@@ -12,6 +12,7 @@ import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.backend.common.IdSignaturesExtractor
 import org.jetbrains.kotlin.backend.common.IdSignaturesExtractorFromKlibWithIndices
 import org.jetbrains.kotlin.backend.common.IdSignaturesExtractorFromRegularKlib
+import org.jetbrains.kotlin.backend.common.LoadedNativeKlibs
 import org.jetbrains.kotlin.backend.konan.serialization.IdSignaturesExtractorFromCInteropKlib
 import org.jetbrains.kotlin.io.ZipFileSystemInPlaceAccessor
 import org.jetbrains.kotlin.ir.util.IdSignature
@@ -132,6 +133,13 @@ class KlibDAG internal constructor(private val dag: Map<KotlinLibrary, KlibDAGNo
         }
 
         emitted
+    }
+
+    /**
+     * A (library -> it's serial index in [librariesReverseTopoSorted]) mapping.
+     */
+    val libraryReverseTopoRank: Map<KotlinLibrary, Int> by lazy {
+        librariesReverseTopoSorted.mapIndexed { index, library -> library to index }.toMap()
     }
 
     operator fun get(library: KotlinLibrary): KlibDAGNode =
