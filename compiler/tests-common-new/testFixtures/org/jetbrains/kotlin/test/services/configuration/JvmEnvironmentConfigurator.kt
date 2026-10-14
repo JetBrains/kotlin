@@ -96,7 +96,7 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
             }
         }
 
-        fun extractJdkKind(registeredDirectives: RegisteredDirectives): TestJdkKind {
+        fun extractJdkKind(registeredDirectives: RegisteredDirectives, default: TestJdkKind = TestJdkKind.MOCK_JDK): TestJdkKind {
             val fullJdkEnabled = JvmEnvironmentConfigurationDirectives.FULL_JDK in registeredDirectives
             val jdkKinds = registeredDirectives[JDK_KIND]
 
@@ -108,7 +108,7 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
             }
 
             return when (jdkKinds.size) {
-                0 -> TestJdkKind.MOCK_JDK
+                0 -> default
                 1 -> jdkKinds.single()
                 else -> error("Too many jdk kinds passed: ${jdkKinds.joinToArrayString()}")
             }

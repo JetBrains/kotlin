@@ -1,3 +1,4 @@
+// DUMP_IR_DIFFERENCE: JKLIB
 enum class Enum { A }
 object A
 val a = 0

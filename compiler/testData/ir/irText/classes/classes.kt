@@ -1,3 +1,4 @@
+// DUMP_IR_DIFFERENCE: JKLIB
 class TestClass
 
 interface TestInterface
