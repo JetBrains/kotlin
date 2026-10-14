@@ -354,8 +354,10 @@ internal object KotlinJsBrowserTestMetrics : FusMetrics {
     }
 
     internal fun collectMetrics(project: Project, jdBrowserRunner: KotlinBrowserTestRunnerDsl) {
+        // KT-90126: runners of unsupported types are reported via a diagnostic, FUS should not fail on them
+        val browserKind = jdBrowserRunner.getBrowserKindOrNull() ?: return
         project.addConfigurationMetrics { metricContainer ->
-            metricContainer.put(StringListMetrics.JS_TEST_BROWSER_TYPE, jdBrowserRunner.getBrowserKind().browserName)
+            metricContainer.put(StringListMetrics.JS_TEST_BROWSER_TYPE, browserKind.browserName)
             metricContainer.put(StringListMetrics.JS_TEST_BROWSER_CHANGED_OPTION, jdBrowserRunner.optionsChangedFromDefaults())
         }
     }
