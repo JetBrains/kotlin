@@ -810,6 +810,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleSymbolByReferenceTestGenerated 
     }
 
     @Test
+    @TestMetadata("generatedJavaGetter.kt")
+    public void testGeneratedJavaGetter() {
+      run("generatedJavaGetter.kt");
+    }
+
+    @Test
     @TestMetadata("generatedLocalClass.kt")
     public void testGeneratedLocalClass() {
       run("generatedLocalClass.kt");
