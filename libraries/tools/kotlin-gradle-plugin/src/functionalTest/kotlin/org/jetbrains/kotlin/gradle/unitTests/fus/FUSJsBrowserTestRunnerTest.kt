@@ -9,10 +9,13 @@ package org.jetbrains.kotlin.gradle.unitTests.fus
 
 import org.jetbrains.kotlin.gradle.ExperimentalJsTestDsl
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinBrowserTestRunnerDsl
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.statistics.metrics.StringListMetrics
+import javax.inject.Inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFails
 
 class FUSJsBrowserTestRunnerTest {
 
@@ -67,5 +70,28 @@ class FUSJsBrowserTestRunnerTest {
             listOf("headless"),
             metrics[StringListMetrics.JS_TEST_BROWSER_CHANGED_OPTION],
         )
+    }
+
+    internal abstract class UnsupportedBrowserTestRunner @Inject constructor() : KotlinBrowserTestRunnerDsl
+
+    @Test
+    fun `unsupported browser test runner does not break configuration time metrics`() {
+        val project = buildProjectWithMPP(preApplyCode = enableFusOnCI) {
+            with(multiplatformExtension) {
+                js {
+                    browser {
+                        test {
+                            it.firefox("ff")
+                            it.browserRunners.add(project.objects.newInstance(UnsupportedBrowserTestRunner::class.java, "custom"))
+                        }
+                    }
+                }
+            }
+        }
+
+        assertFails { project.evaluate() }
+
+        val metrics = project.collectedFusConfigurationTimeMetrics
+        assertEquals(listOf("firefox"), metrics.stringListMetrics[StringListMetrics.JS_TEST_BROWSER_TYPE])
     }
 }
