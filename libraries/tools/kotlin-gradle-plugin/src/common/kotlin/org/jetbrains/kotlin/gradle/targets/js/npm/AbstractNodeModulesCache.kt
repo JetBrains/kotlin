@@ -70,7 +70,7 @@ fun makeNodeModule(
     files: (File) -> Unit,
 ): File {
     /** imported package directory */
-    val dir = container.resolve(packageJson.name).resolve(packageJson.version)
+    val dir = importedPackageDirWithinCache(container, packageJson.name, packageJson.version)
 
     if (dir.exists()) dir.deleteRecursively()
 
@@ -94,7 +94,7 @@ fun makeNodeModule(
 
 @Deprecated("Internal KGP utility. Scheduled for removal in Kotlin 2.7")
 fun importedPackageDir(container: File, name: String, version: String): File =
-    container.resolve(name).resolve(version)
+    importedPackageDirWithinCache(container, name, version)
 
 @Deprecated("Internal KGP utility. Scheduled for removal in Kotlin 2.7")
 fun GradleNodeModule(dir: File) = GradleNodeModule(dir.parentFile.name, dir.name, dir)
