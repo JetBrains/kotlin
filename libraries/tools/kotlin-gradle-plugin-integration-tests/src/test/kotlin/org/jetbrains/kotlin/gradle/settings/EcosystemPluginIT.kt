@@ -24,12 +24,14 @@ import org.jetbrains.kotlin.gradle.testbase.plugins
 import org.jetbrains.kotlin.gradle.testbase.project
 import org.jetbrains.kotlin.gradle.testbase.settingsBuildScriptInjection
 import org.jetbrains.kotlin.gradle.testbase.source
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.createDirectories
 import kotlin.io.path.createFile
 
 @DisplayName("Kotlin ecosystem plugin")
 @JvmGradlePluginTests
+@MustRunOnChangesInGradle
 class EcosystemPluginIT : KGPBaseTest() {
 
     @DisplayName("Works in buildSrc")
