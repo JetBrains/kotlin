@@ -10,13 +10,14 @@ import java.io.File
 import java.util.concurrent.ConcurrentHashMap
 
 internal class DaemonConnectionRegistry(private val sessionIsAliveFlagFile: Lazy<File>) : AutoCloseable {
+    private val closeableGuard = CloseableGuard(this)
     private val connections = ConcurrentHashMap<DaemonExecutionPolicyImpl, CompileServiceSession>()
 
     fun getCompileServiceSession(
         policy: DaemonExecutionPolicyImpl,
         loggerAdapter: KotlinLoggerMessageCollectorAdapter,
     ): CompileServiceSession? {
-
+        closeableGuard.requireNotClosed()
         @Suppress("UNCHECKED_CAST") // to support the case when compute returns null and the mapping is not recorded
         val connectionsNullable = connections as MutableMap<DaemonExecutionPolicyImpl, CompileServiceSession?>
 
@@ -27,13 +28,15 @@ internal class DaemonConnectionRegistry(private val sessionIsAliveFlagFile: Lazy
     }
 
     override fun close() {
-        connections.values.distinct().forEach {
-            try {
-                it.compileService.releaseCompileSession(it.sessionId)
-            } catch (_: Exception) {
+        closeableGuard.close {
+            connections.values.distinct().forEach {
+                try {
+                    it.compileService.releaseCompileSession(it.sessionId)
+                } catch (_: Exception) {
+                }
             }
+            connections.clear()
         }
-        connections.clear()
     }
 }
 
