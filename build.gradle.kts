@@ -294,6 +294,10 @@ tasks {
         dependsOn(":kotlin-gradle-plugin-integration-tests:kgpOtherTestsGroupedByGradleVersion")
     }
 
+    testLifecycleTask("gradlePluginIntegrationMasterTestTemp", QualityGate.Undefined) {
+        // TODO KT-85475 remove in https://github.com/JetBrains/kotlin/pull/8916
+        dependsOn(":kotlin-gradle-plugin-integration-tests:kgpWasmTestsGroupedByGradleVersion")
+    }
 
     // Gradle Plugin Integration Tests
     //   grouped by Gradle Version
