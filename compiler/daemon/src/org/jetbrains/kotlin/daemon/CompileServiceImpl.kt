@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.*
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.repl.ReplCheckResult
 import org.jetbrains.kotlin.cli.common.repl.ReplCodeLine
@@ -56,8 +55,6 @@ import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompil
 import org.jetbrains.kotlin.progress.CompilationCanceledException
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
-import org.jetbrains.kotlin.util.PerformanceManager.DumpFormat
-import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.Time
 import org.jetbrains.kotlin.util.forEachPhaseMeasurement
 import org.jetbrains.kotlin.util.getLinesPerSecond
@@ -1096,6 +1093,7 @@ class CompileServiceImpl(
         compilationId: Int,
         operation: ByteArray,
         callbackChannel: DaemonCallbackChannel,
+        servicesFacade: CompilerServicesFacadeBase?,
     ): CompileService.CallResult<ByteArray> = ifAlive {
         maybeWaitForTestStart()
         log.info { "Executing operation $compilationId" }
@@ -1119,7 +1117,7 @@ class CompileServiceImpl(
                 )
             }
             val logger = RemoteLogger(messageSender)
-            buildOperation.afterSerialization(messageSender)
+            buildOperation.afterDeserialization(messageSender, servicesFacade)
 
             val result: Any? = kotlinToolchains.createBuildSession().use { buildSession ->
                 buildSession.executeOperation(buildOperation, logger = logger)

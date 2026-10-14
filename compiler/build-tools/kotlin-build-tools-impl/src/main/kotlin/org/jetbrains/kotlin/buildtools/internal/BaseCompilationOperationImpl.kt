@@ -51,8 +51,8 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
         return CompilationResultSerializer
     }
 
-    override fun afterSerialization(messageReporter: (Message) -> Unit) {
-        super.afterSerialization(messageReporter)
+    override fun afterDeserialization(messageReporter: (Message) -> Unit, compilerFacade: CompilerServicesFacadeBase?) {
+        super.afterDeserialization(messageReporter, compilerFacade)
         if (hasLookupTracker) {
             lookupTracker = MessageReportingCompilerLookupTracker(messageReporter)
         }
@@ -180,8 +180,8 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
         }
     }
 
-    private fun createMessageCollector(kotlinLogger: KotlinLogger): KotlinLoggerMessageCollectorAdapter =
-        KotlinLoggerMessageCollectorAdapter(kotlinLogger, compilerMessageRenderer, compilerArguments[WERROR])
+    override fun createMessageCollector(logger: KotlinLogger): KotlinLoggerMessageCollectorAdapter =
+        KotlinLoggerMessageCollectorAdapter(logger, compilerMessageRenderer, compilerArguments[WERROR])
 
     private fun reportArgumentWarningsAndErrors(
         kotlinLogger: KotlinLogger,
@@ -299,7 +299,7 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
         }
     }
 
-    protected open fun createCompilerServicesFacade(
+    override fun createCompilerServicesFacade(
         logger: KotlinLogger,
         messageCollector: MessageCollectorWithDiagnosticId,
     ): CompilerServicesFacadeBase =

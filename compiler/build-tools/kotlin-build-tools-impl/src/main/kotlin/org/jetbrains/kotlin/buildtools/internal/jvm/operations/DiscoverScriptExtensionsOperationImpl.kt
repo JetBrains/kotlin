@@ -20,13 +20,13 @@ import org.jetbrains.kotlin.buildtools.api.ProjectId
 import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.DiscoverScriptExtensionsOperation
 import org.jetbrains.kotlin.buildtools.internal.*
-import org.jetbrains.kotlin.buildtools.internal.arguments.CommonToolArgumentsImpl.Companion.WERROR
 import org.jetbrains.kotlin.buildtools.internal.serializability.Message
 import org.jetbrains.kotlin.buildtools.internal.serializability.MessageReportingMessageCollectorWithDiagnosticId
 import org.jetbrains.kotlin.buildtools.internal.serializability.PathAsStringSerializer
 import org.jetbrains.kotlin.buildtools.internal.serializability.getPropertyWithSerialNameValue
 import org.jetbrains.kotlin.buildtools.internal.serializability.setPropertyWithSerialNameValue
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorWithDiagnosticId
+import org.jetbrains.kotlin.daemon.common.CompilerServicesFacadeBase
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.reporter
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionsFromClasspathDiscoverySource
 import java.nio.file.Path
@@ -46,8 +46,8 @@ internal class DiscoverScriptExtensionsOperationImpl(
     @Transient
     private var compilerMessageCollector: MessageCollectorWithDiagnosticId? = null
 
-    override fun afterSerialization(messageReporter: (Message) -> Unit) {
-        super.afterSerialization(messageReporter)
+    override fun afterDeserialization(messageReporter: (Message) -> Unit, compilerFacade: CompilerServicesFacadeBase?) {
+        super.afterDeserialization(messageReporter, compilerFacade)
         compilerMessageCollector = MessageReportingMessageCollectorWithDiagnosticId(messageReporter)
     }
 

@@ -25,7 +25,11 @@ import org.jetbrains.kotlin.buildtools.internal.serializability.Message
 import org.jetbrains.kotlin.buildtools.internal.serializability.getPropertyWithSerialNameValue
 import org.jetbrains.kotlin.buildtools.internal.serializability.setPropertyWithSerialNameValue
 import org.jetbrains.kotlin.buildtools.internal.trackers.getMetricsReporter
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
+import org.jetbrains.kotlin.cli.common.messages.MessageCollectorWithDiagnosticId
 import org.jetbrains.kotlin.daemon.common.CompileService
+import org.jetbrains.kotlin.daemon.common.CompilerServicesFacadeBase
 import kotlin.concurrent.atomics.AtomicBoolean
 import kotlin.concurrent.atomics.AtomicInt
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
@@ -75,7 +79,7 @@ public abstract class BuildOperationImpl<R> : BuildOperation<R>, BuildOperation.
     @Transient
     public open val compilerMessageRenderer: CompilerMessageRenderer = DefaultCompilerMessageRenderer
 
-    override fun afterSerialization(messageReporter: (Message) -> Unit) {
+    override fun afterDeserialization(messageReporter: (Message) -> Unit, compilerFacade: CompilerServicesFacadeBase?) {
         if (hasMetricsCollector) {
             metricsCollector = MessageReportingMetricsCollector(messageReporter)
         }
@@ -142,7 +146,13 @@ public abstract class BuildOperationImpl<R> : BuildOperation<R>, BuildOperation.
             }
             val result = try {
                 when (val result =
-                    daemon.compileService.execute(daemon.sessionId, operationCopy.compilationId, serializedOperation, callbackChannel)) {
+                    daemon.compileService.execute(
+                        daemon.sessionId,
+                        operationCopy.compilationId,
+                        serializedOperation,
+                        callbackChannel,
+                        createCompilerServicesFacade(logger, createMessageCollector(logger))
+                    )) {
                     is CompileService.CallResult.Dying -> throw(IllegalStateException("Daemon is dying"))
                     is CompileService.CallResult.Error -> result.cause?.let { throw(it) } ?: throw(IllegalStateException("Unknown error"))
                     is CompileService.CallResult.Good<*> -> result.get()
@@ -187,6 +197,33 @@ public abstract class BuildOperationImpl<R> : BuildOperation<R>, BuildOperation.
         val ENABLE_CLASSLOADER_CACHE: Option<Boolean> = Option("ENABLE_CLASSLOADER_CACHE")
 
         private val compilationIdCounter = AtomicInt(0)
+    }
+
+    protected open fun createMessageCollector(logger: KotlinLogger): MessageCollectorWithDiagnosticId =
+        DoNothingMessageCollector()
+
+    protected open fun createCompilerServicesFacade(
+        logger: KotlinLogger,
+        messageCollector: MessageCollectorWithDiagnosticId
+    ): CompilerServicesFacadeBase? = null
+}
+
+private class DoNothingMessageCollector : MessageCollectorWithDiagnosticId {
+    override fun report(
+        severity: CompilerMessageSeverity,
+        message: String,
+        location: CompilerMessageSourceLocation?,
+        diagnosticId: String?,
+    ) {
+
+    }
+
+    override fun clear() {
+
+    }
+
+    override fun hasErrors(): Boolean {
+        return false
     }
 }
 

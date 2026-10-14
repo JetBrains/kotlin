@@ -5,14 +5,14 @@
 
 package org.jetbrains.kotlin.buildtools.internal.serializability
 
-import kotlinx.serialization.KSerializer
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.internal.MessageVisitor
+import org.jetbrains.kotlin.daemon.common.CompilerServicesFacadeBase
 
 public interface BtaSerializable {
     public fun beforeSerialization(logger: KotlinLogger): List<MessageVisitor> {
         return emptyList()
     }
 
-    public fun afterSerialization(messageReporter: (Message) -> Unit) {}
+    public fun afterDeserialization(messageReporter: (Message) -> Unit, compilerFacade: CompilerServicesFacadeBase? = null) {}
 }

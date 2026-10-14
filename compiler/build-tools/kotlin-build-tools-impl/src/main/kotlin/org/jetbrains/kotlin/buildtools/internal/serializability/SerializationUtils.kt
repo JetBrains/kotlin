@@ -118,8 +118,14 @@ public val btaSerializersModule: SerializersModule = SerializersModule {
             JvmSnapshotBasedIncrementalCompilationConfigurationImpl::class,
             JvmSnapshotBasedIncrementalCompilationConfigurationImplSerializer
         )
-        @OptIn(DelicateBuildToolsApi::class)
-        subclass(JvmJpsManagedIncrementalCompilationConfigurationImpl::class)
+        try {
+            Class.forName("org.jetbrains.kotlin.buildtools.api.jps.jvm.JvmJpsManagedIncrementalCompilationConfiguration").let {
+                @OptIn(DelicateBuildToolsApi::class)
+                subclass(JvmJpsManagedIncrementalCompilationConfigurationImpl::class)
+            }
+        } catch (_: ClassNotFoundException) {
+            // ignore - optional JPS module was not loaded, JPS classes will not be used
+        }
     }
 
     polymorphic(JsIncrementalCompilationConfiguration::class) {
@@ -217,7 +223,7 @@ public fun CompilerMessageSourceLocation.beforeSerialization(): CompilerMessageS
         else -> this
     }
 
-public fun CompilerMessageSourceLocation.afterSerialization(): CompilerMessageSourceLocation? =
+public fun CompilerMessageSourceLocation.afterDeserialization(): CompilerMessageSourceLocation? =
     when (this) {
         is org.jetbrains.kotlin.buildtools.internal.serializability.CompilerMessageLocation -> this.toCompiler()
         is org.jetbrains.kotlin.buildtools.internal.serializability.CompilerMessageLocationWithRange -> this.toCompiler()

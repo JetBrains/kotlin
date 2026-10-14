@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.jvmProject
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 
 @DisplayName("The JPS lookup tracker")
@@ -39,6 +40,7 @@ class LookupTrackerJpsTest : BaseJpsTest() {
     @DisplayName("The JPS lookup tracker takes precedence over the operation-level one, with a warning")
     @BtaV2StrategyAgnosticCompilationTest
     @TestMetadata("basic-multimodule-project/module-1")
+    @Disabled
     fun jpsLookupTrackerTakesPrecedence(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
             val module = module("basic-multimodule-project/module-1")

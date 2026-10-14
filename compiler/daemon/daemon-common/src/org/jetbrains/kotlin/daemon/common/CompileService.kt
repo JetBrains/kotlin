@@ -187,6 +187,7 @@ interface CompileService : Remote {
         compilationId: Int,
         operation: ByteArray,
         callbackChannel: DaemonCallbackChannel,
+        servicesFacade: CompilerServicesFacadeBase?,
     ): CallResult<ByteArray>
 }
 

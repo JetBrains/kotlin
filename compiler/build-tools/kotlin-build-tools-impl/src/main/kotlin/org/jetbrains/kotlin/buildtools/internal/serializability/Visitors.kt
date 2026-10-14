@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.buildtools.api.jps.jvm.incremental.trackers.Compiler
 import org.jetbrains.kotlin.buildtools.api.trackers.BuildMetricsCollector
 import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
 import org.jetbrains.kotlin.buildtools.internal.serializability.Message
-import org.jetbrains.kotlin.buildtools.internal.serializability.afterSerialization
+import org.jetbrains.kotlin.buildtools.internal.serializability.afterDeserialization
 
 internal class LookupMessageVisitor(private val lookupTracker: CompilerLookupTracker) : MessageVisitor {
 
@@ -55,7 +55,7 @@ internal class CompilerMessageVisitor(private val logger: KotlinLoggerMessageCol
 
     override fun accept(message: Message): Boolean = when (message) {
         is Message.CompilerMessageWithDiagnosticId -> {
-            logger.report(message.severity, message.message, message.location?.afterSerialization(), message.diagnosticId)
+            logger.report(message.severity, message.message, message.location?.afterDeserialization(), message.diagnosticId)
             true
         }
         is Message.CompilerMessageClear -> {

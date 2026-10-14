@@ -89,9 +89,9 @@ internal class JvmCompilationOperationImpl(
         return visitors
     }
 
-    override fun afterSerialization(messageReporter: (Message) -> Unit) {
-        super.afterSerialization(messageReporter)
-        (incrementalCompilation as? BtaSerializable)?.afterSerialization(messageReporter)
+    override fun afterDeserialization(messageReporter: (Message) -> Unit, compilerFacade: CompilerServicesFacadeBase?) {
+        super.afterDeserialization(messageReporter, compilerFacade)
+        (incrementalCompilation as? BtaSerializable)?.afterDeserialization(messageReporter, compilerFacade)
     }
 
     override fun deepCopy(): JvmCompilationOperationImpl {

@@ -15,11 +15,14 @@ import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
 import org.jetbrains.kotlin.buildtools.api.jps.InternalBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.jps.jvm.JvmJpsManagedIncrementalCompilationConfiguration
+import org.jetbrains.kotlin.buildtools.api.jps.jvm.incremental.CompilerIncrementalCache
 import org.jetbrains.kotlin.buildtools.api.jps.jvm.incremental.CompilerIncrementalCompilationComponents
+import org.jetbrains.kotlin.buildtools.api.jps.jvm.incremental.CompilerTargetId
 import org.jetbrains.kotlin.buildtools.api.jps.jvm.incremental.trackers.*
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
 import org.jetbrains.kotlin.buildtools.internal.*
+import org.jetbrains.kotlin.buildtools.internal.jps.incremental.CompilerIncrementalCompilationComponentsAdapter
 import org.jetbrains.kotlin.buildtools.internal.jps.incremental.IncrementalCompilationComponentsAdapter
 import org.jetbrains.kotlin.buildtools.internal.jps.incremental.trackers.*
 import org.jetbrains.kotlin.buildtools.internal.jvm.operations.JvmCompilationOperationImpl
@@ -32,11 +35,20 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollectorWithDiagnosticId
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.common.CompilationOptions
 import org.jetbrains.kotlin.daemon.common.CompileService
+import org.jetbrains.kotlin.daemon.common.CompilerCallbackServicesFacade
 import org.jetbrains.kotlin.daemon.common.CompilerMode
 import org.jetbrains.kotlin.daemon.common.CompilerServicesFacadeBase
+import org.jetbrains.kotlin.daemon.common.DummyProfiler
+import org.jetbrains.kotlin.daemon.common.Profiler
+import org.jetbrains.kotlin.daemon.common.RemoteIncrementalCompilationComponentsClient
+import org.jetbrains.kotlin.daemon.common.withMeasure
 import org.jetbrains.kotlin.incremental.components.*
+import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
+import org.jetbrains.kotlin.load.kotlin.incremental.components.JvmPackagePartProto
+import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
+import java.io.File
 import java.nio.file.Path
 import org.jetbrains.kotlin.buildtools.internal.BaseCompilationOperationImpl.Companion.LOOKUP_TRACKER as BASE_LOOKUP_TRACKER
 
@@ -147,11 +159,18 @@ internal fun JvmClientManagedIncrementalCompilationConfiguration.registerPlatfor
     }
 }
 
+internal object CompilerIncrementalCompilationComponentsPlaceholder : CompilerIncrementalCompilationComponents {
+    override fun getIncrementalCache(target: CompilerTargetId): CompilerIncrementalCache {
+        error("Placeholder only for serialization")
+    }
+}
+
 @DelicateBuildToolsApi
 @OptIn(InternalBuildToolsApi::class)
 @Serializable
 internal class JvmJpsManagedIncrementalCompilationConfigurationImpl(
-    override val incrementalCompilationComponents: CompilerIncrementalCompilationComponents,
+    @Transient
+    override var incrementalCompilationComponents: CompilerIncrementalCompilationComponents = CompilerIncrementalCompilationComponentsPlaceholder,
 ) : JvmJpsManagedIncrementalCompilationConfiguration,
     JvmJpsManagedIncrementalCompilationConfiguration.Builder,
     JvmClientManagedIncrementalCompilationConfiguration,
@@ -169,7 +188,7 @@ internal class JvmJpsManagedIncrementalCompilationConfigurationImpl(
         return messageVisitors
     }
 
-    override fun afterSerialization(messageReporter: (Message) -> Unit) {
+    override fun afterDeserialization(messageReporter: (Message) -> Unit, compilerFacade: CompilerServicesFacadeBase?) {
         if (hasLookupTracker) {
             lookupTracker = MessageReportingCompilerLookupTracker(messageReporter)
         }
@@ -187,6 +206,11 @@ internal class JvmJpsManagedIncrementalCompilationConfigurationImpl(
         }
         if (hasInlineConstTracker) {
             inlineConstTracker = MessageReportingCompilerInlineConstTracker(messageReporter)
+        }
+        @Suppress("DEPRECATION")
+        if (compilerFacade is CompilerCallbackServicesFacade) {
+            incrementalCompilationComponents =
+                CompilerIncrementalCompilationComponentsAdapter(RemoteIncrementalCompilationComponentsClient(compilerFacade))
         }
     }
 
@@ -363,3 +387,39 @@ private class MessageReportingCompilerInlineConstTracker(private val messageRepo
         )
     }
 }
+
+//private class RemoteIncrementalCompilationComponentsClient(
+//    @Suppress("DEPRECATION") val facade: CompilerCallbackServicesFacade,
+//    val profiler: Profiler = DummyProfiler(),
+//) : CompilerIncrementalCompilationComponents {
+//    override fun getIncrementalCache(target: CompilerTargetId): CompilerIncrementalCache =
+//        RemoteIncrementalCacheClient(facade, target, profiler)
+//}
+//
+//private class RemoteIncrementalCacheClient(
+//    @Suppress("DEPRECATION") val facade: CompilerCallbackServicesFacade,
+//    val target: CompilerTargetId,
+//    val profiler: Profiler = DummyProfiler(),
+//) : CompilerIncrementalCache {
+//    override fun getObsoletePackageParts(): Collection<String> =
+//        profiler.withMeasure(this) { facade.incrementalCache_getObsoletePackageParts(target) }
+//
+//    override fun getObsoleteMultifileClasses(): Collection<String> =
+//        profiler.withMeasure(this) { facade.incrementalCache_getObsoleteMultifileClassFacades(target) }
+//
+//    override fun getStableMultifileFacadeParts(facadeInternalName: String): Collection<String>? =
+//        profiler.withMeasure(this) { facade.incrementalCache_getMultifileFacadeParts(target, facadeInternalName) }
+//
+//    override fun getPackagePartData(partInternalName: String): JvmPackagePartProto? =
+//        profiler.withMeasure(this) { facade.incrementalCache_getPackagePartData(target, partInternalName) }
+//
+//    override fun getModuleMappingData(): ByteArray? = profiler.withMeasure(this) { facade.incrementalCache_getModuleMappingData(target) }
+//
+//    override fun getMetadata(fragmentName: String): Map<File, ByteArray> =
+//        profiler.withMeasure(this) { facade.incrementalCache_getMetadata(target, fragmentName) }
+//
+//    override fun getClassFilePath(internalClassName: String): String =
+//        profiler.withMeasure(this) { facade.incrementalCache_getClassFilePath(target, internalClassName) }
+//
+//    override fun close(): Unit = profiler.withMeasure(this) { facade.incrementalCache_close(target) }
+//}
