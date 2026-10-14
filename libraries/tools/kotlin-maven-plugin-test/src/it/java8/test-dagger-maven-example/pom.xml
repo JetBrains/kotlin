@@ -12,7 +12,7 @@
     <properties>
 <!--        <kotlin.compiler.jdkHome>${kotlinCompilerJdk}</kotlin.compiler.jdkHome>-->
         <junit.version>4.13.1</junit.version>
-        <dagger.version>2.9</dagger.version>
+        <dagger.version>2.60.1</dagger.version>
         <main.class>coffee.CoffeeApp</main.class>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
@@ -29,6 +29,11 @@
             <version>${kotlin.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-metadata-jvm</artifactId>
+            <version>${kotlin.version}</version>
+        </dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>${junit.version}</version>
@@ -42,6 +47,12 @@
                 <artifactId>kotlin-maven-plugin</artifactId>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <version>${kotlin.version}</version>
+                <configuration>
+                    <args>
+                        <arg>-Xskip-metadata-version-check</arg>
+                        <arg>-Xskip-prerelease-check</arg>
+                    </args>
+                </configuration>
                 <executions>
                     <execution>
                         <id>kapt</id>
@@ -54,6 +65,11 @@
                                 <sourceDir>src/main/java</sourceDir>
                             </sourceDirs>
                             <annotationProcessorPaths>
+                                <annotationProcessorPath>
+                                    <groupId>org.jetbrains.kotlin</groupId>
+                                    <artifactId>kotlin-metadata-jvm</artifactId>
+                                    <version>${kotlin.version}</version>
+                                </annotationProcessorPath>
                                 <annotationProcessorPath>
                                     <groupId>com.google.dagger</groupId>
                                     <artifactId>dagger-compiler</artifactId>
@@ -85,6 +101,11 @@
                                 <sourceDir>src/test/java</sourceDir>
                             </sourceDirs>
                             <annotationProcessorPaths>
+                                <annotationProcessorPath>
+                                    <groupId>org.jetbrains.kotlin</groupId>
+                                    <artifactId>kotlin-metadata-jvm</artifactId>
+                                    <version>${kotlin.version}</version>
+                                </annotationProcessorPath>
                                 <annotationProcessorPath>
                                     <groupId>com.google.dagger</groupId>
                                     <artifactId>dagger-compiler</artifactId>
