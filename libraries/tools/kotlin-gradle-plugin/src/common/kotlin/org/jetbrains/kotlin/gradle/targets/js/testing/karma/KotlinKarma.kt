@@ -376,10 +376,10 @@ class KotlinKarma internal constructor(
         }
     }
 
-    override fun createTestExecutionSpec(
+    override fun createTestExecutionSpecification(
         task: KotlinJsTest,
         launchOpts: ProcessLaunchOptions,
-        nodeJsArgs: MutableList<String>,
+        toolArgs: List<String>,
         debug: Boolean,
     ): TCServiceMessagesTestExecutionSpec {
         val modules = NpmProjectModules(npmToolingDir.getFile())
@@ -407,7 +407,7 @@ class KotlinKarma internal constructor(
         ) { it.appendFromConfigDir() }
 
         val karmaConfigAbsolutePath = karmaConfJs.absolutePath
-        val args = nodeJsArgs +
+        val args = toolArgs +
                 modules.require("karma/bin/karma") +
                 listOf("start", karmaConfigAbsolutePath)
 

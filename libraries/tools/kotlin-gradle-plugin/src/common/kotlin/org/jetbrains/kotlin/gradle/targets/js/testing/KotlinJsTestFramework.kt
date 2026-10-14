@@ -19,12 +19,23 @@ interface KotlinJsTestFramework : RequiresNpmDependencies {
 
     val executable: Provider<String>
 
+    fun createTestExecutionSpecification(
+        task: KotlinJsTest,
+        launchOpts: ProcessLaunchOptions,
+        toolArgs: List<String>,
+        debug: Boolean,
+    ): TestExecutionSpec
+
+    @Deprecated(
+        "Use createTestExecutionSpec(task, launchOpts, toolArgs, debug) instead. Scheduled for removal in Kotlin 2.7",
+        replaceWith = ReplaceWith("createTestExecutionSpec(task, launchOpts, nodeJsArgs.toList(), debug)")
+    )
     fun createTestExecutionSpec(
         task: KotlinJsTest,
         launchOpts: ProcessLaunchOptions,
         nodeJsArgs: MutableList<String>,
         debug: Boolean,
-    ): TestExecutionSpec
+    ): TestExecutionSpec = createTestExecutionSpecification(task, launchOpts, nodeJsArgs.toList(), debug)
 
     /** Will be assigned to task property with @[org.gradle.api.tasks.Nested] annotation. So it must comply with its requirements */
     val frameworkTaskInputs: Any?

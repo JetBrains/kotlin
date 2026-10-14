@@ -76,10 +76,10 @@ class KotlinMocha internal constructor(
 
     private val platformType = compilation.platformType
 
-    override fun createTestExecutionSpec(
+    override fun createTestExecutionSpecification(
         task: KotlinJsTest,
         launchOpts: ProcessLaunchOptions,
-        nodeJsArgs: MutableList<String>,
+        toolArgs: List<String>,
         debug: Boolean,
     ): TCServiceMessagesTestExecutionSpec {
         val clientSettings = TCServiceMessagesClientSettings(
@@ -101,7 +101,7 @@ class KotlinMocha internal constructor(
 
         val file = task.inputFileProperty.getFile().toString()
 
-        val args = nodeJsArgs + mutableListOf(
+        val args = toolArgs + mutableListOf(
             "--require",
             modules.require("source-map-support/register.js")
         ).apply {
@@ -123,7 +123,7 @@ class KotlinMocha internal constructor(
         val dryRunArgs = if (platformType == KotlinPlatformType.wasm)
             null
         else {
-            nodeJsArgs + mutableListOf(
+            toolArgs + mutableListOf(
                 "--require",
                 modules.require("source-map-support/register.js")
             ).apply {
