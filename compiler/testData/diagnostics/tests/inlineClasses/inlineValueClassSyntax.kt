@@ -6,7 +6,7 @@
 inline value class A(val x: Int)
 value inline class B(val x: String)
 
-inline <!UNSUPPORTED_FEATURE!>value<!> class C(val x: Int, val y: String)
+inline value class C<!INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE!>(val x: Int, val y: String)<!>
 <!VALUE_CLASS_NOT_FINAL!>abstract<!> <!ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS!>inline<!> <!ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS{PSI}!>value<!> class D
 <!WRONG_MODIFIER_TARGET!>inline<!> <!WRONG_MODIFIER_TARGET!>value<!> object E
 
