@@ -60,11 +60,7 @@ sourceSets {
 }
 
 projectTests {
-    testTask(
-        javaLauncher = JdkMajorVersion.JDK_1_8,
-        // Use Parallel GC because this test runs on JDK 8.
-        garbageCollector = GarbageCollector.Parallel,
-    ) {
+    testTask {
         useJsIrBoxTests(buildDir = layout.buildDirectory)
     }
 
