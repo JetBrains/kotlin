@@ -84,12 +84,6 @@ class WasmTestsRunOnceIT : KGPBaseTest() {
             kotlinMultiplatform.sourceSets.getByName("commonTest").dependencies {
                 implementation(kotlin("test"))
             }
-            // The real run merges stderr into the test output, which is not logged by default
-            project.tasks.withType(AbstractTestTask::class.java).configureEach { task ->
-                task.testLogging {
-                    it.get(DEFAULT_LOG_LEVEL).showStandardStreams = true
-                }
-            }
         }
 
         kotlinSourcesDir("commonTest").source("org/example/RunOnceTest.kt") {
@@ -121,7 +115,7 @@ class WasmTestsRunOnceIT : KGPBaseTest() {
             private fun consoleError(message: String): Unit = js("console.error(message)")
 
             actual fun reportExecution(testName: String) {
-                println("$TEST_BODY_MARKER" + testName)
+                consoleError("$TEST_BODY_MARKER" + testName)
             }
             """.trimIndent()
         }
@@ -129,34 +123,13 @@ class WasmTestsRunOnceIT : KGPBaseTest() {
         // printing to STDERR is necessary, because on dry run STDOUT is ignored
         kotlinSourcesDir("wasmWasiTest").source("org/example/reportExecution.kt") {
             """
-            @file:OptIn(ExperimentalWasmInterop::class, UnsafeWasmMemoryApi::class)
-
             package org.example
 
-            import kotlin.wasm.ExperimentalWasmInterop
-            import kotlin.wasm.WasmImport
-            import kotlin.wasm.unsafe.UnsafeWasmMemoryApi
-            import kotlin.wasm.unsafe.withScopedMemoryAllocator
-
-            private const val STDERR = 2
-
-            @WasmImport("wasi_snapshot_preview1", "fd_write")
-            private external fun wasiFdWrite(descriptor: Int, scatterPtr: Int, scatterSize: Int, resultPtr: Int): Int
-
             actual fun reportExecution(testName: String) {
-                val bytes = ("$TEST_BODY_MARKER" + testName + "\n").encodeToByteArray()
-                withScopedMemoryAllocator { allocator ->
-                    val data = allocator.allocate(bytes.size)
-                    for (i in bytes.indices) {
-                        (data + i).storeByte(bytes[i])
-                    }
-                    val scatter = allocator.allocate(8)
-                    scatter.storeInt(data.address.toInt())
-                    (scatter + 4).storeInt(bytes.size)
-                    val written = allocator.allocate(4)
-                    val result = wasiFdWrite(STDERR, scatter.address.toInt(), 1, written.address.toInt())
-                    check(result == 0) { "fd_write failed with error code " + result }
-                }
+                @Suppress("INVISIBLE_REFERENCE")
+                printError("$TEST_BODY_MARKER" + testName)
+                @Suppress("INVISIBLE_REFERENCE")
+                printError("\r\n")
             }
             """.trimIndent()
         }
