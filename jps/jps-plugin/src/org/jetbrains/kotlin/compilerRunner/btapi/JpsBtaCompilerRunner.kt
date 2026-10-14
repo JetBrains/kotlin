@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.compilerRunner.mergeBeans
 import org.jetbrains.kotlin.compilerRunner.reportInternalCompilerError
 import org.jetbrains.kotlin.config.CompilerSettings
 import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
-import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.ImportTracker
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -189,10 +188,6 @@ internal class JpsBtaCompilerRunner {
         // JPS reads its own trackers back after the compilation, so they are wrapped rather than replaced
         environment.services[LookupTracker::class.java]?.let {
             icBuilder[JvmJpsManagedIncrementalCompilationConfiguration.LOOKUP_TRACKER] = JpsBtaLookupTracker(it)
-        }
-        environment.services[ExpectActualTracker::class.java]?.let {
-            icBuilder[JvmJpsManagedIncrementalCompilationConfiguration.EXPECT_ACTUAL_TRACKER] =
-                JpsBtaExpectActualTracker(it)
         }
         environment.services[InlineConstTracker::class.java]?.let {
             icBuilder[JvmJpsManagedIncrementalCompilationConfiguration.INLINE_CONST_TRACKER] =

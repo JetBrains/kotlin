@@ -90,19 +90,6 @@ internal class RecordingInlineConstTracker : CompilerInlineConstTracker {
     }
 }
 
-internal class RecordingExpectActualTracker : CompilerExpectActualTracker {
-    val matched: MutableList<Pair<Path, Path>> = mutableListOf()
-    val lenientStubs: MutableList<Path> = mutableListOf()
-
-    override fun report(expectFilePath: Path, actualFilePath: Path) {
-        matched += expectFilePath to actualFilePath
-    }
-
-    override fun reportExpectOfLenientStub(expectFilePath: Path) {
-        lenientStubs.add(expectFilePath)
-    }
-}
-
 internal class RecordingFileMappingTracker : CompilerFileMappingTracker {
     val sourcesToOutput: MutableList<Pair<List<Path>, Path>> = mutableListOf()
     val pluginReferencedSources: MutableList<Path> = mutableListOf()

@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.buildtools.api.jps.jvm.incremental.CompilerIncrement
 import org.jetbrains.kotlin.buildtools.api.jps.jvm.incremental.CompilerIncrementalCompilationComponents
 import org.jetbrains.kotlin.buildtools.api.jps.jvm.incremental.CompilerTargetId
 import org.jetbrains.kotlin.buildtools.api.jps.jvm.incremental.trackers.CompilerEnumWhenTracker
-import org.jetbrains.kotlin.buildtools.api.jps.jvm.incremental.trackers.CompilerExpectActualTracker
 import org.jetbrains.kotlin.buildtools.api.jps.jvm.incremental.trackers.CompilerFileMappingTracker
 import org.jetbrains.kotlin.buildtools.api.jps.jvm.incremental.trackers.CompilerImportTracker
 import org.jetbrains.kotlin.buildtools.api.jps.jvm.incremental.trackers.CompilerInlineConstTracker
@@ -21,7 +20,6 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollector
 import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
-import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.ImportTracker
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -131,16 +129,6 @@ internal class JpsBtaLookupTracker(private val delegate: LookupTracker) : Compil
 
     override fun clear() {
         delegate.clear()
-    }
-}
-
-internal class JpsBtaExpectActualTracker(private val delegate: ExpectActualTracker) : CompilerExpectActualTracker {
-    override fun report(expectFilePath: Path, actualFilePath: Path) {
-        delegate.report(expectFilePath.toFile(), actualFilePath.toFile())
-    }
-
-    override fun reportExpectOfLenientStub(expectFilePath: Path) {
-        delegate.reportExpectOfLenientStub(expectFilePath.toFile())
     }
 }
 
