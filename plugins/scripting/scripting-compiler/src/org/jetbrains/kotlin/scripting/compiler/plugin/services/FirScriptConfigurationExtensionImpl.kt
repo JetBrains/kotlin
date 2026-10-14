@@ -30,17 +30,18 @@ import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousInitializerSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularPropertySymbol
 import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildUserTypeRef
+import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.constructType
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.fir.types.impl.FirQualifierPartImpl
 import org.jetbrains.kotlin.fir.types.impl.FirTypeArgumentListImpl
-import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -109,7 +110,12 @@ class FirScriptConfiguratorExtensionImpl(
             )
 
             if (baseClassTypeRef is FirResolvedTypeRef) {
-                val baseClassPrimaryConstructor = baseClassTypeRef.toRegularClassSymbol(session)?.fir?.primaryConstructorIfAny(session)
+                // Querying session.symbolProvider here would cache the names of the base class package while the source
+                // provider has not yet recorded the remaining source files, hiding their declarations from resolution (KT-89627)
+                val baseClassSymbol = baseClassTypeRef.coneType.classId?.let {
+                    session.dependenciesSymbolProvider.getClassLikeSymbolByClassId(it)
+                } as? FirRegularClassSymbol
+                val baseClassPrimaryConstructor = baseClassSymbol?.fir?.primaryConstructorIfAny(session)
 
                 baseClassPrimaryConstructor?.fir?.valueParameters?.forEachIndexed { index, baseCtorParameter ->
                     val sourceElementKind = KtFakeSourceElementKind.ScriptParameter.BaseClassConstructorParameter(index)

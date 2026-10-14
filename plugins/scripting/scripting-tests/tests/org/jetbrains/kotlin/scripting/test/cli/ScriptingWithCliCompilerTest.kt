@@ -271,6 +271,39 @@ class ScriptingWithCliCompilerTest {
     }
 
     @Test
+    fun testScriptSortedBeforeSourcesInDefinitionPackage() {
+        withTempDir { tmpdir ->
+            // The script's path sorts before the sources, so its definition (and base class) is processed first
+            val script = File(tmpdir, "aaa/script.main.kts").apply {
+                parentFile.mkdirs()
+                writeText("println(\"OK\")\n")
+            }
+            val sourcesDir = File(tmpdir, "src/org/jetbrains/kotlin/mainKts").apply { mkdirs() }
+            val helper = File(sourcesDir, "Helper.kt").apply {
+                writeText("package org.jetbrains.kotlin.mainKts\n\nobject Helper { fun value() = 42 }\n")
+            }
+            val usesHelper = File(sourcesDir, "UsesHelper.kt").apply {
+                writeText("package org.jetbrains.kotlin.mainKts\n\nclass UsesHelper { fun run() = Helper.value() }\n")
+            }
+            val [_, err, ret] = captureOutErrRet {
+                CLICompiler.doMainNoExit(
+                    K2JVMCompiler(),
+                    arrayOf(
+                        "-P", "plugin:kotlin.scripting:disable-script-definitions-autoloading=true",
+                        K2JVMCompilerArguments::classpath.cliArgument, getMainKtsClassPath().joinToString(File.pathSeparator),
+                        K2JVMCompilerArguments::destination.cliArgument, File(tmpdir, "out").path,
+                        K2JVMCompilerArguments::allowAnyScriptsInSourceRoots.cliArgument,
+                        script.path,
+                        helper.path,
+                        usesHelper.path,
+                    )
+                )
+            }
+            assertEquals(ExitCode.OK.code, ret.code, "Expecting successful compilation, got:\n$err")
+        }
+    }
+
+    @Test
     fun testScriptMainKtsDiscovery() {
         withTempDir { tmpdir ->
 
