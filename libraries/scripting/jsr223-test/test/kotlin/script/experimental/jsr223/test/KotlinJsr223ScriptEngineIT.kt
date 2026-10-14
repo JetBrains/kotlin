@@ -91,25 +91,36 @@ class KotlinJsr223ScriptEngineIT {
         assertEquals(5, res2)
     }
 
-    // @Test // Probably not possible to make it sensible on CI and with parallel run, so leaving it here for manual testing only
-    fun testMemory() {
+    @Test
+    fun testDroppedEnginesDoNotRetainCompilerEnvironments() {
         val memoryMXBean = ManagementFactory.getMemoryMXBean()!!
-        var prevMem = memoryMXBean.getHeapMemoryUsage().getUsed()
-        for (i in 1..10) {
-            with(ScriptEngineManager().getEngineByExtension("kts")) {
-                val res1 = eval("val x = 3")
-                assertNull(res1)
-                val res2 = eval("x + 2")
-                assertEquals(5, res2)
-            }
-            System.gc()
-            val curMem = memoryMXBean.getHeapMemoryUsage().getUsed()
-            if (i > 3 && curMem > prevMem) {
-                assertTrue((curMem - prevMem) < 1024*1024, "Memory leak: iter: $i prev: $prevMem, cur: $curMem")
-            }
-            println("${curMem/1024/1024}Mb")
-            prevMem = curMem
+
+        fun evalInNewEngine(i: Int) {
+            val engine = ScriptEngineManager().getEngineByExtension("kts")!!
+            assertEquals(i * 2, engine.eval("$i * 2"))
         }
+
+        // Environments of the collected engine states are disposed asynchronously, so GC is repeated until they are released
+        fun usedHeapAfterGc(attempts: Int, isLowEnough: (Long) -> Boolean = { false }): Long {
+            var used = Long.MAX_VALUE
+            for (attempt in 1..attempts) {
+                System.gc()
+                Thread.sleep(100)
+                used = memoryMXBean.heapMemoryUsage.used
+                if (isLowEnough(used)) break
+            }
+            return used
+        }
+
+        val limit = 100L * 1024 * 1024
+        evalInNewEngine(0)
+        val baseline = usedHeapAfterGc(attempts = 5)
+        // Each leaked environment retains about 24 MB (KT-90244), so 15 engines exceed the limit severalfold
+        for (i in 1..15) {
+            evalInNewEngine(i)
+        }
+        val retained = usedHeapAfterGc(attempts = 20) { it - baseline < limit } - baseline
+        assertTrue(retained < limit, "Dropped engines retain ${retained / 1024 / 1024} MB")
     }
 
 

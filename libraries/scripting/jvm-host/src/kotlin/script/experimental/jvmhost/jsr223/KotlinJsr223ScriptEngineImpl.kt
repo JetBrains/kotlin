@@ -8,6 +8,7 @@ package kotlin.script.experimental.jvmhost.jsr223
 import com.google.common.base.Throwables
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.K2ReplCompiler
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.currentSnippetNo
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.disposeOnFinalization
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.withMessageCollectorAndDisposable
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import javax.script.ScriptContext
@@ -28,7 +29,17 @@ data class K2ReplState(
     val compiler: K2ReplCompiler,
     val evaluator: K2ReplEvaluator,
     var lineCounter: Int = 0,
-)
+) : AutoCloseable {
+    internal var compilerDisposal: AutoCloseable? = null
+
+    /**
+     * Releases the compiler environment of this state; the state is unusable afterward.
+     * It also happens automatically once the state becomes unreachable.
+     */
+    override fun close() {
+        compilerDisposal?.close()
+    }
+}
 
 /**
  * The in-process Kotlin JSR-223 engine. It runs [KotlinJsr223JvmScriptEngineBase]'s compile/eval
@@ -78,7 +89,10 @@ class KotlinJsr223ScriptEngineImpl(
                     )
                 ),
                 K2ReplEvaluator()
-            ).asSuccess()
+            ).also {
+                // JSR-223 hosts usually drop engines and contexts without closing them
+                it.compilerDisposal = disposeOnFinalization(disposable)
+            }.asSuccess()
         }.valueOrThrow() // TODO: consider error reporting
 
     // Uses the default context's lineCounter so snippet names stay unique across the shared
