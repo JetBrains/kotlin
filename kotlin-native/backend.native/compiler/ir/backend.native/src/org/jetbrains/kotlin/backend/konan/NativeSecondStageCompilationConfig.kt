@@ -369,6 +369,9 @@ class NativeSecondStageCompilationConfig(
     val perFileCacheForStdlib: Boolean
         get() = configuration.get(BinaryOptions.perFileCacheForStdlib) ?: defaultPerFileCacheForStdlib
 
+    val batchedCacheBuild: Boolean
+        get() = configuration.get(BinaryOptions.batchedCacheBuild) ?: true
+
     init {
         // NB: producing LIBRARY is enabled on any combination of hosts/targets
         if (produce != CompilerOutputKind.LIBRARY && !platformManager.isEnabled(target)) {

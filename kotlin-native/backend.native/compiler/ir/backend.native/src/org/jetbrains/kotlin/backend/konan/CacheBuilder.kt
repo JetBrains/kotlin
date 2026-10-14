@@ -372,9 +372,12 @@ class CacheBuilder(
             configuration.reportLog("        $it")
         }
 
-        tryBuildCacheBatch(icedLibraries, needFullRebuild, groupedDirtyFiles.keys, rebuiltLibraries)?.let { [batchLibraries, builtCachePaths] ->
-            rebuiltLibraries.addAll(batchLibraries)
-            lastRebuiltArchives.addAll(builtCachePaths)
+        if (config.batchedCacheBuild) {
+            tryBuildCacheBatch(icedLibraries, needFullRebuild, groupedDirtyFiles.keys, rebuiltLibraries)
+                    ?.let { [batchLibraries, builtCachePaths] ->
+                        rebuiltLibraries.addAll(batchLibraries)
+                        lastRebuiltArchives.addAll(builtCachePaths)
+                    }
         }
 
         for (library in icedLibraries) {
