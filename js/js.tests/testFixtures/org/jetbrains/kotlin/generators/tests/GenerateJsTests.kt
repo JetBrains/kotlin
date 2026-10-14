@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.js.test.JsInlineAnonymousFunctionsTest
 import org.jetbrains.kotlin.js.test.runners.*
 import org.jetbrains.kotlin.js.test.runners.tsexport.*
 import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
+import org.junit.jupiter.api.Tag
 
 fun main(args: Array<String>) {
     val testsRoot = args[0]
@@ -109,6 +110,10 @@ fun main(args: Array<String>) {
             testClass<AbstractJsES6BoxWithInlineAnonymousFunctionsTest>(annotations = listOf(es6(), inlineAnonymousFunctions())) {
                 model(pattern = "^([^_](.+))\\.kt$")
             }
+
+            testClass<AbstractJsSwcBoxTest>(annotations = listOf(swcTag())) {
+                model(pattern = "^([^_](.+))\\.kt$")
+            }
         }
 
         testGroup(testsRoot, "js/js.translator/testData/typescript-export/js", testRunnerMethodName = "runTest0") {
@@ -169,6 +174,14 @@ fun main(args: Array<String>) {
             }
 
             testClass<AbstractJsCodegenBoxInlineWithInlineAnonymousFunctionsTest>(annotations = listOf(inlineAnonymousFunctions())) {
+                model("boxInline")
+            }
+
+            testClass<AbstractJsSwcCodegenBoxTest>(annotations = listOf(swcTag())) {
+                model("box", excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
+            }
+
+            testClass<AbstractJsSwcCodegenBoxInlineTest>(annotations = listOf(swcTag())) {
                 model("boxInline")
             }
 
@@ -295,3 +308,5 @@ fun main(args: Array<String>) {
 private fun es6() = annotation<JsEs6Test>()
 
 private fun inlineAnonymousFunctions() = annotation<JsInlineAnonymousFunctionsTest>()
+
+private fun swcTag() = annotation(Tag::class.java, "swc")
