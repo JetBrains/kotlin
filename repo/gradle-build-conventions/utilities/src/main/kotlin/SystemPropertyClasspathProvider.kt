@@ -3,6 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+import org.gradle.api.artifacts.Dependency
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
@@ -17,6 +18,7 @@ import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.testing.Test
@@ -160,4 +162,18 @@ fun Test.addClasspathDirectoryProperty(
     provider.classpath.from(classpath)
     provider.property.set(property)
     jvmArgumentProviders.add(provider)
+}
+
+/**
+ * Hands the jar built by [dependency] to the benchmark JVM as `-D[systemProperty]=<path>`. The jar is a
+ * tracked input of the task, so it gets built beforehand and the task re-runs when it changes.
+ */
+fun JavaExec.addJarPathProperty(systemProperty: String, dependency: Dependency) {
+    val jar = project.configurations
+        .detachedConfiguration(dependency)
+        .apply { isTransitive = false }
+    jvmArgumentProviders.add(project.objects.newInstance(SystemPropertyClasspathProvider::class.java).apply {
+        property.set(systemProperty)
+        classpath.from(jar)
+    })
 }

@@ -89,7 +89,9 @@
 
 # UNKNOWN: /annotations/
 
-/benchmarks/ "Kotlin Frontend"
+/benchmarks/build-tools "Build Tools API"
+/benchmarks/frontend "Kotlin Frontend"
+/benchmarks/jvm "Kotlin JVM"
 
 /build-common/ "Kotlin Build Tools" "Build Tools API"
 
