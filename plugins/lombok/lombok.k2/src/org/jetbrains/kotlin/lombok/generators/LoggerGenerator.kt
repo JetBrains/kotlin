@@ -205,7 +205,7 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
 
         return if (logContainingClass.hasJavaOrigin) {
             buildJavaField {
-                isFromSource = true
+                origin = FirDeclarationOrigin.Java.Source
                 lazyHasConstantInitializer = lazy { false }
                 lazyHasInitializer = lazy { false }
                 containingClassSymbol = logContainingClass
