@@ -45,9 +45,16 @@ private object DomainSourcesGenerator {
     fun generate(outputDir: Directory, declaredDomains: RegularFile) {
         val mapper = ObjectMapper(YAMLFactory()).registerKotlinModule()
         val node = mapper.readTree(declaredDomains.asFile)
-        val domains = node.properties().mapNotNull { (key, value) ->
-            if (key.startsWith("$")) null else value.toDomainDTO(key)
-        }
+
+        val ignores = node.properties()
+            .filter { (key, _) -> key == "ignore" }
+            .flatMap { (_, value) -> value.valueStream()?.toList().orEmpty().map { it.asText() } }
+            .toSet()
+
+        val domains = node.properties()
+            .filter { (key, _) -> key != "ignore" }
+            .filter { (key, _) -> !key.startsWith("$") }
+            .map { (key, value) -> value.toDomainDTO(key) }
 
 
         outputDir.asFile.toPath().resolve("domains.kt").createParentDirectories().writeText(
@@ -84,6 +91,8 @@ private object DomainSourcesGenerator {
                 }
                 this += "|    )"
                 this += "|}"
+                this += "|"
+                this += "|val ignores = hashSetOf<String>(${ignores.joinToString { "\"$it\"" }})"
             }.trimMargin()
         )
 

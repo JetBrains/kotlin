@@ -5,10 +5,16 @@
     "$schema": {
       "type": "string",
       "format": "uri"
+    },
+    "ignore": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
     }
   },
   "patternProperties": {
-    "^[A-Za-z0-9_]+$": {
+    "^(?!ignore$)[A-Za-z0-9_]+$": {
       "$ref": "#/$defs/system"
     }
   },

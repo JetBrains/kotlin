@@ -10,6 +10,7 @@ All tests run in master builds, even if they were not required for merging the c
 - [Which tests are required for merging to master?](#which-tests-are-required-for-merging-to-master)
 - [Defining domains](#defining-domains)
     - [Running all tests on changes in another domain](#running-all-tests-on-changes-in-another-domain)
+- [Ignoring files](#ignoring-files)
 - [Running individual tests on changes in another domain](#running-individual-tests-on-changes-in-another-domain)
 - [Always running tests](#always-running-tests)
 - [`^test:` commit command](#test-commit-command)
@@ -72,6 +73,22 @@ In the example above, all `Js` tests are required for merging to master when `Co
 This declaration does not require all `CoreLibs` tests to run when only `Js` is changed.
 List every domain whose changes should require these tests explicitly: the declaration is **not transitive**.
 
+## Ignoring files
+
+Use the top-level `ignore` list in [domains.yaml](./domains.yaml) for files whose changes should not mark any domain as changed:
+
+```yaml
+ignore:
+  - "docs"
+  - "tests/mute-common.csv"
+```
+
+Ignored paths belong to no domain. Ignore rules override all domain `include` and `exclude` rules; `ignore` is not a domain.
+Entries can be directory paths or glob patterns. Directories include all descendants; `*.md` matches only root-level Markdown files.
+
+If all changed files are ignored, no tests (including smoke and `@MustRunAlways` tests) or compilation are required before merging to master.
+Codeowner approval can suffice. Mixed changes follow the normal rules for non-ignored files.
+
 ## Running individual tests on changes in another domain
 
 Use `@MustRunOnChangesInXYZ` to require a test to run and pass when domain `XYZ` is changed.
@@ -96,7 +113,7 @@ See [Extra: Contract tests](#extra-contract-tests) for why these tests are usefu
 ## Always running tests
 
 Use `@MustRunAlways` to require a test to run and pass regardless of which domains are changed.
-These tests are required for merging to master. Other test filters, such as `@NightlyTest`, still apply.
+These tests are required for merging to master unless all changed files are ignored. Other test filters, such as `@NightlyTest`, still apply.
 With JUnit 5 (or higher), the annotation can be placed:
 
 - on the test method directly
@@ -278,6 +295,7 @@ This may be useful if your task does not support partial execution
 ### Checking which files belong to each domain
 
 [domains.dump.txt](domains.dump.txt) lists the files belonging to each domain. CI checks that it matches the domain declarations.
+Its `ignored:` section lists globally ignored paths and takes precedence over domain entries.
 Run the same check locally from the repository root:
 
 ```shell
@@ -335,6 +353,6 @@ merging to master. Both teams must approve changes to these tests because the te
 
 ## Extra: Smoke tests
 
-A smoke test is a quick check of core functionality. `@MustRunAlways` can be used for smoke tests that should run for every change,
+A smoke test is a quick check of core functionality. `@MustRunAlways` can be used for smoke tests that should run for every non-ignored change,
 but not every smoke test needs to run for unrelated changes. Selecting a percentage of fast, stable tests through `testFederation { smokeTests { includeAutoSamples(...) } }` is
 another way to check core functionality for unrelated changes.
