@@ -22,6 +22,7 @@ kotlin {
 kotlinxBenchmark {
     applicationName = "HelloWorld"
     prefixBenchmarksWithApplicationName = false
+    hideParameterFilter = "*"
 }
 
 val outputBinary = layout.buildDirectory.file("program${if (HostManager.hostIsMingw) ".exe" else ".kexe"}")

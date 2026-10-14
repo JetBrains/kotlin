@@ -17,6 +17,7 @@ private class Benchmark(
         val benchmark: String,
         val warmupIterations: Int,
         val primaryMetric: Metric,
+        val params: Map<String, String> = emptyMap(),
 )
 
 private fun Benchmark.toBenchmarkResult(
@@ -24,6 +25,7 @@ private fun Benchmark.toBenchmarkResult(
         metric: BenchmarkResult.Metric,
         hidePostfix: String?,
         hidePackage: Boolean,
+        hideParameterFilter: String?,
 ): List<BenchmarkResult> {
     check(primaryMetric.scoreUnit == "us/op") {
         "Unexpected scoreUnit `${primaryMetric.scoreUnit}`; needs `us/op`"
@@ -33,11 +35,19 @@ private fun Benchmark.toBenchmarkResult(
 
         fun String.shouldHide() = hidePostfix?.let { endsWith(it) } ?: false
         val separator = "."
+
         benchmark
             .split(separator)
             .let { if (hidePackage) it.takeLast(2) else it }
             .filterNot { it.shouldHide() }
             .joinTo(this, separator = separator)
+
+        val paramsTag = omittingParametersMatching(hideParameterFilter)
+                .map { [name, value] -> "$name=$value" }
+                .joinToString(separator = ",")
+                .let { if (it.isEmpty()) "" else "[$it]" }
+
+        append(paramsTag)
     }
     return primaryMetric.rawData.flatten().mapIndexed { index, score ->
         BenchmarkResult(
@@ -52,6 +62,19 @@ private fun Benchmark.toBenchmarkResult(
     }
 }
 
+private fun Benchmark.omittingParametersMatching(hideParameterFilter: String?): Map<String, String> {
+    return when {
+        hideParameterFilter.isNullOrBlank() -> params
+        hideParameterFilter == "*" -> emptyMap()
+        else -> {
+            val hidden = hideParameterFilter.split(",")
+            params.filterKeys { name ->
+                name !in hidden
+            }
+        }
+    }
+}
+
 fun main(args: Array<String>) {
     val argParser = ArgParser("convertJMHReport", prefixStyle = ArgParser.OptionPrefixStyle.GNU)
 
@@ -61,11 +84,12 @@ fun main(args: Array<String>) {
     val metric by argParser.option(ArgType.Choice<BenchmarkResult.Metric>(), shortName = "m", description = "Type of the metric").default(BenchmarkResult.Metric.EXECUTION_TIME)
     val hidePostfix by argParser.option(ArgType.String, description = "In benchmark names hide components that end with the given postfix")
     val hidePackage by argParser.option(ArgType.Boolean, description = "In benchmark names hide package names").default(false)
+    val hideParameterFilter by argParser.option(ArgType.String, description = "Do not add matching parameters to benchmark names")
 
     argParser.parse(args)
 
     jmh.decodeFromString<List<Benchmark>>(File(jmhReport).readText()).flatMap {
-        it.toBenchmarkResult(prefix, metric, hidePostfix, hidePackage)
+        it.toBenchmarkResult(prefix, metric, hidePostfix, hidePackage, hideParameterFilter)
     }.joinToString(prefix = "[", postfix = "]") { it.toJson() }.let {
         File(output).writeText(it)
     }
