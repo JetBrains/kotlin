@@ -99,7 +99,7 @@ class MethodInliner(
         transformations.add(info)
     }
 
-    private fun doInline(
+    fun doInline(
         adapter: MethodVisitor,
         remapper: LocalVarRemapper,
         remapReturn: Boolean,
