@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.konan.test.blackbox
 import com.intellij.testFramework.TestDataPath
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.target.SanitizerKind
+import org.jetbrains.kotlin.konan.target.supportedSanitizers
 import org.jetbrains.kotlin.konan.test.blackbox.CachesAutoBuildTest.Companion.TEST_SUITE_PATH
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedHostTarget
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCompilerArgs
@@ -21,6 +23,7 @@ import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertFalse
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -43,7 +46,7 @@ class CachesAutoBuildTest : AbstractNativeSimpleTest() {
     fun testSimple() {
         val rootDir = ForTestCompileRuntime.transformTestDataPath("$TEST_SUITE_PATH/simple")
         val lib = compileToLibrary(rootDir.resolve("lib"), buildDir)
-        val main = compileToExecutable(rootDir.resolve("main"), autoCacheFrom = buildDir, emptyList(), emptyList(), lib)
+        val main = compileToExecutable(rootDir.resolve("main"), autoCacheFrom = buildDir, emptyList(), emptyList(), lib).executableFile
 
         assertTrue(main.exists())
         assertTrue(autoCacheDir.resolve(cacheFlavor).resolve("lib").exists())
@@ -59,7 +62,7 @@ class CachesAutoBuildTest : AbstractNativeSimpleTest() {
             rootDir.resolve("main"),
             autoCacheFrom = buildDir.resolve("external"), emptyList(), emptyList(),
             externalLib, userLib
-        )
+        ).executableFile
 
         assertTrue(main.exists())
         assertTrue(autoCacheDir.resolve(cacheFlavor).resolve("externalLib").exists())
@@ -77,6 +80,7 @@ class CachesAutoBuildTest : AbstractNativeSimpleTest() {
         val makePerFileCache = testRunSettings.get<CacheMode>().makePerFileCaches
         assertTrue(cacheDir.resolve("lib-${if (makePerFileCache) "per-file-cache" else "cache"}").exists())
         val main = compileToExecutable(rootDir.resolve("main"), autoCacheFrom = buildDir, listOf(cacheDir), emptyList(), lib)
+            .executableFile
 
         assertTrue(main.exists())
         assertFalse(autoCacheDir.resolve(cacheFlavor).resolve("lib").exists())
@@ -87,13 +91,14 @@ class CachesAutoBuildTest : AbstractNativeSimpleTest() {
     fun testCustomBinaryOptions() {
         val rootDir = ForTestCompileRuntime.transformTestDataPath("$TEST_SUITE_PATH/simple")
         val lib = compileToLibrary(rootDir.resolve("lib"), buildDir)
-        val main = compileToExecutable(rootDir.resolve("main"), autoCacheFrom = buildDir, emptyList(), emptyList(), lib)
+        val main = compileToExecutable(rootDir.resolve("main"), autoCacheFrom = buildDir, emptyList(), emptyList(), lib).executableFile
 
         assertTrue(main.exists())
         assertTrue(autoCacheDir.resolve(cacheFlavor).resolve("lib").exists())
 
         val customRuntimeAsserts = "-Xbinary=runtimeAssertionsMode=log"
         val main2 = compileToExecutable(rootDir.resolve("main"), autoCacheFrom = buildDir, emptyList(), listOf(customRuntimeAsserts), lib)
+            .executableFile
 
         assertTrue(main2.exists())
     }
@@ -106,7 +111,7 @@ class CachesAutoBuildTest : AbstractNativeSimpleTest() {
         val lib = compileToLibrary(rootDir.resolve("lib"), buildDir)
         val main = compileToExecutable(
             rootDir.resolve("main"), autoCacheFrom = buildDir, emptyList(), listOf("-Xbinary=latin1Strings=true"), lib
-        )
+        ).executableFile
 
         assertTrue(main.exists())
 
@@ -115,6 +120,59 @@ class CachesAutoBuildTest : AbstractNativeSimpleTest() {
         val binary = main.readBytes()
         assertTrue(binary.contains(marker.toByteArray(Charsets.ISO_8859_1))) { "Latin-1 encoded string not found in $main" }
         assertFalse(binary.contains(marker.toByteArray(Charsets.UTF_16LE))) { "UTF-16 encoded string found in $main" }
+    }
+
+    // KT-89892: `-enable-assertions` must be propagated to the cache builds.
+    @Test
+    @TestMetadata("assertions")
+    fun testAssertions() {
+        // With `-opt`, `-enable-assertions` is not the default, and the cache flavor gets an extra `-assertsENABLE` part.
+        Assumptions.assumeTrue(testRunSettings.get<OptimizationMode>() == OptimizationMode.DEBUG)
+        val rootDir = ForTestCompileRuntime.transformTestDataPath("$TEST_SUITE_PATH/assertions")
+        val lib = compileToLibrary(rootDir.resolve("lib"), buildDir)
+        val main = compileToExecutable(rootDir.resolve("main"), autoCacheFrom = buildDir, emptyList(), listOf("-enable-assertions"), lib)
+
+        assertTrue(autoCacheDir.resolve(cacheFlavor).resolve("lib").exists())
+        // The `assert` call from the cached `lib` must not be removed.
+        runExecutableAndVerify(main.testCase, main.testExecutable)
+    }
+
+    // KT-89892: binary options affecting the generated code must be propagated to the cache builds.
+    @Test
+    @TestMetadata("codeInstrumentation")
+    fun testStackProtector() {
+        val rootDir = ForTestCompileRuntime.transformTestDataPath("$TEST_SUITE_PATH/codeInstrumentation")
+        val lib = compileToLibrary(rootDir.resolve("lib"), buildDir)
+        val main = compileToExecutable(
+            rootDir.resolve("main"), autoCacheFrom = buildDir, emptyList(), listOf("-Xbinary=stackProtector=all"), lib
+        )
+
+        assertTrue(main.executableFile.exists())
+        val libCacheDir = autoCacheDir.resolve(cacheFlavor(stackProtector = "ALL")).resolve("lib")
+        assertTrue(libCacheDir.exists())
+        assertTrue(libCacheDir.walk().any { it.isFile && it.readBytes().contains("__stack_chk_fail".toByteArray()) }) {
+            "No stack protector in $libCacheDir"
+        }
+    }
+
+    // KT-89892: binary options affecting the generated code must be propagated to the cache builds.
+    @Test
+    @Disabled("KT-90124: the cache build fails with 'Sanitizers are unsupported'")
+    @TestMetadata("codeInstrumentation")
+    fun testThreadSanitizer() {
+        Assumptions.assumeTrue(SanitizerKind.THREAD in targets.testTarget.supportedSanitizers())
+        val rootDir = ForTestCompileRuntime.transformTestDataPath("$TEST_SUITE_PATH/codeInstrumentation")
+        val lib = compileToLibrary(rootDir.resolve("lib"), buildDir)
+        val main = compileToExecutable(
+            rootDir.resolve("main"), autoCacheFrom = buildDir, emptyList(), listOf("-Xbinary=sanitizer=thread"), lib
+        )
+
+        assertTrue(main.executableFile.exists())
+        val libCacheDir = autoCacheDir.resolve(cacheFlavor(sanitizer = "THREAD")).resolve("lib")
+        assertTrue(libCacheDir.exists())
+        assertTrue(libCacheDir.walk().any { it.isFile && it.readBytes().contains("__tsan_".toByteArray()) }) {
+            "Not instrumented with TSan: $libCacheDir"
+        }
     }
 
     private fun ByteArray.contains(pattern: ByteArray): Boolean =
@@ -126,7 +184,7 @@ class CachesAutoBuildTest : AbstractNativeSimpleTest() {
         cacheDirectories: List<File>,
         additionalArgs: List<String>,
         vararg dependencies: KLIB
-    ): File {
+    ): CompiledExecutable {
         autoCacheDir.mkdirs()
         return compileToExecutableInOneStage(
             sourcesDir,
@@ -139,17 +197,20 @@ class CachesAutoBuildTest : AbstractNativeSimpleTest() {
                 ) + cacheDirectories.map { "-Xcache-directory=${it.absolutePath}" } + additionalArgs
             ),
             *dependencies
-        ).executableFile
+        )
     }
 
     private val autoCacheDir: File get() = buildDir.resolve("__auto_cache__")
-    private val cacheFlavor: String
-        get() = CacheMode.computeCacheDirName(
+    private val cacheFlavor: String get() = cacheFlavor()
+    private fun cacheFlavor(sanitizer: String? = null, stackProtector: String? = null): String =
+        CacheMode.computeCacheDirName(
             testRunSettings.get<KotlinNativeTargets>().testTarget,
             "STATIC",
             testRunSettings.get<OptimizationMode>() == OptimizationMode.DEBUG,
             testRunSettings.get<OptimizationMode>() == OptimizationMode.OPT,
-            checkStateAtExternalCalls = testRunSettings.get<ThreadStateChecker>() == ThreadStateChecker.ENABLED
+            checkStateAtExternalCalls = testRunSettings.get<ThreadStateChecker>() == ThreadStateChecker.ENABLED,
+            sanitizer = sanitizer,
+            stackProtector = stackProtector,
         )
 
     companion object {
