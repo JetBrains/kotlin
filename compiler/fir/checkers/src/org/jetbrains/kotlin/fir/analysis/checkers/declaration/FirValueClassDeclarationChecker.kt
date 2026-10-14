@@ -230,7 +230,9 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
                 val jvmInlineAnnotation = context.session.annotationPlatformSupport.jvmInlineAnnotationClassId
                 val hasJvmInlineAnnotation = jvmInlineAnnotation != null && declaration.hasAnnotation(jvmInlineAnnotation, context.session)
                 val valueModifier = declaration.getModifier(VALUE_KEYWORD)
-                if (primaryConstructorParametersByName.size > 1 && !hasJvmInlineAnnotation && valueModifier != null) {
+                if (
+                    primaryConstructorParametersByName.size > 1 && !hasJvmInlineAnnotation && valueModifier != null && !declaration.isInline
+                ) {
                     reporter.reportOn(
                         valueModifier.source, FirErrors.UNSUPPORTED_FEATURE, LanguageFeature.FullValueClasses to context.languageVersionSettings
                     )
