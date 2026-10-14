@@ -688,6 +688,9 @@ class CacheMetadata(
         // Combined fingerprint of the monolithically cached dependencies (auto-cached external libraries
         // and IC'ed cinterop libraries) the cache was built against.
         val dependenciesFingerprint: FingerprintHash?,
+        // Whether the cached library uses the new companion initialization order.
+        // It is only recorded in the klib manifest and affects the generated code.
+        val newCompanionInitialization: Boolean,
 )
 
 object CacheMetadataSerializer {
@@ -701,6 +704,7 @@ object CacheMetadataSerializer {
                 "compilerFingerprint" to metadata.compilerFingerprint,
                 metadata.runtimeFingerprint?.let { "runtimeFingerprint" to it },
                 metadata.dependenciesFingerprint?.let { "dependenciesFingerprint" to it.toString() },
+                ("newCompanionInitialization" to "true").takeIf { metadata.newCompanionInitialization },
         ).forEach { [key, value] ->
             writer.appendLine("$key=$value")
         }
@@ -716,6 +720,7 @@ object CacheMetadataSerializer {
                     compilerFingerprint = this["compilerFingerprint"] as String,
                     runtimeFingerprint = this["runtimeFingerprint"] as String?,
                     dependenciesFingerprint = (this["dependenciesFingerprint"] as String?)?.let { FingerprintHash.fromString(it) },
+                    newCompanionInitialization = (this["newCompanionInitialization"] as String?)?.toBoolean() == true,
             )
         }
     }
