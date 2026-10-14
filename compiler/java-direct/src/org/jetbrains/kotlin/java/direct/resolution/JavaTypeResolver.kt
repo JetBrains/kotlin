@@ -326,11 +326,13 @@ private fun findInheritedNestedClass(
 ): ClassId? = resolveInheritedInnerClassToClassId(nestedName, classifierAdapterFor(outerClassId))
 
 /**
- * Builtins- and typealias-filtered class-existence probe: `true` if [classId] is known to the
- * session's symbol provider and denotes a real class (not a Kotlin builtin, not a `typealias`).
- * Returns `false` for sessions with no symbol provider.
+ * Class-existence probe: first checks whether [classId] can be found in the Java source index,
+ * avoiding re-entering the composite symbol provider while an enclosing source class is being
+ * built. If the source finder misses (including when only the outer class exists), falls back to
+ * the provider so generated members remain resolvable. Provider results must denote real classes
+ * (not Kotlin builtins or `typealias`es). Returns `false` if neither source nor provider has it.
  *
- * Both filters exist to match PSI's file-backed class finder, which only resolves a Java type
+ * The provider-result filters match PSI's file-backed class finder, which only resolves a Java type
  * reference when an actual `.class`/`.java` file exists:
  *  - `origin != BuiltIns` drops the `kotlin.*` builtins that FIR's symbol provider bundles into
  *    the compiler but PSI never sees;
@@ -341,6 +343,10 @@ private fun findInheritedNestedClass(
  */
 context(c: JavaResolutionContext)
 private fun tryResolve(classId: ClassId): Boolean {
+    val finder = c.fileContext.classFinder
+    if (finder != null && finder.isClassInIndex(classId) && finder.findClass(JavaClassFinder.Request(classId)) != null) {
+        return true
+    }
     val symbol = c.fileContext.session.cycleSafeClassLikeSymbol(classId) ?: return false
     if (symbol is FirTypeAliasSymbol) return false
     return symbol.origin != FirDeclarationOrigin.BuiltIns

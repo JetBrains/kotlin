@@ -1,0 +1,25 @@
+FILE: main.kt
+    package com.other
+
+    public final class Part : R|com/example/RequestBuilder.RequestFormBodyPart| {
+        public constructor(value: R|kotlin/String|): R|com/other/Part| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val value: R|kotlin/String| = R|<local>/value|
+            public get(): R|kotlin/String|
+
+        public open override fun header(): R|kotlin/String| {
+            ^header this@R|com/other/Part|.R|com/other/Part.value|
+        }
+
+    }
+    public final fun <T, R : R|com/example/RequestBuilder.RequestFormBodyPart|> fill(builder: R|com/example/RequestBuilder<T, R>|, part: R|R|): R|T| {
+        ^fill R|<local>/builder|.R|SubstitutionOverride<com/example/RequestBuilder.build: R|T!|>|(R|<local>/part|)
+    }
+    public final fun box(): R|kotlin/String| {
+        ^box R|com/other/fill|<R|kotlin/String|, R|com/other/Part|>(R|com/example/RequestBuilder|<R|kotlin/String!|, R|com/other/Part!|>(<L> = RequestBuilder@fun <anonymous>(it: R|com/other/Part!|): R|kotlin/String!| <inline=NoInline>  {
+            ^ R|<local>/it|.R|com/other/Part.header|()
+        }
+        ), R|com/other/Part.Part|(String(OK)))
+    }

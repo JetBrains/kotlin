@@ -1,0 +1,78 @@
+FILE: main.kt
+    package com.other
+
+    public final class Single : R|single/A.AN|, R|single/B.BN| {
+        public constructor(value: R|kotlin/String|): R|com/other/Single| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val value: R|kotlin/String| = R|<local>/value|
+            public get(): R|kotlin/String|
+
+    }
+    public final class StaticStar : R|staticStar/A.AN|, R|staticStar/B.BN| {
+        public constructor(value: R|kotlin/String|): R|com/other/StaticStar| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val value: R|kotlin/String| = R|<local>/value|
+            public get(): R|kotlin/String|
+
+    }
+    public final class TypeStar : R|typeStar/A.AN|, R|typeStar/B.BN| {
+        public constructor(value: R|kotlin/String|): R|com/other/TypeStar| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val value: R|kotlin/String| = R|<local>/value|
+            public get(): R|kotlin/String|
+
+    }
+    public final fun <T : R|single/B.BN|> singleA(a: R|single/A<T>|): R|T| {
+        ^singleA R|<local>/a|.R|SubstitutionOverride<single/A.get: R|T!|>|()
+    }
+    public final fun <U : R|single/A.AN|> singleB(b: R|single/B<U>|): R|U| {
+        ^singleB R|<local>/b|.R|SubstitutionOverride<single/B.get: R|U!|>|()
+    }
+    public final fun <T : R|staticStar/B.BN|> staticStarA(a: R|staticStar/A<T>|): R|T| {
+        ^staticStarA R|<local>/a|.R|SubstitutionOverride<staticStar/A.get: R|T!|>|()
+    }
+    public final fun <U : R|staticStar/A.AN|> staticStarB(b: R|staticStar/B<U>|): R|U| {
+        ^staticStarB R|<local>/b|.R|SubstitutionOverride<staticStar/B.get: R|U!|>|()
+    }
+    public final fun <T : R|typeStar/B.BN|> typeStarA(a: R|typeStar/A<T>|): R|T| {
+        ^typeStarA R|<local>/a|.R|SubstitutionOverride<typeStar/A.get: R|T!|>|()
+    }
+    public final fun <U : R|typeStar/A.AN|> typeStarB(b: R|typeStar/B<U>|): R|U| {
+        ^typeStarB R|<local>/b|.R|SubstitutionOverride<typeStar/B.get: R|U!|>|()
+    }
+    public final fun box(): R|kotlin/String| {
+        lval result: R|kotlin/String| = R|com/other/singleA|<R|com/other/Single!|>(Q|single|.R|single/A|<R|com/other/Single!|>(<L> = A@fun <anonymous>(): R|com/other/Single!| <inline=NoInline>  {
+            ^ R|com/other/Single.Single|(String(O))
+        }
+        )).R|com/other/Single.value|.R|kotlin/String.plus|(R|com/other/singleB|<R|com/other/Single!|>(Q|single|.R|single/B|<R|com/other/Single!|>(<L> = B@fun <anonymous>(): R|com/other/Single!| <inline=NoInline>  {
+            ^ R|com/other/Single.Single|(String(K))
+        }
+        )).R|com/other/Single.value|).R|kotlin/String.plus|(R|com/other/staticStarA|<R|com/other/StaticStar!|>(Q|staticStar|.R|staticStar/A|<R|com/other/StaticStar!|>(<L> = A@fun <anonymous>(): R|com/other/StaticStar!| <inline=NoInline>  {
+            ^ R|com/other/StaticStar.StaticStar|(String(O))
+        }
+        )).R|com/other/StaticStar.value|).R|kotlin/String.plus|(R|com/other/staticStarB|<R|com/other/StaticStar!|>(Q|staticStar|.R|staticStar/B|<R|com/other/StaticStar!|>(<L> = B@fun <anonymous>(): R|com/other/StaticStar!| <inline=NoInline>  {
+            ^ R|com/other/StaticStar.StaticStar|(String(K))
+        }
+        )).R|com/other/StaticStar.value|).R|kotlin/String.plus|(R|com/other/typeStarA|<R|com/other/TypeStar!|>(Q|typeStar|.R|typeStar/A|<R|com/other/TypeStar!|>(<L> = A@fun <anonymous>(): R|com/other/TypeStar!| <inline=NoInline>  {
+            ^ R|com/other/TypeStar.TypeStar|(String(O))
+        }
+        )).R|com/other/TypeStar.value|).R|kotlin/String.plus|(R|com/other/typeStarB|<R|com/other/TypeStar!|>(Q|typeStar|.R|typeStar/B|<R|com/other/TypeStar!|>(<L> = B@fun <anonymous>(): R|com/other/TypeStar!| <inline=NoInline>  {
+            ^ R|com/other/TypeStar.TypeStar|(String(K))
+        }
+        )).R|com/other/TypeStar.value|)
+        ^box when () {
+            ==(R|<local>/result|, String(OKOKOK)) ->  {
+                String(OK)
+            }
+            else ->  {
+                <strcat>(String(Fail: ), R|<local>/result|)
+            }
+        }
+
+    }
