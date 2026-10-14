@@ -6,12 +6,14 @@
 package org.jetbrains.kotlin.fir.analysis.checkers
 
 import org.jetbrains.kotlin.KtRealSourceElementKind
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.resolve.Compatibility
 import org.jetbrains.kotlin.resolve.compatibility
@@ -63,7 +65,10 @@ internal fun checkCompatibilityType(
                 firstModifierToken
             )
         }
-        Compatibility.INCOMPATIBLE, Compatibility.COMPATIBLE_FOR_CLASSES_ONLY -> {
+        Compatibility.INLINE_VALUE_ALLOWED if (LanguageFeature.ExplicitInlineValueClassesSyntax.isEnabled()) -> {
+            return
+        }
+        Compatibility.INCOMPATIBLE, Compatibility.COMPATIBLE_FOR_CLASSES_ONLY, Compatibility.INLINE_VALUE_ALLOWED -> {
             if (compatibilityType == Compatibility.COMPATIBLE_FOR_CLASSES_ONLY && owner is FirClass) {
                 return
             }
