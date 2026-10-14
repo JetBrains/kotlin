@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
+import org.jetbrains.kotlin.library.newCompanionInitializationEnabled
 import org.jetbrains.kotlin.library.uniqueName
 import java.nio.channels.FileChannel
 import java.nio.channels.FileLock
@@ -158,6 +159,8 @@ class CacheBuilder(
                 "was produced by a different compiler version"
             metadata.dependenciesFingerprint != computeDependenciesFingerprint(library) ->
                 "was produced against different dependencies"
+            metadata.newCompanionInitialization != library.newCompanionInitializationEnabled ->
+                "was produced with a different companion initialization order"
             cache is CachedLibraries.Cache.Monolithic
                     && metadata.hash != SerializedKlibFingerprint(library.path.toFile()).klibFingerprint ->
                 "does not match the current content of the library"
@@ -215,6 +218,9 @@ class CacheBuilder(
         // The dirty-file check doesn't cover the monolithically cached cinterop libraries either: their caches are looked up
         // by the library name, so a changed library would silently reuse the stale cache (KT-87273). Each cache records
         // the fingerprint of its library, so force a rebuild whenever it doesn't match the current library.
+        // The dirty-file check doesn't notice the library-wide switch of the companion initialization order either: it is
+        // only recorded in the klib manifest (with `-Xcompanion-blocks`), yet affects the code generated for every file
+        // of the library (KT-89390). Each cache records the order it was produced with, so force a full rebuild on a mismatch.
         // Caches produced by compilers older than 2.2.20 don't have the metadata at all; rebuild them as well (KT-87202).
         val staleCaches = icedLibraries.mapNotNull { library ->
             val cache = caches[library] ?: return@mapNotNull null
