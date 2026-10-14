@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.presetName
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInNative
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
@@ -34,6 +36,7 @@ import kotlin.test.assertTrue
 @OsCondition(enabledOnCI = [OS.LINUX, OS.MAC, OS.WINDOWS])
 @DisplayName("Tests for general K/N builds")
 @NativeGradlePluginTests
+@MustRunOnChangesInGradle
 class GeneralNativeIT : KGPBaseTest() {
 
     private val nativeHostTargetName = MPPNativeTargets.current
@@ -80,6 +83,7 @@ class GeneralNativeIT : KGPBaseTest() {
         }
     }
 
+    @MustRunOnChangesInNative
     @DisplayName("Can produce native libraries")
     @GradleTest
     @TestMetadata("native-binaries/libraries")
@@ -265,6 +269,7 @@ class GeneralNativeIT : KGPBaseTest() {
         )
     }
 
+    @MustRunOnChangesInNative
     @DisplayName("Checks generating lldbinit file")
     @GradleTest
     @TestMetadata("native-binaries/frameworks")
@@ -781,6 +786,7 @@ class GeneralNativeIT : KGPBaseTest() {
         }
     }
 
+    @MustRunOnChangesInNative
     @DisplayName("Checks builds with cinterop tool")
     @GradleTest
     @TestMetadata("native-cinterop")
@@ -887,6 +893,7 @@ class GeneralNativeIT : KGPBaseTest() {
         }
     }
 
+    @MustRunOnChangesInNative
     @DisplayName("Checks native arguments with the spaces in it")
     @TestMetadata("new-mpp-lib-and-app/sample-lib")
     @GradleTest
