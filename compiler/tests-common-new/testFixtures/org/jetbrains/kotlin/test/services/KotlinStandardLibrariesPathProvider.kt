@@ -14,10 +14,10 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import java.io.File
 import java.lang.ref.SoftReference
+import java.net.URI
 import java.net.URL
 import java.net.URLClassLoader
 import kotlin.reflect.KMutableProperty0
-import kotlin.script.experimental.jvm.util.KotlinJars
 
 interface KotlinStandardLibrariesPathProvider : TestService {
     companion object {
@@ -179,7 +179,7 @@ object StandardLibrariesPathProviderForKotlinProject : KotlinStandardLibrariesPa
 
     override fun scriptRuntimeJarForTests(): File = ForTestCompileRuntime.scriptRuntimeJarForTests()
 
-    override fun scriptingCommonJarForTests(): File? = KotlinJars.scriptingCommonOrNull
+    override fun scriptingCommonJarForTests(): File? = findScriptingCommonJarInTestClasspath()
 
     override fun jvmAnnotationsForTests(): File = ForTestCompileRuntime.jvmAnnotationsForTests()
 
@@ -212,6 +212,7 @@ object EnvironmentBasedStandardLibrariesPathProvider : KotlinStandardLibrariesPa
     const val KOTLIN_TEST_PROP = "org.jetbrains.kotlin.test.kotlin-test"
     const val KOTLIN_TEST_JS_PROP = "org.jetbrains.kotlin.test.kotlin-test-js"
     const val KOTLIN_SCRIPT_RUNTIME_PROP = "org.jetbrains.kotlin.test.kotlin-script-runtime"
+    const val KOTLIN_SCRIPTING_COMMON_PROP = "org.jetbrains.kotlin.test.kotlin-scripting-common"
     const val KOTLIN_COMMON_STDLIB_PATH = "org.jetbrains.kotlin.test.kotlin-common-stdlib"
     const val KOTLIN_ANNOTATIONS_JVM_PROP = "org.jetbrains.kotlin.test.kotlin-annotations-jvm"
 
@@ -228,7 +229,9 @@ object EnvironmentBasedStandardLibrariesPathProvider : KotlinStandardLibrariesPa
     override fun reflectJarForTests(): File = getFile(KOTLIN_REFLECT_PROP)
     override fun kotlinTestJarForTests(): File = getFile(KOTLIN_TEST_PROP)
     override fun scriptRuntimeJarForTests(): File = getFile(KOTLIN_SCRIPT_RUNTIME_PROP)
-    override fun scriptingCommonJarForTests(): File? = KotlinJars.scriptingCommonOrNull
+    override fun scriptingCommonJarForTests(): File? =
+        System.getProperty(KOTLIN_SCRIPTING_COMMON_PROP)?.let { getFile(KOTLIN_SCRIPTING_COMMON_PROP) }
+            ?: findScriptingCommonJarInTestClasspath()
     override fun jvmAnnotationsForTests(): File = getFile(KOTLIN_ANNOTATIONS_JVM_PROP)
     override fun getAnnotationsJar(): File = getFile(KOTLIN_ANNOTATIONS_JVM_PROP)
     override fun fullJsStdlib(): File = getFile(KOTLIN_STDLIB_JS_PROP)
@@ -244,6 +247,17 @@ object EnvironmentBasedStandardLibrariesPathProvider : KotlinStandardLibrariesPa
 }
 
 val TestServices.standardLibrariesPathProvider: KotlinStandardLibrariesPathProvider by TestServices.testServiceAccessor()
+
+private fun findScriptingCommonJarInTestClasspath(): File? {
+    val resourceName = "kotlin/script/experimental/templates/ScriptWithArgs.class"
+    val url = KotlinStandardLibrariesPathProvider::class.java.classLoader.getResource(resourceName) ?: return null
+    val root = when (url.protocol) {
+        "jar" -> URI(url.path.substringBefore("!/"))
+        "file" -> URI(url.toString().removeSuffix(resourceName))
+        else -> return null
+    }
+    return File(root).takeIf(File::exists)
+}
 
 fun CompilerConfiguration.configureStandardLibs(
     pathProvider: KotlinStandardLibrariesPathProvider,
