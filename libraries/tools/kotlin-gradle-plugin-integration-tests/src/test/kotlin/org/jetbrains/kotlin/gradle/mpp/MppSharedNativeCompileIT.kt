@@ -9,11 +9,14 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_DEPENDS
 import org.jetbrains.kotlin.library.loader.KlibLoader
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInNative
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.fail
 
 @MppGradlePluginTests
+@MustRunOnChangesInGradle
 @DisplayName("Tests for multiplatform | shared native compilations")
 class MppSharedNativeCompileIT : KGPBaseTest() {
     /**
@@ -21,6 +24,7 @@ class MppSharedNativeCompileIT : KGPBaseTest() {
      * metadata klib should not contain any dependsOn= in their klib manifest.
      */
     @GradleTest
+    @MustRunOnChangesInNative
     fun `test - shared native klib - does not contain 'depends=' manifest property`(gradleVersion: GradleVersion) {
         project("kt-54995-compileSharedNative-with-okio", gradleVersion) {
             build("compileNativeMainKotlinMetadata") {
