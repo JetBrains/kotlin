@@ -30,7 +30,6 @@
 // Once all platforms have roundeven available, the fallback path can be removed.
 #define KONAN_USE_BUILTIN_ROUNDEVEN 1
 #else
-#include <cstring>
 #define KONAN_USE_BUILTIN_ROUNDEVEN 0
 #endif
 
@@ -104,65 +103,6 @@ namespace {
 }
 #endif
 
-#if !KONAN_USE_BUILTIN_ROUNDEVEN
-template <typename Float> Float roundevenFallback(Float x) {
-    static_assert(std::is_same_v<Float, KFloat> ||
-                  std::is_same_v<Float, KDouble>);
-
-    using UInt = std::conditional_t<
-        std::is_same_v<Float, float>,
-        std::uint32_t,
-        std::uint64_t>;
-
-    using Limits = std::numeric_limits<Float>;
-    static_assert(Limits::is_iec559 && Limits::radix == 2);
-    static_assert(sizeof(Float) == sizeof(UInt));
-
-    constexpr int fractionBits = Limits::digits - 1;
-    constexpr int exponentBias = Limits::max_exponent - 1;
-    constexpr int storageBits = std::numeric_limits<UInt>::digits;
-
-    constexpr UInt signMask = UInt{1} << (storageBits - 1);
-    constexpr UInt oneBits  = UInt{exponentBias} << fractionBits;
-    constexpr UInt halfBits = UInt{exponentBias - 1} << fractionBits;
-
-    UInt bits;
-    std::memcpy(&bits, &x, sizeof(bits));
-
-    const auto sign = bits & signMask;
-    const auto magnitude = bits & ~signMask;
-    const int exponent = static_cast<int>(magnitude >> fractionBits) - exponentBias;
-
-    if (exponent >= fractionBits) {
-        // Already integral, infinity, or NaN.
-        return x;
-    }
-
-    if (exponent < 0) {
-        // |x| <= 0.5 -> signed zero; 0.5 < |x| < 1 -> signed one.
-        bits = sign | (magnitude > halfBits ? oneBits : UInt{0});
-    } else {
-        // The bit corresponding to an increment of 1.0.
-        const auto unit = UInt{1} << (fractionBits - exponent);
-        const auto fractionMask = unit - 1;
-        const auto fraction = magnitude & fractionMask;
-        auto rounded = magnitude & ~fractionMask;
-
-        const auto halfway = unit >> 1;
-        const bool odd = (rounded & unit) != 0;
-
-        if (fraction > halfway || (fraction == halfway && odd)) {
-            rounded += unit;
-        }
-
-        bits = sign | rounded;
-    }
-
-    std::memcpy(&x, &bits, sizeof(x));
-    return x;
-}
-#endif
-
 extern "C" {
 
 // region Double math.
@@ -218,7 +158,22 @@ KDouble Kotlin_math_round(KDouble x) {
 #if KONAN_USE_BUILTIN_ROUNDEVEN
     return __builtin_roundeven(x);
 #else
-    return roundevenFallback<KDouble>(x);
+    // Already integral, infinity, or NaN. The negation and < instead of just >= short-circuits in NaN case.
+    if (!(fabs(x) < 0x1p52)) {
+        return x;
+    }
+
+    KDouble t = __builtin_trunc(x);
+    // The subtraction is exact according to https://en.wikipedia.org/wiki/Sterbenz_lemma.
+    KDouble fraction = fabs(x - t);
+    const bool isOdd = static_cast<int64_t>(t) % 2 != 0;
+
+    if (fraction > 0.5 || (fraction == 0.5 && isOdd)) {
+        // Also exact because of the initial range check: all integers are exactly representable.
+        t += copysign(1.0, x);
+    }
+
+    return copysign(t, x);
 #endif
 }
 
@@ -302,7 +257,22 @@ KFloat Kotlin_math_roundf(KFloat x) {
 #if KONAN_USE_BUILTIN_ROUNDEVEN
     return __builtin_roundevenf(x);
 #else
-    return roundevenFallback<KFloat>(x);
+    // Already integral, infinity, or NaN. The negation and < instead of just >= short-circuits in NaN case.
+    if (!(fabsf(x) < 0x1p23f)) {
+        return x;
+    }
+
+    KFloat t = __builtin_truncf(x);
+    // The subtraction is exact according to https://en.wikipedia.org/wiki/Sterbenz_lemma.
+    KFloat fraction = fabsf(x - t);
+    const bool isOdd = static_cast<int32_t>(t) % 2 != 0;
+
+    if (fraction > 0.5f || (fraction == 0.5f && isOdd)) {
+        // Also exact because of the initial range check: all integers are exactly representable.
+        t += copysignf(1.0f, x);
+    }
+
+    return copysignf(t, x);
 #endif
 }
 
