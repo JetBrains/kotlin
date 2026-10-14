@@ -8633,6 +8633,13 @@ private fun KaDiagnosticConverterBuilder.addConversions189() {
             token,
         )
     }
+    add(FirJvmErrors.ANNOTATION_TARGETS_NON_EXISTENT_ACCESSOR) { firDiagnostic ->
+        AnnotationTargetsNonExistentAccessorImpl(
+            firDiagnostic.a,
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions190() {
