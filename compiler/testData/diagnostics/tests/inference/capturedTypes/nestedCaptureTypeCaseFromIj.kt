@@ -1,5 +1,4 @@
-// RUN_PIPELINE_TILL: CODEGEN
-// WITH_STDLIB
+// RUN_PIPELINE_TILL: FRONTEND
 import kotlin.reflect.KClass
 
 // Just some case found in IJ
@@ -11,7 +10,7 @@ fun <R, C : MutableList<R>> bar(x: (ExceptionDescriptor<*>) -> R): MutableList<R
 
 fun foo(x: List<ExceptionDescriptor<*>>) {
     val a: MutableList<Class<out Throwable>> =
-        x.mapTo(mutableListOf()) { it.type.java }.also { y ->}
+        x.mapTo(mutableListOf()) { it.type.java }.<!INITIALIZER_TYPE_MISMATCH!>also<!> { y ->}
 }
 
 /* GENERATED_FIR_TAGS: capturedType, classDeclaration, functionDeclaration, lambdaLiteral, localProperty, outProjection,

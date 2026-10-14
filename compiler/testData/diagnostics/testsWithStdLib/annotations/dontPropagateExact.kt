@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: CODEGEN
+// RUN_PIPELINE_TILL: LOWERINGS
 // FULL_JDK
 package test
 import kotlin.reflect.KClass
