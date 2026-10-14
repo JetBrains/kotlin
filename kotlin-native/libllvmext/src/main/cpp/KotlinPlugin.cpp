@@ -76,10 +76,6 @@ PassPluginLibraryInfo getKotlinPluginInfo() {
                     PM.addPass(HideSymbolsPass());
                     return true;
                   }
-                  if (parsePass(Name, "kotlin-array-load-metadata")) {
-                    PM.addPass(createModuleToFunctionPassAdaptor(ArrayLoadMetadataPass()));
-                    return true;
-                  }
                   if (parsePass(Name, "kotlin-calls-checker-module")) {
                     PM.addPass(ModuleCallsCheckerPass());
                     return true;
