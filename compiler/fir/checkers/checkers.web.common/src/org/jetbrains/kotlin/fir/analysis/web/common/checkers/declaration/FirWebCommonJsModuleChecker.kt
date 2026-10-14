@@ -17,8 +17,11 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.utils.isInterface
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.name.WebCommonStandardClassIds.Annotations.JsModule
+import org.jetbrains.kotlin.name.WebCommonStandardClassIds.Annotations.JsQualifier
 
 /**
  * Reports a declaration that has an annotation describing its relation to a JS module, but cannot have one.
@@ -59,6 +62,13 @@ abstract class FirWebCommonJsModuleChecker : FirBasicDeclarationChecker(MppCheck
 
         if (context.isTopLevel && context.containingFileSymbol?.hasModuleAnnotation(context.session) == true) {
             reporter.reportOn(declaration.source, FirWebCommonErrors.NESTED_JS_MODULE_PROHIBITED)
+        }
+
+        // A file qualifier is not applied consistently to a declaration that is imported from its own module.
+        if (context.isTopLevel && declaration.symbol.hasAnnotation(JsModule, context.session) &&
+            context.containingFileSymbol?.hasAnnotation(JsQualifier, context.session) == true
+        ) {
+            reporter.reportOn(declaration.source, FirWebCommonErrors.JS_MODULE_PROHIBITED_IN_FILE_WITH_JS_QUALIFIER)
         }
     }
 }

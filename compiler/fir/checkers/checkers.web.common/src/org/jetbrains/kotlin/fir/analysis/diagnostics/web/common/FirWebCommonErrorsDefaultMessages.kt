@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErro
 import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors.WRONG_JS_EXPORT_TARGET_VISIBILITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors.JSCODE_ARGUMENT_NON_CONST_EXPRESSION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors.JS_MODULE_PROHIBITED_ON_EXTERNAL_INTERFACE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors.JS_MODULE_PROHIBITED_IN_FILE_WITH_JS_QUALIFIER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors.JS_MODULE_PROHIBITED_ON_MEMBER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors.JS_MODULE_PROHIBITED_ON_NON_EXTERNAL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors.JS_MODULE_PROHIBITED_ON_VAR
@@ -135,6 +136,10 @@ object FirWebCommonErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             JS_MODULE_PROHIBITED_ON_EXTERNAL_INTERFACE,
             "'@JsModule' and '@JsNonModule' cannot be applied to an external interface, since it has no runtime value to import."
+        )
+        map.put(
+            JS_MODULE_PROHIBITED_IN_FILE_WITH_JS_QUALIFIER,
+            "'@JsModule' cannot be applied to a declaration in a file marked with '@JsQualifier'."
         )
         map.put(
             NON_EXTERNAL_DECLARATION_IN_INAPPROPRIATE_FILE,
