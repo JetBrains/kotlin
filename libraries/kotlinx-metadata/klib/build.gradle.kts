@@ -25,6 +25,8 @@ configurations.testApi.get().extendsFrom(embedded)
 
 dependencies {
     api(kotlinStdlib())
+    api(project(":kotlin-metadata"))
+
     embedded(project(":kotlin-metadata"))
     embedded(project(":core:compiler.common"))
     embedded(project(":core:names"))
@@ -36,11 +38,15 @@ dependencies {
     embedded(project(":kotlin-util-klib"))
     embedded(project(":kotlin-util-io"))
     embedded(protobufLite())
+
     testImplementation(kotlinTest("junit5"))
 }
 
 if (deployVersion != null) {
     publish()
+    dependencies {
+        "publishedCompile"(kotlinStdlib())
+    }
 }
 
 tasks.test {

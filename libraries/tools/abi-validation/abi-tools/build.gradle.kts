@@ -25,10 +25,16 @@ dependencies {
     implementation(project(":kotlin-metadata-jvm"))
     implementation(project(":kotlin-klib-abi-reader"))
 
-    compileOnly(libs.intellij.asm)
+    implementation(libs.intellij.asm)
     embedded(libs.intellij.asm)
 
     implementation(libs.diff.utils)
+
+    publishedCompile(project(":libraries:tools:abi-validation:abi-tools-api"))
+    publishedCompile(kotlinStdlib())
+    publishedRuntime(project(":kotlin-metadata-jvm"))
+    publishedRuntime(project(":kotlin-klib-abi-reader"))
+    publishedRuntime(libs.diff.utils)
 
     testImplementation(kotlinTest("junit5"))
     testImplementation(platform(libs.junit.bom))

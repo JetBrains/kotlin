@@ -33,6 +33,7 @@ runtimeJarWithRelocation {
     relocate("org.jetbrains.annotations", "org.jetbrains.kotlin.abi.tools.org.jetbrains.annotations")
     relocate("com.github.difflib", "org.jetbrains.kotlin.abi.tools.com.github.difflib")
     relocate("org.checkerframework", "org.jetbrains.kotlin.abi.tools.org.checkerframework")
+    relocate("org.jetbrains.org.objectweb.asm", "org.jetbrains.kotlin.abi.tools.org.jetbrains.org.objectweb.asm")
 
     exclude("kotlinManifest.properties", "META-INF/compiler.version", "**/module-info.class")
 
