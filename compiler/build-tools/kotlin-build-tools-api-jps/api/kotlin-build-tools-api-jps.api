@@ -4,7 +4,6 @@ public abstract interface annotation class org/jetbrains/kotlin/buildtools/api/j
 public abstract interface class org/jetbrains/kotlin/buildtools/api/jps/jvm/JvmJpsManagedIncrementalCompilationConfiguration : org/jetbrains/kotlin/buildtools/api/jvm/JvmIncrementalCompilationConfiguration {
 	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/jps/jvm/JvmJpsManagedIncrementalCompilationConfiguration$Companion;
 	public static final field ENUM_WHEN_TRACKER Lorg/jetbrains/kotlin/buildtools/api/jps/jvm/JvmJpsManagedIncrementalCompilationConfiguration$Option;
-	public static final field EXPECT_ACTUAL_TRACKER Lorg/jetbrains/kotlin/buildtools/api/jps/jvm/JvmJpsManagedIncrementalCompilationConfiguration$Option;
 	public static final field FILE_MAPPING_TRACKER Lorg/jetbrains/kotlin/buildtools/api/jps/jvm/JvmJpsManagedIncrementalCompilationConfiguration$Option;
 	public static final field IMPORT_TRACKER Lorg/jetbrains/kotlin/buildtools/api/jps/jvm/JvmJpsManagedIncrementalCompilationConfiguration$Option;
 	public static final field INLINE_CONST_TRACKER Lorg/jetbrains/kotlin/buildtools/api/jps/jvm/JvmJpsManagedIncrementalCompilationConfiguration$Option;
@@ -47,11 +46,6 @@ public final class org/jetbrains/kotlin/buildtools/api/jps/jvm/incremental/Compi
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/jps/jvm/incremental/trackers/CompilerEnumWhenTracker {
 	public abstract fun report (Ljava/nio/file/Path;Ljava/lang/String;)V
-}
-
-public abstract interface class org/jetbrains/kotlin/buildtools/api/jps/jvm/incremental/trackers/CompilerExpectActualTracker {
-	public abstract fun report (Ljava/nio/file/Path;Ljava/nio/file/Path;)V
-	public abstract fun reportExpectOfLenientStub (Ljava/nio/file/Path;)V
 }
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/jps/jvm/incremental/trackers/CompilerFileMappingTracker {
