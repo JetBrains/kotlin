@@ -26,7 +26,7 @@ class JKlibEnvironmentConfigurator(testServices: TestServices) : EnvironmentConf
         val registeredDirectives = module.directives
         val extractedJdkKind = JvmEnvironmentConfigurator.extractJdkKind(registeredDirectives)
 
-        // Default programmatically to FULL_JDK_8 instead of MOCK_JDK so JRE classes are always present without stubs
+        // Default programmatically to FULL_JDK_17 instead of MOCK_JDK so JRE classes are always present without stubs
         val jdkKind = if (extractedJdkKind == TestJdkKind.MOCK_JDK || extractedJdkKind == TestJdkKind.MODIFIED_MOCK_JDK) {
             TestJdkKind.FULL_JDK_17
         } else {

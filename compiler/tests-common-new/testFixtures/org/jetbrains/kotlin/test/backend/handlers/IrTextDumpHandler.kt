@@ -147,6 +147,8 @@ class IrTextDumpHandler(
         compareDumpsOfExternalClasses(module, info)
     }
 
+    private val externalFiles = mutableMapOf<File, String>()
+
     private fun compareDumpsOfExternalClasses(module: TestModule, info: IrBackendInput) {
         val externalClassIds = module.directives[DUMP_EXTERNAL_CLASS]
         if (externalClassIds.isEmpty()) return
@@ -159,6 +161,9 @@ class IrTextDumpHandler(
                     val suffix = ".__${externalClassId.replace("/", ".")}"
                     val expectedFile = baseFile.withSuffixAndExtension(suffix, getDumpExtension())
                     assertions.assertEqualsToFile(expectedFile, classDump)
+
+                    val classBaseDump = baseFile.withSuffixAndExtension(suffix, getBaseDumpExtension())
+                    externalFiles[classBaseDump] = classDump
                 }
             }
         )
@@ -182,6 +187,7 @@ class IrTextDumpHandler(
             directiveForIrDifference,
             actualDump,
             isKotlinLikeDump = false,
+            externalFilesDumps = externalFiles,
         )
     }
 
