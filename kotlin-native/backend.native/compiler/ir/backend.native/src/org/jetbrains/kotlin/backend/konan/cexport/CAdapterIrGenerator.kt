@@ -97,7 +97,7 @@ internal class ExportedElementIr(
         override val scope: ExportedElementScope,
         private val declaration: IrDeclarationWithName,
         override val generator: CAdapterIrGenerator,
-        private val typeTranslator: CAdapterIrTypeTranslator,
+        private val typeTranslator: CAdapterTypeTranslator,
 ) : ExportedElement {
     init {
         scope.elements.add(this)
@@ -130,10 +130,10 @@ internal class ExportedElementIr(
         }
 
     override val classType: String
-        get() = typeTranslator.translateType((declaration as IrClass).defaultType)
+        get() = typeTranslator.translateType((declaration as IrClass).defaultType.asCExportableType())
 
     override val enumEntryContainingType: String
-        get() = typeTranslator.translateType((declaration as IrEnumEntry).parentAsClass.defaultType)
+        get() = typeTranslator.translateType((declaration as IrEnumEntry).parentAsClass.defaultType.asCExportableType())
 
     private fun IrFunction.cNameValue(key: String): String? =
             getAnnotationArgumentValue<String>(RuntimeNames.cnameAnnotation, key)?.takeIf { it.isNotEmpty() }
@@ -159,24 +159,24 @@ internal class ExportedElementIr(
 
     override fun makeCFunctionSignature(shortName: Boolean): List<SignatureElement> {
         val function = declaration as? IrFunction ?: error("only for functions")
-        val returned = SignatureElement(uniqueName(function, shortName), typeTranslator.exportedType(function.cReturnType))
+        val returned = SignatureElement(uniqueName(function, shortName), typeTranslator.exportedType(function.cReturnType.asCExportableType()))
 
         val functionParameters = function.parameters
         val uniqueNames = generator.paramsToUniqueNames(functionParameters)
         val params = functionParameters
                 .filter { !it.type.isUnit() }
-                .map { SignatureElement(uniqueNames.getValue(it), typeTranslator.exportedType(it.type)) }
+                .map { SignatureElement(uniqueNames.getValue(it), typeTranslator.exportedType(it.type.asCExportableType())) }
         return listOf(returned) + params
     }
 
     override fun makeBridgeSignature(): List<String> {
         val function = declaration as? IrFunction ?: error("only for functions")
         // A constructor's bridge returns Unit (the instance is passed in, not returned), so it does not use cReturnType.
-        val returnType = if (function is IrConstructor) generator.unitType else function.returnType
+        val returnType = (if (function is IrConstructor) generator.unitType else function.returnType).asCExportableType()
 
         val params = function.cParameterTypes()
                 .filter { !it.isUnit() }
-                .map { typeTranslator.translateTypeBridge(it) }
+                .map { typeTranslator.translateTypeBridge(it.asCExportableType()) }
                 .toMutableList()
         if (typeTranslator.isMappedToReference(returnType) || typeTranslator.isMappedToString(returnType)) {
             params += "KObjHeader**"
@@ -187,7 +187,7 @@ internal class ExportedElementIr(
     override fun addUsedTypes(set: MutableSet<CExportedType>) {
         fun addUsedType(type: IrType) {
             if (type.classifierOrNull is IrTypeParameterSymbol) return
-            set.add(typeTranslator.exportedType(type))
+            set.add(typeTranslator.exportedType(type.asCExportableType()))
         }
         when (val decl = declaration) {
             is IrFunction -> {
@@ -217,7 +217,7 @@ internal class CAdapterIrGenerator(
         override val prefix: String,
         private val irBuiltIns: IrBuiltIns,
 ) : CAdapterModelOwner {
-    private val typeTranslator = CAdapterIrTypeTranslator(prefix)
+    private val typeTranslator = CAdapterTypeTranslator(prefix)
 
     val unitType: IrType get() = irBuiltIns.unitType
 

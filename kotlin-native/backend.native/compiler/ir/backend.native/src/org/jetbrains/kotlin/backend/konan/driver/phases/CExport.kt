@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
-import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
 import org.jetbrains.kotlin.backend.common.serialization.kotlinLibrary
 import org.jetbrains.kotlin.backend.konan.LinkKlibsContext
@@ -21,8 +20,7 @@ internal val BuildCExports = createSimpleNamedCompilerPhase<LinkKlibsContext, K1
 ) { context, input ->
     val prefix = context.config.cExportPrefix
 
-    @OptIn(K1Deprecation::class)
-    val typeTranslator = CAdapterTypeTranslator(prefix, context.builtIns)
+    val typeTranslator = CAdapterTypeTranslator(prefix)
     CAdapterGenerator(context, typeTranslator).buildExports(input.moduleDescriptor)
 }
 

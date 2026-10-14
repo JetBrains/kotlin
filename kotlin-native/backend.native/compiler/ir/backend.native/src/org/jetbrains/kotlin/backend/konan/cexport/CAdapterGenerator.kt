@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.isChildOf
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.annotations.argumentValue
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyPublicApi
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
@@ -139,9 +140,9 @@ internal class ExportedElementK1(
         val original = descriptor.original as FunctionDescriptor
         val returned = when {
             original is ConstructorDescriptor ->
-                SignatureElement(uniqueName(original, shortName), typeTranslator.exportedType(original.constructedClass.defaultType))
+                SignatureElement(uniqueName(original, shortName), typeTranslator.exportedType(original.constructedClass.defaultType.asCExportableType()))
             else ->
-                SignatureElement(uniqueName(original, shortName), typeTranslator.exportedType(original.returnType!!))
+                SignatureElement(uniqueName(original, shortName), typeTranslator.exportedType(original.returnType!!.asCExportableType()))
         }
 
         @OptIn(K1Deprecation::class)
@@ -150,7 +151,7 @@ internal class ExportedElementK1(
         @OptIn(K1Deprecation::class)
         val params = ArrayList(original.explicitParameters
                 .filter { it.type.includeToSignature() }
-                .map { SignatureElement(uniqueNames[it]!!, typeTranslator.exportedType(it.type)) })
+                .map { SignatureElement(uniqueNames[it]!!, typeTranslator.exportedType(it.type.asCExportableType())) })
         return listOf(returned) + params
     }
 
@@ -163,15 +164,15 @@ internal class ExportedElementK1(
 
         @OptIn(K1Deprecation::class)
         val returnedType = when {
-            original is ConstructorDescriptor -> typeTranslator.builtIns.unitType
+            original is ConstructorDescriptor -> original.builtIns.unitType
             else -> original.returnType!!
-        }
+        }.asCExportableType()
 
         @OptIn(K1Deprecation::class)
         val params = ArrayList(original.allParameters
                 .filter { it.type.includeToSignature() }
                 .map {
-                    typeTranslator.translateTypeBridge(it.type)
+                    typeTranslator.translateTypeBridge(it.type.asCExportableType())
                 })
         if (typeTranslator.isMappedToReference(returnedType) || typeTranslator.isMappedToString(returnedType)) {
             params += "KObjHeader**"
@@ -180,13 +181,13 @@ internal class ExportedElementK1(
     }
 
     override val classType: String
-        get() = typeTranslator.translateType((declaration as ClassDescriptor).defaultType)
+        get() = typeTranslator.translateType((declaration as ClassDescriptor).defaultType.asCExportableType())
 
     override val enumEntryContainingType: String
         get() {
             assert(isEnumEntry)
             val enumClass = declaration.containingDeclaration as ClassDescriptor
-            return typeTranslator.translateType(enumClass.defaultType)
+            return typeTranslator.translateType(enumClass.defaultType.asCExportableType())
         }
 
     override val cnameImpl: String
@@ -197,7 +198,7 @@ internal class ExportedElementK1(
 
     private fun addUsedType(type: KotlinType, set: MutableSet<CExportedType>) {
         if (type.constructor.declarationDescriptor is TypeParameterDescriptor) return
-        set.add(typeTranslator.exportedType(type))
+        set.add(typeTranslator.exportedType(type.asCExportableType()))
     }
 
     override fun addUsedTypes(set: MutableSet<CExportedType>) {

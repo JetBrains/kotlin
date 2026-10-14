@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.backend.konan.cexport
 
+import org.jetbrains.kotlin.backend.konan.KonanPrimitiveType
 import org.jetbrains.kotlin.backend.konan.cKeywords
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import kotlin.collections.contains
 
@@ -19,10 +21,6 @@ import kotlin.collections.contains
  * The model in this file is produced by phase 1 and consumed by phases 2 and 3. Nothing here depends on an actual
  * representation (`KotlinType`/descriptors or IR) beyond [IrSymbol], which is the handle phase 2 needs into codegen.
  *
- * Each phase-1 mode supplies implementations of the interfaces below: the K1 mode in [CAdapterGenerator]
- * ([ExportedElementK1], [ExportedDeclarationKey] via a descriptor-backed key) and [CAdapterTypeTranslator]
- * ([CExportedTypeK1]). [ExportedElementScope]'s naming is representation-neutral: callers supply a base name and
- * an [ExportedDeclarationKey], and the scope handles clash mangling.
  */
 
 internal enum class ScopeKind {
@@ -47,17 +45,57 @@ internal enum class DefinitionKind {
 /**
  * Representation-neutral view of an exported type. Phase 3 asks its questions through this interface and never
  * touches the backing `KotlinType`/`IrType`.
+ * Two exported types are equal iff they translate to the same C type.
+ * Most of the exported types are translated by CAdapterTypeTranslator from KotlinType or IrType, except for
+ * enum entries in IR mode. See `CExportedReferenceTypeByFqName` for details.
  */
-internal interface CExportedType {
+internal abstract class CExportedType {
     // The C type of the exported ("public") API, e.g. `int`, `const char*`, `<prefix>_kref_foo_Bar`.
-    fun translateType(): String
+    abstract fun translateType(): String
 
     // The C type used by the runtime bridge, e.g. `KObjHeader*` for references/strings.
-    fun translateTypeBridge(): String
+    abstract fun translateTypeBridge(): String
 
-    fun isMappedToVoid(): Boolean
-    fun isMappedToString(): Boolean
-    fun isMappedToReference(): Boolean
+    abstract fun isMappedToVoid(): Boolean
+    abstract fun isMappedToString(): Boolean
+    abstract fun isMappedToReference(): Boolean
+
+    final override fun equals(other: Any?): Boolean =
+            other is CExportedType && other.translateType() == translateType()
+
+    final override fun hashCode(): Int = translateType().hashCode()
+}
+
+/**
+ * A Kotlin type viewed through the handful of queries C export needs, hiding whether it is backed by a K1
+ * `KotlinType` or an `IrType`. This is the single representation seam: the one [CAdapterTypeTranslator] maps a
+ * [CExportableType] to its C spellings without knowing which representation produced it.
+ */
+internal interface CExportableType {
+    fun isUnit(): Boolean
+    fun isNothing(): Boolean
+    fun binaryTypeIsReference(): Boolean
+
+    /** The class this type's binary representation references, or `null` if that binary type is primitive. */
+    fun referenceClassOrNull(): CExportableClass?
+
+    /**
+     * Unwraps the type's inline-class layers: [eachInlinedClass] is called for each inlined layer and may
+     * short-circuit by returning a non-null value; otherwise the terminal is [ifPrimitive] for a primitive or
+     * [ifReference] for a reference.
+     */
+    fun <R> unwrapToPrimitiveOrReference(
+            eachInlinedClass: (CExportableClass) -> R?,
+            ifPrimitive: (KonanPrimitiveType) -> R,
+            ifReference: (CExportableClass) -> R,
+    ): R
+}
+
+/** The class a [CExportableType] erases to or references, hiding `ClassDescriptor` vs `IrClass`. */
+internal interface CExportableClass {
+    val classId: ClassId?
+    fun isString(): Boolean
+    val fqName: String
 }
 
 internal data class SignatureElement(val name: String, val type: CExportedType)
