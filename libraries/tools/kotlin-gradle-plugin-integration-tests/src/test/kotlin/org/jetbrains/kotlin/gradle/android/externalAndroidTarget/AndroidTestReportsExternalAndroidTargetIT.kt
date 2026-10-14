@@ -9,12 +9,14 @@ import com.android.build.api.dsl.KotlinMultiplatformAndroidDeviceTestCompilation
 import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryTarget
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 // Used AGP 9.0 as the minimal stable version supporting the external Android target plugin (com.android.kotlin.multiplatform.library).
 @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_90)
 @AndroidGradlePluginTests
+@MustRunOnChangesInGradle
 class AndroidTestReportsExternalAndroidTargetIT : KGPBaseTest() {
 
     // Uses `com.android.kotlin.multiplatform.library`, requires AGP new DSL.
