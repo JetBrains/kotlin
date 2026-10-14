@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.light.classes.symbol
 
 import com.github.benmanes.caffeine.cache.Caffeine
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
@@ -131,10 +132,10 @@ private fun KaModule.isValidContextModule(): Boolean {
 }
 
 @OptIn(KaImplementationDetail::class)
-internal class SymbolKotlinAsJavaSupport(private val project: Project) : KotlinAsJavaSupport(), KaInternalsLightClassBridge {
+internal class SymbolKotlinAsJavaSupport(private val project: Project) : KotlinAsJavaSupport(), KaInternalsLightClassBridge, Disposable {
 
     init {
-        project.analysisMessageBus.connect(project).subscribe(
+        project.analysisMessageBus.connect(this).subscribe(
             KotlinModificationEvent.TOPIC,
             KotlinModificationEventListener { event ->
                 when (event) {
@@ -157,6 +158,8 @@ internal class SymbolKotlinAsJavaSupport(private val project: Project) : KotlinA
             }
         )
     }
+
+    override fun dispose() {}
 
     // ============ LIGHT FACADES ============
     //region Light Facades
