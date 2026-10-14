@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildPropertyAccessExpression
 import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.extensions.predicate.LookupPredicate
-import org.jetbrains.kotlin.fir.extensions.predicate.LookupPredicate.BuilderContext.or
 import org.jetbrains.kotlin.fir.java.FirJavaLazyDeprecationsProvider
 import org.jetbrains.kotlin.fir.java.JavaScopeProvider
 import org.jetbrains.kotlin.fir.java.MutableJavaTypeParameterStack
@@ -62,8 +61,9 @@ class ExternalClassGenerator(session: FirSession) : FirDeclarationGenerationExte
         private val GENERATED_CLASS_ID = ClassId(FOO_PACKAGE, Name.identifier("AllOpenGenerated"))
         private val MATERIALIZE_NAME = Name.identifier("materialize")
 
-        private val PREDICATE = LookupPredicate.create { annotated("ExternalClassWithNested".fqn()) }
+        private val KOTLIN_PREDICATE = LookupPredicate.create { annotated("ExternalClassWithNested".fqn()) }
         private val JAVA_PREDICATE = LookupPredicate.create { annotated("JavaClassWithHiddenNested".fqn()) }
+        private val PREDICATE = LookupPredicate.create { KOTLIN_PREDICATE or JAVA_PREDICATE }
     }
 
     data object ExternalClassGeneratorKey : GeneratedDeclarationKey()
@@ -71,7 +71,7 @@ class ExternalClassGenerator(session: FirSession) : FirDeclarationGenerationExte
 
     private val predicateBasedProvider = session.predicateBasedProvider
     private val matchedClasses by lazy {
-        predicateBasedProvider.getSymbolsByPredicate(PREDICATE.or(JAVA_PREDICATE)).filterIsInstance<FirRegularClassSymbol>()
+        predicateBasedProvider.getSymbolsByPredicate(PREDICATE).filterIsInstance<FirRegularClassSymbol>()
     }
     private val classIdsForMatchedClasses: Map<ClassId, FirRegularClassSymbol> by lazy {
         matchedClasses.associateBy {
@@ -116,7 +116,7 @@ class ExternalClassGenerator(session: FirSession) : FirDeclarationGenerationExte
     }
 
     private fun generateNestedJavaClass(classId: ClassId, owner: FirClassSymbol<*>): FirClassLikeSymbol<*>? {
-        if (!owner.hasAnnotation(ClassId(SANDBOX_ANNOTATIONS_PACKAGE, FqName("JavaClassWithHiddenNested"), false), session)) {
+        if (!predicateBasedProvider.matches(JAVA_PREDICATE, owner)) {
             return null
         }
         val annotation = buildAnnotation {
@@ -201,7 +201,6 @@ class ExternalClassGenerator(session: FirSession) : FirDeclarationGenerationExte
 
     override fun FirDeclarationPredicateRegistrar.registerPredicates() {
         register(PREDICATE)
-        register(JAVA_PREDICATE)
     }
 }
 
