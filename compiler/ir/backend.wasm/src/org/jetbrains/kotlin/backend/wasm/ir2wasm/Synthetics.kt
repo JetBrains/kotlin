@@ -73,7 +73,6 @@ object Synthetics {
     private val stringLiteralJsStringFunctionTypeSignature = "stringLiteralJsStringFunctionType".toSyntheticSignature()
     private val parameterlessNoReturnFunctionTypeSignature = "parameterlessNoReturnFunctionTypeSignature".toSyntheticSignature()
     private val jsExceptionTagFuncTypeSignature = "jsExceptionTagFuncType".toSyntheticSignature()
-    private val wasmContTagFuncTypeSignature = "wasmContTagFuncType".toSyntheticSignature()
 
     // bound Stack Switching continuation
     private val boundContTypeSignature = "boundContType".toSyntheticSignature()
@@ -117,7 +116,6 @@ object Synthetics {
         val jsExceptionTagFuncType = FunctionHeapTypeSymbol(jsExceptionTagFuncTypeSignature)
         val parameterlessNoReturnFunctionType = FunctionHeapTypeSymbol(parameterlessNoReturnFunctionTypeSignature)
         val associatedObjectGetterType = FunctionHeapTypeSymbol(associatedObjectGetterTypeSignature)
-        val wasmContTagFuncType = FunctionHeapTypeSymbol(wasmContTagFuncTypeSignature)
         val boundContFuncType = FunctionHeapTypeSymbol(boundContFuncTypeSignature)
     }
 
