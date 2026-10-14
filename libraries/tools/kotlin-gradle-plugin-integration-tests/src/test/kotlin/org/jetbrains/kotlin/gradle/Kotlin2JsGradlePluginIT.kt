@@ -13,7 +13,6 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution
 import org.jetbrains.kotlin.gradle.targets.js.ir.JsIrBinary
 import org.jetbrains.kotlin.gradle.targets.js.ir.KLIB_TYPE
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.JsPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.UPGRADE_PACKAGE_LOCK_BASE_NAME
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
@@ -21,9 +20,12 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
 import org.jetbrains.kotlin.gradle.targets.js.npm.fromSrcPackageJson
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
-import org.jetbrains.kotlin.gradle.util.compileSources
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInBuildToolsApi
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCommonBackend
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInJs
 import org.junit.jupiter.api.DisplayName
 import java.util.zip.ZipFile
 import kotlin.io.path.*
@@ -33,12 +35,14 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 @JsGradlePluginTests
+@MustRunOnChangesInGradle
 class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
 
     override val defaultBuildOptions: BuildOptions
         // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
         get() = super.defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
 
+    @MustRunOnChangesInJs
     @DisplayName("TS type declarations are generated")
     @GradleTest
     fun generateDts(gradleVersion: GradleVersion) {
@@ -60,6 +64,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @MustRunOnChangesInJs
     @DisplayName("TS type declarations are generated using the rich TypeScript schema")
     @GradleTest
     fun generateDtsWithRichTypeScriptSchema(gradleVersion: GradleVersion) {
@@ -77,6 +82,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @MustRunOnChangesInJs
     @DisplayName("TS type declarations are generated with the right extension for ES modules")
     @GradleTest
     fun generateDtsWithEsModules(gradleVersion: GradleVersion) {
@@ -100,6 +106,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @MustRunOnChangesInJs
     @DisplayName("es2020 target produces ES modules and compiles Long as bigint by default")
     @GradleTest
     fun testEs2020TargetProducesEsModulesWithBigIntLongs(gradleVersion: GradleVersion) {
@@ -565,6 +572,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @MustRunOnChangesInJs
+    @MustRunOnChangesInBuildToolsApi
     @GradleTest
     @TestMetadata("kotlin-js-browser-project")
     fun testJsIrIncrementalInParallel(gradleVersion: GradleVersion) {
@@ -751,6 +760,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @MustRunOnChangesInJs
     @DisplayName("test TypeScript declarations generated after DSL applied")
     @GradleTest
     fun testGeneratedTypeScriptDeclarations(gradleVersion: GradleVersion) {
@@ -807,6 +817,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @MustRunOnChangesInJs
     @DisplayName("generated typescript declarations validation")
     @GradleTest
     fun testGeneratedTypeScriptDeclarationsValidation(gradleVersion: GradleVersion) {
@@ -849,6 +860,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @MustRunOnChangesInJs
     @DisplayName("klib compilation with the declarations name clash")
     @GradleTest
     @TestMetadata("kotlin-js-invalid-project-with-exported-clash")
@@ -860,6 +872,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @MustRunOnChangesInJs
     @DisplayName("fully qualified names can be used in the sourcemap")
     @GradleTest
     fun testKotlinJsSourceMapGenerateFqNames(gradleVersion: GradleVersion) {
@@ -886,6 +899,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @MustRunOnChangesInJs
     @DisplayName("simple names can be used in the sourcemap")
     @GradleTest
     fun testKotlinJsSourceMapGenerateSimpleNames(gradleVersion: GradleVersion) {
@@ -911,6 +925,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @MustRunOnChangesInJs
     @DisplayName("don't generate names in the sourcemap")
     @GradleTest
     fun testKotlinJsSourceMapGenerateNoNames(gradleVersion: GradleVersion) {
@@ -936,6 +951,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @MustRunOnChangesInJs
     @DisplayName("Kotlin/JS project with module name starting with package")
     @GradleTest
     fun testKotlinJsPackageModuleName(gradleVersion: GradleVersion) {
@@ -971,6 +987,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @MustRunOnChangesInJs
     @DisplayName("K1/JS IR implementation dependency")
     @GradleTest
     @TestMetadata("kotlin-js-browser-project")
@@ -987,6 +1004,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @MustRunOnChangesInJs
     @DisplayName("K2/JS IR implementation dependency")
     @GradleTest
     @TestMetadata("kotlin-js-browser-project")
@@ -1031,6 +1049,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @MustRunOnChangesInJs
+    @MustRunOnChangesInCommonBackend
     @DisplayName("klib fingerprints")
     @GradleTest
     fun testKlibFingerprints(gradleVersion: GradleVersion) {
@@ -1252,6 +1272,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @MustRunOnChangesInJs
     @DisplayName("source map is generated")
     @GradleTest
     fun testKotlinJsSourceMap(gradleVersion: GradleVersion) {
@@ -1305,6 +1326,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @MustRunOnChangesInJs
     @DisplayName("Test correct sources path with per-file granularity ('KT-72833')")
     @GradleTest
     @TestMetadata("js-per-file")
@@ -1354,6 +1376,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @MustRunOnChangesInJs
     @DisplayName("path in source maps are remapped for custom outputFile in executable")
     @GradleTest
     fun testKotlinJsSourceMapCustomOutputFileInExecutable(gradleVersion: GradleVersion) {
@@ -1381,6 +1404,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @MustRunOnChangesInJs
     @DisplayName("path in source maps are remapped for custom outputFile in library")
     @GradleTest
     fun testKotlinJsSourceMapCustomOutputFileInLibrary(gradleVersion: GradleVersion) {
@@ -1408,7 +1432,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
-
+    @MustRunOnChangesInJs
     @DisplayName("path in source maps are remapped for custom outputFile in library with ES modules")
     @GradleTest
     fun testKotlinJsSourceMapCustomOutputFileInLibraryWithESM(gradleVersion: GradleVersion) {
@@ -1441,6 +1465,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @MustRunOnChangesInJs
     @DisplayName("source map is not generated when disabled")
     @GradleTest
     fun testKotlinJsSourceMapDisabled(gradleVersion: GradleVersion) {
@@ -1463,6 +1488,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @MustRunOnChangesInJs
     @DisplayName("sources of all modules are embedded into source map")
     @GradleTest
     fun testKotlinJsSourceMapEmbedSourcesAlways(gradleVersion: GradleVersion) {
@@ -1498,6 +1524,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @MustRunOnChangesInJs
     @DisplayName("only sources of external modules are embedded into source map")
     @GradleTest
     fun testKotlinJsSourceMapEmbedSourcesInlining(gradleVersion: GradleVersion) {
@@ -2137,6 +2164,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @MustRunOnChangesInJs
     @GradleTest
     @TestMetadata("kotlin-js-browser-project")
     fun testJsIrWholeProgram(gradleVersion: GradleVersion) {
@@ -2152,6 +2180,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @MustRunOnChangesInJs
     @DisplayName("Cross modules work correctly with compose dependency ('KT60852')")
     @GradleTest
     fun crossModulesWorkCorrectlyWithComposeDependencyKT60852(gradleVersion: GradleVersion) {
@@ -2395,6 +2424,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @MustRunOnChangesInJs
     @DisplayName("Changed output module name")
     @GradleTest
     @TestMetadata("kotlin-js-browser-project")
@@ -2419,6 +2449,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @MustRunOnChangesInJs
     @DisplayName("KT-37105: Project is properly rebuilt when @JsModule name is changed")
     @GradleTest
     @TestMetadata("empty")
