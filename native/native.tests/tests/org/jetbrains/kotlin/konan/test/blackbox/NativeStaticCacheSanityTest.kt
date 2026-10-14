@@ -83,6 +83,102 @@ class NativeStaticCacheSanityTest : AbstractNativeSimpleTest() {
     }
 
     @Test
+    fun absoluteLibraryPathWithRelativeAddCacheIsAcceptedWhenCachingLibrary() =
+        doTestMixedLibraryAndAddCachePaths(isLibraryPathRelative = false, isAddCachePathRelative = true)
+
+    @Test
+    fun relativeLibraryPathWithAbsoluteAddCacheIsAcceptedWhenCachingLibrary() =
+        doTestMixedLibraryAndAddCachePaths(isLibraryPathRelative = true, isAddCachePathRelative = false)
+
+    private fun doTestMixedLibraryAndAddCachePaths(isLibraryPathRelative: Boolean, isAddCachePathRelative: Boolean) {
+        val sourceFile = createFile("lib.kt") {
+            """
+                fun hello() = "hi"
+            """.trimIndent()
+        }
+
+        val klibFile = createFile("lib.klib")
+        val cacheDir = createDir("cache")
+
+        // Compile a library.
+        callNativeCompiler(
+            sourceFile.absolutePath,
+            "-p", "library",
+            "-o", klibFile.absolutePath,
+        )
+
+        val libraryArg = if (isLibraryPathRelative) klibFile.relativeTo(userDir).path else klibFile.absolutePath
+        val addCacheArg = if (isAddCachePathRelative) klibFile.relativeTo(userDir).path else klibFile.absolutePath
+
+        // Prepare a cache for user lib using mixed relative and absolute paths.
+        callNativeCompiler(
+            "-g",
+            "-p", "static_cache",
+            "-Xcache-directory=${cacheDir.absolutePath}",
+            "-Xcache-directory=${systemCacheDir.absolutePath}",
+            "-library", libraryArg,
+            "-Xadd-cache=$addCacheArg",
+        )
+    }
+
+    @Test
+    fun relativeLibraryWithAbsoluteCachedLibraryIsAccepted() =
+        doTestMixedLibraryAndCachedLibraryPaths(isLibraryPathRelative = true, isCachedLibraryPathRelative = false)
+
+    @Test
+    fun absoluteLibraryWithRelativeCachedLibraryIsAccepted() =
+        doTestMixedLibraryAndCachedLibraryPaths(isLibraryPathRelative = false, isCachedLibraryPathRelative = true)
+
+    private fun doTestMixedLibraryAndCachedLibraryPaths(isLibraryPathRelative: Boolean, isCachedLibraryPathRelative: Boolean) {
+        val sourceFile = createFile("lib.kt") {
+            """
+                fun hello() = "hi"
+            """.trimIndent()
+        }
+
+        val klibFile = createFile("lib.klib")
+        val cacheDir = createDir("cache")
+
+        // Compile a library.
+        callNativeCompiler(
+            sourceFile.absolutePath,
+            "-p", "library",
+            "-o", klibFile.absolutePath,
+        )
+
+        // Prepare a cache for the library.
+        callNativeCompiler(
+            "-g",
+            "-p", "static_cache",
+            "-Xcache-directory=${cacheDir.absolutePath}",
+            "-Xcache-directory=${systemCacheDir.absolutePath}",
+            "-Xadd-cache=${klibFile.absolutePath}",
+        )
+
+        val cacheArtifact = cacheDir.listFiles().orEmpty().firstOrNull { it.name.startsWith("lib") }
+            ?: fail { "Cache not found in $cacheDir" }
+
+        val libraryArg = if (isLibraryPathRelative) klibFile.relativeTo(userDir).path else klibFile.absolutePath
+        val cachedLibArg = if (isCachedLibraryPathRelative) klibFile.relativeTo(userDir).path else klibFile.absolutePath
+
+        val appFile = createFile("app.kexe")
+        callNativeCompiler(
+            createFile("main.kt") {
+                """
+                    fun main() {
+                        println(hello())
+                    }
+                """.trimIndent()
+            }.absolutePath,
+            "-p", "program",
+            "-library", libraryArg,
+            "-Xcached-library=$cachedLibArg,${cacheArtifact.absolutePath}",
+            "-Xcache-directory=${systemCacheDir.absolutePath}",
+            "-o", appFile.absolutePath,
+        )
+    }
+
+    @Test
     fun eagerInitializationOrderIsCorrectWithoutCaches() {
         assumeExecutableIsRun()
         doTestEagerInitializationOrderIsCorrect(useCaches = false)
