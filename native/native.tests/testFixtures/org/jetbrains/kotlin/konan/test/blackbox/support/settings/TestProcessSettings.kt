@@ -266,12 +266,16 @@ sealed class CacheMode {
             debuggable: Boolean,
             optimized: Boolean,
             checkStateAtExternalCalls: Boolean,
+            sanitizer: String? = null,
+            stackProtector: String? = null,
         ) = buildString {
             append(testTarget)
             if (debuggable) append("-g")
             if (optimized) append("-opt")
             append(cacheKind)
+            if (sanitizer != null) append("-sanitizer$sanitizer")
             if (checkStateAtExternalCalls) append("-check_state_at_external_calls")
+            if (stackProtector != null) append("-stack_protector$stackProtector")
             append("-user")
             append("-pl")
         }
