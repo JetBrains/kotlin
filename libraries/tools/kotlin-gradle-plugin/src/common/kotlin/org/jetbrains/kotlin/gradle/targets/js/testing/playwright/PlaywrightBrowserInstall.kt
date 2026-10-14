@@ -28,11 +28,9 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.OsType
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependenciesTask
 import org.jetbrains.kotlin.gradle.targets.native.internal.KotlinInterprocessDirectoryLock
-import org.jetbrains.kotlin.gradle.targets.web.nodejs.nodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.*
 import org.jetbrains.kotlin.gradle.tasks.nodejs.UsesNodeJsToolchainService
 import org.jetbrains.kotlin.gradle.utils.getFile
-import org.jetbrains.kotlin.gradle.utils.property
 import java.io.File
 import javax.inject.Inject
 
@@ -94,7 +92,7 @@ internal abstract class PlaywrightBrowserInstall @Inject constructor(
             // Resolve providers outside of the lambda, so it does not capture the task (breaks configuration cache)
             val userProfile = providers.environmentVariable("USERPROFILE")
             return providers.systemProperty("user.home").zip(
-                providers.currentHostPlatform()
+                providers.currentHostOs()
             ) { userHome, platform ->
                 when (platform) {
                     OsType.WINDOWS -> {
