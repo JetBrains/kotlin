@@ -48,8 +48,8 @@ open class BenchmarkExtension @Inject constructor(project: Project) {
      */
     val prefixBenchmarksWithApplicationName: Property<Boolean> = project.objects.property(Boolean::class.java).convention(true)
 
-    val getCodeSize by project.tasks.registering(CodeSizeTask::class)
-    val konanJsonReport by project.tasks.registering(JsonReportTask::class)
+    val getCodeSize = project.tasks.register("getCodeSize", CodeSizeTask::class.java)
+    val konanJsonReport = project.tasks.register("konanJsonReport", JsonReportTask::class.java)
 
     val benchmarkSemaphore = project.gradle.sharedServices.registerIfAbsent(BENCHMARK_SEMAPHORE_NAME, BenchmarkSemaphore::class.java) {
         maxParallelUsages.set(1) // Benchmarks should not be executed in parallel to each other: this will skew their results
@@ -101,7 +101,7 @@ abstract class BenchmarkingPlugin : Plugin<Project> {
             reportFile.set(layout.buildDirectory.file(nativeJson))
         }
 
-        val nativeReportElements by configurations.creating {
+        val nativeReportElements = configurations.create("nativeReportElements") {
             isCanBeConsumed = true
             isCanBeResolved = false
             attributes {

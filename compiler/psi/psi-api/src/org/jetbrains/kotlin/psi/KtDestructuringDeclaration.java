@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.psi.stubs.KotlinDestructuringDeclarationStub;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.jetbrains.kotlin.lexer.KtTokens.*;
@@ -59,6 +60,13 @@ public class KtDestructuringDeclaration extends KtDeclarationStub<KotlinDestruct
      */
     @NotNull
     public List<KtDestructuringDeclarationEntry> getEntries() {
+        KotlinDestructuringDeclarationStub stub = getGreenStub();
+        if (stub != null) {
+            KtDestructuringDeclarationEntry[] entries =
+                    getStubOrPsiChildren(KtNodeTypes.DESTRUCTURING_DECLARATION_ENTRY, KtDestructuringDeclarationEntry.EMPTY_ARRAY);
+            return Arrays.asList(entries);
+        }
+
         List<KtDestructuringDeclarationEntry> result = new ArrayList<>();
         for (ASTNode child = getNode().getFirstChildNode(); child != null; child = child.getTreeNext()) {
             if (child.getElementType() == KtNodeTypes.DESTRUCTURING_DECLARATION_ENTRY) {
@@ -138,6 +146,11 @@ public class KtDestructuringDeclaration extends KtDeclarationStub<KotlinDestruct
      * See <a href="https://kotl.in/name-based-destructuring">KEEP</a>.
      */
     public boolean isFullForm() {
+        KotlinDestructuringDeclarationStub stub = getGreenStub();
+        if (stub != null) {
+            return stub.isFullForm();
+        }
+
         List<KtDestructuringDeclarationEntry> entries = getEntries();
         return !entries.isEmpty() && entries.get(0).getOwnValOrVarKeyword() != null;
     }
@@ -161,6 +174,11 @@ public class KtDestructuringDeclaration extends KtDeclarationStub<KotlinDestruct
      * @return true when this destructuring declaration uses square brackets.
      */
     public boolean hasSquareBrackets() {
+        KotlinDestructuringDeclarationStub stub = getGreenStub();
+        if (stub != null) {
+            return stub.getHasSquareBrackets();
+        }
+
         return getNode().findChildByType(LBRACKET) != null;
     }
 

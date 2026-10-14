@@ -1,0 +1,5 @@
+KtDotQualifiedExpression(93,106): 'this@Test.foo'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      var foo: kotlin.Int
+    ]

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.lightTree
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.util.PathUtil
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderTestCase
 import org.jetbrains.kotlin.fir.builder.StubFirScopeProvider
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
@@ -23,16 +24,19 @@ abstract class AbstractLightTree2FirConverterTestCase : AbstractRawFirBuilderTes
     @OptIn(ObsoleteTestInfrastructure::class)
     override fun runTest(filePath: String) {
         myFileExt = FileUtilRt.getExtension(PathUtil.getFileName(filePath))
-        val path = Paths.get(filePath)
+        val absolutePath = ForTestCompileRuntime.transformTestDataPath(filePath).path
+        val path = Paths.get(absolutePath)
+        val session = FirSessionFactoryHelper.createEmptySession(parseLanguageFeatures(path.readText()))
+        session.registerReplSnippetConfiguratorForReplFixture(filePath)
         val firFile = LightTree2Fir(
-            session = FirSessionFactoryHelper.createEmptySession(parseLanguageFeatures(path.readText())),
+            session = session,
             scopeProvider = StubFirScopeProvider,
             diagnosticsReporter = null
         ).buildFirFile(path)
         val firDump = FirRenderer.withDeclarationAttributes().renderElementAsString(firFile)
 
-        val originalExpectedFile = File(expectedPath(filePath, ".txt"))
-        val lightTreeExpectedFile = File(expectedPath(filePath, ".lt.txt"))
+        val originalExpectedFile = File(expectedPath(absolutePath, ".txt"))
+        val lightTreeExpectedFile = File(expectedPath(absolutePath, ".lt.txt"))
         val expectedFile = lightTreeExpectedFile.takeIf { it.exists() } ?: originalExpectedFile
         TestDataAssertions.assertEqualsToFile(expectedFile, firDump)
 
@@ -47,6 +51,6 @@ abstract class AbstractLightTree2FirConverterTestCase : AbstractRawFirBuilderTes
             }
         }
 
-        checkAnnotationOwners(filePath, firFile)
+        checkAnnotationOwners(absolutePath, firFile)
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,6 +9,8 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.component.ComponentIdentifier
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.buildtools.api.abi.KlibTargetType
+import org.jetbrains.kotlin.gradle.ExperimentalNodeJsToolchainDsl
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.KotlinSourceSetConvention.isAccessedByKotlinSourceSetConventionAt
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_BUILD_TOOLS_API_IMPL
@@ -19,6 +21,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.KOTLIN_SUPPRESS_GRADLE_PLUGIN_WARNINGS_PROPERTY
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_ALLOW_INCOMPLETE_KOTLIN_ARCHIVE_PUBLICATION
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_INTERNAL_ALLOW_MULTIPLATFORM_PUBLICATIONS_ON_UNSUPPORTED_HOST
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_APPLY_DEFAULT_HIERARCHY_TEMPLATE
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_ENABLE_KLIBS_CROSSCOMPILATION
@@ -26,11 +29,15 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.CompilationDependenciesPair.Companion.toFormattedString
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsSeverity.*
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.NpmDependencyInGradleScopeUsage
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.UnresolvedKmpDependency.ResolvedVariant
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.UnresolvedKmpDependency.UnresolvedComponent
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib
+import org.jetbrains.kotlin.gradle.dsl.KotlinBrowserBundler
+import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.NodeJsVersion
 import org.jetbrains.kotlin.gradle.targets.jvm.JAVA_TEST_FIXTURES_PLUGIN_ID
 import org.jetbrains.kotlin.gradle.targets.wasm.WasmCompilationMode
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.normalized
 import org.jetbrains.kotlin.gradle.utils.appendLine
 import org.jetbrains.kotlin.gradle.utils.prettyName
 import org.jetbrains.kotlin.konan.target.Family
@@ -476,6 +483,30 @@ internal object KotlinToolingDiagnostics {
                 .solution("Upgrade Kotlin or downgrade the associated dependency")
                 .documentationLink(URI("https://kotl.in/kar"))
         }
+    }
+
+    internal object IncompleteKotlinArchivePublication : ToolingDiagnosticFactory(FATAL, DiagnosticGroup.Kgp.Misconfiguration) {
+        operator fun invoke(missingTargetNames: Collection<String>, hostName: String) =
+            build {
+                val targetsList = missingTargetNames.sorted().joinToString(separator = "\n* ", prefix = "* ")
+
+                title("Kotlin Archive publication is incomplete")
+                    .description(
+                        """
+                        |The Kotlin Archive keeps several targets in one artifact, so it must be built on a host that supports all of them.
+                        |These targets are not publishable on the current host platform ($hostName), but configured to be stored in Kotlin Archive:
+                        |$targetsList
+                        """.trimMargin()
+                    )
+                    .solutions {
+                        listOf(
+                            "Run the publish task on a host platform that supports all targets of the project.",
+                            "If you need it for testing purposes, and plan to publish only to local repositories, add " +
+                                    "'$KOTLIN_ALLOW_INCOMPLETE_KOTLIN_ARCHIVE_PUBLICATION=true' to your local Gradle properties.",
+                        )
+                    }
+                    .documentationLink(URI("https://kotl.in/kar"))
+            }
     }
 
     object NewNativeVersionDiagnostic : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
@@ -1322,23 +1353,6 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object BuildToolsApiVersionInconsistency : ToolingDiagnosticFactory(FATAL, DiagnosticGroup.Kgp.Misconfiguration) {
-        operator fun invoke(expectedVersion: String, actualVersion: String?) = build {
-            title("Build Tools API Version Mismatch Detected")
-                .description {
-                    """
-                    Artifact $KOTLIN_MODULE_GROUP:$KOTLIN_BUILD_TOOLS_API_IMPL must have version aligned with the version of KGP when compilation via the Build Tools API is disabled.
-    
-                    Expected version: $expectedVersion
-                    Actual resolved version: ${actualVersion ?: "not found"}
-                    """.trimIndent()
-                }
-                .solution {
-                    "Please ensure that the version of the Build Tools API artifact is aligned with the version of the Kotlin Gradle Plugin."
-                }
-        }
-    }
-
     object WasmSourceSetsNotFoundError : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
         operator fun invoke(nameOfRequestedSourceSet: String) = build {
             title("Wasm Source Sets Missing Due to Renaming in Kotlin 1.9.20")
@@ -1768,10 +1782,9 @@ internal object KotlinToolingDiagnostics {
             "$pluginString Gradle plugin is not compatible with 'org.jetbrains.kotlin.multiplatform' plugin."
     }
 
-    internal object KMPWithJavaDiagnostic : ToolingDiagnosticFactory(predefinedSeverity = WARNING, DiagnosticGroup.Kgp.Deprecation) {
+    internal object KMPWithJavaDiagnostic : ToolingDiagnosticFactory(predefinedSeverity = ERROR, DiagnosticGroup.Kgp.Deprecation) {
         operator fun invoke(): ToolingDiagnostic {
-            val severity = if (GradleVersion.current() >= GradleVersion.version("9.0")) ERROR else WARNING
-            return build(severity = severity) {
+            return build {
                 title("'org.jetbrains.kotlin.multiplatform' plugin 'withJava()' configuration deprecation.")
                     .description {
                         "Kotlin multiplatform plugin always configures Java sources compilation and 'withJava()' configuration is deprecated."
@@ -1989,10 +2002,38 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
+    object SwiftExportPackageModulesMismatch : ToolingDiagnosticFactory(FATAL, DiagnosticGroup.Kgp.Misconfiguration) {
+        /**
+         * @param differences one line per module that differs
+         */
+        operator fun invoke(referenceTarget: String, otherTarget: String, differences: List<String>) = build {
+            title("Swift Modules Differ Between Targets")
+                .description {
+                    "Swift Export produced different Swift modules for '$referenceTarget' and '$otherTarget', " +
+                            "so their output cannot be combined into one Swift package:\n" +
+                            differences.joinToString("\n") { "  $it" }
+                }
+                .solution {
+                    "Make every Apple target of the project export the same Swift modules with the same dependencies."
+                }
+        }
+    }
+
+    object SwiftExportWithoutAppleTargets : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+        operator fun invoke() = build {
+            title("Swift Export Configured Without Apple Targets")
+                .description("'export.swift { }' is configured, but the project declares no Apple target, so there is nothing to export.")
+                .solution("Declare an Apple target, such as 'iosArm64()', or remove the 'export.swift { }' block.")
+        }
+    }
+
     internal object DeprecatedSwiftExportDsl : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Deprecation) {
         operator fun invoke() = build {
             title("Deprecated 'swiftExport { }' DSL")
-                .description("The 'swiftExport { }' DSL is deprecated and will be removed in Kotlin 2.7.")
+                .description(
+                    "The 'swiftExport { }' DSL is deprecated. It will become an error in Kotlin 2.5.20 " +
+                            "and will be removed in Kotlin 2.6.0."
+                )
                 .solution(
                     "Move the configuration to 'export { swift { } }'. Rename 'flattenPackage' to 'rootPackage' " +
                             "and call 'xcodeIntegration()' to register the task that embeds Swift Export's " +
@@ -2393,18 +2434,6 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    internal object DeprecatedKotlinJsPlugin : ToolingDiagnosticFactory(
-        FATAL,
-        DiagnosticGroup.Kgp.Deprecation,
-    ) {
-        operator fun invoke(trace: Throwable? = null) = build(throwable = trace) {
-            title { "'kotlin-js' Gradle plugin is deprecated" }
-                .description { "'kotlin-js' Gradle plugin is deprecated and will be removed in the future" }
-                .solution { "Please use 'kotlin(\"multiplatform\")' plugin with a 'js()' target instead" }
-                .documentationLink(URI("https://kotl.in/t6m3vu"))
-        }
-    }
-
     internal object XCFrameworkWithSwiftPMDependencies : ToolingDiagnosticFactory(
         WARNING,
         DiagnosticGroup.Kgp.Experimental,
@@ -2549,6 +2578,63 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
+    internal object UnsupportedJsBrowserTestRunnerType : ToolingDiagnosticFactory(
+        predefinedSeverity = ERROR,
+        predefinedGroup = DiagnosticGroup.Kgp.Misconfiguration,
+    ) {
+        operator fun invoke(runnerName: String, runnerType: String) = build {
+            title { "Unsupported browser test runner type" }
+                .description {
+                    "Browser test runner '$runnerName' of type '$runnerType' cannot be added to the 'browserRunners' collection. " +
+                            "Only runners declared via chromium(), firefox(), or webkit() are supported. " +
+                            "Custom browser test runners are not supported yet. " +
+                            "Follow https://youtrack.jetbrains.com/issue/KT-86706 for updates on custom browser test runner support."
+                }
+                .solution { "Declare browser test runners using chromium(), firefox(), or webkit() in the 'test {}' block." }
+                .documentationLink(URI("https://kotl.in/new-js-browser-test-dsl"))
+        }
+    }
+
+    internal object ConflictingJsBrowserTestRunnerName : ToolingDiagnosticFactory(
+        predefinedSeverity = ERROR,
+        predefinedGroup = DiagnosticGroup.Kgp.Misconfiguration,
+    ) {
+        operator fun invoke(runnerName: String) = build {
+            title { "Conflicting browser test runner name" }
+                .description {
+                    "Cannot declare browser test runner with name '$runnerName': " +
+                            "a browser test runner with the same name is already declared via different runner type. "
+                }
+                .solution { "Use different name for the runner." }
+                .documentationLink(URI("https://kotl.in/new-js-browser-test-dsl"))
+        }
+    }
+
+    @OptIn(ExperimentalWasmDsl::class)
+    internal object BrowserBundlerAlreadyDefined : ToolingDiagnosticFactory(
+        predefinedSeverity = ERROR,
+        predefinedGroup = DiagnosticGroup.Kgp.Misconfiguration,
+    ) {
+        operator fun invoke(
+            targetName: String,
+            definedBundler: KotlinBrowserBundler,
+            requestedBundler: KotlinBrowserBundler,
+        ) = build {
+            title { "Browser bundler is already defined in the '$targetName' target" }
+                .description {
+                    """
+                    The '$definedBundler' bundler is already defined for the browser execution environment of the '$targetName' target,
+                    so it can't be changed to '$requestedBundler'.
+                    The bundler is chosen when the 'browser { }' block is configured for the first time and can't be changed afterwards,
+                    because the corresponding bundler tasks are already registered.
+                    """.trimIndent()
+                }
+                .solution {
+                    "Please declare the same bundler in all 'browser(${requestedBundler.name}) { }' blocks of the '$targetName' target"
+                }
+        }
+    }
+
     internal object SwiftPMLinkagePackageNotIntegratedInXcodeProject : ToolingDiagnosticFactory(
         FATAL,
         DiagnosticGroup.Kgp.Misconfiguration,
@@ -2604,7 +2690,46 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    internal object SharedNpmProjectInvalidPackageJson : ToolingDiagnosticFactory(
+    internal object PreInstalledNodeJsVersionMismatch : ToolingDiagnosticFactory(
+        predefinedSeverity = WARNING,
+        predefinedGroup = DiagnosticGroup.Kgp.Misconfiguration,
+    ) {
+        @OptIn(ExperimentalNodeJsToolchainDsl::class)
+        operator fun invoke(
+            installedVersion: NodeJsVersion,
+            requestedVersion: NodeJsVersion,
+            command: String = "node",
+        ) = build {
+            title("Pre-installed Node.js version mismatch")
+                .description {
+                    "Node.js $installedVersion found by '$command' does not match the requested " +
+                            "version $requestedVersion. The requested version cannot be provisioned, because " +
+                            "the Node.js toolchain is configured to use a pre-installed Node.js."
+                }
+                .solution {
+                    "Please update the pre-installed Node.js or configure the Kotlin Gradle Plugin to download Node.js by setting kotlin.js.node.toolchain=DOWNLOAD."
+                }
+        }
+    }
+
+    internal object NodeJsVersionIsNotSupported : ToolingDiagnosticFactory(
+        predefinedSeverity = WARNING,
+        predefinedGroup = DiagnosticGroup.Kgp.Misconfiguration,
+    ) {
+        @OptIn(ExperimentalNodeJsToolchainDsl::class)
+        operator fun invoke(version: NodeJsVersion, minimalSupportedMajorVersion: Int) = build {
+            title("Node.js ${version.normalized} is not supported")
+                .description {
+                    "Node.js ${version.normalized} is not supported by the Kotlin Gradle Plugin. " +
+                            "The minimal supported version is $minimalSupportedMajorVersion."
+                }
+                .solution {
+                    "Please use Node.js $minimalSupportedMajorVersion or a newer version."
+                }
+        }
+    }
+
+internal object SharedNpmProjectInvalidPackageJson : ToolingDiagnosticFactory(
         WARNING,
         DiagnosticGroup.Kgp.Misconfiguration,
     ) {
@@ -2612,6 +2737,58 @@ internal object KotlinToolingDiagnostics {
             title { "Skipping '$file': not a valid package.json" }
                 .description { "The file could not be parsed or has no 'name', so it is left out of the shared npm project." }
                 .solution { "Check the projects declared on the 'kotlinNpmSharedDependencies' / 'kotlinWasmNpmSharedDependencies' configurations." }
+        }
+    }
+
+    internal object RichTypeScriptDeclarationsUnsupportedBuildToolsApiVersion : ToolingDiagnosticFactory(
+        ERROR,
+        DiagnosticGroup.Kgp.Misconfiguration,
+    ) {
+        operator fun invoke(buildToolsApiVersion: String, minimalSupportedVersion: String) = build {
+            title { "Rich TypeScript declarations generation is not supported by the Kotlin Build Tools API $buildToolsApiVersion" }
+                .description {
+                    "The Kotlin Build Tools API version $buildToolsApiVersion configured for the project " +
+                            "supports only the legacy TypeScript declarations generation. " +
+                            "The rich TypeScript declarations generation requires Kotlin Build Tools API $minimalSupportedVersion or higher."
+                }
+                .solution {
+                    "Either opt in to the legacy TypeScript declarations generation by setting " +
+                            "'${PropertiesProvider.PropertyNames.KOTLIN_JS_GENERATE_RICH_TYPESCRIPT_DECLARATIONS}=false' in your gradle.properties, " +
+                            "or bump the Kotlin Build Tools API version to $minimalSupportedVersion or higher."
+                }
+        }
+    }
+
+    internal object NpmDependencyInGradleScope : ToolingDiagnosticFactory(
+        WARNING,
+        DiagnosticGroup.Kgp.Deprecation,
+    ) {
+        operator fun invoke(usages: List<NpmDependencyInGradleScopeUsage>) = build {
+            val deprecatedDeclarations = usages
+                .map { "    - '${it.sourceSetName}' source set: ${it.dependencyScope}(${it.deprecatedDeclaration})" }
+                .distinct()
+                .sorted()
+                .joinToString("\n")
+
+            val replacements = usages
+                .map {
+                    "Replace '${it.dependencyScope}(${it.deprecatedDeclaration})' with '${it.replacement}' " +
+                            "in the '${it.sourceSetName}' source set."
+                }
+                .distinct()
+                .sorted()
+
+            title("NPM dependencies are declared in Gradle dependency scopes")
+                .description {
+                    """
+                    |NPM dependencies are passed to Gradle dependency scopes:
+                    |$deprecatedDeclarations
+                    |
+                    |This is deprecated. Declare NPM dependencies just by calling npm, npmDev, npmOptional and so on.
+                    |Don't wrap them to Gradle dependency scopes api, implementation, runtimeOnly etc.
+                    """.trimMargin()
+                }
+                .solutions { replacements }
         }
     }
 }

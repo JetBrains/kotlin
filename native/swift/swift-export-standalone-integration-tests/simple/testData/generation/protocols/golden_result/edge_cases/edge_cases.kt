@@ -75,29 +75,29 @@ public fun SomeInterface_repeat__TypesOfArgumentsE__Swift_String_Swift_Int32____
 public fun Baz_foo__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(self: kotlin.native.internal.NativePtr, result: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Baz
     val __result = kotlin.native.internal.ref.dereferenceExternalRCRef(result) as kotlin.Any
-    val _result = run { __self.foo(__result) }
-    return run { _result; true }
+    __self.foo(__result)
+    return true
 }
 
 @ExportedBridge("ClassC_baz")
 public fun ClassC_baz(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as ClassC
-    val _result = run { __self.baz() }
-    return run { _result; true }
+    __self.baz()
+    return true
 }
 
 @ExportedBridge("InterfaceA_foo")
 public fun InterfaceA_foo(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as InterfaceA
-    val _result = run { __self.foo() }
-    return run { _result; true }
+    __self.foo()
+    return true
 }
 
 @ExportedBridge("InterfaceB_bar")
 public fun InterfaceB_bar(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as InterfaceB
-    val _result = run { __self.bar() }
-    return run { _result; true }
+    __self.bar()
+    return true
 }
 
 @ExportedBridge("SomeInterface_repeat__TypesOfArgumentsE__Swift_String_Swift_Int32__")
@@ -105,7 +105,7 @@ public fun SomeInterface_repeat__TypesOfArgumentsE__Swift_String_Swift_Int32__(s
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as SomeInterface
     val __receiver = interpretObjCPointer<kotlin.String>(`receiver`)
     val __count = count
-    val _result = run { __self.run { __receiver.repeat(__count) } }
+    val _result = __self.run { __receiver.repeat(__count) }
     return _result.objcPtr()
 }
 
@@ -116,7 +116,7 @@ public fun SomeInterface_repeatWithContext__TypesOfArgumentsEC2__Swift_String_Sw
     val __count = count
     val ___2 = kotlin.native.internal.ref.dereferenceExternalRCRef(_2) as Baz
     val ___3 = kotlin.native.internal.ref.dereferenceExternalRCRef(_3) as conflictingTypealiases.Foo
-    val _result = run { context(___2, ___3) { __self.run { __receiver.repeatWithContext(__count) } } }
+    val _result = context(___2, ___3) { __self.run { __receiver.repeatWithContext(__count) } }
     return _result.objcPtr()
 }
 
@@ -126,7 +126,7 @@ public fun SomeInterface_somethingWithContext_get__TypesOfArgumentsEC2__Swift_St
     val __receiver = interpretObjCPointer<kotlin.String>(`receiver`)
     val ___1 = kotlin.native.internal.ref.dereferenceExternalRCRef(_1) as Baz
     val ___2 = kotlin.native.internal.ref.dereferenceExternalRCRef(_2) as conflictingTypealiases.Foo
-    val _result = run { context(___1, ___2) { __self.run { __receiver.somethingWithContext } } }
+    val _result = context(___1, ___2) { __self.run { __receiver.somethingWithContext } }
     return _result
 }
 
@@ -137,15 +137,15 @@ public fun SomeInterface_somethingWithContext_set__TypesOfArgumentsEC2__Swift_St
     val __value = value
     val ___2 = kotlin.native.internal.ref.dereferenceExternalRCRef(_2) as Baz
     val ___3 = kotlin.native.internal.ref.dereferenceExternalRCRef(_3) as conflictingTypealiases.Foo
-    val _result = run { context(___2, ___3) { __self.run { __receiver.somethingWithContext = __value } } }
-    return run { _result; true }
+    context(___2, ___3) { __self.run { __receiver.somethingWithContext = __value } }
+    return true
 }
 
 @ExportedBridge("SomeInterface_something_get__TypesOfArgumentsE__Swift_String__")
 public fun SomeInterface_something_get__TypesOfArgumentsE__Swift_String__(self: kotlin.native.internal.NativePtr, `receiver`: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as SomeInterface
     val __receiver = interpretObjCPointer<kotlin.String>(`receiver`)
-    val _result = run { __self.run { __receiver.something } }
+    val _result = __self.run { __receiver.something }
     return _result
 }
 
@@ -154,39 +154,39 @@ public fun SomeInterface_something_set__TypesOfArgumentsE__Swift_String_Swift_In
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as SomeInterface
     val __receiver = interpretObjCPointer<kotlin.String>(`receiver`)
     val __value = value
-    val _result = run { __self.run { __receiver.something = __value } }
-    return run { _result; true }
+    __self.run { __receiver.something = __value }
+    return true
 }
 
 @ExportedBridge("__root___ClassC_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__", nonVirtualTargetMethod = "<init>")
 public fun __root___ClassC_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val _result = run { kotlin.native.internal.initInstance(____kt, ClassC()) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, ClassC())
+    return true
 }
 
 @ExportedBridge("conflictingTypealiases_Bar_Conflict_init_allocate")
 public fun conflictingTypealiases_Bar_Conflict_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<conflictingTypealiases.Bar.Conflict>() }
+    val _result = kotlin.native.internal.createUninitializedInstance<conflictingTypealiases.Bar.Conflict>()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("conflictingTypealiases_Bar_Conflict_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
 public fun conflictingTypealiases_Bar_Conflict_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val _result = run { kotlin.native.internal.initInstance(____kt, conflictingTypealiases.Bar.Conflict()) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, conflictingTypealiases.Bar.Conflict())
+    return true
 }
 
 @ExportedBridge("conflictingTypealiases_Foo_Conflict_init_allocate")
 public fun conflictingTypealiases_Foo_Conflict_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<conflictingTypealiases.Foo.Conflict>() }
+    val _result = kotlin.native.internal.createUninitializedInstance<conflictingTypealiases.Foo.Conflict>()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("conflictingTypealiases_Foo_Conflict_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
 public fun conflictingTypealiases_Foo_Conflict_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val _result = run { kotlin.native.internal.initInstance(____kt, conflictingTypealiases.Foo.Conflict()) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, conflictingTypealiases.Foo.Conflict())
+    return true
 }

@@ -9,6 +9,7 @@ import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
+import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationFactory.ProduceStaticCache
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.BinaryLibraryKind
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
@@ -54,6 +55,8 @@ abstract class AbstractSwiftExportWithBinaryCompilationTest : AbstractSwiftExpor
         val kotlinBinaryLibrary = testCompilationFactory.testCaseToBinaryLibrary(
             resultingTestCase, testRunSettings,
             kind = BinaryLibraryKind.STATIC,
+            // Include the generated bridges in the cache when testing with caches for user libraries.
+            produceStaticCache = ProduceStaticCache.decideForRegularKlib(testRunSettings),
         ).result.assertSuccess().resultingArtifact
         val testPathFull = getAbsoluteFile(testDir)
 

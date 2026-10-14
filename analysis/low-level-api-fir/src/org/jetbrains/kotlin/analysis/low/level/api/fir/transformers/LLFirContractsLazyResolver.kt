@@ -87,7 +87,6 @@ private class LLFirContractsTargetResolver(target: LLFirResolveTarget) : LLFirAb
             is FirScript,
             is FirCodeFragment,
             is FirDanglingModifierList,
-            is FirReplSnippet,
                 -> {
                 // No contracts here
                 check(target !is FirContractDescriptionOwner) {

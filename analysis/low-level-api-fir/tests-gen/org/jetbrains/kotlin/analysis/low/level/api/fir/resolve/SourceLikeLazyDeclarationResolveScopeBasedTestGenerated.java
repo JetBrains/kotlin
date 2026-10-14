@@ -208,6 +208,12 @@ public class SourceLikeLazyDeclarationResolveScopeBasedTestGenerated extends Abs
   }
 
   @Test
+  @TestMetadata("javaClassScopeWithoutRequiredPhase.kt")
+  public void testJavaClassScopeWithoutRequiredPhase() {
+    run("javaClassScopeWithoutRequiredPhase.kt");
+  }
+
+  @Test
   @TestMetadata("localClass.kt")
   public void testLocalClass() {
     run("localClass.kt");

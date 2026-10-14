@@ -34,7 +34,6 @@ import kotlin.reflect.*
 import kotlin.reflect.full.createType
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.functions
-import kotlin.reflect.full.isSubtypeOf
 import kotlin.reflect.jvm.internal.types.FlexibleKType
 import kotlin.reflect.jvm.internal.types.SimpleKType
 import kotlin.reflect.jvm.internal.types.allTypeParameters
@@ -59,27 +58,26 @@ internal fun Type.toKType(
             if (isArray) {
                 val argumentType =
                     if (componentType.isPrimitive) null
-                    else componentType.toKTypeProjection(knownTypeParameters, isForAnnotationParameter)
+                    else componentType.toKTypeProjection(knownTypeParameters, isForAnnotationParameter, KVariance.INVARIANT)
                 return createJavaSimpleType(this, kotlin, listOfNotNull(argumentType), isMarkedNullable = false)
                     .toFlexibleArrayType(this, nullability, isForAnnotationParameter)
             }
             createJavaSimpleType(this, kotlin, allTypeParameters().map { KTypeProjection.STAR }, isMarkedNullable = false)
         }
         is GenericArrayType -> {
-            val componentType = genericComponentType.toKTypeProjection(knownTypeParameters, isForAnnotationParameter)
+            val componentType = genericComponentType.toKTypeProjection(knownTypeParameters, isForAnnotationParameter, KVariance.INVARIANT)
             val componentClass = componentType.type!!.jvmErasure.java.createArrayType().kotlin
             return createJavaSimpleType(this, componentClass, listOf(componentType), isMarkedNullable = false)
                 .toFlexibleArrayType(this, nullability, isForAnnotationParameter)
         }
-        is ParameterizedType -> createJavaSimpleType(
-            this,
-            (rawType as Class<*>).convertJavaClass(isForAnnotationParameter),
-            if (replaceNonArrayArgumentsWithStarProjections)
-                collectAllArguments().map { KTypeProjection.STAR }
-            else
-                collectAllArguments().map { it.toKTypeProjection(knownTypeParameters, isForAnnotationParameter) },
-            isMarkedNullable = false,
-        )
+        is ParameterizedType -> {
+            val kClass = (rawType as Class<*>).convertJavaClass(isForAnnotationParameter)
+            createJavaSimpleType(
+                this, kClass,
+                computeArguments(kClass, knownTypeParameters, isForAnnotationParameter, replaceNonArrayArgumentsWithStarProjections),
+                isMarkedNullable = false,
+            )
+        }
         is TypeVariable<*> ->
             createJavaSimpleType(this, findKTypeParameterInContainer(knownTypeParameters), emptyList(), isMarkedNullable = false)
         is WildcardType -> throw KotlinReflectionInternalError("Wildcard type is not possible here: $this")
@@ -90,7 +88,13 @@ internal fun Type.toKType(
 
     // We cannot read `@kotlin.annotations.jvm.Mutable/ReadOnly` annotations in kotlin-reflect because they have CLASS retention.
     // Therefore, collection types in Java are considered mutability-flexible by default. The few exceptions are listed a bit below.
-    val mutableType = base.createMutableCollectionType(this)
+    val mutableType = base.createMutableCollectionType(this) { mutableCollectionClass ->
+        if (this is ParameterizedType) {
+            computeArguments(
+                mutableCollectionClass, knownTypeParameters, isForAnnotationParameter, replaceNonArrayArgumentsWithStarProjections,
+            )
+        } else base.arguments
+    }
 
     // Java collection type is loaded as mutable (as opposed to mutability-flexible) in the following cases:
     // 1) If it's the top-level type in the supertype position.
@@ -150,6 +154,7 @@ private fun createRawJavaType(
     jClass: Class<*>, knownTypeParameters: Map<TypeVariable<*>, KTypeParameter>, isForAnnotationParameter: Boolean,
 ): KType {
     val kClass = jClass.convertJavaClass(isForAnnotationParameter)
+    val kotlinTypeParameters = if (kClass is KClassImpl<*> && kClass.kmClass != null) kClass.allTypeParameters() else null
     val lowerBound = createJavaSimpleType(
         jClass, kClass,
         jClass.allTypeParameters().mapIndexed { index, typeParameter ->
@@ -158,17 +163,17 @@ private fun createRawJavaType(
             // to translate the bound's own type parameters because it will lead to stack overflow in cases like `class A<T extends A>`.
             // Since a type parameter's upper bound may be another type parameter, we need to unwrap it until we end up with anything
             // but the type parameter (`Class` or `ParameterizedType`).
-            // For mapped built-in classes (e.g. Kotlin collections), we also need to take into account the nullability of the corresponding
-            // Kotlin type parameter. For normal classes, this type is always flexible.
+            // For Kotlin classes, the nullability of the argument is the nullability of the erased upper bound of the corresponding
+            // type parameter. For Java classes, this type is always flexible.
             // Note that this is still not exactly how the compiler translates raw types
             // (see `JavaClassifierType.toConeKotlinTypeForFlexibleBound` in K2, or `JavaTypeResolver.computeRawTypeArguments` in K1),
             // but it's a good enough approximation.
             val upperBound = generateSequence(typeParameter) { it.bounds.first() as? TypeVariable<*> }.last().bounds.first()
+            val kotlinTypeParameter = kotlinTypeParameters?.getOrNull(index)
             val nullability = when {
                 isForAnnotationParameter -> TypeNullability.NOT_NULL
-                kClass.isMappedBuiltin ->
-                    if (kClass.allTypeParameters()[index].createType().isSubtypeOf(StandardKTypes.ANY)) TypeNullability.NOT_NULL
-                    else TypeNullability.NULLABLE
+                kotlinTypeParameter != null ->
+                    if (kotlinTypeParameter.erasedUpperBound.isMarkedNullable) TypeNullability.NULLABLE else TypeNullability.NOT_NULL
                 else -> TypeNullability.FLEXIBLE
             }
             KTypeProjection.invariant(
@@ -176,8 +181,8 @@ private fun createRawJavaType(
             )
         },
         isMarkedNullable = false,
-    ).let {
-        it.createMutableCollectionType(jClass) ?: it
+    ).let { type ->
+        type.createMutableCollectionType(jClass) { type.arguments } ?: type
     }
     val upperBound = createJavaSimpleType(
         jClass, kClass, jClass.allTypeParameters().map { KTypeProjection.STAR }, isMarkedNullable = true,
@@ -188,10 +193,17 @@ private fun createRawJavaType(
 internal val KClass<*>.isMappedBuiltin: Boolean
     get() = qualifiedName.let { it != null && java.canonicalName != it && it.startsWith("kotlin") }
 
-private fun SimpleKType.createMutableCollectionType(javaType: Type): SimpleKType? {
+// See `TypeParameterUpperBoundEraser` in K1, and `FirTypeParameter.eraseToUpperBound` in K2.
+private val KTypeParameter.erasedUpperBound: KType
+    get() = generateSequence(upperBounds.first()) { (it.classifier as? KTypeParameter)?.upperBounds?.first() }.last()
+
+private fun SimpleKType.createMutableCollectionType(
+    javaType: Type,
+    computeArguments: (mutableCollectionClass: KClass<*>) -> List<KTypeProjection>,
+): SimpleKType? {
     val klass = classifier as? KClass<*> ?: return null
     val mutableCollectionClass = getMutableCollectionKClass(klass) ?: return null
-    return createJavaSimpleType(javaType, classifier, arguments, isMarkedNullable, mutableCollectionClass)
+    return createJavaSimpleType(javaType, classifier, computeArguments(mutableCollectionClass), isMarkedNullable, mutableCollectionClass)
 }
 
 private fun Class<*>.convertJavaClass(isForAnnotationParameter: Boolean): KClass<*> =
@@ -203,11 +215,28 @@ internal fun Class<*>.allTypeParameters(): List<TypeVariable<*>> =
         if (!Modifier.isStatic(it.modifiers)) it.declaringClass else null
     }.flatMap { it.typeParameters.asSequence() }.toList()
 
-private fun ParameterizedType.collectAllArguments(): List<Type> =
-    generateSequence(this) { it.ownerType as? ParameterizedType }.flatMap { it.actualTypeArguments.toList() }.toList()
+private fun ParameterizedType.computeArguments(
+    kClass: KClass<*>,
+    knownTypeParameters: Map<TypeVariable<*>, KTypeParameter>,
+    isForAnnotationParameter: Boolean,
+    replaceNonArrayArgumentsWithStarProjections: Boolean,
+): List<KTypeProjection> {
+    val javaArguments = generateSequence(this) { it.ownerType as? ParameterizedType }.flatMap { it.actualTypeArguments.toList() }.toList()
+    if (replaceNonArrayArgumentsWithStarProjections) return javaArguments.map { KTypeProjection.STAR }
 
+    // Type parameters of Java classes never have declaration-site variance. Also, loading type parameters of Java classes here would result
+    // in infinite recursion in cases like `class A<T extends A<T>>`.
+    val variances = if (kClass is KClassImpl<*> && kClass.kmClass == null) null else kClass.allTypeParameters().map { it.variance }
+    return javaArguments.mapIndexed { index, javaArgument ->
+        javaArgument.toKTypeProjection(knownTypeParameters, isForAnnotationParameter, variances?.getOrNull(index) ?: KVariance.INVARIANT)
+    }
+}
+
+// See `JavaTypeResolver.transformToTypeProjection`.
 private fun Type.toKTypeProjection(
-    knownTypeParameters: Map<TypeVariable<*>, KTypeParameter>, isForAnnotationParameter: Boolean,
+    knownTypeParameters: Map<TypeVariable<*>, KTypeParameter>,
+    isForAnnotationParameter: Boolean,
+    declarationSiteVariance: KVariance,
 ): KTypeProjection {
     if (this !is WildcardType) {
         return KTypeProjection.invariant(toKType(knownTypeParameters, isForAnnotationParameter = isForAnnotationParameter))
@@ -218,18 +247,18 @@ private fun Type.toKTypeProjection(
     if (upperBounds.size > 1 || lowerBounds.size > 1) {
         throw KotlinReflectionInternalError("Wildcard types with many bounds are not supported: $this")
     }
-    return when {
-        lowerBounds.size == 1 -> KTypeProjection.contravariant(
-            lowerBounds.single().toKType(knownTypeParameters, isForAnnotationParameter = isForAnnotationParameter)
-        )
-        upperBounds.size == 1 -> upperBounds.single().let {
-            if (it == Any::class.java) KTypeProjection.STAR
-            else KTypeProjection.covariant(
-                upperBounds.single().toKType(knownTypeParameters, isForAnnotationParameter = isForAnnotationParameter)
-            )
-        }
-        else -> KTypeProjection.STAR
+    val bound = when {
+        lowerBounds.size == 1 -> lowerBounds.single()
+        upperBounds.size == 1 && upperBounds.single() != Any::class.java -> upperBounds.single()
+        else -> return KTypeProjection.STAR
     }
+    val javaVariance = if (lowerBounds.size == 1) KVariance.IN else KVariance.OUT
+    val useSiteVariance = when (declarationSiteVariance) {
+        KVariance.INVARIANT -> javaVariance
+        javaVariance -> KVariance.INVARIANT
+        else -> return KTypeProjection.STAR
+    }
+    return KTypeProjection(useSiteVariance, bound.toKType(knownTypeParameters, isForAnnotationParameter = isForAnnotationParameter))
 }
 
 private val TypeVariable<*>.kotlinContainer: KTypeParameterOwnerImpl
@@ -263,7 +292,7 @@ private fun TypeVariable<*>.findKTypeParameterInContainer(knownTypeParameters: M
 
 internal fun Array<out TypeVariable<*>>.toKTypeParameters(container: KTypeParameterOwnerImpl): List<KTypeParameter> {
     val kTypeParameters = this.associateWith {
-        val unbound = (container as? ReflectKCallable<*>)?.unbindAllReceivers() ?: container
+        val unbound = (container as? ReflectKCallable<*>)?.unbind() ?: container
         KTypeParameterImpl(unbound, it.name, KVariance.INVARIANT, isReified = false)
     }
     for ((typeVariable, kTypeParameter) in kTypeParameters) {
@@ -288,10 +317,14 @@ private fun SimpleKType.toFlexibleArrayType(
         computeJavaType = lazyOf(javaType),
     ) as FlexibleKType
 
-private fun Type.argumentsMakeSenseOnlyForMutableContainer(mutableType: SimpleKType?): Boolean =
-    this is ParameterizedType && actualTypeArguments.lastOrNull().let {
-        it is WildcardType && it.lowerBounds.size == 1
-    } && mutableType != null && (mutableType.classifier as KClass<*>).typeParameters.last().variance == KVariance.OUT
+// See `argumentsMakeSenseOnlyForMutableContainer` in the compiler.
+private fun Type.argumentsMakeSenseOnlyForMutableContainer(mutableType: SimpleKType?): Boolean {
+    if (this !is ParameterizedType) return false
+    val lastArgument = actualTypeArguments.lastOrNull()
+    if (lastArgument !is WildcardType || lastArgument.lowerBounds.size != 1) return false
+    val mutableLastParameterVariance = mutableType?.mutableCollectionClass?.typeParameters?.lastOrNull()?.variance ?: return false
+    return mutableLastParameterVariance != KVariance.OUT
+}
 
 internal fun Int.computeVisibilityForJavaModifiers(): KVisibility? = when {
     Modifier.isPublic(this) -> KVisibility.PUBLIC
@@ -337,7 +370,7 @@ internal fun getPurelyImplementedSupertype(kClass: KClassImpl<*>): KType? {
     }
 
     val result = createJavaSimpleType(superClass, superClass.kotlin, typeArguments, isMarkedNullable = false)
-    return result.createMutableCollectionType(superClass) ?: result
+    return result.createMutableCollectionType(superClass) { result.arguments } ?: result
 }
 
 // Based on `OperatorFunctionChecks` from the compiler.

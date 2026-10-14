@@ -5,7 +5,40 @@ and instructing it to check the changed files against rules defined in `code-rul
 
 ## Requirements for running locally
 
-Install Claude Code CLI and log in: https://code.claude.com/docs/en/quickstart.
+Install Claude Code CLI: https://code.claude.com/docs/en/quickstart.
+
+The tool runs Claude Code in [bare mode](#operation), which supports only API authentication.
+Logging in with a Claude subscription is not supported.
+The authentication can be provided in one of the following ways.
+
+### JetBrains Central CLI
+
+[JetBrains Central CLI](https://www.jetbrains.com/help/central-cli/quickstart.html) provides access to Claude
+with a JetBrains AI subscription. Install it and log in with `central login`.
+Then choose one of the two ways to [use it with Claude Code](https://www.jetbrains.com/help/central-cli/cli-agents.html):
+
+* Connect Claude Code to JetBrains Central permanently with `central add claude`.
+  This sets `apiKeyHelper` and `ANTHROPIC_BASE_URL` in `~/.claude/settings.json`, which the tool picks up,
+  so no additional configuration is needed.
+* Make the tool run Claude Code through JetBrains Central, like `central run claude -- ...`.
+  This doesn't change the Claude Code configuration, so it is preferable when you want to keep using Claude Code
+  in a different way otherwise, e.g. with a Claude subscription.
+  To enable it, set the `kotlin.autoCodeReview.useJetBrainsCentralCLI` Gradle property to the `central` binary
+  in `local.properties` in the repository root or in `~/.gradle/gradle.properties`:
+
+  ```properties
+  kotlin.autoCodeReview.useJetBrainsCentralCLI=central
+  ```
+
+  Use the full path to the binary if it isn't in `PATH`.
+
+### API key
+
+To use this authentication method, make sure that one of the following is defined:
+
+* `ANTHROPIC_API_KEY` or `ANTHROPIC_AUTH_TOKEN`, as an environment variable
+  or in the `env` section of `~/.claude/settings.json`;
+* `apiKeyHelper` in `~/.claude/settings.json`.
 
 ## Run locally
 
@@ -27,6 +60,21 @@ The report includes rule violations (if any) and some meta-information.
 If you run the tool from IntelliJ IDEA, the printed report link is clickable and opens the report in the IDE.
 Viewing the report in IntelliJ IDEA with Markdown preview enabled is the intended way of reading it:
 all the links to code and code rules are clickable and open the destinations in the IDE.
+
+## Run for a GitHub PR
+
+JetBrains employees can run the tool for a GitHub pull request
+by posting a comment with the text `/review` in the pull request.
+At the moment this is only supported for pull requests authored by JetBrains employees.
+
+If the requirements are met and the review is started, the comment gets a 🚀 reaction,
+and the response is posted to the PR after the review is finished.
+
+> [!NOTE]
+> The review might take 15 minutes or more.
+> If the response doesn't arrive, you can check the status manually in
+> [the build configuration](https://kotlinlang.teamcity.com/buildConfiguration/Kotlin_KotlinCloud_Dev_AutoCodeReview).
+> Look for builds for the PR branch — `refs/pull/<number>/head`.
 
 ## Run on CI
 
@@ -56,7 +104,7 @@ As a side effect, this approach also allows estimating the API costs for each ru
 
 Rules are organized in special Markdown files named `code-rules.md`.
 
-Some sanity checks for all the `code-fules.md` files in the repository are implemented as tests in
+Some sanity checks for all the `code-rules.md` files in the repository are implemented as tests in
 [RepoCodeRulesTests](test/org/jetbrains/kotlin/code/review/RepoCodeRulesTests.kt).
 For example, those tests check that all rule files can be parsed successfully, all includes refer to existing files,
 and every rule applies to at least one file.
@@ -68,25 +116,27 @@ When updating rule files, it is reasonable to run those tests. The tests are als
 `code-rules.md` files work akin to `.gitignore` files: each `code-rules.md` covers files inside its directory.
 
 Here is an example of the file:
-```markdown
+````markdown
 @../foo/code-rules.md
 
 @/bar/baz.md
 
 # Rule 1 Name
 
-Pattern: *.kt
-
-Pattern: !test
+Applies to:
+```
+*.kt
+!test
+```
 
 Rule 1 description
 
 # Rule 2 Name
 
-Pattern: test
+Applies to: `test`
 
 Rule 2 Description
-```
+````
 
 ### Include directives
 
@@ -95,37 +145,83 @@ So, at the beginning of the file, there are optional include directives that sta
 * `@../foo/code-rules.md` uses relative path, so the path is resolved as a relative path from the directory the current file is in.
 * `@/bar/baz.md` uses "absolute" path, which is in fact resolved as relative from the root of the repository.
 
-The include directive includes the rules defined in the included file and also all same-named files in its enclosing directories.
+The include directive includes the rules defined in the included file,
+as if they were defined in the including file:
+the rules apply to files in the including file directory (and its subdirectories),
+and their patterns are relative to that directory (see [File patterns](#file-patterns)).
+Note that the file name in the include directive is not required to be `code-rules.md`.
 
-Note that the file name in the include directive is not required to be `code-rules.md`. So, including `@/foo/bar/baz.md`
-adds rules from `$repo/foo/bar/baz.md`, `$repo/foo/baz.md` and `$repo/baz.md`.
+Only the included file itself is included, the rule files in its enclosing directories aren't included automatically.
+For example, including `@/foo/bar/code-rules.md` doesn't include `/foo/code-rules.md`.
 
 The includes are transitive.
 
 ### File patterns
 
-Apart from name and description, each rule can have optional file patterns.
+Apart from name and description, each rule must have file patterns.
 Only files matching those patterns will be checked.
-The pattern syntax follows [`.gitignore` syntax](https://git-scm.com/docs/gitignore).
-But don't be confused: the patterns in code rules files list which files are checked and not which files are ignored.
 
-To include or exclude a file, it is enough to have a single matching pattern.
-An exclusion pattern can be defined using `!`. In other words,
+The patterns are defined with the mandatory `Applies to:` directive right after the rule name.
+A single pattern can be put on the same line, in backticks:
 
 ```markdown
-Pattern: *.kt
-
-Pattern: !test
+Applies to: `test`
 ```
 
-means that the rule applies to all Kotlin files except those inside directories named `test`.
-The matching process starts from the last pattern and goes backwards, just like in `.gitignore`.
+Any number of patterns can be put into a code block right after the directive, one pattern per line:
 
-When deciding whether a rule applies to a file, the tool checks two paths against the patterns:
-* If the file is inside the rule file directory, the relative path from that directory to the file is checked.
-  This follows the `.gitignore` convention.
-* Also, a relative path from the repo root is always checked against the same patterns.
-  This allows using patterns with includes: in such a case, some covered files can be outside the rule directory,
-  and we need a way to use patterns for them.
+````markdown
+Applies to:
+```
+*.kt
+!test
+```
+````
 
-For a file to be covered by the rule, it is enough that at least one of those paths matches the patterns.
+The pattern syntax follows [`.gitignore` syntax](https://git-scm.com/docs/gitignore),
+and the patterns are relative to the directory of the `code-rules.md` file.
+But don't be confused: the patterns in code rules files list which files are checked and not which files are ignored.
+
+There are two kinds of patterns:
+
+| Kind       | Examples                                  | Matches                                                |
+|------------|-------------------------------------------|--------------------------------------------------------|
+| Unanchored | `*.kt`, `test`, `test/`, `**/src/**/*.kt` | Paths at any depth                                     |
+| Anchored   | `/build.gradle.kts`, `src/main`, `src/**` | Paths relative to the directory of the `code-rules.md` |
+
+A pattern is unanchored if it has no `/` except a trailing one, or if it starts with `**/`.
+A pattern matching a directory also matches all files inside it.
+
+An exclusion pattern can be defined using `!`.
+Exclusion patterns must go after all other patterns.
+A rule applies to a file if the file matches at least one of the regular patterns and none of the exclusion patterns.
+For example, the patterns 
+
+````markdown
+Applies to:
+```
+*.kt
+!test
+```
+````
+
+mean that the rule applies to all Kotlin files except those inside directories named `test`.
+
+To make a rule apply to all files, use ``Applies to: `*` ``.
+
+### Patterns in included rules
+
+The patterns of included rules are relative to the directory of the including file, not of the included one.
+So, if a rule is included from another directory, its anchored patterns would have a different meaning there.
+To avoid confusion, such rules can have only unanchored patterns, and the tool reports anchored patterns as errors.
+
+For example, if `/foo/code-rules.md` includes `@/bar/code-rules.md`, which has a rule that applies to `src`,
+the rule applies to files inside `src` directories in both `/bar` and `/foo`.
+
+As the includes are transitive, the same holds for the rules included indirectly:
+their patterns are relative to the directory of the `code-rules.md` that includes them, directly or not.
+So, if `/bar/code-rules.md` also includes `@/baz/shared.md`, the rules from `/baz/shared.md` apply to files in `/foo`,
+with the patterns relative to `/foo`, and to files in `/bar`, with the patterns relative to `/bar`.
+
+Including a rule file located in the same directory as the `code-rules.md` (e.g. with `@more-rules.md`)
+doesn't prohibit anchored patterns in the included file (`more-rules.md`).

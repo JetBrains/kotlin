@@ -1,5 +1,9 @@
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
+
+// Same-named files confuse AndroidTestGenerator.
+// IGNORE_BACKEND: ANDROID
+
 // FILE: 1/part.kt
 
 @file:JvmName("Foo")

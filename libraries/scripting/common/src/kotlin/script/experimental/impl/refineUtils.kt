@@ -23,10 +23,10 @@ fun ScriptCompilationConfiguration.refineOnAnnotationsWithLazyDataCollection(
         // deprecated legacy templates used unconditional refinement, so we need to call the handler, even if there are no annotations found
         @Suppress("DEPRECATION")
         val isFromLegacy = this[ScriptCompilationConfiguration.fromLegacyTemplate] ?: false
-        if (foundAnnotationNames.isEmpty() && !isFromLegacy) return this.asSuccess()
+        if (foundAnnotationNames.isEmpty() && !isFromLegacy) return@onSuccess this.asSuccess()
 
         val thisResult: ResultWithDiagnostics<ScriptCompilationConfiguration> = this.asSuccess()
-        return refineDataList.fold(thisResult) { currentResult, (annotations, handler) ->
+        refineDataList.fold(thisResult) { currentResult, (annotations, handler) ->
             currentResult.onSuccess { configuration ->
                 // checking that the collected data contains expected annotations
                 if (annotations.none { foundAnnotationNames.contains(it.typeName) } && !isFromLegacy) configuration.asSuccess()

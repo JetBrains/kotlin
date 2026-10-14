@@ -14,9 +14,11 @@ dependencies {
 
     compileOnly(intellijCore())
     compileOnly(libs.intellij.asm)
+    implementation(project(":compiler:frontend.common"))
     implementation(project(":compiler:frontend.common.jvm"))
     implementation(project(":compiler:plugin-api"))
-    implementation(project(":compiler:cli"))
+    implementation(project(":compiler:fir:resolve"))
+    implementation(project(":compiler:fir:fir-jvm"))
     implementation(project(":compiler:multiplatform-parsing"))
 
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
@@ -42,10 +44,7 @@ optInToExperimentalCompilerApi()
 
 projectTests {
     testTask(
-        javaLauncher = JdkMajorVersion.JDK_1_8,
         maxHeapSize = testMaxHeapSizeLarge,
-        // Use Parallel GC because this test runs on JDK 8.
-        garbageCollector = GarbageCollector.Parallel,
         defineJDKEnvVariables = listOf(
             JdkMajorVersion.JDK_1_8,
             JdkMajorVersion.JDK_11_0,
@@ -61,7 +60,6 @@ projectTests {
     testData(project(":compiler").isolated, "testData/loadJava")
 
     withJvmStdlibAndReflect()
-    withScriptRuntime()
     withMockJdkAnnotationsJar()
     withMockJDKModifiedRuntime()
     withTestJar()

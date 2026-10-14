@@ -270,7 +270,7 @@ class Candidate(
         }
     }
 
-    fun setUpdatedArgumentFromContextSensitiveResolution(old: FirPropertyAccessExpression, new: FirExpression) {
+    fun setUpdatedArgumentFromContextSensitiveResolution(old: FirExpression, new: FirExpression) {
         setUpdatedArgument(old, new)
     }
 

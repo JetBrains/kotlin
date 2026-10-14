@@ -97,15 +97,15 @@ public fun FunctionalInterfaceWithSuspendFunction_emit(self: kotlin.native.inter
 
 @ExportedBridge("__root___Foo_init_allocate")
 public fun __root___Foo_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<Foo>() }
+    val _result = kotlin.native.internal.createUninitializedInstance<Foo>()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
 public fun __root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val _result = run { kotlin.native.internal.initInstance(____kt, Foo()) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, Foo())
+    return true
 }
 
 @ExportedBridge("__root___FunctionalInterfaceWithSuspendFunction__TypesOfArguments__U282920asyncU20throwsU202D_U20Swift_Void__")
@@ -123,7 +123,7 @@ public fun __root___FunctionalInterfaceWithSuspendFunction__TypesOfArguments__U2
             }
         }
     }
-    val _result = run { FunctionalInterfaceWithSuspendFunction(__function) }
+    val _result = FunctionalInterfaceWithSuspendFunction(__function)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -142,8 +142,8 @@ public fun __root___accept_suspend_function_type__TypesOfArguments__U282920async
             }
         }
     }
-    val _result = run { accept_suspend_function_type(__block) }
-    return run { _result; true }
+    accept_suspend_function_type(__block)
+    return true
 }
 
 @ExportedBridge("__root___alwaysFails")
@@ -183,56 +183,56 @@ public fun __root___closure_returning_flow__TypesOfArguments__U28anyU20KotlinCor
             run<Unit> { _result }
         }
     }
-    val _result = run { closure_returning_flow(__i) }
-    return run { _result; true }
+    closure_returning_flow(__i)
+    return true
 }
 
 @ExportedBridge("__root___consume_flow__TypesOfArguments__anyU20KotlinCoroutineSupport_KotlinTypedFlow_main_Foo___")
 public fun __root___consume_flow__TypesOfArguments__anyU20KotlinCoroutineSupport_KotlinTypedFlow_main_Foo___(flow: kotlin.native.internal.NativePtr): Boolean {
     val __flow = kotlin.native.internal.ref.dereferenceExternalRCRef(flow) as kotlinx.coroutines.flow.Flow<Foo>
-    val _result = run { consume_flow(__flow) }
-    return run { _result; true }
+    consume_flow(__flow)
+    return true
 }
 
 @ExportedBridge("__root___demo")
 public fun __root___demo(): kotlin.native.internal.NativePtr {
-    val _result = run { demo() }
+    val _result = demo()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___flowFoo_get")
 public fun __root___flowFoo_get(): kotlin.native.internal.NativePtr {
-    val _result = run { flowFoo }
+    val _result = flowFoo
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___flowOfNullableUnit")
 public fun __root___flowOfNullableUnit(): kotlin.native.internal.NativePtr {
-    val _result = run { flowOfNullableUnit() }
+    val _result = flowOfNullableUnit()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___flowOfUnit")
 public fun __root___flowOfUnit(): kotlin.native.internal.NativePtr {
-    val _result = run { flowOfUnit() }
+    val _result = flowOfUnit()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___mutableStateFlowOfUnit")
 public fun __root___mutableStateFlowOfUnit(): kotlin.native.internal.NativePtr {
-    val _result = run { mutableStateFlowOfUnit() }
+    val _result = mutableStateFlowOfUnit()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___produce_flow")
 public fun __root___produce_flow(): kotlin.native.internal.NativePtr {
-    val _result = run { produce_flow() }
+    val _result = produce_flow()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___produce_function")
 public fun __root___produce_function(): kotlin.native.internal.NativePtr {
-    val _result = run { produce_function() }
+    val _result = produce_function()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -368,7 +368,7 @@ public fun __root___returnSuspendGeneric(continuation: kotlin.native.internal.Na
 
 @ExportedBridge("__root___returnSuspendUnit")
 public fun __root___returnSuspendUnit(): kotlin.native.internal.NativePtr {
-    val _result = run { returnSuspendUnit() }
+    val _result = returnSuspendUnit()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -454,7 +454,7 @@ public fun __root___returnsListOfSuspendNullables(continuation: kotlin.native.in
 public fun main_internal_functional_type_caller_SwiftU2EInt32__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Float__(pointerToBlock: kotlin.native.internal.NativePtr, _1: Float): Int {
     val __pointerToBlock = kotlin.native.internal.ref.dereferenceExternalRCRef(pointerToBlock)!!
     val ___1 = _1
-    val _result = run { (__pointerToBlock as Function1<Float, Int>).invoke(___1) }
+    val _result = (__pointerToBlock as Function1<Float, Int>).invoke(___1)
     return _result
 }
 
@@ -462,24 +462,24 @@ public fun main_internal_functional_type_caller_SwiftU2EInt32__TypesOfArguments_
 public fun main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(pointerToBlock: kotlin.native.internal.NativePtr, _1: Int): Boolean {
     val __pointerToBlock = kotlin.native.internal.ref.dereferenceExternalRCRef(pointerToBlock)!!
     val ___1 = _1
-    val _result = run { (__pointerToBlock as Function1<Int, Unit>).invoke(___1) }
-    return run { _result; true }
+    (__pointerToBlock as Function1<Int, Unit>).invoke(___1)
+    return true
 }
 
 @ExportedBridge("main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___")
 public fun main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock: kotlin.native.internal.NativePtr, _1: kotlin.native.internal.NativePtr): Boolean {
     val __pointerToBlock = kotlin.native.internal.ref.dereferenceExternalRCRef(pointerToBlock)!!
     val ___1 = if (_1 == kotlin.native.internal.NativePtr.NULL) null else throwableFromReverseBridge(_1)
-    val _result = run { (__pointerToBlock as Function1<kotlin.Throwable?, Unit>).invoke(___1) }
-    return run { _result; true }
+    (__pointerToBlock as Function1<kotlin.Throwable?, Unit>).invoke(___1)
+    return true
 }
 
 @ExportedBridge("main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Void__")
 public fun main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Void__(pointerToBlock: kotlin.native.internal.NativePtr, _1: Boolean): Boolean {
     val __pointerToBlock = kotlin.native.internal.ref.dereferenceExternalRCRef(pointerToBlock)!!
     val ___1 = run<Unit> { _1 }
-    val _result = run { (__pointerToBlock as Function1<Unit, Unit>).invoke(___1) }
-    return run { _result; true }
+    (__pointerToBlock as Function1<Unit, Unit>).invoke(___1)
+    return true
 }
 
 @ExportedBridge("main_internal_functional_type_caller_async_SwiftU2EInt32__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__")

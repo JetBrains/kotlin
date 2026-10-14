@@ -5,11 +5,14 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.test.projectStructure
 
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.platform.modification.publishGlobalModuleStateModificationEvent
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode
 import org.jetbrains.kotlin.analysis.api.projectStructure.isStable
 import org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulSymbol
 import org.jetbrains.kotlin.analysis.api.session.analyze
+import org.jetbrains.kotlin.analysis.api.session.analyzeCopy
 import org.jetbrains.kotlin.analysis.api.session.canBeAnalysed
 import org.jetbrains.kotlin.analysis.api.session.useSiteModule
 import org.jetbrains.kotlin.analysis.api.symbols.symbol
@@ -214,5 +217,58 @@ class AnalysisApiDanglingFilesTest : AbstractAnalysisApiExecutionTest("testData/
                 assertions.assertEquals(builtinTypes.int, method.symbol.returnType)
             }
         }
+    }
+
+    /**
+     * An in-memory file copy created by [KtPsiFactory] has no [virtualFile][com.intellij.psi.PsiFile.getVirtualFile]. It should still be
+     * analyzable in the [PREFER_SELF][KaDanglingFileResolutionMode.PREFER_SELF] mode, both when the mode is set explicitly and when it is
+     * calculated automatically, with the copy's own declarations taking precedence over the original ones (see KT-68102).
+     */
+    @Test
+    fun inMemoryFileCopyPreferSelf(mainFile: KtFile, testServices: TestServices) {
+        val assertions = testServices.assertions
+
+        // Changing the inferred return type of `method` is an out-of-block modification.
+        val copyText = mainFile.text.replace("fun method() = 5", "fun method() = \"five\"")
+        val fileCopy = KtPsiFactory.contextual(mainFile).createFile("copy.kt", copyText)
+        fileCopy.originalFile = mainFile
+        assertions.assertTrue(fileCopy.virtualFile == null) { "Expected an in-memory file copy without a virtual file." }
+
+        analyzeCopy(fileCopy, KaDanglingFileResolutionMode.PREFER_SELF) {
+            checkInMemoryFileCopyPreferSelf(fileCopy, testServices)
+        }
+
+        analyze(fileCopy) {
+            checkInMemoryFileCopyPreferSelf(fileCopy, testServices)
+        }
+    }
+
+    context(_: KaSession)
+    private fun checkInMemoryFileCopyPreferSelf(fileCopy: KtFile, testServices: TestServices) {
+        val assertions = testServices.assertions
+
+        val useSiteModule = useSiteModule as? KaDanglingFileModule
+            ?: error("Expected the use-site module to be a dangling file module")
+
+        assertions.assertEquals(KaDanglingFileResolutionMode.PREFER_SELF, useSiteModule.resolutionMode)
+        assertions.assertEquals(listOf(fileCopy), useSiteModule.files)
+
+        val simpleClass = fileCopy.declarations.single() as KtClass
+        val method = simpleClass.declarations.first() as KtNamedFunction
+        assertions.assertEquals("method", method.name)
+
+        val usage = simpleClass.declarations.last() as KtNamedFunction
+        assertions.assertEquals("usage", usage.name)
+
+        val call = usage.bodyExpression as KtCallExpression
+
+        assertions.assertTrue(fileCopy.canBeAnalysed())
+        assertions.assertTrue(simpleClass.canBeAnalysed())
+        assertions.assertTrue(call.canBeAnalysed())
+
+        // The call should resolve to the declaration from the copy, not from the original file.
+        assertions.assertEquals(method, call.resolveSuccessfulSymbol()?.realPsi)
+        assertions.assertEquals(builtinTypes.string, method.symbol.returnType)
+        assertions.assertEquals(builtinTypes.string, usage.symbol.returnType)
     }
 }

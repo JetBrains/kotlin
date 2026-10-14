@@ -68,11 +68,13 @@ KtSuperTypeList(86,93): 'Base(x)'
   NO_CANDIDATES
 
 KtSuperTypeCallEntry(86,93): 'Base(x)'
-  KaInapplicableCallCandidate:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
-      dispatchReceiver = null
+      dispatchReceiver = KaImplicitReceiverValue:
+        symbol = r/A
+        type = r.A
       extensionReceiver = null
       kind = SUPER_CALL
       signature = KaFunctionSignature:
@@ -100,15 +102,16 @@ KtSuperTypeCallEntry(86,93): 'Base(x)'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<INNER_CLASS_CONSTRUCTOR_NO_RECEIVER: Constructor of the inner class 'inner class Base : Any' can only be called with a receiver of the containing class.>
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(86,90): 'Base'
-  KaInapplicableCallCandidate:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
-      dispatchReceiver = null
+      dispatchReceiver = KaImplicitReceiverValue:
+        symbol = r/A
+        type = r.A
       extensionReceiver = null
       kind = SUPER_CALL
       signature = KaFunctionSignature:
@@ -136,7 +139,6 @@ KtConstructorCalleeExpression(86,90): 'Base'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<INNER_CLASS_CONSTRUCTOR_NO_RECEIVER: Constructor of the inner class 'inner class Base : Any' can only be called with a receiver of the containing class.>
     isInBestCandidates = true
 
 KtTypeReference(86,90): 'Base'
@@ -146,11 +148,13 @@ KtUserType(86,90): 'Base'
   NO_CANDIDATES
 
 KtNameReferenceExpression(86,90): 'Base'
-  KaInapplicableCallCandidate:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
-      dispatchReceiver = null
+      dispatchReceiver = KaImplicitReceiverValue:
+        symbol = r/A
+        type = r.A
       extensionReceiver = null
       kind = SUPER_CALL
       signature = KaFunctionSignature:
@@ -178,7 +182,6 @@ KtNameReferenceExpression(86,90): 'Base'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<INNER_CLASS_CONSTRUCTOR_NO_RECEIVER: Constructor of the inner class 'inner class Base : Any' can only be called with a receiver of the containing class.>
     isInBestCandidates = true
 
 KtValueArgumentList(90,93): '(x)'

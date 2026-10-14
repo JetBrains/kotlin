@@ -141,9 +141,8 @@ object LanguageSettingsDirectives : SimpleDirectivesContainer() {
         additionalParser = JvmDefaultMode.Companion::fromStringOrNull
     )
 
-    val VALHALLA_SUPPORT by enumDirective(
-        description = "Configures corresponding analysis flag (JvmAnalysisFlags.valhallaSupport)",
-        additionalParser = ValhallaSupportMode.Companion::fromStringOrNull
+    val VALHALLA_VALUE_CLASSES by directive(
+        description = "Enables corresponding analysis flag (JvmAnalysisFlags.valhallaValueClasses)"
     )
 
     val JDK_RELEASE by valueDirective(

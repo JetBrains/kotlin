@@ -9,7 +9,10 @@ import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
@@ -17,6 +20,7 @@ import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
+import org.jetbrains.kotlin.ir.overrides.isEffectivelyPrivate
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.js.common.RESERVED_KEYWORDS
@@ -109,6 +113,7 @@ private class MoveExternalInlineFunctionsWithBodiesOutsideLowering(private val c
             origin = originalFunction.origin
             isInline = true
             isExternal = false
+            visibility = parent.effectiveTopLevelVisibility
         }.apply {
             copyFunctionSignatureFrom(originalFunction)
             parameters = nonDispatchParameters
@@ -120,6 +125,14 @@ private class MoveExternalInlineFunctionsWithBodiesOutsideLowering(private val c
             }
         }
     }
+
+    private val IrClass.effectiveTopLevelVisibility: DescriptorVisibility
+        get() = when {
+            isEffectivelyPrivate() -> DescriptorVisibilities.PRIVATE
+            parentsWithSelf.filterIsInstance<IrDeclarationWithVisibility>()
+                .any { it.visibility == DescriptorVisibilities.INTERNAL && !it.isPublishedApi() } -> DescriptorVisibilities.INTERNAL
+            else -> DescriptorVisibilities.PUBLIC
+        }
 
     private fun generateBodyWithTheProxyFunctionCall(originalFunction: IrSimpleFunction, proxyFunction: IrSimpleFunction): IrBlockBody {
         return context.irFactory.createBlockBody(originalFunction.startOffset, originalFunction.endOffset).apply {
@@ -164,7 +177,10 @@ private class MoveExternalInlineFunctionsWithBodiesOutsideLowering(private val c
                     0,
                 ).apply {
                     val proxyFunctionRegularParameters = proxyFunction.parameters.filter { it.kind == IrParameterKind.Regular }
-                    arguments[0] = createValueParametersObject(proxyFunctionRegularParameters).toIrConst(context.irBuiltIns.stringType)
+                    arguments[0] = JsIrBuilder.buildString(
+                        context.irBuiltIns.stringType,
+                        createValueParametersObject(proxyFunctionRegularParameters)
+                    )
                 }
             )
         }
@@ -207,7 +223,7 @@ private class MoveExternalInlineFunctionsWithBodiesOutsideLowering(private val c
                 ).apply {
                     val objectAssignCall =
                         "Object.assign({}, ${selfName.identifier}, ${createValueParametersObject(proxyFunction.parameters.drop(1))})"
-                    arguments[0] = objectAssignCall.toIrConst(context.irBuiltIns.stringType)
+                    arguments[0] = JsIrBuilder.buildString(context.irBuiltIns.stringType, objectAssignCall)
                 }
             )
         }

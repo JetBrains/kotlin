@@ -354,7 +354,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
 
     fun parseExpressionCodeFragment() {
         val marker = mark()
-        expressionParsing.parseExpression()
+        expressionParsing.parseBlockLevelExpression()
 
         checkForUnexpectedSymbols()
 
@@ -1692,7 +1692,8 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
 
         beforeName.drop()
 
-        if (mode.accessorsAllowed) {
+        // Destructuring declarations have no accessors or backing fields, so the following tokens are left to the caller
+        if (mode.accessorsAllowed && !multiDeclaration) {
             // It's only needed for non-local properties, because in local ones:
             // "val a = 1; b" must not be an infix call of b on "val ...;"
 

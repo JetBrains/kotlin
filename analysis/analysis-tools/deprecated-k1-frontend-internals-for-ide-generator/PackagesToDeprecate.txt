@@ -45,7 +45,6 @@ org.jetbrains.kotlin.resolve.lazy.declarations
 org.jetbrains.kotlin.resolve.lazy.descriptors
 org.jetbrains.kotlin.resolve.multiplatform
 org.jetbrains.kotlin.resolve.references
-org.jetbrains.kotlin.resolve.repl
 org.jetbrains.kotlin.resolve.sam
 org.jetbrains.kotlin.resolve.scopes
 org.jetbrains.kotlin.resolve.scopes.optimization

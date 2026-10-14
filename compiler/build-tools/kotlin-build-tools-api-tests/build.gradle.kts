@@ -197,7 +197,7 @@ val businessLogicTestSuits = setOf(
     "testKotlinLogger",
     "testDefaultOptions",
     "testDaemonOptions",
-    "testInternalInputsTracker",
+    "testJps",
     "testAbiValidation",
     "testRestrictedArguments",
     "testArgumentParsingWarnings",
@@ -247,9 +247,7 @@ testing {
                     projectTests {
                         testTask(
                             taskName = testTask.name,
-                            javaLauncher = JdkMajorVersion.JDK_1_8,
                             skipInLocalBuild = false,
-                            garbageCollector = GarbageCollector.Parallel
                         ) {
                             ensureExecutedAgainstExpectedBuildToolsImplVersion(implVersion)
                             systemProperty("kotlin.build-tools-api.log.level", "DEBUG")
@@ -278,7 +276,6 @@ testing {
                     projectTests {
                         testTask(
                             taskName = testTask.name,
-                            javaLauncher = JdkMajorVersion.JDK_17_0,
                             skipInLocalBuild = false,
                             garbageCollector = GarbageCollector.Parallel
                         ) {
@@ -323,9 +320,9 @@ testing {
             }
         }
 
-        named<JvmTestSuite>("testInternalInputsTracker") {
+        named<JvmTestSuite>("testJps") {
             dependencies {
-                implementation(project(":compiler:build-tools:kotlin-build-tools-impl"))
+                implementation(project(":compiler:build-tools:kotlin-build-tools-api-jps"))
             }
         }
 

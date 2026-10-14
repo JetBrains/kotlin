@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.builder
 import com.intellij.testFramework.TestDataPath
 import com.intellij.util.PathUtil
 import org.jetbrains.kotlin.*
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.fir.builder.test.COMPILER_DIAGNOSTICS_TEST_DATA_DIRECTORY
 import org.jetbrains.kotlin.fir.builder.test.toStrippedCompilerDiagnosticsTestDataFiles
 import org.jetbrains.kotlin.fir.session.FirSessionFactoryHelper
@@ -28,7 +29,9 @@ class MultiplatformParsingDistinctSourceElementsTest : AbstractRawFirBuilderTest
      */
     @Test
     fun testTotalKotlin() {
-        val root = File(testDataPath)
+        // Back from /compiler/fir/raw-fir/<module>
+        val path = "$testDataPath/../../../.."
+        val root = File(path)
 
         @OptIn(ObsoleteTestInfrastructure::class)
         val converter = MultiplatformParsing2Fir(
@@ -37,7 +40,7 @@ class MultiplatformParsingDistinctSourceElementsTest : AbstractRawFirBuilderTest
             diagnosticsReporter = null,
         )
 
-        testDataPath.walkRepositoryKotlinFilesWithoutTestData { file ->
+        path.walkRepositoryKotlinFilesWithoutTestData { file ->
             val sourceFile = KtIoFileSourceFile(file)
             val [code, linesMapping] = file.inputStream().reader(Charsets.UTF_8).use {
                 it.readSourceFileWithMapping()
@@ -55,6 +58,7 @@ class MultiplatformParsingDistinctSourceElementsTest : AbstractRawFirBuilderTest
      * This test covers FIR files in their raw state. See `FirDistinctSourceElementsHandler` for the handler that checks already transformed
      * FIR files during compiler frontend tests.
      */
+    @Test
     fun testDiagnosticsTestData() {
         @OptIn(ObsoleteTestInfrastructure::class)
         val converter = MultiplatformParsing2Fir(
@@ -63,7 +67,8 @@ class MultiplatformParsingDistinctSourceElementsTest : AbstractRawFirBuilderTest
             diagnosticsReporter = null,
         )
 
-        COMPILER_DIAGNOSTICS_TEST_DATA_DIRECTORY.walkRepositoryKotlinFilesWithTestData { file ->
+        val absolutePath = ForTestCompileRuntime.transformTestDataPath(COMPILER_DIAGNOSTICS_TEST_DATA_DIRECTORY).path
+        absolutePath.walkRepositoryKotlinFilesWithTestData { file ->
             if (file.isCustomTestData) return@walkRepositoryKotlinFilesWithTestData
 
             file.toStrippedCompilerDiagnosticsTestDataFiles()?.forEach { [filePath, fileText] ->

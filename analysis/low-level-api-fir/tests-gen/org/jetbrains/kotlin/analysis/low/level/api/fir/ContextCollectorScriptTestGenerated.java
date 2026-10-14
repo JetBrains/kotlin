@@ -57,6 +57,20 @@ public class ContextCollectorScriptTestGenerated extends AbstractContextCollecto
   }
 
   @Nested
+  @TestMetadata("analysis/low-level-api-fir/testData/contextCollector/classMembers")
+  @TestDataPath("$PROJECT_ROOT")
+  public class ClassMembers {
+    private void run(String fileName) {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/classMembers/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInClassMembers() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/contextCollector/classMembers"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/low-level-api-fir/testData/contextCollector/codeFragments")
   @TestDataPath("$PROJECT_ROOT")
   public class CodeFragments {
@@ -127,70 +141,40 @@ public class ContextCollectorScriptTestGenerated extends AbstractContextCollecto
   }
 
   @Nested
-  @TestMetadata("analysis/low-level-api-fir/testData/contextCollector/repl")
+  @TestMetadata("analysis/low-level-api-fir/testData/contextCollector/fileMembers")
   @TestDataPath("$PROJECT_ROOT")
-  public class Repl {
+  public class FileMembers {
     private void run(String fileName) {
-      runTest("analysis/low-level-api-fir/testData/contextCollector/repl/" + fileName);
+      runTest("analysis/low-level-api-fir/testData/contextCollector/fileMembers/" + fileName);
     }
 
     @Test
-    public void testAllFilesPresentInRepl() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/contextCollector/repl"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
+    public void testAllFilesPresentInFileMembers() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/contextCollector/fileMembers"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
     }
 
     @Test
-    @TestMetadata("destructuringEntry.repl.kts")
-    public void testDestructuringEntry_repl() {
-      run("destructuringEntry.repl.kts");
+    @TestMetadata("scriptAnnotationArgument.kts")
+    public void testScriptAnnotationArgument() {
+      run("scriptAnnotationArgument.kts");
     }
 
     @Test
-    @TestMetadata("destructuringInitializer.repl.kts")
-    public void testDestructuringInitializer_repl() {
-      run("destructuringInitializer.repl.kts");
+    @TestMetadata("scriptDanglingModifierList.kts")
+    public void testScriptDanglingModifierList() {
+      run("scriptDanglingModifierList.kts");
     }
 
     @Test
-    @TestMetadata("resultPropertyExpression.repl.kts")
-    public void testResultPropertyExpression_repl() {
-      run("resultPropertyExpression.repl.kts");
+    @TestMetadata("scriptDeclaration.kts")
+    public void testScriptDeclaration() {
+      run("scriptDeclaration.kts");
     }
 
     @Test
-    @TestMetadata("resultPropertyReference.repl.kts")
-    public void testResultPropertyReference_repl() {
-      run("resultPropertyReference.repl.kts");
-    }
-
-    @Test
-    @TestMetadata("statement.repl.kts")
-    public void testStatement_repl() {
-      run("statement.repl.kts");
-    }
-
-    @Test
-    @TestMetadata("topLevelAccessorContent.repl.kts")
-    public void testTopLevelAccessorContent_repl() {
-      run("topLevelAccessorContent.repl.kts");
-    }
-
-    @Test
-    @TestMetadata("topLevelFunctionContent.repl.kts")
-    public void testTopLevelFunctionContent_repl() {
-      run("topLevelFunctionContent.repl.kts");
-    }
-
-    @Test
-    @TestMetadata("topLevelFunction.repl.kts")
-    public void testTopLevelFunction_repl() {
-      run("topLevelFunction.repl.kts");
-    }
-
-    @Test
-    @TestMetadata("topLevelInitializerContent.repl.kts")
-    public void testTopLevelInitializerContent_repl() {
-      run("topLevelInitializerContent.repl.kts");
+    @TestMetadata("scriptStatement.kts")
+    public void testScriptStatement() {
+      run("scriptStatement.kts");
     }
   }
 

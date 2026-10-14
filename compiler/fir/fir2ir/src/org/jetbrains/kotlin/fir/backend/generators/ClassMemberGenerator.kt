@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.*
@@ -395,30 +396,78 @@ internal class ClassMemberGenerator(
     private fun IrClass.isValhallaFullValueClass(): Boolean =
         isFullValueClass && valueClassRepresentation.isKotlinValhallaValueClass(configuration.languageVersionSettings)
 
-    @OptIn(UnsafeDuringIrConstructionAPI::class)
     private fun moveFieldFromParameterInitsBeforeSuperCall(irConstructor: IrConstructor, irClass: IrClass) {
         val body = irConstructor.body ?: return
         requireWithAttachment(condition = body is IrBlockBody, message = { "Expected IrBlockBody" }) {
             withEntry("body", body.dump())
         }
-        val fieldInits = buildList {
-            for (declaration in irClass.declarations) {
-                val field = (declaration as? IrProperty)?.backingField ?: continue
-                val initializer = field.initializer ?: continue
-                if ((initializer.expression as? IrGetValue)?.origin != IrStatementOrigin.INITIALIZE_PROPERTY_FROM_PARAMETER) continue
-                val fieldInitialization = IrSetFieldImpl(
-                    initializer.startOffset, initializer.endOffset,
-                    field.symbol,
-                    IrGetValueImpl(initializer.startOffset, initializer.endOffset, irClass.thisReceiver!!.symbol),
-                    initializer.expression,
-                    builtins.unitType,
-                    IrStatementOrigin.INITIALIZE_FIELD,
-                )
-                add(fieldInitialization)
-                field.initializer = null
-            }
+
+        // Evaluate the super constructor arguments into temporaries before the field assignments, so that nothing branches between
+        // the assignments and the super constructor call: value classes compiled to JVM value classes (Valhalla) require this.
+        // For example, `value class A(val x: Int) : Base(if (x > 0) 1 else 2)` gets the constructor body
+        // `val superArgument = if (x > 0) 1 else 2; this.x = x; super(superArgument)`.
+        // If it was `this.x = x; val superArgument = if (x > 0) 1 else 2; super(superArgument)`, the JVM would fail to load the class.
+        val fieldInits = generateFieldInitializers(irClass)
+        unwrapOutOfOrderArgumentsBlockIntoBody(body)
+        val superCallIndex = body.statements.indexOfFirst { it is IrDelegatingConstructorCall }
+        val superArgumentTemporaries = extractSuperCallArgumentsToTemporaries(body, superCallIndex, irConstructor)
+        body.statements.addAll(maxOf(superCallIndex, 0), superArgumentTemporaries + fieldInits)
+    }
+
+    private fun unwrapOutOfOrderArgumentsBlockIntoBody(body: IrBlockBody) {
+        // Arguments passed by name out of order are already evaluated into temporaries, but inside a block together with the call;
+        // the block is unwrapped into the body, so that the field assignments can go between those temporaries and the call.
+        val reorderingIndex = body.statements.indexOfFirst {
+            it is IrBlock && it.origin == IrStatementOrigin.ARGUMENTS_REORDERING_FOR_CALL && it.statements.lastOrNull() is IrDelegatingConstructorCall
         }
-        body.statements.addAll(0, fieldInits)
+        if (reorderingIndex >= 0) {
+            val reordering = body.statements.removeAt(reorderingIndex) as IrBlock
+            body.statements.addAll(reorderingIndex, reordering.statements)
+        }
+    }
+
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
+    private fun extractSuperCallArgumentsToTemporaries(
+        body: IrBlockBody,
+        superCallIndex: Int,
+        irConstructor: IrConstructor,
+    ): List<IrVariable> = buildList {
+        val superCall = body.statements.getOrNull(superCallIndex) as? IrDelegatingConstructorCall ?: return@buildList
+        val parameters = superCall.symbol.owner.parameters
+        val scope = Scope(irConstructor.symbol)
+        for (index in superCall.arguments.indices) {
+            // Each temporary has the parameter's type, so that the conversion to it, which may branch too (e.g. boxing a nullable inline
+            // class passed as `Any?`), also happens before the field assignments.
+            val argument = superCall.arguments[index] ?: continue
+            val parameterType = parameters[index].type.eraseTypeParameters()
+            if ((argument is IrGetValue || argument is IrConst) && argument.type == parameterType) continue
+            // An explicit cast keeps the coercion in the temporary, which would otherwise be inlined back into the call.
+            val coercedArgument = if (argument.type == parameterType) argument else IrTypeOperatorCallImpl(
+                argument.startOffset, argument.endOffset, parameterType, IMPLICIT_CAST, parameterType, argument,
+            )
+            val temporary = scope.createTemporaryVariable(coercedArgument, nameHint = "superArgument", irType = parameterType)
+            add(temporary)
+            superCall.arguments[index] = IrGetValueImpl(argument.startOffset, argument.endOffset, temporary.symbol)
+        }
+    }
+
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
+    private fun generateFieldInitializers(irClass: IrClass): List<IrSetFieldImpl> = buildList {
+        for (declaration in irClass.declarations) {
+            val field = (declaration as? IrProperty)?.backingField ?: continue
+            val initializer = field.initializer ?: continue
+            if ((initializer.expression as? IrGetValue)?.origin != IrStatementOrigin.INITIALIZE_PROPERTY_FROM_PARAMETER) continue
+            val fieldInitialization = IrSetFieldImpl(
+                initializer.startOffset, initializer.endOffset,
+                field.symbol,
+                IrGetValueImpl(initializer.startOffset, initializer.endOffset, irClass.thisReceiver!!.symbol),
+                initializer.expression,
+                builtins.unitType,
+                IrStatementOrigin.INITIALIZE_FIELD,
+            )
+            add(fieldInitialization)
+            field.initializer = null
+        }
     }
 
     private fun IrFieldAccessExpression.setReceiver(declaration: IrDeclaration): IrFieldAccessExpression {

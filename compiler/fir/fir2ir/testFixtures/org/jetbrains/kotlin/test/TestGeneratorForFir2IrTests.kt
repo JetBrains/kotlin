@@ -26,17 +26,7 @@ fun main(args: Array<String>) {
                 model("boxJvm")
             }
 
-            testClass<AbstractValhallaPrimitivesBlackBoxSmokeTest> {
-                model("box")
-                model("boxJvm")
-            }
-
-            testClass<AbstractValhallaPrimitivesAndFullValueClassesBlackBoxSmokeTest> {
-                model("box")
-                model("boxJvm")
-            }
-
-            testClass<AbstractValhallaAllValuesBlackBoxSmokeTest> {
+            testClass<AbstractValhallaBlackBoxSmokeTest> {
                 model("box")
                 model("boxJvm")
             }
@@ -56,11 +46,6 @@ fun main(args: Array<String>) {
             }
 
             testClass<AbstractReflectionLegacyImplementationTest> {
-                model("box/reflection")
-                model("boxJvm/reflection")
-            }
-
-            testClass<AbstractReflectionK1MembersImplementationTest> {
                 model("box/reflection")
                 model("boxJvm/reflection")
             }

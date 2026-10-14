@@ -336,14 +336,14 @@ public fun kotlin_ranges_ULongProgression_isEmpty__reverse(self: kotlin.ranges.U
 public fun kotlin_Array_get__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, index: Int): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Array<kotlin.Any?>
     val __index = index
-    val _result = run { __self.`get`(__index) }
+    val _result = __self.`get`(__index)
     return if (_result == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("kotlin_Array_iterator")
 public fun kotlin_Array_iterator(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Array<kotlin.Any?>
-    val _result = run { __self.iterator() }
+    val _result = __self.iterator()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -352,20 +352,20 @@ public fun kotlin_Array_set__TypesOfArguments__Swift_Int32_Swift_Optional_anyU20
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Array<kotlin.Any?>
     val __index = index
     val __value = if (value == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(value) as kotlin.Any
-    val _result = run { __self.`set`(__index, __value) }
-    return run { _result; true }
+    __self.`set`(__index, __value)
+    return true
 }
 
 @ExportedBridge("kotlin_Array_size_get")
 public fun kotlin_Array_size_get(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Array<kotlin.Any?>
-    val _result = run { __self.size }
+    val _result = __self.size
     return _result
 }
 
 @ExportedBridge("kotlin_Boolean_Companion_get")
 public fun kotlin_Boolean_Companion_get(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.Boolean.Companion }
+    val _result = kotlin.Boolean.Companion
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -373,7 +373,7 @@ public fun kotlin_Boolean_Companion_get(): kotlin.native.internal.NativePtr {
 public fun kotlin_Boolean_and__TypesOfArguments__Swift_Bool__(self: kotlin.native.internal.NativePtr, other: Boolean): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Boolean
     val __other = other
-    val _result = run { __self.and(__other) }
+    val _result = __self.and(__other)
     return _result
 }
 
@@ -381,14 +381,14 @@ public fun kotlin_Boolean_and__TypesOfArguments__Swift_Bool__(self: kotlin.nativ
 public fun kotlin_Boolean_compareTo__TypesOfArguments__Swift_Bool__(self: kotlin.native.internal.NativePtr, other: Boolean): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Boolean
     val __other = other
-    val _result = run { __self.compareTo(__other) }
+    val _result = __self.compareTo(__other)
     return _result
 }
 
 @ExportedBridge("kotlin_Boolean_not")
 public fun kotlin_Boolean_not(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Boolean
-    val _result = run { __self.not() }
+    val _result = __self.not()
     return _result
 }
 
@@ -396,7 +396,7 @@ public fun kotlin_Boolean_not(self: kotlin.native.internal.NativePtr): Boolean {
 public fun kotlin_Boolean_or__TypesOfArguments__Swift_Bool__(self: kotlin.native.internal.NativePtr, other: Boolean): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Boolean
     val __other = other
-    val _result = run { __self.or(__other) }
+    val _result = __self.or(__other)
     return _result
 }
 
@@ -404,7 +404,7 @@ public fun kotlin_Boolean_or__TypesOfArguments__Swift_Bool__(self: kotlin.native
 public fun kotlin_Boolean_xor__TypesOfArguments__Swift_Bool__(self: kotlin.native.internal.NativePtr, other: Boolean): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Boolean
     val __other = other
-    val _result = run { __self.xor(__other) }
+    val _result = __self.xor(__other)
     return _result
 }
 
@@ -412,14 +412,14 @@ public fun kotlin_Boolean_xor__TypesOfArguments__Swift_Bool__(self: kotlin.nativ
 public fun kotlin_ByteArray_get__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, index: Int): Byte {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ByteArray
     val __index = index
-    val _result = run { __self.`get`(__index) }
+    val _result = __self.`get`(__index)
     return _result
 }
 
 @ExportedBridge("kotlin_ByteArray_iterator")
 public fun kotlin_ByteArray_iterator(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ByteArray
-    val _result = run { __self.iterator() }
+    val _result = __self.iterator()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -428,48 +428,48 @@ public fun kotlin_ByteArray_set__TypesOfArguments__Swift_Int32_Swift_Int8__(self
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ByteArray
     val __index = index
     val __value = value
-    val _result = run { __self.`set`(__index, __value) }
-    return run { _result; true }
+    __self.`set`(__index, __value)
+    return true
 }
 
 @ExportedBridge("kotlin_ByteArray_size_get")
 public fun kotlin_ByteArray_size_get(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ByteArray
-    val _result = run { __self.size }
+    val _result = __self.size
     return _result
 }
 
 @ExportedBridge("kotlin_Byte_Companion_MAX_VALUE_get")
 public fun kotlin_Byte_Companion_MAX_VALUE_get(self: kotlin.native.internal.NativePtr): Byte {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Byte.Companion
-    val _result = run { __self.MAX_VALUE }
+    val _result = __self.MAX_VALUE
     return _result
 }
 
 @ExportedBridge("kotlin_Byte_Companion_MIN_VALUE_get")
 public fun kotlin_Byte_Companion_MIN_VALUE_get(self: kotlin.native.internal.NativePtr): Byte {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Byte.Companion
-    val _result = run { __self.MIN_VALUE }
+    val _result = __self.MIN_VALUE
     return _result
 }
 
 @ExportedBridge("kotlin_Byte_Companion_SIZE_BITS_get")
 public fun kotlin_Byte_Companion_SIZE_BITS_get(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Byte.Companion
-    val _result = run { __self.SIZE_BITS }
+    val _result = __self.SIZE_BITS
     return _result
 }
 
 @ExportedBridge("kotlin_Byte_Companion_SIZE_BYTES_get")
 public fun kotlin_Byte_Companion_SIZE_BYTES_get(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Byte.Companion
-    val _result = run { __self.SIZE_BYTES }
+    val _result = __self.SIZE_BYTES
     return _result
 }
 
 @ExportedBridge("kotlin_Byte_Companion_get")
 public fun kotlin_Byte_Companion_get(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.Byte.Companion }
+    val _result = kotlin.Byte.Companion
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -477,7 +477,7 @@ public fun kotlin_Byte_Companion_get(): kotlin.native.internal.NativePtr {
 public fun kotlin_Byte_compareTo__TypesOfArguments__Swift_Int8__(self: kotlin.native.internal.NativePtr, other: Byte): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Byte
     val __other = other
-    val _result = run { __self.compareTo(__other) }
+    val _result = __self.compareTo(__other)
     return _result
 }
 
@@ -485,7 +485,7 @@ public fun kotlin_Byte_compareTo__TypesOfArguments__Swift_Int8__(self: kotlin.na
 public fun kotlin_Byte_compareTo__TypesOfArguments__Swift_Int16__(self: kotlin.native.internal.NativePtr, other: Short): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Byte
     val __other = other
-    val _result = run { __self.compareTo(__other) }
+    val _result = __self.compareTo(__other)
     return _result
 }
 
@@ -493,7 +493,7 @@ public fun kotlin_Byte_compareTo__TypesOfArguments__Swift_Int16__(self: kotlin.n
 public fun kotlin_Byte_compareTo__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, other: Int): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Byte
     val __other = other
-    val _result = run { __self.compareTo(__other) }
+    val _result = __self.compareTo(__other)
     return _result
 }
 
@@ -501,7 +501,7 @@ public fun kotlin_Byte_compareTo__TypesOfArguments__Swift_Int32__(self: kotlin.n
 public fun kotlin_Byte_compareTo__TypesOfArguments__Swift_Int64__(self: kotlin.native.internal.NativePtr, other: Long): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Byte
     val __other = other
-    val _result = run { __self.compareTo(__other) }
+    val _result = __self.compareTo(__other)
     return _result
 }
 
@@ -509,7 +509,7 @@ public fun kotlin_Byte_compareTo__TypesOfArguments__Swift_Int64__(self: kotlin.n
 public fun kotlin_Byte_compareTo__TypesOfArguments__Swift_Float__(self: kotlin.native.internal.NativePtr, other: Float): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Byte
     val __other = other
-    val _result = run { __self.compareTo(__other) }
+    val _result = __self.compareTo(__other)
     return _result
 }
 
@@ -517,14 +517,14 @@ public fun kotlin_Byte_compareTo__TypesOfArguments__Swift_Float__(self: kotlin.n
 public fun kotlin_Byte_compareTo__TypesOfArguments__Swift_Double__(self: kotlin.native.internal.NativePtr, other: Double): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Byte
     val __other = other
-    val _result = run { __self.compareTo(__other) }
+    val _result = __self.compareTo(__other)
     return _result
 }
 
 @ExportedBridge("kotlin_Byte_dec")
 public fun kotlin_Byte_dec(self: kotlin.native.internal.NativePtr): Byte {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Byte
-    val _result = run { __self.dec() }
+    val _result = __self.dec()
     return _result
 }
 
@@ -532,7 +532,7 @@ public fun kotlin_Byte_dec(self: kotlin.native.internal.NativePtr): Byte {
 public fun kotlin_Byte_div__TypesOfArguments__Swift_Int8__(self: kotlin.native.internal.NativePtr, other: Byte): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Byte
     val __other = other
-    val _result = run { __self.div(__other) }
+    val _result = __self.div(__other)
     return _result
 }
 
@@ -540,7 +540,7 @@ public fun kotlin_Byte_div__TypesOfArguments__Swift_Int8__(self: kotlin.native.i
 public fun kotlin_Byte_div__TypesOfArguments__Swift_Int16__(self: kotlin.native.internal.NativePtr, other: Short): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Byte
     val __other = other
-    val _result = run { __self.div(__other) }
+    val _result = __self.div(__other)
     return _result
 }
 
@@ -548,7 +548,7 @@ public fun kotlin_Byte_div__TypesOfArguments__Swift_Int16__(self: kotlin.native.
 public fun kotlin_Byte_div__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, other: Int): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Byte
     val __other = other
-    val _result = run { __self.div(__other) }
+    val _result = __self.div(__other)
     return _result
 }
 
@@ -556,7 +556,7 @@ public fun kotlin_Byte_div__TypesOfArguments__Swift_Int32__(self: kotlin.native.
 public fun kotlin_Byte_div__TypesOfArguments__Swift_Int64__(self: kotlin.native.internal.NativePtr, other: Long): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Byte
     val __other = other
-    val _result = run { __self.div(__other) }
+    val _result = __self.div(__other)
     return _result
 }
 
@@ -564,7 +564,7 @@ public fun kotlin_Byte_div__TypesOfArguments__Swift_Int64__(self: kotlin.native.
 public fun kotlin_Byte_div__TypesOfArguments__Swift_Float__(self: kotlin.native.internal.NativePtr, other: Float): Float {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Byte
     val __other = other
-    val _result = run { __self.div(__other) }
+    val _result = __self.div(__other)
     return _result
 }
 
@@ -572,14 +572,14 @@ public fun kotlin_Byte_div__TypesOfArguments__Swift_Float__(self: kotlin.native.
 public fun kotlin_Byte_div__TypesOfArguments__Swift_Double__(self: kotlin.native.internal.NativePtr, other: Double): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Byte
     val __other = other
-    val _result = run { __self.div(__other) }
+    val _result = __self.div(__other)
     return _result
 }
 
 @ExportedBridge("kotlin_Byte_inc")
 public fun kotlin_Byte_inc(self: kotlin.native.internal.NativePtr): Byte {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Byte
-    val _result = run { __self.inc() }
+    val _result = __self.inc()
     return _result
 }
 
@@ -587,7 +587,7 @@ public fun kotlin_Byte_inc(self: kotlin.native.internal.NativePtr): Byte {
 public fun kotlin_Byte_minus__TypesOfArguments__Swift_Int8__(self: kotlin.native.internal.NativePtr, other: Byte): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Byte
     val __other = other
-    val _result = run { __self.minus(__other) }
+    val _result = __self.minus(__other)
     return _result
 }
 
@@ -595,7 +595,7 @@ public fun kotlin_Byte_minus__TypesOfArguments__Swift_Int8__(self: kotlin.native
 public fun kotlin_Byte_minus__TypesOfArguments__Swift_Int16__(self: kotlin.native.internal.NativePtr, other: Short): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Byte
     val __other = other
-    val _result = run { __self.minus(__other) }
+    val _result = __self.minus(__other)
     return _result
 }
 
@@ -603,7 +603,7 @@ public fun kotlin_Byte_minus__TypesOfArguments__Swift_Int16__(self: kotlin.nativ
 public fun kotlin_Byte_minus__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, other: Int): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Byte
     val __other = other
-    val _result = run { __self.minus(__other) }
+    val _result = __self.minus(__other)
     return _result
 }
 
@@ -611,7 +611,7 @@ public fun kotlin_Byte_minus__TypesOfArguments__Swift_Int32__(self: kotlin.nativ
 public fun kotlin_Byte_minus__TypesOfArguments__Swift_Int64__(self: kotlin.native.internal.NativePtr, other: Long): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Byte
     val __other = other
-    val _result = run { __self.minus(__other) }
+    val _result = __self.minus(__other)
     return _result
 }
 
@@ -619,7 +619,7 @@ public fun kotlin_Byte_minus__TypesOfArguments__Swift_Int64__(self: kotlin.nativ
 public fun kotlin_Byte_minus__TypesOfArguments__Swift_Float__(self: kotlin.native.internal.NativePtr, other: Float): Float {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Byte
     val __other = other
-    val _result = run { __self.minus(__other) }
+    val _result = __self.minus(__other)
     return _result
 }
 
@@ -627,7 +627,7 @@ public fun kotlin_Byte_minus__TypesOfArguments__Swift_Float__(self: kotlin.nativ
 public fun kotlin_Byte_minus__TypesOfArguments__Swift_Double__(self: kotlin.native.internal.NativePtr, other: Double): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Byte
     val __other = other
-    val _result = run { __self.minus(__other) }
+    val _result = __self.minus(__other)
     return _result
 }
 
@@ -635,7 +635,7 @@ public fun kotlin_Byte_minus__TypesOfArguments__Swift_Double__(self: kotlin.nati
 public fun kotlin_Byte_plus__TypesOfArguments__Swift_Int8__(self: kotlin.native.internal.NativePtr, other: Byte): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Byte
     val __other = other
-    val _result = run { __self.plus(__other) }
+    val _result = __self.plus(__other)
     return _result
 }
 
@@ -643,7 +643,7 @@ public fun kotlin_Byte_plus__TypesOfArguments__Swift_Int8__(self: kotlin.native.
 public fun kotlin_Byte_plus__TypesOfArguments__Swift_Int16__(self: kotlin.native.internal.NativePtr, other: Short): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Byte
     val __other = other
-    val _result = run { __self.plus(__other) }
+    val _result = __self.plus(__other)
     return _result
 }
 
@@ -651,7 +651,7 @@ public fun kotlin_Byte_plus__TypesOfArguments__Swift_Int16__(self: kotlin.native
 public fun kotlin_Byte_plus__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, other: Int): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Byte
     val __other = other
-    val _result = run { __self.plus(__other) }
+    val _result = __self.plus(__other)
     return _result
 }
 
@@ -659,7 +659,7 @@ public fun kotlin_Byte_plus__TypesOfArguments__Swift_Int32__(self: kotlin.native
 public fun kotlin_Byte_plus__TypesOfArguments__Swift_Int64__(self: kotlin.native.internal.NativePtr, other: Long): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Byte
     val __other = other
-    val _result = run { __self.plus(__other) }
+    val _result = __self.plus(__other)
     return _result
 }
 
@@ -667,7 +667,7 @@ public fun kotlin_Byte_plus__TypesOfArguments__Swift_Int64__(self: kotlin.native
 public fun kotlin_Byte_plus__TypesOfArguments__Swift_Float__(self: kotlin.native.internal.NativePtr, other: Float): Float {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Byte
     val __other = other
-    val _result = run { __self.plus(__other) }
+    val _result = __self.plus(__other)
     return _result
 }
 
@@ -675,7 +675,7 @@ public fun kotlin_Byte_plus__TypesOfArguments__Swift_Float__(self: kotlin.native
 public fun kotlin_Byte_plus__TypesOfArguments__Swift_Double__(self: kotlin.native.internal.NativePtr, other: Double): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Byte
     val __other = other
-    val _result = run { __self.plus(__other) }
+    val _result = __self.plus(__other)
     return _result
 }
 
@@ -683,7 +683,7 @@ public fun kotlin_Byte_plus__TypesOfArguments__Swift_Double__(self: kotlin.nativ
 public fun kotlin_Byte_rangeTo__TypesOfArguments__Swift_Int8__(self: kotlin.native.internal.NativePtr, other: Byte): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Byte
     val __other = other
-    val _result = run { __self.rangeTo(__other) }
+    val _result = __self.rangeTo(__other)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -691,7 +691,7 @@ public fun kotlin_Byte_rangeTo__TypesOfArguments__Swift_Int8__(self: kotlin.nati
 public fun kotlin_Byte_rangeTo__TypesOfArguments__Swift_Int16__(self: kotlin.native.internal.NativePtr, other: Short): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Byte
     val __other = other
-    val _result = run { __self.rangeTo(__other) }
+    val _result = __self.rangeTo(__other)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -699,7 +699,7 @@ public fun kotlin_Byte_rangeTo__TypesOfArguments__Swift_Int16__(self: kotlin.nat
 public fun kotlin_Byte_rangeTo__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, other: Int): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Byte
     val __other = other
-    val _result = run { __self.rangeTo(__other) }
+    val _result = __self.rangeTo(__other)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -707,7 +707,7 @@ public fun kotlin_Byte_rangeTo__TypesOfArguments__Swift_Int32__(self: kotlin.nat
 public fun kotlin_Byte_rangeTo__TypesOfArguments__Swift_Int64__(self: kotlin.native.internal.NativePtr, other: Long): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Byte
     val __other = other
-    val _result = run { __self.rangeTo(__other) }
+    val _result = __self.rangeTo(__other)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -715,7 +715,7 @@ public fun kotlin_Byte_rangeTo__TypesOfArguments__Swift_Int64__(self: kotlin.nat
 public fun kotlin_Byte_rangeUntil__TypesOfArguments__Swift_Int8__(self: kotlin.native.internal.NativePtr, other: Byte): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Byte
     val __other = other
-    val _result = run { __self.rangeUntil(__other) }
+    val _result = __self.rangeUntil(__other)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -723,7 +723,7 @@ public fun kotlin_Byte_rangeUntil__TypesOfArguments__Swift_Int8__(self: kotlin.n
 public fun kotlin_Byte_rangeUntil__TypesOfArguments__Swift_Int16__(self: kotlin.native.internal.NativePtr, other: Short): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Byte
     val __other = other
-    val _result = run { __self.rangeUntil(__other) }
+    val _result = __self.rangeUntil(__other)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -731,7 +731,7 @@ public fun kotlin_Byte_rangeUntil__TypesOfArguments__Swift_Int16__(self: kotlin.
 public fun kotlin_Byte_rangeUntil__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, other: Int): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Byte
     val __other = other
-    val _result = run { __self.rangeUntil(__other) }
+    val _result = __self.rangeUntil(__other)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -739,7 +739,7 @@ public fun kotlin_Byte_rangeUntil__TypesOfArguments__Swift_Int32__(self: kotlin.
 public fun kotlin_Byte_rangeUntil__TypesOfArguments__Swift_Int64__(self: kotlin.native.internal.NativePtr, other: Long): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Byte
     val __other = other
-    val _result = run { __self.rangeUntil(__other) }
+    val _result = __self.rangeUntil(__other)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -747,7 +747,7 @@ public fun kotlin_Byte_rangeUntil__TypesOfArguments__Swift_Int64__(self: kotlin.
 public fun kotlin_Byte_rem__TypesOfArguments__Swift_Int8__(self: kotlin.native.internal.NativePtr, other: Byte): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Byte
     val __other = other
-    val _result = run { __self.rem(__other) }
+    val _result = __self.rem(__other)
     return _result
 }
 
@@ -755,7 +755,7 @@ public fun kotlin_Byte_rem__TypesOfArguments__Swift_Int8__(self: kotlin.native.i
 public fun kotlin_Byte_rem__TypesOfArguments__Swift_Int16__(self: kotlin.native.internal.NativePtr, other: Short): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Byte
     val __other = other
-    val _result = run { __self.rem(__other) }
+    val _result = __self.rem(__other)
     return _result
 }
 
@@ -763,7 +763,7 @@ public fun kotlin_Byte_rem__TypesOfArguments__Swift_Int16__(self: kotlin.native.
 public fun kotlin_Byte_rem__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, other: Int): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Byte
     val __other = other
-    val _result = run { __self.rem(__other) }
+    val _result = __self.rem(__other)
     return _result
 }
 
@@ -771,7 +771,7 @@ public fun kotlin_Byte_rem__TypesOfArguments__Swift_Int32__(self: kotlin.native.
 public fun kotlin_Byte_rem__TypesOfArguments__Swift_Int64__(self: kotlin.native.internal.NativePtr, other: Long): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Byte
     val __other = other
-    val _result = run { __self.rem(__other) }
+    val _result = __self.rem(__other)
     return _result
 }
 
@@ -779,7 +779,7 @@ public fun kotlin_Byte_rem__TypesOfArguments__Swift_Int64__(self: kotlin.native.
 public fun kotlin_Byte_rem__TypesOfArguments__Swift_Float__(self: kotlin.native.internal.NativePtr, other: Float): Float {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Byte
     val __other = other
-    val _result = run { __self.rem(__other) }
+    val _result = __self.rem(__other)
     return _result
 }
 
@@ -787,7 +787,7 @@ public fun kotlin_Byte_rem__TypesOfArguments__Swift_Float__(self: kotlin.native.
 public fun kotlin_Byte_rem__TypesOfArguments__Swift_Double__(self: kotlin.native.internal.NativePtr, other: Double): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Byte
     val __other = other
-    val _result = run { __self.rem(__other) }
+    val _result = __self.rem(__other)
     return _result
 }
 
@@ -795,7 +795,7 @@ public fun kotlin_Byte_rem__TypesOfArguments__Swift_Double__(self: kotlin.native
 public fun kotlin_Byte_times__TypesOfArguments__Swift_Int8__(self: kotlin.native.internal.NativePtr, other: Byte): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Byte
     val __other = other
-    val _result = run { __self.times(__other) }
+    val _result = __self.times(__other)
     return _result
 }
 
@@ -803,7 +803,7 @@ public fun kotlin_Byte_times__TypesOfArguments__Swift_Int8__(self: kotlin.native
 public fun kotlin_Byte_times__TypesOfArguments__Swift_Int16__(self: kotlin.native.internal.NativePtr, other: Short): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Byte
     val __other = other
-    val _result = run { __self.times(__other) }
+    val _result = __self.times(__other)
     return _result
 }
 
@@ -811,7 +811,7 @@ public fun kotlin_Byte_times__TypesOfArguments__Swift_Int16__(self: kotlin.nativ
 public fun kotlin_Byte_times__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, other: Int): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Byte
     val __other = other
-    val _result = run { __self.times(__other) }
+    val _result = __self.times(__other)
     return _result
 }
 
@@ -819,7 +819,7 @@ public fun kotlin_Byte_times__TypesOfArguments__Swift_Int32__(self: kotlin.nativ
 public fun kotlin_Byte_times__TypesOfArguments__Swift_Int64__(self: kotlin.native.internal.NativePtr, other: Long): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Byte
     val __other = other
-    val _result = run { __self.times(__other) }
+    val _result = __self.times(__other)
     return _result
 }
 
@@ -827,7 +827,7 @@ public fun kotlin_Byte_times__TypesOfArguments__Swift_Int64__(self: kotlin.nativ
 public fun kotlin_Byte_times__TypesOfArguments__Swift_Float__(self: kotlin.native.internal.NativePtr, other: Float): Float {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Byte
     val __other = other
-    val _result = run { __self.times(__other) }
+    val _result = __self.times(__other)
     return _result
 }
 
@@ -835,70 +835,70 @@ public fun kotlin_Byte_times__TypesOfArguments__Swift_Float__(self: kotlin.nativ
 public fun kotlin_Byte_times__TypesOfArguments__Swift_Double__(self: kotlin.native.internal.NativePtr, other: Double): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Byte
     val __other = other
-    val _result = run { __self.times(__other) }
+    val _result = __self.times(__other)
     return _result
 }
 
 @ExportedBridge("kotlin_Byte_toByte")
 public fun kotlin_Byte_toByte(self: kotlin.native.internal.NativePtr): Byte {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Byte
-    val _result = run { __self.toByte() }
+    val _result = __self.toByte()
     return _result
 }
 
 @ExportedBridge("kotlin_Byte_toChar")
 public fun kotlin_Byte_toChar(self: kotlin.native.internal.NativePtr): Char {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Byte
-    val _result = run { __self.toChar() }
+    val _result = __self.toChar()
     return _result
 }
 
 @ExportedBridge("kotlin_Byte_toDouble")
 public fun kotlin_Byte_toDouble(self: kotlin.native.internal.NativePtr): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Byte
-    val _result = run { __self.toDouble() }
+    val _result = __self.toDouble()
     return _result
 }
 
 @ExportedBridge("kotlin_Byte_toFloat")
 public fun kotlin_Byte_toFloat(self: kotlin.native.internal.NativePtr): Float {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Byte
-    val _result = run { __self.toFloat() }
+    val _result = __self.toFloat()
     return _result
 }
 
 @ExportedBridge("kotlin_Byte_toInt")
 public fun kotlin_Byte_toInt(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Byte
-    val _result = run { __self.toInt() }
+    val _result = __self.toInt()
     return _result
 }
 
 @ExportedBridge("kotlin_Byte_toLong")
 public fun kotlin_Byte_toLong(self: kotlin.native.internal.NativePtr): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Byte
-    val _result = run { __self.toLong() }
+    val _result = __self.toLong()
     return _result
 }
 
 @ExportedBridge("kotlin_Byte_toShort")
 public fun kotlin_Byte_toShort(self: kotlin.native.internal.NativePtr): Short {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Byte
-    val _result = run { __self.toShort() }
+    val _result = __self.toShort()
     return _result
 }
 
 @ExportedBridge("kotlin_Byte_unaryMinus")
 public fun kotlin_Byte_unaryMinus(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Byte
-    val _result = run { __self.unaryMinus() }
+    val _result = __self.unaryMinus()
     return _result
 }
 
 @ExportedBridge("kotlin_Byte_unaryPlus")
 public fun kotlin_Byte_unaryPlus(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Byte
-    val _result = run { __self.unaryPlus() }
+    val _result = __self.unaryPlus()
     return _result
 }
 
@@ -906,14 +906,14 @@ public fun kotlin_Byte_unaryPlus(self: kotlin.native.internal.NativePtr): Int {
 public fun kotlin_CharSequence_get__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, index: Int): Char {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.CharSequence
     val __index = index
-    val _result = run { __self.`get`(__index) }
+    val _result = __self.`get`(__index)
     return _result
 }
 
 @ExportedBridge("kotlin_CharSequence_length_get")
 public fun kotlin_CharSequence_length_get(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.CharSequence
-    val _result = run { __self.length }
+    val _result = __self.length
     return _result
 }
 
@@ -922,7 +922,7 @@ public fun kotlin_CharSequence_subSequence__TypesOfArguments__Swift_Int32_Swift_
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.CharSequence
     val __startIndex = startIndex
     val __endIndex = endIndex
-    val _result = run { __self.subSequence(__startIndex, __endIndex) }
+    val _result = __self.subSequence(__startIndex, __endIndex)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -930,42 +930,42 @@ public fun kotlin_CharSequence_subSequence__TypesOfArguments__Swift_Int32_Swift_
 @OptIn(kotlin.experimental.ExperimentalNativeApi::class)
 public fun kotlin_Char_Companion_MAX_CODE_POINT_get(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Char.Companion
-    val _result = run { __self.MAX_CODE_POINT }
+    val _result = __self.MAX_CODE_POINT
     return _result
 }
 
 @ExportedBridge("kotlin_Char_Companion_MAX_HIGH_SURROGATE_get")
 public fun kotlin_Char_Companion_MAX_HIGH_SURROGATE_get(self: kotlin.native.internal.NativePtr): Char {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Char.Companion
-    val _result = run { __self.MAX_HIGH_SURROGATE }
+    val _result = __self.MAX_HIGH_SURROGATE
     return _result
 }
 
 @ExportedBridge("kotlin_Char_Companion_MAX_LOW_SURROGATE_get")
 public fun kotlin_Char_Companion_MAX_LOW_SURROGATE_get(self: kotlin.native.internal.NativePtr): Char {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Char.Companion
-    val _result = run { __self.MAX_LOW_SURROGATE }
+    val _result = __self.MAX_LOW_SURROGATE
     return _result
 }
 
 @ExportedBridge("kotlin_Char_Companion_MAX_RADIX_get")
 public fun kotlin_Char_Companion_MAX_RADIX_get(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Char.Companion
-    val _result = run { __self.MAX_RADIX }
+    val _result = __self.MAX_RADIX
     return _result
 }
 
 @ExportedBridge("kotlin_Char_Companion_MAX_SURROGATE_get")
 public fun kotlin_Char_Companion_MAX_SURROGATE_get(self: kotlin.native.internal.NativePtr): Char {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Char.Companion
-    val _result = run { __self.MAX_SURROGATE }
+    val _result = __self.MAX_SURROGATE
     return _result
 }
 
 @ExportedBridge("kotlin_Char_Companion_MAX_VALUE_get")
 public fun kotlin_Char_Companion_MAX_VALUE_get(self: kotlin.native.internal.NativePtr): Char {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Char.Companion
-    val _result = run { __self.MAX_VALUE }
+    val _result = __self.MAX_VALUE
     return _result
 }
 
@@ -973,28 +973,28 @@ public fun kotlin_Char_Companion_MAX_VALUE_get(self: kotlin.native.internal.Nati
 @OptIn(kotlin.experimental.ExperimentalNativeApi::class)
 public fun kotlin_Char_Companion_MIN_CODE_POINT_get(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Char.Companion
-    val _result = run { __self.MIN_CODE_POINT }
+    val _result = __self.MIN_CODE_POINT
     return _result
 }
 
 @ExportedBridge("kotlin_Char_Companion_MIN_HIGH_SURROGATE_get")
 public fun kotlin_Char_Companion_MIN_HIGH_SURROGATE_get(self: kotlin.native.internal.NativePtr): Char {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Char.Companion
-    val _result = run { __self.MIN_HIGH_SURROGATE }
+    val _result = __self.MIN_HIGH_SURROGATE
     return _result
 }
 
 @ExportedBridge("kotlin_Char_Companion_MIN_LOW_SURROGATE_get")
 public fun kotlin_Char_Companion_MIN_LOW_SURROGATE_get(self: kotlin.native.internal.NativePtr): Char {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Char.Companion
-    val _result = run { __self.MIN_LOW_SURROGATE }
+    val _result = __self.MIN_LOW_SURROGATE
     return _result
 }
 
 @ExportedBridge("kotlin_Char_Companion_MIN_RADIX_get")
 public fun kotlin_Char_Companion_MIN_RADIX_get(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Char.Companion
-    val _result = run { __self.MIN_RADIX }
+    val _result = __self.MIN_RADIX
     return _result
 }
 
@@ -1002,41 +1002,41 @@ public fun kotlin_Char_Companion_MIN_RADIX_get(self: kotlin.native.internal.Nati
 @OptIn(kotlin.experimental.ExperimentalNativeApi::class)
 public fun kotlin_Char_Companion_MIN_SUPPLEMENTARY_CODE_POINT_get(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Char.Companion
-    val _result = run { __self.MIN_SUPPLEMENTARY_CODE_POINT }
+    val _result = __self.MIN_SUPPLEMENTARY_CODE_POINT
     return _result
 }
 
 @ExportedBridge("kotlin_Char_Companion_MIN_SURROGATE_get")
 public fun kotlin_Char_Companion_MIN_SURROGATE_get(self: kotlin.native.internal.NativePtr): Char {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Char.Companion
-    val _result = run { __self.MIN_SURROGATE }
+    val _result = __self.MIN_SURROGATE
     return _result
 }
 
 @ExportedBridge("kotlin_Char_Companion_MIN_VALUE_get")
 public fun kotlin_Char_Companion_MIN_VALUE_get(self: kotlin.native.internal.NativePtr): Char {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Char.Companion
-    val _result = run { __self.MIN_VALUE }
+    val _result = __self.MIN_VALUE
     return _result
 }
 
 @ExportedBridge("kotlin_Char_Companion_SIZE_BITS_get")
 public fun kotlin_Char_Companion_SIZE_BITS_get(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Char.Companion
-    val _result = run { __self.SIZE_BITS }
+    val _result = __self.SIZE_BITS
     return _result
 }
 
 @ExportedBridge("kotlin_Char_Companion_SIZE_BYTES_get")
 public fun kotlin_Char_Companion_SIZE_BYTES_get(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Char.Companion
-    val _result = run { __self.SIZE_BYTES }
+    val _result = __self.SIZE_BYTES
     return _result
 }
 
 @ExportedBridge("kotlin_Char_Companion_get")
 public fun kotlin_Char_Companion_get(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.Char.Companion }
+    val _result = kotlin.Char.Companion
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -1044,21 +1044,21 @@ public fun kotlin_Char_Companion_get(): kotlin.native.internal.NativePtr {
 public fun kotlin_Char_compareTo__TypesOfArguments__Swift_Unicode_UTF16_CodeUnit__(self: kotlin.native.internal.NativePtr, other: Char): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Char
     val __other = other
-    val _result = run { __self.compareTo(__other) }
+    val _result = __self.compareTo(__other)
     return _result
 }
 
 @ExportedBridge("kotlin_Char_dec")
 public fun kotlin_Char_dec(self: kotlin.native.internal.NativePtr): Char {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Char
-    val _result = run { __self.dec() }
+    val _result = __self.dec()
     return _result
 }
 
 @ExportedBridge("kotlin_Char_inc")
 public fun kotlin_Char_inc(self: kotlin.native.internal.NativePtr): Char {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Char
-    val _result = run { __self.inc() }
+    val _result = __self.inc()
     return _result
 }
 
@@ -1066,7 +1066,7 @@ public fun kotlin_Char_inc(self: kotlin.native.internal.NativePtr): Char {
 public fun kotlin_Char_minus__TypesOfArguments__Swift_Unicode_UTF16_CodeUnit__(self: kotlin.native.internal.NativePtr, other: Char): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Char
     val __other = other
-    val _result = run { __self.minus(__other) }
+    val _result = __self.minus(__other)
     return _result
 }
 
@@ -1074,7 +1074,7 @@ public fun kotlin_Char_minus__TypesOfArguments__Swift_Unicode_UTF16_CodeUnit__(s
 public fun kotlin_Char_minus__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, other: Int): Char {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Char
     val __other = other
-    val _result = run { __self.minus(__other) }
+    val _result = __self.minus(__other)
     return _result
 }
 
@@ -1082,7 +1082,7 @@ public fun kotlin_Char_minus__TypesOfArguments__Swift_Int32__(self: kotlin.nativ
 public fun kotlin_Char_plus__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, other: Int): Char {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Char
     val __other = other
-    val _result = run { __self.plus(__other) }
+    val _result = __self.plus(__other)
     return _result
 }
 
@@ -1090,7 +1090,7 @@ public fun kotlin_Char_plus__TypesOfArguments__Swift_Int32__(self: kotlin.native
 public fun kotlin_Char_rangeTo__TypesOfArguments__Swift_Unicode_UTF16_CodeUnit__(self: kotlin.native.internal.NativePtr, other: Char): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Char
     val __other = other
-    val _result = run { __self.rangeTo(__other) }
+    val _result = __self.rangeTo(__other)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -1098,111 +1098,111 @@ public fun kotlin_Char_rangeTo__TypesOfArguments__Swift_Unicode_UTF16_CodeUnit__
 public fun kotlin_Char_rangeUntil__TypesOfArguments__Swift_Unicode_UTF16_CodeUnit__(self: kotlin.native.internal.NativePtr, other: Char): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Char
     val __other = other
-    val _result = run { __self.rangeUntil(__other) }
+    val _result = __self.rangeUntil(__other)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("kotlin_Char_toByte")
 public fun kotlin_Char_toByte(self: kotlin.native.internal.NativePtr): Byte {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Char
-    val _result = run { __self.toByte() }
+    val _result = __self.toByte()
     return _result
 }
 
 @ExportedBridge("kotlin_Char_toChar")
 public fun kotlin_Char_toChar(self: kotlin.native.internal.NativePtr): Char {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Char
-    val _result = run { __self.toChar() }
+    val _result = __self.toChar()
     return _result
 }
 
 @ExportedBridge("kotlin_Char_toDouble")
 public fun kotlin_Char_toDouble(self: kotlin.native.internal.NativePtr): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Char
-    val _result = run { __self.toDouble() }
+    val _result = __self.toDouble()
     return _result
 }
 
 @ExportedBridge("kotlin_Char_toFloat")
 public fun kotlin_Char_toFloat(self: kotlin.native.internal.NativePtr): Float {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Char
-    val _result = run { __self.toFloat() }
+    val _result = __self.toFloat()
     return _result
 }
 
 @ExportedBridge("kotlin_Char_toInt")
 public fun kotlin_Char_toInt(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Char
-    val _result = run { __self.toInt() }
+    val _result = __self.toInt()
     return _result
 }
 
 @ExportedBridge("kotlin_Char_toLong")
 public fun kotlin_Char_toLong(self: kotlin.native.internal.NativePtr): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Char
-    val _result = run { __self.toLong() }
+    val _result = __self.toLong()
     return _result
 }
 
 @ExportedBridge("kotlin_Char_toShort")
 public fun kotlin_Char_toShort(self: kotlin.native.internal.NativePtr): Short {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Char
-    val _result = run { __self.toShort() }
+    val _result = __self.toShort()
     return _result
 }
 
 @ExportedBridge("kotlin_Double_Companion_MAX_VALUE_get")
 public fun kotlin_Double_Companion_MAX_VALUE_get(self: kotlin.native.internal.NativePtr): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Double.Companion
-    val _result = run { __self.MAX_VALUE }
+    val _result = __self.MAX_VALUE
     return _result
 }
 
 @ExportedBridge("kotlin_Double_Companion_MIN_VALUE_get")
 public fun kotlin_Double_Companion_MIN_VALUE_get(self: kotlin.native.internal.NativePtr): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Double.Companion
-    val _result = run { __self.MIN_VALUE }
+    val _result = __self.MIN_VALUE
     return _result
 }
 
 @ExportedBridge("kotlin_Double_Companion_NEGATIVE_INFINITY_get")
 public fun kotlin_Double_Companion_NEGATIVE_INFINITY_get(self: kotlin.native.internal.NativePtr): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Double.Companion
-    val _result = run { __self.NEGATIVE_INFINITY }
+    val _result = __self.NEGATIVE_INFINITY
     return _result
 }
 
 @ExportedBridge("kotlin_Double_Companion_NaN_get")
 public fun kotlin_Double_Companion_NaN_get(self: kotlin.native.internal.NativePtr): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Double.Companion
-    val _result = run { __self.NaN }
+    val _result = __self.NaN
     return _result
 }
 
 @ExportedBridge("kotlin_Double_Companion_POSITIVE_INFINITY_get")
 public fun kotlin_Double_Companion_POSITIVE_INFINITY_get(self: kotlin.native.internal.NativePtr): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Double.Companion
-    val _result = run { __self.POSITIVE_INFINITY }
+    val _result = __self.POSITIVE_INFINITY
     return _result
 }
 
 @ExportedBridge("kotlin_Double_Companion_SIZE_BITS_get")
 public fun kotlin_Double_Companion_SIZE_BITS_get(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Double.Companion
-    val _result = run { __self.SIZE_BITS }
+    val _result = __self.SIZE_BITS
     return _result
 }
 
 @ExportedBridge("kotlin_Double_Companion_SIZE_BYTES_get")
 public fun kotlin_Double_Companion_SIZE_BYTES_get(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Double.Companion
-    val _result = run { __self.SIZE_BYTES }
+    val _result = __self.SIZE_BYTES
     return _result
 }
 
 @ExportedBridge("kotlin_Double_Companion_get")
 public fun kotlin_Double_Companion_get(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.Double.Companion }
+    val _result = kotlin.Double.Companion
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -1210,7 +1210,7 @@ public fun kotlin_Double_Companion_get(): kotlin.native.internal.NativePtr {
 public fun kotlin_Double_compareTo__TypesOfArguments__Swift_Int8__(self: kotlin.native.internal.NativePtr, other: Byte): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Double
     val __other = other
-    val _result = run { __self.compareTo(__other) }
+    val _result = __self.compareTo(__other)
     return _result
 }
 
@@ -1218,7 +1218,7 @@ public fun kotlin_Double_compareTo__TypesOfArguments__Swift_Int8__(self: kotlin.
 public fun kotlin_Double_compareTo__TypesOfArguments__Swift_Int16__(self: kotlin.native.internal.NativePtr, other: Short): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Double
     val __other = other
-    val _result = run { __self.compareTo(__other) }
+    val _result = __self.compareTo(__other)
     return _result
 }
 
@@ -1226,7 +1226,7 @@ public fun kotlin_Double_compareTo__TypesOfArguments__Swift_Int16__(self: kotlin
 public fun kotlin_Double_compareTo__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, other: Int): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Double
     val __other = other
-    val _result = run { __self.compareTo(__other) }
+    val _result = __self.compareTo(__other)
     return _result
 }
 
@@ -1234,7 +1234,7 @@ public fun kotlin_Double_compareTo__TypesOfArguments__Swift_Int32__(self: kotlin
 public fun kotlin_Double_compareTo__TypesOfArguments__Swift_Int64__(self: kotlin.native.internal.NativePtr, other: Long): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Double
     val __other = other
-    val _result = run { __self.compareTo(__other) }
+    val _result = __self.compareTo(__other)
     return _result
 }
 
@@ -1242,7 +1242,7 @@ public fun kotlin_Double_compareTo__TypesOfArguments__Swift_Int64__(self: kotlin
 public fun kotlin_Double_compareTo__TypesOfArguments__Swift_Float__(self: kotlin.native.internal.NativePtr, other: Float): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Double
     val __other = other
-    val _result = run { __self.compareTo(__other) }
+    val _result = __self.compareTo(__other)
     return _result
 }
 
@@ -1250,14 +1250,14 @@ public fun kotlin_Double_compareTo__TypesOfArguments__Swift_Float__(self: kotlin
 public fun kotlin_Double_compareTo__TypesOfArguments__Swift_Double__(self: kotlin.native.internal.NativePtr, other: Double): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Double
     val __other = other
-    val _result = run { __self.compareTo(__other) }
+    val _result = __self.compareTo(__other)
     return _result
 }
 
 @ExportedBridge("kotlin_Double_dec")
 public fun kotlin_Double_dec(self: kotlin.native.internal.NativePtr): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Double
-    val _result = run { __self.dec() }
+    val _result = __self.dec()
     return _result
 }
 
@@ -1265,7 +1265,7 @@ public fun kotlin_Double_dec(self: kotlin.native.internal.NativePtr): Double {
 public fun kotlin_Double_div__TypesOfArguments__Swift_Int8__(self: kotlin.native.internal.NativePtr, other: Byte): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Double
     val __other = other
-    val _result = run { __self.div(__other) }
+    val _result = __self.div(__other)
     return _result
 }
 
@@ -1273,7 +1273,7 @@ public fun kotlin_Double_div__TypesOfArguments__Swift_Int8__(self: kotlin.native
 public fun kotlin_Double_div__TypesOfArguments__Swift_Int16__(self: kotlin.native.internal.NativePtr, other: Short): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Double
     val __other = other
-    val _result = run { __self.div(__other) }
+    val _result = __self.div(__other)
     return _result
 }
 
@@ -1281,7 +1281,7 @@ public fun kotlin_Double_div__TypesOfArguments__Swift_Int16__(self: kotlin.nativ
 public fun kotlin_Double_div__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, other: Int): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Double
     val __other = other
-    val _result = run { __self.div(__other) }
+    val _result = __self.div(__other)
     return _result
 }
 
@@ -1289,7 +1289,7 @@ public fun kotlin_Double_div__TypesOfArguments__Swift_Int32__(self: kotlin.nativ
 public fun kotlin_Double_div__TypesOfArguments__Swift_Int64__(self: kotlin.native.internal.NativePtr, other: Long): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Double
     val __other = other
-    val _result = run { __self.div(__other) }
+    val _result = __self.div(__other)
     return _result
 }
 
@@ -1297,7 +1297,7 @@ public fun kotlin_Double_div__TypesOfArguments__Swift_Int64__(self: kotlin.nativ
 public fun kotlin_Double_div__TypesOfArguments__Swift_Float__(self: kotlin.native.internal.NativePtr, other: Float): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Double
     val __other = other
-    val _result = run { __self.div(__other) }
+    val _result = __self.div(__other)
     return _result
 }
 
@@ -1305,14 +1305,14 @@ public fun kotlin_Double_div__TypesOfArguments__Swift_Float__(self: kotlin.nativ
 public fun kotlin_Double_div__TypesOfArguments__Swift_Double__(self: kotlin.native.internal.NativePtr, other: Double): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Double
     val __other = other
-    val _result = run { __self.div(__other) }
+    val _result = __self.div(__other)
     return _result
 }
 
 @ExportedBridge("kotlin_Double_inc")
 public fun kotlin_Double_inc(self: kotlin.native.internal.NativePtr): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Double
-    val _result = run { __self.inc() }
+    val _result = __self.inc()
     return _result
 }
 
@@ -1320,7 +1320,7 @@ public fun kotlin_Double_inc(self: kotlin.native.internal.NativePtr): Double {
 public fun kotlin_Double_minus__TypesOfArguments__Swift_Int8__(self: kotlin.native.internal.NativePtr, other: Byte): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Double
     val __other = other
-    val _result = run { __self.minus(__other) }
+    val _result = __self.minus(__other)
     return _result
 }
 
@@ -1328,7 +1328,7 @@ public fun kotlin_Double_minus__TypesOfArguments__Swift_Int8__(self: kotlin.nati
 public fun kotlin_Double_minus__TypesOfArguments__Swift_Int16__(self: kotlin.native.internal.NativePtr, other: Short): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Double
     val __other = other
-    val _result = run { __self.minus(__other) }
+    val _result = __self.minus(__other)
     return _result
 }
 
@@ -1336,7 +1336,7 @@ public fun kotlin_Double_minus__TypesOfArguments__Swift_Int16__(self: kotlin.nat
 public fun kotlin_Double_minus__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, other: Int): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Double
     val __other = other
-    val _result = run { __self.minus(__other) }
+    val _result = __self.minus(__other)
     return _result
 }
 
@@ -1344,7 +1344,7 @@ public fun kotlin_Double_minus__TypesOfArguments__Swift_Int32__(self: kotlin.nat
 public fun kotlin_Double_minus__TypesOfArguments__Swift_Int64__(self: kotlin.native.internal.NativePtr, other: Long): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Double
     val __other = other
-    val _result = run { __self.minus(__other) }
+    val _result = __self.minus(__other)
     return _result
 }
 
@@ -1352,7 +1352,7 @@ public fun kotlin_Double_minus__TypesOfArguments__Swift_Int64__(self: kotlin.nat
 public fun kotlin_Double_minus__TypesOfArguments__Swift_Float__(self: kotlin.native.internal.NativePtr, other: Float): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Double
     val __other = other
-    val _result = run { __self.minus(__other) }
+    val _result = __self.minus(__other)
     return _result
 }
 
@@ -1360,7 +1360,7 @@ public fun kotlin_Double_minus__TypesOfArguments__Swift_Float__(self: kotlin.nat
 public fun kotlin_Double_minus__TypesOfArguments__Swift_Double__(self: kotlin.native.internal.NativePtr, other: Double): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Double
     val __other = other
-    val _result = run { __self.minus(__other) }
+    val _result = __self.minus(__other)
     return _result
 }
 
@@ -1368,7 +1368,7 @@ public fun kotlin_Double_minus__TypesOfArguments__Swift_Double__(self: kotlin.na
 public fun kotlin_Double_plus__TypesOfArguments__Swift_Int8__(self: kotlin.native.internal.NativePtr, other: Byte): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Double
     val __other = other
-    val _result = run { __self.plus(__other) }
+    val _result = __self.plus(__other)
     return _result
 }
 
@@ -1376,7 +1376,7 @@ public fun kotlin_Double_plus__TypesOfArguments__Swift_Int8__(self: kotlin.nativ
 public fun kotlin_Double_plus__TypesOfArguments__Swift_Int16__(self: kotlin.native.internal.NativePtr, other: Short): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Double
     val __other = other
-    val _result = run { __self.plus(__other) }
+    val _result = __self.plus(__other)
     return _result
 }
 
@@ -1384,7 +1384,7 @@ public fun kotlin_Double_plus__TypesOfArguments__Swift_Int16__(self: kotlin.nati
 public fun kotlin_Double_plus__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, other: Int): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Double
     val __other = other
-    val _result = run { __self.plus(__other) }
+    val _result = __self.plus(__other)
     return _result
 }
 
@@ -1392,7 +1392,7 @@ public fun kotlin_Double_plus__TypesOfArguments__Swift_Int32__(self: kotlin.nati
 public fun kotlin_Double_plus__TypesOfArguments__Swift_Int64__(self: kotlin.native.internal.NativePtr, other: Long): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Double
     val __other = other
-    val _result = run { __self.plus(__other) }
+    val _result = __self.plus(__other)
     return _result
 }
 
@@ -1400,7 +1400,7 @@ public fun kotlin_Double_plus__TypesOfArguments__Swift_Int64__(self: kotlin.nati
 public fun kotlin_Double_plus__TypesOfArguments__Swift_Float__(self: kotlin.native.internal.NativePtr, other: Float): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Double
     val __other = other
-    val _result = run { __self.plus(__other) }
+    val _result = __self.plus(__other)
     return _result
 }
 
@@ -1408,7 +1408,7 @@ public fun kotlin_Double_plus__TypesOfArguments__Swift_Float__(self: kotlin.nati
 public fun kotlin_Double_plus__TypesOfArguments__Swift_Double__(self: kotlin.native.internal.NativePtr, other: Double): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Double
     val __other = other
-    val _result = run { __self.plus(__other) }
+    val _result = __self.plus(__other)
     return _result
 }
 
@@ -1416,7 +1416,7 @@ public fun kotlin_Double_plus__TypesOfArguments__Swift_Double__(self: kotlin.nat
 public fun kotlin_Double_rem__TypesOfArguments__Swift_Int8__(self: kotlin.native.internal.NativePtr, other: Byte): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Double
     val __other = other
-    val _result = run { __self.rem(__other) }
+    val _result = __self.rem(__other)
     return _result
 }
 
@@ -1424,7 +1424,7 @@ public fun kotlin_Double_rem__TypesOfArguments__Swift_Int8__(self: kotlin.native
 public fun kotlin_Double_rem__TypesOfArguments__Swift_Int16__(self: kotlin.native.internal.NativePtr, other: Short): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Double
     val __other = other
-    val _result = run { __self.rem(__other) }
+    val _result = __self.rem(__other)
     return _result
 }
 
@@ -1432,7 +1432,7 @@ public fun kotlin_Double_rem__TypesOfArguments__Swift_Int16__(self: kotlin.nativ
 public fun kotlin_Double_rem__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, other: Int): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Double
     val __other = other
-    val _result = run { __self.rem(__other) }
+    val _result = __self.rem(__other)
     return _result
 }
 
@@ -1440,7 +1440,7 @@ public fun kotlin_Double_rem__TypesOfArguments__Swift_Int32__(self: kotlin.nativ
 public fun kotlin_Double_rem__TypesOfArguments__Swift_Int64__(self: kotlin.native.internal.NativePtr, other: Long): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Double
     val __other = other
-    val _result = run { __self.rem(__other) }
+    val _result = __self.rem(__other)
     return _result
 }
 
@@ -1448,7 +1448,7 @@ public fun kotlin_Double_rem__TypesOfArguments__Swift_Int64__(self: kotlin.nativ
 public fun kotlin_Double_rem__TypesOfArguments__Swift_Float__(self: kotlin.native.internal.NativePtr, other: Float): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Double
     val __other = other
-    val _result = run { __self.rem(__other) }
+    val _result = __self.rem(__other)
     return _result
 }
 
@@ -1456,7 +1456,7 @@ public fun kotlin_Double_rem__TypesOfArguments__Swift_Float__(self: kotlin.nativ
 public fun kotlin_Double_rem__TypesOfArguments__Swift_Double__(self: kotlin.native.internal.NativePtr, other: Double): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Double
     val __other = other
-    val _result = run { __self.rem(__other) }
+    val _result = __self.rem(__other)
     return _result
 }
 
@@ -1464,7 +1464,7 @@ public fun kotlin_Double_rem__TypesOfArguments__Swift_Double__(self: kotlin.nati
 public fun kotlin_Double_times__TypesOfArguments__Swift_Int8__(self: kotlin.native.internal.NativePtr, other: Byte): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Double
     val __other = other
-    val _result = run { __self.times(__other) }
+    val _result = __self.times(__other)
     return _result
 }
 
@@ -1472,7 +1472,7 @@ public fun kotlin_Double_times__TypesOfArguments__Swift_Int8__(self: kotlin.nati
 public fun kotlin_Double_times__TypesOfArguments__Swift_Int16__(self: kotlin.native.internal.NativePtr, other: Short): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Double
     val __other = other
-    val _result = run { __self.times(__other) }
+    val _result = __self.times(__other)
     return _result
 }
 
@@ -1480,7 +1480,7 @@ public fun kotlin_Double_times__TypesOfArguments__Swift_Int16__(self: kotlin.nat
 public fun kotlin_Double_times__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, other: Int): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Double
     val __other = other
-    val _result = run { __self.times(__other) }
+    val _result = __self.times(__other)
     return _result
 }
 
@@ -1488,7 +1488,7 @@ public fun kotlin_Double_times__TypesOfArguments__Swift_Int32__(self: kotlin.nat
 public fun kotlin_Double_times__TypesOfArguments__Swift_Int64__(self: kotlin.native.internal.NativePtr, other: Long): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Double
     val __other = other
-    val _result = run { __self.times(__other) }
+    val _result = __self.times(__other)
     return _result
 }
 
@@ -1496,7 +1496,7 @@ public fun kotlin_Double_times__TypesOfArguments__Swift_Int64__(self: kotlin.nat
 public fun kotlin_Double_times__TypesOfArguments__Swift_Float__(self: kotlin.native.internal.NativePtr, other: Float): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Double
     val __other = other
-    val _result = run { __self.times(__other) }
+    val _result = __self.times(__other)
     return _result
 }
 
@@ -1504,92 +1504,92 @@ public fun kotlin_Double_times__TypesOfArguments__Swift_Float__(self: kotlin.nat
 public fun kotlin_Double_times__TypesOfArguments__Swift_Double__(self: kotlin.native.internal.NativePtr, other: Double): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Double
     val __other = other
-    val _result = run { __self.times(__other) }
+    val _result = __self.times(__other)
     return _result
 }
 
 @ExportedBridge("kotlin_Double_toByte")
 public fun kotlin_Double_toByte(self: kotlin.native.internal.NativePtr): Byte {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Double
-    val _result = run { __self.toByte() }
+    val _result = __self.toByte()
     return _result
 }
 
 @ExportedBridge("kotlin_Double_toChar")
 public fun kotlin_Double_toChar(self: kotlin.native.internal.NativePtr): Char {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Double
-    val _result = run { __self.toChar() }
+    val _result = __self.toChar()
     return _result
 }
 
 @ExportedBridge("kotlin_Double_toDouble")
 public fun kotlin_Double_toDouble(self: kotlin.native.internal.NativePtr): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Double
-    val _result = run { __self.toDouble() }
+    val _result = __self.toDouble()
     return _result
 }
 
 @ExportedBridge("kotlin_Double_toFloat")
 public fun kotlin_Double_toFloat(self: kotlin.native.internal.NativePtr): Float {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Double
-    val _result = run { __self.toFloat() }
+    val _result = __self.toFloat()
     return _result
 }
 
 @ExportedBridge("kotlin_Double_toInt")
 public fun kotlin_Double_toInt(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Double
-    val _result = run { __self.toInt() }
+    val _result = __self.toInt()
     return _result
 }
 
 @ExportedBridge("kotlin_Double_toLong")
 public fun kotlin_Double_toLong(self: kotlin.native.internal.NativePtr): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Double
-    val _result = run { __self.toLong() }
+    val _result = __self.toLong()
     return _result
 }
 
 @ExportedBridge("kotlin_Double_toShort")
 public fun kotlin_Double_toShort(self: kotlin.native.internal.NativePtr): Short {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Double
-    val _result = run { __self.toShort() }
+    val _result = __self.toShort()
     return _result
 }
 
 @ExportedBridge("kotlin_Double_unaryMinus")
 public fun kotlin_Double_unaryMinus(self: kotlin.native.internal.NativePtr): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Double
-    val _result = run { __self.unaryMinus() }
+    val _result = __self.unaryMinus()
     return _result
 }
 
 @ExportedBridge("kotlin_Double_unaryPlus")
 public fun kotlin_Double_unaryPlus(self: kotlin.native.internal.NativePtr): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Double
-    val _result = run { __self.unaryPlus() }
+    val _result = __self.unaryPlus()
     return _result
 }
 
 @ExportedBridge("kotlin_Exception_init_allocate")
 public fun kotlin_Exception_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<kotlin.Exception>() }
+    val _result = kotlin.native.internal.createUninitializedInstance<kotlin.Exception>()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("kotlin_Exception_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
 public fun kotlin_Exception_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val _result = run { kotlin.native.internal.initInstance(____kt, kotlin.Exception()) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, kotlin.Exception())
+    return true
 }
 
 @ExportedBridge("kotlin_Exception_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String___")
 public fun kotlin_Exception_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String___(__kt: kotlin.native.internal.NativePtr, message: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     val __message = if (message == kotlin.native.internal.NativePtr.NULL) null else interpretObjCPointer<kotlin.String>(message)
-    val _result = run { kotlin.native.internal.initInstance(____kt, kotlin.Exception(__message)) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, kotlin.Exception(__message))
+    return true
 }
 
 @ExportedBridge("kotlin_Exception_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String__Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___")
@@ -1597,70 +1597,70 @@ public fun kotlin_Exception_init_initialize__TypesOfArguments__Swift_UnsafeMutab
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     val __message = if (message == kotlin.native.internal.NativePtr.NULL) null else interpretObjCPointer<kotlin.String>(message)
     val __cause = if (cause == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(cause) as kotlin.Throwable
-    val _result = run { kotlin.native.internal.initInstance(____kt, kotlin.Exception(__message, __cause)) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, kotlin.Exception(__message, __cause))
+    return true
 }
 
 @ExportedBridge("kotlin_Exception_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___")
 public fun kotlin_Exception_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt: kotlin.native.internal.NativePtr, cause: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     val __cause = if (cause == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(cause) as kotlin.Throwable
-    val _result = run { kotlin.native.internal.initInstance(____kt, kotlin.Exception(__cause)) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, kotlin.Exception(__cause))
+    return true
 }
 
 @ExportedBridge("kotlin_Float_Companion_MAX_VALUE_get")
 public fun kotlin_Float_Companion_MAX_VALUE_get(self: kotlin.native.internal.NativePtr): Float {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Float.Companion
-    val _result = run { __self.MAX_VALUE }
+    val _result = __self.MAX_VALUE
     return _result
 }
 
 @ExportedBridge("kotlin_Float_Companion_MIN_VALUE_get")
 public fun kotlin_Float_Companion_MIN_VALUE_get(self: kotlin.native.internal.NativePtr): Float {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Float.Companion
-    val _result = run { __self.MIN_VALUE }
+    val _result = __self.MIN_VALUE
     return _result
 }
 
 @ExportedBridge("kotlin_Float_Companion_NEGATIVE_INFINITY_get")
 public fun kotlin_Float_Companion_NEGATIVE_INFINITY_get(self: kotlin.native.internal.NativePtr): Float {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Float.Companion
-    val _result = run { __self.NEGATIVE_INFINITY }
+    val _result = __self.NEGATIVE_INFINITY
     return _result
 }
 
 @ExportedBridge("kotlin_Float_Companion_NaN_get")
 public fun kotlin_Float_Companion_NaN_get(self: kotlin.native.internal.NativePtr): Float {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Float.Companion
-    val _result = run { __self.NaN }
+    val _result = __self.NaN
     return _result
 }
 
 @ExportedBridge("kotlin_Float_Companion_POSITIVE_INFINITY_get")
 public fun kotlin_Float_Companion_POSITIVE_INFINITY_get(self: kotlin.native.internal.NativePtr): Float {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Float.Companion
-    val _result = run { __self.POSITIVE_INFINITY }
+    val _result = __self.POSITIVE_INFINITY
     return _result
 }
 
 @ExportedBridge("kotlin_Float_Companion_SIZE_BITS_get")
 public fun kotlin_Float_Companion_SIZE_BITS_get(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Float.Companion
-    val _result = run { __self.SIZE_BITS }
+    val _result = __self.SIZE_BITS
     return _result
 }
 
 @ExportedBridge("kotlin_Float_Companion_SIZE_BYTES_get")
 public fun kotlin_Float_Companion_SIZE_BYTES_get(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Float.Companion
-    val _result = run { __self.SIZE_BYTES }
+    val _result = __self.SIZE_BYTES
     return _result
 }
 
 @ExportedBridge("kotlin_Float_Companion_get")
 public fun kotlin_Float_Companion_get(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.Float.Companion }
+    val _result = kotlin.Float.Companion
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -1668,7 +1668,7 @@ public fun kotlin_Float_Companion_get(): kotlin.native.internal.NativePtr {
 public fun kotlin_Float_compareTo__TypesOfArguments__Swift_Int8__(self: kotlin.native.internal.NativePtr, other: Byte): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Float
     val __other = other
-    val _result = run { __self.compareTo(__other) }
+    val _result = __self.compareTo(__other)
     return _result
 }
 
@@ -1676,7 +1676,7 @@ public fun kotlin_Float_compareTo__TypesOfArguments__Swift_Int8__(self: kotlin.n
 public fun kotlin_Float_compareTo__TypesOfArguments__Swift_Int16__(self: kotlin.native.internal.NativePtr, other: Short): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Float
     val __other = other
-    val _result = run { __self.compareTo(__other) }
+    val _result = __self.compareTo(__other)
     return _result
 }
 
@@ -1684,7 +1684,7 @@ public fun kotlin_Float_compareTo__TypesOfArguments__Swift_Int16__(self: kotlin.
 public fun kotlin_Float_compareTo__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, other: Int): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Float
     val __other = other
-    val _result = run { __self.compareTo(__other) }
+    val _result = __self.compareTo(__other)
     return _result
 }
 
@@ -1692,7 +1692,7 @@ public fun kotlin_Float_compareTo__TypesOfArguments__Swift_Int32__(self: kotlin.
 public fun kotlin_Float_compareTo__TypesOfArguments__Swift_Int64__(self: kotlin.native.internal.NativePtr, other: Long): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Float
     val __other = other
-    val _result = run { __self.compareTo(__other) }
+    val _result = __self.compareTo(__other)
     return _result
 }
 
@@ -1700,7 +1700,7 @@ public fun kotlin_Float_compareTo__TypesOfArguments__Swift_Int64__(self: kotlin.
 public fun kotlin_Float_compareTo__TypesOfArguments__Swift_Float__(self: kotlin.native.internal.NativePtr, other: Float): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Float
     val __other = other
-    val _result = run { __self.compareTo(__other) }
+    val _result = __self.compareTo(__other)
     return _result
 }
 
@@ -1708,14 +1708,14 @@ public fun kotlin_Float_compareTo__TypesOfArguments__Swift_Float__(self: kotlin.
 public fun kotlin_Float_compareTo__TypesOfArguments__Swift_Double__(self: kotlin.native.internal.NativePtr, other: Double): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Float
     val __other = other
-    val _result = run { __self.compareTo(__other) }
+    val _result = __self.compareTo(__other)
     return _result
 }
 
 @ExportedBridge("kotlin_Float_dec")
 public fun kotlin_Float_dec(self: kotlin.native.internal.NativePtr): Float {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Float
-    val _result = run { __self.dec() }
+    val _result = __self.dec()
     return _result
 }
 
@@ -1723,7 +1723,7 @@ public fun kotlin_Float_dec(self: kotlin.native.internal.NativePtr): Float {
 public fun kotlin_Float_div__TypesOfArguments__Swift_Int8__(self: kotlin.native.internal.NativePtr, other: Byte): Float {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Float
     val __other = other
-    val _result = run { __self.div(__other) }
+    val _result = __self.div(__other)
     return _result
 }
 
@@ -1731,7 +1731,7 @@ public fun kotlin_Float_div__TypesOfArguments__Swift_Int8__(self: kotlin.native.
 public fun kotlin_Float_div__TypesOfArguments__Swift_Int16__(self: kotlin.native.internal.NativePtr, other: Short): Float {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Float
     val __other = other
-    val _result = run { __self.div(__other) }
+    val _result = __self.div(__other)
     return _result
 }
 
@@ -1739,7 +1739,7 @@ public fun kotlin_Float_div__TypesOfArguments__Swift_Int16__(self: kotlin.native
 public fun kotlin_Float_div__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, other: Int): Float {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Float
     val __other = other
-    val _result = run { __self.div(__other) }
+    val _result = __self.div(__other)
     return _result
 }
 
@@ -1747,7 +1747,7 @@ public fun kotlin_Float_div__TypesOfArguments__Swift_Int32__(self: kotlin.native
 public fun kotlin_Float_div__TypesOfArguments__Swift_Int64__(self: kotlin.native.internal.NativePtr, other: Long): Float {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Float
     val __other = other
-    val _result = run { __self.div(__other) }
+    val _result = __self.div(__other)
     return _result
 }
 
@@ -1755,7 +1755,7 @@ public fun kotlin_Float_div__TypesOfArguments__Swift_Int64__(self: kotlin.native
 public fun kotlin_Float_div__TypesOfArguments__Swift_Float__(self: kotlin.native.internal.NativePtr, other: Float): Float {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Float
     val __other = other
-    val _result = run { __self.div(__other) }
+    val _result = __self.div(__other)
     return _result
 }
 
@@ -1763,14 +1763,14 @@ public fun kotlin_Float_div__TypesOfArguments__Swift_Float__(self: kotlin.native
 public fun kotlin_Float_div__TypesOfArguments__Swift_Double__(self: kotlin.native.internal.NativePtr, other: Double): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Float
     val __other = other
-    val _result = run { __self.div(__other) }
+    val _result = __self.div(__other)
     return _result
 }
 
 @ExportedBridge("kotlin_Float_inc")
 public fun kotlin_Float_inc(self: kotlin.native.internal.NativePtr): Float {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Float
-    val _result = run { __self.inc() }
+    val _result = __self.inc()
     return _result
 }
 
@@ -1778,7 +1778,7 @@ public fun kotlin_Float_inc(self: kotlin.native.internal.NativePtr): Float {
 public fun kotlin_Float_minus__TypesOfArguments__Swift_Int8__(self: kotlin.native.internal.NativePtr, other: Byte): Float {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Float
     val __other = other
-    val _result = run { __self.minus(__other) }
+    val _result = __self.minus(__other)
     return _result
 }
 
@@ -1786,7 +1786,7 @@ public fun kotlin_Float_minus__TypesOfArguments__Swift_Int8__(self: kotlin.nativ
 public fun kotlin_Float_minus__TypesOfArguments__Swift_Int16__(self: kotlin.native.internal.NativePtr, other: Short): Float {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Float
     val __other = other
-    val _result = run { __self.minus(__other) }
+    val _result = __self.minus(__other)
     return _result
 }
 
@@ -1794,7 +1794,7 @@ public fun kotlin_Float_minus__TypesOfArguments__Swift_Int16__(self: kotlin.nati
 public fun kotlin_Float_minus__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, other: Int): Float {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Float
     val __other = other
-    val _result = run { __self.minus(__other) }
+    val _result = __self.minus(__other)
     return _result
 }
 
@@ -1802,7 +1802,7 @@ public fun kotlin_Float_minus__TypesOfArguments__Swift_Int32__(self: kotlin.nati
 public fun kotlin_Float_minus__TypesOfArguments__Swift_Int64__(self: kotlin.native.internal.NativePtr, other: Long): Float {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Float
     val __other = other
-    val _result = run { __self.minus(__other) }
+    val _result = __self.minus(__other)
     return _result
 }
 
@@ -1810,7 +1810,7 @@ public fun kotlin_Float_minus__TypesOfArguments__Swift_Int64__(self: kotlin.nati
 public fun kotlin_Float_minus__TypesOfArguments__Swift_Float__(self: kotlin.native.internal.NativePtr, other: Float): Float {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Float
     val __other = other
-    val _result = run { __self.minus(__other) }
+    val _result = __self.minus(__other)
     return _result
 }
 
@@ -1818,7 +1818,7 @@ public fun kotlin_Float_minus__TypesOfArguments__Swift_Float__(self: kotlin.nati
 public fun kotlin_Float_minus__TypesOfArguments__Swift_Double__(self: kotlin.native.internal.NativePtr, other: Double): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Float
     val __other = other
-    val _result = run { __self.minus(__other) }
+    val _result = __self.minus(__other)
     return _result
 }
 
@@ -1826,7 +1826,7 @@ public fun kotlin_Float_minus__TypesOfArguments__Swift_Double__(self: kotlin.nat
 public fun kotlin_Float_plus__TypesOfArguments__Swift_Int8__(self: kotlin.native.internal.NativePtr, other: Byte): Float {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Float
     val __other = other
-    val _result = run { __self.plus(__other) }
+    val _result = __self.plus(__other)
     return _result
 }
 
@@ -1834,7 +1834,7 @@ public fun kotlin_Float_plus__TypesOfArguments__Swift_Int8__(self: kotlin.native
 public fun kotlin_Float_plus__TypesOfArguments__Swift_Int16__(self: kotlin.native.internal.NativePtr, other: Short): Float {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Float
     val __other = other
-    val _result = run { __self.plus(__other) }
+    val _result = __self.plus(__other)
     return _result
 }
 
@@ -1842,7 +1842,7 @@ public fun kotlin_Float_plus__TypesOfArguments__Swift_Int16__(self: kotlin.nativ
 public fun kotlin_Float_plus__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, other: Int): Float {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Float
     val __other = other
-    val _result = run { __self.plus(__other) }
+    val _result = __self.plus(__other)
     return _result
 }
 
@@ -1850,7 +1850,7 @@ public fun kotlin_Float_plus__TypesOfArguments__Swift_Int32__(self: kotlin.nativ
 public fun kotlin_Float_plus__TypesOfArguments__Swift_Int64__(self: kotlin.native.internal.NativePtr, other: Long): Float {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Float
     val __other = other
-    val _result = run { __self.plus(__other) }
+    val _result = __self.plus(__other)
     return _result
 }
 
@@ -1858,7 +1858,7 @@ public fun kotlin_Float_plus__TypesOfArguments__Swift_Int64__(self: kotlin.nativ
 public fun kotlin_Float_plus__TypesOfArguments__Swift_Float__(self: kotlin.native.internal.NativePtr, other: Float): Float {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Float
     val __other = other
-    val _result = run { __self.plus(__other) }
+    val _result = __self.plus(__other)
     return _result
 }
 
@@ -1866,7 +1866,7 @@ public fun kotlin_Float_plus__TypesOfArguments__Swift_Float__(self: kotlin.nativ
 public fun kotlin_Float_plus__TypesOfArguments__Swift_Double__(self: kotlin.native.internal.NativePtr, other: Double): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Float
     val __other = other
-    val _result = run { __self.plus(__other) }
+    val _result = __self.plus(__other)
     return _result
 }
 
@@ -1874,7 +1874,7 @@ public fun kotlin_Float_plus__TypesOfArguments__Swift_Double__(self: kotlin.nati
 public fun kotlin_Float_rem__TypesOfArguments__Swift_Int8__(self: kotlin.native.internal.NativePtr, other: Byte): Float {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Float
     val __other = other
-    val _result = run { __self.rem(__other) }
+    val _result = __self.rem(__other)
     return _result
 }
 
@@ -1882,7 +1882,7 @@ public fun kotlin_Float_rem__TypesOfArguments__Swift_Int8__(self: kotlin.native.
 public fun kotlin_Float_rem__TypesOfArguments__Swift_Int16__(self: kotlin.native.internal.NativePtr, other: Short): Float {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Float
     val __other = other
-    val _result = run { __self.rem(__other) }
+    val _result = __self.rem(__other)
     return _result
 }
 
@@ -1890,7 +1890,7 @@ public fun kotlin_Float_rem__TypesOfArguments__Swift_Int16__(self: kotlin.native
 public fun kotlin_Float_rem__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, other: Int): Float {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Float
     val __other = other
-    val _result = run { __self.rem(__other) }
+    val _result = __self.rem(__other)
     return _result
 }
 
@@ -1898,7 +1898,7 @@ public fun kotlin_Float_rem__TypesOfArguments__Swift_Int32__(self: kotlin.native
 public fun kotlin_Float_rem__TypesOfArguments__Swift_Int64__(self: kotlin.native.internal.NativePtr, other: Long): Float {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Float
     val __other = other
-    val _result = run { __self.rem(__other) }
+    val _result = __self.rem(__other)
     return _result
 }
 
@@ -1906,7 +1906,7 @@ public fun kotlin_Float_rem__TypesOfArguments__Swift_Int64__(self: kotlin.native
 public fun kotlin_Float_rem__TypesOfArguments__Swift_Float__(self: kotlin.native.internal.NativePtr, other: Float): Float {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Float
     val __other = other
-    val _result = run { __self.rem(__other) }
+    val _result = __self.rem(__other)
     return _result
 }
 
@@ -1914,7 +1914,7 @@ public fun kotlin_Float_rem__TypesOfArguments__Swift_Float__(self: kotlin.native
 public fun kotlin_Float_rem__TypesOfArguments__Swift_Double__(self: kotlin.native.internal.NativePtr, other: Double): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Float
     val __other = other
-    val _result = run { __self.rem(__other) }
+    val _result = __self.rem(__other)
     return _result
 }
 
@@ -1922,7 +1922,7 @@ public fun kotlin_Float_rem__TypesOfArguments__Swift_Double__(self: kotlin.nativ
 public fun kotlin_Float_times__TypesOfArguments__Swift_Int8__(self: kotlin.native.internal.NativePtr, other: Byte): Float {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Float
     val __other = other
-    val _result = run { __self.times(__other) }
+    val _result = __self.times(__other)
     return _result
 }
 
@@ -1930,7 +1930,7 @@ public fun kotlin_Float_times__TypesOfArguments__Swift_Int8__(self: kotlin.nativ
 public fun kotlin_Float_times__TypesOfArguments__Swift_Int16__(self: kotlin.native.internal.NativePtr, other: Short): Float {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Float
     val __other = other
-    val _result = run { __self.times(__other) }
+    val _result = __self.times(__other)
     return _result
 }
 
@@ -1938,7 +1938,7 @@ public fun kotlin_Float_times__TypesOfArguments__Swift_Int16__(self: kotlin.nati
 public fun kotlin_Float_times__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, other: Int): Float {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Float
     val __other = other
-    val _result = run { __self.times(__other) }
+    val _result = __self.times(__other)
     return _result
 }
 
@@ -1946,7 +1946,7 @@ public fun kotlin_Float_times__TypesOfArguments__Swift_Int32__(self: kotlin.nati
 public fun kotlin_Float_times__TypesOfArguments__Swift_Int64__(self: kotlin.native.internal.NativePtr, other: Long): Float {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Float
     val __other = other
-    val _result = run { __self.times(__other) }
+    val _result = __self.times(__other)
     return _result
 }
 
@@ -1954,7 +1954,7 @@ public fun kotlin_Float_times__TypesOfArguments__Swift_Int64__(self: kotlin.nati
 public fun kotlin_Float_times__TypesOfArguments__Swift_Float__(self: kotlin.native.internal.NativePtr, other: Float): Float {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Float
     val __other = other
-    val _result = run { __self.times(__other) }
+    val _result = __self.times(__other)
     return _result
 }
 
@@ -1962,92 +1962,92 @@ public fun kotlin_Float_times__TypesOfArguments__Swift_Float__(self: kotlin.nati
 public fun kotlin_Float_times__TypesOfArguments__Swift_Double__(self: kotlin.native.internal.NativePtr, other: Double): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Float
     val __other = other
-    val _result = run { __self.times(__other) }
+    val _result = __self.times(__other)
     return _result
 }
 
 @ExportedBridge("kotlin_Float_toByte")
 public fun kotlin_Float_toByte(self: kotlin.native.internal.NativePtr): Byte {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Float
-    val _result = run { __self.toByte() }
+    val _result = __self.toByte()
     return _result
 }
 
 @ExportedBridge("kotlin_Float_toChar")
 public fun kotlin_Float_toChar(self: kotlin.native.internal.NativePtr): Char {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Float
-    val _result = run { __self.toChar() }
+    val _result = __self.toChar()
     return _result
 }
 
 @ExportedBridge("kotlin_Float_toDouble")
 public fun kotlin_Float_toDouble(self: kotlin.native.internal.NativePtr): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Float
-    val _result = run { __self.toDouble() }
+    val _result = __self.toDouble()
     return _result
 }
 
 @ExportedBridge("kotlin_Float_toFloat")
 public fun kotlin_Float_toFloat(self: kotlin.native.internal.NativePtr): Float {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Float
-    val _result = run { __self.toFloat() }
+    val _result = __self.toFloat()
     return _result
 }
 
 @ExportedBridge("kotlin_Float_toInt")
 public fun kotlin_Float_toInt(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Float
-    val _result = run { __self.toInt() }
+    val _result = __self.toInt()
     return _result
 }
 
 @ExportedBridge("kotlin_Float_toLong")
 public fun kotlin_Float_toLong(self: kotlin.native.internal.NativePtr): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Float
-    val _result = run { __self.toLong() }
+    val _result = __self.toLong()
     return _result
 }
 
 @ExportedBridge("kotlin_Float_toShort")
 public fun kotlin_Float_toShort(self: kotlin.native.internal.NativePtr): Short {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Float
-    val _result = run { __self.toShort() }
+    val _result = __self.toShort()
     return _result
 }
 
 @ExportedBridge("kotlin_Float_unaryMinus")
 public fun kotlin_Float_unaryMinus(self: kotlin.native.internal.NativePtr): Float {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Float
-    val _result = run { __self.unaryMinus() }
+    val _result = __self.unaryMinus()
     return _result
 }
 
 @ExportedBridge("kotlin_Float_unaryPlus")
 public fun kotlin_Float_unaryPlus(self: kotlin.native.internal.NativePtr): Float {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Float
-    val _result = run { __self.unaryPlus() }
+    val _result = __self.unaryPlus()
     return _result
 }
 
 @ExportedBridge("kotlin_IllegalArgumentException_init_allocate")
 public fun kotlin_IllegalArgumentException_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<kotlin.IllegalArgumentException>() }
+    val _result = kotlin.native.internal.createUninitializedInstance<kotlin.IllegalArgumentException>()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("kotlin_IllegalArgumentException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
 public fun kotlin_IllegalArgumentException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val _result = run { kotlin.native.internal.initInstance(____kt, kotlin.IllegalArgumentException()) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, kotlin.IllegalArgumentException())
+    return true
 }
 
 @ExportedBridge("kotlin_IllegalArgumentException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String___")
 public fun kotlin_IllegalArgumentException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String___(__kt: kotlin.native.internal.NativePtr, message: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     val __message = if (message == kotlin.native.internal.NativePtr.NULL) null else interpretObjCPointer<kotlin.String>(message)
-    val _result = run { kotlin.native.internal.initInstance(____kt, kotlin.IllegalArgumentException(__message)) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, kotlin.IllegalArgumentException(__message))
+    return true
 }
 
 @ExportedBridge("kotlin_IllegalArgumentException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String__Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___")
@@ -2055,30 +2055,30 @@ public fun kotlin_IllegalArgumentException_init_initialize__TypesOfArguments__Sw
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     val __message = if (message == kotlin.native.internal.NativePtr.NULL) null else interpretObjCPointer<kotlin.String>(message)
     val __cause = if (cause == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(cause) as kotlin.Throwable
-    val _result = run { kotlin.native.internal.initInstance(____kt, kotlin.IllegalArgumentException(__message, __cause)) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, kotlin.IllegalArgumentException(__message, __cause))
+    return true
 }
 
 @ExportedBridge("kotlin_IllegalArgumentException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___")
 public fun kotlin_IllegalArgumentException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt: kotlin.native.internal.NativePtr, cause: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     val __cause = if (cause == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(cause) as kotlin.Throwable
-    val _result = run { kotlin.native.internal.initInstance(____kt, kotlin.IllegalArgumentException(__cause)) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, kotlin.IllegalArgumentException(__cause))
+    return true
 }
 
 @ExportedBridge("kotlin_IntArray_get__TypesOfArguments__Swift_Int32__")
 public fun kotlin_IntArray_get__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, index: Int): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.IntArray
     val __index = index
-    val _result = run { __self.`get`(__index) }
+    val _result = __self.`get`(__index)
     return _result
 }
 
 @ExportedBridge("kotlin_IntArray_iterator")
 public fun kotlin_IntArray_iterator(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.IntArray
-    val _result = run { __self.iterator() }
+    val _result = __self.iterator()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -2087,48 +2087,48 @@ public fun kotlin_IntArray_set__TypesOfArguments__Swift_Int32_Swift_Int32__(self
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.IntArray
     val __index = index
     val __value = value
-    val _result = run { __self.`set`(__index, __value) }
-    return run { _result; true }
+    __self.`set`(__index, __value)
+    return true
 }
 
 @ExportedBridge("kotlin_IntArray_size_get")
 public fun kotlin_IntArray_size_get(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.IntArray
-    val _result = run { __self.size }
+    val _result = __self.size
     return _result
 }
 
 @ExportedBridge("kotlin_Int_Companion_MAX_VALUE_get")
 public fun kotlin_Int_Companion_MAX_VALUE_get(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Int.Companion
-    val _result = run { __self.MAX_VALUE }
+    val _result = __self.MAX_VALUE
     return _result
 }
 
 @ExportedBridge("kotlin_Int_Companion_MIN_VALUE_get")
 public fun kotlin_Int_Companion_MIN_VALUE_get(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Int.Companion
-    val _result = run { __self.MIN_VALUE }
+    val _result = __self.MIN_VALUE
     return _result
 }
 
 @ExportedBridge("kotlin_Int_Companion_SIZE_BITS_get")
 public fun kotlin_Int_Companion_SIZE_BITS_get(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Int.Companion
-    val _result = run { __self.SIZE_BITS }
+    val _result = __self.SIZE_BITS
     return _result
 }
 
 @ExportedBridge("kotlin_Int_Companion_SIZE_BYTES_get")
 public fun kotlin_Int_Companion_SIZE_BYTES_get(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Int.Companion
-    val _result = run { __self.SIZE_BYTES }
+    val _result = __self.SIZE_BYTES
     return _result
 }
 
 @ExportedBridge("kotlin_Int_Companion_get")
 public fun kotlin_Int_Companion_get(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.Int.Companion }
+    val _result = kotlin.Int.Companion
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -2136,7 +2136,7 @@ public fun kotlin_Int_Companion_get(): kotlin.native.internal.NativePtr {
 public fun kotlin_Int_and__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, other: Int): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Int
     val __other = other
-    val _result = run { __self.and(__other) }
+    val _result = __self.and(__other)
     return _result
 }
 
@@ -2144,7 +2144,7 @@ public fun kotlin_Int_and__TypesOfArguments__Swift_Int32__(self: kotlin.native.i
 public fun kotlin_Int_compareTo__TypesOfArguments__Swift_Int8__(self: kotlin.native.internal.NativePtr, other: Byte): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Int
     val __other = other
-    val _result = run { __self.compareTo(__other) }
+    val _result = __self.compareTo(__other)
     return _result
 }
 
@@ -2152,7 +2152,7 @@ public fun kotlin_Int_compareTo__TypesOfArguments__Swift_Int8__(self: kotlin.nat
 public fun kotlin_Int_compareTo__TypesOfArguments__Swift_Int16__(self: kotlin.native.internal.NativePtr, other: Short): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Int
     val __other = other
-    val _result = run { __self.compareTo(__other) }
+    val _result = __self.compareTo(__other)
     return _result
 }
 
@@ -2160,7 +2160,7 @@ public fun kotlin_Int_compareTo__TypesOfArguments__Swift_Int16__(self: kotlin.na
 public fun kotlin_Int_compareTo__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, other: Int): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Int
     val __other = other
-    val _result = run { __self.compareTo(__other) }
+    val _result = __self.compareTo(__other)
     return _result
 }
 
@@ -2168,7 +2168,7 @@ public fun kotlin_Int_compareTo__TypesOfArguments__Swift_Int32__(self: kotlin.na
 public fun kotlin_Int_compareTo__TypesOfArguments__Swift_Int64__(self: kotlin.native.internal.NativePtr, other: Long): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Int
     val __other = other
-    val _result = run { __self.compareTo(__other) }
+    val _result = __self.compareTo(__other)
     return _result
 }
 
@@ -2176,7 +2176,7 @@ public fun kotlin_Int_compareTo__TypesOfArguments__Swift_Int64__(self: kotlin.na
 public fun kotlin_Int_compareTo__TypesOfArguments__Swift_Float__(self: kotlin.native.internal.NativePtr, other: Float): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Int
     val __other = other
-    val _result = run { __self.compareTo(__other) }
+    val _result = __self.compareTo(__other)
     return _result
 }
 
@@ -2184,14 +2184,14 @@ public fun kotlin_Int_compareTo__TypesOfArguments__Swift_Float__(self: kotlin.na
 public fun kotlin_Int_compareTo__TypesOfArguments__Swift_Double__(self: kotlin.native.internal.NativePtr, other: Double): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Int
     val __other = other
-    val _result = run { __self.compareTo(__other) }
+    val _result = __self.compareTo(__other)
     return _result
 }
 
 @ExportedBridge("kotlin_Int_dec")
 public fun kotlin_Int_dec(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Int
-    val _result = run { __self.dec() }
+    val _result = __self.dec()
     return _result
 }
 
@@ -2199,7 +2199,7 @@ public fun kotlin_Int_dec(self: kotlin.native.internal.NativePtr): Int {
 public fun kotlin_Int_div__TypesOfArguments__Swift_Int8__(self: kotlin.native.internal.NativePtr, other: Byte): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Int
     val __other = other
-    val _result = run { __self.div(__other) }
+    val _result = __self.div(__other)
     return _result
 }
 
@@ -2207,7 +2207,7 @@ public fun kotlin_Int_div__TypesOfArguments__Swift_Int8__(self: kotlin.native.in
 public fun kotlin_Int_div__TypesOfArguments__Swift_Int16__(self: kotlin.native.internal.NativePtr, other: Short): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Int
     val __other = other
-    val _result = run { __self.div(__other) }
+    val _result = __self.div(__other)
     return _result
 }
 
@@ -2215,7 +2215,7 @@ public fun kotlin_Int_div__TypesOfArguments__Swift_Int16__(self: kotlin.native.i
 public fun kotlin_Int_div__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, other: Int): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Int
     val __other = other
-    val _result = run { __self.div(__other) }
+    val _result = __self.div(__other)
     return _result
 }
 
@@ -2223,7 +2223,7 @@ public fun kotlin_Int_div__TypesOfArguments__Swift_Int32__(self: kotlin.native.i
 public fun kotlin_Int_div__TypesOfArguments__Swift_Int64__(self: kotlin.native.internal.NativePtr, other: Long): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Int
     val __other = other
-    val _result = run { __self.div(__other) }
+    val _result = __self.div(__other)
     return _result
 }
 
@@ -2231,7 +2231,7 @@ public fun kotlin_Int_div__TypesOfArguments__Swift_Int64__(self: kotlin.native.i
 public fun kotlin_Int_div__TypesOfArguments__Swift_Float__(self: kotlin.native.internal.NativePtr, other: Float): Float {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Int
     val __other = other
-    val _result = run { __self.div(__other) }
+    val _result = __self.div(__other)
     return _result
 }
 
@@ -2239,21 +2239,21 @@ public fun kotlin_Int_div__TypesOfArguments__Swift_Float__(self: kotlin.native.i
 public fun kotlin_Int_div__TypesOfArguments__Swift_Double__(self: kotlin.native.internal.NativePtr, other: Double): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Int
     val __other = other
-    val _result = run { __self.div(__other) }
+    val _result = __self.div(__other)
     return _result
 }
 
 @ExportedBridge("kotlin_Int_inc")
 public fun kotlin_Int_inc(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Int
-    val _result = run { __self.inc() }
+    val _result = __self.inc()
     return _result
 }
 
 @ExportedBridge("kotlin_Int_inv")
 public fun kotlin_Int_inv(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Int
-    val _result = run { __self.inv() }
+    val _result = __self.inv()
     return _result
 }
 
@@ -2261,7 +2261,7 @@ public fun kotlin_Int_inv(self: kotlin.native.internal.NativePtr): Int {
 public fun kotlin_Int_minus__TypesOfArguments__Swift_Int8__(self: kotlin.native.internal.NativePtr, other: Byte): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Int
     val __other = other
-    val _result = run { __self.minus(__other) }
+    val _result = __self.minus(__other)
     return _result
 }
 
@@ -2269,7 +2269,7 @@ public fun kotlin_Int_minus__TypesOfArguments__Swift_Int8__(self: kotlin.native.
 public fun kotlin_Int_minus__TypesOfArguments__Swift_Int16__(self: kotlin.native.internal.NativePtr, other: Short): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Int
     val __other = other
-    val _result = run { __self.minus(__other) }
+    val _result = __self.minus(__other)
     return _result
 }
 
@@ -2277,7 +2277,7 @@ public fun kotlin_Int_minus__TypesOfArguments__Swift_Int16__(self: kotlin.native
 public fun kotlin_Int_minus__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, other: Int): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Int
     val __other = other
-    val _result = run { __self.minus(__other) }
+    val _result = __self.minus(__other)
     return _result
 }
 
@@ -2285,7 +2285,7 @@ public fun kotlin_Int_minus__TypesOfArguments__Swift_Int32__(self: kotlin.native
 public fun kotlin_Int_minus__TypesOfArguments__Swift_Int64__(self: kotlin.native.internal.NativePtr, other: Long): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Int
     val __other = other
-    val _result = run { __self.minus(__other) }
+    val _result = __self.minus(__other)
     return _result
 }
 
@@ -2293,7 +2293,7 @@ public fun kotlin_Int_minus__TypesOfArguments__Swift_Int64__(self: kotlin.native
 public fun kotlin_Int_minus__TypesOfArguments__Swift_Float__(self: kotlin.native.internal.NativePtr, other: Float): Float {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Int
     val __other = other
-    val _result = run { __self.minus(__other) }
+    val _result = __self.minus(__other)
     return _result
 }
 
@@ -2301,7 +2301,7 @@ public fun kotlin_Int_minus__TypesOfArguments__Swift_Float__(self: kotlin.native
 public fun kotlin_Int_minus__TypesOfArguments__Swift_Double__(self: kotlin.native.internal.NativePtr, other: Double): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Int
     val __other = other
-    val _result = run { __self.minus(__other) }
+    val _result = __self.minus(__other)
     return _result
 }
 
@@ -2309,7 +2309,7 @@ public fun kotlin_Int_minus__TypesOfArguments__Swift_Double__(self: kotlin.nativ
 public fun kotlin_Int_or__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, other: Int): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Int
     val __other = other
-    val _result = run { __self.or(__other) }
+    val _result = __self.or(__other)
     return _result
 }
 
@@ -2317,7 +2317,7 @@ public fun kotlin_Int_or__TypesOfArguments__Swift_Int32__(self: kotlin.native.in
 public fun kotlin_Int_plus__TypesOfArguments__Swift_Int8__(self: kotlin.native.internal.NativePtr, other: Byte): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Int
     val __other = other
-    val _result = run { __self.plus(__other) }
+    val _result = __self.plus(__other)
     return _result
 }
 
@@ -2325,7 +2325,7 @@ public fun kotlin_Int_plus__TypesOfArguments__Swift_Int8__(self: kotlin.native.i
 public fun kotlin_Int_plus__TypesOfArguments__Swift_Int16__(self: kotlin.native.internal.NativePtr, other: Short): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Int
     val __other = other
-    val _result = run { __self.plus(__other) }
+    val _result = __self.plus(__other)
     return _result
 }
 
@@ -2333,7 +2333,7 @@ public fun kotlin_Int_plus__TypesOfArguments__Swift_Int16__(self: kotlin.native.
 public fun kotlin_Int_plus__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, other: Int): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Int
     val __other = other
-    val _result = run { __self.plus(__other) }
+    val _result = __self.plus(__other)
     return _result
 }
 
@@ -2341,7 +2341,7 @@ public fun kotlin_Int_plus__TypesOfArguments__Swift_Int32__(self: kotlin.native.
 public fun kotlin_Int_plus__TypesOfArguments__Swift_Int64__(self: kotlin.native.internal.NativePtr, other: Long): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Int
     val __other = other
-    val _result = run { __self.plus(__other) }
+    val _result = __self.plus(__other)
     return _result
 }
 
@@ -2349,7 +2349,7 @@ public fun kotlin_Int_plus__TypesOfArguments__Swift_Int64__(self: kotlin.native.
 public fun kotlin_Int_plus__TypesOfArguments__Swift_Float__(self: kotlin.native.internal.NativePtr, other: Float): Float {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Int
     val __other = other
-    val _result = run { __self.plus(__other) }
+    val _result = __self.plus(__other)
     return _result
 }
 
@@ -2357,7 +2357,7 @@ public fun kotlin_Int_plus__TypesOfArguments__Swift_Float__(self: kotlin.native.
 public fun kotlin_Int_plus__TypesOfArguments__Swift_Double__(self: kotlin.native.internal.NativePtr, other: Double): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Int
     val __other = other
-    val _result = run { __self.plus(__other) }
+    val _result = __self.plus(__other)
     return _result
 }
 
@@ -2365,7 +2365,7 @@ public fun kotlin_Int_plus__TypesOfArguments__Swift_Double__(self: kotlin.native
 public fun kotlin_Int_rangeTo__TypesOfArguments__Swift_Int8__(self: kotlin.native.internal.NativePtr, other: Byte): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Int
     val __other = other
-    val _result = run { __self.rangeTo(__other) }
+    val _result = __self.rangeTo(__other)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -2373,7 +2373,7 @@ public fun kotlin_Int_rangeTo__TypesOfArguments__Swift_Int8__(self: kotlin.nativ
 public fun kotlin_Int_rangeTo__TypesOfArguments__Swift_Int16__(self: kotlin.native.internal.NativePtr, other: Short): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Int
     val __other = other
-    val _result = run { __self.rangeTo(__other) }
+    val _result = __self.rangeTo(__other)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -2381,7 +2381,7 @@ public fun kotlin_Int_rangeTo__TypesOfArguments__Swift_Int16__(self: kotlin.nati
 public fun kotlin_Int_rangeTo__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, other: Int): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Int
     val __other = other
-    val _result = run { __self.rangeTo(__other) }
+    val _result = __self.rangeTo(__other)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -2389,7 +2389,7 @@ public fun kotlin_Int_rangeTo__TypesOfArguments__Swift_Int32__(self: kotlin.nati
 public fun kotlin_Int_rangeTo__TypesOfArguments__Swift_Int64__(self: kotlin.native.internal.NativePtr, other: Long): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Int
     val __other = other
-    val _result = run { __self.rangeTo(__other) }
+    val _result = __self.rangeTo(__other)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -2397,7 +2397,7 @@ public fun kotlin_Int_rangeTo__TypesOfArguments__Swift_Int64__(self: kotlin.nati
 public fun kotlin_Int_rangeUntil__TypesOfArguments__Swift_Int8__(self: kotlin.native.internal.NativePtr, other: Byte): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Int
     val __other = other
-    val _result = run { __self.rangeUntil(__other) }
+    val _result = __self.rangeUntil(__other)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -2405,7 +2405,7 @@ public fun kotlin_Int_rangeUntil__TypesOfArguments__Swift_Int8__(self: kotlin.na
 public fun kotlin_Int_rangeUntil__TypesOfArguments__Swift_Int16__(self: kotlin.native.internal.NativePtr, other: Short): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Int
     val __other = other
-    val _result = run { __self.rangeUntil(__other) }
+    val _result = __self.rangeUntil(__other)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -2413,7 +2413,7 @@ public fun kotlin_Int_rangeUntil__TypesOfArguments__Swift_Int16__(self: kotlin.n
 public fun kotlin_Int_rangeUntil__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, other: Int): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Int
     val __other = other
-    val _result = run { __self.rangeUntil(__other) }
+    val _result = __self.rangeUntil(__other)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -2421,7 +2421,7 @@ public fun kotlin_Int_rangeUntil__TypesOfArguments__Swift_Int32__(self: kotlin.n
 public fun kotlin_Int_rangeUntil__TypesOfArguments__Swift_Int64__(self: kotlin.native.internal.NativePtr, other: Long): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Int
     val __other = other
-    val _result = run { __self.rangeUntil(__other) }
+    val _result = __self.rangeUntil(__other)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -2429,7 +2429,7 @@ public fun kotlin_Int_rangeUntil__TypesOfArguments__Swift_Int64__(self: kotlin.n
 public fun kotlin_Int_rem__TypesOfArguments__Swift_Int8__(self: kotlin.native.internal.NativePtr, other: Byte): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Int
     val __other = other
-    val _result = run { __self.rem(__other) }
+    val _result = __self.rem(__other)
     return _result
 }
 
@@ -2437,7 +2437,7 @@ public fun kotlin_Int_rem__TypesOfArguments__Swift_Int8__(self: kotlin.native.in
 public fun kotlin_Int_rem__TypesOfArguments__Swift_Int16__(self: kotlin.native.internal.NativePtr, other: Short): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Int
     val __other = other
-    val _result = run { __self.rem(__other) }
+    val _result = __self.rem(__other)
     return _result
 }
 
@@ -2445,7 +2445,7 @@ public fun kotlin_Int_rem__TypesOfArguments__Swift_Int16__(self: kotlin.native.i
 public fun kotlin_Int_rem__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, other: Int): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Int
     val __other = other
-    val _result = run { __self.rem(__other) }
+    val _result = __self.rem(__other)
     return _result
 }
 
@@ -2453,7 +2453,7 @@ public fun kotlin_Int_rem__TypesOfArguments__Swift_Int32__(self: kotlin.native.i
 public fun kotlin_Int_rem__TypesOfArguments__Swift_Int64__(self: kotlin.native.internal.NativePtr, other: Long): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Int
     val __other = other
-    val _result = run { __self.rem(__other) }
+    val _result = __self.rem(__other)
     return _result
 }
 
@@ -2461,7 +2461,7 @@ public fun kotlin_Int_rem__TypesOfArguments__Swift_Int64__(self: kotlin.native.i
 public fun kotlin_Int_rem__TypesOfArguments__Swift_Float__(self: kotlin.native.internal.NativePtr, other: Float): Float {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Int
     val __other = other
-    val _result = run { __self.rem(__other) }
+    val _result = __self.rem(__other)
     return _result
 }
 
@@ -2469,7 +2469,7 @@ public fun kotlin_Int_rem__TypesOfArguments__Swift_Float__(self: kotlin.native.i
 public fun kotlin_Int_rem__TypesOfArguments__Swift_Double__(self: kotlin.native.internal.NativePtr, other: Double): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Int
     val __other = other
-    val _result = run { __self.rem(__other) }
+    val _result = __self.rem(__other)
     return _result
 }
 
@@ -2477,7 +2477,7 @@ public fun kotlin_Int_rem__TypesOfArguments__Swift_Double__(self: kotlin.native.
 public fun kotlin_Int_shl__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, bitCount: Int): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Int
     val __bitCount = bitCount
-    val _result = run { __self.shl(__bitCount) }
+    val _result = __self.shl(__bitCount)
     return _result
 }
 
@@ -2485,7 +2485,7 @@ public fun kotlin_Int_shl__TypesOfArguments__Swift_Int32__(self: kotlin.native.i
 public fun kotlin_Int_shr__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, bitCount: Int): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Int
     val __bitCount = bitCount
-    val _result = run { __self.shr(__bitCount) }
+    val _result = __self.shr(__bitCount)
     return _result
 }
 
@@ -2493,7 +2493,7 @@ public fun kotlin_Int_shr__TypesOfArguments__Swift_Int32__(self: kotlin.native.i
 public fun kotlin_Int_times__TypesOfArguments__Swift_Int8__(self: kotlin.native.internal.NativePtr, other: Byte): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Int
     val __other = other
-    val _result = run { __self.times(__other) }
+    val _result = __self.times(__other)
     return _result
 }
 
@@ -2501,7 +2501,7 @@ public fun kotlin_Int_times__TypesOfArguments__Swift_Int8__(self: kotlin.native.
 public fun kotlin_Int_times__TypesOfArguments__Swift_Int16__(self: kotlin.native.internal.NativePtr, other: Short): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Int
     val __other = other
-    val _result = run { __self.times(__other) }
+    val _result = __self.times(__other)
     return _result
 }
 
@@ -2509,7 +2509,7 @@ public fun kotlin_Int_times__TypesOfArguments__Swift_Int16__(self: kotlin.native
 public fun kotlin_Int_times__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, other: Int): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Int
     val __other = other
-    val _result = run { __self.times(__other) }
+    val _result = __self.times(__other)
     return _result
 }
 
@@ -2517,7 +2517,7 @@ public fun kotlin_Int_times__TypesOfArguments__Swift_Int32__(self: kotlin.native
 public fun kotlin_Int_times__TypesOfArguments__Swift_Int64__(self: kotlin.native.internal.NativePtr, other: Long): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Int
     val __other = other
-    val _result = run { __self.times(__other) }
+    val _result = __self.times(__other)
     return _result
 }
 
@@ -2525,7 +2525,7 @@ public fun kotlin_Int_times__TypesOfArguments__Swift_Int64__(self: kotlin.native
 public fun kotlin_Int_times__TypesOfArguments__Swift_Float__(self: kotlin.native.internal.NativePtr, other: Float): Float {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Int
     val __other = other
-    val _result = run { __self.times(__other) }
+    val _result = __self.times(__other)
     return _result
 }
 
@@ -2533,70 +2533,70 @@ public fun kotlin_Int_times__TypesOfArguments__Swift_Float__(self: kotlin.native
 public fun kotlin_Int_times__TypesOfArguments__Swift_Double__(self: kotlin.native.internal.NativePtr, other: Double): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Int
     val __other = other
-    val _result = run { __self.times(__other) }
+    val _result = __self.times(__other)
     return _result
 }
 
 @ExportedBridge("kotlin_Int_toByte")
 public fun kotlin_Int_toByte(self: kotlin.native.internal.NativePtr): Byte {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Int
-    val _result = run { __self.toByte() }
+    val _result = __self.toByte()
     return _result
 }
 
 @ExportedBridge("kotlin_Int_toChar")
 public fun kotlin_Int_toChar(self: kotlin.native.internal.NativePtr): Char {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Int
-    val _result = run { __self.toChar() }
+    val _result = __self.toChar()
     return _result
 }
 
 @ExportedBridge("kotlin_Int_toDouble")
 public fun kotlin_Int_toDouble(self: kotlin.native.internal.NativePtr): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Int
-    val _result = run { __self.toDouble() }
+    val _result = __self.toDouble()
     return _result
 }
 
 @ExportedBridge("kotlin_Int_toFloat")
 public fun kotlin_Int_toFloat(self: kotlin.native.internal.NativePtr): Float {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Int
-    val _result = run { __self.toFloat() }
+    val _result = __self.toFloat()
     return _result
 }
 
 @ExportedBridge("kotlin_Int_toInt")
 public fun kotlin_Int_toInt(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Int
-    val _result = run { __self.toInt() }
+    val _result = __self.toInt()
     return _result
 }
 
 @ExportedBridge("kotlin_Int_toLong")
 public fun kotlin_Int_toLong(self: kotlin.native.internal.NativePtr): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Int
-    val _result = run { __self.toLong() }
+    val _result = __self.toLong()
     return _result
 }
 
 @ExportedBridge("kotlin_Int_toShort")
 public fun kotlin_Int_toShort(self: kotlin.native.internal.NativePtr): Short {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Int
-    val _result = run { __self.toShort() }
+    val _result = __self.toShort()
     return _result
 }
 
 @ExportedBridge("kotlin_Int_unaryMinus")
 public fun kotlin_Int_unaryMinus(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Int
-    val _result = run { __self.unaryMinus() }
+    val _result = __self.unaryMinus()
     return _result
 }
 
 @ExportedBridge("kotlin_Int_unaryPlus")
 public fun kotlin_Int_unaryPlus(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Int
-    val _result = run { __self.unaryPlus() }
+    val _result = __self.unaryPlus()
     return _result
 }
 
@@ -2604,7 +2604,7 @@ public fun kotlin_Int_unaryPlus(self: kotlin.native.internal.NativePtr): Int {
 public fun kotlin_Int_ushr__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, bitCount: Int): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Int
     val __bitCount = bitCount
-    val _result = run { __self.ushr(__bitCount) }
+    val _result = __self.ushr(__bitCount)
     return _result
 }
 
@@ -2612,41 +2612,41 @@ public fun kotlin_Int_ushr__TypesOfArguments__Swift_Int32__(self: kotlin.native.
 public fun kotlin_Int_xor__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, other: Int): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Int
     val __other = other
-    val _result = run { __self.xor(__other) }
+    val _result = __self.xor(__other)
     return _result
 }
 
 @ExportedBridge("kotlin_Long_Companion_MAX_VALUE_get")
 public fun kotlin_Long_Companion_MAX_VALUE_get(self: kotlin.native.internal.NativePtr): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Long.Companion
-    val _result = run { __self.MAX_VALUE }
+    val _result = __self.MAX_VALUE
     return _result
 }
 
 @ExportedBridge("kotlin_Long_Companion_MIN_VALUE_get")
 public fun kotlin_Long_Companion_MIN_VALUE_get(self: kotlin.native.internal.NativePtr): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Long.Companion
-    val _result = run { __self.MIN_VALUE }
+    val _result = __self.MIN_VALUE
     return _result
 }
 
 @ExportedBridge("kotlin_Long_Companion_SIZE_BITS_get")
 public fun kotlin_Long_Companion_SIZE_BITS_get(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Long.Companion
-    val _result = run { __self.SIZE_BITS }
+    val _result = __self.SIZE_BITS
     return _result
 }
 
 @ExportedBridge("kotlin_Long_Companion_SIZE_BYTES_get")
 public fun kotlin_Long_Companion_SIZE_BYTES_get(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Long.Companion
-    val _result = run { __self.SIZE_BYTES }
+    val _result = __self.SIZE_BYTES
     return _result
 }
 
 @ExportedBridge("kotlin_Long_Companion_get")
 public fun kotlin_Long_Companion_get(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.Long.Companion }
+    val _result = kotlin.Long.Companion
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -2654,7 +2654,7 @@ public fun kotlin_Long_Companion_get(): kotlin.native.internal.NativePtr {
 public fun kotlin_Long_and__TypesOfArguments__Swift_Int64__(self: kotlin.native.internal.NativePtr, other: Long): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Long
     val __other = other
-    val _result = run { __self.and(__other) }
+    val _result = __self.and(__other)
     return _result
 }
 
@@ -2662,7 +2662,7 @@ public fun kotlin_Long_and__TypesOfArguments__Swift_Int64__(self: kotlin.native.
 public fun kotlin_Long_compareTo__TypesOfArguments__Swift_Int8__(self: kotlin.native.internal.NativePtr, other: Byte): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Long
     val __other = other
-    val _result = run { __self.compareTo(__other) }
+    val _result = __self.compareTo(__other)
     return _result
 }
 
@@ -2670,7 +2670,7 @@ public fun kotlin_Long_compareTo__TypesOfArguments__Swift_Int8__(self: kotlin.na
 public fun kotlin_Long_compareTo__TypesOfArguments__Swift_Int16__(self: kotlin.native.internal.NativePtr, other: Short): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Long
     val __other = other
-    val _result = run { __self.compareTo(__other) }
+    val _result = __self.compareTo(__other)
     return _result
 }
 
@@ -2678,7 +2678,7 @@ public fun kotlin_Long_compareTo__TypesOfArguments__Swift_Int16__(self: kotlin.n
 public fun kotlin_Long_compareTo__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, other: Int): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Long
     val __other = other
-    val _result = run { __self.compareTo(__other) }
+    val _result = __self.compareTo(__other)
     return _result
 }
 
@@ -2686,7 +2686,7 @@ public fun kotlin_Long_compareTo__TypesOfArguments__Swift_Int32__(self: kotlin.n
 public fun kotlin_Long_compareTo__TypesOfArguments__Swift_Int64__(self: kotlin.native.internal.NativePtr, other: Long): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Long
     val __other = other
-    val _result = run { __self.compareTo(__other) }
+    val _result = __self.compareTo(__other)
     return _result
 }
 
@@ -2694,7 +2694,7 @@ public fun kotlin_Long_compareTo__TypesOfArguments__Swift_Int64__(self: kotlin.n
 public fun kotlin_Long_compareTo__TypesOfArguments__Swift_Float__(self: kotlin.native.internal.NativePtr, other: Float): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Long
     val __other = other
-    val _result = run { __self.compareTo(__other) }
+    val _result = __self.compareTo(__other)
     return _result
 }
 
@@ -2702,14 +2702,14 @@ public fun kotlin_Long_compareTo__TypesOfArguments__Swift_Float__(self: kotlin.n
 public fun kotlin_Long_compareTo__TypesOfArguments__Swift_Double__(self: kotlin.native.internal.NativePtr, other: Double): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Long
     val __other = other
-    val _result = run { __self.compareTo(__other) }
+    val _result = __self.compareTo(__other)
     return _result
 }
 
 @ExportedBridge("kotlin_Long_dec")
 public fun kotlin_Long_dec(self: kotlin.native.internal.NativePtr): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Long
-    val _result = run { __self.dec() }
+    val _result = __self.dec()
     return _result
 }
 
@@ -2717,7 +2717,7 @@ public fun kotlin_Long_dec(self: kotlin.native.internal.NativePtr): Long {
 public fun kotlin_Long_div__TypesOfArguments__Swift_Int8__(self: kotlin.native.internal.NativePtr, other: Byte): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Long
     val __other = other
-    val _result = run { __self.div(__other) }
+    val _result = __self.div(__other)
     return _result
 }
 
@@ -2725,7 +2725,7 @@ public fun kotlin_Long_div__TypesOfArguments__Swift_Int8__(self: kotlin.native.i
 public fun kotlin_Long_div__TypesOfArguments__Swift_Int16__(self: kotlin.native.internal.NativePtr, other: Short): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Long
     val __other = other
-    val _result = run { __self.div(__other) }
+    val _result = __self.div(__other)
     return _result
 }
 
@@ -2733,7 +2733,7 @@ public fun kotlin_Long_div__TypesOfArguments__Swift_Int16__(self: kotlin.native.
 public fun kotlin_Long_div__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, other: Int): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Long
     val __other = other
-    val _result = run { __self.div(__other) }
+    val _result = __self.div(__other)
     return _result
 }
 
@@ -2741,7 +2741,7 @@ public fun kotlin_Long_div__TypesOfArguments__Swift_Int32__(self: kotlin.native.
 public fun kotlin_Long_div__TypesOfArguments__Swift_Int64__(self: kotlin.native.internal.NativePtr, other: Long): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Long
     val __other = other
-    val _result = run { __self.div(__other) }
+    val _result = __self.div(__other)
     return _result
 }
 
@@ -2749,7 +2749,7 @@ public fun kotlin_Long_div__TypesOfArguments__Swift_Int64__(self: kotlin.native.
 public fun kotlin_Long_div__TypesOfArguments__Swift_Float__(self: kotlin.native.internal.NativePtr, other: Float): Float {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Long
     val __other = other
-    val _result = run { __self.div(__other) }
+    val _result = __self.div(__other)
     return _result
 }
 
@@ -2757,21 +2757,21 @@ public fun kotlin_Long_div__TypesOfArguments__Swift_Float__(self: kotlin.native.
 public fun kotlin_Long_div__TypesOfArguments__Swift_Double__(self: kotlin.native.internal.NativePtr, other: Double): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Long
     val __other = other
-    val _result = run { __self.div(__other) }
+    val _result = __self.div(__other)
     return _result
 }
 
 @ExportedBridge("kotlin_Long_inc")
 public fun kotlin_Long_inc(self: kotlin.native.internal.NativePtr): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Long
-    val _result = run { __self.inc() }
+    val _result = __self.inc()
     return _result
 }
 
 @ExportedBridge("kotlin_Long_inv")
 public fun kotlin_Long_inv(self: kotlin.native.internal.NativePtr): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Long
-    val _result = run { __self.inv() }
+    val _result = __self.inv()
     return _result
 }
 
@@ -2779,7 +2779,7 @@ public fun kotlin_Long_inv(self: kotlin.native.internal.NativePtr): Long {
 public fun kotlin_Long_minus__TypesOfArguments__Swift_Int8__(self: kotlin.native.internal.NativePtr, other: Byte): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Long
     val __other = other
-    val _result = run { __self.minus(__other) }
+    val _result = __self.minus(__other)
     return _result
 }
 
@@ -2787,7 +2787,7 @@ public fun kotlin_Long_minus__TypesOfArguments__Swift_Int8__(self: kotlin.native
 public fun kotlin_Long_minus__TypesOfArguments__Swift_Int16__(self: kotlin.native.internal.NativePtr, other: Short): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Long
     val __other = other
-    val _result = run { __self.minus(__other) }
+    val _result = __self.minus(__other)
     return _result
 }
 
@@ -2795,7 +2795,7 @@ public fun kotlin_Long_minus__TypesOfArguments__Swift_Int16__(self: kotlin.nativ
 public fun kotlin_Long_minus__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, other: Int): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Long
     val __other = other
-    val _result = run { __self.minus(__other) }
+    val _result = __self.minus(__other)
     return _result
 }
 
@@ -2803,7 +2803,7 @@ public fun kotlin_Long_minus__TypesOfArguments__Swift_Int32__(self: kotlin.nativ
 public fun kotlin_Long_minus__TypesOfArguments__Swift_Int64__(self: kotlin.native.internal.NativePtr, other: Long): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Long
     val __other = other
-    val _result = run { __self.minus(__other) }
+    val _result = __self.minus(__other)
     return _result
 }
 
@@ -2811,7 +2811,7 @@ public fun kotlin_Long_minus__TypesOfArguments__Swift_Int64__(self: kotlin.nativ
 public fun kotlin_Long_minus__TypesOfArguments__Swift_Float__(self: kotlin.native.internal.NativePtr, other: Float): Float {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Long
     val __other = other
-    val _result = run { __self.minus(__other) }
+    val _result = __self.minus(__other)
     return _result
 }
 
@@ -2819,7 +2819,7 @@ public fun kotlin_Long_minus__TypesOfArguments__Swift_Float__(self: kotlin.nativ
 public fun kotlin_Long_minus__TypesOfArguments__Swift_Double__(self: kotlin.native.internal.NativePtr, other: Double): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Long
     val __other = other
-    val _result = run { __self.minus(__other) }
+    val _result = __self.minus(__other)
     return _result
 }
 
@@ -2827,7 +2827,7 @@ public fun kotlin_Long_minus__TypesOfArguments__Swift_Double__(self: kotlin.nati
 public fun kotlin_Long_or__TypesOfArguments__Swift_Int64__(self: kotlin.native.internal.NativePtr, other: Long): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Long
     val __other = other
-    val _result = run { __self.or(__other) }
+    val _result = __self.or(__other)
     return _result
 }
 
@@ -2835,7 +2835,7 @@ public fun kotlin_Long_or__TypesOfArguments__Swift_Int64__(self: kotlin.native.i
 public fun kotlin_Long_plus__TypesOfArguments__Swift_Int8__(self: kotlin.native.internal.NativePtr, other: Byte): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Long
     val __other = other
-    val _result = run { __self.plus(__other) }
+    val _result = __self.plus(__other)
     return _result
 }
 
@@ -2843,7 +2843,7 @@ public fun kotlin_Long_plus__TypesOfArguments__Swift_Int8__(self: kotlin.native.
 public fun kotlin_Long_plus__TypesOfArguments__Swift_Int16__(self: kotlin.native.internal.NativePtr, other: Short): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Long
     val __other = other
-    val _result = run { __self.plus(__other) }
+    val _result = __self.plus(__other)
     return _result
 }
 
@@ -2851,7 +2851,7 @@ public fun kotlin_Long_plus__TypesOfArguments__Swift_Int16__(self: kotlin.native
 public fun kotlin_Long_plus__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, other: Int): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Long
     val __other = other
-    val _result = run { __self.plus(__other) }
+    val _result = __self.plus(__other)
     return _result
 }
 
@@ -2859,7 +2859,7 @@ public fun kotlin_Long_plus__TypesOfArguments__Swift_Int32__(self: kotlin.native
 public fun kotlin_Long_plus__TypesOfArguments__Swift_Int64__(self: kotlin.native.internal.NativePtr, other: Long): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Long
     val __other = other
-    val _result = run { __self.plus(__other) }
+    val _result = __self.plus(__other)
     return _result
 }
 
@@ -2867,7 +2867,7 @@ public fun kotlin_Long_plus__TypesOfArguments__Swift_Int64__(self: kotlin.native
 public fun kotlin_Long_plus__TypesOfArguments__Swift_Float__(self: kotlin.native.internal.NativePtr, other: Float): Float {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Long
     val __other = other
-    val _result = run { __self.plus(__other) }
+    val _result = __self.plus(__other)
     return _result
 }
 
@@ -2875,7 +2875,7 @@ public fun kotlin_Long_plus__TypesOfArguments__Swift_Float__(self: kotlin.native
 public fun kotlin_Long_plus__TypesOfArguments__Swift_Double__(self: kotlin.native.internal.NativePtr, other: Double): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Long
     val __other = other
-    val _result = run { __self.plus(__other) }
+    val _result = __self.plus(__other)
     return _result
 }
 
@@ -2883,7 +2883,7 @@ public fun kotlin_Long_plus__TypesOfArguments__Swift_Double__(self: kotlin.nativ
 public fun kotlin_Long_rangeTo__TypesOfArguments__Swift_Int8__(self: kotlin.native.internal.NativePtr, other: Byte): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Long
     val __other = other
-    val _result = run { __self.rangeTo(__other) }
+    val _result = __self.rangeTo(__other)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -2891,7 +2891,7 @@ public fun kotlin_Long_rangeTo__TypesOfArguments__Swift_Int8__(self: kotlin.nati
 public fun kotlin_Long_rangeTo__TypesOfArguments__Swift_Int16__(self: kotlin.native.internal.NativePtr, other: Short): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Long
     val __other = other
-    val _result = run { __self.rangeTo(__other) }
+    val _result = __self.rangeTo(__other)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -2899,7 +2899,7 @@ public fun kotlin_Long_rangeTo__TypesOfArguments__Swift_Int16__(self: kotlin.nat
 public fun kotlin_Long_rangeTo__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, other: Int): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Long
     val __other = other
-    val _result = run { __self.rangeTo(__other) }
+    val _result = __self.rangeTo(__other)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -2907,7 +2907,7 @@ public fun kotlin_Long_rangeTo__TypesOfArguments__Swift_Int32__(self: kotlin.nat
 public fun kotlin_Long_rangeTo__TypesOfArguments__Swift_Int64__(self: kotlin.native.internal.NativePtr, other: Long): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Long
     val __other = other
-    val _result = run { __self.rangeTo(__other) }
+    val _result = __self.rangeTo(__other)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -2915,7 +2915,7 @@ public fun kotlin_Long_rangeTo__TypesOfArguments__Swift_Int64__(self: kotlin.nat
 public fun kotlin_Long_rangeUntil__TypesOfArguments__Swift_Int8__(self: kotlin.native.internal.NativePtr, other: Byte): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Long
     val __other = other
-    val _result = run { __self.rangeUntil(__other) }
+    val _result = __self.rangeUntil(__other)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -2923,7 +2923,7 @@ public fun kotlin_Long_rangeUntil__TypesOfArguments__Swift_Int8__(self: kotlin.n
 public fun kotlin_Long_rangeUntil__TypesOfArguments__Swift_Int16__(self: kotlin.native.internal.NativePtr, other: Short): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Long
     val __other = other
-    val _result = run { __self.rangeUntil(__other) }
+    val _result = __self.rangeUntil(__other)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -2931,7 +2931,7 @@ public fun kotlin_Long_rangeUntil__TypesOfArguments__Swift_Int16__(self: kotlin.
 public fun kotlin_Long_rangeUntil__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, other: Int): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Long
     val __other = other
-    val _result = run { __self.rangeUntil(__other) }
+    val _result = __self.rangeUntil(__other)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -2939,7 +2939,7 @@ public fun kotlin_Long_rangeUntil__TypesOfArguments__Swift_Int32__(self: kotlin.
 public fun kotlin_Long_rangeUntil__TypesOfArguments__Swift_Int64__(self: kotlin.native.internal.NativePtr, other: Long): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Long
     val __other = other
-    val _result = run { __self.rangeUntil(__other) }
+    val _result = __self.rangeUntil(__other)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -2947,7 +2947,7 @@ public fun kotlin_Long_rangeUntil__TypesOfArguments__Swift_Int64__(self: kotlin.
 public fun kotlin_Long_rem__TypesOfArguments__Swift_Int8__(self: kotlin.native.internal.NativePtr, other: Byte): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Long
     val __other = other
-    val _result = run { __self.rem(__other) }
+    val _result = __self.rem(__other)
     return _result
 }
 
@@ -2955,7 +2955,7 @@ public fun kotlin_Long_rem__TypesOfArguments__Swift_Int8__(self: kotlin.native.i
 public fun kotlin_Long_rem__TypesOfArguments__Swift_Int16__(self: kotlin.native.internal.NativePtr, other: Short): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Long
     val __other = other
-    val _result = run { __self.rem(__other) }
+    val _result = __self.rem(__other)
     return _result
 }
 
@@ -2963,7 +2963,7 @@ public fun kotlin_Long_rem__TypesOfArguments__Swift_Int16__(self: kotlin.native.
 public fun kotlin_Long_rem__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, other: Int): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Long
     val __other = other
-    val _result = run { __self.rem(__other) }
+    val _result = __self.rem(__other)
     return _result
 }
 
@@ -2971,7 +2971,7 @@ public fun kotlin_Long_rem__TypesOfArguments__Swift_Int32__(self: kotlin.native.
 public fun kotlin_Long_rem__TypesOfArguments__Swift_Int64__(self: kotlin.native.internal.NativePtr, other: Long): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Long
     val __other = other
-    val _result = run { __self.rem(__other) }
+    val _result = __self.rem(__other)
     return _result
 }
 
@@ -2979,7 +2979,7 @@ public fun kotlin_Long_rem__TypesOfArguments__Swift_Int64__(self: kotlin.native.
 public fun kotlin_Long_rem__TypesOfArguments__Swift_Float__(self: kotlin.native.internal.NativePtr, other: Float): Float {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Long
     val __other = other
-    val _result = run { __self.rem(__other) }
+    val _result = __self.rem(__other)
     return _result
 }
 
@@ -2987,7 +2987,7 @@ public fun kotlin_Long_rem__TypesOfArguments__Swift_Float__(self: kotlin.native.
 public fun kotlin_Long_rem__TypesOfArguments__Swift_Double__(self: kotlin.native.internal.NativePtr, other: Double): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Long
     val __other = other
-    val _result = run { __self.rem(__other) }
+    val _result = __self.rem(__other)
     return _result
 }
 
@@ -2995,7 +2995,7 @@ public fun kotlin_Long_rem__TypesOfArguments__Swift_Double__(self: kotlin.native
 public fun kotlin_Long_shl__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, bitCount: Int): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Long
     val __bitCount = bitCount
-    val _result = run { __self.shl(__bitCount) }
+    val _result = __self.shl(__bitCount)
     return _result
 }
 
@@ -3003,7 +3003,7 @@ public fun kotlin_Long_shl__TypesOfArguments__Swift_Int32__(self: kotlin.native.
 public fun kotlin_Long_shr__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, bitCount: Int): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Long
     val __bitCount = bitCount
-    val _result = run { __self.shr(__bitCount) }
+    val _result = __self.shr(__bitCount)
     return _result
 }
 
@@ -3011,7 +3011,7 @@ public fun kotlin_Long_shr__TypesOfArguments__Swift_Int32__(self: kotlin.native.
 public fun kotlin_Long_times__TypesOfArguments__Swift_Int8__(self: kotlin.native.internal.NativePtr, other: Byte): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Long
     val __other = other
-    val _result = run { __self.times(__other) }
+    val _result = __self.times(__other)
     return _result
 }
 
@@ -3019,7 +3019,7 @@ public fun kotlin_Long_times__TypesOfArguments__Swift_Int8__(self: kotlin.native
 public fun kotlin_Long_times__TypesOfArguments__Swift_Int16__(self: kotlin.native.internal.NativePtr, other: Short): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Long
     val __other = other
-    val _result = run { __self.times(__other) }
+    val _result = __self.times(__other)
     return _result
 }
 
@@ -3027,7 +3027,7 @@ public fun kotlin_Long_times__TypesOfArguments__Swift_Int16__(self: kotlin.nativ
 public fun kotlin_Long_times__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, other: Int): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Long
     val __other = other
-    val _result = run { __self.times(__other) }
+    val _result = __self.times(__other)
     return _result
 }
 
@@ -3035,7 +3035,7 @@ public fun kotlin_Long_times__TypesOfArguments__Swift_Int32__(self: kotlin.nativ
 public fun kotlin_Long_times__TypesOfArguments__Swift_Int64__(self: kotlin.native.internal.NativePtr, other: Long): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Long
     val __other = other
-    val _result = run { __self.times(__other) }
+    val _result = __self.times(__other)
     return _result
 }
 
@@ -3043,7 +3043,7 @@ public fun kotlin_Long_times__TypesOfArguments__Swift_Int64__(self: kotlin.nativ
 public fun kotlin_Long_times__TypesOfArguments__Swift_Float__(self: kotlin.native.internal.NativePtr, other: Float): Float {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Long
     val __other = other
-    val _result = run { __self.times(__other) }
+    val _result = __self.times(__other)
     return _result
 }
 
@@ -3051,70 +3051,70 @@ public fun kotlin_Long_times__TypesOfArguments__Swift_Float__(self: kotlin.nativ
 public fun kotlin_Long_times__TypesOfArguments__Swift_Double__(self: kotlin.native.internal.NativePtr, other: Double): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Long
     val __other = other
-    val _result = run { __self.times(__other) }
+    val _result = __self.times(__other)
     return _result
 }
 
 @ExportedBridge("kotlin_Long_toByte")
 public fun kotlin_Long_toByte(self: kotlin.native.internal.NativePtr): Byte {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Long
-    val _result = run { __self.toByte() }
+    val _result = __self.toByte()
     return _result
 }
 
 @ExportedBridge("kotlin_Long_toChar")
 public fun kotlin_Long_toChar(self: kotlin.native.internal.NativePtr): Char {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Long
-    val _result = run { __self.toChar() }
+    val _result = __self.toChar()
     return _result
 }
 
 @ExportedBridge("kotlin_Long_toDouble")
 public fun kotlin_Long_toDouble(self: kotlin.native.internal.NativePtr): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Long
-    val _result = run { __self.toDouble() }
+    val _result = __self.toDouble()
     return _result
 }
 
 @ExportedBridge("kotlin_Long_toFloat")
 public fun kotlin_Long_toFloat(self: kotlin.native.internal.NativePtr): Float {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Long
-    val _result = run { __self.toFloat() }
+    val _result = __self.toFloat()
     return _result
 }
 
 @ExportedBridge("kotlin_Long_toInt")
 public fun kotlin_Long_toInt(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Long
-    val _result = run { __self.toInt() }
+    val _result = __self.toInt()
     return _result
 }
 
 @ExportedBridge("kotlin_Long_toLong")
 public fun kotlin_Long_toLong(self: kotlin.native.internal.NativePtr): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Long
-    val _result = run { __self.toLong() }
+    val _result = __self.toLong()
     return _result
 }
 
 @ExportedBridge("kotlin_Long_toShort")
 public fun kotlin_Long_toShort(self: kotlin.native.internal.NativePtr): Short {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Long
-    val _result = run { __self.toShort() }
+    val _result = __self.toShort()
     return _result
 }
 
 @ExportedBridge("kotlin_Long_unaryMinus")
 public fun kotlin_Long_unaryMinus(self: kotlin.native.internal.NativePtr): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Long
-    val _result = run { __self.unaryMinus() }
+    val _result = __self.unaryMinus()
     return _result
 }
 
 @ExportedBridge("kotlin_Long_unaryPlus")
 public fun kotlin_Long_unaryPlus(self: kotlin.native.internal.NativePtr): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Long
-    val _result = run { __self.unaryPlus() }
+    val _result = __self.unaryPlus()
     return _result
 }
 
@@ -3122,7 +3122,7 @@ public fun kotlin_Long_unaryPlus(self: kotlin.native.internal.NativePtr): Long {
 public fun kotlin_Long_ushr__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, bitCount: Int): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Long
     val __bitCount = bitCount
-    val _result = run { __self.ushr(__bitCount) }
+    val _result = __self.ushr(__bitCount)
     return _result
 }
 
@@ -3130,92 +3130,92 @@ public fun kotlin_Long_ushr__TypesOfArguments__Swift_Int32__(self: kotlin.native
 public fun kotlin_Long_xor__TypesOfArguments__Swift_Int64__(self: kotlin.native.internal.NativePtr, other: Long): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Long
     val __other = other
-    val _result = run { __self.xor(__other) }
+    val _result = __self.xor(__other)
     return _result
 }
 
 @ExportedBridge("kotlin_Number_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__", nonVirtualTargetMethod = "<init>")
 public fun kotlin_Number_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val _result = run { kotlin.native.internal.initInstance(____kt, kotlin.Number()) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, kotlin.Number())
+    return true
 }
 
 @ExportedBridge("kotlin_Number_toByte")
 public fun kotlin_Number_toByte(self: kotlin.native.internal.NativePtr): Byte {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Number
-    val _result = run { __self.toByte() }
+    val _result = __self.toByte()
     return _result
 }
 
 @ExportedBridge("kotlin_Number_toChar")
 public fun kotlin_Number_toChar(self: kotlin.native.internal.NativePtr): Char {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Number
-    val _result = run { __self.toChar() }
+    val _result = __self.toChar()
     return _result
 }
 
 @ExportedBridge("kotlin_Number_toChar_direct", nonVirtualTargetMethod = "toChar")
 public fun kotlin_Number_toChar_direct(self: kotlin.native.internal.NativePtr): Char {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Number
-    val _result = run { __self.toChar() }
+    val _result = __self.toChar()
     return _result
 }
 
 @ExportedBridge("kotlin_Number_toDouble")
 public fun kotlin_Number_toDouble(self: kotlin.native.internal.NativePtr): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Number
-    val _result = run { __self.toDouble() }
+    val _result = __self.toDouble()
     return _result
 }
 
 @ExportedBridge("kotlin_Number_toFloat")
 public fun kotlin_Number_toFloat(self: kotlin.native.internal.NativePtr): Float {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Number
-    val _result = run { __self.toFloat() }
+    val _result = __self.toFloat()
     return _result
 }
 
 @ExportedBridge("kotlin_Number_toInt")
 public fun kotlin_Number_toInt(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Number
-    val _result = run { __self.toInt() }
+    val _result = __self.toInt()
     return _result
 }
 
 @ExportedBridge("kotlin_Number_toLong")
 public fun kotlin_Number_toLong(self: kotlin.native.internal.NativePtr): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Number
-    val _result = run { __self.toLong() }
+    val _result = __self.toLong()
     return _result
 }
 
 @ExportedBridge("kotlin_Number_toShort")
 public fun kotlin_Number_toShort(self: kotlin.native.internal.NativePtr): Short {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Number
-    val _result = run { __self.toShort() }
+    val _result = __self.toShort()
     return _result
 }
 
 @ExportedBridge("kotlin_RuntimeException_init_allocate")
 public fun kotlin_RuntimeException_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<kotlin.RuntimeException>() }
+    val _result = kotlin.native.internal.createUninitializedInstance<kotlin.RuntimeException>()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("kotlin_RuntimeException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
 public fun kotlin_RuntimeException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val _result = run { kotlin.native.internal.initInstance(____kt, kotlin.RuntimeException()) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, kotlin.RuntimeException())
+    return true
 }
 
 @ExportedBridge("kotlin_RuntimeException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String___")
 public fun kotlin_RuntimeException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String___(__kt: kotlin.native.internal.NativePtr, message: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     val __message = if (message == kotlin.native.internal.NativePtr.NULL) null else interpretObjCPointer<kotlin.String>(message)
-    val _result = run { kotlin.native.internal.initInstance(____kt, kotlin.RuntimeException(__message)) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, kotlin.RuntimeException(__message))
+    return true
 }
 
 @ExportedBridge("kotlin_RuntimeException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String__Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___")
@@ -3223,49 +3223,49 @@ public fun kotlin_RuntimeException_init_initialize__TypesOfArguments__Swift_Unsa
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     val __message = if (message == kotlin.native.internal.NativePtr.NULL) null else interpretObjCPointer<kotlin.String>(message)
     val __cause = if (cause == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(cause) as kotlin.Throwable
-    val _result = run { kotlin.native.internal.initInstance(____kt, kotlin.RuntimeException(__message, __cause)) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, kotlin.RuntimeException(__message, __cause))
+    return true
 }
 
 @ExportedBridge("kotlin_RuntimeException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___")
 public fun kotlin_RuntimeException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt: kotlin.native.internal.NativePtr, cause: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     val __cause = if (cause == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(cause) as kotlin.Throwable
-    val _result = run { kotlin.native.internal.initInstance(____kt, kotlin.RuntimeException(__cause)) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, kotlin.RuntimeException(__cause))
+    return true
 }
 
 @ExportedBridge("kotlin_Short_Companion_MAX_VALUE_get")
 public fun kotlin_Short_Companion_MAX_VALUE_get(self: kotlin.native.internal.NativePtr): Short {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Short.Companion
-    val _result = run { __self.MAX_VALUE }
+    val _result = __self.MAX_VALUE
     return _result
 }
 
 @ExportedBridge("kotlin_Short_Companion_MIN_VALUE_get")
 public fun kotlin_Short_Companion_MIN_VALUE_get(self: kotlin.native.internal.NativePtr): Short {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Short.Companion
-    val _result = run { __self.MIN_VALUE }
+    val _result = __self.MIN_VALUE
     return _result
 }
 
 @ExportedBridge("kotlin_Short_Companion_SIZE_BITS_get")
 public fun kotlin_Short_Companion_SIZE_BITS_get(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Short.Companion
-    val _result = run { __self.SIZE_BITS }
+    val _result = __self.SIZE_BITS
     return _result
 }
 
 @ExportedBridge("kotlin_Short_Companion_SIZE_BYTES_get")
 public fun kotlin_Short_Companion_SIZE_BYTES_get(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Short.Companion
-    val _result = run { __self.SIZE_BYTES }
+    val _result = __self.SIZE_BYTES
     return _result
 }
 
 @ExportedBridge("kotlin_Short_Companion_get")
 public fun kotlin_Short_Companion_get(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.Short.Companion }
+    val _result = kotlin.Short.Companion
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -3273,7 +3273,7 @@ public fun kotlin_Short_Companion_get(): kotlin.native.internal.NativePtr {
 public fun kotlin_Short_compareTo__TypesOfArguments__Swift_Int8__(self: kotlin.native.internal.NativePtr, other: Byte): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Short
     val __other = other
-    val _result = run { __self.compareTo(__other) }
+    val _result = __self.compareTo(__other)
     return _result
 }
 
@@ -3281,7 +3281,7 @@ public fun kotlin_Short_compareTo__TypesOfArguments__Swift_Int8__(self: kotlin.n
 public fun kotlin_Short_compareTo__TypesOfArguments__Swift_Int16__(self: kotlin.native.internal.NativePtr, other: Short): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Short
     val __other = other
-    val _result = run { __self.compareTo(__other) }
+    val _result = __self.compareTo(__other)
     return _result
 }
 
@@ -3289,7 +3289,7 @@ public fun kotlin_Short_compareTo__TypesOfArguments__Swift_Int16__(self: kotlin.
 public fun kotlin_Short_compareTo__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, other: Int): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Short
     val __other = other
-    val _result = run { __self.compareTo(__other) }
+    val _result = __self.compareTo(__other)
     return _result
 }
 
@@ -3297,7 +3297,7 @@ public fun kotlin_Short_compareTo__TypesOfArguments__Swift_Int32__(self: kotlin.
 public fun kotlin_Short_compareTo__TypesOfArguments__Swift_Int64__(self: kotlin.native.internal.NativePtr, other: Long): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Short
     val __other = other
-    val _result = run { __self.compareTo(__other) }
+    val _result = __self.compareTo(__other)
     return _result
 }
 
@@ -3305,7 +3305,7 @@ public fun kotlin_Short_compareTo__TypesOfArguments__Swift_Int64__(self: kotlin.
 public fun kotlin_Short_compareTo__TypesOfArguments__Swift_Float__(self: kotlin.native.internal.NativePtr, other: Float): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Short
     val __other = other
-    val _result = run { __self.compareTo(__other) }
+    val _result = __self.compareTo(__other)
     return _result
 }
 
@@ -3313,14 +3313,14 @@ public fun kotlin_Short_compareTo__TypesOfArguments__Swift_Float__(self: kotlin.
 public fun kotlin_Short_compareTo__TypesOfArguments__Swift_Double__(self: kotlin.native.internal.NativePtr, other: Double): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Short
     val __other = other
-    val _result = run { __self.compareTo(__other) }
+    val _result = __self.compareTo(__other)
     return _result
 }
 
 @ExportedBridge("kotlin_Short_dec")
 public fun kotlin_Short_dec(self: kotlin.native.internal.NativePtr): Short {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Short
-    val _result = run { __self.dec() }
+    val _result = __self.dec()
     return _result
 }
 
@@ -3328,7 +3328,7 @@ public fun kotlin_Short_dec(self: kotlin.native.internal.NativePtr): Short {
 public fun kotlin_Short_div__TypesOfArguments__Swift_Int8__(self: kotlin.native.internal.NativePtr, other: Byte): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Short
     val __other = other
-    val _result = run { __self.div(__other) }
+    val _result = __self.div(__other)
     return _result
 }
 
@@ -3336,7 +3336,7 @@ public fun kotlin_Short_div__TypesOfArguments__Swift_Int8__(self: kotlin.native.
 public fun kotlin_Short_div__TypesOfArguments__Swift_Int16__(self: kotlin.native.internal.NativePtr, other: Short): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Short
     val __other = other
-    val _result = run { __self.div(__other) }
+    val _result = __self.div(__other)
     return _result
 }
 
@@ -3344,7 +3344,7 @@ public fun kotlin_Short_div__TypesOfArguments__Swift_Int16__(self: kotlin.native
 public fun kotlin_Short_div__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, other: Int): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Short
     val __other = other
-    val _result = run { __self.div(__other) }
+    val _result = __self.div(__other)
     return _result
 }
 
@@ -3352,7 +3352,7 @@ public fun kotlin_Short_div__TypesOfArguments__Swift_Int32__(self: kotlin.native
 public fun kotlin_Short_div__TypesOfArguments__Swift_Int64__(self: kotlin.native.internal.NativePtr, other: Long): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Short
     val __other = other
-    val _result = run { __self.div(__other) }
+    val _result = __self.div(__other)
     return _result
 }
 
@@ -3360,7 +3360,7 @@ public fun kotlin_Short_div__TypesOfArguments__Swift_Int64__(self: kotlin.native
 public fun kotlin_Short_div__TypesOfArguments__Swift_Float__(self: kotlin.native.internal.NativePtr, other: Float): Float {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Short
     val __other = other
-    val _result = run { __self.div(__other) }
+    val _result = __self.div(__other)
     return _result
 }
 
@@ -3368,14 +3368,14 @@ public fun kotlin_Short_div__TypesOfArguments__Swift_Float__(self: kotlin.native
 public fun kotlin_Short_div__TypesOfArguments__Swift_Double__(self: kotlin.native.internal.NativePtr, other: Double): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Short
     val __other = other
-    val _result = run { __self.div(__other) }
+    val _result = __self.div(__other)
     return _result
 }
 
 @ExportedBridge("kotlin_Short_inc")
 public fun kotlin_Short_inc(self: kotlin.native.internal.NativePtr): Short {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Short
-    val _result = run { __self.inc() }
+    val _result = __self.inc()
     return _result
 }
 
@@ -3383,7 +3383,7 @@ public fun kotlin_Short_inc(self: kotlin.native.internal.NativePtr): Short {
 public fun kotlin_Short_minus__TypesOfArguments__Swift_Int8__(self: kotlin.native.internal.NativePtr, other: Byte): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Short
     val __other = other
-    val _result = run { __self.minus(__other) }
+    val _result = __self.minus(__other)
     return _result
 }
 
@@ -3391,7 +3391,7 @@ public fun kotlin_Short_minus__TypesOfArguments__Swift_Int8__(self: kotlin.nativ
 public fun kotlin_Short_minus__TypesOfArguments__Swift_Int16__(self: kotlin.native.internal.NativePtr, other: Short): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Short
     val __other = other
-    val _result = run { __self.minus(__other) }
+    val _result = __self.minus(__other)
     return _result
 }
 
@@ -3399,7 +3399,7 @@ public fun kotlin_Short_minus__TypesOfArguments__Swift_Int16__(self: kotlin.nati
 public fun kotlin_Short_minus__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, other: Int): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Short
     val __other = other
-    val _result = run { __self.minus(__other) }
+    val _result = __self.minus(__other)
     return _result
 }
 
@@ -3407,7 +3407,7 @@ public fun kotlin_Short_minus__TypesOfArguments__Swift_Int32__(self: kotlin.nati
 public fun kotlin_Short_minus__TypesOfArguments__Swift_Int64__(self: kotlin.native.internal.NativePtr, other: Long): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Short
     val __other = other
-    val _result = run { __self.minus(__other) }
+    val _result = __self.minus(__other)
     return _result
 }
 
@@ -3415,7 +3415,7 @@ public fun kotlin_Short_minus__TypesOfArguments__Swift_Int64__(self: kotlin.nati
 public fun kotlin_Short_minus__TypesOfArguments__Swift_Float__(self: kotlin.native.internal.NativePtr, other: Float): Float {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Short
     val __other = other
-    val _result = run { __self.minus(__other) }
+    val _result = __self.minus(__other)
     return _result
 }
 
@@ -3423,7 +3423,7 @@ public fun kotlin_Short_minus__TypesOfArguments__Swift_Float__(self: kotlin.nati
 public fun kotlin_Short_minus__TypesOfArguments__Swift_Double__(self: kotlin.native.internal.NativePtr, other: Double): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Short
     val __other = other
-    val _result = run { __self.minus(__other) }
+    val _result = __self.minus(__other)
     return _result
 }
 
@@ -3431,7 +3431,7 @@ public fun kotlin_Short_minus__TypesOfArguments__Swift_Double__(self: kotlin.nat
 public fun kotlin_Short_plus__TypesOfArguments__Swift_Int8__(self: kotlin.native.internal.NativePtr, other: Byte): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Short
     val __other = other
-    val _result = run { __self.plus(__other) }
+    val _result = __self.plus(__other)
     return _result
 }
 
@@ -3439,7 +3439,7 @@ public fun kotlin_Short_plus__TypesOfArguments__Swift_Int8__(self: kotlin.native
 public fun kotlin_Short_plus__TypesOfArguments__Swift_Int16__(self: kotlin.native.internal.NativePtr, other: Short): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Short
     val __other = other
-    val _result = run { __self.plus(__other) }
+    val _result = __self.plus(__other)
     return _result
 }
 
@@ -3447,7 +3447,7 @@ public fun kotlin_Short_plus__TypesOfArguments__Swift_Int16__(self: kotlin.nativ
 public fun kotlin_Short_plus__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, other: Int): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Short
     val __other = other
-    val _result = run { __self.plus(__other) }
+    val _result = __self.plus(__other)
     return _result
 }
 
@@ -3455,7 +3455,7 @@ public fun kotlin_Short_plus__TypesOfArguments__Swift_Int32__(self: kotlin.nativ
 public fun kotlin_Short_plus__TypesOfArguments__Swift_Int64__(self: kotlin.native.internal.NativePtr, other: Long): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Short
     val __other = other
-    val _result = run { __self.plus(__other) }
+    val _result = __self.plus(__other)
     return _result
 }
 
@@ -3463,7 +3463,7 @@ public fun kotlin_Short_plus__TypesOfArguments__Swift_Int64__(self: kotlin.nativ
 public fun kotlin_Short_plus__TypesOfArguments__Swift_Float__(self: kotlin.native.internal.NativePtr, other: Float): Float {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Short
     val __other = other
-    val _result = run { __self.plus(__other) }
+    val _result = __self.plus(__other)
     return _result
 }
 
@@ -3471,7 +3471,7 @@ public fun kotlin_Short_plus__TypesOfArguments__Swift_Float__(self: kotlin.nativ
 public fun kotlin_Short_plus__TypesOfArguments__Swift_Double__(self: kotlin.native.internal.NativePtr, other: Double): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Short
     val __other = other
-    val _result = run { __self.plus(__other) }
+    val _result = __self.plus(__other)
     return _result
 }
 
@@ -3479,7 +3479,7 @@ public fun kotlin_Short_plus__TypesOfArguments__Swift_Double__(self: kotlin.nati
 public fun kotlin_Short_rangeTo__TypesOfArguments__Swift_Int8__(self: kotlin.native.internal.NativePtr, other: Byte): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Short
     val __other = other
-    val _result = run { __self.rangeTo(__other) }
+    val _result = __self.rangeTo(__other)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -3487,7 +3487,7 @@ public fun kotlin_Short_rangeTo__TypesOfArguments__Swift_Int8__(self: kotlin.nat
 public fun kotlin_Short_rangeTo__TypesOfArguments__Swift_Int16__(self: kotlin.native.internal.NativePtr, other: Short): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Short
     val __other = other
-    val _result = run { __self.rangeTo(__other) }
+    val _result = __self.rangeTo(__other)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -3495,7 +3495,7 @@ public fun kotlin_Short_rangeTo__TypesOfArguments__Swift_Int16__(self: kotlin.na
 public fun kotlin_Short_rangeTo__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, other: Int): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Short
     val __other = other
-    val _result = run { __self.rangeTo(__other) }
+    val _result = __self.rangeTo(__other)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -3503,7 +3503,7 @@ public fun kotlin_Short_rangeTo__TypesOfArguments__Swift_Int32__(self: kotlin.na
 public fun kotlin_Short_rangeTo__TypesOfArguments__Swift_Int64__(self: kotlin.native.internal.NativePtr, other: Long): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Short
     val __other = other
-    val _result = run { __self.rangeTo(__other) }
+    val _result = __self.rangeTo(__other)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -3511,7 +3511,7 @@ public fun kotlin_Short_rangeTo__TypesOfArguments__Swift_Int64__(self: kotlin.na
 public fun kotlin_Short_rangeUntil__TypesOfArguments__Swift_Int8__(self: kotlin.native.internal.NativePtr, other: Byte): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Short
     val __other = other
-    val _result = run { __self.rangeUntil(__other) }
+    val _result = __self.rangeUntil(__other)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -3519,7 +3519,7 @@ public fun kotlin_Short_rangeUntil__TypesOfArguments__Swift_Int8__(self: kotlin.
 public fun kotlin_Short_rangeUntil__TypesOfArguments__Swift_Int16__(self: kotlin.native.internal.NativePtr, other: Short): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Short
     val __other = other
-    val _result = run { __self.rangeUntil(__other) }
+    val _result = __self.rangeUntil(__other)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -3527,7 +3527,7 @@ public fun kotlin_Short_rangeUntil__TypesOfArguments__Swift_Int16__(self: kotlin
 public fun kotlin_Short_rangeUntil__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, other: Int): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Short
     val __other = other
-    val _result = run { __self.rangeUntil(__other) }
+    val _result = __self.rangeUntil(__other)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -3535,7 +3535,7 @@ public fun kotlin_Short_rangeUntil__TypesOfArguments__Swift_Int32__(self: kotlin
 public fun kotlin_Short_rangeUntil__TypesOfArguments__Swift_Int64__(self: kotlin.native.internal.NativePtr, other: Long): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Short
     val __other = other
-    val _result = run { __self.rangeUntil(__other) }
+    val _result = __self.rangeUntil(__other)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -3543,7 +3543,7 @@ public fun kotlin_Short_rangeUntil__TypesOfArguments__Swift_Int64__(self: kotlin
 public fun kotlin_Short_rem__TypesOfArguments__Swift_Int8__(self: kotlin.native.internal.NativePtr, other: Byte): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Short
     val __other = other
-    val _result = run { __self.rem(__other) }
+    val _result = __self.rem(__other)
     return _result
 }
 
@@ -3551,7 +3551,7 @@ public fun kotlin_Short_rem__TypesOfArguments__Swift_Int8__(self: kotlin.native.
 public fun kotlin_Short_rem__TypesOfArguments__Swift_Int16__(self: kotlin.native.internal.NativePtr, other: Short): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Short
     val __other = other
-    val _result = run { __self.rem(__other) }
+    val _result = __self.rem(__other)
     return _result
 }
 
@@ -3559,7 +3559,7 @@ public fun kotlin_Short_rem__TypesOfArguments__Swift_Int16__(self: kotlin.native
 public fun kotlin_Short_rem__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, other: Int): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Short
     val __other = other
-    val _result = run { __self.rem(__other) }
+    val _result = __self.rem(__other)
     return _result
 }
 
@@ -3567,7 +3567,7 @@ public fun kotlin_Short_rem__TypesOfArguments__Swift_Int32__(self: kotlin.native
 public fun kotlin_Short_rem__TypesOfArguments__Swift_Int64__(self: kotlin.native.internal.NativePtr, other: Long): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Short
     val __other = other
-    val _result = run { __self.rem(__other) }
+    val _result = __self.rem(__other)
     return _result
 }
 
@@ -3575,7 +3575,7 @@ public fun kotlin_Short_rem__TypesOfArguments__Swift_Int64__(self: kotlin.native
 public fun kotlin_Short_rem__TypesOfArguments__Swift_Float__(self: kotlin.native.internal.NativePtr, other: Float): Float {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Short
     val __other = other
-    val _result = run { __self.rem(__other) }
+    val _result = __self.rem(__other)
     return _result
 }
 
@@ -3583,7 +3583,7 @@ public fun kotlin_Short_rem__TypesOfArguments__Swift_Float__(self: kotlin.native
 public fun kotlin_Short_rem__TypesOfArguments__Swift_Double__(self: kotlin.native.internal.NativePtr, other: Double): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Short
     val __other = other
-    val _result = run { __self.rem(__other) }
+    val _result = __self.rem(__other)
     return _result
 }
 
@@ -3591,7 +3591,7 @@ public fun kotlin_Short_rem__TypesOfArguments__Swift_Double__(self: kotlin.nativ
 public fun kotlin_Short_times__TypesOfArguments__Swift_Int8__(self: kotlin.native.internal.NativePtr, other: Byte): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Short
     val __other = other
-    val _result = run { __self.times(__other) }
+    val _result = __self.times(__other)
     return _result
 }
 
@@ -3599,7 +3599,7 @@ public fun kotlin_Short_times__TypesOfArguments__Swift_Int8__(self: kotlin.nativ
 public fun kotlin_Short_times__TypesOfArguments__Swift_Int16__(self: kotlin.native.internal.NativePtr, other: Short): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Short
     val __other = other
-    val _result = run { __self.times(__other) }
+    val _result = __self.times(__other)
     return _result
 }
 
@@ -3607,7 +3607,7 @@ public fun kotlin_Short_times__TypesOfArguments__Swift_Int16__(self: kotlin.nati
 public fun kotlin_Short_times__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, other: Int): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Short
     val __other = other
-    val _result = run { __self.times(__other) }
+    val _result = __self.times(__other)
     return _result
 }
 
@@ -3615,7 +3615,7 @@ public fun kotlin_Short_times__TypesOfArguments__Swift_Int32__(self: kotlin.nati
 public fun kotlin_Short_times__TypesOfArguments__Swift_Int64__(self: kotlin.native.internal.NativePtr, other: Long): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Short
     val __other = other
-    val _result = run { __self.times(__other) }
+    val _result = __self.times(__other)
     return _result
 }
 
@@ -3623,7 +3623,7 @@ public fun kotlin_Short_times__TypesOfArguments__Swift_Int64__(self: kotlin.nati
 public fun kotlin_Short_times__TypesOfArguments__Swift_Float__(self: kotlin.native.internal.NativePtr, other: Float): Float {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Short
     val __other = other
-    val _result = run { __self.times(__other) }
+    val _result = __self.times(__other)
     return _result
 }
 
@@ -3631,76 +3631,76 @@ public fun kotlin_Short_times__TypesOfArguments__Swift_Float__(self: kotlin.nati
 public fun kotlin_Short_times__TypesOfArguments__Swift_Double__(self: kotlin.native.internal.NativePtr, other: Double): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Short
     val __other = other
-    val _result = run { __self.times(__other) }
+    val _result = __self.times(__other)
     return _result
 }
 
 @ExportedBridge("kotlin_Short_toByte")
 public fun kotlin_Short_toByte(self: kotlin.native.internal.NativePtr): Byte {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Short
-    val _result = run { __self.toByte() }
+    val _result = __self.toByte()
     return _result
 }
 
 @ExportedBridge("kotlin_Short_toChar")
 public fun kotlin_Short_toChar(self: kotlin.native.internal.NativePtr): Char {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Short
-    val _result = run { __self.toChar() }
+    val _result = __self.toChar()
     return _result
 }
 
 @ExportedBridge("kotlin_Short_toDouble")
 public fun kotlin_Short_toDouble(self: kotlin.native.internal.NativePtr): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Short
-    val _result = run { __self.toDouble() }
+    val _result = __self.toDouble()
     return _result
 }
 
 @ExportedBridge("kotlin_Short_toFloat")
 public fun kotlin_Short_toFloat(self: kotlin.native.internal.NativePtr): Float {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Short
-    val _result = run { __self.toFloat() }
+    val _result = __self.toFloat()
     return _result
 }
 
 @ExportedBridge("kotlin_Short_toInt")
 public fun kotlin_Short_toInt(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Short
-    val _result = run { __self.toInt() }
+    val _result = __self.toInt()
     return _result
 }
 
 @ExportedBridge("kotlin_Short_toLong")
 public fun kotlin_Short_toLong(self: kotlin.native.internal.NativePtr): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Short
-    val _result = run { __self.toLong() }
+    val _result = __self.toLong()
     return _result
 }
 
 @ExportedBridge("kotlin_Short_toShort")
 public fun kotlin_Short_toShort(self: kotlin.native.internal.NativePtr): Short {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Short
-    val _result = run { __self.toShort() }
+    val _result = __self.toShort()
     return _result
 }
 
 @ExportedBridge("kotlin_Short_unaryMinus")
 public fun kotlin_Short_unaryMinus(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Short
-    val _result = run { __self.unaryMinus() }
+    val _result = __self.unaryMinus()
     return _result
 }
 
 @ExportedBridge("kotlin_Short_unaryPlus")
 public fun kotlin_Short_unaryPlus(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Short
-    val _result = run { __self.unaryPlus() }
+    val _result = __self.unaryPlus()
     return _result
 }
 
 @ExportedBridge("kotlin_String_Companion_get")
 public fun kotlin_String_Companion_get(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.String.Companion }
+    val _result = kotlin.String.Companion
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -3708,7 +3708,7 @@ public fun kotlin_String_Companion_get(): kotlin.native.internal.NativePtr {
 public fun kotlin_String_compareTo__TypesOfArguments__Swift_String__(self: kotlin.native.internal.NativePtr, other: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.String
     val __other = interpretObjCPointer<kotlin.String>(other)
-    val _result = run { __self.compareTo(__other) }
+    val _result = __self.compareTo(__other)
     return _result
 }
 
@@ -3716,27 +3716,27 @@ public fun kotlin_String_compareTo__TypesOfArguments__Swift_String__(self: kotli
 public fun kotlin_String_get__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, index: Int): Char {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.String
     val __index = index
-    val _result = run { __self.`get`(__index) }
+    val _result = __self.`get`(__index)
     return _result
 }
 
 @ExportedBridge("kotlin_String_init_allocate")
 public fun kotlin_String_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<kotlin.String>() }
+    val _result = kotlin.native.internal.createUninitializedInstance<kotlin.String>()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("kotlin_String_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
 public fun kotlin_String_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val _result = run { kotlin.native.internal.initInstance(____kt, kotlin.String()) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, kotlin.String())
+    return true
 }
 
 @ExportedBridge("kotlin_String_length_get")
 public fun kotlin_String_length_get(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.String
-    val _result = run { __self.length }
+    val _result = __self.length
     return _result
 }
 
@@ -3744,7 +3744,7 @@ public fun kotlin_String_length_get(self: kotlin.native.internal.NativePtr): Int
 public fun kotlin_String_plus__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, other: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.String
     val __other = if (other == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(other) as kotlin.Any
-    val _result = run { __self.plus(__other) }
+    val _result = __self.plus(__other)
     return _result.objcPtr()
 }
 
@@ -3753,21 +3753,21 @@ public fun kotlin_String_subSequence__TypesOfArguments__Swift_Int32_Swift_Int32_
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.String
     val __startIndex = startIndex
     val __endIndex = endIndex
-    val _result = run { __self.subSequence(__startIndex, __endIndex) }
+    val _result = __self.subSequence(__startIndex, __endIndex)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("kotlin_Throwable_cause_get")
 public fun kotlin_Throwable_cause_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Throwable
-    val _result = run { __self.cause }
+    val _result = __self.cause
     return if (_result == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("kotlin_Throwable_cause_get_direct", nonVirtualTargetMethod = "<get-cause>")
 public fun kotlin_Throwable_cause_get_direct(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Throwable
-    val _result = run { __self.cause }
+    val _result = __self.cause
     return if (_result == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -3775,13 +3775,13 @@ public fun kotlin_Throwable_cause_get_direct(self: kotlin.native.internal.Native
 @OptIn(kotlin.experimental.ExperimentalNativeApi::class)
 public fun kotlin_Throwable_getStackTrace(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Throwable
-    val _result = run { __self.getStackTrace() }
+    val _result = __self.getStackTrace()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("kotlin_Throwable_init_allocate")
 public fun kotlin_Throwable_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<kotlin.Throwable>() }
+    val _result = kotlin.native.internal.createUninitializedInstance<kotlin.Throwable>()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -3790,85 +3790,85 @@ public fun kotlin_Throwable_init_initialize__TypesOfArguments__Swift_UnsafeMutab
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     val __message = if (message == kotlin.native.internal.NativePtr.NULL) null else interpretObjCPointer<kotlin.String>(message)
     val __cause = if (cause == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(cause) as kotlin.Throwable
-    val _result = run { kotlin.native.internal.initInstance(____kt, kotlin.Throwable(__message, __cause)) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, kotlin.Throwable(__message, __cause))
+    return true
 }
 
 @ExportedBridge("kotlin_Throwable_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String___")
 public fun kotlin_Throwable_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String___(__kt: kotlin.native.internal.NativePtr, message: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     val __message = if (message == kotlin.native.internal.NativePtr.NULL) null else interpretObjCPointer<kotlin.String>(message)
-    val _result = run { kotlin.native.internal.initInstance(____kt, kotlin.Throwable(__message)) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, kotlin.Throwable(__message))
+    return true
 }
 
 @ExportedBridge("kotlin_Throwable_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___")
 public fun kotlin_Throwable_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt: kotlin.native.internal.NativePtr, cause: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     val __cause = if (cause == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(cause) as kotlin.Throwable
-    val _result = run { kotlin.native.internal.initInstance(____kt, kotlin.Throwable(__cause)) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, kotlin.Throwable(__cause))
+    return true
 }
 
 @ExportedBridge("kotlin_Throwable_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
 public fun kotlin_Throwable_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val _result = run { kotlin.native.internal.initInstance(____kt, kotlin.Throwable()) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, kotlin.Throwable())
+    return true
 }
 
 @ExportedBridge("kotlin_Throwable_message_get")
 public fun kotlin_Throwable_message_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Throwable
-    val _result = run { __self.message }
+    val _result = __self.message
     return if (_result == null) kotlin.native.internal.NativePtr.NULL else _result.objcPtr()
 }
 
 @ExportedBridge("kotlin_Throwable_message_get_direct", nonVirtualTargetMethod = "<get-message>")
 public fun kotlin_Throwable_message_get_direct(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Throwable
-    val _result = run { __self.message }
+    val _result = __self.message
     return if (_result == null) kotlin.native.internal.NativePtr.NULL else _result.objcPtr()
 }
 
 @ExportedBridge("kotlin_Throwable_printStackTrace")
 public fun kotlin_Throwable_printStackTrace(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Throwable
-    val _result = run { __self.printStackTrace() }
-    return run { _result; true }
+    __self.printStackTrace()
+    return true
 }
 
 @ExportedBridge("kotlin_UByte_Companion_MAX_VALUE_get")
 public fun kotlin_UByte_Companion_MAX_VALUE_get(self: kotlin.native.internal.NativePtr): UByte {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UByte.Companion
-    val _result = run { __self.MAX_VALUE }
+    val _result = __self.MAX_VALUE
     return _result
 }
 
 @ExportedBridge("kotlin_UByte_Companion_MIN_VALUE_get")
 public fun kotlin_UByte_Companion_MIN_VALUE_get(self: kotlin.native.internal.NativePtr): UByte {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UByte.Companion
-    val _result = run { __self.MIN_VALUE }
+    val _result = __self.MIN_VALUE
     return _result
 }
 
 @ExportedBridge("kotlin_UByte_Companion_SIZE_BITS_get")
 public fun kotlin_UByte_Companion_SIZE_BITS_get(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UByte.Companion
-    val _result = run { __self.SIZE_BITS }
+    val _result = __self.SIZE_BITS
     return _result
 }
 
 @ExportedBridge("kotlin_UByte_Companion_SIZE_BYTES_get")
 public fun kotlin_UByte_Companion_SIZE_BYTES_get(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UByte.Companion
-    val _result = run { __self.SIZE_BYTES }
+    val _result = __self.SIZE_BYTES
     return _result
 }
 
 @ExportedBridge("kotlin_UByte_Companion_get")
 public fun kotlin_UByte_Companion_get(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.UByte.Companion }
+    val _result = kotlin.UByte.Companion
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -3876,7 +3876,7 @@ public fun kotlin_UByte_Companion_get(): kotlin.native.internal.NativePtr {
 public fun kotlin_UByte_and__TypesOfArguments__Swift_UInt8__(self: kotlin.native.internal.NativePtr, other: UByte): UByte {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UByte
     val __other = other
-    val _result = run { __self.and(__other) }
+    val _result = __self.and(__other)
     return _result
 }
 
@@ -3884,7 +3884,7 @@ public fun kotlin_UByte_and__TypesOfArguments__Swift_UInt8__(self: kotlin.native
 public fun kotlin_UByte_compareTo__TypesOfArguments__Swift_UInt8__(self: kotlin.native.internal.NativePtr, other: UByte): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UByte
     val __other = other
-    val _result = run { __self.compareTo(__other) }
+    val _result = __self.compareTo(__other)
     return _result
 }
 
@@ -3892,7 +3892,7 @@ public fun kotlin_UByte_compareTo__TypesOfArguments__Swift_UInt8__(self: kotlin.
 public fun kotlin_UByte_compareTo__TypesOfArguments__Swift_UInt16__(self: kotlin.native.internal.NativePtr, other: UShort): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UByte
     val __other = other
-    val _result = run { __self.compareTo(__other) }
+    val _result = __self.compareTo(__other)
     return _result
 }
 
@@ -3900,7 +3900,7 @@ public fun kotlin_UByte_compareTo__TypesOfArguments__Swift_UInt16__(self: kotlin
 public fun kotlin_UByte_compareTo__TypesOfArguments__Swift_UInt32__(self: kotlin.native.internal.NativePtr, other: UInt): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UByte
     val __other = other
-    val _result = run { __self.compareTo(__other) }
+    val _result = __self.compareTo(__other)
     return _result
 }
 
@@ -3908,14 +3908,14 @@ public fun kotlin_UByte_compareTo__TypesOfArguments__Swift_UInt32__(self: kotlin
 public fun kotlin_UByte_compareTo__TypesOfArguments__Swift_UInt64__(self: kotlin.native.internal.NativePtr, other: ULong): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UByte
     val __other = other
-    val _result = run { __self.compareTo(__other) }
+    val _result = __self.compareTo(__other)
     return _result
 }
 
 @ExportedBridge("kotlin_UByte_dec")
 public fun kotlin_UByte_dec(self: kotlin.native.internal.NativePtr): UByte {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UByte
-    val _result = run { __self.dec() }
+    val _result = __self.dec()
     return _result
 }
 
@@ -3923,7 +3923,7 @@ public fun kotlin_UByte_dec(self: kotlin.native.internal.NativePtr): UByte {
 public fun kotlin_UByte_div__TypesOfArguments__Swift_UInt8__(self: kotlin.native.internal.NativePtr, other: UByte): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UByte
     val __other = other
-    val _result = run { __self.div(__other) }
+    val _result = __self.div(__other)
     return _result
 }
 
@@ -3931,7 +3931,7 @@ public fun kotlin_UByte_div__TypesOfArguments__Swift_UInt8__(self: kotlin.native
 public fun kotlin_UByte_div__TypesOfArguments__Swift_UInt16__(self: kotlin.native.internal.NativePtr, other: UShort): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UByte
     val __other = other
-    val _result = run { __self.div(__other) }
+    val _result = __self.div(__other)
     return _result
 }
 
@@ -3939,7 +3939,7 @@ public fun kotlin_UByte_div__TypesOfArguments__Swift_UInt16__(self: kotlin.nativ
 public fun kotlin_UByte_div__TypesOfArguments__Swift_UInt32__(self: kotlin.native.internal.NativePtr, other: UInt): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UByte
     val __other = other
-    val _result = run { __self.div(__other) }
+    val _result = __self.div(__other)
     return _result
 }
 
@@ -3947,7 +3947,7 @@ public fun kotlin_UByte_div__TypesOfArguments__Swift_UInt32__(self: kotlin.nativ
 public fun kotlin_UByte_div__TypesOfArguments__Swift_UInt64__(self: kotlin.native.internal.NativePtr, other: ULong): ULong {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UByte
     val __other = other
-    val _result = run { __self.div(__other) }
+    val _result = __self.div(__other)
     return _result
 }
 
@@ -3955,7 +3955,7 @@ public fun kotlin_UByte_div__TypesOfArguments__Swift_UInt64__(self: kotlin.nativ
 public fun kotlin_UByte_floorDiv__TypesOfArguments__Swift_UInt8__(self: kotlin.native.internal.NativePtr, other: UByte): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UByte
     val __other = other
-    val _result = run { __self.floorDiv(__other) }
+    val _result = __self.floorDiv(__other)
     return _result
 }
 
@@ -3963,7 +3963,7 @@ public fun kotlin_UByte_floorDiv__TypesOfArguments__Swift_UInt8__(self: kotlin.n
 public fun kotlin_UByte_floorDiv__TypesOfArguments__Swift_UInt16__(self: kotlin.native.internal.NativePtr, other: UShort): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UByte
     val __other = other
-    val _result = run { __self.floorDiv(__other) }
+    val _result = __self.floorDiv(__other)
     return _result
 }
 
@@ -3971,7 +3971,7 @@ public fun kotlin_UByte_floorDiv__TypesOfArguments__Swift_UInt16__(self: kotlin.
 public fun kotlin_UByte_floorDiv__TypesOfArguments__Swift_UInt32__(self: kotlin.native.internal.NativePtr, other: UInt): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UByte
     val __other = other
-    val _result = run { __self.floorDiv(__other) }
+    val _result = __self.floorDiv(__other)
     return _result
 }
 
@@ -3979,21 +3979,21 @@ public fun kotlin_UByte_floorDiv__TypesOfArguments__Swift_UInt32__(self: kotlin.
 public fun kotlin_UByte_floorDiv__TypesOfArguments__Swift_UInt64__(self: kotlin.native.internal.NativePtr, other: ULong): ULong {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UByte
     val __other = other
-    val _result = run { __self.floorDiv(__other) }
+    val _result = __self.floorDiv(__other)
     return _result
 }
 
 @ExportedBridge("kotlin_UByte_inc")
 public fun kotlin_UByte_inc(self: kotlin.native.internal.NativePtr): UByte {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UByte
-    val _result = run { __self.inc() }
+    val _result = __self.inc()
     return _result
 }
 
 @ExportedBridge("kotlin_UByte_inv")
 public fun kotlin_UByte_inv(self: kotlin.native.internal.NativePtr): UByte {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UByte
-    val _result = run { __self.inv() }
+    val _result = __self.inv()
     return _result
 }
 
@@ -4001,7 +4001,7 @@ public fun kotlin_UByte_inv(self: kotlin.native.internal.NativePtr): UByte {
 public fun kotlin_UByte_minus__TypesOfArguments__Swift_UInt8__(self: kotlin.native.internal.NativePtr, other: UByte): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UByte
     val __other = other
-    val _result = run { __self.minus(__other) }
+    val _result = __self.minus(__other)
     return _result
 }
 
@@ -4009,7 +4009,7 @@ public fun kotlin_UByte_minus__TypesOfArguments__Swift_UInt8__(self: kotlin.nati
 public fun kotlin_UByte_minus__TypesOfArguments__Swift_UInt16__(self: kotlin.native.internal.NativePtr, other: UShort): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UByte
     val __other = other
-    val _result = run { __self.minus(__other) }
+    val _result = __self.minus(__other)
     return _result
 }
 
@@ -4017,7 +4017,7 @@ public fun kotlin_UByte_minus__TypesOfArguments__Swift_UInt16__(self: kotlin.nat
 public fun kotlin_UByte_minus__TypesOfArguments__Swift_UInt32__(self: kotlin.native.internal.NativePtr, other: UInt): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UByte
     val __other = other
-    val _result = run { __self.minus(__other) }
+    val _result = __self.minus(__other)
     return _result
 }
 
@@ -4025,7 +4025,7 @@ public fun kotlin_UByte_minus__TypesOfArguments__Swift_UInt32__(self: kotlin.nat
 public fun kotlin_UByte_minus__TypesOfArguments__Swift_UInt64__(self: kotlin.native.internal.NativePtr, other: ULong): ULong {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UByte
     val __other = other
-    val _result = run { __self.minus(__other) }
+    val _result = __self.minus(__other)
     return _result
 }
 
@@ -4033,7 +4033,7 @@ public fun kotlin_UByte_minus__TypesOfArguments__Swift_UInt64__(self: kotlin.nat
 public fun kotlin_UByte_mod__TypesOfArguments__Swift_UInt8__(self: kotlin.native.internal.NativePtr, other: UByte): UByte {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UByte
     val __other = other
-    val _result = run { __self.mod(__other) }
+    val _result = __self.mod(__other)
     return _result
 }
 
@@ -4041,7 +4041,7 @@ public fun kotlin_UByte_mod__TypesOfArguments__Swift_UInt8__(self: kotlin.native
 public fun kotlin_UByte_mod__TypesOfArguments__Swift_UInt16__(self: kotlin.native.internal.NativePtr, other: UShort): UShort {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UByte
     val __other = other
-    val _result = run { __self.mod(__other) }
+    val _result = __self.mod(__other)
     return _result
 }
 
@@ -4049,7 +4049,7 @@ public fun kotlin_UByte_mod__TypesOfArguments__Swift_UInt16__(self: kotlin.nativ
 public fun kotlin_UByte_mod__TypesOfArguments__Swift_UInt32__(self: kotlin.native.internal.NativePtr, other: UInt): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UByte
     val __other = other
-    val _result = run { __self.mod(__other) }
+    val _result = __self.mod(__other)
     return _result
 }
 
@@ -4057,7 +4057,7 @@ public fun kotlin_UByte_mod__TypesOfArguments__Swift_UInt32__(self: kotlin.nativ
 public fun kotlin_UByte_mod__TypesOfArguments__Swift_UInt64__(self: kotlin.native.internal.NativePtr, other: ULong): ULong {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UByte
     val __other = other
-    val _result = run { __self.mod(__other) }
+    val _result = __self.mod(__other)
     return _result
 }
 
@@ -4065,7 +4065,7 @@ public fun kotlin_UByte_mod__TypesOfArguments__Swift_UInt64__(self: kotlin.nativ
 public fun kotlin_UByte_or__TypesOfArguments__Swift_UInt8__(self: kotlin.native.internal.NativePtr, other: UByte): UByte {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UByte
     val __other = other
-    val _result = run { __self.or(__other) }
+    val _result = __self.or(__other)
     return _result
 }
 
@@ -4073,7 +4073,7 @@ public fun kotlin_UByte_or__TypesOfArguments__Swift_UInt8__(self: kotlin.native.
 public fun kotlin_UByte_plus__TypesOfArguments__Swift_UInt8__(self: kotlin.native.internal.NativePtr, other: UByte): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UByte
     val __other = other
-    val _result = run { __self.plus(__other) }
+    val _result = __self.plus(__other)
     return _result
 }
 
@@ -4081,7 +4081,7 @@ public fun kotlin_UByte_plus__TypesOfArguments__Swift_UInt8__(self: kotlin.nativ
 public fun kotlin_UByte_plus__TypesOfArguments__Swift_UInt16__(self: kotlin.native.internal.NativePtr, other: UShort): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UByte
     val __other = other
-    val _result = run { __self.plus(__other) }
+    val _result = __self.plus(__other)
     return _result
 }
 
@@ -4089,7 +4089,7 @@ public fun kotlin_UByte_plus__TypesOfArguments__Swift_UInt16__(self: kotlin.nati
 public fun kotlin_UByte_plus__TypesOfArguments__Swift_UInt32__(self: kotlin.native.internal.NativePtr, other: UInt): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UByte
     val __other = other
-    val _result = run { __self.plus(__other) }
+    val _result = __self.plus(__other)
     return _result
 }
 
@@ -4097,7 +4097,7 @@ public fun kotlin_UByte_plus__TypesOfArguments__Swift_UInt32__(self: kotlin.nati
 public fun kotlin_UByte_plus__TypesOfArguments__Swift_UInt64__(self: kotlin.native.internal.NativePtr, other: ULong): ULong {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UByte
     val __other = other
-    val _result = run { __self.plus(__other) }
+    val _result = __self.plus(__other)
     return _result
 }
 
@@ -4105,7 +4105,7 @@ public fun kotlin_UByte_plus__TypesOfArguments__Swift_UInt64__(self: kotlin.nati
 public fun kotlin_UByte_rangeTo__TypesOfArguments__Swift_UInt8__(self: kotlin.native.internal.NativePtr, other: UByte): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UByte
     val __other = other
-    val _result = run { __self.rangeTo(__other) }
+    val _result = __self.rangeTo(__other)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -4113,7 +4113,7 @@ public fun kotlin_UByte_rangeTo__TypesOfArguments__Swift_UInt8__(self: kotlin.na
 public fun kotlin_UByte_rangeUntil__TypesOfArguments__Swift_UInt8__(self: kotlin.native.internal.NativePtr, other: UByte): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UByte
     val __other = other
-    val _result = run { __self.rangeUntil(__other) }
+    val _result = __self.rangeUntil(__other)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -4121,7 +4121,7 @@ public fun kotlin_UByte_rangeUntil__TypesOfArguments__Swift_UInt8__(self: kotlin
 public fun kotlin_UByte_rem__TypesOfArguments__Swift_UInt8__(self: kotlin.native.internal.NativePtr, other: UByte): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UByte
     val __other = other
-    val _result = run { __self.rem(__other) }
+    val _result = __self.rem(__other)
     return _result
 }
 
@@ -4129,7 +4129,7 @@ public fun kotlin_UByte_rem__TypesOfArguments__Swift_UInt8__(self: kotlin.native
 public fun kotlin_UByte_rem__TypesOfArguments__Swift_UInt16__(self: kotlin.native.internal.NativePtr, other: UShort): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UByte
     val __other = other
-    val _result = run { __self.rem(__other) }
+    val _result = __self.rem(__other)
     return _result
 }
 
@@ -4137,7 +4137,7 @@ public fun kotlin_UByte_rem__TypesOfArguments__Swift_UInt16__(self: kotlin.nativ
 public fun kotlin_UByte_rem__TypesOfArguments__Swift_UInt32__(self: kotlin.native.internal.NativePtr, other: UInt): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UByte
     val __other = other
-    val _result = run { __self.rem(__other) }
+    val _result = __self.rem(__other)
     return _result
 }
 
@@ -4145,7 +4145,7 @@ public fun kotlin_UByte_rem__TypesOfArguments__Swift_UInt32__(self: kotlin.nativ
 public fun kotlin_UByte_rem__TypesOfArguments__Swift_UInt64__(self: kotlin.native.internal.NativePtr, other: ULong): ULong {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UByte
     val __other = other
-    val _result = run { __self.rem(__other) }
+    val _result = __self.rem(__other)
     return _result
 }
 
@@ -4153,7 +4153,7 @@ public fun kotlin_UByte_rem__TypesOfArguments__Swift_UInt64__(self: kotlin.nativ
 public fun kotlin_UByte_times__TypesOfArguments__Swift_UInt8__(self: kotlin.native.internal.NativePtr, other: UByte): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UByte
     val __other = other
-    val _result = run { __self.times(__other) }
+    val _result = __self.times(__other)
     return _result
 }
 
@@ -4161,7 +4161,7 @@ public fun kotlin_UByte_times__TypesOfArguments__Swift_UInt8__(self: kotlin.nati
 public fun kotlin_UByte_times__TypesOfArguments__Swift_UInt16__(self: kotlin.native.internal.NativePtr, other: UShort): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UByte
     val __other = other
-    val _result = run { __self.times(__other) }
+    val _result = __self.times(__other)
     return _result
 }
 
@@ -4169,7 +4169,7 @@ public fun kotlin_UByte_times__TypesOfArguments__Swift_UInt16__(self: kotlin.nat
 public fun kotlin_UByte_times__TypesOfArguments__Swift_UInt32__(self: kotlin.native.internal.NativePtr, other: UInt): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UByte
     val __other = other
-    val _result = run { __self.times(__other) }
+    val _result = __self.times(__other)
     return _result
 }
 
@@ -4177,77 +4177,77 @@ public fun kotlin_UByte_times__TypesOfArguments__Swift_UInt32__(self: kotlin.nat
 public fun kotlin_UByte_times__TypesOfArguments__Swift_UInt64__(self: kotlin.native.internal.NativePtr, other: ULong): ULong {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UByte
     val __other = other
-    val _result = run { __self.times(__other) }
+    val _result = __self.times(__other)
     return _result
 }
 
 @ExportedBridge("kotlin_UByte_toByte")
 public fun kotlin_UByte_toByte(self: kotlin.native.internal.NativePtr): Byte {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UByte
-    val _result = run { __self.toByte() }
+    val _result = __self.toByte()
     return _result
 }
 
 @ExportedBridge("kotlin_UByte_toDouble")
 public fun kotlin_UByte_toDouble(self: kotlin.native.internal.NativePtr): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UByte
-    val _result = run { __self.toDouble() }
+    val _result = __self.toDouble()
     return _result
 }
 
 @ExportedBridge("kotlin_UByte_toFloat")
 public fun kotlin_UByte_toFloat(self: kotlin.native.internal.NativePtr): Float {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UByte
-    val _result = run { __self.toFloat() }
+    val _result = __self.toFloat()
     return _result
 }
 
 @ExportedBridge("kotlin_UByte_toInt")
 public fun kotlin_UByte_toInt(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UByte
-    val _result = run { __self.toInt() }
+    val _result = __self.toInt()
     return _result
 }
 
 @ExportedBridge("kotlin_UByte_toLong")
 public fun kotlin_UByte_toLong(self: kotlin.native.internal.NativePtr): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UByte
-    val _result = run { __self.toLong() }
+    val _result = __self.toLong()
     return _result
 }
 
 @ExportedBridge("kotlin_UByte_toShort")
 public fun kotlin_UByte_toShort(self: kotlin.native.internal.NativePtr): Short {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UByte
-    val _result = run { __self.toShort() }
+    val _result = __self.toShort()
     return _result
 }
 
 @ExportedBridge("kotlin_UByte_toUByte")
 public fun kotlin_UByte_toUByte(self: kotlin.native.internal.NativePtr): UByte {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UByte
-    val _result = run { __self.toUByte() }
+    val _result = __self.toUByte()
     return _result
 }
 
 @ExportedBridge("kotlin_UByte_toUInt")
 public fun kotlin_UByte_toUInt(self: kotlin.native.internal.NativePtr): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UByte
-    val _result = run { __self.toUInt() }
+    val _result = __self.toUInt()
     return _result
 }
 
 @ExportedBridge("kotlin_UByte_toULong")
 public fun kotlin_UByte_toULong(self: kotlin.native.internal.NativePtr): ULong {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UByte
-    val _result = run { __self.toULong() }
+    val _result = __self.toULong()
     return _result
 }
 
 @ExportedBridge("kotlin_UByte_toUShort")
 public fun kotlin_UByte_toUShort(self: kotlin.native.internal.NativePtr): UShort {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UByte
-    val _result = run { __self.toUShort() }
+    val _result = __self.toUShort()
     return _result
 }
 
@@ -4255,41 +4255,41 @@ public fun kotlin_UByte_toUShort(self: kotlin.native.internal.NativePtr): UShort
 public fun kotlin_UByte_xor__TypesOfArguments__Swift_UInt8__(self: kotlin.native.internal.NativePtr, other: UByte): UByte {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UByte
     val __other = other
-    val _result = run { __self.xor(__other) }
+    val _result = __self.xor(__other)
     return _result
 }
 
 @ExportedBridge("kotlin_UInt_Companion_MAX_VALUE_get")
 public fun kotlin_UInt_Companion_MAX_VALUE_get(self: kotlin.native.internal.NativePtr): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UInt.Companion
-    val _result = run { __self.MAX_VALUE }
+    val _result = __self.MAX_VALUE
     return _result
 }
 
 @ExportedBridge("kotlin_UInt_Companion_MIN_VALUE_get")
 public fun kotlin_UInt_Companion_MIN_VALUE_get(self: kotlin.native.internal.NativePtr): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UInt.Companion
-    val _result = run { __self.MIN_VALUE }
+    val _result = __self.MIN_VALUE
     return _result
 }
 
 @ExportedBridge("kotlin_UInt_Companion_SIZE_BITS_get")
 public fun kotlin_UInt_Companion_SIZE_BITS_get(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UInt.Companion
-    val _result = run { __self.SIZE_BITS }
+    val _result = __self.SIZE_BITS
     return _result
 }
 
 @ExportedBridge("kotlin_UInt_Companion_SIZE_BYTES_get")
 public fun kotlin_UInt_Companion_SIZE_BYTES_get(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UInt.Companion
-    val _result = run { __self.SIZE_BYTES }
+    val _result = __self.SIZE_BYTES
     return _result
 }
 
 @ExportedBridge("kotlin_UInt_Companion_get")
 public fun kotlin_UInt_Companion_get(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.UInt.Companion }
+    val _result = kotlin.UInt.Companion
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -4297,7 +4297,7 @@ public fun kotlin_UInt_Companion_get(): kotlin.native.internal.NativePtr {
 public fun kotlin_UInt_and__TypesOfArguments__Swift_UInt32__(self: kotlin.native.internal.NativePtr, other: UInt): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UInt
     val __other = other
-    val _result = run { __self.and(__other) }
+    val _result = __self.and(__other)
     return _result
 }
 
@@ -4305,7 +4305,7 @@ public fun kotlin_UInt_and__TypesOfArguments__Swift_UInt32__(self: kotlin.native
 public fun kotlin_UInt_compareTo__TypesOfArguments__Swift_UInt8__(self: kotlin.native.internal.NativePtr, other: UByte): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UInt
     val __other = other
-    val _result = run { __self.compareTo(__other) }
+    val _result = __self.compareTo(__other)
     return _result
 }
 
@@ -4313,7 +4313,7 @@ public fun kotlin_UInt_compareTo__TypesOfArguments__Swift_UInt8__(self: kotlin.n
 public fun kotlin_UInt_compareTo__TypesOfArguments__Swift_UInt16__(self: kotlin.native.internal.NativePtr, other: UShort): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UInt
     val __other = other
-    val _result = run { __self.compareTo(__other) }
+    val _result = __self.compareTo(__other)
     return _result
 }
 
@@ -4321,7 +4321,7 @@ public fun kotlin_UInt_compareTo__TypesOfArguments__Swift_UInt16__(self: kotlin.
 public fun kotlin_UInt_compareTo__TypesOfArguments__Swift_UInt32__(self: kotlin.native.internal.NativePtr, other: UInt): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UInt
     val __other = other
-    val _result = run { __self.compareTo(__other) }
+    val _result = __self.compareTo(__other)
     return _result
 }
 
@@ -4329,14 +4329,14 @@ public fun kotlin_UInt_compareTo__TypesOfArguments__Swift_UInt32__(self: kotlin.
 public fun kotlin_UInt_compareTo__TypesOfArguments__Swift_UInt64__(self: kotlin.native.internal.NativePtr, other: ULong): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UInt
     val __other = other
-    val _result = run { __self.compareTo(__other) }
+    val _result = __self.compareTo(__other)
     return _result
 }
 
 @ExportedBridge("kotlin_UInt_dec")
 public fun kotlin_UInt_dec(self: kotlin.native.internal.NativePtr): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UInt
-    val _result = run { __self.dec() }
+    val _result = __self.dec()
     return _result
 }
 
@@ -4344,7 +4344,7 @@ public fun kotlin_UInt_dec(self: kotlin.native.internal.NativePtr): UInt {
 public fun kotlin_UInt_div__TypesOfArguments__Swift_UInt8__(self: kotlin.native.internal.NativePtr, other: UByte): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UInt
     val __other = other
-    val _result = run { __self.div(__other) }
+    val _result = __self.div(__other)
     return _result
 }
 
@@ -4352,7 +4352,7 @@ public fun kotlin_UInt_div__TypesOfArguments__Swift_UInt8__(self: kotlin.native.
 public fun kotlin_UInt_div__TypesOfArguments__Swift_UInt16__(self: kotlin.native.internal.NativePtr, other: UShort): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UInt
     val __other = other
-    val _result = run { __self.div(__other) }
+    val _result = __self.div(__other)
     return _result
 }
 
@@ -4360,7 +4360,7 @@ public fun kotlin_UInt_div__TypesOfArguments__Swift_UInt16__(self: kotlin.native
 public fun kotlin_UInt_div__TypesOfArguments__Swift_UInt32__(self: kotlin.native.internal.NativePtr, other: UInt): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UInt
     val __other = other
-    val _result = run { __self.div(__other) }
+    val _result = __self.div(__other)
     return _result
 }
 
@@ -4368,7 +4368,7 @@ public fun kotlin_UInt_div__TypesOfArguments__Swift_UInt32__(self: kotlin.native
 public fun kotlin_UInt_div__TypesOfArguments__Swift_UInt64__(self: kotlin.native.internal.NativePtr, other: ULong): ULong {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UInt
     val __other = other
-    val _result = run { __self.div(__other) }
+    val _result = __self.div(__other)
     return _result
 }
 
@@ -4376,7 +4376,7 @@ public fun kotlin_UInt_div__TypesOfArguments__Swift_UInt64__(self: kotlin.native
 public fun kotlin_UInt_floorDiv__TypesOfArguments__Swift_UInt8__(self: kotlin.native.internal.NativePtr, other: UByte): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UInt
     val __other = other
-    val _result = run { __self.floorDiv(__other) }
+    val _result = __self.floorDiv(__other)
     return _result
 }
 
@@ -4384,7 +4384,7 @@ public fun kotlin_UInt_floorDiv__TypesOfArguments__Swift_UInt8__(self: kotlin.na
 public fun kotlin_UInt_floorDiv__TypesOfArguments__Swift_UInt16__(self: kotlin.native.internal.NativePtr, other: UShort): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UInt
     val __other = other
-    val _result = run { __self.floorDiv(__other) }
+    val _result = __self.floorDiv(__other)
     return _result
 }
 
@@ -4392,7 +4392,7 @@ public fun kotlin_UInt_floorDiv__TypesOfArguments__Swift_UInt16__(self: kotlin.n
 public fun kotlin_UInt_floorDiv__TypesOfArguments__Swift_UInt32__(self: kotlin.native.internal.NativePtr, other: UInt): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UInt
     val __other = other
-    val _result = run { __self.floorDiv(__other) }
+    val _result = __self.floorDiv(__other)
     return _result
 }
 
@@ -4400,21 +4400,21 @@ public fun kotlin_UInt_floorDiv__TypesOfArguments__Swift_UInt32__(self: kotlin.n
 public fun kotlin_UInt_floorDiv__TypesOfArguments__Swift_UInt64__(self: kotlin.native.internal.NativePtr, other: ULong): ULong {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UInt
     val __other = other
-    val _result = run { __self.floorDiv(__other) }
+    val _result = __self.floorDiv(__other)
     return _result
 }
 
 @ExportedBridge("kotlin_UInt_inc")
 public fun kotlin_UInt_inc(self: kotlin.native.internal.NativePtr): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UInt
-    val _result = run { __self.inc() }
+    val _result = __self.inc()
     return _result
 }
 
 @ExportedBridge("kotlin_UInt_inv")
 public fun kotlin_UInt_inv(self: kotlin.native.internal.NativePtr): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UInt
-    val _result = run { __self.inv() }
+    val _result = __self.inv()
     return _result
 }
 
@@ -4422,7 +4422,7 @@ public fun kotlin_UInt_inv(self: kotlin.native.internal.NativePtr): UInt {
 public fun kotlin_UInt_minus__TypesOfArguments__Swift_UInt8__(self: kotlin.native.internal.NativePtr, other: UByte): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UInt
     val __other = other
-    val _result = run { __self.minus(__other) }
+    val _result = __self.minus(__other)
     return _result
 }
 
@@ -4430,7 +4430,7 @@ public fun kotlin_UInt_minus__TypesOfArguments__Swift_UInt8__(self: kotlin.nativ
 public fun kotlin_UInt_minus__TypesOfArguments__Swift_UInt16__(self: kotlin.native.internal.NativePtr, other: UShort): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UInt
     val __other = other
-    val _result = run { __self.minus(__other) }
+    val _result = __self.minus(__other)
     return _result
 }
 
@@ -4438,7 +4438,7 @@ public fun kotlin_UInt_minus__TypesOfArguments__Swift_UInt16__(self: kotlin.nati
 public fun kotlin_UInt_minus__TypesOfArguments__Swift_UInt32__(self: kotlin.native.internal.NativePtr, other: UInt): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UInt
     val __other = other
-    val _result = run { __self.minus(__other) }
+    val _result = __self.minus(__other)
     return _result
 }
 
@@ -4446,7 +4446,7 @@ public fun kotlin_UInt_minus__TypesOfArguments__Swift_UInt32__(self: kotlin.nati
 public fun kotlin_UInt_minus__TypesOfArguments__Swift_UInt64__(self: kotlin.native.internal.NativePtr, other: ULong): ULong {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UInt
     val __other = other
-    val _result = run { __self.minus(__other) }
+    val _result = __self.minus(__other)
     return _result
 }
 
@@ -4454,7 +4454,7 @@ public fun kotlin_UInt_minus__TypesOfArguments__Swift_UInt64__(self: kotlin.nati
 public fun kotlin_UInt_mod__TypesOfArguments__Swift_UInt8__(self: kotlin.native.internal.NativePtr, other: UByte): UByte {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UInt
     val __other = other
-    val _result = run { __self.mod(__other) }
+    val _result = __self.mod(__other)
     return _result
 }
 
@@ -4462,7 +4462,7 @@ public fun kotlin_UInt_mod__TypesOfArguments__Swift_UInt8__(self: kotlin.native.
 public fun kotlin_UInt_mod__TypesOfArguments__Swift_UInt16__(self: kotlin.native.internal.NativePtr, other: UShort): UShort {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UInt
     val __other = other
-    val _result = run { __self.mod(__other) }
+    val _result = __self.mod(__other)
     return _result
 }
 
@@ -4470,7 +4470,7 @@ public fun kotlin_UInt_mod__TypesOfArguments__Swift_UInt16__(self: kotlin.native
 public fun kotlin_UInt_mod__TypesOfArguments__Swift_UInt32__(self: kotlin.native.internal.NativePtr, other: UInt): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UInt
     val __other = other
-    val _result = run { __self.mod(__other) }
+    val _result = __self.mod(__other)
     return _result
 }
 
@@ -4478,7 +4478,7 @@ public fun kotlin_UInt_mod__TypesOfArguments__Swift_UInt32__(self: kotlin.native
 public fun kotlin_UInt_mod__TypesOfArguments__Swift_UInt64__(self: kotlin.native.internal.NativePtr, other: ULong): ULong {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UInt
     val __other = other
-    val _result = run { __self.mod(__other) }
+    val _result = __self.mod(__other)
     return _result
 }
 
@@ -4486,7 +4486,7 @@ public fun kotlin_UInt_mod__TypesOfArguments__Swift_UInt64__(self: kotlin.native
 public fun kotlin_UInt_or__TypesOfArguments__Swift_UInt32__(self: kotlin.native.internal.NativePtr, other: UInt): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UInt
     val __other = other
-    val _result = run { __self.or(__other) }
+    val _result = __self.or(__other)
     return _result
 }
 
@@ -4494,7 +4494,7 @@ public fun kotlin_UInt_or__TypesOfArguments__Swift_UInt32__(self: kotlin.native.
 public fun kotlin_UInt_plus__TypesOfArguments__Swift_UInt8__(self: kotlin.native.internal.NativePtr, other: UByte): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UInt
     val __other = other
-    val _result = run { __self.plus(__other) }
+    val _result = __self.plus(__other)
     return _result
 }
 
@@ -4502,7 +4502,7 @@ public fun kotlin_UInt_plus__TypesOfArguments__Swift_UInt8__(self: kotlin.native
 public fun kotlin_UInt_plus__TypesOfArguments__Swift_UInt16__(self: kotlin.native.internal.NativePtr, other: UShort): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UInt
     val __other = other
-    val _result = run { __self.plus(__other) }
+    val _result = __self.plus(__other)
     return _result
 }
 
@@ -4510,7 +4510,7 @@ public fun kotlin_UInt_plus__TypesOfArguments__Swift_UInt16__(self: kotlin.nativ
 public fun kotlin_UInt_plus__TypesOfArguments__Swift_UInt32__(self: kotlin.native.internal.NativePtr, other: UInt): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UInt
     val __other = other
-    val _result = run { __self.plus(__other) }
+    val _result = __self.plus(__other)
     return _result
 }
 
@@ -4518,7 +4518,7 @@ public fun kotlin_UInt_plus__TypesOfArguments__Swift_UInt32__(self: kotlin.nativ
 public fun kotlin_UInt_plus__TypesOfArguments__Swift_UInt64__(self: kotlin.native.internal.NativePtr, other: ULong): ULong {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UInt
     val __other = other
-    val _result = run { __self.plus(__other) }
+    val _result = __self.plus(__other)
     return _result
 }
 
@@ -4526,7 +4526,7 @@ public fun kotlin_UInt_plus__TypesOfArguments__Swift_UInt64__(self: kotlin.nativ
 public fun kotlin_UInt_rangeTo__TypesOfArguments__Swift_UInt32__(self: kotlin.native.internal.NativePtr, other: UInt): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UInt
     val __other = other
-    val _result = run { __self.rangeTo(__other) }
+    val _result = __self.rangeTo(__other)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -4534,7 +4534,7 @@ public fun kotlin_UInt_rangeTo__TypesOfArguments__Swift_UInt32__(self: kotlin.na
 public fun kotlin_UInt_rangeUntil__TypesOfArguments__Swift_UInt32__(self: kotlin.native.internal.NativePtr, other: UInt): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UInt
     val __other = other
-    val _result = run { __self.rangeUntil(__other) }
+    val _result = __self.rangeUntil(__other)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -4542,7 +4542,7 @@ public fun kotlin_UInt_rangeUntil__TypesOfArguments__Swift_UInt32__(self: kotlin
 public fun kotlin_UInt_rem__TypesOfArguments__Swift_UInt8__(self: kotlin.native.internal.NativePtr, other: UByte): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UInt
     val __other = other
-    val _result = run { __self.rem(__other) }
+    val _result = __self.rem(__other)
     return _result
 }
 
@@ -4550,7 +4550,7 @@ public fun kotlin_UInt_rem__TypesOfArguments__Swift_UInt8__(self: kotlin.native.
 public fun kotlin_UInt_rem__TypesOfArguments__Swift_UInt16__(self: kotlin.native.internal.NativePtr, other: UShort): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UInt
     val __other = other
-    val _result = run { __self.rem(__other) }
+    val _result = __self.rem(__other)
     return _result
 }
 
@@ -4558,7 +4558,7 @@ public fun kotlin_UInt_rem__TypesOfArguments__Swift_UInt16__(self: kotlin.native
 public fun kotlin_UInt_rem__TypesOfArguments__Swift_UInt32__(self: kotlin.native.internal.NativePtr, other: UInt): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UInt
     val __other = other
-    val _result = run { __self.rem(__other) }
+    val _result = __self.rem(__other)
     return _result
 }
 
@@ -4566,7 +4566,7 @@ public fun kotlin_UInt_rem__TypesOfArguments__Swift_UInt32__(self: kotlin.native
 public fun kotlin_UInt_rem__TypesOfArguments__Swift_UInt64__(self: kotlin.native.internal.NativePtr, other: ULong): ULong {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UInt
     val __other = other
-    val _result = run { __self.rem(__other) }
+    val _result = __self.rem(__other)
     return _result
 }
 
@@ -4574,7 +4574,7 @@ public fun kotlin_UInt_rem__TypesOfArguments__Swift_UInt64__(self: kotlin.native
 public fun kotlin_UInt_shl__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, bitCount: Int): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UInt
     val __bitCount = bitCount
-    val _result = run { __self.shl(__bitCount) }
+    val _result = __self.shl(__bitCount)
     return _result
 }
 
@@ -4582,7 +4582,7 @@ public fun kotlin_UInt_shl__TypesOfArguments__Swift_Int32__(self: kotlin.native.
 public fun kotlin_UInt_shr__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, bitCount: Int): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UInt
     val __bitCount = bitCount
-    val _result = run { __self.shr(__bitCount) }
+    val _result = __self.shr(__bitCount)
     return _result
 }
 
@@ -4590,7 +4590,7 @@ public fun kotlin_UInt_shr__TypesOfArguments__Swift_Int32__(self: kotlin.native.
 public fun kotlin_UInt_times__TypesOfArguments__Swift_UInt8__(self: kotlin.native.internal.NativePtr, other: UByte): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UInt
     val __other = other
-    val _result = run { __self.times(__other) }
+    val _result = __self.times(__other)
     return _result
 }
 
@@ -4598,7 +4598,7 @@ public fun kotlin_UInt_times__TypesOfArguments__Swift_UInt8__(self: kotlin.nativ
 public fun kotlin_UInt_times__TypesOfArguments__Swift_UInt16__(self: kotlin.native.internal.NativePtr, other: UShort): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UInt
     val __other = other
-    val _result = run { __self.times(__other) }
+    val _result = __self.times(__other)
     return _result
 }
 
@@ -4606,7 +4606,7 @@ public fun kotlin_UInt_times__TypesOfArguments__Swift_UInt16__(self: kotlin.nati
 public fun kotlin_UInt_times__TypesOfArguments__Swift_UInt32__(self: kotlin.native.internal.NativePtr, other: UInt): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UInt
     val __other = other
-    val _result = run { __self.times(__other) }
+    val _result = __self.times(__other)
     return _result
 }
 
@@ -4614,77 +4614,77 @@ public fun kotlin_UInt_times__TypesOfArguments__Swift_UInt32__(self: kotlin.nati
 public fun kotlin_UInt_times__TypesOfArguments__Swift_UInt64__(self: kotlin.native.internal.NativePtr, other: ULong): ULong {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UInt
     val __other = other
-    val _result = run { __self.times(__other) }
+    val _result = __self.times(__other)
     return _result
 }
 
 @ExportedBridge("kotlin_UInt_toByte")
 public fun kotlin_UInt_toByte(self: kotlin.native.internal.NativePtr): Byte {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UInt
-    val _result = run { __self.toByte() }
+    val _result = __self.toByte()
     return _result
 }
 
 @ExportedBridge("kotlin_UInt_toDouble")
 public fun kotlin_UInt_toDouble(self: kotlin.native.internal.NativePtr): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UInt
-    val _result = run { __self.toDouble() }
+    val _result = __self.toDouble()
     return _result
 }
 
 @ExportedBridge("kotlin_UInt_toFloat")
 public fun kotlin_UInt_toFloat(self: kotlin.native.internal.NativePtr): Float {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UInt
-    val _result = run { __self.toFloat() }
+    val _result = __self.toFloat()
     return _result
 }
 
 @ExportedBridge("kotlin_UInt_toInt")
 public fun kotlin_UInt_toInt(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UInt
-    val _result = run { __self.toInt() }
+    val _result = __self.toInt()
     return _result
 }
 
 @ExportedBridge("kotlin_UInt_toLong")
 public fun kotlin_UInt_toLong(self: kotlin.native.internal.NativePtr): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UInt
-    val _result = run { __self.toLong() }
+    val _result = __self.toLong()
     return _result
 }
 
 @ExportedBridge("kotlin_UInt_toShort")
 public fun kotlin_UInt_toShort(self: kotlin.native.internal.NativePtr): Short {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UInt
-    val _result = run { __self.toShort() }
+    val _result = __self.toShort()
     return _result
 }
 
 @ExportedBridge("kotlin_UInt_toUByte")
 public fun kotlin_UInt_toUByte(self: kotlin.native.internal.NativePtr): UByte {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UInt
-    val _result = run { __self.toUByte() }
+    val _result = __self.toUByte()
     return _result
 }
 
 @ExportedBridge("kotlin_UInt_toUInt")
 public fun kotlin_UInt_toUInt(self: kotlin.native.internal.NativePtr): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UInt
-    val _result = run { __self.toUInt() }
+    val _result = __self.toUInt()
     return _result
 }
 
 @ExportedBridge("kotlin_UInt_toULong")
 public fun kotlin_UInt_toULong(self: kotlin.native.internal.NativePtr): ULong {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UInt
-    val _result = run { __self.toULong() }
+    val _result = __self.toULong()
     return _result
 }
 
 @ExportedBridge("kotlin_UInt_toUShort")
 public fun kotlin_UInt_toUShort(self: kotlin.native.internal.NativePtr): UShort {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UInt
-    val _result = run { __self.toUShort() }
+    val _result = __self.toUShort()
     return _result
 }
 
@@ -4692,41 +4692,41 @@ public fun kotlin_UInt_toUShort(self: kotlin.native.internal.NativePtr): UShort 
 public fun kotlin_UInt_xor__TypesOfArguments__Swift_UInt32__(self: kotlin.native.internal.NativePtr, other: UInt): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UInt
     val __other = other
-    val _result = run { __self.xor(__other) }
+    val _result = __self.xor(__other)
     return _result
 }
 
 @ExportedBridge("kotlin_ULong_Companion_MAX_VALUE_get")
 public fun kotlin_ULong_Companion_MAX_VALUE_get(self: kotlin.native.internal.NativePtr): ULong {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ULong.Companion
-    val _result = run { __self.MAX_VALUE }
+    val _result = __self.MAX_VALUE
     return _result
 }
 
 @ExportedBridge("kotlin_ULong_Companion_MIN_VALUE_get")
 public fun kotlin_ULong_Companion_MIN_VALUE_get(self: kotlin.native.internal.NativePtr): ULong {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ULong.Companion
-    val _result = run { __self.MIN_VALUE }
+    val _result = __self.MIN_VALUE
     return _result
 }
 
 @ExportedBridge("kotlin_ULong_Companion_SIZE_BITS_get")
 public fun kotlin_ULong_Companion_SIZE_BITS_get(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ULong.Companion
-    val _result = run { __self.SIZE_BITS }
+    val _result = __self.SIZE_BITS
     return _result
 }
 
 @ExportedBridge("kotlin_ULong_Companion_SIZE_BYTES_get")
 public fun kotlin_ULong_Companion_SIZE_BYTES_get(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ULong.Companion
-    val _result = run { __self.SIZE_BYTES }
+    val _result = __self.SIZE_BYTES
     return _result
 }
 
 @ExportedBridge("kotlin_ULong_Companion_get")
 public fun kotlin_ULong_Companion_get(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.ULong.Companion }
+    val _result = kotlin.ULong.Companion
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -4734,7 +4734,7 @@ public fun kotlin_ULong_Companion_get(): kotlin.native.internal.NativePtr {
 public fun kotlin_ULong_and__TypesOfArguments__Swift_UInt64__(self: kotlin.native.internal.NativePtr, other: ULong): ULong {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ULong
     val __other = other
-    val _result = run { __self.and(__other) }
+    val _result = __self.and(__other)
     return _result
 }
 
@@ -4742,7 +4742,7 @@ public fun kotlin_ULong_and__TypesOfArguments__Swift_UInt64__(self: kotlin.nativ
 public fun kotlin_ULong_compareTo__TypesOfArguments__Swift_UInt8__(self: kotlin.native.internal.NativePtr, other: UByte): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ULong
     val __other = other
-    val _result = run { __self.compareTo(__other) }
+    val _result = __self.compareTo(__other)
     return _result
 }
 
@@ -4750,7 +4750,7 @@ public fun kotlin_ULong_compareTo__TypesOfArguments__Swift_UInt8__(self: kotlin.
 public fun kotlin_ULong_compareTo__TypesOfArguments__Swift_UInt16__(self: kotlin.native.internal.NativePtr, other: UShort): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ULong
     val __other = other
-    val _result = run { __self.compareTo(__other) }
+    val _result = __self.compareTo(__other)
     return _result
 }
 
@@ -4758,7 +4758,7 @@ public fun kotlin_ULong_compareTo__TypesOfArguments__Swift_UInt16__(self: kotlin
 public fun kotlin_ULong_compareTo__TypesOfArguments__Swift_UInt32__(self: kotlin.native.internal.NativePtr, other: UInt): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ULong
     val __other = other
-    val _result = run { __self.compareTo(__other) }
+    val _result = __self.compareTo(__other)
     return _result
 }
 
@@ -4766,14 +4766,14 @@ public fun kotlin_ULong_compareTo__TypesOfArguments__Swift_UInt32__(self: kotlin
 public fun kotlin_ULong_compareTo__TypesOfArguments__Swift_UInt64__(self: kotlin.native.internal.NativePtr, other: ULong): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ULong
     val __other = other
-    val _result = run { __self.compareTo(__other) }
+    val _result = __self.compareTo(__other)
     return _result
 }
 
 @ExportedBridge("kotlin_ULong_dec")
 public fun kotlin_ULong_dec(self: kotlin.native.internal.NativePtr): ULong {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ULong
-    val _result = run { __self.dec() }
+    val _result = __self.dec()
     return _result
 }
 
@@ -4781,7 +4781,7 @@ public fun kotlin_ULong_dec(self: kotlin.native.internal.NativePtr): ULong {
 public fun kotlin_ULong_div__TypesOfArguments__Swift_UInt8__(self: kotlin.native.internal.NativePtr, other: UByte): ULong {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ULong
     val __other = other
-    val _result = run { __self.div(__other) }
+    val _result = __self.div(__other)
     return _result
 }
 
@@ -4789,7 +4789,7 @@ public fun kotlin_ULong_div__TypesOfArguments__Swift_UInt8__(self: kotlin.native
 public fun kotlin_ULong_div__TypesOfArguments__Swift_UInt16__(self: kotlin.native.internal.NativePtr, other: UShort): ULong {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ULong
     val __other = other
-    val _result = run { __self.div(__other) }
+    val _result = __self.div(__other)
     return _result
 }
 
@@ -4797,7 +4797,7 @@ public fun kotlin_ULong_div__TypesOfArguments__Swift_UInt16__(self: kotlin.nativ
 public fun kotlin_ULong_div__TypesOfArguments__Swift_UInt32__(self: kotlin.native.internal.NativePtr, other: UInt): ULong {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ULong
     val __other = other
-    val _result = run { __self.div(__other) }
+    val _result = __self.div(__other)
     return _result
 }
 
@@ -4805,7 +4805,7 @@ public fun kotlin_ULong_div__TypesOfArguments__Swift_UInt32__(self: kotlin.nativ
 public fun kotlin_ULong_div__TypesOfArguments__Swift_UInt64__(self: kotlin.native.internal.NativePtr, other: ULong): ULong {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ULong
     val __other = other
-    val _result = run { __self.div(__other) }
+    val _result = __self.div(__other)
     return _result
 }
 
@@ -4813,7 +4813,7 @@ public fun kotlin_ULong_div__TypesOfArguments__Swift_UInt64__(self: kotlin.nativ
 public fun kotlin_ULong_floorDiv__TypesOfArguments__Swift_UInt8__(self: kotlin.native.internal.NativePtr, other: UByte): ULong {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ULong
     val __other = other
-    val _result = run { __self.floorDiv(__other) }
+    val _result = __self.floorDiv(__other)
     return _result
 }
 
@@ -4821,7 +4821,7 @@ public fun kotlin_ULong_floorDiv__TypesOfArguments__Swift_UInt8__(self: kotlin.n
 public fun kotlin_ULong_floorDiv__TypesOfArguments__Swift_UInt16__(self: kotlin.native.internal.NativePtr, other: UShort): ULong {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ULong
     val __other = other
-    val _result = run { __self.floorDiv(__other) }
+    val _result = __self.floorDiv(__other)
     return _result
 }
 
@@ -4829,7 +4829,7 @@ public fun kotlin_ULong_floorDiv__TypesOfArguments__Swift_UInt16__(self: kotlin.
 public fun kotlin_ULong_floorDiv__TypesOfArguments__Swift_UInt32__(self: kotlin.native.internal.NativePtr, other: UInt): ULong {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ULong
     val __other = other
-    val _result = run { __self.floorDiv(__other) }
+    val _result = __self.floorDiv(__other)
     return _result
 }
 
@@ -4837,21 +4837,21 @@ public fun kotlin_ULong_floorDiv__TypesOfArguments__Swift_UInt32__(self: kotlin.
 public fun kotlin_ULong_floorDiv__TypesOfArguments__Swift_UInt64__(self: kotlin.native.internal.NativePtr, other: ULong): ULong {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ULong
     val __other = other
-    val _result = run { __self.floorDiv(__other) }
+    val _result = __self.floorDiv(__other)
     return _result
 }
 
 @ExportedBridge("kotlin_ULong_inc")
 public fun kotlin_ULong_inc(self: kotlin.native.internal.NativePtr): ULong {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ULong
-    val _result = run { __self.inc() }
+    val _result = __self.inc()
     return _result
 }
 
 @ExportedBridge("kotlin_ULong_inv")
 public fun kotlin_ULong_inv(self: kotlin.native.internal.NativePtr): ULong {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ULong
-    val _result = run { __self.inv() }
+    val _result = __self.inv()
     return _result
 }
 
@@ -4859,7 +4859,7 @@ public fun kotlin_ULong_inv(self: kotlin.native.internal.NativePtr): ULong {
 public fun kotlin_ULong_minus__TypesOfArguments__Swift_UInt8__(self: kotlin.native.internal.NativePtr, other: UByte): ULong {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ULong
     val __other = other
-    val _result = run { __self.minus(__other) }
+    val _result = __self.minus(__other)
     return _result
 }
 
@@ -4867,7 +4867,7 @@ public fun kotlin_ULong_minus__TypesOfArguments__Swift_UInt8__(self: kotlin.nati
 public fun kotlin_ULong_minus__TypesOfArguments__Swift_UInt16__(self: kotlin.native.internal.NativePtr, other: UShort): ULong {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ULong
     val __other = other
-    val _result = run { __self.minus(__other) }
+    val _result = __self.minus(__other)
     return _result
 }
 
@@ -4875,7 +4875,7 @@ public fun kotlin_ULong_minus__TypesOfArguments__Swift_UInt16__(self: kotlin.nat
 public fun kotlin_ULong_minus__TypesOfArguments__Swift_UInt32__(self: kotlin.native.internal.NativePtr, other: UInt): ULong {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ULong
     val __other = other
-    val _result = run { __self.minus(__other) }
+    val _result = __self.minus(__other)
     return _result
 }
 
@@ -4883,7 +4883,7 @@ public fun kotlin_ULong_minus__TypesOfArguments__Swift_UInt32__(self: kotlin.nat
 public fun kotlin_ULong_minus__TypesOfArguments__Swift_UInt64__(self: kotlin.native.internal.NativePtr, other: ULong): ULong {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ULong
     val __other = other
-    val _result = run { __self.minus(__other) }
+    val _result = __self.minus(__other)
     return _result
 }
 
@@ -4891,7 +4891,7 @@ public fun kotlin_ULong_minus__TypesOfArguments__Swift_UInt64__(self: kotlin.nat
 public fun kotlin_ULong_mod__TypesOfArguments__Swift_UInt8__(self: kotlin.native.internal.NativePtr, other: UByte): UByte {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ULong
     val __other = other
-    val _result = run { __self.mod(__other) }
+    val _result = __self.mod(__other)
     return _result
 }
 
@@ -4899,7 +4899,7 @@ public fun kotlin_ULong_mod__TypesOfArguments__Swift_UInt8__(self: kotlin.native
 public fun kotlin_ULong_mod__TypesOfArguments__Swift_UInt16__(self: kotlin.native.internal.NativePtr, other: UShort): UShort {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ULong
     val __other = other
-    val _result = run { __self.mod(__other) }
+    val _result = __self.mod(__other)
     return _result
 }
 
@@ -4907,7 +4907,7 @@ public fun kotlin_ULong_mod__TypesOfArguments__Swift_UInt16__(self: kotlin.nativ
 public fun kotlin_ULong_mod__TypesOfArguments__Swift_UInt32__(self: kotlin.native.internal.NativePtr, other: UInt): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ULong
     val __other = other
-    val _result = run { __self.mod(__other) }
+    val _result = __self.mod(__other)
     return _result
 }
 
@@ -4915,7 +4915,7 @@ public fun kotlin_ULong_mod__TypesOfArguments__Swift_UInt32__(self: kotlin.nativ
 public fun kotlin_ULong_mod__TypesOfArguments__Swift_UInt64__(self: kotlin.native.internal.NativePtr, other: ULong): ULong {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ULong
     val __other = other
-    val _result = run { __self.mod(__other) }
+    val _result = __self.mod(__other)
     return _result
 }
 
@@ -4923,7 +4923,7 @@ public fun kotlin_ULong_mod__TypesOfArguments__Swift_UInt64__(self: kotlin.nativ
 public fun kotlin_ULong_or__TypesOfArguments__Swift_UInt64__(self: kotlin.native.internal.NativePtr, other: ULong): ULong {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ULong
     val __other = other
-    val _result = run { __self.or(__other) }
+    val _result = __self.or(__other)
     return _result
 }
 
@@ -4931,7 +4931,7 @@ public fun kotlin_ULong_or__TypesOfArguments__Swift_UInt64__(self: kotlin.native
 public fun kotlin_ULong_plus__TypesOfArguments__Swift_UInt8__(self: kotlin.native.internal.NativePtr, other: UByte): ULong {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ULong
     val __other = other
-    val _result = run { __self.plus(__other) }
+    val _result = __self.plus(__other)
     return _result
 }
 
@@ -4939,7 +4939,7 @@ public fun kotlin_ULong_plus__TypesOfArguments__Swift_UInt8__(self: kotlin.nativ
 public fun kotlin_ULong_plus__TypesOfArguments__Swift_UInt16__(self: kotlin.native.internal.NativePtr, other: UShort): ULong {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ULong
     val __other = other
-    val _result = run { __self.plus(__other) }
+    val _result = __self.plus(__other)
     return _result
 }
 
@@ -4947,7 +4947,7 @@ public fun kotlin_ULong_plus__TypesOfArguments__Swift_UInt16__(self: kotlin.nati
 public fun kotlin_ULong_plus__TypesOfArguments__Swift_UInt32__(self: kotlin.native.internal.NativePtr, other: UInt): ULong {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ULong
     val __other = other
-    val _result = run { __self.plus(__other) }
+    val _result = __self.plus(__other)
     return _result
 }
 
@@ -4955,7 +4955,7 @@ public fun kotlin_ULong_plus__TypesOfArguments__Swift_UInt32__(self: kotlin.nati
 public fun kotlin_ULong_plus__TypesOfArguments__Swift_UInt64__(self: kotlin.native.internal.NativePtr, other: ULong): ULong {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ULong
     val __other = other
-    val _result = run { __self.plus(__other) }
+    val _result = __self.plus(__other)
     return _result
 }
 
@@ -4963,7 +4963,7 @@ public fun kotlin_ULong_plus__TypesOfArguments__Swift_UInt64__(self: kotlin.nati
 public fun kotlin_ULong_rangeTo__TypesOfArguments__Swift_UInt64__(self: kotlin.native.internal.NativePtr, other: ULong): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ULong
     val __other = other
-    val _result = run { __self.rangeTo(__other) }
+    val _result = __self.rangeTo(__other)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -4971,7 +4971,7 @@ public fun kotlin_ULong_rangeTo__TypesOfArguments__Swift_UInt64__(self: kotlin.n
 public fun kotlin_ULong_rangeUntil__TypesOfArguments__Swift_UInt64__(self: kotlin.native.internal.NativePtr, other: ULong): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ULong
     val __other = other
-    val _result = run { __self.rangeUntil(__other) }
+    val _result = __self.rangeUntil(__other)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -4979,7 +4979,7 @@ public fun kotlin_ULong_rangeUntil__TypesOfArguments__Swift_UInt64__(self: kotli
 public fun kotlin_ULong_rem__TypesOfArguments__Swift_UInt8__(self: kotlin.native.internal.NativePtr, other: UByte): ULong {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ULong
     val __other = other
-    val _result = run { __self.rem(__other) }
+    val _result = __self.rem(__other)
     return _result
 }
 
@@ -4987,7 +4987,7 @@ public fun kotlin_ULong_rem__TypesOfArguments__Swift_UInt8__(self: kotlin.native
 public fun kotlin_ULong_rem__TypesOfArguments__Swift_UInt16__(self: kotlin.native.internal.NativePtr, other: UShort): ULong {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ULong
     val __other = other
-    val _result = run { __self.rem(__other) }
+    val _result = __self.rem(__other)
     return _result
 }
 
@@ -4995,7 +4995,7 @@ public fun kotlin_ULong_rem__TypesOfArguments__Swift_UInt16__(self: kotlin.nativ
 public fun kotlin_ULong_rem__TypesOfArguments__Swift_UInt32__(self: kotlin.native.internal.NativePtr, other: UInt): ULong {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ULong
     val __other = other
-    val _result = run { __self.rem(__other) }
+    val _result = __self.rem(__other)
     return _result
 }
 
@@ -5003,7 +5003,7 @@ public fun kotlin_ULong_rem__TypesOfArguments__Swift_UInt32__(self: kotlin.nativ
 public fun kotlin_ULong_rem__TypesOfArguments__Swift_UInt64__(self: kotlin.native.internal.NativePtr, other: ULong): ULong {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ULong
     val __other = other
-    val _result = run { __self.rem(__other) }
+    val _result = __self.rem(__other)
     return _result
 }
 
@@ -5011,7 +5011,7 @@ public fun kotlin_ULong_rem__TypesOfArguments__Swift_UInt64__(self: kotlin.nativ
 public fun kotlin_ULong_shl__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, bitCount: Int): ULong {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ULong
     val __bitCount = bitCount
-    val _result = run { __self.shl(__bitCount) }
+    val _result = __self.shl(__bitCount)
     return _result
 }
 
@@ -5019,7 +5019,7 @@ public fun kotlin_ULong_shl__TypesOfArguments__Swift_Int32__(self: kotlin.native
 public fun kotlin_ULong_shr__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, bitCount: Int): ULong {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ULong
     val __bitCount = bitCount
-    val _result = run { __self.shr(__bitCount) }
+    val _result = __self.shr(__bitCount)
     return _result
 }
 
@@ -5027,7 +5027,7 @@ public fun kotlin_ULong_shr__TypesOfArguments__Swift_Int32__(self: kotlin.native
 public fun kotlin_ULong_times__TypesOfArguments__Swift_UInt8__(self: kotlin.native.internal.NativePtr, other: UByte): ULong {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ULong
     val __other = other
-    val _result = run { __self.times(__other) }
+    val _result = __self.times(__other)
     return _result
 }
 
@@ -5035,7 +5035,7 @@ public fun kotlin_ULong_times__TypesOfArguments__Swift_UInt8__(self: kotlin.nati
 public fun kotlin_ULong_times__TypesOfArguments__Swift_UInt16__(self: kotlin.native.internal.NativePtr, other: UShort): ULong {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ULong
     val __other = other
-    val _result = run { __self.times(__other) }
+    val _result = __self.times(__other)
     return _result
 }
 
@@ -5043,7 +5043,7 @@ public fun kotlin_ULong_times__TypesOfArguments__Swift_UInt16__(self: kotlin.nat
 public fun kotlin_ULong_times__TypesOfArguments__Swift_UInt32__(self: kotlin.native.internal.NativePtr, other: UInt): ULong {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ULong
     val __other = other
-    val _result = run { __self.times(__other) }
+    val _result = __self.times(__other)
     return _result
 }
 
@@ -5051,77 +5051,77 @@ public fun kotlin_ULong_times__TypesOfArguments__Swift_UInt32__(self: kotlin.nat
 public fun kotlin_ULong_times__TypesOfArguments__Swift_UInt64__(self: kotlin.native.internal.NativePtr, other: ULong): ULong {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ULong
     val __other = other
-    val _result = run { __self.times(__other) }
+    val _result = __self.times(__other)
     return _result
 }
 
 @ExportedBridge("kotlin_ULong_toByte")
 public fun kotlin_ULong_toByte(self: kotlin.native.internal.NativePtr): Byte {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ULong
-    val _result = run { __self.toByte() }
+    val _result = __self.toByte()
     return _result
 }
 
 @ExportedBridge("kotlin_ULong_toDouble")
 public fun kotlin_ULong_toDouble(self: kotlin.native.internal.NativePtr): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ULong
-    val _result = run { __self.toDouble() }
+    val _result = __self.toDouble()
     return _result
 }
 
 @ExportedBridge("kotlin_ULong_toFloat")
 public fun kotlin_ULong_toFloat(self: kotlin.native.internal.NativePtr): Float {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ULong
-    val _result = run { __self.toFloat() }
+    val _result = __self.toFloat()
     return _result
 }
 
 @ExportedBridge("kotlin_ULong_toInt")
 public fun kotlin_ULong_toInt(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ULong
-    val _result = run { __self.toInt() }
+    val _result = __self.toInt()
     return _result
 }
 
 @ExportedBridge("kotlin_ULong_toLong")
 public fun kotlin_ULong_toLong(self: kotlin.native.internal.NativePtr): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ULong
-    val _result = run { __self.toLong() }
+    val _result = __self.toLong()
     return _result
 }
 
 @ExportedBridge("kotlin_ULong_toShort")
 public fun kotlin_ULong_toShort(self: kotlin.native.internal.NativePtr): Short {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ULong
-    val _result = run { __self.toShort() }
+    val _result = __self.toShort()
     return _result
 }
 
 @ExportedBridge("kotlin_ULong_toUByte")
 public fun kotlin_ULong_toUByte(self: kotlin.native.internal.NativePtr): UByte {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ULong
-    val _result = run { __self.toUByte() }
+    val _result = __self.toUByte()
     return _result
 }
 
 @ExportedBridge("kotlin_ULong_toUInt")
 public fun kotlin_ULong_toUInt(self: kotlin.native.internal.NativePtr): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ULong
-    val _result = run { __self.toUInt() }
+    val _result = __self.toUInt()
     return _result
 }
 
 @ExportedBridge("kotlin_ULong_toULong")
 public fun kotlin_ULong_toULong(self: kotlin.native.internal.NativePtr): ULong {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ULong
-    val _result = run { __self.toULong() }
+    val _result = __self.toULong()
     return _result
 }
 
 @ExportedBridge("kotlin_ULong_toUShort")
 public fun kotlin_ULong_toUShort(self: kotlin.native.internal.NativePtr): UShort {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ULong
-    val _result = run { __self.toUShort() }
+    val _result = __self.toUShort()
     return _result
 }
 
@@ -5129,41 +5129,41 @@ public fun kotlin_ULong_toUShort(self: kotlin.native.internal.NativePtr): UShort
 public fun kotlin_ULong_xor__TypesOfArguments__Swift_UInt64__(self: kotlin.native.internal.NativePtr, other: ULong): ULong {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ULong
     val __other = other
-    val _result = run { __self.xor(__other) }
+    val _result = __self.xor(__other)
     return _result
 }
 
 @ExportedBridge("kotlin_UShort_Companion_MAX_VALUE_get")
 public fun kotlin_UShort_Companion_MAX_VALUE_get(self: kotlin.native.internal.NativePtr): UShort {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UShort.Companion
-    val _result = run { __self.MAX_VALUE }
+    val _result = __self.MAX_VALUE
     return _result
 }
 
 @ExportedBridge("kotlin_UShort_Companion_MIN_VALUE_get")
 public fun kotlin_UShort_Companion_MIN_VALUE_get(self: kotlin.native.internal.NativePtr): UShort {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UShort.Companion
-    val _result = run { __self.MIN_VALUE }
+    val _result = __self.MIN_VALUE
     return _result
 }
 
 @ExportedBridge("kotlin_UShort_Companion_SIZE_BITS_get")
 public fun kotlin_UShort_Companion_SIZE_BITS_get(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UShort.Companion
-    val _result = run { __self.SIZE_BITS }
+    val _result = __self.SIZE_BITS
     return _result
 }
 
 @ExportedBridge("kotlin_UShort_Companion_SIZE_BYTES_get")
 public fun kotlin_UShort_Companion_SIZE_BYTES_get(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UShort.Companion
-    val _result = run { __self.SIZE_BYTES }
+    val _result = __self.SIZE_BYTES
     return _result
 }
 
 @ExportedBridge("kotlin_UShort_Companion_get")
 public fun kotlin_UShort_Companion_get(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.UShort.Companion }
+    val _result = kotlin.UShort.Companion
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -5171,7 +5171,7 @@ public fun kotlin_UShort_Companion_get(): kotlin.native.internal.NativePtr {
 public fun kotlin_UShort_and__TypesOfArguments__Swift_UInt16__(self: kotlin.native.internal.NativePtr, other: UShort): UShort {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UShort
     val __other = other
-    val _result = run { __self.and(__other) }
+    val _result = __self.and(__other)
     return _result
 }
 
@@ -5179,7 +5179,7 @@ public fun kotlin_UShort_and__TypesOfArguments__Swift_UInt16__(self: kotlin.nati
 public fun kotlin_UShort_compareTo__TypesOfArguments__Swift_UInt8__(self: kotlin.native.internal.NativePtr, other: UByte): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UShort
     val __other = other
-    val _result = run { __self.compareTo(__other) }
+    val _result = __self.compareTo(__other)
     return _result
 }
 
@@ -5187,7 +5187,7 @@ public fun kotlin_UShort_compareTo__TypesOfArguments__Swift_UInt8__(self: kotlin
 public fun kotlin_UShort_compareTo__TypesOfArguments__Swift_UInt16__(self: kotlin.native.internal.NativePtr, other: UShort): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UShort
     val __other = other
-    val _result = run { __self.compareTo(__other) }
+    val _result = __self.compareTo(__other)
     return _result
 }
 
@@ -5195,7 +5195,7 @@ public fun kotlin_UShort_compareTo__TypesOfArguments__Swift_UInt16__(self: kotli
 public fun kotlin_UShort_compareTo__TypesOfArguments__Swift_UInt32__(self: kotlin.native.internal.NativePtr, other: UInt): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UShort
     val __other = other
-    val _result = run { __self.compareTo(__other) }
+    val _result = __self.compareTo(__other)
     return _result
 }
 
@@ -5203,14 +5203,14 @@ public fun kotlin_UShort_compareTo__TypesOfArguments__Swift_UInt32__(self: kotli
 public fun kotlin_UShort_compareTo__TypesOfArguments__Swift_UInt64__(self: kotlin.native.internal.NativePtr, other: ULong): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UShort
     val __other = other
-    val _result = run { __self.compareTo(__other) }
+    val _result = __self.compareTo(__other)
     return _result
 }
 
 @ExportedBridge("kotlin_UShort_dec")
 public fun kotlin_UShort_dec(self: kotlin.native.internal.NativePtr): UShort {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UShort
-    val _result = run { __self.dec() }
+    val _result = __self.dec()
     return _result
 }
 
@@ -5218,7 +5218,7 @@ public fun kotlin_UShort_dec(self: kotlin.native.internal.NativePtr): UShort {
 public fun kotlin_UShort_div__TypesOfArguments__Swift_UInt8__(self: kotlin.native.internal.NativePtr, other: UByte): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UShort
     val __other = other
-    val _result = run { __self.div(__other) }
+    val _result = __self.div(__other)
     return _result
 }
 
@@ -5226,7 +5226,7 @@ public fun kotlin_UShort_div__TypesOfArguments__Swift_UInt8__(self: kotlin.nativ
 public fun kotlin_UShort_div__TypesOfArguments__Swift_UInt16__(self: kotlin.native.internal.NativePtr, other: UShort): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UShort
     val __other = other
-    val _result = run { __self.div(__other) }
+    val _result = __self.div(__other)
     return _result
 }
 
@@ -5234,7 +5234,7 @@ public fun kotlin_UShort_div__TypesOfArguments__Swift_UInt16__(self: kotlin.nati
 public fun kotlin_UShort_div__TypesOfArguments__Swift_UInt32__(self: kotlin.native.internal.NativePtr, other: UInt): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UShort
     val __other = other
-    val _result = run { __self.div(__other) }
+    val _result = __self.div(__other)
     return _result
 }
 
@@ -5242,7 +5242,7 @@ public fun kotlin_UShort_div__TypesOfArguments__Swift_UInt32__(self: kotlin.nati
 public fun kotlin_UShort_div__TypesOfArguments__Swift_UInt64__(self: kotlin.native.internal.NativePtr, other: ULong): ULong {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UShort
     val __other = other
-    val _result = run { __self.div(__other) }
+    val _result = __self.div(__other)
     return _result
 }
 
@@ -5250,7 +5250,7 @@ public fun kotlin_UShort_div__TypesOfArguments__Swift_UInt64__(self: kotlin.nati
 public fun kotlin_UShort_floorDiv__TypesOfArguments__Swift_UInt8__(self: kotlin.native.internal.NativePtr, other: UByte): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UShort
     val __other = other
-    val _result = run { __self.floorDiv(__other) }
+    val _result = __self.floorDiv(__other)
     return _result
 }
 
@@ -5258,7 +5258,7 @@ public fun kotlin_UShort_floorDiv__TypesOfArguments__Swift_UInt8__(self: kotlin.
 public fun kotlin_UShort_floorDiv__TypesOfArguments__Swift_UInt16__(self: kotlin.native.internal.NativePtr, other: UShort): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UShort
     val __other = other
-    val _result = run { __self.floorDiv(__other) }
+    val _result = __self.floorDiv(__other)
     return _result
 }
 
@@ -5266,7 +5266,7 @@ public fun kotlin_UShort_floorDiv__TypesOfArguments__Swift_UInt16__(self: kotlin
 public fun kotlin_UShort_floorDiv__TypesOfArguments__Swift_UInt32__(self: kotlin.native.internal.NativePtr, other: UInt): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UShort
     val __other = other
-    val _result = run { __self.floorDiv(__other) }
+    val _result = __self.floorDiv(__other)
     return _result
 }
 
@@ -5274,21 +5274,21 @@ public fun kotlin_UShort_floorDiv__TypesOfArguments__Swift_UInt32__(self: kotlin
 public fun kotlin_UShort_floorDiv__TypesOfArguments__Swift_UInt64__(self: kotlin.native.internal.NativePtr, other: ULong): ULong {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UShort
     val __other = other
-    val _result = run { __self.floorDiv(__other) }
+    val _result = __self.floorDiv(__other)
     return _result
 }
 
 @ExportedBridge("kotlin_UShort_inc")
 public fun kotlin_UShort_inc(self: kotlin.native.internal.NativePtr): UShort {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UShort
-    val _result = run { __self.inc() }
+    val _result = __self.inc()
     return _result
 }
 
 @ExportedBridge("kotlin_UShort_inv")
 public fun kotlin_UShort_inv(self: kotlin.native.internal.NativePtr): UShort {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UShort
-    val _result = run { __self.inv() }
+    val _result = __self.inv()
     return _result
 }
 
@@ -5296,7 +5296,7 @@ public fun kotlin_UShort_inv(self: kotlin.native.internal.NativePtr): UShort {
 public fun kotlin_UShort_minus__TypesOfArguments__Swift_UInt8__(self: kotlin.native.internal.NativePtr, other: UByte): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UShort
     val __other = other
-    val _result = run { __self.minus(__other) }
+    val _result = __self.minus(__other)
     return _result
 }
 
@@ -5304,7 +5304,7 @@ public fun kotlin_UShort_minus__TypesOfArguments__Swift_UInt8__(self: kotlin.nat
 public fun kotlin_UShort_minus__TypesOfArguments__Swift_UInt16__(self: kotlin.native.internal.NativePtr, other: UShort): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UShort
     val __other = other
-    val _result = run { __self.minus(__other) }
+    val _result = __self.minus(__other)
     return _result
 }
 
@@ -5312,7 +5312,7 @@ public fun kotlin_UShort_minus__TypesOfArguments__Swift_UInt16__(self: kotlin.na
 public fun kotlin_UShort_minus__TypesOfArguments__Swift_UInt32__(self: kotlin.native.internal.NativePtr, other: UInt): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UShort
     val __other = other
-    val _result = run { __self.minus(__other) }
+    val _result = __self.minus(__other)
     return _result
 }
 
@@ -5320,7 +5320,7 @@ public fun kotlin_UShort_minus__TypesOfArguments__Swift_UInt32__(self: kotlin.na
 public fun kotlin_UShort_minus__TypesOfArguments__Swift_UInt64__(self: kotlin.native.internal.NativePtr, other: ULong): ULong {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UShort
     val __other = other
-    val _result = run { __self.minus(__other) }
+    val _result = __self.minus(__other)
     return _result
 }
 
@@ -5328,7 +5328,7 @@ public fun kotlin_UShort_minus__TypesOfArguments__Swift_UInt64__(self: kotlin.na
 public fun kotlin_UShort_mod__TypesOfArguments__Swift_UInt8__(self: kotlin.native.internal.NativePtr, other: UByte): UByte {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UShort
     val __other = other
-    val _result = run { __self.mod(__other) }
+    val _result = __self.mod(__other)
     return _result
 }
 
@@ -5336,7 +5336,7 @@ public fun kotlin_UShort_mod__TypesOfArguments__Swift_UInt8__(self: kotlin.nativ
 public fun kotlin_UShort_mod__TypesOfArguments__Swift_UInt16__(self: kotlin.native.internal.NativePtr, other: UShort): UShort {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UShort
     val __other = other
-    val _result = run { __self.mod(__other) }
+    val _result = __self.mod(__other)
     return _result
 }
 
@@ -5344,7 +5344,7 @@ public fun kotlin_UShort_mod__TypesOfArguments__Swift_UInt16__(self: kotlin.nati
 public fun kotlin_UShort_mod__TypesOfArguments__Swift_UInt32__(self: kotlin.native.internal.NativePtr, other: UInt): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UShort
     val __other = other
-    val _result = run { __self.mod(__other) }
+    val _result = __self.mod(__other)
     return _result
 }
 
@@ -5352,7 +5352,7 @@ public fun kotlin_UShort_mod__TypesOfArguments__Swift_UInt32__(self: kotlin.nati
 public fun kotlin_UShort_mod__TypesOfArguments__Swift_UInt64__(self: kotlin.native.internal.NativePtr, other: ULong): ULong {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UShort
     val __other = other
-    val _result = run { __self.mod(__other) }
+    val _result = __self.mod(__other)
     return _result
 }
 
@@ -5360,7 +5360,7 @@ public fun kotlin_UShort_mod__TypesOfArguments__Swift_UInt64__(self: kotlin.nati
 public fun kotlin_UShort_or__TypesOfArguments__Swift_UInt16__(self: kotlin.native.internal.NativePtr, other: UShort): UShort {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UShort
     val __other = other
-    val _result = run { __self.or(__other) }
+    val _result = __self.or(__other)
     return _result
 }
 
@@ -5368,7 +5368,7 @@ public fun kotlin_UShort_or__TypesOfArguments__Swift_UInt16__(self: kotlin.nativ
 public fun kotlin_UShort_plus__TypesOfArguments__Swift_UInt8__(self: kotlin.native.internal.NativePtr, other: UByte): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UShort
     val __other = other
-    val _result = run { __self.plus(__other) }
+    val _result = __self.plus(__other)
     return _result
 }
 
@@ -5376,7 +5376,7 @@ public fun kotlin_UShort_plus__TypesOfArguments__Swift_UInt8__(self: kotlin.nati
 public fun kotlin_UShort_plus__TypesOfArguments__Swift_UInt16__(self: kotlin.native.internal.NativePtr, other: UShort): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UShort
     val __other = other
-    val _result = run { __self.plus(__other) }
+    val _result = __self.plus(__other)
     return _result
 }
 
@@ -5384,7 +5384,7 @@ public fun kotlin_UShort_plus__TypesOfArguments__Swift_UInt16__(self: kotlin.nat
 public fun kotlin_UShort_plus__TypesOfArguments__Swift_UInt32__(self: kotlin.native.internal.NativePtr, other: UInt): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UShort
     val __other = other
-    val _result = run { __self.plus(__other) }
+    val _result = __self.plus(__other)
     return _result
 }
 
@@ -5392,7 +5392,7 @@ public fun kotlin_UShort_plus__TypesOfArguments__Swift_UInt32__(self: kotlin.nat
 public fun kotlin_UShort_plus__TypesOfArguments__Swift_UInt64__(self: kotlin.native.internal.NativePtr, other: ULong): ULong {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UShort
     val __other = other
-    val _result = run { __self.plus(__other) }
+    val _result = __self.plus(__other)
     return _result
 }
 
@@ -5400,7 +5400,7 @@ public fun kotlin_UShort_plus__TypesOfArguments__Swift_UInt64__(self: kotlin.nat
 public fun kotlin_UShort_rangeTo__TypesOfArguments__Swift_UInt16__(self: kotlin.native.internal.NativePtr, other: UShort): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UShort
     val __other = other
-    val _result = run { __self.rangeTo(__other) }
+    val _result = __self.rangeTo(__other)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -5408,7 +5408,7 @@ public fun kotlin_UShort_rangeTo__TypesOfArguments__Swift_UInt16__(self: kotlin.
 public fun kotlin_UShort_rangeUntil__TypesOfArguments__Swift_UInt16__(self: kotlin.native.internal.NativePtr, other: UShort): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UShort
     val __other = other
-    val _result = run { __self.rangeUntil(__other) }
+    val _result = __self.rangeUntil(__other)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -5416,7 +5416,7 @@ public fun kotlin_UShort_rangeUntil__TypesOfArguments__Swift_UInt16__(self: kotl
 public fun kotlin_UShort_rem__TypesOfArguments__Swift_UInt8__(self: kotlin.native.internal.NativePtr, other: UByte): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UShort
     val __other = other
-    val _result = run { __self.rem(__other) }
+    val _result = __self.rem(__other)
     return _result
 }
 
@@ -5424,7 +5424,7 @@ public fun kotlin_UShort_rem__TypesOfArguments__Swift_UInt8__(self: kotlin.nativ
 public fun kotlin_UShort_rem__TypesOfArguments__Swift_UInt16__(self: kotlin.native.internal.NativePtr, other: UShort): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UShort
     val __other = other
-    val _result = run { __self.rem(__other) }
+    val _result = __self.rem(__other)
     return _result
 }
 
@@ -5432,7 +5432,7 @@ public fun kotlin_UShort_rem__TypesOfArguments__Swift_UInt16__(self: kotlin.nati
 public fun kotlin_UShort_rem__TypesOfArguments__Swift_UInt32__(self: kotlin.native.internal.NativePtr, other: UInt): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UShort
     val __other = other
-    val _result = run { __self.rem(__other) }
+    val _result = __self.rem(__other)
     return _result
 }
 
@@ -5440,7 +5440,7 @@ public fun kotlin_UShort_rem__TypesOfArguments__Swift_UInt32__(self: kotlin.nati
 public fun kotlin_UShort_rem__TypesOfArguments__Swift_UInt64__(self: kotlin.native.internal.NativePtr, other: ULong): ULong {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UShort
     val __other = other
-    val _result = run { __self.rem(__other) }
+    val _result = __self.rem(__other)
     return _result
 }
 
@@ -5448,7 +5448,7 @@ public fun kotlin_UShort_rem__TypesOfArguments__Swift_UInt64__(self: kotlin.nati
 public fun kotlin_UShort_times__TypesOfArguments__Swift_UInt8__(self: kotlin.native.internal.NativePtr, other: UByte): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UShort
     val __other = other
-    val _result = run { __self.times(__other) }
+    val _result = __self.times(__other)
     return _result
 }
 
@@ -5456,7 +5456,7 @@ public fun kotlin_UShort_times__TypesOfArguments__Swift_UInt8__(self: kotlin.nat
 public fun kotlin_UShort_times__TypesOfArguments__Swift_UInt16__(self: kotlin.native.internal.NativePtr, other: UShort): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UShort
     val __other = other
-    val _result = run { __self.times(__other) }
+    val _result = __self.times(__other)
     return _result
 }
 
@@ -5464,7 +5464,7 @@ public fun kotlin_UShort_times__TypesOfArguments__Swift_UInt16__(self: kotlin.na
 public fun kotlin_UShort_times__TypesOfArguments__Swift_UInt32__(self: kotlin.native.internal.NativePtr, other: UInt): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UShort
     val __other = other
-    val _result = run { __self.times(__other) }
+    val _result = __self.times(__other)
     return _result
 }
 
@@ -5472,77 +5472,77 @@ public fun kotlin_UShort_times__TypesOfArguments__Swift_UInt32__(self: kotlin.na
 public fun kotlin_UShort_times__TypesOfArguments__Swift_UInt64__(self: kotlin.native.internal.NativePtr, other: ULong): ULong {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UShort
     val __other = other
-    val _result = run { __self.times(__other) }
+    val _result = __self.times(__other)
     return _result
 }
 
 @ExportedBridge("kotlin_UShort_toByte")
 public fun kotlin_UShort_toByte(self: kotlin.native.internal.NativePtr): Byte {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UShort
-    val _result = run { __self.toByte() }
+    val _result = __self.toByte()
     return _result
 }
 
 @ExportedBridge("kotlin_UShort_toDouble")
 public fun kotlin_UShort_toDouble(self: kotlin.native.internal.NativePtr): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UShort
-    val _result = run { __self.toDouble() }
+    val _result = __self.toDouble()
     return _result
 }
 
 @ExportedBridge("kotlin_UShort_toFloat")
 public fun kotlin_UShort_toFloat(self: kotlin.native.internal.NativePtr): Float {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UShort
-    val _result = run { __self.toFloat() }
+    val _result = __self.toFloat()
     return _result
 }
 
 @ExportedBridge("kotlin_UShort_toInt")
 public fun kotlin_UShort_toInt(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UShort
-    val _result = run { __self.toInt() }
+    val _result = __self.toInt()
     return _result
 }
 
 @ExportedBridge("kotlin_UShort_toLong")
 public fun kotlin_UShort_toLong(self: kotlin.native.internal.NativePtr): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UShort
-    val _result = run { __self.toLong() }
+    val _result = __self.toLong()
     return _result
 }
 
 @ExportedBridge("kotlin_UShort_toShort")
 public fun kotlin_UShort_toShort(self: kotlin.native.internal.NativePtr): Short {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UShort
-    val _result = run { __self.toShort() }
+    val _result = __self.toShort()
     return _result
 }
 
 @ExportedBridge("kotlin_UShort_toUByte")
 public fun kotlin_UShort_toUByte(self: kotlin.native.internal.NativePtr): UByte {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UShort
-    val _result = run { __self.toUByte() }
+    val _result = __self.toUByte()
     return _result
 }
 
 @ExportedBridge("kotlin_UShort_toUInt")
 public fun kotlin_UShort_toUInt(self: kotlin.native.internal.NativePtr): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UShort
-    val _result = run { __self.toUInt() }
+    val _result = __self.toUInt()
     return _result
 }
 
 @ExportedBridge("kotlin_UShort_toULong")
 public fun kotlin_UShort_toULong(self: kotlin.native.internal.NativePtr): ULong {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UShort
-    val _result = run { __self.toULong() }
+    val _result = __self.toULong()
     return _result
 }
 
 @ExportedBridge("kotlin_UShort_toUShort")
 public fun kotlin_UShort_toUShort(self: kotlin.native.internal.NativePtr): UShort {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UShort
-    val _result = run { __self.toUShort() }
+    val _result = __self.toUShort()
     return _result
 }
 
@@ -5550,49 +5550,49 @@ public fun kotlin_UShort_toUShort(self: kotlin.native.internal.NativePtr): UShor
 public fun kotlin_UShort_xor__TypesOfArguments__Swift_UInt16__(self: kotlin.native.internal.NativePtr, other: UShort): UShort {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.UShort
     val __other = other
-    val _result = run { __self.xor(__other) }
+    val _result = __self.xor(__other)
     return _result
 }
 
 @ExportedBridge("kotlin_collections_ByteIterator_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__", nonVirtualTargetMethod = "<init>")
 public fun kotlin_collections_ByteIterator_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val _result = run { kotlin.native.internal.initInstance(____kt, kotlin.collections.ByteIterator()) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, kotlin.collections.ByteIterator())
+    return true
 }
 
 @ExportedBridge("kotlin_collections_ByteIterator_next")
 public fun kotlin_collections_ByteIterator_next(self: kotlin.native.internal.NativePtr): Byte {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.collections.ByteIterator
-    val _result = run { __self.next() }
+    val _result = __self.next()
     return _result
 }
 
 @ExportedBridge("kotlin_collections_ByteIterator_nextByte")
 public fun kotlin_collections_ByteIterator_nextByte(self: kotlin.native.internal.NativePtr): Byte {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.collections.ByteIterator
-    val _result = run { __self.nextByte() }
+    val _result = __self.nextByte()
     return _result
 }
 
 @ExportedBridge("kotlin_collections_CharIterator_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__", nonVirtualTargetMethod = "<init>")
 public fun kotlin_collections_CharIterator_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val _result = run { kotlin.native.internal.initInstance(____kt, kotlin.collections.CharIterator()) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, kotlin.collections.CharIterator())
+    return true
 }
 
 @ExportedBridge("kotlin_collections_CharIterator_next")
 public fun kotlin_collections_CharIterator_next(self: kotlin.native.internal.NativePtr): Char {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.collections.CharIterator
-    val _result = run { __self.next() }
+    val _result = __self.next()
     return _result
 }
 
 @ExportedBridge("kotlin_collections_CharIterator_nextChar")
 public fun kotlin_collections_CharIterator_nextChar(self: kotlin.native.internal.NativePtr): Char {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.collections.CharIterator
-    val _result = run { __self.nextChar() }
+    val _result = __self.nextChar()
     return _result
 }
 
@@ -5600,7 +5600,7 @@ public fun kotlin_collections_CharIterator_nextChar(self: kotlin.native.internal
 public fun kotlin_collections_Collection_contains__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, element: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.collections.Collection<kotlin.Any?>
     val __element = if (element == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(element) as kotlin.Any
-    val _result = run { __self.contains(__element) }
+    val _result = __self.contains(__element)
     return _result
 }
 
@@ -5608,70 +5608,70 @@ public fun kotlin_collections_Collection_contains__TypesOfArguments__Swift_Optio
 public fun kotlin_collections_Collection_containsAll__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_collections_Collection__(self: kotlin.native.internal.NativePtr, elements: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.collections.Collection<kotlin.Any?>
     val __elements = kotlin.native.internal.ref.dereferenceExternalRCRef(elements) as kotlin.collections.Collection<kotlin.Any?>
-    val _result = run { __self.containsAll(__elements) }
+    val _result = __self.containsAll(__elements)
     return _result
 }
 
 @ExportedBridge("kotlin_collections_Collection_isEmpty")
 public fun kotlin_collections_Collection_isEmpty(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.collections.Collection<kotlin.Any?>
-    val _result = run { __self.isEmpty() }
+    val _result = __self.isEmpty()
     return _result
 }
 
 @ExportedBridge("kotlin_collections_Collection_iterator")
 public fun kotlin_collections_Collection_iterator(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.collections.Collection<kotlin.Any?>
-    val _result = run { __self.iterator() }
+    val _result = __self.iterator()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("kotlin_collections_Collection_size_get")
 public fun kotlin_collections_Collection_size_get(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.collections.Collection<kotlin.Any?>
-    val _result = run { __self.size }
+    val _result = __self.size
     return _result
 }
 
 @ExportedBridge("kotlin_collections_IntIterator_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__", nonVirtualTargetMethod = "<init>")
 public fun kotlin_collections_IntIterator_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val _result = run { kotlin.native.internal.initInstance(____kt, kotlin.collections.IntIterator()) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, kotlin.collections.IntIterator())
+    return true
 }
 
 @ExportedBridge("kotlin_collections_IntIterator_next")
 public fun kotlin_collections_IntIterator_next(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.collections.IntIterator
-    val _result = run { __self.next() }
+    val _result = __self.next()
     return _result
 }
 
 @ExportedBridge("kotlin_collections_IntIterator_nextInt")
 public fun kotlin_collections_IntIterator_nextInt(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.collections.IntIterator
-    val _result = run { __self.nextInt() }
+    val _result = __self.nextInt()
     return _result
 }
 
 @ExportedBridge("kotlin_collections_Iterable_iterator")
 public fun kotlin_collections_Iterable_iterator(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.collections.Iterable<kotlin.Any?>
-    val _result = run { __self.iterator() }
+    val _result = __self.iterator()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("kotlin_collections_Iterator_hasNext")
 public fun kotlin_collections_Iterator_hasNext(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.collections.Iterator<kotlin.Any?>
-    val _result = run { __self.hasNext() }
+    val _result = __self.hasNext()
     return _result
 }
 
 @ExportedBridge("kotlin_collections_Iterator_next")
 public fun kotlin_collections_Iterator_next(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.collections.Iterator<kotlin.Any?>
-    val _result = run { __self.next() }
+    val _result = __self.next()
     return if (_result == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -5681,75 +5681,75 @@ public fun kotlin_ranges_CharProgression_Companion_fromClosedRange__TypesOfArgum
     val __rangeStart = rangeStart
     val __rangeEnd = rangeEnd
     val __step = step
-    val _result = run { __self.fromClosedRange(__rangeStart, __rangeEnd, __step) }
+    val _result = __self.fromClosedRange(__rangeStart, __rangeEnd, __step)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("kotlin_ranges_CharProgression_Companion_get")
 public fun kotlin_ranges_CharProgression_Companion_get(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.ranges.CharProgression.Companion }
+    val _result = kotlin.ranges.CharProgression.Companion
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("kotlin_ranges_CharProgression_first_get")
 public fun kotlin_ranges_CharProgression_first_get(self: kotlin.native.internal.NativePtr): Char {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ranges.CharProgression
-    val _result = run { __self.first }
+    val _result = __self.first
     return _result
 }
 
 @ExportedBridge("kotlin_ranges_CharProgression_isEmpty")
 public fun kotlin_ranges_CharProgression_isEmpty(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ranges.CharProgression
-    val _result = run { __self.isEmpty() }
+    val _result = __self.isEmpty()
     return _result
 }
 
 @ExportedBridge("kotlin_ranges_CharProgression_isEmpty_direct", nonVirtualTargetMethod = "isEmpty")
 public fun kotlin_ranges_CharProgression_isEmpty_direct(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ranges.CharProgression
-    val _result = run { __self.isEmpty() }
+    val _result = __self.isEmpty()
     return _result
 }
 
 @ExportedBridge("kotlin_ranges_CharProgression_iterator")
 public fun kotlin_ranges_CharProgression_iterator(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ranges.CharProgression
-    val _result = run { __self.iterator() }
+    val _result = __self.iterator()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("kotlin_ranges_CharProgression_iterator_direct", nonVirtualTargetMethod = "iterator")
 public fun kotlin_ranges_CharProgression_iterator_direct(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ranges.CharProgression
-    val _result = run { __self.iterator() }
+    val _result = __self.iterator()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("kotlin_ranges_CharProgression_last_get")
 public fun kotlin_ranges_CharProgression_last_get(self: kotlin.native.internal.NativePtr): Char {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ranges.CharProgression
-    val _result = run { __self.last }
+    val _result = __self.last
     return _result
 }
 
 @ExportedBridge("kotlin_ranges_CharProgression_step_get")
 public fun kotlin_ranges_CharProgression_step_get(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ranges.CharProgression
-    val _result = run { __self.step }
+    val _result = __self.step
     return _result
 }
 
 @ExportedBridge("kotlin_ranges_CharRange_Companion_EMPTY_get")
 public fun kotlin_ranges_CharRange_Companion_EMPTY_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ranges.CharRange.Companion
-    val _result = run { __self.EMPTY }
+    val _result = __self.EMPTY
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("kotlin_ranges_CharRange_Companion_get")
 public fun kotlin_ranges_CharRange_Companion_get(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.ranges.CharRange.Companion }
+    val _result = kotlin.ranges.CharRange.Companion
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -5757,27 +5757,27 @@ public fun kotlin_ranges_CharRange_Companion_get(): kotlin.native.internal.Nativ
 public fun kotlin_ranges_CharRange_contains__TypesOfArguments__Swift_Unicode_UTF16_CodeUnit__(self: kotlin.native.internal.NativePtr, value: Char): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ranges.CharRange
     val __value = value
-    val _result = run { __self.contains(__value) }
+    val _result = __self.contains(__value)
     return _result
 }
 
 @ExportedBridge("kotlin_ranges_CharRange_endExclusive_get")
 public fun kotlin_ranges_CharRange_endExclusive_get(self: kotlin.native.internal.NativePtr): Char {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ranges.CharRange
-    val _result = run { __self.endExclusive }
+    val _result = __self.endExclusive
     return _result
 }
 
 @ExportedBridge("kotlin_ranges_CharRange_endInclusive_get")
 public fun kotlin_ranges_CharRange_endInclusive_get(self: kotlin.native.internal.NativePtr): Char {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ranges.CharRange
-    val _result = run { __self.endInclusive }
+    val _result = __self.endInclusive
     return _result
 }
 
 @ExportedBridge("kotlin_ranges_CharRange_init_allocate")
 public fun kotlin_ranges_CharRange_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<kotlin.ranges.CharRange>() }
+    val _result = kotlin.native.internal.createUninitializedInstance<kotlin.ranges.CharRange>()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -5786,21 +5786,21 @@ public fun kotlin_ranges_CharRange_init_initialize__TypesOfArguments__Swift_Unsa
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     val __start = start
     val __endInclusive = endInclusive
-    val _result = run { kotlin.native.internal.initInstance(____kt, kotlin.ranges.CharRange(__start, __endInclusive)) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, kotlin.ranges.CharRange(__start, __endInclusive))
+    return true
 }
 
 @ExportedBridge("kotlin_ranges_CharRange_isEmpty")
 public fun kotlin_ranges_CharRange_isEmpty(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ranges.CharRange
-    val _result = run { __self.isEmpty() }
+    val _result = __self.isEmpty()
     return _result
 }
 
 @ExportedBridge("kotlin_ranges_CharRange_start_get")
 public fun kotlin_ranges_CharRange_start_get(self: kotlin.native.internal.NativePtr): Char {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ranges.CharRange
-    val _result = run { __self.start }
+    val _result = __self.start
     return _result
 }
 
@@ -5810,68 +5810,68 @@ public fun kotlin_ranges_UIntProgression_Companion_fromClosedRange__TypesOfArgum
     val __rangeStart = rangeStart
     val __rangeEnd = rangeEnd
     val __step = step
-    val _result = run { __self.fromClosedRange(__rangeStart, __rangeEnd, __step) }
+    val _result = __self.fromClosedRange(__rangeStart, __rangeEnd, __step)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("kotlin_ranges_UIntProgression_Companion_get")
 public fun kotlin_ranges_UIntProgression_Companion_get(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.ranges.UIntProgression.Companion }
+    val _result = kotlin.ranges.UIntProgression.Companion
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("kotlin_ranges_UIntProgression_first_get")
 public fun kotlin_ranges_UIntProgression_first_get(self: kotlin.native.internal.NativePtr): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ranges.UIntProgression
-    val _result = run { __self.first }
+    val _result = __self.first
     return _result
 }
 
 @ExportedBridge("kotlin_ranges_UIntProgression_isEmpty")
 public fun kotlin_ranges_UIntProgression_isEmpty(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ranges.UIntProgression
-    val _result = run { __self.isEmpty() }
+    val _result = __self.isEmpty()
     return _result
 }
 
 @ExportedBridge("kotlin_ranges_UIntProgression_isEmpty_direct", nonVirtualTargetMethod = "isEmpty")
 public fun kotlin_ranges_UIntProgression_isEmpty_direct(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ranges.UIntProgression
-    val _result = run { __self.isEmpty() }
+    val _result = __self.isEmpty()
     return _result
 }
 
 @ExportedBridge("kotlin_ranges_UIntProgression_iterator")
 public fun kotlin_ranges_UIntProgression_iterator(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ranges.UIntProgression
-    val _result = run { __self.iterator() }
+    val _result = __self.iterator()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("kotlin_ranges_UIntProgression_last_get")
 public fun kotlin_ranges_UIntProgression_last_get(self: kotlin.native.internal.NativePtr): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ranges.UIntProgression
-    val _result = run { __self.last }
+    val _result = __self.last
     return _result
 }
 
 @ExportedBridge("kotlin_ranges_UIntProgression_step_get")
 public fun kotlin_ranges_UIntProgression_step_get(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ranges.UIntProgression
-    val _result = run { __self.step }
+    val _result = __self.step
     return _result
 }
 
 @ExportedBridge("kotlin_ranges_UIntRange_Companion_EMPTY_get")
 public fun kotlin_ranges_UIntRange_Companion_EMPTY_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ranges.UIntRange.Companion
-    val _result = run { __self.EMPTY }
+    val _result = __self.EMPTY
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("kotlin_ranges_UIntRange_Companion_get")
 public fun kotlin_ranges_UIntRange_Companion_get(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.ranges.UIntRange.Companion }
+    val _result = kotlin.ranges.UIntRange.Companion
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -5879,27 +5879,27 @@ public fun kotlin_ranges_UIntRange_Companion_get(): kotlin.native.internal.Nativ
 public fun kotlin_ranges_UIntRange_contains__TypesOfArguments__Swift_UInt32__(self: kotlin.native.internal.NativePtr, value: UInt): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ranges.UIntRange
     val __value = value
-    val _result = run { __self.contains(__value) }
+    val _result = __self.contains(__value)
     return _result
 }
 
 @ExportedBridge("kotlin_ranges_UIntRange_endExclusive_get")
 public fun kotlin_ranges_UIntRange_endExclusive_get(self: kotlin.native.internal.NativePtr): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ranges.UIntRange
-    val _result = run { __self.endExclusive }
+    val _result = __self.endExclusive
     return _result
 }
 
 @ExportedBridge("kotlin_ranges_UIntRange_endInclusive_get")
 public fun kotlin_ranges_UIntRange_endInclusive_get(self: kotlin.native.internal.NativePtr): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ranges.UIntRange
-    val _result = run { __self.endInclusive }
+    val _result = __self.endInclusive
     return _result
 }
 
 @ExportedBridge("kotlin_ranges_UIntRange_init_allocate")
 public fun kotlin_ranges_UIntRange_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<kotlin.ranges.UIntRange>() }
+    val _result = kotlin.native.internal.createUninitializedInstance<kotlin.ranges.UIntRange>()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -5908,21 +5908,21 @@ public fun kotlin_ranges_UIntRange_init_initialize__TypesOfArguments__Swift_Unsa
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     val __start = start
     val __endInclusive = endInclusive
-    val _result = run { kotlin.native.internal.initInstance(____kt, kotlin.ranges.UIntRange(__start, __endInclusive)) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, kotlin.ranges.UIntRange(__start, __endInclusive))
+    return true
 }
 
 @ExportedBridge("kotlin_ranges_UIntRange_isEmpty")
 public fun kotlin_ranges_UIntRange_isEmpty(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ranges.UIntRange
-    val _result = run { __self.isEmpty() }
+    val _result = __self.isEmpty()
     return _result
 }
 
 @ExportedBridge("kotlin_ranges_UIntRange_start_get")
 public fun kotlin_ranges_UIntRange_start_get(self: kotlin.native.internal.NativePtr): UInt {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ranges.UIntRange
-    val _result = run { __self.start }
+    val _result = __self.start
     return _result
 }
 
@@ -5932,68 +5932,68 @@ public fun kotlin_ranges_ULongProgression_Companion_fromClosedRange__TypesOfArgu
     val __rangeStart = rangeStart
     val __rangeEnd = rangeEnd
     val __step = step
-    val _result = run { __self.fromClosedRange(__rangeStart, __rangeEnd, __step) }
+    val _result = __self.fromClosedRange(__rangeStart, __rangeEnd, __step)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("kotlin_ranges_ULongProgression_Companion_get")
 public fun kotlin_ranges_ULongProgression_Companion_get(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.ranges.ULongProgression.Companion }
+    val _result = kotlin.ranges.ULongProgression.Companion
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("kotlin_ranges_ULongProgression_first_get")
 public fun kotlin_ranges_ULongProgression_first_get(self: kotlin.native.internal.NativePtr): ULong {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ranges.ULongProgression
-    val _result = run { __self.first }
+    val _result = __self.first
     return _result
 }
 
 @ExportedBridge("kotlin_ranges_ULongProgression_isEmpty")
 public fun kotlin_ranges_ULongProgression_isEmpty(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ranges.ULongProgression
-    val _result = run { __self.isEmpty() }
+    val _result = __self.isEmpty()
     return _result
 }
 
 @ExportedBridge("kotlin_ranges_ULongProgression_isEmpty_direct", nonVirtualTargetMethod = "isEmpty")
 public fun kotlin_ranges_ULongProgression_isEmpty_direct(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ranges.ULongProgression
-    val _result = run { __self.isEmpty() }
+    val _result = __self.isEmpty()
     return _result
 }
 
 @ExportedBridge("kotlin_ranges_ULongProgression_iterator")
 public fun kotlin_ranges_ULongProgression_iterator(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ranges.ULongProgression
-    val _result = run { __self.iterator() }
+    val _result = __self.iterator()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("kotlin_ranges_ULongProgression_last_get")
 public fun kotlin_ranges_ULongProgression_last_get(self: kotlin.native.internal.NativePtr): ULong {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ranges.ULongProgression
-    val _result = run { __self.last }
+    val _result = __self.last
     return _result
 }
 
 @ExportedBridge("kotlin_ranges_ULongProgression_step_get")
 public fun kotlin_ranges_ULongProgression_step_get(self: kotlin.native.internal.NativePtr): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ranges.ULongProgression
-    val _result = run { __self.step }
+    val _result = __self.step
     return _result
 }
 
 @ExportedBridge("kotlin_ranges_ULongRange_Companion_EMPTY_get")
 public fun kotlin_ranges_ULongRange_Companion_EMPTY_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ranges.ULongRange.Companion
-    val _result = run { __self.EMPTY }
+    val _result = __self.EMPTY
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("kotlin_ranges_ULongRange_Companion_get")
 public fun kotlin_ranges_ULongRange_Companion_get(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.ranges.ULongRange.Companion }
+    val _result = kotlin.ranges.ULongRange.Companion
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -6001,27 +6001,27 @@ public fun kotlin_ranges_ULongRange_Companion_get(): kotlin.native.internal.Nati
 public fun kotlin_ranges_ULongRange_contains__TypesOfArguments__Swift_UInt64__(self: kotlin.native.internal.NativePtr, value: ULong): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ranges.ULongRange
     val __value = value
-    val _result = run { __self.contains(__value) }
+    val _result = __self.contains(__value)
     return _result
 }
 
 @ExportedBridge("kotlin_ranges_ULongRange_endExclusive_get")
 public fun kotlin_ranges_ULongRange_endExclusive_get(self: kotlin.native.internal.NativePtr): ULong {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ranges.ULongRange
-    val _result = run { __self.endExclusive }
+    val _result = __self.endExclusive
     return _result
 }
 
 @ExportedBridge("kotlin_ranges_ULongRange_endInclusive_get")
 public fun kotlin_ranges_ULongRange_endInclusive_get(self: kotlin.native.internal.NativePtr): ULong {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ranges.ULongRange
-    val _result = run { __self.endInclusive }
+    val _result = __self.endInclusive
     return _result
 }
 
 @ExportedBridge("kotlin_ranges_ULongRange_init_allocate")
 public fun kotlin_ranges_ULongRange_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<kotlin.ranges.ULongRange>() }
+    val _result = kotlin.native.internal.createUninitializedInstance<kotlin.ranges.ULongRange>()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -6030,21 +6030,21 @@ public fun kotlin_ranges_ULongRange_init_initialize__TypesOfArguments__Swift_Uns
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     val __start = start
     val __endInclusive = endInclusive
-    val _result = run { kotlin.native.internal.initInstance(____kt, kotlin.ranges.ULongRange(__start, __endInclusive)) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, kotlin.ranges.ULongRange(__start, __endInclusive))
+    return true
 }
 
 @ExportedBridge("kotlin_ranges_ULongRange_isEmpty")
 public fun kotlin_ranges_ULongRange_isEmpty(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ranges.ULongRange
-    val _result = run { __self.isEmpty() }
+    val _result = __self.isEmpty()
     return _result
 }
 
 @ExportedBridge("kotlin_ranges_ULongRange_start_get")
 public fun kotlin_ranges_ULongRange_start_get(self: kotlin.native.internal.NativePtr): ULong {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ranges.ULongRange
-    val _result = run { __self.start }
+    val _result = __self.start
     return _result
 }
 
@@ -6084,64 +6084,64 @@ fun kotlin_ranges_longRange_getStart_long_KotlinStdlib(nativePtr: kotlin.native.
 
 @ExportedBridge("kotlin_time_DurationUnit_DAYS")
 public fun kotlin_time_DurationUnit_DAYS(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.time.DurationUnit.DAYS }
+    val _result = kotlin.time.DurationUnit.DAYS
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("kotlin_time_DurationUnit_HOURS")
 public fun kotlin_time_DurationUnit_HOURS(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.time.DurationUnit.HOURS }
+    val _result = kotlin.time.DurationUnit.HOURS
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("kotlin_time_DurationUnit_MICROSECONDS")
 public fun kotlin_time_DurationUnit_MICROSECONDS(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.time.DurationUnit.MICROSECONDS }
+    val _result = kotlin.time.DurationUnit.MICROSECONDS
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("kotlin_time_DurationUnit_MILLISECONDS")
 public fun kotlin_time_DurationUnit_MILLISECONDS(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.time.DurationUnit.MILLISECONDS }
+    val _result = kotlin.time.DurationUnit.MILLISECONDS
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("kotlin_time_DurationUnit_MINUTES")
 public fun kotlin_time_DurationUnit_MINUTES(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.time.DurationUnit.MINUTES }
+    val _result = kotlin.time.DurationUnit.MINUTES
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("kotlin_time_DurationUnit_NANOSECONDS")
 public fun kotlin_time_DurationUnit_NANOSECONDS(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.time.DurationUnit.NANOSECONDS }
+    val _result = kotlin.time.DurationUnit.NANOSECONDS
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("kotlin_time_DurationUnit_SECONDS")
 public fun kotlin_time_DurationUnit_SECONDS(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.time.DurationUnit.SECONDS }
+    val _result = kotlin.time.DurationUnit.SECONDS
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("kotlin_time_DurationUnit_ordinal")
 public fun kotlin_time_DurationUnit_ordinal(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.time.DurationUnit
-    val _result = run { __self.ordinal }
+    val _result = __self.ordinal
     return _result
 }
 
 @ExportedBridge("kotlin_time_Duration_Companion_INFINITE_get")
 public fun kotlin_time_Duration_Companion_INFINITE_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.time.Duration.Companion
-    val _result = run { __self.INFINITE }
+    val _result = __self.INFINITE
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("kotlin_time_Duration_Companion_ZERO_get")
 public fun kotlin_time_Duration_Companion_ZERO_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.time.Duration.Companion
-    val _result = run { __self.ZERO }
+    val _result = __self.ZERO
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -6152,7 +6152,7 @@ public fun kotlin_time_Duration_Companion_convert__TypesOfArguments__Swift_Doubl
     val __value = value
     val __sourceUnit = kotlin.native.internal.ref.dereferenceExternalRCRef(sourceUnit) as kotlin.time.DurationUnit
     val __targetUnit = kotlin.native.internal.ref.dereferenceExternalRCRef(targetUnit) as kotlin.time.DurationUnit
-    val _result = run { __self.convert(__value, __sourceUnit, __targetUnit) }
+    val _result = __self.convert(__value, __sourceUnit, __targetUnit)
     return _result
 }
 
@@ -6160,7 +6160,7 @@ public fun kotlin_time_Duration_Companion_convert__TypesOfArguments__Swift_Doubl
 public fun kotlin_time_Duration_Companion_days_get__TypesOfArgumentsE__Swift_Int32__(self: kotlin.native.internal.NativePtr, `receiver`: Int): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.time.Duration.Companion
     val __receiver = `receiver`
-    val _result = run { __self.run { __receiver.days } }
+    val _result = __self.run { __receiver.days }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -6168,7 +6168,7 @@ public fun kotlin_time_Duration_Companion_days_get__TypesOfArgumentsE__Swift_Int
 public fun kotlin_time_Duration_Companion_days_get__TypesOfArgumentsE__Swift_Int64__(self: kotlin.native.internal.NativePtr, `receiver`: Long): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.time.Duration.Companion
     val __receiver = `receiver`
-    val _result = run { __self.run { __receiver.days } }
+    val _result = __self.run { __receiver.days }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -6176,13 +6176,13 @@ public fun kotlin_time_Duration_Companion_days_get__TypesOfArgumentsE__Swift_Int
 public fun kotlin_time_Duration_Companion_days_get__TypesOfArgumentsE__Swift_Double__(self: kotlin.native.internal.NativePtr, `receiver`: Double): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.time.Duration.Companion
     val __receiver = `receiver`
-    val _result = run { __self.run { __receiver.days } }
+    val _result = __self.run { __receiver.days }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("kotlin_time_Duration_Companion_get")
 public fun kotlin_time_Duration_Companion_get(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.time.Duration.Companion }
+    val _result = kotlin.time.Duration.Companion
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -6190,7 +6190,7 @@ public fun kotlin_time_Duration_Companion_get(): kotlin.native.internal.NativePt
 public fun kotlin_time_Duration_Companion_hours_get__TypesOfArgumentsE__Swift_Int32__(self: kotlin.native.internal.NativePtr, `receiver`: Int): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.time.Duration.Companion
     val __receiver = `receiver`
-    val _result = run { __self.run { __receiver.hours } }
+    val _result = __self.run { __receiver.hours }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -6198,7 +6198,7 @@ public fun kotlin_time_Duration_Companion_hours_get__TypesOfArgumentsE__Swift_In
 public fun kotlin_time_Duration_Companion_hours_get__TypesOfArgumentsE__Swift_Int64__(self: kotlin.native.internal.NativePtr, `receiver`: Long): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.time.Duration.Companion
     val __receiver = `receiver`
-    val _result = run { __self.run { __receiver.hours } }
+    val _result = __self.run { __receiver.hours }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -6206,7 +6206,7 @@ public fun kotlin_time_Duration_Companion_hours_get__TypesOfArgumentsE__Swift_In
 public fun kotlin_time_Duration_Companion_hours_get__TypesOfArgumentsE__Swift_Double__(self: kotlin.native.internal.NativePtr, `receiver`: Double): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.time.Duration.Companion
     val __receiver = `receiver`
-    val _result = run { __self.run { __receiver.hours } }
+    val _result = __self.run { __receiver.hours }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -6214,7 +6214,7 @@ public fun kotlin_time_Duration_Companion_hours_get__TypesOfArgumentsE__Swift_Do
 public fun kotlin_time_Duration_Companion_microseconds_get__TypesOfArgumentsE__Swift_Int32__(self: kotlin.native.internal.NativePtr, `receiver`: Int): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.time.Duration.Companion
     val __receiver = `receiver`
-    val _result = run { __self.run { __receiver.microseconds } }
+    val _result = __self.run { __receiver.microseconds }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -6222,7 +6222,7 @@ public fun kotlin_time_Duration_Companion_microseconds_get__TypesOfArgumentsE__S
 public fun kotlin_time_Duration_Companion_microseconds_get__TypesOfArgumentsE__Swift_Int64__(self: kotlin.native.internal.NativePtr, `receiver`: Long): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.time.Duration.Companion
     val __receiver = `receiver`
-    val _result = run { __self.run { __receiver.microseconds } }
+    val _result = __self.run { __receiver.microseconds }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -6230,7 +6230,7 @@ public fun kotlin_time_Duration_Companion_microseconds_get__TypesOfArgumentsE__S
 public fun kotlin_time_Duration_Companion_microseconds_get__TypesOfArgumentsE__Swift_Double__(self: kotlin.native.internal.NativePtr, `receiver`: Double): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.time.Duration.Companion
     val __receiver = `receiver`
-    val _result = run { __self.run { __receiver.microseconds } }
+    val _result = __self.run { __receiver.microseconds }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -6238,7 +6238,7 @@ public fun kotlin_time_Duration_Companion_microseconds_get__TypesOfArgumentsE__S
 public fun kotlin_time_Duration_Companion_milliseconds_get__TypesOfArgumentsE__Swift_Int32__(self: kotlin.native.internal.NativePtr, `receiver`: Int): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.time.Duration.Companion
     val __receiver = `receiver`
-    val _result = run { __self.run { __receiver.milliseconds } }
+    val _result = __self.run { __receiver.milliseconds }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -6246,7 +6246,7 @@ public fun kotlin_time_Duration_Companion_milliseconds_get__TypesOfArgumentsE__S
 public fun kotlin_time_Duration_Companion_milliseconds_get__TypesOfArgumentsE__Swift_Int64__(self: kotlin.native.internal.NativePtr, `receiver`: Long): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.time.Duration.Companion
     val __receiver = `receiver`
-    val _result = run { __self.run { __receiver.milliseconds } }
+    val _result = __self.run { __receiver.milliseconds }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -6254,7 +6254,7 @@ public fun kotlin_time_Duration_Companion_milliseconds_get__TypesOfArgumentsE__S
 public fun kotlin_time_Duration_Companion_milliseconds_get__TypesOfArgumentsE__Swift_Double__(self: kotlin.native.internal.NativePtr, `receiver`: Double): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.time.Duration.Companion
     val __receiver = `receiver`
-    val _result = run { __self.run { __receiver.milliseconds } }
+    val _result = __self.run { __receiver.milliseconds }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -6262,7 +6262,7 @@ public fun kotlin_time_Duration_Companion_milliseconds_get__TypesOfArgumentsE__S
 public fun kotlin_time_Duration_Companion_minutes_get__TypesOfArgumentsE__Swift_Int32__(self: kotlin.native.internal.NativePtr, `receiver`: Int): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.time.Duration.Companion
     val __receiver = `receiver`
-    val _result = run { __self.run { __receiver.minutes } }
+    val _result = __self.run { __receiver.minutes }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -6270,7 +6270,7 @@ public fun kotlin_time_Duration_Companion_minutes_get__TypesOfArgumentsE__Swift_
 public fun kotlin_time_Duration_Companion_minutes_get__TypesOfArgumentsE__Swift_Int64__(self: kotlin.native.internal.NativePtr, `receiver`: Long): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.time.Duration.Companion
     val __receiver = `receiver`
-    val _result = run { __self.run { __receiver.minutes } }
+    val _result = __self.run { __receiver.minutes }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -6278,7 +6278,7 @@ public fun kotlin_time_Duration_Companion_minutes_get__TypesOfArgumentsE__Swift_
 public fun kotlin_time_Duration_Companion_minutes_get__TypesOfArgumentsE__Swift_Double__(self: kotlin.native.internal.NativePtr, `receiver`: Double): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.time.Duration.Companion
     val __receiver = `receiver`
-    val _result = run { __self.run { __receiver.minutes } }
+    val _result = __self.run { __receiver.minutes }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -6286,7 +6286,7 @@ public fun kotlin_time_Duration_Companion_minutes_get__TypesOfArgumentsE__Swift_
 public fun kotlin_time_Duration_Companion_nanoseconds_get__TypesOfArgumentsE__Swift_Int32__(self: kotlin.native.internal.NativePtr, `receiver`: Int): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.time.Duration.Companion
     val __receiver = `receiver`
-    val _result = run { __self.run { __receiver.nanoseconds } }
+    val _result = __self.run { __receiver.nanoseconds }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -6294,7 +6294,7 @@ public fun kotlin_time_Duration_Companion_nanoseconds_get__TypesOfArgumentsE__Sw
 public fun kotlin_time_Duration_Companion_nanoseconds_get__TypesOfArgumentsE__Swift_Int64__(self: kotlin.native.internal.NativePtr, `receiver`: Long): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.time.Duration.Companion
     val __receiver = `receiver`
-    val _result = run { __self.run { __receiver.nanoseconds } }
+    val _result = __self.run { __receiver.nanoseconds }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -6302,7 +6302,7 @@ public fun kotlin_time_Duration_Companion_nanoseconds_get__TypesOfArgumentsE__Sw
 public fun kotlin_time_Duration_Companion_nanoseconds_get__TypesOfArgumentsE__Swift_Double__(self: kotlin.native.internal.NativePtr, `receiver`: Double): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.time.Duration.Companion
     val __receiver = `receiver`
-    val _result = run { __self.run { __receiver.nanoseconds } }
+    val _result = __self.run { __receiver.nanoseconds }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -6310,7 +6310,7 @@ public fun kotlin_time_Duration_Companion_nanoseconds_get__TypesOfArgumentsE__Sw
 public fun kotlin_time_Duration_Companion_parse__TypesOfArguments__Swift_String__(self: kotlin.native.internal.NativePtr, value: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.time.Duration.Companion
     val __value = interpretObjCPointer<kotlin.String>(value)
-    val _result = run { __self.parse(__value) }
+    val _result = __self.parse(__value)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -6318,7 +6318,7 @@ public fun kotlin_time_Duration_Companion_parse__TypesOfArguments__Swift_String_
 public fun kotlin_time_Duration_Companion_parseIsoString__TypesOfArguments__Swift_String__(self: kotlin.native.internal.NativePtr, value: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.time.Duration.Companion
     val __value = interpretObjCPointer<kotlin.String>(value)
-    val _result = run { __self.parseIsoString(__value) }
+    val _result = __self.parseIsoString(__value)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -6326,7 +6326,7 @@ public fun kotlin_time_Duration_Companion_parseIsoString__TypesOfArguments__Swif
 public fun kotlin_time_Duration_Companion_parseIsoStringOrNull__TypesOfArguments__Swift_String__(self: kotlin.native.internal.NativePtr, value: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.time.Duration.Companion
     val __value = interpretObjCPointer<kotlin.String>(value)
-    val _result = run { __self.parseIsoStringOrNull(__value) }
+    val _result = __self.parseIsoStringOrNull(__value)
     return if (_result == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -6334,7 +6334,7 @@ public fun kotlin_time_Duration_Companion_parseIsoStringOrNull__TypesOfArguments
 public fun kotlin_time_Duration_Companion_parseOrNull__TypesOfArguments__Swift_String__(self: kotlin.native.internal.NativePtr, value: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.time.Duration.Companion
     val __value = interpretObjCPointer<kotlin.String>(value)
-    val _result = run { __self.parseOrNull(__value) }
+    val _result = __self.parseOrNull(__value)
     return if (_result == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -6342,7 +6342,7 @@ public fun kotlin_time_Duration_Companion_parseOrNull__TypesOfArguments__Swift_S
 public fun kotlin_time_Duration_Companion_seconds_get__TypesOfArgumentsE__Swift_Int32__(self: kotlin.native.internal.NativePtr, `receiver`: Int): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.time.Duration.Companion
     val __receiver = `receiver`
-    val _result = run { __self.run { __receiver.seconds } }
+    val _result = __self.run { __receiver.seconds }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -6350,7 +6350,7 @@ public fun kotlin_time_Duration_Companion_seconds_get__TypesOfArgumentsE__Swift_
 public fun kotlin_time_Duration_Companion_seconds_get__TypesOfArgumentsE__Swift_Int64__(self: kotlin.native.internal.NativePtr, `receiver`: Long): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.time.Duration.Companion
     val __receiver = `receiver`
-    val _result = run { __self.run { __receiver.seconds } }
+    val _result = __self.run { __receiver.seconds }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -6358,14 +6358,14 @@ public fun kotlin_time_Duration_Companion_seconds_get__TypesOfArgumentsE__Swift_
 public fun kotlin_time_Duration_Companion_seconds_get__TypesOfArgumentsE__Swift_Double__(self: kotlin.native.internal.NativePtr, `receiver`: Double): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.time.Duration.Companion
     val __receiver = `receiver`
-    val _result = run { __self.run { __receiver.seconds } }
+    val _result = __self.run { __receiver.seconds }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("kotlin_time_Duration_absoluteValue_get")
 public fun kotlin_time_Duration_absoluteValue_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.time.Duration
-    val _result = run { __self.absoluteValue }
+    val _result = __self.absoluteValue
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -6373,7 +6373,7 @@ public fun kotlin_time_Duration_absoluteValue_get(self: kotlin.native.internal.N
 public fun kotlin_time_Duration_compareTo__TypesOfArguments__ExportedKotlinPackages_kotlin_time_Duration__(self: kotlin.native.internal.NativePtr, other: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.time.Duration
     val __other = kotlin.native.internal.ref.dereferenceExternalRCRef(other) as kotlin.time.Duration
-    val _result = run { __self.compareTo(__other) }
+    val _result = __self.compareTo(__other)
     return _result
 }
 
@@ -6381,7 +6381,7 @@ public fun kotlin_time_Duration_compareTo__TypesOfArguments__ExportedKotlinPacka
 public fun kotlin_time_Duration_div__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, scale: Int): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.time.Duration
     val __scale = scale
-    val _result = run { __self.div(__scale) }
+    val _result = __self.div(__scale)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -6389,7 +6389,7 @@ public fun kotlin_time_Duration_div__TypesOfArguments__Swift_Int32__(self: kotli
 public fun kotlin_time_Duration_div__TypesOfArguments__Swift_Double__(self: kotlin.native.internal.NativePtr, scale: Double): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.time.Duration
     val __scale = scale
-    val _result = run { __self.div(__scale) }
+    val _result = __self.div(__scale)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -6397,84 +6397,84 @@ public fun kotlin_time_Duration_div__TypesOfArguments__Swift_Double__(self: kotl
 public fun kotlin_time_Duration_div__TypesOfArguments__ExportedKotlinPackages_kotlin_time_Duration__(self: kotlin.native.internal.NativePtr, other: kotlin.native.internal.NativePtr): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.time.Duration
     val __other = kotlin.native.internal.ref.dereferenceExternalRCRef(other) as kotlin.time.Duration
-    val _result = run { __self.div(__other) }
+    val _result = __self.div(__other)
     return _result
 }
 
 @ExportedBridge("kotlin_time_Duration_inWholeDays_get")
 public fun kotlin_time_Duration_inWholeDays_get(self: kotlin.native.internal.NativePtr): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.time.Duration
-    val _result = run { __self.inWholeDays }
+    val _result = __self.inWholeDays
     return _result
 }
 
 @ExportedBridge("kotlin_time_Duration_inWholeHours_get")
 public fun kotlin_time_Duration_inWholeHours_get(self: kotlin.native.internal.NativePtr): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.time.Duration
-    val _result = run { __self.inWholeHours }
+    val _result = __self.inWholeHours
     return _result
 }
 
 @ExportedBridge("kotlin_time_Duration_inWholeMicroseconds_get")
 public fun kotlin_time_Duration_inWholeMicroseconds_get(self: kotlin.native.internal.NativePtr): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.time.Duration
-    val _result = run { __self.inWholeMicroseconds }
+    val _result = __self.inWholeMicroseconds
     return _result
 }
 
 @ExportedBridge("kotlin_time_Duration_inWholeMilliseconds_get")
 public fun kotlin_time_Duration_inWholeMilliseconds_get(self: kotlin.native.internal.NativePtr): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.time.Duration
-    val _result = run { __self.inWholeMilliseconds }
+    val _result = __self.inWholeMilliseconds
     return _result
 }
 
 @ExportedBridge("kotlin_time_Duration_inWholeMinutes_get")
 public fun kotlin_time_Duration_inWholeMinutes_get(self: kotlin.native.internal.NativePtr): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.time.Duration
-    val _result = run { __self.inWholeMinutes }
+    val _result = __self.inWholeMinutes
     return _result
 }
 
 @ExportedBridge("kotlin_time_Duration_inWholeNanoseconds_get")
 public fun kotlin_time_Duration_inWholeNanoseconds_get(self: kotlin.native.internal.NativePtr): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.time.Duration
-    val _result = run { __self.inWholeNanoseconds }
+    val _result = __self.inWholeNanoseconds
     return _result
 }
 
 @ExportedBridge("kotlin_time_Duration_inWholeSeconds_get")
 public fun kotlin_time_Duration_inWholeSeconds_get(self: kotlin.native.internal.NativePtr): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.time.Duration
-    val _result = run { __self.inWholeSeconds }
+    val _result = __self.inWholeSeconds
     return _result
 }
 
 @ExportedBridge("kotlin_time_Duration_isFinite")
 public fun kotlin_time_Duration_isFinite(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.time.Duration
-    val _result = run { __self.isFinite() }
+    val _result = __self.isFinite()
     return _result
 }
 
 @ExportedBridge("kotlin_time_Duration_isInfinite")
 public fun kotlin_time_Duration_isInfinite(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.time.Duration
-    val _result = run { __self.isInfinite() }
+    val _result = __self.isInfinite()
     return _result
 }
 
 @ExportedBridge("kotlin_time_Duration_isNegative")
 public fun kotlin_time_Duration_isNegative(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.time.Duration
-    val _result = run { __self.isNegative() }
+    val _result = __self.isNegative()
     return _result
 }
 
 @ExportedBridge("kotlin_time_Duration_isPositive")
 public fun kotlin_time_Duration_isPositive(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.time.Duration
-    val _result = run { __self.isPositive() }
+    val _result = __self.isPositive()
     return _result
 }
 
@@ -6482,7 +6482,7 @@ public fun kotlin_time_Duration_isPositive(self: kotlin.native.internal.NativePt
 public fun kotlin_time_Duration_minus__TypesOfArguments__ExportedKotlinPackages_kotlin_time_Duration__(self: kotlin.native.internal.NativePtr, other: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.time.Duration
     val __other = kotlin.native.internal.ref.dereferenceExternalRCRef(other) as kotlin.time.Duration
-    val _result = run { __self.minus(__other) }
+    val _result = __self.minus(__other)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -6490,7 +6490,7 @@ public fun kotlin_time_Duration_minus__TypesOfArguments__ExportedKotlinPackages_
 public fun kotlin_time_Duration_plus__TypesOfArguments__ExportedKotlinPackages_kotlin_time_Duration__(self: kotlin.native.internal.NativePtr, other: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.time.Duration
     val __other = kotlin.native.internal.ref.dereferenceExternalRCRef(other) as kotlin.time.Duration
-    val _result = run { __self.plus(__other) }
+    val _result = __self.plus(__other)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -6498,7 +6498,7 @@ public fun kotlin_time_Duration_plus__TypesOfArguments__ExportedKotlinPackages_k
 public fun kotlin_time_Duration_times__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, scale: Int): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.time.Duration
     val __scale = scale
-    val _result = run { __self.times(__scale) }
+    val _result = __self.times(__scale)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -6506,7 +6506,7 @@ public fun kotlin_time_Duration_times__TypesOfArguments__Swift_Int32__(self: kot
 public fun kotlin_time_Duration_times__TypesOfArguments__Swift_Double__(self: kotlin.native.internal.NativePtr, scale: Double): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.time.Duration
     val __scale = scale
-    val _result = run { __self.times(__scale) }
+    val _result = __self.times(__scale)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -6526,7 +6526,7 @@ public fun kotlin_time_Duration_toComponents__TypesOfArguments__U28Swift_Int64_U
             if (_result == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlin.Any
         }
     }
-    val _result = run { __self.toComponents<kotlin.Any?>(__action) }
+    val _result = __self.toComponents<kotlin.Any?>(__action)
     return if (_result == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -6545,7 +6545,7 @@ public fun kotlin_time_Duration_toComponents__TypesOfArguments__U28Swift_Int64_U
             if (_result == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlin.Any
         }
     }
-    val _result = run { __self.toComponents<kotlin.Any?>(__action) }
+    val _result = __self.toComponents<kotlin.Any?>(__action)
     return if (_result == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -6563,7 +6563,7 @@ public fun kotlin_time_Duration_toComponents__TypesOfArguments__U28Swift_Int64_U
             if (_result == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlin.Any
         }
     }
-    val _result = run { __self.toComponents<kotlin.Any?>(__action) }
+    val _result = __self.toComponents<kotlin.Any?>(__action)
     return if (_result == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -6580,7 +6580,7 @@ public fun kotlin_time_Duration_toComponents__TypesOfArguments__U28Swift_Int64_U
             if (_result == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlin.Any
         }
     }
-    val _result = run { __self.toComponents<kotlin.Any?>(__action) }
+    val _result = __self.toComponents<kotlin.Any?>(__action)
     return if (_result == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -6588,7 +6588,7 @@ public fun kotlin_time_Duration_toComponents__TypesOfArguments__U28Swift_Int64_U
 public fun kotlin_time_Duration_toDouble__TypesOfArguments__ExportedKotlinPackages_kotlin_time_DurationUnit__(self: kotlin.native.internal.NativePtr, unit: kotlin.native.internal.NativePtr): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.time.Duration
     val __unit = kotlin.native.internal.ref.dereferenceExternalRCRef(unit) as kotlin.time.DurationUnit
-    val _result = run { __self.toDouble(__unit) }
+    val _result = __self.toDouble(__unit)
     return _result
 }
 
@@ -6596,14 +6596,14 @@ public fun kotlin_time_Duration_toDouble__TypesOfArguments__ExportedKotlinPackag
 public fun kotlin_time_Duration_toInt__TypesOfArguments__ExportedKotlinPackages_kotlin_time_DurationUnit__(self: kotlin.native.internal.NativePtr, unit: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.time.Duration
     val __unit = kotlin.native.internal.ref.dereferenceExternalRCRef(unit) as kotlin.time.DurationUnit
-    val _result = run { __self.toInt(__unit) }
+    val _result = __self.toInt(__unit)
     return _result
 }
 
 @ExportedBridge("kotlin_time_Duration_toIsoString")
 public fun kotlin_time_Duration_toIsoString(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.time.Duration
-    val _result = run { __self.toIsoString() }
+    val _result = __self.toIsoString()
     return _result.objcPtr()
 }
 
@@ -6611,7 +6611,7 @@ public fun kotlin_time_Duration_toIsoString(self: kotlin.native.internal.NativeP
 public fun kotlin_time_Duration_toLong__TypesOfArguments__ExportedKotlinPackages_kotlin_time_DurationUnit__(self: kotlin.native.internal.NativePtr, unit: kotlin.native.internal.NativePtr): Long {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.time.Duration
     val __unit = kotlin.native.internal.ref.dereferenceExternalRCRef(unit) as kotlin.time.DurationUnit
-    val _result = run { __self.toLong(__unit) }
+    val _result = __self.toLong(__unit)
     return _result
 }
 
@@ -6620,13 +6620,13 @@ public fun kotlin_time_Duration_toString__TypesOfArguments__ExportedKotlinPackag
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.time.Duration
     val __unit = kotlin.native.internal.ref.dereferenceExternalRCRef(unit) as kotlin.time.DurationUnit
     val __decimals = decimals
-    val _result = run { __self.toString(__unit, __decimals) }
+    val _result = __self.toString(__unit, __decimals)
     return _result.objcPtr()
 }
 
 @ExportedBridge("kotlin_time_Duration_unaryMinus")
 public fun kotlin_time_Duration_unaryMinus(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.time.Duration
-    val _result = run { __self.unaryMinus() }
+    val _result = __self.unaryMinus()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }

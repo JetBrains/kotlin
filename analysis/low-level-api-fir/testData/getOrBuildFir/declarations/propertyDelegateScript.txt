@@ -11,7 +11,7 @@ R|kotlin/lazy|<R|kotlin/Int|>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParamete
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] propertyDelegateScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-propertyDelegateScript.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] val x: R|kotlin/Int|by R|kotlin/lazy|<R|kotlin/Int|>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=() -> TypeVariable(T)] lazy@fun <anonymous>(): R|kotlin/Int| <inline=NoInline>  {

@@ -8,10 +8,13 @@ package org.jetbrains.kotlin.resolve.calls.inference.components
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
-import org.jetbrains.kotlin.resolve.calls.model.CollectionLiteralAtomMarker
+import org.jetbrains.kotlin.resolve.calls.model.ExpectedTypeAsStaticReceiverAtomMarker
 import org.jetbrains.kotlin.resolve.calls.model.FunctionLikeAtomMarker
 import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
-import org.jetbrains.kotlin.types.model.*
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.TypeConstructorMarker
+import org.jetbrains.kotlin.types.model.freshTypeConstructor
+import org.jetbrains.kotlin.types.model.typeConstructor
 import org.jetbrains.kotlin.utils.SmartSet
 
 class TypeVariableDependencyInformationProvider(
@@ -42,7 +45,7 @@ class TypeVariableDependencyInformationProvider(
 
     private val relatedToAllOutputTypes: MutableSet<TypeConstructorMarker> = hashSetOf()
     private val relatedToTopLevelType: MutableSet<TypeConstructorMarker> = hashSetOf()
-    private val relatedToCollectionLiteral: MutableSet<TypeConstructorMarker> = hashSetOf()
+    private val relatedToAtomsWithExpectedTypeAsStaticReceiver: MutableSet<TypeConstructorMarker> = hashSetOf()
     private var relatedToOuterTypeVariables: MutableSet<TypeConstructorMarker>? = null
 
     init {
@@ -50,15 +53,15 @@ class TypeVariableDependencyInformationProvider(
         computePostponeArgumentsEdges()
         computeRelatedToAllOutputTypes()
         computeRelatedToTopLevelType()
-        computeRelatedToCollectionLiteral()
+        computeRelatedToAtomsWithExpectedTypeAsStaticReceiver()
         computeRelatedToTopOuterTypeVariables()
     }
 
     fun isVariableRelatedToTopLevelType(variable: TypeConstructorMarker) =
         relatedToTopLevelType.contains(variable)
 
-    fun isRelatedToCollectionLiteral(variable: TypeConstructorMarker) =
-        relatedToCollectionLiteral.contains(variable)
+    fun isRelatedToAtomWithExpectedTypeAsStaticReceiver(variable: TypeConstructorMarker) =
+        relatedToAtomsWithExpectedTypeAsStaticReceiver.contains(variable)
 
     fun isRelatedToOuterTypeVariable(variable: TypeConstructorMarker): Boolean =
         if (languageVersionSettings.supportsFeature(LanguageFeature.PCLAEnhancementsIn21))
@@ -156,13 +159,13 @@ class TypeVariableDependencyInformationProvider(
         }
     }
 
-    private fun computeRelatedToCollectionLiteral() {
+    private fun computeRelatedToAtomsWithExpectedTypeAsStaticReceiver() {
         for (argument in postponedKtPrimitives) {
-            if (argument.analyzed || argument !is CollectionLiteralAtomMarker) continue
+            if (argument.analyzed || argument !is ExpectedTypeAsStaticReceiverAtomMarker) continue
             val expectedType = argument.expectedType ?: continue
             val expectedTypeConstructor = expectedType.typeConstructor(c = typeSystemContext)
             if (isMyTypeVariable(expectedTypeConstructor)) {
-                addAllRelatedNodes(relatedToCollectionLiteral, expectedTypeConstructor, includePostponedEdges = true)
+                addAllRelatedNodes(relatedToAtomsWithExpectedTypeAsStaticReceiver, expectedTypeConstructor, includePostponedEdges = true)
             }
         }
     }

@@ -1,0 +1,457 @@
+/*
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.fir.scopes
+
+import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.fir.FirImplementationDetail
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirSessionComponent
+import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
+import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
+import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
+import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeRawScopeSubstitutor
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
+import org.jetbrains.kotlin.fir.scopes.impl.*
+import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseWithCallableMembers
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseWithCallableMembersInSupertypes
+import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.runUnless
+
+class FirKotlinScopeProvider(
+    val declaredMemberScopeDecorator: (
+        klass: FirClass,
+        declaredMemberScope: FirContainingNamesAwareScope,
+        useSiteSession: FirSession,
+        scopeSession: ScopeSession,
+        memberRequiredPhase: FirResolvePhase?,
+    ) -> FirContainingNamesAwareScope = { _, declaredMemberScope, session, _, _ ->
+        PlatformDependentFilteringScope(declaredMemberScope, session)
+    }
+) : FirScopeProvider(), FirSessionComponent {
+    override fun getUseSiteMemberScope(
+        klass: FirClass,
+        useSiteSession: FirSession,
+        scopeSession: ScopeSession,
+        memberRequiredPhase: FirResolvePhase?,
+    ): FirTypeScope {
+        val scopeId = useSiteSession to klass.symbol
+        scopeSession.ensureRequiredMembersPhase(
+            scopeId,
+            USE_SITE_REQUIRED_MEMBERS_PHASE,
+            memberRequiredPhase,
+            resolveOwner = { klass.lazyResolveToPhaseWithCallableMembers(it) },
+            resolveHierarchy = { klass.lazyResolveToPhaseWithCallableMembersInSupertypes(useSiteSession, it) },
+        )
+
+        return scopeSession.getOrBuild(scopeId, USE_SITE) {
+            // Optimization for enum entries that don't declare any members: just use the supertype scope.
+            // Otherwise, we'll get quadratic memory consumption as every enum entry contains every enum entry's name in its callable name
+            // cache.
+            if (klass.classKind == ClassKind.ENUM_ENTRY && klass.declarations.singleOrNull() is FirPrimaryConstructor) {
+                klass.superConeTypes.singleOrNull()?.scopeForSupertype(useSiteSession, scopeSession, klass, memberRequiredPhase)
+                    ?.let { return@getOrBuild FirTrivialEnumEntryScope(klass, it) }
+            }
+
+            val declaredScope = useSiteSession.declaredMemberScope(klass, memberRequiredPhase)
+            val possiblyDelegatedDeclaredMemberScope = declaredMemberScopeDecorator(
+                klass,
+                declaredScope,
+                useSiteSession,
+                scopeSession,
+                memberRequiredPhase
+            ).let {
+                val delegateFields = klass.delegateFields
+                if (delegateFields.isEmpty() || klass.superConeTypes.any { superType ->
+                        val diagnosticKind = ((superType as? ConeErrorType)?.diagnostic as? ConeSimpleDiagnostic)?.kind
+                        diagnosticKind == DiagnosticKind.LoopInSupertype
+                    }
+                )
+                    it
+                else
+                    FirDelegatedMemberScope(useSiteSession, scopeSession, klass, it, delegateFields)
+            }
+            val declaredMemberScopeWithPossiblySynthesizedMembers =
+                // Related: https://youtrack.jetbrains.com/issue/KT-20427#focus=Comments-27-8652759.0-0
+                if (
+                    klass is FirRegularClass && !klass.isExpect &&
+                    (klass.isData || klass.isInlineClass || klass.isFullValueClass && !klass.isAbstract && !klass.isSealed) &&
+                    klass.origin != FirDeclarationOrigin.Library
+                ) {
+                    // See also KT-58926 (we apply delegation first, and data/value classes after it)
+                    FirClassAnySynthesizedMemberScope(useSiteSession, possiblyDelegatedDeclaredMemberScope, klass, scopeSession)
+                } else {
+                    possiblyDelegatedDeclaredMemberScope
+                }
+
+            val scopes = lookupSuperTypes(
+                klass, lookupInterfaces = true, deep = false, useSiteSession = useSiteSession, substituteTypes = true
+            ).mapNotNull { useSiteSuperType ->
+                useSiteSuperType.scopeForSupertype(useSiteSession, scopeSession, klass, memberRequiredPhase = memberRequiredPhase)
+            }
+            FirClassUseSiteMemberScope(
+                klass,
+                useSiteSession,
+                scopes,
+                declaredMemberScopeWithPossiblySynthesizedMembers,
+            )
+        }
+    }
+
+    @OptIn(FirImplementationDetail::class)
+    override fun getTypealiasConstructorScope(
+        typeAlias: FirTypeAlias,
+        useSiteSession: FirSession,
+        scopeSession: ScopeSession,
+    ): FirScope {
+        return scopeSession.getOrBuild(useSiteSession to typeAlias.symbol, TYPEALIAS_CONSTRUCTOR) {
+            TypeAliasConstructorsSubstitutingScope.initialize(typeAlias.symbol, useSiteSession, scopeSession)
+        }
+    }
+
+    override fun getStaticCallableMemberScope(
+        klass: FirClass,
+        useSiteSession: FirSession,
+        scopeSession: ScopeSession
+    ): FirContainingNamesAwareScope? = getStaticCallableMemberScopeImpl(klass, useSiteSession, scopeSession, forBackend = false)
+
+    override fun getStaticCallableMemberScopeForBackend(
+        klass: FirClass,
+        useSiteSession: FirSession,
+        scopeSession: ScopeSession,
+    ): FirContainingNamesAwareScope? = getStaticCallableMemberScopeImpl(klass, useSiteSession, scopeSession, forBackend = true)
+
+    private fun getStaticCallableMemberScopeImpl(
+        klass: FirClass,
+        useSiteSession: FirSession,
+        scopeSession: ScopeSession,
+        forBackend: Boolean
+    ): FirContainingNamesAwareScope? {
+        val declaredMemberScope = useSiteSession.declaredMemberScope(
+            klass,
+            memberRequiredPhase = null,
+        )
+
+        val scope = runUnless(declaredMemberScope.hasDefinitelyNoStaticMembers) {
+            FirNameAwareOnlyCallablesScope(
+                FirStaticScope(
+                    declaredMemberScope
+                )
+            )
+        }
+
+        return if (forBackend) {
+            val superClass = klass.superConeTypes.firstNotNullOfOrNull {
+                it.fullyExpandedType(useSiteSession).toRegularClassSymbol(useSiteSession)?.takeIf { it.classKind == ClassKind.CLASS }
+            }?.fir
+            val superClassScope = superClass?.staticScopeForBackend(useSiteSession, scopeSession) ?: return scope
+            scope?.let { FirNameAwareCompositeScope(listOf(it, superClassScope)) } ?: superClassScope
+        } else {
+            scope
+        }
+    }
+
+    override fun getNestedClassifierScope(
+        klass: FirClass,
+        useSiteSession: FirSession,
+        scopeSession: ScopeSession
+    ): FirContainingNamesAwareScope? {
+        return useSiteSession.nestedClassifierScope(klass)
+    }
+
+    class PlatformDependentFilteringScope(
+        val declaredMemberScope: FirContainingNamesAwareScope,
+        val session: FirSession,
+    ) : FirContainingNamesAwareScope() {
+        override fun getCallableNames(): Set<Name> = declaredMemberScope.getCallableNames()
+
+        override fun getClassifierNames(): Set<Name> = declaredMemberScope.getClassifierNames()
+
+        override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
+            declaredMemberScope.processPropertiesByName(name, processor)
+        }
+
+        override fun processClassifiersByNameWithSubstitution(name: Name, processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit) {
+            declaredMemberScope.processClassifiersByNameWithSubstitution(name, processor)
+        }
+
+        override fun processDeclaredConstructors(processor: (FirConstructorSymbol) -> Unit) {
+            declaredMemberScope.processDeclaredConstructors(processor)
+        }
+
+        override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
+            declaredMemberScope.processFunctionsByName(name) {
+                if (FirPlatformDeclarationFilter.isNotPlatformDependent(it.fir, session)) {
+                    processor(it)
+                }
+            }
+        }
+
+        override fun mayContainName(name: Name): Boolean = declaredMemberScope.mayContainName(name)
+
+        override val scopeOwnerLookupNames: List<String>
+            get() = declaredMemberScope.scopeOwnerLookupNames
+
+        @DelicateScopeAPI
+        override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): PlatformDependentFilteringScope {
+            return PlatformDependentFilteringScope(
+                declaredMemberScope.withReplacedSessionOrNull(newSession, newScopeSession) ?: declaredMemberScope,
+                newSession
+            )
+        }
+    }
+}
+
+object FirPlatformDeclarationFilter {
+    fun isNotPlatformDependent(function: FirNamedFunction, session: FirSession): Boolean {
+        // Optimization: only check the annotations for specially named functions
+        // as only those in List and Map are annotated as `@PlatformIndependent`.
+        // This also allows optimizing more heavyweight FirJvmPlatformDeclarationFilter as it uses this function
+        return function.name !in namesToCheck || !function.symbol.hasAnnotation(StandardNames.FqNames.platformDependentClassId, session)
+    }
+
+    private val namesToCheck = listOf("getOrDefault", "remove", "first", "last").mapTo(hashSetOf(), Name::identifier)
+}
+
+abstract class ConeSubstitutionScopeKey : ScopeSessionKey<FirClass, FirClassSubstitutionScope>() {
+    protected abstract val lookupTag: ConeClassLikeLookupTag
+    protected abstract val isFromExpectClass: Boolean
+    protected abstract val substitutor: ConeSubstitutor
+    protected abstract val derivedClassLookupTag: ConeClassLikeLookupTag?
+}
+
+fun FirClass.unsubstitutedScope(
+    useSiteSession: FirSession,
+    scopeSession: ScopeSession,
+    withForcedTypeCalculator: Boolean,
+    memberRequiredPhase: FirResolvePhase?,
+): FirTypeScope {
+    val scope = scopeProvider.getUseSiteMemberScope(this, useSiteSession, scopeSession, memberRequiredPhase)
+    if (withForcedTypeCalculator) return FirScopeWithCallableCopyReturnTypeUpdater(scope, CallableCopyTypeCalculator.CalculateDeferredForceLazyResolution)
+    return scope
+}
+
+context(c: SessionAndScopeSessionHolder)
+fun FirClass.unsubstitutedScope(
+    withForcedTypeCalculator: Boolean,
+    memberRequiredPhase: FirResolvePhase?,
+): FirTypeScope {
+    return unsubstitutedScope(c.session, c.scopeSession, withForcedTypeCalculator, memberRequiredPhase)
+}
+
+fun FirClassSymbol<*>.unsubstitutedScope(
+    useSiteSession: FirSession,
+    scopeSession: ScopeSession,
+    withForcedTypeCalculator: Boolean,
+    memberRequiredPhase: FirResolvePhase?,
+): FirTypeScope {
+    return fir.unsubstitutedScope(useSiteSession, scopeSession, withForcedTypeCalculator, memberRequiredPhase)
+}
+
+context(c: SessionAndScopeSessionHolder)
+fun FirClassSymbol<*>.unsubstitutedScope(
+    withForcedTypeCalculator: Boolean,
+    memberRequiredPhase: FirResolvePhase?,
+): FirTypeScope {
+    return unsubstitutedScope(c.session, c.scopeSession, withForcedTypeCalculator, memberRequiredPhase)
+}
+
+fun FirClass.scopeForClass(
+    substitutor: ConeSubstitutor,
+    useSiteSession: FirSession,
+    scopeSession: ScopeSession,
+    memberOwnerClass: FirClassSymbol<*>?,
+    memberOwnerLookupTag: ConeClassLikeLookupTag,
+    memberRequiredPhase: FirResolvePhase?,
+): FirTypeScope = scopeForClassImpl(
+    substitutor, useSiteSession, scopeSession,
+    skipPrivateMembers = false,
+    classFirDispatchReceiver = this,
+    // TODO: why it's always false?
+    isFromExpectClass = false,
+    memberOwnerLookupTag = memberOwnerLookupTag,
+    memberOwnerClass = memberOwnerClass,
+    memberRequiredPhase = memberRequiredPhase,
+)
+
+context(c: SessionAndScopeSessionHolder)
+fun FirClass.scopeForClass(
+    substitutor: ConeSubstitutor,
+    memberOwnerClass: FirClassSymbol<*>,
+    memberRequiredPhase: FirResolvePhase?,
+): FirTypeScope = scopeForClass(
+    substitutor,
+    c.session,
+    c.scopeSession,
+    memberOwnerClass,
+    memberOwnerClass.toLookupTag(),
+    memberRequiredPhase,
+)
+
+fun FirTypeAlias.scopeForTypeAlias(
+    useSiteSession: FirSession,
+    scopeSession: ScopeSession,
+): FirScope {
+    return scopeProvider.getTypealiasConstructorScope(this, useSiteSession, scopeSession)
+}
+
+context(c: SessionAndScopeSessionHolder)
+fun FirClassLikeDeclaration.scopeForConstructors(
+    substitutor: ConeSubstitutor,
+    memberOwnerClass: FirClassSymbol<*>?,
+): FirScope? {
+    val scope = when (this) {
+        is FirTypeAlias -> scopeForTypeAlias(c.session, c.scopeSession)
+        is FirClass -> when (classKind) {
+            // Interfaces aren't expected to have constructors, so we skip them explicitly
+            ClassKind.INTERFACE -> null
+            else -> scopeForClass(
+                substitutor,
+                memberOwnerClass = memberOwnerClass ?: symbol,
+                memberRequiredPhase = FirResolvePhase.STATUS,
+            )
+        }
+    }
+
+    return scope
+}
+
+fun ConeKotlinType.scopeForSupertype(
+    useSiteSession: FirSession,
+    scopeSession: ScopeSession,
+    derivedClass: FirClass,
+    memberRequiredPhase: FirResolvePhase?,
+): FirTypeScope? {
+    if (this !is ConeClassLikeType) return null
+    if (this is ConeErrorType) return null
+
+    val symbol = lookupTag.toRegularClassSymbol(useSiteSession) ?: return null
+
+    val substitutor = substitutorForSuperType(useSiteSession, symbol)
+
+    return symbol.fir.scopeForClassImpl(
+        substitutor,
+        useSiteSession,
+        scopeSession,
+        skipPrivateMembers = true,
+        classFirDispatchReceiver = derivedClass,
+        isFromExpectClass = (derivedClass as? FirRegularClass)?.isExpect == true,
+        memberOwnerClass = derivedClass.symbol,
+        memberOwnerLookupTag = derivedClass.symbol.toLookupTag(),
+        memberRequiredPhase = memberRequiredPhase,
+    )
+}
+
+fun ConeClassLikeType.substitutorForSuperType(useSiteSession: FirSession, classTypeSymbol: FirRegularClassSymbol): ConeSubstitutor {
+    return when {
+        this.attributes.contains(CompilerConeAttributes.RawType) -> ConeRawScopeSubstitutor(useSiteSession)
+        else -> substitutor(classTypeSymbol, this, useSiteSession)
+    }
+}
+
+private fun substitutor(symbol: FirRegularClassSymbol, type: ConeClassLikeType, useSiteSession: FirSession): ConeSubstitutor {
+    if (type.typeArguments.isEmpty()) return ConeSubstitutor.Empty
+    val originalSubstitution = createSubstitutionForScope(symbol.fir.typeParameters, type, useSiteSession)
+    return substitutorByMap(originalSubstitution, useSiteSession)
+}
+
+/**
+ * Returns the possibly cached substitution scope for a given class type.
+ *
+ * @param memberOwnerLookupTag Lookup tag of the class for which the scope is being requested.
+ * @param memberOwnerClass Symbol of the class for which the scope is being requested, if available. This parameter is purely a performance
+ * optimization; it is safe to pass `null` as an argument.
+ */
+private fun FirClass.scopeForClassImpl(
+    substitutor: ConeSubstitutor,
+    useSiteSession: FirSession,
+    scopeSession: ScopeSession,
+    skipPrivateMembers: Boolean,
+    classFirDispatchReceiver: FirClass,
+    isFromExpectClass: Boolean,
+    memberOwnerLookupTag: ConeClassLikeLookupTag,
+    memberOwnerClass: FirClassSymbol<*>?,
+    memberRequiredPhase: FirResolvePhase?,
+): FirTypeScope {
+    val basicScope = unsubstitutedScope(useSiteSession, scopeSession, withForcedTypeCalculator = false, memberRequiredPhase)
+    if (substitutor == ConeSubstitutor.Empty) return basicScope
+
+    val substitutionScopeKeyFactory = moduleData.session.substitutionScopeKeyFactory
+    val key = substitutionScopeKeyFactory.createKey(
+        substitutor,
+        classFirDispatchReceiver.symbol.toLookupTag(),
+        memberOwnerLookupTag,
+        memberOwnerClass,
+        isFromExpectClass,
+    )
+
+    return scopeSession.getOrBuild(this, key) {
+        FirClassSubstitutionScope(
+            useSiteSession,
+            basicScope,
+            key, substitutor,
+            substitutor.substituteOrSelf(classFirDispatchReceiver.defaultType()).lowerBoundIfFlexible() as ConeClassLikeType,
+            skipPrivateMembers,
+            makeExpect = isFromExpectClass,
+            memberOwnerLookupTag,
+            origin = if (classFirDispatchReceiver != this) {
+                FirDeclarationOrigin.SubstitutionOverride.DeclarationSite
+            } else {
+                FirDeclarationOrigin.SubstitutionOverride.CallSite
+            },
+        )
+    }
+}
+
+private val TYPEALIAS_CONSTRUCTOR: ScopeSessionKey<Pair<FirSession, FirTypeAliasSymbol>, FirScope> = scopeSessionKey()
+
+private val USE_SITE_REQUIRED_MEMBERS_PHASE: ScopeSessionKey<Pair<FirSession, FirClassSymbol<*>>, FirRequiredMembersPhaseStamp> =
+    requiredMembersPhaseStampKey()
+
+val FirSession.kotlinScopeProvider: FirKotlinScopeProvider by FirSession.sessionComponentAccessor()
+
+fun interface SubstitutionScopeKeyFactory : FirSessionComponent {
+    fun createKey(
+        substitutor: ConeSubstitutor,
+        dispatchReceiverLookupTag: ConeClassLikeLookupTag,
+        memberOwnerLookupTag: ConeClassLikeLookupTag,
+        memberOwnerClass: FirClassSymbol<*>?,
+        isFromExpectClass: Boolean,
+    ): ConeSubstitutionScopeKey
+
+    object Default : SubstitutionScopeKeyFactory {
+        override fun createKey(
+            substitutor: ConeSubstitutor,
+            dispatchReceiverLookupTag: ConeClassLikeLookupTag,
+            memberOwnerLookupTag: ConeClassLikeLookupTag,
+            memberOwnerClass: FirClassSymbol<*>?,
+            isFromExpectClass: Boolean,
+        ): ConeSubstitutionScopeKey {
+            return DefaultConeSubstitutionScopeKey(
+                dispatchReceiverLookupTag,
+                isFromExpectClass,
+                substitutor,
+                memberOwnerLookupTag,
+            )
+        }
+
+        private data class DefaultConeSubstitutionScopeKey(
+            override val lookupTag: ConeClassLikeLookupTag,
+            override val isFromExpectClass: Boolean,
+            override val substitutor: ConeSubstitutor,
+            override val derivedClassLookupTag: ConeClassLikeLookupTag?
+        ) : ConeSubstitutionScopeKey()
+    }
+}
+
+val FirSession.substitutionScopeKeyFactory: SubstitutionScopeKeyFactory by FirSession.sessionComponentAccessor()

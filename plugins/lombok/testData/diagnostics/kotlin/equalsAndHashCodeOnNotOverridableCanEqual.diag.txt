@@ -1,0 +1,11 @@
+/test.kt:29:1: error: Cannot generate 'canEqual': 'canEqual' in 'FinalCanEqual' cannot be overridden, as it is final or its parameter type is not 'Any?'.
+
+/test.kt:34:1: error: Cannot generate 'canEqual': 'canEqual' in 'FinalCanEqual' cannot be overridden, as it is final or its parameter type is not 'Any?'.
+
+/test.kt:37:1: error: Cannot generate 'canEqual': 'canEqual' in 'JavaFinalCanEqual' cannot be overridden, as it is final or its parameter type is not 'Any?'.
+
+/test.kt:45:1: error: Cannot generate 'canEqual': 'canEqual' in 'NonNullCanEqual' cannot be overridden, as it is final or its parameter type is not 'Any?'.
+
+/test.kt:52:1: error: Cannot generate 'canEqual': 'canEqual' in 'TypeParameterCanEqual' cannot be overridden, as it is final or its parameter type is not 'Any?'.
+
+/test.kt:85:5: error: 'canEqual' in 'FinalCanEqual' is final and cannot be overridden.

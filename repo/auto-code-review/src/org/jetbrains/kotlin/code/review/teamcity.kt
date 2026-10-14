@@ -22,7 +22,7 @@ suspend fun main(args: Array<String>) {
     val baseRevString = args[2]
 
     val gitTree = GitWorkingTree(repoRoot, GitCLI)
-    val agent = LocalClaudeAgent.create(gitTree.project)
+    val agent = LocalClaudeAgent.create(gitTree.project, LocalClaudeAgent.AuthMethod.LocalConfiguration)
 
     val headSha1 = gitTree.findHead()
     val baseRev = GitRevision(baseRevString)

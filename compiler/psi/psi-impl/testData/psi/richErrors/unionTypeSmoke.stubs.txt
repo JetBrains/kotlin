@@ -3,9 +3,9 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=UnionTypeSmokeKt]]
   partSimpleName: "UnionTypeSmokeKt"
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  CLASS[classId=/Foo, fqName=Foo, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Foo, superNames=[]]
+  CLASS[classId=/Foo, fqName=Foo, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Foo, superNames=[]]
     MODIFIER_LIST[error]
-  CLASS[classId=/Bar, fqName=Bar, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Bar, superNames=[]]
+  CLASS[classId=/Bar, fqName=Bar, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Bar, superNames=[]]
     MODIFIER_LIST[error]
   FUNCTION[fqName=test, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=test]
     TYPE_PARAMETER_LIST

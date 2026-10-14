@@ -28,18 +28,17 @@ internal open class JavaForKotlinOverrideKProperty0<out V>(
     override fun invoke(): V = get()
 
     override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): ReflectKCallable<V> =
-        JavaForKotlinOverrideKProperty0(container, rawBoundReceiver, overriddenStorage, getterMethod, setterMethod, overriddenProperty)
-
-    override fun rebindSameArity(boundReceiver: Any?): ReflectKProperty<V> =
-        JavaForKotlinOverrideKProperty0(container, boundReceiver, overriddenStorage, getterMethod, setterMethod, overriddenProperty)
-
-    override fun unbindToHigherArity(): ReflectKProperty<V> =
-        JavaForKotlinOverrideKProperty1<Any?, V>(
+        JavaForKotlinOverrideKProperty0(
             container, CallableReference.NO_RECEIVER, overriddenStorage, getterMethod, setterMethod, overriddenProperty,
         )
 
-    override fun bindToLowerArity(boundReceiver: Any?): ReflectKProperty<V> =
+    override fun bindToLowerArity(boundReceiver: Any?, boundContextArguments: List<Any?>) =
         throw KotlinReflectionInternalError("Cannot bind KProperty0: $this")
+
+    override fun unbindToHigherArity(): ReflectKCallable<V> =
+        JavaForKotlinOverrideKProperty1<Any?, V>(
+            container, CallableReference.NO_RECEIVER, overriddenStorage, getterMethod, setterMethod, overriddenProperty,
+        )
 
     class Getter<out R>(override val property: JavaForKotlinOverrideKProperty0<R>) :
         JavaForKotlinOverrideKProperty.Getter<R>(), KProperty0.Getter<R> {
@@ -62,15 +61,10 @@ internal open class JavaForKotlinOverrideKMutableProperty0<V>(
 
     override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): ReflectKCallable<V> =
         JavaForKotlinOverrideKMutableProperty0(
-            container, rawBoundReceiver, overriddenStorage, getterMethod, setterMethod!!, overriddenProperty,
+            container, CallableReference.NO_RECEIVER, overriddenStorage, getterMethod, setterMethod!!, overriddenProperty,
         )
 
-    override fun rebindSameArity(boundReceiver: Any?): ReflectKProperty<V> =
-        JavaForKotlinOverrideKMutableProperty0(
-            container, boundReceiver, overriddenStorage, getterMethod, setterMethod!!, overriddenProperty,
-        )
-
-    override fun unbindToHigherArity(): ReflectKProperty<V> =
+    override fun unbindToHigherArity(): ReflectKCallable<V> =
         JavaForKotlinOverrideKMutableProperty1<Any?, V>(
             container, CallableReference.NO_RECEIVER, overriddenStorage, getterMethod, setterMethod!!, overriddenProperty,
         )

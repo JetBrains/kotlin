@@ -16,23 +16,6 @@ declare namespace JS_TESTS {
             const constructor: abstract new () => C3;
         }
     }
-    namespace a.b {
-        function f(x1: foo.bar.baz.C1, x2: a.b.C2, x3: C3): string;
-        class C2 {
-            constructor(value: string);
-            copy(value?: string): a.b.C2;
-            equals(other: Nullable<any>): boolean;
-            hashCode(): number;
-            toString(): string;
-            get value(): string;
-        }
-        namespace C2 {
-            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
-            namespace $metadata$ {
-                const constructor: abstract new () => C2;
-            }
-        }
-    }
     namespace foo.bar.baz {
         function f(x1: foo.bar.baz.C1, x2: a.b.C2, x3: C3): string;
         class C1 {
@@ -47,6 +30,23 @@ declare namespace JS_TESTS {
             /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
             namespace $metadata$ {
                 const constructor: abstract new () => C1;
+            }
+        }
+    }
+    namespace a.b {
+        function f(x1: foo.bar.baz.C1, x2: a.b.C2, x3: C3): string;
+        class C2 {
+            constructor(value: string);
+            copy(value?: string): a.b.C2;
+            equals(other: Nullable<any>): boolean;
+            hashCode(): number;
+            toString(): string;
+            get value(): string;
+        }
+        namespace C2 {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => C2;
             }
         }
     }

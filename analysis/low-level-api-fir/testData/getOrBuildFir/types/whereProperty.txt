@@ -11,7 +11,5 @@ FILE: [ResolvedTo(IMPORTS)] whereProperty.kt
     }
     public final? [ResolvedTo(RAW_FIR)] interface Two : R|kotlin/Any| {
     }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val <[ResolvedTo(ANNOTATION_ARGUMENTS)] T : R|One|, R|Two|> [ResolvedTo(ANNOTATION_ARGUMENTS)] R|T|.foo: R|T|
-        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|T| {
-            ^ this@R|/foo|
-        }
+    public? final? [ResolvedTo(TYPES)] val <[ResolvedTo(TYPES)] T : R|One|, R|Two|> [ResolvedTo(TYPES)] R|T|.foo: <implicit>
+        public? [ResolvedTo(TYPES)] get(): <implicit> { LAZY_BLOCK }

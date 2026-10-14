@@ -20,10 +20,10 @@ import org.jetbrains.kotlin.test.util.KtTestUtil
 
 /**
  * The JVM target the Valhalla codegen tests compile against. Preview features (`-Xjvm-enable-preview`) are only valid on the exact
- * JDK feature version that produced them, so this must match the JDK provided via `JDK_VALHALLA` (currently a Project Valhalla build
- * based on JDK 27).
+ * JDK feature version that produced them, so this must match the JDK provided via `JDK_VALHALLA` (currently a JDK 28 early-access
+ * build, which includes JEP 401).
  */
-internal val VALHALLA_JVM_TARGET = JvmTarget.JVM_27
+internal val VALHALLA_JVM_TARGET = JvmTarget.JVM_28
 
 /**
  * The default *environment* directives of the Project Valhalla codegen tests: JVM preview features (`-Xjvm-enable-preview`),

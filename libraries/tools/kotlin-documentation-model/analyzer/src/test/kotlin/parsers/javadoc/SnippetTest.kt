@@ -10,12 +10,14 @@ import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.links.JavaClassReference
 import org.jetbrains.dokka.model.DModule
 import org.jetbrains.dokka.model.doc.*
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInAnalysisApi
 import java.nio.file.Paths
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
+@MustRunOnChangesInAnalysisApi
 class SnippetTest : BaseAbstractTest() {
     private val testDataDir = getTestDataDir("parsers/javadoc").toAbsolutePath()
 

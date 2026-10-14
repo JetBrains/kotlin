@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.testbase.GradleAndroidTest
 import org.jetbrains.kotlin.gradle.testbase.GradleTest
 import org.jetbrains.kotlin.gradle.testbase.KGPBaseTest
 import org.jetbrains.kotlin.gradle.testbase.MppGradlePluginTests
+import org.jetbrains.kotlin.gradle.testbase.TestProject
 import org.jetbrains.kotlin.gradle.testbase.assertHasDiagnostic
 import org.jetbrains.kotlin.gradle.testbase.assertNoDiagnostic
 import org.jetbrains.kotlin.gradle.testbase.assertOutputDoesNotContain
@@ -23,7 +24,6 @@ import org.jetbrains.kotlin.gradle.testbase.disableIsolatedProjectsBecauseOfJsAn
 import org.jetbrains.kotlin.gradle.testbase.plugins
 import org.jetbrains.kotlin.gradle.testbase.project
 import org.jetbrains.kotlin.gradle.testbase.settingsBuildScriptInjection
-import org.jetbrains.kotlin.gradle.testbase.suppressAgpWarningIsProperty
 import org.jetbrains.kotlin.gradle.uklibs.PublisherConfiguration
 import org.jetbrains.kotlin.gradle.uklibs.addPublishedProjectToRepositories
 import org.jetbrains.kotlin.gradle.uklibs.applyJvm
@@ -96,7 +96,44 @@ class KmpPartiallyResolvedDependenciesCheckerIT : KGPBaseTest() {
 
     @GradleTest
     fun `partially resolved kmp dependencies checker - smoke test project dependency`(gradleVersion: GradleVersion) {
-        val consumer = project("empty", gradleVersion) {
+        val consumer = projectWithPartiallyResolvedDependency(gradleVersion)
+
+        consumer.buildAndFail("compileKotlinJvm") {
+            assertHasDiagnostic(KotlinToolingDiagnostics.PartiallyResolvedKmpDependencies)
+        }
+
+        consumer.build("compileKotlinLinuxArm64") {
+            assertHasDiagnostic(KotlinToolingDiagnostics.PartiallyResolvedKmpDependencies)
+        }
+    }
+
+    @GradleTest
+    fun `partially resolved kmp dependencies checker - diagnostic is disabled in a sufficiently large project`(gradleVersion: GradleVersion) {
+        val consumer = projectWithPartiallyResolvedDependency(gradleVersion)
+        /**
+         * See [org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.KmpPartiallyResolvedDependenciesChecker.MAX_KMP_PROJECTS]
+         */
+        repeat(org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.KmpPartiallyResolvedDependenciesChecker.MAX_KMP_PROJECTS) { index ->
+            val subproject = project("empty", gradleVersion) {
+                plugins {
+                    kotlin("multiplatform")
+                }
+                buildScriptInjection {
+                    project.applyMultiplatform {
+                        jvm()
+                    }
+                }
+            }
+            consumer.include(subproject, "kmp$index")
+        }
+
+        consumer.buildAndFail("compileKotlinJvm") {
+            assertNoDiagnostic(KotlinToolingDiagnostics.PartiallyResolvedKmpDependencies)
+        }
+    }
+
+    private fun projectWithPartiallyResolvedDependency(gradleVersion: GradleVersion): TestProject =
+        project("empty", gradleVersion) {
             val producer = project("empty", gradleVersion) {
                 plugins {
                     kotlin("multiplatform")
@@ -125,16 +162,6 @@ class KmpPartiallyResolvedDependenciesCheckerIT : KGPBaseTest() {
 
             include(producer, "producer")
         }
-
-        consumer.buildAndFail("compileKotlinJvm") {
-            assertHasDiagnostic(KotlinToolingDiagnostics.PartiallyResolvedKmpDependencies)
-        }
-
-        consumer.build("compileKotlinLinuxArm64") {
-            assertHasDiagnostic(KotlinToolingDiagnostics.PartiallyResolvedKmpDependencies)
-        }
-    }
-
 
     @GradleTest
     fun `partially resolved kmp dependencies checker - smoke test included build`(gradleVersion: GradleVersion) {
@@ -229,7 +256,7 @@ class KmpPartiallyResolvedDependenciesCheckerIT : KGPBaseTest() {
             include(producer, "producer")
         }
 
-        consumer.build("compileKotlinLinuxArm64", buildOptions = buildOpions.suppressAgpWarningIsProperty(gradleVersion)) {
+        consumer.build("compileKotlinLinuxArm64") {
             assertOutputDoesNotContain("Configuration 'jvmCompileClasspath' was resolved during configuration time")
             assertHasDiagnostic(KotlinToolingDiagnostics.PartiallyResolvedKmpDependencies)
         }

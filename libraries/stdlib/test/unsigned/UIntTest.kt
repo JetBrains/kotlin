@@ -92,14 +92,18 @@ class UIntTest {
 
         assertEquals(number, div * divisor + rem)
         assertTrue(rem < divisor)
-        assertTrue(div < number)
+        if (number > 0u && divisor != 1u) assertTrue(div < number)
     }
+
 
     @Test
     fun divRem() = repeat(1000) {
         val number = Random.nextUInt()
         val divisor = Random.nextUInt(until = UInt.MAX_VALUE) + 1u
         testMulDivRem(number, divisor, number / divisor, number % divisor)
+        // special cases
+        testMulDivRem(zero, divisor, zero, zero)
+        testMulDivRem(number, one, number, zero)
     }
 
     @Test

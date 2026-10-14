@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.cli.bc.K2Native
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.test.blackbox.support.copyNativeHomeProperty
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.provisionedXcodeCompilerArgs
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import java.io.File
 
@@ -33,5 +34,6 @@ abstract class AbstractNativeCliTest : AbstractCliTest() {
     override fun readArgs(testArgsFilePath: String, tempDir: String) = buildList {
         addAll(super.readArgs(testArgsFilePath, tempDir))
         add("-no-default-libs")
+        addAll(provisionedXcodeCompilerArgs)
     }
 }

@@ -31,7 +31,9 @@ private object UpperBoundTypeParameterTypeRenderer : KaTypeParameterTypeRenderer
         typeRenderer: KaTypeRenderer,
         printer: PrettyPrinter
     ) {
-        val type = type.symbol.resolveUpperBound() ?: analysisSession.builtinTypes.nullableAny
+        val type = context(analysisSession) {
+            type.resolveUpperBound() ?: analysisSession.builtinTypes.nullableAny
+        }
         typeRenderer.renderType(analysisSession, type, printer)
     }
 }
@@ -45,7 +47,7 @@ private object UpperBoundTypeProjectionRenderer : KaTypeProjectionRenderer {
     ) {
         when (projection) {
             is KaStarTypeProjection -> printer.append('*')
-            is KaTypeArgumentWithVariance -> {
+            is KaTypeArgumentWithVariance -> context(analysisSession) {
                 val type = projection.type.resolveUpperBound() ?: analysisSession.builtinTypes.nullableAny
                 typeRenderer.renderType(analysisSession, type, printer)
             }

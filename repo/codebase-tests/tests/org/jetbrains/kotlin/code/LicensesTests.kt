@@ -12,7 +12,7 @@ import java.io.File
 
 class LicensesTests {
     companion object {
-        private const val licenseReadmePath = "license/README.md"
+        private const val LICENSE_README_PATH = "license/README.md"
     }
 
     @Test
@@ -23,7 +23,7 @@ class LicensesTests {
         val linksUsages = mutableSetOf<String>()
         val linksDefinitions = mutableSetOf<String>()
 
-        val readmeFile = File(licenseReadmePath)
+        val readmeFile = File(LICENSE_README_PATH)
         readmeFile.useLines { lineSequence ->
             lineSequence.forEach { line ->
                 val definitionMatch = linkDefinitionRegExp.matchEntire(line)
@@ -45,7 +45,7 @@ class LicensesTests {
     @Test
     fun testLicensesAreExistingFiles() {
         val licenseReferenceRegexp = Regex("\\[([^]]*third_party/[^]]*\\.txt)]")
-        val readmeFile = File(licenseReadmePath)
+        val readmeFile = File(LICENSE_README_PATH)
         val linkedInReadme = readmeFile.useLines { lineSequence ->
             lineSequence.flatMap { line ->
                 licenseReferenceRegexp.findAll(line).map { it.groups[1]?.value ?: error("Should be present because of match") }

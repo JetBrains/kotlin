@@ -37,6 +37,12 @@ CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Array modality:FINAL visibility:pu
     VALUE_PARAMETER kind:Regular name:index index:1 type:kotlin.Int
   FUN IR_EXTERNAL_DECLARATION_STUB name:iterator visibility:public modality:FINAL returnType:kotlin.collections.Iterator<T of kotlin.Array> [operator]
     VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Array<T of kotlin.Array>
+  FUN IR_EXTERNAL_DECLARATION_STUB name:of visibility:public modality:FINAL returnType:kotlin.Array<T of kotlin.Array.of> [inline,operator,companion]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:true
+    VALUE_PARAMETER kind:Regular name:elements index:0 type:kotlin.Array<out T of kotlin.Array.of> varargElementType:T of kotlin.Array.of [vararg]
+    annotations:
+      SinceKotlin(version = "2.5")
+      ExperimentalCollectionLiteralsApi
   FUN IR_EXTERNAL_DECLARATION_STUB name:set visibility:public modality:FINAL returnType:kotlin.Unit [operator]
     VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Array<T of kotlin.Array>
     VALUE_PARAMETER kind:Regular name:index index:1 type:kotlin.Int

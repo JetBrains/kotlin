@@ -1,0 +1,91 @@
+/*
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.generators.tests
+
+import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUnit5
+import org.jetbrains.kotlin.generators.model.annotation
+import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeCodegenBoxTest
+import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedHostTarget
+import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseExtTestCaseGroupProvider
+import org.jetbrains.kotlinx.atomicfu.incremental.AbstractIncrementalJVMWithAtomicfuRunnerTest
+import org.jetbrains.kotlinx.atomicfu.runners.*
+import org.junit.jupiter.api.Tag
+
+fun main(args: Array<String>) {
+    System.setProperty("java.awt.headless", "true")
+
+    generateTestGroupSuiteWithJUnit5(args) {
+        testGroup("plugins/atomicfu/atomicfu-compiler/tests-gen", "plugins/atomicfu/atomicfu-compiler/testData/") {
+            testClass<AbstractIncrementalJVMWithAtomicfuRunnerTest> {
+                model("projects/", extension = null, recursive = false)
+            }
+        }
+
+        // Atomicfu compiler plugin native tests.
+        testGroup("plugins/atomicfu/atomicfu-compiler/tests-gen", "plugins/atomicfu/atomicfu-compiler/testData/box") {
+            testClass<AbstractNativeCodegenBoxTest>(
+                suiteTestClassName = "AtomicfuNativeTestGenerated",
+                annotations = listOf(*atomicfuNative(), provider<UseExtTestCaseGroupProvider>())
+            ) {
+                model()
+            }
+            testClass<AbstractAtomicfuNativeKlibSyntheticAccessorTest>(
+                annotations = listOf(*klibSyntheticAccessors(), *atomicfuNative())
+            ) {
+                model()
+            }
+            testClass<AbstractAtomicfuNativeIrTextTest>(
+                suiteTestClassName = "AtomicfuNativeIrTextTestGenerated",
+                annotations = listOf(*atomicfuNative(), provider<UseExtTestCaseGroupProvider>())
+            ) {
+                // KT83367.kt is ignored because it requires klib generation, but RUN_PIPELINE_TILL is limited to TestPhase.FIR2IR in
+                // AbstractAtomicfuNativeIrTextTest because of KT-85312.
+                model(excludedPattern = """^KT83367\.kt$""")
+            }
+        }
+
+        testGroup(
+            "plugins/atomicfu/atomicfu-compiler/tests-gen",
+            "plugins/atomicfu/atomicfu-compiler/testData",
+            testRunnerMethodName = "runTest0"
+        ) {
+            testClass<AbstractAtomicfuJsTest> {
+                model("box/")
+            }
+        }
+
+        testGroup(
+            "plugins/atomicfu/atomicfu-compiler/tests-gen",
+            "plugins/atomicfu/atomicfu-compiler/testData",
+            testRunnerMethodName = "runTest0"
+        ) {
+            testClass<AbstractAtomicfuFirCheckerTest> {
+                model("diagnostics/")
+            }
+
+            testClass<AbstractAtomicfuJvmFirLightTreeTest> {
+                model("box/")
+            }
+        }
+
+        testGroup(
+            "plugins/atomicfu/atomicfu-compiler/tests-gen",
+            "plugins/atomicfu/atomicfu-compiler/testData",
+            testRunnerMethodName = "runTest0"
+        ) {
+            testClass<AbstractAtomicfuNativeDiagnosticTest>(
+                annotations = listOf(*atomicfuNative(), provider<UseExtTestCaseGroupProvider>())
+            ) {
+                model("backendDiagnostic/")
+            }
+        }
+    }
+}
+
+private fun atomicfuNative() = arrayOf(
+    annotation(Tag::class.java, "atomicfu-native"),
+    annotation(EnforcedHostTarget::class.java), // TODO(KT-65977): Make atomicfu tests run on all targets.
+)

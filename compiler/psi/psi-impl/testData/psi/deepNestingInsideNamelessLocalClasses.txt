@@ -1,0 +1,199 @@
+KtFile: deepNestingInsideNamelessLocalClasses.kt
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')
+  PsiWhiteSpace('\n')
+  PACKAGE_DIRECTIVE
+    PsiElement(package)('package')
+    PsiWhiteSpace(' ')
+    DOT_QUALIFIED_EXPRESSION
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('one')
+      PsiElement(DOT)('.')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('two')
+  IMPORT_LIST
+    <empty list>
+  PsiWhiteSpace('\n\n')
+  FUNCTION
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('foo')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      CLASS
+        PsiElement(class)('class')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('Local')
+        PsiWhiteSpace(' ')
+        CLASS_BODY
+          PsiElement(LBRACE)('{')
+          PsiWhiteSpace('\n        ')
+          OBJECT_DECLARATION
+            PsiElement(object)('object')
+            PsiErrorElement:Name expected
+              <empty list>
+            PsiWhiteSpace(' ')
+            CLASS_BODY
+              PsiElement(LBRACE)('{')
+              PsiWhiteSpace('\n            ')
+              CLASS
+                PsiElement(class)('class')
+                PsiWhiteSpace(' ')
+                PsiElement(IDENTIFIER)('A')
+                PsiWhiteSpace(' ')
+                CLASS_BODY
+                  PsiElement(LBRACE)('{')
+                  PsiWhiteSpace('\n                ')
+                  OBJECT_DECLARATION
+                    PsiElement(object)('object')
+                    PsiErrorElement:Name expected
+                      <empty list>
+                    PsiWhiteSpace(' ')
+                    CLASS_BODY
+                      PsiElement(LBRACE)('{')
+                      PsiWhiteSpace('\n                    ')
+                      CLASS
+                        PsiElement(class)('class')
+                        PsiWhiteSpace(' ')
+                        PsiElement(IDENTIFIER)('B')
+                      PsiWhiteSpace('\n                ')
+                      PsiElement(RBRACE)('}')
+                  PsiWhiteSpace('\n            ')
+                  PsiElement(RBRACE)('}')
+              PsiWhiteSpace('\n        ')
+              PsiElement(RBRACE)('}')
+          PsiWhiteSpace('\n    ')
+          PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n\n    ')
+      CLASS
+        PsiElement(class)('class')
+        PsiErrorElement:Name expected
+          <empty list>
+        PsiWhiteSpace(' ')
+        CLASS_BODY
+          PsiElement(LBRACE)('{')
+          PsiWhiteSpace('\n        ')
+          CLASS
+            PsiElement(class)('class')
+            PsiWhiteSpace(' ')
+            PsiElement(IDENTIFIER)('Nested')
+            PsiWhiteSpace(' ')
+            CLASS_BODY
+              PsiElement(LBRACE)('{')
+              PsiWhiteSpace('\n            ')
+              CLASS
+                PsiElement(class)('class')
+                PsiErrorElement:Name expected
+                  <empty list>
+                PsiWhiteSpace(' ')
+                CLASS_BODY
+                  PsiElement(LBRACE)('{')
+                  PsiWhiteSpace('\n                ')
+                  CLASS
+                    PsiElement(class)('class')
+                    PsiWhiteSpace(' ')
+                    PsiElement(IDENTIFIER)('C')
+                  PsiWhiteSpace('\n            ')
+                  PsiElement(RBRACE)('}')
+              PsiWhiteSpace('\n        ')
+              PsiElement(RBRACE)('}')
+          PsiWhiteSpace('\n    ')
+          PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  OBJECT_DECLARATION
+    PsiElement(object)('object')
+    PsiErrorElement:Name expected
+      <empty list>
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      FUNCTION
+        PsiElement(fun)('fun')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('bar')
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        BLOCK
+          PsiElement(LBRACE)('{')
+          PsiWhiteSpace('\n        ')
+          CLASS
+            PsiElement(class)('class')
+            PsiWhiteSpace(' ')
+            PsiElement(IDENTIFIER)('Local')
+            PsiWhiteSpace(' ')
+            CLASS_BODY
+              PsiElement(LBRACE)('{')
+              PsiWhiteSpace('\n            ')
+              OBJECT_DECLARATION
+                PsiElement(object)('object')
+                PsiErrorElement:Name expected
+                  <empty list>
+                PsiWhiteSpace(' ')
+                CLASS_BODY
+                  PsiElement(LBRACE)('{')
+                  PsiWhiteSpace('\n                ')
+                  CLASS
+                    PsiElement(class)('class')
+                    PsiWhiteSpace(' ')
+                    PsiElement(IDENTIFIER)('D')
+                  PsiWhiteSpace('\n            ')
+                  PsiElement(RBRACE)('}')
+              PsiWhiteSpace('\n        ')
+              PsiElement(RBRACE)('}')
+          PsiWhiteSpace('\n    ')
+          PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('property')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        OBJECT_LITERAL
+          OBJECT_DECLARATION
+            PsiElement(object)('object')
+            PsiWhiteSpace(' ')
+            CLASS_BODY
+              PsiElement(LBRACE)('{')
+              PsiWhiteSpace('\n        ')
+              CLASS
+                PsiElement(class)('class')
+                PsiWhiteSpace(' ')
+                PsiElement(IDENTIFIER)('E')
+              PsiWhiteSpace('\n    ')
+              PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n\n    ')
+      CLASS_INITIALIZER
+        PsiElement(init)('init')
+        PsiWhiteSpace(' ')
+        BLOCK
+          PsiElement(LBRACE)('{')
+          PsiWhiteSpace('\n        ')
+          CLASS
+            PsiElement(class)('class')
+            PsiErrorElement:Name expected
+              <empty list>
+            PsiWhiteSpace(' ')
+            CLASS_BODY
+              PsiElement(LBRACE)('{')
+              PsiWhiteSpace('\n            ')
+              CLASS
+                PsiElement(class)('class')
+                PsiWhiteSpace(' ')
+                PsiElement(IDENTIFIER)('F')
+              PsiWhiteSpace('\n        ')
+              PsiElement(RBRACE)('}')
+          PsiWhiteSpace('\n    ')
+          PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

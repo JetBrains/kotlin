@@ -264,7 +264,7 @@ KtNameReferenceExpression(240,243): 'bar'
     isInBestCandidates = true
 
 KtCallExpression(249,257): 'foo(bar)'
-  KaApplicableCallCandidate:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -295,10 +295,11 @@ KtCallExpression(249,257): 'foo(bar)'
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun foo(a: MyClass): Unit>
     isInBestCandidates = true
 
 KtNameReferenceExpression(249,252): 'foo'
-  KaApplicableCallCandidate:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -329,6 +330,7 @@ KtNameReferenceExpression(249,252): 'foo'
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun foo(a: MyClass): Unit>
     isInBestCandidates = true
 
 KtValueArgumentList(252,257): '(bar)'

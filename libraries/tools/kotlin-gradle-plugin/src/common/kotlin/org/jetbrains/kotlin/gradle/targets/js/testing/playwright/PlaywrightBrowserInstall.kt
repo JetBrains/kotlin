@@ -8,31 +8,36 @@ package org.jetbrains.kotlin.gradle.targets.js.testing.playwright
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.model.ObjectFactory
-import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
+import org.jetbrains.kotlin.gradle.ExperimentalNodeJsToolchainDsl
+import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.NodeJsRequest
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.dependsOnNpmTooling
 import org.jetbrains.kotlin.gradle.targets.js.ir.nodeJsRoot
 import org.jetbrains.kotlin.gradle.targets.js.ir.npmToolingDir
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.OsType
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependenciesTask
 import org.jetbrains.kotlin.gradle.targets.native.internal.KotlinInterprocessDirectoryLock
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.nodeJsEnvSpec
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.*
+import org.jetbrains.kotlin.gradle.tasks.nodejs.UsesNodeJsToolchainService
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.property
-import org.jetbrains.kotlin.konan.target.HostManager
 import java.io.File
 import javax.inject.Inject
 
 @DisableCachingByDefault(because = "Playwright cli manages caches on its own")
+@OptIn(ExperimentalNodeJsToolchainDsl::class)
 internal abstract class PlaywrightBrowserInstall @Inject constructor(
     @Internal
     @Transient
@@ -40,10 +45,15 @@ internal abstract class PlaywrightBrowserInstall @Inject constructor(
     objects: ObjectFactory,
     private val execOperations: ExecOperations,
     private val providers: ProviderFactory,
-) : RequiresNpmDependenciesTask, DefaultTask() {
+) : RequiresNpmDependenciesTask, DefaultTask(), UsesNodeJsToolchainService {
 
     @get:Input
-    internal val nodeExecutable: Property<String> = objects.property(compilation.nodeJsEnvSpec.executable)
+    @get:Optional
+    internal val nodeExecutable: Provider<String> = nodeJsToolchainService.legacyNodeJsExecutable(objects, compilation)
+
+    @OptIn(ExperimentalNodeJsToolchainDsl::class)
+    @get:Input
+    internal val nodeJsRequest: Provider<NodeJsRequest> = compilation.project.requestDefaultNodeJs()
 
     @get:Input
     internal val browsers = objects.setProperty(String::class.java).convention(emptyList())
@@ -81,21 +91,24 @@ internal abstract class PlaywrightBrowserInstall @Inject constructor(
 
     private val defaultPlaywrightBrowserDir: Provider<File>
         get() {
-            val userHome = providers.systemProperty("user.home")
-
-            val defaultPath = when {
-                HostManager.hostIsMingw -> providers
-                    .environmentVariable("USERPROFILE")
-                    .orElse(userHome)
-                    .map { File(it).resolve("AppData/Local/ms-playwright") }
-
-                HostManager.hostIsMac -> userHome.map { File(it).resolve("Library/Caches/ms-playwright") }
-                HostManager.hostIsLinux -> userHome.map { File(it).resolve(".cache/ms-playwright") }
-                else -> throw IllegalStateException("Unsupported OS")
+            // Resolve providers outside of the lambda, so it does not capture the task (breaks configuration cache)
+            val userProfile = providers.environmentVariable("USERPROFILE")
+            return providers.systemProperty("user.home").zip(
+                providers.currentHostPlatform()
+            ) { userHome, platform ->
+                when (platform) {
+                    OsType.WINDOWS -> {
+                        val path = userProfile.getOrElse(userHome)
+                        File(path).resolve("AppData/Local/ms-playwright")
+                    }
+                    OsType.MAC -> File(userHome).resolve("Library/Caches/ms-playwright")
+                    OsType.LINUX, OsType.FREEBSD -> File(userHome).resolve(".cache/ms-playwright")
+                    else -> throw IllegalStateException("Unsupported OS")
+                }
             }
-            return defaultPath
         }
 
+    @OptIn(ExperimentalNodeJsToolchainDsl::class)
     @TaskAction
     fun installBrowsers() {
         val modules = NpmProjectModules(npmToolingEnvDir.getFile())
@@ -104,9 +117,11 @@ internal abstract class PlaywrightBrowserInstall @Inject constructor(
 
         val lock = KotlinInterprocessDirectoryLock(outputDir.getFile())
 
+        val nodeJsExecutable = nodeJsToolchainService.get().resolveNodeJsExecutable(nodeExecutable, nodeJsRequest)
+
         lock.withLock {
             execOperations.exec { spec ->
-                spec.executable(nodeExecutable.get())
+                spec.executable(nodeJsExecutable)
                 spec.args(args)
                 spec.environment("PLAYWRIGHT_BROWSERS_PATH", outputDir.get().asFile.absolutePath)
             }

@@ -16,6 +16,7 @@ import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
+import org.gradle.api.tasks.SkipWhenEmpty
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.work.DisableCachingByDefault
@@ -49,6 +50,7 @@ internal abstract class EsmBundleKotlinJsTests @Inject constructor(
      * Directory where kotlin js/wasmsj linker produced binaries with tests in ESM format.
      */
     @get:InputDirectory
+    @get:SkipWhenEmpty
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val kotlinLinkerOutputFiles: DirectoryProperty
 

@@ -104,6 +104,7 @@ val copyMinimalSources = tasks.register("copyMinimalSources", Sync::class) {
             "kotlin/annotations/Annotations.kt",
             "kotlin/concurrent/atomics/ExperimentalAtomicApi.kt",
             "kotlin/annotations/ExperimentalStdlibApi.kt",
+            "kotlin/annotations/ExperimentalCollectionLiteralsApi.kt",
         )
         into("src/common")
     }
@@ -199,7 +200,9 @@ fun JavaExec.configureJklibCompilation(
             "-opt-in=kotlin.contracts.ExperimentalContracts",
             "-opt-in=kotlin.ExperimentalMultiplatform",
             "-opt-in=kotlin.contracts.ExperimentalExtendedContracts",
+            *dogfoodedExperimentalFeatures.toTypedArray(),
             "-Xreturn-value-checker=full",
+            "-Xcompanion-blocks",
             "-Xcommon-sources=${(commonSourceFiles).joinToString(",")}",
         )
 
@@ -213,7 +216,7 @@ fun JavaExec.configureJklibCompilation(
 val compileStdlib = tasks.register("compileStdlib", JavaExec::class) {
     val javaToolchains = project.extensions.getByType(JavaToolchainService::class.java)
     javaLauncher.set(javaToolchains.launcherFor {
-        languageVersion.set(JavaLanguageVersion.of(8))
+        languageVersion.set(JavaLanguageVersion.of(17))
     })
     configureJklibCompilation(copyMinimalSources, outputKlib)
 

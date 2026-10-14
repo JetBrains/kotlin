@@ -1,0 +1,8 @@
+STEP 0:
+    dependencies: stdlib
+    arguments: -XXLanguage:+FullValueClasses
+STEP 1:
+    dependencies: stdlib
+    arguments: -XXLanguage:+FullValueClasses
+    modifications:
+        U : l3.kt.1 -> l3.kt

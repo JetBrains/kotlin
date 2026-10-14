@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.gradle.native
 
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.plugin.KotlinPublicationFormat
 import org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.*
@@ -21,7 +23,7 @@ import kotlin.test.assertNotNull
 @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
 @DisplayName("Tests for Swift Export metadata consumption with the export DSL")
 @SwiftExportGradlePluginTests
-@OptIn(ExperimentalSwiftExportDsl::class)
+@OptIn(ExperimentalSwiftExportDsl::class, ExperimentalKotlinGradlePluginApi::class)
 class SwiftExportMetadataConsumptionIT : KGPBaseTest() {
 
     @DisplayName(
@@ -117,6 +119,60 @@ class SwiftExportMetadataConsumptionIT : KGPBaseTest() {
             gradleVersion = gradleVersion,
             testBuildDir = testBuildDir,
             published = true,
+            moduleNameOverride = "Bar",
+            rootPackageOverride = "com.bar.baz",
+            transitiveModuleNameOverride = "Baz",
+            transitiveRootPackageOverride = "com.foo.bar.baz",
+        )
+    }
+
+    @DisplayName(
+        "Swift Export metadata consumed from a direct Kotlin Archive dependency with moduleName and rootPackage overrides"
+    )
+    @GradleTest
+    fun directKotlinArchiveDependencyWithModuleNameAndRootPackageOverrides(
+        gradleVersion: GradleVersion,
+        @TempDir testBuildDir: Path,
+    ) {
+        testSwiftExportMetadataConsumption(
+            gradleVersion = gradleVersion,
+            testBuildDir = testBuildDir,
+            published = true,
+            publicationFormat = KotlinPublicationFormat.KOTLIN_ARCHIVE,
+            moduleNameOverride = "Bar",
+            rootPackageOverride = "com.bar.baz",
+        )
+    }
+
+    @DisplayName(
+        "Swift Export metadata consumed from a direct Kotlin Archive dependency with no overrides"
+    )
+    @GradleTest
+    fun directKotlinArchiveDependencyWithNoOverrides(
+        gradleVersion: GradleVersion,
+        @TempDir testBuildDir: Path,
+    ) {
+        testSwiftExportMetadataConsumption(
+            gradleVersion = gradleVersion,
+            testBuildDir = testBuildDir,
+            published = true,
+            publicationFormat = KotlinPublicationFormat.KOTLIN_ARCHIVE,
+        )
+    }
+
+    @DisplayName(
+        "Swift Export metadata consumed from a transitive Kotlin Archive dependency with moduleName and rootPackage overrides"
+    )
+    @GradleTest
+    fun transitiveKotlinArchiveDependencyWithModuleNameAndRootPackageOverrides(
+        gradleVersion: GradleVersion,
+        @TempDir testBuildDir: Path,
+    ) {
+        testSwiftExportMetadataConsumption(
+            gradleVersion = gradleVersion,
+            testBuildDir = testBuildDir,
+            published = true,
+            publicationFormat = KotlinPublicationFormat.KOTLIN_ARCHIVE,
             moduleNameOverride = "Bar",
             rootPackageOverride = "com.bar.baz",
             transitiveModuleNameOverride = "Baz",
@@ -232,6 +288,7 @@ class SwiftExportMetadataConsumptionIT : KGPBaseTest() {
         gradleVersion: GradleVersion,
         testBuildDir: Path,
         published: Boolean,
+        publicationFormat: KotlinPublicationFormat = KotlinPublicationFormat.LEGACY_MULTIPLE_PUBLICATIONS,
         configModuleNameOverride: String? = null,
         moduleNameOverride: String? = null,
         rootPackageOverride: String? = null,
@@ -251,6 +308,9 @@ class SwiftExportMetadataConsumptionIT : KGPBaseTest() {
                 buildScriptInjection {
                     project.applyMultiplatform {
                         iosArm64()
+                        publishing {
+                            this.publicationFormat.set(publicationFormat)
+                        }
                         export.swift {
                             this.moduleName.set(transitiveModuleNameOverride)
                             this.rootPackage.set(transitiveRootPackageOverride)
@@ -293,6 +353,9 @@ class SwiftExportMetadataConsumptionIT : KGPBaseTest() {
             buildScriptInjection {
                 project.applyMultiplatform {
                     iosArm64()
+                    publishing {
+                        this.publicationFormat.set(publicationFormat)
+                    }
                     export.swift {
                         this.moduleName.set(moduleNameOverride)
                         this.rootPackage.set(rootPackageOverride)
@@ -425,7 +488,7 @@ class SwiftExportMetadataConsumptionIT : KGPBaseTest() {
 
                 if (rootPackageOverride != null) {
                     val subprojectSwiftPath =
-                        projectPath.resolve("build/SwiftExport/iosArm64/Debug/files/$expectedDirectDependencyModuleName/$expectedDirectDependencyModuleName.swift")
+                        projectPath.resolve("build/SwiftExport/iosArm64/files/$expectedDirectDependencyModuleName/$expectedDirectDependencyModuleName.swift")
                     assertFileContains(
                         subprojectSwiftPath,
                         "public typealias LibFoo = ExportedKotlinPackages.$rootPackageOverride.LibFoo"
@@ -434,7 +497,7 @@ class SwiftExportMetadataConsumptionIT : KGPBaseTest() {
                 // Root package overrides for transitive dependencies are ignored!
                 if (expectedTransitiveDependencyModuleName != null && transitiveRootPackageOverride != null) {
                     val subprojectSwiftPath =
-                        projectPath.resolve("build/SwiftExport/iosArm64/Debug/files/$expectedTransitiveDependencyModuleName/$expectedTransitiveDependencyModuleName.swift")
+                        projectPath.resolve("build/SwiftExport/iosArm64/files/$expectedTransitiveDependencyModuleName/$expectedTransitiveDependencyModuleName.swift")
                     assertFileDoesNotContain(
                         subprojectSwiftPath,
                         "public typealias LibBar = ExportedKotlinPackages.$transitiveRootPackageOverride.LibBar",
@@ -460,7 +523,7 @@ class SwiftExportMetadataConsumptionIT : KGPBaseTest() {
                     ":embedSwiftExportForXcode",
                     environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
                 ) {
-                    assertTasksExecuted(":iosArm64DebugSwiftExport")
+                    assertTasksExecuted(":iosArm64SwiftExport")
 
                     val buildProductsDir = this@project.gradleRunner.environment?.get("BUILT_PRODUCTS_DIR")?.let { File(it) }
                     assertNotNull(buildProductsDir)

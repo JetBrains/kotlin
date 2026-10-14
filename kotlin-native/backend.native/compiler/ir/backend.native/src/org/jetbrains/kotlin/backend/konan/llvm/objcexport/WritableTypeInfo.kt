@@ -55,7 +55,7 @@ internal fun ContextUtils.generateWritableTypeInfoForSyntheticInterface(irClass:
  * If [irClass] is exported, its [WritableTypeInfoPointer] can later be overridden once.
  */
 internal fun ContextUtils.generateWritableTypeInfoForClass(irClass: IrClass): WritableTypeInfoPointer? = runtime.writableTypeInfoType?.let { type ->
-    if (!irClass.isExported()) {
+    if (!irClass.isExported) {
         // If the class not exported, its WritableTypeInfo cannot be replaced
         FixedWritableTypeInfo(staticData.createGlobal(type, "").apply {
             setZeroInitializer()

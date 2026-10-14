@@ -31,8 +31,6 @@ class KotlinWasmCompilerArgumentsConfigurator : CommonKlibBasedCompilerArguments
         require(this is KotlinWasmCompilerArguments)
         val result = super.configureLanguageFeatures(arguments, reporter, languageVersion)
         result.configureWasmLanguageFeatures(this)
-//        // TODO: Should be removed (see KT-80182)
-        result[LanguageFeature.AllowAnyAsAnActualTypeForExpectInterface] = LanguageFeature.State.ENABLED
         result[LanguageFeature.JsAllowImplementingFunctionInterface] = LanguageFeature.State.ENABLED
         return result
     }

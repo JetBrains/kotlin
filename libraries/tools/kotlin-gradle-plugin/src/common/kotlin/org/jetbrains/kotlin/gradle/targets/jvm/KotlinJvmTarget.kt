@@ -122,19 +122,19 @@ abstract class KotlinJvmTarget @Inject constructor(
 
     @Deprecated(
         message = WITH_JAVA_DEPRECATION_MESSAGE,
-        level = DeprecationLevel.WARNING
+        level = DeprecationLevel.ERROR
     )
     var withJavaEnabled = false
         private set
 
     @Deprecated(
         message = WITH_JAVA_DEPRECATION_MESSAGE,
-        level = DeprecationLevel.WARNING
+        level = DeprecationLevel.ERROR
     )
     fun withJava() {
         project.reportDiagnostic(KotlinToolingDiagnostics.KMPWithJavaDiagnostic())
 
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         if (withJavaEnabled)
             return
 
@@ -146,7 +146,7 @@ abstract class KotlinJvmTarget @Inject constructor(
         }
 
         project.multiplatformExtension.targets.find {
-            @Suppress("DEPRECATION")
+            @Suppress("DEPRECATION_ERROR")
             it is KotlinJvmTarget && it.withJavaEnabled
         }
             ?.let { existingJavaTarget ->
@@ -175,7 +175,7 @@ abstract class KotlinJvmTarget @Inject constructor(
             project.reportDiagnostic(KotlinToolingDiagnostics.JvmWithJavaIsIncompatibleWithAndroid(androidPluginId, trace))
         }
 
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         withJavaEnabled = true
 
         project.plugins.apply(JavaBasePlugin::class.java)

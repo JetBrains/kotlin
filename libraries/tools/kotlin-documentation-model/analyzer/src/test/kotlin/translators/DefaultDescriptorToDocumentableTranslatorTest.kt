@@ -13,9 +13,11 @@ import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.links.PointingToDeclaration
 import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.model.doc.*
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInAnalysisApi
 import utils.text
 import kotlin.test.*
 
+@MustRunOnChangesInAnalysisApi
 class DefaultDescriptorToDocumentableTranslatorTest : BaseAbstractTest() {
     val configuration = dokkaConfiguration {
         suppressObviousFunctions = false
@@ -734,14 +736,10 @@ val soapXml = node("soap-env:Envelope", soapAttrs,
             documentablesMergingStage = { module ->
                 val testClass = module.packages.single().classlikes.single { it.name == "A" }
                 val setterLookalike = testClass.functions.firstOrNull { it.name == "setV" }
-                assertNotNull(setterLookalike) {
-                    "Expected regular function not found, wrongly categorized as setter?"
-                }
+                assertNotNull(setterLookalike, "Expected regular function not found, wrongly categorized as setter?")
 
                 val getterLookalike = testClass.functions.firstOrNull { it.name == "getV" }
-                assertNotNull(getterLookalike) {
-                    "Expected regular function not found, wrongly categorized as getter?"
-                }
+                assertNotNull(getterLookalike, "Expected regular function not found, wrongly categorized as getter?")
             }
         }
     }

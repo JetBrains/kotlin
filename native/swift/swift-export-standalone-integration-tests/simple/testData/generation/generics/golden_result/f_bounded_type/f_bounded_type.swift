@@ -19,7 +19,7 @@ public final class BaseClass: KotlinRuntime.KotlinBase {
         }
     }
     package override init(
-        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -32,7 +32,7 @@ public final class ConcreteSelfReferencing: f_bounded_type.SelfReferencing {
         { __root___ConcreteSelfReferencing_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
     package override init(
-        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -40,7 +40,7 @@ public final class ConcreteSelfReferencing: f_bounded_type.SelfReferencing {
 }
 open class SelfReferencing: KotlinRuntime.KotlinBase {
     package override init(
-        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);

@@ -99,6 +99,14 @@ class KlibMockDSL(val currentDir: Path, val parent: KlibMockDSL?) {
             )
         }
 
+        /** Generates a random "signature index". */
+        fun generateRandomSignatureIndex(): SerializedSignatureIndex {
+            val random = Random(System.nanoTime())
+            return SerializedSignatureIndex(
+                signatureIndex = random.nextBytes(8_000),
+            )
+        }
+
         /** Generates a random name. */
         fun generateRandomName(nameLength: Int): String {
             require(nameLength > 0) { "Length must be greater than zero" }

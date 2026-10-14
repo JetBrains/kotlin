@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.mpp
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.logging.LogLevel
+import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.invoke
 import org.gradle.kotlin.dsl.kotlin
@@ -95,7 +96,7 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
             }
         }) { fragmentDependencies ->
             val visitedDependencies = mutableSetOf<String>()
-            for ([_, dependencies] in fragmentDependencies) {
+            for ((_, dependencies) in fragmentDependencies) {
                 for (dependency in dependencies) {
                     assertTrue(
                         visitedDependencies.add(dependency),
@@ -233,7 +234,7 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
                     )
                 },
             )
-            for ([_, particularCompileArgs] in compileArgs) {
+            for ((_, particularCompileArgs) in compileArgs) {
                 val fragmentDependencies = particularCompileArgs.fragmentDependencies
                 val dependenciesPerFragment = fragmentDependencies
                     .groupBy({ it.substringBefore(":") }) { it.substringAfter(":") }
@@ -346,7 +347,12 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
 
             buildAndFail(
                 ":assemble",
-                buildOptions = buildOptions.copy(continueAfterFailure = true, separateCompilation = true)
+                buildOptions = buildOptions.copy(
+                    continueAfterFailure = true,
+                    separateCompilation = true,
+                    // FIXME: KT-89618
+                    warningMode = WarningMode.Summary,
+                )
             ) {
                 // ensures no unexpected task dependencies are added
                 val libraryTasks = setOf(
@@ -438,7 +444,7 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
                 )
                 val specificSourceSets = sourceSetNames - "commonMain"
                 val outputPerTask = compileTasks.associateWith { getOutputForTask(it, logLevel = LogLevel.INFO) }
-                for ([task, taskOutput] in outputPerTask) {
+                for ((task, taskOutput) in outputPerTask) {
                     assertFalse(
                         taskOutput.contains("generatedSource_commonMain_\\d+.kt:\\d+:\\d+ Unresolved reference 'commonMain'".toRegex()),
                         "$task should be able to resolve `commonMain()`\n$taskOutput"

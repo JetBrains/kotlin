@@ -326,7 +326,8 @@ private fun AbstractNativeSimpleTest.compileToLibrary(
     return compilation.result.assertSuccess()
 }
 
-private fun AbstractNativeSimpleTest.compileToExecutableInOneStage(
+// Unlike other overloads, this one does not assert that the compilation has succeeded.
+internal fun AbstractNativeSimpleTest.compileToExecutableInOneStage(
     testCase: TestCase,
     tryPassSystemCacheDirectory: Boolean,
     dependencies: List<TestCompilationDependency<*>>

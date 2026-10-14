@@ -5,12 +5,23 @@
 
 package org.jetbrains.kotlin.gradle.archive
 
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import org.gradle.api.tasks.Copy
 import org.gradle.kotlin.dsl.kotlin
+import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPublication
+import org.jetbrains.kotlin.gradle.targets.js.npm.AbstractNodeModulesCache
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.testbase.assertNoDiagnostic
+import org.jetbrains.kotlin.gradle.testbase.assertTasksExecuted
+import org.jetbrains.kotlin.gradle.testbase.build
+import org.jetbrains.kotlin.gradle.testbase.buildScriptInjection
 import org.jetbrains.kotlin.gradle.testing.ResolvedComponentWithArtifacts
 import org.jetbrains.kotlin.gradle.testing.compilationResolution
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
@@ -22,7 +33,11 @@ import org.jetbrains.kotlin.gradle.uklibs.ignoreAccessViolations
 import org.jetbrains.kotlin.gradle.uklibs.publish
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
+import java.io.File
 import kotlin.test.assertEquals
+import kotlin.io.path.listDirectoryEntries
+import kotlin.io.path.name
+import kotlin.io.path.readText
 
 @MppGradlePluginTests
 @DisplayName("Consumption of a project published in the Kotlin Archive format")
@@ -140,7 +155,7 @@ class KotlinArchiveConsumptionIT : KGPBaseTest() {
 
     private fun consumptionWithCInteropsTestImpl(gradleVersion: GradleVersion, withAppleTargets: Boolean) {
         val producer = kotlinArchiveProducer(gradleVersion, withAppleTargets)
-        producer.configureCinteropPublication()
+        producer.configureCinterop()
         val publishedProject = producer.publish()
 
         val consumer = kotlinArchiveConsumer(gradleVersion, publishedProject, withAppleTargets)
@@ -148,6 +163,7 @@ class KotlinArchiveConsumptionIT : KGPBaseTest() {
 
         consumer.build("assemble") {
             assertTasksExecuted(expectedConsumerCompilationTasks(withAppleTargets))
+            assertNoDiagnostic(KotlinToolingDiagnostics.UnsupportedKotlinArchiveUsage)
         }
     }
 
@@ -161,6 +177,150 @@ class KotlinArchiveConsumptionIT : KGPBaseTest() {
     @OsCondition(supportedOn = [OS.MAC, OS.LINUX, OS.WINDOWS], enabledOnCI = [OS.LINUX, OS.WINDOWS])
     fun consumptionWithCinteropsWithoutAppleTargetsTest(gradleVersion: GradleVersion) {
         consumptionWithCInteropsTestImpl(gradleVersion, withAppleTargets = false)
+    }
+
+    @GradleTest
+    @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
+    @DisplayName("A framework of a consumer exports a library in the Kotlin Archive format")
+    fun consumptionWithFrameworkExportTest(gradleVersion: GradleVersion) {
+        val publishedProject = kotlinArchiveProducer(gradleVersion).publish()
+
+        val consumer = kotlinArchiveConsumer(gradleVersion, publishedProject, apiDependency = true)
+        consumer.exportProducerFromFrameworks(publishedProject)
+
+        consumer.build(*expectedFrameworkLinkTasks.toTypedArray()) {
+            assertTasksExecuted(expectedFrameworkLinkTasks)
+            assertNoDiagnostic(KotlinToolingDiagnostics.UnsupportedKotlinArchiveUsage)
+
+            appleTargets.forEach { targetName ->
+                assertEquals(
+                    // This is not published one, but rather unpacked from klib
+                    listOf("${publishedProject.name}-$targetName.klib"),
+                    exportedLibraryNames(frameworkLinkTaskOf(targetName)),
+                    "Unexpected libraries exported from the framework of $targetName",
+                )
+            }
+        }
+    }
+
+    private fun BuildResult.exportedLibraryNames(taskPath: String): List<String> =
+        extractNativeCompilerTaskArguments(taskPath)
+            .lines()
+            .map { it.trim() }
+            .filter { it.startsWith(EXPORT_LIBRARY_ARGUMENT) }
+            .map { File(it.removePrefix(EXPORT_LIBRARY_ARGUMENT)).name }
+            .sorted()
+
+    @GradleTest
+    @DisplayName("A consumer with its own cinterop uses a library in the Kotlin Archive format")
+    fun consumptionWithConsumerCinteropsTest(gradleVersion: GradleVersion) {
+        val publishedProject = kotlinArchiveProducer(gradleVersion, withAppleTargets = false).publish()
+
+        val consumer = kotlinArchiveConsumer(gradleVersion, publishedProject, withAppleTargets = false)
+        consumer.configureCinterop(CONSUMER_CINTEROP_NAME, CONSUMER_CINTEROP_PACKAGE)
+        consumer.cinteropsCallsSource(CONSUMER_CINTEROP_FUNCTION)
+
+        consumer.build("assemble") {
+            assertTasksExecuted(expectedConsumerCompilationTasks(withAppleTargets = false))
+            assertNoDiagnostic(KotlinToolingDiagnostics.UnsupportedKotlinArchiveUsage)
+        }
+    }
+
+    @GradleTest
+    @DisplayName("A consumer gets the npm dependencies of a library in the Kotlin Archive format")
+    fun consumptionWithNpmDependenciesTest(gradleVersion: GradleVersion) {
+        val producer = kotlinArchiveProducer(gradleVersion, withAppleTargets = false, withNodeJs = true)
+        producer.buildScriptInjection {
+            project.applyMultiplatform {
+                sourceSets.jsMain.dependencies {
+                    api(npm("test-npm-dep", "1.1.1"))
+                }
+                sourceSets.wasmJsMain.dependencies {
+                    api(npm("test-npm-dep", "1.1.2"))
+                }
+            }
+        }
+        val publishedProject = producer.publish()
+
+        val consumer = kotlinArchiveConsumer(gradleVersion, publishedProject, withAppleTargets = false)
+        // The npm tasks only exist for a target with an engine
+        consumer.buildScriptInjection {
+            project.applyMultiplatform {
+                js { nodejs() }
+                wasmJs { nodejs() }
+            }
+        }
+
+        consumer.build("jsPackageJson", "wasmJsPackageJson") {
+            assertTasksExecuted(":jsPackageJson", ":wasmJsPackageJson")
+            assertEquals(
+                "1.1.1",
+                consumer.mainPackageJsonDependencies("js")["test-npm-dep"]
+            )
+            assertEquals(
+                "1.1.2",
+                consumer.mainPackageJsonDependencies("wasm")["test-npm-dep"]
+            )
+        }
+    }
+
+    private fun TestProject.mainPackageJsonDependencies(target: String): Map<String, String> {
+        val packageJson = projectPath.resolve("build/$target/packages")
+            .listDirectoryEntries()
+            .single { !it.name.endsWith("-test") }
+            .resolve("package.json")
+        assertFileExists(packageJson)
+        return Json.parseToJsonElement(packageJson.readText())
+            .jsonObject["dependencies"]
+            ?.jsonObject
+            ?.mapValues { it.value.jsonPrimitive.content }
+            .orEmpty()
+    }
+
+    @GradleTest
+    @DisplayName("A consumer imports the files stored inside the klib of a library in the Kotlin Archive format")
+    fun consumptionOfFilesStoredInsideKlibTest(gradleVersion: GradleVersion) {
+        val producer = kotlinArchiveProducer(
+            gradleVersion,
+            withAppleTargets = false,
+            withNodeJs = true,
+        )
+        producer.configureWebResourcesStoredInsideKlib()
+        val publishedProject = producer.publish("jsPublicPackageJson", "wasmJsPublicPackageJson")
+
+        val consumer = kotlinArchiveConsumer(gradleVersion, publishedProject, withAppleTargets = false)
+        consumer.buildScriptInjection {
+            project.applyMultiplatform {
+                this.js { nodejs() }
+                this.wasmJs { nodejs() }
+            }
+        }
+        consumer.build("jsPackageJson", "wasmJsPackageJson") {
+            assertTasksExecuted(":jsPackageJson", ":wasmJsPackageJson")
+        }
+        val importedNodeModulesList = webRootDirectories.flatMap { rootDirectory ->
+            val importedModulesFile = consumer.projectPath.resolve("build/$rootDirectory/packages_imported").toFile()
+            importedModulesFile.walkTopDown()
+                .filter { it.isFile }
+                .map { it.relativeTo(importedModulesFile).invariantSeparatorsPath }
+                // The state file of the node modules cache belongs to the build, not to a module
+                .filterNot { it.startsWith(AbstractNodeModulesCache.STATE_FILE_NAME) }
+                .map { path ->
+                    val segments = path.split("/")
+                    // A module is stored as <name>/<version>/<its files>
+                    "$rootDirectory/${segments.take(2).joinToString("/")}" to segments.drop(2).joinToString("/")
+                }
+                .toList()
+        }
+        val importedNodeModules: Map<String, List<String>> = importedNodeModulesList
+            .groupBy({ it.first }, { it.second })
+            .mapValues { it.value.sorted() }
+            .toSortedMap()
+
+        assertEquals(
+            expectedImportedNodeModules.prettyPrinted,
+            importedNodeModules.prettyPrinted,
+        )
     }
 
     private fun TestProject.resolvedResources(): List<String> {
@@ -194,6 +354,7 @@ class KotlinArchiveConsumptionIT : KGPBaseTest() {
         gradleVersion: GradleVersion,
         publishedProject: PublishedProject,
         withAppleTargets: Boolean = true,
+        apiDependency: Boolean = false,
     ): TestProject = project("empty", gradleVersion) {
         plugins { kotlin("multiplatform") }
         addPublishedProjectToRepositories(publishedProject)
@@ -210,7 +371,24 @@ class KotlinArchiveConsumptionIT : KGPBaseTest() {
                 kotlinArchiveTargets(withAppleTargets)
 
                 sourceSets.commonMain.dependencies {
-                    implementation(publishedProject.rootCoordinate)
+                    if (apiDependency) {
+                        api(publishedProject.rootCoordinate)
+                    } else {
+                        implementation(publishedProject.rootCoordinate)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun TestProject.exportProducerFromFrameworks(publishedProject: PublishedProject) {
+        buildScriptInjection {
+            project.applyMultiplatform {
+                appleTargets.forEach { targetName ->
+                    val target = targets.getByName(targetName) as KotlinNativeTarget
+                    target.binaries.framework {
+                        export(publishedProject.rootCoordinate)
+                    }
                 }
             }
         }
@@ -235,7 +413,7 @@ class KotlinArchiveConsumptionIT : KGPBaseTest() {
         }
     }
 
-    private fun TestProject.cinteropsCallsSource() {
+    private fun TestProject.cinteropsCallsSource(cinteropFunction: String = PRODUCER_CINTEROP_FUNCTION) {
         buildScriptInjection {
             project.enableCinteropCommonization()
         }
@@ -247,7 +425,7 @@ class KotlinArchiveConsumptionIT : KGPBaseTest() {
                 @file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
 
                 fun $functionName() {
-                    $PRODUCER_CINTEROP_FUNCTION()
+                    $cinteropFunction()
                 }
                 """.trimIndent(),
                 fileName = "${sourceSetName}Cinterop.kt",
@@ -273,6 +451,36 @@ class KotlinArchiveConsumptionIT : KGPBaseTest() {
 
         private val targetsWithCheckedResolution = listOf("linuxX64", "jvm")
 
+        private val appleTargets = listOf("iosArm64", "macosArm64")
+
+        private val webRootDirectories = listOf("js", "wasm")
+
+        private val expectedImportedNodeModules = mapOf(
+            "js/producer/1.0.0" to listOf(
+                "package.json",
+                "stored.html",
+                "stored.js",
+                "stored.js.map",
+                "stored.mjs",
+                "stored.wasm",
+            ),
+            "wasm/producer/1.0.0" to listOf(
+                "package.json",
+                "stored.html",
+                "stored.js",
+                "stored.js.map",
+                "stored.mjs",
+                "stored.wasm",
+            ),
+        )
+
+        private fun frameworkLinkTaskOf(targetName: String): String =
+            ":linkDebugFramework" + targetName.replaceFirstChar { it.uppercase() }
+
+        private val expectedFrameworkLinkTasks = appleTargets.map(::frameworkLinkTaskOf)
+
+        private const val EXPORT_LIBRARY_ARGUMENT = "-Xexport-library="
+
         private val nativeSourceSets = setOf(
             "nativeMain",
             "appleMain",
@@ -285,6 +493,7 @@ class KotlinArchiveConsumptionIT : KGPBaseTest() {
 
         private const val RESOLVE_RESOURCES_TASK_NAME = "resolveProducerResources"
         private const val RESOLVED_RESOURCES_DIRECTORY = "resolvedProducerResources"
+
 
         /**
          * Resources of every target, merged from all the source sets it is compiled from.

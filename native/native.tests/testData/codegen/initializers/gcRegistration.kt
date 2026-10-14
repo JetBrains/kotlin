@@ -1,0 +1,30 @@
+// IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE: Native:*
+@file:OptIn(kotlin.native.runtime.NativeRuntimeApi::class, kotlin.experimental.ExperimentalNativeApi::class)
+
+import kotlin.native.runtime.GC
+import kotlin.native.ref.WeakReference
+
+class C(val x: Int)
+
+val weakX = initX()
+val xStatus = checkX()
+var x: C? = null
+
+@NoInline
+fun initX(): WeakReference<C> {
+    x = C(42)
+    return WeakReference(x!!)
+}
+
+fun checkX(): String {
+    GC.collect()
+    val v = weakX.value?.x
+    return when (v) {
+        42 -> "OK"
+        else -> "FAIL: $v"
+    }
+}
+
+fun box(): String {
+    return xStatus
+}

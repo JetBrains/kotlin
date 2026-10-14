@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScopeWithLazyNestedScope
 import org.jetbrains.kotlin.fir.scopes.impl.lazyNestedClassifierScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseWithCallableMembersInSupertypes
 import org.jetbrains.kotlin.fir.types.constructClassLikeType
 import org.jetbrains.kotlin.fir.types.isAny
 import org.jetbrains.kotlin.fir.types.lookupTagIfAny
@@ -37,6 +38,15 @@ object JavaScopeProvider : FirScopeProvider() {
         memberRequiredPhase: FirResolvePhase?,
     ): FirTypeScope {
         val symbol = klass.symbol as FirRegularClassSymbol
+        scopeSession.ensureRequiredMembersPhase(
+            symbol,
+            JAVA_REQUIRED_MEMBERS_PHASE,
+            memberRequiredPhase,
+            // Java classes are always resolved
+            resolveOwner = {},
+            resolveHierarchy = { klass.lazyResolveToPhaseWithCallableMembersInSupertypes(useSiteSession, it) },
+        )
+
         val enhancementScope = buildJavaEnhancementScope(useSiteSession, symbol, scopeSession, memberRequiredPhase)
         if (klass.classKind == ClassKind.ANNOTATION_CLASS) {
             return buildSyntheticScopeForAnnotations(useSiteSession, symbol, scopeSession, enhancementScope)
@@ -221,7 +231,7 @@ object JavaScopeProvider : FirScopeProvider() {
     ): FirContainingNamesAwareScope? {
         return lazyNestedClassifierScope(
             useSiteSession,
-            klass.classId,
+            klass,
             (klass as FirJavaClass).existingNestedClassifierNames
         )
     }
@@ -231,3 +241,4 @@ private val JAVA_SYNTHETIC_FOR_ANNOTATIONS = scopeSessionKey<FirRegularClassSymb
 private val JAVA_ENHANCEMENT_FOR_STATIC = scopeSessionKey<FirRegularClassSymbol, JavaClassStaticEnhancementScope>()
 private val JAVA_ENHANCEMENT = scopeSessionKey<FirRegularClassSymbol, JavaClassMembersEnhancementScope>()
 private val JAVA_USE_SITE = scopeSessionKey<FirRegularClassSymbol, JavaClassUseSiteMemberScope>()
+private val JAVA_REQUIRED_MEMBERS_PHASE = requiredMembersPhaseStampKey<FirRegularClassSymbol>()

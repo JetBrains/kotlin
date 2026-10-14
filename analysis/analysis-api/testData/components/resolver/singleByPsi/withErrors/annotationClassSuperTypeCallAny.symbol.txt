@@ -1,0 +1,5 @@
+KtSuperTypeCallEntry(37,42): 'Any()'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): kotlin.Any
+    ]

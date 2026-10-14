@@ -57,8 +57,13 @@ class StackPeepholeOptimizationsTransformer : MethodTransformer() {
                 Opcodes.POP -> {
                     when {
                         prev.isEliminatedByPop() -> {
-                            instructions.set(insn, InsnNode(Opcodes.NOP))
                             instructions.set(prev, InsnNode(Opcodes.NOP))
+                            instructions.set(insn, InsnNode(Opcodes.NOP))
+                            changed = true
+                        }
+                        prev.isReifiedOperationPlaceholderConstant() -> {
+                            instructions.removeReifiedOperation(prev)
+                            instructions.set(insn, InsnNode(Opcodes.NOP))
                             changed = true
                         }
                         prev.opcode == Opcodes.DUP_X1 -> {
@@ -102,9 +107,9 @@ class StackPeepholeOptimizationsTransformer : MethodTransformer() {
                     } else {
                         val prev2 = prev.previousMeaningful() ?: continue
                         if (prev.isEliminatedByPop() && prev2.isEliminatedByPop()) {
-                            instructions.set(insn, InsnNode(Opcodes.NOP))
-                            instructions.set(prev, InsnNode(Opcodes.NOP))
                             instructions.set(prev2, InsnNode(Opcodes.NOP))
+                            instructions.set(prev, InsnNode(Opcodes.NOP))
+                            instructions.set(insn, InsnNode(Opcodes.NOP))
                             changed = true
                         }
                     }
@@ -137,28 +142,9 @@ class StackPeepholeOptimizationsTransformer : MethodTransformer() {
         isPurePushOfSize1() ||
                 opcode == Opcodes.DUP
 
-    private fun AbstractInsnNode.isPurePushOfSize1(): Boolean =
-        !isLdcOfSize2() && (
-                opcode in Opcodes.ACONST_NULL..Opcodes.FCONST_2 ||
-                        opcode in Opcodes.BIPUSH..Opcodes.ILOAD ||
-                        opcode == Opcodes.FLOAD ||
-                        opcode == Opcodes.ALOAD ||
-                        isUnitInstance()
-                )
-
     private fun AbstractInsnNode.isEliminatedByPop2() =
         isPurePushOfSize2() ||
                 opcode == Opcodes.DUP2
-
-    private fun AbstractInsnNode.isPurePushOfSize2(): Boolean =
-        isLdcOfSize2() ||
-                opcode == Opcodes.LCONST_0 || opcode == Opcodes.LCONST_1 ||
-                opcode == Opcodes.DCONST_0 || opcode == Opcodes.DCONST_1 ||
-                opcode == Opcodes.LLOAD ||
-                opcode == Opcodes.DLOAD
-
-    private fun AbstractInsnNode.isLdcOfSize2(): Boolean =
-        opcode == Opcodes.LDC && this is LdcInsnNode && (this.cst is Double || this.cst is Long)
 
     private fun AbstractInsnNode.isKotlinJvmInternalIntrinsicsCompareInt() =
         isMethodInsnWith(Opcodes.INVOKESTATIC) {

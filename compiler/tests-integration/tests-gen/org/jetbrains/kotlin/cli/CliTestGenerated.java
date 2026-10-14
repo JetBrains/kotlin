@@ -191,6 +191,12 @@ public class CliTestGenerated extends AbstractCliTest {
     }
 
     @Test
+    @TestMetadata("intermediateHasNonExistentDependency.args")
+    public void testIntermediateHasNonExistentDependency() {
+      run("intermediateHasNonExistentDependency.args");
+    }
+
+    @Test
     @TestMetadata("jvmDependenciesInCommonClasspath_dir.args")
     public void testJvmDependenciesInCommonClasspath_dir() {
       run("jvmDependenciesInCommonClasspath_dir.args");
@@ -200,6 +206,12 @@ public class CliTestGenerated extends AbstractCliTest {
     @TestMetadata("jvmDependenciesInCommonClasspath_friends.args")
     public void testJvmDependenciesInCommonClasspath_friends() {
       run("jvmDependenciesInCommonClasspath_friends.args");
+    }
+
+    @Test
+    @TestMetadata("jvmDependenciesInCommonClasspath_friendsWithKlib.args")
+    public void testJvmDependenciesInCommonClasspath_friendsWithKlib() {
+      run("jvmDependenciesInCommonClasspath_friendsWithKlib.args");
     }
 
     @Test
@@ -619,15 +631,33 @@ public class CliTestGenerated extends AbstractCliTest {
     }
 
     @Test
+    @TestMetadata("checkerLv24.args")
+    public void testCheckerLv24() {
+      run("checkerLv24.args");
+    }
+
+    @Test
     @TestMetadata("contracts.args")
     public void testContracts() {
       run("contracts.args");
     }
 
     @Test
+    @TestMetadata("default.args")
+    public void testDefault() {
+      run("default.args");
+    }
+
+    @Test
     @TestMetadata("full.args")
     public void testFull() {
       run("full.args");
+    }
+
+    @Test
+    @TestMetadata("lv24.args")
+    public void testLv24() {
+      run("lv24.args");
     }
   }
 
@@ -2127,6 +2157,12 @@ public class CliTestGenerated extends AbstractCliTest {
     }
 
     @Test
+    @TestMetadata("tailrec.args")
+    public void testTailrec() {
+      run("tailrec.args");
+    }
+
+    @Test
     @TestMetadata("twoDiagnosticsOnSingleElement.args")
     public void testTwoDiagnosticsOnSingleElement() {
       run("twoDiagnosticsOnSingleElement.args");
@@ -2145,9 +2181,15 @@ public class CliTestGenerated extends AbstractCliTest {
     }
 
     @Test
-    @TestMetadata("valhallaSupportIllegalConfiguration.args")
-    public void testValhallaSupportIllegalConfiguration() {
-      run("valhallaSupportIllegalConfiguration.args");
+    @TestMetadata("valhallaValueClassesIllegalConfiguration.args")
+    public void testValhallaValueClassesIllegalConfiguration() {
+      run("valhallaValueClassesIllegalConfiguration.args");
+    }
+
+    @Test
+    @TestMetadata("valhallaValueClassesJvmTarget27.args")
+    public void testValhallaValueClassesJvmTarget27() {
+      run("valhallaValueClassesJvmTarget27.args");
     }
 
     @Test
@@ -2621,6 +2663,12 @@ public class CliTestGenerated extends AbstractCliTest {
     }
 
     @Test
+    @TestMetadata("tailrec.args")
+    public void testTailrec() {
+      run("tailrec.args");
+    }
+
+    @Test
     @TestMetadata("unknownFriendLibraries.args")
     public void testUnknownFriendLibraries() {
       run("unknownFriendLibraries.args");
@@ -2710,6 +2758,12 @@ public class CliTestGenerated extends AbstractCliTest {
     @TestMetadata("reportPerfLowerings.args")
     public void testReportPerfLowerings() {
       run("reportPerfLowerings.args");
+    }
+
+    @Test
+    @TestMetadata("tailrec.args")
+    public void testTailrec() {
+      run("tailrec.args");
     }
 
     @Test

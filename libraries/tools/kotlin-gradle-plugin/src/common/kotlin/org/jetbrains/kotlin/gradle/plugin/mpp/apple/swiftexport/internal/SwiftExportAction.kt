@@ -60,7 +60,7 @@ internal abstract class SwiftExportAction : WorkAction<SwiftExportAction.SwiftEx
         )
 
         val json = SerializationTools.writeToJson(modules)
-        parameters.swiftModulesFile.getFile().writeText(json)
+        parameters.swiftModulesFile.getFile().also { it.parentFile.mkdirs() }.writeText(json)
     }
 
     private fun createModuleConfig(

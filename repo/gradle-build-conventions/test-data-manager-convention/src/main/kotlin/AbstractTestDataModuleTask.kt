@@ -3,13 +3,17 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.JavaExec
+import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
+import org.gradle.process.CommandLineArgumentProvider
 
 /**
  * Base class for the `-P`-driven test data manager tasks: [CheckTestDataModuleTask] (`checkTestData`)
@@ -78,20 +82,40 @@ abstract class AbstractTestDataModuleTask : JavaExec() {
     @get:[Input Optional]
     abstract val incremental: Property<Boolean>
 
+    /**
+     * Environment variables inherited from the carrier `Test` task.
+     *
+     * [JavaExec] has no lazy environment API, so the value is captured here and applied in [exec].
+     * `@Internal` like [JavaExec.getEnvironment].
+     */
+    @get:Internal
+    abstract val inheritedEnvironment: MapProperty<String, String>
+
+    /**
+     * JVM argument providers inherited from the carrier `Test` task.
+     *
+     * [JavaExec.getJvmArgumentProviders] is a plain list with no lazy API, so the providers are captured here
+     * and added in [exec].
+     */
+    @get:Nested
+    abstract val inheritedJvmArgumentProviders: ListProperty<CommandLineArgumentProvider>
+
     init {
         group = "verification"
         mainClass.set("org.jetbrains.kotlin.analysis.test.data.manager.TestDataManagerRunner")
     }
 
     /**
-     * Forwards the fixed [mode] and every set option to the test runner as `-D` system properties,
-     * then delegates to [JavaExec.exec].
+     * Applies the inherited options that have no lazy [JavaExec] counterpart, forwards the fixed [mode] and
+     * every set option to the test runner as `-D` system properties, then delegates to [JavaExec.exec].
      *
      * All options are forwarded regardless of [mode] for symmetry; the runner ignores options that are
      * irrelevant to the current mode (e.g. `incremental` is effective only in update mode).
      */
     @TaskAction
     override fun exec() {
+        environment(inheritedEnvironment.get())
+        jvmArgumentProviders.addAll(inheritedJvmArgumentProviders.get())
         systemProperty(TestDataManagerOption.MODE, mode)
         forwardOption(TestDataManagerOption.TEST_DATA_PATH, testDataPath)
         forwardOption(TestDataManagerOption.TEST_CLASS_PATTERN, testClassPattern)

@@ -6,17 +6,24 @@
 package org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers
 
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmSubTargetContainerDsl
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
+import org.jetbrains.kotlin.gradle.targets.wasm.KotlinWasmtimeSubtarget
+import org.jetbrains.kotlin.gradle.utils.withType
 
 internal object WasmWasiEnvironmentChecker : JsLikeEnvironmentChecker(
     KotlinToolingDiagnostics.WasmWasiEnvironmentNotChosenExplicitly,
     { it.platformType == KotlinPlatformType.wasm && (it as KotlinJsIrTarget).wasmTargetType == KotlinWasmTargetType.WASI },
     listOf(
-        "nodejs()"
+        "wasmtime()"
     ),
     listOf(
-        { it.nodejsNotConfigured() }
+        { it.wasmtimeNotConfigured() }
     )
 )
+
+private fun KotlinTarget.wasmtimeNotConfigured() =
+    (this as? KotlinWasmSubTargetContainerDsl)?.subTargets?.withType<KotlinWasmtimeSubtarget>()?.isNotEmpty() != true

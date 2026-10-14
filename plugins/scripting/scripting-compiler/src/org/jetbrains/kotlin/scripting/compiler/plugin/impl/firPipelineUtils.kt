@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.scripting.compiler.plugin.impl
 import org.jetbrains.kotlin.backend.common.actualizer.IrActualizedResult
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
+import org.jetbrains.kotlin.cli.common.fir.reportToMessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFir2IrPipelinePhase.convertToIrAndActualizeForJvm
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmWriteOutputsPhase.writeOutputsIfNeeded
@@ -31,6 +32,8 @@ import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.PotentiallyIncorrectPhaseTimeMeasurement
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
+import kotlin.script.experimental.api.ResultWithDiagnostics
+import kotlin.script.experimental.api.asSuccess
 
 /**
  * Used for marking API used in the legacy K2 CLI pipeline.
@@ -69,6 +72,40 @@ internal fun convertAnalyzedFirToIr(
         irActualizedResult,
         symbolTable
     )
+}
+
+/**
+ * Converts the analyzed [frontendOutput] to IR and generates the code from it, unless errors are reported before or during the conversion.
+ * The diagnostics collected by the [environment] reporter are passed to the [messageCollector] once, on failure or after the codegen.
+ */
+@LegacyK2CliPipeline
+internal fun generateCodeIfNoErrors(
+    configuration: CompilerConfiguration,
+    targetId: TargetId,
+    frontendOutput: AllModulesFrontendOutput,
+    environment: ModuleCompilerEnvironment,
+    messageCollector: ScriptDiagnosticsMessageCollector,
+    renderDiagnosticName: Boolean,
+): ResultWithDiagnostics<Pair<ModuleCompilerIrBackendInput, GenerationState>> {
+    val diagnosticsReporter = environment.diagnosticsReporter
+
+    fun reportDiagnostics() = diagnosticsReporter.reportToMessageCollector(messageCollector, renderDiagnosticName)
+
+    fun reportedFailure(): ResultWithDiagnostics.Failure {
+        reportDiagnostics()
+        return failure(messageCollector)
+    }
+
+    if (diagnosticsReporter.hasErrors) return reportedFailure()
+
+    val irInput = convertAnalyzedFirToIr(configuration, targetId, frontendOutput, environment)
+    if (diagnosticsReporter.hasErrors) return reportedFailure()
+
+    val generationState = generateCodeFromIr(irInput, environment)
+    if (diagnosticsReporter.hasErrors) return reportedFailure()
+
+    reportDiagnostics()
+    return (irInput to generationState).asSuccess()
 }
 
 @LegacyK2CliPipeline

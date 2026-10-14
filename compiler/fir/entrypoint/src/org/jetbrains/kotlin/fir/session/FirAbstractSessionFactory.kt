@@ -262,13 +262,14 @@ abstract class FirAbstractSessionFactory<CONTEXT> {
             if (configuration.dumpInferenceLogs) register(FirInferenceLogger::class, FirInferenceLogger())
             registerCliCompilerAndCommonComponents(languageVersionSettings, isFactoryForMetadataCompilation)
             registerResolveComponents(
-                configuration.diagnosticFactoriesStorage ?: error("diagnosticFactoriesStorage is not registered in the configuration"),
                 configuration.lookupTracker,
                 configuration.enumWhenTracker,
                 configuration.importTracker,
                 configuration.fileMappingTracker,
             )
-            registerCliCompilerOnlyResolveComponents()
+            registerCliCompilerOnlyResolveComponents(
+                configuration.diagnosticFactoriesStorage ?: error("diagnosticFactoriesStorage is not registered in the configuration"),
+            )
 
             registerSourceSessionComponents(context)
 

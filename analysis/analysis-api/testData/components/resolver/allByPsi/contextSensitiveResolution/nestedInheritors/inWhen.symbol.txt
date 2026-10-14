@@ -437,19 +437,21 @@ KtBlockExpression(587,737): '{'
   null
 
 KtCallExpression(593,735): 'receiveMyClass('
-  KaSimpleSymbolResolutionSuccess:
-    symbols = [
+  KaSimpleSymbolResolutionError:
+    candidateSymbols = [
       /receiveMyClass(m: MyClass): kotlin.Unit
     ]
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /receiveMyClass>
 
 KtNameReferenceExpression(593,607): 'receiveMyClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSimpleSymbolResolutionSuccess:
-    symbols = [
+  KaSimpleSymbolResolutionError:
+    candidateSymbols = [
       /receiveMyClass(m: MyClass): kotlin.Unit
     ]
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /receiveMyClass>
 
 KtValueArgumentList(607,735): '('
   null
@@ -1277,8 +1279,9 @@ KtWhenEntry(1583,1617): 'else -> NestedInheritorOfOpenClass'
 
 KtNameReferenceExpression(1591,1617): 'NestedInheritorOfOpenClass'
   isImplicitReferenceToCompanion: false
-  contextSensitiveResolutionStatus: NotAvailable
+  contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSimpleSymbolResolutionError:
-    candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'NestedInheritorOfOpenClass'.>
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      /OpenClass.NestedInheritorOfOpenClass
+    ]

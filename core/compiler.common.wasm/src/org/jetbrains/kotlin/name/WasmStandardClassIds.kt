@@ -24,6 +24,9 @@ object WasmStandardClassIds {
         val JsFun = "JsFun".baseId()
 
         @JvmField
+        val EagerInitialization = "EagerInitialization".baseId()
+
+        @JvmField
         val annotationsRequiringExternal = setOf(JsModule, JsQualifier)
     }
 }

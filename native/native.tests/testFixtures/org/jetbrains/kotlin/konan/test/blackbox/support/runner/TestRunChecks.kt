@@ -20,9 +20,9 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.OptimizationMod
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Settings
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.LLDBTestOutputFilter
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.TestOutputFilter
-import org.jetbrains.kotlin.konan.test.blackbox.support.util.TestReport
 import org.jetbrains.kotlin.native.executors.RunProcessResult
 import org.jetbrains.kotlin.native.executors.runProcess
+import org.jetbrains.kotlin.test.report.TestReport
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
 import org.jetbrains.kotlin.utils.yieldIfNotNull
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
@@ -139,9 +139,11 @@ sealed interface TestRunCheck {
     class TestFiltering(val testOutputFilter: TestOutputFilter) : TestRunCheck {
         override fun apply(testRun: TestRun, runResult: RunResult): Result {
             if (testOutputFilter != TestOutputFilter.NO_FILTERING && testOutputFilter != LLDBTestOutputFilter) {
-                val testReport = runResult.processOutput.stdOut.testReport
+                val tcTestReport = runResult.processOutput.stdOut.testReport
 
-                checkNotNull(testReport) { "TestRun has TestFiltering enabled, but test report is null" }
+                checkNotNull(tcTestReport) { "TestRun has TestFiltering enabled, but test report is null" }
+
+                val testReport = tcTestReport.tests
 
                 if (testReport.isEmpty())
                     return Result.Failed("No tests have been found. Test report is empty")
@@ -215,7 +217,7 @@ sealed interface TestRunCheck {
             } else Result.Passed
         }
 
-        private fun TestReport.checkDisabled() {
+        private fun TestReport<TestName>.checkDisabled() {
             Assumptions.assumeFalse(
                 ignoredTests.isNotEmpty() && passedTests.isEmpty(),
                 "Test case is disabled"

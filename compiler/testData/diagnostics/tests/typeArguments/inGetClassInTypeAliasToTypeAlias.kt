@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-84380
-// LANGUAGE: -ForbidUselessTypeArgumentsIn25
+// LANGUAGE: -ForbidUselessTypeArgumentsIn26
 // WITH_STDLIB
 
 typealias No = List<Int>

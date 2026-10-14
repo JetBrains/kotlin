@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
+
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
 import org.gradle.api.artifacts.Dependency
@@ -15,6 +17,14 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject.Companion.PACKAGE_J
 import org.jetbrains.kotlin.gradle.utils.normalizedAbsoluteFile
 import java.io.File
 
+@Suppress("DEPRECATION")
+internal typealias NpmDependencyDeprecated = NpmDependency
+
+@Suppress("DEPRECATION")
+internal typealias NpmDependencyScopeDeprecated = NpmDependency.Scope
+
+@Deprecated("Use KotlinNpmDependency instead")
+@Suppress("DEPRECATION") // the deprecated Scope is a part of this deprecated class
 data class NpmDependency(
     val objectFactory: ObjectFactory,
     val scope: Scope = Scope.NORMAL,
@@ -23,6 +33,7 @@ data class NpmDependency(
 ) : FileCollectionDependency,
     SelfResolvingDependencyInternal {
 
+    @Deprecated("Use KotlinNpmDependency.Scope instead")
     enum class Scope {
         NORMAL,
         DEV,
@@ -53,15 +64,15 @@ data class NpmDependency(
 
 internal fun directoryNpmDependency(
     objectFactory: ObjectFactory,
-    scope: NpmDependency.Scope,
+    scope: NpmDependencyScopeDeprecated,
     name: String,
     directory: File,
-): NpmDependency {
+): NpmDependencyDeprecated {
     check(directory.isDirectory) {
         "Dependency on local path should point on directory but $directory found"
     }
 
-    return NpmDependency(
+    return NpmDependencyDeprecated(
         objectFactory = objectFactory,
         scope = scope,
         name = name,

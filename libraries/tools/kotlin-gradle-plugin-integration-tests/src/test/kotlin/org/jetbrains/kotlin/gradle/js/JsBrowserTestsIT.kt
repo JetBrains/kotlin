@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.js
 
 import org.gradle.api.logging.LogLevel
+import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.util.GradleVersion
@@ -20,6 +21,7 @@ import kotlin.io.path.moveTo
 import org.junit.jupiter.api.Assumptions.assumeFalse
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
+import kotlin.jvm.java
 import kotlin.test.assertContains
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -163,6 +165,32 @@ class JsBrowserTestsIT : KGPBaseTest() {
     }
 
     @GradleTest
+    @DisplayName("KT-89521: Wasm test ESM bundle is skipped when there are no test sources")
+    fun `wasm test esm bundle is skipped without test sources`(gradleVersion: GradleVersion) {
+        project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    wasmJs {
+                        browser {
+                            @OptIn(ExperimentalJsTestDsl::class)
+                            test {}
+                        }
+                    }
+                }
+            }
+
+            build("wasmJsTest") {
+                assertTasksNoSource(":wasmJsTestBundleAsEsm")
+                assertTasksNoSource(":wasmJsTest")
+            }
+        }
+    }
+
+    @GradleTest
     fun `smoke js browser test`(
         gradleVersion: GradleVersion,
     ) {
@@ -215,9 +243,18 @@ class JsBrowserTestsIT : KGPBaseTest() {
                             fun assertFails() {
                                 assertTrue(42 == 0)
                             }
+                            
+                            @Test
+                            fun `assert special symbols "🫎"`() {
+                                assertNotEquals("🫎", "🎈")
+                            }
                         }
                         """.trimIndent()
                     )
+                }
+
+                project.tasks.withType(KotlinJsTest::class.java).configureEach {
+                    it.filter.setExcludePatterns("JsBrowserSmokeTest.assert special symbols \"🫎\"")
                 }
             }
 

@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.classSymbol
 import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
 import org.jetbrains.kotlin.asJava.classes.*
 import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.jetbrains.kotlin.light.classes.symbol.KaSymbolJavaView
+import org.jetbrains.kotlin.analysis.api.javaInterop.KaSymbolJavaView
 import org.jetbrains.kotlin.light.classes.symbol.SymbolFakeFile
 import org.jetbrains.kotlin.light.classes.symbol.utils.analyzeForLightClasses
 import org.jetbrains.kotlin.light.classes.symbol.utils.cachedValue

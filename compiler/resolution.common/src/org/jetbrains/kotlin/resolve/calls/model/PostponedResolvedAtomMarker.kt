@@ -37,7 +37,11 @@ interface FunctionLikeAtomMarker : PostponedResolvedAtomMarker {
     val outputType: KotlinTypeMarker?
 }
 
-interface CollectionLiteralAtomMarker : PostponedResolvedAtomMarker
+/**
+ * A postponed atom whose resolution uses an expected type as an implicit static receiver:
+ * collection literals, context-sensitive resolution.
+ */
+interface ExpectedTypeAsStaticReceiverAtomMarker : PostponedResolvedAtomMarker
 
 // TODO: Merge with PostponedAtomWithRevisableExpectedType once K1 is dropped (KT-88318)
 interface PostponedAtomWithRevisableExpectedTypeAndRegisteredTypeVariables : PostponedAtomWithRevisableExpectedType {

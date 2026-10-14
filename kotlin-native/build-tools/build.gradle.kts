@@ -7,8 +7,8 @@ import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 
 buildscript {
-    @Suppress("DEPRECATION")
-    val rootBuildDirectory by extra(project.file("../.."))
+    val rootBuildDirectory = project.file("../..")
+    extra["rootBuildDirectory"] = rootBuildDirectory
     apply(from = rootBuildDirectory.resolve("kotlin-native/gradle/loadRootProperties.gradle"))
 
     dependencies {
@@ -44,6 +44,7 @@ kotlin {
     }
     @OptIn(ExperimentalKotlinGradlePluginApi::class, ExperimentalBuildToolsApi::class)
     compilerVersion = embeddedKotlinVersion
+    @Suppress("DEPRECATION")
     coreLibrariesVersion = embeddedKotlinVersion
     jvmToolchain(17)
 

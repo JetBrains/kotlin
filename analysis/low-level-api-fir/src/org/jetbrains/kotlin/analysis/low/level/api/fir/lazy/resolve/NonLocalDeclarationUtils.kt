@@ -23,15 +23,7 @@ internal fun elementCanBeLazilyResolved(element: KtElement?): Boolean = when (el
     is KtScript -> elementCanBeLazilyResolved(element.parent as? KtFile)
     is KtFile -> element !is KtCodeFragment
     is KtParameter -> elementCanBeLazilyResolved(element.ownerDeclaration)
-    is KtScriptInitializer -> {
-        val script = element.containingDeclaration
-
-        @OptIn(KtExperimentalApi::class)
-        // Script initializers inside repl snippets are flattened into the eval function,
-        // so they are not present in the FIR tree at all and can't be resolved autonomously.
-        !script.isReplSnippet && elementCanBeLazilyResolved(script)
-    }
-
+    is KtScriptInitializer -> elementCanBeLazilyResolved(element.containingDeclaration)
     is KtCallableDeclaration, is KtEnumEntry, is KtDestructuringDeclaration, is KtClassInitializer -> {
         val parentToCheck = when (val parent = element.parent) {
             is KtClassOrObject, is KtFile -> parent
@@ -43,17 +35,12 @@ internal fun elementCanBeLazilyResolved(element: KtElement?): Boolean = when (el
 
         when (parentToCheck) {
             is KtEnumEntry -> false
-            // Destructuring declarations are embedded into the eval function inside repl snippets
-            is KtScript if element is KtDestructuringDeclaration && parentToCheck.isReplSnippet -> false
             else -> elementCanBeLazilyResolved(parentToCheck)
         }
     }
 
-    // A property component is normally owned by a 'KtProperty', but in broken code it can be attached
-    // to a 'KtDestructuringDeclaration', so the owner has to be checked instead of using 'property'
-    // TODO(KT-74793): return back to `property` once the issue is fixed in the parser
-    is KtPropertyAccessor -> elementCanBeLazilyResolved(element.parent as? KtProperty)
-    is KtBackingField -> elementCanBeLazilyResolved(element.parent as? KtProperty)
+    is KtPropertyAccessor -> elementCanBeLazilyResolved(element.property)
+    is KtBackingField -> elementCanBeLazilyResolved(element.property)
     is KtClassOrObject -> element.isTopLevel() || element.getClassId() != null
     is KtTypeAlias -> element.isTopLevel() || element.getClassId() != null
     is KtModifierList -> element.isNonLocalDanglingModifierList()

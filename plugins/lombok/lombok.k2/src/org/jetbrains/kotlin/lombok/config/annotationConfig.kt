@@ -5,20 +5,23 @@
 
 package org.jetbrains.kotlin.lombok.config
 
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
-import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.declarations.getBooleanArgument
+import org.jetbrains.kotlin.fir.declarations.getCompilerRequiredAnnotationByClassId
 import org.jetbrains.kotlin.fir.declarations.getStringArgument
 import org.jetbrains.kotlin.fir.declarations.getStringArrayArgument
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.lombok.generators.hasJavaOrigin
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.ACCESS
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.BUILDER_CLASS_NAME
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.BUILDER_CLASS_NAME_CONFIG
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.BUILDER_FLAG_USAGE_CONFIG
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.SUPER_BUILDER_FLAG_USAGE_CONFIG
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.SINGULAR_AUTO_CONFIG
+import org.jetbrains.kotlin.lombok.config.LombokConfigNames.SINGULAR_USE_GUAVA_CONFIG
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.BUILDER_METHOD_NAME
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.BUILD_METHOD_NAME
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.CHAIN
@@ -42,8 +45,6 @@ import org.jetbrains.kotlin.lombok.config.LombokConfigNames.FLOGGER_LOG_FLAG_USA
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.JBOSS_LOG_FLAG_USAGE_CONFIG
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.LOG4J2_LOG_FLAG_USAGE_CONFIG
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.XSLF4J_LOG_FLAG_USAGE_CONFIG
-import org.jetbrains.kotlin.lombok.config.LombokConfigNames.DO_NOT_USE_GETTERS
-import org.jetbrains.kotlin.lombok.config.LombokConfigNames.EXCLUDE
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.INCLUDE_FIELD_NAMES
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.JAVA_UTIL_LOG_FLAG_USAGE_CONFIG
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.LOG4J_LOG_FLAG_USAGE_CONFIG
@@ -66,7 +67,7 @@ import org.jetbrains.kotlin.lombok.config.LombokConfigNames.NO_ARGS_CONSTRUCTOR_
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.ALL_ARGS_CONSTRUCTOR_FLAG_USAGE_CONFIG
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.REQUIRED_ARGS_CONSTRUCTOR_FLAG_USAGE_CONFIG
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.EQUALS_AND_HASH_CODE_ONLY_EXPLICITLY_INCLUDED_CONFIG
-import org.jetbrains.kotlin.lombok.config.LombokConfigNames.OF
+import org.jetbrains.kotlin.lombok.config.LombokConfigNames.FIELD_DEFAULTS_PRIVATE
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.TO_STRING_DO_NOT_USE_GETTERS_CONFIG
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -80,11 +81,11 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
  * keeping processors' code unaware about configuration origin.
  */
 
-abstract class ConeAnnotationCompanion<T : ConeLombokAnnotation>(val name: ClassId) {
+abstract class ConeAnnotationCompanion<T : ConeLombokAnnotation>(val classId: ClassId) {
     abstract fun extract(annotation: FirAnnotation, session: FirSession): T
 
     fun getOrNull(symbol: FirBasedSymbol<*>, session: FirSession): T? {
-        return symbol.resolvedCompilerAnnotationsWithClassIds.getAnnotationByClassId(name, session)
+        return symbol.getCompilerRequiredAnnotationByClassId(classId)
             ?.let { this.extract(it, session) }
     }
 }
@@ -113,6 +114,7 @@ class GlobalConfig(
     val builderFlagUsage: FlagUsageValue?,
     val superBuilderFlagUsage: FlagUsageValue?,
     val singularAuto: Boolean,
+    val singularUseGuava: Boolean,
     val logFieldName: String,
     val logFieldIsStatic: Boolean,
     val logFlagUsage: FlagUsageValue?,
@@ -137,6 +139,7 @@ class GlobalConfig(
     val noArgsConstructorFlagUsage: FlagUsageValue?,
     val allArgsConstructorFlagUsage: FlagUsageValue?,
     val requiredArgsConstructorFlagUsage: FlagUsageValue?,
+    val fieldDefaultPrivate: Boolean,
 ) {
     companion object {
         fun extract(config: LombokConfig): GlobalConfig {
@@ -149,6 +152,7 @@ class GlobalConfig(
                 builderFlagUsage = parseFlagUsage(config, BUILDER_FLAG_USAGE_CONFIG),
                 superBuilderFlagUsage = parseFlagUsage(config, SUPER_BUILDER_FLAG_USAGE_CONFIG),
                 singularAuto = config.getBoolean(SINGULAR_AUTO_CONFIG) ?: true,
+                singularUseGuava = config.getBoolean(SINGULAR_USE_GUAVA_CONFIG) ?: false,
                 logFieldName = config.getString(LOG_FIELD_NAME_CONFIG) ?: "log",
                 logFieldIsStatic = config.getBoolean(LOG_FIELD_IS_STATIC_CONFIG) ?: true,
                 logFlagUsage = parseFlagUsage(config, LOG_FLAG_USAGE_CONFIG),
@@ -180,6 +184,7 @@ class GlobalConfig(
                 noArgsConstructorFlagUsage = parseFlagUsage(config, NO_ARGS_CONSTRUCTOR_FLAG_USAGE_CONFIG),
                 allArgsConstructorFlagUsage = parseFlagUsage(config, ALL_ARGS_CONSTRUCTOR_FLAG_USAGE_CONFIG),
                 requiredArgsConstructorFlagUsage = parseFlagUsage(config, REQUIRED_ARGS_CONSTRUCTOR_FLAG_USAGE_CONFIG),
+                fieldDefaultPrivate = config.getBoolean(FIELD_DEFAULTS_PRIVATE) ?: false,
             )
         }
     }
@@ -329,7 +334,10 @@ object ConeLombokAnnotations {
     sealed class AbstractBuilder(
         val builderClassName: String?,
         val buildMethodName: String,
-        val builderMethodName: String,
+        /**
+         * The name of the `builder()` factory to generate, or `null` where the annotation suppresses it.
+         */
+        val builderMethodName: String?,
         val requiresToBuilder: Boolean,
         val accessLevel: AccessLevel,
         val setterPrefix: String?,
@@ -341,8 +349,16 @@ object ConeLombokAnnotations {
             protected fun getBuildMethodName(annotation: FirAnnotation): String =
                 annotation.getStringArgument(BUILD_METHOD_NAME) ?: "build"
 
-            protected fun getBuilderMethodName(annotation: FirAnnotation): String =
-                annotation.getStringArgument(BUILDER_METHOD_NAME) ?: "builder"
+            /**
+             * The name of the `builder()` factory to generate, or `null` where the annotation suppresses it.
+             *
+             * Lombok documents the argument as "if the empty string, suppress generating the `builder`
+             * method", and `HandleBuilder` clears its `generateBuilderMethod` flag on exactly `isEmpty()`.
+             */
+            protected fun getBuilderMethodName(annotation: FirAnnotation): String? {
+                val builderMethodName = annotation.getStringArgument(BUILDER_METHOD_NAME) ?: return "builder"
+                return builderMethodName.takeIf { it.isNotEmpty() }
+            }
 
             protected fun getRequiresToBuilder(annotation: FirAnnotation): Boolean =
                 annotation.getBooleanArgument(TO_BUILDER) ?: false
@@ -352,21 +368,38 @@ object ConeLombokAnnotations {
         }
 
         /**
+         * The visibility of the functions generated *inside* the builder class - its setters and `build()` -
+         * which is not always the [accessLevel] the annotation asks for.
+         *
          * Mirrors Lombok behavior (https://projectlombok.org/features/Builder#small-print):
          *
          * > If setting the access level to `PROTECTED`, all methods generated inside the builder class are actually generated as `public`;
          * the meaning of the `protected` keyword is different inside the inner class, and the precise behavior that `PROTECTED` would indicate
          * (access by any source in the same package is allowed, as well as any subclasses *from the outer class, marked with `@Builder`* is not possible,
          * and marking the inner members `public` is as close as we can get.
+         *
+         * A Kotlin builder needs the same of `PRIVATE`, for a reason Lombok never had to state: Java lets a class
+         * reach a private member of its own nested class, which is what makes `@Builder(access = PRIVATE)` usable
+         * there, while Kotlin's `private` inside the builder class means that class and nothing else - leaving the
+         * annotated class unable to call the setters or `build()` of the very builder it asked for (KT-89027).
+         * Nothing is widened in practice: the builder class itself stays private, and its members can only be
+         * named where its type can. A Java class keeps Lombok's own output.
          */
-        val builderFunctionsAccessLevel: AccessLevel
-            get() = if (accessLevel == AccessLevel.PROTECTED) AccessLevel.PUBLIC else accessLevel
+        fun builderFunctionsVisibility(builderSymbol: FirBasedSymbol<*>): Visibility? {
+            val effectiveAccessLevel = when (accessLevel) {
+                AccessLevel.PROTECTED -> AccessLevel.PUBLIC
+                AccessLevel.PRIVATE -> if (builderSymbol.hasJavaOrigin) accessLevel else AccessLevel.PUBLIC
+                else -> accessLevel
+            }
+
+            return effectiveAccessLevel.toVisibility(builderSymbol)
+        }
     }
 
     class Builder(
         builderClassName: String?,
         buildMethodName: String,
-        builderMethodName: String,
+        builderMethodName: String?,
         requiresToBuilder: Boolean,
         accessLevel: AccessLevel,
         setterPrefix: String?,
@@ -402,7 +435,7 @@ object ConeLombokAnnotations {
     class SuperBuilder(
         builderClassName: String?,
         buildMethodName: String,
-        builderMethodName: String,
+        builderMethodName: String?,
         requiresToBuilder: Boolean,
         setterPrefix: String?,
         hasSpecifiedBuilderClassName: Boolean,

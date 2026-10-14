@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.js.test.utils
 
 import com.intellij.openapi.util.text.StringUtil
+import org.jetbrains.kotlin.cli.common.isWindows
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import org.jetbrains.kotlin.js.backend.ast.ESM_EXTENSION
@@ -293,7 +294,10 @@ fun TestServices.compiledTestOutputDirectory(
     val pathToTestDir = allDirectives[pathToTestDirDirective].first()
 
     val testGroupOutputDir =
-        File(File(pathToRootOutputDir, prefix), testGroupDirPrefix)
+        File(
+            File(pathToRootOutputDir, prefix),
+            testGroupDirPrefix.split('/').joinToString(File.separator, transform = ::maybeShortenWindowsPathPart)
+        )
     val stopFile = ForTestCompileRuntime.transformTestDataPath(pathToTestDir).absoluteFile
     val parentAbsoluteFile = originalFile.parentFile.absoluteFile
     val fullPathSequence = generateSequence(parentAbsoluteFile) { it.parentFile }.toList()
@@ -320,8 +324,18 @@ fun TestServices.compiledTestOutputDirectory(
  *   ...\build\out\WasmJsCodegenBoxTestGenerated2.4\3f2a9d1c\SourceSinkFeedContexts
  */
 private fun maybeShortenWindowsPath(pathParts: List<String>): List<String> {
-    val osName = System.getProperty("os.name") ?: ""
-    if (!osName.startsWith("Windows", ignoreCase = true)) return pathParts
+    if (!isWindows) return pathParts
     if (pathParts.size <= 2) return pathParts
     return listOf(pathParts.joinToString().hashCode().toHexString(), pathParts.last())
+}
+
+private const val WINDOWS_PATH_PART_KEPT_EDGE_LENGTH = 20
+private const val WINDOWS_PATH_PART_MAX_LENGTH = WINDOWS_PATH_PART_KEPT_EDGE_LENGTH + 1 + 8 + 1 + WINDOWS_PATH_PART_KEPT_EDGE_LENGTH
+
+/** Shortens an overly long path component on Windows, keeping both ends of the name and a hash of the whole name in between. */
+fun maybeShortenWindowsPathPart(part: String): String {
+    if (!isWindows) return part
+    if (part.length <= WINDOWS_PATH_PART_MAX_LENGTH) return part
+    val edge = WINDOWS_PATH_PART_KEPT_EDGE_LENGTH
+    return "${part.take(edge)}~${part.hashCode().toHexString()}~${part.takeLast(edge)}"
 }

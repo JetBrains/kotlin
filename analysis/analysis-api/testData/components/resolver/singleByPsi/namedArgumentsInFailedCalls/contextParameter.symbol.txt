@@ -1,0 +1,17 @@
+KtNameReferenceExpression(181,182): 's'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  KaSimpleSymbolResolutionError:
+    candidateSymbols = [
+      s: kotlin.String
+    ]
+    diagnostic = ERROR<NONE_APPLICABLE: None of the following candidates is applicable:
+
+    context(s: String) fun foo(x: Int): Unit:
+      No value passed for parameter 'x'.
+
+    fun foo(n: Int, m: Int): Unit:
+      No parameter with name 's' found.
+      No value passed for parameter 'n'.
+      No value passed for parameter 'm'.>

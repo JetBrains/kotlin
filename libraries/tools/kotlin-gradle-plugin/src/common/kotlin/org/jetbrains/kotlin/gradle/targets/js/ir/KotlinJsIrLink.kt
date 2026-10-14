@@ -168,7 +168,7 @@ abstract class KotlinJsIrLink
     override fun processArgsBeforeCompile(args: K2JSCompilerArguments) {
         if (!isWasmPlatformValue) {
             buildFusService.orNull?.reportFusMetrics {
-                CompileKotlinJsIrLinkMetrics.collectMetrics(args, incrementalJsIr, it)
+                CompileKotlinJsIrLinkMetrics.collectMetrics(incrementalJsIr, it)
             }
         } else {
             buildFusService.orNull?.reportFusMetrics {

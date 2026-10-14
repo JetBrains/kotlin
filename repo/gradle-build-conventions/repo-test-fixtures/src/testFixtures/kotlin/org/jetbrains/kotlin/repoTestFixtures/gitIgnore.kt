@@ -84,14 +84,25 @@ private val ignoreNodesCache = hashMapOf<IgnoreNodeCacheKey, IgnoreNode?>()
 data class IgnoreNodeCacheKey(val repositoryRoot: Path, val path: Path)
 
 @Synchronized
-private fun Path.getOrParseGitIgnoreNode(repositoryRoot: Path): IgnoreNode? =
-    ignoreNodesCache.getOrPut(IgnoreNodeCacheKey(repositoryRoot, this)) {
-        if (!Files.isRegularFile(this, LinkOption.NOFOLLOW_LINKS)) return@getOrPut null
-        val node = IgnoreNode()
-        Files.newByteChannel(this, setOf(StandardOpenOption.READ, LinkOption.NOFOLLOW_LINKS)).use { channel ->
-            Channels.newInputStream(channel).use { stream ->
-                node.parse(repositoryRoot.relativize(this).invariantSeparatorsPathString, stream)
+private fun Path.getOrParseGitIgnoreNode(repositoryRoot: Path): IgnoreNode? {
+    val key = IgnoreNodeCacheKey(repositoryRoot, this)
+    val value = ignoreNodesCache[key]
+    if (value != null || key in ignoreNodesCache) {
+        return value
+    }
+
+    val ignoreNode = if (Files.isRegularFile(this, LinkOption.NOFOLLOW_LINKS)) {
+        IgnoreNode().also { node ->
+            Files.newByteChannel(this, setOf(StandardOpenOption.READ, LinkOption.NOFOLLOW_LINKS)).use { channel ->
+                Channels.newInputStream(channel).use { stream ->
+                    node.parse(repositoryRoot.relativize(this).invariantSeparatorsPathString, stream)
+                }
             }
         }
-        node
+    } else {
+        null
     }
+
+    ignoreNodesCache[key] = ignoreNode
+    return ignoreNode
+}

@@ -9,7 +9,7 @@ FIR tree is a core abstraction for the new frontend. FIR tree contains all infor
 FIR compiler is performed in separate compiler phases. Compiler phases are executed sequentially in the CLI compiler and lazily in the Analysis API.
 There is a guarantee that if we have two phases: `A` and `B` where `B` follows `A`, then all FIR elements visible in phase `B` are already resolved to phase `A`. 
 This is a crucial invariant that determines which information in FIR elements is resolved in each phase.
-See [FirResolvePhase](../../compiler/fir/tree/src/org/jetbrains/kotlin/fir/declarations/FirResolvePhase.kt) for more details and up-to-date information regarding the compiler phases.
+See [FirResolvePhase](/compiler/fir/tree/src/org/jetbrains/kotlin/fir/declarations/FirResolvePhase.kt) for more details and up-to-date information regarding the compiler phases.
 
 ## Phases
 List of all FIR phases that exist in the compiler right now with a short description:
@@ -42,14 +42,14 @@ it runs all those phases for that classifier specifically.
 ## FIR elements
 
 All nodes of the FIR tree are inheritors
-of [FirElement](https://github.com/JetBrains/kotlin/blob/master/compiler/fir/tree/gen/org/jetbrains/kotlin/fir/FirElement.kt) class.
+of [FirElement](/compiler/fir/tree/gen/org/jetbrains/kotlin/fir/FirElement.kt) class.
 There are three main kinds of FirElement:
 
-- [FirDeclaration](https://github.com/JetBrains/kotlin/blob/master/compiler/fir/tree/gen/org/jetbrains/kotlin/fir/declarations/FirDeclaration.kt) is a base class for all declaration nodes. Each declaration must have a unique symbol identifying this declaration. The symbol is used to create declaration references and allows to recreate a declaration with the same symbol and don't break any reference to it.
-- [FirExpression](https://github.com/JetBrains/kotlin/blob/master/compiler/fir/tree/gen/org/jetbrains/kotlin/fir/expressions/FirExpression.kt) is a base class for all possible expressions that can be used in the Kotlin code. All expressions have `typeRef` field containing the type of this
+- [FirDeclaration](/compiler/fir/tree/gen/org/jetbrains/kotlin/fir/declarations/FirDeclaration.kt) is a base class for all declaration nodes. Each declaration must have a unique symbol identifying this declaration. The symbol is used to create declaration references and allows to recreate a declaration with the same symbol and don't break any reference to it.
+- [FirExpression](/compiler/fir/tree/gen/org/jetbrains/kotlin/fir/expressions/FirExpression.kt) is a base class for all possible expressions that can be used in the Kotlin code. All expressions have `typeRef` field containing the type of this
   specific expression.
-- [FirTypeRef](https://github.com/JetBrains/kotlin/blob/master/compiler/fir/tree/gen/org/jetbrains/kotlin/fir/types/FirTypeRef.kt) is a base class for any reference to the type in the user code. There is a difference between a type and a type reference in FIR. Type references are FIR elements inheriting `FirTypeRef` and contain actual ConeKotlinType..
-  of [ConeKotlinType](https://github.com/JetBrains/kotlin/blob/master/compiler/fir/cones/src/org/jetbrains/kotlin/fir/types/ConeTypes.kt) is a similar concept to `KotlinType` from FE1.0. There are three main kinds of `FirTypeRef`:
+- [FirTypeRef](/compiler/fir/tree/gen/org/jetbrains/kotlin/fir/types/FirTypeRef.kt) is a base class for any reference to the type in the user code. There is a difference between a type and a type reference in FIR. Type references are FIR elements inheriting `FirTypeRef` and contain actual ConeKotlinType..
+  of [ConeKotlinType](/compiler/fir/cones/src/org/jetbrains/kotlin/fir/types/ConeTypes.kt) is a similar concept to `KotlinType` from FE1.0. There are three main kinds of `FirTypeRef`:
     - unresolved type refs (`FirUserTypeRef`) represent types refs explicitly declared in source code but not yet resolved to a specific `ConeKotlinType`;
     - implicit type refs (`FirImplicitTypeRef`) represent types refs not declared in code explicitly (`val x /*: FirImplicitTypeRef*/ = 1`);
     - resolved type refs (`FirResolvedTypeRef`) represent resolved type refs containing some specific cone type in `FirResolvedTypeRef.type`
@@ -75,11 +75,11 @@ generated and written with all possible members explicitly declared, so they are
 
 ## Providers
 
-The main way to get some declaration inside compiler is [FirSymbolProvider](https://github.com/JetBrains/kotlin/blob/master/compiler/fir/providers/src/org/jetbrains/kotlin/fir/resolve/providers/FirSymbolProvider.kt)
-and [FirScope](https://github.com/JetBrains/kotlin/blob/master/compiler/fir/tree/src/org/jetbrains/kotlin/fir/scopes/FirScope.kt).
+The main way to get some declaration inside compiler is [FirSymbolProvider](/compiler/fir/semantics.api/src/org/jetbrains/kotlin/fir/resolve/providers/FirSymbolProvider.kt)
+and [FirScope](/compiler/fir/tree/src/org/jetbrains/kotlin/fir/scopes/FirScope.kt).
 
-_Symbol provider_ is used to lookup for classes by their [ClassId](https://github.com/JetBrains/kotlin/blob/master/core/compiler.common/src/org/jetbrains/kotlin/name/ClassId.kt) and top-level functions and properties by
-their [CallableId](https://github.com/JetBrains/kotlin/blob/master/core/compiler.common/src/org/jetbrains/kotlin/name/CallableId.kt).
+_Symbol provider_ is used to lookup for classes by their [ClassId](/core/compiler.common/src/org/jetbrains/kotlin/name/ClassId.kt) and top-level functions and properties by
+their [CallableId](/core/compiler.common/src/org/jetbrains/kotlin/name/CallableId.kt).
 The main symbol provider is a composition of multiple symbol providers, each of them looks up for declaration in specific scopes:
 - In sources of current modules,
 - In generated declarations by plugins for the current module,

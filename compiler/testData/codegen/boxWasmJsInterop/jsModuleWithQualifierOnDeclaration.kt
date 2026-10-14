@@ -24,7 +24,7 @@ export { a };
 package abcd
 
 @JsQualifier("a.b.c.d")
-external var x: Int
+external val x: Int
 
 @JsQualifier("a.b.c.d")
 external fun f(): Int
@@ -37,7 +37,7 @@ external class C {
 
 @JsName("x")
 @JsQualifier("a.b.c.d")
-external var x2: Int
+external val x2: Int
 
 @JsName("f")
 @JsQualifier("a.b.c.d")

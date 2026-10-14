@@ -8,6 +8,7 @@ package kotlin.reflect.jvm.internal
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KProperty1
+import kotlin.jvm.internal.CallableReference
 
 internal open class JavaForKotlinOverrideKProperty1<T, out V>(
     container: KDeclarationContainerImpl,
@@ -28,17 +29,14 @@ internal open class JavaForKotlinOverrideKProperty1<T, out V>(
 
     override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): ReflectKCallable<V> =
         JavaForKotlinOverrideKProperty1<T, V>(
-            container, rawBoundReceiver, overriddenStorage, getterMethod, setterMethod, overriddenProperty,
+            container, CallableReference.NO_RECEIVER, overriddenStorage, getterMethod, setterMethod, overriddenProperty,
         )
 
-    override fun rebindSameArity(boundReceiver: Any?): ReflectKProperty<V> =
-        JavaForKotlinOverrideKProperty1<T, V>(container, boundReceiver, overriddenStorage, getterMethod, setterMethod, overriddenProperty)
+    override fun bindToLowerArity(boundReceiver: Any?, boundContextArguments: List<Any?>): ReflectKCallable<V> {
+        require(boundContextArguments.isEmpty()) { "Java declaration cannot have bound context arguments: $this" }
+        return JavaForKotlinOverrideKProperty0(container, boundReceiver, overriddenStorage, getterMethod, setterMethod, overriddenProperty)
+    }
 
-    override fun unbindToHigherArity(): ReflectKProperty<V> =
-        throw KotlinReflectionInternalError("Cannot unbind KProperty1: $this")
-
-    override fun bindToLowerArity(boundReceiver: Any?): ReflectKProperty<V> =
-        JavaForKotlinOverrideKProperty0(container, boundReceiver, overriddenStorage, getterMethod, setterMethod, overriddenProperty)
 
     class Getter<T, out V>(override val property: JavaForKotlinOverrideKProperty1<T, V>) :
         JavaForKotlinOverrideKProperty.Getter<V>(), KProperty1.Getter<T, V> {
@@ -61,13 +59,15 @@ internal open class JavaForKotlinOverrideKMutableProperty1<T, V>(
 
     override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): ReflectKCallable<V> =
         JavaForKotlinOverrideKMutableProperty1<T, V>(
-            container, rawBoundReceiver, overriddenStorage, getterMethod, setterMethod!!, overriddenProperty,
+            container, CallableReference.NO_RECEIVER, overriddenStorage, getterMethod, setterMethod!!, overriddenProperty,
         )
 
-    override fun bindToLowerArity(boundReceiver: Any?): ReflectKProperty<V> =
-        JavaForKotlinOverrideKMutableProperty0(
+    override fun bindToLowerArity(boundReceiver: Any?, boundContextArguments: List<Any?>): ReflectKCallable<V> {
+        require(boundContextArguments.isEmpty()) { "Java declaration cannot have bound context arguments: $this" }
+        return JavaForKotlinOverrideKMutableProperty0(
             container, boundReceiver, overriddenStorage, getterMethod, setterMethod!!, overriddenProperty,
         )
+    }
 
     class Setter<T, V>(override val property: JavaForKotlinOverrideKMutableProperty1<T, V>) :
         JavaForKotlinOverrideKProperty.Setter<V>(), KMutableProperty1.Setter<T, V> {

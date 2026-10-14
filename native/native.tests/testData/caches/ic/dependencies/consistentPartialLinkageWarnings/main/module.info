@@ -1,0 +1,21 @@
+STEP 0:
+    dependencies: lib, user
+    modifications:
+        U : main.kt -> main.kt
+    arguments: -Xpartial-linkage-loglevel=warning
+    forbidden output: pl-warning.txt
+
+STEP 1:
+    dependencies: lib, user
+    arguments: -Xpartial-linkage-loglevel=warning
+    expected output: pl-warning.txt
+
+STEP 2:
+    dependencies: lib, user
+    arguments: -Xpartial-linkage-loglevel=warning
+    expected output: pl-warning.txt
+
+STEP 3:
+    dependencies: lib, user
+    arguments: -Xpartial-linkage-loglevel=error
+    expected compilation failure: pl-error.txt

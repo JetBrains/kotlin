@@ -158,23 +158,19 @@ KtBlockExpression(271,374): '{'
   null
 
 KtCallExpression(277,297): 'overload(EnumValue1)'
-  KaSimpleSymbolResolutionError:
-    candidateSymbols = [
-      /overload(arg: MyClass): MyClass,
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
       /overload(arg: MyEnum): MyEnum
     ]
-    diagnostic = ERROR<OTHER_ERROR: Ambiguity: overload, [/overload, /overload]>
 
 KtNameReferenceExpression(277,285): 'overload'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSimpleSymbolResolutionError:
-    candidateSymbols = [
-      /overload(arg: MyClass): MyClass,
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
       /overload(arg: MyEnum): MyEnum
     ]
-    diagnostic = ERROR<OTHER_ERROR: Ambiguity: overload, [/overload, /overload]>
 
 KtValueArgumentList(285,297): '(EnumValue1)'
   null
@@ -184,11 +180,12 @@ KtValueArgument(286,296): 'EnumValue1'
 
 KtNameReferenceExpression(286,296): 'EnumValue1'
   isImplicitReferenceToCompanion: false
-  contextSensitiveResolutionStatus: NotAvailable
+  contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSimpleSymbolResolutionError:
-    candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'EnumValue1'.>
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.EnumValue1
+    ]
 
 KtProperty(303,340): 'var v1: MyEnum = overload(EnumValue1)'
   null
@@ -215,23 +212,19 @@ KtNameReferenceExpression(311,317): 'MyEnum'
     ]
 
 KtCallExpression(320,340): 'overload(EnumValue1)'
-  KaSimpleSymbolResolutionError:
-    candidateSymbols = [
-      /overload(arg: MyClass): MyClass,
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
       /overload(arg: MyEnum): MyEnum
     ]
-    diagnostic = ERROR<OTHER_ERROR: Ambiguity: overload, [/overload, /overload]>
 
 KtNameReferenceExpression(320,328): 'overload'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSimpleSymbolResolutionError:
-    candidateSymbols = [
-      /overload(arg: MyClass): MyClass,
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
       /overload(arg: MyEnum): MyEnum
     ]
-    diagnostic = ERROR<OTHER_ERROR: Ambiguity: overload, [/overload, /overload]>
 
 KtValueArgumentList(328,340): '(EnumValue1)'
   null
@@ -241,30 +234,27 @@ KtValueArgument(329,339): 'EnumValue1'
 
 KtNameReferenceExpression(329,339): 'EnumValue1'
   isImplicitReferenceToCompanion: false
-  contextSensitiveResolutionStatus: NotAvailable
+  contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSimpleSymbolResolutionError:
-    candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'EnumValue1'.>
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum.EnumValue1
+    ]
 
 KtCallExpression(346,371): 'overload(InheritorObject)'
-  KaSimpleSymbolResolutionError:
-    candidateSymbols = [
-      /overload(arg: MyClass): MyClass,
-      /overload(arg: MyEnum): MyEnum
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      /overload(arg: MyClass): MyClass
     ]
-    diagnostic = ERROR<OTHER_ERROR: Ambiguity: overload, [/overload, /overload]>
 
 KtNameReferenceExpression(346,354): 'overload'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSimpleSymbolResolutionError:
-    candidateSymbols = [
-      /overload(arg: MyClass): MyClass,
-      /overload(arg: MyEnum): MyEnum
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      /overload(arg: MyClass): MyClass
     ]
-    diagnostic = ERROR<OTHER_ERROR: Ambiguity: overload, [/overload, /overload]>
 
 KtValueArgumentList(354,371): '(InheritorObject)'
   null
@@ -274,11 +264,12 @@ KtValueArgument(355,370): 'InheritorObject'
 
 KtNameReferenceExpression(355,370): 'InheritorObject'
   isImplicitReferenceToCompanion: false
-  contextSensitiveResolutionStatus: NotAvailable
+  contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSimpleSymbolResolutionError:
-    candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'InheritorObject'.>
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.InheritorObject
+    ]
 
 KtNamedFunction(375,429): 'fun overload2(arg: MyEnum) { println("Enum version") }'
   null

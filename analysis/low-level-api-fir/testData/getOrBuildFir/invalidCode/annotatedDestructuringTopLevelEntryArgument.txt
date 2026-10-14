@@ -1,0 +1,21 @@
+KT element: KtNameReferenceExpression
+FIR element: null
+FIR source kind: null
+
+FIR element rendered:
+null
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] annotatedDestructuringTopLevelEntryArgument.kt
+    public final [ResolvedTo(STATUS)] annotation class Ann : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Ann] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Ann.s] s: R|kotlin/String|): R|Ann| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Ann] get(): R|kotlin/String|
+
+    }
+    public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val x: R|kotlin/String| = String(str)
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
+    @R|Ann|[Types](s = R|/x| [evaluated = String(str)]) public final [ResolvedTo(BODY_RESOLVE)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = IntegerLiteral(1).<Unresolved name: to>#(Int(2))

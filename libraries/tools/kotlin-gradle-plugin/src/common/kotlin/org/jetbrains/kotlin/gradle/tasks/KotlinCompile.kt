@@ -186,13 +186,6 @@ abstract class KotlinCompile @Inject constructor(
     @get:Internal
     internal var executionTimeFreeCompilerArgs: List<String>? = null
 
-    @Suppress("DeprecatedCallableAddReplaceWith")
-    @Deprecated("KTIJ-25227: Necessary override for IDEs < 2023.2", level = DeprecationLevel.ERROR)
-    override fun setupCompilerArgs(args: K2JVMCompilerArguments, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
-        @Suppress("DEPRECATION_ERROR")
-        super.setupCompilerArgs(args, defaultsOnly, ignoreClasspathResolutionErrors)
-    }
-
     override fun createCompilerArguments(
         context: KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext,
     ): K2JVMCompilerArguments = context.create<K2JVMCompilerArguments> {
@@ -227,9 +220,10 @@ abstract class KotlinCompile @Inject constructor(
             overrideXJvmDefaultInPresenceOfKotlinDslPlugin(args)
 
             explicitApiMode.orNull?.run { args.explicitApi = toCompilerValue() }
+            returnValueCheckerMode.orNull?.run { args.returnValueChecker = toCompilerValue() }
 
             if (useFirRunner.get()) {
-                @Suppress("DEPRECATION")
+                @Suppress("DEPRECATION_ERROR")
                 if (compilerOptions.languageVersion.orElse(KotlinVersion.DEFAULT).get() < KotlinVersion.KOTLIN_2_0) {
                     reportDiagnostic(
                         KotlinToolingDiagnostics.IcFirMisconfigurationLV(
@@ -355,8 +349,7 @@ abstract class KotlinCompile @Inject constructor(
         args: K2JVMCompilerArguments,
     ) {
         val kotlinCompilerVersion = kotlinCompilerVersion.orNull
-        val shouldSkipCheck = runViaBuildToolsApi.get() &&
-                kotlinCompilerVersion != null &&
+        val shouldSkipCheck = kotlinCompilerVersion != null &&
                 kotlinCompilerVersion <= KotlinToolingVersion(2, 2, 19, null)
         if (!shouldSkipCheck && kotlinDslPluginIsPresent.get() && args.freeArgs.any { it.startsWith("-Xjvm-default") }) {
             val xJvmDefaultArg = args.freeArgs.first { it.startsWith("-Xjvm-default") }

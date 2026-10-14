@@ -83,9 +83,6 @@ fun Project.mainJavaPluginSourceSet() = findJavaPluginExtension()?.sourceSets?.f
 fun Project.mainKotlinSourceSet() =
     (extensions.findByName("kotlin") as? KotlinSourceSetContainer)?.sourceSets?.findByName("main")
 
-fun Project.commonMainKotlinSourceSet() =
-    (extensions.findByName("kotlin") as? KotlinSourceSetContainer)?.sourceSets?.findByName("commonMain")
-
 fun Project.sources() = mainJavaPluginSourceSet()?.allSource ?: mainKotlinSourceSet()?.kotlin
 
 fun SourceSet.generatedDir(project: Project, generationRoot: Provider<Directory>) {

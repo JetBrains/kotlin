@@ -40,17 +40,6 @@ import javax.inject.Inject
  */
 abstract class ComposeCompilerGradlePluginExtension @Inject internal constructor(objectFactory: ObjectFactory) {
     /**
-     * Generate function key metaclasses with annotations indicating the functions and their group keys.
-     *
-     * Generally used for tooling.
-     */
-    @Deprecated(
-        message = "The user facing property is deprecated. Intended for tooling use only. Will be removed in Kotlin 2.5.0.",
-        level = DeprecationLevel.ERROR,
-    )
-    val generateFunctionKeyMetaClasses: Property<Boolean> = objectFactory.property(Boolean::class.java).convention(false)
-
-    /**
      * Include source information in generated code.
      *
      * Records source information that can be used for tooling to determine the source location of the corresponding composable function.
@@ -99,72 +88,6 @@ abstract class ComposeCompilerGradlePluginExtension @Inject internal constructor
      *  - [Composable metrics blog post](https://chrisbanes.me/posts/composable-metrics/)
      */
     abstract val reportsDestination: DirectoryProperty
-
-    /**
-     * Enable intrinsic remember performance optimization.
-     *
-     * Intrinsic Remember is an optimization mode which improves the runtime performance of your application by inlining `remember`
-     * invocations and replacing `.equals` comparison (for keys) with comparisons of the `$changed` meta parameter when possible. This
-     * results in fewer slots being used and fewer comparisons being done at runtime.
-     *
-     * It is enabled by default.
-     *
-     * To change the default value, use the following code:
-     * ```
-     * composeCompiler {
-     *     enableIntrinsicRemember.set(false)
-     * }
-     * ```
-     */
-    @Deprecated(
-        message = "Use the featureFlags option instead. Will be removed in Kotlin 2.5.0",
-        level = DeprecationLevel.ERROR
-    )
-    val enableIntrinsicRemember: Property<Boolean> = objectFactory.property(Boolean::class.java).convention(true)
-
-    /**
-     * Remove groups around non-skipping composable functions.
-     *
-     * Removing groups around non-skipping composables is an experimental mode which improves the runtime performance of your application
-     * by skipping unnecessary groups around composables which do not skip (and thus do not require a group). This optimization will remove
-     * the groups around functions that are not skippable such as explicitly marked as `@NonSkippableComposable` and functions that are
-     * implicitly not skippable such inline functions and functions that return a non-Unit value such as remember.
-     *
-     * This feature is still considered experimental and is thus disabled by default.
-     */
-    @Deprecated(
-        message = "Use the featureFlags option instead. Will be removed in Kotlin 2.5.0",
-        level = DeprecationLevel.ERROR
-    )
-    val enableNonSkippingGroupOptimization: Property<Boolean> = objectFactory.property(Boolean::class.java).convention(false)
-
-    /**
-     * Enable strong skipping mode.
-     *
-     * Strong Skipping is a mode that improves the runtime performance of your application by skipping unnecessary
-     * invocations of composable functions for which the parameters have not changed. In particular, when enabled, Composables with
-     * unstable parameters become skippable and lambdas with unstable captures will be memoized.
-     *
-     * For more information, see this link:
-     *  - [AndroidX strong skipping](https://github.com/JetBrains/kotlin/blob/master/plugins/compose/design/strong-skipping.md)
-     */
-    @Deprecated(
-        message = "Use the featureFlags option instead. Will be removed in Kotlin 2.5.0",
-        level = DeprecationLevel.ERROR
-    )
-    val enableStrongSkippingMode: Property<Boolean> = objectFactory.property(Boolean::class.java).convention(true)
-
-    /**
-     * Path to the stability configuration file.
-     *
-     * For more information, see this link:
-     *  - [AndroidX stability configuration file](https://developer.android.com/develop/ui/compose/performance/stability/fix#configuration-file)
-     */
-    @Deprecated(
-        message = "Use the stabilityConfigurationFiles option instead. Will be removed in Kotlin 2.5.0",
-        level = DeprecationLevel.ERROR
-    )
-    abstract val stabilityConfigurationFile: RegularFileProperty
 
     /**
      * List of paths to stability configuration files.
@@ -231,20 +154,8 @@ abstract class ComposeCompilerGradlePluginExtension @Inject internal constructor
      *
      * @see ComposeFeatureFlag
      */
-    @Suppress("DEPRECATION_ERROR", "DEPRECATION")
     val featureFlags: SetProperty<ComposeFeatureFlag> = objectFactory
         .setProperty(ComposeFeatureFlag::class.java)
-        .convention(
-            // Add features that used to be added by deprecated options. No other features should be added this way.
-            enableIntrinsicRemember.zip(enableStrongSkippingMode) { intrinsicRemember, strongSkippingMode ->
-                setOfNotNull(
-                    if (!intrinsicRemember) ComposeFeatureFlag.IntrinsicRemember.disabled() else null,
-                    if (!strongSkippingMode) ComposeFeatureFlag.StrongSkipping.disabled() else null
-                )
-            }.zip(enableNonSkippingGroupOptimization) { features, nonSkippingGroupsOptimization ->
-                if (nonSkippingGroupsOptimization) features + ComposeFeatureFlag.OptimizeNonSkippingGroups else features
-            }
-        )
 
     /**
      * Enable addition of Compose-specific entries to the proguard mapping file

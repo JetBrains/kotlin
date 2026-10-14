@@ -228,7 +228,18 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
             build("build") {
                 val mainKt = subProject("app").kotlinSourcesDir().resolve("main.kt")
                 // ensure warnings are properly parsed
-                assertOutputContains("w: ${mainKt.toRealPath().toUri()}:9:5 'constructor(): A' is deprecated. deprecated for test")
+                if (gradleVersion == GradleVersion.version(TestVersions.Gradle.G_8_14)) {
+                    assertOutputContains("w: ${mainKt.toRealPath().toUri()}:9:5 'constructor(): A' is deprecated. deprecated for test")
+                } else {
+                    assertOutputContains(
+                        """
+                        Problem found: Kotlin compiler: DEPRECATION (id: kotlin:compiler:warning:DEPRECATION)
+                          Kotlin compiler warning
+                            'constructor(): A' is deprecated. deprecated for test.
+                            Location: ${mainKt.toRealPath()}
+                        """.trimIndent()
+                    )
+                }
             }
         }
     }
@@ -341,10 +352,6 @@ class NoActiveThreadsAfterCompilerInvocationIT : KGPDaemonsBaseTest() {
     @GradleTest
     fun testBta(gradleVersion: GradleVersion) = test(gradleVersion, buildOptions = defaultBuildOptions.copy(runViaBuildToolsApi = true))
 
-    @DisplayName("KT-84152: In-process compilation should not leave active threads")
-    @GradleTest
-    fun testNonBta(gradleVersion: GradleVersion) = test(gradleVersion, buildOptions = defaultBuildOptions.copy(runViaBuildToolsApi = false))
-
     private fun test(
         gradleVersion: GradleVersion,
         buildOptions: BuildOptions
@@ -373,7 +380,7 @@ class NoActiveThreadsAfterCompilerInvocationIT : KGPDaemonsBaseTest() {
                 fun makeThreadsSnapshot(): Set<String> = Thread
                     .getAllStackTraces()
                     .keys.groupBy { it.javaClass.name + ":" + it.name }
-                    .map { [name, threads] -> "$name (total ${threads.size})" }.toSet()
+                    .map { (name, threads) -> "$name (total ${threads.size})" }.toSet()
 
                 project.tasks.named("compileKotlin").configure {
                     it.doFirst {

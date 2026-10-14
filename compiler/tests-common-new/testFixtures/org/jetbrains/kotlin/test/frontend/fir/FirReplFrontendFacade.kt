@@ -7,27 +7,31 @@ package org.jetbrains.kotlin.test.frontend.fir
 
 import com.intellij.openapi.vfs.StandardFileSystems.FILE_PROTOCOL
 import com.intellij.openapi.vfs.VirtualFileManager
-import com.intellij.psi.search.ProjectScope.getLibrariesScope
-import org.jetbrains.kotlin.cli.jvm.compiler.PsiBasedProjectFileSearchScope
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.javaInterop
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelinePhase.createLibraryListForJvm
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.checkers.registerExperimentalCheckers
 import org.jetbrains.kotlin.fir.checkers.registerExtraCommonCheckers
+import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
+import org.jetbrains.kotlin.fir.declarations.FirReplSnippet
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
+import org.jetbrains.kotlin.fir.extensions.replHistoryProvider
+import org.jetbrains.kotlin.fir.symbols.impl.FirReplSnippetSymbol
 import org.jetbrains.kotlin.fir.session.FirJvmSessionFactory
 import org.jetbrains.kotlin.fir.session.KmpModuleKind
+import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.isJvm
-import org.jetbrains.kotlin.psi.KtNonPublicApi
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.checkTestInfrastructure
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.singleValue
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticCollectorService
+import org.jetbrains.kotlin.test.frontend.fir.handlers.firDiagnosticCollectorService
 import org.jetbrains.kotlin.test.model.FrontendFacade
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
@@ -69,7 +73,6 @@ open class FirReplFrontendFacade(testServices: TestServices) : FrontendFacade<Fi
         val libraryList = createLibraryListForJvm("repl", configuration, emptyList())
         val extensionRegistrars = configuration.getCompilerExtensions(FirExtensionRegistrar)
         val packagePartProviderFactory = compilerConfigurationProvider.getPackagePartProviderFactory(testModule)
-        val librariesSearchScope = PsiBasedProjectFileSearchScope(getLibrariesScope(project))
 
         val projectEnvironment =
             VfsBasedProjectEnvironment(project, VirtualFileManager.getInstance().getFileSystem(FILE_PROTOCOL)) {
@@ -79,7 +82,8 @@ open class FirReplFrontendFacade(testServices: TestServices) : FrontendFacade<Fi
         val context = FirJvmSessionFactory.Context(
             configuration,
             projectEnvironment,
-            librariesSearchScope,
+            JvmClasspath.ProjectLibraries(),
+            projectEnvironment.javaInterop(configuration),
         )
 
         val sharedLibrarySession = FirJvmSessionFactory.createSharedLibrarySession(
@@ -105,7 +109,13 @@ open class FirReplFrontendFacade(testServices: TestServices) : FrontendFacade<Fi
         )
     }
 
+    private val checkedSnippetModules = mutableSetOf<TestModule>()
+    private val erroneousSnippetModuleData = mutableSetOf<FirModuleData>()
+    private val erroneousSnippets = mutableListOf<FirReplSnippetSymbol>()
+
     override fun analyze(module: TestModule): FirOutputArtifact {
+        collectErroneousPrecedingSnippets(module)
+
         val moduleData = initializeModuleData(module)
 
         val firOutputPart = analyzeImpl(module, moduleData)
@@ -113,14 +123,30 @@ open class FirReplFrontendFacade(testServices: TestServices) : FrontendFacade<Fi
         return FirOutputArtifactImpl(listOf(firOutputPart))
     }
 
+    @OptIn(DirectDeclarationsAccess::class)
+    private fun collectErroneousPrecedingSnippets(module: TestModule) {
+        for (precedingModule in testServices.moduleStructure.modules.takeWhile { it != module }) {
+            if (!checkedSnippetModules.add(precedingModule)) continue
+            val artifact = testServices.artifactsProvider.getArtifactSafe(precedingModule, FrontendKinds.FIR) ?: continue
+            if (!testServices.firDiagnosticCollectorService.containsErrors(artifact)) continue
+            erroneousSnippetModuleData += testServices.firModuleInfoProvider.getCorrespondingModuleData(precedingModule)
+            erroneousSnippets += artifact.allFirFiles.flatMap { file -> file.declarations.filterIsInstance<FirReplSnippet>() }.map { it.symbol }
+        }
+    }
+
     private fun initializeModuleData(module: TestModule): FirModuleData {
         val moduleInfoProvider = testServices.firModuleInfoProvider
         val libraryList = replCompilationEnvironment.libraryList
 
-        val regularModules = libraryList.regularDependencies + moduleInfoProvider.getRegularDependentSourceModules(module)
+        fun List<FirModuleData>.withoutErroneousSnippets() = filter { it !in erroneousSnippetModuleData }
+
+        val regularModules =
+            libraryList.regularDependencies + moduleInfoProvider.getRegularDependentSourceModules(module).withoutErroneousSnippets()
         // TODO: collect instead of recursive traversal on each new snippet
-        val friendModules = libraryList.friendDependencies + moduleInfoProvider.getDependentFriendSourceModulesRecursively(module)
-        val dependsOnModules = libraryList.dependsOnDependencies + moduleInfoProvider.getDependentDependsOnSourceModules(module)
+        val friendModules =
+            libraryList.friendDependencies + moduleInfoProvider.getDependentFriendSourceModulesRecursively(module).withoutErroneousSnippets()
+        val dependsOnModules =
+            libraryList.dependsOnDependencies + moduleInfoProvider.getDependentDependsOnSourceModules(module).withoutErroneousSnippets()
 
         return FirSourceModuleData(
             Name.special("<${module.name}>"),
@@ -134,7 +160,6 @@ open class FirReplFrontendFacade(testServices: TestServices) : FrontendFacade<Fi
         }
     }
 
-    @OptIn(KtNonPublicApi::class)
     private fun analyzeImpl(module: TestModule, moduleData: FirModuleData): FirOutputPartForDependsOnModule {
         val firParser = module.directives.singleValue(FirDiagnosticsDirectives.FIR_PARSER)
 
@@ -147,12 +172,10 @@ open class FirReplFrontendFacade(testServices: TestServices) : FrontendFacade<Fi
         val ktFiles = testServices.sourceFileProvider.getKtFilesForSourceFiles(module.files, project)
         val moduleBasedSession = FirJvmSessionFactory.createSourceSession(
             moduleData = moduleData,
-            javaSourcesScope = PsiBasedProjectFileSearchScope(FirFrontendFacade.newModuleSearchScope(project, ktFiles.values)),
             createIncrementalCompilationSymbolProviders = { null },
             extensionRegistrars = replCompilationEnvironment.extensionRegistrars,
             configuration = compilerConfiguration,
             context = replCompilationEnvironment.jvmSessionFactoryContext,
-            needRegisterJavaElementFinder = true,
             kmpModuleKind = KmpModuleKind.SingleModule,
         ) {
             if (FirDiagnosticsDirectives.WITH_EXTRA_CHECKERS in module.directives) {
@@ -162,6 +185,8 @@ open class FirReplFrontendFacade(testServices: TestServices) : FrontendFacade<Fi
                 registerExperimentalCheckers()
             }
         }.also(::registerExtraComponents)
+
+        moduleBasedSession.replHistoryProvider?.removeSnippets(erroneousSnippets)
 
         val firAnalyzerFacade = FirAnalyzerFacade(moduleBasedSession, ktFiles.values, parser = firParser)
         val firFiles = firAnalyzerFacade.runResolution()

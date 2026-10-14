@@ -38,12 +38,12 @@ public final class _ExportedKotlinPackages_kotlin_coroutines_ContinuationInterce
         }
     }
     package override init(
-        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
-    private init() {
+    private override init() {
         fatalError()
     }
 }
@@ -75,7 +75,7 @@ extension ExportedKotlinPackages.kotlin {
             fatalError()
         }
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -123,7 +123,7 @@ extension ExportedKotlinPackages.kotlin {
             fatalError()
         }
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -171,7 +171,7 @@ extension ExportedKotlinPackages.kotlin {
             fatalError()
         }
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -250,7 +250,7 @@ extension ExportedKotlinPackages.kotlin {
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { kotlin_Throwable_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, cause.map { it in it.__externalRCRef() } ?? nil); return () }()
         }
-        public init() {
+        public override init() {
              let __kt: Swift.UnsafeMutableRawPointer!
              if Self.self == ExportedKotlinPackages.kotlin.Throwable.self {
                  __kt = kotlin_Throwable_init_allocate()
@@ -261,7 +261,7 @@ extension ExportedKotlinPackages.kotlin {
             { kotlin_Throwable_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -316,7 +316,7 @@ extension ExportedKotlinPackages.kotlin {
             { kotlin_Exception_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, cause.map { it in it.__externalRCRef() } ?? nil); return () }()
         }
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -371,7 +371,7 @@ extension ExportedKotlinPackages.kotlin {
             { kotlin_RuntimeException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, cause.map { it in it.__externalRCRef() } ?? nil); return () }()
         }
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -426,7 +426,7 @@ extension ExportedKotlinPackages.kotlin {
             { kotlin_IllegalStateException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, cause.map { it in it.__externalRCRef() } ?? nil); return () }()
         }
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -456,7 +456,7 @@ extension ExportedKotlinPackages.kotlin {
             { kotlin_NoSuchElementException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String___(__kt, message ?? nil); return () }()
         }
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -480,12 +480,12 @@ extension ExportedKotlinPackages.kotlin {
                 return ExportedKotlinPackages.kotlin.Result.__createClassWrapper(externalRCRef: kotlin_Result_Companion_failure__TypesOfArguments__ExportedKotlinPackages_kotlin_Throwable__(self.__externalRCRef(), exception.__externalRCRef()))
             }
             package override init(
-                __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+                __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
                 options: KotlinRuntime.KotlinBaseConstructionOptions
             ) {
                 super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
             }
-            private init() {
+            private override init() {
                 fatalError()
             }
         }
@@ -506,7 +506,7 @@ extension ExportedKotlinPackages.kotlin {
             return { switch kotlin_Result_exceptionOrNull(self.__externalRCRef()) { case nil: .none; case let res?: ExportedKotlinPackages.kotlin.Throwable.__createClassWrapper(externalRCRef: res); } }()
         }
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -767,7 +767,7 @@ extension ExportedKotlinPackages.kotlin.collections {
             { kotlin_collections_IndexedValue_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(__kt, index, value.map { it in it.__externalRCRef() } ?? nil); return () }()
         }
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -784,14 +784,14 @@ extension ExportedKotlinPackages.kotlin.collections {
                 fatalError("Cannot invoke the inherited implementation of abstract member 'ExportedKotlinPackages.kotlin.collections.IntIterator.nextInt': a Swift subclass must override it and must not call super.")
             }
         }
-        public init() {
+        public override init() {
             precondition(Self.self != ExportedKotlinPackages.kotlin.collections.IntIterator.self, "ExportedKotlinPackages.kotlin.collections.IntIterator is an abstract class and cannot be instantiated directly")
             let __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { kotlin_collections_IntIterator_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -808,14 +808,14 @@ extension ExportedKotlinPackages.kotlin.collections {
                 fatalError("Cannot invoke the inherited implementation of abstract member 'ExportedKotlinPackages.kotlin.collections.LongIterator.nextLong': a Swift subclass must override it and must not call super.")
             }
         }
-        public init() {
+        public override init() {
             precondition(Self.self != ExportedKotlinPackages.kotlin.collections.LongIterator.self, "ExportedKotlinPackages.kotlin.collections.LongIterator is an abstract class and cannot be instantiated directly")
             let __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { kotlin_collections_LongIterator_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -894,7 +894,7 @@ extension ExportedKotlinPackages.kotlin.coroutines {
             { kotlin_coroutines_AbstractCoroutineContextElement_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Key__(__kt, key.__externalRCRef()); return () }()
         }
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -913,7 +913,7 @@ extension ExportedKotlinPackages.kotlin.coroutines {
             { kotlin_coroutines_AbstractCoroutineContextKey_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Key_U28anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_ElementU29202D_U20Swift_Optional_anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Element___(__kt, baseKey.__externalRCRef(), Unmanaged.passRetained((safeCast as (any KotlinStdlib._ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Element) -> Swift.Optional<any KotlinStdlib._ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Element>) as AnyObject).toOpaque()); return () }()
         }
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -970,7 +970,7 @@ extension ExportedKotlinPackages.kotlin.coroutines.cancellation {
             { kotlin_coroutines_cancellation_CancellationException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, cause.map { it in it.__externalRCRef() } ?? nil); return () }()
         }
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -1025,7 +1025,7 @@ extension ExportedKotlinPackages.kotlin.time {
             }
         }
         public init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer!,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             switch kotlin_time_DurationUnit_ordinal(__externalRCRefUnsafe) {
@@ -1039,7 +1039,7 @@ extension ExportedKotlinPackages.kotlin.time {
             default: fatalError()
             }
         }
-        public func __externalRCRef() -> Swift.UnsafeMutableRawPointer! {
+        public func __externalRCRef() -> Swift.UnsafeMutableRawPointer {
             return switch self {
             case .NANOSECONDS: kotlin_time_DurationUnit_NANOSECONDS()
             case .MICROSECONDS: kotlin_time_DurationUnit_MICROSECONDS()
@@ -1223,12 +1223,12 @@ extension ExportedKotlinPackages.kotlin.time {
                 return ExportedKotlinPackages.kotlin.time.Duration.__createClassWrapper(externalRCRef: kotlin_time_Duration_Companion_days_get__TypesOfArgumentsE__Swift_Double__(self.__externalRCRef(), receiver))
             }
             package override init(
-                __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+                __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
                 options: KotlinRuntime.KotlinBaseConstructionOptions
             ) {
                 super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
             }
-            private init() {
+            private override init() {
                 fatalError()
             }
         }
@@ -1443,7 +1443,7 @@ extension ExportedKotlinPackages.kotlin.time {
             return kotlin_time_Duration_toIsoString(self.__externalRCRef())
         }
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -2123,14 +2123,14 @@ package func KotlinStdlib_internal_functional_type_callee_SwiftU2EOptionalU3Cany
 
 @_cdecl("kotlin_Throwable_cause_get__reverse_swift")
 package func kotlin_Throwable_cause_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer? {
-    let _self = ExportedKotlinPackages.kotlin.Throwable.__createClassWrapper(externalRCRef: `self`)!
+    let _self = ExportedKotlinPackages.kotlin.Throwable.__createClassWrapper(externalRCRef: `self`)
     let _result: Swift.Optional<ExportedKotlinPackages.kotlin.Throwable> = _self.cause
     return _result.map { it in it.__externalRCRef() } ?? nil
 }
 
 @_cdecl("kotlin_Throwable_message_get__reverse_swift")
 package func kotlin_Throwable_message_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.String? {
-    let _self = ExportedKotlinPackages.kotlin.Throwable.__createClassWrapper(externalRCRef: `self`)!
+    let _self = ExportedKotlinPackages.kotlin.Throwable.__createClassWrapper(externalRCRef: `self`)
     let _result: Swift.Optional<Swift.String> = _self.message
     return _result ?? nil
 }
@@ -2172,7 +2172,7 @@ package func kotlin_collections_Collection_size_get__reverse_swift(_ `self`: Swi
 
 @_cdecl("kotlin_collections_IntIterator_nextInt__reverse_swift")
 package func kotlin_collections_IntIterator_nextInt__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Int32 {
-    let _self = ExportedKotlinPackages.kotlin.collections.IntIterator.__createClassWrapper(externalRCRef: `self`)!
+    let _self = ExportedKotlinPackages.kotlin.collections.IntIterator.__createClassWrapper(externalRCRef: `self`)
     let _result: Swift.Int32 = _self.nextInt()
     return _result
 }
@@ -2319,7 +2319,7 @@ package func kotlin_collections_List_subList__TypesOfArguments__Swift_Int32_Swif
 
 @_cdecl("kotlin_collections_LongIterator_nextLong__reverse_swift")
 package func kotlin_collections_LongIterator_nextLong__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Int64 {
-    let _self = ExportedKotlinPackages.kotlin.collections.LongIterator.__createClassWrapper(externalRCRef: `self`)!
+    let _self = ExportedKotlinPackages.kotlin.collections.LongIterator.__createClassWrapper(externalRCRef: `self`)
     let _result: Swift.Int64 = _self.nextLong()
     return _result
 }
@@ -2599,7 +2599,7 @@ package func kotlin_collections_Set_size_get__reverse_swift(_ `self`: Swift.Unsa
 
 @_cdecl("kotlin_coroutines_AbstractCoroutineContextElement_key_get__reverse_swift")
 package func kotlin_coroutines_AbstractCoroutineContextElement_key_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
-    let _self = ExportedKotlinPackages.kotlin.coroutines.AbstractCoroutineContextElement.__createClassWrapper(externalRCRef: `self`)!
+    let _self = ExportedKotlinPackages.kotlin.coroutines.AbstractCoroutineContextElement.__createClassWrapper(externalRCRef: `self`)
     let _result: any KotlinStdlib._ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Key = _self.key
     return _result.__externalRCRef()
 }
@@ -2650,8 +2650,8 @@ package func kotlin_coroutines_Continuation_resumeWith__TypesOfArguments__Export
 package func kotlin_coroutines_CoroutineContext_Element_fold__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_ElementU29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ initial: Swift.UnsafeMutableRawPointer?, _ operation: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer? {
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: KotlinStdlib._ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Element.Type.self) as! any KotlinStdlib._ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Element
     let _result: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = _self.fold(initial: { switch initial { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }(), operation: {
-    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: operation, options: .asBestFittingWrapper)!
-    return { _1, _2 in return { switch KotlinStdlib_internal_functional_type_caller_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Element__(pointerToBlock.__externalRCRef()!, _1.map { it in it.__externalRCRef() } ?? nil, _2.__externalRCRef()) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }() }
+    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: operation, options: .asBestFittingWrapper)
+    return { _1, _2 in return { switch KotlinStdlib_internal_functional_type_caller_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Element__(pointerToBlock.__externalRCRef(), _1.map { it in it.__externalRCRef() } ?? nil, _2.__externalRCRef()) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }() }
 }())
     return _result.map { it in it.__externalRCRef() } ?? nil
 }
@@ -2681,8 +2681,8 @@ package func kotlin_coroutines_CoroutineContext_Element_minusKey__TypesOfArgumen
 package func kotlin_coroutines_CoroutineContext_fold__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_ElementU29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ initial: Swift.UnsafeMutableRawPointer?, _ operation: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer? {
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: ExportedKotlinPackages.kotlin.coroutines.CoroutineContext.Type.self) as! any ExportedKotlinPackages.kotlin.coroutines.CoroutineContext
     let _result: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = _self.fold(initial: { switch initial { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }(), operation: {
-    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: operation, options: .asBestFittingWrapper)!
-    return { _1, _2 in return { switch KotlinStdlib_internal_functional_type_caller_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Element__(pointerToBlock.__externalRCRef()!, _1.map { it in it.__externalRCRef() } ?? nil, _2.__externalRCRef()) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }() }
+    let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: operation, options: .asBestFittingWrapper)
+    return { _1, _2 in return { switch KotlinStdlib_internal_functional_type_caller_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Element__(pointerToBlock.__externalRCRef(), _1.map { it in it.__externalRCRef() } ?? nil, _2.__externalRCRef()) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }() }
 }())
     return _result.map { it in it.__externalRCRef() } ?? nil
 }

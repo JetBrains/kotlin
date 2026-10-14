@@ -9,6 +9,7 @@ import java.lang.reflect.Field
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.reflect.KMutableProperty0
 import kotlin.reflect.KProperty0
+import kotlin.jvm.internal.CallableReference
 
 internal open class JavaFieldKProperty0<out V>(
     container: KDeclarationContainerImpl, field: Field, rawBoundReceiver: Any?,
@@ -23,16 +24,14 @@ internal open class JavaFieldKProperty0<out V>(
     override fun invoke(): V = get()
 
     override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): ReflectKCallable<V> =
-        JavaFieldKProperty0(container, jField, rawBoundReceiver, overriddenStorage)
+        JavaFieldKProperty0(container, jField, CallableReference.NO_RECEIVER, overriddenStorage)
 
-    override fun rebindSameArity(boundReceiver: Any?): ReflectKProperty<V> =
-        JavaFieldKProperty0(container, jField, boundReceiver, overriddenStorage)
+    override fun unbindToHigherArity(): ReflectKCallable<V> =
+        JavaFieldKProperty1<Any?, V>(container, jField, CallableReference.NO_RECEIVER, overriddenStorage)
 
-    override fun unbindToHigherArity(): ReflectKProperty<V> =
-        throw KotlinReflectionInternalError("Cannot unbind KProperty0: $this")
-
-    override fun bindToLowerArity(boundReceiver: Any?): ReflectKProperty<V> =
+    override fun bindToLowerArity(boundReceiver: Any?, boundContextArguments: List<Any?>) =
         throw KotlinReflectionInternalError("Cannot bind KProperty0: $this")
+
 
     class Getter<out R>(override val property: JavaFieldKProperty0<R>) : JavaFieldKProperty.Getter<R>(), KProperty0.Getter<R> {
         override fun invoke(): R = property.get()
@@ -48,10 +47,10 @@ internal open class JavaFieldKMutableProperty0<V>(
     override fun set(value: V): Unit = setter.call(value)
 
     override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): ReflectKCallable<V> =
-        JavaFieldKMutableProperty0(container, jField, rawBoundReceiver, overriddenStorage)
+        JavaFieldKMutableProperty0(container, jField, CallableReference.NO_RECEIVER, overriddenStorage)
 
-    override fun rebindSameArity(boundReceiver: Any?): ReflectKProperty<V> =
-        JavaFieldKMutableProperty0(container, jField, boundReceiver, overriddenStorage)
+    override fun unbindToHigherArity(): ReflectKCallable<V> =
+        JavaFieldKMutableProperty1<Any?, V>(container, jField, CallableReference.NO_RECEIVER, overriddenStorage)
 
     class Setter<R>(override val property: JavaFieldKMutableProperty0<R>) : JavaFieldKProperty.Setter<R>(), KMutableProperty0.Setter<R> {
         override fun invoke(value: R): Unit = property.set(value)

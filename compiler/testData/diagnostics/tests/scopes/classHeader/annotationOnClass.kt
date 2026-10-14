@@ -16,9 +16,9 @@ annotation class Ann(
 )
 
 @Ann(
-        <!ANNOTATION_ARGUMENT_MUST_BE_CONST!><!UNRESOLVED_REFERENCE!>Nested<!>::class<!>,
-        <!ANNOTATION_ARGUMENT_MUST_BE_CONST!><!UNRESOLVED_REFERENCE!>Inner<!>::class<!>,
-        <!ANNOTATION_ARGUMENT_MUST_BE_CONST!><!UNRESOLVED_REFERENCE!>Interface<!>::class<!>,
+        <!UNRESOLVED_REFERENCE!>Nested<!>::class,
+        <!UNRESOLVED_REFERENCE!>Inner<!>::class,
+        <!UNRESOLVED_REFERENCE!>Interface<!>::class,
         <!UNRESOLVED_REFERENCE!>CONST<!>,
         <!UNRESOLVED_REFERENCE!>Companion<!>.CONST,
         <!UNRESOLVED_REFERENCE!>Nested<!>.CONST,

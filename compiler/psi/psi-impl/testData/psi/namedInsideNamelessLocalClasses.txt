@@ -1,0 +1,59 @@
+KtFile: namedInsideNamelessLocalClasses.kt
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')
+  PsiWhiteSpace('\n')
+  PACKAGE_DIRECTIVE
+    PsiElement(package)('package')
+    PsiWhiteSpace(' ')
+    DOT_QUALIFIED_EXPRESSION
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('one')
+      PsiElement(DOT)('.')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('two')
+  IMPORT_LIST
+    <empty list>
+  PsiWhiteSpace('\n\n')
+  FUNCTION
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('foo')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      CLASS
+        PsiElement(class)('class')
+        PsiErrorElement:Name expected
+          <empty list>
+        PsiWhiteSpace(' ')
+        CLASS_BODY
+          PsiElement(LBRACE)('{')
+          PsiWhiteSpace('\n        ')
+          CLASS
+            PsiElement(class)('class')
+            PsiWhiteSpace(' ')
+            PsiElement(IDENTIFIER)('A')
+          PsiWhiteSpace('\n        ')
+          OBJECT_DECLARATION
+            PsiElement(object)('object')
+            PsiWhiteSpace(' ')
+            PsiElement(IDENTIFIER)('B')
+          PsiWhiteSpace('\n        ')
+          TYPEALIAS
+            PsiElement(typealias)('typealias')
+            PsiWhiteSpace(' ')
+            PsiElement(IDENTIFIER)('C')
+            PsiWhiteSpace(' ')
+            PsiElement(EQ)('=')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Int')
+          PsiWhiteSpace('\n    ')
+          PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

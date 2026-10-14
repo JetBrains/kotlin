@@ -37,7 +37,6 @@ publish()
 runtimeJar()
 sourcesJar()
 javadocJar()
-testsJar()
 
 projectTests {
     testTask()
@@ -46,7 +45,6 @@ projectTests {
 
     withJvmStdlibAndReflect()
     withTestJar()
-    withScriptRuntime()
     withMockJdkRuntime()
     withMockJdkAnnotationsJar()
 

@@ -27,11 +27,10 @@ sourceSets {
     "testFixtures" { projectDefault() }
 }
 
-testsJar()
 
 projectTests {
     testTask(defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_1_8)) {
-        val jdkHome = project.getToolchainJdkHomeFor(JdkMajorVersion.JDK_1_8)
+        val jdkHome = project.getToolchainJdkHomeFor(DEFAULT_JAVA_LAUNCHER_FOR_TESTS)
         doFirst {
             environment("JAVA_HOME", jdkHome.get())
         }

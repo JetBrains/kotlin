@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // IGNORE_FIR_DIAGNOSTICS
-// IGNORE_PHASE_VERIFICATION: invalid code inside annotations
 // MODULE: m1-common
 // FILE: common.kt
 

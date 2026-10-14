@@ -79,6 +79,7 @@ fun wasmLoweringsOfTheFirstPhase(
             this += ::createUpgradeCallableReferences
         }
         this += loweringsOfTheFirstPhase(languageVersionSettings)
+        this += ::WasmTailrecCheckerLowering
     }
     return createModulePhases(*phases.toTypedArray())
 }
@@ -238,6 +239,7 @@ val wasmLowerings: List<NamedCompilerPhase<WasmBackendContext, IrModuleFragment,
 
     ::WhenBranchOptimiserLowering,
 
+    ::WasmAssociativeReductionLowering,
     ::WasmTailCallLowering,
 
     ::IrValidationAfterLoweringsSecondStagePhase,

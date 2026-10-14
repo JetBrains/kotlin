@@ -1,0 +1,20 @@
+KtNameReferenceExpression(39,51): 'AbstractList'
+  KaApplicableCallCandidate:
+    candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.collections.AbstractList<kotlin.String>
+        symbol = <constructor>(): kotlin.collections.AbstractList<E>
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {
+        E -> (kotlin.String)
+      }
+      valueArgumentMapping = {}
+    isInBestCandidates = true

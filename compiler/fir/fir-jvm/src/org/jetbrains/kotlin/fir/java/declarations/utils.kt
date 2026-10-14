@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.java.declarations
 
+import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
@@ -17,8 +18,12 @@ import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.statusTransformerExtensions
 import kotlin.reflect.KCallable
 
-internal fun javaOrigin(isFromSource: Boolean): FirDeclarationOrigin.Java {
-    return if (isFromSource) FirDeclarationOrigin.Java.Source else FirDeclarationOrigin.Java.Library
+internal fun javaOrigin(isFromSource: Boolean, key: GeneratedDeclarationKey? = null): FirDeclarationOrigin.Java {
+    return when {
+        key != null -> FirDeclarationOrigin.Java.Plugin(key)
+        isFromSource -> FirDeclarationOrigin.Java.Source
+        else -> FirDeclarationOrigin.Java.Library
+    }
 }
 
 internal inline fun applyStatusTransformerExtensions(

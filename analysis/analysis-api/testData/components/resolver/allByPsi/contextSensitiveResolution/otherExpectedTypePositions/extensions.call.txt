@@ -250,70 +250,76 @@ KtNameReferenceExpression(240,243): 'bar'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'val MyClass2.Companion.bar: MyClass2' is inapplicable because of a receiver type mismatch. Actual receiver type is 'MyClass.Companion'.>
 
 KtCallExpression(249,257): 'foo(bar)'
-  KaSimpleCallResolutionSuccess:
-    call = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.Unit
-        symbol = /foo(a: MyClass): kotlin.Unit
-        valueParameters = [
-          KaVariableSignature:
+  KaSimpleCallResolutionError:
+    candidateCalls = [
+      KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /foo(a: MyClass): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = MyClass
+              symbol = a: MyClass
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /foo
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          bar -> (KaVariableSignature:
             name = a
             receiverType = null
             returnType = MyClass
             symbol = a: MyClass
             contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = /foo
-      typeArgumentsMapping = {}
-      valueArgumentMapping = {
-        bar -> (KaVariableSignature:
-          name = a
-          receiverType = null
-          returnType = MyClass
-          symbol = a: MyClass
-          contextParameters = []
-          callableId = null)
-      }
+            callableId = null)
+        }
+    ]
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /foo>
 
 KtNameReferenceExpression(249,252): 'foo'
-  KaSimpleCallResolutionSuccess:
-    call = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.Unit
-        symbol = /foo(a: MyClass): kotlin.Unit
-        valueParameters = [
-          KaVariableSignature:
+  KaSimpleCallResolutionError:
+    candidateCalls = [
+      KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /foo(a: MyClass): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = MyClass
+              symbol = a: MyClass
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /foo
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          bar -> (KaVariableSignature:
             name = a
             receiverType = null
             returnType = MyClass
             symbol = a: MyClass
             contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = /foo
-      typeArgumentsMapping = {}
-      valueArgumentMapping = {
-        bar -> (KaVariableSignature:
-          name = a
-          receiverType = null
-          returnType = MyClass
-          symbol = a: MyClass
-          contextParameters = []
-          callableId = null)
-      }
+            callableId = null)
+        }
+    ]
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /foo>
 
 KtValueArgumentList(252,257): '(bar)'
   null

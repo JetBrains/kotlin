@@ -40,7 +40,6 @@ publish()
 runtimeJar()
 sourcesJar()
 javadocJar()
-testsJar()
 
 projectTests {
     testTask(defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_17_0))
@@ -48,7 +47,6 @@ projectTests {
     testGenerator("org.jetbrains.kotlin.allopen.TestGeneratorKt", generateTestsInBuildDirectory = true)
 
     withJvmStdlibAndReflect()
-    withScriptRuntime()
     withTestJar()
     withMockJdkAnnotationsJar()
     withMockJdkRuntime()

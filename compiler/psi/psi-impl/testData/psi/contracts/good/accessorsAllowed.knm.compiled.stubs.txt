@@ -70,13 +70,13 @@ FILE[kind=File[packageFqName=<root>]]
       contract: [ effect:Returns(TRUE) -> param(0) is KotlinClassTypeBean(classId=/Status.Error, arguments=[], nullable=false, abbreviatedType=null) ]
       MODIFIER_LIST[public final]
       VALUE_PARAMETER_LIST
-  CLASS[classId=/Status, fqName=Status, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Status, superNames=[]]
+  CLASS[classId=/Status, fqName=Status, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Status, superNames=[]]
     MODIFIER_LIST[public sealed]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Status]
       MODIFIER_LIST[protected]
       VALUE_PARAMETER_LIST
     CLASS_BODY
-      CLASS[classId=/Status.Ok, fqName=Status.Ok, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=Ok, superNames=[Status]]
+      CLASS[classId=/Status.Ok, fqName=Status.Ok, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=Ok, superNames=[Status]]
         MODIFIER_LIST[public final]
         PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Ok]
           MODIFIER_LIST[public]
@@ -88,7 +88,7 @@ FILE[kind=File[packageFqName=<root>]]
                 REFERENCE_EXPRESSION[referencedName=Status]
                   isClassRef: true
         CLASS_BODY
-      CLASS[classId=/Status.Error, fqName=Status.Error, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=Error, superNames=[Status]]
+      CLASS[classId=/Status.Error, fqName=Status.Error, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=Error, superNames=[Status]]
         MODIFIER_LIST[public final]
         PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Error]
           MODIFIER_LIST[public]

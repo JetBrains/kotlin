@@ -52,6 +52,12 @@ public class SymbolLightClassesStructureForSourceTestGenerated extends AbstractS
   }
 
   @Test
+  @TestMetadata("FullValueClasses.kt")
+  public void testFullValueClasses() {
+    run("FullValueClasses.kt");
+  }
+
+  @Test
   @TestMetadata("InterfaceAndClasses.kt")
   public void testInterfaceAndClasses() {
     run("InterfaceAndClasses.kt");
@@ -61,6 +67,12 @@ public class SymbolLightClassesStructureForSourceTestGenerated extends AbstractS
   @TestMetadata("Interfaces.kt")
   public void testInterfaces() {
     run("Interfaces.kt");
+  }
+
+  @Test
+  @TestMetadata("KotlinAbstractListSupertype.kt")
+  public void testKotlinAbstractListSupertype() {
+    run("KotlinAbstractListSupertype.kt");
   }
 
   @Test

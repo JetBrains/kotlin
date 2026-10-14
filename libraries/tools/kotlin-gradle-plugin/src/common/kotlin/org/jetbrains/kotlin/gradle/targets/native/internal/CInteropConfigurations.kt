@@ -13,10 +13,10 @@ import org.jetbrains.kotlin.gradle.artifacts.maybeCreateKlibPackingTask
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterFinaliseDsl
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.categoryByName
 import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.archive.usesPlatformKlibsOf
 import org.jetbrains.kotlin.gradle.plugin.usesPlatformOf
 import org.jetbrains.kotlin.gradle.targets.KotlinTargetSideEffect
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropKlibLibraryElements.cinteropKlibLibraryElements
@@ -31,13 +31,9 @@ internal fun createCInteropApiElementsKlibArtifact(
     val project = compilation.project
     val configurationName = cInteropApiElementsConfigurationName(compilation.target)
     val configuration = project.configurations.getByName(configurationName)
-    val packedArtifactFile = if (project.kotlinPropertiesProvider.useNonPackedKlibs) {
-        // the default artifact should be compressed
-        val packTask = compilation.maybeCreateKlibPackingTask(settings.classifier, interopTask)
-        packTask.map { it.archiveFile.get().asFile }
-    } else {
-        interopTask.map { it.klibFile }
-    }
+    val packTask = compilation.maybeCreateKlibPackingTask(settings.classifier, interopTask)
+    // the default artifact should be compressed
+    val packedArtifactFile = packTask.map { it.archiveFile.get().asFile }
     configuration.outgoing.registerKlibArtifact(packedArtifactFile, settings.classifier)
 }
 
@@ -55,7 +51,7 @@ internal fun Project.locateOrCreateCInteropDependencyConfiguration(
 
         /* Deferring attributes to wait for compilation.attributes to be configured by user */
         launchInStage(AfterFinaliseDsl) {
-            usesPlatformOf(compilation.target)
+            usesPlatformKlibsOf(compilation.target)
             compilation.copyAttributesTo(project.providers, dest = attributes)
             attributes.attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, cinteropKlibLibraryElements())
             attributes.attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_CINTEROP))

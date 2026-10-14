@@ -7,11 +7,12 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
+import org.gradle.api.file.Directory
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -23,17 +24,15 @@ import org.jetbrains.kotlin.gradle.targets.js.*
 import org.jetbrains.kotlin.gradle.targets.js.dsl.*
 import org.jetbrains.kotlin.gradle.targets.js.internal.jsToolingProject
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTargetConfigurator.Companion.configureJsDefaultOptions
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmResolverPlugin
+import org.jetbrains.kotlin.gradle.targets.js.typescript.KotlinJsDtsGenerationTask
 import org.jetbrains.kotlin.gradle.targets.js.typescript.TypeScriptValidationTask
-import org.jetbrains.kotlin.gradle.targets.wasm.KotlinWasmtimeSubtarget
-import org.jetbrains.kotlin.gradle.targets.wasm.WasmtimeEnvironmentConfigurator
 import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenExec
-import org.jetbrains.kotlin.gradle.targets.wasm.dsl.KotlinWasmtimeDsl
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsPlugin
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.wasm.npm.WasmNpmResolverPlugin
+import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
@@ -56,10 +55,8 @@ internal constructor(
     KotlinTargetWithBinaries<KotlinJsIrCompilation, KotlinJsBinaryContainer>(project, platformType),
     KotlinTargetWithTests<JsAggregatingExecutionSource, KotlinJsReportAggregatingTestRun>,
     KotlinJsTargetDsl,
-    KotlinWasmJsTargetDsl,
-    KotlinWasmWasiTargetDsl,
+    KotlinWasmTargetDsl,
     KotlinJsSubTargetContainerDsl,
-    KotlinWasmSubTargetContainerDsl,
     KotlinTargetWithKotlinArchiveSupport {
 
     @InternalKotlinGradlePluginApi
@@ -69,6 +66,14 @@ internal constructor(
     @InternalKotlinGradlePluginApi
     override val platformNameInKotlinArchive: String
         get() = targetPreset?.name ?: error("Name in kotlin archive in unknown for $targetName")
+
+    @InternalKotlinGradlePluginApi
+    override val platformKlibFiles: FileCollection
+        get() = project.files(project.tasks.named(artifactsTaskName))
+
+    @InternalKotlinGradlePluginApi
+    override val doesPlatformKlibRequireUnpacking: Boolean
+        get() = true
 
     @Deprecated(
         "Creating new KotlinJsIrTarget instances outside of Kotlin Gradle plugin is deprecated. Scheduled for removal in Kotlin 2.7.",
@@ -158,7 +163,7 @@ internal constructor(
             }
     }
 
-    private fun <T : KotlinJsIrSubTargetWithBinary> addSubTarget(type: Class<T>, configure: T.() -> Unit): T {
+    internal fun <T : KotlinJsIrSubTargetWithBinary> addSubTarget(type: Class<T>, configure: T.() -> Unit): T {
         val subTarget = project.objects.newInstance(type, this).also(configure)
         subTargets.add(subTarget)
         return subTarget
@@ -185,8 +190,10 @@ internal constructor(
 
     private val commonLazy by commonLazyDelegate
 
-    private fun registerTypeScriptCheckTask(binary: JsIrBinary): TaskProvider<TypeScriptValidationTask> {
-        val linkTask = binary.linkTask
+    private fun registerTypeScriptCheckTask(
+        binary: JsIrBinary,
+        inputDirectory: Provider<Directory>,
+    ): TaskProvider<TypeScriptValidationTask> {
         val compilation = binary.compilation
         return project.registerTask(binary.validateGeneratedTsTaskName, listOf(compilation)) {
             it.versions.value(
@@ -195,7 +202,7 @@ internal constructor(
                     { project.jsToolingProject().wasmKotlinNodeJsRootExtension.versions },
                 )
             ).disallowChanges()
-            it.inputDir.set(linkTask.flatMap { it.destinationDirectory })
+            it.inputDir.set(inputDirectory)
             it.validationStrategy.set(
                 when (binary.mode) {
                     KotlinJsBinaryMode.DEVELOPMENT -> propertiesProvider.jsIrGeneratedTypeScriptValidationDevStrategy
@@ -205,11 +212,8 @@ internal constructor(
         }
     }
 
-    @Deprecated(
-        "Binaryen is enabled by default. This call is redundant. Scheduled for removal in Kotlin 2.3.",
-        level = DeprecationLevel.ERROR
-    )
-    override fun applyBinaryen(body: BinaryenExec.() -> Unit) {
+    internal open fun KotlinBrowserJsIr.bundleConfigurator() {
+        subTargetConfigurators.add(WebpackConfigurator(this))
     }
 
     //region Browser
@@ -219,7 +223,7 @@ internal constructor(
             configureSubTarget()
             subTargetConfigurators.add(SwcConfigurator(this))
             subTargetConfigurators.add(LibraryConfigurator(this))
-            subTargetConfigurators.add(WebpackConfigurator(this))
+            bundleConfigurator()
         }
     }
 
@@ -254,52 +258,7 @@ internal constructor(
     }
     //endregion
 
-    //region d8
-    @OptIn(ExperimentalWasmDsl::class)
-    private val d8LazyDelegate = lazy {
-        webTargetVariant(
-            { NodeJsRootPlugin.apply(project.jsToolingProject()) },
-            { WasmNodeJsRootPlugin.apply(project.jsToolingProject()) },
-        )
-
-        addSubTarget(KotlinD8Ir::class.java) {
-            configureSubTarget()
-            subTargetConfigurators.add(LibraryConfigurator(this))
-            subTargetConfigurators.add(D8EnvironmentConfigurator(this))
-        }
-    }
-
-    override val d8: KotlinWasmD8Dsl by d8LazyDelegate
-
-    override fun d8(body: KotlinWasmD8Dsl.() -> Unit) {
-        body(d8)
-    }
-    //endregion
-
-    //region wasmtime
-    @OptIn(ExperimentalWasmDsl::class)
-    private val wasmtimeLazyDelegate = lazy {
-        check(wasmTargetType == KotlinWasmTargetType.WASI) {
-            "Wasmtime execution environment is supported only for the Kotlin/Wasm WASI target."
-        }
-
-        addSubTarget(KotlinWasmtimeSubtarget::class.java) {
-            configureSubTarget()
-            subTargetConfigurators.add(LibraryConfigurator(this))
-            subTargetConfigurators.add(WasmtimeEnvironmentConfigurator(this))
-        }
-    }
-
-    @ExperimentalWasmDsl
-    private val wasmtime: KotlinWasmtimeDsl by wasmtimeLazyDelegate
-
-    @ExperimentalWasmDsl
-    override fun wasmtime(body: KotlinWasmtimeDsl.() -> Unit) {
-        body(wasmtime)
-    }
-    //endregion
-
-    private fun KotlinJsIrSubTarget.configureSubTarget() {
+    internal fun KotlinJsIrSubTarget.configureSubTarget() {
         configure()
     }
 
@@ -366,18 +325,49 @@ internal constructor(
     override fun generateTypeScriptDefinitions() {
         shouldGenerateTypeScriptDefinitions.set(true)
         compilations
-            .all {
-                it.binaries
+            .all { compilation ->
+                compilation.binaries
                     .withType(JsIrBinary::class.java)
                     .all { binary ->
-                        val tsValidationTask = registerTypeScriptCheckTask(binary)
+                        if (binary.target.wasmTargetType == null && propertiesProvider.jsGenerateRichTypeScriptDeclarations) {
+                            val dtsTask = registerDtsGenerationTask(binary)
 
-                        binary.linkTask.configure { linkTask ->
-                            linkTask.compilerOptions.freeCompilerArgs.add(GENERATE_D_TS)
-                            linkTask.finalizedBy(tsValidationTask)
+                            val tsValidationTask = registerTypeScriptCheckTask(
+                                binary,
+                                dtsTask.flatMap { it.outputDirectory },
+                            )
+                            dtsTask.configure { it.finalizedBy(tsValidationTask) }
+                            binary.linkSyncTask.configure { it.from.from(dtsTask) }
+                        } else {
+                            val tsValidationTask = registerTypeScriptCheckTask(
+                                binary,
+                                binary.linkTask.flatMap { it.destinationDirectory },
+                            )
+                            binary.linkTask.configure { linkTask ->
+                                linkTask.compilerOptions.freeCompilerArgs.add(GENERATE_D_TS)
+                                linkTask.finalizedBy(tsValidationTask)
+                            }
                         }
                     }
             }
+    }
+
+    private fun registerDtsGenerationTask(binary: JsIrBinary): TaskProvider<KotlinJsDtsGenerationTask> {
+        val linkTask = binary.linkTask
+        val configurations = project.configurations
+
+        return project.locateOrRegisterTask<KotlinJsDtsGenerationTask>(binary.dtsGenerationTaskName) { task ->
+            KotlinJsCompilerOptionsHelper.syncOptionsAsConvention(
+                linkTask.get().compilerOptions,
+                task.linkCompilerOptions,
+            )
+            task.klibs.from(linkTask.map { it.libraries })
+            task.entryModule.set(linkTask.flatMap { it.entryModule })
+            task.granularity.set(linkTask.map { it.outputGranularity })
+            task.kotlinBuildToolsApiClasspath.from(configurations.named(BUILD_TOOLS_API_CLASSPATH_CONFIGURATION_NAME))
+
+            task.outputDirectory.set(binary.outputDirBase.map { it.dir(KotlinJsDtsGenerationTask.OUTPUT_DIRECTORY_NAME) })
+        }
     }
 
     override val compilerOptions: KotlinJsCompilerOptions = project.objects

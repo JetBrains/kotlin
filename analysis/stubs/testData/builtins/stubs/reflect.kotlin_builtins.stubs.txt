@@ -4,7 +4,7 @@ FILE[kind=File[packageFqName=kotlin.reflect]]
       REFERENCE_EXPRESSION[referencedName=kotlin]
       REFERENCE_EXPRESSION[referencedName=reflect]
   IMPORT_LIST
-  CLASS[classId=kotlin/reflect/KCallable, fqName=kotlin.reflect.KCallable, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=KCallable, superNames=[]]
+  CLASS[classId=kotlin/reflect/KCallable, fqName=kotlin.reflect.KCallable, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isTopLevel=true, name=KCallable, superNames=[]]
     MODIFIER_LIST[public expect]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=R]
@@ -29,7 +29,7 @@ FILE[kind=File[packageFqName=kotlin.reflect]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=String]
               isClassRef: true
-  CLASS[classId=kotlin/reflect/KClass, fqName=kotlin.reflect.KClass, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=KClass, superNames=[KClassifier]]
+  CLASS[classId=kotlin/reflect/KClass, fqName=kotlin.reflect.KClass, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isTopLevel=true, name=KClass, superNames=[KClassifier]]
     MODIFIER_LIST[public expect]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=T]
@@ -126,7 +126,7 @@ FILE[kind=File[packageFqName=kotlin.reflect]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
               isClassRef: true
-  CLASS[classId=kotlin/reflect/KClassifier, fqName=kotlin.reflect.KClassifier, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=KClassifier, superNames=[]]
+  CLASS[classId=kotlin/reflect/KClassifier, fqName=kotlin.reflect.KClassifier, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isTopLevel=true, name=KClassifier, superNames=[]]
     MODIFIER_LIST[public]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=SinceKotlin]
         valueArguments: [ version -> "1.1" ]
@@ -144,7 +144,7 @@ FILE[kind=File[packageFqName=kotlin.reflect]]
             STRING_TEMPLATE
               LITERAL_STRING_TEMPLATE_ENTRY[text=1.1]
     CLASS_BODY
-  CLASS[classId=kotlin/reflect/KFunction, fqName=kotlin.reflect.KFunction, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=KFunction, superNames=[KCallable, Function]]
+  CLASS[classId=kotlin/reflect/KFunction, fqName=kotlin.reflect.KFunction, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isTopLevel=true, name=KFunction, superNames=[KCallable, Function]]
     MODIFIER_LIST[public expect]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=R]
@@ -179,7 +179,7 @@ FILE[kind=File[packageFqName=kotlin.reflect]]
                     REFERENCE_EXPRESSION[referencedName=R]
                       isClassRef: true
     CLASS_BODY
-  CLASS[classId=kotlin/reflect/KMutableProperty, fqName=kotlin.reflect.KMutableProperty, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=KMutableProperty, superNames=[KProperty]]
+  CLASS[classId=kotlin/reflect/KMutableProperty, fqName=kotlin.reflect.KMutableProperty, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isTopLevel=true, name=KMutableProperty, superNames=[KProperty]]
     MODIFIER_LIST[public expect]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=V]
@@ -200,7 +200,7 @@ FILE[kind=File[packageFqName=kotlin.reflect]]
                     REFERENCE_EXPRESSION[referencedName=V]
                       isClassRef: true
     CLASS_BODY
-  CLASS[classId=kotlin/reflect/KMutableProperty0, fqName=kotlin.reflect.KMutableProperty0, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=KMutableProperty0, superNames=[KProperty0, KMutableProperty]]
+  CLASS[classId=kotlin/reflect/KMutableProperty0, fqName=kotlin.reflect.KMutableProperty0, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isTopLevel=true, name=KMutableProperty0, superNames=[KProperty0, KMutableProperty]]
     MODIFIER_LIST[public expect]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=V]
@@ -250,7 +250,7 @@ FILE[kind=File[packageFqName=kotlin.reflect]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
               isClassRef: true
-  CLASS[classId=kotlin/reflect/KMutableProperty1, fqName=kotlin.reflect.KMutableProperty1, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=KMutableProperty1, superNames=[KProperty1, KMutableProperty]]
+  CLASS[classId=kotlin/reflect/KMutableProperty1, fqName=kotlin.reflect.KMutableProperty1, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isTopLevel=true, name=KMutableProperty1, superNames=[KProperty1, KMutableProperty]]
     MODIFIER_LIST[public expect]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=T]
@@ -311,7 +311,7 @@ FILE[kind=File[packageFqName=kotlin.reflect]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
               isClassRef: true
-  CLASS[classId=kotlin/reflect/KMutableProperty2, fqName=kotlin.reflect.KMutableProperty2, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=KMutableProperty2, superNames=[KProperty2, KMutableProperty]]
+  CLASS[classId=kotlin/reflect/KMutableProperty2, fqName=kotlin.reflect.KMutableProperty2, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isTopLevel=true, name=KMutableProperty2, superNames=[KProperty2, KMutableProperty]]
     MODIFIER_LIST[public expect]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=D]
@@ -383,7 +383,7 @@ FILE[kind=File[packageFqName=kotlin.reflect]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
               isClassRef: true
-  CLASS[classId=kotlin/reflect/KProperty, fqName=kotlin.reflect.KProperty, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=KProperty, superNames=[KCallable]]
+  CLASS[classId=kotlin/reflect/KProperty, fqName=kotlin.reflect.KProperty, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isTopLevel=true, name=KProperty, superNames=[KCallable]]
     MODIFIER_LIST[public expect]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=V]
@@ -405,7 +405,7 @@ FILE[kind=File[packageFqName=kotlin.reflect]]
                     REFERENCE_EXPRESSION[referencedName=V]
                       isClassRef: true
     CLASS_BODY
-  CLASS[classId=kotlin/reflect/KProperty0, fqName=kotlin.reflect.KProperty0, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=KProperty0, superNames=[KProperty]]
+  CLASS[classId=kotlin/reflect/KProperty0, fqName=kotlin.reflect.KProperty0, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isTopLevel=true, name=KProperty0, superNames=[KProperty]]
     MODIFIER_LIST[public expect]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=V]
@@ -442,7 +442,7 @@ FILE[kind=File[packageFqName=kotlin.reflect]]
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=V]
               isClassRef: true
-  CLASS[classId=kotlin/reflect/KProperty1, fqName=kotlin.reflect.KProperty1, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=KProperty1, superNames=[KProperty]]
+  CLASS[classId=kotlin/reflect/KProperty1, fqName=kotlin.reflect.KProperty1, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isTopLevel=true, name=KProperty1, superNames=[KProperty]]
     MODIFIER_LIST[public expect]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=T]
@@ -490,7 +490,7 @@ FILE[kind=File[packageFqName=kotlin.reflect]]
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=V]
               isClassRef: true
-  CLASS[classId=kotlin/reflect/KProperty2, fqName=kotlin.reflect.KProperty2, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=KProperty2, superNames=[KProperty]]
+  CLASS[classId=kotlin/reflect/KProperty2, fqName=kotlin.reflect.KProperty2, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isTopLevel=true, name=KProperty2, superNames=[KProperty]]
     MODIFIER_LIST[public expect]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=D]
@@ -549,7 +549,7 @@ FILE[kind=File[packageFqName=kotlin.reflect]]
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=V]
               isClassRef: true
-  CLASS[classId=kotlin/reflect/KType, fqName=kotlin.reflect.KType, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=KType, superNames=[]]
+  CLASS[classId=kotlin/reflect/KType, fqName=kotlin.reflect.KType, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isTopLevel=true, name=KType, superNames=[]]
     MODIFIER_LIST[public expect]
     CLASS_BODY
       PROPERTY[fqName=kotlin.reflect.KType.classifier, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=classifier]
@@ -621,7 +621,7 @@ FILE[kind=File[packageFqName=kotlin.reflect]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
               isClassRef: true
-  CLASS[classId=kotlin/reflect/KTypeParameter, fqName=kotlin.reflect.KTypeParameter, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=KTypeParameter, superNames=[KClassifier]]
+  CLASS[classId=kotlin/reflect/KTypeParameter, fqName=kotlin.reflect.KTypeParameter, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isTopLevel=true, name=KTypeParameter, superNames=[KClassifier]]
     MODIFIER_LIST[public]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=SinceKotlin]
         valueArguments: [ version -> "1.1" ]
@@ -695,7 +695,7 @@ FILE[kind=File[packageFqName=kotlin.reflect]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
               isClassRef: true
-  CLASS[classId=kotlin/reflect/KTypeProjection, fqName=kotlin.reflect.KTypeProjection, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=KTypeProjection, superNames=[]]
+  CLASS[classId=kotlin/reflect/KTypeProjection, fqName=kotlin.reflect.KTypeProjection, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=KTypeProjection, superNames=[]]
     MODIFIER_LIST[public final data]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=SinceKotlin]
         valueArguments: [ version -> "1.1" ]
@@ -736,7 +736,7 @@ FILE[kind=File[packageFqName=kotlin.reflect]]
                 REFERENCE_EXPRESSION[referencedName=KType]
                   isClassRef: true
     CLASS_BODY
-      OBJECT_DECLARATION[classId=kotlin/reflect/KTypeProjection.Companion, fqName=kotlin.reflect.KTypeProjection.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+      OBJECT_DECLARATION[classId=kotlin/reflect/KTypeProjection.Companion, fqName=kotlin.reflect.KTypeProjection.Companion, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[public companion]
         CLASS_BODY
           PROPERTY[fqName=kotlin.reflect.KTypeProjection.Companion.star, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=star]
@@ -978,7 +978,7 @@ FILE[kind=File[packageFqName=kotlin.reflect]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
               isClassRef: true
-  CLASS[classId=kotlin/reflect/KVariance, fqName=kotlin.reflect.KVariance, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=KVariance, superNames=[Enum]]
+  CLASS[classId=kotlin/reflect/KVariance, fqName=kotlin.reflect.KVariance, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=KVariance, superNames=[Enum]]
     MODIFIER_LIST[public final enum]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=SinceKotlin]
         valueArguments: [ version -> "1.1" ]
@@ -1017,6 +1017,6 @@ FILE[kind=File[packageFqName=kotlin.reflect]]
                     REFERENCE_EXPRESSION[referencedName=KVariance]
                       isClassRef: true
     CLASS_BODY
-      ENUM_ENTRY[classId=null, fqName=kotlin.reflect.KVariance.INVARIANT, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=INVARIANT, superNames=[]]
-      ENUM_ENTRY[classId=null, fqName=kotlin.reflect.KVariance.IN, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=IN, superNames=[]]
-      ENUM_ENTRY[classId=null, fqName=kotlin.reflect.KVariance.OUT, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=OUT, superNames=[]]
+      ENUM_ENTRY[classId=null, fqName=kotlin.reflect.KVariance.INVARIANT, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=INVARIANT, superNames=[]]
+      ENUM_ENTRY[classId=null, fqName=kotlin.reflect.KVariance.IN, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=IN, superNames=[]]
+      ENUM_ENTRY[classId=null, fqName=kotlin.reflect.KVariance.OUT, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=OUT, superNames=[]]

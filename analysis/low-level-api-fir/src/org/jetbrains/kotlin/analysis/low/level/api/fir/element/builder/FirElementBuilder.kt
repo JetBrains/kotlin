@@ -218,7 +218,9 @@ internal class FirElementBuilder(private val moduleComponents: LLFirModuleResolv
         nonLocalDeclaration = nonLocalDeclaration,
         anchorElementProvider = { it.parentsOfType<KtAnnotationEntry>(nonLocalDeclaration).firstOrNull() },
         elementOwnerProvider = { it.annotationOwner() },
-        resolveAndFindFirForAnchor = { declaration, anchor -> declaration.resolveAndFindAnnotation(anchor, goDeep = true) },
+        resolveAndFindFirForAnchor = { declaration, anchor ->
+            declaration.resolveAndFindAnnotation(anchor, phase = element.phaseToResolveInsideAnnotation(anchor), goDeep = true)
+        },
     )
 
     private fun getFirForElementInsideTypes(
@@ -235,7 +237,9 @@ internal class FirElementBuilder(private val moduleComponents: LLFirModuleResolv
                 else -> null
             }
         },
-        resolveAndFindFirForAnchor = { declaration, anchor -> declaration.resolveAndFindTypeRefAnchor(anchor) },
+        resolveAndFindFirForAnchor = { declaration, anchor ->
+            declaration.resolveAndFindTypeRefAnchor(anchor, phase = element.phaseToResolveInsideType(anchor))
+        },
     )?.let { firElement ->
         if (firElement is FirReceiverParameter) {
             firElement.typeRef
@@ -265,6 +269,26 @@ internal class FirElementBuilder(private val moduleComponents: LLFirModuleResolv
         },
     )
 
+    /**
+     * [TYPES][FirResolvePhase.TYPES] is enough for types, but annotations on them are resolved only in
+     * [ANNOTATION_ARGUMENTS][FirResolvePhase.ANNOTATION_ARGUMENTS].
+     *
+     * @see phaseToResolveInsideAnnotation
+     */
+    private fun KtElement.phaseToResolveInsideType(typeReference: KtTypeReference): FirResolvePhase {
+        val annotationEntry = parentsOfType<KtAnnotationEntry>(typeReference).firstOrNull() ?: return FirResolvePhase.TYPES
+        return phaseToResolveInsideAnnotation(annotationEntry)
+    }
+
+    /**
+     * [TYPES][FirResolvePhase.TYPES] is enough for the type reference of an annotation.
+     * Other elements need [ANNOTATION_ARGUMENTS][FirResolvePhase.ANNOTATION_ARGUMENTS]: e.g., the callee name is mapped
+     * to the resolved callee reference, which is unresolved before this phase.
+     */
+    private fun KtElement.phaseToResolveInsideAnnotation(annotationEntry: KtAnnotationEntry): FirResolvePhase {
+        return if (this === annotationEntry.typeReference) FirResolvePhase.TYPES else FirResolvePhase.ANNOTATION_ARGUMENTS
+    }
+
     private fun KtElement.fileHeaderAnchorElement(): KtElement? {
         return parentsWithSelf.find { it is KtPackageDirective || it is KtImportDirective } as? KtElement
     }
@@ -275,10 +299,13 @@ internal class FirElementBuilder(private val moduleComponents: LLFirModuleResolv
         return KtToFirMapping.getFir(elementToSearch, moduleComponents.session, mapping)
     }
 
-    private fun FirElementWithResolveState.resolveAndFindTypeRefAnchor(typeReference: KtTypeReference): FirElement? {
+    private fun FirElementWithResolveState.resolveAndFindTypeRefAnchor(
+        typeReference: KtTypeReference,
+        phase: FirResolvePhase,
+    ): FirElement? {
         requireTypeIntersectionWith<FirAnnotationContainer>()
 
-        lazyResolveToPhase(FirResolvePhase.ANNOTATION_ARGUMENTS)
+        lazyResolveToPhase(phase)
 
         when (this) {
             is FirCallableDeclaration -> {
@@ -326,11 +353,12 @@ internal class FirElementBuilder(private val moduleComponents: LLFirModuleResolv
 
     private fun FirElementWithResolveState.resolveAndFindAnnotation(
         annotationEntry: KtAnnotationEntry,
+        phase: FirResolvePhase,
         goDeep: Boolean = false,
     ): FirAnnotation? {
         requireTypeIntersectionWith<FirAnnotationContainer>()
 
-        lazyResolveToPhase(FirResolvePhase.ANNOTATION_ARGUMENTS)
+        lazyResolveToPhase(phase)
         findAnnotation(annotationEntry)?.let { return it }
 
         if (this is FirProperty) {
@@ -342,8 +370,8 @@ internal class FirElementBuilder(private val moduleComponents: LLFirModuleResolv
 
         return when {
             !goDeep -> null
-            this is FirProperty -> correspondingValueParameterFromPrimaryConstructor?.fir?.resolveAndFindAnnotation(annotationEntry)
-            this is FirValueParameter -> correspondingProperty?.resolveAndFindAnnotation(annotationEntry)
+            this is FirProperty -> correspondingValueParameterFromPrimaryConstructor?.fir?.resolveAndFindAnnotation(annotationEntry, phase)
+            this is FirValueParameter -> correspondingProperty?.resolveAndFindAnnotation(annotationEntry, phase)
             else -> null
         }
     }
@@ -395,6 +423,6 @@ internal fun PsiElement.getNonLocalContainingOrThisElement(predicate: (KtElement
     return null
 }
 
-private inline fun <reified T : KtElement> PsiElement.parentsOfType(stopDeclaration: KtDeclaration?): Sequence<T> {
-    return parentsWithSelf.takeWhile { it !== stopDeclaration }.filterIsInstance<T>()
+private inline fun <reified T : KtElement> PsiElement.parentsOfType(stopElement: KtElement?): Sequence<T> {
+    return parentsWithSelf.takeWhile { it !== stopElement }.filterIsInstance<T>()
 }

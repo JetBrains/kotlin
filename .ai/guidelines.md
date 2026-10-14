@@ -25,6 +25,11 @@ Note: The IntelliJ Kotlin plugin is in a separate repository (JetBrains/intellij
 
 - Don't modify `*Generated.java` test files directly - regenerate them with `generateTests` Gradle task
 
+## Diagnostic Messages
+
+When adding, changing, or proofreading compiler diagnostic messages (errors and warnings),
+follow the [Diagnostic Message Style Guide](../docs/diagnostic_message_style_guide.md).
+
 ## Areas
 
 **BEFORE running tests, modifying, or investigating code — identify the area and READ its docs.**

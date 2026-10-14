@@ -86,7 +86,7 @@ fun CompilerConfiguration.setupCommonArguments(
     checkRedundantArguments(arguments)
 
     put(CommonConfigurationKeys.USE_FIR, languageVersionSettings.languageVersion.usesK2)
-    put(CommonConfigurationKeys.USE_LIGHT_TREE, @Suppress("DEPRECATION") arguments.useFirLT)
+    put(CommonConfigurationKeys.PARSER_MODE, @Suppress("DEPRECATION") if (arguments.useFirLT) ParserMode.LightTree else ParserMode.Psi)
 
     buildHmppModuleStructure(arguments)?.let { put(CommonConfigurationKeys.HMPP_MODULE_STRUCTURE, it) }
 
@@ -109,7 +109,7 @@ private fun CompilerConfiguration.handleMinimumRuntimeJdkOptOut(arguments: Commo
 
     if (currentJdkVersion < requiredRuntimeJdk && !arguments.allowPre17RuntimeJdk) {
         report(
-            COMPILER_ARGUMENTS_WARNING,
+            COMPILER_ARGUMENTS_ERROR,
             "Running Kotlin compiler using JDK $currentJdkVersion will not be supported in future versions of Kotlin. " +
                     "Consider upgrading to at least JDK $requiredRuntimeJdk or supplying '$optOutOption' (which will only work until Kotlin $stopsWorkingIn). " +
                     "See https://jb.gg/kotlin-compiler-jdk-17-migration for more details.",

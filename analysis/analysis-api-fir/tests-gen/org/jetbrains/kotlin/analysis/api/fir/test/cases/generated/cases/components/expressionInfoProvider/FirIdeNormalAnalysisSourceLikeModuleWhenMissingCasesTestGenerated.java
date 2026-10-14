@@ -104,6 +104,18 @@ public class FirIdeNormalAnalysisSourceLikeModuleWhenMissingCasesTestGenerated e
   }
 
   @Test
+  @TestMetadata("fullValueClassExhaustive.kt")
+  public void testFullValueClassExhaustive() {
+    run("fullValueClassExhaustive.kt");
+  }
+
+  @Test
+  @TestMetadata("fullValueClassNullable.kt")
+  public void testFullValueClassNullable() {
+    run("fullValueClassNullable.kt");
+  }
+
+  @Test
   @TestMetadata("nothing.kt")
   public void testNothing() {
     run("nothing.kt");

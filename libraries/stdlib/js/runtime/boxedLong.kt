@@ -22,6 +22,7 @@ package kotlin.js.internal.boxedLong
 import withType
 import kotlin.internal.InlineOnly
 import kotlin.internal.UsedFromCompilerGeneratedCode
+import kotlin.js.internal.longAsBigInt.LongAsBigIntApi
 import kotlin.math.floor
 import kotlin.reflect.js.internal.PrimitiveKClassImpl
 
@@ -467,14 +468,6 @@ private val MAX_VALUE = Long(-1, -1 ushr 1)
 @Suppress("DEPRECATION")
 @EagerInitialization
 private val MIN_VALUE = Long(0, 1 shl 31)
-
-@BoxedLongApi
-@UsedFromCompilerGeneratedCode
-@OptIn(ExperimentalStdlibApi::class)
-@Suppress("DEPRECATION")
-@EagerInitialization
-// TODO(KT-85540): remove the property after bootstrapping
-internal val longArrayClass = PrimitiveKClassImpl(js("Array").unsafeCast<JsClass<LongArray>>(), "LongArray", { it is LongArray })
 
 @BoxedLongApi
 @UsedFromCompilerGeneratedCode

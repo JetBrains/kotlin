@@ -8,11 +8,7 @@ dependencies {
     api(gradleApi())
     api(project(":kotlin-gradle-plugin-api"))
     api(project(":native:kotlin-native-utils"))
-    implementation(projectTests(":generators")) {
-        // because of hacky projectTests this transitive dependency does not work well
-        // also it may bring a lot of unrelated dependencies
-        isTransitive = false
-    }
+    implementation(testFixtures(project(":generators")))
     implementation(project(":core:util.runtime"))
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)

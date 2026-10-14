@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.handlers.KlibBackendDiagnosticsHandler
+import org.jetbrains.kotlin.test.backend.ir.IrDiagnosticsHandler
 import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.configuration.commonCodegenConfiguration
 import org.jetbrains.kotlin.test.configuration.commonIrHandlersForCodegenTest
@@ -174,6 +175,7 @@ fun TestConfigurationBuilder.setupStepsForWasmFirstStageUpToSerialization(
     facadeStep(::WasmPreSerializationLoweringFacade)
     loweredIrHandlersStep {
         commonIrHandlersForCodegenTest()
+        useHandlers(::IrDiagnosticsHandler)
     }
 
     facadeStep(::FirKlibSerializerCliWasmFacade)

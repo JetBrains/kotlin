@@ -45,7 +45,7 @@ internal class LLJvmSessionConfiguration(private val project: Project) : LLPlatf
 
     override fun createPlatformSpecificSymbolProvidersForBuiltinsSession(
         session: LLFirBuiltinsAndCloneableSession
-    ): List<FirSymbolProvider> = listOf(createCloneableSymbolProvider(session))
+    ): List<FirSymbolProvider> = createSyntheticSymbolProviders(session)
 
     override fun createBinaryLibrarySymbolProviders(session: LLFirSession, scope: GlobalSearchScope): List<FirSymbolProvider> =
         createSymbolProvidersWithOptionalAnnotationClassesProvider(session, scope) { packagePartProvider ->

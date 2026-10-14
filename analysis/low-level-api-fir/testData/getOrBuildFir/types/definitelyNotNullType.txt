@@ -7,7 +7,7 @@ R|T1 & Any|
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] KotlinInterface.kt
-    public abstract [ResolvedTo(STATUS)] interface KotlinInterface<[ResolvedTo(STATUS)] T1> : R|JavaInterface<T1>| {
-        public abstract override [ResolvedTo(ANNOTATION_ARGUMENTS)] fun doSmth([ResolvedTo(ANNOTATION_ARGUMENTS)] x: R|T1 & Any|): R|kotlin/Unit|
+    public final? [ResolvedTo(TYPES)] interface KotlinInterface<[ResolvedTo(TYPES)] T1> : R|JavaInterface<T1>| {
+        public? open? override [ResolvedTo(TYPES)] fun doSmth([ResolvedTo(TYPES)] x: R|T1 & Any|): R|kotlin/Unit|
 
     }

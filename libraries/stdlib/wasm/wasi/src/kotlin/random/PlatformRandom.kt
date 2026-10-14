@@ -34,4 +34,4 @@ private fun wasiRandomGet(): Long {
     }
 }
 
-internal actual fun defaultPlatformRandom(): Random = Random(wasiRandomGet())
+internal actual val defaultRandom: Random = Random(wasiRandomGet())

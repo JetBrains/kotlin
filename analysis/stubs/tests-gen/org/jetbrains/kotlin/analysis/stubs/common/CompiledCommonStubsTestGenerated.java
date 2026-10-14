@@ -221,6 +221,12 @@ public class CompiledCommonStubsTestGenerated extends AbstractCompiledCommonStub
   }
 
   @Test
+  @TestMetadata("companionsInsideNamelessClasses.kt")
+  public void testCompanionsInsideNamelessClasses() {
+    run("companionsInsideNamelessClasses.kt");
+  }
+
+  @Test
   @TestMetadata("complicateLTGT.kt")
   public void testComplicateLTGT() {
     run("complicateLTGT.kt");
@@ -266,6 +272,18 @@ public class CompiledCommonStubsTestGenerated extends AbstractCompiledCommonStub
   @TestMetadata("dataObject.kt")
   public void testDataObject() {
     run("dataObject.kt");
+  }
+
+  @Test
+  @TestMetadata("deepNestingInsideNamelessClasses.kt")
+  public void testDeepNestingInsideNamelessClasses() {
+    run("deepNestingInsideNamelessClasses.kt");
+  }
+
+  @Test
+  @TestMetadata("deepNestingInsideNamelessLocalClasses.kt")
+  public void testDeepNestingInsideNamelessLocalClasses() {
+    run("deepNestingInsideNamelessLocalClasses.kt");
   }
 
   @Test
@@ -899,6 +917,36 @@ public class CompiledCommonStubsTestGenerated extends AbstractCompiledCommonStub
   }
 
   @Test
+  @TestMetadata("namedInsideNamelessClasses.kt")
+  public void testNamedInsideNamelessClasses() {
+    run("namedInsideNamelessClasses.kt");
+  }
+
+  @Test
+  @TestMetadata("namedInsideNamelessLocalClasses.kt")
+  public void testNamedInsideNamelessLocalClasses() {
+    run("namedInsideNamelessLocalClasses.kt");
+  }
+
+  @Test
+  @TestMetadata("namelessEnumClasses.kt")
+  public void testNamelessEnumClasses() {
+    run("namelessEnumClasses.kt");
+  }
+
+  @Test
+  @TestMetadata("namelessInsideNamelessClasses.kt")
+  public void testNamelessInsideNamelessClasses() {
+    run("namelessInsideNamelessClasses.kt");
+  }
+
+  @Test
+  @TestMetadata("namelessInsideNamelessLocalClasses.kt")
+  public void testNamelessInsideNamelessLocalClasses() {
+    run("namelessInsideNamelessLocalClasses.kt");
+  }
+
+  @Test
   @TestMetadata("namelessObjectAsEnumMember.kt")
   public void testNamelessObjectAsEnumMember() {
     run("namelessObjectAsEnumMember.kt");
@@ -1506,6 +1554,12 @@ public class CompiledCommonStubsTestGenerated extends AbstractCompiledCommonStub
     }
 
     @Test
+    @TestMetadata("constructorWithThrowsFromLibrary.kt")
+    public void testConstructorWithThrowsFromLibrary() {
+      run("constructorWithThrowsFromLibrary.kt");
+    }
+
+    @Test
     @TestMetadata("differentDefaultValues.kt")
     public void testDifferentDefaultValues() {
       run("differentDefaultValues.kt");
@@ -1545,6 +1599,12 @@ public class CompiledCommonStubsTestGenerated extends AbstractCompiledCommonStub
     @TestMetadata("oldAnnotationsRecovery.kt")
     public void testOldAnnotationsRecovery() {
       run("oldAnnotationsRecovery.kt");
+    }
+
+    @Test
+    @TestMetadata("propertyAccessorsWithThrowsFromLibrary.kt")
+    public void testPropertyAccessorsWithThrowsFromLibrary() {
+      run("propertyAccessorsWithThrowsFromLibrary.kt");
     }
 
     @Test
@@ -2877,6 +2937,12 @@ public class CompiledCommonStubsTestGenerated extends AbstractCompiledCommonStub
     }
 
     @Test
+    @TestMetadata("accessorOnNonLocalDestructuring.kt")
+    public void testAccessorOnNonLocalDestructuring() {
+      run("accessorOnNonLocalDestructuring.kt");
+    }
+
+    @Test
     public void testAllFilesPresentInDestructuring() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/psi/psi-impl/testData/psi/destructuring"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
@@ -3452,6 +3518,12 @@ public class CompiledCommonStubsTestGenerated extends AbstractCompiledCommonStub
     }
 
     @Test
+    @TestMetadata("codeBlockWithBlockComment.kt")
+    public void testCodeBlockWithBlockComment() {
+      run("codeBlockWithBlockComment.kt");
+    }
+
+    @Test
     @TestMetadata("CodeBlocks.kt")
     public void testCodeBlocks() {
       run("CodeBlocks.kt");
@@ -3572,6 +3644,12 @@ public class CompiledCommonStubsTestGenerated extends AbstractCompiledCommonStub
     }
 
     @Test
+    @TestMetadata("kt89933.kt")
+    public void testKt89933() {
+      run("kt89933.kt");
+    }
+
+    @Test
     @TestMetadata("Markdown.kt")
     public void testMarkdown() {
       run("Markdown.kt");
@@ -3677,6 +3755,12 @@ public class CompiledCommonStubsTestGenerated extends AbstractCompiledCommonStub
     @TestMetadata("TwoTags.kt")
     public void testTwoTags() {
       run("TwoTags.kt");
+    }
+
+    @Test
+    @TestMetadata("unclosedCodeBlocks.kt")
+    public void testUnclosedCodeBlocks() {
+      run("unclosedCodeBlocks.kt");
     }
   }
 
@@ -4336,6 +4420,12 @@ public class CompiledCommonStubsTestGenerated extends AbstractCompiledCommonStub
     }
 
     @Test
+    @TestMetadata("FunctionExpressionBody.kt")
+    public void testFunctionExpressionBody() {
+      run("FunctionExpressionBody.kt");
+    }
+
+    @Test
     @TestMetadata("IfKeywordRBrace.kt")
     public void testIfKeywordRBrace() {
       run("IfKeywordRBrace.kt");
@@ -4549,6 +4639,12 @@ public class CompiledCommonStubsTestGenerated extends AbstractCompiledCommonStub
     @TestMetadata("PackageRecovery.kt")
     public void testPackageRecovery() {
       run("PackageRecovery.kt");
+    }
+
+    @Test
+    @TestMetadata("PropertyAccessorExpressionBody.kt")
+    public void testPropertyAccessorExpressionBody() {
+      run("PropertyAccessorExpressionBody.kt");
     }
 
     @Test
@@ -4937,20 +5033,6 @@ public class CompiledCommonStubsTestGenerated extends AbstractCompiledCommonStub
   }
 
   @Nested
-  @TestMetadata("compiler/psi/psi-impl/testData/psi/repl")
-  @TestDataPath("$PROJECT_ROOT")
-  public class Repl {
-    private void run(String fileName) {
-      runTest("compiler/psi/psi-impl/testData/psi/repl/" + fileName);
-    }
-
-    @Test
-    public void testAllFilesPresentInRepl() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/psi/psi-impl/testData/psi/repl"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
-    }
-  }
-
-  @Nested
   @TestMetadata("compiler/psi/psi-impl/testData/psi/richErrors")
   @TestDataPath("$PROJECT_ROOT")
   public class RichErrors {
@@ -5179,6 +5261,12 @@ public class CompiledCommonStubsTestGenerated extends AbstractCompiledCommonStub
     @TestMetadata("nonStubbedInitializers.kt")
     public void testNonStubbedInitializers() {
       run("nonStubbedInitializers.kt");
+    }
+
+    @Test
+    @TestMetadata("operationReferences.kt")
+    public void testOperationReferences() {
+      run("operationReferences.kt");
     }
 
     @Test

@@ -159,7 +159,7 @@ class ExportDslIT : KGPBaseTest() {
                 ":$EMBED_SWIFT_EXPORT_TASK_NAME",
                 environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
             ) {
-                assertTasksExecuted(":iosArm64DebugSwiftExport")
+                assertTasksExecuted(":iosArm64SwiftExport")
                 assertTasksExecuted(":$EMBED_SWIFT_EXPORT_TASK_NAME")
             }
         }
@@ -333,9 +333,9 @@ class ExportDslIT : KGPBaseTest() {
                 ":$EMBED_SWIFT_EXPORT_TASK_NAME",
                 environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
             ) {
-                assertTasksExecuted(":iosArm64DebugSwiftExport")
+                assertTasksExecuted(":iosArm64SwiftExport")
 
-                val files = projectPath.resolve("build/SwiftExport/iosArm64/Debug/files")
+                val files = projectPath.resolve("build/SwiftExport/iosArm64/files")
                 // The derived name for `:sub` would have been `Sub`.
                 assertDirectoryDoesNotExist(files.resolve("Sub"))
                 val renamedSwift = files.resolve("Renamed/Renamed.swift")
@@ -344,7 +344,7 @@ class ExportDslIT : KGPBaseTest() {
                 // Flattening the package exposes `com.example.sub.One` at the top level of the module.
                 assertContains(renamedSwift.readText(), "public typealias One = ExportedKotlinPackages.com.example.sub.One")
 
-                val modules = parseJsonToMap(projectPath.resolve("build/SwiftExport/iosArm64/Debug/modules/Shared.json"))
+                val modules = parseJsonToMap(projectPath.resolve("build/SwiftExport/iosArm64/modules.json"))
                     .getNestedList("modules")
                     .orEmpty()
                     .map { it["name"]?.jsonPrimitive?.content }
@@ -416,7 +416,7 @@ class ExportDslIT : KGPBaseTest() {
                 ":$EMBED_SWIFT_EXPORT_TASK_NAME",
                 environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
             ) {
-                assertTasksExecuted(":iosArm64DebugSwiftExport")
+                assertTasksExecuted(":iosArm64SwiftExport")
 
                 // Hiding doesn't remove the module.
                 val builtProductsDir = projectPath.resolve("build/builtProductsDir")
@@ -513,7 +513,7 @@ class ExportDslIT : KGPBaseTest() {
                 ":$EMBED_SWIFT_EXPORT_TASK_NAME",
                 environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
             ) {
-                assertTasksExecuted(":iosArm64DebugSwiftExport")
+                assertTasksExecuted(":iosArm64SwiftExport")
 
                 // Named from the project path, as with `api(project(":sub"))`.
                 val builtProductsDir = projectPath.resolve("build/builtProductsDir")
@@ -618,7 +618,7 @@ class ExportDslIT : KGPBaseTest() {
                 "-P$visibilityProperty=EXPOSED",
                 environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir),
             ) {
-                assertTasksExecuted(":iosArm64DebugSwiftExport")
+                assertTasksExecuted(":iosArm64SwiftExport")
                 assertSwiftModuleSymbols(
                     workingDir = projectPath.toFile(),
                     moduleName = "Sub",
@@ -651,7 +651,7 @@ class ExportDslIT : KGPBaseTest() {
                 "-P$visibilityProperty=EXPOSED",
                 environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir),
             ) {
-                assertTasksUpToDate(":iosArm64DebugSwiftExport")
+                assertTasksUpToDate(":iosArm64SwiftExport")
             }
 
             // 3) Change ONLY the visibility override to HIDDEN. The override drives the task's output and is tracked
@@ -663,7 +663,7 @@ class ExportDslIT : KGPBaseTest() {
                 "-P$visibilityProperty=HIDDEN",
                 environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir),
             ) {
-                assertTasksExecuted(":iosArm64DebugSwiftExport")
+                assertTasksExecuted(":iosArm64SwiftExport")
                 assertSwiftModuleSymbols(
                     workingDir = projectPath.toFile(),
                     moduleName = "Sub",

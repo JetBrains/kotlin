@@ -1,5 +1,5 @@
 FILE fqName:<root> fileName:/destructuringDeclaration.kts
-  CLASS SCRIPT_CLASS CLASS name:DestructuringDeclaration modality:FINAL visibility:public superTypes:[kotlin.script.templates.standard.ScriptTemplateWithArgs]
+  CLASS SCRIPT_CLASS CLASS name:DestructuringDeclaration modality:FINAL visibility:public superTypes:[kotlin.script.experimental.templates.ScriptWithArgs]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.DestructuringDeclaration
     FIELD SCRIPT_CALL_PARAMETER name:args type:kotlin.Array<kotlin.String> visibility:local [final]
     ANONYMOUS_INITIALIZER isStatic=false
@@ -79,12 +79,12 @@ FILE fqName:<root> fileName:/destructuringDeclaration.kts
     CONSTRUCTOR visibility:public returnType:<root>.DestructuringDeclaration [primary]
       VALUE_PARAMETER SCRIPT_CALL_PARAMETER kind:Regular name:args index:0 type:kotlin.Array<kotlin.String>
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (args: kotlin.Array<kotlin.String>) declared in kotlin.script.templates.standard.ScriptTemplateWithArgs'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (args: kotlin.Array<kotlin.String>) declared in kotlin.script.experimental.templates.ScriptWithArgs'
           ARG args: GET_VAR 'args: kotlin.Array<kotlin.String> declared in <root>.DestructuringDeclaration.<init>' type=kotlin.Array<kotlin.String> origin=null
         SET_FIELD 'FIELD SCRIPT_CALL_PARAMETER name:args type:kotlin.Array<kotlin.String> visibility:local [final] declared in <root>.DestructuringDeclaration' type=kotlin.Unit origin=null
           receiver: GET_VAR '<this>: <root>.DestructuringDeclaration declared in <root>.DestructuringDeclaration' type=<root>.DestructuringDeclaration origin=null
           value: GET_VAR 'args: kotlin.Array<kotlin.String> declared in <root>.DestructuringDeclaration.<init>' type=kotlin.Array<kotlin.String> origin=null
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS SCRIPT_CLASS CLASS name:DestructuringDeclaration modality:FINAL visibility:public superTypes:[kotlin.script.templates.standard.ScriptTemplateWithArgs]' type=kotlin.Unit
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS SCRIPT_CLASS CLASS name:DestructuringDeclaration modality:FINAL visibility:public superTypes:[kotlin.script.experimental.templates.ScriptWithArgs]' type=kotlin.Unit
     FUN name:main visibility:public modality:FINAL returnType:kotlin.Unit [companion]
       VALUE_PARAMETER kind:Regular name:args index:0 type:kotlin.Array<kotlin.String>
       EXPRESSION_BODY

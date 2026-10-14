@@ -14,6 +14,7 @@ plugins {
 configureKotlinCompileTasksGradleCompatibility()
 
 kotlin {
+    @Suppress("DEPRECATION")
     coreLibrariesVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()
     compilerOptions {
         optIn.add("org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi")
@@ -22,6 +23,7 @@ kotlin {
 
 dependencies {
     // 'kotlin.coreLibrariesVersion' usage caused by KT-71443
+    @Suppress("DEPRECATION")
     compileOnly(kotlin("stdlib", kotlin.coreLibrariesVersion))
     api(project(":kotlin-tooling-core"))
     api(project(":kotlin-gradle-plugin-annotations"))
@@ -43,8 +45,11 @@ dependencies {
     testFixturesImplementation(project(":kotlin-tooling-core"))
     testFixturesImplementation(project(":kotlin-gradle-plugin-idea-proto"))
     // 'kotlin.coreLibrariesVersion' usage caused by KT-71443
+    @Suppress("DEPRECATION")
     testFixturesImplementation(kotlin("stdlib", kotlin.coreLibrariesVersion))
+    @Suppress("DEPRECATION")
     testFixturesImplementation(kotlin("reflect", kotlin.coreLibrariesVersion))
+    @Suppress("DEPRECATION")
     testFixturesImplementation(kotlin("test", kotlin.coreLibrariesVersion)) // no test annotations, only assertions are needed
 }
 

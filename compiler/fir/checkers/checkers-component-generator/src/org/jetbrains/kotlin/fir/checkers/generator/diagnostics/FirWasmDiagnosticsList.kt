@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.checkers.generator.diagnostics
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.DiagnosticList
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.PositioningStrategy
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -17,6 +18,10 @@ import org.jetbrains.kotlin.util.PrivateForInline
 object WASM_DIAGNOSTICS_LIST : DiagnosticList("FirWasmErrors") {
     val ANNOTATIONS by object : DiagnosticGroup("Annotations") {
         val JS_MODULE_PROHIBITED_ON_NON_EXTERNAL by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
+        val JS_MODULE_PROHIBITED_ON_VAR_IN_MODULE_FILE by deprecationError<KtElement>(
+            LanguageFeature.ProhibitVarInJsModuleFile,
+            PositioningStrategy.VAL_OR_VAR_NODE,
+        )
         val NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_FUN by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
             parameter<ConeKotlinType>("type")
         }

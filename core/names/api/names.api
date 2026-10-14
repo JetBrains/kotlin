@@ -274,11 +274,13 @@ public final class org/jetbrains/kotlin/name/StandardClassIds {
 	public final fun getMutableMap ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getMutableMapEntry ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getMutableSet ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getNonError ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getNothing ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getNumber ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getPrimitiveArrayTypeByElementType ()Ljava/util/Map;
 	public final fun getPrimitiveTypes ()Ljava/util/Set;
 	public final fun getResult ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getRichError ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getSequence ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getSet ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getShort ()Lorg/jetbrains/kotlin/name/ClassId;
@@ -356,6 +358,7 @@ public final class org/jetbrains/kotlin/name/StandardClassIds$Annotations {
 	public final fun getUsedFromCompilerGeneratedCode ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getVolatile ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getWasExperimental ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getWillBecomeValue ()Lorg/jetbrains/kotlin/name/ClassId;
 }
 
 public final class org/jetbrains/kotlin/name/StandardClassIds$Annotations$ParameterNames {

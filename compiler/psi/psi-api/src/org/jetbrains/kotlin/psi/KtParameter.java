@@ -13,6 +13,7 @@ import com.intellij.psi.search.LocalSearchScope;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiTreeUtil;
+import kotlin.DeprecationLevel;
 import kotlin.ReplaceWith;
 import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
@@ -108,7 +109,8 @@ public class KtParameter extends KtNamedDeclarationStub<KotlinParameterStub> imp
             replaceWith = @ReplaceWith(
                     expression = "this.setParameterTypeReference(typeRef)",
                     imports = "org.jetbrains.kotlin.idea.base.psi.setParameterTypeReference"
-            )
+            ),
+            level = DeprecationLevel.ERROR
     )
     @Deprecated
     public KtTypeReference setTypeReference(@Nullable KtTypeReference typeRef) {

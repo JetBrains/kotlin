@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.ir.util.*
 internal class JsUsefulDeclarationProcessor(
     override val context: JsIrBackendContext,
     printReachabilityInfo: Boolean
-) : UsefulDeclarationProcessor(printReachabilityInfo, removeUnusedAssociatedObjects = true) {
+) : UsefulDeclarationProcessor(printReachabilityInfo, removeUnusedAssociatedObjects = true, ignoreFieldWrites = true) {
     private val equalsMethod = getMethodOfAny("equals")
     private val hashCodeMethod = getMethodOfAny("hashCode")
 

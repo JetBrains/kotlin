@@ -1,9 +1,0 @@
-FILE: classLevelDestructuringWithAnnotation.kt
-    public final? class Foo : R|kotlin/Any| {
-        public? [ContainingClassKey=Foo] constructor(): R|util/Foo| {
-            super<R|kotlin/Any|>()
-        }
-
-        public final val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = Pair#(IntegerLiteral(0), IntegerLiteral(1))
-
-    }

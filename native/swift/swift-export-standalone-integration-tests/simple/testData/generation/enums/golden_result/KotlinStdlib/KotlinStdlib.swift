@@ -39,7 +39,7 @@ extension ExportedKotlinPackages.kotlin {
             }
         }
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -82,11 +82,11 @@ extension ExportedKotlinPackages.kotlin {
                     return ExportedKotlinPackages.kotlin.Enum.Companion.__createClassWrapper(externalRCRef: kotlin_Enum_Companion_get())
                 }
             }
-            private init() {
+            private override init() {
                 fatalError()
             }
             package override init(
-                __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+                __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
                 options: KotlinRuntime.KotlinBaseConstructionOptions
             ) {
                 super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -103,7 +103,7 @@ extension ExportedKotlinPackages.kotlin {
             }
         }
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);

@@ -23,23 +23,21 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.resolve.CleanableBindingContext
 
-@OptIn(K1Deprecation::class)
 internal class LinkKlibsContextImpl(
         config: NativeSecondStageCompilationConfig,
         private val moduleDescriptor: ModuleDescriptor,
-        private val bindingContext: BindingContext,
+        private val disposeCallback: () -> Unit,
 ) : BasicNativeBackendPhaseContext(config), LinkKlibsContext {
     // TODO: Invalidate properly in dispose method.
     override val symbolTable = SymbolTable(KonanIdSignaturer(KonanManglerDesc), IrFactoryImpl)
 
+    @OptIn(K1Deprecation::class)
     override val builtIns: KonanBuiltIns by lazy(LazyThreadSafetyMode.PUBLICATION) {
         moduleDescriptor.builtIns as KonanBuiltIns
     }
 
     override fun dispose() {
-        val originalBindingContext = bindingContext as? CleanableBindingContext
-                ?: error("BindingContext should be cleanable in K/N IR to avoid leaking memory: $bindingContext")
-        originalBindingContext.clear()
+        disposeCallback()
     }
 }
 

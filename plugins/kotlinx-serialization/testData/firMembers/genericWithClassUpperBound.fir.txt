@@ -1,0 +1,98 @@
+FILE: genericWithClassUpperBound.kt
+    public open class Base : R|kotlin/Any| {
+        public constructor(): R|Base| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|kotlinx/serialization/Serializable|() public final class Leaf : R|Base| {
+        public constructor(value: R|kotlin/String|): R|Leaf| {
+            super<R|Base|>()
+        }
+
+        public final val value: R|kotlin/String| = R|<local>/value|
+            public get(): R|kotlin/String|
+
+        public final companion object Companion : R|kotlin/Any| {
+            public final fun serializer(): R|kotlinx/serialization/KSerializer<Leaf>|
+
+            private constructor(): R|Leaf.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        @R|kotlin/Deprecated|(message = String(This synthesized declaration should not be used directly), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|) public final object $serializer : R|kotlinx/serialization/internal/GeneratedSerializer<Leaf>| {
+            public final override fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|Leaf|): R|kotlin/Unit|
+
+            public final override fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|Leaf|
+
+            public final val descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|
+                public get(): R|kotlinx/serialization/descriptors/SerialDescriptor|
+
+            public final override fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
+
+            private constructor(): R|Leaf.$serializer| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    @R|kotlinx/serialization/Serializable|() public final class Box<T : R|Base|> : R|kotlin/Any| {
+        public constructor<T : R|Base|>(content: R|T|): R|Box<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val content: R|T| = R|<local>/content|
+            public get(): R|T|
+
+        public final companion object Companion : R|kotlin/Any| {
+            public final fun <T> serializer(typeSerial0: R|kotlinx/serialization/KSerializer<T>|): R|kotlinx/serialization/KSerializer<Box<T>>|
+
+            private constructor(): R|Box.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        @R|kotlin/Deprecated|(message = String(This synthesized declaration should not be used directly), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|) public final class $serializer<T> : R|kotlinx/serialization/internal/GeneratedSerializer<Box<T>>| {
+            public final override fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|Box<T>|): R|kotlin/Unit|
+
+            public final override fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|Box<T>|
+
+            public final val descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|
+                public get(): R|kotlinx/serialization/descriptors/SerialDescriptor|
+
+            public final override fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
+
+            public final override fun typeParametersSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
+
+            private constructor<T>(): R|Box.$serializer<T>| {
+                super<R|kotlin/Any|>()
+            }
+
+            public constructor<T>(typeSerial0: R|kotlinx/serialization/KSerializer<T>|): R|Box.$serializer<T>|
+
+        }
+
+    }
+    public final fun box(): R|kotlin/String| {
+        lval serial: R|kotlinx/serialization/KSerializer<Box<Leaf>>| = Q|Box|.R|/Box.Companion.serializer|<R|Leaf|>(Q|Leaf|.R|/Leaf.Companion.serializer|())
+        lval target: R|kotlin/String| = String({"content":{"value":"x"}})
+        lval decoded: R|Box<Leaf>| = Q|kotlinx/serialization/json/Json|.R|kotlinx/serialization/json/Json.decodeFromString|<R|Box<Leaf>|>(R|<local>/serial|, R|<local>/target|)
+        when () {
+            !=(R|<local>/decoded|.R|SubstitutionOverride</Box.content: R|Leaf|>|.R|/Leaf.value|, String(x)) ->  {
+                ^box <strcat>(String(Incorrect deserialization: ), R|<local>/decoded|.R|SubstitutionOverride</Box.content: R|Leaf|>|.R|/Leaf.value|)
+            }
+        }
+
+        lval encoded: R|kotlin/String| = Q|kotlinx/serialization/json/Json|.R|kotlinx/serialization/json/Json.encodeToString|<R|Box<Leaf>|>(R|<local>/serial|, R|<local>/decoded|)
+        when () {
+            !=(R|<local>/encoded|, R|<local>/target|) ->  {
+                ^box <strcat>(String(Incorrect serialization: ), R|<local>/encoded|)
+            }
+        }
+
+        ^box String(OK)
+    }

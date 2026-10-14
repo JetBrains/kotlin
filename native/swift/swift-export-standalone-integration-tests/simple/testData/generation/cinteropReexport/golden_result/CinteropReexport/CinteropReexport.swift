@@ -8,12 +8,20 @@ import FooKit
 @_implementationOnly import KotlinBridges_CinteropReexport
 import KotlinRuntime
 import KotlinRuntimeSupport
+#if canImport(ZarKit)
+import ZarKit
+#endif
 
 extension ExportedKotlinPackages.main {
     public static func consumesBar(
         x: any Zar
     ) -> Swift.Int32 {
         return main_consumesBar__TypesOfArguments__anyU20Zar__(x)
+    }
+    public static func consumesBar(
+        x: any Zarable
+    ) -> any Zarable {
+        return main_consumesBar__TypesOfArguments__anyU20Zarable__(x) as! any Zarable
     }
     public static func consumesBar(
         x: Bar

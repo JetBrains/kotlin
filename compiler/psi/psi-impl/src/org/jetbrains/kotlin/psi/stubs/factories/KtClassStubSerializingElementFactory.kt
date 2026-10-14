@@ -44,7 +44,6 @@ internal object KtClassStubSerializingElementFactory :
         val name = psi.getName()
         val superNames = psi.getSuperNames()
         val isInterface = psi.isInterface()
-        val isLocal = psi.isLocal()
         val isTopLevel = psi.isTopLevel()
         return KotlinClassStubImpl(
             parent = parentStub,
@@ -54,7 +53,6 @@ internal object KtClassStubSerializingElementFactory :
             superNameRefs = Utils.wrapStrings(superNames),
             isInterface = isInterface,
             isClsStubCompiledToJvmDefaultImplementation = false,
-            isLocal = isLocal,
             isTopLevel = isTopLevel,
             kdocText = null,
             valueClassRepresentation = null,
@@ -69,7 +67,6 @@ internal object KtClassStubSerializingElementFactory :
 
         dataStream.writeBoolean(stub.isInterface)
         dataStream.writeBoolean(stub.isClsStubCompiledToJvmDefaultImplementation)
-        dataStream.writeBoolean(stub.isLocal)
         dataStream.writeBoolean(stub.isTopLevel)
         dataStream.serializeKdocText(stub.kdocText)
 
@@ -90,7 +87,6 @@ internal object KtClassStubSerializingElementFactory :
 
         val isInterface = dataStream.readBoolean()
         val isClsStubCompiledToJvmDefaultImplementation = dataStream.readBoolean()
-        val isLocal = dataStream.readBoolean()
         val isTopLevel = dataStream.readBoolean()
         val kdocText = dataStream.deserializeKdocText()
 
@@ -110,7 +106,6 @@ internal object KtClassStubSerializingElementFactory :
             superNameRefs = superNames,
             isInterface = isInterface,
             isClsStubCompiledToJvmDefaultImplementation = isClsStubCompiledToJvmDefaultImplementation,
-            isLocal = isLocal,
             isTopLevel = isTopLevel,
             kdocText = kdocText,
             valueClassRepresentation = valueClassRepresentation,

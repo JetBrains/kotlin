@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.analysis.api.standalone.fir.test.configurators
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiIdeModeTestServiceRegistrar
-import org.jetbrains.kotlin.analysis.api.standalone.StandaloneSessionServiceRegistrar
-import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.AnalysisApiServiceRegistrar
+import org.jetbrains.kotlin.analysis.api.standalone.fir.StandaloneSessionServiceRegistrar
+import org.jetbrains.kotlin.analysis.api.standalone.fir.projectStructure.AnalysisApiServiceRegistrar
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.LLSourceLikeTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModuleStructure
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator.Companion.defaultTargetPlatformValue

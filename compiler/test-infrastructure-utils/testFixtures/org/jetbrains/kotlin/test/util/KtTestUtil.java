@@ -84,9 +84,6 @@ public class KtTestUtil {
         //noinspection ConstantConditions
         KtFile file = (KtFile) factory.trySetupPsiForFile(virtualFile, KotlinLanguage.INSTANCE, true, false);
         Objects.requireNonNull(file, "PsiFileFactory.trySetupPsiForFile returned null");
-        if (name.endsWith(".repl.kts")) {
-            Objects.requireNonNull(file.getScript()).markAsReplSnippet();
-        }
 
         return file;
     }

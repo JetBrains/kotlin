@@ -78,6 +78,9 @@ internal object KtStubBasedElementTypes {
     val DESTRUCTURING_DECLARATION: KtNodeType = provider.destructuringDeclarationType
 
     @JvmField
+    val DESTRUCTURING_DECLARATION_ENTRY: KtNodeType = provider.destructuringDeclarationEntryType
+
+    @JvmField
     val INITIALIZER_LIST: KtNodeType = provider.initializerListType
 
 

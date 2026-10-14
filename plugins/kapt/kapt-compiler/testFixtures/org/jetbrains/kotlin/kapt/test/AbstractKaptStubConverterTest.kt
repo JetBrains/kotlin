@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.kapt.test
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.kapt.base.StubGenerationScheme
 import org.jetbrains.kotlin.kapt.base.util.doOpenInternalPackagesIfRequired
 import org.jetbrains.kotlin.kapt.test.KaptTestDirectives.MAP_DIAGNOSTIC_LOCATIONS
@@ -13,7 +14,10 @@ import org.jetbrains.kotlin.kapt.test.handlers.KaptStubConverterHandler
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.FirParser
+import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_PARSER
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.TestDumpDirectives
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
@@ -24,9 +28,15 @@ import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurat
 
 abstract class AbstractKaptStubConverterTest(
     private val stubGenerationScheme: StubGenerationScheme,
+    private val useCollectionLiteralsBasedAnnotationResolution: Boolean = false,
 ) : AbstractKotlinCompilerTest() {
     init {
         doOpenInternalPackagesIfRequired()
+    }
+
+    private val dumpClassifier: String = when {
+        useCollectionLiteralsBasedAnnotationResolution -> "cl"
+        else -> stubGenerationScheme.stringValue.lowercase()
     }
 
     override fun configure(builder: TestConfigurationBuilder): Unit = with(builder) {
@@ -38,9 +48,13 @@ abstract class AbstractKaptStubConverterTest(
 
         defaultDirectives {
             +MAP_DIAGNOSTIC_LOCATIONS
+            FIR_PARSER with FirParser.LightTree
             +WITH_STDLIB
             STUB_GENERATION_SCHEME with stubGenerationScheme.stringValue
-            TestDumpDirectives.DUMP_CLASSIFIER with stubGenerationScheme.stringValue.lowercase()
+            TestDumpDirectives.DUMP_CLASSIFIER with dumpClassifier
+            if (useCollectionLiteralsBasedAnnotationResolution) {
+                LANGUAGE with "+${LanguageFeature.CollectionLiteralsBasedAnnotationResolution.name}"
+            }
         }
 
         useConfigurators(
@@ -55,9 +69,18 @@ abstract class AbstractKaptStubConverterTest(
         }
 
         useFailureSuppressors(::BlackBoxCodegenSuppressor)
+
+        if (useCollectionLiteralsBasedAnnotationResolution) {
+            useFailureSuppressors(::KaptCollectionLiteralsSuppressor)
+        }
     }
 }
 
 open class AbstractKaptStubConverterJTreeTest : AbstractKaptStubConverterTest(StubGenerationScheme.JTREE)
 
 open class AbstractKaptStubConverterDirectTest : AbstractKaptStubConverterTest(StubGenerationScheme.DIRECT)
+
+open class AbstractKaptStubConverterDirectWithCollectionLiteralsTest : AbstractKaptStubConverterTest(
+    StubGenerationScheme.DIRECT,
+    useCollectionLiteralsBasedAnnotationResolution = true,
+)

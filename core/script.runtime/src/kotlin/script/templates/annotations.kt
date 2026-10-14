@@ -20,15 +20,26 @@ package kotlin.script.templates
 
 import kotlin.reflect.KClass
 import kotlin.script.dependencies.ScriptDependenciesResolver
-import kotlin.script.experimental.dependencies.DependenciesResolver.NoDependencies
+import kotlin.script.experimental.dependencies.DependenciesResolver
 
+internal const val LEGACY_TEMPLATE_API_DEPRECATION_MESSAGE =
+    "Legacy script template API, use kotlin.script.experimental.annotations.KotlinScript instead"
+
+internal const val LEGACY_TEMPLATE_COMPILER_OPTIONS_DEPRECATION_MESSAGE =
+    "Legacy script template API, use ScriptCompilationConfiguration.compilerOptions from kotlin.script.experimental.api instead"
+
+@Deprecated(LEGACY_TEMPLATE_API_DEPRECATION_MESSAGE)
 const val DEFAULT_SCRIPT_FILE_PATTERN = ".*\\.kts"
 
+@Deprecated(LEGACY_TEMPLATE_API_DEPRECATION_MESSAGE)
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
-annotation class ScriptTemplateDefinition(val resolver: KClass<out ScriptDependenciesResolver> = NoDependencies::class,
-    val scriptFilePattern: String = DEFAULT_SCRIPT_FILE_PATTERN)
+annotation class ScriptTemplateDefinition(
+    @Suppress("DEPRECATION", "DEPRECATION_ERROR") val resolver: KClass<out ScriptDependenciesResolver> = DependenciesResolver.NoDependencies::class,
+    @Suppress("DEPRECATION") val scriptFilePattern: String = DEFAULT_SCRIPT_FILE_PATTERN
+)
 
+@Deprecated("Legacy script template API, use ScriptCompilationConfiguration.refineConfiguration { onAnnotations(...) } from kotlin.script.experimental.api instead")
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
 annotation class AcceptedAnnotations(vararg val supportedAnnotationClasses: KClass<out Annotation>)

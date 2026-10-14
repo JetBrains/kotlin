@@ -39,16 +39,6 @@ open class KotlinMultiplatformPluginWrapper : AbstractKotlinMultiplatformPluginW
     }
 }
 
-open class KotlinJsPluginWrapper : AbstractKotlinJsPluginWrapper() {
-
-    override val pluginVariant: String = PLUGIN_VARIANT_NAME
-
-    override fun apply(project: Project) {
-        project.registerVariantImplementations()
-        super.apply(project)
-    }
-}
-
 open class KotlinApiPlugin : KotlinBaseApiPlugin() {
     override fun apply(project: Project) {
         project.registerVariantImplementations()

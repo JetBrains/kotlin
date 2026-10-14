@@ -99,6 +99,24 @@ public class FirIdeNormalAnalysisSourceLikeModuleSymbolByFqNameTestGenerated ext
   }
 
   @Test
+  @TestMetadata("fullValueClassFromBinary.kt")
+  public void testFullValueClassFromBinary() {
+    run("fullValueClassFromBinary.kt");
+  }
+
+  @Test
+  @TestMetadata("fullValueClassFromCommonBinary.kt")
+  public void testFullValueClassFromCommonBinary() {
+    run("fullValueClassFromCommonBinary.kt");
+  }
+
+  @Test
+  @TestMetadata("fullValueObjectFromBinary.kt")
+  public void testFullValueObjectFromBinary() {
+    run("fullValueObjectFromBinary.kt");
+  }
+
+  @Test
   @TestMetadata("functionWithContextParameterFromLibrary.kt")
   public void testFunctionWithContextParameterFromLibrary() {
     run("functionWithContextParameterFromLibrary.kt");
@@ -114,6 +132,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleSymbolByFqNameTestGenerated ext
   @TestMetadata("getFirstJdk21.kt")
   public void testGetFirstJdk21() {
     run("getFirstJdk21.kt");
+  }
+
+  @Test
+  @TestMetadata("inlineClassFromBinary.kt")
+  public void testInlineClassFromBinary() {
+    run("inlineClassFromBinary.kt");
   }
 
   @Test
@@ -277,6 +301,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleSymbolByFqNameTestGenerated ext
     @TestMetadata("companionWithFoo_commonModule.kt")
     public void testCompanionWithFoo_commonModule() {
       run("companionWithFoo_commonModule.kt");
+    }
+
+    @Test
+    @TestMetadata("javaGetterImplementingKotlinProperty_MethodMode_Plugin.kt")
+    public void testJavaGetterImplementingKotlinProperty_MethodMode_Plugin() {
+      run("javaGetterImplementingKotlinProperty_MethodMode_Plugin.kt");
     }
 
     @Test

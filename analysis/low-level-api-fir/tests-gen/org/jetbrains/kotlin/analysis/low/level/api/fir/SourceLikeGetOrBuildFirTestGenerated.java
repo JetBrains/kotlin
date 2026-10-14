@@ -294,6 +294,54 @@ public class SourceLikeGetOrBuildFirTestGenerated extends AbstractSourceLikeGetO
     }
 
     @Test
+    @TestMetadata("annotationTypeReference.kt")
+    public void testAnnotationTypeReference() {
+      run("annotationTypeReference.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationTypeReferenceOnConstructorPropertyField.kt")
+    public void testAnnotationTypeReferenceOnConstructorPropertyField() {
+      run("annotationTypeReferenceOnConstructorPropertyField.kt");
+    }
+
+    @Test
+    @TestMetadata("arrayOfNestedTypeArgumentInAnnotation.kt")
+    public void testArrayOfNestedTypeArgumentInAnnotation() {
+      run("arrayOfNestedTypeArgumentInAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("arrayOfNestedTypeArgumentInAnnotationCollectionLiteralsBasedResolution.kt")
+    public void testArrayOfNestedTypeArgumentInAnnotationCollectionLiteralsBasedResolution() {
+      run("arrayOfNestedTypeArgumentInAnnotationCollectionLiteralsBasedResolution.kt");
+    }
+
+    @Test
+    @TestMetadata("arrayOfTypeArgumentInAnnotation.kt")
+    public void testArrayOfTypeArgumentInAnnotation() {
+      run("arrayOfTypeArgumentInAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("arrayOfTypeArgumentInAnnotationCollectionLiteralsBasedResolution.kt")
+    public void testArrayOfTypeArgumentInAnnotationCollectionLiteralsBasedResolution() {
+      run("arrayOfTypeArgumentInAnnotationCollectionLiteralsBasedResolution.kt");
+    }
+
+    @Test
+    @TestMetadata("arrayOfTypeArgumentInTypeAnnotation.kt")
+    public void testArrayOfTypeArgumentInTypeAnnotation() {
+      run("arrayOfTypeArgumentInTypeAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("arrayOfTypeArgumentInTypeAnnotationCollectionLiteralsBasedResolution.kt")
+    public void testArrayOfTypeArgumentInTypeAnnotationCollectionLiteralsBasedResolution() {
+      run("arrayOfTypeArgumentInTypeAnnotationCollectionLiteralsBasedResolution.kt");
+    }
+
+    @Test
     @TestMetadata("danglingAnnotation.kt")
     public void testDanglingAnnotation() {
       run("danglingAnnotation.kt");
@@ -1464,6 +1512,24 @@ public class SourceLikeGetOrBuildFirTestGenerated extends AbstractSourceLikeGetO
     }
 
     @Test
+    @TestMetadata("stdlibArrayOperator.kt")
+    public void testStdlibArrayOperator() {
+      run("stdlibArrayOperator.kt");
+    }
+
+    @Test
+    @TestMetadata("stdlibDoubleArrayOperator.kt")
+    public void testStdlibDoubleArrayOperator() {
+      run("stdlibDoubleArrayOperator.kt");
+    }
+
+    @Test
+    @TestMetadata("stdlibSequenceOperator.kt")
+    public void testStdlibSequenceOperator() {
+      run("stdlibSequenceOperator.kt");
+    }
+
+    @Test
     @TestMetadata("stdlibSet.kt")
     public void testStdlibSet() {
       run("stdlibSet.kt");
@@ -1473,6 +1539,12 @@ public class SourceLikeGetOrBuildFirTestGenerated extends AbstractSourceLikeGetO
     @TestMetadata("stdlibSetWithoutStdlib.kt")
     public void testStdlibSetWithoutStdlib() {
       run("stdlibSetWithoutStdlib.kt");
+    }
+
+    @Test
+    @TestMetadata("stdlibULongArrayOperator.kt")
+    public void testStdlibULongArrayOperator() {
+      run("stdlibULongArrayOperator.kt");
     }
   }
 
@@ -2499,14 +2571,98 @@ public class SourceLikeGetOrBuildFirTestGenerated extends AbstractSourceLikeGetO
     }
 
     @Test
-    @TestMetadata("accessorInDestructuringDeclaration.kt")
-    public void testAccessorInDestructuringDeclaration() {
-      run("accessorInDestructuringDeclaration.kt");
+    public void testAllFilesPresentInInvalidCode() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/getOrBuildFir/invalidCode"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
     }
 
     @Test
-    public void testAllFilesPresentInInvalidCode() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/getOrBuildFir/invalidCode"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+    @TestMetadata("annotatedDestructuringNonLocal.kt")
+    public void testAnnotatedDestructuringNonLocal() {
+      run("annotatedDestructuringNonLocal.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedDestructuringNonLocalArgument.kt")
+    public void testAnnotatedDestructuringNonLocalArgument() {
+      run("annotatedDestructuringNonLocalArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedDestructuringNonLocalEntry.kt")
+    public void testAnnotatedDestructuringNonLocalEntry() {
+      run("annotatedDestructuringNonLocalEntry.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedDestructuringNonLocalEntryArgument.kt")
+    public void testAnnotatedDestructuringNonLocalEntryArgument() {
+      run("annotatedDestructuringNonLocalEntryArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedDestructuringNonLocalEntryExplicitType.kt")
+    public void testAnnotatedDestructuringNonLocalEntryExplicitType() {
+      run("annotatedDestructuringNonLocalEntryExplicitType.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedDestructuringNonLocalEntrySquareBrackets.kt")
+    public void testAnnotatedDestructuringNonLocalEntrySquareBrackets() {
+      run("annotatedDestructuringNonLocalEntrySquareBrackets.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedDestructuringNonLocalEntryType.kt")
+    public void testAnnotatedDestructuringNonLocalEntryType() {
+      run("annotatedDestructuringNonLocalEntryType.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedDestructuringNonLocalEntryTypeAnnotation.kt")
+    public void testAnnotatedDestructuringNonLocalEntryTypeAnnotation() {
+      run("annotatedDestructuringNonLocalEntryTypeAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedDestructuringNonLocalEntryWithExplicitType.kt")
+    public void testAnnotatedDestructuringNonLocalEntryWithExplicitType() {
+      run("annotatedDestructuringNonLocalEntryWithExplicitType.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedDestructuringNonLocalType.kt")
+    public void testAnnotatedDestructuringNonLocalType() {
+      run("annotatedDestructuringNonLocalType.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedDestructuringNonLocalUseSiteTarget.kt")
+    public void testAnnotatedDestructuringNonLocalUseSiteTarget() {
+      run("annotatedDestructuringNonLocalUseSiteTarget.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedDestructuringTopLevel.kt")
+    public void testAnnotatedDestructuringTopLevel() {
+      run("annotatedDestructuringTopLevel.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedDestructuringTopLevelArgument.kt")
+    public void testAnnotatedDestructuringTopLevelArgument() {
+      run("annotatedDestructuringTopLevelArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedDestructuringTopLevelEntry.kt")
+    public void testAnnotatedDestructuringTopLevelEntry() {
+      run("annotatedDestructuringTopLevelEntry.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedDestructuringTopLevelEntryArgument.kt")
+    public void testAnnotatedDestructuringTopLevelEntryArgument() {
+      run("annotatedDestructuringTopLevelEntryArgument.kt");
     }
 
     @Test
@@ -2588,12 +2744,6 @@ public class SourceLikeGetOrBuildFirTestGenerated extends AbstractSourceLikeGetO
     }
 
     @Test
-    @TestMetadata("explicitBackingFieldInDestructuringDeclaration.kt")
-    public void testExplicitBackingFieldInDestructuringDeclaration() {
-      run("explicitBackingFieldInDestructuringDeclaration.kt");
-    }
-
-    @Test
     @TestMetadata("incompletePropertyWithAnnotation.kt")
     public void testIncompletePropertyWithAnnotation() {
       run("incompletePropertyWithAnnotation.kt");
@@ -2651,6 +2801,18 @@ public class SourceLikeGetOrBuildFirTestGenerated extends AbstractSourceLikeGetO
     @TestMetadata("typeParameterOnAnonymousFunction.kt")
     public void testTypeParameterOnAnonymousFunction() {
       run("typeParameterOnAnonymousFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("typeParameterOnAnonymousObject.kt")
+    public void testTypeParameterOnAnonymousObject() {
+      run("typeParameterOnAnonymousObject.kt");
+    }
+
+    @Test
+    @TestMetadata("typeParameterReferenceInAnonymousObject.kt")
+    public void testTypeParameterReferenceInAnonymousObject() {
+      run("typeParameterReferenceInAnonymousObject.kt");
     }
   }
 
@@ -2803,80 +2965,6 @@ public class SourceLikeGetOrBuildFirTestGenerated extends AbstractSourceLikeGetO
   }
 
   @Nested
-  @TestMetadata("analysis/low-level-api-fir/testData/getOrBuildFir/repl")
-  @TestDataPath("$PROJECT_ROOT")
-  public class Repl {
-    private void run(String fileName) {
-      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/repl/" + fileName);
-    }
-
-    @Test
-    public void testAllFilesPresentInRepl() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/getOrBuildFir/repl"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
-    }
-
-    @Test
-    @TestMetadata("destructuringEntry.repl.kts")
-    public void testDestructuringEntry_repl() {
-      run("destructuringEntry.repl.kts");
-    }
-
-    @Test
-    @TestMetadata("destructuringInitializer.repl.kts")
-    public void testDestructuringInitializer_repl() {
-      run("destructuringInitializer.repl.kts");
-    }
-
-    @Test
-    @TestMetadata("resultPropertyExpression.repl.kts")
-    public void testResultPropertyExpression_repl() {
-      run("resultPropertyExpression.repl.kts");
-    }
-
-    @Test
-    @TestMetadata("resultPropertyReference.repl.kts")
-    public void testResultPropertyReference_repl() {
-      run("resultPropertyReference.repl.kts");
-    }
-
-    @Test
-    @TestMetadata("script.repl.kts")
-    public void testScript_repl() {
-      run("script.repl.kts");
-    }
-
-    @Test
-    @TestMetadata("statement.repl.kts")
-    public void testStatement_repl() {
-      run("statement.repl.kts");
-    }
-
-    @Test
-    @TestMetadata("topLevelAccessorContent.repl.kts")
-    public void testTopLevelAccessorContent_repl() {
-      run("topLevelAccessorContent.repl.kts");
-    }
-
-    @Test
-    @TestMetadata("topLevelFunctionContent.repl.kts")
-    public void testTopLevelFunctionContent_repl() {
-      run("topLevelFunctionContent.repl.kts");
-    }
-
-    @Test
-    @TestMetadata("topLevelFunction.repl.kts")
-    public void testTopLevelFunction_repl() {
-      run("topLevelFunction.repl.kts");
-    }
-
-    @Test
-    @TestMetadata("topLevelInitializerContent.repl.kts")
-    public void testTopLevelInitializerContent_repl() {
-      run("topLevelInitializerContent.repl.kts");
-    }
-  }
-
-  @Nested
   @TestMetadata("analysis/low-level-api-fir/testData/getOrBuildFir/types")
   @TestDataPath("$PROJECT_ROOT")
   public class Types {
@@ -2887,6 +2975,36 @@ public class SourceLikeGetOrBuildFirTestGenerated extends AbstractSourceLikeGetO
     @Test
     public void testAllFilesPresentInTypes() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/getOrBuildFir/types"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("annotatedValueParameterType.kt")
+    public void testAnnotatedValueParameterType() {
+      run("annotatedValueParameterType.kt");
+    }
+
+    @Test
+    @TestMetadata("classTypeParameterBound.kt")
+    public void testClassTypeParameterBound() {
+      run("classTypeParameterBound.kt");
+    }
+
+    @Test
+    @TestMetadata("constructorParameterType.kt")
+    public void testConstructorParameterType() {
+      run("constructorParameterType.kt");
+    }
+
+    @Test
+    @TestMetadata("constructorPropertyType.kt")
+    public void testConstructorPropertyType() {
+      run("constructorPropertyType.kt");
+    }
+
+    @Test
+    @TestMetadata("contextParameterType.kt")
+    public void testContextParameterType() {
+      run("contextParameterType.kt");
     }
 
     @Test
@@ -2929,6 +3047,12 @@ public class SourceLikeGetOrBuildFirTestGenerated extends AbstractSourceLikeGetO
     @TestMetadata("functionalTypeScript.kts")
     public void testFunctionalTypeScript() {
       run("functionalTypeScript.kts");
+    }
+
+    @Test
+    @TestMetadata("getterReturnType.kt")
+    public void testGetterReturnType() {
+      run("getterReturnType.kt");
     }
 
     @Test
@@ -3010,6 +3134,18 @@ public class SourceLikeGetOrBuildFirTestGenerated extends AbstractSourceLikeGetO
     }
 
     @Test
+    @TestMetadata("propertyReceiverType.kt")
+    public void testPropertyReceiverType() {
+      run("propertyReceiverType.kt");
+    }
+
+    @Test
+    @TestMetadata("propertyType.kt")
+    public void testPropertyType() {
+      run("propertyType.kt");
+    }
+
+    @Test
     @TestMetadata("receiverType.kt")
     public void testReceiverType() {
       run("receiverType.kt");
@@ -3019,6 +3155,18 @@ public class SourceLikeGetOrBuildFirTestGenerated extends AbstractSourceLikeGetO
     @TestMetadata("receiverTypeScript.kts")
     public void testReceiverTypeScript() {
       run("receiverTypeScript.kts");
+    }
+
+    @Test
+    @TestMetadata("secondaryConstructorParameterType.kt")
+    public void testSecondaryConstructorParameterType() {
+      run("secondaryConstructorParameterType.kt");
+    }
+
+    @Test
+    @TestMetadata("setterParameterType.kt")
+    public void testSetterParameterType() {
+      run("setterParameterType.kt");
     }
 
     @Test
@@ -3043,6 +3191,12 @@ public class SourceLikeGetOrBuildFirTestGenerated extends AbstractSourceLikeGetO
     @TestMetadata("superTypeAndGeneratedProperty.kt")
     public void testSuperTypeAndGeneratedProperty() {
       run("superTypeAndGeneratedProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("superTypeArgument.kt")
+    public void testSuperTypeArgument() {
+      run("superTypeArgument.kt");
     }
 
     @Test
@@ -3088,6 +3242,12 @@ public class SourceLikeGetOrBuildFirTestGenerated extends AbstractSourceLikeGetO
     }
 
     @Test
+    @TestMetadata("typeAliasExpandedType.kt")
+    public void testTypeAliasExpandedType() {
+      run("typeAliasExpandedType.kt");
+    }
+
+    @Test
     @TestMetadata("typeArgument.kt")
     public void testTypeArgument() {
       run("typeArgument.kt");
@@ -3097,6 +3257,12 @@ public class SourceLikeGetOrBuildFirTestGenerated extends AbstractSourceLikeGetO
     @TestMetadata("typeParameterBound.kt")
     public void testTypeParameterBound() {
       run("typeParameterBound.kt");
+    }
+
+    @Test
+    @TestMetadata("typeParameterBoundInClassWhere.kt")
+    public void testTypeParameterBoundInClassWhere() {
+      run("typeParameterBoundInClassWhere.kt");
     }
 
     @Test
@@ -3121,6 +3287,12 @@ public class SourceLikeGetOrBuildFirTestGenerated extends AbstractSourceLikeGetO
     @TestMetadata("unresolvedTypeConsturctorResolvedTypeArgument.kt")
     public void testUnresolvedTypeConsturctorResolvedTypeArgument() {
       run("unresolvedTypeConsturctorResolvedTypeArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("valueParameterType.kt")
+    public void testValueParameterType() {
+      run("valueParameterType.kt");
     }
 
     @Test

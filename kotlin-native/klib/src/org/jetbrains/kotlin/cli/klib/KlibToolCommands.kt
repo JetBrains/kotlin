@@ -6,11 +6,13 @@
 package org.jetbrains.kotlin.cli.klib
 
 import org.jetbrains.kotlin.backend.common.DumpIrReferenceRenderingAsSignatureStrategy
+import org.jetbrains.kotlin.backend.common.IdSignaturesExtractorFromKlibWithIndices
 import org.jetbrains.kotlin.backend.common.IdSignaturesExtractorFromRegularKlib
 import org.jetbrains.kotlin.backend.common.serialization.InternalIrInlineDeserializerAPI
 import org.jetbrains.kotlin.backend.common.serialization.IrInterningService
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.NonLinkingIrInlineFunctionDeserializer
+import org.jetbrains.kotlin.backend.common.signatureIndex
 import org.jetbrains.kotlin.backend.konan.serialization.IdSignaturesExtractorFromCInteropKlib
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIdSignaturer
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerDesc
@@ -90,8 +92,7 @@ internal class Info(output: KlibToolOutput, args: ParsedArguments) : KlibToolCom
         val metadataHeader = parseModuleHeader(metadata.moduleHeaderData)
 
         val nonEmptyPackageFQNs = buildSet {
-            addAll(metadataHeader.packageFragmentNameList)
-            removeAll(metadataHeader.emptyPackageList)
+            addAll(metadata.getPackageNames())
 
             // Sometimes `emptyPackageList` is empty, so it's necessary to explicitly filter out empty packages:
             val stillRemainingEmptyPackageFQNs = filterTo(hashSetOf()) { packageName ->
@@ -107,7 +108,7 @@ internal class Info(output: KlibToolOutput, args: ParsedArguments) : KlibToolCom
                 .associateTo(sortedMapOf()) { it.key.toString() to it.value.toString() }
 
         output.appendLine("Full path: ${args.library.path.toRealPath()}")
-        output.appendLine("Module name (metadata): ${metadataHeader.moduleName}")
+        metadataHeader?.let { output.appendLine("Module name (metadata): ${it.moduleName}") }
         output.appendLine("Non-empty package FQNs (${nonEmptyPackageFQNs.size}):")
         nonEmptyPackageFQNs.forEach { packageFQN ->
             output.appendLine("  $packageFQN")
@@ -117,6 +118,7 @@ internal class Info(output: KlibToolOutput, args: ParsedArguments) : KlibToolCom
         irInfo?.preparedInlineFunctionCopyNumber?.let { output.appendLine("  Inlinable function copies: $it") }
         output.appendLine("Has LLVM bitcode: ${args.library.hasBitcode}")
         output.appendLine("Has ABI: ${args.library.hasAbi}")
+        output.appendLine("Has signatures index: ${args.library.signatureIndex != null}")
         output.appendLine("Manifest properties:")
         manifestProperties.entries.forEach { [key, value] ->
             output.appendLine("  $key=$value")
@@ -312,8 +314,13 @@ internal class DumpSignatures(output: KlibToolOutput, args: ParsedArguments) : K
             }
         }
 
-        val signatures = with(signaturesExtractor) {
-            if (args.onlyTopLevelSignatures) extractOnlyTopLevelPublicSignatures() else extractAllPublicSignatures()
+        val signatures = when (args.dumpSignaturesMode) {
+            SignaturesDumpMode.ALL_SIGNATURES, null -> signaturesExtractor.extractAllPublicSignatures()
+            SignaturesDumpMode.TOP_LEVEL_SIGNATURES_NO_INDICES -> signaturesExtractor.extractOnlyTopLevelPublicSignatures()
+            SignaturesDumpMode.TOP_LEVEL_SIGNATURES -> IdSignaturesExtractorFromKlibWithIndices(
+                    library = args.library,
+                    delegate = signaturesExtractor
+            ).extractOnlyTopLevelPublicSignatures()
         }
 
         IrSignaturesRenderer(output, idSignatureRenderer).render(signatures)

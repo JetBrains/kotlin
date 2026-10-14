@@ -11,7 +11,7 @@ plugins {
 }
 
 val kotlin_root = rootProject.file("../../../").absoluteFile.invariantSeparatorsPath
-val kotlin_libs: String by project
+val kotlin_libs = project.property("kotlin_libs") as String
 
 val outputDir = (findProperty("docsBuildDir") as String?)?.let{ file(it) } ?: rootProject.layout.buildDirectory.dir("doc").get().asFile
 val inputDirPrevious = file(findProperty("docsPreviousVersionsDir") as String? ?: "$outputDir/previous")

@@ -14,7 +14,7 @@ import kotlin.reflect.KProperty2
 internal open class KotlinKProperty2<D, E, out V>(
     container: KDeclarationContainerImpl, signature: String, rawBoundReceiver: Any?, kmProperty: KmProperty,
     overriddenStorage: KCallableOverriddenStorage,
-) : KotlinKProperty<V>(container, signature, rawBoundReceiver, kmProperty, overriddenStorage), KProperty2<D, E, V> {
+) : KotlinKProperty<V>(container, signature, rawBoundReceiver, rawBoundContextArguments = emptyList(), kmProperty, overriddenStorage), KProperty2<D, E, V> {
     override val getter: Getter<D, E, V> by lazy(PUBLICATION) { Getter(this) }
 
     override fun get(receiver1: D, receiver2: E): V = getter.call(receiver1, receiver2)
@@ -28,15 +28,10 @@ internal open class KotlinKProperty2<D, E, out V>(
     override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): ReflectKCallable<V> =
         KotlinKProperty2<D, E, V>(container, signature, CallableReference.NO_RECEIVER, kmProperty, overriddenStorage)
 
-    override fun rebindSameArity(boundReceiver: Any?): ReflectKProperty<V> =
-        KotlinKProperty2<D, E, V>(container, signature, boundReceiver, kmProperty, overriddenStorage)
-
-    override fun unbindToHigherArity(): ReflectKProperty<V> =
-        throw KotlinReflectionInternalError("Cannot unbind KProperty2: $this")
-
-    override fun bindToLowerArity(boundReceiver: Any?): ReflectKProperty<V> =
+    override fun bindToLowerArity(boundReceiver: Any?, boundContextArguments: List<Any?>): ReflectKCallable<V> =
         // We don't have bound member extensions in the language yet (KT-8835).
         throw KotlinReflectionInternalError("Cannot bind KProperty2: $this")
+
 
     class Getter<D, E, out V>(override val property: KotlinKProperty2<D, E, V>) : KotlinKProperty.Getter<V>(), KProperty2.Getter<D, E, V> {
         override fun invoke(receiver1: D, receiver2: E): V = property.get(receiver1, receiver2)
@@ -53,9 +48,6 @@ internal class KotlinKMutableProperty2<D, E, V>(
 
     override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): ReflectKCallable<V> =
         KotlinKMutableProperty2<D, E, V>(container, signature, CallableReference.NO_RECEIVER, kmProperty, overriddenStorage)
-
-    override fun rebindSameArity(boundReceiver: Any?): ReflectKProperty<V> =
-        KotlinKMutableProperty2<D, E, V>(container, signature, boundReceiver, kmProperty, overriddenStorage)
 
     class Setter<D, E, V>(override val property: KotlinKMutableProperty2<D, E, V>) :
         KotlinKProperty.Setter<V>(), KMutableProperty2.Setter<D, E, V> {

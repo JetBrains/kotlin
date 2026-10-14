@@ -65,7 +65,6 @@ publish()
 runtimeJar()
 sourcesJar()
 javadocJar()
-testsJar()
 
 projectTests {
     testTask {
@@ -77,7 +76,6 @@ projectTests {
     testGenerator("org.jetbrains.kotlin.powerassert.TestGeneratorKt", generateTestsInBuildDirectory = true)
 
     withJvmStdlibAndReflect()
-    withScriptRuntime()
     withTestJar()
     withMockJdkAnnotationsJar()
     withMockJdkRuntime()

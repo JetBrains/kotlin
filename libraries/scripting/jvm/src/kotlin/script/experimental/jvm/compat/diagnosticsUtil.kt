@@ -12,6 +12,8 @@ import kotlin.script.experimental.api.ScriptDiagnostic
 import kotlin.script.experimental.api.SourceCode
 import kotlin.script.experimental.dependencies.ScriptReport
 
+@Suppress("DEPRECATION_ERROR")
+@Deprecated("Pre-1.2 script dependencies API support, not used anymore", level = DeprecationLevel.ERROR)
 fun mapLegacyDiagnosticSeverity(severity: ScriptDependenciesResolver.ReportSeverity): ScriptDiagnostic.Severity = when (severity) {
     ScriptDependenciesResolver.ReportSeverity.FATAL -> ScriptDiagnostic.Severity.FATAL
     ScriptDependenciesResolver.ReportSeverity.ERROR -> ScriptDiagnostic.Severity.ERROR
@@ -20,6 +22,8 @@ fun mapLegacyDiagnosticSeverity(severity: ScriptDependenciesResolver.ReportSever
     ScriptDependenciesResolver.ReportSeverity.DEBUG -> ScriptDiagnostic.Severity.DEBUG
 }
 
+@Suppress("DEPRECATION")
+@Deprecated("Legacy script dependencies API support, use kotlin.script.experimental.api.ScriptDiagnostic directly")
 fun mapLegacyDiagnosticSeverity(severity: ScriptReport.Severity): ScriptDiagnostic.Severity = when (severity) {
     ScriptReport.Severity.FATAL -> ScriptDiagnostic.Severity.FATAL
     ScriptReport.Severity.ERROR -> ScriptDiagnostic.Severity.ERROR
@@ -28,6 +32,8 @@ fun mapLegacyDiagnosticSeverity(severity: ScriptReport.Severity): ScriptDiagnost
     ScriptReport.Severity.DEBUG -> ScriptDiagnostic.Severity.DEBUG
 }
 
+@Suppress("DEPRECATION")
+@Deprecated("Legacy script dependencies API support, use kotlin.script.experimental.api.ScriptDiagnostic directly")
 fun mapToLegacyScriptReportSeverity(severity: ScriptDiagnostic.Severity): ScriptReport.Severity = when (severity) {
     ScriptDiagnostic.Severity.FATAL -> ScriptReport.Severity.FATAL
     ScriptDiagnostic.Severity.ERROR -> ScriptReport.Severity.ERROR
@@ -36,9 +42,13 @@ fun mapToLegacyScriptReportSeverity(severity: ScriptDiagnostic.Severity): Script
     ScriptDiagnostic.Severity.DEBUG -> ScriptReport.Severity.DEBUG
 }
 
+@Suppress("DEPRECATION")
+@Deprecated("Legacy script dependencies API support, use kotlin.script.experimental.api.ScriptDiagnostic directly")
 fun mapLegacyScriptPosition(pos: ScriptContents.Position?): SourceCode.Location? =
     pos?.let { SourceCode.Location(SourceCode.Position(pos.line, pos.col)) }
 
+@Suppress("DEPRECATION")
+@Deprecated("Legacy script dependencies API support, use kotlin.script.experimental.api.ScriptDiagnostic directly")
 fun mapLegacyScriptPosition(pos: ScriptReport.Position?): SourceCode.Location? =
     pos?.let {
         val endPos =
@@ -47,15 +57,21 @@ fun mapLegacyScriptPosition(pos: ScriptReport.Position?): SourceCode.Location? =
         SourceCode.Location(SourceCode.Position(pos.startLine, pos.startColumn), endPos)
     }
 
+@Suppress("DEPRECATION")
+@Deprecated("Legacy script dependencies API support, use kotlin.script.experimental.api.ScriptDiagnostic directly")
 fun mapToLegacyScriptReportPosition(pos: SourceCode.Location?): ScriptReport.Position? =
     pos?.let { ScriptReport.Position(pos.start.line, pos.start.col, pos.end?.line, pos.end?.col) }
 
+@Suppress("DEPRECATION")
+@Deprecated("Legacy script dependencies API support, use kotlin.script.experimental.api.ScriptDiagnostic directly")
 fun Iterable<ScriptReport>.mapToDiagnostics(): List<ScriptDiagnostic> = map { (message, severity, position) ->
     ScriptDiagnostic(
         ScriptDiagnostic.unspecifiedError, message, mapLegacyDiagnosticSeverity(severity), null, mapLegacyScriptPosition(position)
     )
 }
 
+@Suppress("DEPRECATION")
+@Deprecated("Legacy script dependencies API support, use kotlin.script.experimental.api.ScriptDiagnostic directly")
 fun Iterable<ScriptDiagnostic>.mapToLegacyReports(): List<ScriptReport> = map { (val _ = code, val message, val severity, val _ = sourcePath, val location, val exception) ->
     val reportMessage = if (exception == null) message else "$message ($exception)"
     ScriptReport(reportMessage, mapToLegacyScriptReportSeverity(severity), mapToLegacyScriptReportPosition(location))

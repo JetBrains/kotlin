@@ -38,12 +38,12 @@ fun testIfElse(i: Int) {
     receive<MyClass>(
         if (i == 0) {
             <!UNRESOLVED_REFERENCE!>NestedInheritor<!>
-            <!UNRESOLVED_REFERENCE!>NestedInheritor<!>
+            NestedInheritor
             // KT-76400
         }
         else if (i == 1) {
             <!UNRESOLVED_REFERENCE!>myClassProp<!>
-            <!UNRESOLVED_REFERENCE!>myClassProp<!>
+            myClassProp
             // KT-76400
         }
         else if (i == 2) {
@@ -52,7 +52,7 @@ fun testIfElse(i: Int) {
         }
         else if (i == 3) {
             <!UNRESOLVED_REFERENCE!>stringProp<!>
-            <!UNRESOLVED_REFERENCE!>stringProp<!>
+            <!ARGUMENT_TYPE_MISMATCH!>stringProp<!>
             // KT-76400
         }
         else ClassMemberAlias
@@ -61,12 +61,12 @@ fun testIfElse(i: Int) {
     run<MyClass> {
         if (i == 0) {
             <!UNRESOLVED_REFERENCE!>NestedInheritor<!>
-            <!UNRESOLVED_REFERENCE!>NestedInheritor<!>
+            NestedInheritor
             // KT-76400
         }
         else if (i == 1) {
             <!UNRESOLVED_REFERENCE!>myClassProp<!>
-            <!UNRESOLVED_REFERENCE!>myClassProp<!>
+            myClassProp
             // KT-76400
         }
         else ClassMemberAlias

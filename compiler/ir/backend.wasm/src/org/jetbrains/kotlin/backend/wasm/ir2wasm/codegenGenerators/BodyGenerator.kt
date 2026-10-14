@@ -1086,11 +1086,11 @@ class BodyGenerator(
 
     private fun referenceContSuspendHandlerBlockType(): WasmImmediate.TypeIdx {
         val anyRefNull = WasmRefNullType(Synthetics.HeapTypes.anyBuiltInType)
-        val cont0RefNull = WasmRefNullType(typeCodegenContext.referenceHeapContType(0))
+        val cont0RefNull = WasmRefNullType(Synthetics.HeapTypes.boundContType)
         return typeCodegenContext.referenceWasmFunctionType(WasmFunctionType(emptyList(), listOf(anyRefNull, cont0RefNull)))
     }
 
-    // `invokeArity` is the number of `SuspendFunctionN.invoke` parameters:
+    // `invokeArity` is N in `SuspendFunctionN`, the lowered `invoke` takes N + 2 parameters:
     // the suspend function object itself, N arguments and `completion`.
     private fun generateSuspendFunToContref(
         function: IrFunction,
@@ -1099,13 +1099,13 @@ class BodyGenerator(
     ) {
         val suspendFunctionClassType = function.parameters[0].type
         val suspendFunctionInvoke = irBuiltIns.suspendFunctionN(invokeArity).getSimpleFunction("invoke")!!
-        val contType = typeCodegenContext.referenceContType(invokeArity + 2)
-        val bindContType = typeCodegenContext.referenceContType(0)
+        val contType = GcTypeSymbol(getContTypeSignature(suspendFunctionInvokeWasmType(invokeArity)))
+        val boundContType = Synthetics.GcTypes.boundContType
 
         body.buildGetLocal(functionContext.referenceLocal(0), location)
         castAnyToInvokable(suspendFunctionInvoke.owner, suspendFunctionClassType.classOrFail.owner, location)
         body.buildContNew(contType, location)
-        body.buildContBind(contType, bindContType, location)
+        body.buildContBind(contType, boundContType, location)
     }
 
     // Return true if generated.
@@ -1362,7 +1362,7 @@ class BodyGenerator(
                 val exceptionToResume = functionContext.referenceLocal(0)
                 val wasmContinuation = functionContext.referenceLocal(1)
 
-                val zeroArgContType = typeCodegenContext.referenceHeapContType(0)
+                val boundContType = Synthetics.GcTypes.boundContType
 
                 body.buildFunctionTypedBlock("on_suspend", referenceContSuspendHandlerBlockType()) { idx ->
                     // Throwable
@@ -1373,7 +1373,7 @@ class BodyGenerator(
 
                     body.buildGetLocal(wasmContinuation, location)
                     val contHandle = body.createNewContHandle(contTagId, idx)
-                    body.buildResumeThrow(zeroArgContType, exceptionTagId, contHandle, location)
+                    body.buildResumeThrow(boundContType, exceptionTagId, contHandle, location)
                     body.buildInstr(WasmOp.RETURN, location)
                 }
                 generateResumeIntrinsicsEpilogue(wasmContinuation, location)
@@ -1383,9 +1383,8 @@ class BodyGenerator(
             // Used as a placeholder to be stored in WasmContinuationBox.wasmContinuation.
             // Substituted by the actual wasm continuation, when the coroutine suspends.
             wasmSymbols.coroutinesStackSwitchingIntrinsics?.nullContrefIntrinsic -> {
-                val wasmToType = typeCodegenContext.referenceHeapContType(0)
-                val type = WasmImmediate.HeapType(wasmToType)
-                body.buildInstr(WasmOp.REF_NULL, location, type)
+                val boundContType = Synthetics.GcTypes.boundContType
+                body.buildInstr(WasmOp.REF_NULL, location, boundContType)
             }
 
             /**
@@ -1403,12 +1402,12 @@ class BodyGenerator(
             wasmSymbols.coroutinesStackSwitchingIntrinsics?.resumeWithIntrinsic -> {
                 val wasmContinuation = functionContext.referenceLocal(0)
 
-                val zeroArgContType = typeCodegenContext.referenceHeapContType(0)
+                val boundContType = Synthetics.GcTypes.boundContType
 
                 body.buildFunctionTypedBlock("on_suspend", referenceContSuspendHandlerBlockType()) { idx ->
                     body.buildGetLocal(wasmContinuation, location)
                     val contHandle = body.createNewContHandle(contTagId, idx)
-                    body.buildResume(zeroArgContType, contHandle, location)
+                    body.buildResume(boundContType, contHandle, location)
                     body.buildInstr(WasmOp.RETURN, location)
                 }
                 generateResumeIntrinsicsEpilogue(wasmContinuation, location)
@@ -1431,27 +1430,6 @@ class BodyGenerator(
 
             wasmSymbols.getWasmAbiVersion -> {
                 body.buildConstI32(WASM_ABI_VERSION, location)
-            }
-
-            wasmSymbols.wasmArrayNewData0 -> {
-                val arrayGcType = typeCodegenContext.referenceGcType(call.typeArguments[0]!!.getRuntimeClass(irBuiltIns).symbol)
-                body.buildInstr(WasmOp.ARRAY_NEW_DATA, location, arrayGcType, WasmImmediate.DataIdx(0))
-            }
-
-            wasmSymbols.wasmArrayNewData -> {
-                val arrayGcType = typeCodegenContext.referenceGcType(call.typeArguments[0]!!.getRuntimeClass(irBuiltIns).symbol)
-                val dataIdx = (call.arguments[2] as? IrConst)?.value as? Int
-                    ?: error("An argument for dataIdx should be a compile time const with type Int")
-                body.buildDrop(location)
-                body.buildInstr(WasmOp.ARRAY_NEW_DATA, location, arrayGcType, WasmImmediate.DataIdx(dataIdx))
-            }
-
-            wasmSymbols.wasmArrayNewData0CharArray -> {
-                val wasmArrayNewData0CharArray = wasmSymbols.wasmArrayNewData0CharArray!!
-                val arrayGcType = typeCodegenContext.referenceGcType(
-                    wasmArrayNewData0CharArray.owner.returnType.getRuntimeClass(irBuiltIns).symbol,
-                )
-                body.buildInstr(WasmOp.ARRAY_NEW_DATA, location, arrayGcType, WasmImmediate.DataIdx(0))
             }
 
             wasmSymbols.callAssociatedObjectGetter -> {

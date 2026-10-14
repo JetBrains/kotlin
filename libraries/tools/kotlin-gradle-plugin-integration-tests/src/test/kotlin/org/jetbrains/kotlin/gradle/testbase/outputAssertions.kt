@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.testbase
 
 import org.gradle.api.logging.LogLevel
-import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.cli.common.arguments.*
@@ -61,7 +60,7 @@ fun BuildResult.assertOutputDoesNotContain(
             endIndex = startIndex + notExpectedSubString.length
         } while (startIndex != -1)
 
-        val linesContainingSubString = occurrences.map { [startIndex, endIndex] ->
+        val linesContainingSubString = occurrences.map { (startIndex, endIndex) ->
             output.subSequence(
                 (startIndex - wrappingCharsCount).coerceAtLeast(0),
                 (endIndex + wrappingCharsCount).coerceAtMost(output.length)
@@ -189,36 +188,6 @@ fun BuildResult.assertBuildReportPathIsPrinted() {
     assertOutputContains("Kotlin build report is written to file://")
 }
 
-val NO_GRADLE_WARNINGS_DETECTOR_PLUGIN_ERROR_MESSAGE =
-    """
-    The build uses warning mode other than `${WarningMode.Fail}` and uses a non-default project settings file.
-    Please apply the `org.jetbrains.kotlin.test.gradle-warnings-detector` plugin to the settings.
-
-    """.trimIndent()
-
-fun getWarningModeChangeAdvice(warningMode: WarningMode) =
-    "Warning mode is set to `$warningMode`, but the build produced no deprecation warnings. Please set it to `${WarningMode.Fail}`"
-
-/**
- * Asserts that the build produced some deprecation warnings.
- *
- * Expected to be executed only for the case when [BuildOptions.warningMode] is not set to [WarningMode.Fail]
- */
-fun BuildResult.assertDeprecationWarningsArePresent(@Suppress("unused") warningMode: WarningMode) {
-    assertOutputContains("[GradleWarningsDetectorPlugin] The plugin is being applied", NO_GRADLE_WARNINGS_DETECTOR_PLUGIN_ERROR_MESSAGE)
-
-    /*
-    This assertion is flaky:
-    Some deprecation warnings may skip when the test-kit daemon is warm, which cannot guarantee the assertion:
-    See: https://youtrack.jetbrains.com/issue/KT-88825
-
-    assertOutputContains(
-        "[GradleWarningsDetectorPlugin] Some deprecation warnings were found during this build.",
-        getWarningModeChangeAdvice(warningMode)
-    )
-     */
-}
-
 /**
  * This function searches for a given parameter in a multi-line output string and returns its value.
  *
@@ -229,7 +198,7 @@ fun BuildResult.assertDeprecationWarningsArePresent(@Suppress("unused") warningM
  */
 fun findParameterInOutput(name: String, output: String): String? =
     output.lineSequence().mapNotNull { line ->
-        val [key, value] = line.split('=', limit = 2).takeIf { it.size == 2 } ?: return@mapNotNull null
+        val (key, value) = line.split('=', limit = 2).takeIf { it.size == 2 } ?: return@mapNotNull null
         if (key.endsWith(name)) value else null
     }.firstOrNull()
 
@@ -437,7 +406,7 @@ fun CommandLineArguments.assertNoDuplicates() {
 
 private fun BuildResult.extractNativeCustomEnvironment(taskPath: String, toolName: NativeToolKind): Map<String, String> =
     extractNativeToolSettings(getOutputForTask(taskPath, LogLevel.INFO), toolName, NativeToolSettingsKind.CUSTOM_ENV_VARIABLES).map {
-        val [key, value] = it.split("=")
+        val (key, value) = it.split("=")
         key.trim() to value.trim()
     }.toMap()
 

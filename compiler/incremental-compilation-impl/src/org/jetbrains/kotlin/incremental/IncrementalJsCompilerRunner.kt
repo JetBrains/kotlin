@@ -138,11 +138,7 @@ class IncrementalJsCompilerRunner(
 
         val libs = parseLibrariesArgument(args.libraries)
         //TODO(valtman) check for JS
-        val classpathChanges = getClasspathChanges(
-            libs, changedFiles, lastBuildInfo, modulesApiHistory, reporter,
-            mapOf(), false, caches.platformCache,
-            caches.lookupCache.lookupSymbols.map { if (it.scope.isBlank()) it.name else it.scope }.distinct()
-        )
+        val classpathChanges = getClasspathChanges(libs, changedFiles, lastBuildInfo, modulesApiHistory, reporter)
 
         when (classpathChanges) {
             is ChangesEither.Unknown -> {

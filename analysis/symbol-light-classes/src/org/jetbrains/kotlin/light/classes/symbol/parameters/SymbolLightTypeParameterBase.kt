@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.elements.KtLightAbstractAnnotation
 import org.jetbrains.kotlin.asJava.elements.KtLightDeclaration
 import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.jetbrains.kotlin.light.classes.symbol.KaSymbolJavaView
+import org.jetbrains.kotlin.analysis.api.javaInterop.KaSymbolJavaView
 import org.jetbrains.kotlin.light.classes.symbol.utils.basicIsEquivalentTo
 import org.jetbrains.kotlin.light.classes.symbol.utils.invalidAccess
 import org.jetbrains.kotlin.light.classes.symbol.utils.isOriginEquivalentTo

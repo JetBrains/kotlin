@@ -19,11 +19,9 @@ import org.jetbrains.kotlin.fir.builder.buildDestructuringVariable
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
-import org.jetbrains.kotlin.fir.declarations.utils.isReplSnippetDeclaration
 import org.jetbrains.kotlin.fir.expressions.FirMultiDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
@@ -58,10 +56,6 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
             val declarationsToRebind = when (val originalDeclaration = designation.target) {
                 is FirFunction -> listOf(originalDeclaration)
                 is FirProperty -> listOfNotNull(originalDeclaration.getter, originalDeclaration.setter)
-                is FirReplSnippet -> originalDeclaration.snippetClass.let { snippetClass ->
-                    snippetClass.declarations.filter { it.isReplSnippetDeclaration == true } + snippetClass
-                }
-
                 else -> emptyList()
             }
 
@@ -103,19 +97,6 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
         super.bindFunctionTarget(target, computeRebindTarget(function) as? FirFunction ?: function)
     }
 
-    override fun <T : FirDeclaration, R : FirBasedSymbol<T>> replSnippetDeclarationSymbol(declaration: T): R {
-        val target = (computeRebindTarget(declaration) ?: declaration)
-        requireWithAttachment(
-            declaration.javaClass == target.javaClass,
-            { "Expected ${declaration.javaClass.simpleName} but got ${target.javaClass.simpleName}" },
-        ) {
-            withFirEntry("declaration", declaration)
-            withFirEntry("target", target)
-        }
-
-        return super.replSnippetDeclarationSymbol(target)
-    }
-
     /**
      * @return [FirFunction] if another function should be used instead of [declaration] for [FirFunctionTarget]
      *
@@ -143,8 +124,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
                     buildScriptDestructuringDeclaration(element)
                 }
             } else {
-                val initializer = element.toInitializerExpression()
-                buildErrorNonLocalDestructuringDeclaration(element.toFirSourceElement(), initializer, baseModuleData)
+                buildErrorNonLocalDestructuringDeclaration(element)
             }
         }
 
@@ -162,10 +142,9 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
                 moduleData = baseModuleData,
                 container = container,
                 element,
-                kind = destructuringKindOf(
-                    hasSquareBrackets = (element.parent as KtDestructuringDeclaration).hasSquareBrackets(),
-                    isFullForm = element.ownValOrVarKeyword != null
-                ),
+                kind = with(element.parent as KtDestructuringDeclaration) {
+                    destructuringKindOf(hasSquareBrackets = hasSquareBrackets(), isFullForm = isFullForm)
+                },
                 forceLocal = false,
                 index = element.index(),
                 configure = { configureScriptDestructuringDeclarationEntry(it, container) },
@@ -336,9 +315,8 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
         val psi = parent.psi
         val typeParameters = when (psi) {
             is KtClassOrObject -> parent.typeParameters.subList(0, psi.typeParameters.size)
-            is KtScript -> emptyList()
             else -> errorWithFirSpecificEntries(
-                message = "Expected ${KtClassOrObject::class.simpleName}/${KtScript::class.simpleName} is not found",
+                message = "Expected ${KtClassOrObject::class.simpleName} is not found",
                 fir = parent,
                 psi = psi,
             )

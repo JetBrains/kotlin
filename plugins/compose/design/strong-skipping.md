@@ -89,13 +89,4 @@ We have enabled this option in AndroidX for all Compose modules.
 
 ### Other Gradle projects
 
-To strong skipping for a gradle module, include:
-
-```
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>() {
-    compilerOptions.freeCompilerArgs.addAll(
-        "-P",
-        "plugin:androidx.compose.compiler.plugins.kotlin:featureFlag=StrongSkipping",
-    )
-}
-```
+When using Kotlin 2.0.20 or newer, strong skipping is enabled by default for all Gradle modules.

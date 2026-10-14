@@ -5,22 +5,19 @@
 
 package kotlin.script.experimental.jsr223
 
-import org.jetbrains.kotlin.cli.common.repl.KOTLIN_SCRIPT_ENGINE_BINDINGS_KEY
-import org.jetbrains.kotlin.cli.common.repl.KOTLIN_SCRIPT_STATE_BINDINGS_KEY
 import javax.script.Bindings
 import javax.script.ScriptEngine
 import kotlin.script.experimental.annotations.KotlinScript
-import kotlin.script.experimental.api.ScriptCompilationConfiguration
-import kotlin.script.experimental.api.ScriptEvaluationConfiguration
-import kotlin.script.experimental.api.prependSyntheticSnippets
-import kotlin.script.experimental.api.refineConfiguration
-import kotlin.script.experimental.api.refineConfigurationBeforeEvaluate
+import kotlin.script.experimental.api.*
+import kotlin.script.experimental.jvm.jsr223.configureExposedJsr223Context
+import kotlin.script.experimental.jvm.jsr223.generateBindingSnippetIfNeeded
+import kotlin.script.experimental.jvm.jsr223.importAllBindings
+import kotlin.script.experimental.jvm.jsr223.jsr223
 import kotlin.script.experimental.jvm.jvm
 import kotlin.script.experimental.jvm.jvmTarget
-import kotlin.script.experimental.jvmhost.jsr223.configureExposedJsr223Context
-import kotlin.script.experimental.jvmhost.jsr223.generateBindingSnippetIfNeeded
-import kotlin.script.experimental.jvmhost.jsr223.importAllBindings
-import kotlin.script.experimental.jvmhost.jsr223.jsr223
+
+const val KOTLIN_SCRIPT_STATE_BINDINGS_KEY = "kotlin.script.state"
+const val KOTLIN_SCRIPT_ENGINE_BINDINGS_KEY = "kotlin.script.engine"
 
 @Suppress("unused")
 @KotlinScript(

@@ -9,7 +9,6 @@ plugins {
 }
 
 dependencies {
-    compileOnly(project(":jps:jps-platform-api-signatures"))
     testImplementation(testFixtures(project(":generators:test-generator")))
 
     CompilerModules.kotlinJpsPluginEmbeddedDependencies
@@ -25,6 +24,7 @@ dependencies {
     compileOnly(intellijPlatformUtil())
     compileOnly(jpsModel())
     compileOnly(jpsBuild())
+    compileOnly(jpsBuildDependencyGraph())
     compileOnly(jpsBuildJavacRt())
     compileOnly(jpsModelSerialization())
     compileOnly(intellijJDom())
@@ -63,6 +63,7 @@ dependencies {
 
     testImplementation(testFixtures(project(":compiler:incremental-compilation-impl")))
     testImplementation(jpsBuild())
+    testImplementation(jpsBuildDependencyGraph())
     testImplementation(jpsBuildJavacRt())
 
     testImplementation(platform(libs.junit.bom))
@@ -77,6 +78,26 @@ dependencies {
 
     testImplementation("org.projectlombok:lombok:${project.kotlinBuildProperties.versionsProperty("lombok").get()}")
     testImplementation(libs.kotlinx.serialization.json)
+}
+
+val btaImplSnapshot = configurations.dependencyScope("btaImplSnapshot")
+val btaImplSnapshotResolvable = configurations.resolvable("btaImplSnapshotResolvable") {
+    extendsFrom(btaImplSnapshot.get())
+}
+
+dependencies {
+    btaImplSnapshot(project(":compiler:build-tools:kotlin-build-tools-impl"))
+    btaImplSnapshot(project(":compiler:build-tools:kotlin-build-tools-cri-impl"))
+    // `compileOnly` in the implementation's build script, but needed at run time
+    btaImplSnapshot(project(":kotlin-reflect"))
+    btaImplSnapshot(project(":kotlin-daemon-client"))
+}
+
+val btaImplHome = layout.buildDirectory.dir("btaImplHome")
+val prepareBtaImplHome = tasks.register<Sync>("prepareBtaImplHome") {
+    description = "Collects the Build Tools API implementation for the 'testWithBuildToolsApi' task."
+    from(btaImplSnapshotResolvable)
+    into(btaImplHome)
 }
 
 sourceSets {
@@ -108,39 +129,77 @@ jvmToolchains {
     }
 }
 
+kotlin {
+    compilerOptions {
+        optIn.add("org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi")
+        optIn.add("org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument")
+        optIn.add("org.jetbrains.kotlin.buildtools.api.jps.InternalBuildToolsApi")
+    }
+}
+
+fun Test.configureJpsTests() {
+    // do not replace with compile/runtime dependency,
+    // because it forces Intellij reindexing after each compiler change
+    dependsOn(":kotlin-compiler:dist")
+    dependsOn(":kotlin-stdlib:jsJarForTests")
+    workingDir = rootDir
+
+    // The JPS tests run against the new dependency graph architecture.
+    // KotlinBuilder caches these properties in companion vals on class initialization,
+    // so they have to be set before the test JVM starts, not from a test fixture.
+    systemProperty("jps.use.dependency.graph", true)
+    systemProperty("kotlin.jps.dumb.mode", true)
+    systemProperty("kotlin.jps.enable.lookups.in.dumb.mode", true)
+    systemProperty("jvm-inc-builder.test.track.mock.annotations", true)
+    // for debugging tests with in-process compiler
+    systemProperty("kotlin.jps.classPrefixesToLoadByParent", "kotlin.")
+    jvmArgs(
+        // https://github.com/JetBrains/intellij-community/blob/b49faf433f8d73ccd46016a5717f997d167de65f/jps/jps-builders/src/org/jetbrains/jps/cmdline/ClasspathBootstrap.java#L67
+        "--add-opens=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED",
+        "--add-opens=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED",
+        "--add-opens=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED",
+        "--add-opens=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED",
+        "--add-opens=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED",
+        "--add-opens=jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED",
+        "--add-opens=jdk.compiler/com.sun.tools.javac.model=ALL-UNNAMED",
+        "--add-opens=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED",
+        "--add-opens=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED",
+        "--add-opens=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED",
+        "--add-opens=jdk.compiler/com.sun.tools.javac.jvm=ALL-UNNAMED",
+        // the minimal required set of modules to be opened for the intellij platform itself
+        "--add-opens=java.desktop/java.awt=ALL-UNNAMED",
+        "--add-opens=java.desktop/java.awt.event=ALL-UNNAMED",
+        "--add-opens=java.desktop/sun.awt=ALL-UNNAMED",
+        "--add-opens=java.base/java.lang=ALL-UNNAMED",
+        "--add-opens=java.desktop/javax.swing=ALL-UNNAMED",
+        "--add-opens=java.base/java.io=ALL-UNNAMED",
+        // additions for SDK 261
+        "--add-opens=java.base/sun.nio.ch=ALL-UNNAMED",
+        "--add-opens=java.base/jdk.internal.ref=ALL-UNNAMED",
+    )
+}
+
 projectTests {
+    // Kotlin is compiled through the legacy compiler runner: module.xml + the daemon
     testTask(
         javaLauncher = JdkMajorVersion.JDK_21_0,
         defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0)
     ) {
-        // do not replace with compile/runtime dependency,
-        // because it forces Intellij reindexing after each compiler change
-        dependsOn(":kotlin-compiler:dist")
-        dependsOn(":kotlin-stdlib:jsJarForTests")
-        workingDir = rootDir
-        jvmArgs(
-            // https://github.com/JetBrains/intellij-community/blob/b49faf433f8d73ccd46016a5717f997d167de65f/jps/jps-builders/src/org/jetbrains/jps/cmdline/ClasspathBootstrap.java#L67
-            "--add-opens=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED",
-            "--add-opens=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED",
-            "--add-opens=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED",
-            "--add-opens=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED",
-            "--add-opens=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED",
-            "--add-opens=jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED",
-            "--add-opens=jdk.compiler/com.sun.tools.javac.model=ALL-UNNAMED",
-            "--add-opens=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED",
-            "--add-opens=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED",
-            "--add-opens=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED",
-            "--add-opens=jdk.compiler/com.sun.tools.javac.jvm=ALL-UNNAMED",
-            // the minimal required set of modules to be opened for the intellij platform itself
-            "--add-opens=java.desktop/java.awt=ALL-UNNAMED",
-            "--add-opens=java.desktop/java.awt.event=ALL-UNNAMED",
-            "--add-opens=java.desktop/sun.awt=ALL-UNNAMED",
-            "--add-opens=java.base/java.lang=ALL-UNNAMED",
-            "--add-opens=java.desktop/javax.swing=ALL-UNNAMED",
-            "--add-opens=java.base/java.io=ALL-UNNAMED",
-            // additions for SDK 261
-            "--add-opens=java.base/sun.nio.ch=ALL-UNNAMED",
-            "--add-opens=java.base/jdk.internal.ref=ALL-UNNAMED",
+        configureJpsTests()
+    }
+
+    // Kotlin is compiled through the Build Tools API, enabled by the implementation home
+    testTask(
+        "testWithBuildToolsApi",
+        javaLauncher = JdkMajorVersion.JDK_21_0,
+        defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0),
+        skipInLocalBuild = false,
+    ) {
+        configureJpsTests()
+        inputs.files(prepareBtaImplHome).withPropertyName("btaImplHome").withNormalizer(ClasspathNormalizer::class)
+        systemProperty(
+            "kotlin.jps.build.tools.impl.home",
+            providers.gradleProperty("kotlin.jps.build.tools.impl.home").getOrElse(btaImplHome.get().asFile.absolutePath)
         )
     }
 
@@ -151,7 +210,7 @@ projectTests {
     withJvmStdlibAndReflect()
 }
 
-testsJar {}
+testsJarToBeUsedAlongWithFixtures()
 
 /**
  * Dependency Security Overrides

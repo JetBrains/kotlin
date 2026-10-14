@@ -1,7 +1,7 @@
 // ISSUE: KT-84280, KT-84281, KT-84299
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +ProperSupportOfInnerClassesInCallableReferenceLHS
-// LANGUAGE_FEATURE_TOGGLED: ForbidUselessTypeArgumentsIn25
+// LANGUAGE_FEATURE_TOGGLED: ForbidUselessTypeArgumentsIn26
 import kotlin.reflect.*
 
 object MyUnit

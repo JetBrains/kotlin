@@ -1,0 +1,24 @@
+--- a/enumEntry.ir.txt
++++ b/enumEntry.ir.jklib.txt
+@@ -40,6 +40,10 @@
+           VALUE_PARAMETER kind:Regular name:other index:1 type:<root>.Z
+           overridden:
+             public final fun compareTo (other: <root>.Z): kotlin.Int declared in <root>.Z
++        FUN FAKE_OVERRIDE name:describeConstable visibility:public modality:FINAL returnType:@[FlexibleNullability] java.util.Optional<@[FlexibleNullability] java.lang.Enum.EnumDesc<@[FlexibleNullability] <root>.Z?>?>? [fake_override]
++          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.Z>
++          overridden:
++            public final fun describeConstable (): @[FlexibleNullability] java.util.Optional<@[FlexibleNullability] java.lang.Enum.EnumDesc<@[FlexibleNullability] <root>.Z?>?>? declared in <root>.Z
+         FUN FAKE_OVERRIDE name:equals visibility:public modality:FINAL returnType:kotlin.Boolean [fake_override,operator]
+           VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.Z>
+           VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+@@ -89,6 +93,10 @@
+       VALUE_PARAMETER kind:Regular name:other index:1 type:<root>.Z
+       overridden:
+         public final fun compareTo (other: E of kotlin.Enum): kotlin.Int declared in kotlin.Enum
++    FUN FAKE_OVERRIDE name:describeConstable visibility:public modality:FINAL returnType:@[FlexibleNullability] java.util.Optional<@[FlexibleNullability] java.lang.Enum.EnumDesc<@[FlexibleNullability] <root>.Z?>?>? [fake_override]
++      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.Z>
++      overridden:
++        public final fun describeConstable (): @[FlexibleNullability] java.util.Optional<@[FlexibleNullability] java.lang.Enum.EnumDesc<@[FlexibleNullability] E of kotlin.Enum?>?>? declared in kotlin.Enum
+     FUN FAKE_OVERRIDE name:equals visibility:public modality:FINAL returnType:kotlin.Boolean [fake_override,operator]
+       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.Z>
+       VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?

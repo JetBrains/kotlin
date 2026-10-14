@@ -1,0 +1,10 @@
+KT element: KtTypeReference
+FIR element: FirResolvedTypeRefImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+R|kotlin/collections/List<kotlin/Int>|
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] typeAliasExpandedType.kt
+    public final [ResolvedTo(TYPES)] typealias F = R|kotlin/collections/List<kotlin/Int>|

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.combined
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.providers.FirCompositeCachedSymbolNamesProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProvider
@@ -111,6 +112,12 @@ internal class LLCombinedPackageDelegationSymbolProvider private constructor(
     override fun estimateSymbolCacheSize(): Long = 0
 
     companion object {
+        /**
+         * [ProgressManager.checkCanceled] is too expensive to be called for every single package, so we only check for cancellation every
+         * [CANCELLATION_CHECK_INTERVAL] packages.
+         */
+        private const val CANCELLATION_CHECK_INTERVAL = 128
+
         fun merge(session: FirSession, providers: List<FirSymbolProvider>): FirSymbolProvider? =
             if (providers.size > 1) {
                 val providersByPackage = buildPackageToProvidersMap(providers)
@@ -128,8 +135,14 @@ internal class LLCombinedPackageDelegationSymbolProvider private constructor(
         private fun buildPackageToProvidersMap(providers: List<FirSymbolProvider>): Map<String, Array<FirSymbolProvider>>? {
             val providerListsByPackage = buildMap {
                 providers.forEach { provider ->
+                    checkCanceled()
+
                     val packageNames = provider.symbolNamesProvider.getPackageNames() ?: return null
-                    packageNames.forEach { packageName ->
+                    packageNames.forEachIndexed { index, packageName ->
+                        if (index % CANCELLATION_CHECK_INTERVAL == 0) {
+                            checkCanceled()
+                        }
+
                         // We only use the `FqName` here for convenience. It won't be stored.
                         FqName(packageName).forEachFqName { fqName ->
                             val list = getOrPut(fqName.asString()) { mutableListOf() }
@@ -147,7 +160,11 @@ internal class LLCombinedPackageDelegationSymbolProvider private constructor(
 
             // Avoid linked hash maps to conserve memory.
             return newHashMapWithExpectedSize<String, Array<FirSymbolProvider>>(providerListsByPackage.size).apply {
-                providerListsByPackage.forEach { [packageName, providers] ->
+                providerListsByPackage.entries.forEachIndexed { index, [packageName, providers] ->
+                    if (index % CANCELLATION_CHECK_INTERVAL == 0) {
+                        checkCanceled()
+                    }
+
                     this[packageName] = providers.toTypedArray()
                 }
             }

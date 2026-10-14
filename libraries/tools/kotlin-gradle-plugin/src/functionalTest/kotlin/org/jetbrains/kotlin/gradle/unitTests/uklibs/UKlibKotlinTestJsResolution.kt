@@ -3,7 +3,6 @@
 package org.jetbrains.kotlin.gradle.unitTests.uklibs
 
 import org.gradle.api.artifacts.ModuleDependency
-import org.gradle.api.artifacts.result.ResolvedComponentResult
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.configureRepositoriesForTests
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
@@ -44,7 +43,7 @@ class UKlibKotlinTestJsResolution {
         }.evaluate()
 
         fun resolvedVariantNames(configurationName: String): List<String> = project.configurations.getByName(configurationName)
-            .incoming.resolutionResult.allComponents.map { (it as ResolvedComponentResult).variants.single().displayName }
+            .incoming.resolutionResult.allComponents.map { it.variants.single().displayName }
 
         fun KotlinTarget.resolvedMainCompilation(): List<String> =
             resolvedVariantNames(compilations.getByName("main").compileDependencyConfigurationName)

@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.PlatformManager
+import org.jetbrains.kotlin.konan.test.blackbox.support.ProcessLevelProperty
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import org.jetbrains.kotlin.test.services.TestService
@@ -74,6 +75,8 @@ val Settings.configurables: Configurables
             // Development variant of LLVM is used to have utilities like FileCheck
             put("llvmHome.${HostManager.hostName}", "\$llvm.${HostManager.hostName}.dev")
 
+            if (useProvisionedXcode) put("useProvisionedXcode", "true")
+
             val macabi = get<ExplicitBinaryOptions>().getOrNull(BinaryOptions.macabi) ?: false
             if (macabi) {
                 // The same as in KonanConfig. See the motivation there.
@@ -100,3 +103,26 @@ val Settings.configurables: Configurables
 val Settings.withPlatformLibs: Boolean
     // XCTest depends on platform libraries, so platform libraries must be available.
     get() = get<XCTestRunner>().isEnabled || get<PlatformLibs>() == PlatformLibs.DEFAULT
+
+/**
+ * True when the Apple toolchain and sysroot must be resolved from the whole Xcode provisioned under
+ * `<dependencies root>/xcode_<version>_<build>` instead of from the split `target-toolchain-*` /
+ * `target-sysroot-*` internal-server dependencies.
+ */
+internal val useProvisionedXcode: Boolean
+    get() = ProcessLevelProperty.USE_PROVISIONED_XCODE.readValue().toBoolean()
+
+/**
+ * [useProvisionedXcode] for the Kotlin/Native compiler, which loads `konan.properties` on its own and so has to be
+ * told about the provisioned Xcode explicitly.
+ */
+val provisionedXcodeCompilerArgs: List<String>
+    get() = if (useProvisionedXcode) listOf("-Xoverride-konan-properties=useProvisionedXcode=true") else emptyList()
+
+/**
+ * The same as [provisionedXcodeCompilerArgs], but for cinterop, whose `kotlinx.cli` parser only splits a token on `=`
+ * under `OptionPrefixStyle.GNU` and therefore rejects the `=`-joined form as an unknown option. Repeating the option
+ * accumulates there as well.
+ */
+val provisionedXcodeCInteropArgs: List<String>
+    get() = if (useProvisionedXcode) listOf("-Xoverride-konan-properties", "useProvisionedXcode=true") else emptyList()

@@ -10,15 +10,20 @@ import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.irArrayOf
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.classId
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
+import org.jetbrains.kotlin.ir.util.functions
+import org.jetbrains.kotlin.ir.util.isVararg
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 
@@ -43,8 +48,10 @@ internal class JvmBuiltInsLowering(val context: JvmBackendContext) : FileLowerin
                     return expression.replaceWithCallTo(jvm8Replacement)
                 }
 
+                expression.replaceCollectionOfWithCollectionStaticMembersOfOrNull()?.let { return it }
+
                 return when {
-                    callee.isArrayOf() ->
+                    callee.isArrayOfOrArrayDotOf() ->
                         expression.arguments[0]
                             ?: throw AssertionError("Argument #0 expected: ${expression.dump()}")
 
@@ -70,6 +77,22 @@ internal class JvmBuiltInsLowering(val context: JvmBackendContext) : FileLowerin
         ("kotlin.ULong" to "rem") to context.symbols.remainderUnsignedLong,
         ("kotlin.ULong" to "toString") to context.symbols.toUnsignedStringLong
     )
+
+    private fun IrCall.replaceCollectionOfWithCollectionStaticMembersOfOrNull(): IrExpression? {
+        val callee = symbol.owner
+        if (callee.dispatchReceiverParameter != null) return null
+        val collectionClassId = (callee.parent as? IrClass)?.classId ?: return null
+        val staticMembersClass = context.symbols.mappedCollectionStaticMembers[collectionClassId] ?: return null
+        val replacement = staticMembersClass.owner.functions.singleOrNull { it.hasSameStaticMemberShapeAs(callee) } ?: return null
+        return IrCallImpl.fromSymbolOwner(startOffset, endOffset, type, replacement.symbol).also { newCall ->
+            newCall.typeArguments.assignFrom(typeArguments)
+            newCall.arguments.assignFrom(arguments)
+        }
+    }
+
+    private fun IrSimpleFunction.hasSameStaticMemberShapeAs(other: IrSimpleFunction): Boolean =
+        name == other.name && dispatchReceiverParameter == null && parameters.size == other.parameters.size &&
+                parameters.zip(other.parameters).all { [parameter, otherParameter] -> parameter.isVararg == otherParameter.isVararg }
 
     // Originals are so far only instance methods and extensions, while the replacements are
     // statics, so we copy dispatch and extension receivers to a value argument if needed.

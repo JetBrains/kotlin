@@ -27,6 +27,7 @@ internal abstract class KotlinKFunction(
     override val container: KDeclarationContainerImpl,
     override val signature: String,
     override val rawBoundReceiver: Any?,
+    override val rawBoundContextArguments: List<Any?>,
     overriddenStorage: KCallableOverriddenStorage,
 ) : KotlinKCallable<Any?>(overriddenStorage), ReflectKFunction, FunctionBase<Any?>, FunctionWithAllInvokes {
     protected abstract val contextParameters: List<KmValueParameter>
@@ -38,13 +39,14 @@ internal abstract class KotlinKFunction(
     protected abstract val hasAnnotationsInBytecode: Boolean
 
     override val allParameters: List<KParameter> by lazy(PUBLICATION) {
-        computeParameters(contextParameters, extensionReceiverType, valueParameters, typeParameterTable, includeReceivers = true)
+        computeParameters(contextParameters, extensionReceiverType, valueParameters, typeParameterTable, includeReceiver = true, includeContext = true)
     }
 
     override val parameters: List<KParameter> by lazy(PUBLICATION) {
-        if (isBound)
-            computeParameters(contextParameters, extensionReceiverType, valueParameters, typeParameterTable, includeReceivers = false)
-        else allParameters
+        if (isBound) computeParameters(
+            contextParameters, extensionReceiverType, valueParameters, typeParameterTable,
+            includeReceiver = !isReceiverBound, includeContext = !isContextBound,
+        ) else allParameters
     }
 
     override val typeParameters: List<KTypeParameter> get() = typeParameterTable.ownTypeParameters
@@ -74,9 +76,9 @@ internal abstract class KotlinKFunction(
             is Constructor<*> -> createConstructorCaller(member, isDefault = false)
             is Method -> when {
                 !Modifier.isStatic(member.modifiers) ->
-                    createInstanceMethodCaller(member)
+                    CallerImpl.Method.Instance(member, boundReceiver, boundContextArguments)
                 member.getAnnotation(JvmStatic::class.java) != null ->
-                    createJvmStaticInObjectCaller(member)
+                    CallerImpl.Method.JvmStaticInObject(member, boundReceiver, boundContextArguments)
                 else ->
                     createStaticMethodCaller(member, isCallByToValueClassMangledMethod = false)
             }
@@ -121,7 +123,7 @@ internal abstract class KotlinKFunction(
                 // In objects, $default's signature does _not_ contain the additional object instance parameter,
                 // as opposed to companion objects where the first parameter is the companion object instance.
                 (caller.member as? Method)?.getAnnotation(JvmStatic::class.java) != null && !(container as KClass<*>).isCompanion ->
-                    createJvmStaticInObjectCaller(member)
+                    CallerImpl.Method.JvmStaticInObject(member, boundReceiver, boundContextArguments)
                 else ->
                     createStaticMethodCaller(member, isCallByToValueClassMangledMethod = caller.isBoundInstanceCallWithValueClasses)
             }
@@ -140,26 +142,21 @@ internal abstract class KotlinKFunction(
                 member.parameterTypes.firstOrNull()?.isInterface == true
 
     private fun createStaticMethodCaller(member: Method, isCallByToValueClassMangledMethod: Boolean): Caller<*> =
-        if (isBound)
-            CallerImpl.Method.BoundStatic(
-                member, isCallByToValueClassMangledMethod, if (useBoxedBoundReceiver(member)) rawBoundReceiver else boundReceiver
-            )
-        else CallerImpl.Method.Static(member)
-
-    private fun createJvmStaticInObjectCaller(member: Method): Caller<*> =
-        if (isBound) CallerImpl.Method.BoundJvmStaticInObject(member) else CallerImpl.Method.JvmStaticInObject(member)
-
-    private fun createInstanceMethodCaller(member: Method): Caller<*> =
-        if (isBound) CallerImpl.Method.BoundInstance(member, boundReceiver) else CallerImpl.Method.Instance(member)
+        CallerImpl.Method.Static(
+            member, isCallByToValueClassMangledMethod,
+            boundReceiver = if (isReceiverBound && useBoxedBoundReceiver(member)) rawBoundReceiver else boundReceiver,
+            boundContextArguments,
+            hasInstanceParameter,
+        )
 
     private fun createConstructorCaller(member: Constructor<*>, isDefault: Boolean): CallerImpl<Constructor<*>> {
         return if (!isDefault && this is KotlinKConstructor && shouldHideConstructorDueToValueClassTypeValueParameters(this)) {
-            if (isBound)
+            if (isReceiverBound)
                 CallerImpl.AccessorForHiddenBoundConstructor(member, boundReceiver)
             else
                 CallerImpl.AccessorForHiddenConstructor(member)
         } else {
-            if (isBound)
+            if (isReceiverBound)
                 CallerImpl.BoundConstructor(member, boundReceiver)
             else
                 CallerImpl.Constructor(member)
@@ -172,11 +169,12 @@ internal abstract class KotlinKFunction(
                 constructor.parameters.any { it.type.jvmErasure.isValueClassThatRequiresMangling() }
 
     private fun KClass<*>.isValueClassThatRequiresMangling(): Boolean =
-        isValue && this != Result::class
+        (this as? KClassImpl<*>)?.isJvmInlineValue == true && this != Result::class
 
     override fun equals(other: Any?): Boolean {
         val that = other.asReflectFunction() ?: return false
-        return container == that.container && name == that.name && signature == that.signature && rawBoundReceiver == that.rawBoundReceiver
+        return container == that.container && name == that.name && signature == that.signature &&
+                rawBoundReceiver == that.rawBoundReceiver && rawBoundContextArguments == that.rawBoundContextArguments
     }
 
     override fun hashCode(): Int =

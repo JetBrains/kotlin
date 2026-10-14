@@ -110,8 +110,8 @@ internal fun createEnumValuesKmFunction(klass: KClassImpl<*>): KmFunction = KmFu
     }
     modality = Modality.FINAL
     visibility = Visibility.PUBLIC
-    @OptIn(ExperimentalCompanionBlocksAndExtensions::class)
-    isStatic = true
+    @OptIn(ExperimentalCompanionBlocks::class)
+    isCompanionBlockMember = true
 
     signature = JvmMethodSignature("values", "()[L${klass.classId.asString().replace('.', '$')};")
 }
@@ -127,8 +127,8 @@ internal fun createEnumValueOfKmFunction(klass: KClassImpl<*>): KmFunction = KmF
     }
     modality = Modality.FINAL
     visibility = Visibility.PUBLIC
-    @OptIn(ExperimentalCompanionBlocksAndExtensions::class)
-    isStatic = true
+    @OptIn(ExperimentalCompanionBlocks::class)
+    isCompanionBlockMember = true
 
     signature = JvmMethodSignature("valueOf", "(Ljava/lang/String;)L${klass.classId.asString().replace('.', '$')};")
 }
@@ -142,8 +142,8 @@ internal fun createEnumEntriesKmProperty(klass: KClassImpl<*>): KmProperty = KmP
     }
     modality = Modality.FINAL
     visibility = Visibility.PUBLIC
-    @OptIn(ExperimentalCompanionBlocksAndExtensions::class)
-    isStatic = true
+    @OptIn(ExperimentalCompanionBlocks::class)
+    isCompanionBlockMember = true
 
     getterSignature = JvmMethodSignature("getEntries", "()Lkotlin/enums/EnumEntries;")
 }

@@ -1,0 +1,20 @@
+KT element: KtTypeReference
+FIR element: FirErrorTypeRefImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+<ERROR TYPE REF: Symbol not found for T>
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] typeParameterReferenceInAnonymousObject.kt
+    public final [ResolvedTo(BODY_RESOLVE)] val x: R|kotlin/Any| = object : R|kotlin/Any| {
+        private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=<anonymous>] constructor<[ResolvedTo(BODY_RESOLVE)] T>(): R|<anonymous><T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] t: <ERROR TYPE REF: Symbol not found for T>): R|kotlin/Unit| {
+        }
+
+    }
+
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Any|

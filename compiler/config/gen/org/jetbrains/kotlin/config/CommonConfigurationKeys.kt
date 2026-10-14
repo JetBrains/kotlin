@@ -63,7 +63,7 @@ object CommonConfigurationKeys {
     val USE_FIR = CompilerConfigurationKey.create<Boolean>("USE_FIR")
 
     @JvmField
-    val USE_LIGHT_TREE = CompilerConfigurationKey.create<Boolean>("USE_LIGHT_TREE")
+    val PARSER_MODE = CompilerConfigurationKey.create<ParserMode>("PARSER_MODE")
 
     @JvmField
     val HMPP_MODULE_STRUCTURE = CompilerConfigurationKey.create<HmppCliModuleStructure>("HMPP_MODULE_STRUCTURE")
@@ -188,9 +188,9 @@ var CompilerConfiguration.useFir: Boolean
     get() = getBoolean(CommonConfigurationKeys.USE_FIR)
     set(value) { put(CommonConfigurationKeys.USE_FIR, value) }
 
-var CompilerConfiguration.useLightTree: Boolean
-    get() = getBoolean(CommonConfigurationKeys.USE_LIGHT_TREE)
-    set(value) { put(CommonConfigurationKeys.USE_LIGHT_TREE, value) }
+var CompilerConfiguration.parserMode: ParserMode
+    get() = get(CommonConfigurationKeys.PARSER_MODE, ParserMode.Default)
+    set(value) { put(CommonConfigurationKeys.PARSER_MODE, value) }
 
 var CompilerConfiguration.hmppModuleStructure: HmppCliModuleStructure?
     get() = get(CommonConfigurationKeys.HMPP_MODULE_STRUCTURE)

@@ -15,7 +15,7 @@ FILE[kind=File[packageFqName=<root>]]
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Unit]
           isClassRef: true
-  CLASS[classId=/Annotation, fqName=Annotation, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Annotation, superNames=[]]
+  CLASS[classId=/Annotation, fqName=Annotation, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Annotation, superNames=[]]
     MODIFIER_LIST[public final]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Annotation]
       MODIFIER_LIST[public]

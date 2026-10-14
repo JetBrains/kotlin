@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan.serialization
 
 import kotlinx.metadata.klib.KlibMetadataVersion
 import kotlinx.metadata.klib.KlibModuleFragmentReadStrategy
+import kotlinx.metadata.klib.KlibModuleFragmentWriteStrategy
 import kotlinx.metadata.klib.KlibModuleMetadata
 import org.jetbrains.kotlin.backend.common.IdSignaturesExtractor
 import org.jetbrains.kotlin.backend.common.IdSignaturesExtractor.ExtractedSignatures
@@ -65,7 +66,10 @@ class IdSignaturesExtractorFromCInteropKlib(private val library: KotlinLibrary) 
             .filterNot { it.name.isLocalClassName() }
             .associateBy { ClassId.fromString(it.name) }
 
-        val transformer = createTransformer { classId -> allDeclaredClasses[classId] }
+        val transformer = createTransformer(
+            packageFqName = library.getPackageFqName(),
+            getNestedKmClass = { classId -> allDeclaredClasses[classId] }
+        )
 
         // We have to deserialize each top-level class with all its members/nested classes to get the full set of signatures:
         for ([classId, clazz] in allDeclaredClasses) {
@@ -105,36 +109,15 @@ class IdSignaturesExtractorFromCInteropKlib(private val library: KotlinLibrary) 
             loadOnlyTopLevelReferencedClassIds = true
         )
 
-        val transformer = createTransformer { null }
-
-        val declaredTopLevelClasses = hashSetOf<ClassId>()
-
-        for (packageFragment in metadataModule.fragments) {
-            // Just extract the signature of the top-level class
-            for (clazz in packageFragment.classes) {
-                if (clazz.name.isLocalClassName()) continue
-
-                val classId = ClassId.fromString(clazz.name)
-                if (classId.isNestedClass) continue
-
-                declaredTopLevelClasses += classId
-            }
-
-            val pkg = packageFragment.pkg ?: continue
-            pkg.functions.forEach(transformer::transformTopLevelFunction)
-            pkg.properties.forEach(transformer::transformTopLevelProperty)
-        }
-
-        val importedSignatures = (onlyTopLevelReferencedClasses - declaredTopLevelClasses).mapToSetOrEmpty { it.computeSignature() }
-
-        return ExtractedSignatures(
-            declaredSignatures = transformer.declarationTracker.deserializedDeclarations.keys + declaredTopLevelClasses.mapToSetOrEmpty { it.computeSignature() },
-            importedSignatures = importedSignatures,
+        return extractOnlyTopLevelPublicSignatures(
+            packageFqName = library.getPackageFqName(),
+            onlyTopLevelReferencedClasses,
+            metadataModule = metadataModule,
         )
     }
 
     private fun readMetadataModule(loadOnlyTopLevelReferencedClassIds: Boolean): Pair<Set<ClassId>, KlibModuleMetadata> {
-        val strategy = KlibModuleFragmentReadStrategyImpl(loadOnlyTopLevelReferencedClassIds)
+        val strategy = KlibModuleFragmentReadWriteStrategyImpl(loadOnlyTopLevelReferencedClassIds)
 
         val metadataModule = KlibModuleMetadata.readLenient(
             library = MetadataLibraryProviderImpl(library = library),
@@ -144,32 +127,77 @@ class IdSignaturesExtractorFromCInteropKlib(private val library: KotlinLibrary) 
         return strategy.referencedClassIds to metadataModule
     }
 
-    private fun createTransformer(getNestedKmClass: (ClassId) -> KmClass?): CInteropKlibMetadata2IRTransformer {
-        val packageFragment = IrExternalPackageFragmentImpl(
-            symbol = IrExternalPackageFragmentSymbolImpl(),
-            packageFqName = library.packageFqName?.let(::FqName) ?: error("C-interop library without the package name: ${library.path}"),
-            module = IrErrorModuleFragment,
-        )
+    companion object {
+        fun extractOnlyTopLevelPublicSignatures(
+            packageFqName: FqName,
+            onlyTopLevelReferencedClasses: Set<ClassId>,
+            metadataModule: KlibModuleMetadata,
+        ): ExtractedSignatures {
+            val transformer = createTransformer(packageFqName) { null }
 
-        val symbolTable = SymbolTable(signaturer = null, IrFactoryImpl)
+            val declaredTopLevelClasses = hashSetOf<ClassId>()
 
-        return CInteropKlibMetadata2IRTransformer(
-            symbolTable = symbolTable,
-            symbols = CInteropKlibMetadata2IRTransformer.ExternalSymbols(symbolTable),
-            declarationTracker = CInteropKlibMetadata2IRTransformer.DeclarationTracker(),
-            getNestedKmClass = getNestedKmClass,
-            getOrCreateContainingPackageFragment = { packageFragment },
-            getReferencedDeclarationSymbol = { signature, kind ->
-                referenceDeserializedSymbol(symbolTable, fileSymbol = null, kind, signature)
-            },
-            irProviderForLazyAnnotations = StubAnnotationGenerator,
-        )
-    }
+            for (packageFragment in metadataModule.fragments) {
+                // Just extract the signature of the top-level class
+                for (clazz in packageFragment.classes) {
+                    if (clazz.name.isLocalClassName()) continue
 
-    private fun ClassId.computeSignature(): IdSignature {
-        // Guess, whether it comes from a standard library or another C-interop library,
-        // and create the appropriate signature.
-        return toCInteropSignature(isCInterop = !definitelyNotFromCInterop())
+                    val classId = ClassId.fromString(clazz.name)
+                    if (classId.isNestedClass) continue
+
+                    declaredTopLevelClasses += classId
+                }
+
+                val pkg = packageFragment.pkg ?: continue
+                pkg.functions.forEach(transformer::transformTopLevelFunction)
+                pkg.properties.forEach(transformer::transformTopLevelProperty)
+            }
+
+            // Get all signatures of declarations contained in the library.
+            val allDeclaredSignatures: Map<IdSignature, IrDeclaration> = transformer.declarationTracker.deserializedDeclarations
+
+            val importedSignatures = (onlyTopLevelReferencedClasses - declaredTopLevelClasses).mapToSetOrEmpty { it.computeSignature() }
+
+            // Exclude any non-top-level signatures that might happen for accessors of top-level properties, for example.
+            val onlyPublicTopLevelDeclaredSignatures = allDeclaredSignatures.keys
+                .mapNotNullTo(hashSetOf()) { it as? IdSignature.CommonSignature }
+
+            return ExtractedSignatures(
+                declaredSignatures = onlyPublicTopLevelDeclaredSignatures + declaredTopLevelClasses.mapToSetOrEmpty { it.computeSignature() },
+                importedSignatures = importedSignatures,
+            )
+        }
+
+        private fun KotlinLibrary.getPackageFqName(): FqName =
+            packageFqName?.let(::FqName) ?: error("C-interop library without the package name: $path")
+
+        private fun createTransformer(packageFqName: FqName, getNestedKmClass: (ClassId) -> KmClass?): CInteropKlibMetadata2IRTransformer {
+            val packageFragment = IrExternalPackageFragmentImpl(
+                symbol = IrExternalPackageFragmentSymbolImpl(),
+                packageFqName = packageFqName,
+                module = IrErrorModuleFragment,
+            )
+
+            val symbolTable = SymbolTable(signaturer = null, IrFactoryImpl)
+
+            return CInteropKlibMetadata2IRTransformer(
+                symbolTable = symbolTable,
+                symbols = CInteropKlibMetadata2IRTransformer.ExternalSymbols(symbolTable),
+                declarationTracker = CInteropKlibMetadata2IRTransformer.DeclarationTracker(),
+                getNestedKmClass = getNestedKmClass,
+                getOrCreateContainingPackageFragment = { packageFragment },
+                getReferencedDeclarationSymbol = { signature, kind ->
+                    referenceDeserializedSymbol(symbolTable, fileSymbol = null, kind, signature)
+                },
+                irProviderForLazyAnnotations = StubAnnotationGenerator,
+            )
+        }
+
+        private fun ClassId.computeSignature(): IdSignature {
+            // Guess, whether it comes from a standard library or another C-interop library,
+            // and create the appropriate signature.
+            return toCInteropSignature(isCInterop = !definitelyNotFromCInterop())
+        }
     }
 
     private class MetadataLibraryProviderImpl(library: KotlinLibrary) : KlibModuleMetadata.MetadataLibraryProvider {
@@ -179,14 +207,14 @@ class IdSignaturesExtractorFromCInteropKlib(private val library: KotlinLibrary) 
             library.metadataVersion?.toArray() ?: error("No metadata version specified in ${library.path}")
         )
 
-        override val moduleHeaderData get() = metadata.moduleHeaderData
+        override val moduleHeaderData get() = metadata.moduleHeaderData ?: error("No metadata header data found")
         override fun packageMetadataParts(fqName: String) = metadata.getPackageFragmentNames(fqName)
         override fun packageMetadata(fqName: String, partName: String) = metadata.getPackageFragment(fqName, partName)
     }
 
-    private class KlibModuleFragmentReadStrategyImpl(
+    class KlibModuleFragmentReadWriteStrategyImpl(
         private val loadOnlyTopLevelReferencedClassIds: Boolean
-    ) : KlibModuleFragmentReadStrategy {
+    ) : KlibModuleFragmentReadStrategy, KlibModuleFragmentWriteStrategy {
 
         val referencedClassIds: Set<ClassId>
             field = hashSetOf()

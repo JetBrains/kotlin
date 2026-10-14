@@ -71,7 +71,7 @@ object JvmLoweringsPipelinePhase : PipelinePhase<JvmFir2IrPipelineArtifact, JvmL
             val backendInput = when {
                 chunk.size == 1 -> baseBackendInput
 
-                configurationForModule.useLightTree -> {
+                configurationForModule.parserMode.treeBased -> {
                     val wholeModule = baseBackendInput.irModuleFragment
                     val moduleCopy = IrModuleFragmentImpl(wholeModule.descriptor)
                     wholeModule.files.filterTo(moduleCopy.files) { file ->

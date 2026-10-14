@@ -14,12 +14,16 @@ import java.math.RoundingMode
 
 /**
  * Enables the use of the `+` operator for [BigDecimal] instances.
+ *
+ * @sample samples.misc.BigDecimals.plus
  */
 @kotlin.internal.InlineOnly
 public inline operator fun BigDecimal.plus(other: BigDecimal): BigDecimal = this.add(other)
 
 /**
  * Enables the use of the `-` operator for [BigDecimal] instances.
+ *
+ * @sample samples.misc.BigDecimals.minus
  */
 @kotlin.internal.InlineOnly
 public inline operator fun BigDecimal.minus(other: BigDecimal): BigDecimal = this.subtract(other)

@@ -107,18 +107,20 @@ internal fun isSupported(type: SirType): Boolean = when (type) {
     is SirNominalType -> {
         val declarationSupported = when (val declaration = type.typeDeclaration) {
             is SirTypealias -> isSupported(declaration.type)
-            else -> type.typeDeclaration.kaSymbolOrNull<KaNamedClassSymbol>()?.sirAvailability()?.let { it is SirAvailability.Available } != false
+            else -> type.typeDeclaration.kaSymbolOrNull<KaNamedClassSymbol>()?.sirAvailability()
+                ?.let { it is SirAvailability.Available } != false
         }
         declarationSupported && type.typeArguments.all { isSupported(it) }
     }
     is SirFunctionalType -> isSupported(type.returnType) && type.parameterTypes.all { isSupported(it) }
-    is SirTypedFlowType -> isSupported(type.elementType)
     is SirExistentialType -> type.protocols.all { [protocol, typeArguments] ->
-        val protocolSupported = protocol == KotlinRuntimeSupportModule.kotlinBridgeable ||
-                protocol.kaSymbolOrNull<KaClassSymbol>()?.sirAvailability() is SirAvailability.Available
+        val protocolSupported = protocol.kaSymbolOrNull<KaClassSymbol>()?.sirAvailability()
+            ?.let { it is SirAvailability.Available } != false
         protocolSupported && typeArguments.all { isSupported(it) }
     }
-    else -> false
+    is SirTupleType -> type.types.all { isSupported(it.second) }
+    is SirType.Metatype -> isSupported(type.type)
+    is SirErrorType, SirUnsupportedType -> false
 }
 
 public interface BridgeFunctionBuilder {
@@ -488,8 +490,7 @@ private class BridgeFunctionDescriptor(
 
         val deprecationPrefix = swiftDeprecation?.let { "${it.renderAsSwiftSourceLine()}\n" }.orEmpty()
         val selfDeclaration = if (selfBridge != null) {
-            val forceUnwrap = if (selfBridge.bridge is Bridge.AsObject) "!" else ""
-            "    let _self = $selfConversion$forceUnwrap\n"
+            "    let _self = $selfConversion\n"
         } else {
             ""
         }
@@ -635,8 +636,7 @@ private class BridgeFunctionDescriptor(
         val resultLine = returnBridge.inSwiftSources.swiftToKotlin(typeNamer, "_result")
 
         val selfDeclaration = selfBridge?.let {
-            val forceUnwrap = if (it.bridge is Bridge.AsObject) "!" else "" // Swift infers T? from T! here for objects
-            "\n    let _self = $selfConversion$forceUnwrap"
+            "\n    let _self = $selfConversion"
         }.orEmpty()
 
         val callBody = if (errorParameter != null) {
@@ -820,7 +820,6 @@ private fun BridgeFunctionDescriptor.createKotlinBridge(
 
     if (isAsync) {
         val [continuation, exception, cancellation] = asyncParameters ?: error("Async function must have a continuation & cancellation")
-        val errorParameter = errorParameter ?: error("Async function must have an error parameter")
         add(
             """
             swiftCoroutine(__${continuation.name}, __${exception.name}, __${cancellation.name.kotlinIdentifier}) {
@@ -829,23 +828,34 @@ private fun BridgeFunctionDescriptor.createKotlinBridge(
             """.trimIndent().prependIndent(indent)
         )
     } else {
+        // Avoid wrapping call sites in `run { }`: thousands of such lambdas noticeably slow down bridge compilation.
+        val resultLines = if (returnType == Bridge.AsVoid) {
+            """
+                $callSite
+                return true
+            """.trimIndent()
+        } else {
+            """
+                val $resultName = $callSite
+                return ${returnType.inKotlinSources.kotlinToSwift(typeNamer, resultName)}
+            """.trimIndent()
+        }
         if (errorParameter != null) {
             // TODO: is it correct to use the first type only here?
             val defaultValue = returnType.kotlinType.defaultValue
+            // `trimMargin` instead of `trimIndent`: the latter would see the unindented continuation lines of `resultLines`.
             add(
                 """
-            try {
-                val $resultName = run { $callSite }
-                return ${returnType.inKotlinSources.kotlinToSwift(typeNamer, resultName)}
-            } catch (error: Throwable) {
-                __${errorParameter.name}.value = StableRef.create(error).asCPointer()
-                return $defaultValue
-            }
-            """.trimIndent().prependIndent(indent)
+                |try {
+                |${resultLines.prependIndent(indent)}
+                |} catch (error: Throwable) {
+                |    __${errorParameter.name}.value = StableRef.create(error).asCPointer()
+                |    return $defaultValue
+                |}
+                """.trimMargin().prependIndent(indent)
             )
         } else {
-            add("${indent}val $resultName = run { $callSite }")
-            add("${indent}return ${returnType.inKotlinSources.kotlinToSwift(typeNamer, resultName)}")
+            add(resultLines.prependIndent(indent))
         }
     }
     add("}")

@@ -5,43 +5,43 @@
 
 package org.jetbrains.kotlin.testFederation
 
-internal const val TEST_FEDERATION_ENABLED_KEY = "test.federation.enabled"
-internal const val TEST_FEDERATION_ENABLED_ENV_KEY = "TEST_FEDERATION_ENABLED"
-internal const val TEST_FEDERATION_MODE_KEY = "test.federation.mode"
-internal const val TEST_FEDERATION_MODE_ENV_KEY = "TEST_FEDERATION_MODE"
-internal const val TEST_FEDERATION_CHANGED_DOMAINS_KEY = "test.federation.changed.domains"
-internal const val TEST_FEDERATION_CHANGED_DOMAINS_ENV_KEY = "TEST_FEDERATION_CHANGED_DOMAINS"
+import org.jetbrains.kotlin.testFederation.TestSubset.*
+
 internal const val TEST_FEDERATION_AUTO_SMOKE_TEST_PERCENTAGE_KEY = "test.federation.auto.smoke.test.percentage"
 internal const val TEST_FEDERATION_AUTO_SMOKE_TEST_PERCENTAGE_ENV_KEY = "TEST_FEDERATION_AUTO_SMOKE_TEST_PERCENTAGE"
+internal const val TEST_FEDERATION_SUBSETS_KEY = "test.federation.subsets"
+internal const val TEST_FEDERATION_SUBSETS_ENV_KEY = "TEST_FEDERATION_SUBSETS"
 const val TEST_FEDERATION_NIGHTLY_KEY = "test.federation.nightly"
 const val TEST_FEDERATION_NIGHTLY_ENV_KEY = "TEST_FEDERATION_NIGHTLY"
+const val TEST_FEDERATION_DOMAINS_KEY = "test.federation.domains"
+const val TEST_FEDERATION_DOMAINS_ENV_KEY = "TEST_FEDERATION_DOMAINS"
 
 /**
- * Reports whether Test Federation is enabled in the runtime configuration. Defaults to `false`.
- * The discovery filter uses [testFederationMode] to select tests, not this flag directly.
+ * Use this property to shrink dynamic variants of your tests unless the `AllTests` subset is requested.
  */
-val testFederationEnabled: Boolean =
-    resolve(TEST_FEDERATION_ENABLED_KEY, TEST_FEDERATION_ENABLED_ENV_KEY)?.toBoolean() ?: false
+val testFederationAllTestsRequested: Boolean
+    get() = AllTests in testFederationSubsets
 
 /**
- * Provides the configured test selection mode, or `null` when no mode is configured.
- * With no mode, the discovery filter does not restrict test selection. Other test filters still apply.
+ * Provides the list of [Domain]s for the test task currently being executed.
  */
-val testFederationMode: TestFederationMode? = run {
-    val raw = resolve(TEST_FEDERATION_MODE_KEY, TEST_FEDERATION_MODE_ENV_KEY) ?: return@run null
-    TestFederationMode.valueOf(raw)
+val testFederationDomains: Set<Domain> =
+    resolve(TEST_FEDERATION_DOMAINS_KEY, TEST_FEDERATION_DOMAINS_ENV_KEY)?.let(Domain::fromArgumentString).orEmpty()
+
+/**
+ * Provides the requested test subsets.
+ * Defaults to `AllTests` when [TEST_FEDERATION_SUBSETS_KEY] is not explicitly configured.
+ */
+internal val testFederationSubsets: Set<TestSubset> =
+    resolve(TEST_FEDERATION_SUBSETS_KEY, TEST_FEDERATION_SUBSETS_ENV_KEY)?.toTestSubsets() ?: setOf(AllTests)
+
+private fun String.toTestSubsets(): Set<TestSubset> {
+    val trimmed = trim()
+    return when {
+        trimmed.isBlank() -> emptySet()
+        else -> trimmed.split(",").map { TestSubset.valueOf(it.trim()) }.toSet()
+    }
 }
-
-/**
- * Provides the configured domains containing changed files, or `null` when the value is absent or blank.
- * Used to select tests marked to run for changes in those domains when no full run is selected.
- */
-val testFederationChangedDomains: Set<Domain>? = run {
-    val raw = resolve(TEST_FEDERATION_CHANGED_DOMAINS_KEY, TEST_FEDERATION_CHANGED_DOMAINS_ENV_KEY) ?: return@run null
-    if (raw.isBlank()) return@run null
-    domainsFromString(raw)
-}
-
 
 /**
  * Reports whether nightly tests are enabled in the runtime configuration. Defaults to `false` when not configured.
@@ -59,12 +59,3 @@ internal val autoSmokeTestPercentage: Int = run {
 private fun resolve(key: String, envKey: String): String? =
     System.getProperty(key) ?: System.getenv(envKey)
 
-private fun domainsFromString(value: String): Set<Domain> {
-    return value.split(";").flatMap { value ->
-        when (value) {
-            "*" -> Domain.entries
-            "<none>" -> emptyList()
-            else -> listOf(Domain.valueOf(value))
-        }
-    }.sorted().toSet()
-}

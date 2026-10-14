@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.deserialization.PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -37,6 +38,8 @@ private var IrSimpleFunction.defaultImplsMethod: IrSimpleFunction? by irAttribut
 private var IrClass.defaultImplsClass: IrClass? by irAttribute(copyByDefault = false)
 private var IrSimpleFunction.classFakeOverrideReplacement: ClassFakeOverrideReplacement? by irAttribute(copyByDefault = false)
 var IrSimpleFunction.originalFunctionForDefaultImpl: IrSimpleFunction? by irAttribute(copyByDefault = false)
+
+private var IrClass.syntheticClassInitTrigger: IrSimpleFunction? by irAttribute(copyByDefault = false)
 
 private var IrClass.repeatedAnnotationSyntheticContainer: IrClass? by irAttribute(copyByDefault = false)
 
@@ -247,6 +250,18 @@ class JvmCachedDeclarations(
             }.apply {
                 parent = interfaceClass
                 createThisReceiverParameter()
+            }
+        }
+
+    fun getSyntheticClassInitTrigger(irClass: IrClass): IrSimpleFunction =
+        irClass::syntheticClassInitTrigger.getOrSetIfNull {
+            context.irFactory.buildFun {
+                origin = JvmLoweredDeclarationOrigin.INTERFACE_PRIVATE_FIELDS_CLASS
+                name = Name.identifier("init")
+                returnType = context.irBuiltIns.unitType
+            }.apply {
+                parent = irClass
+                body = irClass.factory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
             }
         }
 

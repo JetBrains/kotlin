@@ -235,6 +235,12 @@ public class LLSerializationDiagnosticsTestGenerated extends AbstractLLSerializa
     }
 
     @Test
+    @TestMetadata("ProtobufFullValueClasses.kt")
+    public void testProtobufFullValueClasses() {
+      run("ProtobufFullValueClasses.kt");
+    }
+
+    @Test
     @TestMetadata("repeatableSerialInfo.kt")
     public void testRepeatableSerialInfo() {
       run("repeatableSerialInfo.kt");
@@ -384,6 +390,12 @@ public class LLSerializationDiagnosticsTestGenerated extends AbstractLLSerializa
     @TestMetadata("externalSerializers.kt")
     public void testExternalSerializers() {
       run("externalSerializers.kt");
+    }
+
+    @Test
+    @TestMetadata("genericWithClassUpperBound.kt")
+    public void testGenericWithClassUpperBound() {
+      run("genericWithClassUpperBound.kt");
     }
 
     @Test

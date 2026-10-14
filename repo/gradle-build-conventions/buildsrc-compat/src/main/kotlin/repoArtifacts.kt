@@ -33,23 +33,6 @@ import plugins.KotlinBuildPublishingPlugin
 import plugins.mainPublicationName
 
 
-private const val MAGIC_DO_NOT_CHANGE_TEST_JAR_TASK_NAME = "testJar"
-
-fun Project.testsJar(body: Jar.() -> Unit = {}): TaskProvider<Jar> {
-    val testsJarCfg = configurations.getOrCreate("tests-jar").extendsFrom(configurations["testApi"])
-
-    return tasks.register<Jar>(MAGIC_DO_NOT_CHANGE_TEST_JAR_TASK_NAME) {
-        dependsOn("testClasses")
-        pluginManager.withPlugin("java") {
-            from(testSourceSet.output)
-        }
-        archiveClassifier.set("tests")
-        body()
-    }.also {
-        project.addArtifact(testsJarCfg.name, it)
-    }
-}
-
 /**
  * This is a dirty hack that allows depending both on tests and test-fixture
  * of the module from some other module. Please don't use it.
@@ -304,10 +287,6 @@ fun Project.idePluginPublishingLatch(block: () -> Unit) {
     specialPublishingLatch("publish.ide.plugin.dependencies", block)
 }
 
-fun Project.analysisApiPublishingLatch(block: () -> Unit) {
-    specialPublishingLatch("publish.analysis.api", block)
-}
-
 private fun Project.specialPublishingLatch(latchPropertyName: String, block: () -> Unit) {
     val shouldActivate = project.kotlinBuildProperties.booleanProperty(latchPropertyName).getOrElse(false)
     if (shouldActivate) {
@@ -350,7 +329,6 @@ fun Project.publishJarsForIde(
  * - pass `xyz` both to [projectWithFixturesNames] and [projectWithRenamedTestJarNames]
  */
 fun Project.publishTestJarsForIde(
-    projectNames: List<String>,
     projectWithFixturesNames: List<String> = emptyList(),
     projectWithRenamedTestJarNames: List<String> = emptyList(),
 ) {
@@ -359,7 +337,6 @@ fun Project.publishTestJarsForIde(
         // If required, the components should be registered on the IDE plugin side.
         val excludedPaths = listOf("junit-platform.properties", "META-INF/services/**/*")
         publishTestJar(
-            projectNames,
             projectWithFixturesNames,
             projectWithRenamedTestJarNames,
             excludedPaths,
@@ -375,9 +352,6 @@ fun Project.publishTestJarsForIde(
             jpsLikeJarDependency(notation, JpsDepScope.COMPILE, exported = true)
         }
 
-        for (projectName in projectNames) {
-            declareDependency(projectTests(projectName))
-        }
         for (projectName in projectWithFixturesNames) {
             declareDependency(testFixtures(project(projectName)))
         }
@@ -421,18 +395,13 @@ fun Project.publishProjectJars(
     }
 
     sourcesJar {
-        from {
-            projects.map {
-                project(it).commonMainKotlinSourceSet()?.kotlin ?: project(it).mainSourceSet.allSource
-            }
-        }
+        addEmbeddedSources("fatJarContents")
     }
 
     javadocJar()
 }
 
 private fun Project.publishTestJar(
-    projects: List<String>,
     projectWithFixturesNames: List<String>,
     projectWithRenamedTestJarNames: List<String>,
     excludedPaths: List<String>,
@@ -442,10 +411,6 @@ private fun Project.publishTestJar(
     val fatJarContents = configurations.create("fatJarContents")
 
     dependencies {
-        for (projectName in projects) {
-            fatJarContents(project(projectName, configuration = "tests-jar")) { isTransitive = false }
-        }
-
         for (projectName in projectWithFixturesNames) {
             fatJarContents(testFixtures(project(projectName)) as ModuleDependency) { isTransitive = false }
         }
@@ -476,7 +441,6 @@ private fun Project.publishTestJar(
             }
         }
 
-        registerTestSources(projects)
         registerTestSources(projectWithRenamedTestJarNames)
 
         from {

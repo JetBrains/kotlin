@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.test.base
 import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
+import org.jetbrains.kotlin.analysis.api.fir.utils.KaFirCacheCleaner
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinForeignValueProviderService
 import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackagePartProviderFactory
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinActualDeclarationProvider
@@ -22,6 +23,11 @@ object AnalysisApiFirTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
         project.apply {
             registerService(KotlinPackagePartProviderFactory::class.java, PackagePartProviderTestImpl(testServices))
             registerService(KotlinActualDeclarationProvider::class.java, TestKotlinActualDeclarationProvider(project))
+
+            // The low-memory cache cleanup only waits for `analyze` blocks, so it can invalidate sessions in the middle of a test which
+            // works with FIR outside of `analyze` (KT-89816). Without the service, `KaFirCacheCleaner.getInstance` falls back to a no-op.
+            // Services are keyed by the interface name, and this registrar must run after `FirStandaloneServiceRegistrar`.
+            picoContainer.unregisterComponent(KaFirCacheCleaner::class.java.name)
         }
     }
 

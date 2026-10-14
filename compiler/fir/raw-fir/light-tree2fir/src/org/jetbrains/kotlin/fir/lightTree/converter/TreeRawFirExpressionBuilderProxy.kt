@@ -51,7 +51,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
-    val analyzer: AbstractTreeRawFirBuilder<Node, Type>,
+    val rootBuilder: AbstractTreeRawFirBuilder<Node, Type>,
     context: Context<Node>,
     session: FirSession,
     val headerMode: Boolean,
@@ -752,11 +752,11 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
             when (val tokenType = it.toTokenId()) {
                 KtTokens.DOT_ID -> isSelector = true
                 KtTokens.SAFE_ACCESS_ID -> {
-                    kind = NullSafe
+                    kind = FirSafeCallKind.NullSafe
                     isSelector = true
                 }
                 KtTokens.ERROR_SAFE_ACCESS_ID -> {
-                    kind = ErrorSafe
+                    kind = FirSafeCallKind.ErrorSafe
                     isSelector = true
                 }
                 else -> {
@@ -867,7 +867,7 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
         // TODO(KT-22765) drop workaround when suspend modifier for lambdas is implemented
         if (imitateLambdaSuspendModifier &&
             name == StandardClassIds.Callables.suspend.callableName.identifier &&
-            !callSuffix.getParent().let { it.selectorExpression == callSuffix && it.receiverExpression != null } &&
+            !callSuffix.getParent().let { it != null && it.selectorExpression == callSuffix && it.receiverExpression != null } &&
             valueArguments.singleOrNull()?.toTokenId() == KtNodeTypes.LAMBDA_ARGUMENT_ID &&
             firTypeArguments.isEmpty()
         ) {
@@ -1809,25 +1809,25 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
     private fun Node.isExpression(): Boolean = toTokenId().isExpression()
 
     override fun Node.toFirSourceElement(kind: KtFakeSourceElementKind?): KtSourceElement {
-        return with(analyzer) { toFirSourceElement(kind) }
+        return with(rootBuilder) { toFirSourceElement(kind) }
     }
 
     override fun KtSourceElement.toNode(): Node {
-        return with(analyzer) { toNode() }
+        return with(rootBuilder) { toNode() }
     }
 
     override val Node.elementType: Type
-        get() = with(analyzer) { elementType }
+        get() = with(rootBuilder) { elementType }
     override val Node.asText: String
-        get() = with(analyzer) { asText }
+        get() = with(rootBuilder) { asText }
 
-    override val Node?.receiverExpression: Node?
-        get() = with(analyzer) { receiverExpression }
-    override val Node?.selectorExpression: Node?
-        get() = with(analyzer) { selectorExpression }
+    override val Node.receiverExpression: Node?
+        get() = with(rootBuilder) { receiverExpression }
+    override val Node.selectorExpression: Node?
+        get() = with(rootBuilder) { selectorExpression }
 
     override fun Type.typeToTokenId(): Int {
-        return with(analyzer) { typeToTokenId() }
+        return with(rootBuilder) { typeToTokenId() }
     }
 
     override fun convertScript(
@@ -1840,21 +1840,21 @@ class TreeRawFirExpressionBuilderProxy<Node : Any, Type : Any>(
     }
 
     override fun Node.getParent(): Node? {
-        return with(analyzer) { getParent() }
+        return with(rootBuilder) { getParent() }
     }
 
     override fun Node.getChildren(): List<Node> {
-        return with(analyzer) { getChildren() }
+        return with(rootBuilder) { getChildren() }
     }
 
-    override val Node?.indexExpressions: List<Node>?
-        get() = with(analyzer) { indexExpressions }
+    override val Node.indexExpressions: List<Node>?
+        get() = with(rootBuilder) { indexExpressions }
 
     override fun KtSourceElement.isChildInParentheses(): Boolean {
-        return with(analyzer) { isChildInParentheses()}
+        return with(rootBuilder) { isChildInParentheses()}
     }
 
-    override fun Node?.getChildrenAsArray(): Array<out Node?> {
-        return with(analyzer) { getChildrenAsArray() }
+    override fun Node.getChildrenAsArray(): Array<out Node?> {
+        return with(rootBuilder) { getChildrenAsArray() }
     }
 }

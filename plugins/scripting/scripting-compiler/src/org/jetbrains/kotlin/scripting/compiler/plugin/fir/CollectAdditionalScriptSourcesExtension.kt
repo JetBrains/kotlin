@@ -6,13 +6,12 @@
 package org.jetbrains.kotlin.scripting.compiler.plugin.fir
 
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.search.ProjectScope
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.KtVirtualFileSourceFile
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.cli.CliDiagnostics
-import org.jetbrains.kotlin.cli.jvm.compiler.PsiBasedProjectFileSearchScope
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.javaInterop
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
@@ -27,9 +26,10 @@ import org.jetbrains.kotlin.fir.extensions.CollectAdditionalSourceFilesExtension
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.session.FirJvmSessionFactory
 import org.jetbrains.kotlin.fir.session.KmpModuleKind
-import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingK2CompilerPluginRegistrar
+import org.jetbrains.kotlin.scripting.compiler.plugin.legacyScriptRuntimeToAdd
+import org.jetbrains.kotlin.scripting.compiler.plugin.requiresLegacyScriptRuntime
 import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.*
 import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.toSystemIndependentScriptPath
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptingModuleDataProvider
@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.impl.refineAllForK2
 import org.jetbrains.kotlin.scripting.compiler.plugin.report
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.resolve.toSourceCode
+import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.utils.topologicalSort
 import java.io.File
 import kotlin.script.experimental.api.*
@@ -102,6 +103,9 @@ class CollectAdditionalScriptSourcesExtension : CollectAdditionalSourceFilesExte
                 }.valueOrNull()
 
             updatedClasspath.addAll(refinedScriptCompilationConfiguration?.get(ScriptCompilationConfiguration.dependencies).toClassPathOrEmpty())
+            if (refinedScriptCompilationConfiguration?.requiresLegacyScriptRuntime == true) {
+                configuration.legacyScriptRuntimeToAdd()?.let(updatedClasspath::add)
+            }
             return refinedScriptCompilationConfiguration?.get(ScriptCompilationConfiguration.importScripts)?.takeIf { it.isNotEmpty() }
         }
 
@@ -201,7 +205,8 @@ class CollectAdditionalScriptSourcesExtension : CollectAdditionalSourceFilesExte
             val sessionFactoryContext = FirJvmSessionFactory.Context(
                 configuration = configuration,
                 projectEnvironment = projectEnvironment,
-                librariesScope = PsiBasedProjectFileSearchScope(ProjectScope.getLibrariesScope(projectEnvironment.project)),
+                librariesClasspath = JvmClasspath.ProjectLibraries(),
+                javaInterop = projectEnvironment.javaInterop(configuration, withJavaSources = false),
             )
             val sharedLibrarySession = FirJvmSessionFactory.createSharedLibrarySession(
                 mainModuleName = Name.special("<dummy>"),
@@ -220,18 +225,16 @@ class CollectAdditionalScriptSourcesExtension : CollectAdditionalSourceFilesExte
 
             FirJvmSessionFactory.createSourceSession(
                 moduleData = moduleDataProvider.addNewScriptModuleData(Name.special("<raw-script>"), isDummy = true),
-                javaSourcesScope = AbstractProjectFileSearchScope.EMPTY,
                 createIncrementalCompilationSymbolProviders = { null },
                 extensionRegistrars = extensionRegistrars,
                 configuration = configuration,
                 context = sessionFactoryContext,
-                needRegisterJavaElementFinder = true,
                 kmpModuleKind = KmpModuleKind.SingleModule,
                 init = {},
             ).apply {
                 register(
                     FirScriptCompilationComponent::class,
-                    FirScriptCompilationComponent(hostConfiguration, { _, _ -> this })
+                    FirScriptCompilationComponent(hostConfiguration)
                 )
                 dummySessionForAnnotationResolution = this
             }

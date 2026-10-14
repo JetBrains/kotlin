@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import kotlin.DeprecationLevel;
 import kotlin.ReplaceWith;
 import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
@@ -135,16 +136,24 @@ public class KtEnumEntry extends KtClass implements KtDeclarationWithReturnType 
             replaceWith = @ReplaceWith(
                     expression = "this.addEnumEntrySemicolon()",
                     imports = "org.jetbrains.kotlin.idea.base.psi.addEnumEntrySemicolon"
-            )
+            ),
+            level = DeprecationLevel.ERROR
     )
     @Deprecated
     public PsiElement addSemicolon() {
         return KtPsiMutationService.getInstance().addEnumEntrySemicolon(this);
     }
 
+    /**
+     * Deletes this enum entry.
+     * <p>
+     * When {@link KtPsiMutationService} is registered, as in the IntelliJ Kotlin plugin, the deletion may also adjust the surrounding code,
+     * e.g., move the semicolon that ends the list of entries to the previous entry. Without the service, it performs only the plain
+     * platform deletion, which deletes such a semicolon along with the entry, as the semicolon belongs to the last entry.
+     */
     @Override
     public void delete() {
-        KtPsiMutationService.getInstance().deleteEnumEntry(this);
+        KtPsiMutationServiceKt.deleteWithMutationService(this, mutationService -> mutationService.deleteEnumEntry(this));
     }
 
     @Override

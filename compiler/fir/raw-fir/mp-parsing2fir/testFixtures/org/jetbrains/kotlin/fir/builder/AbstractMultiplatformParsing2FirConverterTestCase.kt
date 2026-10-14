@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.builder
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.util.PathUtil
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.session.FirSessionFactoryHelper
 import org.jetbrains.kotlin.test.TestDataAssertions
@@ -20,16 +21,19 @@ abstract class AbstractMultiplatformParsing2FirConverterTestCase : AbstractRawFi
     @OptIn(ObsoleteTestInfrastructure::class)
     override fun runTest(filePath: String) {
         myFileExt = FileUtilRt.getExtension(PathUtil.getFileName(filePath))
-        val path = Paths.get(filePath)
+        val absolutePath = ForTestCompileRuntime.transformTestDataPath(filePath).path
+        val path = Paths.get(absolutePath)
+        val session = FirSessionFactoryHelper.createEmptySession(parseLanguageFeatures(path.readText()))
+        session.registerReplSnippetConfiguratorForReplFixture(filePath)
         val firFile = MultiplatformParsing2Fir(
-            session = FirSessionFactoryHelper.createEmptySession(parseLanguageFeatures(path.readText())),
+            session = session,
             scopeProvider = StubFirScopeProvider,
             diagnosticsReporter = null
         ).buildFirFile(path)
         val firDump = FirRenderer.withDeclarationAttributes().renderElementAsString(firFile)
 
-        val originalExpectedFile = File(expectedPath(filePath, ".txt"))
-        val lightSyntaxTreeExpectedFile = File(expectedPath(filePath, ".lst.txt"))
+        val originalExpectedFile = File(expectedPath(absolutePath, ".txt"))
+        val lightSyntaxTreeExpectedFile = File(expectedPath(absolutePath, ".lst.txt"))
         val expectedFile = lightSyntaxTreeExpectedFile.takeIf { it.exists() } ?: originalExpectedFile
         TestDataAssertions.assertEqualsToFile(expectedFile, firDump)
 
@@ -44,6 +48,6 @@ abstract class AbstractMultiplatformParsing2FirConverterTestCase : AbstractRawFi
             }
         }
 
-        checkAnnotationOwners(filePath, firFile)
+        checkAnnotationOwners(absolutePath, firFile)
     }
 }

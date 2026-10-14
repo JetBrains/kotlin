@@ -40,5 +40,3 @@ val ModuleDescriptor.klibModuleOrigin: KlibModuleOrigin
                     "use klibModuleOriginOrNull for modules that may not originate from a klib."
         )
 
-val ModuleDescriptor.kotlinLibrary: KotlinLibrary
-    get() = (this.klibModuleOrigin as DeserializedKlibModuleOrigin).library

@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.gradle.dsl.explicitApiModeAsCompilerArg
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupCoroutine
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetTree
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnosticOncePerBuild
 import org.jetbrains.kotlin.gradle.plugin.hierarchy.orNull
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.plugin.sources.awaitPlatformCompilations
@@ -34,6 +36,12 @@ internal val SyncLanguageSettingsWithKotlinExtensionSetupAction = KotlinProjectS
             val propertyValue = with(project.extensions.extraProperties) {
                 val sourceSetFreeCompilerArgsPropertyName = "kotlin.mpp.freeCompilerArgsForSourceSet.${sourceSet.name}"
                 if (has(sourceSetFreeCompilerArgsPropertyName)) {
+                    project.reportDiagnosticOncePerBuild(
+                        KotlinToolingDiagnostics.DeprecatedWarningGradleProperties(
+                            sourceSetFreeCompilerArgsPropertyName,
+                            "Please use 'compilerOptions.freeCompilerArgs' API instead, see more at: https://kotl.in/compiler-options-dsl"
+                        )
+                    )
                     get(sourceSetFreeCompilerArgsPropertyName)
                 } else null
             }

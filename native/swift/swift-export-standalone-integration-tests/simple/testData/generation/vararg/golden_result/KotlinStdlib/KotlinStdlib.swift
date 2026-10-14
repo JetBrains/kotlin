@@ -5,14 +5,14 @@ import KotlinRuntimeSupport
 
 extension ExportedKotlinPackages.kotlin.collections {
     open class BooleanIterator: KotlinRuntime.KotlinBase {
-        public init() {
+        public override init() {
             precondition(Self.self != ExportedKotlinPackages.kotlin.collections.BooleanIterator.self, "ExportedKotlinPackages.kotlin.collections.BooleanIterator is an abstract class and cannot be instantiated directly")
             let __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { kotlin_collections_BooleanIterator_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -29,14 +29,14 @@ extension ExportedKotlinPackages.kotlin.collections {
         }
     }
     open class IntIterator: KotlinRuntime.KotlinBase {
-        public init() {
+        public override init() {
             precondition(Self.self != ExportedKotlinPackages.kotlin.collections.IntIterator.self, "ExportedKotlinPackages.kotlin.collections.IntIterator is an abstract class and cannot be instantiated directly")
             let __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { kotlin_collections_IntIterator_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -66,7 +66,7 @@ extension ExportedKotlinPackages.kotlin {
             fatalError()
         }
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -114,7 +114,7 @@ extension ExportedKotlinPackages.kotlin {
             fatalError()
         }
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -151,14 +151,14 @@ extension ExportedKotlinPackages.kotlin {
         }
     }
     open class Number: KotlinRuntime.KotlinBase {
-        public init() {
+        public override init() {
             precondition(Self.self != ExportedKotlinPackages.kotlin.Number.self, "ExportedKotlinPackages.kotlin.Number is an abstract class and cannot be instantiated directly")
             let __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { kotlin_Number_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -221,7 +221,7 @@ See https://youtrack.jetbrains.com/issue/KT-46465 for details about the migratio
 }
 @_cdecl("kotlin_Number_toByte__reverse_swift")
 package func kotlin_Number_toByte__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Int8 {
-    let _self = ExportedKotlinPackages.kotlin.Number.__createClassWrapper(externalRCRef: `self`)!
+    let _self = ExportedKotlinPackages.kotlin.Number.__createClassWrapper(externalRCRef: `self`)
     let _result: Swift.Int8 = _self.toByte()
     return _result
 }
@@ -233,56 +233,56 @@ See https://youtrack.jetbrains.com/issue/KT-46465 for details about the migratio
 """)
 @_cdecl("kotlin_Number_toChar__reverse_swift")
 package func kotlin_Number_toChar__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UInt16 {
-    let _self = ExportedKotlinPackages.kotlin.Number.__createClassWrapper(externalRCRef: `self`)!
+    let _self = ExportedKotlinPackages.kotlin.Number.__createClassWrapper(externalRCRef: `self`)
     let _result: Swift.Unicode.UTF16.CodeUnit = _self.toChar()
     return _result
 }
 
 @_cdecl("kotlin_Number_toDouble__reverse_swift")
 package func kotlin_Number_toDouble__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Double {
-    let _self = ExportedKotlinPackages.kotlin.Number.__createClassWrapper(externalRCRef: `self`)!
+    let _self = ExportedKotlinPackages.kotlin.Number.__createClassWrapper(externalRCRef: `self`)
     let _result: Swift.Double = _self.toDouble()
     return _result
 }
 
 @_cdecl("kotlin_Number_toFloat__reverse_swift")
 package func kotlin_Number_toFloat__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Float {
-    let _self = ExportedKotlinPackages.kotlin.Number.__createClassWrapper(externalRCRef: `self`)!
+    let _self = ExportedKotlinPackages.kotlin.Number.__createClassWrapper(externalRCRef: `self`)
     let _result: Swift.Float = _self.toFloat()
     return _result
 }
 
 @_cdecl("kotlin_Number_toInt__reverse_swift")
 package func kotlin_Number_toInt__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Int32 {
-    let _self = ExportedKotlinPackages.kotlin.Number.__createClassWrapper(externalRCRef: `self`)!
+    let _self = ExportedKotlinPackages.kotlin.Number.__createClassWrapper(externalRCRef: `self`)
     let _result: Swift.Int32 = _self.toInt()
     return _result
 }
 
 @_cdecl("kotlin_Number_toLong__reverse_swift")
 package func kotlin_Number_toLong__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Int64 {
-    let _self = ExportedKotlinPackages.kotlin.Number.__createClassWrapper(externalRCRef: `self`)!
+    let _self = ExportedKotlinPackages.kotlin.Number.__createClassWrapper(externalRCRef: `self`)
     let _result: Swift.Int64 = _self.toLong()
     return _result
 }
 
 @_cdecl("kotlin_Number_toShort__reverse_swift")
 package func kotlin_Number_toShort__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Int16 {
-    let _self = ExportedKotlinPackages.kotlin.Number.__createClassWrapper(externalRCRef: `self`)!
+    let _self = ExportedKotlinPackages.kotlin.Number.__createClassWrapper(externalRCRef: `self`)
     let _result: Swift.Int16 = _self.toShort()
     return _result
 }
 
 @_cdecl("kotlin_collections_BooleanIterator_nextBoolean__reverse_swift")
 package func kotlin_collections_BooleanIterator_nextBoolean__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
-    let _self = ExportedKotlinPackages.kotlin.collections.BooleanIterator.__createClassWrapper(externalRCRef: `self`)!
+    let _self = ExportedKotlinPackages.kotlin.collections.BooleanIterator.__createClassWrapper(externalRCRef: `self`)
     let _result: Swift.Bool = _self.nextBoolean()
     return _result
 }
 
 @_cdecl("kotlin_collections_IntIterator_nextInt__reverse_swift")
 package func kotlin_collections_IntIterator_nextInt__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Int32 {
-    let _self = ExportedKotlinPackages.kotlin.collections.IntIterator.__createClassWrapper(externalRCRef: `self`)!
+    let _self = ExportedKotlinPackages.kotlin.collections.IntIterator.__createClassWrapper(externalRCRef: `self`)
     let _result: Swift.Int32 = _self.nextInt()
     return _result
 }

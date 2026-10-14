@@ -76,9 +76,6 @@ internal constructor(
     ) {
         val nodeJsRoot = target.extensions.getByName(WasmNodeJsRootExtension.EXTENSION_NAME) as WasmNodeJsRootExtension
 
-        @Suppress("DEPRECATION_ERROR")
-        nodeJsRoot.version = "26.2.0"
-
         val nodeJs = target.extensions.getByName(WasmNodeJsEnvSpec.EXTENSION_NAME) as WasmNodeJsEnvSpec
 
         val packageManagerName = nodeJsRoot.packageManagerExtension.map { it.name }
@@ -134,7 +131,7 @@ internal constructor(
                 toolingInstall.dependsOn(target.nodeJsSetupTaskProvider)
             }
             toolingInstall.group = TASKS_GROUP_NAME
-            toolingInstall.description = "Find, download and link NPM dependencies and projects"
+            toolingInstall.description = "Install NPM dependencies required for Kotlin/Wasm tooling"
 
             toolingInstall.outputs.upToDateWhen {
                 toolingInstall.nodeModules.getFile().exists()

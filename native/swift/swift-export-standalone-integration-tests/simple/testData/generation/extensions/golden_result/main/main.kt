@@ -42,7 +42,7 @@ internal external fun main_internal_functional_type_callee_SwiftU2EVoid__TypesOf
 public fun Bar_doubleReceiverExtFun__TypesOfArgumentsE__anyU20ExportedKotlinPackages_foo_Foo__(self: kotlin.native.internal.NativePtr, `receiver`: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Bar
     val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as foo.Foo
-    val _result = run { __self.run { __receiver.doubleReceiverExtFun() } }
+    val _result = __self.run { __receiver.doubleReceiverExtFun() }
     return _result.objcPtr()
 }
 
@@ -51,7 +51,7 @@ public fun Bar_doubleReceiverExtFun__TypesOfArgumentsE__anyU20ExportedKotlinPack
 public fun Bar_doubleReceiverExtProp_get__TypesOfArgumentsE__anyU20ExportedKotlinPackages_foo_Foo__(self: kotlin.native.internal.NativePtr, `receiver`: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Bar
     val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as foo.Foo
-    val _result = run { __self.run { __receiver.doubleReceiverExtProp } }
+    val _result = __self.run { __receiver.doubleReceiverExtProp }
     return _result
 }
 
@@ -59,7 +59,7 @@ public fun Bar_doubleReceiverExtProp_get__TypesOfArgumentsE__anyU20ExportedKotli
 public fun Baz_doubleReceiverExtFun__TypesOfArgumentsE__anyU20ExportedKotlinPackages_foo_Foo__(self: kotlin.native.internal.NativePtr, `receiver`: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Baz
     val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as foo.Foo
-    val _result = run { __self.run { __receiver.doubleReceiverExtFun() } }
+    val _result = __self.run { __receiver.doubleReceiverExtFun() }
     return _result.objcPtr()
 }
 
@@ -67,14 +67,14 @@ public fun Baz_doubleReceiverExtFun__TypesOfArgumentsE__anyU20ExportedKotlinPack
 public fun Baz_doubleReceiverExtProp_get__TypesOfArgumentsE__anyU20ExportedKotlinPackages_foo_Foo__(self: kotlin.native.internal.NativePtr, `receiver`: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Baz
     val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as foo.Foo
-    val _result = run { __self.run { __receiver.doubleReceiverExtProp } }
+    val _result = __self.run { __receiver.doubleReceiverExtProp }
     return _result
 }
 
 @ExportedBridge("__root___Bar_init_allocate")
 @OptIn(ExperimentalApi::class)
 public fun __root___Bar_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<Bar>() }
+    val _result = kotlin.native.internal.createUninitializedInstance<Bar>()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -82,47 +82,47 @@ public fun __root___Bar_init_allocate(): kotlin.native.internal.NativePtr {
 @OptIn(ExperimentalApi::class)
 public fun __root___Bar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val _result = run { kotlin.native.internal.initInstance(____kt, Bar()) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, Bar())
+    return true
 }
 
 @ExportedBridge("__root___Baz_get")
 public fun __root___Baz_get(): kotlin.native.internal.NativePtr {
-    val _result = run { Baz }
+    val _result = Baz
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___DeprecatedBar_init_allocate")
 public fun __root___DeprecatedBar_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<DeprecatedBar>() }
+    val _result = kotlin.native.internal.createUninitializedInstance<DeprecatedBar>()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___DeprecatedBar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
 public fun __root___DeprecatedBar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val _result = run { kotlin.native.internal.initInstance(____kt, DeprecatedBar()) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, DeprecatedBar())
+    return true
 }
 
 @ExportedBridge("__root___GenericClass_init_allocate")
 public fun __root___GenericClass_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<GenericClass<kotlin.Any?>>() }
+    val _result = kotlin.native.internal.createUninitializedInstance<GenericClass<kotlin.Any?>>()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___GenericClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
 public fun __root___GenericClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val _result = run { kotlin.native.internal.initInstance(____kt, GenericClass<kotlin.Any?>()) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, GenericClass<kotlin.Any?>())
+    return true
 }
 
 @ExportedBridge("__root___deprecatedSetterProp_get__TypesOfArgumentsE__main_Bar__")
 @OptIn(ExperimentalApi::class)
 public fun __root___deprecatedSetterProp_get__TypesOfArgumentsE__main_Bar__(`receiver`: kotlin.native.internal.NativePtr): Boolean {
     val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as Bar
-    val _result = run { __receiver.deprecatedSetterProp }
+    val _result = __receiver.deprecatedSetterProp
     return _result
 }
 
@@ -131,15 +131,15 @@ public fun __root___deprecatedSetterProp_get__TypesOfArgumentsE__main_Bar__(`rec
 public fun __root___deprecatedSetterProp_set__TypesOfArgumentsE__main_Bar_Swift_Bool__(`receiver`: kotlin.native.internal.NativePtr, value: Boolean): Boolean {
     val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as Bar
     val __value = value
-    val _result = run { __receiver.deprecatedSetterProp = __value }
-    return run { _result; true }
+    __receiver.deprecatedSetterProp = __value
+    return true
 }
 
 @ExportedBridge("__root___errorDeprecatedSetterProp_get__TypesOfArgumentsE__main_Bar__")
 @OptIn(ExperimentalApi::class)
 public fun __root___errorDeprecatedSetterProp_get__TypesOfArgumentsE__main_Bar__(`receiver`: kotlin.native.internal.NativePtr): Boolean {
     val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as Bar
-    val _result = run { __receiver.errorDeprecatedSetterProp }
+    val _result = __receiver.errorDeprecatedSetterProp
     return _result
 }
 
@@ -153,7 +153,7 @@ public fun __root___funExtFun__TypesOfArgumentsE__U2829202D_U20Swift_Void__(`rec
             run<Unit> { _result }
         }
     }
-    val _result = run { __receiver.funExtFun() }
+    val _result = __receiver.funExtFun()
     return _result
 }
 
@@ -167,35 +167,35 @@ public fun __root___funExtProp_get__TypesOfArgumentsE__U2829202D_U20Swift_Void__
             run<Unit> { _result }
         }
     }
-    val _result = run { __receiver.funExtProp }
+    val _result = __receiver.funExtProp
     return _result
 }
 
 @ExportedBridge("__root___genericExtFun__TypesOfArgumentsE__main_GenericClass__")
 public fun __root___genericExtFun__TypesOfArgumentsE__main_GenericClass__(`receiver`: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as GenericClass<kotlin.Any?>
-    val _result = run { __receiver.genericExtFun() }
+    val _result = __receiver.genericExtFun()
     return _result.objcPtr()
 }
 
 @ExportedBridge("__root___genericExtProp_get__TypesOfArgumentsE__main_GenericClass__")
 public fun __root___genericExtProp_get__TypesOfArgumentsE__main_GenericClass__(`receiver`: kotlin.native.internal.NativePtr): Int {
     val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as GenericClass<kotlin.Any?>
-    val _result = run { __receiver.genericExtProp }
+    val _result = __receiver.genericExtProp
     return _result
 }
 
 @ExportedBridge("__root___genericUpperBoundExtFun__TypesOfArgumentsE__main_GenericClass__")
 public fun __root___genericUpperBoundExtFun__TypesOfArgumentsE__main_GenericClass__(`receiver`: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as GenericClass<kotlin.Any?>
-    val _result = run { __receiver.genericUpperBoundExtFun() }
+    val _result = __receiver.genericUpperBoundExtFun()
     return _result.objcPtr()
 }
 
 @ExportedBridge("__root___genericUpperBoundExtProp_get__TypesOfArgumentsE__main_GenericClass__")
 public fun __root___genericUpperBoundExtProp_get__TypesOfArgumentsE__main_GenericClass__(`receiver`: kotlin.native.internal.NativePtr): Int {
     val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as GenericClass<kotlin.Any?>
-    val _result = run { __receiver.genericUpperBoundExtProp }
+    val _result = __receiver.genericUpperBoundExtProp
     return _result
 }
 
@@ -203,7 +203,7 @@ public fun __root___genericUpperBoundExtProp_get__TypesOfArgumentsE__main_Generi
 @OptIn(ExperimentalApi::class)
 public fun __root___hiddenDeprecatedSetterProp_get__TypesOfArgumentsE__main_Bar__(`receiver`: kotlin.native.internal.NativePtr): Boolean {
     val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as Bar
-    val _result = run { __receiver.hiddenDeprecatedSetterProp }
+    val _result = __receiver.hiddenDeprecatedSetterProp
     return _result
 }
 
@@ -211,7 +211,7 @@ public fun __root___hiddenDeprecatedSetterProp_get__TypesOfArgumentsE__main_Bar_
 @OptIn(ExperimentalApi::class)
 public fun __root___optInExtFun__TypesOfArgumentsE__main_Baz__(`receiver`: kotlin.native.internal.NativePtr): Boolean {
     val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as Baz
-    val _result = run { __receiver.optInExtFun() }
+    val _result = __receiver.optInExtFun()
     return _result
 }
 
@@ -219,7 +219,7 @@ public fun __root___optInExtFun__TypesOfArgumentsE__main_Baz__(`receiver`: kotli
 @OptIn(ExperimentalApi::class)
 public fun __root___optInProp_get__TypesOfArgumentsE__main_Baz__(`receiver`: kotlin.native.internal.NativePtr): Int {
     val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as Baz
-    val _result = run { __receiver.optInProp }
+    val _result = __receiver.optInProp
     return _result
 }
 
@@ -228,14 +228,14 @@ public fun __root___optInProp_get__TypesOfArgumentsE__main_Baz__(`receiver`: kot
 public fun __root___optInProp_set__TypesOfArgumentsE__main_Baz_Swift_Int32__(`receiver`: kotlin.native.internal.NativePtr, value: Int): Boolean {
     val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as Baz
     val __value = value
-    val _result = run { __receiver.optInProp = __value }
-    return run { _result; true }
+    __receiver.optInProp = __value
+    return true
 }
 
 @ExportedBridge("__root___optInSetterProp_get__TypesOfArgumentsE__main_Baz__")
 public fun __root___optInSetterProp_get__TypesOfArgumentsE__main_Baz__(`receiver`: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as Baz
-    val _result = run { __receiver.optInSetterProp }
+    val _result = __receiver.optInSetterProp
     return _result.objcPtr()
 }
 
@@ -244,8 +244,8 @@ public fun __root___optInSetterProp_get__TypesOfArgumentsE__main_Baz__(`receiver
 public fun __root___optInSetterProp_set__TypesOfArgumentsE__main_Baz_Swift_String__(`receiver`: kotlin.native.internal.NativePtr, value: kotlin.native.internal.NativePtr): Boolean {
     val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as Baz
     val __value = interpretObjCPointer<kotlin.String>(value)
-    val _result = run { __receiver.optInSetterProp = __value }
-    return run { _result; true }
+    __receiver.optInSetterProp = __value
+    return true
 }
 
 @ExportedBridge("foo_Foo_doubleReceiverExtFun__TypesOfArgumentsE__main_Bar__")
@@ -253,7 +253,7 @@ public fun __root___optInSetterProp_set__TypesOfArgumentsE__main_Baz_Swift_Strin
 public fun foo_Foo_doubleReceiverExtFun__TypesOfArgumentsE__main_Bar__(self: kotlin.native.internal.NativePtr, `receiver`: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as foo.Foo
     val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as Bar
-    val _result = run { __self.run { __receiver.doubleReceiverExtFun() } }
+    val _result = __self.run { __receiver.doubleReceiverExtFun() }
     return _result.objcPtr()
 }
 
@@ -262,7 +262,7 @@ public fun foo_Foo_doubleReceiverExtFun__TypesOfArgumentsE__main_Bar__(self: kot
 public fun foo_Foo_doubleReceiverExtProp_get__TypesOfArgumentsE__main_Bar__(self: kotlin.native.internal.NativePtr, `receiver`: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as foo.Foo
     val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as Bar
-    val _result = run { __self.run { __receiver.doubleReceiverExtProp } }
+    val _result = __self.run { __receiver.doubleReceiverExtProp }
     return _result
 }
 
@@ -272,7 +272,7 @@ public fun foo_contextExtFun__TypesOfArgumentsEC1__anyU20ExportedKotlinPackages_
     val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as foo.Foo
     val __arg = arg
     val __bar = kotlin.native.internal.ref.dereferenceExternalRCRef(bar) as Bar
-    val _result = run { context(__bar) { __receiver.foo_contextExtFun(__arg) } }
+    val _result = context(__bar) { __receiver.foo_contextExtFun(__arg) }
     return _result
 }
 
@@ -281,7 +281,7 @@ public fun foo_contextExtFun__TypesOfArgumentsEC1__anyU20ExportedKotlinPackages_
 public fun foo_contextProp_get__TypesOfArgumentsEC1__anyU20ExportedKotlinPackages_foo_Foo_main_Bar__(`receiver`: kotlin.native.internal.NativePtr, bar: kotlin.native.internal.NativePtr): Int {
     val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as foo.Foo
     val __bar = kotlin.native.internal.ref.dereferenceExternalRCRef(bar) as Bar
-    val _result = run { context(__bar) { __receiver.foo_contextProp } }
+    val _result = context(__bar) { __receiver.foo_contextProp }
     return _result
 }
 
@@ -291,21 +291,21 @@ public fun foo_contextProp_set__TypesOfArgumentsEC1__anyU20ExportedKotlinPackage
     val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as foo.Foo
     val `___` = `_`
     val __bar = kotlin.native.internal.ref.dereferenceExternalRCRef(bar) as Bar
-    val _result = run { context(__bar) { __receiver.foo_contextProp = `___` } }
-    return run { _result; true }
+    context(__bar) { __receiver.foo_contextProp = `___` }
+    return true
 }
 
 @ExportedBridge("foo_nullableFun__TypesOfArgumentsE__Swift_Optional_anyU20ExportedKotlinPackages_foo_Foo___")
 public fun foo_nullableFun__TypesOfArgumentsE__Swift_Optional_anyU20ExportedKotlinPackages_foo_Foo___(`receiver`: kotlin.native.internal.NativePtr): Boolean {
     val __receiver = if (`receiver` == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as foo.Foo
-    val _result = run { __receiver.foo_nullableFun() }
+    val _result = __receiver.foo_nullableFun()
     return _result
 }
 
 @ExportedBridge("foo_nullableProp_get__TypesOfArgumentsE__Swift_Optional_anyU20ExportedKotlinPackages_foo_Foo___")
 public fun foo_nullableProp_get__TypesOfArgumentsE__Swift_Optional_anyU20ExportedKotlinPackages_foo_Foo___(`receiver`: kotlin.native.internal.NativePtr): Boolean {
     val __receiver = if (`receiver` == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as foo.Foo
-    val _result = run { __receiver.foo_nullableProp }
+    val _result = __receiver.foo_nullableProp
     return _result
 }
 
@@ -313,14 +313,14 @@ public fun foo_nullableProp_get__TypesOfArgumentsE__Swift_Optional_anyU20Exporte
 public fun foo_nullableProp_set__TypesOfArgumentsE__Swift_Optional_anyU20ExportedKotlinPackages_foo_Foo__Swift_Bool__(`receiver`: kotlin.native.internal.NativePtr, `_`: Boolean): Boolean {
     val __receiver = if (`receiver` == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as foo.Foo
     val `___` = `_`
-    val _result = run { __receiver.foo_nullableProp = `___` }
-    return run { _result; true }
+    __receiver.foo_nullableProp = `___`
+    return true
 }
 
 @ExportedBridge("foo_simpleExtFun__TypesOfArgumentsE__anyU20ExportedKotlinPackages_foo_Foo__")
 public fun foo_simpleExtFun__TypesOfArgumentsE__anyU20ExportedKotlinPackages_foo_Foo__(`receiver`: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as foo.Foo
-    val _result = run { __receiver.foo_simpleExtFun() }
+    val _result = __receiver.foo_simpleExtFun()
     return _result.objcPtr()
 }
 
@@ -330,14 +330,14 @@ public fun foo_simpleExtFunWithArgs__TypesOfArgumentsE__anyU20ExportedKotlinPack
     val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as foo.Foo
     val __arg1 = arg1
     val __arg2 = kotlin.native.internal.ref.dereferenceExternalRCRef(arg2) as Bar
-    val _result = run { __receiver.foo_simpleExtFunWithArgs(__arg1, __arg2) }
+    val _result = __receiver.foo_simpleExtFunWithArgs(__arg1, __arg2)
     return _result.objcPtr()
 }
 
 @ExportedBridge("foo_simplePropVar_get__TypesOfArgumentsE__anyU20ExportedKotlinPackages_foo_Foo__")
 public fun foo_simplePropVar_get__TypesOfArgumentsE__anyU20ExportedKotlinPackages_foo_Foo__(`receiver`: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as foo.Foo
-    val _result = run { __receiver.foo_simplePropVar }
+    val _result = __receiver.foo_simplePropVar
     return _result.objcPtr()
 }
 
@@ -345,14 +345,14 @@ public fun foo_simplePropVar_get__TypesOfArgumentsE__anyU20ExportedKotlinPackage
 public fun foo_simplePropVar_set__TypesOfArgumentsE__anyU20ExportedKotlinPackages_foo_Foo_Swift_String__(`receiver`: kotlin.native.internal.NativePtr, `_`: kotlin.native.internal.NativePtr): Boolean {
     val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as foo.Foo
     val `___` = interpretObjCPointer<kotlin.String>(`_`)
-    val _result = run { __receiver.foo_simplePropVar = `___` }
-    return run { _result; true }
+    __receiver.foo_simplePropVar = `___`
+    return true
 }
 
 @ExportedBridge("foo_simpleProp_get__TypesOfArgumentsE__anyU20ExportedKotlinPackages_foo_Foo__")
 public fun foo_simpleProp_get__TypesOfArgumentsE__anyU20ExportedKotlinPackages_foo_Foo__(`receiver`: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as foo.Foo
-    val _result = run { __receiver.foo_simpleProp }
+    val _result = __receiver.foo_simpleProp
     return _result.objcPtr()
 }
 
@@ -360,34 +360,34 @@ public fun foo_simpleProp_get__TypesOfArgumentsE__anyU20ExportedKotlinPackages_f
 public fun foo_varargExtFun__TypesOfArgumentsE__anyU20ExportedKotlinPackages_foo_Foo_Swift_Array_Swift_String__Vararg___(`receiver`: kotlin.native.internal.NativePtr, args: kotlin.native.internal.NativePtr): Int {
     val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as foo.Foo
     val __args = interpretObjCPointer<kotlin.collections.List<kotlin.String>>(args).toTypedArray()
-    val _result = run { __receiver.foo_varargExtFun(*__args) }
+    val _result = __receiver.foo_varargExtFun(*__args)
     return _result
 }
 
 @ExportedBridge("other_Other_init_allocate")
 public fun other_Other_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<other.Other>() }
+    val _result = kotlin.native.internal.createUninitializedInstance<other.Other>()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("other_Other_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
 public fun other_Other_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val _result = run { kotlin.native.internal.initInstance(____kt, other.Other()) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, other.Other())
+    return true
 }
 
 @ExportedBridge("other_otherExtFun__TypesOfArgumentsE__ExportedKotlinPackages_other_Other__")
 public fun other_otherExtFun__TypesOfArgumentsE__ExportedKotlinPackages_other_Other__(`receiver`: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as other.Other
-    val _result = run { __receiver.other_otherExtFun() }
+    val _result = __receiver.other_otherExtFun()
     return _result.objcPtr()
 }
 
 @ExportedBridge("other_otherProp_get__TypesOfArgumentsE__ExportedKotlinPackages_other_Other__")
 public fun other_otherProp_get__TypesOfArgumentsE__ExportedKotlinPackages_other_Other__(`receiver`: kotlin.native.internal.NativePtr): Int {
     val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as other.Other
-    val _result = run { __receiver.other_otherProp }
+    val _result = __receiver.other_otherProp
     return _result
 }
 
@@ -395,6 +395,6 @@ public fun other_otherProp_get__TypesOfArgumentsE__ExportedKotlinPackages_other_
 public fun other_otherProp_set__TypesOfArgumentsE__ExportedKotlinPackages_other_Other_Swift_Int32__(`receiver`: kotlin.native.internal.NativePtr, value: Int): Boolean {
     val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as other.Other
     val __value = value
-    val _result = run { __receiver.other_otherProp = __value }
-    return run { _result; true }
+    __receiver.other_otherProp = __value
+    return true
 }

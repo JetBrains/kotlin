@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] annotationArgumentsMixScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-annotationArgumentsMixScript.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>, ScriptTopLevelDeclaration=true] annotation class AnotherAnnotation : R|kotlin/Annotation| {
@@ -25,7 +25,7 @@ FILE: [ResolvedTo(RAW_FIR)] annotationArgumentsMixScript.kts
             }
 
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
-                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<EnumClass>|
+                public static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] get(): R|kotlin/enums/EnumEntries<EnumClass>|
 
         }
 
@@ -54,7 +54,7 @@ FILE: [ResolvedTo(RAW_FIR)] annotationArgumentsMixScript.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-annotationArgumentsMixScript.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>, ScriptTopLevelDeclaration=true] annotation class AnotherAnnotation : R|kotlin/Annotation| {
@@ -78,7 +78,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
             }
 
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
-                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<EnumClass>|
+                public static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] get(): R|kotlin/enums/EnumEntries<EnumClass>|
 
         }
 
@@ -107,7 +107,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-annotationArgumentsMixScript.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>, ScriptTopLevelDeclaration=true] annotation class AnotherAnnotation : R|kotlin/Annotation| {
@@ -131,7 +131,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
             }
 
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
-                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<EnumClass>|
+                public static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] get(): R|kotlin/enums/EnumEntries<EnumClass>|
 
         }
 
@@ -160,7 +160,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-annotationArgumentsMixScript.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>, ScriptTopLevelDeclaration=true] annotation class AnotherAnnotation : R|kotlin/Annotation| {
@@ -184,7 +184,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
             }
 
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
-                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<EnumClass>|
+                public static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] get(): R|kotlin/enums/EnumEntries<EnumClass>|
 
         }
 
@@ -213,7 +213,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-annotationArgumentsMixScript.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>, ScriptTopLevelDeclaration=true] annotation class AnotherAnnotation : R|kotlin/Annotation| {
@@ -237,7 +237,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
             }
 
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
-                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<EnumClass>|
+                public static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] get(): R|kotlin/enums/EnumEntries<EnumClass>|
 
         }
 
@@ -266,7 +266,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-annotationArgumentsMixScript.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>, ScriptTopLevelDeclaration=true] annotation class AnotherAnnotation : R|kotlin/Annotation| {
@@ -290,7 +290,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
             }
 
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
-                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<EnumClass>|
+                public static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] get(): R|kotlin/enums/EnumEntries<EnumClass>|
 
         }
 
@@ -319,7 +319,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-annotationArgumentsMixScript.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>, ScriptTopLevelDeclaration=true] annotation class AnotherAnnotation : R|kotlin/Annotation| {
@@ -343,7 +343,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
             }
 
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
-                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<EnumClass>|
+                public static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] get(): R|kotlin/enums/EnumEntries<EnumClass>|
 
         }
 
@@ -372,7 +372,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-annotationArgumentsMixScript.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>, ScriptTopLevelDeclaration=true] annotation class AnotherAnnotation : R|kotlin/Annotation| {
@@ -396,7 +396,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
             }
 
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
-                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<EnumClass>|
+                public static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] get(): R|kotlin/enums/EnumEntries<EnumClass>|
 
         }
 
@@ -425,7 +425,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-annotationArgumentsMixScript.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>, ScriptTopLevelDeclaration=true] annotation class AnotherAnnotation : R|kotlin/Annotation| {
@@ -449,7 +449,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
             }
 
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
-                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<EnumClass>|
+                public static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] get(): R|kotlin/enums/EnumEntries<EnumClass>|
 
         }
 
@@ -478,7 +478,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-annotationArgumentsMixScript.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>, ScriptTopLevelDeclaration=true] annotation class AnotherAnnotation : R|kotlin/Annotation| {
@@ -502,7 +502,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
             }
 
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
-                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<EnumClass>|
+                public static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] get(): R|kotlin/enums/EnumEntries<EnumClass>|
 
         }
 
@@ -531,7 +531,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-annotationArgumentsMixScript.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>, ScriptTopLevelDeclaration=true] annotation class AnotherAnnotation : R|kotlin/Annotation| {
@@ -555,7 +555,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
             }
 
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
-                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<EnumClass>|
+                public static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] get(): R|kotlin/enums/EnumEntries<EnumClass>|
 
         }
 
@@ -584,7 +584,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-annotationArgumentsMixScript.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>, ScriptTopLevelDeclaration=true] annotation class AnotherAnnotation : R|kotlin/Annotation| {
@@ -608,7 +608,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
             }
 
             public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
-                public static [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<EnumClass>|
+                public static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] get(): R|kotlin/enums/EnumEntries<EnumClass>|
 
         }
 
@@ -637,7 +637,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-annotationArgumentsMixScript.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>, ScriptTopLevelDeclaration=true] annotation class AnotherAnnotation : R|kotlin/Annotation| {
@@ -661,7 +661,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
             }
 
             public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
-                public static [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<EnumClass>|
+                public static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] get(): R|kotlin/enums/EnumEntries<EnumClass>|
 
         }
 
@@ -691,7 +691,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] annotationArgumentsMixScript.kts
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-annotationArgumentsMixScript.kts>
-        [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>, ScriptTopLevelDeclaration=true] annotation class AnotherAnnotation : R|kotlin/Annotation| {
@@ -715,7 +715,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] annotationArgumentsMixScript.kts
             }
 
             public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=EnumClass, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
-                public static [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<EnumClass>|
+                public static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=EnumClass] get(): R|kotlin/enums/EnumEntries<EnumClass>|
 
         }
 

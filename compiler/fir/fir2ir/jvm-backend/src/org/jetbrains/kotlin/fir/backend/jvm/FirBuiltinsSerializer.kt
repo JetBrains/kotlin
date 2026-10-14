@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.comparators.FirMemberDeclarationComparator
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCloneableSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.impl.FirNonErrorSymbolProvider
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.fir.serialization.FirAdditionalMetadataProvider
 import org.jetbrains.kotlin.fir.serialization.FirElementSerializer
@@ -54,10 +55,16 @@ class FirBuiltInsSerializer(val session: FirSession, val scopeSession: ScopeSess
             }
         }
 
-        @OptIn(SymbolInternals::class)
-        contentPerPackage.getOrPut(StandardNames.BUILT_INS_PACKAGE_FQ_NAME) { PackageContent() }.classes +=
-            FirCloneableSymbolProvider(session, session.moduleData, session.kotlinScopeProvider)
+        contentPerPackage.getOrPut(StandardNames.BUILT_INS_PACKAGE_FQ_NAME) { PackageContent() }.run {
+            classes += FirCloneableSymbolProvider(session, session.moduleData, session.kotlinScopeProvider)
                 .getClassLikeSymbolByClassId(StandardClassIds.Cloneable)!!.fir as FirRegularClass
+
+            val valueSymbolProvider =
+                FirNonErrorSymbolProvider.createIfRichErrorsEnabled(session, session.moduleData, session.kotlinScopeProvider)
+            if (valueSymbolProvider != null) {
+                classes += valueSymbolProvider.getClassLikeSymbolByClassId(StandardClassIds.NonError)!!.fir as FirRegularClass
+            }
+        }
 
         return contentPerPackage.map { packageWithContent ->
             val [packageFqName, content] = packageWithContent

@@ -1,0 +1,6 @@
+ALL:
+  test/Base.value: T
+  test/HasValue.value: T
+DIRECT:
+  test/Base.value: T
+INTERSECTION:

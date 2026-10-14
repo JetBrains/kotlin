@@ -8,3 +8,4 @@ getValue@(7,1) : T
   property@(7,57) : kotlin.reflect.KProperty<*>
 A@(9,1)
   i@(10,5) : kotlin.Int
+    <anonymous>@(10,19) : kotlin.Int

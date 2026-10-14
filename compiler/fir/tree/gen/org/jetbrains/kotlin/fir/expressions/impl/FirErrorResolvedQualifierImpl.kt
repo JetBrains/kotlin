@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.transformInplace
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 
 @OptIn(FirIdeOnly::class, UnresolvedExpressionTypeAccess::class)
 internal class FirErrorResolvedQualifierImpl(
@@ -44,6 +45,7 @@ internal class FirErrorResolvedQualifierImpl(
     override var resolvedToCompanionObject: Boolean,
     override var nonFatalDiagnostics: MutableOrEmptyList<ConeDiagnostic>,
     override var resolvedSymbolOrigin: FirResolvedSymbolOrigin?,
+    override var originalNameForContextSensitiveResolution: Name?,
     override var typeArguments: MutableOrEmptyList<FirTypeProjection>,
     override val diagnostic: ConeDiagnostic,
 ) : FirErrorResolvedQualifier() {
@@ -105,6 +107,10 @@ internal class FirErrorResolvedQualifierImpl(
 
     override fun replaceResolvedSymbolOrigin(newResolvedSymbolOrigin: FirResolvedSymbolOrigin?) {
         resolvedSymbolOrigin = newResolvedSymbolOrigin
+    }
+
+    override fun replaceOriginalNameForContextSensitiveResolution(newOriginalNameForContextSensitiveResolution: Name?) {
+        originalNameForContextSensitiveResolution = newOriginalNameForContextSensitiveResolution
     }
 
     override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>) {

@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirRegularClassChecker
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
+import org.jetbrains.kotlin.fir.declarations.getCompilerRequiredAnnotationByClassId
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics
 import org.jetbrains.kotlin.lombok.LombokNames
@@ -55,7 +55,7 @@ object FirLombokUsageChecker : FirRegularClassChecker(MppCheckerKind.Platform) {
                 }
             }
             lombokService.config.superBuilderFlagUsage?.let { superBuilderFlagUsage ->
-                declaration.annotations.getAnnotationByClassId(LombokNames.SUPER_BUILDER_ID, context.session)?.let { rawAnnotation ->
+                declaration.symbol.getCompilerRequiredAnnotationByClassId(LombokNames.SUPER_BUILDER_ID)?.let { rawAnnotation ->
                     val superBuilder = ConeLombokAnnotations.SuperBuilder.extract(rawAnnotation, context.session)
                     add(superBuilder to superBuilderFlagUsage)
                 }
@@ -67,7 +67,7 @@ object FirLombokUsageChecker : FirRegularClassChecker(MppCheckerKind.Platform) {
 
             fun addConstructorFlagUsageIfNeeded(constructorCompanion: ConeAnnotationCompanion<*>, constructorFlagUsage: FlagUsageValue?) {
                 val flagUsage = maxOfFlagUsage(constructorFlagUsage, anyConstructorFlagUsage) ?: return
-                declaration.annotations.getAnnotationByClassId(constructorCompanion.name, context.session)?.let { rawAnnotation ->
+                declaration.symbol.getCompilerRequiredAnnotationByClassId(constructorCompanion.classId)?.let { rawAnnotation ->
                     add(constructorCompanion.extract(rawAnnotation, context.session) to flagUsage)
                 }
             }

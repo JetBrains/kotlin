@@ -142,4 +142,52 @@ class FloatMathNativeTest {
     @Test fun maxValue() {
         assertEquals(Float.MAX_VALUE, Float.MAX_VALUE + 42)
     }
+
+    //TODO: once Float.ulp becomes a common API (KT-57155), move this test to libraries/stdlib/test/numbers/MathTest.kt
+    @Test
+    fun ulp() {
+        assertTrue(Float.NaN.ulp.isNaN())
+
+        val customQuietNaN = Float.fromBits(Float.NaN.toBits() or 1)
+        assertTrue(customQuietNaN.ulp.isNaN())
+
+        val customSignalingNaN = Float.fromBits(Float.NaN.toBits() or (1 shl 31))
+        assertTrue(customSignalingNaN.ulp.isNaN())
+
+        assertEquals(Float.MIN_VALUE, (0.0f).ulp)
+        assertEquals(Float.MIN_VALUE, (-0.0f).ulp)
+        assertEquals(Float.MIN_VALUE, Float.MIN_VALUE.ulp)
+        assertEquals(Float.MIN_VALUE, (-Float.MIN_VALUE).ulp)
+        assertEquals(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY.ulp)
+        assertEquals(Float.POSITIVE_INFINITY, Float.NEGATIVE_INFINITY.ulp)
+
+        val maxUlp = 2.0f.pow(104)
+        assertEquals(maxUlp, Float.MAX_VALUE.ulp)
+        assertEquals(maxUlp, (-Float.MAX_VALUE).ulp)
+
+        // subnormal-normal boundary
+        val minNormalMagnitude = Float.fromBits(0x80_0000)
+        for (normal in [minNormalMagnitude, -minNormalMagnitude]) {
+            val subnormal = if (normal > 0) minNormalMagnitude.nextDown() else normal.nextUp()
+
+            // minNormal.ulp is already Double.MIN_VALUE, can't go below that
+            assertEquals(1.0f, normal.ulp / subnormal.ulp)
+        }
+
+        // power-of-two boundaries
+        for (power in floatArrayOf(-40.0f, -20.0f, -10.0f, 0.0f, 10.0f, 20.0f, 40.0f)) {
+            val magnitude = 2.0f.pow(power)
+            magnitude.let {
+                val previousUlp = it.nextDown().ulp
+
+                assertEquals(2.0f, it.ulp / previousUlp)
+            }
+
+            (-magnitude).let {
+                val previousUlp = it.nextUp().ulp
+
+                assertEquals(2.0f, it.ulp / previousUlp)
+            }
+        }
+    }
 }

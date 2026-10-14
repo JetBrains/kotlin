@@ -9,7 +9,6 @@ import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.artifacts.*
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.internal.CustomizeKotlinDependenciesSetupAction
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.abi.internal.AbiValidationSetupAction
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectChecker
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsSetupAction
@@ -83,6 +82,7 @@ internal fun Project.registerKotlinPluginExtensions() {
         }
 
         if (isMultiplatform) {
+            register(project, CountKotlinMultiplatformPluginApplicationsSetupAction)
             register(project, ApplyJavaBasePluginSetupAction)
             register(project, DeprecateJavaPluginsApplicationSetupAction)
             register(project, DeprecatedMppGradlePropertiesMigrationSetupAction)
@@ -139,11 +139,9 @@ internal fun Project.registerKotlinPluginExtensions() {
         register(project, SetupCInteropApiElementsConfigurationSideEffect)
         register(project, SetupEmbedAndSignAppleFrameworkTaskSideEffect)
         register(project, ConfigureJavaTestFixturesSideEffect)
-        if (useNonPackedKlibs) {
-            register(project, MaybeAddWorkaroundForSecondaryVariantsBug)
-            register(project, CreateNonPackedKlibVariantsSideEffect)
-            register(project, ConfigureNonPackedKlibConsumingSideEffect)
-        }
+        register(project, MaybeAddWorkaroundForSecondaryVariantsBug)
+        register(project, CreateNonPackedKlibVariantsSideEffect)
+        register(project, ConfigureNonPackedKlibConsumingSideEffect)
         register(project, WasmBinaryPreparationSetupAction)
         register(project, ConfigureKotlinPlaywrightTestRunner)
         register(project, PublishSharedPackageJsonSideEffect)
@@ -202,6 +200,7 @@ internal fun Project.registerKotlinPluginExtensions() {
         register(project, KmpPartiallyResolvedDependenciesChecker)
         register(project, TestApiDependenciesChecker)
         register(project, ConfigurationOnDemandSupportChecker)
+        register(project, NpmDependencyInGradleScopeChecker)
         if (isMultiplatform) {
             register(project, NativeVersionChecker)
             register(project, SupportedNativeHostChecker)
@@ -223,5 +222,3 @@ private val Project.isMultiplatform get() = multiplatformExtensionOrNull != null
 private val Project.isJvm get() = kotlinJvmExtensionOrNull != null
 
 private val Project.isAndroid get() = kotlinExtension is KotlinAndroidProjectExtension
-
-private val Project.useNonPackedKlibs get() = kotlinPropertiesProvider.useNonPackedKlibs

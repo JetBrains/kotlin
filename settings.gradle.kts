@@ -388,6 +388,7 @@ include(
     ":analysis:analysis-tools:deprecated-k1-frontend-internals-for-ide-generated",
     ":kotlin-gradle-plugin-dsl-codegen",
     ":kotlin-gradle-statistics",
+    ":kotlin-gradle-statistics:metric-helpers-generator",
     ":kotlin-gradle-build-metrics",
     ":kotlin-gradle-plugin",
     ":gradle:kotlin-gradle-ecosystem-plugin",
@@ -448,6 +449,8 @@ include(
     ":examples:scripting-jvm-maven-deps",
     ":examples:scripting-jvm-maven-deps-host",
     ":examples:scripting-jvm-embeddable-host",
+    ":examples:scripting-jsr223-daemon",
+    ":examples:scripting-jsr223-bta",
     ":libraries:kotlin-prepush-hook",
     ":libraries:tools:mutability-annotations-compat",
     ":plugins:jvm-abi-gen",
@@ -512,17 +515,17 @@ include(
     ":compiler:fir:raw-fir:mp-parsing2fir",
     ":compiler:fir:fir2ir",
     ":compiler:fir:fir2ir:jvm-backend",
-    ":compiler:fir:providers",
-    ":compiler:fir:semantics",
+    ":compiler:fir:semantics.api",
     ":compiler:fir:resolve",
     ":compiler:fir:plugin-utils",
     ":compiler:fir:fir-serialization",
     ":compiler:fir:fir-deserialization",
     ":compiler:fir:fir-jvm",
-    ":compiler:fir:fir-js",
     ":compiler:fir:fir-native",
     ":compiler:fir:modularized-tests",
-    ":compiler:fir:checkers",
+    ":compiler:fir:checkers:checkers.common",
+    ":compiler:fir:checkers:checkers.api",
+    ":compiler:fir:checkers:checkers.common",
     ":compiler:fir:checkers:checkers.jvm",
     ":compiler:fir:checkers:checkers.js",
     ":compiler:fir:checkers:checkers.native",
@@ -536,9 +539,6 @@ include(
 )
 
 include(
-    ":kotlin-scripting-ide-services-unshaded",
-    ":kotlin-scripting-ide-services-test",
-    ":kotlin-scripting-ide-services",
     ":kotlin-scripting-ide-common"
 )
 
@@ -639,20 +639,12 @@ include(
     ":prepare:analysis-api:kotlin-analysis-api-standalone-implementation",
     ":prepare:analysis-api:kotlin-analysis-api-intellij-api-surface-components",
     ":prepare:analysis-api:kotlin-analysis-api-intellij-implementation-components",
-    ":prepare:analysis-api:kotlin-analysis-api-allopen-compiler-plugin-support",
-    ":prepare:analysis-api:kotlin-analysis-api-assignment-compiler-plugin-support",
-    ":prepare:analysis-api:kotlin-analysis-api-compose-compiler-plugin-support",
-    ":prepare:analysis-api:kotlin-analysis-api-dataframe-compiler-plugin-support",
-    ":prepare:analysis-api:kotlin-analysis-api-js-plain-objects-compiler-plugin-support",
-    ":prepare:analysis-api:kotlin-analysis-api-kotlinx-serialization-compiler-plugin-support",
-    ":prepare:analysis-api:kotlin-analysis-api-lombok-compiler-plugin-support",
-    ":prepare:analysis-api:kotlin-analysis-api-noarg-compiler-plugin-support",
-    ":prepare:analysis-api:kotlin-analysis-api-parcelize-compiler-plugin-support",
-    ":prepare:analysis-api:kotlin-analysis-api-sam-with-receiver-compiler-plugin-support",
+    ":prepare:analysis-api:kotlin-analysis-api-internal-test-framework",
 )
 
 include(
     ":compiler:build-tools:kotlin-build-tools-api",
+    ":compiler:build-tools:kotlin-build-tools-api-jps",
     ":compiler:build-tools:kotlin-build-tools-api-backports",
     ":compiler:build-tools:kotlin-build-tools-impl",
     ":compiler:build-tools:kotlin-build-tools-compat",
@@ -709,7 +701,6 @@ include(
     ":jps:jps-common",
     ":jps:jps-plugin",
     ":prepare:kotlin-jps-plugin",
-    ":jps:jps-platform-api-signatures"
 )
 
 include(
@@ -923,6 +914,8 @@ project(":kotlin-gradle-plugin-idea-for-compatibility-tests").projectDir =
     File("$rootDir/libraries/tools/kotlin-gradle-plugin-idea-for-compatibility-tests")
 project(":kotlin-gradle-plugin-dsl-codegen").projectDir = File("$rootDir/libraries/tools/kotlin-gradle-plugin-dsl-codegen")
 project(":kotlin-gradle-statistics").projectDir = File("$rootDir/libraries/tools/kotlin-gradle-statistics")
+project(":kotlin-gradle-statistics:metric-helpers-generator").projectDir =
+    File("$rootDir/libraries/tools/kotlin-gradle-statistics/metric-helpers-generator")
 project(":kotlin-gradle-build-metrics").projectDir = File("$rootDir/libraries/tools/kotlin-gradle-build-metrics")
 project(":kotlin-gradle-plugin").projectDir = File("$rootDir/libraries/tools/kotlin-gradle-plugin")
 project(":gradle:kotlin-gradle-ecosystem-plugin").projectDir = File("$rootDir/libraries/tools/gradle/kotlin-gradle-ecosystem-plugin")
@@ -981,6 +974,8 @@ project(":examples:scripting-jvm-simple-script-host").projectDir = File("$rootDi
 project(":examples:scripting-jvm-maven-deps").projectDir = File("$rootDir/libraries/examples/scripting/jvm-maven-deps/script")
 project(":examples:scripting-jvm-maven-deps-host").projectDir = File("$rootDir/libraries/examples/scripting/jvm-maven-deps/host")
 project(":examples:scripting-jvm-embeddable-host").projectDir = File("$rootDir/libraries/examples/scripting/jvm-embeddable-host")
+project(":examples:scripting-jsr223-daemon").projectDir = File("$rootDir/libraries/examples/scripting/jsr223-daemon")
+project(":examples:scripting-jsr223-bta").projectDir = File("$rootDir/libraries/examples/scripting/jsr223-bta")
 project(":libraries:kotlin-prepush-hook").projectDir = File("$rootDir/libraries/tools/kotlin-prepush-hook")
 project(":plugins:jvm-abi-gen").projectDir = File("$rootDir/plugins/jvm-abi-gen")
 project(":plugins:jvm-abi-gen-embeddable").projectDir = File("$rootDir/plugins/jvm-abi-gen/embeddable")
@@ -1029,9 +1024,6 @@ if (buildProperties.isInIdeaSync.get()) {
         file("$rootDir/plugins/compose/compiler-hosted/runtime-tests")
 }
 
-project(":kotlin-scripting-ide-services-unshaded").projectDir = File("$rootDir/plugins/scripting/scripting-ide-services")
-project(":kotlin-scripting-ide-services-test").projectDir = File("$rootDir/plugins/scripting/scripting-ide-services-test")
-project(":kotlin-scripting-ide-services").projectDir = File("$rootDir/plugins/scripting/scripting-ide-services-embeddable")
 project(":kotlin-scripting-ide-common").projectDir = File("$rootDir/plugins/scripting/scripting-ide-common")
 project(":kotlin-scripting-compiler").projectDir = File("$rootDir/plugins/scripting/scripting-compiler")
 project(":kotlin-scripting-compiler-impl").projectDir = File("$rootDir/plugins/scripting/scripting-compiler-impl")

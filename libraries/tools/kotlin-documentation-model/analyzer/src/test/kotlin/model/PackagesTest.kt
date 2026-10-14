@@ -5,9 +5,11 @@
 package model
 
 import org.jetbrains.dokka.model.DPackage
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInAnalysisApi
 import utils.AbstractModelTest
 import kotlin.test.Test
 
+@MustRunOnChangesInAnalysisApi
 class PackagesTest : AbstractModelTest("/src/main/kotlin/packages/Test.kt", "packages") {
 
     @Test

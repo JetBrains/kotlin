@@ -13,9 +13,24 @@ package kotlin.math
 
 // constants, can't use them from nativeMath as they are not constants there
 
-/** Ratio of the circumference of a circle to its diameter, approximately 3.14159. */
+/**
+ * Ratio of the circumference of a circle to its _diameter_, approximately 3.14159.
+ *
+ * @see TAU
+ */
 @SinceKotlin("1.2")
 public const val PI: Double = 3.141592653589793
+
+/**
+ * Ratio of the circumference of a circle to its _radius_, equals 2 times [PI] or approximately 6.28319.
+ *
+ * Tau (τ) radians is a full circle, making it easy to express fractions of a circle as τ/n.
+ *
+ * @see PI
+ */
+@SinceKotlin("2.5")
+public const val TAU: Double = 2 * PI
+
 /** Base of the natural logarithms, approximately 2.71828. */
 @SinceKotlin("1.2")
 public const val E: Double = 2.718281828459045
@@ -515,6 +530,7 @@ public expect fun Double.withSign(sign: Int): Double
  * Special cases:
  *   - `NaN.ulp` is `NaN`
  *   - `x.ulp` is `+Inf` when `x` is `+Inf` or `-Inf`
+ *   - `x.ulp` is `2^971` when `x` is `Double.MAX_VALUE` or `-Double.MAX_VALUE`
  *   - `0.0.ulp` is `Double.MIN_VALUE`
  *
  * @see nextUp
@@ -530,8 +546,8 @@ public expect val Double.ulp: Double
  * Returns the [Double] value nearest to this value in a direction of positive infinity.
  *
  * Special cases:
- *   - `NaN.nextUp() is `NaN`
- *   - `Double.POSITIVE_INFINITY.nextUp() is `+Infinity`
+ *   - `NaN.nextUp()` is `NaN`
+ *   - `Double.POSITIVE_INFINITY.nextUp()` is `+Infinity`
  *   - `0.0.nextUp()` is `Double.MIN_VALUE`
  *
  * @see nextTowards
@@ -547,8 +563,8 @@ public expect fun Double.nextUp(): Double
  * Returns the [Double] value nearest to this value in a direction of negative infinity.
  *
  * Special cases:
- *   - `NaN.nextDown() is `NaN`
- *   - `Double.NEGATIVE_INFINITY.nextDown() is `-Infinity`
+ *   - `NaN.nextDown()` is `NaN`
+ *   - `Double.NEGATIVE_INFINITY.nextDown()` is `-Infinity`
  *   - `0.0.nextDown()` is `-Double.MIN_VALUE`
  *
  * @see nextUp

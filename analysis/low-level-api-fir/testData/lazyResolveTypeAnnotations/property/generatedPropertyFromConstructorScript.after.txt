@@ -48,7 +48,7 @@
 
 FILE: [ResolvedTo(IMPORTS)] generatedPropertyFromConstructorScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-generatedPropertyFromConstructorScript.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[Types](AnnotationTarget#.TYPE#, AnnotationTarget#.PROPERTY#, AnnotationTarget#.VALUE_PARAMETER#, AnnotationTarget#.FIELD#, AnnotationTarget#.PROPERTY_SETTER#, AnnotationTarget#.PROPERTY_GETTER#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.TYPE|, R|kotlin/annotation/AnnotationTarget.PROPERTY|, R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, R|kotlin/annotation/AnnotationTarget.FIELD|, R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|))] public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol properties.<script-generatedPropertyFromConstructorScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {

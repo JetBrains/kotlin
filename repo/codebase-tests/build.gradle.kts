@@ -1,5 +1,4 @@
-import org.jetbrains.kotlin.testFederation.SmokeTestConfig
-import org.jetbrains.kotlin.testFederation.smokeTestConfig
+import org.jetbrains.kotlin.testFederation.testFederation
 
 plugins {
     id("common-configuration")
@@ -29,6 +28,7 @@ dependencies {
     }
     testImplementation(gradleTestKit())
     testImplementation(libs.intellij.asm)
+    testImplementation(libs.icu4j)
 }
 
 jvmToolchains {
@@ -89,7 +89,9 @@ projectTests {
             qualityGateNightlyTasks.set(providers.gradleProperty("quality.gate.nightly.tasks"))
         })
 
-        smokeTestConfig = SmokeTestConfig.RunAllTests
+        testFederation {
+            smokeTests { includeAll() }
+        }
         forkEvery = 1
     }
 
@@ -98,7 +100,6 @@ projectTests {
     withTestJar()
 }
 
-testsJar()
 
 tasks.register<JavaExec>("updateTestLifecycleTaskDump") {
     dependsOn(":compileAll")

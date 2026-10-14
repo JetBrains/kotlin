@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] annotationParametersScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-annotationParametersScript.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationParametersScript.kts>, ScriptTopLevelDeclaration=true] enum class X : R|kotlin/Enum<X>| {
@@ -17,7 +17,7 @@ FILE: [ResolvedTo(RAW_FIR)] annotationParametersScript.kts
             }
 
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=X, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<X>|
-                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<X>|
+                public static [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] get(): R|kotlin/enums/EnumEntries<X>|
 
         }
 
@@ -46,7 +46,7 @@ FILE: [ResolvedTo(RAW_FIR)] annotationParametersScript.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-annotationParametersScript.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationParametersScript.kts>, ScriptTopLevelDeclaration=true] enum class X : R|kotlin/Enum<X>| {
@@ -62,7 +62,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
             }
 
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=X, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<X>|
-                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<X>|
+                public static [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] get(): R|kotlin/enums/EnumEntries<X>|
 
         }
 
@@ -91,7 +91,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-annotationParametersScript.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationParametersScript.kts>, ScriptTopLevelDeclaration=true] enum class X : R|kotlin/Enum<X>| {
@@ -107,7 +107,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
             }
 
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=X, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<X>|
-                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<X>|
+                public static [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] get(): R|kotlin/enums/EnumEntries<X>|
 
         }
 
@@ -136,7 +136,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-annotationParametersScript.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationParametersScript.kts>, ScriptTopLevelDeclaration=true] enum class X : R|kotlin/Enum<X>| {
@@ -152,7 +152,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
             }
 
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=X, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<X>|
-                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<X>|
+                public static [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] get(): R|kotlin/enums/EnumEntries<X>|
 
         }
 
@@ -181,7 +181,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-annotationParametersScript.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationParametersScript.kts>, ScriptTopLevelDeclaration=true] enum class X : R|kotlin/Enum<X>| {
@@ -197,7 +197,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
             }
 
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=X, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<X>|
-                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<X>|
+                public static [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] get(): R|kotlin/enums/EnumEntries<X>|
 
         }
 
@@ -226,7 +226,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-annotationParametersScript.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationParametersScript.kts>, ScriptTopLevelDeclaration=true] enum class X : R|kotlin/Enum<X>| {
@@ -242,7 +242,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
             }
 
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=X, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<X>|
-                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<X>|
+                public static [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] get(): R|kotlin/enums/EnumEntries<X>|
 
         }
 
@@ -271,7 +271,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-annotationParametersScript.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationParametersScript.kts>, ScriptTopLevelDeclaration=true] enum class X : R|kotlin/Enum<X>| {
@@ -287,7 +287,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
             }
 
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=X, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<X>|
-                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<X>|
+                public static [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] get(): R|kotlin/enums/EnumEntries<X>|
 
         }
 
@@ -316,7 +316,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-annotationParametersScript.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationParametersScript.kts>, ScriptTopLevelDeclaration=true] enum class X : R|kotlin/Enum<X>| {
@@ -332,7 +332,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
             }
 
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=X, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<X>|
-                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<X>|
+                public static [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] get(): R|kotlin/enums/EnumEntries<X>|
 
         }
 
@@ -361,7 +361,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-annotationParametersScript.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationParametersScript.kts>, ScriptTopLevelDeclaration=true] enum class X : R|kotlin/Enum<X>| {
@@ -377,7 +377,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
             }
 
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=X, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<X>|
-                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<X>|
+                public static [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] get(): R|kotlin/enums/EnumEntries<X>|
 
         }
 
@@ -406,7 +406,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-annotationParametersScript.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationParametersScript.kts>, ScriptTopLevelDeclaration=true] enum class X : R|kotlin/Enum<X>| {
@@ -422,7 +422,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
             }
 
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=X, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<X>|
-                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<X>|
+                public static [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] get(): R|kotlin/enums/EnumEntries<X>|
 
         }
 
@@ -451,7 +451,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-annotationParametersScript.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationParametersScript.kts>, ScriptTopLevelDeclaration=true] enum class X : R|kotlin/Enum<X>| {
@@ -467,7 +467,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
             }
 
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=X, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<X>|
-                public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<X>|
+                public static [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] get(): R|kotlin/enums/EnumEntries<X>|
 
         }
 
@@ -496,7 +496,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-annotationParametersScript.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-annotationParametersScript.kts>, ScriptTopLevelDeclaration=true] enum class X : R|kotlin/Enum<X>| {
@@ -512,7 +512,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
             }
 
             public final static [ResolvedTo(STATUS)] [ContainingClassKey=X, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<X>|
-                public static [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<X>|
+                public static [ResolvedTo(STATUS)] [ContainingClassKey=X] get(): R|kotlin/enums/EnumEntries<X>|
 
         }
 
@@ -541,7 +541,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-annotationParametersScript.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-annotationParametersScript.kts>, ScriptTopLevelDeclaration=true] enum class X : R|kotlin/Enum<X>| {
@@ -557,7 +557,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
             }
 
             public final static [ResolvedTo(STATUS)] [ContainingClassKey=X, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<X>|
-                public static [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<X>|
+                public static [ResolvedTo(STATUS)] [ContainingClassKey=X] get(): R|kotlin/enums/EnumEntries<X>|
 
         }
 
@@ -587,7 +587,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] annotationParametersScript.kts
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-annotationParametersScript.kts>
-        [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-annotationParametersScript.kts>, ScriptTopLevelDeclaration=true] enum class X : R|kotlin/Enum<X>| {
@@ -603,7 +603,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] annotationParametersScript.kts
             }
 
             public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=X, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<X>|
-                public static [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<X>|
+                public static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=X] get(): R|kotlin/enums/EnumEntries<X>|
 
         }
 

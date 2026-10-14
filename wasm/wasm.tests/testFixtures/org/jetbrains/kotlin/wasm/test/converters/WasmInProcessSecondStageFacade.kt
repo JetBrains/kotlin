@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.wasm.test.converters
 import org.jetbrains.kotlin.test.GroupingStageInputArtifact
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.model.WasmCompilationSetsBinaryArtifact
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
@@ -17,15 +18,15 @@ import org.jetbrains.kotlin.test.services.targetPlatform
 import org.jetbrains.kotlin.test.diagnostics.DiagnosticsCollectorStub
 import org.jetbrains.kotlin.test.services.CompilationStage
 import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
-import org.jetbrains.kotlin.platform.wasm.isWasmWasi
 import org.jetbrains.kotlin.wasm.config.wasmTarget
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.js.config.friendLibraries
 import org.jetbrains.kotlin.js.config.includes
 import org.jetbrains.kotlin.js.config.libraries
 import org.jetbrains.kotlin.platform.wasm.WasmPlatformWithTarget
-import org.jetbrains.kotlin.test.frontend.fir.getTransitivesAndFriends
 import org.jetbrains.kotlin.test.isSingleTestBatch
+import org.jetbrains.kotlin.test.klib.getTransitivesAndFriendsWithoutReflectionPackageNameHelper
 import org.jetbrains.kotlin.test.testInfraError
 import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 import org.jetbrains.kotlin.wasm.test.blackbox.AbstractWasmSecondStageGroupingFacade
@@ -71,9 +72,8 @@ class WasmInProcessSecondStageFacade {
             tempDir: File,
         ): BinaryArtifacts.Wasm {
             val someModule = inputArtifact.nonGroupingStageOutputs.first().testServices.moduleStructure.modules.last()
-            val isWasiTarget = someModule.targetPlatform(testServices).isWasmWasi()
 
-            val batchLauncherFile = generateGroupedBatchLauncherSource(context.filteredOutputs, someModule, tempDir, isWasiTarget)
+            val batchLauncherFile = generateGroupedBatchLauncherSource(context.filteredOutputs, someModule, tempDir)
             val settings = context.settings
             val perTestKlibPaths = context.perTestKlibPaths
             val cleanedRegularDependencies = context.cleanedRegularDependencies
@@ -87,7 +87,11 @@ class WasmInProcessSecondStageFacade {
                 launcherModule,
                 listOf(batchLauncherFile.originalFile),
                 launcherKlibFile,
-                languageVersion = settings.maxLanguageVersion,
+                // launcher klib is compiled by the current version of 1st stage, which will be fed to current version of 2nd stage.
+                // So even for backward-compatibility tests this languageVersion should not be lower than the latest stable one, to avoid:
+                // - already unsupported language versions like 1.9.20
+                // - export to previous ABI versions, which is unsupported for two major versions back or more.
+                languageVersion = maxOf(settings.maxLanguageVersion, LanguageVersion.LATEST_STABLE),
                 customOptIns = settings.allOptIns,
                 allowKotlinPackage = settings.allAllowKotlinPackage,
                 cleanedRegularDependencies + perTestKlibPaths,
@@ -112,9 +116,11 @@ class WasmInProcessSecondStageFacade {
 
             val outputDir = services.getWasmTestOutputDirectory()
             outputDir.mkdirs()
-            copyJsFilesToOutputDir(context.filteredOutputs.map { it.testServices to it.testModule }, outputDir)
+            copyJsFilesToOutputDir(context.filteredOutputs.map { it.testModule }, outputDir)
 
-            return result ?: testInfraError("WasmInProcessSecondStageFacade: groupedBatch produced no Wasm artifact")
+            val artifact = result as? WasmCompilationSetsBinaryArtifact
+                ?: testInfraError("WasmInProcessSecondStageFacade: groupedBatch produced no Wasm compilation sets, but $result")
+            return artifact.withGroupedTestsDriver()
         }
 
         private inline fun <T> withTemporarySingleModuleStructure(
@@ -159,7 +165,7 @@ class WasmInProcessSecondStageFacade {
             configuration.libraries = runtimeKlibs + deps.regular.toList() + deps.friend.toList() + libraries + listOf(includedLibrary)
             val outputDir = services.getWasmTestOutputDirectory()
             outputDir.mkdirs()
-            copyJsFilesToOutputDir(testModules.map { services to it }, outputDir)
+            copyJsFilesToOutputDir(testModules, outputDir)
             val klibArtifact = BinaryArtifacts.KLib(File(includedLibrary), configuration.diagnosticsCollector)
             return WasmBackendFacade(services).transform(mainModule, klibArtifact)
                 ?: testInfraError("WasmInProcessSecondStageFacade.doIsolatedInProcess() produced no Wasm artifact")
@@ -172,7 +178,8 @@ class WasmInProcessSecondStageFacade {
             testServices: TestServices,
             compilationStage: CompilationStage,
         ): DependencyPaths {
-            val [transitiveLibraries: List<File>, friendLibraries: List<File>] = getTransitivesAndFriends(module = this, testServices)
+            val [transitiveLibraries: List<File>, friendLibraries: List<File>] =
+                getTransitivesAndFriendsWithoutReflectionPackageNameHelper(testServices)
 
             val regularDependencies: Set<String> = buildSet {
                 val wasmTarget = (targetPlatform(testServices).single() as WasmPlatformWithTarget).target

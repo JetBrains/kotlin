@@ -21,9 +21,10 @@ internal class KotlinKNamedFunction(
     container: KDeclarationContainerImpl,
     signature: String,
     rawBoundReceiver: Any?,
+    rawBoundContextArguments: List<Any?>,
     private val kmFunction: KmFunction,
     overriddenStorage: KCallableOverriddenStorage,
-) : KotlinKFunction(container, signature, rawBoundReceiver, overriddenStorage) {
+) : KotlinKFunction(container, signature, rawBoundReceiver, rawBoundContextArguments, overriddenStorage) {
     override val contextParameters: List<KmValueParameter> get() = kmFunction.contextParameters
 
     override val extensionReceiverType: KmType? get() = kmFunction.receiverParameterType
@@ -62,27 +63,27 @@ internal class KotlinKNamedFunction(
 
     override val isPrimaryConstructor: Boolean get() = false
 
-    @OptIn(ExperimentalCompanionBlocksAndExtensions::class)
+    @OptIn(ExperimentalCompanionBlocks::class)
     override val isCompanionBlockMember: Boolean
-        get() = container is KClassImpl<*> && kmFunction.isStatic
+        get() = container is KClassImpl<*> && kmFunction.isCompanionBlockMember
 
     override val overridden: Collection<ReflectKFunction> by lazy(PUBLICATION) {
         computeOverriddenFunctions(this)
     }
 
     @ExperimentalCompanionExtensions
-    @OptIn(ExperimentalCompanionBlocksAndExtensions::class)
+    @OptIn(kotlin.metadata.ExperimentalCompanionExtensions::class)
     override val companionExtensionClass: KClass<*>?
         get() = (kmFunction.companionExtensionReceiverType?.classifier as KmClassifier.Class?)?.let {
             container.jClass.safeClassLoader.loadKClass(it.name)
         }
 
     override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): ReflectKCallable<Any?> =
-        KotlinKNamedFunction(container, signature, CallableReference.NO_RECEIVER, kmFunction, overriddenStorage)
+        KotlinKNamedFunction(container, signature, CallableReference.NO_RECEIVER, rawBoundContextArguments = emptyList(), kmFunction, overriddenStorage)
 
-    override fun rebind(boundReceiver: Any?): ReflectKCallable<Any?> =
-        if (this.rawBoundReceiver === boundReceiver) this
-        else KotlinKNamedFunction(container, signature, boundReceiver, kmFunction, overriddenStorage)
+    override fun bindToLowerArity(boundReceiver: Any?, boundContextArguments: List<Any?>): ReflectKCallable<Any?> =
+        KotlinKNamedFunction(container, signature, boundReceiver, boundContextArguments, kmFunction, overriddenStorage)
+
 
     private fun convertSignatureForBuiltinFunction(signature: String): JvmMethodSignature =
         with(signature) {

@@ -10,10 +10,12 @@ import org.jetbrains.dokka.model.doc.CustomDocTag
 import org.jetbrains.dokka.model.doc.Description
 import org.jetbrains.dokka.model.doc.P
 import org.jetbrains.dokka.model.doc.Text
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInAnalysisApi
 import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
+@MustRunOnChangesInAnalysisApi
 class JavadocInheritDocsTest : BaseAbstractTest() {
     val configuration = dokkaConfiguration {
         sourceSets {

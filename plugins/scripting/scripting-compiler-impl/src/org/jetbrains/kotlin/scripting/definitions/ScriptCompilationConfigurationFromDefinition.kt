@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.scripting.definitions
 
-import kotlin.script.dependencies.Environment
 import kotlin.script.experimental.api.KotlinType
 import kotlin.script.experimental.api.ScriptCompilationConfigurationKeys
 import kotlin.script.experimental.host.ScriptingHostConfigurationKeys
@@ -18,4 +17,8 @@ val ScriptCompilationConfigurationKeys.platform by PropertiesCollection.key<Stri
 
 val ScriptCompilationConfigurationKeys.asyncDependenciesResolver by PropertiesCollection.key<Boolean>()
 
-val ScriptingHostConfigurationKeys.getEnvironment by PropertiesCollection.key<() -> Environment?>()
+@Deprecated(
+    "Use ScriptingHostConfiguration.getRefinementEnvironment from kotlin.script.experimental.host instead",
+    ReplaceWith("getRefinementEnvironment", "kotlin.script.experimental.host.getRefinementEnvironment")
+)
+val ScriptingHostConfigurationKeys.getEnvironment by PropertiesCollection.key<() -> Map<String, Any?>?>()

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.session.FirSessionFactoryHelper
 import org.jetbrains.kotlin.parsing.KotlinLightParser
 import org.jetbrains.kotlin.test.util.walkRepositoryKotlinFilesWithoutTestData
 import org.junit.jupiter.api.Test
+import java.io.File
 import kotlin.system.measureNanoTime
 
 @TestDataPath("/")
@@ -31,7 +32,8 @@ class TotalKotlinTest : AbstractRawFirBuilderTestCase() {
     }
 
     private fun totalKotlinLight(onlyLightTree: Boolean) {
-        val path = System.getProperty("user.dir")
+        // Back from /compiler/fir/raw-fir/<module>
+        val path = System.getProperty("user.dir") + "/../../../.."
         var counter = 0
         var time = 0L
 
@@ -43,7 +45,7 @@ class TotalKotlinTest : AbstractRawFirBuilderTestCase() {
         )
 
         if (onlyLightTree) println("LightTree generation") else println("Fir from LightTree converter")
-        println("BASE PATH: $path")
+        println("BASE PATH: ${File(path).normalize().absolutePath}")
         path.walkRepositoryKotlinFilesWithoutTestData {
             val sourceFile = KtIoFileSourceFile(it)
             val [code, linesMapping] = it.inputStream().reader(Charsets.UTF_8).use {

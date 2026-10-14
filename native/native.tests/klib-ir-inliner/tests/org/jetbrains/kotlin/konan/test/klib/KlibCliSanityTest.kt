@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.konan.test.klib
 
+import org.jetbrains.kotlin.backend.common.signatureIndex
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.konan.library.KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
+import org.jetbrains.kotlin.konan.library.KlibNativeDistributionLibraryProvider
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSimpleTest
 import org.jetbrains.kotlin.konan.test.blackbox.buildDir
 import org.jetbrains.kotlin.konan.test.blackbox.support.LoggedData
@@ -24,6 +26,12 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeHom
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_DEPENDS
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_IR_PROVIDER
+import org.jetbrains.kotlin.library.components.metadata
+import org.jetbrains.kotlin.library.isNativeStdlib
+import org.jetbrains.kotlin.library.loader.KlibLoader
+import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
+import org.jetbrains.kotlin.library.metadata.parsePackageFragment
+import org.jetbrains.kotlin.library.packageFqName
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.utils.patchManifestAsMap
 import org.jetbrains.kotlin.test.utils.patchManifestToBumpAbiVersion
@@ -464,6 +472,71 @@ class KlibCliSanityTest : AbstractNativeSimpleTest() {
             }
         ) { _, successKlib ->
             successKlib.assertNoKlibLoaderIssues()
+        }
+    }
+
+    @Test
+    fun `Klibs in distribution have signature index`() {
+        val libraries = KlibLoader {
+            libraryProviders(
+                KlibNativeDistributionLibraryProvider(testRunSettings.get<KotlinNativeHome>().dir) {
+                    withStdlib()
+                    withPlatformLibs(testRunSettings.get<KotlinNativeTargets>().testTarget)
+                }
+            )
+        }.load().librariesStdlibFirst
+
+        assertTrue(libraries.size > 1)
+        assertTrue(libraries.any { it.isNativeStdlib })
+
+        for (library in libraries) {
+            val signatureIndex = library.signatureIndex ?: fail("No signature index in library: ${library.canonicalPath}")
+
+            if (signatureIndex.exportedTopLevelSignatures.isEmpty()) {
+                // There are a few special C-interop libraries without declarations. Need to check this additionally.
+                assertTrue(library.isCInteropLibrary())
+
+                val packageFqName = library.packageFqName!!
+                val metadata = library.metadata
+
+                for (fragmentName in metadata.getPackageFragmentNames(packageFqName)) {
+                    val packageFragmentProto = parsePackageFragment(metadata.getPackageFragment(packageFqName, fragmentName))
+                    assertEquals(0, packageFragmentProto.class_Count)
+                    assertEquals(0, packageFragmentProto.`package`?.functionCount ?: 0)
+                    assertEquals(0, packageFragmentProto.`package`?.propertyCount ?: 0)
+                    assertEquals(0, packageFragmentProto.`package`?.typeAliasCount ?: 0)
+                }
+            } else {
+                assertTrue(signatureIndex.importedTopLevelSignatures.isNotEmpty())
+            }
+        }
+    }
+
+    @Test
+    fun `Compiler generates signature index for regular Klibs`() {
+        newSourceModules {
+            addRegularModule("r") { sourceFileAddend("fun main() = Unit") }
+            addCInteropModule("c")
+        }.compileToKlibsViaCli { _, successKlib ->
+            val generatedKlibPath = successKlib.resultingArtifact.klibFile.absolutePath
+            val generatedKlib = KlibLoader { libraryPaths(generatedKlibPath) }.load().librariesStdlibFirst.single()
+
+            val signatureIndex = generatedKlib.signatureIndex ?: fail("No signature index in library: $generatedKlibPath")
+            assertTrue(signatureIndex.exportedTopLevelSignatures.isNotEmpty())
+            assertTrue(signatureIndex.importedTopLevelSignatures.isNotEmpty())
+        }
+    }
+
+    @Test
+    fun `Compiler does not generate signature index for metadata Klibs`() {
+        newSourceModules {
+            addRegularModule("r") { sourceFileAddend("fun main() = Unit") }
+        }.compileToKlibsViaCli(extraCliArgs = listOf("-Xmetadata-klib")) { _, successKlib ->
+            val generatedKlibPath = successKlib.resultingArtifact.klibFile.absolutePath
+            val generatedKlib = KlibLoader { libraryPaths(generatedKlibPath) }.load().librariesStdlibFirst.single()
+            assertNull(generatedKlib.signatureIndex) {
+                "Unexpected signature index in metadata-only library: $generatedKlibPath"
+            }
         }
     }
 

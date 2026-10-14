@@ -12,10 +12,12 @@ import org.jetbrains.dokka.model.DTypeAlias
 import org.jetbrains.dokka.model.Documentable
 import org.jetbrains.dokka.model.TypeAliased
 import org.jetbrains.dokka.utilities.cast
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInAnalysisApi
 import utils.AbstractModelTest
 import utils.name
 import kotlin.test.Test
 
+@MustRunOnChangesInAnalysisApi
 class NestedTypealiasesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "classes") {
 
     private fun Bound.checkType(

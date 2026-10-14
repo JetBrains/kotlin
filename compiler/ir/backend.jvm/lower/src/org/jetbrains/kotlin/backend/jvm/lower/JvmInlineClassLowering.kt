@@ -155,6 +155,7 @@ internal class JvmInlineClassLowering(private val context: JvmBackendContext) : 
             it == irConstructor || (it is IrFunction && it.isInlineClassFieldGetter && !it.visibility.isPublicAPI)
         }
         buildPrimaryInlineClassConstructor(declaration, irConstructor)
+        declaration.addExposedForJavaSecondaryConstructors()
         buildBoxFunction(declaration)
         buildUnboxFunction(declaration)
         buildSpecializedEqualsMethodIfNeeded(declaration)
@@ -643,13 +644,78 @@ internal class JvmInlineClassLowering(private val context: JvmBackendContext) : 
                 annotations = irConstructor.annotations.withJvmExposeBoxedAnnotation(irConstructor, this@JvmInlineClassLowering.context)
                 body = this@JvmInlineClassLowering.context.createIrBuilder(symbol).irBlockBody(this) {
                     // Delegate to exposed constructor-impl$default
-                    val tmp = irTemporary(irCall(function).apply {
+                    val tmp = irUnderlyingValueFromConstructorImpl(function, primaryConstructor) {
                         arguments[0] = null
                         passTypeArgumentsFrom(primaryConstructor)
-                    })
+                    }
                     +irDelegatingConstructorCall(primaryConstructor).apply {
                         passTypeArgumentsFrom(primaryConstructor)
-                        arguments[0] = irGet(tmp).coerceToUnboxed()
+                        arguments[0] = irGet(tmp)
+                        arguments[1] = irNull()
+                    }
+                }
+            }
+        }
+    }
+
+    private fun IrStatementsBuilder<*>.irUnderlyingValueFromConstructorImpl(
+        constructorImpl: IrSimpleFunction,
+        primaryConstructor: IrConstructor,
+        configureCall: IrFunctionAccessExpression.() -> Unit,
+    ): IrVariable {
+        val underlyingType = primaryConstructor.parameters[0].type
+        return irTemporary(
+            coerceInlineClasses(
+                irCall(constructorImpl).apply(configureCall),
+                constructorImpl.returnType,
+                underlyingType,
+            ),
+            irType = underlyingType,
+        )
+    }
+
+    private fun IrClass.addExposedForJavaSecondaryConstructors() {
+        val primaryConstructor = primaryConstructor!!
+
+        val exposedSecondaryConstructors = declarations.filterIsInstance<IrSimpleFunction>()
+            .filter { it.origin == JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_CONSTRUCTOR }
+            .mapNotNull { ctor ->
+                val constructor = ctor.originalFunctionOfStaticInlineClassReplacement as? IrConstructor ?: return@mapNotNull null
+                if (constructor.isPrimary || !constructor.shouldBeExposedByAnnotationOrFlag(context)) return@mapNotNull null
+                constructor to ctor
+            }
+
+        for ([constructor, replacement] in exposedSecondaryConstructors) {
+            addExposedForJavaSecondaryConstructor(constructor, primaryConstructor, replacement)
+        }
+    }
+
+    private fun IrClass.addExposedForJavaSecondaryConstructor(
+        constructor: IrConstructor,
+        primaryConstructor: IrConstructor,
+        constructorImpl: IrSimpleFunction,
+    ) {
+        addConstructor {
+            updateFrom(constructor)
+            isPrimary = false
+            origin = JvmLoweredDeclarationOrigin.EXPOSED_INLINE_CLASS_CONSTRUCTOR
+        }.apply {
+            copyFunctionSignatureFrom(constructor)
+            // Don't create a default argument stub for the exposed constructor
+            parameters.forEach { it.defaultValue = null }
+            annotations = constructor.annotations.withJvmExposeBoxedAnnotation(constructor, this@JvmInlineClassLowering.context)
+            val exposedParameters = parameters
+            body = this@JvmInlineClassLowering.context.createIrBuilder(symbol).irBlockBody(this) {
+                val underlying = irUnderlyingValueFromConstructorImpl(constructorImpl, primaryConstructor) {
+                    passTypeArgumentsFrom(primaryConstructor)
+                    for ([index, parameter] in exposedParameters.withIndex()) {
+                        arguments[index] = irGet(parameter)
+                    }
+                }
+                +irDelegatingConstructorCall(primaryConstructor).apply {
+                    passTypeArgumentsFrom(primaryConstructor)
+                    arguments[0] = irGet(underlying)
+                    if (hasNonExposedPrimaryConstructorWithMarker) {
                         arguments[1] = irNull()
                     }
                 }
@@ -664,6 +730,9 @@ internal class JvmInlineClassLowering(private val context: JvmBackendContext) : 
             }
         }
 
+    private val IrClass.hasNonExposedPrimaryConstructorWithMarker: Boolean
+        get() = primaryConstructor?.parameters?.lastOrNull()?.origin == INLINE_CLASS_CONSTRUCTOR_SYNTHETIC_PARAMETER
+
     private fun buildBoxFunction(valueClass: IrClass) {
         val function = context.inlineClassReplacements.getBoxFunction(valueClass)
         with(context.createIrBuilder(function.symbol)) {
@@ -671,7 +740,7 @@ internal class JvmInlineClassLowering(private val context: JvmBackendContext) : 
                 irCall(valueClass.primaryConstructor!!.symbol).apply {
                     passTypeArgumentsFrom(function)
                     arguments[0] = irGet(function.parameters[0])
-                    if (valueClass.primaryConstructor?.parameters?.last()?.origin == INLINE_CLASS_CONSTRUCTOR_SYNTHETIC_PARAMETER) {
+                    if (valueClass.hasNonExposedPrimaryConstructorWithMarker) {
                         arguments[1] = irNull()
                     }
                 }
@@ -734,6 +803,40 @@ internal class JvmInlineClassLowering(private val context: JvmBackendContext) : 
         valueClass.declarations += function
     }
 
+    // The strict fields of a Valhalla value class are assigned before super(), where no branch may follow an assignment, since ASM doesn't
+    // track unset strict fields in stack map frames. Unboxing a boxed inline class value checks it for null, so the field values and the
+    // super constructor arguments are unboxed beforehand. An explicit cast keeps the unboxing in the temporary, which would otherwise be
+    // inlined back into its use.
+    private fun IrConstructor.unboxFieldValuesBeforeAssignments() {
+        val statements = (body as? IrBlockBody)?.statements ?: return
+        val superCallIndex = statements.indexOfFirst { it is IrDelegatingConstructorCall }
+        if (superCallIndex < 0) return
+        val superCall = statements[superCallIndex] as IrDelegatingConstructorCall
+        val scope = Scope(symbol)
+        fun IrExpression.unboxedInto(type: IrType, nameHint: String): IrVariable =
+            scope.createTemporaryVariable(
+                IrTypeOperatorCallImpl(startOffset, endOffset, type, IrTypeOperator.IMPLICIT_CAST, type, this), nameHint = nameHint,
+            )
+
+        val temporaries = mutableListOf<IrVariable>()
+        val fieldAssignments = statements.subList(0, superCallIndex).filterIsInstance<IrSetField>()
+        for (setField in fieldAssignments) {
+            val value = setField.value.takeIf { it.type.isInlineClassType() } ?: continue
+            val temporary = value.unboxedInto(setField.symbol.owner.type, "fieldValue")
+            temporaries += temporary
+            setField.value = IrGetValueImpl(value.startOffset, value.endOffset, temporary.symbol)
+        }
+        val parameters = superCall.symbol.owner.parameters
+        for (index in superCall.arguments.indices) {
+            val argument = superCall.arguments[index]?.takeIf { it.type.isInlineClassType() } ?: continue
+            val temporary = argument.unboxedInto(parameters[index].type.eraseTypeParameters(), "superArgument")
+            temporaries += temporary
+            superCall.arguments[index] = IrGetValueImpl(argument.startOffset, argument.endOffset, temporary.symbol)
+        }
+        val firstAssignmentIndex = fieldAssignments.firstOrNull()?.let(statements::indexOf) ?: superCallIndex
+        statements.addAll(firstAssignmentIndex, temporaries)
+    }
+
     override fun lower(irFile: IrFile) = withinScope(irFile) {
         irFile.transformChildrenVoid()
     }
@@ -758,6 +861,9 @@ internal class JvmInlineClassLowering(private val context: JvmBackendContext) : 
                         // the constructor is already exposed - no need to duplicate it.
                         // However, since it is exposed constructor, propagate @JvmExposeBoxed to it
                         function.annotations = function.annotations.withJvmExposeBoxedAnnotation(function, context)
+                        if (function.constructedClass.isKotlinValhallaValueClass(context.config.languageVersionSettings)) {
+                            function.unboxFieldValuesBeforeAssignments()
+                        }
                         return null
                     }
 

@@ -102,7 +102,10 @@ class ExplicitApiExternalAndroidTargetIT : KGPBaseTest() {
                 assertTasksFailed(":compileAndroidMain")
                 assertCompilerArgument(":compileAndroidMain", "-Xexplicit-api=strict", LogLevel.INFO)
                 assertOutputContains("Visibility must be specified in explicit API mode")
-                assertOutputContains("Return type must be specified in explicit API mode")
+                // FIXME: KT-89618
+                if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_7)) {
+                    assertOutputContains("Return type must be specified in explicit API mode")
+                }
             }
         }
     }
@@ -147,13 +150,19 @@ class ExplicitApiExternalAndroidTargetIT : KGPBaseTest() {
                 assertTasksFailed(":compileCommonMainKotlinMetadata")
                 assertCompilerArgument(":compileCommonMainKotlinMetadata", "-Xexplicit-api=strict", LogLevel.INFO)
                 assertOutputContains("Visibility must be specified in explicit API mode")
-                assertOutputContains("Return type must be specified in explicit API mode")
+                // FIXME: KT-89618
+                if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_7)) {
+                    assertOutputContains("Return type must be specified in explicit API mode")
+                }
             }
             buildAndFail(":compileAndroidMain") {
                 assertTasksFailed(":compileAndroidMain")
                 assertCompilerArgument(":compileAndroidMain", "-Xexplicit-api=strict", LogLevel.INFO)
                 assertOutputContains("Visibility must be specified in explicit API mode")
-                assertOutputContains("Return type must be specified in explicit API mode")
+                // FIXME: KT-89618
+                if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_7)) {
+                    assertOutputContains("Return type must be specified in explicit API mode")
+                }
             }
         }
     }

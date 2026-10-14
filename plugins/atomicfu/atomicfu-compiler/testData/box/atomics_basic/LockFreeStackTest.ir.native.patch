@@ -1,0 +1,296 @@
+--- a/LockFreeStackTest.ir.txt
++++ b/LockFreeStackTest.ir.native.txt
+@@ -80,25 +80,25 @@
+         WHILE label=null origin=null
+           condition: CONST Boolean type=kotlin.Boolean value=true
+           body: BLOCK type=kotlin.Unit origin=null
+-            VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:T of kotlin.concurrent.atomicGetField [val]
+-              CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
++            VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Any? [val]
++              CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=kotlin.Any? origin=null
+                 TYPE_ARG T: kotlin.Any?
+-                ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=R of kotlin.Function0 origin=null
++                ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null
+                   ARG <this>: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>> declared in <root>.LockFreeStack.getAndUpdate$atomicfu$NATIVE_PROPERTY_REF$Any' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>> origin=null
+-            VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:R of kotlin.Function1 [val]
+-              CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=R of kotlin.Function1 origin=null
++            VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.Any? [val]
++              CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Any? origin=null
+                 ARG <this>: GET_VAR 'action$atomicfu: kotlin.Function1<kotlin.Any?, kotlin.Any?> declared in <root>.LockFreeStack.getAndUpdate$atomicfu$NATIVE_PROPERTY_REF$Any' type=kotlin.Function1<kotlin.Any?, kotlin.Any?> origin=null
+-                ARG p1: GET_VAR 'val tmp_0: T of kotlin.concurrent.atomicGetField declared in <root>.LockFreeStack.getAndUpdate$atomicfu$NATIVE_PROPERTY_REF$Any' type=T of kotlin.concurrent.atomicGetField origin=null
++                ARG p1: GET_VAR 'val tmp_0: kotlin.Any? declared in <root>.LockFreeStack.getAndUpdate$atomicfu$NATIVE_PROPERTY_REF$Any' type=kotlin.Any? origin=null
+             WHEN type=kotlin.Unit origin=null
+               BRANCH
+                 if: CALL 'internal final fun compareAndSetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.compareAndSetField>, expectedValue: T of kotlin.concurrent.compareAndSetField, newValue: T of kotlin.concurrent.compareAndSetField): kotlin.Boolean declared in kotlin.concurrent' type=kotlin.Boolean origin=null
+                   TYPE_ARG T: kotlin.Any?
+-                  ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=R of kotlin.Function0 origin=null
++                  ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null
+                     ARG <this>: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>> declared in <root>.LockFreeStack.getAndUpdate$atomicfu$NATIVE_PROPERTY_REF$Any' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>> origin=null
+-                  ARG expectedValue: GET_VAR 'val tmp_0: T of kotlin.concurrent.atomicGetField declared in <root>.LockFreeStack.getAndUpdate$atomicfu$NATIVE_PROPERTY_REF$Any' type=T of kotlin.concurrent.atomicGetField origin=null
+-                  ARG newValue: GET_VAR 'val tmp_1: R of kotlin.Function1 declared in <root>.LockFreeStack.getAndUpdate$atomicfu$NATIVE_PROPERTY_REF$Any' type=R of kotlin.Function1 origin=null
++                  ARG expectedValue: GET_VAR 'val tmp_0: kotlin.Any? declared in <root>.LockFreeStack.getAndUpdate$atomicfu$NATIVE_PROPERTY_REF$Any' type=kotlin.Any? origin=null
++                  ARG newValue: GET_VAR 'val tmp_1: kotlin.Any? declared in <root>.LockFreeStack.getAndUpdate$atomicfu$NATIVE_PROPERTY_REF$Any' type=kotlin.Any? origin=null
+                 then: RETURN type=kotlin.Nothing from='private final fun getAndUpdate$atomicfu$NATIVE_PROPERTY_REF$Any (handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>>, action$atomicfu: kotlin.Function1<kotlin.Any?, kotlin.Any?>): kotlin.Any? declared in <root>.LockFreeStack'
+-                  GET_VAR 'val tmp_0: T of kotlin.concurrent.atomicGetField declared in <root>.LockFreeStack.getAndUpdate$atomicfu$NATIVE_PROPERTY_REF$Any' type=T of kotlin.concurrent.atomicGetField origin=null
++                  GET_VAR 'val tmp_0: kotlin.Any? declared in <root>.LockFreeStack.getAndUpdate$atomicfu$NATIVE_PROPERTY_REF$Any' type=kotlin.Any? origin=null
+     FUN ATOMICFU_GENERATED_FUNCTION name:loop$atomicfu$NATIVE_PROPERTY_REF$Any visibility:private modality:FINAL returnType:kotlin.Unit [inline]
+       VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.LockFreeStack<T of <root>.LockFreeStack>
+       VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>> [crossinline]
+@@ -106,15 +106,15 @@
+       BLOCK_BODY
+         WHILE label=null origin=null
+           condition: CONST Boolean type=kotlin.Boolean value=true
+-          body: BLOCK type=R of kotlin.Function1 origin=null
+-            VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:T of kotlin.concurrent.atomicGetField [val]
+-              CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
++          body: BLOCK type=kotlin.Unit origin=null
++            VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:kotlin.Any? [val]
++              CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=kotlin.Any? origin=null
+                 TYPE_ARG T: kotlin.Any?
+-                ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=R of kotlin.Function0 origin=null
++                ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null
+                   ARG <this>: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>> declared in <root>.LockFreeStack.loop$atomicfu$NATIVE_PROPERTY_REF$Any' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>> origin=null
+-            CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=R of kotlin.Function1 origin=null
++            CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Unit origin=null
+               ARG <this>: GET_VAR 'action$atomicfu: kotlin.Function1<kotlin.Any?, kotlin.Unit> declared in <root>.LockFreeStack.loop$atomicfu$NATIVE_PROPERTY_REF$Any' type=kotlin.Function1<kotlin.Any?, kotlin.Unit> origin=null
+-              ARG p1: GET_VAR 'val tmp_2: T of kotlin.concurrent.atomicGetField declared in <root>.LockFreeStack.loop$atomicfu$NATIVE_PROPERTY_REF$Any' type=T of kotlin.concurrent.atomicGetField origin=null
++              ARG p1: GET_VAR 'val tmp_2: kotlin.Any? declared in <root>.LockFreeStack.loop$atomicfu$NATIVE_PROPERTY_REF$Any' type=kotlin.Any? origin=null
+     FUN ATOMICFU_GENERATED_FUNCTION name:update$atomicfu$NATIVE_PROPERTY_REF$Any visibility:private modality:FINAL returnType:kotlin.Unit [inline]
+       VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.LockFreeStack<T of <root>.LockFreeStack>
+       VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>> [crossinline]
+@@ -123,23 +123,23 @@
+         WHILE label=null origin=null
+           condition: CONST Boolean type=kotlin.Boolean value=true
+           body: BLOCK type=kotlin.Unit origin=null
+-            VAR IR_TEMPORARY_VARIABLE name:tmp_3 type:T of kotlin.concurrent.atomicGetField [val]
+-              CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
++            VAR IR_TEMPORARY_VARIABLE name:tmp_3 type:kotlin.Any? [val]
++              CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=kotlin.Any? origin=null
+                 TYPE_ARG T: kotlin.Any?
+-                ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=R of kotlin.Function0 origin=null
++                ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null
+                   ARG <this>: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>> declared in <root>.LockFreeStack.update$atomicfu$NATIVE_PROPERTY_REF$Any' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>> origin=null
+-            VAR IR_TEMPORARY_VARIABLE name:tmp_4 type:R of kotlin.Function1 [val]
+-              CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=R of kotlin.Function1 origin=null
++            VAR IR_TEMPORARY_VARIABLE name:tmp_4 type:kotlin.Any? [val]
++              CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Any? origin=null
+                 ARG <this>: GET_VAR 'action$atomicfu: kotlin.Function1<kotlin.Any?, kotlin.Any?> declared in <root>.LockFreeStack.update$atomicfu$NATIVE_PROPERTY_REF$Any' type=kotlin.Function1<kotlin.Any?, kotlin.Any?> origin=null
+-                ARG p1: GET_VAR 'val tmp_3: T of kotlin.concurrent.atomicGetField declared in <root>.LockFreeStack.update$atomicfu$NATIVE_PROPERTY_REF$Any' type=T of kotlin.concurrent.atomicGetField origin=null
++                ARG p1: GET_VAR 'val tmp_3: kotlin.Any? declared in <root>.LockFreeStack.update$atomicfu$NATIVE_PROPERTY_REF$Any' type=kotlin.Any? origin=null
+             WHEN type=kotlin.Unit origin=null
+               BRANCH
+                 if: CALL 'internal final fun compareAndSetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.compareAndSetField>, expectedValue: T of kotlin.concurrent.compareAndSetField, newValue: T of kotlin.concurrent.compareAndSetField): kotlin.Boolean declared in kotlin.concurrent' type=kotlin.Boolean origin=null
+                   TYPE_ARG T: kotlin.Any?
+-                  ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=R of kotlin.Function0 origin=null
++                  ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null
+                     ARG <this>: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>> declared in <root>.LockFreeStack.update$atomicfu$NATIVE_PROPERTY_REF$Any' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>> origin=null
+-                  ARG expectedValue: GET_VAR 'val tmp_3: T of kotlin.concurrent.atomicGetField declared in <root>.LockFreeStack.update$atomicfu$NATIVE_PROPERTY_REF$Any' type=T of kotlin.concurrent.atomicGetField origin=null
+-                  ARG newValue: GET_VAR 'val tmp_4: R of kotlin.Function1 declared in <root>.LockFreeStack.update$atomicfu$NATIVE_PROPERTY_REF$Any' type=R of kotlin.Function1 origin=null
++                  ARG expectedValue: GET_VAR 'val tmp_3: kotlin.Any? declared in <root>.LockFreeStack.update$atomicfu$NATIVE_PROPERTY_REF$Any' type=kotlin.Any? origin=null
++                  ARG newValue: GET_VAR 'val tmp_4: kotlin.Any? declared in <root>.LockFreeStack.update$atomicfu$NATIVE_PROPERTY_REF$Any' type=kotlin.Any? origin=null
+                 then: RETURN type=kotlin.Nothing from='private final fun update$atomicfu$NATIVE_PROPERTY_REF$Any (handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>>, action$atomicfu: kotlin.Function1<kotlin.Any?, kotlin.Any?>): kotlin.Unit declared in <root>.LockFreeStack'
+                   GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+@@ -160,8 +160,22 @@
+       BLOCK_BODY
+         CALL 'internal final fun atomicSetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicSetField>, newValue: T of kotlin.concurrent.atomicSetField): kotlin.Unit declared in kotlin.concurrent' type=kotlin.Unit origin=null
+           TYPE_ARG T: kotlin.Any?
+-          ARG <this>: PROPERTY_REFERENCE 'private final top$volatile: kotlin.Any? declared in <root>.LockFreeStack' field='FIELD ATOMICFU_GENERATED_FIELD name:top$volatile type:kotlin.Any? visibility:private declared in <root>.LockFreeStack' getter='private final fun <get-top$volatile> (): kotlin.Any? declared in <root>.LockFreeStack' setter='private final fun <set-top$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.LockFreeStack' type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null
+-            ARG 1: GET_VAR '<this>: <root>.LockFreeStack<T of <root>.LockFreeStack> declared in <root>.LockFreeStack.clear' type=<root>.LockFreeStack<T of <root>.LockFreeStack> origin=IMPLICIT_ARGUMENT
++          ARG <this>: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null reflectionTarget='private final top$volatile: kotlin.Any? declared in <root>.LockFreeStack'
++            bound <this>: GET_VAR '<this>: <root>.LockFreeStack<T of <root>.LockFreeStack> declared in <root>.LockFreeStack.clear' type=<root>.LockFreeStack<T of <root>.LockFreeStack> origin=IMPLICIT_ARGUMENT
++            getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-top$volatile> visibility:local modality:FINAL returnType:kotlin.Any?
++              VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.LockFreeStack<T of <root>.LockFreeStack>
++              BLOCK_BODY
++                RETURN type=kotlin.Nothing from='local final fun <get-top$volatile> (<this>: <root>.LockFreeStack<T of <root>.LockFreeStack>): kotlin.Any? declared in <root>.LockFreeStack.clear'
++                  CALL 'private final fun <get-top$volatile> (): kotlin.Any? declared in <root>.LockFreeStack' type=kotlin.Any? origin=null
++                    ARG <this>: GET_VAR '<this>: <root>.LockFreeStack<T of <root>.LockFreeStack> declared in <root>.LockFreeStack.clear.<get-top$volatile>' type=<root>.LockFreeStack<T of <root>.LockFreeStack> origin=null
++            setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-top$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++              VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.LockFreeStack<T of <root>.LockFreeStack>
++              VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Any?
++              BLOCK_BODY
++                RETURN type=kotlin.Nothing from='local final fun <set-top$volatile> (<this>: <root>.LockFreeStack<T of <root>.LockFreeStack>, p0: kotlin.Any?): kotlin.Unit declared in <root>.LockFreeStack.clear'
++                  CALL 'private final fun <set-top$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.LockFreeStack' type=kotlin.Unit origin=null
++                    ARG <this>: GET_VAR '<this>: <root>.LockFreeStack<T of <root>.LockFreeStack> declared in <root>.LockFreeStack.clear.<set-top$volatile>' type=<root>.LockFreeStack<T of <root>.LockFreeStack> origin=null
++                    ARG value: GET_VAR 'p0: kotlin.Any? declared in <root>.LockFreeStack.clear.<set-top$volatile>' type=kotlin.Any? origin=null
+           ARG newValue: CONST Null type=kotlin.Nothing? value=null
+     FUN name:isEmpty visibility:public modality:FINAL returnType:kotlin.Boolean
+       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.LockFreeStack<T of <root>.LockFreeStack>
+@@ -169,10 +183,24 @@
+         RETURN type=kotlin.Nothing from='public final fun isEmpty (): kotlin.Boolean declared in <root>.LockFreeStack'
+           CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+             ARG arg0: TYPE_OP type=kotlin.Any? origin=CAST typeOperand=kotlin.Any?
+-              CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
++              CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=kotlin.Any? origin=null
+                 TYPE_ARG T: kotlin.Any?
+-                ARG <this>: PROPERTY_REFERENCE 'private final top$volatile: kotlin.Any? declared in <root>.LockFreeStack' field='FIELD ATOMICFU_GENERATED_FIELD name:top$volatile type:kotlin.Any? visibility:private declared in <root>.LockFreeStack' getter='private final fun <get-top$volatile> (): kotlin.Any? declared in <root>.LockFreeStack' setter='private final fun <set-top$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.LockFreeStack' type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null
+-                  ARG 1: GET_VAR '<this>: <root>.LockFreeStack<T of <root>.LockFreeStack> declared in <root>.LockFreeStack.isEmpty' type=<root>.LockFreeStack<T of <root>.LockFreeStack> origin=IMPLICIT_ARGUMENT
++                ARG <this>: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null reflectionTarget='private final top$volatile: kotlin.Any? declared in <root>.LockFreeStack'
++                  bound <this>: GET_VAR '<this>: <root>.LockFreeStack<T of <root>.LockFreeStack> declared in <root>.LockFreeStack.isEmpty' type=<root>.LockFreeStack<T of <root>.LockFreeStack> origin=IMPLICIT_ARGUMENT
++                  getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-top$volatile> visibility:local modality:FINAL returnType:kotlin.Any?
++                    VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.LockFreeStack<T of <root>.LockFreeStack>
++                    BLOCK_BODY
++                      RETURN type=kotlin.Nothing from='local final fun <get-top$volatile> (<this>: <root>.LockFreeStack<T of <root>.LockFreeStack>): kotlin.Any? declared in <root>.LockFreeStack.isEmpty'
++                        CALL 'private final fun <get-top$volatile> (): kotlin.Any? declared in <root>.LockFreeStack' type=kotlin.Any? origin=null
++                          ARG <this>: GET_VAR '<this>: <root>.LockFreeStack<T of <root>.LockFreeStack> declared in <root>.LockFreeStack.isEmpty.<get-top$volatile>' type=<root>.LockFreeStack<T of <root>.LockFreeStack> origin=null
++                  setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-top$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++                    VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.LockFreeStack<T of <root>.LockFreeStack>
++                    VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Any?
++                    BLOCK_BODY
++                      RETURN type=kotlin.Nothing from='local final fun <set-top$volatile> (<this>: <root>.LockFreeStack<T of <root>.LockFreeStack>, p0: kotlin.Any?): kotlin.Unit declared in <root>.LockFreeStack.isEmpty'
++                        CALL 'private final fun <set-top$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.LockFreeStack' type=kotlin.Unit origin=null
++                          ARG <this>: GET_VAR '<this>: <root>.LockFreeStack<T of <root>.LockFreeStack> declared in <root>.LockFreeStack.isEmpty.<set-top$volatile>' type=<root>.LockFreeStack<T of <root>.LockFreeStack> origin=null
++                          ARG value: GET_VAR 'p0: kotlin.Any? declared in <root>.LockFreeStack.isEmpty.<set-top$volatile>' type=kotlin.Any? origin=null
+             ARG arg1: CONST Null type=kotlin.Nothing? value=null
+     FUN name:popLoop visibility:public modality:FINAL returnType:T of <root>.LockFreeStack?
+       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.LockFreeStack<T of <root>.LockFreeStack>
+@@ -183,8 +211,22 @@
+             FUN ATOMICFU_GENERATED_FUNCTION name:<top$volatile-getter> visibility:local modality:FINAL returnType:kotlin.reflect.KMutableProperty0<kotlin.Any?> [inline]
+               BLOCK_BODY
+                 RETURN type=kotlin.Nothing from='local final fun <top$volatile-getter> (): kotlin.reflect.KMutableProperty0<kotlin.Any?> declared in <root>.LockFreeStack.popLoop'
+-                  PROPERTY_REFERENCE 'private final top$volatile: kotlin.Any? declared in <root>.LockFreeStack' field='FIELD ATOMICFU_GENERATED_FIELD name:top$volatile type:kotlin.Any? visibility:private declared in <root>.LockFreeStack' getter='private final fun <get-top$volatile> (): kotlin.Any? declared in <root>.LockFreeStack' setter='private final fun <set-top$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.LockFreeStack' type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null
+-                    ARG 1: GET_VAR '<this>: <root>.LockFreeStack<T of <root>.LockFreeStack> declared in <root>.LockFreeStack.popLoop' type=<root>.LockFreeStack<T of <root>.LockFreeStack> origin=IMPLICIT_ARGUMENT
++                  RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null reflectionTarget='private final top$volatile: kotlin.Any? declared in <root>.LockFreeStack'
++                    bound <this>: GET_VAR '<this>: <root>.LockFreeStack<T of <root>.LockFreeStack> declared in <root>.LockFreeStack.popLoop' type=<root>.LockFreeStack<T of <root>.LockFreeStack> origin=IMPLICIT_ARGUMENT
++                    getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-top$volatile> visibility:local modality:FINAL returnType:kotlin.Any?
++                      VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.LockFreeStack<T of <root>.LockFreeStack>
++                      BLOCK_BODY
++                        RETURN type=kotlin.Nothing from='local final fun <get-top$volatile> (<this>: <root>.LockFreeStack<T of <root>.LockFreeStack>): kotlin.Any? declared in <root>.LockFreeStack.popLoop.<top$volatile-getter>'
++                          CALL 'private final fun <get-top$volatile> (): kotlin.Any? declared in <root>.LockFreeStack' type=kotlin.Any? origin=null
++                            ARG <this>: GET_VAR '<this>: <root>.LockFreeStack<T of <root>.LockFreeStack> declared in <root>.LockFreeStack.popLoop.<top$volatile-getter>.<get-top$volatile>' type=<root>.LockFreeStack<T of <root>.LockFreeStack> origin=null
++                    setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-top$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++                      VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.LockFreeStack<T of <root>.LockFreeStack>
++                      VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Any?
++                      BLOCK_BODY
++                        RETURN type=kotlin.Nothing from='local final fun <set-top$volatile> (<this>: <root>.LockFreeStack<T of <root>.LockFreeStack>, p0: kotlin.Any?): kotlin.Unit declared in <root>.LockFreeStack.popLoop.<top$volatile-getter>'
++                          CALL 'private final fun <set-top$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.LockFreeStack' type=kotlin.Unit origin=null
++                            ARG <this>: GET_VAR '<this>: <root>.LockFreeStack<T of <root>.LockFreeStack> declared in <root>.LockFreeStack.popLoop.<top$volatile-getter>.<set-top$volatile>' type=<root>.LockFreeStack<T of <root>.LockFreeStack> origin=null
++                            ARG value: GET_VAR 'p0: kotlin.Any? declared in <root>.LockFreeStack.popLoop.<top$volatile-getter>.<set-top$volatile>' type=kotlin.Any? origin=null
+           ARG action$atomicfu: FUN_EXPR type=kotlin.Function1<<root>.LockFreeStack.Node<T of <root>.LockFreeStack>?, kotlin.Unit> origin=LAMBDA
+             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
+               VALUE_PARAMETER kind:Regular name:cur index:0 type:<root>.LockFreeStack.Node<T of <root>.LockFreeStack>?
+@@ -200,8 +242,22 @@
+                   BRANCH
+                     if: CALL 'internal final fun compareAndSetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.compareAndSetField>, expectedValue: T of kotlin.concurrent.compareAndSetField, newValue: T of kotlin.concurrent.compareAndSetField): kotlin.Boolean declared in kotlin.concurrent' type=kotlin.Boolean origin=null
+                       TYPE_ARG T: kotlin.Any?
+-                      ARG <this>: PROPERTY_REFERENCE 'private final top$volatile: kotlin.Any? declared in <root>.LockFreeStack' field='FIELD ATOMICFU_GENERATED_FIELD name:top$volatile type:kotlin.Any? visibility:private declared in <root>.LockFreeStack' getter='private final fun <get-top$volatile> (): kotlin.Any? declared in <root>.LockFreeStack' setter='private final fun <set-top$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.LockFreeStack' type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null
+-                        ARG 1: GET_VAR '<this>: <root>.LockFreeStack<T of <root>.LockFreeStack> declared in <root>.LockFreeStack.popLoop' type=<root>.LockFreeStack<T of <root>.LockFreeStack> origin=IMPLICIT_ARGUMENT
++                      ARG <this>: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null reflectionTarget='private final top$volatile: kotlin.Any? declared in <root>.LockFreeStack'
++                        bound <this>: GET_VAR '<this>: <root>.LockFreeStack<T of <root>.LockFreeStack> declared in <root>.LockFreeStack.popLoop' type=<root>.LockFreeStack<T of <root>.LockFreeStack> origin=IMPLICIT_ARGUMENT
++                        getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-top$volatile> visibility:local modality:FINAL returnType:kotlin.Any?
++                          VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.LockFreeStack<T of <root>.LockFreeStack>
++                          BLOCK_BODY
++                            RETURN type=kotlin.Nothing from='local final fun <get-top$volatile> (<this>: <root>.LockFreeStack<T of <root>.LockFreeStack>): kotlin.Any? declared in <root>.LockFreeStack.popLoop.<anonymous>'
++                              CALL 'private final fun <get-top$volatile> (): kotlin.Any? declared in <root>.LockFreeStack' type=kotlin.Any? origin=null
++                                ARG <this>: GET_VAR '<this>: <root>.LockFreeStack<T of <root>.LockFreeStack> declared in <root>.LockFreeStack.popLoop.<anonymous>.<get-top$volatile>' type=<root>.LockFreeStack<T of <root>.LockFreeStack> origin=null
++                        setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-top$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++                          VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.LockFreeStack<T of <root>.LockFreeStack>
++                          VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Any?
++                          BLOCK_BODY
++                            RETURN type=kotlin.Nothing from='local final fun <set-top$volatile> (<this>: <root>.LockFreeStack<T of <root>.LockFreeStack>, p0: kotlin.Any?): kotlin.Unit declared in <root>.LockFreeStack.popLoop.<anonymous>'
++                              CALL 'private final fun <set-top$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.LockFreeStack' type=kotlin.Unit origin=null
++                                ARG <this>: GET_VAR '<this>: <root>.LockFreeStack<T of <root>.LockFreeStack> declared in <root>.LockFreeStack.popLoop.<anonymous>.<set-top$volatile>' type=<root>.LockFreeStack<T of <root>.LockFreeStack> origin=null
++                                ARG value: GET_VAR 'p0: kotlin.Any? declared in <root>.LockFreeStack.popLoop.<anonymous>.<set-top$volatile>' type=kotlin.Any? origin=null
+                       ARG expectedValue: TYPE_OP type=<root>.LockFreeStack.Node<T of <root>.LockFreeStack> origin=IMPLICIT_CAST typeOperand=<root>.LockFreeStack.Node<T of <root>.LockFreeStack>
+                         GET_VAR 'cur: <root>.LockFreeStack.Node<T of <root>.LockFreeStack>? declared in <root>.LockFreeStack.popLoop.<anonymous>' type=<root>.LockFreeStack.Node<T of <root>.LockFreeStack>? origin=null
+                       ARG newValue: CALL 'public final fun <get-next> (): <root>.LockFreeStack.Node<T of <root>.LockFreeStack.Node>? declared in <root>.LockFreeStack.Node' type=<root>.LockFreeStack.Node<T of <root>.LockFreeStack>? origin=GET_PROPERTY
+@@ -223,8 +279,22 @@
+                   FUN ATOMICFU_GENERATED_FUNCTION name:<top$volatile-getter> visibility:local modality:FINAL returnType:kotlin.reflect.KMutableProperty0<kotlin.Any?> [inline]
+                     BLOCK_BODY
+                       RETURN type=kotlin.Nothing from='local final fun <top$volatile-getter> (): kotlin.reflect.KMutableProperty0<kotlin.Any?> declared in <root>.LockFreeStack.popUpdate'
+-                        PROPERTY_REFERENCE 'private final top$volatile: kotlin.Any? declared in <root>.LockFreeStack' field='FIELD ATOMICFU_GENERATED_FIELD name:top$volatile type:kotlin.Any? visibility:private declared in <root>.LockFreeStack' getter='private final fun <get-top$volatile> (): kotlin.Any? declared in <root>.LockFreeStack' setter='private final fun <set-top$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.LockFreeStack' type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null
+-                          ARG 1: GET_VAR '<this>: <root>.LockFreeStack<T of <root>.LockFreeStack> declared in <root>.LockFreeStack.popUpdate' type=<root>.LockFreeStack<T of <root>.LockFreeStack> origin=IMPLICIT_ARGUMENT
++                        RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null reflectionTarget='private final top$volatile: kotlin.Any? declared in <root>.LockFreeStack'
++                          bound <this>: GET_VAR '<this>: <root>.LockFreeStack<T of <root>.LockFreeStack> declared in <root>.LockFreeStack.popUpdate' type=<root>.LockFreeStack<T of <root>.LockFreeStack> origin=IMPLICIT_ARGUMENT
++                          getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-top$volatile> visibility:local modality:FINAL returnType:kotlin.Any?
++                            VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.LockFreeStack<T of <root>.LockFreeStack>
++                            BLOCK_BODY
++                              RETURN type=kotlin.Nothing from='local final fun <get-top$volatile> (<this>: <root>.LockFreeStack<T of <root>.LockFreeStack>): kotlin.Any? declared in <root>.LockFreeStack.popUpdate.<top$volatile-getter>'
++                                CALL 'private final fun <get-top$volatile> (): kotlin.Any? declared in <root>.LockFreeStack' type=kotlin.Any? origin=null
++                                  ARG <this>: GET_VAR '<this>: <root>.LockFreeStack<T of <root>.LockFreeStack> declared in <root>.LockFreeStack.popUpdate.<top$volatile-getter>.<get-top$volatile>' type=<root>.LockFreeStack<T of <root>.LockFreeStack> origin=null
++                          setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-top$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++                            VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.LockFreeStack<T of <root>.LockFreeStack>
++                            VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Any?
++                            BLOCK_BODY
++                              RETURN type=kotlin.Nothing from='local final fun <set-top$volatile> (<this>: <root>.LockFreeStack<T of <root>.LockFreeStack>, p0: kotlin.Any?): kotlin.Unit declared in <root>.LockFreeStack.popUpdate.<top$volatile-getter>'
++                                CALL 'private final fun <set-top$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.LockFreeStack' type=kotlin.Unit origin=null
++                                  ARG <this>: GET_VAR '<this>: <root>.LockFreeStack<T of <root>.LockFreeStack> declared in <root>.LockFreeStack.popUpdate.<top$volatile-getter>.<set-top$volatile>' type=<root>.LockFreeStack<T of <root>.LockFreeStack> origin=null
++                                  ARG value: GET_VAR 'p0: kotlin.Any? declared in <root>.LockFreeStack.popUpdate.<top$volatile-getter>.<set-top$volatile>' type=kotlin.Any? origin=null
+                 ARG action$atomicfu: FUN_EXPR type=kotlin.Function1<<root>.LockFreeStack.Node<T of <root>.LockFreeStack>?, <root>.LockFreeStack.Node<T of <root>.LockFreeStack>?> origin=LAMBDA
+                   FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:<root>.LockFreeStack.Node<T of <root>.LockFreeStack>?
+                     VALUE_PARAMETER kind:Regular name:cur index:0 type:<root>.LockFreeStack.Node<T of <root>.LockFreeStack>?
+@@ -265,8 +335,22 @@
+             FUN ATOMICFU_GENERATED_FUNCTION name:<top$volatile-getter> visibility:local modality:FINAL returnType:kotlin.reflect.KMutableProperty0<kotlin.Any?> [inline]
+               BLOCK_BODY
+                 RETURN type=kotlin.Nothing from='local final fun <top$volatile-getter> (): kotlin.reflect.KMutableProperty0<kotlin.Any?> declared in <root>.LockFreeStack.pushLoop'
+-                  PROPERTY_REFERENCE 'private final top$volatile: kotlin.Any? declared in <root>.LockFreeStack' field='FIELD ATOMICFU_GENERATED_FIELD name:top$volatile type:kotlin.Any? visibility:private declared in <root>.LockFreeStack' getter='private final fun <get-top$volatile> (): kotlin.Any? declared in <root>.LockFreeStack' setter='private final fun <set-top$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.LockFreeStack' type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null
+-                    ARG 1: GET_VAR '<this>: <root>.LockFreeStack<T of <root>.LockFreeStack> declared in <root>.LockFreeStack.pushLoop' type=<root>.LockFreeStack<T of <root>.LockFreeStack> origin=IMPLICIT_ARGUMENT
++                  RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null reflectionTarget='private final top$volatile: kotlin.Any? declared in <root>.LockFreeStack'
++                    bound <this>: GET_VAR '<this>: <root>.LockFreeStack<T of <root>.LockFreeStack> declared in <root>.LockFreeStack.pushLoop' type=<root>.LockFreeStack<T of <root>.LockFreeStack> origin=IMPLICIT_ARGUMENT
++                    getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-top$volatile> visibility:local modality:FINAL returnType:kotlin.Any?
++                      VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.LockFreeStack<T of <root>.LockFreeStack>
++                      BLOCK_BODY
++                        RETURN type=kotlin.Nothing from='local final fun <get-top$volatile> (<this>: <root>.LockFreeStack<T of <root>.LockFreeStack>): kotlin.Any? declared in <root>.LockFreeStack.pushLoop.<top$volatile-getter>'
++                          CALL 'private final fun <get-top$volatile> (): kotlin.Any? declared in <root>.LockFreeStack' type=kotlin.Any? origin=null
++                            ARG <this>: GET_VAR '<this>: <root>.LockFreeStack<T of <root>.LockFreeStack> declared in <root>.LockFreeStack.pushLoop.<top$volatile-getter>.<get-top$volatile>' type=<root>.LockFreeStack<T of <root>.LockFreeStack> origin=null
++                    setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-top$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++                      VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.LockFreeStack<T of <root>.LockFreeStack>
++                      VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Any?
++                      BLOCK_BODY
++                        RETURN type=kotlin.Nothing from='local final fun <set-top$volatile> (<this>: <root>.LockFreeStack<T of <root>.LockFreeStack>, p0: kotlin.Any?): kotlin.Unit declared in <root>.LockFreeStack.pushLoop.<top$volatile-getter>'
++                          CALL 'private final fun <set-top$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.LockFreeStack' type=kotlin.Unit origin=null
++                            ARG <this>: GET_VAR '<this>: <root>.LockFreeStack<T of <root>.LockFreeStack> declared in <root>.LockFreeStack.pushLoop.<top$volatile-getter>.<set-top$volatile>' type=<root>.LockFreeStack<T of <root>.LockFreeStack> origin=null
++                            ARG value: GET_VAR 'p0: kotlin.Any? declared in <root>.LockFreeStack.pushLoop.<top$volatile-getter>.<set-top$volatile>' type=kotlin.Any? origin=null
+           ARG action$atomicfu: FUN_EXPR type=kotlin.Function1<<root>.LockFreeStack.Node<T of <root>.LockFreeStack>?, kotlin.Unit> origin=LAMBDA
+             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
+               VALUE_PARAMETER kind:Regular name:cur index:0 type:<root>.LockFreeStack.Node<T of <root>.LockFreeStack>?
+@@ -280,8 +364,22 @@
+                   BRANCH
+                     if: CALL 'internal final fun compareAndSetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.compareAndSetField>, expectedValue: T of kotlin.concurrent.compareAndSetField, newValue: T of kotlin.concurrent.compareAndSetField): kotlin.Boolean declared in kotlin.concurrent' type=kotlin.Boolean origin=null
+                       TYPE_ARG T: kotlin.Any?
+-                      ARG <this>: PROPERTY_REFERENCE 'private final top$volatile: kotlin.Any? declared in <root>.LockFreeStack' field='FIELD ATOMICFU_GENERATED_FIELD name:top$volatile type:kotlin.Any? visibility:private declared in <root>.LockFreeStack' getter='private final fun <get-top$volatile> (): kotlin.Any? declared in <root>.LockFreeStack' setter='private final fun <set-top$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.LockFreeStack' type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null
+-                        ARG 1: GET_VAR '<this>: <root>.LockFreeStack<T of <root>.LockFreeStack> declared in <root>.LockFreeStack.pushLoop' type=<root>.LockFreeStack<T of <root>.LockFreeStack> origin=IMPLICIT_ARGUMENT
++                      ARG <this>: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null reflectionTarget='private final top$volatile: kotlin.Any? declared in <root>.LockFreeStack'
++                        bound <this>: GET_VAR '<this>: <root>.LockFreeStack<T of <root>.LockFreeStack> declared in <root>.LockFreeStack.pushLoop' type=<root>.LockFreeStack<T of <root>.LockFreeStack> origin=IMPLICIT_ARGUMENT
++                        getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-top$volatile> visibility:local modality:FINAL returnType:kotlin.Any?
++                          VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.LockFreeStack<T of <root>.LockFreeStack>
++                          BLOCK_BODY
++                            RETURN type=kotlin.Nothing from='local final fun <get-top$volatile> (<this>: <root>.LockFreeStack<T of <root>.LockFreeStack>): kotlin.Any? declared in <root>.LockFreeStack.pushLoop.<anonymous>'
++                              CALL 'private final fun <get-top$volatile> (): kotlin.Any? declared in <root>.LockFreeStack' type=kotlin.Any? origin=null
++                                ARG <this>: GET_VAR '<this>: <root>.LockFreeStack<T of <root>.LockFreeStack> declared in <root>.LockFreeStack.pushLoop.<anonymous>.<get-top$volatile>' type=<root>.LockFreeStack<T of <root>.LockFreeStack> origin=null
++                        setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-top$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++                          VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.LockFreeStack<T of <root>.LockFreeStack>
++                          VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Any?
++                          BLOCK_BODY
++                            RETURN type=kotlin.Nothing from='local final fun <set-top$volatile> (<this>: <root>.LockFreeStack<T of <root>.LockFreeStack>, p0: kotlin.Any?): kotlin.Unit declared in <root>.LockFreeStack.pushLoop.<anonymous>'
++                              CALL 'private final fun <set-top$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.LockFreeStack' type=kotlin.Unit origin=null
++                                ARG <this>: GET_VAR '<this>: <root>.LockFreeStack<T of <root>.LockFreeStack> declared in <root>.LockFreeStack.pushLoop.<anonymous>.<set-top$volatile>' type=<root>.LockFreeStack<T of <root>.LockFreeStack> origin=null
++                                ARG value: GET_VAR 'p0: kotlin.Any? declared in <root>.LockFreeStack.pushLoop.<anonymous>.<set-top$volatile>' type=kotlin.Any? origin=null
+                       ARG expectedValue: GET_VAR 'cur: <root>.LockFreeStack.Node<T of <root>.LockFreeStack>? declared in <root>.LockFreeStack.pushLoop.<anonymous>' type=<root>.LockFreeStack.Node<T of <root>.LockFreeStack>? origin=null
+                       ARG newValue: GET_VAR 'val upd: <root>.LockFreeStack.Node<T of <root>.LockFreeStack> declared in <root>.LockFreeStack.pushLoop.<anonymous>' type=<root>.LockFreeStack.Node<T of <root>.LockFreeStack> origin=null
+                     then: RETURN type=kotlin.Nothing from='public final fun pushLoop (value: T of <root>.LockFreeStack): kotlin.Unit declared in <root>.LockFreeStack'
+@@ -296,8 +394,22 @@
+             FUN ATOMICFU_GENERATED_FUNCTION name:<top$volatile-getter> visibility:local modality:FINAL returnType:kotlin.reflect.KMutableProperty0<kotlin.Any?> [inline]
+               BLOCK_BODY
+                 RETURN type=kotlin.Nothing from='local final fun <top$volatile-getter> (): kotlin.reflect.KMutableProperty0<kotlin.Any?> declared in <root>.LockFreeStack.pushUpdate'
+-                  PROPERTY_REFERENCE 'private final top$volatile: kotlin.Any? declared in <root>.LockFreeStack' field='FIELD ATOMICFU_GENERATED_FIELD name:top$volatile type:kotlin.Any? visibility:private declared in <root>.LockFreeStack' getter='private final fun <get-top$volatile> (): kotlin.Any? declared in <root>.LockFreeStack' setter='private final fun <set-top$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.LockFreeStack' type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null
+-                    ARG 1: GET_VAR '<this>: <root>.LockFreeStack<T of <root>.LockFreeStack> declared in <root>.LockFreeStack.pushUpdate' type=<root>.LockFreeStack<T of <root>.LockFreeStack> origin=IMPLICIT_ARGUMENT
++                  RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null reflectionTarget='private final top$volatile: kotlin.Any? declared in <root>.LockFreeStack'
++                    bound <this>: GET_VAR '<this>: <root>.LockFreeStack<T of <root>.LockFreeStack> declared in <root>.LockFreeStack.pushUpdate' type=<root>.LockFreeStack<T of <root>.LockFreeStack> origin=IMPLICIT_ARGUMENT
++                    getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-top$volatile> visibility:local modality:FINAL returnType:kotlin.Any?
++                      VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.LockFreeStack<T of <root>.LockFreeStack>
++                      BLOCK_BODY
++                        RETURN type=kotlin.Nothing from='local final fun <get-top$volatile> (<this>: <root>.LockFreeStack<T of <root>.LockFreeStack>): kotlin.Any? declared in <root>.LockFreeStack.pushUpdate.<top$volatile-getter>'
++                          CALL 'private final fun <get-top$volatile> (): kotlin.Any? declared in <root>.LockFreeStack' type=kotlin.Any? origin=null
++                            ARG <this>: GET_VAR '<this>: <root>.LockFreeStack<T of <root>.LockFreeStack> declared in <root>.LockFreeStack.pushUpdate.<top$volatile-getter>.<get-top$volatile>' type=<root>.LockFreeStack<T of <root>.LockFreeStack> origin=null
++                    setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-top$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++                      VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.LockFreeStack<T of <root>.LockFreeStack>
++                      VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Any?
++                      BLOCK_BODY
++                        RETURN type=kotlin.Nothing from='local final fun <set-top$volatile> (<this>: <root>.LockFreeStack<T of <root>.LockFreeStack>, p0: kotlin.Any?): kotlin.Unit declared in <root>.LockFreeStack.pushUpdate.<top$volatile-getter>'
++                          CALL 'private final fun <set-top$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.LockFreeStack' type=kotlin.Unit origin=null
++                            ARG <this>: GET_VAR '<this>: <root>.LockFreeStack<T of <root>.LockFreeStack> declared in <root>.LockFreeStack.pushUpdate.<top$volatile-getter>.<set-top$volatile>' type=<root>.LockFreeStack<T of <root>.LockFreeStack> origin=null
++                            ARG value: GET_VAR 'p0: kotlin.Any? declared in <root>.LockFreeStack.pushUpdate.<top$volatile-getter>.<set-top$volatile>' type=kotlin.Any? origin=null
+           ARG action$atomicfu: FUN_EXPR type=kotlin.Function1<<root>.LockFreeStack.Node<T of <root>.LockFreeStack>?, <root>.LockFreeStack.Node<T of <root>.LockFreeStack>?> origin=LAMBDA
+             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:<root>.LockFreeStack.Node<T of <root>.LockFreeStack>?
+               VALUE_PARAMETER kind:Regular name:cur index:0 type:<root>.LockFreeStack.Node<T of <root>.LockFreeStack>?

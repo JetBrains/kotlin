@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:OptIn(KtIdeApi::class, KtImplementationDetail::class, KtNonPublicApi::class)
+@file:OptIn(KtIdeApi::class, KtImplementationDetail::class)
 
 package org.jetbrains.kotlin.psi
 
@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.psiUtil.ClassIdCalculator
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.isKtFile
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
 
@@ -63,6 +64,7 @@ abstract class KtClassOrObject :
     @Deprecated(
         message = "Use addSuperType(superTypeListEntry) instead",
         replaceWith = ReplaceWith("this.addSuperType(superTypeListEntry)", "org.jetbrains.kotlin.idea.base.psi.addSuperType"),
+        level = DeprecationLevel.ERROR,
     )
     fun addSuperTypeListEntry(superTypeListEntry: KtSuperTypeListEntry): KtSuperTypeListEntry =
         KtPsiMutationService.getInstance().addSuperType(this, superTypeListEntry)
@@ -70,6 +72,7 @@ abstract class KtClassOrObject :
     @Deprecated(
         message = "Use removeSuperType(superTypeListEntry) instead",
         replaceWith = ReplaceWith("this.removeSuperType(superTypeListEntry)", "org.jetbrains.kotlin.idea.base.psi.removeSuperType"),
+        level = DeprecationLevel.ERROR,
     )
     fun removeSuperTypeListEntry(superTypeListEntry: KtSuperTypeListEntry) {
         KtPsiMutationService.getInstance().removeSuperType(this, superTypeListEntry)
@@ -86,6 +89,7 @@ abstract class KtClassOrObject :
     @Deprecated(
         message = "Use addMemberDeclaration(declaration) instead",
         replaceWith = ReplaceWith("this.addMemberDeclaration(declaration)", "org.jetbrains.kotlin.idea.base.psi.addMemberDeclaration"),
+        level = DeprecationLevel.ERROR,
     )
     inline fun <reified T : KtDeclaration> addDeclaration(declaration: T): T =
         KtPsiMutationService.getInstance().addMemberDeclaration(this, declaration)
@@ -96,6 +100,7 @@ abstract class KtClassOrObject :
             "this.addMemberDeclarationAfter(declaration, anchor)",
             "org.jetbrains.kotlin.idea.base.psi.addMemberDeclarationAfter",
         ),
+        level = DeprecationLevel.ERROR,
     )
     inline fun <reified T : KtDeclaration> addDeclarationAfter(declaration: T, anchor: PsiElement?): T =
         KtPsiMutationService.getInstance().addMemberDeclarationAfter(this, declaration, anchor)
@@ -106,6 +111,7 @@ abstract class KtClassOrObject :
             "this.addMemberDeclarationBefore(declaration, anchor)",
             "org.jetbrains.kotlin.idea.base.psi.addMemberDeclarationBefore",
         ),
+        level = DeprecationLevel.ERROR,
     )
     inline fun <reified T : KtDeclaration> addDeclarationBefore(declaration: T, anchor: PsiElement?): T =
         KtPsiMutationService.getInstance().addMemberDeclarationBefore(this, declaration, anchor)
@@ -127,7 +133,15 @@ abstract class KtClassOrObject :
     private var isLocal: Boolean? = null
 
     override fun isLocal(): Boolean {
-        greenStub?.isLocal?.let { return it }
+        val stub = greenStub
+        if (stub != null) {
+            return when {
+                stub.classId != null -> false
+                // Enum entries have no class ID, but they are as local as their enum class
+                this is KtEnumEntry -> containingClassOrObject?.isLocal() ?: false
+                else -> true
+            }
+        }
 
         isLocal?.let { return it }
 
@@ -190,8 +204,15 @@ abstract class KtClassOrObject :
         KtTokens.CLASS_KEYWORD, KtTokens.INTERFACE_KEYWORD, KtTokens.OBJECT_KEYWORD
     )
 
+    /**
+     * Deletes this class or object.
+     *
+     * When [KtPsiMutationService] is registered, as in the IntelliJ Kotlin plugin, the deletion may also adjust the surrounding code, e.g.,
+     * delete a semicolon that follows the declaration, or delete the whole file instead if the declaration is the only one in it. Without
+     * the service, it performs only the plain platform deletion.
+     */
     override fun delete() {
-        KtPsiMutationService.getInstance().deleteClassOrObject(this)
+        deleteWithMutationService(this) { it.deleteClassOrObject(this) }
     }
 
     override fun subtreeChanged() {
@@ -216,6 +237,7 @@ abstract class KtClassOrObject :
 @Deprecated(
     message = "Use getOrCreateClassBody() instead",
     replaceWith = ReplaceWith("this.getOrCreateClassBody()", "org.jetbrains.kotlin.idea.base.psi.getOrCreateClassBody"),
+    level = DeprecationLevel.ERROR,
 )
 fun KtClassOrObject.getOrCreateBody(): KtClassBody = KtPsiMutationService.getInstance().getOrCreateClassBody(this)
 

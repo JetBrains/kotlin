@@ -36,7 +36,7 @@ open class BasicJvmScriptEvaluator : ScriptEvaluator {
                         sharedConfiguration.with {
                             compilationConfiguration(compiledScript.compilationConfiguration)
                         }.refineBeforeEvaluation(compiledScript).valueOr {
-                            return@invoke ResultWithDiagnostics.Failure(it.reports)
+                            return@onSuccess it
                         }
 
                     val resultValue = try {

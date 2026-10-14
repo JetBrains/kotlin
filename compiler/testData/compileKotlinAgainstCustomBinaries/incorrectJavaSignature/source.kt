@@ -1,4 +1,4 @@
 package test
 fun main() {
-    object : B() {}
+    val _ = object : B() {}
 }

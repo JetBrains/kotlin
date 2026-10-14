@@ -25,8 +25,8 @@ import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.moduleName
+import org.jetbrains.kotlin.config.parserMode
 import org.jetbrains.kotlin.config.perfManager
-import org.jetbrains.kotlin.config.useLightTree
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.DependencyListForCliModule
 import org.jetbrains.kotlin.fir.FirSession
@@ -34,10 +34,14 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.fir.session.KlibIcData
+import org.jetbrains.kotlin.fir.session.KlibIcMetadataComponent
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
 import org.jetbrains.kotlin.ir.backend.js.loadWebKlibs
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.SerializedIrFile
+import org.jetbrains.kotlin.library.impl.klibIrComponentFromFiles
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.util.PerformanceManager
@@ -69,7 +73,7 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
 
         val extensionStorage = configuration.extensionsStorage ?: error("Extensions storage is not registered")
 
-        val analyzedOutput = if (configuration.useLightTree) {
+        val analyzedOutput = if (configuration.parserMode.treeBased) {
             val groupedSources =
                 collectSources(
                     configuration,
@@ -233,7 +237,7 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
                 resolvedLibraries, dependencyList, extensionRegistrars,
                 isCommonSource = isCommonSource,
                 fileBelongsToModule = fileBelongsToModule,
-                icData = incrementalDataProvider?.let(::KlibIcData),
+                icData = incrementalDataProvider?.toKlibIcData(),
             )
         } else {
             prepareJsSessions(
@@ -241,7 +245,7 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
                 resolvedLibraries, dependencyList, extensionRegistrars,
                 isCommonSource = isCommonSource,
                 fileBelongsToModule = fileBelongsToModule,
-                icData = incrementalDataProvider?.let(::KlibIcData),
+                icData = incrementalDataProvider?.toKlibIcData(),
             )
         }
 
@@ -250,5 +254,26 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
         }
 
         return outputs
+    }
+
+    private fun IncrementalDataProvider.toKlibIcData(): KlibIcData {
+        val inlineData = serializedIrInlineFiles.entries.map {
+            SerializedIrFile(
+                it.value.fileData,
+                FqName.ROOT.asString(), // the exact `fqName` and `path` do not matter for our use case
+                it.key.path,
+                it.value.types,
+                it.value.signatures,
+                it.value.strings,
+                it.value.bodies,
+                it.value.declarations,
+                it.value.debugInfo,
+                it.value.fileEntries
+            )
+        }
+        return KlibIcData(
+            KlibIcMetadataComponent(compiledPackageParts.mapValues { [_, result] -> result.metadata }),
+            klibIrComponentFromFiles(inlineData)
+        )
     }
 }

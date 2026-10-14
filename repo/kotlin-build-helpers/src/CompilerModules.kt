@@ -71,19 +71,18 @@ object CompilerModules {
      */
     val firCommonCompilerModules = arrayOf(
         ":compiler:fir:cones",
-        ":compiler:fir:providers",
-        ":compiler:fir:semantics",
+        ":compiler:fir:semantics.api",
         ":compiler:fir:resolve",
         ":compiler:fir:fir-serialization",
         ":compiler:fir:fir-deserialization",
         ":compiler:fir:plugin-utils",
         ":compiler:fir:tree",
         ":compiler:fir:fir-jvm",
-        ":compiler:fir:fir-js",
         ":compiler:fir:fir-native",
         ":compiler:fir:raw-fir:raw-fir.common",
         ":compiler:fir:raw-fir:psi2fir",
-        ":compiler:fir:checkers",
+        ":compiler:fir:checkers:checkers.api",
+        ":compiler:fir:checkers:checkers.common",
         ":compiler:fir:checkers:checkers.jvm",
         ":compiler:fir:checkers:checkers.js",
         ":compiler:fir:checkers:checkers.native",
@@ -276,16 +275,7 @@ object CompilerModules {
         ":prepare:analysis-api:kotlin-analysis-api-standalone-implementation",
         ":prepare:analysis-api:kotlin-analysis-api-intellij-api-surface-components",
         ":prepare:analysis-api:kotlin-analysis-api-intellij-implementation-components",
-        ":prepare:analysis-api:kotlin-analysis-api-allopen-compiler-plugin-support",
-        ":prepare:analysis-api:kotlin-analysis-api-assignment-compiler-plugin-support",
-        ":prepare:analysis-api:kotlin-analysis-api-compose-compiler-plugin-support",
-        ":prepare:analysis-api:kotlin-analysis-api-dataframe-compiler-plugin-support",
-        ":prepare:analysis-api:kotlin-analysis-api-js-plain-objects-compiler-plugin-support",
-        ":prepare:analysis-api:kotlin-analysis-api-kotlinx-serialization-compiler-plugin-support",
-        ":prepare:analysis-api:kotlin-analysis-api-lombok-compiler-plugin-support",
-        ":prepare:analysis-api:kotlin-analysis-api-noarg-compiler-plugin-support",
-        ":prepare:analysis-api:kotlin-analysis-api-parcelize-compiler-plugin-support",
-        ":prepare:analysis-api:kotlin-analysis-api-sam-with-receiver-compiler-plugin-support",
+        ":prepare:analysis-api:kotlin-analysis-api-internal-test-framework",
     )
 
     /**
@@ -433,6 +423,7 @@ object CompilerModules {
         ":kotlin-util-klib-metadata",
         ":native:kotlin-native-utils",
         ":compiler:build-tools:kotlin-build-tools-api",
+        ":compiler:build-tools:kotlin-build-tools-api-jps",
     )
 
     val compilerArtifactsForIde = listOfNotNull(
@@ -492,6 +483,7 @@ object CompilerModules {
         ":kotlin-main-kts",
         ":kotlin-dom-api-compat",
         ":compiler:build-tools:kotlin-build-tools-api",
+        ":compiler:build-tools:kotlin-build-tools-api-jps",
         ":compiler:build-tools:kotlin-build-tools-impl",
         ":compiler:build-tools:kotlin-build-tools-cri-impl",
     )

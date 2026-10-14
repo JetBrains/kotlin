@@ -17,8 +17,9 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.archive.KotlinTargetWithKotlinArchiveSupport
 import org.jetbrains.kotlin.gradle.plugin.mpp.archive.defaultKotlinUsageContextMaybeReplacedWithKar
+import org.jetbrains.kotlin.gradle.plugin.mpp.archive.isStoredInKotlinArchive
+import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.swiftExportMetadataElementsOrNull
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.KmpPublicationStrategy
 import org.jetbrains.kotlin.gradle.plugin.sources.awaitPlatformCompilations
 import org.jetbrains.kotlin.gradle.plugin.sources.defaultImpl
@@ -49,14 +50,15 @@ private fun Project.addSourcesJarArtifactToConfiguration(
 private suspend fun KotlinMultiplatformExtension.sourcesJarContent(): Map<String, Iterable<File>> {
     KotlinPluginLifecycle.Stage.AfterFinaliseDsl.await()
     return buildSet {
-        addAll(getCommonSourceSetsForMetadataCompilation(project))
-        addAll(getHostSpecificMainSharedSourceSets(project))
+        if (metadataTarget.isSourcesPublishable) {
+            addAll(getCommonSourceSetsForMetadataCompilation(project))
+            addAll(getHostSpecificMainSharedSourceSets(project))
+        }
         if (publishing.publicationFormat.get() == KotlinPublicationFormat.KOTLIN_ARCHIVE) {
-            val platformCompilationsInKotlinArchive = getPublishedPlatformCompilations(project).values
-                .filter {
-                    val target = it.target
-                    target is KotlinTargetWithKotlinArchiveSupport && target.isStoredInKotlinArchive.get()
-                }
+            val platformCompilationsInKotlinArchive = getPublishedPlatformCompilations(
+                project,
+                targetFilter = { it.isSourcesPublishable && it.isStoredInKotlinArchive.get() }
+            ).values
             for (sourceSet in awaitSourceSets()) {
                 if (sourceSet.internal.awaitPlatformCompilations().any { it in platformCompilationsInKotlinArchive }) {
                     add(sourceSet)
@@ -78,10 +80,11 @@ private suspend fun KotlinMultiplatformExtension.metadataVariantsSoftwareCompone
     sourcesJarTask: TaskProvider<Jar>
 ) : SoftwareComponent {
     val mainCompilation = metadataTarget.awaitMetadataCompilationsCreated().getByName(MAIN_COMPILATION_NAME)
+    val isStoredInKotlinArchive = publishing.publicationFormat.map { it == KotlinPublicationFormat.KOTLIN_ARCHIVE }
     val usages = buildSet {
         add(
             project.defaultKotlinUsageContextMaybeReplacedWithKar(
-                isStoredInKotlinArchive = publishing.publicationFormat.map { it == KotlinPublicationFormat.KOTLIN_ARCHIVE },
+                isStoredInKotlinArchive = isStoredInKotlinArchive,
                 compilation = mainCompilation,
                 mavenScope = KotlinUsageContext.MavenScope.COMPILE,
                 dependencyConfigurationName = metadataTarget.apiElementsConfigurationName,
@@ -104,6 +107,19 @@ private suspend fun KotlinMultiplatformExtension.metadataVariantsSoftwareCompone
                     dependencyConfigurationName = sourcesElements,
                     includeIntoProjectStructureMetadata = false,
                     publishOnlyIf = { metadataTarget.isSourcesPublishable }
+                )
+            )
+        }
+
+        val swiftExportMetadataElements = project.swiftExportMetadataElementsOrNull()
+        if (swiftExportMetadataElements != null) {
+            add(
+                project.defaultKotlinUsageContextMaybeReplacedWithKar(
+                    isStoredInKotlinArchive = isStoredInKotlinArchive,
+                    compilation = mainCompilation,
+                    mavenScope = null,
+                    dependencyConfigurationName = swiftExportMetadataElements.name,
+                    includeIntoProjectStructureMetadata = false,
                 )
             )
         }
@@ -134,20 +150,24 @@ private fun KotlinTarget.publishableSoftwareComponents(): List<SoftwareComponent
     return components.filter { it.name in targetPublishableComponentNames }
 }
 
+internal fun KotlinMultiplatformExtension.rootSourcesJarTask(): TaskProvider<Jar> {
+    return sourcesJarTaskNamed(
+        taskName = "sourcesJar",
+        componentName = rootSoftwareComponent.name,
+        project = project,
+        sourceSets = project.future { sourcesJarContent() },
+        artifactNameAppendix = rootSoftwareComponent.name.toLowerCaseAsciiOnly()
+    )
+}
+
 internal val SetupRootPublicationAction = KotlinProjectSetupCoroutine {
     val multiplatformExtension = project.multiplatformExtensionOrNull ?: return@KotlinProjectSetupCoroutine
-    val sourcesJarTask: TaskProvider<Jar> = sourcesJarTaskNamed(
-        taskName = "sourcesJar",
-        componentName = multiplatformExtension.rootSoftwareComponent.name,
-        project = project,
-        sourceSets = project.future { multiplatformExtension.sourcesJarContent() },
-        artifactNameAppendix = multiplatformExtension.rootSoftwareComponent.name.toLowerCaseAsciiOnly()
-    )
+    val sourcesJarTask = multiplatformExtension.rootSourcesJarTask()
     KotlinPluginLifecycle.Stage.AfterFinaliseCompilations.await()
 
     val metadataVariants = multiplatformExtension.metadataVariantsSoftwareComponent(sourcesJarTask)
     val (targetsStoredInKotlinArchive, targetsNotStoredInKotlinArchive) = multiplatformExtension.awaitTargets()
-        .partition { it is KotlinTargetWithKotlinArchiveSupport && it.isStoredInKotlinArchive.get() }
+        .partition { it.isStoredInKotlinArchive.get() }
 
     multiplatformExtension.rootSoftwareComponent.referencedSoftwareComponents.complete(
         targetsNotStoredInKotlinArchive.flatMap { it.publishableSoftwareComponents() }

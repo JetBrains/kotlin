@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.scripting.configuration
 
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import java.io.File
 
@@ -32,8 +33,13 @@ object ScriptingConfigurationKeys {
     val DISABLE_SCRIPT_DEFINITIONS_AUTOLOADING_OPTION: CompilerConfigurationKey<Boolean> =
         CompilerConfigurationKey.create("DISABLE_SCRIPT_DEFINITIONS_AUTOLOADING_OPTION")
 
-    val LEGACY_SCRIPT_RESOLVER_ENVIRONMENT_OPTION: CompilerConfigurationKey<MutableMap<String, Any?>> =
-        CompilerConfigurationKey.create("LEGACY_SCRIPT_RESOLVER_ENVIRONMENT_OPTION")
+    // Host environment passed to the script compilation configuration refinement via ScriptingHostConfiguration.getRefinementEnvironment
+    val SCRIPT_REFINEMENT_ENVIRONMENT: CompilerConfigurationKey<MutableMap<String, Any?>> =
+        CompilerConfigurationKey.create("SCRIPT_REFINEMENT_ENVIRONMENT")
+
+    @Deprecated("Use SCRIPT_REFINEMENT_ENVIRONMENT instead", ReplaceWith("SCRIPT_REFINEMENT_ENVIRONMENT"))
+    val LEGACY_SCRIPT_RESOLVER_ENVIRONMENT_OPTION: CompilerConfigurationKey<MutableMap<String, Any?>>
+        get() = SCRIPT_REFINEMENT_ENVIRONMENT
 
     // Enable additional IR generation which contains script expressions evaluation info.
     val ENABLE_SCRIPT_EXPLANATION_OPTION: CompilerConfigurationKey<Boolean> =
@@ -42,4 +48,20 @@ object ScriptingConfigurationKeys {
     // Do not attempt to use script compilation cache, even if provided by the definition
     val DISABLE_SCRIPT_COMPILATION_CACHE: CompilerConfigurationKey<Boolean> =
         CompilerConfigurationKey.create("DISABLE_SCRIPT_COMPILATION_CACHE")
+
+    // Ordered ClassIds of previous REPL snippets already compiled in this session, oldest first.
+    // Their compiled classes must already be on this compile's classpath. May cover only the
+    // tail of the session - the snippets preceding the oldest one given are recovered from the
+    // prior-snippet links in the compiled snippets' metadata.
+    val REPL_SNIPPET_PRIOR_CLASSES: CompilerConfigurationKey<List<ClassId>> =
+        CompilerConfigurationKey.create("REPL_SNIPPET_PRIOR_CLASSES")
+
+    // Enables compiling `.repl.<file extension>` sources as chained REPL snippets keeping no state
+    // between compilations (should be used together with `-Xallow-any-scripts-in-source-roots`).
+    val REPL_SNIPPET_STATELESS_MODE: CompilerConfigurationKey<Boolean> =
+        CompilerConfigurationKey.create("REPL_SNIPPET_STATELESS_MODE")
+
+    // File with a serialized `ScriptCompilationConfiguration` for the snippets compilation
+    val REPL_SNIPPET_CONFIGURATION_FILE: CompilerConfigurationKey<File> =
+        CompilerConfigurationKey.create("REPL_SNIPPET_CONFIGURATION_FILE")
 }

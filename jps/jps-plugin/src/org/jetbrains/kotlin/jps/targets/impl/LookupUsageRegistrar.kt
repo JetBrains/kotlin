@@ -23,16 +23,7 @@ class LookupUsageRegistrar {
             return
         }
 
-        when (lookupTracker) {
-            is LookupTrackerImpl -> registerLookupTrackerImplEntries(lookupTracker, callback)
-            else -> {
-                // could be DO_NOTHING tracker, TestLookupTracker, RemoteLookupTrackerClient - the last two are not visible, and the first one is irrelevant
-                messageCollector.report(
-                    CompilerMessageSeverity.WARNING,
-                    "Can't register lookup usages with this compilation setup. lookupTracker is $lookupTracker. $HOW_TO_FIX"
-                )
-            }
-        }
+        if (lookupTracker is LookupTrackerImpl) registerLookupTrackerImplEntries(lookupTracker, callback)
     }
 
     // Kotlin plugin can be used with older versions of jps-build, so we check for the availability of APIs.

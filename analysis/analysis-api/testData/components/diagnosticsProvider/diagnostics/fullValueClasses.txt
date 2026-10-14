@@ -1,0 +1,13 @@
+Diagnostics from file:
+  for PSI element of type KtBinaryExpression at (11,50-66)
+    FORBIDDEN_IDENTITY_EQUALS      text ranges: [(258,274)]
+      PSI: KtBinaryExpression at (11,50-66)
+  for PSI element of type KtBinaryExpression at (15,56-72)
+    FORBIDDEN_IDENTITY_EQUALS      text ranges: [(351,367)]
+      PSI: KtBinaryExpression at (15,56-72)
+  for PSI element of type KtProperty at (6,5-25)
+    PROPERTY_WITH_BACKING_FIELD_INSIDE_VALUE_CLASS      text ranges: [(142,154)]
+      PSI: KtProperty at (6,5-25)
+  for PSI element of type KtParameter at (3,29-39)
+    VALUE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER      text ranges: [(60,70)]
+      PSI: KtParameter at (3,29-39)

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import kotlin.DeprecationLevel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -464,7 +465,8 @@ public class KtVisitor<R, D> extends PsiElementVisitor {
      * @deprecated This method is obsolete because {@link KtSelfType} is obsolete.
      */
     @kotlin.Deprecated(
-            message = "This method is obsolete because 'KtSelfType' is obsolete."
+            message = "This method is obsolete because 'KtSelfType' is obsolete.",
+            level = DeprecationLevel.ERROR
     )
     @Deprecated
     public R visitSelfType(@NotNull KtSelfType type, D data) {

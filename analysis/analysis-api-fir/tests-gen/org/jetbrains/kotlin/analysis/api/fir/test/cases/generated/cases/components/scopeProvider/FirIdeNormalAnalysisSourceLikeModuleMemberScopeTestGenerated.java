@@ -99,6 +99,24 @@ public class FirIdeNormalAnalysisSourceLikeModuleMemberScopeTestGenerated extend
   }
 
   @Test
+  @TestMetadata("fullValueClass.kt")
+  public void testFullValueClass() {
+    run("fullValueClass.kt");
+  }
+
+  @Test
+  @TestMetadata("fullValueClassFromLibrary.kt")
+  public void testFullValueClassFromLibrary() {
+    run("fullValueClassFromLibrary.kt");
+  }
+
+  @Test
+  @TestMetadata("fullValueObject.kt")
+  public void testFullValueObject() {
+    run("fullValueObject.kt");
+  }
+
+  @Test
   @TestMetadata("innerClass.kt")
   public void testInnerClass() {
     run("innerClass.kt");
@@ -168,6 +186,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleMemberScopeTestGenerated extend
   @TestMetadata("MutableList.kt")
   public void testMutableList() {
     run("MutableList.kt");
+  }
+
+  @Test
+  @TestMetadata("regularClassWithValueSuperclass.kt")
+  public void testRegularClassWithValueSuperclass() {
+    run("regularClassWithValueSuperclass.kt");
   }
 
   @Test

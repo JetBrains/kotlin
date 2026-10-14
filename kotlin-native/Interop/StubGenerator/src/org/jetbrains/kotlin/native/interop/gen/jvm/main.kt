@@ -23,6 +23,8 @@ import kotlinx.cli.default
 import kotlinx.cli.required
 import kotlinx.metadata.klib.ChunkedKlibModuleFragmentWriteStrategy
 import kotlinx.metadata.klib.KlibMetadataVersion
+import kotlinx.metadata.klib.KlibModuleFragmentWriteStrategy
+import org.jetbrains.kotlin.backend.konan.serialization.IdSignaturesExtractorFromCInteropKlib
 import org.jetbrains.kotlin.config.KlibAbiCompatibilityLevel
 import org.jetbrains.kotlin.konan.ForeignExceptionMode
 import org.jetbrains.kotlin.konan.TempFiles
@@ -55,6 +57,9 @@ import java.util.*
 import kotlin.io.path.Path
 import kotlin.io.path.absolute
 import kotlin.io.path.absolutePathString
+import kotlin.metadata.KmAnnotation
+import kotlin.metadata.KmType
+import kotlin.metadata.internal.common.KmModuleFragment
 
 data class InternalInteropOptions(val generated: String, val natives: String?, val manifest: String? = null,
                                   val cstubsName: String? = null)
@@ -496,9 +501,26 @@ private fun processCLib(
                 if (nopack) it.removeSuffixIfPresent(suffix) else it.suffixIfNot(suffix)
             }
 
-            val serializedMetadata = stubIrOutput.metadata.write(ChunkedKlibModuleFragmentWriteStrategy(topLevelClassifierDeclarationsPerFile = 128)).run {
+            val metadataWriteStrategy = object : KlibModuleFragmentWriteStrategy {
+                val chunked = ChunkedKlibModuleFragmentWriteStrategy(topLevelClassifierDeclarationsPerFile = 128)
+                val extractingReferencedClassIds = IdSignaturesExtractorFromCInteropKlib.KlibModuleFragmentReadWriteStrategyImpl(
+                        loadOnlyTopLevelReferencedClassIds = true
+                )
+
+                override fun processPackageParts(parts: List<KmModuleFragment>) = chunked.processPackageParts(parts)
+                override fun processType(type: KmType) = extractingReferencedClassIds.processType(type)
+                override fun processAnnotation(annotation: KmAnnotation) = extractingReferencedClassIds.processAnnotation(annotation)
+            }
+
+            val serializedMetadata = stubIrOutput.metadata.write(metadataWriteStrategy).run {
                 SerializedMetadata(header, fragments, fragmentNames, metadataVersion.toArray())
             }
+
+            val topLevelSignatures = IdSignaturesExtractorFromCInteropKlib.extractOnlyTopLevelPublicSignatures(
+                    packageFqName = FqName(outKtPkg),
+                    onlyTopLevelReferencedClasses = metadataWriteStrategy.extractingReferencedClassIds.referencedClassIds,
+                    metadataModule = stubIrOutput.metadata,
+            )
 
             createInteropLibrary(
                     serializedMetadata = serializedMetadata,
@@ -512,6 +534,7 @@ private fun processCLib(
                     shortName = cinteropArguments.shortModuleName,
                     staticLibraries = resolveLibraries(staticLibraries, libraryPaths).map(::Path),
                     klibAbiCompatibilityLevel = cinteropArguments.klibAbiCompatibilityLevel,
+                    topLevelSignatures = topLevelSignatures,
             )
             return null
         }

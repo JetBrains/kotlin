@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.incremental.js
 
+import org.jetbrains.kotlin.name.CallableId
 import java.io.File
 
 interface IncrementalResultsConsumer {
@@ -46,6 +47,11 @@ interface IncrementalResultsConsumer {
         fqn: ByteArray,
         debugInfo: ByteArray?,
         fileEntries: ByteArray?,
+    )
+
+    fun processIrInlineIds(
+        sourceFile: File,
+        ids: List<CallableId>,
     )
 }
 
@@ -101,5 +107,34 @@ open class IncrementalResultsConsumerImpl : IncrementalResultsConsumer {
         irInlineFileData[sourceFile] = IrTranslationResultValue(
             fileData, types, signatures, strings, declarations, bodies, fqn, debugInfo, fileEntries
         )
+    }
+
+    val inlineFunctionRepresentationData: Map<File, List<IrInlineFunctionRepresentation>>
+        field = hashMapOf<File, List<IrInlineFunctionRepresentation>>()
+
+    override fun processIrInlineIds(
+        sourceFile: File,
+        ids: List<CallableId>,
+    ) {
+        if (ids.isEmpty()) return
+        val fileHash = irInlineFileData[sourceFile]?.hash() ?: error("There is no inline data associated with $sourceFile")
+        inlineFunctionRepresentationData[sourceFile] = buildMap {
+            ids.forEach { callableId -> getOrPut(callableId) { mutableListOf() }.add(fileHash) }
+        }.map { IrInlineFunctionRepresentation(it.key, it.value) }
+    }
+
+    private fun IrTranslationResultValue.hash(): Long {
+        val hashCodes = listOfNotNull<Long>(
+            this.fileData.contentHashCode().toLong(),
+            this.types.contentHashCode().toLong(),
+            this.signatures.contentHashCode().toLong(),
+            this.strings.contentHashCode().toLong(),
+            this.declarations.contentHashCode().toLong(),
+            this.bodies.contentHashCode().toLong(),
+            this.fqn.contentHashCode().toLong(),
+            this.debugInfo?.contentHashCode()?.toLong(),
+            this.fileEntries?.contentHashCode()?.toLong(),
+        )
+        return hashCodes.reduce { acc, hashCode -> acc * 31 + hashCode }
     }
 }

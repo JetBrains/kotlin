@@ -49,6 +49,7 @@ class KlibLoader(init: KlibLoaderSpec.() -> Unit) {
     private var minSupportedCompilerVersionHint: String? = null
     private var zipFileSystemAccessor: ZipFileSystemAccessor? = null
     private var manifestTransformer: KlibManifestTransformer? = null
+    private var cancellationChecker: KlibLoadingCancellationChecker? = null
 
     init {
         object : KlibLoaderSpec {
@@ -96,6 +97,10 @@ class KlibLoader(init: KlibLoaderSpec.() -> Unit) {
             override fun manifestTransformer(transformer: KlibManifestTransformer) {
                 manifestTransformer = transformer
             }
+
+            override fun cancellationChecker(checker: KlibLoadingCancellationChecker) {
+                cancellationChecker = checker
+            }
         }.init()
     }
 
@@ -113,7 +118,8 @@ class KlibLoader(init: KlibLoaderSpec.() -> Unit) {
             maxPermittedAbiVersion = maxPermittedAbiVersion,
             minSupportedCompilerVersionHint = minSupportedCompilerVersionHint,
             zipFileSystemAccessor = zipFileSystemAccessor ?: ZipFileSystemInPlaceAccessor,
-            manifestTransformer = manifestTransformer
+            manifestTransformer = manifestTransformer,
+            cancellationChecker = cancellationChecker,
         ).loadLibraries()
     }
 }
@@ -133,6 +139,8 @@ interface KlibLoaderSpec {
     fun zipFileSystemAccessor(accessor: ZipFileSystemAccessor)
 
     fun manifestTransformer(transformer: KlibManifestTransformer)
+
+    fun cancellationChecker(checker: KlibLoadingCancellationChecker)
 }
 
 private class KlibLoaderImpl(
@@ -143,6 +151,7 @@ private class KlibLoaderImpl(
     private val minSupportedCompilerVersionHint: String?,
     private val zipFileSystemAccessor: ZipFileSystemAccessor,
     private val manifestTransformer: KlibManifestTransformer?,
+    private val cancellationChecker: KlibLoadingCancellationChecker?,
 ) {
     /**
      * This is needed to avoid inspecting the same canonical path more than once.
@@ -202,6 +211,8 @@ private class KlibLoaderImpl(
     }
 
     private fun loadLibrariesSuggestedByProvider(libraryProvider: KlibLibraryProvider) {
+        cancellationChecker?.checkCanceled()
+
         val providedRawPaths = libraryProvider.getLibraryPaths()
         if (providedRawPaths.isEmpty()) return
 
@@ -209,6 +220,8 @@ private class KlibLoaderImpl(
         val deduplicatedRawPaths = LinkedHashSet(providedRawPaths)
 
         deduplicatedRawPaths.forEach { rawPath ->
+            cancellationChecker?.checkCanceled()
+
             if (rawPath in problematicLibraries) {
                 // We've already seen this raw path and identified it as problematic. No need to inspect again.
                 return@forEach
@@ -260,6 +273,8 @@ private class KlibLoaderImpl(
     }
 
     private fun loadSingleLibrary(rawPath: String, validPath: Path, canonicalPath: Path): LibraryStatus {
+        cancellationChecker?.checkCanceled()
+
         val library = try {
             // Important: Initialization of a KlibImpl instance always triggers reading and parsing
             // of the manifest file. If the manifest, which is the essential part of KLIB, is not available

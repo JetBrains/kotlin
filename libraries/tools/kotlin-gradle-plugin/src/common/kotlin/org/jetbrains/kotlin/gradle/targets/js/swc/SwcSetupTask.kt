@@ -14,7 +14,8 @@ import java.io.File
 import javax.inject.Inject
 
 @DisableCachingByDefault
-internal abstract class SwcSetupTask
+@InternalKotlinGradlePluginApi
+abstract class SwcSetupTask
 @Inject
 internal constructor(
     settings: SwcEnvSpec,
@@ -43,8 +44,8 @@ internal constructor(
         File(executable.get()).setExecutable(true)
     }
 
+    @InternalKotlinGradlePluginApi
     companion object {
-        @InternalKotlinGradlePluginApi
         const val BASE_NAME: String = "swcSetup"
     }
 }

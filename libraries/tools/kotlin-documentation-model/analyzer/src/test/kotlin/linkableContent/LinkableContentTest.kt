@@ -8,6 +8,7 @@ import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.jetbrains.dokka.model.WithGenerics
 import org.jetbrains.dokka.model.dfs
 import org.jetbrains.dokka.model.doc.Text
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInAnalysisApi
 import org.jsoup.Jsoup
 import utils.assertNotNull
 import java.net.URL
@@ -17,6 +18,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 import kotlin.test.assertNotNull
 
+@MustRunOnChangesInAnalysisApi
 class LinkableContentTest : BaseAbstractTest() {
 
     @Test

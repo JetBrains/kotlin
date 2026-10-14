@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.classloadersCache
 import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.config.phaser.Action
+import org.jetbrains.kotlin.diagnostics.FallbackDiagnostics
 import org.jetbrains.kotlin.ir.validation.IrValidationDiagnostics
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.utils.KotlinPaths
@@ -57,6 +58,7 @@ abstract class AbstractConfigurationPhase<A : CommonCompilerArguments>(
             CommonBackendErrors,
             SerializationErrors,
             IrValidationDiagnostics,
+            FallbackDiagnostics,
         )
 
         for (filler in configurationUpdaters) {
@@ -120,7 +122,9 @@ abstract class AbstractConfigurationPhase<A : CommonCompilerArguments>(
                 val [jars, missingJars] =
                     PathUtil.KOTLIN_SCRIPTING_PLUGIN_CLASSPATH_JARS.map { File(libPath, it) }.partition { it.exists() }
                 if (missingJars.isEmpty()) {
-                    scriptingPluginClasspath.addAll(0, jars.map { it.canonicalPath })
+                    val optionalJars =
+                        PathUtil.KOTLIN_SCRIPTING_PLUGIN_OPTIONAL_CLASSPATH_JARS.map { File(libPath, it) }.filter { it.exists() }
+                    scriptingPluginClasspath.addAll(0, (jars + optionalJars).map { it.canonicalPath })
                 } else {
                     configuration.reportLog(
                         "Scripting plugin will not be loaded: not all required jars are present in the classpath (missing files: $missingJars)"

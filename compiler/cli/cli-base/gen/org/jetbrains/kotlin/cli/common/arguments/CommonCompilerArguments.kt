@@ -628,7 +628,6 @@ The argument should be used only if the new compilation scheme is enabled with -
         description = "Enable experimental language support for full value classes.",
     )
     @Enables(LanguageFeature.FullValueClasses)
-    @Enables(LanguageFeature.AllowSmartCastsOnValueClassUnderlyingProperties)
     var fullValueClasses: Boolean = false
         set(value) {
             checkFrozen()
@@ -930,10 +929,10 @@ with bodies.""",
 
     @Argument(
         value = "-Xreturn-value-checker",
-        valueDescription = "{check|full|disable}",
-        description = "Set improved unused return value checker mode. Use 'check' to run checker only and use 'full' to also enable automatic annotation insertion.",
+        valueDescription = "{check|full|disable|default}",
+        description = "Set improved unused return value checker mode. Use 'check' to run checker only and use 'full' to also enable automatic annotation insertion. 'default' mode is based on the current language version: Since Kotlin 2.5, checker is enabled by default.",
     )
-    var returnValueChecker: String = "disable"
+    var returnValueChecker: String = "default"
         set(value) {
             checkFrozen()
             field = value

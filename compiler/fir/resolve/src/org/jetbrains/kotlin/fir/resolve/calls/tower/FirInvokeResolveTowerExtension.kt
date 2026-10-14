@@ -151,7 +151,7 @@ internal class FirInvokeResolveTowerExtension(
                     receiverGroup = towerGroup,
                     collector
                 )
-                collector.forwardedDiagnostics().forEach { candidateFactoriesAndCollectors.resultCollector.addForwardedDiagnostic(it) }
+                collector.forwardedDiagnostics.forEach { candidateFactoriesAndCollectors.resultCollector.addForwardedDiagnostic(it) }
                 collector.newDataSet()
             }
         )

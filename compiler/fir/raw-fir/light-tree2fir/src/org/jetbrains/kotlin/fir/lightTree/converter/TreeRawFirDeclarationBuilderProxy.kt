@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirAnonymousFunctionBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.FirNamedFunctionBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.FirPrimaryConstructorBuilder
+import org.jetbrains.kotlin.fir.declarations.builder.FirReplSnippetBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.FirScriptBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.buildAnonymousInitializer
 import org.jetbrains.kotlin.fir.declarations.builder.buildAnonymousObject
@@ -56,6 +57,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.DanglingTypeConstraint
 import org.jetbrains.kotlin.fir.declarations.utils.addDeclarations
 import org.jetbrains.kotlin.fir.declarations.utils.addDefaultBoundIfNecessary
 import org.jetbrains.kotlin.fir.declarations.utils.danglingTypeConstraints
+import org.jetbrains.kotlin.fir.declarations.utils.isCopiedDelegatedProperty
 import org.jetbrains.kotlin.fir.declarations.utils.isScriptTopLevelDeclaration
 import org.jetbrains.kotlin.fir.diagnostics.ConeContractMayNotHaveLabel
 import org.jetbrains.kotlin.fir.diagnostics.ConeContractShouldBeFirstStatement
@@ -103,6 +105,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousInitializerSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirDanglingModifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
@@ -153,7 +156,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
-    val analyzer: AbstractTreeRawFirBuilder<Node, Type>,
+    val rootBuilder: AbstractTreeRawFirBuilder<Node, Type>,
     context: Context<Node>,
     session: FirSession,
     val expressionConverter: TreeRawFirExpressionBuilderProxy<Node, Type>,
@@ -193,12 +196,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
                 KtNodeTypes.FUNCTION_ID -> firDeclarationList += convertFunctionDeclaration(child) as FirDeclaration
                 KtNodeTypes.PROPERTY_ID -> firDeclarationList += convertPropertyDeclaration(child)
                 KtNodeTypes.TYPEALIAS_ID -> firDeclarationList += convertTypeAlias(child)
-                KtNodeTypes.DESTRUCTURING_DECLARATION_ID -> {
-                    val initializer = buildFirDestructuringDeclarationInitializer(child)
-                    firDeclarationList += buildErrorNonLocalDestructuringDeclaration(
-                        child.toFirSourceElement(), initializer, baseModuleData
-                    )
-                }
+                KtNodeTypes.DESTRUCTURING_DECLARATION_ID -> firDeclarationList += buildErrorNonLocalDestructuringDeclaration(child)
                 KtNodeTypes.SCRIPT_ID -> scriptNodes += child
                 KtNodeTypes.MODIFIER_LIST_ID -> modifierList += child
             }
@@ -679,7 +677,8 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
                             }
                             calculatedModifiers.isAnnotation() && (classKind == ClassKind.ANNOTATION_CLASS) -> {
                                 superTypeRefs += implicitAnnotationType
-                                delegatedSuperTypeRef = implicitAnyType
+                                // A written super call is kept for red code to be resolved as written
+                                delegatedSuperTypeRef = delegatedSuperTypeRef ?: implicitAnyType
                             }
                         }
 
@@ -687,11 +686,12 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
 
                         if (superTypeRefs.isEmpty() && !classIsKotlinAny) {
                             val classIsKotlinNothing = symbol.classId == StandardClassIds.Nothing
+                            val defaultSuperTypeRef = if (calculatedModifiers.isErrorClass()) implicitRichErrorType else implicitAnyType
                             // kotlin.Nothing doesn't have `Any` supertype, but does have delegating constructor call to Any
                             if (!classIsKotlinNothing) {
-                                superTypeRefs += implicitAnyType
+                                superTypeRefs += defaultSuperTypeRef
                             }
-                            delegatedSuperTypeRef = implicitAnyType
+                            delegatedSuperTypeRef = defaultSuperTypeRef
                         }
 
                         this.superTypeRefs += superTypeRefs
@@ -746,7 +746,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
                         //parse data class
                         if (calculatedModifiers.isDataClass() && firPrimaryConstructor != null) {
                             val zippedParameters = properties.map { it.source!!.toNode() to it }
-                            generateDataClassMembers(
+                            DataClassMembersGenerator(
                                 primaryConstructor ?: node,
                                 this,
                                 firPrimaryConstructor,
@@ -765,8 +765,8 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
                                             }
                                         }
                                     }
-                                },
-                            )
+                                }
+                            ).generate()
                         }
 
                         if (calculatedModifiers.isEnum()) {
@@ -847,86 +847,95 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
     fun convertObjectLiteral(node: Node): FirAnonymousObjectExpression {
         return context.withChildClassName(SpecialNames.ANONYMOUS, forceLocalContext = true, isExpect = false) {
             var delegatedFieldsMap: Map<Int, FirFieldSymbol>? = null
-            buildAnonymousObjectExpression {
-                source = node.toFirSourceElement()
+            val objectDeclaration = node.getChildNodesByTokenId(KtNodeTypes.OBJECT_DECLARATION_ID).first()
+            val objectSource = objectDeclaration.toFirSourceElement()
+            val anonymousObjectSymbol = FirAnonymousObjectSymbol(context.packageFqName)
+            // Type parameters are prohibited for objects, but they are kept for the FIR checker and the Analysis API
+            val firTypeParameters = objectDeclaration.getChildNodeByTokenId(KtNodeTypes.TYPE_PARAMETER_LIST_ID)
+                ?.let { convertTypeParameters(it, emptyList(), anonymousObjectSymbol) }
+                .orEmpty()
+            context.withCapturedTypeParameters(status = true, objectSource, firTypeParameters) {
+                buildAnonymousObjectExpression {
+                    source = node.toFirSourceElement()
 
-                val objectDeclaration = node.getChildNodesByTokenId(KtNodeTypes.OBJECT_DECLARATION_ID).first()
-                var modifiers: ModifierList<Node>? = null
-                var primaryConstructor: Node? = null
-                val superTypeRefs = mutableListOf<FirTypeRef>()
-                var delegatedSuperTypeRef: FirTypeRef? = null
-                var classBody: Node? = null
-                var delegatedConstructorSource: KtLightSourceElement? = null
-                var delegatedSuperCalls: List<DelegatedConstructorWrapper>? = null
-                var delegateFields: List<FirField>? = null
+                    var modifiers: ModifierList<Node>? = null
+                    var primaryConstructor: Node? = null
+                    val superTypeRefs = mutableListOf<FirTypeRef>()
+                    var delegatedSuperTypeRef: FirTypeRef? = null
+                    var classBody: Node? = null
+                    var delegatedConstructorSource: KtLightSourceElement? = null
+                    var delegatedSuperCalls: List<DelegatedConstructorWrapper>? = null
+                    var delegateFields: List<FirField>? = null
 
-                objectDeclaration.forEachChildren { child ->
-                    when (child.toTokenId()) {
-                        KtNodeTypes.MODIFIER_LIST_ID -> {
-                            modifiers = convertModifierList(child)
+                    objectDeclaration.forEachChildren { child ->
+                        when (child.toTokenId()) {
+                            KtNodeTypes.MODIFIER_LIST_ID -> {
+                                modifiers = convertModifierList(child)
+                            }
+                            KtNodeTypes.PRIMARY_CONSTRUCTOR_ID -> primaryConstructor = child
+                            KtNodeTypes.SUPER_TYPE_LIST_ID -> convertDelegationSpecifiers(child).let { specifiers ->
+                                delegatedSuperTypeRef = specifiers.superTypeCalls.lastOrNull()?.delegatedSuperTypeRef
+                                superTypeRefs += specifiers.superTypesRef
+                                delegatedConstructorSource = specifiers.superTypeCalls.lastOrNull()?.source
+                                delegateFields = specifiers.delegateFieldsMap.values.map { it.fir }
+                                delegatedFieldsMap = specifiers.delegateFieldsMap.takeIf { it.isNotEmpty() }
+                                delegatedSuperCalls = specifiers.superTypeCalls
+                            }
+                            KtNodeTypes.CLASS_BODY_ID -> classBody = child
                         }
-                        KtNodeTypes.PRIMARY_CONSTRUCTOR_ID -> primaryConstructor = child
-                        KtNodeTypes.SUPER_TYPE_LIST_ID -> convertDelegationSpecifiers(child).let { specifiers ->
-                            delegatedSuperTypeRef = specifiers.superTypeCalls.lastOrNull()?.delegatedSuperTypeRef
-                            superTypeRefs += specifiers.superTypesRef
-                            delegatedConstructorSource = specifiers.superTypeCalls.lastOrNull()?.source
-                            delegateFields = specifiers.delegateFieldsMap.values.map { it.fir }
-                            delegatedFieldsMap = specifiers.delegateFieldsMap.takeIf { it.isNotEmpty() }
-                            delegatedSuperCalls = specifiers.superTypeCalls
+                    }
+                    val companionBlockCollector = CompanionBlockCollector()
+                    anonymousObject = buildAnonymousObject {
+                        source = objectSource
+                        origin = FirDeclarationOrigin.Source
+                        moduleData = baseModuleData
+                        classKind = ClassKind.CLASS
+                        scopeProvider = baseScopeProvider
+                        symbol = anonymousObjectSymbol
+                        status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
+                        typeParameters += firTypeParameters
+                        context.appendOuterTypeParameters(ignoreLastLevel = true, typeParameters)
+                        val delegatedSelfType = objectDeclaration.toDelegatedSelfType(this)
+                        registerSelfType(delegatedSelfType)
+
+                        if (superTypeRefs.isEmpty()) {
+                            superTypeRefs += implicitAnyType
+                            delegatedSuperTypeRef = implicitAnyType
                         }
-                        KtNodeTypes.CLASS_BODY_ID -> classBody = child
+                        val delegatedSuperType = delegatedSuperTypeRef ?: FirImplicitTypeRefImplWithoutSource
+
+                        modifiers?.convertAnnotationsTo(annotations)
+                        this.superTypeRefs += superTypeRefs
+
+                        val classWrapper = ClassWrapper(
+                            modifiers ?: ModifierList(),
+                            ClassKind.OBJECT,
+                            this,
+                            hasSecondaryConstructor = classBody.getChildNodesByTokenId(KtNodeTypes.SECONDARY_CONSTRUCTOR_ID).isNotEmpty(),
+                            hasDefaultConstructor = false,
+                            delegatedSelfTypeRef = delegatedSelfType,
+                            delegatedSuperTypeRef = delegatedSuperType,
+                            delegatedSuperCalls = delegatedSuperCalls ?: emptyList(),
+                            companionBlockCollector,
+                        )
+                        //parse primary constructor
+                        convertPrimaryConstructor(
+                            primaryConstructor,
+                            delegatedSelfType.source,
+                            classWrapper,
+                            delegatedConstructorSource,
+                            containingClassIsExpectClass = false
+                        )?.let { this.declarations += it.firConstructor }
+                        delegateFields?.let { this.declarations += it }
+
+                        //parse declarations
+                        classBody?.let {
+                            this.declarations += convertClassBody(it, classWrapper)
+                        }
+                    }.apply {
+                        this.delegateFieldsMap = delegatedFieldsMap
+                        companionBlockCollector.toCompanionBlockInfoOrNull()?.let { companionBlocks = it }
                     }
-                }
-                val companionBlockCollector = CompanionBlockCollector()
-                anonymousObject = buildAnonymousObject {
-                    source = objectDeclaration.toFirSourceElement()
-                    origin = FirDeclarationOrigin.Source
-                    moduleData = baseModuleData
-                    classKind = ClassKind.CLASS
-                    scopeProvider = baseScopeProvider
-                    symbol = FirAnonymousObjectSymbol(context.packageFqName)
-                    status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
-                    context.appendOuterTypeParameters(ignoreLastLevel = false, typeParameters)
-                    val delegatedSelfType = objectDeclaration.toDelegatedSelfType(this)
-                    registerSelfType(delegatedSelfType)
-
-                    if (superTypeRefs.isEmpty()) {
-                        superTypeRefs += implicitAnyType
-                        delegatedSuperTypeRef = implicitAnyType
-                    }
-                    val delegatedSuperType = delegatedSuperTypeRef ?: FirImplicitTypeRefImplWithoutSource
-
-                    modifiers?.convertAnnotationsTo(annotations)
-                    this.superTypeRefs += superTypeRefs
-
-                    val classWrapper = ClassWrapper(
-                        modifiers ?: ModifierList(),
-                        ClassKind.OBJECT,
-                        this,
-                        hasSecondaryConstructor = classBody.getChildNodesByTokenId(KtNodeTypes.SECONDARY_CONSTRUCTOR_ID).isNotEmpty(),
-                        hasDefaultConstructor = false,
-                        delegatedSelfTypeRef = delegatedSelfType,
-                        delegatedSuperTypeRef = delegatedSuperType,
-                        delegatedSuperCalls = delegatedSuperCalls ?: emptyList(),
-                        companionBlockCollector,
-                    )
-                    //parse primary constructor
-                    convertPrimaryConstructor(
-                        primaryConstructor,
-                        delegatedSelfType.source,
-                        classWrapper,
-                        delegatedConstructorSource,
-                        containingClassIsExpectClass = false
-                    )?.let { this.declarations += it.firConstructor }
-                    delegateFields?.let { this.declarations += it }
-
-                    //parse declarations
-                    classBody?.let {
-                        this.declarations += convertClassBody(it, classWrapper)
-                    }
-                }.apply {
-                    this.delegateFieldsMap = delegatedFieldsMap
-                    companionBlockCollector.toCompanionBlockInfoOrNull()?.let { companionBlocks = it }
                 }
             }
         }
@@ -1093,10 +1102,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
             } //anonymousInitializer
             KtNodeTypes.SECONDARY_CONSTRUCTOR_ID -> container += convertSecondaryConstructor(node, classWrapper!!)
             KtNodeTypes.MODIFIER_LIST_ID -> modifierLists += node
-            KtNodeTypes.DESTRUCTURING_DECLARATION_ID -> {
-                val initializer = buildFirDestructuringDeclarationInitializer(node)
-                container += buildErrorNonLocalDestructuringDeclaration(node.toFirSourceElement(), initializer, baseModuleData)
-            }
+            KtNodeTypes.DESTRUCTURING_DECLARATION_ID -> container += buildErrorNonLocalDestructuringDeclaration(node)
             KtNodeTypes.COMPANION_BLOCK_ID -> {
                 classWrapper?.companionBlockCollector?.collect(node.toFirSourceElement(), isNested = isDirectlyInsideCompanionBlock)
                 context.withCompanionBlock {
@@ -1112,6 +1118,19 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
     ) {
         for (node in modifierLists) {
             firDeclarations += buildErrorNonLocalDeclarationForDanglingModifierList(node)
+        }
+    }
+
+    private fun buildErrorNonLocalDestructuringDeclaration(destructuringDeclaration: Node): FirErrorProperty {
+        val initializer = buildFirDestructuringDeclarationInitializer(destructuringDeclaration)
+        return buildErrorNonLocalDestructuringDeclaration(
+            destructuringDeclaration.toFirSourceElement(),
+            initializer,
+            baseModuleData,
+        ) { annotationContainer ->
+            destructuringDeclaration.getChildNodeByTokenId(KtNodeTypes.MODIFIER_LIST_ID)?.let {
+                convertAnnotationsOnlyTo(it, annotationContainer.annotations)
+            }
         }
     }
 
@@ -1544,7 +1563,11 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseProperty
      */
-    fun convertPropertyDeclaration(node: Node, classWrapper: ClassWrapper<Node>? = null): FirProperty {
+    fun convertPropertyDeclaration(
+        node: Node,
+        classWrapper: ClassWrapper<Node>? = null,
+        ownerRegularOrAnonymousObjectSymbol: FirClassSymbol<*>? = classWrapper?.classBuilder?.ownerRegularOrAnonymousObjectSymbol,
+    ): FirProperty {
         var modifiers: ModifierList<Node>? = null
         var identifier: String? = null
         val firTypeParameters = mutableListOf<FirTypeParameter>()
@@ -1665,7 +1688,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
                     generateAccessorsByDelegate(
                         delegateBuilder,
                         baseModuleData,
-                        classWrapper?.classBuilder?.ownerRegularOrAnonymousObjectSymbol,
+                        ownerRegularOrAnonymousObjectSymbol,
                         context = context,
                         isExtension = false,
                         explicitDeclarationSource = propertySource,
@@ -1746,7 +1769,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
                         generateAccessorsByDelegate(
                             delegateBuilder,
                             baseModuleData,
-                            runUnless(isStatic) { classWrapper?.classBuilder?.ownerRegularOrAnonymousObjectSymbol },
+                            runUnless(isStatic) { ownerRegularOrAnonymousObjectSymbol },
                             context,
                             isExtension = receiverTypeNode != null && !isStatic,
                             explicitDeclarationSource = propertySource,
@@ -3055,6 +3078,10 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
         }
     }
 
+    private fun Node.getReferencedNameAsName(): Name {
+        return asText.nameAsSafeName()
+    }
+
     override fun convertScript(
         script: Node,
         scriptSource: KtSourceElement,
@@ -3133,45 +3160,146 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
         }
     }
 
+    override fun convertReplSnippet(
+        script: Node,
+        scriptSource: KtSourceElement,
+        fileName: String,
+        snippetSetup: FirReplSnippetBuilder.() -> Unit,
+        functionBodySetup: FirBlockBuilder.() -> Unit,
+        statementsSetup: MutableList<FirElement>.() -> Unit,
+    ): FirReplSnippet = convertReplSnippetImpl(
+        script = script,
+        scriptSource = scriptSource,
+        fileName = fileName,
+        scopeProvider = baseScopeProvider,
+        snippetSetup = snippetSetup,
+        functionBodySetup = functionBodySetup,
+        statementsSetup = statementsSetup,
+        extractReplElements = { containingDeclarationSymbol, copiedDelegatedProperties ->
+            extractReplElements(script, containingDeclarationSymbol, copiedDelegatedProperties)
+        },
+    )
+
+    private fun extractReplElements(
+        script: Node,
+        containingDeclarationSymbol: FirRegularClassSymbol,
+        copiedDelegatedProperties: MutableMap<FirPropertySymbol, FirProperty>,
+    ): List<FirElement> {
+        val childNodes = script.getChildNodeByTokenId(KtNodeTypes.BLOCK_ID)?.getChildren().orEmpty()
+            .filter { it.toTokenId() in scriptDeclarationTokensId }
+
+        val result = mutableListOf<FirElement>()
+        val modifierLists = mutableListOf<Node>()
+        for (declarationSource in childNodes) {
+            when (declarationSource.toTokenId()) {
+                KtNodeTypes.SCRIPT_INITIALIZER_ID -> {
+                    result += convertScriptInitializer(
+                        scriptInitializer = declarationSource,
+                        containingDeclarationSymbol = containingDeclarationSymbol,
+                        isLocal = true,
+                    )
+                }
+
+                KtNodeTypes.DESTRUCTURING_DECLARATION_ID -> {
+                    val destructuringDeclaration = convertDestructingDeclaration(declarationSource)
+                    val destructuringContainerVar = generateTemporaryVariable(
+                        moduleData = baseModuleData,
+                        source = declarationSource.toFirSourceElement(),
+                        name = SpecialNames.DESTRUCT,
+                        initializer = destructuringDeclaration.initializer,
+                        extractedAnnotations = destructuringDeclaration.annotations,
+                        origin = FirDeclarationOrigin.Source,
+                    ).apply {
+                        isDestructuringDeclarationContainerVariable = true
+                    }
+                    addDestructuringStatements(
+                        result,
+                        context,
+                        baseModuleData,
+                        destructuringDeclaration,
+                        destructuringContainerVar,
+                        isTmpVariable = true,
+                        forceLocal = false,
+                    ) {
+                        configureScriptDestructuringDeclarationEntry(it, destructuringContainerVar)
+                    }
+                }
+
+                KtNodeTypes.PROPERTY_ID -> {
+                    val firProperty = convertPropertyDeclaration(
+                        declarationSource,
+                        classWrapper = null,
+                        ownerRegularOrAnonymousObjectSymbol = containingDeclarationSymbol,
+                    )
+
+                    // See documentation on `replSnippetDelegatedPropertyCopies` attribute for why this is needed.
+                    if (firProperty.delegate != null) {
+                        val firPropertyCopy = convertPropertyDeclaration(
+                            declarationSource,
+                            classWrapper = null,
+                            ownerRegularOrAnonymousObjectSymbol = containingDeclarationSymbol,
+                        )
+
+                        @OptIn(FirImplementationDetail::class)
+                        firPropertyCopy.isCopiedDelegatedProperty = true
+                        copiedDelegatedProperties[firProperty.symbol] = firPropertyCopy
+                    }
+
+                    result += firProperty
+                }
+
+                else -> {
+                    val declarations = mutableListOf<FirDeclaration>()
+                    convertDeclarationFromClassBody(declarationSource, declarations, classWrapper = null, modifierLists)
+                    result += declarations
+                }
+            }
+        }
+        val danglingModifierLists = mutableListOf<FirDeclaration>()
+        convertDanglingModifierListsInClassBody(modifierLists, danglingModifierLists)
+        result += danglingModifierLists
+        return result
+    }
+
     override fun Node.toFirSourceElement(kind: KtFakeSourceElementKind?): KtSourceElement {
-        return with(analyzer) { toFirSourceElement(kind) }
+        return with(rootBuilder) { toFirSourceElement(kind) }
     }
 
     override fun KtSourceElement.toNode(): Node {
-        return with(analyzer) { toNode() }
+        return with(rootBuilder) { toNode() }
     }
 
     override val Node.elementType: Type
-        get() = with(analyzer) { elementType }
+        get() = with(rootBuilder) { elementType }
     override val Node.asText: String
-        get() = with(analyzer) { asText }
+        get() = with(rootBuilder) { asText }
 
-    override val Node?.receiverExpression: Node?
-        get() = with(analyzer) { receiverExpression }
-    override val Node?.selectorExpression: Node?
-        get() = with(analyzer) { selectorExpression }
+    override val Node.receiverExpression: Node?
+        get() = with(rootBuilder) { receiverExpression }
+    override val Node.selectorExpression: Node?
+        get() = with(rootBuilder) { selectorExpression }
 
     override fun Type.typeToTokenId(): Int {
-        return with(analyzer) { typeToTokenId() }
+        return with(rootBuilder) { typeToTokenId() }
     }
 
     override fun Node.getParent(): Node? {
-        return with(analyzer) { getParent() }
+        return with(rootBuilder) { getParent() }
     }
 
     override fun Node.getChildren(): List<Node> {
-        return with(analyzer) { getChildren() }
+        return with(rootBuilder) { getChildren() }
     }
 
-    override val Node?.indexExpressions: List<Node>?
-        get() = with(analyzer) { indexExpressions }
+    override val Node.indexExpressions: List<Node>?
+        get() = with(rootBuilder) { indexExpressions }
 
     override fun KtSourceElement.isChildInParentheses(): Boolean {
-        return with(analyzer) { isChildInParentheses()}
+        return with(rootBuilder) { isChildInParentheses()}
     }
 
-    override fun Node?.getChildrenAsArray(): Array<out Node?> {
-        return with(analyzer) { getChildrenAsArray() }
+    override fun Node.getChildrenAsArray(): Array<out Node?> {
+        return with(rootBuilder) { getChildrenAsArray() }
     }
 
     private fun Node.isExpression(): Boolean = toTokenId().isExpression()

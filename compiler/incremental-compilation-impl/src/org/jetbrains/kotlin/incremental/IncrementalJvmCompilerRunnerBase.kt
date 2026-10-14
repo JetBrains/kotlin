@@ -96,7 +96,7 @@ abstract class IncrementalJvmCompilerRunnerBase(
         services: Services,
         caches: IncrementalJvmCachesManager,
         generatedFiles: List<GeneratedFile>,
-        changesCollector: ChangesCollector
+        changesCollector: ChangesCollector,
     ) {
         updateIncrementalCache(
             generatedFiles, caches.platformCache, changesCollector,
@@ -115,8 +115,10 @@ abstract class IncrementalJvmCompilerRunnerBase(
     override fun additionalDirtyFiles(
         caches: IncrementalJvmCachesManager,
         generatedFiles: List<GeneratedFile>,
-        services: Services
+        services: Services,
     ): Iterable<File> {
+        if (generatedFiles.isEmpty()) return emptyList()
+
         val cache = caches.platformCache
         val result = HashSet<File>()
 
@@ -156,6 +158,8 @@ abstract class IncrementalJvmCompilerRunnerBase(
                 }
             }
         }
+
+        result.addAll(cache.getObsoleteMultifileClasses().flatMap(::partsByFacadeName))
 
         return result
     }
@@ -219,7 +223,7 @@ abstract class IncrementalJvmCompilerRunnerBase(
         services: Services,
         messageCollector: MessageCollector,
         allSources: List<File>,
-        isIncremental: Boolean
+        isIncremental: Boolean,
     ): Pair<ExitCode, Collection<File>> {
         val compiler = K2JVMCompiler()
         val freeArgsBackup = args.freeArgs.toList()

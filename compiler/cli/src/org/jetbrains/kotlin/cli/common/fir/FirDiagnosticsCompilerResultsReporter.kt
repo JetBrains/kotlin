@@ -61,7 +61,7 @@ object FirDiagnosticsCompilerResultsReporter {
         diagnosticsCollector: BaseDiagnosticsCollector, report: (KtDiagnostic, CompilerMessageSourceLocation?) -> Unit
     ): Boolean {
         var hasErrors = false
-        for (sourceFile in diagnosticsCollector.diagnosticsByFile.keys) {
+        for ([sourceFile, diagnosticList] in diagnosticsCollector.diagnosticsByFile) {
             val positionFinder = lazy {
                 when (sourceFile) {
                     is KtVirtualFileSourceFile,
@@ -71,15 +71,19 @@ object FirDiagnosticsCompilerResultsReporter {
                         if (sourceFile.file.isFile) // Additional check is needed for the IR case; see DiagnosticContextWithSuppressionImpl and KT-85141
                             SequentialCloseablePositionFinder(sourceFile.getContentsAsStream().reader())
                         else null
-                    is KtPsiSourceFile -> null // for PSI files KtPsiDiagnostic contains all location info, we don't need to use the position finder
+                    // KtPsiDiagnostic contains all location info, but a PSI-backed file may still be parsed with the light tree
+                    // (e.g. a KtFileScriptSource passed to a LightTree-based script/REPL compiler), so the finder is needed
+                    // for the diagnostics with non-PSI elements
+                    is KtPsiSourceFile ->
+                        if (diagnosticList.any { it is KtDiagnosticWithSource && it.element !is KtPsiSourceElement })
+                            SequentialCloseablePositionFinder(sourceFile.psiFile.text.byteInputStream().reader())
+                        else null
                     null -> null
                     else -> error("Unexpected source file type: $sourceFile")
                 }
             }
 
             try {
-                val diagnosticList = diagnosticsCollector.diagnosticsByFile[sourceFile].orEmpty()
-
                 // Precomputing positions of the offsets in the ascending order of the offsets
                 val offsetsToPositions = positionFinder.value?.let { finder ->
                     val sortedOffsets = TreeSet<Int>().apply {

@@ -8,7 +8,7 @@ fun box(): String {
 
     success("ints") { ints as Array<*> }
     success("strings") { strings as Array<*> }
-    failsClassCast("null") { nil as Array<*> }
+    failsNullPointer("null") { nil as Array<*> }
     failsClassCast("obj") { obj as Array<*> }
 
     return "OK"

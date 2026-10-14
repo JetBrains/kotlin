@@ -8,7 +8,7 @@ FIR element rendered:
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] typeOnAnnotationOnReceiverPropertyScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-typeOnAnnotationOnReceiverPropertyScript.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ScriptTopLevelDeclaration=true] val [ResolvedTo(ANNOTATION_ARGUMENTS)] R|@R|Anno|(s = String(a) [evaluated = String(a)])  kotlin/Int|.i: R|kotlin/String|

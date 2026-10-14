@@ -4,6 +4,7 @@
  */
 
 import org.gradle.api.Project
+import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.provider.Property
 import org.gradle.kotlin.dsl.dependencies
 import javax.inject.Inject
@@ -40,10 +41,15 @@ abstract class AnalysisApiArtifactExtension @Inject constructor(private val proj
         isPublishedProjectsConfigured = true
 
         val includedProjects = LinkedHashMap<String, Boolean>()
+        val includedTestFixtures = LinkedHashSet<String>()
 
         val builder = object : ArtifactContentBuilder {
             override fun project(path: String, isTransitive: Boolean) {
                 includedProjects.compute(path) { _, oldValue -> oldValue == true || isTransitive }
+            }
+
+            override fun testFixtures(path: String) {
+                includedTestFixtures.add(path)
             }
         }
 
@@ -54,6 +60,10 @@ abstract class AnalysisApiArtifactExtension @Inject constructor(private val proj
 
             for ((projectPath, shouldBeTransitive) in includedProjects) {
                 artifactContent(project(projectPath)) { isTransitive = shouldBeTransitive }
+            }
+
+            for (projectPath in includedTestFixtures) {
+                artifactContent(testFixtures(project(projectPath)) as ModuleDependency) { isTransitive = false }
             }
         }
 
@@ -93,5 +103,19 @@ interface ArtifactContentBuilder {
      */
     fun projects(paths: Array<String>, isTransitive: Boolean = false) {
         projects(paths.asList(), isTransitive)
+    }
+
+    /**
+     * Include test fixtures of the project with the given [path] into the artifact.
+     * Neither the production code of the project nor dependencies of its test fixtures are included.
+     */
+    fun testFixtures(path: String)
+
+    /**
+     * Include test fixtures of all projects with the given [paths] into the artifact.
+     * Neither the production code of the projects nor dependencies of their test fixtures are included.
+     */
+    fun testFixtures(paths: Iterable<String>) {
+        paths.forEach { testFixtures(it) }
     }
 }

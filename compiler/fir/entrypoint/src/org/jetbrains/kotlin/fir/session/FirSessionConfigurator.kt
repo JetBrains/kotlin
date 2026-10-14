@@ -85,7 +85,7 @@ class FirSessionConfigurator(private val session: FirSession) {
 
     @OptIn(SessionConfiguration::class)
     fun registerDiagnosticContainers(vararg diagnosticContainers: KtDiagnosticsContainer) {
-        session.registeredDiagnosticFactoriesStorage.registerDiagnosticContainers(*diagnosticContainers)
+        session.registeredDiagnosticFactoriesStorage?.registerDiagnosticContainers(*diagnosticContainers)
     }
 
     @SessionConfiguration

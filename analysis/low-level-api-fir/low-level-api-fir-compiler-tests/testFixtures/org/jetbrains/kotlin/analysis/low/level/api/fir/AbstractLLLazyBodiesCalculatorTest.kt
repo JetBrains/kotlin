@@ -12,12 +12,9 @@ import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBase
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.utils.ignoreExceptionIfIgnoreDirectivePresent
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.builder.BodyBuildingMode
 import org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder
 import org.jetbrains.kotlin.fir.contracts.FirLazyContractDescription
-import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
-import org.jetbrains.kotlin.fir.declarations.utils.replSnippetDelegatedPropertyCopies
 import org.jetbrains.kotlin.fir.expressions.FirLazyBlock
 import org.jetbrains.kotlin.fir.expressions.FirLazyExpression
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
@@ -49,11 +46,6 @@ abstract class AbstractLLLazyBodiesCalculatorTest : AbstractAnalysisApiBasedTest
                 element is FirLazyContractDescription,
                 "${FirLazyContractDescription::class.simpleName} should not present in the tree",
             )
-
-            if (element is FirNamedFunction) {
-                @OptIn(FirImplementationDetail::class)
-                element.replSnippetDelegatedPropertyCopies?.values?.forEach(this::visitElement)
-            }
 
             element.acceptChildren(this)
         }

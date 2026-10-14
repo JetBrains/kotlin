@@ -1,3 +1,4 @@
+// DUMP_IR_DIFFERENCE: JKLIB
 // LANGUAGE: +MultiPlatformProjects
 
 // MODULE: lib

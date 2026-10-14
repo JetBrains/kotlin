@@ -8,7 +8,7 @@ String()
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] assignment.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-assignment.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-assignment.kts>, ScriptTopLevelDeclaration=true] class Builder : R|kotlin/Any| {

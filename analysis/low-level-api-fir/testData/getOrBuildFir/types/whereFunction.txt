@@ -11,6 +11,4 @@ FILE: [ResolvedTo(IMPORTS)] whereFunction.kt
     }
     public final? [ResolvedTo(RAW_FIR)] interface Two : R|kotlin/Any| {
     }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun <[ResolvedTo(ANNOTATION_ARGUMENTS)] T : R|One|, R|Two|> foo([ResolvedTo(ANNOTATION_ARGUMENTS)] t: R|T|): R|T| {
-        ^foo R|<local>/t|
-    }
+    public? final? [ResolvedTo(TYPES)] fun <[ResolvedTo(TYPES)] T : R|One|, R|Two|> foo([ResolvedTo(TYPES)] t: R|T|): <implicit> { LAZY_BLOCK }

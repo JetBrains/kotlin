@@ -841,7 +841,7 @@ KtNameReferenceExpression(772,788): 'ClassMemberAlias'
     isInBestCandidates = true
 
 KtCallExpression(794,1278): 'receive<MyClass>('
-  KaApplicableCallCandidate:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -893,10 +893,11 @@ KtCallExpression(794,1278): 'receive<MyClass>('
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun <T> receive(e: T): Unit>
     isInBestCandidates = true
 
 KtNameReferenceExpression(794,801): 'receive'
-  KaApplicableCallCandidate:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -948,6 +949,7 @@ KtNameReferenceExpression(794,801): 'receive'
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun <T> receive(e: T): Unit>
     isInBestCandidates = true
 
 KtTypeArgumentList(801,810): '<MyClass>'
@@ -1082,7 +1084,23 @@ KtNameReferenceExpression(846,861): 'NestedInheritor'
   NO_CANDIDATES
 
 KtNameReferenceExpression(874,889): 'NestedInheritor'
-  NO_CANDIDATES
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyClass.NestedInheritor
+        symbol = <constructor>(): MyClass.NestedInheritor
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
 
 KtContainerNodeForControlStructureBody(937,1272): 'if (i == 1) {'
   NO_CANDIDATES
@@ -1198,7 +1216,25 @@ KtNameReferenceExpression(963,974): 'myClassProp'
   NO_CANDIDATES
 
 KtNameReferenceExpression(987,998): 'myClassProp'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = myClassProp
+        isSafeNavigation = false
+        type = MyClass.Companion
+      extensionReceiver = null
+      isContextSensitive = true
+      kind = Read
+      signature = KaVariableSignature:
+        name = myClassProp
+        receiverType = null
+        returnType = MyClass
+        symbol = val myClassProp: MyClass
+        contextParameters = []
+        callableId = /MyClass.Companion.myClassProp
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
 
 KtContainerNodeForControlStructureBody(1046,1272): 'if (i == 2) {'
   NO_CANDIDATES
@@ -1442,7 +1478,25 @@ KtNameReferenceExpression(1175,1185): 'stringProp'
   NO_CANDIDATES
 
 KtNameReferenceExpression(1198,1208): 'stringProp'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = stringProp
+        isSafeNavigation = false
+        type = MyClass.Companion
+      extensionReceiver = null
+      isContextSensitive = true
+      kind = Read
+      signature = KaVariableSignature:
+        name = stringProp
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val stringProp: kotlin.String
+        contextParameters = []
+        callableId = /MyClass.Companion.stringProp
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
 
 KtContainerNodeForControlStructureBody(1256,1272): 'ClassMemberAlias'
   NO_CANDIDATES
@@ -1793,7 +1847,23 @@ KtNameReferenceExpression(1333,1348): 'NestedInheritor'
   NO_CANDIDATES
 
 KtNameReferenceExpression(1361,1376): 'NestedInheritor'
-  NO_CANDIDATES
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyClass.NestedInheritor
+        symbol = <constructor>(): MyClass.NestedInheritor
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
 
 KtContainerNodeForControlStructureBody(1424,1549): 'if (i == 1) {'
   NO_CANDIDATES
@@ -1909,7 +1979,25 @@ KtNameReferenceExpression(1450,1461): 'myClassProp'
   NO_CANDIDATES
 
 KtNameReferenceExpression(1474,1485): 'myClassProp'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = myClassProp
+        isSafeNavigation = false
+        type = MyClass.Companion
+      extensionReceiver = null
+      isContextSensitive = true
+      kind = Read
+      signature = KaVariableSignature:
+        name = myClassProp
+        receiverType = null
+        returnType = MyClass
+        symbol = val myClassProp: MyClass
+        contextParameters = []
+        callableId = /MyClass.Companion.myClassProp
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
 
 KtContainerNodeForControlStructureBody(1533,1549): 'ClassMemberAlias'
   NO_CANDIDATES

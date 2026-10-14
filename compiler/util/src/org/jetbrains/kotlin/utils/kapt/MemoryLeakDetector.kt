@@ -35,7 +35,7 @@ class MemoryLeak(val className: String, val fieldName: String, val description: 
     }
 }
 
-private class ClassLoaderData(classLoader: ClassLoader) {
+private class ClassLoaderData(classLoader: ClassLoader, val loadedClasses: (ClassLoader) -> Collection<Class<*>>?) {
     val ref = WeakReference(classLoader)
 
     @Volatile
@@ -45,9 +45,15 @@ private class ClassLoaderData(classLoader: ClassLoader) {
 object MemoryLeakDetector {
     private val classLoaderData = mutableListOf<ClassLoaderData>()
 
-    fun add(classLoader: ClassLoader) {
+    /**
+     * [loadedClasses] returns the classes defined by the given classloader, or `null` to fall back to reading
+     * `ClassLoader.classes` reflectively (works only on JDK 8 and below).
+     *
+     * [loadedClasses] must not capture [classLoader], otherwise the classloader would never be collected.
+     */
+    fun add(classLoader: ClassLoader, loadedClasses: (ClassLoader) -> Collection<Class<*>>? = { null }) {
         synchronized(classLoaderData) {
-            classLoaderData.add(ClassLoaderData(classLoader))
+            classLoaderData.add(ClassLoaderData(classLoader, loadedClasses))
         }
     }
 
@@ -63,7 +69,7 @@ object MemoryLeakDetector {
                 if (isParanoid || data.age >= 5) {
                     // Inspect statics just once.
                     // Note the 'data' is not added to 'nextClassLoaderData' used the next time.
-                    inspectStatics(classLoader)
+                    memoryLeaks += inspectStatics(classLoader, data.loadedClasses)
                 } else {
                     newClassLoaderData += data
                 }
@@ -76,13 +82,13 @@ object MemoryLeakDetector {
         return memoryLeaks
     }
 
-    private fun inspectStatics(classLoader: ClassLoader): Set<MemoryLeak> {
-        val loadedClasses = classLoader.loadedClasses()
+    private fun inspectStatics(classLoader: ClassLoader, loadedClasses: (ClassLoader) -> Collection<Class<*>>?): Set<MemoryLeak> {
+        val classes = loadedClasses(classLoader) ?: classLoader.loadedClasses()
         val loadedClassesSet = try {
-            loadedClasses.mapTo(mutableSetOf()) { it }
+            classes.mapTo(mutableSetOf()) { it }
         } catch (e: ConcurrentModificationException) {
             Thread.sleep(100)
-            return inspectStatics(classLoader)
+            return inspectStatics(classLoader, loadedClasses)
         }
 
         val leaks = mutableSetOf<MemoryLeak>()

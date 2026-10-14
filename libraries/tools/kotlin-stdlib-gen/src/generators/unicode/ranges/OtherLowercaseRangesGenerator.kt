@@ -20,9 +20,6 @@ internal class OtherLowercaseRangesGenerator(
     private val otherLowerRanges = mutableListOf<IntRange>()
 
     fun appendLine(line: PropertyLine) {
-        // In Native the Other_Lowercase code points are also used to perform String.lowercase()
-        if (target != KotlinTarget.Native && line.rangeStart.hexToInt() > 0xFFFF) return
-
         if (line.property == "Other_Lowercase") {
             otherLowerRanges.add(line.intRange())
         }
@@ -44,9 +41,9 @@ internal class OtherLowercaseRangesGenerator(
     }
 
     fun isOtherLowercaseImpl(strategy: RangesWritingStrategy) = """
-        internal fun Int.isOtherLowercase(): Boolean {
-            val index = binarySearchRange(${strategy.rangeRef("otherLowerStart")}, this)
-            return index >= 0 && this < ${strategy.rangeRef("otherLowerStart")}[index] + ${strategy.rangeRef("otherLowerLength")}[index]
+        internal actual fun isOtherLowercase(code: Int): Boolean {
+            val index = binarySearchRange(${strategy.rangeRef("otherLowerStart")}, code)
+            return index >= 0 && code < ${strategy.rangeRef("otherLowerStart")}[index] + ${strategy.rangeRef("otherLowerLength")}[index]
         }
     """.trimIndent()
 }

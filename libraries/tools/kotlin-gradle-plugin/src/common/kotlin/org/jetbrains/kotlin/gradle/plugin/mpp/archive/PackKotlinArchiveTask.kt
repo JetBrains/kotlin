@@ -9,25 +9,20 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveEntry
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream
 import org.apache.commons.compress.compressors.xz.XZCompressorOutputStream
 import org.gradle.api.DefaultTask
-import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.file.FileCollection
-import org.gradle.api.file.FileVisitDetails
-import org.gradle.api.file.RegularFileProperty
-import org.gradle.api.file.ReproducibleFileVisitor
+import org.gradle.api.file.*
 import org.gradle.api.internal.file.FileOperations
 import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputDirectory
-import org.gradle.api.tasks.InputFile
-import org.gradle.api.tasks.InputFiles
-import org.gradle.api.tasks.Nested
-import org.gradle.api.tasks.OutputDirectory
-import org.gradle.api.tasks.OutputFile
-import org.gradle.api.tasks.PathSensitive
-import org.gradle.api.tasks.PathSensitivity
-import org.gradle.api.tasks.TaskAction
+import org.gradle.api.provider.SetProperty
+import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_ALLOW_INCOMPLETE_KOTLIN_ARCHIVE_PUBLICATION
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.internal.KotlinProjectSharedDataProvider
+import org.jetbrains.kotlin.gradle.plugin.mpp.CrossCompilationData
+import org.jetbrains.kotlin.konan.target.HostManager
 import java.io.File
 import java.io.OutputStream
 import java.util.zip.Deflater
@@ -40,19 +35,44 @@ internal class KotlinArchiveEntry(
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
     val files: FileCollection,
+    @get:Input
+    val filesRequireUnpacking: Boolean = false,
 )
+
+internal class KotlinArchiveTargetCrossCompilationCheckData(
+    @get:Input
+    val targetName: String,
+    @get:Internal
+    val crossCompilationData: KotlinProjectSharedDataProvider<CrossCompilationData>,
+) {
+    /**
+     * This is here purely for dependency management purposes.
+     * Task doesn't need it directly, but it's used in implementation of called functions
+     * from [crossCompilationData].
+     */
+    @get:InputFiles
+    @get:PathSensitive(PathSensitivity.NONE)
+    val crossCompilationMetadata: FileCollection = crossCompilationData.files
+}
+
+internal fun KotlinArchiveTargetCrossCompilationCheckData.isSupported(): Boolean {
+    return crossCompilationData.dataForAllDependencies.all { it.crossCompilationSupported }
+}
 
 @DisableCachingByDefault(because = "Assembling a Kotlin Archive is not worth caching, as it's only built for publishing, which is a rare operation")
 internal abstract class AssembleKotlinArchiveTask @Inject constructor(
     private val fileOperations: FileOperations,
-) : DefaultTask() {
+    private val archiveOperations: ArchiveOperations,
+) : DefaultTask(), UsesKotlinToolingDiagnostics {
     @get:Nested
     abstract val archiveContents: ListProperty<KotlinArchiveEntry>
 
     private fun kotlinArchiveEntryOf(path: String, files: FileCollection) = KotlinArchiveEntry(project.provider { path }, files)
 
-    fun addPlatformKlib(path: String, files: FileCollection) {
-        archiveContents.add(kotlinArchiveEntryOf("${KarLayout.PLATFORM_KLIBS_DIRECTORY_NAME}/$path", files))
+    fun addPlatformKlib(path: String, files: FileCollection, packed: Boolean = false) {
+        archiveContents.add(
+            KotlinArchiveEntry(project.provider { "${KarLayout.PLATFORM_KLIBS_DIRECTORY_NAME}/$path" }, files, packed)
+        )
     }
 
     fun addCInterop(pathProvider: Provider<String>, files: FileCollection) {
@@ -71,11 +91,81 @@ internal abstract class AssembleKotlinArchiveTask @Inject constructor(
     @get:PathSensitive(PathSensitivity.NONE)
     abstract val projectStructureMetadataFile: RegularFileProperty
 
+    /**
+     * Swift Export metadata json produced by
+     * [org.jetbrains.kotlin.gradle.plugin.mpp.export.tasks.SerializeSwiftExportMetadata].
+     * Unset when the project does not configure the `export { swift { } }` DSL.
+     */
+    @get:Optional
+    @get:InputFile
+    @get:PathSensitive(PathSensitivity.NONE)
+    abstract val swiftExportMetadataFile: RegularFileProperty
+
     @get:OutputDirectory
     abstract val outputDirectory: DirectoryProperty
 
+    @get:Input
+    abstract val targetsNotPublishableOnCurrentHost: SetProperty<String>
+
+    /**
+     * This check can't be done on configuration phase, as it requires to resolve the dependencies,
+     * and maybe even run the tasks to generate files from them.
+     *
+     * Also, we can't wrap the sharedData to conditionally empty provider and put it into [targetsNotPublishableOnCurrentHost],
+     * but need to store it directly.
+     * Otherwise, when configuration cache is enabled, it would be queried too early (when cache is stored).
+     *
+     * So we just store relevant data to perform check in task runtime.
+     */
+    @get:Nested
+    abstract val targetsCrossCompilationChecks: ListProperty<KotlinArchiveTargetCrossCompilationCheckData>
+
+    fun checkTargetHasNoMissingDependenciesBecauseOfCrossCompilationDisabled(
+        targetName: String,
+        crossCompilationData: KotlinProjectSharedDataProvider<CrossCompilationData>
+    ) {
+        targetsCrossCompilationChecks.add(
+            KotlinArchiveTargetCrossCompilationCheckData(
+                targetName = targetName,
+                crossCompilationData = crossCompilationData
+            )
+        )
+    }
+
+    @get:Input
+    abstract val incompleteArchiveAllowed: Property<Boolean>
+
+    private fun checkAllTargetsArePublishable() {
+        val targetsNonPublishableBecauseOfMissingCrosscompiledDependencies =
+            targetsCrossCompilationChecks.get()
+                .filter { !it.isSupported() }
+                .map { it.targetName }
+        val allNonPublishableTargets =
+            targetsNotPublishableOnCurrentHost.get() +
+            targetsNonPublishableBecauseOfMissingCrosscompiledDependencies
+
+        if (allNonPublishableTargets.isEmpty()) return
+
+        if (incompleteArchiveAllowed.get()) {
+            logger.info(
+                "Kotlin Archive is built without $allNonPublishableTargets, " +
+                        "as it is allowed by the '$KOTLIN_ALLOW_INCOMPLETE_KOTLIN_ARCHIVE_PUBLICATION' property"
+            )
+            return
+        }
+
+        val diagnostic = KotlinToolingDiagnostics.IncompleteKotlinArchivePublication(
+            allNonPublishableTargets,
+            HostManager.platformName(),
+        )
+
+        reportDiagnostic(diagnostic)
+    }
+
     @TaskAction
     fun execute() {
+        checkAllTargetsArePublishable()
+
         val targetDir = outputDirectory.get().asFile
 
         val rootDirectories = listOf(
@@ -83,18 +173,30 @@ internal abstract class AssembleKotlinArchiveTask @Inject constructor(
             KarLayout.CINTEROP_KLIBS_DIRECTORY_NAME,
             KarLayout.METADATA_DIRECTORY_NAME,
             KarLayout.RESOURCES_DIRECTORY_NAME,
+            KarLayout.SWIFT_EXPORT_DIRECTORY_NAME,
         )
 
         fileOperations.sync { spec ->
             spec.into(targetDir)
             for (input in archiveContents.get()) {
-                spec.from(input.files) { inputSpec ->
+                val content = if (input.filesRequireUnpacking) {
+                    input.files.files.filter { it.exists() }.map { archiveOperations.zipTree(it) }
+                } else {
+                    listOf(input.files)
+                }
+                spec.from(content) { inputSpec ->
                     inputSpec.into(input.pathPrefix)
                 }
             }
             spec.from(projectStructureMetadataFile) { psmSpec ->
                 psmSpec.into(KarLayout.METADATA_DIRECTORY_NAME)
                 psmSpec.rename { KarLayout.PSM_FILE_NAME }
+            }
+            if (swiftExportMetadataFile.isPresent) {
+                spec.from(swiftExportMetadataFile) { swiftExportSpec ->
+                    swiftExportSpec.into(KarLayout.SWIFT_EXPORT_DIRECTORY_NAME)
+                    swiftExportSpec.rename { KarLayout.SWIFT_EXPORT_METADATA_FILE_NAME }
+                }
             }
         }
 

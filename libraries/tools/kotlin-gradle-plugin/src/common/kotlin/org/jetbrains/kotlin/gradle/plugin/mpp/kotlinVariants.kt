@@ -47,12 +47,12 @@ internal fun getCoordinatesFromGroupNameAndVersion(
     return ModuleVersionIdentifierWithUnspecifiedValue(ModuleCoordinates(moduleGroup, moduleName, moduleVersion))
 }
 
-internal fun getCoordinatesFromPublicationDelegateAndProject(
+internal fun ComponentWithCoordinates.getCoordinatesFromPublicationDelegateAndProject(
     publication: MavenPublication?,
     project: Project,
     target: KotlinTarget?,
 ): ModuleVersionIdentifier {
-    val moduleName = publication?.artifactId ?: dashSeparatedName(project.name, target?.name?.lowercase())
+    val moduleName = publication?.artifactId ?: (this as? KotlinTargetComponent)?.defaultArtifactId ?: dashSeparatedName(project.name, target?.name?.lowercase())
     val moduleGroup = publication?.groupId ?: project.group.toString()
     val moduleVersion = publication?.version ?: project.version.toString()
     return getCoordinatesFromGroupNameAndVersion(moduleGroup, moduleName, moduleVersion)

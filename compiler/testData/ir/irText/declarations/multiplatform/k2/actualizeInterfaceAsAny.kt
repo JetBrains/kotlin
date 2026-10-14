@@ -17,9 +17,6 @@ class C : Test(), NoSuperTypeMarker, Marker {}
 fun <T: Marker> test1() {}
 fun <T> test2() where T: Marker, T: NoSuperTypeMarker {}
 fun <T> test3() where T: Marker?, T: NoSuperTypeMarker {}
-fun <T> test4() where T: Marker, T: Test? {}
-fun <T> test5() where T: Marker?, T: Test? {}
-fun <A, B> test6() where A: Marker, A: Test, B: A {}
 
 // MODULE: jvm()()(common)
 // FILE: main.kt

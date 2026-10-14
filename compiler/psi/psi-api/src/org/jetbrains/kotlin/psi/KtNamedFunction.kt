@@ -10,9 +10,9 @@ import com.intellij.lang.ASTNode
 import com.intellij.navigation.ItemPresentation
 import com.intellij.navigation.ItemPresentationProviders
 import com.intellij.psi.PsiElement
-import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.psiUtil.containingScript
 import org.jetbrains.kotlin.psi.psiUtil.isContractPresentPsiCheck
 import org.jetbrains.kotlin.psi.psiUtil.isKtFile
 import org.jetbrains.kotlin.psi.psiUtil.isLegacyContractPresentPsiCheck
@@ -77,11 +77,12 @@ open class KtNamedFunction : KtTypeParameterListOwnerStub<KotlinFunctionStub>, K
     override fun getEqualsToken(): PsiElement? =
         findChildByType(KtTokens.EQ)
 
+    // Without a block body, the body is the expression after '='
     override fun getInitializer(): KtExpression? =
-        PsiTreeUtil.getNextSiblingOfType(/* sibling = */ equalsToken, /* aClass = */ KtExpression::class.java)
+        if (hasBlockBody()) null else bodyExpression
 
     override fun hasInitializer(): Boolean =
-        initializer != null
+        !hasBlockBody() && hasBody()
 
     override fun getPresentation(): ItemPresentation? =
         ItemPresentationProviders.getItemPresentation(/* element = */ this)
@@ -163,8 +164,8 @@ open class KtNamedFunction : KtTypeParameterListOwnerStub<KotlinFunctionStub>, K
     @Deprecated(
         message = "Use setFunctionTypeReference(typeRef) instead",
         replaceWith = ReplaceWith("this.setFunctionTypeReference(typeRef)", "org.jetbrains.kotlin.idea.base.psi.setFunctionTypeReference"),
+        level = DeprecationLevel.ERROR,
     )
-    @OptIn(KtNonPublicApi::class)
     override fun setTypeReference(typeRef: KtTypeReference?): KtTypeReference? =
         KtPsiMutationService.getInstance().setFunctionTypeReference(this, typeRef)
 
@@ -172,6 +173,10 @@ open class KtNamedFunction : KtTypeParameterListOwnerStub<KotlinFunctionStub>, K
         findChildByType(KtTokens.COLON)
 
     override fun isLocal(): Boolean {
+        // Checked before `parent` since it forces AST loading for script declarations
+        @OptIn(KtExperimentalApi::class)
+        if (containingScript != null) return false
+
         val parent = parent
         return when {
             parent == null -> {
@@ -180,7 +185,6 @@ open class KtNamedFunction : KtTypeParameterListOwnerStub<KotlinFunctionStub>, K
             }
             isKtFile(parent) -> false
             parent is KtClassBody -> false
-            parent.parent is KtScript -> false
             else -> true
         }
     }

@@ -7,19 +7,19 @@ KtPackageDirective(0,0): ''
 KtImportList(0,0): ''
   NO_CANDIDATES
 
-KtNamedFunction(6,105): '// FILE: main.kt'
+KtNamedFunction(8,107): '// FILE: main.kt'
   NO_CANDIDATES
 
-KtParameterList(31,33): '()'
+KtParameterList(33,35): '()'
   NO_CANDIDATES
 
-KtBlockExpression(34,105): '{'
+KtBlockExpression(36,107): '{'
   NO_CANDIDATES
 
-KtProperty(39,67): 'val p = JavaClass<Int>.field'
+KtProperty(41,69): 'val p = JavaClass<Int>.field'
   NO_CANDIDATES
 
-KtDotQualifiedExpression(47,67): 'JavaClass<Int>.field'
+KtDotQualifiedExpression(49,69): 'JavaClass<Int>.field'
   KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
@@ -40,7 +40,7 @@ KtDotQualifiedExpression(47,67): 'JavaClass<Int>.field'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-KtCallExpression(47,61): 'JavaClass<Int>'
+KtCallExpression(49,63): 'JavaClass<Int>'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -61,7 +61,7 @@ KtCallExpression(47,61): 'JavaClass<Int>'
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
-KtNameReferenceExpression(47,56): 'JavaClass'
+KtNameReferenceExpression(49,58): 'JavaClass'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -82,22 +82,22 @@ KtNameReferenceExpression(47,56): 'JavaClass'
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
-KtTypeArgumentList(56,61): '<Int>'
+KtTypeArgumentList(58,63): '<Int>'
   NO_CANDIDATES
 
-KtTypeProjection(57,60): 'Int'
+KtTypeProjection(59,62): 'Int'
   NO_CANDIDATES
 
-KtTypeReference(57,60): 'Int'
+KtTypeReference(59,62): 'Int'
   NO_CANDIDATES
 
-KtUserType(57,60): 'Int'
+KtUserType(59,62): 'Int'
   NO_CANDIDATES
 
-KtNameReferenceExpression(57,60): 'Int'
+KtNameReferenceExpression(59,62): 'Int'
   NO_CANDIDATES
 
-KtNameReferenceExpression(62,67): 'field'
+KtNameReferenceExpression(64,69): 'field'
   KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
@@ -118,10 +118,10 @@ KtNameReferenceExpression(62,67): 'field'
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
-KtProperty(71,103): 'val m = JavaClass<Long>.method()'
+KtProperty(73,105): 'val m = JavaClass<Long>.method()'
   NO_CANDIDATES
 
-KtDotQualifiedExpression(79,103): 'JavaClass<Long>.method()'
+KtDotQualifiedExpression(81,105): 'JavaClass<Long>.method()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -142,7 +142,7 @@ KtDotQualifiedExpression(79,103): 'JavaClass<Long>.method()'
       valueArgumentMapping = {}
     isInBestCandidates = true
 
-KtCallExpression(79,94): 'JavaClass<Long>'
+KtCallExpression(81,96): 'JavaClass<Long>'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -163,7 +163,7 @@ KtCallExpression(79,94): 'JavaClass<Long>'
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
-KtNameReferenceExpression(79,88): 'JavaClass'
+KtNameReferenceExpression(81,90): 'JavaClass'
   KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -184,22 +184,22 @@ KtNameReferenceExpression(79,88): 'JavaClass'
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
 
-KtTypeArgumentList(88,94): '<Long>'
+KtTypeArgumentList(90,96): '<Long>'
   NO_CANDIDATES
 
-KtTypeProjection(89,93): 'Long'
+KtTypeProjection(91,95): 'Long'
   NO_CANDIDATES
 
-KtTypeReference(89,93): 'Long'
+KtTypeReference(91,95): 'Long'
   NO_CANDIDATES
 
-KtUserType(89,93): 'Long'
+KtUserType(91,95): 'Long'
   NO_CANDIDATES
 
-KtNameReferenceExpression(89,93): 'Long'
+KtNameReferenceExpression(91,95): 'Long'
   NO_CANDIDATES
 
-KtCallExpression(95,103): 'method()'
+KtCallExpression(97,105): 'method()'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -220,7 +220,7 @@ KtCallExpression(95,103): 'method()'
       valueArgumentMapping = {}
     isInBestCandidates = true
 
-KtNameReferenceExpression(95,101): 'method'
+KtNameReferenceExpression(97,103): 'method'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -241,5 +241,5 @@ KtNameReferenceExpression(95,101): 'method'
       valueArgumentMapping = {}
     isInBestCandidates = true
 
-KtValueArgumentList(101,103): '()'
+KtValueArgumentList(103,105): '()'
   NO_CANDIDATES

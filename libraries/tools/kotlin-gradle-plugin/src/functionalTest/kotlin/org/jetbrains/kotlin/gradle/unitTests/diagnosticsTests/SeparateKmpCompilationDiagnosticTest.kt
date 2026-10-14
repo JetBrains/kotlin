@@ -80,7 +80,7 @@ class SeparateKmpCompilationDiagnosticTest {
                 @OptIn(ExperimentalWasmDsl::class)
                 run {
                     wasmWasi {
-                        nodejs()
+                        wasmtime()
                     }
                     wasmJs {
                         d8()

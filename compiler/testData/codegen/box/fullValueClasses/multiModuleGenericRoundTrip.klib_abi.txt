@@ -1,0 +1,26 @@
+Module: lib
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <lib>
+final value class <#A: kotlin/Any?> /Entry { // /Entry|null[0]
+    final val key // /Entry.key|{}key[0]
+        final fun <get-key>(): kotlin/String? // /Entry.key.<get-key>|<get-key>(){}[0]
+    final val value // /Entry.value|{}value[0]
+        final fun <get-value>(): #A // /Entry.value.<get-value>|<get-value>(){}[0]
+    constructor <init>(kotlin/String?, #A) // /Entry.<init>|<init>(kotlin.String?;1:0){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // /Entry.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // /Entry.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // /Entry.toString|toString(){}[0]
+}
+final fun /makeEntry(): /Entry<kotlin/Int> // /makeEntry|makeEntry(){}[0]
+Module: main
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final fun /box(): kotlin/String // /box|box(){}[0]

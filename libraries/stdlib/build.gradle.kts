@@ -44,6 +44,7 @@ plugins {
 }
 
 description = "Kotlin Standard Library"
+val buildFeatures = serviceOf<BuildFeatures>()
 
 fun KotlinCommonCompilerOptions.mainCompilationOptions() {
     // Use this to override language and API versions for stdlib compared to the version used to build the whole Kotlin
@@ -51,31 +52,14 @@ fun KotlinCommonCompilerOptions.mainCompilationOptions() {
     // apiVersion = KotlinVersion.KOTLIN_...
     freeCompilerArgs.add("-Xstdlib-compilation")
     freeCompilerArgs.add("-Xdont-warn-on-error-suppression")
-    freeCompilerArgs.add("-Xcontext-parameters")
-    freeCompilerArgs.add("-Xname-based-destructuring=complete")
-    freeCompilerArgs.add("-Xcollection-literals")
-    freeCompilerArgs.add("-Xcontext-sensitive-resolution")
-    addReturnValueCheckerInfo()
+    freeCompilerArgs.addAll(dogfoodedExperimentalFeatures)
+    freeCompilerArgs.add("-Xreturn-value-checker=full")
+    freeCompilerArgs.add("-Xcompanion-blocks")
     if (!kotlinBuildProperties.disableWerror) allWarningsAsErrors = true
 
     if (this is KotlinJvmCompilerOptions) {
-        suppressRedundantCliArgumentWarning()
+        freeCompilerArgs.add(redundantCliArgWarningSuppression)
     }
-}
-
-fun KotlinCommonCompilerOptions.addReturnValueCheckerInfo() {
-    freeCompilerArgs.add("-Xreturn-value-checker=full")
-}
-
-/**
- * Between making a language feature stable and the next bootstrap, we need to keep providing the compiler argument.
- * But this produces a warning
- * "The argument ... is redundant for the current language version ..."
- * in the bootstrap test and fails because of -Werror.
- * To work around it, we suppress the warning.
- */
-fun KotlinCommonCompilerOptions.suppressRedundantCliArgumentWarning() {
-    freeCompilerArgs.add("-Xwarning-level=REDUNDANT_CLI_ARG:disabled")
 }
 
 val jvmBuiltinsRelativeDir = "libraries/stdlib/jvm/builtins"
@@ -105,10 +89,13 @@ kotlin {
 
     compilerOptions {
         // Some main compilations use freeCompilerArgs.set instead of .addAll,
-        // so addReturnValueCheckerInfo() duplicated there as well.
+        // so these options may be duplicated there as well.
         // Here it mainly serves the purpose to set up test compilations/source sets
         // and especially commonTest in IDE since there is no separate metadata compilation for it.
-        addReturnValueCheckerInfo()
+        freeCompilerArgs.add("-Xreturn-value-checker=full")
+        freeCompilerArgs.add("-Xcompanion-blocks")
+        freeCompilerArgs.addAll(dogfoodedExperimentalFeatures)
+        freeCompilerArgs.add("-Xallow-kotlin-package")
     }
 
     metadata {
@@ -125,10 +112,10 @@ kotlin {
                                 "-Xexpect-actual-classes",
                                 "-Xexplicit-api=strict",
                                 diagnosticNamesArg,
+                                redundantCliArgWarningSuppression,
                             )
                         )
                         mainCompilationOptions()
-                        suppressRedundantCliArgumentWarning()
                     }
                 }
             }
@@ -143,11 +130,13 @@ kotlin {
                             listOfNotNull(
                                 "-Xallow-kotlin-package",
                                 "-Xsuppress-missing-builtins-error",
-                                diagnosticNamesArg
+                                diagnosticNamesArg,
+                                *dogfoodedExperimentalFeatures.toTypedArray(),
+                                "-Xreturn-value-checker=full",
+                                "-Xcompanion-blocks",
+                                redundantCliArgWarningSuppression,
                             )
                         )
-                        addReturnValueCheckerInfo()
-                        suppressRedundantCliArgumentWarning()
                     }
                 }
             }
@@ -306,27 +295,39 @@ kotlin {
                         .single()
 
                     inputFileProperty.set(devBinary.mainFileSyncPath)
+                    useMocha {
+                        timeout = "10s"
+                    }
                 }
             }
         }
 
+        val jsAllTestTask = tasks.named("jsTest")
 
-        if (!kotlinBuildProperties.isTeamcityBuild.get()) {
-            browser {
+        if(!buildFeatures.isolatedProjects.active.get()) {
+            if (!kotlinBuildProperties.isTeamcityBuild.get()) {
+                browser {
+                    val latestJsRun = latestTargetRunRegistering()
+                    jsAllTestTask {
+                        dependsOn(latestJsRun.executionTask)
+                    }
+                    testTask {
+                        useMocha {
+                            timeout = "10s"
+                        }
+                    }
+                }
+            }
+            nodejs {
                 val latestJsRun = latestTargetRunRegistering()
-
-                testTask {
+                jsAllTestTask {
                     dependsOn(latestJsRun.executionTask)
                 }
-            }
-        }
-        nodejs {
-            val latestJsRun = latestTargetRunRegistering()
 
-            testTask {
-                dependsOn(latestJsRun.executionTask)
-                useMocha {
-                    timeout = "10s"
+                testTask {
+                    useMocha {
+                        timeout = "10s"
+                    }
                 }
             }
         }
@@ -350,7 +351,9 @@ kotlin {
         // KT-85971
         this as KotlinJsTargetDsl
         if (this.wasmTargetType == KotlinWasmTargetType.JS) {
-            nodejs()
+            if(!buildFeatures.isolatedProjects.active.get()) {
+                nodejs()
+            }
         } else {
             this as KotlinWasmWasiTargetDsl
             @OptIn(ExperimentalWasmDsl::class)
@@ -685,9 +688,6 @@ kotlin {
                     commonTestOptIns.forEach { optIn(it) }
                 }
             }
-            compilerOptions.freeCompilerArgs.add("-Xname-based-destructuring=complete")
-            compilerOptions.freeCompilerArgs.add("-Xcollection-literals")
-            compilerOptions.freeCompilerArgs.add("-Xcontext-sensitive-resolution")
         }
     }
 }
@@ -868,6 +868,7 @@ tasks {
         val distWasmWasiKlib = configurations.create("distWasmWasiKlib")
         val commonMainMetadataElements = configurations.create("commonMainMetadataElements")
         val webMainMetadataElements = configurations.create("webMainMetadataElements")
+        val jsIrMainSources = configurations.create("jsIrMainSources")
 
         add(distJsSourcesJar.name, jsSourcesJar)
         add(distJsKlib.name, jsJar)
@@ -875,6 +876,7 @@ tasks {
         add(distWasmWasiKlib.name, wasmWasiJar)
         add(webMainMetadataElements.name, webMetadataJar)
         add(commonMainMetadataElements.name, commonMetadataJar)
+        add(jsIrMainSources.name, project.tasks.named("prepareJsIrMainSources"))
     }
 
 
@@ -912,12 +914,14 @@ tasks {
             exclude("generated/minmax/*")
             exclude("collections/MapTest.kt")
         }
-        named("compileTestDevelopmentExecutableKotlinWasm$wasmTarget", KotlinJsIrLink::class) {
-            compilerOptions.freeCompilerArgs.add("-Xwasm-enable-array-range-checks")
-            compilerOptions.freeCompilerArgs.add("-Xwasm-enable-asserts")
-        }
-        named("compileTestProductionExecutableKotlinWasm$wasmTarget", KotlinJsIrLink::class) {
-            enabled = false  // Causes out-of-memory in CI: KTI-2150
+        if (!buildFeatures.isolatedProjects.active.get()) {
+            named("compileTestDevelopmentExecutableKotlinWasm$wasmTarget", KotlinJsIrLink::class) {
+                compilerOptions.freeCompilerArgs.add("-Xwasm-enable-array-range-checks")
+                compilerOptions.freeCompilerArgs.add("-Xwasm-enable-asserts")
+            }
+            named("compileTestProductionExecutableKotlinWasm$wasmTarget", KotlinJsIrLink::class) {
+                enabled = false  // Causes out-of-memory in CI: KTI-2150
+            }
         }
     }
 

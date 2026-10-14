@@ -1,0 +1,259 @@
+--- a/LockFreeQueueTest.ir.txt
++++ b/LockFreeQueueTest.ir.native.txt
+@@ -30,10 +30,24 @@
+           Volatile
+         EXPRESSION_BODY
+           TYPE_OP type=kotlin.Any? origin=CAST typeOperand=kotlin.Any?
+-            CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
++            CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=kotlin.Any? origin=null
+               TYPE_ARG T: kotlin.Any?
+-              ARG <this>: PROPERTY_REFERENCE 'private final head$volatile: kotlin.Any? declared in <root>.LockFreeQueue' field='FIELD ATOMICFU_GENERATED_FIELD name:head$volatile type:kotlin.Any? visibility:private declared in <root>.LockFreeQueue' getter='private final fun <get-head$volatile> (): kotlin.Any? declared in <root>.LockFreeQueue' setter='private final fun <set-head$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.LockFreeQueue' type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null
+-                ARG 1: GET_VAR '<this>: <root>.LockFreeQueue declared in <root>.LockFreeQueue' type=<root>.LockFreeQueue origin=IMPLICIT_ARGUMENT
++              ARG <this>: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null reflectionTarget='private final head$volatile: kotlin.Any? declared in <root>.LockFreeQueue'
++                bound <this>: GET_VAR '<this>: <root>.LockFreeQueue declared in <root>.LockFreeQueue' type=<root>.LockFreeQueue origin=IMPLICIT_ARGUMENT
++                getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-head$volatile> visibility:local modality:FINAL returnType:kotlin.Any?
++                  VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.LockFreeQueue
++                  BLOCK_BODY
++                    RETURN type=kotlin.Nothing from='local final fun <get-head$volatile> (<this>: <root>.LockFreeQueue): kotlin.Any? declared in <root>.LockFreeQueue.tail$volatile'
++                      CALL 'private final fun <get-head$volatile> (): kotlin.Any? declared in <root>.LockFreeQueue' type=kotlin.Any? origin=null
++                        ARG <this>: GET_VAR '<this>: <root>.LockFreeQueue declared in <root>.LockFreeQueue.tail$volatile.<get-head$volatile>' type=<root>.LockFreeQueue origin=null
++                setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-head$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++                  VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.LockFreeQueue
++                  VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Any?
++                  BLOCK_BODY
++                    RETURN type=kotlin.Nothing from='local final fun <set-head$volatile> (<this>: <root>.LockFreeQueue, p0: kotlin.Any?): kotlin.Unit declared in <root>.LockFreeQueue.tail$volatile'
++                      CALL 'private final fun <set-head$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.LockFreeQueue' type=kotlin.Unit origin=null
++                        ARG <this>: GET_VAR '<this>: <root>.LockFreeQueue declared in <root>.LockFreeQueue.tail$volatile.<set-head$volatile>' type=<root>.LockFreeQueue origin=null
++                        ARG value: GET_VAR 'p0: kotlin.Any? declared in <root>.LockFreeQueue.tail$volatile.<set-head$volatile>' type=kotlin.Any? origin=null
+       FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-tail$volatile> visibility:private modality:FINAL returnType:kotlin.Any?
+         VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.LockFreeQueue
+         correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:tail$volatile visibility:private modality:FINAL [var]
+@@ -114,15 +128,15 @@
+       BLOCK_BODY
+         WHILE label=null origin=null
+           condition: CONST Boolean type=kotlin.Boolean value=true
+-          body: BLOCK type=R of kotlin.Function1 origin=null
+-            VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:T of kotlin.concurrent.atomicGetField [val]
+-              CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
++          body: BLOCK type=kotlin.Unit origin=null
++            VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Any? [val]
++              CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=kotlin.Any? origin=null
+                 TYPE_ARG T: kotlin.Any?
+-                ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=R of kotlin.Function0 origin=null
++                ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null
+                   ARG <this>: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>> declared in <root>.LockFreeQueue.loop$atomicfu$NATIVE_PROPERTY_REF$Any' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>> origin=null
+-            CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=R of kotlin.Function1 origin=null
++            CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Unit origin=null
+               ARG <this>: GET_VAR 'action$atomicfu: kotlin.Function1<kotlin.Any?, kotlin.Unit> declared in <root>.LockFreeQueue.loop$atomicfu$NATIVE_PROPERTY_REF$Any' type=kotlin.Function1<kotlin.Any?, kotlin.Unit> origin=null
+-              ARG p1: GET_VAR 'val tmp_0: T of kotlin.concurrent.atomicGetField declared in <root>.LockFreeQueue.loop$atomicfu$NATIVE_PROPERTY_REF$Any' type=T of kotlin.concurrent.atomicGetField origin=null
++              ARG p1: GET_VAR 'val tmp_0: kotlin.Any? declared in <root>.LockFreeQueue.loop$atomicfu$NATIVE_PROPERTY_REF$Any' type=kotlin.Any? origin=null
+     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+       VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+@@ -145,8 +159,22 @@
+             FUN ATOMICFU_GENERATED_FUNCTION name:<head$volatile-getter> visibility:local modality:FINAL returnType:kotlin.reflect.KMutableProperty0<kotlin.Any?> [inline]
+               BLOCK_BODY
+                 RETURN type=kotlin.Nothing from='local final fun <head$volatile-getter> (): kotlin.reflect.KMutableProperty0<kotlin.Any?> declared in <root>.LockFreeQueue.dequeue'
+-                  PROPERTY_REFERENCE 'private final head$volatile: kotlin.Any? declared in <root>.LockFreeQueue' field='FIELD ATOMICFU_GENERATED_FIELD name:head$volatile type:kotlin.Any? visibility:private declared in <root>.LockFreeQueue' getter='private final fun <get-head$volatile> (): kotlin.Any? declared in <root>.LockFreeQueue' setter='private final fun <set-head$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.LockFreeQueue' type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null
+-                    ARG 1: GET_VAR '<this>: <root>.LockFreeQueue declared in <root>.LockFreeQueue.dequeue' type=<root>.LockFreeQueue origin=IMPLICIT_ARGUMENT
++                  RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null reflectionTarget='private final head$volatile: kotlin.Any? declared in <root>.LockFreeQueue'
++                    bound <this>: GET_VAR '<this>: <root>.LockFreeQueue declared in <root>.LockFreeQueue.dequeue' type=<root>.LockFreeQueue origin=IMPLICIT_ARGUMENT
++                    getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-head$volatile> visibility:local modality:FINAL returnType:kotlin.Any?
++                      VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.LockFreeQueue
++                      BLOCK_BODY
++                        RETURN type=kotlin.Nothing from='local final fun <get-head$volatile> (<this>: <root>.LockFreeQueue): kotlin.Any? declared in <root>.LockFreeQueue.dequeue.<head$volatile-getter>'
++                          CALL 'private final fun <get-head$volatile> (): kotlin.Any? declared in <root>.LockFreeQueue' type=kotlin.Any? origin=null
++                            ARG <this>: GET_VAR '<this>: <root>.LockFreeQueue declared in <root>.LockFreeQueue.dequeue.<head$volatile-getter>.<get-head$volatile>' type=<root>.LockFreeQueue origin=null
++                    setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-head$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++                      VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.LockFreeQueue
++                      VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Any?
++                      BLOCK_BODY
++                        RETURN type=kotlin.Nothing from='local final fun <set-head$volatile> (<this>: <root>.LockFreeQueue, p0: kotlin.Any?): kotlin.Unit declared in <root>.LockFreeQueue.dequeue.<head$volatile-getter>'
++                          CALL 'private final fun <set-head$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.LockFreeQueue' type=kotlin.Unit origin=null
++                            ARG <this>: GET_VAR '<this>: <root>.LockFreeQueue declared in <root>.LockFreeQueue.dequeue.<head$volatile-getter>.<set-head$volatile>' type=<root>.LockFreeQueue origin=null
++                            ARG value: GET_VAR 'p0: kotlin.Any? declared in <root>.LockFreeQueue.dequeue.<head$volatile-getter>.<set-head$volatile>' type=kotlin.Any? origin=null
+           ARG action$atomicfu: FUN_EXPR type=kotlin.Function1<<root>.LockFreeQueue.Node, kotlin.Unit> origin=LAMBDA
+             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
+               VALUE_PARAMETER kind:Regular name:curHead index:0 type:<root>.LockFreeQueue.Node
+@@ -155,10 +183,24 @@
+                   BLOCK type=<root>.LockFreeQueue.Node origin=ELVIS
+                     VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:<root>.LockFreeQueue.Node? [val]
+                       TYPE_OP type=kotlin.Any? origin=CAST typeOperand=kotlin.Any?
+-                        CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
++                        CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=kotlin.Any? origin=null
+                           TYPE_ARG T: kotlin.Any?
+-                          ARG <this>: PROPERTY_REFERENCE 'public final next$volatile: kotlin.Any? declared in <root>.LockFreeQueue.Node' field='FIELD ATOMICFU_GENERATED_FIELD name:next$volatile type:kotlin.Any? visibility:private declared in <root>.LockFreeQueue.Node' getter='public final fun <get-next$volatile> (): kotlin.Any? declared in <root>.LockFreeQueue.Node' setter='public final fun <set-next$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.LockFreeQueue.Node' type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null
+-                            ARG 1: GET_VAR 'curHead: <root>.LockFreeQueue.Node declared in <root>.LockFreeQueue.dequeue.<anonymous>' type=<root>.LockFreeQueue.Node origin=null
++                          ARG <this>: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null reflectionTarget='public final next$volatile: kotlin.Any? declared in <root>.LockFreeQueue.Node'
++                            bound <this>: GET_VAR 'curHead: <root>.LockFreeQueue.Node declared in <root>.LockFreeQueue.dequeue.<anonymous>' type=<root>.LockFreeQueue.Node origin=null
++                            getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-next$volatile> visibility:local modality:FINAL returnType:kotlin.Any?
++                              VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.LockFreeQueue.Node
++                              BLOCK_BODY
++                                RETURN type=kotlin.Nothing from='local final fun <get-next$volatile> (<this>: <root>.LockFreeQueue.Node): kotlin.Any? declared in <root>.LockFreeQueue.dequeue.<anonymous>'
++                                  CALL 'public final fun <get-next$volatile> (): kotlin.Any? declared in <root>.LockFreeQueue.Node' type=kotlin.Any? origin=null
++                                    ARG <this>: GET_VAR '<this>: <root>.LockFreeQueue.Node declared in <root>.LockFreeQueue.dequeue.<anonymous>.<get-next$volatile>' type=<root>.LockFreeQueue.Node origin=null
++                            setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-next$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++                              VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.LockFreeQueue.Node
++                              VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Any?
++                              BLOCK_BODY
++                                RETURN type=kotlin.Nothing from='local final fun <set-next$volatile> (<this>: <root>.LockFreeQueue.Node, p0: kotlin.Any?): kotlin.Unit declared in <root>.LockFreeQueue.dequeue.<anonymous>'
++                                  CALL 'public final fun <set-next$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.LockFreeQueue.Node' type=kotlin.Unit origin=null
++                                    ARG <this>: GET_VAR '<this>: <root>.LockFreeQueue.Node declared in <root>.LockFreeQueue.dequeue.<anonymous>.<set-next$volatile>' type=<root>.LockFreeQueue.Node origin=null
++                                    ARG value: GET_VAR 'p0: kotlin.Any? declared in <root>.LockFreeQueue.dequeue.<anonymous>.<set-next$volatile>' type=kotlin.Any? origin=null
+                     WHEN type=<root>.LockFreeQueue.Node origin=null
+                       BRANCH
+                         if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+@@ -173,8 +215,22 @@
+                   BRANCH
+                     if: CALL 'internal final fun compareAndSetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.compareAndSetField>, expectedValue: T of kotlin.concurrent.compareAndSetField, newValue: T of kotlin.concurrent.compareAndSetField): kotlin.Boolean declared in kotlin.concurrent' type=kotlin.Boolean origin=null
+                       TYPE_ARG T: kotlin.Any?
+-                      ARG <this>: PROPERTY_REFERENCE 'private final head$volatile: kotlin.Any? declared in <root>.LockFreeQueue' field='FIELD ATOMICFU_GENERATED_FIELD name:head$volatile type:kotlin.Any? visibility:private declared in <root>.LockFreeQueue' getter='private final fun <get-head$volatile> (): kotlin.Any? declared in <root>.LockFreeQueue' setter='private final fun <set-head$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.LockFreeQueue' type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null
+-                        ARG 1: GET_VAR '<this>: <root>.LockFreeQueue declared in <root>.LockFreeQueue.dequeue' type=<root>.LockFreeQueue origin=IMPLICIT_ARGUMENT
++                      ARG <this>: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null reflectionTarget='private final head$volatile: kotlin.Any? declared in <root>.LockFreeQueue'
++                        bound <this>: GET_VAR '<this>: <root>.LockFreeQueue declared in <root>.LockFreeQueue.dequeue' type=<root>.LockFreeQueue origin=IMPLICIT_ARGUMENT
++                        getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-head$volatile> visibility:local modality:FINAL returnType:kotlin.Any?
++                          VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.LockFreeQueue
++                          BLOCK_BODY
++                            RETURN type=kotlin.Nothing from='local final fun <get-head$volatile> (<this>: <root>.LockFreeQueue): kotlin.Any? declared in <root>.LockFreeQueue.dequeue.<anonymous>'
++                              CALL 'private final fun <get-head$volatile> (): kotlin.Any? declared in <root>.LockFreeQueue' type=kotlin.Any? origin=null
++                                ARG <this>: GET_VAR '<this>: <root>.LockFreeQueue declared in <root>.LockFreeQueue.dequeue.<anonymous>.<get-head$volatile>' type=<root>.LockFreeQueue origin=null
++                        setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-head$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++                          VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.LockFreeQueue
++                          VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Any?
++                          BLOCK_BODY
++                            RETURN type=kotlin.Nothing from='local final fun <set-head$volatile> (<this>: <root>.LockFreeQueue, p0: kotlin.Any?): kotlin.Unit declared in <root>.LockFreeQueue.dequeue.<anonymous>'
++                              CALL 'private final fun <set-head$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.LockFreeQueue' type=kotlin.Unit origin=null
++                                ARG <this>: GET_VAR '<this>: <root>.LockFreeQueue declared in <root>.LockFreeQueue.dequeue.<anonymous>.<set-head$volatile>' type=<root>.LockFreeQueue origin=null
++                                ARG value: GET_VAR 'p0: kotlin.Any? declared in <root>.LockFreeQueue.dequeue.<anonymous>.<set-head$volatile>' type=kotlin.Any? origin=null
+                       ARG expectedValue: GET_VAR 'curHead: <root>.LockFreeQueue.Node declared in <root>.LockFreeQueue.dequeue.<anonymous>' type=<root>.LockFreeQueue.Node origin=null
+                       ARG newValue: GET_VAR 'val next: <root>.LockFreeQueue.Node declared in <root>.LockFreeQueue.dequeue.<anonymous>' type=<root>.LockFreeQueue.Node origin=null
+                     then: RETURN type=kotlin.Nothing from='public final fun dequeue (): kotlin.Int declared in <root>.LockFreeQueue'
+@@ -193,18 +249,46 @@
+             FUN ATOMICFU_GENERATED_FUNCTION name:<tail$volatile-getter> visibility:local modality:FINAL returnType:kotlin.reflect.KMutableProperty0<kotlin.Any?> [inline]
+               BLOCK_BODY
+                 RETURN type=kotlin.Nothing from='local final fun <tail$volatile-getter> (): kotlin.reflect.KMutableProperty0<kotlin.Any?> declared in <root>.LockFreeQueue.enqueue'
+-                  PROPERTY_REFERENCE 'private final tail$volatile: kotlin.Any? declared in <root>.LockFreeQueue' field='FIELD ATOMICFU_GENERATED_FIELD name:tail$volatile type:kotlin.Any? visibility:private declared in <root>.LockFreeQueue' getter='private final fun <get-tail$volatile> (): kotlin.Any? declared in <root>.LockFreeQueue' setter='private final fun <set-tail$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.LockFreeQueue' type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null
+-                    ARG 1: GET_VAR '<this>: <root>.LockFreeQueue declared in <root>.LockFreeQueue.enqueue' type=<root>.LockFreeQueue origin=IMPLICIT_ARGUMENT
++                  RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null reflectionTarget='private final tail$volatile: kotlin.Any? declared in <root>.LockFreeQueue'
++                    bound <this>: GET_VAR '<this>: <root>.LockFreeQueue declared in <root>.LockFreeQueue.enqueue' type=<root>.LockFreeQueue origin=IMPLICIT_ARGUMENT
++                    getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-tail$volatile> visibility:local modality:FINAL returnType:kotlin.Any?
++                      VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.LockFreeQueue
++                      BLOCK_BODY
++                        RETURN type=kotlin.Nothing from='local final fun <get-tail$volatile> (<this>: <root>.LockFreeQueue): kotlin.Any? declared in <root>.LockFreeQueue.enqueue.<tail$volatile-getter>'
++                          CALL 'private final fun <get-tail$volatile> (): kotlin.Any? declared in <root>.LockFreeQueue' type=kotlin.Any? origin=null
++                            ARG <this>: GET_VAR '<this>: <root>.LockFreeQueue declared in <root>.LockFreeQueue.enqueue.<tail$volatile-getter>.<get-tail$volatile>' type=<root>.LockFreeQueue origin=null
++                    setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-tail$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++                      VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.LockFreeQueue
++                      VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Any?
++                      BLOCK_BODY
++                        RETURN type=kotlin.Nothing from='local final fun <set-tail$volatile> (<this>: <root>.LockFreeQueue, p0: kotlin.Any?): kotlin.Unit declared in <root>.LockFreeQueue.enqueue.<tail$volatile-getter>'
++                          CALL 'private final fun <set-tail$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.LockFreeQueue' type=kotlin.Unit origin=null
++                            ARG <this>: GET_VAR '<this>: <root>.LockFreeQueue declared in <root>.LockFreeQueue.enqueue.<tail$volatile-getter>.<set-tail$volatile>' type=<root>.LockFreeQueue origin=null
++                            ARG value: GET_VAR 'p0: kotlin.Any? declared in <root>.LockFreeQueue.enqueue.<tail$volatile-getter>.<set-tail$volatile>' type=kotlin.Any? origin=null
+           ARG action$atomicfu: FUN_EXPR type=kotlin.Function1<<root>.LockFreeQueue.Node, kotlin.Unit> origin=LAMBDA
+             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
+               VALUE_PARAMETER kind:Regular name:curTail index:0 type:<root>.LockFreeQueue.Node
+               BLOCK_BODY
+                 VAR name:curNext type:<root>.LockFreeQueue.Node? [val]
+                   TYPE_OP type=kotlin.Any? origin=CAST typeOperand=kotlin.Any?
+-                    CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
++                    CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=kotlin.Any? origin=null
+                       TYPE_ARG T: kotlin.Any?
+-                      ARG <this>: PROPERTY_REFERENCE 'public final next$volatile: kotlin.Any? declared in <root>.LockFreeQueue.Node' field='FIELD ATOMICFU_GENERATED_FIELD name:next$volatile type:kotlin.Any? visibility:private declared in <root>.LockFreeQueue.Node' getter='public final fun <get-next$volatile> (): kotlin.Any? declared in <root>.LockFreeQueue.Node' setter='public final fun <set-next$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.LockFreeQueue.Node' type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null
+-                        ARG 1: GET_VAR 'curTail: <root>.LockFreeQueue.Node declared in <root>.LockFreeQueue.enqueue.<anonymous>' type=<root>.LockFreeQueue.Node origin=null
++                      ARG <this>: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null reflectionTarget='public final next$volatile: kotlin.Any? declared in <root>.LockFreeQueue.Node'
++                        bound <this>: GET_VAR 'curTail: <root>.LockFreeQueue.Node declared in <root>.LockFreeQueue.enqueue.<anonymous>' type=<root>.LockFreeQueue.Node origin=null
++                        getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-next$volatile> visibility:local modality:FINAL returnType:kotlin.Any?
++                          VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.LockFreeQueue.Node
++                          BLOCK_BODY
++                            RETURN type=kotlin.Nothing from='local final fun <get-next$volatile> (<this>: <root>.LockFreeQueue.Node): kotlin.Any? declared in <root>.LockFreeQueue.enqueue.<anonymous>'
++                              CALL 'public final fun <get-next$volatile> (): kotlin.Any? declared in <root>.LockFreeQueue.Node' type=kotlin.Any? origin=null
++                                ARG <this>: GET_VAR '<this>: <root>.LockFreeQueue.Node declared in <root>.LockFreeQueue.enqueue.<anonymous>.<get-next$volatile>' type=<root>.LockFreeQueue.Node origin=null
++                        setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-next$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++                          VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.LockFreeQueue.Node
++                          VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Any?
++                          BLOCK_BODY
++                            RETURN type=kotlin.Nothing from='local final fun <set-next$volatile> (<this>: <root>.LockFreeQueue.Node, p0: kotlin.Any?): kotlin.Unit declared in <root>.LockFreeQueue.enqueue.<anonymous>'
++                              CALL 'public final fun <set-next$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.LockFreeQueue.Node' type=kotlin.Unit origin=null
++                                ARG <this>: GET_VAR '<this>: <root>.LockFreeQueue.Node declared in <root>.LockFreeQueue.enqueue.<anonymous>.<set-next$volatile>' type=<root>.LockFreeQueue.Node origin=null
++                                ARG value: GET_VAR 'p0: kotlin.Any? declared in <root>.LockFreeQueue.enqueue.<anonymous>.<set-next$volatile>' type=kotlin.Any? origin=null
+                 WHEN type=kotlin.Unit origin=IF
+                   BRANCH
+                     if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+@@ -215,26 +299,69 @@
+                       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                         CALL 'internal final fun compareAndSetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.compareAndSetField>, expectedValue: T of kotlin.concurrent.compareAndSetField, newValue: T of kotlin.concurrent.compareAndSetField): kotlin.Boolean declared in kotlin.concurrent' type=kotlin.Boolean origin=null
+                           TYPE_ARG T: kotlin.Any?
+-                          ARG <this>: PROPERTY_REFERENCE 'private final tail$volatile: kotlin.Any? declared in <root>.LockFreeQueue' field='FIELD ATOMICFU_GENERATED_FIELD name:tail$volatile type:kotlin.Any? visibility:private declared in <root>.LockFreeQueue' getter='private final fun <get-tail$volatile> (): kotlin.Any? declared in <root>.LockFreeQueue' setter='private final fun <set-tail$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.LockFreeQueue' type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null
+-                            ARG 1: GET_VAR '<this>: <root>.LockFreeQueue declared in <root>.LockFreeQueue.enqueue' type=<root>.LockFreeQueue origin=IMPLICIT_ARGUMENT
++                          ARG <this>: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null reflectionTarget='private final tail$volatile: kotlin.Any? declared in <root>.LockFreeQueue'
++                            bound <this>: GET_VAR '<this>: <root>.LockFreeQueue declared in <root>.LockFreeQueue.enqueue' type=<root>.LockFreeQueue origin=IMPLICIT_ARGUMENT
++                            getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-tail$volatile> visibility:local modality:FINAL returnType:kotlin.Any?
++                              VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.LockFreeQueue
++                              BLOCK_BODY
++                                RETURN type=kotlin.Nothing from='local final fun <get-tail$volatile> (<this>: <root>.LockFreeQueue): kotlin.Any? declared in <root>.LockFreeQueue.enqueue.<anonymous>'
++                                  CALL 'private final fun <get-tail$volatile> (): kotlin.Any? declared in <root>.LockFreeQueue' type=kotlin.Any? origin=null
++                                    ARG <this>: GET_VAR '<this>: <root>.LockFreeQueue declared in <root>.LockFreeQueue.enqueue.<anonymous>.<get-tail$volatile>' type=<root>.LockFreeQueue origin=null
++                            setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-tail$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++                              VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.LockFreeQueue
++                              VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Any?
++                              BLOCK_BODY
++                                RETURN type=kotlin.Nothing from='local final fun <set-tail$volatile> (<this>: <root>.LockFreeQueue, p0: kotlin.Any?): kotlin.Unit declared in <root>.LockFreeQueue.enqueue.<anonymous>'
++                                  CALL 'private final fun <set-tail$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.LockFreeQueue' type=kotlin.Unit origin=null
++                                    ARG <this>: GET_VAR '<this>: <root>.LockFreeQueue declared in <root>.LockFreeQueue.enqueue.<anonymous>.<set-tail$volatile>' type=<root>.LockFreeQueue origin=null
++                                    ARG value: GET_VAR 'p0: kotlin.Any? declared in <root>.LockFreeQueue.enqueue.<anonymous>.<set-tail$volatile>' type=kotlin.Any? origin=null
+                           ARG expectedValue: GET_VAR 'curTail: <root>.LockFreeQueue.Node declared in <root>.LockFreeQueue.enqueue.<anonymous>' type=<root>.LockFreeQueue.Node origin=null
+-                          ARG newValue: GET_VAR 'val curNext: <root>.LockFreeQueue.Node? declared in <root>.LockFreeQueue.enqueue.<anonymous>' type=<root>.LockFreeQueue.Node? origin=null
++                          ARG newValue: TYPE_OP type=<root>.LockFreeQueue.Node origin=IMPLICIT_CAST typeOperand=<root>.LockFreeQueue.Node
++                            GET_VAR 'val curNext: <root>.LockFreeQueue.Node? declared in <root>.LockFreeQueue.enqueue.<anonymous>' type=<root>.LockFreeQueue.Node? origin=null
+                       RETURN type=kotlin.Nothing from='local final fun <anonymous> (curTail: <root>.LockFreeQueue.Node): kotlin.Unit declared in <root>.LockFreeQueue.enqueue'
+                         GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+                 WHEN type=kotlin.Unit origin=IF
+                   BRANCH
+                     if: CALL 'internal final fun compareAndSetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.compareAndSetField>, expectedValue: T of kotlin.concurrent.compareAndSetField, newValue: T of kotlin.concurrent.compareAndSetField): kotlin.Boolean declared in kotlin.concurrent' type=kotlin.Boolean origin=null
+                       TYPE_ARG T: kotlin.Any?
+-                      ARG <this>: PROPERTY_REFERENCE 'public final next$volatile: kotlin.Any? declared in <root>.LockFreeQueue.Node' field='FIELD ATOMICFU_GENERATED_FIELD name:next$volatile type:kotlin.Any? visibility:private declared in <root>.LockFreeQueue.Node' getter='public final fun <get-next$volatile> (): kotlin.Any? declared in <root>.LockFreeQueue.Node' setter='public final fun <set-next$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.LockFreeQueue.Node' type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null
+-                        ARG 1: GET_VAR 'curTail: <root>.LockFreeQueue.Node declared in <root>.LockFreeQueue.enqueue.<anonymous>' type=<root>.LockFreeQueue.Node origin=null
++                      ARG <this>: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null reflectionTarget='public final next$volatile: kotlin.Any? declared in <root>.LockFreeQueue.Node'
++                        bound <this>: GET_VAR 'curTail: <root>.LockFreeQueue.Node declared in <root>.LockFreeQueue.enqueue.<anonymous>' type=<root>.LockFreeQueue.Node origin=null
++                        getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-next$volatile> visibility:local modality:FINAL returnType:kotlin.Any?
++                          VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.LockFreeQueue.Node
++                          BLOCK_BODY
++                            RETURN type=kotlin.Nothing from='local final fun <get-next$volatile> (<this>: <root>.LockFreeQueue.Node): kotlin.Any? declared in <root>.LockFreeQueue.enqueue.<anonymous>'
++                              CALL 'public final fun <get-next$volatile> (): kotlin.Any? declared in <root>.LockFreeQueue.Node' type=kotlin.Any? origin=null
++                                ARG <this>: GET_VAR '<this>: <root>.LockFreeQueue.Node declared in <root>.LockFreeQueue.enqueue.<anonymous>.<get-next$volatile>' type=<root>.LockFreeQueue.Node origin=null
++                        setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-next$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++                          VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.LockFreeQueue.Node
++                          VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Any?
++                          BLOCK_BODY
++                            RETURN type=kotlin.Nothing from='local final fun <set-next$volatile> (<this>: <root>.LockFreeQueue.Node, p0: kotlin.Any?): kotlin.Unit declared in <root>.LockFreeQueue.enqueue.<anonymous>'
++                              CALL 'public final fun <set-next$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.LockFreeQueue.Node' type=kotlin.Unit origin=null
++                                ARG <this>: GET_VAR '<this>: <root>.LockFreeQueue.Node declared in <root>.LockFreeQueue.enqueue.<anonymous>.<set-next$volatile>' type=<root>.LockFreeQueue.Node origin=null
++                                ARG value: GET_VAR 'p0: kotlin.Any? declared in <root>.LockFreeQueue.enqueue.<anonymous>.<set-next$volatile>' type=kotlin.Any? origin=null
+                       ARG expectedValue: CONST Null type=kotlin.Nothing? value=null
+                       ARG newValue: GET_VAR 'val node: <root>.LockFreeQueue.Node declared in <root>.LockFreeQueue.enqueue' type=<root>.LockFreeQueue.Node origin=null
+                     then: BLOCK type=kotlin.Unit origin=null
+                       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                         CALL 'internal final fun compareAndSetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.compareAndSetField>, expectedValue: T of kotlin.concurrent.compareAndSetField, newValue: T of kotlin.concurrent.compareAndSetField): kotlin.Boolean declared in kotlin.concurrent' type=kotlin.Boolean origin=null
+                           TYPE_ARG T: kotlin.Any?
+-                          ARG <this>: PROPERTY_REFERENCE 'private final tail$volatile: kotlin.Any? declared in <root>.LockFreeQueue' field='FIELD ATOMICFU_GENERATED_FIELD name:tail$volatile type:kotlin.Any? visibility:private declared in <root>.LockFreeQueue' getter='private final fun <get-tail$volatile> (): kotlin.Any? declared in <root>.LockFreeQueue' setter='private final fun <set-tail$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.LockFreeQueue' type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null
+-                            ARG 1: GET_VAR '<this>: <root>.LockFreeQueue declared in <root>.LockFreeQueue.enqueue' type=<root>.LockFreeQueue origin=IMPLICIT_ARGUMENT
++                          ARG <this>: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null reflectionTarget='private final tail$volatile: kotlin.Any? declared in <root>.LockFreeQueue'
++                            bound <this>: GET_VAR '<this>: <root>.LockFreeQueue declared in <root>.LockFreeQueue.enqueue' type=<root>.LockFreeQueue origin=IMPLICIT_ARGUMENT
++                            getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-tail$volatile> visibility:local modality:FINAL returnType:kotlin.Any?
++                              VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.LockFreeQueue
++                              BLOCK_BODY
++                                RETURN type=kotlin.Nothing from='local final fun <get-tail$volatile> (<this>: <root>.LockFreeQueue): kotlin.Any? declared in <root>.LockFreeQueue.enqueue.<anonymous>'
++                                  CALL 'private final fun <get-tail$volatile> (): kotlin.Any? declared in <root>.LockFreeQueue' type=kotlin.Any? origin=null
++                                    ARG <this>: GET_VAR '<this>: <root>.LockFreeQueue declared in <root>.LockFreeQueue.enqueue.<anonymous>.<get-tail$volatile>' type=<root>.LockFreeQueue origin=null
++                            setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-tail$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++                              VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.LockFreeQueue
++                              VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Any?
++                              BLOCK_BODY
++                                RETURN type=kotlin.Nothing from='local final fun <set-tail$volatile> (<this>: <root>.LockFreeQueue, p0: kotlin.Any?): kotlin.Unit declared in <root>.LockFreeQueue.enqueue.<anonymous>'
++                                  CALL 'private final fun <set-tail$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.LockFreeQueue' type=kotlin.Unit origin=null
++                                    ARG <this>: GET_VAR '<this>: <root>.LockFreeQueue declared in <root>.LockFreeQueue.enqueue.<anonymous>.<set-tail$volatile>' type=<root>.LockFreeQueue origin=null
++                                    ARG value: GET_VAR 'p0: kotlin.Any? declared in <root>.LockFreeQueue.enqueue.<anonymous>.<set-tail$volatile>' type=kotlin.Any? origin=null
+                           ARG expectedValue: GET_VAR 'curTail: <root>.LockFreeQueue.Node declared in <root>.LockFreeQueue.enqueue.<anonymous>' type=<root>.LockFreeQueue.Node origin=null
+                           ARG newValue: GET_VAR 'val node: <root>.LockFreeQueue.Node declared in <root>.LockFreeQueue.enqueue' type=<root>.LockFreeQueue.Node origin=null
+                       RETURN type=kotlin.Nothing from='public final fun enqueue (value: kotlin.Int): kotlin.Unit declared in <root>.LockFreeQueue'

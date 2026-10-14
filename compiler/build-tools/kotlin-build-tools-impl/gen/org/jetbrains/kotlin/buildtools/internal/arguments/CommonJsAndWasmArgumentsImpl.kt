@@ -2,6 +2,7 @@
 // DO NOT MODIFY IT MANUALLY.
 
 @file:OptIn(ExperimentalCompilerArgument::class)
+@file:Suppress("EnumValuesSoftDeprecate")
 
 package org.jetbrains.kotlin.buildtools.`internal`.arguments
 
@@ -36,6 +37,7 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonJsAndWasmArgum
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonJsAndWasmArgumentsImpl.Companion.SOURCE_MAP_NAMES_POLICY
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonJsAndWasmArgumentsImpl.Companion.SOURCE_MAP_PREFIX
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonJsAndWasmArgumentsImpl.Companion.X_CACHE_DIRECTORY
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonJsAndWasmArgumentsImpl.Companion.X_ENABLE_ADVANCED_OPTIMIZATIONS
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonJsAndWasmArgumentsImpl.Companion.X_FRIEND_MODULES
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonJsAndWasmArgumentsImpl.Companion.X_FRIEND_MODULES_DISABLED
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonJsAndWasmArgumentsImpl.Companion.X_GENERATE_DTS
@@ -148,6 +150,7 @@ internal abstract class CommonJsAndWasmArgumentsImpl(
       throw IllegalStateException("Unknown arguments: ${unknownArgs.joinToString()}")
     }
     if (X_CACHE_DIRECTORY in this) { arguments.cacheDirectory = get(X_CACHE_DIRECTORY)?.absolutePathStringOrThrow()}
+    if (X_ENABLE_ADVANCED_OPTIMIZATIONS in this) { arguments.enableAdvancedOptimizations = get(X_ENABLE_ADVANCED_OPTIMIZATIONS)}
     if (X_FRIEND_MODULES in this) { arguments.friendModules = get(X_FRIEND_MODULES)?.map { it.absolutePathStringOrThrow() }?.also { list -> list.checkNoneContains("${File.pathSeparator}") }?.joinToString(File.pathSeparator)}
     if (X_FRIEND_MODULES_DISABLED in this) { arguments.friendModulesDisabled = get(X_FRIEND_MODULES_DISABLED)}
     if (X_GENERATE_DTS in this) { arguments.generateDts = get(X_GENERATE_DTS)}
@@ -179,13 +182,14 @@ internal abstract class CommonJsAndWasmArgumentsImpl(
   protected fun applyCompilerArguments(arguments: CommonJsAndWasmCompilerArguments) {
     super.applyCompilerArguments(arguments)
     try { this[X_CACHE_DIRECTORY] = arguments.cacheDirectory?.let { Path(it) } } catch (_: NoSuchMethodError) {  }
+    try { this[X_ENABLE_ADVANCED_OPTIMIZATIONS] = arguments.enableAdvancedOptimizations } catch (_: NoSuchMethodError) {  }
     try { this[X_FRIEND_MODULES] = arguments.friendModules?.split(File.pathSeparator)?.map { Path(it) } } catch (_: NoSuchMethodError) {  }
     try { this[X_FRIEND_MODULES_DISABLED] = arguments.friendModulesDisabled } catch (_: NoSuchMethodError) {  }
     try { this[X_GENERATE_DTS] = arguments.generateDts } catch (_: NoSuchMethodError) {  }
     try { this[X_INCLUDE] = arguments.includes?.let { Path(it) } } catch (_: NoSuchMethodError) {  }
     try { this[X_IR_DCE] = arguments.irDce } catch (_: NoSuchMethodError) {  }
     try { this[X_IR_DCE_PRINT_REACHABILITY_INFO] = arguments.irDcePrintReachabilityInfo } catch (_: NoSuchMethodError) {  }
-    try { this[X_IR_DCE_RUNTIME_DIAGNOSTIC] = arguments.irDceRuntimeDiagnostic?.let { JsIrDiagnosticMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::irDceRuntimeDiagnostic, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xir-dce-runtime-diagnostic value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { this[X_IR_DCE_RUNTIME_DIAGNOSTIC] = arguments.irDceRuntimeDiagnostic?.let { JsIrDiagnosticMode.values().firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::irDceRuntimeDiagnostic, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xir-dce-runtime-diagnostic value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     try { this[X_IR_MODULE_NAME] = arguments.irModuleName } catch (_: NoSuchMethodError) {  }
     try { this[X_IR_PER_MODULE_OUTPUT_NAME] = arguments.irPerModuleOutputName } catch (_: NoSuchMethodError) {  }
     try { this[X_IR_PRODUCE_JS] = arguments.irProduceJs } catch (_: NoSuchMethodError) {  }
@@ -196,12 +200,12 @@ internal abstract class CommonJsAndWasmArgumentsImpl(
     try { this[IR_OUTPUT_DIR] = arguments.outputDir?.let { Path(it) } } catch (_: NoSuchMethodError) {  }
     try { this[IR_OUTPUT_NAME] = arguments.moduleName } catch (_: NoSuchMethodError) {  }
     try { this[LIBRARIES] = arguments.libraries?.split(File.pathSeparator)?.map { Path(it) } } catch (_: NoSuchMethodError) {  }
-    try { this[MAIN] = arguments.main?.let { JsMainCallMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::main, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -main value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { this[MAIN] = arguments.main?.let { JsMainCallMode.values().firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::main, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -main value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     try { this[NOPACK] = arguments.nopack } catch (_: NoSuchMethodError) {  }
     try { this[SOURCE_MAP] = arguments.sourceMap } catch (_: NoSuchMethodError) {  }
     try { this[SOURCE_MAP_BASE_DIRS] = arguments.sourceMapBaseDirs?.split(File.pathSeparator)?.map { Path(it) } } catch (_: NoSuchMethodError) {  }
-    try { this[SOURCE_MAP_EMBED_SOURCES] = arguments.sourceMapEmbedSources?.let { SourceMapEmbedSources.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::sourceMapEmbedSources, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -source-map-embed-sources value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
-    try { this[SOURCE_MAP_NAMES_POLICY] = arguments.sourceMapNamesPolicy?.let { SourceMapNamesPolicy.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::sourceMapNamesPolicy, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -source-map-names-policy value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { this[SOURCE_MAP_EMBED_SOURCES] = arguments.sourceMapEmbedSources?.let { SourceMapEmbedSources.values().firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::sourceMapEmbedSources, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -source-map-embed-sources value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { this[SOURCE_MAP_NAMES_POLICY] = arguments.sourceMapNamesPolicy?.let { SourceMapNamesPolicy.values().firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::sourceMapNamesPolicy, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -source-map-names-policy value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     try { this[SOURCE_MAP_PREFIX] = arguments.sourceMapPrefix } catch (_: NoSuchMethodError) {  }
     internalArguments.addAll(arguments.internalArguments.map { it.stringRepresentation })
   }
@@ -210,6 +214,7 @@ internal abstract class CommonJsAndWasmArgumentsImpl(
   public fun toCompilerArgumentsAffectingOutcome(arguments: CommonJsAndWasmCompilerArguments): CommonJsAndWasmCompilerArguments {
     super.toCompilerArgumentsAffectingOutcome(arguments)
     if (X_CACHE_DIRECTORY in this) { arguments.cacheDirectory = get(X_CACHE_DIRECTORY)?.absolutePathStringOrThrow()}
+    if (X_ENABLE_ADVANCED_OPTIMIZATIONS in this) { arguments.enableAdvancedOptimizations = get(X_ENABLE_ADVANCED_OPTIMIZATIONS)}
     if (X_FRIEND_MODULES in this) { arguments.friendModules = get(X_FRIEND_MODULES)?.map { it.absolutePathStringOrThrow() }?.also { list -> list.checkNoneContains("${File.pathSeparator}") }?.joinToString(File.pathSeparator)}
     if (X_FRIEND_MODULES_DISABLED in this) { arguments.friendModulesDisabled = get(X_FRIEND_MODULES_DISABLED)}
     if (X_GENERATE_DTS in this) { arguments.generateDts = get(X_GENERATE_DTS)}
@@ -260,6 +265,9 @@ internal abstract class CommonJsAndWasmArgumentsImpl(
 
     public val X_CACHE_DIRECTORY: CommonJsAndWasmArgument<java.nio.`file`.Path?> =
         CommonJsAndWasmArgument("X_CACHE_DIRECTORY")
+
+    public val X_ENABLE_ADVANCED_OPTIMIZATIONS: CommonJsAndWasmArgument<Boolean> =
+        CommonJsAndWasmArgument("X_ENABLE_ADVANCED_OPTIMIZATIONS")
 
     public val X_FRIEND_MODULES: CommonJsAndWasmArgument<List<java.nio.`file`.Path>?> =
         CommonJsAndWasmArgument("X_FRIEND_MODULES")

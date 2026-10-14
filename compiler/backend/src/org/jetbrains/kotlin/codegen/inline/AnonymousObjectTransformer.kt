@@ -39,6 +39,7 @@ class AnonymousObjectTransformer(
     private val fieldNames = hashMapOf<String, MutableList<String>>()
 
     private var constructor: MethodNode? = null
+    private val loadableDescriptors = LinkedHashSet<String>()
     private lateinit var sourceMap: SMAP
     private lateinit var sourceMapper: SourceMapper
 
@@ -46,6 +47,7 @@ class AnonymousObjectTransformer(
         val innerClassNodes = ArrayList<InnerClassNode>()
         val classBuilder = createRemappingClassBuilderViaFactory(inliningContext)
         val methodsToTransform = ArrayList<MethodNode>()
+        val fieldsToTransform = ArrayList<FieldNode>()
         val metadataReader = ReadKotlinClassHeaderAnnotationVisitor()
         lateinit var superClassName: String
         var debugFileName: String? = null
@@ -55,7 +57,7 @@ class AnonymousObjectTransformer(
         createClassReader().accept(object : ClassVisitor(Opcodes.API_VERSION, classBuilder.visitor) {
             override fun visit(version: Int, access: Int, name: String, signature: String?, superName: String, interfaces: Array<String>) {
                 classBuilder.defineClass(
-                    maxOf(version, state.config.classFileVersion), access, name, signature, superName, interfaces,
+                    regeneratedClassVersion(version, state.config.classFileVersion), access, name, signature, superName, interfaces,
                 )
                 if (superName.isCoroutineSuperClass()) {
                     inliningContext.isContinuation = true
@@ -106,16 +108,22 @@ class AnonymousObjectTransformer(
 
             override fun visitField(access: Int, name: String, desc: String, signature: String?, value: Any?): FieldVisitor? {
                 addUniqueField(name)
-                return if (isCapturedFieldName(name)) {
-                    null
-                } else {
-                    classBuilder.newField(null, access, name, desc, signature, value)
-                }
+                if (isCapturedFieldName(name)) return null
+                return FieldNode(access, name, desc, signature, value).also { fieldsToTransform.add(it) }
             }
 
             override fun visitSource(source: String, debug: String?) {
                 debugFileName = source
                 debugInfo = debug
+            }
+
+            override fun visitAttribute(attribute: Attribute) {
+                // Written together with the fields for the captured values, see `generateConstructorAndFields`.
+                if (attribute is LoadableDescriptorsAttribute) {
+                    loadableDescriptors.addAll(attribute.descriptors)
+                } else {
+                    super.visitAttribute(attribute)
+                }
             }
 
             override fun visitEnd() {}
@@ -141,6 +149,9 @@ class AnonymousObjectTransformer(
         val deferringMethods = ArrayList<DeferredMethodVisitor>()
 
         generateConstructorAndFields(classBuilder, constructorParamBuilder, parentRemapper)
+        if (loadableDescriptors.isNotEmpty()) {
+            classBuilder.visitor.visitAttribute(LoadableDescriptorsAttribute(loadableDescriptors.toList()))
+        }
 
         val coroutineTransformer = CoroutineTransformer(
             inliningContext,
@@ -169,17 +180,19 @@ class AnonymousObjectTransformer(
                 rewriteAssertionsDisabledFieldInitialization(next, inliningContext.root.callSiteInfo.ownerClassName)
             }
 
-            val funResult = inlineMethodAndUpdateGlobalResult(parentRemapper, deferringVisitor, next, allCapturedParamBuilder, false)
-
-            val returnType = Type.getReturnType(next.desc)
-            if (!AsmUtil.isPrimitive(returnType)) {
-                val oldFunReturnType = returnType.internalName
-                val newFunReturnType = funResult.getChangedTypes()[oldFunReturnType]
-                if (newFunReturnType != null) {
-                    inliningContext.typeRemapper.addAdditionalMappings(oldFunReturnType, newFunReturnType)
-                }
-            }
+            inlineMethodAndUpdateGlobalResult(parentRemapper, deferringVisitor, next, allCapturedParamBuilder, false)
             deferringMethods.add(deferringVisitor)
+        }
+
+        for ([oldType, newType] in transformationResult.getChangedTypes()) {
+            inliningContext.typeRemapper.addAdditionalMappings(oldType, newType)
+        }
+
+        for (field in fieldsToTransform) {
+            field.accept(object : ClassVisitor(Opcodes.API_VERSION) {
+                override fun visitField(access: Int, name: String, desc: String, signature: String?, value: Any?) =
+                    classBuilder.newField(null, access, name, desc, signature, value)
+            })
         }
 
         deferringMethods.forEach { method ->
@@ -319,11 +332,10 @@ class AnonymousObjectTransformer(
         next: MethodNode,
         allCapturedParamBuilder: ParametersBuilder,
         isConstructor: Boolean
-    ): InlineResult {
+    ) {
         val funResult = inlineMethod(parentRemapper, deferringVisitor, next, allCapturedParamBuilder, isConstructor)
         transformationResult.merge(funResult)
         transformationResult.reifiedTypeParametersUsages.mergeAll(funResult.reifiedTypeParametersUsages)
-        return funResult
     }
 
     private fun inlineMethod(
@@ -409,6 +421,9 @@ class AnonymousObjectTransformer(
                 val desc = info.type.descriptor
                 val access = AsmUtil.NO_FLAG_PACKAGE_PRIVATE or Opcodes.ACC_SYNTHETIC or Opcodes.ACC_FINAL
                 classBuilder.newField(null, access, info.newFieldName, desc, null, null)
+                if (info.desc.isLoadable) {
+                    loadableDescriptors.add(desc)
+                }
                 constructorVisitor.visitVarInsn(Opcodes.ALOAD, 0)
                 constructorVisitor.visitVarInsn(info.type.getOpcode(Opcodes.ILOAD), offset)
                 constructorVisitor.visitFieldInsn(Opcodes.PUTFIELD, transformationInfo.newClassName, info.newFieldName, desc)

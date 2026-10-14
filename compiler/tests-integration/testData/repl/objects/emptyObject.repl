@@ -1,3 +1,0 @@
->>> object Empty
->>> "Empty" in Empty.toString()
-true

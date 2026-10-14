@@ -20,7 +20,7 @@ FILE fqName:<root> fileName:/LockFreeQueueTest.kt
         VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Any?
         correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:head$volatile visibility:private modality:FINAL [var]
         BLOCK_BODY
-          RETURN type=kotlin.Unit from='private final fun <set-head$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.LockFreeQueue'
+          RETURN type=kotlin.Nothing from='private final fun <set-head$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.LockFreeQueue'
             SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:head$volatile type:kotlin.Any? visibility:private declared in <root>.LockFreeQueue' type=kotlin.Unit origin=null
               receiver: GET_VAR '<this>: <root>.LockFreeQueue declared in <root>.LockFreeQueue.<set-head$volatile>' type=<root>.LockFreeQueue origin=null
               value: GET_VAR 'value: kotlin.Any? declared in <root>.LockFreeQueue.<set-head$volatile>' type=kotlin.Any? origin=null
@@ -46,7 +46,7 @@ FILE fqName:<root> fileName:/LockFreeQueueTest.kt
         VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Any?
         correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:tail$volatile visibility:private modality:FINAL [var]
         BLOCK_BODY
-          RETURN type=kotlin.Unit from='private final fun <set-tail$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.LockFreeQueue'
+          RETURN type=kotlin.Nothing from='private final fun <set-tail$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.LockFreeQueue'
             SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:tail$volatile type:kotlin.Any? visibility:private declared in <root>.LockFreeQueue' type=kotlin.Unit origin=null
               receiver: GET_VAR '<this>: <root>.LockFreeQueue declared in <root>.LockFreeQueue.<set-tail$volatile>' type=<root>.LockFreeQueue origin=null
               value: GET_VAR 'value: kotlin.Any? declared in <root>.LockFreeQueue.<set-tail$volatile>' type=kotlin.Any? origin=null
@@ -81,7 +81,7 @@ FILE fqName:<root> fileName:/LockFreeQueueTest.kt
           VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Any?
           correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:next$volatile visibility:public modality:FINAL [var]
           BLOCK_BODY
-            RETURN type=kotlin.Unit from='public final fun <set-next$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.LockFreeQueue.Node'
+            RETURN type=kotlin.Nothing from='public final fun <set-next$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.LockFreeQueue.Node'
               SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:next$volatile type:kotlin.Any? visibility:private declared in <root>.LockFreeQueue.Node' type=kotlin.Unit origin=null
                 receiver: GET_VAR '<this>: <root>.LockFreeQueue.Node declared in <root>.LockFreeQueue.Node.<set-next$volatile>' type=<root>.LockFreeQueue.Node origin=null
                 value: GET_VAR 'value: kotlin.Any? declared in <root>.LockFreeQueue.Node.<set-next$volatile>' type=kotlin.Any? origin=null

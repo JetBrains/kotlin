@@ -13,10 +13,11 @@ import kotlin.script.experimental.annotations.KotlinScript
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.ScriptDiagnostic
 import kotlin.script.experimental.host.ScriptingHostConfiguration
-import kotlin.script.templates.ScriptTemplateDefinition
 
 const val SCRIPT_DEFINITION_MARKERS_PATH = "META-INF/kotlin/script/templates/"
 const val SCRIPT_DEFINITION_MARKERS_EXTENSION_WITH_DOT = ".classname"
+
+private const val LEGACY_SCRIPT_TEMPLATE_DEFINITION_ANNOTATION_NAME = "ScriptTemplateDefinition"
 
 typealias MessageReporter = (ScriptDiagnostic.Severity, String) -> Unit
 
@@ -289,6 +290,7 @@ private fun loadScriptDefinition(
     messageReporter: MessageReporter,
 ): ScriptDefinition? {
     val anns = loadAnnotationsFromClass(templateClassBytes)
+    var legacyTemplateSkipped = false
     for (ann in anns) {
         var def: ScriptDefinition? = null
         if (ann.name == KotlinScript::class.java.simpleName) {
@@ -300,15 +302,20 @@ private fun loadScriptDefinition(
                 classpathWithLoader.classLoader,
                 messageReporter
             )
-        } else if (ann.name == ScriptTemplateDefinition::class.java.simpleName) {
-            val templateClass = classpathWithLoader.classLoader.loadClass(templateClassName).kotlin
-
-            @Suppress("DEPRECATION")
-            val compilationConfiguration: ScriptCompilationConfiguration =
-                ScriptCompilationConfigurationFromLegacyTemplate(
-                    hostConfiguration,
-                    templateClass
+        } else if (ann.name == LEGACY_SCRIPT_TEMPLATE_DEFINITION_ANNOTATION_NAME) {
+            val compilationConfiguration: ScriptCompilationConfiguration = try {
+                val templateClass = classpathWithLoader.classLoader.loadClass(templateClassName).kotlin
+                @Suppress("DEPRECATION")
+                ScriptCompilationConfigurationFromLegacyTemplate(hostConfiguration, templateClass)
+            } catch (e: LinkageError) {
+                // e.g. kotlin-script-runtime is absent, as in the relocated scripting part of the build tools
+                messageReporter(
+                    ScriptDiagnostic.Severity.INFO,
+                    "Configure scripting: legacy script template $templateClassName is skipped, it cannot be loaded: $e"
                 )
+                legacyTemplateSkipped = true
+                continue
+            }
 
             def = ScriptDefinition.FromConfigurations(
                 hostConfiguration,
@@ -324,10 +331,12 @@ private fun loadScriptDefinition(
             return def
         }
     }
-    messageReporter(
-        ScriptDiagnostic.Severity.WARNING,
-        "Configure scripting: $templateClassName is not marked with any known kotlin script annotation"
-    )
+    if (!legacyTemplateSkipped) {
+        messageReporter(
+            ScriptDiagnostic.Severity.WARNING,
+            "Configure scripting: $templateClassName is not marked with any known kotlin script annotation"
+        )
+    }
     return null
 }
 

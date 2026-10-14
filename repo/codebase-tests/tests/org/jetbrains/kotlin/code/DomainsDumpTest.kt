@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.code
 import kotlinx.coroutines.*
 import org.jetbrains.kotlin.code.DomainsDumpTest.Companion.sanitize
 import org.jetbrains.kotlin.repoTestFixtures.isGitIgnored
+import org.jetbrains.kotlin.testFederation.Domain
 import org.jetbrains.kotlin.testFederation.RepositoryPath
 import org.jetbrains.kotlin.testFederation.allDomainInfos
 import org.jetbrains.kotlin.testFederation.domains
@@ -114,6 +115,7 @@ private val domainsDumpFile = File("repo/domains.dump.txt")
 private fun generateDomainsTree(): Node {
     return runBlocking(Dispatchers.Default) {
         val tree = repositoryRoot.toNode() ?: error("Missing root tree")
+        if (tree !is Node) error("Expected a tree of nodes. Found: $tree")
         tree.conflate()
     }
 }
@@ -125,10 +127,12 @@ private fun Node.generateDomainsDump(): String {
         appendLine("####################################################")
         appendLine()
 
-        fun <T> sorting() = compareBy<Map.Entry<Collection<org.jetbrains.kotlin.testFederation.Domain>, T>> { [domains, _] -> domains.size }
+        fun <T> sorting() = compareBy<Map.Entry<Collection<Domain>, T>> { [domains, _] -> domains.size }
             .thenComparing { [domains, _] -> domains.sumOf { it.ordinal } }
 
-        this@generateDomainsDump.withClosure { it.children }.filter { it.children.isEmpty() }
+        val allNodes = this@generateDomainsDump.withClosure { it.children }
+
+        allNodes.filter { it.children.isEmpty() }
             .groupBy { it.domains }.entries.sortedWith(sorting()).forEach { [domains, nodes] ->
                 appendLine("${domains.joinToString(", ") { it.name }}:")
                 nodes.toList().sortedBy { it.path.value.invariantSeparatorsPathString }.forEach { node ->
@@ -136,30 +140,60 @@ private fun Node.generateDomainsDump(): String {
                 }
                 appendLine()
             }
+
+        appendLine("ignored:")
+        allNodes.flatMap { it.ignored }.toSet().sortedBy { it.value }.forEach { ignored ->
+            appendLine(" - ${ignored.value.invariantSeparatorsPathString}")
+        }
     }.sanitize()
 }
 
+sealed class AbstractNode
+
 private data class Node(
     val path: RepositoryPath,
-    val domains: List<org.jetbrains.kotlin.testFederation.Domain>,
+    val domains: List<Domain>,
     val children: List<Node>,
-)
+    val ignored: Set<RepositoryPath>,
+) : AbstractNode()
 
-private suspend fun Path.toNode(): Node? {
+private data class Ignored(val path: RepositoryPath) : AbstractNode()
+
+private suspend fun Path.toNode(): AbstractNode? {
     return coroutineScope {
         val repositoryPath = RepositoryPath(repositoryRoot, repositoryRoot.relativize(this@toNode))
         val domains = repositoryPath.domains
-        val children = if (isDirectory()) {
+        if (domains.isEmpty()) return@coroutineScope Ignored(repositoryPath)
+        val isDirectory = isDirectory()
+
+        val abstractNodes = if (isDirectory) {
             listDirectoryEntries()
                 .parallelMap { child ->
                     if (child.isGitIgnored()) return@parallelMap null
                     child.toNode()
                 }
                 .filterNotNull()
-                .sortedBy { it.path.value }
-                .ifEmpty { return@coroutineScope null }
         } else emptyList()
-        Node(repositoryPath, domains, children)
+
+        if (isDirectory && abstractNodes.isEmpty()) {
+            return@coroutineScope null
+        }
+
+        val children = mutableListOf<Node>()
+        val ignored = hashSetOf<RepositoryPath>()
+
+        abstractNodes.forEach { abstractNode ->
+            when (abstractNode) {
+                is Ignored -> ignored.add(abstractNode.path)
+                is Node -> {
+                    // Propagate ignores upwards in the tree
+                    children.add(abstractNode.copy(ignored = emptySet()))
+                    ignored.addAll(abstractNode.ignored)
+                }
+            }
+        }
+
+        Node(repositoryPath, domains, children.sortedBy { it.path.value }, ignored)
     }
 }
 

@@ -169,6 +169,18 @@ public class LLSerializationBlackBoxTestGenerated extends AbstractLLSerializatio
     }
 
     @Test
+    @TestMetadata("fullValueClassInPolymorphicHierarchy.kt")
+    public void testFullValueClassInPolymorphicHierarchy() {
+      run("fullValueClassInPolymorphicHierarchy.kt");
+    }
+
+    @Test
+    @TestMetadata("fullValueClassWithSuperclassDefaults.kt")
+    public void testFullValueClassWithSuperclassDefaults() {
+      run("fullValueClassWithSuperclassDefaults.kt");
+    }
+
+    @Test
     @TestMetadata("generatedClassifiersViaLibraryDependency.kt")
     public void testGeneratedClassifiersViaLibraryDependency() {
       run("generatedClassifiersViaLibraryDependency.kt");
@@ -184,6 +196,12 @@ public class LLSerializationBlackBoxTestGenerated extends AbstractLLSerializatio
     @TestMetadata("genericBaseClassSimple.kt")
     public void testGenericBaseClassSimple() {
       run("genericBaseClassSimple.kt");
+    }
+
+    @Test
+    @TestMetadata("genericWithClassUpperBoundMultiModule.kt")
+    public void testGenericWithClassUpperBoundMultiModule() {
+      run("genericWithClassUpperBoundMultiModule.kt");
     }
 
     @Test

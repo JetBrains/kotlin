@@ -97,11 +97,11 @@ class PropertiesBuildServiceTest {
         assertEquals(
             expected,
             when (property) {
-                is PropertiesBuildService.BooleanGradleProperty -> properties.property(property, project).get()
-                is PropertiesBuildService.StringGradleProperty -> properties.property(property, project).get()
-                is PropertiesBuildService.NullableStringGradleProperty -> properties.property(property, project).orNull
-                is PropertiesBuildService.IntGradleProperty -> properties.property(property, project).get()
-                is PropertiesBuildService.NullableBooleanGradleProperty -> properties.property(property, project).orNull
+                is PropertiesBuildService.BooleanGradleProperty -> properties.typedProperty(property, project).get()
+                is PropertiesBuildService.StringGradleProperty -> properties.typedProperty(property, project).get()
+                is PropertiesBuildService.NullableStringGradleProperty -> properties.typedProperty(property, project).orNull
+                is PropertiesBuildService.IntGradleProperty -> properties.typedProperty(property, project).get()
+                is PropertiesBuildService.NullableBooleanGradleProperty -> properties.typedProperty(property, project).orNull
             }
         )
     }

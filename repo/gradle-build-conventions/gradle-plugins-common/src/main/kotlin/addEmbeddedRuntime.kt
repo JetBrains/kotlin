@@ -2,9 +2,11 @@
 @file:JvmName("AddEmbeddedRuntime")
 
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
+import org.gradle.api.artifacts.result.ResolvedArtifactResult
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.DocsType
 import org.gradle.api.attributes.LibraryElements
+import org.gradle.api.attributes.Usage
 import org.gradle.api.file.ArchiveOperations
 import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.jvm.tasks.Jar
@@ -12,6 +14,7 @@ import org.gradle.kotlin.dsl.support.serviceOf
 
 @JvmOverloads
 fun Jar.addEmbeddedRuntime(embeddedConfigurationName: String = "embedded") {
+    if (project.kotlinBuildProperties.isInIdeaSync.get()) return
     val projectPath = project.path
     project.configurations.findByName(embeddedConfigurationName)?.let { embedded ->
         val archiveOperations = project.serviceOf<ArchiveOperations>()
@@ -49,6 +52,7 @@ fun Jar.addEmbeddedSources(configurationName: String = "embedded") {
         val sourcesJarView = embedded.incoming.artifactView {
             isLenient = true
             attributes {
+                attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage::class.java, Usage.JAVA_RUNTIME))
                 attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category::class.java, Category.DOCUMENTATION))
                 attribute(DocsType.DOCS_TYPE_ATTRIBUTE, objects.named(DocsType::class.java, DocsType.SOURCES))
                 attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements::class.java, LibraryElements.JAR))
@@ -74,6 +78,9 @@ fun Jar.addEmbeddedSources(configurationName: String = "embedded") {
         eachFile {
             if (path.startsWith("main/")) {
                 path = path.removePrefix("main/")
+            }
+            if (path.startsWith("commonMain/")) {
+                path = path.removePrefix("commonMain/")
             }
         }
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE

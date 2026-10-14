@@ -384,16 +384,12 @@ class FirCallCompleter(
                 analyzer.analyze(candidate.system, atom, candidate, withPCLASession)
             }
 
-            override fun analyze(atom: ConeSimpleNameForContextSensitiveResolution) {
-                analyzer.analyze(atom, candidate)
-            }
-
             override fun analyze(atom: ConeContextSensitiveAlternativeForQualifierAtom) {
                 analyzer.analyze(atom, candidate)
             }
 
-            override fun analyze(bounds: CollectionLiteralBounds) {
-                analyzer.analyze(bounds, candidate)
+            override fun analyze(state: StateForAtomWithExpectedTypeAsStaticReceiver<*>) {
+                analyzer.analyze(state, candidate)
             }
         }
         completer.complete(

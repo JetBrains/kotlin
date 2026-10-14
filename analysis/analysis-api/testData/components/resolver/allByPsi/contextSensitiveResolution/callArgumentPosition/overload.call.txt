@@ -177,136 +177,70 @@ KtBlockExpression(271,374): '{'
   null
 
 KtCallExpression(277,297): 'overload(EnumValue1)'
-  KaSimpleCallResolutionError:
-    candidateCalls = [
-      KaSimpleFunctionCall:
-        contextArgumentMapping = {}
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyClass
-          symbol = /overload(arg: MyClass): MyClass
-          valueParameters = [
-            KaVariableSignature:
-              name = arg
-              receiverType = null
-              returnType = MyClass
-              symbol = arg: MyClass
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /overload
-        typeArgumentsMapping = {}
-        valueArgumentMapping = {
-          EnumValue1 -> (KaVariableSignature:
-            name = arg
-            receiverType = null
-            returnType = MyClass
-            symbol = arg: MyClass
-            contextParameters = []
-            callableId = null)
-        },
-      KaSimpleFunctionCall:
-        contextArgumentMapping = {}
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyEnum
-          symbol = /overload(arg: MyEnum): MyEnum
-          valueParameters = [
-            KaVariableSignature:
-              name = arg
-              receiverType = null
-              returnType = MyEnum
-              symbol = arg: MyEnum
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /overload
-        typeArgumentsMapping = {}
-        valueArgumentMapping = {
-          EnumValue1 -> (KaVariableSignature:
+  KaSimpleCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyEnum
+        symbol = /overload(arg: MyEnum): MyEnum
+        valueParameters = [
+          KaVariableSignature:
             name = arg
             receiverType = null
             returnType = MyEnum
             symbol = arg: MyEnum
             contextParameters = []
-            callableId = null)
-        }
-    ]
-    diagnostic = ERROR<OTHER_ERROR: Ambiguity: overload, [/overload, /overload]>
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /overload
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        EnumValue1 -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = MyEnum
+          symbol = arg: MyEnum
+          contextParameters = []
+          callableId = null)
+      }
 
 KtNameReferenceExpression(277,285): 'overload'
-  KaSimpleCallResolutionError:
-    candidateCalls = [
-      KaSimpleFunctionCall:
-        contextArgumentMapping = {}
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyClass
-          symbol = /overload(arg: MyClass): MyClass
-          valueParameters = [
-            KaVariableSignature:
-              name = arg
-              receiverType = null
-              returnType = MyClass
-              symbol = arg: MyClass
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /overload
-        typeArgumentsMapping = {}
-        valueArgumentMapping = {
-          EnumValue1 -> (KaVariableSignature:
-            name = arg
-            receiverType = null
-            returnType = MyClass
-            symbol = arg: MyClass
-            contextParameters = []
-            callableId = null)
-        },
-      KaSimpleFunctionCall:
-        contextArgumentMapping = {}
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyEnum
-          symbol = /overload(arg: MyEnum): MyEnum
-          valueParameters = [
-            KaVariableSignature:
-              name = arg
-              receiverType = null
-              returnType = MyEnum
-              symbol = arg: MyEnum
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /overload
-        typeArgumentsMapping = {}
-        valueArgumentMapping = {
-          EnumValue1 -> (KaVariableSignature:
+  KaSimpleCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyEnum
+        symbol = /overload(arg: MyEnum): MyEnum
+        valueParameters = [
+          KaVariableSignature:
             name = arg
             receiverType = null
             returnType = MyEnum
             symbol = arg: MyEnum
             contextParameters = []
-            callableId = null)
-        }
-    ]
-    diagnostic = ERROR<OTHER_ERROR: Ambiguity: overload, [/overload, /overload]>
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /overload
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        EnumValue1 -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = MyEnum
+          symbol = arg: MyEnum
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(285,297): '(EnumValue1)'
   null
@@ -315,9 +249,24 @@ KtValueArgument(286,296): 'EnumValue1'
   null
 
 KtNameReferenceExpression(286,296): 'EnumValue1'
-  KaSimpleCallResolutionError:
-    candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'EnumValue1'.>
+  KaSimpleCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = EnumValue1
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      isContextSensitive = true
+      kind = Read
+      signature = KaVariableSignature:
+        name = EnumValue1
+        receiverType = null
+        returnType = MyEnum
+        symbol = /MyEnum.EnumValue1
+        contextParameters = []
+        callableId = /MyEnum.EnumValue1
+      typeArgumentsMapping = {}
 
 KtProperty(303,340): 'var v1: MyEnum = overload(EnumValue1)'
   null
@@ -332,136 +281,70 @@ KtNameReferenceExpression(311,317): 'MyEnum'
   null
 
 KtCallExpression(320,340): 'overload(EnumValue1)'
-  KaSimpleCallResolutionError:
-    candidateCalls = [
-      KaSimpleFunctionCall:
-        contextArgumentMapping = {}
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyClass
-          symbol = /overload(arg: MyClass): MyClass
-          valueParameters = [
-            KaVariableSignature:
-              name = arg
-              receiverType = null
-              returnType = MyClass
-              symbol = arg: MyClass
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /overload
-        typeArgumentsMapping = {}
-        valueArgumentMapping = {
-          EnumValue1 -> (KaVariableSignature:
-            name = arg
-            receiverType = null
-            returnType = MyClass
-            symbol = arg: MyClass
-            contextParameters = []
-            callableId = null)
-        },
-      KaSimpleFunctionCall:
-        contextArgumentMapping = {}
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyEnum
-          symbol = /overload(arg: MyEnum): MyEnum
-          valueParameters = [
-            KaVariableSignature:
-              name = arg
-              receiverType = null
-              returnType = MyEnum
-              symbol = arg: MyEnum
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /overload
-        typeArgumentsMapping = {}
-        valueArgumentMapping = {
-          EnumValue1 -> (KaVariableSignature:
+  KaSimpleCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyEnum
+        symbol = /overload(arg: MyEnum): MyEnum
+        valueParameters = [
+          KaVariableSignature:
             name = arg
             receiverType = null
             returnType = MyEnum
             symbol = arg: MyEnum
             contextParameters = []
-            callableId = null)
-        }
-    ]
-    diagnostic = ERROR<OTHER_ERROR: Ambiguity: overload, [/overload, /overload]>
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /overload
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        EnumValue1 -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = MyEnum
+          symbol = arg: MyEnum
+          contextParameters = []
+          callableId = null)
+      }
 
 KtNameReferenceExpression(320,328): 'overload'
-  KaSimpleCallResolutionError:
-    candidateCalls = [
-      KaSimpleFunctionCall:
-        contextArgumentMapping = {}
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyClass
-          symbol = /overload(arg: MyClass): MyClass
-          valueParameters = [
-            KaVariableSignature:
-              name = arg
-              receiverType = null
-              returnType = MyClass
-              symbol = arg: MyClass
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /overload
-        typeArgumentsMapping = {}
-        valueArgumentMapping = {
-          EnumValue1 -> (KaVariableSignature:
-            name = arg
-            receiverType = null
-            returnType = MyClass
-            symbol = arg: MyClass
-            contextParameters = []
-            callableId = null)
-        },
-      KaSimpleFunctionCall:
-        contextArgumentMapping = {}
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyEnum
-          symbol = /overload(arg: MyEnum): MyEnum
-          valueParameters = [
-            KaVariableSignature:
-              name = arg
-              receiverType = null
-              returnType = MyEnum
-              symbol = arg: MyEnum
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /overload
-        typeArgumentsMapping = {}
-        valueArgumentMapping = {
-          EnumValue1 -> (KaVariableSignature:
+  KaSimpleCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyEnum
+        symbol = /overload(arg: MyEnum): MyEnum
+        valueParameters = [
+          KaVariableSignature:
             name = arg
             receiverType = null
             returnType = MyEnum
             symbol = arg: MyEnum
             contextParameters = []
-            callableId = null)
-        }
-    ]
-    diagnostic = ERROR<OTHER_ERROR: Ambiguity: overload, [/overload, /overload]>
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /overload
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        EnumValue1 -> (KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = MyEnum
+          symbol = arg: MyEnum
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(328,340): '(EnumValue1)'
   null
@@ -470,141 +353,90 @@ KtValueArgument(329,339): 'EnumValue1'
   null
 
 KtNameReferenceExpression(329,339): 'EnumValue1'
-  KaSimpleCallResolutionError:
-    candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'EnumValue1'.>
+  KaSimpleCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = EnumValue1
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      isContextSensitive = true
+      kind = Read
+      signature = KaVariableSignature:
+        name = EnumValue1
+        receiverType = null
+        returnType = MyEnum
+        symbol = /MyEnum.EnumValue1
+        contextParameters = []
+        callableId = /MyEnum.EnumValue1
+      typeArgumentsMapping = {}
 
 KtCallExpression(346,371): 'overload(InheritorObject)'
-  KaSimpleCallResolutionError:
-    candidateCalls = [
-      KaSimpleFunctionCall:
-        contextArgumentMapping = {}
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyClass
-          symbol = /overload(arg: MyClass): MyClass
-          valueParameters = [
-            KaVariableSignature:
-              name = arg
-              receiverType = null
-              returnType = MyClass
-              symbol = arg: MyClass
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /overload
-        typeArgumentsMapping = {}
-        valueArgumentMapping = {
-          InheritorObject -> (KaVariableSignature:
+  KaSimpleCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyClass
+        symbol = /overload(arg: MyClass): MyClass
+        valueParameters = [
+          KaVariableSignature:
             name = arg
             receiverType = null
             returnType = MyClass
             symbol = arg: MyClass
             contextParameters = []
-            callableId = null)
-        },
-      KaSimpleFunctionCall:
-        contextArgumentMapping = {}
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /overload
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        InheritorObject -> (KaVariableSignature:
+          name = arg
           receiverType = null
-          returnType = MyEnum
-          symbol = /overload(arg: MyEnum): MyEnum
-          valueParameters = [
-            KaVariableSignature:
-              name = arg
-              receiverType = null
-              returnType = MyEnum
-              symbol = arg: MyEnum
-              contextParameters = []
-              callableId = null
-          ]
+          returnType = MyClass
+          symbol = arg: MyClass
           contextParameters = []
-          callableId = /overload
-        typeArgumentsMapping = {}
-        valueArgumentMapping = {
-          InheritorObject -> (KaVariableSignature:
-            name = arg
-            receiverType = null
-            returnType = MyEnum
-            symbol = arg: MyEnum
-            contextParameters = []
-            callableId = null)
-        }
-    ]
-    diagnostic = ERROR<OTHER_ERROR: Ambiguity: overload, [/overload, /overload]>
+          callableId = null)
+      }
 
 KtNameReferenceExpression(346,354): 'overload'
-  KaSimpleCallResolutionError:
-    candidateCalls = [
-      KaSimpleFunctionCall:
-        contextArgumentMapping = {}
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyClass
-          symbol = /overload(arg: MyClass): MyClass
-          valueParameters = [
-            KaVariableSignature:
-              name = arg
-              receiverType = null
-              returnType = MyClass
-              symbol = arg: MyClass
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /overload
-        typeArgumentsMapping = {}
-        valueArgumentMapping = {
-          InheritorObject -> (KaVariableSignature:
+  KaSimpleCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyClass
+        symbol = /overload(arg: MyClass): MyClass
+        valueParameters = [
+          KaVariableSignature:
             name = arg
             receiverType = null
             returnType = MyClass
             symbol = arg: MyClass
             contextParameters = []
-            callableId = null)
-        },
-      KaSimpleFunctionCall:
-        contextArgumentMapping = {}
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /overload
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        InheritorObject -> (KaVariableSignature:
+          name = arg
           receiverType = null
-          returnType = MyEnum
-          symbol = /overload(arg: MyEnum): MyEnum
-          valueParameters = [
-            KaVariableSignature:
-              name = arg
-              receiverType = null
-              returnType = MyEnum
-              symbol = arg: MyEnum
-              contextParameters = []
-              callableId = null
-          ]
+          returnType = MyClass
+          symbol = arg: MyClass
           contextParameters = []
-          callableId = /overload
-        typeArgumentsMapping = {}
-        valueArgumentMapping = {
-          InheritorObject -> (KaVariableSignature:
-            name = arg
-            receiverType = null
-            returnType = MyEnum
-            symbol = arg: MyEnum
-            contextParameters = []
-            callableId = null)
-        }
-    ]
-    diagnostic = ERROR<OTHER_ERROR: Ambiguity: overload, [/overload, /overload]>
+          callableId = null)
+      }
 
 KtValueArgumentList(354,371): '(InheritorObject)'
   null
@@ -613,9 +445,7 @@ KtValueArgument(355,370): 'InheritorObject'
   null
 
 KtNameReferenceExpression(355,370): 'InheritorObject'
-  KaSimpleCallResolutionError:
-    candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'InheritorObject'.>
+  null
 
 KtNamedFunction(375,429): 'fun overload2(arg: MyEnum) { println("Enum version") }'
   null

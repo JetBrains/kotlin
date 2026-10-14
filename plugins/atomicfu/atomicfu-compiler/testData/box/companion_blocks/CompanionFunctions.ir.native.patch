@@ -1,0 +1,202 @@
+--- a/CompanionFunctions.ir.txt
++++ b/CompanionFunctions.ir.native.txt
+@@ -1,38 +1,52 @@
+ FILE fqName:<root> fileName:/CompanionFunctions.kt
+-  PROPERTY name:a visibility:private modality:FINAL [val]
+-    FIELD PROPERTY_BACKING_FIELD name:a type:kotlinx.atomicfu.AtomicLong visibility:private [final,static]
++  PROPERTY ATOMICFU_GENERATED_PROPERTY name:a$volatile visibility:private modality:FINAL [var]
++    FIELD ATOMICFU_GENERATED_FIELD name:a$volatile type:kotlin.Long visibility:private [static]
++      annotations:
++        Volatile
+       EXPRESSION_BODY
+-        CALL 'public final fun atomic (initial: kotlin.Long): kotlinx.atomicfu.AtomicLong declared in kotlinx.atomicfu' type=kotlinx.atomicfu.AtomicLong origin=null
+-          ARG initial: CONST Long type=kotlin.Long value=0
+-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a> visibility:private modality:FINAL returnType:kotlinx.atomicfu.AtomicLong
+-      correspondingProperty: PROPERTY name:a visibility:private modality:FINAL [val]
+-      companionExtension: CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]
++        CONST Long type=kotlin.Long value=0
++    FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-a$volatile> visibility:private modality:FINAL returnType:kotlin.Long
++      correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:a$volatile visibility:private modality:FINAL [var]
+       BLOCK_BODY
+-        RETURN type=kotlin.Nothing from='private final fun <get-a> (): kotlinx.atomicfu.AtomicLong declared in <root>'
+-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a type:kotlinx.atomicfu.AtomicLong visibility:private [final,static]' type=kotlinx.atomicfu.AtomicLong origin=null
+-  PROPERTY name:arr visibility:private modality:FINAL [val]
+-    FIELD PROPERTY_BACKING_FIELD name:arr type:kotlinx.atomicfu.AtomicLongArray visibility:private [final,static]
++        RETURN type=kotlin.Nothing from='private final fun <get-a$volatile> (): kotlin.Long declared in <root>'
++          GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:a$volatile type:kotlin.Long visibility:private [static] declared in <root>' type=kotlin.Long origin=null
++    FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<set-a$volatile> visibility:private modality:FINAL returnType:kotlin.Unit
++      VALUE_PARAMETER kind:Regular name:value index:0 type:kotlin.Long
++      correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:a$volatile visibility:private modality:FINAL [var]
++      BLOCK_BODY
++        RETURN type=kotlin.Nothing from='private final fun <set-a$volatile> (value: kotlin.Long): kotlin.Unit declared in <root>'
++          SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:a$volatile type:kotlin.Long visibility:private [static] declared in <root>' type=kotlin.Unit origin=null
++            value: GET_VAR 'value: kotlin.Long declared in <root>.<set-a$volatile>' type=kotlin.Long origin=null
++  PROPERTY ATOMICFU_GENERATED_PROPERTY name:arr visibility:private modality:FINAL [val]
++    FIELD ATOMICFU_GENERATED_FIELD name:arr type:kotlin.concurrent.AtomicLongArray visibility:private [final,static]
+       EXPRESSION_BODY
+-        CONSTRUCTOR_CALL 'public constructor <init> (size: kotlin.Int) declared in kotlinx.atomicfu.AtomicLongArray' type=kotlinx.atomicfu.AtomicLongArray origin=null
++        CONSTRUCTOR_CALL 'public constructor <init> (size: kotlin.Int) declared in kotlin.concurrent.AtomicLongArray' type=kotlin.concurrent.AtomicLongArray origin=null
+           ARG size: CONST Int type=kotlin.Int value=10
+-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-arr> visibility:private modality:FINAL returnType:kotlinx.atomicfu.AtomicLongArray
+-      correspondingProperty: PROPERTY name:arr visibility:private modality:FINAL [val]
+-      companionExtension: CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]
++    FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-arr> visibility:private modality:FINAL returnType:kotlin.concurrent.AtomicLongArray
++      correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:arr visibility:private modality:FINAL [val]
+       BLOCK_BODY
+-        RETURN type=kotlin.Nothing from='private final fun <get-arr> (): kotlinx.atomicfu.AtomicLongArray declared in <root>'
+-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:arr type:kotlinx.atomicfu.AtomicLongArray visibility:private [final,static]' type=kotlinx.atomicfu.AtomicLongArray origin=null
++        RETURN type=kotlin.Nothing from='private final fun <get-arr> (): kotlin.concurrent.AtomicLongArray declared in <root>'
++          GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:arr type:kotlin.concurrent.AtomicLongArray visibility:private [final,static] declared in <root>' type=kotlin.concurrent.AtomicLongArray origin=null
+   CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]
+     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.C
+-    PROPERTY name:x visibility:private modality:FINAL [val]
+-      FIELD PROPERTY_BACKING_FIELD name:x type:kotlinx.atomicfu.AtomicLong visibility:private [final,static]
++    PROPERTY ATOMICFU_GENERATED_PROPERTY name:x$volatile visibility:private modality:FINAL [var]
++      FIELD ATOMICFU_GENERATED_FIELD name:x$volatile type:kotlin.Long visibility:private [static]
++        annotations:
++          Volatile
+         EXPRESSION_BODY
+-          CALL 'public final fun atomic (initial: kotlin.Long): kotlinx.atomicfu.AtomicLong declared in kotlinx.atomicfu' type=kotlinx.atomicfu.AtomicLong origin=null
+-            ARG initial: CONST Long type=kotlin.Long value=42
+-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:private modality:FINAL returnType:kotlinx.atomicfu.AtomicLong [companion]
+-        correspondingProperty: PROPERTY name:x visibility:private modality:FINAL [val]
++          CONST Long type=kotlin.Long value=42
++      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-x$volatile> visibility:private modality:FINAL returnType:kotlin.Long [companion]
++        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:x$volatile visibility:private modality:FINAL [var]
+         BLOCK_BODY
+-          RETURN type=kotlin.Nothing from='private final fun <get-x> (): kotlinx.atomicfu.AtomicLong declared in <root>.C'
+-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlinx.atomicfu.AtomicLong visibility:private [final,static]' type=kotlinx.atomicfu.AtomicLong origin=null
++          RETURN type=kotlin.Nothing from='private final fun <get-x$volatile> (): kotlin.Long declared in <root>.C'
++            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:x$volatile type:kotlin.Long visibility:private [static] declared in <root>.C' type=kotlin.Long origin=null
++      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<set-x$volatile> visibility:private modality:FINAL returnType:kotlin.Unit [companion]
++        VALUE_PARAMETER kind:Regular name:value index:0 type:kotlin.Long
++        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:x$volatile visibility:private modality:FINAL [var]
++        BLOCK_BODY
++          RETURN type=kotlin.Nothing from='private final fun <set-x$volatile> (value: kotlin.Long): kotlin.Unit declared in <root>.C'
++            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:x$volatile type:kotlin.Long visibility:private [static] declared in <root>.C' type=kotlin.Unit origin=null
++              value: GET_VAR 'value: kotlin.Long declared in <root>.C.<set-x$volatile>' type=kotlin.Long origin=null
+     CONSTRUCTOR visibility:public returnType:<root>.C [primary]
+       BLOCK_BODY
+         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+@@ -53,42 +67,96 @@
+     FUN name:test visibility:public modality:FINAL returnType:kotlin.Long [companion]
+       BLOCK_BODY
+         RETURN type=kotlin.Nothing from='public final fun test (): kotlin.Long declared in <root>.C'
+-          CALL 'private final fun inc (<this>: kotlinx.atomicfu.AtomicLong): kotlin.Long declared in <root>' type=kotlin.Long origin=null
+-            ARG <this>: CALL 'private final fun <get-x> (): kotlinx.atomicfu.AtomicLong declared in <root>.C' type=kotlinx.atomicfu.AtomicLong origin=GET_PROPERTY
++          CALL 'private final fun inc$atomicfu$NATIVE_PROPERTY_REF$Long (handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Long>>): kotlin.Long declared in <root>' type=kotlin.Long origin=null
++            ARG handler$atomicfu: FUN_EXPR type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Long>> origin=LAMBDA
++              FUN ATOMICFU_GENERATED_FUNCTION name:<x$volatile-getter> visibility:local modality:FINAL returnType:kotlin.reflect.KMutableProperty0<kotlin.Long> [inline]
++                BLOCK_BODY
++                  RETURN type=kotlin.Nothing from='local final fun <x$volatile-getter> (): kotlin.reflect.KMutableProperty0<kotlin.Long> declared in <root>.C.test'
++                    RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Long> origin=null reflectionTarget='private final x$volatile: kotlin.Long declared in <root>.C'
++                      getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-x$volatile> visibility:local modality:FINAL returnType:kotlin.Long
++                        BLOCK_BODY
++                          RETURN type=kotlin.Nothing from='local final fun <get-x$volatile> (): kotlin.Long declared in <root>.C.test.<x$volatile-getter>'
++                            CALL 'private final fun <get-x$volatile> (): kotlin.Long declared in <root>.C' type=kotlin.Long origin=null
++                      setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-x$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++                        VALUE_PARAMETER kind:Regular name:p0 index:0 type:kotlin.Long
++                        BLOCK_BODY
++                          RETURN type=kotlin.Nothing from='local final fun <set-x$volatile> (p0: kotlin.Long): kotlin.Unit declared in <root>.C.test.<x$volatile-getter>'
++                            CALL 'private final fun <set-x$volatile> (value: kotlin.Long): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=null
++                              ARG value: GET_VAR 'p0: kotlin.Long declared in <root>.C.test.<x$volatile-getter>.<set-x$volatile>' type=kotlin.Long origin=null
++  FUN ATOMICFU_GENERATED_FUNCTION name:inc$atomicfu$ATOMIC_ARRAY$Long visibility:private modality:FINAL returnType:kotlin.Long [inline]
++    VALUE_PARAMETER kind:Regular name:handler$atomicfu index:0 type:kotlin.concurrent.AtomicLongArray
++    VALUE_PARAMETER kind:Regular name:index$atomicfu index:1 type:kotlin.Int
++    BLOCK_BODY
++      RETURN type=kotlin.Nothing from='private final fun inc$atomicfu$ATOMIC_ARRAY$Long (handler$atomicfu: kotlin.concurrent.AtomicLongArray, index$atomicfu: kotlin.Int): kotlin.Long declared in <root>'
++        CALL 'public final fun incrementAndGet (index: kotlin.Int): kotlin.Long declared in kotlin.concurrent.AtomicLongArray' type=kotlin.Long origin=null
++          ARG <this>: GET_VAR 'handler$atomicfu: kotlin.concurrent.AtomicLongArray declared in <root>.inc$atomicfu$ATOMIC_ARRAY$Long' type=kotlin.concurrent.AtomicLongArray origin=null
++          ARG index: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.inc$atomicfu$ATOMIC_ARRAY$Long' type=kotlin.Int origin=null
++  FUN ATOMICFU_GENERATED_FUNCTION name:inc$atomicfu$NATIVE_PROPERTY_REF$Long visibility:private modality:FINAL returnType:kotlin.Long [inline]
++    VALUE_PARAMETER kind:Regular name:handler$atomicfu index:0 type:kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Long>> [crossinline]
++    BLOCK_BODY
++      RETURN type=kotlin.Nothing from='private final fun inc$atomicfu$NATIVE_PROPERTY_REF$Long (handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Long>>): kotlin.Long declared in <root>'
++        CALL 'public final fun plus (other: kotlin.Long): kotlin.Long declared in kotlin.Long' type=kotlin.Long origin=null
++          ARG <this>: CALL 'internal final fun getAndAddField (<this>: kotlin.reflect.KMutableProperty0<kotlin.Long>, delta: kotlin.Long): kotlin.Long declared in kotlin.concurrent' type=kotlin.Long origin=null
++            ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.reflect.KMutableProperty0<kotlin.Long> origin=null
++              ARG <this>: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Long>> declared in <root>.inc$atomicfu$NATIVE_PROPERTY_REF$Long' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Long>> origin=null
++            ARG delta: TYPE_OP type=kotlin.Long origin=IMPLICIT_CAST typeOperand=kotlin.Long
++              CONST Long type=kotlin.Long value=1
++          ARG other: CONST Long type=kotlin.Long value=1
+   FUN name:aInc visibility:private modality:FINAL returnType:kotlin.Long
+     companionExtension: CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]
+     BLOCK_BODY
+       RETURN type=kotlin.Nothing from='private final fun aInc (): kotlin.Long declared in <root>'
+-        CALL 'public final fun incrementAndGet (): kotlin.Long declared in kotlinx.atomicfu.AtomicLong' type=kotlin.Long origin=null
+-          ARG <this>: CALL 'private final fun <get-a> (): kotlinx.atomicfu.AtomicLong declared in <root>' type=kotlinx.atomicfu.AtomicLong origin=GET_PROPERTY
++        CALL 'public final fun plus (other: kotlin.Long): kotlin.Long declared in kotlin.Long' type=kotlin.Long origin=null
++          ARG <this>: CALL 'internal final fun getAndAddField (<this>: kotlin.reflect.KMutableProperty0<kotlin.Long>, delta: kotlin.Long): kotlin.Long declared in kotlin.concurrent' type=kotlin.Long origin=null
++            ARG <this>: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Long> origin=null reflectionTarget='private final a$volatile: kotlin.Long declared in <root>'
++              getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-a$volatile> visibility:local modality:FINAL returnType:kotlin.Long
++                BLOCK_BODY
++                  RETURN type=kotlin.Nothing from='local final fun <get-a$volatile> (): kotlin.Long declared in <root>.aInc'
++                    CALL 'private final fun <get-a$volatile> (): kotlin.Long declared in <root>' type=kotlin.Long origin=null
++              setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-a$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++                VALUE_PARAMETER kind:Regular name:p0 index:0 type:kotlin.Long
++                BLOCK_BODY
++                  RETURN type=kotlin.Nothing from='local final fun <set-a$volatile> (p0: kotlin.Long): kotlin.Unit declared in <root>.aInc'
++                    CALL 'private final fun <set-a$volatile> (value: kotlin.Long): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
++                      ARG value: GET_VAR 'p0: kotlin.Long declared in <root>.aInc.<set-a$volatile>' type=kotlin.Long origin=null
++            ARG delta: TYPE_OP type=kotlin.Long origin=IMPLICIT_CAST typeOperand=kotlin.Long
++              CONST Long type=kotlin.Long value=1
++          ARG other: CONST Long type=kotlin.Long value=1
+   FUN name:box visibility:public modality:FINAL returnType:kotlin.String
+     BLOCK_BODY
+-      CALL 'public final fun assertEquals <T> (a: T of kotlin.test.assertEquals, b: T of kotlin.test.assertEquals): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
++      CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+         TYPE_ARG T: kotlin.Long
+-        ARG a: CONST Long type=kotlin.Long value=1
+-        ARG b: CALL 'private final fun inc (<this>: kotlinx.atomicfu.AtomicLong): kotlin.Long declared in <root>' type=kotlin.Long origin=null
+-          ARG <this>: CALL 'private final fun <get-a> (): kotlinx.atomicfu.AtomicLong declared in <root>' type=kotlinx.atomicfu.AtomicLong origin=GET_PROPERTY
+-      CALL 'public final fun assertEquals <T> (a: T of kotlin.test.assertEquals, b: T of kotlin.test.assertEquals): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
++        ARG expected: CONST Long type=kotlin.Long value=1
++        ARG actual: CALL 'private final fun inc$atomicfu$NATIVE_PROPERTY_REF$Long (handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Long>>): kotlin.Long declared in <root>' type=kotlin.Long origin=null
++          ARG handler$atomicfu: FUN_EXPR type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Long>> origin=LAMBDA
++            FUN ATOMICFU_GENERATED_FUNCTION name:<a$volatile-getter> visibility:local modality:FINAL returnType:kotlin.reflect.KMutableProperty0<kotlin.Long> [inline]
++              BLOCK_BODY
++                RETURN type=kotlin.Nothing from='local final fun <a$volatile-getter> (): kotlin.reflect.KMutableProperty0<kotlin.Long> declared in <root>.box'
++                  RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Long> origin=null reflectionTarget='private final a$volatile: kotlin.Long declared in <root>'
++                    getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-a$volatile> visibility:local modality:FINAL returnType:kotlin.Long
++                      BLOCK_BODY
++                        RETURN type=kotlin.Nothing from='local final fun <get-a$volatile> (): kotlin.Long declared in <root>.box.<a$volatile-getter>'
++                          CALL 'private final fun <get-a$volatile> (): kotlin.Long declared in <root>' type=kotlin.Long origin=null
++                    setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-a$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++                      VALUE_PARAMETER kind:Regular name:p0 index:0 type:kotlin.Long
++                      BLOCK_BODY
++                        RETURN type=kotlin.Nothing from='local final fun <set-a$volatile> (p0: kotlin.Long): kotlin.Unit declared in <root>.box.<a$volatile-getter>'
++                          CALL 'private final fun <set-a$volatile> (value: kotlin.Long): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
++                            ARG value: GET_VAR 'p0: kotlin.Long declared in <root>.box.<a$volatile-getter>.<set-a$volatile>' type=kotlin.Long origin=null
++      CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+         TYPE_ARG T: kotlin.Long
+-        ARG a: CONST Long type=kotlin.Long value=43
+-        ARG b: CALL 'public final fun test (): kotlin.Long declared in <root>.C' type=kotlin.Long origin=null
+-      CALL 'public final fun assertEquals <T> (a: T of kotlin.test.assertEquals, b: T of kotlin.test.assertEquals): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
++        ARG expected: CONST Long type=kotlin.Long value=43
++        ARG actual: CALL 'public final fun test (): kotlin.Long declared in <root>.C' type=kotlin.Long origin=null
++      CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+         TYPE_ARG T: kotlin.Long
+-        ARG a: CONST Long type=kotlin.Long value=2
+-        ARG b: CALL 'private final fun aInc (): kotlin.Long declared in <root>' type=kotlin.Long origin=null
+-      CALL 'public final fun assertEquals <T> (a: T of kotlin.test.assertEquals, b: T of kotlin.test.assertEquals): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
++        ARG expected: CONST Long type=kotlin.Long value=2
++        ARG actual: CALL 'private final fun aInc (): kotlin.Long declared in <root>' type=kotlin.Long origin=null
++      CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+         TYPE_ARG T: kotlin.Long
+-        ARG a: CONST Long type=kotlin.Long value=1
+-        ARG b: CALL 'private final fun inc (<this>: kotlinx.atomicfu.AtomicLong): kotlin.Long declared in <root>' type=kotlin.Long origin=null
+-          ARG <this>: CALL 'public final fun get (index: kotlin.Int): kotlinx.atomicfu.AtomicLong declared in kotlinx.atomicfu.AtomicLongArray' type=kotlinx.atomicfu.AtomicLong origin=GET_ARRAY_ELEMENT
+-            ARG <this>: CALL 'private final fun <get-arr> (): kotlinx.atomicfu.AtomicLongArray declared in <root>' type=kotlinx.atomicfu.AtomicLongArray origin=GET_PROPERTY
+-            ARG index: CONST Int type=kotlin.Int value=0
++        ARG expected: CONST Long type=kotlin.Long value=1
++        ARG actual: CALL 'private final fun inc$atomicfu$ATOMIC_ARRAY$Long (handler$atomicfu: kotlin.concurrent.AtomicLongArray, index$atomicfu: kotlin.Int): kotlin.Long declared in <root>' type=kotlin.Long origin=null
++          ARG handler$atomicfu: CALL 'private final fun <get-arr> (): kotlin.concurrent.AtomicLongArray declared in <root>' type=kotlin.concurrent.AtomicLongArray origin=null
++          ARG index$atomicfu: CONST Int type=kotlin.Int value=0
+       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+         CONST String type=kotlin.String value="OK"
+-  FUN name:inc visibility:private modality:FINAL returnType:kotlin.Long [inline]
+-    VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:0 type:kotlinx.atomicfu.AtomicLong
+-    BLOCK_BODY
+-      RETURN type=kotlin.Nothing from='private final fun inc (<this>: kotlinx.atomicfu.AtomicLong): kotlin.Long declared in <root>'
+-        CALL 'public final fun incrementAndGet (): kotlin.Long declared in kotlinx.atomicfu.AtomicLong' type=kotlin.Long origin=null
+-          ARG <this>: GET_VAR '<this>: kotlinx.atomicfu.AtomicLong declared in <root>.inc' type=kotlinx.atomicfu.AtomicLong origin=null

@@ -442,7 +442,6 @@ class MppCompositeBuildIT : KGPBaseTest() {
 
             build(
                 ":consumerA:compileCommonMainKotlinMetadata",
-                buildOptions = buildOptions.suppressAgpWarningIsProperty(gradleVersion),
             ) {
                 assertTasksExecuted(":consumerA:compileCommonMainKotlinMetadata")
             }

@@ -1,1 +1,6 @@
+ERR:
+hello.kt:4:10: warning: unused return value of 'size'.
+    this.size
+         ^^^^
+
 Return code: 0

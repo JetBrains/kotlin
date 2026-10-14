@@ -8,8 +8,7 @@ function box() {
     var tmp;
     var tmp_0;
     if (equals(OK, 'OK') && flag1 === 1) {
-      var tmp_1 = flag2;
-      tmp_0 = typeof tmp_1 === 'number';
+      tmp_0 = typeof flag2 === 'number';
     } else {
       tmp_0 = false;
     }
@@ -24,20 +23,19 @@ function box() {
   }
   sep('Call in else');
   if (!(flag1 === 0)) {
+    var tmp_1;
     var tmp_2;
-    var tmp_3;
     if (equals(OK, 'OK') && flag1 === 1) {
-      var tmp_4 = flag2;
-      tmp_3 = typeof tmp_4 === 'number';
-    } else {
-      tmp_3 = false;
-    }
-    if (tmp_3) {
-      tmp_2 = check_0();
+      tmp_2 = typeof flag2 === 'number';
     } else {
       tmp_2 = false;
     }
     if (tmp_2) {
+      tmp_1 = check_0();
+    } else {
+      tmp_1 = false;
+    }
+    if (tmp_1) {
       check_0();
       check_0();
     } else {
@@ -50,7 +48,7 @@ function box() {
   }
   sep('Call in when');
   var tmp0_subject = OK;
-  if (!(tmp0_subject == null) ? typeof tmp0_subject === 'string' : false) {
+  if (!(tmp0_subject == null) && typeof tmp0_subject === 'string') {
     // Inline function 'inlineFunction' call
   } else {
     if (isNumber(tmp0_subject)) {
@@ -74,6 +72,6 @@ function box() {
     // Inline function 'inlineFunction' call
   }
   sep('End');
-  var tmp_5 = OK;
-  return (!(tmp_5 == null) ? typeof tmp_5 === 'string' : false) ? tmp_5 : THROW_CCE();
+  var tmp_3 = ensureNotNull(OK);
+  return typeof tmp_3 === 'string' ? tmp_3 : THROW_CCE();
 }

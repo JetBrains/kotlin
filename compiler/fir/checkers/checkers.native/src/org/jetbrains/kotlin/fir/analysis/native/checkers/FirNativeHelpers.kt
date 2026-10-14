@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.konan.IntrinsicType
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory0
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryForDeprecation0
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
@@ -25,6 +26,18 @@ fun DiagnosticReporter.reportIfHasAnnotation(
     declaration: FirDeclaration,
     annotationClassId: ClassId,
     error: KtDiagnosticFactory0
+) {
+    val annotation = declaration.getAnnotationByClassId(annotationClassId, context.session)
+    if (annotation != null) {
+        reportOn(annotation.source, error)
+    }
+}
+
+context(context: CheckerContext)
+fun DiagnosticReporter.reportIfHasAnnotation(
+    declaration: FirDeclaration,
+    annotationClassId: ClassId,
+    error: KtDiagnosticFactoryForDeprecation0
 ) {
     val annotation = declaration.getAnnotationByClassId(annotationClassId, context.session)
     if (annotation != null) {

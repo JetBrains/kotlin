@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors
 import org.jetbrains.kotlin.ir.backend.js.checkers.JsKlibErrors
 import org.jetbrains.kotlin.ir.inline.diagnostics.IrInlinerErrors
 import org.jetbrains.kotlin.test.checkTestInfrastructure
@@ -19,10 +20,16 @@ import kotlin.reflect.KProperty
 import kotlin.reflect.full.memberProperties
 
 fun verifyDiagnostics(vararg diagnosticContainers: KtDiagnosticsContainer) {
+    verifyDiagnostics(diagnosticGroup("default", diagnosticContainers.toList()))
+}
+
+fun verifyDiagnostics(vararg diagnosticContainersWithGroup: KtDiagnosticsContainerWithGroup) {
     val errors = mutableListOf<String>()
-    val existingDiagnosticFactories = mutableMapOf<String, AbstractKtDiagnosticFactory>()
-    for (container in diagnosticContainers) {
-        container.getRendererFactory().MAP.verifyMessages(container, errors, existingDiagnosticFactories)
+    for ((_ = group, diagnosticContainers) in diagnosticContainersWithGroup) {
+        val existingDiagnosticFactories = mutableMapOf<String, AbstractKtDiagnosticFactory>()
+        for (container in diagnosticContainers) {
+            container.getRendererFactory().MAP.verifyMessages(container, errors, existingDiagnosticFactories)
+        }
     }
     checkTestInfrastructure(errors.isEmpty()) {
         errors.joinToString(
@@ -30,6 +37,12 @@ fun verifyDiagnostics(vararg diagnosticContainers: KtDiagnosticsContainer) {
             postfix = "\n\nSee https://youtrack.jetbrains.com/articles/KT-A-610 for the style guide.\n\n"
         )
     }
+}
+
+class KtDiagnosticsContainerWithGroup(val group: String, val diagnosticContainers: List<KtDiagnosticsContainer>)
+
+fun diagnosticGroup(group: String, diagnosticContainers: List<KtDiagnosticsContainer>): KtDiagnosticsContainerWithGroup {
+    return KtDiagnosticsContainerWithGroup(group, diagnosticContainers)
 }
 
 private fun KtDiagnosticFactoryToRendererMap.verifyMessages(
@@ -87,6 +100,11 @@ private val duplicateIdExclusions = listOf(
     IrActualizationErrors.ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT.name,
     JsKlibErrors.EXPORTING_JS_NAME_CLASH.name,
     CliDiagnostics.KOTLIN_PACKAGE_USAGE.name,
+    FirNativeErrors.INAPPLICABLE_EAGER_INITIALIZATION.warningFactory.name,
+    FirNativeErrors.INAPPLICABLE_EAGER_INITIALIZATION.errorFactory.name,
+    // Declared in both FirJsErrors and FirWasmErrors with platform-specific messages.
+    FirJsErrors.JS_MODULE_PROHIBITED_ON_VAR_IN_MODULE_FILE.warningFactory.name,
+    FirJsErrors.JS_MODULE_PROHIBITED_ON_VAR_IN_MODULE_FILE.errorFactory.name,
 )
 
 fun KtDiagnosticFactoryToRendererMap.verifyMessageForFactory(

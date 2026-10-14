@@ -14,6 +14,7 @@ import java.lang.reflect.*
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.metadata.*
 import kotlin.metadata.jvm.*
+import kotlin.reflect.ExperimentalCompanionExtensions
 import kotlin.reflect.*
 import kotlin.reflect.jvm.internal.calls.*
 
@@ -21,24 +22,28 @@ internal abstract class KotlinKProperty<out V>(
     override val container: KDeclarationContainerImpl,
     override val signature: String,
     override val rawBoundReceiver: Any?,
+    override val rawBoundContextArguments: List<Any?>,
     val kmProperty: KmProperty,
     overriddenStorage: KCallableOverriddenStorage,
 ) : KotlinKCallable<V>(overriddenStorage), ReflectKProperty<V> {
     override val name: String get() = kmProperty.name
 
+    protected val hasContextParameters: Boolean get() = kmProperty.contextParameters.isNotEmpty()
+
     private val extensionReceiverType: KmType? get() = kmProperty.receiverParameterType
 
     override val allParameters: List<KParameter> by lazy(PUBLICATION) {
-        computeParameters(this, includeReceivers = true)
+        computeParameters(this, includeReceiver = true, includeContext = true)
     }
 
     override val parameters: List<KParameter> by lazy(PUBLICATION) {
-        if (isBound) computeParameters(this, includeReceivers = false) else allParameters
+        if (isBound) computeParameters(this, includeReceiver = !isReceiverBound, includeContext = !isContextBound) else allParameters
     }
 
-    private fun computeParameters(propertyOrAccessor: KotlinKCallable<*>, includeReceivers: Boolean): List<KParameter> =
+    private fun computeParameters(propertyOrAccessor: KotlinKCallable<*>, includeReceiver: Boolean, includeContext: Boolean): List<KParameter> =
         propertyOrAccessor.computeParameters(
-            kmProperty.contextParameters, extensionReceiverType, valueParameters = emptyList(), typeParameterTable.value, includeReceivers,
+            kmProperty.contextParameters, extensionReceiverType, valueParameters = emptyList(), typeParameterTable.value,
+            includeReceiver, includeContext,
         )
 
     override val returnType: KType by lazy(PUBLICATION) {
@@ -63,7 +68,7 @@ internal abstract class KotlinKProperty<out V>(
     override val isLateinit: Boolean get() = kmProperty.isLateinit
     override val isConst: Boolean get() = kmProperty.isConst
 
-    @OptIn(ExperimentalCompanionBlocksAndExtensions::class)
+    @OptIn(kotlin.metadata.ExperimentalCompanionExtensions::class)
     @ExperimentalCompanionExtensions
     override val companionExtensionClass: KClass<*>?
         get() = (kmProperty.companionExtensionReceiverType?.classifier as KmClassifier.Class?)?.let {
@@ -80,11 +85,7 @@ internal abstract class KotlinKProperty<out V>(
                 originalContainer.jClass.enclosingClass
             else
                 originalContainer.jClass
-        try {
-            owner.getDeclaredField(fieldSignature.name)
-        } catch (_: NoSuchFieldException) {
-            null
-        }
+        owner.getDeclaredFieldOrNull(fieldSignature.name, isStatic)
     }
 
     private fun isPropertyWithBackingFieldInOuterClass(): Boolean {
@@ -134,9 +135,9 @@ internal abstract class KotlinKProperty<out V>(
             return annotations.unwrapKotlinRepeatableAnnotations()
         }
 
-    @OptIn(ExperimentalCompanionBlocksAndExtensions::class)
+    @OptIn(ExperimentalCompanionBlocks::class)
     override val isCompanionBlockMember: Boolean
-        get() = container is KClassImpl<*> && kmProperty.isStatic
+        get() = container is KClassImpl<*> && kmProperty.isCompanionBlockMember
 
     abstract class Accessor<out PropertyType, out ReturnType> :
         KotlinKCallable<ReturnType>(KCallableOverriddenStorage.EMPTY), KProperty.Accessor<PropertyType>, KFunction<ReturnType> {
@@ -149,6 +150,8 @@ internal abstract class KotlinKProperty<out V>(
         override val callerWithDefaults: Caller<*>? get() = null
 
         override val rawBoundReceiver: Any? get() = property.rawBoundReceiver
+
+        override val rawBoundContextArguments: List<Any?> get() = property.rawBoundContextArguments
 
         override val typeParameters: List<KTypeParameter> get() = property.typeParameters
 
@@ -170,8 +173,9 @@ internal abstract class KotlinKProperty<out V>(
         ): ReflectKCallable<ReturnType> =
             error("Property accessors can only be copied by copying the corresponding property")
 
-        override fun rebind(boundReceiver: Any?): ReflectKCallable<ReturnType> =
+        override fun bindToLowerArity(boundReceiver: Any?, boundContextArguments: List<Any?>) =
             error("Property accessors can only be bound by copying the corresponding property")
+
 
         override val annotations: List<Annotation>
             get() {
@@ -187,10 +191,10 @@ internal abstract class KotlinKProperty<out V>(
             get() = property.kmProperty.getter
 
         override val allParameters: List<KParameter> by lazy(PUBLICATION) {
-            property.computeParameters(this, includeReceivers = true)
+            property.computeParameters(this, includeReceiver = true, includeContext = true)
         }
         override val parameters: List<KParameter> by lazy(PUBLICATION) {
-            if (isBound) property.computeParameters(this, includeReceivers = false) else allParameters
+            if (isBound) property.computeParameters(this, includeReceiver = !isReceiverBound, includeContext = !isContextBound) else allParameters
         }
 
         override val returnType: KType get() = property.returnType
@@ -211,12 +215,12 @@ internal abstract class KotlinKProperty<out V>(
             get() = property.kmProperty.setter
 
         override val allParameters: List<KParameter> by lazy(PUBLICATION) {
-            val propertyParameters = property.computeParameters(this, includeReceivers = true)
+            val propertyParameters = property.computeParameters(this, includeReceiver = true, includeContext = true)
             propertyParameters + createSetterParameter(propertyParameters.size)
         }
         override val parameters: List<KParameter> by lazy(PUBLICATION) {
             if (isBound) {
-                val propertyParameters = property.computeParameters(this, includeReceivers = false)
+                val propertyParameters = property.computeParameters(this, includeReceiver = !isReceiverBound, includeContext = !isContextBound)
                 propertyParameters + createSetterParameter(propertyParameters.size)
             } else allParameters
         }
@@ -239,7 +243,8 @@ internal abstract class KotlinKProperty<out V>(
 
     override fun equals(other: Any?): Boolean {
         val that = other.asReflectProperty() ?: return false
-        return container == that.container && name == that.name && signature == that.signature && rawBoundReceiver == that.rawBoundReceiver
+        return container == that.container && name == that.name && signature == that.signature &&
+                rawBoundReceiver == that.rawBoundReceiver && rawBoundContextArguments == that.rawBoundContextArguments
     }
 
     override fun hashCode(): Int =
@@ -268,17 +273,17 @@ internal fun KotlinKProperty.Accessor<*, *>.computeCallerForAccessor(isGetter: B
     fun computeFieldCaller(field: Field): CallerImpl<Field> = when {
         property.isJvmFieldPropertyInCompanionObject() || !Modifier.isStatic(field.modifiers) ->
             if (isGetter)
-                if (isBound) CallerImpl.FieldGetter.BoundInstance(field, boundReceiver)
+                if (isReceiverBound) CallerImpl.FieldGetter.BoundInstance(field, boundReceiver)
                 else CallerImpl.FieldGetter.Instance(field)
             else
-                if (isBound) CallerImpl.FieldSetter.BoundInstance(field, isNotNullProperty(), boundReceiver)
+                if (isReceiverBound) CallerImpl.FieldSetter.BoundInstance(field, isNotNullProperty(), boundReceiver)
                 else CallerImpl.FieldSetter.Instance(field, isNotNullProperty())
         isJvmStaticProperty() ->
             if (isGetter)
-                if (isBound) CallerImpl.FieldGetter.BoundJvmStaticInObject(field)
+                if (isReceiverBound) CallerImpl.FieldGetter.BoundJvmStaticInObject(field)
                 else CallerImpl.FieldGetter.JvmStaticInObject(field)
             else
-                if (isBound) CallerImpl.FieldSetter.BoundJvmStaticInObject(field, isNotNullProperty())
+                if (isReceiverBound) CallerImpl.FieldSetter.BoundJvmStaticInObject(field, isNotNullProperty())
                 else CallerImpl.FieldSetter.JvmStaticInObject(field, isNotNullProperty())
         else ->
             if (isGetter) CallerImpl.FieldGetter.Static(field)
@@ -301,7 +306,7 @@ internal fun KotlinKProperty.Accessor<*, *>.computeCallerForAccessor(isGetter: B
             if (property.isUnderlyingPropertyOfValueClass() && property.visibility == KVisibility.INTERNAL) {
                 val unboxMethod = property.allParameters.single().type.toInlineClass()?.getInlineClassUnboxMethod(property)
                     ?: throw KotlinReflectionInternalError("Underlying property of inline class $property should have a field")
-                if (isBound) InternalUnderlyingValOfInlineClass.Bound(unboxMethod, boundReceiver)
+                if (isReceiverBound) InternalUnderlyingValOfInlineClass.Bound(unboxMethod, boundReceiver)
                 else InternalUnderlyingValOfInlineClass.Unbound(unboxMethod)
             } else {
                 val javaField = property.javaField
@@ -310,14 +315,13 @@ internal fun KotlinKProperty.Accessor<*, *>.computeCallerForAccessor(isGetter: B
             }
         }
         !Modifier.isStatic(accessor.modifiers) ->
-            if (isBound) CallerImpl.Method.BoundInstance(accessor, boundReceiver)
-            else CallerImpl.Method.Instance(accessor)
+            CallerImpl.Method.Instance(accessor, boundReceiver, boundContextArguments)
         isJvmStaticProperty() ->
-            if (isBound) CallerImpl.Method.BoundJvmStaticInObject(accessor)
-            else CallerImpl.Method.JvmStaticInObject(accessor)
+            CallerImpl.Method.JvmStaticInObject(accessor, boundReceiver, boundContextArguments)
         else ->
-            if (isBound) CallerImpl.Method.BoundStatic(accessor, isCallByToValueClassMangledMethod = false, boundReceiver)
-            else CallerImpl.Method.Static(accessor)
+            CallerImpl.Method.Static(
+                accessor, isCallByToValueClassMangledMethod = false, boundReceiver, boundContextArguments, hasInstanceParameter
+            )
     }.createValueClassAwareCallerIfNeeded(this, isDefault = false, forbidUnboxingForIndices = emptyList())
 }
 

@@ -1,0 +1,13 @@
+// KT-87777: an inherited open generic method becomes final; the fake overrides in the subclasses specialize
+// the type parameter to primitives, so their entry points have a different signature than the implementation.
+// DISABLE_NATIVE: targetFamily=MINGW
+MODULES: lib, main
+
+STEP 0:
+    libs: lib, main
+
+STEP 1:
+    libs: lib, main
+
+STEP 2:
+    libs: lib, main

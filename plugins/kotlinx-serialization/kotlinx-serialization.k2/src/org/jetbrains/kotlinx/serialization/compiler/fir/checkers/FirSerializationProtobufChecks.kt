@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.declarations.findArgumentByName
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
+import org.jetbrains.kotlin.fir.declarations.isInlineClass
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
-import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.isRealOwnerOf
@@ -197,8 +197,8 @@ private fun CheckerContext.isOpaqueForProtobuf(type: ConeKotlinType): Boolean {
     if (type.lowerBoundIfFlexible().isTypeParameter) return true
     // A serializer attached to the type's own class, rather than to the property.
     if (type.getSerializableWith(session) != null) return true
-    // A value class forwards the property's tag, integer type included, to the value it wraps.
-    return type.toRegularClassSymbol()?.isInlineOrValue == true
+    // An inline class forwards the property's tag, integer type included, to the value it wraps.
+    return type.toRegularClassSymbol()?.isInlineClass == true
 }
 
 private fun CheckerContext.isMapWithIntegerEncodedEntries(type: ConeKotlinType): Boolean {

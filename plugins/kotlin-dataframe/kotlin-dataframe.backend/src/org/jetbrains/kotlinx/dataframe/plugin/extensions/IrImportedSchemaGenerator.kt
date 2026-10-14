@@ -9,14 +9,15 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.hasShape
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
-import org.jetbrains.kotlin.ir.util.toIrConst
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
@@ -44,8 +45,10 @@ class IrImportedSchemaGenerator(
         if (origin is IrDeclarationOrigin.GeneratedByPlugin && origin.pluginKey is ImportedSchemaCompanionKey) {
             val metadata = (origin.pluginKey as ImportedSchemaCompanionKey).metadata
             val param = when (declaration.name) {
-                Names.DEFAULT -> metadata.data.toIrConst(context.irBuiltIns.stringType)
-                Names.READ -> IrGetValueImpl(-1, -1, declaration.parameters[1].symbol)
+                Names.DEFAULT -> IrConstImpl.string(
+                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, type = context.irBuiltIns.stringType, value = metadata.data
+                )
+                Names.READ -> IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, declaration.parameters[1].symbol)
                 else -> return declaration
             }
 

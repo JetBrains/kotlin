@@ -141,7 +141,6 @@ class PhasedPipelineChecker(
             testDataFile.extension == "nkt" -> listOf(testDataFile)
             else -> listOf(
                 originalFile,
-                originalFile.firTestDataFile,
                 originalFile.llFirTestDataFile,
                 originalFile.latestLVTestDataFile,
                 originalFile.reversedTestDataFile,

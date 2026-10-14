@@ -1,0 +1,37 @@
+Module: anno
+FILE: Anno.kt
+    @R|kotlin/annotation/Repeatable|() public final annotation class Anno : R|kotlin/Annotation| {
+        public constructor(strings: R|kotlin/Array<kotlin/String>|, classes: R|kotlin/Array<kotlin/reflect/KClass<*>>|, vararg names: R|kotlin/Array<out kotlin/String>|): R|Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val strings: R|kotlin/Array<kotlin/String>| = R|<local>/strings|
+            public get(): R|kotlin/Array<kotlin/String>|
+
+        public final val classes: R|kotlin/Array<kotlin/reflect/KClass<*>>| = R|<local>/classes|
+            public get(): R|kotlin/Array<kotlin/reflect/KClass<*>>|
+
+        public final val names: R|kotlin/Array<out kotlin/String>| = R|<local>/names|
+            public get(): R|kotlin/Array<out kotlin/String>|
+
+    }
+Module: companionsOn
+FILE: withCompanions.kt
+    @R|Anno|(strings = Q|kotlin/Array|.R|kotlin/Array.of*s|<R|kotlin/String|>(vararg(String(a))) [evaluated = <collectionLiteralCall>(String(a))], classes = Q|kotlin/Array|.R|kotlin/Array.of*s|<R|kotlin/reflect/KClass<*>|>() [evaluated = <collectionLiteralCall>()], names = vararg(*Q|kotlin/Array|.R|kotlin/Array.of*s|<R|kotlin/String|>(vararg(String(b), String(c)))) [evaluated = vararg(String(b), String(c))]) public final fun testOn(): R|kotlin/Unit| {
+        lval a: R|kotlin/Array<kotlin/String>| = Q|kotlin/Array|.R|kotlin/Array.of*s|<R|kotlin/String|>()
+        lval b: R|kotlin/Array<kotlin/Any?>| = Q|kotlin/Array|.R|kotlin/Array.of*s|<R|kotlin/Any?|>(vararg(Null(null)))
+        lval c: R|kotlin/Array<kotlin/Int>| = Q|kotlin/Array|.R|kotlin/Array.of*s|<R|kotlin/Int|>(vararg(Int(1), Int(2), Int(3)))
+        lval x: R|kotlin/Array<kotlin/String>| = Q|kotlin/Array|.R|kotlin/Array.of*s|<R|kotlin/String|>()
+        lval y: R|kotlin/Array<kotlin/Any?>| = Q|kotlin/Array|.R|kotlin/Array.of*s|<R|kotlin/Any?|>(vararg(Null(null)))
+        lval z: R|kotlin/Array<kotlin/Int>| = Q|kotlin/Array|.R|kotlin/Array.of*s|<R|kotlin/Int|>(vararg(Int(1), Int(2), Int(3)))
+    }
+Module: companionsOff
+FILE: withoutCompanions.kt
+    @R|Anno|(strings = Q|kotlin|.R|kotlin/arrayOf|<R|kotlin/String|>(vararg(String(a))) [evaluated = <collectionLiteralCall>(String(a))], classes = Q|kotlin/Array|.R|kotlin/Array.of*s<Inapplicable(INAPPLICABLE): kotlin/Array.of>#|<R|kotlin/reflect/KClass<*>|>(vararg(<getClass>(Q|kotlin/String|))) [evaluated = <collectionLiteralCall>(<getClass>(Q|kotlin/String|))], names = vararg(*Q|kotlin|.R|kotlin/arrayOf|<R|kotlin/String|>()) [evaluated = vararg()]) public final fun testOff(): R|kotlin/Unit| {
+        lval a: R|kotlin/Array<kotlin/String>| = Q|kotlin/Array|.R|kotlin/Array.of*s<Inapplicable(INAPPLICABLE): kotlin/Array.of>#|<R|kotlin/String|>()
+        lval b: R|kotlin/Array<kotlin/Any?>| = Q|kotlin/Array|.R|kotlin/Array.of*s<Inapplicable(INAPPLICABLE): kotlin/Array.of>#|<R|kotlin/Any?|>(vararg(Null(null)))
+        lval c: R|kotlin/Array<kotlin/Int>| = Q|kotlin/Array|.R|kotlin/Array.of*s<Inapplicable(INAPPLICABLE): kotlin/Array.of>#|<R|kotlin/Int|>(vararg(Int(1), Int(2), Int(3)))
+        lval x: R|kotlin/Array<kotlin/String>| = Q|kotlin|.R|kotlin/arrayOf|<R|kotlin/String|>()
+        lval y: R|kotlin/Array<kotlin/Any?>| = Q|kotlin|.R|kotlin/arrayOf|<R|kotlin/Any?|>(vararg(Null(null)))
+        lval z: R|kotlin/Array<kotlin/Int>| = Q|kotlin|.R|kotlin/arrayOf|<R|kotlin/Int|>(vararg(Int(1), Int(2), Int(3)))
+    }

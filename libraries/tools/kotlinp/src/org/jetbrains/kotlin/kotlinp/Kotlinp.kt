@@ -154,7 +154,6 @@ abstract class Kotlinp(protected val settings: Settings) {
         container.typeAliases.sortIfNeeded { it.sortedBy(KmTypeAlias::name) }.forEach { renderTypeAlias(it, this) }
     }
 
-    @OptIn(ExperimentalMustUseStatus::class)
     fun renderConstructor(constructor: KmConstructor, printer: Printer): Unit = with(printer) {
         appendLine()
         appendVersionRequirements(constructor.versionRequirements)
@@ -176,7 +175,7 @@ abstract class Kotlinp(protected val settings: Settings) {
         )
     }
 
-    @OptIn(ExperimentalContextParameters::class, ExperimentalContracts::class, ExperimentalMustUseStatus::class, ExperimentalCompanionBlocksAndExtensions::class)
+    @OptIn(ExperimentalContextParameters::class, ExperimentalContracts::class, ExperimentalCompanionExtensions::class)
     fun renderFunction(function: KmFunction, printer: Printer): Unit = with(printer) {
         appendLine()
         appendOrigin(function)
@@ -203,7 +202,7 @@ abstract class Kotlinp(protected val settings: Settings) {
         }
     }
 
-    @OptIn(ExperimentalCompanionBlocksAndExtensions::class)
+    @OptIn(ExperimentalCompanionBlocks::class, ExperimentalCompanionExtensions::class)
     fun renderFunctionModifiers(function: KmFunction, printer: Printer): Unit = with(printer) {
         append(VISIBILITY_MAP[function.visibility])
         append(MODALITY_MAP[function.modality])
@@ -216,7 +215,7 @@ abstract class Kotlinp(protected val settings: Settings) {
             function.isExternal to "external",
             function.isSuspend to "suspend",
             function.isExpect to "expect",
-            function.isStatic to "static",
+            function.isCompanionBlockMember to "static",
             (function.companionExtensionReceiverType != null) to "companion",
             function.hasNonStableParameterNames to "/* non-stable parameter names */"
         )
@@ -324,7 +323,7 @@ abstract class Kotlinp(protected val settings: Settings) {
         appendLine("}")
     }
 
-    @OptIn(ExperimentalContextParameters::class, ExperimentalMustUseStatus::class, ExperimentalCompanionBlocksAndExtensions::class)
+    @OptIn(ExperimentalContextParameters::class, ExperimentalCompanionExtensions::class)
     fun renderProperty(property: KmProperty, printer: Printer): Unit = with(printer) {
         appendLine()
         appendVersionRequirements(property.versionRequirements)
@@ -366,7 +365,7 @@ abstract class Kotlinp(protected val settings: Settings) {
         }
     }
 
-    @OptIn(ExperimentalCompanionBlocksAndExtensions::class)
+    @OptIn(ExperimentalCompanionExtensions::class, ExperimentalCompanionBlocks::class)
     fun renderPropertyModifiers(property: KmProperty, printer: Printer): Unit = with(printer) {
         append(VISIBILITY_MAP[property.visibility])
         append(MODALITY_MAP[property.modality])
@@ -377,7 +376,7 @@ abstract class Kotlinp(protected val settings: Settings) {
             property.isExternal to "external",
             property.isDelegated to "/* delegated */",
             property.isExpect to "expect",
-            property.isStatic to "static",
+            property.isCompanionBlockMember to "static",
             (property.companionExtensionReceiverType != null) to "companion"
         )
     }
@@ -551,7 +550,6 @@ abstract class Kotlinp(protected val settings: Settings) {
         }
     }
 
-    @OptIn(ExperimentalMustUseStatus::class)
     private fun Printer.appendReturnValueStatus(returnValueStatus: ReturnValueStatus) {
         val s = when (returnValueStatus) {
             ReturnValueStatus.UNSPECIFIED -> return

@@ -128,7 +128,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=BitArithKt]]
         REFERENCE_EXPRESSION[referencedName=mask]
       OPERATION_REFERENCE[operationToken=EQEQ, referencedName===]
       REFERENCE_EXPRESSION[referencedName=mask]
-  CLASS[classId=/INumber, fqName=INumber, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=INumber, superNames=[IComparable]]
+  CLASS[classId=/INumber, fqName=INumber, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=INumber, superNames=[IComparable]]
     MODIFIER_LIST[open]
     SUPER_TYPE_LIST
       SUPER_TYPE_ENTRY

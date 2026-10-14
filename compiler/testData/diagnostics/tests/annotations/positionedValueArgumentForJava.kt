@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-88667
-// LANGUAGE_FEATURE_TOGGLED: EnforceNamedArgumentsOnJavaAnnotationInAccessors
+// LANGUAGE_FEATURE_TOGGLED: EnforceMissingNamedArgumentsOnJavaAnnotation
 // FILE: TestAnn.java
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -12,11 +12,20 @@ public @interface TestAnn {
 // FILE: test.kt
 import java.lang.Deprecated as deprecated
 
+typealias MyAlias = TestAnn
+
 @TestAnn(<!POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION!>"message"<!>)
 class A {
     @get:TestAnn(<!POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION!>"message"<!>) <!DEPRECATED_JAVA_ANNOTATION!>@get:deprecated<!>
     val x: Int = 10
     fun test() = TestAnn(<!POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION!>"message"<!>)
+}
+
+@MyAlias(<!POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION!>"message"<!>)
+class B {
+    @get:MyAlias(<!POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION!>"message"<!>) <!DEPRECATED_JAVA_ANNOTATION!>@get:deprecated<!>
+    val x: Int = 10
+    fun test() = MyAlias(<!POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION!>"message"<!>)
 }
 
 /* GENERATED_FIR_TAGS: annotationUseSiteTargetPropertyGetter, classDeclaration, functionDeclaration, integerLiteral,

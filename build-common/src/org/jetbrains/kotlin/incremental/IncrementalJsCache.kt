@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.incremental
 import com.intellij.util.io.DataExternalizer
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumerImpl
+import org.jetbrains.kotlin.incremental.js.IrInlineFunctionRepresentation
 import org.jetbrains.kotlin.incremental.js.IrTranslationResultValue
 import org.jetbrains.kotlin.incremental.js.TranslationResultValue
 import org.jetbrains.kotlin.incremental.storage.*
@@ -37,6 +38,7 @@ open class IncrementalJsCache(
         private const val TRANSLATION_RESULT_MAP = "translation-result"
         private const val IR_TRANSLATION_RESULT_MAP = "ir-translation-result"
         private const val INLINE_FUNCTIONS = "inline-functions"
+        private const val INLINE_FUNCTIONS_REPRESENTATION = "inline-functions-representation"
     }
 
     private val protoData = ProtoDataProvider(serializerProtocol)
@@ -46,6 +48,7 @@ open class IncrementalJsCache(
     private val translationResults = registerMap(TranslationResultMap(TRANSLATION_RESULT_MAP.storageFile, protoData, icContext))
     private val irTranslationResults = registerMap(IrTranslationResultMap(IR_TRANSLATION_RESULT_MAP.storageFile, icContext))
     private val irInlineTranslationResults = registerMap(IrTranslationResultMap(INLINE_FUNCTIONS.storageFile, icContext))
+    private val irInlineFunctionRepresentationMap = registerMap(IrInlineIdsMap(INLINE_FUNCTIONS_REPRESENTATION.storageFile, icContext))
 
     private val dirtySources = hashSetOf<File>()
 
@@ -66,12 +69,10 @@ open class IncrementalJsCache(
     }
 
     fun compareAndUpdate(incrementalResults: IncrementalResultsConsumerImpl, changesCollector: ChangesCollector) {
-        val translatedFiles = incrementalResults.packageParts
-
-        for ([srcFile, data] in translatedFiles) {
+        for ([srcFile, newData] in incrementalResults.packageParts) {
             dirtySources.remove(srcFile)
             val oldProtoMap = translationResults[srcFile]?.metadata?.let { protoData(srcFile, it) } ?: emptyMap()
-            val newProtoMap = protoData(srcFile, data.metadata)
+            val newProtoMap = protoData(srcFile, newData.metadata)
 
             for ([classId, protoData] in newProtoMap) {
                 registerOutputForFile(srcFile, classId.asSingleFqName())
@@ -85,22 +86,46 @@ open class IncrementalJsCache(
                 changesCollector.collectProtoChanges(oldProtoMap[classId], newProtoMap[classId])
             }
 
-            translationResults.put(srcFile, data.metadata)
+            translationResults.put(srcFile, newData.metadata)
         }
 
-        for ([srcFile, irData] in incrementalResults.irFileData) {
-            (val fileData, val types, val signatures, val strings, val declarations, val bodies, val fqn, val debugInfos = debugInfo, val fileEntries) = irData
+        for ([srcFile, newIrData] in incrementalResults.irFileData) {
+            val (fileData, types, signatures, strings, declarations, bodies, fqn, debugInfos = debugInfo, fileEntries) = newIrData
             irTranslationResults.put(
                 srcFile, fileData, types, signatures, strings, declarations, bodies, fqn, debugInfos, fileEntries
             )
         }
 
-        for ([srcFile, irData] in incrementalResults.irInlineFileData) {
-            (val fileData, val types, val signatures, val strings, val declarations, val bodies, val fqn, val debugInfos = debugInfo, val fileEntries) = irData
+        for ([srcFile, newIrData] in incrementalResults.irInlineFileData) {
+            val (fileData, types, signatures, strings, declarations, bodies, fqn, debugInfos = debugInfo, fileEntries) = newIrData
             irInlineTranslationResults.put(
                 srcFile, fileData, types, signatures, strings, declarations, bodies, fqn, debugInfos, fileEntries
             )
         }
+
+        // If all inline functions from a file were deleted, then there will be no data associated with this file in `incrementalResults.irInlineFileData`.
+        // But we still would like to precess it and mark old inline functions as deleted.
+        for (srcFile in incrementalResults.irFileData.keys) {
+            val newIrInlineFunctionRepresentations = compareInlineFunctions(srcFile, incrementalResults, changesCollector)
+            irInlineFunctionRepresentationMap.put(srcFile, newIrInlineFunctionRepresentations)
+        }
+    }
+
+    private fun compareInlineFunctions(
+        srcFile: File,
+        incrementalResults: IncrementalResultsConsumerImpl,
+        changesCollector: ChangesCollector,
+    ): List<IrInlineFunctionRepresentation> {
+        val oldRepresentation = irInlineFunctionRepresentationMap[srcFile]?.associate { it.callableId to it.hashes } ?: emptyMap()
+        val newRepresentation = incrementalResults.inlineFunctionRepresentationData[srcFile]?.associate { it.callableId to it.hashes } ?: emptyMap()
+
+        (newRepresentation + oldRepresentation).forEach { [callableId, _] ->
+            val scope = callableId.classId?.asSingleFqName() ?: callableId.packageName
+            val name = callableId.callableName.asString()
+            changesCollector.collectMemberIfValueWasChanged(scope, name, oldRepresentation[callableId], newRepresentation[callableId])
+        }
+
+        return newRepresentation.entries.map { IrInlineFunctionRepresentation(it.key, it.value) }
     }
 
     private fun registerOutputForFile(srcFile: File, name: FqName) {
@@ -113,6 +138,7 @@ open class IncrementalJsCache(
             translationResults.remove(it, changesCollector)
             irTranslationResults.remove(it)
             irInlineTranslationResults.remove(it)
+            irInlineFunctionRepresentationMap.remove(it)
         }
         removeAllFromClassStorage(dirtyOutputClassesMap.getDirtyOutputClasses(), changesCollector)
         dirtySources.clear()
@@ -120,7 +146,7 @@ open class IncrementalJsCache(
     }
 
     fun nonDirtyPackageParts(): Map<File, TranslationResultValue> =
-        hashMapOf<File, TranslationResultValue>().apply {
+        buildMap {
             for (file in translationResults.keys) {
 
                 if (file !in dirtySources) {
@@ -130,7 +156,7 @@ open class IncrementalJsCache(
         }
 
     fun nonDirtyIrParts(): Map<File, IrTranslationResultValue> =
-        hashMapOf<File, IrTranslationResultValue>().apply {
+        buildMap {
             for (file in irTranslationResults.keys) {
 
                 if (file !in dirtySources) {
@@ -140,7 +166,7 @@ open class IncrementalJsCache(
         }
 
     fun nonDirtyIrInlineParts(): Map<File, IrTranslationResultValue> =
-        hashMapOf<File, IrTranslationResultValue>().apply {
+        buildMap {
             for (file in irInlineTranslationResults.keys) {
 
                 if (file !in dirtySources) {
@@ -297,3 +323,42 @@ private class IrTranslationResultMap(
             )
     }
 }
+
+private class IrInlineIdsMap(
+    storageFile: File,
+    icContext: IncrementalCompilationContext,
+) : AbstractBasicMap<File, List<IrInlineFunctionRepresentation>>(
+    storageFile,
+    icContext.fileDescriptorForSourceFiles,
+    ListExternalizer(IrInlineFunctionRepresentationExternalizer),
+    icContext
+) {
+
+    @TestOnly
+    override fun dumpValue(value: List<IrInlineFunctionRepresentation>): String {
+        return "IrInlineFunctionRepresentation: ${value.joinToString().toByteArray().md5()}"
+    }
+
+    @Synchronized
+    fun put(
+        sourceFile: File,
+        irInlineFunctionRepresentations: List<IrInlineFunctionRepresentation>,
+    ) {
+        this[sourceFile] = irInlineFunctionRepresentations
+    }
+}
+
+private object IrInlineFunctionRepresentationExternalizer : DataExternalizer<IrInlineFunctionRepresentation> {
+    override fun save(output: DataOutput, value: IrInlineFunctionRepresentation) {
+        CallableIdExternalizer.save(output, value.callableId)
+        ListExternalizer(LongExternalizer).save(output, value.hashes)
+    }
+
+    override fun read(input: DataInput): IrInlineFunctionRepresentation {
+        val callableId = CallableIdExternalizer.read(input)
+        val hash = ListExternalizer(LongExternalizer).read(input)
+
+        return IrInlineFunctionRepresentation(callableId, hash)
+    }
+}
+

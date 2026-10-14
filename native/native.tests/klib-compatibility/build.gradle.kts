@@ -95,12 +95,11 @@ fun Project.customCompilerTest(
         allowParallelExecution = true,
         requirePlatformLibs = false,
     ) {
-        val testTargetName = providers.gradleProperty("kotlin.internal.native.test.target")
+        val testTarget = providers.gradleProperty("kotlin.internal.native.test.target")
             .orElse(providers.gradleProperty("kn.target"))
-            .getOrElse(HostManager.hostName)
-
-        val testTarget = KonanTarget.predefinedTargets[testTargetName] ?: error("Test target $testTargetName is not defined")
-        if (!testTarget.family.isAppleFamily) {
+            .map { KonanTarget.predefinedTargets[it] ?: error("Test target $it is not defined") }
+            .orNull ?: HostManager.hostOrNull
+        if (testTarget?.family?.isAppleFamily != true) {
             // KT-85080: make sure Llvm-dev native dependency is downloaded, so Clang tool is available
             // Clang is used via `compileWithClangToStaticLibrary()` in ObjCInteropFacade for CInterop tests with source files of types: c, cpp m, mm
             // Note: For Apple targets, clang is invoked from XCode toolchain instead, see `Settings.defaultClangDistribution()` in Clang.kt

@@ -42,7 +42,7 @@ object ObjectSingletonProps {
 val generic = GenericDestructuringObject<Int>()
 val delegatedGeneric by lazy { GenericDestructuringObject<Int>() }
 
-// оставляем только fetchGeneric(), чтобы не конфликтовать с JVM-геттером свойства generic
+// Keep only fetchGeneric() to avoid a conflict with the JVM getter of the generic property
 fun fetchGeneric() = generic
 
 inline fun <A, B> consumeTwo(a: A, b: B, f: (A, B) -> Unit) = f(a, b)

@@ -1,0 +1,80 @@
+/*
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.psi.psiUtil
+
+import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.util.TextRange
+import com.intellij.openapi.util.text.StringUtil
+import com.intellij.psi.AbstractElementManipulator
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtIdeApi
+import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.KtStringTemplateEntryWithExpression
+import org.jetbrains.kotlin.psi.KtStringTemplateExpression
+
+@OptIn(KtIdeApi::class)
+private val LOG = Logger.getInstance(KtStringTemplateExpressionManipulator::class.java)
+
+/**
+ * The [ElementManipulator][com.intellij.psi.ElementManipulator] of [KtStringTemplateExpression], which edits the content of a string
+ * literal, e.g., when a language fragment injected into the string is edited or a reference contributed to the string is renamed.
+ *
+ * The IntelliJ Kotlin plugin registers it as the element manipulator of [KtStringTemplateExpression]. By default, it edits the
+ * [content][getContentRange] between the quotes. In a single-quoted string, it escapes quotes, backslashes, and control characters in the
+ * new content, but keeps interpolated expressions (`$name` and `${...}`) as is. In a raw string, it inserts the new content as is.
+ */
+@KtIdeApi
+class KtStringTemplateExpressionManipulator : AbstractElementManipulator<KtStringTemplateExpression>() {
+    override fun handleContentChange(
+        element: KtStringTemplateExpression,
+        range: TextRange,
+        newContent: String
+    ): KtStringTemplateExpression? = replaceStringTemplateContent(element, range, newContent)
+
+    override fun getRangeInElement(element: KtStringTemplateExpression): TextRange {
+        return element.getContentRange()
+    }
+}
+
+/**
+ * Replaces the text in [range] of [element] with [newContent], escaping it as described in [KtStringTemplateExpressionManipulator].
+ */
+internal fun replaceStringTemplateContent(
+    element: KtStringTemplateExpression,
+    range: TextRange,
+    newContent: String
+): KtStringTemplateExpression? {
+    val node = element.node
+    val oldText = node.text
+
+    fun wrapAsInOld(content: String) = oldText.substring(0, range.startOffset) + content + oldText.substring(range.endOffset)
+
+    fun makeKtExpressionFromText(text: String): KtExpression {
+        val ktExpression = KtPsiFactory(element.project).createExpression(text)
+        if (ktExpression !is KtStringTemplateExpression) {
+            LOG.error("can't create a `KtStringTemplateExpression` from '$text'")
+        }
+        return ktExpression
+    }
+
+    val newContentPreprocessed: String =
+        if (element.isSingleQuoted()) {
+            val expressionFromText = makeKtExpressionFromText("\"\"\"$newContent\"\"\"")
+            if (expressionFromText is KtStringTemplateExpression) {
+                expressionFromText.entries.joinToString("") { entry ->
+                    when (entry) {
+                        is KtStringTemplateEntryWithExpression -> entry.text
+                        else -> StringUtil.escapeStringCharacters(entry.text)
+                    }
+                }
+            } else newContent
+        } else newContent
+
+    val newKtExpression = makeKtExpressionFromText(wrapAsInOld(newContentPreprocessed))
+    node.replaceAllChildrenToChildrenOf(newKtExpression.node)
+
+    return node.getPsi(KtStringTemplateExpression::class.java)
+}

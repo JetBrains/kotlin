@@ -271,12 +271,12 @@ internal fun writeLocalPackageSources(
     }
 }
 
-internal fun swiftSourceContent(): String = """
+internal fun swiftSourceContent(className: String = "LocalHelper"): String = """
     import Foundation
 
-    @objc public class LocalHelper: NSObject {
+    @objc public class ${className}: NSObject {
         @objc public static func greeting() -> String {
-            return "Hello from LocalHelper"
+            return "Hello from ${className}"
         }
         
         public static func invisible() -> String {
@@ -393,7 +393,7 @@ internal fun addSwiftPmGitTag(
     tag: String,
     files: Map<String, String>? = null,
 ) {
-    files?.forEach { [filePath, fileContent] ->
+    files?.forEach { (filePath, fileContent) ->
         val f = repoDir.resolve(filePath)
         f.parent.createDirectories()
         f.writeText(fileContent)
@@ -906,7 +906,7 @@ internal fun BuildResult.assertResolvedVersions(
     val actual = parsePackageResolved(persistedPackageResolved.readText())
 
     val expected = SwiftPmPackageResolved(
-        pins = expectedPins.map { [repoRef, version] ->
+        pins = expectedPins.map { (repoRef, version) ->
             checkoutRepoDir?.let { checkoutRepoDir ->
                 assertCheckoutVersion(checkoutRepoDir, repoRef, version)
             }
@@ -1086,6 +1086,7 @@ data class SwiftPackageTarget(
     @SerialName("product_dependencies") val productDependencies: List<String> = emptyList(),
     @SerialName("product_memberships") val productMemberships: List<String> = emptyList(),
     val sources: List<String> = emptyList(),
+    @SerialName("target_dependencies") val targetDependencies: List<String> = emptyList(),
     val type: String,
 )
 

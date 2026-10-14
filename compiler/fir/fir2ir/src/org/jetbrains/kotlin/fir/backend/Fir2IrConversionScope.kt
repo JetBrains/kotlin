@@ -5,11 +5,15 @@
 
 package org.jetbrains.kotlin.fir.backend
 
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.utils.ConversionTypeOrigin
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isExtension
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
+import org.jetbrains.kotlin.fir.extensions.containingReplSnippet
 import org.jetbrains.kotlin.fir.resolve.typeParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirReplSnippetSymbol
 import org.jetbrains.kotlin.fir.types.ConeTypeParameterType
 import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.declarations.*
@@ -41,6 +45,10 @@ class Fir2IrConversionScope(val configuration: Fir2IrConfiguration) {
     @PrivateForInline
     internal val currentlyGeneratedDelegatedConstructors: MutableMap<IrClassSymbol, IrConstructor> = mutableMapOf()
 
+    @PublishedApi
+    @PrivateForInline
+    internal val replSnippetStack: MutableList<FirReplSnippetSymbol> = mutableListOf()
+
     inline fun <T : IrDeclarationParent, R> withParent(parent: T, f: T.() -> R): R {
         _parentStack += parent
         if (parent is IrDeclaration) {
@@ -54,6 +62,20 @@ class Fir2IrConversionScope(val configuration: Fir2IrConfiguration) {
             }
             _parentStack.removeAt(_parentStack.size - 1)
         }
+    }
+
+    inline fun <R> withCurrentReplSnippet(snippet: FirReplSnippetSymbol, f: () -> R): R {
+        replSnippetStack += snippet
+        try {
+            return f()
+        } finally {
+            replSnippetStack.removeAt(replSnippetStack.size - 1)
+        }
+    }
+
+    fun isFromAnotherReplSnippet(symbol: FirBasedSymbol<*>, session: FirSession): Boolean {
+        val container = session.containingReplSnippet(symbol) ?: return false
+        return container != replSnippetStack.lastOrNull()
     }
 
     internal fun <T> forDelegatingConstructorCall(constructor: IrConstructor, irClass: IrClass, f: () -> T): T {

@@ -1,1 +1,6 @@
+ERR:
+hello.kt:5:7: warning: unused return value of 'size'.
+    c.size
+      ^^^^
+
 Return code: 0

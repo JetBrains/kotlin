@@ -1,6 +1,4 @@
-import org.jetbrains.kotlin.testFederation.SmokeTestConfig
-import org.jetbrains.kotlin.testFederation.TemporaryTestFederationApi
-import org.jetbrains.kotlin.testFederation.smokeTestConfig
+import org.jetbrains.kotlin.testFederation.testFederation
 
 plugins {
     id("common-configuration")
@@ -10,10 +8,10 @@ plugins {
 }
 
 dependencies {
+    testImplementation(testFixtures(project(":compiler:tests-common-new")))
     testImplementation(project(":compiler:tests-common-new", "testsJarConfig"))
-    testRuntimeOnly(testFixtures(project(":compiler:tests-common-new")))
+    testImplementation(testFixtures(project(":compiler:fir:fir2ir")))
     testImplementation(project(":compiler:fir:fir2ir", "testsJarConfig"))
-    testRuntimeOnly(testFixtures(project(":compiler:fir:fir2ir")))
 
     testImplementation(libs.junit.platform.suite)
     testImplementation(kotlinStdlib())
@@ -34,7 +32,6 @@ projectTests {
     testData(project(":compiler").isolated, "testData/klib")
 
     withJvmStdlibAndReflect()
-    withScriptRuntime()
     withScriptingPlugin()
     withAnnotations()
     withMockJdkRuntime()
@@ -63,9 +60,11 @@ projectTests {
             val testName = "JvmTarget${targetInTestClass}OnJvm${jvm}"
             filter.includeTestsMatching("org.jetbrains.kotlin.codegen.jdk.$testName")
 
-            /* No smoke tests are defined here, yet, and the 'CustomJvmTargetOnJvmBaseTest' is defined to fail if no tests are executed */
-            @OptIn(TemporaryTestFederationApi::class)
-            smokeTestConfig = SmokeTestConfig.Disabled
+            testFederation {
+                // No smoke tests are defined here, yet, and 'CustomJvmTargetOnJvmBaseTest' is defined to fail if no tests are executed
+                smokeTests { skip() }
+                contractTests { skip() }
+            }
 
             systemProperty("kotlin.test.default.jvm.target", "${if (target <= 8) "1." else ""}$target")
             if (jdk.majorVersion >= 17 && kotlinBuildProperties.isTeamcityBuild.get()) {
@@ -83,15 +82,6 @@ projectTests {
             group = "verification"
         }
     }
-
-    //JDK 8
-    // This is default one and is executed in default build configuration
-    codegenTestTask(target = 8, jdk = JdkMajorVersion.JDK_1_8)
-
-    //JDK 11
-    codegenTestTask(target = 8, jdk = JdkMajorVersion.JDK_11_0)
-
-    codegenTestTask(target = 11, jdk = JdkMajorVersion.JDK_11_0)
 
     //JDK 17
     codegenTestTask(target = 8, jdk = JdkMajorVersion.JDK_17_0)

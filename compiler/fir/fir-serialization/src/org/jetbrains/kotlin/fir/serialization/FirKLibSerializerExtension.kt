@@ -102,10 +102,12 @@ class FirKLibSerializerExtension(
     }
 
     private fun FirDeclaration.findKDocString(): String? =
-        source?.let {
+        source?.let { source ->
             val kidsRef = Ref<Array<LighterASTNode?>>()
-            it.treeStructure.getChildren(it.lighterASTNode, kidsRef)
-            kidsRef.get().singleOrNull { it?.tokenType == KtTokens.DOC_COMMENT }?.toString()
+            source.treeStructure.getChildren(source.lighterASTNode, kidsRef)
+            // Use the first attached KDoc.
+            val docComment = kidsRef.get().firstOrNull { it?.tokenType == KtTokens.DOC_COMMENT } ?: return@let null
+            source.treeStructure.toString(docComment).toString()
         }
 
     @Suppress("Reformat")

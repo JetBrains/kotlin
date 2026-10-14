@@ -1,0 +1,22 @@
+KtFile: codeBlockWithBlockComment.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  KDoc
+    PsiElement(KDOC_START)('/**')
+    PsiWhiteSpace('\n ')
+    KDOC_SECTION
+      PsiElement(KDOC_LEADING_ASTERISK)('*')
+      PsiElement(KDOC_TEXT)(' ```kotlin')
+      PsiWhiteSpace('\n ')
+      PsiElement(KDOC_LEADING_ASTERISK)('*')
+      PsiElement(KDOC_CODE_BLOCK_TEXT)('   /*a*/ val x = 1')
+      PsiWhiteSpace('\n ')
+      PsiElement(KDOC_LEADING_ASTERISK)('*')
+      PsiElement(KDOC_CODE_BLOCK_TEXT)('   /*b*/ val y = 2')
+      PsiWhiteSpace('\n ')
+      PsiElement(KDOC_LEADING_ASTERISK)('*')
+      PsiElement(KDOC_TEXT)(' ```')
+    PsiWhiteSpace('\n ')
+    PsiElement(KDOC_END)('*/')

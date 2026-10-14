@@ -66,7 +66,7 @@ class Iterators {
         val iterator = (1..3).iterator()
         // skip an element
         if (iterator.hasNext()) {
-            iterator.next()
+            val _ = iterator.next()
         }
 
         // do something with the rest of elements

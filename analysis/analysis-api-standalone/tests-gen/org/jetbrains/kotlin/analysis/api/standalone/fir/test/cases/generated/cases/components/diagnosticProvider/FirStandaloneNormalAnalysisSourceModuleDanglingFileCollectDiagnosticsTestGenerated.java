@@ -195,6 +195,12 @@ public class FirStandaloneNormalAnalysisSourceModuleDanglingFileCollectDiagnosti
   }
 
   @Test
+  @TestMetadata("fullValueClasses.kt")
+  public void testFullValueClasses() {
+    run("fullValueClasses.kt");
+  }
+
+  @Test
   @TestMetadata("genericsOnOuterClass.kt")
   public void testGenericsOnOuterClass() {
     run("genericsOnOuterClass.kt");
@@ -222,6 +228,18 @@ public class FirStandaloneNormalAnalysisSourceModuleDanglingFileCollectDiagnosti
   @TestMetadata("inferTypeFromGetValueDelegateLibrary.kt")
   public void testInferTypeFromGetValueDelegateLibrary() {
     run("inferTypeFromGetValueDelegateLibrary.kt");
+  }
+
+  @Test
+  @TestMetadata("inlineFromHigherPlatform.kt")
+  public void testInlineFromHigherPlatform() {
+    run("inlineFromHigherPlatform.kt");
+  }
+
+  @Test
+  @TestMetadata("inlineFromHigherPlatformUnspecifiedJvmTarget.kt")
+  public void testInlineFromHigherPlatformUnspecifiedJvmTarget() {
+    run("inlineFromHigherPlatformUnspecifiedJvmTarget.kt");
   }
 
   @Test
@@ -348,6 +366,24 @@ public class FirStandaloneNormalAnalysisSourceModuleDanglingFileCollectDiagnosti
   @TestMetadata("packageAnnotationsUnrelatedOverloadsFromLibraryFallbackDependencies.kt")
   public void testPackageAnnotationsUnrelatedOverloadsFromLibraryFallbackDependencies() {
     run("packageAnnotationsUnrelatedOverloadsFromLibraryFallbackDependencies.kt");
+  }
+
+  @Test
+  @TestMetadata("privateAnnotationFromLibrary.kt")
+  public void testPrivateAnnotationFromLibrary() {
+    run("privateAnnotationFromLibrary.kt");
+  }
+
+  @Test
+  @TestMetadata("privateAnnotationFromSameModule.kt")
+  public void testPrivateAnnotationFromSameModule() {
+    run("privateAnnotationFromSameModule.kt");
+  }
+
+  @Test
+  @TestMetadata("privateAnnotationFromSourceModule.kt")
+  public void testPrivateAnnotationFromSourceModule() {
+    run("privateAnnotationFromSourceModule.kt");
   }
 
   @Test

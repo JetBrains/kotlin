@@ -398,6 +398,11 @@ fun Project.reconfigureMainSourcesSetForGradlePlugin(
                     attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.JAR))
                 }
             }
+
+            tasks.named<Jar>(sourceSets.getByName("main").sourcesJarTaskName) {
+                addEmbeddedSources()
+                addEmbeddedSources(sourceSets.getByName("main").embeddedConfigurationName)
+            }
         }
 
         // Workaround for https://youtrack.jetbrains.com/issue/KT-52987
@@ -708,9 +713,9 @@ fun Project.configureBuildToolsApiVersionForGradleCompatibility() {
             val kgpCompilerMajorVersion = kgpCompilerVersion.substringBeforeLast(".").let { KotlinVersion.fromVersion(it) }
             languageVersion.set(kgpCompilerMajorVersion)
             apiVersion.set(kgpCompilerMajorVersion)
+            freeCompilerArgs.add("-Xwarning-level=DEPRECATED_LANGUAGE_VERSION:disabled")
         }
     }
-    project.extra["kotlin.compiler.runViaBuildToolsApi"] = true
 }
 
 // Shares expensive shadowing of common inputs while allowing final jars to combine multiple SourceSet outputs.

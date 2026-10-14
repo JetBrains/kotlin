@@ -21,7 +21,9 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.REND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.STRING_TARGETS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOL_WITH_CONTAINING_DECLARATION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.UNSAFE_CALL_RECEIVER_WITH_HINT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.ACCIDENTAL_OVERRIDE_CLASH_BY_JVM_SIGNATURE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.ANNOTATION_TARGETS_NON_EXISTENT_ACCESSOR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.ANNOTATION_TARGETS_ONLY_IN_JAVA
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.CONCURRENT_HASH_MAP_CONTAINS_OPERATOR_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.CONFLICT_VERSION_AND_JVM_OVERLOADS_ANNOTATION
@@ -35,7 +37,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.EXTERNAL_D
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.EXTERNAL_DECLARATION_IN_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.FIELD_IN_JVM_RECORD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.FUNCTION_DELEGATE_MEMBER_NAME_CLASH
-import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.ILLEGAL_JAVA_LANG_RECORD_SUPERTYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.ILLEGAL_JVM_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.IMPLEMENTATION_BY_DELEGATION_WITH_DIFFERENT_GENERIC_SIGNATURE
@@ -68,6 +69,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_EXPOSE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_EXPOSE_BOXED_CANNOT_EXPOSE_SUSPEND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_EXPOSE_BOXED_CANNOT_EXPOSE_SYNTHETIC
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_EXPOSE_BOXED_CAN_BE_REPLACED_WITH_JVM_NAME
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_EXPOSE_BOXED_NAME_IS_NOT_JAVA_IDENTIFIER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_EXPOSE_BOXED_REQUIRES_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_INLINE_WITHOUT_VALUE_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_PACKAGE_NAME_CANNOT_BE_EMPTY
@@ -94,6 +96,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.NON_SOURCE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.NOT_YET_SUPPORTED_LOCAL_INLINE_FUNCTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.NO_REFLECTION_IN_CLASS_PATH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.NULLABILITY_MISMATCH_BASED_ON_EXPLICIT_TYPE_ARGUMENTS_FOR_JAVA
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.SYNCHRONIZED_ON_WILL_BECOME_VALUE_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.OVERLOADS_ABSTRACT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.OVERLOADS_ANNOTATION_CLASS_CONSTRUCTOR_ERROR
@@ -152,8 +155,8 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
 
         map.put(
             RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS,
-            "Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type ''{0}''.{2}",
-            RENDER_TYPE,
+            "Unsafe call {0}.{2}",
+            UNSAFE_CALL_RECEIVER_WITH_HINT,
             NOT_RENDERED,
             OPTIONAL_SENTENCE,
         )
@@ -259,6 +262,10 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(SYNCHRONIZED_ON_INLINE, "'@Synchronized' annotation has no effect on inline functions.")
         map.put(SYNCHRONIZED_ON_VALUE_CLASS, "'@Synchronized' annotation has no effect on value classes.")
         map.put(
+            SYNCHRONIZED_ON_WILL_BECOME_VALUE_CLASS,
+            "'@Synchronized' annotation cannot be used on classes annotated with '@WillBecomeValue'."
+        )
+        map.put(
             SYNCHRONIZED_BLOCK_ON_JAVA_VALUE_BASED_CLASS,
             "Synchronizing on an instance of Java value-based class ''{0}'' will produce a runtime exception in future JVM releases.",
             RENDER_TYPE,
@@ -281,7 +288,7 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION_WARNING,
             "Only named arguments are available for Java annotations."
-                .toDeprecationWarningMessage(LanguageFeature.EnforceNamedArgumentsOnJavaAnnotationInAccessors)
+                .toDeprecationWarningMessage(LanguageFeature.EnforceMissingNamedArgumentsOnJavaAnnotation)
         )
         map.put(JVM_PACKAGE_NAME_CANNOT_BE_EMPTY, "'@JvmPackageName' annotation value cannot be empty.")
         map.put(
@@ -409,6 +416,11 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             JVM_EXPOSE_BOXED_CAN_BE_REPLACED_WITH_JVM_NAME,
             "'@JvmExposeBoxed' can be replaced with '@JvmName'."
         )
+        map.put(
+            JVM_EXPOSE_BOXED_NAME_IS_NOT_JAVA_IDENTIFIER,
+            "Name ''{0}'' is not a valid Java identifier, so the exposed declaration cannot be called from Java.",
+            STRING,
+        )
 
         map.put(
             JVM_DEFAULT_WITHOUT_COMPATIBILITY_NOT_IN_ENABLE_MODE,
@@ -532,6 +544,11 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "No Kotlin '@Target' annotation specified (implicitly targeting everything), but one exists for Java."
         )
         map.put(
+            ANNOTATION_TARGETS_NON_EXISTENT_ACCESSOR,
+            "An accessor will not be generated for ''{0}'', so the annotation will not be written to the class file.",
+            STRING,
+        )
+        map.put(
             RUNTIME_ANNOTATION_ON_LAMBDA_IS_NOT_RETAINED,
             "Annotation ''{0}'' is not retained on the lambda instance at runtime, because the lambda is compiled to ''invokedynamic''. " +
                     "Annotate the lambda with ''@JvmSerializableLambda'' to generate a class for it and retain the annotation.",
@@ -578,11 +595,6 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             STRING
         )
 
-        map.put(
-            IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE,
-            "Identity-sensitive operation on an instance of value type ''{0}'' may cause unexpected behavior or errors.",
-            RENDER_TYPE,
-        )
 
 
         map.put(

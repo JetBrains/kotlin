@@ -1,0 +1,391 @@
+/*
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.fir.declarations
+
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
+import org.jetbrains.kotlin.fir.containingClassLookupTag
+import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
+import org.jetbrains.kotlin.fir.declarations.utils.isCompanionBlockMember
+import org.jetbrains.kotlin.fir.declarations.utils.isExtension
+import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
+import org.jetbrains.kotlin.fir.languageVersionSettings
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.scopes.overriddenFunctions
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
+import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.ConeClassLikeTypeImpl
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.util.OperatorNameConventions
+
+sealed class OperatorDiagnostic {
+    class IllegalOperatorDiagnostic(val message: String, val deprecatingFeature: LanguageFeature? = null) : OperatorDiagnostic()
+    class Unsupported(val feature: LanguageFeature) : OperatorDiagnostic()
+    class ReturnTypeMismatchWithOuterClass(
+        val outer: FirRegularClassSymbol,
+        val dueToNullability: Boolean = false,
+        val dueToFlexibility: Boolean = false,
+    ) : OperatorDiagnostic() {
+        init {
+            require(!dueToNullability || !dueToFlexibility)
+        }
+    }
+}
+
+sealed class CheckResult(val isSuccess: Boolean) {
+    class IllegalSignature(val error: OperatorDiagnostic) : CheckResult(false)
+    object IllegalFunctionName : CheckResult(false)
+    object AnonymousOperatorFunction : CheckResult(false)
+    object SuccessCheck : CheckResult(true)
+}
+
+object OperatorFunctionChecks {
+    fun isOperator(function: FirFunction, session: FirSession, scopeSession: ScopeSession?): CheckResult {
+        if (function !is FirNamedFunction) {
+            return CheckResult.AnonymousOperatorFunction
+        }
+
+        val checks = checksByName.getOrElse(function.name) {
+            regexChecks.find { it.first.matches(function.name.asString()) }?.second
+        } ?: return CheckResult.IllegalFunctionName
+        for (check in checks) {
+            check.check(function, session, scopeSession)?.let {
+                return CheckResult.IllegalSignature(it)
+            }
+        }
+
+        return CheckResult.SuccessCheck
+    }
+
+    //reimplementation of org.jetbrains.kotlin.util.OperatorChecks for FIR
+    private val checksByName: Map<Name, List<Check>> = buildMap {
+        checkFor(OperatorNameConventions.GET, Checks.memberOrExtension, Checks.ValueParametersCount.atLeast(1))
+        checkFor(
+            OperatorNameConventions.SET,
+            Checks.memberOrExtension, Checks.ValueParametersCount.atLeast(2),
+            Checks.simple("last parameter must not have a default value or be a vararg") { it, _ ->
+                it.valueParameters.lastOrNull()?.let { param ->
+                    param.defaultValue == null && !param.isVararg
+                } == true
+            }
+        )
+        checkFor(
+            OperatorNameConventions.GET_VALUE,
+            Checks.memberOrExtension,
+            Checks.noDefaultAndVarargs,
+            Checks.ValueParametersCount.atLeast(2),
+            Checks.ValueParametersCount.atMost(2, LanguageFeature.ForbidGetSetValueWithTooManyParameters),
+            Checks.isKProperty,
+            Checks.nonSuspend,
+        )
+        checkFor(
+            OperatorNameConventions.SET_VALUE,
+            Checks.memberOrExtension,
+            Checks.noDefaultAndVarargs,
+            Checks.ValueParametersCount.atLeast(3),
+            Checks.ValueParametersCount.atMost(3, LanguageFeature.ForbidGetSetValueWithTooManyParameters),
+            Checks.isKProperty,
+            Checks.nonSuspend,
+        )
+        checkFor(
+            OperatorNameConventions.PROVIDE_DELEGATE,
+            Checks.memberOrExtension,
+            Checks.noDefaultAndVarargs, Checks.ValueParametersCount.exactly(2),
+            Checks.isKProperty,
+            Checks.nonSuspend,
+        )
+        checkFor(OperatorNameConventions.INVOKE, Checks.memberOrExtensionOrCompanionBlockMember)
+        checkFor(
+            OperatorNameConventions.CONTAINS,
+            Checks.memberOrExtension, Checks.ValueParametersCount.single,
+            Checks.noDefaultAndVarargs, Checks.Returns.boolean
+        )
+        checkFor(OperatorNameConventions.ITERATOR, Checks.memberOrExtension, Checks.ValueParametersCount.none)
+        checkFor(OperatorNameConventions.NEXT, Checks.memberOrExtension, Checks.ValueParametersCount.none)
+        checkFor(OperatorNameConventions.HAS_NEXT, Checks.memberOrExtension, Checks.ValueParametersCount.none, Checks.Returns.boolean)
+        checkFor(OperatorNameConventions.RANGE_TO, Checks.memberOrExtension, Checks.ValueParametersCount.single, Checks.noDefaultAndVarargs)
+        checkFor(
+            OperatorNameConventions.RANGE_UNTIL,
+            Checks.memberOrExtension, Checks.ValueParametersCount.single,
+            Checks.noDefaultAndVarargs
+        )
+        checkFor(
+            OperatorNameConventions.EQUALS,
+            Checks.member, Checks.EqualsOverridesEqualsOfAny
+        )
+        checkFor(
+            OperatorNameConventions.COMPARE_TO,
+            Checks.memberOrExtension, Checks.Returns.int, Checks.ValueParametersCount.single,
+            Checks.noDefaultAndVarargs
+        )
+        checkFor(
+            OperatorNameConventions.BINARY_OPERATION_NAMES,
+            Checks.memberOrExtension, Checks.ValueParametersCount.single,
+            Checks.noDefaultAndVarargs
+        )
+        checkFor(OperatorNameConventions.SIMPLE_UNARY_OPERATION_NAMES, Checks.memberOrExtension, Checks.ValueParametersCount.none)
+        checkFor(
+            setOf(OperatorNameConventions.INC, OperatorNameConventions.DEC),
+            Checks.memberOrExtension,
+            Checks.simple("receiver must be a supertype of the return type") { function, session ->
+                val receiver = function.receiverParameter?.typeRef?.coneType ?: function.dispatchReceiverType ?: return@simple false
+                function.returnTypeRef.coneType.isSubtypeOf(session.typeContext, receiver)
+            }
+        )
+        checkFor(
+            OperatorNameConventions.ASSIGNMENT_OPERATIONS,
+            Checks.memberOrExtension, Checks.Returns.unit, Checks.ValueParametersCount.single,
+            Checks.noDefaultAndVarargs
+        )
+        checkFor(
+            OperatorNameConventions.OF,
+            Checks.FeatureIsSupported(LanguageFeature.CollectionLiterals),
+            Checks.notExtension, Checks.noContextParameters, Checks.noDefaults, Checks.onlyLastVararg,
+            // Also includes a check that it is a companion member
+            Checks.Returns.outerOfCompanionWhereDefined,
+        )
+    }
+
+    private val regexChecks: List<Pair<Regex, List<Check>>> = buildList {
+        checkFor(OperatorNameConventions.COMPONENT_REGEX, Checks.memberOrExtension, Checks.ValueParametersCount.none)
+    }
+
+    private fun MutableMap<Name, List<Check>>.checkFor(name: Name, vararg checks: Check) {
+        put(name, checks.asList())
+    }
+
+    private fun MutableMap<Name, List<Check>>.checkFor(names: Set<Name>, vararg checks: Check) {
+        names.forEach { put(it, checks.asList()) }
+    }
+
+    private fun MutableList<Pair<Regex, List<Check>>>.checkFor(regex: Regex, vararg checks: Check) {
+        add(regex to checks.asList())
+    }
+}
+
+private abstract class Check {
+    abstract fun check(function: FirNamedFunction, session: FirSession, scopeSession: ScopeSession?): OperatorDiagnostic?
+}
+
+private object Checks {
+    fun full(
+        requiredResolvePhase: ((FirNamedFunction) -> FirResolvePhase?)? = null,
+        implementation: (FirNamedFunction, FirSession) -> OperatorDiagnostic?,
+    ): Check =
+        object : Check() {
+            override fun check(function: FirNamedFunction, session: FirSession, scopeSession: ScopeSession?): OperatorDiagnostic? {
+                requiredResolvePhase?.invoke(function)?.let { function.lazyResolveToPhase(it) }
+                return implementation(function, session)
+            }
+        }
+
+    fun simple(
+        message: String,
+        requiredResolvePhase: ((FirNamedFunction) -> FirResolvePhase?)? = null,
+        predicate: (FirNamedFunction, FirSession) -> Boolean,
+    ): Check = full(requiredResolvePhase) { function, session ->
+        if (predicate(function, session)) null
+        else OperatorDiagnostic.IllegalOperatorDiagnostic(message)
+    }
+
+    val memberOrExtension = simple("must be a member or an extension function") { function, _ ->
+        function.dispatchReceiverType != null || function.receiverParameter != null
+    }
+
+    val memberOrExtensionOrCompanionBlockMember =
+        simple("must be a member, an extension function or companion block member") { function, _ ->
+            function.dispatchReceiverType != null || function.receiverParameter != null || function.isCompanionBlockMember
+        }
+
+    val member = simple("must be a member function") { function, _ ->
+        function.dispatchReceiverType != null
+    }
+
+    val notExtension = simple("must not have an extension receiver") { function, _ ->
+        !function.isExtension
+    }
+
+    val noContextParameters = simple("must not have context parameters") { function, _ ->
+        function.contextParameters.isEmpty()
+    }
+
+    val nonSuspend = simple("must not be suspend", requiredResolvePhase = { FirResolvePhase.STATUS }) { function, _ ->
+        !function.isSuspend
+    }
+
+    object ValueParametersCount {
+        fun atLeast(n: Int): Check = simple("must have at least $n value parameter" + (if (n > 1) "s" else "")) { function, _ ->
+            function.valueParameters.size >= n
+        }
+
+        fun exactly(n: Int): Check = simple("must have exactly $n value parameters") { function, _ ->
+            function.valueParameters.size == n
+        }
+
+        fun atMost(n: Int, feature: LanguageFeature?): Check =
+            full { function, _ ->
+                if (function.valueParameters.size <= n) return@full null
+
+                val message = "must have at most $n value parameter" + (if (n > 1) "s" else "")
+
+                OperatorDiagnostic.IllegalOperatorDiagnostic(message, feature)
+            }
+
+        val single = simple("must have a single value parameter") { function, _ ->
+            function.valueParameters.size == 1
+        }
+
+        val none = simple("must have no value parameters") { function, _ ->
+            function.valueParameters.isEmpty()
+        }
+    }
+
+    object Returns {
+        fun returnsCheck(message: String, predicate: (FirNamedFunction, FirSession) -> Boolean): Check =
+            simple(
+                message,
+                requiredResolvePhase = { fn ->
+                    when (fn.returnTypeRef) {
+                        is FirResolvedTypeRef -> null
+                        is FirImplicitTypeRef -> FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE
+                        else -> FirResolvePhase.TYPES
+                    }
+                },
+                predicate
+            )
+
+        val boolean = returnsCheck("must return 'Boolean'") { function, session ->
+            function.returnTypeRef.coneType.fullyExpandedType(session).isBoolean
+        }
+
+        val int = returnsCheck("must return 'Int'") { function, session ->
+            function.returnTypeRef.coneType.fullyExpandedType(session).isInt
+        }
+
+        val unit = returnsCheck("must return 'Unit'") { function, session ->
+            function.returnTypeRef.coneType.fullyExpandedType(session).isUnit
+        }
+
+        // TODO(KT-80494): support this check for java
+        val outerOfCompanionWhereDefined =
+            full(
+                requiredResolvePhase = { fn ->
+                    when (fn.returnTypeRef) {
+                        is FirResolvedTypeRef -> FirResolvePhase.STATUS
+                        is FirImplicitTypeRef -> FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE
+                        else -> FirResolvePhase.TYPES
+                    }
+                }
+            ) { function, session ->
+                val outerClass = if (function.isCompanionBlockMember && !function.isJavaOrEnhancement) {
+                    function.containingClassForStaticMemberAttr?.toRegularClassSymbol(session)
+                } else {
+                    val dispatch = function.dispatchReceiverType?.toRegularClassSymbol(session)
+                    dispatch?.takeIf { it.isCompanion }?.getContainingClassSymbol() as? FirRegularClassSymbol
+                }
+                if (outerClass == null) {
+                    return@full OperatorDiagnostic.IllegalOperatorDiagnostic("must be a member of companion")
+                }
+                val returnType = function.returnTypeRef.coneType.fullyExpandedType(session)
+                val lowerBound = returnType.lowerBoundIfFlexible()
+
+                when {
+                    lowerBound is ConeErrorType -> null
+                    lowerBound !is ConeClassLikeType || lowerBound.classId != outerClass.classId ->
+                        OperatorDiagnostic.ReturnTypeMismatchWithOuterClass(outerClass)
+                    lowerBound.isMarkedNullable ->
+                        OperatorDiagnostic.ReturnTypeMismatchWithOuterClass(outerClass, dueToNullability = true)
+                    returnType is ConeFlexibleType ->
+                        OperatorDiagnostic.ReturnTypeMismatchWithOuterClass(outerClass, dueToFlexibility = true)
+                    else -> null
+                }
+            }
+    }
+
+    val noDefaults =
+        simple(
+            "must not have parameters with default values",
+            requiredResolvePhase = { FirResolvePhase.BODY_RESOLVE }
+        ) { it, _ ->
+            it.valueParameters.all { param -> param.defaultValue == null }
+        }
+
+    val onlyLastVararg =
+        simple(
+            "must not have vararg parameters other than the last one",
+            requiredResolvePhase = { FirResolvePhase.BODY_RESOLVE }
+        ) { function, _ ->
+            function.valueParameters.dropLast(1).all { param -> !param.isVararg }
+        }
+
+    val noDefaultAndVarargs = full(requiredResolvePhase = { FirResolvePhase.BODY_RESOLVE }) { function, _ ->
+        for (parameter in function.valueParameters) {
+            if (parameter.defaultValue != null)
+                return@full OperatorDiagnostic.IllegalOperatorDiagnostic("must not have parameters with default values")
+            if (parameter.isVararg)
+                return@full OperatorDiagnostic.IllegalOperatorDiagnostic("must not have varargs")
+        }
+        null
+    }
+
+    private val kPropertyType = ConeClassLikeTypeImpl(
+        StandardClassIds.KProperty.toLookupTag(),
+        arrayOf(ConeStarProjection),
+        isMarkedNullable = false
+    )
+
+    val isKProperty =
+        simple("second parameter must be of type KProperty<*> or its supertype", { FirResolvePhase.TYPES }) { function, session ->
+            val paramType = function.valueParameters.getOrNull(1)?.returnTypeRef?.coneType ?: return@simple false
+            kPropertyType.isSubtypeOf(paramType, session, errorTypesEqualToAnything = true)
+        }
+
+    object EqualsOverridesEqualsOfAny : Check() {
+        override fun check(function: FirNamedFunction, session: FirSession, scopeSession: ScopeSession?): OperatorDiagnostic? {
+            if (scopeSession == null) return null
+            val containingClassSymbol = function.containingClassLookupTag()?.toClassSymbol(session) ?: return null
+            val customEqualsSupported = session.languageVersionSettings.supportsFeature(LanguageFeature.CustomEqualsInValueClasses)
+            val deprecatingFeature = LanguageFeature.ForbidOperatorEqualsInEnumEntriesAndAnonymousObjects.takeIf {
+                containingClassSymbol !is FirRegularClassSymbol
+            }
+
+            if (function.symbol.overriddenFunctions(containingClassSymbol, session, scopeSession)
+                    .any { it.containingClassLookupTag()?.classId == StandardClassIds.Any }
+                || (customEqualsSupported && function.symbol.isTypedEqualsInValueClass(session))
+                || containingClassSymbol.classId == StandardClassIds.Any
+            ) {
+                return null
+            }
+            val message = buildString {
+                append("must override 'equals()' in Any")
+                if (customEqualsSupported && (containingClassSymbol as? FirRegularClassSymbol)?.isInlineClass == true) {
+                    val expectedParameterTypeRendered =
+                        containingClassSymbol.defaultType().replaceArgumentsWithStarProjections().renderReadable()
+                    append(" or define 'equals(other: ${expectedParameterTypeRendered}): Boolean'")
+                }
+            }
+            return OperatorDiagnostic.IllegalOperatorDiagnostic(message, deprecatingFeature)
+        }
+    }
+
+    class FeatureIsSupported(val feature: LanguageFeature) : Check() {
+        override fun check(
+            function: FirNamedFunction,
+            session: FirSession,
+            scopeSession: ScopeSession?,
+        ): OperatorDiagnostic? =
+            if (session.languageVersionSettings.supportsFeature(feature)) null
+            else OperatorDiagnostic.Unsupported(feature)
+    }
+}

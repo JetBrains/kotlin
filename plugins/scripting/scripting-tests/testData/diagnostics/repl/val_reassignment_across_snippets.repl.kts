@@ -1,0 +1,15 @@
+// SNIPPET
+
+val x = 1
+
+// SNIPPET
+
+<!VAL_REASSIGNMENT!>x<!> = 2
+
+// SNIPPET
+
+<!VAL_REASSIGNMENT!>x<!>++
+
+// SNIPPET
+
+x

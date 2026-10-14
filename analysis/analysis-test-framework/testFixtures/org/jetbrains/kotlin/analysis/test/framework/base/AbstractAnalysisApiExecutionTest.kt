@@ -178,7 +178,6 @@ private class AnalysisApiExecutionTestExtension : BeforeTestExecutionCallback, A
         return tryPath("")
             ?: tryPath(".kt")
             ?: tryPath(".kts")
-            ?: tryPath(".repl.kts")
             ?: tryPath(".kotlin_builtins")
             ?: error("Cannot find test file $testFileName.kt(s) in $testDirPathString")
     }

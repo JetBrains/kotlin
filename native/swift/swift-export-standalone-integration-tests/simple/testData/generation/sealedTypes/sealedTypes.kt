@@ -103,6 +103,18 @@ sealed interface QueryResult<T> {
     class AsyncValue<T>(val value: T) : QueryResult<T>
 }
 
+// FILE: internal_container.kt
+package org.kotlin.foo
+
+// KT-89701: `Builder` is public, but its internal container is not exported, so neither is `Builder`.
+sealed interface SealedInterfaceWithContainedInheritor
+
+class ExportedContainedInheritor : SealedInterfaceWithContainedInheritor
+
+internal class InternalContainer {
+    class Builder : SealedInterfaceWithContainedInheritor
+}
+
 // FIXME: platform test are not supported right now, enable in KT-86819
 // DISABLED MODULE: platform()()(common)
 // TARGET_PLATFORM: Native

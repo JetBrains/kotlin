@@ -1,0 +1,5 @@
+KtDotQualifiedExpression(233,246): 'derived.get()'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      /Derived.get(<dispatch receiver>: Derived): kotlin.String
+    ]

@@ -32,7 +32,7 @@ private fun invokeKlibTool(
     command: String,
     metadataTestMode: String? = null,
     signatureVersion: KotlinIrSignatureVersion? = null,
-    onlyTopLevelSignatures: Boolean = false,
+    signatureDumpMode: String? = null,
     absolutePathPrefixes: List<String> = emptyList(),
 ): String {
     val args = buildList<String> {
@@ -46,9 +46,9 @@ private fun invokeKlibTool(
             this += "-signature-version"
             this += signatureVersion.number.toString()
         }
-        if (onlyTopLevelSignatures) {
-            this += "-only-top-level-signatures"
-            this += "true"
+        signatureDumpMode?.let {
+            this += "-dump-signatures-mode"
+            this += it
         }
         absolutePathPrefixes.forEach {
             this += "-relative-path-base"
@@ -108,21 +108,21 @@ fun File.dumpIr(
 fun TestCompilationArtifact.KLIB.dumpSignatures(
     kotlinNativeClassLoader: ClassLoader,
     signatureVersion: KotlinIrSignatureVersion,
-    onlyTopLevelSignatures: Boolean,
+    signatureDumpMode: String,
 ): String = klibFile.dumpSignatures(
     kotlinNativeClassLoader = kotlinNativeClassLoader,
     signatureVersion = signatureVersion,
-    onlyTopLevelSignatures = onlyTopLevelSignatures,
+    signatureDumpMode = signatureDumpMode,
 )
 
 fun File.dumpSignatures(
     kotlinNativeClassLoader: ClassLoader,
     signatureVersion: KotlinIrSignatureVersion,
-    onlyTopLevelSignatures: Boolean,
+    signatureDumpMode: String,
 ): String = invokeKlibTool(
     kotlinNativeClassLoader = kotlinNativeClassLoader,
     klibFile = this,
     command = "dump-signatures",
     signatureVersion = signatureVersion,
-    onlyTopLevelSignatures = onlyTopLevelSignatures,
+    signatureDumpMode = signatureDumpMode,
 )

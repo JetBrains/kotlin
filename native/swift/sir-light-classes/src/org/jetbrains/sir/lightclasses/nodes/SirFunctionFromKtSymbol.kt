@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.sir.providers.utils.throwsAnnotation
 import org.jetbrains.kotlin.sir.util.isUnavailable
 import org.jetbrains.kotlin.sir.util.replaceOrAddPropagatedUnavailability
 import org.jetbrains.kotlin.sir.util.swiftFqName
+import org.jetbrains.kotlin.sir.util.swiftIdentifier
 import org.jetbrains.kotlin.sir.util.swiftName
 import org.jetbrains.kotlin.sir.util.unavailableTypes
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -183,7 +184,7 @@ internal open class SirFunctionFromKtSymbol(
                 targetMethodName = ktSymbol.name?.asString() ?: "",
                 swiftDynamicCall = { selfExpr, paramExprs ->
                     check(paramExprs.size == params.size) { "Parameter expression count doesn't match parameter count" }
-                    val methodName = this@SirFunctionFromKtSymbol.name
+                    val methodName = this@SirFunctionFromKtSymbol.name.swiftIdentifier
                     val tryPrefix = when {
                         isAsync -> "try await "
                         errorType != SirType.never -> "try "
@@ -196,12 +197,15 @@ internal open class SirFunctionFromKtSymbol(
                             returnType = returnType,
                             errorType = errorType,
                         ).swiftName
-                        "${tryPrefix}unsafeBitCast($selfExpr.$methodName, to: ($destType).self)(${paramExprs.joinToString(", ")})"
+                        val labels = params.joinToString("") { param ->
+                            "${param.argumentName?.takeIf { it.isNotEmpty() }?.swiftIdentifier ?: "_"}:"
+                        }
+                        "${tryPrefix}unsafeBitCast($selfExpr.$methodName($labels), to: ($destType).self)(${paramExprs.joinToString(", ")})"
                     } else {
                         val args = params
                             .zip(paramExprs)
                             .joinToString(", ") { [param, expr] ->
-                                param.argumentName?.takeIf { it.isNotEmpty() }?.let { "$it: $expr" } ?: expr
+                                param.argumentName?.takeIf { it.isNotEmpty() }?.let { "${it.swiftIdentifier}: $expr" } ?: expr
                             }
                         "$tryPrefix$selfExpr.$methodName($args)"
                     }

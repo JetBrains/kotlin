@@ -148,7 +148,10 @@ class WasmTypeTransformer(
                     }
 
                     val arity = functionTypeArguments.size - 2
-                    WasmRefNullType(typeCodegenContext.referenceHeapContType(arity))
+                    check(arity == 0) {
+                        "typedcontref supports only the bound coroutine continuation, got arity: $arity"
+                    }
+                    WasmRefNullType(Synthetics.HeapTypes.boundContType)
                 }
                 else -> error("Unknown reference type $name")
             }

@@ -1,0 +1,34 @@
+# copy
+../simple/ap
+ap
+
+# copy
+../simple/Test.kt
+Test.kt
+
+# mkdir
+output/ap
+output/stubs
+output/classes
+output/sources
+
+# kotlinc
+-cp %KOTLIN_STDLIB%
+-d output/ap
+ap/Processor.kt
+
+# kapt
+-Xsuppress-version-warnings
+-Kapt-stubs=output/stubs
+-Kapt-classes=output/classes
+-Kapt-sources=output/sources
+-Kapt-classpath=output/ap
+-Kapt-mode=stubs
+-Kapt-stub-generation-scheme=jtree
+-Kapt-stub-writer-threads=4
+-d output/classes
+-cp output/ap:%KOTLIN_STDLIB%
+Test.kt
+
+# output
+warning: [kapt] Stub writer threads (4) have no effect with the 'jtree' stub generation scheme, stubs are written sequentially. Use the 'direct' scheme to write stubs in parallel.

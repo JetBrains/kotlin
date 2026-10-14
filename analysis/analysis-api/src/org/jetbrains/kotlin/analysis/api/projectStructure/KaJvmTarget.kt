@@ -101,6 +101,10 @@ public class KaJvmTarget private constructor(public val name: String, public val
         @JvmField
         public val JVM_27: KaJvmTarget = KaJvmTarget("27", Opcodes.V22 + 5)
 
+        /** Java 28. */
+        @JvmField
+        public val JVM_28: KaJvmTarget = KaJvmTarget("28", Opcodes.V22 + 6)
+
         /**
          * List of all targets provided by [KaJvmTarget].
          */
@@ -126,6 +130,7 @@ public class KaJvmTarget private constructor(public val name: String, public val
             JVM_25,
             JVM_26,
             JVM_27,
+            JVM_28,
         )
     }
 

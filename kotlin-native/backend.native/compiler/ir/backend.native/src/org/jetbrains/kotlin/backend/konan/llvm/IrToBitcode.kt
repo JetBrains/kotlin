@@ -6,16 +6,17 @@
 package org.jetbrains.kotlin.backend.konan.llvm
 
 import kotlinx.cinterop.cValuesOf
-import kotlinx.cinterop.toKString
 import llvm.*
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.ir.isUnconditional
 import org.jetbrains.kotlin.backend.common.lower.coroutines.getOrCreateFunctionWithContinuationStub
+import org.jetbrains.kotlin.backend.common.serialization.kotlinLibrary
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterCodegen
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterExportedElements
 import org.jetbrains.kotlin.backend.konan.cgen.CBridgeOrigin
 import org.jetbrains.kotlin.backend.konan.ir.*
+import org.jetbrains.kotlin.backend.konan.llvm.objc.emitBindClassToObjCNameAdaptersFromCaches
 import org.jetbrains.kotlin.backend.konan.llvm.objc.processBindClassToObjCNameAnnotations
 import org.jetbrains.kotlin.backend.konan.lower.*
 import org.jetbrains.kotlin.backend.konan.lower.ReifiedFunctionLowering.Companion.isReifiedInline
@@ -352,6 +353,10 @@ internal class CodeGeneratorVisitor(
         declaration.acceptChildrenVoid(this)
 
         runAndProcessInitializers(null) {
+            // Note: has to be before `objCExport.generate` below, which is what emits the adapter tables,
+            // and after all the files were visited, so that the bindings of this binary take precedence.
+            codegen.emitBindClassToObjCNameAdaptersFromCaches()
+
             // Note: it is here because it also generates some bitcode.
             generationState.objCExport.generate(codegen)
 
@@ -479,7 +484,7 @@ internal class CodeGeneratorVisitor(
     override fun visitFile(declaration: IrFile) {
         @Suppress("UNCHECKED_CAST")
         using(FileScope(declaration, declaration.fileEntry)) {
-            runAndProcessInitializers(declaration.konanLibrary) {
+            runAndProcessInitializers(declaration.module.kotlinLibrary) {
                 declaration.acceptChildrenVoid(this)
                 codegen.processBindClassToObjCNameAnnotations(declaration)
             }
@@ -700,7 +705,7 @@ internal class CodeGeneratorVisitor(
         return
     }
 
-    fun handleStaticInitializer(declaration: IrSimpleFunction) {
+    private fun handleStaticInitializer(declaration: IrSimpleFunction) {
         val scopeState = llvm.initializersGenerationState.scopeState
         when (declaration.origin) {
             StaticInitializersOrigins.STATIC_GLOBAL_INITIALIZER -> {
@@ -725,11 +730,44 @@ internal class CodeGeneratorVisitor(
         require(declaration.returnsUnit()) { "Static initializer must return Unit" }
     }
 
-    override fun visitSimpleFunction(declaration: IrSimpleFunction) {
-        context.log{"visitFunction                  : ${ir2string(declaration)}"}
+    private fun FunctionGenerationContext.handleStaticInitializerBody(declaration: IrSimpleFunction) {
+        val initializedGlobals = declaration.initializedGlobals ?: return
+        val allowedOrigins = listOf(
+                StaticInitializersOrigins.STATIC_GLOBAL_INITIALIZER,
+                StaticInitializersOrigins.STATIC_THREAD_LOCAL_INITIALIZER,
+                StaticInitializersOrigins.STATIC_STANDALONE_THREAD_LOCAL_INITIALIZER,
+                StaticInitializersOrigins.EAGER_STATIC_GLOBAL_INITIALIZER,
+                StaticInitializersOrigins.EAGER_STATIC_THREAD_LOCAL_INITIALIZER,
+        )
+        require(declaration.origin in allowedOrigins) {
+            "initializedGlobals may only be set on static initializers. Origin is ${declaration.origin}, expected $allowedOrigins"
+        }
+        // Currently, thread-local objects are registered completely separately.
+        when (declaration.origin) {
+            StaticInitializersOrigins.STATIC_THREAD_LOCAL_INITIALIZER,
+            StaticInitializersOrigins.STATIC_STANDALONE_THREAD_LOCAL_INITIALIZER,
+            StaticInitializersOrigins.EAGER_STATIC_THREAD_LOCAL_INITIALIZER -> return
+        }
+        initializedGlobals.forEach {
+            val field = it.owner
+            require(field.type.binaryTypeIsReference())
+            require(field.isStatic)
+            call(llvm.registerGlobalFunction, listOf(staticFieldPtr(field, functionGenerationContext)))
+        }
+    }
 
-        if (declaration.needsVirtualTrampoline)
+    override fun visitSimpleFunction(declaration: IrSimpleFunction) {
+        context.log { "visitFunction                  : ${ir2string(declaration)}" }
+
+        // KT-87777: Cached callers may still reference the trampoline of an inherited method that has become final.
+        // The solution is still building the "trampoline", but its body will directly call the parent's method.
+        val needCacheEntryPoint = context(context.config) {
+            declaration.needsCacheEntryPointForFinalFakeOverride
+        }
+
+        if (declaration.needsVirtualTrampoline || needCacheEntryPoint) {
             buildVirtualFunctionTrampoline(declaration)
+        }
 
         handleStaticInitializer(declaration)
 
@@ -747,6 +785,7 @@ internal class CodeGeneratorVisitor(
                     val parameterScope = ParameterScope(declaration, functionGenerationContext)
                     using(parameterScope) usingParameterScope@{
                         using(VariableScope()) usingVariableScope@{
+                            handleStaticInitializerBody(declaration)
                             when (body) {
                                 is IrBlockBody -> body.statements.forEach { generateStatement(it) }
                                 is IrExpressionBody -> compilationException("IrExpressionBody should've been lowered", declaration)
@@ -789,7 +828,7 @@ internal class CodeGeneratorVisitor(
             }
 
             using(ClassScope(declaration)) {
-                runAndProcessInitializers(declaration.konanLibrary) {
+                runAndProcessInitializers(declaration.moduleFragment.kotlinLibrary) {
                     declaration.declarations.forEach {
                         it.acceptVoid(this)
                     }
@@ -1714,9 +1753,6 @@ internal class CodeGeneratorVisitor(
             address = staticFieldPtr(field, functionGenerationContext)
             alignment = generationState.llvmDeclarations.forStaticField(field).alignment
         }
-        if (value.origin == StaticInitializersOrigins.INITIALIZE_GLOBAL_FIELD && field.type.binaryTypeIsReference()) {
-            call(llvm.registerGlobalFunction, listOf(address))
-        }
         functionGenerationContext.storeAny(
                 valueToAssign, address, field.type.binaryTypeIsReference(), false,
                 isVolatile = field.hasAnnotation(KonanFqNames.volatile),
@@ -1801,7 +1837,6 @@ internal class CodeGeneratorVisitor(
             }
 
     private fun evaluateConstantValueImpl(value: IrConstantValue): ConstValue {
-        val symbols = context.symbols
         return when (value) {
             is IrConstantPrimitive -> {
                 val constructedType = value.value.type
@@ -1853,11 +1888,18 @@ internal class CodeGeneratorVisitor(
                     //
                     //  Child(constantValue) could be initialized constantly. This is required for function references.
                     val delegatedCallConstants = constructor.loweredConstructorFunction?.body?.statements
-                            ?.filterIsInstance<IrCall>()
-                            ?.singleOrNull { it.origin == LOWERED_DELEGATING_CONSTRUCTOR_CALL }
+                            ?.flatMap {
+                                when (it) {
+                                    is IrCall -> [it]
+                                    // TODO(KT-89893): Avoid just ignoring other calls in the block
+                                    //  ($init_global of KSuspendFunctionImpl).
+                                    is IrBlock -> it.statements.filterIsInstance<IrCall>()
+                                    else -> []
+                                }
+                            }?.singleOrNull { it.origin == LOWERED_DELEGATING_CONSTRUCTOR_CALL }
                             ?.getArgumentsWithIr()
                             ?.filter { it.second is IrConstantValue }
-                            ?.associate { it.first.name.toString() to it.second }
+                            ?.associate { [parameter, constant] -> parameter.name.toString() to constant }
                             .orEmpty()
                     fields.map { field ->
                         val init = if (field.isConst) {
@@ -2029,7 +2071,7 @@ internal class CodeGeneratorVisitor(
 
     private inner class ClassScope(val clazz:IrClass) : InnerScopeImpl() {
         val isExported
-            get() = clazz.isExported()
+            get() = clazz.isExported
         var offsetInBits = 0L
         val members = mutableListOf<DIDerivedTypeRef>()
         @Suppress("UNCHECKED_CAST")

@@ -472,6 +472,7 @@ private class DebugDiagnosticConsumer(
             KtFakeSourceElementKind.DesugaredTimesAssign,
             KtFakeSourceElementKind.DesugaredDivAssign,
             KtFakeSourceElementKind.DesugaredRemAssign,
+            KtFakeSourceElementKind.FunctionTypeConversion,
         )
 
         private val KtSourceElementKind.isAllowedKindForDebugInfo: Boolean

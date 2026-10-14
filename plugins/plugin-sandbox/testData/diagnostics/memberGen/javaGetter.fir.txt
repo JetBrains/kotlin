@@ -1,0 +1,4 @@
+FILE: main.kt
+    public final fun test(): R|kotlin/Unit| {
+        lval foo: R|kotlin/Int| = R|/B.B|().R|/B.foo|
+    }

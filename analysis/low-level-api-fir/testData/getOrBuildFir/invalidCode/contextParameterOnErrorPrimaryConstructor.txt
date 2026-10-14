@@ -7,9 +7,9 @@ R|Clazz|
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] contextParameterOnErrorPrimaryConstructor.kt
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Clazz : R|kotlin/Any| {
-        context([ResolvedTo(ANNOTATION_ARGUMENTS)] c: R|Clazz|)
-        public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Clazz] constructor(): R|Clazz| {
+    public final? [ResolvedTo(TYPES)] class Clazz : R|kotlin/Any| {
+        context([ResolvedTo(TYPES)] c: R|Clazz|)
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=Clazz] constructor(): R|Clazz| {
             LAZY_super<R|kotlin/Any|>
         }
 

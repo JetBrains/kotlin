@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.gradle.utils.property
         "BinaryenEnvSpec",
         "org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenEnvSpec"
     ),
-    level = DeprecationLevel.WARNING
+    level = DeprecationLevel.ERROR
 )
 open class BinaryenExtension(
     @Transient val project: Project,
@@ -38,7 +38,7 @@ open class BinaryenExtension(
         .value("https://github.com/WebAssembly/binaryen/releases/download")
 
     override val versionProperty: org.gradle.api.provider.Property<String> = project.objects.property<String>()
-        .convention("130")
+        .convention("133")
 
     override val downloadProperty: org.gradle.api.provider.Property<Boolean> = project.objects.property<Boolean>()
         .convention(true)

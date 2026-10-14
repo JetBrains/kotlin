@@ -63,11 +63,6 @@ class ComposeCompilerGradleSubplugin : KotlinCompilerPluginSupportPlugin {
         val allPluginProperties = project.objects
             .listProperty(SubpluginOption::class.java)
             .apply {
-                @Suppress("DEPRECATION_ERROR")
-                add(composeExtension.generateFunctionKeyMetaClasses.map { value ->
-                    if (value) SubpluginOption("generateFunctionKeyMetaClasses", value.toString())
-                    else EMPTY_OPTION
-                })
                 if (!composeWithAgpConfig.isDisableIncludeSourceInformationForAgp) {
                     add(composeExtension.includeSourceInformation.map {
                         SubpluginOption("sourceInformation", it.toString())
@@ -86,11 +81,6 @@ class ComposeCompilerGradleSubplugin : KotlinCompilerPluginSupportPlugin {
                     FilesSubpluginOption("reportsDestination", listOf(it.asFile))
                 }.orElse(EMPTY_OPTION))
 
-                @Suppress("DEPRECATION_ERROR")
-                add(composeExtension.stabilityConfigurationFile.map<SubpluginOption> {
-                    FilesSubpluginOption("stabilityConfigurationPath", listOf(it.asFile))
-                }.orElse(EMPTY_OPTION))
-
                 addAll(composeExtension.stabilityConfigurationFiles.map { paths ->
                     paths.map { FilesSubpluginOption("stabilityConfigurationPath", listOf(it.asFile)) }
                 }.orElse(emptyList()))
@@ -99,30 +89,8 @@ class ComposeCompilerGradleSubplugin : KotlinCompilerPluginSupportPlugin {
                     SubpluginOption("traceMarkersEnabled", it.toString())
                 })
 
-                @Suppress("DEPRECATION_ERROR", "DEPRECATION")
                 addAll(
                     composeExtension.featureFlags
-                        .zip(composeExtension.enableIntrinsicRemember) { featureFlags, intrinsicRemember ->
-                            if (!intrinsicRemember && !featureFlags.contains(ComposeFeatureFlag.IntrinsicRemember.disabled())) {
-                                featureFlags + ComposeFeatureFlag.IntrinsicRemember.disabled()
-                            } else {
-                                featureFlags
-                            }
-                        }
-                        .zip(composeExtension.enableStrongSkippingMode) { featureFlags, strongSkippingMode ->
-                            if (!strongSkippingMode && !featureFlags.contains(ComposeFeatureFlag.StrongSkipping.disabled())) {
-                                featureFlags + ComposeFeatureFlag.StrongSkipping.disabled()
-                            } else {
-                                featureFlags
-                            }
-                        }
-                        .zip(composeExtension.enableNonSkippingGroupOptimization) { featureFlags, nonSkippingGroupOptimization ->
-                            if (nonSkippingGroupOptimization && !featureFlags.contains(ComposeFeatureFlag.OptimizeNonSkippingGroups)) {
-                                featureFlags + ComposeFeatureFlag.OptimizeNonSkippingGroups
-                            } else {
-                                featureFlags
-                            }
-                        }
                         .map { flags ->
                             flags.map { SubpluginOption("featureFlag", it.toString()) }
                         }

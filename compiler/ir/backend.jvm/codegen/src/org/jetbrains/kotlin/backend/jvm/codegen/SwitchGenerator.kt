@@ -65,7 +65,7 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
         return when {
             subject is IrCall && subject.isCoerceFromUIntToInt() ->
                 generateUIntSwitch(subject.arguments[0]!! as? IrGetValue, calls, callToLabels, expressionToLabels, elseExpression)
-            subject is IrGetValue || subject is IrConst && subject.type.isString() -> // also generate tableswitch for literal string subject
+            subject is IrGetValue || subject is IrConst && subject.kind == IrConstKind.String -> // also generate tableswitch for literal string subject
                 generatePrimitiveSwitch(subject, calls, callToLabels, expressionToLabels, elseExpression)
             else ->
                 null

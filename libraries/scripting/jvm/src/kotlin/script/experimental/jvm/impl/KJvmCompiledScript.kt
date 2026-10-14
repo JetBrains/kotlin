@@ -173,6 +173,9 @@ fun scriptMetadataPath(scriptClassFQName: String) =
 
 fun KJvmCompiledScript.copyWithoutModule(): KJvmCompiledScript = KJvmCompiledScript(data, null)
 
+fun KJvmCompiledScript.withModuleFromClassLoader(classLoader: ClassLoader): KJvmCompiledScript =
+    KJvmCompiledScript(data, KJvmCompiledModuleFromClassLoader(classLoader))
+
 fun KJvmCompiledScript.toBytes(): ByteArray {
     val bos = ByteArrayOutputStream()
     var oos: ObjectOutputStream? = null

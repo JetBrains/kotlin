@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.library.components
 import org.jetbrains.kotlin.library.Klib
 import org.jetbrains.kotlin.library.KlibComponent
 import org.jetbrains.kotlin.library.KlibComponentLayout
+import org.jetbrains.kotlin.library.KlibComponentsContainer
 import org.jetbrains.kotlin.library.KlibConstants.KLIB_DEFAULT_COMPONENT_NAME
 import org.jetbrains.kotlin.library.KlibLayoutReader
 import org.jetbrains.kotlin.library.components.KlibMetadataConstants.KLIB_METADATA_FILE_EXTENSION
@@ -25,13 +26,16 @@ import java.nio.file.Path
  */
 interface KlibMetadataComponent : KlibComponent {
     /** The metadata header in the raw form (bytes, yet to be deserialized to [KlibMetadataProtoBuf.Header]). */
-    val moduleHeaderData: ByteArray
+    val moduleHeaderData: ByteArray?
 
     /** Names of package fragments for the fully qualified package name [packageFqName]. */
     fun getPackageFragmentNames(packageFqName: String): Set<String>
 
     /** The concrete package fragment in the raw form (bytes, yet to be deserialized to [ProtoBuf.PackageFragment]). */
     fun getPackageFragment(packageFqName: String, fragmentName: String): ByteArray
+
+    /** The names of all packages inside given klib. */
+    fun getPackageNames(): Set<String>
 
     companion object Kind : KlibComponent.Kind<KlibMetadataComponent, KlibMetadataComponentLayout> {
         override fun createLayout(root: Path) = KlibMetadataComponentLayout(root)
@@ -51,7 +55,7 @@ interface KlibMetadataComponent : KlibComponent {
  * It is expected that every correct Klib has metadata files. So, the [metadata] property always returns
  * a non-null component instance that can be used to read the Klib's metadata.
  */
-inline val Klib.metadata: KlibMetadataComponent
+inline val KlibComponentsContainer.metadata: KlibMetadataComponent
     get() = getComponent(KlibMetadataComponent.Kind)!!
 
 class KlibMetadataComponentLayout(root: Path) : KlibComponentLayout(root) {

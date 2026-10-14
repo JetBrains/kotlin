@@ -51,6 +51,13 @@ nativeInteropPlugin {
             // To enforce linking with proper libc++, pass the default path explicitly:
             add("-L${nativeDependencies.hostPlatform.absoluteTargetSysRoot}/usr/lib")
         } else if (PlatformInfo.isLinux()) {
+            // When LLVM is built with LTO, its static libraries contain LLVM bitcode
+            // instead of native object code. Use lld to link them without requiring
+            // an additional LLVMgold plugin for GNU ld.
+            // Windows JNI links already select lld-link through ClangArgs.
+            // On macOS, the distribution's Clang driver passes its libLTO.dylib
+            // to Apple's linker via -lto_library, so no extra flag is needed.
+            add("-fuse-ld=lld")
             add("-Wl,-z,noexecstack")
             addAll(listOf("-lrt", "-ldl", "-lpthread", "-lz", "-lm"))
         } else if (PlatformInfo.isWindows()) {

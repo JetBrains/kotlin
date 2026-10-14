@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.util.constructedClass
 import org.jetbrains.kotlin.ir.util.hasAnnotation
+import org.jetbrains.kotlin.ir.util.originalOfPreparedInlineFunctionCopy
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.name.Name
@@ -59,7 +60,7 @@ abstract class IrExportCheckerVisitor(private val compatibleMode: Boolean) : Kot
         }
 
         override fun visitSimpleFunction(declaration: IrSimpleFunction, data: Nothing?): Boolean {
-            if (declaration.name.isAnonymous) return false
+            if (declaration.name.isAnonymous || declaration.originalOfPreparedInlineFunctionCopy != null) return false
             return super.visitSimpleFunction(declaration, data)
         }
 

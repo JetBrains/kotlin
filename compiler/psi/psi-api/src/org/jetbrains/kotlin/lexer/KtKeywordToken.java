@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.lexer;
 
+import kotlin.DeprecationLevel;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -25,7 +26,8 @@ public class KtKeywordToken extends KtSingleValueToken {
      * Generate keyword (identifier that has a keyword meaning in all possible contexts)
      */
     @kotlin.Deprecated(
-            message = "Use 'keyword(value, tokenId)' instead"
+            message = "Use 'keyword(value, tokenId)' instead",
+            level = DeprecationLevel.ERROR
     )
     @Deprecated
     public static KtKeywordToken keyword(String value) {
@@ -37,7 +39,8 @@ public class KtKeywordToken extends KtSingleValueToken {
     }
 
     @kotlin.Deprecated(
-            message = "Use 'keyword(debugName, value, tokenId)' instead"
+            message = "Use 'keyword(debugName, value, tokenId)' instead",
+            level = DeprecationLevel.ERROR
     )
     @Deprecated
     public static KtKeywordToken keyword(String debugName, String value) {
@@ -52,7 +55,8 @@ public class KtKeywordToken extends KtSingleValueToken {
      * Generate soft keyword (identifier that has a keyword meaning only in some contexts)
      */
     @kotlin.Deprecated(
-            message = "Use 'softKeyword(value, tokenId)' instead"
+            message = "Use 'softKeyword(value, tokenId)' instead",
+            level = DeprecationLevel.ERROR
     )
     @Deprecated
     public static KtKeywordToken softKeyword(String value) {
@@ -66,7 +70,8 @@ public class KtKeywordToken extends KtSingleValueToken {
     private final boolean myIsSoft;
 
     @kotlin.Deprecated(
-            message = "Use the 'KtKeywordToken(String, String, boolean, int)' constructor instead"
+            message = "Use the 'KtKeywordToken(String, String, boolean, int)' constructor instead",
+            level = DeprecationLevel.ERROR
     )
     @Deprecated
     protected KtKeywordToken(@NotNull @NonNls String debugName, @NotNull @NonNls String value, boolean isSoft) {

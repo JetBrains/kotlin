@@ -22,13 +22,14 @@ import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType;
 import org.jetbrains.org.objectweb.asm.*;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.jetbrains.org.objectweb.asm.ClassReader.*;
 import static org.jetbrains.org.objectweb.asm.Opcodes.API_VERSION;
 
 public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
     private final ClassId classId;
-    private final int classVersion;
+    private final JvmClassFileVersion classVersion;
     private final KotlinClassHeader classHeader;
     private final InnerClassesInfo innerClasses;
 
@@ -39,7 +40,7 @@ public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
             @NotNull InnerClassesInfo innerClasses
     ) {
         this.classId = classId;
-        this.classVersion = classVersion;
+        this.classVersion = JvmClassFileVersion.fromAsmVersion(classVersion);
         this.classHeader = classHeader;
         this.innerClasses = innerClasses;
     }
@@ -123,7 +124,8 @@ public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
         return classId;
     }
 
-    public int getClassVersion() {
+    @NotNull
+    public JvmClassFileVersion getClassVersion() {
         return classVersion;
     }
 
@@ -248,7 +250,16 @@ public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
 
             @Override
             public MethodVisitor visitMethod(int access, @NotNull String name, @NotNull String desc, String signature, String[] exceptions) {
-                MethodAnnotationVisitor v = memberVisitor.visitMethod(Name.identifier(name), desc);
+                List<ClassId> exceptionsClassIds;
+                if (exceptions == null || exceptions.length == 0) {
+                    exceptionsClassIds = Collections.emptyList();
+                } else {
+                    exceptionsClassIds = Arrays.stream(exceptions).map( internalName ->
+                        resolveNameByInternalName(internalName, innerClasses)
+                    ).collect(Collectors.toList());
+                }
+
+                MethodAnnotationVisitor v = memberVisitor.visitMethod(Name.identifier(name), desc, exceptionsClassIds);
                 if (v == null) return null;
 
                 int methodParamCount = Type.getArgumentTypes(desc).length;

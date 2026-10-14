@@ -20,7 +20,7 @@
 
 FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashWithNestedTypesAndAnnotationsScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-delegatedFieldNestedNameClashWithNestedTypesAndAnnotationsScript.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[Types](AnnotationTarget#.TYPE#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.TYPE|))] public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashWithNestedTypesAndAnnotationsScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {

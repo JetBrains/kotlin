@@ -24,7 +24,7 @@ extension ExportedKotlinPackages.kotlinx.cinterop {
     }
     open class ObjCObjectBase: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.cinterop.ObjCObject, ExportedKotlinPackages.kotlinx.cinterop.__ObjCObject {
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);

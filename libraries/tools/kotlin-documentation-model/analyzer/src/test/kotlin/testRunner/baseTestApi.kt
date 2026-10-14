@@ -19,6 +19,7 @@ import org.jetbrains.dokka.testApi.testRunner.TestBuilder
 import org.jetbrains.dokka.utilities.DokkaConsoleLogger
 import org.jetbrains.dokka.utilities.DokkaLogger
 import org.jetbrains.dokka.utilities.LoggingLevel
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInAnalysisApi
 
 public class BaseDokkaTestGenerator(
     configuration: DokkaConfiguration,

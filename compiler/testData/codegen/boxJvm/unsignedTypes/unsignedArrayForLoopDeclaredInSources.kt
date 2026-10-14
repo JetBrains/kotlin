@@ -3,6 +3,9 @@
 // PREFER_IN_TEST_OVER_STDLIB
 // ALLOW_KOTLIN_PACKAGE
 
+// kotlin package is being relocated in Android tests
+// IGNORE_BACKEND: ANDROID
+
 // FILE: declarations.kt
 package kotlin
 

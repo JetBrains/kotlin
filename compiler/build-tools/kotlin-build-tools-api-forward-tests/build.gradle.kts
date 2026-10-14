@@ -189,7 +189,6 @@ val businessLogicTestSuits = setOf(
     "testKotlinLogger",
     "testDefaultOptions",
     "testDaemonOptions",
-    "testInternalInputsTracker",
     "testAbiValidation",
     "testRestrictedArguments",
     "testCompatibility",
@@ -274,12 +273,6 @@ testing {
                 }
             }
 
-            named<JvmTestSuite>("testInternalInputsTracker$apiVersion") {
-                dependencies {
-                    implementation(project(":compiler:build-tools:kotlin-build-tools-impl")) { isTransitive = false }
-                }
-            }
-
             named<JvmTestSuite>("testRestrictedArguments$apiVersion") {
                 dependencies {
                     implementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect"))
@@ -326,7 +319,6 @@ testing {
                 projectTests {
                     testTask(
                         taskName = testTask.name,
-                        javaLauncher = JdkMajorVersion.JDK_17_0,
                         skipInLocalBuild = false,
                         garbageCollector = GarbageCollector.Parallel
                     ) {

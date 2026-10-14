@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.sir.util.swiftFqName
 import kotlin.collections.plus
 
 sealed interface SirType {
+    val origin: Origin
     val attributes: List<SirAttribute>
 
     companion object {
@@ -20,10 +21,37 @@ sealed interface SirType {
         val void get() = SirNominalType(SirSwiftModule.void)
     }
 
+    sealed interface Origin {
+        sealed interface Synthetic : Origin
+
+        data object Metatype : Synthetic
+
+        sealed interface ReifiedType : Synthetic {
+            val erasedType: SirType
+            val reifiedType: SirType
+
+            data class Flow(
+                val typedProtocol: SirProtocol,
+                val typedStruct: SirStruct,
+                val elementType: SirType,
+                override val erasedType: SirType,
+            ) : ReifiedType {
+                override val reifiedType = SirExistentialType(listOf(typedProtocol to listOf(elementType)), this)
+                val structType = SirNominalType(typedStruct, listOf(elementType))
+            }
+        }
+
+        interface Foreign : Origin
+
+        data object Unknown : Origin
+    }
+
     class Metatype(
         val type: SirType,
         override val attributes: List<SirAttribute> = emptyList(),
     ) : SirWrappedType {
+        override val origin: Origin = Origin.Metatype
+
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
             if (other == null || other !is Metatype) return false
@@ -54,6 +82,7 @@ class SirFunctionalType(
     val isAsync: Boolean = false,
     val errorType: SirType = SirType.never,
     val returnType: SirType,
+    override val origin: SirType.Origin = SirType.Origin.Unknown,
     override val attributes: List<SirAttribute> = emptyList(),
 ) : SirWrappedType {
     val contextType: SirType? = contextTypes.takeIf { it.isNotEmpty() }?.let { types ->
@@ -63,7 +92,7 @@ class SirFunctionalType(
     fun copyAppendingAttributes(vararg attributes: SirAttribute): SirFunctionalType {
         val attributesToAdd = attributes.filter { !this.attributes.contains(it) }
         return if (attributesToAdd.isEmpty()) this
-        else SirFunctionalType(contextTypes, parameterTypes, isAsync, errorType, returnType, this.attributes + attributesToAdd)
+        else SirFunctionalType(contextTypes, parameterTypes, isAsync, errorType, returnType, origin, this.attributes + attributesToAdd)
     }
 
     override fun equals(other: Any?): Boolean {
@@ -93,6 +122,7 @@ class SirFunctionalType(
 
 class SirTupleType(
     val types: List<Pair<String?, SirType>>,
+    override val origin: SirType.Origin = SirType.Origin.Unknown,
     override val attributes: List<SirAttribute> = emptyList(),
 ) : SirWrappedType {
     init {
@@ -120,6 +150,7 @@ open class SirNominalType(
     val typeDeclaration: SirScopeDefiningDeclaration,
     val typeArguments: List<SirType> = emptyList(),
     val parent: SirNominalType? = null,
+    override val origin: SirType.Origin = SirType.Origin.Unknown,
     override val attributes: List<SirAttribute> = emptyList(),
 ) : SirType {
 
@@ -144,7 +175,7 @@ open class SirNominalType(
     }
 
     fun copyAppendingAttributes(vararg attributes: SirAttribute): SirNominalType =
-        SirNominalType(typeDeclaration, typeArguments, parent, this.attributes + attributes)
+        SirNominalType(typeDeclaration, typeArguments, parent, origin, this.attributes + attributes)
 }
 
 open class SirOptionalType(type: SirType) : SirNominalType(
@@ -171,8 +202,9 @@ class SirDictionaryType(keyType: SirType, valueType: SirType) : SirNominalType(
     val valueType: SirType get() = super.typeArguments[1]
 }
 
-open class SirExistentialType(
+class SirExistentialType(
     protocols: List<Pair<SirProtocol, List<SirType>>> = emptyList(),
+    override val origin: SirType.Origin = SirType.Origin.Unknown,
 ) : SirType {
     override val attributes: List<SirAttribute> = emptyList()
 
@@ -193,12 +225,6 @@ open class SirExistentialType(
     }
 }
 
-class SirTypedFlowType(
-    val typedProtocol: SirProtocol,
-    val elementType: SirType,
-    val flowType: SirExistentialType,
-) : SirExistentialType(typedProtocol to listOf(elementType)), SirWrappedType
-
 val SirNominalType.escaping: SirNominalType get() = copyAppendingAttributes(SirAttribute.Escaping)
 
 val SirFunctionalType.escaping: SirFunctionalType get() = copyAppendingAttributes(SirAttribute.Escaping)
@@ -217,6 +243,7 @@ val SirType.escaping: SirType get() = when (this) {
  *
  */
 class SirErrorType(val reason: String) : SirType {
+    override val origin: SirType.Origin = SirType.Origin.Unknown
     override val attributes: List<SirAttribute> = emptyList()
 }
 
@@ -224,10 +251,13 @@ class SirErrorType(val reason: String) : SirType {
  * A synthetic type for not yet supported Kotlin types.
  */
 data object SirUnsupportedType : SirType {
+    override val origin: SirType.Origin = SirType.Origin.Unknown
     override val attributes: List<SirAttribute> = emptyList()
 }
 
 fun SirType.optional(): SirNominalType = SirOptionalType(this)
+
+fun SirType.nonOptional(): SirType = (this as? SirOptionalType)?.wrappedType ?: this
 
 fun SirType.implicitlyUnwrappedOptional(): SirNominalType = SirImplicitlyUnwrappedOptionalType(this)
 

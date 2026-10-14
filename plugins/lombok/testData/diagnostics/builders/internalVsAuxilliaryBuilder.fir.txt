@@ -1,0 +1,21 @@
+FILE: test.kt
+    public final fun foo(): R|kotlin/Unit| {
+        lval internalBuilder: R|test/java/TestJava.TestJavaBuilder| = Q|test/java/TestJava|.R|test/java/TestJava.internalBuilder*s|()
+        lval builder: R|test/java/TestJava.TestJavaBuilder!| = Q|test/java/TestJava|.R|test/java/TestJava.builder*s|(Int(1))
+        lval qualifiedBuilder: R|test/java/TestJava.TestJavaBuilder!| = Q|test/java/TestJava|.R|test/java/TestJava.qualifiedBuilder*s|(Int(1))
+        lval fullyQualifiedBuilder: R|test/java/TestJava.TestJavaBuilder!| = Q|test/java/TestJava|.R|test/java/TestJava.fullyQualifiedBuilder*s|(Int(1))
+        lval qualifiedBuilderFromNested: R|test/java/TestJava.TestJavaBuilder!| = Q|test/java/TestJava.NestedClass|.R|test/java/TestJava.NestedClass.qualifiedBuilder*s|(Int(1))
+        lval fullyQualifiedBuilderFromNested: R|test/java/TestJava.TestJavaBuilder!| = Q|test/java/TestJava.NestedClass|.R|test/java/TestJava.NestedClass.fullyQualifiedBuilder*s|(Int(1))
+    }
+    public final fun bar(): R|kotlin/Unit| {
+        lval internalBuilder: R|test/java/Owner.TestJava.TestJavaBuilder| = Q|test/java/Owner.TestJava|.R|test/java/Owner.TestJava.internalBuilder*s|()
+        lval builder: R|test/java/Owner.TestJava.TestJavaBuilder!| = Q|test/java/Owner.TestJava|.R|test/java/Owner.TestJava.builder*s|(Int(1))
+        lval qualifiedBuilder: R|test/java/Owner.TestJava.TestJavaBuilder!| = Q|test/java/Owner.TestJava|.R|test/java/Owner.TestJava.qualifiedBuilder*s|(Int(1))
+        lval fullyQualifiedBuilder: R|test/java/Owner.TestJava.TestJavaBuilder!| = Q|test/java/Owner.TestJava|.R|test/java/Owner.TestJava.fullyQualifiedBuilder*s|(Int(1))
+    }
+    public final fun unsupported(): R|kotlin/Unit| {
+        lval builderArray: R|ft<kotlin/Array<TestJavaBuilder!>, kotlin/Array<out TestJavaBuilder!>?>| = Q|test/java/TestJava|.R|test/java/TestJava.builderArray*s|()
+        lval builder: R|TestJavaBuilder!| = Q|test/other/Other|.R|test/other/Other.builder*s|(Int(1))
+        lval qualifiedBuilder: R|TestJava/TestJavaBuilder!| = Q|test/other/Other|.R|test/other/Other.qualifiedBuilder*s|(Int(1))
+        lval fullyQualifiedBuilder: R|test/java/TestJava/TestJavaBuilder!| = Q|test/other/Other|.R|test/other/Other.fullyQualifiedBuilder*s|(Int(1))
+    }

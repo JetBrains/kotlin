@@ -35,7 +35,7 @@ FILE[kind=Facade[packageFqName=test, facadeFqName=test.ParameterDefaultValuesKt]
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Int]
         REFERENCE_EXPRESSION[referencedName=constant]
-  CLASS[classId=test/WithArrayDefaults, fqName=test.WithArrayDefaults, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithArrayDefaults, superNames=[]]
+  CLASS[classId=test/WithArrayDefaults, fqName=test.WithArrayDefaults, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=WithArrayDefaults, superNames=[]]
     MODIFIER_LIST[annotation]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=WithArrayDefaults]
       VALUE_PARAMETER_LIST
@@ -51,7 +51,7 @@ FILE[kind=Facade[packageFqName=test, facadeFqName=test.ParameterDefaultValuesKt]
           COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=2]
             INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=4]
             INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=5]
-  CLASS[classId=test/WithConstructorDefaults, fqName=test.WithConstructorDefaults, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithConstructorDefaults, superNames=[]]
+  CLASS[classId=test/WithConstructorDefaults, fqName=test.WithConstructorDefaults, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=WithConstructorDefaults, superNames=[]]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=WithConstructorDefaults]
       VALUE_PARAMETER_LIST
         VALUE_PARAMETER[fqName=test.WithConstructorDefaults.value, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=value]

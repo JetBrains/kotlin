@@ -1,0 +1,647 @@
+FILE fqName:<root> fileName:/genericWithClassUpperBound.kt
+  CLASS CLASS name:Base modality:OPEN visibility:public superTypes:[kotlin.Any]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Base
+    CONSTRUCTOR visibility:public returnType:<root>.Base [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Base modality:OPEN visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+  CLASS CLASS name:Box modality:FINAL visibility:public superTypes:[kotlin.Any]
+    annotations:
+      Serializable(with = <null>)
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Box<T of <root>.Box>
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[<root>.Base] reified:false
+    PROPERTY name:content visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:content type:T of <root>.Box visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'content: T of <root>.Box declared in <root>.Box.<init>' type=T of <root>.Box origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-content> visibility:public modality:FINAL returnType:T of <root>.Box
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Box<T of <root>.Box>
+        correspondingProperty: PROPERTY name:content visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-content> (): T of <root>.Box declared in <root>.Box'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:content type:T of <root>.Box visibility:private [final]' type=T of <root>.Box origin=null
+              receiver: GET_VAR '<this>: <root>.Box<T of <root>.Box> declared in <root>.Box.<get-content>' type=<root>.Box<T of <root>.Box> origin=null
+    CLASS GENERATED[org.jetbrains.kotlinx.serialization.compiler.fir.SerializationPluginKey] OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]
+      thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Box.Companion
+      PROPERTY KOTLINX_SERIALIZATION name:$cachedDescriptor visibility:public modality:FINAL [val]
+        FIELD KOTLINX_SERIALIZATION name:$cachedDescriptor type:kotlinx.serialization.descriptors.SerialDescriptor visibility:private [final]
+          annotations:
+            JvmField
+        FUN KOTLINX_SERIALIZATION name:<get-$cachedDescriptor> visibility:public modality:FINAL returnType:kotlinx.serialization.descriptors.SerialDescriptor
+          VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.Box.Companion
+          correspondingProperty: PROPERTY KOTLINX_SERIALIZATION name:$cachedDescriptor visibility:public modality:FINAL [val]
+          BLOCK_BODY
+            RETURN type=kotlin.Nothing from='public final fun <get-$cachedDescriptor> (): kotlinx.serialization.descriptors.SerialDescriptor declared in <root>.Box.Companion'
+              GET_FIELD 'FIELD KOTLINX_SERIALIZATION name:$cachedDescriptor type:kotlinx.serialization.descriptors.SerialDescriptor visibility:private [final] declared in <root>.Box.Companion' type=kotlinx.serialization.descriptors.SerialDescriptor origin=null
+                receiver: GET_VAR '<this>: <root>.Box.Companion declared in <root>.Box.Companion.<get-$cachedDescriptor>' type=<root>.Box.Companion origin=null
+      ANONYMOUS_INITIALIZER isStatic=false
+        BLOCK_BODY
+          VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlinx.serialization.internal.PluginGeneratedSerialDescriptor [val]
+            CONSTRUCTOR_CALL 'public constructor <init> (serialName: kotlin.String, generatedSerializer: kotlinx.serialization.internal.GeneratedSerializer<*>?, elementsCount: kotlin.Int) declared in kotlinx.serialization.internal.PluginGeneratedSerialDescriptor' type=kotlinx.serialization.internal.PluginGeneratedSerialDescriptor origin=null
+              ARG serialName: CONST String type=kotlin.String value="Box"
+              ARG generatedSerializer: CONST Null type=kotlin.Nothing? value=null
+              ARG elementsCount: CONST Int type=kotlin.Int value=1
+          CALL 'public final fun addElement (name: kotlin.String, isOptional: kotlin.Boolean): kotlin.Unit declared in kotlinx.serialization.internal.PluginGeneratedSerialDescriptor' type=kotlin.Unit origin=null
+            ARG <this>: GET_VAR 'val tmp_0: kotlinx.serialization.internal.PluginGeneratedSerialDescriptor declared in <root>.Box.Companion' type=kotlinx.serialization.internal.PluginGeneratedSerialDescriptor origin=null
+            ARG name: CONST String type=kotlin.String value="content"
+            ARG isOptional: CONST Boolean type=kotlin.Boolean value=false
+          SET_FIELD 'FIELD KOTLINX_SERIALIZATION name:$cachedDescriptor type:kotlinx.serialization.descriptors.SerialDescriptor visibility:private [final] declared in <root>.Box.Companion' type=kotlin.Unit origin=null
+            receiver: GET_VAR '<this>: <root>.Box.Companion declared in <root>.Box.Companion' type=<root>.Box.Companion origin=null
+            value: GET_VAR 'val tmp_0: kotlinx.serialization.internal.PluginGeneratedSerialDescriptor declared in <root>.Box.Companion' type=kotlinx.serialization.internal.PluginGeneratedSerialDescriptor origin=null
+      CONSTRUCTOR GENERATED[org.jetbrains.kotlinx.serialization.compiler.fir.SerializationPluginKey] visibility:private returnType:<root>.Box.Companion [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS GENERATED[org.jetbrains.kotlinx.serialization.compiler.fir.SerializationPluginKey] OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]' type=kotlin.Unit
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+        overridden:
+          public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        overridden:
+          public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        overridden:
+          public open fun toString (): kotlin.String declared in kotlin.Any
+      FUN GENERATED[org.jetbrains.kotlinx.serialization.compiler.fir.SerializationPluginKey] name:serializer visibility:public modality:FINAL returnType:kotlinx.serialization.KSerializer<<root>.Box<T of <root>.Box.Companion.serializer>>
+        TYPE_PARAMETER GENERATED[org.jetbrains.kotlinx.serialization.compiler.fir.SerializationPluginKey] name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Box.Companion
+        VALUE_PARAMETER GENERATED[org.jetbrains.kotlinx.serialization.compiler.fir.SerializationPluginKey] kind:Regular name:typeSerial0 index:1 type:kotlinx.serialization.KSerializer<T of <root>.Box.Companion.serializer>
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun serializer <T> (typeSerial0: kotlinx.serialization.KSerializer<T of <root>.Box.Companion.serializer>): kotlinx.serialization.KSerializer<<root>.Box<T of <root>.Box.Companion.serializer>> declared in <root>.Box.Companion'
+            CONSTRUCTOR_CALL 'public constructor <init> (typeSerial0: kotlinx.serialization.KSerializer<T of <root>.Box.$serializer>) declared in <root>.Box.$serializer' type=<root>.Box.$serializer<T of <root>.Box.Companion.serializer> origin=null
+              ARG typeSerial0: GET_VAR 'typeSerial0: kotlinx.serialization.KSerializer<T of <root>.Box.Companion.serializer> declared in <root>.Box.Companion.serializer' type=kotlinx.serialization.KSerializer<T of <root>.Box.Companion.serializer> origin=null
+    CLASS KOTLINX_SERIALIZATION CLASS name:$serializer modality:FINAL visibility:public superTypes:[kotlinx.serialization.internal.GeneratedSerializer<<root>.Box<T of <root>.Box.$serializer>>]
+      annotations:
+        Deprecated(message = "This synthesized declaration should not be used directly", replaceWith = <null>, level = DeprecationLevel.HIDDEN)
+      thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Box.$serializer<T of <root>.Box.$serializer>
+      TYPE_PARAMETER GENERATED[org.jetbrains.kotlinx.serialization.compiler.fir.SerializationPluginKey] name:T index:0 variance: superTypes:[<root>.Base] reified:false
+      PROPERTY GENERATED[org.jetbrains.kotlinx.serialization.compiler.fir.SerializationPluginKey] name:descriptor visibility:public modality:FINAL [val]
+        overridden:
+          public abstract descriptor: kotlinx.serialization.descriptors.SerialDescriptor declared in kotlinx.serialization.internal.GeneratedSerializer
+        FIELD PROPERTY_BACKING_FIELD name:descriptor type:kotlinx.serialization.descriptors.SerialDescriptor visibility:private [final]
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-descriptor> visibility:public modality:FINAL returnType:kotlinx.serialization.descriptors.SerialDescriptor
+          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Box.$serializer<T of <root>.Box.$serializer>
+          correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.serialization.compiler.fir.SerializationPluginKey] name:descriptor visibility:public modality:FINAL [val]
+          overridden:
+            public abstract fun <get-descriptor> (): kotlinx.serialization.descriptors.SerialDescriptor declared in kotlinx.serialization.internal.GeneratedSerializer
+          BLOCK_BODY
+            RETURN type=kotlin.Nothing from='public final fun <get-descriptor> (): kotlinx.serialization.descriptors.SerialDescriptor declared in <root>.Box.$serializer'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:descriptor type:kotlinx.serialization.descriptors.SerialDescriptor visibility:private [final]' type=kotlinx.serialization.descriptors.SerialDescriptor origin=null
+                receiver: GET_VAR '<this>: <root>.Box.$serializer<T of <root>.Box.$serializer> declared in <root>.Box.$serializer.<get-descriptor>' type=<root>.Box.$serializer<T of <root>.Box.$serializer> origin=null
+      PROPERTY KOTLINX_SERIALIZATION name:typeSerial0 visibility:public modality:FINAL [val]
+        FIELD KOTLINX_SERIALIZATION name:typeSerial0 type:kotlinx.serialization.KSerializer<*> visibility:private [final]
+        FUN KOTLINX_SERIALIZATION name:<get-typeSerial0> visibility:private modality:FINAL returnType:kotlinx.serialization.KSerializer<*>
+          VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.Box.$serializer<T of <root>.Box.$serializer>
+          correspondingProperty: PROPERTY KOTLINX_SERIALIZATION name:typeSerial0 visibility:public modality:FINAL [val]
+          BLOCK_BODY
+            RETURN type=kotlin.Nothing from='private final fun <get-typeSerial0> (): kotlinx.serialization.KSerializer<*> declared in <root>.Box.$serializer'
+              GET_FIELD 'FIELD KOTLINX_SERIALIZATION name:typeSerial0 type:kotlinx.serialization.KSerializer<*> visibility:private [final] declared in <root>.Box.$serializer' type=kotlinx.serialization.KSerializer<*> origin=null
+                receiver: GET_VAR '<this>: <root>.Box.$serializer<T of <root>.Box.$serializer> declared in <root>.Box.$serializer.<get-typeSerial0>' type=<root>.Box.$serializer<T of <root>.Box.$serializer> origin=null
+      ANONYMOUS_INITIALIZER isStatic=false
+        BLOCK_BODY
+          VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlinx.serialization.internal.PluginGeneratedSerialDescriptor [val]
+            CONSTRUCTOR_CALL 'public constructor <init> (serialName: kotlin.String, generatedSerializer: kotlinx.serialization.internal.GeneratedSerializer<*>?, elementsCount: kotlin.Int) declared in kotlinx.serialization.internal.PluginGeneratedSerialDescriptor' type=kotlinx.serialization.internal.PluginGeneratedSerialDescriptor origin=null
+              ARG serialName: CONST String type=kotlin.String value="Box"
+              ARG generatedSerializer: GET_VAR '<this>: <root>.Box.$serializer<T of <root>.Box.$serializer> declared in <root>.Box.$serializer' type=<root>.Box.$serializer<T of <root>.Box.$serializer> origin=null
+              ARG elementsCount: CONST Int type=kotlin.Int value=1
+          CALL 'public final fun addElement (name: kotlin.String, isOptional: kotlin.Boolean): kotlin.Unit declared in kotlinx.serialization.internal.PluginGeneratedSerialDescriptor' type=kotlin.Unit origin=null
+            ARG <this>: GET_VAR 'val tmp_1: kotlinx.serialization.internal.PluginGeneratedSerialDescriptor declared in <root>.Box.$serializer' type=kotlinx.serialization.internal.PluginGeneratedSerialDescriptor origin=null
+            ARG name: CONST String type=kotlin.String value="content"
+            ARG isOptional: CONST Boolean type=kotlin.Boolean value=false
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:descriptor type:kotlinx.serialization.descriptors.SerialDescriptor visibility:private [final]' type=kotlin.Unit origin=null
+            receiver: GET_VAR '<this>: <root>.Box.$serializer<T of <root>.Box.$serializer> declared in <root>.Box.$serializer' type=<root>.Box.$serializer<T of <root>.Box.$serializer> origin=null
+            value: GET_VAR 'val tmp_1: kotlinx.serialization.internal.PluginGeneratedSerialDescriptor declared in <root>.Box.$serializer' type=kotlinx.serialization.internal.PluginGeneratedSerialDescriptor origin=null
+      CONSTRUCTOR GENERATED[org.jetbrains.kotlinx.serialization.compiler.fir.SerializationPluginKey] visibility:private returnType:<root>.Box.$serializer<T of <root>.Box.$serializer> [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS KOTLINX_SERIALIZATION CLASS name:$serializer modality:FINAL visibility:public superTypes:[kotlinx.serialization.internal.GeneratedSerializer<<root>.Box<T of <root>.Box.$serializer>>]' type=kotlin.Unit
+      CONSTRUCTOR GENERATED[org.jetbrains.kotlinx.serialization.compiler.fir.SerializationPluginKey] visibility:public returnType:<root>.Box.$serializer<T of <root>.Box.$serializer>
+        VALUE_PARAMETER GENERATED[org.jetbrains.kotlinx.serialization.compiler.fir.SerializationPluginKey] kind:Regular name:typeSerial0 index:0 type:kotlinx.serialization.KSerializer<T of <root>.Box.$serializer>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'private constructor <init> () declared in <root>.Box.$serializer'
+            TYPE_ARG T: T of <root>.Box.$serializer
+          SET_FIELD 'FIELD KOTLINX_SERIALIZATION name:typeSerial0 type:kotlinx.serialization.KSerializer<*> visibility:private [final] declared in <root>.Box.$serializer' type=kotlin.Unit origin=null
+            receiver: GET_VAR '<this>: <root>.Box.$serializer<T of <root>.Box.$serializer> declared in <root>.Box.$serializer' type=<root>.Box.$serializer<T of <root>.Box.$serializer> origin=null
+            value: GET_VAR 'typeSerial0: kotlinx.serialization.KSerializer<T of <root>.Box.$serializer> declared in <root>.Box.$serializer.<init>' type=kotlinx.serialization.KSerializer<T of <root>.Box.$serializer> origin=null
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+        overridden:
+          public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlinx.serialization.internal.GeneratedSerializer
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        overridden:
+          public open fun hashCode (): kotlin.Int declared in kotlinx.serialization.internal.GeneratedSerializer
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        overridden:
+          public open fun toString (): kotlin.String declared in kotlinx.serialization.internal.GeneratedSerializer
+      FUN GENERATED[org.jetbrains.kotlinx.serialization.compiler.fir.SerializationPluginKey] name:childSerializers visibility:public modality:FINAL returnType:kotlin.Array<kotlinx.serialization.KSerializer<*>>
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Box.$serializer<T of <root>.Box.$serializer>
+        overridden:
+          public abstract fun childSerializers (): kotlin.Array<kotlinx.serialization.KSerializer<*>> declared in kotlinx.serialization.internal.GeneratedSerializer
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun childSerializers (): kotlin.Array<kotlinx.serialization.KSerializer<*>> declared in <root>.Box.$serializer'
+            CALL 'public final fun arrayOf <T> (vararg elements: T of kotlin.arrayOf): kotlin.Array<T of kotlin.arrayOf> declared in kotlin' type=kotlin.Array<kotlinx.serialization.KSerializer<*>> origin=null
+              TYPE_ARG T: kotlinx.serialization.KSerializer<*>
+              ARG elements: VARARG type=kotlin.Array<kotlinx.serialization.KSerializer<*>> varargElementType=kotlinx.serialization.KSerializer<*>
+                GET_FIELD 'FIELD KOTLINX_SERIALIZATION name:typeSerial0 type:kotlinx.serialization.KSerializer<*> visibility:private [final] declared in <root>.Box.$serializer' type=kotlinx.serialization.KSerializer<*> origin=null
+                  receiver: GET_VAR '<this>: <root>.Box.$serializer<T of <root>.Box.$serializer> declared in <root>.Box.$serializer.childSerializers' type=<root>.Box.$serializer<T of <root>.Box.$serializer> origin=null
+      FUN GENERATED[org.jetbrains.kotlinx.serialization.compiler.fir.SerializationPluginKey] name:deserialize visibility:public modality:FINAL returnType:<root>.Box<T of <root>.Box.$serializer>
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Box.$serializer<T of <root>.Box.$serializer>
+        VALUE_PARAMETER GENERATED[org.jetbrains.kotlinx.serialization.compiler.fir.SerializationPluginKey] kind:Regular name:decoder index:1 type:kotlinx.serialization.encoding.Decoder
+        overridden:
+          public abstract fun deserialize (decoder: kotlinx.serialization.encoding.Decoder): T of kotlinx.serialization.internal.GeneratedSerializer declared in kotlinx.serialization.internal.GeneratedSerializer
+        BLOCK_BODY
+          VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:kotlinx.serialization.descriptors.SerialDescriptor [val]
+            CALL 'public final fun <get-descriptor> (): kotlinx.serialization.descriptors.SerialDescriptor declared in <root>.Box.$serializer' type=kotlinx.serialization.descriptors.SerialDescriptor origin=GET_PROPERTY
+              ARG <this>: GET_VAR '<this>: <root>.Box.$serializer<T of <root>.Box.$serializer> declared in <root>.Box.$serializer.deserialize' type=<root>.Box.$serializer<T of <root>.Box.$serializer> origin=null
+          VAR IR_TEMPORARY_VARIABLE name:tmp_3 type:kotlin.Boolean [var]
+            CONST Boolean type=kotlin.Boolean value=true
+          VAR IR_TEMPORARY_VARIABLE name:tmp_4 type:kotlin.Int [var]
+            CONST Int type=kotlin.Int value=0
+          VAR IR_TEMPORARY_VARIABLE name:tmp_5 type:kotlin.Int [var]
+            CONST Int type=kotlin.Int value=0
+          VAR IR_TEMPORARY_VARIABLE name:tmp_6 type:T of <root>.Box.$serializer? [var]
+            CONST Null type=T of <root>.Box.$serializer? value=null
+          VAR IR_TEMPORARY_VARIABLE name:tmp_7 type:kotlinx.serialization.encoding.CompositeDecoder [val]
+            CALL 'public abstract fun beginStructure (descriptor: kotlinx.serialization.descriptors.SerialDescriptor): kotlinx.serialization.encoding.CompositeDecoder declared in kotlinx.serialization.encoding.Decoder' type=kotlinx.serialization.encoding.CompositeDecoder origin=null
+              ARG <this>: GET_VAR 'decoder: kotlinx.serialization.encoding.Decoder declared in <root>.Box.$serializer.deserialize' type=kotlinx.serialization.encoding.Decoder origin=null
+              ARG descriptor: GET_VAR 'val tmp_2: kotlinx.serialization.descriptors.SerialDescriptor declared in <root>.Box.$serializer.deserialize' type=kotlinx.serialization.descriptors.SerialDescriptor origin=null
+          WHEN type=kotlin.Unit origin=null
+            BRANCH
+              if: CALL 'public open fun decodeSequentially (): kotlin.Boolean declared in kotlinx.serialization.encoding.CompositeDecoder' type=kotlin.Boolean origin=null
+                ARG <this>: GET_VAR 'val tmp_7: kotlinx.serialization.encoding.CompositeDecoder declared in <root>.Box.$serializer.deserialize' type=kotlinx.serialization.encoding.CompositeDecoder origin=null
+              then: BLOCK type=kotlin.Unit origin=null
+                BLOCK type=kotlin.Unit origin=null
+                  SET_VAR 'var tmp_6: T of <root>.Box.$serializer? declared in <root>.Box.$serializer.deserialize' type=kotlin.Unit origin=EQ
+                    CALL 'public abstract fun decodeSerializableElement <T> (descriptor: kotlinx.serialization.descriptors.SerialDescriptor, index: kotlin.Int, deserializer: kotlinx.serialization.DeserializationStrategy<T of kotlinx.serialization.encoding.CompositeDecoder.decodeSerializableElement>, previousValue: T of kotlinx.serialization.encoding.CompositeDecoder.decodeSerializableElement?): T of kotlinx.serialization.encoding.CompositeDecoder.decodeSerializableElement declared in kotlinx.serialization.encoding.CompositeDecoder' type=T of <root>.Box.$serializer origin=null
+                      TYPE_ARG T: T of <root>.Box.$serializer
+                      ARG <this>: GET_VAR 'val tmp_7: kotlinx.serialization.encoding.CompositeDecoder declared in <root>.Box.$serializer.deserialize' type=kotlinx.serialization.encoding.CompositeDecoder origin=null
+                      ARG descriptor: GET_VAR 'val tmp_2: kotlinx.serialization.descriptors.SerialDescriptor declared in <root>.Box.$serializer.deserialize' type=kotlinx.serialization.descriptors.SerialDescriptor origin=null
+                      ARG index: CONST Int type=kotlin.Int value=0
+                      ARG deserializer: GET_FIELD 'FIELD KOTLINX_SERIALIZATION name:typeSerial0 type:kotlinx.serialization.KSerializer<*> visibility:private [final] declared in <root>.Box.$serializer' type=kotlinx.serialization.KSerializer<*> origin=null
+                        receiver: GET_VAR '<this>: <root>.Box.$serializer<T of <root>.Box.$serializer> declared in <root>.Box.$serializer.deserialize' type=<root>.Box.$serializer<T of <root>.Box.$serializer> origin=null
+                      ARG previousValue: GET_VAR 'var tmp_6: T of <root>.Box.$serializer? declared in <root>.Box.$serializer.deserialize' type=T of <root>.Box.$serializer? origin=null
+                  SET_VAR 'var tmp_5: kotlin.Int declared in <root>.Box.$serializer.deserialize' type=kotlin.Unit origin=EQ
+                    CALL 'public final fun or (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+                      ARG <this>: GET_VAR 'var tmp_5: kotlin.Int declared in <root>.Box.$serializer.deserialize' type=kotlin.Int origin=null
+                      ARG other: CONST Int type=kotlin.Int value=1
+            BRANCH
+              if: CONST Boolean type=kotlin.Boolean value=true
+              then: WHILE label=null origin=null
+                condition: GET_VAR 'var tmp_3: kotlin.Boolean declared in <root>.Box.$serializer.deserialize' type=kotlin.Boolean origin=null
+                body: BLOCK type=kotlin.Unit origin=null
+                  SET_VAR 'var tmp_4: kotlin.Int declared in <root>.Box.$serializer.deserialize' type=kotlin.Unit origin=EQ
+                    CALL 'public abstract fun decodeElementIndex (descriptor: kotlinx.serialization.descriptors.SerialDescriptor): kotlin.Int declared in kotlinx.serialization.encoding.CompositeDecoder' type=kotlin.Int origin=null
+                      ARG <this>: GET_VAR 'val tmp_7: kotlinx.serialization.encoding.CompositeDecoder declared in <root>.Box.$serializer.deserialize' type=kotlinx.serialization.encoding.CompositeDecoder origin=null
+                      ARG descriptor: GET_VAR 'val tmp_2: kotlinx.serialization.descriptors.SerialDescriptor declared in <root>.Box.$serializer.deserialize' type=kotlinx.serialization.descriptors.SerialDescriptor origin=null
+                  WHEN type=kotlin.Unit origin=null
+                    BRANCH
+                      if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                        ARG arg0: GET_VAR 'var tmp_4: kotlin.Int declared in <root>.Box.$serializer.deserialize' type=kotlin.Int origin=null
+                        ARG arg1: CONST Int type=kotlin.Int value=-1
+                      then: SET_VAR 'var tmp_3: kotlin.Boolean declared in <root>.Box.$serializer.deserialize' type=kotlin.Unit origin=EQ
+                        CONST Boolean type=kotlin.Boolean value=false
+                    BRANCH
+                      if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                        ARG arg0: GET_VAR 'var tmp_4: kotlin.Int declared in <root>.Box.$serializer.deserialize' type=kotlin.Int origin=null
+                        ARG arg1: CONST Int type=kotlin.Int value=0
+                      then: BLOCK type=kotlin.Unit origin=null
+                        SET_VAR 'var tmp_6: T of <root>.Box.$serializer? declared in <root>.Box.$serializer.deserialize' type=kotlin.Unit origin=EQ
+                          CALL 'public abstract fun decodeSerializableElement <T> (descriptor: kotlinx.serialization.descriptors.SerialDescriptor, index: kotlin.Int, deserializer: kotlinx.serialization.DeserializationStrategy<T of kotlinx.serialization.encoding.CompositeDecoder.decodeSerializableElement>, previousValue: T of kotlinx.serialization.encoding.CompositeDecoder.decodeSerializableElement?): T of kotlinx.serialization.encoding.CompositeDecoder.decodeSerializableElement declared in kotlinx.serialization.encoding.CompositeDecoder' type=T of <root>.Box.$serializer origin=null
+                            TYPE_ARG T: T of <root>.Box.$serializer
+                            ARG <this>: GET_VAR 'val tmp_7: kotlinx.serialization.encoding.CompositeDecoder declared in <root>.Box.$serializer.deserialize' type=kotlinx.serialization.encoding.CompositeDecoder origin=null
+                            ARG descriptor: GET_VAR 'val tmp_2: kotlinx.serialization.descriptors.SerialDescriptor declared in <root>.Box.$serializer.deserialize' type=kotlinx.serialization.descriptors.SerialDescriptor origin=null
+                            ARG index: CONST Int type=kotlin.Int value=0
+                            ARG deserializer: GET_FIELD 'FIELD KOTLINX_SERIALIZATION name:typeSerial0 type:kotlinx.serialization.KSerializer<*> visibility:private [final] declared in <root>.Box.$serializer' type=kotlinx.serialization.KSerializer<*> origin=null
+                              receiver: GET_VAR '<this>: <root>.Box.$serializer<T of <root>.Box.$serializer> declared in <root>.Box.$serializer.deserialize' type=<root>.Box.$serializer<T of <root>.Box.$serializer> origin=null
+                            ARG previousValue: GET_VAR 'var tmp_6: T of <root>.Box.$serializer? declared in <root>.Box.$serializer.deserialize' type=T of <root>.Box.$serializer? origin=null
+                        SET_VAR 'var tmp_5: kotlin.Int declared in <root>.Box.$serializer.deserialize' type=kotlin.Unit origin=EQ
+                          CALL 'public final fun or (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+                            ARG <this>: GET_VAR 'var tmp_5: kotlin.Int declared in <root>.Box.$serializer.deserialize' type=kotlin.Int origin=null
+                            ARG other: CONST Int type=kotlin.Int value=1
+                    BRANCH
+                      if: CONST Boolean type=kotlin.Boolean value=true
+                      then: THROW type=kotlin.Nothing
+                        CONSTRUCTOR_CALL 'public constructor <init> (index: kotlin.Int) declared in kotlinx.serialization.UnknownFieldException' type=kotlinx.serialization.UnknownFieldException origin=null
+                          ARG index: GET_VAR 'var tmp_4: kotlin.Int declared in <root>.Box.$serializer.deserialize' type=kotlin.Int origin=null
+          CALL 'public abstract fun endStructure (descriptor: kotlinx.serialization.descriptors.SerialDescriptor): kotlin.Unit declared in kotlinx.serialization.encoding.CompositeDecoder' type=kotlin.Unit origin=null
+            ARG <this>: GET_VAR 'val tmp_7: kotlinx.serialization.encoding.CompositeDecoder declared in <root>.Box.$serializer.deserialize' type=kotlinx.serialization.encoding.CompositeDecoder origin=null
+            ARG descriptor: GET_VAR 'val tmp_2: kotlinx.serialization.descriptors.SerialDescriptor declared in <root>.Box.$serializer.deserialize' type=kotlinx.serialization.descriptors.SerialDescriptor origin=null
+          RETURN type=kotlin.Nothing from='public final fun deserialize (decoder: kotlinx.serialization.encoding.Decoder): <root>.Box<T of <root>.Box.$serializer> declared in <root>.Box.$serializer'
+            CONSTRUCTOR_CALL 'internal constructor <init> (seen0: kotlin.Int, content: T of <root>.Box?, serializationConstructorMarker: kotlinx.serialization.internal.SerializationConstructorMarker?) declared in <root>.Box' type=<root>.Box<T of <root>.Box.$serializer> origin=null
+              TYPE_ARG (of class) T: T of <root>.Box.$serializer
+              ARG seen0: GET_VAR 'var tmp_5: kotlin.Int declared in <root>.Box.$serializer.deserialize' type=kotlin.Int origin=null
+              ARG content: GET_VAR 'var tmp_6: T of <root>.Box.$serializer? declared in <root>.Box.$serializer.deserialize' type=T of <root>.Box.$serializer? origin=null
+              ARG serializationConstructorMarker: CONST Null type=kotlin.Nothing? value=null
+      FUN GENERATED[org.jetbrains.kotlinx.serialization.compiler.fir.SerializationPluginKey] name:serialize visibility:public modality:FINAL returnType:kotlin.Unit
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Box.$serializer<T of <root>.Box.$serializer>
+        VALUE_PARAMETER GENERATED[org.jetbrains.kotlinx.serialization.compiler.fir.SerializationPluginKey] kind:Regular name:encoder index:1 type:kotlinx.serialization.encoding.Encoder
+        VALUE_PARAMETER GENERATED[org.jetbrains.kotlinx.serialization.compiler.fir.SerializationPluginKey] kind:Regular name:value index:2 type:<root>.Box<T of <root>.Box.$serializer>
+        overridden:
+          public abstract fun serialize (encoder: kotlinx.serialization.encoding.Encoder, value: T of kotlinx.serialization.internal.GeneratedSerializer): kotlin.Unit declared in kotlinx.serialization.internal.GeneratedSerializer
+        BLOCK_BODY
+          VAR IR_TEMPORARY_VARIABLE name:tmp_8 type:kotlinx.serialization.descriptors.SerialDescriptor [val]
+            CALL 'public final fun <get-descriptor> (): kotlinx.serialization.descriptors.SerialDescriptor declared in <root>.Box.$serializer' type=kotlinx.serialization.descriptors.SerialDescriptor origin=GET_PROPERTY
+              ARG <this>: GET_VAR '<this>: <root>.Box.$serializer<T of <root>.Box.$serializer> declared in <root>.Box.$serializer.serialize' type=<root>.Box.$serializer<T of <root>.Box.$serializer> origin=null
+          VAR IR_TEMPORARY_VARIABLE name:tmp_9 type:kotlinx.serialization.encoding.CompositeEncoder [val]
+            CALL 'public abstract fun beginStructure (descriptor: kotlinx.serialization.descriptors.SerialDescriptor): kotlinx.serialization.encoding.CompositeEncoder declared in kotlinx.serialization.encoding.Encoder' type=kotlinx.serialization.encoding.CompositeEncoder origin=null
+              ARG <this>: GET_VAR 'encoder: kotlinx.serialization.encoding.Encoder declared in <root>.Box.$serializer.serialize' type=kotlinx.serialization.encoding.Encoder origin=null
+              ARG descriptor: GET_VAR 'val tmp_8: kotlinx.serialization.descriptors.SerialDescriptor declared in <root>.Box.$serializer.serialize' type=kotlinx.serialization.descriptors.SerialDescriptor origin=null
+          CALL 'internal final fun write$Self <T> (self: <root>.Box<T of <root>.Box.write$Self>, output: kotlinx.serialization.encoding.CompositeEncoder, serialDesc: kotlinx.serialization.descriptors.SerialDescriptor, typeSerial0: kotlinx.serialization.KSerializer<T of <root>.Box.write$Self>): kotlin.Unit declared in <root>.Box' type=kotlin.Unit origin=null
+            TYPE_ARG T: <none>
+            ARG self: GET_VAR 'value: <root>.Box<T of <root>.Box.$serializer> declared in <root>.Box.$serializer.serialize' type=<root>.Box<T of <root>.Box.$serializer> origin=null
+            ARG output: GET_VAR 'val tmp_9: kotlinx.serialization.encoding.CompositeEncoder declared in <root>.Box.$serializer.serialize' type=kotlinx.serialization.encoding.CompositeEncoder origin=null
+            ARG serialDesc: GET_VAR 'val tmp_8: kotlinx.serialization.descriptors.SerialDescriptor declared in <root>.Box.$serializer.serialize' type=kotlinx.serialization.descriptors.SerialDescriptor origin=null
+            ARG typeSerial0: GET_FIELD 'FIELD KOTLINX_SERIALIZATION name:typeSerial0 type:kotlinx.serialization.KSerializer<*> visibility:private [final] declared in <root>.Box.$serializer' type=kotlinx.serialization.KSerializer<*> origin=null
+              receiver: GET_VAR '<this>: <root>.Box.$serializer<T of <root>.Box.$serializer> declared in <root>.Box.$serializer.serialize' type=<root>.Box.$serializer<T of <root>.Box.$serializer> origin=null
+          CALL 'public abstract fun endStructure (descriptor: kotlinx.serialization.descriptors.SerialDescriptor): kotlin.Unit declared in kotlinx.serialization.encoding.CompositeEncoder' type=kotlin.Unit origin=null
+            ARG <this>: GET_VAR 'val tmp_9: kotlinx.serialization.encoding.CompositeEncoder declared in <root>.Box.$serializer.serialize' type=kotlinx.serialization.encoding.CompositeEncoder origin=null
+            ARG descriptor: GET_VAR 'val tmp_8: kotlinx.serialization.descriptors.SerialDescriptor declared in <root>.Box.$serializer.serialize' type=kotlinx.serialization.descriptors.SerialDescriptor origin=null
+      FUN GENERATED[org.jetbrains.kotlinx.serialization.compiler.fir.SerializationPluginKey] name:typeParametersSerializers visibility:public modality:FINAL returnType:kotlin.Array<kotlinx.serialization.KSerializer<*>>
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Box.$serializer<T of <root>.Box.$serializer>
+        overridden:
+          public open fun typeParametersSerializers (): kotlin.Array<kotlinx.serialization.KSerializer<*>> declared in kotlinx.serialization.internal.GeneratedSerializer
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun typeParametersSerializers (): kotlin.Array<kotlinx.serialization.KSerializer<*>> declared in <root>.Box.$serializer'
+            CALL 'public final fun arrayOf <T> (vararg elements: T of kotlin.arrayOf): kotlin.Array<T of kotlin.arrayOf> declared in kotlin' type=kotlin.Array<kotlinx.serialization.KSerializer<*>> origin=null
+              TYPE_ARG T: kotlinx.serialization.KSerializer<*>
+              ARG elements: VARARG type=kotlin.Array<kotlinx.serialization.KSerializer<*>> varargElementType=kotlinx.serialization.KSerializer<*>
+                GET_FIELD 'FIELD KOTLINX_SERIALIZATION name:typeSerial0 type:kotlinx.serialization.KSerializer<*> visibility:private [final] declared in <root>.Box.$serializer' type=kotlinx.serialization.KSerializer<*> origin=null
+                  receiver: GET_VAR '<this>: <root>.Box.$serializer<T of <root>.Box.$serializer> declared in <root>.Box.$serializer.typeParametersSerializers' type=<root>.Box.$serializer<T of <root>.Box.$serializer> origin=null
+    CONSTRUCTOR KOTLINX_SERIALIZATION visibility:internal returnType:<root>.Box<T of <root>.Box>
+      VALUE_PARAMETER KOTLINX_SERIALIZATION kind:Regular name:seen0 index:0 type:kotlin.Int
+      VALUE_PARAMETER KOTLINX_SERIALIZATION kind:Regular name:content index:1 type:T of <root>.Box?
+      VALUE_PARAMETER KOTLINX_SERIALIZATION kind:Regular name:serializationConstructorMarker index:2 type:kotlinx.serialization.internal.SerializationConstructorMarker?
+      BLOCK_BODY
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+              ARG <this>: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+                ARG arg0: CONST Int type=kotlin.Int value=1
+                ARG arg1: CALL 'public final fun and (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+                  ARG <this>: CONST Int type=kotlin.Int value=1
+                  ARG other: GET_VAR 'seen0: kotlin.Int declared in <root>.Box.<init>' type=kotlin.Int origin=null
+            then: CALL 'public final fun throwMissingFieldException (seen: kotlin.Int, goldenMask: kotlin.Int, descriptor: kotlinx.serialization.descriptors.SerialDescriptor): kotlin.Unit declared in kotlinx.serialization.internal' type=kotlin.Unit origin=null
+              ARG seen: GET_VAR 'seen0: kotlin.Int declared in <root>.Box.<init>' type=kotlin.Int origin=null
+              ARG goldenMask: CONST Int type=kotlin.Int value=1
+              ARG descriptor: GET_FIELD 'FIELD KOTLINX_SERIALIZATION name:$cachedDescriptor type:kotlinx.serialization.descriptors.SerialDescriptor visibility:private [final] declared in <root>.Box.Companion' type=kotlinx.serialization.descriptors.SerialDescriptor origin=null
+                receiver: GET_OBJECT 'CLASS GENERATED[org.jetbrains.kotlinx.serialization.compiler.fir.SerializationPluginKey] OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]' type=<root>.Box.Companion
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:content type:T of <root>.Box visibility:private [final]' type=kotlin.Unit origin=null
+          receiver: GET_VAR '<this>: <root>.Box<T of <root>.Box> declared in <root>.Box' type=<root>.Box<T of <root>.Box> origin=null
+          value: GET_VAR 'content: T of <root>.Box? declared in <root>.Box.<init>' type=T of <root>.Box? origin=null
+    CONSTRUCTOR visibility:public returnType:<root>.Box<T of <root>.Box> [primary]
+      VALUE_PARAMETER kind:Regular name:content index:0 type:T of <root>.Box
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Box modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+    FUN KOTLINX_SERIALIZATION name:write$Self visibility:internal modality:FINAL returnType:kotlin.Unit [companion]
+      TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+      VALUE_PARAMETER KOTLINX_SERIALIZATION kind:Regular name:self index:0 type:<root>.Box<T of <root>.Box.write$Self>
+      VALUE_PARAMETER KOTLINX_SERIALIZATION kind:Regular name:output index:1 type:kotlinx.serialization.encoding.CompositeEncoder
+      VALUE_PARAMETER KOTLINX_SERIALIZATION kind:Regular name:serialDesc index:2 type:kotlinx.serialization.descriptors.SerialDescriptor
+      VALUE_PARAMETER KOTLINX_SERIALIZATION kind:Regular name:typeSerial0 index:3 type:kotlinx.serialization.KSerializer<T of <root>.Box.write$Self>
+      annotations:
+        JvmStatic
+      BLOCK_BODY
+        CALL 'public abstract fun encodeSerializableElement <T> (descriptor: kotlinx.serialization.descriptors.SerialDescriptor, index: kotlin.Int, serializer: kotlinx.serialization.SerializationStrategy<T of kotlinx.serialization.encoding.CompositeEncoder.encodeSerializableElement>, value: T of kotlinx.serialization.encoding.CompositeEncoder.encodeSerializableElement): kotlin.Unit declared in kotlinx.serialization.encoding.CompositeEncoder' type=kotlin.Unit origin=null
+          TYPE_ARG T: T of <root>.Box
+          ARG <this>: GET_VAR 'output: kotlinx.serialization.encoding.CompositeEncoder declared in <root>.Box.write$Self' type=kotlinx.serialization.encoding.CompositeEncoder origin=null
+          ARG descriptor: GET_VAR 'serialDesc: kotlinx.serialization.descriptors.SerialDescriptor declared in <root>.Box.write$Self' type=kotlinx.serialization.descriptors.SerialDescriptor origin=null
+          ARG index: CONST Int type=kotlin.Int value=0
+          ARG serializer: GET_VAR 'typeSerial0: kotlinx.serialization.KSerializer<T of <root>.Box.write$Self> declared in <root>.Box.write$Self' type=kotlinx.serialization.KSerializer<T of <root>.Box.write$Self> origin=null
+          ARG value: CALL 'public final fun <get-content> (): T of <root>.Box declared in <root>.Box' type=T of <root>.Box origin=GET_PROPERTY
+            ARG <this>: GET_VAR 'self: <root>.Box<T of <root>.Box.write$Self> declared in <root>.Box.write$Self' type=<root>.Box<T of <root>.Box.write$Self> origin=null
+  CLASS CLASS name:Leaf modality:FINAL visibility:public superTypes:[<root>.Base]
+    annotations:
+      Serializable(with = <null>)
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Leaf
+    PROPERTY name:value visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.String visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'value: kotlin.String declared in <root>.Leaf.<init>' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:FINAL returnType:kotlin.String
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Leaf
+        correspondingProperty: PROPERTY name:value visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-value> (): kotlin.String declared in <root>.Leaf'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
+              receiver: GET_VAR '<this>: <root>.Leaf declared in <root>.Leaf.<get-value>' type=<root>.Leaf origin=null
+    CLASS GENERATED[org.jetbrains.kotlinx.serialization.compiler.fir.SerializationPluginKey] OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]
+      thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Leaf.Companion
+      CONSTRUCTOR GENERATED[org.jetbrains.kotlinx.serialization.compiler.fir.SerializationPluginKey] visibility:private returnType:<root>.Leaf.Companion [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS GENERATED[org.jetbrains.kotlinx.serialization.compiler.fir.SerializationPluginKey] OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]' type=kotlin.Unit
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+        overridden:
+          public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        overridden:
+          public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        overridden:
+          public open fun toString (): kotlin.String declared in kotlin.Any
+      FUN GENERATED[org.jetbrains.kotlinx.serialization.compiler.fir.SerializationPluginKey] name:serializer visibility:public modality:FINAL returnType:kotlinx.serialization.KSerializer<<root>.Leaf>
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Leaf.Companion
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun serializer (): kotlinx.serialization.KSerializer<<root>.Leaf> declared in <root>.Leaf.Companion'
+            GET_OBJECT 'CLASS KOTLINX_SERIALIZATION OBJECT name:$serializer modality:FINAL visibility:public superTypes:[kotlinx.serialization.internal.GeneratedSerializer<<root>.Leaf>]' type=<root>.Leaf.$serializer
+    CLASS KOTLINX_SERIALIZATION OBJECT name:$serializer modality:FINAL visibility:public superTypes:[kotlinx.serialization.internal.GeneratedSerializer<<root>.Leaf>]
+      annotations:
+        Deprecated(message = "This synthesized declaration should not be used directly", replaceWith = <null>, level = DeprecationLevel.HIDDEN)
+      thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Leaf.$serializer
+      PROPERTY GENERATED[org.jetbrains.kotlinx.serialization.compiler.fir.SerializationPluginKey] name:descriptor visibility:public modality:FINAL [val]
+        overridden:
+          public abstract descriptor: kotlinx.serialization.descriptors.SerialDescriptor declared in kotlinx.serialization.internal.GeneratedSerializer
+        FIELD PROPERTY_BACKING_FIELD name:descriptor type:kotlinx.serialization.descriptors.SerialDescriptor visibility:private [final]
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-descriptor> visibility:public modality:FINAL returnType:kotlinx.serialization.descriptors.SerialDescriptor
+          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Leaf.$serializer
+          correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.serialization.compiler.fir.SerializationPluginKey] name:descriptor visibility:public modality:FINAL [val]
+          overridden:
+            public abstract fun <get-descriptor> (): kotlinx.serialization.descriptors.SerialDescriptor declared in kotlinx.serialization.internal.GeneratedSerializer
+          BLOCK_BODY
+            RETURN type=kotlin.Nothing from='public final fun <get-descriptor> (): kotlinx.serialization.descriptors.SerialDescriptor declared in <root>.Leaf.$serializer'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:descriptor type:kotlinx.serialization.descriptors.SerialDescriptor visibility:private [final]' type=kotlinx.serialization.descriptors.SerialDescriptor origin=null
+                receiver: GET_VAR '<this>: <root>.Leaf.$serializer declared in <root>.Leaf.$serializer.<get-descriptor>' type=<root>.Leaf.$serializer origin=null
+      ANONYMOUS_INITIALIZER isStatic=false
+        BLOCK_BODY
+          VAR IR_TEMPORARY_VARIABLE name:tmp_10 type:kotlinx.serialization.internal.PluginGeneratedSerialDescriptor [val]
+            CONSTRUCTOR_CALL 'public constructor <init> (serialName: kotlin.String, generatedSerializer: kotlinx.serialization.internal.GeneratedSerializer<*>?, elementsCount: kotlin.Int) declared in kotlinx.serialization.internal.PluginGeneratedSerialDescriptor' type=kotlinx.serialization.internal.PluginGeneratedSerialDescriptor origin=null
+              ARG serialName: CONST String type=kotlin.String value="Leaf"
+              ARG generatedSerializer: GET_VAR '<this>: <root>.Leaf.$serializer declared in <root>.Leaf.$serializer' type=<root>.Leaf.$serializer origin=null
+              ARG elementsCount: CONST Int type=kotlin.Int value=1
+          CALL 'public final fun addElement (name: kotlin.String, isOptional: kotlin.Boolean): kotlin.Unit declared in kotlinx.serialization.internal.PluginGeneratedSerialDescriptor' type=kotlin.Unit origin=null
+            ARG <this>: GET_VAR 'val tmp_10: kotlinx.serialization.internal.PluginGeneratedSerialDescriptor declared in <root>.Leaf.$serializer' type=kotlinx.serialization.internal.PluginGeneratedSerialDescriptor origin=null
+            ARG name: CONST String type=kotlin.String value="value"
+            ARG isOptional: CONST Boolean type=kotlin.Boolean value=false
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:descriptor type:kotlinx.serialization.descriptors.SerialDescriptor visibility:private [final]' type=kotlin.Unit origin=null
+            receiver: GET_VAR '<this>: <root>.Leaf.$serializer declared in <root>.Leaf.$serializer' type=<root>.Leaf.$serializer origin=null
+            value: GET_VAR 'val tmp_10: kotlinx.serialization.internal.PluginGeneratedSerialDescriptor declared in <root>.Leaf.$serializer' type=kotlinx.serialization.internal.PluginGeneratedSerialDescriptor origin=null
+      CONSTRUCTOR GENERATED[org.jetbrains.kotlinx.serialization.compiler.fir.SerializationPluginKey] visibility:private returnType:<root>.Leaf.$serializer [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS KOTLINX_SERIALIZATION OBJECT name:$serializer modality:FINAL visibility:public superTypes:[kotlinx.serialization.internal.GeneratedSerializer<<root>.Leaf>]' type=kotlin.Unit
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+        overridden:
+          public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlinx.serialization.internal.GeneratedSerializer
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        overridden:
+          public open fun hashCode (): kotlin.Int declared in kotlinx.serialization.internal.GeneratedSerializer
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        overridden:
+          public open fun toString (): kotlin.String declared in kotlinx.serialization.internal.GeneratedSerializer
+      FUN FAKE_OVERRIDE name:typeParametersSerializers visibility:public modality:OPEN returnType:kotlin.Array<kotlinx.serialization.KSerializer<*>> [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlinx.serialization.internal.GeneratedSerializer<<root>.Leaf>
+        overridden:
+          public open fun typeParametersSerializers (): kotlin.Array<kotlinx.serialization.KSerializer<*>> declared in kotlinx.serialization.internal.GeneratedSerializer
+      FUN GENERATED[org.jetbrains.kotlinx.serialization.compiler.fir.SerializationPluginKey] name:childSerializers visibility:public modality:FINAL returnType:kotlin.Array<kotlinx.serialization.KSerializer<*>>
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Leaf.$serializer
+        overridden:
+          public abstract fun childSerializers (): kotlin.Array<kotlinx.serialization.KSerializer<*>> declared in kotlinx.serialization.internal.GeneratedSerializer
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun childSerializers (): kotlin.Array<kotlinx.serialization.KSerializer<*>> declared in <root>.Leaf.$serializer'
+            CALL 'public final fun arrayOf <T> (vararg elements: T of kotlin.arrayOf): kotlin.Array<T of kotlin.arrayOf> declared in kotlin' type=kotlin.Array<kotlinx.serialization.KSerializer<*>> origin=null
+              TYPE_ARG T: kotlinx.serialization.KSerializer<*>
+              ARG elements: VARARG type=kotlin.Array<kotlinx.serialization.KSerializer<*>> varargElementType=kotlinx.serialization.KSerializer<*>
+                GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:StringSerializer modality:FINAL visibility:internal superTypes:[kotlinx.serialization.KSerializer<kotlin.String>]' type=kotlinx.serialization.internal.StringSerializer
+      FUN GENERATED[org.jetbrains.kotlinx.serialization.compiler.fir.SerializationPluginKey] name:deserialize visibility:public modality:FINAL returnType:<root>.Leaf
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Leaf.$serializer
+        VALUE_PARAMETER GENERATED[org.jetbrains.kotlinx.serialization.compiler.fir.SerializationPluginKey] kind:Regular name:decoder index:1 type:kotlinx.serialization.encoding.Decoder
+        overridden:
+          public abstract fun deserialize (decoder: kotlinx.serialization.encoding.Decoder): T of kotlinx.serialization.internal.GeneratedSerializer declared in kotlinx.serialization.internal.GeneratedSerializer
+        BLOCK_BODY
+          VAR IR_TEMPORARY_VARIABLE name:tmp_11 type:kotlinx.serialization.descriptors.SerialDescriptor [val]
+            CALL 'public final fun <get-descriptor> (): kotlinx.serialization.descriptors.SerialDescriptor declared in <root>.Leaf.$serializer' type=kotlinx.serialization.descriptors.SerialDescriptor origin=GET_PROPERTY
+              ARG <this>: GET_VAR '<this>: <root>.Leaf.$serializer declared in <root>.Leaf.$serializer.deserialize' type=<root>.Leaf.$serializer origin=null
+          VAR IR_TEMPORARY_VARIABLE name:tmp_12 type:kotlin.Boolean [var]
+            CONST Boolean type=kotlin.Boolean value=true
+          VAR IR_TEMPORARY_VARIABLE name:tmp_13 type:kotlin.Int [var]
+            CONST Int type=kotlin.Int value=0
+          VAR IR_TEMPORARY_VARIABLE name:tmp_14 type:kotlin.Int [var]
+            CONST Int type=kotlin.Int value=0
+          VAR IR_TEMPORARY_VARIABLE name:tmp_15 type:kotlin.String? [var]
+            CONST Null type=kotlin.String? value=null
+          VAR IR_TEMPORARY_VARIABLE name:tmp_16 type:kotlinx.serialization.encoding.CompositeDecoder [val]
+            CALL 'public abstract fun beginStructure (descriptor: kotlinx.serialization.descriptors.SerialDescriptor): kotlinx.serialization.encoding.CompositeDecoder declared in kotlinx.serialization.encoding.Decoder' type=kotlinx.serialization.encoding.CompositeDecoder origin=null
+              ARG <this>: GET_VAR 'decoder: kotlinx.serialization.encoding.Decoder declared in <root>.Leaf.$serializer.deserialize' type=kotlinx.serialization.encoding.Decoder origin=null
+              ARG descriptor: GET_VAR 'val tmp_11: kotlinx.serialization.descriptors.SerialDescriptor declared in <root>.Leaf.$serializer.deserialize' type=kotlinx.serialization.descriptors.SerialDescriptor origin=null
+          WHEN type=kotlin.Unit origin=null
+            BRANCH
+              if: CALL 'public open fun decodeSequentially (): kotlin.Boolean declared in kotlinx.serialization.encoding.CompositeDecoder' type=kotlin.Boolean origin=null
+                ARG <this>: GET_VAR 'val tmp_16: kotlinx.serialization.encoding.CompositeDecoder declared in <root>.Leaf.$serializer.deserialize' type=kotlinx.serialization.encoding.CompositeDecoder origin=null
+              then: BLOCK type=kotlin.Unit origin=null
+                BLOCK type=kotlin.Unit origin=null
+                  SET_VAR 'var tmp_15: kotlin.String? declared in <root>.Leaf.$serializer.deserialize' type=kotlin.Unit origin=EQ
+                    CALL 'public abstract fun decodeStringElement (descriptor: kotlinx.serialization.descriptors.SerialDescriptor, index: kotlin.Int): kotlin.String declared in kotlinx.serialization.encoding.CompositeDecoder' type=kotlin.String origin=null
+                      ARG <this>: GET_VAR 'val tmp_16: kotlinx.serialization.encoding.CompositeDecoder declared in <root>.Leaf.$serializer.deserialize' type=kotlinx.serialization.encoding.CompositeDecoder origin=null
+                      ARG descriptor: GET_VAR 'val tmp_11: kotlinx.serialization.descriptors.SerialDescriptor declared in <root>.Leaf.$serializer.deserialize' type=kotlinx.serialization.descriptors.SerialDescriptor origin=null
+                      ARG index: CONST Int type=kotlin.Int value=0
+                  SET_VAR 'var tmp_14: kotlin.Int declared in <root>.Leaf.$serializer.deserialize' type=kotlin.Unit origin=EQ
+                    CALL 'public final fun or (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+                      ARG <this>: GET_VAR 'var tmp_14: kotlin.Int declared in <root>.Leaf.$serializer.deserialize' type=kotlin.Int origin=null
+                      ARG other: CONST Int type=kotlin.Int value=1
+            BRANCH
+              if: CONST Boolean type=kotlin.Boolean value=true
+              then: WHILE label=null origin=null
+                condition: GET_VAR 'var tmp_12: kotlin.Boolean declared in <root>.Leaf.$serializer.deserialize' type=kotlin.Boolean origin=null
+                body: BLOCK type=kotlin.Unit origin=null
+                  SET_VAR 'var tmp_13: kotlin.Int declared in <root>.Leaf.$serializer.deserialize' type=kotlin.Unit origin=EQ
+                    CALL 'public abstract fun decodeElementIndex (descriptor: kotlinx.serialization.descriptors.SerialDescriptor): kotlin.Int declared in kotlinx.serialization.encoding.CompositeDecoder' type=kotlin.Int origin=null
+                      ARG <this>: GET_VAR 'val tmp_16: kotlinx.serialization.encoding.CompositeDecoder declared in <root>.Leaf.$serializer.deserialize' type=kotlinx.serialization.encoding.CompositeDecoder origin=null
+                      ARG descriptor: GET_VAR 'val tmp_11: kotlinx.serialization.descriptors.SerialDescriptor declared in <root>.Leaf.$serializer.deserialize' type=kotlinx.serialization.descriptors.SerialDescriptor origin=null
+                  WHEN type=kotlin.Unit origin=null
+                    BRANCH
+                      if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                        ARG arg0: GET_VAR 'var tmp_13: kotlin.Int declared in <root>.Leaf.$serializer.deserialize' type=kotlin.Int origin=null
+                        ARG arg1: CONST Int type=kotlin.Int value=-1
+                      then: SET_VAR 'var tmp_12: kotlin.Boolean declared in <root>.Leaf.$serializer.deserialize' type=kotlin.Unit origin=EQ
+                        CONST Boolean type=kotlin.Boolean value=false
+                    BRANCH
+                      if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                        ARG arg0: GET_VAR 'var tmp_13: kotlin.Int declared in <root>.Leaf.$serializer.deserialize' type=kotlin.Int origin=null
+                        ARG arg1: CONST Int type=kotlin.Int value=0
+                      then: BLOCK type=kotlin.Unit origin=null
+                        SET_VAR 'var tmp_15: kotlin.String? declared in <root>.Leaf.$serializer.deserialize' type=kotlin.Unit origin=EQ
+                          CALL 'public abstract fun decodeStringElement (descriptor: kotlinx.serialization.descriptors.SerialDescriptor, index: kotlin.Int): kotlin.String declared in kotlinx.serialization.encoding.CompositeDecoder' type=kotlin.String origin=null
+                            ARG <this>: GET_VAR 'val tmp_16: kotlinx.serialization.encoding.CompositeDecoder declared in <root>.Leaf.$serializer.deserialize' type=kotlinx.serialization.encoding.CompositeDecoder origin=null
+                            ARG descriptor: GET_VAR 'val tmp_11: kotlinx.serialization.descriptors.SerialDescriptor declared in <root>.Leaf.$serializer.deserialize' type=kotlinx.serialization.descriptors.SerialDescriptor origin=null
+                            ARG index: CONST Int type=kotlin.Int value=0
+                        SET_VAR 'var tmp_14: kotlin.Int declared in <root>.Leaf.$serializer.deserialize' type=kotlin.Unit origin=EQ
+                          CALL 'public final fun or (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+                            ARG <this>: GET_VAR 'var tmp_14: kotlin.Int declared in <root>.Leaf.$serializer.deserialize' type=kotlin.Int origin=null
+                            ARG other: CONST Int type=kotlin.Int value=1
+                    BRANCH
+                      if: CONST Boolean type=kotlin.Boolean value=true
+                      then: THROW type=kotlin.Nothing
+                        CONSTRUCTOR_CALL 'public constructor <init> (index: kotlin.Int) declared in kotlinx.serialization.UnknownFieldException' type=kotlinx.serialization.UnknownFieldException origin=null
+                          ARG index: GET_VAR 'var tmp_13: kotlin.Int declared in <root>.Leaf.$serializer.deserialize' type=kotlin.Int origin=null
+          CALL 'public abstract fun endStructure (descriptor: kotlinx.serialization.descriptors.SerialDescriptor): kotlin.Unit declared in kotlinx.serialization.encoding.CompositeDecoder' type=kotlin.Unit origin=null
+            ARG <this>: GET_VAR 'val tmp_16: kotlinx.serialization.encoding.CompositeDecoder declared in <root>.Leaf.$serializer.deserialize' type=kotlinx.serialization.encoding.CompositeDecoder origin=null
+            ARG descriptor: GET_VAR 'val tmp_11: kotlinx.serialization.descriptors.SerialDescriptor declared in <root>.Leaf.$serializer.deserialize' type=kotlinx.serialization.descriptors.SerialDescriptor origin=null
+          RETURN type=kotlin.Nothing from='public final fun deserialize (decoder: kotlinx.serialization.encoding.Decoder): <root>.Leaf declared in <root>.Leaf.$serializer'
+            CONSTRUCTOR_CALL 'internal constructor <init> (seen0: kotlin.Int, value: kotlin.String?, serializationConstructorMarker: kotlinx.serialization.internal.SerializationConstructorMarker?) declared in <root>.Leaf' type=<root>.Leaf origin=null
+              ARG seen0: GET_VAR 'var tmp_14: kotlin.Int declared in <root>.Leaf.$serializer.deserialize' type=kotlin.Int origin=null
+              ARG value: GET_VAR 'var tmp_15: kotlin.String? declared in <root>.Leaf.$serializer.deserialize' type=kotlin.String? origin=null
+              ARG serializationConstructorMarker: CONST Null type=kotlin.Nothing? value=null
+      FUN GENERATED[org.jetbrains.kotlinx.serialization.compiler.fir.SerializationPluginKey] name:serialize visibility:public modality:FINAL returnType:kotlin.Unit
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Leaf.$serializer
+        VALUE_PARAMETER GENERATED[org.jetbrains.kotlinx.serialization.compiler.fir.SerializationPluginKey] kind:Regular name:encoder index:1 type:kotlinx.serialization.encoding.Encoder
+        VALUE_PARAMETER GENERATED[org.jetbrains.kotlinx.serialization.compiler.fir.SerializationPluginKey] kind:Regular name:value index:2 type:<root>.Leaf
+        overridden:
+          public abstract fun serialize (encoder: kotlinx.serialization.encoding.Encoder, value: T of kotlinx.serialization.internal.GeneratedSerializer): kotlin.Unit declared in kotlinx.serialization.internal.GeneratedSerializer
+        BLOCK_BODY
+          VAR IR_TEMPORARY_VARIABLE name:tmp_17 type:kotlinx.serialization.descriptors.SerialDescriptor [val]
+            CALL 'public final fun <get-descriptor> (): kotlinx.serialization.descriptors.SerialDescriptor declared in <root>.Leaf.$serializer' type=kotlinx.serialization.descriptors.SerialDescriptor origin=GET_PROPERTY
+              ARG <this>: GET_VAR '<this>: <root>.Leaf.$serializer declared in <root>.Leaf.$serializer.serialize' type=<root>.Leaf.$serializer origin=null
+          VAR IR_TEMPORARY_VARIABLE name:tmp_18 type:kotlinx.serialization.encoding.CompositeEncoder [val]
+            CALL 'public abstract fun beginStructure (descriptor: kotlinx.serialization.descriptors.SerialDescriptor): kotlinx.serialization.encoding.CompositeEncoder declared in kotlinx.serialization.encoding.Encoder' type=kotlinx.serialization.encoding.CompositeEncoder origin=null
+              ARG <this>: GET_VAR 'encoder: kotlinx.serialization.encoding.Encoder declared in <root>.Leaf.$serializer.serialize' type=kotlinx.serialization.encoding.Encoder origin=null
+              ARG descriptor: GET_VAR 'val tmp_17: kotlinx.serialization.descriptors.SerialDescriptor declared in <root>.Leaf.$serializer.serialize' type=kotlinx.serialization.descriptors.SerialDescriptor origin=null
+          CALL 'internal final fun write$Self (self: <root>.Leaf, output: kotlinx.serialization.encoding.CompositeEncoder, serialDesc: kotlinx.serialization.descriptors.SerialDescriptor): kotlin.Unit declared in <root>.Leaf' type=kotlin.Unit origin=null
+            ARG self: GET_VAR 'value: <root>.Leaf declared in <root>.Leaf.$serializer.serialize' type=<root>.Leaf origin=null
+            ARG output: GET_VAR 'val tmp_18: kotlinx.serialization.encoding.CompositeEncoder declared in <root>.Leaf.$serializer.serialize' type=kotlinx.serialization.encoding.CompositeEncoder origin=null
+            ARG serialDesc: GET_VAR 'val tmp_17: kotlinx.serialization.descriptors.SerialDescriptor declared in <root>.Leaf.$serializer.serialize' type=kotlinx.serialization.descriptors.SerialDescriptor origin=null
+          CALL 'public abstract fun endStructure (descriptor: kotlinx.serialization.descriptors.SerialDescriptor): kotlin.Unit declared in kotlinx.serialization.encoding.CompositeEncoder' type=kotlin.Unit origin=null
+            ARG <this>: GET_VAR 'val tmp_18: kotlinx.serialization.encoding.CompositeEncoder declared in <root>.Leaf.$serializer.serialize' type=kotlinx.serialization.encoding.CompositeEncoder origin=null
+            ARG descriptor: GET_VAR 'val tmp_17: kotlinx.serialization.descriptors.SerialDescriptor declared in <root>.Leaf.$serializer.serialize' type=kotlinx.serialization.descriptors.SerialDescriptor origin=null
+    CONSTRUCTOR KOTLINX_SERIALIZATION visibility:internal returnType:<root>.Leaf
+      VALUE_PARAMETER KOTLINX_SERIALIZATION kind:Regular name:seen0 index:0 type:kotlin.Int
+      VALUE_PARAMETER KOTLINX_SERIALIZATION kind:Regular name:value index:1 type:kotlin.String?
+      VALUE_PARAMETER KOTLINX_SERIALIZATION kind:Regular name:serializationConstructorMarker index:2 type:kotlinx.serialization.internal.SerializationConstructorMarker?
+      BLOCK_BODY
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+              ARG <this>: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+                ARG arg0: CONST Int type=kotlin.Int value=1
+                ARG arg1: CALL 'public final fun and (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+                  ARG <this>: CONST Int type=kotlin.Int value=1
+                  ARG other: GET_VAR 'seen0: kotlin.Int declared in <root>.Leaf.<init>' type=kotlin.Int origin=null
+            then: CALL 'public final fun throwMissingFieldException (seen: kotlin.Int, goldenMask: kotlin.Int, descriptor: kotlinx.serialization.descriptors.SerialDescriptor): kotlin.Unit declared in kotlinx.serialization.internal' type=kotlin.Unit origin=null
+              ARG seen: GET_VAR 'seen0: kotlin.Int declared in <root>.Leaf.<init>' type=kotlin.Int origin=null
+              ARG goldenMask: CONST Int type=kotlin.Int value=1
+              ARG descriptor: CALL 'public final fun <get-descriptor> (): kotlinx.serialization.descriptors.SerialDescriptor declared in <root>.Leaf.$serializer' type=kotlinx.serialization.descriptors.SerialDescriptor origin=GET_PROPERTY
+                ARG <this>: GET_OBJECT 'CLASS KOTLINX_SERIALIZATION OBJECT name:$serializer modality:FINAL visibility:public superTypes:[kotlinx.serialization.internal.GeneratedSerializer<<root>.Leaf>]' type=<root>.Leaf.$serializer
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Base'
+        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.String visibility:private [final]' type=kotlin.Unit origin=null
+          receiver: GET_VAR '<this>: <root>.Leaf declared in <root>.Leaf' type=<root>.Leaf origin=null
+          value: GET_VAR 'value: kotlin.String? declared in <root>.Leaf.<init>' type=kotlin.String? origin=null
+    CONSTRUCTOR visibility:public returnType:<root>.Leaf [primary]
+      VALUE_PARAMETER kind:Regular name:value index:0 type:kotlin.String
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Base'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Leaf modality:FINAL visibility:public superTypes:[<root>.Base]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Base
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.Base
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.Base
+    FUN KOTLINX_SERIALIZATION name:write$Self visibility:internal modality:FINAL returnType:kotlin.Unit [companion]
+      VALUE_PARAMETER KOTLINX_SERIALIZATION kind:Regular name:self index:0 type:<root>.Leaf
+      VALUE_PARAMETER KOTLINX_SERIALIZATION kind:Regular name:output index:1 type:kotlinx.serialization.encoding.CompositeEncoder
+      VALUE_PARAMETER KOTLINX_SERIALIZATION kind:Regular name:serialDesc index:2 type:kotlinx.serialization.descriptors.SerialDescriptor
+      annotations:
+        JvmStatic
+      BLOCK_BODY
+        CALL 'public abstract fun encodeStringElement (descriptor: kotlinx.serialization.descriptors.SerialDescriptor, index: kotlin.Int, value: kotlin.String): kotlin.Unit declared in kotlinx.serialization.encoding.CompositeEncoder' type=kotlin.Unit origin=null
+          ARG <this>: GET_VAR 'output: kotlinx.serialization.encoding.CompositeEncoder declared in <root>.Leaf.write$Self' type=kotlinx.serialization.encoding.CompositeEncoder origin=null
+          ARG descriptor: GET_VAR 'serialDesc: kotlinx.serialization.descriptors.SerialDescriptor declared in <root>.Leaf.write$Self' type=kotlinx.serialization.descriptors.SerialDescriptor origin=null
+          ARG index: CONST Int type=kotlin.Int value=0
+          ARG value: CALL 'public final fun <get-value> (): kotlin.String declared in <root>.Leaf' type=kotlin.String origin=GET_PROPERTY
+            ARG <this>: GET_VAR 'self: <root>.Leaf declared in <root>.Leaf.write$Self' type=<root>.Leaf origin=null
+  FUN name:box visibility:public modality:FINAL returnType:kotlin.String
+    BLOCK_BODY
+      VAR name:serial type:kotlinx.serialization.KSerializer<<root>.Box<<root>.Leaf>> [val]
+        CALL 'public final fun serializer <T> (typeSerial0: kotlinx.serialization.KSerializer<T of <root>.Box.Companion.serializer>): kotlinx.serialization.KSerializer<<root>.Box<T of <root>.Box.Companion.serializer>> declared in <root>.Box.Companion' type=kotlinx.serialization.KSerializer<<root>.Box<<root>.Leaf>> origin=null
+          TYPE_ARG T: <root>.Leaf
+          ARG <this>: GET_OBJECT 'CLASS GENERATED[org.jetbrains.kotlinx.serialization.compiler.fir.SerializationPluginKey] OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]' type=<root>.Box.Companion
+          ARG typeSerial0: CALL 'public final fun serializer (): kotlinx.serialization.KSerializer<<root>.Leaf> declared in <root>.Leaf.Companion' type=kotlinx.serialization.KSerializer<<root>.Leaf> origin=null
+            ARG <this>: GET_OBJECT 'CLASS GENERATED[org.jetbrains.kotlinx.serialization.compiler.fir.SerializationPluginKey] OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]' type=<root>.Leaf.Companion
+      VAR name:target type:kotlin.String [val]
+        CONST String type=kotlin.String value="{\"content\":{\"value\":\"x\"}}"
+      VAR name:decoded type:<root>.Box<<root>.Leaf> [val]
+        CALL 'public final fun decodeFromString <T> (deserializer: kotlinx.serialization.DeserializationStrategy<T of kotlinx.serialization.json.Json.Default.decodeFromString>, string: kotlin.String): T of kotlinx.serialization.json.Json.Default.decodeFromString declared in kotlinx.serialization.json.Json.Default' type=<root>.Box<<root>.Leaf> origin=null
+          TYPE_ARG T: <root>.Box<<root>.Leaf>
+          ARG <this>: GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Default modality:FINAL visibility:public [companion] superTypes:[kotlinx.serialization.json.Json]' type=kotlinx.serialization.json.Json.Default
+          ARG deserializer: GET_VAR 'val serial: kotlinx.serialization.KSerializer<<root>.Box<<root>.Leaf>> declared in <root>.box' type=kotlinx.serialization.KSerializer<<root>.Box<<root>.Leaf>> origin=null
+          ARG string: GET_VAR 'val target: kotlin.String declared in <root>.box' type=kotlin.String origin=null
+      WHEN type=kotlin.Unit origin=IF
+        BRANCH
+          if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+            ARG <this>: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+              ARG arg0: CALL 'public final fun <get-value> (): kotlin.String declared in <root>.Leaf' type=kotlin.String origin=GET_PROPERTY
+                ARG <this>: CALL 'public final fun <get-content> (): T of <root>.Box declared in <root>.Box' type=<root>.Leaf origin=GET_PROPERTY
+                  ARG <this>: GET_VAR 'val decoded: <root>.Box<<root>.Leaf> declared in <root>.box' type=<root>.Box<<root>.Leaf> origin=null
+              ARG arg1: CONST String type=kotlin.String value="x"
+          then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+            STRING_CONCATENATION type=kotlin.String
+              CONST String type=kotlin.String value="Incorrect deserialization: "
+              CALL 'public final fun <get-value> (): kotlin.String declared in <root>.Leaf' type=kotlin.String origin=GET_PROPERTY
+                ARG <this>: CALL 'public final fun <get-content> (): T of <root>.Box declared in <root>.Box' type=<root>.Leaf origin=GET_PROPERTY
+                  ARG <this>: GET_VAR 'val decoded: <root>.Box<<root>.Leaf> declared in <root>.box' type=<root>.Box<<root>.Leaf> origin=null
+      VAR name:encoded type:kotlin.String [val]
+        CALL 'public final fun encodeToString <T> (serializer: kotlinx.serialization.SerializationStrategy<T of kotlinx.serialization.json.Json.Default.encodeToString>, value: T of kotlinx.serialization.json.Json.Default.encodeToString): kotlin.String declared in kotlinx.serialization.json.Json.Default' type=kotlin.String origin=null
+          TYPE_ARG T: <root>.Box<<root>.Leaf>
+          ARG <this>: GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Default modality:FINAL visibility:public [companion] superTypes:[kotlinx.serialization.json.Json]' type=kotlinx.serialization.json.Json.Default
+          ARG serializer: GET_VAR 'val serial: kotlinx.serialization.KSerializer<<root>.Box<<root>.Leaf>> declared in <root>.box' type=kotlinx.serialization.KSerializer<<root>.Box<<root>.Leaf>> origin=null
+          ARG value: GET_VAR 'val decoded: <root>.Box<<root>.Leaf> declared in <root>.box' type=<root>.Box<<root>.Leaf> origin=null
+      WHEN type=kotlin.Unit origin=IF
+        BRANCH
+          if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+            ARG <this>: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+              ARG arg0: GET_VAR 'val encoded: kotlin.String declared in <root>.box' type=kotlin.String origin=null
+              ARG arg1: GET_VAR 'val target: kotlin.String declared in <root>.box' type=kotlin.String origin=null
+          then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+            STRING_CONCATENATION type=kotlin.String
+              CONST String type=kotlin.String value="Incorrect serialization: "
+              GET_VAR 'val encoded: kotlin.String declared in <root>.box' type=kotlin.String origin=null
+      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+        CONST String type=kotlin.String value="OK"

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.js.dsl
 
 import org.gradle.api.Action
 import org.gradle.api.Named
+import org.gradle.api.NamedDomainObjectSet
 import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
@@ -237,5 +238,35 @@ interface KotlinJsBrowserTestDsl : BrowserTestRunnerTopLevelConfigDsl {
      *
      * Use this API to collect browser test runner configuration for reporting, extra processing, or configure additional tasks.
      */
+    @Deprecated(
+        "Use 'browserRunners' instead.",
+        ReplaceWith("browserRunners"),
+    )
     val allBrowserRunners: Provider<Map<String, KotlinBrowserTestRunnerDsl>>
+
+    /**
+     * Live collection of all enabled browser test runners declared via [chromium], [firefox] or [webkit].
+     *
+     * Use this API to react on declared browser test runners for extra processing, or configure additional tasks.
+     *
+     * Sample:
+     *
+     *     kotlin {
+     *       js {
+     *         browser {
+     *           test {
+     *             chromium()
+     *             browserRunners.configureEach {
+     *               timeout = 20.seconds
+     *               tasks.register("process") {}
+     *             }
+     *           }
+     *         }
+     *       }
+     *     }
+     *
+     * Adding runners directly to this collection is not supported.
+     * Use [chromium], [firefox] or [webkit] to declare browser test runners instead.
+     */
+    val browserRunners: NamedDomainObjectSet<KotlinBrowserTestRunnerDsl>
 }

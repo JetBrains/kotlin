@@ -24,13 +24,19 @@ public class ReplViaApiDiagnosticsTestGenerated extends AbstractReplViaApiDiagno
 
   @Test
   public void testAllFilesPresentInRepl() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/scripting/scripting-tests/testData/diagnostics/repl"), Pattern.compile("^(.+)\\.kts$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV|disabled)(\\.repl)?\\.kts?$"), true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/scripting/scripting-tests/testData/diagnostics/repl"), Pattern.compile("^(.+)\\.kts$"), Pattern.compile("^(.+)\\.(reversed|partialBody|ll|latestLV|disabled)(\\.repl)?\\.kts?$"), true);
   }
 
   @Test
   @TestMetadata("cast_assignment.repl.kts")
   public void testCast_assignment_repl() {
     run("cast_assignment.repl.kts");
+  }
+
+  @Test
+  @TestMetadata("continues_after_erroneous_snippets.repl.kts")
+  public void testContinues_after_erroneous_snippets_repl() {
+    run("continues_after_erroneous_snippets.repl.kts");
   }
 
   @Test
@@ -58,9 +64,21 @@ public class ReplViaApiDiagnosticsTestGenerated extends AbstractReplViaApiDiagno
   }
 
   @Test
+  @TestMetadata("implicit_return_type_resolved_from_use.repl.kts")
+  public void testImplicit_return_type_resolved_from_use_repl() {
+    run("implicit_return_type_resolved_from_use.repl.kts");
+  }
+
+  @Test
   @TestMetadata("import_visible_in_next_snippet.repl.kts")
   public void testImport_visible_in_next_snippet_repl() {
     run("import_visible_in_next_snippet.repl.kts");
+  }
+
+  @Test
+  @TestMetadata("long_history_shadowing.repl.kts")
+  public void testLong_history_shadowing_repl() {
+    run("long_history_shadowing.repl.kts");
   }
 
   @Test
@@ -79,6 +97,12 @@ public class ReplViaApiDiagnosticsTestGenerated extends AbstractReplViaApiDiagno
   @TestMetadata("property_constant_initializer.repl.kts")
   public void testProperty_constant_initializer_repl() {
     run("property_constant_initializer.repl.kts");
+  }
+
+  @Test
+  @TestMetadata("property_initialization_within_snippet.repl.kts")
+  public void testProperty_initialization_within_snippet_repl() {
+    run("property_initialization_within_snippet.repl.kts");
   }
 
   @Test
@@ -130,6 +154,12 @@ public class ReplViaApiDiagnosticsTestGenerated extends AbstractReplViaApiDiagno
   }
 
   @Test
+  @TestMetadata("smartcast_on_property_from_previous_snippet.repl.kts")
+  public void testSmartcast_on_property_from_previous_snippet_repl() {
+    run("smartcast_on_property_from_previous_snippet.repl.kts");
+  }
+
+  @Test
   @TestMetadata("unsafe_cast_assignment_within_class.repl.kts")
   public void testUnsafe_cast_assignment_within_class_repl() {
     run("unsafe_cast_assignment_within_class.repl.kts");
@@ -157,5 +187,11 @@ public class ReplViaApiDiagnosticsTestGenerated extends AbstractReplViaApiDiagno
   @TestMetadata("unsafe_cast_in_loop.repl.kts")
   public void testUnsafe_cast_in_loop_repl() {
     run("unsafe_cast_in_loop.repl.kts");
+  }
+
+  @Test
+  @TestMetadata("val_reassignment_across_snippets.repl.kts")
+  public void testVal_reassignment_across_snippets_repl() {
+    run("val_reassignment_across_snippets.repl.kts");
   }
 }

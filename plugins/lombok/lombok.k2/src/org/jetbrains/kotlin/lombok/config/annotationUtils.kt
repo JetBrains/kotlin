@@ -66,6 +66,7 @@ object LombokConfigNames {
     const val BUILDER_FLAG_USAGE_CONFIG = "lombok.builder.flagUsage"
     const val SUPER_BUILDER_FLAG_USAGE_CONFIG = "lombok.superBuilder.flagUsage"
     const val SINGULAR_AUTO_CONFIG = "lombok.singular.auto"
+    const val SINGULAR_USE_GUAVA_CONFIG = "lombok.singular.useGuava"
     const val LOG_FIELD_NAME_CONFIG = "lombok.log.fieldName"
     const val LOG_FIELD_IS_STATIC_CONFIG = "lombok.log.fieldIsStatic"
     const val LOG_FLAG_USAGE_CONFIG = "lombok.log.flagUsage"
@@ -107,6 +108,8 @@ object LombokConfigNames {
     const val NO_ARGS_CONSTRUCTOR_FLAG_USAGE_CONFIG = "lombok.noArgsConstructor.flagUsage"
     const val ALL_ARGS_CONSTRUCTOR_FLAG_USAGE_CONFIG = "lombok.allArgsConstructor.flagUsage"
     const val REQUIRED_ARGS_CONSTRUCTOR_FLAG_USAGE_CONFIG = "lombok.requiredArgsConstructor.flagUsage"
+
+    const val FIELD_DEFAULTS_PRIVATE = "lombok.fieldDefaults.defaultPrivate"
 }
 
 enum class FlagUsageValue {

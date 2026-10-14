@@ -337,7 +337,20 @@ Root-cause each failure:
 
 ---
 
-## Step 6 — Handover (do not commit)
+### Step 6 - Update CI infrastructure
+
+Repository CI configuration should also be updated to properly support new Gradle version in the repository:
+1. Ask user the path to the infrastructure repository
+2. In this repository create a new branch `gradle-version-update`
+3. Update constant `GRADLE_VERSION_DEFAULT` in `.teamcity/common/gradle.kt` file to new version
+4. Commit the change with the following commit message:
+```text
+[Build] Update GRADLE_VERSION_DEFAULT to <new Gradle version>
+```
+
+---
+
+## Step 7 — Handover (do not commit)
 
 The user reviews and commits this change themselves; a wrapper bump usually gets split into a core
 commit plus per-area fix commits, and that split is theirs to make. **Leave everything in the
@@ -351,7 +364,8 @@ Finish by reporting:
 3. **Anything still not clean** — in particular any warning that still needs
    `-Pkotlin.build.disable.werror=true` or any step you could only get through with a flag.
 4. **`local.properties` restored** to its original content (confirm this explicitly).
-5. **A suggested commit message** for the user to apply if they want it — the style prior bumps
+5. **Ask user to update infrastructure** by creating merge request in the infrastructure repository.
+6. **A suggested commit message** for the user to apply if they want it — the style prior bumps
    used (`91b45e1ee110`):
 
    ```
@@ -368,9 +382,9 @@ Finish by reporting:
 
 ## Out of scope
 
-- **The other four `gradle-wrapper.properties` files** —
+- **The other 3 `gradle-wrapper.properties` files** —
   `kotlin-native/performance/`, `kotlin-native/backend.native/tests/samples/`,
-  `libraries/tools/kotlin-stdlib-docs/`, `libraries/tools/kotlin-stdlib-docs-legacy/` — are
+  `libraries/tools/kotlin-stdlib-docs/` — are
   independent standalone sub-builds, intentionally pinned to their own Gradle versions. Do
   **not** sync them with the root wrapper.
 - **`GRADLE_COMMON_COMPILE_API_VERSION`** → `build-tools-bump-gradle-api`.

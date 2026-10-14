@@ -40,7 +40,7 @@ import kotlin.time.Instant
  *   - Comparing UUIDs to establish ordering or equality.
  *
  * Note that [Uuid] has value semantics, and it may become a value class in the future
- * (see (KEEP-0454)[https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0454-better-immutability-value-classes-MFVC.md]
+ * (see [KEEP-0454](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0454-better-immutability-value-classes-MFVC.md)
  * for more details about multi-field value classes). It is not recommended
  * to rely on [Uuid] identity (i.e., abstain from comparing two [Uuid]s using `===`
  * or having an [kotlin.concurrent.atomics.AtomicReference] to it). Identity-based operations on [Uuid]
@@ -578,7 +578,7 @@ public class Uuid private constructor(
          * @see Uuid.generateV4
          * @sample samples.uuid.Uuids.random
          */
-        public fun random(): Uuid = @OptIn(ExperimentalUuidApi::class) generateV4()
+        public fun random(): Uuid = generateV4()
 
         /**
          * Generates a new random [Uuid] instance.
@@ -614,8 +614,8 @@ public class Uuid private constructor(
          *
          * @sample samples.uuid.Uuids.v4
          */
-        @SinceKotlin("2.3")
-        @ExperimentalUuidApi
+        @SinceKotlin("2.5")
+        @WasExperimental(ExperimentalUuidApi::class)
         public fun generateV4(): Uuid = secureRandomUuid()
 
         /**
@@ -665,8 +665,8 @@ public class Uuid private constructor(
          *
          * @sample samples.uuid.Uuids.v7
          */
-        @SinceKotlin("2.3")
-        @ExperimentalUuidApi
+        @SinceKotlin("2.5")
+        @WasExperimental(ExperimentalUuidApi::class)
         public fun generateV7(): Uuid = generateV7(Clock.System)
 
         /**

@@ -251,7 +251,7 @@ inside suspend functions and lambdas to distinguish them from user code by debug
         value = "-Xjdk-release",
         valueDescription = "<version>",
         description = """Compile against the specified JDK API version, similarly to javac's '-release'. This requires JDK 9 or newer.
-The supported versions depend on the JDK used; for JDK 17+, the supported versions are 1.8 and 9–27.
+The supported versions depend on the JDK used; for JDK 17+, the supported versions are 1.8 and 9–28.
 This also sets the value of '-jvm-target' to be equal to the selected JDK version.""",
     )
     var jdkRelease: String? = null
@@ -624,14 +624,13 @@ This can be used in the event of problems with the new implementation.""",
         }
 
     @Argument(
-        value = "-Xvalhalla-support",
-        valueDescription = "{none|primitives|primitivesAndFullValueClasses|allValues}",
-        description = "Select which declarations are compiled to behave as experimental Project Valhalla value classes. Use 'none' for a JDK that is not Valhalla-compatible (the default); any other mode requires a Valhalla-compatible JDK.",
+        value = "-Xvalhalla-value-classes",
+        description = "Compile value classes to behave as experimental Project Valhalla value classes. Requires JVM target 28 or later and the '-Xjvm-enable-preview' flag.",
     )
-    var valhallaSupport: String? = null
+    var valhallaValueClasses: Boolean = false
         set(value) {
             checkFrozen()
-            field = if (value.isNullOrEmpty()) null else value
+            field = value
         }
 
     @Argument(
@@ -744,7 +743,7 @@ The default value is 'indy' if the JVM target version is 21 or greater, and 'inl
     @Argument(
         value = "-jvm-target",
         valueDescription = "<version>",
-        description = "The target version of the generated JVM bytecode (1.8 and 9–27), with 1.8 as the default.",
+        description = "The target version of the generated JVM bytecode (1.8 and 9–28), with 1.8 as the default.",
     )
     var jvmTarget: String? = null
         set(value) {

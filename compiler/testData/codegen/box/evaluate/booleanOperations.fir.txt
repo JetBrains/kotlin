@@ -34,6 +34,30 @@ FILE: booleanOperations.kt
         public get(): R|kotlin/Boolean|
     public final const [EvaluatedValue=Boolean(false)] val xor4: R|kotlin/Boolean| = R|/falseVal|.R|kotlin/Boolean.xor|(R|/falseVal|)
         public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(true)] val infixAnd1: R|kotlin/Boolean| = R|/trueVal|.R|kotlin/Boolean.and|(R|/trueVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(false)] val infixAnd2: R|kotlin/Boolean| = R|/trueVal|.R|kotlin/Boolean.and|(R|/falseVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(false)] val infixAnd3: R|kotlin/Boolean| = R|/falseVal|.R|kotlin/Boolean.and|(R|/trueVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(false)] val infixAnd4: R|kotlin/Boolean| = R|/falseVal|.R|kotlin/Boolean.and|(R|/falseVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(true)] val infixOr1: R|kotlin/Boolean| = R|/trueVal|.R|kotlin/Boolean.or|(R|/trueVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(true)] val infixOr2: R|kotlin/Boolean| = R|/trueVal|.R|kotlin/Boolean.or|(R|/falseVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(true)] val infixOr3: R|kotlin/Boolean| = R|/falseVal|.R|kotlin/Boolean.or|(R|/trueVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(false)] val infixOr4: R|kotlin/Boolean| = R|/falseVal|.R|kotlin/Boolean.or|(R|/falseVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(false)] val infixXor1: R|kotlin/Boolean| = R|/trueVal|.R|kotlin/Boolean.xor|(R|/trueVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(true)] val infixXor2: R|kotlin/Boolean| = R|/trueVal|.R|kotlin/Boolean.xor|(R|/falseVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(true)] val infixXor3: R|kotlin/Boolean| = R|/falseVal|.R|kotlin/Boolean.xor|(R|/trueVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(false)] val infixXor4: R|kotlin/Boolean| = R|/falseVal|.R|kotlin/Boolean.xor|(R|/falseVal|)
+        public get(): R|kotlin/Boolean|
     public final const [EvaluatedValue=Int(0)] val compareTo1: R|kotlin/Int| = R|/trueVal|.R|kotlin/Boolean.compareTo|(R|/trueVal|)
         public get(): R|kotlin/Int|
     public final const [EvaluatedValue=Int(1)] val compareTo2: R|kotlin/Int| = R|/trueVal|.R|kotlin/Boolean.compareTo|(R|/falseVal|)
@@ -49,6 +73,14 @@ FILE: booleanOperations.kt
     public final const [EvaluatedValue=Boolean(false)] val equals3: R|kotlin/Boolean| = ==(R|/falseVal|, R|/trueVal|)
         public get(): R|kotlin/Boolean|
     public final const [EvaluatedValue=Boolean(true)] val equals4: R|kotlin/Boolean| = ==(R|/falseVal|, R|/falseVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(false)] val notEquals1: R|kotlin/Boolean| = !=(R|/trueVal|, R|/trueVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(true)] val notEquals2: R|kotlin/Boolean| = !=(R|/trueVal|, R|/falseVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(true)] val notEquals3: R|kotlin/Boolean| = !=(R|/falseVal|, R|/trueVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(false)] val notEquals4: R|kotlin/Boolean| = !=(R|/falseVal|, R|/falseVal|)
         public get(): R|kotlin/Boolean|
     public final const [EvaluatedValue=String(true)] val toString1: R|kotlin/String| = R|/trueVal|.R|kotlin/Boolean.toString|()
         public get(): R|kotlin/String|
@@ -140,6 +172,78 @@ FILE: booleanOperations.kt
         }
 
         when () {
+            !=(R|/infixAnd1|.R|/id|<R|kotlin/Boolean|>(), Boolean(true)) ->  {
+                ^box String(Fail 4b.1)
+            }
+        }
+
+        when () {
+            !=(R|/infixAnd2|.R|/id|<R|kotlin/Boolean|>(), Boolean(false)) ->  {
+                ^box String(Fail 4b.2)
+            }
+        }
+
+        when () {
+            !=(R|/infixAnd3|.R|/id|<R|kotlin/Boolean|>(), Boolean(false)) ->  {
+                ^box String(Fail 4b.3)
+            }
+        }
+
+        when () {
+            !=(R|/infixAnd4|.R|/id|<R|kotlin/Boolean|>(), Boolean(false)) ->  {
+                ^box String(Fail 4b.4)
+            }
+        }
+
+        when () {
+            !=(R|/infixOr1|.R|/id|<R|kotlin/Boolean|>(), Boolean(true)) ->  {
+                ^box String(Fail 4c.1)
+            }
+        }
+
+        when () {
+            !=(R|/infixOr2|.R|/id|<R|kotlin/Boolean|>(), Boolean(true)) ->  {
+                ^box String(Fail 4c.2)
+            }
+        }
+
+        when () {
+            !=(R|/infixOr3|.R|/id|<R|kotlin/Boolean|>(), Boolean(true)) ->  {
+                ^box String(Fail 4c.3)
+            }
+        }
+
+        when () {
+            !=(R|/infixOr4|.R|/id|<R|kotlin/Boolean|>(), Boolean(false)) ->  {
+                ^box String(Fail 4c.4)
+            }
+        }
+
+        when () {
+            !=(R|/infixXor1|.R|/id|<R|kotlin/Boolean|>(), Boolean(false)) ->  {
+                ^box String(Fail 4d.1)
+            }
+        }
+
+        when () {
+            !=(R|/infixXor2|.R|/id|<R|kotlin/Boolean|>(), Boolean(true)) ->  {
+                ^box String(Fail 4d.2)
+            }
+        }
+
+        when () {
+            !=(R|/infixXor3|.R|/id|<R|kotlin/Boolean|>(), Boolean(true)) ->  {
+                ^box String(Fail 4d.3)
+            }
+        }
+
+        when () {
+            !=(R|/infixXor4|.R|/id|<R|kotlin/Boolean|>(), Boolean(false)) ->  {
+                ^box String(Fail 4d.4)
+            }
+        }
+
+        when () {
             !=(R|/compareTo1|.R|/id|<R|kotlin/Int|>(), Int(0)) ->  {
                 ^box String(Fail 5.1)
             }
@@ -184,6 +288,30 @@ FILE: booleanOperations.kt
         when () {
             !=(R|/equals4|.R|/id|<R|kotlin/Boolean|>(), Boolean(true)) ->  {
                 ^box String(Fail 6.4)
+            }
+        }
+
+        when () {
+            !=(R|/notEquals1|.R|/id|<R|kotlin/Boolean|>(), Boolean(false)) ->  {
+                ^box String(Fail 6.5)
+            }
+        }
+
+        when () {
+            !=(R|/notEquals2|.R|/id|<R|kotlin/Boolean|>(), Boolean(true)) ->  {
+                ^box String(Fail 6.6)
+            }
+        }
+
+        when () {
+            !=(R|/notEquals3|.R|/id|<R|kotlin/Boolean|>(), Boolean(true)) ->  {
+                ^box String(Fail 6.7)
+            }
+        }
+
+        when () {
+            !=(R|/notEquals4|.R|/id|<R|kotlin/Boolean|>(), Boolean(false)) ->  {
+                ^box String(Fail 6.8)
             }
         }
 

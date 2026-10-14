@@ -7,13 +7,13 @@ package org.jetbrains.kotlin.backend.konan.llvm
 
 import kotlinx.cinterop.toCValues
 import llvm.*
+import org.jetbrains.kotlin.backend.common.serialization.kotlinLibrary
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.cgen.isCFunctionOrGlobalAccessor
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.WritableTypeInfoPointer
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.generateWritableTypeInfoForClass
 import org.jetbrains.kotlin.backend.konan.serialization.CacheDeserializationStrategy
-import org.jetbrains.kotlin.backend.konan.serialization.isFromCInteropLibrary
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.objcinterop.*
@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
@@ -273,7 +273,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
         val typeInfoPtr: ConstPointer
         val typeInfoGlobal: StaticData.Global
 
-        val typeInfoSymbolName = if (declaration.isExported()) {
+        val typeInfoSymbolName = if (declaration.isExported) {
             declaration.computeTypeInfoSymbolName()
         } else {
             if (!context.config.producePerFileCache)
@@ -294,7 +294,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
 
             typeInfoGlobal = staticData.createGlobal(
                     typeInfoWithVtableType, typeInfoSymbolName,
-                    declaration.isExported()
+                    declaration.isExported
                             // This is required because internal inline functions can access private classes.
                             // So, in the generated code, the class type info can be accessed outside the file.
                             // With per-file caches involved, this can mean accessing from a different object file.
@@ -315,7 +315,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
         } else {
             typeInfoGlobal = staticData.createGlobal(runtime.typeInfoType,
                     typeInfoSymbolName,
-                    isExported = declaration.isExported())
+                    isExported = declaration.isExported)
 
             typeInfoPtr = typeInfoGlobal.pointer
         }
@@ -360,7 +360,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
     private fun createKotlinObjCClassDeclarations(irClass: IrClass): KotlinObjCClassLlvmDeclarations {
         val internalName = qualifyInternalName(irClass)
 
-        val isExported = irClass.isExported()
+        val isExported = irClass.isExported
         val classInfoSymbolName = if (isExported) {
             irClass.kotlinObjCClassInfoSymbolName
         } else {
@@ -428,7 +428,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
             if (declaration.isTypedIntrinsic || declaration.isObjCBridgeBased()
                     // All call-sites to external accessors to interop properties
                     // are lowered by InteropLowering.
-                    || (declaration.isAccessor && declaration.isFromCInteropLibrary())
+                    || (declaration.isAccessor && declaration.moduleFragment.kotlinLibrary?.isCInteropLibrary() == true)
                     || declaration.isCFunctionOrGlobalAccessor()) return
 
             val symbolName = declaration.computeSymbolName(context, forImplementation = true)
@@ -443,7 +443,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
                     "${KonanBinaryInterface.MANGLE_FUN_PREFIX}:${qualifyInternalName(declaration)}"
                 }
             }
-            if (declaration.isExported()) {
+            if (declaration.isExported) {
                 if (declaration.name.asString() != "main") {
                     assert(LLVMGetNamedFunction(llvm.module, symbolName) == null) {
                         "Function `$symbolName` is already defined. New definition is required for ${declaration.render()}"
@@ -465,9 +465,9 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
     }
 }
 
-internal sealed class KonanMetadata(override val name: Name?, val konanLibrary: KotlinLibrary?) : MetadataSource {
+internal sealed class KonanMetadata(override val name: Name?) : MetadataSource {
     sealed class Declaration<T>(declaration: T)
-        : KonanMetadata(declaration.metadata?.name, declaration.konanLibrary) where T : IrDeclaration, T : IrMetadataSourceOwner
+        : KonanMetadata(declaration.metadata?.name) where T : IrDeclaration, T : IrMetadataSourceOwner
 
     class Class(irClass: IrClass, val llvm: ClassLlvmDeclarations, val layoutBuilder: ClassLayoutBuilder) : Declaration<IrClass>(irClass)
 

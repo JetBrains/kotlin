@@ -6,11 +6,10 @@ package org.jetbrains.kotlin.scripting.compiler.plugin.impl
 
 import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.cli.common.*
-import org.jetbrains.kotlin.cli.common.fir.reportToMessageCollector
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.prepareIncrementalCompilationContextAndLibrariesScope
+import org.jetbrains.kotlin.cli.jvm.compiler.prepareIncrementalCompilationContextAndLibrariesClasspath
 import org.jetbrains.kotlin.cli.jvm.compiler.toVfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmModulePathRoot
@@ -24,7 +23,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.fir.session.IncrementalCompilationContext
-import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
@@ -50,6 +48,7 @@ import org.jetbrains.kotlin.scripting.resolve.KtFileScriptSource
 import org.jetbrains.kotlin.scripting.resolve.VirtualFileScriptSource
 import org.jetbrains.kotlin.scripting.resolve.getKtFile
 import org.jetbrains.kotlin.scripting.resolve.resolvedImportScripts
+import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.topologicalSort
 import kotlin.script.experimental.api.*
@@ -249,11 +248,8 @@ private fun doCompileWithK2(
     val projectEnvironment = context.environment.toVfsBasedProjectEnvironment()
     val compilerEnvironment = ModuleCompilerEnvironment(projectEnvironment, diagnosticsReporter)
 
-    val [librariesScope, incrementalCompilationContext] = prepareIncrementalCompilationContextAndLibrariesScope(
-        configuration,
-        projectEnvironment,
-        incrementalExcludesScope = null
-    )
+    val [librariesClasspath, incrementalCompilationContext] =
+        prepareIncrementalCompilationContextAndLibrariesClasspath(configuration, projectEnvironment)
 
     val session = prepareJvmSessionsForScripting(
         projectEnvironment,
@@ -261,7 +257,7 @@ private fun doCompileWithK2(
         ktFiles,
         rootModuleNameAsString = targetId.name,
         friendPaths = emptyList(),
-        librariesScope,
+        librariesClasspath,
         isScript = { false },
         incrementalCompilationContext,
     ).single().session
@@ -325,20 +321,9 @@ private fun doCompileWithK2(
 
     val analysisResults = AllModulesFrontendOutput(listOf(SingleModuleFrontendOutput(session, scopeSession, fir)))
 
-    if (diagnosticsReporter.hasErrors) {
-        diagnosticsReporter.reportToMessageCollector(messageCollector, renderDiagnosticName)
-        return failure(messageCollector)
-    }
-
-    val irInput = convertAnalyzedFirToIr(configuration, targetId, analysisResults, compilerEnvironment)
-
-    val generationState = generateCodeFromIr(irInput, compilerEnvironment)
-
-    diagnosticsReporter.reportToMessageCollector(messageCollector, renderDiagnosticName)
-
-    if (diagnosticsReporter.hasErrors) {
-        return failure(messageCollector)
-    }
+    val [irInput, generationState] = generateCodeIfNoErrors(
+        configuration, targetId, analysisResults, compilerEnvironment, messageCollector, renderDiagnosticName
+    ).valueOr { return it }
 
     return makeCompiledScript(
         generationState,
@@ -371,7 +356,7 @@ private fun prepareJvmSessionsForScripting(
     files: List<KtFile>,
     rootModuleNameAsString: String,
     friendPaths: List<String>,
-    librariesScope: AbstractProjectFileSearchScope,
+    librariesClasspath: JvmClasspath,
     isScript: (KtFile) -> Boolean,
     incrementalCompilationContext: IncrementalCompilationContext?,
 ): List<SessionWithSources<KtFile>> {
@@ -382,7 +367,7 @@ private fun prepareJvmSessionsForScripting(
         rootModuleName,
         configuration,
         projectEnvironment,
-        librariesScope,
+        librariesClasspath,
         libraryList,
         isCommonSourceForPsi,
         isScript,

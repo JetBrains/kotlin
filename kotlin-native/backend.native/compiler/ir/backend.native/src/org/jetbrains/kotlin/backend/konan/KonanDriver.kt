@@ -150,6 +150,13 @@ class KonanDriver(
             config.cacheSupport.checkConsistency()
         }
 
+        // The code that is reused from the caches is not inspected by the partial linkage engine in this compilation,
+        // so the issues detected at the moment those caches were built have to be reported once again (KT-78253).
+        // Note: A compilation that produces a cache stores the issues in that cache directory instead;
+        // they are replayed by the compilations that consume it.
+        if (!config.produce.isCache)
+            replayPartialLinkageIssuesFromCaches(config, cacheBuilder::wasRebuiltInThisRun)
+
         NativeCompilerDriver(performanceManager).run(config, environment)
     }
 

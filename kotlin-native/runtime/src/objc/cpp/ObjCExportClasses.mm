@@ -32,6 +32,7 @@
 #include "StackTrace.hpp"
 
 extern "C" const TypeInfo* Kotlin_SwiftExport_getOrCreateTypeInfoForSwiftSubclass(Class, Class, const TypeInfo*);
+extern "C" void* Kotlin_SwiftExport_allocInstanceForSwiftSubclass(Class);
 
 @interface NSObject (NSObjectPrivateMethods)
 // Implemented for NSObject in libobjc/NSObject.mm
@@ -85,6 +86,9 @@ static VTableElement nonRecursiveAnyMemberImpl(KRef obj, const KotlinToObjCMetho
 }
 
 +(void)initialize {
+  if (kotlin::mm::IsCurrentThreadRegistered()) {
+    kotlin::AssertThreadState(kotlin::ThreadState::kNative);
+  }
   if (self == [KotlinBase class]) {
     injectToRuntime(); // In case `initialize` is called before `load` (see e.g. https://youtrack.jetbrains.com/issue/KT-50982).
     Kotlin_ObjCExport_initialize();
@@ -229,6 +233,15 @@ static VTableElement nonRecursiveAnyMemberImpl(KRef obj, const KotlinToObjCMetho
     }
 }
 
+- (instancetype)init {
+    if (!kotlin::compiler::swiftExport()) {
+        return [super init];
+    }
+
+    void* ref = Kotlin_SwiftExport_allocInstanceForSwiftSubclass([self class]);
+    return [self constructWithExternalRCRefUnsafe:ref options:KotlinBaseConstructionOptionsAsBoundBridge];
+}
+
 /*
  * KotlinBase maintains a 1:1 association between wrapper instances and Kotlin objects for better performance and object identity preservation.
  * However, in rare cases multiple wrapper types may be required for a single Kotlin object, with only the designated "best-fitting" wrapper being cached.
@@ -245,6 +258,10 @@ static VTableElement nonRecursiveAnyMemberImpl(KRef obj, const KotlinToObjCMetho
  * @see `_createClassWrapperForExternalRCRef`
  */
 - (instancetype)initWithExternalRCRefUnsafe:(void *)ref options:(KotlinBaseConstructionOptions)options {
+    return [self constructWithExternalRCRefUnsafe:ref options:options];
+}
+
+- (instancetype)constructWithExternalRCRefUnsafe:(void *)ref options:(KotlinBaseConstructionOptions)options __attribute__((objc_direct)) {
     RuntimeAssert(kotlin::compiler::swiftExport(), "Must be used in Swift Export only");
     kotlin::AssertThreadState(kotlin::ThreadState::kNative);
 
@@ -281,14 +298,20 @@ static VTableElement nonRecursiveAnyMemberImpl(KRef obj, const KotlinToObjCMetho
         const TypeInfo* currentTypeInfo = obj->type_info();
         const ObjCTypeAdapter* adapter = kotlin::objCExport(currentTypeInfo).typeAdapter;
         if (adapter != nullptr && adapter->objCName != nullptr) {
-            Class boundClass = objc_getClass(adapter->objCName);
-            if (boundClass != nil && [self class] != boundClass && [[self class] isSubclassOfClass:boundClass]) {
-                const TypeInfo* patchedTypeInfo = Kotlin_SwiftExport_getOrCreateTypeInfoForSwiftSubclass([self class], boundClass, currentTypeInfo);
-                if (patchedTypeInfo != nullptr && patchedTypeInfo != currentTypeInfo) {
-                    auto* typeInfoSlot = clearPointerBits(obj->typeInfoOrMeta_, OBJECT_TAG_MASK);
-                    kotlin::std_support::atomic_ref{typeInfoSlot->typeInfo_}.store(
-                        const_cast<TypeInfo*>(patchedTypeInfo), std::memory_order_release);
+            auto patchedTypeInfo = [adapter, currentTypeInfo, self]() noexcept -> const TypeInfo* {
+                // Class lookups below may instantiate Swift metadata and trigger +initialize, so they have to happen in the native state.
+                kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative);
+                Class boundClass = objc_getClass(adapter->objCName);
+                if (boundClass != nil && [self class] != boundClass && [[self class] isSubclassOfClass:boundClass]) {
+                    return Kotlin_SwiftExport_getOrCreateTypeInfoForSwiftSubclass([self class], boundClass, currentTypeInfo);
                 }
+                return nullptr;
+            }();
+            if (patchedTypeInfo != nullptr && patchedTypeInfo != currentTypeInfo) {
+                    kotlin::ThreadStateGuard guard(kotlin::ThreadState::kRunnable);
+                    auto* typeInfoSlot = clearPointerBits(obj->typeInfoOrMeta_, OBJECT_TAG_MASK);
+                    kotlin::std_support::atomic_ref{typeInfoSlot->typeInfo_}
+                        .store(const_cast<TypeInfo*>(patchedTypeInfo), std::memory_order_release);
             }
         }
     }

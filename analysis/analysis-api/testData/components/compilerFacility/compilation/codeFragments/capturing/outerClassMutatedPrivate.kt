@@ -1,5 +1,3 @@
-// LANGUAGE: -ForbidParenthesizedLhsInAssignments
-
 // MODULE: context
 
 // FILE: context.kt

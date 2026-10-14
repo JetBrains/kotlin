@@ -1,0 +1,2 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] topLevelDestructuringWithAnnotation.kt
+    @<ERROR TYPE REF: Symbol not found for Destructuring>[Types]() public final [ResolvedTo(BODY_RESOLVE)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = <Unresolved name: Pair>#(Int(0), Int(1))

@@ -1,0 +1,50 @@
+FILE[kind=Facade[packageFqName=one.two, facadeFqName=one.two.NamelessEnumClassesKt]]
+  facadeFqName: one.two.NamelessEnumClassesKt
+  partSimpleName: "NamelessEnumClassesKt"
+  PACKAGE_DIRECTIVE
+    DOT_QUALIFIED_EXPRESSION
+      REFERENCE_EXPRESSION[referencedName=one]
+      REFERENCE_EXPRESSION[referencedName=two]
+  IMPORT_LIST
+  CLASS[classId=one/two/<no name provided>, fqName=one.two.<no name provided>, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=null, superNames=[]]
+    MODIFIER_LIST[enum]
+    CLASS_BODY
+      ENUM_ENTRY[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=A, superNames=[]]
+      ENUM_ENTRY[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=B, superNames=[]]
+        CLASS_BODY
+          CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=InsideEntry, superNames=[]]
+          OBJECT_DECLARATION[classId=null, fqName=null, isObjectLiteral=false, isTopLevel=false, name=null, superNames=[]]
+            CLASS_BODY
+              CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=InsideNamelessInEntry, superNames=[]]
+      CLASS[classId=one/two/<no name provided>.Nested, fqName=one.two.<no name provided>.Nested, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=Nested, superNames=[]]
+      OBJECT_DECLARATION[classId=one/two/<no name provided>.<no name provided>, fqName=one.two.<no name provided>.<no name provided>, isObjectLiteral=false, isTopLevel=false, name=null, superNames=[]]
+  OBJECT_DECLARATION[classId=one/two/<no name provided>, fqName=one.two.<no name provided>, isObjectLiteral=false, isTopLevel=true, name=null, superNames=[]]
+    CLASS_BODY
+      CLASS[classId=one/two/<no name provided>.NamedEnum, fqName=one.two.<no name provided>.NamedEnum, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=NamedEnum, superNames=[]]
+        MODIFIER_LIST[enum]
+        CLASS_BODY
+          ENUM_ENTRY[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=C, superNames=[]]
+            CLASS_BODY
+              CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=InsideEntry, superNames=[]]
+          CLASS[classId=one/two/<no name provided>.NamedEnum.Nested, fqName=one.two.<no name provided>.NamedEnum.Nested, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=Nested, superNames=[]]
+          OBJECT_DECLARATION[classId=one/two/<no name provided>.NamedEnum.<no name provided>, fqName=one.two.<no name provided>.NamedEnum.<no name provided>, isObjectLiteral=false, isTopLevel=false, name=null, superNames=[]]
+            CLASS_BODY
+              CLASS[classId=one/two/<no name provided>.NamedEnum.<no name provided>.InsideNameless, fqName=one.two.<no name provided>.NamedEnum.<no name provided>.InsideNameless, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=InsideNameless, superNames=[]]
+  CLASS[classId=one/two/Outer, fqName=one.two.Outer, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Outer, superNames=[]]
+    CLASS_BODY
+      OBJECT_DECLARATION[classId=one/two/Outer.<no name provided>, fqName=one.two.Outer.<no name provided>, isObjectLiteral=false, isTopLevel=false, name=null, superNames=[]]
+        CLASS_BODY
+          CLASS[classId=one/two/Outer.<no name provided>.<no name provided>, fqName=one.two.Outer.<no name provided>.<no name provided>, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=null, superNames=[]]
+            MODIFIER_LIST[enum]
+            CLASS_BODY
+              ENUM_ENTRY[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=D, superNames=[]]
+              CLASS[classId=one/two/Outer.<no name provided>.<no name provided>.Nested, fqName=one.two.Outer.<no name provided>.<no name provided>.Nested, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=Nested, superNames=[]]
+  FUNCTION[fqName=one.two.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
+    VALUE_PARAMETER_LIST
+    CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=null, superNames=[]]
+      MODIFIER_LIST[enum]
+      CLASS_BODY
+        ENUM_ENTRY[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=E, superNames=[]]
+          CLASS_BODY
+            CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=InsideEntry, superNames=[]]
+        CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=Nested, superNames=[]]

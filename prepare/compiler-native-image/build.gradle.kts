@@ -119,6 +119,7 @@ projectTests {
         }
         useNativeImageDist()
         usePlugins()
+        withJunit5ParallelExecution(4)
     }
 
     nativeImageTestTask("generateReachabilityMetadataBox") {

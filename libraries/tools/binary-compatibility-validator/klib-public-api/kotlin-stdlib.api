@@ -178,6 +178,10 @@ open annotation class kotlin.reflect/ExperimentalAssociatedObjects : kotlin/Anno
     constructor <init>() // kotlin.reflect/ExperimentalAssociatedObjects.<init>|<init>(){}[0]
 }
 
+open annotation class kotlin.text.unicode/ExperimentalUnicodeApi : kotlin/Annotation { // kotlin.text.unicode/ExperimentalUnicodeApi|null[0]
+    constructor <init>() // kotlin.text.unicode/ExperimentalUnicodeApi.<init>|<init>(){}[0]
+}
+
 open annotation class kotlin.time/ExperimentalTime : kotlin/Annotation { // kotlin.time/ExperimentalTime|null[0]
     constructor <init>() // kotlin.time/ExperimentalTime.<init>|<init>(){}[0]
 }
@@ -256,6 +260,10 @@ open annotation class kotlin/ExperimentalSubclassOptIn : kotlin/Annotation { // 
 
 open annotation class kotlin/ExperimentalUnsignedTypes : kotlin/Annotation { // kotlin/ExperimentalUnsignedTypes|null[0]
     constructor <init>() // kotlin/ExperimentalUnsignedTypes.<init>|<init>(){}[0]
+}
+
+open annotation class kotlin/ExperimentalValueClassesApi : kotlin/Annotation { // kotlin/ExperimentalValueClassesApi|null[0]
+    constructor <init>() // kotlin/ExperimentalValueClassesApi.<init>|<init>(){}[0]
 }
 
 open annotation class kotlin/ExperimentalVersionOverloading : kotlin/Annotation { // kotlin/ExperimentalVersionOverloading|null[0]
@@ -363,6 +371,10 @@ open annotation class kotlin/Suppress : kotlin/Annotation { // kotlin/Suppress|n
 
 open annotation class kotlin/UnsafeVariance : kotlin/Annotation { // kotlin/UnsafeVariance|null[0]
     constructor <init>() // kotlin/UnsafeVariance.<init>|<init>(){}[0]
+}
+
+open annotation class kotlin/WillBecomeValue : kotlin/Annotation { // kotlin/WillBecomeValue|null[0]
+    constructor <init>() // kotlin/WillBecomeValue.<init>|<init>(){}[0]
 }
 
 final enum class kotlin.annotation/AnnotationRetention : kotlin/Enum<kotlin.annotation/AnnotationRetention> { // kotlin.annotation/AnnotationRetention|null[0]
@@ -851,6 +863,9 @@ abstract interface <#A: out kotlin/Any?> kotlin.reflect/KProperty0 : kotlin.refl
 
 abstract interface <#A: out kotlin/Any?> kotlin.sequences/Sequence { // kotlin.sequences/Sequence|null[0]
     abstract fun iterator(): kotlin.collections/Iterator<#A> // kotlin.sequences/Sequence.iterator|iterator(){}[0]
+    final fun <#A1: kotlin/Any?> of(#A1): kotlin.sequences/Sequence<#A1> // kotlin.sequences/Sequence.of|of#static(0:0){0§<kotlin.Any?>}[0]
+    final fun <#A1: kotlin/Any?> of(): kotlin.sequences/Sequence<#A1> // kotlin.sequences/Sequence.of|of#static(){0§<kotlin.Any?>}[0]
+    final fun <#A1: kotlin/Any?> of(kotlin/Array<out #A1>...): kotlin.sequences/Sequence<#A1> // kotlin.sequences/Sequence.of|of#static(kotlin.Array<out|0:0>...){0§<kotlin.Any?>}[0]
 }
 
 abstract interface <#A: out kotlin/Any?> kotlin/Function // kotlin/Function|null[0]
@@ -938,6 +953,22 @@ abstract interface kotlin.reflect/KTypeParameter : kotlin.reflect/KClassifier { 
         abstract fun <get-upperBounds>(): kotlin.collections/List<kotlin.reflect/KType> // kotlin.reflect/KTypeParameter.upperBounds.<get-upperBounds>|<get-upperBounds>(){}[0]
     abstract val variance // kotlin.reflect/KTypeParameter.variance|{}variance[0]
         abstract fun <get-variance>(): kotlin.reflect/KVariance // kotlin.reflect/KTypeParameter.variance.<get-variance>|<get-variance>(){}[0]
+}
+
+abstract interface kotlin.text.unicode/CodePointIndexedIterator : kotlin.text.unicode/CodePointIterator { // kotlin.text.unicode/CodePointIndexedIterator|null[0]
+    abstract fun advanceByCodePoints(kotlin/Int) // kotlin.text.unicode/CodePointIndexedIterator.advanceByCodePoints|advanceByCodePoints(kotlin.Int){}[0]
+    abstract fun hasNext(): kotlin/Boolean // kotlin.text.unicode/CodePointIndexedIterator.hasNext|hasNext(){}[0]
+    abstract fun hasPrevious(): kotlin/Boolean // kotlin.text.unicode/CodePointIndexedIterator.hasPrevious|hasPrevious(){}[0]
+    abstract fun next(): kotlin.text.unicode/CodePoint // kotlin.text.unicode/CodePointIndexedIterator.next|next(){}[0]
+    abstract fun nextIndex(): kotlin/Int // kotlin.text.unicode/CodePointIndexedIterator.nextIndex|nextIndex(){}[0]
+    abstract fun previous(): kotlin.text.unicode/CodePoint // kotlin.text.unicode/CodePointIndexedIterator.previous|previous(){}[0]
+    abstract fun previousIndex(): kotlin/Int // kotlin.text.unicode/CodePointIndexedIterator.previousIndex|previousIndex(){}[0]
+}
+
+abstract interface kotlin.text.unicode/CodePointIterator : kotlin.collections/Iterator<kotlin.text.unicode/CodePoint> // kotlin.text.unicode/CodePointIterator|null[0]
+
+abstract interface kotlin.text.unicode/CodePointSequence : kotlin.sequences/Sequence<kotlin.text.unicode/CodePoint> { // kotlin.text.unicode/CodePointSequence|null[0]
+    abstract fun iterator(): kotlin.text.unicode/CodePointIterator // kotlin.text.unicode/CodePointSequence.iterator|iterator(){}[0]
 }
 
 abstract interface kotlin.text/Appendable { // kotlin.text/Appendable|null[0]
@@ -1363,6 +1394,10 @@ abstract class kotlin/Number { // kotlin/Number|null[0]
     open fun toChar(): kotlin/Char // kotlin/Number.toChar|toChar(){}[0]
 }
 
+abstract class kotlin/RichError { // kotlin/RichError|null[0]
+    constructor <init>() // kotlin/RichError.<init>|<init>(){}[0]
+}
+
 final class <#A: in kotlin/Any?> kotlin.coroutines/SafeContinuation : kotlin.coroutines/Continuation<#A> { // kotlin.coroutines/SafeContinuation|null[0]
     constructor <init>(kotlin.coroutines/Continuation<#A>) // kotlin.coroutines/SafeContinuation.<init>|<init>(kotlin.coroutines.Continuation<1:0>){}[0]
 
@@ -1499,6 +1534,7 @@ final class <#A: kotlin/Any?> kotlin/Array { // kotlin/Array|null[0]
     final fun get(kotlin/Int): #A // kotlin/Array.get|get(kotlin.Int){}[0]
     final fun iterator(): kotlin.collections/Iterator<#A> // kotlin/Array.iterator|iterator(){}[0]
     final fun set(kotlin/Int, #A) // kotlin/Array.set|set(kotlin.Int;1:0){}[0]
+    final inline fun <#A1: kotlin/Any?> of(kotlin/Array<out #A1>...): kotlin/Array<#A1> // kotlin/Array.of|of#static(kotlin.Array<out|0:0>...){0§<kotlin.Any?>}[0]
 
     // Targets: [native, wasmJs, wasmWasi]
     constructor <init>(kotlin/Int) // kotlin/Array.<init>|<init>(kotlin.Int){}[0]
@@ -1830,7 +1866,6 @@ final class kotlin.ranges/UIntRange : kotlin.ranges/ClosedRange<kotlin/UInt>, ko
 
     final fun contains(kotlin/UInt): kotlin/Boolean // kotlin.ranges/UIntRange.contains|contains(kotlin.UInt){}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // kotlin.ranges/UIntRange.equals|equals(kotlin.Any?){}[0]
-    final fun hashCode(): kotlin/Int // kotlin.ranges/UIntRange.hashCode|hashCode(){}[0]
     final fun isEmpty(): kotlin/Boolean // kotlin.ranges/UIntRange.isEmpty|isEmpty(){}[0]
     final fun toString(): kotlin/String // kotlin.ranges/UIntRange.toString|toString(){}[0]
 
@@ -1852,7 +1887,6 @@ final class kotlin.ranges/ULongRange : kotlin.ranges/ClosedRange<kotlin/ULong>, 
 
     final fun contains(kotlin/ULong): kotlin/Boolean // kotlin.ranges/ULongRange.contains|contains(kotlin.ULong){}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // kotlin.ranges/ULongRange.equals|equals(kotlin.Any?){}[0]
-    final fun hashCode(): kotlin/Int // kotlin.ranges/ULongRange.hashCode|hashCode(){}[0]
     final fun isEmpty(): kotlin/Boolean // kotlin.ranges/ULongRange.isEmpty|isEmpty(){}[0]
     final fun toString(): kotlin/String // kotlin.ranges/ULongRange.toString|toString(){}[0]
 
@@ -1886,6 +1920,27 @@ final class kotlin.reflect/KTypeProjection { // kotlin.reflect/KTypeProjection|n
         final fun contravariant(kotlin.reflect/KType): kotlin.reflect/KTypeProjection // kotlin.reflect/KTypeProjection.Companion.contravariant|contravariant(kotlin.reflect.KType){}[0]
         final fun covariant(kotlin.reflect/KType): kotlin.reflect/KTypeProjection // kotlin.reflect/KTypeProjection.Companion.covariant|covariant(kotlin.reflect.KType){}[0]
         final fun invariant(kotlin.reflect/KType): kotlin.reflect/KTypeProjection // kotlin.reflect/KTypeProjection.Companion.invariant|invariant(kotlin.reflect.KType){}[0]
+    }
+}
+
+final class kotlin.text.unicode/CodePointRange : kotlin.ranges/ClosedRange<kotlin.text.unicode/CodePoint>, kotlin.ranges/OpenEndRange<kotlin.text.unicode/CodePoint>, kotlin.text.unicode/CodePointProgression { // kotlin.text.unicode/CodePointRange|null[0]
+    constructor <init>(kotlin.text.unicode/CodePoint, kotlin.text.unicode/CodePoint) // kotlin.text.unicode/CodePointRange.<init>|<init>(kotlin.text.unicode.CodePoint;kotlin.text.unicode.CodePoint){}[0]
+
+    final val endExclusive // kotlin.text.unicode/CodePointRange.endExclusive|{}endExclusive[0]
+        final fun <get-endExclusive>(): kotlin.text.unicode/CodePoint // kotlin.text.unicode/CodePointRange.endExclusive.<get-endExclusive>|<get-endExclusive>(){}[0]
+    final val endInclusive // kotlin.text.unicode/CodePointRange.endInclusive|{}endInclusive[0]
+        final fun <get-endInclusive>(): kotlin.text.unicode/CodePoint // kotlin.text.unicode/CodePointRange.endInclusive.<get-endInclusive>|<get-endInclusive>(){}[0]
+    final val start // kotlin.text.unicode/CodePointRange.start|{}start[0]
+        final fun <get-start>(): kotlin.text.unicode/CodePoint // kotlin.text.unicode/CodePointRange.start.<get-start>|<get-start>(){}[0]
+
+    final fun contains(kotlin.text.unicode/CodePoint): kotlin/Boolean // kotlin.text.unicode/CodePointRange.contains|contains(kotlin.text.unicode.CodePoint){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // kotlin.text.unicode/CodePointRange.equals|equals(kotlin.Any?){}[0]
+    final fun isEmpty(): kotlin/Boolean // kotlin.text.unicode/CodePointRange.isEmpty|isEmpty(){}[0]
+    final fun toString(): kotlin/String // kotlin.text.unicode/CodePointRange.toString|toString(){}[0]
+
+    final object Companion { // kotlin.text.unicode/CodePointRange.Companion|null[0]
+        final val EMPTY // kotlin.text.unicode/CodePointRange.Companion.EMPTY|{}EMPTY[0]
+            final fun <get-EMPTY>(): kotlin.text.unicode/CodePointRange // kotlin.text.unicode/CodePointRange.Companion.EMPTY.<get-EMPTY>|<get-EMPTY>(){}[0]
     }
 }
 
@@ -2219,6 +2274,7 @@ final class kotlin/BooleanArray { // kotlin/BooleanArray|null[0]
     final fun get(kotlin/Int): kotlin/Boolean // kotlin/BooleanArray.get|get(kotlin.Int){}[0]
     final fun iterator(): kotlin.collections/BooleanIterator // kotlin/BooleanArray.iterator|iterator(){}[0]
     final fun set(kotlin/Int, kotlin/Boolean) // kotlin/BooleanArray.set|set(kotlin.Int;kotlin.Boolean){}[0]
+    final inline fun of(kotlin/BooleanArray...): kotlin/BooleanArray // kotlin/BooleanArray.of|of#static(kotlin.BooleanArray...){}[0]
 }
 
 final class kotlin/Byte : kotlin/Comparable<kotlin/Byte>, kotlin/Number { // kotlin/Byte|null[0]
@@ -2506,6 +2562,7 @@ final class kotlin/ByteArray { // kotlin/ByteArray|null[0]
     final fun get(kotlin/Int): kotlin/Byte // kotlin/ByteArray.get|get(kotlin.Int){}[0]
     final fun iterator(): kotlin.collections/ByteIterator // kotlin/ByteArray.iterator|iterator(){}[0]
     final fun set(kotlin/Int, kotlin/Byte) // kotlin/ByteArray.set|set(kotlin.Int;kotlin.Byte){}[0]
+    final inline fun of(kotlin/ByteArray...): kotlin/ByteArray // kotlin/ByteArray.of|of#static(kotlin.ByteArray...){}[0]
 }
 
 final class kotlin/Char : kotlin/Comparable<kotlin/Char> { // kotlin/Char|null[0]
@@ -2643,6 +2700,7 @@ final class kotlin/CharArray { // kotlin/CharArray|null[0]
     final fun get(kotlin/Int): kotlin/Char // kotlin/CharArray.get|get(kotlin.Int){}[0]
     final fun iterator(): kotlin.collections/CharIterator // kotlin/CharArray.iterator|iterator(){}[0]
     final fun set(kotlin/Int, kotlin/Char) // kotlin/CharArray.set|set(kotlin.Int;kotlin.Char){}[0]
+    final inline fun of(kotlin/CharArray...): kotlin/CharArray // kotlin/CharArray.of|of#static(kotlin.CharArray...){}[0]
 }
 
 final class kotlin/Double : kotlin/Comparable<kotlin/Double>, kotlin/Number { // kotlin/Double|null[0]
@@ -2916,6 +2974,7 @@ final class kotlin/DoubleArray { // kotlin/DoubleArray|null[0]
     final fun get(kotlin/Int): kotlin/Double // kotlin/DoubleArray.get|get(kotlin.Int){}[0]
     final fun iterator(): kotlin.collections/DoubleIterator // kotlin/DoubleArray.iterator|iterator(){}[0]
     final fun set(kotlin/Int, kotlin/Double) // kotlin/DoubleArray.set|set(kotlin.Int;kotlin.Double){}[0]
+    final inline fun of(kotlin/DoubleArray...): kotlin/DoubleArray // kotlin/DoubleArray.of|of#static(kotlin.DoubleArray...){}[0]
 }
 
 final class kotlin/Float : kotlin/Comparable<kotlin/Float>, kotlin/Number { // kotlin/Float|null[0]
@@ -3189,6 +3248,7 @@ final class kotlin/FloatArray { // kotlin/FloatArray|null[0]
     final fun get(kotlin/Int): kotlin/Float // kotlin/FloatArray.get|get(kotlin.Int){}[0]
     final fun iterator(): kotlin.collections/FloatIterator // kotlin/FloatArray.iterator|iterator(){}[0]
     final fun set(kotlin/Int, kotlin/Float) // kotlin/FloatArray.set|set(kotlin.Int;kotlin.Float){}[0]
+    final inline fun of(kotlin/FloatArray...): kotlin/FloatArray // kotlin/FloatArray.of|of#static(kotlin.FloatArray...){}[0]
 }
 
 final class kotlin/Int : kotlin/Comparable<kotlin/Int>, kotlin/Number { // kotlin/Int|null[0]
@@ -3458,6 +3518,7 @@ final class kotlin/IntArray { // kotlin/IntArray|null[0]
     final fun get(kotlin/Int): kotlin/Int // kotlin/IntArray.get|get(kotlin.Int){}[0]
     final fun iterator(): kotlin.collections/IntIterator // kotlin/IntArray.iterator|iterator(){}[0]
     final fun set(kotlin/Int, kotlin/Int) // kotlin/IntArray.set|set(kotlin.Int;kotlin.Int){}[0]
+    final inline fun of(kotlin/IntArray...): kotlin/IntArray // kotlin/IntArray.of|of#static(kotlin.IntArray...){}[0]
 }
 
 final class kotlin/KotlinNothingValueException : kotlin/RuntimeException { // kotlin/KotlinNothingValueException|null[0]
@@ -3646,6 +3707,7 @@ final class kotlin/LongArray { // kotlin/LongArray|null[0]
     final fun get(kotlin/Int): kotlin/Long // kotlin/LongArray.get|get(kotlin.Int){}[0]
     final fun iterator(): kotlin.collections/LongIterator // kotlin/LongArray.iterator|iterator(){}[0]
     final fun set(kotlin/Int, kotlin/Long) // kotlin/LongArray.set|set(kotlin.Int;kotlin.Long){}[0]
+    final inline fun of(kotlin/LongArray...): kotlin/LongArray // kotlin/LongArray.of|of#static(kotlin.LongArray...){}[0]
 }
 
 final class kotlin/NotImplementedError : kotlin/Error { // kotlin/NotImplementedError|null[0]
@@ -3944,6 +4006,7 @@ final class kotlin/ShortArray { // kotlin/ShortArray|null[0]
     final fun get(kotlin/Int): kotlin/Short // kotlin/ShortArray.get|get(kotlin.Int){}[0]
     final fun iterator(): kotlin.collections/ShortIterator // kotlin/ShortArray.iterator|iterator(){}[0]
     final fun set(kotlin/Int, kotlin/Short) // kotlin/ShortArray.set|set(kotlin.Int;kotlin.Short){}[0]
+    final inline fun of(kotlin/ShortArray...): kotlin/ShortArray // kotlin/ShortArray.of|of#static(kotlin.ShortArray...){}[0]
 }
 
 final class kotlin/String : kotlin/CharSequence, kotlin/Comparable<kotlin/String> { // kotlin/String|null[0]
@@ -3986,6 +4049,49 @@ final value class <#A: out kotlin/Any?> kotlin/Result : kotlin.io/Serializable {
     final object Companion { // kotlin/Result.Companion|null[0]
         final inline fun <#A2: kotlin/Any?> failure(kotlin/Throwable): kotlin/Result<#A2> // kotlin/Result.Companion.failure|failure(kotlin.Throwable){0§<kotlin.Any?>}[0]
         final inline fun <#A2: kotlin/Any?> success(#A2): kotlin/Result<#A2> // kotlin/Result.Companion.success|success(0:0){0§<kotlin.Any?>}[0]
+    }
+}
+
+final value class kotlin.text.unicode/CodePoint : kotlin/Comparable<kotlin.text.unicode/CodePoint> { // kotlin.text.unicode/CodePoint|null[0]
+    constructor <init>(kotlin/Int) // kotlin.text.unicode/CodePoint.<init>|<init>(kotlin.Int){}[0]
+
+    final val code // kotlin.text.unicode/CodePoint.code|{}code[0]
+        final fun <get-code>(): kotlin/Int // kotlin.text.unicode/CodePoint.code.<get-code>|<get-code>(){}[0]
+    final val isBasic // kotlin.text.unicode/CodePoint.isBasic|{}isBasic[0]
+        final fun <get-isBasic>(): kotlin/Boolean // kotlin.text.unicode/CodePoint.isBasic.<get-isBasic>|<get-isBasic>(){}[0]
+    final val isSupplementary // kotlin.text.unicode/CodePoint.isSupplementary|{}isSupplementary[0]
+        final fun <get-isSupplementary>(): kotlin/Boolean // kotlin.text.unicode/CodePoint.isSupplementary.<get-isSupplementary>|<get-isSupplementary>(){}[0]
+    final val size // kotlin.text.unicode/CodePoint.size|{}size[0]
+        final fun <get-size>(): kotlin/Int // kotlin.text.unicode/CodePoint.size.<get-size>|<get-size>(){}[0]
+
+    final fun compareTo(kotlin.text.unicode/CodePoint): kotlin/Int // kotlin.text.unicode/CodePoint.compareTo|compareTo(kotlin.text.unicode.CodePoint){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // kotlin.text.unicode/CodePoint.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // kotlin.text.unicode/CodePoint.hashCode|hashCode(){}[0]
+    final fun highSurrogate(): kotlin/Char // kotlin.text.unicode/CodePoint.highSurrogate|highSurrogate(){}[0]
+    final fun lowSurrogate(): kotlin/Char // kotlin.text.unicode/CodePoint.lowSurrogate|lowSurrogate(){}[0]
+    final fun minus(kotlin.text.unicode/CodePoint): kotlin/Int // kotlin.text.unicode/CodePoint.minus|minus(kotlin.text.unicode.CodePoint){}[0]
+    final fun minus(kotlin/Int): kotlin.text.unicode/CodePoint // kotlin.text.unicode/CodePoint.minus|minus(kotlin.Int){}[0]
+    final fun plus(kotlin/Int): kotlin.text.unicode/CodePoint // kotlin.text.unicode/CodePoint.plus|plus(kotlin.Int){}[0]
+    final fun rangeUntil(kotlin.text.unicode/CodePoint): kotlin.text.unicode/CodePointRange // kotlin.text.unicode/CodePoint.rangeUntil|rangeUntil(kotlin.text.unicode.CodePoint){}[0]
+    final fun requireIsSupplementary() // kotlin.text.unicode/CodePoint.requireIsSupplementary|requireIsSupplementary(){}[0]
+    final fun toCharArray(): kotlin/CharArray // kotlin.text.unicode/CodePoint.toCharArray|toCharArray(){}[0]
+    final fun toSingleChar(): kotlin/Char // kotlin.text.unicode/CodePoint.toSingleChar|toSingleChar(){}[0]
+    final fun toString(): kotlin/String // kotlin.text.unicode/CodePoint.toString|toString(){}[0]
+    final fun toSurrogatePair(): kotlin/Pair<kotlin/Char, kotlin/Char> // kotlin.text.unicode/CodePoint.toSurrogatePair|toSurrogatePair(){}[0]
+    final inline fun <#A1: kotlin/Any?> toSurrogatePair(kotlin/Function2<kotlin/Char, kotlin/Char, #A1>): #A1 // kotlin.text.unicode/CodePoint.toSurrogatePair|toSurrogatePair(kotlin.Function2<kotlin.Char,kotlin.Char,0:0>){0§<kotlin.Any?>}[0]
+    final inline fun dec(): kotlin.text.unicode/CodePoint // kotlin.text.unicode/CodePoint.dec|dec(){}[0]
+    final inline fun inc(): kotlin.text.unicode/CodePoint // kotlin.text.unicode/CodePoint.inc|inc(){}[0]
+    final inline fun rangeTo(kotlin.text.unicode/CodePoint): kotlin.text.unicode/CodePointRange // kotlin.text.unicode/CodePoint.rangeTo|rangeTo(kotlin.text.unicode.CodePoint){}[0]
+
+    final object Companion { // kotlin.text.unicode/CodePoint.Companion|null[0]
+        final val MAX_VALUE // kotlin.text.unicode/CodePoint.Companion.MAX_VALUE|{}MAX_VALUE[0]
+            final fun <get-MAX_VALUE>(): kotlin.text.unicode/CodePoint // kotlin.text.unicode/CodePoint.Companion.MAX_VALUE.<get-MAX_VALUE>|<get-MAX_VALUE>(){}[0]
+        final val MIN_VALUE // kotlin.text.unicode/CodePoint.Companion.MIN_VALUE|{}MIN_VALUE[0]
+            final fun <get-MIN_VALUE>(): kotlin.text.unicode/CodePoint // kotlin.text.unicode/CodePoint.Companion.MIN_VALUE.<get-MIN_VALUE>|<get-MIN_VALUE>(){}[0]
+
+        final fun fromChar(kotlin/Char): kotlin.text.unicode/CodePoint // kotlin.text.unicode/CodePoint.Companion.fromChar|fromChar(kotlin.Char){}[0]
+        final fun fromSurrogatePair(kotlin/Char, kotlin/Char): kotlin.text.unicode/CodePoint // kotlin.text.unicode/CodePoint.Companion.fromSurrogatePair|fromSurrogatePair(kotlin.Char;kotlin.Char){}[0]
+        final fun isSurrogatePair(kotlin/Char, kotlin/Char): kotlin/Boolean // kotlin.text.unicode/CodePoint.Companion.isSurrogatePair|isSurrogatePair(kotlin.Char;kotlin.Char){}[0]
     }
 }
 
@@ -4187,6 +4293,7 @@ final value class kotlin/UByteArray : kotlin.collections/Collection<kotlin/UByte
     final fun iterator(): kotlin.collections/Iterator<kotlin/UByte> // kotlin/UByteArray.iterator|iterator(){}[0]
     final fun set(kotlin/Int, kotlin/UByte) // kotlin/UByteArray.set|set(kotlin.Int;kotlin.UByte){}[0]
     final fun toString(): kotlin/String // kotlin/UByteArray.toString|toString(){}[0]
+    final inline fun of(kotlin/UByteArray...): kotlin/UByteArray // kotlin/UByteArray.of|of#static(kotlin.UByteArray...){}[0]
 }
 
 final value class kotlin/UInt : kotlin/Comparable<kotlin/UInt> { // kotlin/UInt|null[0]
@@ -4281,6 +4388,7 @@ final value class kotlin/UIntArray : kotlin.collections/Collection<kotlin/UInt> 
     final fun iterator(): kotlin.collections/Iterator<kotlin/UInt> // kotlin/UIntArray.iterator|iterator(){}[0]
     final fun set(kotlin/Int, kotlin/UInt) // kotlin/UIntArray.set|set(kotlin.Int;kotlin.UInt){}[0]
     final fun toString(): kotlin/String // kotlin/UIntArray.toString|toString(){}[0]
+    final inline fun of(kotlin/UIntArray...): kotlin/UIntArray // kotlin/UIntArray.of|of#static(kotlin.UIntArray...){}[0]
 }
 
 final value class kotlin/ULong : kotlin/Comparable<kotlin/ULong> { // kotlin/ULong|null[0]
@@ -4375,6 +4483,7 @@ final value class kotlin/ULongArray : kotlin.collections/Collection<kotlin/ULong
     final fun iterator(): kotlin.collections/Iterator<kotlin/ULong> // kotlin/ULongArray.iterator|iterator(){}[0]
     final fun set(kotlin/Int, kotlin/ULong) // kotlin/ULongArray.set|set(kotlin.Int;kotlin.ULong){}[0]
     final fun toString(): kotlin/String // kotlin/ULongArray.toString|toString(){}[0]
+    final inline fun of(kotlin/ULongArray...): kotlin/ULongArray // kotlin/ULongArray.of|of#static(kotlin.ULongArray...){}[0]
 }
 
 final value class kotlin/UShort : kotlin/Comparable<kotlin/UShort> { // kotlin/UShort|null[0]
@@ -4467,6 +4576,7 @@ final value class kotlin/UShortArray : kotlin.collections/Collection<kotlin/USho
     final fun iterator(): kotlin.collections/Iterator<kotlin/UShort> // kotlin/UShortArray.iterator|iterator(){}[0]
     final fun set(kotlin/Int, kotlin/UShort) // kotlin/UShortArray.set|set(kotlin.Int;kotlin.UShort){}[0]
     final fun toString(): kotlin/String // kotlin/UShortArray.toString|toString(){}[0]
+    final inline fun of(kotlin/UShortArray...): kotlin/UShortArray // kotlin/UShortArray.of|of#static(kotlin.UShortArray...){}[0]
 }
 
 open class kotlin.coroutines.cancellation/CancellationException : kotlin/IllegalStateException { // kotlin.coroutines.cancellation/CancellationException|null[0]
@@ -4602,6 +4712,25 @@ open class kotlin.ranges/ULongProgression : kotlin.collections/Iterable<kotlin/U
 
     final object Companion { // kotlin.ranges/ULongProgression.Companion|null[0]
         final fun fromClosedRange(kotlin/ULong, kotlin/ULong, kotlin/Long): kotlin.ranges/ULongProgression // kotlin.ranges/ULongProgression.Companion.fromClosedRange|fromClosedRange(kotlin.ULong;kotlin.ULong;kotlin.Long){}[0]
+    }
+}
+
+open class kotlin.text.unicode/CodePointProgression : kotlin.collections/Iterable<kotlin.text.unicode/CodePoint> { // kotlin.text.unicode/CodePointProgression|null[0]
+    final val first // kotlin.text.unicode/CodePointProgression.first|{}first[0]
+        final fun <get-first>(): kotlin.text.unicode/CodePoint // kotlin.text.unicode/CodePointProgression.first.<get-first>|<get-first>(){}[0]
+    final val last // kotlin.text.unicode/CodePointProgression.last|{}last[0]
+        final fun <get-last>(): kotlin.text.unicode/CodePoint // kotlin.text.unicode/CodePointProgression.last.<get-last>|<get-last>(){}[0]
+    final val step // kotlin.text.unicode/CodePointProgression.step|{}step[0]
+        final fun <get-step>(): kotlin/Int // kotlin.text.unicode/CodePointProgression.step.<get-step>|<get-step>(){}[0]
+
+    final fun iterator(): kotlin.text.unicode/CodePointIterator // kotlin.text.unicode/CodePointProgression.iterator|iterator(){}[0]
+    open fun equals(kotlin/Any?): kotlin/Boolean // kotlin.text.unicode/CodePointProgression.equals|equals(kotlin.Any?){}[0]
+    open fun hashCode(): kotlin/Int // kotlin.text.unicode/CodePointProgression.hashCode|hashCode(){}[0]
+    open fun isEmpty(): kotlin/Boolean // kotlin.text.unicode/CodePointProgression.isEmpty|isEmpty(){}[0]
+    open fun toString(): kotlin/String // kotlin.text.unicode/CodePointProgression.toString|toString(){}[0]
+
+    final object Companion { // kotlin.text.unicode/CodePointProgression.Companion|null[0]
+        final fun fromClosedRange(kotlin.text.unicode/CodePoint, kotlin.text.unicode/CodePoint, kotlin/Int): kotlin.text.unicode/CodePointProgression // kotlin.text.unicode/CodePointProgression.Companion.fromClosedRange|fromClosedRange(kotlin.text.unicode.CodePoint;kotlin.text.unicode.CodePoint;kotlin.Int){}[0]
     }
 }
 
@@ -4842,6 +4971,8 @@ final const val kotlin.math/E // kotlin.math/E|{}E[0]
     final fun <get-E>(): kotlin/Double // kotlin.math/E.<get-E>|<get-E>(){}[0]
 final const val kotlin.math/PI // kotlin.math/PI|{}PI[0]
     final fun <get-PI>(): kotlin/Double // kotlin.math/PI.<get-PI>|<get-PI>(){}[0]
+final const val kotlin.math/TAU // kotlin.math/TAU|{}TAU[0]
+    final fun <get-TAU>(): kotlin/Double // kotlin.math/TAU.<get-TAU>|<get-TAU>(){}[0]
 
 final val kotlin.collections/indices // kotlin.collections/indices|@kotlin.Array<out|0:0>{0§<kotlin.Any?>}indices[0]
     final fun <#A1: kotlin/Any?> (kotlin/Array<out #A1>).<get-indices>(): kotlin.ranges/IntRange // kotlin.collections/indices.<get-indices>|<get-indices>@kotlin.Array<out|0:0>(){0§<kotlin.Any?>}[0]
@@ -4945,6 +5076,8 @@ final val kotlin.math/sign // kotlin.math/sign|@kotlin.Long{}sign[0]
     final fun (kotlin/Long).<get-sign>(): kotlin/Int // kotlin.math/sign.<get-sign>|<get-sign>@kotlin.Long(){}[0]
 final val kotlin.math/ulp // kotlin.math/ulp|@kotlin.Double{}ulp[0]
     final fun (kotlin/Double).<get-ulp>(): kotlin/Double // kotlin.math/ulp.<get-ulp>|<get-ulp>@kotlin.Double(){}[0]
+final val kotlin.text.unicode/category // kotlin.text.unicode/category|@kotlin.text.unicode.CodePoint{}category[0]
+    final fun (kotlin.text.unicode/CodePoint).<get-category>(): kotlin.text/CharCategory // kotlin.text.unicode/category.<get-category>|<get-category>@kotlin.text.unicode.CodePoint(){}[0]
 final val kotlin.text/CASE_INSENSITIVE_ORDER // kotlin.text/CASE_INSENSITIVE_ORDER|@kotlin.String.Companion{}CASE_INSENSITIVE_ORDER[0]
     final fun (kotlin/String.Companion).<get-CASE_INSENSITIVE_ORDER>(): kotlin/Comparator<kotlin/String> // kotlin.text/CASE_INSENSITIVE_ORDER.<get-CASE_INSENSITIVE_ORDER>|<get-CASE_INSENSITIVE_ORDER>@kotlin.String.Companion(){}[0]
 final val kotlin.text/category // kotlin.text/category|@kotlin.Char{}category[0]
@@ -5147,7 +5280,31 @@ final fun (kotlin.sequences/Sequence<kotlin/UByte>).kotlin.sequences/sum(): kotl
 final fun (kotlin.sequences/Sequence<kotlin/UInt>).kotlin.sequences/sum(): kotlin/UInt // kotlin.sequences/sum|sum@kotlin.sequences.Sequence<kotlin.UInt>(){}[0]
 final fun (kotlin.sequences/Sequence<kotlin/ULong>).kotlin.sequences/sum(): kotlin/ULong // kotlin.sequences/sum|sum@kotlin.sequences.Sequence<kotlin.ULong>(){}[0]
 final fun (kotlin.sequences/Sequence<kotlin/UShort>).kotlin.sequences/sum(): kotlin/UInt // kotlin.sequences/sum|sum@kotlin.sequences.Sequence<kotlin.UShort>(){}[0]
+final fun (kotlin.text.unicode/CodePoint).kotlin.text.unicode/downTo(kotlin.text.unicode/CodePoint): kotlin.text.unicode/CodePointProgression // kotlin.text.unicode/downTo|downTo@kotlin.text.unicode.CodePoint(kotlin.text.unicode.CodePoint){}[0]
+final fun (kotlin.text.unicode/CodePoint).kotlin.text.unicode/isDefined(): kotlin/Boolean // kotlin.text.unicode/isDefined|isDefined@kotlin.text.unicode.CodePoint(){}[0]
+final fun (kotlin.text.unicode/CodePoint).kotlin.text.unicode/isDigit(): kotlin/Boolean // kotlin.text.unicode/isDigit|isDigit@kotlin.text.unicode.CodePoint(){}[0]
+final fun (kotlin.text.unicode/CodePoint).kotlin.text.unicode/isISOControl(): kotlin/Boolean // kotlin.text.unicode/isISOControl|isISOControl@kotlin.text.unicode.CodePoint(){}[0]
+final fun (kotlin.text.unicode/CodePoint).kotlin.text.unicode/isLetter(): kotlin/Boolean // kotlin.text.unicode/isLetter|isLetter@kotlin.text.unicode.CodePoint(){}[0]
+final fun (kotlin.text.unicode/CodePoint).kotlin.text.unicode/isLetterOrDigit(): kotlin/Boolean // kotlin.text.unicode/isLetterOrDigit|isLetterOrDigit@kotlin.text.unicode.CodePoint(){}[0]
+final fun (kotlin.text.unicode/CodePoint).kotlin.text.unicode/isLowerCase(): kotlin/Boolean // kotlin.text.unicode/isLowerCase|isLowerCase@kotlin.text.unicode.CodePoint(){}[0]
+final fun (kotlin.text.unicode/CodePoint).kotlin.text.unicode/isTitleCase(): kotlin/Boolean // kotlin.text.unicode/isTitleCase|isTitleCase@kotlin.text.unicode.CodePoint(){}[0]
+final fun (kotlin.text.unicode/CodePoint).kotlin.text.unicode/isUpperCase(): kotlin/Boolean // kotlin.text.unicode/isUpperCase|isUpperCase@kotlin.text.unicode.CodePoint(){}[0]
+final fun (kotlin.text.unicode/CodePoint).kotlin.text.unicode/isWhitespace(): kotlin/Boolean // kotlin.text.unicode/isWhitespace|isWhitespace@kotlin.text.unicode.CodePoint(){}[0]
+final fun (kotlin.text.unicode/CodePoint).kotlin.text.unicode/lowercase(): kotlin/String // kotlin.text.unicode/lowercase|lowercase@kotlin.text.unicode.CodePoint(){}[0]
+final fun (kotlin.text.unicode/CodePoint).kotlin.text.unicode/lowercaseCodePoint(): kotlin.text.unicode/CodePoint // kotlin.text.unicode/lowercaseCodePoint|lowercaseCodePoint@kotlin.text.unicode.CodePoint(){}[0]
+final fun (kotlin.text.unicode/CodePoint).kotlin.text.unicode/titlecase(): kotlin/String // kotlin.text.unicode/titlecase|titlecase@kotlin.text.unicode.CodePoint(){}[0]
+final fun (kotlin.text.unicode/CodePoint).kotlin.text.unicode/titlecaseCodePoint(): kotlin.text.unicode/CodePoint // kotlin.text.unicode/titlecaseCodePoint|titlecaseCodePoint@kotlin.text.unicode.CodePoint(){}[0]
+final fun (kotlin.text.unicode/CodePoint).kotlin.text.unicode/uppercase(): kotlin/String // kotlin.text.unicode/uppercase|uppercase@kotlin.text.unicode.CodePoint(){}[0]
+final fun (kotlin.text.unicode/CodePoint).kotlin.text.unicode/uppercaseCodePoint(): kotlin.text.unicode/CodePoint // kotlin.text.unicode/uppercaseCodePoint|uppercaseCodePoint@kotlin.text.unicode.CodePoint(){}[0]
+final fun (kotlin.text.unicode/CodePointProgression).kotlin.text.unicode/step(kotlin/Int): kotlin.text.unicode/CodePointProgression // kotlin.text.unicode/step|step@kotlin.text.unicode.CodePointProgression(kotlin.Int){}[0]
+final fun (kotlin.text.unicode/CodePointRange).kotlin.text.unicode/contains(kotlin/Char): kotlin/Boolean // kotlin.text.unicode/contains|contains@kotlin.text.unicode.CodePointRange(kotlin.Char){}[0]
+final fun (kotlin.text.unicode/CodePointRange).kotlin.text.unicode/random(kotlin.random/Random): kotlin.text.unicode/CodePoint // kotlin.text.unicode/random|random@kotlin.text.unicode.CodePointRange(kotlin.random.Random){}[0]
+final fun (kotlin.text.unicode/CodePointRange).kotlin.text.unicode/randomOrNull(kotlin.random/Random): kotlin.text.unicode/CodePoint? // kotlin.text.unicode/randomOrNull|randomOrNull@kotlin.text.unicode.CodePointRange(kotlin.random.Random){}[0]
+final fun (kotlin.text/CharCategory).kotlin.text.unicode/contains(kotlin.text.unicode/CodePoint): kotlin/Boolean // kotlin.text.unicode/contains|contains@kotlin.text.CharCategory(kotlin.text.unicode.CodePoint){}[0]
 final fun (kotlin.text/MatchGroupCollection).kotlin.text/get(kotlin/String): kotlin.text/MatchGroup? // kotlin.text/get|get@kotlin.text.MatchGroupCollection(kotlin.String){}[0]
+final fun (kotlin.text/StringBuilder).kotlin.text.unicode/deleteCodePointAt(kotlin/Int): kotlin.text/StringBuilder // kotlin.text.unicode/deleteCodePointAt|deleteCodePointAt@kotlin.text.StringBuilder(kotlin.Int){}[0]
+final fun (kotlin.text/StringBuilder).kotlin.text.unicode/insertCodePointAt(kotlin/Int, kotlin.text.unicode/CodePoint): kotlin.text/StringBuilder // kotlin.text.unicode/insertCodePointAt|insertCodePointAt@kotlin.text.StringBuilder(kotlin.Int;kotlin.text.unicode.CodePoint){}[0]
+final fun (kotlin.text/StringBuilder).kotlin.text.unicode/setCodePointAt(kotlin/Int, kotlin.text.unicode/CodePoint): kotlin.text/StringBuilder // kotlin.text.unicode/setCodePointAt|setCodePointAt@kotlin.text.StringBuilder(kotlin.Int;kotlin.text.unicode.CodePoint){}[0]
 final fun (kotlin.text/StringBuilder).kotlin.text/append(kotlin/Array<out kotlin/Any?>...): kotlin.text/StringBuilder // kotlin.text/append|append@kotlin.text.StringBuilder(kotlin.Array<out|kotlin.Any?>...){}[0]
 final fun (kotlin.text/StringBuilder).kotlin.text/append(kotlin/Array<out kotlin/String?>...): kotlin.text/StringBuilder // kotlin.text/append|append@kotlin.text.StringBuilder(kotlin.Array<out|kotlin.String?>...){}[0]
 final fun (kotlin.time/TimeSource).kotlin.time/asClock(kotlin.time/Instant): kotlin.time/Clock // kotlin.time/asClock|asClock@kotlin.time.TimeSource(kotlin.time.Instant){}[0]
@@ -5343,6 +5500,7 @@ final fun (kotlin/ByteArray?).kotlin.collections/contentHashCode(): kotlin/Int /
 final fun (kotlin/ByteArray?).kotlin.collections/contentToString(): kotlin/String // kotlin.collections/contentToString|contentToString@kotlin.ByteArray?(){}[0]
 final fun (kotlin/Char).kotlin.ranges/downTo(kotlin/Char): kotlin.ranges/CharProgression // kotlin.ranges/downTo|downTo@kotlin.Char(kotlin.Char){}[0]
 final fun (kotlin/Char).kotlin.ranges/until(kotlin/Char): kotlin.ranges/CharRange // kotlin.ranges/until|until@kotlin.Char(kotlin.Char){}[0]
+final fun (kotlin/Char).kotlin.text.unicode/toCodePoint(): kotlin.text.unicode/CodePoint // kotlin.text.unicode/toCodePoint|toCodePoint@kotlin.Char(){}[0]
 final fun (kotlin/Char).kotlin.text/digitToInt(): kotlin/Int // kotlin.text/digitToInt|digitToInt@kotlin.Char(){}[0]
 final fun (kotlin/Char).kotlin.text/digitToInt(kotlin/Int): kotlin/Int // kotlin.text/digitToInt|digitToInt@kotlin.Char(kotlin.Int){}[0]
 final fun (kotlin/Char).kotlin.text/digitToIntOrNull(): kotlin/Int? // kotlin.text/digitToIntOrNull|digitToIntOrNull@kotlin.Char(){}[0]
@@ -5434,11 +5592,27 @@ final fun (kotlin/CharArray).kotlin.collections/toTypedArray(): kotlin/Array<kot
 final fun (kotlin/CharArray).kotlin.collections/union(kotlin.collections/Iterable<kotlin/Char>): kotlin.collections/Set<kotlin/Char> // kotlin.collections/union|union@kotlin.CharArray(kotlin.collections.Iterable<kotlin.Char>){}[0]
 final fun (kotlin/CharArray).kotlin.collections/withIndex(): kotlin.collections/Iterable<kotlin.collections/IndexedValue<kotlin/Char>> // kotlin.collections/withIndex|withIndex@kotlin.CharArray(){}[0]
 final fun (kotlin/CharArray).kotlin.collections/zip(kotlin/CharArray): kotlin.collections/List<kotlin/Pair<kotlin/Char, kotlin/Char>> // kotlin.collections/zip|zip@kotlin.CharArray(kotlin.CharArray){}[0]
+final fun (kotlin/CharArray).kotlin.text.unicode/asCodePointSequence(kotlin/Int = ..., kotlin/Int = ...): kotlin.text.unicode/CodePointSequence // kotlin.text.unicode/asCodePointSequence|asCodePointSequence@kotlin.CharArray(kotlin.Int;kotlin.Int){}[0]
+final fun (kotlin/CharArray).kotlin.text.unicode/codePointAt(kotlin/Int): kotlin.text.unicode/CodePoint // kotlin.text.unicode/codePointAt|codePointAt@kotlin.CharArray(kotlin.Int){}[0]
+final fun (kotlin/CharArray).kotlin.text.unicode/codePointAt(kotlin/Int, kotlin/Int): kotlin.text.unicode/CodePoint // kotlin.text.unicode/codePointAt|codePointAt@kotlin.CharArray(kotlin.Int;kotlin.Int){}[0]
+final fun (kotlin/CharArray).kotlin.text.unicode/codePointBefore(kotlin/Int): kotlin.text.unicode/CodePoint // kotlin.text.unicode/codePointBefore|codePointBefore@kotlin.CharArray(kotlin.Int){}[0]
+final fun (kotlin/CharArray).kotlin.text.unicode/codePointBefore(kotlin/Int, kotlin/Int): kotlin.text.unicode/CodePoint // kotlin.text.unicode/codePointBefore|codePointBefore@kotlin.CharArray(kotlin.Int;kotlin.Int){}[0]
+final fun (kotlin/CharArray).kotlin.text.unicode/codePointCount(kotlin/Int = ..., kotlin/Int = ...): kotlin/Int // kotlin.text.unicode/codePointCount|codePointCount@kotlin.CharArray(kotlin.Int;kotlin.Int){}[0]
+final fun (kotlin/CharArray).kotlin.text.unicode/codePointIterator(kotlin/Int = ...): kotlin.text.unicode/CodePointIndexedIterator // kotlin.text.unicode/codePointIterator|codePointIterator@kotlin.CharArray(kotlin.Int){}[0]
+final fun (kotlin/CharArray).kotlin.text.unicode/codePointIterator(kotlin/Int = ..., kotlin/Int = ...): kotlin.text.unicode/CodePointIndexedIterator // kotlin.text.unicode/codePointIterator|codePointIterator@kotlin.CharArray(kotlin.Int;kotlin.Int){}[0]
+final fun (kotlin/CharArray).kotlin.text.unicode/codePointIterator(kotlin/Int, kotlin/Int = ..., kotlin/Int = ...): kotlin.text.unicode/CodePointIndexedIterator // kotlin.text.unicode/codePointIterator|codePointIterator@kotlin.CharArray(kotlin.Int;kotlin.Int;kotlin.Int){}[0]
+final fun (kotlin/CharArray).kotlin.text.unicode/offsetByCodePoints(kotlin/Int, kotlin/Int, kotlin/Int = ..., kotlin/Int = ...): kotlin/Int // kotlin.text.unicode/offsetByCodePoints|offsetByCodePoints@kotlin.CharArray(kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int){}[0]
 final fun (kotlin/CharArray).kotlin.text/concatToString(): kotlin/String // kotlin.text/concatToString|concatToString@kotlin.CharArray(){}[0]
 final fun (kotlin/CharArray).kotlin.text/concatToString(kotlin/Int = ..., kotlin/Int = ...): kotlin/String // kotlin.text/concatToString|concatToString@kotlin.CharArray(kotlin.Int;kotlin.Int){}[0]
 final fun (kotlin/CharArray?).kotlin.collections/contentEquals(kotlin/CharArray?): kotlin/Boolean // kotlin.collections/contentEquals|contentEquals@kotlin.CharArray?(kotlin.CharArray?){}[0]
 final fun (kotlin/CharArray?).kotlin.collections/contentHashCode(): kotlin/Int // kotlin.collections/contentHashCode|contentHashCode@kotlin.CharArray?(){}[0]
 final fun (kotlin/CharArray?).kotlin.collections/contentToString(): kotlin/String // kotlin.collections/contentToString|contentToString@kotlin.CharArray?(){}[0]
+final fun (kotlin/CharSequence).kotlin.text.unicode/asCodePointSequence(): kotlin.text.unicode/CodePointSequence // kotlin.text.unicode/asCodePointSequence|asCodePointSequence@kotlin.CharSequence(){}[0]
+final fun (kotlin/CharSequence).kotlin.text.unicode/codePointAt(kotlin/Int): kotlin.text.unicode/CodePoint // kotlin.text.unicode/codePointAt|codePointAt@kotlin.CharSequence(kotlin.Int){}[0]
+final fun (kotlin/CharSequence).kotlin.text.unicode/codePointBefore(kotlin/Int): kotlin.text.unicode/CodePoint // kotlin.text.unicode/codePointBefore|codePointBefore@kotlin.CharSequence(kotlin.Int){}[0]
+final fun (kotlin/CharSequence).kotlin.text.unicode/codePointCount(kotlin/Int = ..., kotlin/Int = ...): kotlin/Int // kotlin.text.unicode/codePointCount|codePointCount@kotlin.CharSequence(kotlin.Int;kotlin.Int){}[0]
+final fun (kotlin/CharSequence).kotlin.text.unicode/codePointIterator(kotlin/Int = ...): kotlin.text.unicode/CodePointIndexedIterator // kotlin.text.unicode/codePointIterator|codePointIterator@kotlin.CharSequence(kotlin.Int){}[0]
+final fun (kotlin/CharSequence).kotlin.text.unicode/offsetByCodePoints(kotlin/Int, kotlin/Int): kotlin/Int // kotlin.text.unicode/offsetByCodePoints|offsetByCodePoints@kotlin.CharSequence(kotlin.Int;kotlin.Int){}[0]
 final fun (kotlin/CharSequence).kotlin.text/any(): kotlin/Boolean // kotlin.text/any|any@kotlin.CharSequence(){}[0]
 final fun (kotlin/CharSequence).kotlin.text/asIterable(): kotlin.collections/Iterable<kotlin/Char> // kotlin.text/asIterable|asIterable@kotlin.CharSequence(){}[0]
 final fun (kotlin/CharSequence).kotlin.text/asSequence(): kotlin.sequences/Sequence<kotlin/Char> // kotlin.text/asSequence|asSequence@kotlin.CharSequence(){}[0]
@@ -5711,6 +5885,7 @@ final fun (kotlin/Int).kotlin.ranges/until(kotlin/Byte): kotlin.ranges/IntRange 
 final fun (kotlin/Int).kotlin.ranges/until(kotlin/Int): kotlin.ranges/IntRange // kotlin.ranges/until|until@kotlin.Int(kotlin.Int){}[0]
 final fun (kotlin/Int).kotlin.ranges/until(kotlin/Long): kotlin.ranges/LongRange // kotlin.ranges/until|until@kotlin.Int(kotlin.Long){}[0]
 final fun (kotlin/Int).kotlin.ranges/until(kotlin/Short): kotlin.ranges/IntRange // kotlin.ranges/until|until@kotlin.Int(kotlin.Short){}[0]
+final fun (kotlin/Int).kotlin.text.unicode/toCodePoint(): kotlin.text.unicode/CodePoint // kotlin.text.unicode/toCodePoint|toCodePoint@kotlin.Int(){}[0]
 final fun (kotlin/Int).kotlin.text/digitToChar(): kotlin/Char // kotlin.text/digitToChar|digitToChar@kotlin.Int(){}[0]
 final fun (kotlin/Int).kotlin.text/digitToChar(kotlin/Int): kotlin/Char // kotlin.text/digitToChar|digitToChar@kotlin.Int(kotlin.Int){}[0]
 final fun (kotlin/Int).kotlin.text/toHexString(kotlin.text/HexFormat = ...): kotlin/String // kotlin.text/toHexString|toHexString@kotlin.Int(kotlin.text.HexFormat){}[0]
@@ -5977,6 +6152,12 @@ final fun (kotlin/ShortArray).kotlin.collections/zip(kotlin/ShortArray): kotlin.
 final fun (kotlin/ShortArray?).kotlin.collections/contentEquals(kotlin/ShortArray?): kotlin/Boolean // kotlin.collections/contentEquals|contentEquals@kotlin.ShortArray?(kotlin.ShortArray?){}[0]
 final fun (kotlin/ShortArray?).kotlin.collections/contentHashCode(): kotlin/Int // kotlin.collections/contentHashCode|contentHashCode@kotlin.ShortArray?(){}[0]
 final fun (kotlin/ShortArray?).kotlin.collections/contentToString(): kotlin/String // kotlin.collections/contentToString|contentToString@kotlin.ShortArray?(){}[0]
+final fun (kotlin/String).kotlin.text.unicode/asCodePointSequence(): kotlin.text.unicode/CodePointSequence // kotlin.text.unicode/asCodePointSequence|asCodePointSequence@kotlin.String(){}[0]
+final fun (kotlin/String).kotlin.text.unicode/codePointAt(kotlin/Int): kotlin.text.unicode/CodePoint // kotlin.text.unicode/codePointAt|codePointAt@kotlin.String(kotlin.Int){}[0]
+final fun (kotlin/String).kotlin.text.unicode/codePointBefore(kotlin/Int): kotlin.text.unicode/CodePoint // kotlin.text.unicode/codePointBefore|codePointBefore@kotlin.String(kotlin.Int){}[0]
+final fun (kotlin/String).kotlin.text.unicode/codePointCount(kotlin/Int = ..., kotlin/Int = ...): kotlin/Int // kotlin.text.unicode/codePointCount|codePointCount@kotlin.String(kotlin.Int;kotlin.Int){}[0]
+final fun (kotlin/String).kotlin.text.unicode/codePointIterator(kotlin/Int = ...): kotlin.text.unicode/CodePointIndexedIterator // kotlin.text.unicode/codePointIterator|codePointIterator@kotlin.String(kotlin.Int){}[0]
+final fun (kotlin/String).kotlin.text.unicode/offsetByCodePoints(kotlin/Int, kotlin/Int): kotlin/Int // kotlin.text.unicode/offsetByCodePoints|offsetByCodePoints@kotlin.String(kotlin.Int;kotlin.Int){}[0]
 final fun (kotlin/String).kotlin.text/capitalize(): kotlin/String // kotlin.text/capitalize|capitalize@kotlin.String(){}[0]
 final fun (kotlin/String).kotlin.text/compareTo(kotlin/String, kotlin/Boolean = ...): kotlin/Int // kotlin.text/compareTo|compareTo@kotlin.String(kotlin.String;kotlin.Boolean){}[0]
 final fun (kotlin/String).kotlin.text/decapitalize(): kotlin/String // kotlin.text/decapitalize|decapitalize@kotlin.String(){}[0]
@@ -6292,6 +6473,7 @@ final fun <#A: kotlin.collections/MutableCollection<in kotlin/Int>> (kotlin/IntA
 final fun <#A: kotlin.collections/MutableCollection<in kotlin/Long>> (kotlin/LongArray).kotlin.collections/toCollection(#A): #A // kotlin.collections/toCollection|toCollection@kotlin.LongArray(0:0){0§<kotlin.collections.MutableCollection<in|kotlin.Long>>}[0]
 final fun <#A: kotlin.collections/MutableCollection<in kotlin/Short>> (kotlin/ShortArray).kotlin.collections/toCollection(#A): #A // kotlin.collections/toCollection|toCollection@kotlin.ShortArray(0:0){0§<kotlin.collections.MutableCollection<in|kotlin.Short>>}[0]
 final fun <#A: kotlin.coroutines/CoroutineContext.Element> (kotlin.coroutines/CoroutineContext.Element).kotlin.coroutines/getPolymorphicElement(kotlin.coroutines/CoroutineContext.Key<#A>): #A? // kotlin.coroutines/getPolymorphicElement|getPolymorphicElement@kotlin.coroutines.CoroutineContext.Element(kotlin.coroutines.CoroutineContext.Key<0:0>){0§<kotlin.coroutines.CoroutineContext.Element>}[0]
+final fun <#A: kotlin.text/Appendable> (#A).kotlin.text.unicode/appendCodePoint(kotlin.text.unicode/CodePoint): #A // kotlin.text.unicode/appendCodePoint|appendCodePoint@0:0(kotlin.text.unicode.CodePoint){0§<kotlin.text.Appendable>}[0]
 final fun <#A: kotlin.text/Appendable> (#A).kotlin.text/append(kotlin/Array<out kotlin/CharSequence?>...): #A // kotlin.text/append|append@0:0(kotlin.Array<out|kotlin.CharSequence?>...){0§<kotlin.text.Appendable>}[0]
 final fun <#A: kotlin.text/Appendable> (#A).kotlin.text/appendRange(kotlin/CharSequence, kotlin/Int, kotlin/Int): #A // kotlin.text/appendRange|appendRange@0:0(kotlin.CharSequence;kotlin.Int;kotlin.Int){0§<kotlin.text.Appendable>}[0]
 final fun <#A: kotlin.text/Appendable> (kotlin/BooleanArray).kotlin.collections/joinTo(#A, kotlin/CharSequence = ..., kotlin/CharSequence = ..., kotlin/CharSequence = ..., kotlin/Int = ..., kotlin/CharSequence = ..., kotlin/Function1<kotlin/Boolean, kotlin/CharSequence>? = ...): #A // kotlin.collections/joinTo|joinTo@kotlin.BooleanArray(0:0;kotlin.CharSequence;kotlin.CharSequence;kotlin.CharSequence;kotlin.Int;kotlin.CharSequence;kotlin.Function1<kotlin.Boolean,kotlin.CharSequence>?){0§<kotlin.text.Appendable>}[0]
@@ -6842,6 +7024,10 @@ final inline fun (kotlin.ranges/UIntRange).kotlin.ranges/randomOrNull(): kotlin/
 final inline fun (kotlin.ranges/ULongRange).kotlin.ranges/contains(kotlin/ULong?): kotlin/Boolean // kotlin.ranges/contains|contains@kotlin.ranges.ULongRange(kotlin.ULong?){}[0]
 final inline fun (kotlin.ranges/ULongRange).kotlin.ranges/random(): kotlin/ULong // kotlin.ranges/random|random@kotlin.ranges.ULongRange(){}[0]
 final inline fun (kotlin.ranges/ULongRange).kotlin.ranges/randomOrNull(): kotlin/ULong? // kotlin.ranges/randomOrNull|randomOrNull@kotlin.ranges.ULongRange(){}[0]
+final inline fun (kotlin.text.unicode/CodePoint).kotlin.text.unicode/until(kotlin.text.unicode/CodePoint): kotlin.text.unicode/CodePointRange // kotlin.text.unicode/until|until@kotlin.text.unicode.CodePoint(kotlin.text.unicode.CodePoint){}[0]
+final inline fun (kotlin.text.unicode/CodePointRange).kotlin.text.unicode/contains(kotlin.text.unicode/CodePoint?): kotlin/Boolean // kotlin.text.unicode/contains|contains@kotlin.text.unicode.CodePointRange(kotlin.text.unicode.CodePoint?){}[0]
+final inline fun (kotlin.text.unicode/CodePointRange).kotlin.text.unicode/random(): kotlin.text.unicode/CodePoint // kotlin.text.unicode/random|random@kotlin.text.unicode.CodePointRange(){}[0]
+final inline fun (kotlin.text.unicode/CodePointRange).kotlin.text.unicode/randomOrNull(): kotlin.text.unicode/CodePoint? // kotlin.text.unicode/randomOrNull|randomOrNull@kotlin.text.unicode.CodePointRange(){}[0]
 final inline fun (kotlin.text/Appendable).kotlin.text/appendLine(): kotlin.text/Appendable // kotlin.text/appendLine|appendLine@kotlin.text.Appendable(){}[0]
 final inline fun (kotlin.text/Appendable).kotlin.text/appendLine(kotlin/Char): kotlin.text/Appendable // kotlin.text/appendLine|appendLine@kotlin.text.Appendable(kotlin.Char){}[0]
 final inline fun (kotlin.text/Appendable).kotlin.text/appendLine(kotlin/CharSequence?): kotlin.text/Appendable // kotlin.text/appendLine|appendLine@kotlin.text.Appendable(kotlin.CharSequence?){}[0]
@@ -7098,6 +7284,8 @@ final inline fun (kotlin/CharArray).kotlin.collections/sumOf(kotlin/Function1<ko
 final inline fun (kotlin/CharArray).kotlin.collections/sumOf(kotlin/Function1<kotlin/Char, kotlin/ULong>): kotlin/ULong // kotlin.collections/sumOf|sumOf@kotlin.CharArray(kotlin.Function1<kotlin.Char,kotlin.ULong>){}[0]
 final inline fun (kotlin/CharArray).kotlin.collections/takeLastWhile(kotlin/Function1<kotlin/Char, kotlin/Boolean>): kotlin.collections/List<kotlin/Char> // kotlin.collections/takeLastWhile|takeLastWhile@kotlin.CharArray(kotlin.Function1<kotlin.Char,kotlin.Boolean>){}[0]
 final inline fun (kotlin/CharArray).kotlin.collections/takeWhile(kotlin/Function1<kotlin/Char, kotlin/Boolean>): kotlin.collections/List<kotlin/Char> // kotlin.collections/takeWhile|takeWhile@kotlin.CharArray(kotlin.Function1<kotlin.Char,kotlin.Boolean>){}[0]
+final inline fun (kotlin/CharArray).kotlin.text.unicode/forEachCodePoint(kotlin/Int = ..., kotlin/Int = ..., kotlin/Function1<kotlin.text.unicode/CodePoint, kotlin/Unit>) // kotlin.text.unicode/forEachCodePoint|forEachCodePoint@kotlin.CharArray(kotlin.Int;kotlin.Int;kotlin.Function1<kotlin.text.unicode.CodePoint,kotlin.Unit>){}[0]
+final inline fun (kotlin/CharSequence).kotlin.text.unicode/forEachCodePoint(kotlin/Function1<kotlin.text.unicode/CodePoint, kotlin/Unit>) // kotlin.text.unicode/forEachCodePoint|forEachCodePoint@kotlin.CharSequence(kotlin.Function1<kotlin.text.unicode.CodePoint,kotlin.Unit>){}[0]
 final inline fun (kotlin/CharSequence).kotlin.text/all(kotlin/Function1<kotlin/Char, kotlin/Boolean>): kotlin/Boolean // kotlin.text/all|all@kotlin.CharSequence(kotlin.Function1<kotlin.Char,kotlin.Boolean>){}[0]
 final inline fun (kotlin/CharSequence).kotlin.text/any(kotlin/Function1<kotlin/Char, kotlin/Boolean>): kotlin/Boolean // kotlin.text/any|any@kotlin.CharSequence(kotlin.Function1<kotlin.Char,kotlin.Boolean>){}[0]
 final inline fun (kotlin/CharSequence).kotlin.text/contains(kotlin.text/Regex): kotlin/Boolean // kotlin.text/contains|contains@kotlin.CharSequence(kotlin.text.Regex){}[0]
@@ -7556,6 +7744,7 @@ final inline fun (kotlin/ShortArray).kotlin.collections/sumOf(kotlin/Function1<k
 final inline fun (kotlin/ShortArray).kotlin.collections/takeLastWhile(kotlin/Function1<kotlin/Short, kotlin/Boolean>): kotlin.collections/List<kotlin/Short> // kotlin.collections/takeLastWhile|takeLastWhile@kotlin.ShortArray(kotlin.Function1<kotlin.Short,kotlin.Boolean>){}[0]
 final inline fun (kotlin/ShortArray).kotlin.collections/takeWhile(kotlin/Function1<kotlin/Short, kotlin/Boolean>): kotlin.collections/List<kotlin/Short> // kotlin.collections/takeWhile|takeWhile@kotlin.ShortArray(kotlin.Function1<kotlin.Short,kotlin.Boolean>){}[0]
 final inline fun (kotlin/ShortArray).kotlin.collections/toUShortArray(): kotlin/UShortArray // kotlin.collections/toUShortArray|toUShortArray@kotlin.ShortArray(){}[0]
+final inline fun (kotlin/String).kotlin.text.unicode/forEachCodePoint(kotlin/Function1<kotlin.text.unicode/CodePoint, kotlin/Unit>) // kotlin.text.unicode/forEachCodePoint|forEachCodePoint@kotlin.String(kotlin.Function1<kotlin.text.unicode.CodePoint,kotlin.Unit>){}[0]
 final inline fun (kotlin/String).kotlin.text/dropLastWhile(kotlin/Function1<kotlin/Char, kotlin/Boolean>): kotlin/String // kotlin.text/dropLastWhile|dropLastWhile@kotlin.String(kotlin.Function1<kotlin.Char,kotlin.Boolean>){}[0]
 final inline fun (kotlin/String).kotlin.text/dropWhile(kotlin/Function1<kotlin/Char, kotlin/Boolean>): kotlin/String // kotlin.text/dropWhile|dropWhile@kotlin.String(kotlin.Function1<kotlin.Char,kotlin.Boolean>){}[0]
 final inline fun (kotlin/String).kotlin.text/filter(kotlin/Function1<kotlin/Char, kotlin/Boolean>): kotlin/String // kotlin.text/filter|filter@kotlin.String(kotlin.Function1<kotlin.Char,kotlin.Boolean>){}[0]
@@ -9225,6 +9414,7 @@ final inline fun kotlin.math/max(kotlin/UInt, kotlin/UInt): kotlin/UInt // kotli
 final inline fun kotlin.math/max(kotlin/ULong, kotlin/ULong): kotlin/ULong // kotlin.math/max|max(kotlin.ULong;kotlin.ULong){}[0]
 final inline fun kotlin.math/min(kotlin/UInt, kotlin/UInt): kotlin/UInt // kotlin.math/min|min(kotlin.UInt;kotlin.UInt){}[0]
 final inline fun kotlin.math/min(kotlin/ULong, kotlin/ULong): kotlin/ULong // kotlin.math/min|min(kotlin.ULong;kotlin.ULong){}[0]
+final inline fun kotlin.text.unicode/forEachCodePointImpl(kotlin/Int, kotlin/Int, kotlin/Function1<kotlin/Int, kotlin.text.unicode/CodePoint>, kotlin/Function1<kotlin.text.unicode/CodePoint, kotlin/Unit>) // kotlin.text.unicode/forEachCodePointImpl|forEachCodePointImpl(kotlin.Int;kotlin.Int;kotlin.Function1<kotlin.Int,kotlin.text.unicode.CodePoint>;kotlin.Function1<kotlin.text.unicode.CodePoint,kotlin.Unit>){}[0]
 final inline fun kotlin.text/HexFormat(kotlin/Function1<kotlin.text/HexFormat.Builder, kotlin/Unit>): kotlin.text/HexFormat // kotlin.text/HexFormat|HexFormat(kotlin.Function1<kotlin.text.HexFormat.Builder,kotlin.Unit>){}[0]
 final inline fun kotlin.text/buildString(kotlin/Function1<kotlin.text/StringBuilder, kotlin/Unit>): kotlin/String // kotlin.text/buildString|buildString(kotlin.Function1<kotlin.text.StringBuilder,kotlin.Unit>){}[0]
 final inline fun kotlin.text/buildString(kotlin/Int, kotlin/Function1<kotlin.text/StringBuilder, kotlin/Unit>): kotlin/String // kotlin.text/buildString|buildString(kotlin.Int;kotlin.Function1<kotlin.text.StringBuilder,kotlin.Unit>){}[0]
@@ -14472,11 +14662,6 @@ final value class kotlin.wasm.unsafe/Pointer { // kotlin.wasm.unsafe/Pointer|nul
     final fun storeShort(kotlin/Short) // kotlin.wasm.unsafe/Pointer.storeShort|storeShort(kotlin.Short){}[0]
     final fun toString(): kotlin/String // kotlin.wasm.unsafe/Pointer.toString|toString(){}[0]
 }
-
-// Targets: [wasmJs, wasmWasi]
-final var kotlin.wasm.unsafe/currentAllocator // kotlin.wasm.unsafe/currentAllocator|{}currentAllocator[0]
-    final fun <get-currentAllocator>(): kotlin.wasm.unsafe/ScopedMemoryAllocator? // kotlin.wasm.unsafe/currentAllocator.<get-currentAllocator>|<get-currentAllocator>(){}[0]
-    final fun <set-currentAllocator>(kotlin.wasm.unsafe/ScopedMemoryAllocator?) // kotlin.wasm.unsafe/currentAllocator.<set-currentAllocator>|<set-currentAllocator>(kotlin.wasm.unsafe.ScopedMemoryAllocator?){}[0]
 
 // Targets: [wasmJs, wasmWasi]
 final fun (kotlin/Byte).kotlin.text/toString(kotlin/Int): kotlin/String // kotlin.text/toString|toString@kotlin.Byte(kotlin.Int){}[0]

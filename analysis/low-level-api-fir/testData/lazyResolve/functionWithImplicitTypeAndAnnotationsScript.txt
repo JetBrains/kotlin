@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] functionWithImplicitTypeAndAnnotationsScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-functionWithImplicitTypeAndAnnotationsScript.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol myPack.<script-functionWithImplicitTypeAndAnnotationsScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
@@ -41,7 +41,7 @@ FILE: [ResolvedTo(RAW_FIR)] functionWithImplicitTypeAndAnnotationsScript.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] functionWithImplicitTypeAndAnnotationsScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-functionWithImplicitTypeAndAnnotationsScript.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol myPack.<script-functionWithImplicitTypeAndAnnotationsScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
@@ -81,7 +81,7 @@ FILE: [ResolvedTo(IMPORTS)] functionWithImplicitTypeAndAnnotationsScript.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] functionWithImplicitTypeAndAnnotationsScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-functionWithImplicitTypeAndAnnotationsScript.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol myPack.<script-functionWithImplicitTypeAndAnnotationsScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
@@ -121,7 +121,7 @@ FILE: [ResolvedTo(IMPORTS)] functionWithImplicitTypeAndAnnotationsScript.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] functionWithImplicitTypeAndAnnotationsScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-functionWithImplicitTypeAndAnnotationsScript.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol myPack.<script-functionWithImplicitTypeAndAnnotationsScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
@@ -161,7 +161,7 @@ FILE: [ResolvedTo(IMPORTS)] functionWithImplicitTypeAndAnnotationsScript.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] functionWithImplicitTypeAndAnnotationsScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-functionWithImplicitTypeAndAnnotationsScript.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol myPack.<script-functionWithImplicitTypeAndAnnotationsScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
@@ -201,7 +201,7 @@ FILE: [ResolvedTo(IMPORTS)] functionWithImplicitTypeAndAnnotationsScript.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] functionWithImplicitTypeAndAnnotationsScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-functionWithImplicitTypeAndAnnotationsScript.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](AnnotationTarget#.PROPERTY#, AnnotationTarget#.TYPE_PARAMETER#, AnnotationTarget#.FUNCTION#, AnnotationTarget#.VALUE_PARAMETER#, AnnotationTarget#.TYPE#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.PROPERTY|, R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|, R|kotlin/annotation/AnnotationTarget.FUNCTION|, R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, R|kotlin/annotation/AnnotationTarget.TYPE|))] public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol myPack.<script-functionWithImplicitTypeAndAnnotationsScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
@@ -241,7 +241,7 @@ FILE: [ResolvedTo(IMPORTS)] functionWithImplicitTypeAndAnnotationsScript.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] functionWithImplicitTypeAndAnnotationsScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-functionWithImplicitTypeAndAnnotationsScript.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](AnnotationTarget#.PROPERTY#, AnnotationTarget#.TYPE_PARAMETER#, AnnotationTarget#.FUNCTION#, AnnotationTarget#.VALUE_PARAMETER#, AnnotationTarget#.TYPE#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.PROPERTY|, R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|, R|kotlin/annotation/AnnotationTarget.FUNCTION|, R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, R|kotlin/annotation/AnnotationTarget.TYPE|))] public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol myPack.<script-functionWithImplicitTypeAndAnnotationsScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
@@ -281,7 +281,7 @@ FILE: [ResolvedTo(IMPORTS)] functionWithImplicitTypeAndAnnotationsScript.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] functionWithImplicitTypeAndAnnotationsScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-functionWithImplicitTypeAndAnnotationsScript.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](AnnotationTarget#.PROPERTY#, AnnotationTarget#.TYPE_PARAMETER#, AnnotationTarget#.FUNCTION#, AnnotationTarget#.VALUE_PARAMETER#, AnnotationTarget#.TYPE#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.PROPERTY|, R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|, R|kotlin/annotation/AnnotationTarget.FUNCTION|, R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, R|kotlin/annotation/AnnotationTarget.TYPE|))] public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol myPack.<script-functionWithImplicitTypeAndAnnotationsScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
@@ -321,7 +321,7 @@ FILE: [ResolvedTo(IMPORTS)] functionWithImplicitTypeAndAnnotationsScript.kts
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] functionWithImplicitTypeAndAnnotationsScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-functionWithImplicitTypeAndAnnotationsScript.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](AnnotationTarget#.PROPERTY#, AnnotationTarget#.TYPE_PARAMETER#, AnnotationTarget#.FUNCTION#, AnnotationTarget#.VALUE_PARAMETER#, AnnotationTarget#.TYPE#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.PROPERTY|, R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|, R|kotlin/annotation/AnnotationTarget.FUNCTION|, R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, R|kotlin/annotation/AnnotationTarget.TYPE|))] public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol myPack.<script-functionWithImplicitTypeAndAnnotationsScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
@@ -361,7 +361,7 @@ FILE: [ResolvedTo(IMPORTS)] functionWithImplicitTypeAndAnnotationsScript.kts
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] functionWithImplicitTypeAndAnnotationsScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-functionWithImplicitTypeAndAnnotationsScript.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](AnnotationTarget#.PROPERTY#, AnnotationTarget#.TYPE_PARAMETER#, AnnotationTarget#.FUNCTION#, AnnotationTarget#.VALUE_PARAMETER#, AnnotationTarget#.TYPE#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.PROPERTY|, R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|, R|kotlin/annotation/AnnotationTarget.FUNCTION|, R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, R|kotlin/annotation/AnnotationTarget.TYPE|))] public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol myPack.<script-functionWithImplicitTypeAndAnnotationsScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
@@ -403,7 +403,7 @@ FILE: [ResolvedTo(IMPORTS)] functionWithImplicitTypeAndAnnotationsScript.kts
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] functionWithImplicitTypeAndAnnotationsScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-functionWithImplicitTypeAndAnnotationsScript.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](AnnotationTarget#.PROPERTY#, AnnotationTarget#.TYPE_PARAMETER#, AnnotationTarget#.FUNCTION#, AnnotationTarget#.VALUE_PARAMETER#, AnnotationTarget#.TYPE#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.PROPERTY|, R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|, R|kotlin/annotation/AnnotationTarget.FUNCTION|, R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, R|kotlin/annotation/AnnotationTarget.TYPE|))] public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol myPack.<script-functionWithImplicitTypeAndAnnotationsScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
@@ -445,7 +445,7 @@ FILE: [ResolvedTo(IMPORTS)] functionWithImplicitTypeAndAnnotationsScript.kts
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] functionWithImplicitTypeAndAnnotationsScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-functionWithImplicitTypeAndAnnotationsScript.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[Types](AnnotationTarget#.PROPERTY#, AnnotationTarget#.TYPE_PARAMETER#, AnnotationTarget#.FUNCTION#, AnnotationTarget#.VALUE_PARAMETER#, AnnotationTarget#.TYPE#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.PROPERTY|, R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|, R|kotlin/annotation/AnnotationTarget.FUNCTION|, R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, R|kotlin/annotation/AnnotationTarget.TYPE|))] public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol myPack.<script-functionWithImplicitTypeAndAnnotationsScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
@@ -487,7 +487,7 @@ FILE: [ResolvedTo(IMPORTS)] functionWithImplicitTypeAndAnnotationsScript.kts
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] functionWithImplicitTypeAndAnnotationsScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-functionWithImplicitTypeAndAnnotationsScript.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[Types](AnnotationTarget#.PROPERTY#, AnnotationTarget#.TYPE_PARAMETER#, AnnotationTarget#.FUNCTION#, AnnotationTarget#.VALUE_PARAMETER#, AnnotationTarget#.TYPE#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.PROPERTY|, R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|, R|kotlin/annotation/AnnotationTarget.FUNCTION|, R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, R|kotlin/annotation/AnnotationTarget.TYPE|))] public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol myPack.<script-functionWithImplicitTypeAndAnnotationsScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
@@ -529,7 +529,7 @@ FILE: [ResolvedTo(IMPORTS)] functionWithImplicitTypeAndAnnotationsScript.kts
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] functionWithImplicitTypeAndAnnotationsScript.kts
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-functionWithImplicitTypeAndAnnotationsScript.kts>
-        [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)]) public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol myPack.<script-functionWithImplicitTypeAndAnnotationsScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {

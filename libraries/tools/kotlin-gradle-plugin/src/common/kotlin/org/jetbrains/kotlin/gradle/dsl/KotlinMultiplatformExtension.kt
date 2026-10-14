@@ -474,7 +474,7 @@ internal constructor(
 }
 
 private const val swiftExportDslDeprecationMessage =
-    "Use the 'export { swift { } }' DSL instead. Scheduled for removal in Kotlin 2.7."
+    "Use the 'export { swift { } }' DSL instead. This will become an error in Kotlin 2.5.20 and will be removed in Kotlin 2.6.0."
 
 private const val targetsExtensionDeprecationMessage =
     "Usages of this DSL are deprecated, please migrate to top-level 'kotlin {}' extension."

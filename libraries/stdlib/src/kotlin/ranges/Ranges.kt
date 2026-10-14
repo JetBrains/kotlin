@@ -33,6 +33,9 @@ private open class ComparableRange<T : Comparable<T>>(
  *
  * This value needs to be smaller than or equal to [that] value, otherwise the returned range will be empty.
  *
+ * The returned range values can be compared between each other for equality.
+ * The ranges are equal if they include the same set of values, that is if they are both empty or have the same [ClosedRange.start] and [ClosedRange.endInclusive] properties.
+ *
  * @sample samples.ranges.Ranges.rangeToComparable
  */
 public operator fun <T : Comparable<T>> T.rangeTo(that: T): ClosedRange<T> = ComparableRange(this, that)
@@ -61,6 +64,9 @@ private open class ComparableOpenEndRange<T : Comparable<T>>(
  * Creates an open-ended range from this [Comparable] value to the specified [that] value.
  *
  * This value needs to be smaller than [that] value, otherwise the returned range will be empty.
+ *
+ * The returned range values can be compared between each other for equality.
+ * The ranges are equal if they include the same set of values, that is if they are both empty or have the same [OpenEndRange.start] and [OpenEndRange.endExclusive] properties.
  *
  * @sample samples.ranges.Ranges.rangeUntilComparable
  */
@@ -124,6 +130,9 @@ private class ClosedDoubleRange(
  *
  * Numbers are compared with the ends of this range according to IEEE-754.
  *
+ * The returned range values can be compared between each other for equality.
+ * The ranges are equal if they include the same set of values, that is if they are both empty or have the same [ClosedRange.start] and [ClosedRange.endInclusive] properties.
+ *
  * @sample samples.ranges.Ranges.rangeToDouble
  */
 @SinceKotlin("1.1")
@@ -164,6 +173,9 @@ private class OpenEndDoubleRange(
  * Creates an open-ended range from this [Double] value to the specified [that] value.
  *
  * Numbers are compared with the ends of this range according to IEEE-754.
+ *
+ * The returned range values can be compared between each other for equality.
+ * The ranges are equal if they include the same set of values, that is if they are both empty or have the same [OpenEndRange.start] and [OpenEndRange.endExclusive] properties.
  *
  * @sample samples.ranges.Ranges.rangeUntilDouble
  */
@@ -208,6 +220,9 @@ private class ClosedFloatRange(
  *
  * Numbers are compared with the ends of this range according to IEEE-754.
  *
+ * The returned range values can be compared between each other for equality.
+ * The ranges are equal if they include the same set of values, that is if they are both empty or have the same [ClosedRange.start] and [ClosedRange.endInclusive] properties.
+ *
  * @sample samples.ranges.Ranges.rangeToFloat
  */
 @SinceKotlin("1.1")
@@ -249,6 +264,9 @@ private class OpenEndFloatRange(
  * Creates an open-ended range from this [Float] value to the specified [that] value.
  *
  * Numbers are compared with the ends of this range according to IEEE-754.
+ *
+ * The returned range values can be compared between each other for equality.
+ * The ranges are equal if they include the same set of values, that is if they are both empty or have the same [OpenEndRange.start] and [OpenEndRange.endExclusive] properties.
  *
  * @sample samples.ranges.Ranges.rangeUntilFloat
  */

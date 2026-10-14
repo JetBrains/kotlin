@@ -3,7 +3,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=RecoveryEmptyDelegationTypeK
   partSimpleName: "RecoveryEmptyDelegationTypeKt"
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[]]
+  CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=A, superNames=[]]
     CLASS_BODY
       SECONDARY_CONSTRUCTOR[fqName=null, hasBody=true, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=A]
         VALUE_PARAMETER_LIST
@@ -14,7 +14,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=RecoveryEmptyDelegationTypeK
       FUNCTION[fqName=A.foo, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
         VALUE_PARAMETER_LIST
         INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
-  CLASS[classId=/C, fqName=C, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=C, superNames=[]]
+  CLASS[classId=/C, fqName=C, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=C, superNames=[]]
     CLASS_BODY
       SECONDARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=C]
         VALUE_PARAMETER_LIST
@@ -22,7 +22,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=RecoveryEmptyDelegationTypeK
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Int]
-  CLASS[classId=/B, fqName=B, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=B, superNames=[]]
+  CLASS[classId=/B, fqName=B, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=B, superNames=[]]
     CLASS_BODY
       SECONDARY_CONSTRUCTOR[fqName=null, hasBody=true, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=B]
         VALUE_PARAMETER_LIST

@@ -10,11 +10,13 @@ import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.InheritedMember
 import org.jetbrains.dokka.model.IsVar
 import org.jetbrains.dokka.model.KotlinVisibility
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInAnalysisApi
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 
+@MustRunOnChangesInAnalysisApi
 class DescriptorSuperPropertiesTest : BaseAbstractTest() {
 
     private val commonTestConfiguration = dokkaConfiguration {
@@ -54,7 +56,7 @@ class DescriptorSuperPropertiesTest : BaseAbstractTest() {
                 assertNull(property.setter)
                 assertNotNull(property.getter)
 
-                val getterInheritedFrom = property.getter?.extra?.get(InheritedMember)?.inheritedFrom?.values?.single()
+                val getterInheritedFrom = property.getter.extra[InheritedMember]?.inheritedFrom?.values?.single()
                 assertEquals(DRI(packageName = "test", classNames = "A"), getterInheritedFrom)
 
                 assertNull(property.extra[IsVar])
@@ -88,10 +90,11 @@ class DescriptorSuperPropertiesTest : BaseAbstractTest() {
                 assertNull(property, "Inherited property `a` should not be visible as it's not accessible")
 
                 val setterLookalike = testedClass.functions.firstOrNull { it.name == "setA" }
-                assertNotNull(setterLookalike) {
+                assertNotNull(
+                    setterLookalike,
                     "Expected setA to be a regular function because field `a` is neither var nor val from Kotlin's " +
                             "interop perspective, it's not accessible."
-                }
+                )
             }
         }
     }
@@ -216,8 +219,8 @@ class DescriptorSuperPropertiesTest : BaseAbstractTest() {
                 assertNotNull(property.setter)
 
 
-                assertEquals("getA", property.getter?.name)
-                assertEquals("setA", property.setter?.name)
+                assertEquals("getA", property.getter.name)
+                assertEquals("setA", property.setter.name)
 
 
                 assertEquals(0, testedClass.functions.size)
@@ -274,10 +277,10 @@ class DescriptorSuperPropertiesTest : BaseAbstractTest() {
                 val propertyVisibility = property.visibility.values.single()
                 assertEquals(KotlinVisibility.Protected, propertyVisibility)
 
-                val getterVisibility = property.getter?.visibility?.values?.single()
+                val getterVisibility = property.getter.visibility.values.single()
                 assertEquals(KotlinVisibility.Protected, getterVisibility)
 
-                val setterVisibility = property.setter?.visibility?.values?.single()
+                val setterVisibility = property.setter.visibility.values.single()
                 assertEquals(KotlinVisibility.Protected, setterVisibility)
 
                 val inheritedFrom = property.extra[InheritedMember]?.inheritedFrom?.values?.single()

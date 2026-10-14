@@ -128,7 +128,7 @@ class ReflectJavaClass(
         get() = Java16SealedRecordLoader.loadIsRecord(klass) ?: false
 
     override val isValue: Boolean
-        get() = !isInterface && !isAnnotationType && !isEnum && ValhallaValueClassLoader.loadIsValue(klass)
+        get() = ValhallaValueClassLoader.loadIsValue(klass)
 
     override val recordComponents: Collection<JavaRecordComponent>
         get() = (Java16SealedRecordLoader.loadGetRecordComponents(klass) ?: emptyArray()).map(::ReflectJavaRecordComponent)

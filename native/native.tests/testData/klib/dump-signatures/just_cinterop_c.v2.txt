@@ -1,10 +1,13 @@
-// Declared signatures: 18
+// Declared signatures: 21
 just_cinterop_c/do_int|do_int(kotlin.Int){}[100]
 just_cinterop_c/do_my_struct_t_ptr|do_my_struct_t_ptr(kotlinx.cinterop.CValuesRef<just_cinterop_c.my_struct>?){}[100]
 just_cinterop_c/do_my_struct_t|do_my_struct_t(kotlinx.cinterop.CValue<just_cinterop_c.my_struct>){}[100]
 just_cinterop_c/do_short|do_short(kotlin.Short){}[100]
 just_cinterop_c/do_signed_char|do_signed_char(kotlin.Byte){}[100]
 just_cinterop_c/do_void_ptr|do_void_ptr(kotlinx.cinterop.CValuesRef<*>?){}[100]
+just_cinterop_c/my_int_var.<get-my_int_var>|<get-my_int_var>(){}[100]
+just_cinterop_c/my_int_var.<set-my_int_var>|<set-my_int_var>(kotlin.Int){}[100]
+just_cinterop_c/my_int_var|{}my_int_var[100]
 just_cinterop_c/my_struct.<init>|<init>(kotlin.native.internal.NativePtr){}[100]
 just_cinterop_c/my_struct.Companion|null[100]
 just_cinterop_c/my_struct.c.<get-c>|<get-c>(){}[100]

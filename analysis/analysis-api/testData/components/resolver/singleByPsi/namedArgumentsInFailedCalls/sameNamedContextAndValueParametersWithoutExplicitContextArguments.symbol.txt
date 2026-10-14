@@ -1,0 +1,17 @@
+KtNameReferenceExpression(151,152): 'x'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  KaSimpleSymbolResolutionError:
+    candidateSymbols = [
+      x: kotlin.Boolean,
+      x: kotlin.Int
+    ]
+    diagnostic = ERROR<NONE_APPLICABLE: None of the following candidates is applicable:
+
+    context(x: String) fun foo(x: Int): Unit:
+      Argument type mismatch: actual type is 'String', but 'Int' was expected.
+      No context argument for 'x: String' found.
+
+    fun foo(x: Boolean): Unit:
+      Argument type mismatch: actual type is 'String', but 'Boolean' was expected.>

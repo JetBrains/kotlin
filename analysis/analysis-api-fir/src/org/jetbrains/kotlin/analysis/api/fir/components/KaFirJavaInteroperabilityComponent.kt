@@ -480,7 +480,7 @@ internal class KaFirJavaInteroperabilityComponent(
             lightClassBridge.computeJavaMethodName(
                 symbol = function,
                 defaultName = defaultName,
-                ignoreValueClassMangling = false
+                ignoreInlineClassMangling = false
             )?.takeIf(StringUtil::isJavaIdentifier)
         }
     }

@@ -9,14 +9,10 @@ import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
 import org.jetbrains.kotlin.backend.konan.LinkKlibsContext
 import org.jetbrains.kotlin.backend.konan.cexport.*
-import org.jetbrains.kotlin.backend.konan.cexport.CAdapterApiExporter
-import org.jetbrains.kotlin.backend.konan.cexport.CAdapterExportedElements
-import org.jetbrains.kotlin.backend.konan.cexport.CAdapterGenerator
-import org.jetbrains.kotlin.backend.konan.cexport.CAdapterTypeTranslator
 import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import java.io.File
 
-internal val BuildCExports = createSimpleNamedCompilerPhase<LinkKlibsContext, FrontendPhaseOutput.Full, CAdapterExportedElements>(
+internal val BuildCExports = createSimpleNamedCompilerPhase<LinkKlibsContext, K1FrontendPhaseOutput, CAdapterExportedElements>(
         "BuildCExports",
         outputIfNotEnabled = { _, _, _, _ -> error("") }
 ) { context, input ->

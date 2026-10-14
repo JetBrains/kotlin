@@ -41,7 +41,9 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
 
     @Test
     fun testTotalKotlinWithExpressionTrees() {
-        val root = File(testDataPath)
+        // Back from /compiler/fir/raw-fir/<module>
+        val path = "$testDataPath/../../../.."
+        val root = File(path)
         var counter = 0
         var time = 0L
         var totalLength = 0
@@ -57,10 +59,10 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
         var ktExpressions = 0
         var ktDeclarations = 0
         var ktReferences = 0
-        println("BASE PATH: $testDataPath")
-        testDataPath.walkRepositoryKotlinFilesWithoutTestData { file ->
+        println("BASE PATH: ${root.normalize().absolutePath}")
+        path.walkRepositoryKotlinFilesWithoutTestData { file ->
             try {
-                val ktFile = createKtFile(file.toRelativeString(root))
+                val ktFile = createKtFile(file.absolutePath)
                 val firFile: FirFile
                 time += measureNanoTime {
                     firFile = ktFile.toFirFile()
@@ -167,9 +169,11 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
     }
 
     private fun testConsistency(checkConsistency: FirFile.() -> Unit) {
-        val root = File(testDataPath)
-        testDataPath.walkRepositoryKotlinFilesWithoutTestData { file ->
-            val ktFile = createKtFile(file.toRelativeString(root))
+        // Back from /compiler/fir/raw-fir/<module>
+        val path = "$testDataPath/../../../.."
+        val root = File(path)
+        path.walkRepositoryKotlinFilesWithoutTestData { file ->
+            val ktFile = createKtFile(file.absolutePath)
             val firFile = ktFile.toFirFile()
             try {
                 firFile.checkConsistency()
@@ -188,101 +192,5 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
     @Test
     fun testTransformConsistency() {
         testConsistency { checkTransformedChildren() }
-    }
-
-    @Test
-    fun testPsiConsistency() {
-        val root = File(testDataPath)
-        var counter = 0
-        testDataPath.walkRepositoryKotlinFilesWithoutTestData { file ->
-            val ktFile = createKtFile(file.toRelativeString(root))
-            val firFile: FirFile = ktFile.toFirFile(
-                features = mapOf(LanguageFeature.EnableNameBasedDestructuringShortForm to LanguageFeature.State.ENABLED)
-            )
-            val psiSetViaFir = mutableSetOf<KtElement>()
-            val psiSetDirect = mutableSetOf<KtElement>()
-            firFile.accept(object : FirVisitorVoid() {
-                override fun visitElement(element: FirElement) {
-                    val psi = element.psi as? KtElement
-                    if (psi != null) {
-                        psiSetViaFir += psi
-                    }
-                    element.acceptChildren(this)
-                }
-            })
-            ktFile.accept(object : KtTreeVisitor<Nothing?>() {
-                override fun visitKtElement(element: KtElement, data: Nothing?): Void? {
-                    psiSetDirect += element
-                    return super.visitKtElement(element, data)
-                }
-            })
-            psiSetDirect -= psiSetViaFir
-            psiSetDirect.removeIf(::isKnownToBeNotTraversedByFirTree)
-            if (psiSetDirect.isNotEmpty()) {
-                println("Total of $counter files processed successfully")
-                println("FILE ${file.toRelativeString(root)} has not traversed PSI elements (total of ${psiSetDirect.size})!")
-                for (element in psiSetDirect) {
-                    println("Not traversed ${element.javaClass}: ${element.text}")
-                    val traversedParent = element.parents.firstOrNull { it in psiSetViaFir }
-                    if (traversedParent != null) {
-                        println("(traversed parent: ${traversedParent.javaClass} ${traversedParent.text})")
-                    }
-                }
-                println(firFile.render())
-                throw AssertionError()
-            }
-            counter++
-        }
-    }
-
-    private fun isKnownToBeNotTraversedByFirTree(it: KtElement): Boolean {
-        return it is KtPackageDirective || it is KtImportList || it is KtClassBody ||
-                it is KtModifierList ||
-                it is KtUserType || it is KtNullableType || it is KtFunctionType || it is KtFunctionTypeReceiver ||
-                it is KtIntersectionType || it is KtDynamicType ||
-                it is KtQualifiedExpression ||
-                it is KtPropertyDelegate ||
-                it is KtConstructorCalleeExpression && (it.parent is KtAnnotationEntry || it.parent is KtSuperTypeCallEntry) ||
-                it is KtValueArgumentList || it is KtParameterList || it is KtTypeParameterList || it is KtTypeArgumentList ||
-                it is KtTypeReference && it.parent.parent.parent is KtCallExpression ||
-                it is KtSuperTypeList || (it is KtSuperTypeListEntry && it !is KtSuperTypeCallEntry) ||
-                it is KtValueArgument || it is KtLambdaArgument || it is KtValueArgumentName ||
-                it is KtContainerNodeForControlStructureBody || it is KtContainerNode ||
-                it is KtStringTemplateEntry ||
-                it is KtStringInterpolationPrefix ||
-                it is KtOperationReferenceExpression ||
-                it is KtLabelReferenceExpression ||
-                it is KtConstructorDelegationReferenceExpression ||
-                it is KtParenthesizedExpression ||
-                it is KtLabeledExpression ||
-                it is KtAnnotatedExpression ||
-                it is KtWhenConditionWithExpression ||
-                it is KtWhenEntryGuard ||
-                it is KtFinallySection ||
-                it is KtObjectLiteralExpression ||// TODO: KT-24089 (support of dynamic)
-                // NB: KtAnnotation is processed via its KtAnnotationEntries
-                it is KtFileAnnotationList || it is KtAnnotationUseSiteTarget || it is KtAnnotation ||
-                it is KtInitializerList || it is KtEnumEntrySuperclassReferenceExpression ||
-                it is KtLambdaExpression ||
-                it is KtTypeConstraintList ||
-                it is KtTypeConstraint ||
-                it is KtStringTemplateExpression && it.entries.size <= 1 ||
-                it is KtDestructuringDeclaration && it.parent is KtParameter ||
-                it is KtArrayAccessExpression && it.parent is KtBinaryExpression ||
-                it is KtCallExpression && it.parent is KtQualifiedExpression ||
-                it is KtNameReferenceExpression &&
-                (it.parent is KtUserType || it.parent is KtInstanceExpressionWithLabel ||
-                        it.parent is KtValueArgumentName || it.parent is KtTypeConstraint) ||
-                it.getStrictParentOfType<KtPackageDirective>() != null ||
-                it.getStrictParentOfType<KtImportDirective>() != null ||
-                (it is KtPropertyAccessor && !it.hasBody()) ||
-                it is KtDestructuringDeclarationEntry && it.text == "_" ||
-                it is KtConstructorDelegationCall && it.text == "" ||
-                it is KtIfExpression && it.parent is KtContainerNodeForControlStructureBody && it.parent.parent is KtIfExpression ||
-                it is KtContextParameterList ||
-                it is KtContextReceiver && it.parent is KtContextParameterList && it.parent?.parent is KtFunctionType ||
-                it is KtConstantExpression && it.parent.let { parent ->
-            parent is KtPrefixExpression && (parent.operationToken == KtTokens.MINUS || parent.operationToken == KtTokens.PLUS)
-        }
     }
 }

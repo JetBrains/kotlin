@@ -6,10 +6,12 @@ plugins {
     id("common-configuration")
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
+    id("java-test-fixtures")
 }
 
 sourceSets {
     "main" { java.srcDirs("main") }
+    "testFixtures" { projectDefault() }
     "test" { projectDefault() }
 }
 
@@ -48,6 +50,9 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.opentelemetry.api) { isTransitive = false }
 
+    testFixturesApi(testFixtures(project(":compiler:tests-common")))
+    testFixturesApi(project(":core:util.runtime"))
+
     builtinsApi("org.jetbrains.kotlin:kotlin-stdlib:$bootstrapKotlinVersion") { isTransitive = false }
     evaluateApi(commonDependency("org.jetbrains.kotlin:kotlin-reflect"))
     evaluateApi(project(":compiler:ir.tree"))
@@ -65,6 +70,7 @@ dependencies {
     testImplementation(protobufCompareSourceSet.output)
 
     testImplementation(project(":compiler:cli"))
+    testImplementation(project(":kotlin-build-common"))
     testImplementation(testFixtures(project(":compiler:incremental-compilation-impl")))
     testImplementation(testFixtures(project(":plugins:jvm-abi-gen")))
     testImplementation(testFixtures(project(":plugins:parcelize:parcelize-compiler")))
@@ -77,7 +83,7 @@ dependencies {
     testImplementation(testFixtures(project(":kotlin-sam-with-receiver-compiler-plugin")))
     testImplementation(testFixtures(project(":kotlin-assignment-compiler-plugin")))
     testImplementation(testFixtures(project(":kotlinx-serialization-compiler-plugin")))
-    testImplementation(projectTests(":kotlin-atomicfu-compiler-plugin"))
+    testImplementation(testFixtures(project(":kotlin-atomicfu-compiler-plugin")))
     testImplementation(testFixtures(project(":kotlin-dataframe-compiler-plugin")))
     testImplementation(testFixtures(project(":plugins:plugin-sandbox")))
     testImplementation(testFixtures(project(":plugins:plugin-sandbox:plugin-sandbox-ic-test")))
@@ -182,5 +188,3 @@ val generateNativeInteropRuntime by generator(
     nativeInteropRuntimeSourceSet,
     inputKind = RuntimeClasspath,
 )
-
-testsJar()

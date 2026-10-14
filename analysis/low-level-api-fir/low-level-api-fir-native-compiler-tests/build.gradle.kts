@@ -36,7 +36,6 @@ projectTests {
     nativeTestTask("llFirNativeTests", "llFirNative", requirePlatformLibs = true)
 }
 
-testsJar()
 
 if (kotlinBuildProperties.isKotlinNativeEnabled.get()) {
     tasks.named("check") {

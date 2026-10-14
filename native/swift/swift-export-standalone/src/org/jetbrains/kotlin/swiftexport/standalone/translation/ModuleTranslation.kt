@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.sir.providers.utils.updateImport
 import org.jetbrains.kotlin.sir.providers.withSessions
 import org.jetbrains.kotlin.sir.util.allParameters
 import org.jetbrains.kotlin.sir.util.conflictsWith
+import org.jetbrains.kotlin.sir.util.isUnavailable
 import org.jetbrains.kotlin.sir.util.returnType
 import org.jetbrains.kotlin.swiftexport.standalone.InputModule
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportLogger
@@ -183,7 +184,7 @@ private fun createTranslationResult(
 
     val knownModuleNames = setOf(KotlinRuntimeModule.name, bridgeModuleName) +
             kaModules.platformLibraries.map { it.libraryName } +
-            kaModules.cinteropReexportLibrary?.reexportedObjCModuleNames().orEmpty()
+            kaModules.cinteropReexportLibraries.flatMap { it.reexportedObjCModuleNames() }
     val referencedSwiftModules = sirModule.imports
         .filter { it.moduleName !in knownModuleNames }
         .map { SwiftExportModule.Reference(it.moduleName) }
@@ -282,6 +283,8 @@ private fun SirMutableDeclarationContainer.removeConflicts(logger: SwiftExportLo
                     "Exported declaration $expelled was removed from export due to conflicts")
             }
     }
+
+    declarations.filterIsInstance<SirExtension>().forEach { it.removeConflicts(logger) }
 }
 
 private val SirDeclaration.priority: Int get() = when (this) {
@@ -292,6 +295,11 @@ private val SirDeclaration.priority: Int get() = when (this) {
     }.let {
         if (this.origin is SirOrigin.Trampoline)
             it - 50
+        else
+            it
+    }.let {
+        if (this.isUnavailable)
+            it - 100
         else
             it
     }

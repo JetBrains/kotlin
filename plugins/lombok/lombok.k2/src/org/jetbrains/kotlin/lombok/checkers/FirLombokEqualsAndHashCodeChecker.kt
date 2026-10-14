@@ -13,24 +13,21 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirRegularClassChecker
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.processAllFunctions
-import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.isNullableAny
-import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
-import org.jetbrains.kotlin.load.java.structure.JavaClass
-import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics
 import org.jetbrains.kotlin.lombok.LombokNames
 import org.jetbrains.kotlin.lombok.config.CallSuperMode
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.CALL_SUPER
 import org.jetbrains.kotlin.lombok.config.lombokService
+import org.jetbrains.kotlin.lombok.generators.findSuperclassCanEqual
+import org.jetbrains.kotlin.lombok.generators.hasCanEqualJvmSignature
 import org.jetbrains.kotlin.lombok.generators.hasNonTrivialSuperclass
+import org.jetbrains.kotlin.lombok.generators.isAnyOrJavaObjectType
 import org.jetbrains.kotlin.lombok.generators.isEqualsAndHashCode
 import org.jetbrains.kotlin.lombok.generators.isPlainClass
 import org.jetbrains.kotlin.lombok.generators.hasReceiverOrContextParameters
@@ -69,6 +66,21 @@ object FirLombokEqualsAndHashCodeChecker : FirRegularClassChecker(MppCheckerKind
                     LombokFirDiagnostics.EQUALS_OR_HASH_CODE_FUNCTIONS_ARE_FINAL_IN_SUPERCLASS,
                     superClassSymbol.name,
                 )
+            }
+
+            // The generated `canEqual` overrides the superclass one, so it must be open and take exactly `Any?`. The
+            // generator skips the latter case to avoid a JVM clash; the former would fail at runtime with "overrides
+            // final method".
+            if (!declaredMemberScope.hasUserDeclaredCanEqual()) {
+                declaration.symbol.findSuperclassCanEqual(context.session)
+                    ?.takeIf { it.isFinal || !it.valueParameterSymbols.single().isAnyOrJavaObjectType }
+                    ?.let { superclassCanEqual ->
+                        reporter.reportOn(
+                            source,
+                            LombokFirDiagnostics.CAN_EQUAL_FUNCTION_IS_NOT_OVERRIDABLE_IN_SUPERCLASS,
+                            superclassCanEqual.callableId.classId!!.shortClassName,
+                        )
+                    }
             }
         }
 
@@ -126,6 +138,14 @@ object FirLombokEqualsAndHashCodeChecker : FirRegularClassChecker(MppCheckerKind
         return found
     }
 
+    private fun FirContainingNamesAwareScope.hasUserDeclaredCanEqual(): Boolean {
+        var found = false
+        processFunctionsByName(LombokNames.CAN_EQUAL) {
+            found = found || !it.origin.isEqualsAndHashCode && it.hasCanEqualJvmSignature
+        }
+        return found
+    }
+
     /**
      * Whether [this] has the signature of one of the members `@EqualsAndHashCode` generates: `equals(Any?)` or a
      * parameterless `hashCode()`, neither with a receiver or context parameters. Anything else merely shares a
@@ -135,20 +155,4 @@ object FirLombokEqualsAndHashCodeChecker : FirRegularClassChecker(MppCheckerKind
         get() = !hasReceiverOrContextParameters &&
                 (name == EQUALS_NAME && valueParameterSymbols.singleOrNull()?.isAnyOrJavaObjectType == true ||
                         name == HASHCODE_NAME && valueParameterSymbols.isEmpty())
-
-    /**
-     * Whether [this] parameter's type is `Any?`, or `java.lang.Object` for a Java declaration.
-     *
-     * A Java parameter's type is still a [FirJavaTypeRef] when the declaring class is a supertype the checker only
-     * peeks into - signature enhancement has not run for it - so `resolvedReturnTypeRef` would throw and the type
-     * has to be matched structurally instead.
-     */
-    @OptIn(SymbolInternals::class)
-    private val FirValueParameterSymbol.isAnyOrJavaObjectType: Boolean
-        get() = when (val typeRef = fir.returnTypeRef) {
-            is FirResolvedTypeRef -> typeRef.coneType.isNullableAny
-            is FirJavaTypeRef -> ((typeRef.type as? JavaClassifierType)?.classifier as? JavaClass)?.fqName ==
-                    LombokNames.JAVA_OBJECT_ID.asSingleFqName()
-            else -> false
-        }
 }

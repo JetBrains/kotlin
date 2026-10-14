@@ -136,7 +136,8 @@ class NativeDeserializerFacade(
         loadedKlibs: LoadedNativeKlibs,
         moduleDescriptors: List<ModuleDescriptorImpl>,
     ): IrModuleInfo {
-        val libraryToModuleDescriptor: Map<KotlinLibrary, ModuleDescriptorImpl> = moduleDescriptors.associateBy { it.kotlinLibrary }
+        val libraryToModuleDescriptor: Map<KotlinLibrary, ModuleDescriptorImpl> =
+            moduleDescriptors.associateBy { (it.klibModuleOrigin as DeserializedKlibModuleOrigin).library }
 
         val mainLibrary = loadedKlibs.included.single()
 

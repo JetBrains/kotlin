@@ -76,7 +76,7 @@ class MppPublicationCompatibilityIT : KGPBaseTest() {
                 .toSet()
 
             val scenarios = (projects x projects)
-                .map { [consumer, producer] -> Scenario(consumer, producer) }
+                .map { (consumer, producer) -> Scenario(consumer, producer) }
                 .filter(Scenario::hasMasterKmp) // we are not interested in AndroidOnly <-> JavaOnly compatibility
                 .filter(Scenario::isConsumable)
                 .toSet()
@@ -143,7 +143,7 @@ class MppPublicationCompatibilityIT : KGPBaseTest() {
         @JvmStatic
         fun consumerGroups(specificGradleVersion: GradleVersion?): Iterable<ConsumerGroup> = scenarios(specificGradleVersion)
             .groupBy { it.consumer }
-            .map { [consumer, consumerScenarios] ->
+            .map { (consumer, consumerScenarios) ->
                 ConsumerGroup(consumer, consumerScenarios.map { it.producer }.sortedBy { it.id })
             }
 

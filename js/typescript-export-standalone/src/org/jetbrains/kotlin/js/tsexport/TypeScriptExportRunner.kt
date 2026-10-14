@@ -59,6 +59,8 @@ public fun runTypeScriptExport(klibs: List<KlibInputModule<TypeScriptModuleConfi
         }
     }
 
+    if (exportModel.isEmpty()) return emptyList()
+
     val artifacts = TsArtifactProducer.generateArtifacts(exportModel, config.artifactConfiguration.granularity)
     config.artifactConfiguration.outputDirectory.normalizedAbsoluteFile.mkdirs()
     return when (config.artifactConfiguration.tsCompilationStrategy) {

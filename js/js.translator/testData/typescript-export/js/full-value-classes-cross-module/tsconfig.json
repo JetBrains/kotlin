@@ -1,0 +1,6 @@
+{
+  "extends": "../../common.tsconfig.json",
+  "compilerOptions": {
+    "module": "ESNext",
+  }
+}

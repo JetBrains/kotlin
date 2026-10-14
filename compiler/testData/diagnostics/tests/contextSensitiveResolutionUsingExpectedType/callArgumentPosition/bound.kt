@@ -8,7 +8,7 @@ enum class MyEnum {
 fun <T: MyEnum> boundHolder(arg: T) = arg
 
 fun testFunBound() {
-    <!CANNOT_INFER_PARAMETER_TYPE!>boundHolder<!>(<!UNRESOLVED_REFERENCE!>EnumValue1<!>)
+    boundHolder(EnumValue1)
 }
 
 fun testFunBound2() {

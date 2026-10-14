@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.export
 
 import org.gradle.api.Action
+import org.gradle.api.file.Directory
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.ProjectLayout
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
@@ -16,6 +19,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinGradlePluginDsl
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportDeclaredModuleOptions
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportDependencySelector
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportDependencySelectorFactory
+import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.overriddenBy
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl
 import javax.inject.Inject
@@ -43,11 +47,13 @@ internal const val EXPORT_EXTENSION_NAME = "export"
 abstract class ExportExtension @Inject internal constructor(
     objectFactory: ObjectFactory,
     providerFactory: ProviderFactory,
+    projectLayout: ProjectLayout,
     dependencySelectorFactory: SwiftExportDependencySelectorFactory,
 ) {
     private val defaultSwiftExportConfiguration = DefaultSwiftExportConfiguration(
         objectFactory = objectFactory,
         providerFactory = providerFactory,
+        projectLayout = projectLayout,
         dependencySelectorFactory = dependencySelectorFactory,
     )
 
@@ -125,6 +131,42 @@ interface SwiftExportConfigurationDsl : SwiftExportModuleOptionsDsl {
      * The integration is only activated in the projects where this function is called.
      */
     fun xcodeIntegration(configure: Action<SwiftExportXcodeIntegration>)
+
+    /**
+     * Activate the Swift package integration for this module.
+     *
+     * The `export<BuildType>SwiftPackage` tasks write a Swift package with the exported Swift API and the
+     * Kotlin binaries into [SwiftExportSwiftPackageIntegration.outputDirectory].
+     *
+     * Repeated calls configure the same integration, so the order of the calls doesn't matter.
+     *
+     * The integration is only activated in the projects where this function is called.
+     *
+     * @since 2.5.0
+     */
+    fun swiftPackageIntegration()
+
+    /**
+     * Activate and configure the Swift package integration for this module.
+     *
+     * The `export<BuildType>SwiftPackage` tasks write a Swift package with the exported Swift API and the
+     * Kotlin binaries into [SwiftExportSwiftPackageIntegration.outputDirectory].
+     *
+     * Repeated calls configure the same integration, so the order of the calls doesn't matter.
+     *
+     * The integration is only activated in the projects where this function is called.
+     *
+     * @since 2.5.0
+     */
+    fun swiftPackageIntegration(configure: SwiftExportSwiftPackageIntegration.() -> Unit)
+
+    /**
+     * Activate and configure the Swift package integration for this module.
+     *
+     * @see swiftPackageIntegration
+     * @since 2.5.0
+     */
+    fun swiftPackageIntegration(configure: Action<SwiftExportSwiftPackageIntegration>)
 }
 
 /**
@@ -205,15 +247,21 @@ internal interface SwiftExportConfiguration : SwiftExportModuleOptionsDsl {
      * or `null` if it was never activated for this module.
      */
     val activatedXcodeIntegration: SwiftExportXcodeIntegrationConfiguration?
+
+    /**
+     * The Swift package integration activated via [SwiftExportConfigurationDsl.swiftPackageIntegration],
+     * or `null` if it was never activated for this module.
+     */
+    val activatedSwiftPackageIntegration: SwiftExportSwiftPackageIntegrationConfiguration?
 }
 
 /**
- * Represents the Xcode integration activated for an exported module.
+ * Represents an integration activated for an exported module.
  *
  * This API is experimental and may change in future versions.
  */
 @ExperimentalSwiftExportDsl
-internal interface SwiftExportXcodeIntegrationConfiguration {
+internal interface SwiftExportIntegrationConfiguration {
     /**
      * The settings passed to Swift Export for this module.
      */
@@ -224,6 +272,27 @@ internal interface SwiftExportXcodeIntegrationConfiguration {
      * per property.
      */
     val dependencyOverrides: Provider<Map<SwiftExportDependencySelector, SwiftExportDeclaredModuleOptions>>
+}
+
+/**
+ * Represents the Xcode integration activated for an exported module.
+ *
+ * This API is experimental and may change in future versions.
+ */
+@ExperimentalSwiftExportDsl
+internal interface SwiftExportXcodeIntegrationConfiguration : SwiftExportIntegrationConfiguration
+
+/**
+ * Represents the Swift package integration activated for an exported module.
+ *
+ * This API is experimental and may change in future versions.
+ */
+@ExperimentalSwiftExportDsl
+internal interface SwiftExportSwiftPackageIntegrationConfiguration : SwiftExportIntegrationConfiguration {
+    /**
+     * The directory that receives the exported Swift package.
+     */
+    val outputDirectory: Provider<Directory>
 }
 
 /**
@@ -286,9 +355,33 @@ interface SwiftExportIntegration {
 @KotlinGradlePluginDsl
 interface SwiftExportXcodeIntegration : SwiftExportIntegration
 
+/**
+ * Represents Swift Export integration for Swift package consumers.
+ *
+ * This API is experimental and may change in future versions.
+ *
+ * @since 2.5.0
+ */
+@ExperimentalSwiftExportDsl
+@KotlinGradlePluginDsl
+interface SwiftExportSwiftPackageIntegration : SwiftExportIntegration {
+    /**
+     * The directory that receives the exported Swift package. By default `SwiftPackage` next to the build script,
+     * so an export shows up in the working tree of the project.
+     *
+     * Every build type has a subdirectory of its own: `exportDebugSwiftPackage` writes into
+     * `outputDirectory/Debug` and `exportReleaseSwiftPackage` into `outputDirectory/Release`. Add one of them
+     * as a local Swift package, not [outputDirectory] itself.
+     *
+     * The export deletes everything in these subdirectories that is not part of the package.
+     */
+    val outputDirectory: DirectoryProperty
+}
+
 private class DefaultSwiftExportConfiguration(
     private val objectFactory: ObjectFactory,
     private val providerFactory: ProviderFactory,
+    private val projectLayout: ProjectLayout,
     private val dependencySelectorFactory: SwiftExportDependencySelectorFactory,
 ) : SwiftExportConfiguration, SwiftExportConfigurationDsl {
     override val moduleName: Property<String> = objectFactory.property(String::class.java)
@@ -314,13 +407,38 @@ private class DefaultSwiftExportConfiguration(
     override fun xcodeIntegration(configure: Action<SwiftExportXcodeIntegration>) = xcodeIntegration {
         configure.execute(this)
     }
+
+    private var swiftPackageIntegrationConfiguration: DefaultSwiftExportSwiftPackageIntegration? = null
+
+    override val activatedSwiftPackageIntegration: SwiftExportSwiftPackageIntegrationConfiguration?
+        get() = swiftPackageIntegrationConfiguration
+
+    override fun swiftPackageIntegration() = swiftPackageIntegration { }
+
+    override fun swiftPackageIntegration(configure: SwiftExportSwiftPackageIntegration.() -> Unit) {
+        val integration = swiftPackageIntegrationConfiguration
+            ?: DefaultSwiftExportSwiftPackageIntegration(
+                objectFactory = objectFactory,
+                providerFactory = providerFactory,
+                projectLayout = projectLayout,
+                dependencySelectorFactory = dependencySelectorFactory,
+            ).also { swiftPackageIntegrationConfiguration = it }
+        integration.configure()
+    }
+
+    override fun swiftPackageIntegration(configure: Action<SwiftExportSwiftPackageIntegration>) = swiftPackageIntegration {
+        configure.execute(this)
+    }
 }
 
-private class DefaultSwiftExportXcodeIntegration(
+/**
+ * The settings and the dependency overrides, which every integration has.
+ */
+private abstract class DefaultSwiftExportIntegration(
     private val objectFactory: ObjectFactory,
     private val providerFactory: ProviderFactory,
     private val dependencySelectorFactory: SwiftExportDependencySelectorFactory,
-) : SwiftExportXcodeIntegration, SwiftExportXcodeIntegrationConfiguration {
+) : SwiftExportIntegration, SwiftExportIntegrationConfiguration {
 
     override val settings: MapProperty<String, String> = objectFactory.mapProperty(String::class.java, String::class.java)
 
@@ -344,11 +462,12 @@ private class DefaultSwiftExportXcodeIntegration(
             val overrides = LinkedHashMap<SwiftExportDependencySelector, SwiftExportDeclaredModuleOptions>()
             for ((selectorProvider, dsl) in pendingOverrides) {
                 val selector = selectorProvider.get()
-                val previous = overrides[selector]
-                overrides[selector] = SwiftExportDeclaredModuleOptions(
-                    moduleName = dsl.moduleName.orNull ?: previous?.moduleName,
-                    rootPackage = dsl.rootPackage.orNull ?: previous?.rootPackage,
-                    visibility = dsl.visibility.orNull ?: previous?.visibility,
+                overrides[selector] = overrides[selector].overriddenBy(
+                    SwiftExportDeclaredModuleOptions(
+                        moduleName = dsl.moduleName.orNull,
+                        rootPackage = dsl.rootPackage.orNull,
+                        visibility = dsl.visibility.orNull,
+                    )
                 )
             }
             overrides
@@ -368,6 +487,30 @@ private class DefaultSwiftExportXcodeIntegration(
             val selector = dependencySelectorFactory.fromNotation(this)
             providerFactory.provider { selector }
         }
+    }
+}
+
+private class DefaultSwiftExportXcodeIntegration(
+    objectFactory: ObjectFactory,
+    providerFactory: ProviderFactory,
+    dependencySelectorFactory: SwiftExportDependencySelectorFactory,
+) : DefaultSwiftExportIntegration(objectFactory, providerFactory, dependencySelectorFactory),
+    SwiftExportXcodeIntegration,
+    SwiftExportXcodeIntegrationConfiguration
+
+private class DefaultSwiftExportSwiftPackageIntegration(
+    objectFactory: ObjectFactory,
+    providerFactory: ProviderFactory,
+    projectLayout: ProjectLayout,
+    dependencySelectorFactory: SwiftExportDependencySelectorFactory,
+) : DefaultSwiftExportIntegration(objectFactory, providerFactory, dependencySelectorFactory),
+    SwiftExportSwiftPackageIntegration,
+    SwiftExportSwiftPackageIntegrationConfiguration {
+    override val outputDirectory: DirectoryProperty = objectFactory.directoryProperty()
+        .convention(projectLayout.projectDirectory.dir(DEFAULT_OUTPUT_DIRECTORY))
+
+    companion object {
+        const val DEFAULT_OUTPUT_DIRECTORY = "SwiftPackage"
     }
 }
 

@@ -70,7 +70,7 @@ class BuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Builder>(
         substitutor: ConeSubstitutor,
         existingFunctionNames: Set<Name>,
     ) {
-        val visibility = builder.builderFunctionsAccessLevel.toVisibility(builderSymbol) ?: return
+        val visibility = builder.builderFunctionsVisibility(builderSymbol) ?: return
 
         addIfNonClashing(Name.identifier(builder.buildMethodName), existingFunctionNames) { name ->
             val declaredReturnTypeRef = when (builderDeclaration) {
@@ -105,9 +105,9 @@ class BuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Builder>(
                 returnTypeRef = returnTypeRef,
                 visibility = visibility,
                 modality = Modality.OPEN,
-                createKey = {
-                    BuilderGeneratorKey(BuilderDeclarationType.Function.Build(builderDeclaration.symbol))
-                }
+                key = BuilderGeneratorKey(
+                    BuilderDeclarationType.Function.Build(builderDeclaration.symbol, lombokService.config.singularUseGuava)
+                ),
             )
         }
     }

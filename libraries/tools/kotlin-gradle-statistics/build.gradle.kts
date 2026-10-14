@@ -41,3 +41,9 @@ publishing {
 }
 sourcesJar()
 javadocJar()
+
+val generatedSourcesDir = layout.projectDirectory.dir("gen")
+
+sourceSets.main {
+    kotlin.srcDir(generatedSourcesDir)
+}

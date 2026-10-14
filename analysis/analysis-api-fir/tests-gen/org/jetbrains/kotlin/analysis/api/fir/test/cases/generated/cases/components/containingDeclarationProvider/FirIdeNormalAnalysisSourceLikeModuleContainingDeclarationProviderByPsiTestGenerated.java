@@ -182,6 +182,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleContainingDeclarationProviderBy
   }
 
   @Test
+  @TestMetadata("typeParameterOnAnonymousObject.kt")
+  public void testTypeParameterOnAnonymousObject() {
+    run("typeParameterOnAnonymousObject.kt");
+  }
+
+  @Test
   @TestMetadata("unfinishedDefaultParameterValue.kt")
   public void testUnfinishedDefaultParameterValue() {
     run("unfinishedDefaultParameterValue.kt");

@@ -19,10 +19,13 @@ internal object KarLayout {
     const val PLATFORM_KLIBS_DIRECTORY_NAME = "platform"
     const val CINTEROP_KLIBS_DIRECTORY_NAME = "cinterop"
     const val RESOURCES_DIRECTORY_NAME = "resources"
+    const val SWIFT_EXPORT_DIRECTORY_NAME = "swift-export"
 
     const val PSM_FILE_NAME = MULTIPLATFORM_PROJECT_METADATA_JSON_FILE_NAME
     const val PSM_FILE_PATH = "$METADATA_DIRECTORY_NAME/$PSM_FILE_NAME"
     const val MANIFEST_FILE_PATH = "manifest.json"
+    const val SWIFT_EXPORT_METADATA_FILE_NAME = "metadata.json"
+    const val SWIFT_EXPORT_METADATA_FILE_PATH = "$SWIFT_EXPORT_DIRECTORY_NAME/$SWIFT_EXPORT_METADATA_FILE_NAME"
 
     const val PACK_TASK_NAME = "packKotlinArchive"
     const val ASSEMBLE_TASK_NAME = "assembleKotlinArchive"
@@ -34,6 +37,7 @@ internal object KarLayout {
             const val PLATFORM_ARTIFACTS_EXTRACTED = "platform-artifacts-extracted"
             const val PSM_EXTRACTED = "psm-extracted"
             const val RESOURCES_EXTRACTED = "resources-extracted"
+            const val SWIFT_EXPORT_METADATA_EXTRACTED = "swift-export-metadata-extracted"
         }
 
         val state: Attribute<String> = Attribute.of("org.jetbrains.kotlin.kar.state", String::class.java)

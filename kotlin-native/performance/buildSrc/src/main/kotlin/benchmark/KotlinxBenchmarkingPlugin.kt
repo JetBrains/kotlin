@@ -50,7 +50,7 @@ open class KotlinxBenchmarkExtension @Inject constructor(private val project: Pr
     val runBenchmark
         get() = project.tasks.named("${hostKotlinNativeTargetName}Benchmark", NativeBenchmarkExec::class)
 
-    val konanRun by project.tasks.registering(ConvertJMHReportTask::class)
+    val konanRun = project.tasks.register("konanRun", ConvertJMHReportTask::class.java)
 }
 
 /**
@@ -136,6 +136,13 @@ open class KotlinxBenchmarkingPlugin : BenchmarkingPlugin() {
                 outputs.upToDateWhen { false }
 
                 usesService(benchmark.benchmarkSemaphore)
+            }
+
+            tasks.named("${hostKotlinNativeTargetName}BenchmarkGenerate").configure {
+                // kotlinx-benchmark uses KSP, which uses AA, which uses this property.
+                // See KT-89420 and https://github.com/Kotlin/kotlinx-benchmark/issues/408
+                val propName = "idea.max.intellisense.filesize"
+                inputs.property(propName, System.getProperty(propName)).optional(true)
             }
         }
     }

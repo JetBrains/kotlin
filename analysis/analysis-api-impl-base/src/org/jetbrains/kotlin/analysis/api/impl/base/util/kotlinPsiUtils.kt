@@ -44,11 +44,6 @@ fun KtDeclaration.callableIdForName(callableName: Name): CallableId? {
         is KtClassOrObject -> return containingDeclaration.getClassId()?.let { classId ->
             CallableId(classId = classId, callableName = callableName)
         }
-
-        // Script not null -> the declaration inherits its ClassId only in case of REPL, top-level otherwise
-        is KtScript -> containingDeclaration.replSnippetClassId?.let { classId ->
-            return CallableId(classId = classId, callableName = callableName)
-        }
     }
 
     return CallableId(packageName = containingKtFile.packageFqName, callableName = callableName)

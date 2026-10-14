@@ -549,6 +549,7 @@ public actual inline fun Double.withSign(sign: Int): Double = this.withSign(sign
  * Special cases:
  *   - `NaN.ulp` is `NaN`
  *   - `x.ulp` is `+Inf` when `x` is `+Inf` or `-Inf`
+ *   - `x.ulp` is `2^971` when `x` is `Double.MAX_VALUE` or `-Double.MAX_VALUE`
  *   - `0.0.ulp` is `Double.MIN_VALUE`
  *
  * @see nextUp
@@ -569,8 +570,8 @@ public actual val Double.ulp: Double get() = when {
  * Returns the [Double] value nearest to this value in a direction of positive infinity.
  *
  * Special cases:
- *   - `NaN.nextUp() is `NaN`
- *   - `Double.POSITIVE_INFINITY.nextUp() is `+Infinity`
+ *   - `NaN.nextUp()` is `NaN`
+ *   - `Double.POSITIVE_INFINITY.nextUp()` is `+Infinity`
  *   - `0.0.nextUp()` is `Double.MIN_VALUE`
  *
  * @see nextTowards
@@ -590,8 +591,8 @@ public actual fun Double.nextUp(): Double = when {
  * Returns the [Double] value nearest to this value in a direction of negative infinity.
  *
  * Special cases:
- *   - `NaN.nextDown() is `NaN`
- *   - `Double.NEGATIVE_INFINITY.nextDown() is `-Infinity`
+ *   - `NaN.nextDown()` is `NaN`
+ *   - `Double.NEGATIVE_INFINITY.nextDown()` is `-Infinity`
  *   - `0.0.nextDown()` is `-Double.MIN_VALUE`
  *
  * @see nextUp

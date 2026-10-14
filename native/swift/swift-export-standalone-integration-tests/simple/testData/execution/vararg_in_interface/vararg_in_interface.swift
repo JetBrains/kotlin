@@ -22,6 +22,17 @@ private final class SwiftCounter: KotlinObject, Counter {
     }
 }
 
+// The vararg reverse bridge must bind `add(values:)`, not the `add(value:)` overload.
+private final class SwiftOverloadedCounter: KotlinObject, OverloadedCounter {
+    func add(values: Int32...) -> Int32 {
+        values.reduce(0, +)
+    }
+
+    func add(value: Int32) -> Int32 {
+        value * 2
+    }
+}
+
 @Test
 func testVarargReverseBridgeInInterface() throws {
     // Kotlin calls addListener on the Swift conformer through the reverse bridge.
@@ -37,4 +48,10 @@ func testVarargReverseBridgeInOpenClass() throws {
 @Test
 func testPrimitiveVarargReverseBridge() throws {
     try #require(useCounter(counter: SwiftCounter()) == 6)
+}
+
+@Test
+func testOverloadedVarargReverseBridge() throws {
+    try #require(callVarargAdd(counter: SwiftOverloadedCounter()) == 6)
+    try #require(callSingleAdd(counter: SwiftOverloadedCounter()) == 20)
 }

@@ -104,7 +104,7 @@ class FlagDelegatesTest {
         inline var noinlineModifierVar: () -> String
             get() = { "" }
             set(noinline param) {
-                param()
+                val _ = param()
             }
 
     }

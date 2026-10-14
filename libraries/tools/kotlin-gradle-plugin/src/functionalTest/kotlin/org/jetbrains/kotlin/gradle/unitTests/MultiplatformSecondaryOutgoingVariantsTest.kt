@@ -17,7 +17,6 @@ import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.bundling.Zip
 import org.gradle.testfixtures.ProjectBuilder
-import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl.commonMain
@@ -37,10 +36,8 @@ import org.jetbrains.kotlin.gradle.tasks.configuration.BaseKotlinCompileConfig.C
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.enableDefaultJsDomApiDependency
 import org.jetbrains.kotlin.gradle.util.enableDefaultStdlibDependency
-import org.jetbrains.kotlin.gradle.util.enableNonPackedKlibsUsage
 import org.jetbrains.kotlin.gradle.util.enableSecondaryJvmClassesVariant
 import org.jetbrains.kotlin.gradle.util.osVariantSeparatorsPathString
-import org.junit.jupiter.api.Assumptions
 import kotlin.test.*
 
 class MultiplatformSecondaryOutgoingVariantsTest {
@@ -94,67 +91,6 @@ class MultiplatformSecondaryOutgoingVariantsTest {
     }
 
     @Test
-    fun shouldAddSecondaryJvmClassesVariantForJvmApiConfigurationsWithJavaEnabled() {
-        Assumptions.assumeTrue(GradleVersion.current() < GradleVersion.version("9.0"), ".withJava() is not supported with Gradle 9")
-
-        val project = buildProjectWithMPPAndJvmClassesVariant {
-            with(multiplatformExtension) {
-                jvm {
-                    @Suppress("DEPRECATION")
-                    withJava()
-                }
-                applyDefaultHierarchyTemplate()
-            }
-        }
-
-        project.evaluate()
-
-        project.assertJvmClassesVariants(expectedArtifactsSize = 3, isLegacyJavaCompilationEnabled = true)
-    }
-
-    @Test
-    fun shouldAddSecondaryJvmClassesVariantForJvmApiConfigurationsWithJavaEnabledAndJavaLibraryPluginApplied() {
-        Assumptions.assumeTrue(GradleVersion.current() < GradleVersion.version("9.0"), ".withJava() is not supported with Gradle 9")
-
-        val project = buildProjectWithMPPAndJvmClassesVariant {
-            plugins.apply("java-library")
-
-            with(multiplatformExtension) {
-                jvm {
-                    @Suppress("DEPRECATION")
-                    withJava()
-                }
-                applyDefaultHierarchyTemplate()
-            }
-        }
-
-        project.evaluate()
-
-        project.assertJvmClassesVariants(expectedArtifactsSize = 3, isLegacyJavaCompilationEnabled = true)
-    }
-
-    @Test
-    fun shouldAddSecondaryJvmClassesVariantForJvmApiConfigurationsWithJavaTestFixturesApplied() {
-        Assumptions.assumeTrue(GradleVersion.current() < GradleVersion.version("9.0"), ".withJava() is not supported with Gradle 9")
-
-        val project = buildProjectWithMPPAndJvmClassesVariant {
-            plugins.apply("java-test-fixtures")
-
-            with(multiplatformExtension) {
-                jvm {
-                    @Suppress("DEPRECATION")
-                    withJava()
-                }
-                applyDefaultHierarchyTemplate()
-            }
-        }
-
-        project.evaluate()
-
-        project.assertJvmClassesVariants(expectedArtifactsSize = 3, isLegacyJavaCompilationEnabled = true)
-    }
-
-    @Test
     fun shouldNotAddSecondaryJvmClassesVariantByDefault() {
         val project = buildProjectWithMPP {
             with(multiplatformExtension) {
@@ -171,15 +107,6 @@ class MultiplatformSecondaryOutgoingVariantsTest {
     }
 
     @Test
-    fun nonPackedKlibsUsageMayBeDisabled() {
-        val project = buildKmpProjectWithKlibTargets(preApplyCode = { project.enableNonPackedKlibsUsage(false) })
-        val apiConfigurations = project.getKlibApiConfigurations()
-        project.assertKlibWithoutNonPackedVariant(apiConfigurations)
-        val runtimeConfigurations = project.getKlibRuntimeConfigurations()
-        project.assertKlibWithoutNonPackedVariant(runtimeConfigurations)
-    }
-
-    @Test
     fun shouldAddNonPackedKlibVariantByDefaultForKlibTargets() {
         val project = buildKmpProjectWithKlibTargets()
         val apiConfigurations = project.getKlibApiConfigurations()
@@ -191,14 +118,6 @@ class MultiplatformSecondaryOutgoingVariantsTest {
     @Test
     fun klibPackagingAttributeIsNotPublished() {
         val project = buildKmpProjectWithKlibTargets {
-            plugins.apply("maven-publish")
-        }
-        project.assertKlibPackagingAttributeNotPublished()
-    }
-
-    @Test
-    fun klibPackagingAttributeIsNotPublishedWhenNonPackedKlibsAreNotUsed() {
-        val project = buildKmpProjectWithKlibTargets(preApplyCode = { project.enableNonPackedKlibsUsage(false) }) {
             plugins.apply("maven-publish")
         }
         project.assertKlibPackagingAttributeNotPublished()
@@ -220,7 +139,6 @@ class MultiplatformSecondaryOutgoingVariantsTest {
         val project = buildKmpProjectWithKlibTargets(projectBuilder = { withName("app") }, preApplyCode = {
             enableDefaultStdlibDependency(false)
             enableDefaultJsDomApiDependency(false)
-            enableNonPackedKlibsUsage(true)
         })
         val configurations = project.configurations
         for (target in project.multiplatformExtension.targets) {
@@ -255,25 +173,6 @@ class MultiplatformSecondaryOutgoingVariantsTest {
                 }
             }
         }
-    }
-
-    @Test
-    fun testConsumableConfigurationProducerTasksWhenNonPackedKlibsAreNotUsed() {
-        val project = buildKmpProjectWithKlibTargets(preApplyCode = { project.enableNonPackedKlibsUsage(false) })
-        val consumableConfigurations = (project.getKlibApiConfigurations() + project.getKlibRuntimeConfigurations())
-            .associateBy { it.name }
-        @Suppress("DuplicatedCode")
-        run {
-            assertEquals(6, consumableConfigurations.size)
-            consumableConfigurations.assertProducerTasks("jsApiElements", project.tasks.getByName("jsJar") as Jar)
-            consumableConfigurations.assertProducerTasks("jsRuntimeElements", project.tasks.getByName("jsJar") as Jar)
-            consumableConfigurations.assertProducerTasks("wasmJsApiElements", project.tasks.getByName("wasmJsJar") as Jar)
-            consumableConfigurations.assertProducerTasks("wasmWasiApiElements", project.tasks.getByName("wasmWasiJar") as Jar)
-        }
-        val compileKlibTask = project.tasks.getByName("compileKotlinLinuxX64") as KotlinNativeCompile
-        val cinteropProcessTask = project.tasks.getByName("cinteropDummyLinuxX64") as CInteropProcess
-        consumableConfigurations.assertProducerTasks("linuxX64ApiElements", compileKlibTask, cinteropProcessTask)
-        consumableConfigurations.assertProducerTasks("linuxX64CInteropApiElements", cinteropProcessTask)
     }
 
     @Test
@@ -521,7 +420,6 @@ class MultiplatformSecondaryOutgoingVariantsTest {
     private fun Project.assertJvmClassesVariants(
         expectedArtifactsSize: Int = 2,
         apiConfigurations: List<Configuration> = jvmApiConfigurations,
-        isLegacyJavaCompilationEnabled: Boolean = false,
     ) {
         assertTrue(apiConfigurations.isNotEmpty())
 
@@ -541,14 +439,6 @@ class MultiplatformSecondaryOutgoingVariantsTest {
             }
             assertNotNull(javaClasses)
             assertTrue(javaClasses.buildDependencies.getDependencies(null).size >= 1)
-
-            if (isLegacyJavaCompilationEnabled) {
-                val javaClassesLegacy = classesVariant.artifacts.find {
-                    it.file.path.endsWith("build/classes/java/main".osVariantSeparatorsPathString)
-                }
-                assertNotNull(javaClassesLegacy)
-                assertTrue(javaClassesLegacy.buildDependencies.getDependencies(null).size >= 1)
-            }
         }
     }
 

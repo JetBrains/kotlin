@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.SmartPsiElementPointer
+import com.intellij.psi.createSmartPointer
 import com.intellij.psi.util.parentOfType
 import com.intellij.psi.util.parentsOfType
-import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.components.ElementsToShortenCollector.PartialOrderOfScope.Companion.toPartialOrder
@@ -104,7 +104,6 @@ internal class KaFirReferenceShortener(
             ?: file
 
         val firDeclaration = declarationToVisit.getCorrespondingFirElement() ?: return ShortenCommandImpl(
-            @Suppress("DEPRECATION")
             file.createSmartPointer(),
             importsToAdd = emptySet(),
             starImportsToAdd = emptySet(),
@@ -148,7 +147,6 @@ internal class KaFirReferenceShortener(
         )
         kDocCollector.visitElement(declarationToVisit)
 
-        @Suppress("DEPRECATION")
         return ShortenCommandImpl(
             file.createSmartPointer(),
             additionalImports.simpleImports,
@@ -183,11 +181,9 @@ private class FirTowerDataContextProvider private constructor(
         fun create(resolutionFacade: LLResolutionFacade, targetElement: KtElement): FirTowerDataContextProvider {
             val firFile = targetElement.containingKtFile.getOrBuildFirFile(resolutionFacade)
 
-            val designation = ContextCollector.computeDesignation(firFile, targetElement)
-
             val contextProvider = ContextCollector.process(
                 firFile,
-                designation,
+                targetElement,
                 preferBodyContext = false, // we only query SELF context
                 shouldTriggerBodyAnalysis = true,
                 filter = { ContextCollector.FilterResponse.CONTINUE }

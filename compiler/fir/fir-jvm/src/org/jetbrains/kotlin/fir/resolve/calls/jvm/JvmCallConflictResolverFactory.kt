@@ -17,7 +17,7 @@ object JvmCallConflictResolverFactory : ConeCallConflictResolverFactory() {
     override fun createAdditionalResolvers(session: FirSession): List<ConeCallConflictResolver> {
         val isRepl = session.replSnippetResolveExtension != null
         return buildList {
-            if (isRepl) add(ReplOverloadCallConflictResolver)
+            if (isRepl) add(ReplOverloadCallConflictResolver(session))
             add(JvmPlatformOverloadsConflictResolver(session))
         }
     }

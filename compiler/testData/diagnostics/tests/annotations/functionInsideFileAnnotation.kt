@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// IGNORE_PHASE_VERIFICATION: invalid code inside annotations
 
 @file:Anno(<!ANNOTATION_ARGUMENT_MUST_BE_CONST, ARGUMENT_TYPE_MISMATCH!>fun(): Int {
     val s: Int <!INITIALIZER_TYPE_MISMATCH!>=<!> "str"

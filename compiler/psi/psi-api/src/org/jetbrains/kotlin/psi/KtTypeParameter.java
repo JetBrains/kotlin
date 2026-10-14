@@ -9,6 +9,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.search.LocalSearchScope;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
+import kotlin.DeprecationLevel;
 import kotlin.ReplaceWith;
 import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
@@ -71,7 +72,8 @@ public class KtTypeParameter extends KtNamedDeclarationStub<KotlinTypeParameterS
             replaceWith = @ReplaceWith(
                     expression = "this.setTypeParameterExtendsBound(typeReference)",
                     imports = "org.jetbrains.kotlin.idea.base.psi.setTypeParameterExtendsBound"
-            )
+            ),
+            level = DeprecationLevel.ERROR
     )
     @Deprecated
     public KtTypeReference setExtendsBound(@Nullable KtTypeReference typeReference) {

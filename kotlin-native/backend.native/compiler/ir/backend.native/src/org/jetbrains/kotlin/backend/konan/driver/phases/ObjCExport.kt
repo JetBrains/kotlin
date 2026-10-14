@@ -9,12 +9,7 @@ import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
 import org.jetbrains.kotlin.backend.konan.LinkKlibsContext
 import org.jetbrains.kotlin.backend.konan.OutputFiles
 import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
-import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportCodeSpec
-import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportedInterface
-import org.jetbrains.kotlin.backend.konan.objcexport.createCodeSpec
-import org.jetbrains.kotlin.backend.konan.objcexport.createObjCFramework
-import org.jetbrains.kotlin.backend.konan.objcexport.dumpSelectorToSignatureMapping
-import org.jetbrains.kotlin.backend.konan.objcexport.produceObjCExportInterface
+import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIdSignaturer
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerDesc
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -24,11 +19,11 @@ import org.jetbrains.kotlin.ir.util.SymbolTable
 /**
  * Create internal representation of Objective-C wrapper.
  */
-internal val ProduceObjCExportInterfacePhase = createSimpleNamedCompilerPhase<NativeBackendPhaseContext, FrontendPhaseOutput.Full, ObjCExportedInterface>(
+internal val ProduceObjCExportInterfacePhase = createSimpleNamedCompilerPhase<NativeBackendPhaseContext, K1FrontendPhaseOutput, ObjCExportedInterface>(
         "ObjCExportInterface",
         outputIfNotEnabled = { _, _, _, _ -> error("Cannot disable `ObjCExportInterface` phase when producing ObjC framework") }
 ) { context, input ->
-    produceObjCExportInterface(context, input.moduleDescriptor, input.frontendServices).also {
+    produceObjCExportInterface(context, input.moduleDescriptor).also {
         if (context.config.omitFrameworkBinary) {
             // Dump selector -> signature mapping before IR linking if omitFrameworkBinary is true.
             context.config.dumpObjcSelectorToSignatureMapping?.let { path ->

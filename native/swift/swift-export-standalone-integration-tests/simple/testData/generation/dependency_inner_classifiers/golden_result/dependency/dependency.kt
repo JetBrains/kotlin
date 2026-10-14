@@ -24,25 +24,25 @@ public fun datetime_LocalDate_Companion_Format__TypesOfArguments__U28anyU20depen
             run<Unit> { _result }
         }
     }
-    val _result = run { __self.Format(__block) }
+    val _result = __self.Format(__block)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("datetime_LocalDate_Companion_get")
 public fun datetime_LocalDate_Companion_get(): kotlin.native.internal.NativePtr {
-    val _result = run { datetime.LocalDate.Companion }
+    val _result = datetime.LocalDate.Companion
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("datetime_LocalDate_init_allocate")
 public fun datetime_LocalDate_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<datetime.LocalDate>() }
+    val _result = kotlin.native.internal.createUninitializedInstance<datetime.LocalDate>()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("datetime_LocalDate_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
 public fun datetime_LocalDate_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val _result = run { kotlin.native.internal.initInstance(____kt, datetime.LocalDate()) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, datetime.LocalDate())
+    return true
 }

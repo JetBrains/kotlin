@@ -27,6 +27,7 @@ public interface KtStubElementTypes {
     @NotNull KtNodeType PROPERTY_ACCESSOR = new KtNodeType("PROPERTY_ACCESSOR", KtPropertyAccessor::new);
     @NotNull KtNodeType BACKING_FIELD = new KtNodeType("BACKING_FIELD", KtBackingField::new);
     @NotNull KtNodeType DESTRUCTURING_DECLARATION = new KtNodeType("DESTRUCTURING_DECLARATION", KtDestructuringDeclaration::new);
+    @NotNull KtNodeType DESTRUCTURING_DECLARATION_ENTRY = new KtNodeType("DESTRUCTURING_DECLARATION_ENTRY", KtDestructuringDeclarationEntry::new);
     @NotNull KtNodeType TYPEALIAS = new KtNodeType("TYPEALIAS", KtTypeAlias::new);
 
     @NotNull KtNodeType ENUM_ENTRY = new KtNodeType("ENUM_ENTRY", KtEnumEntry::new);

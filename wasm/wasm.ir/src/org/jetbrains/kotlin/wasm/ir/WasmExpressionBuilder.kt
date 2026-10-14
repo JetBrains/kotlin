@@ -468,21 +468,21 @@ open class WasmExpressionBuilder(
     }
 
     fun buildResume(
-        contType: WasmHeapType,
+        contType: WasmImmediate.TypeIdx,
         contHandle: WasmImmediate.ContHandle,
         location: SourceLocation
     ) {
         buildInstr(
             WasmOp.RESUME,
             location,
-            WasmImmediate.HeapType(contType),
+            contType,
             WasmImmediate.ConstI32(1),
             contHandle
         )
     }
 
     fun buildResumeThrow(
-        contType: WasmHeapType,
+        contType: WasmImmediate.TypeIdx,
         exceptionTag: WasmSymbol<Int>,
         contHandle: WasmImmediate.ContHandle,
         location: SourceLocation
@@ -490,7 +490,7 @@ open class WasmExpressionBuilder(
         buildInstr(
             WasmOp.RESUME_THROW,
             location,
-            WasmImmediate.HeapType(contType),
+            contType,
             WasmImmediate.TagIdx(exceptionTag),
             WasmImmediate.ConstI32(1),
             contHandle

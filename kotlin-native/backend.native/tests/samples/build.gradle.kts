@@ -2,11 +2,11 @@ buildscript {
     repositories {
         mavenCentral()
 
-        val kotlinCompilerRepo: String? by rootProject
+        val kotlinCompilerRepo = rootProject.findProperty("kotlinCompilerRepo") as String?
         kotlinCompilerRepo?.let { maven(it) }
     }
 
-    val kotlin_version: String by rootProject
+    val kotlin_version = rootProject.property("kotlin_version") as String
     dependencies {
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version")
     }
@@ -16,7 +16,7 @@ allprojects {
     repositories {
         mavenCentral()
 
-        val kotlinCompilerRepo: String? by rootProject
+        val kotlinCompilerRepo = rootProject.findProperty("kotlinCompilerRepo") as String?
         kotlinCompilerRepo?.let { maven(it) }
     }
 

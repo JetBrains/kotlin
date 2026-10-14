@@ -2,4 +2,5 @@ FILE[kind=File[packageFqName=foo]]
   PACKAGE_DIRECTIVE
     REFERENCE_EXPRESSION[referencedName=foo]
   IMPORT_LIST
-  DESTRUCTURING_DECLARATION[hasInitializer=false, isVar=false]
+  DESTRUCTURING_DECLARATION[hasInitializer=false, hasSquareBrackets=false, isFullForm=true, isVar=false]
+    DESTRUCTURING_DECLARATION_ENTRY[fqName=null, isSingleUnderscore=false, isVar=false, name=null]

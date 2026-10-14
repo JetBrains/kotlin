@@ -1,4 +1,4 @@
-enum class En { A, B, С }
+enum class En { A, B, C }
 
 fun box() {
     var r = ""
@@ -7,13 +7,13 @@ fun box() {
     when (en) {
         En.A -> { r = "when-1" }
         En.B -> {}
-        En.С -> {}
+        En.C -> {}
     }
 
     when (en as En) {
         En.A -> { r = "when-2" }
         En.B -> {}
-        En.С -> {}
+        En.C -> {}
     }
 
 
@@ -23,13 +23,13 @@ fun box() {
         when (en2) {
             En.A -> { r = "when-3" }
             En.B -> {}
-            En.С -> {}
+            En.C -> {}
         }
 
         when (en2 as En) {
             En.A -> { r = "when-4" }
             En.B -> {}
-            En.С -> {}
+            En.C -> {}
         }
     }
 
@@ -40,13 +40,13 @@ fun box() {
         when (en1) {
             En.A -> { r = "when-5" }
             En.B -> {}
-            En.С -> {}
+            En.C -> {}
         }
         // Working without other examples
         when (en1 as En) {
             En.A -> { r = "when-6" }
             En.B -> {}
-            En.С -> {}
+            En.C -> {}
         }
     }
 }

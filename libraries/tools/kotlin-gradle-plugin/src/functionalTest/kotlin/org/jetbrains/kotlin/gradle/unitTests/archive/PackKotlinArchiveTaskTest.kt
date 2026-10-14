@@ -13,9 +13,11 @@ import org.gradle.api.file.FileTree
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinPublicationFormat
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinDiagnosticsException
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.archive.AssembleKotlinArchiveTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.archive.PackKotlinArchiveTask
+import org.jetbrains.kotlin.gradle.plugin.mpp.export.tasks.SerializeSwiftExportMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPublication
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resourcesPublicationExtension
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
@@ -23,7 +25,7 @@ import org.jetbrains.kotlin.gradle.util.*
 import java.io.File
 import java.util.zip.ZipInputStream
 import kotlin.test.Test
-import kotlin.test.assertEquals
+import kotlin.test.*
 
 class PackKotlinArchiveTaskTest {
     @Test
@@ -51,13 +53,13 @@ class PackKotlinArchiveTaskTest {
         assertEquals(
             setOf(
                 "compileCommonMainKotlinMetadata",
-                "compileKotlinJs",
                 "compileKotlinMacosArm64",
-                "compileKotlinWasmJs",
                 "compileWebMainKotlinMetadata",
                 "generateProjectStructureMetadata",
+                "jsJar",
                 "metadataCommonMainClasses",
-                "metadataWebMainClasses"
+                "metadataWebMainClasses",
+                "wasmJsJar",
             ).prettyPrinted,
             assembleTaskDependencies.prettyPrinted,
         )
@@ -99,20 +101,20 @@ class PackKotlinArchiveTaskTest {
                 "compileAppleMainKotlinMetadata",
                 "compileCommonMainKotlinMetadata",
                 "compileKotlinIosArm64",
-                "compileKotlinJs",
                 "compileKotlinLinuxArm64",
                 "compileKotlinMacosArm64",
-                "compileKotlinWasmJs",
                 "compileNativeMainKotlinMetadata",
                 "compileWebMainKotlinMetadata",
                 "generateProjectStructureMetadata",
                 "jsCopyHierarchicalMultiplatformResources",
+                "jsJar",
                 "macosArm64CopyHierarchicalMultiplatformResources",
                 "metadataAppleMainClasses",
                 "metadataCommonMainClasses",
                 "metadataNativeMainClasses",
                 "metadataWebMainClasses",
                 "wasmJsCopyHierarchicalMultiplatformResources",
+                "wasmJsJar",
             ).prettyPrinted,
             assembleTaskDependencies.prettyPrinted,
         )
@@ -191,6 +193,7 @@ class PackKotlinArchiveTaskTest {
                 "metadata/",
                 "platform/",
                 "resources/",
+                "swift-export/",
             ).prettyPrinted,
             packTask.outputFile.get().asFile.zipXzArchiveEntries().sorted().prettyPrinted,
         )
@@ -212,6 +215,7 @@ class PackKotlinArchiveTaskTest {
             addResources("macosArm64", project.singleFileTree("resources/macosArm64", "resources.txt"))
 
             projectStructureMetadataFile.set(project.textFile("project-structure-metadata.json"))
+            swiftExportMetadataFile.set(project.textFile("swift-export-metadata.json"))
             outputDirectory.set(project.layout.buildDirectory.dir("kotlin-archive-test/assemble"))
         }
         val task = project.tasks.register("testPackKotlinArchive", PackKotlinArchiveTask::class.java).get().apply {
@@ -251,8 +255,144 @@ class PackKotlinArchiveTaskTest {
                 "resources/js/resources.txt",
                 "resources/macosArm64/",
                 "resources/macosArm64/resources.txt",
+                "swift-export/",
+                "swift-export/metadata.json",
             ).prettyPrinted,
             task.outputFile.get().asFile.zipXzArchiveEntries().sorted().prettyPrinted,
+        )
+    }
+
+    @Test
+    fun `assemble task depends on swift export metadata serialization`() {
+        val project = exportDslProject(
+            multiplatform = {
+                iosArm64()
+                publishing {
+                    publicationFormat.set(KotlinPublicationFormat.KOTLIN_ARCHIVE)
+                }
+            }
+        ) {
+            exportExtension.swift {
+                moduleName.set("Foo")
+            }
+        }
+
+        val assembleTaskDependencies = project.tasks.getByName("assembleKotlinArchive").dependencyNames()
+        assertTrue(
+            SerializeSwiftExportMetadata.TASK_NAME in assembleTaskDependencies,
+            "Expected $assembleTaskDependencies to contain ${SerializeSwiftExportMetadata.TASK_NAME}",
+        )
+    }
+
+    @Test
+    fun `assemble task takes swift export metadata from the serialization task`() {
+        val project = exportDslProject(
+            multiplatform = {
+                iosArm64()
+                publishing {
+                    publicationFormat.set(KotlinPublicationFormat.KOTLIN_ARCHIVE)
+                }
+            }
+        ) {
+            exportExtension.swift {
+                moduleName.set("Foo")
+            }
+        }
+
+        val serializeTask = project.tasks.getByName(SerializeSwiftExportMetadata.TASK_NAME) as SerializeSwiftExportMetadata
+        val assembleTask = project.tasks.getByName("assembleKotlinArchive") as AssembleKotlinArchiveTask
+
+        assertEquals(serializeTask.metadataFile.get().asFile, assembleTask.swiftExportMetadataFile.get().asFile)
+    }
+
+    @Test
+    fun `assemble task does not depend on swift export metadata serialization without the export DSL`() {
+        val project = exportDslProject(
+            multiplatform = {
+                iosArm64()
+                publishing {
+                    publicationFormat.set(KotlinPublicationFormat.KOTLIN_ARCHIVE)
+                }
+            }
+        )
+
+        val assembleTaskDependencies = project.tasks.getByName("assembleKotlinArchive").dependencyNames()
+        assertFalse(
+            SerializeSwiftExportMetadata.TASK_NAME in assembleTaskDependencies,
+            "Expected $assembleTaskDependencies not to contain ${SerializeSwiftExportMetadata.TASK_NAME}",
+        )
+    }
+
+    @Test
+    fun `all targets are publishable without cinterops`() {
+        val project = buildProjectWithMPP {
+            kotlin {
+                js()
+                wasmJs()
+                macosArm64()
+                iosArm64()
+                linuxX64()
+                mingwX64()
+                jvm()
+                publishing {
+                    publicationFormat.set(KotlinPublicationFormat.KOTLIN_ARCHIVE)
+                }
+            }
+        }.evaluate()
+
+        val assembleTask = project.tasks.getByName("assembleKotlinArchive") as AssembleKotlinArchiveTask
+
+        assertEquals(emptySet(), assembleTask.targetsNotPublishableOnCurrentHost.get())
+    }
+
+    @Test
+    fun `assemble task fails when a target is not publishable on the current host`() {
+        val project = buildProjectWithMPP {
+            kotlin {
+                js()
+                publishing {
+                    publicationFormat.set(KotlinPublicationFormat.KOTLIN_ARCHIVE)
+                }
+            }
+        }.evaluate()
+
+        val assembleTask = project.tasks.getByName("assembleKotlinArchive") as AssembleKotlinArchiveTask
+        assembleTask.targetsNotPublishableOnCurrentHost.set(setOf("iosArm64"))
+
+        assertFailsWith<KotlinDiagnosticsException> { assembleTask.execute() }
+    }
+
+    @Test
+    fun `assemble task packs an incomplete Kotlin Archive when it is allowed`() {
+        val project = buildProjectWithMPP(
+            preApplyCode = { allowIncompleteKotlinArchivePublication() }
+        ) {
+            kotlin {
+                js()
+                iosArm64()
+                publishing {
+                    publicationFormat.set(KotlinPublicationFormat.KOTLIN_ARCHIVE)
+                }
+            }
+        }.evaluate()
+
+        val assembleTask = project.tasks.getByName("assembleKotlinArchive") as AssembleKotlinArchiveTask
+        assembleTask.targetsNotPublishableOnCurrentHost.set(setOf("iosArm64"))
+        assembleTask.execute()
+
+        val packTask = project.tasks.getByName("packKotlinArchive") as PackKotlinArchiveTask
+        packTask.execute()
+
+        assertEquals(
+            listOf(
+                "cinterop/",
+                "manifest.json",
+                "metadata/",
+                "platform/",
+                "resources/",
+                "swift-export/",
+            ).prettyPrinted,
+            packTask.outputFile.get().asFile.zipXzArchiveEntries().sorted().prettyPrinted,
         )
     }
 

@@ -60,9 +60,7 @@ internal fun readKlibDeclarationAddresses(path: Path): Set<KlibDeclarationAddres
 
 internal fun readKlibDeclarationAddresses(library: KotlinLibrary): Set<KlibDeclarationAddress> {
     val metadata = library.metadata
-    val headerProto = parseModuleHeader(metadata.moduleHeaderData)
-
-    val packageMetadataSequence = headerProto.packageFragmentNameList.asSequence().flatMap { packageFragmentName ->
+    val packageMetadataSequence = metadata.getPackageNames().asSequence().flatMap { packageFragmentName ->
         metadata.getPackageFragmentNames(packageFragmentName).asSequence().map { packageMetadataPart ->
             metadata.getPackageFragment(packageFragmentName, packageMetadataPart)
         }

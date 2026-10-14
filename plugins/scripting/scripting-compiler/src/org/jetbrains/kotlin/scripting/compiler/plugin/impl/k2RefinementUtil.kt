@@ -35,7 +35,9 @@ fun ScriptCompilationConfiguration.refineAllForK2(
         }.onSuccess {
             val resolvedScripts = it[ScriptCompilationConfiguration.importScripts]?.map { imported ->
                 if (imported is FileBasedScriptSource && !imported.file.exists())
-                    return makeFailureResult("Imported source file not found: ${imported.file}".asErrorDiagnostics(path = script.locationId))
+                    return@onSuccess makeFailureResult(
+                        "Imported source file not found: ${imported.file}".asErrorDiagnostics(path = script.locationId)
+                    )
                 when (imported) {
                     is FileScriptSource -> {
                         val absoluteFile = imported.file.normalize().absoluteFile

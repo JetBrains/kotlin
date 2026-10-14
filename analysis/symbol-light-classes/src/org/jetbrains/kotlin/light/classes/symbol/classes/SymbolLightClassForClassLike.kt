@@ -99,7 +99,7 @@ internal abstract class SymbolLightClassForClassLike<SType : KaClassSymbol> prot
 
     override fun getOwnInnerClasses(): List<PsiClass> = cachedValue {
         withClassSymbol {
-            createInnerClasses(it, this@SymbolLightClassForClassLike, classOrObjectDeclaration)
+            createInnerClasses(it, this@SymbolLightClassForClassLike)
         }
     }
 

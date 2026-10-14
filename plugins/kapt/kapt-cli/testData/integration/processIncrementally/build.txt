@@ -1,0 +1,71 @@
+# mkdir
+output/ap
+output/stubs
+output/classes
+output/sources
+output/incremental-cache
+output/compiled
+
+# copy
+META-INF/gradle/incremental.annotation.processors
+output/ap/META-INF/gradle/incremental.annotation.processors
+
+# kotlinc
+-d output/ap
+Processor.kt
+
+# kapt
+-Kapt-mode=stubsAndApt
+-Kapt-stubs=output/stubs
+-Kapt-classes=output/classes
+-Kapt-sources=output/sources
+-Kapt-incremental-cache=output/incremental-cache
+-Kapt-classpath=output/ap
+-Kapt-processors=apt.IncrementalProcessor
+-Kapt-dump-processor-stats=output/stats-first.txt
+-d output/classes
+-cp output/ap
+source/First.kt
+source/Second.kt
+
+# kotlinc
+-cp output/ap
+-d output/compiled
+source/First.kt
+source/Second.kt
+
+# javac
+-cp output/compiled:output/ap
+-d output/classes
+output/sources/test/FirstGenerated.java
+output/sources/test/SecondGenerated.java
+
+# kapt
+-Kapt-mode=apt
+-Kapt-stubs=output/stubs
+-Kapt-classes=output/classes
+-Kapt-sources=output/sources
+-Kapt-incremental-cache=output/incremental-cache
+-Kapt-compiled-sources-dir=output/compiled
+-Kapt-compiled-sources-dir=output/classes
+-Kapt-changed-file=output/stubs/test/First.java
+-Kapt-classpath=output/ap
+-Kapt-processors=apt.IncrementalProcessor
+-Kapt-process-incrementally=true
+-Kapt-dump-processor-stats=output/stats-second.txt
+-d output/classes
+-cp output/ap
+source/First.kt
+source/Second.kt
+
+# kotlinc
+-cp %KOTLIN_STDLIB%
+-d output/check
+Check.kt
+
+# java
+-cp output/check:%KOTLIN_STDLIB%
+CheckKt
+
+# after
+OK

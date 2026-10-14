@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.CoreAI
+
+modules = CoreAI
+compilerOpts = -framework CoreAI
+linkerOpts = -framework CoreAI
+#Disabled: Swift-only framework

@@ -1,0 +1,10 @@
+-- collected annotations --
+@AddTestImport(imports = ["foo.bar.Baz"])
+
+-- refinement --
+status: success
+defaultImports: [org.jetbrains.kotlin.scripting.test.definition.AddTestImport, org.jetbrains.kotlin.scripting.test.definition.TestRefinementMarker, foo.bar.Baz]
+
+-- refinement in the script session --
+status: success
+defaultImports: [org.jetbrains.kotlin.scripting.test.definition.AddTestImport, org.jetbrains.kotlin.scripting.test.definition.TestRefinementMarker, foo.bar.Baz]

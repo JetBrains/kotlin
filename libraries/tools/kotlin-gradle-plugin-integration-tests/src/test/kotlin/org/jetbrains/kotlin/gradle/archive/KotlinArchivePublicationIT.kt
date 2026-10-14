@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.gradle.uklibs.PublisherConfiguration
 import org.jetbrains.kotlin.gradle.uklibs.PublishedProject
 import org.jetbrains.kotlin.gradle.uklibs.Variant
 import org.jetbrains.kotlin.gradle.uklibs.VariantFile
+import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.uklibs.publish
 import org.junit.jupiter.api.DisplayName
 import java.io.File
@@ -36,7 +37,10 @@ class KotlinArchivePublicationIT : KGPBaseTest() {
     @GradleTest
     fun publicationContentTest(gradleVersion: GradleVersion) {
         val publishedProject = kotlinArchiveProducer(gradleVersion)
-            .publish(publisherConfiguration = PublisherConfiguration(group = TEST_GROUP))
+            .publish(
+                publisherConfiguration = PublisherConfiguration(group = TEST_GROUP),
+                buildAssertions = { assertOutputDoesNotContain("pom metadata warnings") },
+            )
 
         assertEquals(
             listOf("producer", "producer-jvm").prettyPrinted,
@@ -61,6 +65,61 @@ class KotlinArchivePublicationIT : KGPBaseTest() {
 
         assertEquals(
             expectedRootSourcesJarEntries.prettyPrinted,
+            publishedProject.rootComponent.sourcesJar.zipEntries().prettyPrinted,
+        )
+    }
+
+    @GradleTest
+    @DisplayName("Sources of a target with disabled sources publication are not published")
+    fun publicationContentWithDisabledTargetSourcesTest(gradleVersion: GradleVersion) {
+        val publishedProject = kotlinArchiveProducer(gradleVersion)
+            .apply {
+                buildScriptInjection {
+                    project.applyMultiplatform {
+                        targets.getByName("linuxArm64").withSourcesJar(publish = false)
+                    }
+                }
+            }
+            .publish(publisherConfiguration = PublisherConfiguration(group = TEST_GROUP))
+
+        assertEquals(
+            GradleMetadata(
+                expectedRootVariants.variants.filterNot { it.name == "linuxArm64SourcesElements-published" }.toSet()
+            ).prettyPrinted,
+            publishedProject.rootComponent.gradleMetadata.parseGradleMetadata().prettyPrinted,
+        )
+
+        assertEquals(
+            (expectedRootSourcesJarEntries - "linuxArm64Main/linuxArm64Main.kt").prettyPrinted,
+            publishedProject.rootComponent.sourcesJar.zipEntries().prettyPrinted,
+        )
+    }
+
+    @GradleTest
+    @DisplayName("Only the sources of one target with enabled sources publication are published")
+    fun publicationContentWithSourcesOfSingleTargetTest(gradleVersion: GradleVersion) {
+        val publishedProject = kotlinArchiveProducer(gradleVersion)
+            .apply {
+                buildScriptInjection {
+                    project.applyMultiplatform {
+                        withSourcesJar(publish = false)
+                        targets.getByName(TARGET_WITH_SOURCES).withSourcesJar(publish = true)
+                    }
+                }
+            }
+            .publish(publisherConfiguration = PublisherConfiguration(group = TEST_GROUP))
+
+        assertEquals(
+            GradleMetadata(
+                expectedRootVariants.variants.filterNot {
+                    it.name.endsWith(SOURCES_VARIANT_SUFFIX) && it.name != "$TARGET_WITH_SOURCES$SOURCES_VARIANT_SUFFIX"
+                }.toSet()
+            ).prettyPrinted,
+            publishedProject.rootComponent.gradleMetadata.parseGradleMetadata().prettyPrinted,
+        )
+
+        assertEquals(
+            expectedSourcesJarEntriesOfSingleLinuxTarget.prettyPrinted,
             publishedProject.rootComponent.sourcesJar.zipEntries().prettyPrinted,
         )
     }
@@ -132,6 +191,37 @@ class KotlinArchivePublicationIT : KGPBaseTest() {
                 ),
                 Variant(
                     attributes = mapOf(
+                        "org.gradle.category" to "documentation",
+                        "org.gradle.dependency.bundling" to "external",
+                        "org.gradle.docstype" to "sources",
+                        "org.gradle.jvm.environment" to "non-jvm",
+                        "org.gradle.usage" to "kotlin-runtime",
+                        "org.jetbrains.kotlin.native.target" to "ios_arm64",
+                        "org.jetbrains.kotlin.platform.type" to "native",
+                    ),
+                    availableAt = null,
+                    capabilities = setOf(
+                        Capability(
+                            group = "kotlinArchiveTest",
+                            name = "producer-iosarm64",
+                            version = "1.0",
+                        ),
+                        Capability(
+                            group = "kotlinArchiveTest",
+                            name = "producer",
+                            version = "1.0",
+                        ),
+                    ),
+                    files = listOf(
+                        VariantFile(
+                            name = "producer-kotlin-1.0-sources.jar",
+                            url = "producer-1.0-sources.jar",
+                        ),
+                    ),
+                    name = "iosArm64SourcesElements-published",
+                ),
+                Variant(
+                    attributes = mapOf(
                         "org.gradle.category" to "library",
                         "org.gradle.jvm.environment" to "non-jvm",
                         "org.gradle.usage" to "kotlin-api",
@@ -189,6 +279,37 @@ class KotlinArchivePublicationIT : KGPBaseTest() {
                         ),
                     ),
                     name = "jsRuntimeElements-published",
+                ),
+                Variant(
+                    attributes = mapOf(
+                        "org.gradle.category" to "documentation",
+                        "org.gradle.dependency.bundling" to "external",
+                        "org.gradle.docstype" to "sources",
+                        "org.gradle.jvm.environment" to "non-jvm",
+                        "org.gradle.usage" to "kotlin-runtime",
+                        "org.jetbrains.kotlin.js.compiler" to "ir",
+                        "org.jetbrains.kotlin.platform.type" to "js",
+                    ),
+                    availableAt = null,
+                    capabilities = setOf(
+                        Capability(
+                            group = "kotlinArchiveTest",
+                            name = "producer-js",
+                            version = "1.0",
+                        ),
+                        Capability(
+                            group = "kotlinArchiveTest",
+                            name = "producer",
+                            version = "1.0",
+                        ),
+                    ),
+                    files = listOf(
+                        VariantFile(
+                            name = "producer-kotlin-1.0-sources.jar",
+                            url = "producer-1.0-sources.jar",
+                        ),
+                    ),
+                    name = "jsSourcesElements-published",
                 ),
                 Variant(
                     attributes = mapOf(
@@ -275,6 +396,37 @@ class KotlinArchivePublicationIT : KGPBaseTest() {
                 ),
                 Variant(
                     attributes = mapOf(
+                        "org.gradle.category" to "documentation",
+                        "org.gradle.dependency.bundling" to "external",
+                        "org.gradle.docstype" to "sources",
+                        "org.gradle.jvm.environment" to "non-jvm",
+                        "org.gradle.usage" to "kotlin-runtime",
+                        "org.jetbrains.kotlin.native.target" to "linux_arm64",
+                        "org.jetbrains.kotlin.platform.type" to "native",
+                    ),
+                    availableAt = null,
+                    capabilities = setOf(
+                        Capability(
+                            group = "kotlinArchiveTest",
+                            name = "producer-linuxarm64",
+                            version = "1.0",
+                        ),
+                        Capability(
+                            group = "kotlinArchiveTest",
+                            name = "producer",
+                            version = "1.0",
+                        ),
+                    ),
+                    files = listOf(
+                        VariantFile(
+                            name = "producer-kotlin-1.0-sources.jar",
+                            url = "producer-1.0-sources.jar",
+                        ),
+                    ),
+                    name = "linuxArm64SourcesElements-published",
+                ),
+                Variant(
+                    attributes = mapOf(
                         "org.gradle.category" to "library",
                         "org.gradle.jvm.environment" to "non-jvm",
                         "org.gradle.usage" to "kotlin-api",
@@ -305,6 +457,37 @@ class KotlinArchivePublicationIT : KGPBaseTest() {
                 ),
                 Variant(
                     attributes = mapOf(
+                        "org.gradle.category" to "documentation",
+                        "org.gradle.dependency.bundling" to "external",
+                        "org.gradle.docstype" to "sources",
+                        "org.gradle.jvm.environment" to "non-jvm",
+                        "org.gradle.usage" to "kotlin-runtime",
+                        "org.jetbrains.kotlin.native.target" to "linux_x64",
+                        "org.jetbrains.kotlin.platform.type" to "native",
+                    ),
+                    availableAt = null,
+                    capabilities = setOf(
+                        Capability(
+                            group = "kotlinArchiveTest",
+                            name = "producer-linuxx64",
+                            version = "1.0",
+                        ),
+                        Capability(
+                            group = "kotlinArchiveTest",
+                            name = "producer",
+                            version = "1.0",
+                        ),
+                    ),
+                    files = listOf(
+                        VariantFile(
+                            name = "producer-kotlin-1.0-sources.jar",
+                            url = "producer-1.0-sources.jar",
+                        ),
+                    ),
+                    name = "linuxX64SourcesElements-published",
+                ),
+                Variant(
+                    attributes = mapOf(
                         "org.gradle.category" to "library",
                         "org.gradle.jvm.environment" to "non-jvm",
                         "org.gradle.usage" to "kotlin-api",
@@ -332,6 +515,37 @@ class KotlinArchivePublicationIT : KGPBaseTest() {
                         ),
                     ),
                     name = "macosArm64ApiElements-published",
+                ),
+                Variant(
+                    attributes = mapOf(
+                        "org.gradle.category" to "documentation",
+                        "org.gradle.dependency.bundling" to "external",
+                        "org.gradle.docstype" to "sources",
+                        "org.gradle.jvm.environment" to "non-jvm",
+                        "org.gradle.usage" to "kotlin-runtime",
+                        "org.jetbrains.kotlin.native.target" to "macos_arm64",
+                        "org.jetbrains.kotlin.platform.type" to "native",
+                    ),
+                    availableAt = null,
+                    capabilities = setOf(
+                        Capability(
+                            group = "kotlinArchiveTest",
+                            name = "producer",
+                            version = "1.0",
+                        ),
+                        Capability(
+                            group = "kotlinArchiveTest",
+                            name = "producer-macosarm64",
+                            version = "1.0",
+                        ),
+                    ),
+                    files = listOf(
+                        VariantFile(
+                            name = "producer-kotlin-1.0-sources.jar",
+                            url = "producer-1.0-sources.jar",
+                        ),
+                    ),
+                    name = "macosArm64SourcesElements-published",
                 ),
                 Variant(
                     attributes = mapOf(
@@ -385,7 +599,7 @@ class KotlinArchivePublicationIT : KGPBaseTest() {
                     capabilities = setOf(
                         Capability(
                             group = "kotlinArchiveTest",
-                            name = "producer-wasmjs",
+                            name = "producer-wasm-js",
                             version = "1.0",
                         ),
                         Capability(
@@ -415,7 +629,7 @@ class KotlinArchivePublicationIT : KGPBaseTest() {
                     capabilities = setOf(
                         Capability(
                             group = "kotlinArchiveTest",
-                            name = "producer-wasmjs",
+                            name = "producer-wasm-js",
                             version = "1.0",
                         ),
                         Capability(
@@ -431,6 +645,37 @@ class KotlinArchivePublicationIT : KGPBaseTest() {
                         ),
                     ),
                     name = "wasmJsRuntimeElements-published",
+                ),
+                Variant(
+                    attributes = mapOf(
+                        "org.gradle.category" to "documentation",
+                        "org.gradle.dependency.bundling" to "external",
+                        "org.gradle.docstype" to "sources",
+                        "org.gradle.jvm.environment" to "non-jvm",
+                        "org.gradle.usage" to "kotlin-runtime",
+                        "org.jetbrains.kotlin.platform.type" to "wasm",
+                        "org.jetbrains.kotlin.wasm.target" to "js",
+                    ),
+                    availableAt = null,
+                    capabilities = setOf(
+                        Capability(
+                            group = "kotlinArchiveTest",
+                            name = "producer-wasm-js",
+                            version = "1.0",
+                        ),
+                        Capability(
+                            group = "kotlinArchiveTest",
+                            name = "producer",
+                            version = "1.0",
+                        ),
+                    ),
+                    files = listOf(
+                        VariantFile(
+                            name = "producer-kotlin-1.0-sources.jar",
+                            url = "producer-1.0-sources.jar",
+                        ),
+                    ),
+                    name = "wasmJsSourcesElements-published",
                 ),
             ),
         )
@@ -448,6 +693,21 @@ class KotlinArchivePublicationIT : KGPBaseTest() {
             "nativeMain/nativeMain.kt",
             "wasmJsMain/wasmJsMain.kt",
             "webMain/webMain.kt",
+        )
+
+        private const val TARGET_WITH_SOURCES = "linuxArm64"
+        private const val SOURCES_VARIANT_SUFFIX = "SourcesElements-published"
+
+        /**
+         * Only the source sets which [TARGET_WITH_SOURCES] is compiled from. The common source sets of the other targets,
+         * such as "appleMain" or "webMain", are unrelated to it, so they stay out of the archive.
+         */
+        private val expectedSourcesJarEntriesOfSingleLinuxTarget = listOf(
+            "META-INF/MANIFEST.MF",
+            "commonMain/commonMain.kt",
+            "linuxArm64Main/linuxArm64Main.kt",
+            "linuxMain/linuxMain.kt",
+            "nativeMain/nativeMain.kt",
         )
     }
 }

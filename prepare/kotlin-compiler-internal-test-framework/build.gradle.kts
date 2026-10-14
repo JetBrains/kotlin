@@ -34,11 +34,6 @@ dependencies {
 
 publish()
 runtimeJar()
-sourcesJar {
-    from {
-        mainModules.map { project(it).mainSourceSet.allSource } +
-                testFixturesModules.map { project(it).testFixturesSourceSet.allSource }
-    }
-}
+sourcesJar()
 
 javadocJar()

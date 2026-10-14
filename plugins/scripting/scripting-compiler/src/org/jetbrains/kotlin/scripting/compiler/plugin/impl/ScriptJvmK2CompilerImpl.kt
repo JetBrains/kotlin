@@ -30,9 +30,6 @@ import org.jetbrains.kotlin.fir.pipeline.runPlatformCheckers
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
-import org.jetbrains.kotlin.fir.session.FirJvmSessionFactory.createSourceSession
-import org.jetbrains.kotlin.fir.session.KmpModuleKind
-import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.fir.session.sourcesToPathsMapper
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.Name
@@ -44,7 +41,6 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.getOrStoreRefi
 import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.getRefinedOrBaseCompilationConfiguration
 import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.scriptRefinedCompilationConfigurationsCache
 import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.collectScriptsCompilationDependenciesRecursively
-import org.jetbrains.kotlin.scripting.compiler.plugin.fir.FirScriptCompilationComponent
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
@@ -136,17 +132,14 @@ class ScriptJvmK2CompilerImpl(
             }
     }
 
-    @OptIn(SessionConfiguration::class)
     private fun ScriptCompilationConfiguration.refineAll(
         script: SourceCode,
     ): ResultWithDiagnostics<ScriptCompilationConfiguration> =
-        refineAllForK2(script, state.hostConfiguration) { source, configuration ->
-            collectAndResolveScriptAnnotationsViaFir(
-                source, configuration, state.hostConfiguration,
-                { _, scriptCompilationConfiguration -> state.getOrCreateSessionForAnnotationResolution(scriptCompilationConfiguration) },
-                { session, diagnosticsReporter -> convertToFir(session, diagnosticsReporter) }
-            )
-        }.onSuccess {
+        refineAllViaFir(
+            script, state.hostConfiguration,
+            { _, scriptCompilationConfiguration -> state.getOrCreateSessionForAnnotationResolution(scriptCompilationConfiguration) },
+            convertToFir
+        ).onSuccess {
             it.with {
                 _languageVersion(state.compilerContext.environment.configuration.languageVersionSettings.languageVersion.versionString)
             }.asSuccess()
@@ -217,28 +210,8 @@ class ScriptJvmK2CompilerImpl(
 
         val moduleData = state.moduleDataProvider.addNewScriptModuleData(Name.special("<script-${script.name ?: "main"}>"))
 
-        val session = createSourceSession(
-            moduleData,
-            AbstractProjectFileSearchScope.EMPTY,
-            createIncrementalCompilationSymbolProviders = { null },
-            state.extensionRegistrars,
-            compilerConfiguration,
-            context = state.sessionFactoryContext,
-            needRegisterJavaElementFinder = true,
-            kmpModuleKind = KmpModuleKind.SingleModule,
-            init = {},
-        )
-
-        session.register(
-            FirScriptCompilationComponent::class,
-            FirScriptCompilationComponent(
-                state.hostConfiguration,
-                getSessionForAnnotationResolution = { _, scriptCompilationConfiguration ->
-                    state.getOrCreateSessionForAnnotationResolution(
-                        scriptCompilationConfiguration
-                    )
-                }
-            )
+        val session = createScriptSourceSession(
+            moduleData, state.extensionRegistrars, compilerConfiguration, state.sessionFactoryContext, state.hostConfiguration
         )
 
         state.hostConfiguration[ScriptingHostConfiguration.configureFirSession]?.also {
@@ -255,19 +228,9 @@ class ScriptJvmK2CompilerImpl(
         }
         val frontendOutput = AllModulesFrontendOutput(outputs)
 
-        if (reportingCtx.diagnosticsCollector.hasErrors) return failure(reportingCtx.diagnosticsCollector)
-
-        val irInput = convertAnalyzedFirToIr(compilerConfiguration, targetId, frontendOutput, compilerEnvironment)
-
-        if (reportingCtx.diagnosticsCollector.hasErrors) return failure(reportingCtx.diagnosticsCollector)
-
-        val generationState = generateCodeFromIr(irInput, compilerEnvironment)
-
-        reportingCtx.diagnosticsCollector.reportToMessageCollector(reportingCtx.messageCollector, renderDiagnosticName)
-
-        if (reportingCtx.diagnosticsCollector.hasErrors) {
-            return failure(reportingCtx.diagnosticsCollector)
-        }
+        val [irInput, generationState] = generateCodeIfNoErrors(
+            compilerConfiguration, targetId, frontendOutput, compilerEnvironment, reportingCtx.messageCollector, renderDiagnosticName
+        ).valueOr { return it }
 
         return makeCompiledScript(
             generationState,
@@ -323,7 +286,6 @@ fun SourceCode.convertToFirViaLightTree(session: FirSession, diagnosticsReporter
     }
 }
 
-@SessionConfiguration
 private fun K2ScriptingCompilerEnvironmentInternal.getOrCreateSessionForAnnotationResolution(
     scriptCompilationConfiguration: ScriptCompilationConfiguration
 ): FirSession {
@@ -331,22 +293,12 @@ private fun K2ScriptingCompilerEnvironmentInternal.getOrCreateSessionForAnnotati
     if (dependencies.isNotEmpty()) {
         configureLibrarySessionIfNeeded(this, compilerContext.environment.configuration, dependencies)
     }
-    return dummySessionForAnnotationResolution ?: (createSourceSession(
+    return dummySessionForAnnotationResolution ?: createScriptSourceSession(
         moduleDataProvider.addNewScriptModuleData(Name.special("<raw-script>"), isDummy = true),
-        AbstractProjectFileSearchScope.EMPTY,
-        createIncrementalCompilationSymbolProviders = { null },
         extensionRegistrars,
         compilerContext.environment.configuration,
-        context = sessionFactoryContext,
-        needRegisterJavaElementFinder = true,
-        kmpModuleKind = KmpModuleKind.SingleModule,
-        init = {},
-    ).apply {
-        register(
-            FirScriptCompilationComponent::class,
-            FirScriptCompilationComponent(hostConfiguration, getSessionForAnnotationResolution = { _, _ -> this })
-        )
-        dummySessionForAnnotationResolution = this
-    })
+        sessionFactoryContext,
+        hostConfiguration,
+    ).also { dummySessionForAnnotationResolution = it }
 }
 

@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.types.isMarkedNullable
 import org.jetbrains.kotlin.ir.util.erasedUpperBound
 import org.jetbrains.kotlin.ir.util.getInlineClassUnderlyingType
 import org.jetbrains.kotlin.ir.util.isInterface
+import org.jetbrains.kotlin.ir.util.isNullable
 
 class JsInlineClassesUtils(val context: JsIrBackendContext) : JsCommonInlineClassesUtils {
 
@@ -32,7 +33,7 @@ class JsInlineClassesUtils(val context: JsIrBackendContext) : JsCommonInlineClas
                     var fieldInlinedClass = erased
                     while (true) {
                         fieldType = getInlineClassUnderlyingType(fieldInlinedClass)
-                        if (fieldType.isMarkedNullable()) {
+                        if (fieldType.isNullable()) {
                             return null
                         }
 

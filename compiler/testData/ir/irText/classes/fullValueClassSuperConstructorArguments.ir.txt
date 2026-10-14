@@ -1,0 +1,451 @@
+FILE fqName:<root> fileName:/fullValueClassSuperConstructorArguments.kt
+  CLASS CLASS name:Base modality:ABSTRACT visibility:public [value] superTypes:[kotlin.Any]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Base
+    CONSTRUCTOR visibility:public returnType:<root>.Base [primary]
+      VALUE_PARAMETER kind:Regular name:b index:0 type:kotlin.Int
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Base modality:ABSTRACT visibility:public [value] superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+  CLASS CLASS name:ElvisArgument modality:FINAL visibility:public [value] superTypes:[<root>.Base]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.ElvisArgument
+    PROPERTY name:x visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int? visibility:private [final]
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL returnType:kotlin.Int?
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ElvisArgument
+        correspondingProperty: PROPERTY name:x visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Int? declared in <root>.ElvisArgument'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int? visibility:private [final]' type=kotlin.Int? origin=null
+              receiver: GET_VAR '<this>: <root>.ElvisArgument declared in <root>.ElvisArgument.<get-x>' type=<root>.ElvisArgument origin=null
+    CONSTRUCTOR visibility:public returnType:<root>.ElvisArgument [primary]
+      VALUE_PARAMETER kind:Regular name:x index:0 type:kotlin.Int?
+      BLOCK_BODY
+        VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Int [val]
+          BLOCK type=kotlin.Int origin=ELVIS
+            VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.Int? [val]
+              GET_VAR 'x: kotlin.Int? declared in <root>.ElvisArgument.<init>' type=kotlin.Int? origin=null
+            WHEN type=kotlin.Int origin=null
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                  ARG arg0: GET_VAR 'val tmp_1: kotlin.Int? declared in <root>.ElvisArgument.<init>' type=kotlin.Int? origin=null
+                  ARG arg1: CONST Null type=kotlin.Nothing? value=null
+                then: CONST Int type=kotlin.Int value=0
+              BRANCH
+                if: CONST Boolean type=kotlin.Boolean value=true
+                then: GET_VAR 'val tmp_1: kotlin.Int? declared in <root>.ElvisArgument.<init>' type=kotlin.Int? origin=null
+        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int? visibility:private [final]' type=kotlin.Unit origin=INITIALIZE_FIELD
+          receiver: GET_VAR '<this>: <root>.ElvisArgument declared in <root>.ElvisArgument' type=<root>.ElvisArgument origin=null
+          value: GET_VAR 'x: kotlin.Int? declared in <root>.ElvisArgument.<init>' type=kotlin.Int? origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (b: kotlin.Int) declared in <root>.Base'
+          ARG b: GET_VAR 'val tmp_0: kotlin.Int declared in <root>.ElvisArgument.<init>' type=kotlin.Int origin=null
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ElvisArgument modality:FINAL visibility:public [value] superTypes:[<root>.Base]' type=kotlin.Unit
+    FUN GENERATED_FULL_VALUE_CLASS_MEMBER name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ElvisArgument
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Base
+      BLOCK_BODY
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=<root>.ElvisArgument
+              GET_VAR 'other: kotlin.Any? declared in <root>.ElvisArgument.equals' type=kotlin.Any? origin=null
+            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.ElvisArgument'
+              CONST Boolean type=kotlin.Boolean value=false
+        VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:<root>.ElvisArgument [val]
+          TYPE_OP type=<root>.ElvisArgument origin=IMPLICIT_CAST typeOperand=<root>.ElvisArgument
+            GET_VAR 'other: kotlin.Any? declared in <root>.ElvisArgument.equals' type=kotlin.Any? origin=null
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+              ARG <this>: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+                ARG arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int? visibility:private [final]' type=kotlin.Int? origin=null
+                  receiver: GET_VAR '<this>: <root>.ElvisArgument declared in <root>.ElvisArgument.equals' type=<root>.ElvisArgument origin=null
+                ARG arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int? visibility:private [final]' type=kotlin.Int? origin=null
+                  receiver: GET_VAR 'val tmp_2: <root>.ElvisArgument declared in <root>.ElvisArgument.equals' type=<root>.ElvisArgument origin=null
+            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.ElvisArgument'
+              CONST Boolean type=kotlin.Boolean value=false
+        RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.ElvisArgument'
+          CONST Boolean type=kotlin.Boolean value=true
+    FUN GENERATED_FULL_VALUE_CLASS_MEMBER name:hashCode visibility:public modality:OPEN returnType:kotlin.Int
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ElvisArgument
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.Base
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.ElvisArgument'
+          WHEN type=kotlin.Int origin=null
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                ARG arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int? visibility:private [final]' type=kotlin.Int? origin=null
+                  receiver: GET_VAR '<this>: <root>.ElvisArgument declared in <root>.ElvisArgument.hashCode' type=<root>.ElvisArgument origin=null
+                ARG arg1: CONST Null type=kotlin.Nothing? value=null
+              then: CONST Int type=kotlin.Int value=0
+            BRANCH
+              if: CONST Boolean type=kotlin.Boolean value=true
+              then: CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+                ARG <this>: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int? visibility:private [final]' type=kotlin.Int? origin=null
+                  receiver: GET_VAR '<this>: <root>.ElvisArgument declared in <root>.ElvisArgument.hashCode' type=<root>.ElvisArgument origin=null
+    FUN GENERATED_FULL_VALUE_CLASS_MEMBER name:toString visibility:public modality:OPEN returnType:kotlin.String
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ElvisArgument
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.Base
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.ElvisArgument'
+          STRING_CONCATENATION type=kotlin.String
+            CONST String type=kotlin.String value="ElvisArgument("
+            CONST String type=kotlin.String value="x="
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int? visibility:private [final]' type=kotlin.Int? origin=null
+              receiver: GET_VAR '<this>: <root>.ElvisArgument declared in <root>.ElvisArgument.toString' type=<root>.ElvisArgument origin=null
+            CONST String type=kotlin.String value=")"
+  CLASS CLASS name:GenericArgument modality:FINAL visibility:public [value] superTypes:[<root>.GenericBase<kotlin.Int>]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.GenericArgument
+    PROPERTY name:x visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL returnType:kotlin.Int
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.GenericArgument
+        correspondingProperty: PROPERTY name:x visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Int declared in <root>.GenericArgument'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.GenericArgument declared in <root>.GenericArgument.<get-x>' type=<root>.GenericArgument origin=null
+    CONSTRUCTOR visibility:public returnType:<root>.GenericArgument [primary]
+      VALUE_PARAMETER kind:Regular name:x index:0 type:kotlin.Int
+      BLOCK_BODY
+        VAR IR_TEMPORARY_VARIABLE name:tmp_3 type:kotlin.Any? [val]
+          TYPE_OP type=kotlin.Any? origin=IMPLICIT_CAST typeOperand=kotlin.Any?
+            GET_VAR 'x: kotlin.Int declared in <root>.GenericArgument.<init>' type=kotlin.Int origin=null
+        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Unit origin=INITIALIZE_FIELD
+          receiver: GET_VAR '<this>: <root>.GenericArgument declared in <root>.GenericArgument' type=<root>.GenericArgument origin=null
+          value: GET_VAR 'x: kotlin.Int declared in <root>.GenericArgument.<init>' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (t: T of <root>.GenericBase) declared in <root>.GenericBase'
+          TYPE_ARG T: kotlin.Int
+          ARG t: GET_VAR 'val tmp_3: kotlin.Any? declared in <root>.GenericArgument.<init>' type=kotlin.Any? origin=null
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:GenericArgument modality:FINAL visibility:public [value] superTypes:[<root>.GenericBase<kotlin.Int>]' type=kotlin.Unit
+    FUN GENERATED_FULL_VALUE_CLASS_MEMBER name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.GenericArgument
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.GenericBase
+      BLOCK_BODY
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=<root>.GenericArgument
+              GET_VAR 'other: kotlin.Any? declared in <root>.GenericArgument.equals' type=kotlin.Any? origin=null
+            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.GenericArgument'
+              CONST Boolean type=kotlin.Boolean value=false
+        VAR IR_TEMPORARY_VARIABLE name:tmp_4 type:<root>.GenericArgument [val]
+          TYPE_OP type=<root>.GenericArgument origin=IMPLICIT_CAST typeOperand=<root>.GenericArgument
+            GET_VAR 'other: kotlin.Any? declared in <root>.GenericArgument.equals' type=kotlin.Any? origin=null
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+              ARG <this>: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+                ARG arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+                  receiver: GET_VAR '<this>: <root>.GenericArgument declared in <root>.GenericArgument.equals' type=<root>.GenericArgument origin=null
+                ARG arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+                  receiver: GET_VAR 'val tmp_4: <root>.GenericArgument declared in <root>.GenericArgument.equals' type=<root>.GenericArgument origin=null
+            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.GenericArgument'
+              CONST Boolean type=kotlin.Boolean value=false
+        RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.GenericArgument'
+          CONST Boolean type=kotlin.Boolean value=true
+    FUN GENERATED_FULL_VALUE_CLASS_MEMBER name:hashCode visibility:public modality:OPEN returnType:kotlin.Int
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.GenericArgument
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.GenericBase
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.GenericArgument'
+          CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+            ARG <this>: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.GenericArgument declared in <root>.GenericArgument.hashCode' type=<root>.GenericArgument origin=null
+    FUN GENERATED_FULL_VALUE_CLASS_MEMBER name:toString visibility:public modality:OPEN returnType:kotlin.String
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.GenericArgument
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.GenericBase
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.GenericArgument'
+          STRING_CONCATENATION type=kotlin.String
+            CONST String type=kotlin.String value="GenericArgument("
+            CONST String type=kotlin.String value="x="
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.GenericArgument declared in <root>.GenericArgument.toString' type=<root>.GenericArgument origin=null
+            CONST String type=kotlin.String value=")"
+  CLASS CLASS name:GenericBase modality:ABSTRACT visibility:public [value] superTypes:[kotlin.Any]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.GenericBase<T of <root>.GenericBase>
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+    CONSTRUCTOR visibility:public returnType:<root>.GenericBase<T of <root>.GenericBase> [primary]
+      VALUE_PARAMETER kind:Regular name:t index:0 type:T of <root>.GenericBase
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:GenericBase modality:ABSTRACT visibility:public [value] superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+  CLASS CLASS name:IfArgument modality:FINAL visibility:public [value] superTypes:[<root>.Base]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.IfArgument
+    PROPERTY name:x visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL returnType:kotlin.Int
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.IfArgument
+        correspondingProperty: PROPERTY name:x visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Int declared in <root>.IfArgument'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.IfArgument declared in <root>.IfArgument.<get-x>' type=<root>.IfArgument origin=null
+    CONSTRUCTOR visibility:public returnType:<root>.IfArgument [primary]
+      VALUE_PARAMETER kind:Regular name:x index:0 type:kotlin.Int
+      BLOCK_BODY
+        VAR IR_TEMPORARY_VARIABLE name:tmp_5 type:kotlin.Int [val]
+          WHEN type=kotlin.Int origin=IF
+            BRANCH
+              if: CALL 'public final fun greater (arg0: kotlin.Int, arg1: kotlin.Int): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=GT
+                ARG arg0: GET_VAR 'x: kotlin.Int declared in <root>.IfArgument.<init>' type=kotlin.Int origin=null
+                ARG arg1: CONST Int type=kotlin.Int value=0
+              then: CONST Int type=kotlin.Int value=1
+            BRANCH
+              if: CONST Boolean type=kotlin.Boolean value=true
+              then: CONST Int type=kotlin.Int value=2
+        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Unit origin=INITIALIZE_FIELD
+          receiver: GET_VAR '<this>: <root>.IfArgument declared in <root>.IfArgument' type=<root>.IfArgument origin=null
+          value: GET_VAR 'x: kotlin.Int declared in <root>.IfArgument.<init>' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (b: kotlin.Int) declared in <root>.Base'
+          ARG b: GET_VAR 'val tmp_5: kotlin.Int declared in <root>.IfArgument.<init>' type=kotlin.Int origin=null
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:IfArgument modality:FINAL visibility:public [value] superTypes:[<root>.Base]' type=kotlin.Unit
+    FUN GENERATED_FULL_VALUE_CLASS_MEMBER name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.IfArgument
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Base
+      BLOCK_BODY
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=<root>.IfArgument
+              GET_VAR 'other: kotlin.Any? declared in <root>.IfArgument.equals' type=kotlin.Any? origin=null
+            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.IfArgument'
+              CONST Boolean type=kotlin.Boolean value=false
+        VAR IR_TEMPORARY_VARIABLE name:tmp_6 type:<root>.IfArgument [val]
+          TYPE_OP type=<root>.IfArgument origin=IMPLICIT_CAST typeOperand=<root>.IfArgument
+            GET_VAR 'other: kotlin.Any? declared in <root>.IfArgument.equals' type=kotlin.Any? origin=null
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+              ARG <this>: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+                ARG arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+                  receiver: GET_VAR '<this>: <root>.IfArgument declared in <root>.IfArgument.equals' type=<root>.IfArgument origin=null
+                ARG arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+                  receiver: GET_VAR 'val tmp_6: <root>.IfArgument declared in <root>.IfArgument.equals' type=<root>.IfArgument origin=null
+            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.IfArgument'
+              CONST Boolean type=kotlin.Boolean value=false
+        RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.IfArgument'
+          CONST Boolean type=kotlin.Boolean value=true
+    FUN GENERATED_FULL_VALUE_CLASS_MEMBER name:hashCode visibility:public modality:OPEN returnType:kotlin.Int
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.IfArgument
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.Base
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.IfArgument'
+          CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+            ARG <this>: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.IfArgument declared in <root>.IfArgument.hashCode' type=<root>.IfArgument origin=null
+    FUN GENERATED_FULL_VALUE_CLASS_MEMBER name:toString visibility:public modality:OPEN returnType:kotlin.String
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.IfArgument
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.Base
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.IfArgument'
+          STRING_CONCATENATION type=kotlin.String
+            CONST String type=kotlin.String value="IfArgument("
+            CONST String type=kotlin.String value="x="
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.IfArgument declared in <root>.IfArgument.toString' type=<root>.IfArgument origin=null
+            CONST String type=kotlin.String value=")"
+  CLASS CLASS name:PairBase modality:ABSTRACT visibility:public [value] superTypes:[kotlin.Any]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.PairBase
+    CONSTRUCTOR visibility:public returnType:<root>.PairBase [primary]
+      VALUE_PARAMETER kind:Regular name:a index:0 type:kotlin.Int
+      VALUE_PARAMETER kind:Regular name:b index:1 type:kotlin.Int
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:PairBase modality:ABSTRACT visibility:public [value] superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+  CLASS CLASS name:PlainArgument modality:FINAL visibility:public [value] superTypes:[<root>.Base]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.PlainArgument
+    PROPERTY name:x visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL returnType:kotlin.Int
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.PlainArgument
+        correspondingProperty: PROPERTY name:x visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Int declared in <root>.PlainArgument'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.PlainArgument declared in <root>.PlainArgument.<get-x>' type=<root>.PlainArgument origin=null
+    CONSTRUCTOR visibility:public returnType:<root>.PlainArgument [primary]
+      VALUE_PARAMETER kind:Regular name:x index:0 type:kotlin.Int
+      BLOCK_BODY
+        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Unit origin=INITIALIZE_FIELD
+          receiver: GET_VAR '<this>: <root>.PlainArgument declared in <root>.PlainArgument' type=<root>.PlainArgument origin=null
+          value: GET_VAR 'x: kotlin.Int declared in <root>.PlainArgument.<init>' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (b: kotlin.Int) declared in <root>.Base'
+          ARG b: GET_VAR 'x: kotlin.Int declared in <root>.PlainArgument.<init>' type=kotlin.Int origin=null
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:PlainArgument modality:FINAL visibility:public [value] superTypes:[<root>.Base]' type=kotlin.Unit
+    FUN GENERATED_FULL_VALUE_CLASS_MEMBER name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.PlainArgument
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Base
+      BLOCK_BODY
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=<root>.PlainArgument
+              GET_VAR 'other: kotlin.Any? declared in <root>.PlainArgument.equals' type=kotlin.Any? origin=null
+            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.PlainArgument'
+              CONST Boolean type=kotlin.Boolean value=false
+        VAR IR_TEMPORARY_VARIABLE name:tmp_7 type:<root>.PlainArgument [val]
+          TYPE_OP type=<root>.PlainArgument origin=IMPLICIT_CAST typeOperand=<root>.PlainArgument
+            GET_VAR 'other: kotlin.Any? declared in <root>.PlainArgument.equals' type=kotlin.Any? origin=null
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+              ARG <this>: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+                ARG arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+                  receiver: GET_VAR '<this>: <root>.PlainArgument declared in <root>.PlainArgument.equals' type=<root>.PlainArgument origin=null
+                ARG arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+                  receiver: GET_VAR 'val tmp_7: <root>.PlainArgument declared in <root>.PlainArgument.equals' type=<root>.PlainArgument origin=null
+            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.PlainArgument'
+              CONST Boolean type=kotlin.Boolean value=false
+        RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.PlainArgument'
+          CONST Boolean type=kotlin.Boolean value=true
+    FUN GENERATED_FULL_VALUE_CLASS_MEMBER name:hashCode visibility:public modality:OPEN returnType:kotlin.Int
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.PlainArgument
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.Base
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.PlainArgument'
+          CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+            ARG <this>: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.PlainArgument declared in <root>.PlainArgument.hashCode' type=<root>.PlainArgument origin=null
+    FUN GENERATED_FULL_VALUE_CLASS_MEMBER name:toString visibility:public modality:OPEN returnType:kotlin.String
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.PlainArgument
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.Base
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.PlainArgument'
+          STRING_CONCATENATION type=kotlin.String
+            CONST String type=kotlin.String value="PlainArgument("
+            CONST String type=kotlin.String value="x="
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.PlainArgument declared in <root>.PlainArgument.toString' type=<root>.PlainArgument origin=null
+            CONST String type=kotlin.String value=")"
+  CLASS CLASS name:ReorderedArguments modality:FINAL visibility:public [value] superTypes:[<root>.PairBase]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.ReorderedArguments
+    PROPERTY name:x visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL returnType:kotlin.Int
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ReorderedArguments
+        correspondingProperty: PROPERTY name:x visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Int declared in <root>.ReorderedArguments'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.ReorderedArguments declared in <root>.ReorderedArguments.<get-x>' type=<root>.ReorderedArguments origin=null
+    CONSTRUCTOR visibility:public returnType:<root>.ReorderedArguments [primary]
+      VALUE_PARAMETER kind:Regular name:x index:0 type:kotlin.Int
+      BLOCK_BODY
+        VAR IR_TEMPORARY_VARIABLE name:tmp_8 type:kotlin.Int [val]
+          CALL 'public final fun traced (value: kotlin.Int): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+            ARG value: GET_VAR 'x: kotlin.Int declared in <root>.ReorderedArguments.<init>' type=kotlin.Int origin=null
+        VAR IR_TEMPORARY_VARIABLE name:tmp_9 type:kotlin.Int [val]
+          CALL 'public final fun traced (value: kotlin.Int): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+            ARG value: CONST Int type=kotlin.Int value=3
+        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Unit origin=INITIALIZE_FIELD
+          receiver: GET_VAR '<this>: <root>.ReorderedArguments declared in <root>.ReorderedArguments' type=<root>.ReorderedArguments origin=null
+          value: GET_VAR 'x: kotlin.Int declared in <root>.ReorderedArguments.<init>' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (a: kotlin.Int, b: kotlin.Int) declared in <root>.PairBase'
+          ARG a: GET_VAR 'val tmp_9: kotlin.Int declared in <root>.ReorderedArguments.<init>' type=kotlin.Int origin=null
+          ARG b: GET_VAR 'val tmp_8: kotlin.Int declared in <root>.ReorderedArguments.<init>' type=kotlin.Int origin=null
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ReorderedArguments modality:FINAL visibility:public [value] superTypes:[<root>.PairBase]' type=kotlin.Unit
+    FUN GENERATED_FULL_VALUE_CLASS_MEMBER name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ReorderedArguments
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.PairBase
+      BLOCK_BODY
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=<root>.ReorderedArguments
+              GET_VAR 'other: kotlin.Any? declared in <root>.ReorderedArguments.equals' type=kotlin.Any? origin=null
+            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.ReorderedArguments'
+              CONST Boolean type=kotlin.Boolean value=false
+        VAR IR_TEMPORARY_VARIABLE name:tmp_10 type:<root>.ReorderedArguments [val]
+          TYPE_OP type=<root>.ReorderedArguments origin=IMPLICIT_CAST typeOperand=<root>.ReorderedArguments
+            GET_VAR 'other: kotlin.Any? declared in <root>.ReorderedArguments.equals' type=kotlin.Any? origin=null
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+              ARG <this>: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+                ARG arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+                  receiver: GET_VAR '<this>: <root>.ReorderedArguments declared in <root>.ReorderedArguments.equals' type=<root>.ReorderedArguments origin=null
+                ARG arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+                  receiver: GET_VAR 'val tmp_10: <root>.ReorderedArguments declared in <root>.ReorderedArguments.equals' type=<root>.ReorderedArguments origin=null
+            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.ReorderedArguments'
+              CONST Boolean type=kotlin.Boolean value=false
+        RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.ReorderedArguments'
+          CONST Boolean type=kotlin.Boolean value=true
+    FUN GENERATED_FULL_VALUE_CLASS_MEMBER name:hashCode visibility:public modality:OPEN returnType:kotlin.Int
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ReorderedArguments
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.PairBase
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.ReorderedArguments'
+          CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+            ARG <this>: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.ReorderedArguments declared in <root>.ReorderedArguments.hashCode' type=<root>.ReorderedArguments origin=null
+    FUN GENERATED_FULL_VALUE_CLASS_MEMBER name:toString visibility:public modality:OPEN returnType:kotlin.String
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ReorderedArguments
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.PairBase
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.ReorderedArguments'
+          STRING_CONCATENATION type=kotlin.String
+            CONST String type=kotlin.String value="ReorderedArguments("
+            CONST String type=kotlin.String value="x="
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.ReorderedArguments declared in <root>.ReorderedArguments.toString' type=<root>.ReorderedArguments origin=null
+            CONST String type=kotlin.String value=")"
+  FUN name:traced visibility:public modality:FINAL returnType:kotlin.Int
+    VALUE_PARAMETER kind:Regular name:value index:0 type:kotlin.Int
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun traced (value: kotlin.Int): kotlin.Int declared in <root>'
+        GET_VAR 'value: kotlin.Int declared in <root>.traced' type=kotlin.Int origin=null

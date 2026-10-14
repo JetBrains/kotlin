@@ -1,0 +1,144 @@
+@Unsigned(count = 1, more = {2})
+/**
+ * @Unsigned(count = 1u, more = [2u])
+ * @kotlin/jvm/JvmExposeBoxed
+ * public final class Annotated : kotlin/Any {
+ *
+ *   // signature: <init>(Ljava/lang/String;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+ *   public constructor(id: Id)
+ *
+ *   // field: id:Ljava/lang/String;
+ *   // getter: getId-eEFUqEU()Ljava/lang/String;
+ *   public final val id: Id
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class Annotated {
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.String id = null;
+
+    @kotlin.jvm.JvmExposeBoxed(jvmName = "")
+    public Annotated(@org.jetbrains.annotations.NotNull()
+    Id id) {
+        super();
+    }
+
+    private Annotated(java.lang.String id) {
+        super();
+    }
+
+    @kotlin.jvm.JvmExposeBoxed(jvmName = "")
+    @org.jetbrains.annotations.NotNull()
+    public final Id getId() {
+        return null;
+    }
+}
+
+////////////////////
+
+
+@kotlin.jvm.JvmInline()
+/**
+ * @kotlin/jvm/JvmInline
+ * @kotlin/jvm/JvmExposeBoxed
+ * public final value class Id : kotlin/Any {
+ *
+ *   // signature: constructor-impl(Ljava/lang/String;)Ljava/lang/String;
+ *   public constructor(value: kotlin/String)
+ *
+ *   // signature: equals-impl(Ljava/lang/String;Ljava/lang/Object;)Z
+ *   // must-use return value
+ *   public open (* synthesized *) operator fun equals(other: kotlin/Any?): kotlin/Boolean
+ *
+ *   // signature: hashCode-impl(Ljava/lang/String;)I
+ *   // must-use return value
+ *   public open (* synthesized *) fun hashCode(): kotlin/Int
+ *
+ *   // signature: toString-impl(Ljava/lang/String;)Ljava/lang/String;
+ *   // must-use return value
+ *   public open (* synthesized *) fun toString(): kotlin/String
+ *
+ *   // field: value:Ljava/lang/String;
+ *   // getter: getValue()Ljava/lang/String;
+ *   public final val value: kotlin/String
+ *     public final get
+ *
+ *   // underlying property: value
+ *
+ *   // underlying type: kotlin/String
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class Id {
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.String value = null;
+
+    @kotlin.jvm.JvmExposeBoxed(jvmName = "")
+    public Id(@org.jetbrains.annotations.NotNull()
+    java.lang.String value) {
+        super();
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getValue() {
+        return null;
+    }
+
+    @java.lang.Override()
+    public boolean equals(java.lang.Object other) {
+        return false;
+    }
+
+    @java.lang.Override()
+    public int hashCode() {
+        return 0;
+    }
+
+    @java.lang.Override()
+    public java.lang.String toString() {
+        return null;
+    }
+}
+
+////////////////////
+
+
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+/**
+ * @kotlin/jvm/JvmExposeBoxed
+ * public final annotation class Unsigned : kotlin/Annotation {
+ *
+ *   // signature: <init>(Lkotlin/UInt;Lkotlin/UIntArray;)V
+ *   public constructor(count: kotlin/UInt, vararg more: kotlin/UInt (* kotlin/UIntArray *))
+ *
+ *   // getter: count()I
+ *   public final val count: kotlin/UInt
+ *     public final get
+ *
+ *   // getter: more()[I
+ *   public final val more: kotlin/UIntArray
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract @interface Unsigned {
+
+    public abstract int count();
+
+    @kotlin.jvm.JvmExposeBoxed(jvmName = "")
+    @org.jetbrains.annotations.NotNull()
+    public abstract kotlin.UInt getCount();
+
+    @kotlin.jvm.JvmExposeBoxed(jvmName = "")
+    @org.jetbrains.annotations.NotNull()
+    public abstract kotlin.UIntArray getMore();
+
+    public abstract int[] more();
+}

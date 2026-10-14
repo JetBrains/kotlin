@@ -89,10 +89,10 @@ internal abstract class BuildPropertiesBuildService @Inject constructor(
                 BuildPropertiesBuildService::class.qualifiedName!!,
                 BuildPropertiesBuildService::class.java
             ) {
-                it.parameters.localProperties.set(
+                parameters.localProperties.set(
                     providerFactory.propertiesFromFile(rootDir.resolve("local.properties"))
                 )
-                it.parameters.versionProperties.set(
+                parameters.versionProperties.set(
                     providerFactory.propertiesFromFile(rootDir.resolve("gradle/versions.properties"))
                 )
             }

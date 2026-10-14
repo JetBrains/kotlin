@@ -31,6 +31,7 @@ import java.nio.file.StandardOpenOption
 import kotlin.io.path.Path
 import kotlin.io.path.absolutePathString
 import org.jetbrains.kotlin.io.canonicalPathString
+import org.jetbrains.kotlin.konan.config.NativeConfigurationKeys.DEBUG_PREFIX_MAP
 import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.absolute
 import kotlin.io.path.createDirectories
@@ -49,7 +50,8 @@ class CacheBuilder(
     private val configuration = config.configuration
     private val autoCacheableFrom = configuration[NativeConfigurationKeys.AUTO_CACHEABLE_FROM]!!.map { Path(Path(it).canonicalPathString()) }
     private val icEnabled = configuration[CommonConfigurationKeys.INCREMENTAL_COMPILATION]!!
-    private val includedLibraries = configuration.konanIncludedLibraries.toSet()
+    private val includedLibraries = configuration.konanIncludedLibraries
+            .map { Path(it).canonicalPathString() }.toSet()
     private val generateTestRunner = configuration.getNotNull(NativeConfigurationKeys.GENERATE_TEST_RUNNER)
 
     fun needToBuild() = config.ignoreCacheReason == null
@@ -66,6 +68,31 @@ class CacheBuilder(
 
     private val caches = mutableMapOf<KotlinLibrary, CachedLibraries.Cache>()
     private val cacheRootDirectories = mutableMapOf<KotlinLibrary, String>()
+
+    /**
+     * What part of a library cache has been built during this compilation. See `wasRebuiltInThisRun`.
+     */
+    private sealed class RebuiltCache {
+        /** The cache of the whole library. */
+        object WholeLibrary : RebuiltCache()
+
+        /** The per-file caches of the files with the given cache file IDs. */
+        class Files : RebuiltCache() {
+            val fileIds = mutableSetOf<String>()
+        }
+    }
+
+    private val rebuiltCaches = mutableMapOf<KotlinLibrary, RebuiltCache>()
+
+    /**
+     * Whether the cache of the given file of [library] (or of the whole [library], if [fileId] is `null`) has been
+     * built during this compilation.
+     */
+    fun wasRebuiltInThisRun(library: KotlinLibrary, fileId: String?): Boolean = when (val rebuiltCache = rebuiltCaches[library]) {
+        null -> false
+        RebuiltCache.WholeLibrary -> true
+        is RebuiltCache.Files -> fileId in rebuiltCache.fileIds
+    }
 
     // If libA depends on libB, then dependableLibraries[libB] contains libA.
     private val dependableLibraries = mutableMapOf<KotlinLibrary, MutableList<KotlinLibrary>>()
@@ -214,6 +241,7 @@ class CacheBuilder(
         val removedFiles = mutableListOf<LibraryFile>()
         val addedFiles = mutableListOf<LibraryFile>()
         val reversedPerFileDependencies = mutableMapOf<LibraryFile, MutableList<LibraryFile>>()
+        val reversedWeakPerFileDependencies = mutableMapOf<LibraryFile, MutableList<LibraryFile>>()
         val reversedWholeLibraryDependencies = mutableMapOf<KotlinLibrary, MutableList<LibraryFile>>()
         for (library in icedLibraries) {
             if (library in needFullRebuild) continue
@@ -258,8 +286,8 @@ class CacheBuilder(
                                 reversedWholeLibraryDependencies.getOrPut(dependentLibrary) { mutableListOf() }.add(libraryFile)
                             is DependenciesTracker.DependencyKind.CertainFiles ->
                                 kind.files.forEach { (name, weak) ->
-                                    if (!weak)
-                                        reversedPerFileDependencies.getOrPut(LibraryFile(dependentLibrary, name)) { mutableListOf() }.add(libraryFile)
+                                    (if (weak) reversedWeakPerFileDependencies else reversedPerFileDependencies)
+                                            .getOrPut(LibraryFile(dependentLibrary, name)) { mutableListOf() }.add(libraryFile)
                                 }
                         }
                     }
@@ -294,6 +322,11 @@ class CacheBuilder(
 
         removedFiles.forEach {
             if (it !in dirtyFiles) dfs(it)
+            // A weak dependency is link-time only, but the walk over cached dependencies still resolves it,
+            // so a file that weakly depends on a removed file must be rebuilt to drop the stale edge.
+            reversedWeakPerFileDependencies[it]?.forEach { weakDependent ->
+                if (weakDependent !in dirtyFiles) dfs(weakDependent)
+            }
         }
         changedFiles.forEach {
             if (it !in dirtyFiles) dfs(it)
@@ -560,11 +593,30 @@ class CacheBuilder(
             this.cachedLibraries = cachedLibraries
             cacheDirectories = listOf(libraryCacheDirectory.absolutePathString())
             this.makePerFileCache = makePerFileCache
-            if (library.isSubjectOfIC)
+            if (library.isSubjectOfIC) {
                 cachedLibraryDependenciesFingerprint = computeDependenciesFingerprint(library).toString()
+                putIfNotNull(DEBUG_PREFIX_MAP, config.configuration[DEBUG_PREFIX_MAP])
+            }
             if (filesToCache.isNotEmpty())
                 this.filesToCache = filesToCache
             serializedKlibDag = klibDag.serialize() // Put the DAG of dependencies to compiler configuration to avoid re-computing it again.
+        }
+
+        recordRebuiltCacheFiles(library, makePerFileCache, filesToCache)
+    }
+
+    private fun recordRebuiltCacheFiles(library: KotlinLibrary, makePerFileCache: Boolean, filesToCache: List<String>): Unit = when {
+        makePerFileCache && filesToCache.isNotEmpty() -> {
+            val rebuiltFiles = when (val rebuiltCache = rebuiltCaches.getOrPut(library) { RebuiltCache.Files() }) {
+                RebuiltCache.WholeLibrary -> return // Already covers every file of the library.
+                is RebuiltCache.Files -> rebuiltCache.fileIds
+            }
+            library.getFilesWithFqNames()
+                    .filter { it.filePath in filesToCache }
+                    .forEach { rebuiltFiles += CacheSupport.cacheFileId(it.fqName, it.filePath) }
+        }
+        else -> {
+            rebuiltCaches[library] = RebuiltCache.WholeLibrary
         }
     }
 

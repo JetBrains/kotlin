@@ -61,7 +61,7 @@ abstract class ConstraintSystemCompletionContext : VariableFixationFinder.Contex
         completionMode: ConstraintSystemCompletionMode,
         analyze: (A) -> Unit
     ): Boolean {
-        if (completionMode.allLambdasShouldBeAnalyzed) {
+        if (completionMode.allPostponedAtomsShouldBeAnalyzed) {
             if (analyzeNextReadyPostponedArgumentWithRevisableExpectedType(postponedArguments, analyze)) return true
         }
 

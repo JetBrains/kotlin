@@ -161,7 +161,6 @@ private class ClassClsStubBuilder(
                     classId = classId,
                     superTypeRefs,
                     isTopLevel = isTopLevel,
-                    isLocal = false,
                     isObjectLiteral = false,
                     kdocText = kdoc,
                 )
@@ -178,7 +177,6 @@ private class ClassClsStubBuilder(
                     superNameRefs = superTypeRefs,
                     isInterface = classKind == ProtoBuf.Class.Kind.INTERFACE,
                     isClsStubCompiledToJvmDefaultImplementation = JvmProtoBufUtil.isNewPlaceForBodyGeneration(classProto),
-                    isLocal = false,
                     isTopLevel = isTopLevel,
                     kdocText = kdoc,
                     valueClassRepresentation = createValueClassRepresentation(),
@@ -234,7 +232,9 @@ private class ClassClsStubBuilder(
         if (isAbstractOrSealed()) return KotlinFullValueClassRepresentation(underlyingPropertyNamesToTypes = null)
 
         // A full value class stores nothing about its underlying properties, so they are taken from the primary constructor's parameters
-        val primaryConstructorProto = primaryConstructorProto ?: return null
+        // jvm-abi-gen strips a private primary constructor, and its parameters aren't needed outside the class anyway.
+        val primaryConstructorProto = primaryConstructorProto
+            ?: return KotlinFullValueClassRepresentation(underlyingPropertyNamesToTypes = emptyList())
         val properties = primaryConstructorProto.valueParameterList.map { parameterProto ->
             val type = createValueClassUnderlyingTypeBean(parameterProto.type(c.typeTable)) ?: return null
             c.nameResolver.getName(parameterProto.name) to type
@@ -323,7 +323,6 @@ private class ClassClsStubBuilder(
                 classBody,
                 qualifiedName = c.containerFqName.child(name).ref(),
                 name = name.ref(),
-                isLocal = false,
             )
 
             if (annotations.isNotEmpty()) {

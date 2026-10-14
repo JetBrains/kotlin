@@ -11,3 +11,5 @@ package org.jetbrains.kotlin.platform
  * is `org.jetbrains.kotlin.platform.konan.NativePlatform`.
  */
 abstract class NativePlatform(platformName: String) : SimplePlatform(platformName)
+
+fun TargetPlatform?.isNative(): Boolean = this != null && this.size > 0 && all { it is NativePlatform }

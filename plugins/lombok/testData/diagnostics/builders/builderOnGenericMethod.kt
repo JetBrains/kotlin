@@ -1,6 +1,6 @@
 // WITH_STDLIB
 // ISSUE: KT-84058
-// LANGUAGE: +ForbidUselessTypeArgumentsIn25
+// LANGUAGE: +ForbidUselessTypeArgumentsIn26
 
 // FILE: BuilderOnMethod.java
 import lombok.Builder;

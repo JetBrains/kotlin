@@ -28,9 +28,8 @@ FILE fqName:<root> fileName:/lazyDelegateInObject.kt lineStartOffsets: [0, 15, 2
                   RETURN[115, 128] type=kotlin.Nothing from='public final fun <get-original> (): kotlin.Any? declared in <root>.lazyDelegateInObject.<no name provided>'
                     BLOCK[115, 128] type=kotlin.Any? origin=INLINE_ARGS_CONTAINER
                       VAR[-1, -1] IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Lazy<kotlin.Any?> [val]
-                        TYPE_OP[115, 128] type=kotlin.Lazy<kotlin.Any?> origin=IMPLICIT_CAST typeOperand=kotlin.Lazy<kotlin.Any?>
-                          GET_FIELD[115, 128] 'FIELD PROPERTY_DELEGATE name:original$delegate type:kotlin.Lazy<kotlin.Any?> visibility:private [final] declared in <root>.lazyDelegateInObject.<no name provided>' type=kotlin.Lazy<kotlin.Any?> origin=null
-                            receiver: GET_VAR[115, 128] '<this>: <root>.lazyDelegateInObject.<no name provided> declared in <root>.lazyDelegateInObject.<no name provided>.<get-original>' type=<root>.lazyDelegateInObject.<no name provided> origin=IMPLICIT_ARGUMENT
+                        GET_FIELD[115, 128] 'FIELD PROPERTY_DELEGATE name:original$delegate type:kotlin.Lazy<kotlin.Any?> visibility:private [final] declared in <root>.lazyDelegateInObject.<no name provided>' type=kotlin.Lazy<kotlin.Any?> origin=null
+                          receiver: GET_VAR[115, 128] '<this>: <root>.lazyDelegateInObject.<no name provided> declared in <root>.lazyDelegateInObject.<no name provided>.<get-original>' type=<root>.lazyDelegateInObject.<no name provided> origin=IMPLICIT_ARGUMENT
                       VAR[-1, -1] IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.Any? [val]
                         TYPE_OP[115, 128] type=kotlin.Any? origin=IMPLICIT_CAST typeOperand=kotlin.Any?
                           GET_VAR[115, 128] '<this>: <root>.lazyDelegateInObject.<no name provided> declared in <root>.lazyDelegateInObject.<no name provided>.<get-original>' type=<root>.lazyDelegateInObject.<no name provided> origin=null
@@ -54,9 +53,8 @@ FILE fqName:<root> fileName:/lazyDelegateInObject.kt lineStartOffsets: [0, 15, 2
                           VAR[-1, -1] IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER name:property type:kotlin.reflect.KProperty<*> [val]
                             GET_VAR[-1, -1] 'val tmp_2: kotlin.reflect.KProperty<*> declared in <root>.lazyDelegateInObject.<no name provided>.<get-original>' type=kotlin.reflect.KProperty<*> origin=null
                           RETURN[1773, 1773] type=kotlin.Nothing from='{IrReturnableBlockImpl}'
-                            TYPE_OP[1768, 1773] type=kotlin.Any? origin=IMPLICIT_CAST typeOperand=kotlin.Any?
-                              CALL[1768, 1773] 'UNBOUND IrSimpleFunctionSymbolImpl' type=kotlin.Any? origin=GET_PROPERTY
-                                ARG 1: GET_VAR[1768, 1773] 'val this: kotlin.Lazy<kotlin.Any?> declared in <root>.lazyDelegateInObject.<no name provided>.<get-original>' type=kotlin.Lazy<kotlin.Any?> origin=IMPLICIT_ARGUMENT
+                            CALL[1768, 1773] 'UNBOUND IrSimpleFunctionSymbolImpl' type=kotlin.Any? origin=GET_PROPERTY
+                              ARG 1: GET_VAR[1768, 1773] 'val this: kotlin.Lazy<kotlin.Any?> declared in <root>.lazyDelegateInObject.<no name provided>.<get-original>' type=kotlin.Lazy<kotlin.Any?> origin=IMPLICIT_ARGUMENT
             CONSTRUCTOR[80, 208] visibility:public returnType:<root>.lazyDelegateInObject.<no name provided> [primary]
               BLOCK_BODY[80, 208]
                 DELEGATING_CONSTRUCTOR_CALL[80, 208] 'public constructor <init> () declared in kotlin.Any'

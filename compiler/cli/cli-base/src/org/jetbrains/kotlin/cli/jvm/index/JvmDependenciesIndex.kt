@@ -28,6 +28,12 @@ interface JvmDependenciesIndex {
     val indexedRoots: Sequence<JavaRoot>
 
     /**
+     * Changes whenever roots are added to the index. Only an index whose roots may change after it has been queried
+     * (see [JvmDependenciesDynamicCompoundIndex]) needs to override this.
+     */
+    val version: Int get() = 0
+
+    /**
      * Returns [VirtualFile]s that correspond to a class called [classId] in the index.
      *
      * For each package directory in the index, the implementation derives the relative class name from [classId] and looks up files

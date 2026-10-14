@@ -212,6 +212,7 @@ tasks {
         val excludedNativePrefixes = listOf(
             ":native",
             ":libraries:tools:analysis-api-based-klib-reader:testProject",
+            ":plugins:parcelize:parcelize-runtime",
             ":plugins:plugin-sandbox:plugin-annotations",
             ":kotlin-power-assert-runtime",
         )
@@ -280,6 +281,9 @@ tasks {
         dependsOn(":kotlin-gradle-plugin-integration-tests:kgpAllParallelTests")
     }
 
+
+    // Gradle Plugin Integration Tests,
+    //   grouped by Gradle Version & type of test
     testLifecycleTask("gradlePluginIntegrationMasterTest", QualityGate.Master) {
         dependsOn(":kotlin-gradle-plugin-integration-tests:kgpNativeTestsGroupedByGradleVersion")
         dependsOn(":kotlin-gradle-plugin-integration-tests:kgpAndroidTestsGroupedByGradleVersion")
@@ -291,16 +295,32 @@ tasks {
     }
 
 
+    // Gradle Plugin Integration Tests
+    //   grouped by Gradle Version
+    //   experimental: Tested against 'gradlePluginIntegrationTest' for simplicity, latency and resource usage
+    testLifecycleTask("gradlePluginIntegrationTest_master", QualityGate.Undefined) {
+        dependsOn(":kotlin-gradle-plugin-integration-tests:testsGroupedByGradleVersion_master")
+    }
+
     // === Build: CheckBuildTest (used only in `configurationCacheSmokeTests`) ==/
     register("gradlePluginIntegrationTest") {
         dependsOn(":kotlin-gradle-plugin-integration-tests:check")
     }
 
+    // Nightly Gradle Plugin Integration Tests
+    //   grouped by Gradle Version & type of test
     testLifecycleTask("gradlePluginIntegrationNightlyTest", QualityGate.Nightly) {
         dependsOn(":kotlin-gradle-plugin-integration-tests:kgpNativeTests")
         dependsOn(":kotlin-gradle-plugin-integration-tests:kgpSwiftExportTests")
         dependsOn(":kotlin-gradle-plugin-integration-tests:kgpSwiftPMImportTests")
         dependsOn(":kotlin-gradle-plugin-integration-tests:kgpJsBrowserTestsGroupedByGradleVersion")
+    }
+
+    // Nightly Gradle Plugin Integration Tests
+    //   grouped by Gradle Version
+    //   experimental: Tested against 'gradlePluginIntegrationNightlyTest' for simplicity latency and resource usage
+    testLifecycleTask("gradlePluginIntegrationTest_nightly", QualityGate.Undefined) {
+        dependsOn(":kotlin-gradle-plugin-integration-tests:testsGroupedByGradleVersion_nightly")
     }
 
     testLifecycleTask("jvmCompilerTest", QualityGate.Master) {
@@ -403,16 +423,8 @@ tasks {
         dependsOn(":compiler:ir.backend.common:test")
     }
 
-    testLifecycleTask("codegenTarget8Jvm11Test", QualityGate.Master) {
-        dependsOn(":compiler:tests-different-jdk:codegenTarget8Jvm11Test")
-    }
-
     testLifecycleTask("codegenTarget8Jvm17Test", QualityGate.Master) {
         dependsOn(":compiler:tests-different-jdk:codegenTarget8Jvm17Test")
-    }
-
-    testLifecycleTask("codegenTarget11Jvm11Test", QualityGate.Master) {
-        dependsOn(":compiler:tests-different-jdk:codegenTarget11Jvm11Test")
     }
 
     testLifecycleTask("codegenTarget17Jvm17Test", QualityGate.Master) {
@@ -522,11 +534,12 @@ tasks {
 //        dependsOn(":kotlin-scripting-jvm-host-test:embeddableTest")
         dependsOn(":kotlin-main-kts-test:test")
         dependsOn(":kotlin-scripting-jsr223-test:test")
+        dependsOn(":examples:scripting-jsr223-daemon:test")
+        dependsOn(":examples:scripting-jsr223-bta:test")
     }
 
     val incrementalCompilationTest = testLifecycleTask("incrementalCompilationTest", QualityGate.Master) {
         dependsOn(":compiler:incremental-compilation-impl:test")
-        dependsOn(":compiler:incremental-compilation-impl:testJvmICWithJdk11")
     }
 
     val compilerPluginTest = testLifecycleTask("compilerPluginTest", QualityGate.Master) {
@@ -605,6 +618,10 @@ tasks {
         }
     }
 
+    testLifecycleTask("documentationModelTest", QualityGate.Master) {
+        dependsOn(":tools:kotlin-documentation-model:analyzer:check")
+    }
+
     testLifecycleTask("miscTest", QualityGate.Master) {
         dependsOn(coreLibsTest)
         dependsOn(toolsTest)
@@ -624,6 +641,7 @@ tasks {
         dependsOn(":compiler:build-tools:kotlin-build-tools-api:check")
         dependsOn(":compiler:build-tools:kotlin-build-tools-api-tests:check")
         dependsOn(":compiler:build-tools:kotlin-build-tools-api-forward-tests:check")
+        dependsOn(":compiler:build-tools:kotlin-build-tools-impl:check")
     }
 
     testLifecycleTask("buildToolsApiKotlinVersionCheck", QualityGate.None) {
@@ -638,6 +656,7 @@ tasks {
     testLifecycleTask("jps-tests", QualityGate.Master) {
         dependsOn(dist)
         dependsOn(":jps:jps-plugin:test")
+        dependsOn(":jps:jps-plugin:testWithBuildToolsApi")
     }
 
     testLifecycleTask("kaptTests", QualityGate.Master) {
@@ -654,6 +673,7 @@ tasks {
     testLifecycleTask("codebaseTests", QualityGate.Master) {
         dependsOn(":repo:auto-code-review:test")
         dependsOn(":repo:codebase-tests:test")
+        dependsOn(":repo:test-runtime:test")
     }
 
     testLifecycleTask("artifactsTest", QualityGate.Master) {
@@ -701,7 +721,11 @@ tasks {
         dependsOn(":kotlin-native:prepare:kotlin-native-compiler-embeddable:publish")
     }
 
-    fun registerSpecialPublishingTasks(nameSuffix: String, artifactProjectList: List<String>, latch: Project.(() -> Unit) -> Unit) {
+    fun registerSpecialPublishingTasks(
+        nameSuffix: String,
+        artifactProjectList: List<String>,
+        latch: Project.(() -> Unit) -> Unit = { block -> block() }
+    ) {
         register("publish$nameSuffix") {
             latch {
                 dependsOn(artifactProjectList.map { "$it:publish" })
@@ -721,11 +745,7 @@ tasks {
         latch = Project::idePluginPublishingLatch
     )
 
-    registerSpecialPublishingTasks(
-        nameSuffix = "AnalysisApiArtifacts",
-        artifactProjectList = CompilerModules.analysisApiArtifacts,
-        latch = Project::analysisApiPublishingLatch
-    )
+    registerSpecialPublishingTasks(nameSuffix = "AnalysisApiArtifacts", artifactProjectList = CompilerModules.analysisApiArtifacts)
 
     register<Exec>("mvnInstall") {
         group = "publishing"

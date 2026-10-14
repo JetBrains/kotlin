@@ -8,14 +8,14 @@ package org.jetbrains.kotlin.gradle.targets.wasm.d8
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION_ERROR")
 @Deprecated(
     "Use 'org.jetbrains.kotlin.gradle.targets.wasm.d8.D8EnvSpec' instead. Scheduled for removal in Kotlin 2.6.",
     ReplaceWith(
         "D8EnvSpec",
         "org.jetbrains.kotlin.gradle.targets.wasm.d8.D8EnvSpec"
     ),
-    level = DeprecationLevel.WARNING
+    level = DeprecationLevel.ERROR
 )
 @OptIn(ExperimentalWasmDsl::class)
 open class D8RootExtension(

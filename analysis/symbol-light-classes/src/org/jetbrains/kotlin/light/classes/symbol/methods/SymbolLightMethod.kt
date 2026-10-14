@@ -20,8 +20,6 @@ import org.jetbrains.kotlin.light.classes.symbol.annotations.computeThrowsList
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasDeprecatedAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.annotations.suppressWildcardMode
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
-import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForInterfaceDefaultImpls
-import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightParameterForDefaultImplsReceiver
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightParameterList
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightSuspendContinuationParameter
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightValueParameter
@@ -80,10 +78,6 @@ internal abstract class SymbolLightMethod<FType : KaFunctionSymbol> private cons
             parent = this@SymbolLightMethod,
             correspondingCallablePointer = symbolPointer,
         ) { builder ->
-            if (this@SymbolLightMethod.containingClass is SymbolLightClassForInterfaceDefaultImpls) {
-                builder.addParameter(SymbolLightParameterForDefaultImplsReceiver(this@SymbolLightMethod))
-            }
-
             withFunctionSymbol { functionSymbol ->
                 functionSymbol.valueParameters.forEachIndexed { index, parameter ->
                     val needToSkip = valueParameterPickMask?.get(index) == false

@@ -54,6 +54,9 @@ class CollectionStubComputer(val context: JvmBackendContext) {
 
             mutableClass.owner.functions
                 .filter { memberFun ->
+                    // Skipping `MutableList.of` overloads
+                    if (memberFun.dispatchReceiverParameter == null) return@filter false
+
                     !memberFun.isFakeOverride ||
                             (memberFun.modality == Modality.ABSTRACT && memberFun.overriddenSymbols.none { overriddenFun ->
                                 overriddenFun.owner.parentAsClass.symbol == readOnlyClass

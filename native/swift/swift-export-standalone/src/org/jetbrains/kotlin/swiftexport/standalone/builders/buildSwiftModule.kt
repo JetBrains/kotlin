@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.klib.reader.getAllDeclarations
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.session.analyze
+import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.io.propertyList
 import org.jetbrains.kotlin.library.loader.KlibLoader
@@ -42,7 +44,7 @@ internal fun buildSirSession(
     unsupportedDeclarationReporter = moduleConfig.unsupportedDeclarationReporter,
     moduleProvider = SirOneToOneModuleProvider(
         platformLibs = kaModules.platformLibraries,
-        cinteropReexportLib = kaModules.cinteropReexportLibrary?.let { it to it.reexportedObjCModuleNames() },
+        cinteropReexportLibs = kaModules.cinteropReexportLibraries.associateWith { it.reexportedObjCModuleNames() },
     ),
     targetPackageFqName = moduleConfig.targetPackageFqName,
     referencedTypeHandler = referenceHandler,
@@ -66,13 +68,14 @@ internal fun KaLibraryModule.reexportedObjCModuleNames(): List<String> {
  * Translates the given [module] to a [SirModule].
  * The result is stored as a side effect in [this.sirSession]'s [org.jetbrains.kotlin.sir.providers.SirModuleProvider].
  * [scopeToDeclarations] allows filtering declarations during translation.
+ * Declarations are processed in package order, as the klib does not guarantee a stable package iteration order.
  */
 context(sir: SirSession)
 internal fun translateModule(
     module: KaLibraryModule,
     moduleToDeclarations: context(KaSession) (KaLibraryModule) -> Sequence<KaDeclarationSymbol> = { it.getAllDeclarations() },
 ): SirModule = analyze(sir.useSiteModule) {
-    extractAllTransitively(moduleToDeclarations(module))
+    extractAllTransitively(moduleToDeclarations(module).sortedBy { it.packageFqNameForOrdering })
         .toList()
         .forEach { [oldParent, children] ->
             children
@@ -84,6 +87,13 @@ internal fun translateModule(
         }
     return@analyze module.sirModule()
 }
+
+private val KaDeclarationSymbol.packageFqNameForOrdering: String
+    get() = when (this) {
+        is KaClassLikeSymbol -> classId?.packageFqName
+        is KaCallableSymbol -> callableId?.packageName
+        else -> null
+    }?.asString().orEmpty()
 
 context(sir: SirSession)
 private fun extractAllTransitively(

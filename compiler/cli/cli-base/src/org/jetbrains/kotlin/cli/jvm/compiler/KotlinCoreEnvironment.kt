@@ -47,7 +47,6 @@ import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.config.ContentRoot
 import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
-import org.jetbrains.kotlin.cli.common.extensions.ShellExtension
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.extensionsStorage
 import org.jetbrains.kotlin.cli.jvm.config.*
@@ -345,6 +344,14 @@ class KotlinCoreEnvironment private constructor(
             val text = sourceFile.text
             StringUtil.getLineBreakCount(text) + (if (StringUtil.endsWithLineBreak(text)) 0 else 1)
         }
+
+    /**
+     * The classpath roots this compilation indexed, in classpath order. A root is named by its identity
+     * (`JvmClasspathRootId`) rather than by a location, so a classpath can be described without accessing a file
+     * system; see `VfsBasedProjectEnvironment.registerIndexedClasspathRoots`.
+     */
+    val indexedClasspathRoots: List<VirtualFile>
+        get() = rootsIndex.indexedRoots.map { it.file }.toList()
 
     private fun updateClasspathFromRootsIndex(index: JvmDependenciesIndex) {
         index.indexedRoots.forEach {
@@ -696,7 +703,6 @@ class KotlinCoreEnvironment private constructor(
             CollectAdditionalSourcesExtension.registerExtensionPoint(project)
             ProcessSourcesBeforeCompilingExtension.registerExtensionPoint(project)
             ExtraImportsProviderExtension.registerExtensionPoint(project)
-            ShellExtension.registerExtensionPoint(project)
         }
 
         internal fun registerExtensionsFromPlugins(project: MockProject, configuration: CompilerConfiguration) {

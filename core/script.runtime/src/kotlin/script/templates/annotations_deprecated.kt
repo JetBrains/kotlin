@@ -8,16 +8,16 @@ package kotlin.script.templates
 import kotlin.reflect.KClass
 import kotlin.script.dependencies.Environment
 
-@Deprecated("temporary workaround for missing functionality, will be replaced by the new API soon")
+@Deprecated(LEGACY_TEMPLATE_COMPILER_OPTIONS_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
 // Note: all subclasses should provide the same constructor
 open class ScriptTemplateAdditionalCompilerArgumentsProvider(val arguments: Iterable<String> = emptyList()) {
-    open fun getAdditionalCompilerArguments(@Suppress("UNUSED_PARAMETER") environment: Environment?): Iterable<String> = arguments
+    open fun getAdditionalCompilerArguments(@Suppress("UNUSED_PARAMETER", "DEPRECATION") environment: Environment?): Iterable<String> = arguments
 }
 
-// Should be deprecated as well, but since we don't have replacement as of yet, leaving it as is
+@Deprecated(LEGACY_TEMPLATE_COMPILER_OPTIONS_DEPRECATION_MESSAGE)
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
 annotation class ScriptTemplateAdditionalCompilerArguments(
     val arguments: Array<String> = [],
-    @Suppress("DEPRECATION") val provider: KClass<out ScriptTemplateAdditionalCompilerArgumentsProvider> = ScriptTemplateAdditionalCompilerArgumentsProvider::class
+    @Suppress("DEPRECATION_ERROR") val provider: KClass<out ScriptTemplateAdditionalCompilerArgumentsProvider> = ScriptTemplateAdditionalCompilerArgumentsProvider::class
 )

@@ -298,7 +298,7 @@ KtNameReferenceExpression(343,353): 'EnumValue1'
     isInBestCandidates = true
 
 KtBinaryExpression(358,377): 'i + InheritorObject'
-  KaApplicableCallCandidate:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -332,6 +332,7 @@ KtBinaryExpression(358,377): 'i + InheritorObject'
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun plus(enumArg: MyEnum): Unit>
     isInBestCandidates = true
 
 KtNameReferenceExpression(358,359): 'i'
@@ -353,7 +354,7 @@ KtNameReferenceExpression(358,359): 'i'
     isInBestCandidates = true
 
 KtOperationReferenceExpression(360,361): '+'
-  KaApplicableCallCandidate:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -387,6 +388,7 @@ KtOperationReferenceExpression(360,361): '+'
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun plus(enumArg: MyEnum): Unit>
     isInBestCandidates = true
 
 KtNameReferenceExpression(362,377): 'InheritorObject'

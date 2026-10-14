@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.cli.reportLog
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.diagnostics.KtSourcelessDiagnosticFactory
+import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.isValidJavaFqName
 import org.jetbrains.kotlin.resolve.jvm.KotlinCliJavaFileManager
@@ -175,7 +176,9 @@ class ClasspathRootsResolver(
                 ?: if (isJar) tryLoadVersionSpecificModuleInfo(root, manifest) else null
 
         if (moduleInfoFile != null) {
-            val moduleInfo = JavaModuleInfo.read(moduleInfoFile, javaFileManager, searchScope) ?: return null
+            val moduleInfo = JavaModuleInfo.read(moduleInfoFile) {
+                javaFileManager.findClass(JavaClassFinder.Request(it), searchScope)
+            } ?: return null
             return JavaModule.Explicit(moduleInfo, listOf(JavaModule.Root(root, isBinary = true)), moduleInfoFile)
         }
 
@@ -271,7 +274,14 @@ class ClasspathRootsResolver(
         }
 
         val allDependencies = javaModuleGraph.getAllDependencies(rootModules)
-        if (allDependencies.any { moduleName -> javaModuleFinder.findModule(moduleName) is JavaModule.Automatic }) {
+        // Compatibility, see KT-66622: the implicitly added stdlib used to come together with the automatic module
+        // `kotlin.script.runtime`, which (as any automatic module) made all observable automatic modules part of the graph.
+        // The script runtime is not added implicitly anymore, so this behavior is emulated for the implicitly added stdlib.
+        // TODO(KT-66622): remove this compatibility code after the real fix
+        val implicitAutomaticModulesCompatibility = KOTLIN_STDLIB_MODULE_NAME in additionalModules
+        if (implicitAutomaticModulesCompatibility ||
+            allDependencies.any { moduleName -> javaModuleFinder.findModule(moduleName) is JavaModule.Automatic }
+        ) {
             // According to java.lang.module javadoc, if at least one automatic module is added to the module graph,
             // all observable automatic modules should be added.
             // There are no automatic modules in the JDK, so we select all automatic modules out of user modules

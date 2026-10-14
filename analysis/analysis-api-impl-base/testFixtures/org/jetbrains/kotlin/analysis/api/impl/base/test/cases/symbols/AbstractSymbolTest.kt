@@ -195,21 +195,31 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
         for (symbol in symbols) {
             checkSymbol(symbol, disablePsiBasedLogic)
 
-            if (symbol.origin != KaSymbolOrigin.SOURCE) continue
+            when (symbol.origin) {
+                KaSymbolOrigin.SOURCE -> {
+                    val containingFileSymbol = symbol.containingFile
+                    when {
+                        symbol is KaFileSymbol || symbol is KaPackageSymbol -> {
+                            testServices.assertions.assertEquals(null, containingFileSymbol) {
+                                "'containingFile' for ${symbol::class.simpleName} should be 'null'"
+                            }
+                        }
 
-            val containingFileSymbol = symbol.containingFile
-            when {
-                symbol is KaFileSymbol || symbol is KaPackageSymbol -> {
-                    testServices.assertions.assertEquals(null, containingFileSymbol) {
-                        "'containingFile' for ${symbol::class.simpleName} should be 'null'"
+                        containingFileSymbol !in allowedContainingFileSymbols -> {
+                            testServices.assertions.fail {
+                                "Invalid file for `$symbol`: Found `$containingFileSymbol`, which is not an allowed file symbol."
+                            }
+                        }
                     }
                 }
 
-                containingFileSymbol !in allowedContainingFileSymbols -> {
-                    testServices.assertions.fail {
-                        "Invalid file for `$symbol`: Found `$containingFileSymbol`, which is not an allowed file symbol."
+                KaSymbolOrigin.LIBRARY, KaSymbolOrigin.JAVA_SOURCE, KaSymbolOrigin.JAVA_LIBRARY -> {
+                    testServices.assertions.assertEquals(null, symbol.containingFile) {
+                        "'containingFile' for `$symbol` with origin ${symbol.origin} should be 'null'"
                     }
                 }
+
+                else -> {}
             }
         }
     }

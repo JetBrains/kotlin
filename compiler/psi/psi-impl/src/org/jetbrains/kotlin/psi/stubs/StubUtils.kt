@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.contracts.description.KtContractDescriptionElement
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtClassLikeDeclaration
 import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
@@ -55,31 +54,28 @@ internal object StubUtils {
             is KotlinFileStub -> parentStub.createTopLevelClassId(currentDeclaration)
             is KotlinScriptStub -> parentStub.createClassId(currentDeclaration)
             is KotlinPlaceHolderStub<*> if parentStub.elementType == KtNodeTypes.CLASS_BODY -> {
-                val containingClassStub = parentStub.parentStub as? KotlinClassifierStub
-                if (containingClassStub != null && currentDeclaration !is KtEnumEntry) {
-                    containingClassStub.classId?.createNestedClassId(currentDeclaration.nameAsSafeName)
-                } else {
-                    null
+                when (val containingStub = parentStub.parentStub) {
+                    // As in `ClassIdCalculator`, a `companion { }` block doesn't contribute to the class ID of its declarations
+                    is KotlinPlaceHolderStub<*> if containingStub.elementType == KtNodeTypes.COMPANION_BLOCK -> {
+                        containingStub.parentStub?.let { createClassId(it, currentDeclaration) }
+                    }
+                    is KotlinClassifierStub if currentDeclaration !is KtEnumEntry -> {
+                        containingStub.classId?.createNestedClassId(currentDeclaration.nameAsSafeName)
+                    }
+                    else -> null
                 }
             }
             else -> null
         }
     }
 
-    private fun KotlinFileStub.createTopLevelClassId(name: Name): ClassId = ClassId(getPackageFqName(), name)
     private fun KotlinFileStub.createTopLevelClassId(currentDeclaration: KtClassLikeDeclaration): ClassId {
-        return createTopLevelClassId(currentDeclaration.nameAsSafeName)
+        return ClassId(getPackageFqName(), currentDeclaration.nameAsSafeName)
     }
 
     private fun KotlinScriptStub.createClassId(currentDeclaration: KtClassLikeDeclaration): ClassId? {
         val fileStub = parentStub as? KotlinFileStub ?: return null
-
-        return if (isReplSnippet) {
-            val snippetClassName = fqName.shortName()
-            fileStub.createTopLevelClassId(snippetClassName).createNestedClassId(currentDeclaration.nameAsSafeName)
-        } else {
-            fileStub.createTopLevelClassId(currentDeclaration)
-        }
+        return fileStub.createTopLevelClassId(currentDeclaration)
     }
 
     @JvmStatic

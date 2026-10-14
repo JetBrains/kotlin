@@ -121,7 +121,7 @@ class SwiftExportIT : KGPBaseTest() {
                 ":embedSwiftExportForXcode",
                 environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
             ) {
-                assertTasksExecuted(":iosArm64DebugSwiftExport")
+                assertTasksExecuted(":iosArm64SwiftExport")
                 assertTasksExecuted(":iosArm64MainKlibrary")
                 assertTasksExecuted(":compileKotlinIosArm64")
                 assertTasksExecuted(":compileSwiftExportMainKotlinIosArm64")
@@ -136,7 +136,7 @@ class SwiftExportIT : KGPBaseTest() {
                 assertDirectoryInProjectExists("build/SPMBuild/iosArm64/Debug")
                 assertDirectoryInProjectExists("build/SPMDerivedData")
                 assertDirectoryInProjectExists("build/SPMPackage/iosArm64/Debug")
-                assertDirectoryInProjectExists("build/SwiftExport/iosArm64/Debug")
+                assertDirectoryInProjectExists("build/SwiftExport/iosArm64")
 
                 val buildProductsDir = this@project.gradleRunner.environment?.get("BUILT_PRODUCTS_DIR")?.let { File(it) }
                 assertNotNull(buildProductsDir)
@@ -157,6 +157,20 @@ class SwiftExportIT : KGPBaseTest() {
                 assertFileExists(libShared.toPath())
 
                 assertHasDiagnostic(KotlinToolingDiagnostics.ExperimentalFeatureWarning, "Swift Export")
+            }
+
+            // The run is per target, so a Release build reuses it and only links and packages again.
+            build(
+                ":embedSwiftExportForXcode",
+                environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir, customVariables = mapOf("CONFIGURATION" to "Release"))
+            ) {
+                assertTasksUpToDate(":iosArm64SwiftExport", ":compileSwiftExportMainKotlinIosArm64")
+                assertTasksExecuted(
+                    ":linkSwiftExportBinaryReleaseStaticIosArm64",
+                    ":iosArm64ReleaseGenerateSPMPackage",
+                    ":iosArm64ReleaseBuildSPMPackage",
+                    ":copyReleaseSPMIntermediates",
+                )
             }
         }
     }
@@ -195,6 +209,13 @@ class SwiftExportIT : KGPBaseTest() {
                 environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
             ) {
                 assertTasksExecuted(":copyDebugSPMIntermediates")
+            }
+
+            build(
+                ":embedSwiftExportForXcode",
+                environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
+            ) {
+                assertTasksUpToDate(":copyDebugSPMIntermediates")
             }
 
             source.appendText(
@@ -241,6 +262,59 @@ class SwiftExportIT : KGPBaseTest() {
                         pathComponents = listOf("barbarbar()")
                     )
                 )
+            )
+        }
+    }
+
+    @DisplayName("KT-89354: what xcodebuild writes into its products directory keeps the Swift Export pipeline up-to-date")
+    @GradleTest
+    fun testXcodebuildKeepsSwiftExportUpToDate(
+        gradleVersion: GradleVersion,
+    ) {
+        project("emptyxcode", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            settingsBuildScriptInjection {
+                settings.rootProject.name = "shared"
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    iosSimulatorArm64()
+                    sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
+                }
+            }
+
+            val xcodeproj = projectPath.resolve("iosApp/iosApp.xcodeproj")
+            val pbxproj = xcodeproj.resolve("project.pbxproj")
+            pbxproj.writeText(pbxproj.readText().replace(":embedAndSignAppleFrameworkForXcode", ":embedSwiftExportForXcode"))
+
+            val derivedDataPath = projectPath.resolve("iosApp/iosApp.derivedData")
+            fun xcodebuild() = buildXcodeProject(
+                xcodeproj = xcodeproj,
+                buildSettingOverrides = mapOf("ARCHS" to "arm64"),
+                derivedDataPath = derivedDataPath,
+            ).gradleTaskOutcomes()
+
+            val swiftExportPipeline = listOf(
+                ":iosSimulatorArm64SwiftExport",
+                ":compileSwiftExportMainKotlinIosSimulatorArm64",
+                ":linkSwiftExportBinaryDebugStaticIosSimulatorArm64",
+                ":iosSimulatorArm64DebugGenerateSPMPackage",
+                ":iosSimulatorArm64DebugBuildSPMPackage",
+                ":mergeIosSimulatorDebugSwiftExportLibraries",
+                ":copyDebugSPMIntermediates",
+            )
+
+            val firstRun = xcodebuild()
+            assertTrue(swiftExportPipeline.all { it in firstRun }, "The Swift Export pipeline didn't run: $firstRun")
+            assertEquals(swiftExportPipeline.associateWith { null }, swiftExportPipeline.associateWith { firstRun[it] })
+
+            // The first build also linked the app into the products directory that Gradle copies into
+            val secondRun = xcodebuild()
+            assertEquals(
+                swiftExportPipeline.associateWith { "UP-TO-DATE" },
+                swiftExportPipeline.associateWith { secondRun[it] },
             )
         }
     }
@@ -324,15 +398,15 @@ class SwiftExportIT : KGPBaseTest() {
                 }
             }
             build(
-                ":iosArm64DebugSwiftExport",
+                ":iosArm64SwiftExport",
                 environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
             ) {
-                assertTasksExecuted(":iosArm64DebugSwiftExport")
-                assertDirectoryInProjectExists("build/SwiftExport/iosArm64/Debug")
+                assertTasksExecuted(":iosArm64SwiftExport")
+                assertDirectoryInProjectExists("build/SwiftExport/iosArm64")
             }
 
             val swiftFile = projectPath
-                .resolve("build/SwiftExport/iosArm64/Debug/files/Shared/Shared.swift")
+                .resolve("build/SwiftExport/iosArm64/files/Shared/Shared.swift")
                 .readText()
 
             assert(swiftFile.contains("iosBar()")) { "Swift file doesn't contain iosBar() from iosMain source set" }
@@ -543,15 +617,15 @@ class SwiftExportIT : KGPBaseTest() {
                 assertTasksExecuted(":dep-two:compileKotlinIosArm64")
                 assertTasksExecuted(":compileKotlinIosArm64")
 
-                val sharedPath = projectPath.resolve("build/SwiftExport/iosArm64/Debug/files/Shared")
-                val depOnePath = projectPath.resolve("build/SwiftExport/iosArm64/Debug/files/SharedDepOne")
-                val depTwoPath = projectPath.resolve("build/SwiftExport/iosArm64/Debug/files/SharedDepTwo")
+                val sharedPath = projectPath.resolve("build/SwiftExport/iosArm64/files/Shared")
+                val depOnePath = projectPath.resolve("build/SwiftExport/iosArm64/files/SharedDepOne")
+                val depTwoPath = projectPath.resolve("build/SwiftExport/iosArm64/files/SharedDepTwo")
 
                 assertDirectoryExists(sharedPath)
                 assertDirectoryExists(depOnePath)
                 assertDirectoryDoesNotExist(depTwoPath)
 
-                val modulesFile = projectPath.resolve("build/SwiftExport/iosArm64/Debug/modules/Shared.json")
+                val modulesFile = projectPath.resolve("build/SwiftExport/iosArm64/modules.json")
                 assertFileExists(modulesFile)
 
                 val modules = parseJsonToMap(modulesFile).getNestedList("modules")
@@ -735,7 +809,7 @@ class SwiftExportIT : KGPBaseTest() {
                 environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
             ) {
                 val librarySwiftPath = projectPath
-                    .resolve("build/SwiftExport/iosArm64/Debug/files/FooMultiplatformLibrary/FooMultiplatformLibrary.swift")
+                    .resolve("build/SwiftExport/iosArm64/files/FooMultiplatformLibrary/FooMultiplatformLibrary.swift")
                 assertFileExists(librarySwiftPath)
                 assertContains(
                     librarySwiftPath.readText(),
@@ -1057,6 +1131,247 @@ class SwiftExportIT : KGPBaseTest() {
             // integrated linkage package, not stomped by the copy step, which filters to own modules.)
             val builtProductsDir = derivedDataPath.resolve("Build/Products/Debug-iphonesimulator")
             assertDirectoryExists(builtProductsDir.resolve("Shared.swiftmodule"))
+        }
+    }
+
+    @OptIn(ExperimentalKotlinGradlePluginApi::class, ExperimentalSwiftExportDsl::class)
+    @DisplayName("KT-80632: a dependency's SwiftPM-import cinterop klib is reexported through Swift Export")
+    @GradleTest
+    @Suppress("DEPRECATION")
+    fun testDependencySwiftPMImportCinteropIsReexportedThroughSwiftExport(
+        gradleVersion: GradleVersion,
+        @TempDir testBuildDir: Path,
+    ) {
+        // Use emptyxcode so that swiftPMDependencies can resolve the local Swift package via xcodebuild.
+        project("emptyxcode", gradleVersion) {
+            val localPackageDir = projectPath.resolve("localSwiftPackage")
+            val targetName = "LocalSwiftPackage"
+            createLocalSwiftPackage(localPackageDir, packageName = targetName)
+
+            plugins {
+                kotlin("multiplatform")
+            }
+            settingsBuildScriptInjection {
+                settings.rootProject.name = "shared"
+            }
+
+            // A library that imports the Swift package and exposes its Objective-C type in its public API,
+            // like a published KMP library built on top of its own SwiftPM import.
+            val producerProject = project("empty", gradleVersion) {
+                buildScriptInjection {
+                    project.group = "org.test"
+                    project.applyMultiplatform {
+                        iosArm64()
+                        iosSimulatorArm64()
+
+                        sourceSets.appleMain.get().compileSource(
+                            """
+                                @file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+                                package producer
+                                import swiftPMImport.org.test.producer.LocalHelper
+                                fun roundTrip(helper: LocalHelper): LocalHelper = helper
+                            """.trimIndent()
+                        )
+
+                        with(swiftImport) {
+                            localSwiftPackage(
+                                directory = project.layout.projectDirectory.dir("../localSwiftPackage"),
+                                products = listOf(targetName),
+                            )
+                        }
+                    }
+                }
+            }
+            include(producerProject, "producer", useSymlink = false)
+
+            // The exported module has no swiftPMDependencies of its own: the Swift package only reaches it transitively,
+            // through the producer, whose cinterop klib Swift Export has to reexport.
+            buildScriptInjection {
+                val producerDependency = project.dependencies.project(mapOf("path" to ":producer"))
+                project.applyMultiplatform {
+                    iosArm64()
+                    iosSimulatorArm64()
+
+                    sourceSets.appleMain.get().compileSource(
+                        """
+                            @file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+                            package consumer
+                            import swiftPMImport.org.test.producer.LocalHelper
+                            fun consumerRoundTrip(helper: LocalHelper): LocalHelper = producer.roundTrip(helper)
+                        """.trimIndent()
+                    )
+                    sourceSets.appleMain.get().dependencies {
+                        api(project(":producer"))
+                    }
+                    with(swiftExport) {
+                        export(producerDependency)
+                    }
+                }
+            }
+
+            val iosAppXcodeProj = projectPath.resolve("iosApp/iosApp.xcodeproj")
+            val pbxproj = iosAppXcodeProj.resolve("project.pbxproj")
+            pbxproj.writeText(pbxproj.readText().replace(":embedAndSignAppleFrameworkForXcode", ":embedSwiftExportForXcode"))
+
+            val envVars = swiftExportEmbedAndSignEnvVariables(
+                testBuildDir,
+                customVariables = mapOf(
+                    "XCODEPROJ_PATH" to "iosApp/iosApp.xcodeproj",
+                    "PROJECT_FILE_PATH" to iosAppXcodeProj.absolutePathString(),
+                )
+            )
+
+            // Both the producer's and the consumer's API reference the imported Objective-C type. A declaration using
+            // an unsupported type isn't exported at all, so the app only compiles if the type is reexported.
+            projectPath.resolve("iosApp/iosApp/iOSApp.swift").writeText(
+                """
+                    import $targetName
+                    import Producer
+                    import Shared
+
+                    @main
+                    struct iOSApp {
+                        static func main() {
+                            let helper = LocalHelper()
+                            let _: LocalHelper = ExportedKotlinPackages.producer.roundTrip(helper: helper)
+                            let _: LocalHelper = ExportedKotlinPackages.consumer.consumerRoundTrip(helper: helper)
+                        }
+                    }
+                """.trimIndent()
+            )
+
+            build(
+                ":integrateLinkagePackage",
+                environmentVariables = envVars
+            )
+
+            buildXcodeProject(
+                xcodeproj = iosAppXcodeProj,
+                action = XcodeBuildAction.Build,
+                destination = "generic/platform=iOS Simulator",
+                buildSettingOverrides = mapOf(
+                    "ARCHS" to "arm64",
+                ),
+                derivedDataPath = projectPath.resolve("iosApp/iosApp.derivedData"),
+            )
+        }
+    }
+
+    @OptIn(ExperimentalKotlinGradlePluginApi::class, ExperimentalSwiftExportDsl::class)
+    @DisplayName("KT-80632: a SwiftPM-import cinterop klib of a dependency that is not exported is reexported when its API leaks")
+    @GradleTest
+    fun testLeakedDependencySwiftPMImportCinteropIsReexportedThroughSwiftExport(
+        gradleVersion: GradleVersion,
+        @TempDir testBuildDir: Path,
+    ) {
+        // Use emptyxcode so that swiftPMDependencies can resolve the local Swift package via xcodebuild.
+        project("emptyxcode", gradleVersion) {
+            val localPackageDir = projectPath.resolve("localSwiftPackage")
+            val targetName = "LocalSwiftPackage"
+            createLocalSwiftPackage(localPackageDir, packageName = targetName)
+
+            plugins {
+                kotlin("multiplatform")
+            }
+            settingsBuildScriptInjection {
+                settings.rootProject.name = "shared"
+            }
+
+            val producerProject = project("empty", gradleVersion) {
+                buildScriptInjection {
+                    project.group = "org.test"
+                    project.applyMultiplatform {
+                        iosArm64()
+                        iosSimulatorArm64()
+
+                        sourceSets.appleMain.get().compileSource(
+                            """
+                                @file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+                                package producer
+                                import swiftPMImport.org.test.producer.LocalHelper
+                                class Holder {
+                                    fun helper(): LocalHelper = LocalHelper()
+                                }
+                            """.trimIndent()
+                        )
+
+                        with(swiftImport) {
+                            localSwiftPackage(
+                                directory = project.layout.projectDirectory.dir("../localSwiftPackage"),
+                                products = listOf(targetName),
+                            )
+                        }
+                    }
+                }
+            }
+            include(producerProject, "producer", useSymlink = false)
+
+            // The producer is an implementation dependency that is neither exported nor exposed, so it is only
+            // translated transitively. The exported module never names the imported type: it only reaches the Swift
+            // API through the producer's leaked Holder.
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    iosArm64()
+                    iosSimulatorArm64()
+
+                    sourceSets.appleMain.get().compileSource(
+                        """
+                            package consumer
+                            fun holder(): producer.Holder = producer.Holder()
+                        """.trimIndent()
+                    )
+                    sourceSets.appleMain.get().dependencies {
+                        implementation(project(":producer"))
+                    }
+                }
+                export.swift {
+                    moduleName.set("Shared")
+                    xcodeIntegration()
+                }
+            }
+
+            val iosAppXcodeProj = projectPath.resolve("iosApp/iosApp.xcodeproj")
+            val pbxproj = iosAppXcodeProj.resolve("project.pbxproj")
+            pbxproj.writeText(pbxproj.readText().replace(":embedAndSignAppleFrameworkForXcode", ":embedSwiftExportForXcode"))
+
+            val envVars = swiftExportEmbedAndSignEnvVariables(
+                testBuildDir,
+                customVariables = mapOf(
+                    "XCODEPROJ_PATH" to "iosApp/iosApp.xcodeproj",
+                    "PROJECT_FILE_PATH" to iosAppXcodeProj.absolutePathString(),
+                )
+            )
+
+            // A declaration using an unsupported type isn't exported at all, so the app only compiles if the type is
+            // reexported.
+            projectPath.resolve("iosApp/iosApp/iOSApp.swift").writeText(
+                """
+                    import $targetName
+                    import Shared
+
+                    @main
+                    struct iOSApp {
+                        static func main() {
+                            let _: LocalHelper = ExportedKotlinPackages.consumer.holder().helper()
+                        }
+                    }
+                """.trimIndent()
+            )
+
+            build(
+                ":integrateLinkagePackage",
+                environmentVariables = envVars
+            )
+
+            buildXcodeProject(
+                xcodeproj = iosAppXcodeProj,
+                action = XcodeBuildAction.Build,
+                destination = "generic/platform=iOS Simulator",
+                buildSettingOverrides = mapOf(
+                    "ARCHS" to "arm64",
+                ),
+                derivedDataPath = projectPath.resolve("iosApp/iosApp.derivedData"),
+            )
         }
     }
 

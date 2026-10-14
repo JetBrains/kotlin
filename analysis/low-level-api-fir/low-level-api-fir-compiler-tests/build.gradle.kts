@@ -1,5 +1,4 @@
-import org.jetbrains.kotlin.testFederation.SmokeTestConfig
-import org.jetbrains.kotlin.testFederation.smokeTestConfig
+import org.jetbrains.kotlin.testFederation.testFederation
 
 plugins {
     id("common-configuration")
@@ -58,7 +57,11 @@ projectTests {
             JdkMajorVersion.JDK_25_0, // TestsWithJava25 and others
         )
     ) {
-        smokeTestConfig = SmokeTestConfig.Enabled(autoSmokeTestPercentage = 1)
+        testFederation {
+            smokeTests {
+                includeAutoSamples(percentage = 1)
+            }
+        }
     }
 
     testGenerator("org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based.TestGeneratorKt", generateTestsInBuildDirectory = true)
@@ -66,8 +69,7 @@ projectTests {
     testData(project(":compiler").isolated, "testData/diagnostics")
     testData(project(":compiler").isolated, "testData/codegen")
     testData(project(":compiler:tests-spec").isolated, "testData/diagnostics")
-    testData(project(":compiler:fir:raw-fir:psi2fir").isolated, "testData/rawBuilder")
-    testData(project(":compiler:fir:raw-fir:psi2fir").isolated, "testData/rawBuilder")
+    testData(project(":compiler:fir:raw-fir").isolated, "testData")
     testData(project(":js:js.translator").isolated, "testData/_commonFiles")
     testData(project(":plugins:scripting:scripting-tests").isolated, "testData/diagnostics")
     testData(project(":plugins:scripting:scripting-tests").isolated, "testData/codegen")
@@ -86,7 +88,6 @@ projectTests {
     withMockJdkRuntime()
     withMockJDKModifiedRuntime()
     withMockJdkAnnotationsJar()
-    withScriptRuntime()
     withScriptingPlugin()
     withTestScriptDefinition()
     withPluginSandboxAnnotations()

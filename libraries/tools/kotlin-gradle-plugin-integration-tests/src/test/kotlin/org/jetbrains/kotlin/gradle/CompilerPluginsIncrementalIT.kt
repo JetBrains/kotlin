@@ -113,7 +113,12 @@ abstract class CompilerPluginsIncrementalIT : KGPBaseTest() {
                 """.trimMargin()
             }
             buildAndFail("compileKotlin") {
-                assertOutputContains("main.kt:2:27 Unresolved reference 'record' on receiver of type 'City.CityBuilder'.")
+                if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_7)) {
+                    assertOutputContains("main.kt:2:27 Unresolved reference 'record' on receiver of type 'City.CityBuilder'.")
+                } else {
+                    assertOutputContains("Unresolved reference 'record' on receiver of type 'City.CityBuilder'.")
+                    assertOutputContains("Location: .*main.kt".toRegex())
+                }
             }
         }
     }

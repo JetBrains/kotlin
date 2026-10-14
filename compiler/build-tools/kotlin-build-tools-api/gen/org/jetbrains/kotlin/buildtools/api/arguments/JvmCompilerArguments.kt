@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.buildtools.api.arguments.enums.JvmTarget
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.LambdasMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.SamConversionsMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.StringConcatMode
-import org.jetbrains.kotlin.buildtools.api.arguments.enums.ValhallaSupportMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.WhenExpressionsMode
 
 /**
@@ -359,7 +358,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
 
     /**
      * Compile against the specified JDK API version, similarly to javac's '-release'. This requires JDK 9 or newer.
-     * The supported versions depend on the JDK used; for JDK 17+, the supported versions are 1.8 and 9–27.
+     * The supported versions depend on the JDK used; for JDK 17+, the supported versions are 1.8 and 9–28.
      * This also sets the value of '-jvm-target' to be equal to the selected JDK version.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
@@ -751,14 +750,14 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
         JvmCompilerArgument("X_USE_TYPE_TABLE", KotlinReleaseVersion(1, 2, 40))
 
     /**
-     * Select which declarations are compiled to behave as experimental Project Valhalla value classes. Use 'none' for a JDK that is not Valhalla-compatible (the default); any other mode requires a Valhalla-compatible JDK.
+     * Compile value classes to behave as experimental Project Valhalla value classes. Requires JVM target 28 or later and the '-Xjvm-enable-preview' flag.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_VALHALLA_SUPPORT: JvmCompilerArgument<ValhallaSupportMode?> =
-        JvmCompilerArgument("X_VALHALLA_SUPPORT", KotlinReleaseVersion(2, 5, 0))
+    public val X_VALHALLA_VALUE_CLASSES: JvmCompilerArgument<Boolean> =
+        JvmCompilerArgument("X_VALHALLA_VALUE_CLASSES", KotlinReleaseVersion(2, 5, 0))
 
     /**
      * Validate generated JVM bytecode before and after optimizations.
@@ -831,7 +830,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
         JvmCompilerArgument("JVM_DEFAULT", KotlinReleaseVersion(2, 2, 0))
 
     /**
-     * The target version of the generated JVM bytecode (1.8 and 9–27), with 1.8 as the default.
+     * The target version of the generated JVM bytecode (1.8 and 9–28), with 1.8 as the default.
      */
     @JvmField
     public val JVM_TARGET: JvmCompilerArgument<JvmTarget?> =

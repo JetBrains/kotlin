@@ -26,12 +26,13 @@ import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectiv
 import org.jetbrains.kotlin.test.grouping.AbstractTwoStageKotlinCompilerWasmTest
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerSecondStageTestSuppressor
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerTestSuppressor
+import org.jetbrains.kotlin.test.klib.isolateReflectionPackageNameDependentTestsIfNeeded
 import org.jetbrains.kotlin.test.klib.setupCustomLVForKlibForwardCompatibilityTest
+import org.jetbrains.kotlin.test.klib.useReflectionPackageNameAnnotationIfSupported
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.services.CompilationStage
 import org.jetbrains.kotlin.test.services.KotlinStandardLibrariesPathProvider
-import org.jetbrains.kotlin.test.services.ReflectionPackageNameAnnotation
 import org.jetbrains.kotlin.test.services.StandardLibrariesPathProviderForKotlinProject
 import org.jetbrains.kotlin.test.services.configuration.UnsupportedFeaturesTestConfigurator
 import org.jetbrains.kotlin.test.services.configuration.WasmSecondStageEnvironmentConfigurator
@@ -100,10 +101,11 @@ open class AbstractCustomWasmJsCompilerSecondStageTest(val testDataRoot: String 
             }
 
             useConfigurators(::WasmSecondStageEnvironmentConfigurator.bind(WasmTarget.JS))
-            useAdditionalService { ReflectionPackageNameAnnotation }
+            useReflectionPackageNameAnnotationIfSupported(customWasmJsCompilerSettings.defaultLanguageVersion)
         }
         nonGroupingStage {
             useGroupingTestIsolators(::WasmGroupingTestIsolator)
+            isolateReflectionPackageNameDependentTestsIfNeeded(customWasmJsCompilerSettings.defaultLanguageVersion)
             useAdditionalSourceProviders(::WasmJsLauncherAdditionalSourceProvider)
             commonCodegenConfiguration()
 

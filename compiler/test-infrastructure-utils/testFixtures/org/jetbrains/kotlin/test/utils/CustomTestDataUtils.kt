@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.test.utils
 import java.io.File
 
 // Prefixes are chosen such that LL FIR test data cannot be mistaken for FIR test data.
-private const val FIR_PREFIX = ".fir"
 private const val LATEST_LV_PREFIX = ".latestLV"
 private const val LF_DISABLED_PREFIX = ".disabled"
 private const val LL_FIR_PREFIX = ".ll"
@@ -16,10 +15,7 @@ private const val REVERSED_PREFIX = ".reversed"
 private const val PARTIAL_BODY_PREFIX = ".partialBody"
 private const val REPL_SUFFIX = ".repl.kts"
 
-const val CUSTOM_TEST_DATA_EXTENSION_PATTERN = "^(.+)\\.(reversed|partialBody|fir|ll|latestLV|disabled)(\\.repl)?\\.kts?\$"
-
-val File.isFirTestData: Boolean
-    get() = isCustomTestDataWithPrefix(FIR_PREFIX)
+const val CUSTOM_TEST_DATA_EXTENSION_PATTERN = "^(.+)\\.(reversed|partialBody|ll|latestLV|disabled)(\\.repl)?\\.kts?\$"
 
 val File.isLatestLVTestData: Boolean
     get() = isCustomTestDataWithPrefix(LATEST_LV_PREFIX)
@@ -37,12 +33,9 @@ val File.isLLFirSpecializedTestData: Boolean
     get() = isCustomTestDataWithPrefix(REVERSED_PREFIX) || isCustomTestDataWithPrefix(PARTIAL_BODY_PREFIX)
 
 val File.isCustomTestData: Boolean
-    get() = isFirTestData || isLLFirTestData || isLatestLVTestData || isLfDisabledTestData
+    get() = isLLFirTestData || isLatestLVTestData || isLfDisabledTestData
 
 private fun File.isCustomTestDataWithPrefix(prefix: String): Boolean = name.endsWith("$prefix$extensionWithDot")
-
-val File.firTestDataFile: File
-    get() = getCustomTestDataFileWithPrefix(FIR_PREFIX)
 
 val File.latestLVTestDataFile: File
     get() = getCustomTestDataFileWithPrefix(LATEST_LV_PREFIX)
@@ -85,7 +78,6 @@ val File.originalTestDataFileName: String
     get() {
         val prefix = when {
             isLLFirTestData -> LL_FIR_PREFIX
-            isFirTestData -> FIR_PREFIX
             isLatestLVTestData -> LATEST_LV_PREFIX
             isLfDisabledTestData -> LF_DISABLED_PREFIX
             else -> return name

@@ -304,7 +304,7 @@ KtNameReferenceExpression(188,189): 'L'
     isInBestCandidates = true
 
 KtCallExpression(195,210): 'foo(UNRESOLVED)'
-  KaApplicableCallCandidate:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -335,10 +335,11 @@ KtCallExpression(195,210): 'foo(UNRESOLVED)'
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun foo(a: MyEnum): Unit>
     isInBestCandidates = true
 
 KtNameReferenceExpression(195,198): 'foo'
-  KaApplicableCallCandidate:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -369,6 +370,7 @@ KtNameReferenceExpression(195,198): 'foo'
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun foo(a: MyEnum): Unit>
     isInBestCandidates = true
 
 KtValueArgumentList(198,210): '(UNRESOLVED)'

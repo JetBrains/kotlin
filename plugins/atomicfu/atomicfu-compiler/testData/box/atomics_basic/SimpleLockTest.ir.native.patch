@@ -1,0 +1,99 @@
+--- a/SimpleLockTest.ir.txt
++++ b/SimpleLockTest.ir.native.txt
+@@ -34,15 +34,15 @@
+       BLOCK_BODY
+         WHILE label=null origin=null
+           condition: CONST Boolean type=kotlin.Boolean value=true
+-          body: BLOCK type=R of kotlin.Function1 origin=null
+-            VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:T of kotlin.concurrent.atomicGetField [val]
+-              CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
++          body: BLOCK type=kotlin.Unit origin=null
++            VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Int [val]
++              CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=kotlin.Int origin=null
+                 TYPE_ARG T: kotlin.Int
+-                ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=R of kotlin.Function0 origin=null
++                ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+                   ARG <this>: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>> declared in <root>.SimpleLock.loop$atomicfu$NATIVE_PROPERTY_REF$Int' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>> origin=null
+-            CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=R of kotlin.Function1 origin=null
++            CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Unit origin=null
+               ARG <this>: GET_VAR 'action$atomicfu: kotlin.Function1<kotlin.Int, kotlin.Unit> declared in <root>.SimpleLock.loop$atomicfu$NATIVE_PROPERTY_REF$Int' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=null
+-              ARG p1: GET_VAR 'val tmp_0: T of kotlin.concurrent.atomicGetField declared in <root>.SimpleLock.loop$atomicfu$NATIVE_PROPERTY_REF$Int' type=T of kotlin.concurrent.atomicGetField origin=null
++              ARG p1: GET_VAR 'val tmp_0: kotlin.Int declared in <root>.SimpleLock.loop$atomicfu$NATIVE_PROPERTY_REF$Int' type=kotlin.Int origin=null
+     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+       VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+@@ -69,8 +69,22 @@
+                 FUN ATOMICFU_GENERATED_FUNCTION name:<_locked$volatile-getter> visibility:local modality:FINAL returnType:kotlin.reflect.KMutableProperty0<kotlin.Int> [inline]
+                   BLOCK_BODY
+                     RETURN type=kotlin.Nothing from='local final fun <_locked$volatile-getter> (): kotlin.reflect.KMutableProperty0<kotlin.Int> declared in <root>.SimpleLock.withLock'
+-                      PROPERTY_REFERENCE 'private final _locked$volatile: kotlin.Int declared in <root>.SimpleLock' field='FIELD ATOMICFU_GENERATED_FIELD name:_locked$volatile type:kotlin.Int visibility:private declared in <root>.SimpleLock' getter='private final fun <get-_locked$volatile> (): kotlin.Int declared in <root>.SimpleLock' setter='private final fun <set-_locked$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.SimpleLock' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+-                        ARG 1: GET_VAR '<this>: <root>.SimpleLock declared in <root>.SimpleLock.withLock' type=<root>.SimpleLock origin=IMPLICIT_ARGUMENT
++                      RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null reflectionTarget='private final _locked$volatile: kotlin.Int declared in <root>.SimpleLock'
++                        bound <this>: GET_VAR '<this>: <root>.SimpleLock declared in <root>.SimpleLock.withLock' type=<root>.SimpleLock origin=IMPLICIT_ARGUMENT
++                        getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-_locked$volatile> visibility:local modality:FINAL returnType:kotlin.Int
++                          VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.SimpleLock
++                          BLOCK_BODY
++                            RETURN type=kotlin.Nothing from='local final fun <get-_locked$volatile> (<this>: <root>.SimpleLock): kotlin.Int declared in <root>.SimpleLock.withLock.<_locked$volatile-getter>'
++                              CALL 'private final fun <get-_locked$volatile> (): kotlin.Int declared in <root>.SimpleLock' type=kotlin.Int origin=null
++                                ARG <this>: GET_VAR '<this>: <root>.SimpleLock declared in <root>.SimpleLock.withLock.<_locked$volatile-getter>.<get-_locked$volatile>' type=<root>.SimpleLock origin=null
++                        setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-_locked$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++                          VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.SimpleLock
++                          VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Int
++                          BLOCK_BODY
++                            RETURN type=kotlin.Nothing from='local final fun <set-_locked$volatile> (<this>: <root>.SimpleLock, p0: kotlin.Int): kotlin.Unit declared in <root>.SimpleLock.withLock.<_locked$volatile-getter>'
++                              CALL 'private final fun <set-_locked$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.SimpleLock' type=kotlin.Unit origin=null
++                                ARG <this>: GET_VAR '<this>: <root>.SimpleLock declared in <root>.SimpleLock.withLock.<_locked$volatile-getter>.<set-_locked$volatile>' type=<root>.SimpleLock origin=null
++                                ARG value: GET_VAR 'p0: kotlin.Int declared in <root>.SimpleLock.withLock.<_locked$volatile-getter>.<set-_locked$volatile>' type=kotlin.Int origin=null
+               ARG action$atomicfu: FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=LAMBDA
+                 FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
+                   VALUE_PARAMETER kind:Regular name:locked index:0 type:kotlin.Int
+@@ -84,8 +98,22 @@
+                         if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=null
+                           ARG <this>: CALL 'internal final fun compareAndSetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.compareAndSetField>, expectedValue: T of kotlin.concurrent.compareAndSetField, newValue: T of kotlin.concurrent.compareAndSetField): kotlin.Boolean declared in kotlin.concurrent' type=kotlin.Boolean origin=null
+                             TYPE_ARG T: kotlin.Int
+-                            ARG <this>: PROPERTY_REFERENCE 'private final _locked$volatile: kotlin.Int declared in <root>.SimpleLock' field='FIELD ATOMICFU_GENERATED_FIELD name:_locked$volatile type:kotlin.Int visibility:private declared in <root>.SimpleLock' getter='private final fun <get-_locked$volatile> (): kotlin.Int declared in <root>.SimpleLock' setter='private final fun <set-_locked$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.SimpleLock' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+-                              ARG 1: GET_VAR '<this>: <root>.SimpleLock declared in <root>.SimpleLock.withLock' type=<root>.SimpleLock origin=IMPLICIT_ARGUMENT
++                            ARG <this>: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null reflectionTarget='private final _locked$volatile: kotlin.Int declared in <root>.SimpleLock'
++                              bound <this>: GET_VAR '<this>: <root>.SimpleLock declared in <root>.SimpleLock.withLock' type=<root>.SimpleLock origin=IMPLICIT_ARGUMENT
++                              getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-_locked$volatile> visibility:local modality:FINAL returnType:kotlin.Int
++                                VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.SimpleLock
++                                BLOCK_BODY
++                                  RETURN type=kotlin.Nothing from='local final fun <get-_locked$volatile> (<this>: <root>.SimpleLock): kotlin.Int declared in <root>.SimpleLock.withLock.<anonymous>'
++                                    CALL 'private final fun <get-_locked$volatile> (): kotlin.Int declared in <root>.SimpleLock' type=kotlin.Int origin=null
++                                      ARG <this>: GET_VAR '<this>: <root>.SimpleLock declared in <root>.SimpleLock.withLock.<anonymous>.<get-_locked$volatile>' type=<root>.SimpleLock origin=null
++                              setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-_locked$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++                                VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.SimpleLock
++                                VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Int
++                                BLOCK_BODY
++                                  RETURN type=kotlin.Nothing from='local final fun <set-_locked$volatile> (<this>: <root>.SimpleLock, p0: kotlin.Int): kotlin.Unit declared in <root>.SimpleLock.withLock.<anonymous>'
++                                    CALL 'private final fun <set-_locked$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.SimpleLock' type=kotlin.Unit origin=null
++                                      ARG <this>: GET_VAR '<this>: <root>.SimpleLock declared in <root>.SimpleLock.withLock.<anonymous>.<set-_locked$volatile>' type=<root>.SimpleLock origin=null
++                                      ARG value: GET_VAR 'p0: kotlin.Int declared in <root>.SimpleLock.withLock.<anonymous>.<set-_locked$volatile>' type=kotlin.Int origin=null
+                             ARG expectedValue: CONST Int type=kotlin.Int value=0
+                             ARG newValue: CONST Int type=kotlin.Int value=1
+                         then: RETURN type=kotlin.Nothing from='local final fun <anonymous> (locked: kotlin.Int): kotlin.Unit declared in <root>.SimpleLock.withLock'
+@@ -95,8 +123,22 @@
+           finally: BLOCK type=kotlin.Unit origin=null
+             CALL 'internal final fun atomicSetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicSetField>, newValue: T of kotlin.concurrent.atomicSetField): kotlin.Unit declared in kotlin.concurrent' type=kotlin.Unit origin=null
+               TYPE_ARG T: kotlin.Int
+-              ARG <this>: PROPERTY_REFERENCE 'private final _locked$volatile: kotlin.Int declared in <root>.SimpleLock' field='FIELD ATOMICFU_GENERATED_FIELD name:_locked$volatile type:kotlin.Int visibility:private declared in <root>.SimpleLock' getter='private final fun <get-_locked$volatile> (): kotlin.Int declared in <root>.SimpleLock' setter='private final fun <set-_locked$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.SimpleLock' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+-                ARG 1: GET_VAR '<this>: <root>.SimpleLock declared in <root>.SimpleLock.withLock' type=<root>.SimpleLock origin=IMPLICIT_ARGUMENT
++              ARG <this>: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null reflectionTarget='private final _locked$volatile: kotlin.Int declared in <root>.SimpleLock'
++                bound <this>: GET_VAR '<this>: <root>.SimpleLock declared in <root>.SimpleLock.withLock' type=<root>.SimpleLock origin=IMPLICIT_ARGUMENT
++                getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-_locked$volatile> visibility:local modality:FINAL returnType:kotlin.Int
++                  VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.SimpleLock
++                  BLOCK_BODY
++                    RETURN type=kotlin.Nothing from='local final fun <get-_locked$volatile> (<this>: <root>.SimpleLock): kotlin.Int declared in <root>.SimpleLock.withLock'
++                      CALL 'private final fun <get-_locked$volatile> (): kotlin.Int declared in <root>.SimpleLock' type=kotlin.Int origin=null
++                        ARG <this>: GET_VAR '<this>: <root>.SimpleLock declared in <root>.SimpleLock.withLock.<get-_locked$volatile>' type=<root>.SimpleLock origin=null
++                setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-_locked$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++                  VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.SimpleLock
++                  VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Int
++                  BLOCK_BODY
++                    RETURN type=kotlin.Nothing from='local final fun <set-_locked$volatile> (<this>: <root>.SimpleLock, p0: kotlin.Int): kotlin.Unit declared in <root>.SimpleLock.withLock'
++                      CALL 'private final fun <set-_locked$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.SimpleLock' type=kotlin.Unit origin=null
++                        ARG <this>: GET_VAR '<this>: <root>.SimpleLock declared in <root>.SimpleLock.withLock.<set-_locked$volatile>' type=<root>.SimpleLock origin=null
++                        ARG value: GET_VAR 'p0: kotlin.Int declared in <root>.SimpleLock.withLock.<set-_locked$volatile>' type=kotlin.Int origin=null
+               ARG newValue: CONST Int type=kotlin.Int value=0
+   CLASS CLASS name:SimpleLockTest modality:FINAL visibility:public superTypes:[kotlin.Any]
+     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.SimpleLockTest

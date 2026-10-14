@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.psi.psiUtil.siblings
 @Deprecated(
     message = "Moved to the IntelliJ Kotlin plugin",
     replaceWith = ReplaceWith("EditCommaSeparatedListHelper", "org.jetbrains.kotlin.idea.base.psi.EditCommaSeparatedListHelper"),
+    level = DeprecationLevel.ERROR,
 )
 object EditCommaSeparatedListHelper {
     @Deprecated(
@@ -33,8 +34,9 @@ object EditCommaSeparatedListHelper {
             "EditCommaSeparatedListHelper.addItem(list, allItems, item, prefix)",
             "org.jetbrains.kotlin.idea.base.psi.EditCommaSeparatedListHelper"
         ),
+        level = DeprecationLevel.ERROR,
     )
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     @JvmOverloads
     fun <TItem : KtElement> addItem(list: KtElement, allItems: List<TItem>, item: TItem, prefix: KtToken = KtTokens.LPAR): TItem {
         return addItemBefore(list, allItems, item, null, prefix)
@@ -46,6 +48,7 @@ object EditCommaSeparatedListHelper {
             "EditCommaSeparatedListHelper.addItemAfter(list, allItems, item, anchor, prefix)",
             "org.jetbrains.kotlin.idea.base.psi.EditCommaSeparatedListHelper"
         ),
+        level = DeprecationLevel.ERROR,
     )
     @Suppress("UNCHECKED_CAST")
     @JvmOverloads
@@ -81,8 +84,9 @@ object EditCommaSeparatedListHelper {
             "EditCommaSeparatedListHelper.addItemBefore(list, allItems, item, anchor, prefix)",
             "org.jetbrains.kotlin.idea.base.psi.EditCommaSeparatedListHelper"
         ),
+        level = DeprecationLevel.ERROR,
     )
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     @JvmOverloads
     fun <TItem : KtElement> addItemBefore(
         list: KtElement,
@@ -113,6 +117,7 @@ object EditCommaSeparatedListHelper {
             "EditCommaSeparatedListHelper.removeItem(item)",
             "org.jetbrains.kotlin.idea.base.psi.EditCommaSeparatedListHelper"
         ),
+        level = DeprecationLevel.ERROR,
     )
     fun <TItem : KtElement> removeItem(item: TItem) {
         var comma = item.siblings(withItself = false).firstOrNull { it !is PsiWhiteSpace && it !is PsiComment }

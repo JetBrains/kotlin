@@ -1083,6 +1083,7 @@ KaNamedClassSymbol:
   isFun: false
   isInline: false
   isInner: false
+  isValue: false
   location: TOP_LEVEL
   modality: ABSTRACT
   name: I
@@ -1117,6 +1118,7 @@ KaNamedClassSymbol:
   isFun: false
   isInline: false
   isInner: false
+  isValue: false
   location: TOP_LEVEL
   modality: FINAL
   name: C1
@@ -1151,6 +1153,7 @@ KaNamedClassSymbol:
   isFun: false
   isInline: false
   isInner: false
+  isValue: false
   location: TOP_LEVEL
   modality: FINAL
   name: PrivateC1
@@ -1185,6 +1188,7 @@ KaNamedClassSymbol:
   isFun: false
   isInline: false
   isInner: false
+  isValue: false
   location: TOP_LEVEL
   modality: FINAL
   name: InternalC1
@@ -1219,6 +1223,7 @@ KaNamedClassSymbol:
   isFun: false
   isInline: false
   isInner: false
+  isValue: false
   location: TOP_LEVEL
   modality: ABSTRACT
   name: InternalI
@@ -1253,6 +1258,7 @@ KaNamedClassSymbol:
   isFun: false
   isInline: false
   isInner: false
+  isValue: false
   location: TOP_LEVEL
   modality: ABSTRACT
   name: PrivateI
@@ -1287,6 +1293,7 @@ KaNamedClassSymbol:
   isFun: false
   isInline: false
   isInner: false
+  isValue: false
   location: TOP_LEVEL
   modality: ABSTRACT
   name: FakeI
@@ -1321,6 +1328,7 @@ KaNamedClassSymbol:
   isFun: false
   isInline: false
   isInner: false
+  isValue: false
   location: TOP_LEVEL
   modality: ABSTRACT
   name: InternalFakeI
@@ -1355,6 +1363,7 @@ KaNamedClassSymbol:
   isFun: false
   isInline: false
   isInner: false
+  isValue: false
   location: TOP_LEVEL
   modality: ABSTRACT
   name: PrivateFakeI

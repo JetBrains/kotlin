@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
-import org.jetbrains.kotlin.light.classes.symbol.KaSymbolJavaView
+import org.jetbrains.kotlin.analysis.api.javaInterop.KaSymbolJavaView
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForClassOrObject
 import org.jetbrains.kotlin.light.classes.symbol.utils.cachedValue
 import org.jetbrains.kotlin.light.classes.symbol.utils.toArrayIfNotEmptyOrDefault

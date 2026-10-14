@@ -3,7 +3,7 @@ Defaults.class:
     PACKAGE_DIRECTIVE
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST
-    CLASS[classId=test/Defaults, fqName=test.Defaults, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Defaults, superNames=[Annotation]]
+    CLASS[classId=test/Defaults, fqName=test.Defaults, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Defaults, superNames=[Annotation]]
       MODIFIER_LIST[public final annotation]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Defaults]
         MODIFIER_LIST[public]
@@ -57,7 +57,7 @@ Empty.class:
     PACKAGE_DIRECTIVE
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST
-    CLASS[classId=test/Empty, fqName=test.Empty, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Empty, superNames=[Annotation]]
+    CLASS[classId=test/Empty, fqName=test.Empty, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Empty, superNames=[Annotation]]
       MODIFIER_LIST[public final annotation]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Empty]
         MODIFIER_LIST[public]
@@ -78,7 +78,7 @@ Single.class:
     PACKAGE_DIRECTIVE
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST
-    CLASS[classId=test/Single, fqName=test.Single, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Single, superNames=[Annotation]]
+    CLASS[classId=test/Single, fqName=test.Single, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Single, superNames=[Annotation]]
       MODIFIER_LIST[public final annotation]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Single]
         MODIFIER_LIST[public]
@@ -107,7 +107,7 @@ Varargs.class:
     PACKAGE_DIRECTIVE
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST
-    CLASS[classId=test/Varargs, fqName=test.Varargs, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Varargs, superNames=[Annotation]]
+    CLASS[classId=test/Varargs, fqName=test.Varargs, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Varargs, superNames=[Annotation]]
       MODIFIER_LIST[public final annotation]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Varargs]
         MODIFIER_LIST[public]

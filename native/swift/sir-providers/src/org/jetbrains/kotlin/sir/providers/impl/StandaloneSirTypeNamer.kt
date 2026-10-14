@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.sir.providers.impl
 
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.typeParameters
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.analysis.api.types.isMarkedNullable
 import org.jetbrains.kotlin.analysis.api.types.symbol
 import org.jetbrains.kotlin.sir.SirErrorType
 import org.jetbrains.kotlin.sir.SirExistentialType
@@ -17,14 +19,16 @@ import org.jetbrains.kotlin.sir.SirNominalType
 import org.jetbrains.kotlin.sir.SirScopeDefiningDeclaration
 import org.jetbrains.kotlin.sir.SirTupleType
 import org.jetbrains.kotlin.sir.SirType
-import org.jetbrains.kotlin.sir.SirTypedFlowType
 import org.jetbrains.kotlin.sir.SirUnsupportedType
+import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.SirTypeNamer
+import org.jetbrains.kotlin.sir.providers.source.KotlinType
 import org.jetbrains.kotlin.sir.providers.source.kaSymbolOrNull
 import org.jetbrains.kotlin.sir.providers.utils.KotlinCoroutineSupportModule
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeSupportModule
 import org.jetbrains.kotlin.sir.providers.utils.resolveUpperBound
+import org.jetbrains.kotlin.sir.providers.withSessions
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
 import org.jetbrains.kotlin.sir.util.swiftName
 import org.jetbrains.kotlin.types.Variance
@@ -32,9 +36,12 @@ import org.jetbrains.kotlin.types.Variance
 internal object StandaloneSirTypeNamer : SirTypeNamer {
     override fun swiftFqName(type: SirType): String = type.swiftName
 
-    override fun kotlinFqName(sirType: SirType, nameType: SirTypeNamer.KotlinNameType): String = when (nameType) {
-        SirTypeNamer.KotlinNameType.FQN -> kotlinFqName(sirType)
-        SirTypeNamer.KotlinNameType.PARAMETRIZED -> kotlinParametrizedName(sirType)
+    context(session: SirSession)
+    override fun kotlinFqName(sirType: SirType, nameType: SirTypeNamer.KotlinNameType): String = session.withSessions {
+        when (nameType) {
+            SirTypeNamer.KotlinNameType.FQN -> kotlinFqName(sirType)
+            SirTypeNamer.KotlinNameType.PARAMETRIZED -> kotlinParametrizedName(sirType)
+        }
     }
 
     override fun kotlinPrimitiveFqNameIfAny(sirType: SirType): String? {
@@ -64,37 +71,52 @@ internal object StandaloneSirTypeNamer : SirTypeNamer {
         SirSwiftModule.utf16CodeUnit to "Char",
     )
 
-    private fun kotlinFqName(type: SirType): String = when (type) {
-        is SirNominalType -> kotlinFqName(type)
-        is SirTypedFlowType -> when (type.typedProtocol) {
-            KotlinCoroutineSupportModule.kotlinTypedFlow -> "kotlinx.coroutines.flow.Flow<${kotlinParametrizedName(type.elementType)}>"
-            KotlinCoroutineSupportModule.kotlinTypedSharedFlow -> "kotlinx.coroutines.flow.SharedFlow<${kotlinParametrizedName(type.elementType)}>"
-            KotlinCoroutineSupportModule.kotlinTypedMutableSharedFlow -> "kotlinx.coroutines.flow.MutableSharedFlow<${kotlinParametrizedName(type.elementType)}>"
-            KotlinCoroutineSupportModule.kotlinTypedStateFlow -> "kotlinx.coroutines.flow.StateFlow<${kotlinParametrizedName(type.elementType)}>"
-            KotlinCoroutineSupportModule.kotlinTypedMutableStateFlow -> "kotlinx.coroutines.flow.MutableStateFlow<${kotlinParametrizedName(type.elementType)}>"
-            else -> error("TypedFlowType $type can not be named")
+    context(session: KaSession)
+    private fun kotlinFqName(type: SirType): String {
+        val origin = type.origin
+        if (origin is SirType.Origin.ReifiedType) {
+            return kotlinFqName(origin.erasedType)
+        } else if (origin is KotlinType) {
+            return kotlinParametrizedName(origin.type) ?: error("Failed to name Kotlin type: ${origin.type}")
         }
-        is SirExistentialType -> kotlinFqName(type)
-        is SirFunctionalType -> "${"kotlin.coroutines.Suspend".takeIf { type.isAsync } ?: ""}Function${type.contextTypes.count() + type.parameterTypes.count()}<${(type.contextTypes + type.parameterTypes + type.returnType).joinToString { kotlinFqName(it) }}>"
-        is SirErrorType, is SirUnsupportedType, is SirTupleType, is SirType.Metatype ->
-            error("Type $type can not be named")
+        return when (type) {
+            is SirNominalType -> kotlinFqName(type)
+            is SirExistentialType -> kotlinFqName(type)
+            is SirFunctionalType -> "${"kotlin.coroutines.Suspend".takeIf { type.isAsync } ?: ""}Function${type.contextTypes.count() + type.parameterTypes.count()}<${(type.contextTypes + type.parameterTypes + type.returnType).joinToString { kotlinFqName(it) }}>"
+            is SirErrorType, is SirUnsupportedType, is SirTupleType, is SirType.Metatype ->
+                error("Type $type can not be named")
+        }
     }
 
-    private fun kotlinParametrizedName(type: SirType): String = when (type) {
-        is SirNominalType -> type.typeDeclaration.kaSymbolOrNull<KaClassLikeSymbol>()?.parametrisedTypeName()
-        is SirExistentialType -> type.protocols.singleOrNull()?.first?.kaSymbolOrNull<KaClassLikeSymbol>()?.parametrisedTypeName()
-        is SirErrorType, is SirFunctionalType, is SirUnsupportedType, is SirTupleType, is SirType.Metatype -> null
-    } ?: kotlinFqName(type)
+    context(session: KaSession)
+    private fun kotlinParametrizedName(type: SirType): String {
+        val origin = type.origin
+        if (origin is SirType.Origin.ReifiedType) {
+            return kotlinParametrizedName(origin.erasedType)
+        } else if (origin is KotlinType) {
+            return kotlinParametrizedName(origin.type) ?: error("Failed to name Kotlin type: ${origin.type}")
+        }
+        return when (type) {
+            is SirNominalType -> type.typeDeclaration.kaSymbolOrNull<KaClassLikeSymbol>()?.parametrisedTypeName()
+            is SirExistentialType -> type.protocols.singleOrNull()?.first?.kaSymbolOrNull<KaClassLikeSymbol>()?.parametrisedTypeName()
+            is SirErrorType, is SirFunctionalType, is SirUnsupportedType, is SirTupleType, is SirType.Metatype -> null
+        } ?: kotlinFqName(type)
+    }
 
-    private fun kotlinFqName(type: SirExistentialType): String = type.protocols.single().let { [protocol, _] ->
+    context(session: KaSession)
+    private fun kotlinFqName(type: SirExistentialType): String = type.protocols.single().let { [protocol, typeArguments] ->
         if (protocol == KotlinRuntimeSupportModule.kotlinBridgeable) return@let "kotlin.Any"
         val symbol = protocol.kaSymbolOrNull<KaClassLikeSymbol>()!!
         val fqName = symbol.classId!!.asFqNameString()
-        // Generics aren't supported yet, so we don't have the actual typeArguments, fallback to the upperbound
-        val typeArgs = symbol.typeParameters.takeIf { it.isNotEmpty() }?.joinToString(prefix = "<", postfix = ">") { "*" } ?: ""
+        val typeArgs = when {
+            symbol.typeParameters.isEmpty() -> null
+            typeArguments.isEmpty() -> symbol.typeParameters.map { "*" }
+            else -> typeArguments.map { kotlinParametrizedName(it) }
+        }?.joinToString(prefix = "<", postfix = ">") ?: ""
         "$fqName$typeArgs"
     }
 
+    context(session: KaSession)
     private fun kotlinFqName(type: SirNominalType): String {
         val declaration = type.typeDeclaration
         declaration.primitiveFqNameIfAny()?.let { return it }
@@ -129,13 +151,23 @@ internal object StandaloneSirTypeNamer : SirTypeNamer {
 
             else -> declaration.kaSymbolOrNull<KaClassLikeSymbol>()?.let { symbol ->
                 val fqName = symbol.classId?.asFqNameString() ?: return@let null
-                // Generics aren't supported yet, so we don't have the actual typeArguments, fallback to the upperbound
-                val typeArgs = symbol.typeParameters.takeIf { it.isNotEmpty() }?.joinToString(prefix = "<", postfix = ">") { "*" } ?: ""
+                val typeArgs = when {
+                    symbol.typeParameters.isEmpty() -> null
+                    type.typeArguments.isEmpty() -> symbol.typeParameters.map { "*" }
+                    else -> type.typeArguments.map { kotlinParametrizedName(it) }
+                }?.joinToString(prefix = "<", postfix = ">") ?: ""
                 "$fqName$typeArgs"
             } ?: error("Unnameable declaration $declaration")
         }
     }
 
+    context(session: KaSession)
+    private fun kotlinParametrizedName(type: KaType): String? {
+        check(type is KaClassType) { "Can't name non-class Kotlin type: $type" }
+        return type.symbol.parametrisedTypeName(type.typeArguments.map { it.type })
+    }
+
+    context(session: KaSession)
     private fun KaClassLikeSymbol.parametrisedTypeName(typeArguments: List<KaType?>? = null): String? {
         require(typeArguments == null || typeParameters.size == typeArguments.size) {
             "type argument count must match type parameter count"
@@ -148,17 +180,23 @@ internal object StandaloneSirTypeNamer : SirTypeNamer {
         val typeArguments = typeArguments ?: typeParameters.map { null }
         val typesRendered = typeParameters.zip(typeArguments) { param, arg ->
             var type = arg?.resolveUpperBound()
+            var isUpperBound = type != arg
             // Two cases when we use the upper bound from the parameter:
             // 1. we don't have an argument
             // 2. for in variance parameters that have an (upper bound) argument equal to this type
             if (arg == null || (param.variance == Variance.IN_VARIANCE && type?.symbol?.classId?.asFqNameString() == fqname)) {
                 type = param.resolveUpperBound()
+                isUpperBound = true
             }
             when {
                 type !is KaClassType -> null
-                type.symbol.classId?.asFqNameString() == fqname -> "*"
+                isUpperBound && type.symbol.classId?.asFqNameString() == fqname -> "*"
                 else -> type.symbol.parametrisedTypeName(type.typeArguments.map { it.type })?.let {
-                    if (it.contains('*')) "*" else it
+                    when {
+                        it.contains("*") -> "*"
+                        type.isMarkedNullable -> "$it?"
+                        else -> it
+                    }
                 }
             } ?: "kotlin.Any?"
         }

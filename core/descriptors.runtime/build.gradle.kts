@@ -40,7 +40,6 @@ projectTests {
     withJvmStdlibAndReflect()
     withMockJdkAnnotationsJar()
     withMockJdkRuntime()
-    withScriptRuntime()
     withTestJar()
     withAnnotations()
 
@@ -53,4 +52,3 @@ projectTests {
     testGenerator("org.jetbrains.kotlin.generators.tests.GenerateRuntimeDescriptorTestsKt", generateTestsInBuildDirectory = true)
 }
 
-testsJar()

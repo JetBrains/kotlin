@@ -1523,21 +1523,19 @@ KtNameReferenceExpression(1250,1265): 'InheritorObject'
     ]
 
 KtCallExpression(1272,1302): 'testTypeParam(InheritorObject)'
-  KaSimpleSymbolResolutionError:
-    candidateSymbols = [
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
       /testTypeParam(instance: T): kotlin.String
     ]
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /testTypeParam>
 
 KtNameReferenceExpression(1272,1285): 'testTypeParam'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSimpleSymbolResolutionError:
-    candidateSymbols = [
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
       /testTypeParam(instance: T): kotlin.String
     ]
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /testTypeParam>
 
 KtValueArgumentList(1285,1302): '(InheritorObject)'
   null
@@ -1547,18 +1545,19 @@ KtValueArgument(1286,1301): 'InheritorObject'
 
 KtNameReferenceExpression(1286,1301): 'InheritorObject'
   isImplicitReferenceToCompanion: false
-  contextSensitiveResolutionStatus: NotAvailable
+  contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSimpleSymbolResolutionError:
-    candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'InheritorObject'.>
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.InheritorObject
+    ]
 
 KtCallExpression(1307,1354): 'testTypeParamWithMultipleBound(InheritorObject)'
   KaSimpleSymbolResolutionError:
     candidateSymbols = [
       /testTypeParamWithMultipleBound(instance: T): kotlin.String
     ]
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /testTypeParamWithMultipleBound>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MyClass.InheritorObject', but 'MyClass & OtherI' was expected.>
 
 KtNameReferenceExpression(1307,1337): 'testTypeParamWithMultipleBound'
   isImplicitReferenceToCompanion: false
@@ -1568,7 +1567,7 @@ KtNameReferenceExpression(1307,1337): 'testTypeParamWithMultipleBound'
     candidateSymbols = [
       /testTypeParamWithMultipleBound(instance: T): kotlin.String
     ]
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /testTypeParamWithMultipleBound>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MyClass.InheritorObject', but 'MyClass & OtherI' was expected.>
 
 KtValueArgumentList(1337,1354): '(InheritorObject)'
   null
@@ -1578,28 +1577,27 @@ KtValueArgument(1338,1353): 'InheritorObject'
 
 KtNameReferenceExpression(1338,1353): 'InheritorObject'
   isImplicitReferenceToCompanion: false
-  contextSensitiveResolutionStatus: NotAvailable
+  contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSimpleSymbolResolutionError:
-    candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'InheritorObject'.>
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.InheritorObject
+    ]
 
 KtCallExpression(1359,1409): 'testDefinitelyNotNullIntersection(InheritorObject)'
-  KaSimpleSymbolResolutionError:
-    candidateSymbols = [
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
       /testDefinitelyNotNullIntersection(instance: T & Any): kotlin.String
     ]
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /testDefinitelyNotNullIntersection>
 
 KtNameReferenceExpression(1359,1392): 'testDefinitelyNotNullIntersection'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSimpleSymbolResolutionError:
-    candidateSymbols = [
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
       /testDefinitelyNotNullIntersection(instance: T & Any): kotlin.String
     ]
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /testDefinitelyNotNullIntersection>
 
 KtValueArgumentList(1392,1409): '(InheritorObject)'
   null
@@ -1609,11 +1607,12 @@ KtValueArgument(1393,1408): 'InheritorObject'
 
 KtNameReferenceExpression(1393,1408): 'InheritorObject'
   isImplicitReferenceToCompanion: false
-  contextSensitiveResolutionStatus: NotAvailable
+  contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSimpleSymbolResolutionError:
-    candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'InheritorObject'.>
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.InheritorObject
+    ]
 
 KtCallExpression(1414,1451): 'testFakeIntersection(InheritorObject)'
   KaSimpleSymbolResolutionError:
@@ -1682,7 +1681,7 @@ KtCallExpression(1505,1545): 'testRegularIntersection(InheritorObject)'
     candidateSymbols = [
       /testRegularIntersection(instance: T): kotlin.String
     ]
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /testRegularIntersection>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MyClass.InheritorObject', but 'SealedInterface & MyClass' was expected.>
 
 KtNameReferenceExpression(1505,1528): 'testRegularIntersection'
   isImplicitReferenceToCompanion: false
@@ -1692,7 +1691,7 @@ KtNameReferenceExpression(1505,1528): 'testRegularIntersection'
     candidateSymbols = [
       /testRegularIntersection(instance: T): kotlin.String
     ]
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /testRegularIntersection>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MyClass.InheritorObject', but 'SealedInterface & MyClass' was expected.>
 
 KtValueArgumentList(1528,1545): '(InheritorObject)'
   null
@@ -1702,8 +1701,9 @@ KtValueArgument(1529,1544): 'InheritorObject'
 
 KtNameReferenceExpression(1529,1544): 'InheritorObject'
   isImplicitReferenceToCompanion: false
-  contextSensitiveResolutionStatus: NotAvailable
+  contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSimpleSymbolResolutionError:
-    candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'InheritorObject'.>
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.InheritorObject
+    ]

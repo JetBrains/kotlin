@@ -96,6 +96,71 @@ class KotlinArchiveLegacyPlatformCapabilityTest {
     }
 
     @Test
+    fun `legacy platform component is replaced by the kotlin archive component when the consumer renames the js target`() {
+        val repository = generateMockRepository(
+            temporaryDirectory,
+            listOf(
+                legacyPlatformComponent("1.0"),
+                kotlinArchiveComponent("2.0"),
+                intermediateComponent("intermediateLibrary", dependency("library-js", "1.0")),
+            )
+        )
+
+        val consumer = jsConsumer(
+            repository,
+            dependencyCoordinates = listOf("$GROUP:intermediateLibrary:1.0", "$GROUP:library:2.0"),
+            targetName = RENAMED_JS_TARGET_NAME,
+        )
+
+        assertEquals(
+            mapOf(
+                "$GROUP:intermediateLibrary:1.0" to "jsApiElements-published",
+                "$GROUP:library:2.0" to "jsApiElements-published",
+            ).prettyPrinted,
+            consumer.jsCompileResolution(RENAMED_JS_TARGET_NAME).prettyPrinted,
+        )
+        assertEquals(
+            mapOf(
+                "$GROUP:intermediateLibrary:1.0" to "jsRuntimeElements-published",
+                "$GROUP:library:2.0" to "jsRuntimeElements-published",
+            ).prettyPrinted,
+            consumer.jsRuntimeResolution(RENAMED_JS_TARGET_NAME).prettyPrinted,
+        )
+    }
+
+    @Test
+    fun `legacy platform component is replaced by the kotlin archive component of a producer with a renamed js target`() {
+        val repository = generateMockRepository(
+            temporaryDirectory,
+            listOf(
+                legacyPlatformComponent("1.0", LEGACY_RENAMED_JS_MODULE),
+                kotlinArchiveComponent("2.0", LEGACY_RENAMED_JS_MODULE),
+                intermediateComponent("intermediateLibrary", dependency(LEGACY_RENAMED_JS_MODULE, "1.0")),
+            )
+        )
+
+        val consumer = jsConsumer(
+            repository,
+            dependencyCoordinates = listOf("$GROUP:intermediateLibrary:1.0", "$GROUP:library:2.0")
+        )
+
+        assertEquals(
+            mapOf(
+                "$GROUP:intermediateLibrary:1.0" to "jsApiElements-published",
+                "$GROUP:library:2.0" to "jsApiElements-published",
+            ).prettyPrinted,
+            consumer.jsCompileResolution().prettyPrinted,
+        )
+        assertEquals(
+            mapOf(
+                "$GROUP:intermediateLibrary:1.0" to "jsRuntimeElements-published",
+                "$GROUP:library:2.0" to "jsRuntimeElements-published",
+            ).prettyPrinted,
+            consumer.jsRuntimeResolution().prettyPrinted,
+        )
+    }
+
+    @Test
     fun `newest kotlin archive component wins over several legacy and several kotlin archive versions`() {
         val repository = generateMockRepository(
             temporaryDirectory,
@@ -146,6 +211,7 @@ class KotlinArchiveLegacyPlatformCapabilityTest {
     private fun jsConsumer(
         repository: File,
         dependencyCoordinates: List<String>,
+        targetName: String = DEFAULT_JS_TARGET_NAME,
     ): Project = buildProjectWithMPP(
         preApplyCode = {
             enableDefaultStdlibDependency(false)
@@ -154,33 +220,35 @@ class KotlinArchiveLegacyPlatformCapabilityTest {
     ) {
         repositories.maven { it.setUrl(repository) }
         kotlin {
-            js()
+            js(targetName)
             sourceSets.commonMain.dependencies {
                 dependencyCoordinates.forEach { implementation(it) }
             }
         }
     }.evaluate()
 
-    private fun Project.jsCompileResolution() =
-        multiplatformExtension.js().compilationConfiguration().resolveSelectedVariantNames()
+    private fun Project.jsCompileResolution(targetName: String = DEFAULT_JS_TARGET_NAME) =
+        jsTarget(targetName).compilationConfiguration().resolveSelectedVariantNames()
 
-    private fun Project.jsRuntimeResolution() =
-        multiplatformExtension.js().runtimeConfiguration().resolveSelectedVariantNames()
+    private fun Project.jsRuntimeResolution(targetName: String = DEFAULT_JS_TARGET_NAME) =
+        jsTarget(targetName).runtimeConfiguration().resolveSelectedVariantNames()
 
-    private fun legacyPlatformComponent(version: String) = jsGradleComponent(
-        module = "library-js",
+    private fun Project.jsTarget(targetName: String) = multiplatformExtension.targets.getByName(targetName)
+
+    private fun legacyPlatformComponent(version: String, legacyModule: String = LEGACY_JS_MODULE) = jsGradleComponent(
+        module = legacyModule,
         version = version,
         apiAttributes = kmpJsApiVariantAttributes,
         runtimeAttributes = kmpJsRuntimeVariantAttributes,
     )
 
-    private fun kotlinArchiveComponent(version: String) = jsGradleComponent(
+    private fun kotlinArchiveComponent(version: String, legacyModule: String = LEGACY_JS_MODULE) = jsGradleComponent(
         module = "library",
         version = version,
         apiAttributes = karJsApiVariantAttributes,
         runtimeAttributes = karJsRuntimeVariantAttributes,
         capabilities = listOf(
-            GradleMetadataComponent.Capability(GROUP, "library-js", version),
+            GradleMetadataComponent.Capability(GROUP, legacyModule, version),
             GradleMetadataComponent.Capability(GROUP, "library", version),
         ),
     )
@@ -239,6 +307,10 @@ class KotlinArchiveLegacyPlatformCapabilityTest {
 
     companion object {
         private const val GROUP = "kotlinArchiveTest"
+        private const val DEFAULT_JS_TARGET_NAME = "js"
+        private const val RENAMED_JS_TARGET_NAME = "custom"
+        private const val LEGACY_JS_MODULE = "library-js"
+        private const val LEGACY_RENAMED_JS_MODULE = "library-custom"
 
         private val karJsApiVariantAttributes =
             kmpJsApiVariantAttributes +

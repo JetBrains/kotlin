@@ -10,21 +10,13 @@ import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.serialization.Hash128Bits
 import org.jetbrains.kotlin.backend.common.serialization.cityHash128
 import org.jetbrains.kotlin.backend.common.serialization.cityHash64
-import org.jetbrains.kotlin.backend.wasm.MultimoduleCompileOptions
-import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
-import org.jetbrains.kotlin.backend.wasm.importedStringConstants
-import org.jetbrains.kotlin.backend.wasm.wasmStartExportName
+import org.jetbrains.kotlin.backend.wasm.*
 import org.jetbrains.kotlin.backend.wasm.utils.fitsLatin1
-import org.jetbrains.kotlin.backend.wasm.wasmInitializeExportName
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import org.jetbrains.kotlin.wasm.ir.*
-import org.jetbrains.kotlin.wasm.ir.WasmFunction
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
-import java.util.IdentityHashMap
-import kotlin.collections.MutableMap
-import kotlin.collections.mutableMapOf
-import kotlin.collections.set
+import java.util.*
 
 enum class ExceptionTagType { WASM_TAG, JS_TAG, TRAP }
 
@@ -171,9 +163,10 @@ class WasmCompiledModuleFragment(
             exports.addAll(it.exports)
         }
 
+        val isStdlibOrMonolith = multimoduleOptions?.stdlibModuleNameForImport == null
         val memories = createAndExportMemory(
             importWasmMemoryInsteadOfExport = importWasmMemoryInsteadOfExport,
-            isStdlibOrMonolith = multimoduleOptions?.stdlibModuleNameForImport == null,
+            isStdlibOrMonolith = isStdlibOrMonolith,
             definedDeclarations = definedDeclarations,
             exports = exports,
         )
@@ -201,12 +194,20 @@ class WasmCompiledModuleFragment(
 
         val masterInitFunction = createMasterInitFunction(
             definedDeclarations = definedDeclarations,
-            initializeUnit = multimoduleOptions?.initializeUnit ?: true
         )
 
         val globals = getGlobals(definedDeclarations)
 
-        val tags = getTags(definedDeclarations, exceptionTagType, useStackSwitching)
+        if (useStackSwitching) {
+            createContTypes(definedDeclarations, isStdlibOrMonolith)
+        }
+
+        val tags = getTags(
+            definedDeclarations = definedDeclarations,
+            exceptionTagType = exceptionTagType,
+            generateStackSwitchingTag =
+                useStackSwitching && isStdlibOrMonolith,
+        )
 
         val [importedTags, definedTags] = tags.partition { it.importPair != null }
 
@@ -276,7 +277,7 @@ class WasmCompiledModuleFragment(
     private fun getTags(
         definedDeclarations: DefinedDeclarationsResolver,
         exceptionTagType: ExceptionTagType,
-        useStackSwitching: Boolean,
+        generateStackSwitchingTag: Boolean,
     ): List<WasmTag> {
         val exceptionTag = when (exceptionTagType) {
             ExceptionTagType.TRAP -> null
@@ -300,14 +301,32 @@ class WasmCompiledModuleFragment(
             }
         }
 
-        val contTagType = useStackSwitching.takeIf { it }?.run {
+        val contTagType = if (generateStackSwitchingTag) {
             val kotlinAnyRefType = WasmRefNullType(Synthetics.HeapTypes.anyBuiltInType)
             val contTagFuncType = WasmFunctionType(listOf(kotlinAnyRefType), listOf())
-            definedDeclarations.contFunctionTypes[Synthetics.FunctionHeapTypes.wasmContFunctionType.arity] = contTagFuncType
-            WasmTag(Synthetics.FunctionHeapTypes.wasmContFunctionType)
-        }
+            definedDeclarations.functionTypes[Synthetics.FunctionHeapTypes.wasmContTagFuncType.type] = contTagFuncType
+            WasmTag(Synthetics.FunctionHeapTypes.wasmContTagFuncType)
+        } else null
 
         return listOfNotNull(exceptionTag, contTagType)
+    }
+
+    private fun createContTypes(definedDeclarations: DefinedDeclarationsResolver, isStdlibOrMonolith: Boolean) {
+        val boundContFuncType = WasmFunctionType(emptyList(), listOf(WasmRefNullType(Synthetics.HeapTypes.anyBuiltInType)))
+        definedDeclarations.functionTypes[Synthetics.FunctionHeapTypes.boundContFuncType.type] = boundContFuncType
+        definedDeclarations.gcTypes[Synthetics.HeapTypes.boundContType.type] =
+            WasmContType("cont_0", Synthetics.FunctionHeapTypes.boundContFuncType)
+
+        if (isStdlibOrMonolith) {
+            // Continuation types of `SuspendFunction{0,1,2}.invoke`
+            for (arity in 0..2) {
+                val funType = suspendFunctionInvokeWasmType(arity)
+                val funTypeSignature = getFunctionTypeSignature(funType)
+                definedDeclarations.functionTypes.putIfAbsent(funTypeSignature, funType)
+                definedDeclarations.gcTypes[getContTypeSignature(funType)] =
+                    WasmContType("cont_${arity + 2}", FunctionHeapTypeSymbol(funTypeSignature))
+            }
+        }
     }
 
     private fun getTypes(definedDeclarations: DefinedDeclarationsResolver): List<RecursiveTypeGroup> {
@@ -323,21 +342,12 @@ class WasmCompiledModuleFragment(
             }
         }
 
-        // Rebind cont function types to canonical (if found)
-        val contFunctionTypes = definedDeclarations.contFunctionTypes
-        for (contFunctionType in contFunctionTypes) {
-            val canonicalSignature = reversedFunctionTypeMap[contFunctionType.value] ?: continue
-            contFunctionTypes[contFunctionType.key] = allFunctionTypes.getValue(canonicalSignature)
-        }
-
         val heapTypeResolver: (WasmHeapType.Type) -> WasmTypeDeclaration = definedDeclarations::resolve
 
         val recursiveGroups = with(RecursiveGroupBuilder(heapTypeResolver)) {
             addTypes(definedDeclarations.gcTypes.values.toSet())
             addTypes(definedDeclarations.vTableGcTypes.values.toSet())
             addTypes(allFunctionTypes.values.toSet())
-            addTypes(definedDeclarations.contTypes.values.toSet())
-            addTypes(definedDeclarations.contFunctionTypes.values.toSet())
             build()
         }
 
@@ -485,14 +495,9 @@ class WasmCompiledModuleFragment(
 
     private fun createMasterInitFunction(
         definedDeclarations: DefinedDeclarationsResolver,
-        initializeUnit: Boolean,
     ): WasmFunction.Defined {
         val masterInitFunction = WasmFunction.Defined("_initializeModule", Synthetics.FunctionHeapTypes.parameterlessNoReturnFunctionType)
         with(WasmExpressionBuilder(masterInitFunction.instructions)) {
-            if (initializeUnit) {
-                buildCall(Synthetics.Functions.unitGetInstanceBuiltIn, serviceCodeLocation)
-            }
-
             buildCall(Synthetics.Functions.fieldInitializerFunction, serviceCodeLocation)
 
             if (definedDeclarations.functions.containsKey(Synthetics.Functions.associatedObjectGetter.value)) {
@@ -896,9 +901,6 @@ class WasmCompiledModuleFragment(
             putAllChecked(fragmentTypes.definedVTableGcTypes, resolver.vTableGcTypes, "vTableGcTypes")
             // functionTypes are deduplicated by Wasm signature structure, duplicates are expected and equivalent
             resolver.functionTypes.putAll(fragmentTypes.definedFunctionTypes)
-            // contTypes and contFunctionTypes are keyed by arity; duplicates across fragments are identical
-            resolver.contTypes.putAll(fragmentTypes.contTypes)
-            resolver.contFunctionTypes.putAll(fragmentTypes.contFunctionTypes)
         }
 
         rebindEquivalentFunctions(resolver.functions)

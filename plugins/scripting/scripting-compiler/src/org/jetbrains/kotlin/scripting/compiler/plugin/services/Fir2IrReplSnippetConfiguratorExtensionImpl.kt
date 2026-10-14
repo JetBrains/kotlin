@@ -16,15 +16,16 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
 import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.declarations.utils.originalReplSnippetSymbol
 import org.jetbrains.kotlin.fir.expressions.FirEmptyArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
 import org.jetbrains.kotlin.fir.expressions.builder.buildDelegatedConstructorCall
+import org.jetbrains.kotlin.fir.extensions.containingReplSnippet
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.providers.dependenciesSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.scopes.getDeclaredConstructors
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
@@ -40,13 +41,20 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrReplSnippet
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.symbols.IrReplSnippetSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.scripting.compiler.plugin.ReplSnippetConfigurationCodec
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SnippetArtifactMetadataCodec
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.buildSnippetArtifactMetadataFromFir
+import org.jetbrains.kotlin.scripting.compiler.plugin.irLowerings.importedSnippetsAttr
+import org.jetbrains.kotlin.scripting.compiler.plugin.irLowerings.replSnippetArtifactMetadataAttr
 import kotlin.script.experimental.api.ReplScriptingHostConfigurationKeys
 import kotlin.script.experimental.api.repl
+import kotlin.script.experimental.api.valueOrNull
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.util.PropertiesCollection
 
@@ -64,6 +72,8 @@ class Fir2IrReplSnippetConfiguratorExtensionImpl(
     private val hostConfiguration: ScriptingHostConfiguration,
 ) : Fir2IrReplSnippetConfiguratorExtension(session) {
 
+    private var cachedStateObjectIrClass: IrClass? = null
+
     @OptIn(SymbolInternals::class)
     override fun Fir2IrComponents.prepareSnippet(fir2IrVisitor: Fir2IrVisitor, firReplSnippet: FirReplSnippet, irSnippet: IrReplSnippet) {
         val propertiesFromState = hashMapOf<FirPropertySymbol, FirReplSnippetSymbol>()
@@ -71,15 +81,19 @@ class Fir2IrReplSnippetConfiguratorExtensionImpl(
         val classesFromState = hashMapOf<FirRegularClassSymbol, FirReplSnippetSymbol>()
         val usedOtherSnippets = HashSet<FirReplSnippetSymbol>()
 
+        // Same-batch snippets (including the current one) are regular same-module declarations and need no lazy copies.
+        @OptIn(SymbolInternals::class)
+        fun FirReplSnippetSymbol.isFromSameBatch(): Boolean = declarationStorage.getCachedIrReplSnippet(fir) != null
+
         CollectAccessToOtherState(
             session,
             propertiesFromState,
             functionsFromState,
             classesFromState,
-            usedOtherSnippets
+            usedOtherSnippets,
+            shouldCollectFrom = { !it.isFromSameBatch() }
         ).visitReplSnippet(firReplSnippet)
 
-        usedOtherSnippets.remove(firReplSnippet.symbol)
         usedOtherSnippets.forEach {
             val packageFragment = declarationStorage.getIrExternalPackageFragment(it.packageFqName(), it.moduleData)
             classifierStorage.createAndCacheEarlierSnippetClass(it, packageFragment)
@@ -134,25 +148,63 @@ class Fir2IrReplSnippetConfiguratorExtensionImpl(
             }
         }
 
-        val stateObject =
-            getStateObject(
-                irSnippet,
-                fir2IrVisitor,
-                createIfNotFound = hostConfiguration[ScriptingHostConfiguration.repl.replStateObjectFqName] == null &&
-                        hostConfiguration[ScriptingHostConfiguration.repl.firReplHistoryProvider]!!.isFirstSnippet(firReplSnippet.symbol)
-            )
+        val stateObject = getStateObject(irSnippet, fir2IrVisitor)
 
         irSnippet.stateObject = stateObject.symbol
+
+        irSnippet.importedSnippetsAttr = collectImportedSameBatchSnippets(firReplSnippet).takeIf { it.isNotEmpty() }
+
+        saveSnippetArtifactMetadataIfStateless(firReplSnippet, irSnippet)
+    }
+
+    /**
+     * The importing snippet evaluates the whole transitive closure of its imports, which are deduplicated and registered
+     * in the history in the dependency order by the REPL compiler, so a script imported several times is evaluated once.
+     * The imported snippets of the earlier batches have no IR in the current one.
+     */
+    @OptIn(SymbolInternals::class)
+    private fun Fir2IrComponents.collectImportedSameBatchSnippets(firReplSnippet: FirReplSnippet): List<IrReplSnippetSymbol> {
+        val historyProvider = hostConfiguration[ScriptingHostConfiguration.repl.firReplHistoryProvider] ?: return emptyList()
+        if (historyProvider.isImportedSnippet(firReplSnippet.symbol)) return emptyList()
+        return historyProvider.getSnippets().mapNotNull { snippetSymbol ->
+            if (!historyProvider.isImportedSnippet(snippetSymbol)) return@mapNotNull null
+            declarationStorage.getCachedIrReplSnippet(snippetSymbol.fir)?.symbol
+        }
+    }
+
+    private fun saveSnippetArtifactMetadataIfStateless(firReplSnippet: FirReplSnippet, irSnippet: IrReplSnippet) {
+        val historyProvider = hostConfiguration[ScriptingHostConfiguration.repl.firReplHistoryProvider]
+        if (historyProvider !is ClasspathBackedFirReplHistoryProvider) return
+
+        val metadata = buildSnippetArtifactMetadataFromFir(
+            firSnippet = firReplSnippet,
+            session = session,
+            priorSnippetClassId = historyProvider.predecessorClassIdOf(firReplSnippet.symbol),
+            serializedCompilationConfiguration = serializedCompilationConfigurationOf(firReplSnippet),
+        )
+        irSnippet.replSnippetArtifactMetadataAttr = SnippetArtifactMetadataCodec.encode(metadata)
+    }
+
+    private fun serializedCompilationConfigurationOf(firReplSnippet: FirReplSnippet): ByteArray? {
+        val sourceFile = session.firProvider.getFirReplSnippetContainerFile(firReplSnippet.symbol)?.sourceFile ?: return null
+        val configuration = getOrLoadConfiguration(session, sourceFile)?.valueOrNull() ?: return null
+        return ReplSnippetConfigurationCodec.encode(configuration)
     }
 
     private fun Fir2IrComponents.getOrBuildActualParent(
         symbol: FirBasedSymbol<*>, parentClassOrSnippet: IrClass, irSnippet: IrReplSnippet
     ): IrClass =
         symbol.getContainingClassSymbol()?.let {
-            if (it is FirRegularClassSymbol && it.origin != FirDeclarationOrigin.Synthetic.ReplContainerClass)
+            if (it is FirRegularClassSymbol &&
+                it.origin != FirDeclarationOrigin.Synthetic.ReplContainerClass &&
+                !it.isReconstructedSnippetContainerFor(symbol)
+            )
                 createClassFromOtherSnippet(it, parentClassOrSnippet, irSnippet)
             else null
         } ?: parentClassOrSnippet
+
+    private fun FirRegularClassSymbol.isReconstructedSnippetContainerFor(accessedSymbol: FirBasedSymbol<*>): Boolean =
+        session.containingReplSnippet(accessedSymbol)?.snippetClassSymbol == this
 
     @OptIn(SymbolInternals::class, DelicateDeclarationStorageApi::class)
     private fun Fir2IrComponents.createClassFromOtherSnippet(
@@ -176,15 +228,16 @@ class Fir2IrReplSnippetConfiguratorExtensionImpl(
     private fun Fir2IrComponents.getStateObject(
         irSnippet: IrReplSnippet,
         fir2IrVisitor: Fir2IrVisitor,
-        createIfNotFound: Boolean,
     ): IrClass {
+        cachedStateObjectIrClass?.let { return it }
+
         fun fqn2cid(s: String): ClassId {
             val fqn = FqName(s)
             return ClassId(fqn.parent(), fqn.shortName())
         }
 
-        val classId = hostConfiguration[ScriptingHostConfiguration.repl.replStateObjectFqName]?.let(::fqn2cid)
-            ?: ClassId(irSnippet.getPackageFragment().packageFqName, replStateDefaultName)
+        val explicitClassId = hostConfiguration[ScriptingHostConfiguration.repl.replStateObjectFqName]?.let(::fqn2cid)
+        val classId = explicitClassId ?: ClassId(irSnippet.getPackageFragment().packageFqName, replStateDefaultName)
 
         val firReplStateFromDependencies =
             (session.dependenciesSymbolProvider.getClassLikeSymbolByClassId(classId) as? FirRegularClassSymbol)?.fir
@@ -247,7 +300,7 @@ class Fir2IrReplSnippetConfiguratorExtensionImpl(
             }
         }
 
-        return if (firReplStateFromDependencies == null && createIfNotFound) {
+        return if (firReplStateFromDependencies == null && explicitClassId == null) {
             classifierStorage.createAndCacheIrClass(firReplStateObject, irSnippet.parent).also { irReplStateObject ->
                 classifiersGenerator.processClassHeader(firReplStateObject, irReplStateObject)
                 declarationStorage.createAndCacheIrConstructor(
@@ -260,7 +313,7 @@ class Fir2IrReplSnippetConfiguratorExtensionImpl(
             val irReplStateParent =
                 declarationStorage.getIrExternalPackageFragment(firReplStateObject.symbol.classId.packageFqName, session.moduleData)
             lazyDeclarationsGenerator.createIrLazyClass(firReplStateObject, irReplStateParent, IrClassSymbolImpl())
-        }
+        }.also { cachedStateObjectIrClass = it }
     }
 
     companion object {
@@ -276,19 +329,16 @@ private class CollectAccessToOtherState(
     val functions: MutableMap<FirNamedFunctionSymbol, FirReplSnippetSymbol>,
     val classes: MutableMap<FirRegularClassSymbol, FirReplSnippetSymbol>,
     val snippets: MutableSet<FirReplSnippetSymbol>,
+    val shouldCollectFrom: (FirReplSnippetSymbol) -> Boolean,
 ) : FirDefaultVisitorVoid() {
 
     private fun storeAccessedSymbol(symbol: FirBasedSymbol<FirDeclaration>) {
-
-        @OptIn(SymbolInternals::class)
-        fun FirBasedSymbol<FirDeclaration>.getOriginalSnippetSymbol(): FirReplSnippetSymbol? = fir.originalReplSnippetSymbol
-
-        val originalSnippet = symbol.getOriginalSnippetSymbol() ?: return
-        snippets.add(originalSnippet)
+        val containingSnippet = session.containingReplSnippet(symbol)?.takeIf(shouldCollectFrom) ?: return
+        snippets.add(containingSnippet)
         when (symbol) {
-            is FirPropertySymbol -> properties[symbol] = originalSnippet
-            is FirNamedFunctionSymbol -> functions[symbol] = originalSnippet
-            is FirRegularClassSymbol -> classes[symbol] = originalSnippet
+            is FirPropertySymbol -> properties[symbol] = containingSnippet
+            is FirNamedFunctionSymbol -> functions[symbol] = containingSnippet
+            is FirRegularClassSymbol -> classes[symbol] = containingSnippet
             else -> {}
         }
     }

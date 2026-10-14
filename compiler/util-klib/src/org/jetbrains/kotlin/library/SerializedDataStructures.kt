@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.library
 
 class SerializedMetadata(
-    val module: ByteArray,
+    val module: ByteArray?,
     val fragments: List<List<ByteArray>>,
     val fragmentNames: List<String>,
     val metadataVersion: IntArray,
@@ -29,7 +29,10 @@ class SerializedIrFile(
     val fileEntries: ByteArray?,
 )
 
+class SerializedSignatureIndex(val signatureIndex: ByteArray)
+
 class SerializedIrModule(
+    val signatureIndex: SerializedSignatureIndex?,
     val files: Collection<SerializedIrFile>,
     val filesWithPreparedInlinableFunctions: Collection<SerializedIrFile>,
 )

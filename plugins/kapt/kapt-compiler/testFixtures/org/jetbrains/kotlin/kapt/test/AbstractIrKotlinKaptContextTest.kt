@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.kapt.test.KaptTestDirectives.MAP_DIAGNOSTIC_LOCATION
 import org.jetbrains.kotlin.kapt.test.handlers.KaptAnnotationProcessingHandler
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.FirParser
+import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_PARSER
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
@@ -31,6 +33,7 @@ abstract class AbstractIrKotlinKaptContextTest : AbstractKotlinCompilerTest() {
 
         defaultDirectives {
             +MAP_DIAGNOSTIC_LOCATIONS
+            FIR_PARSER with FirParser.LightTree
         }
 
         useConfigurators(

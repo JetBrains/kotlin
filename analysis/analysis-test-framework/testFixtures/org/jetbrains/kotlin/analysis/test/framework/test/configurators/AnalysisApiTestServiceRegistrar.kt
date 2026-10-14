@@ -8,10 +8,10 @@ package org.jetbrains.kotlin.analysis.test.framework.test.configurators
 import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
-import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.AnalysisApiServiceRegistrar
-import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.registerApplicationServices
-import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.registerProjectExtensionPoints
-import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.registerProjectServices
+import org.jetbrains.kotlin.analysis.api.standalone.fir.projectStructure.AnalysisApiServiceRegistrar
+import org.jetbrains.kotlin.analysis.api.standalone.fir.projectStructure.registerApplicationServices
+import org.jetbrains.kotlin.analysis.api.standalone.fir.projectStructure.registerProjectExtensionPoints
+import org.jetbrains.kotlin.analysis.api.standalone.fir.projectStructure.registerProjectServices
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.impl.testConfiguration
 import org.jetbrains.kotlin.test.services.TestServices

@@ -14,7 +14,9 @@ private fun WasmOp.pureStacklessInstruction() = when (this) {
 }
 
 private fun WasmOp.isOutCfgNode() = when (this) {
-    WasmOp.UNREACHABLE, WasmOp.RETURN, WasmOp.THROW, WasmOp.THROW_REF, WasmOp.RETHROW, WasmOp.BR, WasmOp.BR_TABLE -> true
+    WasmOp.UNREACHABLE, WasmOp.RETURN, WasmOp.THROW, WasmOp.THROW_REF, WasmOp.RETHROW, WasmOp.BR, WasmOp.BR_TABLE,
+    WasmOp.RETURN_CALL, WasmOp.RETURN_CALL_INDIRECT, WasmOp.RETURN_CALL_REF
+        -> true
     else -> false
 }
 

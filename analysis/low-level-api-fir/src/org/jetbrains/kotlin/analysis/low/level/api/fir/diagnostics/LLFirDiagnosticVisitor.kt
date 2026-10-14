@@ -12,16 +12,12 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getResolutionFacade
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.forEachDeclaration
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.scriptOrReplSnippet
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.script
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContextForProvider
 import org.jetbrains.kotlin.fir.analysis.collectors.CheckerRunningDiagnosticCollectorVisitor
 import org.jetbrains.kotlin.fir.analysis.collectors.DiagnosticCollectorComponents
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.expressions.FirReplDeclarationReference
-import org.jetbrains.kotlin.fir.expressions.FirReplExpressionReference
-import org.jetbrains.kotlin.fir.expressions.FirReplPropertyDelegate
-import org.jetbrains.kotlin.fir.expressions.FirReplPropertyInitializer
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -90,26 +86,6 @@ internal open class LLFirDiagnosticVisitor(
         super.visitCodeFragment(codeFragment, data)
     }
 
-    override fun visitReplExpressionReference(replExpressionReference: FirReplExpressionReference, data: Nothing?) {
-        // Treat moved initializers/delegates as a part of the original property
-        replExpressionReference.expressionRef.value.accept(this, data)
-    }
-
-    /** @see visitReplExpressionReference */
-    override fun visitReplPropertyDelegate(replPropertyDelegate: FirReplPropertyDelegate, data: Nothing?) {
-        // Ignore moved delegates since they should be treated as part of the original property
-    }
-
-    /** @see visitReplExpressionReference */
-    override fun visitReplPropertyInitializer(replPropertyInitializer: FirReplPropertyInitializer, data: Nothing?) {
-        // Ignore moved initializers since they should be treated as part of the original property
-    }
-
-    /** @see visitReplExpressionReference */
-    override fun visitReplDeclarationReference(replDeclarationReference: FirReplDeclarationReference, data: Nothing?) {
-        // Ignore moved references since they are useless
-    }
-
     /**
      * File and class checkers may report diagnostics on top-level declarations and class members, such as conflicting overload errors.
      * Because we are collecting diagnostics for each structure element separately, this visitor will not visit these nested declarations by
@@ -132,9 +108,9 @@ internal open class LLFirDiagnosticVisitor(
         val declarationContainer = when (element) {
             // Script `FirFile`s can be checked by file checkers, which report diagnostics on the declarations inside the `FirScript`, so we
             // have to unwrap the script from the file to commit the diagnostics on the script's declarations.
-            is FirFile -> element.scriptOrReplSnippet ?: element
+            is FirFile -> element.script ?: element
 
-            is FirScript, is FirRegularClass, is FirReplSnippet -> element
+            is FirScript, is FirRegularClass -> element
             else -> return
         }
 

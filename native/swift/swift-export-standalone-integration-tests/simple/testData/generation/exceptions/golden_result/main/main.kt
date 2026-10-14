@@ -6,7 +6,7 @@ import kotlinx.cinterop.*
 
 @ExportedBridge("__root___Object_init_allocate")
 public fun __root___Object_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<Object>() }
+    val _result = kotlin.native.internal.createUninitializedInstance<Object>()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -16,8 +16,8 @@ public fun __root___Object_init_initialize__TypesOfArguments__Swift_UnsafeMutabl
     val __arg = arg
     val ____error = __error
     try {
-        val _result = run { kotlin.native.internal.initInstance(____kt, Object(__arg)) }
-        return run { _result; true }
+        kotlin.native.internal.initInstance(____kt, Object(__arg))
+        return true
     } catch (error: Throwable) {
         ____error.value = StableRef.create(error).asCPointer()
         return false
@@ -30,8 +30,8 @@ public fun __root___Object_init_initialize__TypesOfArguments__Swift_UnsafeMutabl
     val __arg = arg
     val ____error = __error
     try {
-        val _result = run { kotlin.native.internal.initInstance(____kt, Object(__arg)) }
-        return run { _result; true }
+        kotlin.native.internal.initInstance(____kt, Object(__arg))
+        return true
     } catch (error: Throwable) {
         ____error.value = StableRef.create(error).asCPointer()
         return false
@@ -44,8 +44,8 @@ public fun __root___Object_init_initialize__TypesOfArguments__Swift_UnsafeMutabl
     val __arg = arg
     val ____error = __error
     try {
-        val _result = run { kotlin.native.internal.initInstance(____kt, Object(__arg)) }
-        return run { _result; true }
+        kotlin.native.internal.initInstance(____kt, Object(__arg))
+        return true
     } catch (error: Throwable) {
         ____error.value = StableRef.create(error).asCPointer()
         return false
@@ -58,8 +58,8 @@ public fun __root___Object_init_initialize__TypesOfArguments__Swift_UnsafeMutabl
     val __arg = arg
     val ____error = __error
     try {
-        val _result = run { kotlin.native.internal.initInstance(____kt, Object(__arg)) }
-        return run { _result; true }
+        kotlin.native.internal.initInstance(____kt, Object(__arg))
+        return true
     } catch (error: Throwable) {
         ____error.value = StableRef.create(error).asCPointer()
         return false
@@ -72,8 +72,8 @@ public fun __root___Object_init_initialize__TypesOfArguments__Swift_UnsafeMutabl
     val __arg = kotlin.native.internal.ref.dereferenceExternalRCRef(arg) as kotlin.Any
     val ____error = __error
     try {
-        val _result = run { kotlin.native.internal.initInstance(____kt, Object(__arg)) }
-        return run { _result; true }
+        kotlin.native.internal.initInstance(____kt, Object(__arg))
+        return true
     } catch (error: Throwable) {
         ____error.value = StableRef.create(error).asCPointer()
         return false
@@ -86,8 +86,8 @@ public fun __root___Object_init_initialize__TypesOfArguments__Swift_UnsafeMutabl
     val __arg = if (arg == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(arg) as kotlin.Any
     val ____error = __error
     try {
-        val _result = run { kotlin.native.internal.initInstance(____kt, Object(__arg)) }
-        return run { _result; true }
+        kotlin.native.internal.initInstance(____kt, Object(__arg))
+        return true
     } catch (error: Throwable) {
         ____error.value = StableRef.create(error).asCPointer()
         return false
@@ -100,8 +100,8 @@ public fun __root___Object_init_initialize__TypesOfArguments__Swift_UnsafeMutabl
     val __arg = kotlin.native.internal.ref.dereferenceExternalRCRef(arg) as Object
     val ____error = __error
     try {
-        val _result = run { kotlin.native.internal.initInstance(____kt, Object(__arg)) }
-        return run { _result; true }
+        kotlin.native.internal.initInstance(____kt, Object(__arg))
+        return true
     } catch (error: Throwable) {
         ____error.value = StableRef.create(error).asCPointer()
         return false
@@ -112,7 +112,7 @@ public fun __root___Object_init_initialize__TypesOfArguments__Swift_UnsafeMutabl
 public fun __root___throwing_fun_any(_out_error: kotlinx.cinterop.COpaquePointerVar): kotlin.native.internal.NativePtr {
     val ___out_error = _out_error
     try {
-        val _result = run { throwing_fun_any() }
+        val _result = throwing_fun_any()
         return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
     } catch (error: Throwable) {
         ___out_error.value = StableRef.create(error).asCPointer()
@@ -125,7 +125,7 @@ public fun __root___throwing_fun_any__TypesOfArguments__anyU20KotlinRuntimeSuppo
     val __arg = kotlin.native.internal.ref.dereferenceExternalRCRef(arg) as kotlin.Any
     val ___out_error = _out_error
     try {
-        val _result = run { throwing_fun_any(__arg) }
+        val _result = throwing_fun_any(__arg)
         return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
     } catch (error: Throwable) {
         ___out_error.value = StableRef.create(error).asCPointer()
@@ -137,7 +137,7 @@ public fun __root___throwing_fun_any__TypesOfArguments__anyU20KotlinRuntimeSuppo
 public fun __root___throwing_fun_boolean(_out_error: kotlinx.cinterop.COpaquePointerVar): Boolean {
     val ___out_error = _out_error
     try {
-        val _result = run { throwing_fun_boolean() }
+        val _result = throwing_fun_boolean()
         return _result
     } catch (error: Throwable) {
         ___out_error.value = StableRef.create(error).asCPointer()
@@ -150,7 +150,7 @@ public fun __root___throwing_fun_boolean__TypesOfArguments__Swift_Bool__(arg: Bo
     val __arg = arg
     val ___out_error = _out_error
     try {
-        val _result = run { throwing_fun_boolean(__arg) }
+        val _result = throwing_fun_boolean(__arg)
         return _result
     } catch (error: Throwable) {
         ___out_error.value = StableRef.create(error).asCPointer()
@@ -162,7 +162,7 @@ public fun __root___throwing_fun_boolean__TypesOfArguments__Swift_Bool__(arg: Bo
 public fun __root___throwing_fun_char(_out_error: kotlinx.cinterop.COpaquePointerVar): Char {
     val ___out_error = _out_error
     try {
-        val _result = run { throwing_fun_char() }
+        val _result = throwing_fun_char()
         return _result
     } catch (error: Throwable) {
         ___out_error.value = StableRef.create(error).asCPointer()
@@ -175,7 +175,7 @@ public fun __root___throwing_fun_char__TypesOfArguments__Swift_Unicode_UTF16_Cod
     val __arg = arg
     val ___out_error = _out_error
     try {
-        val _result = run { throwing_fun_char(__arg) }
+        val _result = throwing_fun_char(__arg)
         return _result
     } catch (error: Throwable) {
         ___out_error.value = StableRef.create(error).asCPointer()
@@ -187,7 +187,7 @@ public fun __root___throwing_fun_char__TypesOfArguments__Swift_Unicode_UTF16_Cod
 public fun __root___throwing_fun_double(_out_error: kotlinx.cinterop.COpaquePointerVar): Double {
     val ___out_error = _out_error
     try {
-        val _result = run { throwing_fun_double() }
+        val _result = throwing_fun_double()
         return _result
     } catch (error: Throwable) {
         ___out_error.value = StableRef.create(error).asCPointer()
@@ -200,7 +200,7 @@ public fun __root___throwing_fun_double__TypesOfArguments__Swift_Double__(arg: D
     val __arg = arg
     val ___out_error = _out_error
     try {
-        val _result = run { throwing_fun_double(__arg) }
+        val _result = throwing_fun_double(__arg)
         return _result
     } catch (error: Throwable) {
         ___out_error.value = StableRef.create(error).asCPointer()
@@ -212,7 +212,7 @@ public fun __root___throwing_fun_double__TypesOfArguments__Swift_Double__(arg: D
 public fun __root___throwing_fun_int(_out_error: kotlinx.cinterop.COpaquePointerVar): Int {
     val ___out_error = _out_error
     try {
-        val _result = run { throwing_fun_int() }
+        val _result = throwing_fun_int()
         return _result
     } catch (error: Throwable) {
         ___out_error.value = StableRef.create(error).asCPointer()
@@ -225,7 +225,7 @@ public fun __root___throwing_fun_int__TypesOfArguments__Swift_Int32__(arg: Int, 
     val __arg = arg
     val ___out_error = _out_error
     try {
-        val _result = run { throwing_fun_int(__arg) }
+        val _result = throwing_fun_int(__arg)
         return _result
     } catch (error: Throwable) {
         ___out_error.value = StableRef.create(error).asCPointer()
@@ -237,7 +237,7 @@ public fun __root___throwing_fun_int__TypesOfArguments__Swift_Int32__(arg: Int, 
 public fun __root___throwing_fun_never(_out_error: kotlinx.cinterop.COpaquePointerVar): Boolean {
     val ___out_error = _out_error
     try {
-        val _result = run { throwing_fun_never() }
+        val _result = throwing_fun_never()
         return _result
     } catch (error: Throwable) {
         ___out_error.value = StableRef.create(error).asCPointer()
@@ -249,7 +249,7 @@ public fun __root___throwing_fun_never(_out_error: kotlinx.cinterop.COpaquePoint
 public fun __root___throwing_fun_nullable(_out_error: kotlinx.cinterop.COpaquePointerVar): kotlin.native.internal.NativePtr {
     val ___out_error = _out_error
     try {
-        val _result = run { throwing_fun_nullable() }
+        val _result = throwing_fun_nullable()
         return if (_result == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
     } catch (error: Throwable) {
         ___out_error.value = StableRef.create(error).asCPointer()
@@ -262,7 +262,7 @@ public fun __root___throwing_fun_nullable__TypesOfArguments__Swift_Optional_anyU
     val __arg = if (arg == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(arg) as kotlin.Any
     val ___out_error = _out_error
     try {
-        val _result = run { throwing_fun_nullable(__arg) }
+        val _result = throwing_fun_nullable(__arg)
         return if (_result == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
     } catch (error: Throwable) {
         ___out_error.value = StableRef.create(error).asCPointer()
@@ -274,7 +274,7 @@ public fun __root___throwing_fun_nullable__TypesOfArguments__Swift_Optional_anyU
 public fun __root___throwing_fun_object(_out_error: kotlinx.cinterop.COpaquePointerVar): kotlin.native.internal.NativePtr {
     val ___out_error = _out_error
     try {
-        val _result = run { throwing_fun_object() }
+        val _result = throwing_fun_object()
         return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
     } catch (error: Throwable) {
         ___out_error.value = StableRef.create(error).asCPointer()
@@ -287,7 +287,7 @@ public fun __root___throwing_fun_object__TypesOfArguments__anyU20KotlinRuntimeSu
     val __arg = kotlin.native.internal.ref.dereferenceExternalRCRef(arg) as kotlin.Any
     val ___out_error = _out_error
     try {
-        val _result = run { throwing_fun_object(__arg) }
+        val _result = throwing_fun_object(__arg)
         return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
     } catch (error: Throwable) {
         ___out_error.value = StableRef.create(error).asCPointer()
@@ -299,8 +299,8 @@ public fun __root___throwing_fun_object__TypesOfArguments__anyU20KotlinRuntimeSu
 public fun __root___throwing_fun_void(_out_error: kotlinx.cinterop.COpaquePointerVar): Boolean {
     val ___out_error = _out_error
     try {
-        val _result = run { throwing_fun_void() }
-        return run { _result; true }
+        throwing_fun_void()
+        return true
     } catch (error: Throwable) {
         ___out_error.value = StableRef.create(error).asCPointer()
         return false

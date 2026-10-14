@@ -88,7 +88,7 @@ MyClass.class:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/MyClass, fqName=MyClass, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=MyClass, superNames=[]]
+    CLASS[classId=/MyClass, fqName=MyClass, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=MyClass, superNames=[]]
       MODIFIER_LIST[public open]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=MyClass]
         MODIFIER_LIST[public]
@@ -100,7 +100,7 @@ MyOtherClass.class:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/MyOtherClass, fqName=MyOtherClass, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=MyOtherClass, superNames=[]]
+    CLASS[classId=/MyOtherClass, fqName=MyOtherClass, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=MyOtherClass, superNames=[]]
       MODIFIER_LIST[public open]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=MyOtherClass]
         MODIFIER_LIST[public]
@@ -112,7 +112,7 @@ SomeType.class:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/SomeType, fqName=SomeType, isClsStubCompiledToJvmDefaultImplementation=true, isInterface=true, isLocal=false, isTopLevel=true, name=SomeType, superNames=[]]
+    CLASS[classId=/SomeType, fqName=SomeType, isClsStubCompiledToJvmDefaultImplementation=true, isInterface=true, isTopLevel=true, name=SomeType, superNames=[]]
       MODIFIER_LIST[public]
       CLASS_BODY
 
@@ -121,6 +121,6 @@ SuperType.class:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/SuperType, fqName=SuperType, isClsStubCompiledToJvmDefaultImplementation=true, isInterface=true, isLocal=false, isTopLevel=true, name=SuperType, superNames=[]]
+    CLASS[classId=/SuperType, fqName=SuperType, isClsStubCompiledToJvmDefaultImplementation=true, isInterface=true, isTopLevel=true, name=SuperType, superNames=[]]
       MODIFIER_LIST[public]
       CLASS_BODY

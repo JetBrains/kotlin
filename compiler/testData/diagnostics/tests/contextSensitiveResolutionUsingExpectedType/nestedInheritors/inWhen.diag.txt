@@ -1,5 +1,1 @@
 /inWhen.kt:34:21: error: Unresolved reference 'OtherInheritor'.
-
-/inWhen.kt:55:21: error: Argument type mismatch: actual type is 'OtherClass.C', but 'OtherClass.Base' was expected.
-
-/inWhen.kt:79:21: error: Unresolved reference 'NestedInheritorOfOpenClass'.

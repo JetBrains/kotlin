@@ -21,6 +21,7 @@ public final class org/jetbrains/kotlin/config/JvmTarget : java/lang/Enum, org/j
 	public static final field JVM_25 Lorg/jetbrains/kotlin/config/JvmTarget;
 	public static final field JVM_26 Lorg/jetbrains/kotlin/config/JvmTarget;
 	public static final field JVM_27 Lorg/jetbrains/kotlin/config/JvmTarget;
+	public static final field JVM_28 Lorg/jetbrains/kotlin/config/JvmTarget;
 	public static final field JVM_9 Lorg/jetbrains/kotlin/config/JvmTarget;
 	public static final fun fromString (Ljava/lang/String;)Lorg/jetbrains/kotlin/config/JvmTarget;
 	public fun getDescription ()Ljava/lang/String;
@@ -35,6 +36,10 @@ public final class org/jetbrains/kotlin/config/JvmTarget$Companion {
 	public final fun fromString (Ljava/lang/String;)Lorg/jetbrains/kotlin/config/JvmTarget;
 	public final fun getDescription (I)Ljava/lang/String;
 	public final fun supportedValues ()Ljava/util/List;
+}
+
+public final class org/jetbrains/kotlin/config/JvmTargetKt {
+	public static final fun isJvmTargetValhallaCompatible (Lorg/jetbrains/kotlin/config/JvmTarget;Z)Z
 }
 
 public final class org/jetbrains/kotlin/platform/jvm/JdkPlatform : org/jetbrains/kotlin/platform/jvm/JvmPlatform {

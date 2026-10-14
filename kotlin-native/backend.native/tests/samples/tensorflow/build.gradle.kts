@@ -43,5 +43,5 @@ val downloadTensorflow = tasks.create("downloadTensorflow", Exec::class) {
     commandLine("./downloadTensorflow.sh")
 }
 
-val tensorflow: KotlinNativeTarget by kotlin.targets
+val tensorflow = kotlin.targets.getByName<KotlinNativeTarget>("tensorflow")
 tasks[tensorflow.compilations["main"].cinterops["tensorflow"].interopProcessingTaskName].dependsOn(downloadTensorflow)

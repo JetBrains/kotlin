@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.TrustInsights
+
+modules = TrustInsights
+compilerOpts = -framework TrustInsights
+linkerOpts = -framework TrustInsights
+#Disabled: Swift-only framework

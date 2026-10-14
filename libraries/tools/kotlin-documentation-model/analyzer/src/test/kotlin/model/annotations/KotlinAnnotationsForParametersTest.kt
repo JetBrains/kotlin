@@ -8,11 +8,13 @@ import org.jetbrains.dokka.base.signatures.KotlinSignatureUtils.annotations
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.utilities.cast
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInAnalysisApi
 import utils.AbstractModelTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
+@MustRunOnChangesInAnalysisApi
 class KotlinAnnotationsForParametersTest : AbstractModelTest("/src/main/kotlin/annotations/Test.kt", "annotations") {
     @Test
     fun `generic receiver with annotations`() {

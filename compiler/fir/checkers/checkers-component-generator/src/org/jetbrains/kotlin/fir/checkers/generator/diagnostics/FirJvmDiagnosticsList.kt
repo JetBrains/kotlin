@@ -57,6 +57,9 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         val JVM_EXPOSE_BOXED_CANNOT_EXPOSE_PRIVATE by error<PsiElement>()
         val JVM_EXPOSE_BOXED_CANNOT_EXPOSE_SEALED_CONSTRUCTOR by error<PsiElement>()
         val JVM_EXPOSE_BOXED_CAN_BE_REPLACED_WITH_JVM_NAME by warning<PsiElement>()
+        val JVM_EXPOSE_BOXED_NAME_IS_NOT_JAVA_IDENTIFIER by warning<PsiElement> {
+            parameter<String>("name")
+        }
 
         val WRONG_TYPE_FOR_JAVA_OVERRIDE by warning<PsiElement>(PositioningStrategy.OVERRIDE_MODIFIER) {
             parameter<FirCallableSymbol<*>>("override")
@@ -150,6 +153,7 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         val SYNCHRONIZED_IN_ANNOTATION by deprecationError<KtAnnotationEntry>(ForbidJvmAnnotationsOnAnnotationParameters)
         val SYNCHRONIZED_ON_INLINE by warning<KtAnnotationEntry>()
         val SYNCHRONIZED_ON_VALUE_CLASS by deprecationError<KtAnnotationEntry>(ProhibitSynchronizationByValueClassesAndPrimitives)
+        val SYNCHRONIZED_ON_WILL_BECOME_VALUE_CLASS by error<KtAnnotationEntry>()
         val SYNCHRONIZED_ON_SUSPEND_ERROR by error<KtAnnotationEntry>()
         val OVERLOADS_WITHOUT_DEFAULT_ARGUMENTS by warning<KtAnnotationEntry>()
         val OVERLOADS_ABSTRACT by error<KtAnnotationEntry>()
@@ -181,6 +185,9 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
             parameter<Collection<String>>("correspondingKotlinTargets")
         }
         val ANNOTATION_TARGETS_ONLY_IN_JAVA by warning<KtAnnotationEntry>()
+        val ANNOTATION_TARGETS_NON_EXISTENT_ACCESSOR by warning<KtAnnotationEntry> {
+            parameter<String>("declarationName")
+        }
         val RUNTIME_ANNOTATION_ON_LAMBDA_IS_NOT_RETAINED by warning<KtAnnotationEntry> {
             parameter<FirClassLikeSymbol<*>>("annotationClass")
         }
@@ -284,9 +291,6 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         }
         val INAPPLICABLE_JVM_FIELD_WARNING by warning<KtAnnotationEntry> {
             parameter<String>("message")
-        }
-        val IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE by warning<KtElement> {
-            parameter<ConeKotlinType>("type")
         }
         val SYNCHRONIZED_BLOCK_ON_JAVA_VALUE_BASED_CLASS by warning<KtElement> {
             parameter<ConeKotlinType>("type")

@@ -81,7 +81,7 @@ internal class TypeParameterTable private constructor(
             classLoader: ClassLoader,
         ): TypeParameterTable {
             val kTypeParameters = kmTypeParameters.map { km ->
-                val unbound = (container as? ReflectKCallable<*>)?.unbindAllReceivers() ?: container
+                val unbound = (container as? ReflectKCallable<*>)?.unbind() ?: container
                 KTypeParameterImpl(unbound, km.name, km.variance.toKVariance(), km.isReified)
             }
             val map = kmTypeParameters.withIndex().associate { (index, km) -> km.id to kTypeParameters[index] }
@@ -324,10 +324,10 @@ private fun KmProperty.getManglingSuffix(container: KDeclarationContainerImpl): 
 }
 
 internal fun createUnboundProperty(property: KmProperty, container: KDeclarationContainerImpl): KotlinKProperty<*> {
-    @OptIn(ExperimentalCompanionBlocksAndExtensions::class)
+    @OptIn(ExperimentalCompanionBlocks::class)
     val receiverCount = when {
         property.contextParameters.isNotEmpty() -> -1
-        property.isStatic -> 0
+        property.isCompanionBlockMember -> 0
         else ->
             (if (property.receiverParameterType != null) 1 else 0) +
                     (if (container is KClassImpl<*>) 1 else 0)
@@ -337,15 +337,15 @@ internal fun createUnboundProperty(property: KmProperty, container: KDeclaration
     return when {
         !property.isVar -> when (receiverCount) {
             -1 -> KotlinKPropertyN(container, signature, boundReceiver, property, KCallableOverriddenStorage.EMPTY)
-            0 -> KotlinKProperty0(container, signature, boundReceiver, property, KCallableOverriddenStorage.EMPTY)
-            1 -> KotlinKProperty1<Any?, Any?>(container, signature, boundReceiver, property, KCallableOverriddenStorage.EMPTY)
+            0 -> KotlinKProperty0(container, signature, boundReceiver, rawBoundContextArguments = emptyList(), property, KCallableOverriddenStorage.EMPTY)
+            1 -> KotlinKProperty1<Any?, Any?>(container, signature, boundReceiver, rawBoundContextArguments = emptyList(), property, KCallableOverriddenStorage.EMPTY)
             2 -> KotlinKProperty2<Any?, Any?, Any?>(container, signature, boundReceiver, property, KCallableOverriddenStorage.EMPTY)
             else -> null
         }
         else -> when (receiverCount) {
             -1 -> KotlinKMutablePropertyN(container, signature, boundReceiver, property, KCallableOverriddenStorage.EMPTY)
-            0 -> KotlinKMutableProperty0(container, signature, boundReceiver, property, KCallableOverriddenStorage.EMPTY)
-            1 -> KotlinKMutableProperty1<Any?, Any?>(container, signature, boundReceiver, property, KCallableOverriddenStorage.EMPTY)
+            0 -> KotlinKMutableProperty0(container, signature, boundReceiver, rawBoundContextArguments = emptyList(), property, KCallableOverriddenStorage.EMPTY)
+            1 -> KotlinKMutableProperty1<Any?, Any?>(container, signature, boundReceiver, rawBoundContextArguments = emptyList(), property, KCallableOverriddenStorage.EMPTY)
             2 -> KotlinKMutableProperty2<Any?, Any?, Any?>(container, signature, boundReceiver, property, KCallableOverriddenStorage.EMPTY)
             else -> null
         }
@@ -360,7 +360,7 @@ internal fun createUnboundFunction(function: KmFunction, container: KDeclaration
     // (*) Actually, when builtins metadata is read by kotlin-metadata-jvm, JVM signatures are computed and stored by
     // `JvmMetadataExtensions.readFunctionExtensions` in case they can be easily computed (see `JvmProtoBufUtil.getJvmMethodSignature`).
     val signature = function.mapSignature((container as? KClassImpl<*>)?.kmClass)
-    return KotlinKNamedFunction(container, signature.toString(), CallableReference.NO_RECEIVER, function, KCallableOverriddenStorage.EMPTY)
+    return KotlinKNamedFunction(container, signature.toString(), CallableReference.NO_RECEIVER, rawBoundContextArguments = emptyList(), function, KCallableOverriddenStorage.EMPTY)
 }
 
 internal fun createUnboundConstructor(constructor: KmConstructor, container: KDeclarationContainerImpl): KotlinKFunction {

@@ -151,7 +151,7 @@ public abstract class AbstractTest<M : TestMethods, T : TestBuilder<M>, D : Dokk
             .toList()
             .also { slices ->
                 /* Post-condition verifying that no character is lost */
-                check(slices.sumBy { it.length } == length)
+                check(slices.sumOf { it.length } == length)
             }
     }
 

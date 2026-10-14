@@ -1,0 +1,79 @@
+KtFile: accessorOnScriptDestructuring.kts
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  SCRIPT
+    BLOCK
+      PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')
+      PsiWhiteSpace('\n')
+      DESTRUCTURING_DECLARATION
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        DESTRUCTURING_DECLARATION_ENTRY
+          PsiElement(IDENTIFIER)('a')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace(' ')
+        DESTRUCTURING_DECLARATION_ENTRY
+          PsiElement(IDENTIFIER)('b')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        BINARY_EXPRESSION
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('1')
+          PsiWhiteSpace(' ')
+          OPERATION_REFERENCE
+            PsiElement(IDENTIFIER)('to')
+          PsiWhiteSpace(' ')
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('2')
+      PsiWhiteSpace('\n    ')
+      SCRIPT_INITIALIZER
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('get')
+      PsiWhiteSpace('\n\n')
+      DESTRUCTURING_DECLARATION
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        DESTRUCTURING_DECLARATION_ENTRY
+          PsiElement(IDENTIFIER)('c')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace(' ')
+        DESTRUCTURING_DECLARATION_ENTRY
+          PsiElement(IDENTIFIER)('d')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        BINARY_EXPRESSION
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('1')
+          PsiWhiteSpace(' ')
+          OPERATION_REFERENCE
+            PsiElement(IDENTIFIER)('to')
+          PsiWhiteSpace(' ')
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('2')
+      PsiWhiteSpace('\n    ')
+      SCRIPT_INITIALIZER
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('set')
+          VALUE_ARGUMENT_LIST
+            PsiElement(LPAR)('(')
+            VALUE_ARGUMENT
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('value')
+            PsiElement(RPAR)(')')
+          PsiWhiteSpace(' ')
+          LAMBDA_ARGUMENT
+            LAMBDA_EXPRESSION
+              FUNCTION_LITERAL
+                PsiElement(LBRACE)('{')
+                BLOCK
+                  <empty list>
+                PsiElement(RBRACE)('}')

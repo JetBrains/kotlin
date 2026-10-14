@@ -1,7 +1,6 @@
 package org.jetbrains.kotlin.mainKts.test
 
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import javax.script.ScriptEngineManager
 
@@ -32,12 +31,6 @@ class MainKtsJsr223Test {
     }
 
     @Test
-    @Disabled(
-        """ BLOCKED-COMPILER-KT-77583/KT-83498: light-tree REPL-snippet support is unimplemented (LightTreeRawFirDeclarationBuilder.convertReplSnippet TODO). 
-            K2ReplCompiler's own isReplSnippetSource predicate is session-wide/argument-independent 'true', so the light-tree-converted 
-            @file:Import(...) scripts get misclassified as REPL snippets and hit the TODO instead of the working convertScript path. 
-            """
-    )
     fun testWithImport() {
         val engine = ScriptEngineManager().getEngineByExtension("main.kts")!!
         val out = captureOut {

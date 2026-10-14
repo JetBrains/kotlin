@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: -ForbidUselessTypeArgumentsIn25 +CompanionBlocks +CompanionExtensions
+// LANGUAGE: -ForbidUselessTypeArgumentsIn26 +CompanionBlocks +CompanionExtensions
 class C<T>
 object O
 

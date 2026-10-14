@@ -145,7 +145,10 @@ class KotlinHeaderModeType : EnumType<HeaderMode>() {
  */
 @Serializable
 class ReturnValueCheckerModeType : EnumType<ReturnValueCheckerMode>() {
-    override val defaultValue: ReleaseDependent<ReturnValueCheckerMode?> = ReleaseDependent(ReturnValueCheckerMode.disabled)
+    override val defaultValue: ReleaseDependent<ReturnValueCheckerMode?> = ReleaseDependent(
+        ReturnValueCheckerMode.default,
+        KotlinReleaseVersion.v2_2_0 ..KotlinReleaseVersion.v2_4_20 to ReturnValueCheckerMode.disabled
+    )
 }
 
 /**
@@ -199,15 +202,6 @@ class PathType : KotlinArgumentValueType<Path> {
 @Serializable
 class JvmDefaultModeType : EnumType<JvmDefaultMode>(ReleaseDependent(true)) {
     override val defaultValue: ReleaseDependent<JvmDefaultMode?> = ReleaseDependent(null)
-}
-
-/**
- * A value which accepts [ValhallaSupportMode] type.
- */
-@ExperimentalArgumentApi
-@Serializable
-class ValhallaSupportModeType : EnumType<ValhallaSupportMode>(ReleaseDependent(true)) {
-    override val defaultValue: ReleaseDependent<ValhallaSupportMode?> = ReleaseDependent(null)
 }
 
 /**

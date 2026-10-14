@@ -59,12 +59,15 @@ internal class JavaKConstructor(
 
     override val overridden: Collection<ReflectKFunction> = emptyList()
 
-    override val allParameters: List<KParameter> by lazy(PUBLICATION) {
+    override val originalParameters: List<KParameter> by lazy(PUBLICATION) {
         computeParameters()
     }
 
+    override val allParameters: List<KParameter>
+        get() = enhancedSignature?.allParameters ?: originalParameters
+
     override val caller: Caller<*> by lazy(PUBLICATION) {
-        if (isBound) CallerImpl.BoundConstructor(jConstructor, boundReceiver)
+        if (isReceiverBound) CallerImpl.BoundConstructor(jConstructor, boundReceiver)
         else CallerImpl.Constructor(jConstructor)
     }
 
@@ -75,7 +78,9 @@ internal class JavaKConstructor(
         return JavaKConstructor(container, jConstructor, CallableReference.NO_RECEIVER)
     }
 
-    override fun rebind(boundReceiver: Any?): ReflectKCallable<Any?> =
-        if (this.rawBoundReceiver === boundReceiver) this
-        else JavaKConstructor(container, jConstructor, boundReceiver)
+    override fun bindToLowerArity(boundReceiver: Any?, boundContextArguments: List<Any?>): ReflectKCallable<Any?> {
+        require(boundContextArguments.isEmpty()) { "Constructors cannot have bound context arguments: $this" }
+        return JavaKConstructor(container, jConstructor, boundReceiver)
+    }
+
 }

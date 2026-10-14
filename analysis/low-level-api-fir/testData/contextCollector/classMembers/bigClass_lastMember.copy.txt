@@ -1,0 +1,55 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Static scope owner symbol: FirRegularClassSymbol public final class BigClass : R|kotlin/Any|
+    Element 7
+        Implicit receiver:
+            FirRegularClassSymbol public final class BigClass : R|kotlin/Any|
+                Type: test.BigClass
+    Element 8
+        Scope: FirLocalScope
+    Element 9
+        Scope: FirLocalScope
+
+FILE: [ResolvedTo(IMPORTS)] bigClass_lastMember.kt
+    public final? [ResolvedTo(RAW_FIR)] class BigClass : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] constructor(): R|test/BigClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun member1(): Int { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun member2(): Int { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun member3(): Int { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun member4(): Int { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun member5(): Int { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun member6(): Int { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun member7(): Int { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun member8(): Int { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun member9(): Int { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun member10(): Int { LAZY_BLOCK }
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun lastMember(): R|kotlin/Int| {
+            ^lastMember Int(42)
+        }
+
+    }

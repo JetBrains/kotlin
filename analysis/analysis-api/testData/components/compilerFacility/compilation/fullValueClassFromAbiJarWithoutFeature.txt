@@ -1,0 +1,6 @@
+public final class MainKt {
+    // source: 'main.kt'
+    public final static method sum(p0: lib.Point): int
+    public final static method test(): int
+    public final inner class lib/Point$Companion
+}

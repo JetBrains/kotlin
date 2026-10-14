@@ -85,8 +85,8 @@ class KotlinAndroidIT : KGPBaseTest() {
         project(
             "AndroidProject",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion).suppressAgpWarningIsProperty(gradleVersion),
-            buildJdk = jdkVersion.location
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildJdk = jdkVersion.location,
         ) {
             build("assembleAndroidTest")
         }
@@ -102,7 +102,7 @@ class KotlinAndroidIT : KGPBaseTest() {
         project(
             "AndroidIcepickProject",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion).suppressAgpWarningIsProperty(gradleVersion),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
             buildJdk = jdkVersion.location,
             dependencyManagement = DependencyManagement.DefaultDependencyManagement(
                 setOf("https://clojars.org/repo/")
@@ -122,7 +122,7 @@ class KotlinAndroidIT : KGPBaseTest() {
         project(
             "AndroidParcelizeProject",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion).suppressAgpWarningIsProperty(gradleVersion),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
             buildJdk = jdkVersion.location
         ) {
             build("assembleDebug")
@@ -179,7 +179,7 @@ class KotlinAndroidIT : KGPBaseTest() {
         project(
             "AndroidProject",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion).suppressAgpWarningIsProperty(gradleVersion),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
             buildJdk = jdkVersion.location
         ) {
             buildGradle.modify {
@@ -244,7 +244,7 @@ class KotlinAndroidIT : KGPBaseTest() {
         project(
             "AndroidProject",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion).suppressAgpWarningIsProperty(gradleVersion),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
             buildJdk = jdkVersion.location
         ) {
             subProject("Lib").buildGradle.modify {
@@ -307,7 +307,7 @@ class KotlinAndroidIT : KGPBaseTest() {
             "AndroidSimpleApp",
             gradleVersion,
             buildJdk = jdkVersion.location,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion).suppressAgpWarningIsProperty(gradleVersion),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
         ) {
             val buildSrcDir = projectPath.resolve("buildSrc").also { it.createDirectory() }
             buildSrcDir.resolve("build.gradle.kts").writeText(

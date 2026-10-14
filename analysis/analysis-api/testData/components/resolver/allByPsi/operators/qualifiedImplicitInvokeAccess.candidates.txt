@@ -442,7 +442,7 @@ KtCallExpression(228,234): 's("3")'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<UNSAFE_IMPLICIT_INVOKE_CALL: Reference has a nullable type 'MyClass?'. Use explicit '?.invoke' to make a function-like call instead.>
+    diagnostic = ERROR<UNSAFE_IMPLICIT_INVOKE_CALL: Unsafe implicit 'invoke' call on receiver of nullable type 'MyClass?'. Consider using a safe call '?.invoke' or non-null asserted call '!!()'.>
     isInBestCandidates = true
 
 KtNameReferenceExpression(228,229): 's'

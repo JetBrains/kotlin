@@ -248,8 +248,10 @@ internal class BridgesBuilding(val context: NativeLoweringContext) : ClassLoweri
             for (overriddenFunction in function.allOverriddenFunctions) {
                 val overriddenFunctionInfo = OverriddenFunctionInfo(function, overriddenFunction, bridgesPolicy)
                 val bridgeDirections = overriddenFunctionInfo.bridgeDirections
-                if (!bridgeDirections.allNotNeeded() && overriddenFunctionInfo.canBeCalledVirtually
-                        && !overriddenFunctionInfo.inheritsBridge && set.add(bridgeDirections)) {
+                val canBeCalled = overriddenFunctionInfo.canBeCalledVirtually || context(context.config) {
+                    overriddenFunctionInfo.needsBridgeForCacheEntryPoint()
+                }
+                if (!bridgeDirections.allNotNeeded() && canBeCalled && !overriddenFunctionInfo.inheritsBridge && set.add(bridgeDirections)) {
                     buildBridge(overriddenFunctionInfo, irClass)
                     builtBridges += function
                 }

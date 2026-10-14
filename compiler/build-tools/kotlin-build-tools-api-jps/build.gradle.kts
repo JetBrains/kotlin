@@ -1,0 +1,29 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmDefaultMode
+
+plugins {
+    id("common-configuration")
+    kotlin("jvm")
+    id("org.jetbrains.kotlinx.binary-compatibility-validator")
+}
+
+configureKotlinCompileTasksGradleCompatibility()
+
+dependencies {
+    val coreDepsVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()
+    compileOnly(kotlin("stdlib", coreDepsVersion))
+    api(project(":compiler:build-tools:kotlin-build-tools-api"))
+}
+
+kotlin {
+    explicitApi()
+}
+
+publish()
+
+standardPublicJars()
+
+tasks.compileKotlin {
+    compilerOptions {
+        jvmDefault = JvmDefaultMode.NO_COMPATIBILITY
+    }
+}

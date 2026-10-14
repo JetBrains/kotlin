@@ -6,44 +6,44 @@ import kotlinx.cinterop.*
 @ExportedBridge("__root___accept__TypesOfArguments__Swift_ClosedRange_Swift_Int32___")
 public fun __root___accept__TypesOfArguments__Swift_ClosedRange_Swift_Int32___(range: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __range = kotlin.native.internal.ref.dereferenceExternalRCRef(range) as kotlin.ranges.IntRange
-    val _result = run { accept(__range) }
+    val _result = accept(__range)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___acceptClosed__TypesOfArguments__Swift_ClosedRange_Swift_Int32___")
 public fun __root___acceptClosed__TypesOfArguments__Swift_ClosedRange_Swift_Int32___(range: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __range = kotlin.native.internal.ref.dereferenceExternalRCRef(range) as kotlin.ranges.IntRange
-    val _result = run { acceptClosed(__range) }
+    val _result = acceptClosed(__range)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___bar")
 public fun __root___bar(): kotlin.native.internal.NativePtr {
-    val _result = run { bar() }
+    val _result = bar()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___baz")
 public fun __root___baz(): kotlin.native.internal.NativePtr {
-    val _result = run { baz() }
+    val _result = baz()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___foo")
 public fun __root___foo(): kotlin.native.internal.NativePtr {
-    val _result = run { foo() }
+    val _result = foo()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___foo_opt")
 public fun __root___foo_opt(): kotlin.native.internal.NativePtr {
-    val _result = run { foo_opt() }
+    val _result = foo_opt()
     return if (_result == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___unsupported")
 public fun __root___unsupported(): kotlin.native.internal.NativePtr {
-    val _result = run { unsupported() }
+    val _result = unsupported()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 

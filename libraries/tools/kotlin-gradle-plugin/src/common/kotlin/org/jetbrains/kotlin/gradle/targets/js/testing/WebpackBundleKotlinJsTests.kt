@@ -14,17 +14,10 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
-import org.gradle.api.tasks.CacheableTask
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputFile
-import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.OutputDirectory
-import org.gradle.api.tasks.OutputFile
-import org.gradle.api.tasks.PathSensitive
-import org.gradle.api.tasks.PathSensitivity
-import org.gradle.api.tasks.TaskAction
-import org.gradle.api.tasks.TaskProvider
+import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
+import org.jetbrains.kotlin.gradle.ExperimentalNodeJsToolchainDsl
+import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.NodeJsRequest
 import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
@@ -41,9 +34,10 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackOutput
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackRunner
 import org.jetbrains.kotlin.gradle.targets.wasm.internal.isWasm
-import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootExtension
-import org.jetbrains.kotlin.gradle.targets.web.nodejs.nodeJsEnvSpec
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.requestDefaultNodeJs
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.resolveNodeJsExecutable
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
+import org.jetbrains.kotlin.gradle.tasks.nodejs.UsesNodeJsToolchainService
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.property
 import org.jetbrains.kotlin.gradle.utils.propertyWithConvention
@@ -56,6 +50,7 @@ import kotlin.io.path.name
 import kotlin.io.path.readText
 
 @CacheableTask
+@OptIn(ExperimentalNodeJsToolchainDsl::class)
 internal abstract class WebpackBundleKotlinJsTests
 @Inject
 constructor(
@@ -65,10 +60,13 @@ constructor(
     private val objects: ObjectFactory,
     private val providers: ProviderFactory,
     private val execOps: ExecOperations,
-) : DefaultTask(), RequiresNpmDependenciesTask {
+) : DefaultTask(), RequiresNpmDependenciesTask, UsesNodeJsToolchainService {
 
     private val npmProject = compilation.npmProject
     private val npmProjectDir: Provider<Directory> = npmProject.dir
+
+    @get:Input
+    internal val nodeJsRequest: Provider<NodeJsRequest> = compilation.project.requestDefaultNodeJs()
 
     /** This flag prevents from installing NPM dependencies that not going to be used.
      * i.e. task is registered but wasn't requested for execution.
@@ -178,7 +176,7 @@ constructor(
         val runner = KotlinWebpackRunner(
             name = name,
             npmProjectDir = npmProject.dir.get().asFile,
-            nodeExecutable = npmProject.nodeExecutable,
+            nodeExecutable = nodeJsToolchainService.get().resolveNodeJsExecutable(npmProject, nodeJsRequest),
             logger = logger,
             configFile = webpackConfigFile.get().asFile,
             tool = "webpack/bin/webpack.js",

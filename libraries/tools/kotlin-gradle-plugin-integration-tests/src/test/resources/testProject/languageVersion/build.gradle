@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+
 plugins {
     id "org.jetbrains.kotlin.jvm"
 }
@@ -8,8 +10,8 @@ repositories {
 }
 
 compileKotlin {
-    kotlinOptions {
-        languageVersion = "2.1"
-        apiVersion = "2.1"
+    compilerOptions {
+        languageVersion = KotlinVersion.KOTLIN_2_4 // Latest stable minus 1.
+        apiVersion = KotlinVersion.KOTLIN_2_4 // Latest stable minus 1.
     }
 }

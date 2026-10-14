@@ -119,8 +119,8 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
         @Deprecated(
             message = "Use setPackageFqName(value) instead",
             replaceWith = ReplaceWith("this.setPackageFqName(value)", "org.jetbrains.kotlin.idea.base.psi.setPackageFqName"),
+            level = DeprecationLevel.ERROR,
         )
-        @OptIn(KtNonPublicApi::class)
         set(value) {
             KtPsiMutationService.getInstance().setPackageFqName(this, value)
         }
@@ -133,6 +133,7 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
     @Deprecated(
         message = "Use 'packageFqName' property instead",
         replaceWith = ReplaceWith("packageFqName"),
+        level = DeprecationLevel.ERROR,
     )
     val packageFqNameByTree: FqName
         get() = packageFqName
@@ -173,6 +174,7 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
     @Deprecated(
         message = "Use 'isScript()' instead",
         replaceWith = ReplaceWith("isScript()"),
+        level = DeprecationLevel.ERROR,
     )
     val isScriptByTree: Boolean
         get() = isScript()
@@ -358,13 +360,22 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
     override fun getAnnotationEntries(): List<KtAnnotationEntry> =
         fileAnnotationList?.annotationEntries ?: emptyList()
 
-    @OptIn(KtNonPublicApi::class)
+    /**
+     * Renames this file.
+     *
+     * When [KtPsiMutationService] is registered, as in the IntelliJ Kotlin plugin, the renaming may also update the PSI, e.g., reparse the
+     * file if the new name turns it into a script or back. Without the service, it performs only the plain platform renaming, which does
+     * not reparse the file.
+     */
     @Throws(IncorrectOperationException::class)
-    override fun setName(name: String): PsiElement = KtPsiMutationService.getInstance().setCommonFileName(this, name)
+    override fun setName(name: String): PsiElement {
+        val mutationService = KtPsiMutationService.getInstanceOrNull() ?: return super.setName(name)
+        return mutationService.setCommonFileName(this, name)
+    }
 
     override fun getPsiOrParent(): KtElement = this
 
-    @KtNonPublicApi
+    @KtIdeApi
     override fun rawDelete() {
         super.delete()
     }

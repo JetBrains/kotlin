@@ -14,6 +14,7 @@ import kotlin.io.path.absolutePathString
 import kotlin.io.path.createFile
 import kotlin.test.assertEquals
 
+@Suppress("DEPRECATION") // tests the deprecated NpmDependency
 class NpmDependencyTest {
 
     @Test

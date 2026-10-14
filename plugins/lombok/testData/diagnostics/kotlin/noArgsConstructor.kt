@@ -57,12 +57,12 @@ class NoArgsConstructorWithValPropertyAndInitializer {
 // A value class *is* its underlying value: there is no instance to initialize field by field, and its
 // constructors compile to static `constructor-impl` functions that must return that value. Generating one used
 // to fail the JVM backend outright with "Unexpected IR element found during code generation", KT-88705.
-<!ANNOTATION_HAS_NO_EFFECT!>@NoArgsConstructor(force = true)<!>
+<!ANNOTATION_IS_NOT_SUPPORTED_ON_CLASS!>@NoArgsConstructor(force = true)<!>
 @JvmInline
 value class OnValueClass(val value: Int)
 
 // The static factory exists only to call the constructor, so it is not generated either.
-<!ANNOTATION_HAS_NO_EFFECT!>@NoArgsConstructor(staticName = "create", force = true)<!>
+<!ANNOTATION_IS_NOT_SUPPORTED_ON_CLASS!>@NoArgsConstructor(staticName = "create", force = true)<!>
 @JvmInline
 value class OnValueClassWithStaticName(val value: Int)
 
@@ -180,10 +180,10 @@ fun testAccessLevels() {
 // output for the Java equivalent is rejected by `javac`. The noarg plugin refuses an inner class for the same
 // lowering, and so does this one now.
 class OuterOfInner {
-    <!ANNOTATION_HAS_NO_EFFECT!>@NoArgsConstructor(staticName = "make", force = true)<!>
+    <!ANNOTATION_IS_NOT_SUPPORTED_ON_CLASS!>@NoArgsConstructor(staticName = "make", force = true)<!>
     inner class InnerWithStaticName(val x: Int)
 
-    <!ANNOTATION_HAS_NO_EFFECT!>@NoArgsConstructor(force = true)<!>
+    <!ANNOTATION_IS_NOT_SUPPORTED_ON_CLASS!>@NoArgsConstructor(force = true)<!>
     inner class InnerWithoutStaticName(val x: Int)
 
     // The KT-88659 shape itself, which is what makes the inner case unfixable rather than merely unsupported:
@@ -194,7 +194,7 @@ class OuterOfInner {
     // one: `InnerClassesLowering` reads a super-delegating constructor without that call as a `this(...)`
     // delegation and passes the outer instance to a call with no receiver slot. Neither shape works, so nothing
     // is generated at all.
-    <!ANNOTATION_HAS_NO_EFFECT!>@NoArgsConstructor<!>
+    <!ANNOTATION_IS_NOT_SUPPORTED_ON_CLASS!>@NoArgsConstructor<!>
     inner class InnerWithReferencedParameter(input: Int) {
         var inputValue: Int? = input
     }
@@ -222,8 +222,9 @@ fun testInner(outer: OuterOfInner) {
 fun testLocal() {
     <!ANNOTATION_HAS_NO_EFFECT!>@NoArgsConstructor(force = true)<!>
     class LocalClass(val x: Int) {
-        // An inner class of a local class is refused on both counts.
-        <!ANNOTATION_HAS_NO_EFFECT!>@NoArgsConstructor(force = true)<!>
+        // An inner class of a local class is refused on both counts, and the more specific of the two - the
+        // `inner` modifier rather than the local-class target - is the one named.
+        <!ANNOTATION_IS_NOT_SUPPORTED_ON_CLASS!>@NoArgsConstructor(force = true)<!>
         inner class InnerOfLocal(val y: Int)
     }
 

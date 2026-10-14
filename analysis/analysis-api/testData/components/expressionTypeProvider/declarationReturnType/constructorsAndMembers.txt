@@ -1,0 +1,17 @@
+A@(1,1)
+  A@(1,8) : A
+    x@(1,9) : kotlin.Int
+  A@(2,5) : A
+    s@(2,17) : kotlin.String
+  y@(6,5) : kotlin.Int
+    KtPropertyAccessor@(6,11) : kotlin.Int
+  member@(8,5) : kotlin.Any
+    KtObjectDeclaration@(8,20)
+      inner@(9,9) : kotlin.Int
+      innerFun@(10,9) : kotlin.Int
+  Companion@(13,5)
+    C@(14,9) : kotlin.Int
+E@(18,1)
+  First@(19,5) : E
+  Second@(19,12) : E
+  self@(21,5) : E

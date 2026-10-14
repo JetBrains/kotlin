@@ -98,14 +98,14 @@ public fun Foeble_baz_get__reverse(self: Foeble): Foeble {
 public fun Bar_bar__TypesOfArguments__anyU20main_Foeble__(self: kotlin.native.internal.NativePtr, arg: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Bar
     val __arg = kotlin.native.internal.ref.dereferenceExternalRCRef(arg) as Foeble
-    val _result = run { __self.bar(__arg) }
+    val _result = __self.bar(__arg)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("Bar_baz_get")
 public fun Bar_baz_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Bar
-    val _result = run { __self.baz }
+    val _result = __self.baz
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -113,55 +113,55 @@ public fun Bar_baz_get(self: kotlin.native.internal.NativePtr): kotlin.native.in
 public fun Barable_bar__TypesOfArguments__anyU20main_Foeble__(self: kotlin.native.internal.NativePtr, arg: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Barable
     val __arg = kotlin.native.internal.ref.dereferenceExternalRCRef(arg) as Foeble
-    val _result = run { __self.bar(__arg) }
+    val _result = __self.bar(__arg)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("Barable_baz_get")
 public fun Barable_baz_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Barable
-    val _result = run { __self.baz }
+    val _result = __self.baz
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("ContainerProtocol_NestedClass_init_allocate")
 public fun ContainerProtocol_NestedClass_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<ContainerProtocol.NestedClass>() }
+    val _result = kotlin.native.internal.createUninitializedInstance<ContainerProtocol.NestedClass>()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("ContainerProtocol_NestedClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
 public fun ContainerProtocol_NestedClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val _result = run { kotlin.native.internal.initInstance(____kt, ContainerProtocol.NestedClass()) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, ContainerProtocol.NestedClass())
+    return true
 }
 
 @ExportedBridge("ContainerProtocol_NestedProtocol_NestedClass_init_allocate")
 public fun ContainerProtocol_NestedProtocol_NestedClass_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<ContainerProtocol.NestedProtocol.NestedClass>() }
+    val _result = kotlin.native.internal.createUninitializedInstance<ContainerProtocol.NestedProtocol.NestedClass>()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("ContainerProtocol_NestedProtocol_NestedClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
 public fun ContainerProtocol_NestedProtocol_NestedClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val _result = run { kotlin.native.internal.initInstance(____kt, ContainerProtocol.NestedProtocol.NestedClass()) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, ContainerProtocol.NestedProtocol.NestedClass())
+    return true
 }
 
 @ExportedBridge("Foeble_bar__TypesOfArguments__anyU20main_Foeble__")
 public fun Foeble_bar__TypesOfArguments__anyU20main_Foeble__(self: kotlin.native.internal.NativePtr, arg: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Foeble
     val __arg = kotlin.native.internal.ref.dereferenceExternalRCRef(arg) as Foeble
-    val _result = run { __self.bar(__arg) }
+    val _result = __self.bar(__arg)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("Foeble_baz_get")
 public fun Foeble_baz_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Foeble
-    val _result = run { __self.baz }
+    val _result = __self.baz
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -169,491 +169,491 @@ public fun Foeble_baz_get(self: kotlin.native.internal.NativePtr): kotlin.native
 public fun Foo_bar__TypesOfArguments__anyU20main_Foeble__(self: kotlin.native.internal.NativePtr, arg: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Foo
     val __arg = kotlin.native.internal.ref.dereferenceExternalRCRef(arg) as Foeble
-    val _result = run { __self.bar(__arg) }
+    val _result = __self.bar(__arg)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("Foo_baz_get")
 public fun Foo_baz_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Foo
-    val _result = run { __self.baz }
+    val _result = __self.baz
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("SealedFoeble_SomeBarable_get")
 public fun SealedFoeble_SomeBarable_get(): kotlin.native.internal.NativePtr {
-    val _result = run { SealedFoeble.SomeBarable }
+    val _result = SealedFoeble.SomeBarable
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("SealedFoeble_SomeFoeble_get")
 public fun SealedFoeble_SomeFoeble_get(): kotlin.native.internal.NativePtr {
-    val _result = run { SealedFoeble.SomeFoeble }
+    val _result = SealedFoeble.SomeFoeble
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("SiblingProtocol_NestedClass_NestedClass_init_allocate")
 public fun SiblingProtocol_NestedClass_NestedClass_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<SiblingProtocol.NestedClass.NestedClass>() }
+    val _result = kotlin.native.internal.createUninitializedInstance<SiblingProtocol.NestedClass.NestedClass>()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("SiblingProtocol_NestedClass_NestedClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
 public fun SiblingProtocol_NestedClass_NestedClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val _result = run { kotlin.native.internal.initInstance(____kt, SiblingProtocol.NestedClass.NestedClass()) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, SiblingProtocol.NestedClass.NestedClass())
+    return true
 }
 
 @ExportedBridge("SiblingProtocol_NestedClass_init_allocate")
 public fun SiblingProtocol_NestedClass_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<SiblingProtocol.NestedClass>() }
+    val _result = kotlin.native.internal.createUninitializedInstance<SiblingProtocol.NestedClass>()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("SiblingProtocol_NestedClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
 public fun SiblingProtocol_NestedClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val _result = run { kotlin.native.internal.initInstance(____kt, SiblingProtocol.NestedClass()) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, SiblingProtocol.NestedClass())
+    return true
 }
 
 @ExportedBridge("__root___Bar_init_allocate")
 public fun __root___Bar_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<Bar>() }
+    val _result = kotlin.native.internal.createUninitializedInstance<Bar>()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___Bar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
 public fun __root___Bar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val _result = run { kotlin.native.internal.initInstance(____kt, Bar()) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, Bar())
+    return true
 }
 
 @ExportedBridge("__root___Foo_init_allocate")
 public fun __root___Foo_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<Foo>() }
+    val _result = kotlin.native.internal.createUninitializedInstance<Foo>()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
 public fun __root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val _result = run { kotlin.native.internal.initInstance(____kt, Foo()) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, Foo())
+    return true
 }
 
 @ExportedBridge("__root___MyObject_get")
 public fun __root___MyObject_get(): kotlin.native.internal.NativePtr {
-    val _result = run { MyObject }
+    val _result = MyObject
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___SomeBazzable_get")
 public fun __root___SomeBazzable_get(): kotlin.native.internal.NativePtr {
-    val _result = run { SomeBazzable }
+    val _result = SomeBazzable
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___foo__TypesOfArgumentsE__anyU20main_ContainerProtocol__")
 public fun __root___foo__TypesOfArgumentsE__anyU20main_ContainerProtocol__(`receiver`: kotlin.native.internal.NativePtr): Boolean {
     val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as ContainerProtocol
-    val _result = run { __receiver.foo() }
-    return run { _result; true }
+    __receiver.foo()
+    return true
 }
 
 @ExportedBridge("__root___foo__TypesOfArgumentsE__main___ContainerProtocol_NestedProtocol_NestedClass__")
 public fun __root___foo__TypesOfArgumentsE__main___ContainerProtocol_NestedProtocol_NestedClass__(`receiver`: kotlin.native.internal.NativePtr): Boolean {
     val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as ContainerProtocol.NestedProtocol.NestedClass
-    val _result = run { __receiver.foo() }
-    return run { _result; true }
+    __receiver.foo()
+    return true
 }
 
 @ExportedBridge("__root___foo__TypesOfArgumentsE__main__SiblingProtocol_NestedClass__")
 public fun __root___foo__TypesOfArgumentsE__main__SiblingProtocol_NestedClass__(`receiver`: kotlin.native.internal.NativePtr): Boolean {
     val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as SiblingProtocol.NestedClass
-    val _result = run { __receiver.foo() }
-    return run { _result; true }
+    __receiver.foo()
+    return true
 }
 
 @ExportedBridge("__root___foo__TypesOfArgumentsE__anyU20main__ContainerProtocol_NestedProtocol__")
 public fun __root___foo__TypesOfArgumentsE__anyU20main__ContainerProtocol_NestedProtocol__(`receiver`: kotlin.native.internal.NativePtr): Boolean {
     val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as ContainerProtocol.NestedProtocol
-    val _result = run { __receiver.foo() }
-    return run { _result; true }
+    __receiver.foo()
+    return true
 }
 
 @ExportedBridge("__root___list__TypesOfArguments__Swift_Array_anyU20main_Foeble___")
 public fun __root___list__TypesOfArguments__Swift_Array_anyU20main_Foeble___(value: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __value = interpretObjCPointer<kotlin.collections.List<Foeble>>(value)
-    val _result = run { list(__value) }
+    val _result = list(__value)
     return _result.objcPtr()
 }
 
 @ExportedBridge("__root___list_get")
 public fun __root___list_get(): kotlin.native.internal.NativePtr {
-    val _result = run { list }
+    val _result = list
     return _result.objcPtr()
 }
 
 @ExportedBridge("__root___list_set__TypesOfArguments__Swift_Array_anyU20main_Foeble___")
 public fun __root___list_set__TypesOfArguments__Swift_Array_anyU20main_Foeble___(newValue: kotlin.native.internal.NativePtr): Boolean {
     val __newValue = interpretObjCPointer<kotlin.collections.List<Foeble>>(newValue)
-    val _result = run { list = __newValue }
-    return run { _result; true }
+    list = __newValue
+    return true
 }
 
 @ExportedBridge("__root___normal__TypesOfArguments__anyU20main_Foeble__")
 public fun __root___normal__TypesOfArguments__anyU20main_Foeble__(value: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __value = kotlin.native.internal.ref.dereferenceExternalRCRef(value) as Foeble
-    val _result = run { normal(__value) }
+    val _result = normal(__value)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___normal_get")
 public fun __root___normal_get(): kotlin.native.internal.NativePtr {
-    val _result = run { normal }
+    val _result = normal
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___normal_set__TypesOfArguments__anyU20main_Foeble__")
 public fun __root___normal_set__TypesOfArguments__anyU20main_Foeble__(newValue: kotlin.native.internal.NativePtr): Boolean {
     val __newValue = kotlin.native.internal.ref.dereferenceExternalRCRef(newValue) as Foeble
-    val _result = run { normal = __newValue }
-    return run { _result; true }
+    normal = __newValue
+    return true
 }
 
 @ExportedBridge("__root___nullable__TypesOfArguments__Swift_Optional_anyU20main_Foeble___")
 public fun __root___nullable__TypesOfArguments__Swift_Optional_anyU20main_Foeble___(value: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __value = if (value == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(value) as Foeble
-    val _result = run { nullable(__value) }
+    val _result = nullable(__value)
     return if (_result == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___nullable_get")
 public fun __root___nullable_get(): kotlin.native.internal.NativePtr {
-    val _result = run { nullable }
+    val _result = nullable
     return if (_result == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___nullable_set__TypesOfArguments__Swift_Optional_anyU20main_Foeble___")
 public fun __root___nullable_set__TypesOfArguments__Swift_Optional_anyU20main_Foeble___(newValue: kotlin.native.internal.NativePtr): Boolean {
     val __newValue = if (newValue == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(newValue) as Foeble
-    val _result = run { nullable = __newValue }
-    return run { _result; true }
+    nullable = __newValue
+    return true
 }
 
 @ExportedBridge("packagewithprotocols_ContainerProtocol_NestedClass_init_allocate")
 public fun packagewithprotocols_ContainerProtocol_NestedClass_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<packagewithprotocols.ContainerProtocol.NestedClass>() }
+    val _result = kotlin.native.internal.createUninitializedInstance<packagewithprotocols.ContainerProtocol.NestedClass>()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("packagewithprotocols_ContainerProtocol_NestedClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
 public fun packagewithprotocols_ContainerProtocol_NestedClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val _result = run { kotlin.native.internal.initInstance(____kt, packagewithprotocols.ContainerProtocol.NestedClass()) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, packagewithprotocols.ContainerProtocol.NestedClass())
+    return true
 }
 
 @ExportedBridge("packagewithprotocols_ContainerProtocol_NestedProtocol_NestedClass_init_allocate")
 public fun packagewithprotocols_ContainerProtocol_NestedProtocol_NestedClass_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<packagewithprotocols.ContainerProtocol.NestedProtocol.NestedClass>() }
+    val _result = kotlin.native.internal.createUninitializedInstance<packagewithprotocols.ContainerProtocol.NestedProtocol.NestedClass>()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("packagewithprotocols_ContainerProtocol_NestedProtocol_NestedClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
 public fun packagewithprotocols_ContainerProtocol_NestedProtocol_NestedClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val _result = run { kotlin.native.internal.initInstance(____kt, packagewithprotocols.ContainerProtocol.NestedProtocol.NestedClass()) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, packagewithprotocols.ContainerProtocol.NestedProtocol.NestedClass())
+    return true
 }
 
 @ExportedBridge("packagewithprotocols_ENUM_WITH_INTERFACE_INHERITANCE_ordinal")
 public fun packagewithprotocols_ENUM_WITH_INTERFACE_INHERITANCE_ordinal(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as packagewithprotocols.ENUM_WITH_INTERFACE_INHERITANCE
-    val _result = run { __self.ordinal }
+    val _result = __self.ordinal
     return _result
 }
 
 @ExportedBridge("packagewithprotocols_INHERITANCE_COUPLE_init_allocate")
 public fun packagewithprotocols_INHERITANCE_COUPLE_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<packagewithprotocols.INHERITANCE_COUPLE>() }
+    val _result = kotlin.native.internal.createUninitializedInstance<packagewithprotocols.INHERITANCE_COUPLE>()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("packagewithprotocols_INHERITANCE_COUPLE_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
 public fun packagewithprotocols_INHERITANCE_COUPLE_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val _result = run { kotlin.native.internal.initInstance(____kt, packagewithprotocols.INHERITANCE_COUPLE()) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, packagewithprotocols.INHERITANCE_COUPLE())
+    return true
 }
 
 @ExportedBridge("packagewithprotocols_INHERITANCE_SINGLE_PROTO_init_allocate")
 public fun packagewithprotocols_INHERITANCE_SINGLE_PROTO_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<packagewithprotocols.INHERITANCE_SINGLE_PROTO>() }
+    val _result = kotlin.native.internal.createUninitializedInstance<packagewithprotocols.INHERITANCE_SINGLE_PROTO>()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("packagewithprotocols_INHERITANCE_SINGLE_PROTO_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
 public fun packagewithprotocols_INHERITANCE_SINGLE_PROTO_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val _result = run { kotlin.native.internal.initInstance(____kt, packagewithprotocols.INHERITANCE_SINGLE_PROTO()) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, packagewithprotocols.INHERITANCE_SINGLE_PROTO())
+    return true
 }
 
 @ExportedBridge("packagewithprotocols_OBJECT_WITH_INTERFACE_INHERITANCE_get")
 public fun packagewithprotocols_OBJECT_WITH_INTERFACE_INHERITANCE_get(): kotlin.native.internal.NativePtr {
-    val _result = run { packagewithprotocols.OBJECT_WITH_INTERFACE_INHERITANCE }
+    val _result = packagewithprotocols.OBJECT_WITH_INTERFACE_INHERITANCE
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("packagewithprotocols_SiblingProtocol_NestedClass_NestedClass_init_allocate")
 public fun packagewithprotocols_SiblingProtocol_NestedClass_NestedClass_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<packagewithprotocols.SiblingProtocol.NestedClass.NestedClass>() }
+    val _result = kotlin.native.internal.createUninitializedInstance<packagewithprotocols.SiblingProtocol.NestedClass.NestedClass>()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("packagewithprotocols_SiblingProtocol_NestedClass_NestedClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
 public fun packagewithprotocols_SiblingProtocol_NestedClass_NestedClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val _result = run { kotlin.native.internal.initInstance(____kt, packagewithprotocols.SiblingProtocol.NestedClass.NestedClass()) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, packagewithprotocols.SiblingProtocol.NestedClass.NestedClass())
+    return true
 }
 
 @ExportedBridge("packagewithprotocols_SiblingProtocol_NestedClass_init_allocate")
 public fun packagewithprotocols_SiblingProtocol_NestedClass_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<packagewithprotocols.SiblingProtocol.NestedClass>() }
+    val _result = kotlin.native.internal.createUninitializedInstance<packagewithprotocols.SiblingProtocol.NestedClass>()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("packagewithprotocols_SiblingProtocol_NestedClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
 public fun packagewithprotocols_SiblingProtocol_NestedClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val _result = run { kotlin.native.internal.initInstance(____kt, packagewithprotocols.SiblingProtocol.NestedClass()) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, packagewithprotocols.SiblingProtocol.NestedClass())
+    return true
 }
 
 @ExportedBridge("packagewithprotocols_foo__TypesOfArgumentsE__anyU20ExportedKotlinPackages_packagewithprotocols_ContainerProtocol__")
 public fun packagewithprotocols_foo__TypesOfArgumentsE__anyU20ExportedKotlinPackages_packagewithprotocols_ContainerProtocol__(`receiver`: kotlin.native.internal.NativePtr): Boolean {
     val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as packagewithprotocols.ContainerProtocol
-    val _result = run { __receiver.packagewithprotocols_foo() }
-    return run { _result; true }
+    __receiver.packagewithprotocols_foo()
+    return true
 }
 
 @ExportedBridge("packagewithprotocols_foo__TypesOfArgumentsE__main___ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol_NestedClass__")
 public fun packagewithprotocols_foo__TypesOfArgumentsE__main___ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol_NestedClass__(`receiver`: kotlin.native.internal.NativePtr): Boolean {
     val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as packagewithprotocols.ContainerProtocol.NestedProtocol.NestedClass
-    val _result = run { __receiver.packagewithprotocols_foo() }
-    return run { _result; true }
+    __receiver.packagewithprotocols_foo()
+    return true
 }
 
 @ExportedBridge("packagewithprotocols_foo__TypesOfArgumentsE__main__ExportedKotlinPackages_packagewithprotocols_SiblingProtocol_NestedClass__")
 public fun packagewithprotocols_foo__TypesOfArgumentsE__main__ExportedKotlinPackages_packagewithprotocols_SiblingProtocol_NestedClass__(`receiver`: kotlin.native.internal.NativePtr): Boolean {
     val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as packagewithprotocols.SiblingProtocol.NestedClass
-    val _result = run { __receiver.packagewithprotocols_foo() }
-    return run { _result; true }
+    __receiver.packagewithprotocols_foo()
+    return true
 }
 
 @ExportedBridge("packagewithprotocols_foo__TypesOfArgumentsE__anyU20main__ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol__")
 public fun packagewithprotocols_foo__TypesOfArgumentsE__anyU20main__ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol__(`receiver`: kotlin.native.internal.NativePtr): Boolean {
     val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as packagewithprotocols.ContainerProtocol.NestedProtocol
-    val _result = run { __receiver.packagewithprotocols_foo() }
-    return run { _result; true }
+    __receiver.packagewithprotocols_foo()
+    return true
 }
 
 @ExportedBridge("repeating_conformances_Child1_init_allocate")
 public fun repeating_conformances_Child1_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<repeating_conformances.Child1>() }
+    val _result = kotlin.native.internal.createUninitializedInstance<repeating_conformances.Child1>()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("repeating_conformances_Child1_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
 public fun repeating_conformances_Child1_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val _result = run { kotlin.native.internal.initInstance(____kt, repeating_conformances.Child1()) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, repeating_conformances.Child1())
+    return true
 }
 
 @ExportedBridge("repeating_conformances_Child2_init_allocate")
 public fun repeating_conformances_Child2_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<repeating_conformances.Child2>() }
+    val _result = kotlin.native.internal.createUninitializedInstance<repeating_conformances.Child2>()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("repeating_conformances_Child2_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
 public fun repeating_conformances_Child2_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val _result = run { kotlin.native.internal.initInstance(____kt, repeating_conformances.Child2()) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, repeating_conformances.Child2())
+    return true
 }
 
 @ExportedBridge("repeating_conformances_Child3_init_allocate")
 public fun repeating_conformances_Child3_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<repeating_conformances.Child3>() }
+    val _result = kotlin.native.internal.createUninitializedInstance<repeating_conformances.Child3>()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("repeating_conformances_Child3_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
 public fun repeating_conformances_Child3_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val _result = run { kotlin.native.internal.initInstance(____kt, repeating_conformances.Child3()) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, repeating_conformances.Child3())
+    return true
 }
 
 @ExportedBridge("repeating_conformances_Child4_init_allocate")
 public fun repeating_conformances_Child4_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<repeating_conformances.Child4>() }
+    val _result = kotlin.native.internal.createUninitializedInstance<repeating_conformances.Child4>()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("repeating_conformances_Child4_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
 public fun repeating_conformances_Child4_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val _result = run { kotlin.native.internal.initInstance(____kt, repeating_conformances.Child4()) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, repeating_conformances.Child4())
+    return true
 }
 
 @ExportedBridge("repeating_conformances_Child5_init_allocate")
 public fun repeating_conformances_Child5_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<repeating_conformances.Child5>() }
+    val _result = kotlin.native.internal.createUninitializedInstance<repeating_conformances.Child5>()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("repeating_conformances_Child5_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
 public fun repeating_conformances_Child5_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val _result = run { kotlin.native.internal.initInstance(____kt, repeating_conformances.Child5()) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, repeating_conformances.Child5())
+    return true
 }
 
 @ExportedBridge("repeating_conformances_GrandChild1_init_allocate")
 public fun repeating_conformances_GrandChild1_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<repeating_conformances.GrandChild1>() }
+    val _result = kotlin.native.internal.createUninitializedInstance<repeating_conformances.GrandChild1>()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("repeating_conformances_GrandChild1_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
 public fun repeating_conformances_GrandChild1_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val _result = run { kotlin.native.internal.initInstance(____kt, repeating_conformances.GrandChild1()) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, repeating_conformances.GrandChild1())
+    return true
 }
 
 @ExportedBridge("repeating_conformances_GrandChild2_init_allocate")
 public fun repeating_conformances_GrandChild2_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<repeating_conformances.GrandChild2>() }
+    val _result = kotlin.native.internal.createUninitializedInstance<repeating_conformances.GrandChild2>()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("repeating_conformances_GrandChild2_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
 public fun repeating_conformances_GrandChild2_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val _result = run { kotlin.native.internal.initInstance(____kt, repeating_conformances.GrandChild2()) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, repeating_conformances.GrandChild2())
+    return true
 }
 
 @ExportedBridge("repeating_conformances_GrandChild3_init_allocate")
 public fun repeating_conformances_GrandChild3_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<repeating_conformances.GrandChild3>() }
+    val _result = kotlin.native.internal.createUninitializedInstance<repeating_conformances.GrandChild3>()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("repeating_conformances_GrandChild3_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
 public fun repeating_conformances_GrandChild3_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val _result = run { kotlin.native.internal.initInstance(____kt, repeating_conformances.GrandChild3()) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, repeating_conformances.GrandChild3())
+    return true
 }
 
 @ExportedBridge("repeating_conformances_GrandChild4_init_allocate")
 public fun repeating_conformances_GrandChild4_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<repeating_conformances.GrandChild4>() }
+    val _result = kotlin.native.internal.createUninitializedInstance<repeating_conformances.GrandChild4>()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("repeating_conformances_GrandChild4_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
 public fun repeating_conformances_GrandChild4_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val _result = run { kotlin.native.internal.initInstance(____kt, repeating_conformances.GrandChild4()) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, repeating_conformances.GrandChild4())
+    return true
 }
 
 @ExportedBridge("repeating_conformances_GrandChild5_init_allocate")
 public fun repeating_conformances_GrandChild5_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<repeating_conformances.GrandChild5>() }
+    val _result = kotlin.native.internal.createUninitializedInstance<repeating_conformances.GrandChild5>()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("repeating_conformances_GrandChild5_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
 public fun repeating_conformances_GrandChild5_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val _result = run { kotlin.native.internal.initInstance(____kt, repeating_conformances.GrandChild5()) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, repeating_conformances.GrandChild5())
+    return true
 }
 
 @ExportedBridge("repeating_conformances_Parent1_init_allocate")
 public fun repeating_conformances_Parent1_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<repeating_conformances.Parent1>() }
+    val _result = kotlin.native.internal.createUninitializedInstance<repeating_conformances.Parent1>()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("repeating_conformances_Parent1_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
 public fun repeating_conformances_Parent1_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val _result = run { kotlin.native.internal.initInstance(____kt, repeating_conformances.Parent1()) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, repeating_conformances.Parent1())
+    return true
 }
 
 @ExportedBridge("repeating_conformances_Parent2_init_allocate")
 public fun repeating_conformances_Parent2_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<repeating_conformances.Parent2>() }
+    val _result = kotlin.native.internal.createUninitializedInstance<repeating_conformances.Parent2>()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("repeating_conformances_Parent2_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
 public fun repeating_conformances_Parent2_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val _result = run { kotlin.native.internal.initInstance(____kt, repeating_conformances.Parent2()) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, repeating_conformances.Parent2())
+    return true
 }
 
 @ExportedBridge("repeating_conformances_Parent3_init_allocate")
 public fun repeating_conformances_Parent3_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<repeating_conformances.Parent3>() }
+    val _result = kotlin.native.internal.createUninitializedInstance<repeating_conformances.Parent3>()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("repeating_conformances_Parent3_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
 public fun repeating_conformances_Parent3_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val _result = run { kotlin.native.internal.initInstance(____kt, repeating_conformances.Parent3()) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, repeating_conformances.Parent3())
+    return true
 }
 
 @ExportedBridge("repeating_conformances_Parent4_init_allocate")
 public fun repeating_conformances_Parent4_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<repeating_conformances.Parent4>() }
+    val _result = kotlin.native.internal.createUninitializedInstance<repeating_conformances.Parent4>()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("repeating_conformances_Parent4_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
 public fun repeating_conformances_Parent4_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val _result = run { kotlin.native.internal.initInstance(____kt, repeating_conformances.Parent4()) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, repeating_conformances.Parent4())
+    return true
 }
 
 @ExportedBridge("repeating_conformances_Parent5_init_allocate")
 public fun repeating_conformances_Parent5_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<repeating_conformances.Parent5>() }
+    val _result = kotlin.native.internal.createUninitializedInstance<repeating_conformances.Parent5>()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("repeating_conformances_Parent5_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
 public fun repeating_conformances_Parent5_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val _result = run { kotlin.native.internal.initInstance(____kt, repeating_conformances.Parent5()) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, repeating_conformances.Parent5())
+    return true
 }

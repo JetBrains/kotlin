@@ -6,16 +6,30 @@
 package org.jetbrains.kotlin.backend.wasm.ir2wasm
 
 import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.wasm.ir.WasmFunctionType
+import org.jetbrains.kotlin.wasm.ir.WasmRefNullType
 
 private const val syntheticFqName = "__SYNTHETIC__"
 
 private fun String.toSyntheticSignature() =
     IdSignature.CommonSignature(syntheticFqName, this, null, 0, null)
 
-internal fun getFunctionTypeSignature(wasmFunctionType: org.jetbrains.kotlin.wasm.ir.WasmFunctionType): IdSignature {
+internal fun getFunctionTypeSignature(wasmFunctionType: WasmFunctionType): IdSignature {
     val params = wasmFunctionType.parameterTypes.joinToString("_")
     val results = wasmFunctionType.resultTypes.joinToString("_")
     return "wasm_func_type_\$${params}_\$${results}".toSyntheticSignature()
+}
+
+internal fun getContTypeSignature(wasmFunctionType: WasmFunctionType): IdSignature {
+    val params = wasmFunctionType.parameterTypes.joinToString("_")
+    val results = wasmFunctionType.resultTypes.joinToString("_")
+    return "wasm_cont_type_\$${params}_\$${results}".toSyntheticSignature()
+}
+
+// Lowered `SuspendFunctionN.invoke`: (receiver, p1..pN, $completion) -> Any?, all erased to kotlin.Any
+internal fun suspendFunctionInvokeWasmType(arity: Int): WasmFunctionType {
+    val anyRefNull = WasmRefNullType(Synthetics.HeapTypes.anyBuiltInType)
+    return WasmFunctionType(List(arity + 2) { anyRefNull }, listOf(anyRefNull))
 }
 
 object Synthetics {
@@ -59,6 +73,11 @@ object Synthetics {
     private val stringLiteralJsStringFunctionTypeSignature = "stringLiteralJsStringFunctionType".toSyntheticSignature()
     private val parameterlessNoReturnFunctionTypeSignature = "parameterlessNoReturnFunctionTypeSignature".toSyntheticSignature()
     private val jsExceptionTagFuncTypeSignature = "jsExceptionTagFuncType".toSyntheticSignature()
+    private val wasmContTagFuncTypeSignature = "wasmContTagFuncType".toSyntheticSignature()
+
+    // bound Stack Switching continuation
+    private val boundContTypeSignature = "boundContType".toSyntheticSignature()
+    private val boundContFuncTypeSignature = "boundContFuncType".toSyntheticSignature()
 
     private val throwableBuiltInTypeSignature = "throwableBuiltInType".toSyntheticSignature()
     private val anyBuiltInTypeSignature = "anyBuiltInType".toSyntheticSignature()
@@ -75,6 +94,7 @@ object Synthetics {
         val associatedObjectGetterWrapper = GcHeapTypeSymbol(associatedObjectGetterWrapperSignature)
         val throwableBuiltInType = GcHeapTypeSymbol(throwableBuiltInTypeSignature)
         val anyBuiltInType = GcHeapTypeSymbol(anyBuiltInTypeSignature)
+        val boundContType = GcHeapTypeSymbol(boundContTypeSignature)
     }
 
     object GcTypes {
@@ -88,6 +108,7 @@ object Synthetics {
         val associatedObjectGetterWrapper = GcTypeSymbol(associatedObjectGetterWrapperSignature)
         val stringLiteralFunctionType = FunctionTypeSymbol(stringLiteralFunctionTypeSignature)
         val stringLiteralJsStringFunctionType = FunctionTypeSymbol(stringLiteralJsStringFunctionTypeSignature)
+        val boundContType = GcTypeSymbol(boundContTypeSignature)
     }
 
     object FunctionHeapTypes {
@@ -96,8 +117,8 @@ object Synthetics {
         val jsExceptionTagFuncType = FunctionHeapTypeSymbol(jsExceptionTagFuncTypeSignature)
         val parameterlessNoReturnFunctionType = FunctionHeapTypeSymbol(parameterlessNoReturnFunctionTypeSignature)
         val associatedObjectGetterType = FunctionHeapTypeSymbol(associatedObjectGetterTypeSignature)
-
-        val wasmContFunctionType = ContFunctionHeapTypeSymbol(1)
+        val wasmContTagFuncType = FunctionHeapTypeSymbol(wasmContTagFuncTypeSignature)
+        val boundContFuncType = FunctionHeapTypeSymbol(boundContFuncTypeSignature)
     }
 
 }

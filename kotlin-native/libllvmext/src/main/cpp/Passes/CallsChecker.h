@@ -20,13 +20,18 @@ namespace llvm::kotlin {
 ///   * a call is to a function defined in this module (assumed to be a Kotlin
 ///     function)
 ///   * a call is to a "good" function (defined as names in
-///     `Kotlin_callsCheckerGoodFunctionNames` in the runtime)
+///     `GoodFunctionNames` in the pass implementation)
 /// * before the call (or after in case of
 ///   `llvm.objc.retainAutoreleasedReturnValue`) insert a call into the runtime
-///   `Kotlin_mm_checkStateAtExternalFunctionCall` and give it all info about
+///   `Kotlin_callsChecker_check` and give it all info about
 ///   the call. It'll dynamically check if the call is allowed to be performed
 ///   in the runnable thread state, and if not will assert, that the thread
 ///   state is native.
+/// * `objc_msgSend` and `objc_msgSendSuper2` are instrumented specially:
+///   inserted calls are, respectively, `Kotlin_callsChecker_checkMsgSend`
+///   and `Kotlin_callsChecker_checkMsgSendSuper2`, to which the first 2
+///   arguments are forwarded, so the runtime can figure out which actual
+///   functions are called.
 class CallsCheckerPass : public PassInfoMixin<CallsCheckerPass> {
 public:
   PreservedAnalyses run(Function &F, FunctionAnalysisManager &AF);
@@ -38,7 +43,6 @@ public:
 private:
   bool load(Module &M);
   void loadIgnoredFunctions(Module &M);
-  void loadGoodFunctions(Module &M);
 
   Value *placeCString(Module &M, StringRef S);
 
@@ -47,10 +51,9 @@ private:
   bool Loaded = false; // Assumes there's a single module and no paralellism.
   SmallPtrSet<Function *, 32> IgnoredFunctions;
   SmallVector<StringRef> GoodFunctions;
-  FunctionCallee CheckStateAtExternalCall;
-  FunctionCallee GetMethodImpl;
-  FunctionCallee GetClass;
-  FunctionCallee GetSuperClass;
+  FunctionCallee Check;
+  FunctionCallee CheckMsgSend;
+  FunctionCallee CheckMsgSendSuper2;
 
   StringMap<Value *> Strings;
 };

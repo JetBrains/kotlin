@@ -6,11 +6,14 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Action
+import org.gradle.api.NamedDomainObjectSet
 import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.*
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinBrowserTestRunnerDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserTestDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTestsLocation
@@ -64,57 +67,86 @@ internal abstract class KotlinJsBrowserTestImpl
 @Inject constructor(
     testCompilation: KotlinJsIrCompilation,
     private val objects: ObjectFactory,
-    providers: ProviderFactory,
+    private val providers: ProviderFactory,
 ) : KotlinJsBrowserTestDsl {
+
+    private val project = testCompilation.project
 
     internal fun setUpDefaultBrowserRunner() {
         chromium("chromium")
     }
 
+    override val browserRunners: NamedDomainObjectSet<KotlinBrowserTestRunnerDsl> =
+        objects.namedDomainObjectSet(KotlinBrowserTestRunnerDsl::class.java).apply {
+            configureEach { runner ->
+                reportIfUnknownType(runner)
+                connectTopLevelConfigDslWithBrowserTestDsl(runner)
+            }
+        }
+
+    private fun reportIfUnknownType(runner: KotlinBrowserTestRunnerDsl) {
+        if (runner is KotlinBrowserTestRunner) return
+
+        project.reportDiagnostic(
+            KotlinToolingDiagnostics.UnsupportedJsBrowserTestRunnerType(
+                runnerName = runner.name,
+                runnerType = runner.javaClass.name,
+            )
+        )
+    }
+
+    @Deprecated(
+        "Use 'browserRunners' instead.",
+        replaceWith = ReplaceWith("browserRunners"),
+    )
     override val allBrowserRunners: Provider<Map<String, KotlinBrowserTestRunnerDsl>> = providers.provider {
-        (chromiumRunners + firefoxRunners + webkitRunners)
+        browserRunners.asMap
     }
 
     override val defaultTestsLocationProvider: Provider<KotlinDefaultJsTestLocation> =
         testCompilation.registerTestLocations()
 
-    val chromiumRunners = mutableMapOf<String, KotlinChromiumTestRunner>()
+    val chromiumRunners: NamedDomainObjectSet<KotlinChromiumTestRunner> = browserRunners.withType(KotlinChromiumTestRunner::class.java)
     override fun chromium(
         name: String,
         body: Action<KotlinJsBrowserTestDsl.ChromiumTestRunnerDsl>,
     ) {
-        val runner = chromiumRunners.getOrPut(name) {
-            KotlinChromiumTestRunner(name, objects).also {
-                connectTopLevelConfigDslWithBrowserTestDsl(it)
-            }
-        }
-        body.execute(runner)
+        getOrCreateRunner(name) { KotlinChromiumTestRunner(name, objects) }?.let(body::execute)
     }
 
-    val firefoxRunners = mutableMapOf<String, KotlinFirefoxTestRunner>()
+    val firefoxRunners: NamedDomainObjectSet<KotlinFirefoxTestRunner> = browserRunners.withType(KotlinFirefoxTestRunner::class.java)
     override fun firefox(
         name: String,
         body: Action<KotlinJsBrowserTestDsl.FirefoxTestRunnerDsl>,
     ) {
-        val runner = firefoxRunners.getOrPut(name) {
-            KotlinFirefoxTestRunner(name, objects).also {
-                connectTopLevelConfigDslWithBrowserTestDsl(it)
-            }
-        }
-        body.execute(runner)
+        getOrCreateRunner(name) { KotlinFirefoxTestRunner(name, objects) }?.let(body::execute)
     }
 
-    val webkitRunners = mutableMapOf<String, KotlinWebkitTestRunner>()
+    val webkitRunners: NamedDomainObjectSet<KotlinWebkitTestRunner> = browserRunners.withType(KotlinWebkitTestRunner::class.java)
     override fun webkit(
         name: String,
         body: Action<KotlinJsBrowserTestDsl.WebkitTestRunnerDsl>,
     ) {
-        val runner = webkitRunners.getOrPut(name) {
-            KotlinWebkitTestRunner(name, objects).also {
-                connectTopLevelConfigDslWithBrowserTestDsl(it)
-            }
+        getOrCreateRunner(name) { KotlinWebkitTestRunner(name, objects) }?.let(body::execute)
+    }
+
+    private inline fun <reified T : KotlinBrowserTestRunner> getOrCreateRunner(
+        name: String,
+        create: () -> T,
+    ): T? {
+        val existing = browserRunners.findByName(name)
+        if (existing != null) {
+            if (existing is T) return existing
+            project.reportDiagnostic(
+                KotlinToolingDiagnostics.ConflictingJsBrowserTestRunnerName(
+                    runnerName = name
+                )
+            )
+            return null
         }
-        body.execute(runner)
+        val runner = create()
+        browserRunners.add(runner)
+        return runner
     }
 
     override val testsLocation: Property<KotlinJsTestsLocation> =
@@ -136,7 +168,7 @@ internal abstract class KotlinJsBrowserTestImpl
             isWasm -> locateOrRegisterEsmBundleKotlinJsTestsTask().map { it.kotlinJsTestLocation }
             else -> locateOrRegisterBrowserTestBundleTask {
                 // enabled when at least one browser runner is enabled. So the user has an intention to test via the browser pipeline.
-                browserRunnersDeclared.set(allBrowserRunners.map { it.isNotEmpty() })
+                browserRunnersDeclared.set(providers.provider { browserRunners.isNotEmpty() })
             }.map { it.kotlinJsTestLocation }
         }
     }

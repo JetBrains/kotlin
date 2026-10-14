@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.dependencyResolutionTests.configureRepositori
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
@@ -121,7 +122,7 @@ class SwiftExportUnitTests {
         val project = swiftExportProject()
         project.evaluate()
 
-        val swiftExportTask = project.tasks.getByName("iosSimulatorArm64DebugSwiftExport")
+        val swiftExportTask = project.tasks.getByName("iosSimulatorArm64SwiftExport")
         val generateSPMPackageTask = project.tasks.getByName("iosSimulatorArm64DebugGenerateSPMPackage")
         val buildSPMPackageTask = project.tasks.getByName("iosSimulatorArm64DebugBuildSPMPackage")
         val linkSwiftExportBinaryTask = project.tasks.getByName("linkSwiftExportBinaryDebugStaticIosSimulatorArm64")
@@ -239,11 +240,8 @@ class SwiftExportUnitTests {
         val iosArm64Prefix = "iosSimulatorArm64"
         val iosX64Prefix = "iosX64"
 
-        fun swiftExportExpectedTaskName(prefix: String): String = lowerCamelCaseName(
-            prefix,
-            buildTypeName,
-            "swiftExport"
-        )
+        // One run per target, so the build type isn't part of the name.
+        fun swiftExportExpectedTaskName(prefix: String): String = lowerCamelCaseName(prefix, "swiftExport")
 
         // Swift Export should be registered
         assertEquals(
@@ -593,6 +591,63 @@ class SwiftExportUnitTests {
         val taskSettings = swiftExportTask.parameters.swiftExportSettings.get()
 
         assertEquals(taskSettings, customSettings)
+    }
+
+    @Test
+    fun `test swift export worker max heap size defaults to 1g`() {
+        val project = swiftExportProject()
+        project.evaluate()
+
+        val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
+
+        assertEquals(listOf("-Xmx1g"), swiftExportTask.workerJvmArgs)
+    }
+
+    @Test
+    fun `test swift export worker jvm args from property keep default max heap size`() {
+        val project = swiftExportProject()
+        project.propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_NATIVE_SWIFT_EXPORT_WORKER_JVM_ARGS, " -XX:+UseG1GC  -Dfoo=bar ")
+        project.evaluate()
+
+        val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
+
+        assertEquals(listOf("-XX:+UseG1GC", "-Dfoo=bar"), swiftExportTask.customJvmArgs.get())
+        assertEquals(listOf("-XX:+UseG1GC", "-Dfoo=bar", "-Xmx1g"), swiftExportTask.workerJvmArgs)
+    }
+
+    @Test
+    fun `test swift export worker max heap size from property overrides default`() {
+        val project = swiftExportProject()
+        project.propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_NATIVE_SWIFT_EXPORT_WORKER_JVM_ARGS, "-Xmx4g -XX:+UseG1GC")
+        project.evaluate()
+
+        val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
+
+        assertEquals(listOf("-Xmx4g", "-XX:+UseG1GC"), swiftExportTask.workerJvmArgs)
+    }
+
+    @Test
+    fun `test swift export experimental warning is suppressed by property`() {
+        val project = swiftExportProject()
+        project.propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_NATIVE_SUPPRESS_SWIFT_EXPORT_EXPERIMENTAL_WARNING, "true")
+        project.evaluate()
+
+        val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
+
+        assertEquals(true, swiftExportTask.ignoreExperimentalDiagnostic.get())
+        project.assertNoDiagnostics(KotlinToolingDiagnostics.DeprecatedPropertyWithReplacement)
+    }
+
+    @Test
+    fun `test deprecated swift export nowarn property still suppresses experimental warning`() {
+        val project = swiftExportProject()
+        project.propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_SWIFT_EXPORT_EXPERIMENTAL_NOWARN_DEPRECATED, "true")
+        project.evaluate()
+
+        val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
+
+        assertEquals(true, swiftExportTask.ignoreExperimentalDiagnostic.get())
+        project.assertContainsDiagnostic(KotlinToolingDiagnostics.DeprecatedPropertyWithReplacement)
     }
 
     @Test

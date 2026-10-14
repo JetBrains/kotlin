@@ -3,7 +3,7 @@ E.class:
     PACKAGE_DIRECTIVE
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST
-    CLASS[classId=test/E, fqName=test.E, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=E, superNames=[Enum]]
+    CLASS[classId=test/E, fqName=test.E, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=E, superNames=[Enum]]
       MODIFIER_LIST[public final enum]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=E]
         MODIFIER_LIST[private]
@@ -25,8 +25,8 @@ E.class:
                       REFERENCE_EXPRESSION[referencedName=E]
                         isClassRef: true
       CLASS_BODY
-        ENUM_ENTRY[classId=null, fqName=test.E.E1, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=E1, superNames=[]]
-        ENUM_ENTRY[classId=null, fqName=test.E.E2, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=E2, superNames=[]]
+        ENUM_ENTRY[classId=null, fqName=test.E.E1, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=E1, superNames=[]]
+        ENUM_ENTRY[classId=null, fqName=test.E.E2, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=E2, superNames=[]]
 
 
 EnumLiteral.class:
@@ -34,7 +34,7 @@ EnumLiteral.class:
     PACKAGE_DIRECTIVE
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST
-    CLASS[classId=test/EnumLiteral, fqName=test.EnumLiteral, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=EnumLiteral, superNames=[Annotation]]
+    CLASS[classId=test/EnumLiteral, fqName=test.EnumLiteral, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=EnumLiteral, superNames=[Annotation]]
       MODIFIER_LIST[public final annotation]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=EnumLiteral]
         MODIFIER_LIST[public]
@@ -79,7 +79,7 @@ WithEnumLiteral.class:
     PACKAGE_DIRECTIVE
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST
-    CLASS[classId=test/WithEnumLiteral, fqName=test.WithEnumLiteral, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithEnumLiteral, superNames=[]]
+    CLASS[classId=test/WithEnumLiteral, fqName=test.WithEnumLiteral, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=WithEnumLiteral, superNames=[]]
       MODIFIER_LIST[public final]
         ANNOTATION_ENTRY[hasValueArguments=true, shortName=EnumLiteral]
           valueArguments: [

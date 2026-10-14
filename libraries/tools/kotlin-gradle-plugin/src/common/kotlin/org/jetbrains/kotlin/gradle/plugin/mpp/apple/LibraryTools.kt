@@ -27,6 +27,18 @@ internal class LibraryTools(private val logger: Logger? = null) {
         )
     }
 
+    /** Packs one static library per Apple platform into an XCFramework. */
+    fun createXCFramework(libraries: List<File>, output: File) {
+        runCommand(
+            buildList {
+                addAll(listOf("xcodebuild", "-create-xcframework"))
+                libraries.flatMapTo(this) { listOf("-library", it.absolutePath) }
+                addAll(listOf("-output", output.absolutePath))
+            },
+            logger = logger
+        )
+    }
+
     fun mergeLibraries(inputs: List<File>, output: File) {
         val inputLibs = inputs.map { it.absolutePath }
         val outputLib = output.absolutePath

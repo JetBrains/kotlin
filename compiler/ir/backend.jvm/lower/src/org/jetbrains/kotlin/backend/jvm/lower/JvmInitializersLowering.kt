@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.lower.InitializersLowering
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.constantValue
+import org.jetbrains.kotlin.ir.declarations.IrField
 
 /**
  * Merges init blocks and field initializers into constructors.
@@ -26,7 +27,7 @@ internal class JvmInitializersLowering(context: JvmBackendContext) : Initializer
 @PhasePrerequisites(JvmInitializersLowering::class)
 internal class JvmInitializersCleanupLowering(context: JvmBackendContext) : InitializersCleanupLowering(
     context,
-    {
-        it.constantValue() == null && (!it.isStatic || it.correspondingPropertySymbol?.owner?.isConst != true)
-    }
-)
+) {
+    override fun shouldEraseFieldInitializer(field: IrField): Boolean =
+        field.constantValue() == null && (!field.isStatic || super.shouldEraseFieldInitializer(field))
+}

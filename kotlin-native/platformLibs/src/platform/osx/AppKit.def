@@ -7,8 +7,8 @@ apiNotesSwiftName = true
 compilerOpts = -framework AppKit
 linkerOpts = -framework AppKit
 
-strictEnums = NSBezierPathElement
-objcClassesIncludingCategories = NSImage NSProgressIndicator NSCursor NSDocument NSGraphicsContext NSMutableParagraphStyle NSParagraphStyle NSTextTab NSToolbar NSWindow NSTextContainer NSTextAttachment
+strictEnums = NSBezierPathElement NSWritingToolsCoordinatorTextReplacementReason
+objcClassesIncludingCategories = NSImage NSProgressIndicator NSCursor NSDocument NSGraphicsContext NSMutableParagraphStyle NSParagraphStyle NSTextTab NSToolbar NSWindow NSTextContainer NSTextAttachment NSTextStorage NSFont
 allowIncludingObjCCategoriesFromDefFile = true
 ---
 @interface NSTextAttachment(K)

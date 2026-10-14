@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.standalone.fir.test.cases.session.buil
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationValue
-import org.jetbrains.kotlin.analysis.api.components.returnType
+import org.jetbrains.kotlin.analysis.api.expressions.returnType
 import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageProvider
 import org.jetbrains.kotlin.analysis.api.platform.packages.createPackageProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.psi.KtTypeAlias
 import org.jetbrains.kotlin.test.services.StandardLibrariesPathProviderForKotlinProject
 import org.junit.jupiter.api.Test
 import java.nio.file.Files
+import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.zip.ZipFile
 import kotlin.io.path.ExperimentalPathApi
@@ -50,8 +51,8 @@ import kotlin.test.assertIs
 import kotlin.test.assertTrue
 
 class StandaloneBehaviorTest : AbstractStandaloneTest() {
-    override val suiteName: String
-        get() = "behavior"
+    override val suiteName: Path
+        get() = Paths.get("behavior")
 
     @Test
     fun testStubbedAnnotationArguments() {

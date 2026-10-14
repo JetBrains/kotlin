@@ -1,0 +1,99 @@
+KtCollectionLiteralExpression(43,48): '["!"]'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = ["!"]
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.sequences.Sequence<kotlin.String>
+        symbol = kotlin/sequences/Sequence.of(): kotlin.sequences.Sequence<T>
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/sequences/Sequence.of
+      typeArgumentsMapping = {
+        T -> (kotlin.String)
+      }
+      valueArgumentMapping = {}
+    diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'companion fun <T> of(): Sequence<T>'.>
+    isInBestCandidates = false
+
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = ["!"]
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.sequences.Sequence<kotlin.String>
+        symbol = kotlin/sequences/Sequence.of(element: T): kotlin.sequences.Sequence<T>
+        valueParameters = [
+          KaVariableSignature:
+            name = element
+            receiverType = null
+            returnType = kotlin.String
+            symbol = element: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/sequences/Sequence.of
+      typeArgumentsMapping = {
+        T -> (kotlin.String)
+      }
+      valueArgumentMapping = {
+        "!" -> (KaVariableSignature:
+          name = element
+          receiverType = null
+          returnType = kotlin.String
+          symbol = element: T
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = ["!"]
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.sequences.Sequence<kotlin.String>
+        symbol = kotlin/sequences/Sequence.of(vararg elements: T): kotlin.sequences.Sequence<T>
+        valueParameters = [
+          KaVariableSignature:
+            name = elements
+            receiverType = null
+            returnType = kotlin.String
+            symbol = vararg elements: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/sequences/Sequence.of
+      typeArgumentsMapping = {
+        T -> (kotlin.String)
+      }
+      valueArgumentMapping = {
+        "!" -> (KaVariableSignature:
+          name = elements
+          receiverType = null
+          returnType = kotlin.String
+          symbol = vararg elements: T
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = false

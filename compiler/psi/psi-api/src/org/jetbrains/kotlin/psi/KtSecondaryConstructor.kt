@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:OptIn(KtNonPublicApi::class)
+@file:OptIn(KtIdeApi::class)
 
 package org.jetbrains.kotlin.psi
 
@@ -69,6 +69,7 @@ class KtSecondaryConstructor : KtConstructor<KtSecondaryConstructor> {
             "this.convertImplicitDelegationCallToExplicit(isThis)",
             "org.jetbrains.kotlin.idea.base.psi.convertImplicitDelegationCallToExplicit",
         ),
+        level = DeprecationLevel.ERROR,
     )
     fun replaceImplicitDelegationCallWithExplicit(isThis: Boolean): KtConstructorDelegationCall =
         KtPsiMutationService.getInstance().convertImplicitDelegationCallToExplicit(this, isThis)

@@ -1,0 +1,39 @@
+================ Step #1 =================
+
+Cleaning output files:
+  out/production/module/BigBar.class
+  out/production/module/IBar.class
+  out/production/module/META-INF/module.kotlin_module
+  out/production/module/SmallBar.class
+End of files
+Compiling files:
+  src/sealedInterface.kt
+  src/sealedSubclasses.kt
+End of files
+Exit code: OK
+------------------------------------------
+Cleaning output files:
+  out/production/module/ExhaustiveWhenKt.class
+  out/production/module/META-INF/module.kotlin_module
+End of files
+Compiling files:
+  src/exhaustiveWhen.kt
+End of files
+Exit code: ABORT
+------------------------------------------
+COMPILATION FAILED
+Unresolved reference 'SmallBar'.
+
+================ Step #2 =================
+
+Cleaning output files:
+  out/production/module/BigBar.class
+  out/production/module/IBar.class
+End of files
+Compiling files:
+  src/exhaustiveWhen.kt
+  src/sealedInterface.kt
+  src/sealedSubclasses.kt
+End of files
+Exit code: OK
+------------------------------------------

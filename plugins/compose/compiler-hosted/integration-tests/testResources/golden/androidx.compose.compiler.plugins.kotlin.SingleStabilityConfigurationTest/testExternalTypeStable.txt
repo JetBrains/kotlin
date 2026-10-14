@@ -6,12 +6,12 @@ import androidx.compose.runtime.Composable
 import java.time.Instant
 
 @Composable
-fun SkippableComposable(list: List<String>) {
+fun StableComposable(list: List<String>) {
     use(list)
 }
 
 @Composable
-fun UnskippableComposable(instant: Instant) {
+fun UnstableComposable(instant: Instant) {
     use(instant)
 }
 
@@ -20,14 +20,14 @@ fun UnskippableComposable(instant: Instant) {
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = 637373796, startOffset = 81, endOffset = 142)
-fun SkippableComposable(list: List<String>, %composer: Composer?, %changed: Int) {
+@FunctionKeyMeta(key = -1044797936, startOffset = 81, endOffset = 139)
+fun StableComposable(list: List<String>, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   val %dirty = %changed
-  if (%changed and 0b1110 == 0) {
+  if (%changed and 0b0110 == 0) {
     %dirty = %dirty or if (%composer.changed(list)) 0b0100 else 0b0010
   }
-  if (%composer.shouldExecute(%dirty and 0b1011 != 0b0010, %dirty and 0b0001)) {
+  if (%composer.shouldExecute(%dirty and 0b0011 != 0b0010, %dirty and 0b0001)) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }
@@ -39,21 +39,29 @@ fun SkippableComposable(list: List<String>, %composer: Composer?, %changed: Int)
     %composer.skipToGroupEnd()
   }
   %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-    SkippableComposable(list, %composer, updateChangedFlags(%changed or 0b0001))
+    StableComposable(list, %composer, updateChangedFlags(%changed or 0b0001))
   }
 }
 @Composable
-@FunctionKeyMeta(key = -961358826, startOffset = 156, endOffset = 220)
-fun UnskippableComposable(instant: Instant, %composer: Composer?, %changed: Int) {
+@FunctionKeyMeta(key = 1041109592, startOffset = 153, endOffset = 214)
+fun UnstableComposable(instant: Instant, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  if (isTraceInProgress()) {
-    traceEventStart(<>, %changed, -1, <>)
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changedInstance(instant)) 0b0100 else 0b0010
   }
-  use(instant)
-  if (isTraceInProgress()) {
-    traceEventEnd()
+  if (%composer.shouldExecute(%dirty and 0b0011 != 0b0010, %dirty and 0b0001)) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    use(instant)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
   }
   %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-    UnskippableComposable(instant, %composer, updateChangedFlags(%changed or 0b0001))
+    UnstableComposable(instant, %composer, updateChangedFlags(%changed or 0b0001))
   }
 }

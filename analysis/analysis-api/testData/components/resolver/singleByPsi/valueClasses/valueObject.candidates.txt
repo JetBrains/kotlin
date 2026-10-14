@@ -1,0 +1,18 @@
+KtNameReferenceExpression(111,116): 'Empty'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Empty
+        symbol = <constructor>(): Empty
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false

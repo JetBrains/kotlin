@@ -102,6 +102,8 @@ public abstract class org/jetbrains/kotlin/gradle/dsl/KotlinMultiplatformExtensi
 	public fun getWasmJsTest (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
 	public fun getWasmWasiMain (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
 	public fun getWasmWasiTest (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public fun getWatchosArm32Main (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public fun getWatchosArm32Test (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
 	public fun getWatchosArm64Main (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
 	public fun getWatchosArm64Test (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
 	public fun getWatchosDeviceArm64Main (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
@@ -212,6 +214,11 @@ public abstract class org/jetbrains/kotlin/gradle/dsl/KotlinMultiplatformExtensi
 	public fun wasmWasi (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmWasiTargetDsl;
 	public fun wasmWasi (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmWasiTargetDsl;
 	public fun wasmWasi (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmWasiTargetDsl;
+	public fun watchosArm32 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun watchosArm32 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun watchosArm32 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun watchosArm32 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun watchosArm32 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public fun watchosArm64 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public fun watchosArm64 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public fun watchosArm64 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
@@ -237,7 +244,6 @@ public abstract class org/jetbrains/kotlin/gradle/dsl/KotlinMultiplatformExtensi
 }
 
 public abstract class org/jetbrains/kotlin/gradle/dsl/KotlinProjectExtension : org/gradle/api/plugins/ExtensionAware, org/jetbrains/kotlin/gradle/dsl/KotlinBaseExtension, org/jetbrains/kotlin/gradle/plugin/HasProject, org/jetbrains/kotlin/tooling/core/HasMutableExtras {
-	public field coreLibrariesVersion Ljava/lang/String;
 	public fun <init> (Lorg/gradle/api/Project;)V
 	public fun abiValidation ()V
 	public fun abiValidation (Lorg/gradle/api/Action;)V
@@ -245,6 +251,7 @@ public abstract class org/jetbrains/kotlin/gradle/dsl/KotlinProjectExtension : o
 	public fun explicitApiWarning ()V
 	public fun getAbiValidation ()Lorg/jetbrains/kotlin/gradle/dsl/abi/AbiValidationExtension;
 	public fun getCompilerVersion ()Lorg/gradle/api/provider/Property;
+	public fun getCoreKotlinLibrariesVersion ()Lorg/gradle/api/provider/Property;
 	public fun getCoreLibrariesVersion ()Ljava/lang/String;
 	public fun getExplicitApi ()Lorg/jetbrains/kotlin/gradle/dsl/ExplicitApiMode;
 	public synthetic fun getExtras ()Lorg/jetbrains/kotlin/tooling/core/Extras;
@@ -363,6 +370,10 @@ public final class org/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPr
 	public static fun tvosX64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
 	public static fun tvosX64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
 	public static fun tvosX64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
+	public static fun watchosArm32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public static fun watchosArm32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public static fun watchosArm32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public static fun watchosArm32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public static fun watchosArm64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public static fun watchosArm64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public static fun watchosArm64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions;Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
@@ -472,6 +483,11 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinTargetCont
 	public abstract fun tvosX64 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
 	public abstract fun tvosX64 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
 	public abstract fun tvosX64 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
+	public abstract fun watchosArm32 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun watchosArm32 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun watchosArm32 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun watchosArm32 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun watchosArm32 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public abstract fun watchosArm64 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public abstract fun watchosArm64 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public abstract fun watchosArm64 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
@@ -585,6 +601,11 @@ public final class org/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPres
 	public static fun tvosX64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
 	public static fun tvosX64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
 	public static synthetic fun tvosX64$default (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
+	public static fun watchosArm32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public static fun watchosArm32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public static fun watchosArm32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public static fun watchosArm32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public static synthetic fun watchosArm32$default (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public static fun watchosArm64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public static fun watchosArm64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public static fun watchosArm64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions;Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
@@ -703,6 +724,10 @@ public final class org/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasm
 	public static fun wasmWasi (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmWasiTargetDsl;
 	public static fun wasmWasi (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmWasiTargetDsl;
 	public static synthetic fun wasmWasi$default (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmWasiTargetDsl;
+	public static fun watchosArm32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public static fun watchosArm32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public static fun watchosArm32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public static fun watchosArm32 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public static fun watchosArm64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public static fun watchosArm64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
 	public static fun watchosArm64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
@@ -840,6 +865,7 @@ public final class org/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport
 	public static final field PostAdditionalArtifactResolution Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$AdditionalArtifactResolutionPhase;
 	public static final field PreAdditionalArtifactResolution Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$AdditionalArtifactResolutionPhase;
 	public static final field SourcesAndDocumentationResolution Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$AdditionalArtifactResolutionPhase;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$AdditionalArtifactResolutionPhase;
 	public static fun values ()[Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$AdditionalArtifactResolutionPhase;
 }
@@ -859,6 +885,7 @@ public final class org/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport
 	public static final field PreDependencyResolution Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyResolutionPhase;
 	public static final field SourceDependencyResolution Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyResolutionPhase;
 	public static final field SourcesAndDocumentationResolution Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyResolutionPhase;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyResolutionPhase;
 	public static fun values ()[Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyResolutionPhase;
 }
@@ -868,6 +895,7 @@ public final class org/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport
 	public static final field FreeDependencyTransformationPhase Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyTransformationPhase;
 	public static final field PostDependencyTransformationPhase Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyTransformationPhase;
 	public static final field PreDependencyTransformationPhase Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyTransformationPhase;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyTransformationPhase;
 	public static fun values ()[Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyTransformationPhase;
 }

@@ -179,8 +179,12 @@ class SmokeCompilationTest : BaseCompilationTest() {
             sources: List<Path>,
             destination: Path,
             extraClasspath: List<Path> = emptyList(),
+            rawArguments: List<String> = emptyList(),
             additionalConfiguration: JvmCompilationOperation.Builder.() -> Unit = {},
         ): JvmCompilationOperation = toolchain.jvm.jvmCompilationOperation(sources, destination) {
+            if (rawArguments.isNotEmpty()) {
+                compilerArguments.applyArgumentStrings(rawArguments)
+            }
             val stdlibPath = KotlinVersion::class.java.protectionDomain.codeSource.location.toURI().toPath()
             compilerArguments[JvmCompilerArguments.MODULE_NAME] = "a"
             compilerArguments[JvmCompilerArguments.JVM_TARGET] = JvmTarget.JVM_17

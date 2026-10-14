@@ -64,9 +64,17 @@ internal class KonanInteropModuleDeserializer(
         require(klib.isCInteropLibrary())
     }
 
+    // Allow to link against a declaration from another C interop module, even if this module also defines one with the same signature.
+    // This avoids an error when two declarations could try to bind to the same signature (KT-89825). Now, the first one to be deserialized
+    // will be used from all modules.
+    // This is only enabled for interop Klibs because:
+    // a) For compatibility with previous versions of Kotlin.
+    // b) They are likely more susceptible to duplicated declarations then regular Klibs, e.g. when two C libraries use the same header file.
+    override val preferLinkingToTheCurrentModule: Boolean get() = false
+
     private val symbolTable = linker.symbolTable
     private val metadataReader = KlibMetadataReader(klib)
-    private val moduleHeaderProto: KlibMetadataProtoBuf.Header by lazy { parseModuleHeader(klib.metadata.moduleHeaderData) }
+    private val moduleHeaderProto: KlibMetadataProtoBuf.Header? by lazy { parseModuleHeader(klib.metadata.moduleHeaderData) }
 
     // Interop Klibs may declare only one package, and its FQ name is declared in the manifest.
     private val definedPackageFqName: FqName = klib.packageFqName?.let(::FqName)
@@ -218,11 +226,10 @@ internal class KonanInteropModuleDeserializer(
             val kmClass = metadataReader.retrieveDeclarationsById(id, removeMetadataRepresentation = false)
                     ?.firstOrNull() as? KmClass ?: continue
             if (kmClass.inheritsFromCStructOrEnum()) {
-                // At first, pass removeMetadataRepresentation = false, because we only use the metadata class to check if it is a C struct or enum.
-                // If it is, pass removeMetadataRepresentation = true, because we are going to actually deserialize it. This helps to ensure
-                // we only deserialize a given class once.
-                metadataReader.retrieveDeclarationsById(id, removeMetadataRepresentation = true)
-                transformer.transformTopLevelClass(kmClass)
+                // Ask linker about the class instead of deserializing it directly from metadata.
+                // This ensures that, if two interop Klibs define a class with the same ID, only one of them will be chosen, deterministically.
+                val classSig = ClassId.fromString(kmClass.name).toCInteropSignature(isCInterop = true)
+                val _ = linker.deserializeOrReturnUnboundIrSymbolIfPartialLinkageEnabled(classSig, BinarySymbolData.SymbolKind.CLASS_SYMBOL, this)
             }
         }
     }
@@ -283,7 +290,7 @@ internal class KonanInteropModuleDeserializer(
         private fun loadAndCacheMetadata(): Map<MetadataDeclarationId, List<Any>> {
             val metadataComponent = klib.metadata
             val provider = object : KlibModuleMetadata.MetadataLibraryProvider {
-                override val moduleHeaderData get() = metadataComponent.moduleHeaderData
+                override val moduleHeaderData get() = metadataComponent.moduleHeaderData ?: error("No metadata header data found")
                 override val metadataVersion = KlibMetadataVersion((klib.metadataVersion?.toArray()
                         ?: error("No metadata version specified in ${klib.path}")))
 

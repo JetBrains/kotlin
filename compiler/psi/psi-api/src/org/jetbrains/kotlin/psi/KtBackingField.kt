@@ -75,8 +75,6 @@ open class KtBackingField : KtDeclarationStub<KotlinBackingFieldStub>, KtModifie
 
     /**
      * The property this backing field belongs to.
-     *
-     * Note: in broken code a backing field can be attached to a [KtDestructuringDeclaration] (KT-74793)
      */
     val property: KtProperty
         get() = parent as KtProperty
@@ -91,6 +89,7 @@ open class KtBackingField : KtDeclarationStub<KotlinBackingFieldStub>, KtModifie
     @Deprecated(
         message = "Use typeReference instead",
         replaceWith = ReplaceWith("typeReference"),
+        level = DeprecationLevel.ERROR,
     )
     open val returnTypeReference: KtTypeReference?
         get() = typeReference

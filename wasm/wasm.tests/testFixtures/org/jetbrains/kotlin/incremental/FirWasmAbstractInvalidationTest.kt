@@ -13,11 +13,8 @@ import org.jetbrains.kotlin.config.PartialLinkageLogLevel
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.wasm.config.wasmGenerateClosedWorldMultimodule
 import org.jetbrains.kotlin.wasm.config.wasmIncludedModuleOnly
+import org.jetbrains.kotlin.wasm.config.wasmUseStackSwitchingProposal
 import org.jetbrains.kotlin.wasm.test.WasmFirCompilerExtraTest
-
-abstract class AbstractFirWasmInvalidationTest :
-    WasmAbstractInvalidationTest(TargetBackend.WASM, "incrementalOut/invalidationFir") {
-}
 
 @WasmFirCompilerExtraTest
 abstract class AbstractFirWasmInvalidationMultiModuleTestBase(workingDirPath: String) :
@@ -33,15 +30,21 @@ abstract class AbstractFirWasmInvalidationMultiModuleTestBase(workingDirPath: St
         super.isIgnoredTest(projectInfo) || projectInfo.name in ignoredTests
 }
 
-abstract class AbstractFirWasmInvalidationMultiModuleTest :
-    AbstractFirWasmInvalidationMultiModuleTestBase("incrementalOut/invalidationFirMultimodule") {
+abstract class AbstractFirWasmInvalidationTest(
+    workingDirPath: String = "incrementalOut/invalidationFir",
+) : WasmAbstractInvalidationTest(TargetBackend.WASM, workingDirPath)
+
+abstract class AbstractFirWasmInvalidationMultiModuleTest(
+    workingDirPath: String = "incrementalOut/invalidationFirMultimodule",
+) : AbstractFirWasmInvalidationMultiModuleTestBase(workingDirPath) {
     override fun modifyConfig(configuration: CompilerConfiguration) {
         configuration.wasmGenerateClosedWorldMultimodule = true
     }
 }
 
-abstract class AbstractFirWasmInvalidationSingleModuleTest :
-    AbstractFirWasmInvalidationMultiModuleTestBase("incrementalOut/invalidationFirSinglemodule") {
+abstract class AbstractFirWasmInvalidationSingleModuleTest(
+    workingDirPath: String = "incrementalOut/invalidationFirSinglemodule",
+) : AbstractFirWasmInvalidationMultiModuleTestBase(workingDirPath) {
     override fun modifyConfig(configuration: CompilerConfiguration) {
         configuration.wasmIncludedModuleOnly = true
     }
@@ -91,5 +94,32 @@ abstract class AbstractWasmInvalidationWithPLTest(workingDirPath: String) :
     WasmAbstractInvalidationTest(TargetBackend.WASM, workingDirPath) {
     override fun modifyConfig(configuration: CompilerConfiguration) {
         configuration.setupPartialLinkageConfig(PartialLinkageConfig(PartialLinkageLogLevel.WARNING))
+    }
+}
+
+@WasmFirCompilerExtraTest
+abstract class AbstractFirWasmInvalidationStackSwitchingTest :
+    AbstractFirWasmInvalidationTest("incrementalOut/invalidationFirStackSwitching") {
+    override fun modifyConfig(configuration: CompilerConfiguration) {
+        super.modifyConfig(configuration)
+        configuration.wasmUseStackSwitchingProposal = true
+    }
+}
+
+// Inheriting all suppressed tests of AbstractFirWasmInvalidationMultiModuleTestBase
+abstract class AbstractFirWasmInvalidationStackSwitchingMultiModuleTest :
+    AbstractFirWasmInvalidationMultiModuleTest("incrementalOut/invalidationFirStackSwitchingMultimodule") {
+    override fun modifyConfig(configuration: CompilerConfiguration) {
+        super.modifyConfig(configuration)
+        configuration.wasmUseStackSwitchingProposal = true
+    }
+}
+
+// Inheriting all suppressed tests of AbstractFirWasmInvalidationSingleModuleTest
+abstract class AbstractFirWasmInvalidationStackSwitchingSingleModuleTest :
+    AbstractFirWasmInvalidationSingleModuleTest("incrementalOut/invalidationFirStackSwitchingSinglemodule") {
+    override fun modifyConfig(configuration: CompilerConfiguration) {
+        super.modifyConfig(configuration)
+        configuration.wasmUseStackSwitchingProposal = true
     }
 }

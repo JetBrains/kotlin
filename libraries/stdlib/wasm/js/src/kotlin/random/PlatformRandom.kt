@@ -9,5 +9,5 @@ package kotlin.random
 private fun initialSeed(): Int =
     js("((Math.random() * Math.pow(2, 32)) | 0)")
 
-internal actual fun defaultPlatformRandom(): Random =
+internal actual val defaultRandom: Random =
     Random(initialSeed())

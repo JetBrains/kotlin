@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity.CLASS_ME
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jvm
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshottingOperation.Companion.EXPAND_TYPE_ALIASES
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshottingOperation.Companion.GRANULARITY
-import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshottingOperation.Companion.PARSE_INLINED_LOCAL_CLASSES
 import org.jetbrains.kotlin.compilerRunner.btapi.BuildSessionService
 import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
@@ -47,9 +46,6 @@ internal abstract class ClasspathEntrySnapshotTransform : TransformAction<Classp
         @get:Classpath
         internal abstract val classpath: ConfigurableFileCollection
 
-        @get:Input
-        internal abstract val compilationViaBuildToolsApi: Property<Boolean>
-
         @get:Internal
         internal abstract val buildToolsImplVersion: Property<String>
 
@@ -58,9 +54,6 @@ internal abstract class ClasspathEntrySnapshotTransform : TransformAction<Classp
 
         @get:Internal
         internal abstract val suppressVersionInconsistencyChecks: Property<Boolean>
-
-        @get:Input
-        abstract val parseInlinedLocalClasses: Property<Boolean>
 
         @get:Input
         abstract val expandTypeAliases: Property<Boolean>
@@ -77,18 +70,7 @@ internal abstract class ClasspathEntrySnapshotTransform : TransformAction<Classp
     private val buildToolsImplVersion: String?
         get() = parameters.buildToolsImplVersion.orNull.takeIf { it != "null" }
 
-    private fun checkVersionConsistency() {
-        if (parameters.suppressVersionInconsistencyChecks.get()) return
-        val kgpVersion = parameters.kgpVersion.get()
-        if (kgpVersion != buildToolsImplVersion) {
-            reportDiagnostic(KotlinToolingDiagnostics.BuildToolsApiVersionInconsistency(kgpVersion, buildToolsImplVersion))
-        }
-    }
-
     override fun transform(outputs: TransformOutputs) {
-        if (!parameters.compilationViaBuildToolsApi.get()) {
-            checkVersionConsistency()
-        }
         val classpathEntryInputDirOrJar = inputArtifact.get().asFile
         if (!classpathEntryInputDirOrJar.exists()) {
             reportDiagnostic(KotlinToolingDiagnostics.DependencyDoesNotPhysicallyExist(classpathEntryInputDirOrJar))
@@ -102,7 +84,6 @@ internal abstract class ClasspathEntrySnapshotTransform : TransformAction<Classp
             parameters.gradleUserHomeDir.get().asFile,
             parameters.gradleReadOnlyDependenciesCacheDir.orNull?.asFile
         )
-        val parseInlinedLocalClasses = parameters.parseInlinedLocalClasses.get()
         val expandTypeAliases = parameters.expandTypeAliases.get()
 
         val buildSession = parameters.buildSessionService.get().getOrCreateBuildSession(
@@ -114,7 +95,6 @@ internal abstract class ClasspathEntrySnapshotTransform : TransformAction<Classp
         val snapshotOperation = kotlinToolchains.jvm.classpathSnapshottingOperationBuilder(classpathEntryInputDirOrJar.toPath())
             .apply {
                 this[GRANULARITY] = granularity
-                this[PARSE_INLINED_LOCAL_CLASSES] = parseInlinedLocalClasses
 
                 if (supportsExpandTypeAliases()) {
                     this[EXPAND_TYPE_ALIASES] = expandTypeAliases

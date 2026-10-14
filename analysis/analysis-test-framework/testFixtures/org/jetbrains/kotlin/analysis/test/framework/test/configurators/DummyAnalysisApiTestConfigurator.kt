@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.test.framework.test.configurators
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.AnalysisApiServiceRegistrar
+import org.jetbrains.kotlin.analysis.api.standalone.fir.projectStructure.AnalysisApiServiceRegistrar
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModuleStructure
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.services.TestModuleStructure

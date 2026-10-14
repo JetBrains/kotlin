@@ -1,5 +1,4 @@
-import org.jetbrains.kotlin.testFederation.SmokeTestConfig
-import org.jetbrains.kotlin.testFederation.smokeTestConfig
+import org.jetbrains.kotlin.testFederation.testFederation
 
 plugins {
     id("common-configuration")
@@ -68,6 +67,7 @@ tasks.processTestFixturesResources.configure {
         include("/diagnostics/helpers/**")
         include("/codegen/helpers/**")
         include("/ir/interpreter/helpers/**")
+        include("/klib/klib-compatibility/helpers/**")
     }
     into("stdlib") {
         from(project(":kotlin-stdlib").isolated.projectDirectory.dir("src/kotlin")) {
@@ -117,7 +117,6 @@ projectTests {
 
     withJvmStdlibAndReflect()
     withStdlibCommon()
-    withScriptRuntime()
     withTestJar()
     withAnnotations()
     withScriptingPlugin()
@@ -139,9 +138,11 @@ projectTests {
             JdkMajorVersion.JDK_21_0, // e.g. org.jetbrains.kotlin.test.runners.codegen.FirLightTreeBlackBoxModernJdkCodegenTestGenerated.TestsWithJava21
         )
     ) {
-        smokeTestConfig = SmokeTestConfig.Enabled(
-            autoSmokeTestPercentage = 3
-        )
+        testFederation {
+            smokeTests {
+                includeAutoSamples(percentage = 3)
+            }
+        }
     }
 
     testGenerator("org.jetbrains.kotlin.test.TestGeneratorForTestCommonNewKt", generateTestsInBuildDirectory = true)

@@ -8,7 +8,7 @@
 
 FILE: [ResolvedTo(IMPORTS)] nestedAliasWithNestedAnnotationInLocalClassScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-nestedAliasWithNestedAnnotationInLocalClassScript.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[Types](AnnotationTarget#.TYPE#, AnnotationTarget#.TYPEALIAS#, AnnotationTarget#.TYPE_PARAMETER#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.TYPE|, R|kotlin/annotation/AnnotationTarget.TYPEALIAS|, R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|))] public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-nestedAliasWithNestedAnnotationInLocalClassScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {

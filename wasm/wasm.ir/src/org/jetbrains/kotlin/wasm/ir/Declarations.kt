@@ -172,10 +172,10 @@ sealed class WasmTypeDeclaration(
     override val name: String
 ) : WasmNamedModuleField()
 
-data class WasmContType(
-    val arity: Int,
+class WasmContType(
+    name: String,
     val funType: WasmHeapType.Type.FunctionType,
-) : WasmTypeDeclaration("continuation_$arity")
+) : WasmTypeDeclaration(name)
 
 data class WasmFunctionType(
     val parameterTypes: List<WasmType>,

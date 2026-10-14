@@ -1,0 +1,90 @@
+FILE: boundsFromFunctionTypeAtoms.kt
+    public final enum class MyEnum : R|kotlin/Enum<MyEnum>| {
+        private constructor(): R|MyEnum| {
+            super<R|kotlin/Enum<MyEnum>|>()
+        }
+
+        public final static enum entry X: R|MyEnum|
+        public final static fun values(): R|kotlin/Array<MyEnum>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|MyEnum| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<MyEnum>|
+            public static get(): R|kotlin/enums/EnumEntries<MyEnum>|
+
+    }
+    public sealed class MySealed : R|kotlin/Any| {
+        protected constructor(): R|MySealed| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final object A : R|MySealed| {
+            private constructor(): R|MySealed.A| {
+                super<R|MySealed|>()
+            }
+
+        }
+
+    }
+    public final fun enumEntry(i: R|kotlin/Int|): R|MyEnum| {
+        ^enumEntry Q|MyEnum|.R|/MyEnum.X|
+    }
+    public final fun sealedInheritor(i: R|kotlin/Int|): R|MySealed| {
+        ^sealedInheritor Q|MySealed.A|
+    }
+    public final fun <T, R> viaLambdaWithParameter(x: R|T|, y: R|R|, f: R|(R) -> T|): R|kotlin/Unit| {
+    }
+    public final fun <T> viaLambdaResult(x: R|T|, f: R|() -> T|): R|kotlin/Unit| {
+    }
+    public final fun <T, R> viaCallableReference(x: R|T|, f: R|(R) -> T|): R|kotlin/Unit| {
+    }
+    public final fun <T, R> viaCallableReferenceWithKnownParameter(x: R|T|, r: R|R|, f: R|(R) -> T|): R|kotlin/Unit| {
+    }
+    public final fun <T> noBounds(x: R|T|): R|kotlin/Unit| {
+    }
+    public final fun <T, R> unrelatedLambda(x: R|T|, f: R|(R) -> kotlin/Unit|): R|kotlin/Unit| {
+    }
+    public final fun testEnum(): R|kotlin/Unit| {
+        R|/viaLambdaWithParameter|<R|MyEnum|, R|kotlin/Int|>(Q|MyEnum|.R|/MyEnum.X|, Int(1), <L> = viaLambdaWithParameter@fun <anonymous>(it: R|kotlin/Int|): R|MyEnum| <inline=NoInline>  {
+            ^ Q|MyEnum|.R|/MyEnum.X|
+        }
+        )
+        R|/viaLambdaResult|<R|MyEnum|>(Q|MyEnum|.R|/MyEnum.X|, <L> = viaLambdaResult@fun <anonymous>(): R|MyEnum| <inline=NoInline>  {
+            ^ Q|MyEnum|.R|/MyEnum.X|
+        }
+        )
+        R|/viaCallableReference|<R|MyEnum|, R|@R|kotlin/ParameterName|(name = String(i))  kotlin/Int|>(Q|MyEnum|.R|/MyEnum.X|, ::R|/enumEntry|)
+        R|/viaCallableReferenceWithKnownParameter|<R|MyEnum|, R|kotlin/Int|>(Q|MyEnum|.R|/MyEnum.X|, Int(1), ::R|/enumEntry|)
+        R|/noBounds<Inapplicable(INAPPLICABLE): /noBounds>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(<Unresolved name: X>#)
+        R|/unrelatedLambda<Inapplicable(INAPPLICABLE): /unrelatedLambda>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>, R|kotlin/Int|>(<Unresolved name: X>#, <L> = unrelatedLambda@fun <anonymous>(r: R|kotlin/Int|): R|kotlin/Unit| <inline=NoInline>  {
+            ^@unrelatedLambda Unit
+        }
+        )
+        R|/unrelatedLambda<Inapplicable(INAPPLICABLE): /unrelatedLambda>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>, <ERROR TYPE REF: Cannot infer argument for type parameter R>>(<Unresolved name: X>#, <L> = unrelatedLambda@fun <anonymous>(it: <ERROR TYPE REF: Cannot infer argument for type parameter R>): R|kotlin/Unit| <inline=NoInline>  {
+            ^@unrelatedLambda Unit
+        }
+        )
+    }
+    public final fun testSealed(): R|kotlin/Unit| {
+        R|/viaLambdaWithParameter|<R|MySealed.A|, R|kotlin/Int|>(Q|MySealed.A|, Int(1), <L> = viaLambdaWithParameter@fun <anonymous>(it: R|kotlin/Int|): R|MySealed.A| <inline=NoInline>  {
+            ^ Q|MySealed.A|
+        }
+        )
+        R|/viaLambdaResult|<R|MySealed.A|>(Q|MySealed.A|, <L> = viaLambdaResult@fun <anonymous>(): R|MySealed.A| <inline=NoInline>  {
+            ^ Q|MySealed.A|
+        }
+        )
+        R|/viaCallableReference|<R|MySealed|, R|@R|kotlin/ParameterName|(name = String(i))  kotlin/Int|>(Q|MySealed.A|, ::R|/sealedInheritor|)
+        R|/viaCallableReferenceWithKnownParameter|<R|MySealed|, R|kotlin/Int|>(Q|MySealed.A|, Int(1), ::R|/sealedInheritor|)
+        R|/noBounds<Inapplicable(INAPPLICABLE): /noBounds>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(<Unresolved name: A>#)
+        R|/unrelatedLambda<Inapplicable(INAPPLICABLE): /unrelatedLambda>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>, R|kotlin/Int|>(<Unresolved name: A>#, <L> = unrelatedLambda@fun <anonymous>(r: R|kotlin/Int|): R|kotlin/Unit| <inline=NoInline>  {
+            ^@unrelatedLambda Unit
+        }
+        )
+        R|/unrelatedLambda<Inapplicable(INAPPLICABLE): /unrelatedLambda>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>, <ERROR TYPE REF: Cannot infer argument for type parameter R>>(<Unresolved name: A>#, <L> = unrelatedLambda@fun <anonymous>(it: <ERROR TYPE REF: Cannot infer argument for type parameter R>): R|kotlin/Unit| <inline=NoInline>  {
+            ^@unrelatedLambda Unit
+        }
+        )
+    }

@@ -163,7 +163,8 @@ public fun FirExtension.createNestedClass(
  *
  * If no supertypes added then [kotlin.Any] supertype will be added automatically
  *
- * Created class won't have a constructor; constructor can be added separately with [createDefaultPrivateConstructor] function
+ * Created class won't have a constructor;
+ * constructor can be added separately with [createDefaultConstructor] or [createDefaultPrivateConstructor] function
  */
 public fun FirExtension.createCompanionObject(
     owner: FirClassSymbol<*>,

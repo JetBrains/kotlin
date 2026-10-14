@@ -56,8 +56,10 @@ import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
+import org.jetbrains.kotlin.psi.KtClassBody
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.types.SmartcastStability
@@ -180,7 +182,7 @@ object ContextCollector {
         return resolutionFacade.getOrBuildFirFor(resolvedElement) != null
     }
 
-    fun computeDesignation(file: FirFile, targetElement: PsiElement): FirDesignation? {
+    private fun computeDesignation(file: FirFile, targetElement: PsiElement): FirDesignation? {
         val contextKtDeclaration = targetElement.getNonLocalContainingOrThisDeclaration(::isValidTarget)
         if (contextKtDeclaration != null) {
             val designationPath = FirElementFinder.collectDesignationPath(file, contextKtDeclaration)
@@ -199,12 +201,33 @@ object ContextCollector {
      * Processes the [FirFile], collecting contexts for elements matching the [filter].
      *
      * @param file The file to process.
-     * @param designation The declaration to process. If `null`, all declarations in the [file] are processed.
+     * @param targetElement The element whose non-local containing declaration is processed.
+     *     If there is no such declaration, all declarations in the [file] are processed.
      * @param preferBodyContext If `true`, [ContextKind.BODY] is collected where available.
      * @param filter The filter predicate. Context is collected only for [PsiElement]s for which the [filter] returns
      *     [FilterResponse.CONTINUE] or [FilterResponse.STOP].
      */
     fun process(
+        file: FirFile,
+        targetElement: PsiElement,
+        preferBodyContext: Boolean,
+        shouldTriggerBodyAnalysis: Boolean,
+        filter: (PsiElement) -> FilterResponse,
+    ): ContextProvider {
+        val designation = computeDesignation(file, targetElement)
+        return process(file, designation, preferBodyContext, shouldTriggerBodyAnalysis, filter)
+    }
+
+    /**
+     * Processes the [FirFile], collecting contexts for elements matching the [filter].
+     *
+     * @param file The file to process.
+     * @param designation The declaration to process. If `null`, all declarations in the [file] are processed.
+     * @param preferBodyContext If `true`, [ContextKind.BODY] is collected where available.
+     * @param filter The filter predicate. Context is collected only for [PsiElement]s for which the [filter] returns
+     *     [FilterResponse.CONTINUE] or [FilterResponse.STOP].
+     */
+    private fun process(
         file: FirFile,
         designation: FirDesignation?,
         preferBodyContext: Boolean,
@@ -559,26 +582,6 @@ private class ContextCollectorVisitor(
         }
     }
 
-    override fun visitReplSnippet(replSnippet: FirReplSnippet) = withProcessor(replSnippet) {
-        dumpContext(replSnippet, ContextKind.SELF)
-
-        processAnnotations(replSnippet)
-
-        onActive {
-            val holder = getSessionHolder(replSnippet)
-
-            context.withReplSnippet(replSnippet, holder = holder) {
-                dumpContext(replSnippet, ContextKind.BODY)
-
-                onActive {
-                    withInterceptor {
-                        processChildren(replSnippet)
-                    }
-                }
-            }
-        }
-    }
-
     override fun visitFile(file: FirFile) = withProcessor(file) {
         val holder = getSessionHolder(file)
 
@@ -589,6 +592,7 @@ private class ContextCollectorVisitor(
 
             onActive {
                 withInterceptor {
+                    skipUnrelatedDeclarations(file.declarations) { it.parent is KtFile }
                     processChildren(file)
                 }
             }
@@ -704,6 +708,7 @@ private class ContextCollectorVisitor(
                     onActive {
                         withLocalVariableHolder(onEnter = { enterClass(regularClass) }, onExit = { exitClass() }) {
                             withInterceptor {
+                                skipUnrelatedDeclarations(regularClass.declarations) { it.parent is KtClassBody }
                                 processChildren(regularClass)
                             }
                         }
@@ -792,6 +797,25 @@ private class ContextCollectorVisitor(
         }
     }
 
+    /**
+     * Once the designation is exhausted or absent, skips [declarations] that don't contain the target:
+     * no context can be collected inside them, but visiting them would trigger their body analysis (KT-76375).
+     *
+     * Only declarations with a real source declared directly in a class body or a file ([isDirectMember]) are skipped,
+     * as FIR might put the target under members with a fake source (e.g., data class generated members) or declared
+     * outside the class body (e.g., constructor properties, delegate fields, or the primary constructor with its
+     * delegated constructor call). Each declaration is checked by its own PSI, as the FIR tree of such a declaration
+     * never leaves its PSI. Script and REPL snippet members are kept, as their statements drive the data flow.
+     */
+    private fun Processor.skipUnrelatedDeclarations(declarations: List<FirDeclaration>, isDirectMember: (PsiElement) -> Boolean) {
+        for (declaration in declarations) {
+            val psi = declaration.realPsi ?: continue
+            if (isDirectMember(psi) && filter(psi) == FilterResponse.SKIP) {
+                skip(declaration)
+            }
+        }
+    }
+
     private fun Processor.processFileHeader(file: FirFile) {
         process(file.packageDirective)
         processList(file.imports)
@@ -837,15 +861,40 @@ private class ContextCollectorVisitor(
                 }
 
                 onActive {
-                    context.forDelegatedConstructorCallChildren(constructor, owningClass = null, holder = holder) {
-                        process(constructor.delegatedConstructor)
-                    }
-
+                    process(constructor.delegatedConstructor)
                     process(constructor.contractDescription)
                 }
             }
         }
     }
+
+    /**
+     * Same as [FirExpressionsResolveTransformer.transformDelegatedConstructorCall][org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirExpressionsResolveTransformer.transformDelegatedConstructorCall]:
+     * the call itself is resolved with the implicit receiver of the containing class (required for super calls to inner classes),
+     * while its children (e.g., arguments) are resolved without it.
+     */
+    override fun visitDelegatedConstructorCall(delegatedConstructorCall: FirDelegatedConstructorCall) = withProcessor(delegatedConstructorCall) {
+        val constructor = context.containerIfAny as? FirConstructor
+            ?: errorWithAttachment("Delegated constructor call is expected to be inside a constructor") {
+                withFirEntry("delegatedConstructorCall", delegatedConstructorCall)
+            }
+
+        context.forDelegatedConstructorCallResolution {
+            dumpContext(delegatedConstructorCall, ContextKind.SELF, hasBodyContext = false)
+        }
+
+        onActive {
+            context.forDelegatedConstructorCallChildren(constructor, owningClass = null, holder = getSessionHolder(constructor)) {
+                processChildren(delegatedConstructorCall)
+            }
+        }
+    }
+
+    override fun visitMultiDelegatedConstructorCall(multiDelegatedConstructorCall: FirMultiDelegatedConstructorCall) =
+        withProcessor(multiDelegatedConstructorCall) {
+            // The multi-call shares the source with its last delegated call, so its own context is not dumped
+            processChildren(multiDelegatedConstructorCall)
+        }
 
     override fun visitEnumEntry(enumEntry: FirEnumEntry) = withProcessor(enumEntry) {
         dumpContext(enumEntry, ContextKind.SELF)
@@ -1198,6 +1247,10 @@ private class ContextCollectorVisitor(
                 process(element)
                 elementsToSkip += element
             }
+        }
+
+        fun skip(element: FirElement) {
+            elementsToSkip += element
         }
 
         fun processChildren(element: FirElement, checkIsActive: Boolean = true) {

@@ -12,8 +12,6 @@ org.jetbrains.kotlin.psi.KtExpressionCodeFragmentType
 org.jetbrains.kotlin.psi.KtExpressionCodeFragmentType:constructor()
 org.jetbrains.kotlin.psi.KtTypeCodeFragmentType
 org.jetbrains.kotlin.psi.KtTypeCodeFragmentType:constructor()
-org.jetbrains.kotlin.psi.psiUtil.KtStringTemplateExpressionManipulator
-org.jetbrains.kotlin.psi.psiUtil.StringTemplateExpressionManipulator
 org.jetbrains.kotlin.psi.stubs.elements.KtFileStubBuilder
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:ANNOTATION
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:ANNOTATION_ENTRY
@@ -36,6 +34,7 @@ org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:CONTRACT_EFFECT
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:CONTRACT_EFFECT_LIST
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:DELEGATED_SUPER_TYPE_ENTRY
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:DESTRUCTURING_DECLARATION
+org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:DESTRUCTURING_DECLARATION_ENTRY
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:DOT_QUALIFIED_EXPRESSION
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:DYNAMIC_TYPE
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:ENUM_ENTRY

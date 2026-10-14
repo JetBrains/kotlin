@@ -1,0 +1,180 @@
+FILE[kind=Facade[packageFqName=test, facadeFqName=test.OperationReferencesKt]]
+  facadeFqName: test.OperationReferencesKt
+  partSimpleName: "OperationReferencesKt"
+  PACKAGE_DIRECTIVE
+    REFERENCE_EXPRESSION[referencedName=test]
+  IMPORT_LIST
+  PROPERTY[fqName=test.counter, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=true, name=counter]
+    origin: Facade(className=test/OperationReferencesKt, jvmClassName=null)
+    MODIFIER_LIST[public]
+    TYPE_REFERENCE
+      USER_TYPE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=kotlin]
+        REFERENCE_EXPRESSION[referencedName=Int]
+          isClassRef: true
+  FUNCTION[fqName=test.postfixDecrement, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=postfixDecrement]
+    origin: Facade(className=test/OperationReferencesKt, jvmClassName=null)
+    MODIFIER_LIST[public]
+    VALUE_PARAMETER_LIST
+    TYPE_REFERENCE
+      USER_TYPE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=kotlin]
+        REFERENCE_EXPRESSION[referencedName=Int]
+          isClassRef: true
+  FUNCTION[fqName=test.prefixDecrement, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=prefixDecrement]
+    origin: Facade(className=test/OperationReferencesKt, jvmClassName=null)
+    MODIFIER_LIST[public]
+    VALUE_PARAMETER_LIST
+    TYPE_REFERENCE
+      USER_TYPE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=kotlin]
+        REFERENCE_EXPRESSION[referencedName=Int]
+          isClassRef: true
+  FUNCTION[fqName=test.greater, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=greater]
+    origin: Facade(className=test/OperationReferencesKt, jvmClassName=null)
+    MODIFIER_LIST[public]
+    VALUE_PARAMETER_LIST
+      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Int]
+              isClassRef: true
+      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=b]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Int]
+              isClassRef: true
+    TYPE_REFERENCE
+      USER_TYPE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=kotlin]
+        REFERENCE_EXPRESSION[referencedName=Boolean]
+          isClassRef: true
+  FUNCTION[fqName=test.lessOrEqual, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=lessOrEqual]
+    origin: Facade(className=test/OperationReferencesKt, jvmClassName=null)
+    MODIFIER_LIST[public]
+    VALUE_PARAMETER_LIST
+      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Int]
+              isClassRef: true
+      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=b]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Int]
+              isClassRef: true
+    TYPE_REFERENCE
+      USER_TYPE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=kotlin]
+        REFERENCE_EXPRESSION[referencedName=Boolean]
+          isClassRef: true
+  FUNCTION[fqName=test.notIdentical, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=notIdentical]
+    origin: Facade(className=test/OperationReferencesKt, jvmClassName=null)
+    MODIFIER_LIST[public]
+    VALUE_PARAMETER_LIST
+      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Any]
+              isClassRef: true
+      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=b]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Any]
+              isClassRef: true
+    TYPE_REFERENCE
+      USER_TYPE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=kotlin]
+        REFERENCE_EXPRESSION[referencedName=Boolean]
+          isClassRef: true
+  FUNCTION[fqName=test.contains, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=contains]
+    origin: Facade(className=test/OperationReferencesKt, jvmClassName=null)
+    MODIFIER_LIST[public]
+    VALUE_PARAMETER_LIST
+      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Int]
+              isClassRef: true
+      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=range]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=ranges]
+            REFERENCE_EXPRESSION[referencedName=IntRange]
+              isClassRef: true
+    TYPE_REFERENCE
+      USER_TYPE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=kotlin]
+        REFERENCE_EXPRESSION[referencedName=Boolean]
+          isClassRef: true
+  FUNCTION[fqName=test.in, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=in]
+    origin: Facade(className=test/OperationReferencesKt, jvmClassName=null)
+    MODIFIER_LIST[public infix]
+    TYPE_REFERENCE
+      USER_TYPE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=kotlin]
+        REFERENCE_EXPRESSION[referencedName=Int]
+          isClassRef: true
+    VALUE_PARAMETER_LIST
+      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=other]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Int]
+              isClassRef: true
+    TYPE_REFERENCE
+      USER_TYPE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=kotlin]
+        REFERENCE_EXPRESSION[referencedName=Int]
+          isClassRef: true
+  FUNCTION[fqName=test.backtickedInfixCall, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=backtickedInfixCall]
+    origin: Facade(className=test/OperationReferencesKt, jvmClassName=null)
+    MODIFIER_LIST[public]
+    VALUE_PARAMETER_LIST
+      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Int]
+              isClassRef: true
+      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=b]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Int]
+              isClassRef: true
+    TYPE_REFERENCE
+      USER_TYPE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=kotlin]
+        REFERENCE_EXPRESSION[referencedName=Int]
+          isClassRef: true

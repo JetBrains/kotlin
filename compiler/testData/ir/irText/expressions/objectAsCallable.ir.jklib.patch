@@ -1,0 +1,13 @@
+--- a/objectAsCallable.ir.txt
++++ b/objectAsCallable.ir.jklib.txt
+@@ -41,6 +41,10 @@
+       VALUE_PARAMETER kind:Regular name:other index:1 type:<root>.En
+       overridden:
+         public final fun compareTo (other: E of kotlin.Enum): kotlin.Int declared in kotlin.Enum
++    FUN FAKE_OVERRIDE name:describeConstable visibility:public modality:FINAL returnType:@[FlexibleNullability] java.util.Optional<@[FlexibleNullability] java.lang.Enum.EnumDesc<@[FlexibleNullability] <root>.En?>?>? [fake_override]
++      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.En>
++      overridden:
++        public final fun describeConstable (): @[FlexibleNullability] java.util.Optional<@[FlexibleNullability] java.lang.Enum.EnumDesc<@[FlexibleNullability] E of kotlin.Enum?>?>? declared in kotlin.Enum
+     FUN FAKE_OVERRIDE name:equals visibility:public modality:FINAL returnType:kotlin.Boolean [fake_override,operator]
+       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.En>
+       VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?

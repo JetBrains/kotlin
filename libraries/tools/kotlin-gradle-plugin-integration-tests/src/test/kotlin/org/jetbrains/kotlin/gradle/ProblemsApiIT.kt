@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
@@ -16,6 +17,8 @@ import kotlin.test.assertNotNull
 @DisplayName("Problems API tests")
 @OtherGradlePluginTests
 class ProblemsApiIT : KGPBaseTest() {
+    override val defaultBuildOptions: BuildOptions = super.defaultBuildOptions.copy(warningMode = WarningMode.Fail)
+
     @GradleTest
     @GradleTestVersions(
         additionalVersions = [TestVersions.Gradle.G_9_5],

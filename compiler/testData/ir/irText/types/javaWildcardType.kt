@@ -1,8 +1,5 @@
 // TARGET_BACKEND: JVM
 
-// KT-85735 Reflection: Java wildcard type based on Kotlin type with declaration-site variance is loaded differently in new implementation
-// KOTLIN_REFLECT_DUMP_MISMATCH
-
 // FILE: javaWildcardType.kt
 interface K {
     fun kf1(): Collection<out CharSequence>

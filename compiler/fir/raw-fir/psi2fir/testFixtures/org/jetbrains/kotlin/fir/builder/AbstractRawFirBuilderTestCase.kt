@@ -8,11 +8,12 @@ package org.jetbrains.kotlin.fir.builder
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.psi.PsiFile
-import com.intellij.psi.tree.IElementType
 import com.intellij.util.PathUtil
-import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.checkers.collectLanguageFeatureMap
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
@@ -20,10 +21,15 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.declarations.builder.FirFileBuilder
+import org.jetbrains.kotlin.fir.declarations.builder.FirReplSnippetBuilder
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.builder.FirBlockBuilder
 import org.jetbrains.kotlin.fir.expressions.impl.FirContractCallBlock
+import org.jetbrains.kotlin.fir.extensions.PluginServicesInitialization
+import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.references.impl.FirStubReference
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.session.FirSessionFactoryHelper
@@ -38,9 +44,7 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtNonPublicApi
 import org.jetbrains.kotlin.psi.KtPropertyDelegate
-import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.TestDataAssertions
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
@@ -52,25 +56,42 @@ import kotlin.reflect.jvm.isAccessible
 
 @OptIn(ObsoleteTestInfrastructure::class)
 abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase("", "kt") {
-    private fun createFile(filePath: String, fileType: IElementType): PsiFile {
-        val psiFactory = KtPsiFactory(myProject)
-        return when (fileType) {
-            KtNodeTypes.EXPRESSION_CODE_FRAGMENT ->
-                psiFactory.createExpressionCodeFragment(loadFile(filePath), null)
-            KtNodeTypes.BLOCK_CODE_FRAGMENT ->
-                psiFactory.createBlockCodeFragment(loadFile(filePath), null)
-            else ->
-                createPsiFile(FileUtil.getNameWithoutExtension(PathUtil.getFileName(filePath)), loadFile(filePath))
-        }
+    private fun createFile(filePath: String): PsiFile {
+        val file = File(filePath)
+        return createPsiFile(FileUtil.getNameWithoutExtension(PathUtil.getFileName(filePath)), loadFile(file))
     }
 
     protected open fun runTest(filePath: String) {
-        val file = createKtFile(filePath)
-        val firFile = file.toFirFile(BodyBuildingMode.NORMAL)
+        val absolutePath = ForTestCompileRuntime.transformTestDataPath(filePath).path
+        val file = createKtFile(absolutePath)
+        val session = FirSessionFactoryHelper.createEmptySession(parseLanguageFeatures(file.text))
+        session.registerReplSnippetConfiguratorForReplFixture(filePath)
+        val firFile = file.toFirFile(session, BodyBuildingMode.NORMAL)
         val firFileDump = dumpFirFile(firFile)
-        val expectedPath = expectedPath(filePath, ".txt")
+        val expectedPath = expectedPath(absolutePath, ".txt")
         TestDataAssertions.assertEqualsToFile(File(expectedPath), firFileDump)
-        checkAnnotationOwners(filePath, firFile)
+        checkAnnotationOwners(absolutePath, firFile)
+    }
+
+    /**
+     * Raw FIR builders decide between a script and a REPL snippet through the registered [FirReplSnippetConfiguratorExtension]s,
+     * so a no-op one accepting every source is registered for `*.repl.kts` fixtures.
+     */
+    @OptIn(PluginServicesInitialization::class)
+    protected fun FirSession.registerReplSnippetConfiguratorForReplFixture(filePath: String) {
+        if (!filePath.endsWith(".repl.kts")) return
+        extensionService.registerExtensions(
+            FirReplSnippetConfiguratorExtension::class,
+            listOf(FirReplSnippetConfiguratorExtension.Factory { TestReplSnippetConfigurator(it) }),
+        )
+    }
+
+    private class TestReplSnippetConfigurator(session: FirSession) : FirReplSnippetConfiguratorExtension(session) {
+        override fun isReplSnippetsSource(sourceFile: KtSourceFile?, scriptSource: KtSourceElement): Boolean = true
+        override fun FirReplSnippetBuilder.configureContainingFile(fileBuilder: FirFileBuilder) {}
+        override fun FirReplSnippetBuilder.configure(sourceFile: KtSourceFile?, context: Context<*>) {}
+        override fun FirBlockBuilder.configureEvalBody(sourceFile: KtSourceFile?, scriptSource: KtSourceElement, context: Context<*>) {}
+        override fun MutableList<FirElement>.configure(sourceFile: KtSourceFile?, scriptSource: KtSourceElement, context: Context<*>) {}
     }
 
     protected fun expectedPath(originalPath: String, newExtension: String): String {
@@ -115,10 +136,9 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase("", "kt") {
         TestDataAssertions.assertEqualsToFile(expectedFile, actual)
     }
 
-    @OptIn(KtNonPublicApi::class)
     protected open fun createKtFile(filePath: String): KtFile {
         myFileExt = FileUtilRt.getExtension(PathUtil.getFileName(filePath))
-        return (createFile(filePath, KtNodeTypes.FILE) as KtFile).apply {
+        return (createFile(filePath) as KtFile).apply {
             myFile = this
         }
     }

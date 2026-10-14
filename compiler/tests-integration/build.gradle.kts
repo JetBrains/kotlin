@@ -1,6 +1,4 @@
-import org.jetbrains.kotlin.testFederation.SmokeTestConfig
-import org.jetbrains.kotlin.testFederation.isSmokeTestMode
-import org.jetbrains.kotlin.testFederation.smokeTestConfig
+import org.jetbrains.kotlin.testFederation.testFederation
 
 plugins {
     id("common-configuration")
@@ -15,9 +13,6 @@ val otherCompilerModules = CompilerModules.compilerModules.filter { it != path }
 val antLauncherJar = configurations.create("antLauncherJar")
 
 dependencies {
-
-    testFixturesApi(project(":kotlin-script-runtime"))
-
     testFixturesApi(kotlinStdlib())
 
     testFixturesApi(kotlinTest())
@@ -88,7 +83,6 @@ projectTests {
             JdkMajorVersion.JDK_17_0,
             JdkMajorVersion.JDK_21_0
         ),
-        javaLauncher = JdkMajorVersion.JDK_17_0,
         maxHeapSize = testMaxHeapSizeLarge,
     ) {
         dependsOn(":dist")
@@ -109,14 +103,10 @@ projectTests {
 
         /*
         This test is still using junit3 style tests, neither 'Category' nor 'Tag' mechanics are supported.
-        We declare smoke tests here, junit3 compliant.
+        We just run all tests as smoke tests.
         */
-        smokeTestConfig = SmokeTestConfig.RunAllTests
-        if (isSmokeTestMode.get()) {
-            filter {
-                includeTestsMatching("*SmokeTest")
-                includeTestsMatching("*CliTestGenerated$*")
-            }
+        testFederation {
+            smokeTests { includeAll() }
         }
     }
 
@@ -131,7 +121,6 @@ projectTests {
     testData(project(":compiler").isolated, "testData/loadJavaPackageAnnotations")
 
     withJvmStdlibAndReflect()
-    withScriptRuntime()
     withTestJar()
     withThirdPartyAnnotations()
     @OptIn(KotlinCompilerDistUsage::class)
@@ -151,4 +140,3 @@ projectTests {
     withScriptingPlugin()
 }
 
-testsJar()

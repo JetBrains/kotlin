@@ -10,11 +10,13 @@ import org.jetbrains.dokka.links.Callable
 import org.jetbrains.dokka.links.Nullable
 import org.jetbrains.dokka.links.TypeConstructor
 import org.jetbrains.dokka.model.*
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInAnalysisApi
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
+@MustRunOnChangesInAnalysisApi
 class DRITest : BaseAbstractTest() {
     private val defaultConfiguration = dokkaConfiguration {
         sourceSets {
