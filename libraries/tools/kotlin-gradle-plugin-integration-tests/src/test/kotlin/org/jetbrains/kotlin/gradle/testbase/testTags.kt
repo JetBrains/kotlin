@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.testbase
 
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInJs
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInNative
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInSwiftExport
@@ -83,6 +84,7 @@ annotation class NativeGradlePluginTests
 @Target(AnnotationTarget.CLASS, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
 @Tag("SwiftPMImportKGP")
+@MustRunOnChangesInGradle
 annotation class SwiftPMImportGradlePluginTests
 
 /**
