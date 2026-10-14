@@ -194,7 +194,6 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
      *  fun foo(x: KotlinType, y: KotlinType = <default>): KotlinType { <original-body> }
      */
     fun transformExportFunction(function: IrSimpleFunction): List<IrDeclaration>? {
-        val hasDefaultValues = function.parameters.any { it.defaultValue != null }
         val valueParametersAdapters = function.parameters.map {
             it.type.jsToKotlinAdapterIfNeeded(isReturn = false, canBeUndefined = it.defaultValue != null)
         }
@@ -224,11 +223,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
 
         // Delegate new function to old function:
         val builder: DeclarationIrBuilder = context.createIrBuilder(newFun.symbol)
-        newFun.body = if (hasDefaultValues) {
-            createExportAdapterFunctionBodyWithDefaultValues(builder, newFun, function, valueParametersAdapters, resultAdapter)
-        } else {
-            createAdapterFunctionBody(builder, newFun, function, valueParametersAdapters, resultAdapter)
-        }
+        newFun.body = createAdapterFunctionBody(builder, newFun, function, valueParametersAdapters, resultAdapter)
 
         newFun.annotations += builder.irAnnotation(jsRelatedSymbols.jsNameConstructor, typeArguments = emptyList()).also {
             it.arguments[0] = builder.irString(function.getJsNameOrKotlinName().identifier)
@@ -247,60 +242,39 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
         valueParametersAdapters: List<InteropTypeAdapter?>,
         resultAdapter: InteropTypeAdapter?
     ) = builder.irBlockBody {
-        +irReturn(
-            irCall(functionToCall).let { call ->
-                for ([index, valueParameter] in function.parameters.withIndex()) {
-                    val get = irGet(valueParameter)
-                    call.arguments[index] = valueParametersAdapters[index].adaptIfNeeded(get, builder)
-                }
-                resultAdapter.adaptIfNeeded(call, builder)
-            }
-        )
-    }
-
-    private fun createExportAdapterFunctionBodyWithDefaultValues(
-        builder: DeclarationIrBuilder,
-        adapterFunction: IrSimpleFunction,
-        function: IrSimpleFunction,
-        valueParametersAdapters: List<InteropTypeAdapter?>,
-        resultAdapter: InteropTypeAdapter?
-    ) = builder.irBlockBody {
-        val typeParameterRemapper = IrTypeParameterRemapper(function.typeParameters.zip(adapterFunction.typeParameters).toMap())
+        val typeParameterRemapper = IrTypeParameterRemapper(functionToCall.typeParameters.zip(function.typeParameters).toMap())
 
         // Default values can refer to the preceding parameters, so they should see the already adapted values.
+        val hasDefaultValues = functionToCall.parameters.any { it.defaultValue != null }
         val adaptedParameters = mutableMapOf<IrValueSymbol, IrValueSymbol>()
-        val adaptedVariables = function.parameters.mapIndexed { index, parameter ->
-            val adapterParameter = adapterFunction.parameters[index]
-            val adaptedValue = valueParametersAdapters[index].adaptIfNeeded(irGet(adapterParameter), this)
+
+        val arguments = functionToCall.parameters.mapIndexed { index, parameterToCall ->
+            val parameter = function.parameters[index]
 
             // Only JS references can be `undefined`.
-            val defaultValue = parameter.defaultValue?.takeIf { isExternalType(adapterParameter.type) }
-            val value = if (defaultValue != null) {
-                val defaultExpression = defaultValue.expression
-                    .deepCopyWithSymbols(adapterFunction)
+            val defaultValue = parameterToCall.defaultValue?.takeIf { isExternalType(parameter.type) }
+            val adapter = if (defaultValue == null) valueParametersAdapters[index] else DefaultValueOrAdapter(
+                kotlinType = typeParameterRemapper.remapType(parameterToCall.type),
+                adapter = valueParametersAdapters[index],
+                defaultValue = defaultValue.expression
+                    .deepCopyWithSymbols(function)
                     .transform(ValueRemapper(adaptedParameters), null)
-                    .also { it.remapTypes(typeParameterRemapper) }
+                    .also { it.remapTypes(typeParameterRemapper) },
+            )
 
-                irIfThenElse(
-                    type = typeParameterRemapper.remapType(parameter.type),
-                    condition = irCall(adapters.jsIsUndefinedAdapter).also { it.arguments[0] = irGet(adapterParameter) },
-                    thenPart = defaultExpression,
-                    elsePart = adaptedValue,
-                )
-            } else {
-                adaptedValue
-            }
+            val adaptedValue = adapter.adaptIfNeeded(irGet(parameter), builder)
+            if (!hasDefaultValues) return@mapIndexed adaptedValue
 
-            irTemporary(value, nameHint = parameter.name.asStringStripSpecialMarkers()).also {
-                adaptedParameters[parameter.symbol] = it.symbol
-            }
+            val adaptedVariable = irTemporary(adaptedValue, nameHint = parameterToCall.name.asStringStripSpecialMarkers())
+            adaptedParameters[parameterToCall.symbol] = adaptedVariable.symbol
+            irGet(adaptedVariable)
         }
 
         +irReturn(
-            irCall(function).let { call ->
-                call.passTypeArgumentsFrom(adapterFunction)
-                for ([index, adaptedVariable] in adaptedVariables.withIndex()) {
-                    call.arguments[index] = irGet(adaptedVariable)
+            irCall(functionToCall).let { call ->
+                if (functionToCall.typeParameters.isNotEmpty()) call.passTypeArgumentsFrom(function)
+                for ([index, argument] in arguments.withIndex()) {
+                    call.arguments[index] = argument
                 }
                 resultAdapter.adaptIfNeeded(call, builder)
             }
@@ -994,6 +968,33 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
                     subject = irGet(temp),
                     thenPart = irCall(this@JsInteropFunctionsLowering.context.wasmSymbols.throwNullPointerException),
                     elsePart = adapter.adapt(irImplicitCast(irGet(temp), adapter.fromType.makeNotNull()), builder),
+                )
+            }
+        }
+    }
+
+    /**
+     * Effectively `if (value === undefined) default else adapter(value)`.
+     *
+     * Used for parameters with default values, which JS is allowed to omit.
+     * [defaultValue] is expected to be already usable in the adapter function, i.e. its references to the
+     * preceding parameters are remapped to the values adapted by this point.
+     */
+    inner class DefaultValueOrAdapter(
+        kotlinType: IrType,
+        private val adapter: InteropTypeAdapter?,
+        private val defaultValue: IrExpression,
+    ) : InteropTypeAdapter {
+        override val fromType: IrType = (adapter?.fromType ?: kotlinType).makeNullable()
+        override val toType: IrType = kotlinType
+        override fun adapt(expression: IrExpression, builder: IrBuilderWithScope): IrExpression {
+            return builder.irComposite {
+                val temp = irTemporary(expression)
+                +irIfThenElse(
+                    type = toType,
+                    condition = irCall(adapters.jsIsUndefinedAdapter).also { it.arguments[0] = irGet(temp) },
+                    thenPart = defaultValue,
+                    elsePart = adapter.adaptIfNeeded(irGet(temp), builder),
                 )
             }
         }

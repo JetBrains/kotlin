@@ -43,6 +43,22 @@ fun jsAnyWithDefault(x: JsAny? = "default".toJsString()): String = x?.toString()
 @JsExport
 fun lambdaWithDefault(x: Int, f: (Int) -> Int = { it + 1 }): Int = f(x)
 
+var defaultEvaluations = 0
+
+fun newJsObject(): JsAny = js("({})")
+
+fun nextObject(): JsAny {
+    defaultEvaluations++
+    return newJsObject()
+}
+
+// `c` must see the same `b` instance, and `b`'s default must be evaluated exactly once.
+@JsExport
+fun defaultReferencesDefault(b: JsAny = nextObject(), c: JsAny = b): Boolean = b === c
+
+@JsExport
+fun getDefaultEvaluations(): Int = defaultEvaluations
+
 fun box(): String {
     if (appendWithDefault() != "OK") return "Fail: appendWithDefault from Kotlin"
     if (intWithDefault() != 42) return "Fail: intWithDefault from Kotlin"
@@ -68,6 +84,8 @@ import {
     dependentDefaults,
     jsAnyWithDefault,
     lambdaWithDefault,
+    defaultReferencesDefault,
+    getDefaultEvaluations,
 } from "./index.mjs"
 
 function check(actual, expected, message) {
@@ -122,3 +140,7 @@ check(jsAnyWithDefault(), "default", "jsAnyWithDefault omitted");
 
 check(lambdaWithDefault(1, (x) => x * 10), 10, "lambdaWithDefault explicit");
 check(lambdaWithDefault(1), 2, "lambdaWithDefault omitted");
+
+const evaluationsBefore = getDefaultEvaluations();
+check(defaultReferencesDefault(), true, "defaultReferencesDefault omitted");
+check(getDefaultEvaluations() - evaluationsBefore, 1, "defaultReferencesDefault evaluates default once");
