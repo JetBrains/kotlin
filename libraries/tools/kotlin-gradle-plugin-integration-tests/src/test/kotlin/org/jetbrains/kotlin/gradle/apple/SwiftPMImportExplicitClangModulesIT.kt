@@ -12,6 +12,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInNative
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import java.nio.file.Path
@@ -25,6 +26,7 @@ import kotlin.test.assertEquals
 )
 @DisplayName("SwiftPM import integration tests for explicit Clang module settings")
 @SwiftPMImportGradlePluginTests
+@MustRunOnChangesInNative
 class SwiftPMImportExplicitClangModulesIT : KGPBaseTest() {
 
     @GradleTest
