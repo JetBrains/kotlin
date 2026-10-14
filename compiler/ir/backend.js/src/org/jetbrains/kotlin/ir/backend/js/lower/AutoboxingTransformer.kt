@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.util.isPrimitiveArray
@@ -228,7 +229,7 @@ open class AutoboxingTransformer(context: JsCommonBackendContext, replaceTypesIn
                     arguments[1] = buildNull(irBuiltIns.nothingNType)
                 },
                 thenBranch = buildNull(irBuiltIns.nothingNType),
-                elseBranch = call(tmp?.symbol?.let(::buildGetValue) ?: arg),
+                elseBranch = call(tmp?.symbol?.let(::buildGetValue) ?: arg.deepCopyWithSymbols()),
                 origin = SAFE_NULLABLE_BOXING
             )
 
