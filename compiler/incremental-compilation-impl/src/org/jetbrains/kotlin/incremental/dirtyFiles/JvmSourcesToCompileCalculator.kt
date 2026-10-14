@@ -55,8 +55,8 @@ internal class JvmSourcesToCompileCalculator(
     ): CompilationMode {
         val dirtyFiles = dirtyFilesProvider.getInitializedDirtyFiles(caches, changedFiles)
 
-        dirtyFiles.addByDirtySymbols(changedAndImpactedSymbols.lookupSymbols)
-        dirtyFiles.addByDirtyClasses(changedAndImpactedSymbols.fqNames)
+        dirtyFiles.addByDirtySymbols(changedAndImpactedSymbols.lookupSymbols, null)
+        dirtyFiles.addByDirtyClasses(changedAndImpactedSymbols.fqNames, null)
 
         reporter.measure(IC_ANALYZE_CHANGES_IN_JAVA_SOURCES) {
             val javaRebuildReason = javaInteropCoordinator.analyzeChangesInJavaSources(caches, changedFiles, dirtyFiles)

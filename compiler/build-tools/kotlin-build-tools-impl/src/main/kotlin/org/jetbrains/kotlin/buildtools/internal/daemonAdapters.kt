@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.build.report.metrics.COMPILE_ITERATION
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.jvm.ClasspathSnapshotBasedIncrementalCompilationApproachParameters
 import org.jetbrains.kotlin.buildtools.api.jvm.ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration
+import org.jetbrains.kotlin.buildtools.api.trackers.FileCompilationReason
 import org.jetbrains.kotlin.buildtools.api.trackers.IcEventCollector
 import org.jetbrains.kotlin.buildtools.api.trackers.IcEvent
 import org.jetbrains.kotlin.daemon.common.*
@@ -122,35 +123,26 @@ internal class DaemonCompilationResults(
             }
             CompilationResultCategory.IC_EVENT.code -> @Suppress("UNCHECKED_CAST") (value as? List<IcEventImpl>)?.let {
                 icEventCollector?.collectEvents(value.map { event ->
-                    @Suppress("REDUNDANT_ELSE_IN_WHEN")
                     when (event) {
                         is IcEventImpl.CompilationStarted -> {
                             object : IcEvent.CompilationStarted {
                                 override val isIncremental = event.isIncremental
                                 override val reason = event.reason
                                 override val type = event.type
-                                override val severity = event.severity
                                 override val timestamp = event.timestamp
                                 override val iteration = event.iteration
                             }
                         }
                         is IcEventImpl.CompileIteration -> {
                             object : IcEvent.CompileIteration {
-                                override val files = event.files
-                                override val reasons = event.reasons
+                                override val reasons = event.reasons.mapValues {
+                                    it.value.map { object : FileCompilationReason.Basic { override val readableString = it } }
+                                }
                                 override val exitCode = event.exitCode
                                 override val type = event.type
-                                override val severity = event.severity
                                 override val timestamp = event.timestamp
                                 override val iteration = event.iteration
                             }
-                        }
-                        else -> object : IcEvent.Unknown {
-                            override val type = "Unknown"
-                            override val unknownType = event.type
-                            override val severity = event.severity
-                            override val timestamp = event.timestamp
-                            override val iteration = event.iteration
                         }
                     }
                 })

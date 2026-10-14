@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 @ExperimentalBuildToolsApi
 public interface IcEvent {
     public val type: String
-    public val severity: String
     public val timestamp: Long
     public val iteration: Int
 
@@ -20,12 +19,7 @@ public interface IcEvent {
     }
 
     public interface CompileIteration : IcEvent {
-        public val files: List<String>
-        public val reasons: Map<String, List<String>>
+        public val reasons: Map<String, List<FileCompilationReason>>
         public val exitCode: String
-    }
-
-    public interface Unknown : IcEvent {
-        public val unknownType: String
     }
 }

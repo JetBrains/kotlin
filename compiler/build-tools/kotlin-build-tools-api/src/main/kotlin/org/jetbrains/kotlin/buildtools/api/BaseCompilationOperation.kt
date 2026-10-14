@@ -80,7 +80,7 @@ public interface BaseCompilationOperation : BuildOperation<CompilationResult> {
          * Adds a collector that allows BTA-impl to pass events to the Build Tool consumer.
          */
         @JvmField
-        public val IC_EVENT_COLLECTOR: Option<IcEventCollector?> = Option("IC_EVENT_TRACKER", KotlinReleaseVersion(2, 5, 0))
+        public val IC_EVENT_COLLECTOR: Option<IcEventCollector?> = Option("IC_EVENT_COLLECTOR", KotlinReleaseVersion(2, 5, 0))
 
         /**
          * Controls at which logging level to display the command line arguments passed to the compiler.

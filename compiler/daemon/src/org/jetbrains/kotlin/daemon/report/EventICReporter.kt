@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.build.report.events.ScopeExpansionReason
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.daemon.common.CompilationResultCategory
 import org.jetbrains.kotlin.daemon.common.CompilationResults
-import org.jetbrains.kotlin.incremental.ChangeInfo
 import java.io.File
 import kotlin.collections.forEach
 
@@ -35,12 +34,14 @@ class EventICReporter(
     override fun report(message: () -> String, severity: ReportSeverity) {
     }
 
-    override fun reportIcEvent(event: IcEventImpl) {
-        pendingEvents.add(event)
-    }
-
     override fun reportCompilationStart(isIncremental: Boolean, reason: String?) {
         pendingEvents.add(IcEventImpl.CompilationStarted(isIncremental, reason))
+        iteration = 0
+        if (!isIncremental) {
+            fileReasons.clear()
+            fqNameReasons.clear()
+            symbolReasons.clear()
+        }
     }
 
     override fun reportMarkDirty(affectedFiles: Iterable<File>, reason: String) {
@@ -63,25 +64,31 @@ class EventICReporter(
         }
     }
 
-    override fun reportProcessedChanges(change: ChangeInfo, symbols: Iterable<Pair<String, String>>, fqnames: Iterable<String>) {
-        fqnames.forEach {
-            fqNameReasons.getOrPut(it) { mutableSetOf() }.add(change.toReadableString())
+    override fun reportProcessedChanges(
+        dirtySymbols: Iterable<Pair<String, String>>,
+        dirtyClasses: Iterable<String>,
+        dirtySealed: Iterable<String>
+    ) {
+        dirtySymbols.forEach {
+            symbolReasons.getOrPut(it) { mutableSetOf() }.add(
+                if (it.second == "<SAM-CONSTRUCTOR>")
+                    "Uses ${it.first}, which has changed, in a SAM conversion"
+                else
+                    "Uses ${if (it.first.isEmpty()) it.second else "${it.first}.${it.second}"}, which has changed"
+            )
         }
-        symbols.forEach {
-            symbolReasons.getOrPut(it) { mutableSetOf() }.add(change.toReadableString())
+        dirtyClasses.forEach {
+            fqNameReasons.getOrPut(it) { mutableSetOf() }.add("Declares $it – a class or subtype affected by changes")
+        }
+        dirtySealed.forEach {
+            fqNameReasons.getOrPut(it) { mutableSetOf() }.add("Declares sealed class $it, whose subclasses may have changed")
         }
     }
 
     override fun reportCompileIteration(incremental: Boolean, sourceFiles: Collection<File>, exitCode: ExitCode) {
-        // TODO: do we start iteration from 0, or does 0 represent "before doCompile loop" and first iteration is 1?
-        pendingEvents.add(
-            IcEventImpl.CompileIteration(
-                sourceFiles.map { it.path },
-//                fileReasons.filterKeys { it in sourceFiles.map { it.path } }.mapValues { it.value.toList() },
-                fileReasons.mapValues { it.value.toList() },
-                exitCode.toString()
-            )
-        )
+        val fallback = listOf(if (incremental) ScopeExpansionReason.UNKNOWN.toString() else ScopeExpansionReason.REBUILD.toString())
+        val reasons = sourceFiles.associate { file -> file.path to (fileReasons[file.path]?.takeIf { incremental }?.toList() ?: fallback) }
+        pendingEvents.add(IcEventImpl.CompileIteration(reasons, exitCode.toString()))
         pendingEvents.forEach { it.iteration = iteration }
         icEvents.addAll(pendingEvents)
         pendingEvents.clear()
@@ -94,15 +101,5 @@ class EventICReporter(
     override fun flush() {
         icEvents.addAll(pendingEvents)
         compilationResults.add(CompilationResultCategory.IC_EVENT.code, icEvents)
-    }
-
-
-    companion object {
-        fun ChangeInfo.toReadableString(): String = when (this) {
-            is ChangeInfo.Removed -> ScopeExpansionReason.ABI_REMOVED
-            is ChangeInfo.MembersChanged -> ScopeExpansionReason.ABI_MEMBERS_CHANGED
-            is ChangeInfo.SignatureChanged -> ScopeExpansionReason.ABI_SIGNATURE_CHANGED
-            is ChangeInfo.ParentsChanged -> ScopeExpansionReason.ABI_PARENTS_CHANGED
-        }.readableString + this.fqName.asString()
     }
 }

@@ -14,6 +14,7 @@ import com.intellij.psi.PsiJavaFile
 import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.build.report.BuildReporter
+import org.jetbrains.kotlin.build.report.events.ScopeExpansionReason
 import org.jetbrains.kotlin.build.report.info
 import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
 import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
@@ -55,7 +56,7 @@ private class CoarseJavaInteropCoordinator(
             is ChangesEither.Known -> javaFilesChanges.lookupSymbols
             is ChangesEither.Unknown -> return CompilationMode.Rebuild(javaFilesChanges.reason)
         }
-        mutableDirtyFiles.addByDirtySymbols(affectedJavaSymbols)
+        mutableDirtyFiles.addByDirtySymbols(affectedJavaSymbols, ScopeExpansionReason.JAVA_DECLARATION_USED)
         return null
     }
 

@@ -351,7 +351,7 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
     companion object {
         val LOOKUP_TRACKER: Option<CompilerLookupTracker?> = Option("LOOKUP_TRACKER", null)
 
-        val IC_EVENT_COLLECTOR: Option<IcEventCollector?> = Option("IC_EVENT_TRACKER", null)
+        val IC_EVENT_COLLECTOR: Option<IcEventCollector?> = Option("IC_EVENT_COLLECTOR", null)
 
         /*
         * Tracks imports during compilation.

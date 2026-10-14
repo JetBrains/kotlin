@@ -324,6 +324,10 @@ abstract class AbstractIncrementalCache<ClassName>(
         val complementaryFiles = HashSet<File>()
         val filesQueue = ArrayDeque(dirtyFiles)
         filesQueue.addAll(expectOfLenientStubs.keys)
+        icContext.reporter.reportMarkDirty(
+            expectOfLenientStubs.keys - dirtyFiles.toSet(),
+            "Declares expect without actual; Recompiled in case actual is added"
+        )
 
         val processedClasses = HashSet<FqName>()
         val processedFiles = HashSet<File>()
@@ -335,7 +339,13 @@ abstract class AbstractIncrementalCache<ClassName>(
             }
             processedFiles.add(file)
             complementaryFilesMap[file]?.forEach {
-                if (complementaryFiles.add(it) && !processedFiles.contains(it)) filesQueue.add(it)
+                if (complementaryFiles.add(it) && !processedFiles.contains(it)) {
+                    filesQueue.add(it)
+                    icContext.reporter.reportMarkDirty(
+                        listOf(it),
+                        "Contains expect/actual counterpart of a changed declaration in ${file.path}"
+                    )
+                }
             }
             val classes2recompile = sourceToClassesMap.getFqNames(file).orEmpty()
             classes2recompile.filter { !processedClasses.contains(it) }.forEach { class2recompile ->
@@ -347,6 +357,10 @@ abstract class AbstractIncrementalCache<ClassName>(
                 }
                 val files2add = allSubtypes.mapNotNull { classFqNameToSourceMap[it] }.filter { !processedFiles.contains(it) }
                 filesQueue.addAll(files2add)
+                icContext.reporter.reportMarkDirty(
+                    files2add - dirtyFiles.toSet(),
+                    "Declares class in a sealed hierarchy, to which the recompiled $class2recompile belongs"
+                )
             }
         }
         complementaryFiles.addAll(processedFiles)

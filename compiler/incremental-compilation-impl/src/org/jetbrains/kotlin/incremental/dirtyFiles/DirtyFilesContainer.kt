@@ -23,23 +23,22 @@ class DirtyFilesContainer(
     fun toMutableLinkedSet(): LinkedHashSet<File> =
         LinkedHashSet(myDirtyFiles)
 
-    fun add(files: Iterable<File>, reason: ScopeExpansionReason) {
+    fun add(files: Iterable<File>, reason: ScopeExpansionReason?) {
         val existingKotlinFiles = files.filter { it.isKotlinFile(sourceFilesExtensions) }
         if (existingKotlinFiles.isNotEmpty()) {
             myDirtyFiles.addAll(existingKotlinFiles)
-            reporter.reportMarkDirty(existingKotlinFiles, reason.readableString)
+            if (reason != null) reporter.reportMarkDirty(existingKotlinFiles, reason.readableString)
         }
     }
 
-    fun addByDirtySymbols(lookupSymbols: Collection<LookupSymbol>, reason: ScopeExpansionReason = ScopeExpansionReason.UNKNOWN) {
+    fun addByDirtySymbols(lookupSymbols: Collection<LookupSymbol>, reason: ScopeExpansionReason? = ScopeExpansionReason.UNKNOWN) {
         if (lookupSymbols.isEmpty()) return
 
         val dirtyFilesFromLookups = mapLookupSymbolsToFiles(caches.lookupCache, lookupSymbols, reporter)
-        // reason is null, because files are reported in mapLookupSymbolsToFiles
         add(dirtyFilesFromLookups, reason = reason)
     }
 
-    fun addByDirtyClasses(dirtyClassesFqNames: Collection<FqName>, reason: ScopeExpansionReason = ScopeExpansionReason.UNKNOWN) {
+    fun addByDirtyClasses(dirtyClassesFqNames: Collection<FqName>, reason: ScopeExpansionReason? = ScopeExpansionReason.UNKNOWN) {
         if (dirtyClassesFqNames.isEmpty()) return
 
         val fqNamesWithSubtypes = dirtyClassesFqNames.flatMap {
@@ -50,7 +49,6 @@ class DirtyFilesContainer(
         }
         val dirtyFilesFromFqNames =
             mapClassesFqNamesToFiles(listOf(caches.platformCache), fqNamesWithSubtypes, reporter)
-        // reason is null, because files are reported in mapClassesFqNamesToFiles
         add(dirtyFilesFromFqNames, reason = reason)
     }
 }

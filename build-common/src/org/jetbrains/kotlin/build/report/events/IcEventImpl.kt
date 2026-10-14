@@ -7,11 +7,7 @@ package org.jetbrains.kotlin.build.report.events
 
 import java.io.Serializable
 
-// Ideally, the basic interface should be in shared bta api folder, while the concrete implementations should be in kotlin-build-statistics
-
-sealed class IcEventImpl(
-    val severity: String,
-) : Serializable {
+sealed class IcEventImpl : Serializable {
     val type: String get() = javaClass.simpleName
     val timestamp: Long = System.currentTimeMillis()
     var iteration: Int = UNASSIGNED_ITERATION
@@ -19,21 +15,15 @@ sealed class IcEventImpl(
     class CompilationStarted(
         val isIncremental: Boolean,
         val reason: String?,
-    ) : IcEventImpl("INFO")
+    ) : IcEventImpl()
 
     class CompileIteration(
-        val files: List<String>,
         val reasons: Map<String, List<String>>,
         val exitCode: String,
-    ) : IcEventImpl("INFO")
+    ) : IcEventImpl()
 
     companion object {
         const val serialVersionUID: Long = 0L
         const val UNASSIGNED_ITERATION: Int = -1
-
-        const val NONE = "NONE"
-        const val WARNING = "WARNING"
-        const val INFO = "INFO"
-        const val DEBUG = "DEBUG"
     }
 }

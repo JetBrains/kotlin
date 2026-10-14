@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.build.report
 
-import org.jetbrains.kotlin.build.report.events.IcEventImpl
-import org.jetbrains.kotlin.incremental.ChangeInfo
 import java.io.File
 
 abstract class ICReporterBase(private val pathsBase: File? = null) : ICReporter {
@@ -24,9 +22,13 @@ abstract class ICReporterBase(private val pathsBase: File? = null) : ICReporter 
         }
     }
 
-    override fun reportIcEvent(event: IcEventImpl) {}
     override fun reportCompilationStart(isIncremental: Boolean, reason: String?) {}
-    override fun reportProcessedChanges(change: ChangeInfo, symbols: Iterable<Pair<String, String>>, fqnames: Iterable<String>) {}
+    override fun reportProcessedChanges(
+        dirtySymbols: Iterable<Pair<String, String>>,
+        dirtyClasses: Iterable<String>,
+        dirtySealed: Iterable<String>
+    ) {
+    }
 
     protected fun relativizeIfPossible(files: Iterable<File>): List<File> =
         files.map { it.relativeOrAbsolute() }

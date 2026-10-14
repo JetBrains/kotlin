@@ -154,13 +154,11 @@ abstract class IncrementalCompilerRunner<
         reporter.debug {
             "Source changes: $changedFiles"
         }
-
         if (configurationInputs != null) {
             reporter.debug {
                 "Configuration inputs: $configurationInputs"
             }
         }
-
 
         val hashedConfigurationInputs = configurationInputs?.computeHashedConfigurationInputs()
         val trackChangedFiles = changedFiles is DeterminableFiles.ToBeComputed
@@ -350,7 +348,6 @@ abstract class IncrementalCompilerRunner<
             } ?: mainOutputDirs
 
             reporter.debug { "Cleaning ${outputDirsToClean.size} output directories" }
-
             cleanOrCreateDirectories(outputDirsToClean)
         }
         val icContext = createIncrementalCompilationContext(
@@ -524,6 +521,10 @@ abstract class IncrementalCompilerRunner<
         abiSnapshotData: AbiSnapshotData?, // Not null iff withAbiSnapshot = true
         messageCollector: MessageCollector,
     ): ExitCode {
+        when (compilationMode) {
+            is CompilationMode.Incremental -> reporter.reportCompilationStart(true, null)
+            is CompilationMode.Rebuild -> reporter.reportCompilationStart(false, compilationMode.reason.readableString)
+        }
         performWorkBeforeCompilation(compilationMode, args)
 
         val allKotlinFiles = allSourceFiles.filter { it.isKotlinFile(kotlinSourceFilesExtensions) }
@@ -568,10 +569,6 @@ abstract class IncrementalCompilerRunner<
             is CompilationMode.Incremental -> compilationMode.dirtyFiles.toMutableLinkedSet()
             is CompilationMode.Rebuild -> LinkedHashSet(allKotlinSources)
         }
-        when (compilationMode) {
-            is CompilationMode.Incremental -> reporter.reportCompilationStart(true, null)
-            is CompilationMode.Rebuild -> reporter.reportCompilationStart(false, compilationMode.reason.readableString)
-        }
 
         val currentBuildInfo = BuildInfo(startTS = System.currentTimeMillis(), abiSnapshotData?.classpathAbiSnapshot ?: emptyMap())
         val buildDirtyLookupSymbols = HashSet<LookupSymbol>()
@@ -587,7 +584,6 @@ abstract class IncrementalCompilerRunner<
 
         while (dirtySources.any() || runWithNoDirtyKotlinSources(caches)) {
             val complementaryFiles = caches.platformCache.getComplementaryFilesRecursive(dirtySources)
-            reporter.reportMarkDirty(complementaryFiles, ScopeExpansionReason.EXPECT_ACTUAL_COUNTERPART)
             dirtySources.addAll(complementaryFiles)
             reporter.reportMarkDirty(
                 caches.compilerPluginFilesCache.getSourceFilesReferencedByPlugins(),
@@ -660,7 +656,7 @@ abstract class IncrementalCompilerRunner<
                 val dirtySourcesSet = dirtySources.toHashSet()
                 val additionalDirtyFiles = additionalDirtyFiles(caches, generatedFiles, services).filter { it !in dirtySourcesSet }
                 if (additionalDirtyFiles.isNotEmpty()) {
-                    reporter.reportMarkDirty(additionalDirtyFiles, ScopeExpansionReason.CLASS_NAME_CLASH)
+                    reporter.reportMarkDirty(additionalDirtyFiles, ScopeExpansionReason.SHARED_CLASS_NAME)
                     dirtySources.addAll(additionalDirtyFiles)
                     generatedFiles.forEach { transaction.deleteFile(it.outputFile.toPath()) }
                     continue

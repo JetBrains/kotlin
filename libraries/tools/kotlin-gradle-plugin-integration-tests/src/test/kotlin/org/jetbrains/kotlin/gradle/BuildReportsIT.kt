@@ -1164,7 +1164,7 @@ class BuildReportsIT : KGPBaseTest() {
                 validateBuildReportFile(
                     baseBuildFileExpectedContents(KotlinVersion.DEFAULT.version), listOf(
                         "Compile iteration:",
-                        "${helloWorldSource.relativeTo(projectPath)} <- was modified since last time",
+                        "${helloWorldSource.relativeTo(projectPath)} <- Manually edited or added",
                         "Source changes: Known(modified=[$helloWorldSourcePath], removed=[], forDependencies=false)",
                         "Deleting $helloWorldBinaryPath on clearing cache for $helloWorldSourcePath",
                         "Moving $helloWorldBinaryPath to the stash as",
