@@ -86,9 +86,6 @@ class F : Java1(), KotlinInterface {  //Kotlin ← Java, Kotlin2
     override operator fun get(index: Number): Char {
         return 'a'
     }
-    override fun isEmpty(): Boolean {
-        return null!!
-    }
 }
 
 class G : Java1(), KotlinInterface {
@@ -141,7 +138,7 @@ abstract class L : Java1(), A {         // Kotlin ← Java, Kotlin2 ← Java2, J
         return null!!
     }
     override fun isEmpty(): Boolean {
-        return null!!
+        return false
     }
 }
 
@@ -153,7 +150,7 @@ abstract class M : Java1(), java.lang.CharSequence {    //Kotlin ← Java1, Java
         return null!!
     }
     override fun isEmpty(): Boolean {
-        return null!!
+        return false
     }
 }
 

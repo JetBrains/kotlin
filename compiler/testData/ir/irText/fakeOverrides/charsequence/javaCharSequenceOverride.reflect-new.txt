@@ -88,7 +88,6 @@ KClass: class F : Java1, KotlinInterface
     public open val F.length: kotlin.Int
   declaredMembers:
     public open operator fun F.get(kotlin.Number): kotlin.Char
-    public open fun F.isEmpty(): kotlin.Boolean
 KClass: class G : Java1, KotlinInterface
   constructors:
     public final fun `<init>`(): G
