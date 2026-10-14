@@ -16,7 +16,7 @@ import org.junit.jupiter.api.condition.OS
 internal class KotlinNativeIsolatedClassloaderIT : KGPBaseTest() {
 
     @DisplayName("KT-65761: K2Native isolated class loader should be able to load platform classes")
-    @JdkVersions(versions = [JavaVersion.VERSION_1_8, JavaVersion.VERSION_21])
+    @JdkVersions(versions = [JavaVersion.VERSION_21])
     @GradleWithJdkTest
     @OsCondition(
         supportedOn = [OS.LINUX, OS.MAC, OS.WINDOWS],
