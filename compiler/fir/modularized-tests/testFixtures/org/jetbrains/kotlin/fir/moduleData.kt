@@ -24,6 +24,7 @@ data class ModuleData(
     val rawOutputDir: String,
     val qualifier: String,
     val rawClasspath: List<String>,
+    val rawModulepath: List<String>,
     val rawSources: List<String>,
     val rawJavaSourceRoots: List<JavaSourceRootData<String>>,
     val rawFriendDirs: List<String>,
@@ -35,6 +36,7 @@ data class ModuleData(
     val qualifiedName get() = if (name in qualifier) qualifier else "$name.$qualifier"
 
     val classpath = rawClasspath.map { it.fixPath(rootPath) }
+    val modulepath = rawModulepath.map { it.fixPath(rootPath) }
     val sources = rawSources.map { it.fixPath(rootPath) }
     val javaSourceRoots = rawJavaSourceRoots.map { JavaSourceRootData(it.path.fixPath(rootPath), it.packagePrefix) }
     val friendDirs = rawFriendDirs.map { it.fixPath(rootPath) }
@@ -91,6 +93,7 @@ private fun readModule(xr: XMLStreamReader, config: ModularizedTestConfig): Modu
 
     val javaSourceRoots = mutableListOf<JavaSourceRootData<String>>()
     val classpath = mutableListOf<String>()
+    val modulepath = mutableListOf<String>()
     val sources = mutableListOf<String>()
     val friendDirs = mutableListOf<String>()
     val optInAnnotations = mutableListOf<String>()
@@ -103,6 +106,11 @@ private fun readModule(xr: XMLStreamReader, config: ModularizedTestConfig): Modu
                 "classpath" -> {
                     val path = xr.getAttributeValue(null, "path")
                     if (path != null && path != outputDir) classpath += path
+                    skipElement(xr)
+                }
+                "modulepath" -> {
+                    val path = xr.getAttributeValue(null, "path")
+                    if (path != null && path != outputDir) modulepath += path
                     skipElement(xr)
                 }
                 "friendDir" -> {
@@ -144,6 +152,7 @@ private fun readModule(xr: XMLStreamReader, config: ModularizedTestConfig): Modu
                     outputDir,
                     moduleNameQualifier,
                     classpath,
+                    modulepath,
                     sources,
                     javaSourceRoots,
                     friendDirs,
