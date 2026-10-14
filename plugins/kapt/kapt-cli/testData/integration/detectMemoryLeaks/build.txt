@@ -21,6 +21,7 @@ ap/LeakingProcessor.kt
 Test.kt
 
 # output
+warning: warning: Supported source version 'RELEASE_8' from annotation processor 'org.jetbrains.kotlin.kapt.base.ProcessorWrapper' less than -source '17'
 warning: [kapt] Memory leak detected!
 Location: 'apt.LeakingProcessor', static field 'leakedProcessor'
 Field leaks an Annotation Processing component (LeakingProcessor).
@@ -39,5 +40,6 @@ Test.kt
 
 # output
 warning: [kapt] The 'default' value for 'detectMemoryLeaks' is deprecated. Use 'standard' instead.
+warning: warning: Supported source version 'RELEASE_8' from annotation processor 'org.jetbrains.kotlin.kapt.base.ProcessorWrapper' less than -source '17'
 
 # after
