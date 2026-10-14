@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.light.classes.symbol
 
 import com.github.benmanes.caffeine.cache.Caffeine
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
@@ -131,10 +132,10 @@ private fun KaModule.isValidContextModule(): Boolean {
 }
 
 @OptIn(KaImplementationDetail::class)
-internal class SymbolKotlinAsJavaSupport(private val project: Project) : KotlinAsJavaSupport(), KaInternalsLightClassBridge {
+internal class SymbolKotlinAsJavaSupport(private val project: Project) : KotlinAsJavaSupport(), KaInternalsLightClassBridge, Disposable {
 
     init {
-        project.analysisMessageBus.connect(project).subscribe(
+        project.analysisMessageBus.connect(this).subscribe(
             KotlinModificationEvent.TOPIC,
             KotlinModificationEventListener { event ->
                 when (event) {
@@ -206,8 +207,10 @@ internal class SymbolKotlinAsJavaSupport(private val project: Project) : KotlinA
     override fun getFacadeNames(packageFqName: FqName, scope: GlobalSearchScope): Collection<String> {
         return findFilesForFacadeByPackage(packageFqName, scope).mapNotNullTo(mutableSetOf()) { file ->
             file.takeIf { it.facadeIsPossible() }
-                ?.takeIf { facadeIsApplicable(it.getContainingModule()) }
-                ?.javaFileFacadeFqName
+                ?.takeIf {
+                    val containingModule = it.getContainingModule()
+                    containingModule != null && facadeIsApplicable(containingModule)
+                }?.javaFileFacadeFqName
                 ?.shortName()
                 ?.asString()
         }.toSet()
@@ -485,7 +488,7 @@ internal class SymbolKotlinAsJavaSupport(private val project: Project) : KotlinA
         val declarationProvider = project.createDeclarationProvider(searchScope, contextualModule = null)
         return fqName.toClassIdSequence()
             .flatMap(declarationProvider::getAllClassesByClassId)
-            .filter { it.getContainingModule().isFromSourceOrLibraryBinary() }
+            .filter { it.getContainingModule()?.isFromSourceOrLibraryBinary() == true }
             .toSet()
     }
 
@@ -625,8 +628,8 @@ internal class SymbolKotlinAsJavaSupport(private val project: Project) : KotlinA
     /**
      * Returns a containing module for [this].
      */
-    private fun KtElement.getContainingModule(): KaModule {
-        return projectStructureProvider.getModule(
+    private fun KtElement.getContainingModule(): KaModule? {
+        return projectStructureProvider.value?.getModule(
             element = this,
             useSiteModule = null,
         )
@@ -643,7 +646,7 @@ internal class SymbolKotlinAsJavaSupport(private val project: Project) : KotlinA
         scope: GlobalSearchScope? = null,
         moduleFilter: (KaModule) -> Boolean = { true }
     ): KaModule? {
-        val declarationModule = getContainingModule().takeIf(moduleFilter) ?: return null
+        val declarationModule = getContainingModule()?.takeIf(moduleFilter) ?: return null
         return calculatedContextModuleCache
             .getOrPut(moduleKeyInterner.intern(declarationModule), scope) { declarationModule, scope ->
                 findContextModuleNonCached(declarationModule, scope)
@@ -721,8 +724,10 @@ internal class SymbolKotlinAsJavaSupport(private val project: Project) : KotlinA
         return project.createProjectWideLibraryModificationTracker()
     }
 
+    @Volatile
     @KaCachedService
-    private val projectStructureProvider by lazyPub { KotlinProjectStructureProvider.getInstance(project) }
+    private var projectStructureProvider: Lazy<KotlinProjectStructureProvider?> =
+        lazyPub { KotlinProjectStructureProvider.getInstance(project) }
     //endregion
 
     // ============ BRIDGE ============
@@ -831,4 +836,8 @@ internal class SymbolKotlinAsJavaSupport(private val project: Project) : KotlinA
         return computedValue as R?
     }
     //endregion
+
+    override fun dispose() {
+        projectStructureProvider = lazyPub { null }
+    }
 }
