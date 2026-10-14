@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.utils.SuspiciousValueClassCheck
+import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
 import org.jetbrains.kotlin.fir.declarations.utils.isValue
 import org.jetbrains.kotlin.fir.declarations.utils.modality
@@ -32,7 +33,11 @@ internal fun ConeKotlinType.unsubstitutedUnderlyingTypeForInlineClassInJvm(sessi
 fun computeValueClassRepresentation(klass: FirRegularClass, session: FirSession): ValueClassRepresentation<ConeRigidType>? {
     val areFullValueClassesSupported = session.languageVersionSettings.supportsFeature(LanguageFeature.FullValueClasses)
     val jvmInlineAnnotationClassId = session.annotationPlatformSupport.jvmInlineAnnotationClassId
-    if (areFullValueClassesSupported && (jvmInlineAnnotationClassId == null || !klass.hasAnnotation(jvmInlineAnnotationClassId, session)) && klass.isValue) {
+    if (
+        areFullValueClassesSupported &&
+        (jvmInlineAnnotationClassId == null || !klass.hasAnnotation(jvmInlineAnnotationClassId, session)) &&
+        klass.isValue && !klass.isInline
+    ) {
         val fields = if (klass.modality == Modality.ABSTRACT || klass.modality == Modality.SEALED) {
             null
         } else {

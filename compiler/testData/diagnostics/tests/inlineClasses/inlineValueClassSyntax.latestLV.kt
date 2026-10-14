@@ -6,11 +6,11 @@
 inline value class A(val x: Int)
 value inline class B(val x: String)
 
-inline value class C(val x: Int, val y: String)
-abstract inline value class D
+inline value class C<!INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE!>(val x: Int, val y: String)<!>
+<!VALUE_CLASS_NOT_FINAL!>abstract<!> <!ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS!>inline<!> value class D
 <!WRONG_MODIFIER_TARGET!>inline<!> value object E
 
-fun f(vararg xs: A) {}
-fun g(vararg xs: B) {}
+fun f(<!FORBIDDEN_VARARG_PARAMETER_TYPE!>vararg<!> xs: A) {}
+fun g(<!FORBIDDEN_VARARG_PARAMETER_TYPE!>vararg<!> xs: B) {}
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, primaryConstructor, propertyDeclaration, value, vararg */
