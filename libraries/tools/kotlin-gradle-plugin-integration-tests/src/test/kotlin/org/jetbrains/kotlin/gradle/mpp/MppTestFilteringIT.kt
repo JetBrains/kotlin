@@ -8,9 +8,11 @@ package org.jetbrains.kotlin.gradle.mpp
 import org.gradle.api.tasks.testing.Test
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 
 @MppGradlePluginTests
+@MustRunOnChangesInGradle
 @DisplayName("Tests for Multiplatform test filtering")
 class MppTestFilteringIT : KGPBaseTest() {
 
