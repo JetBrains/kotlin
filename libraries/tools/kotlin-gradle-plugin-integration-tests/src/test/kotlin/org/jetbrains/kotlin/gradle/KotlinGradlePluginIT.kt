@@ -25,7 +25,9 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.checkBytecodeContains
 import org.jetbrains.kotlin.gradle.util.checkedReplace
 import org.jetbrains.kotlin.gradle.util.testResolveAllConfigurations
-import org.jetbrains.kotlin.testFederation.MustRunAlways
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInBuildToolsApi
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCompilerInfrastructure
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.DisabledOnOs
@@ -41,7 +43,7 @@ import kotlin.test.assertTrue
 
 @DisplayName("Basic Kotlin/JVM plugin tests")
 @JvmGradlePluginTests
-@MustRunAlways
+@MustRunOnChangesInGradle
 class KotlinGradleIT : KGPBaseTest() {
 
     @DisplayName("Kotlin/Java cross compilation")
@@ -108,7 +110,7 @@ class KotlinGradleIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("Plugin is avialble when applied via buildscript classpath")
+    @DisplayName("Plugin is available when applied via buildscript classpath")
     @GradleTest
     fun testMultiprojectPluginClasspath(gradleVersion: GradleVersion) {
         project("multiprojectClassPathTest", gradleVersion) {
@@ -123,6 +125,7 @@ class KotlinGradleIT : KGPBaseTest() {
 
     @DisplayName("Incremental logs are available on INFO log level")
     @GradleTest
+    @MustRunOnChangesInBuildToolsApi
     fun testIncrementalCompilationLogLevel(gradleVersion: GradleVersion) {
         project("kotlinProject", gradleVersion) {
             build(
@@ -143,6 +146,7 @@ class KotlinGradleIT : KGPBaseTest() {
 
     @DisplayName("Conversion between Kotlin and Java")
     @GradleTest
+    @MustRunOnChangesInBuildToolsApi
     fun testConvertJavaToKotlin(gradleVersion: GradleVersion) {
         project("convertBetweenJavaAndKotlin", gradleVersion) {
             val barKt = javaSourcesDir().resolve("foo/Bar.kt")
@@ -171,6 +175,7 @@ class KotlinGradleIT : KGPBaseTest() {
 
     @DisplayName("Moving class to another Gradle subproject")
     @GradleTest
+    @MustRunOnChangesInBuildToolsApi
     fun testMoveClassToOtherModule(gradleVersion: GradleVersion) {
         project("moveClassToOtherModule", gradleVersion) {
             build("assemble")
@@ -254,6 +259,7 @@ class KotlinGradleIT : KGPBaseTest() {
 
     @DisplayName("Passing api/language version")
     @GradleTest
+    @MustRunOnChangesInCompilerInfrastructure
     fun testLanguageVersionApiVersionExplicit(gradleVersion: GradleVersion) {
         project(
             "kotlinProject",
