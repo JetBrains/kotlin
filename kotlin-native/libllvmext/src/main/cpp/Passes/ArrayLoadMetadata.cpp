@@ -40,6 +40,7 @@ PreservedAnalyses ArrayLoadMetadataPass::run(Function &F,
 
   MDNode *InvariantMD = nullptr;
   MDNode *RangeMD = nullptr;
+  bool Changed = false;
 
   for (BasicBlock &BB : F) {
     for (Instruction &I : BB) {
@@ -60,12 +61,18 @@ PreservedAnalyses ArrayLoadMetadataPass::run(Function &F,
         RangeMD = MDNode::get(Ctx, RangeOperands);
       }
 
-      if (!LI->hasMetadata(LLVMContext::MD_invariant_load))
+      if (!LI->hasMetadata(LLVMContext::MD_invariant_load)) {
         LI->setMetadata(LLVMContext::MD_invariant_load, InvariantMD);
-      if (!LI->hasMetadata(LLVMContext::MD_range))
+        Changed = true;
+      }
+      if (!LI->hasMetadata(LLVMContext::MD_range)) {
         LI->setMetadata(LLVMContext::MD_range, RangeMD);
+        Changed = true;
+      }
     }
   }
 
-  return PreservedAnalyses::all();
+  if (!Changed)
+    return PreservedAnalyses::all();
+  return PreservedAnalyses::none();
 }
