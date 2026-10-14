@@ -2,6 +2,8 @@
 // WITH_STDLIB
 // IGNORE_BACKEND: WASM_WASI, WASM_JS
 //                 ^^^ KT-88829
+// IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE: JS:2.4
+// KT-49422: Fixed in 2.5.0-Beta2
 
 // MODULE: lib
 // FILE: lib.kt
