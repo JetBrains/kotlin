@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.annotationPlatformSupport
 import org.jetbrains.kotlin.fir.declarations.utils.SuspiciousValueClassCheck
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.declarations.utils.isValue
@@ -22,7 +23,14 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker(MppCheckerKind.
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirRegularClass) {
         if (declaration.isInline && !(declaration.isValue && LanguageFeature.ExplicitInlineValueClassesSyntax.isEnabled())) {
-            reporter.reportOn(declaration.source, FirErrors.INLINE_CLASS_DEPRECATED)
+            val replacement = when {
+                LanguageFeature.ExplicitInlineValueClassesSyntax.isEnabled() -> "'inline value'"
+                // With full value classes, a JVM value class without `@JvmInline` isn't inlined.
+                LanguageFeature.FullValueClasses.isEnabled() &&
+                        context.session.annotationPlatformSupport.jvmInlineAnnotationClassId != null -> "'@JvmInline value'"
+                else -> "'value'"
+            }
+            reporter.reportOn(declaration.source, FirErrors.INLINE_CLASS_DEPRECATED, replacement)
         }
     }
 }
