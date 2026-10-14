@@ -232,13 +232,34 @@ class DoubleMathTest {
     }
 
     @Test fun rounding() {
+        val intBoundary = 2.0.pow(52)
+
+        // Special & integral values
         for (value in listOf(Double.NaN, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, 0.0, 1.0, -10.0)) {
             assertEquals(value, ceil(value))
             assertEquals(value, floor(value))
             assertEquals(value, truncate(value))
             assertEquals(value, round(value))
         }
+        // Custom NaNs: two signaling, one silent
+        for (bits in longArrayOf(0x7ff0_0000_0000_0001L, -0x000f_ffff_ffff_ffffL, 0x7ff8000000000001L)) {
+            val value = Double.fromBits(bits)
+
+            // isNaN is the only thing we can be sure of here, because some behaviors like signaling NaN quieting are platform-dependent.
+            assertTrue(ceil(value).isNaN())
+            assertTrue(floor(value).isNaN())
+            assertTrue(truncate(value).isNaN())
+            assertTrue(round(value).isNaN())
+        }
+
         val data = arrayOf( //   v floor trunc round  ceil
+                doubleArrayOf( 0.3,  0.0,  0.0,  0.0,  1.0),
+                doubleArrayOf(-0.3, -1.0, -0.0, -0.0, -0.0),
+                doubleArrayOf( 0.5,  0.0,  0.0,  0.0,  1.0),
+                doubleArrayOf(-0.5, -1.0, -0.0, -0.0, -0.0),
+                doubleArrayOf( 0.8,  0.0,  0.0,  1.0,  1.0),
+                doubleArrayOf(-0.8, -1.0, -0.0, -1.0, -0.0),
+
                 doubleArrayOf( 1.3,  1.0,  1.0,  1.0,  2.0),
                 doubleArrayOf(-1.3, -2.0, -1.0, -1.0, -1.0),
                 doubleArrayOf( 1.5,  1.0,  1.0,  2.0,  2.0),
@@ -251,7 +272,12 @@ class DoubleMathTest {
                 doubleArrayOf( 2.5,  2.0,  2.0,  2.0,  3.0),
                 doubleArrayOf(-2.5, -3.0, -2.0, -2.0, -2.0),
                 doubleArrayOf( 2.8,  2.0,  2.0,  3.0,  3.0),
-                doubleArrayOf(-2.8, -3.0, -2.0, -3.0, -2.0)
+                doubleArrayOf(-2.8, -3.0, -2.0, -3.0, -2.0),
+
+                doubleArrayOf(intBoundary - 0.5, intBoundary - 1.0, intBoundary - 1.0, intBoundary, intBoundary),
+                doubleArrayOf(-intBoundary + 0.5, -intBoundary, -intBoundary + 1.0, -intBoundary, -intBoundary + 1.0),
+                doubleArrayOf(intBoundary + 1.0, intBoundary + 1.0, intBoundary + 1.0, intBoundary + 1.0, intBoundary + 1.0),
+                doubleArrayOf(-intBoundary - 1.0, -intBoundary - 1.0, -intBoundary - 1.0, -intBoundary - 1.0, -intBoundary - 1.0),
         )
         for ([v, f, t, r, c] in data) {
             assertEquals(f, floor(v), "floor($v)")
@@ -638,13 +664,34 @@ class FloatMathTest {
     }
 
     @Test fun rounding() {
-        for (value in listOf(Float.NaN, Float.POSITIVE_INFINITY, Float.NEGATIVE_INFINITY, 0.0F, 1.0F, -10.0F)) {
+        val intBoundary = 2.0F.pow(23)
+
+        // Special & integral values
+        for (value in listOf(Float.NaN, Float.POSITIVE_INFINITY, Float.NEGATIVE_INFINITY, 0.0F, 1.0F, -10.0F, intBoundary, -intBoundary)) {
             assertEquals(value, ceil(value))
             assertEquals(value, floor(value))
             assertEquals(value, truncate(value))
             assertEquals(value, round(value))
         }
+        // Custom NaNs: two signaling, one silent
+        for (bits in intArrayOf(0x7f80_0001, -0x007f_ffff, 0x7fc00001)) {
+            val value = Float.fromBits(bits)
+
+            // isNaN is the only thing we can be sure of here, because some behaviors like signaling NaN quieting are platform-dependent.
+            assertTrue(ceil(value).isNaN())
+            assertTrue(floor(value).isNaN())
+            assertTrue(truncate(value).isNaN())
+            assertTrue(round(value).isNaN())
+        }
+
         val data = arrayOf( //   v floor trunc round  ceil
+                floatArrayOf( 0.3F,  0.0F,  0.0F,  0.0F,  1.0F),
+                floatArrayOf(-0.3F, -1.0F, -0.0F, -0.0F, -0.0F),
+                floatArrayOf( 0.5F,  0.0F,  0.0F,  0.0F,  1.0F),
+                floatArrayOf(-0.5F, -1.0F, -0.0F, -0.0F, -0.0F),
+                floatArrayOf( 0.8F,  0.0F,  0.0F,  1.0F,  1.0F),
+                floatArrayOf(-0.8F, -1.0F, -0.0F, -1.0F, -0.0F),
+
                 floatArrayOf( 1.3F,  1.0F,  1.0F,  1.0F,  2.0F),
                 floatArrayOf(-1.3F, -2.0F, -1.0F, -1.0F, -1.0F),
                 floatArrayOf( 1.5F,  1.0F,  1.0F,  2.0F,  2.0F),
@@ -657,7 +704,12 @@ class FloatMathTest {
                 floatArrayOf( 2.5F,  2.0F,  2.0F,  2.0F,  3.0F),
                 floatArrayOf(-2.5F, -3.0F, -2.0F, -2.0F, -2.0F),
                 floatArrayOf( 2.8F,  2.0F,  2.0F,  3.0F,  3.0F),
-                floatArrayOf(-2.8F, -3.0F, -2.0F, -3.0F, -2.0F)
+                floatArrayOf(-2.8F, -3.0F, -2.0F, -3.0F, -2.0F),
+
+                floatArrayOf(intBoundary - 0.5F, intBoundary - 1.0F, intBoundary - 1.0F, intBoundary, intBoundary),
+                floatArrayOf(-intBoundary + 0.5F, -intBoundary, -intBoundary + 1.0F, -intBoundary, -intBoundary + 1.0F),
+                floatArrayOf(intBoundary + 1.0F, intBoundary + 1.0F, intBoundary + 1.0F, intBoundary + 1.0F, intBoundary + 1.0F),
+                floatArrayOf(-intBoundary - 1.0F, -intBoundary - 1.0F, -intBoundary - 1.0F, -intBoundary - 1.0F, -intBoundary - 1.0F),
         )
         for ([v, f, t, r, c] in data) {
             assertEquals(f, floor(v), "floor($v)")
