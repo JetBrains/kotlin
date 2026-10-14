@@ -523,7 +523,7 @@ abstract class AbstractTypeApproximator(
                 else projection.getType()!!
             }
         }
-        val baseSubType = capturedType.lowerType()
+        val baseSubType = capturedType.lowerType() ?: runIf(conf.approximateToNothingSubtype) { nothingType() }
 
         val approximatedSuperType by lazy(LazyThreadSafetyMode.NONE) {
             approximateToSuperType(baseSuperType, depth)
