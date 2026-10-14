@@ -27,8 +27,8 @@ class MppDslPublishedMetadataIT : KGPBaseTest() {
             localRepoDir = localRepoDir,
             buildOptions = defaultBuildOptions.disableKlibsCrossCompilation()
         ) {
-            val publishedVariants = MPPNativeTargets.supported
-            val nonPublishedVariants = MPPNativeTargets.unsupported
+            val publishedVariants = MPPNativeTargets.supported.map { it.lowercase() }
+            val nonPublishedVariants = MPPNativeTargets.unsupported.map { it.lowercase() }
 
             build("publish") {
 
@@ -59,7 +59,7 @@ class MppDslPublishedMetadataIT : KGPBaseTest() {
             gradleVersion = gradleVersion,
             localRepoDir = localRepoDir,
         ) {
-            val publishedVariants = MPPNativeTargets.supported + MPPNativeTargets.unsupported
+            val publishedVariants = (MPPNativeTargets.supported + MPPNativeTargets.unsupported).map { it.lowercase() }
 
             build("publish") {
 
