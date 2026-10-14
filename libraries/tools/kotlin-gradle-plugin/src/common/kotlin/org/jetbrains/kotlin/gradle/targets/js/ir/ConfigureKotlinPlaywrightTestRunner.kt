@@ -111,12 +111,15 @@ internal val ConfigureKotlinPlaywrightTestRunner = KotlinTargetSideEffect { targ
     }
 }
 
-internal fun KotlinBrowserTestRunnerDsl.getBrowserKind(): PwBrowserKind = when (this) {
+internal fun KotlinBrowserTestRunnerDsl.getBrowserKindOrNull(): PwBrowserKind? = when (this) {
     is KotlinFirefoxTestRunner -> PwBrowserKind.FIREFOX
     is KotlinWebkitTestRunner -> PwBrowserKind.WEBKIT
     is KotlinChromiumTestRunner -> PwBrowserKind.CHROMIUM
-    else -> throw IllegalArgumentException("Unsupported browser runner: ${this::class.simpleName}")
+    else -> null
 }
+
+internal fun KotlinBrowserTestRunnerDsl.getBrowserKind(): PwBrowserKind =
+    getBrowserKindOrNull() ?: throw IllegalArgumentException("Unsupported browser runner: ${this::class.simpleName}")
 
 private fun KotlinPlaywrightJsTestFramework.BrowserRunnerInput.populateFrom(
     project: Project,
