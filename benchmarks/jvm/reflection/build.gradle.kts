@@ -20,27 +20,15 @@ sourceSets {
 
 benchmark {
     configurations {
-        // The plugin pre-registers `main`, which would give a `testBenchmark` task that runs every
-        // benchmark in the module under JMH settings that do not suit them.
-        // Drop it and register each suite explicitly, so every benchmark belongs to exactly one
-        // task and neither suite needs to exclude the other.
-        remove(getByName("main"))
 
-        // The reflection benchmarks carry their own JMH settings: they are single-shot and select the
-        // reflection implementation through a `reflectImplementation` param
-        register("reflection") {
+        // The reflection benchmarks are single-shot and select the reflection implementation through a `implementation` param
+        named("main") {
 
-            // `reflectionInclude` is `<class>.<method>`, or `<class>.*` for all methods of the class.
-            // Examples: `KClassMembersHierarchyBenchmark.kotlinHierarchy`, `KClassMembersHierarchyBenchmark.*`
-            providers.gradleProperty("reflectionInclude").orNull?.let { value ->
-                val (className, methodName) = Regex("""(\w+)\.(\w+|\*)""").matchEntire(value)?.destructured
-                        ?: error("Invalid reflectionInclude '$value': expected '<class>.<method>' or '<class>.*'")
-                val methodPattern = if (methodName == "*") ".*" else methodName
-                include("^org\\.jetbrains\\.kotlin\\.benchmarks\\.jvm\\.reflection\\.$className\\.$methodPattern$")
-            }
+            // Examples: `KClassMembersHierarchyBenchmark\.kotlinHierarchy`, `KClassMembersHierarchyBenchmark`, `java`
+            providers.gradleProperty("include").orNull?.let { include(it) }
 
-            providers.gradleProperty("reflectionImplementation").orNull?.let {
-                if (it != "new" || it != "k1") error("Unknown reflectionImplementation '$it': expected 'new' or 'k1'")
+            providers.gradleProperty("implementation").orNull?.let {
+                if (it != "new" || it != "k1") error("Unknown implementation '$it': expected 'new' or 'k1'")
                 param("reflectImplementation", it)
             }
 
