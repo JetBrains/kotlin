@@ -24,13 +24,6 @@ import kotlin.reflect.full.allSuperclasses
 
 private const val ARGUMENT_PARSE_DIAGNOSTICS_CLASS = "ArgumentParseDiagnostics"
 
-internal data class CompatLayerConfig(
-    /**
-     * The Kotlin version of the currently running build.
-     */
-    val currentKotlinVersion: KotlinReleaseVersion,
-)
-
 @OptIn(ExperimentalArgumentApi::class)
 internal class BtaImplOptionsGenerator(
     override val targetPackage: String,
@@ -42,10 +35,7 @@ internal class BtaImplOptionsGenerator(
      * but it will be set to an older version when generating the compat layer.
      */
     private val kotlinVersion: KotlinReleaseVersion,
-    private val compatLayerConfig: CompatLayerConfig? = null,
 ) : BtaOptionsGenerator {
-
-    private val generateCompatLayer = compatLayerConfig != null
 
     private val outputs = mutableListOf<Pair<Path, String>>()
 
@@ -87,11 +77,9 @@ internal class BtaImplOptionsGenerator(
 
                 if (parentClass != null) {
                     superclass(parentClass)
-                    if (!generateCompatLayer) {
-                        addSuperclassConstructorParameter("argumentValidationErrors")
-                        addSuperclassConstructorParameter("restrictedArgViolations")
-                        addSuperclassConstructorParameter("argumentParseDiagnostics")
-                    }
+                    addSuperclassConstructorParameter("argumentValidationErrors")
+                    addSuperclassConstructorParameter("restrictedArgViolations")
+                    addSuperclassConstructorParameter("argumentParseDiagnostics")
                 } else {
                     property(
                         "internalArguments",
@@ -156,9 +144,7 @@ internal class BtaImplOptionsGenerator(
                     function("deepCopy") {
                         addModifiers(KModifier.OVERRIDE)
                         returns(ClassName(targetPackage, implClassName))
-                        val constructorArgs = if (!generateCompatLayer) {
-                            "argumentValidationErrors.toSet(), restrictedArgViolations.toList(), argumentParseDiagnostics.copy()"
-                        } else ""
+                        val constructorArgs = "argumentValidationErrors.toSet(), restrictedArgViolations.toList(), argumentParseDiagnostics.copy()"
                         addStatement(
                             "return %T($constructorArgs).also { newArgs -> newArgs.applyCompilerArguments(toCompilerArguments()) }",
                             ClassName(targetPackage, implClassName)
@@ -179,12 +165,10 @@ internal class BtaImplOptionsGenerator(
                         MemberName("org.jetbrains.kotlin.cli.common.arguments", "parseCommandLineArguments"),
                         level.getCompilerArgumentsClassName()
                     )
-                    if (!generateCompatLayer) {
-                        toCompilerConverterFun.addStatement(
-                            "%M(arguments)",
-                            MemberName("org.jetbrains.kotlin.buildtools.internal.arguments", "populateExplicitArguments")
-                        )
-                    }
+                    toCompilerConverterFun.addStatement(
+                        "%M(arguments)",
+                        MemberName("org.jetbrains.kotlin.buildtools.internal.arguments", "populateExplicitArguments")
+                    )
                     constructorSpecBuilder.addStatement("applyCompilerArguments(%T())", level.getCompilerArgumentsClassName())
                 } else {
                     function("build") {
@@ -201,18 +185,14 @@ internal class BtaImplOptionsGenerator(
                 applyCompilerArgumentsFun.addStatement("internalArguments.addAll(arguments.internalArguments.map { it.stringRepresentation })")
                 addFunction(applyCompilerArgumentsFun.build())
 
-                if (!generateCompatLayer) {
-                    toCompilerArgumentsAffectingOutcomeFun.addStatement("return arguments")
-                    addFunction(toCompilerArgumentsAffectingOutcomeFun.build())
-                }
+                toCompilerArgumentsAffectingOutcomeFun.addStatement("return arguments")
+                addFunction(toCompilerArgumentsAffectingOutcomeFun.build())
 
-                maybeAddApplyArgumentStringsFun(level, generateCompatLayer, compatLayerConfig?.currentKotlinVersion ?: kotlinVersion)
-                maybeAddApplyCommandLineArgumentsFun(level, generateCompatLayer)
+                maybeAddApplyArgumentStringsFun(level, kotlinVersion)
+                maybeAddApplyCommandLineArgumentsFun(level)
                 maybeAddToArgumentsStringFun(level, parentClass)
-                if (!generateCompatLayer) {
-                    generateRestrictedArgViolationCollection(level, parentClass)
-                    generateToCompilationInputsFun(level, implClassName, parentClass)
-                }
+                generateRestrictedArgViolationCollection(level, parentClass)
+                generateToCompilationInputsFun(level)
             }
         }
         if (currentFileCallsApiEnumValues) {
@@ -282,31 +262,29 @@ internal class BtaImplOptionsGenerator(
     }
 
     private fun constructorSpecBuilder(): FunSpec.Builder = FunSpec.constructorBuilder().apply {
-        if (!generateCompatLayer) {
-            addParameter(
-                ParameterSpec.builder("argumentValidationErrors", setTypeNameOf<String>())
-                    .defaultValue("%M()", MemberName("kotlin.collections", "emptySet"))
-                    .build()
-            )
+        addParameter(
+            ParameterSpec.builder("argumentValidationErrors", setTypeNameOf<String>())
+                .defaultValue("%M()", MemberName("kotlin.collections", "emptySet"))
+                .build()
+        )
 
-            addParameter(
-                ParameterSpec.builder(
-                    "restrictedArgViolations",
-                    ClassName("kotlin.collections", "List")
-                        .parameterizedBy(
-                            ClassName(targetPackage, "RestrictedArgViolation")
-                        )
-                )
-                    .defaultValue("%M()", MemberName("kotlin.collections", "emptyList"))
-                    .build()
+        addParameter(
+            ParameterSpec.builder(
+                "restrictedArgViolations",
+                ClassName("kotlin.collections", "List")
+                    .parameterizedBy(
+                        ClassName(targetPackage, "RestrictedArgViolation")
+                    )
             )
+                .defaultValue("%M()", MemberName("kotlin.collections", "emptyList"))
+                .build()
+        )
 
-            addParameter(
-                ParameterSpec.builder("argumentParseDiagnostics", ClassName(targetPackage, ARGUMENT_PARSE_DIAGNOSTICS_CLASS))
-                    .defaultValue("%T()", ClassName(targetPackage, ARGUMENT_PARSE_DIAGNOSTICS_CLASS))
-                    .build()
-            )
-        }
+        addParameter(
+            ParameterSpec.builder("argumentParseDiagnostics", ClassName(targetPackage, ARGUMENT_PARSE_DIAGNOSTICS_CLASS))
+                .defaultValue("%T()", ClassName(targetPackage, ARGUMENT_PARSE_DIAGNOSTICS_CLASS))
+                .build()
+        )
     }
 
     private fun TypeSpec.Builder.generateOptions(
@@ -440,7 +418,6 @@ internal class BtaImplOptionsGenerator(
                 name,
                 argument,
                 setStatement,
-                generateCompatLayer,
             )
             if (argument.affectsCompilationOutcome) {
                 toCompilerArgumentsAffectingOutcomeFun.addSafeSetStatement(
@@ -449,7 +426,6 @@ internal class BtaImplOptionsGenerator(
                     name,
                     argument,
                     setStatement,
-                    generateCompatLayer,
                 )
             }
         }
@@ -460,16 +436,14 @@ internal class BtaImplOptionsGenerator(
             }.build(),
             catches =
                 buildList {
-                    if (!generateCompatLayer) {
-                        add(catchCompilerArgumentsParseException())
-                    }
+                    add(catchCompilerArgumentsParseException())
                     add(catchNoSuchMethodError())
                 },
         )
     }
 
     /**
-     * Generates code that configures for example [org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments] from [org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments] and vice versa
+     * Generates code that configures for example `org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments` from `org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments` and vice versa
      */
     private fun generateAutomaticArgumentsPropagators(
         implClassName: String,
@@ -500,7 +474,6 @@ internal class BtaImplOptionsGenerator(
                 name,
                 argument,
                 setStatement,
-                generateCompatLayer,
             )
             if (argument.affectsCompilationOutcome) {
                 toCompilerArgumentsAffectingOutcomeFun.addSafeSetStatement(
@@ -509,7 +482,6 @@ internal class BtaImplOptionsGenerator(
                     name,
                     argument,
                     setStatement,
-                    generateCompatLayer,
                 )
             }
         }
@@ -521,7 +493,7 @@ internal class BtaImplOptionsGenerator(
         applyCompilerArgumentsFun.addSafeMethodAccessStatement(
             compilerToBtaStatement,
             catches = buildList {
-                if (!generateCompatLayer && (type.isGeneratedEnum || type.isGeneratedEnumList())) {
+                if (type.isGeneratedEnum || type.isGeneratedEnumList()) {
                     add(catchCompilerArgumentsParseException())
                 }
                 add(catchNoSuchMethodError())
@@ -647,21 +619,13 @@ internal class BtaImplOptionsGenerator(
             type.isGeneratedEnum -> {
                 currentFileCallsApiEnumValues = true
                 add(maybeGetNullabilitySign(argument))
-                if (!generateCompatLayer) {
-                    add(
-                        $$".let { %T.values().firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> %M(_restrictedArgViolations, arguments::%N, entry.stringValue, it) } ?: throw %M(\"Unknown -$${argument.name} value: $it\") }",
-                        argumentTypeParameter.copy(nullable = false),
-                        MemberName(targetPackage, "checkCaseMatches"),
-                        effectiveCompilerName,
-                        MemberName("org.jetbrains.kotlin.buildtools.api", "CompilerArgumentsParseException"),
-                    )
-                } else {
-                    add(
-                        $$".let { %T.values().firstOrNull { entry -> entry.stringValue.equals(it, true) } ?: throw %M(\"Unknown -$${argument.name} value: $it\") }",
-                        argumentTypeParameter.copy(nullable = false),
-                        MemberName("org.jetbrains.kotlin.buildtools.api", "CompilerArgumentsParseException"),
-                    )
-                }
+                add(
+                    $$".let { %T.values().firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> %M(_restrictedArgViolations, arguments::%N, entry.stringValue, it) } ?: throw %M(\"Unknown -$${argument.name} value: $it\") }",
+                    argumentTypeParameter.copy(nullable = false),
+                    MemberName(targetPackage, "checkCaseMatches"),
+                    effectiveCompilerName,
+                    MemberName("org.jetbrains.kotlin.buildtools.api", "CompilerArgumentsParseException"),
+                )
             }
             type.isGeneratedEnumList() -> {
                 currentFileCallsApiEnumValues = true
@@ -724,8 +688,6 @@ internal class BtaImplOptionsGenerator(
 
     private fun TypeSpec.Builder.generateToCompilationInputsFun(
         level: KotlinCompilerArgumentsLevel,
-        implClassName: String,
-        parentClass: ClassName?,
     ) {
         if (!level.isLeaf()) return
         function("toCompilationInputs") {
@@ -822,20 +784,12 @@ internal class BtaImplOptionsGenerator(
             addParameter("key", parameter.parameterizedBy(typeParameter))
             addParameter("value", typeParameter)
 
-            val currentKotlinVersion = if (generateCompatLayer) {
-                addStatement(
-                    "val currentKotlinVersion = %T(KC_VERSION)",
-                    ClassName("org.jetbrains.kotlin.tooling.core", "KotlinToolingVersion")
-                )
-                CodeBlock.of("(currentKotlinVersion.major, currentKotlinVersion.minor, currentKotlinVersion.patch)")
-            } else {
-                CodeBlock.of(
-                    "(%L, %L, %L)",
-                    kotlinVersion.major,
-                    kotlinVersion.minor,
-                    kotlinVersion.patch
-                )
-            }
+            val currentKotlinVersion = CodeBlock.of(
+                "(%L, %L, %L)",
+                kotlinVersion.major,
+                kotlinVersion.minor,
+                kotlinVersion.patch
+            )
             addCode(
                 CodeBlock.builder()
                     .beginControlFlow(
@@ -855,7 +809,7 @@ internal class BtaImplOptionsGenerator(
 
         if (levelsSince[level.name] == KDOC_SINCE_2_3_0) {
             withDeprecationCycle(
-                compatLayerConfig?.currentKotlinVersion ?: kotlinVersion,
+                kotlinVersion,
                 warnFrom = KotlinReleaseVersion.v2_4_0,
                 errorFrom = KotlinReleaseVersion.v2_5_0,
                 removeFrom = KotlinReleaseVersion.v2_6_0,
@@ -1015,11 +969,7 @@ internal class BtaImplOptionsGenerator(
                 addModifiers(KModifier.OPEN)
             }
             returns(listTypeNameOf<String>())
-            if (generateCompatLayer) {
-                addStatement("val arguments = toCompilerArguments().compilerToArgumentStrings()")
-            } else {
-                addStatement("val arguments = toCompilerArguments().compilerToArgumentStrings(allowArgFileInValues = false)")
-            }
+            addStatement("val arguments = toCompilerArguments().compilerToArgumentStrings(allowArgFileInValues = false)")
             addStatement("return arguments")
         }
     }
@@ -1041,11 +991,10 @@ internal fun FunSpec.Builder.addSafeSetStatement(
     name: String,
     argument: BtaCompilerArgument<*>,
     setStatement: CodeBlock,
-    generateCompatLayer: Boolean,
 ) {
     // There's no need in future compatibility check for non-compat layer.
     // The main impl is tied to a compiler version and could not know about the future changes.
-    if (wasRemoved || generateCompatLayer && wasIntroducedRecently) {
+    if (wasRemoved) {
         val errorMessage = CodeBlock.of(
             "%P",
             buildString {
@@ -1053,10 +1002,8 @@ internal fun FunSpec.Builder.addSafeSetStatement(
                 if (wasIntroducedRecently) {
                     append(" the argument was introduced in ${argument.introducedSinceVersion.releaseName}")
                 }
-                if (wasRemoved) {
-                    append(if (wasIntroducedRecently) " and" else " the argument was")
-                    append(" removed in ${argument.removedSinceVersion?.releaseName}")
-                }
+                append(if (wasIntroducedRecently) " and" else " the argument was")
+                append(" removed in ${argument.removedSinceVersion?.releaseName}")
             }
         )
         addSafeMethodAccessStatement(
@@ -1123,7 +1070,6 @@ private fun toCompilerConverterFunBuilder(
 
 private fun TypeSpec.Builder.maybeAddApplyArgumentStringsFun(
     level: KotlinCompilerArgumentsLevel,
-    generateCompatLayer: Boolean,
     kotlinVersion: KotlinReleaseVersion,
 ) {
     if (!level.isLeaf()) {
@@ -1146,22 +1092,14 @@ private fun TypeSpec.Builder.maybeAddApplyArgumentStringsFun(
                 compilerArgumentsClass,
                 MemberName("org.jetbrains.kotlin.cli.common.arguments", "parseCommandLineArguments")
             )
-            if (!generateCompatLayer) {
-                addStatement("collectRestrictedArgViolations(compilerArgs, %T())", compilerArgumentsClass)
-                addStatement(
-                    "%M(compilerArgs.errors).forEach { _argumentValidationErrors.add(it) }",
-                    MemberName("org.jetbrains.kotlin.cli.common.arguments", "validateArgumentsAllErrors"),
-                )
-                // has to run before the values are applied, so that values previously set through the typed argument API
-                // are still observable
-                addStatement("argumentParseDiagnostics.record(compilerArgs, arguments) { toCompilerArguments() }")
-            } else {
-                addStatement(
-                    "%M(compilerArgs.errors)?.let { throw %M(it) }",
-                    MemberName("org.jetbrains.kotlin.cli.common.arguments", "validateArguments"),
-                    MemberName("org.jetbrains.kotlin.buildtools.api", "CompilerArgumentsParseException"),
-                )
-            }
+            addStatement("collectRestrictedArgViolations(compilerArgs, %T())", compilerArgumentsClass)
+            addStatement(
+                "%M(compilerArgs.errors).forEach { _argumentValidationErrors.add(it) }",
+                MemberName("org.jetbrains.kotlin.cli.common.arguments", "validateArgumentsAllErrors"),
+            )
+            // has to run before the values are applied, so that values previously set through the typed argument API
+            // are still observable
+            addStatement("argumentParseDiagnostics.record(compilerArgs, arguments) { toCompilerArguments() }")
             addStatement("applyCompilerArguments(compilerArgs)")
         }
     }
@@ -1169,7 +1107,6 @@ private fun TypeSpec.Builder.maybeAddApplyArgumentStringsFun(
 
 private fun TypeSpec.Builder.maybeAddApplyCommandLineArgumentsFun(
     level: KotlinCompilerArgumentsLevel,
-    generateCompatLayer: Boolean,
 ) {
     if (!level.isLeaf()) {
         return
@@ -1180,28 +1117,24 @@ private fun TypeSpec.Builder.maybeAddApplyCommandLineArgumentsFun(
         addAnnotation(ANNOTATION_DELICATE_BUILDTOOLS_API)
         addModifiers(KModifier.OVERRIDE)
         addParameter("arguments", listTypeNameOf<String>())
-        if (!generateCompatLayer) {
-            addStatement("val compilerArgs = toCompilerArguments()")
-            addStatement(
-                "%M(arguments, compilerArgs, false)",
-                MemberName("org.jetbrains.kotlin.cli.common.arguments", "parseCommandLineArguments")
-            )
-            addStatement(
-                "%M(this, compilerArgs)",
-                MemberName("org.jetbrains.kotlin.buildtools.internal.arguments", "handleCustomPluginArguments")
-            )
-            addStatement("collectRestrictedArgViolations(compilerArgs, %T())", compilerArgumentsClass)
-            addStatement(
-                "%M(compilerArgs.errors).forEach { _argumentValidationErrors.add(it) }",
-                MemberName("org.jetbrains.kotlin.cli.common.arguments", "validateArgumentsAllErrors"),
-            )
-            // has to run before the values are applied, so that values previously set through the typed argument API
-            // are still observable
-            addStatement("argumentParseDiagnostics.record(compilerArgs, arguments) { toCompilerArguments() }")
-            addStatement("applyCompilerArguments(compilerArgs)")
-        } else {
-            addStatement("error(\"Will never be called, it's handled in JvmCompilerArgumentsImplV1Adapter\")")
-        }
+        addStatement("val compilerArgs = toCompilerArguments()")
+        addStatement(
+            "%M(arguments, compilerArgs, false)",
+            MemberName("org.jetbrains.kotlin.cli.common.arguments", "parseCommandLineArguments")
+        )
+        addStatement(
+            "%M(this, compilerArgs)",
+            MemberName("org.jetbrains.kotlin.buildtools.internal.arguments", "handleCustomPluginArguments")
+        )
+        addStatement("collectRestrictedArgViolations(compilerArgs, %T())", compilerArgumentsClass)
+        addStatement(
+            "%M(compilerArgs.errors).forEach { _argumentValidationErrors.add(it) }",
+            MemberName("org.jetbrains.kotlin.cli.common.arguments", "validateArgumentsAllErrors"),
+        )
+        // has to run before the values are applied, so that values previously set through the typed argument API
+        // are still observable
+        addStatement("argumentParseDiagnostics.record(compilerArgs, arguments) { toCompilerArguments() }")
+        addStatement("applyCompilerArguments(compilerArgs)")
     }
 }
 
