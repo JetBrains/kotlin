@@ -181,10 +181,13 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                 assertFileContains(
                     projectPath.resolve("build/js/packages/kotlin-js-multiplatform-app-project-test/.swcrc"),
                     "\"target\": \"es5\"",
-                    "\"type\": \"umd\"",
+                    "\"isModule\": false",
                     "\"loose\": false",
                     "\"sourceMaps\": true",
-                    "\"outFileExtension\": \".js\"",
+                )
+                assertFileDoesNotContain(
+                    projectPath.resolve("build/js/packages/kotlin-js-multiplatform-app-project-test/.swcrc"),
+                    "\"module\"",
                 )
             }
 
@@ -196,10 +199,13 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                 assertFileContains(
                     projectPath.resolve("build/js/packages/kotlin-js-multiplatform-app-project/.swcrc"),
                     "\"target\": \"es5\"",
-                    "\"type\": \"umd\"",
+                    "\"isModule\": false",
                     "\"loose\": false",
                     "\"sourceMaps\": true",
-                    "\"outFileExtension\": \".js\"",
+                )
+                assertFileDoesNotContain(
+                    projectPath.resolve("build/js/packages/kotlin-js-multiplatform-app-project/.swcrc"),
+                    "\"module\"",
                 )
                 assertFileContains(
                     projectPath.resolve("build/js/packages/kotlin-js-multiplatform-app-project/kotlin/kotlin-js-multiplatform-app-project.d.ts"),
@@ -215,10 +221,13 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                 assertFileContains(
                     projectPath.resolve("build/js/packages/kotlin-js-multiplatform-app-project/.swcrc"),
                     "\"target\": \"es5\"",
-                    "\"type\": \"umd\"",
+                    "\"isModule\": false",
                     "\"loose\": false",
                     "\"sourceMaps\": true",
-                    "\"outFileExtension\": \".js\"",
+                )
+                assertFileDoesNotContain(
+                    projectPath.resolve("build/js/packages/kotlin-js-multiplatform-app-project/.swcrc"),
+                    "\"module\"",
                 )
             }
         }
@@ -245,9 +254,12 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                 assertFileContains(
                     projectPath.resolve("build/js/packages/kotlin-js-multiplatform-library-project/.swcrc"),
                     "\"target\": \"es5\"",
-                    "\"type\": \"umd\"",
+                    "\"isModule\": false",
                     "\"loose\": false",
-                    "\"outFileExtension\": \".js\"",
+                )
+                assertFileDoesNotContain(
+                    projectPath.resolve("build/js/packages/kotlin-js-multiplatform-library-project/.swcrc"),
+                    "\"module\"",
                 )
             }
 
@@ -258,9 +270,12 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                 assertFileContains(
                     projectPath.resolve("build/js/packages/kotlin-js-multiplatform-library-project/.swcrc"),
                     "\"target\": \"es5\"",
-                    "\"type\": \"umd\"",
+                    "\"isModule\": false",
                     "\"loose\": false",
-                    "\"outFileExtension\": \".js\"",
+                )
+                assertFileDoesNotContain(
+                    projectPath.resolve("build/js/packages/kotlin-js-multiplatform-library-project/.swcrc"),
+                    "\"module\"",
                 )
             }
         }
