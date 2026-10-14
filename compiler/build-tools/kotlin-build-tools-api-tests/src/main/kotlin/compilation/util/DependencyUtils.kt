@@ -11,7 +11,7 @@ import java.net.URLClassLoader
 import java.nio.file.Paths
 import kotlin.io.path.toPath
 
-private const val COMPILER_CLASSPATH_PROPERTY = "kotlin.build-tools-api.test.compilerClasspath"
+const val COMPILER_CLASSPATH_PROPERTY = "kotlin.build-tools-api.test.compilerClasspath"
 
 fun initializeBtaClassloader(customParent: ClassLoader? = null): URLClassLoader {
     val classpath = System.getProperty(COMPILER_CLASSPATH_PROPERTY)
