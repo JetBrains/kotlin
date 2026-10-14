@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.konan.allParameters
 import org.jetbrains.kotlin.K1Deprecation
-import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.CurrentKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.SyntheticModulesOrigin
@@ -557,14 +556,9 @@ internal class CAdapterGenerator(
 
     private val moduleDescriptors = mutableSetOf<ModuleDescriptor>()
 
-    private val libraryReverseTopoRank: Map<KotlinLibrary, Int> =
-            context.config.klibDag.librariesReverseTopoSorted
-                    .mapIndexed { index, library -> library to index }
-                    .toMap()
-
     private fun ModuleDescriptor.reverseTopoRank(): Int =
             when (val origin = klibModuleOrigin) {
-                is DeserializedKlibModuleOrigin -> libraryReverseTopoRank[origin.library] ?: Int.MAX_VALUE
+                is DeserializedKlibModuleOrigin -> context.config.klibDag.libraryReverseTopoRank[origin.library] ?: Int.MAX_VALUE
                 CurrentKlibModuleOrigin, SyntheticModulesOrigin -> Int.MAX_VALUE
             }
 
