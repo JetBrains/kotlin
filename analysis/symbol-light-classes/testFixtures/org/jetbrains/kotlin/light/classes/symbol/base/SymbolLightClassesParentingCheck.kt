@@ -24,6 +24,7 @@ internal object SymbolLightClassesParentingCheckDirectives : SimpleDirectivesCon
  * the element's `parent`/`context` matches the enclosing element, its `containingFile` is the enclosing element's one,
  * members are reachable from their containing class, annotations are reachable from their owner,
  * and [ElementBase.getElementIcon] is overridden instead of inherited.
+ * It also checks that a member annotated with `@java.lang.Deprecated` is [deprecated][PsiDocCommentOwner.isDeprecated].
  *
  * The check renders nothing, so it produces no test output file.
  */
@@ -330,6 +331,14 @@ private fun createLightElementsVisitor(
 
             assertions.assertTrue(owner.annotations.any { it == annotation }) {
                 "$annotation is not found in ${owner.annotations}"
+            }
+
+            // Java resolve checks the deprecation of a member with `isDeprecated`, not with its annotations, see
+            // `com.intellij.psi.impl.PsiImplUtil.isDeprecated`
+            if (qualifiedName == CommonClassNames.JAVA_LANG_DEPRECATED && psiModifierListOwner is PsiDocCommentOwner) {
+                assertions.assertTrue(psiModifierListOwner.isDeprecated) {
+                    "$psiModifierListOwner is annotated with $qualifiedName, but is not deprecated"
+                }
             }
 
             checkParentAndVisitChildren(annotation, notCheckItself = true) { visitor ->
