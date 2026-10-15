@@ -344,6 +344,7 @@ Unknown:
  - prepare/kotlin-compiler-internal-test-framework
  - prepare/kotlin-daemon-embeddable
  - prepare/kotlin-jps-plugin
+ - prepare/kotlinx-metadata-klib
  - prepare/parcelize-compiler-gradle
  - resources
  - spec-docs
