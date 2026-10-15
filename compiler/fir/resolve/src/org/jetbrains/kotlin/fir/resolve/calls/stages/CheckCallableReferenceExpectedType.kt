@@ -229,14 +229,14 @@ private fun BodyResolveComponents.getCallableReferenceAdaptation(
         for (fakeArgumentAtom in resolvedArgument.arguments) {
             val fakeArgument = fakeArgumentAtom.expression
             val index = fakeArgument.index
-            val substitutedParameter = function.valueParameters.getOrNull(function.indexOf(valueParameter)) ?: continue
+            val parameterOfReferencedFunction = function.valueParameters.getOrNull(function.indexOf(valueParameter)) ?: continue
 
             val mappedArgument: ConeKotlinType?
-            if (substitutedParameter.isVararg) {
+            if (parameterOfReferencedFunction.isVararg) {
                 val [varargType, newVarargMappingState] = varargParameterTypeByExpectedParameter(
                     candidate,
                     inputTypes[index + unboundReceiverCount],
-                    substitutedParameter,
+                    parameterOfReferencedFunction,
                     varargMappingState
                 )
                 varargMappingState = newVarargMappingState
@@ -254,7 +254,7 @@ private fun BodyResolveComponents.getCallableReferenceAdaptation(
                     }
                 }
             } else {
-                mappedArgument = substitutedParameter.returnTypeRef.coneType
+                mappedArgument = parameterOfReferencedFunction.returnTypeRef.coneType
                 mappedArguments[valueParameter] = resolvedArgument
             }
 
@@ -332,13 +332,13 @@ context(_: SessionHolder)
 private fun varargParameterTypeByExpectedParameter(
     candidate: Candidate,
     expectedParameterType: ConeKotlinType,
-    substitutedParameter: FirValueParameter,
+    parameterOfReferencedFunction: FirValueParameter,
     varargMappingState: VarargMappingState,
 ): Pair<ConeKotlinType?, VarargMappingState> {
-    val elementType = substitutedParameter.returnTypeRef.coneType.arrayElementType()
-        ?: errorWithAttachment("Vararg parameter ${substitutedParameter::class.java} does not have vararg type") {
+    val elementType = parameterOfReferencedFunction.returnTypeRef.coneType.arrayElementType()
+        ?: errorWithAttachment("Vararg parameter ${parameterOfReferencedFunction::class.java} does not have vararg type") {
             withConeTypeEntry("expectedParameterType", expectedParameterType)
-            withFirEntry("substitutedParameter", substitutedParameter)
+            withFirEntry("parameterOfReferencedFunction", parameterOfReferencedFunction)
             withEntry("varargMappingState", varargMappingState.toString())
         }
 
