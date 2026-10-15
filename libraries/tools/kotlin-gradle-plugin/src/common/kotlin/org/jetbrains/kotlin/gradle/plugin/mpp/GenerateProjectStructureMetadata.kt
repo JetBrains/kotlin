@@ -13,12 +13,11 @@ import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.ProjectLayout
 import org.gradle.api.file.RegularFile
-import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.plugin.internal.KotlinProjectSharedDataProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.KotlinProjectCoordinatesData
 import java.io.File
@@ -50,6 +49,7 @@ abstract class GenerateProjectStructureMetadata : DefaultTask() {
      */
     @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:InputFiles
+    @get:NormalizeLineEndings
     internal val sourceSetDependenciesInputFiles: List<FileCollection>
         get() = coordinatesOfProjectDependencies
             .get()

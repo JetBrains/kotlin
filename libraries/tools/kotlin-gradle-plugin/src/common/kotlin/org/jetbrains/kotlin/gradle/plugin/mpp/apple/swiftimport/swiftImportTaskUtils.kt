@@ -13,10 +13,12 @@ import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import java.io.File
+import org.gradle.work.NormalizeLineEndings
 
 internal abstract class SwiftImportFingerprintInput {
 
     @get:InputFiles
+    @get:NormalizeLineEndings
     @get:Optional
     @get:PathSensitive(PathSensitivity.NONE)
     abstract val fingerprintFile: RegularFileProperty
@@ -63,11 +65,13 @@ private fun readLegacySwiftImportFingerprint(
 internal abstract class LocalPackageTrackingInputs {
 
     @get:InputFiles
+    @get:NormalizeLineEndings
     @get:Optional
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val filesToTrackFromLocalPackages: RegularFileProperty
 
     @get:InputFiles
+    @get:NormalizeLineEndings
     @get:Optional
     @get:PathSensitive(PathSensitivity.RELATIVE)
     val nonEmptyFilesFromLocalPackages: Provider<List<File>>

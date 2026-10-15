@@ -16,6 +16,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
+import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.FetchSyntheticImportProjectPackages
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftImportFingerprintedCoordinationService
@@ -69,6 +70,7 @@ internal abstract class BuildSPMSwiftExportPackage @Inject constructor(
     abstract val packageRoot: DirectoryProperty
 
     @get:InputFiles
+    @get:NormalizeLineEndings
     @get:PathSensitive(PathSensitivity.RELATIVE)
     protected val packageRootTrackedFiles: FileTree
         get() = packageRoot.packageFilesWithoutSwiftPMState()
@@ -80,6 +82,7 @@ internal abstract class BuildSPMSwiftExportPackage @Inject constructor(
     val swiftPMImportHasDependencies: Property<Boolean> = objectFactory.property<Boolean>().convention(false)
 
     @get:InputFile
+    @get:NormalizeLineEndings
     @get:Optional
     @get:PathSensitive(PathSensitivity.NONE)
     abstract val swiftPMImportFingerprint: RegularFileProperty
@@ -88,6 +91,7 @@ internal abstract class BuildSPMSwiftExportPackage @Inject constructor(
     abstract val swiftPMImportCoordinationService: Property<SwiftImportFingerprintedCoordinationService>
 
     @get:InputFiles
+    @get:NormalizeLineEndings
     @get:Optional
     @get:PathSensitive(PathSensitivity.RELATIVE)
     protected val swiftPMImportPackageTrackedFiles: FileCollection

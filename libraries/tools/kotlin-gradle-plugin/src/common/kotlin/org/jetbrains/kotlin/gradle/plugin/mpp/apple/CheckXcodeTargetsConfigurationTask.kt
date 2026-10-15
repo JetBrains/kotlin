@@ -17,6 +17,7 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
+import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupCoroutine
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
@@ -141,6 +142,7 @@ internal abstract class ConvertPbxprojToJsonTask : DefaultTask() {
     abstract val execOperations: ExecOperations
 
     @get:InputFile
+    @get:NormalizeLineEndings
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val pbxprojFile: RegularFileProperty
 
@@ -189,6 +191,7 @@ internal abstract class CheckXcodeTargetsConfigurationTask : DefaultTask(), Uses
     abstract val xcodeProjectPath: DirectoryProperty
 
     @get:InputFile
+    @get:NormalizeLineEndings
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val pbxprojJson: RegularFileProperty
 

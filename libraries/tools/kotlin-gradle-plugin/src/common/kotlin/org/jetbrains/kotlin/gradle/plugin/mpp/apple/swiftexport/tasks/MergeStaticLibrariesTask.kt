@@ -11,6 +11,7 @@ import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
+import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.LibraryTools
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -24,6 +25,7 @@ internal abstract class MergeStaticLibrariesTask : DefaultTask() {
 
     @get:SkipWhenEmpty
     @get:InputFiles
+    @get:NormalizeLineEndings
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val libraries: ConfigurableFileCollection
 

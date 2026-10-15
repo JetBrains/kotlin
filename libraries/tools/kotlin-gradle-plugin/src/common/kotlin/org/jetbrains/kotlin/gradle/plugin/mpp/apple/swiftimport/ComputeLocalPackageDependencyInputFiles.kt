@@ -17,6 +17,7 @@ import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
+import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.utils.getFile
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
@@ -33,6 +34,7 @@ internal abstract class ComputeLocalPackageDependencyInputFiles : DefaultTask() 
      * Recompute if the manifests change
      */
     @get:InputFiles
+    @get:NormalizeLineEndings
     @get:PathSensitive(PathSensitivity.RELATIVE)
     protected val manifests get() = localPackages.map { it.map { it.resolve("Package.swift") } }
 

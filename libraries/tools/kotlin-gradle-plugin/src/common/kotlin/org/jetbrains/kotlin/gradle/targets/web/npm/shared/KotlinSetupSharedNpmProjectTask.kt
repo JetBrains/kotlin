@@ -16,6 +16,7 @@ import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
+import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
@@ -30,6 +31,7 @@ import java.io.File
 internal abstract class KotlinSetupSharedNpmProjectTask : DefaultTask(), UsesKotlinToolingDiagnostics {
 
     @get:InputFiles
+    @get:NormalizeLineEndings
     @get:PathSensitive(PathSensitivity.NONE)
     abstract val packageJsonFiles: ConfigurableFileCollection
 

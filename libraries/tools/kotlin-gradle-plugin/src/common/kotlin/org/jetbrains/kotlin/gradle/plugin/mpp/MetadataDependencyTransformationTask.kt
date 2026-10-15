@@ -16,6 +16,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
+import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.KmpResolutionStrategy
@@ -99,6 +100,7 @@ abstract class MetadataDependencyTransformationTask
 
     @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:InputFiles
+    @get:NormalizeLineEndings
     protected val parentLibrariesIndexFiles: SetProperty<RegularFile> = objectFactory.setProperty<RegularFile>().apply {
         parentTransformationTasks.forEach { taskProvider ->
             add(taskProvider.flatMap { it.transformedLibrariesIndexFile })

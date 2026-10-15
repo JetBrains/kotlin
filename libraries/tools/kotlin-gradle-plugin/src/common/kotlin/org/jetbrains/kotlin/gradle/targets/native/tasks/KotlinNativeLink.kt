@@ -233,6 +233,7 @@ constructor(
 
     @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:InputFiles
+    @get:NormalizeLineEndings
     internal abstract val linkerOptionsProducerFingerprint: ConfigurableFileCollection
 
     @get:Input

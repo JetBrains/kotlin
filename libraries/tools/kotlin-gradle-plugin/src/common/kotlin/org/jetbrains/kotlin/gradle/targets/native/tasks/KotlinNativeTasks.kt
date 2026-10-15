@@ -807,11 +807,13 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
 
     @get:IgnoreEmptyDirectories
     @get:InputFiles
+    @get:NormalizeLineEndings
     @get:PathSensitive(PathSensitivity.RELATIVE)
     val allHeadersDirs: Set<File> get() = settings.includeDirs.allHeadersDirs.files
 
     @get:IgnoreEmptyDirectories
     @get:InputFiles
+    @get:NormalizeLineEndings
     @get:PathSensitive(PathSensitivity.RELATIVE)
     val headerFilterDirs: Set<File> get() = settings.includeDirs.headerFilterDirs.files
 

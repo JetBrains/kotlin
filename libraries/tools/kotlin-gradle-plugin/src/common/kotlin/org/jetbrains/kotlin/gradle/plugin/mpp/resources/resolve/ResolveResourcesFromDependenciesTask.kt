@@ -10,6 +10,7 @@ import org.gradle.api.file.*
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
+import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPublicationImpl
 import org.jetbrains.kotlin.incremental.deleteDirectoryContents
 import javax.inject.Inject
@@ -28,6 +29,7 @@ internal abstract class ResolveResourcesFromDependenciesTask : DefaultTask() {
 
     @get:PathSensitive(PathSensitivity.NONE)
     @get:InputFiles
+    @get:NormalizeLineEndings
     abstract val archivesFromDependencies: ConfigurableFileCollection
 
     @get:OutputDirectory

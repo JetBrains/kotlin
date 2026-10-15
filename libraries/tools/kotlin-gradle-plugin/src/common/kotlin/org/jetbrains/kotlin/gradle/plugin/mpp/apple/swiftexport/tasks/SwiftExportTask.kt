@@ -61,6 +61,7 @@ internal abstract class SwiftExportTask @Inject constructor(
 
         /** The klib to translate. Wired from the compile task, so the dependency on it comes with the file. */
         @get:InputFiles
+        @get:NormalizeLineEndings
         @get:PathSensitive(PathSensitivity.RELATIVE)
         abstract val artifact: RegularFileProperty
     }
@@ -73,6 +74,7 @@ internal abstract class SwiftExportTask @Inject constructor(
     abstract val cinteropModuleName: Property<String>
 
     @get:InputFiles
+    @get:NormalizeLineEndings
     @get:Optional
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val cinteropModuleArtifact: RegularFileProperty
@@ -149,6 +151,7 @@ internal abstract class SwiftExportTask @Inject constructor(
      * Up-to-date tracking of [metadataConfiguration]'s backing configuration.
      */
     @get:InputFiles
+    @get:NormalizeLineEndings
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val metadataConfigurationFiles: ConfigurableFileCollection
 
@@ -166,6 +169,7 @@ internal abstract class SwiftExportTask @Inject constructor(
      * the subproject metadata producers run before this task executes, so their JSON exists when [run] reads it.
      */
     @get:InputFiles
+    @get:NormalizeLineEndings
     @get:PathSensitive(PathSensitivity.RELATIVE)
     val sharedMetadataFiles: List<FileCollection>
         get() = sharedMetadata.orNull?.let { listOf(it.files) } ?: emptyList()
