@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.yieldIfNotNull
 
 @KaPlatformInterface
@@ -98,8 +97,7 @@ public class KotlinFileBasedDeclarationProvider(public val kotlinFile: KtFile) :
     }
 
     override fun getTopLevelKotlinClassLikeDeclarationNamesInPackage(packageFqName: FqName): Set<Name> {
-        // Class IDs of nameless declarations use the safe name
-        return getTopLevelDeclarationNames(packageFqName) { (it as? KtClassLikeDeclaration)?.nameAsSafeName }
+        return getTopLevelDeclarationNames(packageFqName) { it is KtClassLikeDeclaration }
     }
 
     override fun getTopLevelProperties(callableId: CallableId): Collection<KtProperty> {
@@ -118,7 +116,7 @@ public class KotlinFileBasedDeclarationProvider(public val kotlinFile: KtFile) :
     }
 
     override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name> {
-        return getTopLevelDeclarationNames(packageFqName) { (it as? KtCallableDeclaration)?.nameAsName }
+        return getTopLevelDeclarationNames(packageFqName) { it is KtCallableDeclaration }
     }
 
     override fun findFilesForFacadeByPackage(packageFqName: FqName): Collection<KtFile> {
@@ -163,22 +161,24 @@ public class KotlinFileBasedDeclarationProvider(public val kotlinFile: KtFile) :
 
         return buildList {
             for (declaration in topLevelDeclarations) {
-                if (declaration is T && declaration.nameAsName == name) {
+                // IDs of nameless declarations use the safe name
+                if (declaration is T && declaration.nameAsSafeName == name) {
                     add(declaration)
                 }
             }
         }
     }
 
-    private inline fun getTopLevelDeclarationNames(packageFqName: FqName, getName: (KtNamedDeclaration) -> Name?): Set<Name> {
+    private inline fun getTopLevelDeclarationNames(packageFqName: FqName, filter: (KtNamedDeclaration) -> Boolean): Set<Name> {
         if (kotlinFile.packageFqName != packageFqName) {
             return emptySet()
         }
 
         return buildSet {
             for (declaration in topLevelDeclarations) {
-                if (declaration is KtNamedDeclaration) {
-                    addIfNotNull(getName(declaration))
+                // IDs of nameless declarations use the safe name
+                if (declaration is KtNamedDeclaration && filter(declaration)) {
+                    add(declaration.nameAsSafeName)
                 }
             }
         }
