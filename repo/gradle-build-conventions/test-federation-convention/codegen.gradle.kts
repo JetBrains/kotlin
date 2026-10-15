@@ -49,7 +49,6 @@ private object DomainSourcesGenerator {
         val ignores = node.properties()
             .filter { (key, _) -> key == "ignore" }
             .flatMap { (_, value) -> value.valueStream()?.toList().orEmpty().map { it.asText() } }
-            .toSet()
 
         val domains = node.properties()
             .filter { (key, _) -> key != "ignore" }
@@ -92,7 +91,7 @@ private object DomainSourcesGenerator {
                 this += "|    )"
                 this += "|}"
                 this += "|"
-                this += "|val ignores = hashSetOf<String>(${ignores.joinToString { "\"$it\"" }})"
+                this += "|val ignores = listOf<String>(${ignores.joinToString { "\"$it\"" }})"
             }.trimMargin()
         )
 

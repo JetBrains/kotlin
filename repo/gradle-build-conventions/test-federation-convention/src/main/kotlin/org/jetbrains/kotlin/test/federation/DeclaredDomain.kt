@@ -22,7 +22,10 @@ internal data class DeclaredDomain(
      * Files matching these patterns are excluded from this domain. Directory paths exclude all their descendants.
      * See [includes].
      *
-     * Note: If a file matches an 'include' and 'exclude' pattern, then the 'most specific' pattern will dominate.
+     * Note: 'include' and 'exclude' rules are each evaluated in declaration order: the last matching rule wins.
+     * Rules starting with '!' are negated (e.g. '!foo/abc/bar' in 'exclude' revokes the exclusion of 'foo/abc/bar' by a previous rule).
+     * 'exclude' rules can only narrow the set of included paths: they never add a path to the domain.
+     * Rules matching a path take precedence over rules matching its parent directories.
      * e.g., a definition like
      * ```yaml
      * include:
@@ -31,7 +34,7 @@ internal data class DeclaredDomain(
      *     - foo/abc
      * ```
      *
-     * Will exclude 'foo/abc/bar', as the exclude rule is considered 'more specific'.
+     * Will exclude 'foo/abc/bar', as 'foo/abc' is matched before its parent directory 'foo'.
      */
     val excludes: List<String>,
 
