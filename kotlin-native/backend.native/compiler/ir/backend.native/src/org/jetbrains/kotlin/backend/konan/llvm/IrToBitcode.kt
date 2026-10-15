@@ -1754,7 +1754,7 @@ internal class CodeGeneratorVisitor(
             alignment = generationState.llvmDeclarations.forStaticField(field).alignment
         }
         functionGenerationContext.storeAny(
-                valueToAssign, address, field.type.binaryTypeIsReference(), false,
+                valueToAssign, address, field.type.binaryTypeIsReference(), if (field.isStatic) RefLocation.GLOBAL else RefLocation.HEAP,
                 isVolatile = field.hasAnnotation(KonanFqNames.volatile),
                 alignment = alignment,
         )

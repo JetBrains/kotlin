@@ -122,7 +122,7 @@ extern "C" RUNTIME_NOTHROW void RegisterGlobal(ObjHeader** location) {
 }
 
 extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW void ZeroHeapRef(ObjHeader** location) {
-    mm::RefAccessor<false>{location} = nullptr;
+    mm::RefFieldAccessor{location} = nullptr;
 }
 
 extern "C" RUNTIME_NOTHROW void ZeroArrayRefs(ArrayHeader* array) {
@@ -141,27 +141,51 @@ extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW void UpdateStackRef(ObjHeader** lo
 }
 
 extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW void UpdateHeapRef(ObjHeader** location, const ObjHeader* object) {
-    mm::RefAccessor<false>{location} = const_cast<ObjHeader*>(object);
+    mm::RefFieldAccessor{location} = const_cast<ObjHeader*>(object);
 }
 
 extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW void UpdateVolatileHeapRef(ObjHeader** location, const ObjHeader* object) {
-    mm::RefAccessor<false>{location}.storeAtomic(const_cast<ObjHeader*>(object), std::memory_order_seq_cst);
+    mm::RefFieldAccessor{location}.storeAtomic(const_cast<ObjHeader*>(object), std::memory_order_seq_cst);
 }
 
 extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW
         OBJ_GETTER(CompareAndSwapVolatileHeapRef, ObjHeader** location, ObjHeader* expectedValue, ObjHeader* newValue) {
     ObjHeader* actual = expectedValue;
-    mm::RefAccessor<false>{location}.compareAndExchange(actual, newValue, std::memory_order_seq_cst);
+    mm::RefFieldAccessor{location}.compareAndExchange(actual, newValue, std::memory_order_seq_cst);
     RETURN_OBJ(actual);
 }
 
 extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW bool CompareAndSetVolatileHeapRef(
         ObjHeader** location, ObjHeader* expectedValue, ObjHeader* newValue) {
-    return mm::RefAccessor<false>{location}.compareAndExchange(expectedValue, newValue, std::memory_order_seq_cst);
+    return mm::RefFieldAccessor{location}.compareAndExchange(expectedValue, newValue, std::memory_order_seq_cst);
 }
 
 extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW OBJ_GETTER(GetAndSetVolatileHeapRef, ObjHeader** location, ObjHeader* newValue) {
-    RETURN_OBJ(mm::RefAccessor<false>{location}.exchange(newValue, std::memory_order_seq_cst));
+    RETURN_OBJ(mm::RefFieldAccessor{location}.exchange(newValue, std::memory_order_seq_cst));
+}
+
+extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW void UpdateGlobalRef(ObjHeader** location, const ObjHeader* object) {
+    mm::GlobalRefAccessor{location} = const_cast<ObjHeader*>(object);
+}
+
+extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW void UpdateVolatileGlobalRef(ObjHeader** location, const ObjHeader* object) {
+    mm::GlobalRefAccessor{location}.storeAtomic(const_cast<ObjHeader*>(object), std::memory_order_seq_cst);
+}
+
+extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW
+        OBJ_GETTER(CompareAndSwapVolatileGlobalRef, ObjHeader** location, ObjHeader* expectedValue, ObjHeader* newValue) {
+    ObjHeader* actual = expectedValue;
+    mm::GlobalRefAccessor{location}.compareAndExchange(actual, newValue, std::memory_order_seq_cst);
+    RETURN_OBJ(actual);
+}
+
+extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW bool CompareAndSetVolatileGlobalRef(
+        ObjHeader** location, ObjHeader* expectedValue, ObjHeader* newValue) {
+    return mm::GlobalRefAccessor{location}.compareAndExchange(expectedValue, newValue, std::memory_order_seq_cst);
+}
+
+extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW OBJ_GETTER(GetAndSetVolatileGlobalRef, ObjHeader** location, ObjHeader* newValue) {
+    RETURN_OBJ(mm::GlobalRefAccessor{location}.exchange(newValue, std::memory_order_seq_cst));
 }
 
 extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW void UpdateReturnRef(ObjHeader** returnSlot, const ObjHeader* object) {

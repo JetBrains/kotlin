@@ -95,12 +95,18 @@ private:
     ObjHeader*& ref_;
 };
 
+enum class RefLocation {
+    kHeap,
+    kGlobal,
+    kStack
+};
+
 /**
  * Represents Koltin-level operations on Koltin references.
  * With all the necessary GC barriers etc.
  * Prefer using aliases below.
  */
-template<bool kOnStack>
+template<RefLocation kLocation>
 class RefAccessor {
 public:
     RefAccessor() = delete;
@@ -175,9 +181,9 @@ private:
     DirectRefAccessor direct_;
 };
 
-using RefFieldAccessor = RefAccessor<false>;
-using GlobalRefAccessor = RefAccessor<false>;
-using StackRefAccessor = RefAccessor<true>;
+using RefFieldAccessor = RefAccessor<RefLocation::kHeap>;
+using GlobalRefAccessor = RefAccessor<RefLocation::kGlobal>;
+using StackRefAccessor = RefAccessor<RefLocation::kStack>;
 
 class RefField : private Pinned {
 public:

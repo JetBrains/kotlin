@@ -109,6 +109,12 @@ internal enum class ThreadState {
     Native, Runnable
 }
 
+internal enum class RefLocation {
+    HEAP,
+    GLOBAL,
+    STACK
+}
+
 internal inline fun generateFunction(
         codegen: CodeGenerator,
         function: IrSimpleFunction,
@@ -758,16 +764,16 @@ internal abstract class FunctionGenerationContext(
     }
 
     fun storeHeapRef(value: LLVMValueRef, ptr: LLVMValueRef) {
-        updateRef(value, ptr, onStack = false)
+        updateRef(value, ptr, RefLocation.HEAP)
     }
 
     fun storeStackRef(value: LLVMValueRef, ptr: LLVMValueRef) {
-        updateRef(value, ptr, onStack = true)
+        updateRef(value, ptr, RefLocation.STACK)
     }
 
-    fun storeAny(value: LLVMValueRef, ptr: LLVMValueRef, isObjectRef: Boolean, onStack: Boolean, isVolatile: Boolean = false, alignment: Int? = null) {
+    fun storeAny(value: LLVMValueRef, ptr: LLVMValueRef, isObjectRef: Boolean, location: RefLocation, isVolatile: Boolean = false, alignment: Int? = null) {
         when {
-            isObjectRef -> updateRef(value, ptr, onStack, isVolatile, alignment)
+            isObjectRef -> updateRef(value, ptr, location, isVolatile, alignment)
             else -> store(value, ptr, if (isVolatile) LLVMAtomicOrdering.LLVMAtomicOrderingSequentiallyConsistent else null, alignment)
         }
     }
@@ -776,18 +782,16 @@ internal abstract class FunctionGenerationContext(
         call(llvm.updateReturnRefFunction, listOf(address, value))
     }
 
-    private fun updateRef(value: LLVMValueRef, address: LLVMValueRef, onStack: Boolean,
+    private fun updateRef(value: LLVMValueRef, address: LLVMValueRef, location: RefLocation,
                           isVolatile: Boolean = false, alignment: Int? = null) {
         require(alignment == null || alignment % runtime.pointerAlignment == 0)
-        if (onStack) {
-            require(!isVolatile) { "Stack ref update can't be volatile"}
-            call(llvm.updateStackRefFunction, listOf(address, value))
-        } else {
-            if (isVolatile) {
-                call(llvm.UpdateVolatileHeapRef, listOf(address, value))
-            } else {
-                call(llvm.updateHeapRefFunction, listOf(address, value))
+        when (location) {
+            RefLocation.STACK -> {
+                require(!isVolatile) { "Stack ref update can't be volatile"}
+                call(llvm.updateStackRefFunction, listOf(address, value))
             }
+            RefLocation.HEAP -> call(if (isVolatile) llvm.UpdateVolatileHeapRef else llvm.updateHeapRefFunction, listOf(address, value))
+            RefLocation.GLOBAL -> call(if (isVolatile) llvm.UpdateVolatileGlobalRef else llvm.updateGlobalRefFunction, listOf(address, value))
         }
     }
 
