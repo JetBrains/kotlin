@@ -34,7 +34,7 @@ abstract class AbstractFirLightTreeDiagnosticsWithLatestLanguageVersionTest : Ab
     }
 }
 
-abstract class AbstractFirLightTreeDiagnosticsWithLanguageFeatureDisabledTest : AbstractFirLightTreeDiagnosticsTest() {
+abstract class AbstractFirLightTreeDiagnosticsWithLanguageFeatureDisabledTest : AbstractFirPhasedDiagnosticTest(FirParser.LightTree) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.configurationForTestWithLanguageFeatureDisabled()

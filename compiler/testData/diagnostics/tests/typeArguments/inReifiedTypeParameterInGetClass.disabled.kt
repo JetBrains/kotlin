@@ -1,5 +1,5 @@
 // ISSUE: KT-84380
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: CODEGEN
 // LANGUAGE_FEATURE_TOGGLED: ForbidUselessTypeArgumentsIn26
 
 inline fun <reified R> test() {

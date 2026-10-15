@@ -1,5 +1,5 @@
 // LANGUAGE_FEATURE_TOGGLED: ResolveTopLevelLambdasAsSyntheticCallArgument
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-80434
 @DslMarker
 @Target(AnnotationTarget.TYPE)
