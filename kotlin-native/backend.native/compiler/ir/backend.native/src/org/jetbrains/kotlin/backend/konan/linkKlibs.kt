@@ -55,16 +55,15 @@ data class LinkKlibsInput(
  */
 internal class LinkKlibsOutput(
         val irModules: List<IrModuleFragment>,
-        val irModule: IrModuleFragment,
         val irBuiltIns: IrBuiltIns,
         val symbols: BackendNativeSymbols,
         val symbolTable: ReferenceSymbolTable,
         val irLinker: KonanIrLinker,
-        val irModulesToCompile: List<IrModuleFragment> = listOf(irModule),
+        val irModulesToCompile: List<IrModuleFragment>,
 ) : KotlinBackendIrHolder {
 
     override val kotlinIr: IrElement
-        get() = irModule
+        get() = irModulesToCompile.first()
 }
 
 
@@ -130,18 +129,17 @@ internal fun LinkKlibsContext.linkKlibs(
         val mainModule = IrModuleFragmentImpl(moduleDescriptor)
         LinkKlibsOutput(
                 irModules = irModulesForLinkKlibsOutput,
-                irModule = mainModule,
                 irBuiltIns = irBuiltIns,
                 symbols = symbols,
                 symbolTable = symbolTable,
-                irLinker = irLinker
+                irLinker = irLinker,
+                irModulesToCompile = listOf(mainModule),
         )
     } else {
         val [libraryModules, otherModules] = irModulesForLinkKlibsOutput.partition { it.kotlinLibrary in config.librariesToCache }
         check(libraryModules.size == config.librariesToCache.size) { "Missing modules for libraries being cached" }
         LinkKlibsOutput(
                 irModules = otherModules, // TODO(KT-88867): Keep the full list of all IR module fragments in `irModules`
-                irModule = libraryModules.first(),
                 irBuiltIns = irBuiltIns,
                 symbols = symbols,
                 symbolTable = symbolTable,
