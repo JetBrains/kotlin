@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
-import java.util.concurrent.ConcurrentHashMap
 
 /**
  * This service is used to determine how tests would be grouped in batches in the grouped test engine.
@@ -26,15 +25,13 @@ abstract class GroupingTestIsolator(val testServices: TestServices, val affectsF
         data class Custom(val name: String) : BatchToken()
     }
 
-    companion object {
-        private val sourceContainsCache = ConcurrentHashMap<TestModuleStructure, ConcurrentHashMap<Regex, Boolean>>()
-        fun TestModuleStructure.sourceContains(regex: Regex): Boolean {
-            val perStructureCache = sourceContainsCache.computeIfAbsent(this) { ConcurrentHashMap() }
-            return perStructureCache.computeIfAbsent(regex) {
-                modules.any { module ->
-                    module.files.any { it.originalContent.contains(regex) }
-                }
-            }
+    /**
+     * Deliberately uncached: the same isolator is asked about growing snapshots of a test's module structure while it
+     * is being built, so a cached answer may be stale, and a safe cache key would cost about as much as the scan itself.
+     */
+    protected fun TestModuleStructure.sourceContains(regex: Regex): Boolean {
+        return modules.any { module ->
+            module.files.any { it.originalContent.contains(regex) }
         }
     }
 
