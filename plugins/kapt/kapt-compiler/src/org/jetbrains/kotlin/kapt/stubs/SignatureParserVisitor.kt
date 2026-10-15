@@ -16,9 +16,12 @@
 
 package org.jetbrains.kotlin.kapt.stubs
 
+import org.jetbrains.kotlin.kapt.javac.KaptTreeMaker
 import org.jetbrains.kotlin.kapt.stubs.ElementKind.*
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.org.objectweb.asm.Opcodes
+import org.jetbrains.org.objectweb.asm.TypePath
+import org.jetbrains.org.objectweb.asm.TypeReference
 import org.jetbrains.org.objectweb.asm.signature.SignatureReader
 import org.jetbrains.org.objectweb.asm.signature.SignatureVisitor
 import java.util.*
@@ -35,8 +38,8 @@ import java.util.*
         + ReturnType
         * ExceptionType
 
-    Root (Field)
-        + SuperClass
+    Root (Standalone type)
+        + Type
 
     TypeParameter < Root
         + ClassBound
@@ -85,8 +88,8 @@ private class SignatureNode(val kind: ElementKind, val name: String? = null) {
     val children: MutableList<SignatureNode> = SmartList()
 }
 
-class SignatureParser<Expression, TypeParameter>(
-    private val converter: ParameterizedKaptStubConverter<*, Expression, *, *, *, *, TypeParameter, *, *, *>
+class SignatureParser<Expression, Annotation : Expression, TypeParameter>(
+    private val converter: ParameterizedKaptStubConverter<*, Expression, *, *, *, Annotation, TypeParameter, *, *, *>
 ) {
     class ClassGenericSignature<Expression, TypeParameter>(
         val typeParameters: List<TypeParameter>,
@@ -106,28 +109,42 @@ class SignatureParser<Expression, TypeParameter>(
                 typeParameters,
                 parameterTypes,
                 exceptionTypes,
-                newReturnType
+                newReturnType,
             )
     }
 
-    fun parseClassSignature(signature: String): ClassGenericSignature<Expression, TypeParameter> {
+    internal fun parseClassSignature(
+        signature: String,
+        typeAnnotations: List<TypeAnnotation<Annotation>> = emptyList(),
+    ): ClassGenericSignature<Expression, TypeParameter> {
         val root = parse(signature)
         val typeParameters = smartList()
         val superClasses = smartList()
         val interfaces = smartList()
         root.split(typeParameters, TypeParameter, superClasses, SuperClass, interfaces, Interface)
 
-        val parsedTypeParameters = typeParameters.map { parseTypeParameter(it) }
-        val superClass = parseType(superClasses.single().children.single())
-        val parsedInterfaces = interfaces.map { parseType(it.children.single()) }
+        val parsedTypeParameters = parseTypeParameters(
+            typeParameters, typeAnnotations, TypeReference.CLASS_TYPE_PARAMETER, TypeReference.CLASS_TYPE_PARAMETER_BOUND,
+        )
+
+        fun parseSuperType(node: SignatureNode, superTypeAnnotationIndex: Int): Expression {
+            val type = node.children.single()
+            val annotations = typeAnnotations.forTarget(TypeReference.newSuperTypeReference(superTypeAnnotationIndex))
+            return parseType(type, mapTypeAnnotationsToNodes(annotations, type))
+        }
+
+        val superClass = parseSuperType(superClasses.single(), SUPERCLASS_TYPE_ANNOTATION_INDEX)
+        val parsedInterfaces = interfaces.mapIndexed { index, node -> parseSuperType(node, index) }
         return ClassGenericSignature(parsedTypeParameters, superClass, parsedInterfaces)
     }
 
-    fun parseMethodSignature(
+    internal fun parseMethodSignature(
         signature: String,
         rawParameterTypes: List<Expression>,
         hasReturnType: Boolean,
-        nonErrorParameterTypeProvider: (Int, () -> Expression) -> Expression
+        typeAnnotations: List<TypeAnnotation<Annotation>>,
+        varargParameterIndex: Int?,
+        nonErrorParameterTypeProvider: (Int, () -> Expression) -> Expression,
     ): MethodGenericSignature<Expression, TypeParameter> {
         val root = parse(signature)
         val typeParameters = smartList()
@@ -136,28 +153,88 @@ class SignatureParser<Expression, TypeParameter>(
         val returnTypes = smartList()
         root.split(typeParameters, TypeParameter, parameterTypes, ParameterType, exceptionTypes, ExceptionType, returnTypes, ReturnType)
 
-        val parsedTypeParameters = typeParameters.map { parseTypeParameter(it) }
+        val parsedTypeParameters = parseTypeParameters(
+            typeParameters, typeAnnotations, TypeReference.METHOD_TYPE_PARAMETER, TypeReference.METHOD_TYPE_PARAMETER_BOUND,
+        )
+
+        fun parseTypeWithTargetAnnotations(node: SignatureNode, reference: TypeReference, isVararg: Boolean = false): Expression {
+            val type = node.children.single()
+            return parseType(type, mapTypeAnnotationsToNodes(typeAnnotations.forTarget(reference), type), isVararg)
+        }
+
         assert(rawParameterTypes.size >= parameterTypes.size)
         val offset = rawParameterTypes.size - parameterTypes.size
         val parsedParameterTypes = rawParameterTypes.take(offset) + parameterTypes.mapIndexed { index, it ->
-            nonErrorParameterTypeProvider(index) { parseType(it.children.single()) }
+            val parameterIndex = index + offset
+            val isVararg = parameterIndex == varargParameterIndex
+            if (isVararg) {
+                check(it.children.single().kind == ArrayType) { "A vararg parameter must have an array signature" }
+            }
+            nonErrorParameterTypeProvider(parameterIndex) {
+                parseTypeWithTargetAnnotations(it, TypeReference.newFormalParameterReference(parameterIndex), isVararg)
+            }
         }
-        val parsedExceptionTypes = exceptionTypes.map { parseType(it) }
-        val returnType = if (hasReturnType) parseType(returnTypes.single().children.single()) else null
+        val parsedExceptionTypes = exceptionTypes.mapIndexed { index, node ->
+            parseTypeWithTargetAnnotations(node, TypeReference.newExceptionReference(index))
+        }
+        val returnType = if (hasReturnType) {
+            parseTypeWithTargetAnnotations(returnTypes.single(), TypeReference.newTypeReference(TypeReference.METHOD_RETURN))
+        } else null
         return MethodGenericSignature(parsedTypeParameters, parsedParameterTypes, parsedExceptionTypes, returnType)
     }
 
-    fun parseFieldSignature(
+    internal fun parseTypeSignature(
         signature: String,
+        typeAnnotations: List<Pair<TypePath?, Annotation>> = emptyList(),
+        isVararg: Boolean = false,
     ): Expression {
-        val root = parse(signature)
-        val superClass = root.children.single()
-        assert(superClass.kind == SuperClass)
-
-        return parseType(superClass.children.single())
+        val parser = SignatureParserVisitor(converter.treeMaker::resolveQualifiedName)
+        SignatureReader(signature).acceptType(parser)
+        val type = parser.root.children.single()
+        return parseType(type, mapTypeAnnotationsToNodes(typeAnnotations, type), isVararg)
     }
 
-    private fun parseTypeParameter(node: SignatureNode): TypeParameter {
+    private fun mapTypeAnnotationsToNodes(
+        typeAnnotations: List<Pair<TypePath?, Annotation>>,
+        root: SignatureNode,
+    ): IdentityHashMap<SignatureNode, MutableList<Annotation>> {
+        val annotationsByNode = IdentityHashMap<SignatureNode, MutableList<Annotation>>()
+        for ([typePath, annotation] in typeAnnotations) {
+            val target = root.findTypePathTarget(typePath)
+            if (target == null) {
+                // The backend can emit annotation paths that are not matched to signature parts due to known and unknown bugs
+                converter.kaptContext.logger.warn(
+                    "Type annotation $annotation at path '$typePath' has no anchor in the generic signature and will not be emitted"
+                )
+                continue
+            }
+            annotationsByNode.getOrPut(target, ::SmartList).add(annotation)
+        }
+        return annotationsByNode
+    }
+
+    private fun parseTypeParameters(
+        parameters: List<SignatureNode>,
+        typeAnnotations: List<TypeAnnotation<Annotation>>,
+        parameterSort: Int,
+        boundSort: Int,
+    ): List<TypeParameter> = parameters.mapIndexed { index, parameter ->
+        val annotations = typeAnnotations.forTarget(TypeReference.newTypeParameterReference(parameterSort, index))
+            .map { [path, annotation] ->
+                require(path == null || path.length == 0) { "A type parameter annotation cannot have a type path: $path" }
+                annotation
+            }
+        val boundAnnotations = typeAnnotations.filter {
+            it.reference.sort == boundSort && it.reference.typeParameterIndex == index
+        }
+        parseTypeParameter(parameter, annotations, boundAnnotations)
+    }
+
+    private fun parseTypeParameter(
+        node: SignatureNode,
+        annotations: List<Annotation> = emptyList(),
+        boundTypeAnnotations: List<TypeAnnotation<Annotation>> = emptyList(),
+    ): TypeParameter {
         assert(node.kind == TypeParameter)
 
         val classBounds = smartList()
@@ -165,37 +242,57 @@ class SignatureParser<Expression, TypeParameter>(
         node.split(classBounds, ClassBound, interfaceBounds, InterfaceBound)
         assert(classBounds.size <= 1)
 
-        val parsedClassBound = classBounds.firstOrNull()?.let { parseBound(it) }
-        val parsedInterfaceBounds = interfaceBounds.map { parseBound(it) }
+        val annotationsByBoundIndex = boundTypeAnnotations.groupBy(
+            { it.reference.typeParameterBoundIndex },
+            { it.path to it.annotation },
+        )
+        val parsedClassBound = classBounds.firstOrNull()?.let { parseBound(it, annotationsByBoundIndex[0].orEmpty()) }
+        // Class and type-variable bounds have index 0, indices for interface bounds starts from 1 - see
+        // `AnnotationCodegen.genAnnotationsOnTypeParametersAndBounds`
+        var nextInterfaceIndex = 1
+        val parsedInterfaceBounds = interfaceBounds.map { bound ->
+            val boundIndex = if (bound.children.single().kind == TypeVariable) 0 else nextInterfaceIndex++
+            parseBound(bound, boundIndex.let { annotationsByBoundIndex[it] }.orEmpty())
+        }
         val allBounds = if (parsedClassBound != null) listOf(parsedClassBound) + parsedInterfaceBounds else parsedInterfaceBounds
 
-        return converter.makeTypeParameter(node.name!!, allBounds)
+        return converter.makeTypeParameter(node.name!!, allBounds, annotations)
     }
 
-    private fun parseBound(node: SignatureNode): Expression {
+    private fun parseBound(node: SignatureNode, annotations: List<Pair<TypePath?, Annotation>>): Expression {
         assert(node.kind == ClassBound || node.kind == InterfaceBound)
-        return parseType(node.children.single())
+        val type = node.children.single()
+        return parseType(type, mapTypeAnnotationsToNodes(annotations, type))
     }
 
-    private fun parseType(node: SignatureNode): Expression {
+    private fun parseType(
+        node: SignatureNode,
+        annotationsByNode: Map<SignatureNode, List<Annotation>>,
+        isVararg: Boolean = false,
+    ): Expression {
         val kind = node.kind
-        return when (kind) {
+        val annotationsOnCurrentType = annotationsByNode[node].orEmpty()
+        val expression = when (kind) {
             ClassType -> {
                 val typeArgs = mutableListOf<SignatureNode>()
                 val innerClasses = mutableListOf<SignatureNode>()
                 node.split(typeArgs, TypeArgument, innerClasses, InnerClass)
-                val convertedTypeArgs: List<Expression> = typeArgs.map { convertTypeArgument(it) }
+                val convertedTypeArgs: List<Expression> = typeArgs.map { convertTypeArgument(it, annotationsByNode) }
 
-                val fqName = converter.makeQualifiedName(node.name!!)
-                var expression = makeExpressionForClassTypeWithArguments(fqName, convertedTypeArgs)
-
-                if (innerClasses.isEmpty()) return expression
+                val classType = converter.makeClassType(node.name!!, annotationsOnCurrentType)
+                var expression = makeExpressionForClassTypeWithArguments(classType, convertedTypeArgs)
 
                 for (innerClass in innerClasses) {
                     val convertedInnerClassArgs: List<Expression> =
-                        innerClass.children.map { convertTypeArgument(it) }
+                        innerClass.children.map { convertTypeArgument(it, annotationsByNode) }
+                    val annotationsOnInnerClass = annotationsByNode[innerClass].orEmpty()
+                    val selectedInnerType = converter.makeInnerClassType(
+                        expression,
+                        innerClass.name!!,
+                        annotationsOnInnerClass,
+                    )
                     expression = makeExpressionForClassTypeWithArguments(
-                        converter.makeSelect(expression, innerClass.name!!),
+                        selectedInnerType,
                         convertedInnerClassArgs
                     )
                 }
@@ -206,13 +303,24 @@ class SignatureParser<Expression, TypeParameter>(
             TypeVariable ->
                 converter.makeSimpleName(node.name!!)
             ArrayType -> {
-                val elementType = parseType(node.children.single())
-                converter.makeArrayType(elementType, 1)
+                val arrayDimensions = mutableListOf<List<Annotation>>()
+                var elementNode = node
+                while (elementNode.kind == ArrayType) {
+                    arrayDimensions += annotationsByNode[elementNode].orEmpty()
+                    elementNode = elementNode.children.single()
+                }
+                converter.makeArrayType(parseType(elementNode, annotationsByNode), arrayDimensions, isVararg)
             }
             PrimitiveType ->
                 converter.makePrimitiveType(node.name!!.single())
 
             else -> error("Unsupported type: $node")
+        }
+
+        return if (annotationsOnCurrentType.isEmpty() || kind == ClassType || kind == ArrayType) {
+            expression
+        } else {
+            converter.makeAnnotatedType(expression, annotationsOnCurrentType)
         }
     }
 
@@ -224,20 +332,78 @@ class SignatureParser<Expression, TypeParameter>(
         return converter.makeTypeApply(fqNameExpression, args)
     }
 
-    private fun convertTypeArgument(arg: SignatureNode): Expression {
+    private fun convertTypeArgument(
+        arg: SignatureNode,
+        annotationsByNode: Map<SignatureNode, List<Annotation>>,
+    ): Expression {
         assert(arg.kind == TypeArgument) { "Unexpected kind ${arg.kind}, $TypeArgument expected" }
 
-        val variance = arg.name ?: return converter.makeUnboundWildcard()
-        val asmWildcard = variance.single()
-        val argType = parseType(arg.children.single())
-        return converter.makeWildcard(asmWildcard, argType)
+        val expression = if (arg.name == null) {
+            converter.makeUnboundWildcard()
+        } else {
+            val argType = parseType(arg.children.single(), annotationsByNode)
+            converter.makeWildcard(arg.name.single(), argType)
+        }
+        val annotations = annotationsByNode[arg].orEmpty()
+        return if (annotations.isEmpty()) expression else converter.makeAnnotatedType(expression, annotations)
     }
 
     private fun parse(signature: String): SignatureNode {
-        val parser = SignatureParserVisitor()
+        val parser = SignatureParserVisitor(converter.treeMaker::resolveQualifiedName)
         SignatureReader(signature).accept(parser)
         return parser.root
     }
+}
+
+private fun SignatureNode.findTypePathTarget(typePath: TypePath?): SignatureNode? {
+    if (typePath == null) return this
+
+    var current = this
+    var innerClassIterator: Iterator<SignatureNode>? = null
+    for (index in 0 until typePath.length) {
+        val step = typePath.getStep(index)
+
+        current = when (step) {
+            TypePath.ARRAY_ELEMENT -> {
+                if (current.kind != ArrayType) return null
+                innerClassIterator = null
+
+                current.children.single()
+            }
+            TypePath.INNER_TYPE if innerClassIterator != null -> {
+                if (current.kind != InnerClass || !innerClassIterator.hasNext()) return null
+                innerClassIterator.next()
+            }
+            TypePath.INNER_TYPE -> {
+                if (current.kind != ClassType) return null
+                innerClassIterator = current.children.filter { it.kind == InnerClass }.iterator()
+
+                if (!innerClassIterator.hasNext()) return null
+                innerClassIterator.next()
+            }
+            TypePath.WILDCARD_BOUND -> {
+                if (current.kind != TypeArgument) return null
+                innerClassIterator = null
+
+                when (current.name) {
+                    "+", "-" -> current.children.single()
+                    else -> return null
+                }
+            }
+            TypePath.TYPE_ARGUMENT -> {
+                if (current.kind != ClassType && current.kind != InnerClass) return null
+                innerClassIterator = null
+
+                val argument = current.children.filter { it.kind == TypeArgument }
+                    .getOrNull(typePath.getStepArgument(index))
+                    ?: return null
+                if (argument.name == "=") argument.children.single() else argument
+            }
+
+            else -> return null
+        }
+    }
+    return current
 }
 
 private fun smartList() = SmartList<SignatureNode>()
@@ -291,7 +457,9 @@ private fun SignatureNode.split(
     }
 }
 
-private class SignatureParserVisitor : SignatureVisitor(Opcodes.API_VERSION) {
+private class SignatureParserVisitor(
+    private val resolveQualifiedName: (String) -> KaptTreeMaker.ResolvedQualifiedName,
+) : SignatureVisitor(Opcodes.API_VERSION) {
     val root = SignatureNode(Root)
     private val stack = ArrayDeque<SignatureNode>(5).apply { add(root) }
 
@@ -372,7 +540,22 @@ private class SignatureParserVisitor : SignatureVisitor(Opcodes.API_VERSION) {
     }
 
     override fun visitClassType(name: String) {
-        push(ClassType, name = name)
+        val classInfo = resolveQualifiedName(name).classInfo
+        // A generic signature may join nested and non-generic inner classes with '$' before the first type argument,
+        // forming a "flat prefix". But for proper mapping of type annotation paths we need to know all inner classes,
+        // so expose inner classes from that prefix as InnerClass nodes too, not only ones with explicit '.' suffixes.
+        val namesInFlatPrefix = classInfo.indexOfLast { !it.isInner } + 1
+        if (namesInFlatPrefix == classInfo.size) {
+            push(ClassType, name = name)
+            return
+        }
+
+        val packagePrefix = name.substringBeforeLast('/', missingDelimiterValue = "").let { if (it.isEmpty()) "" else "$it/" }
+        val outerName = packagePrefix + classInfo.take(namesInFlatPrefix).joinToString("$") { it.name }
+        push(ClassType, name = outerName)
+        for ([innerName] in classInfo.drop(namesInFlatPrefix)) {
+            push(InnerClass, name = innerName, parent = ClassType)
+        }
     }
 
     override fun visitTypeVariable(name: String) {

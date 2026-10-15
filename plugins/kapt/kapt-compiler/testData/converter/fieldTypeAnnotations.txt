@@ -1,0 +1,676 @@
+package org.jetbrains;
+
+@kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.TYPE})
+@kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.RUNTIME)
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@java.lang.annotation.Target(value = {java.lang.annotation.ElementType.TYPE_USE})
+/**
+ * @kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.TYPE])
+ * @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.RUNTIME)
+ * public final annotation class org/jetbrains/Anno : kotlin/Annotation {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract @interface Anno {
+}
+
+////////////////////
+
+package org.jetbrains;
+
+@kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.TYPE})
+@kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.RUNTIME)
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@java.lang.annotation.Target(value = {java.lang.annotation.ElementType.TYPE_USE})
+/**
+ * @kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.TYPE])
+ * @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.RUNTIME)
+ * public final annotation class org/jetbrains/AnnoWithArguments : kotlin/Annotation {
+ *
+ *   // signature: <init>(Ljava/lang/String;ILkotlin/reflect/KClass;Lorg/jetbrains/Mode;Lorg/jetbrains/Nested;[I)V
+ *   public constructor(text: kotlin/String, number: kotlin/Int, klass: kotlin/reflect/KClass<*>, mode: org/jetbrains/Mode, nested: org/jetbrains/Nested, numbers: kotlin/IntArray)
+ *
+ *   // getter: klass()Ljava/lang/Class;
+ *   public final val klass: kotlin/reflect/KClass<*>
+ *     public final get
+ *
+ *   // getter: mode()Lorg/jetbrains/Mode;
+ *   public final val mode: org/jetbrains/Mode
+ *     public final get
+ *
+ *   // getter: nested()Lorg/jetbrains/Nested;
+ *   public final val nested: org/jetbrains/Nested
+ *     public final get
+ *
+ *   // getter: number()I
+ *   public final val number: kotlin/Int
+ *     public final get
+ *
+ *   // getter: numbers()[I
+ *   public final val numbers: kotlin/IntArray
+ *     public final get
+ *
+ *   // getter: text()Ljava/lang/String;
+ *   public final val text: kotlin/String
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract @interface AnnoWithArguments {
+
+    public abstract java.lang.String text();
+
+    public abstract int number();
+
+    public abstract java.lang.Class<?> klass();
+
+    public abstract org.jetbrains.Mode mode();
+
+    public abstract org.jetbrains.Nested nested();
+
+    public abstract int[] numbers();
+}
+
+////////////////////
+
+package org.jetbrains;
+
+/**
+ * public final class org/jetbrains/DeepOuter : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // nested class: Middle
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class DeepOuter {
+
+    public DeepOuter() {
+        super();
+    }
+
+    /**
+     * public final class org/jetbrains/DeepOuter.Middle : kotlin/Any {
+     *
+     *   // signature: <init>()V
+     *   public constructor()
+     *
+     *   // nested class: DeepNested
+     *
+     *   // module name: main
+     * }
+     */
+    @kotlin.Metadata()
+    public static final class Middle {
+
+        public Middle() {
+            super();
+        }
+
+        /**
+         * public final class org/jetbrains/DeepOuter.Middle.DeepNested : kotlin/Any {
+         *
+         *   // signature: <init>()V
+         *   public constructor()
+         *
+         *   // module name: main
+         * }
+         */
+        @kotlin.Metadata()
+        public static final class DeepNested {
+
+            public DeepNested() {
+                super();
+            }
+        }
+    }
+}
+
+////////////////////
+
+package org.jetbrains;
+
+/**
+ * public final class org/jetbrains/Dollar$Outer : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // nested class: Nested$Class
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class Dollar$Outer {
+
+    public Dollar$Outer() {
+        super();
+    }
+
+    /**
+     * public final class org/jetbrains/Dollar$Outer.Nested$Class : kotlin/Any {
+     *
+     *   // signature: <init>()V
+     *   public constructor()
+     *
+     *   // module name: main
+     * }
+     */
+    @kotlin.Metadata()
+    public static final class Nested$Class {
+
+        public Nested$Class() {
+            super();
+        }
+    }
+}
+
+////////////////////
+
+package org.jetbrains;
+
+/**
+ * public final class org/jetbrains/FieldTypeAnnotations<T#0 (* T *)> : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // field: allArrayDimensions:[[[Ljava/lang/String;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val allArrayDimensions: @org/jetbrains/Anno kotlin/Array<kotlin/Array<@org/jetbrains/Anno kotlin/Array<kotlin/String>>>
+ *     public final get
+ *
+ *   // field: annotationArguments:Ljava/lang/String;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val annotationArguments: @org/jetbrains/AnnoWithArguments(text = "simple", number = 42, klass = kotlin/String::class, mode = org/jetbrains/Mode.FIRST, nested = org/jetbrains/Nested(value = "nested"), numbers = [1, 2]) kotlin/String
+ *     public final get
+ *
+ *   // field: arrayElement:[Ljava/lang/String;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val arrayElement: kotlin/Array<@org/jetbrains/Anno kotlin/String>
+ *     public final get
+ *
+ *   // field: classpathNestedType:Ljava/lang/Thread$State;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val classpathNestedType: @org/jetbrains/Anno java/lang/Thread.State
+ *     public final get
+ *
+ *   // field: dollarInClassNames:Lorg/jetbrains/Dollar$Outer$Nested$Class;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val dollarInClassNames: @org/jetbrains/Anno org/jetbrains/Dollar$Outer.Nested$Class
+ *     public final get
+ *
+ *   // field: dollarInTopLevelName:Lorg/jetbrains/Dollar$Outer;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val dollarInTopLevelName: @org/jetbrains/Anno org/jetbrains/Dollar$Outer
+ *     public final get
+ *
+ *   // field: genericAnnotationArguments:Ljava/util/List;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val genericAnnotationArguments: kotlin/collections/List<@org/jetbrains/AnnoWithArguments(text = "argument", number = -1, klass = kotlin/IntArray::class, mode = org/jetbrains/Mode.SECOND, nested = org/jetbrains/Nested(value = "argument"), numbers = []) kotlin/String>
+ *     public final get
+ *
+ *   // field: genericInnerArray:[[Ljava/util/List;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val genericInnerArray: kotlin/Array<@org/jetbrains/Anno kotlin/Array<kotlin/collections/List<kotlin/String>>>
+ *     public final get
+ *
+ *   // field: genericNestedType:Lorg/jetbrains/GenericOuter$GenericNested;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val genericNestedType: @org/jetbrains/Anno org/jetbrains/GenericOuter.GenericNested<kotlin/String>
+ *     public final get
+ *
+ *   // field: genericRepeatableAnnotations:Ljava/util/List;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val genericRepeatableAnnotations: kotlin/collections/List<@org/jetbrains/RepeatableAnno(value = "argument first") @org/jetbrains/RepeatableAnno(value = "argument second") kotlin/String>
+ *     public final get
+ *
+ *   // field: genericTypeArgument:Ljava/util/List;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val genericTypeArgument: kotlin/collections/List<@org/jetbrains/Anno kotlin/String>
+ *     public final get
+ *
+ *   // field: mixedTypePath:[Lorg/jetbrains/GenericOuter$GenericNested;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val mixedTypePath: @org/jetbrains/Anno kotlin/Array<org/jetbrains/GenericOuter.GenericNested<@org/jetbrains/Anno kotlin/collections/MutableMap<kotlin/String, out @org/jetbrains/Anno kotlin/Number>>>
+ *     public final get
+ *
+ *   // field: nestedType:Lorg/jetbrains/Outer$Nested;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val nestedType: @org/jetbrains/Anno org/jetbrains/Outer.Nested
+ *     public final get
+ *
+ *   // field: nestedTypeArgument:Ljava/util/List;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val nestedTypeArgument: kotlin/collections/List<@org/jetbrains/Anno org/jetbrains/Outer.Nested>
+ *     public final get
+ *
+ *   // field: nestedTypeInMultidimensionalArray:[[Lorg/jetbrains/DeepOuter$Middle$DeepNested;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val nestedTypeInMultidimensionalArray: kotlin/Array<kotlin/Array<@org/jetbrains/Anno org/jetbrains/DeepOuter.Middle.DeepNested>>
+ *     public final get
+ *
+ *   // field: nullPath:Ljava/lang/String;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val nullPath: @org/jetbrains/Anno kotlin/String
+ *     public final get
+ *
+ *   // field: outerArray:[[Ljava/lang/String;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val outerArray: @org/jetbrains/Anno kotlin/Array<kotlin/Array<kotlin/String>>
+ *     public final get
+ *
+ *   // field: primitive:I
+ *   @field:kotlin/jvm/JvmField
+ *   public final val primitive: @org/jetbrains/Anno kotlin/Int
+ *     public final get
+ *
+ *   // field: primitiveInnerArray:[[I
+ *   @field:kotlin/jvm/JvmField
+ *   public final val primitiveInnerArray: kotlin/Array<@org/jetbrains/Anno kotlin/IntArray>
+ *     public final get
+ *
+ *   // field: repeatableAnnotations:Ljava/lang/String;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val repeatableAnnotations: @org/jetbrains/RepeatableAnno(value = "first") @org/jetbrains/RepeatableAnno(value = "second") kotlin/String
+ *     public final get
+ *
+ *   // field: typeVariable:Ljava/lang/Object;
+ *   @field:kotlin/jvm/JvmField
+ *   public final var typeVariable: @org/jetbrains/Anno T#0?
+ *     public final get
+ *     public final set
+ *
+ *   // field: wildcardBound:Ljava/util/List;
+ *   @field:kotlin/jvm/JvmField
+ *   public final var wildcardBound: kotlin/collections/MutableList<out @org/jetbrains/Anno kotlin/Number>
+ *     public final get
+ *     public final set
+ *
+ *   // field: wildcardLowerBound:Ljava/util/List;
+ *   @field:kotlin/jvm/JvmField
+ *   public final var wildcardLowerBound: kotlin/collections/MutableList<in @org/jetbrains/Anno kotlin/Number>
+ *     public final get
+ *     public final set
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class FieldTypeAnnotations<T extends java.lang.Object> {
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.@Anno() @SourceAnno() String nullPath = "";
+    @kotlin.jvm.JvmField()
+    @Anno()
+    @SourceAnno()
+    public final int primitive = 0;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.@Anno() @SourceAnno() String[] arrayElement = {};
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String @Anno() @SourceAnno() [][] outerArray = {};
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String @Anno() [] @SourceAnno() [] @Anno() @SourceAnno() [] allArrayDimensions = {};
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final java.util.List<java.lang.String>[] @Anno() @SourceAnno() [] genericInnerArray = {};
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final int[] @Anno() @SourceAnno() [] primitiveInnerArray = {};
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final java.util.List<java.lang.@Anno() @SourceAnno() String> genericTypeArgument = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public java.util.List<? extends java.lang.@Anno() @SourceAnno() Number> wildcardBound;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public java.util.List<? super java.lang.@Anno() @SourceAnno() Number> wildcardLowerBound;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    @Anno()
+    @SourceAnno()
+    public T typeVariable;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final org.jetbrains.Outer.@Anno() @SourceAnno() Nested nestedType = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final org.jetbrains.GenericOuter.@Anno() @SourceAnno() GenericNested<java.lang.String> genericNestedType = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.Thread.@Anno() @SourceAnno() State classpathNestedType = java.lang.Thread.State.NEW;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final org.jetbrains.Dollar$Outer.@Anno() @SourceAnno() Nested$Class dollarInClassNames = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final org.jetbrains.DeepOuter.Middle.@Anno() DeepNested[] @SourceAnno() [] nestedTypeInMultidimensionalArray = {};
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final java.util.List<org.jetbrains.Outer.@Anno() @SourceAnno() Nested> nestedTypeArgument = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final org.jetbrains.@Anno() @SourceAnno() Dollar$Outer dollarInTopLevelName = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final org.jetbrains.GenericOuter.@SourceAnno() GenericNested<java.util.@Anno() Map<java.lang.String, ? extends java.lang.@Anno() @SourceAnno() Number>> @Anno() [] mixedTypePath = {};
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.@AnnoWithArguments(text = "simple", number = 42, klass = java.lang.String.class, mode = org.jetbrains.Mode.FIRST, nested = @org.jetbrains.Nested(value = "nested"), numbers = {1, 2}) @SourceAnnoWithArguments(text = "source", classes = {java.lang.String.class, int.class}) String annotationArguments = "";
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final java.util.List<java.lang.@AnnoWithArguments(text = "argument", number = -1, klass = int[].class, mode = org.jetbrains.Mode.SECOND, nested = @org.jetbrains.Nested(value = "argument"), numbers = {}) @SourceAnnoWithArguments(text = "source argument", classes = {}) String> genericAnnotationArguments = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.@RepeatableAnno(value = "first") @RepeatableAnno(value = "second") @RepeatableSourceAnno(value = "first") @RepeatableSourceAnno(value = "second") String repeatableAnnotations = "";
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final java.util.List<java.lang.@RepeatableAnno(value = "argument first") @RepeatableAnno(value = "argument second") @RepeatableSourceAnno(value = "argument first") @RepeatableSourceAnno(value = "argument second") String> genericRepeatableAnnotations = null;
+
+    public FieldTypeAnnotations() {
+        super();
+    }
+}
+
+////////////////////
+
+package org.jetbrains;
+
+/**
+ * public final class org/jetbrains/GenericOuter<T#0 (* T *)> : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // nested class: GenericNested
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class GenericOuter<T extends java.lang.Object> {
+
+    public GenericOuter() {
+        super();
+    }
+
+    /**
+     * public final class org/jetbrains/GenericOuter.GenericNested<T#1 (* U *)> : kotlin/Any {
+     *
+     *   // signature: <init>()V
+     *   public constructor()
+     *
+     *   // module name: main
+     * }
+     */
+    @kotlin.Metadata()
+    public static final class GenericNested<U extends java.lang.Object> {
+
+        public GenericNested() {
+            super();
+        }
+    }
+}
+
+////////////////////
+
+package org.jetbrains;
+
+/**
+ * public final enum class org/jetbrains/Mode : kotlin/Enum<org/jetbrains/Mode> {
+ *
+ *   // signature: <init>(Ljava/lang/String;I)V
+ *   private constructor()
+ *
+ *   FIRST,
+ *
+ *   SECOND,
+ *
+ *   // module name: main
+ *
+ *   // has Enum.entries
+ * }
+ */
+@kotlin.Metadata()
+public enum Mode {
+    /*public static final*/ FIRST /* = new Mode() */,
+    /*public static final*/ SECOND /* = new Mode() */;
+
+    Mode() {
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public static kotlin.enums.EnumEntries<org.jetbrains.Mode> getEntries() {
+        return null;
+    }
+}
+
+////////////////////
+
+package org.jetbrains;
+
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+/**
+ * public final annotation class org/jetbrains/Nested : kotlin/Annotation {
+ *
+ *   // signature: <init>(Ljava/lang/String;)V
+ *   public constructor(value: kotlin/String)
+ *
+ *   // getter: value()Ljava/lang/String;
+ *   public final val value: kotlin/String
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract @interface Nested {
+
+    public abstract java.lang.String value();
+}
+
+////////////////////
+
+package org.jetbrains;
+
+/**
+ * public final class org/jetbrains/Outer : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // nested class: Nested
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class Outer {
+
+    public Outer() {
+        super();
+    }
+
+    /**
+     * public final class org/jetbrains/Outer.Nested : kotlin/Any {
+     *
+     *   // signature: <init>()V
+     *   public constructor()
+     *
+     *   // module name: main
+     * }
+     */
+    @kotlin.Metadata()
+    public static final class Nested {
+
+        public Nested() {
+            super();
+        }
+    }
+}
+
+////////////////////
+
+package org.jetbrains;
+
+@kotlin.annotation.Repeatable()
+@kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.TYPE})
+@kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.RUNTIME)
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@java.lang.annotation.Target(value = {java.lang.annotation.ElementType.TYPE_USE})
+@java.lang.annotation.Repeatable(value = org.jetbrains.RepeatableAnno.Container.class)
+/**
+ * @kotlin/annotation/Repeatable
+ * @kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.TYPE])
+ * @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.RUNTIME)
+ * public final annotation class org/jetbrains/RepeatableAnno : kotlin/Annotation {
+ *
+ *   // signature: <init>(Ljava/lang/String;)V
+ *   public constructor(value: kotlin/String)
+ *
+ *   // getter: value()Ljava/lang/String;
+ *   public final val value: kotlin/String
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract @interface RepeatableAnno {
+
+    public abstract java.lang.String value();
+
+    @kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.TYPE})
+    @kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.RUNTIME)
+    @kotlin.jvm.internal.RepeatableContainer()
+    @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+    @java.lang.annotation.Target(value = {java.lang.annotation.ElementType.TYPE_USE})
+    /**
+     * synthetic class
+     */
+    @kotlin.Metadata()
+    public static abstract @interface Container {
+
+        public abstract org.jetbrains.RepeatableAnno[] value();
+    }
+}
+
+////////////////////
+
+package org.jetbrains;
+
+@kotlin.annotation.Repeatable()
+@kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.TYPE})
+@kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.SOURCE)
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.SOURCE)
+@java.lang.annotation.Target(value = {java.lang.annotation.ElementType.TYPE_USE})
+@java.lang.annotation.Repeatable(value = org.jetbrains.RepeatableSourceAnno.Container.class)
+/**
+ * @kotlin/annotation/Repeatable
+ * @kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.TYPE])
+ * @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.SOURCE)
+ * public final annotation class org/jetbrains/RepeatableSourceAnno : kotlin/Annotation {
+ *
+ *   // signature: <init>(Ljava/lang/String;)V
+ *   public constructor(value: kotlin/String)
+ *
+ *   // getter: value()Ljava/lang/String;
+ *   public final val value: kotlin/String
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract @interface RepeatableSourceAnno {
+
+    public abstract java.lang.String value();
+
+    @kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.TYPE})
+    @kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.SOURCE)
+    @kotlin.jvm.internal.RepeatableContainer()
+    @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.SOURCE)
+    @java.lang.annotation.Target(value = {java.lang.annotation.ElementType.TYPE_USE})
+    /**
+     * synthetic class
+     */
+    @kotlin.Metadata()
+    public static abstract @interface Container {
+
+        public abstract org.jetbrains.RepeatableSourceAnno[] value();
+    }
+}
+
+////////////////////
+
+package org.jetbrains;
+
+@kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.TYPE})
+@kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.SOURCE)
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.SOURCE)
+@java.lang.annotation.Target(value = {java.lang.annotation.ElementType.TYPE_USE})
+/**
+ * @kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.TYPE])
+ * @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.SOURCE)
+ * public final annotation class org/jetbrains/SourceAnno : kotlin/Annotation {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract @interface SourceAnno {
+}
+
+////////////////////
+
+package org.jetbrains;
+
+@kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.TYPE})
+@kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.SOURCE)
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.SOURCE)
+@java.lang.annotation.Target(value = {java.lang.annotation.ElementType.TYPE_USE})
+/**
+ * @kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.TYPE])
+ * @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.SOURCE)
+ * public final annotation class org/jetbrains/SourceAnnoWithArguments : kotlin/Annotation {
+ *
+ *   // signature: <init>(Ljava/lang/String;Lkotlin/Array;)V
+ *   public constructor(text: kotlin/String, classes: kotlin/Array<kotlin/reflect/KClass<*>>)
+ *
+ *   // getter: classes()[Ljava/lang/Class;
+ *   public final val classes: kotlin/Array<kotlin/reflect/KClass<*>>
+ *     public final get
+ *
+ *   // getter: text()Ljava/lang/String;
+ *   public final val text: kotlin/String
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract @interface SourceAnnoWithArguments {
+
+    public abstract java.lang.String text();
+
+    public abstract java.lang.Class<?>[] classes();
+}

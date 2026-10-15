@@ -31,6 +31,20 @@ public final class Subject {
     @java.lang.Deprecated()
     public static void getAnnotationTrigger$annotations() {
     }
+
+    public final void annotatedMethod(@org.jetbrains.annotations.NotNull()
+    java.util.List<java.lang.@TypeAnnotation() String> value) {
+    }
+}
+
+////////////////////
+
+
+@kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.TYPE})
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@java.lang.annotation.Target(value = {})
+@kotlin.Metadata()
+public abstract @interface TypeAnnotation {
 }
 
 ////////////////////

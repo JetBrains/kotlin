@@ -1,4 +1,51 @@
 /**
+ * public final class GenericOuter<T#0 (* T *)> : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // field: value:LGenericOuter$Inner;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val value: GenericOuter<kotlin/String>.Inner<error/NonExistentClass>?
+ *     public final get
+ *
+ *   // nested class: Inner
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class GenericOuter<T extends java.lang.Object> {
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public final GenericOuter<java.lang.String>.Inner<Missing> value = null;
+
+    public GenericOuter() {
+        super();
+    }
+
+    /**
+     * public final inner class GenericOuter.Inner<T#1 (* U *)> : kotlin/Any {
+     *
+     *   // signature: <init>(LGenericOuter;)V
+     *   public constructor()
+     *
+     *   // module name: main
+     * }
+     */
+    @kotlin.Metadata()
+    public final class Inner<U extends java.lang.Object> {
+
+        public Inner() {
+            super();
+        }
+    }
+}
+
+////////////////////
+
+
+/**
  * public final class Test : kotlin/Any {
  *
  *   // signature: <init>()V

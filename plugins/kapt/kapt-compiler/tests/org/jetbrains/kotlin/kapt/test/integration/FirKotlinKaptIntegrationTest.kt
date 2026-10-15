@@ -132,9 +132,15 @@ class FirKotlinKaptIntegrationTest(private val testInfo: TestInfo) {
                 "note on field",
                 field
             )
+
+            val method = ElementFilter.methodsIn(subject.enclosedElements).single {
+                it.simpleName.toString() == "annotatedMethod"
+            }
+            processingEnv.messager.printMessage(Diagnostic.Kind.NOTE, "note on annotated method", method)
         }
-        diagnostics.assertContainsDiagnostic("ErrorLocationMapping.kt:1: Note: note on class")
-        diagnostics.assertContainsDiagnostic("ErrorLocationMapping.kt:5: Note: note on field")
+        diagnostics.assertContainsDiagnostic("ErrorLocationMapping.kt:3: Note: note on class")
+        diagnostics.assertContainsDiagnostic("ErrorLocationMapping.kt:7: Note: note on field")
+        diagnostics.assertContainsDiagnostic("ErrorLocationMapping.kt:12: Note: note on annotated method")
     }
 
     private fun List<MessageCollectorImpl.Message>.assertContainsDiagnostic(

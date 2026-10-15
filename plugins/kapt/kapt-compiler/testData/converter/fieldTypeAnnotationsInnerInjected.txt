@@ -1,0 +1,445 @@
+package org.jetbrains;
+
+@kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.TYPE})
+@kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.RUNTIME)
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@java.lang.annotation.Target(value = {java.lang.annotation.ElementType.TYPE_USE})
+/**
+ * @kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.TYPE])
+ * @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.RUNTIME)
+ * public final annotation class org/jetbrains/Anno : kotlin/Annotation {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract @interface Anno {
+}
+
+////////////////////
+
+package org.jetbrains;
+
+/**
+ * public final class org/jetbrains/ChainOuter : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // nested class: Nested
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class ChainOuter {
+
+    public ChainOuter() {
+        super();
+    }
+
+    /**
+     * public final class org/jetbrains/ChainOuter.Nested : kotlin/Any {
+     *
+     *   // signature: <init>()V
+     *   public constructor()
+     *
+     *   // nested class: Inner1
+     *
+     *   // module name: main
+     * }
+     */
+    @kotlin.Metadata()
+    public static final class Nested {
+
+        public Nested() {
+            super();
+        }
+
+        /**
+         * public final inner class org/jetbrains/ChainOuter.Nested.Inner1 : kotlin/Any {
+         *
+         *   // signature: <init>(Lorg/jetbrains/ChainOuter$Nested;)V
+         *   public constructor()
+         *
+         *   // nested class: Inner2
+         *
+         *   // module name: main
+         * }
+         */
+        @kotlin.Metadata()
+        public final class Inner1 {
+
+            public Inner1() {
+                super();
+            }
+
+            /**
+             * public final inner class org/jetbrains/ChainOuter.Nested.Inner1.Inner2 : kotlin/Any {
+             *
+             *   // signature: <init>(Lorg/jetbrains/ChainOuter$Nested$Inner1;)V
+             *   public constructor()
+             *
+             *   // nested class: InnerT
+             *
+             *   // module name: main
+             * }
+             */
+            @kotlin.Metadata()
+            public final class Inner2 {
+
+                public Inner2() {
+                    super();
+                }
+
+                /**
+                 * public final inner class org/jetbrains/ChainOuter.Nested.Inner1.Inner2.InnerT<T#0 (* T *)> : kotlin/Any {
+                 *
+                 *   // signature: <init>(Lorg/jetbrains/ChainOuter$Nested$Inner1$Inner2;)V
+                 *   public constructor()
+                 *
+                 *   // nested class: InnerK
+                 *
+                 *   // module name: main
+                 * }
+                 */
+                @kotlin.Metadata()
+                public final class InnerT<T extends java.lang.Object> {
+
+                    public InnerT() {
+                        super();
+                    }
+
+                    /**
+                     * public final inner class org/jetbrains/ChainOuter.Nested.Inner1.Inner2.InnerT.InnerK<T#1 (* K *)> : kotlin/Any {
+                     *
+                     *   // signature: <init>(Lorg/jetbrains/ChainOuter$Nested$Inner1$Inner2$InnerT;)V
+                     *   public constructor()
+                     *
+                     *   // module name: main
+                     * }
+                     */
+                    @kotlin.Metadata()
+                    public final class InnerK<K extends java.lang.Object> {
+
+                        public InnerK() {
+                            super();
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+////////////////////
+
+package org.jetbrains;
+
+/**
+ * public final class org/jetbrains/DeepOuter : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // nested class: Middle
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class DeepOuter {
+
+    public DeepOuter() {
+        super();
+    }
+
+    /**
+     * public final inner class org/jetbrains/DeepOuter.Middle : kotlin/Any {
+     *
+     *   // signature: <init>(Lorg/jetbrains/DeepOuter;)V
+     *   public constructor()
+     *
+     *   // nested class: DeepInner
+     *
+     *   // module name: main
+     * }
+     */
+    @kotlin.Metadata()
+    public final class Middle {
+
+        public Middle() {
+            super();
+        }
+
+        /**
+         * public final inner class org/jetbrains/DeepOuter.Middle.DeepInner : kotlin/Any {
+         *
+         *   // signature: <init>(Lorg/jetbrains/DeepOuter$Middle;)V
+         *   public constructor()
+         *
+         *   // module name: main
+         * }
+         */
+        @kotlin.Metadata()
+        public final class DeepInner {
+
+            public DeepInner() {
+                super();
+            }
+        }
+    }
+}
+
+////////////////////
+
+package org.jetbrains;
+
+/**
+ * public final class org/jetbrains/Dollar$Outer : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // nested class: Inner$Class
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class Dollar$Outer {
+
+    public Dollar$Outer() {
+        super();
+    }
+
+    /**
+     * public final inner class org/jetbrains/Dollar$Outer.Inner$Class : kotlin/Any {
+     *
+     *   // signature: <init>(Lorg/jetbrains/Dollar$Outer;)V
+     *   public constructor()
+     *
+     *   // module name: main
+     * }
+     */
+    @kotlin.Metadata()
+    public final class Inner$Class {
+
+        public Inner$Class() {
+            super();
+        }
+    }
+}
+
+////////////////////
+
+package org.jetbrains;
+
+/**
+ * public final class org/jetbrains/FieldTypeAnnotationsInnerInjected : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // field: dollarInClassNames:Lorg/jetbrains/Dollar$Outer$Inner$Class;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val dollarInClassNames: org/jetbrains/Dollar$Outer.Inner$Class
+ *     public final get
+ *
+ *   // field: genericInnerChain:Lorg/jetbrains/ChainOuter$Nested$Inner1$Inner2$InnerT$InnerK;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val genericInnerChain: org/jetbrains/ChainOuter.Nested.Inner1.Inner2.InnerT<kotlin/String>.InnerK<kotlin/String>?
+ *     public final get
+ *
+ *   // field: innerType:Lorg/jetbrains/Outer$Inner;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val innerType: org/jetbrains/Outer.Inner
+ *     public final get
+ *
+ *   // field: interleavedArrayAndInnerTypes:[[Lorg/jetbrains/DeepOuter$Middle$DeepInner;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val interleavedArrayAndInnerTypes: kotlin/Array<kotlin/Array<org/jetbrains/DeepOuter.Middle.DeepInner>>
+ *     public final get
+ *
+ *   // field: mixedTypePath:[Lorg/jetbrains/GenericOuter$GenericInner;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val mixedTypePath: kotlin/Array<org/jetbrains/GenericOuter<kotlin/Unit>.GenericInner<kotlin/collections/MutableMap<kotlin/String, out kotlin/String>>>
+ *     public final get
+ *
+ *   // field: nestedAndInnerType:Lorg/jetbrains/Outer$Nested$Inner;
+ *   @field:kotlin/jvm/JvmField
+ *   public final val nestedAndInnerType: org/jetbrains/Outer.Nested.Inner
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class FieldTypeAnnotationsInnerInjected {
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final org.jetbrains.@Anno() Outer.@SourceAnno() Inner innerType = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final org.jetbrains.@Anno() Dollar$Outer.@SourceAnno() Inner$Class dollarInClassNames = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final org.jetbrains.GenericOuter<kotlin.Unit>.GenericInner<java.util.Map<java.lang.String, @Anno() ? extends java.lang.@SourceAnno() String>>[] mixedTypePath = {};
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final org.jetbrains.DeepOuter.@Anno() Middle.DeepInner[] @SourceAnno() [] interleavedArrayAndInnerTypes = {};
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
+    public final org.jetbrains.Outer.@Anno() Nested.@SourceAnno() Inner nestedAndInnerType = null;
+    @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.Nullable()
+    public final org.jetbrains.ChainOuter.@SourceAnno() Nested.@Anno() Inner1.@SourceAnno() Inner2.@Anno() InnerT<java.lang.@SourceAnno() String>.@SourceAnno() InnerK<java.lang.@Anno() String> genericInnerChain = null;
+
+    public FieldTypeAnnotationsInnerInjected() {
+        super();
+    }
+}
+
+////////////////////
+
+package org.jetbrains;
+
+/**
+ * public final class org/jetbrains/GenericOuter<T#0 (* T *)> : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // nested class: GenericInner
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class GenericOuter<T extends java.lang.Object> {
+
+    public GenericOuter() {
+        super();
+    }
+
+    /**
+     * public final inner class org/jetbrains/GenericOuter.GenericInner<T#1 (* U *)> : kotlin/Any {
+     *
+     *   // signature: <init>(Lorg/jetbrains/GenericOuter;)V
+     *   public constructor()
+     *
+     *   // module name: main
+     * }
+     */
+    @kotlin.Metadata()
+    public final class GenericInner<U extends java.lang.Object> {
+
+        public GenericInner() {
+            super();
+        }
+    }
+}
+
+////////////////////
+
+package org.jetbrains;
+
+/**
+ * public final class org/jetbrains/Outer : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // nested class: Inner
+ *
+ *   // nested class: Nested
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class Outer {
+
+    public Outer() {
+        super();
+    }
+
+    /**
+     * public final inner class org/jetbrains/Outer.Inner : kotlin/Any {
+     *
+     *   // signature: <init>(Lorg/jetbrains/Outer;)V
+     *   public constructor()
+     *
+     *   // module name: main
+     * }
+     */
+    @kotlin.Metadata()
+    public final class Inner {
+
+        public Inner() {
+            super();
+        }
+    }
+
+    /**
+     * public final class org/jetbrains/Outer.Nested : kotlin/Any {
+     *
+     *   // signature: <init>()V
+     *   public constructor()
+     *
+     *   // nested class: Inner
+     *
+     *   // module name: main
+     * }
+     */
+    @kotlin.Metadata()
+    public static final class Nested {
+
+        public Nested() {
+            super();
+        }
+
+        /**
+         * public final inner class org/jetbrains/Outer.Nested.Inner : kotlin/Any {
+         *
+         *   // signature: <init>(Lorg/jetbrains/Outer$Nested;)V
+         *   public constructor()
+         *
+         *   // module name: main
+         * }
+         */
+        @kotlin.Metadata()
+        public final class Inner {
+
+            public Inner() {
+                super();
+            }
+        }
+    }
+}
+
+////////////////////
+
+package org.jetbrains;
+
+@kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.TYPE})
+@kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.SOURCE)
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.SOURCE)
+@java.lang.annotation.Target(value = {java.lang.annotation.ElementType.TYPE_USE})
+/**
+ * @kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.TYPE])
+ * @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.SOURCE)
+ * public final annotation class org/jetbrains/SourceAnno : kotlin/Annotation {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract @interface SourceAnno {
+}
