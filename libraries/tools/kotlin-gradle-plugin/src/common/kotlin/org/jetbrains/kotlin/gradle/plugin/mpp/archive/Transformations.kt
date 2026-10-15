@@ -20,6 +20,7 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.work.DisableCachingByDefault
+import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.plugin.mpp.archive.KarLayout.Attributes.CompressionMethod
@@ -57,6 +58,7 @@ private abstract class XZDecompressAction : TransformAction<TransformParameters.
 
     @get:PathSensitive(PathSensitivity.NAME_ONLY)
     @get:InputArtifact
+    @get:NormalizeLineEndings
     abstract val inputArtifact: Provider<FileSystemLocation>
 
     override fun transform(outputs: TransformOutputs) {
@@ -111,6 +113,7 @@ internal abstract class KarToResourcesTransformation : TransformAction<KarToReso
 
     @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:InputArtifact
+    @get:NormalizeLineEndings
     abstract val inputArtifact: Provider<FileSystemLocation>
 
     override fun transform(outputs: TransformOutputs) {
@@ -148,6 +151,7 @@ internal abstract class KarToSwiftExportMetadataTransformation : TransformAction
 
     @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:InputArtifact
+    @get:NormalizeLineEndings
     abstract val inputArtifact: Provider<FileSystemLocation>
 
     override fun transform(outputs: TransformOutputs) {
@@ -189,6 +193,7 @@ internal abstract class KarToPlatformArtifactsTransformation : TransformAction<K
 
     @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:InputArtifact
+    @get:NormalizeLineEndings
     abstract val inputArtifact: Provider<FileSystemLocation>
 
     override fun transform(outputs: TransformOutputs) {

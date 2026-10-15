@@ -139,6 +139,7 @@ internal abstract class WasmBinaryTransform : TransformAction<WasmBinaryTransfor
     abstract val execOps: ExecOperations
 
     @get:InputArtifact
+    @get:NormalizeLineEndings
     @get:PathSensitive(PathSensitivity.NAME_ONLY)
     abstract val inputArtifact: Provider<FileSystemLocation>
 
