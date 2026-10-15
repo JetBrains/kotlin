@@ -1,0 +1,3 @@
+Phase FRONTEND could be promoted to CODEGEN: frontendCouldBePromoted.kt
+- // RUN_PIPELINE_TILL: FRONTEND
++ // RUN_PIPELINE_TILL: CODEGEN

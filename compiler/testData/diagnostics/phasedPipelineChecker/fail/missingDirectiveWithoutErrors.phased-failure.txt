@@ -1,0 +1,2 @@
+Please specify the test phase in `// RUN_PIPELINE_TILL` directive: missingDirectiveWithoutErrors.kt
++ // RUN_PIPELINE_TILL: CODEGEN
