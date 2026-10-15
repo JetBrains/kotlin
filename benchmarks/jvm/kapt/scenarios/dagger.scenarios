@@ -1,0 +1,40 @@
+# dagger-sample benchmark scenarios — 3 sizes.
+
+dagger_small {
+    title = "dagger-sample small (100 classes)"
+    tasks = [":samples:dagger-sample:kaptKotlin"]
+    cleanup-tasks = [":samples:dagger-sample:clean"]
+    gradle-args = [
+        "-PsampleSize=small",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "-Dorg.gradle.parallel=false"
+    ]
+    warm-ups = 2
+    iterations = 20
+}
+
+dagger_medium {
+    title = "dagger-sample medium (500 classes)"
+    tasks = [":samples:dagger-sample:kaptKotlin"]
+    cleanup-tasks = [":samples:dagger-sample:clean"]
+    gradle-args = [
+        "-PsampleSize=medium",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "-Dorg.gradle.parallel=false"
+    ]
+    warm-ups = 2
+    iterations = 20
+}
+
+dagger_large {
+    title = "dagger-sample large (2000 classes)"
+    tasks = [":samples:dagger-sample:kaptKotlin"]
+    cleanup-tasks = [":samples:dagger-sample:clean"]
+    gradle-args = [
+        "-PsampleSize=large",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "-Dorg.gradle.parallel=false"
+    ]
+    warm-ups = 2
+    iterations = 20
+}

@@ -1,0 +1,36 @@
+# compiler-corpus — 114 real Kotlin compiler source files (compiler/ir/backend.common/src),
+# ~19.5k lines, 252 stubs. Unlike the generated samples this is real code with real method bodies,
+# real inference and real call graphs, which is what makes it the cell for frontend questions.
+#
+# The two arms are the same corpus with and without function bodies; the body-stripped tree is
+# produced by profile-async/strip_bodies.py and its stubs are byte-identical to the baseline's.
+# The delta is therefore pure FIR body-resolution cost. See Step 19.
+#
+# Not part of the default suite: the pair is only meaningful compared against each other, and
+# `stripped` is a measurement artefact rather than a workload anyone ships.
+
+compiler_corpus_baseline {
+    title = "compiler-corpus baseline (114 real compiler files, real bodies)"
+    tasks = [":samples:compiler-corpus:kaptKotlin"]
+    cleanup-tasks = [":samples:compiler-corpus:clean"]
+    gradle-args = [
+        "-PbodyMode=baseline",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "-Dorg.gradle.parallel=false"
+    ]
+    warm-ups = 2
+    iterations = 20
+}
+
+compiler_corpus_stripped {
+    title = "compiler-corpus body-stripped (same corpus, bodies -> TODO())"
+    tasks = [":samples:compiler-corpus:kaptKotlin"]
+    cleanup-tasks = [":samples:compiler-corpus:clean"]
+    gradle-args = [
+        "-PbodyMode=stripped",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "-Dorg.gradle.parallel=false"
+    ]
+    warm-ups = 2
+    iterations = 20
+}
