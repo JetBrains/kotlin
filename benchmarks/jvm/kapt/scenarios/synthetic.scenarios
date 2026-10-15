@@ -1,0 +1,140 @@
+# synthetic-noop benchmark scenarios — 3 sizes.
+# Output: profile-out/benchmark.csv (gradle-profiler default).
+
+synthetic_small {
+    title = "synthetic-noop small (100 classes)"
+    tasks = [":samples:synthetic-noop:kaptKotlin"]
+    cleanup-tasks = [":samples:synthetic-noop:clean"]
+    gradle-args = [
+        "-PsampleSize=small",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "-Dorg.gradle.parallel=false"
+    ]
+    warm-ups = 2
+    iterations = 20
+}
+
+synthetic_medium {
+    title = "synthetic-noop medium (500 classes)"
+    tasks = [":samples:synthetic-noop:kaptKotlin"]
+    cleanup-tasks = [":samples:synthetic-noop:clean"]
+    gradle-args = [
+        "-PsampleSize=medium",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "-Dorg.gradle.parallel=false"
+    ]
+    warm-ups = 2
+    iterations = 20
+}
+
+synthetic_large {
+    title = "synthetic-noop large (2000 classes)"
+    tasks = [":samples:synthetic-noop:kaptKotlin"]
+    cleanup-tasks = [":samples:synthetic-noop:clean"]
+    gradle-args = [
+        "-PsampleSize=large",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "-Dorg.gradle.parallel=false"
+    ]
+    warm-ups = 2
+    iterations = 20
+}
+
+# Wide-class cell: 100 classes x 100 properties each.
+# Stresses kapt's per-class javac list construction (class members / annotations) at a list
+# length where an O(n^2) accumulator is distinguishable from an O(n) one. Not part of the
+# default 9-cell suite; run explicitly.
+synthetic_wide {
+    title = "synthetic-noop wide (100 classes x 100 props)"
+    tasks = [":samples:synthetic-noop:kaptKotlin"]
+    cleanup-tasks = [":samples:synthetic-noop:clean"]
+    gradle-args = [
+        "-PsampleSize=small",
+        "-PclassWidth=100",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "-Dorg.gradle.parallel=false"
+    ]
+    warm-ups = 2
+    iterations = 20
+}
+
+# Nesting-heavy cell: 100 outer classes x 20 nested classes each.
+# Stresses KaptTreeMaker.getQualifiedName, which only takes its expensive path (linear scan over
+# compiledClasses, or a PSI classpath lookup) for `$`-containing internal names. Not part of the
+# default 9-cell suite; run explicitly.
+synthetic_nested {
+    title = "synthetic-noop nested (100 classes x 20 nested)"
+    tasks = [":samples:synthetic-noop:kaptKotlin"]
+    cleanup-tasks = [":samples:synthetic-noop:clean"]
+    gradle-args = [
+        "-PsampleSize=small",
+        "-PclassNesting=20",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "-Dorg.gradle.parallel=false"
+    ]
+    warm-ups = 2
+    iterations = 20
+}
+
+# Deep-package cell: 2000 classes in one 13-component package.
+# Stresses the stub-write path: redundant `mkdirs()` calls = (stubs - distinct packages), so the
+# 2000-class size maximizes the count while the package depth maximizes each call's path-resolution
+# cost. Not part of the default 9-cell suite; run explicitly.
+synthetic_deeppkg {
+    title = "synthetic-noop deep package (2000 classes, depth 10)"
+    tasks = [":samples:synthetic-noop:kaptKotlin"]
+    cleanup-tasks = [":samples:synthetic-noop:clean"]
+    gradle-args = [
+        "-PsampleSize=large",
+        "-PclassPackageDepth=10",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "-Dorg.gradle.parallel=false"
+    ]
+    warm-ups = 2
+    iterations = 20
+}
+
+# Incremental cell — the benchmark's first. Every other scenario cleans first, so kapt's incremental
+# bookkeeping (ClasspathSnapshot.diff, JavaClassCache.getSourceForType) never runs under them.
+#
+# Requires -PincrementalProcessor=true: without the META-INF/gradle/incremental.annotation.processors
+# marker the synthetic processor is NON_INCREMENTAL and kapt disables the incremental path entirely.
+# -PcommonBase=true makes every generated class reference research.kapt.base.Base, so the ABI change
+# below impacts all 2000 types rather than one.
+synthetic_incremental {
+    title = "synthetic-noop incremental (2000 classes, ABI change to shared base)"
+    tasks = [":samples:synthetic-noop:kaptKotlin"]
+    apply-abi-change-to = "samples/synthetic-noop/src/main/kotlin/research/kapt/base/Base.kt"
+    gradle-args = [
+        "-PsampleSize=large",
+        "-PcommonBase=true",
+        "-PincrementalProcessor=true",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "-Dorg.gradle.parallel=false"
+    ]
+    warm-ups = 2
+    iterations = 20
+}
+
+# Body-heavy cell: 2000 classes x 5 inference-heavy methods each (chained stdlib lambdas, fold,
+# when, smart cast, generic calls). Every other synthetic shape is a signature holder with
+# essentially empty bodies, which is why the default cells measure BODY_RESOLVE at 1.1-2.5% of
+# Java-level work and cannot size it. Not part of the default suite; run explicitly.
+# The real-code equivalent, and the cell Step 19's result rests on, is compiler-corpus.
+#
+# COST: ~80 s per build on a fast workstation (10000 inference-heavy methods), so with the
+# warm-ups and iterations below this single cell is ~30 minutes. Lower `iterations` if you are
+# running it as part of a sweep rather than on its own.
+synthetic_bodies {
+    title = "synthetic-noop body-heavy (2000 classes x 5 methods)"
+    tasks = [":samples:synthetic-noop:kaptKotlin"]
+    cleanup-tasks = [":samples:synthetic-noop:clean"]
+    gradle-args = [
+        "-PsampleSize=large",
+        "-PclassBodySize=5",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "-Dorg.gradle.parallel=false"
+    ]
+    warm-ups = 2
+    iterations = 20
+}
