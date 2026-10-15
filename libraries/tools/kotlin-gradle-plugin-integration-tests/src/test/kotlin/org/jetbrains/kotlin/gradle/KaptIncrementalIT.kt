@@ -4,6 +4,8 @@ import org.gradle.api.logging.LogLevel
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCompilerPlugins
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import java.io.File
@@ -17,6 +19,8 @@ import kotlin.test.assertEquals
 
 @DisplayName("Kapt incremental compilation")
 @OtherGradlePluginTests
+@MustRunOnChangesInGradle
+@MustRunOnChangesInCompilerPlugins
 open class KaptIncrementalIT : KGPBaseTest() {
     companion object {
         private val EXAMPLE_ANNOTATION_REGEX = "@(field:)?example.ExampleAnnotation".toRegex()

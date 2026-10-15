@@ -10,10 +10,14 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceText
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInFrontend
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 
 @DisplayName("EnumEntries feature test when no kotlin.enums.EnumEntries found on the classpath")
 @JvmGradlePluginTests
+@MustRunOnChangesInGradle
+@MustRunOnChangesInFrontend
 class EnumEntriesWithOutdatedStdlibTest : KGPBaseTest() {
     @DisplayName("EnumEntries should not be accessible without kotlin.enums.EnumEntries")
     @GradleTest

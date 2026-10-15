@@ -9,11 +9,13 @@ import org.gradle.api.logging.LogLevel
 import org.gradle.tooling.internal.consumer.ConnectorServices
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.DisplayName
 import kotlin.test.assertTrue
 
 @DisplayName("Gradle daemon memory leak")
+@MustRunOnChangesInGradle
 class GradleDaemonMemoryIT : KGPDaemonsBaseTest() {
     override val defaultBuildOptions: BuildOptions
         get() = super.defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
