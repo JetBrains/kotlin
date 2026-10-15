@@ -90,6 +90,15 @@ class GlobalMetadataInfoHandler(
             this.toString()
         }
     }
+
+    /**
+     * Forgets the reported meta-infos, which may refer to a whole compiler session (a reported diagnostic refers to the
+     * context of its checker), once they have been compared with the expected ones.
+     */
+    fun clearReportedMetaInfos() {
+        infosPerFile.clear()
+        existingInfosPerFilePerInfoCache.clear()
+    }
 }
 
 val TestServices.globalMetadataInfoHandler: GlobalMetadataInfoHandler by TestServices.testServiceAccessor()

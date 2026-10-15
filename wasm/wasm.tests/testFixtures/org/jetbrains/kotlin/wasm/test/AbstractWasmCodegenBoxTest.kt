@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectiv
 import org.jetbrains.kotlin.test.directives.model.ValueDirective
 import org.jetbrains.kotlin.test.frontend.fir.FirMetaInfoDiffSuppressor
 import org.jetbrains.kotlin.test.grouping.AbstractTwoStageKotlinCompilerWasmTest
+import org.jetbrains.kotlin.test.klib.KlibOnlyFirstStageStateReleaser
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.FrontendKinds
@@ -110,6 +111,7 @@ abstract class AbstractWasmCodegenBoxTest(
 
             facadeStep(::FirKlibSerializerCliWasmFacade)
             klibArtifactsHandlersStep()
+            useAfterAnalysisCheckers(::KlibOnlyFirstStageStateReleaser)
 
             commonConfigurationForWasmSecondStageTest(
                 pathToTestDir,
