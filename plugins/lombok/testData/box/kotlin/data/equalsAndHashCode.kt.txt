@@ -1,0 +1,826 @@
+@Data
+open class CallSuperBase {
+  val baseProp: Int
+    field = baseProp
+    get
+
+  constructor(baseProp: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+@Data
+class CallSuperDerived : CallSuperBase {
+  val ownProp: String
+    field = ownProp
+    get
+
+  constructor(ownProp: String) /* primary */ {
+    super/*CallSuperBase*/(baseProp = 10)
+    /* <init>() */
+
+  }
+
+}
+
+@Data
+class CanEqualChild : CanEqualParent {
+  val c: Int
+    field = c
+    get
+
+  constructor(a: Int, b: Int, c: Int) /* primary */ {
+    super/*CanEqualParent*/(a = a, b = b)
+    /* <init>() */
+
+  }
+
+}
+
+@Data
+open class CanEqualGrandparent {
+  val a: Int
+    field = a
+    get
+
+  constructor(a: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+@Data
+open class CanEqualParent : CanEqualGrandparent {
+  val b: Int
+    field = b
+    get
+
+  constructor(a: Int, b: Int) /* primary */ {
+    super/*CanEqualGrandparent*/(a = a)
+    /* <init>() */
+
+  }
+
+}
+
+@Data
+class ChildOfPrivateCanEqual : PrivateCanEqualBase {
+  val a: Int
+    field = a
+    get
+
+  constructor(a: Int) /* primary */ {
+    super/*PrivateCanEqualBase*/()
+    /* <init>() */
+
+  }
+
+}
+
+@Data
+data class DataClassWithExclude {
+  val name: String
+    field = name
+    get
+
+  val age: Int
+    field = age
+    get
+
+  val customProp: Char
+    field = customProp
+    get
+
+  constructor(name: String, age: Int, customProp: Char) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  operator fun component1(): String {
+    return <this>.#name
+  }
+
+  operator fun component2(): Int {
+    return <this>.#age
+  }
+
+  operator fun component3(): Char {
+    return <this>.#customProp
+  }
+
+  fun copy(name: String = <this>.#name, age: Int = <this>.#age, customProp: Char = <this>.#customProp): DataClassWithExclude {
+    return DataClassWithExclude(name = name, age = age, customProp = customProp)
+  }
+
+  override operator fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is DataClassWithExclude -> return false
+    }
+    val tmp_0: DataClassWithExclude = other /*as DataClassWithExclude */
+    when {
+      EQEQ(arg0 = <this>.#name, arg1 = tmp_0.#name).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#age, arg1 = tmp_0.#age).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#customProp, arg1 = tmp_0.#customProp).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var result: Int = <this>.#name.hashCode()
+    result = result.times(other = 31).plus(other = <this>.#age.hashCode())
+    result = result.times(other = 31).plus(other = <this>.#customProp.hashCode())
+    return result
+  }
+
+  override fun toString(): String {
+    return "DataClassWithExclude(" + "name=" + <this>.#name + ", " + "age=" + <this>.#age + ", " + "customProp=" + <this>.#customProp + ")"
+  }
+
+}
+
+@Data
+@EqualsAndHashCode(callSuper = true)
+class DataWithExplicitEquals : CallSuperBase {
+  val own: Int
+    field = own
+    get
+
+  constructor(own: Int, base: Int) /* primary */ {
+    super/*CallSuperBase*/(baseProp = base)
+    /* <init>() */
+
+  }
+
+  protected open fun canEqual(other: Any?): Boolean {
+    return other is DataWithExplicitEquals
+  }
+
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is DataWithExplicitEquals -> return false
+    }
+    val tmp_1: DataWithExplicitEquals = other /*as DataWithExplicitEquals */
+    when {
+      tmp_1.canEqual(other = <this>).not() -> return false
+    }
+    when {
+      super<CallSuperBase>.equals(other = other).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.<get-own>(), arg1 = tmp_1.<get-own>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_2: Int = super<CallSuperBase>.hashCode()
+    tmp_2 = tmp_2.times(other = 59).plus(other = <this>.<get-own>().hashCode())
+    return tmp_2
+  }
+
+}
+
+@Data
+class Empty {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+@Data
+open class ExtensionCanEqual {
+  val a: Int
+    field = a
+    get
+
+  constructor(a: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  fun Int.canEqual(other: Any?): Boolean {
+    return false
+  }
+
+}
+
+@Data
+open class GenericFunctionCanEqual {
+  val a: Int
+    field = a
+    get
+
+  constructor(a: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  open fun <T : Any?> canEqual(other: T): Boolean {
+    return other is GenericFunctionCanEqual
+  }
+
+}
+
+@Data
+open class NonNullCanEqual {
+  val a: Int
+    field = a
+    get
+
+  constructor(a: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  open fun canEqual(other: Any): Boolean {
+    return other is NonNullCanEqual
+  }
+
+}
+
+@Data
+open class OverloadBeforeUserDeclaredCanEqual {
+  val a: Int
+    field = a
+    get
+
+  constructor(a: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  fun canEqual(x: Int): Boolean {
+    return EQEQ(arg0 = x, arg1 = <this>.<get-a>())
+  }
+
+  open fun canEqual(other: Any): Boolean {
+    return other is OverloadBeforeUserDeclaredCanEqual
+  }
+
+}
+
+@Data
+data class PlainDataClass {
+  val a: String
+    field = a
+    get
+
+  val b: Int
+    field = b
+    get
+
+  constructor(a: String, b: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  operator fun component1(): String {
+    return <this>.#a
+  }
+
+  operator fun component2(): Int {
+    return <this>.#b
+  }
+
+  fun copy(a: String = <this>.#a, b: Int = <this>.#b): PlainDataClass {
+    return PlainDataClass(a = a, b = b)
+  }
+
+  override operator fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is PlainDataClass -> return false
+    }
+    val tmp_3: PlainDataClass = other /*as PlainDataClass */
+    when {
+      EQEQ(arg0 = <this>.#a, arg1 = tmp_3.#a).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#b, arg1 = tmp_3.#b).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var result: Int = <this>.#a.hashCode()
+    result = result.times(other = 31).plus(other = <this>.#b.hashCode())
+    return result
+  }
+
+  override fun toString(): String {
+    return "PlainDataClass(" + "a=" + <this>.#a + ", " + "b=" + <this>.#b + ")"
+  }
+
+}
+
+open class PrivateCanEqualBase {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  private fun canEqual(other: Any?): Boolean {
+    return false
+  }
+
+}
+
+@Data
+class Simple {
+  val name: String
+    field = name
+    get
+
+  val age: Int
+    field = age
+    get
+
+  val megaName: String
+    field = "Super " + <this>.<get-name>()
+    get
+
+  constructor(name: String, age: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+@Data
+class SingleNullableInt {
+  val optionalId: Int?
+    field = optionalId
+    get
+
+  constructor(optionalId: Int?) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+@Data
+class SingleNullableString {
+  val optional: String?
+    field = optional
+    get
+
+  constructor(optional: String?) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+@Data
+class TwoNullableInts {
+  val first: Int?
+    field = first
+    get
+
+  val second: Int?
+    field = second
+    get
+
+  constructor(first: Int?, second: Int?) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+@Data
+open class TypeParameterCanEqual<T : Any?> {
+  val a: Int
+    field = a
+    get
+
+  constructor(a: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  open fun canEqual(other: T): Boolean {
+    return EQEQ(arg0 = other, arg1 = null).not()
+  }
+
+}
+
+@Data
+open class UnrelatedCanEqualOverload {
+  val a: Int
+    field = a
+    get
+
+  constructor(a: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  fun canEqual(x: Int): Boolean {
+    return EQEQ(arg0 = x, arg1 = <this>.<get-a>())
+  }
+
+}
+
+@Data
+open class UserDeclaredCanEqual {
+  val a: Int
+    field = a
+    get
+
+  constructor(a: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  open fun canEqual(other: Any?): Boolean {
+    return other is UserDeclaredCanEqual
+  }
+
+}
+
+@Data
+class UserDeclaredEqualsOnly {
+  val a: Int
+    field = a
+    get
+
+  constructor(a: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override operator fun equals(other: Any?): Boolean {
+    return other is UserDeclaredEqualsOnly
+  }
+
+}
+
+@Data
+class WithComputedProperties {
+  val real: String
+    field = real
+    get
+
+  constructor(real: String) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val computedProp: String
+    get(): String {
+      return "computed"
+    }
+
+}
+
+@Data
+class WithDollarPrefixedProperties {
+  val regular: String
+    field = regular
+    get
+
+  val $excludedByDefault: String
+    field = $excludedByDefault
+    get
+
+  val $explicitlyIncluded: String
+    field = $explicitlyIncluded
+    get
+
+  constructor(regular: String, $excludedByDefault: String, $explicitlyIncluded: String) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+@Data
+class WithExclude {
+  val a: String
+    field = a
+    get
+
+  val b: String
+    field = b
+    get
+
+  constructor(a: String, b: String) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+@Data
+class WithGenericArray<T : Any?> {
+  val array: Array<T>
+    field = array
+    get
+
+  constructor(array: Array<T>) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+@Data
+class WithNestedArray {
+  val array: Array<Array<String>>
+    field = array
+    get
+
+  constructor(array: Array<Array<String>>) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+@Data
+class WithNullable {
+  val a: String?
+    field = a
+    get
+
+  val b: Int
+    field = b
+    get
+
+  constructor(a: String?, b: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+@Data
+class WithNullableArray {
+  val array: Array<String>?
+    field = array
+    get
+
+  constructor(array: Array<String>?) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+@Data
+class WithObjectArray {
+  val array: Array<String>
+    field = array
+    get
+
+  constructor(array: Array<String>) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+@Data
+class WithPrimitiveArray {
+  val array: IntArray
+    field = array
+    get
+
+  constructor(array: IntArray) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+@Data
+enum class Color : Enum<Color> {
+  val hex: String
+    field = hex
+    get
+
+  RED = Color(hex = "#FF0000")
+
+  GREEN = Color(hex = "#00FF00")
+
+  private constructor(hex: String) /* primary */ {
+    super/*Enum*/<Color>()
+    /* <init>() */
+
+  }
+
+  companion fun valueOf(value: String): Color /* Synthetic body for ENUM_VALUEOF */
+
+  companion fun values(): Array<Color> /* Synthetic body for ENUM_VALUES */
+
+  companion val entries: EnumEntries<Color>
+    companion get(): EnumEntries<Color> /* Synthetic body for ENUM_ENTRIES */
+
+}
+
+@Data
+object ObjectWithProperties {
+  val version: String
+    field = "2.0"
+    get
+
+  val label: String
+    field = "release"
+    get
+
+  private constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+@Data
+object SingletonObject {
+  private constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+fun box(): String {
+  val s1: Simple = Simple(name = "Alice", age = 30)
+  val s2: Simple = Simple(name = "Alice", age = 30)
+  val s3: Simple = Simple(name = "Bob", age = 30)
+  assertEquals<Simple>(expected = s1, actual = s2)
+  assertNotEquals<Simple>(illegal = s1, actual = s3)
+  assertEquals<Int>(expected = s1.hashCode(), actual = s2.hashCode())
+  assertEquals<Simple>(expected = Simple(name = "Alice", age = 30), actual = Simple(name = "Alice", age = 30))
+  val we1: WithExclude = WithExclude(a = "a", b = "b1")
+  val we2: WithExclude = WithExclude(a = "a", b = "b2")
+  assertEquals<WithExclude>(expected = we1, actual = we2)
+  assertEquals<Int>(expected = we1.hashCode(), actual = we2.hashCode())
+  val d1: DataClassWithExclude = DataClassWithExclude(name = "Alice", age = 30, customProp = 'a')
+  val d2: DataClassWithExclude = DataClassWithExclude(name = "Alice", age = 30, customProp = 'b')
+  assertEquals<DataClassWithExclude>(expected = d1, actual = d2)
+  assertEquals<Int>(expected = d1.hashCode(), actual = d2.hashCode())
+  val d3: DataClassWithExclude = DataClassWithExclude(name = "Alice", age = 31, customProp = 'a')
+  assertNotEquals<DataClassWithExclude>(illegal = d1, actual = d3)
+  val p1: PlainDataClass = PlainDataClass(a = "x", b = 1)
+  val p2: PlainDataClass = PlainDataClass(a = "x", b = 1)
+  assertEquals<PlainDataClass>(expected = p1, actual = p2)
+  assertEquals<Int>(expected = p1.hashCode(), actual = p2.hashCode())
+  assertEquals<SingletonObject>(expected = SingletonObject, actual = SingletonObject)
+  assertEquals<ObjectWithProperties>(expected = ObjectWithProperties, actual = ObjectWithProperties)
+  SingletonObject.hashCode() /*~> Unit */
+  ObjectWithProperties.hashCode() /*~> Unit */
+  assertEquals<WithNullable>(expected = WithNullable(a = null, b = 1), actual = WithNullable(a = null, b = 1))
+  assertNotEquals<WithNullable>(illegal = WithNullable(a = "a", b = 1), actual = WithNullable(a = null, b = 1))
+  WithNullable(a = null, b = 1).hashCode() /*~> Unit */
+  assertNotEquals<SingleNullableInt>(illegal = SingleNullableInt(optionalId = 0), actual = SingleNullableInt(optionalId = null))
+  assertNotEquals<Int>(illegal = SingleNullableInt(optionalId = 0).hashCode(), actual = SingleNullableInt(optionalId = null).hashCode())
+  assertNotEquals<SingleNullableString>(illegal = SingleNullableString(optional = ""), actual = SingleNullableString(optional = null))
+  assertNotEquals<Int>(illegal = SingleNullableString(optional = "").hashCode(), actual = SingleNullableString(optional = null).hashCode())
+  assertNotEquals<TwoNullableInts>(illegal = TwoNullableInts(first = 0, second = 1), actual = TwoNullableInts(first = null, second = 1))
+  assertNotEquals<Int>(illegal = TwoNullableInts(first = 0, second = 1).hashCode(), actual = TwoNullableInts(first = null, second = 1).hashCode())
+  assertEquals<SingleNullableInt>(expected = SingleNullableInt(optionalId = null), actual = SingleNullableInt(optionalId = null))
+  assertEquals<Int>(expected = SingleNullableInt(optionalId = null).hashCode(), actual = SingleNullableInt(optionalId = null).hashCode())
+  assertEquals<Int>(expected = TwoNullableInts(first = null, second = null).hashCode(), actual = TwoNullableInts(first = null, second = null).hashCode())
+  assertEquals<WithObjectArray>(expected = WithObjectArray(array = arrayOf<String>(elements = ["a", "b"])), actual = WithObjectArray(array = arrayOf<String>(elements = ["a", "b"])))
+  assertEquals<Int>(expected = WithObjectArray(array = arrayOf<String>(elements = ["a", "b"])).hashCode(), actual = WithObjectArray(array = arrayOf<String>(elements = ["a", "b"])).hashCode())
+  assertNotEquals<WithObjectArray>(illegal = WithObjectArray(array = arrayOf<String>(elements = ["a", "b"])), actual = WithObjectArray(array = arrayOf<String>(elements = ["a", "c"])))
+  assertEquals<WithPrimitiveArray>(expected = WithPrimitiveArray(array = intArrayOf(elements = [1, 2])), actual = WithPrimitiveArray(array = intArrayOf(elements = [1, 2])))
+  assertEquals<Int>(expected = WithPrimitiveArray(array = intArrayOf(elements = [1, 2])).hashCode(), actual = WithPrimitiveArray(array = intArrayOf(elements = [1, 2])).hashCode())
+  assertNotEquals<WithPrimitiveArray>(illegal = WithPrimitiveArray(array = intArrayOf(elements = [1, 2])), actual = WithPrimitiveArray(array = intArrayOf(elements = [1, 3])))
+  assertEquals<WithNestedArray>(expected = WithNestedArray(array = arrayOf<Array<String>>(elements = [arrayOf<String>(elements = ["a"])])), actual = WithNestedArray(array = arrayOf<Array<String>>(elements = [arrayOf<String>(elements = ["a"])])))
+  assertEquals<Int>(expected = WithNestedArray(array = arrayOf<Array<String>>(elements = [arrayOf<String>(elements = ["a"])])).hashCode(), actual = WithNestedArray(array = arrayOf<Array<String>>(elements = [arrayOf<String>(elements = ["a"])])).hashCode())
+  assertNotEquals<WithNestedArray>(illegal = WithNestedArray(array = arrayOf<Array<String>>(elements = [arrayOf<String>(elements = ["a"])])), actual = WithNestedArray(array = arrayOf<Array<String>>(elements = [arrayOf<String>(elements = ["b"])])))
+  assertEquals<WithNullableArray>(expected = WithNullableArray(array = null), actual = WithNullableArray(array = null))
+  assertEquals<Int>(expected = WithNullableArray(array = null).hashCode(), actual = WithNullableArray(array = null).hashCode())
+  assertNotEquals<WithNullableArray>(illegal = WithNullableArray(array = null), actual = WithNullableArray(array = arrayOf<String>(elements = ["a"])))
+  assertEquals<WithGenericArray<Any?>>(expected = WithGenericArray<Any?>(array = arrayOf<Any?>(elements = [1, "2", 3.0, null])), actual = WithGenericArray<Any?>(array = arrayOf<Any?>(elements = [1, "2", 3.0, null])))
+  assertEquals<Int>(expected = WithGenericArray<Any?>(array = arrayOf<Any?>(elements = [1, "2", 3.0, null])).hashCode(), actual = WithGenericArray<Any?>(array = arrayOf<Any?>(elements = [1, "2", 3.0, null])).hashCode())
+  assertEquals<WithGenericArray<String>>(expected = WithGenericArray<String>(array = emptyArray<String>()), actual = WithGenericArray<String>(array = emptyArray<String>()))
+  assertEquals<Int>(expected = WithGenericArray<String>(array = emptyArray<String>()).hashCode(), actual = WithGenericArray<String>(array = emptyArray<String>()).hashCode())
+  assertEquals<WithDollarPrefixedProperties>(expected = WithDollarPrefixedProperties(regular = "r", $excludedByDefault = "a", $explicitlyIncluded = "i"), actual = WithDollarPrefixedProperties(regular = "r", $excludedByDefault = "b", $explicitlyIncluded = "i"))
+  assertEquals<Int>(expected = WithDollarPrefixedProperties(regular = "r", $excludedByDefault = "a", $explicitlyIncluded = "i").hashCode(), actual = WithDollarPrefixedProperties(regular = "r", $excludedByDefault = "b", $explicitlyIncluded = "i").hashCode())
+  assertNotEquals<WithDollarPrefixedProperties>(illegal = WithDollarPrefixedProperties(regular = "r", $excludedByDefault = "a", $explicitlyIncluded = "i"), actual = WithDollarPrefixedProperties(regular = "r", $excludedByDefault = "a", $explicitlyIncluded = "j"))
+  assertNotEquals<WithDollarPrefixedProperties>(illegal = WithDollarPrefixedProperties(regular = "r", $excludedByDefault = "a", $explicitlyIncluded = "i"), actual = WithDollarPrefixedProperties(regular = "s", $excludedByDefault = "a", $explicitlyIncluded = "i"))
+  assertEquals<Empty>(expected = Empty(), actual = Empty())
+  assertEquals<Int>(expected = 1, actual = Empty().hashCode())
+  val cd1: CallSuperDerived = CallSuperDerived(ownProp = "x")
+  val cd2: CallSuperDerived = CallSuperDerived(ownProp = "x")
+  assertEquals<CallSuperDerived>(expected = cd1, actual = cd2)
+  assertEquals<Int>(expected = cd1.hashCode(), actual = cd2.hashCode())
+  assertEquals<CallSuperBase>(expected = CallSuperBase(baseProp = 10), actual = CallSuperBase(baseProp = 10))
+  val callSuperBase: CallSuperBase = CallSuperBase(baseProp = 10)
+  val callSuperDerived: CallSuperDerived = CallSuperDerived(ownProp = "x")
+  assertNotEquals<CallSuperBase>(illegal = callSuperBase, actual = callSuperDerived)
+  assertNotEquals<CallSuperBase>(illegal = callSuperDerived, actual = callSuperBase)
+  assertEquals<DataWithExplicitEquals>(expected = DataWithExplicitEquals(own = 1, base = 10), actual = DataWithExplicitEquals(own = 1, base = 10))
+  assertEquals<Int>(expected = DataWithExplicitEquals(own = 1, base = 10).hashCode(), actual = DataWithExplicitEquals(own = 1, base = 10).hashCode())
+  assertNotEquals<DataWithExplicitEquals>(illegal = DataWithExplicitEquals(own = 1, base = 10), actual = DataWithExplicitEquals(own = 1, base = 11))
+  assertEquals<UserDeclaredEqualsOnly>(expected = UserDeclaredEqualsOnly(a = 1), actual = UserDeclaredEqualsOnly(a = 2))
+  assertTrue(actual = none<@FlexibleNullability Method?>(/* <this> = <get-java><UserDeclaredEqualsOnly>(/* <this> = UserDeclaredEqualsOnly::class */).getDeclaredMethods() /*!! @FlexibleArrayElementVariance Array<out @FlexibleNullability Method?> */, */ predicate = local fun <anonymous>(it: @FlexibleNullability Method?): Boolean {
+    return EQEQ(arg0 = it /*!! Method */.getName(), arg1 = "hashCode")
+  }
+))
+  val grandparent: CanEqualGrandparent = CanEqualGrandparent(a = 1)
+  val parent: CanEqualParent = CanEqualParent(a = 1, b = 2)
+  val child: CanEqualChild = CanEqualChild(a = 1, b = 2, c = 3)
+  assertEquals<CanEqualGrandparent>(expected = CanEqualGrandparent(a = 1), actual = CanEqualGrandparent(a = 1))
+  assertEquals<CanEqualParent>(expected = CanEqualParent(a = 1, b = 2), actual = CanEqualParent(a = 1, b = 2))
+  assertEquals<CanEqualChild>(expected = CanEqualChild(a = 1, b = 2, c = 3), actual = CanEqualChild(a = 1, b = 2, c = 3))
+  assertNotEquals<CanEqualGrandparent>(illegal = grandparent, actual = parent)
+  assertNotEquals<CanEqualGrandparent>(illegal = parent, actual = grandparent)
+  assertNotEquals<CanEqualParent>(illegal = parent, actual = child)
+  assertNotEquals<CanEqualParent>(illegal = child, actual = parent)
+  assertNotEquals<CanEqualGrandparent>(illegal = grandparent, actual = child)
+  assertNotEquals<CanEqualGrandparent>(illegal = child, actual = grandparent)
+  val userDeclared1: UserDeclaredCanEqual = UserDeclaredCanEqual(a = 1)
+  val userDeclared2: UserDeclaredCanEqual = UserDeclaredCanEqual(a = 1)
+  assertEquals<UserDeclaredCanEqual>(expected = userDeclared1, actual = userDeclared2)
+  assertEquals<Boolean>(expected = true, actual = userDeclared1.canEqual(other = userDeclared2))
+  assertEquals<UnrelatedCanEqualOverload>(expected = UnrelatedCanEqualOverload(a = 1), actual = UnrelatedCanEqualOverload(a = 1))
+  assertNotEquals<UnrelatedCanEqualOverload>(illegal = UnrelatedCanEqualOverload(a = 1), actual = UnrelatedCanEqualOverload(a = 2))
+  assertEquals<Boolean>(expected = true, actual = UnrelatedCanEqualOverload(a = 1).canEqual(x = 1))
+  assertEquals<Boolean>(expected = false, actual = UnrelatedCanEqualOverload(a = 1).canEqual(x = 2))
+  val nonNull1: NonNullCanEqual = NonNullCanEqual(a = 1)
+  val nonNull2: NonNullCanEqual = NonNullCanEqual(a = 1)
+  assertEquals<NonNullCanEqual>(expected = nonNull1, actual = nonNull2)
+  assertEquals<Boolean>(expected = true, actual = nonNull1.canEqual(other = nonNull2))
+  val typeParam1: TypeParameterCanEqual<String> = TypeParameterCanEqual<String>(a = 1)
+  val typeParam2: TypeParameterCanEqual<String> = TypeParameterCanEqual<String>(a = 1)
+  assertEquals<TypeParameterCanEqual<String>>(expected = typeParam1, actual = typeParam2)
+  assertEquals<ExtensionCanEqual>(expected = ExtensionCanEqual(a = 1), actual = ExtensionCanEqual(a = 1))
+  assertEquals<OverloadBeforeUserDeclaredCanEqual>(expected = OverloadBeforeUserDeclaredCanEqual(a = 1), actual = OverloadBeforeUserDeclaredCanEqual(a = 1))
+  assertEquals<GenericFunctionCanEqual>(expected = GenericFunctionCanEqual(a = 1), actual = GenericFunctionCanEqual(a = 1))
+  assertEquals<ChildOfPrivateCanEqual>(expected = ChildOfPrivateCanEqual(a = 1), actual = ChildOfPrivateCanEqual(a = 1))
+  assertNotEquals<ChildOfPrivateCanEqual>(illegal = ChildOfPrivateCanEqual(a = 1), actual = ChildOfPrivateCanEqual(a = 2))
+  assertEquals<WithComputedProperties>(expected = WithComputedProperties(real = "X"), actual = WithComputedProperties(real = "X"))
+  @Data
+  local class LocalClass {
+    val x: Int
+      field = x
+      get
+
+    constructor(x: Int) /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+  }
+
+  assertEquals<LocalClass>(expected = LocalClass(x = 7), actual = LocalClass(x = 7))
+  assertNotEquals<LocalClass>(illegal = LocalClass(x = 7), actual = LocalClass(x = 8))
+  assertEquals<Color>(expected = Color.RED, actual = Color.RED)
+  assertNotEquals<Color>(illegal = Color.RED, actual = Color.GREEN)
+  assertEquals<Int>(expected = Color.RED.hashCode(), actual = Color.RED.hashCode())
+  return "OK"
+}
+

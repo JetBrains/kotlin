@@ -1,0 +1,236 @@
+@Data(staticConstructor = "create")
+class Bounded<T : Comparable<T>> {
+  val value: T
+    field = value
+    get
+
+  constructor(value: T) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+@Data(staticConstructor = "create")
+class Box<T : Any?> {
+  val value: T
+    field = value
+    get
+
+  constructor(value: T) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+@Data(staticConstructor = "create")
+data class DataClass {
+  val a: Int
+    field = a
+    get
+
+  constructor(a: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  operator fun component1(): Int {
+    return <this>.#a
+  }
+
+  fun copy(a: Int = <this>.#a): DataClass {
+    return DataClass(a = a)
+  }
+
+  override operator fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is DataClass -> return false
+    }
+    val tmp_0: DataClass = other /*as DataClass */
+    when {
+      EQEQ(arg0 = <this>.#a, arg1 = tmp_0.#a).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    return <this>.#a.hashCode()
+  }
+
+  override fun toString(): String {
+    return "DataClass(" + "a=" + <this>.#a + ")"
+  }
+
+}
+
+@Data(staticConstructor = "create")
+class Mixed {
+  var y: String
+    field = y
+    get
+    set
+
+  val z: Int
+    field = z
+    get
+
+  val xCopy: Int
+    field = x
+    get
+
+  constructor(x: Int, y: String, z: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+@Data(staticConstructor = "create")
+class NameTaken {
+  val x: Int
+    field = x
+    get
+
+  companion object Companion {
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    fun create(x: Int): NameTaken {
+      return NameTaken(x = x.plus(other = 100))
+    }
+
+  }
+
+  constructor(x: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+@Data(staticConstructor = "create")
+class Point {
+  val x: Int
+    field = x
+    get
+
+  val y: Int
+    field = y
+    get
+
+  constructor(x: Int, y: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+@Data(staticConstructor = "create")
+@NoArgsConstructor(force = true)
+class WithNoArgs {
+  val x: Int
+    field = x
+    get
+
+  constructor() {
+    super/*Any*/()
+  }
+
+  constructor(x: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+@Data(staticConstructor = "create")
+class WithSecondary {
+  val x: Int
+    field = x
+    get
+
+  var y: String
+    field = y
+    get
+    set
+
+  constructor(x: Int, y: String) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  constructor(y: String) {
+    this/*WithSecondary*/(x = 0, y = y)
+  }
+
+}
+
+@Data(staticConstructor = "create")
+class WithVararg {
+  val items: Array<out String>
+    field = items
+    get
+
+  constructor(vararg items: String) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+fun box(): String {
+  val point: Point = Point(x = 1, y = 2)
+  assertEquals<Int>(expected = 1, actual = point.<get-x>())
+  assertEquals<Int>(expected = 2, actual = point.<get-y>())
+  val mixed: Mixed = Mixed(x = 1, y = "y", z = 3)
+  assertEquals<Int>(expected = 1, actual = mixed.<get-xCopy>())
+  assertEquals<String>(expected = "y", actual = mixed.<get-y>())
+  assertEquals<Int>(expected = 3, actual = mixed.<get-z>())
+  assertEquals<String>(expected = "value", actual = Box<String>(value = "value").<get-value>())
+  assertEquals<Box<List<Int>>>(expected = Box<List<Int>>(value = listOf<Int>(element = 1)), actual = Box<List<Int>>(value = listOf<Int>(element = 1)))
+  assertEquals<Int>(expected = 42, actual = Bounded<Int>(value = 42).<get-value>())
+  val withSecondary: WithSecondary = WithSecondary(x = 1, y = "y")
+  assertEquals<Int>(expected = 1, actual = withSecondary.<get-x>())
+  assertEquals<String>(expected = "y", actual = withSecondary.<get-y>())
+  assertEquals<Int>(expected = 0, actual = WithSecondary(y = "z").<get-x>())
+  assertEquals<Int>(expected = 101, actual = Companion.create(x = 1).<get-x>())
+  assertEquals<Int>(expected = 1, actual = NameTaken(x = 1).<get-x>())
+  assertEquals<Int>(expected = 0, actual = WithNoArgs().<get-x>())
+  assertEquals<Int>(expected = 5, actual = WithNoArgs(x = 5).<get-x>())
+  assertEquals<DataClass>(expected = DataClass(a = 1), actual = DataClass(a = 1))
+  assertEquals<String>(expected = "DataClass(a=1)", actual = DataClass(a = 1).toString())
+  assertEquals<List<String>>(expected = listOf<String>(elements = ["a", "b"]), actual = toList<String>(/* <this> = WithVararg(items = ["a", "b"]).<get-items>() */))
+  @Data(staticConstructor = "create")
+  local class Local {
+    val x: Int
+      field = x
+      get
+
+    constructor(x: Int) /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+  }
+
+  assertEquals<Local>(expected = Local(x = 1), actual = Local(x = 1))
+  return "OK"
+}
+
