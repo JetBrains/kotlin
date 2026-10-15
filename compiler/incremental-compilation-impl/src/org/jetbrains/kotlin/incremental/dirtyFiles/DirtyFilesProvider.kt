@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.incremental.dirtyFiles
 
 import org.jetbrains.kotlin.build.report.ICReporter
 import org.jetbrains.kotlin.incremental.*
+import org.jetbrains.kotlin.build.report.events.ScopeExpansionReason
 import org.jetbrains.kotlin.incremental.ChangedFiles.DeterminableFiles
 import org.jetbrains.kotlin.incremental.IncrementalCompilerRunner.Companion.DIRTY_SOURCES_FILE_NAME
 import org.jetbrains.kotlin.name.FqName
@@ -50,12 +51,12 @@ internal class DirtyFilesProvider(
         changedFiles: DeterminableFiles.Known,
     ): DirtyFilesContainer {
         val dirtyFiles = DirtyFilesContainer(caches, reporter, kotlinSourceFileExtensions)
-        dirtyFiles.add(changedFiles.modified, "was modified since last time")
-        dirtyFiles.add(changedFiles.removed, "was removed since last time")
-        dirtyFiles.add(cachedHistory.read(), "was not compiled last time")
+        dirtyFiles.add(changedFiles.modified, ScopeExpansionReason.SOURCE_FILE_CHANGED)
+        dirtyFiles.add(changedFiles.removed, ScopeExpansionReason.SOURCE_FILE_REMOVED)
+        dirtyFiles.add(cachedHistory.read(), ScopeExpansionReason.PENDING_FROM_PREVIOUS_BUILD)
         dirtyFiles.add(
             findSupertypeSourcesReferencingTypesFromChangedFiles(caches, changedFiles.modified + changedFiles.removed),
-            reason = "is a supertype of a class from a changed file and references types from changed files, so its inferred types may be outdated"
+            reason = ScopeExpansionReason.SUPERTYPE_REFERENCING_CHANGED_TYPES
         )
         return dirtyFiles
     }

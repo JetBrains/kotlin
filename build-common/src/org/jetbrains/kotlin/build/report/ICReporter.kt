@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.build.report
 
+import org.jetbrains.kotlin.build.report.events.ScopeExpansionReason
 import org.jetbrains.kotlin.cli.common.ExitCode
 import java.io.File
 
@@ -28,6 +29,9 @@ interface ICReporter {
 fun ICReporter.warn(message: () -> String) = report(message, severity = ICReporter.ReportSeverity.WARNING)
 fun ICReporter.info(message: () -> String) = report(message, severity = ICReporter.ReportSeverity.INFO)
 fun ICReporter.debug(message: () -> String) = report(message, severity = ICReporter.ReportSeverity.DEBUG)
+
+fun ICReporter.reportMarkDirty(affectedFiles: Iterable<File>, reason: ScopeExpansionReason) =
+    reportMarkDirty(affectedFiles, reason.toString())
 
 object DoNothingICReporter : ICReporter {
     override fun report(message: () -> String, severity: ICReporter.ReportSeverity) {}
