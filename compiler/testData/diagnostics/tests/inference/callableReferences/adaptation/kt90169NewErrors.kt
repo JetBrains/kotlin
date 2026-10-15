@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-90169
 // WITH_STDLIB
 
@@ -12,15 +12,15 @@ fun <E : CharSequence> countCS(vararg xs: E): Int = xs.size
 fun <E> countL(vararg xs: List<E>): Int = xs.size
 
 fun main(arr: Array<String>) {
-    val s: String = arr.<!INITIALIZER_TYPE_MISMATCH!>let<!>(::firstG)
-    val l: List<String> = arr.<!INITIALIZER_TYPE_MISMATCH!>let<!>(::listOf)
-    arr.let(::listOf).first().<!UNRESOLVED_REFERENCE!>length<!>
-    arr.let<Array<String>, List<String>>(::<!NONE_APPLICABLE!>listOf<!>)
-    applyR<Array<String>, String>(arr, ::<!INAPPLICABLE_CANDIDATE!>firstG<!>)
+    val s: String = arr.let(::firstG)
+    val l: List<String> = arr.let(::listOf)
+    arr.let(::listOf).first().length
+    arr.let<Array<String>, List<String>>(::listOf)
+    applyR<Array<String>, String>(arr, ::firstG)
 
-    applyIt(arr, ::<!INAPPLICABLE_CANDIDATE!>countCS<!>)
-    applyIt(arrayOf(listOf(1), listOf(2)), ::<!INAPPLICABLE_CANDIDATE!>countL<!>)
-    applyK(arr, <!ADAPTED_CALLABLE_REFERENCE_AGAINST_REFLECTION_TYPE!>::countG<!>)
+    applyIt(arr, ::countCS)
+    applyIt(arrayOf(listOf(1), listOf(2)), ::countL)
+    applyK(arr, ::countG)
 }
 
 /* GENERATED_FIR_TAGS: callableReference, capturedType, functionDeclaration, functionalType, integerLiteral,

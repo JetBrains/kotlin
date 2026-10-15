@@ -1,6 +1,5 @@
 // ISSUE: KT-90169
-// Expected failure before the fix for KT-90169: "FAIL explicit type argument: 1"
-// IGNORE_BACKEND: ANY
+// IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_FIRST_STAGE: 2.4
 // WITH_STDLIB
 
 fun <T> applyIt(t: T, f: (T) -> Int): Int = f(t)
