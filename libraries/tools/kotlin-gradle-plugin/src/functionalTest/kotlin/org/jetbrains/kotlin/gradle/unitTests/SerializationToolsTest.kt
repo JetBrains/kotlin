@@ -20,7 +20,7 @@ class SerializationToolsTest {
 
     @Test
     fun `test hierarchy SwiftModule serialization`() {
-        val json = SerializationTools.writeToJson(GradleSwiftExportModules(hierarchyModules(), 1721919536167))
+        val json = SerializationTools.writeToJson(GradleSwiftExportModules(hierarchyModules()))
         val hierarchyJson = testJson("hierarchyJson").readText()
 
         assertEquals(json.unixStylePath(), hierarchyJson)
@@ -31,7 +31,7 @@ class SerializationToolsTest {
         val modules = SerializationTools.readFromJson(
             testJson("hierarchyJson").readText()
         )
-        val hierarchyModules = GradleSwiftExportModules(hierarchyModules(), 1721919536167)
+        val hierarchyModules = GradleSwiftExportModules(hierarchyModules())
 
         assertEquals(modules, hierarchyModules)
     }
@@ -46,7 +46,7 @@ class SerializationToolsTest {
 
     @Test
     fun `test nested SwiftModule serialization`() {
-        val json = SerializationTools.writeToJson(GradleSwiftExportModules(nestedModules(), 1721919536167))
+        val json = SerializationTools.writeToJson(GradleSwiftExportModules(nestedModules()))
         val nestedJson = testJson("nestedJson").readText()
 
         assertEquals(json.unixStylePath(), nestedJson)
@@ -57,7 +57,7 @@ class SerializationToolsTest {
         val modules = SerializationTools.readFromJson(
             testJson("nestedJson").readText()
         )
-        val nestedModules = GradleSwiftExportModules(nestedModules(), 1721919536167)
+        val nestedModules = GradleSwiftExportModules(nestedModules())
 
         assertEquals(modules, nestedModules)
     }
@@ -72,7 +72,7 @@ class SerializationToolsTest {
 
     @Test
     fun `test Windows Unix SwiftModule paths`() {
-        val json = SerializationTools.writeToJson(GradleSwiftExportModules(simpleModules(), 1721919536167))
+        val json = SerializationTools.writeToJson(GradleSwiftExportModules(simpleModules()))
         val simpleJson = testJson("simpleJson").readText()
         val simpleWinJson = testJson("simpleWindowsJson").readText()
 
