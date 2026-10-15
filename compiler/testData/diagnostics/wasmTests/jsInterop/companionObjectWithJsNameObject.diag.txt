@@ -1,0 +1,6 @@
+/companionObjectWithJsNameObject.kt:7:15: error: Accessing a companion object of an external interface currently produces an empty JavaScript object.
+This behavior will change in the future: references to the companion object will compile to JavaScript code that references the interface name and will fail at runtime if that name is not defined.
+
+To keep the current behavior, annotate the interface with '@JsName("Object")'.
+
+Read more: https://kotl.in/e4vlc5
