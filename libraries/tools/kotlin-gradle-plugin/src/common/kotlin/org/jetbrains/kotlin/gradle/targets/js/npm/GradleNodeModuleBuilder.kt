@@ -11,7 +11,7 @@ import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.file.FileTree
 import org.jetbrains.kotlin.gradle.targets.js.ir.KLIB_TYPE
 import java.io.File
-import java.nio.file.Path
+import kotlin.io.path.name
 
 /**
  * Creates fake NodeJS module directory from given Gradle `dependency`.
@@ -133,29 +133,37 @@ private fun createNodeModule(
     return dir
 }
 
-// npm package name: `name` or `@scope/name`. No path separator allowed.
-private val ACCEPTED_NPM_PACKAGE_NAME = Regex("(@[A-Za-z0-9_.-]+/)?[A-Za-z0-9_.-]+")
-
-// [name] and [version] come from a dependency's package.json. An absolute name or `..` would put
-// the imported package outside the cache and delete what it lands on (KT-89245, CWE-22/CWE-73).
-internal fun importedPackageDirWithinCache(container: File, name: String, version: String): File {
-    val dir = container.resolve(name).resolve(version)
-
-    check(name.matches(ACCEPTED_NPM_PACKAGE_NAME)) {
-        "Illegal npm package name (name='$name'): the imported-package directory '$dir' would be created " +
-                "outside the cache directory '$container'."
+/**
+ * Returns the directory in [container] that a package with [packageName] and [packageVersion] is imported into:
+ * `<name>/<version>`, or `<scope>/<name>/<version>` for a scoped name.
+ *
+ * Protects against path traversal.
+ */
+internal fun importedPackageDirWithinCache(container: File, packageName: String, packageVersion: String): File {
+    // A scoped npm name, `@scope/name`, is the only packageName that may contain a `/`: it gets one directory per part.
+    // Every other name, including `@scope` without a `/`, must resolve to a single directory.
+    return if (packageName.startsWith("@") && packageName.contains("/")) {
+        val scope = packageName.substringBefore("/")
+        val name = packageName.substringAfter("/")
+        container.resolveChild(scope).resolveChild(name).resolveChild(packageVersion)
+    } else {
+        container.resolveChild(packageName).resolveChild(packageVersion)
     }
-
-    check(container.toPath().strictlyContains(dir.toPath())) {
-        "Illegal npm package coordinates (name='$name', version='$version'): the imported-package " +
-                "directory '$dir' would be created outside the cache directory '$container'."
-    }
-
-    return dir
 }
 
-private fun Path.strictlyContains(child: Path): Boolean {
-    val base = toAbsolutePath().normalize()
-    val target = child.toAbsolutePath().normalize()
-    return target != base && target.startsWith(base)
+/**
+ * Resolves [segment] as a direct child of this path.
+ *
+ * Protects against path traversal.
+ */
+internal fun File.resolveChild(segment: String): File {
+    require(segment.isNotBlank()) { "Path segment must not be blank" }
+
+    val base = this.toPath().toAbsolutePath().normalize()
+    val child = base.resolve(segment).normalize()
+
+    require(child.parent == base) { "Path segment '$segment' did not resolve to a child directory of $this" }
+    require(child.fileName.name == segment) { "Path segment '$segment' is not a plain name" }
+
+    return child.toFile()
 }
