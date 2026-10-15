@@ -14,6 +14,7 @@ import java.io.File
 @InternalKotlinGradlePluginApi
 data class KotlinCompilerPluginData(
     @get:Classpath
+    @get:NormalizeLineEndings
     val classpath: FileCollection,
 
     @get:Internal

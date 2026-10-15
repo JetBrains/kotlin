@@ -62,6 +62,7 @@ internal abstract class KotlinJsDtsGenerationTask @Inject constructor(
     }
 
     @get:Classpath
+    @get:NormalizeLineEndings
     abstract val klibs: ConfigurableFileCollection
 
     @get:Input
@@ -84,6 +85,7 @@ internal abstract class KotlinJsDtsGenerationTask @Inject constructor(
     abstract val outputDirectory: DirectoryProperty
 
     @get:Classpath
+    @get:NormalizeLineEndings
     internal abstract val kotlinBuildToolsApiClasspath: ConfigurableFileCollection
 
 

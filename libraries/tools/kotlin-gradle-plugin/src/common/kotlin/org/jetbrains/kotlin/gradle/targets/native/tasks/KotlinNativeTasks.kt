@@ -164,6 +164,7 @@ abstract class AbstractKotlinNativeCompile<
     internal val konanDistribution = project.nativeProperties.actualNativeHomeDirectory
 
     @get:Classpath
+    @get:NormalizeLineEndings
     override val libraries: ConfigurableFileCollection by providerFactory.provider {
         val nativeCompilation = compilation.tcs.compilation as AbstractKotlinNativeCompilation
         if (nativeCompilation.crossCompilationOnCurrentHostSupported) {
@@ -174,9 +175,11 @@ abstract class AbstractKotlinNativeCompile<
     }
 
     @get:Classpath
+    @get:NormalizeLineEndings
     internal val friendModule: FileCollection = objectFactory.fileCollection().from({ compilation.friendPaths })
 
     @get:Classpath
+    @get:NormalizeLineEndings
     internal val refinesModule: FileCollection = objectFactory.fileCollection().from({ compilation.refinesPaths })
 
     @get:Input
@@ -224,6 +227,7 @@ abstract class AbstractKotlinNativeCompile<
 
     @Optional
     @Classpath
+    @NormalizeLineEndings
     open var compilerPluginClasspath: FileCollection? = null
 
     /**

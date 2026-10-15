@@ -12,6 +12,7 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.*
+import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.abi.AbiFilters
 import org.jetbrains.kotlin.buildtools.api.abi.AbiValidationToolchain
@@ -167,6 +168,7 @@ internal abstract class KotlinAbiDumpTaskImpl : AbiToolsTask(), UsesKotlinToolin
 
         @get:Optional
         @get:Classpath
+        @get:NormalizeLineEndings
         val classfilesDirs: FileCollection,
     )
 

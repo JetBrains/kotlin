@@ -14,6 +14,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Classpath
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
+import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity.CLASS_LEVEL
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity.CLASS_MEMBER_LEVEL
@@ -44,6 +45,7 @@ internal abstract class ClasspathEntrySnapshotTransform : TransformAction<Classp
         internal abstract val classLoadersCachingService: Property<ClassLoadersCachingBuildService>
 
         @get:Classpath
+        @get:NormalizeLineEndings
         internal abstract val classpath: ConfigurableFileCollection
 
         @get:Internal
@@ -63,6 +65,7 @@ internal abstract class ClasspathEntrySnapshotTransform : TransformAction<Classp
     }
 
     @get:Classpath
+    @get:NormalizeLineEndings
     @get:InputArtifact
     abstract val inputArtifact: Provider<FileSystemLocation>
 

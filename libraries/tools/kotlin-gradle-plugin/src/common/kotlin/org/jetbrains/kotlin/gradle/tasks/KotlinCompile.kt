@@ -101,6 +101,7 @@ abstract class KotlinCompile @Inject constructor(
     /** Properties related to the classpath snapshots based incremental compilation feature. */
     abstract class ClasspathSnapshotProperties {
         @get:Classpath
+        @get:NormalizeLineEndings
         @get:Incremental
         @get:Optional // Set if useClasspathSnapshot == true
         abstract val classpathSnapshot: ConfigurableFileCollection

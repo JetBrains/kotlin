@@ -149,6 +149,7 @@ internal abstract class DiscoverScriptExtensionsTransformAction : TransformActio
         val classLoadersCachingService: Property<ClassLoadersCachingBuildService>
 
         @get:Classpath
+        @get:NormalizeLineEndings
         val compilerClasspath: ConfigurableFileCollection
 
         @get:Internal

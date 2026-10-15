@@ -14,6 +14,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.*
+import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
@@ -61,9 +62,11 @@ internal abstract class CInteropCommonizerTask
         sourceSets: Provider<Set<KotlinSourceSet>>,
 
         @get:Classpath
+        @get:NormalizeLineEndings
         val libraryFile: Provider<File>,
 
         @get:Classpath
+        @get:NormalizeLineEndings
         val dependencies: FileCollection,
     ) {
         @Suppress("unused") // Used for UP-TO-DATE check
@@ -122,6 +125,7 @@ internal abstract class CInteropCommonizerTask
         .chainedDisallowChanges()
 
     @get:Classpath
+    @get:NormalizeLineEndings
     internal val commonizerClasspath: ConfigurableFileCollection = objectFactory.fileCollection()
 
     @get:Input
@@ -202,6 +206,7 @@ internal abstract class CInteropCommonizerTask
 
     @Suppress("unused") // Used for UP-TO-DATE check
     @get:Classpath
+    @get:NormalizeLineEndings
     protected val commonizerDependenciesClasspath: FileCollection = project.filesProvider {
         groupedCommonizerDependencies.getOrThrow().values.flatten().map { it.dependencies }
     }
