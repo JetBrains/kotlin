@@ -1,7 +1,7 @@
 // ENABLE_FOREIGN_ANNOTATIONS
 // WITH_STDLIB
 // FULL_JDK
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: CODEGEN
 // LANGUAGE: +ProhibitIllegalNotNullSmartCastsInEqualities
 // LANGUAGE_FEATURE_TOGGLED: ProhibitNotNullSmartCastsBasedOnFlexibleComponentsInEqualities
 // JSPECIFY_STATE: warn

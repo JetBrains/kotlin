@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: CODEGEN
 // LANGUAGE_FEATURE_TOGGLED: ForbidSamConstructorCallsWithMissingDependencySupertype
 // ISSUE: KT-81075
 
