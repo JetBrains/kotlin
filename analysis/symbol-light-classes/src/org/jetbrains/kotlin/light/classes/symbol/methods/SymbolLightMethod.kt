@@ -100,7 +100,7 @@ internal abstract class SymbolLightMethod<FType : KaFunctionSymbol> private cons
     }
 
     private val _isDeprecated: Boolean by lazyPub {
-        withFunctionSymbol { functionSymbol ->
+        isDefaultImplsCompatibilityDelegate || withFunctionSymbol { functionSymbol ->
             functionSymbol.hasDeprecatedAnnotation()
         }
     }

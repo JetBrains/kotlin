@@ -32,7 +32,9 @@ import org.jetbrains.kotlin.light.classes.symbol.annotations.AnnotationFilter
 import org.jetbrains.kotlin.light.classes.symbol.annotations.ExcludeAnnotationFilter
 import org.jetbrains.kotlin.light.classes.symbol.annotations.getJvmExposeBoxedNameFromAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
+import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForInterfaceDefaultImpls
 import org.jetbrains.kotlin.light.classes.symbol.classes.computeJavaMethodName
+import org.jetbrains.kotlin.light.classes.symbol.classes.jvmDefaultMode
 import org.jetbrains.kotlin.light.classes.symbol.classes.jvmNameFromAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.classes.typeForInlineClass
 
@@ -52,6 +54,14 @@ internal abstract class SymbolLightMethodBaseImpl<out SType : KaSymbol>(
      * Whether this method is the Java-facing declaration whose inline-class types are boxed.
      */
     val isJvmExposeBoxed: Boolean get() = generationMode is MethodGenerationMode.Boxed
+
+    /**
+     * Whether this method is a compatibility delegate to a JVM `default` method of the interface, which `DefaultImpls` holds with JVM
+     * default methods enabled. The JVM backend marks such delegates as deprecated with `@java.lang.Deprecated`, see
+     * `org.jetbrains.kotlin.backend.jvm.JvmCachedDeclarations.getDefaultImplsFunction`.
+     */
+    val isDefaultImplsCompatibilityDelegate: Boolean
+        get() = containingClass is SymbolLightClassForInterfaceDefaultImpls && containingClass.jvmDefaultMode.isEnabled
 
     override fun getBody(): PsiCodeBlock? = null
 
