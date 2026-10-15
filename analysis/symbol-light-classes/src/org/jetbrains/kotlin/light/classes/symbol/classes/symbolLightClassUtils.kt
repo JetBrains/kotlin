@@ -11,7 +11,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiField
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiReferenceList
-import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationValue
 import org.jetbrains.kotlin.analysis.api.javaInterop.asPsiClass
@@ -702,7 +702,7 @@ private fun SymbolLightClassForInterface.hasDefaultImpls(interfaceSymbol: KaName
  *
  * @param jvmDefaultMode the `-jvm-default` mode of the interface light class
  */
-@OptIn(KaNonPublicApi::class)
+@OptIn(KaImplementationDetail::class)
 context(_: KaSession)
 internal fun inheritedDefaultImplsCallables(
     interfaceSymbol: KaNamedClassSymbol,
