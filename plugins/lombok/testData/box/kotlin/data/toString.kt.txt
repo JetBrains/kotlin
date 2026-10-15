@@ -10,6 +10,37 @@ open class CallSuperBase {
 
   }
 
+  protected open fun canEqual(other: Any?): Boolean {
+    return other is CallSuperBase
+  }
+
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is CallSuperBase -> return false
+    }
+    val tmp_0: CallSuperBase = other /*as CallSuperBase */
+    when {
+      tmp_0.canEqual(other = <this>).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.<get-baseProp>(), arg1 = tmp_0.<get-baseProp>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_1: Int = 1
+    tmp_1 = tmp_1.times(other = 59).plus(other = <this>.<get-baseProp>().hashCode())
+    return tmp_1
+  }
+
+  override fun toString(): String {
+    return "CallSuperBase(" + "baseProp=" + <this>.<get-baseProp>() + ')'
+  }
+
 }
 
 @Data
@@ -24,6 +55,37 @@ class CallSuperDerived : CallSuperBase {
 
   }
 
+  protected override fun canEqual(other: Any?): Boolean {
+    return other is CallSuperDerived
+  }
+
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is CallSuperDerived -> return false
+    }
+    val tmp_2: CallSuperDerived = other /*as CallSuperDerived */
+    when {
+      tmp_2.canEqual(other = <this>).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.<get-ownProp>(), arg1 = tmp_2.<get-ownProp>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_3: Int = 1
+    tmp_3 = tmp_3.times(other = 59).plus(other = <this>.<get-ownProp>().hashCode())
+    return tmp_3
+  }
+
+  override fun toString(): String {
+    return "CallSuperDerived(" + "ownProp=" + <this>.<get-ownProp>() + ')'
+  }
+
 }
 
 @Data
@@ -36,6 +98,37 @@ class CallSuperWithComputedPropertyFirst : CallSuperBase {
     super/*CallSuperBase*/(baseProp = 10)
     /* <init>() */
 
+  }
+
+  protected override fun canEqual(other: Any?): Boolean {
+    return other is CallSuperWithComputedPropertyFirst
+  }
+
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is CallSuperWithComputedPropertyFirst -> return false
+    }
+    val tmp_4: CallSuperWithComputedPropertyFirst = other /*as CallSuperWithComputedPropertyFirst */
+    when {
+      tmp_4.canEqual(other = <this>).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.<get-ownProp>(), arg1 = tmp_4.<get-ownProp>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_5: Int = 1
+    tmp_5 = tmp_5.times(other = 59).plus(other = <this>.<get-ownProp>().hashCode())
+    return tmp_5
+  }
+
+  override fun toString(): String {
+    return "CallSuperWithComputedPropertyFirst(" + "ownProp=" + <this>.<get-ownProp>() + ')'
   }
 
   val computedProp: Int
@@ -61,6 +154,34 @@ data class DataClassDefault {
 
   }
 
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is DataClassDefault -> return false
+    }
+    val tmp_6: DataClassDefault = other /*as DataClassDefault */
+    when {
+      EQEQ(arg0 = <this>.<get-name>(), arg1 = tmp_6.<get-name>()).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.<get-age>(), arg1 = tmp_6.<get-age>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_7: Int = 1
+    tmp_7 = tmp_7.times(other = 59).plus(other = <this>.<get-name>().hashCode())
+    tmp_7 = tmp_7.times(other = 59).plus(other = <this>.<get-age>().hashCode())
+    return tmp_7
+  }
+
+  override fun toString(): String {
+    return "DataClassDefault(" + "name=" + <this>.<get-name>() + ", age=" + <this>.<get-age>() + ')'
+  }
+
   operator fun component1(): String {
     return <this>.#name
   }
@@ -71,33 +192,6 @@ data class DataClassDefault {
 
   fun copy(name: String = <this>.#name, age: Int = <this>.#age): DataClassDefault {
     return DataClassDefault(name = name, age = age)
-  }
-
-  override operator fun equals(other: Any?): Boolean {
-    when {
-      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
-    }
-    when {
-      other !is DataClassDefault -> return false
-    }
-    val tmp_0: DataClassDefault = other /*as DataClassDefault */
-    when {
-      EQEQ(arg0 = <this>.#name, arg1 = tmp_0.#name).not() -> return false
-    }
-    when {
-      EQEQ(arg0 = <this>.#age, arg1 = tmp_0.#age).not() -> return false
-    }
-    return true
-  }
-
-  override fun hashCode(): Int {
-    var result: Int = <this>.#name.hashCode()
-    result = result.times(other = 31).plus(other = <this>.#age.hashCode())
-    return result
-  }
-
-  override fun toString(): String {
-    return "DataClassDefault(" + "name=" + <this>.#name + ", " + "age=" + <this>.#age + ")"
   }
 
 }
@@ -113,6 +207,33 @@ class DataWithExplicitToString : CallSuperBase {
     super/*CallSuperBase*/(baseProp = 10)
     /* <init>() */
 
+  }
+
+  protected override fun canEqual(other: Any?): Boolean {
+    return other is DataWithExplicitToString
+  }
+
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is DataWithExplicitToString -> return false
+    }
+    val tmp_8: DataWithExplicitToString = other /*as DataWithExplicitToString */
+    when {
+      tmp_8.canEqual(other = <this>).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.<get-own>(), arg1 = tmp_8.<get-own>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_9: Int = 1
+    tmp_9 = tmp_9.times(other = 59).plus(other = <this>.<get-own>().hashCode())
+    return tmp_9
   }
 
   override fun toString(): String {
@@ -135,6 +256,34 @@ class Simple {
     super/*Any*/()
     /* <init>() */
 
+  }
+
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is Simple -> return false
+    }
+    val tmp_10: Simple = other /*as Simple */
+    when {
+      EQEQ(arg0 = <this>.<get-name>(), arg1 = tmp_10.<get-name>()).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.<get-age>(), arg1 = tmp_10.<get-age>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_11: Int = 1
+    tmp_11 = tmp_11.times(other = 59).plus(other = <this>.<get-name>().hashCode())
+    tmp_11 = tmp_11.times(other = 59).plus(other = <this>.<get-age>().hashCode())
+    return tmp_11
+  }
+
+  override fun toString(): String {
+    return "Simple(" + "name=" + <this>.<get-name>() + ", age=" + <this>.<get-age>() + ')'
   }
 
 }
@@ -167,6 +316,46 @@ class WithArrays {
 
   }
 
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is WithArrays -> return false
+    }
+    val tmp_12: WithArrays = other /*as WithArrays */
+    when {
+      deepEquals(p0 = <this>.<get-objectArray>(), p1 = tmp_12.<get-objectArray>()).not() -> return false
+    }
+    when {
+      deepEquals(p0 = <this>.<get-nestedArray>(), p1 = tmp_12.<get-nestedArray>()).not() -> return false
+    }
+    when {
+      equals(p0 = <this>.<get-intArray>(), p1 = tmp_12.<get-intArray>()).not() -> return false
+    }
+    when {
+      equals(p0 = <this>.<get-charArray>(), p1 = tmp_12.<get-charArray>()).not() -> return false
+    }
+    when {
+      deepEquals(p0 = <this>.<get-nullArray>(), p1 = tmp_12.<get-nullArray>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_13: Int = 1
+    tmp_13 = tmp_13.times(other = 59).plus(other = deepHashCode(p0 = <this>.<get-objectArray>()))
+    tmp_13 = tmp_13.times(other = 59).plus(other = deepHashCode(p0 = <this>.<get-nestedArray>()))
+    tmp_13 = tmp_13.times(other = 59).plus(other = hashCode(p0 = <this>.<get-intArray>()))
+    tmp_13 = tmp_13.times(other = 59).plus(other = hashCode(p0 = <this>.<get-charArray>()))
+    tmp_13 = tmp_13.times(other = 59).plus(other = deepHashCode(p0 = <this>.<get-nullArray>()))
+    return tmp_13
+  }
+
+  override fun toString(): String {
+    return "WithArrays(" + "objectArray=" + deepToString(p0 = <this>.<get-objectArray>()) + ", nestedArray=" + deepToString(p0 = <this>.<get-nestedArray>()) + ", intArray=" + toString(p0 = <this>.<get-intArray>()) + ", charArray=" + toString(p0 = <this>.<get-charArray>()) + ", nullArray=" + deepToString(p0 = <this>.<get-nullArray>()) + ')'
+  }
+
 }
 
 @Data
@@ -183,6 +372,30 @@ class WithBackingFieldAndGetter {
 
   }
 
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is WithBackingFieldAndGetter -> return false
+    }
+    val tmp_14: WithBackingFieldAndGetter = other /*as WithBackingFieldAndGetter */
+    when {
+      EQEQ(arg0 = <this>.<get-x>(), arg1 = tmp_14.<get-x>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_15: Int = 1
+    tmp_15 = tmp_15.times(other = 59).plus(other = <this>.<get-x>().hashCode())
+    return tmp_15
+  }
+
+  override fun toString(): String {
+    return "WithBackingFieldAndGetter(" + "x=" + <this>.<get-x>() + ')'
+  }
+
 }
 
 @Data
@@ -191,6 +404,25 @@ class WithComputedProperties {
     super/*Any*/()
     /* <init>() */
 
+  }
+
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is WithComputedProperties -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_16: Int = 1
+    return tmp_16
+  }
+
+  override fun toString(): String {
+    return "WithComputedProperties(" + ')'
   }
 
   val computedProp: String
@@ -210,6 +442,30 @@ class WithComputedPropertyFirst {
     super/*Any*/()
     /* <init>() */
 
+  }
+
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is WithComputedPropertyFirst -> return false
+    }
+    val tmp_17: WithComputedPropertyFirst = other /*as WithComputedPropertyFirst */
+    when {
+      EQEQ(arg0 = <this>.<get-b>(), arg1 = tmp_17.<get-b>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_18: Int = 1
+    tmp_18 = tmp_18.times(other = 59).plus(other = <this>.<get-b>().hashCode())
+    return tmp_18
+  }
+
+  override fun toString(): String {
+    return "WithComputedPropertyFirst(" + "b=" + <this>.<get-b>() + ')'
   }
 
   val computedProp: Int
@@ -233,6 +489,34 @@ class WithComputedPropertyInTheMiddle {
     super/*Any*/()
     /* <init>() */
 
+  }
+
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is WithComputedPropertyInTheMiddle -> return false
+    }
+    val tmp_19: WithComputedPropertyInTheMiddle = other /*as WithComputedPropertyInTheMiddle */
+    when {
+      EQEQ(arg0 = <this>.<get-a>(), arg1 = tmp_19.<get-a>()).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.<get-c>(), arg1 = tmp_19.<get-c>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_20: Int = 1
+    tmp_20 = tmp_20.times(other = 59).plus(other = <this>.<get-a>().hashCode())
+    tmp_20 = tmp_20.times(other = 59).plus(other = <this>.<get-c>().hashCode())
+    return tmp_20
+  }
+
+  override fun toString(): String {
+    return "WithComputedPropertyInTheMiddle(" + "a=" + <this>.<get-a>() + ", c=" + <this>.<get-c>() + ')'
   }
 
   val computedProp: Int
@@ -262,6 +546,30 @@ class WithDollarPrefixedProperties {
 
   }
 
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is WithDollarPrefixedProperties -> return false
+    }
+    val tmp_21: WithDollarPrefixedProperties = other /*as WithDollarPrefixedProperties */
+    when {
+      EQEQ(arg0 = <this>.<get-regular>(), arg1 = tmp_21.<get-regular>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_22: Int = 1
+    tmp_22 = tmp_22.times(other = 59).plus(other = <this>.<get-regular>().hashCode())
+    return tmp_22
+  }
+
+  override fun toString(): String {
+    return "WithDollarPrefixedProperties(" + "regular=" + <this>.<get-regular>() + ", $explicitlyIncluded=" + <this>.<get-$explicitlyIncluded>() + ')'
+  }
+
 }
 
 @Data
@@ -280,6 +588,34 @@ class WithExclude {
 
   }
 
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is WithExclude -> return false
+    }
+    val tmp_23: WithExclude = other /*as WithExclude */
+    when {
+      EQEQ(arg0 = <this>.<get-a>(), arg1 = tmp_23.<get-a>()).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.<get-b>(), arg1 = tmp_23.<get-b>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_24: Int = 1
+    tmp_24 = tmp_24.times(other = 59).plus(other = <this>.<get-a>().hashCode())
+    tmp_24 = tmp_24.times(other = 59).plus(other = <this>.<get-b>().hashCode())
+    return tmp_24
+  }
+
+  override fun toString(): String {
+    return "WithExclude(" + "a=" + <this>.<get-a>() + ')'
+  }
+
 }
 
 @Data
@@ -292,6 +628,30 @@ class WithExistingNonConflictingToString {
     super/*Any*/()
     /* <init>() */
 
+  }
+
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is WithExistingNonConflictingToString -> return false
+    }
+    val tmp_25: WithExistingNonConflictingToString = other /*as WithExistingNonConflictingToString */
+    when {
+      EQEQ(arg0 = <this>.<get-x>(), arg1 = tmp_25.<get-x>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_26: Int = 1
+    tmp_26 = tmp_26.times(other = 59).plus(other = <this>.<get-x>().hashCode())
+    return tmp_26
+  }
+
+  override fun toString(): String {
+    return "WithExistingNonConflictingToString(" + "x=" + <this>.<get-x>() + ')'
   }
 
   fun toString(p: Boolean): String {
@@ -315,6 +675,26 @@ class WithExistingToString {
 
   }
 
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is WithExistingToString -> return false
+    }
+    val tmp_27: WithExistingToString = other /*as WithExistingToString */
+    when {
+      EQEQ(arg0 = <this>.<get-x>(), arg1 = tmp_27.<get-x>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_28: Int = 1
+    tmp_28 = tmp_28.times(other = 59).plus(other = <this>.<get-x>().hashCode())
+    return tmp_28
+  }
+
   override fun toString(): String {
     return "custom"
   }
@@ -331,6 +711,30 @@ class WithImplicitReturnTypeProperty {
     super/*Any*/()
     /* <init>() */
 
+  }
+
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is WithImplicitReturnTypeProperty -> return false
+    }
+    val tmp_29: WithImplicitReturnTypeProperty = other /*as WithImplicitReturnTypeProperty */
+    when {
+      EQEQ(arg0 = <this>.<get-implicitReturnTypeProp>(), arg1 = tmp_29.<get-implicitReturnTypeProp>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_30: Int = 1
+    tmp_30 = tmp_30.times(other = 59).plus(other = <this>.<get-implicitReturnTypeProp>().hashCode())
+    return tmp_30
+  }
+
+  override fun toString(): String {
+    return "WithImplicitReturnTypeProperty(" + "implicitReturnTypeProp=" + <this>.<get-implicitReturnTypeProp>() + ')'
   }
 
 }
@@ -351,6 +755,34 @@ class WithIncludeCustomName {
 
   }
 
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is WithIncludeCustomName -> return false
+    }
+    val tmp_31: WithIncludeCustomName = other /*as WithIncludeCustomName */
+    when {
+      EQEQ(arg0 = <this>.<get-x>(), arg1 = tmp_31.<get-x>()).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.<get-y>(), arg1 = tmp_31.<get-y>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_32: Int = 1
+    tmp_32 = tmp_32.times(other = 59).plus(other = <this>.<get-x>().hashCode())
+    tmp_32 = tmp_32.times(other = 59).plus(other = <this>.<get-y>().hashCode())
+    return tmp_32
+  }
+
+  override fun toString(): String {
+    return "WithIncludeCustomName(" + "myName=" + <this>.<get-x>() + ", y=" + <this>.<get-y>() + ')'
+  }
+
 }
 
 @Data
@@ -363,6 +795,30 @@ class WithNonConflictingContextualFunction {
     super/*Any*/()
     /* <init>() */
 
+  }
+
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is WithNonConflictingContextualFunction -> return false
+    }
+    val tmp_33: WithNonConflictingContextualFunction = other /*as WithNonConflictingContextualFunction */
+    when {
+      EQEQ(arg0 = <this>.<get-b>(), arg1 = tmp_33.<get-b>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_34: Int = 1
+    tmp_34 = tmp_34.times(other = 59).plus(other = <this>.<get-b>().hashCode())
+    return tmp_34
+  }
+
+  override fun toString(): String {
+    return "WithNonConflictingContextualFunction(" + "b=" + <this>.<get-b>() + ')'
   }
 
   context(p: WithNonConflictingContextualFunction)
@@ -382,6 +838,30 @@ class WithNonConflictingExtensionFunction {
     super/*Any*/()
     /* <init>() */
 
+  }
+
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is WithNonConflictingExtensionFunction -> return false
+    }
+    val tmp_35: WithNonConflictingExtensionFunction = other /*as WithNonConflictingExtensionFunction */
+    when {
+      EQEQ(arg0 = <this>.<get-a>(), arg1 = tmp_35.<get-a>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_36: Int = 1
+    tmp_36 = tmp_36.times(other = 59).plus(other = <this>.<get-a>().hashCode())
+    return tmp_36
+  }
+
+  override fun toString(): String {
+    return "WithNonConflictingExtensionFunction(" + "a=" + <this>.<get-a>() + ')'
   }
 
   fun WithNonConflictingExtensionFunction.toString(): String {
@@ -410,6 +890,38 @@ class WithRank {
 
   }
 
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is WithRank -> return false
+    }
+    val tmp_37: WithRank = other /*as WithRank */
+    when {
+      EQEQ(arg0 = <this>.<get-lowRank>(), arg1 = tmp_37.<get-lowRank>()).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.<get-defaultRank>(), arg1 = tmp_37.<get-defaultRank>()).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.<get-highRank>(), arg1 = tmp_37.<get-highRank>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_38: Int = 1
+    tmp_38 = tmp_38.times(other = 59).plus(other = <this>.<get-lowRank>().hashCode())
+    tmp_38 = tmp_38.times(other = 59).plus(other = <this>.<get-defaultRank>().hashCode())
+    tmp_38 = tmp_38.times(other = 59).plus(other = <this>.<get-highRank>().hashCode())
+    return tmp_38
+  }
+
+  override fun toString(): String {
+    return "WithRank(" + "highRank=" + <this>.<get-highRank>() + ", defaultRank=" + <this>.<get-defaultRank>() + ", lowRank=" + <this>.<get-lowRank>() + ')'
+  }
+
 }
 
 @Data
@@ -432,6 +944,38 @@ class WithSameRank {
 
   }
 
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is WithSameRank -> return false
+    }
+    val tmp_39: WithSameRank = other /*as WithSameRank */
+    when {
+      EQEQ(arg0 = <this>.<get-a>(), arg1 = tmp_39.<get-a>()).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.<get-b>(), arg1 = tmp_39.<get-b>()).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.<get-c>(), arg1 = tmp_39.<get-c>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_40: Int = 1
+    tmp_40 = tmp_40.times(other = 59).plus(other = <this>.<get-a>().hashCode())
+    tmp_40 = tmp_40.times(other = 59).plus(other = <this>.<get-b>().hashCode())
+    tmp_40 = tmp_40.times(other = 59).plus(other = <this>.<get-c>().hashCode())
+    return tmp_40
+  }
+
+  override fun toString(): String {
+    return "WithSameRank(" + "a=" + <this>.<get-a>() + ", b=" + <this>.<get-b>() + ", c=" + <this>.<get-c>() + ')'
+  }
+
 }
 
 @Data
@@ -440,6 +984,10 @@ object EmptyObject {
     super/*Any*/()
     /* <init>() */
 
+  }
+
+  override fun toString(): String {
+    return "EmptyObject()"
   }
 
 }
@@ -460,6 +1008,10 @@ object ObjectWithProperties {
 
   }
 
+  override fun toString(): String {
+    return "ObjectWithProperties(" + "version=" + <this>.<get-version>() + ", label=" + <this>.<get-label>() + ')'
+  }
+
 }
 
 fun box(): String {
@@ -471,7 +1023,7 @@ fun box(): String {
   assertEquals<String>(expected = "WithComputedProperties()", actual = WithComputedProperties().toString())
   assertEquals<String>(expected = "WithComputedPropertyFirst(b=2)", actual = WithComputedPropertyFirst().toString())
   assertEquals<String>(expected = "WithComputedPropertyInTheMiddle(a=1, c=3)", actual = WithComputedPropertyInTheMiddle().toString())
-  assertEquals<String>(expected = "CallSuperWithComputedPropertyFirst(super=CallSuperBase(baseProp=10), ownProp=2)", actual = CallSuperWithComputedPropertyFirst().toString())
+  assertEquals<String>(expected = "CallSuperWithComputedPropertyFirst(ownProp=2)", actual = CallSuperWithComputedPropertyFirst().toString())
   assertEquals<String>(expected = "WithImplicitReturnTypeProperty(implicitReturnTypeProp=implicit return type)", actual = WithImplicitReturnTypeProperty().toString())
   assertEquals<String>(expected = "WithBackingFieldAndGetter(x=42)", actual = WithBackingFieldAndGetter().toString())
   assertEquals<String>(expected = "WithNonConflictingExtensionFunction(a=6)", actual = WithNonConflictingExtensionFunction(a = 6).toString())
@@ -491,13 +1043,37 @@ fun box(): String {
 
     }
 
+    override fun equals(other: Any?): Boolean {
+      when {
+        EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+      }
+      when {
+        other !is LocalClass -> return false
+      }
+      val tmp_41: LocalClass = other /*as LocalClass */
+      when {
+        EQEQ(arg0 = <this>.<get-prop>(), arg1 = tmp_41.<get-prop>()).not() -> return false
+      }
+      return true
+    }
+
+    override fun hashCode(): Int {
+      var tmp_42: Int = 1
+      tmp_42 = tmp_42.times(other = 59).plus(other = <this>.<get-prop>().hashCode())
+      return tmp_42
+    }
+
+    override fun toString(): String {
+      return "LocalClass(" + "prop=" + <this>.<get-prop>() + ')'
+    }
+
   }
 
   assertEquals<String>(expected = "LocalClass(prop=TestLocalClass)", actual = LocalClass(prop = "TestLocalClass").toString())
   assertEquals<String>(expected = "WithRank(highRank=hi, defaultRank=mid, lowRank=lo)", actual = WithRank(lowRank = "lo", defaultRank = "mid", highRank = "hi").toString())
   assertEquals<String>(expected = "WithSameRank(a=1, b=2, c=3)", actual = WithSameRank(a = "1", b = "2", c = "3").toString())
   assertEquals<String>(expected = "CallSuperBase(baseProp=10)", actual = CallSuperBase(baseProp = 10).toString())
-  assertEquals<String>(expected = "CallSuperDerived(super=CallSuperBase(baseProp=10), ownProp=hello)", actual = CallSuperDerived(ownProp = "hello").toString())
+  assertEquals<String>(expected = "CallSuperDerived(ownProp=hello)", actual = CallSuperDerived(ownProp = "hello").toString())
   val withExplicitToString: String = DataWithExplicitToString(own = 5).toString()
   assertEquals<String>(expected = "DataWithExplicitToString(super=CallSuperBase(baseProp=10), own=5)", actual = withExplicitToString)
   assertEquals<String>(expected = "WithArrays(objectArray=[a, b], nestedArray=[[a], [b]], intArray=[1, 2], charArray=[x, y], nullArray=null)", actual = WithArrays().toString())

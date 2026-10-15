@@ -7,16 +7,16 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
-<!ANNOTATION_IS_NOT_SUPPORTED!>@Data<!>
+@Data
 class Simple(val name: String, val age: Int) {
     @EqualsAndHashCode.Exclude
     val megaName: String = "Super $name"
 }
 
-<!ANNOTATION_IS_NOT_SUPPORTED!>@Data<!>
+@Data
 class WithExclude(val a: String, @EqualsAndHashCode.Exclude val b: String)
 
-<!ANNOTATION_IS_NOT_SUPPORTED!>@Data<!>
+@Data
 data class DataClassWithExclude(
     val name: String,
     val age: Int,
@@ -24,95 +24,95 @@ data class DataClassWithExclude(
     val customProp: Char,
 )
 
-<!ANNOTATION_IS_NOT_SUPPORTED!>@Data<!>
+@Data
 data class PlainDataClass(val a: String, val b: Int)
 
 // Nothing is generated for an object either: it is a single instance, so the identity comparison it already has
 // is exactly what a generated `equals` would amount to, KT-88507.
-<!ANNOTATION_IS_NOT_SUPPORTED!>@Data<!>
+<!ANNOTATION_HAS_NO_EFFECT!>@Data<!>
 object SingletonObject
 
-<!ANNOTATION_IS_NOT_SUPPORTED!>@Data<!>
+<!ANNOTATION_HAS_NO_EFFECT!>@Data<!>
 object ObjectWithProperties {
     val version = "2.0"
     val label = "release"
 }
 
-<!ANNOTATION_IS_NOT_SUPPORTED!>@Data<!>
+@Data
 class WithNullable(val a: String?, val b: Int)
 
 // A null property must not hash to what a present one can hash to: `0.hashCode()` and `"".hashCode()` are both
 // 0, so a null field hashing to 0 collided with them and made non-equal instances share a hash, KT-88532.
-<!ANNOTATION_IS_NOT_SUPPORTED!>@Data<!>
+@Data
 class SingleNullableInt(val optionalId: Int?)
 
-<!ANNOTATION_IS_NOT_SUPPORTED!>@Data<!>
+@Data
 class SingleNullableString(val optional: String?)
 
 // The same, on the path that folds several properties into `result`, not the single-property shortcut.
-<!ANNOTATION_IS_NOT_SUPPORTED!>@Data<!>
+@Data
 class TwoNullableInts(val first: Int?, val second: Int?)
 
 // An array property is compared and hashed by content, not by identity: Lombok routes one through
 // `java.util.Arrays`, deeply for an object array and shallowly for a primitive one, KT-88656.
-<!ANNOTATION_IS_NOT_SUPPORTED!>@Data<!>
+@Data
 class WithObjectArray(val array: Array<String>)
 
-<!ANNOTATION_IS_NOT_SUPPORTED!>@Data<!>
+@Data
 class WithPrimitiveArray(val array: IntArray)
 
-<!ANNOTATION_IS_NOT_SUPPORTED!>@Data<!>
+@Data
 class WithNestedArray(val array: Array<Array<String>>)
 
-<!ANNOTATION_IS_NOT_SUPPORTED!>@Data<!>
+@Data
 class WithNullableArray(val array: Array<String>?)
 
-<!ANNOTATION_IS_NOT_SUPPORTED!>@Data<!>
+@Data
 class WithGenericArray<T>(val array: Array<T>)
 
 // A `$`-prefixed name is generated or internal by convention, so Lombok leaves such a property out of the
 // class's identity unless it is explicitly opted in with `@EqualsAndHashCode.Include`, KT-88636.
-<!ANNOTATION_IS_NOT_SUPPORTED!>@Data<!>
+@Data
 class WithDollarPrefixedProperties(
     val regular: String,
     val `$excludedByDefault`: String,
     @EqualsAndHashCode.Include val `$explicitlyIncluded`: String,
 )
 
-<!ANNOTATION_IS_NOT_SUPPORTED!>@Data<!>
+@Data
 class Empty
 
-<!ANNOTATION_IS_NOT_SUPPORTED!>@Data<!>
+@Data
 open class CallSuperBase(val baseProp: Int)
 
-<!ANNOTATION_IS_NOT_SUPPORTED!>@Data<!>
+@Data
 class CallSuperDerived(val ownProp: String) : CallSuperBase(10)
 
 // An explicit `@EqualsAndHashCode` takes precedence over the one implied by `@Data`.
-<!ANNOTATION_IS_NOT_SUPPORTED!>@Data<!>
+@Data
 @EqualsAndHashCode(callSuper = true)
 class DataWithExplicitEquals(val own: Int, base: Int) : CallSuperBase(base)
 
 // A user-declared `equals` alone is enough for Lombok to generate neither `equals` nor `hashCode`, silently for `@Data`.
-<!ANNOTATION_IS_NOT_SUPPORTED!>@Data<!>
+@Data
 class UserDeclaredEqualsOnly(val a: Int) {
     override fun equals(other: Any?): Boolean = other is UserDeclaredEqualsOnly
 }
 
 // KT-89189: `canEqual` must make `equals` symmetric across a hierarchy - a subtype with more state must not
 // compare equal to an instance of its looser supertype, in either direction.
-<!ANNOTATION_IS_NOT_SUPPORTED!>@Data<!>
+@Data
 open class CanEqualGrandparent(val a: Int)
 
-<!ANNOTATION_IS_NOT_SUPPORTED!>@Data<!>
+@Data
 open class CanEqualParent(a: Int, val b: Int) : CanEqualGrandparent(a)
 
-<!ANNOTATION_IS_NOT_SUPPORTED!>@Data<!>
+@Data
 class CanEqualChild(a: Int, b: Int, val c: Int) : CanEqualParent(a, b)
 
 // A user-declared `canEqual` matching the generated shape must not be duplicated - generating one on top would
 // clash with it on the JVM (CONFLICTING_JVM_DECLARATIONS) - but `equals` must still call it.
-<!ANNOTATION_IS_NOT_SUPPORTED!>@Data<!>
+@Data
 open class UserDeclaredCanEqual(val a: Int) {
     open fun canEqual(other: Any?): Boolean = other is UserDeclaredCanEqual
 }
@@ -121,38 +121,38 @@ open class UserDeclaredCanEqual(val a: Int) {
 // `equals` body ends up calling the wrong overload and throws a ClassCastException at runtime. `open`, so
 // `canEqual` is actually generated here (skipped only for a class that is both final and has no non-trivial
 // superclass) and coexists with the unrelated overload, exercising the ambiguous-lookup fix.
-<!ANNOTATION_IS_NOT_SUPPORTED!>@Data<!>
+@Data
 open class UnrelatedCanEqualOverload(val a: Int) {
     fun canEqual(x: Int): Boolean = x == a
 }
 
 // `Any` and `Any?` both erase to `canEqual(Ljava/lang/Object;)Z` on the JVM, so a non-null parameter must be
 // recognized as matching the generated shape too, or a second `canEqual` is generated on top of this one.
-<!ANNOTATION_IS_NOT_SUPPORTED!>@Data<!>
+@Data
 open class NonNullCanEqual(val a: Int) {
     open fun canEqual(other: Any): Boolean = other is NonNullCanEqual
 }
 
 // The same erasure gap reached through an unbounded type parameter rather than `Any` directly: `T` erases to
 // `java.lang.Object` just the same.
-<!ANNOTATION_IS_NOT_SUPPORTED!>@Data<!>
+@Data
 open class TypeParameterCanEqual<T>(val a: Int) {
     open fun canEqual(other: T): Boolean = other != null
 }
 
 // Neither an extension nor an overload declared before the user's own `canEqual` may be called by `equals` instead.
-<!ANNOTATION_IS_NOT_SUPPORTED!>@Data<!>
+@Data
 open class ExtensionCanEqual(val a: Int) {
     fun Int.canEqual(other: Any?): Boolean = false
 }
 
-<!ANNOTATION_IS_NOT_SUPPORTED!>@Data<!>
+@Data
 open class OverloadBeforeUserDeclaredCanEqual(val a: Int) {
     fun canEqual(x: Int): Boolean = x == a
     open fun canEqual(other: Any): Boolean = other is OverloadBeforeUserDeclaredCanEqual
 }
 
-<!ANNOTATION_IS_NOT_SUPPORTED!>@Data<!>
+@Data
 open class GenericFunctionCanEqual(val a: Int) {
     open fun <T> canEqual(other: T): Boolean = other is GenericFunctionCanEqual
 }
@@ -162,17 +162,17 @@ open class PrivateCanEqualBase {
     private fun canEqual(other: Any?): Boolean = false
 }
 
-<!ANNOTATION_IS_NOT_SUPPORTED!>@Data<!>
+@Data
 class ChildOfPrivateCanEqual(val a: Int) : PrivateCanEqualBase()
 
-<!ANNOTATION_IS_NOT_SUPPORTED!>@Data<!>
+@Data
 class WithComputedProperties(val real: String) {
     val computedProp: String get() = "computed"
 }
 
 // Nothing is generated: `java.lang.Enum` declares `equals`/`hashCode` final, so a generated one used to fail
 // verification and the class didn't even load, KT-88507. `ANNOTATION_HAS_NO_EFFECT` is reported instead.
-<!ANNOTATION_IS_NOT_SUPPORTED!>@Data<!>
+<!ANNOTATION_HAS_NO_EFFECT!>@Data<!>
 enum class Color(val hex: String) {
     RED("#FF0000"),
     GREEN("#00FF00")
@@ -333,7 +333,7 @@ fun box(): String {
 
     assertEquals(WithComputedProperties("X"), WithComputedProperties("X"))
 
-    <!ANNOTATION_IS_NOT_SUPPORTED!>@Data<!>
+    @Data
     class LocalClass(val x: Int)
     assertEquals(LocalClass(7), LocalClass(7))
     assertNotEquals(LocalClass(7), LocalClass(8))

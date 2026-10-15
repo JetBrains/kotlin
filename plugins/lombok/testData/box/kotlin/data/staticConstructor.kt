@@ -5,29 +5,29 @@ import lombok.Data
 import lombok.NoArgsConstructor
 import kotlin.test.*
 
-<!ANNOTATION_IS_NOT_SUPPORTED!>@Data(staticConstructor = "create")<!>
+@Data(staticConstructor = "create")
 class Point(val x: Int, val y: Int)
 
 // The factory takes every primary constructor parameter, not only the `val` ones Lombok would call required.
-<!ANNOTATION_IS_NOT_SUPPORTED!>@Data(staticConstructor = "create")<!>
+@Data(staticConstructor = "create")
 class Mixed(x: Int, var y: String, val z: Int) {
     val xCopy = x
 }
 
-<!ANNOTATION_IS_NOT_SUPPORTED!>@Data(staticConstructor = "create")<!>
+@Data(staticConstructor = "create")
 class Box<T>(val value: T)
 
-<!ANNOTATION_IS_NOT_SUPPORTED!>@Data(staticConstructor = "create")<!>
+@Data(staticConstructor = "create")
 class Bounded<T : Comparable<T>>(val value: T)
 
 // The factory calls the primary constructor, never the secondary one that happens to take as many parameters.
-<!ANNOTATION_IS_NOT_SUPPORTED!>@Data(staticConstructor = "create")<!>
+@Data(staticConstructor = "create")
 class WithSecondary(val x: Int, var y: String) {
     constructor(y: String) : this(0, y)
 }
 
 // The factory is not generated when its name is taken, so the primary constructor stays public.
-<!ANNOTATION_IS_NOT_SUPPORTED!>@Data(staticConstructor = "create")<!>
+@Data(staticConstructor = "create")
 class NameTaken(val x: Int) {
     companion object {
         fun create(x: Int): NameTaken = NameTaken(x + 100)
@@ -35,15 +35,15 @@ class NameTaken(val x: Int) {
 }
 
 // An explicit constructor annotation replaces the constructor `@Data` would generate, `staticConstructor` included.
-<!ANNOTATION_IS_NOT_SUPPORTED!>@Data(staticConstructor = "create")<!>
+@Data(staticConstructor = "create")
 @NoArgsConstructor(force = true)
 class WithNoArgs(val x: Int)
 
-<!ANNOTATION_IS_NOT_SUPPORTED!>@Data(staticConstructor = "create")<!>
+@Data(staticConstructor = "create")
 data class DataClass(val a: Int)
 
 // There is no factory for a vararg parameter, so the primary constructor stays public.
-<!ANNOTATION_IS_NOT_SUPPORTED!>@Data(staticConstructor = "create")<!>
+@Data(staticConstructor = "create")
 class WithVararg(vararg val items: String)
 
 fun box(): String {
@@ -76,7 +76,7 @@ fun box(): String {
 
     assertEquals(listOf("a", "b"), WithVararg("a", "b").items.toList())
 
-    <!ANNOTATION_IS_NOT_SUPPORTED!>@Data(staticConstructor = "create")<!>
+    @Data(staticConstructor = "create")
     class Local(val x: Int)
     assertEquals(Local(1), Local(1))
 

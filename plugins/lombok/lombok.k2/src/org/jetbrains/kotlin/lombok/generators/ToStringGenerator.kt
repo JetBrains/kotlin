@@ -71,6 +71,7 @@ class ToStringGenerator(session: FirSession) : FirDeclarationGenerationExtension
                     LombokNames.TO_STRING,
                     LombokNames.TO_STRING_INCLUDE_ID.asSingleFqName(),
                     LombokNames.TO_STRING_EXCLUDE_ID.asSingleFqName(),
+                    LombokNames.DATA,
                 )
             )
         }

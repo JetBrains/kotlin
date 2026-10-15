@@ -310,6 +310,14 @@ object ConeLombokAnnotations {
             annotation = annotation,
         )
 
+        fun toEqualsAndHashCode(): EqualsAndHashCode {
+            return EqualsAndHashCode(null, null, annotation)
+        }
+
+        fun toToString(): ToString {
+            return ToString(null, null, null, annotation)
+        }
+
         companion object : ConeAnnotationCompanion<Data>(LombokNames.DATA_ID) {
             override fun extract(annotation: FirAnnotation, session: FirSession): Data =
                 Data(

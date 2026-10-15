@@ -136,6 +136,34 @@ class Point {
 
   }
 
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is Point -> return false
+    }
+    val tmp_0: Point = other /*as Point */
+    when {
+      EQEQ(arg0 = <this>.<get-x>(), arg1 = tmp_0.<get-x>()).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.<get-y>(), arg1 = tmp_0.<get-y>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_1: Int = 1
+    tmp_1 = tmp_1.times(other = 59).plus(other = <this>.<get-x>().hashCode())
+    tmp_1 = tmp_1.times(other = 59).plus(other = <this>.<get-y>().hashCode())
+    return tmp_1
+  }
+
+  override fun toString(): String {
+    return "Point(" + "x=" + <this>.<get-x>() + ", y=" + <this>.<get-y>() + ')'
+  }
+
 }
 
 @Data(staticConstructor = "create")

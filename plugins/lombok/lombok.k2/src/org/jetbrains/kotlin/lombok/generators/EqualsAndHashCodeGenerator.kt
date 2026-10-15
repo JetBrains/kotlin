@@ -89,6 +89,7 @@ class EqualsAndHashCodeGenerator(session: FirSession) : FirDeclarationGeneration
                     LombokNames.EQUALS_AND_HASH_CODE,
                     LombokNames.EQUALS_AND_HASH_CODE_INCLUDE_ID.asSingleFqName(),
                     LombokNames.EQUALS_AND_HASH_CODE_EXCLUDE_ID.asSingleFqName(),
+                    LombokNames.DATA,
                 )
             )
         }
