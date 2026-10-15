@@ -63,12 +63,12 @@ class KdJsonTest {
             isInline = false,
             isTailRec = false,
             mappedTo = null,
-            returnType = KdPrimitiveType(KdElementId("kotlin/Unit"), isMarkedNullable = false, annotations = emptyList()),
+            returnType = KdClassLikeType(emptyList(), KdElementId("kotlin/Unit"), isMarkedNullable = false, annotations = emptyList()),
             typeParameters = emptyList(),
             valueParameters = listOf(
                 KdValueParameter(
                     name = "x",
-                    type = KdPrimitiveType(KdElementId("kotlin/Int"), isMarkedNullable = false, annotations = emptyList()),
+                    type = KdClassLikeType(emptyList(), KdElementId("kotlin/Int"), isMarkedNullable = false, annotations = emptyList()),
                     isNoinline = false,
                     isCrossinline = false,
                     isVararg = false,
@@ -99,7 +99,7 @@ class KdJsonTest {
             getter = null,
             setter = null,
             mappedTo = null,
-            type = KdPrimitiveType(KdElementId("kotlin/Int"), isMarkedNullable = false, annotations = emptyList()),
+            type = KdClassLikeType(emptyList(), KdElementId("kotlin/Int"), isMarkedNullable = false, annotations = emptyList()),
             typeParameters = emptyList(),
             extensionReceiverParameter = null,
             contextParameters = emptyList(),

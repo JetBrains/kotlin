@@ -43,19 +43,6 @@ data class KdClassTypeQualifier(
 @Serializable
 sealed class KdType
 
-/**
- * A Kotlin or Java primitive type (e.g. `kotlin/Int`), represented uniformly so that consumers
- * don't need to handle Kotlin and Java primitives differently.
- */
-@Serializable
-@SerialName("primitive")
-data class KdPrimitiveType(
-    /** A reference to a Kotlin primitive class-like, e.g. `kotlin/Int` or `kotlin/Long`. */
-    val classLikeId: KdElementId,
-    val isMarkedNullable: Boolean,
-    val annotations: List<KdAnnotation>,
-) : KdType()
-
 /** A type referencing a class, interface, object, or other class-like declaration, e.g. `List<String>`. */
 @Serializable
 @SerialName("classLike")

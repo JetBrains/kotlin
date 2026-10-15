@@ -272,9 +272,6 @@
                     "$ref": "#/$defs/functional"
                 },
                 {
-                    "$ref": "#/$defs/primitive"
-                },
-                {
                     "$ref": "#/$defs/typeParameter"
                 }
             ]
@@ -989,34 +986,6 @@
                 "valueParameterTypes",
                 "contextParameterTypes",
                 "isSuspend",
-                "isMarkedNullable",
-                "annotations"
-            ],
-            "additionalProperties": false
-        },
-        "primitive": {
-            "type": "object",
-            "properties": {
-                "type": {
-                    "type": "string",
-                    "const": "primitive"
-                },
-                "classLikeId": {
-                    "type": "string"
-                },
-                "isMarkedNullable": {
-                    "type": "boolean"
-                },
-                "annotations": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/$defs/org.jetbrains.kotlin.documentation.KdAnnotation"
-                    }
-                }
-            },
-            "required": [
-                "type",
-                "classLikeId",
                 "isMarkedNullable",
                 "annotations"
             ],
