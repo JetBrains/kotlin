@@ -90,7 +90,7 @@ class WasmGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolato
         return when (specificTokens.size) {
             0 -> BatchToken.Regular
             1 -> specificTokens.single()
-            else -> BatchToken.Isolated
+            else -> Custom(specificTokens.joinToString("; "))
         }
     }
 
@@ -127,7 +127,7 @@ class WasmGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolato
 
     private fun computeToggledCheckersToken(registeredDirectives: RegisteredDirectives): ToggledCheckersToken? =
         registeredDirectives.collectToggledCheckers().let { [additional, disabled] -> additional + disabled }
-            .ifNotEmpty { ToggledCheckersToken(this) }
+            .ifNotEmpty { ToggledCheckersToken(toSortedSet()) }
 
     private fun RegisteredDirectives.collectToggledCheckers(): Pair<Set<String>, Set<String>> {
         val additionalCheckers = IrCheckersEnabledByTestDirectives.filter { it.key in this }.values.toSet()
@@ -138,4 +138,3 @@ class WasmGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolato
         return additionalCheckers to disabledIrCheckers
     }
 }
-
