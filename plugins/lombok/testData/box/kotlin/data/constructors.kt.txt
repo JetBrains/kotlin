@@ -180,3 +180,4 @@ fun box(): String {
   assertEquals<OnlySecondary>(expected = OnlySecondary(x = 1), actual = OnlySecondary(x = 1))
   return "OK"
 }
+

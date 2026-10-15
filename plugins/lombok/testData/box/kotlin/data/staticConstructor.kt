@@ -47,20 +47,20 @@ data class DataClass(val a: Int)
 class WithVararg(vararg val items: String)
 
 fun box(): String {
-    val point = Point(1, 2) // Should be Point.create(1, 2) instead
+    val point = Point.create(1, 2)
     assertEquals(1, point.x)
     assertEquals(2, point.y)
 
-    val mixed = Mixed.<!UNRESOLVED_REFERENCE!>create<!>(1, "y", 3)
+    val mixed = Mixed.create(1, "y", 3)
     assertEquals(1, mixed.xCopy)
     assertEquals("y", mixed.y)
     assertEquals(3, mixed.z)
 
-    assertEquals("value", Box.<!UNRESOLVED_REFERENCE!>create<!>("value").value)
-    <!CANNOT_INFER_PARAMETER_TYPE!>assertEquals<!>(Box.<!UNRESOLVED_REFERENCE!>create<!>(listOf(1)), Box.<!UNRESOLVED_REFERENCE!>create<!>(listOf(1)))
-    assertEquals(42, Bounded.<!UNRESOLVED_REFERENCE!>create<!>(42).value)
+    assertEquals("value", Box.create("value").value)
+    assertEquals(Box.create(listOf(1)), Box.create(listOf(1)))
+    assertEquals(42, Bounded.create(42).value)
 
-    val withSecondary = WithSecondary.<!UNRESOLVED_REFERENCE!>create<!>(1, "y")
+    val withSecondary = WithSecondary.create(1, "y")
     assertEquals(1, withSecondary.x)
     assertEquals("y", withSecondary.y)
     assertEquals(0, WithSecondary("z").x)
@@ -71,8 +71,8 @@ fun box(): String {
     assertEquals(0, WithNoArgs().x)
     assertEquals(5, WithNoArgs(5).x)
 
-    <!CANNOT_INFER_PARAMETER_TYPE!>assertEquals<!>(DataClass.<!UNRESOLVED_REFERENCE!>create<!>(1), DataClass.<!UNRESOLVED_REFERENCE!>create<!>(1))
-    assertEquals("DataClass(a=1)", DataClass.<!UNRESOLVED_REFERENCE!>create<!>(1).toString())
+    assertEquals(DataClass.create(1), DataClass.create(1))
+    assertEquals("DataClass(a=1)", DataClass.create(1).toString())
 
     assertEquals(listOf("a", "b"), WithVararg("a", "b").items.toList())
 
