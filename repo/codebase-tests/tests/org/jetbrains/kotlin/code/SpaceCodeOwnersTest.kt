@@ -7,10 +7,12 @@ package org.jetbrains.kotlin.code
 
 import org.eclipse.jgit.ignore.FastIgnoreRule
 import org.eclipse.jgit.ignore.IgnoreNode
+import org.jetbrains.kotlin.testFederation.isTestFederationIgnored
 import org.junit.jupiter.api.Test
 import java.io.File
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
+import kotlin.test.assertTrue
 import kotlin.test.fail
 
 class SpaceCodeOwnersTest {
@@ -220,6 +222,7 @@ class SpaceCodeOwnersTest {
         fun visitFile(file: File, parentMatch: ItemUse?) {
             val path = file.path.replace(File.separatorChar, '/')
             if (ignoreTracker.isIgnored(path, isDirectory = false)) return
+            if (file.toRepositoryPath().isTestFederationIgnored) return
 
             val matchedItem = findMatchLine(path, isDirectory = false, parentMatch)
             if (matchedItem != fallbackMatcher) return
@@ -232,6 +235,7 @@ class SpaceCodeOwnersTest {
             val path = directory.path.replace(File.separatorChar, '/')
 
             if (ignoreTracker.isIgnored(path, isDirectory = true)) return
+            if (directory.toRepositoryPath().isTestFederationIgnored) return
             val directoryMatch = findMatchLine(path, isDirectory = true, parentMatch)
             ignoreTracker.withDirectory(directory) {
                 for (childName in (directory.list() ?: emptyArray())) {
@@ -254,7 +258,18 @@ class SpaceCodeOwnersTest {
         }
 
         fun unusedMatchers(): List<ItemUse> {
-            return matchers.filterNot { it.used }
+            return matchers.filterNot { it.used || isIgnoredPattern(it.item.pattern) }
+        }
+
+        private fun isIgnoredPattern(pattern: String): Boolean {
+            val path = pattern.removePrefix("/").removeSuffix("/")
+            // A name-only rule can match anywhere, including nonignored paths.
+            if (!pattern.startsWith('/') && '/' !in path) return false
+
+            val literalPrefix = path.takeWhile { it !in "*?[\\" }
+            // For globs, only an ignored literal parent directory proves that all matches are ignored.
+            val ignoredPath = if (literalPrefix == path) path else literalPrefix.substringBeforeLast('/', "")
+            return ignoredPath.isNotEmpty() && File(ignoredPath).toRepositoryPath().isTestFederationIgnored
         }
     }
 }
@@ -292,7 +307,7 @@ private data class CodeOwners(
     val userOwners: List<UserOwnerEntry>,
     val githubOwners: List<GitHubOwnerEntry>,
     val patterns: List<OwnershipPattern>,
-    val branchRules: List<BranchRule> = emptyList()
+    val branchRules: List<BranchRule> = emptyList(),
 ) {
     data class OwnerListEntry(val name: String, val line: Int) {
         override fun toString(): String {
