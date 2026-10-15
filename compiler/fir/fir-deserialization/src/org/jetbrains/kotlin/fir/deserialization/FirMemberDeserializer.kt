@@ -244,6 +244,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
             typeParameters += local.typeDeserializer.ownTypeParameters.map { it.fir }
             deprecationsProvider = annotations.getDeprecationsProviderFromAnnotations(c.session, fromJava = false, versionRequirements)
+            applyKDoc(c.kdocDeserializer.loadTypeAliasKDoc(proto))
         }.apply {
             this.versionRequirements = versionRequirements
             sourceElement = c.containerSource
@@ -302,6 +303,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 )
             )
             containingClassForStaticMemberAttr = c.dispatchReceiver?.lookupTag
+            attributes.applyKDoc(c.kdocDeserializer.loadPropertyGetterKDoc(proto))
         }
     }
 
@@ -367,6 +369,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 )
             )
             containingClassForStaticMemberAttr = c.dispatchReceiver?.lookupTag
+            attributes.applyKDoc(c.kdocDeserializer.loadPropertySetterKDoc(proto))
         }
     }
 
