@@ -10,7 +10,11 @@ import org.gradle.api.file.FileSystemOperations
 import org.gradle.internal.extensions.core.serviceOf
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.zipTo
+import org.junit.jupiter.api.DynamicTest
+import org.junit.jupiter.api.DynamicTest.dynamicTest
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestFactory
+import org.junit.jupiter.api.assertNotNull
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import kotlin.test.assertEquals
@@ -39,7 +43,7 @@ class GradleNodeModuleBuilderE2ETest {
             "evil.js" to "module.exports = {}",
         )
 
-        assertFailsWith<IllegalStateException> { builderFor(jar, cacheDir).rebuild() }
+        assertFailsWith<IllegalArgumentException> { builderFor(jar, cacheDir).rebuild() }
 
         assertTrue(keepMe.exists(), "a directory outside the cache must not be deleted")
         assertTrue(cacheDir.listFiles().isNullOrEmpty(), "nothing should be written for a rejected name")
@@ -54,29 +58,62 @@ class GradleNodeModuleBuilderE2ETest {
         val cacheDir = tempDir.cacheDir()
         val jar = tempDir.jar("meta", "...meta.js" to "module.exports = {}")
 
-        assertFailsWith<IllegalStateException> { builderFor(jar, cacheDir).rebuild() }
+        assertFailsWith<IllegalArgumentException> { builderFor(jar, cacheDir).rebuild() }
 
         assertTrue(cacheDir.listFiles().isNullOrEmpty(), "nothing should be written for a rejected name")
     }
 
+    /** The version also comes from `package.json`. It must not move the package into another package's directory. */
     @Test
-    fun importsLegitimatePackage(
+    fun keepsVersionWithPathSegmentsInPackageDirectory(
         @TempDir
         tempDir: File,
     ) {
         val cacheDir = tempDir.cacheDir()
+        val otherPackage = cacheDir.resolve("react/1.0.0/package.json").apply {
+            parentFile.mkdirs()
+            writeText("{}")
+        }
         val jar = tempDir.jar(
-            "legit",
-            "package.json" to """{ "name": "my-package", "version": "1.0.0" }""",
+            "version",
+            "package.json" to """{ "name": "my-package", "version": "../react/1.0.0" }""",
             "my-package.js" to "module.exports = {}",
         )
 
         val dir = builderFor(jar, cacheDir).rebuild()
 
-        assertEquals(cacheDir.resolve("my-package").resolve("1.0.0"), dir)
-        assertTrue(dir!!.resolve("package.json").exists(), "package.json should be written")
-        assertTrue(dir.resolve("my-package.js").exists(), "runtime files should be copied")
+        assertTrue(otherPackage.exists(), "another cached package must not be deleted")
+        assertEquals(cacheDir.resolve("my-package"), dir?.parentFile)
     }
+
+    @TestFactory
+    fun importsLegitimatePackages(
+        @TempDir
+        tempDir: File,
+    ): List<DynamicTest> =
+        listOf(
+            "my-package",
+            "@scope/my-package",
+            // spaces aren't valid in npm package names, but KGP doesn't enforce this, so technically spaces are allowed
+            "My Project-lib",
+        ).mapIndexed { index, name ->
+            dynamicTest(name) {
+                val caseDir = tempDir.resolve("case$index")
+                val cacheDir = caseDir.cacheDir()
+                val jar = caseDir.jar(
+                    "legit",
+                    "package.json" to """{ "name": "$name", "version": "1.0.0" }""",
+                    "index.js" to "module.exports = {}",
+                )
+
+                val dir = builderFor(jar, cacheDir).rebuild()
+
+                assertEquals(cacheDir.resolve(name).resolve("1.0.0"), dir)
+                assertNotNull(dir)
+                assertTrue(dir.resolve("package.json").exists(), "package.json should be written")
+                assertTrue(dir.resolve("index.js").exists(), "runtime files should be copied")
+            }
+        }
 
     private val project = buildProject()
 
@@ -89,7 +126,7 @@ class GradleNodeModuleBuilderE2ETest {
         cacheDir = cacheDir,
     ).apply { visitArtifacts() }
 
-    // Nested like the real cache, so `../..` stays in the temp dir
+    /** Nested like the real cache, so `../..` stays in the temp dir */
     private fun File.cacheDir(): File = resolve("build/js/packages_imported").apply { mkdirs() }
 
     private fun File.jar(name: String, vararg entries: Pair<String, String>): File {
