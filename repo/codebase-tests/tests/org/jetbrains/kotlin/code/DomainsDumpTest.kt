@@ -8,16 +8,19 @@ package org.jetbrains.kotlin.code
 import kotlinx.coroutines.*
 import org.jetbrains.kotlin.code.DomainsDumpTest.Companion.sanitize
 import org.jetbrains.kotlin.repoTestFixtures.isGitIgnored
+import org.jetbrains.kotlin.test.isTeamCityBuild
 import org.jetbrains.kotlin.testFederation.Domain
 import org.jetbrains.kotlin.testFederation.RepositoryPath
 import org.jetbrains.kotlin.testFederation.allDomainInfos
 import org.jetbrains.kotlin.testFederation.domains
+import org.jetbrains.kotlin.testFederation.isTestFederationIgnored
 import org.jetbrains.kotlin.tooling.core.withClosure
 import org.opentest4j.AssertionFailedError
 import org.opentest4j.FileInfo
 import java.io.File
 import java.nio.file.FileSystems
 import java.nio.file.Path
+import kotlin.io.path.Path
 import kotlin.io.path.absolute
 import kotlin.io.path.invariantSeparatorsPathString
 import kotlin.io.path.isDirectory
@@ -29,15 +32,19 @@ class DomainsDumpTest {
     @Test
     fun `test - domains dump is up to date`() {
         val tree = generateDomainsTree()
-        val actualText = tree.generateDomainsDump()
-        val expectText = domainsDumpFile.readText().sanitize()
 
-        if (expectText != actualText) {
-            throw AssertionFailedError(
-                "${domainsDumpFile.name} mismatch: ${domainsDumpFile.name}",
-                FileInfo(domainsDumpFile.absolutePath, expectText.encodeToByteArray()),
-                actualText,
-            )
+        domainsDumpFile.checkDump(tree.generateDomainsDump()) { expectText, actualText ->
+            if (expectText != actualText) {
+                throw AssertionFailedError(
+                    "${domainsDumpFile.name} mismatch: ${domainsDumpFile.name}",
+                    FileInfo(domainsDumpFile.absolutePath, expectText.encodeToByteArray()),
+                    actualText,
+                )
+            }
+        }
+
+        domainsIgnoreDumpFile.checkDump(tree.generateDomainsIgnoreDump()) { expectedText, actualText ->
+            assertIgnoredPathsDumpContains(expectedText, actualText)
         }
 
         /* Check if any 'include' or 'exclude' rules are orphan (not matching anything) */
@@ -96,13 +103,18 @@ class DomainsDumpTest {
     object Update {
         @JvmStatic
         fun main(args: Array<String>) {
-            val actualText = generateDomainsTree().generateDomainsDump()
-            val expectText = domainsDumpFile.readText().sanitize()
-            if (actualText != expectText) {
-                domainsDumpFile.writeText(actualText)
-                println("Updated: ${domainsDumpFile.toURI().toURL()}")
-            } else {
-                println("Up to date: ${domainsDumpFile.toURI().toURL()}")
+            val tree = generateDomainsTree()
+            mapOf(
+                domainsDumpFile to tree.generateDomainsDump(),
+                domainsIgnoreDumpFile to tree.generateDomainsIgnoreDump(),
+            ).forEach { [file, actualText] ->
+                val expectText = if (file.isFile) file.readText().sanitize() else null
+                if (actualText != expectText) {
+                    file.writeText(actualText)
+                    println("Updated: ${file.toURI().toURL()}")
+                } else {
+                    println("Up to date: ${file.toURI().toURL()}")
+                }
             }
         }
     }
@@ -111,6 +123,58 @@ class DomainsDumpTest {
 private val repositoryRoot = File(".").toPath().absolute()
 
 private val domainsDumpFile = File("repo/domains.dump.txt")
+
+private val domainsIgnoreDumpFile = File("repo/domains.ignore.dump.txt")
+
+internal fun File.checkDump(actualText: String, isTeamCity: Boolean = isTeamCityBuild, check: (String, String) -> Unit) {
+    try {
+        check(readText().sanitize(), actualText)
+    } catch (failure: AssertionFailedError) {
+        if (isTeamCity) {
+            resolveSibling("$nameWithoutExtension-actual.txt").writeText(actualText)
+        }
+        throw failure
+    }
+}
+
+/**
+ * We do not assert that the dump matches fully.
+ * Removing an ignored filed is still allowed to be 'fast tracked on CI', but could render the dump 'stale' which could block merges.
+ * Therefore, it is acceptable to have entries in the ignored dump which would be ignored, but  no longer exist in the repostiory.
+ * Regular updates to the dumps will remove such entries
+ */
+internal fun assertIgnoredPathsDumpContains(expectedText: String, actualText: String) {
+    fun String.entries(): Set<String> = lineSequence()
+        .map { it.trim() }
+        .filter { it.startsWith("- ") }
+        .map { it.removePrefix("- ") }
+        .toSet()
+
+    val expectedPaths = expectedText.entries()
+    val actualPaths = actualText.entries()
+    val missingPaths = actualPaths - expectedPaths
+
+    val noLongerIgnoredPaths = (expectedPaths - actualPaths)
+        .filterNot { path -> RepositoryPath(repositoryRoot, Path(path)).isTestFederationIgnored }
+
+    if (missingPaths.isNotEmpty() || noLongerIgnoredPaths.isNotEmpty()) {
+        throw AssertionFailedError(
+            buildString {
+                appendLine("${domainsIgnoreDumpFile.name} mismatch:")
+                if (missingPaths.isNotEmpty()) {
+                    appendLine("Missing ignored paths:")
+                    missingPaths.forEach { appendLine(" - $it") }
+                }
+                if (noLongerIgnoredPaths.isNotEmpty()) {
+                    appendLine("Extra paths no longer covered by ignore rules:")
+                    noLongerIgnoredPaths.forEach { appendLine(" - $it") }
+                }
+            },
+            FileInfo(domainsIgnoreDumpFile.absolutePath, expectedText.encodeToByteArray()),
+            actualText,
+        )
+    }
+}
 
 private fun generateDomainsTree(): Node {
     return runBlocking(Dispatchers.Default) {
@@ -122,10 +186,7 @@ private fun generateDomainsTree(): Node {
 
 private fun Node.generateDomainsDump(): String {
     return buildString {
-        appendLine("####################################################")
-        appendLine("This dump is generated by ${DomainsDumpTest::class.simpleName}.kt")
-        appendLine("####################################################")
-        appendLine()
+        appendDumpHeader()
 
         fun <T> sorting() = compareBy<Map.Entry<Collection<Domain>, T>> { [domains, _] -> domains.size }
             .thenComparing { [domains, _] -> domains.sumOf { it.ordinal } }
@@ -141,11 +202,25 @@ private fun Node.generateDomainsDump(): String {
                 appendLine()
             }
 
-        appendLine("ignored:")
-        allNodes.flatMap { it.ignored }.toSet().sortedBy { it.value }.forEach { ignored ->
-            appendLine(" - ${ignored.value.invariantSeparatorsPathString}")
-        }
     }.sanitize()
+}
+
+private fun Node.generateDomainsIgnoreDump(): String {
+    return buildString {
+        appendDumpHeader()
+        appendLine("ignored:")
+        this@generateDomainsIgnoreDump.withClosure { it.children }
+            .flatMap { it.ignored }.toSet().sortedBy { it.value }.forEach { ignored ->
+                appendLine(" - ${ignored.value.invariantSeparatorsPathString}")
+            }
+    }.sanitize()
+}
+
+private fun StringBuilder.appendDumpHeader() {
+    appendLine("####################################################")
+    appendLine("This dump is generated by ${DomainsDumpTest::class.simpleName}.kt")
+    appendLine("####################################################")
+    appendLine()
 }
 
 sealed class AbstractNode

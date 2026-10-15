@@ -111,7 +111,7 @@ tasks.register<JavaExec>("updateTestLifecycleTaskDump") {
 
 tasks.register<JavaExec>("updateDomainsDump") {
     doNotTrackState("Should always run")
-    description = "Updates the 'domains.dump.txt' file"
+    description = "Updates the 'domains.dump.txt' and 'domains.ignore.dump.txt' files"
     classpath = files(sourceSets.test.map { it.runtimeClasspath })
     workingDir = rootDir
     mainClass = $$"org.jetbrains.kotlin.code.DomainsDumpTest$Update"

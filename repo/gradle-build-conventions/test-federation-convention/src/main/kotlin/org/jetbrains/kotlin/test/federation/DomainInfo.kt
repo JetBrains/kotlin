@@ -105,6 +105,8 @@ fun DomainInfo.Companion.resolveDomainInfosOf(path: RepositoryPath): List<Domain
 val RepositoryPath.domains: List<Domain>
     get() = DomainInfo.resolveDomainInfosOf(this).map { it.domain }
 
+val RepositoryPath.isTestFederationIgnored: Boolean
+    get() = withLinearClosure { it.parentOrNull }.any { ignoreRules.includes(it) == true }
 
 /**
  * Global 'ignore' rules are evaluated in declaration order: the last matching rule wins.
