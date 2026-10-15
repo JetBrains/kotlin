@@ -111,9 +111,6 @@ object JS_DIAGNOSTICS_LIST : DiagnosticList("FirJsErrors") {
     }
 
     val EXPORT by object : DiagnosticGroup("Export") {
-        val WRONG_EXPORTED_DECLARATION by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
-            parameter<String>("kind")
-        }
         val NON_EXPORTABLE_TYPE by warning<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
             parameter<String>("kind")
             parameter<ConeKotlinType>("type")
@@ -123,9 +120,6 @@ object JS_DIAGNOSTICS_LIST : DiagnosticList("FirJsErrors") {
         }
         val NON_EXPORTABLE_TYPE_IN_SYNTHETIC_COPY_WITHOUT_CONSISTENT_VISIBILITY by warning<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
             parameter<ConeKotlinType>("type")
-        }
-        val NON_CONSUMABLE_EXPORTED_IDENTIFIER by warning<KtElement>(PositioningStrategy.DEFAULT) {
-            parameter<String>("name")
         }
         val NAMED_COMPANION_IN_EXPORTED_INTERFACE by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
 

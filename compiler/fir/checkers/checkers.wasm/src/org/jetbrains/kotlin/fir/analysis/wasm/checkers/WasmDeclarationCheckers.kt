@@ -41,6 +41,7 @@ object WasmJsDeclarationCheckers : DeclarationCheckers() {
             FirWasmJsInteropTypesChecker,
             FirWasmJsFunAnnotationChecker,
             FirJsExportAnnotationChecker,
+            FirWasmJsExportDeclarationChecker,
             FirWasmJsModuleChecker,
             FirWasmExternalFileChecker,
             FirWasmJsAssociatedObjectChecker,

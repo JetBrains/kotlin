@@ -9694,15 +9694,6 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
-    public interface WrongExportedDeclaration : KaFirDiagnostic<KtElement> {
-        override val diagnosticClass: KClass<WrongExportedDeclaration>
-            get() = WrongExportedDeclaration::class
-
-        public val kind: String
-    }
-
-    @KaUnstableDiagnosticApi
-    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface NonExportableType : KaFirDiagnostic<KtElement> {
         override val diagnosticClass: KClass<NonExportableType>
             get() = NonExportableType::class
@@ -9727,15 +9718,6 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
             get() = NonExportableTypeInSyntheticCopyWithoutConsistentVisibility::class
 
         public val type: KaType
-    }
-
-    @KaUnstableDiagnosticApi
-    @SubclassOptInRequired(KaImplementationDetail::class)
-    public interface NonConsumableExportedIdentifier : KaFirDiagnostic<KtElement> {
-        override val diagnosticClass: KClass<NonConsumableExportedIdentifier>
-            get() = NonConsumableExportedIdentifier::class
-
-        public val name: String
     }
 
     @KaUnstableDiagnosticApi
@@ -9789,6 +9771,24 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
     public interface WrongJsExportTargetVisibility : KaFirDiagnostic<KtElement> {
         override val diagnosticClass: KClass<WrongJsExportTargetVisibility>
             get() = WrongJsExportTargetVisibility::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface WrongExportedDeclaration : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<WrongExportedDeclaration>
+            get() = WrongExportedDeclaration::class
+
+        public val kind: String
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface NonConsumableExportedIdentifier : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<NonConsumableExportedIdentifier>
+            get() = NonConsumableExportedIdentifier::class
+
+        public val name: String
     }
 
     @KaUnstableDiagnosticApi

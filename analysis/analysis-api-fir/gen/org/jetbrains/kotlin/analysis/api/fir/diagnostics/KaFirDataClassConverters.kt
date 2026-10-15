@@ -574,7 +574,7 @@ private fun KaDiagnosticConverterBuilder.addConversions6() {
             token,
         )
     }
-    add(FirJsErrors.WRONG_EXPORTED_DECLARATION) { firDiagnostic ->
+    add(FirWebCommonErrors.WRONG_EXPORTED_DECLARATION) { firDiagnostic ->
         WrongExportedDeclarationImpl(
             firDiagnostic.a,
             firDiagnostic as KtDiagnosticWithSource,
@@ -5475,7 +5475,7 @@ private fun KaDiagnosticConverterBuilder.addConversions116() {
             token,
         )
     }
-    add(FirJsErrors.NON_CONSUMABLE_EXPORTED_IDENTIFIER) { firDiagnostic ->
+    add(FirWebCommonErrors.NON_CONSUMABLE_EXPORTED_IDENTIFIER) { firDiagnostic ->
         NonConsumableExportedIdentifierImpl(
             firDiagnostic.a,
             firDiagnostic as KtDiagnosticWithSource,

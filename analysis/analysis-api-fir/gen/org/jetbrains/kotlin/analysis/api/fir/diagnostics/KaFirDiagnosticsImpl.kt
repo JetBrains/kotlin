@@ -6845,12 +6845,6 @@ internal class JsExternalArgumentImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.JsExternalArgument
 
-internal class WrongExportedDeclarationImpl(
-    override val kind: String,
-    firDiagnostic: KtDiagnosticWithSource,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.WrongExportedDeclaration
-
 internal class NonExportableTypeImpl(
     override val kind: String,
     override val type: KaType,
@@ -6869,12 +6863,6 @@ internal class NonExportableTypeInSyntheticCopyWithoutConsistentVisibilityImpl(
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.NonExportableTypeInSyntheticCopyWithoutConsistentVisibility
-
-internal class NonConsumableExportedIdentifierImpl(
-    override val name: String,
-    firDiagnostic: KtDiagnosticWithSource,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.NonConsumableExportedIdentifier
 
 internal class NamedCompanionInExportedInterfaceImpl(
     firDiagnostic: KtDiagnosticWithSource,
@@ -6912,6 +6900,18 @@ internal class WrongJsExportTargetVisibilityImpl(
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.WrongJsExportTargetVisibility
+
+internal class WrongExportedDeclarationImpl(
+    override val kind: String,
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.WrongExportedDeclaration
+
+internal class NonConsumableExportedIdentifierImpl(
+    override val name: String,
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.NonConsumableExportedIdentifier
 
 internal class DelegationByDynamicImpl(
     firDiagnostic: KtDiagnosticWithSource,
