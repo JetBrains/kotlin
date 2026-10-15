@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.backend.wasm.lower
 
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
+import org.jetbrains.kotlin.backend.common.lower.MaskedDefaultArgumentFunctionFactory
+import org.jetbrains.kotlin.backend.common.lower.canHaveDefaultValue
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.isBuiltInWasmRefType
@@ -23,6 +25,7 @@ import org.jetbrains.kotlin.ir.backend.js.utils.isExplicitlyExported
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.defaultArgumentsDispatchFunction
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
@@ -38,6 +41,35 @@ val JS_EXPORT_ADAPTER by IrDeclarationOriginImpl.Regular
 val KOTLIN_TO_JS_CLOSURE_ORIGIN by IrDeclarationOriginImpl.Regular
 
 /**
+ * Creates the `$default` stubs of @JsExport functions ahead of [WasmDefaultArgumentStubGenerator], which reuses them,
+ * so that the export adapters can call them for the arguments omitted in JS. This can't be done in [JsInteropFunctionsLowering]:
+ * the stub and the adapter created for the same function within one lowering would get clashing IC signatures.
+ */
+class JsExportDefaultArgumentStubsLowering(val context: WasmBackendContext) : DeclarationTransformer {
+    // Configured the same way as in [WasmDefaultArgumentStubGenerator].
+    private val factory = MaskedDefaultArgumentFunctionFactory(context, copyOriginalFunctionLocation = false)
+
+    override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
+        // Suspend functions are skipped, as their stubs would miss the continuation parameter added later.
+        if (!context.isWasmJsTarget || declaration !is IrSimpleFunction || declaration.isSuspend) return null
+        if (!declaration.isExplicitlyExported()) return null
+        val jsRelatedSymbols = context.wasmSymbols.jsRelatedSymbols
+        factory.generateDefaultsFunction(
+            declaration,
+            skipInlineMethods = true,
+            skipExternalMethods = true,
+            forceSetOverrideSymbols = true,
+            visibility = declaration.visibility,
+            useConstructorMarker = false,
+            copiedAnnotations = declaration.copyAnnotations {
+                it.classSymbol != jsRelatedSymbols.jsExport && it.classSymbol != jsRelatedSymbols.jsExportDefault
+            },
+        )
+        return null
+    }
+}
+
+/**
  * Create wrappers for external and @JsExport functions when type adaptation is needed
  */
 class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationTransformer {
@@ -45,6 +77,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
     val symbols = context.wasmSymbols
     val jsRelatedSymbols get() = context.wasmSymbols.jsRelatedSymbols
     val adapters get() = jsRelatedSymbols.jsInteropAdapters
+    private val intOrSymbol by lazy { builtIns.intClass.getSimpleFunction(OperatorNameConventions.OR.asString())!! }
 
     val additionalDeclarations = mutableListOf<IrDeclaration>()
     lateinit var currentParent: IrDeclarationParent
@@ -172,10 +205,20 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
      *      adaptResult(foo(adaptParameter(x)));
      *
      *  fun foo(x: KotlinType): KotlinType { <original-body> }
+     *
+     *  If the function has default values, JS can omit the arguments or pass `undefined`, and the adapter calls
+     *  the `$default` stub of the function instead, with the bits of such arguments set in the masks:
+     *
+     *  fun foo__JsExportAdapter(x: JsType, y: JsType): JsType =
+     *      adaptResult(foo$default(adaptParameter(x), if (y === undefined) null else adaptParameter(y), mask, null))
      */
     fun transformExportFunction(function: IrSimpleFunction): List<IrDeclaration>? {
+        val defaultArgumentsStub = function.defaultArgumentsDispatchFunction as IrSimpleFunction?
         val valueParametersAdapters = function.parameters.map {
-            it.type.jsToKotlinAdapterIfNeeded(isReturn = false)
+            if (defaultArgumentsStub == null || it.defaultValue == null) return@map it.type.jsToKotlinAdapterIfNeeded(isReturn = false)
+            // Receive it as a nullable JS reference, which can also be `undefined`, and check for `null` only if it's not.
+            val adapter = it.type.makeNullable().jsToKotlinAdapterIfNeeded(isReturn = false)!!
+            UndefinedOrAdapter(if (it.type.isNullable()) adapter else CombineAdapter(CheckNotNullNoAdapter(it.type), adapter))
         }
         val resultAdapter =
             function.returnType.kotlinToJsAdapterIfNeeded(isReturn = true)
@@ -203,7 +246,13 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
 
         // Delegate new function to old function:
         val builder: DeclarationIrBuilder = context.createIrBuilder(newFun.symbol)
-        newFun.body = createAdapterFunctionBody(builder, newFun, function, valueParametersAdapters, resultAdapter)
+        newFun.body = if (defaultArgumentsStub == null) {
+            createAdapterFunctionBody(builder, newFun, function, valueParametersAdapters, resultAdapter)
+        } else {
+            // The handler parameter of the stub is unused for top-level functions.
+            val additionalArguments = builder.omittedArgumentsMasks(newFun, function) + builder.irNull()
+            createAdapterFunctionBody(builder, newFun, defaultArgumentsStub, valueParametersAdapters, resultAdapter, additionalArguments)
+        }
 
         newFun.annotations += builder.irAnnotation(jsRelatedSymbols.jsNameConstructor, typeArguments = emptyList()).also {
             it.arguments[0] = builder.irString(function.getJsNameOrKotlinName().identifier)
@@ -220,7 +269,8 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
         function: IrSimpleFunction,
         functionToCall: IrSimpleFunction,
         valueParametersAdapters: List<InteropTypeAdapter?>,
-        resultAdapter: InteropTypeAdapter?
+        resultAdapter: InteropTypeAdapter?,
+        additionalArguments: List<IrExpression> = emptyList(),
     ) = builder.irBlockBody {
         +irReturn(
             irCall(functionToCall).let { call ->
@@ -228,10 +278,30 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
                     val get = irGet(valueParameter)
                     call.arguments[index] = valueParametersAdapters[index].adaptIfNeeded(get, builder)
                 }
+                for ([index, argument] in additionalArguments.withIndex()) {
+                    call.arguments[function.parameters.size + index] = argument
+                }
                 resultAdapter.adaptIfNeeded(call, builder)
             }
         )
     }
+
+    /**
+     * The masks for the `$default` stub of [function], with the bits of the arguments omitted in JS set.
+     */
+    private fun DeclarationIrBuilder.omittedArgumentsMasks(adapterFunction: IrSimpleFunction, function: IrSimpleFunction) =
+        function.parameters.filter { it.canHaveDefaultValue() }.chunked(32) { parameters ->
+            parameters.foldIndexed<IrValueParameter, IrExpression>(irInt(0)) { bit, mask, parameter ->
+                if (parameter.defaultValue == null) return@foldIndexed mask
+                val isOmitted = irCall(adapters.jsIsUndefinedAdapter).also {
+                    it.arguments[0] = irGet(adapterFunction.parameters[parameter.indexInParameters])
+                }
+                irCall(intOrSymbol).also {
+                    it.arguments[0] = mask
+                    it.arguments[1] = irIfThenElse(builtIns.intType, isOmitted, irInt(1 shl bit), irInt(0))
+                }
+            }
+        }
 
     val primitivesToExternRefAdapters: Map<IrType, InteropTypeAdapter> by lazy {
         mapOf(
@@ -884,6 +954,27 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
                 +irIfNull(
                     type = toType,
                     subject = irGet(tmp),
+                    thenPart = irNull(toType),
+                    elsePart = irImplicitCast(adapter.adapt(irGet(tmp), builder), toType)
+                )
+            }
+        }
+    }
+
+    /**
+     * Effectively `if (value === undefined) null else adapter(value)`
+     */
+    inner class UndefinedOrAdapter(
+        private val adapter: InteropTypeAdapter
+    ) : InteropTypeAdapter {
+        override val fromType: IrType = adapter.fromType.makeNullable()
+        override val toType: IrType = adapter.toType.makeNullable()
+        override fun adapt(expression: IrExpression, builder: IrBuilderWithScope): IrExpression {
+            return builder.irComposite {
+                val tmp = irTemporary(expression)
+                +irIfThenElse(
+                    type = toType,
+                    condition = irCall(adapters.jsIsUndefinedAdapter).also { it.arguments[0] = irGet(tmp) },
                     thenPart = irNull(toType),
                     elsePart = irImplicitCast(adapter.adapt(irGet(tmp), builder), toType)
                 )

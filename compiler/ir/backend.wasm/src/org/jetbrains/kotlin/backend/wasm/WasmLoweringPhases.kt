@@ -152,6 +152,7 @@ val wasmLowerings: List<NamedCompilerPhase<WasmBackendContext, IrModuleFragment,
     ::ComplexExternalDeclarationsToTopLevelFunctionsLowering,
     ::ComplexExternalDeclarationsUsageLowering,
 
+    ::JsExportDefaultArgumentStubsLowering,
     ::JsInteropFunctionsLowering,
 
     ::ObjectDeclarationLowering, // Also depends on `WasmCallableReferenceLowering`, but it is hard to represent in the common phase
