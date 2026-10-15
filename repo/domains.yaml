@@ -261,3 +261,5 @@ ignore:
   - ".junie"
   - "**/ReadMe.md"
   - "**/README.md"
+  - "!license/README.md"
+  - "!**/resources/**"
