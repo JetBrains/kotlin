@@ -38,10 +38,8 @@ struct KotlinFrameAnchor {
         RuntimeCheck((uint64_t) fp % 16 == 0, "Frame pointer is not aligned on 16");
     }
 
-    // Reads the frame record this anchor points to and validates it before anything is built from it.
-    // `stackHigh` is the exclusive upper bound of the thread's stack. A frame record must lie above the
-    // current one, be 16-byte aligned and stay inside the stack; anything else means the chain is broken.
-    std::optional<KotlinFrameAnchor> next(const uint64_t* stackHigh) const {
+    // Reads the frame record this anchor points to and validates it.
+    std::optional<KotlinFrameAnchor> next() const {
         RuntimeAssert(fp != nullptr, "Current fp is null, cannot get next");
         auto* nextFp = reinterpret_cast<uint64_t*>(fp[0]);
         auto* nextPc = reinterpret_cast<uint64_t*>(fp[1]);
@@ -50,7 +48,6 @@ struct KotlinFrameAnchor {
 
         if (reinterpret_cast<uintptr_t>(nextFp) % 16 != 0) return std::nullopt;
         if (nextFp <= fp) return std::nullopt;
-        if (stackHigh != nullptr && nextFp >= stackHigh) return std::nullopt;
 
         return KotlinFrameAnchor(nextFp, nextPc);
     }

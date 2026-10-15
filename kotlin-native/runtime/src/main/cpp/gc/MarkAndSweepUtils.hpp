@@ -163,34 +163,30 @@ void collectRootSetFromMapForThread(GCHandle gcHandle, typename Traits::MarkQueu
     };
 
     const auto& anchors = thread.frameAnchors();
-    uint64_t* stackHigh = thread.stackHigh();
-    // Without known stack bounds there is no upper limit for the oldest anchor.
-    uint64_t* topLimit = stackHigh != nullptr ? stackHigh : reinterpret_cast<uint64_t*>(UINTPTR_MAX);
+    uint64_t* stackHigh = thread.stackHigh() != nullptr ? thread.stackHigh() : reinterpret_cast<uint64_t*>(UINTPTR_MAX);
 
-    // Anchors are ordered by the stack: the last one is the youngest (the lowest addresses). Each anchor
-    // is walked up to the frame of the next older anchor, which is walked by that anchor itself. Frames
-    // without a stack map (runtime C++ code between Kotlin frames) are stepped over, so a Kotlin frame
-    // under a runtime frame (Kotlin -> runtime -> Kotlin) is not lost. The oldest anchor is walked up to
-    // the end of the chain.
     for (size_t anchorIndex = anchors.size(); anchorIndex-- > 0;) {
         auto anchor = anchors[anchorIndex];
-        uint64_t* limit = anchorIndex > 0 ? anchors[anchorIndex - 1].fp : topLimit;
-        RuntimeLogDebug({logging::Tag::kGC}, "Start new anchor pc=%p fp=%p index=%zu limit=%p", anchor.pc, anchor.fp, anchorIndex, limit);
+        RuntimeLogDebug({logging::Tag::kGC}, "Start new anchor pc=%p fp=%p index=%zu stackHigh=%p", anchor.pc, anchor.fp, anchorIndex, stackHigh);
 
-        while (anchor.fp != 0 && anchor.fp < limit) {
+        // Stop when fp = 0 (fist called method) or we hit next anchor.
+        while (anchor.fp != 0 && (anchorIndex <= 0 || anchor.fp < anchors[anchorIndex - 1].fp)) {
             RuntimeLogDebug({logging::Tag::kGC}, "Visit frame pc=%p fp=%p", anchor.pc, anchor.fp);
+
             if (stackMapBuilder.hasMapForPC(anchor.pc)) {
                 collectRoots(anchor);
             }
 
-            if (auto result = anchor.next(stackHigh); result.has_value()) {
-                anchor = result.value();
-            } else {
+            auto next = anchor.next();
+
+            if (!next.has_value() || next.value().fp >= stackHigh) {
                 RuntimeFail(
                         "Broken frame chain of thread %" PRIuPTR ": anchor #%zu, frame fp=%p pc=%p, saved fp=%p, stack [%p, %p)",
                         thread.threadId(), anchorIndex, anchor.fp, anchor.pc, reinterpret_cast<void*>(anchor.fp[0]), thread.stackLow(),
                         thread.stackHigh());
             }
+
+            anchor = next.value();
         }
     }
 }
