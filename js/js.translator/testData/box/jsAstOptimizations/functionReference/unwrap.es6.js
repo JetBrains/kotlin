@@ -34,3 +34,12 @@ function boxConstructor$ref() {
 function inheritedConstructor$ref() {
   return (p0) => inheritedConstructor(p0);
 }
+function capturedInvoke$ref() {
+  return (p0) => capturedInvoke(p0);
+}
+function nestedCapturedInvoke$ref() {
+  return (p0) => nestedCapturedInvoke(p0);
+}
+function capturedAssignmentInvoke$ref() {
+  return (p0) => capturedAssignmentInvoke(p0);
+}

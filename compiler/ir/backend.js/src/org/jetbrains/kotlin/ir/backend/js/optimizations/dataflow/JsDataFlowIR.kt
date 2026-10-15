@@ -27,8 +27,9 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
  *
  * A [Node] represents either a runtime value or an operation that consumes runtime values.
  * References from a consumer to its inputs are the graph's edges; there is no separate edge
- * type. Nodes are grouped into [Node.Scope]s to preserve loop nesting, but the graph does not
- * otherwise model control flow.
+ * type. Nodes are grouped into [Node.Scope]s to preserve loop nesting, but inputs may refer to a
+ * parameter or local-variable node owned by an enclosing execution unit when that value is
+ * captured. The graph does not otherwise model control flow.
  *
  * Each executable body is represented by an [ExecutionUnit]. A [Function] combines the
  * identity and signature in [FunctionSymbol] with its analyzed [Body], while a
@@ -190,13 +191,18 @@ object JsDataFlowIR {
         /**
          * An escape sink for value flows the graph cannot model precisely.
          *
-         * Typical inputs include values captured or reassigned by nested declarations and
+         * Typical inputs include vararg elements, assignments to mutable parameter slots, and
          * operands of unrecognized IR. Consumers must assume that every node in [values] can be
          * observed in any way after reaching this sink.
          */
         class OpaqueValue(val values: List<Node>) : Node
 
-        /** A merge of all [values] that may reach the same IR local or expression result. */
+        /**
+         * A merge of all [values] that may reach the same IR local or expression result.
+         *
+         * During construction, writes from nested execution units may be appended to the variable
+         * owned by an enclosing unit. The merge is complete before [JsModuleDFG.index] is built.
+         */
         class Variable(values: List<Node>, val type: Type) : Node {
             val values = mutableListOf<Node>().also { it += values }
         }

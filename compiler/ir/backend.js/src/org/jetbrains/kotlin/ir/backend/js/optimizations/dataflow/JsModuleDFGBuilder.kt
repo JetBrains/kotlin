@@ -30,15 +30,19 @@ class JsModuleDFG(
  * Builds a [JsModuleDFG] in linked-program scope.
  *
  * The builder first pre-registers bodied callables and classes from every module. It then builds
- * execution units for function and constructor bodies and for static field initializers, allowing
- * any additional referenced identities to be interned along the way. The symbol table is sealed
- * only after all units have been built.
+ * each execution unit before visiting declarations nested inside it. This parent-first order lets
+ * nested units reuse the nodes of captured parameters and locals through a construction-only
+ * registry. The symbol table is sealed and the index is created only after all units, including
+ * writes to captured variables, have been built.
  */
 internal class JsModuleDFGBuilder(
     val context: JsIrBackendContext,
     val irModules: Iterable<IrModuleFragment>,
 ) {
     private val symbolTable = JsDataFlowIR.SymbolTable(context)
+
+    /** Nodes available to nested execution units while this DFG snapshot is being built. */
+    private val capturedValueNodes = mutableMapOf<IrValueDeclaration, JsDataFlowIR.Node>()
 
     fun build(): JsModuleDFG {
         for (irModule in irModules) {
@@ -80,11 +84,11 @@ internal class JsModuleDFGBuilder(
             }
 
             private fun analyze(irFunction: IrFunction) {
-                executionUnits += JsBodyDFGBuilder(context, symbolTable).buildFunction(irFunction)
+                executionUnits += JsBodyDFGBuilder(context, symbolTable, capturedValueNodes).buildFunction(irFunction)
             }
 
             private fun analyze(irField: IrField) {
-                executionUnits += JsBodyDFGBuilder(context, symbolTable).buildInitializer(irField)
+                executionUnits += JsBodyDFGBuilder(context, symbolTable, capturedValueNodes).buildInitializer(irField)
             }
         }
 
