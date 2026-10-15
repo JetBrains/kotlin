@@ -36,8 +36,8 @@ class XcodeProjectSerializationIT : KGPBaseTest() {
             val sampleXcodeProjectJson = XcodeProjectSerializationFixtures.sampleXcodeProjectWithEmbedAndSignIntegration
             val reserializedProjectString = buildScriptReturn {
                 ByteArrayOutputStream().use {
-                    deserializeXcodeProject(sampleXcodeProjectJson.toByteArray())
-                        .serializeXcodeProject(it)
+                    deserializePbxprojJson(sampleXcodeProjectJson.toByteArray())
+                        .serializePbxprojJson(it)
                     it.toString()
                 }
             }.buildAndReturn()
