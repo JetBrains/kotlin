@@ -220,7 +220,7 @@ private fun BodyResolveComponents.getCallableReferenceAdaptation(
      * fun foo(a: A, b: B = B(), vararg c: C)
      */
     var defaults = 0
-    var varargMappingState = VarargMappingState.UNMAPPED
+    var varargMappingState: VarargMappingState? = null
     val mappedArguments = linkedMapOf<FirValueParameter, ResolvedCallArgument<ConeResolutionAtom>>()
     val mappedVarargElements = linkedMapOf<FirValueParameter, MutableList<ConeResolutionAtom>>()
     val mappedArgumentTypes = arrayOfNulls<ConeKotlinType?>(fakeArguments.size)
@@ -248,8 +248,6 @@ private fun BodyResolveComponents.getCallableReferenceAdaptation(
                     }
                     VarargMappingState.MAPPED_WITH_PLAIN_ARGS -> {
                         mappedVarargElements.getOrPut(valueParameter) { ArrayList() }.add(fakeArgumentAtom)
-                    }
-                    VarargMappingState.UNMAPPED -> {
                     }
                 }
             } else {
@@ -332,7 +330,7 @@ private fun varargParameterTypeByExpectedParameter(
     candidate: Candidate,
     expectedParameterType: ConeKotlinType,
     parameterOfReferencedFunction: FirValueParameter,
-    varargMappingState: VarargMappingState,
+    varargMappingState: VarargMappingState?, // `null` means calling it for the first time
 ): Pair<ConeKotlinType?, VarargMappingState> {
     val elementType = parameterOfReferencedFunction.returnTypeRef.coneType.arrayElementType()
         ?: errorWithAttachment("Vararg parameter ${parameterOfReferencedFunction::class.java} does not have vararg type") {
@@ -342,7 +340,7 @@ private fun varargParameterTypeByExpectedParameter(
         }
 
     return when (varargMappingState) {
-        VarargMappingState.UNMAPPED -> {
+        null -> {
             when {
                 expectedParameterType.isArrayOrPrimitiveArray() ||
                         isApplicableTypeVariableForMappingAsArray(
@@ -419,7 +417,7 @@ private fun Constraint.doesNotContradictToArrayArgument(candidate: Candidate, ar
 }
 
 private enum class VarargMappingState {
-    UNMAPPED, MAPPED_WITH_PLAIN_ARGS, MAPPED_WITH_ARRAY
+    MAPPED_WITH_PLAIN_ARGS, MAPPED_WITH_ARRAY
 }
 
 private val ConeKotlinType.isBaseTypeForNumberedReferenceTypes: Boolean
