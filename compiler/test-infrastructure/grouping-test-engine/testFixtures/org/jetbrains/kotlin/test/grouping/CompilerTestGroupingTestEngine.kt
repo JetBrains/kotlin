@@ -148,7 +148,15 @@ class CompilerTestGroupingTestEngine : TestEngine {
             coroutineScope {
                 batches.forEachIndexed { index, batch ->
                     launch {
-                        ctx.activeBatches.withPermit { executeBatch(classContext, classDescriptor, batch, index = index + 1) }
+                        ctx.activeBatches.withPermit {
+                            try {
+                                executeBatch(classContext, classDescriptor, batch, index = index + 1)
+                            } catch (e: Throwable) {
+                                // A last resort: a failure escaping here must not cancel the other batches, which would
+                                // silently drop all their tests from the report.
+                                batch.tests.forEach { it.context.failIfUnfinished(it.method, e) }
+                            }
+                        }
                     }
                 }
             }
@@ -187,7 +195,18 @@ class CompilerTestGroupingTestEngine : TestEngine {
     /** Packs the tests of [methods] with equal batch tokens into batches. */
     context(ctx: ExecutionContext)
     private suspend fun planBatches(methods: List<TestMethodWithContext>): List<PlannedBatch> {
-        val tokens = coroutineScope { methods.map { async { planTokens(it.method, it.context) } }.awaitAll() }
+        val tokens = coroutineScope {
+            methods.map {
+                async {
+                    try {
+                        planTokens(it.method, it.context)
+                    } catch (e: Throwable) {
+                        it.context.failIfUnfinished(it.method, e)
+                        null
+                    }
+                }
+            }.awaitAll()
+        }
         val plannedMethods = methods.zip(tokens).mapNotNull { [method, tokens] -> tokens?.let { method to it } }
         return plannedMethods.groupBy({ it.second }, { it.first }).flatMap { [tokens, sameTokenMethods] ->
             // Sorted by unique id, so that which tests share a batch does not depend on the order JUnit lists them in.
@@ -218,14 +237,14 @@ class CompilerTestGroupingTestEngine : TestEngine {
         }
         val collector = methodContext.throwableCollector
         var tokens: List<BatchToken>? = null
-        collector.execute { method.execute(methodContext, DynamicTestExecutorStub) }
+        collector.executeCatchingAll { method.execute(methodContext, DynamicTestExecutorStub) }
         val testInstance = methodContext.extensionContext.testInstances
             .flatMap { it.findInstance(AbstractTwoStageKotlinCompilerTestBase::class.java) }
             .orElse(null)
         if (testInstance != null) {
-            if (collector.isEmpty) collector.execute { tokens = testInstance.computeBatchTokens() }
-            collector.execute { if (testInstance.nonGroupingStageRunnerInitialized) testInstance.nonGroupingRunner.finalizeAndDispose() }
-            collector.execute { if (testInstance.secondStageRunnerInitialized) testInstance.groupingStageRunner.finalizeAndDispose() }
+            if (collector.isEmpty) collector.executeCatchingAll { tokens = testInstance.computeBatchTokens() }
+            collector.executeCatchingAll { if (testInstance.nonGroupingStageRunnerInitialized) testInstance.nonGroupingRunner.finalizeAndDispose() }
+            collector.executeCatchingAll { if (testInstance.secondStageRunnerInitialized) testInstance.groupingStageRunner.finalizeAndDispose() }
         }
         if (collector.isEmpty) return tokens
         // The test has failed while being configured, so it never joins a batch and must be reported right here.
@@ -254,7 +273,7 @@ class CompilerTestGroupingTestEngine : TestEngine {
     /**
      * Runs the non-grouping stage of every test of the batch, then the grouping stage of the batch.
      * @return the tests to retry in isolation (see [retryInIsolation]), which are disposed, but not reported. Nothing
-     *   else of the failed run is returned, so that it does not stay reachable during the retries.
+     *   else of the failed run is returned: it may have run out of memory, so it must not stay reachable during the retries.
      */
     private suspend fun runStagesOfBatch(
         context: JupiterEngineExecutionContext,
@@ -264,8 +283,17 @@ class CompilerTestGroupingTestEngine : TestEngine {
         retryFailures: Boolean,
     ): List<TestMethodWithContext> {
         val testInfos = coroutineScope {
-            batch.tests.map { async { runNonGroupingStage(it.method, it.context, reportFailure = !retryFailures) } }
-                .awaitAll().filterNotNull()
+            batch.tests.map {
+                async {
+                    try {
+                        runNonGroupingStage(it.method, it.context, reportFailure = !retryFailures)
+                    } catch (e: Throwable) {
+                        // Must not cancel the other tests of the batch, which would neither report nor dispose them.
+                        it.context.failIfUnfinished(it.method, e)
+                        null
+                    }
+                }
+            }.awaitAll().filterNotNull()
         }
         val failedTests = testInfos.filter { it.failedWithError && retryFailures }.toMutableList()
         val successfulTests = testInfos.filterNot { it.failed || it.hadIgnoredFailuresOnNonGroupingStage }
@@ -294,8 +322,13 @@ class CompilerTestGroupingTestEngine : TestEngine {
         )
         // Sequentially: the batch holds a single permit, but every retried test needs a grouping stage of its own.
         for (test in failedTests) {
-            val testInfo = runNonGroupingStage(test.method, test.context, isRetry = true) ?: continue
-            if (!testInfo.failed && !testInfo.hadIgnoredFailuresOnNonGroupingStage) runGroupingStageOnSingleSizedBatch(testInfo)
+            try {
+                val testInfo = runNonGroupingStage(test.method, test.context, isRetry = true) ?: continue
+                if (!testInfo.failed && !testInfo.hadIgnoredFailuresOnNonGroupingStage) runGroupingStageOnSingleSizedBatch(testInfo)
+            } catch (e: Throwable) {
+                // Must not fail the tests still waiting for their retry.
+                test.context.failIfUnfinished(test.method, e)
+            }
         }
     }
 
@@ -336,15 +369,14 @@ class CompilerTestGroupingTestEngine : TestEngine {
         } else {
             methodContext.executionListener.executionStarted(method)
         }
-        methodContext.throwableCollector.execute { method.execute(methodContext, DynamicTestExecutorStub) }
-        val testInstance = methodContext.extensionContext
-            .requiredTestInstances
-            .findInstance(AbstractTwoStageKotlinCompilerTestBase::class.java)
-            .get()
+        methodContext.throwableCollector.executeCatchingAll { method.execute(methodContext, DynamicTestExecutorStub) }
+        val testInstance = methodContext.extensionContext.testInstances
+            .flatMap { it.findInstance(AbstractTwoStageKotlinCompilerTestBase::class.java) }
+            .orElse(null)
 
         // If there is no `@TestMetadata` annotation, then this is some utility test (like `testAllFilesPresentIn`)
-        // and so it should be excluded in grouping processing.
-        if (method.testMethod.annotations.none { it is TestMetadata }) {
+        // and so it should be excluded in grouping processing. Without a test instance, the test has failed to start.
+        if (testInstance == null || method.testMethod.annotations.none { it is TestMetadata }) {
             methodContext.executionListener.executionFinished(
                 method,
                 methodContext.throwableCollector.toTestExecutionResult()
@@ -353,7 +385,7 @@ class CompilerTestGroupingTestEngine : TestEngine {
         }
         val info = TestMethodInfo(method, methodContext, testInstance).apply {
             if (finishIfFailed(reportFailure)) return@apply
-            nonGroupingStageThrowableCollector.execute {
+            nonGroupingStageThrowableCollector.executeCatchingAll {
                 val testRunner = testInstance.nonGroupingRunner
                 testRunner.runTestPreprocessing()
                 testRunner.runSteps()
@@ -392,7 +424,7 @@ class CompilerTestGroupingTestEngine : TestEngine {
         val executionListener = context.executionListener
         executionListener.dynamicTestRegistered(testDescriptor)
         executionListener.executionStarted(testDescriptor)
-        throwableCollector.execute {
+        throwableCollector.executeCatchingAll {
             val testRunner = someTestInstance.groupingStageRunner
             val nonGroupingStageOutputs = batch.map { methodInfo ->
                 NonGroupingStageOutput(
@@ -415,7 +447,7 @@ class CompilerTestGroupingTestEngine : TestEngine {
             return batch
         }
         for (methodInfo in batch) {
-            methodInfo.context.throwableCollector.execute {
+            methodInfo.context.throwableCollector.executeCatchingAll {
                 // A test is checked for unmuting only if the grouping stage has not failed.
                 methodInfo.testInstance.nonGroupingRunner.failuresInterceptor.reportFailures(checkForUnmuting = batchFailure == null)
             }
@@ -443,7 +475,7 @@ class CompilerTestGroupingTestEngine : TestEngine {
     private fun runGroupingStageOnSingleSizedBatch(testInfo: TestMethodInfo, reportFailure: Boolean = true): Boolean {
         val throwableCollector = testInfo.nonGroupingStageThrowableCollector
         val testInstance = testInfo.testInstance
-        throwableCollector.execute {
+        throwableCollector.executeCatchingAll {
             val groupingRunner = testInstance.groupingStageRunner
             val nonGroupingRunner = testInstance.nonGroupingRunner
             val nonGroupingStageOutput = NonGroupingStageOutput(
@@ -520,20 +552,35 @@ class CompilerTestGroupingTestEngine : TestEngine {
 private class SynchronizedEngineExecutionListener(
     private val delegate: EngineExecutionListener,
 ) : EngineExecutionListener {
+    private val started = HashSet<TestDescriptor?>()
+    private val finished = HashSet<TestDescriptor?>()
+
     override fun dynamicTestRegistered(testDescriptor: TestDescriptor?) = synchronized(this) {
         delegate.dynamicTestRegistered(testDescriptor)
     }
 
     override fun executionStarted(testDescriptor: TestDescriptor?) = synchronized(this) {
+        started += testDescriptor
         delegate.executionStarted(testDescriptor)
     }
 
     override fun executionSkipped(testDescriptor: TestDescriptor?, reason: String?) = synchronized(this) {
+        finished += testDescriptor
         delegate.executionSkipped(testDescriptor, reason)
     }
 
     override fun executionFinished(testDescriptor: TestDescriptor?, testExecutionResult: TestExecutionResult?) = synchronized(this) {
+        finished += testDescriptor
         delegate.executionFinished(testDescriptor, testExecutionResult)
+    }
+
+    /** Reports [testDescriptor] as failed with [throwable], unless it has already been reported. */
+    fun failIfUnfinished(testDescriptor: TestDescriptor, throwable: Throwable) {
+        synchronized(this) {
+            if (testDescriptor in finished) return
+            if (testDescriptor !in started) executionStarted(testDescriptor)
+            executionFinished(testDescriptor, TestExecutionResult.failed(throwable))
+        }
     }
 
     override fun reportingEntryPublished(testDescriptor: TestDescriptor?, entry: ReportEntry?) = synchronized(this) {
@@ -564,6 +611,25 @@ private class GroupingStageTestDescriptor(
 ) : AbstractTestDescriptor(uniqueId, displayName, /* source = */ null) {
     override fun getType(): TestDescriptor.Type = TestDescriptor.Type.TEST
 }
+
+/**
+ * Unlike [ThrowableCollector.execute], which deliberately rethrows unrecoverable throwables such as `OutOfMemoryError`,
+ * collects everything, so that a test or a batch running out of memory fails alone, and is disposed and reported as
+ * usual, rather than taking the whole run down with it. An unrecoverable throwable is collected wrapped, as the
+ * collector would rethrow it again otherwise.
+ */
+private inline fun ThrowableCollector.executeCatchingAll(crossinline block: () -> Unit) {
+    try {
+        execute { block() }
+    } catch (e: Throwable) {
+        execute { throw UnrecoverableFailure(e) }
+    }
+}
+
+private class UnrecoverableFailure(cause: Throwable) : Exception("Unrecoverable failure: $cause", cause)
+
+private fun JupiterEngineExecutionContext.failIfUnfinished(testDescriptor: TestDescriptor, throwable: Throwable) =
+    (executionListener as SynchronizedEngineExecutionListener).failIfUnfinished(testDescriptor, throwable)
 
 private class TestMethodWithContext(val method: TestMethodTestDescriptor, val context: JupiterEngineExecutionContext)
 
@@ -603,10 +669,10 @@ private data class TestMethodInfo(
      */
     fun disposeRunners() {
         if (disposed) return
-        nonGroupingStageThrowableCollector.execute {
+        nonGroupingStageThrowableCollector.executeCatchingAll {
             if (testInstance.nonGroupingStageRunnerInitialized) testInstance.nonGroupingRunner.finalizeAndDispose()
         }
-        nonGroupingStageThrowableCollector.execute {
+        nonGroupingStageThrowableCollector.executeCatchingAll {
             if (testInstance.secondStageRunnerInitialized) testInstance.groupingStageRunner.finalizeAndDispose()
         }
         disposed = true
