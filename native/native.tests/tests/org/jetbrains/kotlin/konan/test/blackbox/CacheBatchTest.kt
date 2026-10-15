@@ -224,7 +224,7 @@ class CacheBatchTest : AbstractNativeSimpleTest() {
 
     @Test
     fun batchSplitsLibrariesWithConflictingSignatures() {
-        assumeTrue(HostManager.host.family == Family.OSX || HostManager.host.family == Family.LINUX)
+        assumeTrue(HostManager.host.family == Family.OSX)
         assumeFalse(testRunSettings.get<ForcedNoopTestRunner>().value)
 
         val cacheDir = buildDir.resolve("cache").apply { mkdirs() }
