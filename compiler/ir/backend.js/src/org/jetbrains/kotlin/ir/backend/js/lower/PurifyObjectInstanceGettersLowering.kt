@@ -62,11 +62,12 @@ import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
  * The optimization can be applied only if the object is considered "pure".
  * Currently, the effect checker for regular objects only checks the constructor:
  * - It has no superclass (only extends `Any`)
- * - Every statement in its constructor is pure:
+ * - If effect analysis is disabled, it checks that every statement in its constructor is pure:
  *     - the delegating `super()` call goes to `Any`
  *     - expressions are effect-free
  *     - field reads/writes only touch this object's own fields
  *     - the `instance = this` self-assignment is ignored as an effect
+ * - If it is enabled, the constructor's pureness is determined from that.
  *
  * More details of pure checking logic can be found at [isPureStatementForObjectInitialization] and at [isPure].
  *
@@ -150,14 +151,21 @@ open class PurifyObjectInstanceGettersLowering(val context: JsCommonBackendConte
 
     private fun IrClass.isPureObject() =
         this::hasPureInitialization.getOrSetIfNull {
+            if (superClass != null) return@getOrSetIfNull false
             val constructor = primaryConstructorReplacement ?: primaryConstructor
-            when {
-                superClass != null -> false
-                constructor?.body?.statements?.any { !it.isPureStatementForObjectInitialization(this@isPureObject) } == true ->
-                    false
-                isCompanion && staticInitFunction?.body?.isPureStaticInitFunctionBody() == false ->
-                    false
-                else -> true
+            val staticInitImpure = isCompanion && staticInitFunction?.body?.isPureStaticInitFunctionBody() == false
+            if (context.configuration.enableEffectAnalysis) {
+                val constructorPure = constructor?.let {
+                    it.effects?.compute() == EffectsKind.PURE
+                } ?: true
+                constructorPure && !staticInitImpure
+            } else {
+                when {
+                    constructor?.body?.statements?.any { !it.isPureStatementForObjectInitialization(this@isPureObject) } == true ->
+                        false
+                    staticInitImpure -> false
+                    else -> true
+                }
             }
         }
 
