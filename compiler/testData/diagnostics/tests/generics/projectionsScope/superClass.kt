@@ -8,7 +8,7 @@ interface Clazz<T> {
 
 fun test(clazz: Clazz<*>) {
     clazz.t checkType { _<Any?>() }
-    clazz.getSuperClass() checkType { _<Clazz<*>>() }
+    clazz.getSuperClass() checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Clazz<*>>() }
     clazz.getSuperClass().t checkType { _<Any?>() }
 }
 

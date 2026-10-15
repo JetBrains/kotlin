@@ -78,6 +78,14 @@ class ClassicTypeSystemContextForCS(
         }
     }
 
+    override fun createCapturedTypeForSelReferentialfSupertypes(
+        typeParameter: TypeParameterMarker,
+        status: CaptureStatus,
+        supertypes: List<KotlinTypeMarker>,
+    ): CapturedTypeMarker {
+        error("Unsupported")
+    }
+
     override fun createStubTypeForBuilderInference(typeVariable: TypeVariableMarker): StubTypeMarker {
         return StubTypeForBuilderInference(
             typeVariable.freshTypeConstructor() as NewTypeVariableConstructor,

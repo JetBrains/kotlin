@@ -11,7 +11,7 @@ fun main() {
     val c : ListOfLists<*> = b
     val d : ArrayList<ArrayList<*>> = c.<!INITIALIZER_TYPE_MISMATCH!>x<!>
 
-    c.x checkType { _<ArrayList<out ArrayList<*>>>() }
+    c.x checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><ArrayList<out ArrayList<*>>>() }
 }
 
 /* GENERATED_FIR_TAGS: capturedType, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,

@@ -44,6 +44,14 @@ abstract class TypeApproximatorConfiguration {
     open val approximateLocalTypes get() = false
 
     /**
+     * Captured types must be preserved in type arguments inference as there,
+     * we may have quite complex constraints with no denotable solution.
+     * However, these types are not necessary further down the road in positions
+     * like public properties' types.
+     */
+    open val approximateToNothingSubtype get() = true
+
+    /**
      * Defines additional condition for local type approximation.
      * Should return false if the current local type should be considered as a final approximation.
      * This check is triggered for every found local supertype of the initial type (including the type itself).
@@ -149,6 +157,7 @@ abstract class TypeApproximatorConfiguration {
         override val approximateIntegerLiteralConstantTypes: Boolean get() = true
         override val approximateIntegerConstantOperatorTypes: Boolean get() = true
         override val approximateIntersectionTypesInContravariantPositions: Boolean get() = true
+        override val approximateToNothingSubtype: Boolean get() = false
     }
 
     object FinalApproximationAfterResolutionAndInference :
