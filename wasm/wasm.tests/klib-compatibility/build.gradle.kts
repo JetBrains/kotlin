@@ -90,7 +90,9 @@ fun Project.customFirstStageTest(rawVersion: String): TaskProvider<out Task> {
         taskName = "testCustomFirstStage_$version",
         tag = "custom-first-stage",
         enableGroupingTestEngine = true,
-    )
+    ) {
+        groupingEngineSettings(batchSize = 100, simultaneousBatches = 8)
+    }
 }
 
 fun Project.customSecondStageTest(rawVersion: String): TaskProvider<out Task> {
@@ -102,7 +104,9 @@ fun Project.customSecondStageTest(rawVersion: String): TaskProvider<out Task> {
         // The custom-second-stage tests are migrated to the two-stage grouping test infrastructure
         // (`AbstractCustomWasmJsCompilerSecondStageTest`), so the grouping test engine must be enabled.
         enableGroupingTestEngine = true,
-    )
+    ) {
+        groupingEngineSettings(batchSize = 100, simultaneousBatches = 8)
+    }
 }
 
 fun Project.customStagesAggregateTest(rawVersion: String): TaskProvider<out Task> {
