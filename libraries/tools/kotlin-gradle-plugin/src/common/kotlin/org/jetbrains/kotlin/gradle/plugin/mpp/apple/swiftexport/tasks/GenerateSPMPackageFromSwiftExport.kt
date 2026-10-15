@@ -35,9 +35,11 @@ import org.jetbrains.kotlin.gradle.utils.StringBlockBuilder
 import org.jetbrains.kotlin.gradle.utils.buildStringBlock
 import org.jetbrains.kotlin.gradle.utils.commaSeparatedEntries
 import org.jetbrains.kotlin.gradle.utils.emitListItems
+import org.jetbrains.kotlin.gradle.utils.ensurePathComponentSafeString
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import org.jetbrains.kotlin.gradle.utils.normalizedAbsoluteFile
+import org.jetbrains.kotlin.gradle.utils.resolveInside
 import org.jetbrains.kotlin.incremental.createDirectory
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -252,11 +254,11 @@ internal abstract class GenerateSPMPackageFromSwiftExport @Inject constructor(
     private fun createSPMSources(packageModules: List<SwiftPackageModule>, packageTargets: Set<KonanTarget>) {
         packageModules.forEach { packageModule ->
             val module = packageModule.module
-            val swiftModulePath = sourcesPath.getFile().resolve(module.name).apply { createDirectory() }
+            val swiftModulePath = sourcesPath.getFile().resolveInside(module.name).apply { createDirectory() }
             createSource(packageModule, packageTargets, swiftModulePath, SwiftPackageSourceLanguage.SWIFT) { it.swiftApiFile }
 
             if (module is GradleSwiftExportModule.BridgesToKotlin) {
-                val bridgeModulePath = sourcesPath.getFile().resolve(module.bridgeName).apply { createDirectory() }
+                val bridgeModulePath = sourcesPath.getFile().resolveInside(ensurePathComponentSafeString(module.bridgeName)).apply { createDirectory() }
                 val includePath = bridgeModulePath.resolve("include")
 
                 createSource(packageModule, packageTargets, includePath, SwiftPackageSourceLanguage.C_HEADER) { it.bridgeHeaderFile }
