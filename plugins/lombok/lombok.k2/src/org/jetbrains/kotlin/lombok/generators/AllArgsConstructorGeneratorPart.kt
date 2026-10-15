@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.lombok.generators
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
+import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
@@ -26,7 +27,7 @@ class AllArgsConstructorGeneratorPart(session: FirSession) : AbstractConstructor
     }
 
     @OptIn(SymbolInternals::class, DirectDeclarationsAccess::class)
-    override fun getFieldsForParameters(classSymbol: FirClassSymbol<*>): List<FirJavaField> {
+    override fun getVariablesForParameters(classSymbol: FirClassSymbol<*>): List<FirVariable> {
         val isAllArgsConstructor = lombokService.getAllArgsConstructor(classSymbol) != null
 
         return buildList {

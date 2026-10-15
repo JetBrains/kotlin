@@ -4,10 +4,48 @@ class Bounded<T : Comparable<T>> {
     field = value
     get
 
-  constructor(value: T) /* primary */ {
+  companion object Companion {
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    @JvmStatic
+    fun <T : Comparable<T>> create(value: T): Bounded<T> {
+      return Bounded<T>(value = value)
+    }
+
+  }
+
+  private constructor(value: T) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
+  }
+
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is Bounded<T> -> return false
+    }
+    val tmp_0: Bounded<T> = other /*as Bounded<T> */
+    when {
+      EQEQ(arg0 = <this>.<get-value>(), arg1 = tmp_0.<get-value>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_1: Int = 1
+    tmp_1 = tmp_1.times(other = 59).plus(other = <this>.<get-value>().hashCode())
+    return tmp_1
+  }
+
+  override fun toString(): String {
+    return "Bounded(" + "value=" + <this>.<get-value>() + ')'
   }
 
 }
@@ -18,10 +56,51 @@ class Box<T : Any?> {
     field = value
     get
 
-  constructor(value: T) /* primary */ {
+  companion object Companion {
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    @JvmStatic
+    fun <T : Any?> create(value: T): Box<T> {
+      return Box<T>(value = value)
+    }
+
+  }
+
+  private constructor(value: T) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
+  }
+
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is Box<T> -> return false
+    }
+    val tmp_2: Box<T> = other /*as Box<T> */
+    when {
+      EQEQ(arg0 = <this>.<get-value>(), arg1 = tmp_2.<get-value>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_3: Int = 1
+    tmp_3 = tmp_3.times(other = 59).plus(other = when {
+      EQEQ(arg0 = <this>.<get-value>(), arg1 = null) -> 43
+      else -> <this>.<get-value>().hashCode()
+    })
+    return tmp_3
+  }
+
+  override fun toString(): String {
+    return "Box(" + "value=" + <this>.<get-value>() + ')'
   }
 
 }
@@ -32,10 +111,48 @@ data class DataClass {
     field = a
     get
 
-  constructor(a: Int) /* primary */ {
+  companion object Companion {
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    @JvmStatic
+    fun create(a: Int): DataClass {
+      return DataClass(a = a)
+    }
+
+  }
+
+  private constructor(a: Int) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
+  }
+
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is DataClass -> return false
+    }
+    val tmp_4: DataClass = other /*as DataClass */
+    when {
+      EQEQ(arg0 = <this>.<get-a>(), arg1 = tmp_4.<get-a>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_5: Int = 1
+    tmp_5 = tmp_5.times(other = 59).plus(other = <this>.<get-a>().hashCode())
+    return tmp_5
+  }
+
+  override fun toString(): String {
+    return "DataClass(" + "a=" + <this>.<get-a>() + ')'
   }
 
   operator fun component1(): Int {
@@ -44,28 +161,6 @@ data class DataClass {
 
   fun copy(a: Int = <this>.#a): DataClass {
     return DataClass(a = a)
-  }
-
-  override operator fun equals(other: Any?): Boolean {
-    when {
-      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
-    }
-    when {
-      other !is DataClass -> return false
-    }
-    val tmp_0: DataClass = other /*as DataClass */
-    when {
-      EQEQ(arg0 = <this>.#a, arg1 = tmp_0.#a).not() -> return false
-    }
-    return true
-  }
-
-  override fun hashCode(): Int {
-    return <this>.#a.hashCode()
-  }
-
-  override fun toString(): String {
-    return "DataClass(" + "a=" + <this>.#a + ")"
   }
 
 }
@@ -85,10 +180,56 @@ class Mixed {
     field = x
     get
 
-  constructor(x: Int, y: String, z: Int) /* primary */ {
+  companion object Companion {
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    @JvmStatic
+    fun create(x: Int, y: String, z: Int): Mixed {
+      return Mixed(x = x, y = y, z = z)
+    }
+
+  }
+
+  private constructor(x: Int, y: String, z: Int) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
+  }
+
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is Mixed -> return false
+    }
+    val tmp_6: Mixed = other /*as Mixed */
+    when {
+      EQEQ(arg0 = <this>.<get-y>(), arg1 = tmp_6.<get-y>()).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.<get-z>(), arg1 = tmp_6.<get-z>()).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.<get-xCopy>(), arg1 = tmp_6.<get-xCopy>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_7: Int = 1
+    tmp_7 = tmp_7.times(other = 59).plus(other = <this>.<get-y>().hashCode())
+    tmp_7 = tmp_7.times(other = 59).plus(other = <this>.<get-z>().hashCode())
+    tmp_7 = tmp_7.times(other = 59).plus(other = <this>.<get-xCopy>().hashCode())
+    return tmp_7
+  }
+
+  override fun toString(): String {
+    return "Mixed(" + "y=" + <this>.<get-y>() + ", z=" + <this>.<get-z>() + ", xCopy=" + <this>.<get-xCopy>() + ')'
   }
 
 }
@@ -118,6 +259,30 @@ class NameTaken {
 
   }
 
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is NameTaken -> return false
+    }
+    val tmp_8: NameTaken = other /*as NameTaken */
+    when {
+      EQEQ(arg0 = <this>.<get-x>(), arg1 = tmp_8.<get-x>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_9: Int = 1
+    tmp_9 = tmp_9.times(other = 59).plus(other = <this>.<get-x>().hashCode())
+    return tmp_9
+  }
+
+  override fun toString(): String {
+    return "NameTaken(" + "x=" + <this>.<get-x>() + ')'
+  }
+
 }
 
 @Data(staticConstructor = "create")
@@ -130,7 +295,21 @@ class Point {
     field = y
     get
 
-  constructor(x: Int, y: Int) /* primary */ {
+  companion object Companion {
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    @JvmStatic
+    fun create(x: Int, y: Int): Point {
+      return Point(x = x, y = y)
+    }
+
+  }
+
+  private constructor(x: Int, y: Int) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
@@ -143,21 +322,21 @@ class Point {
     when {
       other !is Point -> return false
     }
-    val tmp_0: Point = other /*as Point */
+    val tmp_10: Point = other /*as Point */
     when {
-      EQEQ(arg0 = <this>.<get-x>(), arg1 = tmp_0.<get-x>()).not() -> return false
+      EQEQ(arg0 = <this>.<get-x>(), arg1 = tmp_10.<get-x>()).not() -> return false
     }
     when {
-      EQEQ(arg0 = <this>.<get-y>(), arg1 = tmp_0.<get-y>()).not() -> return false
+      EQEQ(arg0 = <this>.<get-y>(), arg1 = tmp_10.<get-y>()).not() -> return false
     }
     return true
   }
 
   override fun hashCode(): Int {
-    var tmp_1: Int = 1
-    tmp_1 = tmp_1.times(other = 59).plus(other = <this>.<get-x>().hashCode())
-    tmp_1 = tmp_1.times(other = 59).plus(other = <this>.<get-y>().hashCode())
-    return tmp_1
+    var tmp_11: Int = 1
+    tmp_11 = tmp_11.times(other = 59).plus(other = <this>.<get-x>().hashCode())
+    tmp_11 = tmp_11.times(other = 59).plus(other = <this>.<get-y>().hashCode())
+    return tmp_11
   }
 
   override fun toString(): String {
@@ -183,6 +362,30 @@ class WithNoArgs {
 
   }
 
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is WithNoArgs -> return false
+    }
+    val tmp_12: WithNoArgs = other /*as WithNoArgs */
+    when {
+      EQEQ(arg0 = <this>.<get-x>(), arg1 = tmp_12.<get-x>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_13: Int = 1
+    tmp_13 = tmp_13.times(other = 59).plus(other = <this>.<get-x>().hashCode())
+    return tmp_13
+  }
+
+  override fun toString(): String {
+    return "WithNoArgs(" + "x=" + <this>.<get-x>() + ')'
+  }
+
 }
 
 @Data(staticConstructor = "create")
@@ -196,7 +399,21 @@ class WithSecondary {
     get
     set
 
-  constructor(x: Int, y: String) /* primary */ {
+  companion object Companion {
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    @JvmStatic
+    fun create(x: Int, y: String): WithSecondary {
+      return WithSecondary(x = x, y = y)
+    }
+
+  }
+
+  private constructor(x: Int, y: String) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
@@ -204,6 +421,34 @@ class WithSecondary {
 
   constructor(y: String) {
     this/*WithSecondary*/(x = 0, y = y)
+  }
+
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is WithSecondary -> return false
+    }
+    val tmp_14: WithSecondary = other /*as WithSecondary */
+    when {
+      EQEQ(arg0 = <this>.<get-x>(), arg1 = tmp_14.<get-x>()).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.<get-y>(), arg1 = tmp_14.<get-y>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_15: Int = 1
+    tmp_15 = tmp_15.times(other = 59).plus(other = <this>.<get-x>().hashCode())
+    tmp_15 = tmp_15.times(other = 59).plus(other = <this>.<get-y>().hashCode())
+    return tmp_15
+  }
+
+  override fun toString(): String {
+    return "WithSecondary(" + "x=" + <this>.<get-x>() + ", y=" + <this>.<get-y>() + ')'
   }
 
 }
@@ -220,20 +465,44 @@ class WithVararg {
 
   }
 
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is WithVararg -> return false
+    }
+    val tmp_16: WithVararg = other /*as WithVararg */
+    when {
+      deepEquals(p0 = <this>.<get-items>(), p1 = tmp_16.<get-items>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_17: Int = 1
+    tmp_17 = tmp_17.times(other = 59).plus(other = deepHashCode(p0 = <this>.<get-items>()))
+    return tmp_17
+  }
+
+  override fun toString(): String {
+    return "WithVararg(" + "items=" + deepToString(p0 = <this>.<get-items>()) + ')'
+  }
+
 }
 
 fun box(): String {
-  val point: Point = Point(x = 1, y = 2)
+  val point: Point = Companion.create(x = 1, y = 2)
   assertEquals<Int>(expected = 1, actual = point.<get-x>())
   assertEquals<Int>(expected = 2, actual = point.<get-y>())
-  val mixed: Mixed = Mixed(x = 1, y = "y", z = 3)
+  val mixed: Mixed = Companion.create(x = 1, y = "y", z = 3)
   assertEquals<Int>(expected = 1, actual = mixed.<get-xCopy>())
   assertEquals<String>(expected = "y", actual = mixed.<get-y>())
   assertEquals<Int>(expected = 3, actual = mixed.<get-z>())
-  assertEquals<String>(expected = "value", actual = Box<String>(value = "value").<get-value>())
-  assertEquals<Box<List<Int>>>(expected = Box<List<Int>>(value = listOf<Int>(element = 1)), actual = Box<List<Int>>(value = listOf<Int>(element = 1)))
-  assertEquals<Int>(expected = 42, actual = Bounded<Int>(value = 42).<get-value>())
-  val withSecondary: WithSecondary = WithSecondary(x = 1, y = "y")
+  assertEquals<String>(expected = "value", actual = Companion.create<String>(value = "value").<get-value>())
+  assertEquals<Box<List<Int>>>(expected = Companion.create<List<Int>>(value = listOf<Int>(element = 1)), actual = Companion.create<List<Int>>(value = listOf<Int>(element = 1)))
+  assertEquals<Int>(expected = 42, actual = Companion.create<Int>(value = 42).<get-value>())
+  val withSecondary: WithSecondary = Companion.create(x = 1, y = "y")
   assertEquals<Int>(expected = 1, actual = withSecondary.<get-x>())
   assertEquals<String>(expected = "y", actual = withSecondary.<get-y>())
   assertEquals<Int>(expected = 0, actual = WithSecondary(y = "z").<get-x>())
@@ -241,8 +510,8 @@ fun box(): String {
   assertEquals<Int>(expected = 1, actual = NameTaken(x = 1).<get-x>())
   assertEquals<Int>(expected = 0, actual = WithNoArgs().<get-x>())
   assertEquals<Int>(expected = 5, actual = WithNoArgs(x = 5).<get-x>())
-  assertEquals<DataClass>(expected = DataClass(a = 1), actual = DataClass(a = 1))
-  assertEquals<String>(expected = "DataClass(a=1)", actual = DataClass(a = 1).toString())
+  assertEquals<DataClass>(expected = Companion.create(a = 1), actual = Companion.create(a = 1))
+  assertEquals<String>(expected = "DataClass(a=1)", actual = Companion.create(a = 1).toString())
   assertEquals<List<String>>(expected = listOf<String>(elements = ["a", "b"]), actual = toList<String>(/* <this> = WithVararg(items = ["a", "b"]).<get-items>() */))
   @Data(staticConstructor = "create")
   local class Local {
@@ -254,6 +523,30 @@ fun box(): String {
       super/*Any*/()
       /* <init>() */
 
+    }
+
+    override fun equals(other: Any?): Boolean {
+      when {
+        EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+      }
+      when {
+        other !is Local -> return false
+      }
+      val tmp_18: Local = other /*as Local */
+      when {
+        EQEQ(arg0 = <this>.<get-x>(), arg1 = tmp_18.<get-x>()).not() -> return false
+      }
+      return true
+    }
+
+    override fun hashCode(): Int {
+      var tmp_19: Int = 1
+      tmp_19 = tmp_19.times(other = 59).plus(other = <this>.<get-x>().hashCode())
+      return tmp_19
+    }
+
+    override fun toString(): String {
+      return "Local(" + "x=" + <this>.<get-x>() + ')'
     }
 
   }

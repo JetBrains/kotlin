@@ -22,13 +22,17 @@ import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaConstructor
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.lombok.LombokNames
 import org.jetbrains.kotlin.lombok.config.AccessLevel
 import org.jetbrains.kotlin.lombok.config.lombokService
 
 class LombokDeclarationStatusTransformer(session: FirSession) : FirStatusTransformerExtension(session) {
+    private val requiredArgsConstructorPart = RequiredArgsConstructorGeneratorPart(session)
+
     override fun needTransformStatus(declaration: FirDeclaration): Boolean {
-        return declaration is FirJavaField || declaration is FirJavaClass || declaration is FirJavaConstructor
+        return declaration is FirJavaField || declaration is FirJavaClass || declaration is FirJavaConstructor ||
+                declaration is FirConstructor && declaration.isPrimary
     }
 
     override fun transformStatus(
@@ -73,14 +77,20 @@ class LombokDeclarationStatusTransformer(session: FirSession) : FirStatusTransfo
         containingClass: FirClassLikeSymbol<*>?,
         isLocal: Boolean,
     ): FirDeclarationStatus {
-        if (containingClass == null ||
+        if (containingClass == null) return status
+
+        val isHidden = if (constructor is FirJavaConstructor) {
             // Only hide synthetic constructors (default no-args from Java analysis), not user-declared ones.
-            constructor.source?.kind is KtRealSourceElementKind
-        ) {
-            return status
+            constructor.source?.kind !is KtRealSourceElementKind && containingClass.hasConstructorHiddenByStaticFactory()
+        } else {
+            // The static factory of a Kotlin class delegates to its primary constructor, which it then stands in for,
+            // as the constructor generated for a Java class does. Only once it is actually generated, though, or the
+            // class could not be constructed at all.
+            constructor.isPrimary && containingClass is FirClassSymbol<*> &&
+                    requiredArgsConstructorPart.generatesStaticFactory(containingClass)
         }
 
-        return if (containingClass.hasConstructorHiddenByStaticFactory()) {
+        return if (isHidden) {
             status.copy(visibility = Visibilities.Private)
         } else {
             status

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.builders.IrBlockBodyBuilder
 import org.jetbrains.kotlin.ir.builders.irCallConstructor
+import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.constructors
+import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.lombok.generators.ConstructorGeneratorKey
 
@@ -41,8 +43,9 @@ import org.jetbrains.kotlin.lombok.generators.ConstructorGeneratorKey
  */
 object ConstructorBodyBuilder : IrBodyBuilder<ConstructorGeneratorKey>() {
     /**
-     * The static factory: `return Entity()` and nothing else, the function existing only so that the no-args
-     * constructor beside it can be called by that name.
+     * The static factory: `return Entity(...)` and nothing else, the function existing only so that a constructor
+     * can be called by that name - the no-args one when the factory takes no parameters, and otherwise the primary
+     * one, the parameters of which the factory copies (see `RequiredArgsConstructorGeneratorPart`).
      */
     @OptIn(UnsafeDuringIrConstructionAPI::class)
     override fun IrBlockBodyBuilder.build(key: ConstructorGeneratorKey, declaration: IrSimpleFunction) {
@@ -51,13 +54,23 @@ object ConstructorBodyBuilder : IrBodyBuilder<ConstructorGeneratorKey>() {
         val constructedClass = declaration.returnType.classOrNull?.owner
             ?: error("No constructed class for ${declaration.render()}")
 
-        val constructor = constructedClass.constructors.firstOrNull(IrConstructor::takesNoArguments)
-            ?: error("No no-args constructor for ${constructedClass.render()}")
+        val regularParameters = declaration.parameters.filter { it.kind == IrParameterKind.Regular }
+        val constructor = if (regularParameters.isEmpty()) {
+            constructedClass.constructors.firstOrNull(IrConstructor::takesNoArguments)
+                ?: error("No no-args constructor for ${constructedClass.render()}")
+        } else {
+            constructedClass.primaryConstructor?.takeIf { it.parameters.size == regularParameters.size }
+                ?: error("No primary constructor with ${regularParameters.size} parameters for ${constructedClass.render()}")
+        }
 
         // `irCallConstructor` types the call from the constructor's own return type, which carries the class's
         // type parameters rather than the factory's copies of them, and the IR validator rejects a reference to
         // a type parameter from another scope. The factory's return type is that same type already substituted.
-        val constructorCall = irCallConstructor(constructor.symbol, declaration.typeParameters.map { it.defaultType })
+        val constructorCall = irCallConstructor(constructor.symbol, declaration.typeParameters.map { it.defaultType }).apply {
+            constructor.parameters.zip(regularParameters).forEach { [parameter, value] ->
+                arguments[parameter] = irGet(value)
+            }
+        }
         constructorCall.type = declaration.returnType
 
         +irReturn(constructorCall)
