@@ -250,6 +250,8 @@ Unknown:
 # Files matching these rules belong to no domain.
 #   Such files may not require running any tests or builds before merging to master
 #   An approval from the respective codeowners can suffice.
+# Rules are evaluated in order: the last matching rule wins.
+#   Rules starting with '!' re-include paths matched by a previous rule. They have to be declared after the rule they negate.
 ignore:
   - "tests/mute-common.csv"
   - "*.md"
