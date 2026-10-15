@@ -79,7 +79,7 @@ public final class ErrorInConstructorParameter {
     public ErrorInConstructorParameter(@org.jetbrains.annotations.NotNull()
     java.lang.String a, @org.jetbrains.annotations.NotNull()
     ABC b, @org.jetbrains.annotations.NotNull()
-    java.util.List<? extends ABC> c) {
+    java.util.List<ABC> c) {
         super();
     }
     @org.jetbrains.annotations.NotNull()

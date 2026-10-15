@@ -80,11 +80,16 @@ interface TypeSystemCommonBackendContextForTypeMapping : TypeSystemCommonBackend
     fun KotlinTypeMarker.getNameForErrorType(): String?
 }
 
+// Error types are explicitly considered "most precise" here to make FIR and IR type system agree
+// about them - in IR error-class stubs are final.
+// The only current practical use of it is Kapt handling of the missing (AP-generated) classes,
+// that shall be treated as final for compatibility with APs like Dagger
+
 fun TypeSystemCommonBackendContext.isMostPreciseContravariantArgument(type: KotlinTypeMarker): Boolean =
-    type.typeConstructor().isAnyConstructor()
+    type.isError() || type.typeConstructor().isAnyConstructor()
 
 fun TypeSystemCommonBackendContext.isMostPreciseCovariantArgument(type: KotlinTypeMarker): Boolean =
-    !canHaveSubtypesIgnoringNullability(type)
+    type.isError() || !canHaveSubtypesIgnoringNullability(type)
 
 private fun TypeSystemCommonBackendContext.canHaveSubtypesIgnoringNullability(kotlinType: KotlinTypeMarker): Boolean {
     val constructor = kotlinType.typeConstructor()

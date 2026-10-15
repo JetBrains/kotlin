@@ -25,21 +25,34 @@ import com.sun.tools.javac.util.Name
 import com.sun.tools.javac.util.Names
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.resolve.providers.getRegularClassSymbolByClassId
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.kapt.KaptContextForStubGeneration
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.Type.*
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
 
 class KaptTreeMaker(context: Context, kaptContext: KaptContextForStubGeneration) : TreeMaker(context), Disposable {
+    data class ClassInfo(val name: String, val isInner: Boolean)
+
+    data class ResolvedQualifiedName(
+        val packageName: String,
+        /** Classes from the outermost to the innermost class. Literal '$' characters in names are preserved. */
+        val classInfo: List<ClassInfo>,
+    ) {
+        val qualifiedName: String =
+            (if (packageName.isEmpty()) "" else "$packageName.") + classInfo.joinToString(".") { it.name }
+    }
+
     private var kaptContext = DisposableReference(kaptContext)
 
     val nameTable: Name.Table = Names.instance(context).table
 
-    private val qualifiedNameCache = HashMap<String, String>()
+    private val resolvedQualifiedNameCache = HashMap<String, ResolvedQualifiedName>()
 
     @Suppress("FunctionName")
     fun Type(type: Type): JCTree.JCExpression {
@@ -90,18 +103,24 @@ class KaptTreeMaker(context: Context, kaptContext: KaptContextForStubGeneration)
 
     fun getSimpleName(clazz: ClassNode) = getQualifiedName(clazz.name).substringAfterLast('.')
 
-    fun getQualifiedName(internalName: String): String {
-        val nameWithDots = internalName.replace('/', '.')
-        // This is a top-level class
-        if ('$' !in nameWithDots) return nameWithDots
+    fun getQualifiedName(internalName: String): String = resolveQualifiedName(internalName).qualifiedName
 
-        qualifiedNameCache[internalName]?.let { return it }
-        val qualifiedName = computeQualifiedName(internalName, nameWithDots)
-        qualifiedNameCache[internalName] = qualifiedName
-        return qualifiedName
-    }
+    /**
+     * Resolves a JVM internal name and identifies which '$' characters separate nested classes.
+     * [ResolvedQualifiedName.classInfo] retains '$' characters that are part of a class name.
+     */
+    fun resolveQualifiedName(internalName: String): ResolvedQualifiedName =
+        resolvedQualifiedNameCache.getOrPut(internalName) { computeQualifiedName(internalName) }
 
-    private fun computeQualifiedName(internalName: String, nameWithDots: String): String {
+    private fun computeQualifiedName(internalName: String): ResolvedQualifiedName {
+        val packageName = internalName.substringBeforeLast('/', missingDelimiterValue = "").replace('/', '.')
+        fun topLevelName() = ResolvedQualifiedName(
+            packageName,
+            listOf(ClassInfo(internalName.substringAfterLast('/'), isInner = false)),
+        )
+        // No nested-class separators to resolve.
+        if ('$' !in internalName) return topLevelName()
+
         val kaptContext = this.kaptContext.get()
 
         // Maybe it's in our sources?
@@ -109,14 +128,21 @@ class KaptTreeMaker(context: Context, kaptContext: KaptContextForStubGeneration)
         if (classFromSources != null) {
             // Get inner class node pointing to the outer class
             val innerClassNode = classFromSources.innerClasses.firstOrNull { it.name == classFromSources.name }
-            return innerClassNode?.let { getQualifiedName(it.outerName) + "." + it.innerName } ?: nameWithDots
+            return innerClassNode?.let {
+                val outerName = resolveQualifiedName(it.outerName)
+                ResolvedQualifiedName(
+                    outerName.packageName,
+                    outerName.classInfo + ClassInfo(it.innerName, isInner = it.access and Opcodes.ACC_STATIC == 0),
+                )
+            } ?: topLevelName()
         }
 
         // Search in the classpath
         val firSession = kaptContext.firSession!!
+        val nameWithDots = internalName.replace('/', '.')
         val topLevelClassId = ClassId.topLevel(org.jetbrains.kotlin.name.FqName(nameWithDots))
         if (firSession.getRegularClassSymbolByClassId(topLevelClassId) != null) {
-            return nameWithDots
+            return topLevelName()
         }
 
         nameWithDots.iterateDollars { outerName, innerName ->
@@ -125,23 +151,31 @@ class KaptTreeMaker(context: Context, kaptContext: KaptContextForStubGeneration)
             val classId = ClassId.topLevel(org.jetbrains.kotlin.name.FqName(outerName))
             val outerClass = firSession.getRegularClassSymbolByClassId(classId) ?: return@iterateDollars
             with(firSession) {
-                return tryToFindNestedClass(outerClass, innerName)?.asSingleFqName()?.asString() ?: return@iterateDollars
+                val nestedClasses = tryToFindNestedClass(outerClass, innerName) ?: return@iterateDollars
+                return ResolvedQualifiedName(
+                    outerClass.classId.packageFqName.asString(),
+                    (listOf(outerClass) + nestedClasses).map { ClassInfo(it.classId.shortClassName.asString(), it.isInner) },
+                )
             }
         }
 
-        return nameWithDots
+        // If FIR lookups fail, preserve existing dot-separated components and leave '$' characters literal.
+        return ResolvedQualifiedName(
+            packageName,
+            internalName.substringAfterLast('/').split('.').map { ClassInfo(it, isInner = false) },
+        )
     }
 
     context(session: FirSession)
-    private fun tryToFindNestedClass(outerClass: FirRegularClassSymbol, innerClassName: String): ClassId? {
-        outerClass.findInnerClassByName(innerClassName)?.let { return it.classId }
+    private fun tryToFindNestedClass(outerClass: FirRegularClassSymbol, innerClassName: String): List<FirRegularClassSymbol>? {
+        outerClass.findInnerClassByName(innerClassName)?.let { return listOf(it) }
 
         innerClassName.iterateDollars { name1, name2 ->
-            if (name2.isEmpty()) return outerClass.findInnerClassByName(name1)?.classId
+            if (name2.isEmpty()) return outerClass.findInnerClassByName(name1)?.let { listOf(it) }
 
             val nestedClass = outerClass.findInnerClassByName(name1)
             if (nestedClass != null) {
-                tryToFindNestedClass(nestedClass, name2)?.let { return it }
+                tryToFindNestedClass(nestedClass, name2)?.let { return listOf(nestedClass) + it }
             }
         }
 
@@ -194,7 +228,7 @@ class KaptTreeMaker(context: Context, kaptContext: KaptContextForStubGeneration)
     fun name(name: String): Name = nameTable.fromString(name)
 
     override fun dispose() {
-        qualifiedNameCache.clear()
+        resolvedQualifiedNameCache.clear()
         kaptContext.dispose()
     }
 

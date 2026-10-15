@@ -1,0 +1,347 @@
+package test;
+
+@kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.TYPE})
+@kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.RUNTIME)
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@java.lang.annotation.Target(value = {java.lang.annotation.ElementType.TYPE_USE})
+/**
+ * @kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.TYPE])
+ * @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.RUNTIME)
+ * public final annotation class test/Anno : kotlin/Annotation {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract @interface Anno {
+}
+
+////////////////////
+
+package test;
+
+/**
+ * public final class test/ArrayElements : kotlin/Any {
+ *
+ *   // signature: <init>([[Ljava/lang/String;)V
+ *   public constructor(vararg values: @test/Anno kotlin/Array<kotlin/String> (* kotlin/Array<out @test/Anno kotlin/Array<kotlin/String>> *))
+ *
+ *   // field: values:[[Ljava/lang/String;
+ *   // getter: getValues()[[Ljava/lang/String;
+ *   public final val values: kotlin/Array<out @test/Anno kotlin/Array<kotlin/String>>
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class ArrayElements {
+
+    public ArrayElements(@org.jetbrains.annotations.NotNull()
+    java.lang.@SourceAnno() String @Anno() [] @Anno() ... values) {
+        super();
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.@SourceAnno() String @Anno() [] @Anno() [] getValues() {
+        return null;
+    }
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.@SourceAnno() String @Anno() [] @Anno() [] values = null;
+}
+
+////////////////////
+
+package test;
+
+/**
+ * public final class test/Generic : kotlin/Any {
+ *
+ *   // signature: <init>([Ljava/util/List;)V
+ *   public constructor(vararg values: @test/Anno kotlin/collections/List<kotlin/Number> (* kotlin/Array<out @test/Anno kotlin/collections/List<kotlin/Number>> *))
+ *
+ *   // field: values:[Ljava/util/List;
+ *   // getter: getValues()[Ljava/util/List;
+ *   public final val values: kotlin/Array<out @test/Anno kotlin/collections/List<kotlin/Number>>
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class Generic {
+
+    public Generic(@org.jetbrains.annotations.NotNull()
+    java.util.@Anno() List<? extends java.lang.@SourceAnno() Number> @Anno() ... values) {
+        super();
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.util.@Anno() List<java.lang.@SourceAnno() Number> @Anno() [] getValues() {
+        return null;
+    }
+    @org.jetbrains.annotations.NotNull()
+    private final java.util.@Anno() List<java.lang.@SourceAnno() Number> @Anno() [] values = null;
+}
+
+////////////////////
+
+package test;
+
+/**
+ * public final class test/NestedArrayElements : kotlin/Any {
+ *
+ *   // signature: <init>([[[Ljava/lang/String;)V
+ *   public constructor(vararg values: @test/Anno kotlin/Array<kotlin/Array<@test/Anno kotlin/String>> (* kotlin/Array<out @test/Anno kotlin/Array<kotlin/Array<@test/Anno kotlin/String>>> *))
+ *
+ *   // field: values:[[[Ljava/lang/String;
+ *   // getter: getValues()[[[Ljava/lang/String;
+ *   public final val values: kotlin/Array<out @test/Anno kotlin/Array<kotlin/Array<@test/Anno kotlin/String>>>
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class NestedArrayElements {
+
+    public NestedArrayElements(@org.jetbrains.annotations.NotNull()
+    java.lang.@Anno() String @SourceAnno() [] @Anno() [] @Anno() ... values) {
+        super();
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.@Anno() String @Anno() [] @Anno() [] @SourceAnno() [] getValues() {
+        return null;
+    }
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.@Anno() String @Anno() [] @Anno() [] @SourceAnno() [] values = null;
+}
+
+////////////////////
+
+package test;
+
+/**
+ * public final class test/NonLastVararg : kotlin/Any {
+ *
+ *   // signature: <init>(Ljava/lang/String;[Ljava/util/List;Ljava/lang/String;)V
+ *   public constructor(first: kotlin/String, vararg values: @test/Anno kotlin/collections/List<kotlin/Number> (* kotlin/Array<out @test/Anno kotlin/collections/List<kotlin/Number>> *), last: @test/Anno kotlin/String)
+ *
+ *   // field: first:Ljava/lang/String;
+ *   // getter: getFirst()Ljava/lang/String;
+ *   public final val first: kotlin/String
+ *     public final get
+ *
+ *   // field: last:Ljava/lang/String;
+ *   // getter: getLast()Ljava/lang/String;
+ *   public final val last: @test/Anno kotlin/String
+ *     public final get
+ *
+ *   // field: values:[Ljava/util/List;
+ *   // getter: getValues()[Ljava/util/List;
+ *   public final val values: kotlin/Array<out @test/Anno kotlin/collections/List<kotlin/Number>>
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class NonLastVararg {
+
+    public NonLastVararg(@org.jetbrains.annotations.NotNull()
+    java.lang.@SourceAnno() String first, @org.jetbrains.annotations.NotNull()
+    java.util.@Anno() List<? extends java.lang.@SourceAnno() Number> @Anno() [] values, @org.jetbrains.annotations.NotNull()
+    java.lang.@Anno() String last) {
+        super();
+    }
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.@SourceAnno() String first = null;
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.@SourceAnno() String getFirst() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.util.@Anno() List<java.lang.@SourceAnno() Number> @Anno() [] getValues() {
+        return null;
+    }
+    @org.jetbrains.annotations.NotNull()
+    private final java.util.@Anno() List<java.lang.@SourceAnno() Number> @Anno() [] values = null;
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.@Anno() String getLast() {
+        return null;
+    }
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.@Anno() String last = null;
+}
+
+////////////////////
+
+package test;
+
+/**
+ * public final class test/PrimitiveArrayElements : kotlin/Any {
+ *
+ *   // signature: <init>([[I)V
+ *   public constructor(vararg values: @test/Anno kotlin/IntArray (* kotlin/Array<out @test/Anno kotlin/IntArray> *))
+ *
+ *   // field: values:[[I
+ *   // getter: getValues()[[I
+ *   public final val values: kotlin/Array<out @test/Anno kotlin/IntArray>
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class PrimitiveArrayElements {
+
+    public PrimitiveArrayElements(@org.jetbrains.annotations.NotNull()
+    int @Anno() [] @Anno() ... values) {
+        super();
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final int @Anno() [] @Anno() [] getValues() {
+        return null;
+    }
+    @org.jetbrains.annotations.NotNull()
+    private final int @Anno() [] @Anno() [] values = null;
+}
+
+////////////////////
+
+package test;
+
+/**
+ * public final class test/PrimitiveElements : kotlin/Any {
+ *
+ *   // signature: <init>([I)V
+ *   public constructor(vararg values: @test/Anno kotlin/Int (* kotlin/IntArray *))
+ *
+ *   // field: values:[I
+ *   // getter: getValues()[I
+ *   public final val values: kotlin/IntArray
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class PrimitiveElements {
+
+    public PrimitiveElements(@org.jetbrains.annotations.NotNull()
+    int @Anno() @SourceAnno() ... values) {
+        super();
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final int @Anno() @SourceAnno() [] getValues() {
+        return null;
+    }
+    @org.jetbrains.annotations.NotNull()
+    private final int @Anno() @SourceAnno() [] values = null;
+}
+
+////////////////////
+
+package test;
+
+/**
+ * public final class test/Simple : kotlin/Any {
+ *
+ *   // signature: <init>([Ljava/lang/String;)V
+ *   public constructor(vararg values: @test/Anno kotlin/String (* kotlin/Array<out @test/Anno kotlin/String> *))
+ *
+ *   // field: values:[Ljava/lang/String;
+ *   // getter: getValues()[Ljava/lang/String;
+ *   public final val values: kotlin/Array<out @test/Anno kotlin/String>
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class Simple {
+
+    public Simple(@org.jetbrains.annotations.NotNull()
+    java.lang.@Anno() @SourceAnno() String @Anno() @SourceAnno() ... values) {
+        super();
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.@Anno() @SourceAnno() String @Anno() @SourceAnno() [] getValues() {
+        return null;
+    }
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.@Anno() @SourceAnno() String @Anno() @SourceAnno() [] values = null;
+}
+
+////////////////////
+
+package test;
+
+@kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.TYPE})
+@kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.SOURCE)
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.SOURCE)
+@java.lang.annotation.Target(value = {java.lang.annotation.ElementType.TYPE_USE})
+/**
+ * @kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.TYPE])
+ * @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.SOURCE)
+ * public final annotation class test/SourceAnno : kotlin/Annotation {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract @interface SourceAnno {
+}
+
+////////////////////
+
+package test;
+
+/**
+ * public final class test/TypeVariableElements<T#0 (* T *)> : kotlin/Any {
+ *
+ *   // signature: <init>([Ljava/lang/Object;)V
+ *   public constructor(vararg values: @test/Anno T#0 (* kotlin/Array<out @test/Anno T#0> *))
+ *
+ *   // field: values:[Ljava/lang/Object;
+ *   // getter: getValues()[Ljava/lang/Object;
+ *   public final val values: kotlin/Array<out @test/Anno T#0>
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class TypeVariableElements<T extends java.lang.Object> {
+
+    public TypeVariableElements(@org.jetbrains.annotations.NotNull()
+    @Anno()
+    @SourceAnno()
+    T @Anno() @SourceAnno() ... values) {
+        super();
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    @Anno()
+    @SourceAnno()
+    public final T @Anno() @SourceAnno() [] getValues() {
+        return null;
+    }
+    @org.jetbrains.annotations.NotNull()
+    @Anno()
+    @SourceAnno()
+    private final T @Anno() @SourceAnno() [] values = null;
+}

@@ -3,7 +3,10 @@
 // WITH_STDLIB
 // FULL_JDK
 
-@file:Suppress("UNRESOLVED_REFERENCE", "ANNOTATION_ARGUMENT_MUST_BE_CONST", "NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION", "UNSUPPORTED_FEATURE")
+@file:Suppress(
+    "UNRESOLVED_REFERENCE", "ANNOTATION_ARGUMENT_MUST_BE_CONST", "NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION",
+    "UNSUPPORTED_FEATURE", "WRONG_NUMBER_OF_TYPE_ARGUMENTS"
+)
 import java.util.Calendar
 import kotlin.reflect.KClass
 
@@ -13,6 +16,11 @@ typealias Coocoo3<X> = ABC<String, X>
 
 typealias Nested1 = ABC
 typealias Nested2 = Nested1
+
+typealias Two<X, Y> = ABC<X, Y>
+
+// A vararg primary-constructor property of a regular class keeps the implicit array in its field and accessors.
+class VarargClass(vararg val vc: Unresolved)
 
 @Anno(Blah::class, arrayOf(NoFoo1::class, NoBar1::class), [NoFoo2::class, String::class], Boolean::class, NoBar3::class)
 class Test<G> {
@@ -37,6 +45,10 @@ class Test<G> {
     lateinit var coocoo31: Coocoo3<Coocoo2<Coocoo>>
 
     lateinit var nested: Nested2
+
+    // A wrong number of typealias arguments must still produce javac-parseable stubs.
+    lateinit var wrongArityAlias: Two<List<String>>
+    fun wrongArityAlias(p: Two<String>): Two<String>? = null
 
     val m = ABC()
     val n = "".toString()

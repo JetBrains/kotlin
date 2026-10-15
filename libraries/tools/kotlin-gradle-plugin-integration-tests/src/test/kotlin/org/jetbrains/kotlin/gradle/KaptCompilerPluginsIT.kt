@@ -106,7 +106,7 @@ class KaptCompilerPluginsIT : KaptBaseIT() {
                 )
                 assertFileInProjectContains(
                     interfaceStub,
-                    "kotlin.coroutines.Continuation<kotlin.jvm.functions.Function0<kotlin.Unit>>",
+                    "kotlin.coroutines.Continuation<? super kotlin.jvm.functions.Function0<kotlin.Unit>>",
                 )
 
                 val classStub = "example/build/tmp/kapt3/stubs/main/repro/TestClass.java"
