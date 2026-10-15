@@ -1,0 +1,216 @@
+/*
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.backend.common.extensions
+
+import org.jetbrains.kotlin.backend.common.linkage.IrDeserializer
+import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.ir.*
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrAnnotation
+import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
+import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
+
+@Suppress("DEPRECATION")
+open class IrPluginContextImpl(
+    private val module: ModuleDescriptor,
+    override val languageVersionSettings: LanguageVersionSettings,
+    private val st: ReferenceSymbolTable,
+    override val irBuiltIns: IrBuiltIns,
+    val linker: IrProvider,
+    diagnosticReporter: DiagnosticReporter = DiagnosticsCollectorImpl(),
+) : IrPluginContext {
+    override val afterK2: Boolean = false
+
+    override val platform: TargetPlatform? = module.platform
+
+    @ObsoleteDescriptorBasedAPI
+    override val symbolTable: ReferenceSymbolTable = st
+
+    final override val metadataDeclarationRegistrar: IrGeneratedDeclarationsRegistrar
+        get() = DummyIrGeneratedDeclarationsRegistrar
+
+    private fun resolveMemberScope(fqName: FqName): MemberScope? {
+        val pkg = module.getPackage(fqName)
+
+        if (fqName.isRoot || pkg.fragments.isNotEmpty()) return pkg.memberScope
+
+        val parentMemberScope = resolveMemberScope(fqName.parent()) ?: return null
+
+        val classDescriptor =
+            parentMemberScope.getContributedClassifier(fqName.shortName(), NoLookupLocation.FROM_BACKEND) as? ClassDescriptor ?: return null
+
+        return classDescriptor.unsubstitutedMemberScope
+    }
+
+    private fun <S : IrSymbol> resolveSymbol(fqName: FqName, referencer: (MemberScope) -> S?): S? {
+        val memberScope = resolveMemberScope(fqName) ?: return null
+
+        val symbol = referencer(memberScope) ?: return null
+        if (symbol.isBound) return symbol
+
+        linker.getDeclaration(symbol)
+        if (linker is IrDeserializer) {
+            linker.postProcess(irBuiltIns, inOrAfterLinkageStep = false)
+        }
+
+        return symbol
+    }
+
+    override val diagnosticReporter: IrDiagnosticReporter =
+        KtDiagnosticReporterWithImplicitIrBasedContext(diagnosticReporter, languageVersionSettings)
+
+    private fun <S : IrSymbol> resolveSymbolCollection(fqName: FqName, referencer: (MemberScope) -> Collection<S>): Collection<S> {
+        val memberScope = resolveMemberScope(fqName) ?: return emptyList()
+
+        val symbols = referencer(memberScope)
+
+        symbols.forEach { if (!it.isBound) linker.getDeclaration(it) }
+
+        if (linker is IrDeserializer) {
+            linker.postProcess(irBuiltIns, inOrAfterLinkageStep = false)
+        }
+
+        return symbols
+    }
+
+    private inner class Finder : DeclarationFinder {
+        override fun findClass(classId: ClassId): IrClassSymbol? {
+            return this@IrPluginContextImpl.referenceClass(classId)
+        }
+
+        override fun findClassifier(classId: ClassId): IrSymbol? {
+            return this@IrPluginContextImpl.referenceClassifier(classId)
+        }
+
+        override fun findConstructors(classId: ClassId): Collection<IrConstructorSymbol> {
+            return this@IrPluginContextImpl.referenceConstructors(classId)
+        }
+
+        override fun findFunctions(callableId: CallableId): Collection<IrSimpleFunctionSymbol> {
+            return this@IrPluginContextImpl.referenceFunctions(callableId)
+        }
+
+        override fun findProperties(callableId: CallableId): Collection<IrPropertySymbol> {
+            return this@IrPluginContextImpl.referenceProperties(callableId)
+        }
+    }
+
+    override fun finderForBuiltins(): DeclarationFinder {
+        return Finder()
+    }
+
+    override fun finderForSource(fromFile: IrFile): DeclarationFinder {
+        return Finder()
+    }
+
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
+    private fun referenceClass(fqName: FqName): IrClassSymbol? {
+        assert(!fqName.isRoot)
+        return resolveSymbol(fqName.parent()) { scope ->
+            val classDescriptor = scope.getContributedClassifier(fqName.shortName(), NoLookupLocation.FROM_BACKEND) as? ClassDescriptor?
+            classDescriptor?.let {
+                st.descriptorExtension.referenceClass(it)
+            }
+        }
+    }
+
+    private fun referenceConstructors(classFqn: FqName): Collection<IrConstructorSymbol> {
+        val classSymbol = referenceClass(classFqn) ?: error("Cannot find class $classFqn")
+        return classSymbol.owner.declarations.filterIsInstance<IrConstructor>().map { it.symbol }
+    }
+
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
+    private fun referenceFunctions(fqName: FqName): Collection<IrSimpleFunctionSymbol> {
+        assert(!fqName.isRoot)
+        return resolveSymbolCollection(fqName.parent()) { scope ->
+            val descriptors = scope.getContributedFunctions(fqName.shortName(), NoLookupLocation.FROM_BACKEND)
+            descriptors.map { st.descriptorExtension.referenceSimpleFunction(it) }
+        }
+    }
+
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
+    private fun referenceProperties(fqName: FqName): Collection<IrPropertySymbol> {
+        assert(!fqName.isRoot)
+        return resolveSymbolCollection(fqName.parent()) { scope ->
+            val descriptors = scope.getContributedVariables(fqName.shortName(), NoLookupLocation.FROM_BACKEND)
+            descriptors.map { st.descriptorExtension.referenceProperty(it) }
+        }
+    }
+
+    @Deprecated("Please use `finderForBuiltins()` or `finderForSource(fromFile)` instead.", level = DeprecationLevel.WARNING)
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
+    override fun referenceClass(classId: ClassId): IrClassSymbol? {
+        val fqName = classId.asSingleFqName()
+        return resolveSymbol(fqName.parent()) l@{ scope ->
+            when (val descriptor = scope.getContributedClassifier(fqName.shortName(), NoLookupLocation.FROM_BACKEND)) {
+                is TypeAliasDescriptor -> st.descriptorExtension.referenceClass(descriptor.classDescriptor ?: return@l null)
+                is ClassDescriptor -> st.descriptorExtension.referenceClass(descriptor)
+                else -> null
+            }
+        }
+    }
+
+    @Deprecated("Please use `finderForBuiltins()` or `finderForSource(fromFile)` instead.", level = DeprecationLevel.WARNING)
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
+    override fun referenceClassifier(classId: ClassId): IrSymbol? {
+        val fqName = classId.asSingleFqName()
+        return resolveSymbol(fqName.parent()) { scope ->
+            when (val descriptor = scope.getContributedClassifier(fqName.shortName(), NoLookupLocation.FROM_BACKEND)) {
+                is TypeAliasDescriptor -> st.descriptorExtension.referenceTypeAlias(descriptor)
+                is ClassDescriptor -> st.descriptorExtension.referenceClass(descriptor)
+                else -> null
+            }
+        }
+    }
+
+    @Deprecated("Please use `finderForBuiltins()` or `finderForSource(fromFile)` instead.", level = DeprecationLevel.WARNING)
+    override fun referenceConstructors(classId: ClassId): Collection<IrConstructorSymbol> {
+        return referenceConstructors(classId.asSingleFqName())
+    }
+
+    @Deprecated("Please use `finderForBuiltins()` or `finderForSource(fromFile)` instead.", level = DeprecationLevel.WARNING)
+    override fun referenceFunctions(callableId: CallableId): Collection<IrSimpleFunctionSymbol> {
+        return referenceFunctions(callableId.asSingleFqName())
+    }
+
+    @Deprecated("Please use `finderForBuiltins()` or `finderForSource(fromFile)` instead.", level = DeprecationLevel.WARNING)
+    override fun referenceProperties(callableId: CallableId): Collection<IrPropertySymbol> {
+        return referenceProperties(callableId.asSingleFqName())
+    }
+
+    override fun recordLookup(declaration: IrDeclarationWithName, fromFile: IrFile) {}
+
+    private object DummyIrGeneratedDeclarationsRegistrar : IrGeneratedDeclarationsRegistrar() {
+        override fun getMetadataVisibleAnnotationsForElement(declaration: IrDeclaration): MutableList<IrAnnotation> = mutableListOf()
+
+        override fun addMetadataVisibleAnnotationsToElement(declaration: IrDeclaration, annotations: List<IrAnnotation>) {
+            declaration.annotations += annotations
+        }
+
+        override fun registerFunctionAsMetadataVisible(irFunction: IrSimpleFunction) {}
+
+        override fun registerConstructorAsMetadataVisible(irConstructor: IrConstructor) {}
+
+        override fun registerPropertyAsMetadataVisible(irProperty: IrProperty) {}
+
+        override fun registerClassAsMetadataVisible(irClass: IrClass) {}
+
+        override fun addCustomMetadataExtension(irDeclaration: IrDeclaration, pluginId: String, data: ByteArray) {}
+
+        override fun getCustomMetadataExtension(irDeclaration: IrDeclaration, pluginId: String): ByteArray? = null
+    }
+}
