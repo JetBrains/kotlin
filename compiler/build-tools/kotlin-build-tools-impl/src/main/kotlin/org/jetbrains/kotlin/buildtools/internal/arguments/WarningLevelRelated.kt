@@ -7,6 +7,7 @@
 
 package org.jetbrains.kotlin.buildtools.internal.arguments
 
+import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.WarningLevel
@@ -31,6 +32,7 @@ internal fun applyWarningLevels(
         WarningLevelImpl(parts[0], severity)
     }
 
+@Serializable
 internal class WarningLevelImpl(
     val warningName: String,
     val severity: Severity,

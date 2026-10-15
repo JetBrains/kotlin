@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.internal.arguments
 
+import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.buildtools.api.arguments.CompilerPlugin
 import org.jetbrains.kotlin.buildtools.api.arguments.CompilerPluginOption
 import org.jetbrains.kotlin.buildtools.api.arguments.CompilerPluginPartialOrder
@@ -68,6 +69,7 @@ internal fun applyCompilerPlugins(
     return currentValue + rawValue
 }
 
+@Serializable
 public class CompilerPluginOptionImpl(public val key: String, public val value: String) {
     internal fun toApi(): CompilerPluginOption = CompilerPluginOption(key, value)
 }
@@ -85,6 +87,7 @@ public enum class CompilerPluginPartialOrderRelationImpl {
 internal fun CompilerPluginPartialOrderRelation.toImpl(): CompilerPluginPartialOrderRelationImpl =
     CompilerPluginPartialOrderRelationImpl.valueOf(name)
 
+@Serializable
 public class CompilerPluginPartialOrderImpl(
     public val relation: CompilerPluginPartialOrderRelationImpl,
     public val otherPluginId: String,
@@ -95,6 +98,8 @@ public class CompilerPluginPartialOrderImpl(
 internal fun CompilerPluginPartialOrder.toImpl(): CompilerPluginPartialOrderImpl =
     CompilerPluginPartialOrderImpl(relation.toImpl(), otherPluginId)
 
+
+@Serializable
 public class CompilerPluginImpl(
     public val pluginId: String,
     public val classpath: List<Path>,
