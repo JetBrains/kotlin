@@ -29,6 +29,7 @@ import org.junit.platform.engine.reporting.ReportEntry
 import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor
 import org.junit.platform.engine.support.hierarchical.Node
 import org.junit.platform.engine.support.hierarchical.ThrowableCollector
+import org.opentest4j.TestAbortedException
 import java.io.Closeable
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -68,6 +69,15 @@ class CompilerTestGroupingTestEngine : TestEngine {
          */
         private const val SIMULTANEOUS_METHODS_GROUP_SIZE_PROP = "kotlin.test.grouping.engine.simultaneous.methods.group.size"
         private const val DEFAULT_SIMULTANEOUS_METHODS_GROUP_SIZE = 50
+
+        /**
+         * Whether the tests which failed in a grouped batch are retried in isolation (see [retryInIsolation]): all tests of
+         * a batch whose grouping stage failed as a whole, and every single test which is not isolated by its batch tokens
+         * and failed at any stage.
+         * Set it to `false` to report such tests as they failed in the batch instead: retries hide the failures which
+         * grouping causes, so this is the way to find tests which the isolators fail to separate.
+         */
+        private const val RETRY_FAILED_TESTS_PROP = "kotlin.test.grouping.engine.retry.failed.tests.isolated"
     }
 
     override fun getId(): String = ID
@@ -77,6 +87,7 @@ class CompilerTestGroupingTestEngine : TestEngine {
         val dispatcher: ExecutorCoroutineDispatcher
         val activeBatches: Semaphore
         val methodsChunkSize: Int
+        val retryFailedTests: Boolean = params.getBoolean(RETRY_FAILED_TESTS_PROP).orElse(null) ?: true
 
         init {
             val parallelism = DynamicWithMaxThresholdParallelExecutionConfigurationStrategy.computeParallelism(
@@ -175,13 +186,17 @@ class CompilerTestGroupingTestEngine : TestEngine {
 
     /** Packs the tests of [methods] with equal batch tokens into batches. */
     context(ctx: ExecutionContext)
-    private suspend fun planBatches(methods: List<TestMethodWithContext>): List<List<TestMethodWithContext>> {
+    private suspend fun planBatches(methods: List<TestMethodWithContext>): List<PlannedBatch> {
         val tokens = coroutineScope { methods.map { async { planTokens(it.method, it.context) } }.awaitAll() }
         val plannedMethods = methods.zip(tokens).mapNotNull { [method, tokens] -> tokens?.let { method to it } }
         return plannedMethods.groupBy({ it.second }, { it.first }).flatMap { [tokens, sameTokenMethods] ->
             // Sorted by unique id, so that which tests share a batch does not depend on the order JUnit lists them in.
             val sortedMethods = sameTokenMethods.sortedBy { it.method.uniqueId.toString() }
-            if (BatchToken.Isolated in tokens) sortedMethods.map { listOf(it) } else sortedMethods.chunked(ctx.methodsChunkSize)
+            if (BatchToken.Isolated in tokens) {
+                sortedMethods.map { PlannedBatch(listOf(it), isolated = true) }
+            } else {
+                sortedMethods.chunked(ctx.methodsChunkSize) { PlannedBatch(it.toList(), isolated = false) }
+            }
         }
     }
 
@@ -221,24 +236,78 @@ class CompilerTestGroupingTestEngine : TestEngine {
         return null
     }
 
+    context(ctx: ExecutionContext)
     private suspend fun executeBatch(
         context: JupiterEngineExecutionContext,
         classDescriptor: TestDescriptor,
-        batch: List<TestMethodWithContext>,
+        batch: PlannedBatch,
         index: Int,
     ) {
-        val testInfos = coroutineScope { batch.map { async { runNonGroupingStage(it.method, it.context) } }.awaitAll() }
-        val successfulTests = testInfos.filterNotNull().filterNot { it.failed || it.hadIgnoredFailuresOnNonGroupingStage }
+        // A test which is not isolated by its tokens is prepared for a batch already in its non-grouping stage (e.g.
+        // moved to a package of its own), even if it happens to be left alone in its batch, so wherever such a test
+        // fails, it is retried in isolation.
+        val retryFailures = ctx.retryFailedTests && !batch.isolated
+        val failedTests = runStagesOfBatch(context, classDescriptor, batch, index, retryFailures)
+        if (failedTests.isNotEmpty()) retryInIsolation(failedTests, batch, index)
+    }
+
+    /**
+     * Runs the non-grouping stage of every test of the batch, then the grouping stage of the batch.
+     * @return the tests to retry in isolation (see [retryInIsolation]), which are disposed, but not reported. Nothing
+     *   else of the failed run is returned, so that it does not stay reachable during the retries.
+     */
+    private suspend fun runStagesOfBatch(
+        context: JupiterEngineExecutionContext,
+        classDescriptor: TestDescriptor,
+        batch: PlannedBatch,
+        index: Int,
+        retryFailures: Boolean,
+    ): List<TestMethodWithContext> {
+        val testInfos = coroutineScope {
+            batch.tests.map { async { runNonGroupingStage(it.method, it.context, reportFailure = !retryFailures) } }
+                .awaitAll().filterNotNull()
+        }
+        val failedTests = testInfos.filter { it.failedWithError && retryFailures }.toMutableList()
+        val successfulTests = testInfos.filterNot { it.failed || it.hadIgnoredFailuresOnNonGroupingStage }
         when (successfulTests.size) {
             0 -> {}
-            1 -> runGroupingStageOnSingleSizedBatch(successfulTests.single())
-            else -> runGroupingStageOnBatch(context, classDescriptor, successfulTests, index)
+            1 -> if (!runGroupingStageOnSingleSizedBatch(successfulTests.single(), reportFailure = !retryFailures)) {
+                failedTests += successfulTests.single()
+            }
+            else -> failedTests += runGroupingStageOnBatch(context, classDescriptor, successfulTests, index, retryFailures)
+        }
+        return batch.tests.filter { method -> failedTests.any { it.descriptor == method.method } }
+    }
+
+    /**
+     * Re-runs the tests which failed in a grouped batch, one by one. Grouping is an optimization, and the isolators only
+     * recognize the known cases of tests which cannot be grouped: without this fallback a test which the isolators have
+     * missed would fail, and if it breaks the grouping stage as a whole, so would every other test of its batch.
+     * A retried test is isolated as if an isolator had recognized it (see [RetriedTestIsolator]), and a test which
+     * fails on its own merely fails once more.
+     * @param failedTests the failed tests, which are disposed, but not reported.
+     */
+    private fun retryInIsolation(failedTests: List<TestMethodWithContext>, batch: PlannedBatch, index: Int) {
+        println(
+            "Grouping engine: ${failedTests.size} of ${batch.tests.size} tests of grouped batch #$index failed, re-running them in isolated batches: " +
+                    failedTests.joinToString { "${it.method.testClass.name.substringAfterLast('.')}.${it.method.testMethod.name}" }
+        )
+        // Sequentially: the batch holds a single permit, but every retried test needs a grouping stage of its own.
+        for (test in failedTests) {
+            val testInfo = runNonGroupingStage(test.method, test.context, isRetry = true) ?: continue
+            if (!testInfo.failed && !testInfo.hadIgnoredFailuresOnNonGroupingStage) runGroupingStageOnSingleSizedBatch(testInfo)
         }
     }
 
+    /**
+     * @param isRetry whether the test is being retried in isolation, so it has already been reported as started.
+     * @param reportFailure whether a failed test is reported, or only disposed, to be retried in isolation.
+     */
     private fun runNonGroupingStage(
         method: TestMethodTestDescriptor,
         context: JupiterEngineExecutionContext,
+        isRetry: Boolean = false,
+        reportFailure: Boolean = true,
     ): TestMethodInfo? {
         val methodContext = method.prepare(context)
 
@@ -249,11 +318,24 @@ class CompilerTestGroupingTestEngine : TestEngine {
         // disabled tests (e.g. tests muted in smoke mode) would always run.
         val skipResult = method.shouldBeSkipped(methodContext)
         if (skipResult.isSkipped) {
-            methodContext.executionListener.executionSkipped(method, skipResult.reason.orElse("<unknown reason>"))
+            val reason = skipResult.reason.orElse("<unknown reason>")
+            if (isRetry) {
+                // A started test can only be finished.
+                methodContext.executionListener.executionFinished(method, TestExecutionResult.aborted(TestAbortedException(reason)))
+            } else {
+                methodContext.executionListener.executionSkipped(method, reason)
+            }
             return null
         }
 
-        methodContext.executionListener.executionStarted(method)
+        if (isRetry) {
+            // The test instance is created by `prepare`, while the test is configured by `execute`.
+            methodContext.extensionContext.testInstances
+                .flatMap { it.findInstance(AbstractTwoStageKotlinCompilerTestBase::class.java) }
+                .ifPresent { it.isRetriedInIsolation = true }
+        } else {
+            methodContext.executionListener.executionStarted(method)
+        }
         methodContext.throwableCollector.execute { method.execute(methodContext, DynamicTestExecutorStub) }
         val testInstance = methodContext.extensionContext
             .requiredTestInstances
@@ -270,24 +352,32 @@ class CompilerTestGroupingTestEngine : TestEngine {
             return null
         }
         val info = TestMethodInfo(method, methodContext, testInstance).apply {
-            if (finishIfFailed()) return@apply
+            if (finishIfFailed(reportFailure)) return@apply
             nonGroupingStageThrowableCollector.execute {
                 val testRunner = testInstance.nonGroupingRunner
                 testRunner.runTestPreprocessing()
                 testRunner.runSteps()
                 hadIgnoredFailuresOnNonGroupingStage = testRunner.failuresInterceptor.reportFailures(checkForUnmuting = false)
             }
-            finishIfFailed()
+            finishIfFailed(reportFailure)
         }
         return info
     }
 
+    /**
+     * @return the tests to retry in isolation (see [retryInIsolation]), which are disposed, but not reported: all tests
+     *   of the batch if its grouping stage failed as a whole, which says nothing about its individual tests, otherwise
+     *   the tests which failed in the batch. A grouping stage which was aborted, rather than failed, is not retried:
+     *   its tests are reported as aborted. Unless [retryFailures] is `false`: then nothing is retried, and the tests
+     *   are reported with their own failures, or with the batch failure.
+     */
     private fun runGroupingStageOnBatch(
         context: JupiterEngineExecutionContext,
         classDescriptor: TestDescriptor,
         batch: List<TestMethodInfo>,
         index: Int,
-    ) {
+        retryFailures: Boolean,
+    ): List<TestMethodInfo> {
         require(batch.size > 1) { "Batch expected to have at least 2 methods, got ${batch.size}" }
         val testDescriptor = GroupingStageTestDescriptor(
             uniqueId = classDescriptor.uniqueId.append("dynamic-test", "batch$index"),
@@ -315,25 +405,42 @@ class CompilerTestGroupingTestEngine : TestEngine {
             testRunner.run(nonGroupingStageOutputs)
             testRunner.failuresInterceptor.reportFailures(checkForUnmuting = true)
         }
+        val batchFailure = throwableCollector.throwable
+        val batchResult = throwableCollector.toTestExecutionResult()
+        if (batchResult.status == TestExecutionResult.Status.FAILED && retryFailures) {
+            // The batch is reported as aborted (it shows up as skipped, with the reason attached), and its tests are retried.
+            executionListener.executionFinished(testDescriptor, TestExecutionResult.aborted(batchFailure))
+            batch.forEach { it.disposeRunners() }
+            println("Grouping engine: grouped batch #$index of ${batch.size} tests could not be run as a group, re-running its tests in isolated batches")
+            return batch
+        }
         for (methodInfo in batch) {
             methodInfo.context.throwableCollector.execute {
-                methodInfo.testInstance.nonGroupingRunner.failuresInterceptor.reportFailures(
-                    // we need to check for unmuting only if there were no exceptions from the
-                    // grouped facades
-                    checkForUnmuting = throwableCollector.isEmpty
-                )
+                // A test is checked for unmuting only if the grouping stage has not failed.
+                methodInfo.testInstance.nonGroupingRunner.failuresInterceptor.reportFailures(checkForUnmuting = batchFailure == null)
             }
         }
 
-        executionListener.executionFinished(testDescriptor, throwableCollector.toTestExecutionResult())
-        batch.forEach {
-            it.finalizeNonGroupingStage()
-            val collector = if (it.failed) it.nonGroupingStageThrowableCollector else throwableCollector
-            it.reportFinished(collector)
+        executionListener.executionFinished(testDescriptor, batchResult)
+        val failedTests = mutableListOf<TestMethodInfo>()
+        for (methodInfo in batch) {
+            methodInfo.disposeRunners()
+            if (methodInfo.failedWithError && retryFailures) {
+                failedTests += methodInfo
+                continue
+            }
+            // A test which failed on its own is reported with its own failure, the others with the batch failure.
+            val result = if (methodInfo.failed) methodInfo.nonGroupingStageThrowableCollector.toTestExecutionResult() else batchResult
+            methodInfo.context.executionListener.executionFinished(methodInfo.descriptor, result)
         }
+        return failedTests
     }
 
-    private fun runGroupingStageOnSingleSizedBatch(testInfo: TestMethodInfo) {
+    /**
+     * @param reportFailure whether a failed test is reported, or only disposed, to be retried in isolation.
+     * @return `false` if the test failed and is not reported.
+     */
+    private fun runGroupingStageOnSingleSizedBatch(testInfo: TestMethodInfo, reportFailure: Boolean = true): Boolean {
         val throwableCollector = testInfo.nonGroupingStageThrowableCollector
         val testInstance = testInfo.testInstance
         throwableCollector.execute {
@@ -356,8 +463,10 @@ class CompilerTestGroupingTestEngine : TestEngine {
             nonGroupingRunner.failuresInterceptor.reportFailures(checkForUnmuting = true)
         }
 
-        testInfo.finalizeNonGroupingStage()
+        testInfo.disposeRunners()
+        if (testInfo.failedWithError && !reportFailure) return false
         testInfo.reportFinished(throwableCollector)
+        return true
     }
 
     override fun discover(discoveryRequest: EngineDiscoveryRequest, uniqueId: UniqueId): TestDescriptor {
@@ -458,6 +567,9 @@ private class GroupingStageTestDescriptor(
 
 private class TestMethodWithContext(val method: TestMethodTestDescriptor, val context: JupiterEngineExecutionContext)
 
+/** @property isolated whether the tests are isolated by their batch tokens, so they run alone as if no batching happened. */
+private class PlannedBatch(val tests: List<TestMethodWithContext>, val isolated: Boolean)
+
 private fun AbstractTwoStageKotlinCompilerTestBase.computeBatchTokens(): List<BatchToken> {
     val testConfiguration = nonGroupingRunner.testConfiguration
     return testConfiguration.groupingTestIsolators.mapNotNull {
@@ -473,33 +585,44 @@ private data class TestMethodInfo(
     val failed: Boolean
         get() = nonGroupingStageThrowableCollector.isNotEmpty
 
+    /** Whether the test has failed, rather than been aborted, like skipped by a test configurator: only such a test is retried. */
+    val failedWithError: Boolean
+        get() = nonGroupingStageThrowableCollector.toTestExecutionResult().status == TestExecutionResult.Status.FAILED
+
     var hadIgnoredFailuresOnNonGroupingStage: Boolean = false
 
-    var finalized: Boolean = false
+    var disposed: Boolean = false
         private set
 
     val nonGroupingStageThrowableCollector: ThrowableCollector
         get() = context.throwableCollector
 
-    fun finalizeNonGroupingStage() {
-        if (finalized) return
+    /**
+     * Disposes both runners of the test. The grouping-stage runner of a test has either run the grouping stage of its
+     * batch, which is over by now, or has not been used at all, so there is nothing to keep it alive for.
+     */
+    fun disposeRunners() {
+        if (disposed) return
         nonGroupingStageThrowableCollector.execute {
-            if (testInstance.nonGroupingStageRunnerInitialized) {
-                testInstance.nonGroupingRunner.finalizeAndDispose()
-            }
+            if (testInstance.nonGroupingStageRunnerInitialized) testInstance.nonGroupingRunner.finalizeAndDispose()
         }
-        finalized = true
+        nonGroupingStageThrowableCollector.execute {
+            if (testInstance.secondStageRunnerInitialized) testInstance.groupingStageRunner.finalizeAndDispose()
+        }
+        disposed = true
     }
 }
 
 /**
+ * @param reportFailure whether a failed test is reported, or only disposed, to be retried in isolation.
+ *   An aborted test, or a test which has only ignored failures, is reported anyway.
  * @returns true if the test failed
  */
-private fun TestMethodInfo.finishIfFailed(): Boolean {
+private fun TestMethodInfo.finishIfFailed(reportFailure: Boolean): Boolean {
     return (failed || hadIgnoredFailuresOnNonGroupingStage).also {
         if (it) {
-            finalizeNonGroupingStage()
-            reportFinished(nonGroupingStageThrowableCollector)
+            disposeRunners()
+            if (reportFailure || !failedWithError) reportFinished(nonGroupingStageThrowableCollector)
         }
     }
 }
