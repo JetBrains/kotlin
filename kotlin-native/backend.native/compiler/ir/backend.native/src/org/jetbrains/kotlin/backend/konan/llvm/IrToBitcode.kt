@@ -2951,6 +2951,7 @@ internal fun NativeGenerationState.generateRuntimeConstantsModule(): LLVMModuleR
         setRuntimeConstGlobal(NativeRuntimeConstants.GC_MARK_SINGLE_THREADED, config.gcMarkSingleThreaded.toLlvmConstInt32())
         setRuntimeConstGlobal(NativeRuntimeConstants.FIXED_BLOCK_PAGE_SIZE, config.fixedBlockPageSize.toInt().toLlvmConstInt32())
         setRuntimeConstGlobal(NativeRuntimeConstants.PAGED_ALLOCATOR, config.pagedAllocator.toLlvmConstInt32())
+        setRuntimeConstGlobal(NativeRuntimeConstants.COMPRESSED_REFS, config.compressedRefs.toLlvmConstInt32())
     }
 
     return llvmModule

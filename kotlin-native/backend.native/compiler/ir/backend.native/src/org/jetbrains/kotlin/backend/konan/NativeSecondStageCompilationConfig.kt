@@ -454,6 +454,16 @@ class NativeSecondStageCompilationConfig(
         } ?: true
     }
 
+    val compressedRefs: Boolean by lazy {
+        val compressedRefs = configuration.get(BinaryOptions.compressedRefs) ?: false
+        if (compressedRefs && (target.pointerBits() != 64 || gc != GC.CONCURRENT_MARK_AND_SWEEP || allocationMode != AllocationMode.CUSTOM)) {
+            configuration.report(CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING, "Compressed references require a 64-bit target, CMS GC and the custom allocator")
+            false
+        } else {
+            compressedRefs
+        }
+    }
+
     val enableReleaseBinaryCache: Boolean
         get() = configuration.get(BinaryOptions.enableReleaseBinaryCache) ?: false
 
@@ -541,6 +551,8 @@ class NativeSecondStageCompilationConfig(
             append("-latin1_strings${if (latin1Strings) "ENABLE" else "DISABLE"}")
         if (assertsEnabled != defaultAsserts)
             append("-asserts${if (assertsEnabled) "ENABLE" else "DISABLE"}")
+        if (compressedRefs)
+            append("-compressed_refs")
     }
 
     private val systemCacheFlavorString = buildString {
