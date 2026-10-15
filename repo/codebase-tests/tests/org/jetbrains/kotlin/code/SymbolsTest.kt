@@ -9,9 +9,9 @@ import com.ibm.icu.text.SpoofChecker
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.code.tools.FileMatcher
 import org.jetbrains.kotlin.repoTestFixtures.isGitIgnored
+import org.jetbrains.kotlin.testFederation.isTestFederationIgnored
 import org.junit.jupiter.api.Test
 import java.io.File
-import kotlin.code
 import kotlin.test.fail
 
 class SymbolsTest {
@@ -148,6 +148,7 @@ class SymbolsTest {
         for (file in gitTrackedFiles()) {
             if (!file.isFile) continue
             if (file.extension in binaryExtensions) continue
+            if (file.toRepositoryPath().isTestFederationIgnored) continue
 
             val bytes = file.readBytes()
             val text = bytes.toString(Charsets.UTF_8)
