@@ -83,7 +83,7 @@ java.util.List<Unresolved2> y) {
     @org.jetbrains.annotations.NotNull()
     public final test.R copy(@org.jetbrains.annotations.NotNull()
     Unresolved x, @org.jetbrains.annotations.NotNull()
-    java.util.List<? extends Unresolved2> y) {
+    java.util.List<Unresolved2> y) {
         return null;
     }
 

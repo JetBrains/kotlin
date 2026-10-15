@@ -34,6 +34,8 @@ import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.resolve.jvm.JAVA_LANG_RECORD_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
+import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.org.objectweb.asm.Handle
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
@@ -289,7 +291,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
         }
 
         fun getTypeMappingModeForReturnType(
-            typeSystem: IrTypeSystemContext, declaration: IrDeclaration, returnType: IrType
+            typeSystem: TypeSystemCommonBackendContext, declaration: IrDeclaration, returnType: KotlinTypeMarker
         ): TypeMappingMode = with(typeSystem) {
             val isAnnotationMethod = declaration.parent.let { it is IrClass && it.isAnnotationClass }
             extractTypeMappingModeFromAnnotation(
@@ -298,7 +300,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
         }
 
         fun getTypeMappingModeForParameter(
-            typeSystem: IrTypeSystemContext, declaration: IrDeclaration, type: IrType
+            typeSystem: TypeSystemCommonBackendContext, declaration: IrDeclaration, type: KotlinTypeMarker
         ): TypeMappingMode = with(typeSystem) {
             extractTypeMappingModeFromAnnotation(
                 declaration.suppressWildcardsMode(), type, isForAnnotationParameter = false, mapTypeAliases = false

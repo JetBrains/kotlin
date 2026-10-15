@@ -60,9 +60,6 @@ class Plain {
 }
 
 @JvmRecord
-data class Varargs(val i: Int, vararg val xs: String)
-
-@JvmRecord
 data class RecordNamed(val record: Int)
 
 @JvmRecord

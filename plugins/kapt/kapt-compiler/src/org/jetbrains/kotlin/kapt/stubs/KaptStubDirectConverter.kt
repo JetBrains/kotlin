@@ -27,6 +27,9 @@ import org.jetbrains.org.objectweb.asm.tree.MethodNode
 import javax.lang.model.element.ElementKind
 import kotlin.math.sign
 
+private fun List<String>.asInlineTypeAnnotations(): String =
+    joinToString(separator = " ")
+
 class KaptStubDirectConverter(
     kaptContext: KaptContextForStubGeneration,
     generateNonExistentClass: Boolean,
@@ -159,7 +162,8 @@ class KaptStubDirectConverter(
         return DirectKaptStub(packageName, simpleName, text, lineMappings.serialize())
     }
 
-    override fun makeTypeParameter(name: String, allBounds: List<String>): String = buildString {
+    override fun makeTypeParameter(name: String, allBounds: List<String>, annotations: List<String>): String = buildString {
+        if (annotations.isNotEmpty()) append(annotations.asInlineTypeAnnotations()).append(' ')
         append(name)
         if (allBounds.isNotEmpty()) {
             allBounds.joinTo(this, prefix = " extends ", separator = " & ")
@@ -266,10 +270,10 @@ class KaptStubDirectConverter(
 
     override val supportsRecords: Boolean get() = true
 
-    override fun makeRecordComponent(field: FieldNode, modifiers: String, convertedType: String, isVararg: Boolean): String =
+    override fun makeRecordComponent(field: FieldNode, modifiers: String, convertedType: String): String =
         buildString {
             append(modifiers)
-            append(if (isVararg) convertedType.removeSuffix("[]") + "..." else convertedType)
+            append(convertedType)
             append(' ')
             append(field.name)
         }
@@ -286,13 +290,7 @@ class KaptStubDirectConverter(
         name: String,
         type: String,
         modifiers: String,
-        isVararg: Boolean,
-    ): String = buildString {
-        append(modifiers)
-        append(if (isVararg) type.removeSuffix("[]") + "..." else type)
-        append(' ')
-        append(name)
-    }
+    ): String = "$modifiers$type $name"
 
     override fun makeBlock(statements: List<String>): String =
         statements.joinToString(separator = "\n") { it }
@@ -303,9 +301,12 @@ class KaptStubDirectConverter(
     }
 
     override fun makeReturn(arg: String): String = "return $arg;"
-    override fun makeTypeApply(type: String, typeArguments: List<String>): String = buildString {
-        append(type)
-        typeArguments.joinTo(this, separator = ", ", prefix = "<", postfix = ">")
+    override fun makeTypeApply(type: String, typeArguments: List<String>): String {
+        if (typeArguments.isEmpty()) return type
+        return buildString {
+            append(type)
+            typeArguments.joinTo(this, separator = ", ", prefix = "<", postfix = ">")
+        }
     }
 
     override fun makePrimitiveType(primitiveTypeSig: Char): String = when (primitiveTypeSig) {
@@ -363,18 +364,67 @@ class KaptStubDirectConverter(
         append('@')
         append(type)
         appendListIfNonEmpty(arguments, "(", ")")
-        append("\n")
     }
 
-    override fun makeArrayType(baseType: String, arrayDimensions: Int) = baseType + "[]".repeat(arrayDimensions)
+    override fun makeArrayType(
+        elementType: String,
+        arrayDimensions: List<List<String>>,
+        isVararg: Boolean,
+    ): String = buildString {
+        append(elementType)
+        val nonVarargDimensions = if (isVararg) arrayDimensions.drop(1) else arrayDimensions
+        for (annotations in nonVarargDimensions) {
+            if (annotations.isNotEmpty()) {
+                append(' ').append(annotations.asInlineTypeAnnotations()).append(' ')
+            }
+            append("[]")
+        }
+        if (isVararg) {
+            val annotations = arrayDimensions.first()
+            if (annotations.isNotEmpty()) {
+                append(' ').append(annotations.asInlineTypeAnnotations()).append(' ')
+            }
+            append("...")
+        }
+    }
 
     override fun makeSimpleName(simpleName: String) = simpleName
 
-    override fun makeSelect(left: String, simpleName: String) = "$left.$simpleName"
+    override fun makeSelect(left: String, simpleName: String): String = "$left.$simpleName"
+
+    override fun makeInnerClassType(
+        outerType: String,
+        innerClassName: String,
+        annotationsOnInnerClassName: List<String>,
+    ): String = if (annotationsOnInnerClassName.isEmpty()) {
+        "$outerType.$innerClassName"
+    } else {
+        "$outerType.${annotationsOnInnerClassName.asInlineTypeAnnotations()} $innerClassName"
+    }
 
     override fun makeType(asmType: Type): String = treeMaker.convertAsmTypeToJavaText(asmType)
 
+    override fun makeAnnotatedType(type: String, annotations: List<String>): String =
+        "${annotations.asInlineTypeAnnotations()} $type"
+
     override fun makeQualifiedName(javaName: String): String = treeMaker.getQualifiedName(javaName)
+
+    override fun makeClassType(internalClassName: String, annotationsOnClassName: List<String>): String {
+        val resolvedName = treeMaker.resolveQualifiedName(internalClassName)
+        if (annotationsOnClassName.isEmpty()) return resolvedName.qualifiedName
+
+        return buildString {
+            if (resolvedName.packageName.isNotEmpty()) {
+                append(resolvedName.packageName)
+                append('.')
+            }
+            for ((name) in resolvedName.classInfo.dropLast(1)) {
+                append(name)
+                append('.')
+            }
+            append(makeAnnotatedType(resolvedName.classInfo.last().name, annotationsOnClassName))
+        }
+    }
 
     override fun makeQualifiedName(fqName: FqName): String = fqName.asString()
 
@@ -425,8 +475,9 @@ class KaptStubDirectConverter(
     override fun makeNullLiteral(): String = "null"
 
     override fun makeModifiers(kind: ElementKind, isEnumField: Boolean, flags: Long, annotations: List<String>): String = buildString {
-        for (annotation in annotations)
-            append(annotation)
+        for (annotation in annotations) {
+            append(annotation).append('\n')
+        }
         if (!isEnumField)
             appendModifiers(flags, kind)
     }

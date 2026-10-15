@@ -24,6 +24,18 @@ object KaptTestDirectives : SimpleDirectivesContainer() {
 
     val NON_EXISTENT_CLASS by directive("Generate stub for class error.NonExistentClass")
     val EXPECTED_ERROR by stringDirective("The following error is expected in this test", multiLine = true)
+    val INJECT_FIELD_TYPE_ANNOTATION by stringDirective(
+        "Inject a field type annotation to a compiled class: class internal name | field name | type path | annotation descriptor | visibility"
+    )
+    val INJECT_PARAMETER_TYPE_ANNOTATION by stringDirective(
+        "Inject a method parameter type annotation for vararg stub-conversion tests. KT-77762 duplicates backend-emitted type annotations, " +
+                "so injection is needed to test distinct vararg array levels: " +
+                "class internal name | method name | parameter index | type path | annotation descriptor | visibility"
+    )
+    val INJECT_EXCEPTION_TYPE_ANNOTATION by stringDirective(
+        "Inject a method exception type annotation: class internal name | method name | exception index | " +
+                "type path | annotation descriptor | visibility"
+    )
     val STUB_GENERATION_SCHEME by stringDirective("Sets stub generation scheme: direct or jtree")
     val MIN_JAVA_VERSION by valueDirective("Skips the test on an older JVM, e.g. one whose javac cannot parse the stubs", parser = String::toIntOrNull)
 

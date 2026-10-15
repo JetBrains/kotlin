@@ -31,7 +31,7 @@ public final class Foo {
 
     @org.jetbrains.annotations.Nullable()
     public final java.lang.Object c(@org.jetbrains.annotations.NotNull()
-    kotlin.coroutines.Continuation<java.util.List<? extends ABC>> $completion) {
+    kotlin.coroutines.Continuation<? super java.util.List<ABC>> $completion) {
         return null;
     }
 }

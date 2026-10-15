@@ -81,11 +81,13 @@ import kotlin.reflect.KClass;
  *
  *   public typealias Nested2 = Nested1^ (* = error/NonExistentClass (* = Nested1^ *) *)
  *
+ *   public typealias Two<T#0 (* X *), T#1 (* Y *)> = error/NonExistentClass (* = error/NonExistentClass *)
+ *
  *   // module name: main
  * }
  */
 @kotlin.Metadata()
-@kotlin.Suppress(names = {"UNRESOLVED_REFERENCE", "ANNOTATION_ARGUMENT_MUST_BE_CONST", "NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION", "UNSUPPORTED_FEATURE"})
+@kotlin.Suppress(names = {"UNRESOLVED_REFERENCE", "ANNOTATION_ARGUMENT_MUST_BE_CONST", "NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION", "UNSUPPORTED_FEATURE", "WRONG_NUMBER_OF_TYPE_ARGUMENTS"})
 public final class NonExistentClassTypesConversionKt {
 }
 
@@ -120,6 +122,9 @@ import kotlin.reflect.KClass;
  *
  *   // signature: f6()Ljava/util/List;
  *   public final fun f6(): kotlin/collections/List<error/NonExistentClass>
+ *
+ *   // signature: wrongArityAlias(Lerror/NonExistentClass;)Lerror/NonExistentClass;
+ *   public final fun wrongArityAlias(p: error/NonExistentClass): error/NonExistentClass
  *
  *   // field: a:Lerror/NonExistentClass;
  *   // getter: getA()Lerror/NonExistentClass;
@@ -277,6 +282,13 @@ import kotlin.reflect.KClass;
  *   public final val q: kotlin/collections/List<error/NonExistentClass>
  *     public final get
  *
+ *   // field: wrongArityAlias:Lerror/NonExistentClass;
+ *   // getter: getWrongArityAlias()Lerror/NonExistentClass;
+ *   // setter: setWrongArityAlias(Lerror/NonExistentClass;)V
+ *   public final lateinit var wrongArityAlias: error/NonExistentClass
+ *     public final get
+ *     public final set
+ *
  *   // module name: main
  * }
  */
@@ -317,7 +329,7 @@ public final class Test<G extends java.lang.Object> {
     public final java.util.List<java.util.Map<BCD, ABC<java.util.List<BCD>>>> getD() {
         return null;
     }
-    public java.util.List<java.util.Map<? extends ABC, BCD>> e;
+    public java.util.List<? extends java.util.Map<? extends ABC, BCD>> e;
 
     @org.jetbrains.annotations.NotNull()
     public final java.util.List<java.util.Map<? extends ABC, BCD>> getE() {
@@ -325,7 +337,7 @@ public final class Test<G extends java.lang.Object> {
     }
 
     public final void setE(@org.jetbrains.annotations.NotNull()
-    java.util.List<? extends java.util.Map<? extends ABC, ? extends BCD>> p0) {
+    java.util.List<? extends java.util.Map<? extends ABC, BCD>> p0) {
     }
     public ABC<?> f;
 
@@ -362,10 +374,10 @@ public final class Test<G extends java.lang.Object> {
     public final kotlin.jvm.functions.Function2<ABC, java.util.List<BCD>, CDE> getI() {
         return null;
     }
-    public kotlin.jvm.functions.Function2<ABC, java.util.List<BCD>, CDE> i;
+    public kotlin.jvm.functions.Function2<ABC, ? super java.util.List<BCD>, CDE> i;
 
     public final void setI(@org.jetbrains.annotations.NotNull()
-    kotlin.jvm.functions.Function2<ABC, java.util.List<? extends BCD>, CDE> p0) {
+    kotlin.jvm.functions.Function2<ABC, ? super java.util.List<BCD>, CDE> p0) {
     }
 
     @org.jetbrains.annotations.NotNull()
@@ -382,10 +394,10 @@ public final class Test<G extends java.lang.Object> {
     public final kotlin.jvm.functions.Function2<ABC, java.util.List<BCD>, CDE> getK() {
         return null;
     }
-    public kotlin.jvm.functions.Function2<ABC, java.util.List<BCD>, CDE> k;
+    public kotlin.jvm.functions.Function2<ABC, ? super java.util.List<BCD>, CDE> k;
 
     public final void setK(@org.jetbrains.annotations.NotNull()
-    kotlin.jvm.functions.Function2<ABC, java.util.List<? extends BCD>, CDE> p0) {
+    kotlin.jvm.functions.Function2<ABC, ? super java.util.List<BCD>, CDE> p0) {
     }
 
     @org.jetbrains.annotations.NotNull()
@@ -459,6 +471,22 @@ public final class Test<G extends java.lang.Object> {
     }
 
     @org.jetbrains.annotations.NotNull()
+    public final Two getWrongArityAlias() {
+        return null;
+    }
+
+    public final void setWrongArityAlias(@org.jetbrains.annotations.NotNull()
+    Two p0) {
+    }
+    public Two wrongArityAlias;
+
+    @org.jetbrains.annotations.NotNull()
+    public final Two wrongArityAlias(@org.jetbrains.annotations.NotNull()
+    Two p) {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
     public final error.NonExistentClass getM() {
         return null;
     }
@@ -493,10 +521,10 @@ public final class Test<G extends java.lang.Object> {
     public final java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<ABC>>>>>>>>> getO10() {
         return null;
     }
-    public java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<ABC>>>>>>>>> o10;
+    public java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<ABC>>>>>>>>> o10;
 
     public final void setO10(@org.jetbrains.annotations.NotNull()
-    java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends ABC>>>>>>>>> p0) {
+    java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<ABC>>>>>>>>> p0) {
     }
 
     @org.jetbrains.annotations.NotNull()
@@ -539,6 +567,42 @@ public final class Test<G extends java.lang.Object> {
     MyType<T> $this$f5) {
         return null;
     }
+}
+
+////////////////////
+
+
+import java.util.Calendar;
+import kotlin.reflect.KClass;
+
+/**
+ * public final class VarargClass : kotlin/Any {
+ *
+ *   // signature: <init>([Lerror/NonExistentClass;)V
+ *   public constructor(vararg vc: error/NonExistentClass (* kotlin/Array<out error/NonExistentClass> *))
+ *
+ *   // field: vc:[Lerror/NonExistentClass;
+ *   // getter: getVc()[Lerror/NonExistentClass;
+ *   public final val vc: kotlin/Array<out error/NonExistentClass>
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class VarargClass {
+
+    public VarargClass(@org.jetbrains.annotations.NotNull()
+    Unresolved... vc) {
+        super();
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final Unresolved[] getVc() {
+        return null;
+    }
+    @org.jetbrains.annotations.NotNull()
+    private final Unresolved[] vc = null;
 }
 
 ////////////////////
