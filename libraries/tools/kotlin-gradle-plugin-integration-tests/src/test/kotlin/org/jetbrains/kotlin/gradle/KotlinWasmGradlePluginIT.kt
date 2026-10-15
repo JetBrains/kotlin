@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.provider.Provider
 import org.gradle.kotlin.dsl.kotlin
+import org.gradle.kotlin.dsl.the
 import org.gradle.kotlin.dsl.withType
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution
 import org.jetbrains.kotlin.gradle.targets.js.ir.WASM_INCLUDED_MODULE_ONLY
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.fromSrcPackageJson
+import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import org.jetbrains.kotlin.gradle.targets.wasm.WasmCompilationMode
@@ -26,6 +28,8 @@ import org.jetbrains.kotlin.gradle.targets.wasm.d8.D8EnvSpec
 import org.jetbrains.kotlin.gradle.targets.wasm.d8.D8Plugin
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsPlugin
+import org.jetbrains.kotlin.gradle.targets.wasm.wasmtime.WasmtimeEnvSpec
+import org.jetbrains.kotlin.gradle.targets.wasm.wasmtime.WasmtimePlugin
 import org.jetbrains.kotlin.gradle.targets.wasm.yarn.WasmYarnPlugin
 import org.jetbrains.kotlin.gradle.targets.wasm.yarn.WasmYarnRootEnvSpec
 import org.jetbrains.kotlin.gradle.testbase.*
@@ -597,6 +601,62 @@ class KotlinWasmGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
     fun testMultiModuleWasmDist(gradleVersion: GradleVersion) {
         testMultiModuleWasmDistDoTest(gradleVersion, "foo")
     }
+
+    @OptIn(ExperimentalWasmDsl::class)
+    @DisplayName("Check that toolArgs are passed to wasmtime")
+    @GradleTest
+    @TestMetadata("wasm-wasmtime-test")
+    fun wasiWasmtimeTestToolArgs(gradleVersion: GradleVersion) {
+        project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    wasmWasi {
+                        wasmtime()
+                        binaries.executable()
+                    }
+                }
+
+                kotlinMultiplatform.sourceSets.getByName("wasmWasiTest").dependencies {
+                    implementation("org.jetbrains.kotlin:kotlin-test")
+                }
+
+                project.plugins.withType(WasmtimePlugin::class.java) {
+                    project.the<WasmtimeEnvSpec>().version.set("49.0.3")
+                }
+
+                project.tasks.withType<KotlinJsTest>().configureEach {
+                    it.toolArgs.add("-D")
+                    it.toolArgs.add("logging=y")
+                }
+            }
+
+            kotlinSourcesDir("wasmWasiTest").resolve("Test.kt")
+                .also { it.parent.createDirectories() }.writeText(
+                    """
+                    package org
+                    
+                    import kotlin.test.Test
+                    
+                    class A {
+                        @Test
+                        fun test() {
+                            // do nothing, always pass
+                        }
+                    }
+                """.trimIndent()
+                )
+
+            build(":wasmWasiTest") {
+                assertTasksExecuted(":kotlinWasmWasmtimeSetup")
+                assertTasksExecuted(":wasmWasiWasmtimeTest")
+                assertOutputContains("wasmtime -D logging=y")
+            }
+        }
+    }
 }
 
 class KotlinWasmPerModuleGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
@@ -656,6 +716,7 @@ class KotlinWasmPerModuleGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
     fun testMultiModuleWasmDist(gradleVersion: GradleVersion) {
         testMultiModuleWasmDistDoTest(gradleVersion, "bar")
     }
+
 }
 
 @MppGradlePluginTests
