@@ -5,4 +5,3 @@ main.kexe:
 	libSystem.dylib
 	libc++.dylib
 	libobjc.dylib
-	libz.dylib

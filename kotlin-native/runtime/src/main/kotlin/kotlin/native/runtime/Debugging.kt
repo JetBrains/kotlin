@@ -15,14 +15,10 @@ import kotlin.native.internal.InternalForKotlinNative
  * @param omitPrimitiveArrayPayloads If `true`, primitive array contents are omitted from the dump.
  *   Object arrays and native-pointer arrays are still written so the heap graph can be
  *   reconstructed. `kdumputil` fills omitted primitive arrays with zeros when converting to hprof.
- * @param gzip If `true`, the dump is written as a gzip member. `kdumputil` detects the gzip
- *   magic and decompresses before parsing. Ignored on tvOS and watchOS, where the
- *   sysroot does not provide zlib; the dump is then written uncompressed.
  */
 @NativeRuntimeApi
 public class MemoryDumpOptions(
         public val omitPrimitiveArrayPayloads: Boolean = false,
-        public val gzip: Boolean = false,
 )
 
 /**
@@ -50,16 +46,16 @@ public object Debugging {
      * Dump memory in binary format to the given POSIX file descriptor with [options]
      * and returns success flag.
      *
-     * The default [options] write an uncompressed dump with full object and array payloads.
+     * The default [options] write a dump with full object and array payloads.
      * Mutators stay suspended until the write finishes, then this function returns
      * so the caller may close [fd].
      */
     public fun dumpMemory(fd: Long, options: MemoryDumpOptions = MemoryDumpOptions()): Boolean =
-            dumpMemoryWithOptions(fd, options.omitPrimitiveArrayPayloads, options.gzip)
+            dumpMemoryWithOptions(fd, options.omitPrimitiveArrayPayloads)
 
     @GCUnsafeCall("Kotlin_native_runtime_Debugging_dumpMemoryWithOptions")
     @Escapes.Nothing
-    private external fun dumpMemoryWithOptions(fd: Long, omitPrimitiveArrayPayloads: Boolean, gzip: Boolean): Boolean
+    private external fun dumpMemoryWithOptions(fd: Long, omitPrimitiveArrayPayloads: Boolean): Boolean
 }
 
 @GCUnsafeCall("Kotlin_Debugging_isThreadStateRunnable")

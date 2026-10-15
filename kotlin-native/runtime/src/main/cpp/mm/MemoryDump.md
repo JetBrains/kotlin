@@ -119,11 +119,7 @@
 - object_id (id): object ID
 ```
 
-## Optional wrappers
-
-The dump body above is format `1.0.8`. Implementations may wrap the entire file in a
-single gzip member (`1f 8b` magic). `kdumputil` decompresses such files automatically.
-Gzip wrapping is omitted on targets without zlib (tvOS, watchOS).
+## Optional omit
 
 When primitive-array payloads are omitted, the ARRAY record still stores `count`, but
 the following size field is `0` and `element_data` is empty. Object arrays and
