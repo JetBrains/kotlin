@@ -17,4 +17,10 @@ abstract class AbstractTwoStageKotlinCompilerTestBase {
 
     abstract val groupingStageRunner: GroupingTestRunner
     abstract val secondStageRunnerInitialized: Boolean
+
+    /**
+     * Set by `CompilerTestGroupingTestEngine` before the test is configured, if the test is retried in isolation
+     * after it has failed in a grouped batch (see [RetriedTestIsolator]).
+     */
+    var isRetriedInIsolation: Boolean = false
 }

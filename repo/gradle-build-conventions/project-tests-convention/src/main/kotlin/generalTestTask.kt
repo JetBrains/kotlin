@@ -182,6 +182,12 @@ internal fun Project.createGeneralTestTask(
             project.kotlinBuildProperties.booleanProperty("kotlin.test.update.test.data", false).get()
         )
         systemProperty("cacheRedirectorEnabled", project.kotlinBuildProperties.isCacheRedirectorEnabled.get())
+        // `-Pkotlin.test.grouping.engine.retry.failed.tests.isolated=false` turns the retries off in `CompilerTestGroupingTestEngine`.
+        // This might be useful for debugging grouped test failures.
+        val retryFailedGroupingTests = project.providers.gradleProperty("kotlin.test.grouping.engine.retry.failed.tests.isolated")
+        if (retryFailedGroupingTests.isPresent) {
+            systemProperty("kotlin.test.grouping.engine.retry.failed.tests.isolated", retryFailedGroupingTests.get())
+        }
         project.kotlinBuildProperties.junit5NumberOfThreadsForParallelExecution?.let { n ->
             systemProperty("junit.jupiter.execution.parallel.config.strategy", "fixed")
             systemProperty("junit.jupiter.execution.parallel.config.fixed.parallelism", n)
