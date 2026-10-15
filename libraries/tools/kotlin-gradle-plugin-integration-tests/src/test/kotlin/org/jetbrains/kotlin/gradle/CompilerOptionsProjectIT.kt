@@ -11,6 +11,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.kotlinAndroidExtensionOrNull
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
 
@@ -20,6 +21,7 @@ import kotlin.io.path.appendText
  * `ProjectCompilerOptionsTests`. What remains here is Android-specific (needs AGP).
  */
 @DisplayName("Project level compiler options DSL")
+@MustRunOnChangesInGradle
 class CompilerOptionsProjectIT : KGPBaseTest() {
 
     @DisplayName("Project level DSL is available in android project")

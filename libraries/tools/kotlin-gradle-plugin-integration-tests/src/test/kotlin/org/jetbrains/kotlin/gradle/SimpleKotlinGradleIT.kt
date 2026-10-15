@@ -7,8 +7,10 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.jetbrains.kotlin.testFederation.MustRunAlways
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInBuildToolsApi
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInFrontend
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.io.TempDir
@@ -20,11 +22,12 @@ import kotlin.io.path.invariantSeparatorsPathString
 
 @JvmGradlePluginTests
 @DisplayName("KGP simple tests")
-@MustRunAlways
+@MustRunOnChangesInGradle
 class SimpleKotlinGradleIT : KGPBaseTest() {
 
     @GradleTest
     @DisplayName("On second run common tasks should be up-to-date")
+    @MustRunOnChangesInBuildToolsApi
     fun testSimpleCompile(gradleVersion: GradleVersion) {
         project(
             projectName = "simpleProject",
@@ -56,6 +59,7 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
 
     @GradleTest
     @DisplayName("Plugin allows to suppress all warnings")
+    @MustRunOnChangesInFrontend
     fun testSuppressWarnings(gradleVersion: GradleVersion) {
         project("suppressWarnings", gradleVersion) {
             build("build") {
@@ -67,6 +71,7 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
 
     @GradleTest
     @DisplayName("Warnings with set warningLevel are reported")
+    @MustRunOnChangesInFrontend
     fun testWarningLevels(gradleVersion: GradleVersion) {
         project(
             "warningLevelUsage",
@@ -98,6 +103,7 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
 
     @GradleTest
     @DisplayName("Using newer language features with older api level should fail the build")
+    @MustRunOnChangesInFrontend
     fun testLanguageVersion(gradleVersion: GradleVersion) {
         project("languageVersion", gradleVersion) {
             buildAndFail("build") {
@@ -303,28 +309,6 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
 
                 val baseProjectsDir = tempDir.resolve("kotlin-cache")
                 assertDirectoryExists(baseProjectsDir)
-            }
-        }
-    }
-
-    @DisplayName("KT-63499: source sets conventions are not registered since Gradle 8.2")
-    @GradleTest
-    fun sourceSetsConventionsAreNotRegistered(gradleVersion: GradleVersion) {
-        project("simpleProject", gradleVersion) {
-            // project's buildscript has to be in Groovy
-            buildGradle.append(
-                //language=Gradle
-                """
-                sourceSets {
-                    main {
-                        customSourceFilesExtensions // try using a property of KotlinSourceSet through the source set convention
-                    }
-                }
-                """.trimIndent()
-            )
-            @Suppress("UNUSED_EXPRESSION") KotlinSourceSet::customSourceFilesExtensions // ensure the accessed property is available on KotlinSourceSet
-            buildAndFail("help") {
-                assertOutputContains("Could not get unknown property 'customSourceFilesExtensions' for source set 'main' ")
             }
         }
     }

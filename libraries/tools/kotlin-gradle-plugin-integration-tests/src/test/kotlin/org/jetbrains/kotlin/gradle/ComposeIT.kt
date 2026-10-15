@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.BuildOptions.ConfigurationCacheValue.ENABLED
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCompilerPlugins
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.DisabledOnOs
 import org.junit.jupiter.api.condition.OS
@@ -27,9 +29,11 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 @DisplayName("Compose compiler Gradle plugin")
+@MustRunOnChangesInCompilerPlugins
 class ComposeIT : KGPBaseTest() {
 
     @DisplayName("Should work correctly when compose in Android is enabled")
+    @MustRunOnChangesInGradle
     @AndroidGradlePluginTests
     @GradleAndroidTest
     @TestMetadata("AndroidSimpleComposeApp")
@@ -52,6 +56,7 @@ class ComposeIT : KGPBaseTest() {
     }
 
     @DisplayName("Should not break build cache relocation")
+    @MustRunOnChangesInGradle
     @AndroidGradlePluginTests
     @GradleAndroidTest
     @TestMetadata("AndroidSimpleComposeApp")
@@ -118,6 +123,7 @@ class ComposeIT : KGPBaseTest() {
     }
 
     @DisplayName("Should not suggest apply Kotlin compose plugin in JB Compose plugin")
+    @MustRunOnChangesInGradle
     @AndroidGradlePluginTests
     @GradleAndroidTest
     @TestMetadata("JBComposeApp")
@@ -637,6 +643,7 @@ class ComposeIT : KGPBaseTest() {
     @DisplayName("Minified app with disabled mapping does not run Compose tasks.")
     @AndroidGradlePluginTests
     @GradleAndroidTest
+    @MustRunOnChangesInGradle
     @DisabledOnOs(
         OS.WINDOWS, disabledReason = "AGP contains a bug that prevents test output files from being cleaned up on Windows. " +
                 "See: https://issuetracker.google.com/issues/445967244"

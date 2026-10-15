@@ -12,10 +12,12 @@ import org.jetbrains.kotlin.gradle.internals.asFinishLogMessage
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInBuildToolsApi
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.writeText
 
 @DisplayName("Kotlin daemon JVM args")
+@MustRunOnChangesInBuildToolsApi
 class KotlinDaemonJvmArgsTest : KGPDaemonsBaseTest() {
     override val defaultBuildOptions: BuildOptions
         get() = super.defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)

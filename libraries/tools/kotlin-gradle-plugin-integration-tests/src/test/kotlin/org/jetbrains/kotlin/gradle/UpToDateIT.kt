@@ -5,6 +5,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.firstSupported
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.DisabledOnOs
 import org.junit.jupiter.api.condition.OS
@@ -17,6 +18,7 @@ import kotlin.test.assertTrue
 
 @DisplayName("Kotlin options change")
 @JvmGradlePluginTests
+@MustRunOnChangesInGradle
 class UpToDateIT : KGPBaseTest() {
 
     @DisplayName("Language version change")
@@ -277,7 +279,7 @@ class UpToDateIT : KGPBaseTest() {
         }
         .toSet()
 
-    private inner class OptionMutation(
+    private class OptionMutation(
         private val path: String,
         private val oldValue: String,
         private val newValue: String,

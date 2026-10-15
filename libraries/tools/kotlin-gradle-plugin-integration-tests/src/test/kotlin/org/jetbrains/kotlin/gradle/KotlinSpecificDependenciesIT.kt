@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCoreLibs
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.params.ParameterizedTest
@@ -24,6 +26,7 @@ import kotlin.streams.toList
 import kotlin.test.fail
 
 @DisplayName("Kotlin default dependencies")
+@MustRunOnChangesInGradle
 class KotlinSpecificDependenciesIT : KGPBaseTest() {
 
     @JvmGradlePluginTests

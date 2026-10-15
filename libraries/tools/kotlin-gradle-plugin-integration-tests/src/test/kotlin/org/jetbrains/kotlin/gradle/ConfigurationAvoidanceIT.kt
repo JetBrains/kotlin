@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.include
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -19,6 +20,7 @@ import kotlin.io.path.appendText
 import kotlin.test.assertEquals
 
 @DisplayName("Tasks configuration avoidance")
+@MustRunOnChangesInGradle
 class ConfigurationAvoidanceIT : KGPBaseTest() {
 
     @JvmGradlePluginTests
