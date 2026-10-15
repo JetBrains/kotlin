@@ -120,7 +120,7 @@ abstract class WasiAdapter @Inject internal constructor() {
  * @param version the version string. Must not be blank.
  */
 @ExperimentalWasmDsl
-data class WasiAdapterVersion(
+class WasiAdapterVersion(
     @get:Input
     val version: String,
 ) : Serializable {

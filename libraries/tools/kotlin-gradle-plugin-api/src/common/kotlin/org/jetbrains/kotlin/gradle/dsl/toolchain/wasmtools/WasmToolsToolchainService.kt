@@ -124,7 +124,7 @@ abstract class WasmToolsExecutable @Inject internal constructor() {
  * @param version the version string. Must not be blank.
  */
 @ExperimentalWasmDsl
-data class WasmToolsVersion(
+class WasmToolsVersion(
     @get:Input
     val version: String,
 ) : Serializable {
@@ -141,7 +141,7 @@ data class WasmToolsVersion(
  * @property arch the CPU architecture, for example `x64` or `arm64`.
  */
 @ExperimentalWasmDsl
-data class WasmToolsBuildPlatform(
+class WasmToolsBuildPlatform(
     @get:Input
     val os: String,
     @get:Input

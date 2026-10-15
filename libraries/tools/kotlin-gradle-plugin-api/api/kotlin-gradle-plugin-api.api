@@ -894,13 +894,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/toolchain/wasiad
 
 public final class org/jetbrains/kotlin/gradle/dsl/toolchain/wasiadapter/WasiAdapterVersion : java/io/Serializable {
 	public fun <init> (Ljava/lang/String;)V
-	public final fun component1 ()Ljava/lang/String;
-	public final fun copy (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/dsl/toolchain/wasiadapter/WasiAdapterVersion;
-	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/dsl/toolchain/wasiadapter/WasiAdapterVersion;Ljava/lang/String;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/dsl/toolchain/wasiadapter/WasiAdapterVersion;
-	public fun equals (Ljava/lang/Object;)Z
 	public final fun getVersion ()Ljava/lang/String;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/DefaultWasmToolsToolchainService : org/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/WasmToolsToolchainService {
@@ -926,14 +920,8 @@ public abstract class org/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/PreIns
 
 public final class org/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/WasmToolsBuildPlatform : java/io/Serializable {
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
-	public final fun component1 ()Ljava/lang/String;
-	public final fun component2 ()Ljava/lang/String;
-	public final fun copy (Ljava/lang/String;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/WasmToolsBuildPlatform;
-	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/WasmToolsBuildPlatform;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/WasmToolsBuildPlatform;
-	public fun equals (Ljava/lang/Object;)Z
 	public final fun getArch ()Ljava/lang/String;
 	public final fun getOs ()Ljava/lang/String;
-	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
@@ -970,13 +958,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/toolchain/wasmto
 
 public final class org/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/WasmToolsVersion : java/io/Serializable {
 	public fun <init> (Ljava/lang/String;)V
-	public final fun component1 ()Ljava/lang/String;
-	public final fun copy (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/WasmToolsVersion;
-	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/WasmToolsVersion;Ljava/lang/String;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/WasmToolsVersion;
-	public fun equals (Ljava/lang/Object;)Z
 	public final fun getVersion ()Ljava/lang/String;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/CInteropSettings : org/gradle/api/Named {
