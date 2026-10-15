@@ -93,8 +93,9 @@ internal class KaFirNamedClassSymbol private constructor(
     override val isInline: Boolean
         get() = withValidityAssertion {
             when {
-                backingPsi == null || backingPsi.hasModifier(KtTokens.VALUE_KEYWORD) -> firSymbol.isInlineClass
+                backingPsi == null -> firSymbol.isInlineClass
                 backingPsi.hasModifier(KtTokens.INLINE_KEYWORD) -> true
+                backingPsi.hasModifier(KtTokens.VALUE_KEYWORD) -> firSymbol.isInlineClass
                 else -> false
             }
         }
