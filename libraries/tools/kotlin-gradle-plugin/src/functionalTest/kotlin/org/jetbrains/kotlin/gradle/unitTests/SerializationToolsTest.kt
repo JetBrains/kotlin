@@ -9,31 +9,48 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.SerializationTools
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.GradleSwiftExportFiles
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.GradleSwiftExportModule
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.GradleSwiftExportModules
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import org.jetbrains.kotlin.gradle.util.resourcesRoot
 import org.jetbrains.kotlin.konan.target.HostManager
-import kotlin.test.Test
+import org.junit.jupiter.api.Assumptions
+import org.junit.jupiter.api.io.TempDir
 import java.io.File
+import java.nio.file.Files
 import java.nio.file.Path
+import kotlin.io.path.createDirectories
+import kotlin.io.path.createFile
+import kotlin.io.path.createParentDirectories
+import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 class SerializationToolsTest {
 
+    /** The directory with the modules file. The generated files are in its `files` directory. */
+    private val baseDirectory = File("SwiftExport/iosArm64").absoluteFile
+
+    private fun file(path: String) = baseDirectory.resolve("files").resolve(path)
+
     @Test
     fun `test hierarchy SwiftModule serialization`() {
-        val json = SerializationTools.writeToJson(GradleSwiftExportModules(hierarchyModules()))
+        val json = SerializationTools.writeToJson(GradleSwiftExportModules(hierarchyModules()), baseDirectory)
         val hierarchyJson = testJson("hierarchyJson").readText()
 
-        assertEquals(json.unixStylePath(), hierarchyJson)
+        assertEquals(hierarchyJson, json)
     }
 
     @Test
     fun `test hierarchy SwiftModule deserialization`() {
         val modules = SerializationTools.readFromJson(
-            testJson("hierarchyJson").readText()
+            testJson("hierarchyJson").readText(),
+            baseDirectory,
         )
         val hierarchyModules = GradleSwiftExportModules(hierarchyModules())
 
-        assertEquals(modules, hierarchyModules)
+        assertEquals(hierarchyModules, modules)
     }
 
     @Test
@@ -46,20 +63,21 @@ class SerializationToolsTest {
 
     @Test
     fun `test nested SwiftModule serialization`() {
-        val json = SerializationTools.writeToJson(GradleSwiftExportModules(nestedModules()))
+        val json = SerializationTools.writeToJson(GradleSwiftExportModules(nestedModules()), baseDirectory)
         val nestedJson = testJson("nestedJson").readText()
 
-        assertEquals(json.unixStylePath(), nestedJson)
+        assertEquals(nestedJson, json)
     }
 
     @Test
     fun `test nested SwiftModule deserialization`() {
         val modules = SerializationTools.readFromJson(
-            testJson("nestedJson").readText()
+            testJson("nestedJson").readText(),
+            baseDirectory,
         )
         val nestedModules = GradleSwiftExportModules(nestedModules())
 
-        assertEquals(modules, nestedModules)
+        assertEquals(nestedModules, modules)
     }
 
     @Test
@@ -71,25 +89,92 @@ class SerializationToolsTest {
     }
 
     @Test
-    fun `test Windows Unix SwiftModule paths`() {
-        val json = SerializationTools.writeToJson(GradleSwiftExportModules(simpleModules()))
-        val simpleJson = testJson("simpleJson").readText()
-        val simpleWinJson = testJson("simpleWindowsJson").readText()
+    fun `test the same JSON is written on every host`() {
+        val json = SerializationTools.writeToJson(GradleSwiftExportModules(simpleModules()), baseDirectory)
 
-        if (HostManager.hostIsMingw) {
-            assertEquals(json, simpleWinJson)
-        } else if (HostManager.hostIsMac || HostManager.hostIsLinux) {
-            assertEquals(json, simpleJson)
-            assertEquals(json, simpleWinJson.unixStylePath())
+        assertEquals(testJson("simpleJson").readText(), json)
+    }
+
+    @Test
+    fun `test the modules file holds paths relative to its directory`() {
+        val json = SerializationTools.writeToJson(GradleSwiftExportModules(hierarchyModules()), baseDirectory)
+        val modules = Json.parseToJsonElement(json).jsonObject.getValue("modules").jsonArray.map { it.jsonObject }
+
+        val writtenPaths = modules.flatMap { module ->
+            val files = module["files"]?.jsonObject
+            listOfNotNull(
+                files?.get("swiftApi"),
+                files?.get("kotlinBridges"),
+                files?.get("cHeaderBridges"),
+                module["swiftApi"],
+            ).map { it.jsonPrimitive.content }
         }
+
+        assertEquals(
+            listOf(
+                "files/A/SwiftFile.swift", "files/A/KotlinBridge.kt", "files/A/Header.h",
+                "files/B/SwiftFile.swift", "files/B/KotlinBridge.kt", "files/B/Header.h",
+                "files/C/SwiftFile.swift",
+                "files/D/SwiftFile.swift",
+                "files/E/SwiftFile.swift",
+            ),
+            writtenPaths,
+        )
+    }
+
+    @Test
+    fun `test the modules file can be read from another location`() {
+        val json = SerializationTools.writeToJson(GradleSwiftExportModules(simpleModules()), baseDirectory)
+        val movedDirectory = File("moved/SwiftExport/iosArm64").absoluteFile
+
+        val modules = SerializationTools.readFromJson(json, movedDirectory)
+
+        assertEquals(
+            GradleSwiftExportFiles(
+                movedDirectory.resolve("files/A/SwiftFile.swift"),
+                movedDirectory.resolve("files/A/KotlinBridge.kt"),
+                movedDirectory.resolve("files/A/Header.h"),
+            ),
+            (modules.modules.single() as GradleSwiftExportModule.BridgesToKotlin).files,
+        )
+    }
+
+    @Test
+    fun `test a file outside of the base directory is rejected`() {
+        val outside = GradleSwiftExportModule.SwiftOnly(
+            baseDirectory.resolveSibling("macosArm64/files/A/SwiftFile.swift"),
+            "Module_A",
+            emptyList(),
+        )
+
+        assertFailsWith<IllegalArgumentException> {
+            SerializationTools.writeToJson(GradleSwiftExportModules(listOf(outside)), baseDirectory)
+        }
+    }
+
+    @Test
+    fun `test a base directory reached through a symlink still contains its files`(@TempDir tempDir: Path) {
+        // Swift Export only runs on macOS, and Windows agents can't always create symlinks.
+        Assumptions.assumeTrue(HostManager.hostIsMac, "macOS host required for this test")
+        val realDirectory = tempDir.resolve("real").createDirectories()
+        val linkedDirectory = Files.createSymbolicLink(tempDir.resolve("link"), realDirectory)
+        val swiftApi = realDirectory.resolve("files/A/SwiftFile.swift").createParentDirectories().createFile()
+        val module = GradleSwiftExportModule.SwiftOnly(swiftApi.toFile(), "Module_A", emptyList())
+
+        val json = SerializationTools.writeToJson(GradleSwiftExportModules(listOf(module)), linkedDirectory.toFile())
+
+        assertEquals(
+            "files/A/SwiftFile.swift",
+            Json.parseToJsonElement(json).jsonObject["modules"]!!.jsonArray.single().jsonObject["swiftApi"]!!.jsonPrimitive.content,
+        )
     }
 
     private fun simpleModules(): List<GradleSwiftExportModule> = listOf(
         GradleSwiftExportModule.BridgesToKotlin(
             GradleSwiftExportFiles(
-                File("/A/SwiftFile.swift"),
-                File("/A/KotlinBridge.kt"),
-                File("/A/Header.h")
+                file("A/SwiftFile.swift"),
+                file("A/KotlinBridge.kt"),
+                file("A/Header.h")
             ),
             "Bridge_A",
             "Module_A",
@@ -100,9 +185,9 @@ class SerializationToolsTest {
     private fun hierarchyModules(): List<GradleSwiftExportModule> = listOf(
         GradleSwiftExportModule.BridgesToKotlin(
             GradleSwiftExportFiles(
-                File("/A/SwiftFile.swift"),
-                File("/A/KotlinBridge.kt"),
-                File("/A/Header.h")
+                file("A/SwiftFile.swift"),
+                file("A/KotlinBridge.kt"),
+                file("A/Header.h")
             ),
             "Bridge_A",
             "Module_A",
@@ -110,26 +195,26 @@ class SerializationToolsTest {
         ),
         GradleSwiftExportModule.BridgesToKotlin(
             GradleSwiftExportFiles(
-                File("/B/SwiftFile.swift"),
-                File("/B/KotlinBridge.kt"),
-                File("/B/Header.h")
+                file("B/SwiftFile.swift"),
+                file("B/KotlinBridge.kt"),
+                file("B/Header.h")
             ),
             "Bridge_B",
             "Module_B",
             listOf("Module_C", "Module_E")
         ),
         GradleSwiftExportModule.SwiftOnly(
-            File("/C/SwiftFile.swift"),
+            file("C/SwiftFile.swift"),
             "Module_C",
             emptyList()
         ),
         GradleSwiftExportModule.SwiftOnly(
-            File("/D/SwiftFile.swift"),
+            file("D/SwiftFile.swift"),
             "Module_D",
             emptyList()
         ),
         GradleSwiftExportModule.SwiftOnly(
-            File("/E/SwiftFile.swift"),
+            file("E/SwiftFile.swift"),
             "Module_E",
             emptyList()
         )
@@ -138,9 +223,9 @@ class SerializationToolsTest {
     private fun nestedModules(): List<GradleSwiftExportModule> = listOf(
         GradleSwiftExportModule.BridgesToKotlin(
             GradleSwiftExportFiles(
-                File("/A/SwiftFile.swift"),
-                File("/A/KotlinBridge.kt"),
-                File("/A/Header.h")
+                file("A/SwiftFile.swift"),
+                file("A/KotlinBridge.kt"),
+                file("A/Header.h")
             ),
             "Bridge_A",
             "Module_A",
@@ -148,26 +233,26 @@ class SerializationToolsTest {
         ),
         GradleSwiftExportModule.BridgesToKotlin(
             GradleSwiftExportFiles(
-                File("/B/SwiftFile.swift"),
-                File("/B/KotlinBridge.kt"),
-                File("/B/Header.h")
+                file("B/SwiftFile.swift"),
+                file("B/KotlinBridge.kt"),
+                file("B/Header.h")
             ),
             "Bridge_B",
             "Module_B",
             listOf("Module_C")
         ),
         GradleSwiftExportModule.SwiftOnly(
-            File("/C/SwiftFile.swift"),
+            file("C/SwiftFile.swift"),
             "Module_C",
             listOf("Module_D")
         ),
         GradleSwiftExportModule.SwiftOnly(
-            File("/D/SwiftFile.swift"),
+            file("D/SwiftFile.swift"),
             "Module_D",
             listOf("Module_E")
         ),
         GradleSwiftExportModule.SwiftOnly(
-            File("/E/SwiftFile.swift"),
+            file("E/SwiftFile.swift"),
             "Module_E",
             emptyList()
         )
@@ -178,5 +263,3 @@ private val serializationToolsTestFilesRoot: Path
     get() = resourcesRoot.resolve("testData/SerializationToolsTest")
 
 private fun testJson(fileName: String): File = serializationToolsTestFilesRoot.resolve("$fileName.json").toFile()
-
-private fun String.unixStylePath() = this.replace("\\\\", "/")

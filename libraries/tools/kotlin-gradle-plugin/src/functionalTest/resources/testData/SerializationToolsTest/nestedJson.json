@@ -2,9 +2,9 @@
     "modules": [
         {
             "files": {
-                "swiftApi": "/A/SwiftFile.swift",
-                "kotlinBridges": "/A/KotlinBridge.kt",
-                "cHeaderBridges": "/A/Header.h"
+                "swiftApi": "files/A/SwiftFile.swift",
+                "kotlinBridges": "files/A/KotlinBridge.kt",
+                "cHeaderBridges": "files/A/Header.h"
             },
             "bridgeName": "Bridge_A",
             "name": "Module_A",
@@ -15,9 +15,9 @@
         },
         {
             "files": {
-                "swiftApi": "/B/SwiftFile.swift",
-                "kotlinBridges": "/B/KotlinBridge.kt",
-                "cHeaderBridges": "/B/Header.h"
+                "swiftApi": "files/B/SwiftFile.swift",
+                "kotlinBridges": "files/B/KotlinBridge.kt",
+                "cHeaderBridges": "files/B/Header.h"
             },
             "bridgeName": "Bridge_B",
             "name": "Module_B",
@@ -27,7 +27,7 @@
             ]
         },
         {
-            "swiftApi": "/C/SwiftFile.swift",
+            "swiftApi": "files/C/SwiftFile.swift",
             "name": "Module_C",
             "type": "SWIFT_ONLY",
             "dependencies": [
@@ -35,7 +35,7 @@
             ]
         },
         {
-            "swiftApi": "/D/SwiftFile.swift",
+            "swiftApi": "files/D/SwiftFile.swift",
             "name": "Module_D",
             "type": "SWIFT_ONLY",
             "dependencies": [
@@ -43,7 +43,7 @@
             ]
         },
         {
-            "swiftApi": "/E/SwiftFile.swift",
+            "swiftApi": "files/E/SwiftFile.swift",
             "name": "Module_E",
             "type": "SWIFT_ONLY",
             "dependencies": []

@@ -93,6 +93,6 @@ internal abstract class CopySwiftExportIntermediatesForConsumer @Inject construc
         if (!filterInterfacesToOwnModules.get()) return null
         val modulesFile = swiftModulesFile.orNull?.asFile
             ?: error("swiftModulesFile must be set when filterInterfacesToOwnModules is enabled")
-        return SerializationTools.readFromJson(modulesFile.readText()).modules.map { it.name }
+        return SerializationTools.readFromJson(modulesFile.readText(), baseDirectory = modulesFile.parentFile).modules.map { it.name }
     }
 }
