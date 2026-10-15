@@ -176,7 +176,21 @@ object JKlibConfigurationUpdater : ConfigurationUpdater<K2JKlibCompilerArguments
 
         arguments.destination?.let { configuration.jklibOutputDestination = it }
         configuration.jklibCompileIr = arguments.compileIr
-        arguments.klibManifestProperties?.let { configuration.jklibManifestProperties = it.asList() }
+        arguments.klibManifestProperties?.let { properties ->
+            val parsedProperties = LinkedHashMap<String, String>(properties.size)
+            for (property in properties) {
+                val parts = property.split('=', limit = 2)
+                if (parts.size == 2 && parts[0].isNotEmpty()) {
+                    parsedProperties[parts[0]] = parts[1]
+                } else {
+                    configuration.report(
+                        COMPILER_ARGUMENTS_ERROR,
+                        "Invalid -Xklib-manifest-property format: '$property'. Expected '<key=value>'.",
+                    )
+                }
+            }
+            configuration.jklibManifestProperties = parsedProperties
+        }
         arguments.friendModules?.let { configuration.friendPaths = it.split(File.pathSeparator).filterNot(String::isEmpty) }
 
         // TODO(KT-87172): call configuration.setupCommonKlibArguments() instead of manual setup.
@@ -371,8 +385,7 @@ object JKlibKlibSerializationPhase : PipelinePhase<JKlibFir2IrPipelineArtifact, 
                 platformAndTargets(BuiltInsPlatform.JKLIB, emptyList())
                 configuration.jklibManifestProperties?.let { properties ->
                     customProperties {
-                        for (property in properties) {
-                            val [key, value] = property.split('=', limit = 2)
+                        for ((key, value) in properties) {
                             setProperty(key, value)
                         }
                     }
@@ -439,8 +452,7 @@ object JKlibMetadataSerializationPhase : PipelinePhase<JKlibFrontendPipelineArti
                 platformAndTargets(BuiltInsPlatform.JKLIB, emptyList())
                 configuration.jklibManifestProperties?.let { properties ->
                     customProperties {
-                        for (property in properties) {
-                            val [key, value] = property.split('=', limit = 2)
+                        for ((key, value) in properties) {
                             setProperty(key, value)
                         }
                     }

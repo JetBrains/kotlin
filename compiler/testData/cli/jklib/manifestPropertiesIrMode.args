@@ -8,3 +8,4 @@ $TEMP_DIR$
 ir_module
 -Xklib-manifest-property=customKey=customValue
 -Xklib-manifest-property=is_header=false
+-Xklib-manifest-property=commaKey=a,b,c

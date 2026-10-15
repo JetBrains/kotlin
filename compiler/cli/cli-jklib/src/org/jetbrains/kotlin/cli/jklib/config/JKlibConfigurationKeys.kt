@@ -13,7 +13,7 @@ object JKlibConfigurationKeys {
     val JKLIB_COMPILE_IR = CompilerConfigurationKey.create<Boolean>("jklib compile ir")
     val KLIB_PATHS = CompilerConfigurationKey.create<List<String>>("KLIB_PATHS")
     val JKLIB_MANIFEST_PROPERTIES =
-        CompilerConfigurationKey.create<List<String>>("jklib custom manifest properties")
+        CompilerConfigurationKey.create<Map<String, String>>("jklib custom manifest properties")
 }
 
 var CompilerConfiguration.jklibOutputDestination: String?
@@ -34,7 +34,7 @@ var CompilerConfiguration.klibPaths: List<String>
         put(JKlibConfigurationKeys.KLIB_PATHS, value)
     }
 
-var CompilerConfiguration.jklibManifestProperties: List<String>?
+var CompilerConfiguration.jklibManifestProperties: Map<String, String>?
     get() = get(JKlibConfigurationKeys.JKLIB_MANIFEST_PROPERTIES)
     set(value) {
         putIfNotNull(JKlibConfigurationKeys.JKLIB_MANIFEST_PROPERTIES, value)
