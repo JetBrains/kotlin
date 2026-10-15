@@ -16,6 +16,7 @@ import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.*
+import org.gradle.work.NormalizeLineEndings
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnostics
@@ -80,6 +81,7 @@ internal abstract class SwiftExportTask @Inject constructor(
     abstract val kotlinNativeProvider: Property<KotlinNativeProvider>
 
     @get:Classpath
+    @get:NormalizeLineEndings
     abstract val swiftExportClasspath: ConfigurableFileCollection
 
     @get:Nested
@@ -99,6 +101,7 @@ internal abstract class SwiftExportTask @Inject constructor(
      * Up-to-date tracking of [exportConfiguration]'s backing configuration.
      */
     @get:Classpath
+    @get:NormalizeLineEndings
     abstract val exportConfigurationFiles: ConfigurableFileCollection
 
     /**
@@ -116,6 +119,7 @@ internal abstract class SwiftExportTask @Inject constructor(
      * Up-to-date tracking of [apiConfiguration]'s backing configuration.
      */
     @get:Classpath
+    @get:NormalizeLineEndings
     abstract val apiConfigurationFiles: ConfigurableFileCollection
 
     /**

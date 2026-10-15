@@ -15,6 +15,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
+import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.cli.common.arguments.KotlinWasmCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.copyOf
 import org.jetbrains.kotlin.compilerRunner.*
@@ -63,6 +64,7 @@ internal abstract class WasmBinaryTransform : TransformAction<WasmBinaryTransfor
         abstract val currentJvmJdkToolsJar: Property<File>
 
         @get:Classpath
+        @get:NormalizeLineEndings
         abstract val defaultCompilerClasspath: ConfigurableFileCollection
 
         @get:Input
@@ -87,6 +89,7 @@ internal abstract class WasmBinaryTransform : TransformAction<WasmBinaryTransfor
         internal abstract val enhancedFreeCompilerArgs: ListProperty<String>
 
         @get:Classpath
+        @get:NormalizeLineEndings
         internal abstract val classpath: ConfigurableFileCollection
 
         @get:Internal

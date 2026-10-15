@@ -44,11 +44,13 @@ abstract class K2MultiplatformStructure {
          * @see org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.separateKmpCompilation
          */
         @get:Classpath
+        @get:NormalizeLineEndings
         @get:IgnoreEmptyDirectories
         @get:Incremental
         val dependencies: FileCollection,
 
         @get:Classpath
+        @get:NormalizeLineEndings
         @get:IgnoreEmptyDirectories
         @get:Incremental
         val friends: FileCollection,
