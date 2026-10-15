@@ -79,7 +79,7 @@ internal fun File.isParentOf(childCandidate: File, strict: Boolean = false): Boo
     val childCandidatePath = Paths.get(childCandidate.absolutePath).normalize()
 
     return if (strict) {
-        childCandidatePath.startsWith(parentPath) && parentPath != childCandidate
+        childCandidatePath.startsWith(parentPath) && parentPath != childCandidatePath
     } else {
         childCandidatePath.startsWith(parentPath)
     }
