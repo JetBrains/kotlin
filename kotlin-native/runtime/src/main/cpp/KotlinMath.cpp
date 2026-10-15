@@ -24,7 +24,7 @@
 
 #if __has_builtin(__builtin_roundeven) && (defined(__aarch64__) || defined(__SSE4_1__))
 // On aarch64 and on x86 with SSE 4.1, LLVM emits __builtin_roundeven as instructions, on other targets it emits a call
-// to the actual roundeven function, which is not present in the glibc version(s) that Kotlin runtime currently depends
+// to the actual roundeven function, which is not present in the glibc version(s) that Kotlin runtime currently depends on
 // on Linux and Windows, leading to linking errors on those platforms, hence the fallback path.
 //
 // Once all platforms have roundeven available, the fallback path can be removed.
@@ -163,17 +163,17 @@ KDouble Kotlin_math_round(KDouble x) {
         return x;
     }
 
-    KDouble t = __builtin_trunc(x);
+    KDouble rounded = __builtin_trunc(x);
     // The subtraction is exact according to https://en.wikipedia.org/wiki/Sterbenz_lemma.
-    KDouble fraction = fabs(x - t);
-    const bool isOdd = static_cast<int64_t>(t) % 2 != 0;
+    KDouble fraction = fabs(x - rounded);
+    const bool isOdd = static_cast<int64_t>(rounded) % 2 != 0;
 
     if (fraction > 0.5 || (fraction == 0.5 && isOdd)) {
         // Also exact because of the initial range check: all integers are exactly representable.
-        t += copysign(1.0, x);
+        rounded += copysign(1.0, x);
     }
 
-    return copysign(t, x);
+    return copysign(rounded, x);
 #endif
 }
 
@@ -262,17 +262,17 @@ KFloat Kotlin_math_roundf(KFloat x) {
         return x;
     }
 
-    KFloat t = __builtin_truncf(x);
+    KFloat rounded = __builtin_truncf(x);
     // The subtraction is exact according to https://en.wikipedia.org/wiki/Sterbenz_lemma.
-    KFloat fraction = fabsf(x - t);
-    const bool isOdd = static_cast<int32_t>(t) % 2 != 0;
+    KFloat fraction = fabsf(x - rounded);
+    const bool isOdd = static_cast<int32_t>(rounded) % 2 != 0;
 
     if (fraction > 0.5f || (fraction == 0.5f && isOdd)) {
         // Also exact because of the initial range check: all integers are exactly representable.
-        t += copysignf(1.0f, x);
+        rounded += copysignf(1.0f, x);
     }
 
-    return copysignf(t, x);
+    return copysignf(rounded, x);
 #endif
 }
 
