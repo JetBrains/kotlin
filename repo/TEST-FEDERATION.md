@@ -329,7 +329,10 @@ This may be useful if your task does not support partial execution
 ### Checking which files belong to each domain
 
 [domains.dump.txt](domains.dump.txt) lists the files belonging to each domain. CI checks that it matches the domain declarations.
-Its `ignored:` section lists globally ignored paths and takes precedence over domain entries.
+[domains.ignore.dump.txt](domains.ignore.dump.txt) lists globally ignored paths, which take precedence over domain entries.
+CI checks that this dump contains all currently ignored paths. Extra entries are allowed only if the current ignore rules
+still ignore those paths, for example files absent from the current checkout. Entries no longer covered by the rules must be removed.
+Entry order and formatting do not matter for the ignore dump.
 Run the same check locally from the repository root:
 
 ```shell
@@ -338,7 +341,7 @@ Run the same check locally from the repository root:
 
 ### Updating the dump
 
-Changes to `domains.yaml` might require an update of the dump file. Update it from the repository root with:
+Changes to `domains.yaml` might require an update of the dump files. Update both from the repository root with:
 
 ```shell
 ./gradlew :repo:codebase-tests:updateDomainsDump -Pkotlin.native.enabled=true
