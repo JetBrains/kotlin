@@ -50,8 +50,35 @@ class ResultTypeResolver(
             constraint.type.extractTypeForGivenRecursiveTypeParameter(typeParameter)
         }.takeIf { it.isNotEmpty() } ?: return null
 
-        return c.createCapturedStarProjectionForSelfType(typeVariableConstructor, typesForRecursiveTypeParameters)
+        return if (languageVersionSettings.supportsFeature(AvoidStarProjectingSupertypeOfRecursiveCapturedTypes)) {
+            val superType = prepareSupertypeForCaptured(typeVariableConstructor, typesForRecursiveTypeParameters, mapTypeVariable = { it })
+            c.createCapturedTypeForSelfReferentialSupertypes(typeVariableConstructor, listOf(superType), FROM_EXPRESSION)
+        } else {
+            val starProjection = c.createStarProjection(typeParameter)
+            val superType = prepareSupertypeForCaptured(
+                typeVariableConstructor, typesForRecursiveTypeParameters,
+                mapTypeVariable = { starProjection }
+            )
+            c.createCapturedType(starProjection, listOf(superType), lowerType = null, FROM_EXPRESSION)
+        }
     }
+
+    context(c: Context)
+    private inline fun prepareSupertypeForCaptured(
+        typeVariable: TypeVariableTypeConstructorMarker,
+        typesForRecursiveTypeParameters: List<KotlinTypeMarker>,
+        crossinline mapTypeVariable: (TypeArgumentMarker) -> TypeArgumentMarker,
+    ): KotlinTypeMarker = c.intersectTypes(
+        typesForRecursiveTypeParameters.map { type ->
+            type.replaceArgumentsDeeply {
+                when (val typeConstructor = it.getType()?.typeConstructor()) {
+                    typeVariable -> mapTypeVariable(it)
+                    is TypeVariableTypeConstructorMarker -> c.createTypeArgument(c.createUninferredType(typeConstructor), it.getVariance())
+                    else -> it
+                }
+            }
+        }
+    )
 
     context(c: Context)
     fun findResultType(variableWithConstraints: VariableWithConstraints, direction: ResolveDirection): KotlinTypeMarker {

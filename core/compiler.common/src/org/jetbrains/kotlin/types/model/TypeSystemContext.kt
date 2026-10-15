@@ -228,6 +228,12 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
         captureStatus: CaptureStatus
     ): CapturedTypeMarker
 
+    fun createCapturedTypeForSelfReferentialSupertypes(
+        typeVariable: TypeVariableTypeConstructorMarker,
+        supertypes: List<KotlinTypeMarker>,
+        status: CaptureStatus,
+    ): CapturedTypeMarker?
+
     fun createStubTypeForBuilderInference(typeVariable: TypeVariableMarker): StubTypeMarker
     fun createStubTypeForTypeVariablesInSubtyping(typeVariable: TypeVariableMarker): StubTypeMarker
 
@@ -364,27 +370,6 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
     @K2Only
     fun createSubstitutionFromSubtypingStubTypesToTypeVariables(): TypeSubstitutorMarker
 
-    fun createCapturedStarProjectionForSelfType(
-        typeVariable: TypeVariableTypeConstructorMarker,
-        typesForRecursiveTypeParameters: List<KotlinTypeMarker>,
-    ): SimpleTypeMarker? {
-        val typeParameter = typeVariable.typeParameter ?: return null
-        val starProjection = createStarProjection(typeParameter)
-        val superType = intersectTypes(
-            typesForRecursiveTypeParameters.map { type ->
-                type.replaceArgumentsDeeply {
-                    when (val typeConstructor = it.getType()?.typeConstructor()) {
-                        typeVariable -> starProjection
-                        is TypeVariableTypeConstructorMarker -> createTypeArgument(createUninferredType(typeConstructor), it.getVariance())
-                        else -> it
-                    }
-                }
-            }
-        )
-
-        return createCapturedType(starProjection, listOf(superType), lowerType = null, CaptureStatus.FROM_EXPRESSION)
-    }
-
     fun createSubstitutorForSuperTypes(baseType: KotlinTypeMarker): TypeSubstitutorMarker?
 
     fun computeEmptyIntersectionTypeKind(types: Collection<KotlinTypeMarker>): EmptyIntersectionTypeInfo? =
@@ -396,7 +381,6 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
 
     val lexicographicVariableReadinessCalculation: Boolean get() = false
 }
-
 
 class ArgumentList(initialSize: Int) : ArrayList<TypeArgumentMarker>(initialSize), TypeArgumentListMarker
 
