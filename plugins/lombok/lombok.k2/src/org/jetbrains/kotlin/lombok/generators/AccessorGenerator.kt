@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.lombok.generators
 
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.createCache
@@ -26,7 +25,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.lombok.AccessorNames
-import org.jetbrains.kotlin.lombok.LombokNames
 import org.jetbrains.kotlin.lombok.config.ConeLombokAnnotations
 import org.jetbrains.kotlin.lombok.config.ConeLombokAnnotations.Accessors
 import org.jetbrains.kotlin.lombok.config.ConeLombokAnnotations.Getter
@@ -123,19 +121,6 @@ class AccessorGenerator(session: FirSession) : FirDeclarationGenerationExtension
 
                     getOrPut(setterName) { mutableListOf() }.add(function)
                 }
-            }
-
-            if (data != null) {
-                getOrPut(LombokNames.CAN_EQUAL) { mutableListOf() }.add(
-                    classSymbol.createJavaMethod(
-                        name = LombokNames.CAN_EQUAL,
-                        valueParameters = listOf(ConeLombokValueParameter(Name.identifier("other"), session.builtinTypes.nullableAnyType)),
-                        returnTypeRef = session.builtinTypes.booleanType,
-                        visibility = JavaVisibilities.ProtectedAndPackage,
-                        modality = Modality.OPEN,
-                        key = LombokAccessorGeneratorKey,
-                    )
-                )
             }
         }.takeIf { it.isNotEmpty() }
     }

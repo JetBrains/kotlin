@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.builtins.StandardNames.EQUALS_NAME
 import org.jetbrains.kotlin.builtins.StandardNames.HASHCODE_NAME
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
@@ -189,7 +190,7 @@ class EqualsAndHashCodeGenerator(session: FirSession) : FirDeclarationGeneration
                 name = LombokNames.CAN_EQUAL,
                 valueParameters = listOf(ConeLombokValueParameter(OTHER, session.builtinTypes.nullableAnyType)),
                 returnTypeRef = session.builtinTypes.booleanType,
-                visibility = Visibilities.Protected,
+                visibility = if (classSymbol.hasJavaOrigin) JavaVisibilities.ProtectedAndPackage else Visibilities.Protected,
                 modality = Modality.OPEN,
                 isOverride = superclassCanEqual != null,
                 key = key,
