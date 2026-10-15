@@ -19,6 +19,7 @@ class BackendException(message: String, cause: Throwable?) : IllegalStateExcepti
             additionalMessage: String? = null,
             linesMapping: (Int) -> Pair<Int, Int>? = { _ -> null },
         ): Nothing {
+            println()
             // CompilationException (the only KotlinExceptionWithAttachments possible here) is already supposed
             // to have all information about the context.
             if (exception is KotlinExceptionWithAttachments) throw exception
