@@ -37,19 +37,24 @@ object FirLombokEqualsAndHashCodeChecker : FirRegularClassChecker(MppCheckerKind
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirRegularClass) {
-        val annotationInfo = context.session.lombokService.getEqualsAndHashCode(declaration.symbol) ?: return
+        val session = context.session
+        val annotationInfo = session.lombokService.getEqualsAndHashCode(declaration.symbol) ?: return
         val source = annotationInfo.annotation.source ?: declaration.source ?: return
-        val config = context.session.lombokService.config
+        val config = session.lombokService.config
 
-        val declaredMemberScope = context.session.declaredMemberScope(declaration.symbol, memberRequiredPhase = null)
+        val declaredMemberScope = session.declaredMemberScope(declaration.symbol, memberRequiredPhase = null)
         val isPlainClass = declaration.symbol.isPlainClass
         if (declaredMemberScope.hasUserDeclaredEqualsOrHashCode()) {
             /**
              * The user has overridden one of `equals`/`hashCode`. Generating only the
              * missing one would silently couple a user-written method with a generated counterpart that
              * may use a different field set, so we refuse to generate either and ask for both or neither.
+             *
+             * `@Data` only implies `@EqualsAndHashCode`, and Lombok skips the methods it implies silently.
              */
-            reporter.reportOn(source, LombokFirDiagnostics.EQUALS_OR_HASH_CODE_FUNCTIONS_ALREADY_EXIST, context)
+            if (session.lombokService.getData(declaration.symbol)?.annotation !== annotationInfo.annotation) {
+                reporter.reportOn(source, LombokFirDiagnostics.EQUALS_OR_HASH_CODE_FUNCTIONS_ALREADY_EXIST, context)
+            }
         } else if (isPlainClass) {
             /**
              * Mirrors javac's reaction to the members Lombok generates here: "equals(Object) in Child cannot
@@ -72,7 +77,7 @@ object FirLombokEqualsAndHashCodeChecker : FirRegularClassChecker(MppCheckerKind
             // generator skips the latter case to avoid a JVM clash; the former would fail at runtime with "overrides
             // final method".
             if (!declaredMemberScope.hasUserDeclaredCanEqual()) {
-                declaration.symbol.findSuperclassCanEqual(context.session)
+                declaration.symbol.findSuperclassCanEqual(session)
                     ?.takeIf { it.isFinal || !it.valueParameterSymbols.single().isAnyOrJavaObjectType }
                     ?.let { superclassCanEqual ->
                         reporter.reportOn(
@@ -90,7 +95,7 @@ object FirLombokEqualsAndHashCodeChecker : FirRegularClassChecker(MppCheckerKind
         // otherwise be told off for not chaining to a superclass it never generates a member for.
         if (isPlainClass) {
             if (annotationInfo.callSuper == CallSuperMode.Call &&
-                !declaration.symbol.hasNonTrivialSuperclass(context.session)
+                !declaration.symbol.hasNonTrivialSuperclass(session)
             ) {
                 /**
                  * Mirrors Lombok: "Generating equals/hashCode with a supercall to java.lang.Object is pointless."

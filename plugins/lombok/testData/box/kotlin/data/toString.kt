@@ -6,111 +6,111 @@ import lombok.ToString
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-<!ANNOTATION_IS_NOT_SUPPORTED!>@Data<!>
+@Data
 class Simple(val name: String, val age: Int)
 
-<!ANNOTATION_IS_NOT_SUPPORTED!>@Data<!>
+@Data
 class WithExclude(val a: String, @ToString.Exclude val b: String)
 
-<!ANNOTATION_IS_NOT_SUPPORTED!>@Data<!>
+@Data
 class WithIncludeCustomName(@ToString.Include(name = "myName") val x: String, val y: Int)
 
-<!ANNOTATION_IS_NOT_SUPPORTED!>@Data<!>
+@Data
 class WithExistingToString(val x: Int) {
     override fun toString(): String = "custom"
 }
 
-<!ANNOTATION_IS_NOT_SUPPORTED!>@Data<!>
+@Data
 class WithExistingNonConflictingToString(val x: Int) {
     fun toString(p: Boolean): String = if (p) x.toString() else ""
 }
 
-<!ANNOTATION_IS_NOT_SUPPORTED!>@Data<!>
+@Data
 class WithComputedProperties {
     val computedProp: String get() = "computed"
 }
 
 // KT-88410: a skipped property must not leave a separator behind
-<!ANNOTATION_IS_NOT_SUPPORTED!>@Data<!>
+@Data
 class WithComputedPropertyFirst {
     val computedProp: Int get() = 1
     val b = 2
 }
 
-<!ANNOTATION_IS_NOT_SUPPORTED!>@Data<!>
+@Data
 class WithComputedPropertyInTheMiddle {
     val a = 1
     val computedProp: Int get() = 2
     val c = 3
 }
 
-<!ANNOTATION_IS_NOT_SUPPORTED!>@Data<!>
+@Data
 class CallSuperWithComputedPropertyFirst : CallSuperBase(10) {
     val computedProp: Int get() = 1
     val ownProp = 2
 }
 
-<!ANNOTATION_IS_NOT_SUPPORTED!>@Data<!>
+@Data
 class WithImplicitReturnTypeProperty {
     val implicitReturnTypeProp = "implicit return type"
 }
 
-<!ANNOTATION_IS_NOT_SUPPORTED!>@Data<!>
+@Data
 class WithBackingFieldAndGetter {
     val x: Int = 42
         get() = field
 }
 
-<!ANNOTATION_IS_NOT_SUPPORTED!>@Data<!>
+@Data
 class WithNonConflictingExtensionFunction(val a: Int) {
     fun WithNonConflictingExtensionFunction.toString(): String = "Ext"
 }
 
-<!ANNOTATION_IS_NOT_SUPPORTED!>@Data<!>
+@Data
 data class DataClassDefault(val name: String, val age: Int)
 
-<!ANNOTATION_IS_NOT_SUPPORTED!>@Data<!>
+<!ANNOTATION_HAS_NO_EFFECT!>@Data<!>
 object EmptyObject
 
-<!ANNOTATION_IS_NOT_SUPPORTED!>@Data<!>
+<!ANNOTATION_HAS_NO_EFFECT!>@Data<!>
 object ObjectWithProperties {
     val version = "2.0"
     val label = "release"
 }
 
-<!ANNOTATION_IS_NOT_SUPPORTED!>@Data<!>
+@Data
 class WithNonConflictingContextualFunction(val b: String) {
     context(p: WithNonConflictingContextualFunction)
     fun toString(): String = "Contex"
 }
 
-<!ANNOTATION_IS_NOT_SUPPORTED!>@Data<!>
+@Data
 class WithRank(
     @ToString.Include(rank = -1) val lowRank: String,
     val defaultRank: String,
     @ToString.Include(rank = 1) val highRank: String,
 )
 
-<!ANNOTATION_IS_NOT_SUPPORTED!>@Data<!>
+@Data
 class WithSameRank(
     @ToString.Include(rank = 2) val a: String,
     @ToString.Include(rank = 2) val b: String,
     val c: String,
 )
 
-<!ANNOTATION_IS_NOT_SUPPORTED!>@Data<!>
+@Data
 open class CallSuperBase(val baseProp: Int)
 
-<!ANNOTATION_IS_NOT_SUPPORTED!>@Data<!>
+@Data
 class CallSuperDerived(val ownProp: String) : CallSuperBase(10)
 
 // An explicit `@ToString` takes precedence over the one implied by `@Data`.
-<!ANNOTATION_IS_NOT_SUPPORTED!>@Data<!>
+@Data
 @ToString(callSuper = true)
 class DataWithExplicitToString(val own: Int) : CallSuperBase(10)
 
 // ISSUE: KT-88419
-<!ANNOTATION_IS_NOT_SUPPORTED!>@Data<!>
+@Data
 class WithArrays {
     val objectArray = arrayOf("a", "b")
     val nestedArray = arrayOf(arrayOf("a"), arrayOf("b"))
@@ -121,7 +121,7 @@ class WithArrays {
 
 // A `$`-prefixed name is generated or internal by convention, so Lombok leaves such a property out unless it is
 // explicitly opted in with `@ToString.Include`, KT-88636.
-<!ANNOTATION_IS_NOT_SUPPORTED!>@Data<!>
+@Data
 class WithDollarPrefixedProperties(
     val regular: String,
     val `$excludedByDefault`: String,
@@ -138,7 +138,8 @@ fun box(): String {
     assertEquals("WithComputedPropertyFirst(b=2)", WithComputedPropertyFirst().toString())
     assertEquals("WithComputedPropertyInTheMiddle(a=1, c=3)", WithComputedPropertyInTheMiddle().toString())
     assertEquals(
-        "CallSuperWithComputedPropertyFirst(super=CallSuperBase(baseProp=10), ownProp=2)",
+        // With @ToString(callSuper = true) we would have also super=CallSuperBase(baseProp=10)
+        "CallSuperWithComputedPropertyFirst(ownProp=2)",
         CallSuperWithComputedPropertyFirst().toString()
     )
     assertEquals("WithImplicitReturnTypeProperty(implicitReturnTypeProp=implicit return type)", WithImplicitReturnTypeProperty().toString())
@@ -151,7 +152,7 @@ fun box(): String {
     assertEquals("EmptyObject()", EmptyObject.toString())
     assertEquals("ObjectWithProperties(version=2.0, label=release)", ObjectWithProperties.toString())
 
-    <!ANNOTATION_IS_NOT_SUPPORTED!>@Data<!>
+    @Data
     class LocalClass(val prop: String)
     assertEquals("LocalClass(prop=TestLocalClass)", LocalClass("TestLocalClass").toString())
 
@@ -159,7 +160,8 @@ fun box(): String {
     assertEquals("WithSameRank(a=1, b=2, c=3)", WithSameRank(a = "1", b = "2", c = "3").toString())
 
     assertEquals("CallSuperBase(baseProp=10)", CallSuperBase(10).toString())
-    assertEquals("CallSuperDerived(super=CallSuperBase(baseProp=10), ownProp=hello)", CallSuperDerived("hello").toString())
+    // With @ToString(callSuper = true) we would have also super=CallSuperBase(baseProp=10)
+    assertEquals("CallSuperDerived(ownProp=hello)", CallSuperDerived("hello").toString())
     // An explicit `callSuper = true` is honored even against `Any`, whose `toString` is the bare identity hash
     // `Object.toString` renders - "pretty much meaningless", as `@ToString`'s own javadoc puts it, but asked
     // for, and Lombok has no error for it the way `@EqualsAndHashCode` does. The hash rules out `assertEquals`.

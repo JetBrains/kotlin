@@ -138,8 +138,16 @@ class LombokService(session: FirSession, configFile: File?) : FirExtensionSessio
     fun getSuperBuilder(symbol: FirBasedSymbol<*>): SuperBuilder? = superBuilderCache.getValue(symbol)
     fun getSingular(symbol: FirBasedSymbol<*>): Singular? = singularCache.getValue(symbol)
     fun getLogs(symbol: FirBasedSymbol<*>): List<AbstractLog> = logsCache.getValue(symbol)
-    fun getToString(symbol: FirBasedSymbol<*>): ToString? = toStringCache.getValue(symbol)
-    fun getEqualsAndHashCode(symbol: FirBasedSymbol<*>): EqualsAndHashCode? = equalsAndHashCodeCache.getValue(symbol)
+
+    fun getToString(symbol: FirBasedSymbol<*>): ToString? {
+        return toStringCache.getValue(symbol)
+            ?: dataCache.getValue(symbol)?.toToString()
+    }
+
+    fun getEqualsAndHashCode(symbol: FirBasedSymbol<*>): EqualsAndHashCode? {
+        return equalsAndHashCodeCache.getValue(symbol)
+            ?: dataCache.getValue(symbol)?.toEqualsAndHashCode()
+    }
 }
 
 private typealias Cache<T> = FirCache<FirBasedSymbol<*>, T, Nothing?>

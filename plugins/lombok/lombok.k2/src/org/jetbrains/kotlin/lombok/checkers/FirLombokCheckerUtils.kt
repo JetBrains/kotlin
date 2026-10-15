@@ -200,6 +200,12 @@ private val implementedAnnotationInfos: Map<ClassId, ImplementedAnnotationsInfo>
             KotlinTarget.MEMBER_PROPERTY,
         )
     )
+    this[LombokNames.DATA_ID] = ImplementedAnnotationsInfo(
+        allowedTargetsMap = setOf(
+            KotlinTarget.CLASS_ONLY,
+            KotlinTarget.LOCAL_CLASS,
+        )
+    )
     this[LombokNames.BUILDER_ID] = ImplementedAnnotationsInfo(
         allowedTargetsMap = setOf(
             KotlinTarget.CLASS_ONLY,

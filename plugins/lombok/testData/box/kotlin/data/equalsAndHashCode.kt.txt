@@ -10,6 +10,37 @@ open class CallSuperBase {
 
   }
 
+  protected open fun canEqual(other: Any?): Boolean {
+    return other is CallSuperBase
+  }
+
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is CallSuperBase -> return false
+    }
+    val tmp_0: CallSuperBase = other /*as CallSuperBase */
+    when {
+      tmp_0.canEqual(other = <this>).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.<get-baseProp>(), arg1 = tmp_0.<get-baseProp>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_1: Int = 1
+    tmp_1 = tmp_1.times(other = 59).plus(other = <this>.<get-baseProp>().hashCode())
+    return tmp_1
+  }
+
+  override fun toString(): String {
+    return "CallSuperBase(" + "baseProp=" + <this>.<get-baseProp>() + ')'
+  }
+
 }
 
 @Data
@@ -22,6 +53,37 @@ class CallSuperDerived : CallSuperBase {
     super/*CallSuperBase*/(baseProp = 10)
     /* <init>() */
 
+  }
+
+  protected override fun canEqual(other: Any?): Boolean {
+    return other is CallSuperDerived
+  }
+
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is CallSuperDerived -> return false
+    }
+    val tmp_2: CallSuperDerived = other /*as CallSuperDerived */
+    when {
+      tmp_2.canEqual(other = <this>).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.<get-ownProp>(), arg1 = tmp_2.<get-ownProp>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_3: Int = 1
+    tmp_3 = tmp_3.times(other = 59).plus(other = <this>.<get-ownProp>().hashCode())
+    return tmp_3
+  }
+
+  override fun toString(): String {
+    return "CallSuperDerived(" + "ownProp=" + <this>.<get-ownProp>() + ')'
   }
 
 }
@@ -38,6 +100,37 @@ class CanEqualChild : CanEqualParent {
 
   }
 
+  protected override fun canEqual(other: Any?): Boolean {
+    return other is CanEqualChild
+  }
+
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is CanEqualChild -> return false
+    }
+    val tmp_4: CanEqualChild = other /*as CanEqualChild */
+    when {
+      tmp_4.canEqual(other = <this>).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.<get-c>(), arg1 = tmp_4.<get-c>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_5: Int = 1
+    tmp_5 = tmp_5.times(other = 59).plus(other = <this>.<get-c>().hashCode())
+    return tmp_5
+  }
+
+  override fun toString(): String {
+    return "CanEqualChild(" + "c=" + <this>.<get-c>() + ')'
+  }
+
 }
 
 @Data
@@ -50,6 +143,37 @@ open class CanEqualGrandparent {
     super/*Any*/()
     /* <init>() */
 
+  }
+
+  protected open fun canEqual(other: Any?): Boolean {
+    return other is CanEqualGrandparent
+  }
+
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is CanEqualGrandparent -> return false
+    }
+    val tmp_6: CanEqualGrandparent = other /*as CanEqualGrandparent */
+    when {
+      tmp_6.canEqual(other = <this>).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.<get-a>(), arg1 = tmp_6.<get-a>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_7: Int = 1
+    tmp_7 = tmp_7.times(other = 59).plus(other = <this>.<get-a>().hashCode())
+    return tmp_7
+  }
+
+  override fun toString(): String {
+    return "CanEqualGrandparent(" + "a=" + <this>.<get-a>() + ')'
   }
 
 }
@@ -66,6 +190,37 @@ open class CanEqualParent : CanEqualGrandparent {
 
   }
 
+  protected override fun canEqual(other: Any?): Boolean {
+    return other is CanEqualParent
+  }
+
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is CanEqualParent -> return false
+    }
+    val tmp_8: CanEqualParent = other /*as CanEqualParent */
+    when {
+      tmp_8.canEqual(other = <this>).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.<get-b>(), arg1 = tmp_8.<get-b>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_9: Int = 1
+    tmp_9 = tmp_9.times(other = 59).plus(other = <this>.<get-b>().hashCode())
+    return tmp_9
+  }
+
+  override fun toString(): String {
+    return "CanEqualParent(" + "b=" + <this>.<get-b>() + ')'
+  }
+
 }
 
 @Data
@@ -78,6 +233,37 @@ class ChildOfPrivateCanEqual : PrivateCanEqualBase {
     super/*PrivateCanEqualBase*/()
     /* <init>() */
 
+  }
+
+  protected open fun canEqual(other: Any?): Boolean {
+    return other is ChildOfPrivateCanEqual
+  }
+
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is ChildOfPrivateCanEqual -> return false
+    }
+    val tmp_10: ChildOfPrivateCanEqual = other /*as ChildOfPrivateCanEqual */
+    when {
+      tmp_10.canEqual(other = <this>).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.<get-a>(), arg1 = tmp_10.<get-a>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_11: Int = 1
+    tmp_11 = tmp_11.times(other = 59).plus(other = <this>.<get-a>().hashCode())
+    return tmp_11
+  }
+
+  override fun toString(): String {
+    return "ChildOfPrivateCanEqual(" + "a=" + <this>.<get-a>() + ')'
   }
 
 }
@@ -102,6 +288,34 @@ data class DataClassWithExclude {
 
   }
 
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is DataClassWithExclude -> return false
+    }
+    val tmp_12: DataClassWithExclude = other /*as DataClassWithExclude */
+    when {
+      EQEQ(arg0 = <this>.<get-name>(), arg1 = tmp_12.<get-name>()).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.<get-age>(), arg1 = tmp_12.<get-age>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_13: Int = 1
+    tmp_13 = tmp_13.times(other = 59).plus(other = <this>.<get-name>().hashCode())
+    tmp_13 = tmp_13.times(other = 59).plus(other = <this>.<get-age>().hashCode())
+    return tmp_13
+  }
+
+  override fun toString(): String {
+    return "DataClassWithExclude(" + "name=" + <this>.<get-name>() + ", age=" + <this>.<get-age>() + ", customProp=" + <this>.<get-customProp>() + ')'
+  }
+
   operator fun component1(): String {
     return <this>.#name
   }
@@ -116,37 +330,6 @@ data class DataClassWithExclude {
 
   fun copy(name: String = <this>.#name, age: Int = <this>.#age, customProp: Char = <this>.#customProp): DataClassWithExclude {
     return DataClassWithExclude(name = name, age = age, customProp = customProp)
-  }
-
-  override operator fun equals(other: Any?): Boolean {
-    when {
-      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
-    }
-    when {
-      other !is DataClassWithExclude -> return false
-    }
-    val tmp_0: DataClassWithExclude = other /*as DataClassWithExclude */
-    when {
-      EQEQ(arg0 = <this>.#name, arg1 = tmp_0.#name).not() -> return false
-    }
-    when {
-      EQEQ(arg0 = <this>.#age, arg1 = tmp_0.#age).not() -> return false
-    }
-    when {
-      EQEQ(arg0 = <this>.#customProp, arg1 = tmp_0.#customProp).not() -> return false
-    }
-    return true
-  }
-
-  override fun hashCode(): Int {
-    var result: Int = <this>.#name.hashCode()
-    result = result.times(other = 31).plus(other = <this>.#age.hashCode())
-    result = result.times(other = 31).plus(other = <this>.#customProp.hashCode())
-    return result
-  }
-
-  override fun toString(): String {
-    return "DataClassWithExclude(" + "name=" + <this>.#name + ", " + "age=" + <this>.#age + ", " + "customProp=" + <this>.#customProp + ")"
   }
 
 }
@@ -164,7 +347,7 @@ class DataWithExplicitEquals : CallSuperBase {
 
   }
 
-  protected open fun canEqual(other: Any?): Boolean {
+  protected override fun canEqual(other: Any?): Boolean {
     return other is DataWithExplicitEquals
   }
 
@@ -175,23 +358,27 @@ class DataWithExplicitEquals : CallSuperBase {
     when {
       other !is DataWithExplicitEquals -> return false
     }
-    val tmp_1: DataWithExplicitEquals = other /*as DataWithExplicitEquals */
+    val tmp_14: DataWithExplicitEquals = other /*as DataWithExplicitEquals */
     when {
-      tmp_1.canEqual(other = <this>).not() -> return false
+      tmp_14.canEqual(other = <this>).not() -> return false
     }
     when {
       super<CallSuperBase>.equals(other = other).not() -> return false
     }
     when {
-      EQEQ(arg0 = <this>.<get-own>(), arg1 = tmp_1.<get-own>()).not() -> return false
+      EQEQ(arg0 = <this>.<get-own>(), arg1 = tmp_14.<get-own>()).not() -> return false
     }
     return true
   }
 
   override fun hashCode(): Int {
-    var tmp_2: Int = super<CallSuperBase>.hashCode()
-    tmp_2 = tmp_2.times(other = 59).plus(other = <this>.<get-own>().hashCode())
-    return tmp_2
+    var tmp_15: Int = super<CallSuperBase>.hashCode()
+    tmp_15 = tmp_15.times(other = 59).plus(other = <this>.<get-own>().hashCode())
+    return tmp_15
+  }
+
+  override fun toString(): String {
+    return "DataWithExplicitEquals(" + "own=" + <this>.<get-own>() + ')'
   }
 
 }
@@ -202,6 +389,25 @@ class Empty {
     super/*Any*/()
     /* <init>() */
 
+  }
+
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is Empty -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_16: Int = 1
+    return tmp_16
+  }
+
+  override fun toString(): String {
+    return "Empty()"
   }
 
 }
@@ -216,6 +422,37 @@ open class ExtensionCanEqual {
     super/*Any*/()
     /* <init>() */
 
+  }
+
+  protected open fun canEqual(other: Any?): Boolean {
+    return other is ExtensionCanEqual
+  }
+
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is ExtensionCanEqual -> return false
+    }
+    val tmp_17: ExtensionCanEqual = other /*as ExtensionCanEqual */
+    when {
+      tmp_17.canEqual(other = <this>).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.<get-a>(), arg1 = tmp_17.<get-a>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_18: Int = 1
+    tmp_18 = tmp_18.times(other = 59).plus(other = <this>.<get-a>().hashCode())
+    return tmp_18
+  }
+
+  override fun toString(): String {
+    return "ExtensionCanEqual(" + "a=" + <this>.<get-a>() + ')'
   }
 
   fun Int.canEqual(other: Any?): Boolean {
@@ -236,6 +473,33 @@ open class GenericFunctionCanEqual {
 
   }
 
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is GenericFunctionCanEqual -> return false
+    }
+    val tmp_19: GenericFunctionCanEqual = other /*as GenericFunctionCanEqual */
+    when {
+      tmp_19.canEqual<Any?>(other = <this>).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.<get-a>(), arg1 = tmp_19.<get-a>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_20: Int = 1
+    tmp_20 = tmp_20.times(other = 59).plus(other = <this>.<get-a>().hashCode())
+    return tmp_20
+  }
+
+  override fun toString(): String {
+    return "GenericFunctionCanEqual(" + "a=" + <this>.<get-a>() + ')'
+  }
+
   open fun <T : Any?> canEqual(other: T): Boolean {
     return other is GenericFunctionCanEqual
   }
@@ -254,6 +518,33 @@ open class NonNullCanEqual {
 
   }
 
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is NonNullCanEqual -> return false
+    }
+    val tmp_21: NonNullCanEqual = other /*as NonNullCanEqual */
+    when {
+      tmp_21.canEqual(other = <this>).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.<get-a>(), arg1 = tmp_21.<get-a>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_22: Int = 1
+    tmp_22 = tmp_22.times(other = 59).plus(other = <this>.<get-a>().hashCode())
+    return tmp_22
+  }
+
+  override fun toString(): String {
+    return "NonNullCanEqual(" + "a=" + <this>.<get-a>() + ')'
+  }
+
   open fun canEqual(other: Any): Boolean {
     return other is NonNullCanEqual
   }
@@ -270,6 +561,33 @@ open class OverloadBeforeUserDeclaredCanEqual {
     super/*Any*/()
     /* <init>() */
 
+  }
+
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is OverloadBeforeUserDeclaredCanEqual -> return false
+    }
+    val tmp_23: OverloadBeforeUserDeclaredCanEqual = other /*as OverloadBeforeUserDeclaredCanEqual */
+    when {
+      tmp_23.canEqual(other = <this>).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.<get-a>(), arg1 = tmp_23.<get-a>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_24: Int = 1
+    tmp_24 = tmp_24.times(other = 59).plus(other = <this>.<get-a>().hashCode())
+    return tmp_24
+  }
+
+  override fun toString(): String {
+    return "OverloadBeforeUserDeclaredCanEqual(" + "a=" + <this>.<get-a>() + ')'
   }
 
   fun canEqual(x: Int): Boolean {
@@ -298,6 +616,34 @@ data class PlainDataClass {
 
   }
 
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is PlainDataClass -> return false
+    }
+    val tmp_25: PlainDataClass = other /*as PlainDataClass */
+    when {
+      EQEQ(arg0 = <this>.<get-a>(), arg1 = tmp_25.<get-a>()).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.<get-b>(), arg1 = tmp_25.<get-b>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_26: Int = 1
+    tmp_26 = tmp_26.times(other = 59).plus(other = <this>.<get-a>().hashCode())
+    tmp_26 = tmp_26.times(other = 59).plus(other = <this>.<get-b>().hashCode())
+    return tmp_26
+  }
+
+  override fun toString(): String {
+    return "PlainDataClass(" + "a=" + <this>.<get-a>() + ", b=" + <this>.<get-b>() + ')'
+  }
+
   operator fun component1(): String {
     return <this>.#a
   }
@@ -308,33 +654,6 @@ data class PlainDataClass {
 
   fun copy(a: String = <this>.#a, b: Int = <this>.#b): PlainDataClass {
     return PlainDataClass(a = a, b = b)
-  }
-
-  override operator fun equals(other: Any?): Boolean {
-    when {
-      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
-    }
-    when {
-      other !is PlainDataClass -> return false
-    }
-    val tmp_3: PlainDataClass = other /*as PlainDataClass */
-    when {
-      EQEQ(arg0 = <this>.#a, arg1 = tmp_3.#a).not() -> return false
-    }
-    when {
-      EQEQ(arg0 = <this>.#b, arg1 = tmp_3.#b).not() -> return false
-    }
-    return true
-  }
-
-  override fun hashCode(): Int {
-    var result: Int = <this>.#a.hashCode()
-    result = result.times(other = 31).plus(other = <this>.#b.hashCode())
-    return result
-  }
-
-  override fun toString(): String {
-    return "PlainDataClass(" + "a=" + <this>.#a + ", " + "b=" + <this>.#b + ")"
   }
 
 }
@@ -372,6 +691,34 @@ class Simple {
 
   }
 
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is Simple -> return false
+    }
+    val tmp_27: Simple = other /*as Simple */
+    when {
+      EQEQ(arg0 = <this>.<get-name>(), arg1 = tmp_27.<get-name>()).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.<get-age>(), arg1 = tmp_27.<get-age>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_28: Int = 1
+    tmp_28 = tmp_28.times(other = 59).plus(other = <this>.<get-name>().hashCode())
+    tmp_28 = tmp_28.times(other = 59).plus(other = <this>.<get-age>().hashCode())
+    return tmp_28
+  }
+
+  override fun toString(): String {
+    return "Simple(" + "name=" + <this>.<get-name>() + ", age=" + <this>.<get-age>() + ", megaName=" + <this>.<get-megaName>() + ')'
+  }
+
 }
 
 @Data
@@ -386,6 +733,33 @@ class SingleNullableInt {
 
   }
 
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is SingleNullableInt -> return false
+    }
+    val tmp_29: SingleNullableInt = other /*as SingleNullableInt */
+    when {
+      EQEQ(arg0 = <this>.<get-optionalId>(), arg1 = tmp_29.<get-optionalId>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_30: Int = 1
+    tmp_30 = tmp_30.times(other = 59).plus(other = when {
+      EQEQ(arg0 = <this>.<get-optionalId>(), arg1 = null) -> 43
+      else -> <this>.<get-optionalId>().hashCode()
+    })
+    return tmp_30
+  }
+
+  override fun toString(): String {
+    return "SingleNullableInt(" + "optionalId=" + <this>.<get-optionalId>() + ')'
+  }
+
 }
 
 @Data
@@ -398,6 +772,33 @@ class SingleNullableString {
     super/*Any*/()
     /* <init>() */
 
+  }
+
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is SingleNullableString -> return false
+    }
+    val tmp_31: SingleNullableString = other /*as SingleNullableString */
+    when {
+      EQEQ(arg0 = <this>.<get-optional>(), arg1 = tmp_31.<get-optional>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_32: Int = 1
+    tmp_32 = tmp_32.times(other = 59).plus(other = when {
+      EQEQ(arg0 = <this>.<get-optional>(), arg1 = null) -> 43
+      else -> <this>.<get-optional>().hashCode()
+    })
+    return tmp_32
+  }
+
+  override fun toString(): String {
+    return "SingleNullableString(" + "optional=" + <this>.<get-optional>() + ')'
   }
 
 }
@@ -418,6 +819,40 @@ class TwoNullableInts {
 
   }
 
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is TwoNullableInts -> return false
+    }
+    val tmp_33: TwoNullableInts = other /*as TwoNullableInts */
+    when {
+      EQEQ(arg0 = <this>.<get-first>(), arg1 = tmp_33.<get-first>()).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.<get-second>(), arg1 = tmp_33.<get-second>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_34: Int = 1
+    tmp_34 = tmp_34.times(other = 59).plus(other = when {
+      EQEQ(arg0 = <this>.<get-first>(), arg1 = null) -> 43
+      else -> <this>.<get-first>().hashCode()
+    })
+    tmp_34 = tmp_34.times(other = 59).plus(other = when {
+      EQEQ(arg0 = <this>.<get-second>(), arg1 = null) -> 43
+      else -> <this>.<get-second>().hashCode()
+    })
+    return tmp_34
+  }
+
+  override fun toString(): String {
+    return "TwoNullableInts(" + "first=" + <this>.<get-first>() + ", second=" + <this>.<get-second>() + ')'
+  }
+
 }
 
 @Data
@@ -430,6 +865,33 @@ open class TypeParameterCanEqual<T : Any?> {
     super/*Any*/()
     /* <init>() */
 
+  }
+
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is TypeParameterCanEqual<T> -> return false
+    }
+    val tmp_35: TypeParameterCanEqual<T> = other /*as TypeParameterCanEqual<T> */
+    when {
+      tmp_35.canEqual(other = <this>).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.<get-a>(), arg1 = tmp_35.<get-a>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_36: Int = 1
+    tmp_36 = tmp_36.times(other = 59).plus(other = <this>.<get-a>().hashCode())
+    return tmp_36
+  }
+
+  override fun toString(): String {
+    return "TypeParameterCanEqual(" + "a=" + <this>.<get-a>() + ')'
   }
 
   open fun canEqual(other: T): Boolean {
@@ -450,6 +912,37 @@ open class UnrelatedCanEqualOverload {
 
   }
 
+  protected open fun canEqual(other: Any?): Boolean {
+    return other is UnrelatedCanEqualOverload
+  }
+
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is UnrelatedCanEqualOverload -> return false
+    }
+    val tmp_37: UnrelatedCanEqualOverload = other /*as UnrelatedCanEqualOverload */
+    when {
+      tmp_37.canEqual(other = <this>).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.<get-a>(), arg1 = tmp_37.<get-a>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_38: Int = 1
+    tmp_38 = tmp_38.times(other = 59).plus(other = <this>.<get-a>().hashCode())
+    return tmp_38
+  }
+
+  override fun toString(): String {
+    return "UnrelatedCanEqualOverload(" + "a=" + <this>.<get-a>() + ')'
+  }
+
   fun canEqual(x: Int): Boolean {
     return EQEQ(arg0 = x, arg1 = <this>.<get-a>())
   }
@@ -466,6 +959,33 @@ open class UserDeclaredCanEqual {
     super/*Any*/()
     /* <init>() */
 
+  }
+
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is UserDeclaredCanEqual -> return false
+    }
+    val tmp_39: UserDeclaredCanEqual = other /*as UserDeclaredCanEqual */
+    when {
+      tmp_39.canEqual(other = <this>).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.<get-a>(), arg1 = tmp_39.<get-a>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_40: Int = 1
+    tmp_40 = tmp_40.times(other = 59).plus(other = <this>.<get-a>().hashCode())
+    return tmp_40
+  }
+
+  override fun toString(): String {
+    return "UserDeclaredCanEqual(" + "a=" + <this>.<get-a>() + ')'
   }
 
   open fun canEqual(other: Any?): Boolean {
@@ -486,6 +1006,10 @@ class UserDeclaredEqualsOnly {
 
   }
 
+  override fun toString(): String {
+    return "UserDeclaredEqualsOnly(" + "a=" + <this>.<get-a>() + ')'
+  }
+
   override operator fun equals(other: Any?): Boolean {
     return other is UserDeclaredEqualsOnly
   }
@@ -502,6 +1026,30 @@ class WithComputedProperties {
     super/*Any*/()
     /* <init>() */
 
+  }
+
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is WithComputedProperties -> return false
+    }
+    val tmp_41: WithComputedProperties = other /*as WithComputedProperties */
+    when {
+      EQEQ(arg0 = <this>.<get-real>(), arg1 = tmp_41.<get-real>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_42: Int = 1
+    tmp_42 = tmp_42.times(other = 59).plus(other = <this>.<get-real>().hashCode())
+    return tmp_42
+  }
+
+  override fun toString(): String {
+    return "WithComputedProperties(" + "real=" + <this>.<get-real>() + ')'
   }
 
   val computedProp: String
@@ -531,6 +1079,34 @@ class WithDollarPrefixedProperties {
 
   }
 
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is WithDollarPrefixedProperties -> return false
+    }
+    val tmp_43: WithDollarPrefixedProperties = other /*as WithDollarPrefixedProperties */
+    when {
+      EQEQ(arg0 = <this>.<get-regular>(), arg1 = tmp_43.<get-regular>()).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.<get-$explicitlyIncluded>(), arg1 = tmp_43.<get-$explicitlyIncluded>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_44: Int = 1
+    tmp_44 = tmp_44.times(other = 59).plus(other = <this>.<get-regular>().hashCode())
+    tmp_44 = tmp_44.times(other = 59).plus(other = <this>.<get-$explicitlyIncluded>().hashCode())
+    return tmp_44
+  }
+
+  override fun toString(): String {
+    return "WithDollarPrefixedProperties(" + "regular=" + <this>.<get-regular>() + ')'
+  }
+
 }
 
 @Data
@@ -549,6 +1125,30 @@ class WithExclude {
 
   }
 
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is WithExclude -> return false
+    }
+    val tmp_45: WithExclude = other /*as WithExclude */
+    when {
+      EQEQ(arg0 = <this>.<get-a>(), arg1 = tmp_45.<get-a>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_46: Int = 1
+    tmp_46 = tmp_46.times(other = 59).plus(other = <this>.<get-a>().hashCode())
+    return tmp_46
+  }
+
+  override fun toString(): String {
+    return "WithExclude(" + "a=" + <this>.<get-a>() + ", b=" + <this>.<get-b>() + ')'
+  }
+
 }
 
 @Data
@@ -563,6 +1163,30 @@ class WithGenericArray<T : Any?> {
 
   }
 
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is WithGenericArray<T> -> return false
+    }
+    val tmp_47: WithGenericArray<T> = other /*as WithGenericArray<T> */
+    when {
+      deepEquals(p0 = <this>.<get-array>(), p1 = tmp_47.<get-array>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_48: Int = 1
+    tmp_48 = tmp_48.times(other = 59).plus(other = deepHashCode(p0 = <this>.<get-array>()))
+    return tmp_48
+  }
+
+  override fun toString(): String {
+    return "WithGenericArray(" + "array=" + deepToString(p0 = <this>.<get-array>()) + ')'
+  }
+
 }
 
 @Data
@@ -575,6 +1199,30 @@ class WithNestedArray {
     super/*Any*/()
     /* <init>() */
 
+  }
+
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is WithNestedArray -> return false
+    }
+    val tmp_49: WithNestedArray = other /*as WithNestedArray */
+    when {
+      deepEquals(p0 = <this>.<get-array>(), p1 = tmp_49.<get-array>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_50: Int = 1
+    tmp_50 = tmp_50.times(other = 59).plus(other = deepHashCode(p0 = <this>.<get-array>()))
+    return tmp_50
+  }
+
+  override fun toString(): String {
+    return "WithNestedArray(" + "array=" + deepToString(p0 = <this>.<get-array>()) + ')'
   }
 
 }
@@ -595,6 +1243,37 @@ class WithNullable {
 
   }
 
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is WithNullable -> return false
+    }
+    val tmp_51: WithNullable = other /*as WithNullable */
+    when {
+      EQEQ(arg0 = <this>.<get-a>(), arg1 = tmp_51.<get-a>()).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.<get-b>(), arg1 = tmp_51.<get-b>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_52: Int = 1
+    tmp_52 = tmp_52.times(other = 59).plus(other = when {
+      EQEQ(arg0 = <this>.<get-a>(), arg1 = null) -> 43
+      else -> <this>.<get-a>().hashCode()
+    })
+    tmp_52 = tmp_52.times(other = 59).plus(other = <this>.<get-b>().hashCode())
+    return tmp_52
+  }
+
+  override fun toString(): String {
+    return "WithNullable(" + "a=" + <this>.<get-a>() + ", b=" + <this>.<get-b>() + ')'
+  }
+
 }
 
 @Data
@@ -607,6 +1286,30 @@ class WithNullableArray {
     super/*Any*/()
     /* <init>() */
 
+  }
+
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is WithNullableArray -> return false
+    }
+    val tmp_53: WithNullableArray = other /*as WithNullableArray */
+    when {
+      deepEquals(p0 = <this>.<get-array>(), p1 = tmp_53.<get-array>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_54: Int = 1
+    tmp_54 = tmp_54.times(other = 59).plus(other = deepHashCode(p0 = <this>.<get-array>()))
+    return tmp_54
+  }
+
+  override fun toString(): String {
+    return "WithNullableArray(" + "array=" + deepToString(p0 = <this>.<get-array>()) + ')'
   }
 
 }
@@ -623,6 +1326,30 @@ class WithObjectArray {
 
   }
 
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is WithObjectArray -> return false
+    }
+    val tmp_55: WithObjectArray = other /*as WithObjectArray */
+    when {
+      deepEquals(p0 = <this>.<get-array>(), p1 = tmp_55.<get-array>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_56: Int = 1
+    tmp_56 = tmp_56.times(other = 59).plus(other = deepHashCode(p0 = <this>.<get-array>()))
+    return tmp_56
+  }
+
+  override fun toString(): String {
+    return "WithObjectArray(" + "array=" + deepToString(p0 = <this>.<get-array>()) + ')'
+  }
+
 }
 
 @Data
@@ -635,6 +1362,30 @@ class WithPrimitiveArray {
     super/*Any*/()
     /* <init>() */
 
+  }
+
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is WithPrimitiveArray -> return false
+    }
+    val tmp_57: WithPrimitiveArray = other /*as WithPrimitiveArray */
+    when {
+      equals(p0 = <this>.<get-array>(), p1 = tmp_57.<get-array>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_58: Int = 1
+    tmp_58 = tmp_58.times(other = 59).plus(other = hashCode(p0 = <this>.<get-array>()))
+    return tmp_58
+  }
+
+  override fun toString(): String {
+    return "WithPrimitiveArray(" + "array=" + toString(p0 = <this>.<get-array>()) + ')'
   }
 
 }
@@ -659,6 +1410,10 @@ enum class Color : Enum<Color> {
 
   companion fun values(): Array<Color> /* Synthetic body for ENUM_VALUES */
 
+  override fun toString(): String {
+    return "Color(" + "hex=" + <this>.<get-hex>() + ')'
+  }
+
   companion val entries: EnumEntries<Color>
     companion get(): EnumEntries<Color> /* Synthetic body for ENUM_ENTRIES */
 
@@ -680,6 +1435,10 @@ object ObjectWithProperties {
 
   }
 
+  override fun toString(): String {
+    return "ObjectWithProperties(" + "version=" + <this>.<get-version>() + ", label=" + <this>.<get-label>() + ')'
+  }
+
 }
 
 @Data
@@ -688,6 +1447,10 @@ object SingletonObject {
     super/*Any*/()
     /* <init>() */
 
+  }
+
+  override fun toString(): String {
+    return "SingletonObject()"
   }
 
 }
@@ -812,6 +1575,30 @@ fun box(): String {
       super/*Any*/()
       /* <init>() */
 
+    }
+
+    override fun equals(other: Any?): Boolean {
+      when {
+        EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+      }
+      when {
+        other !is LocalClass -> return false
+      }
+      val tmp_59: LocalClass = other /*as LocalClass */
+      when {
+        EQEQ(arg0 = <this>.<get-x>(), arg1 = tmp_59.<get-x>()).not() -> return false
+      }
+      return true
+    }
+
+    override fun hashCode(): Int {
+      var tmp_60: Int = 1
+      tmp_60 = tmp_60.times(other = 59).plus(other = <this>.<get-x>().hashCode())
+      return tmp_60
+    }
+
+    override fun toString(): String {
+      return "LocalClass(" + "x=" + <this>.<get-x>() + ')'
     }
 
   }
