@@ -825,7 +825,7 @@ class SwiftPMImportPopularSwiftPMDependenciesTests : KGPBaseTest() {
         synchronizeLockFileWithXcodeProject = false,
         expectedPackageManifest = if (isStatic) {
             """
-                // swift-tools-version: 5.9
+                // swift-tools-version: 6.1
                 import PackageDescription
                 let package = Package(
                   name: "$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME",
@@ -865,7 +865,7 @@ class SwiftPMImportPopularSwiftPMDependenciesTests : KGPBaseTest() {
 
             localPackageDir.resolve("Package.swift").writeText(
                 """
-                // swift-tools-version: 5.9
+                // swift-tools-version: 6.1
                 import PackageDescription
 
                 let package = Package(
@@ -991,7 +991,7 @@ class SwiftPMImportPopularSwiftPMDependenciesTests : KGPBaseTest() {
 
                 localPackageDir.resolve("Package.swift").writeText(
                     """
-                    // swift-tools-version: 5.9
+                    // swift-tools-version: 6.1
                     import PackageDescription
                     let package = Package(
                         name: "LocalSwiftPackage",
@@ -1086,7 +1086,7 @@ class SwiftPMImportPopularSwiftPMDependenciesTests : KGPBaseTest() {
             if (isStatic) {
                 testPackageManifest(
                     expectedContent = """
-                            // swift-tools-version: 5.9
+                            // swift-tools-version: 6.1
                             import PackageDescription
                             let package = Package(
                               name: "$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME",
@@ -1120,7 +1120,7 @@ class SwiftPMImportPopularSwiftPMDependenciesTests : KGPBaseTest() {
                 //   projectPath/producer/localSwiftPackage
                 testPackageManifest(
                     expectedContent = """
-                            // swift-tools-version: 5.9
+                            // swift-tools-version: 6.1
                             import PackageDescription
                             let package = Package(
                               name: "_producer",

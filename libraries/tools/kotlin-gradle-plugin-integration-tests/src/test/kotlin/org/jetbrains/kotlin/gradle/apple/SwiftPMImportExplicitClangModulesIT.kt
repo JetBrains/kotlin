@@ -170,7 +170,7 @@ private fun createMultiModuleObjcSwiftPackage(localPackageDir: Path) {
     localPackageDir.createDirectories()
     localPackageDir.resolve("Package.swift").writeText(
         """
-            // swift-tools-version: 5.9
+            // swift-tools-version: 6.1
             import PackageDescription
 
             let package = Package(
