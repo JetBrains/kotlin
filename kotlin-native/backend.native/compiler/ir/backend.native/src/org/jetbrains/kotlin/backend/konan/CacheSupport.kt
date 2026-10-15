@@ -74,7 +74,10 @@ class CacheSupport(
         val produce: CompilerOutputKind
 ) {
     // Note: The order of libraries is not important here.
-    private val pathToLibrary = klibDag.librariesReverseTopoSorted.associateBy { it.path.toAbsolutePath().normalize() }
+    private val pathToLibrary = klibDag.librariesReverseTopoSorted.associateBy { it.canonicalPath }
+
+    private fun findLibrary(path: Path): KotlinLibrary? =
+            runCatching { path.toRealPath() }.getOrNull()?.let { pathToLibrary[it] }
 
     private val autoCacheableFrom = configuration[NativeConfigurationKeys.AUTO_CACHEABLE_FROM]!!
             .map {
@@ -114,7 +117,7 @@ class CacheSupport(
         val explicitCacheFiles = configuration[NativeConfigurationKeys.CACHED_LIBRARIES]!!
 
         val explicitCaches = explicitCacheFiles.entries.associate { [libraryPath, cachePath] ->
-            val library = pathToLibrary[Path(libraryPath).toAbsolutePath().normalize()]
+            val library = findLibrary(Path(libraryPath))
                     ?: configuration.reportCompilationErrorAndThrow("cache not applied: library $libraryPath in $cachePath")
 
             library to cachePath
@@ -140,7 +143,7 @@ class CacheSupport(
     }
 
     private fun getLibrary(path: Path) =
-            pathToLibrary[path.toAbsolutePath().normalize()] ?: error("library to cache\n" +
+            findLibrary(path) ?: error("library to cache\n" +
                     "  ${path.pathString}\n" +
                     "not found among resolved libraries:\n  " +
                     klibDag.librariesReverseTopoSorted.joinToString("\n  ") { it.path.pathString })
