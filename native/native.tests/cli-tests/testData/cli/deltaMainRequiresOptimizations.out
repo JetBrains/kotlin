@@ -1,0 +1,2 @@
+error: delta-main GC stack maps require optimizations. Use the default shadow-stack scheme, or add the -opt compiler option.
+COMPILATION_ERROR

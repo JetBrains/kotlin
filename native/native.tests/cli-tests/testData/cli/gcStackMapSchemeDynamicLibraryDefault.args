@@ -1,0 +1,7 @@
+$TESTDATA_DIR$/simple.kt
+-target
+macos_arm64
+-produce
+dynamic
+-o
+$TEMP_DIR$/gcStackMapSchemeDynamicLibraryDefault

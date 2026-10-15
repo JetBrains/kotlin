@@ -1,0 +1,2 @@
+error: delta-main GC stack maps are not supported with PARALLEL_MARK_CONCURRENT_SWEEP collector. Use the default shadow-stack scheme, or CMS collector.
+COMPILATION_ERROR

@@ -183,7 +183,7 @@ bitcode {
 
         testsGroup("runtime_test") {
             testedModules.addAll("runtime")
-            testSupportModules.addAll("noop_externalCallsChecker", "custom_alloc", "noop_gc", "manual_gcScheduler", "objc", "noop_crashHandler")
+            testSupportModules.addAll("noop_externalCallsChecker", "custom_alloc", "noop_gc", "manual_gcScheduler", "objc", "noop_crashHandler", "delta_main_stackmap")
         }
 
         // Headers from here get reused by Swift Export, so this module should not depend on anything in the runtime
@@ -512,7 +512,6 @@ bitcode {
             headersDirs.from(files("src/main/cpp"))
             sourceSets {
                 main {}
-                testFixtures {}
                 test {}
             }
 
@@ -521,7 +520,7 @@ bitcode {
 
         testsGroup("delta_main_stackmap_test") {
             testedModules.addAll("delta_main_stackmap")
-            testSupportModules.addAll("runtime")
+            testSupportModules.addAll("runtime", "noop_externalCallsChecker", "legacy_alloc", "noop_gc", "manual_gcScheduler", "objc", "noop_crashHandler")
         }
 
         module("manual_gcScheduler") {

@@ -1,0 +1,7 @@
+$TESTDATA_DIR$/simple.kt
+-target
+macos_arm64
+-Xbinary=gcStackMapScheme=delta-main
+-Xbinary=gc=pmcs
+-o
+$TEMP_DIR$/deltaMainUnsupportedCollector

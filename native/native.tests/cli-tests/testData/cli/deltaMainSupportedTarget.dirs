@@ -1,0 +1,2 @@
+// DISABLE_NATIVE: targetFamily=LINUX
+// DISABLE_NATIVE: targetFamily=MINGW

@@ -1,0 +1,2 @@
+error: delta-main GC stack maps are not supported on macos_x64. Use the default shadow-stack scheme, or target a 64-bit Apple ARM64 platform (not watchos_arm64)
+COMPILATION_ERROR
