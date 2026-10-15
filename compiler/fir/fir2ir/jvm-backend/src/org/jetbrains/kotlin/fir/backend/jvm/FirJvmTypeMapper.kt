@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.AbstractTypeMapper
 import org.jetbrains.kotlin.types.AbstractTypeMapper.hasNothingInNonContravariantPosition
+import org.jetbrains.kotlin.types.AbstractTypeMapper.suspendFunctionRuntimeType
 import org.jetbrains.kotlin.types.AbstractTypeMapper.writeGenericArguments
 import org.jetbrains.kotlin.types.TypeMappingContext
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
@@ -75,6 +76,10 @@ class FirJvmTypeMapper(override val session: FirSession) : FirSessionComponent, 
 
     val typeContext: TypeSystemCommonBackendContext
         get() = defaultContext.typeContext
+
+    fun buildSuspendFunctionRuntimeType(adjustedArguments: List<ConeKotlinType>): ConeKotlinType =
+        // This context's typeWithArguments constructs ConeSimpleKotlinType for every runtime component.
+        with(defaultContext.typeContext) { suspendFunctionRuntimeType(adjustedArguments) as ConeKotlinType }
 
     private inner class Context(unresolvedQualifierRemapper: (String) -> String?) : TypeMappingContext<JvmSignatureWriter> {
         private fun mapType(type: ConeKotlinType, mode: TypeMappingMode = TypeMappingMode.DEFAULT, sw: JvmSignatureWriter? = null): Type {

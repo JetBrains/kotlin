@@ -142,14 +142,7 @@ object AbstractTypeMapper {
     ): Type {
         val argumentsCount = type.argumentsCount()
         val argumentsList = type.asArgumentList()
-        val arguments = buildList {
-            for (i in 0 until (argumentsCount - 1)) {
-                this += argumentsList[i].adjustedType()
-            }
-            this += continuationTypeConstructor().typeWithArguments(argumentsList[argumentsCount - 1].adjustedType())
-            this += nullableAnyType()
-        }
-        val runtimeFunctionType = functionNTypeConstructor(arguments.size - 1).typeWithArguments(arguments)
+        val runtimeFunctionType = suspendFunctionRuntimeType(List(argumentsCount) { argumentsList[it].adjustedType() })
         return mapType(context, runtimeFunctionType, mode, sw, materialized)
     }
 
@@ -312,6 +305,20 @@ object AbstractTypeMapper {
                 processTypeArgument(index, type, projectionKind, parameterVariance, newMode)
             }
         }
+    }
+
+    /**
+     * Builds the JVM runtime form of a suspend function type: `FunctionN+1<P1, ..., P_N, Continuation<R>, Any?>`
+     * from the suspend function's own type arguments (the return type last), each already adjusted
+     * (a star projection becomes `Any?`).
+     */
+    fun TypeSystemCommonBackendContextForTypeMapping.suspendFunctionRuntimeType(adjustedArguments: List<KotlinTypeMarker>): SimpleTypeMarker {
+        val runtimeArguments = buildList {
+            addAll(adjustedArguments.dropLast(1))
+            add(continuationTypeConstructor().typeWithArguments(adjustedArguments.last()))
+            add(nullableAnyType())
+        }
+        return functionNTypeConstructor(runtimeArguments.size - 1).typeWithArguments(runtimeArguments)
     }
 
     fun TypeSystemCommonBackendContext.getVarianceForWildcard(
