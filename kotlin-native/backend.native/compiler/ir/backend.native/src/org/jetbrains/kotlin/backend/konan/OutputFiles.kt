@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2026 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
 package org.jetbrains.kotlin.backend.konan
@@ -20,7 +20,12 @@ import kotlin.random.Random
 /**
  * Creates and stores terminal compiler outputs.
  */
-class OutputFiles(val outputName: String, target: KonanTarget, val produce: CompilerOutputKind) {
+class OutputFiles(
+        val outputName: String,
+        target: KonanTarget,
+        val produce: CompilerOutputKind,
+        val producePerFileCache: Boolean = false,
+) {
 
     private val prefix = produce.prefix(target)
     private val suffix = produce.suffix(target)
@@ -63,7 +68,12 @@ class OutputFiles(val outputName: String, target: KonanTarget, val produce: Comp
         tempCacheDirectory?.cacheIrPart()?.createDirectories()
     }
 
-    val nativeBinaryFile = tempCacheDirectory?.cacheBinaryPart()?.resolve(cacheFileName)?.absolutePathString() ?: mainFileName
+    private val cacheBinaryFileName =
+            if (producePerFileCache)
+                CachedLibraries.getPerFileCacheObjectFileName(perFileCacheFileName)
+            else cacheFileName
+
+    val nativeBinaryFile = tempCacheDirectory?.cacheBinaryPart()?.resolve(cacheBinaryFileName)?.absolutePathString() ?: mainFileName
 
     val symbolicInfoFile = "$nativeBinaryFile.dSYM"
 

@@ -376,7 +376,9 @@ class CacheBuilder(
                 .filter { filesToCache.isEmpty() || it.filePath in filesToCache }
                 .map { fqnFile ->
                     val fileId = CacheSupport.cacheFileId(fqnFile.fqName, fqnFile.filePath)
-                    cacheRoot.resolve(fileId).resolve("bin").resolve("lib$fileId.a")
+                    cacheRoot.resolve(fileId)
+                            .resolve(CachedLibraries.PER_FILE_CACHE_BINARY_LEVEL_DIR_NAME)
+                            .resolve(CachedLibraries.getPerFileCacheObjectFileName(fileId))
                 }
     }
 

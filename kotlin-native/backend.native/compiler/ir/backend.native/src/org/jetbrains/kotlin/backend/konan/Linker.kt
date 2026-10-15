@@ -158,15 +158,21 @@ internal class Linker(
 
         val driverLinkerFlags = config.configuration.getNotNull(NativeConfigurationKeys.LINKER_ARGS)
                 .asLinkerArgs(linker.useCompilerDriverAsLinker)
-        val linkerArgs = driverLinkerFlags + libraryProvidedLinkerFlags + produceKindFlags + extraLinkerFlags
+
+        val linkerArgs = buildList {
+            addAll(driverLinkerFlags)
+            addAll(libraryProvidedLinkerFlags)
+            addAll(produceKindFlags)
+            addAll(extraLinkerFlags)
+        }
 
         return with(linker) {
             LinkerArguments(
                     tempFiles = tempFiles,
-                    objectFiles = objectFiles,
+                    objectFiles = objectFiles + caches.objectFilePaths,
                     executable = executablePath,
-                    staticLibraries = linker.linkStaticLibraries(includedBinaries) + caches.static,
-                    dynamicLibraries = caches.dynamic,
+                    staticLibraries = linker.linkStaticLibraries(includedBinaries) + caches.staticLibraryPaths,
+                    dynamicLibraries = caches.dynamicLibraryPaths,
                     linkerArgs = linkerArgs,
                     optimize = optimize,
                     debug = debug,

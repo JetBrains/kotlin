@@ -12,11 +12,14 @@ import org.jetbrains.kotlin.backend.konan.ir.externalSymbolOrThrow
 import org.jetbrains.kotlin.backend.konan.ir.isAbstract
 import org.jetbrains.kotlin.backend.konan.ir.isUnit
 import org.jetbrains.kotlin.backend.konan.serialization.AbstractKonanIrMangler
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithVisibility
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.moduleDescriptor
 import org.jetbrains.kotlin.ir.declarations.path
 import org.jetbrains.kotlin.ir.objcinterop.isExternalObjCClass
 import org.jetbrains.kotlin.ir.objcinterop.isKotlinObjCClass
@@ -24,6 +27,9 @@ import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.findAnnotation
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.util.getConstArgument
+import org.jetbrains.kotlin.ir.util.getPackageFragment
+import org.jetbrains.kotlin.ir.util.isPublishedApi
+import org.jetbrains.kotlin.ir.util.parentsWithSelf
 import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.ir.util.render
@@ -86,8 +92,15 @@ object KonanBinaryInterface {
         }
 
         val mangle = mangler.run { mangleString(compatibleMode = true) }
-        return withPrefix(MANGLE_FUN_PREFIX, containerName?.plus(".$mangle") ?: mangle)
+        // Internal declarations of different modules may have the same signature (KT-75928)
+        val qualifier = containerName ?: if (isEffectivelyInternal()) getPackageFragment().moduleDescriptor.name.asString() else null
+        return withPrefix(MANGLE_FUN_PREFIX, qualifier?.plus(".$mangle") ?: mangle)
     }
+
+    private fun IrDeclaration.isEffectivelyInternal(): Boolean =
+            parentsWithSelf
+                    .filterIsInstance<IrDeclarationWithVisibility>()
+                    .any { it.visibility == DescriptorVisibilities.INTERNAL && !it.isPublishedApi() }
 
     private fun IrField.fieldSymbolNameImpl(): String {
         val containingDeclarationPart = parent.fqNameForIrSerialization.let {

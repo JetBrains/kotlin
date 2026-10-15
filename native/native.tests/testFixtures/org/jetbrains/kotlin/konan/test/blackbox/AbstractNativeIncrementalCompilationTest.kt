@@ -245,7 +245,7 @@ abstract class AbstractNativeIncrementalCompilationTest : AbstractNativeSimpleTe
                             cacheExpectation == NativeCacheExpectation.MODIFIED_CACHE
                         ) {
                             current[CacheKey(moduleName, path)]?.cacheDir?.let { dir ->
-                                expectedInBuildOutput.add(archivePath(dir))
+                                expectedInBuildOutput.add(cacheArtifactPath(dir))
                             }
                         }
                     }
@@ -331,7 +331,7 @@ abstract class AbstractNativeIncrementalCompilationTest : AbstractNativeSimpleTe
                 NativeCacheExpectation.ADDED_CACHE -> {
                     val currentCache = currentCacheEntry.required()
                     assertTrue(currentCache.cacheDir.exists()) { "Expected added cache to exist: ${currentCache.cacheDir}" }
-                    assertTrue(archivePath(currentCache.cacheDir) in buildOutputEntries) {
+                    assertTrue(cacheArtifactPath(currentCache.cacheDir) in buildOutputEntries) {
                         "Expected $location to appear in IC build output after build, but it did not."
                     }
                 }
@@ -340,7 +340,7 @@ abstract class AbstractNativeIncrementalCompilationTest : AbstractNativeSimpleTe
                     val currentCache = currentCacheEntry.required()
                     assertTrue(currentCache.cacheDir.exists()) { "Expected modified cache to exist: ${currentCache.cacheDir}" }
                     assertFalse(previousCache.hasSameContentAs(currentCache)) { "Expected cache to be modified for $location" }
-                    assertTrue(archivePath(currentCache.cacheDir) in buildOutputEntries) {
+                    assertTrue(cacheArtifactPath(currentCache.cacheDir) in buildOutputEntries) {
                         "Expected modified $location to appear in IC build output, but it did not."
                     }
                 }
@@ -349,14 +349,14 @@ abstract class AbstractNativeIncrementalCompilationTest : AbstractNativeSimpleTe
                     val currentCache = currentCacheEntry.required()
                     assertTrue(currentCache.cacheDir.exists()) { "Expected unchanged cache to exist: ${currentCache.cacheDir}" }
                     assertTrue(previousCache.hasSameContentAs(currentCache)) { "Expected cache to stay unchanged for $location" }
-                    assertFalse(archivePath(currentCache.cacheDir) in buildOutputEntries) {
+                    assertFalse(cacheArtifactPath(currentCache.cacheDir) in buildOutputEntries) {
                         "Did not expect unchanged $location to appear in IC build output."
                     }
                 }
                 NativeCacheExpectation.REMOVED_CACHE -> {
                     val previousCache = previousCacheEntry.required()
                     assertFalse(previousCache.cacheDir.exists()) { "Expected cache to be removed: ${previousCache.cacheDir}" }
-                    assertFalse(archivePath(previousCache.cacheDir) in buildOutputEntries) {
+                    assertFalse(cacheArtifactPath(previousCache.cacheDir) in buildOutputEntries) {
                         "Did not expect removed $location to appear in IC build output."
                     }
                 }
@@ -379,14 +379,17 @@ abstract class AbstractNativeIncrementalCompilationTest : AbstractNativeSimpleTe
             checkStateAtExternalCalls = testRunSettings.get<ThreadStateChecker>() == ThreadStateChecker.ENABLED,
         )
 
-    private fun archivePath(cacheDir: File): String =
-        Path(cacheDir.absolutePath, "bin", "lib${cacheDir.name}.a").toString()
+    private fun cacheArtifactPath(cacheDir: File): String {
+        val isPerFileCache = cacheDir.parentFile.name.endsWith(PER_FILE_CACHE_DIR_SUFFIX)
+        val binaryName = if (isPerFileCache) "${cacheDir.name}.o" else "lib${cacheDir.name}.a"
+        return Path(cacheDir.absolutePath, "bin", binaryName).toString()
+    }
 
     private fun monolithicLibraryCache(libName: String): File =
         icCacheDir.resolve(cacheFlavor).resolve("$libName-cache")
 
     private fun libraryFileCache(libName: String, libFileRelativePath: String, fqName: String): File {
-        val libCacheDir = icCacheDir.resolve(cacheFlavor).resolve("$libName-per-file-cache")
+        val libCacheDir = icCacheDir.resolve(cacheFlavor).resolve("$libName$PER_FILE_CACHE_DIR_SUFFIX")
         val absoluteSourcePath = buildDir.resolve(libName).resolve(libFileRelativePath).absolutePath
         val fileId = cacheFileId(fqName, absoluteSourcePath)
         return libCacheDir.resolve(fileId)
@@ -466,6 +469,7 @@ abstract class AbstractNativeIncrementalCompilationTest : AbstractNativeSimpleTe
     companion object {
         private const val MAIN_MODULE_NAME = "main"
         private const val EXTERNAL_MODULE_NAME_PREFIX = "external"
+        private const val PER_FILE_CACHE_DIR_SUFFIX = "-per-file-cache"
 
         private val PACKAGE_DIRECTIVE_REGEX = Regex("""^\s*package\s+([\w.]+)""")
 
