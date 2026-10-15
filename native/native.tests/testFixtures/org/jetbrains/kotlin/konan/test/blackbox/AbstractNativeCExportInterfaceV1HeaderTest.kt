@@ -36,7 +36,7 @@ abstract class AbstractNativeCExportInterfaceV1HeaderTest() : AbstractNativeSimp
         // A test data file with `// MODULE:` markers exercises the several-inter-dependent-included-libraries
         // scenario; without them it is a single-module test, compiled exactly as before.
         val compilation = if (lines.none { it.startsWith("// MODULE:") }) {
-            singleModuleBinaryLibrary(path, testName)
+            singleModuleBinaryLibrary(path, testName, lines)
         } else {
             multiModuleBinaryLibrary(testName, lines)
         }
@@ -48,7 +48,8 @@ abstract class AbstractNativeCExportInterfaceV1HeaderTest() : AbstractNativeSimp
         TestDataAssertions.assertEqualsToFile(goldenDataHeaderFile.toFile(), headerFile.readText())
     }
 
-    private fun freeCompilerArgs() = TestCompilerArgs(listOf(
+    // A `// LANGUAGE: +Feature -Other` line enables or disables language features for the whole test.
+    private fun freeCompilerArgs(lines: List<String>) = TestCompilerArgs(listOf(
         "-opt-in", "kotlin.experimental.ExperimentalNativeApi",
         "-opt-in", "kotlinx.cinterop.ExperimentalForeignApi",
         "-opt-in", "kotlin.native.internal.InternalForKotlinNative",
@@ -56,10 +57,12 @@ abstract class AbstractNativeCExportInterfaceV1HeaderTest() : AbstractNativeSimp
         "-XXLanguage:+CompanionBlocks",
         "-XXLanguage:+CompanionExtensions",
         "-Xbinary=cInterfaceMode=v1",
-    ))
+    ) + lines.filter { it.startsWith(LANGUAGE_DIRECTIVE) }.flatMap { line ->
+        line.removePrefix(LANGUAGE_DIRECTIVE).split(' ').filter { it.isNotBlank() }.map { "-XXLanguage:$it" }
+    })
 
     /** A single-module header test: the whole test data file becomes one library. */
-    private fun singleModuleBinaryLibrary(path: Path, moduleName: String): BinaryLibraryCompilation {
+    private fun singleModuleBinaryLibrary(path: Path, moduleName: String, lines: List<String>): BinaryLibraryCompilation {
         val module = TestModule.Exclusive(moduleName, emptySet(), emptySet(), emptySet())
         module.files += TestFile.createCommitted(path.toFile(), module)
 
@@ -67,7 +70,7 @@ abstract class AbstractNativeCExportInterfaceV1HeaderTest() : AbstractNativeSimp
             id = TestCaseId.Named(moduleName),
             kind = TestKind.STANDALONE_NO_TR,
             modules = setOf(module),
-            freeCompilerArgs = freeCompilerArgs(),
+            freeCompilerArgs = freeCompilerArgs(lines),
             nominalPackageName = PackageName(moduleName),
             checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout),
             extras = TestCase.NoTestRunnerExtras()
@@ -107,7 +110,7 @@ abstract class AbstractNativeCExportInterfaceV1HeaderTest() : AbstractNativeSimp
             id = TestCaseId.Named(testName),
             kind = TestKind.STANDALONE_NO_TR,
             modules = orderedModules.toSet(),
-            freeCompilerArgs = freeCompilerArgs(),
+            freeCompilerArgs = freeCompilerArgs(lines),
             nominalPackageName = PackageName(testName),
             checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout),
             extras = TestCase.NoTestRunnerExtras()
@@ -176,5 +179,9 @@ abstract class AbstractNativeCExportInterfaceV1HeaderTest() : AbstractNativeSimp
         val targetSpecificFile = parentDirectory.resolve("$testName.${targets.testTarget}.h")
         val commonFile = parentDirectory.resolve("$testName.h")
         return if (targetSpecificFile.exists()) targetSpecificFile else commonFile
+    }
+
+    private companion object {
+        const val LANGUAGE_DIRECTIVE = "// LANGUAGE:"
     }
 }
