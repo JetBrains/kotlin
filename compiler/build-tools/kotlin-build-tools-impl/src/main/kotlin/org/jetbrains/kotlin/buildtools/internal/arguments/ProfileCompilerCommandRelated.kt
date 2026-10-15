@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.internal.arguments
 
+import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.ProfileCompilerCommand
@@ -32,6 +33,7 @@ internal fun applyProfileCompilerCommand(
     return ProfileCompilerCommandImpl(Path(parts[0]), parts[1], Path(parts[2]))
 }
 
+@Serializable
 public class ProfileCompilerCommandImpl(
     public val profilerPath: Path,
     public val command: String,
