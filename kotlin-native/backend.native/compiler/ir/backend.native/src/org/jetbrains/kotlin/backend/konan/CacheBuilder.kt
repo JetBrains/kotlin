@@ -201,9 +201,16 @@ class CacheBuilder(
             }
         }
 
+        // [rebuiltLibraries] keeps every library built ahead of the per-library loop at the end, which then skips it.
+        // The batched build also relies on it to tell which dependencies are already up to date at the moment of batching.
+        val rebuiltLibraries = mutableSetOf<KotlinLibrary>()
+
         externalLibrariesToCache.forEach { library ->
             val builtCachePaths = buildLibraryCache(library, true, emptyList())
-            lastRebuiltArchives.addAll(builtCachePaths)
+            if (builtCachePaths.isNotEmpty()) {
+                rebuiltLibraries += library
+                lastRebuiltArchives.addAll(builtCachePaths)
+            }
         }
 
         if (!icEnabled) {
@@ -243,8 +250,6 @@ class CacheBuilder(
 
         // Build all the monolithic (cinterop) caches right away: the dependent cache builds spawned below,
         // including the batched one, read them at their fixed name-keyed locations.
-        // [rebuiltLibraries] keeps every library built ahead of the per-library loop at the end, which then skips it.
-        val rebuiltLibraries = mutableSetOf<KotlinLibrary>()
         for (library in icedLibraries) {
             if (library.isCachedPerFile || caches[library] != null) continue
             val builtCachePaths = buildLibraryCache(library, false, emptyList())
