@@ -1,6 +1,4 @@
 // ISSUE: KT-90169
-// Expected failure before the fix for KT-90169: "FAIL countG: 1"
-// IGNORE_BACKEND: ANY
 
 fun <T> applyIt(t: T, f: (T) -> Int): Int = f(t)
 fun <E> countG(vararg xs: E): Int = xs.size

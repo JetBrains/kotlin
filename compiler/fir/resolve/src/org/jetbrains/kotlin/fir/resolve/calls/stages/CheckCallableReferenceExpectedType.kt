@@ -345,7 +345,13 @@ private fun varargParameterTypeByExpectedParameter(
         VarargMappingState.UNMAPPED -> {
             when {
                 expectedParameterType.isArrayOrPrimitiveArray() ||
-                        isApplicableTypeVariableForMappingAsArray(expectedParameterType, candidate, elementType.createOutArrayType()) -> {
+                        isApplicableTypeVariableForMappingAsArray(
+                            expectedParameterType,
+                            candidate,
+                            // The declared element type may refer to the referenced function's own type parameters
+                            // so we need to substitute it.
+                            candidate.substitutor.substituteOrSelf(elementType.createOutArrayType()),
+                        ) -> {
                     elementType.createOutArrayType() to VarargMappingState.MAPPED_WITH_ARRAY
                 }
                 else -> {
