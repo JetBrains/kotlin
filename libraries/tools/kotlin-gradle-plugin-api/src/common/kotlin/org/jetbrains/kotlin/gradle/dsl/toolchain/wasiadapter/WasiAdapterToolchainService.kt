@@ -127,8 +127,6 @@ data class WasiAdapterVersion(
     init {
         require(version.isNotBlank()) { "WASI adapter version must not be blank" }
     }
-
-    override fun toString(): String = version
 }
 
 /**
