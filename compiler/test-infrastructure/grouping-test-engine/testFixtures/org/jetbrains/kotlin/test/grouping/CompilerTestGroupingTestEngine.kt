@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.test.NonGroupingStageOutput
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.test.model.GroupingTestIsolator.BatchToken
 import org.jetbrains.kotlin.test.services.moduleStructure
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import org.junit.jupiter.engine.config.CachingJupiterConfiguration
 import org.junit.jupiter.engine.config.DefaultJupiterConfiguration
@@ -35,18 +34,38 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
-import java.util.concurrent.atomic.AtomicInteger
-import kotlin.collections.iterator
 
+/**
+ * Executes two-stage compiler tests ([AbstractTwoStageKotlinCompilerTestBase]), one top-level test class at a time, in two passes.
+ *
+ * The planning pass executes the test method of every test of the class, which is cheap: it only builds the test
+ * configurations and extracts the module structure, which is all the [org.jetbrains.kotlin.test.model.GroupingTestIsolator]s
+ * need to compute the batch tokens. Everything the test allocated is disposed right away, so only the tokens are kept.
+ *
+ * Then the tests of the whole class, including all its `@Nested` classes, which have equal tokens are packed into
+ * batches of at most [SIMULTANEOUS_METHODS_GROUP_SIZE_PROP] tests, and the expensive stages run batch by batch: the
+ * non-grouping stage for every test of a batch, followed by a single grouping stage for the whole batch.
+ * Tests of different top-level classes never share a batch: such classes may configure different targets or runners
+ * for the grouping stage, which the engine has no generic way to compare.
+ */
 class CompilerTestGroupingTestEngine : TestEngine {
     companion object {
         const val ID = "kotlin-compiler-grouping-engine"
 
         private const val GROUPING_ENGINE_POOL_SIZE_PROP = "kotlin.test.grouping.engine.pool.size"
 
+        /**
+         * How many batches may be processed simultaneously. Together with [SIMULTANEOUS_METHODS_GROUP_SIZE_PROP], this bounds
+         * the memory consumption of a run, as a test keeps its first-stage state alive until the grouping stage of its batch is over.
+         */
         private const val SIMULTANEOUS_METHODS_GROUPS_PROP = "kotlin.test.grouping.engine.simultaneous.methods.groups"
         private const val DEFAULT_SIMULTANEOUS_METHODS_GROUPS = 2
 
+        /**
+         * A hard upper bound on the number of tests which are compiled and executed together as a single batch.
+         * Grouping-stage memory consumption grows with the batch size, as a batch is linked and lowered as a
+         * single IR world containing the standard library and the KLib of every test of the batch.
+         */
         private const val SIMULTANEOUS_METHODS_GROUP_SIZE_PROP = "kotlin.test.grouping.engine.simultaneous.methods.group.size"
         private const val DEFAULT_SIMULTANEOUS_METHODS_GROUP_SIZE = 50
     }
@@ -56,7 +75,7 @@ class CompilerTestGroupingTestEngine : TestEngine {
     private class ExecutionContext(params: ConfigurationParameters) : Closeable {
         private val workerPool: ExecutorService
         val dispatcher: ExecutorCoroutineDispatcher
-        val activeClasses: Semaphore
+        val activeBatches: Semaphore
         val methodsChunkSize: Int
 
         init {
@@ -68,11 +87,11 @@ class CompilerTestGroupingTestEngine : TestEngine {
             workerPool = Executors.newFixedThreadPool(parallelism)
             dispatcher = workerPool.asCoroutineDispatcher()
 
-            val numberOfActiveClasses = params.get(SIMULTANEOUS_METHODS_GROUPS_PROP).orElse(null)?.toInt()?.also {
+            val numberOfActiveBatches = params.get(SIMULTANEOUS_METHODS_GROUPS_PROP).orElse(null)?.toInt()?.also {
                 require(it > 0) { "Number of simultaneous method groups must be positive, but was $it" }
             } ?: DEFAULT_SIMULTANEOUS_METHODS_GROUPS
 
-            activeClasses = Semaphore(permits = numberOfActiveClasses)
+            activeBatches = Semaphore(permits = numberOfActiveBatches)
 
             methodsChunkSize = params.get(SIMULTANEOUS_METHODS_GROUP_SIZE_PROP).orElse(null)?.toInt()?.also {
                 require(it > 0) { "Number of methods in a group must be positive, but was $it" }
@@ -87,70 +106,127 @@ class CompilerTestGroupingTestEngine : TestEngine {
 
     override fun execute(request: ExecutionRequest) {
         ExecutionContext(request.configurationParameters).use { ctx ->
+            val root = request.rootTestDescriptor
             val synchronizedListener = SynchronizedEngineExecutionListener(request.engineExecutionListener)
             val baseContext = JupiterEngineExecutionContext(
                 synchronizedListener,
                 getJupiterConfiguration(request),
                 LauncherStoreFacade(request.store),
             )
-            runBlocking(ctx.dispatcher) {
-                traverseClasses(request.rootTestDescriptor, baseContext) { context, classDescriptor ->
-                    launch {
-                        context(ctx) { processClass(context, classDescriptor) }
-                    }
-                }?.join()
-            }
-        }
-    }
 
-    private fun CoroutineScope.traverseClasses(
-        descriptor: TestDescriptor,
-        baseContext: JupiterEngineExecutionContext,
-        block: (JupiterEngineExecutionContext, TestDescriptor) -> Job,
-    ): Job? {
-        if (!descriptor.isContainer) return null
-        @Suppress("UNCHECKED_CAST")
-        val context = (descriptor as? Node<JupiterEngineExecutionContext>)?.prepare(baseContext) ?: baseContext
-        val needReport = descriptor !is JupiterEngineDescriptor
-        if (needReport) context.executionListener.executionStarted(descriptor)
-        val testClassJob = runIf(descriptor.children.any { it.isTest }) {
-            block(context, descriptor)
-        }
-        val childJobs = descriptor.children.mapNotNull { child ->
-            runIf(child.isContainer) {
-                traverseClasses(child, context, block)
-            }
-        }
-        return runIf(needReport) {
-            launch {
-                testClassJob?.join()
-                childJobs.joinAll()
-                context.executionListener.executionFinished(descriptor, context.throwableCollector.toTestExecutionResult())
+            @Suppress("UNCHECKED_CAST")
+            val rootContext = (root as Node<JupiterEngineExecutionContext>).prepare(baseContext)
+            runBlocking(ctx.dispatcher) {
+                context(ctx) {
+                    for (topLevelClass in root.children.filter { it.isContainer }) {
+                        launch { processTopLevelClass(topLevelClass, rootContext) }
+                    }
+                }
             }
         }
     }
 
     context(ctx: ExecutionContext)
-    private suspend fun CoroutineScope.processClass(
-        context: JupiterEngineExecutionContext,
-        classDescriptor: TestDescriptor,
-    ) {
-        val methods = classDescriptor.children.filterIsInstance<TestMethodTestDescriptor>()
-        val groupCounter = AtomicInteger(1)
-        val groupJobs = methods.chunked(ctx.methodsChunkSize).map { methodsChunk ->
-            launch {
-                ctx.activeClasses.withPermit {
-                    val testInfosFutures = methodsChunk.map { method ->
-                        async {
-                            runNonGroupingStage(method, context)
-                        }
+    private suspend fun processTopLevelClass(classDescriptor: TestDescriptor, parentContext: JupiterEngineExecutionContext) {
+        val containers = mutableListOf<Pair<TestDescriptor, JupiterEngineExecutionContext>>()
+        val methods = mutableListOf<TestMethodWithContext>()
+        prepareContainers(classDescriptor, parentContext, containers, methods)
+        val classContext = containers.first().second
+        try {
+            val batches = planBatches(methods)
+            coroutineScope {
+                batches.forEachIndexed { index, batch ->
+                    launch {
+                        ctx.activeBatches.withPermit { executeBatch(classContext, classDescriptor, batch, index = index + 1) }
                     }
-                    val testInfos = testInfosFutures.awaitAll().filterNotNull()
-                    runGroupingStage(context, classDescriptor, testInfos, groupCounter)
                 }
             }
+        } finally {
+            // The tests of a nested class are spread over the batches of the whole top-level class,
+            // so the containers are finished, bottom-up, only once all of them are done.
+            for ([descriptor, context] in containers.asReversed()) {
+                context.executionListener.executionFinished(descriptor, context.throwableCollector.toTestExecutionResult())
+            }
         }
-        groupJobs.joinAll()
+    }
+
+    /** Prepares every container of the subtree and reports it as started, top-down, collecting all test methods on the way. */
+    private fun prepareContainers(
+        descriptor: TestDescriptor,
+        parentContext: JupiterEngineExecutionContext,
+        containers: MutableList<Pair<TestDescriptor, JupiterEngineExecutionContext>>,
+        methods: MutableList<TestMethodWithContext>,
+    ) {
+        @Suppress("UNCHECKED_CAST")
+        val context = (descriptor as? Node<JupiterEngineExecutionContext>)?.prepare(parentContext) ?: parentContext
+        context.executionListener.executionStarted(descriptor)
+        containers += descriptor to context
+        for (child in descriptor.children) {
+            when {
+                child is TestMethodTestDescriptor -> methods += TestMethodWithContext(child, context)
+                child.isContainer -> prepareContainers(child, context, containers, methods)
+            }
+        }
+    }
+
+    /** Packs the tests of [methods] with equal batch tokens into batches. */
+    context(ctx: ExecutionContext)
+    private suspend fun planBatches(methods: List<TestMethodWithContext>): List<List<TestMethodWithContext>> {
+        val tokens = coroutineScope { methods.map { async { planTokens(it.method, it.context) } }.awaitAll() }
+        val plannedMethods = methods.zip(tokens).mapNotNull { [method, tokens] -> tokens?.let { method to it } }
+        return plannedMethods.groupBy({ it.second }, { it.first }).flatMap { [tokens, sameTokenMethods] ->
+            // Sorted by unique id, so that which tests share a batch does not depend on the order JUnit lists them in.
+            val sortedMethods = sameTokenMethods.sortedBy { it.method.uniqueId.toString() }
+            if (BatchToken.Isolated in tokens) sortedMethods.map { listOf(it) } else sortedMethods.chunked(ctx.methodsChunkSize)
+        }
+    }
+
+    /**
+     * Computes the batch tokens of a test by executing its test method, which only initializes the test runners and
+     * extracts the module structure. Everything the test has allocated is disposed right away.
+     * @return `null` if the test is skipped or has failed while being configured, in which case it is already reported.
+     */
+    private fun planTokens(method: TestMethodTestDescriptor, context: JupiterEngineExecutionContext): List<BatchToken>? {
+        // If there is no `@TestMetadata` annotation, then this is some utility test (like `testAllFilesPresentIn`) or a
+        // sanity test which drives the test runners itself, so it must not be executed here: it runs alone in its batch.
+        if (method.testMethod.annotations.none { it is TestMetadata }) return listOf(BatchToken.Isolated)
+
+        val methodContext = method.prepare(context)
+        val skipResult = method.shouldBeSkipped(methodContext)
+        if (skipResult.isSkipped) {
+            methodContext.executionListener.executionSkipped(method, skipResult.reason.orElse("<unknown reason>"))
+            return null
+        }
+        val collector = methodContext.throwableCollector
+        var tokens: List<BatchToken>? = null
+        collector.execute { method.execute(methodContext, DynamicTestExecutorStub) }
+        val testInstance = methodContext.extensionContext.testInstances
+            .flatMap { it.findInstance(AbstractTwoStageKotlinCompilerTestBase::class.java) }
+            .orElse(null)
+        if (testInstance != null) {
+            if (collector.isEmpty) collector.execute { tokens = testInstance.computeBatchTokens() }
+            collector.execute { if (testInstance.nonGroupingStageRunnerInitialized) testInstance.nonGroupingRunner.finalizeAndDispose() }
+            collector.execute { if (testInstance.secondStageRunnerInitialized) testInstance.groupingStageRunner.finalizeAndDispose() }
+        }
+        if (collector.isEmpty) return tokens
+        methodContext.executionListener.executionStarted(method)
+        methodContext.executionListener.executionFinished(method, collector.toTestExecutionResult())
+        return null
+    }
+
+    private suspend fun executeBatch(
+        context: JupiterEngineExecutionContext,
+        classDescriptor: TestDescriptor,
+        batch: List<TestMethodWithContext>,
+        index: Int,
+    ) {
+        val testInfos = coroutineScope { batch.map { async { runNonGroupingStage(it.method, it.context) } }.awaitAll() }
+        val successfulTests = testInfos.filterNotNull().filterNot { it.failed || it.hadIgnoredFailuresOnNonGroupingStage }
+        when (successfulTests.size) {
+            0 -> {}
+            1 -> runGroupingStageOnSingleSizedBatch(successfulTests.single())
+            else -> runGroupingStageOnBatch(context, classDescriptor, successfulTests, index)
+        }
     }
 
     private fun runNonGroupingStage(
@@ -199,50 +275,6 @@ class CompilerTestGroupingTestEngine : TestEngine {
         return info
     }
 
-    private suspend fun CoroutineScope.runGroupingStage(
-        context: JupiterEngineExecutionContext,
-        classDescriptor: TestDescriptor,
-        tests: List<TestMethodInfo>,
-        groupCounter: AtomicInteger,
-    ) {
-        val successfulTests = tests.filterNot { it.failed || it.hadIgnoredFailuresOnNonGroupingStage }
-        if (successfulTests.isEmpty()) return
-        val batches = groupTestsInBatches(successfulTests)
-
-        val batchFutures = batches.map { batch ->
-            launch {
-                if (batch.size == 1) {
-                    runGroupingStageOnSingleSizedBatch(batch.single())
-                } else {
-                    runGroupingStageOnBatch(context, classDescriptor, batch, index = groupCounter.getAndIncrement())
-                }
-            }
-        }
-
-        batchFutures.joinAll()
-    }
-
-    private fun groupTestsInBatches(infos: List<TestMethodInfo>): List<List<TestMethodInfo>> {
-        val groupedByTokens = infos.groupBy { info ->
-            val testConfiguration = info.testInstance.nonGroupingRunner.testConfiguration
-            testConfiguration.groupingTestIsolators.mapNotNull {
-                it.computeBatchToken(testConfiguration.testServices.moduleStructure).takeIf { token -> token != BatchToken.Regular }
-            }
-        }
-
-        return buildList {
-            for ([tokens, batch] in groupedByTokens) {
-                if (BatchToken.Isolated in tokens) {
-                    for (info in batch) {
-                        add(listOf(info))
-                    }
-                } else {
-                    add(batch)
-                }
-            }
-        }
-    }
-
     private fun runGroupingStageOnBatch(
         context: JupiterEngineExecutionContext,
         classDescriptor: TestDescriptor,
@@ -251,10 +283,10 @@ class CompilerTestGroupingTestEngine : TestEngine {
     ) {
         require(batch.size > 1) { "Batch expected to have at least 2 methods, got ${batch.size}" }
         val testDescriptor = GroupingStageTestDescriptor(
-            uniqueId = batch.first().descriptor.uniqueId.removeLastSegment().append("dynamic-test", "batch$index"),
+            uniqueId = classDescriptor.uniqueId.append("dynamic-test", "batch$index"),
             displayName = "Grouped batch #$index"
         )
-        classDescriptor.addChild(testDescriptor)
+        synchronized(classDescriptor) { classDescriptor.addChild(testDescriptor) }
         val throwableCollector = createThrowableCollector()
         val someTestInstance = batch.first().testInstance
 
@@ -413,6 +445,15 @@ private class GroupingStageTestDescriptor(
     displayName: String,
 ) : AbstractTestDescriptor(uniqueId, displayName, /* source = */ null) {
     override fun getType(): TestDescriptor.Type = TestDescriptor.Type.TEST
+}
+
+private class TestMethodWithContext(val method: TestMethodTestDescriptor, val context: JupiterEngineExecutionContext)
+
+private fun AbstractTwoStageKotlinCompilerTestBase.computeBatchTokens(): List<BatchToken> {
+    val testConfiguration = nonGroupingRunner.testConfiguration
+    return testConfiguration.groupingTestIsolators.mapNotNull {
+        it.computeBatchToken(testConfiguration.testServices.moduleStructure).takeIf { token -> token != BatchToken.Regular }
+    }
 }
 
 private data class TestMethodInfo(
