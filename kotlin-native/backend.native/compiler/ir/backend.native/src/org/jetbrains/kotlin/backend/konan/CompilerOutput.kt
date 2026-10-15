@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2026 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
 package org.jetbrains.kotlin.backend.konan
@@ -31,14 +31,15 @@ import kotlin.io.path.pathString
 /**
  * Supposed to be true for a single LLVM module within final binary.
  */
-val NativeSecondStageCompilationConfig.isFinalBinary: Boolean get() = when (this.produce) {
-    CompilerOutputKind.PROGRAM, CompilerOutputKind.DYNAMIC,
-    CompilerOutputKind.STATIC -> true
-    CompilerOutputKind.DYNAMIC_CACHE, CompilerOutputKind.STATIC_CACHE, CompilerOutputKind.HEADER_CACHE,
-    CompilerOutputKind.LIBRARY, CompilerOutputKind.BITCODE -> false
-    CompilerOutputKind.FRAMEWORK -> !omitFrameworkBinary
-    CompilerOutputKind.TEST_BUNDLE -> true
-}
+val NativeSecondStageCompilationConfig.isFinalBinary: Boolean
+    get() = when (this.produce) {
+        CompilerOutputKind.PROGRAM, CompilerOutputKind.DYNAMIC,
+        CompilerOutputKind.STATIC -> true
+        CompilerOutputKind.DYNAMIC_CACHE, CompilerOutputKind.STATIC_CACHE, CompilerOutputKind.HEADER_CACHE,
+        CompilerOutputKind.LIBRARY, CompilerOutputKind.BITCODE, OBJECT -> false
+        CompilerOutputKind.FRAMEWORK -> !omitFrameworkBinary
+        CompilerOutputKind.TEST_BUNDLE -> true
+    }
 
 val CompilerOutputKind.isNativeLibrary: Boolean
     get() = this == CompilerOutputKind.DYNAMIC || this == CompilerOutputKind.STATIC
