@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.gradle.targets.wasm.dsl
 
 import org.gradle.api.Action
+import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.dsl.KotlinBrowserBundler
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserDsl
 import org.jetbrains.kotlin.gradle.tasks.KotlinWasmDevServer
 
@@ -20,5 +22,13 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinWasmDevServer
  */
 @ExperimentalWasmDsl
 interface KotlinWasmJsBrowserDsl : KotlinJsBrowserDsl {
+    /**
+     * The bundler to use for the browser target.
+     *
+     * The value comes from the [bundler] parameter of [org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmJsTargetDsl.browser], is fixed on first configuration,
+     * and defaults to [KotlinBrowserBundler.WEBPACK].
+     */
+    val bundler: Provider<KotlinBrowserBundler>
+
     fun devServer(body: Action<KotlinWasmDevServer>)
 }
