@@ -65,6 +65,7 @@ internal constructor(
 
     @get:Incremental
     @get:InputDirectory
+    @get:NormalizeLineEndings
     @get:IgnoreEmptyDirectories
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val inputDirectory: DirectoryProperty

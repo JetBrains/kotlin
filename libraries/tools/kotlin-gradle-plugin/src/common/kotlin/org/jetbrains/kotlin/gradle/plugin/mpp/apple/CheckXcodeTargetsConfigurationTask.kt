@@ -187,6 +187,7 @@ internal abstract class CheckXcodeTargetsConfigurationTask : DefaultTask(), Uses
     }
 
     @get:InputDirectory
+    @get:NormalizeLineEndings
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val xcodeProjectPath: DirectoryProperty
 

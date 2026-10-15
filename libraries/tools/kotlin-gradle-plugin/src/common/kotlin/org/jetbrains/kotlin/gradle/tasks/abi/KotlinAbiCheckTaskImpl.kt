@@ -27,6 +27,7 @@ internal abstract class KotlinAbiCheckTaskImpl : AbiToolsTask() {
     abstract val referenceDumps: ConfigurableFileCollection
 
     @get:InputDirectory
+    @get:NormalizeLineEndings
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val actualDir: DirectoryProperty
 

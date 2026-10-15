@@ -671,6 +671,7 @@ internal abstract class FrameworkCopy : DefaultTask() {
 
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
     @get:InputDirectory
+    @get:NormalizeLineEndings
     abstract val sourceFramework: DirectoryProperty
 
     @get:PathSensitive(PathSensitivity.ABSOLUTE)

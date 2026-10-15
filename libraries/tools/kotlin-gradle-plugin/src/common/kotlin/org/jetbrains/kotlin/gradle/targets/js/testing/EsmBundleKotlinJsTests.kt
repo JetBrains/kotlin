@@ -20,6 +20,7 @@ import org.gradle.api.tasks.SkipWhenEmpty
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.work.DisableCachingByDefault
+import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
@@ -50,6 +51,7 @@ internal abstract class EsmBundleKotlinJsTests @Inject constructor(
      * Directory where kotlin js/wasmsj linker produced binaries with tests in ESM format.
      */
     @get:InputDirectory
+    @get:NormalizeLineEndings
     @get:SkipWhenEmpty
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val kotlinLinkerOutputFiles: DirectoryProperty

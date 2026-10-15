@@ -61,6 +61,7 @@ abstract class PodBuildTask @Inject constructor(
     @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:IgnoreEmptyDirectories
     @get:InputDirectory
+    @get:NormalizeLineEndings
     internal val srcDir: Provider<Directory> = pod.flatMap { pod ->
         val podLocation = pod.source
         if (podLocation is Path) {

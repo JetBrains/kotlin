@@ -233,6 +233,7 @@ internal abstract class PackKotlinArchiveTask @Inject constructor(
     private val fileOperations: FileOperations,
 ) : DefaultTask() {
     @get:InputDirectory
+    @get:NormalizeLineEndings
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val assembledKarDirectory: DirectoryProperty
 
