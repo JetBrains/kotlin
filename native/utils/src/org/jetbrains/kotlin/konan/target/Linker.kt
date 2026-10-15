@@ -134,7 +134,15 @@ fun LinkerFlags.finalLinkCommands(
 ): List<Command> = with(this) {
     LinkerArguments(
         TempFiles(),
-        objectFiles, executable, staticLibraries = libraries, dynamicLibraries = emptyList(), linkerArgs, optimize, debug, kind, outputDsymBundle,
+        objectFiles,
+        executable,
+        staticLibraries = libraries,
+        dynamicLibraries = emptyList(),
+        linkerArgs,
+        optimize,
+        debug,
+        kind,
+        outputDsymBundle,
         sanitizer
     ).finalLinkCommands()
 }
@@ -155,7 +163,7 @@ abstract class LinkerFlags(val configurables: Configurables) {
      * Pre-linkage is useful for hiding dependency symbols.
      */
     open fun preLinkCommands(objectFiles: List<ObjectFile>, output: ObjectFile): List<Command> =
-            error("Pre-link is unsupported for ${configurables.target}.")
+        error("Pre-link is unsupported for ${configurables.target}.")
 
     abstract fun filterStaticLibraries(binaries: List<String>): List<String>
 
@@ -171,8 +179,7 @@ abstract class LinkerFlags(val configurables: Configurables) {
     }
 }
 
-class AndroidLinker(targetProperties: AndroidConfigurables)
-    : LinkerFlags(targetProperties), AndroidConfigurables by targetProperties {
+class AndroidLinker(targetProperties: AndroidConfigurables) : LinkerFlags(targetProperties), AndroidConfigurables by targetProperties {
 
     private val clangTarget = when (val targetString = targetProperties.targetTriple.toString()) {
         "arm-unknown-linux-androideabi" -> "armv7a-linux-androideabi"
@@ -199,10 +206,11 @@ class AndroidLinker(targetProperties: AndroidConfigurables)
         val apiSysroot = "$absoluteTargetSysRoot/$architectureDir"
         val clangTarget = targetTriple.withoutVendor()
         val libDirs = listOf(
-                "--sysroot=$apiSysroot",
-                if (target == KonanTarget.ANDROID_X64) "-L$apiSysroot/usr/lib64" else "-L$apiSysroot/usr/lib",
-                "-L$toolchainSysroot/usr/lib/$clangTarget/${Android.API}",
-                "-L$toolchainSysroot/usr/lib/$clangTarget")
+            "--sysroot=$apiSysroot",
+            if (target == KonanTarget.ANDROID_X64) "-L$apiSysroot/usr/lib64" else "-L$apiSysroot/usr/lib",
+            "-L$toolchainSysroot/usr/lib/$clangTarget/${Android.API}",
+            "-L$toolchainSysroot/usr/lib/$clangTarget"
+        )
         return listOf(Command(clang).apply {
             +"-o"
             +executable
@@ -227,8 +235,9 @@ class AndroidLinker(targetProperties: AndroidConfigurables)
     }
 }
 
-class MacOSBasedLinker(targetProperties: AppleConfigurables)
-    : LinkerFlags(targetProperties), AppleConfigurables by targetProperties {
+class MacOSBasedLinker(
+    targetProperties: AppleConfigurables
+) : LinkerFlags(targetProperties), AppleConfigurables by targetProperties {
 
     private val libtool = "$absoluteTargetToolchain/bin/libtool"
     private val linker = "$absoluteTargetToolchain/bin/ld"
@@ -352,8 +361,8 @@ class MacOSBasedLinker(targetProperties: AppleConfigurables)
             +rpath(dynamic, sanitizer)
             when (sanitizer) {
                 null -> {}
-                SanitizerKind.ADDRESS -> +provideCompilerRtLibrary("asan", isDynamic=true)!!
-                SanitizerKind.THREAD -> +provideCompilerRtLibrary("tsan", isDynamic=true)!!
+                SanitizerKind.ADDRESS -> +provideCompilerRtLibrary("asan", isDynamic = true)!!
+                SanitizerKind.THREAD -> +provideCompilerRtLibrary("tsan", isDynamic = true)!!
             }
         }
 
@@ -373,22 +382,23 @@ class MacOSBasedLinker(targetProperties: AppleConfigurables)
     }
 
     private fun rpath(dynamic: Boolean, sanitizer: SanitizerKind?): List<String> = listOfNotNull(
-            when (target.family) {
-                Family.OSX -> "@executable_path/../Frameworks"
-                Family.IOS,
-                Family.WATCHOS,
-                Family.TVOS -> "@executable_path/Frameworks"
-                else -> error(target)
-            },
-            "@loader_path/Frameworks".takeIf { dynamic },
-            compilerRtDir.takeIf { sanitizer != null }
+        when (target.family) {
+            Family.OSX -> "@executable_path/../Frameworks"
+            Family.IOS,
+            Family.WATCHOS,
+            Family.TVOS,
+                -> "@executable_path/Frameworks"
+            else -> error(target)
+        },
+        "@loader_path/Frameworks".takeIf { dynamic },
+        compilerRtDir.takeIf { sanitizer != null }
     ).flatMap { listOf("-rpath", it) }
 
     fun dsymUtilCommand(executable: ExecutableFile, outputDsymBundle: String) =
-            object : Command(dsymutilCommand(executable, outputDsymBundle)) {
-                override fun runProcess(): Int =
-                        executeCommandWithFilter(command)
-            }
+        object : Command(dsymutilCommand(executable, outputDsymBundle)) {
+            override fun runProcess(): Int =
+                executeCommandWithFilter(command)
+        }
 
     // TODO: consider introducing a better filtering directly in Command.
     private fun executeCommandWithFilter(command: List<String>): Int {
@@ -422,11 +432,12 @@ class MacOSBasedLinker(targetProperties: AppleConfigurables)
     }
 
     fun dsymutilCommand(executable: ExecutableFile, outputDsymBundle: String): List<String> =
-            listOf(dsymutil, executable, "-o", outputDsymBundle)
+        listOf(dsymutil, executable, "-o", outputDsymBundle)
 }
 
-class GccBasedLinker(targetProperties: GccConfigurables)
-    : LinkerFlags(targetProperties), GccConfigurables by targetProperties {
+class GccBasedLinker(
+    targetProperties: GccConfigurables
+) : LinkerFlags(targetProperties), GccConfigurables by targetProperties {
 
     private val llvmAr = "$absoluteLlvmHome/bin/llvm-ar"
     override val libGcc = "$absoluteTargetSysRoot/${super.libGcc}"
@@ -506,8 +517,9 @@ class GccBasedLinker(targetProperties: GccConfigurables)
     }
 }
 
-class MingwLinker(targetProperties: MingwConfigurables)
-    : LinkerFlags(targetProperties), MingwConfigurables by targetProperties {
+class MingwLinker(
+    targetProperties: MingwConfigurables
+) : LinkerFlags(targetProperties), MingwConfigurables by targetProperties {
 
     private val llvmAr = "$absoluteLlvmHome/bin/llvm-ar"
     private val clang = "$absoluteLlvmHome/bin/clang++"
@@ -550,8 +562,8 @@ class MingwLinker(targetProperties: MingwConfigurables)
         val usesResponseFile = librariesArgs.isNotEmpty()
 
         fun Command.constructLinkerArguments(
-                additionalArguments: List<String> = listOf(),
-                skipDefaultArguments: List<String> = listOf()
+            additionalArguments: List<String> = listOf(),
+            skipDefaultArguments: List<String> = listOf(),
         ): Command = apply {
             // Must precede the @response-file arguments so clang applies this quoting when expanding them.
             if (usesResponseFile) +"--rsp-quoting=windows"
@@ -575,10 +587,10 @@ class MingwLinker(targetProperties: MingwConfigurables)
 }
 
 fun linker(configurables: Configurables): LinkerFlags =
-        when (configurables) {
-            is GccConfigurables -> GccBasedLinker(configurables)
-            is AppleConfigurables -> MacOSBasedLinker(configurables)
-            is AndroidConfigurables-> AndroidLinker(configurables)
-            is MingwConfigurables -> MingwLinker(configurables)
-            else -> error("Unexpected target: ${configurables.target}")
-        }
+    when (configurables) {
+        is GccConfigurables -> GccBasedLinker(configurables)
+        is AppleConfigurables -> MacOSBasedLinker(configurables)
+        is AndroidConfigurables -> AndroidLinker(configurables)
+        is MingwConfigurables -> MingwLinker(configurables)
+        else -> error("Unexpected target: ${configurables.target}")
+    }
