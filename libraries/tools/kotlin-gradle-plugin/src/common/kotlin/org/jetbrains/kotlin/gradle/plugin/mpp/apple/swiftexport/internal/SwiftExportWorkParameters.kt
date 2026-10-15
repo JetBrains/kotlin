@@ -46,4 +46,8 @@ internal val SwiftExportTaskParameters.outputPath: Provider<Directory>
     get() = outputDirectory.dir("files")
 
 internal val SwiftExportTaskParameters.swiftModulesFile: Provider<RegularFile>
-    get() = outputDirectory.file("modules.json")
+    get() = outputDirectory.swiftModulesFile
+
+/** The modules file in the output directory of a Swift Export run. */
+internal val DirectoryProperty.swiftModulesFile: Provider<RegularFile>
+    get() = file("modules.json")

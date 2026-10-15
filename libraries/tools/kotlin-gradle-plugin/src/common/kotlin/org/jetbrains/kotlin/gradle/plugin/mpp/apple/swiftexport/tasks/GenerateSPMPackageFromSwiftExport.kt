@@ -45,14 +45,14 @@ internal abstract class SwiftExportTargetOutput {
     @get:Input
     abstract val target: Property<KonanTarget>
 
-    @get:InputFile
+    /** The output directory of the run: the modules file and the generated files it lists. */
+    @get:InputDirectory
     @get:PathSensitive(PathSensitivity.RELATIVE)
-    abstract val swiftModulesFile: RegularFileProperty
+    abstract val outputDirectory: DirectoryProperty
 
-    /** The generated files. [swiftModulesFile] has their paths, but not their content. */
-    @get:InputFiles
-    @get:PathSensitive(PathSensitivity.RELATIVE)
-    abstract val files: ConfigurableFileCollection
+    @get:Internal
+    val swiftModulesFile: Provider<RegularFile>
+        get() = outputDirectory.swiftModulesFile
 }
 
 internal fun ObjectFactory.SwiftExportTargetOutput(
@@ -60,8 +60,7 @@ internal fun ObjectFactory.SwiftExportTargetOutput(
     swiftExportTask: TaskProvider<SwiftExportTask>,
 ): SwiftExportTargetOutput = newInstance<SwiftExportTargetOutput>().apply {
     this.target.set(target.konanTarget)
-    swiftModulesFile.set(swiftExportTask.flatMap { it.parameters.swiftModulesFile })
-    files.from(swiftExportTask.flatMap { it.parameters.outputDirectory })
+    outputDirectory.set(swiftExportTask.flatMap { it.parameters.outputDirectory })
 }
 
 @DisableCachingByDefault(because = "Swift Export is experimental, so no caching for now")
@@ -103,15 +102,15 @@ internal abstract class GenerateSPMPackageFromSwiftExport @Inject constructor(
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val kotlinRuntime: DirectoryProperty
 
-    @get:InputFile
+    /** The output directory of the run: the modules file and the generated files it lists. Xcode flow only. */
     @get:Optional
+    @get:InputDirectory
     @get:PathSensitive(PathSensitivity.RELATIVE)
-    abstract val swiftModulesFile: RegularFileProperty
+    abstract val swiftExportOutputDirectory: DirectoryProperty
 
-    /** The generated files [swiftModulesFile] points at: it lists their paths, not their content. Xcode flow only. */
-    @get:InputFiles
-    @get:PathSensitive(PathSensitivity.RELATIVE)
-    abstract val swiftExportFiles: ConfigurableFileCollection
+    @get:Internal
+    val swiftModulesFile: Provider<RegularFile>
+        get() = swiftExportOutputDirectory.swiftModulesFile
 
     @get:Input
     val swiftPMImportHasDependencies: Property<Boolean> = objectFactory.property(Boolean::class.java).convention(false)
@@ -177,7 +176,7 @@ internal abstract class GenerateSPMPackageFromSwiftExport @Inject constructor(
     }
 
     private fun deserializeSwiftModules(): List<GradleSwiftExportModule> {
-        check(swiftModulesFile.isPresent) { "Neither targetOutputs nor swiftModulesFile is set for $path" }
+        check(swiftExportOutputDirectory.isPresent) { "Neither targetOutputs nor swiftExportOutputDirectory is set for $path" }
         return readSwiftModules(swiftModulesFile.getFile())
     }
 
