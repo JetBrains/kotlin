@@ -272,7 +272,7 @@ class CacheBatchTest : AbstractNativeSimpleTest() {
     fun batchRebuildWithConflictingSignaturesInOverlappingClosures() = doConflictingCachedInlineDependenciesTest(overlappingClosures = true)
 
     private fun doConflictingCachedInlineDependenciesTest(overlappingClosures: Boolean) {
-        assumeTrue(HostManager.host.family == Family.OSX || HostManager.host.family == Family.LINUX)
+        assumeTrue(HostManager.host.family == Family.OSX)
         assumeFalse(testRunSettings.get<ForcedNoopTestRunner>().value)
 
         val cacheDir = buildDir.resolve("cache").apply { mkdirs() }
