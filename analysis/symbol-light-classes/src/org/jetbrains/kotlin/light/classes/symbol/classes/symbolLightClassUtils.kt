@@ -627,7 +627,10 @@ internal fun createInnerClasses(
         symbol.asPsiClass() as? SymbolLightClassBase
     }
 
-    if (containingClass is SymbolLightClassForInterface && containingClass.hasDefaultImpls(declarationContainer)) {
+    if (containingClass is SymbolLightClassForInterface &&
+        declarationContainer is KaNamedClassSymbol &&
+        containingClass.hasDefaultImpls(declarationContainer)
+    ) {
         result.add(SymbolLightClassForInterfaceDefaultImpls(containingClass))
     }
 
@@ -647,13 +650,13 @@ internal fun createInnerClasses(
  * return any methods. This mirrors `org.jetbrains.kotlin.backend.jvm.lower.InterfaceLowering`, except that light classes have no
  * `DefaultImpls` that would hold only synthetic methods, such as `$annotations` methods, as they don't expose synthetic members.
  *
- * The check avoids resolving the members where possible. The declared members are checked by PSI, and the member scope of
- * [interfaceSymbol] is required only for the inherited implementations, see [inheritedDefaultImplsCallables]. An interface without
- * supertypes in PSI inherits only the members of `Any`, which are never bridged, so its member scope is skipped. Both PSI checks
- * ignore the declarations added by compiler plugins, i.e., generated members and supertypes.
+ * The check avoids resolving the members where possible. The declared members are checked by PSI, and the member scope of [interfaceSymbol]
+ * is required only for the inherited implementations, see [inheritedDefaultImplsCallables]. An interface without super-interfaces inherits
+ * only the members of `Any`, which are never bridged, so its member scope is skipped. The super-interfaces are taken from
+ * [interfaceSymbol], as compiler plugins may add supertypes.
  */
 context(_: KaSession)
-private fun SymbolLightClassForInterface.hasDefaultImpls(interfaceSymbol: KaDeclarationContainerSymbol): Boolean {
+private fun SymbolLightClassForInterface.hasDefaultImpls(interfaceSymbol: KaNamedClassSymbol): Boolean {
     val jvmDefaultMode = jvmDefaultMode
 
     fun hasDeclaredDefaultImplsMembers(): Boolean {
@@ -674,7 +677,7 @@ private fun SymbolLightClassForInterface.hasDefaultImpls(interfaceSymbol: KaDecl
 
     return when {
         hasDeclaredDefaultImplsMembers() -> true
-        classOrObjectDeclaration?.superTypeListEntries?.isEmpty() == true -> false
+        interfaceSymbol.superTypes.none { it.expandedSymbol?.classKind == KaClassKind.INTERFACE } -> false
         else -> inheritedDefaultImplsCallables(interfaceSymbol, jvmDefaultMode).any()
     }
 }
@@ -699,7 +702,7 @@ private fun SymbolLightClassForInterface.hasDefaultImpls(interfaceSymbol: KaDecl
  */
 context(_: KaSession)
 internal fun inheritedDefaultImplsCallables(
-    interfaceSymbol: KaDeclarationContainerSymbol,
+    interfaceSymbol: KaNamedClassSymbol,
     jvmDefaultMode: JvmDefaultMode,
 ): Sequence<KaCallableSymbol> {
     return interfaceSymbol.memberScope.callables.filter { callable ->
