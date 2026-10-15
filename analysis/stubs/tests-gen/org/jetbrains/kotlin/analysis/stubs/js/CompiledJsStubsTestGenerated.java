@@ -3489,6 +3489,24 @@ public class CompiledJsStubsTestGenerated extends AbstractCompiledJsStubsTest {
       run("inlineValueClass.kt");
     }
 
+    @Test
+    @TestMetadata("inlineValueClassWithAnnotation.kt")
+    public void testInlineValueClassWithAnnotation() {
+      run("inlineValueClassWithAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("inlineValueClassWithFullValueClasses.kt")
+    public void testInlineValueClassWithFullValueClasses() {
+      run("inlineValueClassWithFullValueClasses.kt");
+    }
+
+    @Test
+    @TestMetadata("inlineValueClassWithJvmInline.kt")
+    public void testInlineValueClassWithJvmInline() {
+      run("inlineValueClassWithJvmInline.kt");
+    }
+
     @Nested
     @TestMetadata("compiler/psi/psi-impl/testData/psi/inlineClasses/jvmAbi")
     @TestDataPath("$PROJECT_ROOT")
@@ -3536,6 +3554,12 @@ public class CompiledJsStubsTestGenerated extends AbstractCompiledJsStubsTest {
       @TestMetadata("jvmAbiInlineValueClass.kt")
       public void testJvmAbiInlineValueClass() {
         run("jvmAbiInlineValueClass.kt");
+      }
+
+      @Test
+      @TestMetadata("jvmAbiInlineValueClassWithFullValueClasses.kt")
+      public void testJvmAbiInlineValueClassWithFullValueClasses() {
+        run("jvmAbiInlineValueClassWithFullValueClasses.kt");
       }
     }
   }

@@ -209,6 +209,12 @@ public class JsSymbolLightClassesByPsiForSourceTestGenerated extends AbstractJsS
   }
 
   @Test
+  @TestMetadata("explicitInlineValueClassInSignature.kt")
+  public void testExplicitInlineValueClassInSignature() {
+    run("explicitInlineValueClassInSignature.kt");
+  }
+
+  @Test
   @TestMetadata("exposedAnonymousType.kt")
   public void testExposedAnonymousType() {
     run("exposedAnonymousType.kt");
@@ -1547,6 +1553,18 @@ public class JsSymbolLightClassesByPsiForSourceTestGenerated extends AbstractJsS
     @Test
     public void testAllFilesPresentInFullValueClasses() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/symbol-light-classes/testData/lightClassByPsi/fullValueClasses"), Pattern.compile("^([^.]+)\\.(kt|kts)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("explicitInlineValueClassWithFullValueClassesEnabled.kt")
+    public void testExplicitInlineValueClassWithFullValueClassesEnabled() {
+      run("explicitInlineValueClassWithFullValueClassesEnabled.kt");
+    }
+
+    @Test
+    @TestMetadata("explicitInlineValueClassWithJvmInline.kt")
+    public void testExplicitInlineValueClassWithJvmInline() {
+      run("explicitInlineValueClassWithJvmInline.kt");
     }
 
     @Test

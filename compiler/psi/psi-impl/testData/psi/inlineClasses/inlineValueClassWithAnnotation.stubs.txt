@@ -1,0 +1,18 @@
+FILE[kind=File[packageFqName=<root>]]
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  CLASS[classId=/Anno, fqName=Anno, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Anno, superNames=[]]
+    MODIFIER_LIST[annotation]
+  CLASS[classId=/AnnotatedValue, fqName=AnnotatedValue, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=AnnotatedValue, superNames=[]]
+    MODIFIER_LIST[inline value]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=Anno]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Anno]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=AnnotatedValue]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=AnnotatedValue.value, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=value]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=String]
