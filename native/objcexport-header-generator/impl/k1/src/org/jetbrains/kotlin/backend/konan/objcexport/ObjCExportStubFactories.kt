@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.konan.objcexport
 
 import org.jetbrains.kotlin.backend.common.serialization.extractSerializedKdocString
+import org.jetbrains.kotlin.backend.common.serialization.isDeserialized
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtPrimaryConstructor
@@ -15,7 +16,7 @@ import org.jetbrains.kotlin.resolve.source.getPsi
 fun ObjCExportStubOrigin(descriptor: DeclarationDescriptor?): ObjCExportStubOrigin? {
     if (descriptor == null) return null
 
-    if (descriptor is DeserializedDescriptor) {
+    if (descriptor.isDeserialized()) {
         return ObjCExportStubOrigin.Binary(descriptor.name, descriptor.extractSerializedKdocString())
     }
 
