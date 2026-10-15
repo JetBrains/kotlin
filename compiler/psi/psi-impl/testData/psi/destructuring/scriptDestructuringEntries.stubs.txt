@@ -1,0 +1,84 @@
+FILE[kind=Script[packageFqName=<root>]]
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  SCRIPT[fqName=ScriptDestructuringEntries, fqName=ScriptDestructuringEntries, name=ScriptDestructuringEntries]
+    CLASS[classId=/Ann, fqName=ScriptDestructuringEntries.Ann, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=Ann, superNames=[]]
+      MODIFIER_LIST[annotation]
+    CLASS[classId=/P, fqName=ScriptDestructuringEntries.P, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=P, superNames=[]]
+      MODIFIER_LIST[data]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=P]
+        VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=ScriptDestructuringEntries.P.first, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=first]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Int]
+          VALUE_PARAMETER[fqName=ScriptDestructuringEntries.P.second, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=second]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=String]
+    PROPERTY[fqName=ScriptDestructuringEntries.p, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=p]
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION[referencedName=P]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+          VALUE_ARGUMENT[isSpread=false]
+            STRING_TEMPLATE
+    DESTRUCTURING_DECLARATION[hasInitializer=true, hasSquareBrackets=false, isFullForm=false, isVar=true]
+      DESTRUCTURING_DECLARATION_ENTRY[fqName=null, isSingleUnderscore=false, isVar=true, name=a]
+        MODIFIER_LIST[]
+          ANNOTATION_ENTRY[hasValueArguments=false, shortName=Ann]
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=Ann]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=Int]
+      DESTRUCTURING_DECLARATION_ENTRY[fqName=null, isSingleUnderscore=true, isVar=true, name=_]
+      DESTRUCTURING_DECLARATION_ENTRY[fqName=null, isSingleUnderscore=false, isVar=true, name=c]
+      REFERENCE_EXPRESSION[referencedName=p]
+    DESTRUCTURING_DECLARATION[hasInitializer=true, hasSquareBrackets=true, isFullForm=false, isVar=false]
+      DESTRUCTURING_DECLARATION_ENTRY[fqName=null, isSingleUnderscore=false, isVar=false, name=d]
+      DESTRUCTURING_DECLARATION_ENTRY[fqName=null, isSingleUnderscore=false, isVar=false, name=e]
+        MODIFIER_LIST[]
+          ANNOTATION_ENTRY[hasValueArguments=false, shortName=Ann]
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=Ann]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=String]
+      REFERENCE_EXPRESSION[referencedName=p]
+    DESTRUCTURING_DECLARATION[hasInitializer=true, hasSquareBrackets=false, isFullForm=true, isVar=false]
+      DESTRUCTURING_DECLARATION_ENTRY[fqName=null, isSingleUnderscore=false, isVar=false, name=f]
+        REFERENCE_EXPRESSION[referencedName=first]
+      DESTRUCTURING_DECLARATION_ENTRY[fqName=null, isSingleUnderscore=false, isVar=true, name=g]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=String]
+        REFERENCE_EXPRESSION[referencedName=second]
+      REFERENCE_EXPRESSION[referencedName=p]
+    DESTRUCTURING_DECLARATION[hasInitializer=true, hasSquareBrackets=true, isFullForm=true, isVar=false]
+      DESTRUCTURING_DECLARATION_ENTRY[fqName=null, isSingleUnderscore=false, isVar=true, name=h]
+      DESTRUCTURING_DECLARATION_ENTRY[fqName=null, isSingleUnderscore=false, isVar=false, name=i]
+      REFERENCE_EXPRESSION[referencedName=p]
+    DESTRUCTURING_DECLARATION[hasInitializer=true, hasSquareBrackets=false, isFullForm=false, isVar=false]
+      DESTRUCTURING_DECLARATION_ENTRY[fqName=null, isSingleUnderscore=false, isVar=false, name=_]
+      DESTRUCTURING_DECLARATION_ENTRY[fqName=null, isSingleUnderscore=false, isVar=false, name=a_b]
+      REFERENCE_EXPRESSION[referencedName=p]
+    DESTRUCTURING_DECLARATION[hasInitializer=false, hasSquareBrackets=false, isFullForm=true, isVar=false]
+      DESTRUCTURING_DECLARATION_ENTRY[fqName=null, isSingleUnderscore=false, isVar=false, name=m]
+    SCRIPT_INITIALIZER
+      REFERENCE_EXPRESSION[referencedName=p]
+    DESTRUCTURING_DECLARATION[hasInitializer=true, hasSquareBrackets=false, isFullForm=true, isVar=false]
+      DESTRUCTURING_DECLARATION_ENTRY[fqName=null, isSingleUnderscore=false, isVar=false, name=n]
+        REFERENCE_EXPRESSION[referencedName=]
+      REFERENCE_EXPRESSION[referencedName=p]
+    CLASS[classId=/C, fqName=ScriptDestructuringEntries.C, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=C, superNames=[]]
+      CLASS_BODY
+        DESTRUCTURING_DECLARATION[hasInitializer=true, hasSquareBrackets=false, isFullForm=false, isVar=false]
+          DESTRUCTURING_DECLARATION_ENTRY[fqName=null, isSingleUnderscore=false, isVar=false, name=j]
+          DESTRUCTURING_DECLARATION_ENTRY[fqName=null, isSingleUnderscore=false, isVar=false, name=k]
+          REFERENCE_EXPRESSION[referencedName=p]

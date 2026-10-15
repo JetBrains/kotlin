@@ -41,5 +41,6 @@ internal fun applyJsr305(
         }
     }
 
-private fun jsr305mode(mode: String, fullEntry: String) = Jsr305.Mode.entries.firstOrNull { entry -> entry.stringValue == mode }
+@Suppress("EnumValuesSoftDeprecate")
+private fun jsr305mode(mode: String, fullEntry: String) = Jsr305.Mode.values().firstOrNull { entry -> entry.stringValue == mode }
     ?: throw CompilerArgumentsParseException("Unknown -Xjsr305 mode: $fullEntry")

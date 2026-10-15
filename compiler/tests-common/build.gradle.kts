@@ -25,15 +25,13 @@ dependencies {
     testFixturesApi(project(":compiler:fir:fir-deserialization"))
     testFixturesApi(project(":compiler:fir:cones"))
     testFixturesApi(project(":compiler:fir:resolve"))
-    testFixturesApi(project(":compiler:fir:providers"))
-    testFixturesApi(project(":compiler:fir:semantics"))
-    testFixturesApi(project(":compiler:fir:checkers"))
+    testFixturesApi(project(":compiler:fir:semantics.api"))
+    testFixturesApi(project(":compiler:fir:checkers:checkers.common"))
     testFixturesApi(project(":compiler:fir:checkers:checkers.jvm"))
     testFixturesApi(project(":compiler:fir:checkers:checkers.js"))
     testFixturesApi(project(":compiler:fir:checkers:checkers.native"))
     testFixturesApi(project(":compiler:fir:checkers:checkers.wasm"))
     testFixturesApi(project(":compiler:fir:fir-jvm"))
-    testFixturesApi(project(":compiler:fir:fir-js"))
     testFixturesApi(project(":compiler:fir:entrypoint"))
     testFixturesApi(project(":compiler:frontend"))
     testFixturesApi(project(":compiler:frontend.java"))
@@ -101,4 +99,3 @@ sourceSets {
     "testFixtures" { projectDefault() }
 }
 
-testsJar {}

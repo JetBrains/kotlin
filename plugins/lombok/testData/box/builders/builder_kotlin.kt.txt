@@ -9,7 +9,7 @@ class AccessLevelPrivate {
       private get
       private set
 
-    private constructor() /* primary */ {
+    internal constructor() /* primary */ {
       super/*Any*/()
       /* <init>() */
 
@@ -84,7 +84,7 @@ class User {
       private get
       private set
 
-    private constructor() /* primary */ {
+    internal constructor() /* primary */ {
       super/*Any*/()
       /* <init>() */
 

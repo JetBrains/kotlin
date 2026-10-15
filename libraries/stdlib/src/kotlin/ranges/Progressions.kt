@@ -12,7 +12,13 @@ package kotlin.ranges
 import kotlin.internal.getProgressionLastElement
 
 /**
- * A progression of values of type `Char`.
+ * An iterable progression of values of type `Char`.
+ * 
+ * A progression is defined by its first element [first], last element [last], and [step].
+ * It produces elements starting from the first element and incrementing by the step until the last element is reached.
+ * If the [step] is positive, the progression is increasing; if negative, the progression is decreasing.
+ * 
+ * A progression doesn't store all its elements in memory. Instead, it calculates elements on-the-fly as they are requested.
  */
 public open class CharProgression
     internal constructor
@@ -51,6 +57,12 @@ public open class CharProgression
      */
     public open fun isEmpty(): Boolean = if (step > 0) first > last else first < last
 
+    /**
+     * Checks if the progression is equal to the specified [other].
+     *
+     * `CharProgression` is considered equal to another `CharProgression` if they are both [empty][isEmpty] 
+     * or have the same first element [first], last element [last], and [step].
+     */
     override fun equals(other: Any?): Boolean =
         other is CharProgression && (isEmpty() && other.isEmpty() ||
         first == other.first && last == other.last && step == other.step)
@@ -74,7 +86,13 @@ public open class CharProgression
 }
 
 /**
- * A progression of values of type `Int`.
+ * An iterable progression of values of type `Int`.
+ * 
+ * A progression is defined by its first element [first], last element [last], and [step].
+ * It produces elements starting from the first element and incrementing by the step until the last element is reached.
+ * If the [step] is positive, the progression is increasing; if negative, the progression is decreasing.
+ * 
+ * A progression doesn't store all its elements in memory. Instead, it calculates elements on-the-fly as they are requested.
  */
 public open class IntProgression
     internal constructor
@@ -113,6 +131,12 @@ public open class IntProgression
      */
     public open fun isEmpty(): Boolean = if (step > 0) first > last else first < last
 
+    /**
+     * Checks if the progression is equal to the specified [other].
+     *
+     * `IntProgression` is considered equal to another `IntProgression` if they are both [empty][isEmpty] 
+     * or have the same first element [first], last element [last], and [step].
+     */
     override fun equals(other: Any?): Boolean =
         other is IntProgression && (isEmpty() && other.isEmpty() ||
         first == other.first && last == other.last && step == other.step)
@@ -136,7 +160,13 @@ public open class IntProgression
 }
 
 /**
- * A progression of values of type `Long`.
+ * An iterable progression of values of type `Long`.
+ * 
+ * A progression is defined by its first element [first], last element [last], and [step].
+ * It produces elements starting from the first element and incrementing by the step until the last element is reached.
+ * If the [step] is positive, the progression is increasing; if negative, the progression is decreasing.
+ * 
+ * A progression doesn't store all its elements in memory. Instead, it calculates elements on-the-fly as they are requested.
  */
 public open class LongProgression
     internal constructor
@@ -175,6 +205,12 @@ public open class LongProgression
      */
     public open fun isEmpty(): Boolean = if (step > 0) first > last else first < last
 
+    /**
+     * Checks if the progression is equal to the specified [other].
+     *
+     * `LongProgression` is considered equal to another `LongProgression` if they are both [empty][isEmpty] 
+     * or have the same first element [first], last element [last], and [step].
+     */
     override fun equals(other: Any?): Boolean =
         other is LongProgression && (isEmpty() && other.isEmpty() ||
         first == other.first && last == other.last && step == other.step)

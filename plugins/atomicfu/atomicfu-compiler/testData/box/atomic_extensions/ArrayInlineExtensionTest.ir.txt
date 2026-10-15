@@ -495,7 +495,7 @@ FILE fqName:<root> fileName:/ArrayInlineExtensionTest.kt
         VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Int
         correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:a$volatile visibility:private modality:FINAL [var]
         BLOCK_BODY
-          RETURN type=kotlin.Unit from='private final fun <set-a$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.AtomicIntArrayInlineExtensionTest'
+          RETURN type=kotlin.Nothing from='private final fun <set-a$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.AtomicIntArrayInlineExtensionTest'
             SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:a$volatile type:kotlin.Int visibility:private declared in <root>.AtomicIntArrayInlineExtensionTest' type=kotlin.Unit origin=null
               receiver: GET_VAR '<this>: <root>.AtomicIntArrayInlineExtensionTest declared in <root>.AtomicIntArrayInlineExtensionTest.<set-a$volatile>' type=<root>.AtomicIntArrayInlineExtensionTest origin=null
               value: GET_VAR 'value: kotlin.Int declared in <root>.AtomicIntArrayInlineExtensionTest.<set-a$volatile>' type=kotlin.Int origin=null
@@ -1077,7 +1077,7 @@ FILE fqName:<root> fileName:/ArrayInlineExtensionTest.kt
         VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Long
         correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:a$volatile visibility:private modality:FINAL [var]
         BLOCK_BODY
-          RETURN type=kotlin.Unit from='private final fun <set-a$volatile> (value: kotlin.Long): kotlin.Unit declared in <root>.AtomicLongArrayInlineExtensionTest'
+          RETURN type=kotlin.Nothing from='private final fun <set-a$volatile> (value: kotlin.Long): kotlin.Unit declared in <root>.AtomicLongArrayInlineExtensionTest'
             SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:a$volatile type:kotlin.Long visibility:private declared in <root>.AtomicLongArrayInlineExtensionTest' type=kotlin.Unit origin=null
               receiver: GET_VAR '<this>: <root>.AtomicLongArrayInlineExtensionTest declared in <root>.AtomicLongArrayInlineExtensionTest.<set-a$volatile>' type=<root>.AtomicLongArrayInlineExtensionTest origin=null
               value: GET_VAR 'value: kotlin.Long declared in <root>.AtomicLongArrayInlineExtensionTest.<set-a$volatile>' type=kotlin.Long origin=null
@@ -1663,7 +1663,7 @@ FILE fqName:<root> fileName:/ArrayInlineExtensionTest.kt
         VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Long
         correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:a$volatile visibility:private modality:FINAL [var]
         BLOCK_BODY
-          RETURN type=kotlin.Unit from='private final fun <set-a$volatile> (value: kotlin.Long): kotlin.Unit declared in <root>.AtomicRefArrayInlineExtensionTest'
+          RETURN type=kotlin.Nothing from='private final fun <set-a$volatile> (value: kotlin.Long): kotlin.Unit declared in <root>.AtomicRefArrayInlineExtensionTest'
             SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:a$volatile type:kotlin.Long visibility:private declared in <root>.AtomicRefArrayInlineExtensionTest' type=kotlin.Unit origin=null
               receiver: GET_VAR '<this>: <root>.AtomicRefArrayInlineExtensionTest declared in <root>.AtomicRefArrayInlineExtensionTest.<set-a$volatile>' type=<root>.AtomicRefArrayInlineExtensionTest origin=null
               value: GET_VAR 'value: kotlin.Long declared in <root>.AtomicRefArrayInlineExtensionTest.<set-a$volatile>' type=kotlin.Long origin=null

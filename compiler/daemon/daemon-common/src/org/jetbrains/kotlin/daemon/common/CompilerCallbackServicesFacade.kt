@@ -46,6 +46,9 @@ interface CompilerCallbackServicesFacade : Remote {
     @Throws(RemoteException::class)
     fun hasImportTracker(): Boolean
 
+    @Throws(RemoteException::class)
+    fun hasICFileMappingTracker(): Boolean
+
     // ----------------------------------------------------
     // IncrementalCache
     @Throws(RemoteException::class)
@@ -110,8 +113,21 @@ interface CompilerCallbackServicesFacade : Remote {
     // ImportTracker
     @Throws(RemoteException::class)
     fun importTracker_report(filePath: String, importedFqName: String)
-}
 
+    // ---------------------------------------------------
+    // ICFileMappingTracker
+    @Throws(RemoteException::class)
+    fun icFileMappingTracker_recordSourceFilesToOutputFileMapping(sourceFilePaths: Collection<String>, outputFilePath: String)
+
+    @Throws(RemoteException::class)
+    fun icFileMappingTracker_recordSourceReferencedByCompilerPlugin(sourceFilePath: String)
+
+    @Throws(RemoteException::class)
+    fun icFileMappingTracker_recordOutputFileGeneratedForPlugin(outputFilePath: String)
+
+    @Throws(RemoteException::class)
+    fun icFileMappingTracker_recordSourceFileGeneratedForPlugin(sourceFilePath: String)
+}
 
 class RmiFriendlyCompilationCanceledException : Exception(), Serializable {
     companion object {

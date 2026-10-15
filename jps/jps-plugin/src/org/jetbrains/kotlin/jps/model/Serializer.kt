@@ -14,9 +14,8 @@ import org.jetbrains.jps.model.serialization.JpsProjectExtensionSerializer
 import org.jetbrains.jps.model.serialization.facet.JpsFacetConfigurationSerializer
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.setApiVersionToLanguageVersionIfNeeded
+import org.jetbrains.kotlin.compilerRunner.setApiVersionToLanguageVersionIfNeeded
 import org.jetbrains.kotlin.config.*
-import java.util.*
 
 class KotlinModelSerializerService : KotlinCommonJpsModelSerializerExtension() {
     override fun getProjectExtensionSerializers() = listOf(

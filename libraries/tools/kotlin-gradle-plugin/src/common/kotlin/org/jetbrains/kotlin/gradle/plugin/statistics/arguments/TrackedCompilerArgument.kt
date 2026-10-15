@@ -82,7 +82,7 @@ internal class TrackedArgumentsBuilder{
 
         fun booleanMetric(
             metric: BooleanMetrics,
-            argument: KProperty1<A, Boolean>,
+            argument: KProperty1<A, Boolean?>,
             allowImplicit: Boolean = false,
         ) {
             booleanMetric(
@@ -180,19 +180,6 @@ internal class TrackedArgumentsBuilder{
             )
         }
 
-        @JvmName("stringList_String")
-        fun stringListMetric(
-            metric: StringListMetrics,
-            argument: KProperty1<A, String>,
-        ) {
-            stringListMetric(
-                metric,
-                argument.cliArgument,
-                extract = { argument.get(it) },
-                convert = { it },
-            )
-        }
-
         @JvmName("stringList_StringArray")
         fun stringListMetric(
             metric: StringListMetrics,
@@ -235,7 +222,7 @@ internal class TrackedArgumentsBuilder{
          */
         fun <V : Any> stringMetric(
             metric: StringMetrics,
-            argument: KProperty1<A, V>,
+            argument: KProperty1<A, V?>,
             allowImplicit: Boolean = false,
             convert: (V) -> String?,
         ) {

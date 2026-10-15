@@ -18,7 +18,7 @@ FILE fqName:<root> fileName:/UncheckedCastTest.kt
       VALUE_PARAMETER kind:Regular name:value index:0 type:kotlin.Any?
       correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:topLevelS$volatile visibility:private modality:FINAL [var]
       BLOCK_BODY
-        RETURN type=kotlin.Unit from='private final fun <set-topLevelS$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>'
+        RETURN type=kotlin.Nothing from='private final fun <set-topLevelS$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>'
           SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:topLevelS$volatile type:kotlin.Any? visibility:private [static] declared in <root>' type=kotlin.Unit origin=null
             value: GET_VAR 'value: kotlin.Any? declared in <root>.<set-topLevelS$volatile>' type=kotlin.Any? origin=null
   CLASS CLASS name:UncheckedCastTest modality:FINAL visibility:public superTypes:[kotlin.Any]
@@ -41,7 +41,7 @@ FILE fqName:<root> fileName:/UncheckedCastTest.kt
         VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Any?
         correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:s$volatile visibility:private modality:FINAL [var]
         BLOCK_BODY
-          RETURN type=kotlin.Unit from='private final fun <set-s$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.UncheckedCastTest'
+          RETURN type=kotlin.Nothing from='private final fun <set-s$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.UncheckedCastTest'
             SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:s$volatile type:kotlin.Any? visibility:private declared in <root>.UncheckedCastTest' type=kotlin.Unit origin=null
               receiver: GET_VAR '<this>: <root>.UncheckedCastTest declared in <root>.UncheckedCastTest.<set-s$volatile>' type=<root>.UncheckedCastTest origin=null
               value: GET_VAR 'value: kotlin.Any? declared in <root>.UncheckedCastTest.<set-s$volatile>' type=kotlin.Any? origin=null
@@ -63,7 +63,7 @@ FILE fqName:<root> fileName:/UncheckedCastTest.kt
         VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Any?
         correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:bs$volatile visibility:private modality:FINAL [var]
         BLOCK_BODY
-          RETURN type=kotlin.Unit from='private final fun <set-bs$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.UncheckedCastTest'
+          RETURN type=kotlin.Nothing from='private final fun <set-bs$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.UncheckedCastTest'
             SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:bs$volatile type:kotlin.Any? visibility:private declared in <root>.UncheckedCastTest' type=kotlin.Unit origin=null
               receiver: GET_VAR '<this>: <root>.UncheckedCastTest declared in <root>.UncheckedCastTest.<set-bs$volatile>' type=<root>.UncheckedCastTest origin=null
               value: GET_VAR 'value: kotlin.Any? declared in <root>.UncheckedCastTest.<set-bs$volatile>' type=kotlin.Any? origin=null

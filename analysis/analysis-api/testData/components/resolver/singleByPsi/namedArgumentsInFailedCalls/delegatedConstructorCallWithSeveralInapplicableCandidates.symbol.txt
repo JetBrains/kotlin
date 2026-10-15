@@ -1,0 +1,16 @@
+KtNameReferenceExpression(165,166): 'x'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  KaSimpleSymbolResolutionError:
+    candidateSymbols = [
+      x: kotlin.String
+    ]
+    diagnostic = ERROR<NONE_APPLICABLE: None of the following candidates is applicable:
+
+    constructor(x: String, y: String): Base:
+      No value passed for parameter 'y'.
+
+    constructor(n: Int): Base:
+      No parameter with name 'x' found.
+      No value passed for parameter 'n'.>

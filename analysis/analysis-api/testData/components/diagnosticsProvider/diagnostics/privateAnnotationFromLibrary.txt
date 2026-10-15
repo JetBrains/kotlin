@@ -1,0 +1,19 @@
+Diagnostics from file:
+  for PSI element of type KtNameReferenceExpression at (15,2-20)
+    INVISIBLE_REFERENCE      text ranges: [(63,81)]
+      PSI: KtNameReferenceExpression at (15,2-20)
+  for PSI element of type KtNameReferenceExpression at (15,2-20)
+    INVISIBLE_REFERENCE      text ranges: [(63,81)]
+      PSI: KtNameReferenceExpression at (15,2-20)
+  for PSI element of type KtNameReferenceExpression at (18,2-19)
+    INVISIBLE_REFERENCE      text ranges: [(110,127)]
+      PSI: KtNameReferenceExpression at (18,2-19)
+  for PSI element of type KtNameReferenceExpression at (18,2-19)
+    INVISIBLE_REFERENCE      text ranges: [(110,127)]
+      PSI: KtNameReferenceExpression at (18,2-19)
+  for PSI element of type KtNameReferenceExpression at (21,8-26)
+    INVISIBLE_REFERENCE      text ranges: [(161,179)]
+      PSI: KtNameReferenceExpression at (21,8-26)
+  for PSI element of type KtNameReferenceExpression at (24,24-42)
+    INVISIBLE_REFERENCE      text ranges: [(240,258)]
+      PSI: KtNameReferenceExpression at (24,24-42)

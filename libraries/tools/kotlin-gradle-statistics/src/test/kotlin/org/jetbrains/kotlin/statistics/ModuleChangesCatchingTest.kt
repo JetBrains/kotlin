@@ -25,16 +25,24 @@ private const val STRING_METRICS_RELATIVE_PATH = "$SOURCE_CODE_RELATIVE_PATH/Str
 private const val NUMERICAL_METRICS_RELATIVE_PATH = "$SOURCE_CODE_RELATIVE_PATH/NumericalMetrics.kt"
 private const val STRING_LIST_METRICS_RELATIVE_PATH = "$SOURCE_CODE_RELATIVE_PATH/StringListMetrics.kt"
 
-private val STRING_METRICS_EXPECTED_VERSION_AND_HASH = Pair(13, "f6d1d30105cafe24bdc33325c8465095")
-private val BOOLEAN_METRICS_EXPECTED_VERSION_AND_HASH = Pair(33, "7e83fbff5f954f7a2f2ce3422b58e7bc")
-private val NUMERICAL_METRICS_EXPECTED_VERSION_AND_HASH = Pair(4, "59f544b243ec583602fcfbedd7e6a700")
-private val STRING_LIST_METRICS_EXPECTED_VERSION_AND_HASH = Pair(6, "7b9173d9a7cdbde407e02eba998cec02")
+private const val GEN_CODE_RELATIVE_PATH =
+    "libraries/tools/kotlin-gradle-statistics/gen/org/jetbrains/kotlin/statistics/metrics"
+private const val LANGUAGE_FEATURE_VALUES_RELATIVE_PATH =
+    "$GEN_CODE_RELATIVE_PATH/LanguageFeatureValues.kt"
+
+private val STRING_METRICS_EXPECTED_VERSION_AND_HASH = Pair(14, "d523642ff5b372687a58741579011ab4")
+private val BOOLEAN_METRICS_EXPECTED_VERSION_AND_HASH = Pair(35, "aca086ac097758fa6c9e51babc078927")
+private val NUMERICAL_METRICS_EXPECTED_VERSION_AND_HASH = Pair(5, "bcab47bd1f4b3e609710d10c3f3d5002")
+private val STRING_LIST_METRICS_EXPECTED_VERSION_AND_HASH =
+    Triple(8, "f2cbcbe073215fb202f82f9919b6a65b", "3f176ee1cc87b3d10fa81d8477f77bae")
+
 private val SOURCE_FOLDER_EXPECTED_VERSION_AND_HASH =
     Pair(
         STRING_METRICS_EXPECTED_VERSION_AND_HASH.first +
                 BOOLEAN_METRICS_EXPECTED_VERSION_AND_HASH.first +
-                NUMERICAL_METRICS_EXPECTED_VERSION_AND_HASH.first + STRING_LIST_METRICS_EXPECTED_VERSION_AND_HASH.first,
-        "626062cba4ec71e2306715a0a16909f3"
+                NUMERICAL_METRICS_EXPECTED_VERSION_AND_HASH.first +
+                STRING_LIST_METRICS_EXPECTED_VERSION_AND_HASH.first,
+        "dd242c93f1255a3786f6665bf1061ee2"
     )
 private const val HASH_ALG = "MD5"
 
@@ -85,11 +93,16 @@ class ModuleChangesCatchingTest {
 
     /**
      * Test checks for that the version of [StringListMetrics] was increased after changes in this file
+     * or in the generated `LanguageFeatureValues.kt`, which provides allowed values for one of its metrics
      */
     @Test
     fun testChecksCorrectChangingStringListMetricsVersion() {
         val actualVersionAndHash =
-            Pair(StringListMetrics.VERSION, calculateFileChecksum(STRING_LIST_METRICS_RELATIVE_PATH))
+            Triple(
+                StringListMetrics.VERSION,
+                calculateFileChecksum(STRING_LIST_METRICS_RELATIVE_PATH),
+                calculateFileChecksum(LANGUAGE_FEATURE_VALUES_RELATIVE_PATH),
+            )
         assertEquals(
             STRING_LIST_METRICS_EXPECTED_VERSION_AND_HASH, actualVersionAndHash,
             errorMessage(StringListMetrics::class)

@@ -6,33 +6,33 @@ fun produceFun(): Function0<String> {
 }
 
 fun testCombinedSuspendUnit(fn: Function0<Int>) {
-  useSuspendUnit(fn = { // BLOCK
-    local suspend fun Function0<Int>.suspendConversion0() {
+  useSuspendUnit(fn = SuspendFunction0<Unit>(
+    /* bound = */ [fn],
+    /* invoke = */    local suspend fun($callee: Function0<Int>) {
       $callee.invoke()
     }
-
-    ::suspendConversion0/*($callee = fn) */
-  })
+  )
+)
 }
 
 fun testNonVal() {
-  useUnit(fn = { // BLOCK
-    local fun Function0<String>.suspendConversion0() {
+  useUnit(fn = Function0<Unit>(
+    /* bound = */ [produceFun()],
+    /* invoke = */    local fun($callee: Function0<String>) {
       $callee.invoke()
     }
-
-    ::suspendConversion0/*($callee = produceFun()) */
-  })
+  )
+)
 }
 
 fun testSimple(fn: Function0<String>) {
-  useUnit(fn = { // BLOCK
-    local fun Function0<String>.suspendConversion0() {
+  useUnit(fn = Function0<Unit>(
+    /* bound = */ [fn],
+    /* invoke = */    local fun($callee: Function0<String>) {
       $callee.invoke()
     }
-
-    ::suspendConversion0/*($callee = fn) */
-  })
+  )
+)
 }
 
 fun useSuspendUnit(fn: SuspendFunction0<Unit>) {

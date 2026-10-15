@@ -7,11 +7,13 @@ package enums
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.jetbrains.dokka.model.DEnum
 import org.jetbrains.dokka.model.dfs
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInAnalysisApi
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
+@MustRunOnChangesInAnalysisApi
 class KotlinEnumsTest : BaseAbstractTest() {
 
     @Test

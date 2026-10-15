@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.kmp.lexer.KtTokens
 import org.jetbrains.kotlin.kmp.parser.KtNodeTypes
 import org.jetbrains.kotlin.kmp.utils.SyntaxElementTypesWithIds
 import org.jetbrains.kotlin.types.ConstantValueKind
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 abstract class AbstractTreeRawFirBuilder<Node : Any, Type : Any>(
     baseSession: FirSession,
@@ -194,7 +195,7 @@ abstract class AbstractTreeRawFirBuilder<Node : Any, Type : Any>(
         functionBodySetup: FirBlockBuilder.() -> Unit,
         statementsSetup: MutableList<FirElement>.() -> Unit,
     ): FirReplSnippet {
-        TODO("KT-77583")
+        shouldNotBeCalled("REPL snippets are converted by TreeRawFirDeclarationBuilderProxy")
     }
 
     companion object {

@@ -33,21 +33,10 @@ private fun KClass<*>.supertype(): KType =
 fun box(): String {
     assertEquals("kotlin.collections.MutableList<kotlin.collections.(Mutable)List<kotlin.String!>!>", K1::class.supertype().toString())
 
-    if (Class.forName("kotlin.reflect.jvm.internal.SystemPropertiesKt").getMethod("getUseK1Implementation").invoke(null) == true) {
-        // It's effectively the same type as below, because `List<out S>` is the same type as `List<S>` (because of declaration-site
-        // variance in `kotlin.collections.List`.
-        // But K1 implementation in `JavaTypeResolver` used the following logic: do not add a projection at use site, if the same projection
-        // ("out" here) is present at declaration site.
-        assertEquals(
-            "kotlin.collections.MutableList<(kotlin.collections.MutableList<out kotlin.Number!>..kotlin.collections.List<kotlin.Number!>?)>",
-            K2::class.supertype().toString(),
-        )
-    } else {
-        assertEquals(
-            "kotlin.collections.MutableList<kotlin.collections.(Mutable)List<out kotlin.Number!>!>",
-            K2::class.supertype().toString(),
-        )
-    }
+    assertEquals(
+        "kotlin.collections.MutableList<(kotlin.collections.MutableList<out kotlin.Number!>..kotlin.collections.List<kotlin.Number!>?)>",
+        K2::class.supertype().toString(),
+    )
 
     assertEquals("kotlin.collections.MutableList<kotlin.collections.MutableList<in kotlin.Number!>!>", K3::class.supertype().toString())
     assertEquals("kotlin.collections.MutableList<kotlin.collections.(Mutable)List<T!>!>", K4::class.supertype().toString())

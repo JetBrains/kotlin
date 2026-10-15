@@ -88,12 +88,13 @@ internal class ObjCTypeAdapter private constructor(val irClass: IrClass?, val ob
                 objCName: String,
                 vtableSize: Int,
                 itableSize: Int = 0,
-                reverseAdapters: List<KotlinToObjCMethodAdapter> = emptyList(),
+                reverseAdapters: List<KotlinToObjCMethodAdapter>,
+                typeInfo: ConstPointer? = irClass?.let { constPointer(typeInfoValue(it)) },
         ) = ObjCTypeAdapter(
                 irClass = irClass,
                 objCName = objCName,
                 type = llvm.runtime.objCTypeAdapter,
-                irClass?.let { constPointer(typeInfoValue(it)) },
+                typeInfo,
                 llvm.nullPointer, // vtable
                 llvm.constInt32(vtableSize),
                 llvm.nullPointer, // itable
@@ -111,4 +112,3 @@ internal class ObjCTypeAdapter private constructor(val irClass: IrClass?, val ob
         )
     }
 }
-

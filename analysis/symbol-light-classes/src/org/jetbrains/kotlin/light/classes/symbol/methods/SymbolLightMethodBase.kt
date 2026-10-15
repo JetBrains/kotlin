@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.light.classes.symbol.annotations.getJvmExposeBoxedNa
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
 import org.jetbrains.kotlin.light.classes.symbol.classes.computeJavaMethodName
 import org.jetbrains.kotlin.light.classes.symbol.classes.jvmNameFromAnnotation
-import org.jetbrains.kotlin.light.classes.symbol.classes.typeForValueClass
+import org.jetbrains.kotlin.light.classes.symbol.classes.typeForInlineClass
 
 /**
  * Typealias to [SymbolLightMethodBaseImpl] that can be used to avoid constantly specifying the required type argument.
@@ -49,7 +49,7 @@ internal abstract class SymbolLightMethodBaseImpl<out SType : KaSymbol>(
     val generationMode: MethodGenerationMode,
 ) : SymbolLightMemberBase<PsiMethod>(lightMemberOrigin, containingClass), KtLightMethod, KaSymbolJavaView<SType> {
     /**
-     * Whether this method is the Java-facing declaration whose value-class types are boxed.
+     * Whether this method is the Java-facing declaration whose inline-class types are boxed.
      */
     val isJvmExposeBoxed: Boolean get() = generationMode is MethodGenerationMode.Boxed
 
@@ -151,7 +151,7 @@ internal abstract class SymbolLightMethodBaseImpl<out SType : KaSymbol>(
             }
             is MethodGenerationMode.Boxed -> {
                 symbol.getJvmExposeBoxedNameFromAnnotation()
-                    ?: computeJavaMethodName(symbol, defaultName, ignoreValueClassMangling = true)
+                    ?: computeJavaMethodName(symbol, defaultName, ignoreInlineClassMangling = true)
             }
         }
 
@@ -179,7 +179,7 @@ internal abstract class SymbolLightMethodBaseImpl<out SType : KaSymbol>(
             // implicitly override generic 'invoke' from a corresponding base class.
             symbol is KaNamedFunctionSymbol && symbol.isBuiltinFunctionInvoke && isInlineClassType(returnType) -> true
 
-            isJvmExposeBoxed && typeForValueClass(returnType) -> true
+            isJvmExposeBoxed && typeForInlineClass(returnType) -> true
 
             returnType.isPrimitiveBacked -> {
                 if (symbol.origin == KaSymbolOrigin.DELEGATED) {

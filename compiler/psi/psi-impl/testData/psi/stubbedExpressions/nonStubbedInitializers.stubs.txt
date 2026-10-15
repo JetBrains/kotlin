@@ -111,7 +111,7 @@ FILE[kind=Facade[packageFqName=test, facadeFqName=test.NonStubbedInitializersKt]
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=Any]
     OBJECT_LITERAL
-      OBJECT_DECLARATION[classId=null, fqName=null, isLocal=true, isObjectLiteral=true, isTopLevel=false, name=null, superNames=[Any]]
+      OBJECT_DECLARATION[classId=null, fqName=null, isObjectLiteral=true, isTopLevel=false, name=null, superNames=[Any]]
         SUPER_TYPE_LIST
           SUPER_TYPE_CALL_ENTRY
             CONSTRUCTOR_CALLEE

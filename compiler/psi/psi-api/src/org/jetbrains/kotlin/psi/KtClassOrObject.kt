@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:OptIn(KtIdeApi::class, KtImplementationDetail::class, KtNonPublicApi::class)
+@file:OptIn(KtIdeApi::class, KtImplementationDetail::class)
 
 package org.jetbrains.kotlin.psi
 
@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.psiUtil.ClassIdCalculator
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.isKtFile
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
 
@@ -132,7 +133,15 @@ abstract class KtClassOrObject :
     private var isLocal: Boolean? = null
 
     override fun isLocal(): Boolean {
-        greenStub?.isLocal?.let { return it }
+        val stub = greenStub
+        if (stub != null) {
+            return when {
+                stub.classId != null -> false
+                // Enum entries have no class ID, but they are as local as their enum class
+                this is KtEnumEntry -> containingClassOrObject?.isLocal() ?: false
+                else -> true
+            }
+        }
 
         isLocal?.let { return it }
 
@@ -195,8 +204,15 @@ abstract class KtClassOrObject :
         KtTokens.CLASS_KEYWORD, KtTokens.INTERFACE_KEYWORD, KtTokens.OBJECT_KEYWORD
     )
 
+    /**
+     * Deletes this class or object.
+     *
+     * When [KtPsiMutationService] is registered, as in the IntelliJ Kotlin plugin, the deletion may also adjust the surrounding code, e.g.,
+     * delete a semicolon that follows the declaration, or delete the whole file instead if the declaration is the only one in it. Without
+     * the service, it performs only the plain platform deletion.
+     */
     override fun delete() {
-        KtPsiMutationService.getInstance().deleteClassOrObject(this)
+        deleteWithMutationService(this) { it.deleteClassOrObject(this) }
     }
 
     override fun subtreeChanged() {

@@ -2,6 +2,7 @@
 // DO NOT MODIFY IT MANUALLY.
 
 @file:OptIn(ExperimentalCompilerArgument::class)
+@file:Suppress("EnumValuesSoftDeprecate")
 
 package org.jetbrains.kotlin.buildtools.`internal`.arguments
 
@@ -126,7 +127,7 @@ internal class MetadataArgumentsImpl(
     try { this[X_KLIB_ZIP_FILE_ACCESSOR_CACHE_LIMIT] = arguments.klibZipFileAccessorCacheLimit.let { it.toInt() } } catch (_: NoSuchMethodError) {  }
     try { this[X_LEGACY_METADATA_JAR_K2] = arguments.legacyMetadataJar } catch (_: NoSuchMethodError) {  }
     try { this[X_REFINES_PATHS] = arguments.refinesPaths.mapOrEmpty { Path(it) } } catch (_: NoSuchMethodError) {  }
-    try { this[X_TARGET_PLATFORM] = arguments.targetPlatform.map { MetadataTargetPlatform.entries.firstOrNull { entry -> entry.stringValue == it } ?: throw CompilerArgumentsParseException("Unknown -Xtarget-platform value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { this[X_TARGET_PLATFORM] = arguments.targetPlatform.map { MetadataTargetPlatform.values().firstOrNull { entry -> entry.stringValue == it } ?: throw CompilerArgumentsParseException("Unknown -Xtarget-platform value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     try { this[CLASSPATH] = arguments.classpath?.split(File.pathSeparator)?.map { Path(it) } } catch (_: NoSuchMethodError) {  }
     try { this[D] = arguments.destination } catch (_: NoSuchMethodError) {  }
     try { this[MODULE_NAME] = arguments.moduleName } catch (_: NoSuchMethodError) {  }

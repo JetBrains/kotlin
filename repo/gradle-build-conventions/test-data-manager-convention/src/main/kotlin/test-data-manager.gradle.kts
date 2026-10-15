@@ -36,16 +36,28 @@
  *
  * ## Ordering
  *
- * Both tasks inherit `mustRunAfter` from the module's `test` task, ensuring proper execution
- * order when running across modules (e.g., golden modules first).
+ * [TestDataManagerExtension.mustRunAfterProjects] orders the tasks, as well as `test`, across modules
+ * (e.g., golden modules first):
+ *
+ * ```kotlin
+ * testDataManager {
+ *     mustRunAfterProjects.add(":analysis:analysis-api-fir")
+ * }
+ * ```
  */
 
+val testDataManager = extensions.create<TestDataManagerExtension>("testDataManager")
+
+tasks.named { it == "test" }.configureEach {
+    mustRunAfter(testDataManager.mustRunAfterProjects.map { projectPaths -> projectPaths.map { "$it:test" } })
+}
+
 tasks.register<CheckTestDataModuleTask>(checkTestDataTaskName) {
-    wireOptions(checkTestDataTaskName)
+    wireOptions(testDataManager)
 }
 
 tasks.register<UpdateTestDataModuleTask>(updateTestDataTaskName) {
-    wireOptions(updateTestDataTaskName)
+    wireOptions(testDataManager)
 }
 
 /**
@@ -53,13 +65,8 @@ tasks.register<UpdateTestDataModuleTask>(updateTestDataTaskName) {
  * so tests run the same way under the manager as they do normally.
  *
  * Shared by both [CheckTestDataModuleTask] and [UpdateTestDataModuleTask] registrations.
- *
- * @param peerTaskName the name of the manager task being configured. Used to rewrite
- *   `mustRunAfter` constraints so that, e.g., `:moduleA:test → :moduleB:test` becomes
- *   `:moduleA:peerTaskName → :moduleB:peerTaskName` — preserving cross-module ordering
- *   between manager-task instances.
  */
-private fun AbstractTestDataModuleTask.wireOptions(peerTaskName: String) {
+private fun AbstractTestDataModuleTask.wireOptions(extension: TestDataManagerExtension) {
     /**
      * Wires each option's convention from its `-P` Gradle property. The providers are resolved lazily at
      * execution time, so they are not configuration-cache inputs — see [AbstractTestDataModuleTask].
@@ -69,49 +76,61 @@ private fun AbstractTestDataModuleTask.wireOptions(peerTaskName: String) {
     goldenOnly.convention(project.providers.gradleProperty(TestDataManagerOption.GOLDEN_ONLY).map { it.toBoolean() })
     incremental.convention(project.providers.gradleProperty(TestDataManagerOption.INCREMENTAL).map { it.toBoolean() })
 
-    // Capture test task configuration eagerly during configuration (configuration-cache compatible)
-    // Note: taskProvider.map creates a task dependency, so we capture the value directly
-    val testTask = tasks.named<Test>("test").get()
-
-    // Copy all test task dependencies and inputs, so tests run the same way in the manager as they run normally
-    dependsOn(testTask.dependsOn)
-    dependsOn(testTask.inputs)
-
-    // Inherit ordering from a test task but convert `:test` references to `:peerTaskName`.
-    // This ensures proper ordering when multiple modules' manager tasks run together (e.g., golden modules first).
-    val testMustRunAfter = testTask.mustRunAfter.getDependencies(testTask)
-    testMustRunAfter.forEach { dependency ->
-        if (dependency.path.endsWith(":test")) {
-            // Convert :module:test -> :module:peerTaskName
-            mustRunAfter("${dependency.project.path}:$peerTaskName")
-        }
-    }
-
-    // Use testTask.classpath to include both compiled test classes AND dependencies
-    classpath = testTask.classpath
-    workingDir = testTask.workingDir
-    environment = testTask.environment
-    jvmArgs = testTask.jvmArgs
-    enableAssertions = testTask.enableAssertions
-    minHeapSize = testTask.minHeapSize
-    maxHeapSize = testTask.maxHeapSize
-    javaLauncher = testTask.javaLauncher
-
     /**
-     * Filter out system properties used by `test-inputs-check`.
-     * Otherwise, the task would crash with either missing security policy or `declared-inputs-for-test.txt` file.
+     * The `Test` task configured exactly like the module's `test`, but never executed (see `createGeneralTestTask`).
      *
-     * Also see KT-84278.
+     * All options below are mapped lazily from it. With the configuration cache (on by default in this repository),
+     * the mapped providers are evaluated once, when the cache entry is stored, i.e., after all configuration
+     * of the carrier has been applied, so the `Test` instance is never read while this task executes.
+     * Without the configuration cache, they are evaluated when first queried, right before execution.
      */
-    systemProperties = testTask.systemProperties.filterKeys {
-        !it.startsWith("java.security.") && !it.startsWith("test.instrumenter.")
-    }
+    val carrier = tasks.named<Test>(testDataManagerWarmupTaskName)
+
+    // Runs everything the carrier depends on: compilation of the test classpath and all its other inputs.
+    // The carrier itself is skipped by its `onlyIf`.
+    dependsOn(carrier)
+
+    // Orders same-named tasks across modules, e.g., `:moduleB:checkTestData` after `:moduleA:checkTestData`.
+    // Resolved as plain task paths when the task graph is built.
+    val peerTaskName = name
+    mustRunAfter(extension.mustRunAfterProjects.map { projectPaths -> projectPaths.map { "$it:$peerTaskName" } })
+
+    javaLauncher.set(carrier.flatMap { it.javaLauncher })
+    workingDirectory.set(carrier.flatMap { it.workingDirectory })
+
+    // Includes both compiled test classes AND dependencies.
+    // `Test.classpath` is a plain `FileCollection` that may be replaced later, so a provider of it is used.
+    classpath(carrier.map { it.classpath })
+
+    // `JavaExec` parses `-ea`, `-Xms`, `-Xmx` and `-D` from `jvmArguments` back into the corresponding options
+    // at execution time, so this is equivalent to copying them one by one, but lazy.
+    jvmArguments.addAll(carrier.map { test ->
+        buildList {
+            addAll(test.jvmArgs)
+            if (test.enableAssertions) add("-ea")
+            test.minHeapSize?.let { add("-Xms$it") }
+            test.maxHeapSize?.let { add("-Xmx$it") }
+
+            /**
+             * Filter out system properties used by `test-inputs-check`.
+             * Otherwise, the task would crash with either missing security policy or `declared-inputs-for-test.txt` file.
+             *
+             * Also see KT-84278.
+             */
+            test.systemProperties
+                .filterKeys { !it.startsWith("java.security.") && !it.startsWith("test.instrumenter.") }
+                .forEach { (key, value) -> add(if (value == null) "-D$key" else "-D$key=$value") }
+        }
+    })
+
+    inheritedEnvironment.set(carrier.map { test -> test.environment.mapValues { it.value.toString() } })
 
     /**
      * Filter out JVM argument provider used by `test-inputs-check`
      */
-    jvmArgumentProviders += testTask.jvmArgumentProviders
-        .filter { it !is JfrArgumentProvider }
+    inheritedJvmArgumentProviders.set(carrier.map { test ->
+        test.jvmArgumentProviders.filter { it !is JfrArgumentProvider }
+    })
 
     // IDE integration: mark the task the same way as `Test` so IDEA's test runner picks it up
     // and forwards `idea.active` to enable IDE integration in `TestDataManagerRunner`.

@@ -234,15 +234,6 @@ open class ReturnTypeCalculatorWithJump(
             return tryCalculateReturnType(declaration.getter.delegate)
         }
 
-        val unwrappedDelegate = declaration.delegatedWrapperData?.wrapped
-        if (unwrappedDelegate != null) {
-            return tryCalculateReturnType(unwrappedDelegate).also {
-                if (declaration.returnTypeRef is FirImplicitTypeRef) {
-                    declaration.replaceReturnTypeRef(it)
-                }
-            }
-        }
-
         if (declaration.canHaveDeferredReturnTypeCalculation) {
             val resolvedTypeRef = callableCopyTypeCalculator.computeReturnType(declaration)
             requireWithAttachment(
@@ -315,8 +306,10 @@ open class ReturnTypeCalculatorWithJump(
                     "$symbol with origin ${declaration.origin} and return type ${declaration.returnTypeRef}"
         }
 
-        resolveDeclaration(symbolForStatus.fir)
-        return declaration.returnTypeRef as FirResolvedTypeRef
+        val resolvedTypeRef = resolveDeclaration(symbolForStatus.fir)
+
+        // The resolved type is not always written into the declaration, e.g., in the case of a resolution cycle in LL FIR
+        return declaration.returnTypeRef as? FirResolvedTypeRef ?: resolvedTypeRef
     }
 
     @OptIn(PrivateForInline::class)
@@ -335,6 +328,7 @@ open class ReturnTypeCalculatorWithJump(
             val provider = session.firProvider
             val file = provider.getFirCallableContainerFile(symbol)
             val script = file?.declarations?.firstIsInstanceOrNull<FirScript>()
+            val replSnippet = file?.declarations?.firstIsInstanceOrNull<FirReplSnippet>()
 
             val containingClassLookupTag = symbol.containingClassLookupTag()
             val outerClasses = generateSequence(containingClassLookupTag) { lookupTag ->
@@ -349,7 +343,9 @@ open class ReturnTypeCalculatorWithJump(
                     )
                 }
             }
-            (listOfNotNull(file, script) + outerClasses.filterNotNull().asReversed()) to null
+            // The snippet class is transformed by `transformReplSnippet` itself, within the snippet's tower data context.
+            val designationClasses = outerClasses.filterNotNull().asReversed().filter { it != replSnippet?.snippetClass }
+            (listOfNotNull(file, script, replSnippet) + designationClasses) to null
         }
 
         val previousTowerDataContexts = outerBodyResolveContext?.regularTowerDataContexts

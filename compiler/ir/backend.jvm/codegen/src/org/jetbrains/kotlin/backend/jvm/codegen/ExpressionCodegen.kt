@@ -1004,7 +1004,7 @@ class ExpressionCodegen(
         val isNonLocalReturn = methodSignatureMapper.mapFunctionName(owner) != methodSignatureMapper.mapFunctionName(irFunction)
 
         val [returnType, returnIrType] = owner.returnAsmAndIrTypes()
-        val afterReturnLabel = Label()
+        val afterReturnLabel = linkedLabel()
         expression.value.accept(this, data).materializeAt(returnType, returnIrType)
         generateFinallyBlocksIfNeeded(returnType, afterReturnLabel, data, null)
         expression.markLineNumber(startOffset = true)

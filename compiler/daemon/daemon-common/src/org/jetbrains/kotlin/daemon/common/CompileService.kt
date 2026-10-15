@@ -14,8 +14,11 @@
  * limitations under the License.
  */
 
+@file:Suppress("DEPRECATION_ERROR")
+
 package org.jetbrains.kotlin.daemon.common
 
+import org.jetbrains.kotlin.cli.common.repl.K1_REPL_DEPRECATION_MESSAGE
 import org.jetbrains.kotlin.cli.common.repl.ReplCheckResult
 import org.jetbrains.kotlin.cli.common.repl.ReplCodeLine
 import org.jetbrains.kotlin.cli.common.repl.ReplCompileResult
@@ -76,6 +79,9 @@ interface CompileService : Remote {
 
         abstract fun get(): R
     }
+
+    @Throws(RemoteException::class)
+    fun isSessionActive(sessionId: Int): CallResult<Boolean>
 
     // TODO: remove!
     @Throws(RemoteException::class)
@@ -148,9 +154,11 @@ interface CompileService : Remote {
     @Throws(RemoteException::class)
     fun clearJarCache()
 
+    @Deprecated(K1_REPL_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
     @Throws(RemoteException::class)
     fun releaseReplSession(sessionId: Int): CallResult<Nothing>
 
+    @Deprecated(K1_REPL_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
     @Throws(RemoteException::class)
     fun leaseReplSession(
             aliveFlagPath: String?,
@@ -161,9 +169,11 @@ interface CompileService : Remote {
             templateClassName: String
     ): CallResult<Int>
 
+    @Deprecated(K1_REPL_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
     @Throws(RemoteException::class)
     fun replCreateState(sessionId: Int): CallResult<ReplStateFacade>
 
+    @Deprecated(K1_REPL_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
     @Throws(RemoteException::class)
     fun replCheck(
             sessionId: Int,
@@ -171,6 +181,7 @@ interface CompileService : Remote {
             codeLine: ReplCodeLine
     ): CallResult<ReplCheckResult>
 
+    @Deprecated(K1_REPL_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
     @Throws(RemoteException::class)
     fun replCompile(
             sessionId: Int,

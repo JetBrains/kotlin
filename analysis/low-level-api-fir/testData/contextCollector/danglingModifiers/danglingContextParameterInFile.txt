@@ -13,13 +13,13 @@ Tower Data Context:
         Scope: FirExplicitSimpleImportingScope
 
 FILE: [ResolvedTo(IMPORTS)] danglingContextParameterInFile.kt
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation class Anno : R|kotlin/Annotation| {
-        public [ResolvedTo(BODY_RESOLVE)] constructor([ResolvedTo(BODY_RESOLVE)] position: R|kotlin/String|): R|Anno| {
-            super<R|kotlin/Any|>()
+    @R|kotlin/annotation/Target|[Types](AnnotationTarget#.TYPE#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.TYPE|))] public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] constructor([ResolvedTo(STATUS)] position: R|kotlin/String|): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] val position: R|kotlin/String| = R|<local>/position|
-            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
+        public final [ResolvedTo(STATUS)] val position: R|kotlin/String| = R|<local>/position|
+            public [ResolvedTo(STATUS)] get(): R|kotlin/String|
 
     }
     [ResolvedTo(BODY_RESOLVE)] context([ResolvedTo(BODY_RESOLVE)] parameter1: R|@R|Anno|(position = <strcat>(String(1), String(2)) [evaluated = String(12)])  kotlin/String|, [ResolvedTo(BODY_RESOLVE)] parameter2: R|kotlin/collections/List<@R|Anno|(position = String(str) [evaluated = String(str)])  kotlin/Int>|)

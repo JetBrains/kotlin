@@ -1,0 +1,68 @@
+@kotlin.Metadata
+public final class BoxKt {
+    // source: 'Box.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+@kotlin.Metadata
+public final enum class Color {
+    // source: 'IC.kt'
+    private synthetic final static field $ENTRIES: kotlin.enums.EnumEntries
+    private synthetic final static field $VALUES: Color[]
+    public final enum static field RED: Color
+    private synthetic final static method $values(): Color[]
+    static method <clinit>(): void
+    private method <init>(p0: java.lang.String, p1: int): void
+    public static @org.jetbrains.annotations.NotNull method getEntries(): kotlin.enums.EnumEntries
+    public static method valueOf(p0: java.lang.String): Color
+    public static method values(): Color[]
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class ColorBox {
+    // source: 'IC.kt'
+    private final @org.jetbrains.annotations.NotNull field color: Color
+    public @kotlin.jvm.JvmExposeBoxed(jvmName="") method <init>(@org.jetbrains.annotations.NotNull p0: Color): void
+    private synthetic method <init>(p0: Color, p1: kotlin.jvm.internal.BoxingConstructorMarker): void
+    public synthetic final static method box-impl(p0: Color): ColorBox
+    public static @org.jetbrains.annotations.NotNull method constructor-impl(@org.jetbrains.annotations.NotNull p0: Color): Color
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: Color, p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: Color, p1: Color): boolean
+    public final @org.jetbrains.annotations.NotNull method getColor(): Color
+    public method hashCode(): int
+    public static method hashCode-impl(p0: Color): int
+    public method toString(): java.lang.String
+    public static method toString-impl(p0: Color): java.lang.String
+    public synthetic final method unbox-impl(): Color
+}
+
+@kotlin.Metadata
+public final class ICKt {
+    // source: 'IC.kt'
+    public final static @kotlin.jvm.JvmExposeBoxed @org.jetbrains.annotations.NotNull method nameOf(@org.jetbrains.annotations.NotNull p0: ColorBox): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method nameOf-1H25SDg(@org.jetbrains.annotations.NotNull p0: Color): java.lang.String
+    public final static @kotlin.jvm.JvmExposeBoxed method sumOf(@org.jetbrains.annotations.NotNull p0: IntArrayBox): int
+    public final static method sumOf-PrRmZuk(@org.jetbrains.annotations.NotNull p0: int[]): int
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class IntArrayBox {
+    // source: 'IC.kt'
+    private final @org.jetbrains.annotations.NotNull field array: int[]
+    public @kotlin.jvm.JvmExposeBoxed(jvmName="") method <init>(@org.jetbrains.annotations.NotNull p0: int[]): void
+    private synthetic method <init>(p0: int[], p1: kotlin.jvm.internal.BoxingConstructorMarker): void
+    public synthetic final static method box-impl(p0: int[]): IntArrayBox
+    public static @org.jetbrains.annotations.NotNull method constructor-impl(@org.jetbrains.annotations.NotNull p0: int[]): int[]
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: int[], p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: int[], p1: int[]): boolean
+    public final @org.jetbrains.annotations.NotNull method getArray(): int[]
+    public method hashCode(): int
+    public static method hashCode-impl(p0: int[]): int
+    public method toString(): java.lang.String
+    public static method toString-impl(p0: int[]): java.lang.String
+    public synthetic final method unbox-impl(): int[]
+}

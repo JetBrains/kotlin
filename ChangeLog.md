@@ -1,3 +1,36 @@
+## 2.4.21
+
+### Backend. Wasm
+
+- [`KT-89267`](https://youtrack.jetbrains.com/issue/KT-89267) K/Wasm: calling a (T) -> R lambda with an argument that isn't a T traps instead of throwing ClassCastException
+
+### JVM. Reflection
+
+- [`KT-89280`](https://youtrack.jetbrains.com/issue/KT-89280) NoSuchElementException in argumentsMakeSenseOnlyForMutableContainer for Java non-static inner class of generic outer class
+- [`KT-80710`](https://youtrack.jetbrains.com/issue/KT-80710) Reflection: change KCallable representation to avoid dependency on K1
+
+### JavaScript
+
+- [`KT-89449`](https://youtrack.jetbrains.com/issue/KT-89449) Kotlin/JS: Member names no longer minified in production
+- [`KT-89363`](https://youtrack.jetbrains.com/issue/KT-89363) KJS. Regular class with companion can't extend external class
+
+### Tools. Compiler plugins. Serialization
+
+- [`KT-89275`](https://youtrack.jetbrains.com/issue/KT-89275) Kotlin/Wasm: Invalid Wasm is emitted for a `@Serializable` generic class with a class upper bound
+
+### Tools. Gradle. Native
+
+- [`KT-89285`](https://youtrack.jetbrains.com/issue/KT-89285) SwiftPM import results in flooded log
+- [`KT-86251`](https://youtrack.jetbrains.com/issue/KT-86251) K/N: Flaky linkDebugTestLinuxX64 failure with "truncated or malformed archive" on libstdlib-cache.a
+
+### Tools. Scripts
+
+- [`KT-89247`](https://youtrack.jetbrains.com/issue/KT-89247) Kotlin Script: NoClassDefFoundError on 2nd execution with transitive dependency from imported script
+- [`KT-89220`](https://youtrack.jetbrains.com/issue/KT-89220) JSR-223: generic Java bindings break all subsequent `eval()` calls
+- [`KT-88458`](https://youtrack.jetbrains.com/issue/KT-88458) Audit closeable resource usage
+- [`KT-88453`](https://youtrack.jetbrains.com/issue/KT-88453) `VirtualFileScriptSource.text` leaks an unclosed file stream — script source file handle held until GC, blocks file deletion on Windows
+
+
 ## 2.4.20
 
 ### Analysis API

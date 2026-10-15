@@ -13,13 +13,13 @@ Tower Data Context:
         Scope: FirExplicitSimpleImportingScope
 
 FILE: [ResolvedTo(IMPORTS)] functionInsideFileLevel.kt
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation class Anno : R|kotlin/Annotation| {
-        public [ResolvedTo(BODY_RESOLVE)] constructor([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/String|): R|foo/Anno| {
-            super<R|kotlin/Any|>()
+    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] constructor([ResolvedTo(STATUS)] value: R|kotlin/String|): R|foo/Anno| {
+            LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] val value: R|kotlin/String| = R|<local>/value|
-            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
+        public final [ResolvedTo(STATUS)] val value: R|kotlin/String| = R|<local>/value|
+            public [ResolvedTo(STATUS)] get(): R|kotlin/String|
 
     }
     [ResolvedTo(BODY_RESOLVE)] @R|foo/Anno|[Types](value = ERROR_EXPR(Argument is absent) [evaluated = ERROR_EXPR(Argument is absent)]) <DANGLING MODIFIER: Top level declaration expected>

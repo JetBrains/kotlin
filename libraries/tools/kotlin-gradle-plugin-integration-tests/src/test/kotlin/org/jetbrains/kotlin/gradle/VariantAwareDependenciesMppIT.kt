@@ -241,11 +241,6 @@ class VariantAwareDependenciesMppIT : KGPBaseTest() {
                 buildResult.assertOutputContains(
                     ">> :customConfiguration --> kotlin-compiler-embeddable-${defaultBuildOptions.kotlinVersion}.jar"
                 )
-
-                // Check that the transitive dependencies with 'runtime' scope are also available:
-                buildResult.assertOutputContains(
-                    ">> :customConfiguration --> kotlin-script-runtime-${defaultBuildOptions.kotlinVersion}.jar"
-                )
             }
         }
     }
@@ -260,7 +255,7 @@ class VariantAwareDependenciesMppIT : KGPBaseTest() {
             )
             buildGradle.replaceText("\"com.example:sample-lib:1.0\"", "project(':sample-lib')")
 
-            listOf("jvm6" to "Classpath", "nodeJs" to "Classpath").forEach { [target, suffix] ->
+            listOf("jvm6" to "Classpath", "nodeJs" to "Classpath").forEach { (target, suffix) ->
                 build("dependencyInsight", "--configuration", "${target}Compile$suffix", "--dependency", "sample-lib") {
                     assertOutputContains("Variant ${target}ApiElements")
                 }

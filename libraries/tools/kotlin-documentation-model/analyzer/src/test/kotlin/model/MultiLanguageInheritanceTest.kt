@@ -13,11 +13,13 @@ import org.jetbrains.dokka.model.dfs
 import org.jetbrains.dokka.model.doc.*
 import org.jetbrains.dokka.model.withDescendants
 import org.jetbrains.dokka.utilities.firstIsInstanceOrNull
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInAnalysisApi
 import translators.documentationOf
 import utils.docs
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
+@MustRunOnChangesInAnalysisApi
 class MultiLanguageInheritanceTest : BaseAbstractTest() {
     val configuration = dokkaConfiguration {
         suppressObviousFunctions = false

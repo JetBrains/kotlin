@@ -66,4 +66,15 @@ public actual class Array<T> {
 
     /** Creates an [Iterator] for iterating over the elements of the array. */
     public actual operator fun iterator(): Iterator<T>
+
+    companion {
+        /**
+         * Returns an array containing the specified elements.
+         *
+         * @sample samples.collections.Arrays.Constructors.arrayLiteralSample
+         */
+        @SinceKotlin("2.5")
+        @ExperimentalCollectionLiteralsApi
+        public actual inline operator fun <reified T> of(vararg elements: T): Array<T>
+    }
 }

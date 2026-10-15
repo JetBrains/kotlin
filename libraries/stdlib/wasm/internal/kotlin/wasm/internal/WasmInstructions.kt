@@ -36,11 +36,13 @@ internal fun <reified To> wasm_ref_test_null(a: Any?): Boolean =
 internal fun <T> wasm_array_copy(destination: T, destinationIndex: Int, source: T, sourceIndex: Int, length: Int): Unit =
     implementedAsIntrinsic
 
+// TODO: Remove after bootstrap
 @ExcludedFromCodegen
 @UsedFromCompilerGeneratedCode
 internal fun <T> array_new_data0(address: Int, length: Int): T =
     implementedAsIntrinsic
 
+// TODO: Remove after bootstrap
 @ExcludedFromCodegen
 @UsedFromCompilerGeneratedCode
 internal fun array_new_data0_char_array(address: Int, length: Int): WasmCharArray =

@@ -16,7 +16,7 @@ abstract class C {
         suspend fun suspend() {}
         external fun external()
         <!WRONG_MODIFIER_TARGET!>lateinit<!> fun lateinit() {}
-        <!NO_TAIL_CALLS_FOUND!>tailrec<!> fun tailrec() { <!NON_TAIL_RECURSIVE_CALL!>tailrec<!>() }
+        tailrec fun tailrec() { tailrec() }
         <!WRONG_MODIFIER_TARGET!>const<!> fun const() {}
         <!NOT_A_MULTIPLATFORM_COMPILATION, WRONG_MODIFIER_TARGET!>expect<!> <!NON_ABSTRACT_FUNCTION_WITH_NO_BODY!>fun expect(): String<!>
         <!NOT_A_MULTIPLATFORM_COMPILATION!>actual<!> fun actual() {}
@@ -41,7 +41,7 @@ interface I {
         suspend fun suspend() {}
         <!EXTERNAL_DECLARATION_IN_INTERFACE!>external<!> fun external()
         <!WRONG_MODIFIER_TARGET!>lateinit<!> fun lateinit() {}
-        <!NO_TAIL_CALLS_FOUND!>tailrec<!> fun tailrec() { <!NON_TAIL_RECURSIVE_CALL!>tailrec<!>() }
+        tailrec fun tailrec() { tailrec() }
         <!WRONG_MODIFIER_TARGET!>const<!> fun const() {}
         <!NOT_A_MULTIPLATFORM_COMPILATION, WRONG_MODIFIER_TARGET!>expect<!> <!NON_ABSTRACT_FUNCTION_WITH_NO_BODY!>fun expect(): String<!>
         <!NOT_A_MULTIPLATFORM_COMPILATION!>actual<!> fun actual() {}
@@ -92,7 +92,7 @@ interface J {
 
         <!WRONG_MODIFIER_TARGET!>suspend<!> val suspend = 1
         <!WRONG_MODIFIER_TARGET!>external<!> val external = 1
-        lateinit var lateinit: Any
+        <!COMPANION_BLOCK_LATEINIT_IN_INTERFACE!>lateinit<!> var lateinit: Any
         <!WRONG_MODIFIER_TARGET!>tailrec<!> val tailrec = 1
         const val const = 1
         <!NOT_A_MULTIPLATFORM_COMPILATION, WRONG_MODIFIER_TARGET!>expect<!> val expect: String

@@ -107,6 +107,7 @@ object FirJvmErrors : KtDiagnosticsContainer() {
     val SYNCHRONIZED_IN_ANNOTATION: KtDiagnosticFactoryForDeprecation0 = KtDiagnosticFactoryForDeprecation0("SYNCHRONIZED_IN_ANNOTATION", ForbidJvmAnnotationsOnAnnotationParameters, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class, getRendererFactory())
     val SYNCHRONIZED_ON_INLINE: KtDiagnosticFactory0 = KtDiagnosticFactory0("SYNCHRONIZED_ON_INLINE", WARNING, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class, getRendererFactory())
     val SYNCHRONIZED_ON_VALUE_CLASS: KtDiagnosticFactoryForDeprecation0 = KtDiagnosticFactoryForDeprecation0("SYNCHRONIZED_ON_VALUE_CLASS", ProhibitSynchronizationByValueClassesAndPrimitives, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class, getRendererFactory())
+    val SYNCHRONIZED_ON_WILL_BECOME_VALUE_CLASS: KtDiagnosticFactory0 = KtDiagnosticFactory0("SYNCHRONIZED_ON_WILL_BECOME_VALUE_CLASS", ERROR, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class, getRendererFactory())
     val SYNCHRONIZED_ON_SUSPEND_ERROR: KtDiagnosticFactory0 = KtDiagnosticFactory0("SYNCHRONIZED_ON_SUSPEND_ERROR", ERROR, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class, getRendererFactory())
     val OVERLOADS_WITHOUT_DEFAULT_ARGUMENTS: KtDiagnosticFactory0 = KtDiagnosticFactory0("OVERLOADS_WITHOUT_DEFAULT_ARGUMENTS", WARNING, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class, getRendererFactory())
     val OVERLOADS_ABSTRACT: KtDiagnosticFactory0 = KtDiagnosticFactory0("OVERLOADS_ABSTRACT", ERROR, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class, getRendererFactory())
@@ -125,6 +126,7 @@ object FirJvmErrors : KtDiagnosticsContainer() {
     val JVM_SERIALIZABLE_LAMBDA_ON_INLINED_FUNCTION_LITERALS: KtDiagnosticFactoryForDeprecation0 = KtDiagnosticFactoryForDeprecation0("JVM_SERIALIZABLE_LAMBDA_ON_INLINED_FUNCTION_LITERALS", ForbidJvmSerializableLambdaOnInlinedFunctionLiterals, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class, getRendererFactory())
     val INCOMPATIBLE_ANNOTATION_TARGETS: KtDiagnosticFactory2<Collection<String>, Collection<String>> = KtDiagnosticFactory2("INCOMPATIBLE_ANNOTATION_TARGETS", WARNING, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class, getRendererFactory())
     val ANNOTATION_TARGETS_ONLY_IN_JAVA: KtDiagnosticFactory0 = KtDiagnosticFactory0("ANNOTATION_TARGETS_ONLY_IN_JAVA", WARNING, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class, getRendererFactory())
+    val ANNOTATION_TARGETS_NON_EXISTENT_ACCESSOR: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("ANNOTATION_TARGETS_NON_EXISTENT_ACCESSOR", WARNING, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class, getRendererFactory())
     val RUNTIME_ANNOTATION_ON_LAMBDA_IS_NOT_RETAINED: KtDiagnosticFactory1<FirClassLikeSymbol<*>> = KtDiagnosticFactory1("RUNTIME_ANNOTATION_ON_LAMBDA_IS_NOT_RETAINED", WARNING, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class, getRendererFactory())
 
     // Super
@@ -180,7 +182,6 @@ object FirJvmErrors : KtDiagnosticsContainer() {
     // Misc
     val INAPPLICABLE_JVM_FIELD: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("INAPPLICABLE_JVM_FIELD", ERROR, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class, getRendererFactory())
     val INAPPLICABLE_JVM_FIELD_WARNING: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("INAPPLICABLE_JVM_FIELD_WARNING", WARNING, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class, getRendererFactory())
-    val IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE", WARNING, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
     val SYNCHRONIZED_BLOCK_ON_JAVA_VALUE_BASED_CLASS: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("SYNCHRONIZED_BLOCK_ON_JAVA_VALUE_BASED_CLASS", WARNING, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
     val SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE: KtDiagnosticFactoryForDeprecation1<ConeKotlinType> = KtDiagnosticFactoryForDeprecation1("SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE", ProhibitSynchronizationByValueClassesAndPrimitives, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val JVM_SYNTHETIC_ON_DELEGATE: KtDiagnosticFactory0 = KtDiagnosticFactory0("JVM_SYNTHETIC_ON_DELEGATE", ERROR, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class, getRendererFactory())

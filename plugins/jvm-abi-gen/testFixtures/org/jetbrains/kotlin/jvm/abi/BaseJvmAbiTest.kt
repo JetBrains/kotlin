@@ -56,6 +56,9 @@ abstract class BaseJvmAbiTest {
         val directives: File
             get() = projectDir.resolve("directives.txt")
 
+        val moduleDirectives: File
+            get() = srcDir.resolve("directives.txt")
+
         override fun toString(): String =
             "compilation '$name'"
     }
@@ -69,7 +72,10 @@ abstract class BaseJvmAbiTest {
             dep.abiDir
         }
 
-        val directives = if (compilation.directives.exists()) compilation.directives.readText() else ""
+        val directives = listOf(compilation.directives, compilation.moduleDirectives)
+            .distinct()
+            .filter { it.exists() }
+            .joinToString("\n") { it.readText() }
 
         val messageCollector = MessageCollectorImpl()
         val compiler = K2JVMCompiler()
@@ -103,8 +109,16 @@ abstract class BaseJvmAbiTest {
 
             if (InTextDirectivesUtils.findStringWithPrefixes(directives, "// VALHALLA_VALUE_CLASSES") != null) {
                 valhallaValueClasses = true
-                jvmTarget = "27"
+                jvmTarget = "28"
                 enableJvmPreview = true
+            }
+
+            if (InTextDirectivesUtils.findStringWithPrefixes(directives, "// FULL_VALUE_CLASSES") != null) {
+                fullValueClasses = true
+            }
+
+            if (InTextDirectivesUtils.findStringWithPrefixes(directives, "// SKIP_PRERELEASE_CHECK") != null) {
+                skipPrereleaseCheck = true
             }
 
             if (InTextDirectivesUtils.findStringWithPrefixes(directives, "// INHERIT_MULTIFILE_PARTS") != null) {

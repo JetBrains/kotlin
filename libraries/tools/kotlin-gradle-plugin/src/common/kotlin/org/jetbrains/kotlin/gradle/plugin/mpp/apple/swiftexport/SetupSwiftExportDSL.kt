@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.shareSwiftExportMe
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.swiftExportDependencySelectorFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.tasks.locateOrRegisterSwiftExportMetadataTaskAndConsumableConfiguration
 import org.jetbrains.kotlin.gradle.plugin.statistics.SwiftExportDslMetrics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 
 internal object SwiftExportDSLConstants {
     const val SWIFT_EXPORT_EXTENSION_NAME = "swiftExport"
@@ -47,7 +49,12 @@ internal val SetUpSwiftExportAction = KotlinProjectSetupCoroutine {
         .withType(KotlinNativeTarget::class.java)
         .matching { it.konanTarget.family.isAppleFamily }
 
-    if (appleTargets.isEmpty()) return@KotlinProjectSetupCoroutine
+    if (appleTargets.isEmpty()) {
+        if (exportExtension.isSwiftExportConfigured) {
+            project.reportDiagnostic(KotlinToolingDiagnostics.SwiftExportWithoutAppleTargets())
+        }
+        return@KotlinProjectSetupCoroutine
+    }
 
     if (exportExtension.isSwiftExportConfigured) {
         SwiftExportDslMetrics.collectSwiftExportConfigured(project)
@@ -65,10 +72,10 @@ internal val SetUpSwiftExportAction = KotlinProjectSetupCoroutine {
         )
         locateOrRegisterSwiftExportMetadataTaskAndConsumableConfiguration(swiftExportConfiguration)
 
-        // Published dependencies expose their metadata through the `swiftExportMetadataElements` variant registered
-        // above. Same-build subprojects additionally share it as a secondary variant on each apple target's
-        // `apiElements`, so that a consuming project in the same build can read it at execution time without relying on
-        // the module cache (which a not-yet-published subproject has no entry in).
+        // Published dependencies expose their metadata through the root publication's Swift Export metadata variant.
+        // Same-build subprojects additionally share it as a secondary variant on each apple target's `apiElements`, so
+        // that a consuming project in the same build can read it at execution time without relying on the module cache
+        // (which a not-yet-published subproject has no entry in).
         val metadata = project.provider {
             SwiftExportMetadata(
                 moduleName = swiftExportConfiguration.moduleName.orNull,
@@ -83,15 +90,22 @@ internal val SetUpSwiftExportAction = KotlinProjectSetupCoroutine {
         }
     }
 
-    // The targets are awaited above, so the DSL is finalised by now and the activation is order-independent.
-    if (!multiplatformExtension.isSwiftExportXcodeIntegrationActivated()) return@KotlinProjectSetupCoroutine
+    // The targets are awaited above, so the DSL is finalised by now and the activations are order-independent.
+    val xcodeIntegrationActivated = multiplatformExtension.isSwiftExportXcodeIntegrationActivated()
+    val swiftPackageIntegrationActivated = swiftExportConfiguration.activatedSwiftPackageIntegration != null
+    if (xcodeIntegrationActivated || swiftPackageIntegrationActivated) {
+        swiftExportConfiguration.activatedXcodeIntegration?.let { activatedXcodeIntegration ->
+            SwiftExportDslMetrics.collectXcodeIntegrationMetrics(project, activatedXcodeIntegration)
+        }
 
-    swiftExportConfiguration.activatedXcodeIntegration?.let { activatedXcodeIntegration ->
-        SwiftExportDslMetrics.collectXcodeIntegrationMetrics(project, activatedXcodeIntegration)
+        initSwiftExportClasspathConfigurations()
+        if (xcodeIntegrationActivated) {
+            registerSwiftExportPipeline(legacySwiftExportExtension, exportExtension)
+        }
+        if (swiftPackageIntegrationActivated) {
+            registerSwiftPackageExportPipeline(exportExtension)
+        }
     }
-
-    initSwiftExportClasspathConfigurations()
-    registerSwiftExportPipeline(legacySwiftExportExtension, exportExtension)
 }
 
 /**
@@ -113,7 +127,7 @@ internal fun KotlinMultiplatformExtension.isSwiftExportXcodeIntegrationActivated
 
     if (isSwiftExportRequested) return true
 
-    // TODO(KT-89151): Return false here once the legacy `swiftExport { }` DSL is removed in Kotlin 2.7.
+    // TODO(KT-89151): Return false here once the legacy `swiftExport { }` DSL is removed in Kotlin 2.6.0.
     //  Un-registering `embedSwiftExportForXcode` now would silently break a project whose Xcode build phase
     //  already invokes that task without a `swiftExport { }` block. Keep the integration until the DSL is gone.
     return true

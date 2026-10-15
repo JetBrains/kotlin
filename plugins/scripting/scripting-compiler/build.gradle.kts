@@ -16,8 +16,9 @@ dependencies {
     compileOnly(project(":compiler:plugin-api"))
     compileOnly(project(":compiler:fir:entrypoint"))
     compileOnly(project(":compiler:fir:raw-fir:raw-fir.common"))
+    compileOnly(project(":compiler:fir:raw-fir:psi2fir"))
     compileOnly(project(":compiler:fir:tree"))
-    compileOnly(project(":compiler:fir:providers"))
+    compileOnly(project(":compiler:fir:semantics.api"))
     compileOnly(project(":compiler:fir:fir2ir:jvm-backend"))
     compileOnly(project(":compiler:fir:plugin-utils"))
     compileOnly(project(":compiler:cli"))
@@ -33,6 +34,7 @@ dependencies {
     api(project(":kotlin-scripting-common"))
     api(project(":kotlin-scripting-jvm"))
     api(project(":kotlin-scripting-compiler-impl"))
+    compileOnly(project(":kotlin-script-runtime")) // only for the K1 REPL, to be dropped with it
     api(kotlinStdlib())
     compileOnly(intellijCore())
     compileOnly(libs.intellij.asm)

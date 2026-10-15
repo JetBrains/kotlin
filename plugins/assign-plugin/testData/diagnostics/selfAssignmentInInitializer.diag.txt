@@ -1,0 +1,9 @@
+/selfAssignmentInInitializer.kt:11:16: error: 'val' cannot be reassigned.
+
+/selfAssignmentInInitializer.kt:11:16: error: Only expressions are allowed in this context.
+
+/selfAssignmentInInitializer.kt:11:16: error: Type checking has run into a recursive problem. Easiest workaround: specify the types of your declarations explicitly.
+
+/selfAssignmentInInitializer.kt:14:18: error: Only expressions are allowed in this context.
+
+/selfAssignmentInInitializer.kt:14:18: error: Type checking has run into a recursive problem. Easiest workaround: specify the types of your declarations explicitly.

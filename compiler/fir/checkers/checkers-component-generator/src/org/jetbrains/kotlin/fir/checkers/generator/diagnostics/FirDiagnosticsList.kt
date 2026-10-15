@@ -811,6 +811,36 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<String>("prefix")
         }
         val VALUE_CLASS_CANNOT_BE_CLONEABLE by error<KtDeclaration>(PositioningStrategy.INLINE_OR_VALUE_MODIFIER)
+
+        val WILL_BECOME_VALUE_NOT_APPLICABLE by error<KtAnnotationEntry> {
+            parameter<String>("target")
+        }
+        val IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS by error<KtDeclaration>(PositioningStrategy.DECLARATION_NAME) {
+            parameter<String>("memberName")
+        }
+        val IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE by warning<KtElement> {
+            parameter<ConeKotlinType>("type")
+        }
+        val IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS by warning<KtElement> {
+            parameter<ConeKotlinType>("type")
+        }
+        val IDENTITY_SENSITIVE_OPERATION_INSIDE_WILL_BECOME_VALUE_CLASS by error<KtElement> {
+            parameter<ConeKotlinType>("type")
+        }
+        val WILL_BECOME_VALUE_CLASS_NOT_TOP_LEVEL by error<KtDeclaration>(PositioningStrategy.INLINE_OR_VALUE_MODIFIER)
+        val ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_WILL_BECOME_VALUE_CLASS by error<KtDeclaration>(PositioningStrategy.INLINE_OR_VALUE_MODIFIER)
+        val EXPECT_WILL_BECOME_VALUE_CLASS_WITH_NO_PRIMARY_CONSTRUCTOR_HAS_SECONDARY by error<KtDeclaration>()
+        val WILL_BECOME_VALUE_CLASS_EMPTY_CONSTRUCTOR by error<KtElement>()
+        val WILL_BECOME_VALUE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER by error<KtParameter>()
+        val ABSTRACT_WILL_BECOME_VALUE_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER by error<KtParameter>()
+        val SEALED_WILL_BECOME_VALUE_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER by error<KtParameter>()
+        val PROPERTY_WITH_BACKING_FIELD_INSIDE_WILL_BECOME_VALUE_CLASS by error<KtProperty>(PositioningStrategy.CALLABLE_DECLARATION_SIGNATURE_NO_MODIFIERS)
+        val DELEGATED_PROPERTY_INSIDE_WILL_BECOME_VALUE_CLASS by error<PsiElement>()
+        val WILL_BECOME_VALUE_CLASS_CANNOT_IMPLEMENT_INTERFACE_BY_DELEGATION by error<PsiElement>()
+        val WILL_BECOME_VALUE_CLASS_CANNOT_EXTEND_IDENTITY_CLASSES by error<KtElement>()
+        val WILL_BECOME_VALUE_CLASS_CANNOT_BE_RECURSIVE by error<KtElement>()
+        val WILL_BECOME_VALUE_CLASS_CANNOT_BE_RECURSIVE_VIA_TYPE_PARAMETERS by error<KtElement>()
+        val WILL_BECOME_VALUE_CLASS_CANNOT_BE_CLONEABLE by error<KtDeclaration>(PositioningStrategy.INLINE_OR_VALUE_MODIFIER)
     }
 
     val APPLICABILITY by object : DiagnosticGroup("Applicability") {
@@ -1984,13 +2014,16 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val UNSAFE_CALLABLE_REFERENCE by error<PsiElement>(PositioningStrategy.DOT_BY_QUALIFIED) {
             parameter<ConeKotlinType>("receiverType")
         }
-        val ITERATOR_ON_NULLABLE by error<KtExpression>()
+        val ITERATOR_ON_NULLABLE by error<KtExpression>() {
+            parameter<ConeKotlinType>("actualType")
+        }
         val COMPONENT_FUNCTION_ON_NULLABLE by error<KtExpression> {
             parameter<Name>("componentFunctionName")
             parameter<ConeKotlinType>("destructingType")
         }
         val UNEXPECTED_SAFE_CALL by error<PsiElement>(PositioningStrategy.SAFE_ACCESS)
         val UNNECESSARY_SAFE_CALL by warning<PsiElement>(PositioningStrategy.SAFE_ACCESS) {
+            parameter<String>("kind")
             parameter<ConeKotlinType>("receiverType")
         }
         val UNNECESSARY_NOT_NULL_ASSERTION by warning<KtExpression>(PositioningStrategy.OPERATOR) {
@@ -2492,6 +2525,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
 
     val COMPANION_BLOCKS_AND_EXTENSIONS by object : DiagnosticGroup("Companion Blocks & Extensions") {
         val COMPANION_BLOCK_MEMBER_EXTENSION by error<PsiElement>(PositioningStrategy.DECLARATION_SIGNATURE)
+        val COMPANION_BLOCK_LATEINIT_IN_INTERFACE by error<PsiElement>(PositioningStrategy.LATEINIT_MODIFIER)
         val PRIVATE_CONST_IN_INTERFACE by error<PsiElement>(PositioningStrategy.VISIBILITY_MODIFIER)
         val ILLEGAL_COMPANION_BLOCK by error<PsiElement> {
             parameter<FirBasedSymbol<*>>("parent")
@@ -2512,6 +2546,20 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
         val COMPANION_EXTENSION_RECEIVER_ANNOTATED by error<PsiElement>()
         val COMPANION_EXTENSION_NULLABLE_RECEIVER by error<PsiElement>()
+    }
+
+    val RICH_ERRORS by object : DiagnosticGroup("Rich Errors") {
+        val NON_ERROR_CLASS_EXTENDS_RICH_ERROR by error<PsiElement>()
+        val ERROR_CLASS_HAS_SUPERTYPE by error<PsiElement>()
+        val ERROR_CLASS_HAS_TYPE_PARAMETER by error<PsiElement>()
+        val NULLABLE_ERROR_COMPONENT_IN_UNION_TYPE by error<PsiElement>()
+        val NULLABLE_NESTED_UNION_TYPE by error<PsiElement>()
+        val NON_ERROR_COMPONENT_IN_NESTED_UNION_TYPE by error<PsiElement>()
+        val NON_ERROR_COMPONENT_WRONG_POSITION_IN_UNION_TYPE by error<PsiElement>()
+        val MULTIPLE_TYPE_PARAMETERS_CAN_HOLD_ERROR by error<PsiElement>()
+        val NON_ERROR_SUPERTYPE by error<PsiElement>()
+        val NON_ERROR_GET_CLASS_CALL by error<PsiElement>()
+        val ACTUAL_TYPEALIAS_TO_NON_ERROR by error<PsiElement>()
     }
 }
 

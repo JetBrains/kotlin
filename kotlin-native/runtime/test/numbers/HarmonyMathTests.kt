@@ -703,6 +703,7 @@ class HarmonyMath {
     /**
      * Tests kotlin.Double.ulp
      */
+    @Test
     fun test_ulp_D() {
         // Test for special cases
         assertTrue("Should return NaN", Double.isNaN(ulp(Double.NaN)))
@@ -725,6 +726,7 @@ class HarmonyMath {
     /**
      * Tests kotlin.Float.ulp
      */
+    @Test
     fun test_ulp_f() {
         // Test for special cases
         assertTrue("Should return NaN", Float.isNaN(ulp(Float.NaN)))

@@ -12,12 +12,10 @@ plugins {
     kotlin("jvm")
     kotlin("plugin.serialization")
     id("android-sdk-provisioner")
-    id("gradle-plugin-published-compiler-dependency-configuration") // the test compilation's output is injected into test project's build classpath for the buildscript injection
     id("kotlin-git.gradle-build-conventions.file-leak-detector-downloader")
     id("kgp-jacoco-offline")
 }
 
-testsJar()
 
 jvmToolchains {
     jdkVersion = JdkMajorVersion.JDK_17_0
@@ -40,6 +38,28 @@ kotlin {
         )
         // Avoid having to use JvmSerializableLambda in build script injections
         freeCompilerArgs.add("-Xlambdas=class")
+    }
+}
+
+// the test compilation's output is injected into test project's build classpath for the buildscript injection
+configureKotlinCompileTasksGradleCompatibility()
+tasks.withType<KotlinJvmCompile>().configureEach {
+    compilerOptions {
+        // Required for minimal supported Gradle version, otherwise 'JvmNullOutSpilledCoroutineLocals' language feature breaks coroutines
+        languageVersion = KotlinVersion.KOTLIN_2_1
+        apiVersion = KotlinVersion.KOTLIN_2_1
+    }
+}
+
+// Aligning compiler plugins, remove after bootstrap with fix for KT-81629 happens
+val catalogs = extensions.getByType<VersionCatalogsExtension>()
+val libsCatalog = catalogs.named("libs")
+val kgpCompilerVersion = libsCatalog.findVersion("kotlin.for.gradle.plugins.compilation").get().requiredVersion
+project.configurations.named(org.jetbrains.kotlin.gradle.plugin.PLUGIN_CLASSPATH_CONFIGURATION_NAME + "Test") {
+    resolutionStrategy {
+        eachDependency {
+            if (this.requested.group == "org.jetbrains.kotlin") useVersion(kgpCompilerVersion)
+        }
     }
 }
 
@@ -188,6 +208,9 @@ tasks.register<Delete>("cleanTestKitCache") {
     delete(layout.buildDirectory.dir("kgpTestInfra"))
 }
 
+val parcelizeRuntimeKmpPublication =
+    ":plugins:parcelize:parcelize-runtime:publishKotlinMultiplatformPublicationToMavenLocal"
+
 val cleanUserHomeKonanDir = tasks.register("cleanUserHomeKonanDir", Delete::class) {
     description = "Only runs on CI. " +
             "Deletes ~/.konan dir before tests, to ensure that no test inadvertently creates this directory during execution."
@@ -197,6 +220,10 @@ val cleanUserHomeKonanDir = tasks.register("cleanUserHomeKonanDir", Delete::clas
 
     val userHomeKonanDir = Paths.get("${System.getProperty("user.home")}/.konan")
     delete(userHomeKonanDir)
+
+    // Publishing the root KMP metadata commonizes the Native distribution and may use ~/.konan.
+    // Clean afterward so failures only report default-home usage by the tests themselves.
+    mustRunAfter(parcelizeRuntimeKmpPublication)
 
     doLast {
         logger.info("Default .konan directory user's home has been deleted: $userHomeKonanDir")
@@ -275,6 +302,62 @@ if (project.kotlinBuildProperties.isTeamcityBuild.get()) {
     val junitTags = JunitTag.values().filter { it !in setOf(JunitTag.SwiftExportKGP, JunitTag.SwiftPMImportKGP) }.map { it.name }
     val gradleVersionTaskGroup = "Kotlin Gradle Plugin Verification grouped by Gradle version"
 
+    val nightlyJunitTags = setOf(JunitTag.SwiftExportKGP, JunitTag.SwiftPMImportKGP, JunitTag.JsBrowserKGP)
+    /*
+    Quality gate 'master' (see ':gradlePluginIntegrationMasterTest'):
+    'JsBrowserKGP' tests require a browser environment and are part of the 'nightly' quality gate
+    (see ':kotlin-gradle-plugin-integration-tests:kgpJsBrowserTestsGroupedByGradleVersion')
+     */
+    val masterJunitTags = JunitTag.entries - nightlyJunitTags
+
+    val testsGroupedByGradleVersionMaster = tasks.register("testsGroupedByGradleVersion_master") {
+        group = gradleVersionTaskGroup
+        description = "Runs all tests for Kotlin Gradle plugins of the 'master' quality gate against all supported Gradle versions"
+    }
+
+
+    val testsGroupedByGradleVersionNightly = tasks.register("testsGroupedByGradleVersion_nightly") {
+        group = gradleVersionTaskGroup
+        description = "Runs all tests for Kotlin Gradle plugins of the 'nightly' quality gate against all supported Gradle versions"
+    }
+
+    gradleVersions.forEach { gradleVersion ->
+        val testForGradleVersionMaster = tasks.register<Test>("testsForGradle_${gradleVersion.replace(".", "_")}_master") {
+            description = "Runs all tests for Kotlin Gradle plugins of the 'master' quality gate against Gradle $gradleVersion"
+            useJUnitPlatform {
+                includeTags(*masterJunitTags.map { it.name }.toTypedArray())
+            }
+        }
+
+        val testForGradleVersionNightly = tasks.register<Test>("testsForGradle_${gradleVersion.replace(".", "_")}_nightly") {
+            description = "Runs all tests for Kotlin Gradle plugins of the 'nightly' quality gate against Gradle $gradleVersion"
+            useJUnitPlatform {
+                includeTags(*(masterJunitTags + nightlyJunitTags).map { it.name }.toTypedArray())
+            }
+        }
+
+        listOf(testForGradleVersionMaster, testForGradleVersionNightly).forEach { task ->
+            task.configure {
+                group = gradleVersionTaskGroup
+                maxParallelForks = maxParallelTestForks
+
+                classpath = sourceSets["test"].runtimeClasspath
+                testClassesDirs = sourceSets["test"].output.classesDirs
+                systemProperty("gradle.integration.tests.gradle.version.filter", gradleVersion)
+                systemProperty("gradle.integration.tests.gradle.versions", gradleVersions.joinToString(";"))
+                systemProperty("junit.jupiter.extensions.autodetection.enabled", "true")
+            }
+        }
+
+        testsGroupedByGradleVersionMaster.configure {
+            dependsOn(testForGradleVersionMaster)
+        }
+
+        testsGroupedByGradleVersionNightly.configure {
+            dependsOn(testForGradleVersionNightly)
+        }
+    }
+
     junitTags.forEach { junitTag ->
         val taskPrefix = "kgp${junitTag.substringBefore("KGP")}"
         val tasksByGradleVersion = gradleVersions.map { gradleVersion ->
@@ -286,6 +369,7 @@ if (project.kotlinBuildProperties.isTeamcityBuild.get()) {
                 classpath = sourceSets["test"].runtimeClasspath
                 testClassesDirs = sourceSets["test"].output.classesDirs
                 systemProperty("gradle.integration.tests.gradle.version.filter", gradleVersion)
+                systemProperty("gradle.integration.tests.gradle.versions", gradleVersions.joinToString(";"))
                 systemProperty("junit.jupiter.extensions.autodetection.enabled", "true")
 
                 useJUnitPlatform {
@@ -401,6 +485,8 @@ val kgpTestingUtilities = configurations.detachedConfiguration(
 }
 
 tasks.withType<Test>().configureEach {
+    shardTestsByMethod(kotlinBuildProperties.booleanProperty("kotlin.test.gradle.it.shardByMethod", false).get())
+
     // Disable KONAN_DATA_DIR env variable for all integration tests
     // because we are using `konan.data.dir` gradle property instead
     environment.remove("KONAN_DATA_DIR")
@@ -432,6 +518,10 @@ tasks.withType<Test>().configureEach {
 
     dependsOn(":kotlin-gradle-plugin:validatePlugins")
     dependsOnKotlinGradlePluginInstall()
+    // These tests only consume the Parcelize runtime's root metadata and JVM variant. Using its
+    // aggregate `install` task here would compile and publish every JS, Wasm, and Native target.
+    dependsOn(parcelizeRuntimeKmpPublication)
+    dependsOn(":plugins:parcelize:parcelize-runtime:publishJvmPublicationToMavenLocal")
     dependsOn(":gradle:android-test-fixes:install")
     dependsOn(":gradle:gradle-warnings-detector:install")
     dependsOn(":gradle:kotlin-compiler-args-properties:install")

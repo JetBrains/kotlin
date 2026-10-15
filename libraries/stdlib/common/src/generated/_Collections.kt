@@ -71,6 +71,8 @@ public inline operator fun <T> List<T>.component5(): T {
 
 /**
  * Returns `true` if [element] is found in the collection.
+ * 
+ * @sample samples.collections.Collections.Elements.contains
  */
 public operator fun <@kotlin.internal.OnlyInputTypes T> Iterable<T>.contains(element: T): Boolean {
     if (this is Collection)
@@ -199,6 +201,8 @@ public inline fun <T> List<T>.findLast(predicate: (T) -> Boolean): T? {
  * Returns the first element.
  * 
  * @throws NoSuchElementException if the collection is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.first
  */
 public fun <T> Iterable<T>.first(): T {
     when (this) {
@@ -216,6 +220,8 @@ public fun <T> Iterable<T>.first(): T {
  * Returns the first element.
  * 
  * @throws NoSuchElementException if the list is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.first
  */
 public fun <T> List<T>.first(): T {
     if (isEmpty())
@@ -226,6 +232,8 @@ public fun <T> List<T>.first(): T {
 /**
  * Returns the first element matching the given [predicate].
  * @throws [NoSuchElementException] if no such element is found.
+ * 
+ * @sample samples.collections.Collections.Elements.first
  */
 public inline fun <T> Iterable<T>.first(predicate: (T) -> Boolean): T {
     for (element in this) if (predicate(element)) return element

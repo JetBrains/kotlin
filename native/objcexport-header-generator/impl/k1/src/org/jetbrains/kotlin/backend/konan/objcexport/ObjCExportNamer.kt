@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.isArray
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.config.nativeBinaryOptions.UnitSuspendFunctionObjCExport
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -124,26 +123,6 @@ interface ObjCExportNamer {
         const val nsEnumPropertyName: String = "nsEnum"
     }
 }
-
-fun createNamer(
-    moduleDescriptor: ModuleDescriptor,
-    topLevelNamePrefix: String,
-): ObjCExportNamer =
-    createNamer(moduleDescriptor, emptyList(), topLevelNamePrefix)
-
-@OptIn(K1Deprecation::class)
-fun createNamer(
-    moduleDescriptor: ModuleDescriptor,
-    exportedDependencies: List<ModuleDescriptor>,
-    topLevelNamePrefix: String,
-): ObjCExportNamer = ObjCExportNamerImpl(
-    (exportedDependencies + moduleDescriptor).toSet(),
-    moduleDescriptor.builtIns,
-    ObjCExportMapper(local = true, unitSuspendFunctionExport = UnitSuspendFunctionObjCExport.DEFAULT),
-    ObjCExportProblemCollector.SILENT,
-    topLevelNamePrefix,
-    local = true
-)
 
 // Note: this class duplicates some of ObjCExportNamerImpl logic,
 // but operates on different representation.

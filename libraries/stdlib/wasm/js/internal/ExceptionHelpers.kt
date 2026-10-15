@@ -32,5 +32,6 @@ internal fun throw0(v: JsAny?): Nothing = implementedAsIntrinsic
 
 @UsedFromCompilerGeneratedCode
 internal fun getKotlinException(v: JsAny?): Throwable {
-    return (v as? JsError)?.kotlinException?.get() ?: JsException(v)
+    val kotlinException: JsReference<Any>? = (v as? JsError)?.kotlinException
+    return kotlinException?.get() as? Throwable ?: JsException(v)
 }

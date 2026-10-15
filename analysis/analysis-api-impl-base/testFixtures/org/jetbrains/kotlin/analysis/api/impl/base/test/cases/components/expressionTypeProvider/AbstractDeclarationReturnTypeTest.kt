@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.expressionTypeProvider
 
-import org.jetbrains.kotlin.analysis.api.components.returnType
+import org.jetbrains.kotlin.analysis.api.expressions.returnType
 import org.jetbrains.kotlin.analysis.api.renderer.render
+import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.symbol
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.utils.getNameWithPositionString
@@ -23,17 +25,35 @@ abstract class AbstractDeclarationReturnTypeTest : AbstractAnalysisApiBasedTest(
                     override fun visitDeclaration(declaration: KtDeclaration, indent: Int): Void? {
                         if (declaration is KtTypeParameter) return null
 
-                        append(" ".repeat(indent))
-                        if (declaration is KtClassLikeDeclaration) {
+                        // Enum entries are class-like declarations with a return type
+                        if (declaration is KtClassLikeDeclaration && declaration !is KtEnumEntry) {
+                            append(" ".repeat(indent))
                             appendLine(declaration.getNameWithPositionString())
                         } else if (declaration is KtDeclarationWithReturnType) {
-                            val returnType = declaration.returnType
+                            val returnType = declaration.returnType.render(position = Variance.INVARIANT)
+                            append(" ".repeat(indent))
                             append(declaration.getNameWithPositionString())
                             append(" : ")
-                            appendLine(returnType.render(position = Variance.INVARIANT))
+                            append(returnType)
+
+                            // Function type parameters have no symbol
+                            val symbol = if (declaration is KtParameter && declaration.isFunctionTypeParameter) null else declaration.symbol
+                            val symbolReturnType = (symbol as? KaCallableSymbol)?.returnType?.render(position = Variance.INVARIANT)
+                            if (symbolReturnType != null && symbolReturnType != returnType) {
+                                append(" (symbol: ")
+                                append(symbolReturnType)
+                                append(")")
+                            }
+
+                            appendLine()
                         }
 
                         return super.visitDeclaration(declaration, indent + 2)
+                    }
+
+                    // Function literals are not visited as declarations by default
+                    override fun visitLambdaExpression(expression: KtLambdaExpression, indent: Int): Void? {
+                        return visitDeclaration(expression.functionLiteral, indent)
                     }
                 }, 0)
             }

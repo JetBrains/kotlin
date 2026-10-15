@@ -181,11 +181,9 @@ private class FirTowerDataContextProvider private constructor(
         fun create(resolutionFacade: LLResolutionFacade, targetElement: KtElement): FirTowerDataContextProvider {
             val firFile = targetElement.containingKtFile.getOrBuildFirFile(resolutionFacade)
 
-            val designation = ContextCollector.computeDesignation(firFile, targetElement)
-
             val contextProvider = ContextCollector.process(
                 firFile,
-                designation,
+                targetElement,
                 preferBodyContext = false, // we only query SELF context
                 shouldTriggerBodyAnalysis = true,
                 filter = { ContextCollector.FilterResponse.CONTINUE }

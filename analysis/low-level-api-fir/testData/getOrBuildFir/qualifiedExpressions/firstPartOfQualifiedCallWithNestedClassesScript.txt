@@ -8,7 +8,7 @@ Q|A|
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] firstPartOfQualifiedCallWithNestedClassesScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-firstPartOfQualifiedCallWithNestedClassesScript.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-firstPartOfQualifiedCallWithNestedClassesScript.kts>, ScriptTopLevelDeclaration=true] class A : R|kotlin/Any| {

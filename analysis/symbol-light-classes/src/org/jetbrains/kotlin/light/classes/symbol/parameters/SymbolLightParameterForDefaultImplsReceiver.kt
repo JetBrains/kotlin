@@ -17,12 +17,24 @@ import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.light.classes.symbol.annotations.ComputeAllAtOnceAnnotationsBox
 import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolLightSimpleAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForInterface
+import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForInterfaceDefaultImpls
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
 import org.jetbrains.kotlin.light.classes.symbol.utils.cachedValue
 import org.jetbrains.kotlin.light.classes.symbol.utils.nonExistentType
 import org.jetbrains.kotlin.psi.KtParameter
 
+/**
+ * The `$this` parameter of a static method in [SymbolLightClassForInterfaceDefaultImpls], which takes the interface instance that the
+ * interface member is called on, i.e., its dispatch receiver.
+ *
+ * The JVM backend generates it as the first parameter, before the context parameters and the extension receiver, see
+ * `org.jetbrains.kotlin.backend.jvm.JvmCachedDeclarations.getDefaultImplsFunction`, so [SymbolLightParameterList] adds it first.
+ * Its type is the interface type with the type parameters of the interface as arguments, which the static method declares as its own,
+ * and it is always [NotNull].
+ *
+ * The parameter has no declaration of its own, so it is backed by the symbol of the interface.
+ */
 internal class SymbolLightParameterForDefaultImplsReceiver(containingDeclaration: SymbolLightMethodBase) :
     SymbolLightParameterBase<KaNamedClassSymbol>(containingDeclaration) {
     private val _type by lazyPub {

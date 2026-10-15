@@ -74,7 +74,9 @@ public class SirBridgeProviderImpl(private val session: SirSession, private val 
         if (contravariantTypes.any { it.isNever })
             return@withSessions null
 
-        val parameters = (explicitParameters + contextParameters).mapIndexed { index, value -> bridgeParameter(value, index) }
+        // The parameter order is: first context parameters, then the extension receiver, then regular parameters.
+        // Bridges are installed into the vtable slots as is, and this particular order is required by ABI.
+        val parameters = (contextParameters + explicitParameters).mapIndexed { index, value -> bridgeParameter(value, index) }
         BridgeFunctionDescriptor(
             baseBridgeName = baseBridgeName,
             parameters = parameters,
@@ -82,7 +84,7 @@ public class SirBridgeProviderImpl(private val session: SirSession, private val 
             kotlinFqName = kotlinFqName,
             kotlinOptIns = kotlinOptIns,
             selfParameter = selfParameter?.let { bridgeParameter(it, 0) },
-            contextParameters = parameters.takeLast(contextParameters.size),
+            contextParameters = parameters.take(contextParameters.size),
             extensionReceiverParameter = extensionReceiverParameter?.let { bridgeParameter(it, 0) },
             errorParameter = run {
                 isAsync.ifTrue {
@@ -313,7 +315,7 @@ private class BridgeFunctionDescriptor(
             add("let (${contextParameters.joinToString { it.name.swiftIdentifier }}) = context")
         }
         if (isAsync) {
-            add(descriptor.swiftAsyncCall(typeNamer, argumentOverrides, useDirectDispatch))
+            add((resultTransformer ?: { it })(descriptor.swiftAsyncCall(typeNamer, argumentOverrides, useDirectDispatch)))
         } else if (errorParameter != null) {
             add("var ${errorParameter.name}: UnsafeMutableRawPointer? = nil")
             add("let _result = ".takeIf { resultTransformer != null }.orEmpty() + descriptor.swiftInvocationLineForCBridge(typeNamer, argumentOverrides, useDirectDispatch))
@@ -353,6 +355,21 @@ private class BridgeFunctionDescriptor(
         swiftDynamicCall = { _, paramExprs -> swiftDynamicCall(paramExprs) },
         swiftDeprecation = null,
     )
+
+    context(sir: SirSession)
+    private fun reverseSwiftCallArguments(): List<String> {
+        val exprs = parameters.map { param ->
+            val bridge = param.bridge
+            require(bridge is BidirectionalBridge) { "Parameter bridge must be bidirectional" }
+            bridge.inSwiftSources.kotlinToSwift(typeNamer, param.name.swiftIdentifier)
+        }
+        val contextParamCount = contextParameters.size
+        if (contextParamCount == 0) return exprs
+        return buildList {
+            add(exprs.take(contextParamCount).joinToString(prefix = "(", postfix = ")"))
+            addAll(exprs.drop(contextParamCount))
+        }
+    }
 
     context(sir: SirSession)
     private fun reverseHelperBridges(): List<SirBridge> = buildList {
@@ -481,17 +498,12 @@ private class BridgeFunctionDescriptor(
         } else {
             ""
         }
-        val convertedParamExprs = parameters.map { param ->
-            val bridge = param.bridge
-            require(bridge is BidirectionalBridge) { "Parameter bridge must be bidirectional" }
-            bridge.inSwiftSources.kotlinToSwift(typeNamer, param.name.swiftIdentifier)
-        }
+        val convertedParamExprs = reverseSwiftCallArguments()
         val callExpr = swiftDynamicCall(if (selfBridge != null) "_self" else selfConversion, convertedParamExprs)
 
         val deprecationPrefix = swiftDeprecation?.let { "${it.renderAsSwiftSourceLine()}\n" }.orEmpty()
         val selfDeclaration = if (selfBridge != null) {
-            val forceUnwrap = if (selfBridge.bridge is Bridge.AsObject) "!" else ""
-            "    let _self = $selfConversion$forceUnwrap\n"
+            "    let _self = $selfConversion\n"
         } else {
             ""
         }
@@ -617,18 +629,7 @@ private class BridgeFunctionDescriptor(
             "" // no self
         }
 
-        val convertedParamExprs = parameters.map { param ->
-            val bridge = param.bridge
-            require(bridge is BidirectionalBridge) { "Parameter bridge must be bidirectional" }
-            bridge.inSwiftSources.kotlinToSwift(typeNamer, param.name.swiftIdentifier)
-        }.let { exprs ->
-            val contextParamCount = contextParameters.size
-            if (contextParamCount == 0) return@let exprs
-            buildList {
-                add(exprs.takeLast(contextParamCount).joinToString(prefix = "(", postfix = ")"))
-                addAll(exprs.dropLast(contextParamCount))
-            }
-        }
+        val convertedParamExprs = reverseSwiftCallArguments()
         val callExpr = swiftDynamicCall(if (selfBridge != null) "_self" else selfConversion, convertedParamExprs)
         val swiftReturnTypeName = typeNamer.swiftFqName(returnType.swiftType)
 
@@ -637,8 +638,7 @@ private class BridgeFunctionDescriptor(
         val resultLine = returnBridge.inSwiftSources.swiftToKotlin(typeNamer, "_result")
 
         val selfDeclaration = selfBridge?.let {
-            val forceUnwrap = if (it.bridge is Bridge.AsObject) "!" else "" // Swift infers T? from T! here for objects
-            "\n    let _self = $selfConversion$forceUnwrap"
+            "\n    let _self = $selfConversion"
         }.orEmpty()
 
         val callBody = if (errorParameter != null) {
@@ -822,7 +822,6 @@ private fun BridgeFunctionDescriptor.createKotlinBridge(
 
     if (isAsync) {
         val [continuation, exception, cancellation] = asyncParameters ?: error("Async function must have a continuation & cancellation")
-        val errorParameter = errorParameter ?: error("Async function must have an error parameter")
         add(
             """
             swiftCoroutine(__${continuation.name}, __${exception.name}, __${cancellation.name.kotlinIdentifier}) {
@@ -831,23 +830,34 @@ private fun BridgeFunctionDescriptor.createKotlinBridge(
             """.trimIndent().prependIndent(indent)
         )
     } else {
+        // Avoid wrapping call sites in `run { }`: thousands of such lambdas noticeably slow down bridge compilation.
+        val resultLines = if (returnType == Bridge.AsVoid) {
+            """
+                $callSite
+                return true
+            """.trimIndent()
+        } else {
+            """
+                val $resultName = $callSite
+                return ${returnType.inKotlinSources.kotlinToSwift(typeNamer, resultName)}
+            """.trimIndent()
+        }
         if (errorParameter != null) {
             // TODO: is it correct to use the first type only here?
             val defaultValue = returnType.kotlinType.defaultValue
+            // `trimMargin` instead of `trimIndent`: the latter would see the unindented continuation lines of `resultLines`.
             add(
                 """
-            try {
-                val $resultName = run { $callSite }
-                return ${returnType.inKotlinSources.kotlinToSwift(typeNamer, resultName)}
-            } catch (error: Throwable) {
-                __${errorParameter.name}.value = StableRef.create(error).asCPointer()
-                return $defaultValue
-            }
-            """.trimIndent().prependIndent(indent)
+                |try {
+                |${resultLines.prependIndent(indent)}
+                |} catch (error: Throwable) {
+                |    __${errorParameter.name}.value = StableRef.create(error).asCPointer()
+                |    return $defaultValue
+                |}
+                """.trimMargin().prependIndent(indent)
             )
         } else {
-            add("${indent}val $resultName = run { $callSite }")
-            add("${indent}return ${returnType.inKotlinSources.kotlinToSwift(typeNamer, resultName)}")
+            add(resultLines.prependIndent(indent))
         }
     }
     add("}")

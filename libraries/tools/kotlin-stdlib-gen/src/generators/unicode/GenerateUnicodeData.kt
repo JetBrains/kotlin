@@ -109,7 +109,7 @@ fun main(args: Array<String>) {
         1 -> {
             val baseDir = File(args.first())
 
-            val categoryTestFile = baseDir.resolve("libraries/stdlib/js/test/text/unicodeData/_CharCategoryTest.kt")
+            val categoryTestFile = baseDir.resolve("libraries/stdlib/test/text/unicodeData/_CharCategoryTest.kt")
             categoryTestGenerator = CharCategoryTestGenerator(categoryTestFile)
 
             val commonGeneratedDir = baseDir.resolve("libraries/stdlib/common/src/generated")
@@ -155,7 +155,7 @@ fun main(args: Array<String>) {
     }
 
     categoryRangesGenerators.forEach {
-        bmpUnicodeDataLines.forEach { line -> it.appendLine(line) }
+        unicodeDataLines.forEach { line -> it.appendLine(line) }
         it.generate()
     }
     otherLowercaseGenerators.forEach {
@@ -168,7 +168,7 @@ fun main(args: Array<String>) {
     }
 
     categoryTestGenerator.let {
-        bmpUnicodeDataLines.forEach { line -> it.appendLine(line) }
+        unicodeDataLines.forEach { line -> it.appendLine(line) }
         propListLines.forEach { line -> it.appendPropertyLine(line) }
         it.generate()
     }

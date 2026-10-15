@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 
 /**
  * A class or package qualifier.
@@ -102,6 +103,11 @@ abstract class FirResolvedQualifier : FirExpression(), FirQualifierWithContextSe
     abstract val resolvedToCompanionObject: Boolean
     abstract val nonFatalDiagnostics: List<ConeDiagnostic>
     abstract val resolvedSymbolOrigin: FirResolvedSymbolOrigin?
+    /**
+     * Having a non-null value in a case when the qualifier should be considered as a candidate for CSR.
+     * It might be different from the name of [qualifierSymbol], e.g., when the qualifier is resolved via an import alias.
+     */
+    abstract val originalNameForContextSensitiveResolution: Name?
     abstract val typeArguments: List<FirTypeProjection>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
@@ -128,6 +134,8 @@ abstract class FirResolvedQualifier : FirExpression(), FirQualifierWithContextSe
     abstract fun replaceNonFatalDiagnostics(newNonFatalDiagnostics: List<ConeDiagnostic>)
 
     abstract fun replaceResolvedSymbolOrigin(newResolvedSymbolOrigin: FirResolvedSymbolOrigin?)
+
+    abstract fun replaceOriginalNameForContextSensitiveResolution(newOriginalNameForContextSensitiveResolution: Name?)
 
     abstract fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>)
 

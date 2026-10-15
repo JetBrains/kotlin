@@ -25,8 +25,8 @@ public fun __root___bar__TypesOfArguments__U2829202D_U20Swift_Void_U2829202D_U20
             run<Unit> { _result }
         }
     }
-    val _result = run { bar(__inlined, __notInlined) }
-    return run { _result; true }
+    bar(__inlined, __notInlined)
+    return true
 }
 
 @ExportedBridge("__root___foo__TypesOfArguments__U2829202D_U20Swift_Void__")
@@ -39,6 +39,6 @@ public fun __root___foo__TypesOfArguments__U2829202D_U20Swift_Void__(inlined: ko
             run<Unit> { _result }
         }
     }
-    val _result = run { foo(__inlined) }
-    return run { _result; true }
+    foo(__inlined)
+    return true
 }

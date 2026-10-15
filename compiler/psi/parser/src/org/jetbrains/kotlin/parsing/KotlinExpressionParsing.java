@@ -1302,7 +1302,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
      *  : annotations + ("\n")+ expression
      *  ;
      */
-    private void parseBlockLevelExpression() {
+    void parseBlockLevelExpression() {
         if (at(AT)) {
             PsiBuilder.Marker expression = mark();
             myKotlinParsing.parseAnnotations(DEFAULT);

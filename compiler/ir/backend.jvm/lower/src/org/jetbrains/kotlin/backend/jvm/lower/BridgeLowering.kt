@@ -136,7 +136,14 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
         val bridgeTargets = irClass.functions.mapNotNullTo(SmartList()) { it.asBridgeTargetOrNull() }
         if (bridgeTargets.isEmpty()) return
 
-        bridgeTargets.forEach { createBridges(irClass, it.function, it.specialBridgeOrNull) }
+        // Only @JvmExposeBoxed targets consult this set, so skip building it in the common case.
+        val bridgeTargetFunctions: Set<IrSimpleFunction> =
+            if (bridgeTargets.any { it.function.hasAnnotation(JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME) })
+                bridgeTargets.mapTo(hashSetOf()) { it.function }
+            else
+                emptySet()
+
+        bridgeTargets.forEach { createBridges(irClass, it.function, it.specialBridgeOrNull, bridgeTargetFunctions) }
 
         if (irClass.isInlineClass) {
             // Inline class (implementing 'MutableCollection<T>', where T is Int or an inline class mapped to Int)
@@ -197,7 +204,12 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
         }
     }
 
-    private fun createBridges(irClass: IrClass, irFunction: IrSimpleFunction, specialBridge: SpecialBridge?) {
+    private fun createBridges(
+        irClass: IrClass,
+        irFunction: IrSimpleFunction,
+        specialBridge: SpecialBridge?,
+        bridgeTargetFunctions: Set<IrSimpleFunction>,
+    ) {
         // Track final overrides and bridges to avoid clashes
         val blacklist = mutableSetOf<Method>()
 
@@ -220,12 +232,10 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
         //
         // However, if the exposed methods have separate signature to bridges, we need to generate bridges.
         // For example, when the bridge is using Any?, but the exposed method uses String.
-        if (irFunction.hasAnnotation(JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME)) {
-            val bridgeTargetFunctions = irClass.functions.mapNotNull { it.asBridgeTargetOrNull()?.function }.toSet()
-
-            if (irClass.hasNonExposedBridgeTargetCounterpart(irFunction, bridgeTargetFunctions)) {
-                return
-            }
+        if (irFunction.hasAnnotation(JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME) &&
+            irClass.hasNonExposedBridgeTargetCounterpart(irFunction, bridgeTargetFunctions)
+        ) {
+            return
         }
 
         // Generate special bridges, but only in classes

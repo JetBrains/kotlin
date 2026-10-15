@@ -14,6 +14,7 @@ import java.lang.reflect.*
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.metadata.*
 import kotlin.metadata.jvm.*
+import kotlin.reflect.ExperimentalCompanionExtensions
 import kotlin.reflect.*
 import kotlin.reflect.jvm.internal.calls.*
 
@@ -67,7 +68,7 @@ internal abstract class KotlinKProperty<out V>(
     override val isLateinit: Boolean get() = kmProperty.isLateinit
     override val isConst: Boolean get() = kmProperty.isConst
 
-    @OptIn(ExperimentalCompanionBlocksAndExtensions::class)
+    @OptIn(kotlin.metadata.ExperimentalCompanionExtensions::class)
     @ExperimentalCompanionExtensions
     override val companionExtensionClass: KClass<*>?
         get() = (kmProperty.companionExtensionReceiverType?.classifier as KmClassifier.Class?)?.let {
@@ -84,11 +85,7 @@ internal abstract class KotlinKProperty<out V>(
                 originalContainer.jClass.enclosingClass
             else
                 originalContainer.jClass
-        try {
-            owner.getDeclaredField(fieldSignature.name)
-        } catch (_: NoSuchFieldException) {
-            null
-        }
+        owner.getDeclaredFieldOrNull(fieldSignature.name, isStatic)
     }
 
     private fun isPropertyWithBackingFieldInOuterClass(): Boolean {
@@ -138,9 +135,9 @@ internal abstract class KotlinKProperty<out V>(
             return annotations.unwrapKotlinRepeatableAnnotations()
         }
 
-    @OptIn(ExperimentalCompanionBlocksAndExtensions::class)
+    @OptIn(ExperimentalCompanionBlocks::class)
     override val isCompanionBlockMember: Boolean
-        get() = container is KClassImpl<*> && kmProperty.isStatic
+        get() = container is KClassImpl<*> && kmProperty.isCompanionBlockMember
 
     abstract class Accessor<out PropertyType, out ReturnType> :
         KotlinKCallable<ReturnType>(KCallableOverriddenStorage.EMPTY), KProperty.Accessor<PropertyType>, KFunction<ReturnType> {

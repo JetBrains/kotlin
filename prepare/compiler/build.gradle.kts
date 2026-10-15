@@ -145,7 +145,6 @@ configurations.all {
 
 dependencies {
     api(kotlinStdlib("jdk8"))
-    api(project(":kotlin-script-runtime"))
     api(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     api(libs.kotlinx.coroutines.core)
     api(project(":compiler:build-tools:kotlin-build-tools-api"))

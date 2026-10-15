@@ -186,9 +186,13 @@ RUNTIME_EXPORT RUNTIME_WEAK extern "C" void* Kotlin_SwiftExport_allocInstanceFor
     RuntimeAssert(compiler::swiftExport(), "Only available in Swift Export");
 
     Kotlin_initRuntimeIfNeeded();
-    kotlin::ThreadStateGuard guard(kotlin::ThreadState::kRunnable);
+    // Class lookups below may instantiate Swift metadata and trigger +initialize, so they have to happen in the native state.
+    kotlin::AssertThreadState(kotlin::ThreadState::kNative);
 
     const TypeInfo* typeInfo = Kotlin_ObjCExport_getAssociatedTypeInfo(swiftSubclass);
+    if (typeInfo == nullptr) {
+        typeInfo = Kotlin_SwiftExport_getBoundKotlinTypeInfoForClass(swiftSubclass);
+    }
     if (typeInfo == nullptr) {
         const TypeInfo* kotlinSuperTypeInfo = nullptr;
         Class boundClass = nil;
@@ -202,6 +206,8 @@ RUNTIME_EXPORT RUNTIME_WEAK extern "C" void* Kotlin_SwiftExport_allocInstanceFor
         RuntimeAssert(kotlinSuperTypeInfo != nullptr, "No bound Kotlin superclass found for Swift subclass %s", class_getName(swiftSubclass));
         typeInfo = Kotlin_SwiftExport_getOrCreateTypeInfoForSwiftSubclass(swiftSubclass, boundClass, kotlinSuperTypeInfo);
     }
+
+    kotlin::ThreadStateGuard guard(kotlin::ThreadState::kRunnable);
     ObjHolder holder;
     ObjHeader* instance = AllocInstance(typeInfo, holder.slot());
     return mm::createRetainedExternalRCRef(instance);

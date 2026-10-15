@@ -124,6 +124,10 @@ object JVMConfigurationKeys {
     @JvmField
     val NO_REFLECT = CompilerConfigurationKey.create<Boolean>("NO_REFLECT")
 
+    // Don't automatically include the Kotlin/JVM stdlib and kotlin-reflect into the classpath.
+    @JvmField
+    val NO_STDLIB = CompilerConfigurationKey.create<Boolean>("NO_STDLIB")
+
     @JvmField
     val VALIDATE_BYTECODE = CompilerConfigurationKey.create<Boolean>("VALIDATE_BYTECODE")
 
@@ -299,6 +303,10 @@ var CompilerConfiguration.enableJvmPreview: Boolean
 var CompilerConfiguration.noReflect: Boolean
     get() = getBoolean(JVMConfigurationKeys.NO_REFLECT)
     set(value) { put(JVMConfigurationKeys.NO_REFLECT, value) }
+
+var CompilerConfiguration.noStdlib: Boolean
+    get() = getBoolean(JVMConfigurationKeys.NO_STDLIB)
+    set(value) { put(JVMConfigurationKeys.NO_STDLIB, value) }
 
 var CompilerConfiguration.validateBytecode: Boolean
     get() = getBoolean(JVMConfigurationKeys.VALIDATE_BYTECODE)

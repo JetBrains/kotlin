@@ -16,6 +16,8 @@ typedef NS_ENUM(NSUInteger, KotlinBaseConstructionOptions) {
     KotlinBaseConstructionOptionsAsExistentialWrapper = 8,
 };
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface KotlinBase : NSObject <NSCopying>
 
 + (instancetype)createRetainedWrapper:(struct ObjHeader *)obj;
@@ -51,10 +53,12 @@ typedef NS_ENUM(NSUInteger, KotlinBaseConstructionOptions) {
  * @see `+_createClassWrapperForExternalRCRef:`
  */
 + (KotlinBase *)_createProtocolWrapperForExternalRCRef:(void *)ref
-                                            conformsTo:(NS_NOESCAPE BOOL (^)(Class candidate))conformsTo NS_SWIFT_NAME(__createProtocolWrapper(externalRCRef:conformsTo:));
+                                            conformsTo:(NS_NOESCAPE BOOL (^ _Nullable)(Class candidate))conformsTo NS_SWIFT_NAME(__createProtocolWrapper(externalRCRef:conformsTo:));
 
-+ (instancetype)new NS_UNAVAILABLE;
-- (instancetype)init NS_UNAVAILABLE;
+/**
+ * Designated initializer creating a fresh Kotlin.Any object.
+ */
+- (instancetype)init NS_DESIGNATED_INITIALIZER;
 
 /**
  * Designated initializer allowing the creation of a `KotlinBase` instance directly bound to a kotlin object pointed by a
@@ -77,3 +81,5 @@ typedef NS_ENUM(NSUInteger, KotlinBaseConstructionOptions) {
 - (void *)externalRCRef NS_REFINED_FOR_SWIFT NS_RETURNS_INNER_POINTER;
 
 @end
+
+NS_ASSUME_NONNULL_END

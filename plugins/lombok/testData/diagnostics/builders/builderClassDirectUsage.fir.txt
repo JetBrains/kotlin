@@ -1,0 +1,21 @@
+FILE: test.kt
+    public final fun usage(): R|kotlin/Unit| {
+        lval builder: R|TestJava.TestJavaBuilder| = Q|TestJava|.R|/TestJava.TestJavaBuilder|()
+        R|<local>/builder|.R|/TestJava.TestJavaBuilder.a|(Int(1)).R|/TestJava.TestJavaBuilder.build|()
+        lval justBuilder: R|TestJava.TestJavaBuilder?| = Null(null)
+        R|<local>/justBuilder|?.{ $subj$.R|/TestJava.TestJavaBuilder.a|(Int(2)) }?.{ $subj$.R|/TestJava.TestJavaBuilder.build|() }
+    }
+FILE: testWithImport.kt
+    public final fun usageWithImport(): R|kotlin/Unit| {
+        lval builder: R|TestJava.TestJavaBuilder| = R|/TestJava.TestJavaBuilder|()
+        R|<local>/builder|.R|/TestJava.TestJavaBuilder.a|(Int(1)).R|/TestJava.TestJavaBuilder.build|()
+        lval justBuilder: R|TestJava.TestJavaBuilder?| = Null(null)
+        R|<local>/justBuilder|?.{ $subj$.R|/TestJava.TestJavaBuilder.a|(Int(2)) }?.{ $subj$.R|/TestJava.TestJavaBuilder.build|() }
+    }
+FILE: testWithStarImport.kt
+    public final fun usageWithStarImport(): R|kotlin/Unit| {
+        lval builder: R|TestJava.TestJavaBuilder| = R|/TestJava.TestJavaBuilder|()
+        R|<local>/builder|.R|/TestJava.TestJavaBuilder.a|(Int(1)).R|/TestJava.TestJavaBuilder.build|()
+        lval justBuilder: R|TestJava.TestJavaBuilder?| = Null(null)
+        R|<local>/justBuilder|?.{ $subj$.R|/TestJava.TestJavaBuilder.a|(Int(2)) }?.{ $subj$.R|/TestJava.TestJavaBuilder.build|() }
+    }

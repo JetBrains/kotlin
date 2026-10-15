@@ -1,0 +1,54 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirNestedClassifierScopeImpl
+            Classifiers:
+                FirRegularClassSymbol public final? class Nested : R|kotlin/Any|
+        Static scope owner symbol: FirRegularClassSymbol public final class Child : R|test/Base|
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol param: R|kotlin/Int|
+Expression Stability: STABLE_VALUE
+
+FILE: [ResolvedTo(IMPORTS)] explicitPrimaryConstructorSuperCallArgument.kt
+    public open [ResolvedTo(STATUS)] class Base : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] constructor([ResolvedTo(STATUS)] value: R|kotlin/Int|): R|test/Base| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] val value: R|kotlin/Int| = R|<local>/value|
+            public [ResolvedTo(STATUS)] get(): R|kotlin/Int|
+
+    }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Child : R|test/Base| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor([ResolvedTo(BODY_RESOLVE)] param: R|kotlin/Int|): R|test/Child| {
+            super<R|test/Base|>(R|<local>/param|)
+        }
+
+        public final [ResolvedTo(STATUS)] val property: R|kotlin/Int| = LAZY_EXPRESSION
+            public [ResolvedTo(STATUS)] get(): R|kotlin/Int|
+
+        public final [ResolvedTo(STATUS)] fun member(): R|kotlin/Int| { LAZY_BLOCK }
+
+        public final? [ResolvedTo(RAW_FIR)] class Nested : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] constructor(): R|test/Child.Nested| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] fun nestedMember(): <implicit> { LAZY_BLOCK }
+
+        }
+
+    }

@@ -84,6 +84,7 @@ abstract class BaseNodeJsEnvSpec : EnvSpec<NodeJsEnv>() {
     abstract val Project.nodeJsSetupTaskProvider: TaskProvider<out NodeJsSetupTask>
 }
 
+@Deprecated("Using an Ivy repository is incompatible with Gradle’s Centralizing Repository Declarations feature, please use Node.Js Toolchain")
 internal val KotlinJsIrCompilation.nodeJsEnvSpec: BaseNodeJsEnvSpec
     get() = webTargetVariant(
         jsVariant = { NodeJsPlugin.apply(project) },

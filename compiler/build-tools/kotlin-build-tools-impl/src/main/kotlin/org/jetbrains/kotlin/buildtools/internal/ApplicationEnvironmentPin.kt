@@ -19,6 +19,7 @@ internal object ApplicationEnvironmentPinProvider {
 }
 
 private class ApplicationEnvironmentPin : AutoCloseable {
+    private val closeableGuard = CloseableGuard(this)
     private val disposable: Disposable = Disposer.newDisposable("kotlin-dsl BTA application environment pin")
 
     init {
@@ -30,7 +31,9 @@ private class ApplicationEnvironmentPin : AutoCloseable {
     }
 
     override fun close() {
-        clearJarCaches()
-        Disposer.dispose(disposable)
+        closeableGuard.close {
+            clearJarCaches()
+            Disposer.dispose(disposable)
+        }
     }
 }

@@ -7,9 +7,11 @@ package model
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.model.properties.PropertyContainer
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInAnalysisApi
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
+@MustRunOnChangesInAnalysisApi
 class DocumentableTest {
 
     @Test

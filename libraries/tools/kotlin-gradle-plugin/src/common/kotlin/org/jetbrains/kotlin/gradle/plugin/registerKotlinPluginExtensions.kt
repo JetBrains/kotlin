@@ -82,6 +82,7 @@ internal fun Project.registerKotlinPluginExtensions() {
         }
 
         if (isMultiplatform) {
+            register(project, CountKotlinMultiplatformPluginApplicationsSetupAction)
             register(project, ApplyJavaBasePluginSetupAction)
             register(project, DeprecateJavaPluginsApplicationSetupAction)
             register(project, DeprecatedMppGradlePropertiesMigrationSetupAction)
@@ -199,6 +200,7 @@ internal fun Project.registerKotlinPluginExtensions() {
         register(project, KmpPartiallyResolvedDependenciesChecker)
         register(project, TestApiDependenciesChecker)
         register(project, ConfigurationOnDemandSupportChecker)
+        register(project, NpmDependencyInGradleScopeChecker)
         if (isMultiplatform) {
             register(project, NativeVersionChecker)
             register(project, SupportedNativeHostChecker)

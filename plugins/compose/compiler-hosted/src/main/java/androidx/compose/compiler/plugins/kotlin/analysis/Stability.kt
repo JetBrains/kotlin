@@ -509,17 +509,25 @@ class StabilityInferencer(
                 analysisEntryFile
             )
 
-            type.isFullValueClassType() -> {
+            // A full value class from another file is handled like any class from another file, because we don't want its stability to vary
+            // depending on whether incremental compilation is used.
+            type.isFullValueClassType() && analysisEntryFile != null && type.getClass()?.fileOrNull == analysisEntryFile -> {
                 val valueClassDeclaration = type.getClass()
                     ?: error("Failed to resolve the class definition of full value class type $type")
-                if (valueClassDeclaration.hasStableMarker()) {
+                if (valueClassDeclaration.hasStableMarkedDescendant()) {
                     Stability.Stable
                 } else {
+                    val propertySubstitutions = substitutions + (type as IrSimpleType).substitutionMap()
+                    valueClassDeclaration.knownStability(propertySubstitutions, currentlyAnalyzing, analysisEntryFile)?.let { return it }
+                    // Like other abstract and sealed classes, abstract and sealed value classes may have subclasses of any stability.
                     val primaryProperties = valueClassDeclaration.valueClassRepresentation?.underlyingPropertyNamesToTypes
-                        ?: return Stability.Unstable // is abstract value class
-                    primaryProperties
-                        .map { [_, type] -> stabilityOf(type, substitutions, currentlyAnalyzing, analysisEntryFile) }
-                        .let { Stability.Combined(it) }
+                        ?: return Stability.Unknown(valueClassDeclaration)
+                    val typeArguments = valueClassDeclaration.typeParameters.map { propertySubstitutions[it.symbol] }
+                    val symbol = SymbolForAnalysis(valueClassDeclaration.symbol, typeArguments, analysisEntryFile)
+                    if (symbol in currentlyAnalyzing) return Stability.Unstable
+                    Stability.Stable + primaryProperties.map { [_, type] ->
+                        stabilityOf(type, propertySubstitutions, currentlyAnalyzing + symbol, analysisEntryFile)
+                    }
                 }
             }
 
@@ -527,12 +535,17 @@ class StabilityInferencer(
                 val inlineClassDeclaration = type.getClass()
                     ?: error("Failed to resolve the class definition of inline type $type")
 
-                if (inlineClassDeclaration.hasStableMarker()) {
+                if (inlineClassDeclaration.hasStableMarkedDescendant()) {
                     Stability.Stable
                 } else {
+                    val underlyingSubstitutions = substitutions + (type as IrSimpleType).substitutionMap()
+                    // Known stable constructs like `kotlin.Result` have always taken the stability of their underlying type.
+                    inlineClassDeclaration.knownStability(
+                        underlyingSubstitutions, currentlyAnalyzing, analysisEntryFile, includeKnownConstructs = false,
+                    )?.let { return it }
                     stabilityOf(
                         type = getInlineClassUnderlyingType(inlineClassDeclaration, treatCompatibleFullValueClassesAsInline = false),
-                        substitutions = substitutions,
+                        substitutions = underlyingSubstitutions,
                         currentlyAnalyzing = currentlyAnalyzing,
                         analysisEntryFile
                     )
@@ -550,6 +563,19 @@ class StabilityInferencer(
 
             else -> error("Unexpected IrType: $type")
         }
+    }
+
+    // Like other classes, value classes can be known or configured to be stable, which takes precedence over the stability of their
+    // properties.
+    private fun IrClass.knownStability(
+        substitutions: Map<IrTypeParameterSymbol, IrTypeArgument>,
+        currentlyAnalyzing: Set<SymbolForAnalysis>,
+        analysisEntryFile: IrFile?,
+        includeKnownConstructs: Boolean = true,
+    ): Stability? {
+        val mask = KnownStableConstructs.stableTypes[fqNameWhenAvailable?.toString()]?.takeIf { includeKnownConstructs }
+            ?: if (isExternalStableType()) externalTypeMatcherCollection.maskForName(fqNameWhenAvailable) ?: 0 else return null
+        return Stability.Stable.applyTypeParameterMask(mask, typeParameters, substitutions, currentlyAnalyzing, analysisEntryFile)
     }
 
     private fun IrSimpleType.substitutionMap(): Map<IrTypeParameterSymbol, IrTypeArgument> {

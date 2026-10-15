@@ -127,8 +127,8 @@ KDouble Kotlin_math_acosh(KDouble x) {
 KDouble Kotlin_math_atanh(KDouble x) { return atanh(x); }
 
 KDouble Kotlin_math_hypot(KDouble x, KDouble y) {
-  if (isinf(x) || isinf(y)) return INFINITY;
-  if (isnan(x) || isnan(y)) return NAN;
+  if (__builtin_isinf(x) || __builtin_isinf(y)) return INFINITY;
+  if (__builtin_isnan(x) || __builtin_isnan(y)) return NAN;
   return hypot(x, y);
 }
 
@@ -154,7 +154,8 @@ KDouble Kotlin_math_cbrt(KDouble x) { return cbrt(x); }
 KDouble Kotlin_math_Double_pow(KDouble thiz, KDouble x) {
   // Kotlin corner cases
   if (x == 0.0 || x == -0.0) return 1.0;
-  if (isinf(x) && (thiz == 1.0 || thiz == -1.0)) return NAN;
+  if (__builtin_isnan(x)) return NAN;
+  if (__builtin_isinf(x) && (thiz == 1.0 || thiz == -1.0)) return NAN;
   return pow(thiz, x);
 }
 
@@ -204,8 +205,8 @@ KFloat Kotlin_math_acoshf(KFloat x) {
 KFloat Kotlin_math_atanhf(KFloat x) { return atanhf(x); }
 
 KFloat Kotlin_math_hypotf(KFloat x, KFloat y) {
-  if (isinf(x) || isinf(y)) return INFINITY;
-  if (isnan(x) || isnan(y)) return NAN;
+  if (__builtin_isinf(x) || __builtin_isinf(y)) return INFINITY;
+  if (__builtin_isnan(x) || __builtin_isnan(y)) return NAN;
   return hypotf(x, y);
 }
 
@@ -231,7 +232,8 @@ KFloat Kotlin_math_cbrtf(KFloat x) { return cbrtf(x); }
 KFloat Kotlin_math_Float_pow(KFloat thiz, KFloat x) {
   // Kotlin corner cases
   if (x == 0.0 || x == -0.0) return 1.0;
-  if (isinf(x) && (thiz == 1.0 || thiz == -1.0)) return NAN;
+  if (__builtin_isnan(x)) return NAN;
+  if (__builtin_isinf(x) && (thiz == 1.0 || thiz == -1.0)) return NAN;
   return powf(thiz, x);
 }
 

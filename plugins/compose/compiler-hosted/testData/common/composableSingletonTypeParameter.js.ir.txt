@@ -15,8 +15,9 @@ FILE fqName:<root> fileName:/composableSingletonTypeParameter.kt
                 ARG arg1: CONST Null type=kotlin.Nothing? value=null
               then: SET_FIELD 'FIELD name:lambda$-1840754746 type:kotlin.Function3<kotlin.Any?, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit>? visibility:private declared in <root>.ComposableSingletons$ComposableSingletonTypeParameterKt' type=kotlin.Unit origin=null
                 receiver: GET_VAR '<this>: <root>.ComposableSingletons$ComposableSingletonTypeParameterKt declared in <root>.ComposableSingletons$ComposableSingletonTypeParameterKt.<get-lambda$-1840754746>' type=<root>.ComposableSingletons$ComposableSingletonTypeParameterKt origin=null
-                value: FUNCTION_REFERENCE 'public abstract fun invoke (p1: kotlin.Any?, p2: androidx.compose.runtime.Composer, p3: kotlin.Int): kotlin.Any? declared in androidx.compose.runtime.internal.ComposableLambda' type=kotlin.Function3<kotlin.Any?, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> origin=null reflectionTarget=<same>
-                  ARG <this>: CALL 'public final fun composableLambdaInstance (key: kotlin.Int, tracked: kotlin.Boolean, block: kotlin.Any): androidx.compose.runtime.internal.ComposableLambda declared in androidx.compose.runtime.internal' type=androidx.compose.runtime.internal.ComposableLambda origin=null
+                value: RICH_FUNCTION_REFERENCE type=kotlin.Function3<kotlin.Any?, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> origin=null [unit_conversion] reflectionTarget='public abstract fun invoke (p1: kotlin.Any?, p2: androidx.compose.runtime.Composer, p3: kotlin.Int): kotlin.Any? declared in androidx.compose.runtime.internal.ComposableLambda'
+                  overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.Function3, p2: P2 of kotlin.Function3, p3: P3 of kotlin.Function3): R of kotlin.Function3 declared in kotlin.Function3
+                  bound <this>: CALL 'public final fun composableLambdaInstance (key: kotlin.Int, tracked: kotlin.Boolean, block: kotlin.Any): androidx.compose.runtime.internal.ComposableLambda declared in androidx.compose.runtime.internal' type=androidx.compose.runtime.internal.ComposableLambda origin=null
                     ARG key: CONST Int type=kotlin.Int value=-1840754746
                     ARG tracked: CONST Boolean type=kotlin.Boolean value=false
                     ARG block: FUN_EXPR type=kotlin.Function3<kotlin.Any?, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> origin=LAMBDA
@@ -108,6 +109,19 @@ FILE fqName:<root> fileName:/composableSingletonTypeParameter.kt
                               if: CONST Boolean type=kotlin.Boolean value=true
                               then: CALL 'public abstract fun skipToGroupEnd (): kotlin.Unit declared in androidx.compose.runtime.Composer' type=kotlin.Unit origin=null
                                 ARG <this>: GET_VAR 'var $composer: androidx.compose.runtime.Composer? declared in <root>.ComposableSingletons$ComposableSingletonTypeParameterKt.<get-lambda$-1840754746>.<anonymous>' type=androidx.compose.runtime.Composer? origin=null
+                  invoke: FUN LOCAL_FUNCTION_FOR_LAMBDA name:invoke visibility:local modality:FINAL returnType:kotlin.Unit
+                    VALUE_PARAMETER kind:Regular name:<this> index:0 type:androidx.compose.runtime.internal.ComposableLambda
+                    VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Any?
+                    VALUE_PARAMETER kind:Regular name:p1 index:2 type:androidx.compose.runtime.Composer
+                    VALUE_PARAMETER kind:Regular name:p2 index:3 type:kotlin.Int
+                    BLOCK_BODY
+                      RETURN type=kotlin.Nothing from='local final fun invoke (<this>: androidx.compose.runtime.internal.ComposableLambda, p0: kotlin.Any?, p1: androidx.compose.runtime.Composer, p2: kotlin.Int): kotlin.Unit declared in <root>.ComposableSingletons$ComposableSingletonTypeParameterKt.<get-lambda$-1840754746>'
+                        TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                          CALL 'public abstract fun invoke (p1: kotlin.Any?, p2: androidx.compose.runtime.Composer, p3: kotlin.Int): kotlin.Any? declared in androidx.compose.runtime.internal.ComposableLambda' type=kotlin.Any? origin=null
+                            ARG <this>: GET_VAR '<this>: androidx.compose.runtime.internal.ComposableLambda declared in <root>.ComposableSingletons$ComposableSingletonTypeParameterKt.<get-lambda$-1840754746>.invoke' type=androidx.compose.runtime.internal.ComposableLambda origin=null
+                            ARG p1: GET_VAR 'p0: kotlin.Any? declared in <root>.ComposableSingletons$ComposableSingletonTypeParameterKt.<get-lambda$-1840754746>.invoke' type=kotlin.Any? origin=null
+                            ARG p2: GET_VAR 'p1: androidx.compose.runtime.Composer declared in <root>.ComposableSingletons$ComposableSingletonTypeParameterKt.<get-lambda$-1840754746>.invoke' type=androidx.compose.runtime.Composer origin=null
+                            ARG p3: GET_VAR 'p2: kotlin.Int declared in <root>.ComposableSingletons$ComposableSingletonTypeParameterKt.<get-lambda$-1840754746>.invoke' type=kotlin.Int origin=null
           RETURN type=kotlin.Nothing from='internal final fun <get-lambda$-1840754746> (): kotlin.Function3<kotlin.Any?, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> declared in <root>.ComposableSingletons$ComposableSingletonTypeParameterKt'
             GET_FIELD 'FIELD name:lambda$-1840754746 type:kotlin.Function3<kotlin.Any?, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit>? visibility:private declared in <root>.ComposableSingletons$ComposableSingletonTypeParameterKt' type=kotlin.Function3<kotlin.Any?, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit>? origin=null
               receiver: GET_VAR '<this>: <root>.ComposableSingletons$ComposableSingletonTypeParameterKt declared in <root>.ComposableSingletons$ComposableSingletonTypeParameterKt.<get-lambda$-1840754746>' type=<root>.ComposableSingletons$ComposableSingletonTypeParameterKt origin=null

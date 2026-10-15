@@ -55,10 +55,10 @@ value class A(val a: Int)
 inline class B(val b: Int)
 
 @JsExport
-<!INCOMPATIBLE_MODIFIERS("inline; value")!>inline<!> <!INCOMPATIBLE_MODIFIERS("value; inline")!>value<!> class C(val c: Int)
+inline value class C(val c: Int)
 
 <!MULTIPLE_JS_EXPORT_DEFAULT_IN_ONE_FILE!>@JsExport.Default
-<!INCOMPATIBLE_MODIFIERS("value; inline")!>value<!> <!INCOMPATIBLE_MODIFIERS("inline; value")!>inline<!> class D(val d: Int)<!>
+value inline class D(val d: Int)<!>
 
 @JsExport
 external interface ExternalInterface

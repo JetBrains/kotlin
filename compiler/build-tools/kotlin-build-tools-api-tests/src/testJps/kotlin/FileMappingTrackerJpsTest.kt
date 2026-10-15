@@ -8,22 +8,24 @@ package org.jetbrains.kotlin.buildtools.tests.compilation.jps
 
 import org.jetbrains.kotlin.buildtools.api.jps.InternalBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.jps.jvm.JvmJpsManagedIncrementalCompilationConfiguration
+import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.jvmProject
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Test
+import kotlin.io.path.extension
 
 @DisplayName("The JPS file mapping tracker")
 class FileMappingTrackerJpsTest : BaseJpsTest() {
 
     @DisplayName("Every produced class file is reported together with the sources it was generated from")
+    @BtaV2StrategyAgnosticCompilationTest
     @TestMetadata("basic-multimodule-project/module-3")
-    @Test
-    fun outputsAreMappedToSources() {
+    fun outputsAreMappedToSources(strategyConfig: CompilerExecutionStrategyConfiguration) {
         val fixture = "basic-multimodule-project/module-3"
-        jvmProject(inProcess) {
+        jvmProject(strategyConfig) {
             val module = module(fixture)
             val fileMappingTracker = RecordingFileMappingTracker()
             module.compile(compilationConfigAction = { builder ->
@@ -32,7 +34,7 @@ class FileMappingTrackerJpsTest : BaseJpsTest() {
                 }
             }) {
                 val classMappings = fileMappingTracker.sourcesToOutput
-                    .filter { [_, output] -> output.endsWith(".class") }
+                    .filter { [_, output] -> output.extension == "class" }
                     .associate { [sources, output] ->
                         output.relativeToModule(fixture) to sources.map { it.relativeToModule(fixture) }.sorted()
                     }
@@ -48,7 +50,7 @@ class FileMappingTrackerJpsTest : BaseJpsTest() {
 
                 // the module mapping is also reported; its source list is an implementation detail
                 assertTrue(
-                    fileMappingTracker.sourcesToOutput.any { [_, output] -> output.endsWith(".kotlin_module") }
+                    fileMappingTracker.sourcesToOutput.any { [_, output] -> output.extension == "kotlin_module" }
                 ) { "The .kotlin_module output was not reported" }
 
                 // no compiler plugins take part in this compilation

@@ -7,7 +7,6 @@
 
 package org.jetbrains.kotlin.gradle.archive
 
-import org.apache.commons.compress.compressors.xz.XZCompressorInputStream
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
@@ -22,9 +21,7 @@ import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.uklibs.include
 import org.junit.jupiter.api.condition.OS
 import java.nio.file.Path
-import java.util.zip.ZipInputStream
 import kotlin.io.path.appendText
-import kotlin.io.path.inputStream
 import kotlin.test.assertEquals
 
 @MppGradlePluginTests
@@ -152,6 +149,28 @@ class PackKotlinArchiveTaskIT : KGPBaseTest() {
         }
     }
 
+    @GradleTest
+    @OsCondition(supportedOn = [OS.MAC, OS.LINUX, OS.WINDOWS], enabledOnCI = [OS.LINUX, OS.WINDOWS])
+    fun testIncompleteArchiveIsPackedWhenSharedAppleSourceSetUsesCInterop(gradleVersion: GradleVersion) {
+        packKotlinArchive(
+            gradleVersion,
+            projectName = "producerWithHostSpecificSharedSourceSet",
+            "-P${PropertyNames.KOTLIN_ALLOW_INCOMPLETE_KOTLIN_ARCHIVE_PUBLICATION}=true",
+            "-P${PropertyNames.KOTLIN_MPP_ENABLE_CINTEROP_COMMONIZATION}=true",
+        ) {
+            iosArm64 { createCInterop("first", packageName = "first") }
+            iosSimulatorArm64 { createCInterop("first", packageName = "first") }
+            sourceSets.iosMain {
+                compileSource(
+                    """
+                @file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+                fun useInterop() = first.first()
+                """.trimIndent()
+                )
+            }
+        }
+    }
+
     private fun packKotlinArchive(
         gradleVersion: GradleVersion,
         projectName: String,
@@ -215,6 +234,7 @@ class PackKotlinArchiveTaskIT : KGPBaseTest() {
             "platform/macosArm64/<klib content>",
             "platform/wasmJs/<klib content>",
             "resources/",
+            "swift-export/",
         )
 
         /**
@@ -230,6 +250,7 @@ class PackKotlinArchiveTaskIT : KGPBaseTest() {
             "platform/",
             "platform/js/<klib content>",
             "resources/",
+            "swift-export/",
         )
 
         val producerWithCommonizedCinteropsArchiveEntries = listOf(
@@ -258,22 +279,12 @@ class PackKotlinArchiveTaskIT : KGPBaseTest() {
             "platform/linuxArm64/<klib content>",
             "platform/linuxX64/<klib content>",
             "resources/",
+            "swift-export/",
         )
 
         const val KLIB_MANIFEST_PATH = "default/manifest"
         const val KLIB_CONTENT_PLACEHOLDER = "<klib content>"
     }
-
-    private fun Path.zipXzArchiveEntries(): List<String> =
-        inputStream().buffered().use { fileInput ->
-            XZCompressorInputStream(fileInput).use { xzInput ->
-                ZipInputStream(xzInput).use { zipInput ->
-                    generateSequence(zipInput::getNextEntry)
-                        .map { entry -> entry.name }
-                        .toList()
-                }
-            }
-        }
 }
 
 private fun KotlinMultiplatformExtension.setupKarTestTargetsAndSourceSets() {
@@ -292,11 +303,12 @@ private fun KotlinMultiplatformExtension.setupHostSpecificKarTestTargets() {
     sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
 }
 
-private fun KotlinNativeTarget.createCInterop(interopName: String) {
+private fun KotlinNativeTarget.createCInterop(interopName: String, packageName: String? = null) {
     val definitionFile = project.layout.projectDirectory.file("$interopName.def")
     definitionFile.asFile.writeText(
         """
         language = C
+        ${packageName?.let { "package = $it" }.orEmpty()}
         ---
         void $interopName(void);
         """.trimIndent()

@@ -9,7 +9,7 @@ class BoundedTypeParameterSingular<T : CharSequence> {
       private get
       private set
 
-    private constructor() /* primary */ {
+    internal constructor() /* primary */ {
       super/*Any*/()
       /* <init>() */
 
@@ -102,7 +102,7 @@ class GenericSingular<K : Any?, V : Any?> {
       private get
       private set
 
-    private constructor() /* primary */ {
+    internal constructor() /* primary */ {
       super/*Any*/()
       /* <init>() */
 
@@ -226,7 +226,7 @@ class IgnoreNullCollections {
       private get
       private set
 
-    private constructor() /* primary */ {
+    internal constructor() /* primary */ {
       super/*Any*/()
       /* <init>() */
 
@@ -313,7 +313,7 @@ class IgnoreNullCollectionsWithNullableCollections {
       private get
       private set
 
-    private constructor() /* primary */ {
+    internal constructor() /* primary */ {
       super/*Any*/()
       /* <init>() */
 
@@ -400,7 +400,7 @@ class NullableCollection {
       private get
       private set
 
-    private constructor() /* primary */ {
+    internal constructor() /* primary */ {
       super/*Any*/()
       /* <init>() */
 
@@ -485,7 +485,7 @@ class NullableElements {
       private get
       private set
 
-    private constructor() /* primary */ {
+    internal constructor() /* primary */ {
       super/*Any*/()
       /* <init>() */
 
@@ -570,7 +570,7 @@ class NullableTypeParameterSingular<T : Any?> {
       private get
       private set
 
-    private constructor() /* primary */ {
+    internal constructor() /* primary */ {
       super/*Any*/()
       /* <init>() */
 
@@ -663,7 +663,7 @@ class Other {
       private get
       private set
 
-    private constructor() /* primary */ {
+    internal constructor() /* primary */ {
       super/*Any*/()
       /* <init>() */
 
@@ -804,7 +804,7 @@ class SingularCollections {
       private get
       private set
 
-    private constructor() /* primary */ {
+    internal constructor() /* primary */ {
       super/*Any*/()
       /* <init>() */
 
@@ -984,7 +984,7 @@ class User {
       private get
       private set
 
-    private constructor() /* primary */ {
+    internal constructor() /* primary */ {
       super/*Any*/()
       /* <init>() */
 

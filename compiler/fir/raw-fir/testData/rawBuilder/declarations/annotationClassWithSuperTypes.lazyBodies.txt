@@ -1,0 +1,54 @@
+FILE: annotationClassWithSuperTypes.kt
+    public open class Base : R|kotlin/Any| {
+        public? [ContainingClassKey=Base] constructor(x: Int): R|Base| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final? interface I : R|kotlin/Any| {
+    }
+    public final? annotation class NoSuperTypes : R|kotlin/Annotation| {
+        public? [ContainingClassKey=NoSuperTypes] constructor(): R|NoSuperTypes| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final? annotation class SuperTypeCall : Base, R|kotlin/Annotation| {
+        public? [ContainingClassKey=SuperTypeCall] constructor(): R|SuperTypeCall| {
+            LAZY_super<Base>
+        }
+
+    }
+    public final? annotation class SuperTypeWithoutCall : Base, R|kotlin/Annotation| {
+        public? [ContainingClassKey=SuperTypeWithoutCall] constructor(): R|SuperTypeWithoutCall| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final? annotation class SuperInterface : I, R|kotlin/Annotation| {
+        public? [ContainingClassKey=SuperInterface] constructor(): R|SuperInterface| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final? annotation class SuperInterfaceAndSuperTypeCall : I, Base, R|kotlin/Annotation| {
+        public? [ContainingClassKey=SuperInterfaceAndSuperTypeCall] constructor(): R|SuperInterfaceAndSuperTypeCall| {
+            LAZY_super<Base>
+        }
+
+    }
+    public final? annotation class AnySuperTypeCall : Any, R|kotlin/Annotation| {
+        public? [ContainingClassKey=AnySuperTypeCall] constructor(): R|AnySuperTypeCall| {
+            LAZY_super<Any>
+        }
+
+    }
+    public final? annotation class SuperTypeCallWithPrimaryConstructor : Base, R|kotlin/Annotation| {
+        public? [ContainingClassKey=SuperTypeCallWithPrimaryConstructor] constructor([CorrespondingProperty=/SuperTypeCallWithPrimaryConstructor.s] s: String): R|SuperTypeCallWithPrimaryConstructor| {
+            LAZY_super<Base>
+        }
+
+        public? final? [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ContainingClassKey=SuperTypeCallWithPrimaryConstructor] get(): String
+
+    }

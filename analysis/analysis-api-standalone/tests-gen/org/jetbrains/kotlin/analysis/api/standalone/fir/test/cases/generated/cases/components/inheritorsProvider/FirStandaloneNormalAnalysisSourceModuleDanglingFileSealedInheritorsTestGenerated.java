@@ -50,6 +50,18 @@ public class FirStandaloneNormalAnalysisSourceModuleDanglingFileSealedInheritors
   }
 
   @Test
+  @TestMetadata("fullValueClass.kt")
+  public void testFullValueClass() {
+    run("fullValueClass.kt");
+  }
+
+  @Test
+  @TestMetadata("fullValueClassFromLibrary.kt")
+  public void testFullValueClassFromLibrary() {
+    run("fullValueClassFromLibrary.kt");
+  }
+
+  @Test
   @TestMetadata("sealedClassFromDependency.kt")
   public void testSealedClassFromDependency() {
     run("sealedClassFromDependency.kt");

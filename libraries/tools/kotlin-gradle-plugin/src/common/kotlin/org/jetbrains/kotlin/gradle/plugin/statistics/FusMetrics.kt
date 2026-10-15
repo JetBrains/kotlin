@@ -16,7 +16,12 @@ import org.jetbrains.kotlin.build.report.metrics.CODE_GENERATION_LPS
 import org.jetbrains.kotlin.build.report.metrics.SOURCE_LINES_NUMBER
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.compilerRunner.isKonanIncrementalCompilationEnabled
+import org.jetbrains.kotlin.gradle.ExperimentalNodeJsToolchainDsl
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.DefaultNodeJsToolchainService
+import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.DisabledNodeJsToolchainService
+import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.NodeJsToolchainService
+import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.PreInstalledNodeJsToolchainService
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
@@ -349,8 +354,10 @@ internal object KotlinJsBrowserTestMetrics : FusMetrics {
     }
 
     internal fun collectMetrics(project: Project, jdBrowserRunner: KotlinBrowserTestRunnerDsl) {
+        // KT-90126: runners of unsupported types are reported via a diagnostic, FUS should not fail on them
+        val browserKind = jdBrowserRunner.getBrowserKindOrNull() ?: return
         project.addConfigurationMetrics { metricContainer ->
-            metricContainer.put(StringListMetrics.JS_TEST_BROWSER_TYPE, jdBrowserRunner.getBrowserKind().browserName)
+            metricContainer.put(StringListMetrics.JS_TEST_BROWSER_TYPE, browserKind.browserName)
             metricContainer.put(StringListMetrics.JS_TEST_BROWSER_CHANGED_OPTION, jdBrowserRunner.optionsChangedFromDefaults())
         }
     }
@@ -491,6 +498,23 @@ internal object KotlinSourceSetMetrics : FusMetrics {
                         }
                     }
             }
+        }
+    }
+}
+
+internal object NodeJsToolchainServiceMetrics : FusMetrics {
+    @OptIn(ExperimentalNodeJsToolchainDsl::class)
+    internal fun collectServiceCreated(project: Project, serviceProvider: Provider<out NodeJsToolchainService<out NodeJsToolchainService.Parameters>>) {
+        project.addConfigurationMetrics {
+            val service = serviceProvider.orNull ?: return@addConfigurationMetrics
+            val metric = when (service) {
+                is DisabledNodeJsToolchainService -> "disable"
+                is PreInstalledNodeJsToolchainService -> "preinstalled"
+                is DefaultNodeJsToolchainService -> "download"
+                else -> "custom"
+            }
+
+            it.put(StringListMetrics.NODE_JS_TOOLCHAIN_SERVICE, metric)
         }
     }
 }

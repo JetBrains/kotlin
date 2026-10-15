@@ -1,0 +1,56 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+abstract value class /Base { // /Base|null[0]
+    constructor <init>(kotlin/Int) // /Base.<init>|<init>(kotlin.Int){}[0]
+}
+final value class /ElvisArgument : /Base { // /ElvisArgument|null[0]
+    final val x // /ElvisArgument.x|{}x[0]
+        final fun <get-x>(): kotlin/Int? // /ElvisArgument.x.<get-x>|<get-x>(){}[0]
+    constructor <init>(kotlin/Int?) // /ElvisArgument.<init>|<init>(kotlin.Int?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // /ElvisArgument.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // /ElvisArgument.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // /ElvisArgument.toString|toString(){}[0]
+}
+final value class /GenericArgument : /GenericBase<kotlin/Int> { // /GenericArgument|null[0]
+    final val x // /GenericArgument.x|{}x[0]
+        final fun <get-x>(): kotlin/Int // /GenericArgument.x.<get-x>|<get-x>(){}[0]
+    constructor <init>(kotlin/Int) // /GenericArgument.<init>|<init>(kotlin.Int){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // /GenericArgument.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // /GenericArgument.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // /GenericArgument.toString|toString(){}[0]
+}
+abstract value class <#A: kotlin/Any?> /GenericBase { // /GenericBase|null[0]
+    constructor <init>(#A) // /GenericBase.<init>|<init>(1:0){}[0]
+}
+final value class /IfArgument : /Base { // /IfArgument|null[0]
+    final val x // /IfArgument.x|{}x[0]
+        final fun <get-x>(): kotlin/Int // /IfArgument.x.<get-x>|<get-x>(){}[0]
+    constructor <init>(kotlin/Int) // /IfArgument.<init>|<init>(kotlin.Int){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // /IfArgument.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // /IfArgument.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // /IfArgument.toString|toString(){}[0]
+}
+abstract value class /PairBase { // /PairBase|null[0]
+    constructor <init>(kotlin/Int, kotlin/Int) // /PairBase.<init>|<init>(kotlin.Int;kotlin.Int){}[0]
+}
+final value class /PlainArgument : /Base { // /PlainArgument|null[0]
+    final val x // /PlainArgument.x|{}x[0]
+        final fun <get-x>(): kotlin/Int // /PlainArgument.x.<get-x>|<get-x>(){}[0]
+    constructor <init>(kotlin/Int) // /PlainArgument.<init>|<init>(kotlin.Int){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // /PlainArgument.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // /PlainArgument.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // /PlainArgument.toString|toString(){}[0]
+}
+final value class /ReorderedArguments : /PairBase { // /ReorderedArguments|null[0]
+    final val x // /ReorderedArguments.x|{}x[0]
+        final fun <get-x>(): kotlin/Int // /ReorderedArguments.x.<get-x>|<get-x>(){}[0]
+    constructor <init>(kotlin/Int) // /ReorderedArguments.<init>|<init>(kotlin.Int){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // /ReorderedArguments.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // /ReorderedArguments.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // /ReorderedArguments.toString|toString(){}[0]
+}
+final fun /traced(kotlin/Int): kotlin/Int // /traced|traced(kotlin.Int){}[0]

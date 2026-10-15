@@ -36,7 +36,7 @@ class JKlibJavaSourceConfigurator(testServices: TestServices) : EnvironmentConfi
 
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
         val registeredDirectives = module.directives
-        val jdkKind = JvmEnvironmentConfigurator.extractJdkKind(registeredDirectives)
+        val jdkKind = JvmEnvironmentConfigurator.extractJdkKind(registeredDirectives, default = TestJdkKind.FULL_JDK_17)
         JvmEnvironmentConfigurator.getJdkHome(jdkKind)?.let { configuration.put(JVMConfigurationKeys.JDK_HOME, it) }
 
         when (jdkKind) {
@@ -80,7 +80,6 @@ class JKlibJavaSourceConfigurator(testServices: TestServices) : EnvironmentConfi
                 "${module.name}-java-binaries",
                 extraClasspath = jvmClasspathRoots,
                 assertions = testServices.assertions,
-                useJava11 = true, // Requires jdk.11.home to be set in build.gradle.kts
                 extraJavacOptions = listOf("-parameters") // Preserve parameter names during Java compilation so IR tests match
             )
             configuration.addJvmClasspathRoot(compiledJar)

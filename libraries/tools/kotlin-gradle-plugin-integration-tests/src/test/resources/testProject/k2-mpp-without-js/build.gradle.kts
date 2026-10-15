@@ -1,4 +1,3 @@
-import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
 group = "test"
@@ -37,8 +36,5 @@ kotlin {
 tasks.withType<KotlinCompilationTask<*>>().configureEach {
     compilerOptions {
         freeCompilerArgs.add("-Xrender-internal-diagnostic-names")
-        with(project.providers) {
-            languageVersion.set(KotlinVersion.fromVersion("2.0"))
-        }
     }
 }

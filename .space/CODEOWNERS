@@ -54,7 +54,6 @@
 # USER_OWNER: vsevolod.tolstopyatov@jetbrains.com qwwdfsad
 # USER_OWNER: ilya.gorbunov@jetbrains.com ilya-g
 # USER_OWNER: sergey.shanshin@jetbrains.com shanshin
-# USER_OWNER: leonid.startsev@jetbrains.com sandwwraith
 # USER_OWNER: filipp.zhinkin@jetbrains.com fzhinkin
 # USER_OWNER: dmitry.nekrasov@jetbrains.com DmitryNekrasov
 # USER_OWNER: nikolai.kasyanov@jetbrains.com nikolaykasyanov
@@ -74,7 +73,7 @@
 * "Kotlin"
 
 /.idea/ "Kotlin Build Infrastructure"
-/.idea/kotlinTestDataPluginTestDataPaths.xml dmitriy.novozhilov@jetbrains.com kirill.rakhman@jetbrains.com sergej.jaskiewicz@jetbrains.com
+/.idea/kotlinTestDataPluginTestDataPaths.xml "Kotlin Frontend" sergej.jaskiewicz@jetbrains.com
 
 /.space/ "Kotlin Build Infrastructure"
 /.github/ "Kotlin Build Infrastructure"
@@ -210,7 +209,7 @@
 /compiler/testData/klib/ "Kotlin Common Backend"
 /compiler/testData/loadJava/ "Kotlin Frontend"
 /compiler/testData/loadJavaPackageAnnotations/ "Kotlin Frontend"
-/compiler/testData/reflection/ "Kotlin JVM" vsevolod.tolstopyatov@jetbrains.com leonid.startsev@jetbrains.com filipp.zhinkin@jetbrains.com ilya.gorbunov@jetbrains.com
+/compiler/testData/reflection/ "Kotlin JVM" vsevolod.tolstopyatov@jetbrains.com filipp.zhinkin@jetbrains.com ilya.gorbunov@jetbrains.com
 /compiler/testData/serialization/builtinsSerializer/ "Kotlin Frontend"
 /compiler/testData/serialization/klib/ "Kotlin Common Backend"
 /compiler/testData/writeFlags/ "Kotlin JVM"
@@ -266,15 +265,15 @@
 /core/compiler.common.web/ "Kotlin Frontend" "Kotlin JS" "Kotlin Wasm"
 /core/descriptors/ "Kotlin Frontend"
 /core/descriptors.jvm/ "Kotlin Frontend"
-/core/descriptors.runtime/ vsevolod.tolstopyatov@jetbrains.com leonid.startsev@jetbrains.com filipp.zhinkin@jetbrains.com ilya.gorbunov@jetbrains.com alexander.udalov@jetbrains.com
+/core/descriptors.runtime/ vsevolod.tolstopyatov@jetbrains.com filipp.zhinkin@jetbrains.com ilya.gorbunov@jetbrains.com alexander.udalov@jetbrains.com
 /core/deserialization/ "Kotlin Frontend"
 /core/deserialization.common/ "Kotlin Frontend"
 /core/deserialization.common.jvm/ "Kotlin Frontend"
 /core/metadata/ "Kotlin Frontend"
 /core/metadata.jvm/ "Kotlin JVM"
-/core/reflection.common.jvm/ "Kotlin JVM" vsevolod.tolstopyatov@jetbrains.com leonid.startsev@jetbrains.com filipp.zhinkin@jetbrains.com ilya.gorbunov@jetbrains.com
-/core/reflection.jvm/ vsevolod.tolstopyatov@jetbrains.com leonid.startsev@jetbrains.com filipp.zhinkin@jetbrains.com ilya.gorbunov@jetbrains.com alexander.udalov@jetbrains.com
-/core/reflection.jvm/src/kotlin/reflect/jvm/internal/ "Kotlin JVM" vsevolod.tolstopyatov@jetbrains.com leonid.startsev@jetbrains.com filipp.zhinkin@jetbrains.com ilya.gorbunov@jetbrains.com
+/core/reflection.common.jvm/ "Kotlin JVM" vsevolod.tolstopyatov@jetbrains.com filipp.zhinkin@jetbrains.com ilya.gorbunov@jetbrains.com
+/core/reflection.jvm/ vsevolod.tolstopyatov@jetbrains.com filipp.zhinkin@jetbrains.com ilya.gorbunov@jetbrains.com alexander.udalov@jetbrains.com
+/core/reflection.jvm/src/kotlin/reflect/jvm/internal/ "Kotlin JVM" vsevolod.tolstopyatov@jetbrains.com filipp.zhinkin@jetbrains.com ilya.gorbunov@jetbrains.com
 /core/script.runtime/ "Kotlin Frontend"
 /core/util.runtime/ "Kotlin Frontend"
 
@@ -294,6 +293,7 @@
 # UNKNOWN: /generators/protobufCompare/
 /generators/test-generator/ "Kotlin Compiler"
 /generators/tests/ "Kotlin Compiler"
+/generators/testFixtures/ "Kotlin Compiler"
 /generators/tree-generator-common/ "Kotlin Frontend" "Kotlin Common Backend" sergej.jaskiewicz@jetbrains.com
 /generators/wasm/ "Kotlin Wasm"
 
@@ -324,9 +324,9 @@
 /libraries/examples/kotlin-java-example/ "Kotlin JVM"
 /libraries/examples/scripting/ "Kotlin Frontend"
 /libraries/kotlin.test/ vsevolod.tolstopyatov@jetbrains.com ilya.gorbunov@jetbrains.com filipp.zhinkin@jetbrains.com dmitry.nekrasov@jetbrains.com nikolai.kasyanov@jetbrains.com
-/libraries/kotlinx-metadata/ alexander.udalov@jetbrains.com vsevolod.tolstopyatov@jetbrains.com ilya.gorbunov@jetbrains.com leonid.startsev@jetbrains.com
+/libraries/kotlinx-metadata/ alexander.udalov@jetbrains.com vsevolod.tolstopyatov@jetbrains.com ilya.gorbunov@jetbrains.com filipp.zhinkin@jetbrains.com
 /libraries/lib/ "Kotlin Build Infrastructure"
-/libraries/reflect/ vsevolod.tolstopyatov@jetbrains.com leonid.startsev@jetbrains.com filipp.zhinkin@jetbrains.com ilya.gorbunov@jetbrains.com alexander.udalov@jetbrains.com
+/libraries/reflect/ vsevolod.tolstopyatov@jetbrains.com filipp.zhinkin@jetbrains.com ilya.gorbunov@jetbrains.com alexander.udalov@jetbrains.com
 /libraries/scripting/ "Kotlin Frontend"
 /libraries/stdlib/ vsevolod.tolstopyatov@jetbrains.com ilya.gorbunov@jetbrains.com filipp.zhinkin@jetbrains.com dmitry.nekrasov@jetbrains.com nikolai.kasyanov@jetbrains.com
 /libraries/stdlib/jklib-for-test/ "JKlib" vsevolod.tolstopyatov@jetbrains.com ilya.gorbunov@jetbrains.com filipp.zhinkin@jetbrains.com dmitry.nekrasov@jetbrains.com nikolai.kasyanov@jetbrains.com
@@ -337,9 +337,9 @@
 
 /libraries/tools/abi-comparator "Kotlin JVM"
 /libraries/tools/analysis-api-based-klib-reader/ "Kotlin Native" "Kotlin JS"
-/libraries/tools/atomicfu/ vsevolod.tolstopyatov@jetbrains.com filipp.zhinkin@jetbrains.com leonid.startsev@jetbrains.com
+/libraries/tools/atomicfu/ vsevolod.tolstopyatov@jetbrains.com filipp.zhinkin@jetbrains.com
 /libraries/tools/binary-compatibility-validator/ vsevolod.tolstopyatov@jetbrains.com ilya.gorbunov@jetbrains.com filipp.zhinkin@jetbrains.com dmitry.nekrasov@jetbrains.com nikolai.kasyanov@jetbrains.com
-/libraries/tools/binary-compatibility-validator/reference-public-api/kotlin-reflect.txt vsevolod.tolstopyatov@jetbrains.com ilya.gorbunov@jetbrains.com filipp.zhinkin@jetbrains.com leonid.startsev@jetbrains.com
+/libraries/tools/binary-compatibility-validator/reference-public-api/kotlin-reflect.txt vsevolod.tolstopyatov@jetbrains.com ilya.gorbunov@jetbrains.com filipp.zhinkin@jetbrains.com
 /libraries/tools/abi-validation/ vsevolod.tolstopyatov@jetbrains.com sergey.shanshin@jetbrains.com filipp.zhinkin@jetbrains.com
 /libraries/tools/dukat/ "Kotlin Wasm" "Kotlin JS"
 /libraries/tools/kotlin-documentation-model/ "Dokka"
@@ -347,7 +347,7 @@
 /libraries/kotlin-dom-api-compat/ ilya.goncharov@jetbrains.com stanislav.erokhin@jetbrains.com
 /libraries/tools/kotlin-build-tools-enum-compat/ "Kotlin Build Tools"
 /libraries/tools/gradle/ "Kotlin Build Tools"
-/libraries/tools/jdk-api-validator/ vsevolod.tolstopyatov@jetbrains.com leonid.startsev@jetbrains.com filipp.zhinkin@jetbrains.com ilya.gorbunov@jetbrains.com
+/libraries/tools/jdk-api-validator/ vsevolod.tolstopyatov@jetbrains.com filipp.zhinkin@jetbrains.com ilya.gorbunov@jetbrains.com
 /libraries/tools/klib-abi-reader/ "Kotlin Common Backend"
 /libraries/tools/kotlin-allopen/ "Kotlin Build Tools"
 /libraries/tools/kotlin-annotations-jvm/ vsevolod.tolstopyatov@jetbrains.com ilya.gorbunov@jetbrains.com filipp.zhinkin@jetbrains.com dmitry.nekrasov@jetbrains.com nikolai.kasyanov@jetbrains.com
@@ -402,7 +402,6 @@
 /libraries/tools/kotlin-serialization/ "Kotlin Build Tools"
 /libraries/tools/kotlin-serialization-unshaded/ "Kotlin Build Tools"
 /libraries/tools/kotlin-stdlib-docs/ vsevolod.tolstopyatov@jetbrains.com ilya.gorbunov@jetbrains.com filipp.zhinkin@jetbrains.com dmitry.nekrasov@jetbrains.com nikolai.kasyanov@jetbrains.com
-/libraries/tools/kotlin-stdlib-docs-legacy/ vsevolod.tolstopyatov@jetbrains.com ilya.gorbunov@jetbrains.com filipp.zhinkin@jetbrains.com dmitry.nekrasov@jetbrains.com
 /libraries/tools/kotlin-stdlib-gen/ vsevolod.tolstopyatov@jetbrains.com ilya.gorbunov@jetbrains.com filipp.zhinkin@jetbrains.com dmitry.nekrasov@jetbrains.com nikolai.kasyanov@jetbrains.com
 /libraries/tools/kotlin-tooling-core/ "Kotlin Build Tools"
 /libraries/tools/kotlin-tooling-metadata/ "Kotlin Build Tools"
@@ -448,7 +447,7 @@
 /plugins/plugin-sandbox/ "Kotlin Frontend"
 /plugins/jvm-abi-gen/ "Kotlin JVM"
 /plugins/kapt/ "Kotlin JVM"
-/plugins/kotlinx-serialization/ sergey.shanshin@jetbrains.com leonid.startsev@jetbrains.com
+/plugins/kotlinx-serialization/ sergey.shanshin@jetbrains.com filipp.zhinkin@jetbrains.com
 /plugins/js-plain-objects/ "Kotlin JS"
 /libraries/tools/js-plain-objects "Kotlin JS"
 /plugins/lombok/ "Kotlin Frontend"
@@ -465,6 +464,7 @@
 /prepare/analysis-api/ "Kotlin Analysis API"
 
 /repo/ "Kotlin Build Infrastructure" sebastian.sellmair@jetbrains.com
+/repo/artifacts-tests/src/test/resources/org/jetbrains/kotlin/kotlin-analysis-api*/ "Kotlin Analysis API"
 /repo/auto-code-review svyatoslav.scherbina@jetbrains.com sergey.bogolepov@jetbrains.com simon.ogorodnik@jetbrains.com
 /repo/gradle-build-conventions/kgp-npm-tooling-helper "Kotlin Build Tools"
 /repo/gradle-build-conventions/file-leak-detector-downloader "Kotlin Build Tools"
@@ -500,7 +500,7 @@
 /code-rules.md "Kotlin"
 
 # Diagnostic Messages
-/compiler/fir/checkers/src/org/jetbrains/kotlin/fir/analysis/diagnostics/FirErrorsDefaultMessages.kt alejandro.serrano.mena@jetbrains.com brian.norman@jetbrains.com ilya.chernikov@jetbrains.com kirill.rakhman@jetbrains.com
+/compiler/fir/checkers/checkers.common/src/org/jetbrains/kotlin/fir/analysis/diagnostics/FirErrorsDefaultMessages.kt alejandro.serrano.mena@jetbrains.com brian.norman@jetbrains.com ilya.chernikov@jetbrains.com kirill.rakhman@jetbrains.com
 /compiler/fir/checkers/checkers.jvm/src/org/jetbrains/kotlin/fir/analysis/diagnostics/jvm/FirJvmErrorsDefaultMessages.kt alejandro.serrano.mena@jetbrains.com brian.norman@jetbrains.com ilya.chernikov@jetbrains.com kirill.rakhman@jetbrains.com
 /compiler/fir/checkers/checkers.native/src/org/jetbrains/kotlin/fir/analysis/diagnostics/native/FirNativeErrorsDefaultMessages.kt alejandro.serrano.mena@jetbrains.com brian.norman@jetbrains.com ilya.chernikov@jetbrains.com kirill.rakhman@jetbrains.com
 /compiler/fir/checkers/checkers.wasm/src/org/jetbrains/kotlin/fir/analysis/diagnostics/wasm/FirWasmErrorsDefaultMessages.kt alejandro.serrano.mena@jetbrains.com brian.norman@jetbrains.com ilya.chernikov@jetbrains.com kirill.rakhman@jetbrains.com

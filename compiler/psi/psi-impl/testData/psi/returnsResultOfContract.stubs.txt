@@ -5,7 +5,7 @@ FILE[kind=File[packageFqName=<root>]]
       DOT_QUALIFIED_EXPRESSION
         REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=contracts]
-  CLASS[classId=/Outer, fqName=Outer, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Outer, superNames=[]]
+  CLASS[classId=/Outer, fqName=Outer, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Outer, superNames=[]]
     CLASS_BODY
       FUNCTION[fqName=Outer.myLet, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=true, isTopLevel=false, mayHaveContract=true, name=myLet]
         MODIFIER_LIST[inline]

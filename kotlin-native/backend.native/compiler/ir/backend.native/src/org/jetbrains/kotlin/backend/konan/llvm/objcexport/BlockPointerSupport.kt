@@ -322,7 +322,7 @@ internal class BlockGenerator(private val codegen: CodeGenerator) {
                 ret(llvm.kNull)
             }
 
-            val isa = codegen.importObjCGlobal("_NSConcreteStackBlock", llvm.pointerType)
+            val isa = codegen.importGlobal("_NSConcreteStackBlock", llvm.pointerType)
 
             val flags = llvm.int32((1 shl 25) or (1 shl 30) or (1 shl 31))
             val reserved = llvm.int32(0)

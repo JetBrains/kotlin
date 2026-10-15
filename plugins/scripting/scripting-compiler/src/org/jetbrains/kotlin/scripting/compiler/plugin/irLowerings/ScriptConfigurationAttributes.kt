@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrReplSnippet
 import org.jetbrains.kotlin.ir.declarations.IrScript
 import org.jetbrains.kotlin.ir.irAttribute
+import org.jetbrains.kotlin.ir.symbols.IrReplSnippetSymbol
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
@@ -24,3 +25,5 @@ var IrClass.scriptResultFieldDataAttr: ScriptResultFieldData? by irAttribute(cop
 var IrScript.scriptCompilationConfiguration: ScriptCompilationConfiguration? by irAttribute(copyByDefault = true)
 
 var IrReplSnippet.replSnippetArtifactMetadataAttr: ByteArray? by irAttribute(copyByDefault = false)
+
+var IrReplSnippet.importedSnippetsAttr: List<IrReplSnippetSymbol>? by irAttribute(copyByDefault = false)

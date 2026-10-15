@@ -1,0 +1,22 @@
+// IntelliJ API Decompiler stub source generated from a class file
+// Implementation of methods is not available
+
+package test
+
+public var counter: kotlin.Int /* compiled code */
+
+public fun postfixDecrement(): kotlin.Int { /* compiled code */ }
+
+public fun prefixDecrement(): kotlin.Int { /* compiled code */ }
+
+public fun greater(a: kotlin.Int, b: kotlin.Int): kotlin.Boolean { /* compiled code */ }
+
+public fun lessOrEqual(a: kotlin.Int, b: kotlin.Int): kotlin.Boolean { /* compiled code */ }
+
+public fun notIdentical(a: kotlin.Any, b: kotlin.Any): kotlin.Boolean { /* compiled code */ }
+
+public fun contains(a: kotlin.Int, range: kotlin.ranges.IntRange): kotlin.Boolean { /* compiled code */ }
+
+public infix fun kotlin.Int.`in`(other: kotlin.Int): kotlin.Int { /* compiled code */ }
+
+public fun backtickedInfixCall(a: kotlin.Int, b: kotlin.Int): kotlin.Int { /* compiled code */ }

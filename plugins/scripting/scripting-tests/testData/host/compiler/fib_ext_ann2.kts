@@ -3,6 +3,8 @@
 
 @file:DependsOnTwo(path2 = "@{kotlin-stdlib}")
 
+import org.jetbrains.kotlin.scripting.compiler.test.DependsOnTwo
+
 fun fib(n: Int): Int {
     val v = if(n < 2) 1 else fib(n-1) + fib(n-2)
     println("fib($n)=$v")

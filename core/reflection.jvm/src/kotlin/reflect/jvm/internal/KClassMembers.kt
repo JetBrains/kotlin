@@ -17,7 +17,9 @@ import org.jetbrains.kotlin.load.java.getPropertyNamesCandidatesByAccessorName
 import org.jetbrains.kotlin.load.kotlin.SignatureBuildingComponents
 import org.jetbrains.kotlin.load.kotlin.internalName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 import kotlin.jvm.internal.CallableReference.NO_RECEIVER
@@ -63,7 +65,13 @@ private fun KClassImpl<*>.collectDeclaredMemberNamesTransitively(result: Mutable
 
 internal fun KClassImpl<*>.computeDeclaredMembersByName(name: String): Collection<ReflectKCallable<*>> = buildList {
     val kClass = this@computeDeclaredMembersByName
-    if (useK1Implementation || isComplicatedBuiltinSubclass || (useK1ImplementationForMembers && kmClass != null)) {
+    // TODO: This is a temporary workaround for KT-89979.
+    //  Otherwise, `Array::class.members` fails with `java.lang.ClassNotFoundException: kotlin.Array`.
+    //  This explicit check hides that particular case. Direct usages of `Array::of`, `List::of` etc.
+    //  are still broken.
+    val isOperatorOfInArray = classId == StandardClassIds.Array && name == OperatorNameConventions.OF.asString()
+    if (isOperatorOfInArray) return@buildList
+    if (useK1Implementation || isComplicatedBuiltinSubclass) {
         addAll(getDescriptorBasedFunctions(memberScope, DECLARED, name))
         addAll(getDescriptorBasedProperties(memberScope, DECLARED, name))
         addAll(getDescriptorBasedFunctions(staticScope, DECLARED, name))
@@ -90,9 +98,6 @@ internal fun KClassImpl<*>.computeDeclaredMembersByName(name: String): Collectio
         data.value.additionalFunctions.filterTo(this) { it.name == name }
     } else {
         getDeclaredNonStaticMethodsFromJavaClass(name).filterTo(this) { isVisibleAsFunctionInCurrentClass(it) }
-        if (useK1ImplementationForMembers) {
-            addAll(getDescriptorBasedProperties(memberScope, DECLARED, name))
-        }
         for (method in jClass.declaredMethods) {
             if (method.name == name && Modifier.isStatic(method.modifiers) && !method.isSynthetic) {
                 add(JavaKNamedFunction(kClass, method, NO_RECEIVER, KCallableOverriddenStorage.EMPTY))
@@ -101,7 +106,6 @@ internal fun KClassImpl<*>.computeDeclaredMembersByName(name: String): Collectio
 
         for (field in jClass.declaredFields) {
             if (field.isEnumConstant || field.isSynthetic || field.name != name) continue
-            if (useK1ImplementationForMembers && !Modifier.isStatic(field.modifiers)) continue
             when {
                 Modifier.isStatic(field.modifiers) -> when {
                     Modifier.isFinal(field.modifiers) ->
@@ -118,18 +122,16 @@ internal fun KClassImpl<*>.computeDeclaredMembersByName(name: String): Collectio
             }
         }
 
-        if (!useK1ImplementationForMembers) {
-            val propertiesFromSupertypes = getPropertiesFromSupertypes(name)
-            if (propertiesFromSupertypes.isNotEmpty()) {
-                val handledProperties = hashSetOf<KProperty1<*, *>>()
-                addPropertyOverrideByMethod(propertiesFromSupertypes, this, handledProperties) {
-                    getDeclaredNonStaticMethodsFromJavaClass(it)
-                }
-                // K1 also had logic about properties in supertypes, see `LazyJavaClassMemberScope.computeNonDeclaredProperties`.
-                // However, the only test where it can be observed
-                // `compiler/testData/ir/irText/firProblems/TypeParameterInClashingAccessor.kt` never worked in K1 reflection because of
-                // other problems: KT-81029.
+        val propertiesFromSupertypes = getPropertiesFromSupertypes(name)
+        if (propertiesFromSupertypes.isNotEmpty()) {
+            val handledProperties = hashSetOf<KProperty1<*, *>>()
+            addPropertyOverrideByMethod(propertiesFromSupertypes, this, handledProperties) {
+                getDeclaredNonStaticMethodsFromJavaClass(it)
             }
+            // K1 also had logic about properties in supertypes, see `LazyJavaClassMemberScope.computeNonDeclaredProperties`.
+            // However, the only test where it can be observed
+            // `compiler/testData/ir/irText/firProblems/TypeParameterInClashingAccessor.kt` never worked in K1 reflection because of
+            // other problems: KT-81029.
         }
 
         if (jClass.isEnum && name == ENUM_ENTRIES_PROPERTY_NAME) {
@@ -137,7 +139,7 @@ internal fun KClassImpl<*>.computeDeclaredMembersByName(name: String): Collectio
             add(JavaEnumEntriesKProperty(kClass as KClassImpl<out Enum<*>>))
         }
 
-        if (jClass.isAnnotation && !useK1ImplementationForMembers) {
+        if (jClass.isAnnotation) {
             for (method in jClass.declaredMethods) {
                 if (method.name == name && !method.isSynthetic) {
                     add(JavaAnnotationMethodKProperty1<Any?, Any?>(kClass, method, NO_RECEIVER, KCallableOverriddenStorage.EMPTY))

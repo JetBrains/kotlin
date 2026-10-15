@@ -41,7 +41,6 @@ publish()
 runtimeJar()
 sourcesJar()
 javadocJar()
-testsJar()
 
 projectTests {
     testData(project.isolated, "testData")
@@ -49,7 +48,6 @@ projectTests {
     testGenerator("org.jetbrains.kotlin.assignment.plugin.TestGeneratorKt", generateTestsInBuildDirectory = true)
 
     withJvmStdlibAndReflect()
-    withScriptRuntime()
     withMockJdkRuntime()
     withMockJdkAnnotationsJar()
     withTestJar()

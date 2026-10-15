@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.internal.GradleInternal
 import org.gradle.api.logging.LogLevel
+import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.internal.operations.BuildOperationListener
 import org.gradle.internal.operations.BuildOperationListenerManager
 import org.gradle.internal.operations.DefaultBuildOperationListenerManager
@@ -174,7 +175,7 @@ class BuildReportsIT : KGPBaseTest() {
         project: String,
         task: String,
         gradleVersion: GradleVersion,
-        languageVersion: String = KotlinVersion.KOTLIN_2_0.version,
+        languageVersion: String = KotlinVersion.DEFAULT.version, // FIXME(KT-69597): Previously hardcoded to language version 2.0.
         disableIsolatedProjects: Boolean = false,
         freeCompilerArgs: List<String> = listOf(),
         expectedReportLines: List<String> = listOf(),
@@ -389,7 +390,7 @@ class BuildReportsIT : KGPBaseTest() {
         fun validateSnapshotSizeMetric() {
             // traverse only the `build` directory files, because Gradle also contains a file with the name `last-build.bin`
             val actualSnapshotSize = Files.walk(projectPath.resolve("build")).use { files ->
-                val knownSnapshotFiles = setOf("last-build.bin", "build-history.bin", "abi-snapshot.bin")
+                val knownSnapshotFiles = setOf("last-build.bin", "build-history.bin")
                 files.asSequence().filter { Files.isRegularFile(it) && it.name in knownSnapshotFiles }.map { Files.size(it) }.sum()
             }
             // the first found line of the report should contain a sum of the metric per all the tasks
@@ -641,6 +642,7 @@ class BuildReportsIT : KGPBaseTest() {
         project(
             projectName = "simpleProject",
             gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.copy(warningMode = WarningMode.Fail),
         ) {
 
             val lookupsTab = projectPath.resolve("build/kotlin/compileKotlin/cacheable/caches-jvm/lookups/lookups.tab")
@@ -721,6 +723,7 @@ class BuildReportsIT : KGPBaseTest() {
         project(
             projectName = "simpleProject",
             gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.copy(warningMode = WarningMode.Fail),
         ) {
             val kotlinErrorPath = projectPersistentCache.resolve("errors")
             val gradleErrorPath = projectPath.resolve(".gradle/kotlin/errors")

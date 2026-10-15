@@ -25,6 +25,7 @@ import java.io.File
 fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArguments) {
     put(JVMConfigurationKeys.INCLUDE_RUNTIME, arguments.includeRuntime)
     put(JVMConfigurationKeys.NO_REFLECT, arguments.noReflect)
+    put(JVMConfigurationKeys.NO_STDLIB, arguments.noStdlib)
 
     putIfNotNull(JVMConfigurationKeys.FRIEND_PATHS, arguments.friendPaths?.asList())
 
@@ -92,10 +93,10 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
 
     val jvmTarget = get(JVMConfigurationKeys.JVM_TARGET) ?: JvmTarget.DEFAULT
 
-    if (arguments.valhallaValueClasses && (jvmTarget.majorVersion < JvmTarget.JVM_27.majorVersion || !arguments.enableJvmPreview)) {
+    if (arguments.valhallaValueClasses && !isJvmTargetValhallaCompatible(jvmTarget, arguments.enableJvmPreview)) {
         this.report(
             COMPILER_ARGUMENTS_ERROR,
-            "Valhalla value classes ('-Xvalhalla-value-classes') require JVM target 27 or later and the '-Xjvm-enable-preview' flag."
+            "Valhalla value classes ('-Xvalhalla-value-classes') require JVM target 28 or later and the '-Xjvm-enable-preview' flag."
         )
     }
 
@@ -223,7 +224,6 @@ fun CompilerConfiguration.configureStandardLibs(paths: KotlinPaths?, arguments: 
     configureStandardLibs(
         paths,
         KotlinPaths::stdlibPath,
-        KotlinPaths::scriptRuntimePath,
         KotlinPaths::reflectPath,
         arguments
     )
@@ -232,7 +232,6 @@ fun CompilerConfiguration.configureStandardLibs(paths: KotlinPaths?, arguments: 
 fun <PathProvider : Any> CompilerConfiguration.configureStandardLibs(
     paths: PathProvider?,
     stdlibPath: (PathProvider) -> File,
-    scriptRuntimePath: (PathProvider) -> File,
     reflectPath: (PathProvider) -> File,
     arguments: K2JVMCompilerArguments,
 ) {
@@ -248,7 +247,6 @@ fun <PathProvider : Any> CompilerConfiguration.configureStandardLibs(
 
     if (!arguments.noStdlib) {
         addRoot("kotlin.stdlib", PathUtil.KOTLIN_JAVA_STDLIB_JAR, stdlibPath, "'-no-stdlib'")
-        addRoot("kotlin.script.runtime", PathUtil.KOTLIN_JAVA_SCRIPT_RUNTIME_JAR, scriptRuntimePath, "'-no-stdlib'")
     }
     // "-no-stdlib" implies "-no-reflect": otherwise we would be able to transitively read stdlib classes through kotlin-reflect,
     // which is likely not what user wants since s/he manually provided "-no-stdlib"

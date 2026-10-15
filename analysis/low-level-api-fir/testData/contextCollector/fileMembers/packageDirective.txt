@@ -1,0 +1,41 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+FILE: [ResolvedTo(IMPORTS)] packageDirective.kt
+    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] constructor([ResolvedTo(RAW_FIR)] value: Int): R|test/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] get(): Int
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val CONSTANT: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final? [ResolvedTo(RAW_FIR)] class AfterClass : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] constructor(): R|test/AfterClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] val memberProperty: Int = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] fun memberFunction(): Int { LAZY_BLOCK }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] fun afterFunction(): Int { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] val afterProperty: Int = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): Int
+    public final [ResolvedTo(RAW_FIR)] typealias AfterAlias = AfterClass

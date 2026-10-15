@@ -124,10 +124,9 @@ private fun getDefaultImportsForScripting(session: FirSession, file: FirFile): P
                 it.getScriptDefaultImports(scriptOrSnippet).orEmpty()
             }.transformImports()
         is FirReplSnippet ->
-            session.replSnippetResolveExtension
-                ?.getSnippetDefaultImports(file.sourceFile!!, scriptOrSnippet)
-                .orEmpty()
-                .transformImports()
+            (session.extensionService.firScriptResolutionConfigurators.flatMap {
+                it.getSnippetDefaultImports(scriptOrSnippet).orEmpty()
+            } + session.replSnippetResolveExtension?.getSnippetHistoryImports(scriptOrSnippet).orEmpty()).transformImports()
         else -> null
     }
 }

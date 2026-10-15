@@ -14,21 +14,21 @@ private typealias ListOfFragmentParts = List<FragmentPartContents>
 private typealias MapOfFragmentParts = Map<String, FragmentPartContents>
 
 class SerializedMetadataLibraryProvider(
-    override val moduleHeaderData: ByteArray,
-    fragments: List<ListOfFragmentParts>,
-    fragmentNames: List<String>,
-    override val metadataVersion: KlibMetadataVersion,
+    serializedMetadata: SerializedMetadata
 ) : KlibModuleMetadata.MetadataLibraryProvider {
+    override val moduleHeaderData = serializedMetadata.module ?: error("No metadata header data found")
+    override val metadataVersion: KlibMetadataVersion = KlibMetadataVersion(serializedMetadata.metadataVersion)
+
     private val fragmentMap: Map<String, MapOfFragmentParts>
 
     init {
-        check(fragments.size == fragmentNames.size)
+        check(serializedMetadata.fragments.size == serializedMetadata.fragmentNames.size)
 
-        fragmentMap = fragmentNames.mapIndexed { fragmentIndex, fragmentName ->
+        fragmentMap = serializedMetadata.fragmentNames.mapIndexed { fragmentIndex, fragmentName ->
             // fragmentName is package FQ name, fragmentShortName is right-most part of package FQ name
             val fragmentShortName = fragmentName.substringAfterLast('.')
 
-            val fragmentParts: ListOfFragmentParts = fragments[fragmentIndex]
+            val fragmentParts: ListOfFragmentParts = serializedMetadata.fragments[fragmentIndex]
             val digitCount = fragmentParts.size.toString().length
 
             // N.B. the same fragment part numbering scheme as in org.jetbrains.kotlin.library.impl.MetadataWriterImpl
@@ -40,13 +40,6 @@ class SerializedMetadataLibraryProvider(
             fragmentName to fragmentPartMap
         }.toMap()
     }
-
-    constructor(serializedMetadata: SerializedMetadata) : this(
-        serializedMetadata.module,
-        serializedMetadata.fragments,
-        serializedMetadata.fragmentNames,
-        KlibMetadataVersion(serializedMetadata.metadataVersion),
-    )
 
     override fun packageMetadataParts(fqName: String): Set<String> {
         return fragmentMap.getValue(fqName).keys

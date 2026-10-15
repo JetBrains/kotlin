@@ -29,7 +29,7 @@ public class PathManager {
     }
 
     public String getAndroidAvdRoot() {
-        String androidEmulatorRoot = getAndroidSdkRoot() + "/compiler_box_test_avd";
+        String androidEmulatorRoot = tmpFolder + "/compiler_box_test_avd";
         new File(androidEmulatorRoot).mkdirs();
         return androidEmulatorRoot;
     }

@@ -50,8 +50,16 @@ class KtObjectDeclaration : KtClassOrObject {
         return null
     }
 
-    @OptIn(KtNonPublicApi::class)
-    override fun setName(@NonNls name: String): PsiElement = KtPsiMutationService.getInstance().setObjectDeclarationName(this, name)
+    override fun setName(@NonNls name: String): PsiElement {
+        KtPsiMutationService.getInstanceOrNull()?.let { return it.setObjectDeclarationName(this, name) }
+        if (nameIdentifier != null) return super.setName(name)
+
+        val psiFactory = KtPsiFactory(project)
+        val objectKeyword = getObjectKeyword()!!
+        val result = addAfter(psiFactory.createIdentifier(name), objectKeyword)
+        addAfter(psiFactory.createWhiteSpace(), objectKeyword)
+        return result
+    }
 
     /**
      * Returns `true` if this is a companion object (declared with the `companion` modifier).

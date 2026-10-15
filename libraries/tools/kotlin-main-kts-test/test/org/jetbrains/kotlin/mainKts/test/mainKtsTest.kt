@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Test
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
+import java.security.MessageDigest
 import java.util.*
 import kotlin.io.path.createTempDirectory
 import kotlin.script.experimental.api.*
@@ -264,6 +265,24 @@ class MainKtsTest {
     }
 
     @Test
+    fun testCacheInvalidationOnImportedScriptChange() {
+        assertCacheInvalidatedAfterEdit(
+            "cache.invalidation.imported.main.kts",
+            "@file:Import(\"cache.invalidation.kts\")\n\nprintln(\"from cache.invalidation.imported.main.kts version 2\")\n",
+            listOf("from cache.invalidation.imported.kts version 1", "from cache.invalidation.imported.main.kts version 2")
+        )
+    }
+
+    @Test
+    fun testCacheInvalidationOnTransitiveImportChange() {
+        assertCacheInvalidatedAfterEdit(
+            "cache.invalidation.kts",
+            "println(\"from cache.invalidation.imported.kts version 2\")\n",
+            listOf("from cache.invalidation.imported.kts version 2", "from cache.invalidation.imported.main.kts version 1")
+        )
+    }
+
+    @Test
     fun testCompilerOptions() {
         val out = captureOut {
             val res = evalFile(File("$TEST_DATA_ROOT/compiler-options.main.kts"))
@@ -417,6 +436,42 @@ class MainKtsTest {
                     (if (res is ResultWithDiagnostics.Failure) "failure" else "success") +
                     ":\n  ${reports.joinToString("\n  ")}"
         )
+    }
+
+    private fun evalSuccessWithOut(scriptFile: File, cacheDir: File? = null): List<String> =
+        captureOut {
+            val res = evalFile(scriptFile, cacheDir)
+            assertSucceeded(res)
+        }.lines()
+
+    private fun assertCacheInvalidatedAfterEdit(fileToEdit: String, newText: String, expectedOutput: List<String>) {
+        val tempDir = createTempDirectory("main-kts-cache-test").toFile()
+        val cacheDir = createTempDirectory("main-kts-cache").toFile()
+        try {
+            listOf("cache.invalidation.main.kts", "cache.invalidation.imported.main.kts", "cache.invalidation.kts")
+                .forEach { File("$TEST_DATA_ROOT/$it").copyTo(File(tempDir, it)) }
+            val mainScript = File(tempDir, "cache.invalidation.main.kts")
+
+            assertEquals(
+                listOf("from cache.invalidation.imported.kts version 1", "from cache.invalidation.imported.main.kts version 1"),
+                evalSuccessWithOut(mainScript, cacheDir)
+            )
+            val cachedJar = cacheDir.listFiles()!!.single { it.extension == "jar" }
+            val checksum = MessageDigest.getInstance("SHA-256").digest(cachedJar.readBytes())
+
+            File(tempDir, fileToEdit).writeText(newText)
+
+            assertEquals(expectedOutput, evalSuccessWithOut(mainScript, cacheDir))
+            assertEquals(listOf(cachedJar), cacheDir.listFiles()!!.filter { it.extension == "jar" })
+            assertTrue(cachedJar.isFile)
+            assertTrue(
+                !checksum.contentEquals(MessageDigest.getInstance("SHA-256").digest(cachedJar.readBytes())),
+                "The cached jar should change after an imported script is edited"
+            )
+        } finally {
+            tempDir.deleteRecursively()
+            cacheDir.deleteRecursively()
+        }
     }
 
     private val regexNonWord = "\\W".toRegex()

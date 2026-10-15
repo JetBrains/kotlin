@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.test.frontend.fir.handlers
 
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.isItAllowedToCallLazyResolveTo
 import org.jetbrains.kotlin.fir.declarations.resolvePhase
 import org.jetbrains.kotlin.fir.symbols.FirLazyDeclarationResolver
@@ -30,6 +32,18 @@ class FirCompilerLazyDeclarationResolverWithPhaseChecking : FirLazyDeclarationRe
 
     override fun lazyResolveToPhaseWithCallableMembers(clazz: FirClass, toPhase: FirResolvePhase) {
         checkIfCanLazyResolveToPhase(toPhase, clazz.resolvePhase)
+    }
+
+    override fun lazyResolveToPhaseWithCallableMembersInSupertypes(clazz: FirClass, useSiteSession: FirSession, toPhase: FirResolvePhase) {
+        checkIfCanLazyResolveToPhase(toPhase, clazz.resolvePhase)
+    }
+
+    override fun lazyResolveBoundsToPhaseWithCallableMembersInSupertypes(
+        typeParameter: FirTypeParameter,
+        useSiteSession: FirSession,
+        toPhase: FirResolvePhase,
+    ) {
+        checkIfCanLazyResolveToPhase(toPhase, typeParameter.resolvePhase)
     }
 
     override fun lazyResolveToPhaseRecursively(element: FirElementWithResolveState, toPhase: FirResolvePhase) {

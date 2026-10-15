@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.artifacts.publishedMetadataCompilations
 import org.jetbrains.kotlin.gradle.dsl.metadataTarget
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
+import org.jetbrains.kotlin.gradle.plugin.MultiplatformPluginApplicationCountService
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.await
@@ -49,8 +50,17 @@ internal abstract class KmpPartiallyResolvedDependenciesCheckerProjectsEvaluated
 
 
 internal object KmpPartiallyResolvedDependenciesChecker : KotlinGradleProjectChecker {
+    /**
+     * KT-89900: To implement this diagnostic it is necessary to resolve some configuration eagerly which leads to performance degradations in
+     * large projects (e.g. KT-80117, KT-89574). As a mitigation, until we have a better implementation, we heuristically disable this
+     * diagnostic in a project with > [MAX_KMP_PROJECTS] multiplatform applications (we also assume this diagnostic is most helpful
+     * for KMP newcomers).
+     */
+    internal const val MAX_KMP_PROJECTS = 20
+
     override suspend fun KotlinGradleProjectCheckerContext.runChecks(collector: KotlinToolingDiagnosticsCollector) {
         if (!project.isPartiallyResolvedDependenciesCheckerEnabled) return
+        val pluginApplicationCount = MultiplatformPluginApplicationCountService.getInstance(project)
         /**
          * If we are in a composite build, do all resolutions in a provider instead. This is not great because we can't guarantee that some
          * property will not try to serialize/compute task graph and fail with a resolution error.
@@ -80,7 +90,9 @@ internal object KmpPartiallyResolvedDependenciesChecker : KotlinGradleProjectChe
                         }
                     }.getOrThrow()
                 }.getOrNull() ?: return@configure
-                val validate = {
+                val validate = validate@{
+                    if (pluginApplicationCount.count > MAX_KMP_PROJECTS) return@validate
+
                     metadataTransformations.forEach { transformationParameters ->
                         validateNoTargetPlatformsResolvedPartially(
                             collector,
@@ -119,7 +131,9 @@ internal object KmpPartiallyResolvedDependenciesChecker : KotlinGradleProjectChe
                 if (isAndroidPluginApplied) {
                     return@configureEach
                 }
-                val validate = {
+                val validate = validate@{
+                    if (pluginApplicationCount.count > MAX_KMP_PROJECTS) return@validate
+
                     validateNoTargetPlatformsResolvedPartially(
                         collector,
                         diagnosticsContext,

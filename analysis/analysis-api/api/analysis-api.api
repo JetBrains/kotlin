@@ -35,6 +35,9 @@ public final class org/jetbrains/kotlin/analysis/api/KaSessionKt {
 	public static final fun getModule (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lcom/intellij/psi/PsiElement;)Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;
 }
 
+public abstract interface annotation class org/jetbrains/kotlin/analysis/api/KaSpi : java/lang/annotation/Annotation {
+}
+
 public abstract interface annotation class org/jetbrains/kotlin/analysis/api/KaSpiExtensionPoint : java/lang/annotation/Annotation {
 }
 
@@ -585,6 +588,7 @@ public final class org/jetbrains/kotlin/analysis/api/expressions/ExpressionTypes
 	public static final fun getExpectedType (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lcom/intellij/psi/PsiElement;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
 	public static final fun getExpressionType (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/psi/KtExpression;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
 	public static final fun getFunctionType (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/psi/KtFunction;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
+	public static final fun getReturnType (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/psi/KtDeclarationWithReturnType;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
 	public static final fun isDefinitelyNotNull (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/psi/KtExpression;)Z
 	public static final fun isDefinitelyNull (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/psi/KtExpression;)Z
 }
@@ -1310,6 +1314,7 @@ public final class org/jetbrains/kotlin/analysis/api/symbols/KaSymbolOrigin : ja
 	public static final field DELEGATED Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolOrigin;
 	public static final field INTERSECTION_OVERRIDE Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolOrigin;
 	public static final field JAVA_LIBRARY Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolOrigin;
+	public static final field JAVA_PLUGIN Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolOrigin;
 	public static final field JAVA_SOURCE Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolOrigin;
 	public static final field JAVA_SYNTHETIC_PROPERTY Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolOrigin;
 	public static final field JS_DYNAMIC Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolOrigin;
@@ -1323,6 +1328,7 @@ public final class org/jetbrains/kotlin/analysis/api/symbols/KaSymbolOrigin : ja
 	public static final field SUBSTITUTION_OVERRIDE Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolOrigin;
 	public static final field TYPEALIASED_CONSTRUCTOR Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolOrigin;
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public final fun isFromJava ()Z
 	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolOrigin;
 	public static fun values ()[Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolOrigin;
 }

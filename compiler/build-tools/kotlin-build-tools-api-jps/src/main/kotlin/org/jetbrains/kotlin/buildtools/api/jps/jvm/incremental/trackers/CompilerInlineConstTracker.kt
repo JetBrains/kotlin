@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.buildtools.api.jps.jvm.incremental.trackers
 
 import org.jetbrains.kotlin.buildtools.api.jps.InternalBuildToolsApi
+import java.nio.file.Path
 
 /**
  * A tracker that will be informed whenever the compiler copies the value of a Java constant into the code it
@@ -28,5 +29,5 @@ public interface CompilerInlineConstTracker {
      * @param constType the Kotlin type of the constant: one of `Byte`, `Short`, `Int`, `Long`, `Float`,
      *   `Double`, `Boolean`, `Char` or `String`
      */
-    public fun report(filePath: String, owner: String, name: String, constType: String)
+    public fun report(filePath: Path, owner: String, name: String, constType: String)
 }

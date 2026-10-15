@@ -99,18 +99,14 @@ object FirAdaptiveTypeRenderingKey : RenderingContext.Key<Map<ConeKotlinType, St
 
             if (isClassLike) {
                 if (isAmbiguous) {
-                    append('\'')
-                    append(if (classId.packageFqName.isRoot) "<root>" else classId.packageFqName.asString())
-                    append('\'')
+                    appendSafe(if (classId.packageFqName.isRoot) "<root>" else classId.packageFqName.asString())
                     append(".")
                 }
 
                 val symbol = toSymbol(session) ?: return null
                 appendClassLikeTemplate(symbol)
             } else {
-                append('\'')
-                append(representation)
-                append('\'')
+                appendSafe(representation)
             }
 
             if (!isClassLike && !isError && isAmbiguous) {
@@ -131,9 +127,9 @@ object FirAdaptiveTypeRenderingKey : RenderingContext.Key<Map<ConeKotlinType, St
                     ?: (this@toFinalRepresentation as? ConeTypeParameterLookupTag)?.typeParameterSymbol
 
             if (typeParameterSymbol != null) {
-                append(" (of '")
-                append(FirDiagnosticRenderers.TYPE_PARAMETER_OWNER_SYMBOL.render(typeParameterSymbol.containingDeclarationSymbol))
-                append("')")
+                append(" (of ")
+                appendSafe(FirDiagnosticRenderers.TYPE_PARAMETER_OWNER_SYMBOL.render(typeParameterSymbol.containingDeclarationSymbol))
+                append(")")
             }
         }
     }
@@ -173,9 +169,7 @@ object FirAdaptiveTypeRenderingKey : RenderingContext.Key<Map<ConeKotlinType, St
         }
 
         for ((symbol, genericsStartingIndex, typeArgumentCount) in stack.asReversed()) {
-            append('\'')
-            append(symbol.classId.shortClassName)
-            append('\'')
+            appendSafe(symbol.classId.shortClassName.toString())
             if (typeArgumentCount != 0) {
                 append("<")
                 for (i in 0..<typeArgumentCount) {
@@ -189,6 +183,12 @@ object FirAdaptiveTypeRenderingKey : RenderingContext.Key<Map<ConeKotlinType, St
                 append(".")
             }
         }
+    }
+
+    private fun StringBuilder.appendSafe(obj: String) {
+        append('\'')
+        append(obj.replace("'", "''"))
+        append('\'')
     }
 
     private fun TypeConstructorMarker.delegatedConstructorOrSelf(): TypeConstructorMarker {

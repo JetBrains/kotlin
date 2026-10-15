@@ -11,6 +11,11 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.int
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
+import org.gradle.api.internal.component.SoftwareComponentInternal
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.KotlinPublicationFormat
+import org.jetbrains.kotlin.gradle.plugin.mpp.archive.KarLayout
+import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SWIFT_EXPORT_METADATA_ELEMENTS_NAME
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SWIFT_EXPORT_METADATA_SCHEMA_VERSION
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.deserializeSwiftExportMetadata
@@ -28,6 +33,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
+import kotlin.test.assertTrue
 
 /**
  * None of these tests need a macOS host: publishing depends on the project having an Apple target, which
@@ -91,8 +97,8 @@ class SwiftExportMetadataPublishingUnitTests {
         )
 
         assertNotNull(
-            project.configurations.findByName(SWIFT_EXPORT_METADATA_ELEMENTS),
-            "$SWIFT_EXPORT_METADATA_ELEMENTS configuration should be created when the metadata task is registered"
+            project.configurations.findByName(SWIFT_EXPORT_METADATA_ELEMENTS_NAME),
+            "$SWIFT_EXPORT_METADATA_ELEMENTS_NAME configuration should be created when the metadata task is registered"
         )
 
         val serializeTask = project.tasks.withType(SerializeSwiftExportMetadata::class.java).single()
@@ -127,8 +133,8 @@ class SwiftExportMetadataPublishingUnitTests {
         }
 
         assertNotNull(
-            project.configurations.findByName(SWIFT_EXPORT_METADATA_ELEMENTS),
-            "$SWIFT_EXPORT_METADATA_ELEMENTS configuration should be created when the export DSL configures moduleName"
+            project.configurations.findByName(SWIFT_EXPORT_METADATA_ELEMENTS_NAME),
+            "$SWIFT_EXPORT_METADATA_ELEMENTS_NAME configuration should be created when the export DSL configures moduleName"
         )
 
         val serializeTask = project.tasks.withType(SerializeSwiftExportMetadata::class.java).single()
@@ -147,8 +153,8 @@ class SwiftExportMetadataPublishingUnitTests {
         }
 
         assertNotNull(
-            project.configurations.findByName(SWIFT_EXPORT_METADATA_ELEMENTS),
-            "$SWIFT_EXPORT_METADATA_ELEMENTS configuration should be created when only rootPackage is configured"
+            project.configurations.findByName(SWIFT_EXPORT_METADATA_ELEMENTS_NAME),
+            "$SWIFT_EXPORT_METADATA_ELEMENTS_NAME configuration should be created when only rootPackage is configured"
         )
 
         val serializeTask = project.tasks.withType(SerializeSwiftExportMetadata::class.java).single()
@@ -163,8 +169,8 @@ class SwiftExportMetadataPublishingUnitTests {
         val project = exportDslProject(multiplatform = { iosArm64() })
 
         assertNull(
-            project.configurations.findByName(SWIFT_EXPORT_METADATA_ELEMENTS),
-            "$SWIFT_EXPORT_METADATA_ELEMENTS configuration should not be created when the export DSL is never used"
+            project.configurations.findByName(SWIFT_EXPORT_METADATA_ELEMENTS_NAME),
+            "$SWIFT_EXPORT_METADATA_ELEMENTS_NAME configuration should not be created when the export DSL is never used"
         )
     }
 
@@ -175,8 +181,8 @@ class SwiftExportMetadataPublishingUnitTests {
         }
 
         assertNull(
-            project.configurations.findByName(SWIFT_EXPORT_METADATA_ELEMENTS),
-            "$SWIFT_EXPORT_METADATA_ELEMENTS configuration should not be created when swift {} sets neither property"
+            project.configurations.findByName(SWIFT_EXPORT_METADATA_ELEMENTS_NAME),
+            "$SWIFT_EXPORT_METADATA_ELEMENTS_NAME configuration should not be created when swift {} sets neither property"
         )
     }
 
@@ -190,7 +196,7 @@ class SwiftExportMetadataPublishingUnitTests {
         }
 
         assertNull(
-            project.configurations.findByName(SWIFT_EXPORT_METADATA_ELEMENTS),
+            project.configurations.findByName(SWIFT_EXPORT_METADATA_ELEMENTS_NAME),
             "Swift Export only works for apple targets, so no metadata variant should be created without them"
         )
     }
@@ -204,7 +210,7 @@ class SwiftExportMetadataPublishingUnitTests {
         }
 
         assertNotNull(
-            project.configurations.findByName(SWIFT_EXPORT_METADATA_ELEMENTS),
+            project.configurations.findByName(SWIFT_EXPORT_METADATA_ELEMENTS_NAME),
             "Metadata should still be published even though the Xcode integration was never activated"
         )
         assertNull(
@@ -213,7 +219,69 @@ class SwiftExportMetadataPublishingUnitTests {
         )
     }
 
-    private companion object {
-        const val SWIFT_EXPORT_METADATA_ELEMENTS = "swiftExportMetadataElements"
+    @Test
+    fun `swift export metadata variant is published from the root component under the legacy format`() {
+        val project = exportDslProject(multiplatform = { iosArm64() }) {
+            exportExtension.swift {
+                moduleName.set("Foo")
+            }
+        }
+
+        val usage = project.multiplatformExtension.rootSoftwareComponent.usages.single { it.name == SWIFT_EXPORT_METADATA_ELEMENTS_NAME }
+        val artifact = usage.artifacts.single()
+        assertEquals("json", artifact.extension)
+        assertEquals("swift-export-metadata", artifact.classifier)
+        assertNull(
+            usage.attributes.getAttribute(KarLayout.Attributes.compressionMethod),
+            "The legacy variant must not carry the Kotlin Archive compression attribute"
+        )
+    }
+
+    @Test
+    fun `swift export metadata variant points at the Kotlin Archive under the KAR format`() {
+        val project = exportDslProject(
+            multiplatform = {
+                iosArm64()
+                publishing {
+                    publicationFormat.set(KotlinPublicationFormat.KOTLIN_ARCHIVE)
+                }
+            }
+        ) {
+            exportExtension.swift {
+                moduleName.set("Foo")
+            }
+        }
+
+        val usages = project.multiplatformExtension.rootSoftwareComponent.usages
+        assertNull(
+            usages.find { it.name == SWIFT_EXPORT_METADATA_ELEMENTS_NAME },
+            "Under KAR only the -published variant is part of the root component"
+        )
+        val usage = usages.single { it.name == "$SWIFT_EXPORT_METADATA_ELEMENTS_NAME-published" }
+        val artifact = usage.artifacts.single()
+        assertEquals(KarLayout.KAR_XZ_PACKED_EXTENSION, artifact.extension)
+        assertEquals(
+            KarLayout.Attributes.CompressionMethod.XZ,
+            usage.attributes.getAttribute(KarLayout.Attributes.compressionMethod),
+        )
+
+        // The consumable configuration keeps the json; the archive is only published.
+        val configurationArtifact = project.configurations.getByName(SWIFT_EXPORT_METADATA_ELEMENTS_NAME).artifacts.single()
+        assertEquals("json", configurationArtifact.extension)
+    }
+
+    @Test
+    fun `swift export metadata variant is no longer attached through the adhoc component`() {
+        val project = exportDslProject(multiplatform = { iosArm64() }) {
+            exportExtension.swift {
+                moduleName.set("Foo")
+            }
+        }
+
+        val adhocUsages = (project.multiplatformExtension.publishing.adhocSoftwareComponent as SoftwareComponentInternal).usages
+        assertTrue(
+            adhocUsages.none { it.name == SWIFT_EXPORT_METADATA_ELEMENTS_NAME },
+            "Expected the adhoc component not to list $SWIFT_EXPORT_METADATA_ELEMENTS_NAME, got ${adhocUsages.map { it.name }}"
+        )
     }
 }

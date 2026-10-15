@@ -257,7 +257,7 @@ private object SymbolModifiersRenderer : KaPieceRenderer<KaDeclarationSymbol>(Ka
 
                 if (symbol.isInner) add(KtTokens.INNER_KEYWORD)
                 if (symbol.isData) add(KtTokens.DATA_KEYWORD)
-                if (symbol.isInline) add(KtTokens.VALUE_KEYWORD)
+                if (symbol.isValue) add(KtTokens.VALUE_KEYWORD)
                 if (symbol.isFun) add(KtTokens.FUN_KEYWORD)
             }
             is KaTypeAliasSymbol -> {

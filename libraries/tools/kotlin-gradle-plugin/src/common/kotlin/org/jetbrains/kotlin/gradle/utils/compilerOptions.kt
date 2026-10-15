@@ -50,8 +50,7 @@ internal fun ObjectFactory.KotlinMultiplatformCommonCompilerOptionsDefault(proje
  * Shared logic
  */
 
-// could be private, but it's used by [org.jetbrains.kotlin.gradle.targets.js.KotlinJsPlugin] right now
-internal fun <T : KotlinCommonCompilerOptions> T.configureCommonCompilerOptions(
+private fun <T : KotlinCommonCompilerOptions> T.configureCommonCompilerOptions(
     project: Project
 ): T = apply {
     configureLogging(project.logger)

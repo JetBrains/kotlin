@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform._CoreSpotlight_FoundationModels
+
+modules = _CoreSpotlight_FoundationModels
+compilerOpts = -framework _CoreSpotlight_FoundationModels
+linkerOpts = -framework _CoreSpotlight_FoundationModels
+#Disabled: Unavailable

@@ -1,4 +1,3 @@
-
 plugins {
     id("common-configuration")
     id("com.autonomousapps.dependency-analysis")
@@ -6,7 +5,6 @@ plugins {
     id("java-test-fixtures")
 }
 
-val scriptingTestDefinition = configurations.create("scriptingTestDefinition")
 val powerAssertCompilerPluginJar = configurations.create("powerAssertCompilerPluginJar")
 val kotlinxSerializationGradlePluginClasspath = configurations.create("kotlinxSerializationGradlePluginClasspath")
 val kotlinDataFrameGradlePluginClasspath = configurations.create("kotlinDataFrameGradlePluginClasspath")
@@ -35,7 +33,6 @@ dependencies {
     testRuntimeOnly(commonDependency("com.fasterxml:aalto-xml"))
     testRuntimeOnly(project(":compiler:fir:plugin-utils"))
 
-    scriptingTestDefinition(testFixtures(project(":plugins:scripting:test-script-definition")))
     powerAssertCompilerPluginJar(project(":kotlin-power-assert-compiler-plugin")) { isTransitive = false }
     kotlinxSerializationGradlePluginClasspath(project(":kotlinx-serialization-compiler-plugin.embeddable")) { isTransitive = true }
     kotlinDataFrameGradlePluginClasspath(project(":kotlin-dataframe-compiler-plugin.embeddable")) { isTransitive = true }
@@ -51,22 +48,8 @@ sourceSets {
     "testFixtures" { projectDefault() }
 }
 
-
-// Create a Gradle Task for the K2 example repl we can run from an IntelliJ Run Configuration
-tasks.register<JavaExec>("runK2ExampleRepl") {
-    val scriptingTestDefinitionClasspath = scriptingTestDefinition.asPath
-    group = "application"
-    workingDir = rootDir
-    description = "Runs the K2 Example Repl"
-    mainClass.set("org.jetbrains.kotlin.scripting.test.repl.example.ExampleReplKt")
-    classpath = sourceSets.test.get().runtimeClasspath
-    standardInput = System.`in`
-    systemProperties["kotlin.script.test.script.definition.classpath"] = scriptingTestDefinitionClasspath
-}
-
 projectTests {
     testTask(
-        javaLauncher = JdkMajorVersion.JDK_17_0,
         defineJDKEnvVariables = listOf(
             JdkMajorVersion.JDK_1_8,
             JdkMajorVersion.JDK_11_0,
@@ -98,4 +81,3 @@ projectTests {
     withTestScriptDefinition()
 }
 
-testsJar()

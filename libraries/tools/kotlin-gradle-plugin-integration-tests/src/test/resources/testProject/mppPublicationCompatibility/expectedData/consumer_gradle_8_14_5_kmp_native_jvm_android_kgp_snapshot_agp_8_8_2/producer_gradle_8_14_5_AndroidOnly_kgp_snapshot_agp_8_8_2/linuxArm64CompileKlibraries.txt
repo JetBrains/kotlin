@@ -1,0 +1,1 @@
+root project : => [linuxArm64CompileKlibraries]

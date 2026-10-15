@@ -60,13 +60,10 @@ private class CirTreeSerializationVisitor(
     ): KlibModuleMetadata? {
         val cirModule = moduleContext.get<CirModule>(node) ?: return null
 
-        val fragments: MutableCollection<KmModuleFragment> = mutableListOf()
-        node.packages.mapNotNullTo(fragments) { [packageName, packageNode] ->
+        val fragments: List<KmModuleFragment> = node.packages.mapNotNull { [packageName, packageNode] ->
             val packageContext = moduleContext.packageContext(packageName)
             packageNode.accept(this, packageContext)?.cast()
         }
-
-        addEmptyFragments(fragments)
 
         return cirModule.serializeModule(fragments)
     }

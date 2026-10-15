@@ -221,6 +221,12 @@ public class PsiParsingTestGenerated extends AbstractPsiParsingTest {
   }
 
   @Test
+  @TestMetadata("companionsInsideNamelessClasses.kt")
+  public void testCompanionsInsideNamelessClasses() {
+    run("companionsInsideNamelessClasses.kt");
+  }
+
+  @Test
   @TestMetadata("complicateLTGT.kt")
   public void testComplicateLTGT() {
     run("complicateLTGT.kt");
@@ -266,6 +272,18 @@ public class PsiParsingTestGenerated extends AbstractPsiParsingTest {
   @TestMetadata("dataObject.kt")
   public void testDataObject() {
     run("dataObject.kt");
+  }
+
+  @Test
+  @TestMetadata("deepNestingInsideNamelessClasses.kt")
+  public void testDeepNestingInsideNamelessClasses() {
+    run("deepNestingInsideNamelessClasses.kt");
+  }
+
+  @Test
+  @TestMetadata("deepNestingInsideNamelessLocalClasses.kt")
+  public void testDeepNestingInsideNamelessLocalClasses() {
+    run("deepNestingInsideNamelessLocalClasses.kt");
   }
 
   @Test
@@ -899,6 +917,36 @@ public class PsiParsingTestGenerated extends AbstractPsiParsingTest {
   }
 
   @Test
+  @TestMetadata("namedInsideNamelessClasses.kt")
+  public void testNamedInsideNamelessClasses() {
+    run("namedInsideNamelessClasses.kt");
+  }
+
+  @Test
+  @TestMetadata("namedInsideNamelessLocalClasses.kt")
+  public void testNamedInsideNamelessLocalClasses() {
+    run("namedInsideNamelessLocalClasses.kt");
+  }
+
+  @Test
+  @TestMetadata("namelessEnumClasses.kt")
+  public void testNamelessEnumClasses() {
+    run("namelessEnumClasses.kt");
+  }
+
+  @Test
+  @TestMetadata("namelessInsideNamelessClasses.kt")
+  public void testNamelessInsideNamelessClasses() {
+    run("namelessInsideNamelessClasses.kt");
+  }
+
+  @Test
+  @TestMetadata("namelessInsideNamelessLocalClasses.kt")
+  public void testNamelessInsideNamelessLocalClasses() {
+    run("namelessInsideNamelessLocalClasses.kt");
+  }
+
+  @Test
   @TestMetadata("namelessObjectAsEnumMember.kt")
   public void testNamelessObjectAsEnumMember() {
     run("namelessObjectAsEnumMember.kt");
@@ -1506,6 +1554,12 @@ public class PsiParsingTestGenerated extends AbstractPsiParsingTest {
     }
 
     @Test
+    @TestMetadata("constructorWithThrowsFromLibrary.kt")
+    public void testConstructorWithThrowsFromLibrary() {
+      run("constructorWithThrowsFromLibrary.kt");
+    }
+
+    @Test
     @TestMetadata("differentDefaultValues.kt")
     public void testDifferentDefaultValues() {
       run("differentDefaultValues.kt");
@@ -1545,6 +1599,12 @@ public class PsiParsingTestGenerated extends AbstractPsiParsingTest {
     @TestMetadata("oldAnnotationsRecovery.kt")
     public void testOldAnnotationsRecovery() {
       run("oldAnnotationsRecovery.kt");
+    }
+
+    @Test
+    @TestMetadata("propertyAccessorsWithThrowsFromLibrary.kt")
+    public void testPropertyAccessorsWithThrowsFromLibrary() {
+      run("propertyAccessorsWithThrowsFromLibrary.kt");
     }
 
     @Test
@@ -2877,6 +2937,18 @@ public class PsiParsingTestGenerated extends AbstractPsiParsingTest {
     }
 
     @Test
+    @TestMetadata("accessorOnNonLocalDestructuring.kt")
+    public void testAccessorOnNonLocalDestructuring() {
+      run("accessorOnNonLocalDestructuring.kt");
+    }
+
+    @Test
+    @TestMetadata("accessorOnScriptDestructuring.kts")
+    public void testAccessorOnScriptDestructuring() {
+      run("accessorOnScriptDestructuring.kts");
+    }
+
+    @Test
     public void testAllFilesPresentInDestructuring() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/psi/psi-impl/testData/psi/destructuring"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
     }
@@ -2933,6 +3005,12 @@ public class PsiParsingTestGenerated extends AbstractPsiParsingTest {
     @TestMetadata("ktij23263.kt")
     public void testKtij23263() {
       run("ktij23263.kt");
+    }
+
+    @Test
+    @TestMetadata("scriptDestructuringEntries.kts")
+    public void testScriptDestructuringEntries() {
+      run("scriptDestructuringEntries.kts");
     }
 
     @Test
@@ -3370,6 +3448,12 @@ public class PsiParsingTestGenerated extends AbstractPsiParsingTest {
     }
 
     @Test
+    @TestMetadata("inlineClassOldSyntax.kt")
+    public void testInlineClassOldSyntax() {
+      run("inlineClassOldSyntax.kt");
+    }
+
+    @Test
     @TestMetadata("inlineClassPrivateProperty.kt")
     public void testInlineClassPrivateProperty() {
       run("inlineClassPrivateProperty.kt");
@@ -3399,6 +3483,12 @@ public class PsiParsingTestGenerated extends AbstractPsiParsingTest {
       run("inlineClassWithTypeParameter.kt");
     }
 
+    @Test
+    @TestMetadata("inlineValueClass.kt")
+    public void testInlineValueClass() {
+      run("inlineValueClass.kt");
+    }
+
     @Nested
     @TestMetadata("compiler/psi/psi-impl/testData/psi/inlineClasses/jvmAbi")
     @TestDataPath("$PROJECT_ROOT")
@@ -3410,6 +3500,12 @@ public class PsiParsingTestGenerated extends AbstractPsiParsingTest {
       @Test
       public void testAllFilesPresentInJvmAbi() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/psi/psi-impl/testData/psi/inlineClasses/jvmAbi"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("jvmAbiInlineClassOldSyntax.kt")
+      public void testJvmAbiInlineClassOldSyntax() {
+        run("jvmAbiInlineClassOldSyntax.kt");
       }
 
       @Test
@@ -3435,6 +3531,12 @@ public class PsiParsingTestGenerated extends AbstractPsiParsingTest {
       public void testJvmAbiInlineClassWithTypeParameterUnderlyingType() {
         run("jvmAbiInlineClassWithTypeParameterUnderlyingType.kt");
       }
+
+      @Test
+      @TestMetadata("jvmAbiInlineValueClass.kt")
+      public void testJvmAbiInlineValueClass() {
+        run("jvmAbiInlineValueClass.kt");
+      }
     }
   }
 
@@ -3455,6 +3557,12 @@ public class PsiParsingTestGenerated extends AbstractPsiParsingTest {
     @TestMetadata("AtTags.kt")
     public void testAtTags() {
       run("AtTags.kt");
+    }
+
+    @Test
+    @TestMetadata("codeBlockWithBlockComment.kt")
+    public void testCodeBlockWithBlockComment() {
+      run("codeBlockWithBlockComment.kt");
     }
 
     @Test
@@ -3578,6 +3686,12 @@ public class PsiParsingTestGenerated extends AbstractPsiParsingTest {
     }
 
     @Test
+    @TestMetadata("kt89933.kt")
+    public void testKt89933() {
+      run("kt89933.kt");
+    }
+
+    @Test
     @TestMetadata("Markdown.kt")
     public void testMarkdown() {
       run("Markdown.kt");
@@ -3683,6 +3797,12 @@ public class PsiParsingTestGenerated extends AbstractPsiParsingTest {
     @TestMetadata("TwoTags.kt")
     public void testTwoTags() {
       run("TwoTags.kt");
+    }
+
+    @Test
+    @TestMetadata("unclosedCodeBlocks.kt")
+    public void testUnclosedCodeBlocks() {
+      run("unclosedCodeBlocks.kt");
     }
   }
 
@@ -4342,6 +4462,12 @@ public class PsiParsingTestGenerated extends AbstractPsiParsingTest {
     }
 
     @Test
+    @TestMetadata("FunctionExpressionBody.kt")
+    public void testFunctionExpressionBody() {
+      run("FunctionExpressionBody.kt");
+    }
+
+    @Test
     @TestMetadata("IfKeywordRBrace.kt")
     public void testIfKeywordRBrace() {
       run("IfKeywordRBrace.kt");
@@ -4555,6 +4681,12 @@ public class PsiParsingTestGenerated extends AbstractPsiParsingTest {
     @TestMetadata("PackageRecovery.kt")
     public void testPackageRecovery() {
       run("PackageRecovery.kt");
+    }
+
+    @Test
+    @TestMetadata("PropertyAccessorExpressionBody.kt")
+    public void testPropertyAccessorExpressionBody() {
+      run("PropertyAccessorExpressionBody.kt");
     }
 
     @Test
@@ -4943,26 +5075,6 @@ public class PsiParsingTestGenerated extends AbstractPsiParsingTest {
   }
 
   @Nested
-  @TestMetadata("compiler/psi/psi-impl/testData/psi/repl")
-  @TestDataPath("$PROJECT_ROOT")
-  public class Repl {
-    private void run(String fileName) {
-      runTest("compiler/psi/psi-impl/testData/psi/repl/" + fileName);
-    }
-
-    @Test
-    public void testAllFilesPresentInRepl() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/psi/psi-impl/testData/psi/repl"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
-    }
-
-    @Test
-    @TestMetadata("replSnippet.repl.kts")
-    public void testReplSnippet_repl() {
-      run("replSnippet.repl.kts");
-    }
-  }
-
-  @Nested
   @TestMetadata("compiler/psi/psi-impl/testData/psi/richErrors")
   @TestDataPath("$PROJECT_ROOT")
   public class RichErrors {
@@ -5020,9 +5132,27 @@ public class PsiParsingTestGenerated extends AbstractPsiParsingTest {
     }
 
     @Test
+    @TestMetadata("companionsInsideNamelessClassesScript.kts")
+    public void testCompanionsInsideNamelessClassesScript() {
+      run("companionsInsideNamelessClassesScript.kts");
+    }
+
+    @Test
     @TestMetadata("ComplexScript.kts")
     public void testComplexScript() {
       run("ComplexScript.kts");
+    }
+
+    @Test
+    @TestMetadata("deepNestingInsideNamelessClassesScript.kts")
+    public void testDeepNestingInsideNamelessClassesScript() {
+      run("deepNestingInsideNamelessClassesScript.kts");
+    }
+
+    @Test
+    @TestMetadata("deepNestingInsideNamelessLocalClassesScript.kts")
+    public void testDeepNestingInsideNamelessLocalClassesScript() {
+      run("deepNestingInsideNamelessLocalClassesScript.kts");
     }
 
     @Test
@@ -5047,6 +5177,36 @@ public class PsiParsingTestGenerated extends AbstractPsiParsingTest {
     @TestMetadata("manyAnnotationsOnFile.kts")
     public void testManyAnnotationsOnFile() {
       run("manyAnnotationsOnFile.kts");
+    }
+
+    @Test
+    @TestMetadata("namedInsideNamelessClassesScript.kts")
+    public void testNamedInsideNamelessClassesScript() {
+      run("namedInsideNamelessClassesScript.kts");
+    }
+
+    @Test
+    @TestMetadata("namedInsideNamelessLocalClassesScript.kts")
+    public void testNamedInsideNamelessLocalClassesScript() {
+      run("namedInsideNamelessLocalClassesScript.kts");
+    }
+
+    @Test
+    @TestMetadata("namelessEnumClassesScript.kts")
+    public void testNamelessEnumClassesScript() {
+      run("namelessEnumClassesScript.kts");
+    }
+
+    @Test
+    @TestMetadata("namelessInsideNamelessClassesScript.kts")
+    public void testNamelessInsideNamelessClassesScript() {
+      run("namelessInsideNamelessClassesScript.kts");
+    }
+
+    @Test
+    @TestMetadata("namelessInsideNamelessLocalClassesScript.kts")
+    public void testNamelessInsideNamelessLocalClassesScript() {
+      run("namelessInsideNamelessLocalClassesScript.kts");
     }
 
     @Test
@@ -5254,6 +5414,12 @@ public class PsiParsingTestGenerated extends AbstractPsiParsingTest {
     }
 
     @Test
+    @TestMetadata("assignmentOperationReferences.kts")
+    public void testAssignmentOperationReferences() {
+      run("assignmentOperationReferences.kts");
+    }
+
+    @Test
     @TestMetadata("callInitializers.kt")
     public void testCallInitializers() {
       run("callInitializers.kt");
@@ -5269,6 +5435,12 @@ public class PsiParsingTestGenerated extends AbstractPsiParsingTest {
     @TestMetadata("nonStubbedInitializers.kt")
     public void testNonStubbedInitializers() {
       run("nonStubbedInitializers.kt");
+    }
+
+    @Test
+    @TestMetadata("operationReferences.kt")
+    public void testOperationReferences() {
+      run("operationReferences.kt");
     }
 
     @Test

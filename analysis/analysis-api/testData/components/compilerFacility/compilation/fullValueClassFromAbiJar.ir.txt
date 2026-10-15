@@ -1,0 +1,18 @@
+MODULE_FRAGMENT
+  FILE fqName:<root> fileName:main.kt
+    FUN name:sum visibility:public modality:FINAL returnType:kotlin.Int
+      VALUE_PARAMETER kind:Regular name:point index:0 type:lib.Point
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun sum (point: lib.Point): kotlin.Int declared in <root>'
+          CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PLUS
+            ARG <this>: CALL 'public final fun <get-first> (): kotlin.Int declared in lib.Point' type=kotlin.Int origin=GET_PROPERTY
+              ARG <this>: GET_VAR 'point: lib.Point declared in <root>.sum' type=lib.Point origin=null
+            ARG other: CALL 'public final fun <get-second> (): kotlin.Int declared in lib.Point' type=kotlin.Int origin=GET_PROPERTY
+              ARG <this>: GET_VAR 'point: lib.Point declared in <root>.sum' type=lib.Point origin=null
+    FUN name:test visibility:public modality:FINAL returnType:kotlin.Int
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun test (): kotlin.Int declared in <root>'
+          CALL 'public final fun sum (point: lib.Point): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+            ARG point: CALL 'public final fun of (x: kotlin.Int): lib.Point declared in lib.Point.Companion' type=lib.Point origin=null
+              ARG <this>: GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]' type=lib.Point.Companion
+              ARG x: CONST Int type=kotlin.Int value=1

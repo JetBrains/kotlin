@@ -145,7 +145,7 @@ private fun buildTargetMetadataExtras(target: KotlinTarget): KotlinToolingMetada
 
 private fun buildJvmExtrasOrNull(target: KotlinTarget): KotlinToolingMetadata.ProjectTargetMetadata.JvmExtras? {
     if (target !is KotlinJvmTarget) return null
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION", "DEPRECATION_ERROR")
     return KotlinToolingMetadata.ProjectTargetMetadata.JvmExtras(
         withJavaEnabled = target.withJavaEnabled,
         jvmTarget = target.compilations.findByName(KotlinCompilation.MAIN_COMPILATION_NAME)

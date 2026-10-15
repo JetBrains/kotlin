@@ -46,7 +46,6 @@ interface CompileStatisticsData<B : BuildTimeMetric, P : BuildPerformanceMetric>
 }
 
 enum class StatTag(val readableString: String) {
-    ABI_SNAPSHOT("ABI Snapshot"),
     ARTIFACT_TRANSFORM("Classpath Snapshot"),
     INCREMENTAL("Incremental compilation"),
     NON_INCREMENTAL("Non incremental compilation"),

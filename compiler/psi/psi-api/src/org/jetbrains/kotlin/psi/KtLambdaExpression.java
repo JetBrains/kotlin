@@ -125,7 +125,7 @@ public class KtLambdaExpression extends LazyParseablePsiElement implements KtExp
     }
 
     @Override
-    @KtNonPublicApi
+    @KtIdeApi
     public void rawDelete() throws IncorrectOperationException {
         super.delete();
     }

@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSignatures
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.EnumEntrySyntheticClassDescriptor
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.runtime.components.ReflectKotlinClass
 import org.jetbrains.kotlin.descriptors.runtime.components.RuntimeModuleData
@@ -94,11 +95,14 @@ internal class KClassImpl<T : Any>(
                 if (jClass == Cloneable::class.java) {
                     return@lazy createCloneableKmClass()
                 }
-                if (descriptor is ClassDescriptorImpl) {
-                    return@lazy createEmptyKmClass()
-                }
-                (descriptor as? DeserializedClassDescriptor)?.let { descriptor ->
-                    descriptor.classProto.toKmClass(descriptor.c.nameResolver)
+                when (descriptor) {
+                    is EnumEntrySyntheticClassDescriptor -> {
+                        val metadata = jClass.getAnnotation(Metadata::class.java) ?: return@lazy createEmptyKmClass()
+                        (KotlinClassMetadata.readLenient(metadata) as? KotlinClassMetadata.Class)?.kmClass ?: createEmptyKmClass()
+                    }
+                    is ClassDescriptorImpl -> createEmptyKmClass()
+                    is DeserializedClassDescriptor -> descriptor.classProto.toKmClass(descriptor.c.nameResolver)
+                    else -> null
                 }
             }
         }
@@ -426,11 +430,11 @@ internal class KClassImpl<T : Any>(
             result as List<KClass<out T>>
         }
 
-        @OptIn(ExperimentalCompanionBlocksAndExtensions::class)
+        @OptIn(ExperimentalCompanionBlocks::class)
         internal val inlineClassUnderlyingType: KType? by lazy(PUBLICATION) {
             val kmClass = kmClass
             when {
-                kmClass == null || !kmClass.isValue ->
+                kmClass?.inlineClassUnderlyingPropertyName == null ->
                     null
                 kmClass.inlineClassUnderlyingType != null ->
                     kmClass.inlineClassUnderlyingType?.toKType(jClass.safeClassLoader, typeParameterTable)
@@ -438,7 +442,7 @@ internal class KClassImpl<T : Any>(
                     val underlyingProperty = kmClass.properties.single {
                         it.name == kmClass.inlineClassUnderlyingPropertyName &&
                                 it.contextParameters.isEmpty() && it.receiverParameterType == null &&
-                                !it.isStatic
+                                !it.isCompanionBlockMember
                     }
                     underlyingProperty.returnType.toKType(jClass.safeClassLoader, typeParameterTable)
                 }
@@ -613,8 +617,12 @@ internal class KClassImpl<T : Any>(
         get() = kmClass?.isFunInterface == true
 
     override val isValue: Boolean
-        get() = kmClass?.isValue
-            ?: (!jClass.isInterface && !jClass.isAnnotation && !jClass.isEnum && ValhallaValueClassLoader.loadIsValue(jClass))
+        get() = when {
+            // A builtin like `kotlin.Number` is a value class if the Java class it is mapped to, like `java.lang.Number`, is one.
+            // A primitive type like `kotlin.Int` follows its primitive class `int`, which is not a value class, unlike its box `Integer`.
+            isMappedBuiltin -> ValhallaValueClassLoader.loadIsValue(javaPrimitiveType ?: javaObjectType)
+            else -> kmClass?.isValue ?: ValhallaValueClassLoader.loadIsValue(jClass)
+        }
 
     internal val isJvmInlineValue: Boolean
         get() = isValue && inlineClassUnderlyingPropertyName != null

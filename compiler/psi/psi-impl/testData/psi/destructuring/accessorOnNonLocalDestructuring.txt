@@ -1,0 +1,256 @@
+KtFile: accessorOnNonLocalDestructuring.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  DESTRUCTURING_DECLARATION
+    PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')
+    PsiWhiteSpace('\n')
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiErrorElement:Destructuring declarations are only allowed for local variables/values
+      PsiElement(LPAR)('(')
+      DESTRUCTURING_DECLARATION_ENTRY
+        PsiElement(IDENTIFIER)('a')
+      PsiElement(COMMA)(',')
+      PsiWhiteSpace(' ')
+      DESTRUCTURING_DECLARATION_ENTRY
+        PsiElement(IDENTIFIER)('b')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    BINARY_EXPRESSION
+      INTEGER_CONSTANT
+        PsiElement(INTEGER_LITERAL)('1')
+      PsiWhiteSpace(' ')
+      OPERATION_REFERENCE
+        PsiElement(IDENTIFIER)('to')
+      PsiWhiteSpace(' ')
+      INTEGER_CONSTANT
+        PsiElement(INTEGER_LITERAL)('2')
+  PsiWhiteSpace('\n    ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('get')
+  PsiWhiteSpace('\n\n')
+  DESTRUCTURING_DECLARATION
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiErrorElement:Destructuring declarations are only allowed for local variables/values
+      PsiElement(LBRACKET)('[')
+      DESTRUCTURING_DECLARATION_ENTRY
+        PsiElement(IDENTIFIER)('c')
+      PsiElement(COMMA)(',')
+      PsiWhiteSpace(' ')
+      DESTRUCTURING_DECLARATION_ENTRY
+        PsiElement(IDENTIFIER)('d')
+      PsiElement(RBRACKET)(']')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    BINARY_EXPRESSION
+      INTEGER_CONSTANT
+        PsiElement(INTEGER_LITERAL)('1')
+      PsiWhiteSpace(' ')
+      OPERATION_REFERENCE
+        PsiElement(IDENTIFIER)('to')
+      PsiWhiteSpace(' ')
+      INTEGER_CONSTANT
+        PsiElement(INTEGER_LITERAL)('2')
+  PsiWhiteSpace('\n    ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('get')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(LPAR)('(')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(RPAR)(')')
+  PsiWhiteSpace(' ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(EQ)('=')
+  PsiWhiteSpace(' ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(INTEGER_LITERAL)('1')
+  PsiWhiteSpace('\n    ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('set')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(LPAR)('(')
+  MODIFIER_LIST
+    PsiElement(value)('value')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(RPAR)(')')
+  PsiWhiteSpace(' ')
+  FUNCTION
+    PsiErrorElement:Expecting a top level declaration
+      <empty list>
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  DESTRUCTURING_DECLARATION
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiErrorElement:Destructuring declarations are only allowed for local variables/values
+      PsiElement(LPAR)('(')
+      DESTRUCTURING_DECLARATION_ENTRY
+        PsiElement(IDENTIFIER)('e')
+      PsiElement(COMMA)(',')
+      PsiWhiteSpace(' ')
+      DESTRUCTURING_DECLARATION_ENTRY
+        PsiElement(IDENTIFIER)('f')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    BINARY_EXPRESSION
+      INTEGER_CONSTANT
+        PsiElement(INTEGER_LITERAL)('1')
+      PsiWhiteSpace(' ')
+      OPERATION_REFERENCE
+        PsiElement(IDENTIFIER)('to')
+      PsiWhiteSpace(' ')
+      INTEGER_CONSTANT
+        PsiElement(INTEGER_LITERAL)('2')
+  PsiWhiteSpace('\n    ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('field')
+  PsiWhiteSpace(' ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(EQ)('=')
+  PsiWhiteSpace(' ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(INTEGER_LITERAL)('3')
+  PsiWhiteSpace('\n\n')
+  DESTRUCTURING_DECLARATION
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiErrorElement:Destructuring declarations are only allowed for local variables/values
+      PsiElement(LPAR)('(')
+      DESTRUCTURING_DECLARATION_ENTRY
+        PsiElement(IDENTIFIER)('g')
+      PsiElement(COMMA)(',')
+      PsiWhiteSpace(' ')
+      DESTRUCTURING_DECLARATION_ENTRY
+        PsiElement(IDENTIFIER)('h')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    BINARY_EXPRESSION
+      INTEGER_CONSTANT
+        PsiElement(INTEGER_LITERAL)('1')
+      PsiWhiteSpace(' ')
+      OPERATION_REFERENCE
+        PsiElement(IDENTIFIER)('to')
+      PsiWhiteSpace(' ')
+      INTEGER_CONSTANT
+        PsiElement(INTEGER_LITERAL)('2')
+  PsiElement(SEMICOLON)(';')
+  PsiWhiteSpace(' ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('get')
+  PsiWhiteSpace('\n\n')
+  DESTRUCTURING_DECLARATION
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiErrorElement:Destructuring declarations are only allowed for local variables/values
+      PsiElement(LPAR)('(')
+      DESTRUCTURING_DECLARATION_ENTRY
+        PsiElement(IDENTIFIER)('i')
+      PsiElement(COMMA)(',')
+      PsiWhiteSpace(' ')
+      DESTRUCTURING_DECLARATION_ENTRY
+        PsiElement(IDENTIFIER)('j')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    BINARY_EXPRESSION
+      INTEGER_CONSTANT
+        PsiElement(INTEGER_LITERAL)('1')
+      PsiWhiteSpace(' ')
+      OPERATION_REFERENCE
+        PsiElement(IDENTIFIER)('to')
+      PsiWhiteSpace(' ')
+      INTEGER_CONSTANT
+        PsiElement(INTEGER_LITERAL)('2')
+  PsiElement(SEMICOLON)(';')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('k')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    INTEGER_CONSTANT
+      PsiElement(INTEGER_LITERAL)('1')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('A')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      DESTRUCTURING_DECLARATION
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiErrorElement:Destructuring declarations are only allowed for local variables/values
+          PsiElement(LPAR)('(')
+          DESTRUCTURING_DECLARATION_ENTRY
+            PsiElement(IDENTIFIER)('l')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          DESTRUCTURING_DECLARATION_ENTRY
+            PsiElement(IDENTIFIER)('m')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        BINARY_EXPRESSION
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('1')
+          PsiWhiteSpace(' ')
+          OPERATION_REFERENCE
+            PsiElement(IDENTIFIER)('to')
+          PsiWhiteSpace(' ')
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('2')
+      PsiWhiteSpace('\n        ')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('get')
+      PsiWhiteSpace('\n\n    ')
+      DESTRUCTURING_DECLARATION
+        PsiElement(var)('var')
+        PsiWhiteSpace(' ')
+        PsiErrorElement:Destructuring declarations are only allowed for local variables/values
+          PsiElement(LPAR)('(')
+          DESTRUCTURING_DECLARATION_ENTRY
+            PsiElement(IDENTIFIER)('n')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          DESTRUCTURING_DECLARATION_ENTRY
+            PsiElement(IDENTIFIER)('o')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        BINARY_EXPRESSION
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('1')
+          PsiWhiteSpace(' ')
+          OPERATION_REFERENCE
+            PsiElement(IDENTIFIER)('to')
+          PsiWhiteSpace(' ')
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('2')
+      PsiWhiteSpace('\n        ')
+      MODIFIER_LIST
+        PsiElement(private)('private')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('set')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

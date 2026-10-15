@@ -14,7 +14,7 @@ import kotlin.script.experimental.impl._isSyntheticSnippet
 import kotlin.script.experimental.jvm.jsr223.base.KOTLIN_SCRIPT_ENGINE_BINDINGS_KEY
 import kotlin.script.experimental.jvm.jsr223.base.KOTLIN_SCRIPT_STATE_BINDINGS_KEY
 import kotlin.script.experimental.util.PropertiesCollection
-import kotlin.script.templates.standard.ScriptTemplateWithBindings
+import kotlin.script.experimental.templates.ScriptWithBindings
 
 private val ScriptCompilationConfigurationKeys.exposedBindings by PropertiesCollection.key<Map<String, KotlinType>>()
 private val ScriptCompilationConfigurationKeys.rootBindingsConfigured by PropertiesCollection.key(false)
@@ -143,14 +143,14 @@ fun configureExposedJsr223Context(context: ScriptConfigurationRefinementContext)
         return context.compilationConfiguration.asSuccess()
 
     // Implicit receivers exposed to every JSR-223 snippet: ScriptContext (the JSR-223 scopes and
-    // attributes API) and ScriptTemplateWithBindings (the K1-era bindings-only shape). Their members
+    // attributes API) and ScriptWithBindings (the bindings-only shape). Their members
     // do not collide under normal use.
     //
     // Computed here rather than as a top-level property. A top-level list literal would be evaluated
     // by this file's static initializer on first call, forcing javax.script.* classes to load even
     // for non-JSR-223 compilations (MainKtsScriptDefinition wires this callback unconditionally).
     // That previously caused a spurious NoClassDefFoundError on plain .main.kts scripts.
-    val requiredImplicitReceivers = listOf(ScriptContext::class, ScriptTemplateWithBindings::class)
+    val requiredImplicitReceivers = listOf(ScriptContext::class, ScriptWithBindings::class)
 
     // Add each receiver only once. The engine threads a single, mutated ScriptCompilationConfiguration
     // across evals, including nested eval-in-eval. Appending unconditionally would grow the receiver
@@ -323,19 +323,19 @@ class __Jsr223BindingDelegate<T>(private val bindings: javax.script.Bindings, pr
             } to source).asSuccess()
 }
 
-// Concrete subclass of the abstract ScriptTemplateWithBindings. It wraps the same live, mutable
+// Concrete subclass of the abstract ScriptWithBindings. It wraps the same live, mutable
 // Bindings map that already backs ScriptContext's ENGINE_SCOPE, so both receivers see the same data
 // without separate synchronization.
-private class Jsr223ScriptTemplateWithBindings(bindings: Map<String, Any?>) : ScriptTemplateWithBindings(bindings)
+private class Jsr223ScriptWithBindings(bindings: Map<String, Any?>) : ScriptWithBindings(bindings)
 
 fun configureExposedJsr223Context(context: ScriptEvaluationConfigurationRefinementContext): ResultWithDiagnostics<ScriptEvaluationConfiguration> {
     val jsr223context = context.evaluationConfiguration[ScriptEvaluationConfiguration.jsr223.getScriptContext]?.invoke()
         ?: return context.evaluationConfiguration.asSuccess() // likely an error
 
     // Order matches the compile-time overload of configureExposedJsr223Context above:
-    // ScriptContext first, then ScriptTemplateWithBindings.
+    // ScriptContext first, then ScriptWithBindings.
     val engineBindings = jsr223context.getBindings(ScriptContext.ENGINE_SCOPE) ?: emptyMap<String, Any?>()
     return context.evaluationConfiguration.with {
-        implicitReceivers(jsr223context, Jsr223ScriptTemplateWithBindings(engineBindings))
+        implicitReceivers(jsr223context, Jsr223ScriptWithBindings(engineBindings))
     }.asSuccess()
 }

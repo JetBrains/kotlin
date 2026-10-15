@@ -1,0 +1,46 @@
+FILE: main.kt
+    package a
+
+    public final val original: R|kotlin/Int| = Int(1)
+        public get(): R|kotlin/Int|
+    public final enum class Color : R|kotlin/Enum<a/Color>| {
+        private constructor(): R|a/Color| {
+            super<R|kotlin/Enum<a/Color>|>()
+        }
+
+        public final static enum entry RED: R|a/Color|
+        public final static fun values(): R|kotlin/Array<a/Color>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|a/Color| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<a/Color>|
+            public static get(): R|kotlin/enums/EnumEntries<a/Color>|
+
+    }
+    public final const [EvaluatedValue=String(original)] val FUN_ALIAS: R|kotlin/String| = ::R|a/original|.R|SubstitutionOverride<kotlin/reflect/KProperty0.name: R|kotlin/String|>|
+        public get(): R|kotlin/String|
+    public final const [EvaluatedValue=String(RED)] val ENUM_ALIAS: R|kotlin/String| = R|a/Color.RED|.R|SubstitutionOverride<a/Color.name: R|kotlin/String|>|
+        public get(): R|kotlin/String|
+    public final fun <T> R|T|.id(): R|T| {
+        ^id this@R|a/id|
+    }
+    public final fun error(propertyName: R|kotlin/String|, constant: R|kotlin/String|, runtime: R|kotlin/String|): R|kotlin/String| {
+        ^error <strcat>(String(There is a difference for ), R|<local>/propertyName|, String(: const=), R|<local>/constant|, String( runtime=), R|<local>/runtime|)
+    }
+    public final fun box(): R|kotlin/String| {
+        when () {
+            !=(R|a/FUN_ALIAS|, ::R|a/original|.R|a/id|<R|kotlin/reflect/KProperty0<kotlin/Int>|>().R|SubstitutionOverride<kotlin/reflect/KProperty0.name: R|kotlin/String|>|) ->  {
+                ^box R|a/error|(String(FUN_ALIAS), R|a/FUN_ALIAS|, ::R|a/original|.R|a/id|<R|kotlin/reflect/KProperty0<kotlin/Int>|>().R|SubstitutionOverride<kotlin/reflect/KProperty0.name: R|kotlin/String|>|)
+            }
+        }
+
+        when () {
+            !=(R|a/ENUM_ALIAS|, R|a/Color.RED|.R|a/id|<R|a/Color|>().R|SubstitutionOverride<a/Color.name: R|kotlin/String|>|) ->  {
+                ^box R|a/error|(String(ENUM_ALIAS), R|a/ENUM_ALIAS|, R|a/Color.RED|.R|a/id|<R|a/Color|>().R|SubstitutionOverride<a/Color.name: R|kotlin/String|>|)
+            }
+        }
+
+        ^box String(OK)
+    }

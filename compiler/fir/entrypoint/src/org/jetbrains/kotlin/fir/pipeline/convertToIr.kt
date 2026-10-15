@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.ir.validation.checkers.declaration.IrFieldVisibility
 import org.jetbrains.kotlin.ir.validation.checkers.expression.IrCallTypeArgumentCountChecker
 import org.jetbrains.kotlin.ir.validation.checkers.expression.IrCallValueArgumentCountChecker
 import org.jetbrains.kotlin.ir.validation.checkers.expression.IrCrossFileFieldUsageChecker
+import org.jetbrains.kotlin.ir.validation.checkers.expression.IrLegacyCallableReferenceChecker
 import org.jetbrains.kotlin.ir.validation.checkers.expression.IrValueAccessScopeChecker
 import org.jetbrains.kotlin.ir.validation.checkers.symbol.IrVisibilityChecker
 import org.jetbrains.kotlin.ir.validation.checkers.type.IrTypeParameterScopeChecker
@@ -540,6 +541,10 @@ private class Fir2IrPipeline(
                     // Serializing IrExpressionBody in IrFunction.body is not supported.
                     withCheckers(IrExpressionBodyInFunctionChecker)
                 }
+                .applyIf(validateForKlibSerialization && languageVersionSettings.supportsFeature(LanguageFeature.IrRichCallableReferencesInKlibs)) {
+                    // Only rich callable references are serialized to KLIBs, legacy ones must not reach the serializer.
+                    withCheckers(IrLegacyCallableReferenceChecker)
+                }
                 .withCheckersByName(
                     fir2IrConfiguration.irVerificationSettings.additionalIrCheckers,
                     listOf(IrNestedOffsetRangeChecker)
@@ -556,6 +561,7 @@ private class Fir2IrPipeline(
                         is IrValidationError.Cause.UnboundSymbol -> IrValidationSeverity.ERROR
                         is IrExpressionBodyInFunctionChecker -> IrValidationSeverity.ERROR
                         is IrFieldVisibilityChecker -> IrValidationSeverity.ERROR
+                        is IrLegacyCallableReferenceChecker -> IrValidationSeverity.ERROR
                         is IrCrossFileFieldUsageChecker ->
                             if (languageVersionSettings.supportsFeature(LanguageFeature.ForbidCrossFileIrFieldAccessInKlibs))
                                 IrValidationSeverity.ERROR
@@ -596,4 +602,3 @@ private class Fir2IrPipeline(
 
 class IrGenerationExtensionException(cause: Throwable, val extensionClass: Class<out IrGenerationExtension>) :
     RuntimeException(cause.message, cause)
-

@@ -2,7 +2,7 @@ Binary.kt:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/Binary, fqName=Binary, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Binary, superNames=[]]
+    CLASS[classId=/Binary, fqName=Binary, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Binary, superNames=[]]
       MODIFIER_LIST[annotation]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Binary]
         VALUE_PARAMETER_LIST
@@ -22,7 +22,7 @@ WithComparison.kt:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/WithComparison, fqName=WithComparison, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithComparison, superNames=[]]
+    CLASS[classId=/WithComparison, fqName=WithComparison, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=WithComparison, superNames=[]]
       MODIFIER_LIST[]
         ANNOTATION_ENTRY[hasValueArguments=true, shortName=Binary]
           CONSTRUCTOR_CALLEE
@@ -43,7 +43,7 @@ WithEquality.kt:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/WithEquality, fqName=WithEquality, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithEquality, superNames=[]]
+    CLASS[classId=/WithEquality, fqName=WithEquality, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=WithEquality, superNames=[]]
       MODIFIER_LIST[]
         ANNOTATION_ENTRY[hasValueArguments=true, shortName=Binary]
           CONSTRUCTOR_CALLEE
@@ -64,7 +64,7 @@ WithGreaterOrEqual.kt:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/WithGreaterOrEqual, fqName=WithGreaterOrEqual, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithGreaterOrEqual, superNames=[]]
+    CLASS[classId=/WithGreaterOrEqual, fqName=WithGreaterOrEqual, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=WithGreaterOrEqual, superNames=[]]
       MODIFIER_LIST[]
         ANNOTATION_ENTRY[hasValueArguments=true, shortName=Binary]
           CONSTRUCTOR_CALLEE
@@ -85,7 +85,7 @@ WithInequality.kt:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/WithInequality, fqName=WithInequality, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithInequality, superNames=[]]
+    CLASS[classId=/WithInequality, fqName=WithInequality, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=WithInequality, superNames=[]]
       MODIFIER_LIST[]
         ANNOTATION_ENTRY[hasValueArguments=true, shortName=Binary]
           CONSTRUCTOR_CALLEE
@@ -106,7 +106,7 @@ WithInfixFunction.kt:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/WithInfixFunction, fqName=WithInfixFunction, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithInfixFunction, superNames=[]]
+    CLASS[classId=/WithInfixFunction, fqName=WithInfixFunction, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=WithInfixFunction, superNames=[]]
       MODIFIER_LIST[]
         ANNOTATION_ENTRY[hasValueArguments=true, shortName=Binary]
           CONSTRUCTOR_CALLEE

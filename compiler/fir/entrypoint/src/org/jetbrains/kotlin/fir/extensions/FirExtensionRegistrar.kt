@@ -322,7 +322,7 @@ fun FirExtensionService.registerExtensions(registeredExtensions: BunchOfRegister
     }
     session.registeredPluginAnnotations.initialize()
     if (session.kind == FirSession.Kind.Source) {
-        session.registeredDiagnosticFactoriesStorage.registerDiagnosticContainers(registeredExtensions.diagnosticsContainers)
+        session.registeredDiagnosticFactoriesStorage?.registerDiagnosticContainers(registeredExtensions.diagnosticsContainers)
     }
 }
 

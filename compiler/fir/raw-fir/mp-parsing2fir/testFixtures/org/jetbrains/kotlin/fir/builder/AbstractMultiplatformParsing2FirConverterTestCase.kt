@@ -23,8 +23,10 @@ abstract class AbstractMultiplatformParsing2FirConverterTestCase : AbstractRawFi
         myFileExt = FileUtilRt.getExtension(PathUtil.getFileName(filePath))
         val absolutePath = ForTestCompileRuntime.transformTestDataPath(filePath).path
         val path = Paths.get(absolutePath)
+        val session = FirSessionFactoryHelper.createEmptySession(parseLanguageFeatures(path.readText()))
+        session.registerReplSnippetConfiguratorForReplFixture(filePath)
         val firFile = MultiplatformParsing2Fir(
-            session = FirSessionFactoryHelper.createEmptySession(parseLanguageFeatures(path.readText())),
+            session = session,
             scopeProvider = StubFirScopeProvider,
             diagnosticsReporter = null
         ).buildFirFile(path)

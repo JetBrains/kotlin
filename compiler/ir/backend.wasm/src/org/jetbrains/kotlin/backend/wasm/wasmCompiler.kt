@@ -155,7 +155,6 @@ const val importedStringConstants = "'"
 class MultimoduleCompileOptions(
     val stdlibModuleNameForImport: String?,
     val dependencyModules: Set<WasmModuleDependencyImport>,
-    val initializeUnit: Boolean,
 )
 
 class WasmIrModuleConfiguration(

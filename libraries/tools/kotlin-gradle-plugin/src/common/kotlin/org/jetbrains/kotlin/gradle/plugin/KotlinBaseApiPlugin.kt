@@ -11,6 +11,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.compile.JavaCompile
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask
@@ -105,6 +106,7 @@ abstract class KotlinBaseApiPlugin : DefaultKotlinBasePlugin(), KotlinJvmFactory
         )
     }
 
+    @OptIn(ExperimentalKotlinGradlePluginApi::class)
     override fun registerKotlinJvmCompileTask(
         taskName: String,
         compilerOptions: KotlinJvmCompilerOptions,
@@ -119,6 +121,7 @@ abstract class KotlinBaseApiPlugin : DefaultKotlinBasePlugin(), KotlinJvmFactory
             KotlinCompileConfig(
                 myProject,
                 explicitApiMode,
+                providerFactory.provider { null }
             )
         )
         return registeredKotlinJvmCompileTask

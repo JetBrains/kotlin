@@ -30,7 +30,7 @@
 -        VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Any?
 -        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:atomicRefProp$volatile visibility:private modality:FINAL [var]
 -        BLOCK_BODY
--          RETURN type=kotlin.Unit from='private final fun <set-atomicRefProp$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.TestClass'
+-          RETURN type=kotlin.Nothing from='private final fun <set-atomicRefProp$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.TestClass'
 -            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:atomicRefProp$volatile type:kotlin.Any? visibility:private declared in <root>.TestClass' type=kotlin.Unit origin=null
 -              receiver: GET_VAR '<this>: <root>.TestClass declared in <root>.TestClass.<set-atomicRefProp$volatile>' type=<root>.TestClass origin=null
 -              value: GET_VAR 'value: kotlin.Any? declared in <root>.TestClass.<set-atomicRefProp$volatile>' type=kotlin.Any? origin=null

@@ -124,9 +124,7 @@ object STORE_BUILD_INFO : GradleBuildTimeMetric(INCREMENTAL_COMPILATION_DAEMON, 
 object JAR_SNAPSHOT : GradleBuildTimeMetric(INCREMENTAL_COMPILATION_DAEMON, "ABI JAR Snapshot support", name = "JAR_SNAPSHOT") {
     private fun readResolve(): Any = JAR_SNAPSHOT
 }
-object SET_UP_ABI_SNAPSHOTS : GradleBuildTimeMetric(JAR_SNAPSHOT, "Set up ABI snapshot", name = "SET_UP_ABI_SNAPSHOTS") {
-    private fun readResolve(): Any = SET_UP_ABI_SNAPSHOTS
-}
+
 object IC_ANALYZE_JAR_FILES : GradleBuildTimeMetric(JAR_SNAPSHOT, "Analyze jar files", name = "IC_ANALYZE_JAR_FILES") {
     private fun readResolve(): Any = IC_ANALYZE_JAR_FILES
 }

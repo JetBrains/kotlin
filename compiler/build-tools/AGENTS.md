@@ -9,7 +9,7 @@ accessing compiler internals directly.
 | Module                                                                                                     | Purpose                                                                                                             |
 |------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------|
 | [`kotlin-build-tools-api`](kotlin-build-tools-api)                                                         | Public interfaces only; no implementation; `explicitApi()`; API dump checked in                                     |
-| [`kotlin-build-tools-api-jps`](kotlin-build-tools-api-jps)                                                 | Public interfaces for JPS only, marked `@InternalBuildToolsApi`; no compatibility guarantees, no API dump           |
+| [`kotlin-build-tools-api-jps`](kotlin-build-tools-api-jps)                                                 | Public interfaces for JPS only, marked `@InternalBuildToolsApi`; no compatibility guarantees; API dump checked in    |
 | [`kotlin-build-tools-impl`](kotlin-build-tools-impl)                                                       | Default implementation; version-coupled to the compiler; must run in isolated ClassLoader                           |
 | [`kotlin-build-tools-compat`](kotlin-build-tools-compat)                                                   | Adapter for compilers < 2.3.0 (wraps deprecated `CompilationService`)                                               |
 | [`kotlin-build-tools-cri-impl`](kotlin-build-tools-cri-impl)                                               | Protobuf serialization for Compiler Reference Index; shipped as shadow JAR                                          |
@@ -61,6 +61,7 @@ Two kinds — both must be regenerated after relevant changes:
 
 # Regenerate API binary compatibility dump (after any public API change)
 ./gradlew :compiler:build-tools:kotlin-build-tools-api:apiDump
+./gradlew :compiler:build-tools:kotlin-build-tools-api-jps:apiDump
 ```
 
 ## Compatibility Model

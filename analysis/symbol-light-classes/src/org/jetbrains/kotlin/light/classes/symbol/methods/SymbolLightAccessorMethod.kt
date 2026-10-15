@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.light.classes.symbol.methods
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
-import com.intellij.psi.impl.light.LightParameterListBuilder
 import com.intellij.psi.impl.light.LightReferenceListBuilder
 import org.jetbrains.kotlin.analysis.api.KaConstantInitializerValue
 import org.jetbrains.kotlin.analysis.api.KaConstantValueForAnnotation
@@ -29,7 +28,6 @@ import org.jetbrains.kotlin.light.classes.symbol.classes.*
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.GranularModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.with
-import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightParameterForDefaultImplsReceiver
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightParameterList
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightSetterParameter
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightTypeParameterList
@@ -282,35 +280,23 @@ internal class SymbolLightAccessorMethod private constructor(
     override fun hashCode(): Int = propertyAccessorDeclaration?.hashCode() ?: containingPropertyDeclaration.hashCode()
 
     private val _parametersList by lazyPub {
-        val baseParameterPopulator: (LightParameterListBuilder) -> Unit = if (!isGetter) {
-            { builder ->
-                withAccessorSymbol { accessorSymbol ->
-                    val setterParameter = (accessorSymbol as? KaPropertySetterSymbol)?.parameter ?: return@withAccessorSymbol
-                    builder.addParameter(
-                        SymbolLightSetterParameter(
-                            containingPropertySymbolPointer = containingPropertySymbolPointer,
-                            parameterSymbol = setterParameter,
-                            containingMethod = this@SymbolLightAccessorMethod,
-                        )
-                    )
-                }
-            }
-        } else {
-            { }
-        }
-
-        val parameterPopulator: (LightParameterListBuilder) -> Unit = { builder ->
-            if (containingClass is SymbolLightClassForInterfaceDefaultImpls) {
-                builder.addParameter(SymbolLightParameterForDefaultImplsReceiver(this@SymbolLightAccessorMethod))
-            }
-            baseParameterPopulator(builder)
-        }
-
         SymbolLightParameterList(
             parent = this@SymbolLightAccessorMethod,
             correspondingCallablePointer = containingPropertySymbolPointer,
-            parameterPopulator = parameterPopulator,
-        )
+        ) { builder ->
+            if (isGetter) return@SymbolLightParameterList
+
+            withAccessorSymbol { accessorSymbol ->
+                val setterParameter = (accessorSymbol as? KaPropertySetterSymbol)?.parameter ?: return@withAccessorSymbol
+                builder.addParameter(
+                    SymbolLightSetterParameter(
+                        containingPropertySymbolPointer = containingPropertySymbolPointer,
+                        parameterSymbol = setterParameter,
+                        containingMethod = this@SymbolLightAccessorMethod,
+                    )
+                )
+            }
+        }
     }
 
     override fun getParameterList(): PsiParameterList = _parametersList
@@ -376,37 +362,37 @@ internal class SymbolLightAccessorMethod private constructor(
             val isTopLevel: Boolean,
             /** Whether the accessors should be created only if they are marked with [JvmStatic] annotation. */
             val staticsFromCompanion: Boolean,
-            private val hasValueClassInParameterType: Boolean,
-            private val hasValueClassInReturnType: Boolean,
-            private val hasManglingValueClassInParameterType: Boolean,
-            private val hasManglingValueClassInPropertyType: Boolean,
+            private val hasInlineClassInParameterType: Boolean,
+            private val hasInlineClassInReturnType: Boolean,
+            private val hasManglingInlineClassInParameterType: Boolean,
+            private val hasManglingInlineClassInPropertyType: Boolean,
             private val jvmExposeBoxedMode: JvmExposeBoxedMode,
         ) {
             fun jvmExposeBoxedMode(accessor: KaPropertyAccessorSymbol): JvmExposeBoxedMode =
                 if (accessor.hasJvmExposeBoxedAnnotation()) JvmExposeBoxedMode.EXPLICIT else jvmExposeBoxedMode
 
-            fun hasValueClassInParameterType(accessor: KaPropertyAccessorSymbol): Boolean =
+            fun hasInlineClassInParameterType(accessor: KaPropertyAccessorSymbol): Boolean =
                 if (accessor is KaPropertySetterSymbol) {
                     // Setter uses the return type as a value parameter
-                    hasValueClassInParameterType || hasValueClassInReturnType
+                    hasInlineClassInParameterType || hasInlineClassInReturnType
                 } else {
-                    hasValueClassInParameterType
+                    hasInlineClassInParameterType
                 }
 
-            fun hasManglingValueClassInParameterType(accessor: KaPropertyAccessorSymbol): Boolean =
+            fun hasManglingInlineClassInParameterType(accessor: KaPropertyAccessorSymbol): Boolean =
                 if (accessor is KaPropertySetterSymbol) {
                     // Setter uses the type of the property as a value parameter
-                    hasManglingValueClassInParameterType || hasManglingValueClassInPropertyType
+                    hasManglingInlineClassInParameterType || hasManglingInlineClassInPropertyType
                 } else {
-                    hasManglingValueClassInParameterType
+                    hasManglingInlineClassInParameterType
                 }
 
-            fun hasValueClassInReturnType(accessor: KaPropertyAccessorSymbol): Boolean =
+            fun hasInlineClassInReturnType(accessor: KaPropertyAccessorSymbol): Boolean =
                 if (accessor is KaPropertySetterSymbol) {
                     // Setter has a Unit return type
                     false
                 } else {
-                    hasValueClassInReturnType
+                    hasInlineClassInReturnType
                 }
 
             companion object {
@@ -419,17 +405,18 @@ internal class SymbolLightAccessorMethod private constructor(
                     staticsFromCompanion: Boolean,
                 ): Context = with(session) {
                     // The type of the property is inspected only if it is explicitly declared
-                    val hasValueClassInPropertyType = hasValueClassInReturnType(property)
+                    val hasInlineClassInPropertyType = hasInlineClassInReturnType(property)
                     Context(
                         property = property,
                         destinationLightClass = destinationLightClass,
                         suppressStatic = suppressStatic,
                         isTopLevel = isTopLevel,
                         staticsFromCompanion = staticsFromCompanion,
-                        hasValueClassInParameterType = hasValueClassInSignature(property, skipReturnTypeCheck = true),
-                        hasValueClassInReturnType = hasValueClassInPropertyType,
-                        hasManglingValueClassInParameterType = hasManglingValueClassInParameterPosition(property),
-                        hasManglingValueClassInPropertyType = hasValueClassInPropertyType && parameterTypeRequiresMangling(property.returnType),
+                        hasInlineClassInParameterType = hasInlineClassInSignature(property, skipReturnTypeCheck = true),
+                        hasInlineClassInReturnType = hasInlineClassInPropertyType,
+                        hasManglingInlineClassInParameterType = hasManglingInlineClassInParameterPosition(property),
+                        hasManglingInlineClassInPropertyType = hasInlineClassInPropertyType &&
+                                parameterTypeRequiresMangling(property.returnType),
                         jvmExposeBoxedMode = property.jvmExposeBoxedMode(),
                     )
                 }
@@ -498,20 +485,20 @@ internal class SymbolLightAccessorMethod private constructor(
             val exposeBoxedMode = context.jvmExposeBoxedMode(accessor)
             val hasJvmNameAnnotation = accessor.hasJvmNameAnnotation()
 
-            val hasValueClassInParameterType = context.hasValueClassInParameterType(accessor)
-            val hasValueClassInReturnType = context.hasValueClassInReturnType(accessor)
+            val hasInlineClassInParameterType = context.hasInlineClassInParameterType(accessor)
+            val hasInlineClassInReturnType = context.hasInlineClassInReturnType(accessor)
 
-            val hasMangledNameDueValueClassesInSignature = hasMangledNameDueValueClassesInSignature(
-                // Not every value class in a parameter position mangles the name, so 'hasValueClassInParameterType' cannot be reused
-                hasManglingValueClassInParameterType = context.hasManglingValueClassInParameterType(accessor),
-                hasValueClassInReturnType = hasValueClassInReturnType,
+            val hasMangledNameDueToInlineClassesInSignature = hasMangledNameDueToInlineClassesInSignature(
+                // Not every inline class in a parameter position mangles the name, so 'hasInlineClassInParameterType' cannot be reused
+                hasManglingInlineClassInParameterType = context.hasManglingInlineClassInParameterType(accessor),
+                hasInlineClassInReturnType = hasInlineClassInReturnType,
                 isTopLevel = context.isTopLevel,
             )
 
-            val isNonMaterializableValueClassProperty =
-                // Assessors with JvmStatic should be materialized inside the containing value class
+            val isNonMaterializableInlineClassProperty =
+                // Accessors with JvmStatic should be materialized inside the containing inline class
                 !context.staticsFromCompanion &&
-                        context.destinationLightClass.isKotlinValueClass &&
+                        context.destinationLightClass.isInlineClass &&
                         // Constructor properties are materialized by default
                         (property as? KaKotlinPropertySymbol)?.primaryConstructorParameter == null &&
                         // Overrides are materialized by default
@@ -519,9 +506,9 @@ internal class SymbolLightAccessorMethod private constructor(
 
             val generationMode = methodGeneration(
                 exposeBoxedMode = exposeBoxedMode,
-                hasValueClassInParameterType = hasValueClassInParameterType,
-                hasValueClassInReturnType = hasValueClassInReturnType,
-                isAffectedByValueClass = hasMangledNameDueValueClassesInSignature || isNonMaterializableValueClassProperty,
+                hasInlineClassInParameterType = hasInlineClassInParameterType,
+                hasInlineClassInReturnType = hasInlineClassInReturnType,
+                isAffectedByInlineClass = hasMangledNameDueToInlineClassesInSignature || isNonMaterializableInlineClassProperty,
                 hasJvmNameAnnotation = hasJvmNameAnnotation,
                 isSuspend = false,
                 isOverridable = accessor.isOverridable(),
@@ -606,9 +593,9 @@ internal class SymbolLightAccessorMethod private constructor(
             isHiddenByDeprecation(property) -> false
             isHiddenOrSynthetic(accessorSymbol) -> false
             !accessorSymbol.isNotDefault && accessorSymbol.visibility == KaSymbolVisibility.PRIVATE -> false
-            // Value classes have special logic
-            context.destinationLightClass.isKotlinValueClass -> when {
-                // Overrides are generated for value classes
+            // Inline classes have special logic
+            context.destinationLightClass.isInlineClass -> when {
+                // Overrides are generated for inline classes
                 property.isOverride -> true
 
                 // Only public properties from the constructor can be exposed as regular accessors

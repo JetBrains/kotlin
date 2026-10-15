@@ -9,7 +9,6 @@ import org.gradle.kotlin.dsl.project
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
-import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget.MACOS_ARM64
 import java.io.File
 
@@ -38,7 +37,7 @@ fun ProjectTestsExtension.nativeTestTaskWithExternalDependencies(
             attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
             attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
             /* Project dependencies shall resolve the platform from the current host */
-            attribute(KotlinNativeTarget.konanTargetAttribute, HostManager.host.name)
+            hostKonanTargetAttribute()
         }
 
         project.dependencies {

@@ -1,4 +1,4 @@
-compiler/testData/cli/jvm/werrorWithExplicitError.kt:4:6: error: only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type 'String?'.
+compiler/testData/cli/jvm/werrorWithExplicitError.kt:4:6: error: unsafe call on receiver of nullable type 'String?'. Consider using a safe call '?.' or non-null asserted call '!!.'.
     t.length
      ^
 COMPILATION_ERROR

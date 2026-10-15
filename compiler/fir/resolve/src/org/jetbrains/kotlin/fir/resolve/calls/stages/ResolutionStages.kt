@@ -193,10 +193,10 @@ object CheckDispatchReceiver : ResolutionStage() {
             }
         }
 
-        val dispatchReceiverValueType = candidate.dispatchReceiver?.expression?.resolvedType ?: return
+        val dispatchReceiverExpression = candidate.dispatchReceiver?.expression
+        val dispatchReceiverValueType = dispatchReceiverExpression?.resolvedType ?: return
 
         val isReceiverNullable = !AbstractNullabilityChecker.isSubtypeOfAny(context.session.typeContext, dispatchReceiverValueType)
-
 
         val isCandidateFromUnstableSmartcast =
             (candidate.originScope as? FirUnstableSmartcastTypeScope)?.isSymbolFromUnstableSmartcast(candidate.symbol) == true
@@ -229,8 +229,13 @@ object CheckDispatchReceiver : ResolutionStage() {
                     isImplicitInvokeReceiver = candidate.callInfo.isImplicitInvoke,
                 )
             )
-        } else if (isReceiverNullable) {
-            sink.yieldDiagnostic(InapplicableNullableReceiver(dispatchReceiverValueType))
+        } else if (isReceiverNullable || dispatchReceiverValueType is ConeUnionType) {
+            val actualType = if (dispatchReceiverExpression is FirCheckedSafeCallSubject) {
+                dispatchReceiverExpression.originalReceiverRef.value.resolvedType
+            } else {
+                dispatchReceiverValueType
+            }
+            sink.yieldDiagnostic(InapplicableUnsafeReceiver(actualType))
         } else if (isCandidateFromUnstableSmartcast) {
             sink.yieldDiagnostic(InapplicableWrongReceiver(actualType = dispatchReceiverValueType))
         }

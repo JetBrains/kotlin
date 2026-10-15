@@ -1,7 +1,7 @@
 FILE[kind=File[packageFqName=<root>]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  CLASS[classId=/Ann, fqName=Ann, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Ann, superNames=[]]
+  CLASS[classId=/Ann, fqName=Ann, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Ann, superNames=[]]
     MODIFIER_LIST[annotation]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Ann]
       MODIFIER_LIST[]

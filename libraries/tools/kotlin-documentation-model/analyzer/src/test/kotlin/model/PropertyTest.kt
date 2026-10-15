@@ -15,7 +15,9 @@ import org.jetbrains.dokka.links.Nullable
 import org.jetbrains.dokka.links.TypeConstructor
 import org.jetbrains.dokka.links.TypeParam
 import org.jetbrains.dokka.links.TypeReference
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInAnalysisApi
 
+@MustRunOnChangesInAnalysisApi
 @OptIn(ExperimentalDokkaApi::class)
 class PropertyTest : AbstractModelTest("/src/main/kotlin/property/Test.kt", "property") {
 

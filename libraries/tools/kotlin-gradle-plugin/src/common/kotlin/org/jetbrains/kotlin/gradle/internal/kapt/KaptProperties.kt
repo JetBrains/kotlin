@@ -26,40 +26,45 @@ internal object KaptProperties {
     )
     private val CLASSLOADERS_CACHE_DISABLE_FOR_PROCESSORS = StringGradleProperty("kapt.classloaders.cache.disableForProcessors", "")
     private val CLASSLOADERS_CACHE_SIZE = IntGradleProperty("kapt.classloaders.cache.size", 0)
+    private val KAPT_STUB_WRITER_THREADS = IntGradleProperty("kapt.stub.writer.threads", 1)
     private val KAPT_ISOLATE_PROCESSORS_FROM_BUILD_CLASSPATH = BooleanGradleProperty(
         "kapt.isolate.processors.from.build.classpath",
         false
     )
 
     fun isKaptVerbose(project: Project): Provider<Boolean> = project.propertiesService.flatMap {
-        it.property(KAPT_VERBOSE, project)
+        it.typedProperty(KAPT_VERBOSE, project)
     }
 
     fun isIncrementalKapt(project: Project): Provider<Boolean> = project.propertiesService.flatMap {
-        it.property(KAPT_INCREMENTAL_APT, project)
+        it.typedProperty(KAPT_INCREMENTAL_APT, project)
     }
 
     fun isInfoAsWarnings(project: Project): Provider<Boolean> = project.propertiesService.flatMap {
-        it.property(KAPT_INFO_AS_WARNINGS, project)
+        it.typedProperty(KAPT_INFO_AS_WARNINGS, project)
     }
 
     fun isIncludeCompileClasspath(project: Project): Provider<Boolean> = project.propertiesService.flatMap {
-        it.property(KAPT_INCLUDE_COMPILE_CLASSPATH, project)
+        it.typedProperty(KAPT_INCLUDE_COMPILE_CLASSPATH, project)
     }
 
     fun isKaptDontWarnAnnotationProcessorDependencies(project: Project): Provider<Boolean> = project.propertiesService.flatMap {
-        it.property(KAPT_DONT_WARN_ANNOTATION_PROCESSOR_DEPENDENCIES, project)
+        it.typedProperty(KAPT_DONT_WARN_ANNOTATION_PROCESSOR_DEPENDENCIES, project)
     }
 
     fun getClassloadersCacheDisableForProcessors(project: Project): Provider<String> = project.propertiesService.flatMap {
-        it.property(CLASSLOADERS_CACHE_DISABLE_FOR_PROCESSORS, project)
+        it.typedProperty(CLASSLOADERS_CACHE_DISABLE_FOR_PROCESSORS, project)
     }
 
     fun getClassloadersCacheSize(project: Project): Provider<Int> = project.propertiesService.flatMap {
-        it.property(CLASSLOADERS_CACHE_SIZE, project)
+        it.typedProperty(CLASSLOADERS_CACHE_SIZE, project)
     }
 
     fun isIsolateProcessorsFromBuildClasspath(project: Project): Provider<Boolean> = project.propertiesService.flatMap {
-        it.property(KAPT_ISOLATE_PROCESSORS_FROM_BUILD_CLASSPATH, project)
+        it.typedProperty(KAPT_ISOLATE_PROCESSORS_FROM_BUILD_CLASSPATH, project)
+    }
+
+    fun getStubWriterThreads(project: Project): Provider<Int> = project.propertiesService.flatMap {
+        it.typedProperty(KAPT_STUB_WRITER_THREADS, project)
     }
 }

@@ -12,6 +12,7 @@ import org.gradle.api.initialization.ConfigurableIncludedBuild
 import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.testkit.runner.BuildResult
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
@@ -67,6 +68,7 @@ data class PublishedProject(
         val gradleMetadata: File get() = path.resolve("${artifactsPrefix}.module")
         val swiftPmMetadata: File get() = path.resolve("${artifactsPrefix}-swiftpm-metadata.json")
         val swiftExportMetadata: File get() = path.resolve("${artifactsPrefix}-swift-export-metadata.json")
+        val kar: File get() = path.resolve("${artifactsPrefix}.kar.xz")
     }
 
     val rootCoordinate: String = "$group:$name:$version"
@@ -139,6 +141,7 @@ fun TestProject.publish(
         group = "default_kotlin_${generateIdentifier()}"
     ),
     deriveBuildOptions: TestProject.() -> BuildOptions = { buildOptions },
+    buildAssertions: BuildResult.() -> Unit = {},
 ): PublishedProject {
     val repositoryIdentifier = "_KotlinPublication_${generateIdentifier()}_"
     return publishReturn(
@@ -149,6 +152,7 @@ fun TestProject.publish(
         "-P${repositoryIdentifier}",
         *buildArguments,
         deriveBuildOptions = deriveBuildOptions,
+        buildAssertions = buildAssertions,
     )
 }
 

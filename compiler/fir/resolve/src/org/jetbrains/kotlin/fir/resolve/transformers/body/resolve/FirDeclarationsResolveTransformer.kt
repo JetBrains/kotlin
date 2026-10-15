@@ -904,7 +904,7 @@ open class FirDeclarationsResolveTransformer(
         }
     }
 
-    open fun withReplSnippet(
+    fun withReplSnippet(
         snippet: FirReplSnippet,
         action: () -> FirReplSnippet,
     ): FirReplSnippet = context.withReplSnippet(snippet) {
@@ -1042,7 +1042,9 @@ open class FirDeclarationsResolveTransformer(
                 namedFunction.resolveLocalFunctionAnnotations()
             }
 
-            if (containingDeclaration != null && containingDeclaration !is FirClass && containingDeclaration !is FirFile && (containingDeclaration !is FirScript || namedFunction.status.visibility == Visibilities.Local)) {
+            // A local function may still have a class or a file as the container, e.g., inside their annotation arguments
+            val isLocal = namedFunction.status.visibility == Visibilities.Local
+            if (containingDeclaration != null && isLocal) {
                 // For class members everything should be already prepared
                 prepareSignatureForBodyResolve(namedFunction)
                 namedFunction.transformStatus(this, namedFunction.resolveStatus().mode())

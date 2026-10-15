@@ -96,6 +96,8 @@ class KaptCommandLineProcessor : CommandLineProcessor {
             INFO_AS_WARNINGS_OPTION -> setFlag(KaptFlag.INFO_AS_WARNINGS, value)
             STRICT_MODE_OPTION -> setFlag(KaptFlag.STRICT, value)
             STRIP_METADATA_OPTION -> setFlag(KaptFlag.STRIP_METADATA, value)
+            STUB_WRITER_THREADS_OPTION -> stubWriterThreads = value.toIntOrNull()?.takeIf { it >= 1 }
+                ?: throw CliOptionProcessingException("Invalid value $value for option ${option.optionName}: a positive integer expected")
             ISOLATE_PROCESSORS_FROM_BUILD_CLASSPATH_OPTION -> setFlag(KaptFlag.ISOLATE_PROCESSORS_FROM_BUILD_CLASSPATH, value)
             STUB_GENERATION_SCHEME_OPTION -> setSelector(enumValues<StubGenerationScheme>(), value) { stubGenerationScheme = it }
             USE_K2 -> {}
@@ -105,7 +107,14 @@ class KaptCommandLineProcessor : CommandLineProcessor {
             DUMP_FILE_READ_HISTORY -> fileReadHistoryReportFile = File(value)
             INCLUDE_COMPILE_CLASSPATH -> setFlag(KaptFlag.INCLUDE_COMPILE_CLASSPATH, value)
 
-            DETECT_MEMORY_LEAKS_OPTION -> setSelector(enumValues<DetectMemoryLeaksMode>(), value) { detectMemoryLeaks = it }
+            DETECT_MEMORY_LEAKS_OPTION -> {
+                if (value == "default") {
+                    detectMemoryLeaks = DetectMemoryLeaksMode.STANDARD
+                    usedDefaultDetectMemoryLeaks = true
+                } else {
+                    setSelector(enumValues<DetectMemoryLeaksMode>(), value) { detectMemoryLeaks = it }
+                }
+            }
             APT_MODE_OPTION -> setSelector(enumValues<AptMode>(), value) { mode = it }
 
             APT_OPTIONS_OPTION -> processingOptions.putAll(decodeMap(value))

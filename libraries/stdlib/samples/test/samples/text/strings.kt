@@ -595,6 +595,19 @@ class Strings {
         // The string does not contain 'z'
         assertFalse('z' in text)
     }
+
+    @Sample
+    fun first() {
+        val string = "Kotlin 1.4.0"
+        assertPrints(string.first(), "K")
+        assertPrints(string.first { it.isDigit() }, "1")
+        assertPrints(string.firstOrNull { it > 'z' }, "null")
+        assertFailsWith<NoSuchElementException> { string.first { it > 'z' } }
+
+        val emptyString = ""
+        assertPrints(emptyString.firstOrNull(), "null")
+        assertFailsWith<NoSuchElementException> { emptyString.first() }
+    }
     
     @Sample
     fun last() {
@@ -1018,6 +1031,15 @@ class Strings {
         assertPrints("Ko" + "dee", "Kodee")
         // 2 is not a string, but plus concatenates its string representation with the "Kotlin " string
         assertPrints("Kotlin " + 2, "Kotlin 2")
+        // list is converted to a String first and then concatenated with the "Numbers: " string
+        assertPrints("Numbers: " + listOf(1, 2, 3), "Numbers: [1, 2, 3]")
+    }
+
+    @Sample
+    fun nullableStringPlus() {
+        // null is not a string, but plus concatenates its string representation with the "Hello" string
+        assertPrints(null + "Hello", "nullHello")
+        assertPrints(null + null, "nullnull")
         // list is converted to a String first and then concatenated with the "Numbers: " string
         assertPrints("Numbers: " + listOf(1, 2, 3), "Numbers: [1, 2, 3]")
     }

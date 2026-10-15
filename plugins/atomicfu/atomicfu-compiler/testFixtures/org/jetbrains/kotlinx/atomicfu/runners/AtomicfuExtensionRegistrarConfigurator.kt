@@ -25,6 +25,7 @@ import java.io.File
 
 internal fun TestConfigurationBuilder.configureForKotlinxAtomicfu() {
     useConfigurators(
+        ::AtomicfuCompilerConfigurationConfigurator,
         ::AtomicfuExtensionRegistrarConfigurator
     )
 
@@ -42,11 +43,13 @@ internal fun TestConfigurationBuilder.configureForKotlinxAtomicfu() {
     setupDefaultDirectivesForIrDumps()
 }
 
-class AtomicfuExtensionRegistrarConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
+class AtomicfuCompilerConfigurationConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
         configuration.addJvmClasspathRoots(getLibrariesPaths())
     }
+}
 
+class AtomicfuExtensionRegistrarConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
     override fun ExtensionStorage.registerCompilerExtensions(module: TestModule, configuration: CompilerConfiguration) {
         FirExtensionRegistrar.registerExtension(AtomicfuFirExtensionRegistrar())
         IrGenerationExtension.registerExtension(AtomicfuLoweringExtension())

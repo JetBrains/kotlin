@@ -1,6 +1,9 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmDefaultMode
+
 plugins {
     id("common-configuration")
     kotlin("jvm")
+    id("org.jetbrains.kotlinx.binary-compatibility-validator")
 }
 
 configureKotlinCompileTasksGradleCompatibility()
@@ -21,6 +24,6 @@ standardPublicJars()
 
 tasks.compileKotlin {
     compilerOptions {
-        freeCompilerArgs.add("-Xjvm-default=all")
+        jvmDefault = JvmDefaultMode.NO_COMPATIBILITY
     }
 }

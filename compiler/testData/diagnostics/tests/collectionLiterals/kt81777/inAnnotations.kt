@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-81777, KT-76150
-// IGNORE_PHASE_VERIFICATION: invalid code inside annotations
 // WITH_STDLIB
 // LANGUAGE: -CollectionLiterals
 // LANGUAGE_FEATURE_TOGGLED: CollectionLiteralsBasedAnnotationResolution

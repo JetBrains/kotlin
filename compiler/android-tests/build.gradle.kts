@@ -1,8 +1,6 @@
 import org.gradle.jvm.toolchain.JavaLauncher
 import org.jetbrains.kotlin.build.androidsdkprovisioner.ProvisioningType
-import org.jetbrains.kotlin.testFederation.SmokeTestConfig
-import org.jetbrains.kotlin.testFederation.TemporaryTestFederationApi
-import org.jetbrains.kotlin.testFederation.smokeTestConfig
+import org.jetbrains.kotlin.testFederation.testFederation
 
 plugins {
     id("common-configuration")
@@ -16,6 +14,7 @@ dependencies {
     testImplementation(project(":core:descriptors.jvm"))
     testImplementation(project(":compiler:util"))
     testImplementation(project(":compiler:cli"))
+    testImplementation(project(":compiler:cli-jvm"))
     testImplementation(project(":compiler:frontend"))
     testImplementation(project(":compiler:backend"))
 
@@ -30,7 +29,6 @@ dependencies {
     testImplementation(libs.kotlinx.coroutines.core.jvm)
     testImplementation(testFixtures(project(":compiler:test-infrastructure")))
     testImplementation(testFixtures(project(":compiler:test-infrastructure-utils")))
-    testImplementation(testFixtures(project(":compiler:tests-compiler-utils")))
     testImplementation(testFixtures(project(":compiler:tests-common-new")))
 
 
@@ -92,8 +90,11 @@ projectTests {
             provideToThisTaskAsSystemProperty(ProvisioningType.SDK_WITH_EMULATOR)
         }
 
-        @OptIn(TemporaryTestFederationApi::class)
-        smokeTestConfig = SmokeTestConfig.Disabled
+        testFederation {
+            // KTI-3196
+            smokeTests { skip() }
+            contractTests { skip() }
+        }
 
 
         testData(project(":compiler").isolated, "testData/codegen/box")
@@ -108,7 +109,6 @@ projectTests {
 
     withJvmStdlibAndReflect()
     withTestJar()
-    withScriptRuntime()
     withMockJdkAnnotationsJar()
     withMockJdkRuntime()
 }

@@ -606,6 +606,8 @@ public inline operator fun CharArray.component5(): Char {
 
 /**
  * Returns `true` if [element] is found in the array.
+ * 
+ * @sample samples.collections.Collections.Elements.contains
  */
 public operator fun <@kotlin.internal.OnlyInputTypes T> Array<out T>.contains(element: T): Boolean {
     return indexOf(element) >= 0
@@ -613,6 +615,8 @@ public operator fun <@kotlin.internal.OnlyInputTypes T> Array<out T>.contains(el
 
 /**
  * Returns `true` if [element] is found in the array.
+ * 
+ * @sample samples.collections.Collections.Elements.contains
  */
 public operator fun ByteArray.contains(element: Byte): Boolean {
     return indexOf(element) >= 0
@@ -620,6 +624,8 @@ public operator fun ByteArray.contains(element: Byte): Boolean {
 
 /**
  * Returns `true` if [element] is found in the array.
+ * 
+ * @sample samples.collections.Collections.Elements.contains
  */
 public operator fun ShortArray.contains(element: Short): Boolean {
     return indexOf(element) >= 0
@@ -627,6 +633,8 @@ public operator fun ShortArray.contains(element: Short): Boolean {
 
 /**
  * Returns `true` if [element] is found in the array.
+ * 
+ * @sample samples.collections.Collections.Elements.contains
  */
 public operator fun IntArray.contains(element: Int): Boolean {
     return indexOf(element) >= 0
@@ -634,6 +642,8 @@ public operator fun IntArray.contains(element: Int): Boolean {
 
 /**
  * Returns `true` if [element] is found in the array.
+ * 
+ * @sample samples.collections.Collections.Elements.contains
  */
 public operator fun LongArray.contains(element: Long): Boolean {
     return indexOf(element) >= 0
@@ -641,6 +651,8 @@ public operator fun LongArray.contains(element: Long): Boolean {
 
 /**
  * Returns `true` if [element] is found in the array.
+ * 
+ * @sample samples.collections.Collections.Elements.contains
  */
 @Deprecated("The function has unclear behavior when searching for NaN or zero values and will be removed soon. Use 'any { it == element }' instead to continue using this behavior, or '.asList().contains(element: T)' to get the same search behavior as in a list.", ReplaceWith("any { it == element }"))
 @DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.6", hiddenSince = "1.7")
@@ -650,6 +662,8 @@ public operator fun FloatArray.contains(element: Float): Boolean {
 
 /**
  * Returns `true` if [element] is found in the array.
+ * 
+ * @sample samples.collections.Collections.Elements.contains
  */
 @Deprecated("The function has unclear behavior when searching for NaN or zero values and will be removed soon. Use 'any { it == element }' instead to continue using this behavior, or '.asList().contains(element: T)' to get the same search behavior as in a list.", ReplaceWith("any { it == element }"))
 @DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.6", hiddenSince = "1.7")
@@ -659,6 +673,8 @@ public operator fun DoubleArray.contains(element: Double): Boolean {
 
 /**
  * Returns `true` if [element] is found in the array.
+ * 
+ * @sample samples.collections.Collections.Elements.contains
  */
 public operator fun BooleanArray.contains(element: Boolean): Boolean {
     return indexOf(element) >= 0
@@ -666,6 +682,8 @@ public operator fun BooleanArray.contains(element: Boolean): Boolean {
 
 /**
  * Returns `true` if [element] is found in the array.
+ * 
+ * @sample samples.collections.Collections.Elements.contains
  */
 public operator fun CharArray.contains(element: Char): Boolean {
     return indexOf(element) >= 0
@@ -1125,6 +1143,8 @@ public inline fun CharArray.findLast(predicate: (Char) -> Boolean): Char? {
  * Returns the first element.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.first
  */
 public fun <T> Array<out T>.first(): T {
     if (isEmpty())
@@ -1136,6 +1156,8 @@ public fun <T> Array<out T>.first(): T {
  * Returns the first element.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.first
  */
 public fun ByteArray.first(): Byte {
     if (isEmpty())
@@ -1147,6 +1169,8 @@ public fun ByteArray.first(): Byte {
  * Returns the first element.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.first
  */
 public fun ShortArray.first(): Short {
     if (isEmpty())
@@ -1158,6 +1182,8 @@ public fun ShortArray.first(): Short {
  * Returns the first element.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.first
  */
 public fun IntArray.first(): Int {
     if (isEmpty())
@@ -1169,6 +1195,8 @@ public fun IntArray.first(): Int {
  * Returns the first element.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.first
  */
 public fun LongArray.first(): Long {
     if (isEmpty())
@@ -1180,6 +1208,8 @@ public fun LongArray.first(): Long {
  * Returns the first element.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.first
  */
 public fun FloatArray.first(): Float {
     if (isEmpty())
@@ -1191,6 +1221,8 @@ public fun FloatArray.first(): Float {
  * Returns the first element.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.first
  */
 public fun DoubleArray.first(): Double {
     if (isEmpty())
@@ -1202,6 +1234,8 @@ public fun DoubleArray.first(): Double {
  * Returns the first element.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.first
  */
 public fun BooleanArray.first(): Boolean {
     if (isEmpty())
@@ -1213,6 +1247,8 @@ public fun BooleanArray.first(): Boolean {
  * Returns the first element.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.first
  */
 public fun CharArray.first(): Char {
     if (isEmpty())
@@ -1223,6 +1259,8 @@ public fun CharArray.first(): Char {
 /**
  * Returns the first element matching the given [predicate].
  * @throws [NoSuchElementException] if no such element is found.
+ * 
+ * @sample samples.collections.Collections.Elements.first
  */
 public inline fun <T> Array<out T>.first(predicate: (T) -> Boolean): T {
     for (element in this) if (predicate(element)) return element
@@ -1232,6 +1270,8 @@ public inline fun <T> Array<out T>.first(predicate: (T) -> Boolean): T {
 /**
  * Returns the first element matching the given [predicate].
  * @throws [NoSuchElementException] if no such element is found.
+ * 
+ * @sample samples.collections.Collections.Elements.first
  */
 public inline fun ByteArray.first(predicate: (Byte) -> Boolean): Byte {
     for (element in this) if (predicate(element)) return element
@@ -1241,6 +1281,8 @@ public inline fun ByteArray.first(predicate: (Byte) -> Boolean): Byte {
 /**
  * Returns the first element matching the given [predicate].
  * @throws [NoSuchElementException] if no such element is found.
+ * 
+ * @sample samples.collections.Collections.Elements.first
  */
 public inline fun ShortArray.first(predicate: (Short) -> Boolean): Short {
     for (element in this) if (predicate(element)) return element
@@ -1250,6 +1292,8 @@ public inline fun ShortArray.first(predicate: (Short) -> Boolean): Short {
 /**
  * Returns the first element matching the given [predicate].
  * @throws [NoSuchElementException] if no such element is found.
+ * 
+ * @sample samples.collections.Collections.Elements.first
  */
 public inline fun IntArray.first(predicate: (Int) -> Boolean): Int {
     for (element in this) if (predicate(element)) return element
@@ -1259,6 +1303,8 @@ public inline fun IntArray.first(predicate: (Int) -> Boolean): Int {
 /**
  * Returns the first element matching the given [predicate].
  * @throws [NoSuchElementException] if no such element is found.
+ * 
+ * @sample samples.collections.Collections.Elements.first
  */
 public inline fun LongArray.first(predicate: (Long) -> Boolean): Long {
     for (element in this) if (predicate(element)) return element
@@ -1268,6 +1314,8 @@ public inline fun LongArray.first(predicate: (Long) -> Boolean): Long {
 /**
  * Returns the first element matching the given [predicate].
  * @throws [NoSuchElementException] if no such element is found.
+ * 
+ * @sample samples.collections.Collections.Elements.first
  */
 public inline fun FloatArray.first(predicate: (Float) -> Boolean): Float {
     for (element in this) if (predicate(element)) return element
@@ -1277,6 +1325,8 @@ public inline fun FloatArray.first(predicate: (Float) -> Boolean): Float {
 /**
  * Returns the first element matching the given [predicate].
  * @throws [NoSuchElementException] if no such element is found.
+ * 
+ * @sample samples.collections.Collections.Elements.first
  */
 public inline fun DoubleArray.first(predicate: (Double) -> Boolean): Double {
     for (element in this) if (predicate(element)) return element
@@ -1286,6 +1336,8 @@ public inline fun DoubleArray.first(predicate: (Double) -> Boolean): Double {
 /**
  * Returns the first element matching the given [predicate].
  * @throws [NoSuchElementException] if no such element is found.
+ * 
+ * @sample samples.collections.Collections.Elements.first
  */
 public inline fun BooleanArray.first(predicate: (Boolean) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return element
@@ -1295,6 +1347,8 @@ public inline fun BooleanArray.first(predicate: (Boolean) -> Boolean): Boolean {
 /**
  * Returns the first element matching the given [predicate].
  * @throws [NoSuchElementException] if no such element is found.
+ * 
+ * @sample samples.collections.Collections.Elements.first
  */
 public inline fun CharArray.first(predicate: (Char) -> Boolean): Char {
     for (element in this) if (predicate(element)) return element

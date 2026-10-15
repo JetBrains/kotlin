@@ -9,13 +9,13 @@ public typealias __Foo = ExportedKotlinPackages.foo.__Foo
 @_spi(ExperimentalApi)
 public final class Bar: KotlinRuntime.KotlinBase {
     @_spi(ExperimentalApi)
-    public init() {
+    public override init() {
         let __kt = __root___Bar_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___Bar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
     package override init(
-        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -39,11 +39,11 @@ public final class Baz: KotlinRuntime.KotlinBase {
             return main.Baz.__createClassWrapper(externalRCRef: __root___Baz_get())
         }
     }
-    private init() {
+    private override init() {
         fatalError()
     }
     package override init(
-        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -61,26 +61,26 @@ public final class Baz: KotlinRuntime.KotlinBase {
 }
 @available(*, unavailable, message: "deprecated")
 public final class DeprecatedBar: KotlinRuntime.KotlinBase {
-    public init() {
+    public override init() {
         let __kt = __root___DeprecatedBar_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___DeprecatedBar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
     package override init(
-        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
 }
 public final class GenericClass: KotlinRuntime.KotlinBase {
-    public init() {
+    public override init() {
         let __kt = __root___GenericClass_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___GenericClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
     package override init(
-        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -443,7 +443,7 @@ extension ExportedKotlinPackages.foo {
         arg: Swift.Bool
     ) -> Swift.Int32 {
         let (bar) = context
-        return foo_contextExtFun__TypesOfArgumentsEC1__anyU20ExportedKotlinPackages_foo_Foo_Swift_Bool_main_Bar__(receiver.__externalRCRef(), arg, bar.__externalRCRef())
+        return foo_contextExtFun__TypesOfArgumentsEC1__main_Bar_anyU20ExportedKotlinPackages_foo_Foo_Swift_Bool__(bar.__externalRCRef(), receiver.__externalRCRef(), arg)
     }
     @_spi(ExperimentalApi)
     public static func getContextProp(
@@ -451,7 +451,7 @@ extension ExportedKotlinPackages.foo {
         _ receiver: any ExportedKotlinPackages.foo.Foo
     ) -> Swift.Int32 {
         let (bar) = context
-        return foo_contextProp_get__TypesOfArgumentsEC1__anyU20ExportedKotlinPackages_foo_Foo_main_Bar__(receiver.__externalRCRef(), bar.__externalRCRef())
+        return foo_contextProp_get__TypesOfArgumentsEC1__main_Bar_anyU20ExportedKotlinPackages_foo_Foo__(bar.__externalRCRef(), receiver.__externalRCRef())
     }
     public static func getNullableProp(
         _ receiver: (any ExportedKotlinPackages.foo.Foo)?
@@ -480,7 +480,7 @@ extension ExportedKotlinPackages.foo {
         `_`: Swift.Int32
     ) -> Swift.Void {
         let (bar) = context
-        return { foo_contextProp_set__TypesOfArgumentsEC1__anyU20ExportedKotlinPackages_foo_Foo_Swift_Int32_main_Bar__(receiver.__externalRCRef(), `_`, bar.__externalRCRef()); return () }()
+        return { foo_contextProp_set__TypesOfArgumentsEC1__main_Bar_anyU20ExportedKotlinPackages_foo_Foo_Swift_Int32__(bar.__externalRCRef(), receiver.__externalRCRef(), `_`); return () }()
     }
     public static func setNullableProp(
         _ receiver: (any ExportedKotlinPackages.foo.Foo)?,
@@ -516,13 +516,13 @@ extension ExportedKotlinPackages.foo {
 }
 extension ExportedKotlinPackages.other {
     public final class Other: KotlinRuntime.KotlinBase {
-        public init() {
+        public override init() {
             let __kt = other_Other_init_allocate()
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { other_Other_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
         }
         package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);

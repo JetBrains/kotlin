@@ -35,6 +35,8 @@ internal class KotlinArchiveEntry(
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
     val files: FileCollection,
+    @get:Input
+    val filesRequireUnpacking: Boolean = false,
 )
 
 internal class KotlinArchiveTargetCrossCompilationCheckData(
@@ -60,14 +62,17 @@ internal fun KotlinArchiveTargetCrossCompilationCheckData.isSupported(): Boolean
 @DisableCachingByDefault(because = "Assembling a Kotlin Archive is not worth caching, as it's only built for publishing, which is a rare operation")
 internal abstract class AssembleKotlinArchiveTask @Inject constructor(
     private val fileOperations: FileOperations,
+    private val archiveOperations: ArchiveOperations,
 ) : DefaultTask(), UsesKotlinToolingDiagnostics {
     @get:Nested
     abstract val archiveContents: ListProperty<KotlinArchiveEntry>
 
     private fun kotlinArchiveEntryOf(path: String, files: FileCollection) = KotlinArchiveEntry(project.provider { path }, files)
 
-    fun addPlatformKlib(path: String, files: FileCollection) {
-        archiveContents.add(kotlinArchiveEntryOf("${KarLayout.PLATFORM_KLIBS_DIRECTORY_NAME}/$path", files))
+    fun addPlatformKlib(path: String, files: FileCollection, packed: Boolean = false) {
+        archiveContents.add(
+            KotlinArchiveEntry(project.provider { "${KarLayout.PLATFORM_KLIBS_DIRECTORY_NAME}/$path" }, files, packed)
+        )
     }
 
     fun addCInterop(pathProvider: Provider<String>, files: FileCollection) {
@@ -85,6 +90,16 @@ internal abstract class AssembleKotlinArchiveTask @Inject constructor(
     @get:InputFile
     @get:PathSensitive(PathSensitivity.NONE)
     abstract val projectStructureMetadataFile: RegularFileProperty
+
+    /**
+     * Swift Export metadata json produced by
+     * [org.jetbrains.kotlin.gradle.plugin.mpp.export.tasks.SerializeSwiftExportMetadata].
+     * Unset when the project does not configure the `export { swift { } }` DSL.
+     */
+    @get:Optional
+    @get:InputFile
+    @get:PathSensitive(PathSensitivity.NONE)
+    abstract val swiftExportMetadataFile: RegularFileProperty
 
     @get:OutputDirectory
     abstract val outputDirectory: DirectoryProperty
@@ -158,18 +173,30 @@ internal abstract class AssembleKotlinArchiveTask @Inject constructor(
             KarLayout.CINTEROP_KLIBS_DIRECTORY_NAME,
             KarLayout.METADATA_DIRECTORY_NAME,
             KarLayout.RESOURCES_DIRECTORY_NAME,
+            KarLayout.SWIFT_EXPORT_DIRECTORY_NAME,
         )
 
         fileOperations.sync { spec ->
             spec.into(targetDir)
             for (input in archiveContents.get()) {
-                spec.from(input.files) { inputSpec ->
+                val content = if (input.filesRequireUnpacking) {
+                    input.files.files.filter { it.exists() }.map { archiveOperations.zipTree(it) }
+                } else {
+                    listOf(input.files)
+                }
+                spec.from(content) { inputSpec ->
                     inputSpec.into(input.pathPrefix)
                 }
             }
             spec.from(projectStructureMetadataFile) { psmSpec ->
                 psmSpec.into(KarLayout.METADATA_DIRECTORY_NAME)
                 psmSpec.rename { KarLayout.PSM_FILE_NAME }
+            }
+            if (swiftExportMetadataFile.isPresent) {
+                spec.from(swiftExportMetadataFile) { swiftExportSpec ->
+                    swiftExportSpec.into(KarLayout.SWIFT_EXPORT_DIRECTORY_NAME)
+                    swiftExportSpec.rename { KarLayout.SWIFT_EXPORT_METADATA_FILE_NAME }
+                }
             }
         }
 

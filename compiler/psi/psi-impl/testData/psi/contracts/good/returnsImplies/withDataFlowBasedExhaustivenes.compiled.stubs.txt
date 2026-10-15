@@ -2,7 +2,7 @@ Variants.class:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/Variants, fqName=Variants, isClsStubCompiledToJvmDefaultImplementation=true, isInterface=true, isLocal=false, isTopLevel=true, name=Variants, superNames=[]]
+    CLASS[classId=/Variants, fqName=Variants, isClsStubCompiledToJvmDefaultImplementation=true, isInterface=true, isTopLevel=true, name=Variants, superNames=[]]
       MODIFIER_LIST[public sealed]
       CLASS_BODY
         FUNCTION[fqName=Variants.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
@@ -14,7 +14,7 @@ Variants.class:
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Unit]
                 isClassRef: true
-        OBJECT_DECLARATION[classId=/Variants.A, fqName=Variants.A, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=A, superNames=[Variants]]
+        OBJECT_DECLARATION[classId=/Variants.A, fqName=Variants.A, isObjectLiteral=false, isTopLevel=false, name=A, superNames=[Variants]]
           MODIFIER_LIST[public data]
           SUPER_TYPE_LIST
             SUPER_TYPE_ENTRY
@@ -58,7 +58,7 @@ Variants.class:
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=String]
                     isClassRef: true
-        OBJECT_DECLARATION[classId=/Variants.B, fqName=Variants.B, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=B, superNames=[Variants]]
+        OBJECT_DECLARATION[classId=/Variants.B, fqName=Variants.B, isObjectLiteral=false, isTopLevel=false, name=B, superNames=[Variants]]
           MODIFIER_LIST[public data]
           SUPER_TYPE_LIST
             SUPER_TYPE_ENTRY

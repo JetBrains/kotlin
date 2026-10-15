@@ -52,7 +52,18 @@ import org.jetbrains.kotlin.util.OperatorNameConventions.TO_STRING
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 
 internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassLike {
-    val isKotlinValueClass: Boolean
+    /**
+     * Whether the class is an inline value class: it is unboxed on the JVM, its members are replaced with static `-impl`
+     * methods, and its constructor is not exposed to Java.
+     *
+     * A [full value class](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0454-better-immutability-value-classes-MFVC.md)
+     * and a value object are compiled as regular classes, so they are not inline value classes even though they have the
+     * `value` modifier. The distinction cannot be made from PSI alone, as it depends on the `@JvmInline` annotation, the
+     * target platform, and the `FullValueClasses` language feature, so the flag is computed from the class symbol.
+     *
+     * @see KaNamedClassSymbol.isInline
+     */
+    val isInlineClass: Boolean
 
     constructor(
         useSiteModule: KaModule,
@@ -62,20 +73,20 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
         classSymbol = classSymbol,
     ) {
         require(classSymbol.classKind != KaClassKind.INTERFACE && classSymbol.classKind != KaClassKind.ANNOTATION_CLASS)
-        isKotlinValueClass = classSymbol.isInline
+        isInlineClass = classSymbol.isInline
     }
 
     private constructor(
         classOrObjectDeclaration: KtClassOrObject?,
         classSymbolPointer: KaSymbolPointer<KaNamedClassSymbol>,
         useSiteModule: KaModule,
-        isKotlinValueClass: Boolean,
+        isInlineClass: Boolean,
     ) : super(
         classOrObjectDeclaration = classOrObjectDeclaration,
         classSymbolPointer = classSymbolPointer,
         useSiteModule = useSiteModule,
     ) {
-        this.isKotlinValueClass = isKotlinValueClass
+        this.isInlineClass = isInlineClass
     }
 
     override fun getModifierList(): PsiModifierList = cachedValue {
@@ -192,16 +203,16 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
             lightMemberOrigin,
             METHOD_INDEX_BASE,
             isTopLevel = false,
-            suppressValueClass = true,
+            suppressInlineClass = true,
         )
     }
 
     context(session: KaSession)
     private fun generateMethodsFromAny(classSymbol: KaNamedClassSymbol, result: MutableList<PsiMethod>): Unit = with(session) {
-        if (!classSymbol.isData && !classSymbol.isInline) return
+        if (!classSymbol.isData && !classSymbol.isValue) return
 
-        // Compiler will generate 'equals/hashCode/toString' for data/value class if they are not final.
-        // We want to mimic that.
+        // Compiler will generate 'equals/hashCode/toString' for data/value class if they are not final. We want to mimic that.
+        // Note: an abstract or sealed value class has no generated members, as they are only generated for a concrete class
         val generatedFunctionsFromAny = classSymbol.memberScope
             .callables(EQUALS, HASH_CODE, TO_STRING)
             .filterIsInstance<KaNamedFunctionSymbol>()
@@ -231,7 +242,7 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
                 lightMemberOrigin = lightMemberOrigin,
                 methodIndex = METHOD_INDEX_FOR_NON_ORIGIN_METHOD,
                 isTopLevel = false,
-                suppressValueClass = true,
+                suppressInlineClass = true,
             )
         }
 
@@ -362,6 +373,6 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
         classOrObjectDeclaration = classOrObjectDeclaration,
         classSymbolPointer = symbolPointer,
         useSiteModule = useSiteModule,
-        isKotlinValueClass = isKotlinValueClass,
+        isInlineClass = isInlineClass,
     )
 }

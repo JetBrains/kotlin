@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
+import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
@@ -67,7 +68,11 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
     @GradleTest
     @DisplayName("Warnings with set warningLevel are reported")
     fun testWarningLevels(gradleVersion: GradleVersion) {
-        project("warningLevelUsage", gradleVersion) {
+        project(
+            "warningLevelUsage",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(warningMode = WarningMode.Fail),
+        ) {
             build("build") {
                 assertTasksExecuted(":compileKotlin")
                 assertOutputContains("""w:.*NOTHING_TO_INLINE.*""".toRegex())
@@ -96,7 +101,7 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
     fun testLanguageVersion(gradleVersion: GradleVersion) {
         project("languageVersion", gradleVersion) {
             buildAndFail("build") {
-                assertOutputContains("The feature \"break continue in inline lambdas\" is only available since language version 2.2")
+                assertOutputContains("The feature \"unnamed local variables\" is only available since language version 2.5")
             }
         }
     }

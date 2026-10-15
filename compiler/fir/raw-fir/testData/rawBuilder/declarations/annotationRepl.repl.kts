@@ -1,5 +1,3 @@
-// IGNORE_TREE_ACCESS: KT-64899
-
 @Target(
     AnnotationTarget.CLASS,
     AnnotationTarget.PROPERTY,

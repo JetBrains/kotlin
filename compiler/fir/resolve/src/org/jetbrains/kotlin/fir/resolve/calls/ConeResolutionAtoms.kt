@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeVariableForLambdaRetur
 import org.jetbrains.kotlin.fir.resolve.shouldBeResolvedInContextSensitiveMode
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
@@ -103,11 +104,13 @@ sealed class ConeResolutionAtom : AbstractConeResolutionAtom() {
                         )
                     else -> createRawAtomForResolvable(expression, allowUnresolvedExpression)
                 }
-                is FirResolvedQualifier if expression.shouldAlternativeBeResolved() -> {
-                    ConeResolutionAtomWithPostponedChild(
-                        expression,
-                        fallbackSubAtom = createRawAtomForResolvable(expression, allowUnresolvedExpression),
-                    )
+                is FirResolvedQualifier -> when {
+                    expression.originalNameForContextSensitiveResolution != null || expression.shouldAlternativeBeResolved() ->
+                        ConeResolutionAtomWithPostponedChild(
+                            expression,
+                            fallbackSubAtom = createRawAtomForResolvable(expression, allowUnresolvedExpression),
+                        )
+                    else -> createRawAtomForResolvable(expression, allowUnresolvedExpression)
                 }
                 is FirCollectionLiteral -> ConeResolutionAtomWithPostponedChild(expression)
                 is FirResolvable -> createRawAtomForResolvable(expression, allowUnresolvedExpression)
@@ -411,8 +414,17 @@ sealed class ConeAtomWithExpectedTypeAsStaticReceiver : ConePostponedResolvedAto
     abstract override val expectedType: ConeKotlinType?
 }
 
+/**
+ * @property expression resolved expression which is replaced with the result of CSR when it's successful.
+ * @property name used as a name for a new synthetic property access expression for CSR attempt.
+ *   It's either the name of the callee reference of [expression] when it was resolved to a property,
+ *   or [FirResolvedQualifier.originalNameForContextSensitiveResolution] of the qualifier [expression].
+ *   NB: Information from [expression] is not enough when it's a qualifier because it might have a different name
+ *   when resolved with an alias.
+ */
 class ConeSimpleNameForContextSensitiveResolution(
-    override val expression: FirPropertyAccessExpression,
+    override val expression: FirExpression,
+    val name: Name,
     override val expectedType: ConeKotlinType,
     override val containingCallCandidate: Candidate,
     val fallbackSubAtom: ConeResolutionAtom,

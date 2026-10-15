@@ -121,7 +121,7 @@ internal class FirElementFinder : FirSessionComponent {
                 }
             }
 
-            val nonClassPrefix = firFile.scriptOrReplSnippet?.let(FirFileStructureNode::mappingName)
+            val nonClassPrefix = firFile.script?.let(FirFileStructureNode::mappingName)
 
             val pathSegments = listOfNotNull(nonClassPrefix) + containerClassId?.relativeClassName?.pathSegments().orEmpty()
             val resultPath = ArrayList<FirDeclaration>(pathSegments.size + 1)
@@ -284,9 +284,9 @@ private sealed class FirFileStructureNode(val element: FirDeclaration) {
                 resultPath.removeLast()
             }
 
-            // A corner case for scripts/snippets as they always present in [pathSegments] even if it is a target,
+            // A corner case for scripts as they always present in [pathSegments] even if it is a target,
             // so it should be checked
-            if (pathIndex != 0 || structures.singleOrNull()?.element?.isScriptOrReplSnippet != true) {
+            if (pathIndex != 0 || structures.singleOrNull()?.element?.isScript != true) {
                 return null
             }
         }
@@ -320,11 +320,6 @@ private sealed class FirFileStructureNode(val element: FirDeclaration) {
                 }
             )
 
-            is FirReplSnippet -> Container(
-                element = element,
-                elements = convertDeclarations(listOf(element.snippetClass))
-            )
-
             is FirRegularClass -> Container(
                 element = element,
                 elements = convertDeclarations(element.declarations),
@@ -350,7 +345,6 @@ private sealed class FirFileStructureNode(val element: FirDeclaration) {
          */
         fun mappingName(declaration: FirDeclaration): Name = when (declaration) {
             is FirScript -> declaration.name
-            is FirReplSnippet -> declaration.name
             is FirRegularClass -> declaration.name
             is FirNamedFunction -> declaration.name
             is FirVariable -> declaration.name
@@ -365,6 +359,7 @@ private sealed class FirFileStructureNode(val element: FirDeclaration) {
             is FirPropertyAccessor,
             is FirAnonymousObject,
             is FirReceiverParameter,
+            is FirReplSnippet,
             is FirTypeParameter,
                 -> errorWithFirSpecificEntries("Unexpected declaration ${declaration::class.simpleName}", fir = declaration)
         }
@@ -390,15 +385,7 @@ private sealed class FirFileStructureNode(val element: FirDeclaration) {
             is KtDestructuringDeclarationEntry,
                 -> declaration.nameAsSafeName
 
-            is KtScript -> {
-                val fileName = declaration.containingKtFile.name
-                @OptIn(KtExperimentalApi::class)
-                if (declaration.isReplSnippet) {
-                    AbstractRawFirBuilder.firSnippetName(fileName)
-                } else {
-                    AbstractRawFirBuilder.firScriptName(fileName)
-                }
-            }
+            is KtScript -> AbstractRawFirBuilder.firScriptName(declaration.containingKtFile.name)
 
             else -> null
         }

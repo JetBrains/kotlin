@@ -86,7 +86,7 @@ internal object PersistenceContextCollector {
             is FirCallableDeclaration -> declaration.symbol.isLocalForLazyResolutionPurposes
             is FirDanglingModifierList -> declaration.containingClass()?.toSymbol(sessionHolder.session)?.isLocal == true
             is FirAnonymousInitializer -> declaration.getContainingClassSymbol()?.isLocal == true
-            is FirScript, is FirCodeFragment, is FirReplSnippet -> false
+            is FirScript, is FirCodeFragment -> false
             else -> errorWithAttachment("Unsupported declaration ${declaration::class}") {
                 withFirEntry("declaration", declaration)
             }

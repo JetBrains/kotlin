@@ -1640,6 +1640,36 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveCallTestGenerated ext
     run("whenSelectorSmartCast.kt");
   }
 
+  @Test
+  @TestMetadata("withLambdaReceiver_explicitThis.kt")
+  public void testWithLambdaReceiver_explicitThis() {
+    run("withLambdaReceiver_explicitThis.kt");
+  }
+
+  @Test
+  @TestMetadata("withLambdaReceiver_implicit.kt")
+  public void testWithLambdaReceiver_implicit() {
+    run("withLambdaReceiver_implicit.kt");
+  }
+
+  @Test
+  @TestMetadata("withLambdaReceiver_outerLabeledThis.kt")
+  public void testWithLambdaReceiver_outerLabeledThis() {
+    run("withLambdaReceiver_outerLabeledThis.kt");
+  }
+
+  @Test
+  @TestMetadata("withLambdaReceiver_outerLabeledThisExpression.kt")
+  public void testWithLambdaReceiver_outerLabeledThisExpression() {
+    run("withLambdaReceiver_outerLabeledThisExpression.kt");
+  }
+
+  @Test
+  @TestMetadata("withLambdaReceiver_this.kt")
+  public void testWithLambdaReceiver_this() {
+    run("withLambdaReceiver_this.kt");
+  }
+
   @Nested
   @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/annotations")
   @TestDataPath("$PROJECT_ROOT")
@@ -2155,6 +2185,12 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveCallTestGenerated ext
       }
 
       @Test
+      @TestMetadata("PrivateTopLevelFunctionNameClash.kt")
+      public void testPrivateTopLevelFunctionNameClash() {
+        run("PrivateTopLevelFunctionNameClash.kt");
+      }
+
+      @Test
       @TestMetadata("PropertyCall.kt")
       public void testPropertyCall() {
         run("PropertyCall.kt");
@@ -2268,6 +2304,12 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveCallTestGenerated ext
     }
 
     @Test
+    @TestMetadata("arrayOperator.kt")
+    public void testArrayOperator() {
+      run("arrayOperator.kt");
+    }
+
+    @Test
     @TestMetadata("companionBlockOf.kt")
     public void testCompanionBlockOf() {
       run("companionBlockOf.kt");
@@ -2301,6 +2343,12 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveCallTestGenerated ext
     @TestMetadata("customNonGenericCollectionOverload.kt")
     public void testCustomNonGenericCollectionOverload() {
       run("customNonGenericCollectionOverload.kt");
+    }
+
+    @Test
+    @TestMetadata("doubleArrayOperator.kt")
+    public void testDoubleArrayOperator() {
+      run("doubleArrayOperator.kt");
     }
 
     @Test
@@ -2340,6 +2388,12 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveCallTestGenerated ext
     }
 
     @Test
+    @TestMetadata("sequenceOperator.kt")
+    public void testSequenceOperator() {
+      run("sequenceOperator.kt");
+    }
+
+    @Test
     @TestMetadata("set.kt")
     public void testSet() {
       run("set.kt");
@@ -2355,6 +2409,12 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveCallTestGenerated ext
     @TestMetadata("uintArrayAnnotation.kt")
     public void testUintArrayAnnotation() {
       run("uintArrayAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("ulongArrayOperator.kt")
+    public void testUlongArrayOperator() {
+      run("ulongArrayOperator.kt");
     }
   }
 
@@ -5657,6 +5717,122 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveCallTestGenerated ext
   }
 
   @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/namedArgumentsInFailedCalls")
+  @TestDataPath("$PROJECT_ROOT")
+  public class NamedArgumentsInFailedCalls {
+    private void run(String fileName) {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/namedArgumentsInFailedCalls/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInNamedArgumentsInFailedCalls() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/namedArgumentsInFailedCalls"), Pattern.compile("^(.+)\\.(kt)$"), null, true, "withTestCompilerPluginEnabled");
+    }
+
+    @Test
+    @TestMetadata("ambiguousCall.kt")
+    public void testAmbiguousCall() {
+      run("ambiguousCall.kt");
+    }
+
+    @Test
+    @TestMetadata("contextAndValueParameter.kt")
+    public void testContextAndValueParameter() {
+      run("contextAndValueParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("contextAndValueParameterWithoutExplicitContextArguments.kt")
+    public void testContextAndValueParameterWithoutExplicitContextArguments() {
+      run("contextAndValueParameterWithoutExplicitContextArguments.kt");
+    }
+
+    @Test
+    @TestMetadata("contextParameter.kt")
+    public void testContextParameter() {
+      run("contextParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("contextParameterWithoutExplicitContextArguments.kt")
+    public void testContextParameterWithoutExplicitContextArguments() {
+      run("contextParameterWithoutExplicitContextArguments.kt");
+    }
+
+    @Test
+    @TestMetadata("delegatedConstructorCallWithSeveralInapplicableCandidates.kt")
+    public void testDelegatedConstructorCallWithSeveralInapplicableCandidates() {
+      run("delegatedConstructorCallWithSeveralInapplicableCandidates.kt");
+    }
+
+    @Test
+    @TestMetadata("namedSpreadArgument.kt")
+    public void testNamedSpreadArgument() {
+      run("namedSpreadArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("sameNamedContextAndValueParameters.kt")
+    public void testSameNamedContextAndValueParameters() {
+      run("sameNamedContextAndValueParameters.kt");
+    }
+
+    @Test
+    @TestMetadata("sameNamedContextAndValueParametersWithoutExplicitContextArguments.kt")
+    public void testSameNamedContextAndValueParametersWithoutExplicitContextArguments() {
+      run("sameNamedContextAndValueParametersWithoutExplicitContextArguments.kt");
+    }
+
+    @Test
+    @TestMetadata("sameNamedParametersInAmbiguousCall.kt")
+    public void testSameNamedParametersInAmbiguousCall() {
+      run("sameNamedParametersInAmbiguousCall.kt");
+    }
+
+    @Test
+    @TestMetadata("sameNamedParametersInInapplicableCandidates.kt")
+    public void testSameNamedParametersInInapplicableCandidates() {
+      run("sameNamedParametersInInapplicableCandidates.kt");
+    }
+
+    @Test
+    @TestMetadata("sameNamedParametersInResolvedCall.kt")
+    public void testSameNamedParametersInResolvedCall() {
+      run("sameNamedParametersInResolvedCall.kt");
+    }
+
+    @Test
+    @TestMetadata("sameNamedParametersOfSameTypeInInapplicableCandidates.kt")
+    public void testSameNamedParametersOfSameTypeInInapplicableCandidates() {
+      run("sameNamedParametersOfSameTypeInInapplicableCandidates.kt");
+    }
+
+    @Test
+    @TestMetadata("severalInapplicableConstructors.kt")
+    public void testSeveralInapplicableConstructors() {
+      run("severalInapplicableConstructors.kt");
+    }
+
+    @Test
+    @TestMetadata("severalInapplicableFunctions.kt")
+    public void testSeveralInapplicableFunctions() {
+      run("severalInapplicableFunctions.kt");
+    }
+
+    @Test
+    @TestMetadata("severalInapplicableFunctionsWithSameParameterName.kt")
+    public void testSeveralInapplicableFunctionsWithSameParameterName() {
+      run("severalInapplicableFunctionsWithSameParameterName.kt");
+    }
+
+    @Test
+    @TestMetadata("singleInapplicableCandidate.kt")
+    public void testSingleInapplicableCandidate() {
+      run("singleInapplicableCandidate.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/nestedTypes")
   @TestDataPath("$PROJECT_ROOT")
   public class NestedTypes {
@@ -6825,6 +7001,62 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveCallTestGenerated ext
   }
 
   @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/valueClasses")
+  @TestDataPath("$PROJECT_ROOT")
+  public class ValueClasses {
+    private void run(String fileName) {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/valueClasses/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInValueClasses() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/valueClasses"), Pattern.compile("^(.+)\\.(kt)$"), null, true, "withTestCompilerPluginEnabled");
+    }
+
+    @Test
+    @TestMetadata("constructor.kt")
+    public void testConstructor() {
+      run("constructor.kt");
+    }
+
+    @Test
+    @TestMetadata("constructorReference.kt")
+    public void testConstructorReference() {
+      run("constructorReference.kt");
+    }
+
+    @Test
+    @TestMetadata("generatedEquals.kt")
+    public void testGeneratedEquals() {
+      run("generatedEquals.kt");
+    }
+
+    @Test
+    @TestMetadata("inheritedMember.kt")
+    public void testInheritedMember() {
+      run("inheritedMember.kt");
+    }
+
+    @Test
+    @TestMetadata("nameBasedDestructuring.kt")
+    public void testNameBasedDestructuring() {
+      run("nameBasedDestructuring.kt");
+    }
+
+    @Test
+    @TestMetadata("secondaryConstructor.kt")
+    public void testSecondaryConstructor() {
+      run("secondaryConstructor.kt");
+    }
+
+    @Test
+    @TestMetadata("valueObject.kt")
+    public void testValueObject() {
+      run("valueObject.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors")
   @TestDataPath("$PROJECT_ROOT")
   public class WithErrors {
@@ -6868,6 +7100,36 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveCallTestGenerated ext
     }
 
     @Test
+    @TestMetadata("annotationArgumentOnNonLocalDestructuringDeclaration.kt")
+    public void testAnnotationArgumentOnNonLocalDestructuringDeclaration() {
+      run("annotationArgumentOnNonLocalDestructuringDeclaration.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationArgumentOnNonLocalDestructuringEntry.kt")
+    public void testAnnotationArgumentOnNonLocalDestructuringEntry() {
+      run("annotationArgumentOnNonLocalDestructuringEntry.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationClassSuperTypeCall.kt")
+    public void testAnnotationClassSuperTypeCall() {
+      run("annotationClassSuperTypeCall.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationClassSuperTypeCallAny.kt")
+    public void testAnnotationClassSuperTypeCallAny() {
+      run("annotationClassSuperTypeCallAny.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationClassSuperTypeCallCallee.kt")
+    public void testAnnotationClassSuperTypeCallCallee() {
+      run("annotationClassSuperTypeCallCallee.kt");
+    }
+
+    @Test
     @TestMetadata("annotationOnExpression_asT.kt")
     public void testAnnotationOnExpression_asT() {
       run("annotationOnExpression_asT.kt");
@@ -6880,9 +7142,33 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveCallTestGenerated ext
     }
 
     @Test
+    @TestMetadata("annotationOnNonLocalDestructuringDeclaration.kt")
+    public void testAnnotationOnNonLocalDestructuringDeclaration() {
+      run("annotationOnNonLocalDestructuringDeclaration.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationOnNonLocalDestructuringEntry.kt")
+    public void testAnnotationOnNonLocalDestructuringEntry() {
+      run("annotationOnNonLocalDestructuringEntry.kt");
+    }
+
+    @Test
     @TestMetadata("annotationOnReceiver.kt")
     public void testAnnotationOnReceiver() {
       run("annotationOnReceiver.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationOnTopLevelDestructuringDeclaration.kt")
+    public void testAnnotationOnTopLevelDestructuringDeclaration() {
+      run("annotationOnTopLevelDestructuringDeclaration.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationOnTopLevelDestructuringEntry.kt")
+    public void testAnnotationOnTopLevelDestructuringEntry() {
+      run("annotationOnTopLevelDestructuringEntry.kt");
     }
 
     @Test
@@ -7495,6 +7781,12 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveCallTestGenerated ext
     @TestMetadata("typeParameterAsValue.kt")
     public void testTypeParameterAsValue() {
       run("typeParameterAsValue.kt");
+    }
+
+    @Test
+    @TestMetadata("typeParameterOfAnonymousObject.kt")
+    public void testTypeParameterOfAnonymousObject() {
+      run("typeParameterOfAnonymousObject.kt");
     }
 
     @Test

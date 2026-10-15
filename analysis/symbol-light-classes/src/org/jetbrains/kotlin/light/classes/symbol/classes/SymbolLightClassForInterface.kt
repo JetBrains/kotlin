@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.scopes.combinedDeclaredMemberScope
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.light.classes.symbol.utils.cachedValue
@@ -37,11 +38,24 @@ internal class SymbolLightClassForInterface : SymbolLightClassForInterfaceOrAnno
         useSiteModule = useSiteModule,
     )
 
+    /**
+     * Includes the members declared in the interface and in its companion block, and the `@JvmStatic` members of its companion
+     * object, which are static methods of the interface class. The JVM shape of a member depends on the `-jvm-default` mode,
+     * mirroring `org.jetbrains.kotlin.backend.jvm.lower.InterfaceLowering`:
+     * - A member without a body is an abstract method in any mode.
+     * - With JVM default methods enabled, a member with a body is a JVM `default` method, even if it is private.
+     * - With `-jvm-default=disable`, the implementation of a member with a body is moved to `DefaultImpls`. A non-private member
+     *   leaves an abstract stub in the interface class, and a private member leaves nothing, so private members are excluded.
+     * - Members of the companion block are static methods of the interface class in any mode, so private ones are kept.
+     */
     override fun getOwnMethods(): List<PsiMethod> = cachedValue {
         withClassSymbol { classSymbol ->
             val result = mutableListOf<PsiMethod>()
 
-            val visibleDeclarations = classSymbol.combinedDeclaredMemberScope.callables
+            val includePrivateMembers = jvmDefaultMode.isEnabled
+            val visibleDeclarations = classSymbol.combinedDeclaredMemberScope.callables.filter {
+                includePrivateMembers || it.isCompanion || it.visibility != KaSymbolVisibility.PRIVATE
+            }
 
             createMethods(this@SymbolLightClassForInterface, visibleDeclarations, result)
             addMethodsFromCompanionIfNeeded(result, classSymbol)
@@ -59,6 +73,6 @@ internal class SymbolLightClassForInterface : SymbolLightClassForInterfaceOrAnno
         }
     }
 
-    override fun getExtendsList(): PsiReferenceList? = _extendsList
+    override fun getExtendsList(): PsiReferenceList = _extendsList
     override fun classKind(): KaClassKind = KaClassKind.INTERFACE
 }

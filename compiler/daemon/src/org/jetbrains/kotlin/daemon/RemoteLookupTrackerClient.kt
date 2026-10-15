@@ -34,8 +34,8 @@ class RemoteLookupTrackerClient(
 ) : LookupTracker {
     private val isDoNothing = profiler.withMeasure(this) { facade.lookupTracker_isDoNothing() }
 
-    // Map: FileName -> (ScopeFqName -> Set<Name[String] | LookupInfo>)
-    private val lookups = Object2ObjectOpenHashMap<String, MutableMap<String, MutableSet<Any>>>()
+    // Map: FileName -> (ScopeKind -> (ScopeFqName -> Set<Name[String] | LookupInfo>))
+    private val lookups = Object2ObjectOpenHashMap<String, MutableMap<ScopeKind, MutableMap<String, MutableSet<Any>>>>()
     private val interner = createStringInterner()
 
     override val requiresPosition: Boolean = profiler.withMeasure(this) { facade.lookupTracker_requiresPosition() }
@@ -51,7 +51,10 @@ class RemoteLookupTrackerClient(
                 LookupInfo(filePath, position, scopeFqName, scopeKind, name)
             else
                 internedName
-        lookups.getOrPut(filePath, ::Object2ObjectOpenHashMap).getOrPut(internedSymbolFqName, ::ObjectOpenHashSet).add(objectToPut)
+        lookups.getOrPut(filePath, ::Object2ObjectOpenHashMap)
+            .getOrPut(scopeKind, ::Object2ObjectOpenHashMap)
+            .getOrPut(internedSymbolFqName, ::ObjectOpenHashSet)
+            .add(objectToPut)
     }
 
     override fun clear() {
@@ -68,15 +71,17 @@ class RemoteLookupTrackerClient(
         profiler.withMeasure(this) {
             facade.lookupTracker_record(
                 lookups.flatMap { [filePath, lookupsByFile] ->
-                    lookupsByFile.flatMap { [scopeFqName, lookupsByScopeFqName] ->
-                        lookupsByScopeFqName.map { lookupInfoOrString ->
-                            if (requiresPosition)
-                                lookupInfoOrString as LookupInfo
-                            else
-                                LookupInfo(
-                                    filePath, Position.NO_POSITION, scopeFqName, ScopeKind.CLASSIFIER,
-                                    lookupInfoOrString as String
-                                )
+                    lookupsByFile.flatMap { [scopeKind, lookupsByScopeKind] ->
+                        lookupsByScopeKind.flatMap { [scopeFqName, lookupsByScopeFqName] ->
+                            lookupsByScopeFqName.map { lookupInfoOrString ->
+                                if (requiresPosition)
+                                    lookupInfoOrString as LookupInfo
+                                else
+                                    LookupInfo(
+                                        filePath, Position.NO_POSITION, scopeFqName, scopeKind,
+                                        lookupInfoOrString as String
+                                    )
+                            }
                         }
                     }
                 }

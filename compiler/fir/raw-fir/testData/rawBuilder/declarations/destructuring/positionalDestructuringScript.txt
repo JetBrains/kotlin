@@ -28,3 +28,7 @@ FILE: positionalDestructuringScript.kts
 
         public final [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val b: <implicit> = R|<local>/<destruct>|.component2#()
             public get(): <implicit>
+
+        [ScriptTopLevelDeclaration=true] init {
+            x#
+        }

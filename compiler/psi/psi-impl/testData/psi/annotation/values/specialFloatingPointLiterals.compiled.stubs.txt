@@ -2,7 +2,7 @@ Special.class:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/Special, fqName=Special, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Special, superNames=[Annotation]]
+    CLASS[classId=/Special, fqName=Special, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Special, superNames=[Annotation]]
       MODIFIER_LIST[public final annotation]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Special]
         MODIFIER_LIST[public]
@@ -38,7 +38,7 @@ WithNaN.class:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/WithNaN, fqName=WithNaN, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithNaN, superNames=[]]
+    CLASS[classId=/WithNaN, fqName=WithNaN, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=WithNaN, superNames=[]]
       MODIFIER_LIST[public final]
         ANNOTATION_ENTRY[hasValueArguments=true, shortName=Special]
           valueArguments: [
@@ -77,7 +77,7 @@ WithNegativeInfinity.class:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/WithNegativeInfinity, fqName=WithNegativeInfinity, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithNegativeInfinity, superNames=[]]
+    CLASS[classId=/WithNegativeInfinity, fqName=WithNegativeInfinity, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=WithNegativeInfinity, superNames=[]]
       MODIFIER_LIST[public final]
         ANNOTATION_ENTRY[hasValueArguments=true, shortName=Special]
           valueArguments: [
@@ -116,7 +116,7 @@ WithNegativeZero.class:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/WithNegativeZero, fqName=WithNegativeZero, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithNegativeZero, superNames=[]]
+    CLASS[classId=/WithNegativeZero, fqName=WithNegativeZero, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=WithNegativeZero, superNames=[]]
       MODIFIER_LIST[public final]
         ANNOTATION_ENTRY[hasValueArguments=true, shortName=Special]
           valueArguments: [
@@ -151,7 +151,7 @@ WithPositiveInfinity.class:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/WithPositiveInfinity, fqName=WithPositiveInfinity, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithPositiveInfinity, superNames=[]]
+    CLASS[classId=/WithPositiveInfinity, fqName=WithPositiveInfinity, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=WithPositiveInfinity, superNames=[]]
       MODIFIER_LIST[public final]
         ANNOTATION_ENTRY[hasValueArguments=true, shortName=Special]
           valueArguments: [

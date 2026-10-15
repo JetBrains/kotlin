@@ -12,15 +12,20 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
 import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.isUnit
+import org.jetbrains.kotlin.ir.util.coerceToUnit
 import org.jetbrains.kotlin.ir.util.copyTo
 import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.implicitCastIfNeededTo
 import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.Variance
@@ -445,5 +450,43 @@ fun buildVariable(
         if (parent != null) {
             it.parent = parent
         }
+    }
+}
+
+/**
+ * Builds the invoke or accessor function of a rich callable reference.
+ */
+fun IrBuiltIns.buildRichReferenceWrapper(
+    target: IrSimpleFunction,
+    parent: IrDeclarationParent,
+    boundReceiverType: IrType?,
+    parameterTypes: List<IrType>,
+    returnType: IrType,
+    name: Name = target.name,
+): IrSimpleFunction = irFactory.buildFun {
+    this.name = name
+    origin = IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
+    visibility = DescriptorVisibilities.LOCAL
+    this.returnType = returnType
+}.apply {
+    this.parent = parent
+    if (boundReceiverType != null) {
+        addValueParameter(SpecialNames.THIS, boundReceiverType)
+    }
+    for ([index, type] in parameterTypes.withIndex()) {
+        addValueParameter("p$index", type)
+    }
+    require(parameters.size == target.parameters.size) {
+        "${parameters.size} parameters do not match ${target.render()}"
+    }
+    val call = IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, target.returnType, target.symbol).apply {
+        for ([wrapperParameter, parameter] in parameters.zip(target.parameters)) {
+            arguments[parameter] = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, wrapperParameter.symbol)
+                .implicitCastIfNeededTo(parameter.type)
+        }
+    }
+    val result = if (returnType.isUnit()) call.coerceToUnit(this@buildRichReferenceWrapper) else call.implicitCastIfNeededTo(returnType)
+    body = irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
+        statements += IrReturnImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, nothingType, symbol, result)
     }
 }

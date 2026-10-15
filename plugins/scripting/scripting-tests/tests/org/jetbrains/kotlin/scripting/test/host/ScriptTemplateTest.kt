@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.scripting.compiler.test.ScriptBaseClassWithOverridde
 import org.jetbrains.kotlin.scripting.compiler.test.ScriptReportingErrors
 import org.jetbrains.kotlin.scripting.compiler.test.ScriptVarianceParams
 import org.jetbrains.kotlin.scripting.compiler.test.ScriptWithAcceptedAnnotationsAsyncResolver
-import org.jetbrains.kotlin.scripting.compiler.test.ScriptWithAcceptedAnnotationsLegacyResolver
 import org.jetbrains.kotlin.scripting.compiler.test.ScriptWithAcceptedAnnotationsSyncResolver
 import org.jetbrains.kotlin.scripting.compiler.test.ScriptWithArray2DParam
 import org.jetbrains.kotlin.scripting.compiler.test.ScriptWithArrayParam
@@ -217,6 +216,7 @@ class ScriptTemplateTest {
     }
 
     @Test
+    @Suppress("DEPRECATION") // intentionally checks the legacy standard template
     fun testScriptWithStandardTemplate() {
         val messageCollector = MessageCollectorImpl()
         val aClass = compileScript("fib_std.kts", ScriptTemplateWithArgs::class, runIsolated = false, messageCollector = messageCollector)
@@ -311,11 +311,11 @@ class ScriptTemplateTest {
     }
 
     @Test
-    fun testAcceptedAnnotationsLegacy() {
+    fun testAcceptedAnnotationsImportedByDefault() {
         val messageCollector = MessageCollectorImpl()
         val aClass = compileScript(
-            "acceptedAnnotations.kts",
-            ScriptWithAcceptedAnnotationsLegacyResolver::class,
+            "acceptedAnnotationsWithoutImports.kts",
+            ScriptWithAcceptedAnnotationsSyncResolver::class,
             messageCollector = messageCollector
         )
         assertNotNull(aClass, "Compilation failed:\n$messageCollector")

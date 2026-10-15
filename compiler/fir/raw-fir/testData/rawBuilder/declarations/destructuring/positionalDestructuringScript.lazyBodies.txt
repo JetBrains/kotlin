@@ -1,6 +1,6 @@
 FILE: positionalDestructuringScript.kts
     SCRIPT: <script-positionalDestructuringScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ContainingScriptKey=FirScriptSymbol <script-positionalDestructuringScript.kts>, ScriptTopLevelDeclaration=true] class Tuple : R|kotlin/Any| {
@@ -29,4 +29,7 @@ FILE: positionalDestructuringScript.kts
             public get(): <implicit>
 
         public final [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val b: <implicit> = LAZY_EXPRESSION
+            public get(): <implicit>
+
+        public final val $$result: <implicit> = x#
             public get(): <implicit>

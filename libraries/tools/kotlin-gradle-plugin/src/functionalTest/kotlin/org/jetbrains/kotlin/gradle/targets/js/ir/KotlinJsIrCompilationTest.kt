@@ -96,7 +96,7 @@ class KotlinJsIrCompilationTest {
         project.kotlin {
             js { browser() }
             wasmJs { browser() }
-            wasmWasi { nodejs() }
+            wasmWasi { wasmtime() }
         }
 
         fun assertHasSharedNpmToolingDir(targetName: String, expected: Boolean) {

@@ -1,0 +1,8 @@
+KtNameReferenceExpression(39,51): 'AbstractList'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/collections/AbstractList
+    ]

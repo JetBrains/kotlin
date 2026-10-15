@@ -13,6 +13,7 @@ group = "org.jetbrains.kotlin"
 kotlin {
     jvmToolchain(17)
 
+    @Suppress("DEPRECATION")
     coreLibrariesVersion = embeddedKotlinVersion
     compilerVersion = embeddedKotlinVersion
 

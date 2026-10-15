@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.lombok.AccessorNames
+import org.jetbrains.kotlin.lombok.LombokNames
 import org.jetbrains.kotlin.lombok.config.ConeLombokAnnotations
 import org.jetbrains.kotlin.lombok.config.ConeLombokAnnotations.Accessors
 import org.jetbrains.kotlin.lombok.config.ConeLombokAnnotations.Getter
@@ -38,12 +39,10 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import kotlin.collections.orEmpty
 
+object LombokAccessorGeneratorKey : LombokDeclarationKey()
+
 @OptIn(DirectDeclarationsAccess::class)
 class AccessorGenerator(session: FirSession) : FirDeclarationGenerationExtension(session) {
-    companion object {
-        val CAN_EQUAL = Name.identifier("canEqual")
-    }
-
     private val lombokService: LombokService
         get() = session.lombokService
 
@@ -87,6 +86,7 @@ class AccessorGenerator(session: FirSession) : FirDeclarationGenerationExtension
                         returnTypeRef = field.returnTypeRef,
                         visibility = getterVisibility,
                         modality = Modality.OPEN,
+                        key = LombokAccessorGeneratorKey,
                         dispatchReceiverType = dispatchReceiverType,
                         isStatic = field.isStatic,
                     )
@@ -116,6 +116,7 @@ class AccessorGenerator(session: FirSession) : FirDeclarationGenerationExtension
                         returnTypeRef = returnTypeRef,
                         visibility = setterVisibility,
                         modality = Modality.OPEN,
+                        key = LombokAccessorGeneratorKey,
                         dispatchReceiverType = dispatchReceiverType,
                         isStatic = field.isStatic,
                     )
@@ -125,13 +126,14 @@ class AccessorGenerator(session: FirSession) : FirDeclarationGenerationExtension
             }
 
             if (data != null) {
-                getOrPut(CAN_EQUAL) { mutableListOf() }.add(
+                getOrPut(LombokNames.CAN_EQUAL) { mutableListOf() }.add(
                     classSymbol.createJavaMethod(
-                        name = CAN_EQUAL,
+                        name = LombokNames.CAN_EQUAL,
                         valueParameters = listOf(ConeLombokValueParameter(Name.identifier("other"), session.builtinTypes.nullableAnyType)),
                         returnTypeRef = session.builtinTypes.booleanType,
                         visibility = JavaVisibilities.ProtectedAndPackage,
                         modality = Modality.OPEN,
+                        key = LombokAccessorGeneratorKey,
                     )
                 )
             }

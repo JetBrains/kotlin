@@ -5,23 +5,32 @@
 
 package org.jetbrains.kotlin.backend.konan.library
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.backend.common.IdSignaturesExtractor
+import org.jetbrains.kotlin.backend.common.IdSignaturesExtractorFromKlibWithIndices
 import org.jetbrains.kotlin.backend.common.IdSignaturesExtractorFromRegularKlib
 import org.jetbrains.kotlin.backend.konan.serialization.IdSignaturesExtractorFromCInteropKlib
+import org.jetbrains.kotlin.io.ZipFileSystemInPlaceAccessor
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.konan.library.SerializedKlibDAG
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_PACKAGE
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.components.ir
 import org.jetbrains.kotlin.library.isNativeStdlib
+import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.library.packageFqName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.getValue
-import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 import java.nio.file.Path
+import java.util.PriorityQueue
+import java.util.concurrent.ConcurrentHashMap
+import kotlin.io.path.isRegularFile
 import kotlin.io.path.pathString
 
 /**
@@ -54,8 +63,75 @@ class KlibDAG internal constructor(private val dag: Map<KotlinLibrary, KlibDAGNo
         )
     }
 
+    /**
+     * All libraries of this DAG in the canonical RTO:
+     * - dependencies before dependents
+     * - everything the edges leave unconstrained decided by [dag]'s keys, i.e. by the order of
+     *   [LoadedNativeKlibs.all]: at each step the first library in that order whose dependencies have all
+     *   been emitted is the one emitted next.
+     *
+     * Example: with keys `[X, Y, Z]` and the single edge `X -> Z` the result is `[Y, Z, X]`.
+     *
+     * Why [LoadedNativeKlibs.all] is chosen as a tie-breaker:
+     * We used to derive the order of siblings based on the `depends` property of the dependent's manifest, which
+     * was a stable list of dependencies.
+     * Since we're removing the `depends` property we are left with a few options:
+     * - Sort by IR-driven edges. We discover the dependency graph by the actual IR edges, which is not stable.
+     * - Sort libraries by something like `path` or `uniqueName`. This isn't stable for the one-stage mode, in which
+     * an intermediate klib is being produced with a random name and path somewhere in a temporary directory.
+     * - Sort by the `LoadedNativeKlibs.all` order. This gives us a stable order for a given compilation configuration.
+     * So, `LoadedNativeKlibs.all` was chosen as the second-best alternative to `depends`.
+     */
     val librariesReverseTopoSorted: List<KotlinLibrary> by lazy {
-        DFS.topologicalOrder(dag.keys) { library -> dag.getValue(library).directDependencies }.reversed()
+        // Kahn's algorithm is used rather than a DFS because a DFS takes its *neighbour* order as part of
+        // the output order, and `KlibDAGNode.directDependencies` is an unordered `HashSet`. Even if it was
+        // a `LinkedHashSet` its order would be tied to the order we discover IR links between modules, which
+        // itself isn't stable. So a DFS would place sibling libraries in the result in an unstable order.
+        // Probably reproducible for a fixed command line, but perturbed by adding, removing or moving a library
+        // that nothing depends on.
+        //
+        // NB! this relies on `dag` preserving insertion order.
+
+        val librariesInLoadOrder = ArrayList<KotlinLibrary>(dag.size) // Resolves a [LibraryIndex] back to a library.
+        // The number of dependencies each library is still waiting for, indexed by [LibraryIndex].
+        val pendingDependencies = IntArray(dag.size)
+        // Reverse edges. A dependent is appended in load order, and only the size of `directDependencies` feeds
+        // the counter — so that HashSet's order cannot reach the output.
+        val dependents = HashMap<KotlinLibrary, MutableList<LibraryIndex>>(2 * dag.size) // Reverse edges
+        // Of the libraries that are ready to be emitted, always take the one that comes first in load order.
+        val ready = PriorityQueue<LibraryIndex>()
+
+        dag.entries.forEachIndexed { index, entry ->
+            val dependencies = entry.value.directDependencies
+
+            librariesInLoadOrder += entry.key // Appended at `index`, so that is the [LibraryIndex] used below.
+            pendingDependencies[index] = dependencies.size
+            // Nothing has been emitted yet, so a library is ready exactly when it has no dependencies at all.
+            if (dependencies.isEmpty()) ready += index
+
+            for (dependency in dependencies) {
+                dependents.getOrPut(dependency) { ArrayList() } += index
+            }
+        }
+
+        val emitted = ArrayList<KotlinLibrary>(dag.size)
+        while (ready.isNotEmpty()) {
+            val next = librariesInLoadOrder[ready.poll()]
+            emitted += next
+
+            for (dependent in dependents[next].orEmpty()) {
+                pendingDependencies[dependent] -= 1
+                if (pendingDependencies[dependent] == 0) ready += dependent
+            }
+        }
+
+        if (emitted.size != dag.size) {
+            // Unreachable in an acyclic graph: anything left is part of a cycle, or depends on one, and so
+            // never became ready.
+            librariesInLoadOrder.filterIndexedTo(emitted) { index, _ -> pendingDependencies[index] != 0 }
+        }
+
+        emitted
     }
 
     operator fun get(library: KotlinLibrary): KlibDAGNode =
@@ -122,6 +198,9 @@ interface KlibDAGNode {
 
 class KlibDAGCyclicDependencyException : Exception("Cyclic dependency detected while computing DAG of KLIB dependencies")
 
+@RequiresOptIn("Direct access to the internal Klib DAG API is discouraged.")
+annotation class InternalKlibDAGApi
+
 /**
  * The component constructs [KlibDAG] by reading [KotlinLibrary] raw data. It works without involvement of IR linker.
  *
@@ -130,8 +209,18 @@ class KlibDAGCyclicDependencyException : Exception("Cyclic dependency detected w
  * of IR linker. This class may not be needed in the future if we decide to move the caches orchestration
  * from the compiler to the BTA.
  */
-class KlibDAGBuilder(libraries: Collection<KotlinLibrary>, isRoot: (KotlinLibrary) -> Boolean) {
-    private val worker = KlibDAGBuilderImpl(libraries, isRoot)
+class KlibDAGBuilder @InternalKlibDAGApi constructor(
+    libraries: Collection<KotlinLibrary>,
+    useSignatureIndices: Boolean,
+    isRoot: (KotlinLibrary) -> Boolean,
+) {
+    @OptIn(InternalKlibDAGApi::class)
+    constructor(
+        libraries: Collection<KotlinLibrary>,
+        isRoot: (KotlinLibrary) -> Boolean,
+    ) : this(libraries, useSignatureIndices = true, isRoot)
+
+    private val worker = KlibDAGBuilderImpl(libraries, useSignatureIndices, isRoot)
 
     /** Cache the result of the DAG computation to now compute it on each [build] invocation. */
     private val result by lazy { worker.build() }
@@ -139,7 +228,11 @@ class KlibDAGBuilder(libraries: Collection<KotlinLibrary>, isRoot: (KotlinLibrar
     fun build(): KlibDAG = result
 }
 
-private class KlibDAGBuilderImpl(libraries: Collection<KotlinLibrary>, isRoot: (KotlinLibrary) -> Boolean) {
+private class KlibDAGBuilderImpl(
+    libraries: Collection<KotlinLibrary>,
+    private val useSignatureIndices: Boolean,
+    isRoot: (KotlinLibrary) -> Boolean,
+) {
     private var stdlib: KotlinLibrary? = null
     private val rootsButStdlib: MutableList<KotlinLibrary> = mutableListOf()
     private val others: MutableList<KotlinLibrary> = mutableListOf()
@@ -154,17 +247,6 @@ private class KlibDAGBuilderImpl(libraries: Collection<KotlinLibrary>, isRoot: (
                 library.isNativeStdlib -> stdlib = library
                 isRoot(library) -> rootsButStdlib += library
                 else -> others += library
-            }
-        }
-    }
-
-    private val signatureExtractors: Map<KotlinLibrary, IdSignaturesExtractor> = buildMap {
-        for (library in libraries) {
-            this[library] = when {
-                library.isNativeStdlib -> continue
-                library.isCInteropLibrary() -> IdSignaturesExtractorFromCInteropKlib(library)
-                library.ir != null -> IdSignaturesExtractorFromRegularKlib(library)
-                else -> error("This library does not have IR and is not a C-interop library: ${library.path}")
             }
         }
     }
@@ -185,26 +267,51 @@ private class KlibDAGBuilderImpl(libraries: Collection<KotlinLibrary>, isRoot: (
     private val contributedPackageToNode: MutableMap<FqName, MutableSet<KlibDAGNodeImpl>> = hashMapOf()
 
     // Index: declared signature -> KLIB.
-    private val declaredSignatureToNode: MutableMap<IdSignature, KlibDAGNodeImpl> = hashMapOf()
+    private val declaredSignatureToNode: ConcurrentHashMap<IdSignature, KlibDAGNodeImpl> = ConcurrentHashMap()
 
     // Index: KLIB -> imported signatures.
-    private val nodeToImportedSignatures: MutableMap<KlibDAGNodeImpl, Set<IdSignature>> = hashMapOf()
+    private val nodeToImportedSignatures: ConcurrentHashMap<KlibDAGNodeImpl, Set<IdSignature>> = ConcurrentHashMap()
 
     fun build(): KlibDAG {
         // Optimization: Stdlib is a dependency for each library. We don't need to extract signatures from it.
         stampStdlibNodeAsDependencyForEveryone()
 
-        for (library in rootsButStdlib) {
-            populateSignatureIndicesForLibrary(library) // Populate indices.
+        // Collect all libraries that need eager signature indices population.
+        val librariesToPopulateSignatureIndices: List<KotlinLibrary> = buildList {
+            addAll(rootsButStdlib)
+
+            for (library in others) {
+                // Note: populateContributedPackageIndexForLibrary is inexpensive, so keep it sequential.
+                if (!populateContributedPackageIndexForLibrary(library)) {
+                    // Fallback to expensive population of signature indices.
+                    add(library)
+                }
+            }
         }
 
-        for (library in others) {
-            // Don't populate indices with the expensive data that not necessarily will be used.
-            // Instead, memoize the packages represented by a library.
-            if (!populateContributedPackageIndexForLibrary(library)) {
-                // Fallback to expensive population of signature indices.
-                populateSignatureIndicesForLibrary(library)
-            }
+        // Populate signature indices for all these libraries in parallel: signature extraction is expensive,
+        // and populateSignatureIndicesForLibrary only writes to the  ConcurrentHashMap indices for distinct nodes,
+        // so the calls are safe to run concurrently.
+        runBlocking {
+            // We need to re-load ZIP'ped libraries with `ZipFileSystemInPlaceAccessor` because otherwise multithreaded access
+            // could lead to unexpected concurrency issues. See KT-89764.
+            val [zippedLibraries, unzippedLibraries] = librariesToPopulateSignatureIndices.partition { it.canonicalPath.isRegularFile() }
+            val zippedLibrariesByCanonicalPath = zippedLibraries.associateBy { it.canonicalPath }
+
+            val reloadedZippedLibraries = KlibLoader {
+                libraryPaths(zippedLibraries.map { it.canonicalPath.pathString })
+                zipFileSystemAccessor(ZipFileSystemInPlaceAccessor)
+            }.load().librariesStdlibFirst
+
+            // TODO(KT-89764): Do not reload libraries here, iterate over `librariesToPopulateSignatureIndices` libraries list instead.
+            (reloadedZippedLibraries + unzippedLibraries).map { library ->
+                async(Dispatchers.Default) {
+                    populateSignatureIndicesForLibrary(
+                        library = library,
+                        originalLibrary = zippedLibrariesByCanonicalPath[library.canonicalPath] ?: library,
+                    )
+                }
+            }.awaitAll()
         }
 
         // Maintain the set of really used DAG nodes and their statuses.
@@ -313,14 +420,14 @@ private class KlibDAGBuilderImpl(libraries: Collection<KotlinLibrary>, isRoot: (
      * @return `true` if the indices have been populated as a result of this [populateSignatureIndicesForLibrary] call.
      *         `false` if the indices have been already populated earlier.
      */
-    private fun populateSignatureIndicesForLibrary(library: KotlinLibrary): Boolean {
-        val node = dagUnderConstruction.getValue(library)
-        if (node in nodeToImportedSignatures) return false // The indices were populated earlier.
+    private fun populateSignatureIndicesForLibrary(library: KotlinLibrary, originalLibrary: KotlinLibrary = library): Boolean {
+        val node = dagUnderConstruction.getValue(originalLibrary)
+        if (nodeToImportedSignatures.containsKey(node)) return false // The indices were populated earlier.
 
         // Note: We are intentionally extracting only signatures of top-level declarations. It's an optimization.
         // We can always deduce the signature of a top-level class from a signature of any member or an inner/nested class.
         // In case there are numerous members or inner/nested classes, this helps us to reduce the amount of the computational work.
-        val [declaredSignatures, importedSignatures] = signatureExtractors.getValue(library).extractOnlyTopLevelPublicSignatures()
+        val [declaredSignatures, importedSignatures] = library.getSignatureExtractor().extractOnlyTopLevelPublicSignatures()
 
         for (signature in declaredSignatures) {
             // Note: It might happen that there are clashing signatures coming from different libraries.
@@ -333,6 +440,15 @@ private class KlibDAGBuilderImpl(libraries: Collection<KotlinLibrary>, isRoot: (
         nodeToImportedSignatures[node] = importedSignatures
 
         return true // The indices were populated now.
+    }
+
+    private fun KotlinLibrary.getSignatureExtractor(): IdSignaturesExtractor {
+        val extractor = when {
+            isCInteropLibrary() -> IdSignaturesExtractorFromCInteropKlib(this)
+            ir != null -> IdSignaturesExtractorFromRegularKlib(this)
+            else -> error("This library does not have IR and is not a C-interop library: $path")
+        }
+        return if (useSignatureIndices) IdSignaturesExtractorFromKlibWithIndices(this, extractor) else extractor
     }
 
     private enum class State {
@@ -383,3 +499,9 @@ private fun Collection<KotlinLibrary>.associateByCanonicalPathPreventingDuplicat
 
     return librariesByCanonicalPath
 }
+
+/**
+ * A library's position in the load order, i.e. its index in the load-ordered list of a [KlibDAG]'s libraries.
+ * Only an alias. Used to keep the index-based bookkeeping of [KlibDAG.librariesReverseTopoSorted] readable.
+ */
+private typealias LibraryIndex = Int

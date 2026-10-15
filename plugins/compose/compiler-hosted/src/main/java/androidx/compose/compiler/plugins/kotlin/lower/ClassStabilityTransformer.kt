@@ -23,12 +23,10 @@ import androidx.compose.compiler.plugins.kotlin.analysis.*
 import androidx.compose.compiler.plugins.kotlin.k2.ComposeErrors
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.IrImplementationDetail
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -40,7 +38,6 @@ import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.platform.jvm.isJvm
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 
 enum class StabilityBits(val bits: Int) {
     UNSTABLE(0b100),
@@ -67,14 +64,14 @@ class ClassStabilityTransformer(
     private val StabilityInferredClass = getTopLevelClass(ComposeClassIds.StabilityInferred)
     private val UNSTABLE = StabilityBits.UNSTABLE.bitsForSlot(0)
     private val STABLE = StabilityBits.STABLE.bitsForSlot(0)
-    private val unstableClassesWarning: MutableSet<ClassDescriptor>? = if (!context.platform.isJvm()) mutableSetOf() else null
+    private val unstableClassesWarning: MutableSet<IrClass>? = if (!context.platform.isJvm()) mutableSetOf() else null
 
 
     override fun lower(irModule: IrModuleFragment) {
         irModule.transformChildrenVoid(this)
 
         if (!context.platform.isJvm() && !unstableClassesWarning.isNullOrEmpty()) {
-            val classIds = unstableClassesWarning.mapTo(mutableSetOf()) { it.fqNameSafe.toString() }
+            val classIds = unstableClassesWarning.mapTo(mutableSetOf()) { it.fqNameForIrSerialization.asString() }
             val classesConcatenated = classIds.sorted().joinToString("\n")
             reporter.report(
                 ComposeErrors.COMPOSE_CONFIGURATION_WARNING,
@@ -164,14 +161,12 @@ class ClassStabilityTransformer(
             stableExpr = if (externalParameters)
                 irConst(UNSTABLE)
             else
-                @OptIn(ObsoleteDescriptorBasedAPI::class)
                 stability.irStableExpression(
                     resolve = { irConst(STABLE) },
-                    reportUnknownStability = { unstableClassesWarning?.add(it.descriptor) }) ?: irConst(UNSTABLE)
+                    reportUnknownStability = { unstableClassesWarning?.add(it) }) ?: irConst(UNSTABLE)
         } else {
-            @OptIn(ObsoleteDescriptorBasedAPI::class)
             stableExpr =
-                stability.irStableExpression(reportUnknownStability = { unstableClassesWarning?.add(it.descriptor) }) ?: irConst(UNSTABLE)
+                stability.irStableExpression(reportUnknownStability = { unstableClassesWarning?.add(it) }) ?: irConst(UNSTABLE)
             if (stability.knownStable()) {
                 parameterMask = 0b1
             }

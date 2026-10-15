@@ -22,7 +22,7 @@ FILE[kind=File[packageFqName=<root>]]
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=T]
           isClassRef: true
-  CLASS[classId=/PairList, fqName=PairList, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=PairList, superNames=[]]
+  CLASS[classId=/PairList, fqName=PairList, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=PairList, superNames=[]]
     MODIFIER_LIST[public final]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=T]

@@ -5,17 +5,17 @@
 
 package org.jetbrains.kotlin.backend.konan.testUtils
 
-import org.jetbrains.kotlin.K1Deprecation
-import org.jetbrains.kotlin.config.nativeBinaryOptions.UnitSuspendFunctionObjCExport
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportMapper
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamer
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamerImpl
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportProblemCollector
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
+import org.jetbrains.kotlin.config.nativeBinaryOptions.UnitSuspendFunctionObjCExport
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 
 internal fun createObjCExportNamerConfiguration(
     topLevelNamePrefix: String = "",
@@ -28,16 +28,14 @@ internal fun createObjCExportNamerConfiguration(
     }
 }
 
-@OptIn(K1Deprecation::class)
 internal fun createObjCExportMapper(
-    deprecationResolver: DeprecationResolver? = null,
+    languageVersionSettings: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
     local: Boolean = false,
     unitSuspendFunctionObjCExport: UnitSuspendFunctionObjCExport = UnitSuspendFunctionObjCExport.DEFAULT,
 ): ObjCExportMapper {
-    return ObjCExportMapper(deprecationResolver, local, unitSuspendFunctionObjCExport)
+    return ObjCExportMapper(languageVersionSettings, local, unitSuspendFunctionObjCExport)
 }
 
-@OptIn(K1Deprecation::class)
 internal fun createObjCExportNamer(
     configuration: ObjCExportNamer.Configuration = createObjCExportNamerConfiguration(),
     builtIns: KotlinBuiltIns = DefaultBuiltIns.Instance,

@@ -30,7 +30,7 @@ class Mixed {
       private get
       private set
 
-    private constructor() /* primary */ {
+    internal constructor() /* primary */ {
       super/*Any*/()
       /* <init>() */
 
@@ -106,7 +106,7 @@ class RoundTrip {
       private get
       private set
 
-    private constructor() /* primary */ {
+    internal constructor() /* primary */ {
       super/*Any*/()
       /* <init>() */
 
@@ -174,7 +174,7 @@ class SingularWithoutVal {
       private get
       private set
 
-    private constructor() /* primary */ {
+    internal constructor() /* primary */ {
       super/*Any*/()
       /* <init>() */
 

@@ -15,8 +15,7 @@ fun main(args: Array<String>) {
     generateTestGroupSuiteWithJUnit5(args, mainClassName) {
         testGroup(testRoot, "compiler/fir/raw-fir/testData") {
             testClass<AbstractLightTree2FirConverterTestCase> {
-                // TODO(KT-77583): support REPL snippets in light tree parser.
-                model("rawBuilder", pattern = TestGeneratorUtil.KT_OR_KTS, excludedPattern = TestGeneratorUtil.REPL_KTS)
+                model("rawBuilder", pattern = TestGeneratorUtil.KT_OR_KTS)
             }
         }
     }

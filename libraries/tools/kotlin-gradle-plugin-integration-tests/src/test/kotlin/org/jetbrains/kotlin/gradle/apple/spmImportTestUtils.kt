@@ -8,6 +8,9 @@ package org.jetbrains.kotlin.gradle.apple
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonPrimitive
 import org.gradle.api.provider.Provider
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.testkit.runner.BuildResult
@@ -271,12 +274,12 @@ internal fun writeLocalPackageSources(
     }
 }
 
-internal fun swiftSourceContent(): String = """
+internal fun swiftSourceContent(className: String = "LocalHelper"): String = """
     import Foundation
 
-    @objc public class LocalHelper: NSObject {
+    @objc public class ${className}: NSObject {
         @objc public static func greeting() -> String {
-            return "Hello from LocalHelper"
+            return "Hello from ${className}"
         }
         
         public static func invisible() -> String {
@@ -393,7 +396,7 @@ internal fun addSwiftPmGitTag(
     tag: String,
     files: Map<String, String>? = null,
 ) {
-    files?.forEach { [filePath, fileContent] ->
+    files?.forEach { (filePath, fileContent) ->
         val f = repoDir.resolve(filePath)
         f.parent.createDirectories()
         f.writeText(fileContent)
@@ -906,7 +909,7 @@ internal fun BuildResult.assertResolvedVersions(
     val actual = parsePackageResolved(persistedPackageResolved.readText())
 
     val expected = SwiftPmPackageResolved(
-        pins = expectedPins.map { [repoRef, version] ->
+        pins = expectedPins.map { (repoRef, version) ->
             checkoutRepoDir?.let { checkoutRepoDir ->
                 assertCheckoutVersion(checkoutRepoDir, repoRef, version)
             }
@@ -1086,6 +1089,7 @@ data class SwiftPackageTarget(
     @SerialName("product_dependencies") val productDependencies: List<String> = emptyList(),
     @SerialName("product_memberships") val productMemberships: List<String> = emptyList(),
     val sources: List<String> = emptyList(),
+    @SerialName("target_dependencies") val targetDependencies: List<String> = emptyList(),
     val type: String,
 )
 
@@ -1295,6 +1299,9 @@ data class SwiftPackageDumpTarget(
 data class SwiftPackageDumpTargetDependency(
     // product is a heterogeneous array: [productName: String, packageName: String, moduleAliases: Any?, condition: Any?]
     val product: List<kotlinx.serialization.json.JsonElement>? = null,
+    // target and byName are [name: String, condition: Any?]; a dependency written as a plain string dumps as byName
+    val target: List<kotlinx.serialization.json.JsonElement>? = null,
+    val byName: List<kotlinx.serialization.json.JsonElement>? = null,
 )
 
 @Serializable
@@ -1318,6 +1325,14 @@ data class SwiftPackageDumpUnsafeFlags(
 fun dumpSwiftPackage(packagePath: Path): SwiftPackageDump {
     return runAppleToolCommand(packagePath, listOf("swift", "package", "dump-package"))
 }
+
+/** The target dependencies of [target], with the platforms a condition limits each one to. */
+fun SwiftPackageDump.targetDependencyPlatforms(target: String): Map<String, List<String>?> =
+    targets.single { it.name == target }.dependencies.mapNotNull { dependency ->
+        val entry = dependency.target ?: dependency.byName ?: return@mapNotNull null
+        val platforms = (entry.getOrNull(1) as? JsonObject)?.get("platformNames")?.jsonArray?.map { it.jsonPrimitive.content }
+        entry[0].jsonPrimitive.content to platforms
+    }.toMap()
 
 // region xcodebuild PIF dump DTOs
 

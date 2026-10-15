@@ -9,22 +9,25 @@ package org.jetbrains.kotlin.buildtools.tests.compilation.jps
 import org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.jps.InternalBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.jps.jvm.JvmJpsManagedIncrementalCompilationConfiguration
+import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
+import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsPatterns
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.jvmProject
 import org.jetbrains.kotlin.test.TestMetadata
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Test
 
 @DisplayName("The JPS lookup tracker")
 class LookupTrackerJpsTest : BaseJpsTest() {
 
     @DisplayName("The JPS lookup tracker receives lookups")
+    @BtaV2StrategyAgnosticCompilationTest
     @TestMetadata("basic-multimodule-project/module-1")
-    @Test
-    fun lookupsAreReported() {
-        jvmProject(inProcess) {
+    fun lookupsAreReported(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jvmProject(strategyConfig) {
             val module = module("basic-multimodule-project/module-1")
             val lookupTracker = RecordingLookupTracker()
             module.compile(compilationConfigAction = { builder ->
@@ -35,11 +38,31 @@ class LookupTrackerJpsTest : BaseJpsTest() {
         }
     }
 
-    @DisplayName("The JPS lookup tracker takes precedence over the operation-level one, with a warning")
+    @DisplayName("The JPS lookup tracker reports a top-level function lookup with the PACKAGE scope kind")
+    @BtaV2StrategyAgnosticCompilationTest
     @TestMetadata("basic-multimodule-project/module-1")
-    @Test
-    fun jpsLookupTrackerTakesPrecedence() {
-        jvmProject(inProcess) {
+    fun packageLevelLookupKeepsScopeKind(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jvmProject(strategyConfig) {
+            val module = module("basic-multimodule-project/module-1")
+            val lookupTracker = RecordingLookupTracker()
+            module.compile(compilationConfigAction = { builder ->
+                builder.withJpsIc { this[JvmJpsManagedIncrementalCompilationConfiguration.LOOKUP_TRACKER] = lookupTracker }
+            }) {
+                val fooLookups = lookupTracker.lookups.filter { (filePath, scopeFqName, name) ->
+                    filePath.endsWith("bar.kt") && scopeFqName == "" && name == "foo"
+                }
+                assertEquals(setOf(CompilerLookupTracker.ScopeKind.PACKAGE), fooLookups.map { it.scopeKind }.toSet()) {
+                    "Unexpected scope kinds of the foo() lookups from bar.kt: $fooLookups"
+                }
+            }
+        }
+    }
+
+    @DisplayName("The JPS lookup tracker takes precedence over the operation-level one, with a warning")
+    @BtaV2StrategyAgnosticCompilationTest
+    @TestMetadata("basic-multimodule-project/module-1")
+    fun jpsLookupTrackerTakesPrecedence(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jvmProject(strategyConfig) {
             val module = module("basic-multimodule-project/module-1")
             val jpsTracker = RecordingLookupTracker()
             val operationTracker = RecordingLookupTracker()
@@ -55,6 +78,24 @@ class LookupTrackerJpsTest : BaseJpsTest() {
                     LogLevel.WARN,
                     Regex(".*A lookup tracker is set both as BaseCompilationOperation\\.LOOKUP_TRACKER and as.*"),
                 )
+            }
+        }
+    }
+
+    @DisplayName("The operation-level lookup tracker receives lookups when the JPS one is not set")
+    @BtaV2StrategyAgnosticCompilationTest
+    @TestMetadata("basic-multimodule-project/module-1")
+    fun operationLookupTrackerIsUsedAsFallback(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jvmProject(strategyConfig) {
+            val module = module("basic-multimodule-project/module-1")
+            val operationTracker = RecordingLookupTracker()
+            module.compile(compilationConfigAction = { builder ->
+                builder[BaseCompilationOperation.LOOKUP_TRACKER] = operationTracker
+                builder.withJpsIc()
+            }) {
+                assertTrue(operationTracker.lookups.isNotEmpty()) {
+                    "The operation-level lookup tracker must receive lookups when the JPS one is not set"
+                }
             }
         }
     }

@@ -25,8 +25,9 @@ spdx = "0.11.0"
 proguard = "7.4.2"
 ktor = "3.3.1"
 kotlinx-bcv = "0.17.0"
-kotlinx-benchmark = "0.4.16"
+kotlinx-benchmark = "0.5.0"
 gson = "2.11.0"
+icu4j = "78.3"
 jetbrains-ideaExt = "1.4.1"
 jackson = "2.21.1"
 jgit = "7.3.0.202506031305-r"
@@ -49,7 +50,7 @@ androidx-collections = "1.5.0" # Used for Compose compiler plugin tests
 ant = "1.10.14"
 # It is recommended to skip at least one major release, e.g., use 2.0.21 when the default bootstrap version is 2.2.
 # This ensures additional verification that Gradle-related code does not get dependencies of higher LV
-kotlin-for-gradle-plugins-compilation = "2.2.21"
+kotlin-for-gradle-plugins-compilation = "2.4.20"
 intellij-asm = "9.6.1"
 intellij-kotlinx-coroutines = "1.10.2-intellij-1" # Should be synchronized with 'kotlinx-coroutines'
 diff-utils = "4.12"
@@ -59,7 +60,7 @@ fastutil = "8.5.14-jb1"
 rwmutex-idea = "0.0.10"
 # Wasm specific
 wasmedge = "0.16.3"
-wasmtime = "47.0.3"
+wasmtime = "49.0.1"
 jscTahoe = "312950"
 jscLinux = "312950"
 jscWindows = "312950"
@@ -94,7 +95,7 @@ log4j2 = "2.26.0"
 maven-xml-impl = "4.0.0-beta-5"
 yarn = "1.22.22"
 # This is also the version of bouncycastle that is used by KGP
-bouncycastle = "1.84"
+bouncycastle = "1.86"
 kotlin-before-bta-v2 = "2.2.21"
 jacoco = "0.8.14"
 bytebuddy = "1.18.9"
@@ -160,6 +161,7 @@ jackson-module-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 guava = { module = "com.google.guava:guava", version.ref = "guava" }
 guava-failureaccess = { module = "com.google.guava:failureaccess", version.ref = "failureaccess" }
+icu4j = { module = "com.ibm.icu:icu4j", version.ref = "icu4j" }
 vavr = { module = "io.vavr:vavr", version.ref = "vavr" }
 jetbrains-ideaExt-gradlePlugin = { module = "gradle.plugin.org.jetbrains.gradle.plugin.idea-ext:gradle-idea-ext", version.ref = "jetbrains-ideaExt" }
 jgit = { module = "org.eclipse.jgit:org.eclipse.jgit", version.ref = "jgit" }

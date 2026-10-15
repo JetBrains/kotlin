@@ -28,12 +28,6 @@
   <dependencies>
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
-      <artifactId>kotlin-script-runtime</artifactId>
-      <version>ArtifactsTest.version</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jetbrains.kotlin</groupId>
       <artifactId>kotlin-stdlib</artifactId>
       <version>ArtifactsTest.version</version>
       <scope>compile</scope>
@@ -43,6 +37,12 @@
       <artifactId>kotlin-scripting-common</artifactId>
       <version>ArtifactsTest.version</version>
       <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jetbrains.kotlin</groupId>
+      <artifactId>kotlin-script-runtime</artifactId>
+      <version>ArtifactsTest.version</version>
+      <scope>runtime</scope>
     </dependency>
   </dependencies>
 </project>

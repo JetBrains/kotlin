@@ -605,6 +605,9 @@ class KotlinWasmPerModuleGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
             wasmOptions = BuildOptions.WasmOptions(compilationMode = WasmCompilationMode.MULTIMODULE_OPEN_WORLD)
         )
 
+    override val compilationModeWarningIds: Set<String>
+        get() = setOf(KotlinToolingDiagnostics.ExperimentalFeatureWarning.id)
+
     @DisplayName("Check js target with browser")
     @GradleTest
     fun jsTargetWithBrowser(gradleVersion: GradleVersion) {
@@ -662,11 +665,18 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
         // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
         get() = super.defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
 
+    protected open val compilationModeWarningIds: Set<String> = emptySet()
+
     @DisplayName("Check wasi target")
     @GradleTest
     fun wasiTarget(gradleVersion: GradleVersion) {
         project("new-mpp-wasm-wasi-test", gradleVersion) {
-            wasmWasiTest("Node", "NodeJs")
+            // Node.js is deprecated in the wasm-wasi target and doesn't count as an explicitly chosen environment
+            wasmWasiTest(
+                "Node",
+                "NodeJs",
+                expectedWarningIds = setOf(KotlinToolingDiagnostics.WasmWasiEnvironmentNotChosenExplicitly.id),
+            )
         }
     }
 
@@ -678,7 +688,11 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
         }
     }
 
-    private fun TestProject.wasmWasiTest(engine: String, engineSetup: String = engine) {
+    private fun TestProject.wasmWasiTest(
+        engine: String,
+        engineSetup: String = engine,
+        expectedWarningIds: Set<String> = emptySet(),
+    ) {
         build(":wasmWasiTest") {
             assertTasksExecuted(":kotlinWasm${engineSetup}Setup")
             assertTasksExecuted(":compileKotlinWasmWasi")
@@ -712,7 +726,7 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
 
             assertTasksAreNotInTaskGraph(":kotlinWasmToolingSetup")
 
-            assertNoBuildWarnings()
+            assertNoBuildWarnings(compilationModeWarningIds + expectedWarningIds)
         }
     }
 
@@ -814,7 +828,7 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
                 assertNoBuildWarnings(
                     setOf(
                         "This annotation should be used with the compiler argument '-opt-in=kotlin.RequiresOptIn'"
-                    )
+                    ) + compilationModeWarningIds
                 )
 
                 val original =
@@ -875,7 +889,7 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
                 assertNoBuildWarnings(
                     setOf(
                         "This annotation should be used with the compiler argument '-opt-in=kotlin.RequiresOptIn'"
-                    )
+                    ) + compilationModeWarningIds
                 )
             }
         }
@@ -1000,7 +1014,9 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
         project("kt-63230", gradleVersion) {
             build("check", "-Pkotlin.tests.individualTaskReports=true") {
                 assertTestResults(
-                    projectPath.resolve("TEST-wasm.xml"),
+                    projectPath.resolve(
+                        if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_3)) "TEST-wasm.xml" else "Gradle93-TEST-wasm.xml"
+                    ),
                     "wasmJsBrowserTest",
                     stripBrowserVersionInfoFromTestCaseNames = true,
                 )
@@ -1632,5 +1648,117 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
                 )
             }
         }
+    }
+
+    @DisplayName("d8 test with space in a test name")
+    @GradleTest
+    fun testD8TestWithSpaceInTestName(gradleVersion: GradleVersion) {
+        val testProject = project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    wasmJs {
+                        d8()
+                    }
+                }
+
+                kotlinMultiplatform.sourceSets.getByName("wasmJsTest").dependencies {
+                    implementation("org.jetbrains.kotlin:kotlin-test")
+                }
+            }
+        }
+
+        testProject.projectPath.resolve("src/wasmJsTest/kotlin/test.kt")
+            .also {
+                it.parent.createDirectories()
+            }
+            .writeText(
+                """
+                package org
+                
+                import kotlin.test.Test
+                import kotlin.test.assertEquals
+                import kotlin.test.assertTrue
+                
+                class TestClient {
+                    @Test
+                    fun test() {
+                        assertTrue(false)
+                    }
+                    
+                    @Test
+                    fun `test 1`() {
+                        assertEquals(1, 2)
+                    }
+                }
+                """.trimIndent()
+            )
+
+        testProject.buildAndFail(":wasmJsD8Test", "--tests", "org.TestClient.test 1") {
+            assertTasksFailed(":wasmJsD8Test")
+        }
+        testProject.assertExecutedTestCases(
+            ":wasmJsD8Test",
+            "org.TestClient#test 1",
+        )
+    }
+
+    @DisplayName("Node test with space in a test name")
+    @GradleTest
+    fun testNodeTestWithSpaceInTestName(gradleVersion: GradleVersion) {
+        val testProject = project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    wasmJs {
+                        nodejs()
+                    }
+                }
+
+                kotlinMultiplatform.sourceSets.getByName("wasmJsTest").dependencies {
+                    implementation("org.jetbrains.kotlin:kotlin-test")
+                }
+            }
+        }
+
+        testProject.projectPath.resolve("src/wasmJsTest/kotlin/test.kt")
+            .also {
+                it.parent.createDirectories()
+            }
+            .writeText(
+                """
+                package org
+                
+                import kotlin.test.Test
+                import kotlin.test.assertEquals
+                import kotlin.test.assertTrue
+                
+                class TestClient {
+                    @Test
+                    fun test() {
+                        assertTrue(false)
+                    }
+                
+                    @Test
+                    fun `test 1`() {
+                        assertEquals(1, 2)
+                    }
+                }
+                """.trimIndent()
+            )
+
+        testProject.buildAndFail(":wasmJsNodeTest", "--tests", "org.TestClient.test 1") {
+            assertTasksFailed(":wasmJsNodeTest")
+        }
+        testProject.assertExecutedTestCases(
+            ":wasmJsNodeTest",
+            "org.TestClient#test 1",
+        )
     }
 }

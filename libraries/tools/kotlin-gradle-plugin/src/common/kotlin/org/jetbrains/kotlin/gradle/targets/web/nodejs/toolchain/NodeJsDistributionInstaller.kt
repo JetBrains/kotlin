@@ -8,8 +8,10 @@ package org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain
 import org.gradle.api.file.ArchiveOperations
 import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.logging.Logger
+import org.jetbrains.kotlin.gradle.ExperimentalNodeJsToolchainDsl
+import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.BuildPlatform
+import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.NodeJsVersion
 import org.jetbrains.kotlin.gradle.targets.native.internal.KotlinInterprocessDirectoryLock
-import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.NodeJsToolchainService.Companion.nodeJsExecutableFile
 import java.io.File
 import java.io.IOException
 import java.net.HttpURLConnection
@@ -29,6 +31,7 @@ import java.security.MessageDigest
  * directory, and only then atomically renamed to the final location. Therefore, an existing installation
  * directory is always a complete installation.
  */
+@OptIn(ExperimentalNodeJsToolchainDsl::class)
 internal class NodeJsDistributionInstaller(
     private val fs: FileSystemOperations,
     private val archiveOperations: ArchiveOperations,
@@ -56,7 +59,7 @@ internal class NodeJsDistributionInstaller(
 
         if (offline) {
             throw IOException(
-                "Node.js $version for $platform is not installed in '$installationsDir', " +
+                "Node.js ${version.normalized} for $platform is not installed in '$installationsDir', " +
                         "and the build is running in offline mode, so it cannot be downloaded.\n" +
                         "Either run the build without '--offline', or point the Node.js toolchain " +
                         "at a pre-installed Node.js distribution."

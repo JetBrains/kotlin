@@ -133,12 +133,33 @@ fun Project.checkNoApiDependenciesOnK1Modules() {
 }
 
 fun Project.addEmbeddedConfigurations() {
-    configurations.maybeCreate("embedded").apply {
+    val embedded = configurations.maybeCreate("embedded").apply {
         isCanBeConsumed = false
         isCanBeResolved = true
         attributes {
             attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
             attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.JAR))
+        }
+    }
+
+    if (kotlinBuildProperties.isInIdeaSync.get()) {
+        val k1Modules = (CompilerModules.fe10CompilerModules + CompilerModules.descriptorsCompilerModules).toSet()
+
+        plugins.withId("java-library") {
+            embedded.dependencies.withType<ProjectDependency>().configureEach {
+                if (path in k1Modules) {
+                    dependencies.add("implementation", this)
+                } else {
+                    dependencies.add("api", this)
+                }
+            }
+        }
+        plugins.withId("java") {
+            embedded.dependencies.withType<ProjectDependency>().configureEach {
+                if (!plugins.hasPlugin("java-library")) {
+                    dependencies.add("implementation", this)
+                }
+            }
         }
     }
 }
@@ -191,22 +212,9 @@ fun Project.configureKotlinCompilationOptions() {
                         "-opt-in=kotlin.RequiresOptIn",
                         "-progressive".takeIf { project.kotlinBuildProperties.booleanProperty("test.progressive.mode", false).get() },
                         "-Xdont-warn-on-error-suppression",
-                        "-Xcontext-parameters", // KT-72222
-                        "-Xexplicit-backing-fields".takeUnless { skipNewLanguageFeatures }, // KT-14663
-                        "-Xname-based-destructuring=complete".takeUnless { skipNewLanguageFeatures },
-                        "-Xcollection-literals".takeUnless { skipNewLanguageFeatures },
-                        "-Xcontext-sensitive-resolution".takeUnless { skipNewLanguageFeatures },
-                        "-Xexplicit-context-arguments".takeUnless { skipNewLanguageFeatures },
-                        "-Xallow-pre-17-runtime-jdk", // KT-88174
-                        // Between making a language feature stable and the next bootstrap, we need to keep providing the compiler argument.
-                        // But this produces a warning
-                        // "The argument ... is redundant for the current language version ..."
-                        // in the bootstrap test and fails because of -Werror.
-                        // To work around it, we suppress the warning.
-                        @OptIn(ExperimentalBuildToolsApi::class, ExperimentalKotlinGradlePluginApi::class)
-                        "-Xwarning-level=REDUNDANT_CLI_ARG:disabled".takeIf {
-                            project.kotlinExtension.compilerVersion.get() == project.kotlinToolingVersion.toString()
-                        },
+
+                        *if (skipNewLanguageFeatures) emptyArray() else dogfoodedExperimentalFeatures.toTypedArray(),
+                        redundantCliArgWarningSuppression.takeUnless { skipNewLanguageFeatures },
                     )
                 }
 
@@ -232,6 +240,7 @@ fun Project.configureKotlinCompilationOptions() {
                 !project.path.startsWith(":native:objcexport-header-generator") &&
                 !project.path.startsWith(":libraries:tools:analysis-api-based-klib-reader") &&
                 !project.path.startsWith(":native:external-projects-test-utils") &&
+                !project.path.startsWith(":plugins:parcelize:parcelize-runtime") &&
                 !project.path.startsWith(":plugins:plugin-sandbox:plugin-annotations") &&
                 !project.path.startsWith(":kotlin-power-assert-runtime")
             ) {

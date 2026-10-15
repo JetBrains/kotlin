@@ -11,7 +11,7 @@ dependencies {
     implementation(project(":compiler:fir:cones"))
     implementation(project(":compiler:fir:tree"))
     implementation(project(":compiler:fir:resolve"))
-    implementation(project(":compiler:fir:checkers"))
+    implementation(project(":compiler:fir:checkers:checkers.common"))
     implementation(project(":compiler:ir.backend.common"))
     implementation(project(":compiler:fir:entrypoint"))
 

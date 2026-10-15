@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform._FoundationModels_UIKit
+
+modules = _FoundationModels_UIKit
+compilerOpts = -framework _FoundationModels_UIKit
+linkerOpts = -framework _FoundationModels_UIKit
+#Disabled: Unavailable

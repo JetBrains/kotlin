@@ -8,3 +8,13 @@ After any change in this module, please increase VERSION in of one of the enums:
 * [StringListMetrics.kt](src%2Fmain%2Fkotlin%2Forg%2Fjetbrains%2Fkotlin%2Fstatistics%2Fmetrics%2FStringListMetrics.kt)
 
 The increasing of this value is necessary for auto increasing version in [KotlinGradleFUSCollector.kt](https://jetbrains.team/p/ij/repositories/intellij/files/community/plugins/kotlin/gradle/gradle/src/org/jetbrains/kotlin/idea/gradle/statistics/KotlinGradleFUSCollector.kt)
+
+### Language feature values
+[LanguageFeatureValues.kt](gen%2Forg%2Fjetbrains%2Fkotlin%2Fstatistics%2Fmetrics%2FLanguageFeatureValues.kt) is a snapshot
+of `LanguageFeature` names used as allowed values of `CLI_MANUALLY_CONFIGURED_LANGUAGE_FEATURES`.
+It is not regenerated automatically and must be regenerated manually once before each release branching:
+```bash
+./gradlew :kotlin-gradle-statistics:metric-helpers-generator:run
+```
+The file is covered by the `StringListMetrics` hash in `ModuleChangesCatchingTest`, so after regeneration
+increase `StringListMetrics.VERSION`.

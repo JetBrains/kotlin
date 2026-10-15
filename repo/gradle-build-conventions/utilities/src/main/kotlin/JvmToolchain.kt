@@ -49,17 +49,17 @@ val DEFAULT_JVM_TARGET = JdkMajorVersion.JDK_1_8
  * You can override like this:
  * ```
  * projectTests {
- *     testTask(javaLauncher = JdkMajorVersion.JDK_17_0)
+ *     testTask(javaLauncher = JdkMajorVersion.JDK_21_0)
  * }
  * ```
  *
  * If your test task is registered via plain Gradle, it will use [DEFAULT_JVM_TOOLCHAIN] for running tests,
  * unless you override it via:
  * ```
- * javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_17_0))
+ * javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_21_0))
  * ```
  */
-val DEFAULT_JAVA_LAUNCHER_FOR_TESTS = JdkMajorVersion.JDK_11_0
+val DEFAULT_JAVA_LAUNCHER_FOR_TESTS = JdkMajorVersion.JDK_17_0
 
 fun Project.getToolchainCompilerFor(
     jdkVersion: JdkMajorVersion,

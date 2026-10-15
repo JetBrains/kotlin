@@ -10,6 +10,7 @@ All tests run in master builds, even if they were not required for merging the c
 - [Which tests are required for merging to master?](#which-tests-are-required-for-merging-to-master)
 - [Defining domains](#defining-domains)
     - [Running all tests on changes in another domain](#running-all-tests-on-changes-in-another-domain)
+- [Ignoring files](#ignoring-files)
 - [Running individual tests on changes in another domain](#running-individual-tests-on-changes-in-another-domain)
 - [Always running tests](#always-running-tests)
 - [`^test:` commit command](#test-commit-command)
@@ -26,7 +27,7 @@ All tests run in master builds, even if they were not required for merging the c
 ## Domains and changed domains
 
 A domain is a named group of files, defined in [domains.yaml](./domains.yaml). For example, `Js` includes the files under `js`.
-A domain is **changed** when at least one file belonging to it is changed.
+A domain is **changed** when at least one file belonging to it is changed or it is listed in a `^test:` commit command.
 A Domain is a **CI ownership and impact unit**, not an architecture concept.
 
 A test task belongs to the domains of its project directory. When a domain is changed, all its tests must run and pass
@@ -41,12 +42,12 @@ The following tests must run and pass before a commit can be merged to master:
 - Individual tests annotated with `@MustRunOnChangesInXYZ` when domain `XYZ` is changed.
 - Tests annotated with `@MustRunAlways`, regardless of which domains are changed.
 - All tests in domains listed in the `^test:` commit command.
-- Any additional tests selected by the test task's `smokeTestConfig`.
+- Tests selected by `testFederation { smokeTests { includeAutoSamples(percentage = ...) } }`
 
 Other test filters still apply. In particular, `@NightlyTest` tests are not required for merging to master.
 
-Running all tests in a domain does **not** make that domain changed. Only changed files make a domain changed.
-Neither `mustRunAllTestsOnChangesIn` nor `^test:` triggers `@MustRunOnChangesInXYZ` tests in other domains unless `XYZ` itself is changed.
+Running all tests in a domain does **not** make that domain changed. Changed files and the `^test:` commit command mark domains as changed.
+`mustRunAllTestsOnChangesIn` does **not** make a domain changed, so it does not trigger `@MustRunOnChangesInXYZ` tests in other domains.
 
 ## Defining domains
 
@@ -65,12 +66,28 @@ Entries under `include` and `exclude` can be directory paths or glob patterns. A
 descendants. When entries overlap, the most specific matching entry takes precedence.
 A domain is changed when any file belonging to it is changed.
 
-### Running all tests on changes in another domain
+## Running all tests on changes in another domain
 
 Use `mustRunAllTestsOnChangesIn` to require all tests in this domain to run and pass when a listed domain is changed.
 In the example above, all `Js` tests are required for merging to master when `CoreLibs` is changed.
 This declaration does not require all `CoreLibs` tests to run when only `Js` is changed.
 List every domain whose changes should require these tests explicitly: the declaration is **not transitive**.
+
+## Ignoring files
+
+Use the top-level `ignore` list in [domains.yaml](./domains.yaml) for files whose changes should not mark any domain as changed:
+
+```yaml
+ignore:
+  - "docs"
+  - "tests/mute-common.csv"
+```
+
+Ignored paths belong to no domain. Ignore rules override all domain `include` and `exclude` rules; `ignore` is not a domain.
+Entries can be directory paths or glob patterns. Directories include all descendants; `*.md` matches only root-level Markdown files.
+
+If all changed files are ignored, no tests (including smoke and `@MustRunAlways` tests) or compilation are required before merging to master.
+Codeowner approval can suffice. Mixed changes follow the normal rules for non-ignored files.
 
 ## Running individual tests on changes in another domain
 
@@ -96,7 +113,7 @@ See [Extra: Contract tests](#extra-contract-tests) for why these tests are usefu
 ## Always running tests
 
 Use `@MustRunAlways` to require a test to run and pass regardless of which domains are changed.
-These tests are required for merging to master. Other test filters, such as `@NightlyTest`, still apply.
+These tests are required for merging to master unless all changed files are ignored. Other test filters, such as `@NightlyTest`, still apply.
 With JUnit 5 (or higher), the annotation can be placed:
 
 - on the test method directly
@@ -161,8 +178,9 @@ To require all tests in all domains:
 ^test: *
 ```
 
-The command does not make the listed domains changed. It does not trigger `mustRunAllTestsOnChangesIn` declarations or
-`@MustRunOnChangesInXYZ` tests in other domains.
+The command marks the listed domains as changed, so it triggers `@MustRunOnChangesInXYZ` tests when domain `XYZ` is listed.
+Unlike file-based changes, command-listed domains are added after `mustRunAllTestsOnChangesIn` expansion, so they do not require
+all tests in domains that declare a dependency on them.
 
 ## Nightly tests
 
@@ -193,45 +211,91 @@ Long-running tests or tests that have not yet proven stable can be marked with `
 
 ## Running a subset of a test task
 
-A test task runs in one of two modes:
+Test Federation allows a Gradle test task to run one or more **test subsets**. 
 
-- `Full`: run all tests in the task.
-- `Smoke`: run tests annotated with `@MustRunAlways`, tests annotated with `@MustRunOnChangesInXYZ` for a changed domain `XYZ`,
-  and any additional tests selected by `smokeTestConfig`.
+Each test subset is composed based on the `@MustRun...` annotations + the `testFederation { }` extension in Gradle.
 
-Other test filters, such as `@NightlyTest`, still apply in both modes.
-Test Federation uses `Full` when all tests in the task's domain must run, and `Smoke` otherwise.
-Setting `smokeTestConfig = SmokeTestConfig.Disabled` skips the task in `Smoke` mode, including its annotated tests.
+We define the following test subsets:
 
-Use `smokeTestConfig` to select additional tests when the task runs in `Smoke` mode. By default, no additional tests are selected.
-For example, this configuration selects roughly 5% of the tests in addition to the annotated tests:
+- `AllTests`:
+  - selects every test in the task
+- `SmokeTests`:
+  - selects tests annotated with `@MustRunAlways`
+  - selects tests included in `testFederation { smokeTests { ... } }` DSL
+- `ContractTestsFor<Domain>`
+  - selects tests annotated with `@MustRunOnChangesIn<Domain>`
+
+Test Federation requests `AllTests` when all tests in the task's domain must run, and `SmokeTests` plus the
+relevant `ContractTestsFor<Domain>` subsets otherwise.
+
+Test subsets may overlap. For example, the same test may declare both `@MustRunOnChangesInJs` and `@MustRunOnChagesInWasm`, so it would be
+selected by both `ContractTestsForJs` and `ContractTestsForWasm`.
+
+Other test filters, such as `@NightlyTest`, still apply regardless of the requested subsets.
+
+### Customizing test subsets
+
+The `testFederation { }` extension allows customizing the subsets' content, as well as their behavior.
+
+Use `includeAutoSamples()` to configure additional auto-sampling when the task's test framework supports it.
+It selects an approximate percentage of tests using a hash of each test's identity, and requires a JUnit 5 task:
 
 ```kotlin
-tasks.withType<Test>().configureEach {
-    smokeTestConfig = SmokeTestConfig.Enabled(
-        autoSmokeTestPercentage = 5
-    )
+testTask {
+    testFederation {
+        smokeTests {
+            // Sample 5% of all tests and add them to the SmokeTest subset
+            includeAutoSamples(percentage = 5)
+
+            // Execute all tests when SmokeTests subset is requested
+            includeAll()
+
+            // If only SmokeTests subset was requested, skip the task
+            skip()
+        }
+
+        contractTests {
+            // If only ContractTests* subsets were requested, skip the task
+            skip()
+        }
+    }
 }
 ```
 
-The selection is stable: it uses the fully qualified name and unique ID of each test.
-Choose fast and stable tests, because the selected tests are required for merging to master even for unrelated changes.
+The auto-sampling selection is stable: it uses the fully qualified name and unique ID of each test.
+Choose fast and stable tests because the selected tests are required for merging to master even for unrelated changes.
 
-To require all tests in a task regardless of which domains are changed:
+To require all tests in a task regardless of which subsets are requested:
 
 ```kotlin
 tasks.withType<Test>().configureEach {
-    smokeTestConfig = SmokeTestConfig.RunAllTests
+    testFederation {
+        smokeTests { includeAll() }
+    }
 }
 ```
 
 Other test filters still apply.
+
+You can also skip the task completely when only smoke or contract tests are requested:
+
+```kotlin
+tasks.withType<Test>().configureEach {
+    testFederation {
+        smokeTests { skip() }
+        contractTests { skip() }
+    }
+}
+```
+
+This may be useful if your task does not support partial execution
 
 ## Local testing
 
 ### Checking which files belong to each domain
 
 [domains.dump.txt](domains.dump.txt) lists the files belonging to each domain. CI checks that it matches the domain declarations.
+Its `ignored:` section lists globally ignored paths and takes precedence over domain entries.
 Run the same check locally from the repository root:
 
 ```shell
@@ -260,7 +324,7 @@ To run a test task in `Smoke` mode as if `Js` were changed:
   -Ptest.federation.changed.domains="Js"
 ```
 
-This runs `@MustRunAlways` tests, `@MustRunOnChangesInJs` tests, and any additional tests selected by `smokeTestConfig`.
+This runs `@MustRunAlways` tests, `@MustRunOnChangesInJs` tests, and tests selected by `testFederation { smokeTests { includeAutoSamples() } }`.
 Use `-Ptest.federation.mode=Full` to run all tests in the task. Other test filters still apply.
 
 `test.federation.changed.domains` accepts:
@@ -289,6 +353,6 @@ merging to master. Both teams must approve changes to these tests because the te
 
 ## Extra: Smoke tests
 
-A smoke test is a quick check of core functionality. `@MustRunAlways` can be used for smoke tests that should run for every change,
-but not every smoke test needs to run for unrelated changes. Selecting a percentage of fast, stable tests through `smokeTestConfig` is
+A smoke test is a quick check of core functionality. `@MustRunAlways` can be used for smoke tests that should run for every non-ignored change,
+but not every smoke test needs to run for unrelated changes. Selecting a percentage of fast, stable tests through `testFederation { smokeTests { includeAutoSamples(...) } }` is
 another way to check core functionality for unrelated changes.

@@ -98,9 +98,10 @@ abstract class InitializersLoweringBase(open val context: CommonBackendContext) 
  */
 open class InitializersCleanupLowering(
     val context: CommonBackendContext,
-    private val shouldEraseFieldInitializer: (IrField) -> Boolean = { it.correspondingPropertySymbol?.owner?.isConst != true }
 ) : DeclarationTransformer {
     override val withLocalDeclarations: Boolean get() = true
+
+    protected open fun shouldEraseFieldInitializer(field: IrField): Boolean = field.correspondingPropertySymbol?.owner?.isConst != true
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (declaration is IrAnonymousInitializer) return emptyList()

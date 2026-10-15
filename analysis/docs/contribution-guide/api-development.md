@@ -917,7 +917,6 @@ For functions, explain what the action does:
 ```kotlin
 /**
  * Creates a new [KaType] based on the given type with the updated nullability specified by [isMarkedNullable].
- * @retur
  */
 fun KaType.withNullability(isMarkedNullable: Boolean): KaType
 ```

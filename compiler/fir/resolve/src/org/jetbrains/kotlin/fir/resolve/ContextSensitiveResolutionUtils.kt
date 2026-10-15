@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.isDeprecationLevelHidden
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
@@ -32,8 +34,11 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.asCone
+import org.jetbrains.kotlin.fir.visibilityChecker
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.types.model.safeSubstitute
 
@@ -46,7 +51,9 @@ object ContextSensitiveResolutionReceiverStrategy : ExpectedTypeAsStaticReceiver
     context(resolutionContext: ResolutionContext)
     override fun isSuitableReceiver(atom: ConeSimpleNameForContextSensitiveResolution, classSymbol: FirRegularClassSymbol): Boolean {
         // TODO: potentially might have performance cost (KT-89496)
-        return resolutionContext.bodyResolveComponents.runContextSensitiveResolutionForPropertyAccess(atom.expression, classSymbol) != null
+        return resolutionContext.bodyResolveComponents.runContextSensitiveResolutionForSimpleName(
+            atom.expression, atom.name, classSymbol
+        ) != null
     }
 }
 
@@ -72,7 +79,8 @@ fun runContextSensitiveResolutionForAtom(
         is StateForAtomWithExpectedTypeAsStaticReceiver.FallbackOnly -> emptyList()
     }
 
-    val newExpression = context.bodyResolveComponents.runContextSensitiveResolutionForPropertyAccess(atom.expression, classesForResolution)
+    val newExpression =
+        context.bodyResolveComponents.runContextSensitiveResolutionForSimpleName(atom.expression, atom.name, classesForResolution)
     val checkerSink = outerCandidateContext.checkerSink ?: CheckerSinkImpl(containingCandidate)
 
     val atomToCheck = if (newExpression != null) {
@@ -98,25 +106,27 @@ fun runContextSensitiveResolutionForAtom(
 /**
  * @return not-nullable value when resolution was successful
  */
-fun BodyResolveComponents.runContextSensitiveResolutionForPropertyAccess(
-    originalExpression: FirPropertyAccessExpression,
+fun BodyResolveComponents.runContextSensitiveResolutionForSimpleName(
+    originalExpression: FirExpression,
+    name: Name,
     expectedType: ConeKotlinType,
 ): FirExpression? {
     val representativeClass = expectedType.getClassRepresentativeForResolutionByExpectedType(session) ?: return null
-    return runContextSensitiveResolutionForPropertyAccess(originalExpression, representativeClass)
+    return runContextSensitiveResolutionForSimpleName(originalExpression, name, representativeClass)
 }
 
 /**
  * @return not-nullable value when resolution against at least one of the classes was successful,
  * and all the successful results refer to the same declaration.
  */
-private fun BodyResolveComponents.runContextSensitiveResolutionForPropertyAccess(
-    originalExpression: FirPropertyAccessExpression,
+private fun BodyResolveComponents.runContextSensitiveResolutionForSimpleName(
+    originalExpression: FirExpression,
+    name: Name,
     representativeClasses: Collection<FirRegularClassSymbol>,
 ): FirExpression? {
     var result: FirExpression? = null
     for (representativeClass in representativeClasses) {
-        val newExpression = runContextSensitiveResolutionForPropertyAccess(originalExpression, representativeClass) ?: continue
+        val newExpression = runContextSensitiveResolutionForSimpleName(originalExpression, name, representativeClass) ?: continue
         if (result == null) {
             result = newExpression
         } else if (result.obtainSymbol() != newExpression.obtainSymbol()) {
@@ -130,11 +140,16 @@ private fun BodyResolveComponents.runContextSensitiveResolutionForPropertyAccess
 }
 
 /**
- * This function is expected to be pure, so it should not modify given property access nor should it change any constraint system.
+ * This function is expected to be pure, so it should not modify given expression nor should it change any constraint system.
+ *
+ * @param originalExpression the result of the regular resolution of the simple name: either a property access or a qualifier.
+ *   Its source, annotations and type arguments are used for a new synthetic property access expression.
+ * @param name the simple name as it's written in the source
  * @return not-nullable value when resolution was successful
  */
-fun BodyResolveComponents.runContextSensitiveResolutionForPropertyAccess(
-    originalExpression: FirPropertyAccessExpression,
+fun BodyResolveComponents.runContextSensitiveResolutionForSimpleName(
+    originalExpression: FirExpression,
+    name: Name,
     representativeClass: FirRegularClassSymbol,
 ): FirExpression? {
     for (classToLookAt in representativeClass.getParentChainForContextSensitiveResolution(session, onlySealed = false)) {
@@ -146,12 +161,22 @@ fun BodyResolveComponents.runContextSensitiveResolutionForPropertyAccess(
 
         val newAccess = buildPropertyAccessExpression {
             annotations.addAll(originalExpression.annotations)
-            typeArguments.addAll(originalExpression.typeArguments)
+            typeArguments.addAll(
+                when (originalExpression) {
+                    is FirQualifiedAccessExpression -> originalExpression.typeArguments
+                    is FirResolvedQualifier -> originalExpression.typeArguments
+                    else -> error("Unexpected expression type: ${originalExpression::class}")
+                }
+            )
             explicitReceiver = additionalQualifier
             source = originalExpression.source
             calleeReference = buildSimpleNamedReference {
-                source = originalExpression.calleeReference.source
-                name = originalExpression.calleeReference.name
+                source = when (originalExpression) {
+                    is FirQualifiedAccessExpression -> originalExpression.calleeReference.source
+                    // The same source kind as at RAW FIR, see org.jetbrains.kotlin.fir.builder.ConversionUtilsKt.generateAccessExpression
+                    else -> originalExpression.source?.fakeElement(KtFakeSourceElementKind.ReferenceInAtomicQualifiedAccess)
+                }
+                this.name = name
             }
         }
 
@@ -231,6 +256,38 @@ fun FirPropertyAccessExpression.shouldBeResolvedInContextSensitiveMode(): Boolea
     if (explicitReceiver != null) return false
 
     return diagnostic.meansNoAvailableCandidate()
+}
+
+/**
+ * see [FirPropertyAccessExpression.shouldBeResolvedInContextSensitiveMode].
+ */
+context(components: BodyResolveComponents)
+fun FirResolvedQualifier.shouldBeResolvedInContextSensitiveMode(): Boolean {
+    // Only simple name expressions are supported
+    if (explicitParent != null) return false
+    val qualifierSymbol = qualifierSymbol ?: return false
+
+    if (this is FirErrorResolvedQualifier && this.diagnostic.meansNoAvailableCandidate()) return true
+
+    // A HIDDEN classifier or a class with a HIDDEN companion object has no diagnostic,
+    // it's only reported later by FirDeprecatedQualifierChecker
+    if (qualifierSymbol.isDeprecationLevelHidden(components.session)) return true
+    if (!resolvedToCompanionObject) {
+        // CSR is needed when NO_COMPANION_OBJECT would be reported otherwise
+        return accessedObjectSymbol == null
+    }
+    val companionSymbol = accessedObjectSymbol ?: return false
+    if (companionSymbol.isDeprecationLevelHidden(components.session)) return true
+
+    // TODO: Remove the check if the resolver would mark resolution results to classes with invisible companion objects
+    //  with a proper diagnostic (once KT-89656 is fixed), so this case would be handled by the code above.
+    companionSymbol.lazyResolveToPhase(FirResolvePhase.STATUS)
+    return !components.session.visibilityChecker.isClassLikeVisible(
+        companionSymbol.fir,
+        components.session,
+        components.file,
+        components.containingDeclarations
+    )
 }
 
 private fun ConeDiagnostic.meansNoAvailableCandidate(): Boolean =

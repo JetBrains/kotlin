@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.utils.withType
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
+import java.util.concurrent.Callable
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin.Companion.kotlinNodeJsRootExtension as wasmKotlinNodeJsRootExtension
 
 internal class SwcConfigurator(private val subTarget: KotlinJsIrSubTarget) :
@@ -121,7 +122,11 @@ internal class SwcConfigurator(private val subTarget: KotlinJsIrSubTarget) :
 
             // TODO(KT-83097): think to move this setup to JsIrBinary
             // Override the 'from' of the linkSync task to consume JS files post-processed by SWC, instead of the files from link task
-            task.from.setFrom(swcOrLinkTaskOutputs, binary.linkSyncTaskRegisteredResources)
+            task.from.setFrom(
+                swcOrLinkTaskOutputs,
+                binary.linkSyncTaskRegisteredResources,
+                Callable { binary.dtsGenerationTask },
+            )
         }
     }
 

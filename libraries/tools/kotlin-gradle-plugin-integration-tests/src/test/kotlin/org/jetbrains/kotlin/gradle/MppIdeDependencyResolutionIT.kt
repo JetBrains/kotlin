@@ -792,6 +792,21 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
         }.resolveIdeDependencies(strictMode = true) {}
     }
 
+    @GradleTest
+    fun `KT-78109 gradleApi dependency is imported as opaque file dependency`(gradleVersion: GradleVersion) {
+        project("empty", gradleVersion) {
+            plugins { kotlin("multiplatform") }
+            buildScriptInjection {
+                kotlinMultiplatform.jvm()
+                kotlinMultiplatform.sourceSets.getByName("jvmMain").dependencies {
+                    implementation(project.dependencies.gradleApi())
+                }
+            }
+        }.resolveIdeDependencies(strictMode = true) { dependencies ->
+            dependencies["jvmMain"].getOrFail(binaryCoordinates(Regex("<file>:.*gradle-api-.*\\.jar")))
+        }
+    }
+
     @GradleAndroidTest
     fun `KT-77404 jvm+android commonTest sees stdlib and annotations`(
         gradleVersion: GradleVersion,
@@ -803,8 +818,7 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
             gradleVersion,
             buildJdk = jdkVersion.location,
             buildOptions = defaultBuildOptions
-                .copy(androidVersion = agpVersion)
-                .suppressAgpWarningIsProperty(gradleVersion),
+                .copy(androidVersion = agpVersion),
         ) {
             buildScriptInjection {
                 applyDefaultAndroidLibraryConfiguration()
@@ -948,8 +962,7 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
             "empty",
             gradleVersion,
             buildOptions = defaultBuildOptions
-                .copy(androidVersion = agpVersion)
-                .suppressAgpWarningIsProperty(gradleVersion),
+                .copy(androidVersion = agpVersion),
             buildJdk = jdkVersion.location,
         ) {
             addKgpToBuildScriptCompilationClasspath()
@@ -987,8 +1000,7 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
             "empty",
             gradleVersion,
             buildOptions = defaultBuildOptions
-                .copy(androidVersion = agpVersion)
-                .suppressAgpWarningIsProperty(gradleVersion),
+                .copy(androidVersion = agpVersion),
             buildJdk = jdkVersion.location,
         ) {
             addKgpToBuildScriptCompilationClasspath()

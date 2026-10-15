@@ -5,11 +5,22 @@
 
 import kotlinx.coroutines.*
 
+class ChildFailure : RuntimeException("boom")
+
 // The Kotlin `guarded()` implementation suspends for as long as the Swift overrides do, so passing a plain
 // `AsyncGuarded` through any driver below is an exact control for passing a Swift subclass
 open class AsyncGuarded {
+    private val started = CompletableDeferred<Unit>()
+
+    fun markStarted() {
+        started.complete(Unit)
+    }
+
+    internal suspend fun awaitStarted() = started.await()
+
     open suspend fun guarded(): String {
-        delay(3_000)
+        markStarted()
+        delay(10_000)
         return "kotlin"
     }
 }
@@ -23,7 +34,8 @@ suspend fun callGuardedNonCancellable(g: AsyncGuarded): String = coroutineScope 
             captured = g.guarded()
         }
     }
-    delay(50)
+    g.awaitStarted()
+    check(job.isActive) { "the override returned before the surrounding job was cancelled" }
     job.cancel()
     job.join()
     captured
@@ -33,8 +45,8 @@ suspend fun callGuardedNonCancellable(g: AsyncGuarded): String = coroutineScope 
 // directly in the scope body
 suspend fun callFailingChildWithOverrideInScopeBody(g: AsyncGuarded): String = coroutineScope {
     launch {
-        delay(50)
-        throw IllegalStateException("boom")
+        g.awaitStarted()
+        throw ChildFailure()
     }
     g.guarded()
 }
@@ -43,7 +55,7 @@ suspend fun callFailingChildWithOverrideInScopeBody(g: AsyncGuarded): String = c
 suspend fun callCancelledScopeJobWithOverrideInScopeBody(g: AsyncGuarded): String = coroutineScope {
     val self = coroutineContext[Job]!!
     launch {
-        delay(50)
+        g.awaitStarted()
         self.cancel()
     }
     g.guarded()
@@ -53,8 +65,8 @@ suspend fun callCancelledScopeJobWithOverrideInScopeBody(g: AsyncGuarded): Strin
 suspend fun callFailingChildWithOverrideInChild(g: AsyncGuarded): String = coroutineScope {
     launch { g.guarded() }
     launch {
-        delay(50)
-        throw IllegalStateException("boom")
+        g.awaitStarted()
+        throw ChildFailure()
     }
     "done"
 }

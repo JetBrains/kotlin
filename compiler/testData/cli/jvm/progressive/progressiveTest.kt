@@ -1,3 +1,5 @@
-internal open class Foo {}
-
-fun <T : Foo> foo(x: T?) = x
+enum class EnumEntry {
+    X {
+        operator fun equals(a: Int, b: Int): Boolean = true
+    }, Y;
+}

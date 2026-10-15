@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,10 +10,10 @@ package kotlin.text
 // See: https://github.com/JetBrains/kotlin/tree/master/libraries/stdlib
 //
 
-internal fun Int.isOtherUppercase(): Boolean {
-    return this in 0x2160..0x216f
-            || this in 0x24b6..0x24cf
-            || this in 0x1f130..0x1f149
-            || this in 0x1f150..0x1f169
-            || this in 0x1f170..0x1f189
+internal actual fun isOtherUppercase(code: Int): Boolean {
+    return code in 0x2160..0x216f
+            || code in 0x24b6..0x24cf
+            || code in 0x1f130..0x1f149
+            || code in 0x1f150..0x1f169
+            || code in 0x1f170..0x1f189
 }

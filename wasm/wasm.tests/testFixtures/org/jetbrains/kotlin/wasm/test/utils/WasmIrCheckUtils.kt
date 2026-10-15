@@ -34,7 +34,7 @@ object WasmIrCheckUtils {
 
     private fun countCallsWithPredicate(module: WasmModule, function: WasmFunction.Defined, predicate: (String) -> Boolean): Int {
         return function.instructions.count { inst ->
-            inst.operator in setOf(WasmOp.CALL, WasmOp.CALL_INDIRECT) &&
+            inst.operator in setOf(WasmOp.CALL, WasmOp.CALL_INDIRECT, WasmOp.RETURN_CALL) &&
                     module.resolver.resolve(inst.firstImmediateOrNull() as WasmImmediate.FuncIdx).name
                         .let(predicate)
         }

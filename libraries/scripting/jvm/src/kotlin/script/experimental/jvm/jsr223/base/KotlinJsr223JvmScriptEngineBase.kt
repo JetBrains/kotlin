@@ -153,7 +153,7 @@ abstract class KotlinJsr223JvmScriptEngineBase<State>(
 
     /**
      * Hook for a compiler-specific per-snippet configuration tweak (for example setting
-     * `repl.currentLineId`). Called for every snippet, with the already threaded-forward
+     * `repl.currentSnippetNo`). Called for every snippet, with the already threaded-forward
      * [compilationConfiguration] as the base.
      */
     protected open fun snippetCompilationConfiguration(snippet: SourceCode, snippetNo: Int): ScriptCompilationConfiguration =

@@ -25,7 +25,7 @@ class ChainedDefaults {
       private get
       private set
 
-    private constructor() /* primary */ {
+    internal constructor() /* primary */ {
       super/*Any*/()
       /* <init>() */
 
@@ -94,7 +94,7 @@ class DefaultAnn {
       private get
       private set
 
-    private constructor() /* primary */ {
+    internal constructor() /* primary */ {
       super/*Any*/()
       /* <init>() */
 
@@ -161,7 +161,7 @@ class DefaultDependsOnPlain {
       private get
       private set
 
-    private constructor() /* primary */ {
+    internal constructor() /* primary */ {
       super/*Any*/()
       /* <init>() */
 
@@ -222,7 +222,7 @@ class NotNullable {
       private get
       private set
 
-    private constructor() /* primary */ {
+    internal constructor() /* primary */ {
       super/*Any*/()
       /* <init>() */
 
@@ -305,7 +305,7 @@ class PrimitivesAndNullables {
       private get
       private set
 
-    private constructor() /* primary */ {
+    internal constructor() /* primary */ {
       super/*Any*/()
       /* <init>() */
 

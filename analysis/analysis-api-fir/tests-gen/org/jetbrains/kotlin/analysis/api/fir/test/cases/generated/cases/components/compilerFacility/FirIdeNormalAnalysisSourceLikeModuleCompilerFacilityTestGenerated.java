@@ -111,6 +111,30 @@ public class FirIdeNormalAnalysisSourceLikeModuleCompilerFacilityTestGenerated e
   }
 
   @Test
+  @TestMetadata("fullValueClassFromAbiJar.kt")
+  public void testFullValueClassFromAbiJar() {
+    run("fullValueClassFromAbiJar.kt");
+  }
+
+  @Test
+  @TestMetadata("fullValueClassFromAbiJarWithoutFeature.kt")
+  public void testFullValueClassFromAbiJarWithoutFeature() {
+    run("fullValueClassFromAbiJarWithoutFeature.kt");
+  }
+
+  @Test
+  @TestMetadata("fullValueClassFromLibrary.kt")
+  public void testFullValueClassFromLibrary() {
+    run("fullValueClassFromLibrary.kt");
+  }
+
+  @Test
+  @TestMetadata("fullValueClasses.kt")
+  public void testFullValueClasses() {
+    run("fullValueClasses.kt");
+  }
+
+  @Test
   @TestMetadata("imports.kt")
   public void testImports() {
     run("imports.kt");
@@ -256,6 +280,18 @@ public class FirIdeNormalAnalysisSourceLikeModuleCompilerFacilityTestGenerated e
     }
 
     @Test
+    @TestMetadata("annotatedAssignment.kt")
+    public void testAnnotatedAssignment() {
+      run("annotatedAssignment.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedAssignmentSameLine.kt")
+    public void testAnnotatedAssignmentSameLine() {
+      run("annotatedAssignmentSameLine.kt");
+    }
+
+    @Test
     @TestMetadata("annotatedEnumEntry.kt")
     public void testAnnotatedEnumEntry() {
       run("annotatedEnumEntry.kt");
@@ -388,6 +424,18 @@ public class FirIdeNormalAnalysisSourceLikeModuleCompilerFacilityTestGenerated e
     }
 
     @Test
+    @TestMetadata("fullValueClassCapture.kt")
+    public void testFullValueClassCapture() {
+      run("fullValueClassCapture.kt");
+    }
+
+    @Test
+    @TestMetadata("fullValueClassReceiver.kt")
+    public void testFullValueClassReceiver() {
+      run("fullValueClassReceiver.kt");
+    }
+
+    @Test
     @TestMetadata("implicitlyReturnedLocalObject.kt")
     public void testImplicitlyReturnedLocalObject() {
       run("implicitlyReturnedLocalObject.kt");
@@ -505,6 +553,18 @@ public class FirIdeNormalAnalysisSourceLikeModuleCompilerFacilityTestGenerated e
     @TestMetadata("originalIfFakeOverride.kt")
     public void testOriginalIfFakeOverride() {
       run("originalIfFakeOverride.kt");
+    }
+
+    @Test
+    @TestMetadata("privateTopLevelNameClash.kt")
+    public void testPrivateTopLevelNameClash() {
+      run("privateTopLevelNameClash.kt");
+    }
+
+    @Test
+    @TestMetadata("privateTopLevelNameClashOtherFile.kt")
+    public void testPrivateTopLevelNameClashOtherFile() {
+      run("privateTopLevelNameClashOtherFile.kt");
     }
 
     @Test

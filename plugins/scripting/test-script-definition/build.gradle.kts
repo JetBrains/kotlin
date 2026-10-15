@@ -17,4 +17,3 @@ sourceSets {
     "testFixtures" { projectDefault() }
 }
 
-testsJar()

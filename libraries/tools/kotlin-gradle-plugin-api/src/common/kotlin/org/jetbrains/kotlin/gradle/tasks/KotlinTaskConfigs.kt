@@ -138,6 +138,16 @@ interface BaseKotlinCompile : KotlinCompileTool {
      */
     @get:Input
     val useModuleDetection: Property<Boolean>
+
+    /**
+     * Configures the return value checker mode.
+     *
+     * When unset, the mode depends on the Kotlin language version: it is disabled for language versions below 2.5,
+     * and it is enabled in the check mode starting from 2.5.
+     */
+    @get:Input
+    @get:Optional
+    val returnValueCheckerMode: Property<ReturnValueCheckerMode>
 }
 
 /**

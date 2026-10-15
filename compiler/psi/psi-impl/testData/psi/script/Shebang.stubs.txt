@@ -1,7 +1,7 @@
 FILE[kind=Script[packageFqName=<root>]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  SCRIPT[fqName=Shebang, fqName=Shebang, isReplSnippet=false, name=Shebang]
+  SCRIPT[fqName=Shebang, fqName=Shebang, name=Shebang]
     SCRIPT_INITIALIZER
       CALL_EXPRESSION
         REFERENCE_EXPRESSION[referencedName=println]

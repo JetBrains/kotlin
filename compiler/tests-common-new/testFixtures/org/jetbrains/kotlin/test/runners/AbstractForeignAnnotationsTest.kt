@@ -112,7 +112,7 @@ abstract class AbstractForeignAnnotationsTestBase(
 
         forTestsMatching("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jakarta/*") {
             defaultDirectives {
-                JDK_KIND with TestJdkKind.FULL_JDK_11
+                JDK_KIND with TestJdkKind.FULL_JDK_17
             }
         }
 

@@ -4,10 +4,86 @@ FILE: stdlibConst.kt
     }
     public final const [EvaluatedValue=Int(49)] val code: R|kotlin/Int| = Char(1).R|kotlin/code|
         public get(): R|kotlin/Int|
-    public final const [EvaluatedValue=Int(5)] val floorDiv: R|kotlin/Int| = Int(10).R|kotlin/floorDiv|(Int(2))
+    public final const [EvaluatedValue=Int(0)] val byteFloorDiv1: R|kotlin/Int| = Int(1).R|kotlin/Int.toByte|().R|kotlin/floorDiv|(Int(2).R|kotlin/Int.toByte|())
         public get(): R|kotlin/Int|
-    public final const [EvaluatedValue=Int(2)] val mod: R|kotlin/Int| = Int(5).R|kotlin/mod|(Int(3))
+    public final const [EvaluatedValue=Int(1)] val byteFloorDiv2: R|kotlin/Int| = Int(2).R|kotlin/Int.toByte|().R|kotlin/floorDiv|(Int(2).R|kotlin/Int.toByte|())
         public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Int(1)] val byteFloorDiv3: R|kotlin/Int| = Int(3).R|kotlin/Int.toByte|().R|kotlin/floorDiv|(Int(2).R|kotlin/Int.toByte|())
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Int(-1)] val byteFloorDiv4: R|kotlin/Int| = Int(-1).R|kotlin/Int.toByte|().R|kotlin/floorDiv|(Int(2).R|kotlin/Int.toByte|())
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Int(0)] val shortFloorDiv1: R|kotlin/Int| = Int(1).R|kotlin/Int.toShort|().R|kotlin/floorDiv|(Int(2).R|kotlin/Int.toShort|())
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Int(1)] val shortFloorDiv2: R|kotlin/Int| = Int(2).R|kotlin/Int.toShort|().R|kotlin/floorDiv|(Int(2).R|kotlin/Int.toShort|())
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Int(1)] val shortFloorDiv3: R|kotlin/Int| = Int(3).R|kotlin/Int.toShort|().R|kotlin/floorDiv|(Int(2).R|kotlin/Int.toShort|())
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Int(-1)] val shortFloorDiv4: R|kotlin/Int| = Int(-1).R|kotlin/Int.toShort|().R|kotlin/floorDiv|(Int(2).R|kotlin/Int.toShort|())
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Int(0)] val intFloorDiv1: R|kotlin/Int| = Int(1).R|kotlin/floorDiv|(Int(2))
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Int(1)] val intFloorDiv2: R|kotlin/Int| = Int(2).R|kotlin/floorDiv|(Int(2))
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Int(1)] val intFloorDiv3: R|kotlin/Int| = Int(3).R|kotlin/floorDiv|(Int(2))
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Int(-1)] val intFloorDiv4: R|kotlin/Int| = Int(-1).R|kotlin/floorDiv|(Int(2))
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Long(0)] val longFloorDiv1: R|kotlin/Long| = Long(1).R|kotlin/floorDiv|(Long(2))
+        public get(): R|kotlin/Long|
+    public final const [EvaluatedValue=Long(1)] val longFloorDiv2: R|kotlin/Long| = Long(2).R|kotlin/floorDiv|(Long(2))
+        public get(): R|kotlin/Long|
+    public final const [EvaluatedValue=Long(1)] val longFloorDiv3: R|kotlin/Long| = Long(3).R|kotlin/floorDiv|(Long(2))
+        public get(): R|kotlin/Long|
+    public final const [EvaluatedValue=Long(-1)] val longFloorDiv4: R|kotlin/Long| = Long(1).R|kotlin/Long.unaryMinus|().R|kotlin/floorDiv|(Long(2))
+        public get(): R|kotlin/Long|
+    public final const [EvaluatedValue=Byte(1)] val byteMod1: R|kotlin/Byte| = Int(1).R|kotlin/Int.toByte|().R|kotlin/mod|(Int(2).R|kotlin/Int.toByte|())
+        public get(): R|kotlin/Byte|
+    public final const [EvaluatedValue=Byte(0)] val byteMod2: R|kotlin/Byte| = Int(2).R|kotlin/Int.toByte|().R|kotlin/mod|(Int(2).R|kotlin/Int.toByte|())
+        public get(): R|kotlin/Byte|
+    public final const [EvaluatedValue=Byte(1)] val byteMod3: R|kotlin/Byte| = Int(3).R|kotlin/Int.toByte|().R|kotlin/mod|(Int(2).R|kotlin/Int.toByte|())
+        public get(): R|kotlin/Byte|
+    public final const [EvaluatedValue=Byte(1)] val byteMod4: R|kotlin/Byte| = Int(-1).R|kotlin/Int.toByte|().R|kotlin/mod|(Int(2).R|kotlin/Int.toByte|())
+        public get(): R|kotlin/Byte|
+    public final const [EvaluatedValue=Short(1)] val shortMod1: R|kotlin/Short| = Int(1).R|kotlin/Int.toShort|().R|kotlin/mod|(Int(2).R|kotlin/Int.toShort|())
+        public get(): R|kotlin/Short|
+    public final const [EvaluatedValue=Short(0)] val shortMod2: R|kotlin/Short| = Int(2).R|kotlin/Int.toShort|().R|kotlin/mod|(Int(2).R|kotlin/Int.toShort|())
+        public get(): R|kotlin/Short|
+    public final const [EvaluatedValue=Short(1)] val shortMod3: R|kotlin/Short| = Int(3).R|kotlin/Int.toShort|().R|kotlin/mod|(Int(2).R|kotlin/Int.toShort|())
+        public get(): R|kotlin/Short|
+    public final const [EvaluatedValue=Short(1)] val shortMod4: R|kotlin/Short| = Int(-3).R|kotlin/Int.toShort|().R|kotlin/mod|(Int(2).R|kotlin/Int.toShort|())
+        public get(): R|kotlin/Short|
+    public final const [EvaluatedValue=Int(1)] val intMod1: R|kotlin/Int| = Int(1).R|kotlin/mod|(Int(2))
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Int(0)] val intMod2: R|kotlin/Int| = Int(2).R|kotlin/mod|(Int(2))
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Int(1)] val intMod3: R|kotlin/Int| = Int(3).R|kotlin/mod|(Int(2))
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Int(1)] val intMod4: R|kotlin/Int| = Int(-1).R|kotlin/mod|(Int(2))
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Long(1)] val longMod1: R|kotlin/Long| = Long(1).R|kotlin/mod|(Long(2))
+        public get(): R|kotlin/Long|
+    public final const [EvaluatedValue=Long(0)] val longMod2: R|kotlin/Long| = Long(2).R|kotlin/mod|(Long(2))
+        public get(): R|kotlin/Long|
+    public final const [EvaluatedValue=Long(1)] val longMod3: R|kotlin/Long| = Long(3).R|kotlin/mod|(Long(2))
+        public get(): R|kotlin/Long|
+    public final const [EvaluatedValue=Long(1)] val longMod4: R|kotlin/Long| = Long(1).R|kotlin/Long.unaryMinus|().R|kotlin/mod|(Long(2))
+        public get(): R|kotlin/Long|
+    public final const [EvaluatedValue=Float(1.0)] val floatMod1: R|kotlin/Float| = Float(1.0).R|kotlin/mod|(Float(2.0))
+        public get(): R|kotlin/Float|
+    public final const [EvaluatedValue=Float(0.0)] val floatMod2: R|kotlin/Float| = Float(2.0).R|kotlin/mod|(Float(2.0))
+        public get(): R|kotlin/Float|
+    public final const [EvaluatedValue=Float(1.0)] val floatMod3: R|kotlin/Float| = Float(3.0).R|kotlin/mod|(Float(2.0))
+        public get(): R|kotlin/Float|
+    public final const [EvaluatedValue=Float(1.0)] val floatMod4: R|kotlin/Float| = Float(1.0).R|kotlin/Float.unaryMinus|().R|kotlin/mod|(Float(2.0))
+        public get(): R|kotlin/Float|
+    public final const [EvaluatedValue=Double(1.0)] val doubleMod1: R|kotlin/Double| = Double(1.0).R|kotlin/mod|(Double(2.0))
+        public get(): R|kotlin/Double|
+    public final const [EvaluatedValue=Double(0.0)] val doubleMod2: R|kotlin/Double| = Double(2.0).R|kotlin/mod|(Double(2.0))
+        public get(): R|kotlin/Double|
+    public final const [EvaluatedValue=Double(1.0)] val doubleMod3: R|kotlin/Double| = Double(3.0).R|kotlin/mod|(Double(2.0))
+        public get(): R|kotlin/Double|
+    public final const [EvaluatedValue=Double(1.0)] val doubleMod4: R|kotlin/Double| = Double(1.0).R|kotlin/Double.unaryMinus|().R|kotlin/mod|(Double(2.0))
+        public get(): R|kotlin/Double|
     public final fun box(): R|kotlin/String| {
         when () {
             !=(R|/code|.R|/id|<R|kotlin/Int|>(), Int(49)) ->  {
@@ -16,14 +92,242 @@ FILE: stdlibConst.kt
         }
 
         when () {
-            !=(R|/floorDiv|.R|/id|<R|kotlin/Int|>(), Int(5)) ->  {
-                ^box String(Fail 2)
+            !=(R|/byteFloorDiv1|.R|/id|<R|kotlin/Int|>(), Int(0)) ->  {
+                ^box String(Fail 2.1 Byte)
             }
         }
 
         when () {
-            !=(R|/mod|.R|/id|<R|kotlin/Int|>(), Int(2)) ->  {
-                ^box String(Fail 3)
+            !=(R|/byteFloorDiv2|.R|/id|<R|kotlin/Int|>(), Int(1)) ->  {
+                ^box String(Fail 2.2 Byte)
+            }
+        }
+
+        when () {
+            !=(R|/byteFloorDiv3|.R|/id|<R|kotlin/Int|>(), Int(1)) ->  {
+                ^box String(Fail 2.3 Byte)
+            }
+        }
+
+        when () {
+            !=(R|/byteFloorDiv4|.R|/id|<R|kotlin/Int|>(), Int(-1)) ->  {
+                ^box String(Fail 2.4 Byte)
+            }
+        }
+
+        when () {
+            !=(R|/shortFloorDiv1|.R|/id|<R|kotlin/Int|>(), Int(0)) ->  {
+                ^box String(Fail 2.1 Short)
+            }
+        }
+
+        when () {
+            !=(R|/shortFloorDiv2|.R|/id|<R|kotlin/Int|>(), Int(1)) ->  {
+                ^box String(Fail 2.2 Short)
+            }
+        }
+
+        when () {
+            !=(R|/shortFloorDiv3|.R|/id|<R|kotlin/Int|>(), Int(1)) ->  {
+                ^box String(Fail 2.3 Short)
+            }
+        }
+
+        when () {
+            !=(R|/shortFloorDiv4|.R|/id|<R|kotlin/Int|>(), Int(-1)) ->  {
+                ^box String(Fail 2.4 Short)
+            }
+        }
+
+        when () {
+            !=(R|/intFloorDiv1|.R|/id|<R|kotlin/Int|>(), Int(0)) ->  {
+                ^box String(Fail 2.1 Int)
+            }
+        }
+
+        when () {
+            !=(R|/intFloorDiv2|.R|/id|<R|kotlin/Int|>(), Int(1)) ->  {
+                ^box String(Fail 2.2 Int)
+            }
+        }
+
+        when () {
+            !=(R|/intFloorDiv3|.R|/id|<R|kotlin/Int|>(), Int(1)) ->  {
+                ^box String(Fail 2.3 Int)
+            }
+        }
+
+        when () {
+            !=(R|/intFloorDiv4|.R|/id|<R|kotlin/Int|>(), Int(-1)) ->  {
+                ^box String(Fail 2.4 Int)
+            }
+        }
+
+        when () {
+            !=(R|/longFloorDiv1|.R|/id|<R|kotlin/Long|>(), Long(0)) ->  {
+                ^box String(Fail 2.1 Long)
+            }
+        }
+
+        when () {
+            !=(R|/longFloorDiv2|.R|/id|<R|kotlin/Long|>(), Long(1)) ->  {
+                ^box String(Fail 2.2 Long)
+            }
+        }
+
+        when () {
+            !=(R|/longFloorDiv3|.R|/id|<R|kotlin/Long|>(), Long(1)) ->  {
+                ^box String(Fail 2.3 Long)
+            }
+        }
+
+        when () {
+            !=(R|/longFloorDiv4|.R|/id|<R|kotlin/Long|>(), Long(1).R|kotlin/Long.unaryMinus|()) ->  {
+                ^box String(Fail 2.4 Long)
+            }
+        }
+
+        when () {
+            !=(R|/byteMod1|.R|/id|<R|kotlin/Byte|>(), Int(1).R|kotlin/Int.toByte|()) ->  {
+                ^box String(Fail 3.1 Byte)
+            }
+        }
+
+        when () {
+            !=(R|/byteMod2|.R|/id|<R|kotlin/Byte|>(), Int(0).R|kotlin/Int.toByte|()) ->  {
+                ^box String(Fail 3.2 Byte)
+            }
+        }
+
+        when () {
+            !=(R|/byteMod3|.R|/id|<R|kotlin/Byte|>(), Int(1).R|kotlin/Int.toByte|()) ->  {
+                ^box String(Fail 3.3 Byte)
+            }
+        }
+
+        when () {
+            !=(R|/byteMod4|.R|/id|<R|kotlin/Byte|>(), Int(1).R|kotlin/Int.toByte|()) ->  {
+                ^box String(Fail 3.4 Byte)
+            }
+        }
+
+        when () {
+            !=(R|/shortMod1|.R|/id|<R|kotlin/Short|>(), Int(1).R|kotlin/Int.toShort|()) ->  {
+                ^box String(Fail 3.1 Short)
+            }
+        }
+
+        when () {
+            !=(R|/shortMod2|.R|/id|<R|kotlin/Short|>(), Int(0).R|kotlin/Int.toShort|()) ->  {
+                ^box String(Fail 3.2 Short)
+            }
+        }
+
+        when () {
+            !=(R|/shortMod3|.R|/id|<R|kotlin/Short|>(), Int(1).R|kotlin/Int.toShort|()) ->  {
+                ^box String(Fail 3.3 Short)
+            }
+        }
+
+        when () {
+            !=(R|/shortMod4|.R|/id|<R|kotlin/Short|>(), Int(1).R|kotlin/Int.toShort|()) ->  {
+                ^box String(Fail 3.4 Short)
+            }
+        }
+
+        when () {
+            !=(R|/intMod1|.R|/id|<R|kotlin/Int|>(), Int(1)) ->  {
+                ^box String(Fail 3.1 Int)
+            }
+        }
+
+        when () {
+            !=(R|/intMod2|.R|/id|<R|kotlin/Int|>(), Int(0)) ->  {
+                ^box String(Fail 3.2 Int)
+            }
+        }
+
+        when () {
+            !=(R|/intMod3|.R|/id|<R|kotlin/Int|>(), Int(1)) ->  {
+                ^box String(Fail 3.3 Int)
+            }
+        }
+
+        when () {
+            !=(R|/intMod4|.R|/id|<R|kotlin/Int|>(), Int(1)) ->  {
+                ^box String(Fail 3.4 Int)
+            }
+        }
+
+        when () {
+            !=(R|/longMod1|.R|/id|<R|kotlin/Long|>(), Long(1)) ->  {
+                ^box String(Fail 3.1 Long)
+            }
+        }
+
+        when () {
+            !=(R|/longMod2|.R|/id|<R|kotlin/Long|>(), Long(0)) ->  {
+                ^box String(Fail 3.2 Long)
+            }
+        }
+
+        when () {
+            !=(R|/longMod3|.R|/id|<R|kotlin/Long|>(), Long(1)) ->  {
+                ^box String(Fail 3.3 Long)
+            }
+        }
+
+        when () {
+            !=(R|/longMod4|.R|/id|<R|kotlin/Long|>(), Long(1)) ->  {
+                ^box String(Fail 3.4 Long)
+            }
+        }
+
+        when () {
+            !=(R|/floatMod1|.R|/id|<R|kotlin/Float|>(), Float(1.0)) ->  {
+                ^box String(Fail 3.1 Float)
+            }
+        }
+
+        when () {
+            !=(R|/floatMod2|.R|/id|<R|kotlin/Float|>(), Float(0.0)) ->  {
+                ^box String(Fail 3.2 Float)
+            }
+        }
+
+        when () {
+            !=(R|/floatMod3|.R|/id|<R|kotlin/Float|>(), Float(1.0)) ->  {
+                ^box String(Fail 3.3 Float)
+            }
+        }
+
+        when () {
+            !=(R|/floatMod4|.R|/id|<R|kotlin/Float|>(), Float(1.0)) ->  {
+                ^box String(Fail 3.4 Float)
+            }
+        }
+
+        when () {
+            !=(R|/doubleMod1|.R|/id|<R|kotlin/Double|>(), Double(1.0)) ->  {
+                ^box String(Fail 3.1 Double)
+            }
+        }
+
+        when () {
+            !=(R|/doubleMod2|.R|/id|<R|kotlin/Double|>(), Double(0.0)) ->  {
+                ^box String(Fail 3.2 Double)
+            }
+        }
+
+        when () {
+            !=(R|/doubleMod3|.R|/id|<R|kotlin/Double|>(), Double(1.0)) ->  {
+                ^box String(Fail 3.3 Double)
+            }
+        }
+
+        when () {
+            !=(R|/doubleMod4|.R|/id|<R|kotlin/Double|>(), Double(1.0)) ->  {
+                ^box String(Fail 3.4 Double)
             }
         }
 

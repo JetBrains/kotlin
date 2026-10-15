@@ -8,7 +8,10 @@ package org.jetbrains.kotlin.scripting.compiler.plugin.services
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirImport
+import org.jetbrains.kotlin.fir.declarations.FirReplSnippet
 import org.jetbrains.kotlin.fir.declarations.FirScript
 import org.jetbrains.kotlin.fir.declarations.builder.buildImport
 import org.jetbrains.kotlin.fir.extensions.FirScriptResolutionConfigurationExtension
@@ -24,16 +27,29 @@ class FirScriptResolutionConfigurationExtensionImpl(
     session: FirSession,
 ) : FirScriptResolutionConfigurationExtension(session) {
 
-    override fun getScriptDefaultImports(script: FirScript): List<FirImport>? {
-        val scriptSession = script.moduleData.session
-        val scriptFile = scriptSession.firProvider.getFirScriptContainerFile(script.symbol) ?: return emptyList()
-        val scriptSourceFile = scriptFile.sourceFile?.toSourceCode() ?: return emptyList()
-        @Suppress("DEPRECATION")
-        val compilationConfiguration = script.scriptCompilationConfiguration
-            ?: session.getScriptCompilationConfiguration(scriptSourceFile, getDefault = { null }) ?: return emptyList()
+    override fun getScriptDefaultImports(script: FirScript): List<FirImport>? =
+        getDefaultImports(script, script.scriptCompilationConfiguration) {
+            script.moduleData.session.firProvider.getFirScriptContainerFile(script.symbol)
+        }
+
+    override fun getSnippetDefaultImports(snippet: FirReplSnippet): List<FirImport>? =
+        getDefaultImports(snippet, snippet.scriptCompilationConfiguration) {
+            snippet.moduleData.session.firProvider.getFirReplSnippetContainerFile(snippet.symbol)
+        }
+
+    private inline fun getDefaultImports(
+        declaration: FirDeclaration,
+        attachedConfiguration: ScriptCompilationConfiguration?,
+        getContainingFile: () -> FirFile?,
+    ): List<FirImport>? {
+        val compilationConfiguration = attachedConfiguration ?: run {
+            val sourceCode = getContainingFile()?.sourceFile?.toSourceCode() ?: return emptyList()
+            @Suppress("DEPRECATION")
+            session.getScriptCompilationConfiguration(sourceCode, getDefault = { null })
+        } ?: return emptyList()
 
         return compilationConfiguration[ScriptCompilationConfiguration.defaultImports]
-            .firImportsFromDefaultImports(script.source.fakeElement(KtFakeSourceElementKind.ImplicitImport))
+            .firImportsFromDefaultImports(declaration.source?.fakeElement(KtFakeSourceElementKind.ImplicitImport))
     }
 
     companion object {

@@ -1,0 +1,37 @@
+# mkdir
+default
+warnings
+
+# kotlinc
+-cp %KOTLIN_STDLIB%
+-d output/ap
+processor/InfoAsWarningsProcessor.kt
+
+# kapt
+source.kt
+-Kapt-classpath=processor.jar:%KOTLIN_STDLIB%
+-Kapt-classpath=output/ap
+-Kapt-processors=apt.InfoAsWarningsProcessor
+-Kapt-sources=default/sources
+-Kapt-classes=default/classes
+-Kapt-stubs=default/stubs
+
+# output
+info: note: info-as-warnings test message
+warning: warning: Supported source version 'RELEASE_8' from annotation processor 'org.jetbrains.kotlin.kapt.base.ProcessorWrapper' less than -source '17'
+
+# kapt
+source.kt
+-Kapt-classpath=processor.jar:%KOTLIN_STDLIB%
+-Kapt-classpath=output/ap
+-Kapt-processors=apt.InfoAsWarningsProcessor
+-Kapt-sources=warnings/sources
+-Kapt-classes=warnings/classes
+-Kapt-stubs=warnings/stubs
+-Kapt-info-as-warnings=true
+
+# output
+warning: warning: Supported source version 'RELEASE_8' from annotation processor 'org.jetbrains.kotlin.kapt.base.ProcessorWrapper' less than -source '17'
+warning: note: info-as-warnings test message
+
+# after

@@ -104,12 +104,12 @@ class IrFileDeserializerImpl(
         return buildList {
             for (topLevelSignature in topLevelCallableSignature) {
                 val index = reversedSignatureIndex[topLevelSignature] ?: continue
-                val proto = libraryFile.declaration(index)
+                val protoKind = libraryFile.declarationKind(index)
                 when (signatureKind) {
                     IrDeserializer.TopLevelSymbolKind.FUNCTION_SYMBOL ->
-                        if (proto.declaratorCase == ProtoDeclaration.DeclaratorCase.IR_FUNCTION) add(topLevelSignature)
+                        if (protoKind == ProtoDeclaration.DeclaratorCase.IR_FUNCTION) add(topLevelSignature)
                     IrDeserializer.TopLevelSymbolKind.PROPERTY_SYMBOL ->
-                        if (proto.declaratorCase == ProtoDeclaration.DeclaratorCase.IR_PROPERTY) add(topLevelSignature)
+                        if (protoKind == ProtoDeclaration.DeclaratorCase.IR_PROPERTY) add(topLevelSignature)
                     else -> error("Unexpected signature kind: $signatureKind")
                 }
             }
@@ -249,6 +249,7 @@ class FileDeserializationStateImpl(
 }
 
 abstract class IrLibraryFile {
+    abstract fun declarationKind(index: Int): ProtoDeclaration.DeclaratorCase?
     abstract fun declaration(index: Int): ProtoDeclaration
     abstract fun type(index: Int): ProtoType
     abstract fun signature(index: Int): ProtoIdSignature
@@ -270,6 +271,25 @@ abstract class IrLibraryBytesSource {
 }
 
 class IrLibraryFileFromBytes(private val bytesSource: IrLibraryBytesSource) : IrLibraryFile() {
+    // TODO find a better approach KT-90010
+    override fun declarationKind(index: Int): ProtoDeclaration.DeclaratorCase? {
+        val input = bytesSource.irDeclaration(index).codedInputStream
+        return when (input.readTag()) {
+            10 -> ProtoDeclaration.DeclaratorCase.IR_ANONYMOUS_INIT
+            18 -> ProtoDeclaration.DeclaratorCase.IR_CLASS
+            26 -> ProtoDeclaration.DeclaratorCase.IR_CONSTRUCTOR
+            34 -> ProtoDeclaration.DeclaratorCase.IR_ENUM_ENTRY
+            42 -> ProtoDeclaration.DeclaratorCase.IR_FIELD
+            50 -> ProtoDeclaration.DeclaratorCase.IR_FUNCTION
+            58 -> ProtoDeclaration.DeclaratorCase.IR_PROPERTY
+            66 -> ProtoDeclaration.DeclaratorCase.IR_TYPE_PARAMETER
+            74 -> ProtoDeclaration.DeclaratorCase.IR_VARIABLE
+            82 -> ProtoDeclaration.DeclaratorCase.IR_VALUE_PARAMETER
+            90 -> ProtoDeclaration.DeclaratorCase.IR_LOCAL_DELEGATED_PROPERTY
+            98 -> ProtoDeclaration.DeclaratorCase.IR_TYPE_ALIAS
+            else -> null
+        }
+    }
 
     override fun declaration(index: Int): ProtoDeclaration =
         ProtoDeclaration.parseFrom(bytesSource.irDeclaration(index).codedInputStream, extensionRegistryLite)

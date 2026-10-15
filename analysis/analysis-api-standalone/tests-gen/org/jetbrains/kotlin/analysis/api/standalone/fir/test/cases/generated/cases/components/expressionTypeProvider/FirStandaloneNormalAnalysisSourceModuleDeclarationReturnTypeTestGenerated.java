@@ -80,9 +80,27 @@ public class FirStandaloneNormalAnalysisSourceModuleDeclarationReturnTypeTestGen
   }
 
   @Test
+  @TestMetadata("constructorsAndMembers.kt")
+  public void testConstructorsAndMembers() {
+    run("constructorsAndMembers.kt");
+  }
+
+  @Test
   @TestMetadata("contextParameters.kt")
   public void testContextParameters() {
     run("contextParameters.kt");
+  }
+
+  @Test
+  @TestMetadata("contextParametersOnProperty.kt")
+  public void testContextParametersOnProperty() {
+    run("contextParametersOnProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("danglingContextParameter.kt")
+  public void testDanglingContextParameter() {
+    run("danglingContextParameter.kt");
   }
 
   @Test
@@ -104,6 +122,12 @@ public class FirStandaloneNormalAnalysisSourceModuleDeclarationReturnTypeTestGen
   }
 
   @Test
+  @TestMetadata("explicitBackingField.kt")
+  public void testExplicitBackingField() {
+    run("explicitBackingField.kt");
+  }
+
+  @Test
   @TestMetadata("functionType.kt")
   public void testFunctionType() {
     run("functionType.kt");
@@ -116,15 +140,33 @@ public class FirStandaloneNormalAnalysisSourceModuleDeclarationReturnTypeTestGen
   }
 
   @Test
+  @TestMetadata("implicitTypeErrors.kt")
+  public void testImplicitTypeErrors() {
+    run("implicitTypeErrors.kt");
+  }
+
+  @Test
   @TestMetadata("implicitTypeFromTypealiasedConstructorCallWithImplicitTypeArguments.kt")
   public void testImplicitTypeFromTypealiasedConstructorCallWithImplicitTypeArguments() {
     run("implicitTypeFromTypealiasedConstructorCallWithImplicitTypeArguments.kt");
   }
 
   @Test
+  @TestMetadata("lambdaParameters.kt")
+  public void testLambdaParameters() {
+    run("lambdaParameters.kt");
+  }
+
+  @Test
   @TestMetadata("localDeclarations.kt")
   public void testLocalDeclarations() {
     run("localDeclarations.kt");
+  }
+
+  @Test
+  @TestMetadata("loopAndCatchParameters.kt")
+  public void testLoopAndCatchParameters() {
+    run("loopAndCatchParameters.kt");
   }
 
   @Test

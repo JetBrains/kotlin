@@ -277,7 +277,7 @@ constructor(
     )
 
     private val cacheSettings = CacheSettings(
-        project.isKonanIncrementalCompilationEnabled(),
+        project.isKonanIncrementalCompilationEnabled(konanTarget),
         project.getKonanParallelThreads(),
         project.gradle.gradleUserHomeDir,
         project.layout.buildDirectory.get().asFile,

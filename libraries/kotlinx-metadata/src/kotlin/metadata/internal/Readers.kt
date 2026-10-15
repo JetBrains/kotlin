@@ -193,7 +193,7 @@ private fun ProtoBuf.Constructor.toKmConstructor(c: ReadContext): KmConstructor 
     return v
 }
 
-@OptIn(ExperimentalContextParameters::class, ExperimentalCompanionBlocksAndExtensions::class)
+@OptIn(ExperimentalContextParameters::class, ExperimentalCompanionExtensions::class)
 private fun ProtoBuf.Function.toKmFunction(outer: ReadContext): KmFunction {
     val v = KmFunction(flags, outer[name])
     val c = outer.withTypeParameters(typeParameterList)
@@ -225,7 +225,7 @@ private fun ProtoBuf.Function.toKmFunction(outer: ReadContext): KmFunction {
 }
 
 
-@OptIn(ExperimentalContextParameters::class, ExperimentalCompanionBlocksAndExtensions::class)
+@OptIn(ExperimentalContextParameters::class, ExperimentalCompanionExtensions::class)
 public fun ProtoBuf.Property.toKmProperty(outer: ReadContext): KmProperty {
     val v = KmProperty(flags, outer[name], getPropertyGetterFlags(), getPropertySetterFlags())
     val c = outer.withTypeParameters(typeParameterList)

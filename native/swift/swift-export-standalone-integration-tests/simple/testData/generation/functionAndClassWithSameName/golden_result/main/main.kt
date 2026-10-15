@@ -15,25 +15,25 @@ import kotlinx.cinterop.*
 @ExportedBridge("ClassWithFactoryWithoutParameters_value_get")
 public fun ClassWithFactoryWithoutParameters_value_get(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as ClassWithFactoryWithoutParameters
-    val _result = run { __self.value }
+    val _result = __self.value
     return _result
 }
 
 @ExportedBridge("EnumWithFactory_ONE")
 public fun EnumWithFactory_ONE(): kotlin.native.internal.NativePtr {
-    val _result = run { EnumWithFactory.ONE }
+    val _result = EnumWithFactory.ONE
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___ClassWithFactoryWithoutParameters")
 public fun __root___ClassWithFactoryWithoutParameters(): kotlin.native.internal.NativePtr {
-    val _result = run { ClassWithFactoryWithoutParameters() }
+    val _result = ClassWithFactoryWithoutParameters()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___ClassWithFactoryWithoutParameters_init_allocate")
 public fun __root___ClassWithFactoryWithoutParameters_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<ClassWithFactoryWithoutParameters>() }
+    val _result = kotlin.native.internal.createUninitializedInstance<ClassWithFactoryWithoutParameters>()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -41,112 +41,112 @@ public fun __root___ClassWithFactoryWithoutParameters_init_allocate(): kotlin.na
 public fun __root___ClassWithFactoryWithoutParameters_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt: kotlin.native.internal.NativePtr, value: Int): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     val __value = value
-    val _result = run { kotlin.native.internal.initInstance(____kt, ClassWithFactoryWithoutParameters(__value)) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, ClassWithFactoryWithoutParameters(__value))
+    return true
 }
 
 @ExportedBridge("__root___EnumWithFactory__TypesOfArguments__Swift_Int32__")
 public fun __root___EnumWithFactory__TypesOfArguments__Swift_Int32__(x: Int): kotlin.native.internal.NativePtr {
     val __x = x
-    val _result = run { EnumWithFactory(__x) }
+    val _result = EnumWithFactory(__x)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___EnumWithFactory_ordinal")
 public fun __root___EnumWithFactory_ordinal(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as EnumWithFactory
-    val _result = run { __self.ordinal }
+    val _result = __self.ordinal
     return _result
 }
 
 @ExportedBridge("__root___FlattenedPackageClass__TypesOfArguments__Swift_Float__")
 public fun __root___FlattenedPackageClass__TypesOfArguments__Swift_Float__(f: Float): kotlin.native.internal.NativePtr {
     val __f = f
-    val _result = run { FlattenedPackageClass(__f) }
+    val _result = FlattenedPackageClass(__f)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___InterfaceWithFactory")
 public fun __root___InterfaceWithFactory(): kotlin.native.internal.NativePtr {
-    val _result = run { InterfaceWithFactory() }
+    val _result = InterfaceWithFactory()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___InterfaceWithFactory__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__")
 public fun __root___InterfaceWithFactory__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(arg: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __arg = kotlin.native.internal.ref.dereferenceExternalRCRef(arg) as kotlin.Any
-    val _result = run { InterfaceWithFactory(__arg) }
+    val _result = InterfaceWithFactory(__arg)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___Job__TypesOfArguments__Swift_Optional_anyU20main_Job___")
 public fun __root___Job__TypesOfArguments__Swift_Optional_anyU20main_Job___(parent: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __parent = if (parent == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(parent) as Job
-    val _result = run { Job(__parent) }
+    val _result = Job(__parent)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___Job")
 public fun __root___Job(): kotlin.native.internal.NativePtr {
-    val _result = run { Job() }
+    val _result = Job()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___ObjectWithFactory")
 public fun __root___ObjectWithFactory(): kotlin.native.internal.NativePtr {
-    val _result = run { ObjectWithFactory() }
+    val _result = ObjectWithFactory()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___ObjectWithFactory_get")
 public fun __root___ObjectWithFactory_get(): kotlin.native.internal.NativePtr {
-    val _result = run { ObjectWithFactory }
+    val _result = ObjectWithFactory
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___UtcOffset__TypesOfArguments__Swift_Int32__")
 public fun __root___UtcOffset__TypesOfArguments__Swift_Int32__(x: Int): kotlin.native.internal.NativePtr {
     val __x = x
-    val _result = run { UtcOffset(__x) }
+    val _result = UtcOffset(__x)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___UtcOffset_init_allocate")
 public fun __root___UtcOffset_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<UtcOffset>() }
+    val _result = kotlin.native.internal.createUninitializedInstance<UtcOffset>()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___UtcOffset_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
 public fun __root___UtcOffset_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val _result = run { kotlin.native.internal.initInstance(____kt, UtcOffset()) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, UtcOffset())
+    return true
 }
 
 @ExportedBridge("test_factory_ClassWithFactoryInAPackage__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__")
 public fun test_factory_ClassWithFactoryInAPackage__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(arg: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __arg = kotlin.native.internal.ref.dereferenceExternalRCRef(arg) as kotlin.Any
-    val _result = run { test.factory.ClassWithFactoryInAPackage(__arg) }
+    val _result = test.factory.ClassWithFactoryInAPackage(__arg)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("test_factory_ClassWithFactoryInAPackage_init_allocate")
 public fun test_factory_ClassWithFactoryInAPackage_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<test.factory.ClassWithFactoryInAPackage>() }
+    val _result = kotlin.native.internal.createUninitializedInstance<test.factory.ClassWithFactoryInAPackage>()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("test_factory_ClassWithFactoryInAPackage_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
 public fun test_factory_ClassWithFactoryInAPackage_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val _result = run { kotlin.native.internal.initInstance(____kt, test.factory.ClassWithFactoryInAPackage()) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, test.factory.ClassWithFactoryInAPackage())
+    return true
 }
 
 @ExportedBridge("test_factory_Nested")
 public fun test_factory_Nested(): kotlin.native.internal.NativePtr {
-    val _result = run { test.factory.Nested() }
+    val _result = test.factory.Nested()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -154,7 +154,7 @@ public fun test_factory_Nested(): kotlin.native.internal.NativePtr {
 public fun test_factory_Outer_ClassWithFactoryInAPackage__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(self: kotlin.native.internal.NativePtr, arg: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as test.factory.Outer
     val __arg = kotlin.native.internal.ref.dereferenceExternalRCRef(arg) as kotlin.Any
-    val _result = run { __self.ClassWithFactoryInAPackage(__arg) }
+    val _result = __self.ClassWithFactoryInAPackage(__arg)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -162,52 +162,52 @@ public fun test_factory_Outer_ClassWithFactoryInAPackage__TypesOfArguments__anyU
 public fun test_factory_Outer_Nested__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(self: kotlin.native.internal.NativePtr, x: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as test.factory.Outer
     val __x = kotlin.native.internal.ref.dereferenceExternalRCRef(x) as kotlin.Any
-    val _result = run { __self.Nested(__x) }
+    val _result = __self.Nested(__x)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("test_factory_Outer_Nested_init_allocate")
 public fun test_factory_Outer_Nested_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<test.factory.Outer.Nested>() }
+    val _result = kotlin.native.internal.createUninitializedInstance<test.factory.Outer.Nested>()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("test_factory_Outer_Nested_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
 public fun test_factory_Outer_Nested_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val _result = run { kotlin.native.internal.initInstance(____kt, test.factory.Outer.Nested()) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, test.factory.Outer.Nested())
+    return true
 }
 
 @ExportedBridge("test_factory_Outer_init_allocate")
 public fun test_factory_Outer_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<test.factory.Outer>() }
+    val _result = kotlin.native.internal.createUninitializedInstance<test.factory.Outer>()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("test_factory_Outer_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
 public fun test_factory_Outer_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val _result = run { kotlin.native.internal.initInstance(____kt, test.factory.Outer()) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, test.factory.Outer())
+    return true
 }
 
 @ExportedBridge("test_factory_modules_ClassFromDependency__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__")
 public fun test_factory_modules_ClassFromDependency__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(arg: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __arg = kotlin.native.internal.ref.dereferenceExternalRCRef(arg) as kotlin.Any
-    val _result = run { test.factory.modules.ClassFromDependency(__arg) }
+    val _result = test.factory.modules.ClassFromDependency(__arg)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("test_not_factory_ClassWithFactoryInAPackage__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__")
 public fun test_not_factory_ClassWithFactoryInAPackage__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(arg: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __arg = kotlin.native.internal.ref.dereferenceExternalRCRef(arg) as kotlin.Any
-    val _result = run { test.not.factory.ClassWithFactoryInAPackage(__arg) }
+    val _result = test.not.factory.ClassWithFactoryInAPackage(__arg)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("typealiases_TypealiasWithFactoryWithoutParameters")
 public fun typealiases_TypealiasWithFactoryWithoutParameters(): kotlin.native.internal.NativePtr {
-    val _result = run { typealiases.TypealiasWithFactoryWithoutParameters() }
+    val _result = typealiases.TypealiasWithFactoryWithoutParameters()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }

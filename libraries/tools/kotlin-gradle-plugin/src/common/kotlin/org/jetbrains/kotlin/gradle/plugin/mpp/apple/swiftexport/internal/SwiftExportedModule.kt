@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportDepende
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.applySwiftExportConsumerOverrides
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.deserializeSwiftExportMetadata
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject
 import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfigurationWithArtifacts
 import java.io.File
 import java.io.Serializable
@@ -104,7 +105,7 @@ internal fun collectModules(
     rootModuleName: String,
     reportDiagnostic: (ToolingDiagnostic) -> Unit,
 ): List<SwiftExportedModule> {
-    return applySwiftExportConsumerOverrides(
+    val modules = applySwiftExportConsumerOverrides(
         modules = swiftExportedModules(
             exportConfiguration = exportConfiguration,
             apiConfiguration = apiConfiguration,
@@ -125,6 +126,25 @@ internal fun collectModules(
         rootModuleName = rootModuleName,
         reportDiagnostic = reportDiagnostic,
     )
+    return modules + swiftPMImportCinteropModules(exportConfiguration)
+}
+
+private fun swiftPMImportCinteropModules(
+    exportConfiguration: LazyResolvedConfigurationWithArtifacts,
+): List<SwiftExportedModule> {
+    val modules = LinkedHashMap<File, SwiftExportedModule>()
+    for (dependency in exportConfiguration.allResolvedDependencies) {
+        val moduleVersion = dependency.selected.moduleVersion ?: continue
+        for (artifact in exportConfiguration.getArtifacts(dependency.selected)) {
+            if (!artifact.file.isSwiftPMImportCinteropKlib || artifact.file in modules) continue
+            modules[artifact.file] = createTransitiveSwiftExportedModule(
+                moduleName = "${moduleVersion.inheritedName}_${GenerateSyntheticLinkageImportProject.SWIFT_PM_IMPORT_CINTEROP_NAME}"
+                    .normalizedSwiftExportModuleName,
+                artifact = artifact.file,
+            )
+        }
+    }
+    return modules.values.toList()
 }
 
 private class ResolvedArtifactWithVersionIdentifier(
@@ -272,6 +292,22 @@ private fun LazyResolvedConfigurationWithArtifacts.filteredArtifacts(
 }
 
 private val File.isCinteropKlib get() = name.contains("-cinterop-") || name.contains("Cinterop-")
+
+/**
+ * Not every cinterop KLIB, because for swift export we are allowing only cinterop klibs that were smpImported.
+ *
+ * The reason for that:
+ * Swift Export would produce a Swift source file, defining the exported API. If that API uses a type that came from cinterop,
+ * we would have to write an import of a module, from which that type came. And we would have to write a way for SPM to find
+ * the original clang module with that type and to link with that.
+ *
+ * But for generic cinterop KLIB we cannot do that.
+ *
+ * For Objective-C export it was achievable through forward declarations. But for Swift there is no analog of forward declarations.
+ *
+ */
+private val File.isSwiftPMImportCinteropKlib
+    get() = name.contains("-cinterop-${GenerateSyntheticLinkageImportProject.SWIFT_PM_IMPORT_CINTEROP_NAME}")
 private val File.isJavaJar get() = extension == "jar"
 
 private fun findAndCreateSwiftExportedModules(

@@ -1,0 +1,46 @@
+FILE[kind=Script[packageFqName=one.two]]
+  PACKAGE_DIRECTIVE
+    DOT_QUALIFIED_EXPRESSION
+      REFERENCE_EXPRESSION[referencedName=one]
+      REFERENCE_EXPRESSION[referencedName=two]
+  IMPORT_LIST
+  SCRIPT[fqName=one.two.CompanionsInsideNamelessClassesScript, fqName=one.two.CompanionsInsideNamelessClassesScript, name=CompanionsInsideNamelessClassesScript]
+    CLASS[classId=one/two/<no name provided>, fqName=one.two.CompanionsInsideNamelessClassesScript.<no name provided>, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=null, superNames=[]]
+      CLASS_BODY
+        OBJECT_DECLARATION[classId=one/two/<no name provided>.Companion, fqName=one.two.CompanionsInsideNamelessClassesScript.<no name provided>.Companion, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+          MODIFIER_LIST[companion]
+          CLASS_BODY
+            CLASS[classId=one/two/<no name provided>.Companion.A, fqName=one.two.CompanionsInsideNamelessClassesScript.<no name provided>.Companion.A, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=A, superNames=[]]
+    SCRIPT_INITIALIZER
+      OBJECT_LITERAL
+        OBJECT_DECLARATION[classId=null, fqName=null, isObjectLiteral=true, isTopLevel=false, name=null, superNames=[]]
+          CLASS_BODY
+            CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=Named, superNames=[]]
+              CLASS_BODY
+                OBJECT_DECLARATION[classId=null, fqName=null, isObjectLiteral=false, isTopLevel=false, name=NamedCompanion, superNames=[]]
+                  MODIFIER_LIST[companion]
+                  CLASS_BODY
+                    CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=B, superNames=[]]
+                    OBJECT_DECLARATION[classId=null, fqName=null, isObjectLiteral=false, isTopLevel=false, name=null, superNames=[]]
+                      CLASS_BODY
+                        CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=C, superNames=[]]
+    CLASS[classId=one/two/Outer, fqName=one.two.CompanionsInsideNamelessClassesScript.Outer, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=Outer, superNames=[]]
+      CLASS_BODY
+        OBJECT_DECLARATION[classId=one/two/Outer.<no name provided>, fqName=one.two.CompanionsInsideNamelessClassesScript.Outer.<no name provided>, isObjectLiteral=false, isTopLevel=false, name=null, superNames=[]]
+          CLASS_BODY
+            CLASS[classId=one/two/Outer.<no name provided>.Inner, fqName=one.two.CompanionsInsideNamelessClassesScript.Outer.<no name provided>.Inner, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=Inner, superNames=[]]
+              CLASS_BODY
+                COMPANION_BLOCK
+                  MODIFIER_LIST[companion]
+                  CLASS_BODY
+                    CLASS[classId=one/two/Outer.<no name provided>.Inner.D, fqName=one.two.CompanionsInsideNamelessClassesScript.Outer.<no name provided>.Inner.D, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=D, superNames=[]]
+                    TYPEALIAS[classId=one/two/Outer.<no name provided>.Inner.E, fqName=one.two.CompanionsInsideNamelessClassesScript.Outer.<no name provided>.Inner.E, isTopLevel=false, name=E]
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION[referencedName=Int]
+        COMPANION_BLOCK
+          MODIFIER_LIST[companion]
+          CLASS_BODY
+            OBJECT_DECLARATION[classId=one/two/Outer.<no name provided>, fqName=one.two.CompanionsInsideNamelessClassesScript.Outer.<no name provided>, isObjectLiteral=false, isTopLevel=false, name=null, superNames=[]]
+              CLASS_BODY
+                CLASS[classId=one/two/Outer.<no name provided>.F, fqName=one.two.CompanionsInsideNamelessClassesScript.Outer.<no name provided>.F, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=F, superNames=[]]

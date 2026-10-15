@@ -1,0 +1,40 @@
+KT element: KtNameReferenceExpression
+FIR element: FirPropertyAccessExpressionImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+this@R|/Task|.R|/Task.member|
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] selfAssignmentInInitializer.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class ValueContainer : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ValueContainer] constructor(): R|ValueContainer| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @ValueContainer[Unresolved]() public final? [ResolvedTo(RAW_FIR)] class StringProperty : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=StringProperty] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/StringProperty.v] v: String): R|StringProperty| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] var v: String = R|<local>/v|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=StringProperty] get(): String
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=StringProperty] set([ResolvedTo(RAW_FIR)] value: String): R|kotlin/Unit|
+
+        public? final? [ResolvedTo(RAW_FIR)] fun assign([ResolvedTo(RAW_FIR)] v: String): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public final [ResolvedTo(STATUS)] class Task : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Task] constructor(): R|Task| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val member: <ERROR TYPE REF: Should have initializer> = ERROR_EXPR(Should have initializer)
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=Task] get(): <ERROR TYPE REF: Should have initializer>
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun usage(): R|kotlin/Unit| {
+            this@R|/Task|.R|/Task.member|.R|kotlin/toString|()
+        }
+
+    }

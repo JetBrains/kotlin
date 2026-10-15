@@ -38,11 +38,15 @@ internal object KtDestructuringDeclarationStubSerializingElementFactory :
         parent = parentStub,
         isVar = psi.isVar,
         hasInitializer = psi.hasInitializer(),
+        hasSquareBrackets = psi.hasSquareBrackets(),
+        isFullForm = psi.isFullForm,
     )
 
     override fun serialize(stub: KotlinDestructuringDeclarationStubImpl, dataStream: StubOutputStream) {
         dataStream.writeBoolean(stub.isVar)
         dataStream.writeBoolean(stub.hasInitializer)
+        dataStream.writeBoolean(stub.hasSquareBrackets)
+        dataStream.writeBoolean(stub.isFullForm)
     }
 
     override fun deserialize(
@@ -52,5 +56,7 @@ internal object KtDestructuringDeclarationStubSerializingElementFactory :
         parent = parentStub,
         isVar = dataStream.readBoolean(),
         hasInitializer = dataStream.readBoolean(),
+        hasSquareBrackets = dataStream.readBoolean(),
+        isFullForm = dataStream.readBoolean(),
     )
 }

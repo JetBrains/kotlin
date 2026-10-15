@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY
 import org.junit.jupiter.api.parallel.ResourceLock
 import org.junit.jupiter.api.parallel.Resources
@@ -18,12 +19,16 @@ import java.io.*
 import java.net.URLClassLoader
 import java.security.MessageDigest
 import kotlin.script.experimental.api.*
+import kotlin.script.experimental.host.FileBasedScriptSource
+import kotlin.script.experimental.host.ScriptingHostConfiguration
+import kotlin.script.experimental.host.UrlScriptSource
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.host.with
 import kotlin.script.experimental.jvm.*
 import kotlin.script.experimental.jvm.impl.KJvmCompiledScript
 import kotlin.script.experimental.jvm.util.KotlinJars
 import kotlin.script.experimental.jvm.util.classpathFromClass
+import kotlin.script.experimental.jvmhost.BasicJvmScriptJarGenerator
 import kotlin.script.experimental.jvmhost.BasicJvmScriptingHost
 import kotlin.script.experimental.jvmhost.CompiledScriptJarsCache
 import kotlin.script.experimental.jvmhost.JvmScriptCompiler
@@ -109,6 +114,70 @@ class CachingTest {
 //        val scriptOut = runScriptFromJar(cache.baseDir.listFiles()!!.first { it.extension == "jar" })
 //
 //        assertEquals(scriptWithImportExpectedOutput, scriptOut)
+        }
+    }
+
+    @Test
+    fun testChangedImportInvalidatesJarCache() {
+        withTempDir("scriptingTestJarCacheImportChange") { dir ->
+            checkChangedImportInvalidatesCache(dir, TestCompiledScriptJarsCache(File(dir, "cache").apply { mkdir() }))
+        }
+    }
+
+    @Test
+    fun testJarWithoutImportedScriptsHashesIsOutdated() {
+        checkJarWithoutImportedScriptsHashesIsOutdated(deleteImport = false)
+    }
+
+    @Test
+    fun testJarWithoutImportedScriptsHashesAndDeletedImportIsOutdated() {
+        checkJarWithoutImportedScriptsHashesIsOutdated(deleteImport = true)
+    }
+
+    private fun checkJarWithoutImportedScriptsHashesIsOutdated(deleteImport: Boolean) {
+        withTempDir("scriptingTestJarCacheWithoutHashes") { dir ->
+            val importedScript = File(dir, "imported.kts").apply { writeText("val importedValue = 1") }
+            val script = "println(importedValue)".toScriptSource()
+            val jar = File(dir, "script.jar")
+            val myHostConfiguration = defaultJvmScriptingHostConfiguration.with {
+                jvm {
+                    baseClassLoader.replaceOnlyDefault(null)
+                }
+            }
+            val compilationConfiguration = compilationConfigurationImporting(importedScript, myHostConfiguration)
+            BasicJvmScriptingHost(
+                compiler = JvmScriptCompiler(myHostConfiguration),
+                evaluator = BasicJvmScriptJarGenerator(jar)
+            ).eval(script, compilationConfiguration, null).throwOnFailure()
+
+            if (deleteImport) assertTrue(importedScript.delete())
+            assertNull(CompiledScriptJarsCache { _, _ -> jar }.get(script, compilationConfiguration))
+        }
+    }
+
+    @Test
+    fun testUrlImportIsNotRetrievedFromJarCache() {
+        withTempDir("scriptingTestJarCacheUrlImport") { dir ->
+            val importedScript = File(dir, "imported.kts").apply { writeText("val importedValue = 1") }
+            val cache = TestCompiledScriptJarsCache(File(dir, "cache").apply { mkdir() })
+            val myHostConfiguration = defaultJvmScriptingHostConfiguration.with {
+                jvm {
+                    baseClassLoader.replaceOnlyDefault(null)
+                    compilationCache(cache)
+                }
+            }
+            val compilationConfiguration = compilationConfigurationImporting(
+                importedScript, myHostConfiguration, UrlScriptSource(importedScript.toURI().toURL())
+            )
+            val script = "println(importedValue)".toScriptSource()
+            repeat(2) {
+                val output = captureOut {
+                    BasicJvmScriptingHost(myHostConfiguration).eval(script, compilationConfiguration, null).throwOnFailure()
+                }.lines()
+                assertEquals(listOf("1"), output)
+            }
+            assertEquals(2, cache.storedScripts)
+            assertEquals(0, cache.retrievedScripts)
         }
     }
 
@@ -242,7 +311,7 @@ class CachingTest {
             K2JVMCompilerArguments::classpath.cliArgument,
             standardJars.joinToString(File.pathSeparator),
             CommonCompilerArguments::languageVersion.cliArgument,
-            if (isK2) "2.0" else "1.9",
+            if (isK2) LanguageVersion.LATEST_STABLE.versionString else "1.9",
             CommonCompilerArguments::suppressVersionWarnings.cliArgument,
             inKt.path
         )
@@ -252,6 +321,61 @@ class CachingTest {
         )
         return outJar
     }
+
+    private fun checkChangedImportInvalidatesCache(dir: File, cache: ScriptingCacheWithCounters) {
+        val importedScript = File(dir, "imported.kts")
+        val script = "println(importedValue)".toScriptSource()
+
+        fun eval(): List<String> {
+            val myHostConfiguration = defaultJvmScriptingHostConfiguration.with {
+                jvm {
+                    baseClassLoader.replaceOnlyDefault(null)
+                    compilationCache(cache)
+                }
+            }
+            val host = BasicJvmScriptingHost(
+                compiler = JvmScriptCompiler(myHostConfiguration),
+                evaluator = BasicJvmScriptEvaluator()
+            )
+            return captureOut {
+                host.eval(script, compilationConfigurationImporting(importedScript, myHostConfiguration), null).throwOnFailure()
+            }.lines()
+        }
+
+        importedScript.writeText("val importedValue = \"before\"")
+        assertEquals(listOf("before"), eval())
+        assertEquals(listOf("before"), eval())
+        assertEquals(1, cache.storedScripts)
+
+        importedScript.writeText("val importedValue = \"after\"")
+        assertEquals(listOf("after"), eval())
+        assertEquals(2, cache.storedScripts)
+    }
+
+    private fun compilationConfigurationImporting(
+        importedScript: File,
+        myHostConfiguration: ScriptingHostConfiguration,
+        importedSource: SourceCode = importedScript.toScriptSource()
+    ) =
+        ScriptCompilationConfiguration {
+            updateClasspath(KotlinJars.kotlinScriptStandardJarsWithReflect)
+            updateClasspath(classpathFromClass<ScriptingHostTest>()) // the lambda below should be in the classpath
+            refineConfiguration {
+                // the import should be added to the main script only, otherwise the imported one imports itself
+                beforeCompiling { ctx ->
+                    if ((ctx.script as? FileBasedScriptSource)?.file?.canonicalFile == importedScript.canonicalFile ||
+                        ctx.script.locationId == importedSource.locationId
+                    ) {
+                        ctx.compilationConfiguration
+                    } else {
+                        ScriptCompilationConfiguration(ctx.compilationConfiguration) {
+                            importScripts(importedSource)
+                        }
+                    }.asSuccess()
+                }
+            }
+            hostConfiguration.update { myHostConfiguration }
+        }
 
     private fun checkWithCache(
         cache: ScriptingCacheWithCounters, script: SourceCode, expectedOutput: List<String>, checkDirectEval: Boolean = true,
@@ -436,4 +560,3 @@ private fun Class<*>.supertypes(): MutableList<Class<*>> = when {
         add(superclass)
     }
 }
-

@@ -79,7 +79,7 @@ internal class SymbolLightClassForScript private constructor(
 
     override fun getOwnInnerClasses(): List<SymbolLightClassBase> = cachedValue {
         symbolPointer.withSymbol(useSiteModule) { scriptSymbol ->
-            createInnerClasses(scriptSymbol, this@SymbolLightClassForScript, classOrObject = null)
+            createInnerClasses(scriptSymbol, this@SymbolLightClassForScript)
         }
     }
 
@@ -137,7 +137,7 @@ internal class SymbolLightClassForScript private constructor(
             language = language,
             role = PsiReferenceList.Role.EXTENDS_LIST,
         ).apply {
-            addReference("kotlin.script.templates.standard.ScriptTemplateWithArgs")
+            addReference("kotlin.script.experimental.templates.ScriptWithArgs")
         }
     }
 

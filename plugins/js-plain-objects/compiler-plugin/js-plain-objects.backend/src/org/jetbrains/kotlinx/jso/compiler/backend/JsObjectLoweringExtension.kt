@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
@@ -176,7 +177,10 @@ private class MoveExternalInlineFunctionsWithBodiesOutsideLowering(private val c
                     0,
                 ).apply {
                     val proxyFunctionRegularParameters = proxyFunction.parameters.filter { it.kind == IrParameterKind.Regular }
-                    arguments[0] = createValueParametersObject(proxyFunctionRegularParameters).toIrConst(context.irBuiltIns.stringType)
+                    arguments[0] = JsIrBuilder.buildString(
+                        context.irBuiltIns.stringType,
+                        createValueParametersObject(proxyFunctionRegularParameters)
+                    )
                 }
             )
         }
@@ -219,7 +223,7 @@ private class MoveExternalInlineFunctionsWithBodiesOutsideLowering(private val c
                 ).apply {
                     val objectAssignCall =
                         "Object.assign({}, ${selfName.identifier}, ${createValueParametersObject(proxyFunction.parameters.drop(1))})"
-                    arguments[0] = objectAssignCall.toIrConst(context.irBuiltIns.stringType)
+                    arguments[0] = JsIrBuilder.buildString(context.irBuiltIns.stringType, objectAssignCall)
                 }
             )
         }

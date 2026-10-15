@@ -1,0 +1,1 @@
+abstract value class FullValueClassAbstract(parameter: kotlin.Int)

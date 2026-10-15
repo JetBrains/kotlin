@@ -20,6 +20,8 @@ class KotlinBuildStatHandlerTest {
 
         val konanTargetsMissedInMppPlatforms = KonanTarget::class.sealedSubclasses
             .mapNotNull { sealedClass -> sealedClass.objectInstance }
+            // KT-87513. Deprecated with error, so it can't be declared and is never reported
+            .filter { konanTarget -> konanTarget != KonanTarget.WATCHOS_ARM32 }
             .filter { sealedClass -> !regex.matches(sealedClass.name) }
 
         assert(konanTargetsMissedInMppPlatforms.isEmpty()) {

@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.java.deserialization.OptionalAnnotationClassesPr
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCloneableSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirFallbackBuiltinSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.impl.FirNonErrorSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.*
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 @OptIn(SessionConfiguration::class)
@@ -46,16 +48,22 @@ object FirJKlibSessionFactory : FirAbstractSessionFactory<FirJKlibSessionFactory
     ): List<FirSymbolProvider> {
         val kotlinClassFinder =
             context.projectEnvironment.getKotlinClassFinder(JvmClasspath.ProjectLibraries())
-        return listOf(
+        return listOfNotNull(
             FirCloneableSymbolProvider(session, moduleData, scopeProvider),
+            FirNonErrorSymbolProvider.createIfRichErrorsEnabled(session, moduleData, scopeProvider),
             OptionalAnnotationClassesProvider(
                 session,
                 SingleModuleDataProvider(moduleData),
                 scopeProvider,
                 context.packagePartProvider
             ),
-            FirJvmBuiltinsSymbolProvider(session, FirFallbackBuiltinSymbolProvider(session, moduleData, scopeProvider)) {
-                kotlinClassFinder.findBuiltInsData(it)
+            // Like on the JVM, the stdlib declares the built-ins itself. Providing them too would make the common sources resolve the
+            // calls to some `expect` functions (e.g. `byteArrayOf`) to their built-in rather than to the `expect` declaration, and the
+            // actualizer would not replace them.
+            runUnless(session.languageVersionSettings.getFlag(AnalysisFlags.stdlibCompilation)) {
+                FirJvmBuiltinsSymbolProvider(session, FirFallbackBuiltinSymbolProvider(session, moduleData, scopeProvider)) {
+                    kotlinClassFinder.findBuiltInsData(it)
+                }
             }
         )
     }

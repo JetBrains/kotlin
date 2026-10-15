@@ -63,16 +63,16 @@ internal class KotlinKNamedFunction(
 
     override val isPrimaryConstructor: Boolean get() = false
 
-    @OptIn(ExperimentalCompanionBlocksAndExtensions::class)
+    @OptIn(ExperimentalCompanionBlocks::class)
     override val isCompanionBlockMember: Boolean
-        get() = container is KClassImpl<*> && kmFunction.isStatic
+        get() = container is KClassImpl<*> && kmFunction.isCompanionBlockMember
 
     override val overridden: Collection<ReflectKFunction> by lazy(PUBLICATION) {
         computeOverriddenFunctions(this)
     }
 
     @ExperimentalCompanionExtensions
-    @OptIn(ExperimentalCompanionBlocksAndExtensions::class)
+    @OptIn(kotlin.metadata.ExperimentalCompanionExtensions::class)
     override val companionExtensionClass: KClass<*>?
         get() = (kmFunction.companionExtensionReceiverType?.classifier as KmClassifier.Class?)?.let {
             container.jClass.safeClassLoader.loadKClass(it.name)

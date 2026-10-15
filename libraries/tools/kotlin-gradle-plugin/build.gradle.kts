@@ -9,9 +9,7 @@ import org.jetbrains.kotlin.build.androidsdkprovisioner.ProvisioningType
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.nativeDistribution.useProvidedNativeBootstrapDistribution
-import org.jetbrains.kotlin.testFederation.SmokeTestConfig
-import org.jetbrains.kotlin.testFederation.TemporaryTestFederationApi
-import org.jetbrains.kotlin.testFederation.smokeTestConfig
+import org.jetbrains.kotlin.testFederation.testFederation
 
 plugins {
     id("common-configuration")
@@ -402,7 +400,7 @@ tasks {
              * These files are required only at compilation time, but we include the modules only for runtime
              * Hack for not limiting LV to 1.8 for those modules. To be removed after KT-70247
              */
-            pivotVersion = KotlinMetadataPivotVersion(1, 9, 0)
+            pivotVersion = KotlinMetadataPivotVersion(2, 2, 0)
         }
     }
     GradlePluginVariant.values().forEach { variant ->
@@ -462,12 +460,6 @@ gradlePlugin {
                     configurationCache = true
                 }
             }
-        }
-        create("kotlinJsPlugin") {
-            id = "org.jetbrains.kotlin.js"
-            description = "Kotlin JS plugin"
-            displayName = description
-            implementationClass = "org.jetbrains.kotlin.gradle.plugin.KotlinJsPluginWrapper"
         }
         create("kotlinMultiplatformPlugin") {
             id = "org.jetbrains.kotlin.multiplatform"
@@ -631,8 +623,9 @@ testing {
 
                     systemProperty("kotlinVersion", kotlinBuildProperties.kotlinVersion.get())
 
-                    @OptIn(TemporaryTestFederationApi::class)
-                    smokeTestConfig = SmokeTestConfig.RunAllTests
+                    testFederation {
+                        smokeTests { includeAll() }
+                    }
 
                     // These two lines are required for AGP 9+ to work with current KGP in tests
                     systemProperty("org.gradle.project.android.builtInKotlin", "false")

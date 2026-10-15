@@ -2,7 +2,7 @@ Negative.class:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/Negative, fqName=Negative, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Negative, superNames=[]]
+    CLASS[classId=/Negative, fqName=Negative, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Negative, superNames=[]]
       MODIFIER_LIST[public final]
         ANNOTATION_ENTRY[hasValueArguments=true, shortName=Simple]
           valueArguments: [ i -> -1 ]
@@ -30,7 +30,7 @@ Negative2.class:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/Negative2, fqName=Negative2, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Negative2, superNames=[]]
+    CLASS[classId=/Negative2, fqName=Negative2, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Negative2, superNames=[]]
       MODIFIER_LIST[public final]
         ANNOTATION_ENTRY[hasValueArguments=true, shortName=Simple]
           valueArguments: [ i -> -1 ]
@@ -58,7 +58,7 @@ Positive.class:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/Positive, fqName=Positive, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Positive, superNames=[]]
+    CLASS[classId=/Positive, fqName=Positive, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Positive, superNames=[]]
       MODIFIER_LIST[public final]
         ANNOTATION_ENTRY[hasValueArguments=true, shortName=Simple]
           valueArguments: [ i -> 1 ]
@@ -84,7 +84,7 @@ Qualified.class:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/Qualified, fqName=Qualified, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Qualified, superNames=[]]
+    CLASS[classId=/Qualified, fqName=Qualified, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Qualified, superNames=[]]
       MODIFIER_LIST[public final]
         ANNOTATION_ENTRY[hasValueArguments=true, shortName=Simple]
           valueArguments: [ i -> 1 ]
@@ -111,7 +111,7 @@ Simple.class:
     PACKAGE_DIRECTIVE
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST
-    CLASS[classId=test/Simple, fqName=test.Simple, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Simple, superNames=[Annotation]]
+    CLASS[classId=test/Simple, fqName=test.Simple, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Simple, superNames=[Annotation]]
       MODIFIER_LIST[public final annotation]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Simple]
         MODIFIER_LIST[public]
@@ -133,7 +133,7 @@ Simple.class:
               REFERENCE_EXPRESSION[referencedName=Annotation]
                 isClassRef: true
       CLASS_BODY
-        OBJECT_DECLARATION[classId=test/Simple.Companion, fqName=test.Simple.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+        OBJECT_DECLARATION[classId=test/Simple.Companion, fqName=test.Simple.Companion, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
           MODIFIER_LIST[public companion]
           CLASS_BODY
             PROPERTY[fqName=test.Simple.Companion.CONST1, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=CONST1]
@@ -162,7 +162,7 @@ Sum.class:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/Sum, fqName=Sum, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Sum, superNames=[]]
+    CLASS[classId=/Sum, fqName=Sum, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Sum, superNames=[]]
       MODIFIER_LIST[public final]
         ANNOTATION_ENTRY[hasValueArguments=true, shortName=Simple]
           valueArguments: [ i -> 3 ]

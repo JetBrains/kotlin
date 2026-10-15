@@ -253,7 +253,7 @@ abstract class LlvmOptimizationPipeline(
     private val targetMachine: LLVMTargetMachineRef by targetMachineDelegate
 
     fun execute(llvmModule: LLVMModuleRef) {
-        initLLVMOnce()
+        LLVMKotlinInitializeTargets() // makes sure that the targets are initialized once
         executeCustomPreprocessing(config, llvmModule)
         val passDescription = passes.joinToString(",")
         logger?.log {
@@ -299,24 +299,6 @@ abstract class LlvmOptimizationPipeline(
             LLVMDisposeTargetMachine(targetMachine)
         }
         arena.clear()
-    }
-
-    companion object {
-        private var isInitialized: Boolean = false
-
-        private fun initLLVMTargets() {
-            memScoped {
-                LLVMKotlinInitializeTargets()
-            }
-        }
-
-        @Synchronized
-        fun initLLVMOnce() {
-            if (!isInitialized) {
-                initLLVMTargets()
-                isInitialized = true
-            }
-        }
     }
 }
 

@@ -137,24 +137,6 @@ class ExtensionConfigurationTest {
         }
     }
 
-    @Suppress("DEPRECATION_ERROR")
-    @Test
-    fun testStabilityConfigurationFile() {
-        testComposeOptions(
-            { extension, project ->
-                extension.stabilityConfigurationFile.value(
-                    project.layout.projectDirectory.file("compose.conf")
-                )
-            }
-        ) { options, project ->
-            assertTrue(
-                options.contains(
-                    "stabilityConfigurationPath" to project.layout.projectDirectory.file("compose.conf").asFile.path
-                )
-            )
-        }
-    }
-
     @Test
     fun testStabilityConfigurationFiles() {
         testComposeOptions(
@@ -193,7 +175,7 @@ class ExtensionConfigurationTest {
 
     @Test
     fun disableNonSkippingGroupOptimization() {
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         testComposeFeatureFlags(listOf("-OptimizeNonSkippingGroups")) { extension ->
             extension.featureFlags.value(setOf(ComposeFeatureFlag.OptimizeNonSkippingGroups.disabled()))
         }
@@ -201,17 +183,9 @@ class ExtensionConfigurationTest {
 
     @Test
     fun disablePausableComposition() {
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         testComposeFeatureFlags(listOf("-PausableComposition")) { extension ->
             extension.featureFlags.value(setOf(ComposeFeatureFlag.PausableComposition.disabled()))
-        }
-    }
-
-    @Test
-    fun enableNonSkippingGroupOptimizationCompatibility() {
-        testComposeFeatureFlags(listOf("OptimizeNonSkippingGroups")) { extension ->
-            @Suppress("DEPRECATION_ERROR")
-            extension.enableNonSkippingGroupOptimization.value(true)
         }
     }
 
@@ -225,36 +199,6 @@ class ExtensionConfigurationTest {
                     ComposeFeatureFlag.OptimizeNonSkippingGroups
                 )
             )
-        }
-    }
-
-    @Test
-    fun enableMultipleFlagsCompatibilityDefaults() {
-        @Suppress("DEPRECATION_ERROR")
-        testComposeFeatureFlags(emptyList()) { extension ->
-            extension.enableNonSkippingGroupOptimization.value(false)
-        }
-    }
-
-    @Test
-    fun combineDeprecatedPropertiesWithFeatureFlags() {
-        @Suppress("DEPRECATION_ERROR", "DEPRECATION")
-        val project = buildProjectWithJvm {
-            val composeExtension = extensions.getByType(ComposeCompilerGradlePluginExtension::class.java)
-            composeExtension.featureFlags.addAll(ComposeFeatureFlag.PausableComposition)
-            composeExtension.enableNonSkippingGroupOptimization.set(true)
-        }
-
-        project.evaluate()
-
-        val jvmTask = project.tasks.named<KotlinJvmCompile>("compileKotlin").get()
-        val composeOptions = jvmTask.composeOptions()
-
-        listOf(
-            "PausableComposition",
-            "OptimizeNonSkippingGroups"
-        ).forEach { flag ->
-            composeOptions.assertFeature(flag)
         }
     }
 

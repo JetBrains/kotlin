@@ -29,7 +29,7 @@
 -        VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Int
 -        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:a$volatile visibility:private modality:FINAL [var]
 -        BLOCK_BODY
--          RETURN type=kotlin.Unit from='private final fun <set-a$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.ExtensionsTest'
+-          RETURN type=kotlin.Nothing from='private final fun <set-a$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.ExtensionsTest'
 -            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:a$volatile type:kotlin.Int visibility:private declared in <root>.ExtensionsTest' type=kotlin.Unit origin=null
 -              receiver: GET_VAR '<this>: <root>.ExtensionsTest declared in <root>.ExtensionsTest.<set-a$volatile>' type=<root>.ExtensionsTest origin=null
 -              value: GET_VAR 'value: kotlin.Int declared in <root>.ExtensionsTest.<set-a$volatile>' type=kotlin.Int origin=null
@@ -61,7 +61,7 @@
 -        VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Long
 -        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:l$volatile visibility:private modality:FINAL [var]
 -        BLOCK_BODY
--          RETURN type=kotlin.Unit from='private final fun <set-l$volatile> (value: kotlin.Long): kotlin.Unit declared in <root>.ExtensionsTest'
+-          RETURN type=kotlin.Nothing from='private final fun <set-l$volatile> (value: kotlin.Long): kotlin.Unit declared in <root>.ExtensionsTest'
 -            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:l$volatile type:kotlin.Long visibility:private declared in <root>.ExtensionsTest' type=kotlin.Unit origin=null
 -              receiver: GET_VAR '<this>: <root>.ExtensionsTest declared in <root>.ExtensionsTest.<set-l$volatile>' type=<root>.ExtensionsTest origin=null
 -              value: GET_VAR 'value: kotlin.Long declared in <root>.ExtensionsTest.<set-l$volatile>' type=kotlin.Long origin=null
@@ -94,7 +94,7 @@
 -        VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Any?
 -        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:s$volatile visibility:private modality:FINAL [var]
 -        BLOCK_BODY
--          RETURN type=kotlin.Unit from='private final fun <set-s$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.ExtensionsTest'
+-          RETURN type=kotlin.Nothing from='private final fun <set-s$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.ExtensionsTest'
 -            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:s$volatile type:kotlin.Any? visibility:private declared in <root>.ExtensionsTest' type=kotlin.Unit origin=null
 -              receiver: GET_VAR '<this>: <root>.ExtensionsTest declared in <root>.ExtensionsTest.<set-s$volatile>' type=<root>.ExtensionsTest origin=null
 -              value: GET_VAR 'value: kotlin.Any? declared in <root>.ExtensionsTest.<set-s$volatile>' type=kotlin.Any? origin=null
@@ -126,7 +126,7 @@
 -        VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Boolean
 -        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:b$volatile visibility:private modality:FINAL [var]
 -        BLOCK_BODY
--          RETURN type=kotlin.Unit from='private final fun <set-b$volatile> (value: kotlin.Boolean): kotlin.Unit declared in <root>.ExtensionsTest'
+-          RETURN type=kotlin.Nothing from='private final fun <set-b$volatile> (value: kotlin.Boolean): kotlin.Unit declared in <root>.ExtensionsTest'
 -            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:b$volatile type:kotlin.Boolean visibility:private declared in <root>.ExtensionsTest' type=kotlin.Unit origin=null
 -              receiver: GET_VAR '<this>: <root>.ExtensionsTest declared in <root>.ExtensionsTest.<set-b$volatile>' type=<root>.ExtensionsTest origin=null
 -              value: GET_VAR 'value: kotlin.Boolean declared in <root>.ExtensionsTest.<set-b$volatile>' type=kotlin.Boolean origin=null

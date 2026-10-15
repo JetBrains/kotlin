@@ -273,7 +273,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
         val typeInfoPtr: ConstPointer
         val typeInfoGlobal: StaticData.Global
 
-        val typeInfoSymbolName = if (declaration.isExported()) {
+        val typeInfoSymbolName = if (declaration.isExported) {
             declaration.computeTypeInfoSymbolName()
         } else {
             if (!context.config.producePerFileCache)
@@ -294,7 +294,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
 
             typeInfoGlobal = staticData.createGlobal(
                     typeInfoWithVtableType, typeInfoSymbolName,
-                    declaration.isExported()
+                    declaration.isExported
                             // This is required because internal inline functions can access private classes.
                             // So, in the generated code, the class type info can be accessed outside the file.
                             // With per-file caches involved, this can mean accessing from a different object file.
@@ -315,7 +315,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
         } else {
             typeInfoGlobal = staticData.createGlobal(runtime.typeInfoType,
                     typeInfoSymbolName,
-                    isExported = declaration.isExported())
+                    isExported = declaration.isExported)
 
             typeInfoPtr = typeInfoGlobal.pointer
         }
@@ -360,7 +360,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
     private fun createKotlinObjCClassDeclarations(irClass: IrClass): KotlinObjCClassLlvmDeclarations {
         val internalName = qualifyInternalName(irClass)
 
-        val isExported = irClass.isExported()
+        val isExported = irClass.isExported
         val classInfoSymbolName = if (isExported) {
             irClass.kotlinObjCClassInfoSymbolName
         } else {
@@ -443,7 +443,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
                     "${KonanBinaryInterface.MANGLE_FUN_PREFIX}:${qualifyInternalName(declaration)}"
                 }
             }
-            if (declaration.isExported()) {
+            if (declaration.isExported) {
                 if (declaration.name.asString() != "main") {
                     assert(LLVMGetNamedFunction(llvm.module, symbolName) == null) {
                         "Function `$symbolName` is already defined. New definition is required for ${declaration.render()}"

@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] typeParameterBoundsScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeParameterBoundsScript.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun resolveMe([ResolvedTo(RAW_FIR)] foo: Foo): R|kotlin/Unit| { LAZY_BLOCK }
@@ -18,7 +18,7 @@ FILE: [ResolvedTo(RAW_FIR)] typeParameterBoundsScript.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeParameterBoundsScript.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun resolveMe([ResolvedTo(RAW_FIR)] foo: Foo): R|kotlin/Unit| { LAZY_BLOCK }
@@ -35,7 +35,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeParameterBoundsScript.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ScriptTopLevelDeclaration=true] fun resolveMe([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] foo: Foo): R|kotlin/Unit| { LAZY_BLOCK }
@@ -52,7 +52,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeParameterBoundsScript.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(COMPANION_GENERATION)] [ScriptTopLevelDeclaration=true] fun resolveMe([ResolvedTo(COMPANION_GENERATION)] foo: Foo): R|kotlin/Unit| { LAZY_BLOCK }
@@ -69,7 +69,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeParameterBoundsScript.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(SUPER_TYPES)] [ScriptTopLevelDeclaration=true] fun resolveMe([ResolvedTo(SUPER_TYPES)] foo: Foo): R|kotlin/Unit| { LAZY_BLOCK }
@@ -86,7 +86,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeParameterBoundsScript.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(TYPES)] [ScriptTopLevelDeclaration=true] fun resolveMe([ResolvedTo(TYPES)] foo: R|Foo|): R|kotlin/Unit| { LAZY_BLOCK }
@@ -103,7 +103,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeParameterBoundsScript.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] [ScriptTopLevelDeclaration=true] fun resolveMe([ResolvedTo(STATUS)] foo: R|Foo|): R|kotlin/Unit| { LAZY_BLOCK }
@@ -120,7 +120,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeParameterBoundsScript.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ScriptTopLevelDeclaration=true] fun resolveMe([ResolvedTo(EXPECT_ACTUAL_MATCHING)] foo: R|Foo|): R|kotlin/Unit| { LAZY_BLOCK }
@@ -137,7 +137,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-typeParameterBoundsScript.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(CONTRACTS)] [ScriptTopLevelDeclaration=true] fun resolveMe([ResolvedTo(CONTRACTS)] foo: R|Foo|): R|kotlin/Unit| { LAZY_BLOCK }
@@ -154,7 +154,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-typeParameterBoundsScript.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun resolveMe([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] foo: R|Foo|): R|kotlin/Unit| { LAZY_BLOCK }
@@ -171,7 +171,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-typeParameterBoundsScript.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(CONSTANT_EVALUATION)] [ScriptTopLevelDeclaration=true] fun resolveMe([ResolvedTo(CONSTANT_EVALUATION)] foo: R|Foo|): R|kotlin/Unit| { LAZY_BLOCK }
@@ -188,7 +188,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-typeParameterBoundsScript.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ScriptTopLevelDeclaration=true] fun resolveMe([ResolvedTo(ANNOTATION_ARGUMENTS)] foo: R|Foo|): R|kotlin/Unit| { LAZY_BLOCK }
@@ -205,7 +205,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-typeParameterBoundsScript.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun resolveMe([ResolvedTo(BODY_RESOLVE)] foo: R|Foo|): R|kotlin/Unit| {
@@ -224,7 +224,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] typeParameterBoundsScript.kts
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-typeParameterBoundsScript.kts>
-        [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun resolveMe([ResolvedTo(BODY_RESOLVE)] foo: R|Foo|): R|kotlin/Unit| {

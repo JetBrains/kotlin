@@ -91,7 +91,7 @@ class CompilerReferenceIndexIT : KGPDaemonsBaseTest() {
                 if (strategy == "in-process") assertOutputContains("Generating Compiler Reference Index...")
             }
 
-            val [lookups, fileIdsToPaths, subtypes] = deserializeCriData()
+            val (lookups, fileIdsToPaths, subtypes) = deserializeCriData()
             assertTrue(lookups.isNotEmpty(), "Expected non-empty CRI lookup entries")
             assertTrue(fileIdsToPaths.isNotEmpty(), "Expected non-empty CRI fileIdToPath entries")
             assertTrue(subtypes.isNotEmpty(), "Expected non-empty CRI subtype entries")
@@ -120,7 +120,7 @@ class CompilerReferenceIndexIT : KGPDaemonsBaseTest() {
 
             build("assemble")
 
-            val [initialLookups, initialFileIdsToPaths, initialSubtypes] = deserializeCriData()
+            val (initialLookups, initialFileIdsToPaths, initialSubtypes) = deserializeCriData()
 
             val requiredSource1Path = (kotlinSourcesDir() / source1Filename).relativeTo(projectPath).invariantSeparatorsPathString
             val source1FileIdToPath = assertNotNull(initialFileIdsToPaths.singleOrNull { it.path == requiredSource1Path })
@@ -156,7 +156,7 @@ class CompilerReferenceIndexIT : KGPDaemonsBaseTest() {
 
             build("assemble")
 
-            val [modifiedLookups, modifiedFileIdsToPaths, modifiedSubtypes] = deserializeCriData()
+            val (modifiedLookups, modifiedFileIdsToPaths, modifiedSubtypes) = deserializeCriData()
 
             // TODO KT-82000 Find better approach for generating CRI data with IC instead of appending new data
             // after the incremental compilation there will be 2 entries for the same source file
@@ -181,7 +181,7 @@ class CompilerReferenceIndexIT : KGPDaemonsBaseTest() {
             // force rebuild to clean stale CRI data
             build("assemble", "--rerun-tasks")
 
-            val [afterRebuildLookups, afterRebuildFileIdsToPaths, afterRebuildSubtypes] = deserializeCriData()
+            val (afterRebuildLookups, afterRebuildFileIdsToPaths, afterRebuildSubtypes) = deserializeCriData()
 
             assertNotNull(afterRebuildFileIdsToPaths.singleOrNull { it.path == requiredSource2Path })
 
@@ -231,22 +231,6 @@ class CompilerReferenceIndexIT : KGPDaemonsBaseTest() {
     }
 
     @GradleTest
-    @DisplayName("CRI generation can't be enabled without BTA. KT-83161")
-    fun testCriWithoutBta(gradleVersion: GradleVersion) {
-        project(
-            "kotlinProject",
-            gradleVersion,
-        ) {
-            build("assemble", buildOptions = buildOptions.copy(runViaBuildToolsApi = false, generateCompilerRefIndex = true)) {
-                assertHasDiagnostic(KotlinToolingDiagnostics.GeneratingCompilerRefIndexWithoutBuildToolsApi)
-            }
-            build("assemble", buildOptions = buildOptions.copy(runViaBuildToolsApi = true, generateCompilerRefIndex = true)) {
-                assertNoDiagnostic(KotlinToolingDiagnostics.GeneratingCompilerRefIndexWithoutBuildToolsApi)
-            }
-        }
-    }
-
-    @GradleTest
     @DisplayName("Enabling CRI invalidates compileKotlin UP-TO-DATE state. KT-86118")
     fun testEnablingCriInvalidatesCompileKotlinUpToDate(gradleVersion: GradleVersion) {
         project("kotlinProject", gradleVersion) {
@@ -282,9 +266,7 @@ class CompilerReferenceIndexIT : KGPDaemonsBaseTest() {
             generateCompilerRefIndex = true,
         ).disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
         project("jvm-and-js-hmpp", gradleVersion, buildOptions = options) {
-            build("compileKotlinJvm") {
-                assertHasDiagnostic(KotlinToolingDiagnostics.GeneratingCompilerRefIndexWithoutBuildToolsApi)
-            }
+            build("compileKotlinJvm")
             build("compileKotlinJs") {
                 assertNoDiagnostic(KotlinToolingDiagnostics.GeneratingCompilerRefIndexWithoutBuildToolsApi)
             }

@@ -156,6 +156,14 @@ FILE: doubleOperations.kt
         public get(): R|kotlin/Boolean|
     public final const [EvaluatedValue=Boolean(false)] val equals4: R|kotlin/Boolean| = ==(R|/fourVal|, R|/twoVal|)
         public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(true)] val notEquals1: R|kotlin/Boolean| = !=(R|/oneVal|, R|/twoVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(false)] val notEquals2: R|kotlin/Boolean| = !=(R|/twoVal|, R|/twoVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(true)] val notEquals3: R|kotlin/Boolean| = !=(R|/threeVal|, R|/twoVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(true)] val notEquals4: R|kotlin/Boolean| = !=(R|/fourVal|, R|/twoVal|)
+        public get(): R|kotlin/Boolean|
     public final fun box(): R|kotlin/String| {
         when () {
             !=(R|/funCompareTo1|.R|/id|<R|kotlin/Int|>(), Int(-1)) ->  {
@@ -544,6 +552,30 @@ FILE: doubleOperations.kt
         when () {
             !=(R|/equals4|.R|/id|<R|kotlin/Boolean|>(), Boolean(false)) ->  {
                 ^box String(Fail 9.4)
+            }
+        }
+
+        when () {
+            !=(R|/notEquals1|.R|/id|<R|kotlin/Boolean|>(), Boolean(true)) ->  {
+                ^box String(Fail 9.5)
+            }
+        }
+
+        when () {
+            !=(R|/notEquals2|.R|/id|<R|kotlin/Boolean|>(), Boolean(false)) ->  {
+                ^box String(Fail 9.6)
+            }
+        }
+
+        when () {
+            !=(R|/notEquals3|.R|/id|<R|kotlin/Boolean|>(), Boolean(true)) ->  {
+                ^box String(Fail 9.7)
+            }
+        }
+
+        when () {
+            !=(R|/notEquals4|.R|/id|<R|kotlin/Boolean|>(), Boolean(true)) ->  {
+                ^box String(Fail 9.8)
             }
         }
 

@@ -1,0 +1,3 @@
+@Destructuring(<strcat>(String(destr ), prop#))
+owner -> FirErrorPropertySymbol /<error property>
+context -> FirErrorPropertySymbol /<error property>

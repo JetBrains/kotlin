@@ -55,8 +55,7 @@ fun KGPBaseTest.kotlinAndroidLibraryProject(
         "base-kotlin-android-library",
         gradleVersion,
         buildOptions = defaultBuildOptions
-            .copy(androidVersion = agpVersion)
-            .suppressAgpWarningIsProperty(gradleVersion),
+            .copy(androidVersion = agpVersion),
         buildJdk = jdkVersion.location,
     ) {
         buildScriptInjection { applyDefaultAndroidLibraryConfiguration() }

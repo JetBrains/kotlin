@@ -26,7 +26,7 @@ open class Cousin: overrides.Parent {
         { __root___Cousin_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_String__(__kt, value); return () }()
     }
     package override init(
-        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -58,7 +58,7 @@ public final class FinalDerived3: overrides.AbstractDerived2 {
         { __root___FinalDerived3_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt, x); return () }()
     }
     package override init(
-        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
@@ -69,14 +69,14 @@ public final class FinalDerived3: overrides.AbstractDerived2 {
 }
 @_cdecl("Cousin_primitiveTypeFunc__TypesOfArguments__Swift_Int32____reverse_swift")
 package func Cousin_primitiveTypeFunc__TypesOfArguments__Swift_Int32____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ arg: Swift.Int32) -> Swift.Int32 {
-    let _self = overrides_across_modules.Cousin.__createClassWrapper(externalRCRef: `self`)!
+    let _self = overrides_across_modules.Cousin.__createClassWrapper(externalRCRef: `self`)
     let _result: Swift.Int32 = _self.primitiveTypeFunc(arg: arg)
     return _result
 }
 
 @_cdecl("Cousin_primitiveTypeVar_get__reverse_swift")
 package func Cousin_primitiveTypeVar_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Int32 {
-    let _self = overrides_across_modules.Cousin.__createClassWrapper(externalRCRef: `self`)!
+    let _self = overrides_across_modules.Cousin.__createClassWrapper(externalRCRef: `self`)
     let _result: Swift.Int32 = _self.primitiveTypeVar
     return _result
 }

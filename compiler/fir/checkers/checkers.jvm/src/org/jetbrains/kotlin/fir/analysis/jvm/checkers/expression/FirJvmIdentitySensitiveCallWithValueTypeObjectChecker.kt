@@ -10,14 +10,15 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.isFlexiblePrimitive
 import org.jetbrains.kotlin.fir.analysis.checkers.isValueClass
-import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
-import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE
+import org.jetbrains.kotlin.fir.analysis.checkers.reportIdentitySensitiveOperationOnWillBecomeValueClass
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.SYNCHRONIZED_BLOCK_ON_JAVA_VALUE_BASED_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE
 import org.jetbrains.kotlin.fir.enableWarningsForIdentitySensitiveOperationsOnValueClassesAndPrimitives
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
-import org.jetbrains.kotlin.fir.expressions.argument
 import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.expressions.resolvedArgumentMapping
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
@@ -57,12 +58,14 @@ object FirJvmIdentitySensitiveCallWithValueTypeObjectChecker : FirFunctionCallCh
             synchronizedCallableId -> checkSynchronizedCall(expression)
 
             in operationsToCheckFirstArgCallableIds -> {
-                val type = expression.arguments.firstOrNull()?.resolvedType ?: return
+                val argument = expression.arguments.firstOrNull() ?: return
+                val type = argument.resolvedType
                 if (type.isValueTypeAndWarningsEnabled()) {
                     reporter.reportOn(
-                        expression.argument.source, FirJvmErrors.IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE, type
+                        argument.source, FirErrors.IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE, type
                     )
                 }
+                reportIdentitySensitiveOperationOnWillBecomeValueClass(argument.source, type)
             }
 
             in operationsToCheckFirstTypeArgCallableIds -> {
@@ -70,9 +73,10 @@ object FirJvmIdentitySensitiveCallWithValueTypeObjectChecker : FirFunctionCallCh
                 val type = typeArgument.typeRef.coneType.upperBoundIfFlexible()
                 if (type.isValueTypeAndWarningsEnabled()) {
                     reporter.reportOn(
-                        typeArgument.source, FirJvmErrors.IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE, type
+                        typeArgument.source, FirErrors.IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE, type
                     )
                 }
+                reportIdentitySensitiveOperationOnWillBecomeValueClass(typeArgument.source, type)
             }
         }
     }
@@ -86,13 +90,12 @@ object FirJvmIdentitySensitiveCallWithValueTypeObjectChecker : FirFunctionCallCh
             val type = argument.resolvedType
             if (type.isPrimitive || type.isValueClass(context.session)) {
                 reporter.reportOn(argument.source, SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE, type)
-            }
-            if (type.isJavaValueBasedClassAndWarningsEnabled()) {
+            } else if (type.isJavaValueBasedClassAndWarningsEnabled()) {
                 reporter.reportOn(argument.source, SYNCHRONIZED_BLOCK_ON_JAVA_VALUE_BASED_CLASS, type)
-            }
-            if (enableWarningsForIdentitySensitiveOperationsOnValueClassesAndPrimitives() && type.isFlexiblePrimitive()) {
+            } else if (enableWarningsForIdentitySensitiveOperationsOnValueClassesAndPrimitives() && type.isFlexiblePrimitive()) {
                 reporter.reportOn(argument.source, IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE, type)
             }
+            reportIdentitySensitiveOperationOnWillBecomeValueClass(argument.source, type)
         }
     }
 }

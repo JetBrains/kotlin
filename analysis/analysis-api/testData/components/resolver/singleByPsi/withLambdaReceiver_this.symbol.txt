@@ -1,0 +1,31 @@
+KtThisExpression(82,86): 'this'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      KaReceiverParameterSymbol:
+        anchorPsi: KtFunctionLiteral
+        annotations: []
+        callableId: null
+        contextParameters: []
+        contextReceivers: []
+        isActual: false
+        isCompanion: false
+        isDelegated: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+        psi: KtFunctionLiteral
+        realPsi: KtFunctionLiteral
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: Test
+        typeParameters: []
+        visibility: PUBLIC
+    ]

@@ -11,11 +11,13 @@ import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.links.PointingToDeclaration
 import org.jetbrains.dokka.model.DModule
 import org.jetbrains.dokka.model.doc.*
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInAnalysisApi
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import org.jetbrains.dokka.model.doc.Deprecated as DokkaDeprecatedTag
 import org.jetbrains.dokka.model.doc.Throws as DokkaThrowsTag
 
+@MustRunOnChangesInAnalysisApi
 class JavadocInheritedDocTagsTest : BaseAbstractTest() {
     @Suppress("DEPRECATION") // for includeNonPublic
     private val configuration = dokkaConfiguration {

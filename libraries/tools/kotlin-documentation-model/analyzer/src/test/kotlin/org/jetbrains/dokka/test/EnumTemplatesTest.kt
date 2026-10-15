@@ -128,7 +128,7 @@ class EnumTemplatesTest {
 
         /** Get the actual `Enum.kt` source file from Kotlin stdlib. */
         private val actualStdlibEnumKt: Path by lazy {
-            kotlinStdlibSourcesDir.resolve("jvmMain/kotlin/Enum.kt")
+            kotlinStdlibSourcesDir.resolve("jvm/builtins/Enum.kt")
         }
     }
 }

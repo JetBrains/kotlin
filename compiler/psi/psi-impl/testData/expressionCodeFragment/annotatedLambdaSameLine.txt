@@ -1,0 +1,19 @@
+KtFile: fragment.kt
+  ANNOTATED_EXPRESSION
+    ANNOTATION_ENTRY
+      PsiElement(AT)('@')
+      CONSTRUCTOR_CALLEE
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Ann')
+    PsiWhiteSpace(' ')
+    LAMBDA_EXPRESSION
+      FUNCTION_LITERAL
+        PsiElement(LBRACE)('{')
+        PsiWhiteSpace(' ')
+        BLOCK
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('a')
+        PsiWhiteSpace(' ')
+        PsiElement(RBRACE)('}')

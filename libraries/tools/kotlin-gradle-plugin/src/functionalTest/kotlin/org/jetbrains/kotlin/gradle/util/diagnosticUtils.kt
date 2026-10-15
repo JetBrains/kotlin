@@ -82,7 +82,8 @@ internal fun Project.checkDiagnostics(
             }
     }
 
-    val sanitizedTest = actualRenderedText.replace(File.separator, "/")
+    val sanitizedTest = actualRenderedText.replace(rootDir.absolutePath, "<absolute_project_path>")
+        .replace(File.separator, "/")
 
     TestDataAssertions.assertEqualsToFile(expectedDiagnostics, sanitizedTest)
 }

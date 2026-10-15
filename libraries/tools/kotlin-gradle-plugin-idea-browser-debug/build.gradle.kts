@@ -19,6 +19,7 @@ enableKotlinSerializationPlugin()
 
 extensions.extraProperties["kotlin.stdlib.default.dependency"] = "false"
 kotlin {
+    @Suppress("DEPRECATION")
     coreLibrariesVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()
     compilerOptions {
         optIn.add("org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi")
@@ -28,6 +29,7 @@ kotlin {
 val serializationVersion = GradlePluginVariant.GRADLE_MIN.compatibleKotlinxJsonSerializationVersion
 
 dependencies {
+    @Suppress("DEPRECATION")
     compileOnly(kotlin("stdlib", kotlin.coreLibrariesVersion))
     api(project(":kotlin-gradle-plugin-annotations"))
 

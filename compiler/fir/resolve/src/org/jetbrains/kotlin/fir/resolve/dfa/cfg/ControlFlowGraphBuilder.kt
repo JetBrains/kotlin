@@ -9,9 +9,11 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.contracts.description.*
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanionBlockMember
+import org.jetbrains.kotlin.fir.declarations.utils.isCopiedDelegatedProperty
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildUnitExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
@@ -997,15 +999,21 @@ class ControlFlowGraphBuilder private constructor(
 
     // ----------------------------------- Property -----------------------------------
 
+    // The delegate of a REPL snippet property is resolved via its copy within the snippet's eval function,
+    // so it belongs to the eval graph like the initializers of the other snippet properties.
+    @OptIn(FirImplementationDetail::class)
+    private val FirProperty.shouldHavePropertyGraph: Boolean
+        get() = memberShouldHaveGraph && isCopiedDelegatedProperty != true
+
     fun enterProperty(property: FirProperty): PropertyInitializerEnterNode? {
-        if (!property.memberShouldHaveGraph) return null
+        if (!property.shouldHavePropertyGraph) return null
         return enterGraph(property, "val ${property.name}", ControlFlowGraph.Kind.PropertyInitializer) {
             createPropertyInitializerEnterNode(it) to createPropertyInitializerExitNode(it)
         }.also { addEdgeIfLocalClassMember(it) }
     }
 
     fun exitProperty(property: FirProperty): Pair<PropertyInitializerExitNode, ControlFlowGraph>? {
-        if (!property.memberShouldHaveGraph) return null
+        if (!property.shouldHavePropertyGraph) return null
         return exitGraph()
     }
 

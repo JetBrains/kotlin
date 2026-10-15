@@ -1,4 +1,4 @@
-## Kotlin Standard Library for JS
+## Kotlin standard library for JS
 
 This directory contains Kotlin/JS specific sources of Kotlin standard library
 that are used together common sources to produce the `kotlin-stdlib-js` artifact.

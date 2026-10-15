@@ -144,7 +144,12 @@ fun main(args: Array<String>) {
             testClass<AbstractNativeObjCExportTest>(
                 suiteTestClassName = "FirObjCExportTestGenerated",
             ) {
-                model(pattern = "^([^_](.+))$", recursive = false)
+                model(pattern = "^([^_](.+))$", recursive = false, excludeDirs = listOf("HeaderTests"))
+            }
+            testClass<AbstractNativeObjCExportHeaderTest>(
+                suiteTestClassName = "ObjCExportHeaderTestGenerated",
+            ) {
+                model("HeaderTests")
             }
         }
 

@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.testFederation
 
+import org.jetbrains.kotlin.testFederation.TestSubset.*
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 /**
@@ -33,7 +33,11 @@ class PseudoTest {
     @Test
     fun `domain test`() {
         if (autoSmokeTestPercentage == 0) {
-            assertEquals(TestFederationMode.Full, testFederationMode)
+            val subsets = testFederationSubsets
+            assertTrue(
+                AllTests in subsets,
+                "Expected 'AllTests' in requested subsets, but was: $subsets"
+            )
         }
     }
 
@@ -46,25 +50,25 @@ class PseudoTest {
     @MustRunOnChangesInJs
     @Test
     fun `js contract test`() {
-        if (testFederationMode == TestFederationMode.Full) return
-        val changed = testFederationChangedDomains ?: error("Missing 'testFederationAffectedDomains'")
-        if (Domain.Js !in changed && autoSmokeTestPercentage == 0) error("Expected 'Js' in affected domains, but was: $changed")
+        if (testFederationSubsets.containsNone(ContractTestsForJs, AllTests) && autoSmokeTestPercentage == 0) {
+            error("Expected ContractTestsForJs or AllTests in requested subsets, but was: $testFederationSubsets")
+        }
     }
 
     @MustRunOnChangesInWasm
     @Test
     fun `wasm contract test`() {
-        if (testFederationMode == TestFederationMode.Full) return
-        val changed = testFederationChangedDomains ?: error("Missing 'testFederationAffectedDomains'")
-        if (Domain.Wasm !in changed && autoSmokeTestPercentage == 0) error("Expected 'Wasm' in affected domains, but was: $changed")
+        if (testFederationSubsets.containsNone(ContractTestsForWasm, AllTests) && autoSmokeTestPercentage == 0) {
+            error("Expected ContractTestsForWasm or AllTests in requested subsets, but was: $testFederationSubsets")
+        }
     }
 
     @MustRunOnChangesInGradle
     @Test
     fun `gradle contract test`() {
-        if (testFederationMode == TestFederationMode.Full) return
-        val changed = testFederationChangedDomains ?: error("Missing 'testFederationAffectedDomains'")
-        if (Domain.Gradle !in changed && autoSmokeTestPercentage == 0) error("Expected 'Gradle' in affected domains, but was: $changed")
+        if (testFederationSubsets.containsNone(ContractTestsForGradle, AllTests) && autoSmokeTestPercentage == 0) {
+            error("Expected ContractTestsForGradle or AllTests in requested subsets, but was: $testFederationSubsets")
+        }
     }
 
     @NightlyTest
@@ -72,4 +76,22 @@ class PseudoTest {
     fun `nightly test`() {
         assertTrue(testFederationNightly)
     }
+
+    @MustRunAlways
+    @MustRunOnChangesInJs
+    @Test
+    fun `smoke js contract test`() {
+        if (testFederationSubsets.containsNone(SmokeTests, ContractTestsForJs, AllTests) && autoSmokeTestPercentage == 0) {
+            error("Expected SmokeTests or ContractTestsForJs or AllTests in requested subsets, but was: $testFederationSubsets")
+        }
+    }
+
+    @Suppress("JUnitMixedFramework")
+    @org.junit.Test
+    fun `junit4 test`() {
+        println("Executed: junit4 test")
+    }
 }
+
+private fun Set<TestSubset>.containsNone(vararg subset: TestSubset): Boolean =
+    subset.toSet().intersect(this).isEmpty()

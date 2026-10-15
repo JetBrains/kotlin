@@ -40,6 +40,7 @@ class Test<G> {
 
     val m = ABC()
     val n = "".toString()
+    val q = listOf(ABC())
 
     lateinit var o11: List<List<List<List<List<List<List<List<List<List<ABC>>>>>>>>>>
     lateinit var o10: List<List<List<List<List<List<List<List<List<ABC>>>>>>>>>
@@ -57,6 +58,8 @@ class Test<G> {
     }
 
     fun f4() = ABC()
+
+    fun f6() = listOf(ABC())
 
     fun <T> MyType<T>.f5(): java.lang.Class<Enum<*>>? = null
 }

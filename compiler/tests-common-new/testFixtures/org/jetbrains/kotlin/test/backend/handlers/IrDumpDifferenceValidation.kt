@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.util.convertLineSeparators
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespacesAndAddNewlineAtEOF
 import java.io.File
+import kotlin.collections.map
 
 /**
  * Validates target-specific IR dump files against the DUMP_IR_DIFFERENCE directive.
@@ -43,6 +44,7 @@ internal fun validateTargetSpecificDumpFile(
     directiveForIrDifference: ValueDirective<TargetBackend>,
     actualDump: String,
     isKotlinLikeDump: Boolean,
+    externalFilesDumps: MutableMap<File, String>,
 ) {
     val moduleStructure = testServices.moduleStructure
 
@@ -94,17 +96,26 @@ internal fun validateTargetSpecificDumpFile(
                 // When a used symbol's package is changed -> `*ir.<backend>.patch` is not empty, while `*kt.<backend>.patch` may legitimately be empty.
                 return
             }
-            assertions.fail {
-                "There are no $dumpDescription differences. Please remove $targetBackendDirectiveName from $directiveForIrDifference directive"
+            val externalFilesPatches = externalFilesDumps.map { [file, normalizedActualDump] ->
+                buildPatch(
+                    baseText = file.readText(),
+                    targetText = normalizedActualDump,
+                    targetBackendName = patchBackendName,
+                    mainFileName = file.name,
+                )
+            }
+            if (externalFilesPatches.all { it.isEmpty() }) {
+                assertions.fail {
+                    "There are no $dumpDescription differences. Please remove $targetBackendDirectiveName from $directiveForIrDifference directive"
+                }
+            }
+        } else {
+            assertions.assertEqualsToFile(targetSpecificFile, expectedPatch)
+            // Sanity check: patch application must result in the actual dump
+            checkTestInfrastructure(applyPatch(mainDump, expectedPatch) == normalizedActualDump) {
+                "Unable to reconstruct target-specific dump from patch: ${targetSpecificFile.absolutePath}"
             }
         }
-
-        assertions.assertEqualsToFile(targetSpecificFile, expectedPatch)
-        // Sanity check: patch application must result in the actual dump
-        checkTestInfrastructure(applyPatch(mainDump, expectedPatch) == normalizedActualDump) {
-            "Unable to reconstruct target-specific dump from patch: ${targetSpecificFile.absolutePath}"
-        }
-        return
     } else {
         val existingTargetSpecificFile = moduleStructure.findTargetSpecificPatchFile(targetBackend, baseDumpExtension)
         checkTestInfrastructure(existingTargetSpecificFile == null) {

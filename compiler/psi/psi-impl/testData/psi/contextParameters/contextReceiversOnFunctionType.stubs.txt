@@ -3,7 +3,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ContextReceiversOnFunctionTy
   partSimpleName: "ContextReceiversOnFunctionTypeKt"
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  CLASS[classId=/MyAnnotation, fqName=MyAnnotation, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=MyAnnotation, superNames=[]]
+  CLASS[classId=/MyAnnotation, fqName=MyAnnotation, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=MyAnnotation, superNames=[]]
     MODIFIER_LIST[annotation]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Target]
         CONSTRUCTOR_CALLEE
@@ -127,14 +127,14 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ContextReceiversOnFunctionTy
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Int]
-  CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[]]
+  CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=A, superNames=[]]
     CLASS_BODY
       PROPERTY[fqName=A.valueA, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=valueA]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Int]
         INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=10]
-  CLASS[classId=/B, fqName=B, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=B, superNames=[]]
+  CLASS[classId=/B, fqName=B, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=B, superNames=[]]
     CLASS_BODY
       PROPERTY[fqName=B.valueB, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=valueB]
         TYPE_REFERENCE

@@ -120,6 +120,52 @@ FILE: intOperations.kt
         public get(): R|kotlin/Float|
     public final const [EvaluatedValue=Double(0.0)] val rem8: R|kotlin/Double| = R|/twoVal|.R|kotlin/Int.rem|(R|/doubleVal|)
         public get(): R|kotlin/Double|
+    public final const [EvaluatedValue=Int(2)] val and1: R|kotlin/Int| = R|/threeVal|.R|kotlin/Int.and|(R|/twoVal|)
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Int(2)] val and2: R|kotlin/Int| = R|/twoVal|.R|kotlin/Int.and|(R|/twoVal|)
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Int(0)] val and3: R|kotlin/Int| = R|/fourVal|.R|kotlin/Int.and|(R|/twoVal|)
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Int(0)] val and4: R|kotlin/Int| = R|/oneVal|.R|kotlin/Int.and|(R|/twoVal|)
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Int(3)] val or1: R|kotlin/Int| = R|/oneVal|.R|kotlin/Int.or|(R|/twoVal|)
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Int(2)] val or2: R|kotlin/Int| = R|/twoVal|.R|kotlin/Int.or|(R|/twoVal|)
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Int(6)] val or3: R|kotlin/Int| = R|/fourVal|.R|kotlin/Int.or|(R|/twoVal|)
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Int(3)] val or4: R|kotlin/Int| = R|/oneVal|.R|kotlin/Int.or|(R|/twoVal|)
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Int(3)] val xor1: R|kotlin/Int| = R|/oneVal|.R|kotlin/Int.xor|(R|/twoVal|)
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Int(0)] val xor2: R|kotlin/Int| = R|/twoVal|.R|kotlin/Int.xor|(R|/twoVal|)
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Int(1)] val xor3: R|kotlin/Int| = R|/threeVal|.R|kotlin/Int.xor|(R|/twoVal|)
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Int(3)] val xor4: R|kotlin/Int| = R|/oneVal|.R|kotlin/Int.xor|(R|/twoVal|)
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Int(2)] val shl1: R|kotlin/Int| = R|/oneVal|.R|kotlin/Int.shl|(Int(1))
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Int(8)] val shl2: R|kotlin/Int| = R|/twoVal|.R|kotlin/Int.shl|(Int(2))
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Int(2)] val shl3: R|kotlin/Int| = R|/oneVal|.R|kotlin/Int.shl|(Int(1))
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Int(2)] val shr1: R|kotlin/Int| = R|/fourVal|.R|kotlin/Int.shr|(Int(1))
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Int(-1)] val shr2: R|kotlin/Int| = R|/minusOneVal|.R|kotlin/Int.shr|(Int(1))
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Int(2)] val shr3: R|kotlin/Int| = R|/fourVal|.R|kotlin/Int.shr|(Int(1))
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Int(2)] val ushr1: R|kotlin/Int| = R|/fourVal|.R|kotlin/Int.ushr|(Int(1))
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Int(15)] val ushr2: R|kotlin/Int| = R|/minusOneVal|.R|kotlin/Int.ushr|(Int(28))
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Int(2)] val ushr3: R|kotlin/Int| = R|/fourVal|.R|kotlin/Int.ushr|(Int(1))
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Int(-2)] val inv1: R|kotlin/Int| = R|/oneVal|.R|kotlin/Int.inv|()
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Int(0)] val inv2: R|kotlin/Int| = R|/minusOneVal|.R|kotlin/Int.inv|()
+        public get(): R|kotlin/Int|
     public final const [EvaluatedValue=Int(1)] val unaryPlus1: R|kotlin/Int| = R|/oneVal|.R|kotlin/Int.unaryPlus|()
         public get(): R|kotlin/Int|
     public final const [EvaluatedValue=Int(-1)] val unaryPlus2: R|kotlin/Int| = R|/minusOneVal|.R|kotlin/Int.unaryPlus|()
@@ -149,6 +195,14 @@ FILE: intOperations.kt
     public final const [EvaluatedValue=Boolean(false)] val equals3: R|kotlin/Boolean| = ==(R|/threeVal|, R|/twoVal|)
         public get(): R|kotlin/Boolean|
     public final const [EvaluatedValue=Boolean(false)] val equals4: R|kotlin/Boolean| = ==(R|/fourVal|, R|/twoVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(true)] val notEquals1: R|kotlin/Boolean| = !=(R|/oneVal|, R|/twoVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(false)] val notEquals2: R|kotlin/Boolean| = !=(R|/twoVal|, R|/twoVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(true)] val notEquals3: R|kotlin/Boolean| = !=(R|/threeVal|, R|/twoVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(true)] val notEquals4: R|kotlin/Boolean| = !=(R|/fourVal|, R|/twoVal|)
         public get(): R|kotlin/Boolean|
     public final const [EvaluatedValue=String(1)] val toString1: R|kotlin/String| = R|/oneVal|.R|kotlin/Int.toString|()
         public get(): R|kotlin/String|
@@ -444,6 +498,144 @@ FILE: intOperations.kt
         }
 
         when () {
+            !=(R|/and1|.R|/id|<R|kotlin/Int|>(), Int(2)) ->  {
+                ^box String(Fail 6c.1)
+            }
+        }
+
+        when () {
+            !=(R|/and2|.R|/id|<R|kotlin/Int|>(), Int(2)) ->  {
+                ^box String(Fail 6c.2)
+            }
+        }
+
+        when () {
+            !=(R|/and3|.R|/id|<R|kotlin/Int|>(), Int(0)) ->  {
+                ^box String(Fail 6c.3)
+            }
+        }
+
+        when () {
+            !=(R|/and4|.R|/id|<R|kotlin/Int|>(), Int(0)) ->  {
+                ^box String(Fail 6c.4)
+            }
+        }
+
+        when () {
+            !=(R|/or1|.R|/id|<R|kotlin/Int|>(), Int(3)) ->  {
+                ^box String(Fail 6d.1)
+            }
+        }
+
+        when () {
+            !=(R|/or2|.R|/id|<R|kotlin/Int|>(), Int(2)) ->  {
+                ^box String(Fail 6d.2)
+            }
+        }
+
+        when () {
+            !=(R|/or3|.R|/id|<R|kotlin/Int|>(), Int(6)) ->  {
+                ^box String(Fail 6d.3)
+            }
+        }
+
+        when () {
+            !=(R|/or4|.R|/id|<R|kotlin/Int|>(), Int(3)) ->  {
+                ^box String(Fail 6d.4)
+            }
+        }
+
+        when () {
+            !=(R|/xor1|.R|/id|<R|kotlin/Int|>(), Int(3)) ->  {
+                ^box String(Fail 6e.1)
+            }
+        }
+
+        when () {
+            !=(R|/xor2|.R|/id|<R|kotlin/Int|>(), Int(0)) ->  {
+                ^box String(Fail 6e.2)
+            }
+        }
+
+        when () {
+            !=(R|/xor3|.R|/id|<R|kotlin/Int|>(), Int(1)) ->  {
+                ^box String(Fail 6e.3)
+            }
+        }
+
+        when () {
+            !=(R|/xor4|.R|/id|<R|kotlin/Int|>(), Int(3)) ->  {
+                ^box String(Fail 6e.4)
+            }
+        }
+
+        when () {
+            !=(R|/shl1|.R|/id|<R|kotlin/Int|>(), Int(2)) ->  {
+                ^box String(Fail 6f.1)
+            }
+        }
+
+        when () {
+            !=(R|/shl2|.R|/id|<R|kotlin/Int|>(), Int(8)) ->  {
+                ^box String(Fail 6f.2)
+            }
+        }
+
+        when () {
+            !=(R|/shl3|.R|/id|<R|kotlin/Int|>(), Int(2)) ->  {
+                ^box String(Fail 6f.3)
+            }
+        }
+
+        when () {
+            !=(R|/shr1|.R|/id|<R|kotlin/Int|>(), Int(2)) ->  {
+                ^box String(Fail 6g.1)
+            }
+        }
+
+        when () {
+            !=(R|/shr2|.R|/id|<R|kotlin/Int|>(), Int(-1)) ->  {
+                ^box String(Fail 6g.2)
+            }
+        }
+
+        when () {
+            !=(R|/shr3|.R|/id|<R|kotlin/Int|>(), Int(2)) ->  {
+                ^box String(Fail 6g.3)
+            }
+        }
+
+        when () {
+            !=(R|/ushr1|.R|/id|<R|kotlin/Int|>(), Int(2)) ->  {
+                ^box String(Fail 6h.1)
+            }
+        }
+
+        when () {
+            !=(R|/ushr2|.R|/id|<R|kotlin/Int|>(), Int(15)) ->  {
+                ^box String(Fail 6h.2)
+            }
+        }
+
+        when () {
+            !=(R|/ushr3|.R|/id|<R|kotlin/Int|>(), Int(2)) ->  {
+                ^box String(Fail 6h.3)
+            }
+        }
+
+        when () {
+            !=(R|/inv1|.R|/id|<R|kotlin/Int|>(), Int(-2)) ->  {
+                ^box String(Fail 6i.1)
+            }
+        }
+
+        when () {
+            !=(R|/inv2|.R|/id|<R|kotlin/Int|>(), Int(0)) ->  {
+                ^box String(Fail 6i.2)
+            }
+        }
+
+        when () {
             !=(R|/unaryPlus1|.R|/id|<R|kotlin/Int|>(), Int(1)) ->  {
                 ^box String(Fail 7.1)
             }
@@ -530,6 +722,30 @@ FILE: intOperations.kt
         when () {
             !=(R|/equals4|.R|/id|<R|kotlin/Boolean|>(), Boolean(false)) ->  {
                 ^box String(Fail 9.4)
+            }
+        }
+
+        when () {
+            !=(R|/notEquals1|.R|/id|<R|kotlin/Boolean|>(), Boolean(true)) ->  {
+                ^box String(Fail 9.5)
+            }
+        }
+
+        when () {
+            !=(R|/notEquals2|.R|/id|<R|kotlin/Boolean|>(), Boolean(false)) ->  {
+                ^box String(Fail 9.6)
+            }
+        }
+
+        when () {
+            !=(R|/notEquals3|.R|/id|<R|kotlin/Boolean|>(), Boolean(true)) ->  {
+                ^box String(Fail 9.7)
+            }
+        }
+
+        when () {
+            !=(R|/notEquals4|.R|/id|<R|kotlin/Boolean|>(), Boolean(true)) ->  {
+                ^box String(Fail 9.8)
             }
         }
 

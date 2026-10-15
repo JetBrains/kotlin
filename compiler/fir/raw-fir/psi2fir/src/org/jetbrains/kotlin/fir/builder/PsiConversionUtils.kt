@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.containingScript
 import org.jetbrains.kotlin.toKtPsiSourceElement
 
 internal fun KtWhenCondition.toFirWhenCondition(
@@ -167,3 +168,20 @@ internal fun AbstractRawFirBuilder<*, *>.addDestructuringVariables(
         configure,
     )
 }
+
+/**
+ * Whether this declaration is declared directly in a script.
+ *
+ * Unlike [com.intellij.psi.PsiElement.getParent]-based checks, it doesn't force AST loading for script declarations.
+ */
+@OptIn(KtExperimentalApi::class)
+internal val KtDeclaration.isScriptMember: Boolean
+    get() = containingScript != null
+
+/**
+ * Whether this declaration is declared directly in a class body.
+ *
+ * The script check goes first as [com.intellij.psi.PsiElement.getParent] forces AST loading for script declarations.
+ */
+internal val KtDeclaration.isClassBodyMember: Boolean
+    get() = !isScriptMember && parent is KtClassBody

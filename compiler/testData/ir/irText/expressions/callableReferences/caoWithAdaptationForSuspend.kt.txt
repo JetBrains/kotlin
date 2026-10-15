@@ -56,13 +56,13 @@ fun test2(fn: Function1<Int, Unit>) {
   { // BLOCK
     val tmp_2: B = B
     val tmp_3: Function1<Int, Unit> = fn
-    set(/* <this> = tmp_2, */ i = tmp_3, newValue = get(/* <this> = tmp_2, */ i = { // BLOCK
-      local suspend fun Function1<Int, Unit>.suspendConversion0(p0: Int) {
+    set(/* <this> = tmp_2, */ i = tmp_3, newValue = get(/* <this> = tmp_2, */ i = SuspendFunction1<Int, Unit>(
+      /* bound = */ [tmp_3],
+      /* invoke = */      local suspend fun($callee: Function1<Int, Unit>, p0: Int) {
         $callee.invoke(p1 = p0)
       }
-
-      ::suspendConversion0/*($callee = tmp_3) */
-    }).plus(other = 1))
+    )
+).plus(other = 1))
   }
 }
 
@@ -70,19 +70,19 @@ fun test3(fn: Function1<Int, Unit>) {
   { // BLOCK
     val tmp_4: A = A
     val tmp_5: Function1<Int, Unit> = fn
-    set(/* <this> = tmp_4, */ i = { // BLOCK
-      local suspend fun Function1<Int, Unit>.suspendConversion0(p0: Int) {
+    set(/* <this> = tmp_4, */ i = SuspendFunction1<Int, Unit>(
+      /* bound = */ [tmp_5],
+      /* invoke = */      local suspend fun($callee: Function1<Int, Unit>, p0: Int) {
         $callee.invoke(p1 = p0)
       }
-
-      ::suspendConversion0/*($callee = tmp_5) */
-    }, newValue = get(/* <this> = tmp_4, */ i = { // BLOCK
-      local suspend fun Function1<Int, Unit>.suspendConversion1(p0: Int) {
+    )
+, newValue = get(/* <this> = tmp_4, */ i = SuspendFunction1<Int, Unit>(
+      /* bound = */ [tmp_5],
+      /* invoke = */      local suspend fun($callee: Function1<Int, Unit>, p0: Int) {
         $callee.invoke(p1 = p0)
       }
-
-      ::suspendConversion1/*($callee = tmp_5) */
-    }).plus(other = 1))
+    )
+).plus(other = 1))
   }
 }
 
@@ -91,19 +91,19 @@ fun test4(fn: Function1<Int, Unit>) {
     fn is IFoo -> { // BLOCK
       val tmp_6: A = A
       val tmp_7: Any = fn
-      set(/* <this> = tmp_6, */ i = { // BLOCK
-        local suspend fun Function1<Int, Unit>.suspendConversion0(p0: Int) {
+      set(/* <this> = tmp_6, */ i = SuspendFunction1<Int, Unit>(
+        /* bound = */ [tmp_7],
+        /* invoke = */        local suspend fun($callee: Function1<Int, Unit>, p0: Int) {
           $callee.invoke(p1 = p0)
         }
-
-        ::suspendConversion0/*($callee = tmp_7) */
-      }, newValue = get(/* <this> = tmp_6, */ i = { // BLOCK
-        local suspend fun Function1<Int, Unit>.suspendConversion1(p0: Int) {
+      )
+, newValue = get(/* <this> = tmp_6, */ i = SuspendFunction1<Int, Unit>(
+        /* bound = */ [tmp_7],
+        /* invoke = */        local suspend fun($callee: Function1<Int, Unit>, p0: Int) {
           $callee.invoke(p1 = p0)
         }
-
-        ::suspendConversion1/*($callee = tmp_7) */
-      }).plus(other = 1))
+      )
+).plus(other = 1))
     }
   }
 }
@@ -113,19 +113,19 @@ fun test5(a: Any) {
   { // BLOCK
     val tmp_8: A = A
     val tmp_9: Function1<Int, Unit> = a /*as Function1<Int, Unit> */
-    set(/* <this> = tmp_8, */ i = { // BLOCK
-      local suspend fun Function1<Int, Unit>.suspendConversion0(p0: Int) {
+    set(/* <this> = tmp_8, */ i = SuspendFunction1<Int, Unit>(
+      /* bound = */ [tmp_9],
+      /* invoke = */      local suspend fun($callee: Function1<Int, Unit>, p0: Int) {
         $callee.invoke(p1 = p0)
       }
-
-      ::suspendConversion0/*($callee = tmp_9) */
-    }, newValue = get(/* <this> = tmp_8, */ i = { // BLOCK
-      local suspend fun Function1<Int, Unit>.suspendConversion1(p0: Int) {
+    )
+, newValue = get(/* <this> = tmp_8, */ i = SuspendFunction1<Int, Unit>(
+      /* bound = */ [tmp_9],
+      /* invoke = */      local suspend fun($callee: Function1<Int, Unit>, p0: Int) {
         $callee.invoke(p1 = p0)
       }
-
-      ::suspendConversion1/*($callee = tmp_9) */
-    }).plus(other = 1))
+    )
+).plus(other = 1))
   }
 }
 
@@ -135,19 +135,19 @@ fun test6(a: Any) {
   { // BLOCK
     val tmp_10: A = A
     val tmp_11: Any = a
-    set(/* <this> = tmp_10, */ i = { // BLOCK
-      local suspend fun Function1<Int, Unit>.suspendConversion0(p0: Int) {
+    set(/* <this> = tmp_10, */ i = SuspendFunction1<Int, Unit>(
+      /* bound = */ [tmp_11],
+      /* invoke = */      local suspend fun($callee: Function1<Int, Unit>, p0: Int) {
         $callee.invoke(p1 = p0)
       }
-
-      ::suspendConversion0/*($callee = tmp_11) */
-    }, newValue = get(/* <this> = tmp_10, */ i = { // BLOCK
-      local suspend fun Function1<Int, Unit>.suspendConversion1(p0: Int) {
+    )
+, newValue = get(/* <this> = tmp_10, */ i = SuspendFunction1<Int, Unit>(
+      /* bound = */ [tmp_11],
+      /* invoke = */      local suspend fun($callee: Function1<Int, Unit>, p0: Int) {
         $callee.invoke(p1 = p0)
       }
-
-      ::suspendConversion1/*($callee = tmp_11) */
-    }).plus(other = 1))
+    )
+).plus(other = 1))
   }
 }
 

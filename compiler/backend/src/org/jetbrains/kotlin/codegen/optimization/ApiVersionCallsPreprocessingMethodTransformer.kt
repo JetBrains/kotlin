@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.codegen.optimization
 
 import org.jetbrains.kotlin.codegen.optimization.boxing.isMethodInsnWith
+import org.jetbrains.kotlin.codegen.optimization.common.intConstant
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.MavenComparableVersion
@@ -33,13 +34,13 @@ class ApiVersionCallsPreprocessingMethodTransformer(private val targetApiVersion
             if (!insn.isApiVersionIsAtLeastCall()) continue
 
             val prev3 = insn.previous ?: continue
-            val minor = prev3.getIntConstValue() ?: continue
+            val minor = prev3.intConstant ?: continue
 
             val prev2 = prev3.previous ?: continue
-            val major = prev2.getIntConstValue() ?: continue
+            val major = prev2.intConstant ?: continue
 
             val prev1 = prev2.previous ?: continue
-            val epic = prev1.getIntConstValue() ?: continue
+            val epic = prev1.intConstant ?: continue
 
             hasFoldedCalls = true
 
@@ -69,25 +70,5 @@ class ApiVersionCallsPreprocessingMethodTransformer(private val targetApiVersion
             owner.startsWith("kotlin/internal") &&
                     name == "apiVersionIsAtLeast" &&
                     desc == "(III)Z"
-        }
-
-    private fun AbstractInsnNode.getIntConstValue(): Int? =
-        when (this) {
-            is InsnNode ->
-                if (opcode in Opcodes.ICONST_M1..Opcodes.ICONST_5)
-                    opcode - Opcodes.ICONST_0
-                else
-                    null
-
-            is IntInsnNode ->
-                when (opcode) {
-                    Opcodes.BIPUSH -> operand
-                    Opcodes.SIPUSH -> operand
-                    else -> null
-                }
-
-            is LdcInsnNode -> cst as? Int
-
-            else -> null
         }
 }

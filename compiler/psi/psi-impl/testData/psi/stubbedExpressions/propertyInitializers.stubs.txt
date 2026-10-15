@@ -154,7 +154,7 @@ FILE[kind=Facade[packageFqName=test, facadeFqName=test.PropertyInitializersKt]]
         REFERENCE_EXPRESSION[referencedName=String]
     STRING_TEMPLATE
       LITERAL_STRING_TEMPLATE_ENTRY[text=m]
-  OBJECT_DECLARATION[classId=test/Holder, fqName=test.Holder, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=Holder, superNames=[]]
+  OBJECT_DECLARATION[classId=test/Holder, fqName=test.Holder, isObjectLiteral=false, isTopLevel=true, name=Holder, superNames=[]]
     CLASS_BODY
       PROPERTY[fqName=test.Holder.inObject, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=inObject]
         MODIFIER_LIST[const]
@@ -172,7 +172,7 @@ FILE[kind=Facade[packageFqName=test, facadeFqName=test.PropertyInitializersKt]]
         DOT_QUALIFIED_EXPRESSION
           REFERENCE_EXPRESSION[referencedName=Double]
           REFERENCE_EXPRESSION[referencedName=POSITIVE_INFINITY]
-  CLASS[classId=test/WithMember, fqName=test.WithMember, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithMember, superNames=[]]
+  CLASS[classId=test/WithMember, fqName=test.WithMember, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=WithMember, superNames=[]]
     CLASS_BODY
       PROPERTY[fqName=test.WithMember.member, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=member]
         TYPE_REFERENCE

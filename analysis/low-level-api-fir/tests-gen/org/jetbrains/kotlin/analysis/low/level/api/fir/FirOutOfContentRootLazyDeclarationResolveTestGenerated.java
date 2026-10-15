@@ -503,6 +503,24 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
   }
 
   @Test
+  @TestMetadata("lambdaInsideAnnotationArgument.kt")
+  public void testLambdaInsideAnnotationArgument() {
+    run("lambdaInsideAnnotationArgument.kt");
+  }
+
+  @Test
+  @TestMetadata("lambdaInsideForeignTypeAnnotation.kt")
+  public void testLambdaInsideForeignTypeAnnotation() {
+    run("lambdaInsideForeignTypeAnnotation.kt");
+  }
+
+  @Test
+  @TestMetadata("lambdaInsideLocalForeignTypeAnnotation.kt")
+  public void testLambdaInsideLocalForeignTypeAnnotation() {
+    run("lambdaInsideLocalForeignTypeAnnotation.kt");
+  }
+
+  @Test
   @TestMetadata("lazyProperty.kt")
   public void testLazyProperty() {
     run("lazyProperty.kt");
@@ -560,6 +578,18 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
   @TestMetadata("localParameterInsideSuperEntryCall.kt")
   public void testLocalParameterInsideSuperEntryCall() {
     run("localParameterInsideSuperEntryCall.kt");
+  }
+
+  @Test
+  @TestMetadata("namedFunctionInsideClassAnnotation.kt")
+  public void testNamedFunctionInsideClassAnnotation() {
+    run("namedFunctionInsideClassAnnotation.kt");
+  }
+
+  @Test
+  @TestMetadata("namedFunctionInsideFileAnnotation.kt")
+  public void testNamedFunctionInsideFileAnnotation() {
+    run("namedFunctionInsideFileAnnotation.kt");
   }
 
   @Test
@@ -2463,20 +2493,6 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
     @TestMetadata("unresolvedAnnotationOnPropertyType.kt")
     public void testUnresolvedAnnotationOnPropertyType() {
       run("unresolvedAnnotationOnPropertyType.kt");
-    }
-  }
-
-  @Nested
-  @TestMetadata("analysis/low-level-api-fir/testData/lazyResolve/repl")
-  @TestDataPath("$PROJECT_ROOT")
-  public class Repl {
-    private void run(String fileName) {
-      runTest("analysis/low-level-api-fir/testData/lazyResolve/repl/" + fileName);
-    }
-
-    @Test
-    public void testAllFilesPresentInRepl() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolve/repl"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
   }
 

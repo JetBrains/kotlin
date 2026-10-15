@@ -2,9 +2,9 @@ FILE[kind=File[packageFqName=test]]
   PACKAGE_DIRECTIVE
     REFERENCE_EXPRESSION[referencedName=test]
   IMPORT_LIST
-  CLASS[classId=test/Empty, fqName=test.Empty, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Empty, superNames=[]]
+  CLASS[classId=test/Empty, fqName=test.Empty, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Empty, superNames=[]]
     MODIFIER_LIST[annotation]
-  CLASS[classId=test/Single, fqName=test.Single, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Single, superNames=[]]
+  CLASS[classId=test/Single, fqName=test.Single, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Single, superNames=[]]
     MODIFIER_LIST[annotation]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Single]
       VALUE_PARAMETER_LIST
@@ -12,7 +12,7 @@ FILE[kind=File[packageFqName=test]]
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=String]
-  CLASS[classId=test/Defaults, fqName=test.Defaults, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Defaults, superNames=[]]
+  CLASS[classId=test/Defaults, fqName=test.Defaults, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Defaults, superNames=[]]
     MODIFIER_LIST[annotation]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Defaults]
       VALUE_PARAMETER_LIST
@@ -34,7 +34,7 @@ FILE[kind=File[packageFqName=test]]
           COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=2]
             INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
             INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
-  CLASS[classId=test/Varargs, fqName=test.Varargs, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Varargs, superNames=[]]
+  CLASS[classId=test/Varargs, fqName=test.Varargs, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Varargs, superNames=[]]
     MODIFIER_LIST[annotation]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Varargs]
       VALUE_PARAMETER_LIST

@@ -16,6 +16,7 @@ dependencies {
     testImplementation(project(":kotlin-scripting-jvm-host-unshaded"))
     testImplementation(testFixtures(project(":compiler:tests-compiler-utils")))
     testImplementation(project(":kotlin-scripting-compiler"))
+    testImplementation(project(":kotlin-script-runtime")) // checks of the legacy standard templates mapping
     testImplementation(project(":daemon-common")) // TODO: fix import (workaround for jps build)
 
     testImplementation(libs.kotlinx.coroutines.core)
@@ -34,9 +35,7 @@ tasks.withType<KotlinJvmCompile>().configureEach {
 }
 
 projectTests {
-    testTask(
-        javaLauncher = JdkMajorVersion.JDK_17_0,
-    ) {
+    testTask {
         dependsOn(":dist")
         workingDir = rootDir
     }

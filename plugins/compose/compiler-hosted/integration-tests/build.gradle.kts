@@ -43,6 +43,7 @@ dependencies {
     testImplementation(project(":kotlin-stdlib-common"))
     testImplementation(project(":kotlin-reflect"))
     testImplementation(project(":kotlin-metadata-jvm"))
+    testImplementation(project(":plugins:jvm-abi-gen"))
     testImplementation(kotlinTest("junit5"))
     testImplementation(project(":compiler:ir.backend.common"))
     testImplementation(project(":compiler:cli"))
@@ -109,7 +110,6 @@ projectTests {
     }
 
     withJvmStdlibAndReflect()
-    withScriptRuntime()
     withTestJar()
     withMockJdkAnnotationsJar()
 }

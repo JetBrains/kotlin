@@ -20,8 +20,7 @@ internal enum class OsType(val osName: String) {
     FREEBSD("linux"), // https://github.com/node-gradle/gradle-node-plugin/issues/178
 }
 
-internal fun parsePlatform(name: String, arch: String, uname: Provider<String>): Platform {
-    val osType = parseOsType(name)
+internal fun parsePlatform(osType: OsType, arch: String, uname: Provider<String>): Platform {
     val osArch = if (osType == OsType.WINDOWS) parseWindowsArch(arch.lowercase(), uname)
     else parseOsArch(arch.lowercase(), uname)
 

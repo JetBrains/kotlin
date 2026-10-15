@@ -1,0 +1,44 @@
+FILE[kind=Facade[packageFqName=one.two, facadeFqName=one.two.DeepNestingInsideNamelessLocalClassesKt]]
+  facadeFqName: one.two.DeepNestingInsideNamelessLocalClassesKt
+  partSimpleName: "DeepNestingInsideNamelessLocalClassesKt"
+  PACKAGE_DIRECTIVE
+    DOT_QUALIFIED_EXPRESSION
+      REFERENCE_EXPRESSION[referencedName=one]
+      REFERENCE_EXPRESSION[referencedName=two]
+  IMPORT_LIST
+  FUNCTION[fqName=one.two.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
+    VALUE_PARAMETER_LIST
+    CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=Local, superNames=[]]
+      CLASS_BODY
+        OBJECT_DECLARATION[classId=null, fqName=null, isObjectLiteral=false, isTopLevel=false, name=null, superNames=[]]
+          CLASS_BODY
+            CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=A, superNames=[]]
+              CLASS_BODY
+                OBJECT_DECLARATION[classId=null, fqName=null, isObjectLiteral=false, isTopLevel=false, name=null, superNames=[]]
+                  CLASS_BODY
+                    CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=B, superNames=[]]
+    CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=null, superNames=[]]
+      CLASS_BODY
+        CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=Nested, superNames=[]]
+          CLASS_BODY
+            CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=null, superNames=[]]
+              CLASS_BODY
+                CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=C, superNames=[]]
+  OBJECT_DECLARATION[classId=one/two/<no name provided>, fqName=one.two.<no name provided>, isObjectLiteral=false, isTopLevel=true, name=null, superNames=[]]
+    CLASS_BODY
+      FUNCTION[fqName=one.two.<no name provided>.bar, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=bar]
+        VALUE_PARAMETER_LIST
+        CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=Local, superNames=[]]
+          CLASS_BODY
+            OBJECT_DECLARATION[classId=null, fqName=null, isObjectLiteral=false, isTopLevel=false, name=null, superNames=[]]
+              CLASS_BODY
+                CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=D, superNames=[]]
+      PROPERTY[fqName=one.two.<no name provided>.property, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=property]
+        OBJECT_LITERAL
+          OBJECT_DECLARATION[classId=null, fqName=null, isObjectLiteral=true, isTopLevel=false, name=null, superNames=[]]
+            CLASS_BODY
+              CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=E, superNames=[]]
+      CLASS_INITIALIZER
+        CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=null, superNames=[]]
+          CLASS_BODY
+            CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=F, superNames=[]]

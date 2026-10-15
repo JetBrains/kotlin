@@ -190,8 +190,9 @@ class PostponedArgumentsAnalyzer(
         @OptIn(FirIdeOnly::class) // ConeContextSensitiveAlternativeForQualifierAtom can only be created in IDE mode
         val resolvedShortNameExpression =
             resolutionContext.bodyResolveContext.withReturnTypeCalculator(ReturnTypeCalculator.AlreadyComputedOrError) {
-                resolutionContext.bodyResolveComponents.runContextSensitiveResolutionForPropertyAccess(
+                resolutionContext.bodyResolveComponents.runContextSensitiveResolutionForSimpleName(
                     atom.alternative,
+                    atom.alternative.calleeReference.name,
                     substitutedExpectedType,
                 )
             }

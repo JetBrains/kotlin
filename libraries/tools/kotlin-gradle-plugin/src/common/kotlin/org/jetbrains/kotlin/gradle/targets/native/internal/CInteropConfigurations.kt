@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.categoryByName
 import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.archive.usesPlatformKlibsOf
 import org.jetbrains.kotlin.gradle.plugin.usesPlatformOf
 import org.jetbrains.kotlin.gradle.targets.KotlinTargetSideEffect
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropKlibLibraryElements.cinteropKlibLibraryElements
@@ -50,7 +51,7 @@ internal fun Project.locateOrCreateCInteropDependencyConfiguration(
 
         /* Deferring attributes to wait for compilation.attributes to be configured by user */
         launchInStage(AfterFinaliseDsl) {
-            usesPlatformOf(compilation.target)
+            usesPlatformKlibsOf(compilation.target)
             compilation.copyAttributesTo(project.providers, dest = attributes)
             attributes.attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, cinteropKlibLibraryElements())
             attributes.attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_CINTEROP))

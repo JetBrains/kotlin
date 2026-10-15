@@ -9,10 +9,10 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.TokenType
 import com.intellij.psi.impl.source.tree.TreeUtil
 import com.intellij.psi.util.PsiUtilCore
-import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaBuiltinsModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
@@ -21,9 +21,7 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.*
 
 
-context(_: KaSession)
-internal fun KaClassSymbol.shouldNotBeVisibleAsLightClass(): Boolean {
-    val containingModule = containingModule
+internal fun KaClassSymbol.shouldNotBeVisibleAsLightClass(containingModule: KaModule): Boolean {
     if ((containingModule as? KaDanglingFileModule)?.isCodeFragment == true) {
         // Avoid building light classes for code fragments
         return true
@@ -38,14 +36,14 @@ internal fun KaClassSymbol.shouldNotBeVisibleAsLightClass(): Boolean {
         return true
     }
 
-    val classOrObjectPsi = sourcePsiSafe<KtClassOrObject>()
-    if (isLocal && classOrObjectPsi != null) {
-        if ((containingFile?.realPsi as? KtFile)?.originalFile?.virtualFile == null) return true
-        if (hasParseErrorsAround(classOrObjectPsi) || PsiUtilCore.hasErrorElementChild(classOrObjectPsi)) return true
-        if (classDeclaredInUnexpectedPosition(classOrObjectPsi)) return true
+    if (!isLocal) {
+        return false
     }
 
-    return false
+    val classOrObjectPsi = realPsi as? KtClassOrObject ?: return false
+    if (classOrObjectPsi.containingKtFile.originalFile.virtualFile == null) return true
+    if (hasParseErrorsAround(classOrObjectPsi) || PsiUtilCore.hasErrorElementChild(classOrObjectPsi)) return true
+    return classDeclaredInUnexpectedPosition(classOrObjectPsi)
 }
 
 /**

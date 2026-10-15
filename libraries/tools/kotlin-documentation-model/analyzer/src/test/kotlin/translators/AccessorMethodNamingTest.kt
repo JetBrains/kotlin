@@ -6,6 +6,7 @@ package translators
 
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.jetbrains.dokka.model.DProperty
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInAnalysisApi
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -14,6 +15,7 @@ import kotlin.test.assertTrue
  * https://kotlinlang.org/docs/java-to-kotlin-interop.html#properties
  * https://kotlinlang.org/docs/java-interop.html#getters-and-setters
  */
+@MustRunOnChangesInAnalysisApi
 class AccessorMethodNamingTest : BaseAbstractTest() {
 
     @Test

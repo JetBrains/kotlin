@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
-import org.jetbrains.kotlin.gradle.internal.*
 import org.jetbrains.kotlin.gradle.internal.tasks.TaskWithLocalState
 import org.jetbrains.kotlin.gradle.plugin.COMPILER_CLASSPATH_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer
@@ -33,14 +32,12 @@ import org.jetbrains.kotlin.gradle.utils.fileExtensionCasePermutations
 import org.jetbrains.kotlin.gradle.utils.property
 import javax.inject.Inject
 
-@Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
 @DisableCachingByDefault(because = "Abstract super-class, not to be instantiated directly")
 abstract class AbstractKotlinCompileTool<T : CommonToolArguments> @Inject constructor(
     objectFactory: ObjectFactory,
 ) : DefaultTask(),
     KotlinCompileTool,
     KotlinCompilerArgumentsProducer,
-    DeprecatedCompilerArgumentAware<T>,
     TaskWithLocalState {
 
     @Internal
@@ -143,4 +140,6 @@ abstract class AbstractKotlinCompileTool<T : CommonToolArguments> @Inject constr
             "Default Kotlin compiler classpath is empty! Task: $path (${this::class.qualifiedName})"
         }
     }
+
+    abstract override fun createCompilerArguments(context: KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext): T
 }

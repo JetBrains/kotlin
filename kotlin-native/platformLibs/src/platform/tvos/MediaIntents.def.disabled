@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.MediaIntents
+
+modules = MediaIntents
+compilerOpts = -framework MediaIntents
+linkerOpts = -framework MediaIntents
+#Disabled: Swift-only framework

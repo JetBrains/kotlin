@@ -1,9 +1,9 @@
 import com.github.gradle.node.npm.task.NpmTask
+import org.gradle.kotlin.dsl.support.serviceOf
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
-import org.jetbrains.kotlin.testFederation.SmokeTestConfig
-import org.jetbrains.kotlin.testFederation.smokeTestConfig
+import org.jetbrains.kotlin.testFederation.testFederation
 import java.util.*
 
 plugins {
@@ -109,8 +109,11 @@ sourceSets {
 val testDataDir = project(":js:js.translator").projectDir.resolve("testData")
 
 fun Test.setUpJsBoxTests() {
-    with(nodeJsKotlinBuild) {
-        setupNodeJs(nodejsVersion)
+    val buildFeatures = project.serviceOf<BuildFeatures>()
+    if (!buildFeatures.isolatedProjects.active.get()) {
+        with(nodeJsKotlinBuild) {
+            setupNodeJs(nodejsVersion)
+        }
     }
 
     dependsOn(npmInstall)
@@ -121,7 +124,11 @@ fun Test.setUpJsBoxTests() {
 
     forwardProperties()
 
-    smokeTestConfig = SmokeTestConfig.Enabled(autoSmokeTestPercentage = 1)
+    testFederation {
+        smokeTests {
+            includeAutoSamples(percentage = 1)
+        }
+    }
 }
 
 fun Test.forwardProperties() {
@@ -202,7 +209,6 @@ projectTests {
     withWasmRuntime()
 }
 
-testsJar {}
 
 val testJsFile = testDataDir.resolve("test.js")
 val packageJsonFile = testDataDir.resolve("package.json")

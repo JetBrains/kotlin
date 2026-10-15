@@ -46,8 +46,12 @@ class KtImportAlias : KtElementImplStub<KotlinImportAliasStub>, PsiNameIdentifie
 
     override fun getName(): String? = greenStub?.getName() ?: nameIdentifier?.text
 
-    @OptIn(KtNonPublicApi::class)
-    override fun setName(name: String): PsiElement = KtPsiMutationService.getInstance().setImportAliasName(this, name)
+    @OptIn(KtIdeApi::class)
+    override fun setName(name: String): PsiElement {
+        KtPsiMutationService.getInstanceOrNull()?.let { return it.setImportAliasName(this, name) }
+        nameIdentifier?.replace(KtPsiFactory(project).createNameIdentifier(name))
+        return this
+    }
 
     override fun getNameIdentifier(): PsiElement? = findChildByType(KtTokens.IDENTIFIER)
 

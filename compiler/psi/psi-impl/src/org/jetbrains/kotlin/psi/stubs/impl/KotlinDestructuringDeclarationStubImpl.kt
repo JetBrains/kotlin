@@ -16,6 +16,8 @@ internal class KotlinDestructuringDeclarationStubImpl(
     parent: StubElement<*>?,
     override val isVar: Boolean,
     override val hasInitializer: Boolean,
+    override val hasSquareBrackets: Boolean,
+    override val isFullForm: Boolean,
 ) : KotlinStubBaseImpl<KtDestructuringDeclaration>(parent, KtNodeTypes.DESTRUCTURING_DECLARATION),
     KotlinDestructuringDeclarationStub {
 
@@ -25,11 +27,15 @@ internal class KotlinDestructuringDeclarationStubImpl(
             parent = newParent,
             isVar = isVar,
             hasInitializer = hasInitializer,
+            hasSquareBrackets = hasSquareBrackets,
+            isFullForm = isFullForm,
         )
 
     @KtImplementationDetail
     override fun isEquivalentTo(other: KotlinStubElement<*>): Boolean =
         other is KotlinDestructuringDeclarationStubImpl &&
                 other.isVar == isVar &&
-                other.hasInitializer == hasInitializer
+                other.hasInitializer == hasInitializer &&
+                other.hasSquareBrackets == hasSquareBrackets &&
+                other.isFullForm == isFullForm
 }

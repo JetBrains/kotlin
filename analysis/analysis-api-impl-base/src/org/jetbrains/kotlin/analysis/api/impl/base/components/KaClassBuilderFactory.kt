@@ -11,8 +11,9 @@ import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.ClassBuilderFactory
 import org.jetbrains.kotlin.codegen.DelegatingClassBuilder
 import org.jetbrains.kotlin.codegen.DelegatingClassBuilderFactory
-import org.jetbrains.kotlin.ir.PsiSourceManager
+import org.jetbrains.kotlin.ir.PsiIrFileEntry
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.util.fileOrNull
 
 @KaImplementationDetail
 class KaClassBuilderFactory private constructor(
@@ -39,8 +40,12 @@ class KaClassBuilderFactory private constructor(
             override fun defineClass(
                 version: Int, access: Int, name: String, signature: String?, superName: String, interfaces: Array<out String?>,
             ) {
-                val element = origin?.let(PsiSourceManager::findPsiElement)
-                compiledClassHandler.handleClassDefinition(element?.containingFile, name)
+                val psiElement = origin?.let { origin ->
+                    origin.fileOrNull?.let { irFile ->
+                        (irFile.fileEntry as? PsiIrFileEntry)?.findPsiElement(origin)
+                    }
+                }
+                compiledClassHandler.handleClassDefinition(psiElement?.containingFile, name)
                 super.defineClass(version, access, name, signature, superName, interfaces)
             }
         }

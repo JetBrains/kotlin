@@ -778,7 +778,8 @@ private val debugFriendlyOrigins: Set<IrDeclarationOrigin> = hashSetOf(
     AbstractSuspendFunctionsLowering.DECLARATION_ORIGIN_COROUTINE_IMPL_INVOKE,
     ENUM_ENTRIES_INITIALIZER_ORIGIN,
     SecondaryConstructorLowering.SECONDARY_CONSTRUCTOR_INIT_ORIGIN,
-    WebStaticInitializersDeclarationLowering.STATIC_CLASS_INITIALIZER
+    WebStaticInitializersDeclarationLowering.STATIC_CLASS_INITIALIZER,
+    WebCallableReferenceLowering.LIFTED_CALLABLE_REFERENCE_FUNCTION,
 )
 
 val IrDeclaration.isInlinedCode: Boolean
@@ -790,6 +791,7 @@ val IrDeclaration.isStdlibDeclaration: Boolean
 val IrDeclaration.isArtificialDeclarationOfLambdaImpl: Boolean
     get() = parentClassOrNull?.origin == WebCallableReferenceLowering.LAMBDA_IMPL &&
             origin != IrDeclarationOrigin.DEFINED &&
+            origin != WebCallableReferenceLowering.LIFTED_CALLABLE_REFERENCE_FUNCTION &&
             origin != AbstractSuspendFunctionsLowering.DECLARATION_ORIGIN_COROUTINE_IMPL_INVOKE
 
 val IrSymbol?.shouldIgnore: Boolean

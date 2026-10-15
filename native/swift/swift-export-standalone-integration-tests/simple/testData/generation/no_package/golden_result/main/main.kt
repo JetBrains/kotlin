@@ -5,6 +5,6 @@ import kotlinx.cinterop.*
 
 @ExportedBridge("__root___meaningOfLife")
 public fun __root___meaningOfLife(): Int {
-    val _result = run { meaningOfLife() }
+    val _result = meaningOfLife()
     return _result
 }

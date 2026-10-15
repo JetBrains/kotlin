@@ -1,0 +1,24 @@
+FILE[kind=File[packageFqName=one.two]]
+  PACKAGE_DIRECTIVE
+    DOT_QUALIFIED_EXPRESSION
+      REFERENCE_EXPRESSION[referencedName=one]
+      REFERENCE_EXPRESSION[referencedName=two]
+  IMPORT_LIST
+  OBJECT_DECLARATION[classId=one/two/<no name provided>, fqName=one.two.<no name provided>, isObjectLiteral=false, isTopLevel=true, name=null, superNames=[]]
+    CLASS_BODY
+      CLASS[classId=one/two/<no name provided>.A, fqName=one.two.<no name provided>.A, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=A, superNames=[]]
+      OBJECT_DECLARATION[classId=one/two/<no name provided>.B, fqName=one.two.<no name provided>.B, isObjectLiteral=false, isTopLevel=false, name=B, superNames=[]]
+      TYPEALIAS[classId=one/two/<no name provided>.C, fqName=one.two.<no name provided>.C, isTopLevel=false, name=C]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=Int]
+  CLASS[classId=one/two/Outer, fqName=one.two.Outer, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Outer, superNames=[]]
+    CLASS_BODY
+      OBJECT_DECLARATION[classId=one/two/Outer.<no name provided>, fqName=one.two.Outer.<no name provided>, isObjectLiteral=false, isTopLevel=false, name=null, superNames=[]]
+        CLASS_BODY
+          CLASS[classId=one/two/Outer.<no name provided>.A, fqName=one.two.Outer.<no name provided>.A, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=A, superNames=[]]
+          OBJECT_DECLARATION[classId=one/two/Outer.<no name provided>.B, fqName=one.two.Outer.<no name provided>.B, isObjectLiteral=false, isTopLevel=false, name=B, superNames=[]]
+          TYPEALIAS[classId=one/two/Outer.<no name provided>.C, fqName=one.two.Outer.<no name provided>.C, isTopLevel=false, name=C]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Int]

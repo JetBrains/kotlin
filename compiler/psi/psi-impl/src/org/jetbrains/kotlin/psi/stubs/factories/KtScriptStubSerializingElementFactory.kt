@@ -25,22 +25,18 @@ internal object KtScriptStubSerializingElementFactory :
     override fun createStub(psi: KtScript, parentStub: StubElement<*>?): KotlinScriptStubImpl = KotlinScriptStubImpl(
         parent = parentStub,
         fqNameRef = StringRef.fromString(psi.fqName.asString())!!,
-        isReplSnippet = psi.isReplSnippet,
     )
 
     override fun serialize(stub: KotlinScriptStubImpl, dataStream: StubOutputStream) {
         dataStream.writeName(stub.fqName.asString())
-        dataStream.writeBoolean(stub.isReplSnippet)
     }
 
     override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>?): KotlinScriptStubImpl {
         val fqName = dataStream.readName()!!
-        val isReplSnippet = dataStream.readBoolean()
 
         return KotlinScriptStubImpl(
             parent = parentStub,
             fqNameRef = fqName,
-            isReplSnippet = isReplSnippet,
         )
     }
 

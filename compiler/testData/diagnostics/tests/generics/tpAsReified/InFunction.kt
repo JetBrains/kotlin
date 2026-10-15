@@ -18,7 +18,7 @@ fun <A> main() {
     val b: Int = f()
     f<Int>()
 
-    val с: A = id(<!TYPE_PARAMETER_AS_REIFIED!>f<!>())
+    val c: A = id(<!TYPE_PARAMETER_AS_REIFIED!>f<!>())
 }
 
 /* GENERATED_FIR_TAGS: callableReference, functionDeclaration, inline, localProperty, nullableType, propertyDeclaration,

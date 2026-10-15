@@ -1,0 +1,4 @@
+FILE: typeParametersOnAnonymousObject.kt
+    public? final? val x: <implicit> = LAZY_EXPRESSION
+        public? get(): <implicit>
+    public? final? fun <R> test(): R|kotlin/Unit| { LAZY_BLOCK }

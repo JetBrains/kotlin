@@ -38,6 +38,11 @@ CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:IntArray modality:FINAL visibility
     VALUE_PARAMETER kind:Regular name:index index:1 type:kotlin.Int
   FUN IR_EXTERNAL_DECLARATION_STUB name:iterator visibility:public modality:FINAL returnType:kotlin.collections.IntIterator [operator]
     VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.IntArray
+  FUN IR_EXTERNAL_DECLARATION_STUB name:of visibility:public modality:FINAL returnType:kotlin.IntArray [operator,companion]
+    VALUE_PARAMETER kind:Regular name:elements index:0 type:kotlin.IntArray varargElementType:kotlin.Int [vararg]
+    annotations:
+      SinceKotlin(version = "2.5")
+      ExperimentalCollectionLiteralsApi
   FUN IR_EXTERNAL_DECLARATION_STUB name:set visibility:public modality:FINAL returnType:kotlin.Unit [operator]
     VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.IntArray
     VALUE_PARAMETER kind:Regular name:index index:1 type:kotlin.Int

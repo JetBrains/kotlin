@@ -8,8 +8,9 @@ package org.jetbrains.kotlin.kapt.test
 import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUnit5
 
 fun main(args: Array<String>) {
+    val testsRoot = args[0]
     generateTestGroupSuiteWithJUnit5(args) {
-        testGroup("plugins/kapt/kapt-compiler/tests-gen", "plugins/kapt/kapt-compiler/testData") {
+        testGroup(testsRoot, "plugins/kapt/kapt-compiler/testData") {
             testClass<AbstractIrKotlinKaptContextTest> {
                 model("kotlinRunner")
             }
@@ -20,6 +21,11 @@ fun main(args: Array<String>) {
             }
             testClass<AbstractKaptStubConverterDirectTest>(
                 suiteTestClassName = "KaptStubConverterDirectTestGenerated",
+            ) {
+                model("converter")
+            }
+            testClass<AbstractKaptStubConverterDirectWithCollectionLiteralsTest>(
+                suiteTestClassName = "KaptStubConverterDirectWithCollectionLiteralsTestGenerated",
             ) {
                 model("converter")
             }

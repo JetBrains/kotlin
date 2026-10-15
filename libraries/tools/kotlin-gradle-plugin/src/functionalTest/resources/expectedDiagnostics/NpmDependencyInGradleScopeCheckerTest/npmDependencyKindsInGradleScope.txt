@@ -1,0 +1,11 @@
+[NpmDependencyInGradleScope | WARNING] NPM dependencies are declared in Gradle dependency scopes
+NPM dependencies are passed to Gradle dependency scopes:
+    - 'jsMain' source set: implementation(devNpm("karma", "6.4.0"))
+    - 'jsMain' source set: implementation(optionalNpm("is-even", "1.0.0"))
+    - 'jsMain' source set: implementation(peerNpm("react", "18.0.0"))
+
+This is deprecated. Declare NPM dependencies just by calling npm, npmDev, npmOptional and so on.
+Don't wrap them to Gradle dependency scopes api, implementation, runtimeOnly etc.
+Replace 'implementation(devNpm("karma", "6.4.0"))' with 'npmDev("karma", "6.4.0")' in the 'jsMain' source set.
+Replace 'implementation(optionalNpm("is-even", "1.0.0"))' with 'npmOptional("is-even", "1.0.0")' in the 'jsMain' source set.
+Replace 'implementation(peerNpm("react", "18.0.0"))' with 'npmPeer("react", "18.0.0")' in the 'jsMain' source set.

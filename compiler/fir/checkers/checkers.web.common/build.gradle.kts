@@ -7,8 +7,7 @@ plugins {
 }
 
 dependencies {
-    api(project(":compiler:fir:checkers"))
-    implementation(project(":compiler:fir:diagnostic-renderers"))
+    api(project(":compiler:fir:checkers:checkers.common"))
     implementation(project(":core:compiler.common.web"))
 
     /*

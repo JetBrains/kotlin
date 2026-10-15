@@ -73,7 +73,7 @@ interface KtDoubleColonExpression : KtExpression, KtResolvable {
         ),
         level = DeprecationLevel.ERROR,
     )
-    @OptIn(KtNonPublicApi::class)
+    @OptIn(KtIdeApi::class)
     fun setReceiverExpression(newReceiverExpression: KtExpression) {
         KtPsiMutationService.getInstance().setDoubleColonReceiverExpression(this, newReceiverExpression)
     }

@@ -88,7 +88,7 @@ class JsLikeDiagnosticsFunctionalTest {
         val project = buildProjectWithMPP {
             kotlin {
                 wasmWasi {
-                    nodejs()
+                    wasmtime()
                 }
             }
         }

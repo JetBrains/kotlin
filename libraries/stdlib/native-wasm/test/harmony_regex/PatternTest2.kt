@@ -23,6 +23,8 @@ package test.text.harmony_regex
 
 import kotlin.text.*
 import kotlin.test.*
+import kotlin.text.unicode.ExperimentalUnicodeApi
+import kotlin.text.unicode.codePointAt
 
 class PatternTest2 {
 
@@ -1253,7 +1255,8 @@ class PatternTest2 {
         }
     }
 
-    private fun String.formatFirstCodePoint(): String = codePointAt(0).toHexString(unicodeCodePointFmt)
+    @OptIn(ExperimentalUnicodeApi::class)
+    private fun String.formatFirstCodePoint(): String = codePointAt(0).code.toHexString(unicodeCodePointFmt)
 
     private fun categoryPatternVariants(category: String): List<Regex> = listOf(
         Regex("\\p{$category}"),

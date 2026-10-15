@@ -447,6 +447,7 @@ private class KaptExecution @Inject constructor(
             mode,
             detectMemoryLeaksMode,
             stubGenerationSchemeEnum,
+            /*stubWriterThreads=*/1, // this task only runs annotation processing, the stubs are written by kaptGenerateStubs
 
             processingClassLoader,
             disableClassloaderCacheForProcessors,

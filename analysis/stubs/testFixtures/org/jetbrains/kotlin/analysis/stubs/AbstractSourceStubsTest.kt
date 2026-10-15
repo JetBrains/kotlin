@@ -6,7 +6,10 @@
 package org.jetbrains.kotlin.analysis.stubs
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.LLSourceLikeTestConfigurator
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.testFederation.MustRunAlways
 
 /**
@@ -17,4 +20,15 @@ abstract class AbstractSourceStubsTest : AbstractStubsTest() {
     override val outputFileExtension: String get() = "stubs.txt"
     override val configurator: AnalysisApiTestConfigurator = LLSourceLikeTestConfigurator()
     override val stubsTestEngine: StubsTestEngine get() = SourceStubsTestEngine
+
+    override fun doTestByMainModuleAndOptionalMainFile(mainFile: KtFile?, mainModule: KtTestModule, testServices: TestServices) {
+        super.doTestByMainModuleAndOptionalMainFile(mainFile, mainModule, testServices)
+
+        for (file in mainModule.ktFiles) {
+            forceStubTree(file, testServices)
+            val stubBasedLocality = collectStubBasedClassLocality(file)
+            file.calcTreeElement()
+            assertClassLocalityMatchesAst(stubBasedLocality, testServices)
+        }
+    }
 }

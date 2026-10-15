@@ -36,7 +36,6 @@ fun KGPBaseTest.resourcesProducerProject(
     buildJdk = providedJdk?.location,
     buildOptions = defaultBuildOptions
         .copy(androidVersion = androidVersion, configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED)
-        .suppressAgpWarningIsProperty(gradleVersion)
         .disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
 ) {
     addKgpToBuildScriptCompilationClasspath()

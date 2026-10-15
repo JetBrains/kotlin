@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingK2CompilerPluginRegistrar
+import org.jetbrains.kotlin.scripting.compiler.plugin.requiresLegacyScriptRuntime
 import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.ScriptsCompilationDependencies
 import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.collectScriptsCompilationDependencies
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
@@ -251,7 +252,9 @@ private fun createInitialCompilerConfiguration(
 
         if (!baseArguments.noStdlib) {
             addModularRootIfNotNull(isModularJava, "kotlin.stdlib", KotlinJars.stdlib)
-            addModularRootIfNotNull(isModularJava, "kotlin.script.runtime", KotlinJars.scriptRuntimeOrNull)
+            if (scriptCompilationConfiguration.requiresLegacyScriptRuntime) {
+                addModularRootIfNotNull(isModularJava, "kotlin.script.runtime", KotlinJars.scriptRuntimeOrNull)
+            }
         }
         // see comments about logic in CompilerConfiguration.configureStandardLibs
         if (!baseArguments.noReflect && !baseArguments.noStdlib) {

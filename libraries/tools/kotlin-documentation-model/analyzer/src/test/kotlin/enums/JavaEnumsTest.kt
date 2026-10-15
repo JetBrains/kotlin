@@ -6,9 +6,11 @@ package enums
 
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.jetbrains.dokka.model.DEnum
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInAnalysisApi
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
+@MustRunOnChangesInAnalysisApi
 class JavaEnumsTest : BaseAbstractTest() {
 
     private val basicConfiguration = dokkaConfiguration {

@@ -30,3 +30,5 @@ static my_struct_t do_my_struct_t(my_struct_t x) {
 static my_struct_t* do_my_struct_t_ptr(my_struct_t* x) {
    return x;
 }
+
+static int my_int_var = 0;

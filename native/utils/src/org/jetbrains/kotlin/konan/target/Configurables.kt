@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.konan.target
 
 import org.jetbrains.kotlin.konan.properties.*
+import java.util.Locale
+import java.util.Locale.getDefault
 
 interface RelocationModeFlags : TargetableExternalStorage {
     val dynamicLibraryRelocationMode get() = targetString("dynamicLibraryRelocationMode").mode()
@@ -24,7 +26,7 @@ interface RelocationModeFlags : TargetableExternalStorage {
     val executableRelocationMode get() = targetString("executableRelocationMode").mode()
 
     @Suppress("DEPRECATION")
-    private fun String?.mode(): Mode = when (this?.toLowerCase()) {
+    private fun String?.mode(): Mode = when (this?.lowercase(getDefault())) {
         null -> Mode.DEFAULT
         "pic" -> Mode.PIC
         "static" -> Mode.STATIC

@@ -9,6 +9,7 @@ plugins {
 kotlin {
     @OptIn(ExperimentalKotlinGradlePluginApi::class, ExperimentalBuildToolsApi::class)
     compilerVersion = embeddedKotlinVersion
+    @Suppress("DEPRECATION")
     coreLibrariesVersion = embeddedKotlinVersion
     jvmToolchain(17)
     compilerOptions.allWarningsAsErrors = true
@@ -17,6 +18,7 @@ kotlin {
 dependencies {
     implementation(project(":buildsrc-compat"))
     implementation(kotlinBuildHelpers())
+    implementation(libs.spdx.gradlePlugin)
     compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin:${project.bootstrapKotlinVersion}")
 }
 

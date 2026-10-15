@@ -11,11 +11,13 @@ import org.jetbrains.dokka.model.Annotations
 import org.jetbrains.dokka.model.InheritedMember
 import org.jetbrains.dokka.model.IsVar
 import org.jetbrains.dokka.model.isJvmField
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInAnalysisApi
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 
+@MustRunOnChangesInAnalysisApi
 class PsiSuperFieldsTest : BaseAbstractTest() {
 
     private val commonTestConfiguration = dokkaConfiguration {

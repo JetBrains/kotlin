@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.AnalysisFlags.allowFullyQualifiedNameInKClass
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
+import org.jetbrains.kotlin.platform.wasm.isWasm
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.checkTestInfrastructure
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.INFER_MAIN_MODULE
@@ -107,6 +108,8 @@ class WasmFirstStageEnvironmentConfigurator(
 
     // TODO KT-85876: this is in large part a duplicate of JsFirstStageEnvironmentConfigurator, refactor this
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
+        if (!module.targetPlatform(testServices).isWasm()) return
+
         super.configureCompilerConfiguration(configuration, module)
         configuration.phaseConfig = createJsTestPhaseConfig(testServices, module)
 

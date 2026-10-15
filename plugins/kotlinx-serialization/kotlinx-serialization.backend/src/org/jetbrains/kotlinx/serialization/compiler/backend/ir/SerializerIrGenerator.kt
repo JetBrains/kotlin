@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.backend.jvm.functionByName
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.ValueClassBackendAgnosticApi
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.*
@@ -635,7 +634,6 @@ open class SerializerIrGenerator(
         getSubstitutedType(serializableIrClass, irClass)
 
     companion object {
-        @OptIn(ValueClassBackendAgnosticApi::class)
         fun generate(
             irClass: IrClass,
             context: SerializationPluginContext,
@@ -646,7 +644,7 @@ open class SerializerIrGenerator(
             }
             val generator = when {
                 serializableDesc.isEnumWithLegacyGeneratedSerializer() -> SerializerForEnumsGenerator(irClass, context)
-                serializableDesc.isInlineClass(treatCompatibleFullValueClassesAsInline = !context.platform.isJvm()) ->
+                serializableDesc.isSerializedAsInlineClass(isJvm = context.platform.isJvm()) ->
                     SerializerForInlineClassGenerator(irClass, context)
                 else -> SerializerIrGenerator(irClass, context)
             }

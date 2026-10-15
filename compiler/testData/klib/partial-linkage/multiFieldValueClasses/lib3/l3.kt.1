@@ -1,0 +1,19 @@
+value class OneToTwoParams(val first: Int, val second: Int = 0) {
+    constructor(first: Int) : this(first, 0)
+}
+
+value class TwoToOneParams(val first: Int) {
+    constructor(first: Int, second: Int) : this(first)
+}
+
+abstract value class MfvcToAbstract(first: Int, second: Int)
+
+value class AbstractToMfvc(val first: Int, val second: Int)
+
+value class ClassToMfvc(val first: Int, val second: Int)
+
+class MfvcToClass(val first: Int, val second: Int)
+
+value class MfvcVersionOverload(val first: Int, @IntroducedAt("1") val second: Int = 0)
+
+abstract value class StaysValue

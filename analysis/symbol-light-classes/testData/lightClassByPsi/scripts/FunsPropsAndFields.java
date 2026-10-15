@@ -1,4 +1,4 @@
-public final class FunsPropsAndFields /* FunsPropsAndFields*/ extends kotlin.script.templates.standard.ScriptTemplateWithArgs {
+public final class FunsPropsAndFields /* FunsPropsAndFields*/ extends kotlin.script.experimental.templates.ScriptWithArgs {
   @kotlin.jvm.JvmField()
   public final int testField = 42 /* initializer type: int */;
 

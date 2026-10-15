@@ -95,8 +95,10 @@ public class SirVisibilityCheckerImpl(
             // `toString`, `hashCode` and `equals` pre provided as `description`, `hash`, and `isEqual` by KotlinBase.
             return@withSessions SirAvailability.Unavailable("kotlin.Any members are exposed as through KotlinBase")
         }
-        if ((ktSymbol.containingSymbol as? KaDeclarationSymbol?)?.sirAvailability() is SirAvailability.Unavailable) {
-            return@withSessions SirAvailability.Unavailable("Declaration's lexical parent is unavailable")
+        when (val parentAvailability = (ktSymbol.containingSymbol as? KaDeclarationSymbol?)?.sirAvailability()) {
+            is SirAvailability.Unavailable -> return@withSessions SirAvailability.Unavailable("Declaration's lexical parent is unavailable")
+            is SirAvailability.Available -> visibility.value = parentAvailability.visibility
+            is SirAvailability.Hidden, null -> {}
         }
         if (ktSymbol.hasNonPublicOptIns) {
             return@withSessions SirAvailability.Unavailable("Declarations with non-public OptIn requirements are unsupported")
@@ -207,6 +209,10 @@ public class SirVisibilityCheckerImpl(
         if (classKind == KaClassKind.ANNOTATION_CLASS || classKind == KaClassKind.ANONYMOUS_OBJECT) {
             return@withSessions SirAvailability.Unavailable("Annotation or Anonymous")
         }
+        if (isKotlinObjCClass()) {
+            unsupportedDeclarationReporter.report(this@isExported, "Kotlin subclasses of Objective-C classes are not supported.")
+            return@withSessions SirAvailability.Unavailable("Kotlin subclass of an Objective-C class")
+        }
         if (classKind == KaClassKind.ENUM_CLASS) {
             if (superTypes.any { it.symbol?.classId?.asSingleFqName() == FqName("kotlinx.cinterop.CEnum") }) {
                 unsupportedDeclarationReporter.report(this@isExported, "C enums are not supported yet.")
@@ -256,6 +262,19 @@ public class SirVisibilityCheckerImpl(
             val parent = containingSymbol as? KaClassSymbol ?: return false
             return isStatic && name == StandardNames.ENUM_VALUE_OF && parent.classKind == KaClassKind.ENUM_CLASS
         }
+    }
+
+    private fun KaNamedClassSymbol.isKotlinObjCClass(): Boolean = sirSession.withSessions {
+        val externalObjCClassClassId = ClassId.fromString("kotlinx/cinterop/ExternalObjCClass")
+        val objCObjectClassId = ClassId.fromString("kotlinx/cinterop/ObjCObject")
+
+        if (origin == KaSymbolOrigin.NATIVE_FORWARD_DECLARATION) return@withSessions false
+        if (classId?.packageFqName == objCObjectClassId.packageFqName) return@withSessions false
+
+        val isImportedFromObjC = generateSequence<KaClassSymbol>(this@isKotlinObjCClass) { it.containingSymbol as? KaClassSymbol }
+            .any { externalObjCClassClassId in it.annotations }
+
+        !isImportedFromObjC && defaultType.allSupertypes.any { it.symbol?.classId == objCObjectClassId }
     }
 
     private fun KaNamedClassSymbol.isAllContainingSymbolsExported(): Boolean = sirSession.withSessions {

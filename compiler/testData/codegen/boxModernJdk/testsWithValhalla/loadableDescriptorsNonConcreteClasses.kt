@@ -1,0 +1,29 @@
+// ISSUE: KT-89986
+// VALHALLA_VALUE_CLASSES
+// LANGUAGE: +FullValueClasses
+// CHECK_BYTECODE_TEXT
+
+// FILE: JavaAbstractVal.java
+public abstract value class JavaAbstractVal {}
+
+// FILE: test.kt
+import java.time.ZoneId
+import java.time.ZoneOffset
+
+abstract value class AbstractVal
+sealed value class SealedVal
+value class SealedChild(val x: Int) : SealedVal()
+
+class AbstractHolder(val a: AbstractVal?, val s: SealedVal?, val j: JavaAbstractVal?, val r: Record?, val n: Number?)
+
+class JdkIdentityHolder(val v: Runtime.Version?, val z: ZoneId?, val o: ZoneOffset?)
+
+fun box(): String {
+    val a = AbstractHolder(null, SealedChild(1), null, null, 1)
+    if (a.s != SealedChild(1) || a.n != 1) return "AbstractHolder: ${a.s}, ${a.n}"
+    val j = JdkIdentityHolder(Runtime.version(), ZoneId.of("UTC"), ZoneOffset.UTC)
+    if (j.o != ZoneOffset.UTC) return "JdkIdentityHolder: ${j.o}"
+    return "OK"
+}
+
+// 0 ATTRIBUTE LoadableDescriptors

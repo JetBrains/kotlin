@@ -25,8 +25,7 @@ import kotlin.reflect.full.instanceParameter
 fun box(): String {
     if (!JavaVal::class.isValue) return "FAIL: JavaVal::class.isValue should be true"
 
-    // On a Valhalla JDK the raw `Class.isValue()` reports interfaces (and annotations) as value classes, so these guard against a
-    // regression where that leaks into `KClass.isValue` for Java classes without Kotlin metadata.
+    // Java interfaces, enums and annotations without Kotlin metadata are not value classes.
     if (JavaIface::class.isValue) return "FAIL: a Java interface must not be a value class"
     if (JavaEnum::class.isValue) return "FAIL: a Java enum must not be a value class"
     if (JavaAnno::class.isValue) return "FAIL: a Java annotation must not be a value class"

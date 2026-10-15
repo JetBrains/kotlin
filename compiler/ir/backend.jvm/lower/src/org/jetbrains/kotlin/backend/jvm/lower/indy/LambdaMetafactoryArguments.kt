@@ -460,6 +460,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
      * replaced type parameters with copies: the mapped erasures do not change, while IrType equality would.
      */
     private fun isJdkAdaptableParameter(instantiatedType: IrType, implType: IrType): Boolean {
+        if (implType.isInlineClassType() && implType.erasedUpperBound != instantiatedType.erasedUpperBound) return false
         val instantiatedAsmType = context.defaultTypeMapper.mapType(instantiatedType)
         val implAsmType = context.defaultTypeMapper.mapType(implType)
         if (instantiatedAsmType == implAsmType) return true

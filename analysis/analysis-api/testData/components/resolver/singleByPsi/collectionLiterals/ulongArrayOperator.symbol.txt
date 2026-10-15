@@ -1,0 +1,5 @@
+KtCollectionLiteralExpression(37,47): '[1uL, 2uL]'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/ULongArray.of(vararg elements: kotlin.ULong): kotlin.ULongArray
+    ]

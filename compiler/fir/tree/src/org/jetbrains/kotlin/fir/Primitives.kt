@@ -26,6 +26,7 @@ object StandardTypes {
     val Double: ConeClassLikeType = StandardClassIds.Double.createType()
 
     val Any: ConeClassLikeType = StandardClassIds.Any.createType()
+    val RichError: ConeClassLikeType = StandardClassIds.RichError.createType()
     val NullableAny: ConeClassLikeType = StandardClassIds.Any.createType(isNullable = true)
     val Nothing: ConeClassLikeType = StandardClassIds.Nothing.createType()
     val NullableNothing: ConeClassLikeType = StandardClassIds.Nothing.createType(isNullable = true)

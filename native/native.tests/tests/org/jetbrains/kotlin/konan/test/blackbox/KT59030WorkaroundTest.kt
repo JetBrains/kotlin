@@ -145,7 +145,7 @@ class KT59030WorkaroundTest : AbstractNativeSimpleTest() {
             val moduleMetadata = KlibModuleMetadata.readStrict(
                 object : KlibModuleMetadata.MetadataLibraryProvider {
                     override val metadataVersion get() = metadataVersion
-                    override val moduleHeaderData get() = originalMetadata.moduleHeaderData
+                    override val moduleHeaderData get() = originalMetadata.moduleHeaderData ?: error("No metadata header data found")
                     override fun packageMetadataParts(fqName: String) = originalMetadata.getPackageFragmentNames(fqName)
                     override fun packageMetadata(fqName: String, partName: String) = originalMetadata.getPackageFragment(fqName, partName)
                 }

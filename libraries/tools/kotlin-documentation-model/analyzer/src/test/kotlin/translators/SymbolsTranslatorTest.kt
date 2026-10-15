@@ -5,9 +5,11 @@
 package translators
 
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInAnalysisApi
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
+@MustRunOnChangesInAnalysisApi
 class SymbolsTranslatorTest : BaseAbstractTest() {
     val configuration = dokkaConfiguration {
         sourceSets {

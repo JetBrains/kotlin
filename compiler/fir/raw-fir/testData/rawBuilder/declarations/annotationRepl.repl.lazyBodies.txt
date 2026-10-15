@@ -44,7 +44,7 @@ FILE: annotationRepl.repl.kts
                 }
 
                 public final static [ContainingClassKey=My, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<AnnotationRepl_repl.My>|
-                    public static get(): R|kotlin/enums/EnumEntries<AnnotationRepl_repl.My>|
+                    public static [ContainingClassKey=My] get(): R|kotlin/enums/EnumEntries<AnnotationRepl_repl.My>|
 
             }
 
@@ -94,7 +94,7 @@ FILE: annotationRepl.repl.kts
                 }
 
                 public final static [ContainingClassKey=MyDerived, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<AnnotationRepl_repl.MyDerived>|
-                    public static get(): R|kotlin/enums/EnumEntries<AnnotationRepl_repl.MyDerived>|
+                    public static [ContainingClassKey=MyDerived] get(): R|kotlin/enums/EnumEntries<AnnotationRepl_repl.MyDerived>|
 
             }
 

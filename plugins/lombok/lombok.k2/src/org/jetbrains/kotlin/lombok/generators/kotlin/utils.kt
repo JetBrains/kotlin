@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
+import org.jetbrains.kotlin.fir.declarations.getCompilerRequiredAnnotationByClassId
 import org.jetbrains.kotlin.fir.declarations.utils.fromPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
@@ -36,8 +36,8 @@ import org.jetbrains.kotlin.name.SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
  * Annotations on primary constructor val/var params with @Target(FIELD) end up in the
  * backing field's annotation list, not in property.annotations. We must check both.
  */
-fun FirPropertySymbol.findAnnotationOnPropertyOrField(classId: ClassId, session: FirSession): FirAnnotation? =
-    getAnnotationByClassId(classId, session) ?: backingFieldSymbol?.getAnnotationByClassId(classId, session)
+internal fun FirPropertySymbol.findAnnotationOnPropertyOrField(classId: ClassId): FirAnnotation? =
+    getCompilerRequiredAnnotationByClassId(classId) ?: backingFieldSymbol?.getCompilerRequiredAnnotationByClassId(classId)
 
 /**
  * The properties [this] Kotlin class promotes from its primary constructor's value parameters, keyed by name.

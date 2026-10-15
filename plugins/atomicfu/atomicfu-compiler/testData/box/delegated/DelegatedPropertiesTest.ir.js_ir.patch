@@ -31,7 +31,7 @@
 +    FUN DELEGATED_PROPERTY_ACCESSOR name:<get-topLevelInt> visibility:public modality:FINAL returnType:kotlin.Int
 +      correspondingProperty: PROPERTY name:topLevelInt visibility:public modality:FINAL [delegated,var]
        BLOCK_BODY
--        RETURN type=kotlin.Unit from='private final fun <set-_topLevelInt$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>'
+-        RETURN type=kotlin.Nothing from='private final fun <set-_topLevelInt$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>'
 -          SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:_topLevelInt$volatile type:kotlin.Int visibility:private [static] declared in <root>' type=kotlin.Unit origin=null
 -            value: GET_VAR 'value: kotlin.Int declared in <root>.<set-_topLevelInt$volatile>' type=kotlin.Int origin=null
 -  FIELD ATOMICFU_GENERATED_FIELD name:topLevelVolatile$volatile type:kotlin.Int visibility:private [static]
@@ -155,7 +155,7 @@
 +        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.DelegatedProperties
 +        correspondingProperty: PROPERTY name:a visibility:public modality:FINAL [delegated,var]
          BLOCK_BODY
--          RETURN type=kotlin.Unit from='private final fun <set-_a$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.DelegatedProperties'
+-          RETURN type=kotlin.Nothing from='private final fun <set-_a$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.DelegatedProperties'
 -            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:_a$volatile type:kotlin.Int visibility:private declared in <root>.DelegatedProperties' type=kotlin.Unit origin=null
 -              receiver: GET_VAR '<this>: <root>.DelegatedProperties declared in <root>.DelegatedProperties.<set-_a$volatile>' type=<root>.DelegatedProperties origin=null
 -              value: GET_VAR 'value: kotlin.Int declared in <root>.DelegatedProperties.<set-_a$volatile>' type=kotlin.Int origin=null
@@ -254,7 +254,7 @@
 +        VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:kotlin.Int
 +        correspondingProperty: PROPERTY name:privateA visibility:private modality:FINAL [delegated,var]
          BLOCK_BODY
--          RETURN type=kotlin.Unit from='private final fun <set-_l$volatile> (value: kotlin.Long): kotlin.Unit declared in <root>.DelegatedProperties'
+-          RETURN type=kotlin.Nothing from='private final fun <set-_l$volatile> (value: kotlin.Long): kotlin.Unit declared in <root>.DelegatedProperties'
 -            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:_l$volatile type:kotlin.Long visibility:private declared in <root>.DelegatedProperties' type=kotlin.Unit origin=null
 -              receiver: GET_VAR '<this>: <root>.DelegatedProperties declared in <root>.DelegatedProperties.<set-_l$volatile>' type=<root>.DelegatedProperties origin=null
 -              value: GET_VAR 'value: kotlin.Long declared in <root>.DelegatedProperties.<set-_l$volatile>' type=kotlin.Long origin=null
@@ -315,7 +315,7 @@
 +        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.DelegatedProperties
 +        correspondingProperty: PROPERTY name:l visibility:private modality:FINAL [delegated,var]
          BLOCK_BODY
--          RETURN type=kotlin.Unit from='private final fun <set-_b$volatile> (value: kotlin.Boolean): kotlin.Unit declared in <root>.DelegatedProperties'
+-          RETURN type=kotlin.Nothing from='private final fun <set-_b$volatile> (value: kotlin.Boolean): kotlin.Unit declared in <root>.DelegatedProperties'
 -            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:_b$volatile type:kotlin.Boolean visibility:private declared in <root>.DelegatedProperties' type=kotlin.Unit origin=null
 -              receiver: GET_VAR '<this>: <root>.DelegatedProperties declared in <root>.DelegatedProperties.<set-_b$volatile>' type=<root>.DelegatedProperties origin=null
 -              value: GET_VAR 'value: kotlin.Boolean declared in <root>.DelegatedProperties.<set-_b$volatile>' type=kotlin.Boolean origin=null
@@ -403,7 +403,7 @@
 +        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.DelegatedProperties
 +        correspondingProperty: PROPERTY name:b visibility:private modality:FINAL [delegated,var]
          BLOCK_BODY
--          RETURN type=kotlin.Unit from='private final fun <set-_ref$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.DelegatedProperties'
+-          RETURN type=kotlin.Nothing from='private final fun <set-_ref$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.DelegatedProperties'
 -            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:_ref$volatile type:kotlin.Any? visibility:private declared in <root>.DelegatedProperties' type=kotlin.Unit origin=null
 -              receiver: GET_VAR '<this>: <root>.DelegatedProperties declared in <root>.DelegatedProperties.<set-_ref$volatile>' type=<root>.DelegatedProperties origin=null
 -              value: GET_VAR 'value: kotlin.Any? declared in <root>.DelegatedProperties.<set-_ref$volatile>' type=kotlin.Any? origin=null

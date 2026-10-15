@@ -29,7 +29,7 @@
 -        VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Long
 -        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:counter$volatile visibility:private modality:FINAL [var]
 -        BLOCK_BODY
--          RETURN type=kotlin.Unit from='private final fun <set-counter$volatile> (value: kotlin.Long): kotlin.Unit declared in <root>.LockFreeLongCounter'
+-          RETURN type=kotlin.Nothing from='private final fun <set-counter$volatile> (value: kotlin.Long): kotlin.Unit declared in <root>.LockFreeLongCounter'
 -            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:counter$volatile type:kotlin.Long visibility:private declared in <root>.LockFreeLongCounter' type=kotlin.Unit origin=null
 -              receiver: GET_VAR '<this>: <root>.LockFreeLongCounter declared in <root>.LockFreeLongCounter.<set-counter$volatile>' type=<root>.LockFreeLongCounter origin=null
 -              value: GET_VAR 'value: kotlin.Long declared in <root>.LockFreeLongCounter.<set-counter$volatile>' type=kotlin.Long origin=null

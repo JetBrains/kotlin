@@ -9,9 +9,11 @@ import org.jetbrains.dokka.analysis.kotlin.markdown.MARKDOWN_ELEMENT_FILE_NAME
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.jetbrains.dokka.links.*
 import org.jetbrains.dokka.model.doc.*
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInAnalysisApi
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
+@MustRunOnChangesInAnalysisApi
 @OptIn(ExperimentalDokkaApi::class)
 class ParamTagTest : BaseAbstractTest() {
     private val testConfiguration = dokkaConfiguration {

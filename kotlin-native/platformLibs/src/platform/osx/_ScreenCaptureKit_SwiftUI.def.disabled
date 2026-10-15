@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform._ScreenCaptureKit_SwiftUI
+
+modules = _ScreenCaptureKit_SwiftUI
+compilerOpts = -framework _ScreenCaptureKit_SwiftUI
+linkerOpts = -framework _ScreenCaptureKit_SwiftUI
+#Disabled: Unavailable

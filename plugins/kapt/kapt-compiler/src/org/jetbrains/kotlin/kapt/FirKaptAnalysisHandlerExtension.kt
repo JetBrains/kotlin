@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.cli.common.modules.ModuleChunk
 import org.jetbrains.kotlin.cli.common.output.writeAll
 import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
+import org.jetbrains.kotlin.cli.jvm.config.JvmModulePathRoot
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelineArtifact
 import org.jetbrains.kotlin.cli.registerExtensionStorage
 import org.jetbrains.kotlin.cli.reportOutput
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.fir.builder.FirSyntaxErrors
 import org.jetbrains.kotlin.fir.extensions.FirAnalysisHandlerExtension
 import org.jetbrains.kotlin.kapt.base.*
+import org.jetbrains.kotlin.kapt.base.util.ClassTrackingURLClassLoader
 import org.jetbrains.kotlin.kapt.base.util.KaptBaseError
 import org.jetbrains.kotlin.kapt.base.util.KaptLogger
 import org.jetbrains.kotlin.kapt.base.util.info
@@ -31,6 +33,9 @@ import org.jetbrains.kotlin.kapt.util.CompilerConfigurationBackedKaptLogger
 import org.jetbrains.kotlin.kapt3.diagnostic.KaptError
 import org.jetbrains.kotlin.utils.kapt.MemoryLeakDetector
 import java.io.File
+import java.util.concurrent.ExecutionException
+import java.util.concurrent.Executors
+import java.util.concurrent.atomic.AtomicInteger
 
 /**
  * This extension implements K2 kapt by invoking the compiler in the "skip bodies" / suppress-errors mode, and translating the resulting
@@ -58,6 +63,7 @@ open class FirKaptAnalysisHandlerExtension(
             projectBaseDir = projectBaseDir ?: project.basePath?.let(::File)
             val contentRoots = configuration.contentRoots
             compileClasspath.addAll(contentRoots.filterIsInstance<JvmClasspathRoot>().map { it.file })
+            compileClasspath.addAll(contentRoots.filterIsInstance<JvmModulePathRoot>().map { it.file })
             javaSourceRoots.addAll(contentRoots.filterIsInstance<JavaSourceRoot>().map { it.file })
             classesOutputDir = classesOutputDir ?: configuration.outputDirectory
         }
@@ -72,8 +78,7 @@ open class FirKaptAnalysisHandlerExtension(
         if (options.mode.generateStubs) {
             val updatedConfiguration = configuration.copy().apply {
                 skipBodies = true
-                // TODO: change to LightTree (KT-70784)
-                parserMode = ParserMode.Psi
+                parserMode = ParserMode.LightTree
 
                 /*
                  * Later the KAPT pipeline registers extensions once again, so the extensions storage
@@ -144,7 +149,7 @@ open class FirKaptAnalysisHandlerExtension(
         logger.info { "Annotation processing took $annotationProcessingTime ms" }
 
         if (options.detectMemoryLeaks != DetectMemoryLeaksMode.NONE) {
-            MemoryLeakDetector.add(processors.classLoader)
+            MemoryLeakDetector.add(processors.classLoader) { (it as? ClassTrackingURLClassLoader)?.definedClasses }
 
             val isParanoid = options.detectMemoryLeaks == DetectMemoryLeaksMode.PARANOID
             val [leakDetectionTime, leaks] = measureTimeMillis { MemoryLeakDetector.process(isParanoid) }
@@ -219,6 +224,18 @@ open class FirKaptAnalysisHandlerExtension(
         val packagePaths = HashMap<String, String>()
         val packageDirs = HashMap<String, File>()
 
+        if (options.stubWriterThreads > 1 && options.stubGenerationScheme != StubGenerationScheme.DIRECT) {
+            logger.warn(
+                "Stub writer threads (${options.stubWriterThreads}) have no effect with the " +
+                        "'${options.stubGenerationScheme.stringValue}' stub generation scheme, stubs are written sequentially. " +
+                        "Use the '${StubGenerationScheme.DIRECT.stringValue}' scheme to write stubs in parallel."
+            )
+        }
+        val pendingWrites =
+            if (options.stubWriterThreads > 1 && options.stubGenerationScheme == StubGenerationScheme.DIRECT)
+                ArrayList<PendingStubWrite>(stubs.size)
+            else null
+
         for (kaptStub in stubs) {
             val className = kaptStub.simpleClassName()
             val packageName = kaptStub.packageName()
@@ -246,12 +263,85 @@ open class FirKaptAnalysisHandlerExtension(
             }
 
             reportStubsOutputForIC(sourceFile)
-            sourceFile.writeText(kaptStub.getText(kaptContext.context))
+            if (pendingWrites != null) {
+                val metadata = kaptStub.metadataToWrite(forSource = sourceFile)
+                metadata?.let { reportStubsOutputForIC(it.first) }
+                pendingWrites += PendingStubWrite(sourceFile, kaptStub.getText(kaptContext.context), metadata)
+            } else {
+                sourceFile.writeText(kaptStub.getText(kaptContext.context))
 
-            kaptStub.writeMetadataIfNeeded(forSource = sourceFile, ::reportStubsOutputForIC)
+                kaptStub.writeMetadataIfNeeded(forSource = sourceFile, ::reportStubsOutputForIC)
+            }
+        }
+
+        if (pendingWrites != null) {
+            val [writeTime, usedThreads] = measureTimeMillis { writeStubsInParallel(pendingWrites, options.stubWriterThreads) }
+            if (usedThreads > 1) {
+                logger.info { "Parallel stub file writing took $writeTime ms on $usedThreads threads" }
+            } else {
+                logger.info { "Stub file writing took $writeTime ms (fewer than $MIN_STUBS_FOR_PARALLEL_WRITES stubs, written sequentially)" }
+            }
         }
 
         logger.info { "Source files: ${sourceFiles}" }
+    }
+
+    private class PendingStubWrite(val sourceFile: File, val text: String, val metadata: Pair<File, ByteArray>?) {
+        fun write() {
+            sourceFile.writeText(text)
+            metadata?.let { it.first.writeBytes(it.second) }
+        }
+    }
+
+    // Returns 1 when writes stay on the caller thread; otherwise the worker count.
+    private fun writeStubsInParallel(writes: List<PendingStubWrite>, requestedThreads: Int): Int {
+        val threadCount = if (writes.size < MIN_STUBS_FOR_PARALLEL_WRITES) 1 else minOf(requestedThreads, writes.size)
+        if (threadCount <= 1) {
+            for (stub in writes) {
+                stub.write()
+            }
+            return 1
+        }
+
+        val threadIndex = AtomicInteger()
+        val executor = Executors.newFixedThreadPool(threadCount) { runnable ->
+            Thread(runnable, "kapt-stub-writer-${threadIndex.incrementAndGet()}").apply { isDaemon = true }
+        }
+        try {
+            // Contiguous ranges keep package-clustered stubs in distinct directories.
+            // Strided ranges tend to make all workers contend for the same directory.
+            val futures = (0 until threadCount).map { index ->
+                val from = (writes.size.toLong() * index / threadCount).toInt()
+                val to = (writes.size.toLong() * (index + 1) / threadCount).toInt()
+                executor.submit {
+                    for (i in from until to) {
+                        writes[i].write()
+                    }
+                }
+            }
+            var failure: Throwable? = null
+            for (future in futures) {
+                try {
+                    future.get()
+                } catch (e: InterruptedException) {
+                    // Restore the flag the throw cleared, so callers up the stack can still see the interruption.
+                    // The `finally` below shuts the pool down, which interrupts the writers that are still running.
+                    Thread.currentThread().interrupt()
+                    throw e
+                } catch (e: ExecutionException) {
+                    val cause = e.cause ?: e
+                    val firstFailure = failure
+                    if (firstFailure == null)
+                        failure = cause
+                    else
+                        firstFailure.addSuppressed(cause)
+                }
+            }
+            failure?.let { throw it }
+        } finally {
+            executor.shutdownNow()
+        }
+        return threadCount
     }
 
     protected open fun saveIncrementalData(kaptContext: KaptContextForStubGeneration) {
@@ -290,6 +380,17 @@ open class FirKaptAnalysisHandlerExtension(
             return true
         }
 
+        if (KaptFlag.INCREMENTAL_APT in flags && incrementalCache == null) {
+            logger.warn("Incremental annotation processing is enabled, but no incremental cache was provided, this will lead to a full rebuild.")
+        }
+
+        if (usedDefaultDetectMemoryLeaks) {
+            logger.warn(
+                "The 'default' value for 'detectMemoryLeaks' is deprecated. " +
+                        "Use 'standard' instead."
+            )
+        }
+
         if (sourcesOutputDir == null || classesOutputDir == null || stubsOutputDir == null) {
             val nonExistentOptionName = when {
                 sourcesOutputDir == null -> "Sources output directory"
@@ -312,5 +413,10 @@ open class FirKaptAnalysisHandlerExtension(
         val start = System.currentTimeMillis()
         val result = block()
         return Pair(System.currentTimeMillis() - start, result)
+    }
+
+    private companion object {
+        // Tiny batches are faster on the caller thread than through the writer pool.
+        private const val MIN_STUBS_FOR_PARALLEL_WRITES = 16
     }
 }

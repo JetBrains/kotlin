@@ -625,7 +625,7 @@ This can be used in the event of problems with the new implementation.""",
 
     @Argument(
         value = "-Xvalhalla-value-classes",
-        description = "Compile value classes to behave as experimental Project Valhalla value classes. Requires a Valhalla-compatible JDK, JVM target 27 or later and the '-Xjvm-enable-preview' flag.",
+        description = "Compile value classes to behave as experimental Project Valhalla value classes. Requires JVM target 28 or later and the '-Xjvm-enable-preview' flag.",
     )
     var valhallaValueClasses: Boolean = false
         set(value) {

@@ -7,9 +7,16 @@ package org.jetbrains.kotlin.compilerRunner
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.konan.target.Family
+import org.jetbrains.kotlin.konan.target.KonanTarget
 
 internal fun Project.isKonanIncrementalCompilationEnabled(): Boolean {
     return PropertiesProvider(this).incrementalNative ?: true
+}
+
+// Disabled by default for Linux targets because of clashing declarations, see KT-81760.
+internal fun Project.isKonanIncrementalCompilationEnabled(konanTarget: KonanTarget): Boolean {
+    return PropertiesProvider(this).incrementalNative ?: (konanTarget.family != Family.LINUX)
 }
 
 internal fun Project.getKonanParallelThreads(): Int {

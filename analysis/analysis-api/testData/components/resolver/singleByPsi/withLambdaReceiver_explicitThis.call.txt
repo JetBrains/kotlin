@@ -1,0 +1,20 @@
+KtDotQualifiedExpression(82,90): 'this.foo'
+  KaSimpleCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = this
+        isSafeNavigation = false
+        type = Test
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Write:
+        value = foo
+      signature = KaVariableSignature:
+        name = foo
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = var foo: kotlin.Int
+        contextParameters = []
+        callableId = /Test.foo
+      typeArgumentsMapping = {}

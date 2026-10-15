@@ -8,10 +8,12 @@ import org.jetbrains.dokka.Platform
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.*
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInAnalysisApi
 import translators.findClasslike
 import translators.findPackage
 import kotlin.test.*
 
+@MustRunOnChangesInAnalysisApi
 class JavaAnnotationsTest : BaseAbstractTest() {
 
     val configuration = dokkaConfiguration {

@@ -3,7 +3,7 @@ SecondaryConstructors.class:
     PACKAGE_DIRECTIVE
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST
-    CLASS[classId=test/SecondaryConstructors, fqName=test.SecondaryConstructors, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=SecondaryConstructors, superNames=[]]
+    CLASS[classId=test/SecondaryConstructors, fqName=test.SecondaryConstructors, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=SecondaryConstructors, superNames=[]]
       MODIFIER_LIST[public final]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=SecondaryConstructors]
         MODIFIER_LIST[public]
@@ -45,7 +45,7 @@ SecondaryConstructors.class:
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=Int]
                     isClassRef: true
-        CLASS[classId=test/SecondaryConstructors.Inner, fqName=test.SecondaryConstructors.Inner, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=Inner, superNames=[]]
+        CLASS[classId=test/SecondaryConstructors.Inner, fqName=test.SecondaryConstructors.Inner, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=Inner, superNames=[]]
           MODIFIER_LIST[public final inner]
           TYPE_PARAMETER_LIST
             TYPE_PARAMETER[fqName=null, name=T]
@@ -87,7 +87,7 @@ SecondaryConstructors.class:
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=G]
                         isClassRef: true
-        CLASS[classId=test/SecondaryConstructors.Nested, fqName=test.SecondaryConstructors.Nested, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=Nested, superNames=[]]
+        CLASS[classId=test/SecondaryConstructors.Nested, fqName=test.SecondaryConstructors.Nested, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=Nested, superNames=[]]
           MODIFIER_LIST[public final]
           CLASS_BODY
             SECONDARY_CONSTRUCTOR[fqName=null, hasBody=true, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Nested]
@@ -119,7 +119,7 @@ anno.class:
     PACKAGE_DIRECTIVE
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST
-    CLASS[classId=test/anno, fqName=test.anno, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=anno, superNames=[Annotation]]
+    CLASS[classId=test/anno, fqName=test.anno, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=anno, superNames=[Annotation]]
       MODIFIER_LIST[public final annotation]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=anno]
         MODIFIER_LIST[public]

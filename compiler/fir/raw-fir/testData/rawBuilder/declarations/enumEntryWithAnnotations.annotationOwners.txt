@@ -18,6 +18,10 @@ context -> FirNamedFunctionSymbol /<anonymous>.foo from FirAnonymousObjectSymbol
 owner -> FirNamedFunctionSymbol /<anonymous>.foo
 context -> FirNamedFunctionSymbol /<anonymous>.foo from FirAnonymousObjectSymbol <anonymous> from FirEnumEntrySymbol /MyEnumClass.ENUM_ENTRY
 
+@ErrorPlace(String(destructuring declaration))
+owner -> FirErrorPropertySymbol /<error property>
+context -> FirErrorPropertySymbol /<error property>
+
 @Anno(String(implicit))
 owner -> FirEnumEntrySymbol /MyEnumClass.ENUM_ENTRY
 context -> FirEnumEntrySymbol /MyEnumClass.ENUM_ENTRY

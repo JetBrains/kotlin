@@ -24,9 +24,11 @@ import org.jetbrains.kotlin.inline.InlineFunction
 import org.jetbrains.kotlin.inline.InlineFunctionOrAccessor
 import org.jetbrains.kotlin.inline.InlinePropertyAccessor
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMemberSignature
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.ClassIdBasedLocality
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import java.io.*
 
@@ -90,6 +92,21 @@ object FqNameExternalizer : DataExternalizer<FqName> {
     }
 }
 
+object KotlinNameExternalizer : DataExternalizer<Name> {
+    override fun save(output: DataOutput, name: Name) {
+        output.writeBoolean(name.isSpecial)
+        output.writeString(name.asString())
+    }
+
+    override fun read(input: DataInput): Name {
+        return if (input.readBoolean()) {
+            Name.special(input.readString())
+        } else {
+            Name.identifier(input.readString())
+        }
+    }
+}
+
 object ClassIdExternalizer : DataExternalizer<ClassId> {
     override fun save(output: DataOutput, classId: ClassId) {
         FqNameExternalizer.save(output, classId.packageFqName)
@@ -103,6 +120,22 @@ object ClassIdExternalizer : DataExternalizer<ClassId> {
             packageFqName = FqNameExternalizer.read(input),
             relativeClassName = FqNameExternalizer.read(input),
             isLocal = input.readBoolean()
+        )
+    }
+}
+
+object CallableIdExternalizer : DataExternalizer<CallableId> {
+    override fun save(output: DataOutput, callableId: CallableId) {
+        FqNameExternalizer.save(output, callableId.packageName)
+        NullableValueExternalizer(FqNameExternalizer).save(output, callableId.className)
+        KotlinNameExternalizer.save(output, callableId.callableName)
+    }
+
+    override fun read(input: DataInput): CallableId {
+        return CallableId(
+            packageName = FqNameExternalizer.read(input),
+            className = NullableValueExternalizer(FqNameExternalizer).read(input),
+            callableName = KotlinNameExternalizer.read(input),
         )
     }
 }

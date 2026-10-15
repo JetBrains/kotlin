@@ -74,6 +74,18 @@ public class FirIdeNormalAnalysisSourceLikeModuleOverriddenDeclarationProviderTe
   }
 
   @Test
+  @TestMetadata("fullValueClass.kt")
+  public void testFullValueClass() {
+    run("fullValueClass.kt");
+  }
+
+  @Test
+  @TestMetadata("fullValueClassCustomEquals.kt")
+  public void testFullValueClassCustomEquals() {
+    run("fullValueClassCustomEquals.kt");
+  }
+
+  @Test
   @TestMetadata("functionWithMissedOverride.kt")
   public void testFunctionWithMissedOverride() {
     run("functionWithMissedOverride.kt");
@@ -173,6 +185,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleOverriddenDeclarationProviderTe
   @TestMetadata("javaGetterImplementingKotlinProperty_MethodMode.kt")
   public void testJavaGetterImplementingKotlinProperty_MethodMode() {
     run("javaGetterImplementingKotlinProperty_MethodMode.kt");
+  }
+
+  @Test
+  @TestMetadata("javaGetterImplementingKotlinProperty_MethodMode_Plugin.kt")
+  public void testJavaGetterImplementingKotlinProperty_MethodMode_Plugin() {
+    run("javaGetterImplementingKotlinProperty_MethodMode_Plugin.kt");
   }
 
   @Test

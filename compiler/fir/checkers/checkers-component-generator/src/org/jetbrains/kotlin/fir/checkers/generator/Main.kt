@@ -72,6 +72,19 @@ fun main(args: Array<String>) {
             )
         )
     }
+    if (args.isEmpty() || args[0] == "checkers.common") {
+        val checkersPath = generationPath ?: File("compiler/fir/checkers/checkers.common/gen")
+        generateDiagnostics(
+            checkersPath,
+            packageName,
+            DIAGNOSTICS_LIST,
+            starImportsToAdd = setOf(
+                ErrorListDiagnosticListRenderer.BASE_PACKAGE,
+                ErrorListDiagnosticListRenderer.DIAGNOSTICS_PACKAGE
+            )
+        )
+        generateNonSuppressibleErrorNamesFile(checkersPath, packageName)
+    }
     if (args.isEmpty() || args[0] == "checkers.web.common") {
         generateDiagnostics(
             generationPath ?: File("compiler/fir/checkers/checkers.web.common/gen"),
@@ -91,8 +104,8 @@ fun main(args: Array<String>) {
             starImportsToAdd = setOf(ErrorListDiagnosticListRenderer.DIAGNOSTICS_PACKAGE)
         )
     }
-    if (args.isEmpty() || args[0] == "checkers") {
-        val checkersPath = generationPath ?: File("compiler/fir/checkers/checkers/gen")
+    if (args.isEmpty() || args[0] == "checkers.api") {
+        val checkersPath = generationPath ?: File("compiler/fir/checkers/checkers.api/gen")
         val typePackage = "$basePackage.checkers.type"
         generateCheckersComponents(checkersPath, typePackage, "FirTypeChecker", FirTypeRef::class, FirTypeRef::class) {
             alias<FirTypeRef>("TypeRefChecker").let {
@@ -114,7 +127,6 @@ fun main(args: Array<String>) {
             alias<FirStatement>("BasicExpressionChecker", false).let {
                 visitAlso<FirExpression>(it)
                 visitAlso<FirVarargArgumentsExpression>(it)
-                visitAlso<FirFunctionTypeConversionExpression>(it)
                 visitAlso<FirWrappedExpression>(it)
                 visitAlso<FirWrappedArgumentExpression>(it)
                 visitAlso<FirSpreadArgumentExpression>(it)
@@ -181,6 +193,7 @@ fun main(args: Array<String>) {
             alias<FirCollectionLiteral>("CollectionLiteralChecker")
             alias<FirClassReferenceExpression>("ClassReferenceExpressionChecker")
             alias<FirInaccessibleReceiverExpression>("InaccessibleReceiverChecker")
+            alias<FirFunctionTypeConversionExpression>("FunctionTypeConversionExpressionChecker")
         }
 
         val declarationPackage = "$basePackage.checkers.declaration"
@@ -220,7 +233,9 @@ fun main(args: Array<String>) {
             alias<FirEnumEntry>("EnumEntryChecker")
             alias<FirAnonymousObject>("AnonymousObjectChecker")
             alias<FirAnonymousInitializer>("AnonymousInitializerChecker")
-            alias<FirReceiverParameter>("ReceiverParameterChecker")
+            alias<FirReceiverParameter>("ReceiverParameterChecker").let {
+                visitAlso<FirScriptReceiverParameter>(it)
+            }
 
             additional(
                 fieldName = "controlFlowAnalyserCheckers",
@@ -232,17 +247,6 @@ fun main(args: Array<String>) {
                 classFqn = "$basePackage.cfa.AbstractFirPropertyInitializationChecker"
             )
         }
-
-        generateDiagnostics(
-            checkersPath,
-            packageName,
-            DIAGNOSTICS_LIST,
-            starImportsToAdd = setOf(
-                ErrorListDiagnosticListRenderer.BASE_PACKAGE,
-                ErrorListDiagnosticListRenderer.DIAGNOSTICS_PACKAGE
-            )
-        )
-        generateNonSuppressibleErrorNamesFile(checkersPath, packageName)
     }
 }
 

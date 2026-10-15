@@ -29,6 +29,8 @@ import org.jetbrains.kotlin.buildtools.internal.arguments.CommonCompilerArgument
 import org.jetbrains.kotlin.buildtools.internal.arguments.JvmCompilerArgumentsImpl
 import org.jetbrains.kotlin.buildtools.internal.arguments.absolutePathStringOrThrow
 import org.jetbrains.kotlin.buildtools.internal.jps.JvmClientManagedIncrementalCompilationConfiguration
+import org.jetbrains.kotlin.buildtools.internal.jps.createCompilerServicesFacadeBase
+import org.jetbrains.kotlin.buildtools.internal.jps.getClientManagedIncrementalCompilationOptions
 import org.jetbrains.kotlin.buildtools.internal.jps.registerPlatformServices
 import org.jetbrains.kotlin.buildtools.internal.jvm.HasSnapshotBasedIcOptionsAccessor
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationConfigurationImpl
@@ -43,9 +45,7 @@ import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.jvm.compiler.setupIdeaStandaloneExecution
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.Services
-import org.jetbrains.kotlin.daemon.common.CompileService
-import org.jetbrains.kotlin.daemon.common.CompilerMode
-import org.jetbrains.kotlin.daemon.common.IncrementalCompilationOptions
+import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.storage.FileLocations
 import java.nio.file.Path
@@ -165,14 +165,39 @@ internal class JvmCompilationOperationImpl private constructor(
             compilerArguments.incrementalCompilation = get(INCREMENTAL_COMPILATION) != null
         }
 
-    override fun checkSupportedWithDaemon() {
-        check(get(INCREMENTAL_COMPILATION) !is JvmClientManagedIncrementalCompilationConfiguration) {
-            "JvmJpsManagedIncrementalCompilationConfiguration is not supported with the daemon execution policy. " +
-                    "Use ExecutionPolicy.InProcess."
+    override fun getIcOptionsOrNull(
+        reportCategories: Array<Int>,
+        reportSeverity: Int,
+        requestedCompilationResults: Array<Int>,
+        arguments: K2JVMCompilerArguments,
+    ): CompilationOptions? {
+        val icConfiguration = get(INCREMENTAL_COMPILATION) ?: return null
+
+        return when (icConfiguration) {
+            is JvmSnapshotBasedIncrementalCompilationConfiguration -> getSnapshotBasedIncrementalCompilationOptions(
+                reportCategories,
+                reportSeverity,
+                requestedCompilationResults,
+                arguments
+            )
+            is JvmClientManagedIncrementalCompilationConfiguration -> icConfiguration.getClientManagedIncrementalCompilationOptions(
+                reportCategories,
+                reportSeverity,
+            )
+            else -> error("Unexpected incremental compilation configuration: ${icConfiguration::class}")
         }
     }
 
-    override fun getIcOptionsOrNull(
+    override fun createCompilerServicesFacade(loggerAdapter: KotlinLoggerMessageCollectorAdapter): CompilerServicesFacadeBase {
+        val icConfiguration = get(INCREMENTAL_COMPILATION)
+        if (icConfiguration is JvmClientManagedIncrementalCompilationConfiguration) {
+            return icConfiguration.createCompilerServicesFacadeBase(loggerAdapter, cancellationHandle)
+        }
+
+        return super.createCompilerServicesFacade(loggerAdapter)
+    }
+
+    private fun getSnapshotBasedIncrementalCompilationOptions(
         reportCategories: Array<Int>,
         reportSeverity: Int,
         requestedCompilationResults: Array<Int>,
@@ -213,8 +238,13 @@ internal class JvmCompilationOperationImpl private constructor(
         )
     }
 
+
     override fun shouldCompileIncrementally(): Boolean {
-        return getIcOptionsAccessorOrNull()?.let { true } ?: false
+        return when (val icConfiguration = get(INCREMENTAL_COMPILATION)) {
+            is JvmSnapshotBasedIncrementalCompilationConfiguration -> true
+            null, is JvmClientManagedIncrementalCompilationConfiguration -> false
+            else -> error("Unexpected incremental compilation configuration: ${icConfiguration::class}")
+        }
     }
 
     override fun compileInProcess(
@@ -315,15 +345,13 @@ internal class JvmCompilationOperationImpl private constructor(
     private fun getIcOptionsAccessorOrNull(): HasSnapshotBasedIcOptionsAccessor? {
         val icConfiguration = get(INCREMENTAL_COMPILATION) ?: return null
 
-        return when (icConfiguration) {
-            is JvmSnapshotBasedIncrementalCompilationConfiguration -> icConfiguration.toOptions()
-            is JvmClientManagedIncrementalCompilationConfiguration -> null
-            else -> error(
-                "Unexpected incremental compilation configuration: ${icConfiguration::class}. In this version, it must be an instance of " +
-                        "JvmSnapshotBasedIncrementalCompilationConfiguration for incremental compilation, or null for non-incremental " +
-                        "compilation."
-            )
+        require(icConfiguration is JvmSnapshotBasedIncrementalCompilationConfiguration) {
+            "Unexpected incremental compilation configuration: ${icConfiguration::class}. In this version, it must be an instance of " +
+                    "JvmSnapshotBasedIncrementalCompilationConfiguration for incremental compilation, or null for non-incremental " +
+                    "compilation."
         }
+
+        return icConfiguration.toOptions()
     }
 
     private fun getEffectivePreciseJavaTrackingState(

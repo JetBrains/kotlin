@@ -239,6 +239,7 @@ object AbstractTypeMapper {
         val typeConstructor = type.typeConstructor()
 
         return visited.add(typeConstructor) &&
+                typeConstructor.isInlineClass() &&
                 typeConstructor.getValueClassProperties()?.singleOrNull()
                     ?.let { isPrimitiveBacked(it.second, visited) } == true
     }

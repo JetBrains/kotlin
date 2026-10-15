@@ -5,7 +5,6 @@ plugins {
 }
 
 publishTestJarsForIde(
-    projectNames = listOf(),
     projectWithFixturesNames = listOf(
         ":analysis:analysis-api-fir",
         ":analysis:low-level-api-fir",

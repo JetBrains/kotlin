@@ -52,7 +52,6 @@ projectTests {
     testGenerator("org.jetbrains.kotlin.kotlinp.jvm.test.GenerateKotlinpTestsKt", generateTestsInBuildDirectory = true)
 
     withJvmStdlibAndReflect()
-    withScriptRuntime()
     withMockJdkAnnotationsJar()
     withTestJar()
     withMockJdkRuntime()
@@ -77,4 +76,3 @@ tasks {
     }
 }
 
-testsJar()

@@ -21,6 +21,8 @@ import kotlin.random.*
  * Returns `true` if [element] is found in the sequence.
  *
  * The operation is _terminal_.
+ * 
+ * @sample samples.collections.Collections.Elements.contains
  */
 public operator fun <@kotlin.internal.OnlyInputTypes T> Sequence<T>.contains(element: T): Boolean {
     return indexOf(element) >= 0
@@ -110,6 +112,8 @@ public inline fun <T> Sequence<T>.findLast(predicate: (T) -> Boolean): T? {
  * The operation is _terminal_.
  * 
  * @throws NoSuchElementException if the sequence is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.first
  */
 public fun <T> Sequence<T>.first(): T {
     val iterator = iterator()
@@ -123,6 +127,8 @@ public fun <T> Sequence<T>.first(): T {
  * @throws [NoSuchElementException] if no such element is found.
  *
  * The operation is _terminal_.
+ * 
+ * @sample samples.collections.Collections.Elements.first
  */
 public inline fun <T> Sequence<T>.first(predicate: (T) -> Boolean): T {
     for (element in this) if (predicate(element)) return element

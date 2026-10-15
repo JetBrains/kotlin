@@ -231,8 +231,8 @@ to force diagnostics to be reported.""".asReleaseDependent()
 
     compilerArgument {
         name = "Xvalhalla-value-classes"
-        description = ("Compile value classes to behave as experimental Project Valhalla value classes. Requires a " +
-                "Valhalla-compatible JDK, JVM target 27 or later and the '-Xjvm-enable-preview' flag.").asReleaseDependent()
+        description = ("Compile value classes to behave as experimental Project Valhalla value classes. Requires JVM target 28 or " +
+                "later and the '-Xjvm-enable-preview' flag.").asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
         lifecycle(

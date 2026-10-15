@@ -29,21 +29,21 @@ internal external fun main_internal_functional_type_callee_SwiftU2EVoid__TypesOf
 public fun DATA_CLASS_WITH_REF_copy__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(self: kotlin.native.internal.NativePtr, o: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as DATA_CLASS_WITH_REF
     val __o = kotlin.native.internal.ref.dereferenceExternalRCRef(o) as kotlin.Any
-    val _result = run { __self.copy(__o) }
+    val _result = __self.copy(__o)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("DATA_CLASS_WITH_REF_o_get")
 public fun DATA_CLASS_WITH_REF_o_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as DATA_CLASS_WITH_REF
-    val _result = run { __self.o }
+    val _result = __self.o
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("DATA_CLASS_a_get")
 public fun DATA_CLASS_a_get(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as DATA_CLASS
-    val _result = run { __self.a }
+    val _result = __self.a
     return _result
 }
 
@@ -51,28 +51,28 @@ public fun DATA_CLASS_a_get(self: kotlin.native.internal.NativePtr): Int {
 public fun DATA_CLASS_copy__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, a: Int): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as DATA_CLASS
     val __a = a
-    val _result = run { __self.copy(__a) }
+    val _result = __self.copy(__a)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("DATA_OBJECT_WITH_PACKAGE_foo")
 public fun DATA_OBJECT_WITH_PACKAGE_foo(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as DATA_OBJECT_WITH_PACKAGE
-    val _result = run { __self.foo() }
+    val _result = __self.foo()
     return _result
 }
 
 @ExportedBridge("DATA_OBJECT_WITH_PACKAGE_value_get")
 public fun DATA_OBJECT_WITH_PACKAGE_value_get(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as DATA_OBJECT_WITH_PACKAGE
-    val _result = run { __self.value }
+    val _result = __self.value
     return _result
 }
 
 @ExportedBridge("DATA_OBJECT_WITH_PACKAGE_variable_get")
 public fun DATA_OBJECT_WITH_PACKAGE_variable_get(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as DATA_OBJECT_WITH_PACKAGE
-    val _result = run { __self.variable }
+    val _result = __self.variable
     return _result
 }
 
@@ -80,113 +80,113 @@ public fun DATA_OBJECT_WITH_PACKAGE_variable_get(self: kotlin.native.internal.Na
 public fun DATA_OBJECT_WITH_PACKAGE_variable_set__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, newValue: Int): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as DATA_OBJECT_WITH_PACKAGE
     val __newValue = newValue
-    val _result = run { __self.variable = __newValue }
-    return run { _result; true }
+    __self.variable = __newValue
+    return true
 }
 
 @ExportedBridge("ENUM_A")
 public fun ENUM_A(): kotlin.native.internal.NativePtr {
-    val _result = run { ENUM.A }
+    val _result = ENUM.A
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("ENUM_B")
 public fun ENUM_B(): kotlin.native.internal.NativePtr {
-    val _result = run { ENUM.B }
+    val _result = ENUM.B
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("ENUM_C")
 public fun ENUM_C(): kotlin.native.internal.NativePtr {
-    val _result = run { ENUM.C }
+    val _result = ENUM.C
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("ENUM_INSIDE_ENUM_init_allocate")
 public fun ENUM_INSIDE_ENUM_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<ENUM.INSIDE_ENUM>() }
+    val _result = kotlin.native.internal.createUninitializedInstance<ENUM.INSIDE_ENUM>()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("ENUM_INSIDE_ENUM_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
 public fun ENUM_INSIDE_ENUM_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val _result = run { kotlin.native.internal.initInstance(____kt, ENUM.INSIDE_ENUM()) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, ENUM.INSIDE_ENUM())
+    return true
 }
 
 @ExportedBridge("INLINE_CLASS_WITH_REF_i_get")
 public fun INLINE_CLASS_WITH_REF_i_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as INLINE_CLASS_WITH_REF
-    val _result = run { __self.i }
+    val _result = __self.i
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("INLINE_CLASS_a_get")
 public fun INLINE_CLASS_a_get(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as INLINE_CLASS
-    val _result = run { __self.a }
+    val _result = __self.a
     return _result
 }
 
 @ExportedBridge("OBJECT_WITH_GENERIC_INHERITANCE_hasNext")
 public fun OBJECT_WITH_GENERIC_INHERITANCE_hasNext(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as OBJECT_WITH_GENERIC_INHERITANCE
-    val _result = run { __self.hasNext() }
+    val _result = __self.hasNext()
     return _result
 }
 
 @ExportedBridge("OBJECT_WITH_GENERIC_INHERITANCE_hasPrevious")
 public fun OBJECT_WITH_GENERIC_INHERITANCE_hasPrevious(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as OBJECT_WITH_GENERIC_INHERITANCE
-    val _result = run { __self.hasPrevious() }
+    val _result = __self.hasPrevious()
     return _result
 }
 
 @ExportedBridge("OBJECT_WITH_GENERIC_INHERITANCE_next")
 public fun OBJECT_WITH_GENERIC_INHERITANCE_next(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as OBJECT_WITH_GENERIC_INHERITANCE
-    val _result = run { __self.next() }
+    val _result = __self.next()
     return _result
 }
 
 @ExportedBridge("OBJECT_WITH_GENERIC_INHERITANCE_nextIndex")
 public fun OBJECT_WITH_GENERIC_INHERITANCE_nextIndex(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as OBJECT_WITH_GENERIC_INHERITANCE
-    val _result = run { __self.nextIndex() }
+    val _result = __self.nextIndex()
     return _result
 }
 
 @ExportedBridge("OBJECT_WITH_GENERIC_INHERITANCE_previous")
 public fun OBJECT_WITH_GENERIC_INHERITANCE_previous(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as OBJECT_WITH_GENERIC_INHERITANCE
-    val _result = run { __self.previous() }
+    val _result = __self.previous()
     return _result
 }
 
 @ExportedBridge("OBJECT_WITH_GENERIC_INHERITANCE_previousIndex")
 public fun OBJECT_WITH_GENERIC_INHERITANCE_previousIndex(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as OBJECT_WITH_GENERIC_INHERITANCE
-    val _result = run { __self.previousIndex() }
+    val _result = __self.previousIndex()
     return _result
 }
 
 @ExportedBridge("SEALED_O_get")
 public fun SEALED_O_get(): kotlin.native.internal.NativePtr {
-    val _result = run { SEALED.O }
+    val _result = SEALED.O
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___ABSTRACT_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__", nonVirtualTargetMethod = "<init>")
 public fun __root___ABSTRACT_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val _result = run { kotlin.native.internal.initInstance(____kt, ABSTRACT_CLASS()) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, ABSTRACT_CLASS())
+    return true
 }
 
 @ExportedBridge("__root___DATA_CLASS_WITH_REF_init_allocate")
 public fun __root___DATA_CLASS_WITH_REF_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<DATA_CLASS_WITH_REF>() }
+    val _result = kotlin.native.internal.createUninitializedInstance<DATA_CLASS_WITH_REF>()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -194,13 +194,13 @@ public fun __root___DATA_CLASS_WITH_REF_init_allocate(): kotlin.native.internal.
 public fun __root___DATA_CLASS_WITH_REF_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20KotlinRuntimeSupport__KotlinBridgeable__(__kt: kotlin.native.internal.NativePtr, o: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     val __o = kotlin.native.internal.ref.dereferenceExternalRCRef(o) as kotlin.Any
-    val _result = run { kotlin.native.internal.initInstance(____kt, DATA_CLASS_WITH_REF(__o)) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, DATA_CLASS_WITH_REF(__o))
+    return true
 }
 
 @ExportedBridge("__root___DATA_CLASS_init_allocate")
 public fun __root___DATA_CLASS_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<DATA_CLASS>() }
+    val _result = kotlin.native.internal.createUninitializedInstance<DATA_CLASS>()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -208,52 +208,52 @@ public fun __root___DATA_CLASS_init_allocate(): kotlin.native.internal.NativePtr
 public fun __root___DATA_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt: kotlin.native.internal.NativePtr, a: Int): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     val __a = a
-    val _result = run { kotlin.native.internal.initInstance(____kt, DATA_CLASS(__a)) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, DATA_CLASS(__a))
+    return true
 }
 
 @ExportedBridge("__root___DATA_OBJECT_WITH_PACKAGE_get")
 public fun __root___DATA_OBJECT_WITH_PACKAGE_get(): kotlin.native.internal.NativePtr {
-    val _result = run { DATA_OBJECT_WITH_PACKAGE }
+    val _result = DATA_OBJECT_WITH_PACKAGE
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___ENUM_ordinal")
 public fun __root___ENUM_ordinal(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as ENUM
-    val _result = run { __self.ordinal }
+    val _result = __self.ordinal
     return _result
 }
 
 @ExportedBridge("__root___GENERIC_CLASS_init_allocate")
 public fun __root___GENERIC_CLASS_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<GENERIC_CLASS<kotlin.Any?>>() }
+    val _result = kotlin.native.internal.createUninitializedInstance<GENERIC_CLASS<kotlin.Any?>>()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___GENERIC_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
 public fun __root___GENERIC_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val _result = run { kotlin.native.internal.initInstance(____kt, GENERIC_CLASS<kotlin.Any?>()) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, GENERIC_CLASS<kotlin.Any?>())
+    return true
 }
 
 @ExportedBridge("__root___INHERITANCE_SINGLE_CLASS_init_allocate")
 public fun __root___INHERITANCE_SINGLE_CLASS_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<INHERITANCE_SINGLE_CLASS>() }
+    val _result = kotlin.native.internal.createUninitializedInstance<INHERITANCE_SINGLE_CLASS>()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___INHERITANCE_SINGLE_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
 public fun __root___INHERITANCE_SINGLE_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val _result = run { kotlin.native.internal.initInstance(____kt, INHERITANCE_SINGLE_CLASS()) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, INHERITANCE_SINGLE_CLASS())
+    return true
 }
 
 @ExportedBridge("__root___INLINE_CLASS_WITH_REF_init_allocate")
 public fun __root___INLINE_CLASS_WITH_REF_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<INLINE_CLASS_WITH_REF>() as Any? }
+    val _result = kotlin.native.internal.createUninitializedInstance<INLINE_CLASS_WITH_REF>() as Any?
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -261,13 +261,13 @@ public fun __root___INLINE_CLASS_WITH_REF_init_allocate(): kotlin.native.interna
 public fun __root___INLINE_CLASS_WITH_REF_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_DATA_CLASS_WITH_REF__(__kt: kotlin.native.internal.NativePtr, i: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     val __i = kotlin.native.internal.ref.dereferenceExternalRCRef(i) as DATA_CLASS_WITH_REF
-    val _result = run { kotlin.native.internal.initInstance(____kt, INLINE_CLASS_WITH_REF(__i)) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, INLINE_CLASS_WITH_REF(__i))
+    return true
 }
 
 @ExportedBridge("__root___INLINE_CLASS_init_allocate")
 public fun __root___INLINE_CLASS_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<INLINE_CLASS>() as Any? }
+    val _result = kotlin.native.internal.createUninitializedInstance<INLINE_CLASS>() as Any?
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -275,44 +275,44 @@ public fun __root___INLINE_CLASS_init_allocate(): kotlin.native.internal.NativeP
 public fun __root___INLINE_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt: kotlin.native.internal.NativePtr, a: Int): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     val __a = a
-    val _result = run { kotlin.native.internal.initInstance(____kt, INLINE_CLASS(__a)) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, INLINE_CLASS(__a))
+    return true
 }
 
 @ExportedBridge("__root___OBJECT_WITH_CLASS_INHERITANCE_get")
 public fun __root___OBJECT_WITH_CLASS_INHERITANCE_get(): kotlin.native.internal.NativePtr {
-    val _result = run { OBJECT_WITH_CLASS_INHERITANCE }
+    val _result = OBJECT_WITH_CLASS_INHERITANCE
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___OBJECT_WITH_GENERIC_INHERITANCE_get")
 public fun __root___OBJECT_WITH_GENERIC_INHERITANCE_get(): kotlin.native.internal.NativePtr {
-    val _result = run { OBJECT_WITH_GENERIC_INHERITANCE }
+    val _result = OBJECT_WITH_GENERIC_INHERITANCE
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___OBJECT_WITH_INTERFACE_INHERITANCE_get")
 public fun __root___OBJECT_WITH_INTERFACE_INHERITANCE_get(): kotlin.native.internal.NativePtr {
-    val _result = run { OBJECT_WITH_INTERFACE_INHERITANCE }
+    val _result = OBJECT_WITH_INTERFACE_INHERITANCE
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___OPEN_CLASS_init_allocate")
 public fun __root___OPEN_CLASS_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<OPEN_CLASS>() }
+    val _result = kotlin.native.internal.createUninitializedInstance<OPEN_CLASS>()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___OPEN_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
 public fun __root___OPEN_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val _result = run { kotlin.native.internal.initInstance(____kt, OPEN_CLASS()) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, OPEN_CLASS())
+    return true
 }
 
 @ExportedBridge("__root___block_get")
 public fun __root___block_get(): kotlin.native.internal.NativePtr {
-    val _result = run { block }
+    val _result = block
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -326,8 +326,8 @@ public fun __root___block_set__TypesOfArguments__U2829202D_U20Swift_Void__(newVa
             run<Unit> { _result }
         }
     }
-    val _result = run { block = __newValue }
-    return run { _result; true }
+    block = __newValue
+    return true
 }
 
 @ExportedBridge("__root___consume_closure__TypesOfArguments__U2829202D_U20Swift_Void__")
@@ -340,8 +340,8 @@ public fun __root___consume_closure__TypesOfArguments__U2829202D_U20Swift_Void__
             run<Unit> { _result }
         }
     }
-    val _result = run { consume_closure(__block) }
-    return run { _result; true }
+    consume_closure(__block)
+    return true
 }
 
 @ExportedBridge("__root___deeper_closure_typealiase__TypesOfArguments__U2829202D_U20Swift_Void__")
@@ -354,52 +354,52 @@ public fun __root___deeper_closure_typealiase__TypesOfArguments__U2829202D_U20Sw
             run<Unit> { _result }
         }
     }
-    val _result = run { deeper_closure_typealiase(__block) }
+    val _result = deeper_closure_typealiase(__block)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___increment__TypesOfArguments__Swift_Int32__")
 public fun __root___increment__TypesOfArguments__Swift_Int32__(integer: Int): Int {
     val __integer = integer
-    val _result = run { increment(__integer) }
+    val _result = increment(__integer)
     return _result
 }
 
 @ExportedBridge("__root___produce_closure")
 public fun __root___produce_closure(): kotlin.native.internal.NativePtr {
-    val _result = run { produce_closure() }
+    val _result = produce_closure()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
 public fun main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__(pointerToBlock: kotlin.native.internal.NativePtr): Boolean {
     val __pointerToBlock = kotlin.native.internal.ref.dereferenceExternalRCRef(pointerToBlock)!!
-    val _result = run { (__pointerToBlock as Function0<Unit>).invoke() }
-    return run { _result; true }
+    (__pointerToBlock as Function0<Unit>).invoke()
+    return true
 }
 
 @ExportedBridge("typealiases_Foo_init_allocate")
 public fun typealiases_Foo_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<typealiases.Foo>() }
+    val _result = kotlin.native.internal.createUninitializedInstance<typealiases.Foo>()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("typealiases_Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
 public fun typealiases_Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val _result = run { kotlin.native.internal.initInstance(____kt, typealiases.Foo()) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, typealiases.Foo())
+    return true
 }
 
 @ExportedBridge("typealiases_inner_Bar_init_allocate")
 public fun typealiases_inner_Bar_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<typealiases.inner.Bar>() }
+    val _result = kotlin.native.internal.createUninitializedInstance<typealiases.inner.Bar>()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("typealiases_inner_Bar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
 public fun typealiases_inner_Bar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val _result = run { kotlin.native.internal.initInstance(____kt, typealiases.inner.Bar()) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, typealiases.inner.Bar())
+    return true
 }

@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform._SpatialPreview_USDKit
+
+modules = _SpatialPreview_USDKit
+compilerOpts = -framework _SpatialPreview_USDKit
+linkerOpts = -framework _SpatialPreview_USDKit
+#Disabled: Unavailable

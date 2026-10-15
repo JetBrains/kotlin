@@ -11,13 +11,23 @@ import org.jetbrains.kotlin.name.Name
 
 var IrFunction.defaultArgumentsDispatchFunction: IrFunction? by irAttribute(copyByDefault = false)
 
+/**
+ * Suppression names from source annotations attached to an element that cannot carry IR annotations itself.
+ *
+ * FIR attaches annotations to expressions, while not every corresponding IR element implements
+ * [org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer]. Retaining the names lets backend diagnostics honor
+ * expression-level `@Suppress` annotations.
+ */
+var IrElement.sourceSuppressedDiagnosticNames: Set<String>? by irAttribute(copyByDefault = true)
+
 var IrClass.capturedFields: Collection<IrField>? by irAttribute(copyByDefault = false)
 
 /**
  * True if this class originates from a Java class declared with the `value` modifier (a JEP 401 value class), loaded from source
  * or a binary dependency.
  *
- * Used by the JVM backend to include such field types in `LoadableDescriptors`.
+ * Used by the JVM backend to include such types in `LoadableDescriptors` and to omit `ACC_IDENTITY` from their `InnerClasses`
+ * entries.
  */
 var IrClass.isJavaValueClass: Boolean by irFlag(copyByDefault = false)
 

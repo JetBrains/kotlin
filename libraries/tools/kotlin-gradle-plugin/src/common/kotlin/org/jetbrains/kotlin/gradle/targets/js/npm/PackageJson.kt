@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
+
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
 import com.google.gson.Gson
@@ -149,11 +151,12 @@ internal fun packageJson(
 
     npmDependencies.forEach {
         val dependency = dependencies.getValue(it.name)
+
         when (it.scope) {
-            NpmDependency.Scope.NORMAL -> packageJson.dependencies[it.name] = dependency
-            NpmDependency.Scope.DEV -> packageJson.devDependencies[it.name] = dependency
-            NpmDependency.Scope.OPTIONAL -> packageJson.optionalDependencies[it.name] = dependency
-            NpmDependency.Scope.PEER -> packageJson.peerDependencies[it.name] = dependency
+            NpmDependencyScopeDeprecated.NORMAL -> packageJson.dependencies[it.name] = dependency
+            NpmDependencyScopeDeprecated.DEV -> packageJson.devDependencies[it.name] = dependency
+            NpmDependencyScopeDeprecated.OPTIONAL -> packageJson.optionalDependencies[it.name] = dependency
+            NpmDependencyScopeDeprecated.PEER -> packageJson.peerDependencies[it.name] = dependency
         }
     }
 

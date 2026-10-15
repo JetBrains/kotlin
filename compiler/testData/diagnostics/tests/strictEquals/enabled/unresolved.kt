@@ -1,7 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 
 class A {
-    override fun equals(@EqualityBound(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!><!UNRESOLVED_REFERENCE!>Unresolved<!>::class<!>) other: Any?): Boolean = true
+    override fun equals(@EqualityBound(<!UNRESOLVED_REFERENCE!>Unresolved<!>::class) other: Any?): Boolean = true
 }
 
 class B {
@@ -13,7 +13,7 @@ class C {
 }
 
 class D {
-    override fun equals(@EqualityBound(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>D.<!UNRESOLVED_REFERENCE!>Unresolved<!>::class<!>) other: Any?): Boolean = true
+    override fun equals(@EqualityBound(D.<!UNRESOLVED_REFERENCE!>Unresolved<!>::class) other: Any?): Boolean = true
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, classReference, functionDeclaration, integerLiteral, nullableType, operator,

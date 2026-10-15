@@ -19,7 +19,7 @@ internal interface NativeProperties {
     val kotlinNativeVersion: Provider<String>
     val jvmArgs: Provider<List<String>>
     val forceDisableRunningInProcess: Provider<Boolean>
-    val konanDataDir: Provider<File?>
+    val konanDataDir: Provider<File>
     val downloadFromMaven: Provider<Boolean>
     val isToolchainEnabled: Provider<Boolean>
 
@@ -60,7 +60,7 @@ private class NativePropertiesLoader(private val project: Project) : NativePrope
     private val propertiesService = project.propertiesService
 
     override val isUseXcodeMessageStyleEnabled: Provider<Boolean> = propertiesService.flatMap {
-        it.property(USE_XCODE_MESSAGE_STYLE, project)
+        it.typedProperty(USE_XCODE_MESSAGE_STYLE, project)
     }
 
     override val kotlinNativeVersion: Provider<String> = propertiesService.flatMap {
@@ -78,21 +78,21 @@ private class NativePropertiesLoader(private val project: Project) : NativePrope
     }
 
     override val forceDisableRunningInProcess: Provider<Boolean> = propertiesService.flatMap {
-        it.property(NATIVE_FORCE_DISABLE_IN_PROCESS, project)
+        it.typedProperty(NATIVE_FORCE_DISABLE_IN_PROCESS, project)
     }
 
     private val konanDataDirProperty = propertiesService.flatMap { service ->
-        service.property(KONAN_DATA_DIR, project).map { File(it) }
+        service.typedProperty(KONAN_DATA_DIR, project).map { File(it) }
     }
 
-    override val konanDataDir: Provider<File?> = konanDataDirProperty
+    override val konanDataDir: Provider<File> = konanDataDirProperty
 
     override val downloadFromMaven: Provider<Boolean> = propertiesService.flatMap {
-        it.property(NATIVE_DOWNLOAD_FROM_MAVEN, project)
+        it.typedProperty(NATIVE_DOWNLOAD_FROM_MAVEN, project)
     }
 
     override val isToolchainEnabled: Provider<Boolean> = propertiesService.flatMap {
-        it.property(NATIVE_TOOLCHAIN_ENABLED, project).zip(downloadFromMaven) { isToolchainEnabled, isDownloadFromMavenEnabled ->
+        it.typedProperty(NATIVE_TOOLCHAIN_ENABLED, project).zip(downloadFromMaven) { isToolchainEnabled, isDownloadFromMavenEnabled ->
             isToolchainEnabled && isDownloadFromMavenEnabled
         }
     }

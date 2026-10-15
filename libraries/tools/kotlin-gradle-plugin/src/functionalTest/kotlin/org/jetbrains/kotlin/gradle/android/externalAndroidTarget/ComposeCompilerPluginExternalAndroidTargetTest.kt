@@ -30,7 +30,7 @@ class ComposeCompilerPluginExternalAndroidTargetTest {
                 composeCompiler.includeSourceInformation.set(false)
                 composeCompiler.metricsDestination.set(project.layout.buildDirectory.dir("compose-metrics"))
                 composeCompiler.reportsDestination.set(project.layout.buildDirectory.dir("compose-reports"))
-                @Suppress("DEPRECATION")
+                @Suppress("DEPRECATION_ERROR")
                 composeCompiler.featureFlags.set(setOf(ComposeFeatureFlag.OptimizeNonSkippingGroups))
             },
         )

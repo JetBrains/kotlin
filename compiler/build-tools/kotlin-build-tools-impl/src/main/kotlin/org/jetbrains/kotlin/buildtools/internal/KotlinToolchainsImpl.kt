@@ -22,13 +22,12 @@ import org.jetbrains.kotlin.buildtools.internal.metadata.KotlinMetadataPlatformT
 import org.jetbrains.kotlin.buildtools.internal.wasm.WasmPlatformToolchainImpl
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
-import java.io.File
 import java.util.concurrent.*
 
 private const val DEFAULT_CLASSLOADERS_CACHE_SIZE = 10
 private const val PROPERTY_CLASSLOADERS_CACHE_SIZE = "kotlin.buildtools.classloaders.cache.size"
 
-internal class KotlinToolchainsImpl() : KotlinToolchains {
+internal class KotlinToolchainsImpl : KotlinToolchains {
     val toolchains: ConcurrentHashMap<Class<*>, KotlinToolchains.Toolchain> = ConcurrentHashMap()
     val classloadersCache = LruClassLoadersCache(
         System.getProperty(PROPERTY_CLASSLOADERS_CACHE_SIZE)?.toIntOrNull() ?: DEFAULT_CLASSLOADERS_CACHE_SIZE,
@@ -72,11 +71,13 @@ internal class KotlinToolchainsImpl() : KotlinToolchains {
         override val projectId: ProjectId,
         val classloadersCache: LruClassLoadersCache,
     ) : KotlinToolchains.BuildSession {
+        private val closeableGuard = CloseableGuard(this)
         private val sessionIsAliveFlagFile = lazy { createSessionIsAliveFlagFile() }
         private val executorDelegate = lazy {
             Executors.newCachedThreadPool()
         }
         private val executor by executorDelegate
+        private val daemonConnectionRegistry = DaemonConnectionRegistry(sessionIsAliveFlagFile)
 
         /**
          * Pins the shared application environment to this session so it is reused across build operations and
@@ -90,6 +91,7 @@ internal class KotlinToolchainsImpl() : KotlinToolchains {
         }
 
         override fun <R> executeOperation(operation: BuildOperation<R>): R {
+            closeableGuard.requireNotClosed()
             return executeOperation(operation, logger = null)
         }
 
@@ -98,6 +100,7 @@ internal class KotlinToolchainsImpl() : KotlinToolchains {
             executionPolicy: ExecutionPolicy,
             logger: KotlinLogger?,
         ): R {
+            closeableGuard.requireNotClosed()
             check(operation is BuildOperationImpl<R>) { "Unknown operation type: ${operation::class.qualifiedName}" }
             val operationBody: Callable<R> = {
                 val classloadersCacheWithLogger =
@@ -106,7 +109,7 @@ internal class KotlinToolchainsImpl() : KotlinToolchains {
                     projectId,
                     executionPolicy,
                     logger,
-                    ExecutionContext(sessionIsAliveFlagFile, classloadersCacheWithLogger)
+                    ExecutionContext(classloadersCacheWithLogger, daemonConnectionRegistry)
                 )
             }
             return if (executionPolicy is ExecutionPolicy.InProcess) {
@@ -134,14 +137,17 @@ internal class KotlinToolchainsImpl() : KotlinToolchains {
         }
 
         override fun close() {
-            if (applicationEnvironmentPin.isInitialized()) {
-                applicationEnvironmentPin.value.close()
-            }
-            if (executorDelegate.isInitialized()) {
-                executor.shutdown()
-            }
-            if (sessionIsAliveFlagFile.isInitialized()) {
-                sessionIsAliveFlagFile.value.delete()
+            closeableGuard.close {
+                if (applicationEnvironmentPin.isInitialized()) {
+                    applicationEnvironmentPin.value.close()
+                }
+                if (executorDelegate.isInitialized()) {
+                    executor.shutdown()
+                }
+                if (sessionIsAliveFlagFile.isInitialized()) {
+                    sessionIsAliveFlagFile.value.delete()
+                }
+                daemonConnectionRegistry.close()
             }
         }
     }
@@ -161,6 +167,6 @@ internal sealed interface BtaApiVersion {
 }
 
 internal class ExecutionContext(
-    val sessionIsAliveFlagFile: Lazy<File>,
     val classloadersCache: LruClassLoadersCache?,
+    val daemonConnectionRegistry: DaemonConnectionRegistry
 )

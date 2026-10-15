@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeAsciiOnly
 import org.jetbrains.org.objectweb.asm.Opcodes.*
 import org.jetbrains.org.objectweb.asm.Type
@@ -42,6 +43,9 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
     private val booleanFqn = StandardNames.FqNames._boolean.toSafe()
     private val kClassFqn = StandardNames.FqNames.kClass.toSafe()
     private val stringFqn = StandardNames.FqNames.string.toSafe()
+
+    private val collectionsFqnWithOf = [StandardNames.FqNames.list, StandardNames.FqNames.set]
+    private val mutableCollectionFqnsWithOf = [StandardNames.FqNames.mutableList, StandardNames.FqNames.mutableSet]
 
     private val intrinsics = (
             listOf(
@@ -136,17 +140,32 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
         }
     }
 
-    private fun intrinsicsThatShouldHaveBeenLowered() =
-        (irBuiltIns.primitiveTypesToPrimitiveArrays.map { [_, primitiveClassSymbol] ->
-            val name = primitiveClassSymbol.owner.name.asString()
+    private fun intrinsicsThatShouldHaveBeenLowered() = buildList {
+        val primitiveArrayOfs = irBuiltIns.primitiveTypesToPrimitiveArrays.flatMap { [_, primitiveClassSymbol] ->
+            val fqPrimitiveArray = primitiveClassSymbol.owner.fqNameWhenAvailable!!
+            val primitiveArray = primitiveClassSymbol.owner.name.asString()
             // IntArray -> intArrayOf
-            val arrayOfFunName = name.decapitalizeAsciiOnly() + "Of"
-            Key(kotlinFqn, null, arrayOfFunName, listOf(primitiveClassSymbol.owner.fqNameWhenAvailable))
-        } + listOf(
-            Key(kotlinFqn, anyFqn, "toString", emptyList()),
-            Key(kotlinFqn, null, "arrayOf", listOf(arrayFqn)),
-            Key(stringFqn, null, "plus", listOf(anyFqn)),
-        )).map { it to IntrinsicShouldHaveBeenLowered }
+            val primitiveArrayOf = primitiveArray.decapitalizeAsciiOnly() + "Of"
+            [
+                Key(kotlinFqn, null, primitiveArrayOf, [fqPrimitiveArray]),
+                Key(fqPrimitiveArray, null, OperatorNameConventions.OF.asString(), [fqPrimitiveArray])
+            ]
+        }
+        addAll(primitiveArrayOfs)
+        add(Key(kotlinFqn, anyFqn, "toString", []))
+        add(Key(kotlinFqn, null, "arrayOf", [arrayFqn]))
+        add(Key(arrayFqn, null, OperatorNameConventions.OF.asString(), [arrayFqn]))
+        for (collection in collectionsFqnWithOf) {
+            add(Key(collection, null, OperatorNameConventions.OF.asString(), []))
+            add(Key(collection, null, OperatorNameConventions.OF.asString(), [FqName("E")]))
+            add(Key(collection, null, OperatorNameConventions.OF.asString(), [arrayFqn]))
+        }
+        for (collection in mutableCollectionFqnsWithOf) {
+            add(Key(collection, null, OperatorNameConventions.OF.asString(), []))
+            add(Key(collection, null, OperatorNameConventions.OF.asString(), [arrayFqn]))
+        }
+        add(Key(stringFqn, null, "plus", [anyFqn]))
+    }.map { it to IntrinsicShouldHaveBeenLowered }
 
     private val PrimitiveType.symbol
         get() = irBuiltIns.primitiveTypeToIrType[this]!!.classOrNull!!

@@ -36,10 +36,14 @@ internal val ConfigureKotlinPlaywrightTestRunner = KotlinTargetSideEffect { targ
 
         val browserTestDsl = browser.test as KotlinJsBrowserTestImpl
 
-        if (browserTestDsl.allBrowserRunners.get().isEmpty()) {
+        val browserRunners = browserTestDsl.browserRunners
+
+        if (browserRunners.isEmpty()) {
             project.reportDiagnostic(KotlinToolingDiagnostics.NoBrowserSpecifiedForJsBrowserTestFramework(targetName = target.name))
             browserTestDsl.setUpDefaultBrowserRunner()
         }
+
+        KotlinJsBrowserTestMetrics.collectMetrics(project, browserRunners)
 
         // TODO: KT-86706 Implement different browser runners as independent test runs
         //  so it is aligned with KGP API
@@ -47,14 +51,10 @@ internal val ConfigureKotlinPlaywrightTestRunner = KotlinTargetSideEffect { targ
         val testCompilation = target.compilations.getByName(KotlinCompilation.TEST_COMPILATION_NAME)
         val testTaskProvider = testRun.executionTask
 
-        val jdBrowserRunners = browserTestDsl.allBrowserRunners.get().values
-
-        KotlinJsBrowserTestMetrics.collectMetrics(project, jdBrowserRunners)
-
         // KT-87641: Register one installation task per browser type so that multiple JS targets
         // with overlapping browser configurations don't cause DuplicateTaskException.
         // locateOrRegisterTask returns the existing task when already registered by another target.
-        val browserInstallTasks = jdBrowserRunners
+        val browserInstallTasks = browserRunners
             .map { runner -> runner.getBrowserKind() }
             .distinct()
             .map { browserType ->
@@ -81,19 +81,19 @@ internal val ConfigureKotlinPlaywrightTestRunner = KotlinTargetSideEffect { targ
             inputs.ideDebugSessionUrl.set(project.kotlinPropertiesProvider.jsIdeDebugSessionUrl)
 
             inputs.chromiumRunners.set(
-                browserTestDsl.chromiumRunners.values.map { runner ->
+                browserTestDsl.chromiumRunners.map { runner ->
                     KotlinPlaywrightJsTestFramework.createChromiumInputs(objects)
                         .also { it.populateFrom(project, runner) }
                 }
             )
             inputs.firefoxRunners.set(
-                browserTestDsl.firefoxRunners.values.map { runner ->
+                browserTestDsl.firefoxRunners.map { runner ->
                     KotlinPlaywrightJsTestFramework.createFirefoxInputs(objects)
                         .also { it.populateFrom(project, runner) }
                 }
             )
             inputs.webkitRunners.set(
-                browserTestDsl.webkitRunners.values.map { runner ->
+                browserTestDsl.webkitRunners.map { runner ->
                     KotlinPlaywrightJsTestFramework.createWebkitInputs(objects)
                         .also { it.populateFrom(project, runner) }
                 }
@@ -111,12 +111,15 @@ internal val ConfigureKotlinPlaywrightTestRunner = KotlinTargetSideEffect { targ
     }
 }
 
-internal fun KotlinBrowserTestRunnerDsl.getBrowserKind(): PwBrowserKind = when (this) {
+internal fun KotlinBrowserTestRunnerDsl.getBrowserKindOrNull(): PwBrowserKind? = when (this) {
     is KotlinFirefoxTestRunner -> PwBrowserKind.FIREFOX
     is KotlinWebkitTestRunner -> PwBrowserKind.WEBKIT
     is KotlinChromiumTestRunner -> PwBrowserKind.CHROMIUM
-    else -> throw IllegalArgumentException("Unsupported browser runner: ${this::class.simpleName}")
+    else -> null
 }
+
+internal fun KotlinBrowserTestRunnerDsl.getBrowserKind(): PwBrowserKind =
+    getBrowserKindOrNull() ?: throw IllegalArgumentException("Unsupported browser runner: ${this::class.simpleName}")
 
 private fun KotlinPlaywrightJsTestFramework.BrowserRunnerInput.populateFrom(
     project: Project,

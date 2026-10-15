@@ -607,14 +607,10 @@ class ComposableFunctionBodyTransformer(
         get() = currentScope.functionScope
             ?: error("Expected a FunctionScope but none exist. \n${printScopeStack()}")
 
-    override fun visitClass(declaration: IrClass): IrStatement {
-        if (declaration.isComposableSingletonClass) {
-            return declaration
-        }
-        return inScope(Scope.ClassScope(declaration.name)) {
+    override fun visitClass(declaration: IrClass): IrStatement =
+        inScope(Scope.ClassScope(declaration.name)) {
             super.visitDeclaration(declaration)
         }
-    }
 
     override fun visitFunction(declaration: IrFunction): IrStatement {
         val scope = Scope.FunctionScope(declaration, this)
@@ -2931,64 +2927,43 @@ class ComposableFunctionBodyTransformer(
     }
 
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
-        if (expression.associatedComposableSingletonStub != null) {
-            // This call has an associated stub in ComposableSingletons class. This stub is not
-            // directly reachable by any code in this module, but might be used by other external libraries.
-            // Transform it the same way as the one above.
-            val getterCall = expression.associatedComposableSingletonStub
-            val property = getterCall?.symbol?.owner?.correspondingPropertySymbol?.owner
-            property?.transformChildrenVoid()
-        }
-
         if (expression is IrCall && expression.isComposableCall()) {
             return visitComposableCall(expression)
         }
 
-        when {
-            expression.symbol.owner.isInline || expression.symbol.owner.isInlineArrayConstructor() -> {
-                val captureScope = Scope.CaptureScope()
-                withScope(Scope.CallScope(expression, this)) {
-                    val owner = expression.symbol.owner
+        val owner = expression.symbol.owner
+        if (!owner.isInline && !owner.isInlineArrayConstructor()) {
+            return super.visitFunctionAccess(expression)
+        }
 
-                    // if it is a non-composable call with multiple inline lambdas, we need to force a group for each inline function.
-                    // this preserves structure in the argument body in cases when inline function hides some control flow.
-                    val inlineLambdaCount = owner.parameters.count { it.isInlineParameter() }
-                    captureScope.forceInlinedLambdaGroup = inlineLambdaCount > 1
+        val captureScope = Scope.CaptureScope()
+        withScope(Scope.CallScope(expression, this)) {
+            // if it is a non-composable call with multiple inline lambdas, we need to force a group for each inline function.
+            // this preserves structure in the argument body in cases when inline function hides some control flow.
+            val inlineLambdaCount = owner.parameters.count { it.isInlineParameter() }
+            captureScope.forceInlinedLambdaGroup = inlineLambdaCount > 1
 
-                    expression.arguments.fastForEachIndexed { index, arg ->
-                        val parameter = owner.parameters[index]
-                        val transformed = if (parameter.isInlineParameter()) {
-                            // if it is not a composable call but it is an inline function, then we allow
-                            // composable calls to happen inside of the inlined lambdas. This means that we have
-                            // some control flow analysis to handle there as well. We wrap the call in a
-                            // CaptureScope and coalescable group if the call has any composable invocations
-                            // inside of it.
-                            inScope(captureScope) { arg?.transform(this, null) }
-                        } else {
-                            arg?.transform(this, null)
-                        }
-
-                        expression.arguments[index] = transformed
-                    }
-                }
-                return if (captureScope.hasCapturedComposableCall) {
-                    captureScope.realizeAllDirectChildren()
-                    expression.asCoalescableGroup(captureScope)
+            expression.arguments.fastForEachIndexed { index, arg ->
+                val parameter = owner.parameters[index]
+                val transformed = if (parameter.isInlineParameter()) {
+                    // if it is not a composable call but it is an inline function, then we allow
+                    // composable calls to happen inside of the inlined lambdas. This means that we have
+                    // some control flow analysis to handle there as well. We wrap the call in a
+                    // CaptureScope and coalescable group if the call has any composable invocations
+                    // inside of it.
+                    inScope(captureScope) { arg?.transform(this, null) }
                 } else {
-                    expression
+                    arg?.transform(this, null)
                 }
+
+                expression.arguments[index] = transformed
             }
-            expression is IrCall && expression.isComposableSingletonGetter() -> {
-                // This looks like `ComposableSingletonClass.lambda-123`, which is a static/saved
-                // call of composableLambdaInstance. We want to transform the property here now
-                // so the assumptions about the invocation order assumed by source locations is
-                // preserved.
-                val getter = expression.symbol.owner
-                val property = getter.correspondingPropertySymbol?.owner
-                property?.transformChildrenVoid()
-                return super.visitFunctionAccess(expression)
-            }
-            else -> return super.visitFunctionAccess(expression)
+        }
+        return if (captureScope.hasCapturedComposableCall) {
+            captureScope.realizeAllDirectChildren()
+            expression.asCoalescableGroup(captureScope)
+        } else {
+            expression
         }
     }
 

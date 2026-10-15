@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
@@ -20,6 +21,8 @@ import kotlin.io.path.writeText
 )
 @OtherGradlePluginTests
 class CompilerDiagnosticsProblemsApiIT : KGPBaseTest() {
+
+    override val defaultBuildOptions: BuildOptions = super.defaultBuildOptions.copy(warningMode = WarningMode.Fail)
 
     @GradleTest
     @DisplayName("Test compiler warning appears in build output via Problems API renderer")

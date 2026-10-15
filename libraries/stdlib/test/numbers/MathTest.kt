@@ -39,6 +39,8 @@ private val Float.ulpCommon: Float
 class DoubleMathTest {
 
     @Test fun trigonometric() {
+        assertEquals(6.283185307179586, TAU)
+
         assertEquals(0.0, sin(0.0))
         assertAlmostEquals(0.0, sin(PI))
 
@@ -166,10 +168,12 @@ class DoubleMathTest {
         assertTrue(hypot(Double.NaN, 0.0).isNaN())
 
         assertEquals(1.0, Double.NaN.pow(0.0))
+        assertEquals(1.0, Double.NaN.pow(-0.0))
         assertEquals(1.0, Double.POSITIVE_INFINITY.pow(0))
         assertEquals(49.0, 7.0.pow(2))
         assertEquals(0.25, 2.0.pow(-2))
         assertTrue(0.0.pow(Double.NaN).isNaN())
+        assertTrue(1.0.pow(Double.NaN).isNaN())
         assertTrue(Double.NaN.pow(-1).isNaN())
         assertTrue((-7.0).pow(1 / 3.0).isNaN())
         assertTrue(1.0.pow(Double.POSITIVE_INFINITY).isNaN())
@@ -368,26 +372,63 @@ class DoubleMathTest {
             if (toZero != 0.0) {
                 assertEquals(value, toZero + toZero.ulp.withSign(toZero))
             }
+        }
 
-            assertEquals(Double.POSITIVE_INFINITY, Double.MAX_VALUE.nextUp())
-            assertEquals(Double.MAX_VALUE, Double.POSITIVE_INFINITY.nextDown())
+        assertEquals(Double.POSITIVE_INFINITY, Double.MAX_VALUE.nextUp())
+        assertEquals(Double.MAX_VALUE, Double.POSITIVE_INFINITY.nextDown())
 
-            assertEquals(Double.NEGATIVE_INFINITY, (-Double.MAX_VALUE).nextDown())
-            assertEquals((-Double.MAX_VALUE), Double.NEGATIVE_INFINITY.nextUp())
+        assertEquals(Double.NEGATIVE_INFINITY, (-Double.MAX_VALUE).nextDown())
+        assertEquals((-Double.MAX_VALUE), Double.NEGATIVE_INFINITY.nextUp())
 
-            assertTrue(Double.NaN.ulp.isNaN())
-            assertTrue(Double.NaN.nextDown().isNaN())
-            assertTrue(Double.NaN.nextUp().isNaN())
-            assertTrue(Double.NaN.nextTowards(0.0).isNaN())
+        assertTrue(Double.NaN.nextDown().isNaN())
+        assertTrue(Double.NaN.nextUp().isNaN())
+        assertTrue(Double.NaN.nextTowards(0.0).isNaN())
+    }
 
-            assertEquals(Double.MIN_VALUE, (0.0).ulp)
-            assertEquals(Double.MIN_VALUE, (-0.0).ulp)
-            assertEquals(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY.ulp)
-            assertEquals(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY.ulp)
+    @Test
+    fun ulp() {
+        assertTrue(Double.NaN.ulp.isNaN())
 
-            val maxUlp = 2.0.pow(971)
-            assertEquals(maxUlp, Double.MAX_VALUE.ulp)
-            assertEquals(maxUlp, (-Double.MAX_VALUE).ulp)
+        val customQuietNaN = Double.fromBits(Double.NaN.toBits() or 1L)
+        assertTrue(customQuietNaN.ulp.isNaN())
+
+        val customSignalingNaN = Double.fromBits(Double.NaN.toBits() or (1L shl 63))
+        assertTrue(customSignalingNaN.ulp.isNaN())
+
+        assertEquals(Double.MIN_VALUE, (0.0).ulp)
+        assertEquals(Double.MIN_VALUE, (-0.0).ulp)
+        assertEquals(Double.MIN_VALUE, Double.MIN_VALUE.ulp)
+        assertEquals(Double.MIN_VALUE, (-Double.MIN_VALUE).ulp)
+        assertEquals(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY.ulp)
+        assertEquals(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY.ulp)
+
+        val maxUlp = 2.0.pow(971)
+        assertEquals(maxUlp, Double.MAX_VALUE.ulp)
+        assertEquals(maxUlp, (-Double.MAX_VALUE).ulp)
+
+        // subnormal-normal boundary
+        val minNormalMagnitude = Double.fromBits(0x0010_0000_0000_0000L)
+        for (normal in [minNormalMagnitude, -minNormalMagnitude]) {
+            val subnormal = if (normal > 0) minNormalMagnitude.nextDown() else normal.nextUp()
+
+            // minNormal.ulp is already Double.MIN_VALUE, can't go below that
+            assertEquals(1.0, normal.ulp / subnormal.ulp)
+        }
+
+        // power-of-two boundaries
+        for (power in doubleArrayOf(-300.0, -50.0, -10.0, 0.0, 10.0, 50.0, 300.0)) {
+            val magnitude = 2.0.pow(power)
+            magnitude.let {
+                val previousUlp = it.nextDown().ulp
+
+                assertEquals(2.0, it.ulp / previousUlp)
+            }
+
+            (-magnitude).let {
+                val previousUlp = it.nextUp().ulp
+
+                assertEquals(2.0, it.ulp / previousUlp)
+            }
         }
     }
 }
@@ -537,10 +578,12 @@ class FloatMathTest {
         assertTrue(hypot(Float.NaN, 0.0F).isNaN())
 
         assertEquals(1.0F, Float.NaN.pow(0.0F))
+        assertEquals(1.0F, Float.NaN.pow(-0.0F))
         assertEquals(1.0F, Float.POSITIVE_INFINITY.pow(0))
         assertEquals(49.0F, 7.0F.pow(2))
         assertEquals(0.25F, 2.0F.pow(-2))
         assertTrue(0.0F.pow(Float.NaN).isNaN())
+        assertTrue(1.0F.pow(Float.NaN).isNaN())
         assertTrue(Float.NaN.pow(-1).isNaN())
         assertTrue((-7.0F).pow(1 / 3.0F).isNaN())
         assertTrue(1.0F.pow(Float.POSITIVE_INFINITY).isNaN())

@@ -1,0 +1,22 @@
+Module: lib
+public abstract interface lib/A : java/lang/Object {
+    public abstract java.lang.Object getValue()
+        throws java/io/IOException
+
+    public abstract void setValue(java.lang.Object p0)
+        throws java/io/FileNotFoundException
+}
+Module: main
+public final class main/B : java/lang/Object, lib/A {
+    public void <init>()
+
+    public java.lang.String getValue()
+
+    public java.lang.Object getValue()
+        throws java/io/IOException
+
+    public void setValue(java.lang.String value)
+
+    public void setValue(java.lang.Object <set-?>)
+        throws java/io/FileNotFoundException
+}

@@ -24,7 +24,7 @@ export { a };
 
 package abcd
 
-external var x: Int
+external val x: Int
 external fun f(): Int
 external class C {
     constructor(x: String)
@@ -32,7 +32,7 @@ external class C {
 }
 
 @JsName("x")
-external var x2: Int
+external val x2: Int
 
 @JsName("f")
 external fun f2(): Int

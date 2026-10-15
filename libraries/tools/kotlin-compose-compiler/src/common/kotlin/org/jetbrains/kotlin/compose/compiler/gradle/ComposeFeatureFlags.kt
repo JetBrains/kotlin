@@ -88,8 +88,8 @@ sealed interface ComposeFeatureFlag : Named, Serializable {
          * ```
          */
         @Deprecated(
-            message = "This flag is now enabled by default and will be removed in the future versions.",
-            level = DeprecationLevel.WARNING
+            message = "This flag is now enabled by default and will be removed in Kotlin 2.6.0.",
+            level = DeprecationLevel.ERROR
         )
         @JvmField
         val OptimizeNonSkippingGroups: ComposeFeatureFlag = Enabled(Feature.OptimizeNonSkippingGroups)
@@ -109,8 +109,8 @@ sealed interface ComposeFeatureFlag : Named, Serializable {
          * ```
          */
         @Deprecated(
-            message = "This flag is now enabled by default and will be removed in the future versions.",
-            level = DeprecationLevel.WARNING
+            message = "This flag is now enabled by default and will be removed in Kotlin 2.6.0.",
+            level = DeprecationLevel.ERROR
         )
         @JvmField
         val PausableComposition: ComposeFeatureFlag = Enabled(Feature.PausableComposition)

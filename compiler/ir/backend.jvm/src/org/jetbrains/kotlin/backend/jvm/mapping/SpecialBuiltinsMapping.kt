@@ -85,7 +85,7 @@ class SpecialBuiltinsMapping(private val typeMapper: IrTypeMapper, private val s
         return function.allOverridden(includeSelf = true)
             .filter { it.isBuiltIn }
             .firstNotNullOfOrNull {
-                val signature = function.computeJvmSignature()
+                val signature = it.computeJvmSignature()
                 SpecialGenericSignatures.SIGNATURE_TO_JVM_REPRESENTATION_NAME[signature]?.asString()
             }
     }

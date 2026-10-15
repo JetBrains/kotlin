@@ -24,6 +24,7 @@ public final class org/jetbrains/kotlin/gradle/idea/debugger/IdeaKotlinJsBrowser
 	public static final field DEBUGGER_READY Lorg/jetbrains/kotlin/gradle/idea/debugger/IdeaKotlinJsBrowserDebugSession$BuildSystemSession$State;
 	public static final field FINISHED Lorg/jetbrains/kotlin/gradle/idea/debugger/IdeaKotlinJsBrowserDebugSession$BuildSystemSession$State;
 	public static final field WAITING_FOR_DEBUGGER Lorg/jetbrains/kotlin/gradle/idea/debugger/IdeaKotlinJsBrowserDebugSession$BuildSystemSession$State;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/idea/debugger/IdeaKotlinJsBrowserDebugSession$BuildSystemSession$State;
 	public static fun values ()[Lorg/jetbrains/kotlin/gradle/idea/debugger/IdeaKotlinJsBrowserDebugSession$BuildSystemSession$State;
 }
@@ -52,6 +53,7 @@ public final class org/jetbrains/kotlin/gradle/idea/debugger/IdeaKotlinJsBrowser
 	public static final field DEBUGGER_READY Lorg/jetbrains/kotlin/gradle/idea/debugger/IdeaKotlinJsBrowserDebugSession$IdeSession$State;
 	public static final field FINISHED Lorg/jetbrains/kotlin/gradle/idea/debugger/IdeaKotlinJsBrowserDebugSession$IdeSession$State;
 	public static final field WAITING_FOR_BROWSER Lorg/jetbrains/kotlin/gradle/idea/debugger/IdeaKotlinJsBrowserDebugSession$IdeSession$State;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/idea/debugger/IdeaKotlinJsBrowserDebugSession$IdeSession$State;
 	public static fun values ()[Lorg/jetbrains/kotlin/gradle/idea/debugger/IdeaKotlinJsBrowserDebugSession$IdeSession$State;
 }

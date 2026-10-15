@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.MediaIntelligence
+
+modules = MediaIntelligence
+compilerOpts = -framework MediaIntelligence
+linkerOpts = -framework MediaIntelligence
+#Disabled: Swift-only framework

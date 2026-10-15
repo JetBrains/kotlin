@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.api.compilation.KaCompilationTarget
 import org.jetbrains.kotlin.analysis.api.compilation.compile
 import org.jetbrains.kotlin.analysis.api.compilation.createCompilationOptions
 import org.jetbrains.kotlin.analysis.api.components.asPsiType
-import org.jetbrains.kotlin.analysis.api.components.returnType
+import org.jetbrains.kotlin.analysis.api.expressions.returnType
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compilerFacility.TestAllowedErrorFilter
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compilerFacility.dumpClassFiles
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.javaInteroperabilityComponent.AbstractDeclarationTypeAsPsiTypeTest.Directives.RENDER_CLASS_DUMP

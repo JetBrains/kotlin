@@ -1,0 +1,23 @@
+consume@(1,1) : kotlin.Unit
+  action@(2,17) : (T) -> kotlin.Unit
+    KtParameter@(2,26) : T
+test@(4,1) : kotlin.Unit
+  explicit@(5,5) : (kotlin.Int, kotlin.String) -> kotlin.Int
+    <anonymous>@(5,20) : kotlin.Int
+      x@(5,22) : kotlin.Int
+      y@(5,30) : kotlin.String
+  <anonymous>@(6,21) : kotlin.Unit
+    s@(6,23) : kotlin.String
+  <anonymous>@(7,32) : kotlin.Unit
+    KtParameter@(7,34) : kotlin.Pair<kotlin.Int, kotlin.String>
+      KtDestructuringDeclaration@(7,34) : kotlin.Pair<kotlin.Int, kotlin.String>
+        a@(7,35) : kotlin.Int
+        b@(7,38) : kotlin.String
+  <anonymous>@(8,32) : kotlin.Unit
+    KtParameter@(8,34) : kotlin.Pair<kotlin.Int, kotlin.String>
+      KtDestructuringDeclaration@(8,34) : kotlin.Pair<kotlin.Int, kotlin.String>
+        a@(8,35) : kotlin.Int
+        _@(8,43) : kotlin.String
+  extension@(9,5) : kotlin.Int.(kotlin.Int) -> kotlin.String
+    KtNamedFunction@(9,21) : kotlin.String
+      x@(9,30) : kotlin.Int

@@ -29,7 +29,7 @@
 -        VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Boolean
 -        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:_x$volatile visibility:private modality:FINAL [var]
 -        BLOCK_BODY
--          RETURN type=kotlin.Unit from='private final fun <set-_x$volatile> (value: kotlin.Boolean): kotlin.Unit declared in <root>.BooleanArithmetic'
+-          RETURN type=kotlin.Nothing from='private final fun <set-_x$volatile> (value: kotlin.Boolean): kotlin.Unit declared in <root>.BooleanArithmetic'
 -            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:_x$volatile type:kotlin.Boolean visibility:private declared in <root>.BooleanArithmetic' type=kotlin.Unit origin=null
 -              receiver: GET_VAR '<this>: <root>.BooleanArithmetic declared in <root>.BooleanArithmetic.<set-_x$volatile>' type=<root>.BooleanArithmetic origin=null
 -              value: GET_VAR 'value: kotlin.Boolean declared in <root>.BooleanArithmetic.<set-_x$volatile>' type=kotlin.Boolean origin=null
@@ -145,7 +145,7 @@
 -        VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Int
 -        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:_x$volatile visibility:private modality:FINAL [var]
 -        BLOCK_BODY
--          RETURN type=kotlin.Unit from='private final fun <set-_x$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.IntArithmetic'
+-          RETURN type=kotlin.Nothing from='private final fun <set-_x$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.IntArithmetic'
 -            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:_x$volatile type:kotlin.Int visibility:private declared in <root>.IntArithmetic' type=kotlin.Unit origin=null
 -              receiver: GET_VAR '<this>: <root>.IntArithmetic declared in <root>.IntArithmetic.<set-_x$volatile>' type=<root>.IntArithmetic origin=null
 -              value: GET_VAR 'value: kotlin.Int declared in <root>.IntArithmetic.<set-_x$volatile>' type=kotlin.Int origin=null
@@ -177,7 +177,7 @@
 -        VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Int
 -        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:local$volatile visibility:private modality:FINAL [var]
 -        BLOCK_BODY
--          RETURN type=kotlin.Unit from='private final fun <set-local$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.IntArithmetic'
+-          RETURN type=kotlin.Nothing from='private final fun <set-local$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.IntArithmetic'
 -            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:local$volatile type:kotlin.Int visibility:private declared in <root>.IntArithmetic' type=kotlin.Unit origin=null
 -              receiver: GET_VAR '<this>: <root>.IntArithmetic declared in <root>.IntArithmetic.<set-local$volatile>' type=<root>.IntArithmetic origin=null
 -              value: GET_VAR 'value: kotlin.Int declared in <root>.IntArithmetic.<set-local$volatile>' type=kotlin.Int origin=null
@@ -616,7 +616,7 @@
 -        VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Long
 -        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:_x$volatile visibility:private modality:FINAL [var]
 -        BLOCK_BODY
--          RETURN type=kotlin.Unit from='private final fun <set-_x$volatile> (value: kotlin.Long): kotlin.Unit declared in <root>.LongArithmetic'
+-          RETURN type=kotlin.Nothing from='private final fun <set-_x$volatile> (value: kotlin.Long): kotlin.Unit declared in <root>.LongArithmetic'
 -            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:_x$volatile type:kotlin.Long visibility:private declared in <root>.LongArithmetic' type=kotlin.Unit origin=null
 -              receiver: GET_VAR '<this>: <root>.LongArithmetic declared in <root>.LongArithmetic.<set-_x$volatile>' type=<root>.LongArithmetic origin=null
 -              value: GET_VAR 'value: kotlin.Long declared in <root>.LongArithmetic.<set-_x$volatile>' type=kotlin.Long origin=null
@@ -648,7 +648,7 @@
 -        VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Long
 -        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:y$volatile visibility:private modality:FINAL [var]
 -        BLOCK_BODY
--          RETURN type=kotlin.Unit from='private final fun <set-y$volatile> (value: kotlin.Long): kotlin.Unit declared in <root>.LongArithmetic'
+-          RETURN type=kotlin.Nothing from='private final fun <set-y$volatile> (value: kotlin.Long): kotlin.Unit declared in <root>.LongArithmetic'
 -            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:y$volatile type:kotlin.Long visibility:private declared in <root>.LongArithmetic' type=kotlin.Unit origin=null
 -              receiver: GET_VAR '<this>: <root>.LongArithmetic declared in <root>.LongArithmetic.<set-y$volatile>' type=<root>.LongArithmetic origin=null
 -              value: GET_VAR 'value: kotlin.Long declared in <root>.LongArithmetic.<set-y$volatile>' type=kotlin.Long origin=null
@@ -680,7 +680,7 @@
 -        VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Long
 -        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:z$volatile visibility:private modality:FINAL [var]
 -        BLOCK_BODY
--          RETURN type=kotlin.Unit from='private final fun <set-z$volatile> (value: kotlin.Long): kotlin.Unit declared in <root>.LongArithmetic'
+-          RETURN type=kotlin.Nothing from='private final fun <set-z$volatile> (value: kotlin.Long): kotlin.Unit declared in <root>.LongArithmetic'
 -            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:z$volatile type:kotlin.Long visibility:private declared in <root>.LongArithmetic' type=kotlin.Unit origin=null
 -              receiver: GET_VAR '<this>: <root>.LongArithmetic declared in <root>.LongArithmetic.<set-z$volatile>' type=<root>.LongArithmetic origin=null
 -              value: GET_VAR 'value: kotlin.Long declared in <root>.LongArithmetic.<set-z$volatile>' type=kotlin.Long origin=null
@@ -712,7 +712,7 @@
 -        VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Long
 -        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:max$volatile visibility:private modality:FINAL [var]
 -        BLOCK_BODY
--          RETURN type=kotlin.Unit from='private final fun <set-max$volatile> (value: kotlin.Long): kotlin.Unit declared in <root>.LongArithmetic'
+-          RETURN type=kotlin.Nothing from='private final fun <set-max$volatile> (value: kotlin.Long): kotlin.Unit declared in <root>.LongArithmetic'
 -            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:max$volatile type:kotlin.Long visibility:private declared in <root>.LongArithmetic' type=kotlin.Unit origin=null
 -              receiver: GET_VAR '<this>: <root>.LongArithmetic declared in <root>.LongArithmetic.<set-max$volatile>' type=<root>.LongArithmetic origin=null
 -              value: GET_VAR 'value: kotlin.Long declared in <root>.LongArithmetic.<set-max$volatile>' type=kotlin.Long origin=null
@@ -996,7 +996,7 @@
 -        VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Any?
 -        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:_x$volatile visibility:private modality:FINAL [var]
 -        BLOCK_BODY
--          RETURN type=kotlin.Unit from='private final fun <set-_x$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.ReferenceArithmetic'
+-          RETURN type=kotlin.Nothing from='private final fun <set-_x$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.ReferenceArithmetic'
 -            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:_x$volatile type:kotlin.Any? visibility:private declared in <root>.ReferenceArithmetic' type=kotlin.Unit origin=null
 -              receiver: GET_VAR '<this>: <root>.ReferenceArithmetic declared in <root>.ReferenceArithmetic.<set-_x$volatile>' type=<root>.ReferenceArithmetic origin=null
 -              value: GET_VAR 'value: kotlin.Any? declared in <root>.ReferenceArithmetic.<set-_x$volatile>' type=kotlin.Any? origin=null

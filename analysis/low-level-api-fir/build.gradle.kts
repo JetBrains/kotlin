@@ -19,9 +19,8 @@ dependencies {
     api(project(":compiler:fir:fir2ir:jvm-backend"))
     implementation(project(":compiler:ir.serialization.common"))
     api(project(":compiler:fir:resolve"))
-    api(project(":compiler:fir:providers"))
-    api(project(":compiler:fir:semantics"))
-    api(project(":compiler:fir:checkers"))
+    api(project(":compiler:fir:semantics.api"))
+    api(project(":compiler:fir:checkers:checkers.common"))
     api(project(":compiler:fir:checkers:checkers.jvm"))
     api(project(":compiler:fir:checkers:checkers.js"))
     api(project(":compiler:fir:checkers:checkers.native"))
@@ -106,6 +105,13 @@ kotlin {
     }
 }
 
+if (!kotlinBuildProperties.isTeamcityBuild.get()) {
+    testDataManager {
+        // Ensure golden tests run first since some LL tests are complementary for the surface tests
+        mustRunAfterProjects.add(":analysis:analysis-api-fir")
+    }
+}
+
 projectTests {
     testTask(
         defineJDKEnvVariables = listOf(
@@ -115,11 +121,6 @@ projectTests {
         )
     ) {
         addClasspathProperty(jvmAbiGenPlugin, "kotlin.jvm.abi.jar.path")
-
-        if (!kotlinBuildProperties.isTeamcityBuild.get()) {
-            // Ensure golden tests run first since some LL tests are complementary for the surface tests
-            mustRunAfter(":analysis:analysis-api-fir:test")
-        }
     }
 
     testGenerator("org.jetbrains.kotlin.analysis.low.level.api.fir.TestGeneratorKt")
@@ -140,7 +141,6 @@ projectTests {
     withAnnotations()
     withMockJdkRuntime()
     withMockJdkAnnotationsJar()
-    withScriptRuntime()
     withScriptingPlugin()
     withTestScriptDefinition()
     withPluginSandboxAnnotations()
@@ -170,7 +170,6 @@ kotlin {
     )
 }
 
-testsJar()
 
 tasks.register("analysisLowLevelApiFirAllTests") {
     dependsOn(

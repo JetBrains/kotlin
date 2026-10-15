@@ -73,11 +73,7 @@ internal abstract class DescriptorKProperty<out V> private constructor(
                         else container.jClass
                     }
 
-                    try {
-                        owner?.getDeclaredField(it.name)
-                    } catch (_: NoSuchFieldException) {
-                        null
-                    }
+                    owner?.getDeclaredFieldOrNull(it.name, isStatic)
                 }
             }
             is JavaField -> jvmSignature.field

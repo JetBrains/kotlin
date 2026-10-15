@@ -84,9 +84,6 @@ interface KotlinTypeAliasStub : KotlinClassifierStub<KtTypeAlias>, KotlinStubWit
 
 @SubclassOptInRequired(KtImplementationDetail::class)
 interface KotlinClassOrObjectStub<T : KtClassOrObject> : KotlinClassifierStub<T>, KotlinStubWithFqName<T> {
-    @KtImplementationDetail
-    val isLocal: Boolean get() = classId == null
-
     @KtIdeApi
     val superNames: List<String>
 
@@ -297,6 +294,27 @@ interface KotlinDestructuringDeclarationStub : KotlinStubElement<KtDestructuring
 
     @KtImplementationDetail
     val hasInitializer: Boolean
+
+    @KtImplementationDetail
+    val hasSquareBrackets: Boolean
+
+    @KtImplementationDetail
+    val isFullForm: Boolean
+}
+
+@SubclassOptInRequired(KtImplementationDetail::class)
+interface KotlinDestructuringDeclarationEntryStub : KotlinStubWithFqName<KtDestructuringDeclarationEntry> {
+    /**
+     * Whether the entry is mutable, either via its own `var` keyword or via the `var` keyword of its destructuring declaration.
+     */
+    @KtImplementationDetail
+    val isVar: Boolean
+
+    /**
+     * Whether the entry is named by a single underscore (`_`) that is not quoted with backticks, so it is an unused entry.
+     */
+    @KtImplementationDetail
+    val isSingleUnderscore: Boolean
 }
 
 @SubclassOptInRequired(KtImplementationDetail::class)
@@ -394,14 +412,6 @@ interface KotlinFunctionTypeStub : KotlinStubElement<KtFunctionType>
 interface KotlinScriptStub : KotlinStubWithFqName<KtScript> {
     @KtIdeApi
     override val fqName: FqName
-
-    /**
-     * Whether the script is a REPL snippet.
-     *
-     * @see KtScript.isReplSnippet
-     */
-    @KtImplementationDetail
-    val isReplSnippet: Boolean
 }
 
 @SubclassOptInRequired(KtImplementationDetail::class)

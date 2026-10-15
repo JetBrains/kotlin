@@ -1,0 +1,5 @@
+$TESTDATA_DIR$/tailrec.kt
+-p
+library
+-o
+$TEMP_DIR$/tailrec

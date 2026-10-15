@@ -9,12 +9,11 @@ import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.impl.base.types.KaBaseResolvedClassTypeQualifier
 import org.jetbrains.kotlin.analysis.api.types.KaResolvedClassTypeQualifier
 import org.jetbrains.kotlin.analysis.api.types.KaTypeProjection
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.toSequence
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.tryCollectDesignationWithOptionalFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.fir.containingClassForLocal
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
+import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeTypeImpl
@@ -32,9 +31,8 @@ internal object UsualClassTypeQualifierBuilder {
             }
 
         val designation = coneTypeClassSymbol.fir.let {
-            val nonLocalDesignation = it.tryCollectDesignationWithOptionalFile()
-            nonLocalDesignation?.toSequence(includeTarget = true)?.toList() ?: collectDesignationPathForLocal(it)
-        }.filterIsInstance<FirClassLikeDeclaration>()
+            if (it.isLocal) collectDesignationPathForLocal(it) else collectDesignationPathForNonLocal(it)
+        }
 
         /**
          * Returns a number of own type parameters for [this].
@@ -98,6 +96,12 @@ internal object UsualClassTypeQualifierBuilder {
             )
         }
     }
+
+    /**
+     * Returns the chain of containing classes of the non-local [declaration] ordered outermost-first, [declaration] included.
+     */
+    private fun collectDesignationPathForNonLocal(declaration: FirClassLikeDeclaration): List<FirClassLikeDeclaration> =
+        generateSequence(declaration.symbol) { it.getContainingClassSymbol() }.map { it.fir }.toList().asReversed()
 
     private fun FirClassLikeDeclaration.collectForLocal(): List<FirClassLikeDeclaration> {
         require(isLocal)

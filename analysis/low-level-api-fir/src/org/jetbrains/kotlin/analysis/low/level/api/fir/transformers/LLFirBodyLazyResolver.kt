@@ -839,7 +839,6 @@ private class LLFirBodyTargetResolver(target: LLFirResolveTarget) : LLFirAbstrac
             is FirAnonymousInitializer -> resolve(target, BodyStateKeepers.ANONYMOUS_INITIALIZER)
             is FirDanglingModifierList,
             is FirTypeAlias,
-            is FirReplSnippet,
                 -> {
                 // No bodies here
             }

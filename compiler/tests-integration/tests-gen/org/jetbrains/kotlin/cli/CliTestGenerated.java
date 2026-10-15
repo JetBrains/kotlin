@@ -191,6 +191,12 @@ public class CliTestGenerated extends AbstractCliTest {
     }
 
     @Test
+    @TestMetadata("intermediateHasNonExistentDependency.args")
+    public void testIntermediateHasNonExistentDependency() {
+      run("intermediateHasNonExistentDependency.args");
+    }
+
+    @Test
     @TestMetadata("jvmDependenciesInCommonClasspath_dir.args")
     public void testJvmDependenciesInCommonClasspath_dir() {
       run("jvmDependenciesInCommonClasspath_dir.args");
@@ -200,6 +206,12 @@ public class CliTestGenerated extends AbstractCliTest {
     @TestMetadata("jvmDependenciesInCommonClasspath_friends.args")
     public void testJvmDependenciesInCommonClasspath_friends() {
       run("jvmDependenciesInCommonClasspath_friends.args");
+    }
+
+    @Test
+    @TestMetadata("jvmDependenciesInCommonClasspath_friendsWithKlib.args")
+    public void testJvmDependenciesInCommonClasspath_friendsWithKlib() {
+      run("jvmDependenciesInCommonClasspath_friendsWithKlib.args");
     }
 
     @Test
@@ -2145,6 +2157,12 @@ public class CliTestGenerated extends AbstractCliTest {
     }
 
     @Test
+    @TestMetadata("tailrec.args")
+    public void testTailrec() {
+      run("tailrec.args");
+    }
+
+    @Test
     @TestMetadata("twoDiagnosticsOnSingleElement.args")
     public void testTwoDiagnosticsOnSingleElement() {
       run("twoDiagnosticsOnSingleElement.args");
@@ -2166,6 +2184,12 @@ public class CliTestGenerated extends AbstractCliTest {
     @TestMetadata("valhallaValueClassesIllegalConfiguration.args")
     public void testValhallaValueClassesIllegalConfiguration() {
       run("valhallaValueClassesIllegalConfiguration.args");
+    }
+
+    @Test
+    @TestMetadata("valhallaValueClassesJvmTarget27.args")
+    public void testValhallaValueClassesJvmTarget27() {
+      run("valhallaValueClassesJvmTarget27.args");
     }
 
     @Test
@@ -2639,6 +2663,12 @@ public class CliTestGenerated extends AbstractCliTest {
     }
 
     @Test
+    @TestMetadata("tailrec.args")
+    public void testTailrec() {
+      run("tailrec.args");
+    }
+
+    @Test
     @TestMetadata("unknownFriendLibraries.args")
     public void testUnknownFriendLibraries() {
       run("unknownFriendLibraries.args");
@@ -2728,6 +2758,12 @@ public class CliTestGenerated extends AbstractCliTest {
     @TestMetadata("reportPerfLowerings.args")
     public void testReportPerfLowerings() {
       run("reportPerfLowerings.args");
+    }
+
+    @Test
+    @TestMetadata("tailrec.args")
+    public void testTailrec() {
+      run("tailrec.args");
     }
 
     @Test

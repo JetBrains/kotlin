@@ -1,0 +1,74 @@
+KaUsualClassType:
+  abbreviation: null
+  annotations: []
+  classId: JavaOuter.Nested.Inner
+  qualifiers: [
+    KaResolvedClassTypeQualifier:
+      name: JavaOuter
+      symbol: KaNamedClassSymbol(JavaOuter)
+      typeArguments: []
+    KaResolvedClassTypeQualifier:
+      name: Nested
+      symbol: KaNamedClassSymbol(JavaOuter.Nested)
+      typeArguments: [
+        KaUsualClassType:
+          abbreviation: null
+          annotations: []
+          classId: kotlin/String
+          qualifiers: [
+            KaResolvedClassTypeQualifier:
+              name: String
+              symbol: KaNamedClassSymbol(kotlin/String)
+              typeArguments: []
+          ]
+          symbol: KaNamedClassSymbol(kotlin/String)
+          typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
+      ]
+    KaResolvedClassTypeQualifier:
+      name: Inner
+      symbol: KaNamedClassSymbol(JavaOuter.Nested.Inner)
+      typeArguments: [
+        KaUsualClassType:
+          abbreviation: null
+          annotations: []
+          classId: kotlin/Int
+          qualifiers: [
+            KaResolvedClassTypeQualifier:
+              name: Int
+              symbol: KaNamedClassSymbol(kotlin/Int)
+              typeArguments: []
+          ]
+          symbol: KaNamedClassSymbol(kotlin/Int)
+          typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
+      ]
+  ]
+  symbol: KaNamedClassSymbol(JavaOuter.Nested.Inner)
+  typeArguments: [
+    KaUsualClassType:
+      abbreviation: null
+      annotations: []
+      classId: kotlin/Int
+      qualifiers: [
+        KaResolvedClassTypeQualifier:
+          name: Int
+          symbol: KaNamedClassSymbol(kotlin/Int)
+          typeArguments: []
+      ]
+      symbol: KaNamedClassSymbol(kotlin/Int)
+      typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
+  ]
+  isMarkedNullable: true
+  isNullable: true
+  hasFlexibleNullability: false
+
+Rendered type:
+JavaOuter.Nested<kotlin.String>.Inner<kotlin.Int>?

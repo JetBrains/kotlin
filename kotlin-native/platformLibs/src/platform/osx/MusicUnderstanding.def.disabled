@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.MusicUnderstanding
+
+modules = MusicUnderstanding
+compilerOpts = -framework MusicUnderstanding
+linkerOpts = -framework MusicUnderstanding
+#Disabled: Swift-only framework

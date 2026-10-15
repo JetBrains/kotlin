@@ -19,18 +19,15 @@ import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirAnnotationChecke
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
-import org.jetbrains.kotlin.fir.expressions.FirArgumentList
-import org.jetbrains.kotlin.fir.expressions.FirErrorExpression
-import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
-import org.jetbrains.kotlin.fir.expressions.FirWrappedArgumentExpression
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
-import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.isDisabled
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.abbreviatedTypeOrSelf
 import org.jetbrains.kotlin.fir.types.classLikeLookupTagIfAny
 import org.jetbrains.kotlin.fir.types.coneType
@@ -53,9 +50,10 @@ object FirJavaAnnotationsChecker : FirAnnotationChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirAnnotation) {
         if (expression.source?.kind !in allowedSourceKinds) return
-        val annotationType = expression.annotationTypeRef.coneType.abbreviatedTypeOrSelf
+        val annotationType = expression.annotationTypeRef.coneType.fullyExpandedType()
         val classSymbol = annotationType.classLikeLookupTagIfAny?.toClassSymbol() ?: return
         if (classSymbol.origin !is FirDeclarationOrigin.Java) return
+        val isTypeAlias = expression.annotationTypeRef.coneType.abbreviatedTypeOrSelf.toSymbol() is FirTypeAliasSymbol
 
         val classId = classSymbol.toLookupTag().classId
         // Java's 'since' and 'forRemoval' cannot be represented by 'kotlin.Deprecated'.
@@ -71,8 +69,9 @@ object FirJavaAnnotationsChecker : FirAnnotationChecker(MppCheckerKind.Common) {
 
         if (expression is FirAnnotationCall) {
             val factory = if (
-                context.containingDeclarations.lastOrNull()?.source?.kind != KtRealSourceElementKind &&
-                LanguageFeature.EnforceNamedArgumentsOnJavaAnnotationInAccessors.isDisabled()
+                (context.containingDeclarations.lastOrNull()?.source?.kind != KtRealSourceElementKind ||
+                        isTypeAlias) &&
+                LanguageFeature.EnforceMissingNamedArgumentsOnJavaAnnotation.isDisabled()
             ) {
                 FirJvmErrors.POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION_WARNING
             } else {
@@ -94,7 +93,7 @@ object FirJavaAnnotationsConstructorCallChecker : FirFunctionCallChecker(MppChec
         if (classSymbol.origin !is FirDeclarationOrigin.Java) return
         if (classSymbol.classKind?.isAnnotationClass != true) return
 
-        val factory = if (LanguageFeature.EnforceNamedArgumentsOnJavaAnnotationInAccessors.isDisabled()) {
+        val factory = if (LanguageFeature.EnforceMissingNamedArgumentsOnJavaAnnotation.isDisabled()) {
             FirJvmErrors.POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION_WARNING
         } else {
             FirJvmErrors.POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION

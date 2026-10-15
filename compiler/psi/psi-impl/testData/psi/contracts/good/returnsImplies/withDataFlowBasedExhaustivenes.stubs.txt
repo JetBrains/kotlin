@@ -21,17 +21,17 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=WithDataFlowBasedExhaustiven
       DOT_QUALIFIED_EXPRESSION
         REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=contracts]
-  CLASS[classId=/Variants, fqName=Variants, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=Variants, superNames=[]]
+  CLASS[classId=/Variants, fqName=Variants, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isTopLevel=true, name=Variants, superNames=[]]
     MODIFIER_LIST[sealed]
     CLASS_BODY
-      OBJECT_DECLARATION[classId=/Variants.A, fqName=Variants.A, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=A, superNames=[Variants]]
+      OBJECT_DECLARATION[classId=/Variants.A, fqName=Variants.A, isObjectLiteral=false, isTopLevel=false, name=A, superNames=[Variants]]
         MODIFIER_LIST[data]
         SUPER_TYPE_LIST
           SUPER_TYPE_ENTRY
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Variants]
-      OBJECT_DECLARATION[classId=/Variants.B, fqName=Variants.B, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=B, superNames=[Variants]]
+      OBJECT_DECLARATION[classId=/Variants.B, fqName=Variants.B, isObjectLiteral=false, isTopLevel=false, name=B, superNames=[Variants]]
         MODIFIER_LIST[data]
         SUPER_TYPE_LIST
           SUPER_TYPE_ENTRY

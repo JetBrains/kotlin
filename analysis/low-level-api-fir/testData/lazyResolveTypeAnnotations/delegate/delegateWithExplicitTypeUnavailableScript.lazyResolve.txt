@@ -3,7 +3,7 @@ TARGET: @R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(STATUS
 
 FILE: [ResolvedTo(IMPORTS)] delegateWithExplicitTypeUnavailableScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-delegateWithExplicitTypeUnavailableScript.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](AnnotationTarget#.TYPE#, AnnotationTarget#.FUNCTION#, AnnotationTarget#.VALUE_PARAMETER#, AnnotationTarget#.TYPE_PARAMETER#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.TYPE|, R|kotlin/annotation/AnnotationTarget.FUNCTION|, R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|))] public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithExplicitTypeUnavailableScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
@@ -46,7 +46,7 @@ TARGET: @R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(EXPECT
 
 FILE: [ResolvedTo(IMPORTS)] delegateWithExplicitTypeUnavailableScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-delegateWithExplicitTypeUnavailableScript.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](AnnotationTarget#.TYPE#, AnnotationTarget#.FUNCTION#, AnnotationTarget#.VALUE_PARAMETER#, AnnotationTarget#.TYPE_PARAMETER#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.TYPE|, R|kotlin/annotation/AnnotationTarget.FUNCTION|, R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|))] public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithExplicitTypeUnavailableScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
@@ -89,7 +89,7 @@ TARGET: @R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(CONTRA
 
 FILE: [ResolvedTo(IMPORTS)] delegateWithExplicitTypeUnavailableScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-delegateWithExplicitTypeUnavailableScript.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](AnnotationTarget#.TYPE#, AnnotationTarget#.FUNCTION#, AnnotationTarget#.VALUE_PARAMETER#, AnnotationTarget#.TYPE_PARAMETER#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.TYPE|, R|kotlin/annotation/AnnotationTarget.FUNCTION|, R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|))] public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithExplicitTypeUnavailableScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
@@ -132,7 +132,7 @@ TARGET: @R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(IMPLIC
 
 FILE: [ResolvedTo(IMPORTS)] delegateWithExplicitTypeUnavailableScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-delegateWithExplicitTypeUnavailableScript.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](AnnotationTarget#.TYPE#, AnnotationTarget#.FUNCTION#, AnnotationTarget#.VALUE_PARAMETER#, AnnotationTarget#.TYPE_PARAMETER#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.TYPE|, R|kotlin/annotation/AnnotationTarget.FUNCTION|, R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|))] public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithExplicitTypeUnavailableScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
@@ -175,7 +175,7 @@ TARGET: @R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(CONSTA
 
 FILE: [ResolvedTo(IMPORTS)] delegateWithExplicitTypeUnavailableScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-delegateWithExplicitTypeUnavailableScript.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](AnnotationTarget#.TYPE#, AnnotationTarget#.FUNCTION#, AnnotationTarget#.VALUE_PARAMETER#, AnnotationTarget#.TYPE_PARAMETER#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.TYPE|, R|kotlin/annotation/AnnotationTarget.FUNCTION|, R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|))] public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithExplicitTypeUnavailableScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
@@ -218,7 +218,7 @@ TARGET: @R|Anno|[Types](position = <strcat>(String(explicitType ), this@R|/Origi
 
 FILE: [ResolvedTo(IMPORTS)] delegateWithExplicitTypeUnavailableScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-delegateWithExplicitTypeUnavailableScript.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[Types](AnnotationTarget#.TYPE#, AnnotationTarget#.FUNCTION#, AnnotationTarget#.VALUE_PARAMETER#, AnnotationTarget#.TYPE_PARAMETER#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.TYPE|, R|kotlin/annotation/AnnotationTarget.FUNCTION|, R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|))] public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithExplicitTypeUnavailableScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
@@ -261,7 +261,7 @@ TARGET: @R|Anno|[Types](position = <strcat>(String(explicitType ), this@R|/Origi
 
 FILE: [ResolvedTo(IMPORTS)] delegateWithExplicitTypeUnavailableScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-delegateWithExplicitTypeUnavailableScript.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[Types](AnnotationTarget#.TYPE#, AnnotationTarget#.FUNCTION#, AnnotationTarget#.VALUE_PARAMETER#, AnnotationTarget#.TYPE_PARAMETER#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.TYPE|, R|kotlin/annotation/AnnotationTarget.FUNCTION|, R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|))] public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithExplicitTypeUnavailableScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
@@ -302,7 +302,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithExplicitTypeUnavailableScript.kts
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] delegateWithExplicitTypeUnavailableScript.kts
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-delegateWithExplicitTypeUnavailableScript.kts>
-        [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|)]) public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithExplicitTypeUnavailableScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {

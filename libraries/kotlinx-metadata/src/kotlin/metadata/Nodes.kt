@@ -261,7 +261,7 @@ public class KmFunction internal constructor(internal var flags: Int, public var
     /**
      * Companion extension class of the function, if this is a companion extension.
      */
-    @ExperimentalCompanionBlocksAndExtensions
+    @ExperimentalCompanionExtensions
     public var companionExtensionReceiverType: KmType? = null
 
     /**
@@ -415,7 +415,7 @@ public class KmProperty internal constructor(
     /**
      * Companion extension class of the property, if this is a companion extension.
      */
-    @ExperimentalCompanionBlocksAndExtensions
+    @ExperimentalCompanionExtensions
     public var companionExtensionReceiverType: KmType? = null
 
     /**

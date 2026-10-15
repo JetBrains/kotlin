@@ -9,7 +9,7 @@ public final [ResolvedTo(BODY_RESOLVE)] val $$result: R|kotlin/Int| = R|/foo|()
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclarationInitializer.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-syntheticResultDeclarationInitializer.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun foo(): R|kotlin/Int| {

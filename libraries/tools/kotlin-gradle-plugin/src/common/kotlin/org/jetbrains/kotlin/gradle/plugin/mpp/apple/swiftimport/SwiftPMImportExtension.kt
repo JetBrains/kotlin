@@ -429,6 +429,7 @@ sealed class SwiftPMDependency : Serializable {
     internal abstract val traits: Set<String>
 
     /** Describes a SwiftPM product imported from a package. */
+    @ConsistentCopyVisibility
     @kotlinx.serialization.Serializable
     data class Product internal constructor(
         internal val name: String,
@@ -438,6 +439,7 @@ sealed class SwiftPMDependency : Serializable {
     ) : Serializable
 
     /** Describes a Clang module imported into cinterop from a SwiftPM package. */
+    @ConsistentCopyVisibility
     @kotlinx.serialization.Serializable
     data class CinteropClangModule internal constructor(
         internal val name: String,
@@ -461,6 +463,7 @@ sealed class SwiftPMDependency : Serializable {
     }
 
     /** A remote SwiftPM package dependency created by [SwiftPMImportExtension.swiftPackage]. */
+    @ConsistentCopyVisibility
     @kotlinx.serialization.Serializable
     data class Remote internal constructor(
         internal val repository: Repository,
@@ -474,22 +477,27 @@ sealed class SwiftPMDependency : Serializable {
         @kotlinx.serialization.Serializable
         sealed class Version : Serializable {
             /** Pins the package to an exact version. Prefer range-based requirements when possible. */
+            @ConsistentCopyVisibility
             @kotlinx.serialization.Serializable
             data class Exact internal constructor(internal val value: String) : Version()
 
             /** Allows versions from the given lower bound up to, but not including, the next major version. */
+            @ConsistentCopyVisibility
             @kotlinx.serialization.Serializable
             data class From internal constructor(internal val value: String) : Version()
 
             /** Allows versions in the inclusive range from [from] to [through]. */
+            @ConsistentCopyVisibility
             @kotlinx.serialization.Serializable
             data class Range internal constructor(internal val from: String, val through: String) : Version()
 
             /** Resolves the package from the given Git branch. */
+            @ConsistentCopyVisibility
             @kotlinx.serialization.Serializable
             data class Branch internal constructor(internal val value: String) : Version()
 
             /** Resolves the package from the given Git revision. */
+            @ConsistentCopyVisibility
             @kotlinx.serialization.Serializable
             data class Revision internal constructor(internal val value: String) : Version()
         }
@@ -498,10 +506,12 @@ sealed class SwiftPMDependency : Serializable {
         @kotlinx.serialization.Serializable
         sealed class Repository : Serializable {
             /** SwiftPM package identity. */
+            @ConsistentCopyVisibility
             @kotlinx.serialization.Serializable
             data class Id internal constructor(internal val value: String) : Repository()
 
             /** SwiftPM package repository URL. */
+            @ConsistentCopyVisibility
             @kotlinx.serialization.Serializable
             data class Url internal constructor(internal val value: String) : Repository()
         }
@@ -515,6 +525,7 @@ sealed class SwiftPMDependency : Serializable {
      *
      * @property absolutePath Absolute path to the SwiftPM package directory
      */
+    @ConsistentCopyVisibility
     @kotlinx.serialization.Serializable
     data class Local internal constructor(
         @kotlinx.serialization.Serializable(with = LocalFileSerializer::class)

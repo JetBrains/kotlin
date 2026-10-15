@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 
 @FirBuilderDsl
 interface FirAbstractResolvedQualifierBuilder {
@@ -39,6 +40,7 @@ interface FirAbstractResolvedQualifierBuilder {
     abstract var resolvedToCompanionObject: Boolean
     abstract val nonFatalDiagnostics: MutableList<ConeDiagnostic>
     abstract var resolvedSymbolOrigin: FirResolvedSymbolOrigin?
+    abstract var originalNameForContextSensitiveResolution: Name?
     abstract val typeArguments: MutableList<FirTypeProjection>
 
     fun build(): FirResolvedQualifier

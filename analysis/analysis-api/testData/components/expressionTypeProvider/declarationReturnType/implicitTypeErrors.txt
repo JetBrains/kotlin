@@ -1,0 +1,7 @@
+recursive1@(1,1) : ERROR
+recursive2@(2,1) : ERROR
+selfRecursive@(3,1) : ERROR
+unresolvedCall@(4,1) : unresolved
+unresolvedType@(5,1) : UnresolvedType
+getterWithBlockBody@(6,1) : ERROR
+  KtPropertyAccessor@(6,25) : ERROR

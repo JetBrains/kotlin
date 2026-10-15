@@ -1375,7 +1375,6 @@ Warning: this flag is not intended for production use. If you want to configure 
 
         additionalAnnotations(
             Enables(LanguageFeature.FullValueClasses),
-            Enables(LanguageFeature.AllowSmartCastsOnValueClassUnderlyingProperties),
         )
 
         lifecycle(

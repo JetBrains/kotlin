@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.analysis.jvm.FirJvmOverridesBackwardCompatibilit
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.FirJavaNullabilityWarningUpperBoundsProvider
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.FirJvmAnnotationsPlatformSpecificSupportComponent
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.FirJvmInlineCheckerComponent
+import org.jetbrains.kotlin.fir.analysis.jvm.checkers.FirJvmPlatformValueClassDeterminer
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.FirJvmPrimaryConstructorSuperTypeCheckerPlatformComponent
 import org.jetbrains.kotlin.fir.caches.FirCachesFactory
 import org.jetbrains.kotlin.fir.caches.FirThreadUnsafeCachesFactory
@@ -53,7 +54,6 @@ import org.jetbrains.kotlin.fir.resolve.transformers.mpp.FirExpectActualMatching
 import org.jetbrains.kotlin.fir.scopes.FirDefaultImportsProviderHolder
 import org.jetbrains.kotlin.fir.scopes.FirLookupDefaultStarImportsInSourcesSettingHolder
 import org.jetbrains.kotlin.fir.scopes.FirOverrideChecker
-import org.jetbrains.kotlin.fir.scopes.FirOverrideService
 import org.jetbrains.kotlin.fir.scopes.SubstitutionScopeKeyFactory
 import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.fir.scopes.jvm.FirJvmDelegatedMembersFilter
@@ -91,7 +91,6 @@ fun FirSession.registerCommonComponents(languageVersionSettings: LanguageVersion
     register(FirSynthesizedStorage::class, FirSynthesizedStorage(this))
     register(FirGeneratedMemberDeclarationsStorage::class, FirGeneratedMemberDeclarationsStorage(this))
     register(FirSamConstructorStorage::class, FirSamConstructorStorage(this))
-    register(FirOverrideService::class, FirOverrideService(this))
     register(FirDynamicMembersStorage::class, FirDynamicMembersStorage(this))
     register(FirOverrideChecker::class, FirStandardOverrideChecker(this))
     register(FirDeclarationOverloadabilityHelper::class, FirDeclarationOverloadabilityHelperImpl(this))
@@ -181,6 +180,7 @@ fun FirSession.registerJavaComponents(
     register(FirEnumEntriesSupport::class, FirJvmEnumEntriesSupport(this))
     register(FirAnnotationsPlatformSpecificSupportComponent::class, FirJvmAnnotationsPlatformSpecificSupportComponent)
     register(FirPrimaryConstructorSuperTypeCheckerPlatformComponent::class, FirJvmPrimaryConstructorSuperTypeCheckerPlatformComponent)
+    register(FirPlatformValueClassDeterminer::class, FirJvmPlatformValueClassDeterminer(this))
 
     register(FirJavaVisibilityChecker)
     register(JvmCallConflictResolverFactory)
@@ -204,7 +204,6 @@ fun FirSession.registerJavaComponents(
  */
 @OptIn(SessionConfiguration::class)
 fun FirSession.registerResolveComponents(
-    diagnosticFactoriesStorage: KtRegisteredDiagnosticFactoriesStorage,
     lookupTracker: LookupTracker? = null,
     enumWhenTracker: EnumWhenTracker? = null,
     importTracker: ImportTracker? = null,
@@ -236,15 +235,15 @@ fun FirSession.registerResolveComponents(
         )
     }
     register(FirExpectActualMatchingContextFactory::class, FirExpectActualMatchingContextImpl.Factory)
-    register(FirRegisteredDiagnosticFactoriesStorage::class, FirRegisteredDiagnosticFactoriesStorage(diagnosticFactoriesStorage))
 }
 
 @OptIn(SessionConfiguration::class)
-fun FirSession.registerCliCompilerOnlyResolveComponents() {
+fun FirSession.registerCliCompilerOnlyResolveComponents(diagnosticFactoriesStorage: KtRegisteredDiagnosticFactoriesStorage) {
     register(FirNameConflictsTracker::class, FirNameConflictsTrackerImpl())
 
     // The Analysis API uses `LLCheckersFactory`.
     register(CheckersComponent::class, CheckersComponent())
+    register(FirRegisteredDiagnosticFactoriesStorage::class, FirRegisteredDiagnosticFactoriesStorage(diagnosticFactoriesStorage))
 }
 
 @OptIn(SessionConfiguration::class)

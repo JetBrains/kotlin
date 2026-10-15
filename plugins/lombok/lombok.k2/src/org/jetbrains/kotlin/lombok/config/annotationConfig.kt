@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.lombok.config
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
-import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.declarations.getBooleanArgument
+import org.jetbrains.kotlin.fir.declarations.getCompilerRequiredAnnotationByClassId
 import org.jetbrains.kotlin.fir.declarations.getStringArgument
 import org.jetbrains.kotlin.fir.declarations.getStringArrayArgument
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.lombok.config.LombokConfigNames.BUILDER_CLASS_NAME_C
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.BUILDER_FLAG_USAGE_CONFIG
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.SUPER_BUILDER_FLAG_USAGE_CONFIG
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.SINGULAR_AUTO_CONFIG
+import org.jetbrains.kotlin.lombok.config.LombokConfigNames.SINGULAR_USE_GUAVA_CONFIG
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.BUILDER_METHOD_NAME
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.BUILD_METHOD_NAME
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.CHAIN
@@ -80,11 +81,11 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
  * keeping processors' code unaware about configuration origin.
  */
 
-abstract class ConeAnnotationCompanion<T : ConeLombokAnnotation>(val name: ClassId) {
+abstract class ConeAnnotationCompanion<T : ConeLombokAnnotation>(val classId: ClassId) {
     abstract fun extract(annotation: FirAnnotation, session: FirSession): T
 
     fun getOrNull(symbol: FirBasedSymbol<*>, session: FirSession): T? {
-        return symbol.resolvedCompilerAnnotationsWithClassIds.getAnnotationByClassId(name, session)
+        return symbol.getCompilerRequiredAnnotationByClassId(classId)
             ?.let { this.extract(it, session) }
     }
 }
@@ -113,6 +114,7 @@ class GlobalConfig(
     val builderFlagUsage: FlagUsageValue?,
     val superBuilderFlagUsage: FlagUsageValue?,
     val singularAuto: Boolean,
+    val singularUseGuava: Boolean,
     val logFieldName: String,
     val logFieldIsStatic: Boolean,
     val logFlagUsage: FlagUsageValue?,
@@ -150,6 +152,7 @@ class GlobalConfig(
                 builderFlagUsage = parseFlagUsage(config, BUILDER_FLAG_USAGE_CONFIG),
                 superBuilderFlagUsage = parseFlagUsage(config, SUPER_BUILDER_FLAG_USAGE_CONFIG),
                 singularAuto = config.getBoolean(SINGULAR_AUTO_CONFIG) ?: true,
+                singularUseGuava = config.getBoolean(SINGULAR_USE_GUAVA_CONFIG) ?: false,
                 logFieldName = config.getString(LOG_FIELD_NAME_CONFIG) ?: "log",
                 logFieldIsStatic = config.getBoolean(LOG_FIELD_IS_STATIC_CONFIG) ?: true,
                 logFlagUsage = parseFlagUsage(config, LOG_FLAG_USAGE_CONFIG),

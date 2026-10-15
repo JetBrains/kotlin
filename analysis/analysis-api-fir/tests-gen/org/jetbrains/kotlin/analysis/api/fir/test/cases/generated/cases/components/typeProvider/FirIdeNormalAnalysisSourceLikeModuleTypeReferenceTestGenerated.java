@@ -68,9 +68,33 @@ public class FirIdeNormalAnalysisSourceLikeModuleTypeReferenceTestGenerated exte
   }
 
   @Test
+  @TestMetadata("annotationEntryOnNonLocalDestructuringDeclaration.kt")
+  public void testAnnotationEntryOnNonLocalDestructuringDeclaration() {
+    run("annotationEntryOnNonLocalDestructuringDeclaration.kt");
+  }
+
+  @Test
+  @TestMetadata("annotationEntryOnNonLocalDestructuringEntry.kt")
+  public void testAnnotationEntryOnNonLocalDestructuringEntry() {
+    run("annotationEntryOnNonLocalDestructuringEntry.kt");
+  }
+
+  @Test
   @TestMetadata("annotationEntryOnParameter.kt")
   public void testAnnotationEntryOnParameter() {
     run("annotationEntryOnParameter.kt");
+  }
+
+  @Test
+  @TestMetadata("annotationEntryOnTopLevelDestructuringDeclaration.kt")
+  public void testAnnotationEntryOnTopLevelDestructuringDeclaration() {
+    run("annotationEntryOnTopLevelDestructuringDeclaration.kt");
+  }
+
+  @Test
+  @TestMetadata("annotationEntryOnTopLevelDestructuringEntry.kt")
+  public void testAnnotationEntryOnTopLevelDestructuringEntry() {
+    run("annotationEntryOnTopLevelDestructuringEntry.kt");
   }
 
   @Test
@@ -128,6 +152,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleTypeReferenceTestGenerated exte
   }
 
   @Test
+  @TestMetadata("nonLocalDestructuringEntryType.kt")
+  public void testNonLocalDestructuringEntryType() {
+    run("nonLocalDestructuringEntryType.kt");
+  }
+
+  @Test
   @TestMetadata("propertyReceiver.kt")
   public void testPropertyReceiver() {
     run("propertyReceiver.kt");
@@ -167,6 +197,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleTypeReferenceTestGenerated exte
   @TestMetadata("superTypeQualifierError.kt")
   public void testSuperTypeQualifierError() {
     run("superTypeQualifierError.kt");
+  }
+
+  @Test
+  @TestMetadata("typeAnnotationOnNonLocalDestructuringEntry.kt")
+  public void testTypeAnnotationOnNonLocalDestructuringEntry() {
+    run("typeAnnotationOnNonLocalDestructuringEntry.kt");
   }
 
   @Test

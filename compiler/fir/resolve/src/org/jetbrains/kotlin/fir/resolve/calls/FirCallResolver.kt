@@ -350,7 +350,7 @@ class FirCallResolver(
             info,
             applicability,
             reducedCandidates,
-            resultCollector.forwardedDiagnostics(),
+            resultCollector.forwardedDiagnostics,
             resultCollector.metInapplicableCandidate
         )
     }

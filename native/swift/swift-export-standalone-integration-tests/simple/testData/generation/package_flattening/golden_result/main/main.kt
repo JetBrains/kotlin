@@ -8,67 +8,67 @@ import org.kotlin.foo.y as org_kotlin_foo_y
 
 @ExportedBridge("org_kotlin_foo_Clazz_init_allocate")
 public fun org_kotlin_foo_Clazz_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<org.kotlin.foo.Clazz>() }
+    val _result = kotlin.native.internal.createUninitializedInstance<org.kotlin.foo.Clazz>()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("org_kotlin_foo_Clazz_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
 public fun org_kotlin_foo_Clazz_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val _result = run { kotlin.native.internal.initInstance(____kt, org.kotlin.foo.Clazz()) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, org.kotlin.foo.Clazz())
+    return true
 }
 
 @ExportedBridge("org_kotlin_foo_constant_get")
 public fun org_kotlin_foo_constant_get(): Int {
-    val _result = run { org.kotlin.foo.constant }
+    val _result = org.kotlin.foo.constant
     return _result
 }
 
 @ExportedBridge("org_kotlin_foo_fun_with_keywoards__TypesOfArguments__Swift_Int32__")
 public fun org_kotlin_foo_fun_with_keywoards__TypesOfArguments__Swift_Int32__(repeat: Int): Int {
     val __repeat = repeat
-    val _result = run { org.kotlin.foo.fun_with_keywoards(__repeat) }
+    val _result = org.kotlin.foo.fun_with_keywoards(__repeat)
     return _result
 }
 
 @ExportedBridge("org_kotlin_foo_function__TypesOfArguments__Swift_Int32__")
 public fun org_kotlin_foo_function__TypesOfArguments__Swift_Int32__(arg: Int): Int {
     val __arg = arg
-    val _result = run { org.kotlin.foo.function(__arg) }
+    val _result = org.kotlin.foo.function(__arg)
     return _result
 }
 
 @ExportedBridge("org_kotlin_foo_renamedParameter__TypesOfArguments__Swift_String__")
 public fun org_kotlin_foo_renamedParameter__TypesOfArguments__Swift_String__(input: kotlin.native.internal.NativePtr): Boolean {
     val __input = interpretObjCPointer<kotlin.String>(input)
-    val _result = run { org.kotlin.foo.renamedParameter(__input) }
-    return run { _result; true }
+    org.kotlin.foo.renamedParameter(__input)
+    return true
 }
 
 @ExportedBridge("org_kotlin_foo_variable_get")
 public fun org_kotlin_foo_variable_get(): Int {
-    val _result = run { org.kotlin.foo.variable }
+    val _result = org.kotlin.foo.variable
     return _result
 }
 
 @ExportedBridge("org_kotlin_foo_variable_set__TypesOfArguments__Swift_Int32__")
 public fun org_kotlin_foo_variable_set__TypesOfArguments__Swift_Int32__(newValue: Int): Boolean {
     val __newValue = newValue
-    val _result = run { org.kotlin.foo.variable = __newValue }
-    return run { _result; true }
+    org.kotlin.foo.variable = __newValue
+    return true
 }
 
 @ExportedBridge("org_kotlin_foo_x_get__TypesOfArgumentsE__Swift_Int32__")
 public fun org_kotlin_foo_x_get__TypesOfArgumentsE__Swift_Int32__(`receiver`: Int): kotlin.native.internal.NativePtr {
     val __receiver = `receiver`
-    val _result = run { __receiver.org_kotlin_foo_x }
+    val _result = __receiver.org_kotlin_foo_x
     return _result.objcPtr()
 }
 
 @ExportedBridge("org_kotlin_foo_y__TypesOfArgumentsE__Swift_String__")
 public fun org_kotlin_foo_y__TypesOfArgumentsE__Swift_String__(`receiver`: kotlin.native.internal.NativePtr): Int {
     val __receiver = interpretObjCPointer<kotlin.String>(`receiver`)
-    val _result = run { __receiver.org_kotlin_foo_y() }
+    val _result = __receiver.org_kotlin_foo_y()
     return _result
 }

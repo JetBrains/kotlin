@@ -7,11 +7,11 @@ R|JavaClass?|
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] main.kt
-    public open [ResolvedTo(STATUS)] class KotlinClass : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=KotlinClass] constructor(): R|KotlinClass| {
+    public open [ResolvedTo(TYPES)] class KotlinClass : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KotlinClass] constructor(): R|KotlinClass| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo(): R|JavaClass?| { LAZY_BLOCK }
+        public? final? [ResolvedTo(TYPES)] fun foo(): R|JavaClass?| { LAZY_BLOCK }
 
     }

@@ -2,7 +2,7 @@ A.class:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[Annotation]]
+    CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=A, superNames=[Annotation]]
       MODIFIER_LIST[public final annotation]
         ANNOTATION_ENTRY[hasValueArguments=true, shortName=Target]
           valueArguments: [ allowedTargets -> [AnnotationTarget.TYPE, AnnotationTarget.TYPE_PARAMETER] ]
@@ -52,7 +52,7 @@ AnnotationsOnParenthesizedTypes.class:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/AnnotationsOnParenthesizedTypes, fqName=AnnotationsOnParenthesizedTypes, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=AnnotationsOnParenthesizedTypes, superNames=[]]
+    CLASS[classId=/AnnotationsOnParenthesizedTypes, fqName=AnnotationsOnParenthesizedTypes, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=AnnotationsOnParenthesizedTypes, superNames=[]]
       MODIFIER_LIST[public final]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=AnnotationsOnParenthesizedTypes]
         MODIFIER_LIST[public]
@@ -295,7 +295,7 @@ B.class:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/B, fqName=B, isClsStubCompiledToJvmDefaultImplementation=true, isInterface=true, isLocal=false, isTopLevel=true, name=B, superNames=[]]
+    CLASS[classId=/B, fqName=B, isClsStubCompiledToJvmDefaultImplementation=true, isInterface=true, isTopLevel=true, name=B, superNames=[]]
       MODIFIER_LIST[public]
       TYPE_PARAMETER_LIST
         TYPE_PARAMETER[fqName=null, name=T]
@@ -306,6 +306,6 @@ C.class:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/C, fqName=C, isClsStubCompiledToJvmDefaultImplementation=true, isInterface=true, isLocal=false, isTopLevel=true, name=C, superNames=[]]
+    CLASS[classId=/C, fqName=C, isClsStubCompiledToJvmDefaultImplementation=true, isInterface=true, isTopLevel=true, name=C, superNames=[]]
       MODIFIER_LIST[public]
       CLASS_BODY

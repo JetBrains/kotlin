@@ -56,7 +56,6 @@ open class IncrementalJvmCompilerRunner(
         changedFiles: DeterminableFiles.Known,
         args: K2JVMCompilerArguments,
         messageCollector: MessageCollector,
-        classpathAbiSnapshots: Map<String, AbiSnapshot>
     ): CompilationMode {
         return try {
             val sourcesToCompileCalculator = JvmSourcesToCompileCalculator(

@@ -151,6 +151,10 @@ abstract class AbstractKotlinNativeCompile<
     @get:Optional
     internal abstract val explicitApiMode: Property<ExplicitApiMode>
 
+    @get:Input
+    @get:Optional
+    abstract val returnValueCheckerMode: Property<ReturnValueCheckerMode>
+
     @get:Internal
     internal val konanTarget by providerFactory.provider {
         (compilation.tcs.compilation as AbstractKotlinNativeCompilation).konanTarget
@@ -354,13 +358,6 @@ internal constructor(
     override val klibOutput: Provider<File>
         get() = outputFile
 
-    @Suppress("DeprecatedCallableAddReplaceWith")
-    @Deprecated("KTIJ-25227: Necessary override for IDEs < 2023.2", level = DeprecationLevel.ERROR)
-    override fun setupCompilerArgs(args: K2NativeCompilerArguments, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
-        @Suppress("DEPRECATION_ERROR")
-        super.setupCompilerArgs(args, defaultsOnly, ignoreClasspathResolutionErrors)
-    }
-
     override fun createCompilerArguments(context: CreateCompilerArgumentsContext) = context.create<K2NativeCompilerArguments> {
         val sharedCompilationData = createSharedCompilationDataOrNull()
 
@@ -396,6 +393,7 @@ internal constructor(
             KotlinNativeCompilerOptionsHelper.fillCompilerArguments(compilerOptions, args)
 
             explicitApiMode.orNull?.run { args.explicitApi = toCompilerValue() }
+            returnValueCheckerMode.orNull?.run { args.returnValueChecker = toCompilerValue() }
             kotlinNativeProvider.get().konanDataDir.orNull?.let {
                 args.konanDataDir = it
             }

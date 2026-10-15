@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.metadata.KotlinMetadataCompiler
 import org.jetbrains.kotlin.cli.transformMetadataInClassFile
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
+import org.jetbrains.kotlin.codegen.inline.readLoadableDescriptors
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -627,6 +628,59 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
         assertEquals(1, exitCode.code) // double-check that we failed :) output.txt also says so
     }
 
+    // A class file that does not use preview features is an identity class, even without `ACC_SUPER` (`ACC_IDENTITY` of JEP 401),
+    // so it is not listed in `LoadableDescriptors`.
+    @Test
+    fun testNonPreviewClassFileWithoutAccSuper() {
+        val library = File(tmpdir, "library")
+        File(library, "lib/NoSuper.class").apply { parentFile.mkdirs() }
+            .writeBytes(generateClassWithoutAccSuper("lib/NoSuper", Opcodes.V1_8))
+        val output = File(tmpdir, "output")
+        compileKotlin(
+            "source.kt", output, listOf(library),
+            additionalOptions = listOf(
+                K2JVMCompilerArguments::jvmTarget.cliArgument, JvmTarget.JVM_28.description,
+                K2JVMCompilerArguments::enableJvmPreview.cliArgument,
+                K2JVMCompilerArguments::valhallaValueClasses.cliArgument,
+            ),
+        )
+        assertEquals(emptyList<String>(), readLoadableDescriptors(File(output, "test/Holder.class").readBytes()))
+    }
+
+    // Value classes (JEP 401) are a preview feature since JVM 28, so in an earlier preview class file `ACC_SUPER` isn't `ACC_IDENTITY`,
+    // and the class is not listed in `LoadableDescriptors`.
+    @Test
+    fun testPreviewClassFileOfJvm27WithoutAccSuper() {
+        val library = File(tmpdir, "library")
+        File(library, "lib/NoSuper.class").apply { parentFile.mkdirs() }
+            .writeBytes(generateClassWithoutAccSuper("lib/NoSuper", Opcodes.V_PREVIEW or JvmTarget.JVM_27.majorVersion))
+        val output = File(tmpdir, "output")
+        compileKotlin(
+            "source.kt", output, listOf(library),
+            additionalOptions = listOf(
+                K2JVMCompilerArguments::jvmTarget.cliArgument, JvmTarget.JVM_28.description,
+                K2JVMCompilerArguments::enableJvmPreview.cliArgument,
+                K2JVMCompilerArguments::valhallaValueClasses.cliArgument,
+            ),
+        )
+        assertEquals(emptyList<String>(), readLoadableDescriptors(File(output, "test/Holder.class").readBytes()))
+    }
+
+    private fun generateClassWithoutAccSuper(internalName: String, version: Int): ByteArray {
+        val writer = ClassWriter(0)
+        writer.visit(version, Opcodes.ACC_PUBLIC, internalName, null, "java/lang/Object", null)
+        writer.visitMethod(Opcodes.ACC_PUBLIC, "<init>", "()V", null, null).apply {
+            visitCode()
+            visitVarInsn(Opcodes.ALOAD, 0)
+            visitMethodInsn(Opcodes.INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false)
+            visitInsn(Opcodes.RETURN)
+            visitMaxs(1, 1)
+            visitEnd()
+        }
+        writer.visitEnd()
+        return writer.toByteArray()
+    }
+
     @Test
     fun testReplaceAnnotationClassWithInterface() {
         val library1 = compileLibrary("library-1")
@@ -782,7 +836,7 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
         val library = compileLibrary(
             "library",
             additionalOptions = listOf(
-                CommonCompilerArguments::languageVersion.cliArgument, "2.1",
+                CommonCompilerArguments::languageVersion.cliArgument, LanguageVersion.LATEST_STABLE.versionString,
                 CommonCompilerArguments::suppressVersionWarnings.cliArgument,
             )
         )
@@ -791,7 +845,7 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
         val library2 = compileLibrary(
             "library",
             additionalOptions = listOf(
-                CommonCompilerArguments::languageVersion.cliArgument, "2.1",
+                CommonCompilerArguments::languageVersion.cliArgument, LanguageVersion.LATEST_STABLE.versionString,
                 CommonCompilerArguments::suppressVersionWarnings.cliArgument,
                 K2JVMCompilerArguments::abiStability.cliArgument("stable")
             )
@@ -826,7 +880,7 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
         val library = compileLibrary(
             "library",
             additionalOptions = listOf(
-                CommonCompilerArguments::languageVersion.cliArgument, "2.1",
+                CommonCompilerArguments::languageVersion.cliArgument, LanguageVersion.LATEST_STABLE.versionString,
                 CommonCompilerArguments::suppressVersionWarnings.cliArgument,
                 K2JVMCompilerArguments::abiStability.cliArgument("unstable")
             )
@@ -859,7 +913,7 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
         )
         compileKotlin(
             "source.kt", tmpdir, listOf(library), additionalOptions = listOf(
-                CommonCompilerArguments::languageVersion.cliArgument, "2.1",
+                CommonCompilerArguments::languageVersion.cliArgument, LanguageVersion.LATEST_STABLE.versionString,
                 CommonCompilerArguments::suppressVersionWarnings.cliArgument,
                 CommonCompilerArguments::skipPrereleaseCheck.cliArgument,
             )

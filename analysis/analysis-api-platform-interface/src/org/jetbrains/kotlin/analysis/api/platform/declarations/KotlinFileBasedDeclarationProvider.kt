@@ -18,8 +18,7 @@ public class KotlinFileBasedDeclarationProvider(public val kotlinFile: KtFile) :
         get() {
             return sequence {
                 for (child in kotlinFile.declarations) {
-                    @OptIn(KtExperimentalApi::class)
-                    if (child is KtScript && !child.isReplSnippet) {
+                    if (child is KtScript) {
                         yieldAll(child.declarations)
                     } else {
                         yield(child)
@@ -86,7 +85,7 @@ public class KotlinFileBasedDeclarationProvider(public val kotlinFile: KtFile) :
     }
 
     override fun getTopLevelKotlinClassLikeDeclarationNamesInPackage(packageFqName: FqName): Set<Name> {
-        return getTopLevelDeclarationNames(packageFqName) { it is KtClassLikeDeclaration || it is KtScript }
+        return getTopLevelDeclarationNames(packageFqName) { it is KtClassLikeDeclaration }
     }
 
     override fun getTopLevelProperties(callableId: CallableId): Collection<KtProperty> {

@@ -50,6 +50,8 @@ object StandardClassIds {
     val Nothing = "Nothing".baseId()
     val Unit = "Unit".baseId()
     val Any = "Any".baseId()
+    val NonError = "NonError".baseId()
+    val RichError = "RichError".baseId()
     val Enum = "Enum".baseId()
     val Annotation = "Annotation".baseId()
     val Array = "Array".baseId()
@@ -205,6 +207,8 @@ object StandardClassIds {
 
         val ConsistentCopyVisibility = "ConsistentCopyVisibility".baseId()
         val ExposedCopyVisibility = "ExposedCopyVisibility".baseId()
+
+        val WillBecomeValue = "WillBecomeValue".baseId()
 
         val HidesMembers = "HidesMembers".internalId()
         val DynamicExtension = "DynamicExtension".internalId()

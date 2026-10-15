@@ -22,7 +22,7 @@
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-script-runtime</artifactId>
+            <artifactId>kotlin-scripting-common</artifactId>
             <version>${kotlin.version}</version>
         </dependency>
     </dependencies>

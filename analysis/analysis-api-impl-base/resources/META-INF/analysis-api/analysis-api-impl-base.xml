@@ -1,5 +1,4 @@
 <idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
-  <xi:include href="/META-INF/extensions/compiler.xml"/>
   <xi:include href="/META-INF/analysis-api/analysis-api-platform-interface.xml"/>
 
   <extensionPoints>

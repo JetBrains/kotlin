@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 
 @FirBuilderDsl
 class FirResolvedQualifierBuilder : FirAbstractResolvedQualifierBuilder, FirAnnotationContainerBuilder, FirExpressionBuilder {
@@ -45,6 +46,7 @@ class FirResolvedQualifierBuilder : FirAbstractResolvedQualifierBuilder, FirAnno
     override var resolvedToCompanionObject: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
     override val nonFatalDiagnostics: MutableList<ConeDiagnostic> = []
     override var resolvedSymbolOrigin: FirResolvedSymbolOrigin? = null
+    override var originalNameForContextSensitiveResolution: Name? = null
     override val typeArguments: MutableList<FirTypeProjection> = []
 
     override fun build(): FirResolvedQualifier {
@@ -63,6 +65,7 @@ class FirResolvedQualifierBuilder : FirAbstractResolvedQualifierBuilder, FirAnno
             resolvedToCompanionObject,
             nonFatalDiagnostics.toMutableOrEmpty(),
             resolvedSymbolOrigin,
+            originalNameForContextSensitiveResolution,
             typeArguments.toMutableOrEmpty(),
         )
     }
@@ -97,6 +100,7 @@ inline fun buildResolvedQualifierCopy(original: FirResolvedQualifier, init: FirR
     copyBuilder.resolvedToCompanionObject = original.resolvedToCompanionObject
     copyBuilder.nonFatalDiagnostics.addAll(original.nonFatalDiagnostics)
     copyBuilder.resolvedSymbolOrigin = original.resolvedSymbolOrigin
+    copyBuilder.originalNameForContextSensitiveResolution = original.originalNameForContextSensitiveResolution
     copyBuilder.typeArguments.addAll(original.typeArguments)
     return copyBuilder.apply(init).build()
 }

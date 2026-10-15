@@ -627,6 +627,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleSymbolByPsiTestGenerated extend
   }
 
   @Test
+  @TestMetadata("typeParameterOnAnonymousObject.kt")
+  public void testTypeParameterOnAnonymousObject() {
+    run("typeParameterOnAnonymousObject.kt");
+  }
+
+  @Test
   @TestMetadata("typeParameters.kt")
   public void testTypeParameters() {
     run("typeParameters.kt");

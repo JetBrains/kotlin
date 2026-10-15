@@ -14,20 +14,39 @@
  * limitations under the License.
  */
 
+@file:Suppress("DEPRECATION_ERROR")
+
 package org.jetbrains.kotlin.cli.common.repl
 
+import java.io.Serializable
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
 import kotlin.concurrent.write
 
 
+@Deprecated(K1_REPL_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
 interface ILineId : Comparable<ILineId> {
     val no: Int
     val generation: Int
 }
 
+@Deprecated(K1_REPL_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
+data class LineId(override val no: Int, override val generation: Int, private val codeHash: Int) : ILineId, Serializable {
+
+    override fun compareTo(other: ILineId): Int = (other as? LineId)?.let { lineId ->
+        no.compareTo(lineId.no).takeIf { no -> no != 0 }
+            ?: codeHash.compareTo(lineId.codeHash)
+    } ?: -1
+
+    companion object {
+        private const val serialVersionUID: Long = 8328354000L
+    }
+}
+
+@Deprecated(K1_REPL_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
 data class ReplHistoryRecord<out T> (val id: ILineId, val item: T)
 
+@Deprecated(K1_REPL_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
 interface IReplStageHistory<T> : List<ReplHistoryRecord<T>> {
 
     fun peek(): ReplHistoryRecord<T>? = lock.read { lastOrNull() }
@@ -48,6 +67,7 @@ interface IReplStageHistory<T> : List<ReplHistoryRecord<T>> {
     val lock: ReentrantReadWriteLock
 }
 
+@Deprecated(K1_REPL_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
 interface IReplStageState<T> {
     val history: IReplStageHistory<T>
 
@@ -65,20 +85,4 @@ interface IReplStageState<T> {
     fun dispose() {
     }
 }
-
-
-fun <T> IReplStageHistory<T>.firstMismatch(other: Sequence<ILineId>): Pair<ReplHistoryRecord<T>?, ILineId?>? =
-        lock.read {
-            iterator().asSequence().zip(other.asSequence()).firstOrNull { it.first.id != it.second }?.let { it.first to it.second }
-        }
-
-fun<T> IReplStageHistory<T>.firstMismatchFiltered(other: Sequence<ILineId>, predicate: (ReplHistoryRecord<T>) -> Boolean): Pair<ReplHistoryRecord<T>?, ILineId?>? =
-        lock.read {
-            iterator().asSequence().filter(predicate).zip(other.asSequence()).firstOrNull { it.first.id != it.second }?.let { it.first to it.second }
-        }
-
-fun<T> IReplStageHistory<T>.firstMismatchWhile(other: Sequence<ILineId>, predicate: (ReplHistoryRecord<T>) -> Boolean): Pair<ReplHistoryRecord<T>?, ILineId?>? =
-        lock.read {
-            iterator().asSequence().takeWhile(predicate).zip(other.asSequence()).firstOrNull { it.first.id != it.second }?.let { it.first to it.second }
-        }
 

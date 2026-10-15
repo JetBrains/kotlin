@@ -21,7 +21,7 @@ external class A {
 
 external fun bar(): Int
 
-external var prop: Int
+external val prop: Int
 
 // FILE: main.kt
 

@@ -1,0 +1,16 @@
+KtNameReferenceExpression(122,123): 'x'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  KaSimpleSymbolResolutionError:
+    candidateSymbols = [
+      x: kotlin.Int,
+      x: kotlin.String
+    ]
+    diagnostic = ERROR<NONE_APPLICABLE: None of the following candidates is applicable:
+
+    fun foo(x: Int, x: Int): Unit:
+      Argument type mismatch: actual type is 'String', but 'Int' was expected.
+
+    fun foo(x: Int, z: Int, x: String): Unit:
+      No value passed for parameter 'z'.>

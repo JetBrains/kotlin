@@ -783,6 +783,128 @@ def _init_logger():
         logging.getLogger().setLevel(logging.DEBUG)
 
 
+_COMPILER_GENERATED_FILE = "<compiler-generated>"
+_OBJC_TO_KOTLIN_BRIDGE_PREFIX = "objc2kotlin_"
+_KONAN_LLDB_DONT_SKIP_BRIDGING_FUNCTIONS = "KONAN_LLDB_DONT_SKIP_BRIDGING_FUNCTIONS"
+# Long enough for every key of `_THREAD_PLAN_FROM_STOP_REASON`.
+# Note that this also keeps the hook from reacting to the plans below: their own stop description
+# ("Scripted thread plan implemented by class ...") gets truncated here, so it never matches a key.
+_MAX_SIZE_FOR_STOP_REASON = 20
+
+
+class KonanStep:
+    def __init__(self, thread_plan, args_dict):
+        self.thread_plan = thread_plan
+
+        debugger = thread_plan.GetThread().GetProcess().GetTarget().GetDebugger()
+        self.avoid_no_debug = (
+            debugger.GetInternalVariableValue(
+                "target.process.thread.step-in-avoid-nodebug",
+                debugger.GetInstanceName(),
+            ).GetStringAtIndex(0) == "true"
+        )
+
+        self.step_thread_plan = self.queue_thread_plan()
+
+    def explains_stop(self, event):
+        return True
+
+    def should_stop(self, event):
+        frame = self.thread_plan.GetThread().GetFrameAtIndex(0)
+        source_file = frame.GetLineEntry().GetFileSpec().GetFilename()
+
+        if self.avoid_no_debug and source_file in [None, _COMPILER_GENERATED_FILE,]:
+            logging.debug("stepping further through %s", frame.GetFunctionName())
+            self.step_thread_plan = self.queue_thread_plan()
+            return False
+
+        self.thread_plan.SetPlanComplete(True)
+        return True
+
+    def should_step(self):
+        return True
+
+    def queue_thread_plan(self):
+        frame = self.thread_plan.GetThread().GetFrameAtIndex(0)
+        line_entry = frame.GetLineEntry()
+        begin_address = line_entry.GetStartAddress().GetFileAddress()
+        end_address = line_entry.GetEndAddress().GetFileAddress()
+        return self.do_queue_thread_plan(frame.GetPCAddress(), end_address - begin_address)
+
+    def do_queue_thread_plan(self, address, offset):
+        raise NotImplementedError
+
+
+class KonanStepIn(KonanStep):
+    def do_queue_thread_plan(self, address, offset):
+        return self.thread_plan.QueueThreadPlanForStepInRange(address, offset)
+
+
+class KonanStepOver(KonanStep):
+    def do_queue_thread_plan(self, address, offset):
+        return self.thread_plan.QueueThreadPlanForStepOverRange(address, offset)
+
+
+class KonanStepOut(KonanStep):
+    def do_queue_thread_plan(self, address, offset):
+        return self.thread_plan.QueueThreadPlanForStepOut(0)
+
+
+_THREAD_PLAN_FROM_STOP_REASON = {
+    "step in": KonanStepIn.__name__,
+    "step out": KonanStepOut.__name__,
+    "step over": KonanStepOver.__name__,
+}
+
+
+def _is_objc_to_kotlin_bridge(frame) -> bool:
+    address = frame.addr
+    function_name = address.function.name
+    if function_name is None or not function_name.startswith(
+        _OBJC_TO_KOTLIN_BRIDGE_PREFIX
+    ):
+        return False
+    return address.line_entry.file.basename == _COMPILER_GENERATED_FILE
+
+
+class KonanStopHook:
+    """Steps through the `objc2kotlin_*` bridges when stepping.
+
+    Normally this is done by lldb itself, using the transparent stepping
+    attribute emitted by the compiler (`enableDebugTransparentStepping`).
+    Since Xcode 27 that stopped working when the ObjC caller dispatches
+    through an `_objc_msgSend$<selector>` stub: lldb skips the whole call
+    instead of stepping into Kotlin. See KT-87872.
+
+    Set the `KONAN_LLDB_DONT_SKIP_BRIDGING_FUNCTIONS` environment variable
+    in the target to stop at the bridges instead.
+    """
+
+    def __init__(self, target, extra_args, _):
+        pass
+
+    def handle_stop(self, execution_context, stream) -> bool:
+        is_skip_disabled = execution_context.target.GetEnvironment().Get(
+            _KONAN_LLDB_DONT_SKIP_BRIDGING_FUNCTIONS
+        )
+        if is_skip_disabled or not _is_objc_to_kotlin_bridge(execution_context.frame
+        ):
+            return True
+
+        stop_reason = execution_context.frame.thread.GetStopDescription(
+            _MAX_SIZE_FOR_STOP_REASON
+        )
+        plan = _THREAD_PLAN_FROM_STOP_REASON.get(stop_reason)
+        if plan is None:
+            return True
+
+        logging.debug("stepping through a bridge, stop reason: %s", stop_reason)
+        execution_context.thread.StepUsingScriptedThreadPlan(
+            f"{__name__}.{plan}", False
+        )
+        return False
+
+
 def __lldb_init_module(debugger, _):
     _init_logger()
     logging.debug("init start")
@@ -825,5 +947,11 @@ def __lldb_init_module(debugger, _):
     # Avoid Kotlin/Native runtime
     debugger.HandleCommand(
         "settings set target.process.thread.step-avoid-regexp ^::Kotlin_"
+    )
+    # Use the command interpreter directly: `HandleCommand` would print
+    # "Stop hook #N added." to the debugger output.
+    debugger.GetCommandInterpreter().HandleCommand(
+        f"target stop-hook add -P {__name__}.KonanStopHook",
+        lldb.SBCommandReturnObject(),
     )
     logging.debug("init end")

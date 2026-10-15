@@ -1,7 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
-
-<!WRONG_MODIFIER_TARGET!>error<!> class Foo
-<!WRONG_MODIFIER_TARGET!>error<!> class Bar
+error class Foo
+error class Bar
 
 var a: CharSequence = ""
 var b: CharSequence | Foo = ""

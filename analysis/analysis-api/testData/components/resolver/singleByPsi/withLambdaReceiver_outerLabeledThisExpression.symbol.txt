@@ -1,0 +1,5 @@
+KtThisExpression(93,102): 'this@Test'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      /Test
+    ]

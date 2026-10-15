@@ -1,0 +1,45 @@
+KaTypeParameterSymbol:
+  anchorPsi: KtTypeParameter
+  annotations: []
+  isActual: false
+  isExpect: false
+  isExternal: false
+  isReified: false
+  location: CLASS
+  modality: FINAL
+  name: T
+  origin: SOURCE
+  psi: KtTypeParameter
+  realPsi: KtTypeParameter
+  upperBounds: []
+  variance: INVARIANT
+  visibility: LOCAL
+  getContainingFileSymbol: KaFileSymbol(typeParameterOnAnonymousObject.kt)
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecation: null
+  importableFqName: null
+
+KaTypeParameterSymbol:
+  anchorPsi: KtTypeParameter
+  annotations: []
+  isActual: false
+  isExpect: false
+  isExternal: false
+  isReified: false
+  location: CLASS
+  modality: FINAL
+  name: T
+  origin: SOURCE
+  psi: KtTypeParameter
+  realPsi: KtTypeParameter
+  upperBounds: [
+    KaTypeParameterType:
+      annotations: []
+      type: R
+  ]
+  variance: INVARIANT
+  visibility: LOCAL
+  getContainingFileSymbol: KaFileSymbol(typeParameterOnAnonymousObject.kt)
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecation: null
+  importableFqName: null

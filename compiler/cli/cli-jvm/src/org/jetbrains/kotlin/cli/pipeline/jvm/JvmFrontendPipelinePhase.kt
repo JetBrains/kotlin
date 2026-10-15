@@ -68,6 +68,7 @@ import java.io.File
 import javax.xml.stream.XMLOutputFactory
 import javax.xml.stream.XMLStreamWriter
 import kotlin.io.path.Path
+import kotlin.io.path.exists
 
 object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, JvmFrontendPipelineArtifact>(
     name = "JvmFrontendPipelinePhase",
@@ -267,7 +268,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         destination: MutableList<String?>,
         supportsK2: T.() -> Boolean
     ) {
-        this?.filter { !it.supportsK2() && it::class.java.canonicalName != CLICompiler.SCRIPT_PLUGIN_REGISTRAR_NAME }
+        this?.filter { !it.supportsK2() }
             ?.mapTo(destination) { it::class.qualifiedName }
     }
 
@@ -360,15 +361,17 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                 )
             },
             additionalProvidersForMetadataLibrarySessionsInHmppMode = l@{ session, moduleDataProvider, scopeProvider, libraries, rawRegularDependencies, rawFriendDependencies ->
-                /*
-                 * If no klibs were passed to the dependencies of the common fragment we try to interpret the fragment
-                 * classpath as JVM classpath (with .jar and .class files).
-                 *
-                 * This could happen in a single-target project setup.
-                 */
-                if (libraries.isNotEmpty()) return@l emptyList()
-                val dependencies = (rawRegularDependencies + rawFriendDependencies).map { Path(it) }
-                if (dependencies.isEmpty()) return@l emptyList()
+                // Treat libraries that could not be loaded as klibs as JVM classpath (with .jar and .class files).
+                // This can happen in a single-target project setup.
+
+                fun String.toPathIfExists() = Path(this).takeIf { path -> path.exists() }
+
+                val dependencies = buildList {
+                    rawRegularDependencies.mapNotNullTo(this) { it.toPathIfExists() }
+                    rawFriendDependencies.mapNotNullTo(this) { it.toPathIfExists() }
+                    removeAll(libraries.mapTo(mutableSetOf()) { it.path })
+                }.ifEmpty { return@l emptyList() }
+
                 val classpath = JvmClasspath.Roots(dependencies.map(JvmClasspathRootId::of))
                 val kotlinClassFinder = projectEnvironment.getKotlinClassFinder(classpath)
                 val moduleData = moduleDataProvider.allModuleData.first { it.session == session }
@@ -554,8 +557,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
      * @see FirAnalysisHandlerExtension.isApplicable
      * @see FirAnalysisHandlerExtension.doAnalysis
      */
-
-    fun runAnalysisHandlerExtensions(project: Project, configuration: CompilerConfiguration): Boolean? {
+    private fun runAnalysisHandlerExtensions(project: Project, configuration: CompilerConfiguration): Boolean? {
         val extensions = configuration.getCompilerExtensions(FirAnalysisHandlerExtension)
             .filter { it.isApplicable(configuration) }
             .takeIf { it.isNotEmpty() }

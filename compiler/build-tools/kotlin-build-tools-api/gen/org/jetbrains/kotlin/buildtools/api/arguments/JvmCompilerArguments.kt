@@ -750,7 +750,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
         JvmCompilerArgument("X_USE_TYPE_TABLE", KotlinReleaseVersion(1, 2, 40))
 
     /**
-     * Compile value classes to behave as experimental Project Valhalla value classes. Requires a Valhalla-compatible JDK, JVM target 27 or later and the '-Xjvm-enable-preview' flag.
+     * Compile value classes to behave as experimental Project Valhalla value classes. Requires JVM target 28 or later and the '-Xjvm-enable-preview' flag.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
      */

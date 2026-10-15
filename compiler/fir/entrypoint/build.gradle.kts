@@ -16,7 +16,7 @@ dependencies {
     api(project(":compiler:fir:raw-fir:light-tree2fir"))
     api(project(":compiler:fir:raw-fir:mp-parsing2fir"))
     api(project(":compiler:fir:fir2ir"))
-    api(project(":compiler:fir:checkers"))
+    api(project(":compiler:fir:checkers:checkers.common"))
     api(project(":compiler:fir:checkers:checkers.jvm"))
     api(project(":compiler:fir:checkers:checkers.js"))
     api(project(":compiler:fir:checkers:checkers.native"))

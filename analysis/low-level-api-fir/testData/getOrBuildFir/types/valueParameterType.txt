@@ -1,0 +1,10 @@
+KT element: KtTypeReference
+FIR element: FirResolvedTypeRefImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+R|kotlin/Int|
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] valueParameterType.kt
+    public? final? [ResolvedTo(TYPES)] fun foo([ResolvedTo(TYPES)] p: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }

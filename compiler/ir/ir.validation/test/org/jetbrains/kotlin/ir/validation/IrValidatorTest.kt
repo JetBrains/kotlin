@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.ir.types.impl.IrDynamicTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.validation.checkers.expression.IrLegacyCallableReferenceChecker
 import org.jetbrains.kotlin.ir.validation.checkers.expression.IrTypeOperatorRedundancyChecker
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -3297,6 +3298,105 @@ class IrValidatorTest {
                     CompilerMessageLocation.create("test.kt", 0, 0, null),
                 )
             ),
+        )
+    }
+
+    @Test
+    fun `legacy callable reference nodes are reported`() {
+        val file = createIrFile()
+        val function = IrFactoryImpl.buildFun {
+            name = Name.identifier("foo")
+            returnType = TestIrBuiltins.unitType
+        }
+        val property = IrFactoryImpl.buildProperty {
+            name = Name.identifier("p")
+        }
+
+        val legacyFunctionReference = IrFunctionReferenceImpl(
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET, TestIrBuiltins.anyType, function.symbol,
+            typeArgumentsCount = 0,
+        )
+        val legacyPropertyReference = IrPropertyReferenceImplWithShape(
+            startOffset = UNDEFINED_OFFSET,
+            endOffset = UNDEFINED_OFFSET,
+            type = TestIrBuiltins.anyType,
+            symbol = property.symbol,
+            hasDispatchReceiver = false,
+            hasExtensionReceiver = false,
+            typeArgumentsCount = 0,
+            field = null,
+            getter = null,
+            setter = null,
+        )
+        val delegate = IrVariableImpl(
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.DEFINED, IrVariableSymbolImpl(),
+            Name.identifier($$"d$delegate"), TestIrBuiltins.anyType, isVar = false, isConst = false, isLateinit = false,
+        ).apply { parent = function }
+        val localDelegatedPropertyGetter = IrFactoryImpl.buildFun {
+            name = Name.special("<get-d>")
+            returnType = TestIrBuiltins.anyType
+        }.apply { parent = function }
+        val localDelegatedProperty = IrFactoryImpl.createLocalDelegatedProperty(
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.DEFINED, Name.identifier("d"),
+            IrLocalDelegatedPropertySymbolImpl(), TestIrBuiltins.anyType, isVar = false,
+        ).apply {
+            parent = function
+            this.delegate = delegate
+            getter = localDelegatedPropertyGetter
+        }
+        val legacyLocalDelegatedPropertyReference = IrLocalDelegatedPropertyReferenceImpl(
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET, TestIrBuiltins.anyType, localDelegatedProperty.symbol,
+            delegate = delegate.symbol, getter = localDelegatedPropertyGetter.symbol, setter = null,
+        )
+
+        val body = IrFactoryImpl.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
+        body.statements.add(localDelegatedProperty)
+        body.statements.add(legacyFunctionReference)
+        body.statements.add(legacyPropertyReference)
+        body.statements.add(legacyLocalDelegatedPropertyReference)
+        function.body = body
+        file.addChild(function)
+        file.addChild(property)
+
+        testValidation(
+            IrVerificationMode.ERROR,
+            file,
+            listOf(
+                Message(
+                    ERROR,
+                    """
+                    [IR VALIDATION] IrValidatorTest: Legacy callable reference node 'IrFunctionReference' cannot be used on the first stage of KLIB-based compilation. Generate 'IrRichFunctionReference' instead. To temporarily suppress this check, pass '-Xdisable-ir-checkers=IrLegacyCallableReferenceChecker'.
+                    FUNCTION_REFERENCE 'public final fun foo (): kotlin.Unit declared in org.sample' type=kotlin.Any origin=null reflectionTarget=<same>
+                      inside BLOCK_BODY
+                        inside FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                          inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create("test.kt", 0, 0, null),
+                ),
+                Message(
+                    ERROR,
+                    """
+                    [IR VALIDATION] IrValidatorTest: Legacy callable reference node 'IrPropertyReference' cannot be used on the first stage of KLIB-based compilation. Generate 'IrRichPropertyReference' instead. To temporarily suppress this check, pass '-Xdisable-ir-checkers=IrLegacyCallableReferenceChecker'.
+                    PROPERTY_REFERENCE 'public final p [val] declared in org.sample' field=null getter=null setter=null type=kotlin.Any origin=null
+                      inside BLOCK_BODY
+                        inside FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                          inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create("test.kt", 0, 0, null),
+                ),
+                Message(
+                    ERROR,
+                    $$"""
+                    [IR VALIDATION] IrValidatorTest: Legacy callable reference node 'IrLocalDelegatedPropertyReference' cannot be used on the first stage of KLIB-based compilation. Generate 'IrRichPropertyReference' instead. To temporarily suppress this check, pass '-Xdisable-ir-checkers=IrLegacyCallableReferenceChecker'.
+                    LOCAL_DELEGATED_PROPERTY_REFERENCE 'val d: kotlin.Any by (...)' delegate='val d$delegate: kotlin.Any [val] declared in org.sample.foo' getter='public final fun <get-d> (): kotlin.Any declared in org.sample.foo' setter=null type=kotlin.Any origin=null
+                      inside BLOCK_BODY
+                        inside FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                          inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create("test.kt", 0, 0, null),
+                ),
+            ),
+            config = IrValidatorConfig().withCheckers(IrLegacyCallableReferenceChecker),
         )
     }
 }

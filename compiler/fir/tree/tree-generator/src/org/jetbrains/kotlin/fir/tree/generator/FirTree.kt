@@ -94,7 +94,7 @@ object FirTree : AbstractFirTreeBuilder() {
             This includes all function-like declarations (see [FirFunction] and all variable-like declarations (see [FirVariable]).
 
             Notable properties:
-            - [symbol] — the symbol which serves as a pointer to this càllable declaration.
+            - [symbol] — the symbol which serves as a pointer to this callable declaration.
             - [typeParameters] — type parameter references declared for this callable declaration, if any.
             In certain situations, references to type parameters of its outer classes may also be present in the list. 
             - [dispatchReceiverType] — dispatch receiver type for non-static member callables, or null for top-level or static callables.
@@ -677,7 +677,7 @@ object FirTree : AbstractFirTreeBuilder() {
         +field(varianceType)
         +field("isReified", boolean)
         // TODO: `useMutableOrEmpty = true` is a workaround for KT-60324 until KT-60445 has been fixed.
-        +listField("bounds", typeRef, withReplace = true, useMutableOrEmpty = true)
+        +listField("bounds", typeRef, withReplace = true, useMutableOrEmpty = true, withTransform = true)
         +annotations
     }
 
@@ -1440,6 +1440,12 @@ object FirTree : AbstractFirTreeBuilder() {
         }
         +listField("nonFatalDiagnostics", coneDiagnosticType, useMutableOrEmpty = true, withReplace = true)
         +field("resolvedSymbolOrigin", resolvedSymbolOrigin, nullable = true, withReplace = true)
+        +field("originalNameForContextSensitiveResolution", nameType, nullable = true, withReplace = true) {
+            kDoc = """
+                |Having a non-null value in a case when the qualifier should be considered as a candidate for CSR.
+                |It might be different from the name of [qualifierSymbol], e.g., when the qualifier is resolved via an import alias.
+            """.trimMargin()
+        }
         +typeArguments {
             withTransform = true
         }

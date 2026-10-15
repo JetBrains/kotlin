@@ -34,7 +34,6 @@ class KlibLoadingMetadataCache {
     private class CacheValue<T : Any>(val value: T?)
 
     private val packageFragmentCache = ContainerUtil.createConcurrentWeakValueMap<CacheKey, CacheValue<ProtoBuf.PackageFragment>>()
-    private val moduleHeaderCache = ContainerUtil.createConcurrentWeakValueMap<CacheKey, CacheValue<KlibMetadataProtoBuf.Header>>()
     private val libraryMetadataVersionCache = ContainerUtil.createConcurrentWeakValueMap<CacheKey, CacheValue<MetadataVersion>>()
 
     fun getCachedPackageFragment(packageFragmentFile: VirtualFile): ProtoBuf.PackageFragment? {
@@ -46,18 +45,6 @@ class KlibLoadingMetadataCache {
             CacheKey(packageFragmentFile)
         ) {
             CacheValue(computePackageFragment(packageFragmentFile))
-        }.value
-    }
-
-    fun getCachedModuleHeader(moduleHeaderFile: VirtualFile): KlibMetadataProtoBuf.Header? {
-        check(moduleHeaderFile.name == KLIB_MODULE_METADATA_FILE_NAME) {
-            "Not a module header file: $moduleHeaderFile"
-        }
-
-        return moduleHeaderCache.computeIfAbsent(
-            CacheKey(moduleHeaderFile)
-        ) {
-            CacheValue(computeModuleHeader(moduleHeaderFile))
         }.value
     }
 
@@ -95,17 +82,6 @@ class KlibLoadingMetadataCache {
 
         return try {
             parsePackageFragment(packageFragmentFile.contentsToByteArray(false))
-        } catch (_: IOException) {
-            null
-        }
-    }
-
-    private fun computeModuleHeader(moduleHeaderFile: VirtualFile): KlibMetadataProtoBuf.Header? {
-        if (!isMetadataCompatible(moduleHeaderFile.parent.parent))
-            return null
-
-        return try {
-            parseModuleHeader(moduleHeaderFile.contentsToByteArray(false))
         } catch (_: IOException) {
             null
         }

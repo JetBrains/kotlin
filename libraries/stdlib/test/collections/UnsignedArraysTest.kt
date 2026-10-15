@@ -23,6 +23,14 @@ class UnsignedArraysTest {
     }
 
     @Test
+    fun operatorOf() {
+        assertArrayContentEquals(ubyteArrayOf(), UByteArray.of())
+        assertArrayContentEquals(ushortArrayOf(1u, 2u), UShortArray.of(1u, 2u))
+        assertArrayContentEquals(uintArrayOf(1u, 1u, 1u), UIntArray.of(1u, 1u, 1u))
+        assertArrayContentEquals(ulongArrayOf(42u), ULongArray.of(42u))
+    }
+
+    @Test
     fun ubyteArrayInit() {
         val zeroArray = UByteArray(42)
         assertEquals(42, zeroArray.size)

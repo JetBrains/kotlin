@@ -1,0 +1,48 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// FIR_DUMP
+error class Foo
+
+typealias TA = RichError
+
+fun <T, V : NonError, E : RichError, E2 : TA, E3 : E, E4 : V | Foo, E5 : E | Foo, E6 : Nothing | E5, E7 : String | E6> test(
+    a: T | Foo,
+    b: V | Foo,
+    c: E | Foo,
+    d: E2 | Foo,
+    e: <!NON_ERROR_COMPONENT_WRONG_POSITION_IN_UNION_TYPE!>Foo | T<!>,
+    f: <!NON_ERROR_COMPONENT_WRONG_POSITION_IN_UNION_TYPE!>Foo | V<!>,
+    g: Foo | E,
+    h: Foo | E2,
+    i: String | E3,
+    j: E4 | Foo,
+    k: E5 | Foo,
+) {}
+
+val <E : RichError> (E | Foo).prop get() = 1
+val <T> (T | Foo).prop2 get() = 1
+
+class C<T, V : NonError, E : RichError, E2 : TA> {
+    fun test(
+        a: T | Foo,
+        b: V | Foo,
+        c: E | Foo,
+        d: E2 | Foo,
+        e: <!NON_ERROR_COMPONENT_WRONG_POSITION_IN_UNION_TYPE!>Foo | T<!>,
+        f: <!NON_ERROR_COMPONENT_WRONG_POSITION_IN_UNION_TYPE!>Foo | V<!>,
+        g: Foo | E,
+        h: Foo | E2,
+    ) {}
+}
+
+fun <G : CharSequence, T : List<F | Foo>, F : G | Foo> boundsWithUnionAndDependency() {}
+val <G : CharSequence, T : List<F | Foo>, F : G | Foo> T.boundsWithUnionAndDependency get() = 1
+interface I<G : CharSequence, T : List<F | Foo>, F : G | Foo>
+
+fun <G : CharSequence, T : F | Foo, F : G | Foo> boundsWithUnionAndDependency2() {}
+fun <G : CharSequence?, T : F & Any | Foo, F : G? | Foo> boundsWithUnionAndDependency3() {}
+
+fun <<!CYCLIC_GENERIC_UPPER_BOUND!>T : T | Foo<!>> loop1() {}
+fun <<!CYCLIC_GENERIC_UPPER_BOUND!>T : Any | T<!>> loop2() {}
+fun <<!CYCLIC_GENERIC_UPPER_BOUND!>T : R | Foo<!>, <!CYCLIC_GENERIC_UPPER_BOUND!>R : T | RichError<!>> loop1() {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, typeConstraint, typeParameter */

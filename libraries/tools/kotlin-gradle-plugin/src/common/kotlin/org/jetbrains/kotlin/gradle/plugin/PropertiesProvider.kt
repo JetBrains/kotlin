@@ -53,7 +53,6 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_IGNORE_DISABLED_TARGETS
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_PUBLICATION_FORMAT
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_PUBLISH_JVM_ENVIRONMENT_ATTRIBUTE
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_RUN_COMPILER_VIA_BUILD_TOOLS_API
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_STDLIB_DEFAULT_DEPENDENCY
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_STDLIB_JDK_VARIANTS_VERSION_ALIGNMENT
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_WASM_RUN_COMPILER_VIA_BUILD_TOOLS_API
@@ -156,6 +155,12 @@ internal class PropertiesProvider private constructor(private val project: Proje
 
     val incrementalWasm: Boolean
         get() = booleanProperty("kotlin.incremental.wasm") ?: true
+
+    /**
+     * Enables the metadata-based TypeScript declaration generator for Kotlin/JS.
+     */
+    val jsGenerateRichTypeScriptDeclarations: Boolean
+        get() = booleanProperty(PropertyNames.KOTLIN_JS_GENERATE_RICH_TYPESCRIPT_DECLARATIONS) ?: true
 
     val incrementalNative: Boolean?
         get() = booleanProperty(PropertyNames.KOTLIN_NATIVE_INCREMENTAL_COMPILATION)
@@ -476,11 +481,6 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val allowIncompleteKotlinArchivePublication: Boolean
         get() = booleanProperty(KOTLIN_ALLOW_INCOMPLETE_KOTLIN_ARCHIVE_PUBLICATION) ?: false
 
-    @Suppress("DEPRECATION")
-    @Deprecated("KT-85433: non-BTA JVM compiler invocation is deprecated")
-    val runKotlinCompilerViaBuildToolsApi: Provider<Boolean>
-        get() = booleanProvider(KOTLIN_RUN_COMPILER_VIA_BUILD_TOOLS_API).orElse(true)
-
     val runKotlinJsCompilerViaBuildToolsApi: Provider<Boolean>
         get() = booleanProvider(KOTLIN_JS_RUN_COMPILER_VIA_BUILD_TOOLS_API).orElse(true)
 
@@ -490,13 +490,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val runKotlinMetadataCompilerViaBuildToolsApi: Provider<Boolean>
         get() = booleanProvider(KOTLIN_METADATA_RUN_COMPILER_VIA_BUILD_TOOLS_API).orElse(true)
 
-    @Suppress("DEPRECATION")
-    // Uses [runKotlinCompilerViaBuildToolsApi] as the default value provider to avoid warnings when BTA is explicitly disabled
     val generateCompilerRefIndex: Provider<Boolean>
         get() = booleanProvider(KOTLIN_GENERATE_COMPILER_REF_INDEX).orElse(
-            runKotlinCompilerViaBuildToolsApi.zip(project.providers.provider { isCiBuild() }) { runsViaBta, isCi ->
-                runsViaBta && !isCi
-            }
+            project.providers.provider { !isCiBuild() }
         )
 
     val allowLegacyMppDependencies: Boolean
@@ -555,7 +551,19 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() = booleanProperty(PropertyNames.KOTLIN_APPLE_COPY_DSYM_DURING_ARCHIVING) ?: true
 
     val swiftExportIgnoreExperimental: Boolean
-        get() = booleanProperty(PropertyNames.KOTLIN_SWIFT_EXPORT_EXPERIMENTAL_NOWARN) == true
+        get() = propertyWithDeprecatedVariant(
+            PropertyNames.KOTLIN_NATIVE_SUPPRESS_SWIFT_EXPORT_EXPERIMENTAL_WARNING,
+            PropertyNames.KOTLIN_SWIFT_EXPORT_EXPERIMENTAL_NOWARN_DEPRECATED,
+        )?.toBoolean() == true
+
+    /**
+     * Extra JVM arguments for the Swift Export worker process.
+     */
+    val swiftExportJvmArgs: List<String>
+        get() = get(PropertyNames.KOTLIN_NATIVE_SWIFT_EXPORT_WORKER_JVM_ARGS).orEmpty()
+            .split("\\s+".toRegex())
+            // Leading or trailing whitespace leaves empty strings, which would reach the JVM as arguments
+            .filterNot { it.isBlank() }
 
     /**
      * Application Binary Interface (ABI) validation:
@@ -563,14 +571,6 @@ internal class PropertiesProvider private constructor(private val project: Proje
      */
     val abiValidationBannedTargets: String?
         get() = property(PropertyNames.ABI_VALIDATION_BANNED_TARGETS).orNull
-
-
-    /**
-     * Allows suppressing the diagnostic [KotlinToolingDiagnostics.BuildToolsApiVersionInconsistency].
-     * Required only for Kotlin repo bootstrapping.
-     */
-    val suppressBuildToolsApiVersionConsistencyChecks: Boolean
-        get() = booleanProperty(PropertyNames.KOTLIN_SUPPRESS_BUILD_TOOLS_API_VERSION_CONSISTENCY_CHECKS) ?: false
 
     private val propertiesBuildService = PropertiesBuildService.registerIfAbsent(project).get()
 
@@ -866,6 +866,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_MPP_ENABLE_OPTIMISTIC_NUMBER_COMMONIZATION = property("kotlin.mpp.enableOptimisticNumberCommonization")
         val KOTLIN_MPP_ENABLE_PLATFORM_INTEGER_COMMONIZATION = property("kotlin.mpp.enablePlatformIntegerCommonization")
         val KOTLIN_JS_KARMA_BROWSERS = property("kotlin.js.browser.karma.browsers")
+        val KOTLIN_JS_GENERATE_RICH_TYPESCRIPT_DECLARATIONS = property("kotlin.js.generateRichTypeScriptDeclarations")
         val KOTLIN_PLAYWRIGHT_BROWSERS_PATH = property("kotlin.gradle.playwright.browsers.path")
         val KOTLIN_JS_NODEJS_TOOLCHAIN = property("kotlin.js.nodejs.toolchain")
         val KOTLIN_JS_NODEJS_TOOLCHAIN_DEFAULT_INSTALL_PATH = property("kotlin.js.nodejs.toolchain.default.install.path")
@@ -880,8 +881,6 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_OPTIONS_SUPPRESS_FREEARGS_MODIFICATION_WARNING = property("kotlin.options.suppressFreeCompilerArgsModificationWarning")
         val KOTLIN_JVM_ADD_CLASSES_VARIANT = property("kotlin.jvm.addClassesVariant")
 
-        @Deprecated("KT-85433: non-BTA JVM compiler invocation is deprecated")
-        val KOTLIN_RUN_COMPILER_VIA_BUILD_TOOLS_API = property("kotlin.compiler.runViaBuildToolsApi")
         val KOTLIN_JS_RUN_COMPILER_VIA_BUILD_TOOLS_API = property("kotlin.js.runViaBuildToolsApi")
         val KOTLIN_WASM_RUN_COMPILER_VIA_BUILD_TOOLS_API = property("kotlin.wasm.runViaBuildToolsApi")
         val KOTLIN_METADATA_RUN_COMPILER_VIA_BUILD_TOOLS_API = property("kotlin.metadata.runViaBuildToolsApi")
@@ -895,8 +894,6 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_SUPPRESS_GRADLE_PLUGIN_WARNINGS = property(KOTLIN_SUPPRESS_GRADLE_PLUGIN_WARNINGS_PROPERTY)
         val KOTLIN_NATIVE_IGNORE_DISABLED_TARGETS = property("kotlin.native.ignoreDisabledTargets")
 
-        val KOTLIN_SUPPRESS_BUILD_TOOLS_API_VERSION_CONSISTENCY_CHECKS =
-            property("kotlin.internal.suppress.buildToolsApiVersionConsistencyChecks")
         val KOTLIN_USER_HOME_DIR = property("kotlin.user.home")
         val KOTLIN_PROJECT_PERSISTENT_DIR = property("kotlin.project.persistent.dir")
         val KOTLIN_PROJECT_PERSISTENT_DIR_GRADLE_DISABLE_WRITE = property("kotlin.project.persistent.dir.gradle.disableWrite")
@@ -908,7 +905,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_APPLE_COCOAPODS_EXECUTABLE = property("kotlin.apple.cocoapods.bin")
         val KOTLIN_APPLE_ALLOW_EMBED_AND_SIGN_WITH_COCOAPODS =
             property("kotlin.apple.deprecated.allowUsingEmbedAndSignWithCocoaPodsDependencies")
-        val KOTLIN_SWIFT_EXPORT_EXPERIMENTAL_NOWARN = property("kotlin.swift-export.experimental.nowarn")
+        val KOTLIN_NATIVE_SUPPRESS_SWIFT_EXPORT_EXPERIMENTAL_WARNING = property("kotlin.native.suppressSwiftExportExperimentalWarning")
+        val KOTLIN_SWIFT_EXPORT_EXPERIMENTAL_NOWARN_DEPRECATED = property("kotlin.swift-export.experimental.nowarn")
+        val KOTLIN_NATIVE_SWIFT_EXPORT_WORKER_JVM_ARGS = property("kotlin.native.swiftExportWorkerJvmArgs")
         val KOTLIN_NATIVE_ENABLE_KLIBS_CROSSCOMPILATION = property("kotlin.native.enableKlibsCrossCompilation")
         val KOTLIN_ARCHIVES_TASK_OUTPUT_AS_FRIEND_ENABLED = property("kotlin.build.archivesTaskOutputAsFriendModule")
         val KOTLIN_KMP_PUBLICATION_STRATEGY = property("${KOTLIN_INTERNAL_NAMESPACE}.kmp.kmpPublicationStrategy")

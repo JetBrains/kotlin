@@ -1,0 +1,17 @@
+KT element: KtTypeReference
+FIR element: null
+FIR source kind: null
+
+FIR element rendered:
+null
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] annotatedDestructuringNonLocalEntryExplicitType.kt
+    public final? [ResolvedTo(RAW_FIR)] class C : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|C| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = IntegerLiteral(1).<Unresolved name: to>#(Int(2))
+
+    }

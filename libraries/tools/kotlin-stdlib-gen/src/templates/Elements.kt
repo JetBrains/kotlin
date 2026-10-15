@@ -43,6 +43,7 @@ object Elements : TemplateGroupBase() {
         operator(true)
 
         doc { "Returns `true` if [element] is found in the ${f.collection}." }
+        sample("${f.sampleClass}.contains")
         typeParam("@kotlin.internal.OnlyInputTypes T")
         val isDeprecated = f == ArraysOfPrimitives && primitive!!.isFloatingPoint()
         if (isDeprecated) {
@@ -507,6 +508,7 @@ object Elements : TemplateGroupBase() {
         }
         doc { "Returns the first ${f.element}." }
         throws("NoSuchElementException", "if the ${f.collection} is empty.")
+        sample("${f.sampleClass}.first")
         returns("T")
         body {
             """
@@ -607,6 +609,7 @@ object Elements : TemplateGroupBase() {
 
         doc { """Returns the first ${f.element} matching the given [predicate].
         @throws [NoSuchElementException] if no such ${f.element} is found.""" }
+        sample("${f.sampleClass}.first")
         returns("T")
 
         body {

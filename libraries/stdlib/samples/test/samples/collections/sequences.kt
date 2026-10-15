@@ -60,14 +60,32 @@ class Sequences {
         }
 
         @Sample
+        fun sequenceOfValuesLiteral() {
+            val sequence: Sequence<String> = ["first", "second", "last"]
+            sequence.forEach(::println)
+        }
+
+        @Sample
         fun sequenceOfSingleValue() {
             val sequence = sequenceOf("single")
             assertPrints(sequence.toList(), "[single]")
         }
 
         @Sample
+        fun sequenceOfSingleValueLiteral() {
+            val sequence: Sequence<String> = ["single"]
+            assertPrints(sequence.toList(), "[single]")
+        }
+
+        @Sample
         fun sequenceOfEmpty() {
             val sequence = sequenceOf<String>()
+            assertPrints(sequence.toList(), "[]")
+        }
+
+        @Sample
+        fun sequenceOfEmptyLiteral() {
+            val sequence: Sequence<String> = []
             assertPrints(sequence.toList(), "[]")
         }
 

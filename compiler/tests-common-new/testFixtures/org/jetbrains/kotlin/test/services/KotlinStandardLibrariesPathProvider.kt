@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import java.io.File
 import java.lang.ref.SoftReference
+import java.net.URI
 import java.net.URL
 import java.net.URLClassLoader
 import kotlin.reflect.KMutableProperty0
@@ -27,16 +28,10 @@ interface KotlinStandardLibrariesPathProvider : TestService {
         private var reflectJarClassLoader: SoftReference<ClassLoader?> = SoftReference(null)
 
         @Volatile
-        private var reflectWithNewFakeOverridesJarClassLoader: SoftReference<ClassLoader?> = SoftReference(null)
-
-        @Volatile
         private var reflectWithLoadMetadataDirectlyClassLoader: SoftReference<ClassLoader?> = SoftReference(null)
 
         @Volatile
         private var k1ReflectJarClassLoader: SoftReference<ClassLoader?> = SoftReference(null)
-
-        @Volatile
-        private var k1MembersReflectJarClassLoader: SoftReference<ClassLoader?> = SoftReference(null)
 
         private fun createClassLoader(vararg files: File): ClassLoader {
             val urls: MutableList<URL> = ArrayList(2)
@@ -76,6 +71,11 @@ interface KotlinStandardLibrariesPathProvider : TestService {
      * kotlin-script-runtime.jar
      */
     fun scriptRuntimeJarForTests(): File
+
+    /**
+     * kotlin-scripting-common.jar (contains the default script templates), if available on the test classpath
+     */
+    fun scriptingCommonJarForTests(): File?
 
     /**
      * kotlin-annotations-jvm.jar
@@ -131,14 +131,10 @@ interface KotlinStandardLibrariesPathProvider : TestService {
         getOrCreateClassLoader(::reflectJarClassLoader).also { loader ->
             val systemProperties = loader.loadClass("kotlin.reflect.jvm.internal.SystemPropertiesKt")
             check(systemProperties.getMethod("getUseK1Implementation").invoke(null) == false)
-            check(systemProperties.getMethod("getUseK1ImplementationForMembers").invoke(null) == false)
         }
 
     fun getRuntimeAndK1ReflectJarClassLoader(): ClassLoader =
         getOrCreateClassLoader(::k1ReflectJarClassLoader, "useK1Implementation")
-
-    fun getRuntimeAndK1MembersReflectJarClassLoader(): ClassLoader =
-        getOrCreateClassLoader(::k1MembersReflectJarClassLoader, "useK1ImplementationForMembers")
 
     fun getRuntimeAndReflectWithLoadMetadataDirectlyClassLoader(): ClassLoader =
         getOrCreateClassLoader(::reflectWithLoadMetadataDirectlyClassLoader, "loadMetadataDirectly")
@@ -155,7 +151,7 @@ interface KotlinStandardLibrariesPathProvider : TestService {
                 *listOfNotNull(
                     runtimeJarForTests(),
                     reflectJarForTests().takeUnless { skipReflect },
-                    scriptRuntimeJarForTests(),
+                    scriptingCommonJarForTests(),
                     kotlinTestJarForTests(),
                 ).toTypedArray(),
             ).also { loader ->
@@ -182,6 +178,8 @@ object StandardLibrariesPathProviderForKotlinProject : KotlinStandardLibrariesPa
     override fun kotlinTestJarForTests(): File = ForTestCompileRuntime.kotlinTestJarForTests()
 
     override fun scriptRuntimeJarForTests(): File = ForTestCompileRuntime.scriptRuntimeJarForTests()
+
+    override fun scriptingCommonJarForTests(): File? = findScriptingCommonJarInTestClasspath()
 
     override fun jvmAnnotationsForTests(): File = ForTestCompileRuntime.jvmAnnotationsForTests()
 
@@ -214,6 +212,7 @@ object EnvironmentBasedStandardLibrariesPathProvider : KotlinStandardLibrariesPa
     const val KOTLIN_TEST_PROP = "org.jetbrains.kotlin.test.kotlin-test"
     const val KOTLIN_TEST_JS_PROP = "org.jetbrains.kotlin.test.kotlin-test-js"
     const val KOTLIN_SCRIPT_RUNTIME_PROP = "org.jetbrains.kotlin.test.kotlin-script-runtime"
+    const val KOTLIN_SCRIPTING_COMMON_PROP = "org.jetbrains.kotlin.test.kotlin-scripting-common"
     const val KOTLIN_COMMON_STDLIB_PATH = "org.jetbrains.kotlin.test.kotlin-common-stdlib"
     const val KOTLIN_ANNOTATIONS_JVM_PROP = "org.jetbrains.kotlin.test.kotlin-annotations-jvm"
 
@@ -230,6 +229,9 @@ object EnvironmentBasedStandardLibrariesPathProvider : KotlinStandardLibrariesPa
     override fun reflectJarForTests(): File = getFile(KOTLIN_REFLECT_PROP)
     override fun kotlinTestJarForTests(): File = getFile(KOTLIN_TEST_PROP)
     override fun scriptRuntimeJarForTests(): File = getFile(KOTLIN_SCRIPT_RUNTIME_PROP)
+    override fun scriptingCommonJarForTests(): File? =
+        System.getProperty(KOTLIN_SCRIPTING_COMMON_PROP)?.let { getFile(KOTLIN_SCRIPTING_COMMON_PROP) }
+            ?: findScriptingCommonJarInTestClasspath()
     override fun jvmAnnotationsForTests(): File = getFile(KOTLIN_ANNOTATIONS_JVM_PROP)
     override fun getAnnotationsJar(): File = getFile(KOTLIN_ANNOTATIONS_JVM_PROP)
     override fun fullJsStdlib(): File = getFile(KOTLIN_STDLIB_JS_PROP)
@@ -246,6 +248,17 @@ object EnvironmentBasedStandardLibrariesPathProvider : KotlinStandardLibrariesPa
 
 val TestServices.standardLibrariesPathProvider: KotlinStandardLibrariesPathProvider by TestServices.testServiceAccessor()
 
+private fun findScriptingCommonJarInTestClasspath(): File? {
+    val resourceName = "kotlin/script/experimental/templates/ScriptWithArgs.class"
+    val url = KotlinStandardLibrariesPathProvider::class.java.classLoader.getResource(resourceName) ?: return null
+    val root = when (url.protocol) {
+        "jar" -> URI(url.path.substringBefore("!/"))
+        "file" -> URI(url.toString().removeSuffix(resourceName))
+        else -> return null
+    }
+    return File(root).takeIf(File::exists)
+}
+
 fun CompilerConfiguration.configureStandardLibs(
     pathProvider: KotlinStandardLibrariesPathProvider,
     arguments: K2JVMCompilerArguments
@@ -253,7 +266,6 @@ fun CompilerConfiguration.configureStandardLibs(
     configureStandardLibs(
         pathProvider,
         KotlinStandardLibrariesPathProvider::runtimeJarForTests,
-        KotlinStandardLibrariesPathProvider::scriptRuntimeJarForTests,
         KotlinStandardLibrariesPathProvider::reflectJarForTests,
         arguments
     )

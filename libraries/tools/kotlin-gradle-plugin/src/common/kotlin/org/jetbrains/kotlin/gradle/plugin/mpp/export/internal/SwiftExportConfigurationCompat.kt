@@ -6,9 +6,6 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.export.internal
 
 import org.gradle.api.artifacts.Configuration
-import org.gradle.api.model.ObjectFactory
-import org.gradle.api.provider.ListProperty
-import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
@@ -20,6 +17,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportExten
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportedDependency
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.exportedSwiftExportApiConfiguration
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.SwiftExportConfiguration
+import org.jetbrains.kotlin.gradle.plugin.mpp.export.SwiftExportIntegrationConfiguration
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.targets.native.resolvableApiConfiguration
 
@@ -67,21 +65,25 @@ internal interface SwiftExportConfigurationCompat {
     /**
      * Configure SwiftExportConfig.settings parameters
      */
-    val settings: MapProperty<String, String>
+    val settings: Provider<Map<String, String>>
 
     /**
      * Specifies additional compiler arguments to be passed to the compiler.
      */
-    val freeCompilerArgs: ListProperty<String>
+    val freeCompilerArgs: Provider<List<String>>
 
     fun addBinary(binary: AbstractNativeLibrary)
 
     companion object {
+        /**
+         * The configuration of the module as [integration] sees it. The settings and the dependency overrides
+         * come from the integration, so every integration runs Swift Export with its own.
+         */
         fun from(
             configuration: SwiftExportConfiguration,
+            integration: SwiftExportIntegrationConfiguration,
             kotlinNativeCompilation: KotlinNativeCompilation,
             providers: ProviderFactory,
-            objects: ObjectFactory,
         ): SwiftExportConfigurationCompat =
             object : SwiftExportConfigurationCompat {
                 override val moduleName: Property<String> get() = configuration.moduleName
@@ -105,16 +107,16 @@ internal interface SwiftExportConfigurationCompat {
                     get() = providers.provider { emptySet() }
 
                 override val dependencyOptionsOverrides: Provider<Map<SwiftExportDependencySelector, SwiftExportDeclaredModuleOptions>>
-                    get() = configuration.activatedXcodeIntegration?.dependencyOverrides ?: providers.provider { emptyMap() }
+                    get() = integration.dependencyOverrides
 
-                override val settings: MapProperty<String, String>
-                    get() = objects.mapProperty(String::class.java, String::class.java) // TODO: KT-87890
-                override val freeCompilerArgs: ListProperty<String>
-                    get() = objects.listProperty(String::class.java) // TODO: KT-87890
+                override val settings: Provider<Map<String, String>>
+                    get() = integration.settings
 
-                override fun addBinary(binary: AbstractNativeLibrary) {
-                    // TODO: KT-87890
-                }
+                // The legacy DSL only. The `export { }` DSL has no free compiler arguments and no binaries to add.
+                override val freeCompilerArgs: Provider<List<String>>
+                    get() = providers.provider { emptyList() }
+
+                override fun addBinary(binary: AbstractNativeLibrary) = Unit
             }
 
         fun from(
@@ -145,8 +147,8 @@ internal interface SwiftExportConfigurationCompat {
 
                 override val shouldResolveMetadata: Boolean = false
 
-                override val settings: MapProperty<String, String> get() = extension.advancedConfiguration.settings
-                override val freeCompilerArgs: ListProperty<String> get() = extension.advancedConfiguration.freeCompilerArgs
+                override val settings: Provider<Map<String, String>> get() = extension.advancedConfiguration.settings
+                override val freeCompilerArgs: Provider<List<String>> get() = extension.advancedConfiguration.freeCompilerArgs
                 override fun addBinary(binary: AbstractNativeLibrary) {
                     extension.addBinary(binary)
                 }

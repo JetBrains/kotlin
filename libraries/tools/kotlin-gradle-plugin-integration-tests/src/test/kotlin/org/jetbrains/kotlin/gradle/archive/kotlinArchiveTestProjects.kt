@@ -43,6 +43,7 @@ internal val kotlinArchiveResourcesSourceSets =
 internal fun KGPBaseTest.kotlinArchiveProducer(
     gradleVersion: GradleVersion,
     withAppleTargets: Boolean = true,
+    withNodeJs: Boolean = false,
 ): TestProject {
 
     return project("empty", gradleVersion) {
@@ -57,7 +58,7 @@ internal fun KGPBaseTest.kotlinArchiveProducer(
         }
         buildScriptInjection {
             project.applyMultiplatform {
-                kotlinArchiveTargets(withAppleTargets)
+                kotlinArchiveTargets(withAppleTargets, withNodeJs)
 
                 publishing {
                     publicationFormat.set(KotlinPublicationFormat.KOTLIN_ARCHIVE)
@@ -67,10 +68,18 @@ internal fun KGPBaseTest.kotlinArchiveProducer(
     }
 }
 
-internal fun KotlinMultiplatformExtension.kotlinArchiveTargets(withAppleTargets: Boolean = true) {
+internal fun KotlinMultiplatformExtension.kotlinArchiveTargets(withAppleTargets: Boolean = true, withNodeJs: Boolean = false) {
     jvm()
-    js()
-    wasmJs()
+    js() {
+        if (withNodeJs) {
+            nodejs()
+        }
+    }
+    wasmJs() {
+        if (withNodeJs) {
+            nodejs()
+        }
+    }
     linuxX64()
     linuxArm64()
     if (withAppleTargets) {
@@ -90,6 +99,10 @@ internal const val PRODUCER_CINTEROP_PACKAGE = "producercinterop"
 internal const val PRODUCER_CINTEROP_FUNCTION = "$PRODUCER_CINTEROP_PACKAGE.producerInteropFunction"
 internal const val PRODUCER_RESOURCES_PLACEMENT = "embed/producer"
 
+internal const val CONSUMER_CINTEROP_NAME = "consumerInterop"
+internal const val CONSUMER_CINTEROP_PACKAGE = "consumercinterop"
+internal const val CONSUMER_CINTEROP_FUNCTION = "$CONSUMER_CINTEROP_PACKAGE.consumerInteropFunction"
+
 internal fun TestProject.configureResourcesPublication() {
     kotlinArchiveResourcesSourceSets.forEach { sourceSetName ->
         val resourceFile = projectPath.resolve("src/$sourceSetName/multiplatformResources/$sourceSetName.txt")
@@ -103,16 +116,53 @@ internal fun TestProject.configureResourcesPublication() {
     }
 }
 
-internal fun TestProject.configureCinteropPublication() {
+internal fun TestProject.configureCinterop(
+    interopName: String = PRODUCER_CINTEROP_NAME,
+    packageName: String = PRODUCER_CINTEROP_PACKAGE,
+) {
     buildScriptInjection {
         project.enableCinteropCommonization()
         project.applyMultiplatform {
             targets.withType(KotlinNativeTarget::class.java).configureEach { target ->
-                target.createCInterop(PRODUCER_CINTEROP_NAME)
+                target.createCInterop(interopName, packageName)
             }
         }
     }
 }
+
+internal val webResources = listOf(
+    "stored.js",
+    "stored.mjs",
+    "stored.wasm",
+    "stored.js.map",
+    "stored.html",
+    "stored.txt", // not in allowed list
+)
+
+internal const val STORED_NPM_DEPENDENCY_NAME = "test-npm-dep"
+internal const val STORED_NPM_DEPENDENCY_VERSION = "1.1.1"
+
+internal fun TestProject.configureWebResourcesStoredInsideKlib() {
+    webSourceSetsWithFilesStoredInsideKlib.forEach { sourceSetName ->
+        webResources.forEach { fileName ->
+            val storedFile = projectPath.resolve("src/$sourceSetName/resources/$fileName")
+            storedFile.parent.createDirectories()
+            storedFile.writeText("$sourceSetName $fileName\n")
+        }
+    }
+    buildScriptInjection {
+        project.applyMultiplatform {
+            sourceSets.jsMain.dependencies {
+                api(npm(STORED_NPM_DEPENDENCY_NAME, STORED_NPM_DEPENDENCY_VERSION))
+            }
+            sourceSets.wasmJsMain.dependencies {
+                api(npm(STORED_NPM_DEPENDENCY_NAME, STORED_NPM_DEPENDENCY_VERSION))
+            }
+        }
+    }
+}
+
+private val webSourceSetsWithFilesStoredInsideKlib = listOf("jsMain", "wasmJsMain")
 
 private fun KotlinMultiplatformExtension.publishResourcesOfAllSupportedTargets(project: Project) {
     val resourcesPublication = project.extraProperties.get(
@@ -134,12 +184,12 @@ private fun KotlinMultiplatformExtension.publishResourcesOfAllSupportedTargets(p
     }
 }
 
-private fun KotlinNativeTarget.createCInterop(interopName: String) {
+private fun KotlinNativeTarget.createCInterop(interopName: String, packageName: String) {
     val definitionFile = project.layout.projectDirectory.file("$interopName.def")
     definitionFile.asFile.writeText(
         """
         language = C
-        package = $PRODUCER_CINTEROP_PACKAGE
+        package = $packageName
         ---
         void ${interopName}Function(void);
         """.trimIndent()

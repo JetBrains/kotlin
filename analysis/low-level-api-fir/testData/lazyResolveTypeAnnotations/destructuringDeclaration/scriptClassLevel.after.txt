@@ -1,6 +1,6 @@
 FILE: [ResolvedTo(IMPORTS)] scriptClassLevel.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-scriptClassLevel.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptClassLevel.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
@@ -37,7 +37,7 @@ FILE: [ResolvedTo(IMPORTS)] scriptClassLevel.kts
 
             }
 
-            public final [ResolvedTo(TYPES)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+            @R|util/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(TYPES)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
 
             public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptClassLevel.kts>] object <no name provided> : R|kotlin/Any| {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<no name provided>] constructor(): R|util/Foo.<no name provided>| {
@@ -50,4 +50,3 @@ FILE: [ResolvedTo(IMPORTS)] scriptClassLevel.kts
             }
 
         }
-

@@ -10,10 +10,11 @@ import org.jetbrains.dokka.links.PointingToGenericParameters
 import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.model.doc.*
 import org.jetbrains.dokka.model.doc.P
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInAnalysisApi
 import kotlin.test.Test
 import utils.*
 
-
+@MustRunOnChangesInAnalysisApi
 class ConstructorsTest : AbstractModelTest("/src/main/kotlin/constructors/Test.kt", "constructors") {
 
     @Test

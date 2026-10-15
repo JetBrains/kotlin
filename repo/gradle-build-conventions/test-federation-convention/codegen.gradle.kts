@@ -45,9 +45,16 @@ private object DomainSourcesGenerator {
     fun generate(outputDir: Directory, declaredDomains: RegularFile) {
         val mapper = ObjectMapper(YAMLFactory()).registerKotlinModule()
         val node = mapper.readTree(declaredDomains.asFile)
-        val domains = node.properties().mapNotNull { (key, value) ->
-            if (key.startsWith("$")) null else value.toDomainDTO(key)
-        }
+
+        val ignores = node.properties()
+            .filter { (key, _) -> key == "ignore" }
+            .flatMap { (_, value) -> value.valueStream()?.toList().orEmpty().map { it.asText() } }
+            .toSet()
+
+        val domains = node.properties()
+            .filter { (key, _) -> key != "ignore" }
+            .filter { (key, _) -> !key.startsWith("$") }
+            .map { (key, value) -> value.toDomainDTO(key) }
 
 
         outputDir.asFile.toPath().resolve("domains.kt").createParentDirectories().writeText(
@@ -84,6 +91,38 @@ private object DomainSourcesGenerator {
                 }
                 this += "|    )"
                 this += "|}"
+                this += "|"
+                this += "|val ignores = hashSetOf<String>(${ignores.joinToString { "\"$it\"" }})"
+            }.trimMargin()
+        )
+
+        outputDir.asFile.toPath().resolve("testSubsets.kt").createParentDirectories().writeText(
+            buildString {
+                this += "|// This file is generated automatically. DO NOT MODIFY IT MANUALLY"
+                this += "|// See 'codegen.gradle.kts'"
+                this += "|"
+                this += "|package org.jetbrains.kotlin.testFederation"
+                this += "|"
+                this += "|enum class TestSubset {"
+                this += "|    AllTests,"
+                this += "|    SmokeTests,"
+                for (domain in domains) {
+                    this += "|    ContractTestsFor${domain.name},"
+                }
+                this += "|    ;"
+                this += "|}"
+                this += "|"
+                this += "|fun contractTestsSubsetOf(domain: Domain): TestSubset = when (domain) {"
+                for (domain in domains) {
+                    this += "|    Domain.${domain.name} -> TestSubset.ContractTestsFor${domain.name}"
+                }
+                this += "|}"
+                this += "|"
+                this += "|val contractSubsets = setOf("
+                for (domain in domains) {
+                    this += "|    TestSubset.ContractTestsFor${domain.name},"
+                }
+                this += "|)"
             }.trimMargin()
         )
     }

@@ -14,14 +14,14 @@ Tower Data Context:
 
 FILE: [ResolvedTo(IMPORTS)] fileAnnotationArgument.kt
     @FILE:Anno[Unresolved](LAZY_EXPRESSION)
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FILE|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FILE|)]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation class Anno : R|kotlin/Annotation| {
-        public [ResolvedTo(BODY_RESOLVE)] constructor([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|Anno| {
-            super<R|kotlin/Any|>()
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] constructor([ResolvedTo(RAW_FIR)] value: Int): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] val value: R|kotlin/Int| = R|<local>/value|
-            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+        public? final? [ResolvedTo(RAW_FIR)] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] get(): Int
 
     }
-    public final const [ResolvedTo(BODY_RESOLVE)] val CONST: R|kotlin/Int| = Int(0)
-        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+    public? final? const [ResolvedTo(RAW_FIR)] val CONST: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>

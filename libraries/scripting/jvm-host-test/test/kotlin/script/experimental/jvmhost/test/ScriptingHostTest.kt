@@ -40,6 +40,7 @@ import kotlin.script.templates.standard.SimpleScriptTemplate
 import kotlin.test.*
 
 @ResourceLock(Resources.SYSTEM_OUT)
+@Suppress("DEPRECATION") // SimpleScriptTemplate: checks the mapping of the legacy standard templates
 class ScriptingHostTest {
 
     @Test
@@ -544,7 +545,7 @@ class ScriptingHostTest {
             }
             assertTrue(comp0 is ResultWithDiagnostics.Failure)
             val errors = comp0.reports.filter { it.severity == ScriptDiagnostic.Severity.ERROR }
-            assertTrue( errors.any { it.message.contains( "Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type ") })
+            assertTrue( errors.any { it.message.contains( "Unsafe call on receiver of nullable type") })
 
             // runtime
             fun evalWith(evalConfig: ScriptEvaluationConfiguration) =
@@ -670,12 +671,9 @@ class ScriptingHostTest {
     @Test
     fun testCompileOptionsLanguageVersion() {
         val script = """
-            fun test() {
-                while (true) {
-                    run {
-                        break
-                    }
-                }
+            fun main() {
+                // FF: UnnamedLocalVariables
+                val _ = minOf(1, 2)
             }
         """.trimIndent()
         val compilationConfiguration1 = createJvmCompilationConfigurationFromTemplate<SimpleScriptTemplate> {
@@ -683,13 +681,11 @@ class ScriptingHostTest {
                 CommonCompilerArguments::languageVersion.cliArgument,
                 LanguageVersion.FIRST_SUPPORTED.versionString,
                 CommonCompilerArguments::suppressVersionWarnings.cliArgument,
-                @Suppress("DEPRECATION")
-                CommonCompilerArguments::whenGuards.cliArgument,
             )
         }
         val res = makeScriptingHost().eval(script.toScriptSource(), compilationConfiguration1, null)
         assertTrue(res is ResultWithDiagnostics.Failure)
-        if (res.reports.none { it.message.startsWith("The feature \"break continue in inline lambdas\" is only available since language version 2.2") })
+        if (res.reports.none { it.message.startsWith("The feature \"unnamed local variables\" is only available since language version 2.5") })
             fail("Error report about language version not found. Reported:\n  ${res.reports.joinToString("\n  ") { it.message }}")
     }
 
@@ -914,6 +910,7 @@ private fun evalScriptWithResult(
 ): ResultValue =
     evalScriptWithConfiguration(script, host, compilation, evaluation).throwOnFailure().valueOrNull()!!.returnValue
 
+@Suppress("DEPRECATION") // SimpleScriptTemplate
 internal fun evalScriptWithConfiguration(
     script: String,
     host: BasicScriptingHost = makeScriptingHost(),

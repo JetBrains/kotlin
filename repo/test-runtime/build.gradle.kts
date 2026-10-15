@@ -1,15 +1,11 @@
-@file:OptIn(TemporaryTestFederationApi::class)
-
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.testFederation.DelicateTestFederationApi
 import org.jetbrains.kotlin.testFederation.Domain
 import org.jetbrains.kotlin.testFederation.GenerateTestFederationRuntimeCodeTask
-import org.jetbrains.kotlin.testFederation.SmokeTestConfig
-import org.jetbrains.kotlin.testFederation.TemporaryTestFederationApi
 import org.jetbrains.kotlin.testFederation.fromArgumentStringOrThrow
-import org.jetbrains.kotlin.testFederation.smokeTestConfig
+import org.jetbrains.kotlin.testFederation.testFederation
 import org.jetbrains.kotlin.testFederation.testFederationDomains
 
 plugins {
@@ -22,6 +18,7 @@ plugins {
 kotlin {
     @OptIn(ExperimentalKotlinGradlePluginApi::class, ExperimentalBuildToolsApi::class)
     compilerVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()
+    @Suppress("DEPRECATION")
     coreLibrariesVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()
 }
 
@@ -42,15 +39,32 @@ kotlin.target.compilations.all {
     }
 }
 
-tasks.withType<Test>().configureEach {
-    useJUnitPlatform()
+kotlin.target.compilations.getByName("main").compileTaskProvider.configure {
+    compilerOptions {
+        optIn.add("org.jetbrains.kotlin.testFederation.InternalTestFederationApi")
+    }
+}
+
+tasks.test.configure {
+
+    when (providers.environmentVariable("_TEST_FRAMEWORK_").orNull) {
+        "JUnit5", null -> useJUnitPlatform {
+            /* Fixtures are executed by the tests themselves and may fail deliberately */
+            excludeTags("tests.fixture")
+        }
+        "JUnit4" -> useJUnit()
+    }
 
     /* Used by the TestFederationFunctionalTest and 'PseudoTest' for testing the test federations behavior */
-    providers.environmentVariable("_PSEUDO_TEST_").orNull?.let { value ->
-        smokeTestConfig = when (value) {
-            "RunAllTests" -> SmokeTestConfig.RunAllTests
-            "Disabled" -> SmokeTestConfig.Disabled
-            else -> error("Unknown _PSEUDO_TEST_ configuration")
+    testFederation {
+        providers.environmentVariable("_SMOKE_TESTS_INCLUDE_ALL_").orNull?.let {
+            smokeTests { includeAll() }
+        }
+        providers.environmentVariable("_SKIP_SMOKES_").orNull?.let {
+            smokeTests { skip() }
+        }
+        providers.environmentVariable("_SKIP_CONTRACTS_").orNull?.let {
+            contractTests { skip() }
         }
     }
 
@@ -72,9 +86,47 @@ dependencies {
     compileOnly(kotlin("stdlib", version = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()))
     implementation(libs.junit.jupiter.api)
     implementation(libs.junit.platform.launcher)
+    compileOnly(libs.junit.jupiter.engine)
+    compileOnly(libs.junit.jupiter.params)
 
     testImplementation(kotlin("stdlib", version = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()))
     testImplementation(kotlin("test-junit", version = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()))
     testImplementation(libs.junit.jupiter.engine)
     testImplementation(libs.junit.jupiter.params)
+    testImplementation(libs.junit4)
+}
+
+/* Create synthetic test tasks */
+run {
+    val junit5TestCompilation = kotlin.target.compilations.create("junit5Tests")
+
+    /* Synthetic tests may use the APIs of this module (e.g. 'ParameterizedTestSharding') */
+    junit5TestCompilation.associateWith(kotlin.target.compilations.getByName("main"))
+
+    tasks.register<Test>("junit5Tests") {
+        description = "Synthetic Tests: Used by functional tests to create test build behavior (on junit5)"
+        useJUnitPlatform()
+        testClassesDirs = junit5TestCompilation.output.classesDirs
+        classpath = junit5TestCompilation.runtimeDependencyFiles
+
+        providers.gradleProperty("tests.additionalJvmArgument").orNull?.let { args ->
+            jvmArgs(args.split(" "))
+        }
+
+        /* Used by 'TestShardingFunctionalTest' to shard all test classes by their methods */
+        providers.gradleProperty("tests.shardByMethod").orNull?.let { value ->
+            systemProperty("tests.shardByMethod", value)
+        }
+
+        testLogging {
+            events("passed", "skipped", "failed")
+        }
+    }
+
+    dependencies {
+        junit5TestCompilation.configurations.implementationConfiguration(kotlin("test-junit5"))
+        junit5TestCompilation.configurations.implementationConfiguration(libs.junit.jupiter.api)
+        junit5TestCompilation.configurations.implementationConfiguration(libs.junit.jupiter.engine)
+        junit5TestCompilation.configurations.implementationConfiguration(libs.junit.jupiter.params)
+    }
 }

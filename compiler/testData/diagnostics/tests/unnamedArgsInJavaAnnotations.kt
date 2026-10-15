@@ -1,7 +1,8 @@
 // DISABLE_JAVA_FACADE
-// RUN_PIPELINE_TILL: CODEGEN
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-61309
 // ALLOW_KOTLIN_PACKAGE
+// LANGUAGE_FEATURE_TOGGLED: EnforceMissingNamedArgumentsOnJavaAnnotation
 
 // FILE: javacode/Test.java
 package javacode;
@@ -30,7 +31,7 @@ typealias Test = javacode.Test
 import kotlin.test.Test
 import java.io.IOException
 
-@Test(IOException::class)
+@Test(<!POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION!>IOException::class<!>)
 fun someTest() {}
 
 @Test(expected = IOException::class)

@@ -70,19 +70,19 @@ fun test3(fn: Function1<Int, Unit>) {
   { // BLOCK
     val tmp_4: A = A
     val tmp_5: Function1<Int, Unit> = fn
-    set(/* <this> = tmp_4, */ i = { // BLOCK
-      local suspend fun Function1<Int, Unit>.suspendConversion0(p0: Int) {
+    set(/* <this> = tmp_4, */ i = SuspendFunction1<Int, Unit>(
+      /* bound = */ [tmp_5],
+      /* invoke = */      local suspend fun($callee: Function1<Int, Unit>, p0: Int) {
         $callee.invoke(p1 = p0)
       }
-
-      ::suspendConversion0/*($callee = tmp_5) */ /*-> IFoo */
-    }, newValue = get(/* <this> = tmp_4, */ i = { // BLOCK
-      local suspend fun Function1<Int, Unit>.suspendConversion1(p0: Int) {
+    )
+ /*-> IFoo */, newValue = get(/* <this> = tmp_4, */ i = SuspendFunction1<Int, Unit>(
+      /* bound = */ [tmp_5],
+      /* invoke = */      local suspend fun($callee: Function1<Int, Unit>, p0: Int) {
         $callee.invoke(p1 = p0)
       }
-
-      ::suspendConversion1/*($callee = tmp_5) */ /*-> IFoo */
-    }).plus(other = 1))
+    )
+ /*-> IFoo */).plus(other = 1))
   }
 }
 
@@ -101,19 +101,19 @@ fun test5(a: Any) {
   { // BLOCK
     val tmp_8: A = A
     val tmp_9: Function1<Int, Unit> = a /*as Function1<Int, Unit> */
-    set(/* <this> = tmp_8, */ i = { // BLOCK
-      local suspend fun Function1<Int, Unit>.suspendConversion0(p0: Int) {
+    set(/* <this> = tmp_8, */ i = SuspendFunction1<Int, Unit>(
+      /* bound = */ [tmp_9],
+      /* invoke = */      local suspend fun($callee: Function1<Int, Unit>, p0: Int) {
         $callee.invoke(p1 = p0)
       }
-
-      ::suspendConversion0/*($callee = tmp_9) */ /*-> IFoo */
-    }, newValue = get(/* <this> = tmp_8, */ i = { // BLOCK
-      local suspend fun Function1<Int, Unit>.suspendConversion1(p0: Int) {
+    )
+ /*-> IFoo */, newValue = get(/* <this> = tmp_8, */ i = SuspendFunction1<Int, Unit>(
+      /* bound = */ [tmp_9],
+      /* invoke = */      local suspend fun($callee: Function1<Int, Unit>, p0: Int) {
         $callee.invoke(p1 = p0)
       }
-
-      ::suspendConversion1/*($callee = tmp_9) */ /*-> IFoo */
-    }).plus(other = 1))
+    )
+ /*-> IFoo */).plus(other = 1))
   }
 }
 

@@ -1,6 +1,6 @@
 package foo
 
-fun useС() {
+fun useC() {
     commonF()
     CommonC()
 }

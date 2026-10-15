@@ -19,10 +19,12 @@
 package kotlin.script.experimental.dependencies
 
 import kotlin.script.dependencies.Environment
+import kotlin.script.dependencies.LEGACY_DEPENDENCIES_API_DEPRECATION_MESSAGE
 import kotlin.script.dependencies.ScriptContents
 import kotlin.script.dependencies.ScriptDependenciesResolver
-import kotlin.script.experimental.dependencies.DependenciesResolver.ResolveResult
 
+@Deprecated(LEGACY_DEPENDENCIES_API_DEPRECATION_MESSAGE)
+@Suppress("DEPRECATION", "DEPRECATION_ERROR")
 interface DependenciesResolver : ScriptDependenciesResolver {
     fun resolve(scriptContents: ScriptContents, environment: Environment): ResolveResult
 
@@ -47,9 +49,12 @@ interface DependenciesResolver : ScriptDependenciesResolver {
     }
 }
 
+@Deprecated("Legacy script dependencies API, use kotlin.script.experimental.api.ScriptDiagnostic instead")
 data class ScriptReport(val message: String, val severity: Severity = Severity.ERROR, val position: Position? = null) {
     data class Position(val startLine: Int, val startColumn: Int, val endLine: Int? = null, val endColumn: Int? = null)
     enum class Severity { FATAL, ERROR, WARNING, INFO, DEBUG }
 }
 
-fun ScriptDependencies.asSuccess(): ResolveResult.Success = ResolveResult.Success(this)
+@Deprecated("Legacy script dependencies API, use kotlin.script.experimental.api.ResultWithDiagnostics instead")
+@Suppress("DEPRECATION")
+fun ScriptDependencies.asSuccess(): DependenciesResolver.ResolveResult.Success = DependenciesResolver.ResolveResult.Success(this)

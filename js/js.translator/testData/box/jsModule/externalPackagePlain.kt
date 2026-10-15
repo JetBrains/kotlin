@@ -1,3 +1,5 @@
+// LANGUAGE: -ProhibitVarInJsModuleFile
+// ^^^ Keeps testing the pre-KT-88343 behavior of writing to a top-level `var` in a `@file:JsModule` file
 // FILE: a.kt
 @file:JsModule("lib")
 @file:JsNonModule

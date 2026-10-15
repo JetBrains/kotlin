@@ -120,16 +120,6 @@ object JKlibConfigurationUpdater : ConfigurationUpdater<K2JKlibCompilerArguments
                     add(CLIConfigurationKeys.CONTENT_ROOTS, JvmModulePathRoot(file))
                     add(JVMConfigurationKeys.ADDITIONAL_JAVA_MODULES, "kotlin.stdlib")
                 }
-                getLibraryFromHome(
-                    kotlinPaths,
-                    KotlinPaths::scriptRuntimePath,
-                    PathUtil.KOTLIN_JAVA_SCRIPT_RUNTIME_JAR,
-                    configuration,
-                    "'-no-stdlib'",
-                )?.let { file ->
-                    add(CLIConfigurationKeys.CONTENT_ROOTS, JvmModulePathRoot(file))
-                    add(JVMConfigurationKeys.ADDITIONAL_JAVA_MODULES, "kotlin.script.runtime")
-                }
             }
             if (!arguments.noReflect && !arguments.noStdlib) {
                 getLibraryFromHome(
@@ -379,7 +369,7 @@ object JKlibKlibSerializationPhase : PipelinePhase<JKlibFir2IrPipelineArtifact, 
                 platformAndTargets(BuiltInsPlatform.JKLIB, emptyList())
                 metadataFlags(configuration.languageVersionSettings)
             }
-            includeMetadata(serializerOutput.serializedMetadata ?: error("expected serialized metadata"))
+            includeMetadata(serializerOutput.serializedMetadata)
             includeIr(serializerOutput.serializedIr)
         }.writeTo(destination)
 
@@ -439,7 +429,7 @@ object JKlibMetadataSerializationPhase : PipelinePhase<JKlibFrontendPipelineArti
                 platformAndTargets(BuiltInsPlatform.JKLIB, emptyList())
                 metadataFlags(configuration.languageVersionSettings)
             }
-            includeMetadata(serializerOutput.serializedMetadata ?: error("expected serialized metadata"))
+            includeMetadata(serializerOutput.serializedMetadata)
             // serializedIr is null for metadata-only serialization; includeIr(null) is a no-op.
             includeIr(serializerOutput.serializedIr)
         }.writeTo(destination)

@@ -23,7 +23,7 @@ dependencies {
     testFixturesApi(testFixtures(project(":compiler:tests-compiler-utils")))
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
     testFixturesApi(project(":compiler:cli"))
-    testFixturesApi(project(":compiler:fir:checkers"))
+    testFixturesApi(project(":compiler:fir:checkers:checkers.common"))
     testFixturesApi(project(":compiler:fir:checkers:checkers.jvm"))
     testFixturesApi(project(":compiler:fir:checkers:checkers.js"))
     testFixturesApi(project(":compiler:fir:checkers:checkers.native"))
@@ -73,10 +73,7 @@ kotlin {
 
 projectTests {
     testTask(
-        javaLauncher = JdkMajorVersion.JDK_1_8,
         maxHeapSize = testMaxHeapSizeLarge,
-        // Use Parallel GC because this test runs on JDK 8.
-        garbageCollector = GarbageCollector.Parallel,
         defineJDKEnvVariables = listOf(
             JdkMajorVersion.JDK_1_8,
             JdkMajorVersion.JDK_11_0,
@@ -95,7 +92,6 @@ projectTests {
     testData(project(":compiler:tests-spec").isolated, "testData/diagnostics")
 
     withJvmStdlibAndReflect()
-    withScriptRuntime()
     withMockJdkAnnotationsJar()
     withMockJDKModifiedRuntime()
     withTestJar()
@@ -110,4 +106,3 @@ projectTests {
     withThirdPartyJava9Annotations()
 }
 
-testsJar()

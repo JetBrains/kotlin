@@ -11,7 +11,7 @@ internal fun ProviderFactory.propertiesFromFile(
     propertiesFile: File
 ): Provider<Map<String, String>> =
     of(CustomPropertiesFileValueSource::class.java) {
-        it.parameters.propertiesFile.set(propertiesFile)
+        parameters.propertiesFile.set(propertiesFile)
     }
 
 internal abstract class CustomPropertiesFileValueSource : ValueSource<Map<String, String>, CustomPropertiesFileValueSource.Parameters>,

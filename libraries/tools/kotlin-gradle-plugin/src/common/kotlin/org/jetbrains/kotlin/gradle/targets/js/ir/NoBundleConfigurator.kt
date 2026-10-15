@@ -11,19 +11,21 @@ import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
-import org.jetbrains.kotlin.gradle.tasks.KotlinWasmDevServer
+import org.jetbrains.kotlin.gradle.targets.js.ir.DistributionWithImportMapTask.Companion.VENDORS_FOLDER
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrSubTarget.Companion.DISTRIBUTION_TASK_NAME
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrSubTarget.Companion.RUN_TASK_NAME
-import org.jetbrains.kotlin.gradle.targets.js.ir.DistributionWithImportMapTask.Companion.VENDORS_FOLDER
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin.Companion.kotlinNodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinImportMapGenerateTask
 import org.jetbrains.kotlin.gradle.targets.js.webTargetVariant
+import org.jetbrains.kotlin.gradle.tasks.KotlinWasmDevServer
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.domainObjectSet
 import org.jetbrains.kotlin.gradle.utils.withType
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
+import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsPlugin.Companion.kotlinNodeJsEnvSpec as wasmKotlinNodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin.Companion.kotlinNodeJsRootExtension as wasmKotlinNodeJsRootExtension
 
 @ExperimentalWasmDsl
@@ -36,6 +38,11 @@ internal class NoBundleConfigurator(
     private val nodeJsRoot = subTarget.target.webTargetVariant(
         { project.rootProject.kotlinNodeJsRootExtension },
         { project.rootProject.wasmKotlinNodeJsRootExtension },
+    )
+
+    private val nodeJs = subTarget.target.webTargetVariant(
+        { project.kotlinNodeJsEnvSpec },
+        { project.wasmKotlinNodeJsEnvSpec },
     )
 
     private val runTaskConfigurations = project.objects.domainObjectSet<Action<KotlinWasmDevServer>>()
@@ -54,6 +61,7 @@ internal class NoBundleConfigurator(
             it.inputDirectory.set(npmProject.dir)
             it.importMapFile.set(project.layout.buildDirectory.file("kotlin/${it.name}/importmap.json"))
             it.importMapLoaderFile.set(project.layout.buildDirectory.file("kotlin/${it.name}/importmap-loader.js"))
+            it.getIsWindows.set(nodeJs.env.map { it.isWindows })
         }
 
         return importMapTaskHolder
@@ -90,6 +98,7 @@ internal class NoBundleConfigurator(
                     it.importMapLoaderFile.set(project.layout.buildDirectory.file("kotlin/${it.name}/importmap-loader.js"))
                     it.flattenPaths.set(true)
                     it.pathPrefix.set("./$VENDORS_FOLDER")
+                    it.getIsWindows.set(nodeJs.env.map { it.isWindows })
                 }
 
                 val distributionTask = subTarget.registerSubTargetTask<DistributionWithImportMapTask>(

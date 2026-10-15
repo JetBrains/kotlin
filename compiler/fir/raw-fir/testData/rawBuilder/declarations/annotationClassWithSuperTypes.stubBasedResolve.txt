@@ -1,0 +1,54 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] annotationClassWithSuperTypes.kt
+    public open [ResolvedTo(BODY_RESOLVE)] class Base : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Base] constructor([ResolvedTo(BODY_RESOLVE)] x: R|kotlin/Int|): R|Base| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface I : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] annotation class NoSuperTypes : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=NoSuperTypes] constructor(): R|NoSuperTypes| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] annotation class SuperTypeCall : R|Base|, R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=SuperTypeCall] constructor(): R|SuperTypeCall| {
+            super<R|Base|>(Int(1))
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] annotation class SuperTypeWithoutCall : R|Base|, R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=SuperTypeWithoutCall] constructor(): R|SuperTypeWithoutCall| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] annotation class SuperInterface : R|I|, R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=SuperInterface] constructor(): R|SuperInterface| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] annotation class SuperInterfaceAndSuperTypeCall : R|I|, R|Base|, R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=SuperInterfaceAndSuperTypeCall] constructor(): R|SuperInterfaceAndSuperTypeCall| {
+            super<R|Base|>(Int(2))
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] annotation class AnySuperTypeCall : R|kotlin/Any|, R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AnySuperTypeCall] constructor(): R|AnySuperTypeCall| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] annotation class SuperTypeCallWithPrimaryConstructor : R|Base|, R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=SuperTypeCallWithPrimaryConstructor] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/SuperTypeCallWithPrimaryConstructor.s] s: R|kotlin/String|): R|SuperTypeCallWithPrimaryConstructor| {
+            super<R|Base|>(Int(3))
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=SuperTypeCallWithPrimaryConstructor] get(): R|kotlin/String|
+
+    }

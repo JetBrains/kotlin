@@ -1,3 +1,4 @@
+// DUMP_IR_DIFFERENCE: JKLIB
 // HEADER_MODE
 enum class A {
     EAST,

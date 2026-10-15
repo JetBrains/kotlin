@@ -1,0 +1,73 @@
+KtFile: assignmentOperationReferences.kts
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  SCRIPT
+    BLOCK
+      PsiComment(EOL_COMMENT)('// Assignment operation tokens can be stubbed only as top-level script statements')
+      PsiWhiteSpace('\n')
+      PROPERTY
+        PsiElement(var)('var')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('counter')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('0')
+      PsiWhiteSpace('\n\n')
+      SCRIPT_INITIALIZER
+        BINARY_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('counter')
+          PsiWhiteSpace(' ')
+          OPERATION_REFERENCE
+            PsiElement(PLUSEQ)('+=')
+          PsiWhiteSpace(' ')
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('1')
+      PsiWhiteSpace('\n')
+      SCRIPT_INITIALIZER
+        BINARY_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('counter')
+          PsiWhiteSpace(' ')
+          OPERATION_REFERENCE
+            PsiElement(MINUSEQ)('-=')
+          PsiWhiteSpace(' ')
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('2')
+      PsiWhiteSpace('\n')
+      SCRIPT_INITIALIZER
+        BINARY_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('counter')
+          PsiWhiteSpace(' ')
+          OPERATION_REFERENCE
+            PsiElement(MULTEQ)('*=')
+          PsiWhiteSpace(' ')
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('3')
+      PsiWhiteSpace('\n')
+      SCRIPT_INITIALIZER
+        BINARY_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('counter')
+          PsiWhiteSpace(' ')
+          OPERATION_REFERENCE
+            PsiElement(DIVEQ)('/=')
+          PsiWhiteSpace(' ')
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('4')
+      PsiWhiteSpace('\n')
+      SCRIPT_INITIALIZER
+        BINARY_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('counter')
+          PsiWhiteSpace(' ')
+          OPERATION_REFERENCE
+            PsiElement(PERCEQ)('%=')
+          PsiWhiteSpace(' ')
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('5')

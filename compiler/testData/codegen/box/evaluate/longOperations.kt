@@ -67,6 +67,36 @@ const val rem6 = twoVal.rem(intVal)
 const val rem7 = twoVal.rem(floatVal)
 const val rem8 = twoVal.rem(doubleVal)
 
+const val and1 = threeVal.and(twoVal)
+const val and2 = twoVal.and(twoVal)
+const val and3 = fourVal.and(twoVal)
+const val and4 = oneVal and twoVal
+
+const val or1 = oneVal.or(twoVal)
+const val or2 = twoVal.or(twoVal)
+const val or3 = fourVal.or(twoVal)
+const val or4 = oneVal or twoVal
+
+const val xor1 = oneVal.xor(twoVal)
+const val xor2 = twoVal.xor(twoVal)
+const val xor3 = threeVal.xor(twoVal)
+const val xor4 = oneVal xor twoVal
+
+const val shl1 = oneVal.shl(1)
+const val shl2 = twoVal.shl(2)
+const val shl3 = oneVal shl 1
+
+const val shr1 = fourVal.shr(1)
+const val shr2 = minusOneVal.shr(1)
+const val shr3 = fourVal shr 1
+
+const val ushr1 = fourVal.ushr(1)
+const val ushr2 = minusOneVal.ushr(60)
+const val ushr3 = fourVal ushr 1
+
+const val inv1 = oneVal.inv()
+const val inv2 = minusOneVal.inv()
+
 const val unaryPlus1 = oneVal.unaryPlus()
 const val unaryPlus2 = minusOneVal.unaryPlus()
 const val unaryMinus1 = oneVal.unaryMinus()
@@ -84,6 +114,11 @@ const val equals1 = oneVal == twoVal
 const val equals2 = twoVal == twoVal
 const val equals3 = threeVal == twoVal
 const val equals4 = fourVal == twoVal
+
+const val notEquals1 = oneVal != twoVal
+const val notEquals2 = twoVal != twoVal
+const val notEquals3 = threeVal != twoVal
+const val notEquals4 = fourVal != twoVal
 
 const val toString1 = oneVal.toString()
 const val toString2 = twoVal.toString()
@@ -143,6 +178,36 @@ fun box(): String {
     if (rem7.id() != 0.0f)  return "Fail 6.7"
     if (rem8.id() != 0.0)   return "Fail 6.8"
 
+    if (and1.id() != 2L)     return "Fail 6c.1"
+    if (and2.id() != 2L)     return "Fail 6c.2"
+    if (and3.id() != 0L)     return "Fail 6c.3"
+    if (and4.id() != 0L)     return "Fail 6c.4"
+
+    if (or1.id() != 3L)      return "Fail 6d.1"
+    if (or2.id() != 2L)      return "Fail 6d.2"
+    if (or3.id() != 6L)      return "Fail 6d.3"
+    if (or4.id() != 3L)      return "Fail 6d.4"
+
+    if (xor1.id() != 3L)     return "Fail 6e.1"
+    if (xor2.id() != 0L)     return "Fail 6e.2"
+    if (xor3.id() != 1L)     return "Fail 6e.3"
+    if (xor4.id() != 3L)     return "Fail 6e.4"
+
+    if (shl1.id() != 2L)     return "Fail 6f.1"
+    if (shl2.id() != 8L)     return "Fail 6f.2"
+    if (shl3.id() != 2L)     return "Fail 6f.3"
+
+    if (shr1.id() != 2L)     return "Fail 6g.1"
+    if (shr2.id() != -1L)    return "Fail 6g.2"
+    if (shr3.id() != 2L)     return "Fail 6g.3"
+
+    if (ushr1.id() != 2L)    return "Fail 6h.1"
+    if (ushr2.id() != 15L)   return "Fail 6h.2"
+    if (ushr3.id() != 2L)    return "Fail 6h.3"
+
+    if (inv1.id() != -2L)    return "Fail 6i.1"
+    if (inv2.id() != 0L)     return "Fail 6i.2"
+
     if (unaryPlus1.id() != 1L)    return "Fail 7.1"
     if (unaryPlus2.id() != -1L)   return "Fail 7.2"
     if (unaryMinus1.id() != -1L)  return "Fail 7.3"
@@ -160,6 +225,11 @@ fun box(): String {
     if (equals2.id() != true)    return "Fail 9.2"
     if (equals3.id() != false)   return "Fail 9.3"
     if (equals4.id() != false)   return "Fail 9.4"
+
+    if (notEquals1.id() != true)     return "Fail 9.5"
+    if (notEquals2.id() != false)    return "Fail 9.6"
+    if (notEquals3.id() != true)     return "Fail 9.7"
+    if (notEquals4.id() != true)     return "Fail 9.8"
 
     if (toString1.id() != "1")   return "Fail 10.1"
     if (toString2.id() != "2")   return "Fail 10.2"

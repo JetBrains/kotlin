@@ -45,7 +45,7 @@ class KotlinArchiveIdeDependencyResolutionIT : KGPBaseTest() {
             dependencies.assertResolvedDependenciesOnly()
             dependencies.assertNoKotlinArchiveOnClasspath()
 
-            expectedDependencies(publishedProject).forEach { [sourceSetName, expected] ->
+            expectedDependencies(publishedProject).forEach { (sourceSetName, expected) ->
                 dependencies[sourceSetName].assertMatches(expected)
             }
         }
@@ -111,7 +111,7 @@ class KotlinArchiveIdeDependencyResolutionIT : KGPBaseTest() {
             ),
             "wasmJsMain" to listOf(
                 kotlinStdlibDependencies,
-                platformDependency("wasmjs"),
+                platformDependency("wasm-js"),
                 anyDependsOnDependency(),
             ),
             "jvmMain" to listOf(

@@ -263,6 +263,18 @@ public class JsSymbolLightClassesByPsiForSourceTestGenerated extends AbstractJsS
   }
 
   @Test
+  @TestMetadata("interfaceWithOnlyPrivateImplementations.kt")
+  public void testInterfaceWithOnlyPrivateImplementations() {
+    run("interfaceWithOnlyPrivateImplementations.kt");
+  }
+
+  @Test
+  @TestMetadata("interfaceWithOnlyPrivateImplementationsWithSettingDisable.kt")
+  public void testInterfaceWithOnlyPrivateImplementationsWithSettingDisable() {
+    run("interfaceWithOnlyPrivateImplementationsWithSettingDisable.kt");
+  }
+
+  @Test
   @TestMetadata("jvmField.kt")
   public void testJvmField() {
     run("jvmField.kt");
@@ -353,6 +365,18 @@ public class JsSymbolLightClassesByPsiForSourceTestGenerated extends AbstractJsS
   }
 
   @Test
+  @TestMetadata("privateMethodInInterfaceWithSettingDisable.kt")
+  public void testPrivateMethodInInterfaceWithSettingDisable() {
+    run("privateMethodInInterfaceWithSettingDisable.kt");
+  }
+
+  @Test
+  @TestMetadata("privateMethodInInterfaceWithSettingNoCompatibility.kt")
+  public void testPrivateMethodInInterfaceWithSettingNoCompatibility() {
+    run("privateMethodInInterfaceWithSettingNoCompatibility.kt");
+  }
+
+  @Test
   @TestMetadata("properties.kt")
   public void testProperties() {
     run("properties.kt");
@@ -374,6 +398,12 @@ public class JsSymbolLightClassesByPsiForSourceTestGenerated extends AbstractJsS
   @TestMetadata("simpleFunctions.kt")
   public void testSimpleFunctions() {
     run("simpleFunctions.kt");
+  }
+
+  @Test
+  @TestMetadata("staticMethodsForOverrides.kt")
+  public void testStaticMethodsForOverrides() {
+    run("staticMethodsForOverrides.kt");
   }
 
   @Test
@@ -1447,6 +1477,68 @@ public class JsSymbolLightClassesByPsiForSourceTestGenerated extends AbstractJsS
     @TestMetadata("wildcardOptimization.kt")
     public void testWildcardOptimization() {
       run("wildcardOptimization.kt");
+    }
+  }
+
+  @Nested
+  @TestMetadata("analysis/symbol-light-classes/testData/lightClassByPsi/fullValueClasses")
+  @TestDataPath("$PROJECT_ROOT")
+  public class FullValueClasses {
+    private void run(String fileName) {
+      runTest("analysis/symbol-light-classes/testData/lightClassByPsi/fullValueClasses/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInFullValueClasses() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/symbol-light-classes/testData/lightClassByPsi/fullValueClasses"), Pattern.compile("^([^.]+)\\.(kt|kts)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("facadeWithFullValueClass.kt")
+    public void testFacadeWithFullValueClass() {
+      run("facadeWithFullValueClass.kt");
+    }
+
+    @Test
+    @TestMetadata("fullValueClassAsUpperBound.kt")
+    public void testFullValueClassAsUpperBound() {
+      run("fullValueClassAsUpperBound.kt");
+    }
+
+    @Test
+    @TestMetadata("fullValueClassHierarchy.kt")
+    public void testFullValueClassHierarchy() {
+      run("fullValueClassHierarchy.kt");
+    }
+
+    @Test
+    @TestMetadata("fullValueClassInSignature.kt")
+    public void testFullValueClassInSignature() {
+      run("fullValueClassInSignature.kt");
+    }
+
+    @Test
+    @TestMetadata("jvmExposeBoxedAnnotation.kt")
+    public void testJvmExposeBoxedAnnotation() {
+      run("jvmExposeBoxedAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("jvmExposeBoxedDirective.kt")
+    public void testJvmExposeBoxedDirective() {
+      run("jvmExposeBoxedDirective.kt");
+    }
+
+    @Test
+    @TestMetadata("jvmExposeBoxedWithInlineClass.kt")
+    public void testJvmExposeBoxedWithInlineClass() {
+      run("jvmExposeBoxedWithInlineClass.kt");
+    }
+
+    @Test
+    @TestMetadata("jvmInlineWithFullValueClassesEnabled.kt")
+    public void testJvmInlineWithFullValueClassesEnabled() {
+      run("jvmInlineWithFullValueClassesEnabled.kt");
     }
   }
 

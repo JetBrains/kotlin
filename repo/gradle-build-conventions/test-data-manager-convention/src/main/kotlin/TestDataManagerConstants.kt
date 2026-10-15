@@ -5,6 +5,9 @@
 
 internal const val checkTestDataTaskName = "checkTestData"
 internal const val updateTestDataTaskName = "updateTestData"
+
+/** A never-executed `Test` task configured like `test`, registered by `project-tests-convention`. */
+internal const val testDataManagerWarmupTaskName = "testDataManagerWarmup"
 internal const val testDataManagerPrefix = "org.jetbrains.kotlin.testDataManager"
 internal const val testDataManagerOptionsPrefix = "$testDataManagerPrefix.options"
 

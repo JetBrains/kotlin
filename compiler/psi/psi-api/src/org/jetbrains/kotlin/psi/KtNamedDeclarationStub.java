@@ -82,9 +82,23 @@ public abstract class KtNamedDeclarationStub<T extends KotlinStubWithFqName<?>> 
         return findChildByType(KtTokens.IDENTIFIER);
     }
 
+    /**
+     * Renames this declaration, quoting the new name in backticks if needed.
+     * <p>
+     * When {@link KtPsiMutationService} is registered, as in the IntelliJ Kotlin plugin, the renaming may also adjust the declaration,
+     * e.g., drop the {@code operator} modifier if the new name is not an operator convention. Without the service, it only replaces the
+     * name identifier.
+     */
     @Override
     public PsiElement setName(@NonNls @NotNull String name) throws IncorrectOperationException {
-        return KtPsiMutationService.getInstance().setNamedDeclarationStubName(this, name);
+        KtPsiMutationService mutationService = KtPsiMutationService.getInstanceOrNull();
+        if (mutationService != null) return mutationService.setNamedDeclarationStubName(this, name);
+
+        PsiElement identifier = getNameIdentifier();
+        if (identifier == null) return null;
+
+        identifier.replace(new KtPsiFactory(getProject()).createNameIdentifier(KtPsiUtilKt.quoteIfNeeded(name)));
+        return this;
     }
 
     @Override

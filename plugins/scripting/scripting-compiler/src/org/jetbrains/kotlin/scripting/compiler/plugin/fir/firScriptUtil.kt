@@ -7,9 +7,12 @@ package org.jetbrains.kotlin.scripting.compiler.plugin.fir
 
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationDataKey
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationDataRegistry
+import org.jetbrains.kotlin.fir.declarations.FirReplSnippet
 import org.jetbrains.kotlin.fir.declarations.FirScript
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
 
 private object ScriptCompilationConfigurationKey : FirDeclarationDataKey()
 
 var FirScript.scriptCompilationConfiguration: ScriptCompilationConfiguration? by FirDeclarationDataRegistry.data(ScriptCompilationConfigurationKey)
+
+var FirReplSnippet.scriptCompilationConfiguration: ScriptCompilationConfiguration? by FirDeclarationDataRegistry.data(ScriptCompilationConfigurationKey)

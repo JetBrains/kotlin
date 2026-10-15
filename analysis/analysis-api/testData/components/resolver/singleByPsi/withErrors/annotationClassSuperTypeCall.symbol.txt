@@ -1,0 +1,5 @@
+KtSuperTypeCallEntry(61,68): 'Base(1)'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(x: kotlin.Int): Base
+    ]

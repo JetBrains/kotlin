@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrEnumEntrySymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME
@@ -953,6 +954,19 @@ class JvmSymbols(
 
     private val unsignedArrayClasses: List<IrClassSymbol> =
         StandardClassIds.elementTypeByUnsignedArrayType.keys.mapNotNull { it.classSymbolOrNull() }
+
+    // List -> ListStaticMembers
+    val mappedCollectionStaticMembers: Map<ClassId, IrClassSymbol> =
+        [
+            StandardClassIds.List,
+            StandardClassIds.MutableList,
+            StandardClassIds.Set,
+            StandardClassIds.MutableSet
+        ].mapNotNull { collectionClassId ->
+            val staticMembersClassName = Name.identifier("${collectionClassId.shortClassName}StaticMembers")
+            ClassId(kotlinJvmInternalPackage.packageFqName, staticMembersClassName).classSymbolOrNull()
+                ?.let { collectionClassId to it }
+        }.toMap()
 
     private val unsignedArraySizeGetters: Map<IrClassSymbol, IrSimpleFunctionSymbol> =
         unsignedArrayClasses.mapNotNull { arrayClass ->

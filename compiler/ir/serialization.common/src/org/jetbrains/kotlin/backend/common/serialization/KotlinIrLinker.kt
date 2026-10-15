@@ -111,11 +111,35 @@ abstract class KotlinIrLinker(
         // Note: The top-level symbol might be gone in newer version of dependency KLIB. Then the KLIB that was compiled against
         // the older version of dependency KLIB will still have a reference to non-existing symbol. And the linker will have to
         // handle such situation appropriately. See KT-41378.
-        val actualModuleDeserializer: IrModuleDeserializer? = if (topLevelSignature in moduleDeserializer) {
-            moduleDeserializer
-        } else {
+
+        var currentModuleIfSearched: IrModuleDeserializer? = null
+        var actualModuleDeserializer: IrModuleDeserializer? = null
+        if (moduleDeserializer.preferLinkingToTheCurrentModule) {
+            // First, look for the declaration in the current module (the module with a use-site of this signature).
+            // This influences how duplicated declarations are handled. Longer explanation:
+            //
+            // At first, this was done as an optimization. Any given symbol is most likely to be found in the same Klib as it is used from.
+            // So it made sense to check it first, only then iterate over all other Klibs.
+            // Now, with an introduction of package index (KT-84837), this optimization becomes mostly unnecessary. We expect it's OK to
+            // iterate over all Klibs to define a given package, as usually there should be only one or very few.
+            // So this logic could be removed. However, we keep it to preserve the old behavior when two Klibs define the same declaration
+            // (even though that behavior is very much imperfect) until we have a definite answer to this problem (KT-82172).
+            // Hence, this logic could be theoretically removed. However, we keep it to preserve the old behavior when two Klibs define the
+            // same declaration (even though the behavior is very much imperfect) until we have a definite answer to this problem (KT-82172).
+            // It goes like this: Assuming there are two Klibs, libA and libB, both defining a class C, then:
+            // - If both libA and libB reference class C, each will try to link to "their own" version of the class. In practice,
+            //      this will usually fail, with the second deserialization call failing with an exception like "Class C is already bound".
+            // - If only libA or libB reference class C, and that reference is the first one met by the linker, the corresponding version
+            //     of class C will be linked.
+            // - Otherwise, class C will be arbitrarily linked from either libA or libB.
+            if (topLevelSignature in moduleDeserializer) {
+                actualModuleDeserializer = moduleDeserializer
+            }
+            currentModuleIfSearched = moduleDeserializer
+        }
+        if (actualModuleDeserializer == null) {
             val candidateModules = getModulesDefiningPackage(topLevelSignature.packageFqName())
-            candidateModules.firstOrNull { it != moduleDeserializer && topLevelSignature in it }
+            actualModuleDeserializer = candidateModules.firstOrNull { it != currentModuleIfSearched && topLevelSignature in it }
         }
 
         // Note: It might happen that the top-level symbol still exists in KLIB, but nested symbol has been removed.

@@ -1,0 +1,184 @@
+/**
+ * @kotlin/jvm/JvmExposeBoxed
+ * public final class ClassLevel : kotlin/Any {
+ *
+ *   // signature: <init>(Ljava/lang/String;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+ *   public constructor(id: Id)
+ *
+ *   // signature: member-hr2SalY(Ljava/lang/String;)Ljava/lang/String;
+ *   public final fun member(other: Id): Id
+ *
+ *   // field: id:Ljava/lang/String;
+ *   // getter: getId-eEFUqEU()Ljava/lang/String;
+ *   public final val id: Id
+ *     public final get
+ *
+ *   // companion object: Companion
+ *
+ *   // nested class: Companion
+ *
+ *   // nested class: Inner
+ *
+ *   // nested class: Nested
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class ClassLevel {
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.String id = null;
+    @org.jetbrains.annotations.NotNull()
+    public static final ClassLevel.Companion Companion = null;
+
+    @kotlin.jvm.JvmExposeBoxed(jvmName = "")
+    public ClassLevel(@org.jetbrains.annotations.NotNull()
+    Id id) {
+        super();
+    }
+
+    private ClassLevel(java.lang.String id) {
+        super();
+    }
+
+    @kotlin.jvm.JvmExposeBoxed(jvmName = "")
+    @org.jetbrains.annotations.NotNull()
+    public final Id getId() {
+        return null;
+    }
+
+    @kotlin.jvm.JvmExposeBoxed(jvmName = "")
+    @org.jetbrains.annotations.NotNull()
+    public final Id member(@org.jetbrains.annotations.NotNull()
+    Id other) {
+        return null;
+    }
+
+    /**
+     * public final companion object ClassLevel.Companion : kotlin/Any {
+     *
+     *   // signature: <init>()V
+     *   private constructor()
+     *
+     *   // signature: companionMember-hr2SalY(Ljava/lang/String;)Ljava/lang/String;
+     *   public final fun companionMember(id: Id): Id
+     *
+     *   // module name: main
+     * }
+     */
+    @kotlin.Metadata()
+    public static final class Companion {
+
+        private Companion() {
+            super();
+        }
+    }
+
+    /**
+     * public final inner class ClassLevel.Inner : kotlin/Any {
+     *
+     *   // signature: <init>(LClassLevel;)V
+     *   public constructor()
+     *
+     *   // signature: member-hr2SalY(Ljava/lang/String;)Ljava/lang/String;
+     *   public final fun member(id: Id): Id
+     *
+     *   // module name: main
+     * }
+     */
+    @kotlin.Metadata()
+    public final class Inner {
+
+        public Inner() {
+            super();
+        }
+    }
+
+    /**
+     * public final class ClassLevel.Nested : kotlin/Any {
+     *
+     *   // signature: <init>()V
+     *   public constructor()
+     *
+     *   // signature: member-hr2SalY(Ljava/lang/String;)Ljava/lang/String;
+     *   public final fun member(id: Id): Id
+     *
+     *   // module name: main
+     * }
+     */
+    @kotlin.Metadata()
+    public static final class Nested {
+
+        public Nested() {
+            super();
+        }
+    }
+}
+
+////////////////////
+
+
+@kotlin.jvm.JvmInline()
+/**
+ * @kotlin/jvm/JvmInline
+ * @kotlin/jvm/JvmExposeBoxed
+ * public final value class Id : kotlin/Any {
+ *
+ *   // signature: constructor-impl(Ljava/lang/String;)Ljava/lang/String;
+ *   public constructor(value: kotlin/String)
+ *
+ *   // signature: equals-impl(Ljava/lang/String;Ljava/lang/Object;)Z
+ *   // must-use return value
+ *   public open (* synthesized *) operator fun equals(other: kotlin/Any?): kotlin/Boolean
+ *
+ *   // signature: hashCode-impl(Ljava/lang/String;)I
+ *   // must-use return value
+ *   public open (* synthesized *) fun hashCode(): kotlin/Int
+ *
+ *   // signature: toString-impl(Ljava/lang/String;)Ljava/lang/String;
+ *   // must-use return value
+ *   public open (* synthesized *) fun toString(): kotlin/String
+ *
+ *   // field: value:Ljava/lang/String;
+ *   // getter: getValue()Ljava/lang/String;
+ *   public final val value: kotlin/String
+ *     public final get
+ *
+ *   // underlying property: value
+ *
+ *   // underlying type: kotlin/String
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class Id {
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.String value = null;
+
+    @kotlin.jvm.JvmExposeBoxed(jvmName = "")
+    public Id(@org.jetbrains.annotations.NotNull()
+    java.lang.String value) {
+        super();
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getValue() {
+        return null;
+    }
+
+    @java.lang.Override()
+    public boolean equals(java.lang.Object other) {
+        return false;
+    }
+
+    @java.lang.Override()
+    public int hashCode() {
+        return 0;
+    }
+
+    @java.lang.Override()
+    public java.lang.String toString() {
+        return null;
+    }
+}

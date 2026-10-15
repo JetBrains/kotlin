@@ -13,6 +13,7 @@ import org.jetbrains.dokka.model.doc.CustomDocTag
 import org.jetbrains.dokka.model.doc.Description
 import org.jetbrains.dokka.model.doc.P
 import org.jetbrains.dokka.model.doc.Text
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInAnalysisApi
 import utils.AbstractModelTest
 import utils.assertNotNull
 import utils.comments
@@ -20,6 +21,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
+@MustRunOnChangesInAnalysisApi
 class InheritorsTest : AbstractModelTest("/src/main/kotlin/inheritors/Test.kt", "inheritors") {
 
     val configuration = dokkaConfiguration {

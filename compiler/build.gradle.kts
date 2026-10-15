@@ -85,13 +85,14 @@ projectTests {
     testData(isolated, "testData/writeFlags")
     testData(isolated, "testData/writeSignature")
     withJvmStdlibAndReflect()
-    withScriptRuntime()
     withTestJar()
     withStdlibCommon()
     withMockJdkRuntime()
     withMockJdkAnnotationsJar()
 }
 
-val generateTestData by generator("org.jetbrains.kotlin.generators.tests.GenerateCompilerTestDataKt", testSourceSet)
-
-testsJar()
+val generateTestData by generator(
+    "org.jetbrains.kotlin.generators.tests.GenerateCompilerTestDataKt",
+    testSourceSet,
+    inputKind = GeneratorInputKind.RuntimeClasspath,
+)

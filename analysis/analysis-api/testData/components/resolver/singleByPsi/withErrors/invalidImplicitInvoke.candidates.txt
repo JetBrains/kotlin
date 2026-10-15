@@ -28,5 +28,5 @@ KtDotQualifiedExpression(53,61): 's.action'
         callableId = kotlin/Function1.invoke
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<UNSAFE_IMPLICIT_INVOKE_CALL: Reference has a nullable type '(String.() -> Unit)?'. Use explicit '?.invoke' to make a function-like call instead.>
+    diagnostic = ERROR<UNSAFE_IMPLICIT_INVOKE_CALL: Unsafe implicit 'invoke' call on receiver of nullable type '(String.() -> Unit)?'. Consider using a safe call '?.invoke' or non-null asserted call '!!()'.>
     isInBestCandidates = true

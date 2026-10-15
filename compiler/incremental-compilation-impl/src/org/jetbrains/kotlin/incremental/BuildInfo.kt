@@ -17,33 +17,18 @@
 package org.jetbrains.kotlin.incremental
 
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.incremental.AbiSnapshotImpl.Companion.readAbiSnapshot
-import org.jetbrains.kotlin.incremental.AbiSnapshotImpl.Companion.writeAbiSnapshot
 import org.jetbrains.kotlin.incremental.util.ExceptionLocation
 import org.jetbrains.kotlin.incremental.util.reportException
 import java.io.*
 
-data class BuildInfo(val startTS: Long, val dependencyToAbiSnapshot: Map<String, AbiSnapshot> = mapOf()) : Serializable {
+data class BuildInfo(val startTS: Long) : Serializable {
     companion object {
-        private fun ObjectInputStream.readBuildInfo() : BuildInfo {
-            val ts = readLong()
-            val size = readInt()
-            val abiSnapshots = HashMap<String, AbiSnapshot>(size)
-            repeat(size) {
-                val identifier = readUTF()
-                val snapshot = readAbiSnapshot()
-                abiSnapshots.put(identifier, snapshot)
-            }
-            return BuildInfo(ts, abiSnapshots)
-        }
+        // Older versions stored dependency ABI snapshots after the timestamp, now they are ignored
+        private fun ObjectInputStream.readBuildInfo(): BuildInfo = BuildInfo(readLong())
 
         private fun ObjectOutputStream.writeBuildInfo(buildInfo: BuildInfo) {
             writeLong(buildInfo.startTS)
-            writeInt(buildInfo.dependencyToAbiSnapshot.size)
-            for ([identifier, abiSnapshot] in buildInfo.dependencyToAbiSnapshot) {
-                writeUTF(identifier)
-                writeAbiSnapshot(abiSnapshot)
-            }
+            writeInt(0) // Number of dependency ABI snapshots, obsolete
         }
 
         fun read(file: File, messageCollector: MessageCollector): BuildInfo? {

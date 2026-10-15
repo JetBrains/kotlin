@@ -1355,8 +1355,7 @@ abstract class FirDataFlowAnalyzer(
                     hasAnyContractsToProcess = true
                 }
                 targetLambdaArgument != null && effect is ConeHoldsInEffectDeclaration
-                    && effect.valueParameterReference.parameterIndex == indexOfLambdaArgument ->
-                {
+                        && effect.valueParameterReference.parameterIndex == indexOfLambdaArgument -> {
                     conditionalHoldsIn.add(effect)
                     hasAnyContractsToProcess = true
                 }
@@ -1365,11 +1364,7 @@ abstract class FirDataFlowAnalyzer(
         if (!hasAnyContractsToProcess) return
 
         val argumentVariablesForConditionalEffects = Array(arguments.size) { i ->
-            arguments[i]?.let { argument ->
-                flow.rememberVariableIfUsedOrReal(argument)
-                    // Only apply contract information to argument if it has not been reassigned in a lambda.
-                    .takeIf { callArgsExit == null || isSameValueIn(callArgsExit, argument, flow) }
-            }
+            arguments[i]?.let { argument -> flow.rememberVariableIfUsedOrReal(argument) }
         }
         val allArgumentVariables = Array(arguments.size) { i ->
             arguments[i]?.let { argument -> flow.rememberVariable(argument) }
@@ -1381,6 +1376,12 @@ abstract class FirDataFlowAnalyzer(
             val statements =
                 logicSystem.approveContractStatement(condition, argumentVariablesForConditionalEffects, substitutor) {
                     logicSystem.approveOperationStatement(flow, it, removeApprovedOrImpossible = operation == null)
+                        .filter { [variable, _] ->
+                            // Only approve contract information for variables if it was not reassigned in a lambda.
+                            // The exception is 'holdsIn' contracts, which should are applied within the lambda.
+                            targetLambdaArgument != null || callArgsExit == null ||
+                                    variable !is RealVariable || logicSystem.isSameValueIn(callArgsExit, flow, variable)
+                        }
                 } ?: return // TODO: do what if the result is known to be false?
             if (operation == null) {
                 flow.addAllStatements(statements)
@@ -1975,7 +1976,7 @@ abstract class FirDataFlowAnalyzer(
         currentSmartCastPosition = flow
     }
 
-    private fun isSameValueIn(other: PersistentFlow, fir: FirExpression, original: MutableFlow): Boolean {
+    private fun isSameValueIn(other: Flow, fir: FirExpression, original: Flow): Boolean {
         val variable = other.getKnownVariableWithoutUnwrappingAlias(fir)
         return variable !is RealVariable || logicSystem.isSameValueIn(other, original, variable)
     }

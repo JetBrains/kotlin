@@ -177,11 +177,11 @@ fun KotlinMultiplatformExtension.androidTargetPrototype(): PrototypeAndroidTarge
         compileConfiguration or runtimeConfiguration
          */
         androidVariant.compileConfiguration.extendsFrom(mainCompilation.configurations.compileDependencyConfiguration)
-        androidVariant.runtimeConfiguration.extendsFrom(mainCompilation.configurations.runtimeDependencyConfiguration)
+        mainCompilation.configurations.runtimeDependencyConfiguration?.let { androidVariant.runtimeConfiguration.extendsFrom(it) }
         androidVariant.unitTestVariant.compileConfiguration.extendsFrom(unitTestCompilation.configurations.compileDependencyConfiguration)
-        androidVariant.unitTestVariant.runtimeConfiguration.extendsFrom(unitTestCompilation.configurations.runtimeDependencyConfiguration)
+        unitTestCompilation.configurations.runtimeDependencyConfiguration?.let { androidVariant.unitTestVariant.runtimeConfiguration.extendsFrom(it) }
         androidVariant.testVariant.compileConfiguration.extendsFrom(instrumentedTestCompilation.configurations.compileDependencyConfiguration)
-        androidVariant.testVariant.runtimeConfiguration.extendsFrom(instrumentedTestCompilation.configurations.runtimeDependencyConfiguration)
+        instrumentedTestCompilation.configurations.runtimeDependencyConfiguration?.let { androidVariant.testVariant.runtimeConfiguration.extendsFrom(it) }
 
 
         /*

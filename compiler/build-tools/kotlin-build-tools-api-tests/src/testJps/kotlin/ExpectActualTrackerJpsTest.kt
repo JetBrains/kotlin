@@ -9,12 +9,13 @@ package org.jetbrains.kotlin.buildtools.tests.compilation.jps
 import org.jetbrains.kotlin.buildtools.api.jps.InternalBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.jps.jvm.JvmJpsManagedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
+import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.jvmProject
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Test
 import java.nio.file.Path
 import kotlin.io.path.absolutePathString
 
@@ -22,11 +23,11 @@ import kotlin.io.path.absolutePathString
 class ExpectActualTrackerJpsTest : BaseJpsTest() {
 
     @DisplayName("A matched expect/actual pair is reported with both source files")
+    @BtaV2StrategyAgnosticCompilationTest
     @TestMetadata("expect-actual-metadata")
-    @Test
-    fun matchedExpectActualIsReported() {
+    fun matchedExpectActualIsReported(strategyConfig: CompilerExecutionStrategyConfiguration) {
         val fixture = "expect-actual-metadata"
-        jvmProject(inProcess) {
+        jvmProject(strategyConfig) {
             val module = module(fixture, moduleCompilationConfigAction = configureKmpJvmFragments())
             val expectActualTracker = RecordingExpectActualTracker()
             module.compile(compilationConfigAction = { builder ->

@@ -23,6 +23,7 @@ dependencies {
     testImplementation(kotlinTest("junit5"))
     testRuntimeOnly(project(":kotlin-compiler"))
     testImplementation(project(":kotlin-main-kts"))
+    testImplementation(project(":kotlin-script-runtime")) // marker class to locate the jar for legacy-template tests
     testRuntimeOnly(project(":kotlin-scripting-dependencies-maven"))
 }
 

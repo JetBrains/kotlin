@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform._FoundationModels_SwiftUI
+
+modules = _FoundationModels_SwiftUI
+compilerOpts = -framework _FoundationModels_SwiftUI
+linkerOpts = -framework _FoundationModels_SwiftUI
+#Disabled: Unavailable

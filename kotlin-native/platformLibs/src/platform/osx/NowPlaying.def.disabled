@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.NowPlaying
+
+modules = NowPlaying
+compilerOpts = -framework NowPlaying
+linkerOpts = -framework NowPlaying
+#Disabled: Swift-only framework

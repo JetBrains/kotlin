@@ -113,13 +113,19 @@ public class KtElementImplStub<T extends StubElement<?>> extends StubBasedPsiEle
         return visitor.visitKtElement(this, data);
     }
 
+    /**
+     * Deletes this element.
+     * <p>
+     * When {@link KtPsiMutationService} is registered, as in the IntelliJ Kotlin plugin, the deletion may also adjust the surrounding code,
+     * e.g., delete a semicolon that follows the element. Without the service, it performs only the plain platform deletion.
+     */
     @Override
     public void delete() throws IncorrectOperationException {
-        KtPsiMutationService.getInstance().deleteElement(this);
+        KtPsiMutationServiceKt.deleteWithMutationService(this, mutationService -> mutationService.deleteElement(this));
     }
 
     @Override
-    @KtNonPublicApi
+    @KtIdeApi
     public void rawDelete() throws IncorrectOperationException {
         super.delete();
     }

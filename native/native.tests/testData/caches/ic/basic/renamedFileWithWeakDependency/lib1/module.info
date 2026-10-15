@@ -1,0 +1,12 @@
+STEP 0:
+    modifications:
+        U : actions.kt -> actions.kt
+    added cache: actions.kt
+
+// KT-89876: rename actions.kt -> actions.changed.kt
+STEP 1:
+    modifications:
+        D : actions.kt
+        U : actions.kt -> actions.changed.kt
+    removed cache: actions.kt
+    added cache: actions.changed.kt

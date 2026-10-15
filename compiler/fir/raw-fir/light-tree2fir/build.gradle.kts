@@ -58,4 +58,3 @@ projectTests {
     testData(project(":compiler").isolated, "testData")
 }
 
-testsJar()

@@ -3,7 +3,6 @@ KaCompletionCandidateChecker: org.jetbrains.kotlin.analysis.api.components.KaExt
 KaCompletionCandidateChecker: org.jetbrains.kotlin.analysis.api.components.createExtensionCandidateChecker(KtFile, KtSimpleNameExpression, KtExpression?)
 KaExpressionInformationProvider: org.jetbrains.kotlin.analysis.api.components.KaWhenMissingCase
 KaExpressionInformationProvider: org.jetbrains.kotlin.analysis.api.components.computeMissingCases()
-KaExpressionTypeProvider: org.jetbrains.kotlin.analysis.api.components.returnType
 KaJavaInteroperabilityComponent: org.jetbrains.kotlin.analysis.api.components.asPsiType(PsiElement, Boolean, KaTypeMappingMode, Boolean, Boolean?, Boolean, Boolean)
 KaReferenceShortener: org.jetbrains.kotlin.analysis.api.components.QualifierToShortenInfo
 KaReferenceShortener: org.jetbrains.kotlin.analysis.api.components.ShortenCommand

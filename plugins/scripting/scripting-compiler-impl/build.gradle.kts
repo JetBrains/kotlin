@@ -19,13 +19,12 @@ dependencies {
     compileOnly(project(":compiler:ir.serialization.js"))
     api(project(":kotlin-scripting-common"))
     api(project(":kotlin-scripting-jvm"))
+    // legacy @ScriptTemplateDefinition templates support (ScriptCompilationConfigurationFromLegacyTemplate), KT-87149
+    implementation(project(":kotlin-script-runtime"))
     api(kotlinStdlib())
     compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     compileOnly(intellijCore())
     compileOnly(libs.intellij.asm)
-
-    // FIXME: drop after removing references to LocalFileSystem they don't exist in intellij-core
-    compileOnly(intellijAnalysis())
 
     runtimeOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 }

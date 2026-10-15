@@ -1,0 +1,13 @@
+STEP 0:
+    modifications:
+        U : other.kt -> other.kt
+    added cache: other.kt
+
+STEP 1:
+    modifications:
+        U : other.1.kt -> other.kt
+    modified cache: other.kt
+
+// Nothing `other` depends on changes here.
+STEP 2:
+    unchanged cache: other.kt

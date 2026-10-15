@@ -11,12 +11,16 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irThrow
 import org.jetbrains.kotlin.backend.konan.NativeLoweringContext
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
+import org.jetbrains.kotlin.ir.builders.irBlockBody
+import org.jetbrains.kotlin.ir.builders.irCall
+import org.jetbrains.kotlin.ir.builders.irExprBody
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
-import org.jetbrains.kotlin.ir.util.toIrConst
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 
 internal class ReifiedFunctionLowering(private val backendContext: NativeLoweringContext) : FileLoweringPass, IrElementTransformerVoid() {
@@ -38,8 +42,11 @@ internal class ReifiedFunctionLowering(private val backendContext: NativeLowerin
         fun IrBuilderWithScope.throwException(): IrExpression {
             return irThrow(
                     irCall(backendContext.symbols.throwIllegalStateExceptionWithMessage.owner).apply {
-                        arguments[0] = "unsupported call of reified inlined function `${declaration.fqNameForIrSerialization}`"
-                                .toIrConst(backendContext.irBuiltIns.stringType)
+                        arguments[0] = IrConstImpl.string(
+                                UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                                type = backendContext.irBuiltIns.stringType,
+                                value = "unsupported call of reified inlined function `${declaration.fqNameForIrSerialization}`"
+                        )
                     }
             )
         }

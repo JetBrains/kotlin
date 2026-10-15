@@ -3,7 +3,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ExportedKdocSingleLineKt]]
   partSimpleName: "ExportedKdocSingleLineKt"
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  CLASS[classId=/Foo, fqName=Foo, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Foo, superNames=[]]
+  CLASS[classId=/Foo, fqName=Foo, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Foo, superNames=[]]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Foo]
       VALUE_PARAMETER_LIST
         VALUE_PARAMETER[fqName=Foo.value, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=value]
@@ -24,20 +24,20 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ExportedKdocSingleLineKt]]
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=String]
         STRING_TEMPLATE
-      OBJECT_DECLARATION[classId=/Foo.Companion, fqName=Foo.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+      OBJECT_DECLARATION[classId=/Foo.Companion, fqName=Foo.Companion, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[companion]
         CLASS_BODY
   TYPEALIAS[classId=/MyString, fqName=MyString, isTopLevel=true, name=MyString]
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=String]
-  CLASS[classId=/Anno, fqName=Anno, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Anno, superNames=[]]
+  CLASS[classId=/Anno, fqName=Anno, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Anno, superNames=[]]
     MODIFIER_LIST[annotation]
-  CLASS[classId=/Direction, fqName=Direction, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Direction, superNames=[]]
+  CLASS[classId=/Direction, fqName=Direction, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Direction, superNames=[]]
     MODIFIER_LIST[enum]
     CLASS_BODY
-      ENUM_ENTRY[classId=null, fqName=Direction.SOUTH, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=SOUTH, superNames=[]]
-  OBJECT_DECLARATION[classId=/Obj, fqName=Obj, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=Obj, superNames=[]]
+      ENUM_ENTRY[classId=null, fqName=Direction.SOUTH, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=SOUTH, superNames=[]]
+  OBJECT_DECLARATION[classId=/Obj, fqName=Obj, isObjectLiteral=false, isTopLevel=true, name=Obj, superNames=[]]
   FUNCTION[fqName=bar, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=bar]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=number]

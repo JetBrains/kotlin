@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.lombok.generators.kotlin.ir
 
 import org.jetbrains.kotlin.builtins.StandardNames.EQUALS_NAME
 import org.jetbrains.kotlin.builtins.StandardNames.HASHCODE_NAME
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -18,10 +19,12 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.util.erasedUpperBound
 import org.jetbrains.kotlin.ir.util.findDeclaration
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.isNullable
+import org.jetbrains.kotlin.lombok.LombokNames
 import org.jetbrains.kotlin.lombok.generators.EqualsAndHashCodeGeneratorKey
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -65,6 +68,10 @@ object EqualsAndHashCodeIrBodyBuilder : IrBodyBuilder<EqualsAndHashCodeGenerator
             HASHCODE_NAME -> {
                 buildHashCodeBody(irClass, key, thisParam)
             }
+            LombokNames.CAN_EQUAL -> {
+                val otherParam = declaration.parameters.single { it.kind == IrParameterKind.Regular }
+                buildCanEqualBody(irClass, otherParam)
+            }
         }
     }
 
@@ -77,6 +84,23 @@ object EqualsAndHashCodeIrBodyBuilder : IrBodyBuilder<EqualsAndHashCodeGenerator
         +irIfThenReturnTrue(irEqeqeq(irGetThis(thisParam), irGetOther(otherParam)))
         +irIfThenReturnFalse(irNotIs(irGetOther(otherParam), irClass.defaultTypeForLombok()))
 
+        val included: List<IrProperty> = extractIncludedProperties(key, irClass)
+
+        // The cast is shared by the `canEqual` call and the property comparisons below - create it once, and
+        // only when at least one of them needs it, mirroring the old no-op shortcut for a property-less class.
+        val otherCast = runIf(key.hasCanEqual || included.isNotEmpty()) {
+            irTemporary(
+                irImplicitCast(irGetOther(otherParam), irClass.defaultTypeForLombok()),
+                nameHint = "other_with_cast",
+            )
+        }
+
+        // Right after the instanceof-check-and-cast, and before `super.equals()`: the same position real Lombok
+        // generates its own `canEqual` call in, so a stricter subtype can reject a looser supertype (KT-89189).
+        if (key.hasCanEqual) {
+            +irIfThenReturnFalse(primitiveBooleanNot(buildCanEqualCall(irClass, irGet(otherCast!!), irGetThis(thisParam))))
+        }
+
         val superEquals = runIf(key.callSuper) { buildSuperEqualsCall(irClass, thisParam, otherParam) }
         if (superEquals != null) {
             +irIfThenReturnFalse(
@@ -84,17 +108,10 @@ object EqualsAndHashCodeIrBodyBuilder : IrBodyBuilder<EqualsAndHashCodeGenerator
             )
         }
 
-        val included: List<IrProperty> = extractIncludedProperties(key, irClass)
-
-        if (included.isEmpty()) {
+        if (otherCast == null) {
             +irReturnTrue()
             return
         }
-
-        val otherCast = irTemporary(
-            irImplicitCast(irGetOther(otherParam), irClass.defaultTypeForLombok()),
-            nameHint = "other_with_cast",
-        )
 
         for (property in included) {
             val thisProp = irGetPropertyValue(irGetThis(thisParam), property)
@@ -295,6 +312,35 @@ object EqualsAndHashCodeIrBodyBuilder : IrBodyBuilder<EqualsAndHashCodeGenerator
             arguments[0] = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, thisParam.type, thisParam.symbol)
         }
     }
+
+    private fun IrBlockBodyBuilder.buildCanEqualBody(irClass: IrClass, otherParam: IrValueParameter) {
+        +irReturn(irIs(irGetOther(otherParam), irClass.defaultTypeForLombok()))
+    }
+
+    /**
+     * `receiver.canEqual(argument)`, virtually dispatched: [receiver] is statically typed as [irClass] but may be
+     * an instance of a stricter subtype whose own generated `canEqual` overrides this one.
+     *
+     * Calls the generated `canEqual`, or else the user-declared one that kept it from being generated, matched the
+     * way the FIR generator matches it: other overloads merely share the name and must never be called here.
+     */
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
+    private fun IrBlockBodyBuilder.buildCanEqualCall(irClass: IrClass, receiver: IrExpression, argument: IrExpression): IrExpression {
+        val canEqualFunction = irClass.functions.firstOrNull {
+            it.name == LombokNames.CAN_EQUAL && (it.origin as? IrDeclarationOrigin.GeneratedByPlugin)?.pluginKey is EqualsAndHashCodeGeneratorKey
+        } ?: irClass.functions.first { it.name == LombokNames.CAN_EQUAL && it.hasCanEqualJvmSignature(context.irBuiltIns) }
+        return irCall(canEqualFunction.symbol).apply {
+            // A generic `canEqual<T>(other: T)` qualifies too, `T` erasing to `Object`.
+            canEqualFunction.typeParameters.forEach { typeArguments[it.index] = context.irBuiltIns.anyNType }
+            arguments[0] = receiver
+            arguments[1] = argument
+        }
+    }
+
+    private fun IrSimpleFunction.hasCanEqualJvmSignature(irBuiltIns: IrBuiltIns): Boolean =
+        !isFakeOverride &&
+                parameters.none { it.kind == IrParameterKind.ExtensionReceiver || it.kind == IrParameterKind.Context } &&
+                parameters.singleOrNull { it.kind == IrParameterKind.Regular }?.type?.erasedUpperBound?.symbol == irBuiltIns.anyClass
 
     /**
      * The superclass a generated `equals`/`hashCode` chains to, interfaces skipped - `Any` when there is no other.

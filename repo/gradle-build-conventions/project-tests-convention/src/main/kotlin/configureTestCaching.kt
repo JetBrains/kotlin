@@ -48,7 +48,6 @@ internal fun Project.configureTestCaching() {
             ":kotlin-scripting-dependencies",
             ":kotlin-scripting-dependencies-maven",
             ":kotlin-scripting-dependencies-maven-all",
-            ":kotlin-scripting-ide-services-test",
             ":kotlin-scripting-jsr223-test",
             ":kotlin-scripting-jvm",
             ":kotlin-scripting-jvm-host-test",
@@ -64,6 +63,7 @@ internal fun Project.configureTestCaching() {
             ":libraries:tools:abi-validation:kgp-integration-tests",
 
             ":plugins:compose-compiler-plugin:compiler-hosted:integration-tests",
+            ":plugins:parcelize:parcelize-runtime", // TODO(KTI-3056): 'test-inputs-check' cannot be combined with 'multiplatform' projects
             ":plugins:scripting:scripting-tests",
             ":plugins:scripting:scripting-tests:runtime",
             ":repo:auto-code-review", // Runs processes, traverses all repo files. Quick.
