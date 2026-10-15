@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.gradle.utils.resolveInside
 import java.io.File
 import java.io.Serializable
 import java.util.concurrent.Callable
@@ -184,7 +185,7 @@ internal abstract class CInteropMetadataDependencyTransformationTask @Inject con
                 val sourceSetContent = artifactContent.findSourceSet(visibleSourceSetName) ?: return emptyList()
                 sourceSetContent.cinteropMetadataBinaries
                     .onEach { cInteropMetadataBinary -> cInteropMetadataBinary.copyIntoDirectory(outputDirectory) }
-                    .map { cInteropMetadataBinary -> visibleSourceSetName to outputDirectory.resolve(cInteropMetadataBinary.relativeFile) }
+                    .map { cInteropMetadataBinary -> visibleSourceSetName to outputDirectory.resolveInside(cInteropMetadataBinary.relativeFile) }
             }
         }
     }

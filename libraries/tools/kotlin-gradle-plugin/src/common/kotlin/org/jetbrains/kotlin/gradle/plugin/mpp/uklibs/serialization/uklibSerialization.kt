@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib.Companion.ATTRIBUTES
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib.Companion.FRAGMENTS
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib.Companion.FRAGMENT_IDENTIFIER
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib.Companion.UMANIFEST_VERSION
+import org.jetbrains.kotlin.gradle.utils.resolveInside
 import org.jetbrains.kotlin.incremental.deleteDirectoryContents
 import java.io.BufferedOutputStream
 import java.io.File
@@ -159,7 +160,7 @@ private fun unzip(zipFilePath: File, outputFolderPath: File) {
     ZipInputStream(FileInputStream(zipFilePath)).use { zipInputStream ->
         var zipEntry: ZipEntry? = zipInputStream.nextEntry
         while (zipEntry != null) {
-            val newFile = File(outputFolderPath, zipEntry.name)
+            val newFile = outputFolderPath.resolveInside(zipEntry.name)
             if (zipEntry.isDirectory) {
                 newFile.mkdirs()
             } else {
