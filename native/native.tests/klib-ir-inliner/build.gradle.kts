@@ -68,6 +68,8 @@ projectTests {
         enableGroupingTestEngine = true,
         maxHeapSize = testMaxHeapSizeLarge
     ) {
+        groupingEngineSettings(batchSize = 20, simultaneousBatches = 4)
+
         val testTarget = providers.gradleProperty("kotlin.internal.native.test.target")
             .orElse(providers.gradleProperty("kn.target"))
             .map { KonanTarget.predefinedTargets[it] ?: error("Test target $it is not defined") }

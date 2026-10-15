@@ -403,6 +403,9 @@ projectTests {
                 tags?.let { includeTags(it) }
             }
             setupGradlePropertiesForwarding()
+
+            groupingEngineSettings(batchSize = 50, simultaneousBatches = 12)
+
             addAbsoluteDirectoryProperty(layout.buildDirectory, "kotlin.wasm.test.root.out.dir")
             addAbsoluteDirectoryProperty(node.nodeProjectDir, "kotlin.wasm.test.node.dir")
             body()
