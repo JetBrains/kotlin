@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.ByteArrayInputStream
+import java.io.File
 import java.net.URI
 import java.nio.file.FileSystems
 import java.nio.file.Path
@@ -287,11 +288,10 @@ object JvmAbiTestModuleCompiler : JvmTestModuleCompiler() {
 }
 
 object JsKlibTestModuleCompiler : CliTestModuleCompiler() {
-    override fun buildPlatformCompilerOptions(module: TestModule, testServices: TestServices): List<String> {
-        return listOf(
-            K2JSCompilerArguments::libraries.cliArgument, testServices.standardLibrariesPathProvider.fullJsStdlib().absolutePath,
-        )
-    }
+    override fun buildPlatformCompilerOptions(module: TestModule, testServices: TestServices): List<String> = emptyList()
+
+    override fun buildPlatformExtraClasspath(module: TestModule, testServices: TestServices): List<String> =
+        listOf(testServices.standardLibrariesPathProvider.fullJsStdlib().absolutePath)
 
     override fun doCompile(
         sourcesPath: Path,
@@ -304,6 +304,8 @@ object JsKlibTestModuleCompiler : CliTestModuleCompiler() {
         val commands = buildList {
             add(K2JSCompilerArguments::moduleName.cliArgument); add(libraryOutputPath.nameWithoutExtension)
             add(K2JSCompilerArguments::outputDir.cliArgument); add(libraryOutputPath.parent.absolutePathString())
+            // The JS standard library and the klibs of the dependency modules
+            add(K2JSCompilerArguments::libraries.cliArgument); add(extraClasspath.joinToString(File.pathSeparator))
             sourceFiles.mapTo(this) { it.absolutePath }
             addAll(options)
         }

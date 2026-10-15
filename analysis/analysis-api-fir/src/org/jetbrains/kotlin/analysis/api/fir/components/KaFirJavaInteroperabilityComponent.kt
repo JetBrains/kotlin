@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightParameter
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
+import org.jetbrains.kotlin.config.jvmDefaultMode
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
@@ -52,11 +53,14 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmTypeMapper
 import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
+import org.jetbrains.kotlin.fir.isNewPlaceForBodyGeneration
 import org.jetbrains.kotlin.fir.java.MutableJavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.javaSymbolProvider
 import org.jetbrains.kotlin.fir.java.resolveIfJavaType
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
@@ -305,6 +309,18 @@ internal class KaFirJavaInteroperabilityComponent(
         }
 
         return false
+    }
+
+    override fun isCompiledInJvmDefaultMode(classSymbol: KaNamedClassSymbol): Boolean = withValidityAssertion {
+        if (classSymbol.classKind != KaClassKind.INTERFACE) return false
+        if (classSymbol.origin.isFromJava) return false
+
+        val firClass = classSymbol.firSymbol.fir as? FirRegularClass ?: return false
+        return when {
+            firClass.origin.fromSource -> firClass.moduleData.session.languageVersionSettings.jvmDefaultMode.isEnabled
+            // The deserializer reads the mode from the JVM metadata of the interface, see `JvmFlags.IS_COMPILED_IN_JVM_DEFAULT_MODE`
+            else -> firClass.isNewPlaceForBodyGeneration == true
+        }
     }
 
     override fun asPsiClass(classSymbol: KaClassSymbol): PsiClass? = withValidityAssertion {

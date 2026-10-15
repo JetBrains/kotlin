@@ -185,18 +185,6 @@ public class JsSymbolLightClassesByFqNameForLibraryTestGenerated extends Abstrac
   }
 
   @Test
-  @TestMetadata("DefaultImplsWithExtensionMembers.kt")
-  public void testDefaultImplsWithExtensionMembers() {
-    run("DefaultImplsWithExtensionMembers.kt");
-  }
-
-  @Test
-  @TestMetadata("DefaultImplsWithTypeParameters.kt")
-  public void testDefaultImplsWithTypeParameters() {
-    run("DefaultImplsWithTypeParameters.kt");
-  }
-
-  @Test
   @TestMetadata("DelegatedNested.kt")
   public void testDelegatedNested() {
     run("DelegatedNested.kt");
@@ -275,12 +263,6 @@ public class JsSymbolLightClassesByFqNameForLibraryTestGenerated extends Abstrac
   }
 
   @Test
-  @TestMetadata("ExtendingInterfaceWithDefaultImpls.kt")
-  public void testExtendingInterfaceWithDefaultImpls() {
-    run("ExtendingInterfaceWithDefaultImpls.kt");
-  }
-
-  @Test
   @TestMetadata("HiddenDeprecated.kt")
   public void testHiddenDeprecated() {
     run("HiddenDeprecated.kt");
@@ -299,12 +281,6 @@ public class JsSymbolLightClassesByFqNameForLibraryTestGenerated extends Abstrac
   }
 
   @Test
-  @TestMetadata("InheritingInterfaceDefaultImpls.kt")
-  public void testInheritingInterfaceDefaultImpls() {
-    run("InheritingInterfaceDefaultImpls.kt");
-  }
-
-  @Test
   @TestMetadata("InlineReified.kt")
   public void testInlineReified() {
     run("InlineReified.kt");
@@ -314,12 +290,6 @@ public class JsSymbolLightClassesByFqNameForLibraryTestGenerated extends Abstrac
   @TestMetadata("InterfaceTypeParameterAnnotation.kt")
   public void testInterfaceTypeParameterAnnotation() {
     run("InterfaceTypeParameterAnnotation.kt");
-  }
-
-  @Test
-  @TestMetadata("InterfaceWithDefaultMethodAndCompanion.kt")
-  public void testInterfaceWithDefaultMethodAndCompanion() {
-    run("InterfaceWithDefaultMethodAndCompanion.kt");
   }
 
   @Test
@@ -506,12 +476,6 @@ public class JsSymbolLightClassesByFqNameForLibraryTestGenerated extends Abstrac
   @TestMetadata("ValueClassInParametersWithJvmName.kt")
   public void testValueClassInParametersWithJvmName() {
     run("ValueClassInParametersWithJvmName.kt");
-  }
-
-  @Test
-  @TestMetadata("valueClassInsideDefaultImpl.kt")
-  public void testValueClassInsideDefaultImpl() {
-    run("valueClassInsideDefaultImpl.kt");
   }
 
   @Test
@@ -1147,6 +1111,146 @@ public class JsSymbolLightClassesByFqNameForLibraryTestGenerated extends Abstrac
     @TestMetadata("OverridingProtected.kt")
     public void testOverridingProtected() {
       run("OverridingProtected.kt");
+    }
+  }
+
+  @Nested
+  @TestMetadata("analysis/symbol-light-classes/testData/lightClassByFqName/jvmDefault")
+  @TestDataPath("$PROJECT_ROOT")
+  public class JvmDefault {
+    private void run(String fileName) {
+      runTest("analysis/symbol-light-classes/testData/lightClassByFqName/jvmDefault/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInJvmDefault() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/symbol-light-classes/testData/lightClassByFqName/jvmDefault"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("DefaultImplsWithExtensionMembers.kt")
+    public void testDefaultImplsWithExtensionMembers() {
+      run("DefaultImplsWithExtensionMembers.kt");
+    }
+
+    @Test
+    @TestMetadata("DefaultImplsWithInheritedHiddenJdkMembers.kt")
+    public void testDefaultImplsWithInheritedHiddenJdkMembers() {
+      run("DefaultImplsWithInheritedHiddenJdkMembers.kt");
+    }
+
+    @Test
+    @TestMetadata("DefaultImplsWithInheritedImplementations.kt")
+    public void testDefaultImplsWithInheritedImplementations() {
+      run("DefaultImplsWithInheritedImplementations.kt");
+    }
+
+    @Test
+    @TestMetadata("DefaultImplsWithInheritedImplementationsFromDependenciesJvmDefaultDisable.kt")
+    public void testDefaultImplsWithInheritedImplementationsFromDependenciesJvmDefaultDisable() {
+      run("DefaultImplsWithInheritedImplementationsFromDependenciesJvmDefaultDisable.kt");
+    }
+
+    @Test
+    @TestMetadata("DefaultImplsWithInheritedImplementationsFromDependenciesJvmDefaultEnable.kt")
+    public void testDefaultImplsWithInheritedImplementationsFromDependenciesJvmDefaultEnable() {
+      run("DefaultImplsWithInheritedImplementationsFromDependenciesJvmDefaultEnable.kt");
+    }
+
+    @Test
+    @TestMetadata("DefaultImplsWithInheritedImplementationsFromDependenciesJvmDefaultNoCompatibility.kt")
+    public void testDefaultImplsWithInheritedImplementationsFromDependenciesJvmDefaultNoCompatibility() {
+      run("DefaultImplsWithInheritedImplementationsFromDependenciesJvmDefaultNoCompatibility.kt");
+    }
+
+    @Test
+    @TestMetadata("DefaultImplsWithInheritedImplementationsFromLibrariesJvmDefaultDisable.kt")
+    public void testDefaultImplsWithInheritedImplementationsFromLibrariesJvmDefaultDisable() {
+      run("DefaultImplsWithInheritedImplementationsFromLibrariesJvmDefaultDisable.kt");
+    }
+
+    @Test
+    @TestMetadata("DefaultImplsWithInheritedImplementationsFromLibrariesJvmDefaultEnable.kt")
+    public void testDefaultImplsWithInheritedImplementationsFromLibrariesJvmDefaultEnable() {
+      run("DefaultImplsWithInheritedImplementationsFromLibrariesJvmDefaultEnable.kt");
+    }
+
+    @Test
+    @TestMetadata("DefaultImplsWithInheritedImplementationsFromLibrariesJvmDefaultNoCompatibility.kt")
+    public void testDefaultImplsWithInheritedImplementationsFromLibrariesJvmDefaultNoCompatibility() {
+      run("DefaultImplsWithInheritedImplementationsFromLibrariesJvmDefaultNoCompatibility.kt");
+    }
+
+    @Test
+    @TestMetadata("DefaultImplsWithInheritedImplementationsThroughJavaInterface.kt")
+    public void testDefaultImplsWithInheritedImplementationsThroughJavaInterface() {
+      run("DefaultImplsWithInheritedImplementationsThroughJavaInterface.kt");
+    }
+
+    @Test
+    @TestMetadata("DefaultImplsWithInheritedImplementationsThroughLibraries.kt")
+    public void testDefaultImplsWithInheritedImplementationsThroughLibraries() {
+      run("DefaultImplsWithInheritedImplementationsThroughLibraries.kt");
+    }
+
+    @Test
+    @TestMetadata("DefaultImplsWithInheritedIntersectionOverrides.kt")
+    public void testDefaultImplsWithInheritedIntersectionOverrides() {
+      run("DefaultImplsWithInheritedIntersectionOverrides.kt");
+    }
+
+    @Test
+    @TestMetadata("DefaultImplsWithInheritedMemberKinds.kt")
+    public void testDefaultImplsWithInheritedMemberKinds() {
+      run("DefaultImplsWithInheritedMemberKinds.kt");
+    }
+
+    @Test
+    @TestMetadata("DefaultImplsWithInheritedPlatformDependentImplementations.kt")
+    public void testDefaultImplsWithInheritedPlatformDependentImplementations() {
+      run("DefaultImplsWithInheritedPlatformDependentImplementations.kt");
+    }
+
+    @Test
+    @TestMetadata("DefaultImplsWithOnlyHiddenOrSyntheticInheritedImplementations.kt")
+    public void testDefaultImplsWithOnlyHiddenOrSyntheticInheritedImplementations() {
+      run("DefaultImplsWithOnlyHiddenOrSyntheticInheritedImplementations.kt");
+    }
+
+    @Test
+    @TestMetadata("DefaultImplsWithOnlyInheritedImplementations.kt")
+    public void testDefaultImplsWithOnlyInheritedImplementations() {
+      run("DefaultImplsWithOnlyInheritedImplementations.kt");
+    }
+
+    @Test
+    @TestMetadata("DefaultImplsWithTypeParameters.kt")
+    public void testDefaultImplsWithTypeParameters() {
+      run("DefaultImplsWithTypeParameters.kt");
+    }
+
+    @Test
+    @TestMetadata("ExtendingInterfaceWithDefaultImpls.kt")
+    public void testExtendingInterfaceWithDefaultImpls() {
+      run("ExtendingInterfaceWithDefaultImpls.kt");
+    }
+
+    @Test
+    @TestMetadata("InheritingInterfaceDefaultImpls.kt")
+    public void testInheritingInterfaceDefaultImpls() {
+      run("InheritingInterfaceDefaultImpls.kt");
+    }
+
+    @Test
+    @TestMetadata("InterfaceWithDefaultMethodAndCompanion.kt")
+    public void testInterfaceWithDefaultMethodAndCompanion() {
+      run("InterfaceWithDefaultMethodAndCompanion.kt");
+    }
+
+    @Test
+    @TestMetadata("valueClassInsideDefaultImpl.kt")
+    public void testValueClassInsideDefaultImpl() {
+      run("valueClassInsideDefaultImpl.kt");
     }
   }
 

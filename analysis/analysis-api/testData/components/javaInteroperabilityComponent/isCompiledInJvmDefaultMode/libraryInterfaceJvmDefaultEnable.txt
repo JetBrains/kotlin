@@ -1,0 +1,5 @@
+Class:
+/Foo
+
+isCompiledInJvmDefaultMode:
+true

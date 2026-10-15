@@ -11,14 +11,17 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiField
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiReferenceList
+import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationValue
 import org.jetbrains.kotlin.analysis.api.javaInterop.asPsiClass
+import org.jetbrains.kotlin.analysis.api.javaInterop.isCompiledInJvmDefaultMode
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaScriptModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.baseContextModuleOrSelf
 import org.jetbrains.kotlin.analysis.api.scopes.combinedDeclaredMemberScope
+import org.jetbrains.kotlin.analysis.api.scopes.memberScope
 import org.jetbrains.kotlin.analysis.api.scopes.staticDeclaredMemberScope
 import org.jetbrains.kotlin.analysis.api.session.canBeAnalysed
 import org.jetbrains.kotlin.analysis.api.symbols.*
@@ -41,6 +44,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.light.classes.symbol.annotations.getIntroducedAtVersionFromAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmOverloadsAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmSyntheticAnnotation
+import org.jetbrains.kotlin.light.classes.symbol.annotations.isHiddenOrSynthetic
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightField
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForEnumEntry
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForProperty
@@ -625,7 +629,7 @@ internal fun createInnerClasses(
         symbol.asPsiClass() as? SymbolLightClassBase
     }
 
-    if (containingClass is SymbolLightClassForInterface && containingClass.hasDefaultImpls) {
+    if (containingClass is SymbolLightClassForInterface && containingClass.hasDefaultImpls(declarationContainer)) {
         result.add(SymbolLightClassForInterfaceDefaultImpls(containingClass))
     }
 
@@ -641,25 +645,23 @@ internal fun createInnerClasses(
 }
 
 /**
- * Whether the JVM backend generates the `DefaultImpls` class for this interface, see
- * `org.jetbrains.kotlin.backend.jvm.lower.InterfaceLowering`. The members it holds are computed by
- * [SymbolLightClassForInterfaceDefaultImpls.getOwnMethods]:
- * - With `-jvm-default=disable`, `DefaultImpls` holds the implementations of all members with a body, private ones included.
- * - With `-jvm-default=enable`, `DefaultImpls` holds only compatibility delegates to the non-private JVM default methods.
- * - With `-jvm-default=no-compatibility`, `DefaultImpls` isn't generated.
+ * Whether this interface has the `DefaultImpls` class, i.e., whether [SymbolLightClassForInterfaceDefaultImpls.getOwnMethods] would
+ * return any methods. This mirrors `org.jetbrains.kotlin.backend.jvm.lower.InterfaceLowering`, except that light classes have no
+ * `DefaultImpls` that would hold only synthetic methods, such as `$annotations` methods, as they don't expose synthetic members.
  *
- * The check is PSI-based to avoid resolving the members.
+ * The check avoids resolving the members where possible. The declared members are checked by PSI, and the member scope of
+ * [interfaceSymbol] is required only for the inherited implementations, see [inheritedDefaultImplsCallables]. An interface without
+ * supertypes in PSI inherits only the members of `Any`, which are never bridged, so its member scope is skipped. Both PSI checks
+ * ignore the declarations added by compiler plugins, i.e., generated members and supertypes.
  */
-private val SymbolLightClassForInterface.hasDefaultImpls: Boolean
-    get() {
-        val declaration = classOrObjectDeclaration ?: return false
-        val includePrivateMembers = when (jvmDefaultMode) {
-            JvmDefaultMode.DISABLE -> true
-            JvmDefaultMode.ENABLE -> false
-            JvmDefaultMode.NO_COMPATIBILITY -> return false
-        }
+context(_: KaSession)
+private fun SymbolLightClassForInterface.hasDefaultImpls(interfaceSymbol: KaDeclarationContainerSymbol): Boolean {
+    val jvmDefaultMode = jvmDefaultMode
 
-        return declaration.declarations.any { member ->
+    fun hasDeclaredDefaultImplsMembers(): Boolean {
+        if (jvmDefaultMode == JvmDefaultMode.NO_COMPATIBILITY) return false
+
+        return classOrObjectDeclaration?.declarations.orEmpty().any { member ->
             val hasBody = when (member) {
                 is KtNamedFunction -> member.hasBody()
                 is KtProperty -> member.hasDelegateExpressionOrInitializer() ||
@@ -668,9 +670,69 @@ private val SymbolLightClassForInterface.hasDefaultImpls: Boolean
                 else -> false
             }
 
-            hasBody && (includePrivateMembers || !member.hasModifier(KtTokens.PRIVATE_KEYWORD))
+            hasBody && (jvmDefaultMode == JvmDefaultMode.DISABLE || !member.hasModifier(KtTokens.PRIVATE_KEYWORD))
         }
     }
+
+    return when {
+        hasDeclaredDefaultImplsMembers() -> true
+        classOrObjectDeclaration?.superTypeListEntries?.isEmpty() == true -> false
+        else -> inheritedDefaultImplsCallables(interfaceSymbol, jvmDefaultMode).any()
+    }
+}
+
+/**
+ * Returns the members that [interfaceSymbol] inherits from Kotlin super-interfaces and for which its `DefaultImpls` class has static
+ * bridges. The implementations declared in [interfaceSymbol] itself are handled separately by the callers.
+ *
+ * Mirrors the handling of fake overrides in `org.jetbrains.kotlin.backend.jvm.lower.InterfaceLowering`: in any mode, the JVM backend
+ * generates a bridge to `DefaultImpls` of the super-interface for every inherited implementation that isn't compiled to a JVM
+ * `default` method, e.g., one from a module or a library compiled with `-jvm-default=disable`, such as the JVM standard library. In the
+ * compatibility mode of `-jvm-default=enable`, it also generates a bridge to every inherited `default` method. Private
+ * implementations, implementations from `Any`, Java `default` methods, and `@PlatformDependent` members, whose implementation comes
+ * from the JDK, are never bridged.
+ *
+ * A hidden or synthetic function or property accessor gets a synthetic bridge, which light classes don't expose. So a function is
+ * returned only if its bridge would be visible, and a property only if the bridge of at least one of its accessors would be. Thus,
+ * light classes have no `DefaultImpls` class whose bridges would all be synthetic. The same rule covers the hidden `List.getFirst` and
+ * `List.getLast` that FIR adds before JDK 21, which don't exist in the bytecode at all.
+ *
+ * @param jvmDefaultMode the `-jvm-default` mode of the interface light class
+ */
+@OptIn(KaNonPublicApi::class)
+context(_: KaSession)
+internal fun inheritedDefaultImplsCallables(
+    interfaceSymbol: KaDeclarationContainerSymbol,
+    jvmDefaultMode: JvmDefaultMode,
+): Sequence<KaCallableSymbol> {
+    return interfaceSymbol.memberScope.callables.filter { callable ->
+        if (callable !is KaNamedFunctionSymbol && callable !is KaPropertySymbol) return@filter false
+        if (callable.modality == KaSymbolModality.ABSTRACT || callable.visibility == KaSymbolVisibility.PRIVATE) return@filter false
+
+        val originalCallable = callable.fakeOverrideOriginal
+        if (originalCallable.origin.isFromJava) return@filter false
+
+        val declaringClass = originalCallable.containingDeclaration as? KaNamedClassSymbol ?: return@filter false
+        when {
+            declaringClass == interfaceSymbol -> false
+
+            // The members of `Any`, as an interface has no other superclass
+            declaringClass.classKind != KaClassKind.INTERFACE -> false
+
+            // Outside the compatibility mode of `-jvm-default=enable`, implementations compiled to JVM `default` methods aren't bridged
+            jvmDefaultMode != JvmDefaultMode.ENABLE && declaringClass.isCompiledInJvmDefaultMode -> false
+
+            // The JDK provides the implementations of `@PlatformDependent` members, e.g., of `kotlin.collections.Map.getOrDefault`
+            StandardNames.FqNames.platformDependentClassId in originalCallable.annotations -> false
+
+            isHiddenOrSynthetic(callable) -> false
+
+            callable is KaPropertySymbol -> listOfNotNull(callable.getter, callable.setter).any { !isHiddenOrSynthetic(it) }
+
+            else -> true
+        }
+    }
+}
 
 context(session: KaSession)
 internal fun checkIsInheritor(
