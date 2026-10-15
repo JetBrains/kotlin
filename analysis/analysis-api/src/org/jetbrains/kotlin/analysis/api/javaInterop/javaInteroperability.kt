@@ -11,7 +11,6 @@ import com.intellij.psi.PsiMember
 import com.intellij.psi.PsiType
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
-import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.internals.internals
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
@@ -157,10 +156,7 @@ public val KaFunctionSymbol.javaMethodName: String?
  * the library itself is the use-site module. The latter two are built from PSI with the project-wide language settings for libraries
  * instead of being deserialized from the compiled classes.
  */
-@KaNonPublicApi
+@KaImplementationDetail
 context(session: KaSession)
 public val KaNamedClassSymbol.isCompiledInJvmDefaultMode: Boolean
-    get() {
-        @OptIn(KaImplementationDetail::class)
-        return internals.javaInteroperabilityComponent.isCompiledInJvmDefaultMode(this)
-    }
+    get() = internals.javaInteroperabilityComponent.isCompiledInJvmDefaultMode(this)
