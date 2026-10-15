@@ -229,14 +229,16 @@ public abstract class KaNamedClassSymbol : KaClassSymbol(),
      *
      * For valid declarations, this property is `true` for all of the following:
      *
+     * - A single-property `inline value class` on every target, with the experimental `FullValueClasses` language feature either enabled
+     *   or disabled. This syntax requires language version 2.5 or later.
      * - A single-property `@JvmInline value class` in a module whose target platform includes JVM, with the experimental
      *   `FullValueClasses` language feature either enabled or disabled. This covers JVM modules and common modules that target JVM among
      *   other platforms. On a JS, Wasm, or Native module, the annotation has no effect on this property.
      * - An unannotated single-property `value class` on Common or a non-JVM target with `FullValueClasses` disabled.
      * - The deprecated `inline class` form on every target, with `FullValueClasses` either enabled or disabled.
      *
-     * This property is `false` for full value classes and value objects. With `FullValueClasses` enabled, an unannotated `value class`
-     * uses the full representation on every target, even if it has exactly one primary property.
+     * This property is `false` for full value classes and value objects. With `FullValueClasses` enabled, a `value class` with neither the
+     * `inline` modifier nor `@JvmInline` uses the full representation on every target, even if it has exactly one primary property.
      *
      * @see isValue
      */
@@ -252,11 +254,11 @@ public abstract class KaNamedClassSymbol : KaClassSymbol(),
      *
      * For valid declarations, this property is `true` for all of the following:
      *
-     * - A single-property inline value class. This includes a `@JvmInline value class` on JVM and Common targets, an unannotated
-     *   `value class` on Common or a non-JVM target with the experimental `FullValueClasses` language feature disabled, and the
-     *   deprecated `inline class` form on every target.
-     * - An unannotated `value class` compiled with `FullValueClasses` enabled, regardless of its number of primary properties or
-     *   target platform.
+     * - A single-property inline value class. This includes an `inline value class` on every target, a `@JvmInline value class` on JVM
+     *   and Common targets, an unannotated `value class` on Common or a non-JVM target with the experimental `FullValueClasses` language
+     *   feature disabled, and the deprecated `inline class` form on every target.
+     * - A `value class` with neither the `inline` modifier nor `@JvmInline` compiled with `FullValueClasses` enabled, regardless of its
+     *   number of primary properties or target platform.
      * - A `value object` compiled with `FullValueClasses` enabled.
      *
      * This property is `false` for ordinary Kotlin classes and Java classes. To distinguish inline from full value declarations, use
