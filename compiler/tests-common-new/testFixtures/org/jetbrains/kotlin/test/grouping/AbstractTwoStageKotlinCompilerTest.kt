@@ -39,7 +39,7 @@ abstract class AbstractTwoStageKotlinCompilerTest @UnspecifiedTargetBackend cons
         nonGroupingStage {
             startingArtifactFactory = { ResultingArtifact.Source() }
             testInfo = this@AbstractTwoStageKotlinCompilerTest.testInfo
-            useGroupingTestIsolators(::MutedTestsIsolator)
+            useGroupingTestIsolators(::MutedTestsIsolator, { RetriedTestIsolator(it) { isRetriedInIsolation } })
         }
 
         groupingStage {
