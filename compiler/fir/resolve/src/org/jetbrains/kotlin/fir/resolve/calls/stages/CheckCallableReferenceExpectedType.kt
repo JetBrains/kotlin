@@ -229,14 +229,13 @@ private fun BodyResolveComponents.getCallableReferenceAdaptation(
         for (fakeArgumentAtom in resolvedArgument.arguments) {
             val fakeArgument = fakeArgumentAtom.expression
             val index = fakeArgument.index
-            val parameterOfReferencedFunction = function.valueParameters.getOrNull(function.indexOf(valueParameter)) ?: continue
 
             val mappedArgument: ConeKotlinType?
-            if (parameterOfReferencedFunction.isVararg) {
+            if (valueParameter.isVararg) {
                 val [varargType, newVarargMappingState] = varargParameterTypeByExpectedParameter(
                     candidate,
                     inputTypes[index + unboundReceiverCount],
-                    parameterOfReferencedFunction,
+                    valueParameter,
                     varargMappingState
                 )
                 varargMappingState = newVarargMappingState
@@ -254,7 +253,7 @@ private fun BodyResolveComponents.getCallableReferenceAdaptation(
                     }
                 }
             } else {
-                mappedArgument = parameterOfReferencedFunction.returnTypeRef.coneType
+                mappedArgument = valueParameter.returnTypeRef.coneType
                 mappedArguments[valueParameter] = resolvedArgument
             }
 
@@ -416,8 +415,6 @@ private fun Constraint.doesNotContradictToArrayArgument(candidate: Candidate, ar
 private enum class VarargMappingState {
     UNMAPPED, MAPPED_WITH_PLAIN_ARGS, MAPPED_WITH_ARRAY
 }
-
-private fun FirFunction.indexOf(valueParameter: FirValueParameter): Int = valueParameters.indexOf(valueParameter)
 
 private val ConeKotlinType.isBaseTypeForNumberedReferenceTypes: Boolean
     get() {
