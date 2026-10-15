@@ -2313,14 +2313,13 @@ class ExportExtensionSwiftPackageIntegrationTests {
             listOf(KonanTarget.IOS_ARM64, KonanTarget.IOS_SIMULATOR_ARM64, KonanTarget.MACOS_ARM64),
             targetOutputs.map { it.target.get() },
         )
-        assertNull(generateTask.swiftModulesFile.orNull)
+        assertNull(generateTask.swiftExportOutputDirectory.orNull)
         // The headers are only collected for the Xcode integration.
         assertFalse(generateTask.collectIncludes.get())
         val swiftExportDirectory = project.layout.buildDirectory.dir("SwiftPackageExport").get().asFile
-        // locationOnly, because the value of a task output can't be read before the task has run.
         assertEquals(
             listOf("iosArm64", "iosSimulatorArm64", "macosArm64").map { swiftExportDirectory.resolve("$it/modules.json") },
-            targetOutputs.map { it.swiftModulesFile.locationOnly.get().asFile },
+            targetOutputs.map { it.swiftModulesFile.get().asFile },
         )
     }
 
@@ -2342,7 +2341,7 @@ class ExportExtensionSwiftPackageIntegrationTests {
                 KonanTarget.MACOS_ARM64 to swiftExportDirectory.resolve("desktop/modules.json"),
                 KonanTarget.IOS_ARM64 to swiftExportDirectory.resolve("phone/modules.json"),
             ),
-            generateTask.targetOutputs.get().map { it.target.get() to it.swiftModulesFile.locationOnly.get().asFile },
+            generateTask.targetOutputs.get().map { it.target.get() to it.swiftModulesFile.get().asFile },
         )
     }
 
