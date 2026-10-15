@@ -27,5 +27,5 @@ enum class KdDeprecationLevel { WARNING, ERROR }
 @Serializable
 data class KdReplaceWith(
     val imports: List<String>,
-    val code: KdExpression,
+    val expression: KdExpression,
 )

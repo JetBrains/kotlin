@@ -28,4 +28,4 @@ data class KdTypealias(
     val deprecated: KdDeprecated?,
     val annotations: List<KdAnnotation>,
     val documentation: KdDocumentation = KdDocumentation.EMPTY,
-) : KdElement
+) : KdElement()

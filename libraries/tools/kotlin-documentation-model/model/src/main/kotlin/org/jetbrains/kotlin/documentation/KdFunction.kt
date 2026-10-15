@@ -44,4 +44,4 @@ data class KdFunction(
     val throws: List<KdThrows>,
     val annotations: List<KdAnnotation>,
     val documentation: KdDocumentation = KdDocumentation.EMPTY,
-) : KdElement
+) : KdElement()

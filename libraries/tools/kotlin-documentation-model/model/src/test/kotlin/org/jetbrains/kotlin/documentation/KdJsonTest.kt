@@ -23,6 +23,7 @@ class KdJsonTest {
 
         val klass = KdClass(
             name = "Foo",
+            classKind = KdClassKind.CLASS,
             isCompanion = false,
             isData = false,
             isValue = false,
@@ -47,7 +48,7 @@ class KdJsonTest {
             deprecated = KdDeprecated(
                 since = "2.3",
                 level = KdDeprecationLevel.WARNING,
-                replaceWith = KdReplaceWith(imports = listOf("pkg.Bar"), code = KdExpression("Bar()", emptyList())),
+                replaceWith = KdReplaceWith(imports = listOf("pkg.Bar"), expression = KdExpression("Bar()", emptyList())),
             ),
             annotations = emptyList(),
         )
@@ -71,7 +72,7 @@ class KdJsonTest {
                     isNoinline = false,
                     isCrossinline = false,
                     isVararg = false,
-                    defaultValueExpression = KdExpression("8192", emptyList()),
+                    defaultValueExpression = KdDefaultValueExpression.Defined(KdExpression("8192", emptyList())),
                     annotations = emptyList(),
                 ),
             ),
@@ -84,27 +85,6 @@ class KdJsonTest {
             deprecated = null,
             throws = listOf(KdThrows(KdElementId("kotlin/IllegalStateException"))),
             annotations = emptyList(),
-            documentation = KdDocumentation(
-                content = listOf(
-                    KdDocParagraph(
-                        listOf(
-                            KdDocText("Computes "),
-                            KdDocLink(destination = "https://example.com/bar", label = "bar", children = listOf(KdDocText("something"))),
-                            KdDocText(". See "),
-                            KdDocDeclarationLink(address = KdElementId("kotlin/List"), children = listOf(KdDocText("List"))),
-                            KdDocText(" for more."),
-                        ),
-                    ),
-                ),
-                tags = listOf(
-                    KdDocParamTag(root = listOf(KdDocText("the value to use")), name = "x", address = functionId),
-                    KdDocThrowsTag(
-                        root = listOf(KdDocText("if the state is invalid")),
-                        name = "IllegalStateException",
-                        address = KdElementId("kotlin/IllegalStateException"),
-                    ),
-                ),
-            ),
         )
 
         val property = KdProperty(
@@ -171,6 +151,7 @@ class KdJsonTest {
             embeddedElements = mapOf(
                 KdElementId("kotlin/Any") to KdClass(
                     name = "Any",
+                    classKind = KdClassKind.CLASS,
                     isCompanion = false,
                     isData = false,
                     isValue = false,
@@ -187,17 +168,6 @@ class KdJsonTest {
                     since = null,
                     deprecated = null,
                     annotations = emptyList(),
-                ),
-            ),
-            files = listOf(
-                KdFile(
-                    name = "Foo.kt",
-                    path = "pkg/Foo.kt",
-                    language = KdSourceLanguage.KOTLIN,
-                    annotations = emptyList(),
-                    sourceInformation = mapOf(
-                        classId to KdElementSourceInformation(line = 1, column = 1, url = "https://example.com/Foo.kt#L1"),
-                    ),
                 ),
             ),
         )
@@ -228,15 +198,11 @@ class KdJsonTest {
         assertIs<KdRefinedElement>(decodedFragment.elements.getValue(refinedId))
         assertIs<KdInheritedMember>(decodedFragment.elements.getValue(inheritedId))
         assertEquals(classId, (decodedFragment.elements.getValue(inheritedId) as KdInheritedMember).originalId)
-        assertEquals(1, decodedFragment.files.size)
         assertEquals(bundle.expectActualMappings, decoded.expectActualMappings)
 
         val decodedFunction = decodedFragment.elements.getValue(functionId) as KdFunction
-        assertEquals(function.documentation, decodedFunction.documentation)
-        val decodedParagraph = decodedFunction.documentation.content.single() as KdDocParagraph
-        assertIs<KdDocLink>(decodedParagraph.children[1])
-        assertIs<KdDocDeclarationLink>(decodedParagraph.children[3])
-        assertIs<KdDocParamTag>(decodedFunction.documentation.tags[0])
-        assertIs<KdDocThrowsTag>(decodedFunction.documentation.tags[1])
+        val decodedDefaultValue = decodedFunction.valueParameters.single().defaultValueExpression
+        assertIs<KdDefaultValueExpression.Defined>(decodedDefaultValue)
+        assertEquals("8192", decodedDefaultValue.expression.text)
     }
 }

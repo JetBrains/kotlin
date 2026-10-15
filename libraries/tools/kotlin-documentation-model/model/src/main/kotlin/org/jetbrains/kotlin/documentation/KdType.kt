@@ -63,6 +63,8 @@ data class KdClassLikeType(
     val qualifiers: List<KdClassTypeQualifier>,
     val classLikeId: KdElementId,
     val isMarkedNullable: Boolean,
+    /** Whether this type is a Java platform type enhanced to non-null by a nullability annotation. */
+    val isEnhancedNullability: Boolean = false,
     val annotations: List<KdAnnotation>,
 ) : KdType()
 

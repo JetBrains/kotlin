@@ -26,7 +26,7 @@ data class KdAnnotation(
 sealed class KdAnnotationArgumentValue {
     @Serializable
     @SerialName("const")
-    data class Const(val value: KdConstExpression) : KdAnnotationArgumentValue()
+    data class Const(val expression: KdConstExpression) : KdAnnotationArgumentValue()
 
     @Serializable
     @SerialName("enumEntry")

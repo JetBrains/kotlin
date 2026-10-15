@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.documentation
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
@@ -24,7 +25,10 @@ data class KdTypeParameter(
     val documentation: KdDocumentation = KdDocumentation.EMPTY,
 )
 
-/** An extension receiver parameter of a function or a property. Not a separate [KdElement], see [KdTypeParameter]. */
+/**
+ * An extension receiver parameter of a function or a property; also represents the pseudo-receiver
+ * of a companion object's extensions. Not a separate [KdElement], see [KdTypeParameter].
+ */
 @Serializable
 data class KdExtensionReceiverParameter(
     val type: KdType,
@@ -49,7 +53,23 @@ data class KdValueParameter(
     val isNoinline: Boolean,
     val isCrossinline: Boolean,
     val isVararg: Boolean,
-    val defaultValueExpression: KdExpression?,
+    val defaultValueExpression: KdDefaultValueExpression?,
     val annotations: List<KdAnnotation>,
     val documentation: KdDocumentation = KdDocumentation.EMPTY,
 )
+
+/**
+ * The default value of a [KdValueParameter]: either [Defined] with an explicit [KdExpression], or
+ * [Inherited] from an overridden/actual declaration whose default value may not be available
+ * during analysis (e.g. it comes from another module).
+ */
+@Serializable
+sealed class KdDefaultValueExpression {
+    @Serializable
+    @SerialName("defined")
+    data class Defined(val expression: KdExpression) : KdDefaultValueExpression()
+
+    @Serializable
+    @SerialName("inherited")
+    data class Inherited(val elementId: KdElementId) : KdDefaultValueExpression()
+}

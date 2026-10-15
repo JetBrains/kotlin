@@ -9,8 +9,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
- * A compile-time-known value, e.g. of a `const val`, an annotation argument, or a default
- * parameter value.
+ * A compile-time-known value, e.g., of a `const val` or an annotation argument.
  */
 @Serializable
 sealed class KdConstValue {
@@ -43,12 +42,24 @@ sealed class KdConstValue {
     data class Short(val value: kotlin.Short) : KdConstValue()
 
     @Serializable
+    @SerialName("ushort")
+    data class UShort(val value: kotlin.UShort) : KdConstValue()
+
+    @Serializable
     @SerialName("int")
     data class Int(val value: kotlin.Int) : KdConstValue()
 
     @Serializable
+    @SerialName("uint")
+    data class UInt(val value: kotlin.UInt) : KdConstValue()
+
+    @Serializable
     @SerialName("long")
     data class Long(val value: kotlin.Long) : KdConstValue()
+
+    @Serializable
+    @SerialName("ulong")
+    data class ULong(val value: kotlin.ULong) : KdConstValue()
 
     @Serializable
     @SerialName("float")

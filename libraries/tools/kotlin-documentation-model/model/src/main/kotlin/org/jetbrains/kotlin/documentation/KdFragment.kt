@@ -32,8 +32,6 @@ data class KdFragment(
      * KDoc links), not to be rendered on their own.
      */
     val embeddedElements: Map<KdElementId, KdElement>,
-    /** Source files of elements declared in this fragment. */
-    val files: List<KdFile> = emptyList(),
 )
 
 /**
@@ -45,7 +43,7 @@ data class KdFragment(
 @SerialName("refinedElement")
 data class KdRefinedElement(
     val fragmentName: KdFragmentName,
-) : KdElement
+) : KdElement()
 
 /**
  * A de-duplicated [KdElement] representing an inherited member that was not explicitly
@@ -55,4 +53,4 @@ data class KdRefinedElement(
 @SerialName("inheritedMember")
 data class KdInheritedMember(
     val originalId: KdElementId,
-) : KdElement
+) : KdElement()

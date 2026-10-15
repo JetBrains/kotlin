@@ -14,13 +14,7 @@ import kotlin.test.fail
 private val overwriteExpectedOutput = System.getProperty("kdm.test.overwrite")?.toBoolean() ?: false // use -Dkdm.test.overwrite=true
 
 class KdJsonSchemaTest {
-    // `classDiscriminator` is aligned with the `kind` discriminator [KdJson] actually uses, so the generated
-    // schema reflects the real wire format. `classDiscriminatorMode` is left at its default (`POLYMORPHIC`):
-    // `ALL_JSON_OBJECTS` breaks encoding of kotlinx.schema's own `JsonSchema` model, which this same `Json`
-    // instance is also used to serialize.
     private val schemaJson = Json {
-        encodeDefaults = false
-        classDiscriminator = "kind"
         prettyPrint = true
     }
 

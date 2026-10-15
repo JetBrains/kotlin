@@ -13,6 +13,7 @@ dependencies {
     api(libs.kotlinx.serialization.json)
 
     testImplementation(kotlinTest("junit5"))
+    testImplementation(kotlin("reflect"))
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
@@ -25,8 +26,7 @@ projectTests {
     testData(project.isolated, "src/test/resources")
 
     // kotlinx-schema-generator-json (used by KdJsonSchemaTest) ships JDK 17 bytecode; testTask() defaults to a
-    // JDK 17 launcher, unlike the plain `test` task registered by the `java`/`kotlin("jvm")` plugins, which runs
-    // on the project's JDK 8 toolchain.
+    // JDK 17 launcher.
     testTask {
         systemProperty(
             "kdm.test.overwrite",

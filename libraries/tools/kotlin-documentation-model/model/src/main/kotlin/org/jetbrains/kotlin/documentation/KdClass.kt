@@ -8,17 +8,13 @@ package org.jetbrains.kotlin.documentation
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-/**
- * A class, interface, object, enum class, annotation class, or Java record.
- *
- * Whether this is, e.g., a `class` or an `interface` is not (yet) tracked by a dedicated
- * property, only by the `kind` discriminator used during JSON serialization; see the "class
- * likes" kinds in the KDM spec. Splitting this model per such sub-kind is an open question.
- */
+/** A class, interface, object, enum class, annotation class, or Java record; see [classKind]. */
 @Serializable
 @SerialName("class")
 data class KdClass(
     val name: String,
+
+    val classKind: KdClassKind,
 
     val isCompanion: Boolean,
     val isData: Boolean,
@@ -44,4 +40,8 @@ data class KdClass(
     val deprecated: KdDeprecated?,
     val annotations: List<KdAnnotation>,
     val documentation: KdDocumentation = KdDocumentation.EMPTY,
-) : KdElement
+) : KdElement()
+
+/** The specific kind of a [KdClass]. */
+@Serializable
+enum class KdClassKind { CLASS, INTERFACE, OBJECT, ENUM_CLASS, ANNOTATION_CLASS, RECORD }

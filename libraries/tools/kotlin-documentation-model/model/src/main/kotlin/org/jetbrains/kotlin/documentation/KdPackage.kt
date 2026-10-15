@@ -22,4 +22,4 @@ data class KdPackage(
     /** Java-only, for now. */
     val annotations: List<KdAnnotation>,
     val documentation: KdDocumentation = KdDocumentation.EMPTY,
-) : KdElement
+) : KdElement()
