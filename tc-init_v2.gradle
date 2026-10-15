@@ -248,7 +248,8 @@ class ProjectExtraPropertiesExtender implements ProjectEvaluationListener {
     }
 
     private static boolean doNotPopulateGradleProperties() {
-        return Boolean.valueOf(System.getenv(Constants.DO_NOT_POPULATE_GRADLE_PROPERTIES_ENV_VAR))
+        return Boolean.valueOf(System.getenv(Constants.DO_NOT_POPULATE_GRADLE_PROPERTIES_ENV_VAR)) ||
+                Boolean.valueOf(System.getProperty("teamcity.internal.gradle.runner.doNotPopulateGradleProperties"))
     }
 
     private static Properties getPropertiesFromFile(Logger logger) {
