@@ -218,6 +218,11 @@ fun List<ChangeInfo>.getChangedAndImpactedSymbols(
             }
         }
     }
+    reporter.reportProcessedChanges(
+        dirtyLookupSymbols.map { Pair(it.scope, it.name) },
+        dirtyClassesFqNames.map { it.asString() },
+        sealedParents.map { it.asString() }
+    )
     return DirtyData(dirtyLookupSymbols, dirtyClassesFqNames, sealedParents)
 }
 
