@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-67221
 // LANGUAGE: -ImprovedCapturedTypeApproximationInInference
 // FILE: simple.kt
@@ -28,7 +28,7 @@ class Widget<B : DataSub<C>, C>(val data: B)
 class WidgetWrapper<D : Data<E>, E>(val data: D)
 
 fun foo(w: Widget<*, *>) {
-    <!TYPE_MISMATCH("Data<CapturedType(*)>; DataSub<out Any?>")!><!UPPER_BOUND_VIOLATED!>WidgetWrapper<!>(data = w.data)<!>
+    WidgetWrapper(data = w.data)
 }
 
 /* GENERATED_FIR_TAGS: capturedType, classDeclaration, functionDeclaration, nullableType, outProjection,
