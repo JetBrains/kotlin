@@ -176,4 +176,4 @@ val allDomainInfos: List<DomainInfo> by lazy {
     )
 }
 
-val ignores = listOf<String>("tests/mute-common.csv", "*.md", "docs", ".ai", ".claude", ".junie", "**/ReadMe.md", "**/README.md", "!license/README.md", "!**/resources/**")
+val ignores = listOf<String>("tests/mute-common.csv")

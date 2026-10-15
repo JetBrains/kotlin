@@ -254,12 +254,4 @@ Unknown:
 #   Rules starting with '!' re-include paths matched by a previous rule. They have to be declared after the rule they negate.
 ignore:
   - "tests/mute-common.csv"
-  - "*.md"
-  - "docs"
-  - ".ai"
-  - ".claude"
-  - ".junie"
-  - "**/ReadMe.md"
-  - "**/README.md"
-  - "!license/README.md"
-  - "!**/resources/**"
+
