@@ -1,6 +1,4 @@
 // ISSUE: KT-90169
-// Expected failure before the fix for KT-90169: "FAIL Java Function: 1"
-// IGNORE_BACKEND: ANY
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
 // FULL_JDK

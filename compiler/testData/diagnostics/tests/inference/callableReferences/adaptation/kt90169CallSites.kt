@@ -19,17 +19,17 @@ fun <T> applyF(t: T, f: F<T>): Int = f.f(t)
 fun <E> countG(vararg xs: E): Int = xs.size
 
 fun main(arr: Array<String>, n: Array<String>?) {
-    applyIt<Array<String>>(arr, <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.Array<kotlin.String>) -> kotlin.Int")!>::countG<!>)
-    arr.let(<!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.Array<kotlin.String>) -> kotlin.Int")!>::countG<!>)
-    n?.let(<!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.Array<kotlin.String>) -> kotlin.Int")!>::countG<!>)
-    with(arr, <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.Array<kotlin.String>) -> kotlin.Int")!>::countG<!>)
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.List<kotlin.Int>")!>listOf(arr).map(<!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.Array<kotlin.String>) -> kotlin.Int")!>::countG<!>)<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.List<kotlin.Array<kotlin.String>>")!>listOf(arr).flatMap(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction1<@ParameterName(...) kotlin.Array<kotlin.String>, kotlin.collections.List<kotlin.Array<kotlin.String>>>")!>::listOf<!>)<!>
+    applyIt<Array<String>>(arr, <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction1<@ParameterName(...) kotlin.Array<out kotlin.String>, kotlin.Int>")!>::countG<!>)
+    arr.let(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction1<@ParameterName(...) kotlin.Array<out kotlin.String>, kotlin.Int>")!>::countG<!>)
+    n?.let(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction1<@ParameterName(...) kotlin.Array<out kotlin.String>, kotlin.Int>")!>::countG<!>)
+    with(arr, <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction1<@ParameterName(...) kotlin.Array<out kotlin.String>, kotlin.Int>")!>::countG<!>)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.List<kotlin.Int>")!>listOf(arr).map(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction1<@ParameterName(...) kotlin.Array<out kotlin.String>, kotlin.Int>")!>::countG<!>)<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.List<kotlin.String>")!>listOf(arr).flatMap(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction1<@ParameterName(...) kotlin.Array<out kotlin.String>, kotlin.collections.List<kotlin.String>>")!>::listOf<!>)<!>
 
-    applyRev(<!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.Array<kotlin.String>) -> kotlin.Int")!>::countG<!>, arr)
-    applyNN(arr, <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.Array<kotlin.String>) -> kotlin.Int")!>::countG<!>)
+    applyRev(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction1<@ParameterName(...) kotlin.Array<out kotlin.String>, kotlin.Int>")!>::countG<!>, arr)
+    applyNN(arr, <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction1<@ParameterName(...) kotlin.Array<out kotlin.String>, kotlin.Int>")!>::countG<!>)
     applyJ(arr, <!DEBUG_INFO_EXPRESSION_TYPE("((kotlin.Array<kotlin.String>..kotlin.Array<kotlin.String>?)) -> kotlin.Int")!>::countG<!>)
-    applyF(arr, <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.Array<kotlin.String>) -> kotlin.Int")!>::countG<!>)
+    applyF(arr, <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction1<@ParameterName(...) kotlin.Array<out kotlin.String>, kotlin.Int>")!>::countG<!>)
 }
 
 /* GENERATED_FIR_TAGS: callableReference, flexibleType, funInterface, functionDeclaration, functionalType,
