@@ -96,10 +96,7 @@ private fun transformMetadataLibrariesForBuild(
         resolution.visibleSourceSetNamesExcludingDependsOn.mapNotNull { visibleSourceSetName ->
             val sourceSetContent = artifactContent.findSourceSet(visibleSourceSetName) ?: return@mapNotNull null
             val metadataBinary = sourceSetContent.metadataBinary ?: return@mapNotNull null
-            val metadataLibraryFile = outputDirectory.resolve(metadataBinary.relativeFile)
-            check(outputDirectory.isParentOf(metadataLibraryFile)) {
-                "$metadataLibraryFile is not a child of $outputDirectory; Check content of ${resolution.dependency} dependency."
-            }
+            val metadataLibraryFile = outputDirectory.resolveInside(metadataBinary.relativeFile)
             if (materializeFiles) {
                 metadataLibraryFile.parentFile?.mkdirs()
                 metadataBinary.copyTo(metadataLibraryFile)

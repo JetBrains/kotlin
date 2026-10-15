@@ -218,7 +218,7 @@ internal abstract class GenerateSPMPackageFromSwiftExport @Inject constructor(
             createSource(packageModule, packageTargets, swiftModulePath, SwiftPackageSourceLanguage.SWIFT) { it.swiftApiFile }
 
             if (module is GradleSwiftExportModule.BridgesToKotlin) {
-                val bridgeModulePath = sourcesPath.getFile().resolve(ensurePathSafeString(module.bridgeName)).apply { createDirectory() }
+                val bridgeModulePath = sourcesPath.getFile().resolveInside(ensurePathSafeString(module.bridgeName)).apply { createDirectory() }
                 val includePath = bridgeModulePath.resolve("include")
 
                 createSource(packageModule, packageTargets, includePath, SwiftPackageSourceLanguage.C_HEADER) { it.bridgeHeaderFile }
