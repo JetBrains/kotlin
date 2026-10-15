@@ -78,6 +78,7 @@ internal class ES6PrimaryConstructorOptimizationLowering(private val context: Js
             constructor.copyFunctionSignatureFrom(original)
             constructor.parameters = nonDispatchParameters
             constructor.parent = irClass
+            constructor.effects = original.effects
 
             if (irClass.isExported(backendContext)) {
                 constructor.annotations = original.annotations.withoutFirst {
