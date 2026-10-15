@@ -3,6 +3,16 @@ plugins {
     id 'java-gradle-plugin'
 }
 
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+tasks.withType(GroovyCompile).configureEach {
+    sourceCompatibility = '1.8'
+    targetCompatibility = '1.8'
+}
+
 repositories {
     mavenCentral()
 }
