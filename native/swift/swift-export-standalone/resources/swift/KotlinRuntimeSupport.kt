@@ -299,3 +299,34 @@ public fun MutableList_set(self: kotlin.native.internal.NativePtr, index: Int, e
     val _result = __self.set(index, __element)
     return if (_result == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
+
+@ExportedBridge("_kotlin_swift_List_subList")
+public fun List_subList(self: kotlin.native.internal.NativePtr, fromIndex: Int, toIndex: Int): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.collections.List<kotlin.Any?>
+    val _result = __self.subList(fromIndex, toIndex)
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+private class ReadonlyList<T>(list: List<T>): List<T> by list
+
+@ExportedBridge("_kotlin_swift_SubList_set")
+public fun SubList_set(self: kotlin.native.internal.NativePtr, index: Int, element: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.collections.List<kotlin.Any?>
+    val __element = if (element == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(element) as kotlin.Any
+    val mutableList = if (__self is MutableList) __self else __self.toMutableList()
+    mutableList.set(index, __element)
+    val subList = if (__self is MutableList) __self else ReadonlyList(mutableList)
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(subList)
+}
+
+@ExportedBridge("_kotlin_swift_SubList_setAll")
+public fun SubList_setAll(self: kotlin.native.internal.NativePtr, index: Int, elements: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.collections.List<kotlin.Any?>
+    val __elements = kotlin.native.internal.ref.dereferenceExternalRCRef(elements) as kotlin.collections.List<kotlin.Any?>
+    val mutableList = if (__self is MutableList) __self else __self.toMutableList()
+    __elements.forEachIndexed { i, element ->
+        mutableList.set(index + i, element)
+    }
+    val subList = if (__self is MutableList) __self else ReadonlyList(mutableList)
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(subList)
+}
