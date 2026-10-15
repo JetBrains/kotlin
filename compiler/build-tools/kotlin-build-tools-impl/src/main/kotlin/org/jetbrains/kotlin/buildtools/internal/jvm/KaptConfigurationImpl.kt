@@ -5,14 +5,14 @@
 
 package org.jetbrains.kotlin.buildtools.internal.jvm
 
-import org.jetbrains.kotlin.buildtools.api.arguments.CompilerPlugin
-import org.jetbrains.kotlin.buildtools.api.arguments.CompilerPluginOption
 import org.jetbrains.kotlin.buildtools.api.jvm.KaptConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.KaptDetectMemoryLeaksMode
 import org.jetbrains.kotlin.buildtools.internal.BaseOptionWithDefault
 import org.jetbrains.kotlin.buildtools.internal.DeepCopyable
 import org.jetbrains.kotlin.buildtools.internal.Options
 import org.jetbrains.kotlin.buildtools.internal.UseFromImplModuleRestricted
+import org.jetbrains.kotlin.buildtools.internal.arguments.CompilerPluginImpl
+import org.jetbrains.kotlin.buildtools.internal.arguments.CompilerPluginOptionImpl
 import org.jetbrains.kotlin.buildtools.internal.arguments.absolutePathStringOrThrow
 import org.jetbrains.kotlin.buildtools.internal.initializeOptions
 import java.nio.file.Path
@@ -84,11 +84,11 @@ internal class KaptConfigurationImpl(
         return options[key]
     }
 
-    fun toCompilerPlugin(): CompilerPlugin {
+    fun toCompilerPlugin(): CompilerPluginImpl {
         val copy = deepCopy()
         copy[STUBS_OUTPUT_DIR] = stubsOutputDir
         copy[ANNOTATION_PROCESSOR_CLASSPATH] = annotationProcessorsClasspath
-        return CompilerPlugin(
+        return CompilerPluginImpl(
             PLUGIN_ID,
             classpath = kaptClasspath,
             rawArguments = copy.toCompilerPluginOptions(),
@@ -96,20 +96,20 @@ internal class KaptConfigurationImpl(
         )
     }
 
-    internal fun toCompilerPluginOptions(): List<CompilerPluginOption> {
-        val compilerPluginOptions = mutableListOf<CompilerPluginOption>()
+    internal fun toCompilerPluginOptions(): List<CompilerPluginOptionImpl> {
+        val compilerPluginOptions = mutableListOf<CompilerPluginOptionImpl>()
         val aptMode = when {
             hasAptPhase && hasStubsPhase -> "stubsAndApt"
             hasAptPhase -> "apt"
             hasStubsPhase -> "stubs"
             else -> error("At least one of apt or stubs phase required.")
         }
-        compilerPluginOptions.add(CompilerPluginOption("aptMode", aptMode))
+        compilerPluginOptions.add(CompilerPluginOptionImpl("aptMode", aptMode))
         options.iterator().toCompilerPluginOptions(compilerPluginOptions)
         return compilerPluginOptions
     }
 
-    fun Iterator<Map.Entry<String, Any?>>.toCompilerPluginOptions(compilerPluginOptions: MutableList<CompilerPluginOption> = mutableListOf()): List<CompilerPluginOption> {
+    fun Iterator<Map.Entry<String, Any?>>.toCompilerPluginOptions(compilerPluginOptions: MutableList<CompilerPluginOptionImpl> = mutableListOf()): List<CompilerPluginOptionImpl> {
         this.forEach { (key, value) ->
             value?.toCompilerPluginOptions(key, compilerPluginOptions)
         }
@@ -118,11 +118,11 @@ internal class KaptConfigurationImpl(
 
     fun Any.toCompilerPluginOptions(
         outerKey: String,
-        compilerPluginOptions: MutableList<CompilerPluginOption> = mutableListOf(),
-    ): List<CompilerPluginOption> {
+        compilerPluginOptions: MutableList<CompilerPluginOptionImpl> = mutableListOf(),
+    ): List<CompilerPluginOptionImpl> {
         when (this) {
             is Path -> compilerPluginOptions.add(
-                CompilerPluginOption(
+                CompilerPluginOptionImpl(
                     outerKey, this.absolutePathStringOrThrow()
                 )
             )
@@ -132,9 +132,9 @@ internal class KaptConfigurationImpl(
             is Map<*, *> -> this.forEach { (key, value) ->
                 require(key is String && value is String) { "Only Strings supported in key and values for map arguments for now" }
                 val keyValue = listOf(key, value).filter { it.isNotEmpty() }.joinToString("=")
-                compilerPluginOptions.add(CompilerPluginOption(outerKey, keyValue))
+                compilerPluginOptions.add(CompilerPluginOptionImpl(outerKey, keyValue))
             }
-            else -> compilerPluginOptions.add(CompilerPluginOption(outerKey, this.toString()))
+            else -> compilerPluginOptions.add(CompilerPluginOptionImpl(outerKey, this.toString()))
         }
         return compilerPluginOptions
     }

@@ -82,7 +82,7 @@ internal abstract class CommonKlibBasedArgumentsImpl(
   @UseFromImplModuleRestricted
   override operator fun <V> `get`(key: CommonKlibBasedArguments.CommonKlibBasedArgument<V>): V {
     check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
-    return this[key.id] as V
+    return CommonKlibBasedArgumentValueAdapter.toApi(this[key.id]) as V
   }
 
   @UseFromImplModuleRestricted
@@ -90,14 +90,14 @@ internal abstract class CommonKlibBasedArgumentsImpl(
     if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 20)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
-    this[key.id] = `value`
+    this[key.id] = CommonKlibBasedArgumentValueAdapter.toImpl(value)
   }
 
   @Suppress("UNCHECKED_CAST")
   @UseFromImplModuleRestricted
   override operator fun <V> `get`(key: CommonKlibBasedArgumentsKlibArguments.CommonKlibBasedArgumentsKlibArgument<V>): V {
     check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
-    return this[key.id] as V
+    return CommonKlibBasedArgumentValueAdapter.toApi(this[key.id]) as V
   }
 
   @UseFromImplModuleRestricted
@@ -105,14 +105,14 @@ internal abstract class CommonKlibBasedArgumentsImpl(
     if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 20)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
-    this[key.id] = `value`
+    this[key.id] = CommonKlibBasedArgumentValueAdapter.toImpl(value)
   }
 
   @Suppress("UNCHECKED_CAST")
   @UseFromImplModuleRestricted
   override operator fun <V> `get`(key: CommonKlibBasedArgumentsLinkingArguments.CommonKlibBasedArgumentsLinkingArgument<V>): V {
     check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
-    return this[key.id] as V
+    return CommonKlibBasedArgumentValueAdapter.toApi(this[key.id]) as V
   }
 
   @UseFromImplModuleRestricted
@@ -120,7 +120,7 @@ internal abstract class CommonKlibBasedArgumentsImpl(
     if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 20)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
-    this[key.id] = `value`
+    this[key.id] = CommonKlibBasedArgumentValueAdapter.toImpl(value)
   }
 
   abstract override fun build(): CommonKlibBasedArgumentsImpl

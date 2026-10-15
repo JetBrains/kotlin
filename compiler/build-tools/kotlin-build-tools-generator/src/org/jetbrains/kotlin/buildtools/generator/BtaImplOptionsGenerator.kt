@@ -105,7 +105,6 @@ internal class BtaImplOptionsGenerator(
                 val toCompilerConverterFun = toCompilerConverterFunBuilder(level, parentClass)
                 val toCompilerArgumentsAffectingOutcomeFun = toCompilerArgumentsAffectingOutcomeFunBuilder(level, parentClass)
                 val applyCompilerArgumentsFun = applyCompilerArgumentsFunBuilder(level, parentClass)
-                val defaultsInitializer = CodeBlock.builder()
 
                 val argumentTypeNameString =
                     generateArgumentType(apiClassName, includeSinceVersion = false, registerAsKnownArgument = true)
@@ -119,12 +118,12 @@ internal class BtaImplOptionsGenerator(
 
                 if (syntheticInterfaces.isEmpty()) {
                     val argumentTypeName = ClassName(API_ARGUMENTS_PACKAGE, apiClassName, argumentTypeNameString)
-                    generateGetPutFunctions(argumentTypeName, level)
+                    generateGetPutFunctions(argumentTypeName, level, adapterClassName)
                 } else {
                     syntheticInterfaces.forEach { syntheticInterface ->
                         val argumentTypeName =
                             ClassName(API_ARGUMENTS_PACKAGE, syntheticInterface.name, syntheticInterface.name.removeSuffix("s"))
-                        generateGetPutFunctions(argumentTypeName, level)
+                        generateGetPutFunctions(argumentTypeName, level, adapterClassName)
                     }
                 }
                 var mirroredEnums: Set<KClass<*>> = emptySet()
@@ -147,10 +146,11 @@ internal class BtaImplOptionsGenerator(
                     )
                 }.build())
 
-                outputs += generateValueAdapterFile(adapterClassName, mirroredEnums)
-
-                // Initialize default values for custom arguments
-                defaultsInitializer.build().takeIf { it.isNotEmpty() }?.let { addInitializerBlock(it) }
+                outputs += generateValueAdapterFile(
+                    adapterClassName,
+                    mirroredEnums,
+                    level.transformImplArguments().filterIsInstance<BtaCompilerArgument.CustomCompilerArgument>()
+                )
 
                 if (level.isLeaf()) {
                     function("deepCopy") {
@@ -233,6 +233,7 @@ internal class BtaImplOptionsGenerator(
     private fun generateValueAdapterFile(
         adapterClassName: ClassName,
         mirroredEnums: Set<KClass<*>>,
+        customArguments: List<BtaCompilerArgument.CustomCompilerArgument>,
     ): Pair<Path, String> {
         fun conversionFun(toApi: Boolean): FunSpec {
             val name = if (toApi) "toApi" else "toImpl"
@@ -241,9 +242,8 @@ internal class BtaImplOptionsGenerator(
                 addParameter("value", ANY.copy(nullable = true))
                 beginControlFlow("return when (value)")
                 addStatement(
-                    "is %T if value.firstOrNull() is %T -> value.map { %N(it) }",
+                    "is %T -> value.map { %N(it) }",
                     LIST.parameterizedBy(STAR),
-                    ClassName("kotlin", "Enum").parameterizedBy(STAR),
                     name,
                 )
                 mirroredEnums.forEach { enumType ->
@@ -253,6 +253,18 @@ internal class BtaImplOptionsGenerator(
                     val targetType = if (toApi) apiType else implEnumType
                     val converter = if (toApi) "toApiEnum" else "toImplEnum"
                     addStatement("is %T -> value.%N<%T>()", sourceType, converter, targetType)
+                }
+                customArguments.forEach { it: BtaCompilerArgument.CustomCompilerArgument ->
+                    val apiType = when (val type = it.valueType.type) {
+                        is ParameterizedTypeName if type.rawType == ClassName("kotlin.collections", "List") -> {
+                            type.typeArguments.single() as ClassName
+                        }
+                        else -> type
+                    }.copy(nullable = false)
+                    val implType = getCustomParametersImplType(apiType).copy(nullable = false)
+                    val sourceType = if (toApi) implType else apiType
+                    val converter = if (toApi) "toApi" else "toImpl"
+                    addStatement("is %T -> value.%N()", sourceType, converter)
                 }
                 addStatement("else -> value")
                 endControlFlow()
@@ -356,8 +368,8 @@ internal class BtaImplOptionsGenerator(
             val wasIntroducedRecently = (argument.introducedSinceVersion > getOldestSupportedVersion(kotlinVersion))
 
             // generate impl mirror of arguments
-            val argumentTypeParameter = when (argument.valueType) {
-                is BtaCompilerArgumentValueType.SSoTCompilerArgumentValueType -> {
+            val argumentTypeParameter = when (argument) {
+                is BtaCompilerArgument.SSoTCompilerArgument -> {
                     val type = argument.valueType.kType
                     val classifier = type.classifier as? KClass<*> ?: error("Type is not a KClass: $type")
                     when {
@@ -372,7 +384,9 @@ internal class BtaImplOptionsGenerator(
                         }
                     }
                 }
-                is BtaCompilerArgumentValueType.CustomArgumentValueType -> argument.valueType.type
+                is BtaCompilerArgument.CustomCompilerArgument -> argument.valueType.type.let { type ->
+                    getCustomParametersImplType(type)
+                }
             }.copy(nullable = argument.valueType.isNullable)
 
             property(name, argumentTypeName.parameterizedBy(argumentTypeParameter)) {
@@ -796,7 +810,11 @@ internal class BtaImplOptionsGenerator(
         }
     }
 
-    fun TypeSpec.Builder.generateGetPutFunctions(parameter: ClassName, level: KotlinCompilerArgumentsLevel) {
+    fun TypeSpec.Builder.generateGetPutFunctions(
+        parameter: ClassName,
+        level: KotlinCompilerArgumentsLevel,
+        adapterClassName: ClassName,
+    ) {
         function("get") {
             val typeParameter = TypeVariableName("V")
             annotation<Suppress> {
@@ -810,7 +828,7 @@ internal class BtaImplOptionsGenerator(
             addTypeVariable(typeParameter)
             addParameter("key", parameter.parameterizedBy(typeParameter))
             addStatement($$"check(key.id in optionsMap) { \"Argument ${key.id} is not set and has no default value\" }")
-            addStatement("return this[key.id] as %T", typeParameter)
+            addStatement("return %T.toApi(this[key.id]) as %T", adapterClassName, typeParameter)
         }
         function("set") {
             if (targetPackage == IMPL_ARGUMENTS_PACKAGE) {
@@ -850,7 +868,7 @@ internal class BtaImplOptionsGenerator(
                     .endControlFlow()
                     .build()
             )
-            addStatement("this[key.id] = %N", "value")
+            addStatement("this[key.id] = %T.toImpl(value)", adapterClassName)
         }
 
         if (levelsSince[level.name] == KDOC_SINCE_2_3_0) {
@@ -1032,6 +1050,20 @@ internal class BtaImplOptionsGenerator(
         }
         return this is ParameterizedTypeName && this.rawType == List::class.asTypeName() && this.typeArguments[0].isGeneratedEnum
     }
+}
+
+private fun getCustomParametersImplType(type: TypeName): TypeName = when (type) {
+    is ParameterizedTypeName if type.rawType == ClassName("kotlin.collections", "List") -> {
+        val innerType = type.typeArguments.single() as ClassName
+        listTypeNameOf(
+            ClassName(
+                innerType.packageName.replace(".api.arguments", ".internal.arguments"),
+                innerType.simpleName + "Impl"
+            ).copy(nullable = innerType.isNullable)
+        )
+    }
+    is ClassName -> ClassName(type.packageName.replace(".api.arguments", ".internal.arguments"), type.simpleName + "Impl")
+    else -> type
 }
 
 
