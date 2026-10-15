@@ -18,6 +18,7 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.work.DisableCachingByDefault
+import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.plugin.mpp.EMPTY_PROJECT_STRUCTURE_METADATA_FILE_NAME
 import org.jetbrains.kotlin.gradle.plugin.mpp.MULTIPLATFORM_PROJECT_METADATA_JSON_FILE_NAME
 import javax.inject.Inject
@@ -37,6 +38,7 @@ abstract class ProjectStructureMetadataTransformAction : TransformAction<Project
     abstract val fileSystemOperations: FileSystemOperations
 
     @get:InputArtifact
+    @get:NormalizeLineEndings
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val inputArtifact: Provider<FileSystemLocation>
 
