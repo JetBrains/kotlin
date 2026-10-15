@@ -1450,5 +1450,11 @@ public class SymbolLightClassesByFqNameForLibraryTestGenerated extends AbstractS
     public void testCompanionWithFoo_companionTypeUsedInJava_ReferenceFromKotlin() {
       run("companionWithFoo_companionTypeUsedInJava_ReferenceFromKotlin.kt");
     }
+
+    @Test
+    @TestMetadata("defaultImplsWithGeneratedSupertype.kt")
+    public void testDefaultImplsWithGeneratedSupertype() {
+      run("defaultImplsWithGeneratedSupertype.kt");
+    }
   }
 }
