@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.incremental.dirtyFiles
 
 import org.jetbrains.kotlin.build.report.BuildReporter
+import org.jetbrains.kotlin.build.report.events.ScopeExpansionReason
 import org.jetbrains.kotlin.build.report.info
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.build.report.metrics.measure
@@ -71,10 +72,10 @@ internal class JvmSourcesToCompileCalculator(
             getRemovedClassesChanges(caches, changedFiles, kotlinSourceFilesExtensions, reporter)
         }
 
-        dirtyFiles.addByDirtySymbols(androidLayoutChanges)
-        dirtyFiles.addByDirtySymbols(removedClassesChanges.dirtyLookupSymbols)
-        dirtyFiles.addByDirtyClasses(removedClassesChanges.dirtyClassesFqNames)
-        dirtyFiles.addByDirtyClasses(removedClassesChanges.dirtyClassesFqNamesForceRecompile)
+        dirtyFiles.addByDirtySymbols(androidLayoutChanges, ScopeExpansionReason.ANDROID_LAYOUT_USED)
+        dirtyFiles.addByDirtySymbols(removedClassesChanges.dirtyLookupSymbols, ScopeExpansionReason.REMOVED_CLASS_USED)
+        dirtyFiles.addByDirtyClasses(removedClassesChanges.dirtyClassesFqNames, ScopeExpansionReason.REMOVED_CLASS_SUPERTYPE)
+        dirtyFiles.addByDirtyClasses(removedClassesChanges.dirtyClassesFqNamesForceRecompile, ScopeExpansionReason.REMOVED_CLASS_SUPERTYPE)
         return CompilationMode.Incremental(dirtyFiles)
     }
 
