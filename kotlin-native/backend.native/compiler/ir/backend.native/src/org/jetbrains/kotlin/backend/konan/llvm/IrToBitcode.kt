@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterCodegen
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterExportedElements
 import org.jetbrains.kotlin.backend.konan.cgen.CBridgeOrigin
+import org.jetbrains.kotlin.backend.konan.facts.Fact
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.llvm.objc.emitBindClassToObjCNameAdaptersFromCaches
 import org.jetbrains.kotlin.backend.konan.llvm.objc.processBindClassToObjCNameAnnotations
@@ -2163,6 +2164,11 @@ internal class CodeGeneratorVisitor(
         context.log{"evaluateCall                   : ${ir2string(value)}"}
 
         intrinsicGenerator.tryEvaluateSpecialCall(value, resultSlot)?.let { return it }
+
+        val callSiteFile = (currentCodeContext.functionScope() as FunctionScope).declaration?.fileOrNull
+        if (callSiteFile != null && value.symbol.signature != null && value.symbol.owner.fileOrNull != null) {
+            generationState.context.factsTracker.uses(callSiteFile, Fact.Signature.from(value.symbol.owner))
+        }
 
         val args = evaluateExplicitArgs(value)
 

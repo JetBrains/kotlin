@@ -141,6 +141,11 @@ object BinaryOptions : BinaryOptionRegistry() {
     val runLLVMPassesInCompiler by booleanOption()
 
     val enableReleaseBinaryCache by booleanOption()
+
+    /**
+     * Debug-only: path to a file where the facts tracked by the compiler's `FactsTracker` are appended.
+     */
+    val dumpFactsTo by stringOption()
 }
 
 open class BinaryOption<T : Any>(

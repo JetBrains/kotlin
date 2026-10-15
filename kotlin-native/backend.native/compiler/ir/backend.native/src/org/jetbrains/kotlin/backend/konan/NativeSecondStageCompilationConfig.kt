@@ -315,6 +315,13 @@ class NativeSecondStageCompilationConfig(
         configuration.get(BinaryOptions.dumpObjcSelectorToSignatureMapping)
     }
 
+    /**
+     * Debug-only: path to a file where tracked facts are appended (see [org.jetbrains.kotlin.backend.konan.facts.FactsTracker]).
+     */
+    val dumpFactsTo: String? by lazy {
+        configuration.get(BinaryOptions.dumpFactsTo)
+    }
+
     val enableSafepointSignposts: Boolean = configuration.get(BinaryOptions.enableSafepointSignposts)?.also {
         if (it && !target.supportsSignposts) {
             configuration.report(CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING, "Signposts are not available on $target. The setting will have no effect.")

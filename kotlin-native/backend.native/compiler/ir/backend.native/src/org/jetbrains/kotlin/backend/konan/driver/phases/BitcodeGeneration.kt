@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.driver.utilities.getDefaultIrActions
 import org.jetbrains.kotlin.backend.konan.driver.utilities.getDefaultLlvmModuleActions
+import org.jetbrains.kotlin.backend.konan.facts.DebugFactsSerializer
+import org.jetbrains.kotlin.backend.konan.facts.serializeTo
 import org.jetbrains.kotlin.backend.konan.llvm.CodeGeneratorVisitor
 import org.jetbrains.kotlin.backend.konan.llvm.Lifetime
 import org.jetbrains.kotlin.backend.konan.llvm.RTTIGeneratorVisitor
@@ -21,6 +23,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import kotlin.io.path.Path
 
 internal val CreateLLVMDeclarationsPhase = createSimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment>(
         name = "CreateLLVMDeclarations",
@@ -76,5 +79,11 @@ internal val CodegenPhase = createSimpleNamedCompilerPhase<NativeGenerationState
 
             if (generationState.hasDebugInfo())
                 DIFinalize(generationState.debugInfo.builder)
+
+            // Uses are recorded during codegen, so dump the facts only after it.
+            generationState.config.dumpFactsTo?.let {
+                val factsTracker = context.factsTracker
+                DebugFactsSerializer.serializeTo(Path(it), factsTracker.definedFacts, factsTracker.usedFacts)
+            }
         }
 )

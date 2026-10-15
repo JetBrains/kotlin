@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.config.LoggingContext
 import org.jetbrains.kotlin.backend.common.linkage.partial.createPartialLinkageSupportForLowerings
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterExportedElements
 import org.jetbrains.kotlin.backend.konan.driver.BasicNativeBackendPhaseContext
+import org.jetbrains.kotlin.backend.konan.facts.FactsTrackerImpl
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.llvm.KonanMetadata
 import org.jetbrains.kotlin.backend.konan.lower.*
@@ -62,6 +63,8 @@ internal class NativeBackendContext(
     override val configuration get() = config.configuration
 
     override val irFactory: IrFactory = IrFactoryImpl
+
+    val factsTracker = FactsTrackerImpl()
 
     override val optimizeLoopsOverUnsignedArrays = true
 
