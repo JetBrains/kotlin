@@ -11,6 +11,7 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.*
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
+import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.SerializationTools
 import org.jetbrains.kotlin.gradle.utils.getFile
 import java.io.File
@@ -24,6 +25,7 @@ internal abstract class CopySwiftExportIntermediatesForConsumer @Inject construc
 ) : DefaultTask() {
 
     @get:InputFiles
+    @get:NormalizeLineEndings
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val includes: ConfigurableFileCollection
 
@@ -41,10 +43,12 @@ internal abstract class CopySwiftExportIntermediatesForConsumer @Inject construc
     )
 
     @get:InputFile
+    @get:NormalizeLineEndings
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val library: RegularFileProperty
 
     @get:InputFiles
+    @get:NormalizeLineEndings
     @get:PathSensitive(PathSensitivity.RELATIVE)
     val interfaces: ConfigurableFileCollection = objectFactory.fileCollection()
 
@@ -52,6 +56,7 @@ internal abstract class CopySwiftExportIntermediatesForConsumer @Inject construc
     val filterInterfacesToOwnModules: Property<Boolean> = objectFactory.property(Boolean::class.java).convention(false)
 
     @get:InputFile
+    @get:NormalizeLineEndings
     @get:Optional
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val swiftModulesFile: RegularFileProperty

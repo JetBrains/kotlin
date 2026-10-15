@@ -12,6 +12,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
+import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.utils.*
 import java.io.File
 
@@ -29,11 +30,13 @@ abstract class AbstractPodInstallTask : CocoapodsTask() {
     @get:Optional
     @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:InputFile
+    @get:NormalizeLineEndings
     abstract val podfile: Property<File?>
 
     @get:Optional
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
     @get:InputFile
+    @get:NormalizeLineEndings
     abstract val podExecutablePath: RegularFileProperty
 
     @get:Internal

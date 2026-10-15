@@ -14,6 +14,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
+import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeOutputKind
@@ -189,6 +190,7 @@ internal constructor(
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
     @get:IgnoreEmptyDirectories
     @get:InputFiles
+    @get:NormalizeLineEndings
     @get:SkipWhenEmpty
     protected val inputFrameworkFiles: Iterable<FileTree>
         get() = frameworks.map { objectFactory.fileTree().from(it.file) }
@@ -196,6 +198,7 @@ internal constructor(
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
     @get:IgnoreEmptyDirectories
     @get:InputFiles
+    @get:NormalizeLineEndings
     protected val inputDsymFiles: Iterable<FileTree>
         get() = frameworks.mapNotNull { framework ->
             framework.files.dSYM.takeIf {

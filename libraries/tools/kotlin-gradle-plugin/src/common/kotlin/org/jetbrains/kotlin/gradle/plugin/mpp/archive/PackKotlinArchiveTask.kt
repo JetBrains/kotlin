@@ -17,6 +17,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
+import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_ALLOW_INCOMPLETE_KOTLIN_ARCHIVE_PUBLICATION
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnostics
@@ -33,6 +34,7 @@ internal class KotlinArchiveEntry(
     @get:Input
     val pathPrefix: Provider<String>,
     @get:InputFiles
+    @get:NormalizeLineEndings
     @get:PathSensitive(PathSensitivity.RELATIVE)
     val files: FileCollection,
     @get:Input
@@ -51,6 +53,7 @@ internal class KotlinArchiveTargetCrossCompilationCheckData(
      * from [crossCompilationData].
      */
     @get:InputFiles
+    @get:NormalizeLineEndings
     @get:PathSensitive(PathSensitivity.NONE)
     val crossCompilationMetadata: FileCollection = crossCompilationData.files
 }
@@ -88,6 +91,7 @@ internal abstract class AssembleKotlinArchiveTask @Inject constructor(
     }
 
     @get:InputFile
+    @get:NormalizeLineEndings
     @get:PathSensitive(PathSensitivity.NONE)
     abstract val projectStructureMetadataFile: RegularFileProperty
 
@@ -98,6 +102,7 @@ internal abstract class AssembleKotlinArchiveTask @Inject constructor(
      */
     @get:Optional
     @get:InputFile
+    @get:NormalizeLineEndings
     @get:PathSensitive(PathSensitivity.NONE)
     abstract val swiftExportMetadataFile: RegularFileProperty
 

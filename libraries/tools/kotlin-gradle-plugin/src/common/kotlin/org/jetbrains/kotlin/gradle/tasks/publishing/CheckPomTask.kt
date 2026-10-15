@@ -12,6 +12,7 @@ import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
+import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnostics
 import java.io.File
@@ -22,6 +23,7 @@ import javax.xml.xpath.XPathFactory
 @CacheableTask
 abstract class CheckPomTask internal constructor() : DefaultTask(), UsesKotlinToolingDiagnostics {
     @get:InputFile
+    @get:NormalizeLineEndings
     @get:PathSensitive(PathSensitivity.NONE)
     abstract val pom: Property<File>
 

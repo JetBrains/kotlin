@@ -15,6 +15,7 @@ import org.gradle.api.tasks.*
 import org.gradle.internal.extensions.core.serviceOf
 import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
+import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.dsl.KotlinNativeBinaryContainer
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
@@ -674,6 +675,7 @@ internal abstract class FrameworkCopy : DefaultTask() {
 
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
     @get:InputFiles
+    @get:NormalizeLineEndings
     @get:Optional
     @get:IgnoreEmptyDirectories
     abstract val sourceDsym: DirectoryProperty

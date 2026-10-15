@@ -16,6 +16,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.work.DisableCachingByDefault
+import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.ModuleMapGenerator
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.SerializationTools
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftImportFingerprintedCoordinationService
@@ -135,6 +136,7 @@ internal abstract class GenerateSPMPackageFromSwiftExport @Inject constructor(
         get() = swiftPMImportPackageRoot.locationOnly.map { it.asFile.absolutePath }
 
     @get:InputFile
+    @get:NormalizeLineEndings
     @get:Optional
     @get:PathSensitive(PathSensitivity.NONE)
     abstract val swiftPMImportFingerprint: RegularFileProperty

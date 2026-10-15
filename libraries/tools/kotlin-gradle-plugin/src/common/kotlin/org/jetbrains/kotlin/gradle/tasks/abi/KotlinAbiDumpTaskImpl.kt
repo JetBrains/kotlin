@@ -36,6 +36,7 @@ internal abstract class KotlinAbiDumpTaskImpl : AbiToolsTask(), UsesKotlinToolin
     abstract val dumpDir: DirectoryProperty
 
     @get:InputFiles // don't fail the task if the file does not exist https://github.com/gradle/gradle/issues/2016
+    @get:NormalizeLineEndings
     @get:Optional
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val referenceKlibDump: RegularFileProperty
@@ -180,6 +181,7 @@ internal abstract class KotlinAbiDumpTaskImpl : AbiToolsTask(), UsesKotlinToolin
         val canonicalName: String,
 
         @get:InputFiles
+        @get:NormalizeLineEndings
         @get:Optional
         @get:PathSensitive(PathSensitivity.RELATIVE)
         val klibFiles: FileCollection,

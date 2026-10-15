@@ -89,6 +89,7 @@ constructor(
     }
 
     @get:InputFile
+    @get:NormalizeLineEndings
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val testsEntryFile: RegularFileProperty
 
