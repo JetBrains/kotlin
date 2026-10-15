@@ -135,18 +135,19 @@ class JsGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolator(
             "Compiler settings: " + joinToString { directive ->
                 when (directive) {
                     is SimpleDirective -> directive.name
-                    is StringDirective -> "${directive.name}=${directives[directive]}"
-                    is ValueDirective<*> -> "${directive.name}=${directives[directive]}"
+                    is StringDirective -> "${directive.name}=${directives[directive].distinct()}"
+                    is ValueDirective<*> -> "${directive.name}=${directives[directive].distinct()}"
                 }
             }
         }
 
     private fun computeLanguageSettings(directives: RegisteredDirectives): String? {
-        val languageFeatures = directives[LanguageSettingsDirectives.LANGUAGE].sorted()
-        val optIns = directives[LanguageSettingsDirectives.OPT_IN].sorted()
-        val apiVersion = directives[LanguageSettingsDirectives.API_VERSION]
-        val languageVersion = directives[LanguageSettingsDirectives.LANGUAGE_VERSION]
-        val returnValueCheckerMode = directives[LanguageSettingsDirectives.RETURN_VALUE_CHECKER_MODE]
+        // `disctinct()` below is used to match directive lists for tests having different amount of modules, like `[+X]` vs `[+X, +X]`
+        val languageFeatures = directives[LanguageSettingsDirectives.LANGUAGE].distinct().sorted()
+        val optIns = directives[LanguageSettingsDirectives.OPT_IN].distinct().sorted()
+        val apiVersion = directives[LanguageSettingsDirectives.API_VERSION].distinct()
+        val languageVersion = directives[LanguageSettingsDirectives.LANGUAGE_VERSION].distinct()
+        val returnValueCheckerMode = directives[LanguageSettingsDirectives.RETURN_VALUE_CHECKER_MODE].distinct()
         val progressiveMode = LanguageSettingsDirectives.PROGRESSIVE_MODE in directives
 
         if (languageFeatures.isEmpty()
