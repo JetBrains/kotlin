@@ -61,7 +61,7 @@ fun getBuildReporter(
         (if (areBuildMetricsNeeded) BuildMetricsReporterImpl() else DoNothingBuildMetricsReporter)
             .let { RemoteBuildMetricsReporterAdapter(it, areBuildMetricsNeeded, compilationResults) }
 
-    return RemoteBuildReporter(CompositeICReporter(reporters), metricsReporter)
+    return RemoteBuildReporter(RemoteCompositeICReporter(reporters), metricsReporter)
 }
 
 internal fun ReportSeverity.getSeverity(
