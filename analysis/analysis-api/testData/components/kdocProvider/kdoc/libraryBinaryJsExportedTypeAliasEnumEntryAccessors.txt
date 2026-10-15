@@ -1,0 +1,68 @@
+----------/test(a: {lib.Alias=} kotlin.String): kotlin.Unit---------------------
+null
+
+----------a: {lib.Alias=} kotlin.String-----------------------------------------
+null
+
+<expr_alias>:
+----------lib/Alias-------------------------------------------------------------
+<primary tag="null" subject="null">
+Type alias KDoc.
+<section="null" subject="null">
+Type alias KDoc.
+
+<expr_entry>:
+----------lib/Color.RED---------------------------------------------------------
+<primary tag="null" subject="null">
+Enum entry KDoc.
+<section="null" subject="null">
+Enum entry KDoc.
+
+<expr_undocumentedEntry>:
+----------lib/Color.GREEN-------------------------------------------------------
+null
+
+<expr_prop>:
+----------var prop: kotlin.Int--------------------------------------------------
+<primary tag="null" subject="null">
+Property KDoc.
+<section="null" subject="null">
+Property KDoc.
+----------<getter>(): kotlin.Int------------------------------------------------
+<primary tag="null" subject="null">
+Getter KDoc.
+<section="null" subject="null">
+Getter KDoc.
+----------<setter>(value: kotlin.Int): kotlin.Unit------------------------------
+<primary tag="null" subject="null">
+Setter KDoc.
+<section="null" subject="null">
+Setter KDoc.
+
+<expr_defaultAccessors>:
+----------var defaultAccessors: kotlin.Int--------------------------------------
+null
+----------<getter>(): kotlin.Int------------------------------------------------
+null
+----------<setter>(value: kotlin.Int): kotlin.Unit------------------------------
+null
+
+<expr_bodylessAccessor>:
+----------val bodylessAccessor: kotlin.Int--------------------------------------
+null
+----------<getter>(): kotlin.Int------------------------------------------------
+<primary tag="null" subject="null">
+Bodyless getter KDoc.
+<section="null" subject="null">
+Bodyless getter KDoc.
+
+<expr_bodylessSetter>:
+----------var bodylessSetter: kotlin.Int----------------------------------------
+null
+----------<getter>(): kotlin.Int------------------------------------------------
+null
+----------<setter>(value: kotlin.Int): kotlin.Unit------------------------------
+<primary tag="null" subject="null">
+Bodyless setter KDoc.
+<section="null" subject="null">
+Bodyless setter KDoc.

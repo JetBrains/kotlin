@@ -21,8 +21,10 @@ import org.jetbrains.kotlin.library.components.metadata
 import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.library.metadata.parsePackageFragment
+import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
+import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import org.jetbrains.kotlin.serialization.deserialization.getName
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
@@ -279,6 +281,68 @@ class NativeKlibCliArgumentsTest : AbstractNativeSimpleTest() {
     @Test
     @DisplayName("Test -Xexport-kdoc argument")
     fun testExportKdocArgument() {
+        val packageFragment = compileKdocSourceAndReadPackageFragment(exportKdoc = true)
+        val nameResolver = NameResolverImpl(packageFragment.strings, packageFragment.qualifiedNames)
+
+        val mainFunctionProto = packageFragment.`package`.functionList.single()
+        assertEquals("main", nameResolver.getName(mainFunctionProto.name).asString())
+
+        assertEquals(kdoc("I'm the main function!"), mainFunctionProto.getExtensionOrNull(KlibMetadataProtoBuf.functionKdoc))
+
+        val typeAliasProto = packageFragment.`package`.typeAliasList.single()
+        assertEquals("Alias", nameResolver.getName(typeAliasProto.name).asString())
+        assertEquals(kdoc("I'm a type alias!"), typeAliasProto.getExtensionOrNull(KlibMetadataProtoBuf.typeAliasKdoc))
+
+        val enumEntryProto = packageFragment.findClass(nameResolver, "Color").enumEntryList.single()
+        assertEquals("RED", nameResolver.getName(enumEntryProto.name).asString())
+        assertEquals(kdoc("I'm an enum entry!", indent = 4), enumEntryProto.getExtensionOrNull(KlibMetadataProtoBuf.enumEntryKdoc))
+
+        val propertyProto = packageFragment.`package`.findProperty(nameResolver, "prop")
+        assertEquals(kdoc("I'm a property!"), propertyProto.getExtensionOrNull(KlibMetadataProtoBuf.propertyKdoc))
+        assertEquals(kdoc("I'm a getter!", indent = 4), propertyProto.getExtensionOrNull(KlibMetadataProtoBuf.propertyGetterKdoc))
+        assertEquals(kdoc("I'm a setter!", indent = 4), propertyProto.getExtensionOrNull(KlibMetadataProtoBuf.propertySetterKdoc))
+
+        // The KDoc of the property is not attributed to its default accessors.
+        val defaultAccessorsProto = packageFragment.`package`.findProperty(nameResolver, "defaultAccessors")
+        assertEquals(
+            kdoc("I'm a property with default accessors!"),
+            defaultAccessorsProto.getExtensionOrNull(KlibMetadataProtoBuf.propertyKdoc)
+        )
+        assertEquals(null, defaultAccessorsProto.getExtensionOrNull(KlibMetadataProtoBuf.propertyGetterKdoc))
+        assertEquals(null, defaultAccessorsProto.getExtensionOrNull(KlibMetadataProtoBuf.propertySetterKdoc))
+
+        val constructorPropertyProto = packageFragment.findClass(nameResolver, "Holder").propertyList.single()
+        assertEquals("constructorProperty", nameResolver.getName(constructorPropertyProto.name).asString())
+        assertEquals(
+            kdoc("I'm a constructor property!", indent = 4),
+            constructorPropertyProto.getExtensionOrNull(KlibMetadataProtoBuf.propertyKdoc)
+        )
+        assertEquals(null, constructorPropertyProto.getExtensionOrNull(KlibMetadataProtoBuf.propertyGetterKdoc))
+        assertEquals(null, constructorPropertyProto.getExtensionOrNull(KlibMetadataProtoBuf.propertySetterKdoc))
+    }
+
+    @Test
+    @DisplayName("Test that KDoc is not exported without -Xexport-kdoc argument")
+    fun testNoExportKdocArgument() {
+        val packageFragment = compileKdocSourceAndReadPackageFragment(exportKdoc = false)
+        val nameResolver = NameResolverImpl(packageFragment.strings, packageFragment.qualifiedNames)
+
+        val mainFunctionProto = packageFragment.`package`.functionList.single()
+        assertEquals(null, mainFunctionProto.getExtensionOrNull(KlibMetadataProtoBuf.functionKdoc))
+
+        val typeAliasProto = packageFragment.`package`.typeAliasList.single()
+        assertEquals(null, typeAliasProto.getExtensionOrNull(KlibMetadataProtoBuf.typeAliasKdoc))
+
+        val enumEntryProto = packageFragment.findClass(nameResolver, "Color").enumEntryList.single()
+        assertEquals(null, enumEntryProto.getExtensionOrNull(KlibMetadataProtoBuf.enumEntryKdoc))
+
+        val propertyProto = packageFragment.`package`.findProperty(nameResolver, "prop")
+        assertEquals(null, propertyProto.getExtensionOrNull(KlibMetadataProtoBuf.propertyKdoc))
+        assertEquals(null, propertyProto.getExtensionOrNull(KlibMetadataProtoBuf.propertyGetterKdoc))
+        assertEquals(null, propertyProto.getExtensionOrNull(KlibMetadataProtoBuf.propertySetterKdoc))
+    }
+
+    private fun compileKdocSourceAndReadPackageFragment(exportKdoc: Boolean): ProtoBuf.PackageFragment {
         val sourcesDir = buildDir.resolve("sources").apply { createDirectory() }
 
         val packageName = "test"
@@ -292,6 +356,43 @@ class NativeKlibCliArgumentsTest : AbstractNativeSimpleTest() {
                      * I'm the main function!
                      */
                     fun main() {}
+
+                    /**
+                     * I'm a type alias!
+                     */
+                    typealias Alias = String
+
+                    enum class Color {
+                        /**
+                         * I'm an enum entry!
+                         */
+                        RED
+                    }
+
+                    /**
+                     * I'm a property!
+                     */
+                    var prop: Int
+                        /**
+                         * I'm a getter!
+                         */
+                        get() = 0
+                        /**
+                         * I'm a setter!
+                         */
+                        set(value) {}
+
+                    /**
+                     * I'm a property with default accessors!
+                     */
+                    var defaultAccessors: Int = 0
+
+                    class Holder(
+                        /**
+                         * I'm a constructor property!
+                         */
+                        var constructorProperty: Int,
+                    )
                 """.trimIndent()
             )
         }
@@ -301,7 +402,7 @@ class NativeKlibCliArgumentsTest : AbstractNativeSimpleTest() {
         val klibFile = compileToLibrary(
             sourcesDir = sourcesDir,
             outputDir = binariesDir,
-            freeCompilerArgs = TestCompilerArgs("-Xexport-kdoc"),
+            freeCompilerArgs = if (exportKdoc) TestCompilerArgs("-Xexport-kdoc") else TestCompilerArgs.EMPTY,
             dependencies = emptyList(),
         ).guessKlibArtifactFile()
 
@@ -311,22 +412,20 @@ class NativeKlibCliArgumentsTest : AbstractNativeSimpleTest() {
         val metadata = kotlinLibrary.metadata
 
         val packageFragmentName = kotlinLibrary.metadata.getPackageFragmentNames(packageName).single()
-        val packageFragment = parsePackageFragment(metadata.getPackageFragment(packageName, packageFragmentName))
-        val nameResolver = NameResolverImpl(packageFragment.strings, packageFragment.qualifiedNames)
-
-        val mainFunctionProto = packageFragment.`package`.functionList.single()
-        assertEquals("main", nameResolver.getName(mainFunctionProto.name).asString())
-
-        // Raw representation with the starting asterisks!
-        assertEquals(
-            """
-                /**
-                 * I'm the main function!
-                 */
-            """.trimIndent(),
-            mainFunctionProto.getExtensionOrNull(KlibMetadataProtoBuf.functionKdoc)
-        )
+        return parsePackageFragment(metadata.getPackageFragment(packageName, packageFragmentName))
     }
+
+    private fun ProtoBuf.PackageFragment.findClass(nameResolver: NameResolverImpl, name: String): ProtoBuf.Class =
+        class_List.single { nameResolver.getClassId(it.fqName).shortClassName.asString() == name }
+
+    // Raw representation with the starting asterisks!
+    private fun kdoc(text: String, indent: Int = 0): String {
+        val continuation = " ".repeat(indent)
+        return "/**\n$continuation * $text\n$continuation */"
+    }
+
+    private fun ProtoBuf.Package.findProperty(nameResolver: NameResolverImpl, name: String): ProtoBuf.Property =
+        propertyList.single { nameResolver.getName(it.name).asString() == name }
 
     companion object {
         private fun TestCompilationArtifact.KLIB.guessKlibArtifactFile(): File {
