@@ -1,4 +1,5 @@
 // IGNORE_CONSISTENCY_CHECK: KT-61887
+// IGNORE_TREE_ACCESS: KT-89820
 package one.two
 
 /* ClassId: one/two/TopLevelObject [PsiFqName: one.two.ClassWithMembersWithPackage.TopLevelObject] */object TopLevelObject
