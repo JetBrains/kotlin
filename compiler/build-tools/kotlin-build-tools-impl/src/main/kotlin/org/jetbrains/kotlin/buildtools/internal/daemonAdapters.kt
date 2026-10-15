@@ -7,6 +7,7 @@
 
 package org.jetbrains.kotlin.buildtools.internal
 
+import org.jetbrains.kotlin.build.report.events.IcEventImpl
 import org.jetbrains.kotlin.build.report.metrics.BuildMetrics
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.build.report.metrics.COMPILE_ITERATION
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.jvm.ClasspathSnapshotBasedIncrementalCompilationApproachParameters
 import org.jetbrains.kotlin.buildtools.api.jvm.ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration
+import org.jetbrains.kotlin.buildtools.api.trackers.IcEventCollector
 import org.jetbrains.kotlin.daemon.common.*
 import java.io.File
 import java.io.Serializable
@@ -81,7 +83,8 @@ internal val JvmCompilationConfigurationImpl.asDaemonCompilationOptions: Compila
 internal class DaemonCompilationResults(
     private val kotlinLogger: KotlinLogger,
     private val rootProjectDir: File?,
-    private val buildMetricsReporter: BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>
+    private val buildMetricsReporter: BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>,
+    private val icEventCollector: IcEventCollector?,
 ) : CompilationResults,
     UnicastRemoteObject(
         SOCKET_ANY_FREE_PORT,
@@ -94,6 +97,7 @@ internal class DaemonCompilationResults(
      * 2. [CompilationResultCategory.BUILD_REPORT_LINES.code]         -> a [List] of [String]
      * 3. [CompilationResultCategory.VERBOSE_BUILD_REPORT_LINES.code] -> a [List] of [String]
      * 4. [CompilationResultCategory.BUILD_METRICS.code]              -> a [BuildMetrics] instance
+     * 5. [CompilationResultCategory.IC_EVENT.code]                   -> a [List] of [IcEventImpl]
      **/
     override fun add(compilationResultCategory: Int, value: Serializable) {
         when (compilationResultCategory) {
@@ -116,6 +120,10 @@ internal class DaemonCompilationResults(
                     kotlinLogger.debug(line)
                 }
             }
+            CompilationResultCategory.IC_EVENT.code -> @Suppress("UNCHECKED_CAST") (value as? List<IcEventImpl>)?.let {
+                icEventCollector?.collectEvents(it.toIcEvents())
+            }
+
             else -> kotlinLogger.debug("Result category=$compilationResultCategory value=$value")
         }
     }
