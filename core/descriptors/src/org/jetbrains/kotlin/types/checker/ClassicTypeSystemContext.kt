@@ -570,6 +570,11 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return StarProjectionImpl(typeParameter)
     }
 
+    override fun createTypeParameterType(typeParameter: TypeParameterMarker): SimpleTypeMarker {
+        require(typeParameter is TypeParameterDescriptor, typeParameter::errorMessage)
+        return typeParameter.defaultType
+    }
+
     override fun KotlinTypeMarker.canHaveUndefinedNullability(): Boolean {
         require(this is UnwrappedType, this::errorMessage)
         return constructor is NewTypeVariableConstructor ||
@@ -627,6 +632,14 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
     }
 
     override fun TypeVariableMarker.defaultType(): SimpleTypeMarker {
+        errorSupportedOnlyInTypeInference()
+    }
+
+    override fun createCapturedTypeForSelReferentialfSupertypes(
+        typeParameter: TypeParameterMarker,
+        status: CaptureStatus,
+        supertypes: List<KotlinTypeMarker>,
+    ): CapturedTypeMarker {
         errorSupportedOnlyInTypeInference()
     }
 
