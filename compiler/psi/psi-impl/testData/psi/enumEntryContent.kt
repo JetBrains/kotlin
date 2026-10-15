@@ -2,7 +2,7 @@
 
 enum class MyEnumClass {
     ENTRY {
-        class NestedClass {
+        class NestedClass(val parameter: Int) {
             class NestedNested {}
         }
 
