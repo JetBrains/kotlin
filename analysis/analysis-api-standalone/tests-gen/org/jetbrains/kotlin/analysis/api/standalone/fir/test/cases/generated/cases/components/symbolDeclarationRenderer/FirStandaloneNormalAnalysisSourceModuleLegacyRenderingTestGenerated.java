@@ -126,6 +126,12 @@ public class FirStandaloneNormalAnalysisSourceModuleLegacyRenderingTestGenerated
     }
 
     @Test
+    @TestMetadata("explicitInlineValueClass.kt")
+    public void testExplicitInlineValueClass() {
+      run("explicitInlineValueClass.kt");
+    }
+
+    @Test
     @TestMetadata("funInterface.kt")
     public void testFunInterface() {
       run("funInterface.kt");

@@ -1,0 +1,1 @@
+inline class ExplicitInlineValueClassFromBinary(value: kotlin.Int)
