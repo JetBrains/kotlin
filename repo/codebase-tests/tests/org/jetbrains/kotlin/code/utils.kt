@@ -9,9 +9,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.jetbrains.kotlin.testFederation.RepositoryPath
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
 import org.junit.jupiter.api.parallel.ResourceLock
+import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.*
 
@@ -22,9 +24,9 @@ import kotlin.io.path.*
 @ResourceLock("Gradle")
 internal annotation class GradleLock
 
-private val root = Path("")
+private val repositoryRoot = Path("")
 
-private val rootAbsolute = root.absolute()
+val absoluteRepositoryRoot: Path = repositoryRoot.absolute().normalize()
 
 /**
  * Performs the provided [action] on each class compiled by the kotlin project (found in build/classes).
@@ -34,9 +36,9 @@ internal suspend fun forEachCompiledClass(
     action: suspend (file: Path, ClassNode) -> Unit,
 ) {
     coroutineScope {
-        root.toFile().absoluteFile.walkTopDown()
+        repositoryRoot.toFile().absoluteFile.walkTopDown()
             .onEnter { it.name != ".git" }
-            .map { it.toPath().relativeTo(rootAbsolute) }
+            .map { it.toPath().relativeTo(absoluteRepositoryRoot) }
             .filter { it.extension == "class" }
             .filter { it.pathString.contains("build/classes") }
             .filterNot { it.pathString.contains("/fakes/") }
@@ -50,4 +52,21 @@ internal suspend fun forEachCompiledClass(
                 }
             }
     }
+}
+
+/**
+ * Converts an absolute or working-directory-relative path to a normalized repository path without accessing the filesystem.
+ * The path need not exist (for example, a deleted file listed in a dump).
+ * @throws IllegalArgumentException if the normalized path is outside the repository root.
+ */
+internal fun Path.toRepositoryPath(): RepositoryPath {
+    val absolutePath = absolute().normalize()
+    require(absolutePath.startsWith(absoluteRepositoryRoot)) {
+        "Path '$this' is not within the repository root '$absoluteRepositoryRoot'"
+    }
+    return RepositoryPath(absoluteRepositoryRoot, absoluteRepositoryRoot.relativize(absolutePath))
+}
+
+internal fun File.toRepositoryPath(): RepositoryPath {
+    return toPath().toRepositoryPath()
 }

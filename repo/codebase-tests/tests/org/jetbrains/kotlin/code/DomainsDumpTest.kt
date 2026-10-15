@@ -21,7 +21,6 @@ import java.io.File
 import java.nio.file.FileSystems
 import java.nio.file.Path
 import kotlin.io.path.Path
-import kotlin.io.path.absolute
 import kotlin.io.path.invariantSeparatorsPathString
 import kotlin.io.path.isDirectory
 import kotlin.io.path.listDirectoryEntries
@@ -120,8 +119,6 @@ class DomainsDumpTest {
     }
 }
 
-private val repositoryRoot = File(".").toPath().absolute()
-
 private val domainsDumpFile = File("repo/domains.dump.txt")
 
 private val domainsIgnoreDumpFile = File("repo/domains.ignore.dump.txt")
@@ -155,7 +152,7 @@ internal fun assertIgnoredPathsDumpContains(expectedText: String, actualText: St
     val missingPaths = actualPaths - expectedPaths
 
     val noLongerIgnoredPaths = (expectedPaths - actualPaths)
-        .filterNot { path -> RepositoryPath(repositoryRoot, Path(path)).isTestFederationIgnored }
+        .filterNot { path -> Path(path).toRepositoryPath().isTestFederationIgnored }
 
     if (missingPaths.isNotEmpty() || noLongerIgnoredPaths.isNotEmpty()) {
         throw AssertionFailedError(
@@ -178,7 +175,7 @@ internal fun assertIgnoredPathsDumpContains(expectedText: String, actualText: St
 
 private fun generateDomainsTree(): Node {
     return runBlocking(Dispatchers.Default) {
-        val tree = repositoryRoot.toNode() ?: error("Missing root tree")
+        val tree = absoluteRepositoryRoot.toNode() ?: error("Missing root tree")
         if (tree !is Node) error("Expected a tree of nodes. Found: $tree")
         tree.conflate()
     }
@@ -236,7 +233,7 @@ private data class Ignored(val path: RepositoryPath) : AbstractNode()
 
 private suspend fun Path.toNode(): AbstractNode? {
     return coroutineScope {
-        val repositoryPath = RepositoryPath(repositoryRoot, repositoryRoot.relativize(this@toNode))
+        val repositoryPath = toRepositoryPath()
         val domains = repositoryPath.domains
         if (domains.isEmpty()) return@coroutineScope Ignored(repositoryPath)
         val isDirectory = isDirectory()
