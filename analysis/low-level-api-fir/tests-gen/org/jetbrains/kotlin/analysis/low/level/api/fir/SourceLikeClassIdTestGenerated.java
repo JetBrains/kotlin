@@ -58,6 +58,30 @@ public class SourceLikeClassIdTestGenerated extends AbstractSourceLikeClassIdTes
   }
 
   @Test
+  @TestMetadata("companionBlockInsideDataClass.kt")
+  public void testCompanionBlockInsideDataClass() {
+    run("companionBlockInsideDataClass.kt");
+  }
+
+  @Test
+  @TestMetadata("companionBlockInsideDataClassScript.kts")
+  public void testCompanionBlockInsideDataClassScript() {
+    run("companionBlockInsideDataClassScript.kts");
+  }
+
+  @Test
+  @TestMetadata("companionBlocks.kt")
+  public void testCompanionBlocks() {
+    run("companionBlocks.kt");
+  }
+
+  @Test
+  @TestMetadata("companionBlocksScript.kts")
+  public void testCompanionBlocksScript() {
+    run("companionBlocksScript.kts");
+  }
+
+  @Test
   @TestMetadata("companionsInsideNamelessClasses.kt")
   public void testCompanionsInsideNamelessClasses() {
     run("companionsInsideNamelessClasses.kt");
