@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.utils.getApiKClassOf
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.psi.addRemoveModifier.sortModifiers
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -257,6 +258,8 @@ private object SymbolModifiersRenderer : KaPieceRenderer<KaDeclarationSymbol>(Ka
 
                 if (symbol.isInner) add(KtTokens.INNER_KEYWORD)
                 if (symbol.isData) add(KtTokens.DATA_KEYWORD)
+
+                if (symbol.isInline && JvmStandardClassIds.Annotations.JvmInline !in symbol.annotations) add(KtTokens.INLINE_KEYWORD)
                 if (symbol.isValue) add(KtTokens.VALUE_KEYWORD)
                 if (symbol.isFun) add(KtTokens.FUN_KEYWORD)
             }
