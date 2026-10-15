@@ -1,0 +1,5 @@
+[ExperimentalFeatureWarning_9f96680d | WARNING] Experimental Feature Notice
+Swift Export is an experimental feature and subject to change in any future releases.
+It may not function as you expect and you may encounter bugs. Use it at your own risk.
+To suppress this message add 'kotlin.native.suppressSwiftExportExperimentalWarning=true' to your gradle.properties
+Thank you for your understanding. We would appreciate your feedback on this feature in YouTrack https://kotl.in/1cr522.

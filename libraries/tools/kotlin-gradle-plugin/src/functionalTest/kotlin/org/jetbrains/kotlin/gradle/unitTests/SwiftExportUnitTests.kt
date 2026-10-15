@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.gradle.unitTests
 import com.android.build.api.variant.impl.capitalizeFirstChar
 import org.gradle.api.NamedDomainObjectCollection
 import org.gradle.api.internal.project.ProjectInternal
+import org.gradle.api.tasks.CacheableTask
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.configureRepositoriesForTests
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
@@ -166,6 +167,52 @@ class SwiftExportUnitTests {
 
         assertEquals(swiftExportTask.parameters.outputDirectory.get(), generateTask.swiftExportOutputDirectory.get())
         assertTrue(swiftExportTask in generateTask.taskDependencies.getDependencies(null))
+    }
+
+    @Test
+    fun `test swift export task is cacheable`() {
+        assertNotNull(SwiftExportTask::class.java.getAnnotation(CacheableTask::class.java))
+    }
+
+    @Test
+    fun `test swift export warns that it is experimental`() {
+        val project = exportDslProject(withXcodeEnvironment = true) {
+            exportExtension.swift { xcodeIntegration() }
+        }
+        project.tasks.getByName("iosSimulatorArm64SwiftExport")
+
+        project.checkDiagnostics("swiftExportExperimentalFeatureWarning")
+    }
+
+    @Test
+    fun `test swift export experimental warning is suppressed by property`() {
+        val project = exportDslProject(withXcodeEnvironment = true) {
+            propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_NATIVE_SUPPRESS_SWIFT_EXPORT_EXPERIMENTAL_WARNING, "true")
+            exportExtension.swift { xcodeIntegration() }
+        }
+        project.tasks.getByName("iosSimulatorArm64SwiftExport")
+
+        project.assertNoDiagnostics()
+    }
+
+    @Test
+    fun `test deprecated swift export nowarn property still suppresses experimental warning`() {
+        val project = exportDslProject(withXcodeEnvironment = true) {
+            propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_SWIFT_EXPORT_EXPERIMENTAL_NOWARN_DEPRECATED, "true")
+            exportExtension.swift { xcodeIntegration() }
+        }
+        project.tasks.getByName("iosSimulatorArm64SwiftExport")
+
+        project.checkDiagnostics("swiftExportDeprecatedExperimentalNowarnProperty")
+    }
+
+    @Test
+    fun `test no experimental warning while the swift export run is not used`() {
+        val project = exportDslProject(withXcodeEnvironment = true)
+        // Registered under Xcode even without Swift Export DSL, see KT-89151.
+        assertTrue("iosSimulatorArm64SwiftExport" in project.tasks.names)
+
+        project.assertNoDiagnostics()
     }
 
     @Test
@@ -652,30 +699,6 @@ class SwiftExportUnitTests {
         val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
 
         assertEquals(listOf("-Xmx4g", "-XX:+UseG1GC"), swiftExportTask.workerJvmArgs)
-    }
-
-    @Test
-    fun `test swift export experimental warning is suppressed by property`() {
-        val project = swiftExportProject()
-        project.propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_NATIVE_SUPPRESS_SWIFT_EXPORT_EXPERIMENTAL_WARNING, "true")
-        project.evaluate()
-
-        val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
-
-        assertEquals(true, swiftExportTask.ignoreExperimentalDiagnostic.get())
-        project.assertNoDiagnostics(KotlinToolingDiagnostics.DeprecatedPropertyWithReplacement)
-    }
-
-    @Test
-    fun `test deprecated swift export nowarn property still suppresses experimental warning`() {
-        val project = swiftExportProject()
-        project.propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_SWIFT_EXPORT_EXPERIMENTAL_NOWARN_DEPRECATED, "true")
-        project.evaluate()
-
-        val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
-
-        assertEquals(true, swiftExportTask.ignoreExperimentalDiagnostic.get())
-        project.assertContainsDiagnostic(KotlinToolingDiagnostics.DeprecatedPropertyWithReplacement)
     }
 
     @Test

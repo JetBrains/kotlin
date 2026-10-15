@@ -156,8 +156,6 @@ class SwiftExportIT : KGPBaseTest() {
                 )
 
                 assertFileExists(libShared.toPath())
-
-                assertHasDiagnostic(KotlinToolingDiagnostics.ExperimentalFeatureWarning, "Swift Export")
             }
 
             // The run is per target, so a Release build reuses it and only links and packages again.

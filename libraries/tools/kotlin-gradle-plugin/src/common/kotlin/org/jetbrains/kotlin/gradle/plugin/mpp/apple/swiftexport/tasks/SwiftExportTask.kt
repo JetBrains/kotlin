@@ -16,10 +16,7 @@ import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.*
-import org.gradle.work.DisableCachingByDefault
 import org.gradle.workers.WorkerExecutor
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.internal.KotlinProjectSharedDataProvider
@@ -41,7 +38,12 @@ import org.jetbrains.kotlin.gradle.utils.listProperty
 import org.jetbrains.kotlin.konan.target.Distribution
 import javax.inject.Inject
 
-@DisableCachingByDefault(because = "Swift Export is experimental, so no caching for now")
+/**
+ * Translates the klibs into Swift and Kotlin bridge sources. The output has no absolute paths, so it can be cached.
+ * A cache hit skips the task action and with it the dependency resolution diagnostics, like compiler warnings of a
+ * cached compile task: the same inputs gave the same diagnostics to the build that stored the entry.
+ */
+@CacheableTask
 internal abstract class SwiftExportTask @Inject constructor(
     private val workerExecutor: WorkerExecutor,
     private val fileSystem: FileSystemOperations,
@@ -214,9 +216,6 @@ internal abstract class SwiftExportTask @Inject constructor(
             }
             .sorted()
 
-    @get:Internal
-    abstract val ignoreExperimentalDiagnostic: Property<Boolean>
-
     /**
      * The JVM arguments of the worker process. Tracked through [trackedWorkerJvmArgs]: the heap size and the other
      * `-X` flags don't change what the translation produces, a `-D` property read by the tool might.
@@ -243,10 +242,6 @@ internal abstract class SwiftExportTask @Inject constructor(
 
     @TaskAction
     fun run() {
-        if (!ignoreExperimentalDiagnostic.get()) {
-            warnAboutExperimentalSwiftExportFeature()
-        }
-
         cleanup()
 
         // Run Swift Export with process isolation to avoid leakage for AA/IntelliJ classes. See KT-73438
@@ -322,15 +317,5 @@ internal abstract class SwiftExportTask @Inject constructor(
     private companion object {
         // Gradle gives worker processes 512 MB by default, which is too little for larger modules.
         const val DEFAULT_MAX_HEAP_SIZE = "-Xmx1g"
-    }
-
-    private fun warnAboutExperimentalSwiftExportFeature() {
-        reportDiagnostic(
-            KotlinToolingDiagnostics.ExperimentalFeatureWarning(
-                "Swift Export",
-                "https://kotl.in/1cr522",
-                "To suppress this message add '${PropertiesProvider.PropertyNames.KOTLIN_NATIVE_SUPPRESS_SWIFT_EXPORT_EXPERIMENTAL_WARNING}=true' to your gradle.properties"
-            )
-        )
     }
 }
