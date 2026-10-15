@@ -1,0 +1,507 @@
+@Data
+open class CallSuperBase {
+  val baseProp: Int
+    field = baseProp
+    get
+
+  constructor(baseProp: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+@Data
+class CallSuperDerived : CallSuperBase {
+  val ownProp: String
+    field = ownProp
+    get
+
+  constructor(ownProp: String) /* primary */ {
+    super/*CallSuperBase*/(baseProp = 10)
+    /* <init>() */
+
+  }
+
+}
+
+@Data
+class CallSuperWithComputedPropertyFirst : CallSuperBase {
+  val ownProp: Int
+    field = 2
+    get
+
+  constructor() /* primary */ {
+    super/*CallSuperBase*/(baseProp = 10)
+    /* <init>() */
+
+  }
+
+  val computedProp: Int
+    get(): Int {
+      return 1
+    }
+
+}
+
+@Data
+data class DataClassDefault {
+  val name: String
+    field = name
+    get
+
+  val age: Int
+    field = age
+    get
+
+  constructor(name: String, age: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  operator fun component1(): String {
+    return <this>.#name
+  }
+
+  operator fun component2(): Int {
+    return <this>.#age
+  }
+
+  fun copy(name: String = <this>.#name, age: Int = <this>.#age): DataClassDefault {
+    return DataClassDefault(name = name, age = age)
+  }
+
+  override operator fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is DataClassDefault -> return false
+    }
+    val tmp_0: DataClassDefault = other /*as DataClassDefault */
+    when {
+      EQEQ(arg0 = <this>.#name, arg1 = tmp_0.#name).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#age, arg1 = tmp_0.#age).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var result: Int = <this>.#name.hashCode()
+    result = result.times(other = 31).plus(other = <this>.#age.hashCode())
+    return result
+  }
+
+  override fun toString(): String {
+    return "DataClassDefault(" + "name=" + <this>.#name + ", " + "age=" + <this>.#age + ")"
+  }
+
+}
+
+@Data
+@ToString(callSuper = true)
+class DataWithExplicitToString : CallSuperBase {
+  val own: Int
+    field = own
+    get
+
+  constructor(own: Int) /* primary */ {
+    super/*CallSuperBase*/(baseProp = 10)
+    /* <init>() */
+
+  }
+
+  override fun toString(): String {
+    return "DataWithExplicitToString(" + "super=" + super<CallSuperBase>.toString() + ", own=" + <this>.<get-own>() + ')'
+  }
+
+}
+
+@Data
+class Simple {
+  val name: String
+    field = name
+    get
+
+  val age: Int
+    field = age
+    get
+
+  constructor(name: String, age: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+@Data
+class WithArrays {
+  val objectArray: Array<String>
+    field = arrayOf<String>(elements = ["a", "b"])
+    get
+
+  val nestedArray: Array<Array<String>>
+    field = arrayOf<Array<String>>(elements = [arrayOf<String>(elements = ["a"]), arrayOf<String>(elements = ["b"])])
+    get
+
+  val intArray: IntArray
+    field = intArrayOf(elements = [1, 2])
+    get
+
+  val charArray: CharArray
+    field = charArrayOf(elements = ['x', 'y'])
+    get
+
+  val nullArray: Array<String>?
+    field = null
+    get
+
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+@Data
+class WithBackingFieldAndGetter {
+  val x: Int
+    field = 42
+    get(): Int {
+      return <this>.#x
+    }
+
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+@Data
+class WithComputedProperties {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val computedProp: String
+    get(): String {
+      return "computed"
+    }
+
+}
+
+@Data
+class WithComputedPropertyFirst {
+  val b: Int
+    field = 2
+    get
+
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val computedProp: Int
+    get(): Int {
+      return 1
+    }
+
+}
+
+@Data
+class WithComputedPropertyInTheMiddle {
+  val a: Int
+    field = 1
+    get
+
+  val c: Int
+    field = 3
+    get
+
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val computedProp: Int
+    get(): Int {
+      return 2
+    }
+
+}
+
+@Data
+class WithDollarPrefixedProperties {
+  val regular: String
+    field = regular
+    get
+
+  val $excludedByDefault: String
+    field = $excludedByDefault
+    get
+
+  val $explicitlyIncluded: String
+    field = $explicitlyIncluded
+    get
+
+  constructor(regular: String, $excludedByDefault: String, $explicitlyIncluded: String) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+@Data
+class WithExclude {
+  val a: String
+    field = a
+    get
+
+  val b: String
+    field = b
+    get
+
+  constructor(a: String, b: String) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+@Data
+class WithExistingNonConflictingToString {
+  val x: Int
+    field = x
+    get
+
+  constructor(x: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  fun toString(p: Boolean): String {
+    return when {
+      p -> <this>.<get-x>().toString()
+      else -> ""
+    }
+  }
+
+}
+
+@Data
+class WithExistingToString {
+  val x: Int
+    field = x
+    get
+
+  constructor(x: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override fun toString(): String {
+    return "custom"
+  }
+
+}
+
+@Data
+class WithImplicitReturnTypeProperty {
+  val implicitReturnTypeProp: String
+    field = "implicit return type"
+    get
+
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+@Data
+class WithIncludeCustomName {
+  val x: String
+    field = x
+    get
+
+  val y: Int
+    field = y
+    get
+
+  constructor(x: String, y: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+@Data
+class WithNonConflictingContextualFunction {
+  val b: String
+    field = b
+    get
+
+  constructor(b: String) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  context(p: WithNonConflictingContextualFunction)
+  fun toString(): String {
+    return "Contex"
+  }
+
+}
+
+@Data
+class WithNonConflictingExtensionFunction {
+  val a: Int
+    field = a
+    get
+
+  constructor(a: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  fun WithNonConflictingExtensionFunction.toString(): String {
+    return "Ext"
+  }
+
+}
+
+@Data
+class WithRank {
+  val lowRank: String
+    field = lowRank
+    get
+
+  val defaultRank: String
+    field = defaultRank
+    get
+
+  val highRank: String
+    field = highRank
+    get
+
+  constructor(lowRank: String, defaultRank: String, highRank: String) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+@Data
+class WithSameRank {
+  val a: String
+    field = a
+    get
+
+  val b: String
+    field = b
+    get
+
+  val c: String
+    field = c
+    get
+
+  constructor(a: String, b: String, c: String) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+@Data
+object EmptyObject {
+  private constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+@Data
+object ObjectWithProperties {
+  val version: String
+    field = "2.0"
+    get
+
+  val label: String
+    field = "release"
+    get
+
+  private constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+fun box(): String {
+  assertEquals<String>(expected = "Simple(name=Alice, age=30)", actual = Simple(name = "Alice", age = 30).toString())
+  assertEquals<String>(expected = "WithExclude(a=hello)", actual = WithExclude(a = "hello", b = "world").toString())
+  assertEquals<String>(expected = "WithIncludeCustomName(myName=foo, y=42)", actual = WithIncludeCustomName(x = "foo", y = 42).toString())
+  assertEquals<String>(expected = "custom", actual = WithExistingToString(x = 5).toString())
+  assertEquals<String>(expected = "WithExistingNonConflictingToString(x=5)", actual = WithExistingNonConflictingToString(x = 5).toString())
+  assertEquals<String>(expected = "WithComputedProperties()", actual = WithComputedProperties().toString())
+  assertEquals<String>(expected = "WithComputedPropertyFirst(b=2)", actual = WithComputedPropertyFirst().toString())
+  assertEquals<String>(expected = "WithComputedPropertyInTheMiddle(a=1, c=3)", actual = WithComputedPropertyInTheMiddle().toString())
+  assertEquals<String>(expected = "CallSuperWithComputedPropertyFirst(super=CallSuperBase(baseProp=10), ownProp=2)", actual = CallSuperWithComputedPropertyFirst().toString())
+  assertEquals<String>(expected = "WithImplicitReturnTypeProperty(implicitReturnTypeProp=implicit return type)", actual = WithImplicitReturnTypeProperty().toString())
+  assertEquals<String>(expected = "WithBackingFieldAndGetter(x=42)", actual = WithBackingFieldAndGetter().toString())
+  assertEquals<String>(expected = "WithNonConflictingExtensionFunction(a=6)", actual = WithNonConflictingExtensionFunction(a = 6).toString())
+  assertEquals<String>(expected = "WithNonConflictingContextualFunction(b=str)", actual = WithNonConflictingContextualFunction(b = "str").toString())
+  assertEquals<String>(expected = "DataClassDefault(name=Alice, age=30)", actual = DataClassDefault(name = "Alice", age = 30).toString())
+  assertEquals<String>(expected = "EmptyObject()", actual = EmptyObject.toString())
+  assertEquals<String>(expected = "ObjectWithProperties(version=2.0, label=release)", actual = ObjectWithProperties.toString())
+  @Data
+  local class LocalClass {
+    val prop: String
+      field = prop
+      get
+
+    constructor(prop: String) /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+  }
+
+  assertEquals<String>(expected = "LocalClass(prop=TestLocalClass)", actual = LocalClass(prop = "TestLocalClass").toString())
+  assertEquals<String>(expected = "WithRank(highRank=hi, defaultRank=mid, lowRank=lo)", actual = WithRank(lowRank = "lo", defaultRank = "mid", highRank = "hi").toString())
+  assertEquals<String>(expected = "WithSameRank(a=1, b=2, c=3)", actual = WithSameRank(a = "1", b = "2", c = "3").toString())
+  assertEquals<String>(expected = "CallSuperBase(baseProp=10)", actual = CallSuperBase(baseProp = 10).toString())
+  assertEquals<String>(expected = "CallSuperDerived(super=CallSuperBase(baseProp=10), ownProp=hello)", actual = CallSuperDerived(ownProp = "hello").toString())
+  val withExplicitToString: String = DataWithExplicitToString(own = 5).toString()
+  assertEquals<String>(expected = "DataWithExplicitToString(super=CallSuperBase(baseProp=10), own=5)", actual = withExplicitToString)
+  assertEquals<String>(expected = "WithArrays(objectArray=[a, b], nestedArray=[[a], [b]], intArray=[1, 2], charArray=[x, y], nullArray=null)", actual = WithArrays().toString())
+  assertEquals<String>(expected = "WithDollarPrefixedProperties(regular=r, " + '$' + "explicitlyIncluded=i)", actual = WithDollarPrefixedProperties(regular = "r", $excludedByDefault = "e", $explicitlyIncluded = "i").toString())
+  return "OK"
+}
+
