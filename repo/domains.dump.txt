@@ -390,10 +390,6 @@ ignored:
  - compiler/build-tools/kotlin-build-tools-api-forward-tests/README.md
  - compiler/build-tools/kotlin-build-tools-api-forward-tests/shared/README.md
  - compiler/build-tools/kotlin-build-tools-api-tests/README.md
- - compiler/build-tools/kotlin-build-tools-api-tests/src/main/resources/modules/empty/README.md
- - compiler/build-tools/kotlin-build-tools-api-tests/src/main/resources/modules/empty2/README.md
- - compiler/build-tools/kotlin-build-tools-api-tests/src/main/resources/modules/incrementalMultiproject/README.md
- - compiler/build-tools/kotlin-build-tools-api-tests/src/main/resources/modules/incrementalMultiprojectJava/README.md
  - compiler/build-tools/kotlin-build-tools-api/README.md
  - compiler/build-tools/kotlin-build-tools-compat/README.md
  - compiler/build-tools/kotlin-build-tools-impl/README.md
@@ -492,7 +488,6 @@ ignored:
  - libraries/tools/gradle/fus-statistics-gradle-plugin/ReadMe.md
  - libraries/tools/ide-plugin-dependencies-validator/README.md
  - libraries/tools/jdk-api-validator/ReadMe.md
- - libraries/tools/kotlin-documentation-model/analyzer/src/test/resources/jars/README.md
  - libraries/tools/kotlin-gradle-plugin-annotations/ReadMe.md
  - libraries/tools/kotlin-gradle-plugin-api/ReadMe.md
  - libraries/tools/kotlin-gradle-plugin-api/dokka-template/ReadMe.md
@@ -506,7 +501,6 @@ ignored:
  - libraries/tools/kotlin-stdlib-docs/templates/README.md
  - libraries/tools/kotlin-stdlib-gen/ReadMe.md
  - libraries/tools/stats-analyser/README.md
- - license/README.md
  - native/analysis-api-based-export-common/README.md
  - native/analysis-api-based-test-utils/README.md
  - native/commonizer/README.md
