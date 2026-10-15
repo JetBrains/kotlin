@@ -4,7 +4,7 @@ FILE[kind=File[packageFqName=<root>]]
   CLASS[classId=/PublicValue, fqName=PublicValue, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=PublicValue, superNames=[]]
     classFileMajorVersion: <current_major_version>
     valueClassRepresentation: inline [ value -> kotlin.String ]
-    MODIFIER_LIST[public final value]
+    MODIFIER_LIST[public final inline value]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=JvmInline]
         valueArguments: [ ]
         CONSTRUCTOR_CALLEE

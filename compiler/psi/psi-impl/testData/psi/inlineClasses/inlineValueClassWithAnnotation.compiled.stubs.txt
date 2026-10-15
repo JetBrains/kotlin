@@ -26,7 +26,7 @@ AnnotatedValue.class:
     CLASS[classId=/AnnotatedValue, fqName=AnnotatedValue, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=AnnotatedValue, superNames=[]]
       classFileMajorVersion: <current_major_version>
       valueClassRepresentation: inline [ value -> kotlin.String ]
-      MODIFIER_LIST[public final value]
+      MODIFIER_LIST[public final inline value]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=Anno]
           valueArguments: [ ]
           CONSTRUCTOR_CALLEE

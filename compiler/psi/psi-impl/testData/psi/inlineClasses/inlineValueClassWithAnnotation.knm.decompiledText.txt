@@ -5,7 +5,7 @@ public final annotation class Anno public constructor() : kotlin.Annotation {
 }
 
 @Anno
-public final value class AnnotatedValue public constructor(value: kotlin.String) {
+public final inline value class AnnotatedValue public constructor(value: kotlin.String) {
     public final val value: kotlin.String /* compiled code */
 
     public open operator fun equals(other: kotlin.Any?): kotlin.Boolean { /* compiled code */ }
