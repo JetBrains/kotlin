@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.gradle.utils.checksumString
 import org.jetbrains.kotlin.gradle.utils.copyPartially
 import org.jetbrains.kotlin.gradle.utils.ensureValidZipDirectoryPath
 import org.jetbrains.kotlin.gradle.utils.listDescendants
+import org.jetbrains.kotlin.gradle.utils.ensurePathSafeString
 import java.io.Closeable
 import java.io.File
 import java.io.IOException
@@ -124,11 +125,12 @@ internal class CompositeMetadataArtifactImpl(
          * org.jetbrains.sample-sampleLibrary-1.0.0-SNAPSHOT-appleAndLinuxMain-Vk5pxQ.klib
          */
         override val relativeFile: File = File(buildString {
-            append(containingSourceSetContent.containingArtifactContent.containingArtifact.moduleDependencyIdentifier)
+            fun safeAppend(str: String) = append(ensurePathSafeString(str))
+            safeAppend(containingSourceSetContent.containingArtifactContent.containingArtifact.moduleDependencyIdentifier.toString())
             append("-")
-            append(containingSourceSetContent.containingArtifactContent.containingArtifact.moduleDependencyVersion)
+            safeAppend(containingSourceSetContent.containingArtifactContent.containingArtifact.moduleDependencyVersion)
             append("-")
-            append(containingSourceSetContent.sourceSetName)
+            safeAppend(containingSourceSetContent.sourceSetName)
             append("-")
             append(this@MetadataBinaryImpl.checksum)
             append(".")
@@ -154,6 +156,9 @@ internal class CompositeMetadataArtifactImpl(
         override val cinteropLibraryName: String,
         private val artifactFile: ArtifactFile,
     ) : CompositeMetadataArtifactContent.CInteropMetadataBinary {
+        init {
+            ensurePathSafeString(cinteropLibraryName)
+        }
 
         override val archiveExtension: String
             get() = SourceSetMetadataLayout.KLIB.archiveExtension
@@ -167,11 +172,12 @@ internal class CompositeMetadataArtifactImpl(
          *     org.jetbrains.sample_sampleLibrary-cinterop-simple-Vk5pxQ.klib
          */
         override val relativeFile: File = File(buildString {
-            append(containingSourceSetContent.containingArtifactContent.containingArtifact.moduleDependencyIdentifier)
+            fun safeAppend(str: String) = append(ensurePathSafeString(str))
+            safeAppend(containingSourceSetContent.containingArtifactContent.containingArtifact.moduleDependencyIdentifier.toString())
             append("-")
-            append(containingSourceSetContent.containingArtifactContent.containingArtifact.moduleDependencyVersion)
+            safeAppend(containingSourceSetContent.containingArtifactContent.containingArtifact.moduleDependencyVersion)
             append("-")
-            append(containingSourceSetContent.sourceSetName)
+            safeAppend(containingSourceSetContent.sourceSetName)
             append("-cinterop")
         }).resolve("$cinteropLibraryName-${this.checksum}.${archiveExtension}")
 
