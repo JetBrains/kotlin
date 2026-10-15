@@ -15,7 +15,7 @@ import kotlin.test.fail
  */
 class DomainOwnersTest {
     private val codeOwnersFile = File(System.getProperty("codeOwnersTest.spaceCodeOwnersFile"))
-    private val codeOwnersTeams = parseCodeOwnersTeams(codeOwnersFile)
+    private val codeOwnersTeams = parseCodeOwners(codeOwnersFile).permittedOwners.map { it.name }.toSet()
 
     @Test
     fun `domain teams exist in CODEOWNERS`() {
@@ -27,25 +27,4 @@ class DomainOwnersTest {
             fail(problems.joinToString("\n", prefix = "Domain teams missing in CODEOWNERS:\n"))
         }
     }
-}
-
-private val ownerNamesRegex = "(\"[^\"]+\")|(\\S+)".toRegex()
-
-private fun parseOwnerNames(owners: String): List<String> =
-    ownerNamesRegex.findAll(owners).map { it.value }.toList()
-
-/**
- * Teams are returned in their quoted form, as they appear in CODEOWNERS (e.g. `"Kotlin JVM"`).
- */
-private fun parseCodeOwnersTeams(file: File): Set<String> {
-    val teams = mutableSetOf<String>()
-    file.readLines().forEach { line ->
-        when {
-            line.startsWith("# SPACE_OWNER: ") ->
-                teams += parseOwnerNames(line.removePrefix("# SPACE_OWNER: "))
-            line.startsWith("# SPACE_TO_GITHUB_OWNER: ") ->
-                teams += parseOwnerNames(line.removePrefix("# SPACE_TO_GITHUB_OWNER: ")).take(1)
-        }
-    }
-    return teams
 }

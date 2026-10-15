@@ -287,7 +287,7 @@ private class GitIgnoreTracker {
     }
 }
 
-private data class CodeOwners(
+internal data class CodeOwners(
     val permittedOwners: List<OwnerListEntry>,
     val userOwners: List<UserOwnerEntry>,
     val githubOwners: List<GitHubOwnerEntry>,
@@ -313,13 +313,13 @@ private data class CodeOwners(
     }
 }
 
-private data class BranchRule(val branchPattern: String, val pathPattern: String, val owners: List<String>, val line: Int) {
+internal data class BranchRule(val branchPattern: String, val pathPattern: String, val owners: List<String>, val line: Int) {
     override fun toString(): String {
         return "line $line |# $BRANCH_RULE_DIRECTIVE: $branchPattern $pathPattern ${owners.joinToString(" ") { it.quoteIfContainsSpaces() }}"
     }
 }
 
-private sealed class OwnershipPattern {
+internal sealed class OwnershipPattern {
     abstract val line: Int
     abstract val pattern: String
 
@@ -344,7 +344,7 @@ private sealed class OwnershipPattern {
 
 private fun String.quoteIfContainsSpaces() = if (contains(' ')) "\"$this\"" else this
 
-private fun parseCodeOwners(file: File): CodeOwners {
+internal fun parseCodeOwners(file: File): CodeOwners {
     fun parseDirective(line: String, directive: String): String? {
         val value = line.substringAfter("# $directive: ")
         if (value != line) return value
