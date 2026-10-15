@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.common.lower.isLoweredTrivialEnum
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
@@ -103,7 +104,7 @@ class TrivialEnumClassLowering(private val context: JsIrBackendContext) : Declar
     }
 
     private val irBuiltIns = context.irBuiltIns
-    private val arrayGetFunction = irBuiltIns.arrayClass.getSimpleFunction("get")!!
+    private val arrayGetFunction = context.symbols.jsArrayGet
     private val enumClass = irBuiltIns.enumClass.owner
     private val enumHashCodeRandomizer = context.symbols.enumHashCodeRandomizer
     private val boxIntrinsic = context.symbols.jsBoxIntrinsic
@@ -159,8 +160,8 @@ class TrivialEnumClassLowering(private val context: JsIrBackendContext) : Declar
         private lateinit var namesField: IrField
 
         fun transform() {
-            ordinalProperty = irClass.findFakeOverrideProperty("ordinal")
-            val nameProperty = irClass.findFakeOverrideProperty("name")
+            ordinalProperty = irClass.findFakeOverrideProperty(StandardNames.ORDINAL)
+            val nameProperty = irClass.findFakeOverrideProperty(StandardNames.NAME)
 
             ordinalField = createOrdinalField(ordinalProperty)
             namesField = irClass.addStaticArrayField(
@@ -198,11 +199,11 @@ class TrivialEnumClassLowering(private val context: JsIrBackendContext) : Declar
             }
 
             // The origin is used by `EqualityAndComparisonCallsTransformer` to compare the unboxed values with `===`
-            irClass.findFakeOverrideFunction("equals")
+            irClass.findFakeOverrideFunction(StandardNames.EQUALS_NAME)
                 .overrideDeclarationWithFollowingReturn(IrDeclarationOrigin.GENERATED_INLINE_CLASS_MEMBER) {
                     createEqualsBody(it)
                 }
-            irClass.findFakeOverrideFunction("hashCode")
+            irClass.findFakeOverrideFunction(StandardNames.HASHCODE_NAME)
                 .overrideDeclarationWithFollowingReturn(IrDeclarationOrigin.GENERATED_INLINE_CLASS_MEMBER) {
                     irCall(irBuiltIns.intPlusSymbol).apply {
                         arguments[0] = irGetOrdinal(it)
@@ -232,12 +233,12 @@ class TrivialEnumClassLowering(private val context: JsIrBackendContext) : Declar
             irClass.isLoweredTrivialEnum = true
         }
 
-        private fun IrClass.findFakeOverrideProperty(name: String): IrProperty =
-            declarations.findIsInstanceAnd<IrProperty> { it.isFakeOverride && it.name.asString() == name }
+        private fun IrClass.findFakeOverrideProperty(name: Name): IrProperty =
+            declarations.findIsInstanceAnd<IrProperty> { it.isFakeOverride && it.name == name }
                 ?: error("Enum class '${irClass.render()}' should have a fake override of the '$name' property")
 
-        private fun IrClass.findFakeOverrideFunction(name: String): IrSimpleFunction =
-            declarations.findIsInstanceAnd<IrSimpleFunction> { it.isFakeOverride && it.name.asString() == name }
+        private fun IrClass.findFakeOverrideFunction(name: Name): IrSimpleFunction =
+            declarations.findIsInstanceAnd<IrSimpleFunction> { it.isFakeOverride && it.name == name }
                 ?: error("Enum class '${irClass.render()}' should have a fake override of the '$name' function")
 
         private fun createOrdinalField(ordinalProperty: IrProperty): IrField =

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.common.lower.irIfThen
+import org.jetbrains.kotlin.backend.common.lower.isLoweredTrivialEnum
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities.PRIVATE
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSpreadElementImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.types.defaultType
+import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.isArray
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.types.typeWith
@@ -56,6 +58,24 @@ class EnumUsageLowering(val context: JsCommonBackendContext) : BodyLoweringPass 
                 val klass = enumEntry.parent as IrClass
                 if (klass.isExternal) return expression
                 return lowerEnumEntry(enumEntry, expression)
+            }
+
+            // For the optimized trivial enums we need to transform `name` field access
+            // to the name property usage
+            override fun visitCall(expression: IrCall): IrExpression =
+                super.visitCall(devirtualizeEnumMembers(expression))
+
+            private fun devirtualizeEnumMembers(expression: IrCall): IrCall {
+                if (expression.symbol.owner.parent != context.irBuiltIns.enumClass.owner) return expression
+
+                val loweredTrivialEnumReceiver = expression.dispatchReceiver?.type?.getClass()
+                    ?.takeIf(IrClass::isLoweredTrivialEnum) ?: return expression
+
+                val ownOverride = loweredTrivialEnumReceiver.findDeclaration<IrSimpleFunction> {
+                    it.overriddenSymbols.contains(expression.symbol)
+                } ?: return expression
+
+                return irCall(expression, ownOverride)
             }
         })
     }

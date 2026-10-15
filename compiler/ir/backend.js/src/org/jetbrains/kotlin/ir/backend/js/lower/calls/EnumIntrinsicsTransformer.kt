@@ -68,7 +68,7 @@ class EnumIntrinsicsTransformer(private val context: JsIrBackendContext) : Calls
         val transformedCall = EnumIntrinsicsUtils.transformEnumValueOfIntrinsic(call)
         if (transformedCall === call) return transformedCall
 
-        val enumType = call.typeArguments[0]?.takeIf { it.getClass()?.isLoweredTrivialEnum == true}
+        val enumType = call.typeArguments[0]?.takeIf { it.getClass()?.isLoweredTrivialEnum == true }
             ?: return transformedCall
 
         return JsIrBuilder.buildCall(context.symbols.jsBoxIntrinsic, call.type, listOf(enumType, call.type))
