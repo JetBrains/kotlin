@@ -15,6 +15,18 @@ internal class CompositeICReporter(private val reporters: Iterable<RemoteICRepor
         reporters.forEach { it.report(message, severity) }
     }
 
+    override fun reportCompilationStart(isIncremental: Boolean, reason: String?) {
+        reporters.forEach { it.reportCompilationStart(isIncremental, reason) }
+    }
+
+    override fun reportProcessedChanges(
+        dirtySymbols: Iterable<Pair<String, String>>,
+        dirtyClasses: Iterable<String>,
+        dirtySealed: Iterable<String>
+    ) {
+        reporters.forEach { it.reportProcessedChanges(dirtySymbols, dirtyClasses, dirtySealed) }
+    }
+
     override fun reportCompileIteration(incremental: Boolean, sourceFiles: Collection<File>, exitCode: ExitCode) {
         reporters.forEach { it.reportCompileIteration(incremental, sourceFiles, exitCode) }
     }
