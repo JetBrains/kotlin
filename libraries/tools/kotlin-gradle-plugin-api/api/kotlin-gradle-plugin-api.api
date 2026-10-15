@@ -895,6 +895,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/toolchain/wasiad
 public final class org/jetbrains/kotlin/gradle/dsl/toolchain/wasiadapter/WasiAdapterVersion : java/io/Serializable {
 	public fun <init> (Ljava/lang/String;)V
 	public final fun getVersion ()Ljava/lang/String;
+	public fun toString ()Ljava/lang/String;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/DefaultWasmToolsToolchainService : org/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/WasmToolsToolchainService {

@@ -127,6 +127,13 @@ class WasiAdapterVersion(
     init {
         require(version.isNotBlank()) { "WASI adapter version must not be blank" }
     }
+
+    /**
+     * Returns the string representation of the WASI adapter version.
+     *
+     * @return the version string of the WASI adapter.
+     */
+    override fun toString(): String = version
 }
 
 /**

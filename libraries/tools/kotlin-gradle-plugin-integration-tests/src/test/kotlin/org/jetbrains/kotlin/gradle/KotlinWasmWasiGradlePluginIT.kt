@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.gradle.testbase.GradleTest
 import org.jetbrains.kotlin.gradle.testbase.KGPBaseTest
 import org.jetbrains.kotlin.gradle.testbase.MppGradlePluginTests
 import org.jetbrains.kotlin.gradle.testbase.TestProject
+import org.jetbrains.kotlin.gradle.testbase.addEcosystemPluginToBuildScriptCompilationClasspath
+import org.jetbrains.kotlin.gradle.testbase.addKgpToBuildScriptCompilationClasspath
 import org.jetbrains.kotlin.gradle.testbase.append
 import org.jetbrains.kotlin.gradle.testbase.assertFileExists
 import org.jetbrains.kotlin.gradle.testbase.assertFileInProjectExists
@@ -127,6 +129,8 @@ class KotlinWasmWasiGradlePluginIT : KGPBaseTest() {
         val expectedInstalledAdapter = fakeInstallDir.resolve("v49.0.1/wasi_snapshot_preview1.reactor.wasm")
 
         project("wasm-wasmtime-test", gradleVersion) {
+            addKgpToBuildScriptCompilationClasspath()
+            addEcosystemPluginToBuildScriptCompilationClasspath()
             settingsBuildScriptInjection {
                 settings.plugins.apply("org.jetbrains.kotlin.ecosystem")
                 settings.extensions.getByType(KotlinEcosystemExtension::class.java).toolchainManagement {
@@ -175,6 +179,8 @@ class KotlinWasmWasiGradlePluginIT : KGPBaseTest() {
         val expectedInstalledAdapter = fakeInstallDir.resolve("v49.0.1/wasi_snapshot_preview1.command.wasm")
 
         project("wasm-wasmtime-test", gradleVersion) {
+            addKgpToBuildScriptCompilationClasspath()
+            addEcosystemPluginToBuildScriptCompilationClasspath()
             settingsBuildScriptInjection {
                 settings.plugins.apply("org.jetbrains.kotlin.ecosystem")
                 settings.extensions.getByType(KotlinEcosystemExtension::class.java).toolchainManagement {
