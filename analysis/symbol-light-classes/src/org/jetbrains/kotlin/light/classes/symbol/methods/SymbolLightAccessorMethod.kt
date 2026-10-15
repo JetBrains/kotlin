@@ -203,6 +203,7 @@ internal class SymbolLightAccessorMethod private constructor(
                     },
                     MethodAdditionalAnnotationsProvider,
                     JvmExposeBoxedAdditionalAnnotationsProvider,
+                    DefaultImplsAdditionalAnnotationsProvider,
                 ),
                 annotationFilter = jvmExposeBoxedAwareAnnotationFilter,
             ),
@@ -212,7 +213,7 @@ internal class SymbolLightAccessorMethod private constructor(
     override fun isConstructor(): Boolean = false
 
     private val _isDeprecated: Boolean by lazyPub {
-        withPropertySymbol { propertySymbol ->
+        isDefaultImplsCompatibilityDelegate || withPropertySymbol { propertySymbol ->
             propertySymbol.hasDeprecatedAnnotation() || propertySymbol.accessorSymbol.hasDeprecatedAnnotation()
         }
     }

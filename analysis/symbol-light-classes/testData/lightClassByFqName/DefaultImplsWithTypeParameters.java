@@ -4,8 +4,10 @@ public abstract interface Foo /* Foo*/<X, Y>  {
   public default int getX();//  getX()
 
   public static final class DefaultImpls /* Foo.DefaultImpls*/ {
+    @java.lang.Deprecated()
     public static <X, Y, Z> void foo(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() Foo<X, Y>, X, Y, Z);// <X, Y, Z>  foo(@org.jetbrains.annotations.NotNull() Foo<X, Y>, X, Y, Z)
 
+    @java.lang.Deprecated()
     public static <X, Y> int getX(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() Foo<X, Y>);// <X, Y>  getX(@org.jetbrains.annotations.NotNull() Foo<X, Y>)
   }
 }

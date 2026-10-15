@@ -8,6 +8,7 @@ public abstract interface I /* I*/ {
   public static void publicCompanionBlockMember();//  publicCompanionBlockMember()
 
   public static final class DefaultImpls /* I.DefaultImpls*/ {
+    @java.lang.Deprecated()
     public static void publicMember(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() I);//  publicMember(@org.jetbrains.annotations.NotNull() I)
   }
 }

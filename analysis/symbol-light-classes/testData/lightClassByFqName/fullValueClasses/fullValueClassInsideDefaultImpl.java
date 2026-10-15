@@ -7,11 +7,14 @@ public abstract interface BaseInterface /* one.BaseInterface*/ {
   public default void regularFunction();//  regularFunction()
 
   public static final class DefaultImpls /* one.BaseInterface.DefaultImpls*/ {
+    @java.lang.Deprecated()
     @org.jetbrains.annotations.Nullable()
     public static @org.jetbrains.annotations.Nullable() one.MyValueClass getPropertyWithValueClassParameter(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() one.BaseInterface);//  getPropertyWithValueClassParameter(@org.jetbrains.annotations.NotNull() one.BaseInterface)
 
+    @java.lang.Deprecated()
     public static void functionWithValueClassParameter(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() one.BaseInterface, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() one.MyValueClass);//  functionWithValueClassParameter(@org.jetbrains.annotations.NotNull() one.BaseInterface, @org.jetbrains.annotations.NotNull() one.MyValueClass)
 
+    @java.lang.Deprecated()
     public static void regularFunction(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() one.BaseInterface);//  regularFunction(@org.jetbrains.annotations.NotNull() one.BaseInterface)
   }
 }

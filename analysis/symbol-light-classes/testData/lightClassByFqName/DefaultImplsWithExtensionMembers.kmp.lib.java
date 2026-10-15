@@ -12,16 +12,22 @@ public abstract interface A /* A*/ {
   public default void withContextParameter(double, long);//  withContextParameter(double, long)
 
   public static final class DefaultImpls /* A.DefaultImpls*/ {
+    @java.lang.Deprecated()
     public static int getExtensionProperty(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() A, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  getExtensionProperty(@org.jetbrains.annotations.NotNull() A, @org.jetbrains.annotations.NotNull() java.lang.String)
 
+    @java.lang.Deprecated()
     public static int getExtensionPropertyWithContextParameter(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() A, double, char);//  getExtensionPropertyWithContextParameter(@org.jetbrains.annotations.NotNull() A, double, char)
 
+    @java.lang.Deprecated()
     public static void extension(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() A, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String, long);//  extension(@org.jetbrains.annotations.NotNull() A, @org.jetbrains.annotations.NotNull() java.lang.String, long)
 
+    @java.lang.Deprecated()
     public static void extensionWithContextParameter(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() A, double, char, long);//  extensionWithContextParameter(@org.jetbrains.annotations.NotNull() A, double, char, long)
 
+    @java.lang.Deprecated()
     public static void setExtensionProperty(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() A, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String, int);//  setExtensionProperty(@org.jetbrains.annotations.NotNull() A, @org.jetbrains.annotations.NotNull() java.lang.String, int)
 
+    @java.lang.Deprecated()
     public static void withContextParameter(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() A, double, long);//  withContextParameter(@org.jetbrains.annotations.NotNull() A, double, long)
   }
 }

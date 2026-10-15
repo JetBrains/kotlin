@@ -172,6 +172,7 @@ internal open class SymbolLightSimpleMethod protected constructor(
                     },
                     MethodAdditionalAnnotationsProvider,
                     JvmExposeBoxedAdditionalAnnotationsProvider,
+                    DefaultImplsAdditionalAnnotationsProvider,
                 ),
             )
         )

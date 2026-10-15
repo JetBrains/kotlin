@@ -12,10 +12,13 @@ public abstract interface MyInterface /* MyInterface*/ {
   public default void setPublicRegularVariable(int);//  setPublicRegularVariable(int)
 
   public static final class DefaultImpls /* MyInterface.DefaultImpls*/ {
+    @java.lang.Deprecated()
     public static int getPublicRegularVariable(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() MyInterface);//  getPublicRegularVariable(@org.jetbrains.annotations.NotNull() MyInterface)
 
+    @java.lang.Deprecated()
     public static void publicRegularMethod(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() MyInterface);//  publicRegularMethod(@org.jetbrains.annotations.NotNull() MyInterface)
 
+    @java.lang.Deprecated()
     public static void setPublicRegularVariable(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() MyInterface, int);//  setPublicRegularVariable(@org.jetbrains.annotations.NotNull() MyInterface, int)
   }
 }

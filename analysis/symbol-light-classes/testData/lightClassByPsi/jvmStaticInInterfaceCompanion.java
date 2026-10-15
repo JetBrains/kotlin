@@ -12,6 +12,7 @@ public abstract interface KtInterface /* KtInterface*/ {
   class Companion ...
 
   public static final class DefaultImpls /* KtInterface.DefaultImpls*/ {
+    @java.lang.Deprecated()
     public static void defaultFun(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() KtInterface);//  defaultFun(@org.jetbrains.annotations.NotNull() KtInterface)
   }
 }
