@@ -182,6 +182,56 @@ class CacheBatchTest : AbstractNativeSimpleTest() {
     }
 
     @Test
+    fun batchFollowsExternalDependencyCaching() {
+        assumeTrue(HostManager.host.family == Family.OSX || HostManager.host.family == Family.LINUX)
+        assumeFalse(testRunSettings.get<ForcedNoopTestRunner>().value)
+
+        val cacheDir = buildDir.resolve("cache").apply { mkdirs() }
+        val autoCacheDir = buildDir.resolve("auto-cache").apply { mkdirs() }
+        // The libraries under this directory are cached automatically into [autoCacheDir] instead of incrementally.
+        val externalDir = buildDir.resolve("external").apply { mkdirs() }
+        val external = externalDir.resolve("external.klib")
+        val library = buildDir.resolve("library.klib")
+        val consumer = buildDir.resolve("consumer.klib")
+        val main = buildDir.resolve("main.klib")
+        val executable = buildDir.resolve("main.kexe")
+
+        fun compileExternal(value: Int) {
+            val externalSource = buildDir.resolve("external.kt").apply { writeText("fun externalValue() = $value") }
+            compileKlib(externalSource.path, "-o", external.path)
+        }
+
+        compileExternal(1)
+        val librarySource = buildDir.resolve("library.kt").apply { writeText("fun value() = externalValue() + 1") }
+        compileKlib(librarySource.path, "-l", external.path, "-o", library.path)
+        val consumerSource = buildDir.resolve("consumer.kt").apply { writeText("fun consume() = value() + externalValue()") }
+        compileKlib(consumerSource.path, "-l", external.path, "-l", library.path, "-o", consumer.path)
+        val mainSource = buildDir.resolve("main.kt").apply { writeText("fun main() { println(consume()) }") }
+        compileKlib(mainSource.path, "-l", external.path, "-l", library.path, "-l", consumer.path, "-o", main.path)
+
+        fun link(): String = compile(
+            "-g", "-verbose", "-Xenable-incremental-compilation", "-Xic-cache-dir=${cacheDir.path}",
+            "-Xauto-cache-from=${externalDir.path}", "-Xauto-cache-dir=${autoCacheDir.path}",
+            "-Xinclude=${main.path}", "-l", external.path, "-l", library.path, "-l", consumer.path, "-o", executable.path,
+        )
+
+        fun String.cachesExternal() = lines().any { "CACHING " in it && it.trimEnd().endsWith(external.name) }
+
+        // The external dependency has no cache yet: it is cached first, and its dependents are still batched afterwards.
+        val output = link()
+        assertTrue(output.cachesExternal())
+        assertTrue(output.contains("CACHING BATCH:"))
+        verifyOutput(executable, "3")
+
+        // An updated external dependency gets a new auto cache, and all its dependents need a full rebuild: in a batch again.
+        compileExternal(2)
+        val updatedOutput = link()
+        assertTrue(updatedOutput.cachesExternal())
+        assertTrue(updatedOutput.contains("CACHING BATCH:"))
+        verifyOutput(executable, "5")
+    }
+
+    @Test
     fun batchSkipsLibrariesWithTestRunner() {
         assumeTrue(HostManager.host.family == Family.OSX || HostManager.host.family == Family.LINUX)
         assumeFalse(testRunSettings.get<ForcedNoopTestRunner>().value)
