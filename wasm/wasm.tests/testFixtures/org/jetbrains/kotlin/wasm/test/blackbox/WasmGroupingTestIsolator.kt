@@ -85,6 +85,15 @@ class WasmGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolato
         if (hasCompanionJsFile)
             return BatchToken.Isolated
 
+        // A top-level `main` is exported as `_start`, and the JS glue a released compiler generates for a batch declares
+        // `_start` once per such function: two of them in a batch make the whole batch fail to load.
+        // Like the JS isolator, this takes an indented `main` for a top-level one too: over-isolation is harmless.
+        val declaresMain = moduleStructure.modules.any { module ->
+            module.files.any { !it.isAdditional && it.originalContent.contains(TOP_LEVEL_MAIN_REGEX) }
+        }
+        if (declaresMain)
+            return BatchToken.Isolated
+
         val specificTokens = listOfNotNull(
             computeEHToken(moduleStructure),
             computeLanguageSettingsToken(moduleStructure),
@@ -149,5 +158,9 @@ class WasmGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolato
         }.values.toSet()
 
         return additionalCheckers to disabledIrCheckers
+    }
+
+    companion object {
+        private val TOP_LEVEL_MAIN_REGEX = Regex("""(?m)^\s*(?:suspend\s+)?fun\s+main\s*\(""")
     }
 }
