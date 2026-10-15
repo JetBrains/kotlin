@@ -22,6 +22,7 @@ class KotlinTypeAliasStubImpl(
     private val qualifiedName: StringRef?,
     override val classId: ClassId?,
     override val isTopLevel: Boolean,
+    override val kdocText: String?,
 ) : KotlinStubBaseImpl<KtTypeAlias>(parent, KtNodeTypes.TYPEALIAS), KotlinTypeAliasStub {
     override fun getName(): String? =
         StringRef.toString(name)
@@ -36,6 +37,7 @@ class KotlinTypeAliasStubImpl(
         qualifiedName = qualifiedName,
         classId = classId,
         isTopLevel = isTopLevel,
+        kdocText = kdocText,
     )
 
     @KtImplementationDetail
@@ -44,5 +46,6 @@ class KotlinTypeAliasStubImpl(
                 other.name == name &&
                 other.qualifiedName == qualifiedName &&
                 other.isTopLevel == isTopLevel &&
-                other.classId == classId
+                other.classId == classId &&
+                other.kdocText == kdocText
 }

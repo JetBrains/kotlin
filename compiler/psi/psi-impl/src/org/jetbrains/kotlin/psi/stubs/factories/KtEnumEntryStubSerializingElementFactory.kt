@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.psiUtil.safeFqNameForLazyResolve
+import org.jetbrains.kotlin.psi.stubs.StubUtils.deserializeKdocText
+import org.jetbrains.kotlin.psi.stubs.StubUtils.serializeKdocText
 import org.jetbrains.kotlin.psi.stubs.elements.StubIndexService
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinEnumEntryStubImpl
 
@@ -31,22 +33,26 @@ internal object KtEnumEntryStubSerializingElementFactory :
             parent = parentStub,
             qualifiedName = StringRef.fromString(fqName),
             name = StringRef.fromString(name),
+            kdocText = null,
         )
     }
 
     override fun serialize(stub: KotlinEnumEntryStubImpl, dataStream: StubOutputStream) {
         dataStream.writeName(stub.fqName?.asString())
         dataStream.writeName(stub.getName())
+        dataStream.serializeKdocText(stub.kdocText)
     }
 
     override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>?): KotlinEnumEntryStubImpl {
         val qualifiedName = dataStream.readName()
         val name = dataStream.readName()
+        val kdocText = dataStream.deserializeKdocText()
 
         return KotlinEnumEntryStubImpl(
             parent = parentStub,
             qualifiedName = qualifiedName,
             name = name,
+            kdocText = kdocText,
         )
     }
 

@@ -11,7 +11,9 @@ import com.intellij.psi.stubs.StubOutputStream
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.psi.psiUtil.isLegacyContractPresentPsiCheck
+import org.jetbrains.kotlin.psi.stubs.StubUtils.deserializeKdocText
 import org.jetbrains.kotlin.psi.stubs.StubUtils.readContract
+import org.jetbrains.kotlin.psi.stubs.StubUtils.serializeKdocText
 import org.jetbrains.kotlin.psi.stubs.StubUtils.writeContract
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinPropertyAccessorStubImpl
 
@@ -32,6 +34,7 @@ internal object KtPropertyAccessorStubSerializingElementFactory :
         hasNoExpressionBody = psi.hasBlockBody(),
         mayHaveContract = psi.isLegacyContractPresentPsiCheck(),
         contract = null,
+        kdocText = null,
     )
 
     override fun serialize(stub: KotlinPropertyAccessorStubImpl, dataStream: StubOutputStream) {
@@ -43,6 +46,7 @@ internal object KtPropertyAccessorStubSerializingElementFactory :
         if (mayHaveContract) {
             dataStream.writeContract(stub.contract)
         }
+        dataStream.serializeKdocText(stub.kdocText)
     }
 
     override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>?): KotlinPropertyAccessorStubImpl {
@@ -55,6 +59,7 @@ internal object KtPropertyAccessorStubSerializingElementFactory :
         } else {
             null
         }
+        val kdocText = dataStream.deserializeKdocText()
 
         return KotlinPropertyAccessorStubImpl(
             parent = parentStub,
@@ -63,6 +68,7 @@ internal object KtPropertyAccessorStubSerializingElementFactory :
             hasNoExpressionBody = hasNoExpressionBody,
             mayHaveContract = mayHaveContract,
             contract = contract,
+            kdocText = kdocText,
         )
     }
 }

@@ -8,8 +8,10 @@ package org.jetbrains.kotlin.analysis.decompiler.stub
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
 import org.jetbrains.kotlin.analysis.decompiler.stub.flags.VISIBILITY
+import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.Flags
+import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
 import org.jetbrains.kotlin.metadata.deserialization.underlyingType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinTypeAliasStubImpl
@@ -32,7 +34,8 @@ fun createTypeAliasStub(
 
     val typeAlias = KotlinTypeAliasStubImpl(
         parent, classId.shortClassName.ref(), classId.asSingleFqName().ref(), classId,
-        isTopLevel = !classId.isNestedClass
+        isTopLevel = !classId.isNestedClass,
+        kdocText = typeAliasProto.getExtensionOrNull(KlibMetadataProtoBuf.typeAliasKdoc),
     )
 
     val modifierList = createModifierListStubForDeclaration(

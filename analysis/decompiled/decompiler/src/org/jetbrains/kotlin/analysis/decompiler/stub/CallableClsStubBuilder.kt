@@ -458,7 +458,8 @@ private class PropertyClsStubBuilder(
         }
 
         val annotations = loadAccessorAnnotations(AnnotatedCallableKind.PROPERTY_GETTER)
-        if (annotations.isEmpty() && !shouldGenerateAccessor(propertyFlags = propertyFlags, accessorFlags = getterFlags)) {
+        val kdocText = propertyProto.getExtensionOrNull(KlibMetadataProtoBuf.propertyGetterKdoc)
+        if (annotations.isEmpty() && kdocText == null && !shouldGenerateAccessor(propertyFlags = propertyFlags, accessorFlags = getterFlags)) {
             return
         }
 
@@ -475,6 +476,7 @@ private class PropertyClsStubBuilder(
                     contractOwner = ClsContractOwner.PropertyAccessor(propertyProto, isGetter = true),
                 )
             },
+            kdocText = kdocText,
         )
 
         createModifierListAndAnnotationStubsForAccessor(
@@ -500,7 +502,8 @@ private class PropertyClsStubBuilder(
         }
 
         val annotations = loadAccessorAnnotations(AnnotatedCallableKind.PROPERTY_SETTER)
-        if (annotations.isEmpty() && !shouldGenerateAccessor(propertyFlags = propertyFlags, accessorFlags = setterFlags)) {
+        val kdocText = propertyProto.getExtensionOrNull(KlibMetadataProtoBuf.propertySetterKdoc)
+        if (annotations.isEmpty() && kdocText == null && !shouldGenerateAccessor(propertyFlags = propertyFlags, accessorFlags = setterFlags)) {
             return
         }
 
@@ -517,6 +520,7 @@ private class PropertyClsStubBuilder(
                     contractOwner = ClsContractOwner.PropertyAccessor(propertyProto, isGetter = false),
                 )
             },
+            kdocText = kdocText,
         )
 
         createModifierListAndAnnotationStubsForAccessor(

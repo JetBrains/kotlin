@@ -15,7 +15,9 @@ import org.jetbrains.kotlin.psi.KtTypeAlias
 import org.jetbrains.kotlin.psi.psiUtil.safeFqNameForLazyResolve
 import org.jetbrains.kotlin.psi.stubs.StubUtils.createClassId
 import org.jetbrains.kotlin.psi.stubs.StubUtils.deserializeClassId
+import org.jetbrains.kotlin.psi.stubs.StubUtils.deserializeKdocText
 import org.jetbrains.kotlin.psi.stubs.StubUtils.serializeClassId
+import org.jetbrains.kotlin.psi.stubs.StubUtils.serializeKdocText
 import org.jetbrains.kotlin.psi.stubs.elements.StubIndexService
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinTypeAliasStubImpl
 
@@ -37,6 +39,7 @@ internal object KtTypeAliasStubSerializingElementFactory :
             qualifiedName = fqName,
             classId = classId,
             isTopLevel = isTopLevel,
+            kdocText = null,
         )
     }
 
@@ -45,6 +48,7 @@ internal object KtTypeAliasStubSerializingElementFactory :
         dataStream.writeName(stub.fqName?.asString())
         serializeClassId(dataStream, stub.classId)
         dataStream.writeBoolean(stub.isTopLevel)
+        dataStream.serializeKdocText(stub.kdocText)
     }
 
     override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>?): KotlinTypeAliasStubImpl {
@@ -52,12 +56,14 @@ internal object KtTypeAliasStubSerializingElementFactory :
         val fqName = dataStream.readName()
         val classId = deserializeClassId(dataStream)
         val isTopLevel = dataStream.readBoolean()
+        val kdocText = dataStream.deserializeKdocText()
         return KotlinTypeAliasStubImpl(
             parent = parentStub,
             name = name,
             qualifiedName = fqName,
             classId = classId,
             isTopLevel = isTopLevel,
+            kdocText = kdocText,
         )
     }
 
