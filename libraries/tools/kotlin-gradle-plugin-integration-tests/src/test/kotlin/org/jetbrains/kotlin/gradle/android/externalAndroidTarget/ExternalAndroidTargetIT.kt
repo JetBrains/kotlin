@@ -227,7 +227,7 @@ class ExternalAndroidTargetIT : KGPBaseTest() {
                 """
                     package com.example.shared.model
 
-                    import com.example.shared.Parcelable
+                    import kotlinx.parcelize.AddParcelableSupertype
                     import kotlinx.parcelize.DataClass
                     import kotlinx.parcelize.Experimental
                     import kotlinx.parcelize.IgnoredOnParcel
@@ -236,10 +236,11 @@ class ExternalAndroidTargetIT : KGPBaseTest() {
 
                     @OptIn(Experimental::class)
                     @Parcelize
+                    @AddParcelableSupertype
                     data class CommonParcelized(
                         val rawValue: @RawValue Any? = null,
                         val nested: @DataClass Nested = Nested(),
-                    ) : Parcelable {
+                    ) {
                         @IgnoredOnParcel
                         val ignored: String
                             get() = "ignored"

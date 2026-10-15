@@ -67,6 +67,7 @@ object KtErrorsParcelize : KtDiagnosticsContainer() {
     val DUPLICATE_PARCEL_TAG by error0<PsiElement>()
     val INCONSISTENT_PARCEL_TAG by error0<PsiElement>(NAME_IDENTIFIER)
     val INAPPLICABLE_PARCEL_TAG by error0<PsiElement>()
+    val INAPPLICABLE_ADD_PARCELABLE_SUPERTYPE by error0<PsiElement>()
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = KtDefaultErrorMessagesParcelize
 }
