@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.generators.tests
 
 import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
+import org.jetbrains.kotlin.jklib.test.irText.AbstractFirJKlibIrInlinerTest
 import org.jetbrains.kotlin.jklib.test.irText.AbstractFirJKlibIrTextTest
 
 fun main(args: Array<String>) {
@@ -15,6 +16,9 @@ fun main(args: Array<String>) {
         testGroup(testsRoot, "compiler/testData") {
             testClass<AbstractFirJKlibIrTextTest> {
                 model("ir/irText", excludeDirs = listOf("declarations/multiplatform/k1"))
+            }
+            testClass<AbstractFirJKlibIrInlinerTest> {
+                model("klib/jklibIrInliner")
             }
         }
     }

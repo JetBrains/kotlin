@@ -1,0 +1,105 @@
+FILE fqName:test fileName:/main.kt lineStartOffsets: [0, 17, 30, 31, 66, 67, 95, 114, 116, 117, 143, 144, 175, 176, 241, 242, 306, 307, 407, 479, 480, 544, 545, 613]
+  PROPERTY[144, 174] name:topLevelProperty visibility:public modality:FINAL [val]
+    FIELD[144, 174] PROPERTY_BACKING_FIELD name:topLevelProperty type:kotlin.Int visibility:private [final,static]
+      EXPRESSION_BODY[172, 174]
+        CONST[172, 174] Int type=kotlin.Int value=42
+    FUN[144, 169] DEFAULT_PROPERTY_ACCESSOR name:<get-topLevelProperty> visibility:public modality:FINAL returnType:kotlin.Int
+      correspondingProperty: PROPERTY[144, 174] name:topLevelProperty visibility:public modality:FINAL [val]
+      BLOCK_BODY[144, 169]
+        RETURN[144, 169] type=kotlin.Nothing from='public final fun <get-topLevelProperty> (): kotlin.Int declared in test'
+          GET_FIELD[144, 169] 'FIELD PROPERTY_BACKING_FIELD name:topLevelProperty type:kotlin.Int visibility:private [final,static]' type=kotlin.Int origin=null
+  CLASS[117, 142] CLASS name:Box modality:FINAL visibility:public superTypes:[kotlin.Any]
+    thisReceiver: VALUE_PARAMETER[117, 142] INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:test.Box
+    PROPERTY[127, 141] name:value visibility:public modality:FINAL [val]
+      FIELD[127, 141] PROPERTY_BACKING_FIELD name:value type:kotlin.Int visibility:private [final]
+        EXPRESSION_BODY[127, 141]
+          GET_VAR[127, 141] 'value: kotlin.Int declared in test.Box.<init>' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN[127, 141] DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:FINAL returnType:kotlin.Int
+        VALUE_PARAMETER[127, 141] kind:DispatchReceiver name:<this> index:0 type:test.Box
+        correspondingProperty: PROPERTY[127, 141] name:value visibility:public modality:FINAL [val]
+        BLOCK_BODY[127, 141]
+          RETURN[127, 141] type=kotlin.Nothing from='public final fun <get-value> (): kotlin.Int declared in test.Box'
+            GET_FIELD[127, 141] 'FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+              receiver: GET_VAR[127, 141] '<this>: test.Box declared in test.Box.<get-value>' type=test.Box origin=null
+    CONSTRUCTOR[126, 142] visibility:public returnType:test.Box [primary]
+      VALUE_PARAMETER[127, 141] kind:Regular name:value index:0 type:kotlin.Int
+      BLOCK_BODY[126, 142]
+        DELEGATING_CONSTRUCTOR_CALL[117, 142] 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL[117, 142] classDescriptor='CLASS CLASS name:Box modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN[-2, -2] FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER[-2, -2] kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+    FUN[-2, -2] FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+    FUN[-2, -2] FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+  CLASS[67, 115] INTERFACE name:IntSupplier modality:ABSTRACT visibility:public [fun] superTypes:[kotlin.Any]
+    thisReceiver: VALUE_PARAMETER[67, 115] INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:test.IntSupplier
+    FUN[-2, -2] FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER[-2, -2] kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+    FUN[-2, -2] FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+    FUN[-2, -2] FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+    FUN[99, 113] name:get visibility:public modality:ABSTRACT returnType:kotlin.Int
+      VALUE_PARAMETER[99, 113] kind:DispatchReceiver name:<this> index:0 type:test.IntSupplier
+  FUN[176, 240] name:takeIntSupplier visibility:public modality:FINAL returnType:kotlin.Int
+    VALUE_PARAMETER[196, 217] kind:Regular name:supplier index:0 type:test.IntSupplier
+    BLOCK_BODY[226, 240]
+      RETURN[240, 240] type=kotlin.Nothing from='public final fun takeIntSupplier (supplier: test.IntSupplier): kotlin.Int declared in test'
+        CALL[235, 240] 'public abstract fun get (): kotlin.Int declared in test.IntSupplier' type=kotlin.Int origin=null
+          ARG <this>: GET_VAR[226, 234] 'supplier: test.IntSupplier declared in test.takeIntSupplier' type=test.IntSupplier origin=null
+  FUN[242, 305] name:takeSupplier visibility:public modality:FINAL returnType:kotlin.Int
+    VALUE_PARAMETER[259, 282] kind:Regular name:supplier index:0 type:java.util.function.Supplier<kotlin.Int>
+    BLOCK_BODY[291, 305]
+      RETURN[305, 305] type=kotlin.Nothing from='public final fun takeSupplier (supplier: java.util.function.Supplier<kotlin.Int>): kotlin.Int declared in test'
+        TYPE_OP[300, 305] type=kotlin.Int origin=IMPLICIT_NOTNULL typeOperand=kotlin.Int
+          CALL[300, 305] 'public abstract fun get (): @[EnhancedNullability] T of java.util.function.Supplier declared in java.util.function.Supplier' type=@[EnhancedNullability] kotlin.Int origin=null
+            ARG <this>: GET_VAR[291, 299] 'supplier: java.util.function.Supplier<kotlin.Int> declared in test.takeSupplier' type=java.util.function.Supplier<kotlin.Int> origin=null
+  FUN[545, 612] name:testBoundReference visibility:public modality:FINAL returnType:kotlin.Int
+    VALUE_PARAMETER[568, 576] kind:Regular name:box index:0 type:test.Box
+    BLOCK_BODY[585, 612]
+      RETURN[612, 612] type=kotlin.Nothing from='public final fun testBoundReference (box: test.Box): kotlin.Int declared in test'
+        CALL[585, 612] 'public final fun takeIntSupplier (supplier: test.IntSupplier): kotlin.Int declared in test' type=kotlin.Int origin=null
+          ARG supplier: RICH_FUNCTION_REFERENCE[601, 611] type=test.IntSupplier origin=null reflectionTarget='public final fun <get-value> (): kotlin.Int declared in test.Box'
+            overriddenFunctionSymbol: public abstract fun get (): kotlin.Int declared in test.IntSupplier
+            bound receiver: GET_VAR[601, 604] 'box: test.Box declared in test.testBoundReference' type=test.Box origin=null
+            invoke: FUN[601, 611] LOCAL_FUNCTION_FOR_LAMBDA name:value visibility:local modality:FINAL returnType:kotlin.Int
+              VALUE_PARAMETER[601, 611] ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:test.Box
+              BLOCK_BODY[-1, -1]
+                RETURN[-1, -1] type=kotlin.Nothing from='local final fun value (receiver: test.Box): kotlin.Int declared in test.testBoundReference'
+                  CALL[601, 611] 'public final fun <get-value> (): kotlin.Int declared in test.Box' type=kotlin.Int origin=null
+                    ARG <this>: GET_VAR[601, 611] 'receiver: test.Box declared in test.testBoundReference.value' type=test.Box origin=ADAPTED_FUNCTION_REFERENCE
+  FUN[480, 543] name:testJavaInterface visibility:public modality:FINAL returnType:kotlin.Int
+    BLOCK_BODY[511, 543]
+      RETURN[543, 543] type=kotlin.Nothing from='public final fun testJavaInterface (): kotlin.Int declared in test'
+        CALL[511, 543] 'public final fun takeSupplier (supplier: java.util.function.Supplier<kotlin.Int>): kotlin.Int declared in test' type=kotlin.Int origin=null
+          ARG supplier: RICH_FUNCTION_REFERENCE[524, 542] type=java.util.function.Supplier<kotlin.Int> origin=null reflectionTarget='public final fun <get-topLevelProperty> (): kotlin.Int declared in test'
+            overriddenFunctionSymbol: public abstract fun get (): @[EnhancedNullability] T of java.util.function.Supplier declared in java.util.function.Supplier
+            invoke: FUN[524, 542] LOCAL_FUNCTION_FOR_LAMBDA name:topLevelProperty visibility:local modality:FINAL returnType:kotlin.Int
+              BLOCK_BODY[-1, -1]
+                RETURN[-1, -1] type=kotlin.Nothing from='local final fun topLevelProperty (): kotlin.Int declared in test.testJavaInterface'
+                  CALL[524, 542] 'public final fun <get-topLevelProperty> (): kotlin.Int declared in test' type=kotlin.Int origin=null
+  FUN[407, 478] name:testKotlinFunInterface visibility:public modality:FINAL returnType:kotlin.Int
+    BLOCK_BODY[443, 478]
+      RETURN[478, 478] type=kotlin.Nothing from='public final fun testKotlinFunInterface (): kotlin.Int declared in test'
+        CALL[443, 478] 'public final fun takeIntSupplier (supplier: test.IntSupplier): kotlin.Int declared in test' type=kotlin.Int origin=null
+          ARG supplier: RICH_FUNCTION_REFERENCE[459, 477] type=test.IntSupplier origin=null reflectionTarget='public final fun <get-topLevelProperty> (): kotlin.Int declared in test'
+            overriddenFunctionSymbol: public abstract fun get (): kotlin.Int declared in test.IntSupplier
+            invoke: FUN[459, 477] LOCAL_FUNCTION_FOR_LAMBDA name:topLevelProperty visibility:local modality:FINAL returnType:kotlin.Int
+              BLOCK_BODY[-1, -1]
+                RETURN[-1, -1] type=kotlin.Nothing from='local final fun topLevelProperty (): kotlin.Int declared in test.testKotlinFunInterface'
+                  CALL[459, 477] 'public final fun <get-topLevelProperty> (): kotlin.Int declared in test' type=kotlin.Int origin=null

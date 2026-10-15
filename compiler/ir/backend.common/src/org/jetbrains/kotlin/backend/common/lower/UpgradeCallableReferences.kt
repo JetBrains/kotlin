@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrRichFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrRichPropertyReferenceImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
+import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -32,6 +33,11 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 open class UpgradeCallableReferences(
     val context: LoweringContext,
     val upgradeSamConversions: Boolean = true,
+    /**
+     * Whether the SAM conversions of property references are upgraded too, to rich function references to their getters. Only applies
+     * if [upgradeSamConversions] is set.
+     */
+    val upgradeSamConversionsOfPropertyReferences: Boolean = false,
 ) : FileLoweringPass {
 
     override fun lower(irFile: IrFile) {
@@ -200,6 +206,9 @@ open class UpgradeCallableReferences(
             if (upgradeSamConversions && expression.operator == IrTypeOperator.SAM_CONVERSION) {
                 expression.transformChildren(this, data)
                 val argument = getSamConversionArgument(expression.argument)
+                if (upgradeSamConversionsOfPropertyReferences && argument is IrRichPropertyReference) {
+                    return argument.toReferenceToGetter(expression)
+                }
                 if (argument !is IrRichFunctionReference) return expression
                 return argument.apply {
                     startOffset = expression.startOffset
@@ -210,6 +219,20 @@ open class UpgradeCallableReferences(
             }
             return super.visitTypeOperator(expression, data)
         }
+
+        /** Returns a reference to the getter of this property reference, implementing the type of [samConversion]. */
+        private fun IrRichPropertyReference.toReferenceToGetter(samConversion: IrTypeOperatorCall): IrRichFunctionReference =
+            IrRichFunctionReferenceImpl(
+                startOffset = samConversion.startOffset,
+                endOffset = samConversion.endOffset,
+                type = samConversion.typeOperand,
+                reflectionTargetSymbol = (reflectionTargetSymbol as? IrPropertySymbol)?.owner?.getter?.symbol,
+                overriddenFunctionSymbol = samConversion.typeOperand.classOrFail.owner.selectSAMOverriddenFunction().symbol,
+                invokeFunction = getterFunction,
+                origin = origin,
+            ).apply {
+                boundValues += this@toReferenceToGetter.boundValues
+            }
 
         private fun IrCallableReference<*>.getCapturedValues() = buildList {
             for ([parameter, argument] in getArgumentsWithIr()) {

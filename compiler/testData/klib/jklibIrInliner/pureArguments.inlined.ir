@@ -1,0 +1,38 @@
+FILE fqName:<root> fileName:/pureArguments.kt lineStartOffsets: [0, 75, 76, 114, 115, 141, 142, 197]
+  FUN[115, 140] name:sideEffect visibility:public modality:FINAL returnType:kotlin.Int
+    BLOCK_BODY[139, 140]
+      RETURN[140, 140] type=kotlin.Nothing from='public final fun sideEffect (): kotlin.Int declared in <root>'
+        CONST[139, 140] Int type=kotlin.Int value=1
+  FUN[142, 196] name:test visibility:public modality:FINAL returnType:kotlin.Int
+    VALUE_PARAMETER[151, 157] kind:Regular name:a index:0 type:kotlin.Int
+    BLOCK_BODY[166, 196]
+      RETURN[196, 196] type=kotlin.Nothing from='public final fun test (a: kotlin.Int): kotlin.Int declared in <root>'
+        CALL[166, 196] 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
+          ARG <this>: RETURNABLE_BLOCK[166, 174] type=kotlin.Int origin=null
+            INLINED_BLOCK[166, 174]->[83, 113] type=kotlin.Int origin=null
+              inlinedFunctionSymbol: public final fun twice (x: kotlin.Int): kotlin.Int declared in <root>
+              inlinedFunctionFileEntry: FILE_ENTRY path:/pureArguments.kt
+              RETURN[113, 113] type=kotlin.Nothing from='{IrReturnableBlockImpl}'
+                CALL[108, 113] 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
+                  ARG <this>: GET_VAR[172, 173] 'a: kotlin.Int declared in <root>.test' type=kotlin.Int origin=null
+                  ARG other: GET_VAR[172, 173] 'a: kotlin.Int declared in <root>.test' type=kotlin.Int origin=null
+          ARG other: BLOCK[177, 196] type=kotlin.Int origin=INLINE_ARGS_CONTAINER
+            VAR[-1, -1] IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Int [val]
+              CALL[183, 195] 'public final fun sideEffect (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+            RETURNABLE_BLOCK[177, 196] type=kotlin.Int origin=null
+              INLINED_BLOCK[177, 196]->[83, 113] type=kotlin.Int origin=null
+                inlinedFunctionSymbol: public final fun twice (x: kotlin.Int): kotlin.Int declared in <root>
+                inlinedFunctionFileEntry: FILE_ENTRY path:/pureArguments.kt
+                VAR[-1, -1] IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER name:x type:kotlin.Int [val]
+                  GET_VAR[-1, -1] 'val tmp_0: kotlin.Int declared in <root>.test' type=kotlin.Int origin=null
+                RETURN[113, 113] type=kotlin.Nothing from='{IrReturnableBlockImpl}'
+                  CALL[108, 113] 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
+                    ARG <this>: GET_VAR[108, 109] 'val x: kotlin.Int declared in <root>.test' type=kotlin.Int origin=null
+                    ARG other: GET_VAR[112, 113] 'val x: kotlin.Int declared in <root>.test' type=kotlin.Int origin=null
+  FUN[83, 113] name:twice visibility:public modality:FINAL returnType:kotlin.Int [inline]
+    VALUE_PARAMETER[93, 99] kind:Regular name:x index:0 type:kotlin.Int
+    BLOCK_BODY[108, 113]
+      RETURN[113, 113] type=kotlin.Nothing from='public final fun twice (x: kotlin.Int): kotlin.Int declared in <root>'
+        CALL[108, 113] 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
+          ARG <this>: GET_VAR[108, 109] 'x: kotlin.Int declared in <root>.twice' type=kotlin.Int origin=null
+          ARG other: GET_VAR[112, 113] 'x: kotlin.Int declared in <root>.twice' type=kotlin.Int origin=null
