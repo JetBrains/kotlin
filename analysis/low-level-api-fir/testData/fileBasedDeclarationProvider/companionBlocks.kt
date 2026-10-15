@@ -1,4 +1,3 @@
-// IGNORE_FIR
 // CLASS: test/Foo.Bar
 // CLASS: test/Foo.Bar.Baz
 // CLASS: test/Foo.Qux

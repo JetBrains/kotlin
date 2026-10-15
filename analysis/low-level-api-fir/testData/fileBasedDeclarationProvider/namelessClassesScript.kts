@@ -1,4 +1,3 @@
-// IGNORE_FIR
 package test
 
 enum class {
