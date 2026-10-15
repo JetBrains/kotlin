@@ -5,10 +5,10 @@
 
 import kotlin.reflect.KFunction0
 
-// Each case observes KFunction metadata through a flow the DFG cannot follow precisely
-// (vararg elements, closure captures, indirect invocations). The demand analysis must
-// treat such escapes as keep-sinks; every case below breaks at runtime if its wrapper
-// is unwrapped, so plain box assertions are enough — no generated-code expectations.
+// Each case observes KFunction metadata through either a modeled value flow or a conservative
+// escape. Captured values are shared with their nested execution units; vararg elements and
+// indirect invocations remain keep-sinks. Every case below breaks at runtime if its wrapper is
+// unwrapped, so plain box assertions are enough — no generated-code expectations.
 
 fun capturedName() {}
 

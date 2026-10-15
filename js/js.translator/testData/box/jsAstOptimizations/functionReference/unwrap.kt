@@ -13,8 +13,8 @@ open class Base(val f: (Int) -> Int)
 
 class Sub(f: (Int) -> Int) : Base(f)
 
-// EXPECT_GENERATED_JS: function=invokeOnly$ref;Bound$boundInvoke$ref;dynamicInvoke$ref;kFunctionParam$ref;identity$ref;higherOrder$ref;storedField$ref;localVar$ref;samArgument$ref;samConstructor$ref;boxConstructor$ref;inheritedConstructor$ref expect=unwrap.js TARGET_BACKENDS=JS_IR
-// EXPECT_GENERATED_JS: function=invokeOnly$ref;Bound$boundInvoke$ref;dynamicInvoke$ref;kFunctionParam$ref;identity$ref;higherOrder$ref;storedField$ref;localVar$ref;samArgument$ref;samConstructor$ref;boxConstructor$ref;inheritedConstructor$ref expect=unwrap.es6.js TARGET_BACKENDS=JS_IR_ES6
+// EXPECT_GENERATED_JS: function=invokeOnly$ref;Bound$boundInvoke$ref;dynamicInvoke$ref;kFunctionParam$ref;identity$ref;higherOrder$ref;storedField$ref;localVar$ref;samArgument$ref;samConstructor$ref;boxConstructor$ref;inheritedConstructor$ref;capturedInvoke$ref;nestedCapturedInvoke$ref;capturedAssignmentInvoke$ref expect=unwrap.js TARGET_BACKENDS=JS_IR
+// EXPECT_GENERATED_JS: function=invokeOnly$ref;Bound$boundInvoke$ref;dynamicInvoke$ref;kFunctionParam$ref;identity$ref;higherOrder$ref;storedField$ref;localVar$ref;samArgument$ref;samConstructor$ref;boxConstructor$ref;inheritedConstructor$ref;capturedInvoke$ref;nestedCapturedInvoke$ref;capturedAssignmentInvoke$ref expect=unwrap.es6.js TARGET_BACKENDS=JS_IR_ES6
 
 fun invokeOnly(x: Int) = x + 1
 
@@ -41,6 +41,12 @@ fun samConstructor() = 21
 fun boxConstructor(x: Int) = x + 12
 
 fun inheritedConstructor(x: Int) = x + 13
+
+fun capturedInvoke(x: Int) = x + 14
+
+fun nestedCapturedInvoke(x: Int) = x + 15
+
+fun capturedAssignmentInvoke(x: Int) = x + 16
 
 fun takeK(k: KFunction0<Int>) = k()
 
@@ -80,6 +86,19 @@ fun box(): String {
 
     if (Box(::boxConstructor).f(10) != 22) return "fail box constructor"
     if (Sub(::inheritedConstructor).f(10) != 23) return "fail inherited constructor"
+
+    val captured = ::capturedInvoke
+    val invokeCaptured = { captured(10) }
+    if (invokeCaptured() != 24) return "fail captured"
+
+    val nestedCaptured = ::nestedCapturedInvoke
+    val invokeNestedCaptured = { { nestedCaptured(10) } }
+    if (invokeNestedCaptured()() != 25) return "fail nested captured"
+
+    var assignedCaptured: (Int) -> Int = { it }
+    val assignCaptured = { assignedCaptured = ::capturedAssignmentInvoke }
+    assignCaptured()
+    if (assignedCaptured(10) != 26) return "fail captured assignment"
 
     return "OK"
 }

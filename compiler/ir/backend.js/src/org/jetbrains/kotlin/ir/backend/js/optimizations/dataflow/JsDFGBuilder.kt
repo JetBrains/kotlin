@@ -109,9 +109,9 @@ private val IrCall.actualCallee: IrSimpleFunction
  * Builds one [JsDataFlowIR.ExecutionUnit] from an IR function or static field initializer.
  *
  * Construction has two stages. [ElementFinderVisitor] first records possible expression values,
- * reaching definitions, loop nesting, exits, and escapes. Graph construction then creates nodes,
+ * reaching definitions, loop nesting, exits, and captures. Graph construction then creates nodes,
  * places each node in the shallowest scope containing its inputs, and materializes the collected
- * return, throw, field-write, and escape flows.
+ * return, throw, field-write, and cross-unit value flows.
  *
  * The builder retains all intermediate state and is therefore single-use: create a new instance
  * for every function or field initializer.
@@ -119,6 +119,7 @@ private val IrCall.actualCallee: IrSimpleFunction
 internal class JsBodyDFGBuilder(
     private val context: JsIrBackendContext,
     private val symbolTable: JsDataFlowIR.SymbolTable,
+    private val capturedValueNodes: MutableMap<IrValueDeclaration, JsDataFlowIR.Node>,
 ) {
     private val expressionValuesExtractor = ExpressionValuesExtractor(context)
     private val visitor = ElementFinderVisitor(expressionValuesExtractor)
@@ -138,6 +139,7 @@ internal class JsBodyDFGBuilder(
             "No body for ${irFunction.render()}"
         }
 
+        visitor.ownedParameters += irFunction.parameters
         body.acceptVoid(visitor)
         visitor.variableValues.computeClosure()
         prepareBody(irFunction.parameters)
@@ -218,12 +220,19 @@ internal class JsBodyDFGBuilder(
             variables[key] = Scoped(node, scope)
         }
 
+        for (capturedValue in visitor.capturedValues) {
+            val node = variables[capturedValue]?.value ?: templateParameters[capturedValue]?.value ?: continue
+            check(capturedValueNodes.put(capturedValue, node) == null) {
+                "DFG node already registered for captured value ${capturedValue.render()}"
+            }
+        }
+
         visitor.expressions.forEach { getNode(it.key) }
     }
 
     /**
-     * Completes deferred value merges and adds the execution unit's throws and conservative
-     * escapes before exposing the finished body.
+     * Completes deferred value merges, including writes from nested execution units, and adds the
+     * execution unit's throws before exposing the finished body.
      */
     private fun finishBody(): JsDataFlowIR.Body {
         val throwableIrClass = context.irBuiltIns.throwableClass.owner
@@ -238,15 +247,20 @@ internal class JsBodyDFGBuilder(
             values.forEach { value.value.values += it.toValueNode() }
         }
 
-        val escapes = buildList {
-            for (escaped in visitor.escapedValues) {
-                val node = variables[escaped]?.value ?: templateParameters[escaped]?.value ?: continue
-                add(node)
+        for ([target, assignments] in visitor.capturedAssignments) {
+            val targetNode = checkNotNull(capturedValueNodes[target]) {
+                "No DFG node registered for captured assignment target ${target.render()}"
             }
-            visitor.escapedExpressions.forEach { add(it.toValueNode()) }
+            check(targetNode is JsDataFlowIR.Node.Variable) {
+                "Unexpected captured assignment target ${target.render()}"
+            }
+            assignments.forEach { targetNode.values += it.toValueNode() }
         }
-        if (escapes.isNotEmpty()) {
-            rootScope.nodes += JsDataFlowIR.Node.OpaqueValue(escapes)
+
+        if (visitor.opaqueExpressions.isNotEmpty()) {
+            rootScope.nodes += JsDataFlowIR.Node.OpaqueValue(
+                visitor.opaqueExpressions.map { it.toValueNode() }
+            )
         }
 
         rootScope.nodes += templateParameters.values.map { it.value }
@@ -280,12 +294,13 @@ internal class JsBodyDFGBuilder(
     private fun getNode(expression: IrExpression): Scoped<JsDataFlowIR.Node> {
         if (expression is IrGetValue) {
             val valueDeclaration = expression.symbol.owner
-            if (valueDeclaration is IrValueParameter) {
-                return templateParameters[valueDeclaration]
-                    ?: Scoped(JsDataFlowIR.Node.Const(symbolTable.mapType(expression.type)), rootScope)
+            templateParameters[valueDeclaration]?.let { return it }
+            variables[valueDeclaration]?.let { return it }
+            capturedValueNodes[valueDeclaration]?.let { return Scoped(it, rootScope) }
+            check(valueDeclaration.origin == IrDeclarationOrigin.INSTANCE_RECEIVER) {
+                "No DFG node registered for captured value ${valueDeclaration.render()}"
             }
-            return variables[valueDeclaration]
-                ?: Scoped(JsDataFlowIR.Node.Const(symbolTable.mapType(expression.type)), rootScope)
+            return Scoped(JsDataFlowIR.Node.Const(symbolTable.mapType(expression.type)), rootScope)
         }
         return nodes.getOrPut(expression) {
             val values = mutableListOf<IrExpression>()
@@ -430,7 +445,7 @@ internal class JsBodyDFGBuilder(
             )
 
         is IrFunctionExpression ->
-            // The prepass routes captured inputs to an OpaqueValue escape.
+            // Its body is a separate execution unit whose captured reads reuse their owners' nodes.
             JsDataFlowIR.Node.Const(symbolTable.mapType(expression.type))
 
         is IrConstantArray ->
@@ -474,7 +489,7 @@ internal class JsBodyDFGBuilder(
  *
  * The visitor records loops, relevant expressions, reaching definitions, return and throw
  * values, and flows that cross the current execution-unit boundary. It does not analyze nested
- * declarations as part of the enclosing unit; it only records captured inputs as escapes.
+ * declarations as part of the enclosing unit; it only records which values they capture.
  */
 private class ElementFinderVisitor(
     private val expressionValuesExtractor: ExpressionValuesExtractor,
@@ -484,12 +499,16 @@ private class ElementFinderVisitor(
     val variableValues = VariableValues()
     val returnValues = mutableListOf<IrExpression>()
     val thrownValues = mutableListOf<IrExpression>()
+    val ownedParameters = mutableSetOf<IrValueParameter>()
 
-    /** Values owned by the current execution unit and read by a nested declaration. */
-    val escapedValues = mutableSetOf<IrValueDeclaration>()
+    /** Values read or assigned by a nested declaration. */
+    val capturedValues = mutableSetOf<IrValueDeclaration>()
 
-    /** Values assigned to declarations owned outside the current execution unit. */
-    val escapedExpressions = mutableListOf<IrExpression>()
+    /** Assignments to declarations owned by an enclosing execution unit. */
+    val capturedAssignments = mutableMapOf<IrValueDeclaration, MutableList<IrExpression>>()
+
+    /** Inputs of assignments that the graph cannot represent as local-variable merges. */
+    val opaqueExpressions = mutableListOf<IrExpression>()
 
     private val suspendableExpressionStack = mutableListOf<IrSuspendableExpression>()
     private val loopStack = mutableListOf<IrLoop>()
@@ -506,7 +525,12 @@ private class ElementFinderVisitor(
         }
 
         override fun visitGetValue(expression: IrGetValue) {
-            escapedValues += expression.symbol.owner
+            capturedValues += expression.symbol.owner
+        }
+
+        override fun visitSetValue(expression: IrSetValue) {
+            capturedValues += expression.symbol.owner
+            expression.value.acceptVoid(this)
         }
     }
 
@@ -520,7 +544,7 @@ private class ElementFinderVisitor(
     }
 
     override fun visitClass(declaration: IrClass) {
-        // Local classes also have independent bodies whose captures escape this unit.
+        // Local classes also have independent bodies whose captures refer back to this unit.
         declaration.acceptChildrenVoid(nestedDeclarationVisitor)
     }
 
@@ -593,12 +617,12 @@ private class ElementFinderVisitor(
 
     override fun visitSetValue(expression: IrSetValue) {
         super.visitSetValue(expression)
-        val target = expression.symbol.owner
-        if (target in variableValues.elementData) {
-            assignValue(target, expression.value)
-        } else {
-            // The graph cannot follow a value written into storage owned by another unit.
-            escapedExpressions += expression.value
+        when (val target = expression.symbol.owner) {
+            in variableValues.elementData -> assignValue(target, expression.value)
+
+            in ownedParameters -> opaqueExpressions += expression.value
+
+            else -> capturedAssignments.getOrPut(target) { mutableListOf() } += expression.value
         }
     }
 

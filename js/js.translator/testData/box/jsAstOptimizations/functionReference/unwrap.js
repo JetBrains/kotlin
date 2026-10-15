@@ -58,3 +58,18 @@ function inheritedConstructor$ref() {
     return inheritedConstructor(p0);
   };
 }
+function capturedInvoke$ref() {
+  return function (p0) {
+    return capturedInvoke(p0);
+  };
+}
+function nestedCapturedInvoke$ref() {
+  return function (p0) {
+    return nestedCapturedInvoke(p0);
+  };
+}
+function capturedAssignmentInvoke$ref() {
+  return function (p0) {
+    return capturedAssignmentInvoke(p0);
+  };
+}
