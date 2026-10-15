@@ -18,6 +18,12 @@ object ZipFileSystemInPlaceAccessor : ZipFileSystemAccessor {
     }
 }
 
+/**
+ * A [ZipFileSystemAccessor] that keeps up to [cacheLimit] most recently used zip file systems open.
+ *
+ * The accessor is thread-safe: one compilation may read klibs from several threads at once
+ * (for example, the Kotlin/Native backend with `-Xbackend-threads`).
+ */
 class ZipFileSystemCacheableAccessor(private val cacheLimit: Int) : ZipFileSystemAccessor {
     private val loadFactor = 0.75f
     private val initialCapacity = (1f + cacheLimit.toFloat() / loadFactor).toInt()
@@ -32,11 +38,13 @@ class ZipFileSystemCacheableAccessor(private val cacheLimit: Int) : ZipFileSyste
         }
     }
 
+    @Synchronized
     override fun <T> withZipFileSystem(zipFile: Path, action: (FileSystem) -> T): T {
         val fileSystem = openedFileSystems.getOrPut(zipFile) { zipFile.zipFileSystem() }
         return action(fileSystem)
     }
 
+    @Synchronized
     fun reset() {
         var lastException: Exception? = null
         for (fileSystem in openedFileSystems.values) {
