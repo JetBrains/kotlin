@@ -132,6 +132,14 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind
                     checkValueParameter(parameter, isInSyntheticCopyMethod = isDataClassCopy)
                 }
 
+                declaration.receiverParameter?.takeUnless { declaration.isCompanionExtension }?.let { receiverParameter ->
+                    val receiverType = receiverParameter.typeRef.coneType
+                    if (!receiverType.isExportable()) {
+                        val source = receiverParameter.typeRef.source ?: declaration.source
+                        reporter.reportOn(source, FirJsErrors.NON_EXPORTABLE_TYPE, "receiver", receiverType)
+                    }
+                }
+
                 val returnType = declaration.returnTypeRef.coneType
 
                 if (declaration !is FirConstructor && !returnType.isExportableReturn()) {
