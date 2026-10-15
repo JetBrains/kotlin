@@ -52,6 +52,18 @@ public class SourceLikeFileBasedKotlinDeclarationProviderTestGenerated extends A
   }
 
   @Test
+  @TestMetadata("namelessCallables.kt")
+  public void testNamelessCallables() {
+    run("namelessCallables.kt");
+  }
+
+  @Test
+  @TestMetadata("namelessCallablesScript.kts")
+  public void testNamelessCallablesScript() {
+    run("namelessCallablesScript.kts");
+  }
+
+  @Test
   @TestMetadata("namelessClasses.kt")
   public void testNamelessClasses() {
     run("namelessClasses.kt");
