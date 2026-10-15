@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.lombok.LombokNames
 import org.jetbrains.kotlin.lombok.config.AccessLevel
 import org.jetbrains.kotlin.lombok.config.lombokService
 
-class DeclarationWithValueAnnStatusTransformer(session: FirSession) : FirStatusTransformerExtension(session) {
+class LombokDeclarationStatusTransformer(session: FirSession) : FirStatusTransformerExtension(session) {
     override fun needTransformStatus(declaration: FirDeclaration): Boolean {
         return declaration is FirJavaField || declaration is FirJavaClass || declaration is FirJavaConstructor
     }
