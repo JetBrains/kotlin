@@ -99,7 +99,7 @@ internal abstract class CommonJsAndWasmArgumentsImpl(
   @UseFromImplModuleRestricted
   override operator fun <V> `get`(key: CommonJsAndWasmArguments.CommonJsAndWasmArgument<V>): V {
     check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
-    return this[key.id] as V
+    return CommonJsAndWasmArgumentValueAdapter.toApi(this[key.id]) as V
   }
 
   @UseFromImplModuleRestricted
@@ -107,14 +107,14 @@ internal abstract class CommonJsAndWasmArgumentsImpl(
     if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 0)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
-    this[key.id] = `value`
+    this[key.id] = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
   }
 
   @Suppress("UNCHECKED_CAST")
   @UseFromImplModuleRestricted
   override operator fun <V> `get`(key: CommonJsAndWasmCompilerKlibArguments.CommonJsAndWasmCompilerKlibArgument<V>): V {
     check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
-    return this[key.id] as V
+    return CommonJsAndWasmArgumentValueAdapter.toApi(this[key.id]) as V
   }
 
   @UseFromImplModuleRestricted
@@ -122,14 +122,14 @@ internal abstract class CommonJsAndWasmArgumentsImpl(
     if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 0)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
-    this[key.id] = `value`
+    this[key.id] = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
   }
 
   @Suppress("UNCHECKED_CAST")
   @UseFromImplModuleRestricted
   override operator fun <V> `get`(key: CommonJsAndWasmCompilerLinkingArguments.CommonJsAndWasmCompilerLinkingArgument<V>): V {
     check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
-    return this[key.id] as V
+    return CommonJsAndWasmArgumentValueAdapter.toApi(this[key.id]) as V
   }
 
   @UseFromImplModuleRestricted
@@ -137,7 +137,7 @@ internal abstract class CommonJsAndWasmArgumentsImpl(
     if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 0)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
-    this[key.id] = `value`
+    this[key.id] = CommonJsAndWasmArgumentValueAdapter.toImpl(value)
   }
 
   abstract override fun build(): CommonJsAndWasmArgumentsImpl

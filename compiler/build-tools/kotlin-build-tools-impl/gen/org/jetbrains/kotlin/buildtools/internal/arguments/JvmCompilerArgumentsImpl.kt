@@ -130,10 +130,7 @@ import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.DelicateBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
-import org.jetbrains.kotlin.buildtools.api.arguments.Jsr305
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
-import org.jetbrains.kotlin.buildtools.api.arguments.NullabilityAnnotation
-import org.jetbrains.kotlin.buildtools.api.arguments.ProfileCompilerCommand
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
@@ -173,7 +170,7 @@ internal class JvmCompilerArgumentsImpl(
   @UseFromImplModuleRestricted
   override operator fun <V> `get`(key: JvmCompilerArguments.JvmCompilerArgument<V>): V {
     check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
-    return this[key.id] as V
+    return JvmCompilerArgumentValueAdapter.toApi(this[key.id]) as V
   }
 
   @UseFromImplModuleRestricted
@@ -181,7 +178,7 @@ internal class JvmCompilerArgumentsImpl(
     if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 0)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
-    this[key.id] = `value`
+    this[key.id] = JvmCompilerArgumentValueAdapter.toImpl(value)
   }
 
   @Deprecated(
@@ -374,8 +371,8 @@ internal class JvmCompilerArgumentsImpl(
     try { this[NO_STDLIB] = arguments.noStdlib } catch (_: NoSuchMethodError) {  }
     try { this[SCRIPT_TEMPLATES] = arguments.scriptTemplates.toListOrEmpty() } catch (_: NoSuchMethodError) {  }
     try { this[X_PROFILE] = applyProfileCompilerCommand(if(X_PROFILE in this) this[X_PROFILE] else null, arguments) } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
-    try { this[X_NULLABILITY_ANNOTATIONS] = applyNullabilityAnnotations(if(X_NULLABILITY_ANNOTATIONS in this) this[X_NULLABILITY_ANNOTATIONS] else emptyList<NullabilityAnnotation>(), arguments) } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
-    try { this[X_JSR305] = applyJsr305(if(X_JSR305 in this) this[X_JSR305] else emptyList<Jsr305>(), arguments) } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { this[X_NULLABILITY_ANNOTATIONS] = applyNullabilityAnnotations(if(X_NULLABILITY_ANNOTATIONS in this) this[X_NULLABILITY_ANNOTATIONS] else emptyList<NullabilityAnnotationImpl>(), arguments) } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { this[X_JSR305] = applyJsr305(if(X_JSR305 in this) this[X_JSR305] else emptyList<Jsr305Impl>(), arguments) } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     internalArguments.addAll(arguments.internalArguments.map { it.stringRepresentation })
   }
 
@@ -747,12 +744,12 @@ internal class JvmCompilerArgumentsImpl(
     public val SCRIPT_TEMPLATES: JvmCompilerArgument<List<String>> =
         JvmCompilerArgument("SCRIPT_TEMPLATES")
 
-    public val X_PROFILE: JvmCompilerArgument<ProfileCompilerCommand?> =
+    public val X_PROFILE: JvmCompilerArgument<ProfileCompilerCommandImpl?> =
         JvmCompilerArgument("X_PROFILE")
 
-    public val X_NULLABILITY_ANNOTATIONS: JvmCompilerArgument<List<NullabilityAnnotation>> =
+    public val X_NULLABILITY_ANNOTATIONS: JvmCompilerArgument<List<NullabilityAnnotationImpl>> =
         JvmCompilerArgument("X_NULLABILITY_ANNOTATIONS")
 
-    public val X_JSR305: JvmCompilerArgument<List<Jsr305>> = JvmCompilerArgument("X_JSR305")
+    public val X_JSR305: JvmCompilerArgument<List<Jsr305Impl>> = JvmCompilerArgument("X_JSR305")
   }
 }

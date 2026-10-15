@@ -98,7 +98,7 @@ internal class WasmArgumentsImpl(
   @UseFromImplModuleRestricted
   override operator fun <V> `get`(key: WasmCompilerArguments.WasmCompilerArgument<V>): V {
     check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
-    return this[key.id] as V
+    return WasmArgumentValueAdapter.toApi(this[key.id]) as V
   }
 
   @UseFromImplModuleRestricted
@@ -106,14 +106,14 @@ internal class WasmArgumentsImpl(
     if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 0)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
-    this[key.id] = `value`
+    this[key.id] = WasmArgumentValueAdapter.toImpl(value)
   }
 
   @Suppress("UNCHECKED_CAST")
   @UseFromImplModuleRestricted
   override operator fun <V> `get`(key: WasmCompilerKlibArguments.WasmCompilerKlibArgument<V>): V {
     check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
-    return this[key.id] as V
+    return WasmArgumentValueAdapter.toApi(this[key.id]) as V
   }
 
   @UseFromImplModuleRestricted
@@ -121,14 +121,14 @@ internal class WasmArgumentsImpl(
     if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 0)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
-    this[key.id] = `value`
+    this[key.id] = WasmArgumentValueAdapter.toImpl(value)
   }
 
   @Suppress("UNCHECKED_CAST")
   @UseFromImplModuleRestricted
   override operator fun <V> `get`(key: WasmCompilerLinkingArguments.WasmCompilerLinkingArgument<V>): V {
     check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
-    return this[key.id] as V
+    return WasmArgumentValueAdapter.toApi(this[key.id]) as V
   }
 
   @UseFromImplModuleRestricted
@@ -136,7 +136,7 @@ internal class WasmArgumentsImpl(
     if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 0)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
-    this[key.id] = `value`
+    this[key.id] = WasmArgumentValueAdapter.toImpl(value)
   }
 
   override fun deepCopy(): WasmArgumentsImpl = WasmArgumentsImpl(argumentValidationErrors.toSet(), restrictedArgViolations.toList(), argumentParseDiagnostics.copy()).also { newArgs -> newArgs.applyCompilerArguments(toCompilerArguments()) }

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.buildtools.`internal`.arguments
 
 import kotlin.Any
-import kotlin.Enum
 import kotlin.OptIn
 import kotlin.collections.List
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
@@ -18,12 +17,12 @@ import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgumen
  */
 internal object CommonToolArgumentValueAdapter {
   public fun toApi(`value`: Any?): Any? = when (value) {
-    is List<*> if value.firstOrNull() is Enum<*> -> value.map { toApi(it) }
+    is List<*> -> value.map { toApi(it) }
     else -> value
   }
 
   public fun toImpl(`value`: Any?): Any? = when (value) {
-    is List<*> if value.firstOrNull() is Enum<*> -> value.map { toImpl(it) }
+    is List<*> -> value.map { toImpl(it) }
     else -> value
   }
 }
