@@ -4,7 +4,7 @@ PrivateValue.class:
     IMPORT_LIST
     CLASS[classId=/PrivateValue, fqName=PrivateValue, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=PrivateValue, superNames=[]]
       valueClassRepresentation: inline [ underlying property -> kotlin.String ]
-      MODIFIER_LIST[public final value]
+      MODIFIER_LIST[public final inline value]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=JvmInline]
           valueArguments: [ ]
           CONSTRUCTOR_CALLEE
@@ -78,7 +78,7 @@ PublicValue.class:
     IMPORT_LIST
     CLASS[classId=/PublicValue, fqName=PublicValue, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=PublicValue, superNames=[]]
       valueClassRepresentation: inline [ underlying property -> kotlin.String ]
-      MODIFIER_LIST[public final value]
+      MODIFIER_LIST[public final inline value]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=JvmInline]
           valueArguments: [ ]
           CONSTRUCTOR_CALLEE
