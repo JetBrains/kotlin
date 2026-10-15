@@ -149,6 +149,10 @@ class KtPsiUtilTest(private val testInfo: TestInfo) : KotlinTestWithEnvironment(
                 Assertions.assertEquals(expectedLocal, declaration.isLocal()) { "KtClassOrObject.isLocal for $name" }
             }
 
+            // KT-89786: local members of an enum entry body still have a fully qualified name
+            val expectedFqName = !expectedLocal || name.endsWith("InEntryLocal")
+            Assertions.assertEquals(expectedFqName, declaration.fqName != null) { "fqName for $name: ${declaration.fqName}" }
+
             if (name.endsWith("InEntryLocal")) {
                 val enclosingElement = KtPsiUtil.getEnclosingElementForLocalDeclaration(declaration)
                 Assertions.assertTrue(enclosingElement is KtClassBody && enclosingElement.parent is KtEnumEntry) {
