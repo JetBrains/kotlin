@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: CODEGEN
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +CollectionLiteralsBasedAnnotationResolution
 // LANGUAGE_FEATURE_TOGGLED: AllowAnnotationsOnArgumentsOfAnnotations
 

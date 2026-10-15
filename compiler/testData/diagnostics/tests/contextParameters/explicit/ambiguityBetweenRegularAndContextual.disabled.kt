@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: CODEGEN
 // LANGUAGE: +ContextParameters
 // LANGUAGE_FEATURE_TOGGLED: ExplicitContextArguments
 // MODULE: m1

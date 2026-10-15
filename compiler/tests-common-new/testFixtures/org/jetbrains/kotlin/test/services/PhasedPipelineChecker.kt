@@ -138,7 +138,8 @@ class PhasedPipelineChecker(
         val testDataFile = testServices.moduleStructure.originalTestDataFiles.first()
         val originalFile = testDataFile.originalTestDataFile
         val filesList = when {
-            testDataFile.extension == "nkt" -> listOf(testDataFile)
+            // `.disabled` test data may declare a phase different from the original test data, see `LANGUAGE_FEATURE_TOGGLED`
+            testDataFile.extension == "nkt" || testDataFile.isLfDisabledTestData -> listOf(testDataFile)
             else -> listOf(
                 originalFile,
                 originalFile.llFirTestDataFile,

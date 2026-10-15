@@ -134,6 +134,10 @@ fun main(args: Array<String>) {
             testClass<AbstractPhasedPipelineCheckerTest> {
                 model("phasedPipelineChecker", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
             }
+
+            testClass<AbstractPhasedPipelineCheckerWithLanguageFeatureDisabledTest> {
+                model("phasedPipelineChecker", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
+            }
         }
 
         testGroup(testRoot, "compiler/testData/diagnostics/tests/contextSensitiveResolutionUsingExpectedType") {

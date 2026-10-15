@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.test.runners
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.configuration.configurationForTestWithLanguageFeatureDisabled
 import org.jetbrains.kotlin.test.directives.TestPhaseDirectives.LATEST_PHASE_IN_PIPELINE
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.services.PhasedPipelineChecker
@@ -22,16 +23,15 @@ import org.opentest4j.TestAbortedException
  * Checks the messages reported by [PhasedPipelineChecker] for tests with inconsistent phase directives.
  *
  * If a test is expected to fail, the messages of all its failures are compared with the content of the
- * [PHASED_FAILURE_EXTENSION] file next to the test. Diffs proposed for the test data are rendered as changed lines only,
+ * [failureFileExtension] file next to the test. Diffs proposed for the test data are rendered as changed lines only,
  * and are never applied to the test data itself.
  *
  * Tests located in the `latestPhaseIsFir2Ir` and `noLatestPhase` directories are run with
  * [LATEST_PHASE_IN_PIPELINE] set to [FIR2IR][TestPhase.FIR2IR] and without [LATEST_PHASE_IN_PIPELINE] respectively.
  */
 open class AbstractPhasedPipelineCheckerTest : AbstractFirPhasedDiagnosticTest(FirParser.LightTree) {
-    companion object {
-        const val PHASED_FAILURE_EXTENSION: String = ".phased-failure.txt"
-    }
+    protected open val failureFileExtension: String
+        get() = ".phased-failure.txt"
 
     override fun configure(builder: TestConfigurationBuilder): Unit = with(builder) {
         super.configure(builder)
@@ -60,7 +60,7 @@ open class AbstractPhasedPipelineCheckerTest : AbstractFirPhasedDiagnosticTest(F
             e
         }
 
-        val failureFile = ForTestCompileRuntime.transformTestDataPath(filePath).withExtension(PHASED_FAILURE_EXTENSION)
+        val failureFile = ForTestCompileRuntime.transformTestDataPath(filePath).withExtension(failureFileExtension)
         when {
             failure != null -> JUnit5Assertions.assertEqualsToFile(failureFile, failure.render())
             failureFile.exists() -> JUnit5Assertions.fail {
@@ -85,5 +85,19 @@ open class AbstractPhasedPipelineCheckerTest : AbstractFirPhasedDiagnosticTest(F
         for (line in actualLines - expectedLines.toSet()) {
             append("\n+ ").append(line)
         }
+    }
+}
+
+/**
+ * Same as [AbstractPhasedPipelineCheckerTest], but runs tests having `LANGUAGE_FEATURE_TOGGLED` with the language feature disabled,
+ * i.e., against their `.disabled` test data.
+ */
+open class AbstractPhasedPipelineCheckerWithLanguageFeatureDisabledTest : AbstractPhasedPipelineCheckerTest() {
+    override val failureFileExtension: String
+        get() = ".disabled.phased-failure.txt"
+
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.configurationForTestWithLanguageFeatureDisabled()
     }
 }

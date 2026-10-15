@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-84185
 // JDK_KIND: FULL_JDK_21
 //   ^ to allow static member in inner class in Java
