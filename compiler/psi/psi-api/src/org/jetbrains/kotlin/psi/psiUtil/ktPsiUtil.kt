@@ -1086,13 +1086,14 @@ fun Name?.safeNameForLazyResolve(): Name = this?.takeUnless(Name::isSpecial) ?: 
  * declaration's [ClassId][org.jetbrains.kotlin.name.ClassId], e.g. `Outer.<no name provided>.Inner`.
  *
  * Declarations without a [ClassId][org.jetbrains.kotlin.name.ClassId] are handled differently:
- * - local declarations and everything nested in them have no fully qualified name;
+ * - local declarations, including members of enum entry bodies, and everything nested in them have no fully
+ *   qualified name;
  * - enum entries are named using the real names of their containing classes, e.g. `MyEnum.Entry`, or `null` if
- *   any containing class has no name. Declarations in enum entry bodies are named after the entry.
+ *   any containing class has no name.
  */
 fun KtNamedDeclaration.safeFqNameForLazyResolve(): FqName? {
     val containingClass = (parent as? KtClassBody)?.containingClassOrObject
-    val parentFqName = if (containingClass != null && this !is KtEnumEntry) {
+    val parentFqName = if (containingClass != null && containingClass !is KtEnumEntry && this !is KtEnumEntry) {
         containingClass.safeFqNameForLazyResolve()
     } else {
         KtNamedDeclarationUtil.getParentFqName(this)

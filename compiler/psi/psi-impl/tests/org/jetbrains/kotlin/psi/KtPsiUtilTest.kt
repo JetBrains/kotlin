@@ -127,7 +127,7 @@ class KtPsiUtilTest(private val testInfo: TestInfo) : KotlinTestWithEnvironment(
     }
 
     /**
-     * A declaration is expected to be local if its name contains `Local`.
+     * A declaration is expected to be local and to have no fully qualified name if its name contains `Local`.
      * A local declaration whose name ends with `InEntryLocal` is expected to be enclosed by the enum entry body.
      */
     @Test
@@ -149,9 +149,7 @@ class KtPsiUtilTest(private val testInfo: TestInfo) : KotlinTestWithEnvironment(
                 Assertions.assertEquals(expectedLocal, declaration.isLocal()) { "KtClassOrObject.isLocal for $name" }
             }
 
-            // KT-89786: local members of an enum entry body still have a fully qualified name
-            val expectedFqName = !expectedLocal || name.endsWith("InEntryLocal")
-            Assertions.assertEquals(expectedFqName, declaration.fqName != null) { "fqName for $name: ${declaration.fqName}" }
+            Assertions.assertEquals(!expectedLocal, declaration.fqName != null) { "fqName for $name: ${declaration.fqName}" }
 
             if (name.endsWith("InEntryLocal")) {
                 val enclosingElement = KtPsiUtil.getEnclosingElementForLocalDeclaration(declaration)
