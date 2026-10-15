@@ -491,6 +491,10 @@ abstract class IncrementalCompilerRunner<
         caches: CacheManager,
         messageCollector: MessageCollector,
     ): ExitCode {
+        when (compilationMode) {
+            is CompilationMode.Incremental -> reporter.reportCompilationStart(true, null)
+            is CompilationMode.Rebuild -> reporter.reportCompilationStart(false, compilationMode.reason.readableString)
+        }
         performWorkBeforeCompilation(compilationMode, args)
 
         val allKotlinFiles = allSourceFiles.filter { it.isKotlinFile(kotlinSourceFilesExtensions) }

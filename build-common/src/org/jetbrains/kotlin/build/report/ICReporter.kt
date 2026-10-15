@@ -19,6 +19,9 @@ interface ICReporter {
 
     fun report(message: () -> String, severity: ReportSeverity)
 
+    fun reportCompilationStart(isIncremental: Boolean, reason: String?)
+    fun reportProcessedChanges(dirtySymbols: Iterable<Pair<String, String>>, dirtyClasses: Iterable<String>, dirtySealed: Iterable<String>)
+
     fun reportCompileIteration(incremental: Boolean, sourceFiles: Collection<File>, exitCode: ExitCode)
     fun reportMarkDirtyClass(affectedFiles: Iterable<File>, classFqName: String)
     fun reportMarkDirtyMember(affectedFiles: Iterable<File>, scope: String, name: String)
@@ -35,6 +38,12 @@ fun ICReporter.reportMarkDirty(affectedFiles: Iterable<File>, reason: ScopeExpan
 
 object DoNothingICReporter : ICReporter {
     override fun report(message: () -> String, severity: ICReporter.ReportSeverity) {}
+    override fun reportCompilationStart(isIncremental: Boolean, reason: String?) {}
+    override fun reportProcessedChanges(
+        dirtySymbols: Iterable<Pair<String, String>>,
+        dirtyClasses: Iterable<String>,
+        dirtySealed: Iterable<String>
+    ) {}
     override fun reportCompileIteration(incremental: Boolean, sourceFiles: Collection<File>, exitCode: ExitCode) {}
     override fun reportMarkDirtyClass(affectedFiles: Iterable<File>, classFqName: String) {}
     override fun reportMarkDirtyMember(affectedFiles: Iterable<File>, scope: String, name: String) {}
