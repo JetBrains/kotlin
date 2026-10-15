@@ -104,11 +104,12 @@ class WasmGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolato
         }
 
     private fun computeLanguageSettingsToken(moduleStructure: TestModuleStructure): BatchToken? {
-        val languageFeatures = moduleStructure.allDirectives[LanguageSettingsDirectives.LANGUAGE].sorted()
-        val optIns = moduleStructure.allDirectives[LanguageSettingsDirectives.OPT_IN].sorted()
-        val apiVersion = moduleStructure.allDirectives[LanguageSettingsDirectives.API_VERSION]
-        val languageVersion = moduleStructure.allDirectives[LanguageSettingsDirectives.LANGUAGE_VERSION]
-        val returnValueCheckerMode = moduleStructure.allDirectives[LanguageSettingsDirectives.RETURN_VALUE_CHECKER_MODE]
+        // `distinct()` below is used to match directive lists for tests having different amount of modules, like `[2.2]` vs `[2.2, 2.2]`
+        val languageFeatures = moduleStructure.allDirectives[LanguageSettingsDirectives.LANGUAGE].distinct().sorted()
+        val optIns = moduleStructure.allDirectives[LanguageSettingsDirectives.OPT_IN].distinct().sorted()
+        val apiVersion = moduleStructure.allDirectives[LanguageSettingsDirectives.API_VERSION].distinct()
+        val languageVersion = moduleStructure.allDirectives[LanguageSettingsDirectives.LANGUAGE_VERSION].distinct()
+        val returnValueCheckerMode = moduleStructure.allDirectives[LanguageSettingsDirectives.RETURN_VALUE_CHECKER_MODE].distinct()
         val progressiveMode = LanguageSettingsDirectives.PROGRESSIVE_MODE in moduleStructure.allDirectives
 
         if (languageFeatures.isEmpty()
