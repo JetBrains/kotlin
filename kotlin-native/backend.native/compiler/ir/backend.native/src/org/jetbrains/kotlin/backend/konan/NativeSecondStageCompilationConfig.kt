@@ -150,6 +150,11 @@ class NativeSecondStageCompilationConfig(
                         "delta-main GC stack maps are not supported with ${gc.name} collector. " +
                                 "Use the default shadow-stack scheme, or CMS collector.")
             }
+            if (!optimizationsEnabled) {
+                configuration.reportCompilationErrorAndThrow(
+                        "delta-main GC stack maps require optimizations. " +
+                                "Use the default shadow-stack scheme, or add the -opt compiler option.")
+            }
         }
     }
     val runtimeAssertsMode: RuntimeAssertsMode get() = configuration.get(BinaryOptions.runtimeAssertionsMode) ?: RuntimeAssertsMode.IGNORE
