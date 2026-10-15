@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
-import kotlin.test.assertEquals
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import java.util.stream.Stream
+import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
 
 class SemVerFixTest {
     companion object {
@@ -59,4 +61,32 @@ class SemVerFixTest {
     fun testFixSemver(expected: String, actual: String) {
         assertEquals(expected, fixSemver(actual))
     }
+
+
+    //region KT-89245: the fixed version is used as a directory name, so it must not carry path syntax
+    @Test
+    fun fixSemverRemovesForwardSlashes() {
+        listOf("../react/1.0.0", "/abs/1.0.0", "1.0.0/../x").forEach { version ->
+            val fixed = fixSemver(version)
+            assertEquals(fixed.filterNot { it == '/' }, fixed, "fixSemver('$version')")
+        }
+    }
+
+    @Test
+    fun fixSemverRemovesBackslashes() {
+        listOf("""..\react\1.0.0""", """\abs\1.0.0""", """1.0.0\..\x""").forEach { version ->
+            val fixed = fixSemver(version)
+            assertEquals(fixed.filterNot { it == '\\' }, fixed, "fixSemver('$version')")
+        }
+    }
+
+    @Test
+    fun fixSemverRemovesRelativePaths() {
+        listOf(".", "..").forEach { version ->
+            val fixed = fixSemver(version)
+            assertNotEquals(".", fixed, "fixSemver('$version')")
+            assertNotEquals("..", fixed, "fixSemver('$version')")
+        }
+    }
+    //endregion
 }
