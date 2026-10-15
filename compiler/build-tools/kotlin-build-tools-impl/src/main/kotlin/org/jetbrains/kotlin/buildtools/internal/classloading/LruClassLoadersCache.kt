@@ -9,6 +9,7 @@ import com.google.common.cache.Cache
 import com.google.common.cache.CacheBuilder
 import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
+import org.jetbrains.kotlin.buildtools.internal.CloseableGuard
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginsLoader
 import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
@@ -27,8 +28,8 @@ internal class LruClassLoadersCache private constructor(
     private val parentClassLoader: ClassLoader = ClassLoader.getSystemClassLoader(),
     private val logger: KotlinLogger? = null,
     private val cache: Cache<CacheKey, URLClassLoader>,
+    closeableGuard: CloseableGuard? = null
 ) : ClassLoadersCache, AutoCloseable {
-
     constructor(
         size: Int,
         parentClassLoader: ClassLoader,
@@ -45,11 +46,19 @@ internal class LruClassLoadersCache private constructor(
             }.build()
     )
 
-    fun withLogger(logger: KotlinLogger?): LruClassLoadersCache = LruClassLoadersCache(parentClassLoader, logger, cache)
+    private val closeableGuard = closeableGuard ?: CloseableGuard(this)
 
-    override fun getForClassPath(files: List<File>): URLClassLoader = getForClassPath(files, parentClassLoader)
+    fun withLogger(logger: KotlinLogger?): LruClassLoadersCache {
+        closeableGuard.requireNotClosed()
+        return LruClassLoadersCache(parentClassLoader, logger, cache, closeableGuard)
+    }
 
-    private fun getForClassPath(files: List<File>, parent: ClassLoader): URLClassLoader {
+    override fun getForClassPath(files: List<File>): URLClassLoader {
+        closeableGuard.requireNotClosed()
+        return getForClassPathInternal(files, parentClassLoader)
+    }
+
+    private fun getForClassPathInternal(files: List<File>, parent: ClassLoader): URLClassLoader {
         val key = makeKey(files)
         return cache.get(key) {
             makeClassLoader(key, parent)
@@ -64,6 +73,7 @@ internal class LruClassLoadersCache private constructor(
      * So you can safely cache [ClassLoader] from external artifacts and use it for internal ones.
      */
     fun getForSplitPaths(bottom: List<File>, top: List<File>): ClassLoader {
+        closeableGuard.requireNotClosed()
         return if (bottom.isEmpty() || top.isEmpty()) {
             getForClassPath(bottom + top)
         } else {
@@ -76,7 +86,9 @@ internal class LruClassLoadersCache private constructor(
     }
 
     override fun close() {
-        cache.invalidateAll()
+        closeableGuard.close {
+            cache.invalidateAll()
+        }
     }
 
     private fun makeClassLoader(key: CacheKey, parent: ClassLoader): URLClassLoader {
@@ -96,23 +108,26 @@ internal class LruClassLoadersCache private constructor(
     private data class CacheKey(val entries: List<ClasspathEntry>)
 
     @OptIn(ExperimentalCompilerApi::class)
-    fun asPluginsLoader(): PluginsLoader = object : PluginsLoader {
-        override fun loadCompilerPluginRegistrars(
-            pluginClasspath: Collection<String>,
-            parentDisposable: Disposable,
-        ): List<CompilerPluginRegistrar> {
-            return ServiceLoaderLite.loadImplementations(
-                CompilerPluginRegistrar::class.java, getForClassPath(pluginClasspath.map { File(it) })
-            )
-        }
+    fun asPluginsLoader(): PluginsLoader {
+        closeableGuard.requireNotClosed()
+        return object : PluginsLoader {
+            override fun loadCompilerPluginRegistrars(
+                pluginClasspath: Collection<String>,
+                parentDisposable: Disposable,
+            ): List<CompilerPluginRegistrar> {
+                return ServiceLoaderLite.loadImplementations(
+                    CompilerPluginRegistrar::class.java, getForClassPath(pluginClasspath.map { File(it) })
+                )
+            }
 
-        override fun loadCommandLineProcessors(
-            pluginClasspath: Collection<String>,
-            parentDisposable: Disposable,
-        ): List<CommandLineProcessor> {
-            return ServiceLoaderLite.loadImplementations(
-                CommandLineProcessor::class.java, getForClassPath(pluginClasspath.map { File(it) })
-            )
+            override fun loadCommandLineProcessors(
+                pluginClasspath: Collection<String>,
+                parentDisposable: Disposable,
+            ): List<CommandLineProcessor> {
+                return ServiceLoaderLite.loadImplementations(
+                    CommandLineProcessor::class.java, getForClassPath(pluginClasspath.map { File(it) })
+                )
+            }
         }
     }
 }

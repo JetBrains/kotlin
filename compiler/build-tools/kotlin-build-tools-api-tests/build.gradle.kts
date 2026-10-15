@@ -203,6 +203,7 @@ val businessLogicTestSuits = setOf(
     "testArgumentParsingWarnings",
     "testClasspathMetadata",
     "testBuildSession",
+    "testLint",
 )
 
 val buildToolsImplConfigurationsCache = mutableMapOf<String, Configuration>()
@@ -354,6 +355,24 @@ testing {
                         "org/jetbrains/kotlin/buildtools/tests/compilation/GreetScriptDefinition.class",
                     )
                 }
+            }
+        }
+
+        named<JvmTestSuite>("testLint") {
+            dependencies {
+                implementation(project(":analysis:analysis-api"))
+                implementation(project(":analysis:analysis-api-standalone"))
+                implementation(libs.intellij.asm)
+                runtimeOnly(project(":analysis:analysis-api-standalone:analysis-api-standalone-fir"))
+                runtimeOnly(project(":analysis:analysis-api-fir"))
+                runtimeOnly(intellijCore())
+                runtimeOnly(libs.intellij.fastutil)
+                runtimeOnly(commonDependency("org.jetbrains.intellij.deps:jdom:2.0.6"))
+                runtimeOnly(commonDependency("com.fasterxml:aalto-xml"))
+                runtimeOnly(commonDependency("org.codehaus.woodstox:stax2-api"))
+                runtimeOnly(commonDependency("one.util:streamex"))
+                implementation(project(":core:language.targets.jvm"))
+                implementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect"))
             }
         }
     }
