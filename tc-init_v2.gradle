@@ -629,11 +629,16 @@ abstract class CompileTaskErrorOutputPlugin implements Plugin<Gradle> {
                 gradle.sharedServices.registerIfAbsent("compileTaskErrorOutputService", CompileTaskErrorOutputService) {}
 
         gradle.addListener(new AfterEvaluateListener({ Project project ->
-            project.tasks.matching { Task task ->
-                task instanceof AbstractCompile || Util.isInstance(task.class, "org.jetbrains.kotlin.gradle.tasks.KotlinCompileTool")
-            }.configureEach { Task task ->
+            project.tasks.withType(AbstractCompile).configureEach { Task task ->
                 task.doFirst {
                     compileTaskErrorOutputServiceProvider.get().addCompileTaskErrorOutputListener(it)
+                }
+            }
+            project.tasks.configureEach { Task task ->
+                if (!(task instanceof AbstractCompile) && Util.isInstance(task.class, "org.jetbrains.kotlin.gradle.tasks.KotlinCompileTool")) {
+                    task.doFirst {
+                        compileTaskErrorOutputServiceProvider.get().addCompileTaskErrorOutputListener(it)
+                    }
                 }
             }
         }))
@@ -683,8 +688,16 @@ class TeamcityTestListener implements TestListener, TestOutputListener {
     void afterSuite(TestDescriptor testDescriptor, TestResult testResult) {
         def suiteDescriptorWrapper = new SuiteDescriptorWrapper(testDescriptor, flowWrapper, ignoredSuiteFormat)
         suiteDescriptorWrapper.finish { ServiceMessage flowMessage, ServiceMessage suiteFinishedMessage ->
+            def testDescriptorWrapper = new TestDescriptorWrapper(testDescriptor, testNameDescriptor, flowWrapper, buildDirectoriesResolver, ignoredSuiteFormat)
+            testDescriptorWrapper.flush(testOutputs.remove(testDescriptorWrapper)) { ServiceMessage testOutputServiceMessage -> this.logger.lifecycle(testOutputServiceMessage.asString()) }
             this.logger.lifecycle(suiteFinishedMessage.asString())
             if (flowMessage != null) this.logger.lifecycle(flowMessage.asString())
+        }
+        if (testDescriptor.parent == null) {
+            testOutputs.each { key, outputs ->
+                key.flush(outputs) { ServiceMessage testOutputServiceMessage -> this.logger.lifecycle(testOutputServiceMessage.asString()) }
+            }
+            testOutputs.clear()
         }
     }
 
@@ -1225,7 +1238,7 @@ class DescriptorWrapper {
     }
 
     protected String getFlowId() {
-        return "${flow.id}-${System.identityHashCode(descriptor)}"
+        return "${flow.id}-${descriptor.hashCode()}"
     }
 }
 
@@ -1709,11 +1722,13 @@ gradle.addListener(new AfterEvaluateListener({ Project project ->
 }))
 
 gradle.addListener(new AfterEvaluateListener({ Project project ->
-    project.tasks.matching { Task task -> task.name == "junitPlatformTest" }.configureEach { Task task ->
-        task.doFirst {
-            task.outputs?.files?.each { file ->
-                def message = new ServiceMessage(name: "importData", attributes: [type: "junit", path: "$file.absolutePath/*.xml".toString()])
-                println(message.asString())
+    project.tasks.configureEach { Task task ->
+        if (task.name == "junitPlatformTest") {
+            task.doFirst {
+                task.outputs?.files?.each { file ->
+                    def message = new ServiceMessage(name: "importData", attributes: [type: "junit", path: "$file.absolutePath/*.xml".toString()])
+                    println(message.asString())
+                }
             }
         }
     }
