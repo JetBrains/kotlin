@@ -11,6 +11,7 @@ import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
+import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.incremental.deleteDirectoryContents
 import javax.inject.Inject
 
@@ -23,11 +24,13 @@ internal abstract class AggregateResourcesTask : DefaultTask() {
     @get:Optional
     @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:InputDirectory
+    @get:NormalizeLineEndings
     abstract val resourcesFromDependenciesDirectory: DirectoryProperty
 
     @get:Optional
     @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:InputDirectory
+    @get:NormalizeLineEndings
     abstract val resourcesFromSelfDirectory: DirectoryProperty
 
     @get:OutputDirectory

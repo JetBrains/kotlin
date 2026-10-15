@@ -55,6 +55,7 @@ internal abstract class SwiftExportTargetOutput {
 
     /** The output directory of the run: the modules file and the generated files it lists. */
     @get:InputDirectory
+    @get:NormalizeLineEndings
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val outputDirectory: DirectoryProperty
 
@@ -107,12 +108,14 @@ internal abstract class GenerateSPMPackageFromSwiftExport @Inject constructor(
     abstract val targetOutputs: ListProperty<SwiftExportTargetOutput>
 
     @get:InputDirectory
+    @get:NormalizeLineEndings
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val kotlinRuntime: DirectoryProperty
 
     /** The output directory of the run: the modules file and the generated files it lists. Xcode flow only. */
     @get:Optional
     @get:InputDirectory
+    @get:NormalizeLineEndings
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val swiftExportOutputDirectory: DirectoryProperty
 

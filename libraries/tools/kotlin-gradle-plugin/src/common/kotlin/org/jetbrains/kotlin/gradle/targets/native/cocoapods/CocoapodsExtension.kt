@@ -14,6 +14,7 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
+import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.supportedAppleTargets
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension.CocoapodsDependency.PodLocation.*
@@ -335,6 +336,7 @@ abstract class CocoapodsExtension @Inject constructor(private val project: Proje
 
             data class Path(
                 @get:InputDirectory
+                @get:NormalizeLineEndings
                 @get:IgnoreEmptyDirectories
                 val dir: File
             ) : PodLocation() {

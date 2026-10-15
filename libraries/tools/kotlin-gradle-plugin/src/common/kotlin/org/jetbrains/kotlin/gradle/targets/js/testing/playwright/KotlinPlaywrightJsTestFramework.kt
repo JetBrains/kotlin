@@ -67,6 +67,7 @@ internal class KotlinPlaywrightJsTestFramework(
         val webkitRunners: ListProperty<WebkitRunnerInput> = objects.listProperty()
 
         @get:InputDirectory
+        @get:NormalizeLineEndings
         val playwrightBrowsersDirectory: DirectoryProperty = objects.directoryProperty()
 
         /**
