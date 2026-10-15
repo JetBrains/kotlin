@@ -57,8 +57,9 @@ internal abstract class SwiftExportAction : WorkAction<SwiftExportAction.SwiftEx
             runSwiftExport(exportModules, createSwiftExportConfig()).getOrThrow().toPlainList()
         )
 
-        val json = SerializationTools.writeToJson(modules)
-        parameters.swiftModulesFile.getFile().also { it.parentFile.mkdirs() }.writeText(json)
+        val modulesFile = parameters.swiftModulesFile.getFile()
+        modulesFile.parentFile.mkdirs()
+        modulesFile.writeText(SerializationTools.writeToJson(modules, baseDirectory = modulesFile.parentFile))
     }
 
     private fun createModuleConfig(

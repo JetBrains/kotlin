@@ -178,17 +178,18 @@ internal abstract class GenerateSPMPackageFromSwiftExport @Inject constructor(
 
     private fun deserializeSwiftModules(): List<GradleSwiftExportModule> {
         check(swiftModulesFile.isPresent) { "Neither targetOutputs nor swiftModulesFile is set for $path" }
-        val modulesFile = swiftModulesFile.getFile().readText()
-        val swiftModules = SerializationTools.readFromJson(modulesFile)
-        return swiftModules.modules
+        return readSwiftModules(swiftModulesFile.getFile())
     }
 
     private fun deserializeTargetModules(): List<SwiftExportTargetModules> = targetOutputs.get().map { output ->
         SwiftExportTargetModules(
             output.target.get(),
-            SerializationTools.readFromJson(output.swiftModulesFile.getFile().readText()).modules,
+            readSwiftModules(output.swiftModulesFile.getFile()),
         )
     }
+
+    private fun readSwiftModules(modulesFile: File): List<GradleSwiftExportModule> =
+        SerializationTools.readFromJson(modulesFile.readText(), baseDirectory = modulesFile.parentFile).modules
 
     /**
      * Writes the [source] file of [packageModule] into [destination], combined from its variants if there are any.
