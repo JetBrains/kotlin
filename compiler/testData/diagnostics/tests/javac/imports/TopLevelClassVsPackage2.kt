@@ -1,5 +1,10 @@
 // DISABLE_JAVA_FACADE
-// RUN_PIPELINE_TILL: CODEGEN
+// RUN_PIPELINE_TILL: FRONTEND
+// USE_PSI_JAVA_FACADE: false
+// java-direct classifies `foo.a` in `import foo.a.b` as the class `foo.a` (JLS 6.5.4.2) and looks up `b` among its member
+// types, never in the package `foo.a`. The PSI Java facade still picks the class `b` of the package `foo.a`, see
+// TopLevelClassVsPackage2Psi.kt and KT-90484
+
 // FILE: foo/a/b.java
 package foo.a;
 
@@ -44,7 +49,7 @@ public class c2 {
 // FILE: e.kt
 package foo
 
-fun test() = c().getB().c().a_bc()
+fun test() = c().getB().<!UNRESOLVED_REFERENCE!>c<!>().a_bc()
 fun test2() = c2().getB()._ab()
 
 /* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType */

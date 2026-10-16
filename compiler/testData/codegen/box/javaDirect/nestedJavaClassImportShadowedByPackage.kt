@@ -1,6 +1,5 @@
 // TARGET_BACKEND: JVM
 // ISSUE: KT-90357
-// IGNORE_BACKEND: JVM
 // USE_PSI_JAVA_FACADE: false
 // The PSI Java facade resolves `import shp.Marker.Mode` to the class `Mode` of the package `shp.Marker` (KT-90484)
 
