@@ -51,6 +51,7 @@ public object Debugging {
      * so the caller may close [fd].
      */
     // Keep dumpMemory(Long) in the klib ABI: options did not exist in 1.9.
+    @SinceKotlin("2.5")
     public fun dumpMemory(
             fd: Long,
             @IntroducedAt("2.5.20") options: MemoryDumpOptions = MemoryDumpOptions(),
