@@ -17,6 +17,7 @@ import kotlin.native.internal.InternalForKotlinNative
  *   reconstructed. `kdumputil` fills omitted primitive arrays with zeros when converting to hprof.
  */
 @NativeRuntimeApi
+@SinceKotlin("2.5")
 public class MemoryDumpOptions(
         public val omitPrimitiveArrayPayloads: Boolean = false,
 )
