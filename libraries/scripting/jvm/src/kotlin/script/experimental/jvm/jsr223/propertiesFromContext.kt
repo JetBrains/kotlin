@@ -5,7 +5,9 @@
 
 package kotlin.script.experimental.jvm.jsr223
 
+import java.lang.ref.WeakReference
 import java.lang.reflect.Modifier
+import javax.script.Bindings
 import javax.script.ScriptContext
 import kotlin.reflect.KClass
 import kotlin.script.experimental.api.*
@@ -18,6 +20,24 @@ import kotlin.script.experimental.templates.ScriptWithBindings
 
 private val ScriptCompilationConfigurationKeys.exposedBindings by PropertiesCollection.key<Map<String, KotlinType>>()
 private val ScriptCompilationConfigurationKeys.rootBindingsConfigured by PropertiesCollection.key(false)
+private val ScriptCompilationConfigurationKeys.capturedScopeBindings by PropertiesCollection.key<CapturedScopeBindings>(isTransient = true)
+
+/**
+ * Set by the engine to true if the snippet is evaluated right after its compilation, with the same ScriptContext (`eval`),
+ * false if it may be evaluated later with another one (`compile`). See [generateBindingSnippetIfNeeded] for reasons.
+ */
+internal val ScriptCompilationConfigurationKeys.jsr223EvaluatedWithCompilationContext by PropertiesCollection.key(false, isTransient = true)
+
+/**
+ * The ENGINE_SCOPE and GLOBAL_SCOPE bindings captured by the last synthetic snippet. Referenced weakly.
+ */
+private class CapturedScopeBindings(engineBindings: Bindings?, globalBindings: Bindings?) {
+    private val engineBindingsRef = WeakReference(engineBindings)
+    private val globalBindingsRef = WeakReference(globalBindings)
+
+    fun isSameAs(engineBindings: Bindings?, globalBindings: Bindings?): Boolean =
+        engineBindingsRef.get() === engineBindings && globalBindingsRef.get() === globalBindings
+}
 
 private const val SYNTHETIC_SNIPPET_PREFIX = "\$\$synthetic_jsr223_"
 
@@ -152,8 +172,8 @@ fun configureExposedJsr223Context(context: ScriptConfigurationRefinementContext)
     // That previously caused a spurious NoClassDefFoundError on plain .main.kts scripts.
     val requiredImplicitReceivers = listOf(ScriptContext::class, ScriptWithBindings::class)
 
-    // Add each receiver only once. The engine threads a single, mutated ScriptCompilationConfiguration
-    // across evals, including nested eval-in-eval. Appending unconditionally would grow the receiver
+    // Add each receiver only once. The engine threads the resulting ScriptCompilationConfiguration
+    // from one eval into the next one compiled by the same REPL compiler. Appending unconditionally would grow the receiver
     // list per eval while the evaluator always passes exactly one of each, which surfaces as
     // `IllegalArgumentException: wrong number of arguments`
     // (KotlinJsr223ScriptEngineIT.testSimpleEvalInEval).
@@ -166,6 +186,10 @@ fun configureExposedJsr223Context(context: ScriptConfigurationRefinementContext)
     }.asSuccess()
 }
 
+// The GLOBAL_SCOPE bindings of the ScriptContext active at the snippet's eval. Captured in a snippet property along with
+// `bindings`, since the implicit ScriptContext receiver is not accessible from the snippet property accessors.
+private const val GLOBAL_BINDINGS_PROPERTY = "__jsr223GlobalBindings"
+
 /**
  * Renders the `var $encodedName: $renderedType ...` declaration for one exposed (or [removed]) binding.
  * A backtick-quoted [encodedName] is declared with a [__Jsr223BindingDelegate] (`by ...`) instead of a
@@ -174,15 +198,15 @@ fun configureExposedJsr223Context(context: ScriptConfigurationRefinementContext)
 private fun renderBindingProperty(encodedName: String, renderedType: String, safeKey: String, removed: Boolean): String =
     if (encodedName.startsWith("`")) {
         """
-            var $encodedName: $renderedType by __Jsr223BindingDelegate<$renderedType>(bindings, "$safeKey"${if (removed) ", removed = true" else ""})
+            var $encodedName: $renderedType by __Jsr223BindingDelegate<$renderedType>(bindings, $GLOBAL_BINDINGS_PROPERTY, "$safeKey"${if (removed) ", removed = true" else ""})
 
         """.trimIndent() + "\n"
     } else if (!removed) {
         """
             @Suppress("UNCHECKED_CAST")
             var $encodedName: $renderedType
-                get() = bindings["$safeKey"] as $renderedType
-                set(value) { bindings.put("$safeKey", value) }
+                get() = __jsr223GetBinding(bindings, $GLOBAL_BINDINGS_PROPERTY, "$safeKey") as $renderedType
+                set(value) { __jsr223SetBinding(bindings, $GLOBAL_BINDINGS_PROPERTY, "$safeKey", value) }
 
         """.trimIndent() + "\n"
     } else {
@@ -190,7 +214,7 @@ private fun renderBindingProperty(encodedName: String, renderedType: String, saf
             @Suppress("UNCHECKED_CAST")
             var $encodedName: $renderedType
                 get() = throw java.util.NoSuchElementException("JSR-223 binding \"$safeKey\" is no longer available")
-                set(value) { bindings.put("$safeKey", value) }
+                set(value) { __jsr223SetBinding(bindings, $GLOBAL_BINDINGS_PROPERTY, "$safeKey", value) }
 
         """.trimIndent() + "\n"
     }
@@ -202,14 +226,28 @@ fun generateBindingSnippetIfNeeded(context: ScriptConfigurationRefinementContext
         context.compilationConfiguration[ScriptCompilationConfiguration.jsr223.getScriptContext]?.invoke()
             ?: return (context.compilationConfiguration to null).asSuccess()
 
+    val engineScopeBindings = jsr223context.getBindings(ScriptContext.ENGINE_SCOPE)
+    val globalScopeBindings = jsr223context.getBindings(ScriptContext.GLOBAL_SCOPE)
+    val rootBindingsConfigured = context.compilationConfiguration[ScriptCompilationConfiguration.rootBindingsConfigured] == true
+    val isEvaluatedWithCompilationContext =
+        context.compilationConfiguration[ScriptCompilationConfiguration.jsr223EvaluatedWithCompilationContext] == true
+    // A synthetic snippet is needed if it declares anything new: the root helpers, the binding accessors (see below), or
+    // `bindings` capturing other scope bindings than the previous one. The latter is also the case if the snippet may be
+    // evaluated with another context than the current one.
+    var isSnippetNeeded = !rootBindingsConfigured || !isEvaluatedWithCompilationContext ||
+            context.compilationConfiguration[ScriptCompilationConfiguration.capturedScopeBindings]
+                ?.isSameAs(engineScopeBindings, globalScopeBindings) != true
+
     var bindingsSnippet = ""
 
-    // Declared in every synthetic snippet so each snippet's property accessors resolve `bindings`
-    // from their own class (the ScriptContext active at that eval), not from synthetic-snippet-0.
+    // Declared in every synthetic snippet so each snippet's property accessors resolve `bindings` and
+    // the GLOBAL_SCOPE bindings from their own class (the ScriptContext active at that eval), not from
+    // synthetic-snippet-0.
     // That avoids stale-context bugs when eval is called with a custom Bindings argument.
-    bindingsSnippet += "val bindings: javax.script.Bindings = getBindings(javax.script.ScriptContext.ENGINE_SCOPE)\n\n"
+    bindingsSnippet += "val bindings: javax.script.Bindings = getBindings(javax.script.ScriptContext.ENGINE_SCOPE)\n"
+    bindingsSnippet += "val $GLOBAL_BINDINGS_PROPERTY: javax.script.Bindings? = getBindings(javax.script.ScriptContext.GLOBAL_SCOPE)\n\n"
 
-    if (context.compilationConfiguration[ScriptCompilationConfiguration.rootBindingsConfigured] != true) {
+    if (!rootBindingsConfigured) {
         // Declared only once, in the first synthetic snippet. The helpers reference snippet-0's
         // `bindings` (the default ENGINE_SCOPE), which is what eval-in-eval needs to save and restore.
         // Uses .put() and explicit null checks instead of [] = to avoid @InlineOnly stdlib operators.
@@ -238,17 +276,28 @@ fun eval(script: String, newBindings: javax.script.Bindings): Any? {
     return result
 }
 
-// A property delegate used only for backtick-quoted binding properties. See the doc comment on
-// [encodeBindingNameToKotlinIdentifier] for why these can't be declared with a hardcoded get()/set().
-// [removed] renders the same "no longer available" diagnostic that a removed binding's shadowing
-// accessor used to throw from its getter.
-class __Jsr223BindingDelegate<T>(private val bindings: javax.script.Bindings, private val key: String, private val removed: Boolean = false) {
+fun __jsr223GetBinding(bindings: javax.script.Bindings, globalBindings: javax.script.Bindings?, key: String): Any? =
+    if (globalBindings == null || bindings.containsKey(key)) bindings[key] else globalBindings[key]
+
+fun __jsr223SetBinding(bindings: javax.script.Bindings, globalBindings: javax.script.Bindings?, key: String, value: Any?) {
+    if (globalBindings != null && !bindings.containsKey(key) && globalBindings.containsKey(key)) globalBindings.put(key, value)
+    else bindings.put(key, value)
+}
+
+class __Jsr223BindingDelegate<T>(
+    private val bindings: javax.script.Bindings,
+    private val globalBindings: javax.script.Bindings?,
+    private val key: String,
+    private val removed: Boolean = false,
+) {
     @Suppress("UNCHECKED_CAST")
     operator fun getValue(thisRef: Any?, property: kotlin.reflect.KProperty<*>): T {
         if (removed) throw java.util.NoSuchElementException("JSR-223 binding \"${'$'}key\" is no longer available")
-        return bindings[key] as T
+        return __jsr223GetBinding(bindings, globalBindings, key) as T
     }
-    operator fun setValue(thisRef: Any?, property: kotlin.reflect.KProperty<*>, value: T) { bindings.put(key, value) }
+    operator fun setValue(thisRef: Any?, property: kotlin.reflect.KProperty<*>, value: T) {
+        __jsr223SetBinding(bindings, globalBindings, key, value)
+    }
 }
 
 """
@@ -264,10 +313,9 @@ class __Jsr223BindingDelegate<T>(private val bindings: javax.script.Bindings, pr
         context.compilationConfiguration[ScriptCompilationConfiguration.jsr223.importAllBindings] == true &&
         context.compilationConfiguration[ScriptCompilationConfiguration.repl._isSyntheticSnippet] != true
     ) {
-        val allBindings = (jsr223context.getBindings(ScriptContext.GLOBAL_SCOPE)?.toMutableMap() ?: hashMapOf()).apply {
-            val engineBindings = jsr223context.getBindings(ScriptContext.ENGINE_SCOPE)
-            if (engineBindings != null)
-                putAll(engineBindings)
+        val allBindings = (globalScopeBindings?.toMutableMap() ?: hashMapOf()).apply {
+            if (engineScopeBindings != null)
+                putAll(engineScopeBindings)
         }
         // Bindings whose name is a usable identifier and whose value type can be embedded as a Kotlin
         // type reference are exposed as typed properties. The rest, including indy lambdas and
@@ -299,6 +347,7 @@ class __Jsr223BindingDelegate<T>(private val bindings: javax.script.Bindings, pr
             // Otherwise a null-valued binding would emit a non-null getter cast that NPEs on that value.
             val renderedType = if (type.isNullable) "${type.typeName}?" else type.typeName
             bindingsSnippet += renderBindingProperty(encodedName, renderedType, safeKey, removed = false)
+            isSnippetNeeded = true
         }
 
         // A binding that was exposed before but is no longer present gets a shadowing accessor that
@@ -311,15 +360,22 @@ class __Jsr223BindingDelegate<T>(private val bindings: javax.script.Bindings, pr
             val prevType = knownBindings.getValue(removedName)
             val renderedType = if (prevType.isNullable) "${prevType.typeName}?" else prevType.typeName
             bindingsSnippet += renderBindingProperty(encodedName, renderedType, safeKey, removed = true)
+            isSnippetNeeded = true
         }
 
         updatedBindings = currentBindings
     }
-    val source = bindingsSnippet.takeIf { it.isNotBlank() }?.toScriptSource(SYNTHETIC_SNIPPET_PREFIX + context.script.name)
+    // Nothing new to declare: the snippet uses the same declarations of the previous synthetic snippet.
+    if (!isSnippetNeeded) return (context.compilationConfiguration to null).asSuccess()
+
+    val source = bindingsSnippet.toScriptSource(SYNTHETIC_SNIPPET_PREFIX + context.script.name)
     return (
             context.compilationConfiguration.with {
                 rootBindingsConfigured(true)
                 exposedBindings(updatedBindings)
+                // The bindings captured at the evaluation are only known in advance if it follows the compilation
+                if (isEvaluatedWithCompilationContext) capturedScopeBindings(CapturedScopeBindings(engineScopeBindings, globalScopeBindings))
+                else reset(capturedScopeBindings)
             } to source).asSuccess()
 }
 

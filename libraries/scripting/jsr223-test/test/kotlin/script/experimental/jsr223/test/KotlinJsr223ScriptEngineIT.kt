@@ -91,25 +91,24 @@ class KotlinJsr223ScriptEngineIT {
         assertEquals(5, res2)
     }
 
+    private fun usedHeapAfterGc(attempts: Int, isLowEnough: (Long) -> Boolean = { false }): Long {
+        val memoryMXBean = ManagementFactory.getMemoryMXBean()!!
+        var used = Long.MAX_VALUE
+        // Environments of the collected engine states are disposed asynchronously, so GC is repeated until they are released
+        for (attempt in 1..attempts) {
+            System.gc()
+            Thread.sleep(100)
+            used = memoryMXBean.heapMemoryUsage.used
+            if (isLowEnough(used)) break
+        }
+        return used
+    }
+
     @Test
     fun testDroppedEnginesDoNotRetainCompilerEnvironments() {
-        val memoryMXBean = ManagementFactory.getMemoryMXBean()!!
-
         fun evalInNewEngine(i: Int) {
             val engine = ScriptEngineManager().getEngineByExtension("kts")!!
             assertEquals(i * 2, engine.eval("$i * 2"))
-        }
-
-        // Environments of the collected engine states are disposed asynchronously, so GC is repeated until they are released
-        fun usedHeapAfterGc(attempts: Int, isLowEnough: (Long) -> Boolean = { false }): Long {
-            var used = Long.MAX_VALUE
-            for (attempt in 1..attempts) {
-                System.gc()
-                Thread.sleep(100)
-                used = memoryMXBean.heapMemoryUsage.used
-                if (isLowEnough(used)) break
-            }
-            return used
         }
 
         val limit = 100L * 1024 * 1024
@@ -121,6 +120,25 @@ class KotlinJsr223ScriptEngineIT {
         }
         val retained = usedHeapAfterGc(attempts = 20) { it - baseline < limit } - baseline
         assertTrue(retained < limit, "Dropped engines retain ${retained / 1024 / 1024} MB")
+    }
+
+    @Test
+    fun testEvalsDoNotRetainMoreThanSnippetHistory() {
+        val engine = ScriptEngineManager().getEngineByExtension("kts") as KotlinJsr223ScriptEngineImpl
+        assertNull(engine.eval("var total = 0"))
+        assertEquals(1, engine.eval("total += 1; total"))
+        val baseline = usedHeapAfterGc(attempts = 3)
+        val evals = 40
+        for (i in 2..evals + 1) {
+            assertEquals(i * (i + 1) / 2, engine.eval("total += $i; total"))
+        }
+        // The bindings don't change, so only the first eval is preceded by a synthetic bindings snippet (KT-90299)
+        assertEquals(evals + 3, engine.backwardInstancesHistory.count())
+        // The REPL history keeps the FIR of every snippet, which takes about 0.6 MB per eval here. Retaining the backend
+        // state of each snippet as well (KT-90299) makes it about three times more
+        val limit = evals * 3L * 512 * 1024
+        val retained = usedHeapAfterGc(attempts = 10) { it - baseline < limit } - baseline
+        assertTrue(retained < limit, "$evals evals retain ${retained / 1024 / 1024} MB")
     }
 
 
@@ -274,6 +292,60 @@ obj
         // Re-adding the binding restores typed access.
         engine.put("z", 5)
         assertEquals(10, engine.eval("z * 2"))
+    }
+
+    @Test
+    fun testGlobalScopeBindings() {
+        val manager = ScriptEngineManager()
+        manager.put("globalBase", 1000)
+        manager.put("shadowed", 1)
+        val engine = manager.getEngineByExtension("kts")!!
+        engine.put("shadowed", 2)
+        // GLOBAL_SCOPE bindings are exposed as typed properties as well, and are read from GLOBAL_SCOPE (KT-90298)
+        assertEquals(1001, engine.eval("globalBase + 1"))
+        // ENGINE_SCOPE takes precedence, as in ScriptContext.getAttribute
+        assertEquals(2, engine.eval("shadowed"))
+        // Assignment updates the scope that holds the binding
+        engine.eval("globalBase = 2000")
+        assertEquals(2000, manager.get("globalBase"))
+        assertNull(engine.getBindings(ScriptContext.ENGINE_SCOPE)["globalBase"])
+        assertEquals(2001, engine.eval("globalBase + 1"))
+        // Same for the backtick-quoted names, which are exposed through a delegate
+        manager.put("global name", 5)
+        assertEquals(6, engine.eval("`global name` + 1"))
+    }
+
+    @Test
+    fun testBindingsAfterContextReplacement() {
+        val manager = ScriptEngineManager()
+        manager.put("globalBase", 1000)
+        val engine = manager.getEngineByExtension("kts")!!
+        val globalBindings = engine.getBindings(ScriptContext.GLOBAL_SCOPE)
+        // Each new context gets a new state with an empty REPL history, so the bindings have to be exposed in it again,
+        // regardless of what was exposed in the history of the previous contexts (KT-90298)
+        for (k in 1..3) {
+            val context = SimpleScriptContext().apply {
+                setBindings(engine.createBindings(), ScriptContext.ENGINE_SCOPE)
+                setBindings(globalBindings, ScriptContext.GLOBAL_SCOPE)
+            }
+            engine.context = context
+            context.getBindings(ScriptContext.ENGINE_SCOPE)["engineValue"] = k
+            assertEquals(1000 + k, engine.eval("engineValue + globalBase", context))
+        }
+    }
+
+    @Test
+    fun testBindingsAfterEvalOfCompiledSnippetWithOtherBindings() {
+        val engine = ScriptEngineManager().getEngineByExtension("kts")!!
+        engine.put("z", 1)
+        assertEquals(1, engine.eval("bindings[\"z\"]"))
+        assertEquals(1, engine.eval("z"))
+        // The bindings of a snippet are captured when it is evaluated, which is not known when it is compiled
+        val compiled = (engine as Compilable).compile("bindings[\"z\"]")
+        assertEquals(2, compiled.eval(engine.createBindings().apply { put("z", 2) }))
+        // So the next eval must not reuse the bindings captured for the compiled snippet
+        assertEquals(1, engine.eval("bindings[\"z\"]"))
+        assertEquals(1, engine.eval("z"))
     }
 
     @Test
