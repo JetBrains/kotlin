@@ -6,12 +6,15 @@
 package org.jetbrains.kotlin.gradle
 
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinBrowserBundler
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.junit.jupiter.api.DisplayName
+import kotlin.io.path.readText
+import kotlin.test.assertEquals
 
 @MppGradlePluginTests
 class KotlinWasmBuiltinTasksGradlePluginIT : KGPBaseTest() {
@@ -162,6 +165,25 @@ class KotlinWasmBuiltinTasksGradlePluginIT : KGPBaseTest() {
 
             build("build") {
                 assertTasksExecuted(":wasmJsBrowserDistribution")
+
+                // sanity: npm really produced the nested copy, so the assertions below are not vacuous
+                assertDirectoryInProjectExists("build/wasm/node_modules/wrap-ansi/node_modules/strip-ansi")
+
+                val pathToDist = "build/dist/wasmJs/productionExecutable"
+                assertFileInProjectExists("$pathToDist/vendors/strip-ansi/package.json")
+                assertFileInProjectContains(
+                    "$pathToDist/vendors/strip-ansi/package.json",
+                    "\"version\": \"6.0.1\""
+                )
+
+                // nested dependency trees must not be copied into the distribution
+                assertDirectoryInProjectExists("$pathToDist/vendors/wrap-ansi")
+                assertDirectoryInProjectDoesNotExist("$pathToDist/vendors/wrap-ansi/node_modules")
+
+                val imports = Json.decodeFromString<KotlinWebImportMap>(
+                    projectPath.resolve("build/kotlin/wasmJsGenerateImportMapDist/importmap.json").readText()
+                ).imports
+                assertEquals("./vendors/strip-ansi/index.js", imports["strip-ansi"])
             }
         }
     }
