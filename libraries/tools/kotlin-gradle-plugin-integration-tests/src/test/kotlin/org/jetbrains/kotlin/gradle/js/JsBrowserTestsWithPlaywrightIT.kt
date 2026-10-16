@@ -873,7 +873,7 @@ private abstract class PostProcessTestsBundle : DefaultTask() {
 private val MOCHA_ASSET_REFERENCE = Regex("""(?:href|src)="([^"]*mocha\.(?:js|css))"""")
 
 
-private fun nodeJsToolchain(mode: String) = "-Pkotlin.js.nodejs.toolchain=$mode"
+private fun nodeJsToolchain(mode: String) = "-Pkotlin.js.nodeJsToolchainMode=$mode"
 
 /**
  * The directory the Node.js toolchain shares all its installations through.
