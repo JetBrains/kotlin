@@ -86,7 +86,6 @@ Print the table at the end of the run in Markdown format, so it can be included 
 - Commit message subject: `Mark <ClassName> with <AnnotationName>` (e.g. `Mark DifferentClassloadersIT with MustRunOnChangesInGradle`).
   If multiple annotations were added, name the most relevant one or summarize concisely.
 - Commit description: only the ticket ID, `KT-87614` — nothing else.
-- Include the Junie co-author trailer: `--trailer "Co-authored-by: Junie <junie@jetbrains.com>"`.
 - Before committing, check `git status`/`git diff` to confirm exactly which file(s) are pending and uncommitted.
 
 ## Verification
