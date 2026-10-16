@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.shouldBeCompiledAsGen
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 
+@PhasePrerequisites(TrivialEnumClassLowering::class)
 class JsInlineClassDeclarationLowering(context: JsIrBackendContext) : InlineClassDeclarationLowering(context) {
     /**
      * After the InlineClassLowering, the member methods are delegating to the top-level functions like this:

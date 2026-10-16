@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower
 
+import org.jetbrains.kotlin.backend.common.lower.isLoweredTrivialEnum
 import org.jetbrains.kotlin.backend.common.lower.optimizations.PropertyAccessorInlineLowering
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.util.fileOrNull
 import org.jetbrains.kotlin.ir.util.isTopLevel
+import org.jetbrains.kotlin.ir.util.parentClassOrNull
 
 class JsPropertyAccessorInlineLowering(
     val context: JsIrBackendContext
@@ -33,6 +35,13 @@ class JsPropertyAccessorInlineLowering(
         // Just undefined value
         if (symbol == context.symbols.void) {
             return true
+        }
+
+        // Trivial enum properties are lowered to access of static fields that should be initialized
+        // via static_init, so that they couldn't be inlined, otherwise the static fields would be undefined
+        val potentiallyLoweredTrivialEnum = symbol.owner.parentClassOrNull
+        if (potentiallyLoweredTrivialEnum?.isLoweredTrivialEnum == true && accessContainer.parent !== potentiallyLoweredTrivialEnum) {
+            return false
         }
 
         // TODO: teach the deserializer to load constant property initializers
