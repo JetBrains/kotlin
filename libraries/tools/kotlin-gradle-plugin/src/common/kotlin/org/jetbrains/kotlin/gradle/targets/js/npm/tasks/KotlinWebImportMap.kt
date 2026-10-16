@@ -62,14 +62,3 @@ internal data class KotlinWebImportMap(
         fun readFrom(file: File): KotlinWebImportMap = json.decodeFromString(serializer(), file.readText())
     }
 }
-
-internal fun KotlinJsIrCompilation.locateOrRegisterGenerateModuleMapTask(): TaskProvider<KotlinImportMapGenerateTask> =
-    project.locateOrRegisterTask<KotlinImportMapGenerateTask>(npmProject.generateImportMapTaskName) {
-        it.nodeModulesDirectory.set(npmProject.nodeModulesDir)
-        it.rootDirectory.set(project.rootDir)
-        it.installArtifacts.from(nodeJsRoot().npmInstallTaskProvider.map { it.additionalFiles })
-        it.inputDirectory.set(npmProject.dir)
-        it.importMapFile.set(project.layout.buildDirectory.file("kotlin/${it.name}/importmap.json"))
-        it.importMapLoaderFile.set(project.layout.buildDirectory.file("kotlin/${it.name}/importmap-loader.js"))
-        it.getIsWindows.set(project.providers.isCurrentHostOsWindows())
-    }
