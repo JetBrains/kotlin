@@ -135,7 +135,7 @@ fun test() {
     J()
     F()
     K()
-    L()
+    <!INVISIBLE_REFERENCE!>L<!>()
 
     <!NO_VALUE_FOR_PARAMETER!>StaticNameTakenByMember<!>()
     StaticNameTakenByMember.<!UNRESOLVED_REFERENCE!>make<!>()
@@ -143,7 +143,7 @@ fun test() {
     <!NO_VALUE_FOR_PARAMETER!>StaticNameTakenInCompanion<!>()
     StaticNameTakenInCompanion.make()
 
-    StaticNameTakenByExtensionOnly()
+    <!INVISIBLE_REFERENCE!>StaticNameTakenByExtensionOnly<!>()
     StaticNameTakenByExtensionOnly.make()
 
     <!NO_VALUE_FOR_PARAMETER!>OnValueClass<!>() // Nothing is generated, KT-88705
