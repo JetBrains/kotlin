@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.ir.inline
 
 import org.jetbrains.kotlin.backend.common.*
-import org.jetbrains.kotlin.backend.common.ir.isPure
 import org.jetbrains.kotlin.backend.common.lower.ArrayConstructorLowering
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
@@ -44,11 +43,6 @@ import java.util.ArrayDeque
 abstract class FunctionInlining(
     val context: LoweringContext,
     private val inlineFunctionResolver: InlineFunctionResolver,
-    /**
-     * Whether the arguments without side effects (see [isPure]) are substituted directly at each use of their parameter, instead of
-     * being stored in temporary variables.
-     */
-    private val substitutePureArguments: Boolean = false,
 ) : IrTransformer<IrDeclaration>(), BodyLoweringPass {
     private val fileEntriesStack = ArrayDeque<IrFileEntry>()
 
@@ -102,8 +96,7 @@ abstract class FunctionInlining(
             context = context,
             currentFileEntry = fileEntriesStack.getLast(),
             currentFile = data.file,
-            parent = data as? IrDeclarationParent ?: data.parent,
-            substitutePureArguments = substitutePureArguments,
+            parent = data as? IrDeclarationParent ?: data.parent
         ).inline(expression, actualCallee)
     }
 }
@@ -117,8 +110,7 @@ private class CallInlining(
     private val context: LoweringContext,
     private val currentFileEntry: IrFileEntry,
     private val currentFile: IrFile,
-    private val parent: IrDeclarationParent,
-    private val substitutePureArguments: Boolean,
+    private val parent: IrDeclarationParent
 ) {
     private val parents = (parent as? IrDeclaration)?.parentsWithSelf?.toSet() ?: setOf(parent)
 
@@ -167,7 +159,6 @@ private class CallInlining(
 
         val parameterToTempVariable = mutableMapOf<IrValueParameterSymbol, IrValueSymbol>()
         val parameterToLambda = mutableMapOf<IrValueParameterSymbol, IrRichCallableReference<*>>()
-        val parameterToPureExpression = mutableMapOf<IrValueParameterSymbol, IrExpression>()
         val functionStatements = (copiedCallee.body as? IrBlockBody)?.statements
             ?: error("Body not found for function ${callee.render()}")
 
@@ -189,7 +180,6 @@ private class CallInlining(
                         callSite, copiedCallee,
                         parameterToTempVariable,
                         parameterToLambda,
-                        parameterToPureExpression,
                     )
                     +functionStatements
                     // Insert a return statement for the function that is supposed to return Unit
@@ -202,7 +192,7 @@ private class CallInlining(
                     }
                 }
                 val transformer = InlinePostprocessor(
-                    parameterToTempVariable, parameterToLambda, parameterToPureExpression, returnType, copiedCallee.symbol,
+                    parameterToTempVariable, parameterToLambda, returnType, copiedCallee.symbol,
                     returnableBlockSymbol
                 )
                 inlinedFunctionBlock.transformChildrenVoid(transformer)
@@ -224,7 +214,6 @@ private class CallInlining(
     private inner class InlinePostprocessor(
         val parameterToTempVariable: Map<IrValueParameterSymbol, IrValueSymbol>,
         val parameterToLambda: Map<IrValueParameterSymbol, IrRichCallableReference<*>>,
-        val parameterToPureExpression: Map<IrValueParameterSymbol, IrExpression>,
         val returnType: IrType,
         val inlinedFunctionSymbol: IrFunctionSymbol,
         val returnableBlockSymbol: IrReturnableBlockSymbol,
@@ -259,12 +248,6 @@ private class CallInlining(
                 val copy = it.deepCopyWithSymbols()
                 copy.transformChildrenVoid()
                 return copy
-            }
-
-            // Copy the argument, as the parameter can be read more than once, and transform it, as a default value can read the other
-            // parameters.
-            parameterToPureExpression[newExpression.symbol]?.let {
-                return it.deepCopyWithSymbols().transform(this, null)
             }
 
             return newExpression
@@ -392,7 +375,6 @@ private class CallInlining(
         callee: IrFunction,
         parameterToTempVariable: MutableMap<IrValueParameterSymbol, IrValueSymbol>,
         parameterToLambda: MutableMap<IrValueParameterSymbol, IrRichCallableReference<*>>,
-        parameterToPureExpression: MutableMap<IrValueParameterSymbol, IrExpression>,
     ) {
         for ([parameter, argument] in callee.parameters.zip(callSite.arguments)) {
             val isDefaultArg = argument == null && parameter.defaultValue != null
@@ -437,12 +419,6 @@ private class CallInlining(
             }
 
             val castedArgumentValue = argumentValue.doImplicitCastIfNeededTo(parameter.type)
-
-            // A vararg is excluded, as each substitution would create a new array.
-            if (substitutePureArguments && argumentValue !is IrVararg && argumentValue.isPure(anyVariable = false)) {
-                parameterToPureExpression[parameter.symbol] = castedArgumentValue
-                continue
-            }
 
             val valueForTmpVar = if (isDefaultArg) {
                 castedArgumentValue
