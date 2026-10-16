@@ -606,7 +606,7 @@ class SwiftExportUnitTests {
     @Test
     fun `test swift export worker jvm args from property keep default max heap size`() {
         val project = swiftExportProject()
-        project.propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_SWIFT_EXPORT_JVM_ARGS, " -XX:+UseG1GC  -Dfoo=bar ")
+        project.propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_NATIVE_SWIFT_EXPORT_WORKER_JVM_ARGS, " -XX:+UseG1GC  -Dfoo=bar ")
         project.evaluate()
 
         val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
@@ -618,7 +618,7 @@ class SwiftExportUnitTests {
     @Test
     fun `test swift export worker max heap size from property overrides default`() {
         val project = swiftExportProject()
-        project.propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_SWIFT_EXPORT_JVM_ARGS, "-Xmx4g -XX:+UseG1GC")
+        project.propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_NATIVE_SWIFT_EXPORT_WORKER_JVM_ARGS, "-Xmx4g -XX:+UseG1GC")
         project.evaluate()
 
         val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
