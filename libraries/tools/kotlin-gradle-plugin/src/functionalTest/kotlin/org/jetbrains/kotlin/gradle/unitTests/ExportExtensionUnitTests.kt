@@ -782,6 +782,24 @@ class ExportExtensionSwiftExportTests {
     }
 
     @Test
+    fun `invalid module name with hyphen is reported`() {
+        val project = swiftExportProject(
+            multiplatform = {
+                iosSimulatorArm64()
+            },
+            swiftExport = {
+                moduleName.set("Shared-S")
+                rootPackage.set("com.example.shared")
+            }
+        )
+
+        project.evaluate()
+
+        project.realizeSwiftModules()
+        project.assertContainsDiagnostic(KotlinToolingDiagnostics.SwiftExportInvalidModuleName)
+    }
+
+    @Test
     fun `direct external api dependency exported fully`() {
         val project = swiftExportProject(
             multiplatform = {
