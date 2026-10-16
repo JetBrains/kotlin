@@ -45,7 +45,7 @@ class KotlinJsr223BtaScriptEngineImpl(
     baseEvaluationConfiguration: ScriptEvaluationConfiguration = ScriptEvaluationConfiguration(),
 ) : KotlinJsr223JvmScriptEngineBase<BtaReplState>(factory), AutoCloseable {
 
-    override var compilationConfiguration: ScriptCompilationConfiguration =
+    override val compilationConfiguration: ScriptCompilationConfiguration =
         ScriptCompilationConfiguration(baseCompilationConfiguration) {
             hostConfiguration.update { it.withDefaultsFrom(jsr223HostConfiguration) }
         }
