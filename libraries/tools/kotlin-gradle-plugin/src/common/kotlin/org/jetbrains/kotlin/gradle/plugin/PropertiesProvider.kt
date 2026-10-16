@@ -660,6 +660,10 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val enableMonotonousIncrementalCompileSetExpansion: Boolean
         get() = booleanProperty(PropertyNames.KOTLIN_MONOTONOUS_COMPILE_SET_EXPANSION) ?: true
 
+    /** See [org.jetbrains.kotlin.incremental.IncrementalCompilationFeatures.enableErrorRecoveryRound] */
+    val enableErrorRecoveryRound: Provider<Boolean>
+        get() = booleanProvider(PropertyNames.KOTLIN_JVM_ENABLE_ERROR_RECOVERY_ROUND).orElse(true)
+
     /**
      * Enables incremental compilation of common KMP sources targeting JVM (KT-86703).
      * Metadata is produced as a side effect of JVM compilation and passed to later compilations,
@@ -929,6 +933,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_INCREMENTAL_FIR = property("kotlin.incremental.jvm.fir")
         val KOTLIN_JVM_INCREMENTAL_COMPILATION_OF_COMMON_SOURCES =
             property("kotlin.jvm.enableIncrementalCompilationOfCommonSources")
+        val KOTLIN_JVM_ENABLE_ERROR_RECOVERY_ROUND = property("kotlin.jvm.enableErrorRecoveryRound")
         val KOTLIN_KMP_UNRESOLVED_DEPENDENCIES_DIAGNOSTIC = property("kotlin.kmp.unresolvedDependenciesDiagnostic")
         val KOTLIN_KMP_EAGER_UNRESOLVED_DEPENDENCIES_DIAGNOSTIC = property("kotlin.kmp.eagerUnresolvedDependenciesDiagnostic")
         val KOTLIN_DISPLAY_DIAGNOSTICS_IN_IDE_BUILD_LOG = property("kotlin.displayDiagnosticsInIdeBuildLog")
