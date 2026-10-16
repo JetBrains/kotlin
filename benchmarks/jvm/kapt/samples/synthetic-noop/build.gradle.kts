@@ -1,10 +1,12 @@
 plugins {
+    id("common-configuration")
     kotlin("jvm")
     kotlin("kapt")
 }
 
-kotlin {
-    jvmToolchain(17)
+jvmToolchains {
+    jdkVersion = JdkMajorVersion.JDK_17_0
+    targetBytecodeVersion = JdkMajorVersion.JDK_17_0
 }
 
 // Opt-in: -PstripMetadata=true drops @kotlin.Metadata annotations from generated stubs.
@@ -13,11 +15,18 @@ if ((findProperty("stripMetadata") as String?).toBoolean()) {
     kapt { stripMetadata = true }
 }
 
+val generatorClasspath = configurations.create("generatorClasspath") {
+    isCanBeResolved = true
+    isCanBeConsumed = false
+}
+
 dependencies {
+    generatorClasspath(project(":benchmarks:jvm:kapt:source-generator"))
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:${project.bootstrapKotlinVersion}")
     // compileOnly: annotation classes available at compile time but not on runtime classpath.
     // kapt: registers the same artifact on the annotation-processor path.
-    compileOnly(project(":synthetic-processor"))
-    kapt(project(":synthetic-processor"))
+    compileOnly(project(":benchmarks:jvm:kapt:synthetic-processor"))
+    kapt(project(":benchmarks:jvm:kapt:synthetic-processor"))
 }
 
 val sampleSize: String = (findProperty("sampleSize") ?: "small") as String
@@ -53,8 +62,8 @@ val commonBase: String? = findProperty("commonBase") as String?
 
 val generatedSrcDir = layout.buildDirectory.dir("generated/source/research-kapt/main")
 
-val generateSources by tasks.registering(JavaExec::class) {
-    classpath = project(":source-generator").the<SourceSetContainer>()["main"].runtimeClasspath
+val generateSources = tasks.register<JavaExec>("generateSources") {
+    classpath = generatorClasspath
     mainClass.set("research.kapt.gen.MainKt")
     outputs.dir(generatedSrcDir)
     inputs.property("classCount", classCount)
@@ -65,23 +74,17 @@ val generateSources by tasks.registering(JavaExec::class) {
     inputs.property("classPackageDepth", classPackageDepth ?: "")
     inputs.property("classBodySize", classBodySize ?: "")
     inputs.property("commonBase", commonBase ?: "")
-    argumentProviders.add(CommandLineArgumentProvider {
-        buildList {
-            addAll(
-                listOf(
-                    "--count", classCount.toString(),
-                    "--mode", "synthetic",
-                    "--seed", generatorSeed,
-                    "--out-dir", generatedSrcDir.get().asFile.absolutePath
-                )
-            )
-            if (classWidth != null) addAll(listOf("--wide", classWidth))
-            if (classNesting != null) addAll(listOf("--nested", classNesting))
-            if (classPackageDepth != null) addAll(listOf("--package-depth", classPackageDepth))
-            if (classBodySize != null) addAll(listOf("--bodies", classBodySize))
-            if (commonBase != null) addAll(listOf("--common-base", commonBase))
-        }
-    })
+    args(
+            "--count", classCount.toString(),
+            "--mode", "synthetic",
+            "--seed", generatorSeed,
+            "--out-dir", generatedSrcDir.get().asFile.absolutePath
+    )
+    if (classWidth != null) args(listOf("--wide", classWidth))
+    if (classNesting != null) args(listOf("--nested", classNesting))
+    if (classPackageDepth != null) args(listOf("--package-depth", classPackageDepth))
+    if (classBodySize != null) args(listOf("--bodies", classBodySize))
+    if (commonBase != null) args(listOf("--common-base", commonBase))
 }
 
 sourceSets["main"].kotlin.srcDir(generatedSrcDir)

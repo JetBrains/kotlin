@@ -1,4 +1,5 @@
 plugins {
+    id("common-configuration")
     kotlin("jvm")
     application
 }
@@ -7,14 +8,11 @@ application {
     mainClass.set("research.kapt.gen.MainKt")
 }
 
-kotlin {
-    jvmToolchain(17)
+jvmToolchains {
+    jdkVersion = JdkMajorVersion.JDK_17_0
+    targetBytecodeVersion = JdkMajorVersion.JDK_17_0
 }
 
 dependencies {
-    testImplementation(kotlin("test"))
-}
-
-tasks.test {
-    useJUnitPlatform()
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:${project.bootstrapKotlinVersion}")
 }

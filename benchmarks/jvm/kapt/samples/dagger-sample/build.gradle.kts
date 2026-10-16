@@ -1,10 +1,12 @@
 plugins {
+    id("common-configuration")
     kotlin("jvm")
     kotlin("kapt")
 }
 
-kotlin {
-    jvmToolchain(17)
+jvmToolchains {
+    jdkVersion = JdkMajorVersion.JDK_17_0
+    targetBytecodeVersion = JdkMajorVersion.JDK_17_0
 }
 
 // Opt-in: -PstripMetadata=true drops @kotlin.Metadata annotations from generated stubs.
@@ -14,7 +16,6 @@ if ((findProperty("stripMetadata") as String?).toBoolean()) {
 }
 
 val daggerVersion: String = (findProperty("dagger.version") ?: "2.59.2") as String
-val kotlinVersion: String = property("kotlin.version") as String
 
 // dagger-compiler pulls an older kotlin-metadata-jvm that rejects @Metadata emitted by
 // a newer compiler ("Provided Metadata instance has version X, while maximum supported
@@ -22,10 +23,17 @@ val kotlinVersion: String = property("kotlin.version") as String
 // kaptClasspath_kaptKotlin (the configuration the kapt task actually resolves), not
 // just the declarable `kapt` configuration.
 configurations.all {
-    resolutionStrategy.force("org.jetbrains.kotlin:kotlin-metadata-jvm:$kotlinVersion")
+    resolutionStrategy.force("org.jetbrains.kotlin:kotlin-metadata-jvm:${project.bootstrapKotlinVersion}")
+}
+
+val generatorClasspath = configurations.create("generatorClasspath") {
+    isCanBeResolved = true
+    isCanBeConsumed = false
 }
 
 dependencies {
+    generatorClasspath(project(":benchmarks:jvm:kapt:source-generator"))
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:${project.bootstrapKotlinVersion}")
     // implementation: runtime artifacts (Dagger annotations + javax.inject).
     // kapt: registers the Dagger processor on the annotation-processor path.
     implementation("com.google.dagger:dagger:$daggerVersion")
@@ -45,21 +53,19 @@ val generatorSeed: String = (findProperty("generatorSeed") ?: "42") as String
 
 val generatedSrcDir = layout.buildDirectory.dir("generated/source/research-kapt/main")
 
-val generateSources by tasks.registering(JavaExec::class) {
-    classpath = project(":source-generator").the<SourceSetContainer>()["main"].runtimeClasspath
+val generateSources = tasks.register<JavaExec>("generateSources") {
+    classpath = generatorClasspath
     mainClass.set("research.kapt.gen.MainKt")
     outputs.dir(generatedSrcDir)
     inputs.property("classCount", classCount)
     inputs.property("mode", "dagger")
     inputs.property("seed", generatorSeed)
-    argumentProviders.add(CommandLineArgumentProvider {
-        listOf(
-            "--count", classCount.toString(),
-            "--mode", "dagger",
-            "--seed", generatorSeed,
-            "--out-dir", generatedSrcDir.get().asFile.absolutePath
-        )
-    })
+    args(
+        "--count", classCount.toString(),
+        "--mode", "dagger",
+        "--seed", generatorSeed,
+        "--out-dir", generatedSrcDir.get().asFile.absolutePath
+    )
 }
 
 sourceSets["main"].kotlin.srcDir(generatedSrcDir)
