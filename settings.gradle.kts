@@ -718,7 +718,6 @@ include(
     ":analysis:analysis-api-fir-diagnostics",
     ":analysis:analysis-api-fir-diagnostics:analysis-api-fir-diagnostics-generator",
     ":analysis:analysis-api",
-    ":analysis:analysis-api-impl-base",
     ":analysis:analysis-api-platform-interface",
     ":analysis:analysis-internal-utils",
     ":analysis:analysis-test-framework",
