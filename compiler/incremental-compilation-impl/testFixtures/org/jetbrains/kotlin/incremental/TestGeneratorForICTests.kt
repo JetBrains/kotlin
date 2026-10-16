@@ -36,6 +36,7 @@ fun main(args: Array<String>) {
                     excludedPattern = listOf(
                         "^(sealed.*|fileWithConstantRemoved|propertyRedeclaration|funRedeclaration|funVsConstructorOverloadConflict|bridgeWithThrows)",
                         "(^changeTypealiasTypeWithHierarchy$)", // KT-89851: the klib IC cache does not track typealiases
+                        "(^changeTopLevelTypeAlias$)", // KT-89851: the klib IC cache does not track typealiases
                         ExcludePattern.JPS_ONLY,
                     ).joinToString("|")
                 )
@@ -149,7 +150,6 @@ private object ExcludePattern {
 
     val JPS_ONLY = listOf(
         "(^addNullableAnnotation$)", // KT-89329
-        "(^changeTopLevelTypeAlias$)", // KT-89857
         "(^renameFileWithFunctionOverloadAndCreateConflict$)", // KT-89565
         "(^unwrapJvmFieldInJvmNameFromObject$)", // KT-89352
         "(^changeMethodToPropertyInInheritance$)" // KT-11196
