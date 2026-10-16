@@ -1698,6 +1698,7 @@ internal class CodeGeneratorVisitor(
                 value.type.binaryTypeIsReference(),
                 fieldAddress,
                 !value.symbol.owner.isFinal,
+                if (value.symbol.owner.isStatic) RefLocation.GLOBAL else RefLocation.HEAP,
                 resultSlot,
                 memoryOrder = order,
                 alignment = alignment

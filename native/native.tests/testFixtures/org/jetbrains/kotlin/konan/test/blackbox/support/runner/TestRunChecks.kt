@@ -243,6 +243,11 @@ sealed interface TestRunCheck {
                     } else {
                         add("CHECK-BIGBINARY")
                     }
+                    if (settings.get<ExplicitBinaryOptions>().getOrNull<Boolean>(BinaryOptions.compressedRefs) == true) {
+                        add("CHECK-COMPRESSEDREFS")
+                    } else {
+                        add("CHECK-FULLREFS")
+                    }
                 }
                 val optMode = when (optimizationMode) {
                     OptimizationMode.NO, OptimizationMode.DEBUG -> "DEBUG" // generated LLVM bitcode should be the same; split them up if this stops being the case.
