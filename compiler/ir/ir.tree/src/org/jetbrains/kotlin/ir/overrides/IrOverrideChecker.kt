@@ -74,8 +74,9 @@ class IrOverrideChecker(
             }
             is IrProperty -> {
                 if (subMember !is IrProperty) return incompatible
-                if (superMember.getter == null || subMember.getter == null) return incompatible
-                superMember.getter to subMember.getter
+                if (superMember.setter != null) superMember.setter to (subMember.setter ?: return incompatible)
+                else if (superMember.getter != null && subMember.getter != null) superMember.getter to subMember.getter
+                else return incompatible
             }
         }
 

@@ -15,7 +15,15 @@ open class A {
 
     companion {
         val prop3 get() = ""
-        var prop4 = listOf(1, 2, 3)
+
+        val compVal1 = listOf(1)
+        var compVar1 = listOf(1)
+        val compVal2 = listOf(1)
+        var compVar2 = listOf(1)
+        val compVal3 = listOf(1)
+        var compVar3 = listOf(1)
+        val compVal4 = listOf(1)
+        var compVar4 = listOf(1)
 
         fun compFoo(x: List<Int>) {}
         fun compBar(x: List<Int>) {}
@@ -31,7 +39,15 @@ class B : A() {
         val prop: Int = 0
         val prop2: String = ""
         val prop3 get() = ""
-        var prop4 = listOf("a", "b", "c") // Should be ACCIDENTAL_OVERRIDE
+
+        val compVal1 = listOf(1)
+        <!ACCIDENTAL_OVERRIDE!>val compVar1<!> = listOf(1)
+        var compVal2 = listOf(1)
+        var compVar2 = listOf(1)
+        val compVal3 = listOf("a")
+        <!ACCIDENTAL_OVERRIDE!>val compVar3<!> = listOf("a")
+        var compVal4 = listOf("a")
+        <!ACCIDENTAL_OVERRIDE, ACCIDENTAL_OVERRIDE!>var compVar4<!> = listOf("a")
 
         fun memberFoo(x: List<Int>) {}
         <!ACCIDENTAL_OVERRIDE!>fun memberBar(x: List<String>)<!> {}
