@@ -179,7 +179,14 @@ public class KtDestructuringDeclaration extends KtDeclarationStub<KotlinDestruct
             return stub.getHasSquareBrackets();
         }
 
-        return getNode().findChildByType(LBRACKET) != null;
+        ASTNode node = getNode();
+        if (node.findChildByType(LBRACKET) != null) return true;
+
+        // The brackets may be wrapped in an ERROR_ELEMENT along with the entries (e.g., for top-level destructuring declarations
+        // where the parser reports an error).
+        // TODO(KT-58563): After the reporting is moved out of the parser, this workaround can be removed.
+        ASTNode errorElement = node.findChildByType(TokenType.ERROR_ELEMENT);
+        return errorElement != null && errorElement.findChildByType(LBRACKET) != null;
     }
 
     /** Returns the trailing comma after the last entry, or {@code null} if there is none. */
