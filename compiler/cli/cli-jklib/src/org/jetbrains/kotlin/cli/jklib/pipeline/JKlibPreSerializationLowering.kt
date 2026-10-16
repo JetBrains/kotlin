@@ -37,18 +37,13 @@ import org.jetbrains.kotlin.config.phaser.PhaserState
 import org.jetbrains.kotlin.ir.InternalSymbolFinderAPI
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
-import org.jetbrains.kotlin.ir.SymbolFinder
 import org.jetbrains.kotlin.ir.backend.jklib.JKlibIrMangler
 import org.jetbrains.kotlin.ir.classSymbol
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
-import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.expressions.IrFieldAccessExpression
 import org.jetbrains.kotlin.ir.inline.FunctionInlining
 import org.jetbrains.kotlin.ir.inline.InlineDeclarationCheckerLowering
 import org.jetbrains.kotlin.ir.inline.InlineFunctionResolver
@@ -57,12 +52,8 @@ import org.jetbrains.kotlin.ir.inline.OuterThisInInlineFunctionsSpecialAccessorL
 import org.jetbrains.kotlin.ir.inline.SyntheticAccessorLowering
 import org.jetbrains.kotlin.ir.overrides.isEffectivelyPrivate
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
-import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
-import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.callableId
 import org.jetbrains.kotlin.ir.util.classId
@@ -71,8 +62,6 @@ import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.hasShape
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.util.resolveFakeOverrideOrSelf
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -205,67 +194,15 @@ private class JKlibNonPrivateInlineFunctionResolver(
         signatureComputer = PublicIdSignatureComputer(context.irMangler),
     )
 
-    private val fieldSymbolBinder = UnboundFieldSymbolBinder(context.irBuiltIns.symbolFinder)
-
     override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
         val callee = super.getFunctionDeclaration(symbol) ?: return null
         if (callee.hasAnnotation(DO_NOT_INLINE_ON_FIRST_STAGE)) return null
         if (callee.body != null || callee !is IrSimpleFunction) return callee
-        return deserializer.deserializeInlineFunction(callee)?.also(fieldSymbolBinder::bindFieldSymbolsOf)
+        return deserializer.deserializeInlineFunction(callee)
     }
 
     private companion object {
         val DO_NOT_INLINE_ON_FIRST_STAGE = FqName("kotlin.internal.DoNotInlineOnFirstStage")
-    }
-}
-
-/**
- * Binds the field symbols that [NonLinkingIrInlineFunctionDeserializer] leaves unbound.
- *
- * That deserializer reads the inline function bodies of the dependencies into a symbol table of its own, and deliberately leaves the
- * symbols they reference unbound: they are not meant to be linked, as `IrFileSerializer` writes them back as signatures anyway. Field
- * symbols are the exception, because `IrFileSerializer` needs their owner to tell a field from a property's backing field.
- *
- * The other KLIB-based compilers never hit that case: a body that is serialized for cross-module inlining cannot access a Kotlin backing
- * field, only its accessors. A JKlib inline function can, however, read or write a Java field directly, e.g. `System.out`.
- */
-@OptIn(UnsafeDuringIrConstructionAPI::class)
-private class UnboundFieldSymbolBinder(private val symbolFinder: SymbolFinder) : IrVisitorVoid() {
-    private val visitedFunctions = mutableSetOf<IrSimpleFunction>()
-
-    fun bindFieldSymbolsOf(function: IrSimpleFunction) {
-        // The deserializer caches the functions it deserializes, so it returns the same instance for every call site.
-        if (visitedFunctions.add(function)) function.acceptChildrenVoid(this)
-    }
-
-    override fun visitElement(element: IrElement) {
-        element.acceptChildrenVoid(this)
-    }
-
-    override fun visitFieldAccess(expression: IrFieldAccessExpression) {
-        val symbol = expression.symbol
-        if (!symbol.isBound) (symbol as IrFieldSymbolImpl).bind(symbol.findField())
-        super.visitFieldAccess(expression)
-    }
-
-    /**
-     * Finds the field from its signature, which is the signature of the corresponding property with the backing field marker appended.
-     */
-    private fun IrFieldSymbol.findField(): IrField {
-        val signature = signature
-        val propertySignature = (signature as? IdSignature.CompositeSignature)?.container as? IdSignature.CommonSignature
-            ?: error("Cannot resolve the field of the unexpected signature `$signature`")
-
-        val classNameSegments = propertySignature.nameSegments.dropLast(1).ifEmpty {
-            error("Cannot resolve the field of the top-level property `$propertySignature`")
-        }
-        val classId = ClassId(FqName(propertySignature.packageFqName), FqName.fromSegments(classNameSegments), isLocal = false)
-        // A Java field is represented in IR as the backing field of a property.
-        return symbolFinder.findClass(classId)?.owner?.declarations
-            ?.filterIsInstance<IrProperty>()
-            ?.firstOrNull { it.name.asString() == propertySignature.shortName }
-            ?.backingField
-            ?: error("Cannot find the field `${propertySignature.declarationFqName}` of `$classId`")
     }
 }
 
