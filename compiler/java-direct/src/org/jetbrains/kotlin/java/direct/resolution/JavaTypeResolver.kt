@@ -236,9 +236,9 @@ private fun resolveFromJavaLang(simpleName: String, fullResolution: Boolean): Cl
 
 /**
  * Step 6: type-import-on-demand (`import a.b.*;`, JLS 7.5.2). The on-demand target is a
- * `PackageOrTypeName`, so on a package-probe miss the entry is retried as a *class* whose member
- * types are imported (`import a.D.*;`). Returns `null` on ambiguity (a JLS 7.5.2 compile-time
- * error), falling through to Step 7.
+ * `PackageOrTypeName`: first resolve it as a type, importing its member types if it is a type;
+ * otherwise treat it as a package and import its top-level types. Returns `null` on ambiguity
+ * (a JLS 7.5.2 compile-time error), falling through to Step 7.
  */
 context(c: JavaResolutionContext)
 private fun resolveFromTypeStarImports(
@@ -247,20 +247,13 @@ private fun resolveFromTypeStarImports(
 ): ClassId? {
     var foundClassId: ClassId? = null
     for (starImport in c.fileContext.imports.typeStarImports) {
-        val candidateClassId = ClassId(starImport, Name.identifier(simpleName))
+        val outerClassId = resolveAsClassId(starImport, fullResolution)
+        val candidateClassId = outerClassId?.createNestedClassId(Name.identifier(simpleName))
+            ?: ClassId(starImport, Name.identifier(simpleName))
+
         if (classExists(candidateClassId, fullResolution)) {
             if (foundClassId != null && foundClassId != candidateClassId) return null // Ambiguous
             foundClassId = candidateClassId
-        } else {
-            // Class-level fallback: `import a.D.*` where `a.D` is a class.
-            val outerClassId = resolveAsClassId(starImport, fullResolution)
-            if (outerClassId != null) {
-                val nestedClassId = outerClassId.createNestedClassId(Name.identifier(simpleName))
-                if (classExists(nestedClassId, fullResolution)) {
-                    if (foundClassId != null && foundClassId != nestedClassId) return null // Ambiguous
-                    foundClassId = nestedClassId
-                }
-            }
         }
     }
     return foundClassId
@@ -620,24 +613,23 @@ internal fun getFirstStarImportCandidate(simpleName: String): ClassId? {
 }
 
 /**
- * Resolves a FqName to a ClassId by trying all package/class splits from longest package to
- * shortest — "a.x.b.b.b" tries ClassId(a.x.b.b, b), ClassId(a.x.b, b.b), … — unlike
- * ClassId.topLevel, which only splits at the last dot.
+ * Resolves a FqName to a ClassId by trying package/class splits from shortest package to
+ * longest, as required for qualified names in imports — "a.b.c.D" first tries
+ * ClassId(a, b.c.D), then ClassId(a.b, c.D), … — unlike ClassId.topLevel, which only splits at
+ * the last dot.
  */
 context(c: JavaResolutionContext)
 private fun resolveAsClassId(fqName: FqName, fullResolution: Boolean): ClassId? {
     if (fqName.isRoot) return null
 
-    // most common case: the longest-package split
-    ClassId.topLevel(fqName).takeIf { classExists(it, fullResolution) }?.let { return it }
-
     val parts = fqName.pathSegments()
     val stringParts = parts.map { it.asString() }
-    for (classStartIndex in (parts.size - 2) downTo 0) {
-        val pkg = when (classStartIndex) {
-            0 -> FqName.ROOT
-            else -> FqName.fromSegments(stringParts.subList(0, classStartIndex))
-        }
+    if (parts.size == 1) {
+        return ClassId.topLevel(fqName).takeIf { classExists(it, fullResolution) }
+    }
+
+    for (classStartIndex in 1 until parts.size) {
+        val pkg = FqName.fromSegments(stringParts.subList(0, classStartIndex))
         val cls = FqName.fromSegments(stringParts.subList(classStartIndex, stringParts.size))
         val classId = ClassId(pkg, cls, false)
 

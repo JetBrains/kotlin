@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.KotlinCliJavaFileManager
+import org.jetbrains.kotlin.resolve.jvm.KotlinFinderMarker
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleFinder
 import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.util.PhaseSideType
@@ -98,6 +99,24 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
         return perfManager.tryMeasureSideTime(PhaseSideType.FindJavaClass) {
             findVirtualFileForTopLevelClass(classId, searchScope)?.findPsiClassInVirtualFile(classId.relativeClassName.asString())
         }
+    }
+
+    private fun findKotlinPsiClass(classId: ClassId, searchScope: GlobalSearchScope): PsiClass? {
+        val relativeClassNameSegments = classId.relativeClassName.pathSegments()
+        val topLevelClassName = relativeClassNameSegments.firstOrNull() ?: return null
+        val topLevelClassFqName = classId.packageFqName.child(topLevelClassName).asString()
+        for (finder in PsiElementFinder.EP.getExtensions(myPsiManager.project)) {
+            if (finder !is KotlinFinderMarker) continue
+
+            var result: PsiClass? = finder.findClass(topLevelClassFqName, searchScope) ?: continue
+            for (segment in relativeClassNameSegments.drop(1)) {
+                result = result?.findInnerClassByName(segment.asString(), false) ?: break
+            }
+
+            result?.let { return it }
+        }
+
+        return null
     }
 
     private fun findVirtualFileForTopLevelClass(classId: ClassId, searchScope: GlobalSearchScope): VirtualFile? {
@@ -172,11 +191,12 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
         // String cannot be reliably converted to ClassId because we don't know where the package name ends and class names begin.
         // For example, if qName is "a.b.c.d.e", we should either look for a top level class "e" in the package "a.b.c.d",
         // or, for example, for a nested class with the relative qualified name "c.d.e" in the package "a.b".
-        // Below, we start by looking for the top level class "e" in the package "a.b.c.d" first, then for the class "d.e" in the package
-        // "a.b.c", and so on, until we find something. Most classes are top level, so most of the times the search ends quickly
+        // Below, we start by looking for the shortest package prefix first, then proceed to longer packages if the class
+        // does not exist. This follows the JLS rule that a package name stops at the first segment that names a type.
 
         forEachClassId(qName) { classId ->
             findPsiClass(classId, scope)?.let { return it }
+            findKotlinPsiClass(classId, scope)?.let { return it }
         }
 
         return null
@@ -184,9 +204,10 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
 
     private inline fun forEachClassId(fqName: String, block: (ClassId) -> Unit) {
         var classId = fqName.toSafeTopLevelClassId() ?: return
+        val classIds = mutableListOf<ClassId>()
 
         while (true) {
-            block(classId)
+            classIds += classId
 
             val packageFqName = classId.packageFqName
             if (packageFqName.isRoot) break
@@ -197,6 +218,8 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
                 isLocal = false
             )
         }
+
+        classIds.asReversed().forEach(block)
     }
 
     override fun findClasses(qName: String, scope: GlobalSearchScope): Array<PsiClass> =
@@ -221,6 +244,8 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
                             ?.findPsiClassInVirtualFile(relativeClassName)
                     )
                 }
+
+                result.addIfNotNull(findKotlinPsiClass(classId, scope))
 
                 if (result.isNotEmpty()) {
                     return@tryMeasureSideTime result.toTypedArray()
