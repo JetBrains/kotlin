@@ -730,7 +730,7 @@ private object CallableIds {
     val constructCallableReference = "constructCallableReference".jsCallableId
 
     val compileTimeRandomNumber = "compileTimeRandomNumber".jsCallableId
-    val enumHashCodeRandomizer = "ENUM_HASHCODE_RANDOMIZER".kotlinCallableId
+    val enumHashCodeRandomizer = "ENUM_HASHCODE_RANDOMIZER".jsCallableId
 
     // JS Long functions
     private val String.jsBoxedLongId get() = CallableId(JsStandardClassIds.BOXED_LONG_PACKAGE, Name.identifier(this))

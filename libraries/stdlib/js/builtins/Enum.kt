@@ -7,11 +7,6 @@ package kotlin
 
 import kotlin.js.*
 
-@OptIn(ExperimentalStdlibApi::class)
-@Suppress("DEPRECATION")
-@EagerInitialization
-internal val ENUM_HASHCODE_RANDOMIZER: Int = compileTimeRandomNumber(from = 0, to = Int.MAX_VALUE / 2)
-
 public actual abstract class Enum<E : Enum<E>> actual constructor(@kotlin.internal.IntrinsicConstEvaluation public actual val name: String, public actual val ordinal: Int) : Comparable<E> {
 
     actual final override fun compareTo(other: E): Int = ordinal.compareTo(other.ordinal)
