@@ -90,7 +90,7 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
 
         fun createGenerationState(fragment: BackendJobFragment): NativeGenerationState {
             val outputPath = config.cacheSupport.tryGetImplicitOutput(fragment.cacheDeserializationStrategy) ?: config.outputPath
-            val outputFiles = OutputFiles(outputPath, config.target, config.produce)
+            val outputFiles = OutputFiles(outputPath, config.target, config.produce, config.producePerFileCache)
             val generationState = NativeGenerationState(context.config, backendContext,
                     fragment.cacheDeserializationStrategy, fragment.dependenciesTracker, fragment.llvmModuleSpecification, outputFiles,
                     llvmModuleName = "out", // TODO: Currently, all llvm modules are named as "out" which might lead to collisions.
@@ -286,7 +286,7 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBitcodeBackend(
         val tempFiles = createTempFiles(context.config, null)
         val bitcodeFile = tempFiles.createBitcodeFile(context.config.shortModuleName ?: "out")
         val outputPath = context.config.outputPath
-        val outputFiles = OutputFiles(outputPath, context.config.target, context.config.produce)
+        val outputFiles = OutputFiles(outputPath, context.config.target, context.config.produce, context.config.producePerFileCache)
         bitcodeEngine.runBitcodePostProcessing()
         runInsertEntryPointAliasPhaseIfNeededTo(context.llvm.module)
         runAndMeasurePhase(WriteBitcodeFilePhase, WriteBitcodeFileInput(context.llvm.module, bitcodeFile))
@@ -425,20 +425,38 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.compileAndLink(
         outputFiles: OutputFiles,
         temporaryFiles: TempFiles,
 ) {
-    val compilationResult = temporaryFiles.create(Path(outputFiles.nativeBinaryFile).name, ".o").toFile()
-    runAndMeasurePhase(ObjectFilesPhase, ObjectFilesPhaseInput(moduleCompilationOutput.bitcodeFile, compilationResult))
+    if (outputFiles.producePerFileCache) {
+        // Per-file caches store the object file as is, without archiving it into a static library.
+        runAndMeasurePhase(ObjectFilesPhase, ObjectFilesPhaseInput(moduleCompilationOutput.bitcodeFile, java.io.File(outputFiles.nativeBinaryFile)))
+    } else {
+        val compilationResult = temporaryFiles.create(Path(outputFiles.nativeBinaryFile).name, ".o").toFile()
+        runAndMeasurePhase(ObjectFilesPhase, ObjectFilesPhaseInput(moduleCompilationOutput.bitcodeFile, compilationResult))
+        linkBinaries(moduleCompilationOutput, compilationResult, linkerOutputFile, outputFiles, temporaryFiles)
+    }
+    if (context.config.produce.isCache) {
+        runAndMeasurePhase(FinalizeCachePhase, outputFiles)
+    }
+}
+
+private fun <C : NativeBackendPhaseContext> PhaseEngine<C>.linkBinaries(
+        moduleCompilationOutput: ModuleCompilationOutput,
+        compilationResult: java.io.File,
+        linkerOutputFile: String,
+        outputFiles: OutputFiles,
+        temporaryFiles: TempFiles,
+) {
     val linkerOutputKind = determineLinkerOutput(context)
     val [linkerInput, cacheBinaries] = run {
         val resolvedCacheBinaries by lazy { resolveCacheBinaries(context.config.cachedLibraries, moduleCompilationOutput.dependenciesTrackingResult) }
         when {
             context.config.produce == CompilerOutputKind.STATIC_CACHE -> {
-                compilationResult to ResolvedCacheBinaries(emptyList(), emptyList())
+                compilationResult to ResolvedCacheBinaries.EMPTY
             }
             shouldPerformPreLink(context.config, resolvedCacheBinaries, linkerOutputKind) -> {
                 val prelinkResult = temporaryFiles.create("withStaticCaches", ".o").toFile()
                 runAndMeasurePhase(PreLinkCachesPhase, PreLinkCachesInput(listOf(compilationResult), resolvedCacheBinaries, prelinkResult))
-                // Static caches are linked into binary, so we don't need to pass them.
-                prelinkResult to ResolvedCacheBinaries(emptyList(), resolvedCacheBinaries.dynamic)
+                // Static caches and per-file cache object files are linked into binary, so we don't need to pass them.
+                prelinkResult to ResolvedCacheBinaries(emptyList(), resolvedCacheBinaries.dynamicLibraryPaths, emptyList())
             }
             else -> {
                 compilationResult to resolvedCacheBinaries
@@ -455,9 +473,6 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.compileAndLink(
             cacheBinaries,
     )
     runAndMeasurePhase(LinkerPhase, linkerPhaseInput)
-    if (context.config.produce.isCache) {
-        runAndMeasurePhase(FinalizeCachePhase, outputFiles)
-    }
 }
 
 internal fun PhaseEngine<NativeGenerationState>.partiallyLowerModuleWithDependencies(

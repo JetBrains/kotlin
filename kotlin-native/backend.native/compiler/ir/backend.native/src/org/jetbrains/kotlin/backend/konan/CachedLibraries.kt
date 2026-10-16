@@ -74,12 +74,6 @@ class CachedLibraries(
         protected abstract fun computeSerializedTrivialGetters(): List<SerializedTrivialGetter>
         protected abstract fun computeSerializedObjCAdapters(): List<SerializedObjCAdapter>
 
-        protected fun Kind.toCompilerOutputKind(): CompilerOutputKind = when (this) {
-            Kind.DYNAMIC -> CompilerOutputKind.DYNAMIC_CACHE
-            Kind.STATIC -> CompilerOutputKind.STATIC_CACHE
-            Kind.HEADER -> CompilerOutputKind.HEADER_CACHE
-        }
-
         /**
          * The partial linkage issues that have been recorded at the moment this cache was built: the ones recorded
          * for the cached file [fileId] in a per-file cache, or the ones recorded for the whole library in a monolithic
@@ -167,7 +161,7 @@ class CachedLibraries(
                     perFileBitcodeDependencies[file] ?: error("File $file is not found in cache $path")
 
             fun getFileBinaryPath(file: String) =
-                    Path(path).resolve(file).resolve(PER_FILE_CACHE_BINARY_LEVEL_DIR_NAME).resolve(getArtifactName(target, file, kind.toCompilerOutputKind())).let {
+                    Path(path).resolve(file).resolve(PER_FILE_CACHE_BINARY_LEVEL_DIR_NAME).resolve(getPerFileCacheObjectFileName(file)).let {
                         require(it.exists()) { "File $file is not found in cache $path" }
                         it.absolutePathString()
                     }
@@ -177,7 +171,7 @@ class CachedLibraries(
             override fun computeBitcodeDependencies() = perFileBitcodeDependencies.values.flatten()
 
             override fun computeBinariesPaths() = existingFileDirs.map {
-                it.resolve(PER_FILE_CACHE_BINARY_LEVEL_DIR_NAME).resolve(getArtifactName(target, it.name, kind.toCompilerOutputKind())).absolutePathString()
+                it.resolve(PER_FILE_CACHE_BINARY_LEVEL_DIR_NAME).resolve(getPerFileCacheObjectFileName(it.name)).absolutePathString()
             }
 
             override fun computeSerializedInlineFunctionBodies() = mutableListOf<SerializedInlineFunctionReference>().also {
@@ -319,6 +313,7 @@ class CachedLibraries(
         fun getPerFileCachedLibraryName(library: KotlinLibrary): String = "${library.uniqueName}-per-file-cache"
         fun getCachedLibraryName(library: KotlinLibrary): String = getCachedLibraryName(library.uniqueName)
         fun getCachedLibraryName(libraryName: String): String = "$libraryName-cache"
+        fun getPerFileCacheObjectFileName(fileId: String): String = "$fileId${CompilerOutputKind.OBJECT.suffix()}"
 
         fun computeDependenciesFingerprint(
                 dependencies: List<KotlinLibrary>,

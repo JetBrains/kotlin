@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -52,7 +52,11 @@ internal data class PreLinkCachesInput(
 internal val PreLinkCachesPhase = createSimpleNamedCompilerPhase<NativeBackendPhaseContext, PreLinkCachesInput>(
         name = "PreLinkCaches",
 ) { context, input ->
-    val inputFiles = input.objectFiles.map { it.absoluteFile.normalize().path } + input.caches.static
+    val inputFiles = buildList {
+        addAll(input.objectFiles.map { it.absoluteFile.normalize().path })
+        addAll(input.caches.objectFilePaths)
+        addAll(input.caches.staticLibraryPaths)
+    }
     val commands = context.config.platform.linker.preLinkCommands(inputFiles, input.outputObjectFile.absoluteFile.normalize().path)
     runLinkerCommands(context, commands, cachingInvolved = true)
 }
