@@ -1,0 +1,2 @@
+Greeter.java:15:24:compiler.err.doesnt.exist
+Greeter.java:15:30:compiler.err.enum.annotation.must.be.enum.constant

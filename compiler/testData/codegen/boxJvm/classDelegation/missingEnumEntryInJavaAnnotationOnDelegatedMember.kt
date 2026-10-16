@@ -1,7 +1,6 @@
 // TARGET_BACKEND: JVM
 // ISSUE: KT-90361
 // ISSUE: KT-90363
-// IGNORE_BACKEND: JVM
 // IGNORE_HEADER_MODE: JVM
 //   Reason: javac reports a missing default value of `Restrict.scalar` in `lib/arr/Greeter.java`: the header-mode
 //   `lib` does not seem to keep annotation parameter defaults
