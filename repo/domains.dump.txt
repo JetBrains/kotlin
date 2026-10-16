@@ -189,6 +189,7 @@ BuildToolsApi:
  - compiler/compiler-runner-unshaded
  - compiler/daemon
  - compiler/incremental-compilation-impl
+ - libraries/tools/kotlin-build-tools
 
 SwiftExport:
  - native/swift
