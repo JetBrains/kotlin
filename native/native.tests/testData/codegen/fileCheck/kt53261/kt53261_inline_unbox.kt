@@ -8,7 +8,8 @@ import kotlinx.cinterop.*
 
 val arr: Array<String> = arrayOf("1")
 
-// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
+// CHECK-EAGER_SHADOW_STACK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
+// CHECK-LATE_SHADOW_STACK-LABEL: define ptr addrspace(1) @"kfun:#box(){}kotlin.String"
 @kotlinx.cinterop.ExperimentalForeignApi
 fun box(): String {
     println(arr.size.toByte() == arr[0].toByte())
@@ -68,7 +69,7 @@ fun box(): String {
 // CHECK-OPT-NOT: {{call|invoke}} i32 @"kfun:kotlin.native.concurrent#<Future-unbox>
 // CHECK-OPT-NOT: {{call|invoke}} i32 @"kfun:kotlin.native.concurrent#<Worker-unbox>
 // CHECK-OPT-NOT: {{call|invoke}} <4 x float> @"kfun:kotlin.native#<Vector128-unbox>
-// CHECK-OPT-NOT: {{call|invoke}} ptr @"kfun:kotlin#<Result-unbox>
+// CHECK-OPT-NOT: {{call|invoke}} {{.*}}@"kfun:kotlin#<Result-unbox>
 
 // CHECK-LABEL: epilogue:
 // On APPLE targets, generated functions <T>ToNSNumber may contain non-converted invocations of unbox functions.

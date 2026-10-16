@@ -2,7 +2,8 @@
 // FILECHECK_STAGE: CStubs
 
 var i = 1
-// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
+// CHECK-EAGER_SHADOW_STACK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
+// CHECK-LATE_SHADOW_STACK-LABEL: define ptr addrspace(1) @"kfun:#box(){}kotlin.String"
 fun box(): String = when(i) {
     0 -> "FAIL: 0"
     1 -> "OK"

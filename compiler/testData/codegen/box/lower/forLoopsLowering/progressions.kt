@@ -216,7 +216,8 @@ fun testSumOfCharProgression(): Int {
     return str.sumOf { it.code }
 }
 
-// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
+// CHECK-EAGER_SHADOW_STACK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
+// CHECK-LATE_SHADOW_STACK-LABEL: define ptr addrspace(1) @"kfun:#box(){}kotlin.String"
 fun box(): String {
     assertEquals(55, testIntSumOfIterableInt())
     assertEquals(55, testIntSumOfIterableIntTemporary())

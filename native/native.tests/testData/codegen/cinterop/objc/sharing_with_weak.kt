@@ -42,6 +42,7 @@ private class NSObjectImpl : NSObject() {
     var x = 111
 }
 
+@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 fun run() = withWorker {
     val obj = NSObjectImpl()
     setObject(obj)
@@ -52,5 +53,5 @@ fun run() = withWorker {
         }.result
     } catch (e: Throwable) {
         false
-    }
+    }.also { kotlin.native.internal.keepAlive(obj) }
 }

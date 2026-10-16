@@ -513,6 +513,11 @@ class NativeSecondStageCompilationConfig(
     // By default use the new C++ passes.
     val runLLVMPassesInCompiler = configuration.get(BinaryOptions.runLLVMPassesInCompiler) ?: false
 
+    val lateShadowStack: Boolean = configuration.get(BinaryOptions.lateShadowStack) ?: false
+
+    val lateShadowStackClearDeadSlots: ShadowStackSlotClearing =
+            configuration.get(BinaryOptions.lateShadowStackClearDeadSlots) ?: ShadowStackSlotClearing.LATE
+
     private fun StringBuilder.appendCommonCacheFlavor() {
         append(target.toString())
         if (debug) append("-g")
@@ -541,6 +546,10 @@ class NativeSecondStageCompilationConfig(
             append("-latin1_strings${if (latin1Strings) "ENABLE" else "DISABLE"}")
         if (assertsEnabled != defaultAsserts)
             append("-asserts${if (assertsEnabled) "ENABLE" else "DISABLE"}")
+        if (lateShadowStack)
+            append("-late_shadow_stack")
+        if (lateShadowStack && lateShadowStackClearDeadSlots != ShadowStackSlotClearing.LATE)
+            append("-clear_dead_slots${lateShadowStackClearDeadSlots.name}")
     }
 
     private val systemCacheFlavorString = buildString {

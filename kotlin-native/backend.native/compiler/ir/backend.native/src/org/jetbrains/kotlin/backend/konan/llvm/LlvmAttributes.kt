@@ -34,6 +34,14 @@ internal fun addTargetCpuAndFeaturesAttributes(context: NativeBackendContext, ll
     }
 }
 
+internal const val KOTLIN_GC_FRAME_ATTRIBUTE = "kotlin-gc-frame"
+
+internal fun addKotlinGcFrameAttribute(context: NativeBackendContext, llvmFunction: LLVMValueRef) {
+    if (context.config.lateShadowStack) {
+        LLVMAddTargetDependentFunctionAttr(llvmFunction, KOTLIN_GC_FRAME_ATTRIBUTE, "")
+    }
+}
+
 private fun shouldEnforceFramePointer(context: NativeBackendContext): Boolean {
     // TODO: do we still need it?
     if (!context.shouldOptimize()) {

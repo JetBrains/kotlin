@@ -5,22 +5,26 @@
 // IGNORE_NATIVE: optimizationMode=OPT && cacheMode=STATIC_EVERYWHERE
 
 value class Foo(val value: Int)
-// CHECK-LABEL: define ptr @"kfun:Foo#$<bridge-NU>toString(){}kotlin.String(){}kotlin.String
-// CHECK-DEBUG-NOT: call ptr @"kfun:kotlin.native.internal#downcast
+// CHECK-EAGER_SHADOW_STACK-LABEL: define ptr @"kfun:Foo#$<bridge-NU>toString(){}kotlin.String(){}kotlin.String
+// CHECK-LATE_SHADOW_STACK-LABEL: define ptr addrspace(1) @"kfun:Foo#$<bridge-NU>toString(){}kotlin.String(){}kotlin.String
+// CHECK-DEBUG-NOT: call {{.*}}@"kfun:kotlin.native.internal#downcast
 // CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
-// CHECK-LABEL: call ptr @"kfun:Foo#toString(){}kotlin.String
+// CHECK-EAGER_SHADOW_STACK-LABEL: call ptr @"kfun:Foo#toString(){}kotlin.String
+// CHECK-LATE_SHADOW_STACK-LABEL: call ptr addrspace(1) @"kfun:Foo#toString(){}kotlin.String
 // CHECK-LABEL: epilogue:
 
 // CHECK-LABEL: define i32 @"kfun:#foo(kotlin.Any){}kotlin.Int
 fun foo(x: Any) = x as Int
-// CHECK-DEBUG: call ptr @"kfun:kotlin.native.internal#downcast
+// CHECK-DEBUG-EAGER_SHADOW_STACK: call ptr @"kfun:kotlin.native.internal#downcast
+// CHECK-DEBUG-LATE_SHADOW_STACK: call ptr addrspace(1) @"kfun:kotlin.native.internal#downcast
 // CHECK-OPT: {{call|call zeroext}} i1 @IsSubclassFast
-// CHECK-DEBUG-NOT: call ptr @"kfun:kotlin.native.internal#downcast
+// CHECK-DEBUG-NOT: call {{.*}}@"kfun:kotlin.native.internal#downcast
 // CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
 // CHECK-DEBUG: call i32 @"kfun:kotlin#<Int-unbox>(kotlin.Any){}kotlin.Int
-// CHECK-OPT: getelementptr inbounds nuw %"kclassbody:kotlin.Int#internal", ptr {{%[0-9]+}}, i32 0, i32 1
+// CHECK-OPT-EAGER_SHADOW_STACK: getelementptr inbounds nuw %"kclassbody:kotlin.Int#internal", ptr {{%[0-9]+}}, i32 0, i32 1
+// CHECK-OPT-LATE_SHADOW_STACK: getelementptr inbounds nuw %"kclassbody:kotlin.Int#internal", ptr addrspace(1) {{%[0-9]+}}, i32 0, i32 1
 // CHECK-LABEL: epilogue:
 
 open class A(val x: Int)
@@ -29,14 +33,16 @@ open class B : A(42)
 
 fun bar() = B()
 
-// CHECK-LABEL: define ptr @"kfun:#baz(){}A
-// CHECK-DEBUG-NOT: call ptr @"kfun:kotlin.native.internal#downcast
+// CHECK-EAGER_SHADOW_STACK-LABEL: define ptr @"kfun:#baz(){}A
+// CHECK-LATE_SHADOW_STACK-LABEL: define ptr addrspace(1) @"kfun:#baz(){}A
+// CHECK-DEBUG-NOT: call {{.*}}@"kfun:kotlin.native.internal#downcast
 // CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
 // CHECK-LABEL: epilogue:
 fun baz(): A = bar()
 
-// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
+// CHECK-EAGER_SHADOW_STACK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
+// CHECK-LATE_SHADOW_STACK-LABEL: define ptr addrspace(1) @"kfun:#box(){}kotlin.String"
 fun box(): String {
     println(Foo(42))
     println(foo(42))

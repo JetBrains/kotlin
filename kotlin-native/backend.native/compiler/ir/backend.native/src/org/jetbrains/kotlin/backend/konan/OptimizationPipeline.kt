@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.config.LoggingContext
 import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.llvm.*
+import org.jetbrains.kotlin.config.nativeBinaryOptions.ShadowStackSlotClearing
 import org.jetbrains.kotlin.config.nativeBinaryOptions.StackProtectorMode
 import org.jetbrains.kotlin.konan.config.saveLlvmIr
 import org.jetbrains.kotlin.konan.target.*
@@ -54,6 +55,7 @@ data class LlvmPipelineConfig(
         val saveIrDirectory: java.io.File? = null,
         val runLLVMPassesInCompiler: Boolean,
         val shouldInlineSafepoints: Boolean = false,
+        val clearDeadShadowStackSlots: ShadowStackSlotClearing = ShadowStackSlotClearing.OFF,
 ) {
     /**
      * Create a copy of [LlvmPipelineConfig] setting up options to dump IR
@@ -217,6 +219,7 @@ internal fun createLTOFinalPipelineConfig(
             sspMode = config.stackProtectorMode,
             runLLVMPassesInCompiler = config.runLLVMPassesInCompiler,
             shouldInlineSafepoints = context.shouldInlineSafepoints(),
+            clearDeadShadowStackSlots = config.lateShadowStackClearDeadSlots,
     )
 }
 
@@ -394,6 +397,12 @@ class RemoveRedundantSafepointsPipeline(config: LlvmPipelineConfig, performanceM
         val arg = if (config.shouldInlineSafepoints) "<inline>" else ""
         add("function(kotlin-remove-sp$arg)")
     }
+}
+
+class BuildShadowStackPipeline(config: LlvmPipelineConfig, performanceManager: PerformanceManager?, logger: LoggingContext? = null) :
+        LlvmOptimizationPipeline(config, performanceManager, logger) {
+    override val pipelineName = "llvm-build-shadow-stack"
+    override val passes = listOf("kotlin-build-shadow-stack<clear-dead-slots=${config.clearDeadShadowStackSlots.name.lowercase()}>")
 }
 
 class ModuleCallsCheckerPipeline(config: LlvmPipelineConfig, performanceManager: PerformanceManager?, logger: LoggingContext? = null) :
