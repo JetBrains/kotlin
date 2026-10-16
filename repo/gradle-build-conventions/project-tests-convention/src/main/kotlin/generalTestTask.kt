@@ -6,15 +6,12 @@
 import org.gradle.api.Project
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileSystemOperations
-import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.internal.tasks.testing.filter.DefaultTestFilter
-import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.testing.Test
-import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.newInstance
 import org.gradle.kotlin.dsl.project
 import org.gradle.kotlin.dsl.support.serviceOf
@@ -28,12 +25,6 @@ abstract class GeneralTestArgumentProvider @Inject constructor() : CommandLineAr
     @get:Inject
     protected abstract val providers: ProviderFactory
 
-    @get:Internal
-    abstract val projectName: Property<String>
-
-    @get:Internal
-    abstract val taskName: Property<String>
-
     @get:InputFile
     @get:Optional
     @get:PathSensitive(PathSensitivity.NONE)
@@ -42,11 +33,7 @@ abstract class GeneralTestArgumentProvider @Inject constructor() : CommandLineAr
         .filter { it.exists() }
 
     @get:Internal
-    val tempDir: Provider<String> =
-        providers.environmentVariable("TMPDIR").orElse(providers.systemProperty("java.io.tmpdir"))
-
-    @get:Internal
-    val prefix = projectName.zip(taskName) { projectName, taskName -> "${projectName}Project_${taskName}_" }
+    abstract val tempDir: DirectoryProperty
 
     /**
      * Directory for unified JVM GC logs (`-Xlog:gc*`) of the forked test JVMs.
@@ -61,7 +48,7 @@ abstract class GeneralTestArgumentProvider @Inject constructor() : CommandLineAr
 
     override fun asArguments(): Iterable<String?> = buildList {
         excludesFile.orNull?.let { add("-Dteamcity.build.parallelTests.excludesFile=${it.path}") }
-        tempDir.orNull?.let { add("-Djava.io.tmpdir=" + Files.createTempDirectory(File(it).toPath(), prefix.get()).toString()) }
+        tempDir.orNull?.let { add("-Djava.io.tmpdir=${it.asFile.path}") }
         if (javaMajorVersion.get() < 25) {
             // With many concurrent test threads, an allocation stalled by the GC locker (JNI critical sections,
             // e.g. zip inflation) gives up after only 2 retries and throws OOM before a full GC gets a chance (JDK-8192647).
@@ -201,8 +188,6 @@ internal fun Project.createGeneralTestTask(
         }
 
         val testArgumentProvider = objects.newInstance<GeneralTestArgumentProvider>().also {
-            it.projectName.set(project.name)
-            it.taskName.set(name)
             it.gcLogDirectory.set(project.layout.buildDirectory.dir("test-gc-logs/$name"))
             // Read from the task's final launcher, not the `javaLauncher` parameter:
             // some modules reassign `Test.javaLauncher` in their own configuration (e.g. fir2ir to JDK 8).
@@ -210,9 +195,20 @@ internal fun Project.createGeneralTestTask(
         }
         jvmArgumentProviders.add(testArgumentProvider)
 
+        val baseTempDir = project.providers.environmentVariable("TMPDIR").orElse(project.providers.systemProperty("java.io.tmpdir"))
+        val prefix = "${this.project.name}Project_${this.name}_"
+
         systemProperty("idea.ignore.disabled.plugins", "true")
 
+        val providerFactory = project.providers
         doFirst {
+            baseTempDir
+                .orElse(providerFactory.provider { throw IllegalStateException("Failed to get temp dir") })
+                .get()
+                .let { dir ->
+                    testArgumentProvider.tempDir.set(Files.createTempDirectory(File(dir).toPath(), prefix).toFile())
+                }
+
             // workaround for a Gradle bug: https://github.com/gradle/gradle/issues/37539
             // the tests won't be skipped by Gradle but will be disabled by TCParallelTestsExecutionCondition
             // this can be removed after Gradle updated to a version with the fix (likely 9.6.0)
@@ -226,14 +222,13 @@ internal fun Project.createGeneralTestTask(
 
         val fs = project.serviceOf<FileSystemOperations>()
         doLast {
-            File(testArgumentProvider.tempDir.get(), testArgumentProvider.prefix.get()).let {
-                try {
-                    fs.delete {
-                        delete(it)
-                    }
-                } catch (e: Exception) {
-                    logger.warn("Can't delete test temp root folder $it", e.printStackTrace())
+            val dir = testArgumentProvider.tempDir.get()
+            try {
+                fs.delete {
+                    delete(dir)
                 }
+            } catch (e: Exception) {
+                logger.warn("Can't delete test temp root folder ${dir.asFile}", e)
             }
         }
 
