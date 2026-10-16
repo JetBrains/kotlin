@@ -108,6 +108,7 @@ internal fun Project.registerSwiftExportRunAndBinary(
 
     val swiftApiModuleName = swiftExportConfiguration
         .moduleName
+        .map { it.also(::validateSwiftExportModuleName) }
         .orElse(provider { project.name.normalizedSwiftExportModuleName.also { validateSwiftExportModuleName(it) } })
 
     val taskNamePrefix = lowerCamelCaseName(
