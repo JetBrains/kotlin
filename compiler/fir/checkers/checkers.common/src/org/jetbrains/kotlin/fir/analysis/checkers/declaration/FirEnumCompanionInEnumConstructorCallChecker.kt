@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.isEnumEntry
@@ -57,7 +56,7 @@ object FirEnumCompanionInEnumConstructorCallChecker : FirClassChecker(MppChecker
         companionSymbol: FirRegularClassSymbol,
         enumClass: FirRegularClassSymbol,
     ) {
-        val companionReferenceSources = mutableSetOf<KtSourceElement?>()
+        val reportedAccess = mutableSetOf<FirExpression>()
 
         for (node in graph.nodes) {
             if (node is CFGNodeWithSubgraphs) {
@@ -77,32 +76,29 @@ object FirEnumCompanionInEnumConstructorCallChecker : FirClassChecker(MppChecker
                 }
             }
 
-            val qualifiedAccess = when (node) {
-                is QualifiedAccessNode -> node.fir
-                is FunctionCallExitNode -> node.firAsFunctionCallOrNull ?: continue
-                is ResolvedQualifierNode -> {
-                    if (node.fir.accessedObjectSymbol == companionSymbol) {
-                        companionReferenceSources += node.fir.source
-                    }
-                    continue
-                }
-                else -> continue
+            val access = when (node) {
+                is QualifiedAccessNode -> node.fir.findCompanionAccess(companionSymbol)
+                is FunctionCallExitNode -> node.firAsFunctionCallOrNull?.findCompanionAccess(companionSymbol)
+                is ResolvedQualifierNode -> node.fir.takeIf { it.accessedObjectSymbol == companionSymbol }
+                else -> null
             }
 
-            for (expression in qualifiedAccess.allReceiverExpressions) {
-                val unwrappedExpression = expression.unwrapSmartcastExpression()
-
-                if (unwrappedExpression.getClassSymbol(qualifiedAccess) != companionSymbol) continue
-
-                companionReferenceSources += unwrappedExpression.source ?: qualifiedAccess.source
-
-                break
+            if (access != null && reportedAccess.add(access)) {
+                reporter.reportOn(
+                    access.source ?: node.fir.source,
+                    FirErrors.UNINITIALIZED_ENUM_COMPANION,
+                    enumClass
+                )
             }
-        }
-        for (source in companionReferenceSources) {
-            reporter.reportOn(source, FirErrors.UNINITIALIZED_ENUM_COMPANION, enumClass)
         }
     }
+
+    context(context: CheckerContext)
+    private fun FirQualifiedAccessExpression.findCompanionAccess(companionSymbol: FirRegularClassSymbol): FirExpression? =
+        allReceiverExpressions.firstOrNull {
+            it.unwrapSmartcastExpression().getClassSymbol(this) == companionSymbol
+        }
+
 
     context(context: CheckerContext)
     private fun FirExpression.getClassSymbol(qualifiedAccess: FirQualifiedAccessExpression): FirRegularClassSymbol? {
