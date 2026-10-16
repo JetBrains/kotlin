@@ -43,6 +43,9 @@ fun getBuildReporter(
             CompilationResultCategory.IC_COMPILE_ITERATION -> {
                 reporters.add(CompileIterationICReporter(compilationResults))
             }
+            CompilationResultCategory.IC_EVENT -> {
+                reporters.add(RemoteEventICReporter(compilationResults))
+            }
             CompilationResultCategory.BUILD_REPORT_LINES -> {
                 reporters.add(BuildReportICReporter(compilationResults, root))
             }

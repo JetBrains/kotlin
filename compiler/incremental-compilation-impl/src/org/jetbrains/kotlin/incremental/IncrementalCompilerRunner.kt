@@ -10,8 +10,10 @@ import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.build.report.BuildReporter
 import org.jetbrains.kotlin.build.report.debug
 import org.jetbrains.kotlin.build.report.info
+import org.jetbrains.kotlin.build.report.events.ScopeExpansionReason
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.build.report.metrics.BuildAttribute.*
+import org.jetbrains.kotlin.build.report.reportMarkDirty
 import org.jetbrains.kotlin.build.report.warn
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
@@ -489,6 +491,10 @@ abstract class IncrementalCompilerRunner<
         caches: CacheManager,
         messageCollector: MessageCollector,
     ): ExitCode {
+        when (compilationMode) {
+            is CompilationMode.Incremental -> reporter.reportCompilationStart(true, null)
+            is CompilationMode.Rebuild -> reporter.reportCompilationStart(false, compilationMode.reason.readableString)
+        }
         performWorkBeforeCompilation(compilationMode, args)
 
         val allKotlinFiles = allSourceFiles.filter { it.isKotlinFile(kotlinSourceFilesExtensions) }
@@ -548,8 +554,16 @@ abstract class IncrementalCompilerRunner<
         while (dirtySources.any() || runWithNoDirtyKotlinSources(caches)) {
             val complementaryFiles = caches.platformCache.getComplementaryFilesRecursive(dirtySources)
             dirtySources.addAll(complementaryFiles)
+            reporter.reportMarkDirty(
+                caches.compilerPluginFilesCache.getSourceFilesReferencedByPlugins(),
+                ScopeExpansionReason.REFERENCED_BY_COMPILER_PLUGIN
+            )
             dirtySources.addAll(caches.compilerPluginFilesCache.getSourceFilesReferencedByPlugins())
             val sourceFilesPreviouslyGeneratedByPlugins = caches.compilerPluginFilesCache.getSourceFilesGeneratedByPlugins()
+            reporter.reportMarkDirty(
+                sourceFilesPreviouslyGeneratedByPlugins,
+                ScopeExpansionReason.GENERATED_BY_COMPILER_PLUGIN
+            )
             dirtySources.addAll(sourceFilesPreviouslyGeneratedByPlugins)
             caches.platformCache.markDirty(dirtySources)
             caches.inputsCache.removeOutputForSourceFiles(dirtySources)
@@ -617,6 +631,7 @@ abstract class IncrementalCompilerRunner<
                 val dirtySourcesSet = dirtySources.toHashSet()
                 val additionalDirtyFiles = additionalDirtyFiles(caches, generatedFiles, services).filter { it !in dirtySourcesSet }
                 if (additionalDirtyFiles.isNotEmpty()) {
+                    reporter.reportMarkDirty(additionalDirtyFiles, ScopeExpansionReason.SHARED_CLASS_NAME)
                     dirtySources.addAll(additionalDirtyFiles)
                     generatedFiles.forEach { transaction.deleteFile(it.outputFile.toPath()) }
                     continue
@@ -676,6 +691,7 @@ abstract class IncrementalCompilerRunner<
                         // At this point we have determined that some new source files need to be recompiled,
                         // and we can add previously compiled files to the dirtySources set for logical consistency.
                         // (Take note that outer loop triggers compilation steps while there are not-yet-recompiled affected files.)
+                        reporter.reportMarkDirty(compiledInThisIterationSet, ScopeExpansionReason.FOR_CONSISTENCY)
                         addAll(compiledInThisIterationSet)
                     }
                 }
