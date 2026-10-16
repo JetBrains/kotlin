@@ -67,34 +67,55 @@ internal object DevirtualizationAnalysis {
 
     private inline fun takeName(block: () -> String) = if (TAKE_NAMES) block() else null
 
-    fun computeRootSet(context: NativeBackendContext, irModule: IrModuleFragment, moduleDFG: ModuleDFG): List<DataFlowIR.FunctionSymbol> {
-        val entryPoint = context.symbols.entryPoint?.owner
-        val exported = if (entryPoint != null)
-            listOf(moduleDFG.symbolTable.mapFunction(entryPoint))
-        else {
+    private fun collectSymbolTableRoots(
+            entryPoint: DataFlowIR.FunctionSymbol?,
+            functionSymbols: Collection<DataFlowIR.FunctionSymbol>,
+            types: Collection<DataFlowIR.Type>,
+            functionsWithBodies: Set<DataFlowIR.FunctionSymbol>,
+    ): MutableSet<DataFlowIR.FunctionSymbol> {
+        val roots = mutableSetOf<DataFlowIR.FunctionSymbol>()
+        if (entryPoint != null) {
+            roots.add(entryPoint)
+        } else {
             // In a library every public function and every function accessible via virtual call belongs to the rootset.
-            moduleDFG.symbolTable.functionMap.values.filter {
-                it is DataFlowIR.FunctionSymbol.Public
-                        || (it as? DataFlowIR.FunctionSymbol.External)?.isExported == true
-            } +
-                    moduleDFG.symbolTable.classMap.values
-                            .flatMap { it.vtable + it.itable.values.flatten() }
-                            .filterIsInstance<DataFlowIR.FunctionSymbol.Declared>()
-                            .filter { moduleDFG.functions.containsKey(it) }
+            for (function in functionSymbols) {
+                if (function is DataFlowIR.FunctionSymbol.Public || (function as? DataFlowIR.FunctionSymbol.External)?.isExported == true)
+                    roots.add(function)
+            }
+            for (type in types) {
+                for (function in type.vtable) {
+                    if (function is DataFlowIR.FunctionSymbol.Declared && function in functionsWithBodies)
+                        roots.add(function)
+                }
+                for (methods in type.itable.values) {
+                    for (function in methods) {
+                        if (function is DataFlowIR.FunctionSymbol.Declared && function in functionsWithBodies)
+                            roots.add(function)
+                    }
+                }
+            }
+        }
+        for (function in functionSymbols) {
+            if (function.isStaticFieldInitializer || function.isEagerStaticInitializer)
+                roots.add(function)
+        }
+        for (function in functionSymbols) {
+            if (function.explicitlyExported)
+                roots.add(function)
         }
 
-        val globalInitializers = moduleDFG.symbolTable.functionMap.values.filter {
-            it.isStaticFieldInitializer || it.isEagerStaticInitializer
-        }
-        val explicitlyExported = moduleDFG.symbolTable.functionMap.values.filter { it.explicitlyExported }
+        return roots
+    }
 
-        // Conservatively assume each associated object could be called.
-        // Note: for constructors there is additional parameter (<this>) and its type will be added
-        // to instantiating classes since all objects are final types.
-        val associatedObjectConstructors = mutableListOf<DataFlowIR.FunctionSymbol>()
-        // At this point all function references are lowered except those leaking to the native world.
-        // Conservatively assume them belonging of the root set.
-        val leakingThroughFunctionReferences = mutableListOf<DataFlowIR.FunctionSymbol>()
+    fun computeRootSet(context: NativeBackendContext, irModule: IrModuleFragment, moduleDFG: ModuleDFG): List<DataFlowIR.FunctionSymbol> {
+        val entryPoint = context.symbols.entryPoint?.owner?.let { moduleDFG.symbolTable.mapFunction(it) }
+        val roots = collectSymbolTableRoots(
+                entryPoint,
+                moduleDFG.symbolTable.functionMap.values,
+                moduleDFG.symbolTable.classMap.values,
+                moduleDFG.functions.keys,
+        )
+
         irModule.acceptChildrenVoid(object : IrVisitorVoid() {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
@@ -103,22 +124,26 @@ internal object DevirtualizationAnalysis {
             override fun visitClass(declaration: IrClass) {
                 declaration.acceptChildrenVoid(this)
 
+                // Conservatively assume each associated object could be called. Its final type will be
+                // added to instantiating classes through the constructor's additional <this> parameter.
                 context.getLayoutBuilder(declaration).associatedObjects.values.forEach {
                     assert(it.kind == ClassKind.OBJECT) { "An object expected but was ${it.dump()}" }
-                    associatedObjectConstructors += moduleDFG.symbolTable.mapFunction(context.getObjectClassInstanceFunction(it))
+                    roots.add(moduleDFG.symbolTable.mapFunction(context.getObjectClassInstanceFunction(it)))
                 }
             }
 
+            // At this point all function references are lowered except those leaking to the native world.
+            // Conservatively assume them belonging of the root set.
             override fun visitRawFunctionReference(expression: IrRawFunctionReference) {
                 expression.acceptChildrenVoid(this)
 
                 val function = expression.symbol.owner
                 require(function is IrSimpleFunction) { "All constructors should've been lowered: ${expression.render()}" }
-                leakingThroughFunctionReferences.add(moduleDFG.symbolTable.mapFunction(function))
+                roots.add(moduleDFG.symbolTable.mapFunction(function))
             }
         })
 
-        return (exported + globalInitializers + explicitlyExported + associatedObjectConstructors + leakingThroughFunctionReferences).distinct()
+        return roots.toList()
     }
 
     fun CustomBitSet.format(allTypes: Array<DataFlowIR.Type>): String {
