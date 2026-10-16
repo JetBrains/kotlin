@@ -30,7 +30,7 @@ projectTests {
     testTask {
         systemProperty(
             "kdm.test.overwrite",
-            project.providers.gradleProperty("kdm.test.overwrite").orNull ?: System.getProperty("kdm.test.overwrite", "false")
+            project.providers.gradleProperty("kdm.test.overwrite")
         )
     }
 }
