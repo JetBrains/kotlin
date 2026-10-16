@@ -80,6 +80,7 @@ internal abstract class DistributionWithImportMapTask : DefaultTask() {
             ) {
                 it.includeEmptyDirs = false
                 it.into(VENDORS_FOLDER)
+                it.exclude("**/node_modules/**")
                 it.eachFile { file ->
                     file.path = File(VENDORS_FOLDER).resolve(file.file.relativeTo(file.file.closestNodeModules())).path
                 }
