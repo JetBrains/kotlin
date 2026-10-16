@@ -1,9 +1,136 @@
 <idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
-  <xi:include href="/META-INF/analysis-api/analysis-api-impl-base.xml"/>
+  <xi:include href="/META-INF/analysis-api/analysis-api-platform-interface.xml"/>
   <xi:include href="/META-INF/analysis-api/low-level-api-fir.xml"/>
   <xi:include href="/META-INF/analysis-api/symbol-light-classes.xml"/>
 
   <extensions defaultExtensionNs="com.intellij">
+    <stubElementTypeHolder externalIdPrefix="kotlin." class="org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes"/>
+    <languageStubDefinition language="kotlin"
+                            implementationClass="org.jetbrains.kotlin.psi.stubs.KotlinLanguageStubDefinition"/>
+    <stubElementRegistryExtension implementation="org.jetbrains.kotlin.psi.stubs.KotlinStubRegistryExtension"/>
+
+    <fileType name="ARCHIVE" extensions="klib"/>
+
+    <fileType name="Kotlin" fieldName="INSTANCE" language="kotlin" extensions="kt;kts"
+              implementationClass="org.jetbrains.kotlin.idea.KotlinFileType"/>
+    <fileType name="KNM" fieldName="INSTANCE" extensions="knm"
+              implementationClass="org.jetbrains.kotlin.analysis.decompiler.konan.KlibMetaFileType"/>
+    <fileType name="kotlin_builtins" fieldName="INSTANCE" extensions="kotlin_builtins;kotlin_metadata"
+              implementationClass="org.jetbrains.kotlin.analysis.decompiler.psi.KotlinBuiltInFileType"/>
+    <fileType name="kotlin_module" fieldName="INSTANCE" extensions="kotlin_module"
+              implementationClass="org.jetbrains.kotlin.idea.KotlinModuleFileType"/>
+
+    <fileType.fileViewProviderFactory filetype="KJSM" implementationClass="com.intellij.psi.ClassFileViewProviderFactory"/>
+    <filetype.stubBuilder filetype="KJSM" implementationClass="com.intellij.psi.impl.compiled.ClassFileStubBuilder"/>
+    <filetype.decompiler filetype="KJSM" implementationClass="com.intellij.psi.impl.compiled.ClassFileDecompiler"/>
+
+    <!--
+     There's an inconsistency between 'ClsDecompilerImpl' registration in 'JavaCoreApplicationEnvironment' and in real IntelliJ IDEA.
+     In the IDE, the default decompiler is registered as a 'last' one. That naturally places all other class file decompilers before it.
+
+     ```xml
+     <psi.classFileDecompiler id="clsStubBuilder" implementation="com.intellij.psi.impl.compiled.ClsDecompilerImpl" order="last"/>
+     ```
+
+     However, in 'JavaCoreApplicationEnvironment', which is used in Standalone for non-Kotlin extension registration, it's registered
+     with no specified order or at least an id:
+
+     ```java
+     addExtension(ClassFileDecompilers.getInstance().EP_NAME, new ClsDecompilerImpl())
+     ```
+
+     This makes it problematic to use custom decompilers registered in XML with 'JavaCoreApplicationEnvironment', unless all of them
+     are ordered 'first'.
+     -->
+    <psi.classFileDecompiler
+        implementation="org.jetbrains.kotlin.analysis.decompiler.psi.KotlinClassFileDecompiler"
+        order="first"/>
+    <psi.classFileDecompiler
+        implementation="org.jetbrains.kotlin.analysis.decompiler.psi.KotlinBuiltInDecompiler"
+        order="first"/>
+    <psi.classFileDecompiler
+        implementation="org.jetbrains.kotlin.analysis.decompiler.konan.KotlinKlibMetadataDecompiler"
+        order="first"/>
+
+    <projectService
+        serviceInterface="org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade"
+        serviceImplementation="org.jetbrains.kotlin.analysis.api.impl.base.java.KaBaseKotlinJavaPsiFacade"
+    />
+
+    <projectService
+        serviceInterface="org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver"
+        serviceImplementation="org.jetbrains.kotlin.analysis.api.impl.base.java.KaBaseJavaModuleResolver"
+    />
+
+    <projectService
+        serviceInterface="org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementSourceFactory"
+        serviceImplementation="org.jetbrains.kotlin.analysis.api.impl.base.java.source.JavaElementSourceWithSmartPointerFactory"
+    />
+
+    <projectService
+        serviceInterface="org.jetbrains.kotlin.psi.KotlinReferenceProvidersService"
+        serviceImplementation="org.jetbrains.kotlin.analysis.api.impl.base.references.KotlinReferenceProvidersServiceImpl"
+    />
+
+    <projectService
+        serviceInterface="org.jetbrains.kotlin.analysis.api.projectStructure.KaModuleProvider"
+        serviceImplementation="org.jetbrains.kotlin.analysis.api.impl.base.projectStructure.KaBaseModuleProvider"
+    />
+
+    <projectService
+        serviceInterface="org.jetbrains.kotlin.analysis.api.platform.KotlinMessageBusProvider"
+        serviceImplementation="org.jetbrains.kotlin.analysis.api.platform.KotlinProjectMessageBusProvider"
+    />
+
+    <applicationService
+        serviceInterface="org.jetbrains.kotlin.analysis.api.permissions.KaAnalysisPermissionRegistry"
+        serviceImplementation="org.jetbrains.kotlin.analysis.api.impl.base.permissions.KaBaseAnalysisPermissionRegistry"
+    />
+
+    <projectService
+        serviceInterface="org.jetbrains.kotlin.analysis.api.platform.permissions.KaAnalysisPermissionChecker"
+        serviceImplementation="org.jetbrains.kotlin.analysis.api.impl.base.permissions.KaBaseAnalysisPermissionChecker"
+    />
+
+    <projectService
+        serviceInterface="org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaResolutionScopeProvider"
+        serviceImplementation="org.jetbrains.kotlin.analysis.api.impl.base.projectStructure.KaBaseResolutionScopeProvider"
+    />
+
+    <projectService
+        serviceInterface="org.jetbrains.kotlin.analysis.api.platform.lifetime.KaLifetimeTracker"
+        serviceImplementation="org.jetbrains.kotlin.analysis.api.impl.base.lifetime.KaBaseLifetimeTracker"
+    />
+
+    <projectService
+        serviceInterface="org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaContentScopeProvider"
+        serviceImplementation="org.jetbrains.kotlin.analysis.api.impl.base.projectStructure.KaBaseContentScopeProvider"
+    />
+
+    <projectService
+        serviceInterface="org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaGlobalSearchScopeMerger"
+        serviceImplementation="org.jetbrains.kotlin.analysis.api.impl.base.projectStructure.KotlinOptimizingGlobalSearchScopeMerger"
+    />
+
+    <applicationService serviceImplementation="org.jetbrains.kotlin.analysis.decompiled.light.classes.origin.KotlinDeclarationInCompiledFileSearcher" />
+    <applicationService serviceImplementation="org.jetbrains.kotlin.analysis.decompiler.konan.KlibLoadingMetadataCache" />
+
+    <java.elementFinder implementation="org.jetbrains.kotlin.asJava.finder.JavaElementFinder"/>
+
+    <registryKey
+        defaultValue="false"
+        description="Throw an exception in the case of inconsistency in decompiled light classes"
+        key="kotlin.decompiled.light.classes.check.inconsistency"
+        restartRequired="false"
+    />
+
+    <registryKey
+        defaultValue="true"
+        description="Validate PsiElements passed to the Analysis API"
+        key="kotlin.analysis.validate.psi.input"
+        restartRequired="false"
+    />
+
     <projectService
         serviceInterface="org.jetbrains.kotlin.analysis.api.session.KaSessionProvider"
         serviceImplementation="org.jetbrains.kotlin.analysis.api.fir.KaFirSessionProvider"
@@ -69,6 +196,18 @@
   </extensions>
 
   <extensions defaultExtensionNs="org.jetbrains.kotlin">
+    <kotlinContentScopeRefiner implementation="org.jetbrains.kotlin.analysis.api.impl.base.projectStructure.KaResolveExtensionToContentScopeRefinerBridge"/>
+    <kotlinGlobalSearchScopeMergeStrategy
+        implementation="org.jetbrains.kotlin.analysis.api.impl.base.projectStructure.KotlinUnionScopeMergeStrategy"
+        order="first"/>
+
+    <!-- We merge intersection scopes right after flattening union scopes. This allows the merger to profit from nested union scopes being
+         flattened (which may contain intersection scopes), while also cutting down on the number of scopes passed to later mergers. -->
+    <kotlinGlobalSearchScopeMergeStrategy
+        implementation="org.jetbrains.kotlin.analysis.api.impl.base.projectStructure.KotlinIntersectionScopeMergeStrategy"
+        order="first"/>
+    <kotlinGlobalSearchScopeMergeStrategy implementation="org.jetbrains.kotlin.analysis.api.impl.base.projectStructure.KotlinResolveExtensionGeneratedFileScopeMergeStrategy"/>
+
     <kotlinContentScopeRefiner implementation="org.jetbrains.kotlin.analysis.api.fir.projectStructure.KaFirLibraryTargetPlatformContentScopeRefiner"/>
 
     <kaAdditionalKDocResolutionProvider implementation="org.jetbrains.kotlin.analysis.api.fir.references.KaAdditionalKDocResolutionProviderAdapter"/>
@@ -82,6 +221,43 @@
   </projectListeners>
 
   <extensionPoints>
+    <extensionPoint
+        qualifiedName="org.jetbrains.kotlin.kaResolveExtensionProvider"
+        interface="org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionProvider"
+        area="IDEA_PROJECT"
+        dynamic="true"
+    />
+
+    <extensionPoint
+        qualifiedName="org.jetbrains.kotlin.psiReferenceProvider"
+        interface="org.jetbrains.kotlin.references.KotlinPsiReferenceProviderContributor"
+        area="IDEA_PROJECT"
+        dynamic="true"
+    />
+
+    <!--suppress DeprecatedClassUsageInspection -->
+    <extensionPoint
+        qualifiedName="org.jetbrains.kotlin.analysis.additionalKDocResolutionProvider"
+        interface="org.jetbrains.kotlin.analysis.api.symbols.AdditionalKDocResolutionProvider"
+        dynamic="true"
+    />
+
+    <extensionPoint
+        qualifiedName="org.jetbrains.kotlin.kaAdditionalKDocResolutionProvider"
+        interface="org.jetbrains.kotlin.analysis.api.symbols.KaAdditionalKDocResolutionProvider"
+        dynamic="true"
+    />
+
+    <extensionPoint qualifiedName="org.jetbrains.kotlin.irGenerationExtension"
+                    interface="org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension"
+                    area="IDEA_PROJECT" dynamic="true"/>
+
+    <extensionPoint
+        qualifiedName="org.jetbrains.kotlin.kaSessionListener"
+        interface="org.jetbrains.kotlin.analysis.api.platform.KaSessionListener"
+        dynamic="true"
+    />
+
     <extensionPoint qualifiedName="org.jetbrains.kotlin.fir.extensions.firExtensionRegistrar"
                     interface="org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter"
                     area="IDEA_PROJECT"/>
