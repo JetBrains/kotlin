@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.ir.builders.irSetField
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.irAttribute
+import org.jetbrains.kotlin.ir.objcinterop.isExternalObjCClass
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -159,7 +160,7 @@ internal class StaticInitializersLowering(val context: NativeLoweringContext) : 
             // procedure for S. If necessary, verify and prepare S first.
 
             val superClassesToInitialize = buildList {
-                container.getSuperClassNotAny()?.let { add(it) }
+                container.getSuperClassNotAny()?.takeIf { !it.isExternalObjCClass() }?.let { add(it) }
                 fun IrDeclaration.triggersInterfaceInitialization(): Boolean {
                     if (this !is IrOverridableDeclaration<*>) return false
                     if (isFakeOverride) return false
@@ -169,7 +170,7 @@ internal class StaticInitializersLowering(val context: NativeLoweringContext) : 
                     return false
                 }
 
-                fun IrClass.needsInitializationAsInterface() = isInterface && declarations.any { it.triggersInterfaceInitialization() }
+                fun IrClass.needsInitializationAsInterface() = isInterface && declarations.any { it.triggersInterfaceInitialization() } && !isExternalObjCClass()
                 val seen = mutableSetOf<IrClassSymbol>()
                 fun IrClass.collectSuperInterfacesToInitialize() {
                     if (!seen.add(symbol))
