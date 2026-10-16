@@ -51,6 +51,7 @@ internal class JvmSnapshotBasedIncrementalCompilationConfigurationImpl(
             it.preciseJavaTracking = preciseJavaTracking
             it.assuredNoClasspathSnapshotChanges = assuredNoClasspathSnapshotChanges
             it.useFirRunner = useFirRunner
+            it.enableErrorRecoveryRound = enableErrorRecoveryRound
             it.rootProjectDir = rootProjectDir
             it.moduleBuildDir = moduleBuildDir
             it.backupClasses = backupClasses
@@ -67,6 +68,8 @@ internal class JvmSnapshotBasedIncrementalCompilationConfigurationImpl(
     var assuredNoClasspathSnapshotChanges: Boolean = false
 
     var useFirRunner: Boolean = false
+
+    var enableErrorRecoveryRound: Boolean = true
 
     var rootProjectDir: Path? = null
 
@@ -91,6 +94,7 @@ internal class JvmSnapshotBasedIncrementalCompilationConfigurationImpl(
         "PRECISE_JAVA_TRACKING" -> preciseJavaTracking
         "ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES" -> assuredNoClasspathSnapshotChanges
         "USE_FIR_RUNNER" -> useFirRunner
+        "ENABLE_ERROR_RECOVERY_ROUND" -> enableErrorRecoveryRound
         "ROOT_PROJECT_DIR" -> rootProjectDir
         "MODULE_BUILD_DIR" -> moduleBuildDir
         "BACKUP_CLASSES" -> backupClasses
@@ -108,6 +112,7 @@ internal class JvmSnapshotBasedIncrementalCompilationConfigurationImpl(
             "PRECISE_JAVA_TRACKING" -> preciseJavaTracking = value.cast()
             "ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES" -> assuredNoClasspathSnapshotChanges = value.cast()
             "USE_FIR_RUNNER" -> useFirRunner = value.cast()
+            "ENABLE_ERROR_RECOVERY_ROUND" -> enableErrorRecoveryRound = value.cast()
             "ROOT_PROJECT_DIR" -> rootProjectDir = value.cast()
             "MODULE_BUILD_DIR" -> moduleBuildDir = value.cast()
             "BACKUP_CLASSES" -> backupClasses = value.cast()
