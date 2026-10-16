@@ -630,11 +630,16 @@ abstract class CompileTaskErrorOutputPlugin implements Plugin<Gradle> {
                 gradle.sharedServices.registerIfAbsent("compileTaskErrorOutputService", CompileTaskErrorOutputService) {}
 
         gradle.addListener(new AfterEvaluateListener({ Project project ->
-            project.tasks.matching { Task task ->
-                task instanceof AbstractCompile || Util.isInstance(task.class, "org.jetbrains.kotlin.gradle.tasks.KotlinCompileTool")
-            }.configureEach { Task task ->
+            project.tasks.withType(AbstractCompile).configureEach { Task task ->
                 task.doFirst {
                     compileTaskErrorOutputServiceProvider.get().addCompileTaskErrorOutputListener(it)
+                }
+            }
+            project.tasks.configureEach { Task task ->
+                if (!(task instanceof AbstractCompile) && Util.isInstance(task.class, "org.jetbrains.kotlin.gradle.tasks.KotlinCompileTool")) {
+                    task.doFirst {
+                        compileTaskErrorOutputServiceProvider.get().addCompileTaskErrorOutputListener(it)
+                    }
                 }
             }
         }))
