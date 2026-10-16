@@ -249,4 +249,17 @@ void alloc::HeapReservation::free(void* ptr, size_t size) noexcept {
     }
 }
 
+void* alloc::HeapReservation::allocateRuntimePermanent(size_t size) noexcept {
+    size = AlignUp(size, kObjectAlignment);
+    std::lock_guard guard(runtimePermanentMutex_);
+    if (runtimePermanentEnd_ - runtimePermanentNext_ < size) {
+        auto chunkSize = AlignUp(size, pageSize_);
+        runtimePermanentNext_ = reinterpret_cast<uintptr_t>(allocate(chunkSize));
+        runtimePermanentEnd_ = runtimePermanentNext_ + chunkSize;
+    }
+    auto result = runtimePermanentNext_;
+    runtimePermanentNext_ += size;
+    return reinterpret_cast<void*>(result);
+}
+
 #endif // !KONAN_WINDOWS

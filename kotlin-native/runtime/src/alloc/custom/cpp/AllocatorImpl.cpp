@@ -5,6 +5,8 @@
 
 #include "AllocatorImpl.hpp"
 
+#include <cstdlib>
+
 #include "alloc/Allocator.hpp"
 #include "CompilerConstants.hpp"
 #include "GCApi.hpp"
@@ -108,6 +110,14 @@ void alloc::initObjectPool() noexcept {
 #if !KONAN_WINDOWS
     if (compiler::compressedRefs()) HeapReservation::instance();
 #endif
+}
+
+void* alloc::allocateRuntimePermanentObject(size_t size) noexcept {
+#if !KONAN_WINDOWS
+    // Permanent objects can be referenced from the heap, so they must be inside the compressed references window too.
+    if (compiler::compressedRefs()) return HeapReservation::instance().allocateRuntimePermanent(size);
+#endif
+    return std::calloc(1, size);
 }
 
 void alloc::compactObjectPoolInCurrentThread() noexcept {}

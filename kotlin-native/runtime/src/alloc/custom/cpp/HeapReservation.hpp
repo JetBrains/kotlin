@@ -30,6 +30,9 @@ public:
     void* allocate(size_t size) noexcept;
     void free(void* ptr, size_t size) noexcept;
 
+    // Bump allocator for permanent objects created by the runtime.
+    void* allocateRuntimePermanent(size_t size) noexcept;
+
 private:
     HeapReservation() noexcept;
     ~HeapReservation() = delete;
@@ -42,6 +45,10 @@ private:
 
     std::mutex mutex_;
     std::map<uintptr_t, size_t> freeRanges_;
+
+    std::mutex runtimePermanentMutex_;
+    uintptr_t runtimePermanentNext_ = 0;
+    uintptr_t runtimePermanentEnd_ = 0;
 };
 
 }
