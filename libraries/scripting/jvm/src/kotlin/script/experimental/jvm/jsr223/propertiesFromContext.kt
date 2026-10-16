@@ -166,6 +166,10 @@ fun configureExposedJsr223Context(context: ScriptConfigurationRefinementContext)
     }.asSuccess()
 }
 
+// The GLOBAL_SCOPE bindings of the ScriptContext active at the snippet's eval. Captured in a snippet property along with
+// `bindings`, since the implicit ScriptContext receiver is not accessible from the snippet property accessors.
+private const val GLOBAL_BINDINGS_PROPERTY = "__jsr223GlobalBindings"
+
 /**
  * Renders the `var $encodedName: $renderedType ...` declaration for one exposed (or [removed]) binding.
  * A backtick-quoted [encodedName] is declared with a [__Jsr223BindingDelegate] (`by ...`) instead of a
@@ -174,15 +178,15 @@ fun configureExposedJsr223Context(context: ScriptConfigurationRefinementContext)
 private fun renderBindingProperty(encodedName: String, renderedType: String, safeKey: String, removed: Boolean): String =
     if (encodedName.startsWith("`")) {
         """
-            var $encodedName: $renderedType by __Jsr223BindingDelegate<$renderedType>(bindings, "$safeKey"${if (removed) ", removed = true" else ""})
+            var $encodedName: $renderedType by __Jsr223BindingDelegate<$renderedType>(bindings, $GLOBAL_BINDINGS_PROPERTY, "$safeKey"${if (removed) ", removed = true" else ""})
 
         """.trimIndent() + "\n"
     } else if (!removed) {
         """
             @Suppress("UNCHECKED_CAST")
             var $encodedName: $renderedType
-                get() = bindings["$safeKey"] as $renderedType
-                set(value) { bindings.put("$safeKey", value) }
+                get() = __jsr223GetBinding(bindings, $GLOBAL_BINDINGS_PROPERTY, "$safeKey") as $renderedType
+                set(value) { __jsr223SetBinding(bindings, $GLOBAL_BINDINGS_PROPERTY, "$safeKey", value) }
 
         """.trimIndent() + "\n"
     } else {
@@ -190,7 +194,7 @@ private fun renderBindingProperty(encodedName: String, renderedType: String, saf
             @Suppress("UNCHECKED_CAST")
             var $encodedName: $renderedType
                 get() = throw java.util.NoSuchElementException("JSR-223 binding \"$safeKey\" is no longer available")
-                set(value) { bindings.put("$safeKey", value) }
+                set(value) { __jsr223SetBinding(bindings, $GLOBAL_BINDINGS_PROPERTY, "$safeKey", value) }
 
         """.trimIndent() + "\n"
     }
@@ -204,10 +208,12 @@ fun generateBindingSnippetIfNeeded(context: ScriptConfigurationRefinementContext
 
     var bindingsSnippet = ""
 
-    // Declared in every synthetic snippet so each snippet's property accessors resolve `bindings`
-    // from their own class (the ScriptContext active at that eval), not from synthetic-snippet-0.
+    // Declared in every synthetic snippet so each snippet's property accessors resolve `bindings` and
+    // the GLOBAL_SCOPE bindings from their own class (the ScriptContext active at that eval), not from
+    // synthetic-snippet-0.
     // That avoids stale-context bugs when eval is called with a custom Bindings argument.
-    bindingsSnippet += "val bindings: javax.script.Bindings = getBindings(javax.script.ScriptContext.ENGINE_SCOPE)\n\n"
+    bindingsSnippet += "val bindings: javax.script.Bindings = getBindings(javax.script.ScriptContext.ENGINE_SCOPE)\n"
+    bindingsSnippet += "val $GLOBAL_BINDINGS_PROPERTY: javax.script.Bindings? = getBindings(javax.script.ScriptContext.GLOBAL_SCOPE)\n\n"
 
     if (context.compilationConfiguration[ScriptCompilationConfiguration.rootBindingsConfigured] != true) {
         // Declared only once, in the first synthetic snippet. The helpers reference snippet-0's
@@ -238,17 +244,28 @@ fun eval(script: String, newBindings: javax.script.Bindings): Any? {
     return result
 }
 
-// A property delegate used only for backtick-quoted binding properties. See the doc comment on
-// [encodeBindingNameToKotlinIdentifier] for why these can't be declared with a hardcoded get()/set().
-// [removed] renders the same "no longer available" diagnostic that a removed binding's shadowing
-// accessor used to throw from its getter.
-class __Jsr223BindingDelegate<T>(private val bindings: javax.script.Bindings, private val key: String, private val removed: Boolean = false) {
+fun __jsr223GetBinding(bindings: javax.script.Bindings, globalBindings: javax.script.Bindings?, key: String): Any? =
+    if (globalBindings == null || bindings.containsKey(key)) bindings[key] else globalBindings[key]
+
+fun __jsr223SetBinding(bindings: javax.script.Bindings, globalBindings: javax.script.Bindings?, key: String, value: Any?) {
+    if (globalBindings != null && !bindings.containsKey(key) && globalBindings.containsKey(key)) globalBindings.put(key, value)
+    else bindings.put(key, value)
+}
+
+class __Jsr223BindingDelegate<T>(
+    private val bindings: javax.script.Bindings,
+    private val globalBindings: javax.script.Bindings?,
+    private val key: String,
+    private val removed: Boolean = false,
+) {
     @Suppress("UNCHECKED_CAST")
     operator fun getValue(thisRef: Any?, property: kotlin.reflect.KProperty<*>): T {
         if (removed) throw java.util.NoSuchElementException("JSR-223 binding \"${'$'}key\" is no longer available")
-        return bindings[key] as T
+        return __jsr223GetBinding(bindings, globalBindings, key) as T
     }
-    operator fun setValue(thisRef: Any?, property: kotlin.reflect.KProperty<*>, value: T) { bindings.put(key, value) }
+    operator fun setValue(thisRef: Any?, property: kotlin.reflect.KProperty<*>, value: T) {
+        __jsr223SetBinding(bindings, globalBindings, key, value)
+    }
 }
 
 """
