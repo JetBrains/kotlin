@@ -107,6 +107,8 @@ internal abstract class DefaultWasiAdapterToolchainServiceImpl @Inject internal 
                     return kotlinPropertiesProvider.wasiAdapterToolchainDefaultInstallPath.map { File(it) }
                 }
 
+                val userKotlinPersistentDir = userKotlinPersistentDir
+
                 return providers.provider { userKotlinPersistentDir.resolve(WASI_ADAPTER_TOOLCHAINS_DIR_NAME) }
             }
     }

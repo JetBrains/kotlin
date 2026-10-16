@@ -123,6 +123,8 @@ internal abstract class DefaultWasmToolsToolchainServiceImpl @Inject internal co
                     return kotlinPropertiesProvider.wasmToolsToolchainDefaultInstallPath.map { File(it) }
                 }
 
+                val userKotlinPersistentDir = userKotlinPersistentDir
+
                 return providers.provider { userKotlinPersistentDir.resolve(WASM_TOOLS_TOOLCHAINS_DIR_NAME) }
             }
     }
