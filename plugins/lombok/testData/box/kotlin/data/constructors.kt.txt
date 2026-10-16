@@ -1,0 +1,182 @@
+@Data
+class OnlySecondary {
+  val x: Int
+    get
+
+  constructor(x: Int) {
+    super/*Any*/()
+    /* <init>() */
+
+    <this>(super<OnlySecondary>).#x = x
+  }
+
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is OnlySecondary -> return false
+    }
+    val tmp_0: OnlySecondary = other /*as OnlySecondary */
+    when {
+      EQEQ(arg0 = <this>.<get-x>(), arg1 = tmp_0.<get-x>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_1: Int = 1
+    tmp_1 = tmp_1.times(other = 59).plus(other = <this>.<get-x>().hashCode())
+    return tmp_1
+  }
+
+  override fun toString(): String {
+    return "OnlySecondary(" + "x=" + <this>.<get-x>() + ')'
+  }
+
+}
+
+@Data
+class WithNonNullVar {
+  var name: String
+    field = name
+    get
+    set
+
+  var age: Int
+    field = age
+    get
+    set
+
+  constructor(@NonNull name: String, age: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is WithNonNullVar -> return false
+    }
+    val tmp_2: WithNonNullVar = other /*as WithNonNullVar */
+    when {
+      EQEQ(arg0 = <this>.<get-name>(), arg1 = tmp_2.<get-name>()).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.<get-age>(), arg1 = tmp_2.<get-age>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_3: Int = 1
+    tmp_3 = tmp_3.times(other = 59).plus(other = <this>.<get-name>().hashCode())
+    tmp_3 = tmp_3.times(other = 59).plus(other = <this>.<get-age>().hashCode())
+    return tmp_3
+  }
+
+  override fun toString(): String {
+    return "WithNonNullVar(" + "name=" + <this>.<get-name>() + ", age=" + <this>.<get-age>() + ')'
+  }
+
+}
+
+@Data
+class WithPlainParameter {
+  val y: Int
+    field = y
+    get
+
+  val sum: Int
+    field = x.plus(other = <this>.<get-y>())
+    get
+
+  constructor(x: Int, y: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is WithPlainParameter -> return false
+    }
+    val tmp_4: WithPlainParameter = other /*as WithPlainParameter */
+    when {
+      EQEQ(arg0 = <this>.<get-y>(), arg1 = tmp_4.<get-y>()).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.<get-sum>(), arg1 = tmp_4.<get-sum>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_5: Int = 1
+    tmp_5 = tmp_5.times(other = 59).plus(other = <this>.<get-y>().hashCode())
+    tmp_5 = tmp_5.times(other = 59).plus(other = <this>.<get-sum>().hashCode())
+    return tmp_5
+  }
+
+  override fun toString(): String {
+    return "WithPlainParameter(" + "y=" + <this>.<get-y>() + ", sum=" + <this>.<get-sum>() + ')'
+  }
+
+}
+
+@Data
+class WithVar {
+  var name: String
+    field = name
+    get
+    set
+
+  constructor(name: String) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is WithVar -> return false
+    }
+    val tmp_6: WithVar = other /*as WithVar */
+    when {
+      EQEQ(arg0 = <this>.<get-name>(), arg1 = tmp_6.<get-name>()).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var tmp_7: Int = 1
+    tmp_7 = tmp_7.times(other = 59).plus(other = <this>.<get-name>().hashCode())
+    return tmp_7
+  }
+
+  override fun toString(): String {
+    return "WithVar(" + "name=" + <this>.<get-name>() + ')'
+  }
+
+}
+
+fun box(): String {
+  assertEquals<Int>(expected = 1, actual = <get-java><WithVar>(/* <this> = WithVar::class */).getDeclaredConstructors() /*!! @FlexibleArrayElementVariance Array<out @FlexibleNullability Constructor<*>?> */.<get-size>())
+  assertEquals<String>(expected = "name", actual = WithVar(name = "name").<get-name>())
+  assertEquals<Int>(expected = 1, actual = <get-java><WithPlainParameter>(/* <this> = WithPlainParameter::class */).getDeclaredConstructors() /*!! @FlexibleArrayElementVariance Array<out @FlexibleNullability Constructor<*>?> */.<get-size>())
+  assertEquals<Int>(expected = 3, actual = WithPlainParameter(x = 1, y = 2).<get-sum>())
+  assertEquals<Int>(expected = 1, actual = <get-java><WithNonNullVar>(/* <this> = WithNonNullVar::class */).getDeclaredConstructors() /*!! @FlexibleArrayElementVariance Array<out @FlexibleNullability Constructor<*>?> */.<get-size>())
+  assertEquals<String>(expected = "WithNonNullVar(name=name, age=1)", actual = WithNonNullVar(name = "name", age = 1).toString())
+  assertEquals<Int>(expected = 1, actual = <get-java><OnlySecondary>(/* <this> = OnlySecondary::class */).getDeclaredConstructors() /*!! @FlexibleArrayElementVariance Array<out @FlexibleNullability Constructor<*>?> */.<get-size>())
+  assertEquals<OnlySecondary>(expected = OnlySecondary(x = 1), actual = OnlySecondary(x = 1))
+  return "OK"
+}
