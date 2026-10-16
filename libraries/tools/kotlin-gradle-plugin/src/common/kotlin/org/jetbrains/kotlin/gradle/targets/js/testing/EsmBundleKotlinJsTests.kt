@@ -103,8 +103,6 @@ internal abstract class EsmBundleKotlinJsTests @Inject constructor(
     @get:Internal
     internal abstract val npmToolingEnvDir: DirectoryProperty
 
-    @get:Internal
-    internal abstract val npmProjectDir: DirectoryProperty
 
     @TaskAction
     fun action() {
