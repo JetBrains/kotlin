@@ -144,13 +144,13 @@ internal abstract class CommonToolArgumentsImpl() : ArgumentsCommonToolArguments
 
   @Suppress("DEPRECATION")
   protected fun applyCompilerArguments(arguments: CommonToolArguments) {
-    try { allWarningsAsErrors = arguments.allWarningsAsErrors } catch (_: NoSuchMethodError) {  }
-    try { extraWarnings = arguments.extraWarnings } catch (_: NoSuchMethodError) {  }
-    try { extraHelp = arguments.extraHelp } catch (_: NoSuchMethodError) {  }
-    try { help = arguments.help } catch (_: NoSuchMethodError) {  }
-    try { suppressWarnings = arguments.suppressWarnings } catch (_: NoSuchMethodError) {  }
-    try { verbose = arguments.verbose } catch (_: NoSuchMethodError) {  }
-    try { version = arguments.version } catch (_: NoSuchMethodError) {  }
+    allWarningsAsErrors = arguments.allWarningsAsErrors
+    extraWarnings = arguments.extraWarnings
+    extraHelp = arguments.extraHelp
+    help = arguments.help
+    suppressWarnings = arguments.suppressWarnings
+    verbose = arguments.verbose
+    version = arguments.version
     internalArguments.addAll(arguments.internalArguments.map { it.stringRepresentation })
   }
 

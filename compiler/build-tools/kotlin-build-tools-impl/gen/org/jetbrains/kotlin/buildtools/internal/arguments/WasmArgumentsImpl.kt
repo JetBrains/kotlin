@@ -238,29 +238,29 @@ internal class WasmArgumentsImpl() : CommonJsAndWasmArgumentsImpl(), WasmCompile
   @Suppress("DEPRECATION")
   protected fun applyCompilerArguments(arguments: KotlinWasmCompilerArguments) {
     super.applyCompilerArguments(arguments)
-    try { irDceDumpReachabilityInfoToFile = arguments.irDceDumpReachabilityInfoToFile?.let { kotlin.io.path.Path(it) } } catch (_: NoSuchMethodError) {  }
-    try { irDceDumpDeclarationIrSizesToFile = arguments.irDceDumpDeclarationIrSizesToFile?.let { kotlin.io.path.Path(it) } } catch (_: NoSuchMethodError) {  }
-    try { wasm = arguments.wasm } catch (_: NoSuchMethodError) {  }
-    try { regenerateUnchangedModules = arguments.regenerateUnchangedModules } catch (_: NoSuchMethodError) {  }
-    try { forceDebugFriendlyCompilation = arguments.forceDebugFriendlyCompilation } catch (_: NoSuchMethodError) {  }
-    try { wasmDebug = arguments.wasmDebug } catch (_: NoSuchMethodError) {  }
-    try { debuggerCustomFormatters = arguments.debuggerCustomFormatters } catch (_: NoSuchMethodError) {  }
-    try { wasmDisableArrayRangeChecksSafeElimination = arguments.wasmDisableArrayRangeChecksSafeElimination } catch (_: NoSuchMethodError) {  }
-    try { wasmEnableArrayRangeChecks = arguments.wasmEnableArrayRangeChecks } catch (_: NoSuchMethodError) {  }
-    try { wasmEnableAsserts = arguments.wasmEnableAsserts } catch (_: NoSuchMethodError) {  }
-    try { wasmEnableTailCalls = arguments.wasmEnableTailCalls } catch (_: NoSuchMethodError) {  }
-    try { wasmGenerateClosedWorldMultimodule = arguments.wasmGenerateClosedWorldMultimodule } catch (_: NoSuchMethodError) {  }
-    try { generateDwarf = arguments.generateDwarf } catch (_: NoSuchMethodError) {  }
-    try { wasmGenerateWat = arguments.wasmGenerateWat } catch (_: NoSuchMethodError) {  }
-    try { wasmIncludedModuleOnly = arguments.wasmIncludedModuleOnly } catch (_: NoSuchMethodError) {  }
-    try { wasmInternalLocalVariablePrefix = arguments.wasmInternalLocalVariablePrefix } catch (_: NoSuchMethodError) {  }
-    try { wasmKClassFqn = arguments.wasmKClassFqn } catch (_: NoSuchMethodError) {  }
-    try { wasmNoJsTag = arguments.wasmNoJsTag } catch (_: NoSuchMethodError) {  }
-    try { includeUnavailableSourcesIntoSourceMap = arguments.includeUnavailableSourcesIntoSourceMap } catch (_: NoSuchMethodError) {  }
-    try { wasmTarget = arguments.wasmTarget?.let { WasmTarget.values().firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::wasmTarget, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xwasm-target value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
-    try { wasmUseNewExceptionProposal = arguments.wasmUseNewExceptionProposal } catch (_: NoSuchMethodError) {  }
-    try { wasmUseStackSwitchingProposal = arguments.wasmUseStackSwitchingProposal } catch (_: NoSuchMethodError) {  }
-    try { wasmUseTrapsInsteadOfExceptions = arguments.wasmUseTrapsInsteadOfExceptions } catch (_: NoSuchMethodError) {  }
+    irDceDumpReachabilityInfoToFile = arguments.irDceDumpReachabilityInfoToFile?.let { kotlin.io.path.Path(it) }
+    irDceDumpDeclarationIrSizesToFile = arguments.irDceDumpDeclarationIrSizesToFile?.let { kotlin.io.path.Path(it) }
+    wasm = arguments.wasm
+    regenerateUnchangedModules = arguments.regenerateUnchangedModules
+    forceDebugFriendlyCompilation = arguments.forceDebugFriendlyCompilation
+    wasmDebug = arguments.wasmDebug
+    debuggerCustomFormatters = arguments.debuggerCustomFormatters
+    wasmDisableArrayRangeChecksSafeElimination = arguments.wasmDisableArrayRangeChecksSafeElimination
+    wasmEnableArrayRangeChecks = arguments.wasmEnableArrayRangeChecks
+    wasmEnableAsserts = arguments.wasmEnableAsserts
+    wasmEnableTailCalls = arguments.wasmEnableTailCalls
+    wasmGenerateClosedWorldMultimodule = arguments.wasmGenerateClosedWorldMultimodule
+    generateDwarf = arguments.generateDwarf
+    wasmGenerateWat = arguments.wasmGenerateWat
+    wasmIncludedModuleOnly = arguments.wasmIncludedModuleOnly
+    wasmInternalLocalVariablePrefix = arguments.wasmInternalLocalVariablePrefix
+    wasmKClassFqn = arguments.wasmKClassFqn
+    wasmNoJsTag = arguments.wasmNoJsTag
+    includeUnavailableSourcesIntoSourceMap = arguments.includeUnavailableSourcesIntoSourceMap
+    try { wasmTarget = arguments.wasmTarget?.let { WasmTarget.values().firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::wasmTarget, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xwasm-target value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") }
+    wasmUseNewExceptionProposal = arguments.wasmUseNewExceptionProposal
+    wasmUseStackSwitchingProposal = arguments.wasmUseStackSwitchingProposal
+    wasmUseTrapsInsteadOfExceptions = arguments.wasmUseTrapsInsteadOfExceptions
     internalArguments.addAll(arguments.internalArguments.map { it.stringRepresentation })
   }
 
