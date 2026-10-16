@@ -73,7 +73,7 @@ internal class MainMethodGenerationLowering(private val context: JvmBackendConte
             return
         }
 
-        irClass.functions.find { it.isParameterlessMainMethod() }?.let { parameterlessMainMethod ->
+        irClass.functions.find { it.isNonPrivateParameterlessMainMethod() }?.let { parameterlessMainMethod ->
             irClass.generateMainMethod { newMain, _ ->
                 if (parameterlessMainMethod.isSuspend) {
                     +irRunSuspend(parameterlessMainMethod, null, newMain)
@@ -84,10 +84,11 @@ internal class MainMethodGenerationLowering(private val context: JvmBackendConte
         }
     }
 
-    private fun IrSimpleFunction.isParameterlessMainMethod(): Boolean =
+    private fun IrSimpleFunction.isNonPrivateParameterlessMainMethod(): Boolean =
         typeParameters.isEmpty() && hasShape(regularParameters = 0) &&
                 returnType.isUnit() &&
-                name.asString() == "main"
+                name.asString() == "main" &&
+                visibility != DescriptorVisibilities.PRIVATE
 
     private fun IrSimpleFunction.isMainMethod(): Boolean {
         if ((getJvmNameFromAnnotation() ?: name.asString()) != "main") return false
