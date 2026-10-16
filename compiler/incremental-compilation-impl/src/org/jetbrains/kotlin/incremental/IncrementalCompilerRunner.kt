@@ -159,7 +159,8 @@ abstract class IncrementalCompilerRunner<
         }
         val hashedConfigurationInputs = configurationInputs?.computeHashedConfigurationInputs()
         val trackChangedFiles = changedFiles is DeterminableFiles.ToBeComputed
-        val result = when (val result = tryCompileIncrementally(allSourceFiles, changedFiles, args, fileLocations, messageCollector, hashedConfigurationInputs)) {
+        val result = when (val result =
+            tryCompileIncrementally(allSourceFiles, changedFiles, args, fileLocations, messageCollector, hashedConfigurationInputs)) {
             is ICResult.Completed -> {
                 reporter.debug { "Incremental compilation completed" }
                 result.exitCode
@@ -169,7 +170,13 @@ abstract class IncrementalCompilerRunner<
                 reporter.addAttribute(result.reason)
 
                 compileNonIncrementally(
-                    result.reason, allSourceFiles, args, fileLocations, trackChangedFiles = trackChangedFiles, messageCollector, hashedConfigurationInputs
+                    result.reason,
+                    allSourceFiles,
+                    args,
+                    fileLocations,
+                    trackChangedFiles = trackChangedFiles,
+                    messageCollector,
+                    hashedConfigurationInputs
                 )
             }
             is ICResult.Failed -> {
@@ -188,7 +195,13 @@ abstract class IncrementalCompilerRunner<
                 reporter.addAttribute(result.reason)
 
                 compileNonIncrementally(
-                    result.reason, allSourceFiles, args, fileLocations, trackChangedFiles = trackChangedFiles, messageCollector, hashedConfigurationInputs
+                    result.reason,
+                    allSourceFiles,
+                    args,
+                    fileLocations,
+                    trackChangedFiles = trackChangedFiles,
+                    messageCollector,
+                    hashedConfigurationInputs
                 )
             }
         }
@@ -321,7 +334,7 @@ abstract class IncrementalCompilerRunner<
         fileLocations: FileLocations?,
         trackChangedFiles: Boolean, // Whether we need to track changes to the source files or the build system already handles it
         messageCollector: MessageCollector,
-        hashedConfigurationInputs: HashedConfigurationInputs?
+        hashedConfigurationInputs: HashedConfigurationInputs?,
     ): ExitCode {
         reporter.measure(CLEAR_OUTPUT_ON_REBUILD) {
             val mainOutputDirs = setOf(destinationDir(args), workingDir)
@@ -346,7 +359,14 @@ abstract class IncrementalCompilerRunner<
                 classpathForLibrarySetSnapshot(args),
                 modulesApiHistory.modulesInfo,
             )
-            val exitCode = compileImpl(icContext, CompilationMode.Rebuild(rebuildReason), allSourceFiles, args, caches, messageCollector)
+            val exitCode = compileImpl(
+                icContext,
+                CompilationMode.Rebuild(rebuildReason),
+                allSourceFiles,
+                args,
+                caches,
+                messageCollector
+            )
             if (exitCode == ExitCode.OK) {
                 if (hashedConfigurationInputs != null) {
                     caches.inputsCache.configurationInputsMap.updateHash(hashedConfigurationInputs)
@@ -653,7 +673,7 @@ abstract class IncrementalCompilerRunner<
             }
 
             (
-                val dirtyLookupSymbols, val dirtyClassFqNames = dirtyClassesFqNames, val forceRecompile = dirtyClassesFqNamesForceRecompile
+                val dirtyLookupSymbols, val dirtyClassFqNames = dirtyClassesFqNames, val forceRecompile = dirtyClassesFqNamesForceRecompile,
             ) =
                 changesCollector.getChangedAndImpactedSymbols(
                     listOf(caches.platformCache),
