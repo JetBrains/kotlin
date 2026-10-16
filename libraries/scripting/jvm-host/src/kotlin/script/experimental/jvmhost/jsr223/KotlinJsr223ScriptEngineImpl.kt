@@ -52,7 +52,7 @@ class KotlinJsr223ScriptEngineImpl(
     val getScriptArgs: (context: ScriptContext) -> ScriptArgsWithTypes?
 ) : KotlinJsr223JvmScriptEngineBase<K2ReplState>(factory), KotlinJsr223InvocableScriptEngine {
 
-    override var compilationConfiguration: ScriptCompilationConfiguration =
+    override val compilationConfiguration: ScriptCompilationConfiguration =
         ScriptCompilationConfiguration(baseCompilationConfiguration) {
             hostConfiguration.update { it.withDefaultsFrom(jsr223HostConfiguration) }
             repl {
@@ -99,8 +99,12 @@ class KotlinJsr223ScriptEngineImpl(
     // replCompiler. A custom context's lineCounter would restart at 0 and collide.
     override fun nextSnippetNo(): Int = getCurrentState(getContext()).lineCounter++
 
-    override fun snippetCompilationConfiguration(snippet: SourceCode, snippetNo: Int): ScriptCompilationConfiguration =
-        compilationConfiguration.with {
+    override fun snippetCompilationConfiguration(
+        baseConfiguration: ScriptCompilationConfiguration,
+        snippet: SourceCode,
+        snippetNo: Int,
+    ): ScriptCompilationConfiguration =
+        baseConfiguration.with {
             repl {
                 currentSnippetNo(snippetNo)
             }

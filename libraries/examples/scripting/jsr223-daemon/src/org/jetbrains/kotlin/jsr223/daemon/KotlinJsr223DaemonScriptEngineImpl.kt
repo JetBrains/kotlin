@@ -55,7 +55,7 @@ class KotlinJsr223DaemonScriptEngineImpl(
     baseEvaluationConfiguration: ScriptEvaluationConfiguration = ScriptEvaluationConfiguration(),
 ) : KotlinJsr223JvmScriptEngineBase<DaemonReplState>(factory) {
 
-    override var compilationConfiguration: ScriptCompilationConfiguration =
+    override val compilationConfiguration: ScriptCompilationConfiguration =
         ScriptCompilationConfiguration(baseCompilationConfiguration) {
             hostConfiguration.update { it.withDefaultsFrom(jsr223HostConfiguration) }
         }

@@ -298,6 +298,25 @@ obj
     }
 
     @Test
+    fun testBindingsAfterContextReplacement() {
+        val manager = ScriptEngineManager()
+        manager.put("globalBase", 1000)
+        val engine = manager.getEngineByExtension("kts")!!
+        val globalBindings = engine.getBindings(ScriptContext.GLOBAL_SCOPE)
+        // Each new context gets a new state with an empty REPL history, so the bindings have to be exposed in it again,
+        // regardless of what was exposed in the history of the previous contexts (KT-90298)
+        for (k in 1..3) {
+            val context = SimpleScriptContext().apply {
+                setBindings(engine.createBindings(), ScriptContext.ENGINE_SCOPE)
+                setBindings(globalBindings, ScriptContext.GLOBAL_SCOPE)
+            }
+            engine.context = context
+            context.getBindings(ScriptContext.ENGINE_SCOPE)["engineValue"] = k
+            assertEquals(1000 + k, engine.eval("engineValue + globalBase", context))
+        }
+    }
+
+    @Test
     fun testMultipleCompilable() {
         val engine = ScriptEngineManager().getEngineByExtension("kts") as KotlinJsr223ScriptEngineImpl
         val compiled1 = engine.compile("""listOf(1,2,3).joinToString(",")""")
