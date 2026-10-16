@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.konan.test.blackbox
 import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
-import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.BinaryLibraryCompilation
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationFactory
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
@@ -25,21 +24,41 @@ abstract class AbstractNativeCExportInterfaceV1HeaderTest() : AbstractNativeSimp
 
     private val testCompilationFactory = TestCompilationFactory()
 
+    /** Extra compiler args for subclasses, e.g. to exercise the IR-based discovery mode. */
+    protected open val additionalCompilerArgs: List<String> get() = emptyList()
+
     protected fun runTest(@TestDataFile testFile: String) {
         val path = File(ForTestCompileRuntime.transformTestDataPath(testFile).path)
         val goldenDataHeaderFile = HeaderTestModuleMarkers.resolveTargetSpecificGoldenDataFile(
             path, targets.testTarget.toString(), extension = "h"
         )
 
-        val testName: String = path.nameWithoutExtension
-        val lines = path.readLines()
+        val testName = path.nameWithoutExtension
+        val sourcesDir = testRunSettings.get<Binaries>().testBinariesDir.resolve("$testName-sources")
 
-        // A test data file with `// MODULE:` markers exercises the several-inter-dependent-included-libraries
-        // scenario; without them it is a single-module test, compiled exactly as before.
-        val compilation = if (HeaderTestModuleMarkers.hasModuleMarkers(lines)) {
-            multiModuleBinaryLibrary(testName, lines)
-        } else {
-            singleModuleBinaryLibrary(path, testName)
+        val test = HeaderTestModuleMarkers.parse(path)
+        val modules = HeaderTestModuleMarkers.toTestModules(test, testName, sourcesDir)
+        val testCase = HeaderTestModuleMarkers.createInitializedHeaderTestCase(
+            testName,
+            modules.toSet(),
+            freeCompilerArgs(),
+            TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout),
+        )
+
+        // A single-module fixture compiles straight to a library; a `// MODULE:` fixture compiles each module to a
+        // KLIB and `-Xinclude`s them in declaration order -- the include order the ordering fixtures pin down.
+        val compilation = when (test) {
+            is HeaderTestModuleMarkers.HeaderTest.MultiModule -> testCompilationFactory.includedModulesToBinaryLibrary(
+                modules,
+                testCase.freeCompilerArgs,
+                testRunSettings,
+                kind = testRunSettings.get<BinaryLibraryKind>(),
+            )
+            else -> testCompilationFactory.testCaseToBinaryLibrary(
+                testCase,
+                testRunSettings,
+                kind = testRunSettings.get<BinaryLibraryKind>(),
+            )
         }
 
         val binaryLibrary = compilation.result.assertSuccess().resultingArtifact
@@ -57,54 +76,16 @@ abstract class AbstractNativeCExportInterfaceV1HeaderTest() : AbstractNativeSimp
         "-XXLanguage:+CompanionBlocks",
         "-XXLanguage:+CompanionExtensions",
         "-Xbinary=cInterfaceMode=v1",
-    ))
+    ) + additionalCompilerArgs)
+}
 
-    /** A single-module header test: the whole test data file becomes one library. */
-    private fun singleModuleBinaryLibrary(path: File, moduleName: String): BinaryLibraryCompilation {
-        val module = TestModule.Exclusive(moduleName, emptySet(), emptySet(), emptySet())
-        module.files += TestFile.createCommitted(path, module)
-
-        val testCase = TestCase(
-            id = TestCaseId.Named(moduleName),
-            kind = TestKind.STANDALONE_NO_TR,
-            modules = setOf(module),
-            freeCompilerArgs = freeCompilerArgs(),
-            nominalPackageName = PackageName(moduleName),
-            checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout),
-            extras = TestCase.NoTestRunnerExtras()
-        ).apply {
-            initialize(null, null)
-        }
-        return testCompilationFactory.testCaseToBinaryLibrary(
-            testCase,
-            testRunSettings,
-            kind = testRunSettings.get<BinaryLibraryKind>(),
-        )
-    }
-
-    /**
-     * A multi-module header test (`// MODULE: name(deps)` markers): each module is compiled to its own KLIB and then
-     * `-Xinclude`d into one library, in declaration order. Declaring a dependent module *before* its dependency makes
-     * the CLI include order contradict the topological order; C export must still emit the exported declarations in a
-     * stable dependency-first order, so emitting them in CLI order instead would diverge from the shared golden.
-     */
-    private fun multiModuleBinaryLibrary(testName: String, lines: List<String>): BinaryLibraryCompilation {
-        val sourcesDir = testRunSettings.get<Binaries>().testBinariesDir.resolve("$testName-sources")
-        val orderedModules = HeaderTestModuleMarkers.createOrderedTestModules(
-            HeaderTestModuleMarkers.parseHeaderTestModules(lines), sourcesDir
-        )
-
-        val testCase = HeaderTestModuleMarkers.createInitializedHeaderTestCase(
-            testName,
-            orderedModules.toSet(),
-            freeCompilerArgs(),
-            TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout),
-        )
-        return testCompilationFactory.includedModulesToBinaryLibrary(
-            orderedModules,
-            testCase.freeCompilerArgs,
-            testRunSettings,
-            kind = testRunSettings.get<BinaryLibraryKind>(),
-        )
-    }
+/**
+ * Same as [AbstractNativeCExportInterfaceV1HeaderTest], but with the model built from the IR instead
+ * of K1 descriptors (`-Xbinary=cExportUseIrDiscovery=true`).
+ * The IR mode must produce byte-identical output to the descriptor mode, so both share the same
+ * golden `.h` files.
+ */
+abstract class AbstractNativeCExportInterfaceV1HeaderIrTest : AbstractNativeCExportInterfaceV1HeaderTest() {
+    override val additionalCompilerArgs: List<String>
+        get() = listOf("-Xbinary=cExportUseIrDiscovery=true")
 }
