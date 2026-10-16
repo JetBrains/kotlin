@@ -34,5 +34,5 @@ fun foo() {
     object : Open("") {}
 
     @Parcelize
-    class <!NO_PARCELABLE_SUPERTYPE, PARCELABLE_CANT_BE_LOCAL_CLASS!>Local<!> {}
+    class <!PARCELABLE_CANT_BE_LOCAL_CLASS!>Local<!> {}
 }

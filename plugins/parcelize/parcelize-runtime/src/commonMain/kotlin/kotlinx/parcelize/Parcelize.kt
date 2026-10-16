@@ -20,7 +20,7 @@ package kotlinx.parcelize
  * Instructs the Kotlin compiler to generate `writeToParcel()`, `describeContents()` [android.os.Parcelable] methods,
  * as well as a `CREATOR` factory class automatically.
  *
- * The annotation is applicable only to classes that implements [android.os.Parcelable] (directly or indirectly).
+ * The compiler also makes the annotated class implement [android.os.Parcelable] if it does not already.
  * Note that only the primary constructor properties will be serialized.
  */
 @Target(AnnotationTarget.CLASS)
