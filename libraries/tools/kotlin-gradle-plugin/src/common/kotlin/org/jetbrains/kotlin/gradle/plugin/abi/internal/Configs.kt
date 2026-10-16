@@ -65,7 +65,7 @@ private fun AbiToolsTask.configureClasspath(compilerVersion: Provider<String>, c
  * Registers and preconfigures ABI validation's tasks.
  */
 @ExperimentalAbiValidation
-internal fun AbiValidationExtension.registerTasks(
+internal fun AbiValidationExtensionImpl.registerTasks(
     projectName: String,
     tasks: TaskContainer,
     layout: ProjectLayout,
@@ -76,7 +76,7 @@ internal fun AbiValidationExtension.registerTasks(
     val klibFileName = "$projectName$LEGACY_KLIB_DUMP_EXTENSION"
 
     val referenceDir = referenceDumpDir
-    val filters = filters
+    val filters = (this as AbiValidationExtension).filters
     val dumpDir =
         layout.buildDirectory.dir(AbiValidationPaths.ACTUAL_DUMP_DIR)
 
@@ -87,7 +87,10 @@ internal fun AbiValidationExtension.registerTasks(
 
             it.dumpDir.convention(dumpDir)
             it.referenceKlibDump.convention(referenceDir.map { dir -> dir.file(klibFileName) })
-            it.keepLocallyUnsupportedTargets.convention(true)
+            it.keepLocallyUnsupportedTargets.set(keepLocallyUnsupportedTargets)
+            it.unsupportedTargets.set(unsupportedTargets)
+            it.jvm.set(jvmTargets)
+            it.klib.set(klibTargets)
 
             it.includedClasses.convention(filters.include.byNames)
             it.includedAnnotatedWith.convention(filters.include.annotatedWith)
