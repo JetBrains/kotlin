@@ -104,7 +104,7 @@ internal abstract class CommonJsAndWasmArgumentsImpl(
 
   @UseFromImplModuleRestricted
   override operator fun <V> `set`(key: CommonJsAndWasmArguments.CommonJsAndWasmArgument<V>, `value`: V) {
-    if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 0)) {
+    if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 20)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
     this[key.id] = `value`
@@ -119,7 +119,7 @@ internal abstract class CommonJsAndWasmArgumentsImpl(
 
   @UseFromImplModuleRestricted
   override operator fun <V> `set`(key: CommonJsAndWasmCompilerKlibArguments.CommonJsAndWasmCompilerKlibArgument<V>, `value`: V) {
-    if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 0)) {
+    if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 20)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
     this[key.id] = `value`
@@ -134,7 +134,7 @@ internal abstract class CommonJsAndWasmArgumentsImpl(
 
   @UseFromImplModuleRestricted
   override operator fun <V> `set`(key: CommonJsAndWasmCompilerLinkingArguments.CommonJsAndWasmCompilerLinkingArgument<V>, `value`: V) {
-    if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 0)) {
+    if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 20)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
     this[key.id] = `value`

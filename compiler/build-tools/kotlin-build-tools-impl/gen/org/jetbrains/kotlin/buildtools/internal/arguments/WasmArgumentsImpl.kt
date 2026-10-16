@@ -103,7 +103,7 @@ internal class WasmArgumentsImpl(
 
   @UseFromImplModuleRestricted
   override operator fun <V> `set`(key: WasmCompilerArguments.WasmCompilerArgument<V>, `value`: V) {
-    if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 0)) {
+    if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 20)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
     this[key.id] = `value`
@@ -118,7 +118,7 @@ internal class WasmArgumentsImpl(
 
   @UseFromImplModuleRestricted
   override operator fun <V> `set`(key: WasmCompilerKlibArguments.WasmCompilerKlibArgument<V>, `value`: V) {
-    if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 0)) {
+    if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 20)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
     this[key.id] = `value`
@@ -133,7 +133,7 @@ internal class WasmArgumentsImpl(
 
   @UseFromImplModuleRestricted
   override operator fun <V> `set`(key: WasmCompilerLinkingArguments.WasmCompilerLinkingArgument<V>, `value`: V) {
-    if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 0)) {
+    if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 20)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
     this[key.id] = `value`
