@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.nodeJsRoot
 import org.jetbrains.kotlin.gradle.targets.js.ir.npmToolingDir
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependenciesTask
-import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.locateOrRegisterImportMapGenerateTask
 import org.jetbrains.kotlin.gradle.targets.wasm.internal.isWasm
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
@@ -86,11 +85,15 @@ internal abstract class EsmBundleKotlinJsTests @Inject constructor(
     val kotlinJsTestLocation: KotlinDefaultJsTestLocation
         get() {
             val httpServerService = this.httpServerService
+            val npmRootPackageDirectory = this.npmRootPackageDirectory
+            val npmRootPackagePrefix = this.npmRootPackagePrefix
             val uniqueBundleName = this.path
             return KotlinDefaultJsTestLocation(
                 bundleLocation = outputDirectory,
                 testHtmlFileName = providers.provider { "test.html" },
                 url = outputDirectory.zip(httpServerService) { bundleDir, httpServer ->
+                    // serve is idempotent, i.e. it is ok to request serving the same prefix and path from multiple test tasks
+                    httpServer.serve(npmRootPackagePrefix.get(), npmRootPackageDirectory.get())
                     httpServer.serve(uniqueBundleName, bundleDir).resolve("test.html")
                 }
             )
@@ -99,6 +102,17 @@ internal abstract class EsmBundleKotlinJsTests @Inject constructor(
     @get:Internal
     internal abstract val npmToolingEnvDir: DirectoryProperty
 
+    /**
+     * Root npm package directory (e.g. `build/wasm`), that contains `node_modules` referenced by the import map.
+     */
+    @get:Internal
+    internal abstract val npmRootPackageDirectory: DirectoryProperty
+
+    /**
+     * URL prefix at which [npmRootPackageDirectory] is served, e.g. `build/wasm`.
+     */
+    @get:Internal
+    internal abstract val npmRootPackagePrefix: Property<String>
 
     @TaskAction
     fun action() {
@@ -166,7 +180,6 @@ internal abstract class EsmBundleKotlinJsTests @Inject constructor(
 }
 
 internal fun KotlinJsIrCompilation.locateOrRegisterEsmBundleKotlinJsTestsTask(): TaskProvider<EsmBundleKotlinJsTests> {
-    val npmProject = npmProject
     val importMapTask = locateOrRegisterImportMapGenerateTask()
 
     val esmBundleKotlinJsTests = project.locateOrRegisterTask<EsmBundleKotlinJsTests>(
@@ -182,7 +195,10 @@ internal fun KotlinJsIrCompilation.locateOrRegisterEsmBundleKotlinJsTestsTask():
         ).single()
 
         task.npmToolingEnvDir.value(npmToolingDir).finalizeValue()
-        task.npmProjectDir.set(npmProject.dir)
+        val rootProjectDir = project.rootDir
+        val npmRootPackageDirectory = nodeJsRoot().rootPackageDirectory
+        task.npmRootPackageDirectory.set(npmRootPackageDirectory)
+        task.npmRootPackagePrefix.set(npmRootPackageDirectory.map { it.asFile.relativeTo(rootProjectDir).invariantSeparatorsPath })
         task.importMapLoaderFile.set(importMapTask.flatMap { it.importMapLoaderFile })
         task.kotlinLinkerOutputFiles.fileProvider(binary.linkSyncTask.flatMap { it.destinationDirectory })
         task.testEntryFileName.convention(binary.mainFileSyncPath.map { it.asFile.name })
