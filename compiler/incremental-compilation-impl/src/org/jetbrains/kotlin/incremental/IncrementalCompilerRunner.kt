@@ -560,6 +560,7 @@ abstract class IncrementalCompilerRunner<
         val transaction = icContext.transaction
 
         var exitCode = ExitCode.OK
+        var runErrorRecoveryRound = icFeatures.enableErrorRecoveryRound && compilationMode is CompilationMode.Incremental
 
         // TODO: ideally we should read arguments not here but at earlier stages
         val metadataVersionFromLanguageVersion =
@@ -643,6 +644,21 @@ abstract class IncrementalCompilerRunner<
                 }
             }
 
+            if (runErrorRecoveryRound && exitCode == ExitCode.COMPILATION_ERROR) {
+                val sourcesToRetry = getSourcesToRecompileAfterErrors(caches, sourcesToCompile, dirtySources)
+
+                if (sourcesToRetry.isNotEmpty()) {
+                    reporter.debug { "Compilation failed, recompiling with additional ${sourcesToRetry.size} sources" }
+                    reporter.reportCompileIteration(incremental = true, compiledSources, exitCode)
+
+                    generatedFiles.forEach { transaction.deleteFile(it.outputFile.toPath()) }
+                    dirtySources.addAll(sourcesToRetry)
+
+                    runErrorRecoveryRound = false
+                    continue
+                }
+            }
+
             reporter.reportCompileIteration(compilationMode is CompilationMode.Incremental, compiledSources, exitCode)
             bufferingMessageCollector.forward(originalMessageCollector)
 
@@ -719,6 +735,17 @@ abstract class IncrementalCompilerRunner<
 
         return exitCode
     }
+
+    private fun getSourcesToRecompileAfterErrors(
+        caches: CacheManager,
+        compiledSources: List<File>,
+        dirtySources: Set<File>,
+    ): Set<File> =
+        caches.platformCache.typealiasesFqNamesBySources(compiledSources)
+            .flatMap { caches.lookupCache.get(LookupSymbol(it.shortName().asString(), it.parent().asString())) }
+            .map(::File)
+            .filterNot { it in dirtySources }
+            .toSet()
 
     protected open fun generateCompilerRefIndexIfNeeded(
         services: Services,
