@@ -79,6 +79,7 @@ internal abstract class DistributionWithImportMapTask : DefaultTask() {
             copy.from(importMap.resolveAllModuleDirectories(rootDir)) {
                 it.includeEmptyDirs = false
                 it.into(VENDORS_FOLDER)
+                it.exclude("**/node_modules/**")
                 it.eachFile { file ->
                     // For example:
                     // /path/to/project/node_modules/pkg/index.js -> vendors/pkg/index.js
