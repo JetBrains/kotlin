@@ -148,7 +148,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
                 },
                 forceLocal = false,
                 index = element.index(),
-                configure = { configureScriptDestructuringDeclarationEntry(it, container) },
+                configure = { configureNonLocalDestructuringDeclarationEntry(it, container) },
             )
         }
 

@@ -1151,7 +1151,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
             isMember = true,
             isCompanionBlockMember = isDirectlyInsideCompanionBlock,
         ) {
-            configureScriptDestructuringDeclarationEntry(it, container)
+            configureNonLocalDestructuringDeclarationEntry(it, container)
         }
     }
 
@@ -3168,7 +3168,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
                                 isTmpVariable = true,
                                 forceLocal = false,
                             ) {
-                                configureScriptDestructuringDeclarationEntry(it, destructuringContainerVar)
+                                configureNonLocalDestructuringDeclarationEntry(it, destructuringContainerVar)
                                 it.isScriptTopLevelDeclaration = true
                             }
                         }
@@ -3246,7 +3246,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
                         isTmpVariable = true,
                         forceLocal = false,
                     ) {
-                        configureScriptDestructuringDeclarationEntry(it, destructuringContainerVar)
+                        configureNonLocalDestructuringDeclarationEntry(it, destructuringContainerVar)
                     }
                 }
 
