@@ -290,6 +290,7 @@ Unknown:
  - gradlew
  - gradlew.bat
  - idea
+ - init_v2.gradle
  - intellij.yaml
  - kotlin-js-store
  - libraries/.gitignore
