@@ -47,10 +47,15 @@ abstract class IncrementalCachesManager<PlatformCache : AbstractIncrementalCache
     val compilerPluginFilesCache: CompilerPluginFilesCache = CompilerPluginFilesCache(compilerPluginFilesCacheDir, icContext).apply { registerCache() }
     abstract val platformCache: PlatformCache
 
+    init {
+        icContext.compilerGeneratedSyntheticSources.addAll(compilerPluginFilesCache.getSourceFilesGeneratedByPlugins())
+    }
+
     open fun recordCompilerPluginFilesCaches(outputItemsCollector: OutputItemsCollectorImpl) {
         compilerPluginFilesCache.let {
             it.recordSourceFilesReferencedByPlugins(outputItemsCollector.sourcesReferencedByCompilerPlugin)
             it.recordOutputFilesGeneratedByPlugins(outputItemsCollector.outputsFileGeneratedForPlugin)
+            it.recordSourceFilesGeneratedByPlugins(outputItemsCollector.sourceFileGeneratedForPlugin)
         }
     }
 
@@ -92,9 +97,4 @@ class IncrementalJsCachesManager(
 ) : IncrementalCachesManager<IncrementalJsCache>(icContext, cachesRootDir) {
     private val jsCacheFile = File(cachesRootDir, "js").apply { mkdirs() }
     override val platformCache = IncrementalJsCache(jsCacheFile, icContext, serializerProtocol).apply { registerCache() }
-
-    override fun recordCompilerPluginFilesCaches(outputItemsCollector: OutputItemsCollectorImpl) {
-        super.recordCompilerPluginFilesCaches(outputItemsCollector)
-        compilerPluginFilesCache.recordSourceFilesGeneratedByPlugins(outputItemsCollector.sourceFileGeneratedForPlugin)
-    }
 }

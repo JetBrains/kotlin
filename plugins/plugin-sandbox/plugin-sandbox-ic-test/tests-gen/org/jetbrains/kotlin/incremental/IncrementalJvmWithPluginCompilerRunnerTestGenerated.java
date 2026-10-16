@@ -92,4 +92,10 @@ public class IncrementalJvmWithPluginCompilerRunnerTestGenerated extends Abstrac
   public void testRemoveMethodFromGeneratedClass() {
     runTest("plugins/plugin-sandbox/plugin-sandbox-ic-test/testData/jvmAndKlib/pureKotlin/removeMethodFromGeneratedClass/");
   }
+
+  @Test
+  @TestMetadata("restoreGeneratedTopLevelFunction")
+  public void testRestoreGeneratedTopLevelFunction() {
+    runTest("plugins/plugin-sandbox/plugin-sandbox-ic-test/testData/jvmAndKlib/pureKotlin/restoreGeneratedTopLevelFunction/");
+  }
 }

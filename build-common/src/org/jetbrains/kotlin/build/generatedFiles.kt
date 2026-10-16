@@ -24,9 +24,11 @@ import java.io.File
 
 open class GeneratedFile(
     sourceFiles: Collection<File>,
-    val outputFile: File
+    val outputFile: File,
+    compilerGeneratedSyntheticSources: Set<File> = emptySet(),
 ) {
-    val sourceFiles = sourceFiles.filter { it.exists() }.sortedBy { it.path }
+    // Plugin-generated sources don't exist on disk, but IC still needs them as owners to notice when generated declarations change.
+    val sourceFiles = sourceFiles.filter { it.exists() || it in compilerGeneratedSyntheticSources }.sortedBy { it.path }
 
     override fun toString(): String = "${this::class.java.simpleName}: $outputFile"
 }
@@ -34,8 +36,9 @@ open class GeneratedFile(
 class GeneratedJvmClass(
     sourceFiles: Collection<File>,
     outputFile: File,
-    metadataVersionFromLanguageVersion: MetadataVersion
-) : GeneratedFile(sourceFiles, outputFile) {
+    metadataVersionFromLanguageVersion: MetadataVersion,
+    compilerGeneratedSyntheticSources: Set<File> = emptySet(),
+) : GeneratedFile(sourceFiles, outputFile, compilerGeneratedSyntheticSources) {
     val outputClass = LocalFileKotlinClass.create(outputFile, metadataVersionFromLanguageVersion).sure {
         "Couldn't load KotlinClass from $outputFile; it may happen because class doesn't have valid Kotlin annotations"
     }
