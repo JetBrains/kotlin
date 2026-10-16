@@ -67,6 +67,14 @@ data class IncrementalCompilationFeatures(
      * And in the original mode the next compilation step would include only the files that weren't compiled previously.
      */
     val enableMonotonousIncrementalCompileSetExpansion: Boolean = true,
+    /**
+     * If a round of incremental compilation fails with compilation errors, repeat it once with a widened set of dirty source files
+     * before reporting the errors. This recovers from errors caused by unchanged sources that were not recompiled although
+     * they depend on the changes (e.g. KT-89857). At most one such round is performed per build.
+     *
+     * Has no effect on JS and Wasm yet, see KT-89851.
+     */
+    val enableErrorRecoveryRound: Boolean = true,
 ) : Serializable {
 
     companion object {

@@ -29,13 +29,18 @@ class TypealiasChangesTest : BaseCompilationTest() {
             mod.replaceFileWithVersion("AliasUsage.kt", "change-alias-type")
 
             mod.compile {
-                // TODO(KT-89857): `Service.kt` does not get into the dirty set, so `ServiceUsage.kt` is checked against
-                //  the stale expansion and the build fails, unlike a clean build. Once fixed, it has to succeed with
-                //  `assertCompiledSources("Service.kt", "alias.kt", "ServiceUsage.kt", "AliasUsage.kt")`.
-                expectFailWithError(
-                    ".*ServiceUsage\\.kt:\\d+:\\d+ Argument type mismatch: actual type is 'Int', but 'String' was expected.*".toRegex()
-                )
-                assertCompiledSources("alias.kt", "ServiceUsage.kt", "AliasUsage.kt")
+                when (this@scenario) {
+                    is JvmScenarioDsl -> assertCompiledSources("Service.kt", "alias.kt", "ServiceUsage.kt", "AliasUsage.kt")
+                    is JsScenarioDsl, is WasmScenarioDsl -> {
+                        // TODO(KT-89851): the klib IC cache does not track typealiases, so `Service.kt` does not get into
+                        //  the dirty set, and `ServiceUsage.kt` is checked against the stale expansion.
+                        expectFailWithError(
+                            ".*ServiceUsage\\.kt:\\d+:\\d+ Argument type mismatch: actual type is 'Int', but 'String' was expected.*".toRegex()
+                        )
+                        assertCompiledSources("alias.kt", "ServiceUsage.kt", "AliasUsage.kt")
+                    }
+                    else -> error("Unsupported scenario type: ${this@scenario}")
+                }
             }
         }
     }
