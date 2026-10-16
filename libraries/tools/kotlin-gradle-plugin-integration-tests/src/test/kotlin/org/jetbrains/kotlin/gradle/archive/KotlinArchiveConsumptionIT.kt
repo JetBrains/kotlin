@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.uklibs.enableCinteropCommonization
 import org.jetbrains.kotlin.gradle.uklibs.ignoreAccessViolations
 import org.jetbrains.kotlin.gradle.uklibs.publish
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import java.io.File
@@ -40,6 +41,7 @@ import kotlin.io.path.name
 import kotlin.io.path.readText
 
 @MppGradlePluginTests
+@MustRunOnChangesInGradle
 @DisplayName("Consumption of a project published in the Kotlin Archive format")
 class KotlinArchiveConsumptionIT : KGPBaseTest() {
 
