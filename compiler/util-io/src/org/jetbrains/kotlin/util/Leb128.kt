@@ -69,7 +69,12 @@ fun readUnsignedLeb128(readNextByte: () -> Byte, maxCount: Int = 4): UInt {
     var count = 0
     do {
         cur = readNextByte().toUInt() and 0xffu
-        result = result or ((cur and 0x7fu) shl (count * 7))
+        val payload = cur and 0x7fu
+        val shift = count * 7
+        // `shl` silently drops the bits shifted past the width of `UInt`, so a payload that does not fit is
+        // checked explicitly: otherwise a value such as `80 80 80 80 10` would decode to `0u` instead of failing.
+        if (shift >= UInt.SIZE_BITS || (payload shl shift) shr shift != payload) error("InvalidLeb128Number")
+        result = result or (payload shl shift)
         count++
     } while (cur and 0x80u == 0x80u && count <= maxCount)
     if (cur and 0x80u == 0x80u) error("InvalidLeb128Number")

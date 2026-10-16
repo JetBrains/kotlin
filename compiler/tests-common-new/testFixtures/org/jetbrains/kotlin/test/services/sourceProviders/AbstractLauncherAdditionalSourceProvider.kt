@@ -31,14 +31,14 @@ abstract class AbstractLauncherAdditionalSourceProvider(testServices: TestServic
         module: TestModule,
         testModuleStructure: TestModuleStructure
     ): List<TestFile> {
-        val filesWithBox = module.files.filter { containsBoxMethod(it.originalContent) }
+        val filesWithBox = module.files.filter { containsBoxMethod(it, SourceContentView.ORIGINAL) }
         if (filesWithBox.isEmpty()) return emptyList()
 
         val allLauncherContents = mutableListOf<String>()
         val isGrouped = testServices.isGroupedNonIsolatedBatch(globalDirectives, testModuleStructure)
 
         for (fileWithBox in filesWithBox) {
-            var boxFqName = detectPackage(fileWithBox)?.let { "$it.$BOX_FUNCTION_NAME" } ?: BOX_FUNCTION_NAME
+            var boxFqName = detectPackage(fileWithBox, SourceContentView.ORIGINAL)?.let { "$it.$BOX_FUNCTION_NAME" } ?: BOX_FUNCTION_NAME
             if (isGrouped) {
                 val additionalPackage = BatchingPackageInserter.computePackage(testServices.testInfo)
                 if (!boxFqName.startsWith(additionalPackage)) {
