@@ -39,6 +39,7 @@ private val temporaryExceptions: Set<String> = setOf(
     "Xignore-const-optimization-errors",
     "Xir-do-not-clear-binding-context",
     "Xdirect-java-actualization",
+    "Xallow-pre-17-runtime-jdk",
     "Xrepl",
     "Xjava-direct",
 )
