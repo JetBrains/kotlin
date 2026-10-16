@@ -1,4 +1,9 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// USE_PSI_JAVA_FACADE: false
+// java-direct classifies `a.b` in `import a.b.c` as the class `a.b` (JLS 6.5.4.2) and looks up `c` among its member
+// types, never in the package `a.b`. The PSI Java facade still picks the class `c` of the package `a.b`, see
+// GenericClassVsPackagePsi.kt and KT-90484
+
 // FILE: a/b/c.java
 package a.b;
 
@@ -49,10 +54,10 @@ fun test3() = d().getC()
 
 fun test4() {
     val ab_c = test3()
-    ab_c.ab_c()
+    ab_c.<!UNRESOLVED_REFERENCE!>ab_c<!>()
 
     val ab_c2 = test3()
-    ab_c2.<!UNRESOLVED_REFERENCE!>a_bc<!>()
+    ab_c2.a_bc()
 }
 
 /* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType, localProperty, propertyDeclaration */

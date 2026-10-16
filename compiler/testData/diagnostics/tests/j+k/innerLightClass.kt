@@ -1,7 +1,9 @@
 // DISABLE_JAVA_FACADE
 // RUN_PIPELINE_TILL: CODEGEN
-// FILE: A.java
-import Outer.Middle;
+// FILE: p/A.java
+package p;
+
+import p.Outer.Middle;
 
 public class A {
     public static void foo(Middle x) {}
@@ -10,6 +12,7 @@ public class A {
 }
 
 // FILE: main.kt
+package p
 
 class Outer {
     class Middle {
