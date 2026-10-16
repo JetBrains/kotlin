@@ -224,6 +224,10 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
     @get:Internal
     internal abstract val enableMonotonousIncrementalCompileSetExpansion: Property<Boolean>
 
+    /** See [org.jetbrains.kotlin.incremental.IncrementalCompilationFeatures.enableErrorRecoveryRound] */
+    @get:Internal
+    internal abstract val enableErrorRecoveryRound: Property<Boolean>
+
     /** Task outputs that we don't want to include in [TaskOutputsBackup] (see [TaskOutputsBackup.outputsToRestore] for more info). */
     @get:Internal
     internal abstract val taskOutputsBackupExcludes: SetProperty<File>
@@ -306,6 +310,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
             keepIncrementalCompilationCachesInMemory = true,
             enableUnsafeIncrementalCompilationForMultiplatform = enableUnsafeIncrementalCompilationForMultiplatform.get(),
             enableMonotonousIncrementalCompileSetExpansion = enableMonotonousIncrementalCompileSetExpansion.get(),
+            enableErrorRecoveryRound = enableErrorRecoveryRound.get(),
         )
     }
 

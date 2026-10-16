@@ -67,6 +67,7 @@ data class BuildOptions(
     val enableJsUnsafeIncrementalCompilationForMultiplatform: Boolean? = null,
     val enableWasmUnsafeIncrementalCompilationForMultiplatform: Boolean? = null,
     val enableMonotonousIncrementalCompileSetExpansion: Boolean? = null,
+    val enableErrorRecoveryRound: Boolean = true,
     val useDaemonFallbackStrategy: Boolean = false,
     val useParsableDiagnosticsFormatting: Boolean = true,
     val showDiagnosticsStacktrace: Boolean? = false, // false by default to not clutter the testdata + stacktraces change often
@@ -321,6 +322,8 @@ data class BuildOptions(
         if (enableMonotonousIncrementalCompileSetExpansion != null) {
             arguments.add("-Pkotlin.internal.incremental.enableMonotonousCompileSetExpansion=$enableMonotonousIncrementalCompileSetExpansion")
         }
+
+        arguments.add("-Pkotlin.jvm.enableErrorRecoveryRound=$enableErrorRecoveryRound")
 
         if (jvmClasspathMetadata != null) {
             arguments.add("-Pkotlin.internal.jvm.enableKmpClasspathMetadataForIncrementalCompilation=$jvmClasspathMetadata")
