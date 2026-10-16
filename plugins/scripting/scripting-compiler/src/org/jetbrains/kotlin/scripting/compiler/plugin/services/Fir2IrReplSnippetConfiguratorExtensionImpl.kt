@@ -52,6 +52,7 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SnippetArtifactMetada
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.buildSnippetArtifactMetadataFromFir
 import org.jetbrains.kotlin.scripting.compiler.plugin.irLowerings.importedSnippetsAttr
 import org.jetbrains.kotlin.scripting.compiler.plugin.irLowerings.replSnippetArtifactMetadataAttr
+import java.lang.ref.WeakReference
 import kotlin.script.experimental.api.ReplScriptingHostConfigurationKeys
 import kotlin.script.experimental.api.repl
 import kotlin.script.experimental.api.valueOrNull
@@ -72,7 +73,21 @@ class Fir2IrReplSnippetConfiguratorExtensionImpl(
     private val hostConfiguration: ScriptingHostConfiguration,
 ) : Fir2IrReplSnippetConfiguratorExtension(session) {
 
-    private var cachedStateObjectIrClass: IrClass? = null
+    /**
+     * The state object IR class is shared by all snippets converted in the same Fir2Ir run (same batch), but it is only valid
+     * within that run. The extension itself lives as long as the FIR session, which is kept alive by the REPL history, so both
+     * the components and the IR class are referenced weakly. Otherwise, the cached IR would retain the whole backend state
+     * of the snippet (see KT-90299).
+     */
+    private var cachedStateObject: CachedStateObject? = null
+
+    private class CachedStateObject(components: Fir2IrComponents, irClass: IrClass) {
+        private val componentsRef = WeakReference(components)
+        private val irClassRef = WeakReference(irClass)
+
+        fun getFor(components: Fir2IrComponents): IrClass? =
+            if (componentsRef.get() === components) irClassRef.get() else null
+    }
 
     @OptIn(SymbolInternals::class)
     override fun Fir2IrComponents.prepareSnippet(fir2IrVisitor: Fir2IrVisitor, firReplSnippet: FirReplSnippet, irSnippet: IrReplSnippet) {
@@ -229,7 +244,7 @@ class Fir2IrReplSnippetConfiguratorExtensionImpl(
         irSnippet: IrReplSnippet,
         fir2IrVisitor: Fir2IrVisitor,
     ): IrClass {
-        cachedStateObjectIrClass?.let { return it }
+        cachedStateObject?.getFor(this)?.let { return it }
 
         fun fqn2cid(s: String): ClassId {
             val fqn = FqName(s)
@@ -313,7 +328,7 @@ class Fir2IrReplSnippetConfiguratorExtensionImpl(
             val irReplStateParent =
                 declarationStorage.getIrExternalPackageFragment(firReplStateObject.symbol.classId.packageFqName, session.moduleData)
             lazyDeclarationsGenerator.createIrLazyClass(firReplStateObject, irReplStateParent, IrClassSymbolImpl())
-        }.also { cachedStateObjectIrClass = it }
+        }.also { cachedStateObject = CachedStateObject(this, it) }
     }
 
     companion object {
