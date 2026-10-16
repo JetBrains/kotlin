@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.gradle.native
 
+import org.apache.tools.ant.taskdefs.condition.Os
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.junit.jupiter.api.DisplayName
-import kotlin.test.assertEquals
+import org.junit.jupiter.api.condition.OS
 import kotlin.test.fail
 
 @DisplayName("Tests for friendModule compiler argument in KMP native compilations")
@@ -35,7 +37,13 @@ class KotlinNativeFriendModuleIT : KGPBaseTest() {
             build(":compileTestKotlinLinuxX64") {
                 assertTasksExecuted(":compileTestKotlinLinuxX64")
                 val args = extractNativeCompilerTaskArguments(":compileTestKotlinLinuxX64")
-                assertNoBuildWarnings()
+                assertNoBuildWarnings(
+                    additionalExpectedWarningIds = buildSet {
+                        if (OS.current() == OS.WINDOWS) {
+                            add(KotlinToolingDiagnostics.DisabledNativeTargetTaskWarning.id)
+                        }
+                    }
+                )
                 if (args.contains("-friend-modules"))
                     fail(
                         """

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.checkedReplace
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
+import kotlin.io.path.absolutePathString
 import kotlin.io.path.appendText
 import kotlin.io.path.createFile
 import kotlin.io.path.createParentDirectories
@@ -236,7 +237,7 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
                         Problem found: Kotlin compiler: DEPRECATION (id: kotlin:compiler:warning:DEPRECATION)
                           Kotlin compiler warning
                             'constructor(): A' is deprecated. deprecated for test.
-                            Location: ${mainKt.toRealPath()}
+                            Location: ${mainKt.toRealPath().absolutePathString().normalizePath()}
                         """.trimIndent()
                     )
                 }
