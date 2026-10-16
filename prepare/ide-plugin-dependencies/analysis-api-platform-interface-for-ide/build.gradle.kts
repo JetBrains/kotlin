@@ -4,4 +4,9 @@ plugins {
     kotlin("jvm")
 }
 
-publishJarsForIde(listOf(":analysis:analysis-api-platform-interface"))
+publishJarsForIde(
+    listOf(
+        ":analysis:analysis-api-platform-interface",
+        ":analysis:analysis-internal-utils",
+    )
+)
