@@ -23,8 +23,7 @@ fun box(): String {
     JavaClass.of()
 
     KotlinClass.of()
-    // TODO: uncomment after KT-89212 fix
-    //if (!Modifier.isPrivate(KotlinClass::class.java.getDeclaredConstructor().modifiers)) return "Fail: Kotlin no-args constructor is not private"
+    if (!Modifier.isPrivate(KotlinClass::class.java.getDeclaredConstructor().modifiers)) return "Fail: Kotlin no-args constructor is not private"
 
     return "OK"
 }
