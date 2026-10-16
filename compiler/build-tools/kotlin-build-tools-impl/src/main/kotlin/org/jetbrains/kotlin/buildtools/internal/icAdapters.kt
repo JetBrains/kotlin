@@ -58,6 +58,7 @@ internal fun HasSnapshotBasedIcOptionsAccessor.extractIncrementalCompilationFeat
         keepIncrementalCompilationCachesInMemory = options[KEEP_IC_CACHES_IN_MEMORY],
         enableUnsafeIncrementalCompilationForMultiplatform = options[UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM],
         enableMonotonousIncrementalCompileSetExpansion = options[MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION],
+        enableErrorRecoveryRound = options[JvmSnapshotBasedIncrementalCompilationOptionsImpl.ENABLE_ERROR_RECOVERY_ROUND],
     )
 }
 internal fun JsHistoryBasedIncrementalCompilationConfigurationImpl.extractIncrementalCompilationFeatures(): IncrementalCompilationFeatures {
@@ -67,6 +68,7 @@ internal fun JsHistoryBasedIncrementalCompilationConfigurationImpl.extractIncrem
         keepIncrementalCompilationCachesInMemory = this[KEEP_IC_CACHES_IN_MEMORY],
         enableUnsafeIncrementalCompilationForMultiplatform = this[UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM],
         enableMonotonousIncrementalCompileSetExpansion = this[MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION],
+        enableErrorRecoveryRound = false,
     )
 }
 

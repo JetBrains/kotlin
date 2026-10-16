@@ -114,6 +114,8 @@ internal class JvmSnapshotBasedIncrementalCompilationConfigurationImpl private c
 
         val USE_FIR_RUNNER: Option<Boolean> = Option("USE_FIR_RUNNER", false)
 
+        val ENABLE_ERROR_RECOVERY_ROUND: Option<Boolean> = Option("ENABLE_ERROR_RECOVERY_ROUND", true)
+
         // copied from BaseCompilationConfigurationImpl so initializeOptions works
 
         val ROOT_PROJECT_DIR: Option<Path?> = Option("ROOT_PROJECT_DIR", null)
