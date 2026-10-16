@@ -12,8 +12,8 @@ Compiling the init script into a precompiled plugin provides maximum build effic
 ## Architecture & Workflow
 
 1. **Plugin Source:**
-   - `tc-init-plugin/src/main/groovy/org/jetbrains/teamcity/TeamCityInitPlugin.groovy`: Contains all plugin logic, service message generators, build problem reporters, and test lifecycle interceptors.
-   - `tc-init-plugin/build.gradle`: Standalone build configuration using Gradle's `java-gradle-plugin` and `groovy` plugins.
+   - `tc-init-plugin/src/main/kotlin/org/jetbrains/teamcity/`: Contains modular Kotlin source files for all plugin logic, service message generators, build problem reporters, and test lifecycle interceptors.
+   - `tc-init-plugin/build.gradle.kts`: Standalone build configuration using Gradle's `java-gradle-plugin` and `kotlin("jvm")` targeting Java 8 bytecode.
 
 2. **Precompiled Artifact:**
    - `teamcity-init-plugin.jar`: The binary JAR containing the compiled plugin classes and plugin descriptors.
@@ -34,7 +34,6 @@ When modifying the plugin source code in `tc-init-plugin/src/...`, recompile and
 
 # 2. Copy the updated JAR to the repository root
 cp tc-init-plugin/build/libs/teamcity-init-plugin.jar teamcity-init-plugin.jar
-cp tc-init-plugin/build/libs/teamcity-init-plugin.jar tc-init-plugin/teamcity-init-plugin.jar
 ```
 
 Commit the updated source files alongside `teamcity-init-plugin.jar`.
