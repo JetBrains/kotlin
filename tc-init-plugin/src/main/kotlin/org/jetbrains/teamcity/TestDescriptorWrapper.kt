@@ -126,25 +126,40 @@ class TestDescriptorWrapper(
     }
 
     fun flush(outputs: List<TestOutputEvent>?, action: (ServiceMessage) -> Unit) {
-        if (outputs == null) return
+        if (outputs.isNullOrEmpty()) return
+        val stdOut = StringBuilder()
+        val stdErr = StringBuilder()
         for (output in outputs) {
-            val name = when (output.destination) {
-                TestOutputEvent.Destination.StdOut -> "testStdOut"
-                TestOutputEvent.Destination.StdErr -> "testStdErr"
-                else -> null
+            when (output.destination) {
+                TestOutputEvent.Destination.StdOut -> stdOut.append(output.message)
+                TestOutputEvent.Destination.StdErr -> stdErr.append(output.message)
+                else -> {}
             }
-            if (name != null) {
-                splitByLength(output.message, messageMaxLength).forEach { part ->
-                    val serviceMessage = ServiceMessage(
-                        name = name,
-                        attributes = mutableMapOf(
-                            "name" to this.name,
-                            "out" to part,
-                            "flowId" to flowId
-                        )
+        }
+        if (stdOut.isNotEmpty()) {
+            splitByLength(stdOut.toString(), messageMaxLength).forEach { part ->
+                val serviceMessage = ServiceMessage(
+                    name = "testStdOut",
+                    attributes = mutableMapOf(
+                        "name" to this.name,
+                        "out" to part,
+                        "flowId" to flowId
                     )
-                    action(serviceMessage)
-                }
+                )
+                action(serviceMessage)
+            }
+        }
+        if (stdErr.isNotEmpty()) {
+            splitByLength(stdErr.toString(), messageMaxLength).forEach { part ->
+                val serviceMessage = ServiceMessage(
+                    name = "testStdErr",
+                    attributes = mutableMapOf(
+                        "name" to this.name,
+                        "out" to part,
+                        "flowId" to flowId
+                    )
+                )
+                action(serviceMessage)
             }
         }
     }

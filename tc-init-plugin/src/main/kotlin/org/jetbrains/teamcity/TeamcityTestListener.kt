@@ -18,7 +18,7 @@ class TeamcityTestListener(
 
     private val flowWrapper = FlowWrapper(Util.getFlowIdForTask(taskPath))
     private val testNameDescriptor = TestNameDescriptor(testNameFormat)
-    private val testOutputs = ConcurrentHashMap<TestDescriptorWrapper, MutableList<TestOutputEvent>>()
+    private val testOutputs = ConcurrentHashMap<TestDescriptor, MutableList<TestOutputEvent>>()
 
     override fun beforeSuite(testDescriptor: TestDescriptor) {
         val suiteDescriptorWrapper = SuiteDescriptorWrapper(testDescriptor, flowWrapper, ignoredSuiteFormat)
@@ -32,7 +32,7 @@ class TeamcityTestListener(
         val suiteDescriptorWrapper = SuiteDescriptorWrapper(testDescriptor, flowWrapper, ignoredSuiteFormat)
         suiteDescriptorWrapper.finish { flowMessage, suiteFinishedMessage ->
             val testDescriptorWrapper = TestDescriptorWrapper(testDescriptor, testNameDescriptor, flowWrapper, buildDirectoriesResolver, ignoredSuiteFormat)
-            val outputs = testOutputs.remove(testDescriptorWrapper)
+            val outputs = testOutputs.remove(testDescriptor)
             if (outputs != null) {
                 synchronized(outputs) {
                     testDescriptorWrapper.flush(outputs) { testOutputServiceMessage ->
@@ -45,9 +45,10 @@ class TeamcityTestListener(
             if (flowMessage != null) logger.lifecycle(flowMessage.asString())
         }
         if (testDescriptor.parent == null) {
-            testOutputs.forEach { (key, outputs) ->
+            testOutputs.forEach { (descriptor, outputs) ->
                 synchronized(outputs) {
-                    key.flush(outputs) { testOutputServiceMessage ->
+                    val testDescriptorWrapper = TestDescriptorWrapper(descriptor, testNameDescriptor, flowWrapper, buildDirectoriesResolver, ignoredSuiteFormat)
+                    testDescriptorWrapper.flush(outputs) { testOutputServiceMessage ->
                         logger.lifecycle(testOutputServiceMessage.asString())
                     }
                     outputs.clear()
@@ -67,7 +68,7 @@ class TeamcityTestListener(
 
     override fun afterTest(testDescriptor: TestDescriptor, testResult: TestResult) {
         val testDescriptorWrapper = TestDescriptorWrapper(testDescriptor, testNameDescriptor, flowWrapper, buildDirectoriesResolver, ignoredSuiteFormat)
-        val outputs = testOutputs.remove(testDescriptorWrapper)
+        val outputs = testOutputs.remove(testDescriptor)
         if (outputs != null) {
             synchronized(outputs) {
                 testDescriptorWrapper.flush(outputs) { testOutputServiceMessage ->
@@ -97,11 +98,11 @@ class TeamcityTestListener(
         if (testOutputEvent.destination == TestOutputEvent.Destination.StdErr && java.lang.Boolean.getBoolean(Constants.IGNORE_TEST_STDERR_SYSTEM_PROP)) {
             return
         }
-        val testDescriptorWrapper = TestDescriptorWrapper(testDescriptor, testNameDescriptor, flowWrapper, buildDirectoriesResolver, ignoredSuiteFormat)
-        val outputs = testOutputs.computeIfAbsent(testDescriptorWrapper) { ArrayList() }
+        val outputs = testOutputs.computeIfAbsent(testDescriptor) { ArrayList() }
         synchronized(outputs) {
             outputs.add(testOutputEvent)
             if (outputs.size > 100) {
+                val testDescriptorWrapper = TestDescriptorWrapper(testDescriptor, testNameDescriptor, flowWrapper, buildDirectoriesResolver, ignoredSuiteFormat)
                 testDescriptorWrapper.flush(outputs) { testOutputServiceMessage ->
                     logger.lifecycle(testOutputServiceMessage.asString())
                 }
