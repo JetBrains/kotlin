@@ -1,0 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// LATEST_LV_DIFFERENCE
+val <!SYNTAX!>(x, y)<!> = <!UNRESOLVED_REFERENCE!>Pair<!>(1, 2)
+val <!SYNTAX!>(<!UNRESOLVED_REFERENCE!>e<!>)<!> =<!SYNTAX!><!>
+
+/* GENERATED_FIR_TAGS: integerLiteral */

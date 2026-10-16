@@ -207,6 +207,8 @@ abstract class VariableInitializationCheckProcessor {
         val symbol = expression.calleeReference.toResolvedVariableSymbol() ?: return
         if (doNotReportConstantUninitialized && symbol.isConst) return
         if (symbol.source?.kind != KtRealSourceElementKind) return
+        // Only the entries read the container, right after it, so it may be uninitialized only if the initializer is missing
+        if (symbol.origin == FirDeclarationOrigin.Synthetic.NonLocalDestructuringDeclarationContainer) return
         if (
             !symbol.isLateInit &&
             !symbol.isExternal &&

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve
 
+import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.util.parentOfType
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
@@ -30,6 +31,9 @@ internal fun elementCanBeLazilyResolved(element: KtElement?): Boolean = when (el
             is KtClassBody -> parent.containingClassOrObject
             is KtBlockExpression -> parent.containingScript
             is KtDestructuringDeclaration -> parent.containingScript
+
+            // The parser wraps the entries of a top-level or member destructuring declaration in an error element (KT-58563)
+            is PsiErrorElement if element is KtDestructuringDeclarationEntry -> parent.parent as? KtDestructuringDeclaration
             else -> null
         }
 

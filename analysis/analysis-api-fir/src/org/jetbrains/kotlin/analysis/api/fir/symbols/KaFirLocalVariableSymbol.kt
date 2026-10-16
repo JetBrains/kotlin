@@ -102,9 +102,7 @@ internal class KaFirLocalVariableSymbol : KaFirLocalOrErrorVariableSymbol {
          *  [KtDestructuringDeclaration] in incorrect positions (like class-level)
          *  still produce [KtDestructuringDeclarationEntry],
          *  but their parent is [com.intellij.psi.PsiErrorElement],
-         *  so for them [KaFirErrorVariableSymbol] should be created instead.
-         *
-         *  Otherwise, [KtDestructuringDeclarationEntry.getParentNode] will throw an exception later.
+         *  so for them [KaFirKotlinPropertySymbol.create] should be used instead.
          */
         assert(parent is KtDestructuringDeclaration)
 
@@ -153,11 +151,6 @@ internal class KaFirLocalVariableSymbol : KaFirLocalOrErrorVariableSymbol {
 
 internal class KaFirErrorVariableSymbol : KaFirLocalOrErrorVariableSymbol {
     constructor(symbol: FirErrorPropertySymbol, session: KaFirSession) : super(symbol, session)
-
-    /**
-     * In inapplicable places FIR creates [FirErrorPropertySymbol] with [KtDestructuringDeclaration] as a source
-     */
-    constructor(declaration: KtDestructuringDeclaration, session: KaFirSession) : super(declaration, session)
 
     override val name: Name
         get() = withValidityAssertion { FirErrorPropertySymbol.NAME }

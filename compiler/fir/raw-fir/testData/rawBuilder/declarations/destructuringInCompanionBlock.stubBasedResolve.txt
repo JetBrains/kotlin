@@ -28,8 +28,24 @@ FILE: [ResolvedTo(BODY_RESOLVE)] destructuringInCompanionBlock.kt
             super<R|kotlin/Any|>()
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = R|/X.X|(Int(1), Int(2))
+        private final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A, DestructuringDeclarationContainerVariableMarkerKey=true] val <destruct>: R|X| = R|/X.X|(Int(1), Int(2))
+            private static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] get(): R|X|
 
-        public final [ResolvedTo(BODY_RESOLVE)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = R|/X.X|(Int(1), Int(2))
+        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A, DestructuringDeclarationContainerVariableKey=/A.<destruct>] val a: R|kotlin/Int| = R|/A.<destruct>|.R|/X.component1|()
+            public static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] get(): R|kotlin/Int|
+
+        @R|Anno|[Types]() public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A, DestructuringDeclarationContainerVariableKey=/A.<destruct>] val b: R|kotlin/Int| = R|/A.<destruct>|.R|/X.component2|()
+            public static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] get(): R|kotlin/Int|
+
+        private final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A, DestructuringDeclarationContainerVariableMarkerKey=true] val <destruct>: R|X| = R|/X.X|(Int(1), Int(2))
+            private static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] get(): R|X|
+
+        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A, DestructuringDeclarationContainerVariableKey=/A.<destruct>] var c: R|kotlin/Int| = R|/A.<destruct>|.R|/X.component1|()
+            public static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] get(): R|kotlin/Int|
+            public static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit|
+
+        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A, DestructuringDeclarationContainerVariableKey=/A.<destruct>] var d: R|kotlin/Int| = R|/A.<destruct>|.R|/X.component2|()
+            public static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] get(): R|kotlin/Int|
+            public static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit|
 
     }

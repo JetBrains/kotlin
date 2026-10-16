@@ -1,7 +1,6 @@
 // KT-74654
-// KT-90199: annotations on destructuring entries have no FIR yet
+// KT-90199
 // LOOK_UP_FOR_ELEMENT_OF_TYPE: KtDestructuringDeclarationEntry
-// DO_NOT_REQUIRE_SYMBOL_RESTORATION
 annotation class Ann(val s: String)
 
 const val x = "str"

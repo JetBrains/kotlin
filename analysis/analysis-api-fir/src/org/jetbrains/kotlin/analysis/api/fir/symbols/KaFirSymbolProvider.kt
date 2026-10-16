@@ -149,10 +149,8 @@ internal class KaFirSymbolProvider(
                 }
             }
 
-            is PsiErrorElement -> {
-                val destructuringDeclaration = parent.parent as KtDestructuringDeclaration
-                KaFirErrorVariableSymbol(destructuringDeclaration, analysisSession)
-            }
+            // The parser wraps the entries of a top-level or member destructuring declaration in an error element (KT-58563)
+            is PsiErrorElement -> KaFirKotlinPropertySymbol.create(entry, analysisSession)
 
             else -> errorWithFirSpecificEntries("Unexpected type of parent", psi = entry) {
                 withPsiEntry("parent", parent)

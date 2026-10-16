@@ -28,8 +28,24 @@ FILE: destructuringInCompanionBlock.kt
             super<R|kotlin/Any|>()
         }
 
-        public final val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = X#(IntegerLiteral(1), IntegerLiteral(2))
+        private final static [ContainingClassKey=A, DestructuringDeclarationContainerVariableMarkerKey=true] val <destruct>: <implicit> = X#(IntegerLiteral(1), IntegerLiteral(2))
+            private static [ContainingClassKey=A] get(): <implicit>
 
-        public final val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = X#(IntegerLiteral(1), IntegerLiteral(2))
+        public final static [ContainingClassKey=A, DestructuringDeclarationContainerVariableKey=/A.<destruct>] val a: <implicit> = R|/A.<destruct>|.component1#()
+            public static [ContainingClassKey=A] get(): <implicit>
+
+        @Anno() public final static [ContainingClassKey=A, DestructuringDeclarationContainerVariableKey=/A.<destruct>] val b: <implicit> = R|/A.<destruct>|.component2#()
+            public static [ContainingClassKey=A] get(): <implicit>
+
+        private final static [ContainingClassKey=A, DestructuringDeclarationContainerVariableMarkerKey=true] val <destruct>: <implicit> = X#(IntegerLiteral(1), IntegerLiteral(2))
+            private static [ContainingClassKey=A] get(): <implicit>
+
+        public final static [ContainingClassKey=A, DestructuringDeclarationContainerVariableKey=/A.<destruct>] var c: <implicit> = R|/A.<destruct>|.component1#()
+            public static [ContainingClassKey=A] get(): <implicit>
+            public static [ContainingClassKey=A] set(value: <implicit>): R|kotlin/Unit|
+
+        public final static [ContainingClassKey=A, DestructuringDeclarationContainerVariableKey=/A.<destruct>] var d: Int = R|/A.<destruct>|.component2#()
+            public static [ContainingClassKey=A] get(): Int
+            public static [ContainingClassKey=A] set(value: Int): R|kotlin/Unit|
 
     }

@@ -52,6 +52,12 @@ sealed class FirDeclarationOrigin(
         object FakeFunction : Synthetic()
         object ForwardDeclaration : Synthetic()
         object ScriptTopLevelDestructuringDeclarationContainer : Synthetic()
+
+        /**
+         * The container of a top-level or member destructuring declaration outside of scripts.
+         * Such declarations are not allowed, but their entries are still desugared into properties.
+         */
+        object NonLocalDestructuringDeclarationContainer : Synthetic()
         object FakeHiddenInPreparationForNewJdk : Synthetic()
         object ImplicitWhenSubject : Synthetic()
 

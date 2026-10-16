@@ -10,10 +10,10 @@ class A {
         val <!SYNTAX!>(a, b)<!> = X(1, "")
     }
 
-    fun use() = <!UNRESOLVED_REFERENCE!>b<!>.length
+    fun use() = b.length
 }
 
-fun use() = A.<!UNRESOLVED_REFERENCE!>b<!>.length
+fun use() = A.b.length
 
-/* GENERATED_FIR_TAGS: classDeclaration, data, functionDeclaration, integerLiteral, primaryConstructor,
-propertyDeclaration, stringLiteral */
+/* GENERATED_FIR_TAGS: classDeclaration, data, destructuringDeclaration, functionDeclaration, integerLiteral,
+primaryConstructor, propertyDeclaration, stringLiteral */
