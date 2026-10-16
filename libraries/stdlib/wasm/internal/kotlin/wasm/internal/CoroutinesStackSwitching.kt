@@ -49,39 +49,24 @@ internal fun nullContrefIntrinsic(): typedcontref<(Any?) -> Unit>? {
     implementedAsIntrinsic
 }
 
-internal suspend fun <T> getBlockKotlinContinuation(): CoroutineImplStackSwitching<T, T> {
-    val completion = getContinuation<T>()
-    val wasmContBox = WasmContinuationBox(nullContrefIntrinsic())
-    val blockKotlinContinuation = CoroutineImplStackSwitching<T, T>(completion, wasmContBox)
-    blockKotlinContinuation.pendingSuspend = true
-    return blockKotlinContinuation
-}
-
-@Suppress("UNCHECKED_CAST")
-internal fun <T> getBlockKotlinContinuationResult(blockKotlinContinuation: CoroutineImplStackSwitching<T, T>): T {
-    val e = blockKotlinContinuation.exception
-    if (e != null) throw e
-    return blockKotlinContinuation.result as T
-}
-
-internal fun <T> checkNotPendingSuspend(blockKotlinContinuation: CoroutineImplStackSwitching<T, T>) {
-    if (blockKotlinContinuation.pendingSuspend) {
-        blockKotlinContinuation.pendingSuspend = false
-        suspendIntrinsic(blockKotlinContinuation.wasmContBox)
-    }
-}
-
+@Suppress("UNCHECKED_CAST", "RedundantSuspendModifier")
 @UsedFromCompilerGeneratedCode
-@Suppress("UNCHECKED_CAST")
 internal suspend fun <T> suspendCoroutineUninterceptedOrReturnIntrinsicStackSwitching(block: (Continuation<T>) -> Any?): T {
-    val blockKotlinContinuation = getBlockKotlinContinuation<T>()
+    val coroutineImpl = getContinuation<T>() as CoroutineImplStackSwitching<T, T>
 
-    val blockResult = block(blockKotlinContinuation)
+    val blockResult = block(coroutineImpl)
     if (blockResult !== COROUTINE_SUSPENDED) return blockResult as T
 
-    checkNotPendingSuspend(blockKotlinContinuation)
+    if (coroutineImpl.resumedWhileRunning) {
+        // `block` resumed the continuation itself, the result is already here -- do not park.
+        coroutineImpl.resumedWhileRunning = false
+        coroutineImpl.exception?.let { throw it }
+    } else {
+        coroutineImpl.isRunning = false
+        suspendIntrinsic(coroutineImpl.wasmContBox)
+    }
 
-    return getBlockKotlinContinuationResult(blockKotlinContinuation)
+    return coroutineImpl.result as T
 }
 
 @Suppress("UNUSED_PARAMETER")
@@ -89,30 +74,6 @@ internal suspend fun <T> suspendCoroutineUninterceptedOrReturnIntrinsicStackSwit
 @ExcludedFromCodegen
 internal fun suspendIntrinsic(contBox: WasmContinuationBox) {
     implementedAsIntrinsic
-}
-
-@UsedFromCompilerGeneratedCode
-internal fun <T> suspendFunction0ToContrefImpl(f: (suspend () -> T), completion: Continuation<T>): typedcontref<(Any?) -> Unit> {
-    return suspendFunction0ToContref(f, completion)
-}
-
-@UsedFromCompilerGeneratedCode
-internal fun <R, T> suspendFunction1ToContrefImpl(
-    f: (suspend R.() -> T),
-    receiver: R,
-    completion: Continuation<T>
-): typedcontref<(Any?) -> Unit> {
-    return suspendFunction1ToContref(f, receiver, completion)
-}
-
-@UsedFromCompilerGeneratedCode
-internal fun <R, P, T> suspendFunction2ToContrefImpl(
-    f: (suspend R.(P) -> T),
-    receiver: R,
-    param: P,
-    completion: Continuation<T>
-): typedcontref<(Any?) -> Unit> {
-    return suspendFunction2ToContref(f, receiver, param, completion)
 }
 
 @Suppress("UNUSED_PARAMETER")
