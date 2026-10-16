@@ -19,7 +19,7 @@ class KotlinClass {
 
   }
 
-  constructor() {
+  private constructor() {
     super/*Any*/()
   }
 
@@ -37,5 +37,9 @@ fun box(): String {
   }
   of() /*~> Unit */
   Companion.of() /*~> Unit */
+  when {
+    isPrivate(p0 = <get-java><KotlinClass>(/* <this> = KotlinClass::class */).getDeclaredConstructor() /*!! Constructor<@FlexibleNullability KotlinClass?> */.getModifiers()).not() -> return "Fail: Kotlin no-args constructor is not private"
+  }
   return "OK"
 }
+
