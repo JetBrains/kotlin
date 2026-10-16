@@ -1,4 +1,7 @@
 @Target(AnnotationTarget.TYPE)
 annotation class Anno
 
-fun test(value: <expr>List<@Anno String></expr>) {}
+@Target(AnnotationTarget.TYPE)
+annotation class AnnoWithArgs(val x: String)
+
+fun test(value: <expr>@Anno @AnnoWithArgs("") List<@Anno @AnnoWithArgs("") String></expr>) {}
