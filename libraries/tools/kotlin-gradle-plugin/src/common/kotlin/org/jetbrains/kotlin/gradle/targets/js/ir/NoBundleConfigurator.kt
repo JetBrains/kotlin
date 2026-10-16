@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Action
-import org.gradle.api.tasks.TaskProvider
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
@@ -18,7 +17,7 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin.Companion.kotl
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinImportMapGenerateTask
-import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.locateOrRegisterGenerateModuleMapTask
+import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.locateOrRegisterImportMapGenerateTask
 import org.jetbrains.kotlin.gradle.targets.js.webTargetVariant
 import org.jetbrains.kotlin.gradle.tasks.KotlinWasmDevServer
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
@@ -61,7 +60,7 @@ internal class NoBundleConfigurator(
     override fun setupBuild(compilation: KotlinJsIrCompilation) {
         val npmProject = compilation.npmProject
 
-        val importMapTaskHolder = compilation.locateOrRegisterGenerateModuleMapTask()
+        val importMapTaskHolder = compilation.locateOrRegisterImportMapGenerateTask()
 
         compilation.binaries
             .withType<Executable>()
@@ -105,7 +104,7 @@ internal class NoBundleConfigurator(
 
     override fun setupRun(compilation: KotlinJsIrCompilation) {
 
-        val importMapTaskHolder = compilation.locateOrRegisterGenerateModuleMapTask()
+        val importMapTaskHolder = compilation.locateOrRegisterImportMapGenerateTask()
 
         compilation.binaries
             .withType<Executable>()
