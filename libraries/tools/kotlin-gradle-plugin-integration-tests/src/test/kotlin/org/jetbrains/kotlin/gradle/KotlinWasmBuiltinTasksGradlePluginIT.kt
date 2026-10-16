@@ -5,12 +5,16 @@
 
 package org.jetbrains.kotlin.gradle
 
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinBrowserBundler
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.junit.jupiter.api.DisplayName
+import kotlin.io.path.readText
+import kotlin.test.assertEquals
 
 @MppGradlePluginTests
 class KotlinWasmBuiltinTasksGradlePluginIT : KGPBaseTest() {
@@ -119,4 +123,58 @@ class KotlinWasmBuiltinTasksGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @OptIn(ExperimentalWasmDsl::class)
+    @DisplayName("Check js target dist with npm dependency that has .bin")
+    @GradleTest
+    fun jsTargetDistWithNpmDependencyWithBin(gradleVersion: GradleVersion) {
+        project("empty", gradleVersion) {
+            settingsBuildScriptInjection {
+                settings.rootProject.name = "wasm-browser-simple-project"
+            }
+
+            plugins {
+                kotlin("multiplatform")
+            }
+
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    @OptIn(ExperimentalWasmDsl::class)
+                    wasmJs {
+                        binaries.executable()
+                        browser(bundler = KotlinBrowserBundler.NONE)
+                    }
+
+                    sourceSets.wasmJsMain.get().compileSource(
+                        """
+                        fun main() {
+                            println("Hello, world")
+                        }
+                        """.trimIndent()
+                    )
+
+                    sourceSets.wasmJsMain.dependencies {
+                        npm("uuid", "11.1.0")
+                    }
+                }
+            }
+
+            build("build") {
+                assertTasksExecuted(":wasmJsBrowserDistribution")
+
+                assertDirectoryExists(projectPath.resolve("build/wasm/node_modules/.bin"))
+
+                val imports = Json.decodeFromString<KotlinWebImportMap>(
+                    projectPath.resolve("build/kotlin/wasmJsGenerateImportMapDist/importmap.json").readText()
+                ).imports
+                assertEquals(mapOf("uuid" to "./vendors/uuid/dist/esm/index.js"), imports)
+
+                assertFileInProjectExists("build/dist/wasmJs/productionExecutable/vendors/uuid/dist/esm/index.js")
+            }
+        }
+    }
+
+    @Serializable
+    private data class KotlinWebImportMap(
+        val imports: Map<String, String>,
+    )
 }
