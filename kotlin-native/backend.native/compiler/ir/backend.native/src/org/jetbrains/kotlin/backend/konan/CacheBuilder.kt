@@ -468,41 +468,82 @@ class CacheBuilder(
      * Splits [batch] (in the reverse topo-order) into groups having no common cross-library top-level signatures.
      * The groups are ordered so that each library goes after all its dependencies from [batch]: a library joins
      * the first group it does not conflict with among the groups not preceding those of its dependencies.
+     *
+     * The check covers everything a group's compilation loads, i.e. the members together with their (cached)
+     * dependencies: a dependency with the same signature as a library from another member's closure would be resolved
+     * to whichever of the two got deserialized first (e.g. inside a cached inline function body), silently binding to the
+     * wrong body. Each per-library build loads only its own closure, so a clash within a single closure is pre-existing
+     * and not of the batching's concern. However, which of the clashing declarations gets reached depends on what else
+     * is compiled alongside (only one of them might be reached by the library's own build). Thus, a group whose loaded
+     * libraries share a signature conservatively doesn't grow any further.
      */
     private fun splitIntoNonConflictingGroups(batch: List<KotlinLibrary>, batchSet: Set<KotlinLibrary>): List<List<KotlinLibrary>> {
         class Group {
             val libraries = mutableListOf<KotlinLibrary>()
+            val loadedLibraries = mutableSetOf<KotlinLibrary>()
             val signatureOwners = mutableMapOf<IdSignature, KotlinLibrary>()
+            var sealed = false // Some of the loaded libraries share a signature.
         }
 
+        val signaturesCache = mutableMapOf<KotlinLibrary, Set<IdSignature>>()
+        fun KotlinLibrary.signatures() = signaturesCache.getOrPut(this) { getTopLevelNonPrivateSignatures() }
+
+        fun KotlinLibrary.loadedClosure(): List<KotlinLibrary> =
+                listOf(this) + klibDag.getAllDependencies(this).filter {
+                    !it.isImplicitlyLoadedFromKotlinNativeDistribution && !it.isNativeStdlib && !it.isCInteropLibrary()
+                }
+
         // The groups are built in order (groups[0] is built first, groups[1] is the next, ...)
-        val groups = mutableListOf<Group>()
+        val groups = mutableListOf(Group()) // The list always contains one dummy group at the end to not bother with empty list.
         val groupIndices = mutableMapOf<KotlinLibrary, Int>()
         for (library in batch) {
-            val signatures = library.getTopLevelNonPrivateSignatures()
+            val closure = library.loadedClosure()
             val firstAllowedIndex = klibDag.getAllDependencies(library)
                     .filter { it in batchSet }
                     // A library can't be placed into a group built before its dependencies.
                     .maxOfOrNull { groupIndices.getValue(it) } ?: 0
             var groupIdx = firstAllowedIndex
-            while (groupIdx < groups.size) {
-                val group = groups[groupIdx]
-                val conflict = signatures.firstNotNullOfOrNull { signature ->
-                    group.signatureOwners[signature]?.let { signature to it }
-                } ?: break
-                configuration.reportLog(
-                        "SPLITTING BATCH: ${library.uniqueName} and ${conflict.second.uniqueName}" +
-                                " share a top-level signature: ${conflict.first}")
-                ++groupIdx
-            }
+            do {
+                val group = groups[groupIdx++]
+                var hasConflicts = group.sealed
+                if (hasConflicts) continue // A sealed group has conflicts by definition.
+                var index = 0
+                do {
+                    val loaded = closure[index++]
+                    if (loaded in group.loadedLibraries) continue // The already loaded libraries are the same ones, not clashing.
+                    val conflict = loaded.signatures().firstOrNull { it in group.signatureOwners } ?: continue
+                    hasConflicts = true
+                    val owner = group.signatureOwners[conflict]!!
+                    val ownerMember = group.libraries.first { owner == it || owner in klibDag.getAllDependencies(it) }
+                    configuration.reportLog(
+                            "SPLITTING BATCH: ${library.uniqueName} and ${ownerMember.uniqueName} share a top-level signature: $conflict" +
+                                    (if (loaded != library || owner != ownerMember) " (via ${loaded.uniqueName} and ${owner.uniqueName})" else ""))
+                } while (index < closure.size && !hasConflicts)
+            } while (groupIdx < groups.size && hasConflicts)
             if (groupIdx == groups.size)
-                groups.add(Group())
-            val group = groups[groupIdx]
+                groups.add(Group()) // The dummy group has been used - add a new one.
+            val group = groups[--groupIdx]
             group.libraries.add(library)
-            signatures.forEach { group.signatureOwners[it] = library }
             groupIndices[library] = groupIdx
+            // Note: A clash inside the closure itself is pre-existing (see above), so the closure is added unconditionally,
+            // but the group gets sealed.
+            for (loaded in closure) {
+                if (!group.loadedLibraries.add(loaded)) continue // Already added by other group's member.
+                for (signature in loaded.signatures()) {
+                    // Note: although here group-wide signatureOwners is used, a conflict can only be inside the closure because
+                    // otherwise it would have been found in the previous loop and current group wouldn't have been picked.
+                    val owner = group.signatureOwners.putIfAbsent(signature, loaded) ?: continue
+                    if (!group.sealed) {
+                        group.sealed = true
+                        configuration.reportLog(
+                                "SEALING BATCH: ${library.uniqueName} loads ${owner.uniqueName} and ${loaded.uniqueName}" +
+                                        " sharing a top-level signature: $signature")
+                    }
+                }
+            }
         }
 
+        groups.removeLast() // Remove the (empty) dummy group.
         return groups.map { it.libraries }
     }
 
