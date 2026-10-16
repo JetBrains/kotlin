@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle
 
+import kotlinx.serialization.Serializable
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinBrowserBundler
@@ -164,4 +165,9 @@ class KotlinWasmBuiltinTasksGradlePluginIT : KGPBaseTest() {
             }
         }
     }
+
+    @Serializable
+    private data class KotlinWebImportMap(
+        val imports: Map<String, String>,
+    )
 }
