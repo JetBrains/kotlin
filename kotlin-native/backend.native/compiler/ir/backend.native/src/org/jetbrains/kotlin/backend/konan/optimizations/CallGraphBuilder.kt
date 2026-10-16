@@ -96,6 +96,45 @@ private class CallGraphCalleeCollector(private val unfoldFactor: Int) {
     }
 }
 
+/**
+ * Only for calls without call-site-specific devirtualization results. Their targets depend solely on
+ * the receiver's static type and dispatch slot. The hierarchy is immutable during call graph construction.
+ * Keep this cache local to one builder: opaque targets must be registered in each new graph's root set.
+ */
+private class CallGraphHierarchyDispatchCache(
+        private val typeHierarchy: DataFlowIR.TypeHierarchy,
+        private val unfoldFactor: Int,
+        private val handleRoot: (DataFlowIR.FunctionSymbol) -> Unit,
+) {
+    private data class Key(val receiverTypeIndex: Int, val interfaceId: Int, val slot: Int)
+
+    // A null list marks an opaque call whose roots have already been registered.
+    private val resolutions = HashMap<Key, List<DataFlowIR.FunctionSymbol>?>()
+
+    fun resolve(call: DataFlowIR.Node.VirtualCall) = resolutions.getOrPut(
+            key = when (call) {
+                is DataFlowIR.Node.VtableCall ->
+                    Key(call.receiverType.index, 0 /* Invalid interface ID */, call.calleeVtableIndex)
+                is DataFlowIR.Node.ItableCall ->
+                    Key(call.receiverType.index, call.interfaceId, call.calleeItableIndex)
+            }
+    ) {
+        val collector = CallGraphCalleeCollector(unfoldFactor)
+        typeHierarchy.inheritorsOf(call.receiverType).forEachBit {
+            // TODO: Unconservative way - when we can use it?
+            //.filter { devirtualizationAnalysisResult.instantiatingClasses.contains(it) }
+            val receiverType = typeHierarchy.allTypes[it]
+            if (receiverType.isAbstract) return@forEachBit
+            val actualCallee = when (call) {
+                is DataFlowIR.Node.VtableCall -> receiverType.vtable[call.calleeVtableIndex]
+                is DataFlowIR.Node.ItableCall -> receiverType.itable[call.interfaceId]!![call.calleeItableIndex]
+            }
+            collector.add(actualCallee, handleRoot)
+        }
+        collector.callees.takeUnless { collector.isOpaque }
+    }
+}
+
 internal class CallGraphBuilder(
         val context: NativeBackendContext,
         val irModule: IrModuleFragment,
@@ -110,6 +149,12 @@ internal class CallGraphBuilder(
     private val callGraph = CallGraph(directEdges, reversedEdges, externalRootFunctions, wholeRootSet)
 
     private val functionStack = FunctionStack()
+    private val hierarchyDispatchCache = lazy {
+        CallGraphHierarchyDispatchCache(
+                typeHierarchy = moduleDFG.symbolTable.typeHierarchy,
+                unfoldFactor = nonDevirtualizedCallSitesUnfoldFactor,
+        ) { handleRoot(it) }
+    }
 
     private inner class FunctionStack {
         private val stack = mutableListOf<DataFlowIR.Function>()
@@ -239,24 +284,9 @@ internal class CallGraphBuilder(
                 else -> {
                     // Callsite has not been devirtualized - conservatively assume the worst:
                     // any inheritor of the receiver type is possible here.
-                    val typeHierarchy = moduleDFG.symbolTable.typeHierarchy
-                    val collector = CallGraphCalleeCollector(nonDevirtualizedCallSitesUnfoldFactor)
-                    typeHierarchy.inheritorsOf(call.receiverType).forEachBit {
-                        val receiverType = typeHierarchy.allTypes[it]
-                        if (receiverType.isAbstract) return@forEachBit
-                        // TODO: Unconservative way - when we can use it?
-                        //.filter { devirtualizationAnalysisResult.instantiatingClasses.contains(it) }
-                        val actualCallee = when (call) {
-                            is DataFlowIR.Node.VtableCall ->
-                                receiverType.vtable[call.calleeVtableIndex]
-
-                            is DataFlowIR.Node.ItableCall ->
-                                receiverType.itable[call.interfaceId]!![call.calleeItableIndex]
-                        }
-                        collector.add(actualCallee) { handleRoot(it) }
-                    }
-                    if (!collector.isOpaque)
-                        staticCall(symbol, call, node, collector.callees)
+                    val callees = hierarchyDispatchCache.value.resolve(call)
+                    if (callees != null)
+                        staticCall(symbol, call, node, callees)
                     else {
                         val callSite = CallGraphNode.CallSite.Virtual(call, node, call.callee)
                         callGraph.addEdge(symbol, callSite)
