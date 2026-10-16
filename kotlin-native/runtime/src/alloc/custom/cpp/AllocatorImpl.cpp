@@ -6,8 +6,10 @@
 #include "AllocatorImpl.hpp"
 
 #include "alloc/Allocator.hpp"
+#include "CompilerConstants.hpp"
 #include "GCApi.hpp"
 #include "Heap.hpp"
+#include "HeapReservation.hpp"
 #include "mm/ThreadData.hpp"
 
 using namespace kotlin;
@@ -102,7 +104,11 @@ void alloc::Allocator::scheduleFinalization(gc::GCHandle gcHandle) noexcept {
     impl_->finalizerProcessor().schedule(std::move(queue), gcHandle.getEpoch());
 }
 
-void alloc::initObjectPool() noexcept {}
+void alloc::initObjectPool() noexcept {
+#if !KONAN_WINDOWS
+    if (compiler::compressedRefs()) HeapReservation::instance();
+#endif
+}
 
 void alloc::compactObjectPoolInCurrentThread() noexcept {}
 

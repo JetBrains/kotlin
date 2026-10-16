@@ -10,6 +10,8 @@ import llvm.*
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.expressions.IrConst
+import org.jetbrains.kotlin.konan.target.BinaryFormat
+import org.jetbrains.kotlin.konan.target.binaryFormat
 
 private fun ConstPointer.addBits(llvm: CodegenLlvmHelpers, bits: Int): ConstPointer {
     // Only pointer arithmetic via GEP works on constant pointers in LLVM.
@@ -35,10 +37,21 @@ internal class KotlinStaticData(override val generationState: NativeGenerationSt
         return Struct(runtime.arrayHeaderType, permanentTag(typeInfo), llvm.constInt32(length))
     }
 
+    // With compressed references, the runtime places the heap next to this section, see HeapReservation.cpp.
+    fun placeInPermanentsSection(global: Global) {
+        if (!generationState.config.compressedRefs) return
+        global.setSection(when (generationState.config.target.binaryFormat()) {
+            BinaryFormat.MACH_O -> "__DATA_CONST,__kperm"
+            BinaryFormat.ELF -> "kperm"
+            BinaryFormat.PE_COFF -> error("Compressed references are not supported for PE/COFF")
+        })
+    }
+
     private fun createConstant(value: ConstValue): ConstPointer {
         val global = placeGlobal("", value)
         global.setUnnamedAddr(true)
         global.setConstant(true)
+        placeInPermanentsSection(global)
         // value should be of struct type with first element having the object/array header layout
         return global.pointer.getElementPtr(llvm, global.type, 0)
     }
@@ -99,6 +112,7 @@ internal class KotlinStaticData(override val generationState: NativeGenerationSt
         }
         val global = this.placeGlobal(kind.llvmName, objHeader, isExported = true)
         global.setConstant(true)
+        placeInPermanentsSection(global)
         return global.pointer
     }
 
