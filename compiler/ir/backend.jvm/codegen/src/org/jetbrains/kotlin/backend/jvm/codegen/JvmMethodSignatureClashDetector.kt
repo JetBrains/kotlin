@@ -209,8 +209,8 @@ internal class JvmIrConflictingDeclarationsData(
     }
 }
 
-private val IrFunction.isJavaStaticFakeOverride: Boolean
-    get() = (isFakeOverride && isStatic && this is IrSimpleFunction) && resolveFakeOverride()?.isFromJava() == true
+private val IrFunction.isStaticFakeOverrideForKotlin: Boolean
+    get() = isFakeOverride && isStatic && this is IrSimpleFunction && resolveFakeOverride()?.isFromJava() != true
 
 /**
  * To preserve the old behavior of never allowing accidental overrides by synthetic/generated code,
@@ -224,16 +224,18 @@ private fun IrOverrideChecker.canIgnoreConflict(a: IrFunction, b: IrFunction): B
 
     // Allow "accidental overrides" between two declarations if:
     // 1. One is static and the other is not.
-    // 2. One is a fake override and the other is defined in source code.
+    // 2. One is a static fake override and the other is member defined in source code.
     //    Note: This is overly restrictive but needed for preserving behavior of JvmStatic/JvmOverloads-generated
     //          methods before companion blocks where introduced, such as
     //          compiler/testData/diagnostics/tests/jvm/duplicateJvmSignature/jvmStatic/jvmStaticInCompanionObject.kt
     // 3. Neither of them is a fake override created for a static method from Java.
     // 4. They "override"/hide each other.
 
-    if (a.isStatic == b.isStatic) return false
-    if (!((a.isDefined && b.isFakeOverride) || (a.isFakeOverride && b.isDefined))) return false
-    if (a.isJavaStaticFakeOverride || b.isJavaStaticFakeOverride) return false
+    if (!((a.isDefined && !a.isStatic && b.isStaticFakeOverrideForKotlin) ||
+                (a.isStaticFakeOverrideForKotlin && b.isDefined && !b.isStatic))
+    ) {
+        return false
+    }
     if (a !is IrOverridableMember || b !is IrOverridableMember) return false
     if (!getBothWaysOverridability(MemberWithOriginal(a, null), MemberWithOriginal(b, null)).overridable) return false
 
