@@ -81,12 +81,9 @@ inline const T* PrimitiveArrayAddressOfElementAt(const ArrayHeader* obj, KInt in
   return AddressOfElementAt<T>(obj, index);
 }
 
-inline KRef* ArrayAddressOfElementAt(ArrayHeader* obj, KInt index) {
-  return AddressOfElementAt<KRef>(obj, index);
-}
-
-inline const KRef* ArrayAddressOfElementAt(const ArrayHeader* obj, KInt index) {
-  return AddressOfElementAt<KRef>(obj, index);
+inline kotlin::mm::HeapRefSlot* ArrayAddressOfElementAt(ArrayHeader* obj, KInt index) {
+  int8_t* body = reinterpret_cast<int8_t*>(obj) + alignUp(sizeof(ArrayHeader), alignof(KRef));
+  return reinterpret_cast<kotlin::mm::HeapRefSlot*>(body + index * kotlin::mm::heapRefSlotSize());
 }
 
 #ifdef __cplusplus
@@ -98,7 +95,7 @@ void Kotlin_io_Console_println0();
 void Kotlin_io_Console_println0ToStdErr();
 void Kotlin_NativePtrArray_set(KRef thiz, KInt index, KNativePtr value);
 KNativePtr Kotlin_NativePtrArray_get(KConstRef thiz, KInt index);
-RUNTIME_NOTHROW RUNTIME_PURE KRef* Kotlin_arrayGetElementAddress(KRef array, KInt index);
+RUNTIME_NOTHROW RUNTIME_PURE kotlin::mm::HeapRefSlot* Kotlin_arrayGetElementAddress(KRef array, KInt index);
 RUNTIME_NOTHROW RUNTIME_PURE KInt* Kotlin_intArrayGetElementAddress(KRef array, KInt index);
 RUNTIME_NOTHROW RUNTIME_PURE KLong* Kotlin_longArrayGetElementAddress(KRef array, KInt index);
 

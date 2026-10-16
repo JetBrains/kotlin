@@ -121,13 +121,13 @@ extern "C" RUNTIME_NOTHROW void RegisterGlobal(ObjHeader** location) {
     mm::GlobalsRegistry::Instance().RegisterStorageForGlobal(threadData, location);
 }
 
-extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW void ZeroHeapRef(ObjHeader** location) {
+extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW void ZeroHeapRef(mm::HeapRefSlot* location) {
     mm::RefFieldAccessor{location} = nullptr;
 }
 
 extern "C" RUNTIME_NOTHROW void ZeroArrayRefs(ArrayHeader* array) {
     for (uint32_t index = 0; index < array->count_; ++index) {
-        ObjHeader** location = ArrayAddressOfElementAt(array, index);
+        mm::HeapRefSlot* location = ArrayAddressOfElementAt(array, index);
         mm::RefFieldAccessor{location} = nullptr;
     }
 }
@@ -140,27 +140,27 @@ extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW void UpdateStackRef(ObjHeader** lo
     mm::StackRefAccessor{location} = const_cast<ObjHeader*>(object);
 }
 
-extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW void UpdateHeapRef(ObjHeader** location, const ObjHeader* object) {
+extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW void UpdateHeapRef(mm::HeapRefSlot* location, const ObjHeader* object) {
     mm::RefFieldAccessor{location} = const_cast<ObjHeader*>(object);
 }
 
-extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW void UpdateVolatileHeapRef(ObjHeader** location, const ObjHeader* object) {
+extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW void UpdateVolatileHeapRef(mm::HeapRefSlot* location, const ObjHeader* object) {
     mm::RefFieldAccessor{location}.storeAtomic(const_cast<ObjHeader*>(object), std::memory_order_seq_cst);
 }
 
 extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW
-        OBJ_GETTER(CompareAndSwapVolatileHeapRef, ObjHeader** location, ObjHeader* expectedValue, ObjHeader* newValue) {
+        OBJ_GETTER(CompareAndSwapVolatileHeapRef, mm::HeapRefSlot* location, ObjHeader* expectedValue, ObjHeader* newValue) {
     ObjHeader* actual = expectedValue;
     mm::RefFieldAccessor{location}.compareAndExchange(actual, newValue, std::memory_order_seq_cst);
     RETURN_OBJ(actual);
 }
 
 extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW bool CompareAndSetVolatileHeapRef(
-        ObjHeader** location, ObjHeader* expectedValue, ObjHeader* newValue) {
+        mm::HeapRefSlot* location, ObjHeader* expectedValue, ObjHeader* newValue) {
     return mm::RefFieldAccessor{location}.compareAndExchange(expectedValue, newValue, std::memory_order_seq_cst);
 }
 
-extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW OBJ_GETTER(GetAndSetVolatileHeapRef, ObjHeader** location, ObjHeader* newValue) {
+extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW OBJ_GETTER(GetAndSetVolatileHeapRef, mm::HeapRefSlot* location, ObjHeader* newValue) {
     RETURN_OBJ(mm::RefFieldAccessor{location}.exchange(newValue, std::memory_order_seq_cst));
 }
 
