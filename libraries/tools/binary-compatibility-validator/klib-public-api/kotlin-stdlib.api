@@ -11931,6 +11931,7 @@ final object kotlin.native.runtime/Debugging { // kotlin.native.runtime/Debuggin
         final fun <get-forceCheckedShutdown>(): kotlin/Boolean // kotlin.native.runtime/Debugging.forceCheckedShutdown.<get-forceCheckedShutdown>|<get-forceCheckedShutdown>(){}[0]
         final fun <set-forceCheckedShutdown>(kotlin/Boolean) // kotlin.native.runtime/Debugging.forceCheckedShutdown.<set-forceCheckedShutdown>|<set-forceCheckedShutdown>(kotlin.Boolean){}[0]
 
+    final fun dumpMemory(kotlin/Long): kotlin/Boolean // kotlin.native.runtime/Debugging.dumpMemory|dumpMemory(kotlin.Long){}[0]
     final fun dumpMemory(kotlin/Long, kotlin.native.runtime/MemoryDumpOptions = ...): kotlin/Boolean // kotlin.native.runtime/Debugging.dumpMemory|dumpMemory(kotlin.Long;kotlin.native.runtime.MemoryDumpOptions){}[0]
 }
 

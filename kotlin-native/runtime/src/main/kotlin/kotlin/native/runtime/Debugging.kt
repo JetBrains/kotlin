@@ -50,7 +50,11 @@ public object Debugging {
      * Mutators stay suspended until the write finishes, then this function returns
      * so the caller may close [fd].
      */
-    public fun dumpMemory(fd: Long, options: MemoryDumpOptions = MemoryDumpOptions()): Boolean =
+    // Keep dumpMemory(Long) in the klib ABI: options did not exist in 1.9.
+    public fun dumpMemory(
+            fd: Long,
+            @IntroducedAt("2.5.20") options: MemoryDumpOptions = MemoryDumpOptions(),
+    ): Boolean =
             dumpMemoryWithOptions(fd, options.omitPrimitiveArrayPayloads)
 
     @GCUnsafeCall("Kotlin_native_runtime_Debugging_dumpMemoryWithOptions")
