@@ -119,4 +119,49 @@ class KotlinWasmBuiltinTasksGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @OptIn(ExperimentalWasmDsl::class)
+    @DisplayName("Check js target dist with nested npm dependencies")
+    @GradleTest
+    fun jsTargetDistWithNestedNpmDependencies(gradleVersion: GradleVersion) {
+        project("empty", gradleVersion) {
+            settingsBuildScriptInjection {
+                settings.rootProject.name = "wasm-browser-simple-project"
+            }
+
+            plugins {
+                kotlin("multiplatform")
+            }
+
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    @OptIn(ExperimentalWasmDsl::class)
+                    wasmJs {
+                        binaries.executable()
+                        browser(bundler = KotlinBrowserBundler.NONE)
+                    }
+
+                    sourceSets.wasmJsMain.get().compileSource(
+                        """     
+                        fun main() {
+                            println("Hello, world")
+                        }
+                        """.trimIndent()
+                    )
+
+                    sourceSets.wasmJsMain.dependencies {
+                        // strip-ansi@6.0.1 is declared directly, so it is hoisted to the top level of
+                        // node_modules. wrap-ansi@8.1.0 depends on strip-ansi@^7.0.1, which is incompatible
+                        // with the hoisted 6.0.1, so npm cannot hoist it and nests it instead at
+                        // node_modules/wrap-ansi/node_modules/strip-ansi (resolved to 7.2.0).
+                        npm("strip-ansi", "6.0.1")
+                        npm("wrap-ansi", "8.1.0")
+                    }
+                }
+            }
+
+            build("build") {
+                assertTasksExecuted(":wasmJsBrowserDistribution")
+            }
+        }
+    }
 }
