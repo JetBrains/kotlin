@@ -81,6 +81,9 @@ class OnBuildCompletionSerializingInjection<Return : Any>(
 
     override fun inject(target: Project) {
         val returnEvaluationProvider = GradleProjectBuildScriptInjectionContext(target).returnValueInjection()
+        // Don't capture `this` in the closure below: CC would otherwise serialize `returnValueInjection`, which fails for
+        // deserialized non-capturing lambdas since Gradle 9.8 ("Kotlin object that is not its singleton instance")
+        val serializedReturnPath = serializedReturnPath
         val serializeOutput = {
             val returnValue = returnEvaluationProvider.orNull
             serializedReturnPath.outputStream().use {

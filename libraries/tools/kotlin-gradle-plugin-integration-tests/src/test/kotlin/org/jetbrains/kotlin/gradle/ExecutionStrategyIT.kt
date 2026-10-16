@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.checkedReplace
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
+import kotlin.io.path.absolutePathString
 import kotlin.io.path.appendText
 import kotlin.io.path.createFile
 import kotlin.io.path.createParentDirectories
@@ -228,7 +229,18 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
             build("build") {
                 val mainKt = subProject("app").kotlinSourcesDir().resolve("main.kt")
                 // ensure warnings are properly parsed
-                assertOutputContains("w: ${mainKt.toRealPath().toUri()}:9:5 'constructor(): A' is deprecated. deprecated for test")
+                if (gradleVersion == GradleVersion.version(TestVersions.Gradle.G_8_14)) {
+                    assertOutputContains("w: ${mainKt.toRealPath().toUri()}:9:5 'constructor(): A' is deprecated. deprecated for test")
+                } else {
+                    assertOutputContains(
+                        """
+                        Problem found: Kotlin compiler: DEPRECATION (id: kotlin:compiler:warning:DEPRECATION)
+                          Kotlin compiler warning
+                            'constructor(): A' is deprecated. deprecated for test.
+                            Location: ${mainKt.toRealPath().absolutePathString().normalizePath()}
+                        """.trimIndent()
+                    )
+                }
             }
         }
     }

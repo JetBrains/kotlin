@@ -14,9 +14,10 @@ import org.junit.jupiter.api.DisplayName
 import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.*
+import kotlin.test.assertEquals
 
 @JsGradlePluginTests
-abstract class IncrementalCompilationJsMultiProjectIT : BaseIncrementalCompilationMultiProjectIT() {
+class IncrementalCompilationJsMultiProjectIT : BaseIncrementalCompilationMultiProjectIT() {
     override val defaultProjectName: String = "incrementalMultiproject"
 
     override val defaultBuildOptions: BuildOptions
@@ -233,10 +234,6 @@ abstract class IncrementalCompilationJsMultiProjectIT : BaseIncrementalCompilati
         // `impactedClassInAppIsRecompiled = false` for Kotlin/JS (KT-56197 was fixed for Kotlin/JVM only)
         doTestLibClassBecameFinal(gradleVersion, impactedClassInAppIsRecompiled = false)
     }
-}
-
-class IncrementalCompilationK2JsMultiProject : IncrementalCompilationJsMultiProjectIT() {
-    override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
 }
 
 @JvmGradlePluginTests
@@ -725,7 +722,19 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
             }
 
             buildAndFail("assemble") {
-                assertOutputContains("AA.kt:3:8 Unresolved reference 'bar'.")
+                if (gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_9_3)) {
+                    // With '--warning-mode=all' KGP doesn't log compiler errors, Gradle renders them as problems instead
+                    assertEquals(
+                        "Unresolved reference 'bar'.",
+                        output.lines()
+                            .dropWhile { !it.endsWith("Problem found: Kotlin compiler: UNRESOLVED_IMPORT (id: kotlin:compiler:error:UNRESOLVED_IMPORT)") }
+                            .drop(2)
+                            .firstOrNull()
+                            ?.trim(),
+                    )
+                } else {
+                    assertOutputContains("AA.kt:3:8 Unresolved reference 'bar'.")
+                }
             }
         }
     }
@@ -987,4 +996,3 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
     }
 
 }
-

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.testbase
 
 import org.gradle.testkit.runner.BuildResult
-import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.BuildOptions.ConfigurationCacheProblems
 
 /**
@@ -22,7 +21,7 @@ fun TestProject.assertSimpleConfigurationCacheScenarioWorks(
 
     val executedTask: List<String> = executedTaskNames ?: buildArguments.toList()
 
-    build(*buildArguments, buildOptions = buildOptions.suppressAgpWarningIsProperty(gradleVersion)) {
+    build(*buildArguments, buildOptions = buildOptions) {
         assertTasksExecuted(*executedTask.toTypedArray())
         assertOutputContains(
             "Calculating task graph as no cached configuration is available for tasks: ${buildArguments.joinToString(separator = " ")}"
