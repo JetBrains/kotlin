@@ -31,11 +31,15 @@ import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.uklibs.include
 import org.jetbrains.kotlin.gradle.util.setupCInteropForTarget
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInNative
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import java.io.File
 
 @MppGradlePluginTests
+@MustRunOnChangesInGradle
+@MustRunOnChangesInNative
 class MppCrossCompilationIT : KGPBaseTest() {
 
     @DisplayName("Cross compilation enabled with dependecy, dependency with cinterops")
