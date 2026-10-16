@@ -3,12 +3,10 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.low.level.api.fir.resolve
+package org.jetbrains.kotlin.analysis.api.fir.test.cases.components.resolver
 
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver.AbstractResolveCandidatesByFileTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver.AbstractResolveCandidatesTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.LLSourceLikeTestConfigurator
-import org.jetbrains.kotlin.analysis.test.data.manager.TestVariantChain
-import org.jetbrains.kotlin.analysis.test.data.manager.withAdditionalVariant
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.test.services.TestServices
@@ -20,9 +18,9 @@ import org.jetbrains.kotlin.test.services.assertions
  *
  * This test ensures that the tree structure is not affected.
  *
- * @see AbstractResolveCandidatesFirTreeConsistencyTest
+ * @see AbstractResolveCandidatesByFileFirTreeConsistencyTest
  */
-abstract class AbstractResolveCandidatesByFileFirTreeConsistencyTest : AbstractResolveCandidatesByFileTest() {
+abstract class AbstractResolveCandidatesFirTreeConsistencyTest : AbstractResolveCandidatesTest() {
     override fun generateResolveOutput(resolveKind: ResolveKind, mainElement: KtElement, testServices: TestServices): String {
         return testServices.assertions.assertFirTreeConsistency(mainElement.containingKtFile) {
             super.generateResolveOutput(resolveKind, mainElement, testServices)
@@ -30,14 +28,7 @@ abstract class AbstractResolveCandidatesByFileFirTreeConsistencyTest : AbstractR
     }
 }
 
-/**
- * A workaround to mark the test as a non-golden one.
- *
- * It is fine to just add a synthetic prefix since [AbstractResolveCandidatesByFileFirTreeConsistencyTest] is not supposed to generate any outputs
- */
-internal fun TestVariantChain.patchedChainForConsistencyTests(): TestVariantChain = withAdditionalVariant("consistency")
-
-abstract class AbstractSourceLikeResolveCandidatesByFileFirTreeConsistencyTest : AbstractResolveCandidatesByFileFirTreeConsistencyTest() {
+abstract class AbstractSourceLikeResolveCandidatesFirTreeConsistencyTest : AbstractResolveCandidatesFirTreeConsistencyTest() {
     override val configurator: AnalysisApiTestConfigurator =
         object : LLSourceLikeTestConfigurator() {
             override val testPrefixes: List<String>

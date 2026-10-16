@@ -274,14 +274,6 @@ fun main(args: Array<String>) {
             testClass<AbstractCodeFragmentContextModificationLLFirSessionInvalidationTest> {
                 model("sessions/sessionInvalidation", excludeDirsRecursively = AbstractSessionInvalidationTest.TEST_OUTPUT_DIRECTORY_NAMES)
             }
-
-            testClass<AbstractSourceLikeResolveCandidatesFirTreeConsistencyTest> {
-                model("components/resolver/singleByPsi", pattern = TestGeneratorUtil.KT_OR_KTS)
-            }
-
-            testClass<AbstractSourceLikeResolveCandidatesByFileFirTreeConsistencyTest> {
-                model("components/resolver/allByPsi", pattern = TestGeneratorUtil.KT_OR_KTS)
-            }
         }
     }
 }
