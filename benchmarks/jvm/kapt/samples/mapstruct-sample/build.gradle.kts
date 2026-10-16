@@ -1,10 +1,12 @@
 plugins {
+    id("common-configuration")
     kotlin("jvm")
     kotlin("kapt")
 }
 
-kotlin {
-    jvmToolchain(17)
+jvmToolchains {
+    jdkVersion = JdkMajorVersion.JDK_17_0
+    targetBytecodeVersion = JdkMajorVersion.JDK_17_0
 }
 
 // Opt-in: -PstripMetadata=true drops @kotlin.Metadata annotations from generated stubs.
@@ -15,7 +17,14 @@ if ((findProperty("stripMetadata") as String?).toBoolean()) {
 
 val mapstructVersion: String = (findProperty("mapstruct.version") ?: "1.6.3") as String
 
+val generatorClasspath = configurations.create("generatorClasspath") {
+    isCanBeResolved = true
+    isCanBeConsumed = false
+}
+
 dependencies {
+    generatorClasspath(project(":benchmarks:jvm:kapt:source-generator"))
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:${project.bootstrapKotlinVersion}")
     // implementation: runtime mapper interface + helpers.
     // kapt: registers the MapStruct processor on the annotation-processor path.
     implementation("org.mapstruct:mapstruct:$mapstructVersion")
@@ -34,21 +43,19 @@ val generatorSeed: String = (findProperty("generatorSeed") ?: "42") as String
 
 val generatedSrcDir = layout.buildDirectory.dir("generated/source/research-kapt/main")
 
-val generateSources by tasks.registering(JavaExec::class) {
-    classpath = project(":source-generator").the<SourceSetContainer>()["main"].runtimeClasspath
+val generateSources = tasks.register<JavaExec>("generateSources") {
+    classpath = generatorClasspath
     mainClass.set("research.kapt.gen.MainKt")
     outputs.dir(generatedSrcDir)
     inputs.property("classCount", classCount)
     inputs.property("mode", "mapstruct")
     inputs.property("seed", generatorSeed)
-    argumentProviders.add(CommandLineArgumentProvider {
-        listOf(
-            "--count", classCount.toString(),
-            "--mode", "mapstruct",
-            "--seed", generatorSeed,
-            "--out-dir", generatedSrcDir.get().asFile.absolutePath
-        )
-    })
+    args(
+        "--count", classCount.toString(),
+        "--mode", "mapstruct",
+        "--seed", generatorSeed,
+        "--out-dir", generatedSrcDir.get().asFile.absolutePath
+    )
 }
 
 sourceSets["main"].kotlin.srcDir(generatedSrcDir)

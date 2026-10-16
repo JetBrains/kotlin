@@ -41,11 +41,7 @@ mapstruct-sample large (2000 classes) | 20 |    6037.9 |  117.5 | [5807.6, 6268.
 ### Run a benchmark
 
 ```bash
-git clone <repo-url> kapt-benchmark
-cd kapt-benchmark
-
-# Smoke-test that everything builds:
-./gradlew :samples:synthetic-noop:kaptKotlin -PsampleSize=small
+cd benchmarks/jvm/kapt
 
 # Run the benchmark:
 gradle-profiler --benchmark \
@@ -63,17 +59,13 @@ Scenario                              |  N |  Mean (ms) | Stderr |          95% 
 synthetic-noop large (2000 classes)   | 20 |     1180.5 |   26.3 | [1128.9, 1232.1]
 ```
 
-To run the full suite (all 9 scenarios), see [Run all benchmarks](#run-all-benchmarks) below.
-
 ## Run all benchmarks
 
 Each scenario runs 2 warmups + 20 measured iterations. Wall time per scenario ranges from ~1 minute (synthetic small) to ~4 minutes (dagger large). Total for all 9: ~30 minutes on an M3 Max.
 
 Sizes map to class counts: small=100, medium=500, large=2000.
 
-The repository includes a wrapper script that runs a set of scenarios and prints one combined summary table at the end.
-
-The script writes each scenario's output to `profile-out`, then summarizes them in a single table.
+The repository includes a wrapper script that runs the benchmarks. The script writes each scenario's output to `profile-out`, then summarizes them in a single table.
 
 To re-render the combined table from results already on disk (without rerunning anything):
 
@@ -91,9 +83,9 @@ python3 scripts/summarize_benchmark.py profile-out/benchmark.csv
 
 - **Sample size:** `-PsampleSize=small|medium|large` (100 / 500 / 2000 generated classes).
 - **Source generator seed:** `-PgeneratorSeed=42` (any integer for deterministic source generation).
-- **Kotlin version:** edit `gradle.properties` and change `kotlin.version=2.3.21` to whatever public Kotlin release you want to benchmark (subject to plugin DSL compatibility).
-- **Dependency versions:** edit `gradle.properties` for `dagger.version` / `mapstruct.version`.
-- **Iteration counts:** edit the `kapt.scenarios` file; gradle-profiler uses the `warm-ups` and `iterations` keys.
+- **Kotlin version:** please see Kotlin repo bootstrapping for options
+- **Dependency versions:** `-Pdagger.version` / `-Pmapstruct.version`.
+- **Iteration counts:** edit the `kapt.scenarios` file or pass it to `gradle-profiler` manually; gradle-profiler uses the `warm-ups` and `iterations` keys.
 
 See [METHODOLOGY.md](METHODOLOGY.md) for a deep dive on what's measured, how, and known limitations.
 
@@ -108,7 +100,3 @@ We tested this benchmark on:
 - gradle-profiler: 0.24.0
 
 Numbers will vary on your hardware. The benchmark is designed for **relative** comparisons (version-to-version, configuration-to-configuration on the same machine), not absolute reproducibility across hardware.
-
-## License
-
-Apache-2.0. See [LICENSE](LICENSE).

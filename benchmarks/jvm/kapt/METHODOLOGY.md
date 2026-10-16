@@ -94,7 +94,7 @@ The script does **not** test for normality, do bootstrap CI, or handle outliers 
 ### Adding a workload
 
 1. Create a new module under `samples/<your-workload>/` with a `build.gradle.kts` modeled on `samples/dagger-sample/build.gradle.kts`.
-2. Add `:samples:<your-workload>` to `include(...)` in `settings.gradle.kts`.
+2. Add `:benchmarks:jvm:kapt:samples:<your-workload>` to `include(...)` in `settings.gradle.kts`.
 3. Add it to `kapt.scenarios`.
 4. Wire your annotation processor of choice into the `dependencies { kapt(...) }` block.
 
@@ -116,13 +116,7 @@ Then add corresponding scenarios in the scenario files.
 
 ### Comparing Kotlin versions
 
-Edit `gradle.properties`:
-
-```properties
-kotlin.version=2.4.0  # Whatever public release you want
-```
-
-Re-run the benchmark. Note: when Kotlin's plugin DSL changes between major versions, you may need to update the `pluginManagement.plugins` block in `settings.gradle.kts`.
+Please see Kotlin repo bootstrapping options for options how to select a different Kotlin version. Then, re-run the benchmark. 
 
 ### Profiling deeper than wall time
 
@@ -141,7 +135,7 @@ gradle-profiler supports `--profile async-profiler` (CPU flame graphs) and `--pr
 Run the 9-cell default suite (3 workloads × 3 sizes) and summarize:
 
 ```bash
-cd kapt-benchmark
+cd benchmarks/jvm/kapt
 gradle-profiler --benchmark \
     --output-dir profile-out \
     --scenario-file kapt.scenarios
