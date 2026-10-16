@@ -411,10 +411,10 @@ class KotlinPlaywrightTestFrameworkWiringTest {
         framework.npmToolingEnvDir.set(npmToolingEnvDir)
 
         val executionSpec = assertIs<PwExecutionSpec>(
-            framework.createTestExecutionSpec(
+            framework.createTestExecutionSpecification(
                 task = testTask,
                 launchOpts = project.objects.processLaunchOptions(),
-                nodeJsArgs = mutableListOf(),
+                toolArgs = mutableListOf(),
                 debug = false,
             )
         )

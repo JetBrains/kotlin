@@ -40,10 +40,10 @@ internal class KotlinWasmtime(
 
     override val executable: Provider<String> = wasmtime.executable
 
-    override fun createTestExecutionSpec(
+    override fun createTestExecutionSpecification(
         task: KotlinJsTest,
         launchOpts: ProcessLaunchOptions,
-        nodeJsArgs: MutableList<String>,
+        toolArgs: List<String>,
         debug: Boolean,
     ): TCServiceMessagesTestExecutionSpec {
         val compiledFile = task.inputFileProperty.getFile()
@@ -62,6 +62,7 @@ internal class KotlinWasmtime(
         )
 
         val args = mutableListOf<String>().apply {
+            addAll(toolArgs)
             addAll(wasmtimeInvokeArgs("startUnitTests"))
             add(compiledFile.absolutePath)
             addAll(cliArgs.toList())

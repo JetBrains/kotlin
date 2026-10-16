@@ -163,10 +163,10 @@ internal class KotlinPlaywrightJsTestFramework(
 
     override fun createTestExecuter(): TestExecuter<*> = PlaywrightTestExecutor()
 
-    override fun createTestExecutionSpec(
+    override fun createTestExecutionSpecification(
         task: KotlinJsTest,
         launchOpts: ProcessLaunchOptions,
-        nodeJsArgs: MutableList<String>,
+        toolArgs: List<String>,
         debug: Boolean,
     ): PwExecutionSpec {
         val clientSettings = TCServiceMessagesClientSettings(
