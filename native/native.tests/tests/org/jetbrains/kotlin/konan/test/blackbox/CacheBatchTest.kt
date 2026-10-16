@@ -467,6 +467,7 @@ class CacheBatchTest : AbstractNativeSimpleTest() {
 
     private fun compile(vararg args: String?): String {
         val compilerArgs = buildList {
+            add("-Xbinary=batchedCacheBuild=true")
             addAll(args.filterNotNull())
             testRunSettings.get<PlatformLibs>().compilerFlag?.let { add(it) }
             addAll(provisionedXcodeCompilerArgs)

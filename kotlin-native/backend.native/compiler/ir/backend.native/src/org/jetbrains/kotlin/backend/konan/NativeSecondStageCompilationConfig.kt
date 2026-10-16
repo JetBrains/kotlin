@@ -370,7 +370,7 @@ class NativeSecondStageCompilationConfig(
         get() = configuration.get(BinaryOptions.perFileCacheForStdlib) ?: defaultPerFileCacheForStdlib
 
     val batchedCacheBuild: Boolean
-        get() = configuration.get(BinaryOptions.batchedCacheBuild) ?: true
+        get() = configuration.get(BinaryOptions.batchedCacheBuild) ?: false
 
     init {
         // NB: producing LIBRARY is enabled on any combination of hosts/targets
