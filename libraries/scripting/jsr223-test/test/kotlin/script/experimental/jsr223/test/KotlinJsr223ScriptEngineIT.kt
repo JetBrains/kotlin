@@ -277,6 +277,27 @@ obj
     }
 
     @Test
+    fun testGlobalScopeBindings() {
+        val manager = ScriptEngineManager()
+        manager.put("globalBase", 1000)
+        manager.put("shadowed", 1)
+        val engine = manager.getEngineByExtension("kts")!!
+        engine.put("shadowed", 2)
+        // GLOBAL_SCOPE bindings are exposed as typed properties as well, and are read from GLOBAL_SCOPE (KT-90298)
+        assertEquals(1001, engine.eval("globalBase + 1"))
+        // ENGINE_SCOPE takes precedence, as in ScriptContext.getAttribute
+        assertEquals(2, engine.eval("shadowed"))
+        // Assignment updates the scope that holds the binding
+        engine.eval("globalBase = 2000")
+        assertEquals(2000, manager.get("globalBase"))
+        assertNull(engine.getBindings(ScriptContext.ENGINE_SCOPE)["globalBase"])
+        assertEquals(2001, engine.eval("globalBase + 1"))
+        // Same for the backtick-quoted names, which are exposed through a delegate
+        manager.put("global name", 5)
+        assertEquals(6, engine.eval("`global name` + 1"))
+    }
+
+    @Test
     fun testMultipleCompilable() {
         val engine = ScriptEngineManager().getEngineByExtension("kts") as KotlinJsr223ScriptEngineImpl
         val compiled1 = engine.compile("""listOf(1,2,3).joinToString(",")""")
