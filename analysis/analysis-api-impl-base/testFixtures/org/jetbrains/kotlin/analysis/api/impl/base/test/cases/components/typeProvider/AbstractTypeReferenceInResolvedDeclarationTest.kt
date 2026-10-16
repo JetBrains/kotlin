@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.containingDeclaration
 import org.jetbrains.kotlin.analysis.api.symbols.findClassLike
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.analysis.api.types.KaErrorType
@@ -113,16 +114,18 @@ abstract class AbstractTypeReferenceInResolvedDeclarationTest : AbstractAnalysis
 
     /**
      * Checks that the symbol of [this] type is the same as the one provided by the use-site session:
-     * a class found by its class ID, or a type parameter of the [resolvedSymbol].
+     * a class found by its class ID, or a type parameter of the [resolvedSymbol] or of its containing declarations.
      */
     context(_: KaSession)
     private fun KaType.isSymbolConsistentWith(resolvedSymbol: KaSymbol): Boolean? = when (this) {
         is KaClassType -> symbol == findClassLike(classId)
         is KaTypeParameterType -> {
-            val typeParameters = when (resolvedSymbol) {
-                is KaCallableSymbol -> resolvedSymbol.typeParameters
-                is KaClassLikeSymbol -> resolvedSymbol.typeParameters
-                else -> emptyList()
+            val typeParameters = generateSequence(resolvedSymbol) { it.containingDeclaration }.flatMap { declaration ->
+                when (declaration) {
+                    is KaCallableSymbol -> declaration.typeParameters
+                    is KaClassLikeSymbol -> declaration.typeParameters
+                    else -> emptyList()
+                }
             }
 
             symbol in typeParameters

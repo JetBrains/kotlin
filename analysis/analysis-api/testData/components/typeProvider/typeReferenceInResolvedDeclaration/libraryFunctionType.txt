@@ -1,0 +1,17 @@
+Compiled: true
+Decompiled text loaded by type computation: false
+
+public fun <T> foo(f: context(T) T.(T, kotlin.String) -> kotlin.collections.List<T>, g: suspend (T) -> T?): ((T) -> kotlin.Unit)? { /* compiled code */ }
+//                    ^context(T) T.(T, String) -> List<T>(use)
+//                            ^T(decl)
+//                               ^T(decl)
+//                                  ^T(decl)
+//                                     ^String(use)
+//                                                       ^List<T>(use)
+//                                                                               ^T(decl)
+//                                                                                      ^suspend (T) -> T?(use)
+//                                                                                               ^T(decl)
+//                                                                                                     ^T?(decl)
+//                                                                                                          ^((T) -> Unit)?(use)
+//                                                                                                            ^T(decl)
+//                                                                                                                  ^Unit(use)
