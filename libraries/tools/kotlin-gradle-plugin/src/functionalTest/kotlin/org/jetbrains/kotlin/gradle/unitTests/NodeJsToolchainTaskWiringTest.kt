@@ -101,7 +101,7 @@ class NodeJsToolchainTaskWiringTest {
     fun `node js exec does not resolve the executable at configuration time`() {
         val project = buildProjectWithMPP(
             preApplyCode = {
-                propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_JS_NODEJS_TOOLCHAIN, "download")
+                propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_JS_NODEJS_TOOLCHAIN_MODE, "download")
             }
         ) {
             with(multiplatformExtension) {
@@ -161,7 +161,7 @@ class NodeJsToolchainTaskWiringTest {
     @Test
     fun `legacy executable is empty when the toolchain is enabled`() {
         val project = buildJsBrowserProject {
-            propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_JS_NODEJS_TOOLCHAIN, "download")
+            propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_JS_NODEJS_TOOLCHAIN_MODE, "download")
         }
         assertIs<DefaultNodeJsToolchainServiceImpl>(project.registeredService())
         val service: Provider<NodeJsToolchainService<*>> = project.provider { project.registeredService() }
