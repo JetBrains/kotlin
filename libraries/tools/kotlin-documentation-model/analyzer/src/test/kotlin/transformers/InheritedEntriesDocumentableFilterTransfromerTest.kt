@@ -11,7 +11,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class InheritedEntriesDocumentableFilterTransformerTest : BaseAbstractTest() {
-    val suppressingInheritedConfiguration = dokkaConfiguration {
+    internal val suppressingInheritedConfiguration = dokkaConfiguration {
         suppressInheritedMembers = true
         suppressObviousFunctions = false
         sourceSets {
@@ -21,7 +21,7 @@ class InheritedEntriesDocumentableFilterTransformerTest : BaseAbstractTest() {
         }
     }
 
-    val nonSuppressingInheritedConfiguration = dokkaConfiguration {
+    internal val nonSuppressingInheritedConfiguration = dokkaConfiguration {
         suppressObviousFunctions = false
         suppressInheritedMembers = false
         sourceSets {
@@ -159,4 +159,3 @@ class InheritedEntriesDocumentableFilterTransformerTest : BaseAbstractTest() {
         }
     }
 }
-

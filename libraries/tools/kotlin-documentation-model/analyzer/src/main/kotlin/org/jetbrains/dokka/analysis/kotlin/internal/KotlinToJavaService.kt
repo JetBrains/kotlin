@@ -8,7 +8,7 @@ import org.jetbrains.dokka.InternalDokkaApi
 import org.jetbrains.dokka.links.DRI
 
 @InternalDokkaApi
-public interface KotlinToJavaService {
+internal interface KotlinToJavaService {
     /**
      * E.g.
      * kotlin.Throwable -> java.lang.Throwable
@@ -25,5 +25,5 @@ public interface KotlinToJavaService {
      * kotlin.reflect.KFunction42 -> kotlin.reflect.KFunction
      * kotlin.reflect.KSuspendFunction42 -> kotlin.reflect.KFunction
      */
-    public fun findAsJava(kotlinDri: DRI): DRI?
+    fun findAsJava(kotlinDri: DRI): DRI?
 }

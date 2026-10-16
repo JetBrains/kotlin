@@ -4,9 +4,9 @@
 
 package org.jetbrains.dokka.model
 
-public interface ClassKind
+internal interface ClassKind
 
-public enum class KotlinClassKindTypes : ClassKind {
+internal enum class KotlinClassKindTypes : ClassKind {
     CLASS,
     INTERFACE,
     ENUM_CLASS,
@@ -15,7 +15,7 @@ public enum class KotlinClassKindTypes : ClassKind {
     OBJECT;
 }
 
-public enum class JavaClassKindTypes : ClassKind {
+internal enum class JavaClassKindTypes : ClassKind {
     CLASS,
     INTERFACE,
     ENUM_CLASS,

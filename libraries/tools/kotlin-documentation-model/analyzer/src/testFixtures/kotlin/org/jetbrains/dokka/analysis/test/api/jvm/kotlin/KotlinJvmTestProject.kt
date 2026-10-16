@@ -23,7 +23,7 @@ import org.jetbrains.dokka.plugability.DokkaPlugin
 /**
  * @see kotlinJvmTestProject for an explanation and a convenient way to construct this project
  */
-class KotlinJvmTestProject : TestProject, KtFileCreator, MdFileCreator, KotlinSampleFileCreator, Pluggable {
+internal class KotlinJvmTestProject : TestProject, KtFileCreator, MdFileCreator, KotlinSampleFileCreator, Pluggable {
 
     private val projectConfigurationBuilder = KotlinJvmTestConfigurationBuilder()
 
@@ -99,5 +99,4 @@ class KotlinJvmTestProject : TestProject, KtFileCreator, MdFileCreator, KotlinSa
         val DEFAULT_SOURCE_SET_ID = DokkaSourceSetID(scopeId = "project", sourceSetName = "kotlin")
     }
 }
-
 

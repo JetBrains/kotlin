@@ -10,11 +10,11 @@ import org.jetbrains.dokka.model.Documentable
 import org.jetbrains.dokka.model.WithSources
 
 @InternalDokkaApi
-public enum class DocumentableLanguage {
+internal enum class DocumentableLanguage {
     JAVA, KOTLIN
 }
 
 @InternalDokkaApi
-public interface DocumentableSourceLanguageParser {
-    public fun getLanguage(documentable: Documentable, sourceSet: DokkaConfiguration.DokkaSourceSet): DocumentableLanguage?
+internal interface DocumentableSourceLanguageParser {
+    fun getLanguage(documentable: Documentable, sourceSet: DokkaConfiguration.DokkaSourceSet): DocumentableLanguage?
 }

@@ -23,7 +23,7 @@ import org.jetbrains.dokka.ExperimentalDokkaApi
  * in modules that only have access to `dokka-core`.
  */
 @InternalDokkaApi
-public class DefaultDocumentableMerger(context: DokkaContext) : DocumentableMerger {
+internal class DefaultDocumentableMerger(context: DokkaContext) : DocumentableMerger {
     private val dependencyInfo = context.getDependencyInfo()
 
     override fun invoke(modules: Collection<DModule>): DModule? =
@@ -146,7 +146,7 @@ public class DefaultDocumentableMerger(context: DokkaContext) : DocumentableMerg
         }
     }
 
-    public fun DPackage.mergeWith(other: DPackage): DPackage = copy(
+    fun DPackage.mergeWith(other: DPackage): DPackage = copy(
         functions = mergeExpectActual(functions + other.functions) { f1, f2 -> f1.mergeWith(f2) },
         properties = mergeExpectActual(properties + other.properties) { p1, p2 -> p1.mergeWith(p2) },
         classlikes = mergeExpectActual(classlikes + other.classlikes) { c1, c2 -> c1.mergeWith(c2) },
@@ -156,7 +156,7 @@ public class DefaultDocumentableMerger(context: DokkaContext) : DocumentableMerg
         sourceSets = sourceSets + other.sourceSets
     ).mergeExtras(this, other)
 
-    public fun DFunction.mergeWith(other: DFunction): DFunction = copy(
+    fun DFunction.mergeWith(other: DFunction): DFunction = copy(
         parameters = merge(this.parameters + other.parameters) { p1, p2 -> p1.mergeWith(p2) },
         receiver = receiver?.let { r -> other.receiver?.let { r.mergeWith(it) } ?: r } ?: other.receiver,
         documentation = documentation + other.documentation,
@@ -169,7 +169,7 @@ public class DefaultDocumentableMerger(context: DokkaContext) : DocumentableMerg
         contextParameters = @OptIn(ExperimentalDokkaApi::class) merge(this.contextParameters + other.contextParameters) { p1, p2 -> p1.mergeWith(p2) }
     ).mergeExtras(this, other)
 
-    public fun DProperty.mergeWith(other: DProperty): DProperty = copy(
+    fun DProperty.mergeWith(other: DProperty): DProperty = copy(
         receiver = receiver?.let { r -> other.receiver?.let { r.mergeWith(it) } ?: r } ?: other.receiver,
         documentation = documentation + other.documentation,
         expectPresentInSet = expectPresentInSet ?: other.expectPresentInSet,
@@ -303,8 +303,8 @@ public class DefaultDocumentableMerger(context: DokkaContext) : DocumentableMerg
     ).mergeExtras(this, other)
 }
 
-public data class ClashingDriIdentifier(val value: Set<DokkaConfiguration.DokkaSourceSet>) : ExtraProperty<Documentable> {
-    public companion object : ExtraProperty.Key<Documentable, ClashingDriIdentifier> {
+internal data class ClashingDriIdentifier(val value: Set<DokkaConfiguration.DokkaSourceSet>) : ExtraProperty<Documentable> {
+    companion object : ExtraProperty.Key<Documentable, ClashingDriIdentifier> {
         override fun mergeStrategyFor(
             left: ClashingDriIdentifier,
             right: ClashingDriIdentifier

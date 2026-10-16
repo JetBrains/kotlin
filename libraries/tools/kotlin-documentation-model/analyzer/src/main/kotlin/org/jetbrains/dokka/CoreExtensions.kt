@@ -14,21 +14,21 @@ import org.jetbrains.dokka.transformers.sources.SourceToDocumentableTranslator
 import org.jetbrains.dokka.validity.PreGenerationChecker
 import kotlin.reflect.KProperty
 
-public object CoreExtensions {
+internal object CoreExtensions {
 
-    public val preGenerationCheck: ExtensionPoint<PreGenerationChecker> by coreExtensionPoint<PreGenerationChecker>()
+    val preGenerationCheck: ExtensionPoint<PreGenerationChecker> by coreExtensionPoint<PreGenerationChecker>()
 
-    public val generation: ExtensionPoint<Generation> by coreExtensionPoint<Generation>()
+    val generation: ExtensionPoint<Generation> by coreExtensionPoint<Generation>()
 
-    public val sourceToDocumentableTranslator: ExtensionPoint<SourceToDocumentableTranslator> by coreExtensionPoint<SourceToDocumentableTranslator>()
+    val sourceToDocumentableTranslator: ExtensionPoint<SourceToDocumentableTranslator> by coreExtensionPoint<SourceToDocumentableTranslator>()
 
-    public val documentableMerger: ExtensionPoint<DocumentableMerger> by coreExtensionPoint<DocumentableMerger>()
+    val documentableMerger: ExtensionPoint<DocumentableMerger> by coreExtensionPoint<DocumentableMerger>()
 
-    public val documentableTransformer: ExtensionPoint<DocumentableTransformer> by coreExtensionPoint<DocumentableTransformer>()
+    val documentableTransformer: ExtensionPoint<DocumentableTransformer> by coreExtensionPoint<DocumentableTransformer>()
 
-    public val postActions: ExtensionPoint<PostAction> by coreExtensionPoint<PostAction>()
+    val postActions: ExtensionPoint<PostAction> by coreExtensionPoint<PostAction>()
 
-    public val cleanUpActions: ExtensionPoint<CleanUpAction> by coreExtensionPoint<CleanUpAction>()
+    val cleanUpActions: ExtensionPoint<CleanUpAction> by coreExtensionPoint<CleanUpAction>()
 
     private fun <T : Any> coreExtensionPoint() = object {
         operator fun provideDelegate(thisRef: CoreExtensions, property: KProperty<*>): Lazy<ExtensionPoint<T>> =

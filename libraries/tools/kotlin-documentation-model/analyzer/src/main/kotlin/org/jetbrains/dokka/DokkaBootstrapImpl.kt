@@ -13,10 +13,10 @@ import java.util.function.BiConsumer
  * Accessed with reflection
  */
 @Suppress("unused")
-public class DokkaBootstrapImpl : DokkaBootstrap {
+internal class DokkaBootstrapImpl : DokkaBootstrap {
 
-    public class DokkaProxyLogger(
-        public val consumer: BiConsumer<String, String>
+    class DokkaProxyLogger(
+        val consumer: BiConsumer<String, String>
     ) : DokkaLogger {
         private val warningsCounter = AtomicInteger()
         private val errorsCounter = AtomicInteger()
@@ -52,7 +52,7 @@ public class DokkaBootstrapImpl : DokkaBootstrap {
 
     private lateinit var generator: DokkaGenerator
 
-    public fun configure(logger: DokkaLogger, configuration: DokkaConfigurationImpl) {
+    fun configure(logger: DokkaLogger, configuration: DokkaConfigurationImpl) {
         generator = DokkaGenerator(configuration, logger)
     }
 

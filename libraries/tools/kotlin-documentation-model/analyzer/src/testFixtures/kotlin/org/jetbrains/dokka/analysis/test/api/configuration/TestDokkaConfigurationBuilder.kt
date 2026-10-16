@@ -15,7 +15,7 @@ import org.jetbrains.dokka.analysis.test.api.util.AnalysisTestDslMarker
  * data or prohibit setting certain properties.
  */
 @AnalysisTestDslMarker
-abstract class BaseTestDokkaConfigurationBuilder {
+internal abstract class BaseTestDokkaConfigurationBuilder {
 
     /**
      * @see TestDokkaConfiguration.moduleName
@@ -55,7 +55,7 @@ abstract class BaseTestDokkaConfigurationBuilder {
  * data or prohibit setting certain properties.
  */
 @AnalysisTestDslMarker
-abstract class BaseTestDokkaSourceSetBuilder {
+internal abstract class BaseTestDokkaSourceSetBuilder {
 
     /**
      * Directories **additional** to the default source roots.

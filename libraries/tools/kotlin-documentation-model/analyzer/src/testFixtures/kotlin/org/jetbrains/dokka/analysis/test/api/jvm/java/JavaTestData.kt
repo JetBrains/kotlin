@@ -18,7 +18,7 @@ import org.jetbrains.dokka.analysis.test.api.util.filePathToPackageName
  *                          Must be relative to the root of the test project. Example: `/src/main/java`
  * @see TestData
  */
-class JavaTestData(
+internal class JavaTestData(
     private val pathToJavaSources: String
 ) : TestData, JavaFileCreator {
 
@@ -51,4 +51,3 @@ class JavaTestData(
         return "JavaTestData(pathToJavaSources='$pathToJavaSources', files=$files)"
     }
 }
-

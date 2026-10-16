@@ -15,7 +15,7 @@ import org.jetbrains.dokka.analysis.test.api.util.AnalysisTestDslMarker
 /**
  * An implementation of [BaseTestDokkaConfigurationBuilder] specific to [JavaTestProject].
  */
-class JavaTestConfigurationBuilder : BaseTestDokkaConfigurationBuilder() {
+internal class JavaTestConfigurationBuilder : BaseTestDokkaConfigurationBuilder() {
     override var moduleName: String = "javaTestProject"
 
     private val javaSourceSetBuilder = JavaTestSourceSetBuilder()
@@ -44,7 +44,7 @@ class JavaTestConfigurationBuilder : BaseTestDokkaConfigurationBuilder() {
  *
  * Defines sensible defaults that should cover the majority of simple projects.
  */
-class JavaTestSourceSetBuilder : BaseTestDokkaSourceSetBuilder() {
+internal class JavaTestSourceSetBuilder : BaseTestDokkaSourceSetBuilder() {
     override fun build(): TestDokkaSourceSet {
         return TestDokkaSourceSet(
             analysisPlatform = Platform.jvm,

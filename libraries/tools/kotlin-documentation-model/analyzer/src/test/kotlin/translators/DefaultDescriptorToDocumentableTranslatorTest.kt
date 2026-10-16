@@ -19,7 +19,7 @@ import kotlin.test.*
 
 @MustRunOnChangesInAnalysisApi
 class DefaultDescriptorToDocumentableTranslatorTest : BaseAbstractTest() {
-    val configuration = dokkaConfiguration {
+    internal val configuration = dokkaConfiguration {
         suppressObviousFunctions = false
         sourceSets {
             sourceSet {
@@ -29,7 +29,7 @@ class DefaultDescriptorToDocumentableTranslatorTest : BaseAbstractTest() {
         }
     }
 
-    val javaConfiguration = dokkaConfiguration {
+    internal val javaConfiguration = dokkaConfiguration {
         sourceSets {
             sourceSet {
                 sourceRoots = listOf("src/main/java")

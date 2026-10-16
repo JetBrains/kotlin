@@ -13,14 +13,17 @@ import org.jetbrains.dokka.analysis.test.api.jvm.kotlin.KotlinJvmTestProject
 /**
  * @return the only existing source set or an exception
  */
-fun TestAnalysisContext.singleSourceSet(): DokkaConfiguration.DokkaSourceSet {
+internal fun TestAnalysisContext.singleSourceSet(): DokkaConfiguration.DokkaSourceSet {
     return this.configuration.sourceSets.single()
 }
 
-fun TestAnalysisContext.defaultKotlinSourceSet() = findSourceSetById(KotlinJvmTestProject.DEFAULT_SOURCE_SET_ID)
-fun TestAnalysisContext.defaultJavaSourceSet() = findSourceSetById(JavaTestProject.DEFAULT_SOURCE_SET_ID)
+@Suppress("unused")
+internal fun TestAnalysisContext.defaultKotlinSourceSet() = findSourceSetById(KotlinJvmTestProject.DEFAULT_SOURCE_SET_ID)
 
-fun TestAnalysisContext.findSourceSetById(dokkaSourceSetID: DokkaSourceSetID): DokkaConfiguration.DokkaSourceSet {
+@Suppress("unused")
+internal fun TestAnalysisContext.defaultJavaSourceSet() = findSourceSetById(JavaTestProject.DEFAULT_SOURCE_SET_ID)
+
+internal fun TestAnalysisContext.findSourceSetById(dokkaSourceSetID: DokkaSourceSetID): DokkaConfiguration.DokkaSourceSet {
     return this.configuration.sourceSets.single {
         it.sourceSetID == dokkaSourceSetID
     }

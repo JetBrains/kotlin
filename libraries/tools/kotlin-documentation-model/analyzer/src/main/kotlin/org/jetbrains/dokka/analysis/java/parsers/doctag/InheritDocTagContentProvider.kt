@@ -8,7 +8,7 @@ import org.jetbrains.dokka.InternalDokkaApi
 import org.jetbrains.dokka.analysis.java.doccomment.DocumentationContent
 
 @InternalDokkaApi
-public interface InheritDocTagContentProvider {
-    public fun canConvert(content: DocumentationContent): Boolean
-    public fun convertToHtml(content: DocumentationContent, docTagParserContext: DocTagParserContext): String
+internal interface InheritDocTagContentProvider {
+    fun canConvert(content: DocumentationContent): Boolean
+    fun convertToHtml(content: DocumentationContent, docTagParserContext: DocTagParserContext): String
 }

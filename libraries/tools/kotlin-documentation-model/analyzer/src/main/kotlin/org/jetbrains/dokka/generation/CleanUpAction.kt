@@ -5,4 +5,4 @@
 package org.jetbrains.dokka.generation
 
 /** Runs before generation exits. This action is run even if generation fails. */
-public fun interface CleanUpAction : () -> Unit
+internal fun interface CleanUpAction : () -> Unit

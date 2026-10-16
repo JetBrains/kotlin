@@ -18,4 +18,4 @@ import org.jetbrains.dokka.model.doc.TagWrapper
  * The current name and value are chosen for compatibility reasons, because before this constant
  * was introduced, a different constant named `MARKDOWN_FILE` was used, but it's no longer available.
  */
-public const val MARKDOWN_ELEMENT_FILE_NAME: String = "MARKDOWN_FILE" // see #3366 and #3404 for more context
+internal const val MARKDOWN_ELEMENT_FILE_NAME: String = "MARKDOWN_FILE" // see #3366 and #3404 for more context

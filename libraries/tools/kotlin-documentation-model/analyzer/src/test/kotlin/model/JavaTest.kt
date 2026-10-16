@@ -28,7 +28,7 @@ import kotlin.test.assertTrue
 
 @MustRunOnChangesInAnalysisApi
 class JavaTest : BaseAbstractTest() {
-    val configuration = dokkaConfiguration {
+    internal val configuration = dokkaConfiguration {
         sourceSets {
             sourceSet {
                 sourceRoots = listOf("src/")

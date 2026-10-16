@@ -6,6 +6,7 @@ package org.jetbrains.dokka.model
 
 import org.jetbrains.dokka.links.DRI
 
-public fun DRI.isJvmName(): Boolean = packageName == "kotlin.jvm" && classNames == "JvmName"
+internal fun DRI.isJvmName(): Boolean = packageName == "kotlin.jvm" && classNames == "JvmName"
 
-public fun Annotations.Annotation.isJvmName(): Boolean = dri.isJvmName()
+@Suppress("unused")
+internal fun Annotations.Annotation.isJvmName(): Boolean = dri.isJvmName()

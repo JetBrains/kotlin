@@ -34,7 +34,7 @@ abstract class KDocTest : BaseAbstractTest() {
             .documentation.values.single()
 
 
-    protected fun executeTest(kdoc: String, expectedDocumentationNode: DocumentationNode) {
+    internal fun executeTest(kdoc: String, expectedDocumentationNode: DocumentationNode) {
         testInline(
             interpolateKdoc(kdoc),
             configuration

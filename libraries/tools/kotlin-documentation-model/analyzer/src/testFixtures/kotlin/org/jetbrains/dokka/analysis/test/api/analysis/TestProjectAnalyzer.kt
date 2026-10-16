@@ -32,7 +32,7 @@ import java.io.File
 /**
  * The default logger used for running Dokka and analyzing projects.
  */
-val defaultAnalysisLogger = DokkaConsoleLogger(minLevel = LoggingLevel.DEBUG)
+internal val defaultAnalysisLogger = DokkaConsoleLogger(minLevel = LoggingLevel.DEBUG)
 
 /**
  * Analyzer of the test projects, it is essentially a very simple Dokka runner.

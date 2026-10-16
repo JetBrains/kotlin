@@ -23,7 +23,7 @@ import org.jetbrains.dokka.InternalDokkaApi
  * Java documentation inheritance.
  */
 @InternalDokkaApi
-public fun registerJavaPsiSearchExecutors(disposable: Disposable) {
+internal fun registerJavaPsiSearchExecutors(disposable: Disposable) {
     val superMethodsSearch = SuperMethodsSearch.EP_NAME.point
     if (superMethodsSearch.extensionList.none { it is MethodSuperSearcher }) {
         superMethodsSearch.registerExtension(MethodSuperSearcher(), disposable)

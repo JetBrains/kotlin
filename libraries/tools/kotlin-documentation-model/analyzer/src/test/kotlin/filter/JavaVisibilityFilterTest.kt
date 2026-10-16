@@ -222,14 +222,15 @@ class JavaVisibilityFilterTest : BaseAbstractTest() {
         }
     }
 
-    data class ConfigurationWithVisibility(
+    @ConsistentCopyVisibility
+    data class ConfigurationWithVisibility internal constructor(
         val visibilityKeyword: String,
-        val configuration: DokkaConfigurationImpl,
+        internal val configuration: DokkaConfigurationImpl,
         val expectedClasslikes: Int
     )
 
     companion object TestDataSources {
-        val globalExcludes = dokkaConfiguration {
+        internal val globalExcludes = dokkaConfiguration {
             sourceSets {
                 sourceSet {
                     sourceRoots = listOf("src/")
@@ -237,7 +238,7 @@ class JavaVisibilityFilterTest : BaseAbstractTest() {
             }
         }
 
-        val globalIncludes = dokkaConfiguration {
+        internal val globalIncludes = dokkaConfiguration {
             sourceSets {
                 sourceSet {
                     documentedVisibilities = setOf(
@@ -251,7 +252,7 @@ class JavaVisibilityFilterTest : BaseAbstractTest() {
             }
         }
 
-        val globalIncludesPackageExcludes = dokkaConfiguration {
+        internal val globalIncludesPackageExcludes = dokkaConfiguration {
             sourceSets {
                 sourceSet {
                     documentedVisibilities = setOf(
@@ -274,7 +275,7 @@ class JavaVisibilityFilterTest : BaseAbstractTest() {
             }
         }
 
-        val globalExcludesPackageIncludes = dokkaConfiguration {
+        internal val globalExcludesPackageIncludes = dokkaConfiguration {
             sourceSets {
                 sourceSet {
                     sourceRoots = listOf("src/")
@@ -312,4 +313,3 @@ class JavaVisibilityFilterTest : BaseAbstractTest() {
             }
     }
 }
-

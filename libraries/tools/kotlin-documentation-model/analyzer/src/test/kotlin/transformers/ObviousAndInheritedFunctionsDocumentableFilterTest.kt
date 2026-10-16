@@ -14,7 +14,7 @@ import utils.withAllowKotlinPackage
 import kotlin.test.assertEquals
 
 class ObviousAndInheritedFunctionsDocumentableFilterTest : BaseAbstractTest() {
-    companion object {
+    internal companion object {
         @JvmStatic
         fun suppressingObviousConfiguration() = listOf(dokkaConfiguration {
             suppressInheritedMembers = false
@@ -63,7 +63,7 @@ class ObviousAndInheritedFunctionsDocumentableFilterTest : BaseAbstractTest() {
 
     @ParameterizedTest
     @MethodSource(value = ["suppressingObviousConfiguration"])
-    fun `should suppress toString, equals and hashcode`(suppressingConfiguration: DokkaConfigurationImpl) {
+    internal fun `should suppress toString, equals and hashcode`(suppressingConfiguration: DokkaConfigurationImpl) {
         testInline(
             """
             /src/suppressed/Suppressed.kt
@@ -83,7 +83,7 @@ class ObviousAndInheritedFunctionsDocumentableFilterTest : BaseAbstractTest() {
 
     @ParameterizedTest
     @MethodSource(value = ["suppressingObviousConfiguration"])
-    fun `should suppress toString, equals and hashcode for data class`(suppressingConfiguration: DokkaConfigurationImpl) {
+    internal fun `should suppress toString, equals and hashcode for data class`(suppressingConfiguration: DokkaConfigurationImpl) {
         testInline(
             """
             /src/suppressed/Suppressed.kt
@@ -101,7 +101,7 @@ class ObviousAndInheritedFunctionsDocumentableFilterTest : BaseAbstractTest() {
 
     @ParameterizedTest
     @MethodSource(value = ["suppressingObviousConfiguration", "suppressingInheritedConfiguration"])
-    fun `should suppress toString, equals and hashcode for interface`(suppressingConfiguration: DokkaConfigurationImpl) {
+    internal fun `should suppress toString, equals and hashcode for interface`(suppressingConfiguration: DokkaConfigurationImpl) {
         testInline(
             """
             /src/suppressed/Suppressed.kt
@@ -119,7 +119,7 @@ class ObviousAndInheritedFunctionsDocumentableFilterTest : BaseAbstractTest() {
 
     @ParameterizedTest
     @MethodSource(value = ["suppressingObviousConfiguration", "suppressingInheritedConfiguration"])
-    fun `should suppress toString, equals and hashcode in Java`(suppressingConfiguration: DokkaConfigurationImpl) {
+    internal fun `should suppress toString, equals and hashcode in Java`(suppressingConfiguration: DokkaConfigurationImpl) {
         testInline(
             """
             /src/suppressed/Suppressed.java
@@ -138,7 +138,7 @@ class ObviousAndInheritedFunctionsDocumentableFilterTest : BaseAbstractTest() {
 
     @ParameterizedTest
     @MethodSource(value = ["suppressingObviousConfiguration"])
-    fun `should suppress toString, equals and hashcode but keep custom ones`(suppressingConfiguration: DokkaConfigurationImpl) {
+    internal fun `should suppress toString, equals and hashcode but keep custom ones`(suppressingConfiguration: DokkaConfigurationImpl) {
         testInline(
             """
             /src/suppressed/Suppressed.kt
@@ -160,7 +160,7 @@ class ObviousAndInheritedFunctionsDocumentableFilterTest : BaseAbstractTest() {
 
     @ParameterizedTest
     @MethodSource(value = ["suppressingObviousConfiguration", "suppressingInheritedConfiguration"])
-    fun `should suppress toString, equals and hashcode but keep custom ones in Java`(suppressingConfiguration: DokkaConfigurationImpl) {
+    internal fun `should suppress toString, equals and hashcode but keep custom ones in Java`(suppressingConfiguration: DokkaConfigurationImpl) {
         testInline(
             """
             /src/suppressed/Suppressed.java
@@ -183,7 +183,7 @@ class ObviousAndInheritedFunctionsDocumentableFilterTest : BaseAbstractTest() {
 
     @ParameterizedTest
     @MethodSource(value = ["nonSuppressingObviousConfiguration", "nonSuppressingInheritedConfiguration"])
-    fun `should not suppress toString, equals and hashcode if custom config is provided`(nonSuppressingConfiguration: DokkaConfigurationImpl) {
+    internal fun `should not suppress toString, equals and hashcode if custom config is provided`(nonSuppressingConfiguration: DokkaConfigurationImpl) {
         testInline(
             """
             /src/suppressed/Suppressed.kt
@@ -204,7 +204,7 @@ class ObviousAndInheritedFunctionsDocumentableFilterTest : BaseAbstractTest() {
 
     @ParameterizedTest
     @MethodSource(value = ["nonSuppressingObviousConfiguration", "nonSuppressingInheritedConfiguration"])
-    fun `not should suppress toString, equals and hashcode for interface if custom config is provided`(
+    internal fun `not should suppress toString, equals and hashcode for interface if custom config is provided`(
         nonSuppressingConfiguration: DokkaConfigurationImpl
     ) {
         testInline(
@@ -225,7 +225,7 @@ class ObviousAndInheritedFunctionsDocumentableFilterTest : BaseAbstractTest() {
     @OnlyJavaPsi("type-mapping: AA's combinedMemberScope does not include all java.lang.Object methods (notify/notifyAll) - mapped types")
     @ParameterizedTest
     @MethodSource(value = ["nonSuppressingObviousConfiguration", "nonSuppressingInheritedConfiguration"])
-    fun `should not suppress toString, equals and hashcode if custom config is provided in Java`(
+    internal fun `should not suppress toString, equals and hashcode if custom config is provided in Java`(
         nonSuppressingConfiguration: DokkaConfigurationImpl
     ) {
         testInline(
@@ -257,7 +257,7 @@ class ObviousAndInheritedFunctionsDocumentableFilterTest : BaseAbstractTest() {
 
     @ParameterizedTest
     @MethodSource(value = ["suppressingObviousConfiguration"])
-    fun `should not suppress toString, equals and hashcode of kotlin Any`(suppressingConfiguration: DokkaConfigurationImpl) =
+    internal fun `should not suppress toString, equals and hashcode of kotlin Any`(suppressingConfiguration: DokkaConfigurationImpl) =
         withAllowKotlinPackage {
             testInline(
                 """
@@ -280,7 +280,7 @@ class ObviousAndInheritedFunctionsDocumentableFilterTest : BaseAbstractTest() {
 
     @ParameterizedTest
     @MethodSource(value = ["suppressingObviousConfiguration"])
-    fun `should not suppress toString, equals and hashcode of kotlin Enum`(suppressingConfiguration: DokkaConfigurationImpl) =
+    internal fun `should not suppress toString, equals and hashcode of kotlin Enum`(suppressingConfiguration: DokkaConfigurationImpl) =
         withAllowKotlinPackage {
             testInline(
                 """

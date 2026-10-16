@@ -10,6 +10,6 @@ import org.jetbrains.dokka.model.Documentable
 
 // TODO [beresnev] isSynthetic could be a property of Documentable
 @InternalDokkaApi
-public interface SyntheticDocumentableDetector {
-    public fun isSynthetic(documentable: Documentable, sourceSet: DokkaConfiguration.DokkaSourceSet): Boolean
+internal interface SyntheticDocumentableDetector {
+    fun isSynthetic(documentable: Documentable, sourceSet: DokkaConfiguration.DokkaSourceSet): Boolean
 }

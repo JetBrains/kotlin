@@ -13,14 +13,14 @@ import org.jetbrains.dokka.plugability.DokkaPluginApiPreview
 import org.jetbrains.dokka.plugability.ExtensionPoint
 import org.jetbrains.dokka.plugability.PluginApiPreviewAcknowledgement
 
-public class KotlinAnalysisPlugin : DokkaPlugin() {
+internal class KotlinAnalysisPlugin : DokkaPlugin() {
 
     /**
      * An extension for analyzing Kotlin sample functions used in the `@sample` KDoc tag.
      *
      * @see SampleAnalysisEnvironment for more details
      */
-    public val sampleAnalysisEnvironmentCreator: ExtensionPoint<SampleAnalysisEnvironmentCreator> by extensionPoint()
+    val sampleAnalysisEnvironmentCreator: ExtensionPoint<SampleAnalysisEnvironmentCreator> by extensionPoint()
 
     /**
      * An extension that helps to find external documentables that are not provided by Dokka by default,
@@ -28,7 +28,7 @@ public class KotlinAnalysisPlugin : DokkaPlugin() {
      *
      * @see ExternalDocumentableProvider for more details
      */
-    public val externalDocumentableProvider: ExtensionPoint<ExternalDocumentableProvider> by extensionPoint()
+    val externalDocumentableProvider: ExtensionPoint<ExternalDocumentableProvider> by extensionPoint()
 
     /**
      * An extensions can rewrite Kotlin sample functions that come from the `@sample` KDoc tag.
@@ -38,7 +38,7 @@ public class KotlinAnalysisPlugin : DokkaPlugin() {
      * @see SampleRewriter for more details
      * @see sampleAnalysisEnvironmentCreator
      */
-    public val sampleRewriter: ExtensionPoint<SampleRewriter> by extensionPoint()
+    val sampleRewriter: ExtensionPoint<SampleRewriter> by extensionPoint()
 
     @OptIn(DokkaPluginApiPreview::class)
     override fun pluginApiPreviewAcknowledgement(): PluginApiPreviewAcknowledgement = PluginApiPreviewAcknowledgement

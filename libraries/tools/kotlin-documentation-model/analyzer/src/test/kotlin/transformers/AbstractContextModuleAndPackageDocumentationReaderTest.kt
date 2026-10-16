@@ -17,7 +17,7 @@ abstract class AbstractContextModuleAndPackageDocumentationReaderTest {
 
 
     companion object {
-        val SourceSetDependent<DocumentationNode>.texts: List<String>
+        internal val SourceSetDependent<DocumentationNode>.texts: List<String>
             get() = values.flatMap { it.withDescendants() }
                 .flatMap { it.children }
                 .flatMap { it.children }

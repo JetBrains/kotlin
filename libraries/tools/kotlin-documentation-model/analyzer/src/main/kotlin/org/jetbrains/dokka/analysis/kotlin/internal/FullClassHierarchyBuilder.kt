@@ -10,12 +10,12 @@ import org.jetbrains.dokka.model.DModule
 import org.jetbrains.dokka.model.SourceSetDependent
 
 @InternalDokkaApi
-public typealias Supertypes = List<DRI>
+internal typealias Supertypes = List<DRI>
 
 @InternalDokkaApi
-public typealias ClassHierarchy = SourceSetDependent<Map<DRI, Supertypes>>
+internal typealias ClassHierarchy = SourceSetDependent<Map<DRI, Supertypes>>
 
 @InternalDokkaApi
-public interface FullClassHierarchyBuilder {
-    public suspend fun build(module: DModule): ClassHierarchy
+internal interface FullClassHierarchyBuilder {
+    suspend fun build(module: DModule): ClassHierarchy
 }
