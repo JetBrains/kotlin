@@ -1897,7 +1897,7 @@ internal object KotlinToolingDiagnostics {
                     "The Swift module name '$moduleName' is invalid"
                 }
                 .solution {
-                    "Use only alphanumeric characters and underscores."
+                    "The module name should be a valid Swift identifier, see https://kotl.in/swift-identifiers"
                 }
         }
     }

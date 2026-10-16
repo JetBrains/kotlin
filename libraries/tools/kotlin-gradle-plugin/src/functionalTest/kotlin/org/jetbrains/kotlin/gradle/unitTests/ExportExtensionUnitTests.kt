@@ -800,6 +800,24 @@ class ExportExtensionSwiftExportTests {
     }
 
     @Test
+    fun `invalid module name that starts with digit is reported`() {
+        val project = swiftExportProject(
+            multiplatform = {
+                iosSimulatorArm64()
+            },
+            swiftExport = {
+                moduleName.set("123Shared")
+                rootPackage.set("com.example.shared")
+            }
+        )
+
+        project.evaluate()
+
+        project.realizeSwiftModules()
+        project.assertContainsDiagnostic(KotlinToolingDiagnostics.SwiftExportInvalidModuleName)
+    }
+
+    @Test
     fun `direct external api dependency exported fully`() {
         val project = swiftExportProject(
             multiplatform = {

@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 private const val SWIFT_EXPORT_CLASSPATH = "swiftExportClasspath"
 private const val SWIFT_EXPORT_CLASSPATH_RESOLVABLE = "swiftExportClasspathResolvable"
 private const val SWIFT_EXPORT_EMBEDDABLE_MODULE = "swift-export-embeddable"
-internal const val SWIFT_EXPORT_MODULE_NAME_VALIDATION_PATTERN = "^[A-Za-z0-9_]+$"
+internal const val SWIFT_EXPORT_MODULE_NAME_VALIDATION_PATTERN = "^[A-Za-z_][A-Za-z0-9_]*$"
 internal const val SWIFT_EXPORT_MODULE_NAME_DELIMITERS_PATTERN = "[:\\-]+"
 
 internal fun Project.initSwiftExportClasspathConfigurations() {
