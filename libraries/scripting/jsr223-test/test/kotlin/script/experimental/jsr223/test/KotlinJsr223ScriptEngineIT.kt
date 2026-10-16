@@ -91,25 +91,24 @@ class KotlinJsr223ScriptEngineIT {
         assertEquals(5, res2)
     }
 
+    private fun usedHeapAfterGc(attempts: Int, isLowEnough: (Long) -> Boolean = { false }): Long {
+        val memoryMXBean = ManagementFactory.getMemoryMXBean()!!
+        var used = Long.MAX_VALUE
+        // Environments of the collected engine states are disposed asynchronously, so GC is repeated until they are released
+        for (attempt in 1..attempts) {
+            System.gc()
+            Thread.sleep(100)
+            used = memoryMXBean.heapMemoryUsage.used
+            if (isLowEnough(used)) break
+        }
+        return used
+    }
+
     @Test
     fun testDroppedEnginesDoNotRetainCompilerEnvironments() {
-        val memoryMXBean = ManagementFactory.getMemoryMXBean()!!
-
         fun evalInNewEngine(i: Int) {
             val engine = ScriptEngineManager().getEngineByExtension("kts")!!
             assertEquals(i * 2, engine.eval("$i * 2"))
-        }
-
-        // Environments of the collected engine states are disposed asynchronously, so GC is repeated until they are released
-        fun usedHeapAfterGc(attempts: Int, isLowEnough: (Long) -> Boolean = { false }): Long {
-            var used = Long.MAX_VALUE
-            for (attempt in 1..attempts) {
-                System.gc()
-                Thread.sleep(100)
-                used = memoryMXBean.heapMemoryUsage.used
-                if (isLowEnough(used)) break
-            }
-            return used
         }
 
         val limit = 100L * 1024 * 1024
@@ -121,6 +120,25 @@ class KotlinJsr223ScriptEngineIT {
         }
         val retained = usedHeapAfterGc(attempts = 20) { it - baseline < limit } - baseline
         assertTrue(retained < limit, "Dropped engines retain ${retained / 1024 / 1024} MB")
+    }
+
+    @Test
+    fun testEvalsDoNotRetainMoreThanSnippetHistory() {
+        val engine = ScriptEngineManager().getEngineByExtension("kts") as KotlinJsr223ScriptEngineImpl
+        assertNull(engine.eval("var total = 0"))
+        assertEquals(1, engine.eval("total += 1; total"))
+        val baseline = usedHeapAfterGc(attempts = 3)
+        val evals = 40
+        for (i in 2..evals + 1) {
+            assertEquals(i * (i + 1) / 2, engine.eval("total += $i; total"))
+        }
+        // The bindings don't change, so only the first eval is preceded by a synthetic bindings snippet (KT-90299)
+        assertEquals(evals + 3, engine.backwardInstancesHistory.count())
+        // The REPL history keeps the FIR of every snippet, which takes about 0.6 MB per eval here. Retaining the backend
+        // state of each snippet as well (KT-90299) makes it about three times more
+        val limit = evals * 3L * 512 * 1024
+        val retained = usedHeapAfterGc(attempts = 10) { it - baseline < limit } - baseline
+        assertTrue(retained < limit, "$evals evals retain ${retained / 1024 / 1024} MB")
     }
 
 
