@@ -1,7 +1,5 @@
 // TARGET_BACKEND: JVM
 // ISSUE: KT-90357
-// IGNORE_BACKEND: JVM
-// USE_PSI_JAVA_FACADE: false
 
 // MODULE: decoy
 // FILE: shp/Marker/Mode.kt

@@ -202,6 +202,36 @@ class JavaParsingTypeResolutionTest : JavaParsingTestBase() {
         assertEquals(deep, (classifier as JavaClass).classId)
     }
 
+    @Test
+    @OptIn(SessionConfiguration::class)
+    fun testImportedNameIsLookedUpInLeftmostTypeOnly() {
+        // KT-90357: the class `p.X` clashes with the package `p.X` of another module. JLS 6.5.4.2 classifies `p.X` in
+        // the imports as the class, so `Y` and `Z` are looked up only among its member types, as javac does.
+        val source = """
+            package u;
+            import p.X.Y;
+            import p.X.Z;
+            import static p.X.S;
+            class User {
+                Y nested;
+                Z packageOnly;
+                S staticPackageOnly;
+            }
+        """.trimIndent()
+        val outer = ClassId(FqName("p"), Name.identifier("X"))
+        val nested = outer.createNestedClassId(Name.identifier("Y"))
+        val known = listOf(outer, nested) + listOf("Y", "Z", "S").map { ClassId(FqName("p.X"), Name.identifier(it)) }
+        val session = createDummyFirSessionForTests()
+        session.register(FirSymbolProvider::class, StubSymbolProvider(session) { if (it in known) libraryClassSymbol(it) else null })
+        val user = parseFirstClass(source, session)
+
+        fun classifierOf(fieldName: String) = (user.fields.first { it.name.asString() == fieldName }.type as JavaClassifierType).classifier
+
+        assertEquals(nested, (classifierOf("nested") as JavaClass).classId)
+        assertNull(classifierOf("packageOnly")) { "`p.X.Z` is not a member type of the class `p.X`" }
+        assertNull(classifierOf("staticPackageOnly")) { "`p.X.S` is not a member type of the class `p.X`" }
+    }
+
     fun testImportExtraction() {
         val source = """
             package test;
