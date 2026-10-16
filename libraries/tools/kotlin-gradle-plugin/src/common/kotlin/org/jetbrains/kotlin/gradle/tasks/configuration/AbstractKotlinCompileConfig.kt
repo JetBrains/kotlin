@@ -77,6 +77,9 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
             task.enableMonotonousIncrementalCompileSetExpansion
                 .convention(propertiesProvider.enableMonotonousIncrementalCompileSetExpansion)
                 .finalizeValueOnRead()
+            task.enableErrorRecoveryRound
+                .convention(propertiesProvider.enableErrorRecoveryRound)
+                .finalizeValueOnRead()
             task.buildIdService.value(buildIdService).disallowChanges()
 
             task.incremental = false
