@@ -2,17 +2,17 @@
  * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+@file:UseSerializers(PathAsStringSerializer::class)
+@file:OptIn(ExperimentalSerializationApi::class)
 
 package org.jetbrains.kotlin.buildtools.internal
 
+import kotlinx.serialization.*
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
-import org.jetbrains.kotlin.buildtools.internal.DaemonExecutionPolicyImpl.Companion.DAEMON_RUN_DIR_PATH
-import org.jetbrains.kotlin.buildtools.internal.DaemonExecutionPolicyImpl.Companion.JVM_ARGUMENTS
-import org.jetbrains.kotlin.buildtools.internal.DaemonExecutionPolicyImpl.Companion.LOGS_FILE_COUNT_LIMIT
-import org.jetbrains.kotlin.buildtools.internal.DaemonExecutionPolicyImpl.Companion.LOGS_FILE_SIZE_LIMIT
-import org.jetbrains.kotlin.buildtools.internal.DaemonExecutionPolicyImpl.Companion.LOGS_PATH
-import org.jetbrains.kotlin.buildtools.internal.DaemonExecutionPolicyImpl.Companion.SHUTDOWN_DELAY_MILLIS
+import org.jetbrains.kotlin.buildtools.internal.serializability.PathAsStringSerializer
 import org.jetbrains.kotlin.buildtools.internal.arguments.absolutePathStringOrThrow
+import org.jetbrains.kotlin.buildtools.internal.serializability.getPropertyWithSerialNameValue
+import org.jetbrains.kotlin.buildtools.internal.serializability.setPropertyWithSerialNameValue
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.compilerRunner.KotlinCompilerRunnerUtils
 import org.jetbrains.kotlin.daemon.client.CompileServiceSession
@@ -23,100 +23,56 @@ import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.Path
 
+@Serializable
 internal object InProcessExecutionPolicyImpl : ExecutionPolicy.InProcess
 
+@Serializable
 @ConsistentCopyVisibility
 internal data class DaemonExecutionPolicyImpl private constructor(
-    private val options: Options = Options(ExecutionPolicy.WithDaemon::class),
-) : ExecutionPolicy.WithDaemon, ExecutionPolicy.WithDaemon.Builder, DeepCopyable<DaemonExecutionPolicyImpl> {
+    @SerialName("JVM_ARGUMENTS") var jvmArguments: List<String>? = null,
+    @SerialName("SHUTDOWN_DELAY_MILLIS")
+    var shutdownDelayMillis: Long? = null,
 
-    constructor() : this(
-        Options(ExecutionPolicy.WithDaemon::class),
-    ) {
-        initializeOptions(this::class, options)
-    }
+    @EncodeDefault
+    @SerialName("DAEMON_RUN_DIR_PATH")
+    var daemonRunDirPath: Path = Path(DaemonOptions().runFilesPath),
 
+    @EncodeDefault
+    @SerialName("LOGS_PATH") var logsPath: Path = Path(DEFAULT_LOG_FILE_DIRECTORY),
+    @SerialName("LOGS_FILE_SIZE_LIMIT")
+    var logsFileSizeLimit: Long? = DEFAULT_LOG_FILE_SIZE_LIMIT,
+
+    @SerialName("LOGS_FILE_COUNT_LIMIT")
+    var logsFileCountLimit: Int? = DEFAULT_LOG_FILE_COUNT_LIMIT,
+) : ExecutionPolicy.WithDaemon, ExecutionPolicy.WithDaemon.Builder,
+    DeepCopyable<DaemonExecutionPolicyImpl> {
+
+    internal constructor() : this(null)
+
+    @Suppress("UNCHECKED_CAST")
     @UseFromImplModuleRestricted
-    override fun <V> get(key: ExecutionPolicy.WithDaemon.Option<V>): V = options[key.id]
+    override fun <V> get(key: ExecutionPolicy.WithDaemon.Option<V>): V =
+        DaemonExecutionPolicyImpl::class.getPropertyWithSerialNameValue(this, key.id)
 
     @UseFromImplModuleRestricted
     override fun <V> set(key: ExecutionPolicy.WithDaemon.Option<V>, value: V) {
         checkOptionIsAvailableForVersion(key)
-        options[key] = value
+        DaemonExecutionPolicyImpl::class.setPropertyWithSerialNameValue(this, key.id, value)
     }
 
     override fun build(): ExecutionPolicy.WithDaemon = deepCopy()
 
     override fun toBuilder(): ExecutionPolicy.WithDaemon.Builder = deepCopy()
 
-    operator fun <V> get(key: Option<V>): V = options[key]
-
-    operator fun <V> set(key: Option<V>, value: V) {
-        options[key] = value
-    }
-
     override fun deepCopy(): DaemonExecutionPolicyImpl {
-        return DaemonExecutionPolicyImpl(options.deepCopy())
-    }
-
-    class Option<V>(id: String, default: V) : BaseOptionWithDefault<V>(id, defaultValue = default)
-
-    companion object {
-        /**
-         * A list of JVM arguments to pass to the Kotlin daemon.
-         */
-        val JVM_ARGUMENTS: Option<List<String>?> = Option("JVM_ARGUMENTS", default = null)
-
-        /**
-         * The time in milliseconds that the daemon process continues to live after all clients have disconnected.
-         */
-        val SHUTDOWN_DELAY_MILLIS: Option<Long?> = Option("SHUTDOWN_DELAY_MILLIS", null)
-
-        /**
-         * Specify a custom path for daemon runtime files.
-         *
-         * This is mainly useful for tests,
-         * so that the invoker can make sure that a specific daemon is spun up for a test and no stale daemons are used.
-         */
-        val DAEMON_RUN_DIR_PATH: Option<Path> = Option("DAEMON_RUN_DIR_PATH", Path(DaemonOptions().runFilesPath))
-
-        /**
-         * The path to a directory where the daemon logs files should be stored.
-         *
-         * Kotlin daemon logs are usually prefixed with `kotlin-daemon` and have the extension `.log`.
-         *
-         * @since 2.4.0
-         */
-        val LOGS_PATH: Option<Path> = Option("LOGS_PATH", Path(DEFAULT_LOG_FILE_DIRECTORY))
-
-        /**
-         * The limit for the maximum size of log files, expressed in bytes.
-         *
-         * This option can be used to control the storage size allocated for log files.
-         * If the size of the log files exceeds this limit, appropriate actions such as
-         * truncation or log rotation may be applied.
-         *
-         * The value for this option must be a positive [Long] representing the maximum size of a log file.
-         *
-         * If unset (`null`), no size limit is applied. By default, a non-null limit is used.
-         *
-         * @since 2.4.0
-         */
-        val LOGS_FILE_SIZE_LIMIT: Option<Long?> = Option("LOGS_FILE_SIZE_LIMIT", DEFAULT_LOG_FILE_SIZE_LIMIT)
-
-        /**
-         * Specifies the maximum number of log files that can be retained when [[LOGS_FILE_SIZE_LIMIT]] is set.
-         *
-         * This option is primarily used to limit the
-         * number of historical log files maintained on the filesystem to avoid excessive storage consumption.
-         *
-         * The value for this option must be a positive [Int] representing the maximum number of log files.
-         *
-         * If unset (`null`), no size limit is applied. By default, a non-null limit is used.
-         *
-         * @since 2.4.0
-         */
-        val LOGS_FILE_COUNT_LIMIT: Option<Int?> = Option("LOGS_FILE_COUNT_LIMIT", DEFAULT_LOG_FILE_COUNT_LIMIT)
+        return DaemonExecutionPolicyImpl(
+            jvmArguments?.toList(),
+            shutdownDelayMillis,
+            daemonRunDirPath,
+            logsPath,
+            logsFileSizeLimit,
+            logsFileCountLimit
+        )
     }
 }
 
@@ -130,27 +86,27 @@ internal fun DaemonExecutionPolicyImpl.createDaemonConnection(
     val compilerId = CompilerId.makeCompilerId(getCurrentClasspath())
 
     val daemonLogOptions = DaemonLogOptions(
-        logsPath = this[LOGS_PATH].absolutePathStringOrThrow(),
-        logsFileSizeLimit = this[LOGS_FILE_SIZE_LIMIT] ?: 0,
-        logsFileCountLimit = this[LOGS_FILE_COUNT_LIMIT] ?: Int.MAX_VALUE,
+        logsPath = logsPath.absolutePathStringOrThrow(),
+        logsFileSizeLimit = logsFileSizeLimit ?: 0,
+        logsFileCountLimit = logsFileCountLimit ?: Int.MAX_VALUE,
     )
-    Files.createDirectories(this[LOGS_PATH])
+    Files.createDirectories(logsPath)
 
     val additionalJvmArguments = mutableListOf<String>()
     val daemonOptions = configureDaemonOptions(
         DaemonOptions().apply {
-            this@createDaemonConnection[SHUTDOWN_DELAY_MILLIS]?.let { shutdownDelay ->
+            shutdownDelayMillis?.let { shutdownDelay ->
                 shutdownDelayMilliseconds = shutdownDelay
             }
 
-            runFilesPath = this@createDaemonConnection[DAEMON_RUN_DIR_PATH].absolutePathStringOrThrow()
+            runFilesPath = daemonRunDirPath.absolutePathStringOrThrow()
             additionalJvmArguments += "D${CompilerSystemProperties.COMPILE_DAEMON_CUSTOM_RUN_FILES_PATH_FOR_TESTS.property}=${runFilesPath}"
         })
 
     val jvmOptions = configureDaemonJVMOptions(
         inheritMemoryLimits = true, inheritOtherJvmOptions = false, inheritAdditionalProperties = true
     ).also { opts ->
-        val effectiveJvmArguments = additionalJvmArguments + (this[JVM_ARGUMENTS] ?: emptyList())
+        val effectiveJvmArguments = additionalJvmArguments + (jvmArguments ?: emptyList())
         if (effectiveJvmArguments.isNotEmpty()) {
             opts.jvmParams.addAll(
                 effectiveJvmArguments.filterExtractProps(opts.mappers, "", opts.restMapper)
