@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.caches.*
 import org.jetbrains.kotlin.fir.containingClassForLocalAttr
 import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.declarations.validate
 import org.jetbrains.kotlin.fir.extensions.*
@@ -283,12 +284,15 @@ class FirGeneratedMemberDeclarationsStorage(private val session: FirSession) : F
 
             val extensions = extensionsByClassifierName[name] ?: return null
 
-            val generatedClasses = extensions.mapNotNull { extension ->
-                extension.generateNestedClassLikeDeclaration(classSymbol, name, generationContext)?.also { symbol ->
+            val generatedClasses = buildList {
+                for (extension in extensions) {
+                    val symbol = extension.generateNestedClassLikeDeclaration(classSymbol, name, generationContext) ?: continue
+                    add(symbol)
                     symbol.fir.ownerGenerator = extension
                     if (classSymbol.isLocal) {
                         symbol.fir.containingClassForLocalAttr = classSymbol.toLookupTag()
                     }
+                    if (symbol.isCompanion) break
                 }
             }
 
@@ -319,7 +323,7 @@ class FirGeneratedMemberDeclarationsStorage(private val session: FirSession) : F
         require(session === classSymbol.moduleData.session) {
             "Class $classSymbol is declared in ${classSymbol.moduleData.session}, but generated storage for it taken from $session"
         }
-        return if (classSymbol.origin.generated && !classSymbol.isLocal) {
+        return if (classSymbol.origin.generated && !classSymbol.isLocal && !classSymbol.isCompanion) {
             listOf(classSymbol.fir.ownerGenerator!!)
         } else {
             session.extensionService.declarationGenerators
