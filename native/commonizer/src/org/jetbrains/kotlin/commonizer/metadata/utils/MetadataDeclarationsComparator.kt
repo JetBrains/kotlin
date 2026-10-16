@@ -56,9 +56,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
     sealed interface PathElement {
         data object Root : PathElement
 
-        class Module(val moduleA: KlibModuleMetadata, val moduleB: KlibModuleMetadata) : PathElement {
-            override fun toString() = "Module ${moduleA.name}"
-        }
+        data object Module : PathElement
 
         class Package(
             val packageFqName: String,
@@ -222,8 +220,6 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         }
 
         companion object {
-            val ModuleName by EntityKindImpl
-
             val Classifier by EntityKindImpl
 
             val Class by EntityKindImpl
@@ -364,12 +360,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         metadataB: KlibModuleMetadata
     ): Result {
         val rootContext = Context(PathElement.Root)
-
-        compareValues(rootContext, metadataA.name, metadataB.name, EntityKind.ModuleName)
-        if (mismatches.isNotEmpty())
-            return toResult()
-
-        val moduleContext = rootContext.next(PathElement.Module(metadataA, metadataB))
+        val moduleContext = rootContext.next(PathElement.Module)
 
         compareModuleFragmentLists(moduleContext, metadataA.fragments, metadataB.fragments)
 
