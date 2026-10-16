@@ -10,10 +10,12 @@ import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import kotlin.io.path.pathString
 
 @MppGradlePluginTests
+@MustRunOnChangesInGradle
 class MppDslPomIT : KGPBaseTest() {
 
     @GradleTest
