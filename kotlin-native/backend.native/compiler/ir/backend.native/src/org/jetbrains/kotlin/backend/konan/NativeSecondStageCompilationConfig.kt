@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.io.readProperties
 import org.jetbrains.kotlin.konan.config.*
 import org.jetbrains.kotlin.konan.library.isExplicitlySpecifiedByUserInCLIArgument
 import org.jetbrains.kotlin.konan.target.*
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.utils.KotlinNativePaths
 import java.nio.file.Files
 import java.nio.file.Path
@@ -368,6 +369,9 @@ class NativeSecondStageCompilationConfig(
     val perFileCacheForStdlib: Boolean
         get() = configuration.get(BinaryOptions.perFileCacheForStdlib) ?: defaultPerFileCacheForStdlib
 
+    val batchedCacheBuild: Boolean
+        get() = configuration.get(BinaryOptions.batchedCacheBuild) ?: false
+
     init {
         // NB: producing LIBRARY is enabled on any combination of hosts/targets
         if (produce != CompilerOutputKind.LIBRARY && !platformManager.isEnabled(target)) {
@@ -625,14 +629,14 @@ class NativeSecondStageCompilationConfig(
     internal val cachedLibraries: CachedLibraries
         get() = cacheSupport.cachedLibraries
 
-    internal val libraryToCache: PartialCacheInfo?
-        get() = cacheSupport.libraryToCache
+    internal val librariesToCache: Map<KotlinLibrary, PartialCacheInfo>
+        get() = cacheSupport.librariesToCache
 
     internal val producePerFileCache
         get() = configuration.makePerFileCache
 
     private val implicitModuleName: String
-        get() = cacheSupport.libraryToCache?.let {
+        get() = cacheSupport.librariesToCache.values.singleOrNull()?.let {
             if (producePerFileCache)
                 CachedLibraries.getPerFileCachedLibraryName(it.klib)
             else
