@@ -346,6 +346,7 @@
 /libraries/tools/ide-plugin-dependencies-validator "Kotlin Analysis API"
 /libraries/kotlin-dom-api-compat/ ilya.goncharov@jetbrains.com stanislav.erokhin@jetbrains.com
 /libraries/tools/kotlin-build-tools-enum-compat/ "Kotlin Build Tools"
+/libraries/tools/kotlin-build-tools/ "Kotlin Build Tools"
 /libraries/tools/gradle/ "Kotlin Build Tools"
 /libraries/tools/jdk-api-validator/ vsevolod.tolstopyatov@jetbrains.com filipp.zhinkin@jetbrains.com ilya.gorbunov@jetbrains.com
 /libraries/tools/klib-abi-reader/ "Kotlin Common Backend"
@@ -468,6 +469,7 @@
 /repo/auto-code-review svyatoslav.scherbina@jetbrains.com sergey.bogolepov@jetbrains.com simon.ogorodnik@jetbrains.com
 /repo/gradle-build-conventions/kgp-npm-tooling-helper "Kotlin Build Tools"
 /repo/gradle-build-conventions/file-leak-detector-downloader "Kotlin Build Tools"
+/repo/gradle-build-conventions/kotlin-build-tools-library "Kotlin Build Tools"
 
 /resources/ "Kotlin Build Infrastructure"
 
