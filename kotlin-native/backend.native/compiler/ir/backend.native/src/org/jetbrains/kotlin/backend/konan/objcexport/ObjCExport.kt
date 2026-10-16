@@ -93,9 +93,10 @@ internal fun produceObjCExportInterface(
     )
     val shouldExportKDoc = context.shouldExportKDoc()
     val additionalImports = context.config.configuration.getNotNull(NativeConfigurationKeys.FRAMEWORK_IMPORT_HEADERS)
+    val compilationUnitModules = (listOf(moduleDescriptor) + moduleDescriptor.getIncludedLibraryDescriptors(config)).toSet()
     val headerGenerator = ObjCExportHeaderGenerator.createInstance(
             moduleDescriptors, mapper, namer, problemCollector, objcGenerics, objcExportBlockExplicitParameterNames, shouldExportKDoc = shouldExportKDoc,
-            additionalImports = additionalImports)
+            additionalImports = additionalImports, compilationUnitModules = compilationUnitModules)
     headerGenerator.translateModule()
     return headerGenerator.buildInterface()
 }

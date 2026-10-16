@@ -412,6 +412,66 @@ class FrameworkTest : AbstractNativeSimpleTest() {
     }
 
     @Test
+    fun testExtensionsFromSeveralModules() {
+        Assumptions.assumeTrue(targets.testTarget.family.isAppleFamily)
+        val testName = "extensionsFromSeveralModules"
+        val testDir = testSuiteDir.resolve(testName)
+        fun library(name: String, dependencies: List<TestCompilationArtifact.KLIB>) = compileToLibrary(
+            testDir.resolve(name),
+            buildDir.resolve(name),
+            TestCompilerArgs("-module-name", name),
+            dependencies.map { it.asLibraryDependency() },
+        )
+        val receivers = library("receivers", emptyList())
+        val first = library("first", listOf(receivers))
+        val second = library("second", listOf(receivers))
+
+        val moduleName = "ExtensionsFromSeveralModules"
+        val testCase = generateObjCFrameworkTestCase(
+            TestKind.STANDALONE_NO_TR, extras, moduleName,
+            listOf(testDir.resolve("$testName.kt")),
+            TestCompilerArgs("-module-name", moduleName, "-Xbinary=bundleId=$testName"),
+            givenDependencies = setOf(TestModule.Given(receivers.klibFile), TestModule.Given(first.klibFile), TestModule.Given(second.klibFile)),
+        )
+        testCompilationFactory
+            .testCaseToObjCFrameworkCompilation(testCase, testRunSettings, exportedLibraries = listOf(receivers, first, second))
+            .result.assertSuccess()
+
+        compileAndRunSwift(testName, testCase)
+    }
+
+    @Test
+    fun testExtensionOverride() {
+        Assumptions.assumeTrue(targets.testTarget.family.isAppleFamily)
+        val testName = "extensionOverride"
+        val testDir = testSuiteDir.resolve(testName)
+        val receivers = compileToLibrary(
+            testDir.resolve("receivers"),
+            buildDir.resolve("receivers"),
+            TestCompilerArgs("-module-name", "receivers"),
+            emptyList(),
+        )
+
+        val moduleName = "ExtensionOverride"
+        val checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout).copy(
+            exitCodeCheck = TestRunCheck.ExitCode.Expected(134),
+            outputMatcher = TestRunCheck.OutputMatcher { it.contains("Overriding fromFramework] can't be overridden: it is final") },
+        )
+        val testCase = generateObjCFrameworkTestCase(
+            TestKind.STANDALONE_NO_TR, extras, moduleName,
+            listOf(testDir.resolve("$testName.kt")),
+            TestCompilerArgs("-module-name", moduleName, "-Xbinary=bundleId=$testName"),
+            givenDependencies = setOf(TestModule.Given(receivers.klibFile)),
+            checks = checks,
+        )
+        testCompilationFactory
+            .testCaseToObjCFrameworkCompilation(testCase, testRunSettings, exportedLibraries = listOf(receivers))
+            .result.assertSuccess()
+
+        compileAndRunSwift(testName, testCase)
+    }
+
+    @Test
     fun testCompanionBlocksAndExtensions() {
         // Companion blocks and extensions are not available to ObjC Export. This test compiles the framework and uses it from Swift
         // to check that the generated binary is okay.
@@ -424,6 +484,47 @@ class FrameworkTest : AbstractNativeSimpleTest() {
     fun testFullValueClasses() {
         val testName = "fullValueClasses"
         val testCase = generateObjCFramework(testName, listOf("-XXLanguage:+FullValueClasses"))
+        compileAndRunSwift(testName, testCase)
+    }
+
+    @Test
+    fun testExtensionCategories() {
+        Assumptions.assumeTrue(targets.testTarget.family.isAppleFamily)
+        val testName = "extensionCategories"
+        val testDir = testSuiteDir.resolve(testName)
+        fun library(name: String, dependencies: List<TestCompilationArtifact.KLIB>) = compileToLibrary(
+            testDir.resolve(name),
+            buildDir.resolve(name),
+            TestCompilerArgs("-module-name", name),
+            dependencies.map { it.asLibraryDependency() },
+        )
+        val receivers = library("receivers", emptyList())
+        val alphaBeta = library("exportedAlphaBeta", listOf(receivers))
+        val anotherBuild = library("exportedAnotherBuild", listOf(receivers))
+        val included = library("included", listOf(receivers))
+
+        val moduleName = "ExtensionCategories"
+        val testCase = generateObjCFrameworkTestCase(
+            TestKind.STANDALONE_NO_TR, extras, moduleName,
+            listOf(testDir.resolve("$testName.kt")),
+            TestCompilerArgs("-module-name", moduleName, "-Xbinary=bundleId=$testName"),
+            givenDependencies = setOf(receivers, alphaBeta, anotherBuild).map { TestModule.Given(it.klibFile) }.toSet(),
+        )
+        val success = testCompilationFactory
+            .testCaseToObjCFrameworkCompilation(
+                testCase, testRunSettings,
+                exportedLibraries = listOf(receivers, alphaBeta, anotherBuild),
+                includedLibraries = listOf(included),
+            )
+            .result.assertSuccess()
+
+        val categories = Regex("""^@interface $moduleName\w* \(\w+\)$.*?^@end$""", setOf(RegexOption.MULTILINE, RegexOption.DOT_MATCHES_ALL))
+            .findAll(success.resultingArtifact.mainHeader.readText())
+            .map { it.value }
+            .sorted()
+            .joinToString("\n\n", postfix = "\n")
+        assertEqualsToFile(testDir.resolve("categories.h"), categories)
+
         compileAndRunSwift(testName, testCase)
     }
 

@@ -26,7 +26,7 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 @end
 
-@interface Foo (Extensions)
+@interface Foo (org_jetbrains_kotlin_testExtensionsLibrary)
 - (void)extensionA __attribute__((swift_name("extensionA()")));
 - (void)extensionB __attribute__((swift_name("extensionB()")));
 @end

@@ -173,6 +173,7 @@ class TestCompilationFactory {
         settings: Settings,
         exportedLibraries: Iterable<KLIB> = emptyList(),
         buildDir: File? = null,
+        includedLibraries: Iterable<KLIB> = emptyList(),
     ): ObjCFrameworkCompilation {
         val cacheKey = ObjCFrameworkCacheKey(testCase.rootModules)
         cachedObjCFrameworkCompilations[cacheKey]?.let { return it }
@@ -189,7 +190,7 @@ class TestCompilationFactory {
                 settings = settings,
                 freeCompilerArgs = testCase.freeCompilerArgs,
                 sourceModules = sourceModules,
-                dependencies = dependencies,
+                dependencies = dependencies + includedLibraries.map { ExistingDependency(it, IncludedLibrary) },
                 exportedLibraries = exportedLibraries,
                 expectedArtifact = ObjCFramework(
                     buildDir ?: settings.get<Binaries>().testBinariesDir,

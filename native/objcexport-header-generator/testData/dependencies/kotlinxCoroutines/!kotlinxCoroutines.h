@@ -2316,7 +2316,7 @@ __attribute__((swift_name("AtomicfuSynchronizedObject.Status")))
 @property (class, readonly) NSArray<AtomicfuSynchronizedObjectStatus *> *entries __attribute__((swift_name("entries")));
 @end
 
-@interface CoroutineDispatcher (Extensions)
+@interface CoroutineDispatcher (org_jetbrains_kotlinx_kotlinx_coroutines_core)
 
 /**
  * @note This method converts instances of CancellationException to errors.
@@ -2325,31 +2325,31 @@ __attribute__((swift_name("AtomicfuSynchronizedObject.Status")))
 - (void)invokeBlock:(id<KotlinSuspendFunction1>)block completionHandler:(void (^)(id _Nullable_result, NSError * _Nullable))completionHandler __attribute__((swift_name("invoke(block:completionHandler:)")));
 @end
 
-@interface Dispatchers (Extensions)
+@interface Dispatchers (org_jetbrains_kotlinx_kotlinx_coroutines_core)
 @property (readonly) CoroutineDispatcher *IO __attribute__((swift_name("IO")));
 @end
 
-@interface KotlinArray (Extensions)
+@interface KotlinArray (org_jetbrains_kotlinx_kotlinx_coroutines_core)
 - (id<Flow>)asFlow __attribute__((swift_name("asFlow()")));
 @end
 
-@interface KotlinIntArray (Extensions)
+@interface KotlinIntArray (org_jetbrains_kotlinx_kotlinx_coroutines_core)
 - (id<Flow>)asFlow __attribute__((swift_name("asFlow()")));
 @end
 
-@interface KotlinIntRange (Extensions)
+@interface KotlinIntRange (org_jetbrains_kotlinx_kotlinx_coroutines_core)
 - (id<Flow>)asFlow __attribute__((swift_name("asFlow()")));
 @end
 
-@interface KotlinLongArray (Extensions)
+@interface KotlinLongArray (org_jetbrains_kotlinx_kotlinx_coroutines_core)
 - (id<Flow>)asFlow __attribute__((swift_name("asFlow()")));
 @end
 
-@interface KotlinLongRange (Extensions)
+@interface KotlinLongRange (org_jetbrains_kotlinx_kotlinx_coroutines_core)
 - (id<Flow>)asFlow __attribute__((swift_name("asFlow()")));
 @end
 
-@interface SharingStartedCompanion (Extensions)
+@interface SharingStartedCompanion (org_jetbrains_kotlinx_kotlinx_coroutines_core)
 - (id<SharingStarted>)WhileSubscribedStopTimeout:(int64_t)stopTimeout replayExpiration:(int64_t)replayExpiration __attribute__((swift_name("WhileSubscribed(stopTimeout:replayExpiration:)")));
 @end
 

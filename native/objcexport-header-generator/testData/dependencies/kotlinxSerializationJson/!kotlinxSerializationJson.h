@@ -418,12 +418,12 @@ __attribute__((objc_subclassing_restricted))
 - (unichar)nextChar __attribute__((swift_name("nextChar()")));
 @end
 
-@interface Json (Extensions)
+@interface Json (org_jetbrains_kotlinx_kotlinx_serialization_json)
 - (id _Nullable)decodeFromJsonElementJson:(JsonElement *)json __attribute__((swift_name("decodeFromJsonElement(json:)")));
 - (JsonElement *)encodeToJsonElementValue:(id _Nullable)value __attribute__((swift_name("encodeToJsonElement(value:)")));
 @end
 
-@interface JsonArrayBuilder (Extensions)
+@interface JsonArrayBuilder (org_jetbrains_kotlinx_kotlinx_serialization_json)
 - (BOOL)addValue:(Boolean * _Nullable)value __attribute__((swift_name("add(value:)")));
 - (BOOL)addValue_:(KotlinNothing * _Nullable)value __attribute__((swift_name("add(value_:)")));
 - (BOOL)addValue__:(id _Nullable)value __attribute__((swift_name("add(value__:)")));
@@ -450,14 +450,14 @@ __attribute__((objc_subclassing_restricted))
 - (BOOL)addJsonObjectBuilderAction:(void (^)(JsonObjectBuilder *))builderAction __attribute__((swift_name("addJsonObject(builderAction:)")));
 @end
 
-@interface JsonElement (Extensions)
+@interface JsonElement (org_jetbrains_kotlinx_kotlinx_serialization_json)
 @property (readonly) NSArray<JsonElement *> *jsonArray __attribute__((swift_name("jsonArray")));
 @property (readonly) JsonNull *jsonNull __attribute__((swift_name("jsonNull")));
 @property (readonly) NSDictionary<NSString *, JsonElement *> *jsonObject __attribute__((swift_name("jsonObject")));
 @property (readonly) JsonPrimitive *jsonPrimitive __attribute__((swift_name("jsonPrimitive")));
 @end
 
-@interface JsonObjectBuilder (Extensions)
+@interface JsonObjectBuilder (org_jetbrains_kotlinx_kotlinx_serialization_json)
 - (JsonElement * _Nullable)putKey:(NSString *)key value:(Boolean * _Nullable)value __attribute__((swift_name("put(key:value:)")));
 - (JsonElement * _Nullable)putKey:(NSString *)key value_:(KotlinNothing * _Nullable)value __attribute__((swift_name("put(key:value_:)")));
 - (JsonElement * _Nullable)putKey:(NSString *)key value__:(id _Nullable)value __attribute__((swift_name("put(key:value__:)")));
@@ -466,7 +466,7 @@ __attribute__((objc_subclassing_restricted))
 - (JsonElement * _Nullable)putJsonObjectKey:(NSString *)key builderAction:(void (^)(JsonObjectBuilder *))builderAction __attribute__((swift_name("putJsonObject(key:builderAction:)")));
 @end
 
-@interface JsonPrimitive (Extensions)
+@interface JsonPrimitive (org_jetbrains_kotlinx_kotlinx_serialization_json)
 @property (readonly) BOOL boolean __attribute__((swift_name("boolean")));
 @property (readonly) Boolean * _Nullable booleanOrNull __attribute__((swift_name("booleanOrNull")));
 @property (readonly) NSString * _Nullable contentOrNull __attribute__((swift_name("contentOrNull")));

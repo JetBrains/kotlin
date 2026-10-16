@@ -203,6 +203,7 @@ class ObjCExportDependenciesHeaderGeneratorTest(
     }
 
     @Test
+    @TodoAnalysisApi
     fun `test - extensions library`() {
         doTest(
             dependenciesDir.resolve("extensionsLibrary"), configuration = HeaderGenerator.Configuration(
@@ -250,6 +251,7 @@ class ObjCExportDependenciesHeaderGeneratorTest(
     }
 
     @Test
+    @TodoAnalysisApi
     fun `test - one type extensions from multiple files merged into the same category`() {
         doTest(
             dependenciesDir.resolve("oneTypeExtensionsFromMultipleFilesMergedIntoTheSameCategory"),

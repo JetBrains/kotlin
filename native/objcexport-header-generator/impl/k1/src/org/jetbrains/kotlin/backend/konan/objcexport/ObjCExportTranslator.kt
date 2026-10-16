@@ -44,8 +44,14 @@ interface ObjCExportTranslator {
     fun translateFile(file: SourceFile, declarations: List<CallableMemberDescriptor>): ObjCInterface
     fun translateClass(descriptor: ClassDescriptor): ObjCExportTranslatedClass
     fun translateInterface(descriptor: ClassDescriptor): ObjCProtocol
-    fun translateExtensions(classDescriptor: ClassDescriptor, declarations: List<CallableMemberDescriptor>): ObjCInterface
+    fun translateExtensions(
+        classDescriptor: ClassDescriptor,
+        declarations: List<CallableMemberDescriptor>,
+        categoryName: String,
+    ): ObjCInterface
 }
+
+const val DEFAULT_EXTENSIONS_CATEGORY_NAME: String = "Extensions"
 
 @InternalKotlinNativeApi
 class ObjCExportTranslatorImpl(
@@ -153,6 +159,7 @@ class ObjCExportTranslatorImpl(
     override fun translateExtensions(
         classDescriptor: ClassDescriptor,
         declarations: List<CallableMemberDescriptor>,
+        categoryName: String,
     ): ObjCInterface {
         generator?.generateExtraClassEarly(classDescriptor)
 
@@ -160,7 +167,7 @@ class ObjCExportTranslatorImpl(
         val members = buildMembers {
             translatePlainMembers(declarations, ObjCRootExportScope)
         }
-        return ObjCInterfaceImpl(name, categoryName = "Extensions", members = members)
+        return ObjCInterfaceImpl(name, categoryName = categoryName, members = members)
     }
 
     override fun translateFile(file: SourceFile, declarations: List<CallableMemberDescriptor>): ObjCInterface {
