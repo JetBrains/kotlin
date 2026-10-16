@@ -638,7 +638,7 @@ class TeamcityTestListener implements TestListener, TestOutputListener {
     private final TestNameDescriptor testNameDescriptor
     private final Pattern ignoredSuiteFormat
     private final FlowWrapper flowWrapper
-    private final ConcurrentMap<TestDescriptorWrapper, List> testOutputs = new ConcurrentHashMap()
+    private final ConcurrentMap<TestDescriptor, List> testOutputs = new ConcurrentHashMap()
 
     TeamcityTestListener(Logger logger, TestTaskWrapper testTaskWrapper, Project project, AtomicLong testCounter, TestNameDescriptor testNameDescriptor, String ignoredSuiteFormat) {
         this.logger = logger
@@ -663,7 +663,7 @@ class TeamcityTestListener implements TestListener, TestOutputListener {
         def suiteDescriptorWrapper = new SuiteDescriptorWrapper(testDescriptor, flowWrapper, ignoredSuiteFormat)
         suiteDescriptorWrapper.finish { ServiceMessage flowMessage, ServiceMessage suiteFinishedMessage ->
             def testDescriptorWrapper = new TestDescriptorWrapper(testDescriptor, testNameDescriptor, flowWrapper, buildDirectoriesResolver, ignoredSuiteFormat)
-            def outputs = testOutputs.remove(testDescriptorWrapper)
+            def outputs = testOutputs.remove(testDescriptor)
             if (outputs != null) {
                 synchronized (outputs) {
                     testDescriptorWrapper.flush(outputs) { ServiceMessage testOutputServiceMessage -> this.logger.lifecycle(testOutputServiceMessage.asString()) }
@@ -674,9 +674,10 @@ class TeamcityTestListener implements TestListener, TestOutputListener {
             if (flowMessage != null) this.logger.lifecycle(flowMessage.asString())
         }
         if (testDescriptor.parent == null) {
-            testOutputs.each { key, outputs ->
+            testOutputs.each { descriptor, outputs ->
                 synchronized (outputs) {
-                    key.flush(outputs) { ServiceMessage testOutputServiceMessage -> this.logger.lifecycle(testOutputServiceMessage.asString()) }
+                    def testDescriptorWrapper = new TestDescriptorWrapper(descriptor, testNameDescriptor, flowWrapper, buildDirectoriesResolver, ignoredSuiteFormat)
+                    testDescriptorWrapper.flush(outputs) { ServiceMessage testOutputServiceMessage -> this.logger.lifecycle(testOutputServiceMessage.asString()) }
                     outputs.clear()
                 }
             }
@@ -697,7 +698,13 @@ class TeamcityTestListener implements TestListener, TestOutputListener {
     void afterTest(TestDescriptor testDescriptor, TestResult testResult) {
         def testDescriptorWrapper = new TestDescriptorWrapper(testDescriptor, testNameDescriptor, flowWrapper, buildDirectoriesResolver, ignoredSuiteFormat)
         testDescriptorWrapper.finish(testResult) { ServiceMessage flowMessage, ServiceMessage testFinished ->
-            testDescriptorWrapper.flush(testOutputs.remove(testDescriptorWrapper)) { ServiceMessage testOutputServiceMessage -> this.logger.lifecycle(testOutputServiceMessage.asString()) }
+            def outputs = testOutputs.remove(testDescriptor)
+            if (outputs != null) {
+                synchronized (outputs) {
+                    testDescriptorWrapper.flush(outputs) { ServiceMessage testOutputServiceMessage -> this.logger.lifecycle(testOutputServiceMessage.asString()) }
+                    outputs.clear()
+                }
+            }
             testDescriptorWrapper.result(testResult, testCounter) { List<ServiceMessage> messages -> messages.each{ message -> this.logger.lifecycle(message.asString()) } }
 
             this.logger.lifecycle(testFinished.asString())
@@ -707,9 +714,7 @@ class TeamcityTestListener implements TestListener, TestOutputListener {
 
     @Override
     void onOutput(TestDescriptor testDescriptor, TestOutputEvent outputEvent) {
-        def testDescriptorWrapper = new TestDescriptorWrapper(testDescriptor, testNameDescriptor, flowWrapper, buildDirectoriesResolver, ignoredSuiteFormat)
-        if (testDescriptorWrapper.ignored) {
-            // this is not a real test output
+        if (testDescriptor.className == null) {
             return
         }
 
@@ -723,10 +728,10 @@ class TeamcityTestListener implements TestListener, TestOutputListener {
             default: return
         }
 
-        List outputs = testOutputs[testDescriptorWrapper]
+        List outputs = testOutputs[testDescriptor]
         if (outputs == null) {
             outputs = []
-            def prev = testOutputs.putIfAbsent(testDescriptorWrapper, outputs)
+            def prev = testOutputs.putIfAbsent(testDescriptor, outputs)
             if (prev != null) {
                 outputs = prev
             }
@@ -736,6 +741,7 @@ class TeamcityTestListener implements TestListener, TestOutputListener {
             outputs.add(outputEvent)
 
             if (outputs.size() > 100) {
+                def testDescriptorWrapper = new TestDescriptorWrapper(testDescriptor, testNameDescriptor, flowWrapper, buildDirectoriesResolver, ignoredSuiteFormat)
                 testDescriptorWrapper.flush(outputs) { msg -> this.logger.lifecycle(msg.asString()) }
                 outputs.clear()
             }
