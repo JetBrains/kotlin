@@ -72,12 +72,36 @@ internal class CallGraph(
     }
 }
 
+/**
+ * Buffers targets only while a call can still be unfolded. Once it becomes opaque, all targets
+ * are registered as roots in their original order, and the buffer is cleared.
+ */
+private class CallGraphCalleeCollector(private val unfoldFactor: Int) {
+    val callees: List<DataFlowIR.FunctionSymbol>
+            field = mutableListOf<DataFlowIR.FunctionSymbol>()
+    var isOpaque: Boolean = unfoldFactor < 0
+        private set
+
+    inline fun add(callee: DataFlowIR.FunctionSymbol, handleRoot: (DataFlowIR.FunctionSymbol) -> Unit) {
+        if (!isOpaque && callees.size < unfoldFactor) {
+            callees.add(callee)
+            return
+        }
+        if (!isOpaque) {
+            isOpaque = true
+            callees.forEach(handleRoot)
+            callees.clear()
+        }
+        handleRoot(callee)
+    }
+}
+
 internal class CallGraphBuilder(
         val context: NativeBackendContext,
         val irModule: IrModuleFragment,
         val moduleDFG: ModuleDFG,
         val devirtualizedCallSitesUnfoldFactor: Int,
-        val nonDevirtualizedCallSitesUnfoldFactor: Int
+        val nonDevirtualizedCallSitesUnfoldFactor: Int,
 ) {
     private val directEdges = mutableMapOf<DataFlowIR.FunctionSymbol.Declared, CallGraphNode>()
     private val reversedEdges = mutableMapOf<DataFlowIR.FunctionSymbol.Declared, MutableList<DataFlowIR.FunctionSymbol.Declared>>()
@@ -216,7 +240,7 @@ internal class CallGraphBuilder(
                     // Callsite has not been devirtualized - conservatively assume the worst:
                     // any inheritor of the receiver type is possible here.
                     val typeHierarchy = moduleDFG.symbolTable.typeHierarchy
-                    val allPossibleCallees = mutableListOf<DataFlowIR.FunctionSymbol>()
+                    val collector = CallGraphCalleeCollector(nonDevirtualizedCallSitesUnfoldFactor)
                     typeHierarchy.inheritorsOf(call.receiverType).forEachBit {
                         val receiverType = typeHierarchy.allTypes[it]
                         if (receiverType.isAbstract) return@forEachBit
@@ -229,15 +253,13 @@ internal class CallGraphBuilder(
                             is DataFlowIR.Node.ItableCall ->
                                 receiverType.itable[call.interfaceId]!![call.calleeItableIndex]
                         }
-                        allPossibleCallees.add(actualCallee)
+                        collector.add(actualCallee) { handleRoot(it) }
                     }
-                    if (allPossibleCallees.size <= nonDevirtualizedCallSitesUnfoldFactor)
-                        staticCall(symbol, call, node, allPossibleCallees)
+                    if (!collector.isOpaque)
+                        staticCall(symbol, call, node, collector.callees)
                     else {
                         val callSite = CallGraphNode.CallSite.Virtual(call, node, call.callee)
                         callGraph.addEdge(symbol, callSite)
-
-                        allPossibleCallees.forEach { handleRoot(it) }
                     }
                 }
             }
