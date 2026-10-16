@@ -7,6 +7,6 @@ package org.jetbrains.dokka.utilities
 import org.jetbrains.dokka.InternalDokkaApi
 
 @InternalDokkaApi
-public inline fun <reified T> Any.cast(): T {
+internal inline fun <reified T> Any.cast(): T {
     return this as T
 }

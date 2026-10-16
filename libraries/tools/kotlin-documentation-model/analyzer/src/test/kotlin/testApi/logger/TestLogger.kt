@@ -10,7 +10,7 @@ import java.util.*
 /*
  * Even in tests it be used in a concurrent environment, so needs to be thread safe
  */
-public class TestLogger(private val logger: DokkaLogger) : DokkaLogger {
+public class TestLogger internal constructor(private val logger: DokkaLogger) : DokkaLogger {
     override var warningsCount: Int by logger::warningsCount
     override var errorsCount: Int by logger::errorsCount
 

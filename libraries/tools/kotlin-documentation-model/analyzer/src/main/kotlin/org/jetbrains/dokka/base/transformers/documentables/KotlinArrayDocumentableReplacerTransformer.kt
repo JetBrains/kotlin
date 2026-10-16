@@ -9,7 +9,7 @@ import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.plugability.DokkaContext
 
-public class KotlinArrayDocumentableReplacerTransformer(
+internal class KotlinArrayDocumentableReplacerTransformer(
     context: DokkaContext
 ): DocumentableReplacerTransformer(context) {
 

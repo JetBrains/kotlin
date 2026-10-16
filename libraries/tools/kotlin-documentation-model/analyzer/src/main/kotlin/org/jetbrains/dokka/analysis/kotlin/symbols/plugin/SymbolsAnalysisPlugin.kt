@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.asJava.elements.KtLightAbstractAnnotation
 
 @Suppress("unused")
-public class SymbolsAnalysisPlugin : DokkaPlugin() {
+internal class SymbolsAnalysisPlugin : DokkaPlugin() {
 
     internal val kotlinAnalysis by extensionPoint<KotlinAnalysis>()
 

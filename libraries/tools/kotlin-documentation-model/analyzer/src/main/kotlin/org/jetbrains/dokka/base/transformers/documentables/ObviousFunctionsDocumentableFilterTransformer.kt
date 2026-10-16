@@ -9,7 +9,7 @@ import org.jetbrains.dokka.model.Documentable
 import org.jetbrains.dokka.model.ObviousMember
 import org.jetbrains.dokka.plugability.DokkaContext
 
-public class ObviousFunctionsDocumentableFilterTransformer(
+internal class ObviousFunctionsDocumentableFilterTransformer(
     context: DokkaContext
 ) : SuppressedByConditionDocumentableFilterTransformer(context) {
     override fun shouldBeSuppressed(d: Documentable): Boolean =

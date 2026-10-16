@@ -19,7 +19,7 @@ import java.io.File
  * @param projectDir the actual project directory that will be used to create test files in;
  *                   the path must be absolute and must exist.
  */
-fun TestDokkaConfiguration.toDokkaConfiguration(projectDir: File): DokkaConfiguration {
+internal fun TestDokkaConfiguration.toDokkaConfiguration(projectDir: File): DokkaConfiguration {
     require(projectDir.exists() && projectDir.isDirectory) {
         "Expected the \"projectDir\" File param to exist and be a directory"
     }

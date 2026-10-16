@@ -18,7 +18,7 @@ import java.io.Closeable
  * in one iteration and at the same time, so that the environment is created once and lives for
  * as little is possible, as opposed to creating it again and again for every individual sample.
  */
-public interface SampleAnalysisEnvironment : Closeable {
+internal interface SampleAnalysisEnvironment : Closeable {
 
     /**
      * Resolves a Kotlin sample function by its fully qualified name, and returns its import statements and body.
@@ -37,7 +37,7 @@ public interface SampleAnalysisEnvironment : Closeable {
      * @return a sample code snippet which includes import statements and the function body,
      *         or null if the link could not be resolved (examine the logs to find out the reason).
      */
-    public fun resolveSample(
+    fun resolveSample(
         sourceSet: DokkaConfiguration.DokkaSourceSet,
         fullyQualifiedLink: String
     ): SampleSnippet?

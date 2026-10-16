@@ -21,7 +21,7 @@ import org.jetbrains.dokka.utilities.parallelForEach
 import org.jetbrains.dokka.utilities.parallelMap
 import org.jetbrains.dokka.analysis.kotlin.internal.InternalKotlinAnalysisPlugin
 
-public class ExtensionExtractorTransformer : DocumentableTransformer {
+internal class ExtensionExtractorTransformer : DocumentableTransformer {
     override fun invoke(original: DModule, context: DokkaContext): DModule = runBlocking(Dispatchers.Default) {
         val classGraph = async {
             if (!context.configuration.suppressInheritedMembers)
@@ -174,8 +174,8 @@ public class ExtensionExtractorTransformer : DocumentableTransformer {
         groupBy(Pair<T, *>::first, Pair<*, U>::second)
 }
 
-public data class CallableExtensions(val extensions: Set<Callable>) : ExtraProperty<Documentable> {
-    public companion object Key : ExtraProperty.Key<Documentable, CallableExtensions> {
+internal data class CallableExtensions(val extensions: Set<Callable>) : ExtraProperty<Documentable> {
+    companion object Key : ExtraProperty.Key<Documentable, CallableExtensions> {
         override fun mergeStrategyFor(
             left: CallableExtensions,
             right: CallableExtensions

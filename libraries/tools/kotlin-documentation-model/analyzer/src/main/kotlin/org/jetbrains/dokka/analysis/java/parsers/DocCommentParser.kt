@@ -11,7 +11,7 @@ import org.jetbrains.dokka.analysis.java.doccomment.DocComment
 import org.jetbrains.dokka.model.doc.DocumentationNode
 
 @InternalDokkaApi
-public interface DocCommentParser {
-    public fun canParse(docComment: DocComment): Boolean
-    public fun parse(docComment: DocComment, context: PsiNamedElement, sourceSet: DokkaSourceSet): DocumentationNode
+internal interface DocCommentParser {
+    fun canParse(docComment: DocComment): Boolean
+    fun parse(docComment: DocComment, context: PsiNamedElement, sourceSet: DokkaSourceSet): DocumentationNode
 }

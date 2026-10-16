@@ -21,10 +21,10 @@ annotation class TestDSL
 
 @TestDSL
 abstract class ModelDSL : BaseAbstractTest() {
-    operator fun Documentable?.div(name: String): Documentable? =
+    internal operator fun Documentable?.div(name: String): Documentable? =
         this?.children?.find { it.name == name }
 
-    inline fun <reified T : Documentable> Documentable?.cast(): T =
+    internal inline fun <reified T : Documentable> Documentable?.cast(): T =
         (this as? T).assertNotNull()
 }
 
@@ -77,29 +77,29 @@ inline fun <reified T : Any> Any?.assertIsInstance(name: String? = ""): T {
     return this.let { it as? T } ?: throw AssertionError("$name should not be null")
 }
 
-fun TagWrapper.text(): String = when (val t = this) {
+internal fun TagWrapper.text(): String = when (val t = this) {
     is NamedTagWrapper -> "${t.name}: [${t.root.text()}]"
     else -> t.root.text()
 }
 
-fun DocTag.text(): String = when (val t = this) {
+internal fun DocTag.text(): String = when (val t = this) {
     is Text -> t.body
     is Code -> t.children.joinToString("\n") { it.text() }
     is P -> t.children.joinToString("") { it.text() } + "\n"
     else -> t.children.joinToString("") { it.text() }
 }
 
-fun <T : Documentable> T?.comments(): String = docs().map { it.text() }
+internal fun <T : Documentable> T?.comments(): String = docs().map { it.text() }
     .joinToString(separator = "\n") { it }
 
 fun <T> T?.assertNotNull(name: String = ""): T = this ?: throw AssertionError("$name should not be null")
 
-fun <T : Documentable> T?.docs() = this?.documentation.orEmpty().values.flatMap { it.children }
+internal fun <T : Documentable> T?.docs() = this?.documentation.orEmpty().values.flatMap { it.children }
 
-val DClass.supers
+internal val DClass.supers
     get() = supertypes.flatMap { it.component2() }
 
-val Bound.name: String?
+internal val Bound.name: String?
     get() = when (this) {
         is Nullable -> inner.name
         is DefinitelyNonNullable -> inner.name

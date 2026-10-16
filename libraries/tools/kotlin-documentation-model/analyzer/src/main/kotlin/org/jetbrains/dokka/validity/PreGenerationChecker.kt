@@ -4,14 +4,14 @@
 
 package org.jetbrains.dokka.validity
 
-public fun interface PreGenerationChecker : () -> PreGenerationCheckerOutput {
+internal fun interface PreGenerationChecker : () -> PreGenerationCheckerOutput {
 
     override fun invoke(): PreGenerationCheckerOutput
 }
 
-public data class PreGenerationCheckerOutput(val result: Boolean, val messages: List<String>) {
+internal data class PreGenerationCheckerOutput(val result: Boolean, val messages: List<String>) {
 
-    public operator fun plus(pair: Pair<Boolean, List<String>>): Pair<Boolean, List<String>> {
+    operator fun plus(pair: Pair<Boolean, List<String>>): Pair<Boolean, List<String>> {
         return Pair(result && pair.first, messages + pair.second)
     }
 }

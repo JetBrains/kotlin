@@ -10,24 +10,24 @@ import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.model.AnnotationTarget
 import org.jetbrains.dokka.model.properties.WithExtraProperties
 
-public interface JvmSignatureUtils {
-    public fun <T : Documentable> WithExtraProperties<T>.modifiers(): SourceSetDependent<Set<ExtraModifiers>>
+internal interface JvmSignatureUtils {
+    fun <T : Documentable> WithExtraProperties<T>.modifiers(): SourceSetDependent<Set<ExtraModifiers>>
 
-    public fun Annotations.Annotation.isIgnored(): Boolean
+    fun Annotations.Annotation.isIgnored(): Boolean
 
-    public fun Collection<ExtraModifiers>.toSignatureString(): String =
+    fun Collection<ExtraModifiers>.toSignatureString(): String =
         joinToString("") { it.name.lowercase() + " " }
 
     @Suppress("UNCHECKED_CAST")
-    public fun Documentable.annotations(): Map<DokkaSourceSet, List<Annotations.Annotation>> {
+    fun Documentable.annotations(): Map<DokkaSourceSet, List<Annotations.Annotation>> {
         return (this as? WithExtraProperties<Documentable>)?.annotations() ?: emptyMap()
     }
 
-    public fun <T : AnnotationTarget> WithExtraProperties<T>.annotations(): SourceSetDependent<List<Annotations.Annotation>> =
+    fun <T : AnnotationTarget> WithExtraProperties<T>.annotations(): SourceSetDependent<List<Annotations.Annotation>> =
         extra[Annotations]?.directAnnotations ?: emptyMap()
 
     @Suppress("UNCHECKED_CAST")
-    public operator fun <T : Iterable<*>> SourceSetDependent<T>.plus(other: SourceSetDependent<T>): SourceSetDependent<T> {
+    operator fun <T : Iterable<*>> SourceSetDependent<T>.plus(other: SourceSetDependent<T>): SourceSetDependent<T> {
         return LinkedHashMap(this).apply {
             for ((k, v) in other) {
                 put(k, get(k).let { if (it != null) (it + v) as T else v })
@@ -35,7 +35,7 @@ public interface JvmSignatureUtils {
         }
     }
 
-    public fun DProperty.annotations(): SourceSetDependent<List<Annotations.Annotation>> {
+    fun DProperty.annotations(): SourceSetDependent<List<Annotations.Annotation>> {
         return (extra[Annotations]?.directAnnotations ?: emptyMap()) +
                 (getter?.annotations() ?: emptyMap()).mapValues { it.value.map { it.copy( scope = Annotations.AnnotationScope.GETTER) } } +
                 (setter?.annotations() ?: emptyMap()).mapValues { it.value.map { it.copy( scope = Annotations.AnnotationScope.SETTER) } }
@@ -43,7 +43,7 @@ public interface JvmSignatureUtils {
 
 
 
-    public infix fun DFunction.uses(typeParameter: DTypeParameter): Boolean {
+    infix fun DFunction.uses(typeParameter: DTypeParameter): Boolean {
         val parameterDris = parameters.flatMap { listOf(it.dri) + it.type.drisOfAllNestedBounds }
         val receiverDris =
             listOfNotNull(

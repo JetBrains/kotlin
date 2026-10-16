@@ -22,7 +22,7 @@ import org.jetbrains.dokka.analysis.test.api.util.AnalysisTestDslMarker
  *
  * @see TestData
  */
-class MixedJvmTestData(pathToSources: String) : TestData, KtFileCreator, JavaFileCreator {
+internal class MixedJvmTestData(pathToSources: String) : TestData, KtFileCreator, JavaFileCreator {
 
     private val javaTestData = JavaTestData(pathToJavaSources = pathToSources)
     private val kotlinJvmTestData = KotlinTestData(pathToKotlinSources = pathToSources)

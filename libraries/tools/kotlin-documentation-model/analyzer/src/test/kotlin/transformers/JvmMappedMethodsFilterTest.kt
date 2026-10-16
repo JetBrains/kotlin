@@ -22,12 +22,12 @@ class JvmMappedMethodsFilterTest : BaseAbstractTest() {
         }
     }
 
-    fun List<DModule>.getMethodNamesFrom(classname: String): Set<String> {
+    internal fun List<DModule>.getMethodNamesFrom(classname: String): Set<String> {
         val cl = this.mapNotNull { it.dfs { it.name == classname && it is DClasslike } }.first() as DClasslike
         return cl.functions.map { it.name }.toSet()
     }
 
-    fun List<DModule>.getPropertyNamesFrom(classname: String): Set<String> {
+    internal fun List<DModule>.getPropertyNamesFrom(classname: String): Set<String> {
         val cl = this.mapNotNull { it.dfs { it.name == classname && it is DClasslike } }.first() as DClasslike
         return cl.properties.map { it.name }.toSet()
     }

@@ -15,7 +15,7 @@ import org.jetbrains.dokka.analysis.test.api.TestProject
  * Represents a trimmed-down version of [DokkaConfiguration] that only
  * exposes properties that can be used by Dokka's analysis implementations.
  */
-data class TestDokkaConfiguration(
+internal data class TestDokkaConfiguration(
 
     /**
      * Name of this [TestProject].
@@ -62,7 +62,7 @@ data class TestDokkaConfiguration(
  *
  * @see https://kotlinlang.org/docs/multiplatform-discover-project.html#source-sets
  */
-data class TestDokkaSourceSet (
+internal data class TestDokkaSourceSet (
 
     /**
      * @see DokkaConfiguration.DokkaSourceSet.analysisPlatform

@@ -52,7 +52,7 @@ internal fun <T> withTempDirectory(logger: DokkaLogger? = null, block: (tempDire
  * @throws IllegalArgumentException if the resource cannot be found or does not exist
  * @return an absolute path to the resource, such as `/home/user/projects/dokka/../MyFile.md`
  */
-fun getResourceAbsolutePath(resourcePath: String): String {
+internal fun getResourceAbsolutePath(resourcePath: String): String {
     val resourceFile = getResourceFile(resourcePath)
     require(resourceFile.exists()) {
         "Resource file does not exist: $resourcePath"

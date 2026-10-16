@@ -11,8 +11,8 @@ import org.jetbrains.dokka.model.Documentable
 import org.jetbrains.dokka.model.DocumentableSource
 import org.jetbrains.dokka.model.WithSources
 
-public interface PreMergeDocumentableTransformer {
-    public operator fun invoke(modules: List<DModule>): List<DModule>
+internal interface PreMergeDocumentableTransformer {
+    operator fun invoke(modules: List<DModule>): List<DModule>
 }
 
 /**
@@ -21,19 +21,19 @@ public interface PreMergeDocumentableTransformer {
  * @return the single source set associated with this [documentable].
  */
 @Suppress("UnusedReceiverParameter") // Receiver is used for scoping this function
-public fun PreMergeDocumentableTransformer.sourceSet(documentable: Documentable): DokkaSourceSet {
+internal fun PreMergeDocumentableTransformer.sourceSet(documentable: Documentable): DokkaSourceSet {
     return documentable.sourceSets.single()
 }
 
 /**
  * @return The [PackageOptions] associated with this documentable, or null
  */
-public fun PreMergeDocumentableTransformer.perPackageOptions(documentable: Documentable): PackageOptions? {
+internal fun PreMergeDocumentableTransformer.perPackageOptions(documentable: Documentable): PackageOptions? {
     val packageName = documentable.dri.packageName ?: return null
     return sourceSet(documentable).perPackageOptions
         .sortedByDescending { packageOptions -> packageOptions.matchingRegex.length }
         .firstOrNull { packageOptions -> Regex(packageOptions.matchingRegex).matches(packageName) }
 }
 
-public fun <T> PreMergeDocumentableTransformer.source(documentable: T): DocumentableSource where T : Documentable, T : WithSources =
+internal fun <T> PreMergeDocumentableTransformer.source(documentable: T): DocumentableSource where T : Documentable, T : WithSources =
     checkNotNull(documentable.sources[sourceSet(documentable)])

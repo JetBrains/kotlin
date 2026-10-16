@@ -69,7 +69,7 @@ class CompositeSourceSetIDTest {
         )
     }
 
-    operator fun DokkaSourceSetID.plus(other: DokkaSourceSetID): CompositeSourceSetID {
+    internal operator fun DokkaSourceSetID.plus(other: DokkaSourceSetID): CompositeSourceSetID {
         return CompositeSourceSetID(listOf(this, other))
     }
 

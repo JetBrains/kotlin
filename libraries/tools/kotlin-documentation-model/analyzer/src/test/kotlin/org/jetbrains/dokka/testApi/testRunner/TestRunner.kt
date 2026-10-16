@@ -20,9 +20,9 @@ import java.nio.file.Path
 import java.nio.file.Paths
 
 // TODO: take dokka configuration from file
-public abstract class AbstractTest<M : TestMethods, T : TestBuilder<M>, D : DokkaTestGenerator<M>>(
+public abstract class AbstractTest<M : TestMethods, T : TestBuilder<M>, D : DokkaTestGenerator<M>> internal constructor(
     protected val testBuilder: () -> T,
-    protected val dokkaTestGenerator: (DokkaConfiguration, DokkaLogger, M, List<DokkaPlugin>) -> D,
+    internal val dokkaTestGenerator: (DokkaConfiguration, DokkaLogger, M, List<DokkaPlugin>) -> D,
     protected val logger: TestLogger,
 ) {
     protected fun getTestDataDir(name: String): Path {
@@ -37,7 +37,7 @@ public abstract class AbstractTest<M : TestMethods, T : TestBuilder<M>, D : Dokk
      * @param useOutputLocationFromConfig if set to true, output location specified in [DokkaConfigurationImpl.outputDir]
      *                                    will be used. If set to false, a temporary folder will be used instead.
      */
-    protected fun testFromData(
+    internal fun testFromData(
         configuration: DokkaConfigurationImpl,
         cleanupOutput: Boolean = true,
         useOutputLocationFromConfig: Boolean = false,
@@ -66,7 +66,7 @@ public abstract class AbstractTest<M : TestMethods, T : TestBuilder<M>, D : Dokk
         }
     }
 
-    protected fun testInline(
+    internal fun testInline(
         query: String,
         configuration: DokkaConfigurationImpl,
         cleanupOutput: Boolean = true,
@@ -166,7 +166,7 @@ public abstract class AbstractTest<M : TestMethods, T : TestBuilder<M>, D : Dokk
 
     private fun createTempDir(): File = Files.createTempDirectory("dokka-test").toFile()
 
-    protected fun dokkaConfiguration(block: TestDokkaConfigurationBuilder.() -> Unit): DokkaConfigurationImpl =
+    internal fun dokkaConfiguration(block: TestDokkaConfigurationBuilder.() -> Unit): DokkaConfigurationImpl =
         testApi.testRunner.dokkaConfiguration(block)
 
 
@@ -198,23 +198,23 @@ public abstract class AbstractTest<M : TestMethods, T : TestBuilder<M>, D : Dokk
 
 public interface TestMethods
 
-public open class CoreTestMethods(
-    public open val pluginsSetupStage: (DokkaContext) -> Unit,
+public open class CoreTestMethods internal constructor(
+    internal open val pluginsSetupStage: (DokkaContext) -> Unit,
     public open val verificationStage: (() -> Unit) -> Unit,
-    public open val documentablesCreationStage: (List<DModule>) -> Unit,
-    public open val documentablesMergingStage: (DModule) -> Unit,
-    public open val documentablesTransformationStage: (DModule) -> Unit,
+    internal open val documentablesCreationStage: (List<DModule>) -> Unit,
+    internal open val documentablesMergingStage: (DModule) -> Unit,
+    internal open val documentablesTransformationStage: (DModule) -> Unit,
 ) : TestMethods
 
 public abstract class TestBuilder<M : TestMethods> {
     public abstract fun build(): M
 }
 
-public abstract class DokkaTestGenerator<T : TestMethods>(
-    protected val configuration: DokkaConfiguration,
-    protected val logger: DokkaLogger,
+public abstract class DokkaTestGenerator<T : TestMethods> internal constructor(
+    internal val configuration: DokkaConfiguration,
+    internal val logger: DokkaLogger,
     protected val testMethods: T,
-    protected val additionalPlugins: List<DokkaPlugin> = emptyList(),
+    internal val additionalPlugins: List<DokkaPlugin> = emptyList(),
 ) {
     public abstract fun generate()
 }

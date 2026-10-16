@@ -4,12 +4,12 @@
 
 package org.jetbrains.dokka.model
 
-public data class AncestryNode(
+internal data class AncestryNode(
     val typeConstructor: TypeConstructor,
     val superclass: AncestryNode?,
     val interfaces: List<AncestryNode>,
 ) {
-    public fun allImplementedInterfaces(): List<TypeConstructor> {
+    fun allImplementedInterfaces(): List<TypeConstructor> {
         fun traverseInterfaces(ancestry: AncestryNode): List<TypeConstructor> =
             ancestry.interfaces.flatMap { listOf(it.typeConstructor) + traverseInterfaces(it) } +
                     (ancestry.superclass?.let(::traverseInterfaces) ?: emptyList())

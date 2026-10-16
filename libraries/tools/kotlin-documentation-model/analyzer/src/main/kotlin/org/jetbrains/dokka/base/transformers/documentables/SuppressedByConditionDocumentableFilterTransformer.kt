@@ -8,8 +8,8 @@ import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.plugability.DokkaContext
 import org.jetbrains.dokka.transformers.documentation.PreMergeDocumentableTransformer
 
-public abstract class SuppressedByConditionDocumentableFilterTransformer(
-    public val context: DokkaContext
+internal abstract class SuppressedByConditionDocumentableFilterTransformer(
+    val context: DokkaContext
 ) : PreMergeDocumentableTransformer {
     override fun invoke(modules: List<DModule>): List<DModule> =
         modules.map { module ->
@@ -17,7 +17,7 @@ public abstract class SuppressedByConditionDocumentableFilterTransformer(
             documentable.takeIf { wasChanged } ?: module
         }
 
-    public abstract fun shouldBeSuppressed(d: Documentable): Boolean
+    abstract fun shouldBeSuppressed(d: Documentable): Boolean
 
     private fun processModule(module: DModule): DocumentableWithChanges<DModule> {
         val afterProcessing = module.packages.map { processPackage(it) }

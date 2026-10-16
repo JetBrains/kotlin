@@ -17,7 +17,7 @@ import org.jetbrains.dokka.plugability.DokkaPlugin
 /**
  * @see javaTestProject for an explanation and a convenient way to construct this project
  */
-class JavaTestProject : TestProject, JavaFileCreator, MdFileCreator, Pluggable {
+internal class JavaTestProject : TestProject, JavaFileCreator, MdFileCreator, Pluggable {
 
     private val projectConfigurationBuilder = JavaTestConfigurationBuilder()
 

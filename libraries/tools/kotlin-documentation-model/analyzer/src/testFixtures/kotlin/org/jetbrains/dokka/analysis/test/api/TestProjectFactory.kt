@@ -22,7 +22,7 @@ import org.jetbrains.dokka.analysis.test.api.util.AnalysisTestDslMarker
  *
  * @sample org.jetbrains.dokka.analysis.test.jvm.kotlin.SampleKotlinJvmAnalysisTest.sample
  */
-fun kotlinJvmTestProject(init: (@AnalysisTestDslMarker KotlinJvmTestProject).() -> Unit): TestProject {
+internal fun kotlinJvmTestProject(init: (@AnalysisTestDslMarker KotlinJvmTestProject).() -> Unit): TestProject {
     val testData = KotlinJvmTestProject()
     testData.init()
     return testData
@@ -40,7 +40,7 @@ fun kotlinJvmTestProject(init: (@AnalysisTestDslMarker KotlinJvmTestProject).() 
  *
  * @sample org.jetbrains.dokka.analysis.test.jvm.java.SampleJavaAnalysisTest.sample
  */
-fun javaTestProject(init: (@AnalysisTestDslMarker JavaTestProject).() -> Unit): TestProject {
+internal fun javaTestProject(init: (@AnalysisTestDslMarker JavaTestProject).() -> Unit): TestProject {
     val testData = JavaTestProject()
     testData.init()
     return testData
@@ -60,7 +60,7 @@ fun javaTestProject(init: (@AnalysisTestDslMarker JavaTestProject).() -> Unit): 
  *
  * @sample org.jetbrains.dokka.analysis.test.jvm.mixed.SampleMixedJvmAnalysisTest.sample
  */
-fun mixedJvmTestProject(init: (@AnalysisTestDslMarker MixedJvmTestProject).() -> Unit): TestProject {
+internal fun mixedJvmTestProject(init: (@AnalysisTestDslMarker MixedJvmTestProject).() -> Unit): TestProject {
     val testProject = MixedJvmTestProject()
     testProject.init()
     return testProject

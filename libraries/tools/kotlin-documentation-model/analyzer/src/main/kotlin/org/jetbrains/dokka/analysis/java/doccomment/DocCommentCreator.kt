@@ -8,6 +8,6 @@ import com.intellij.psi.PsiNamedElement
 import org.jetbrains.dokka.InternalDokkaApi
 
 @InternalDokkaApi
-public interface DocCommentCreator {
-    public fun create(element: PsiNamedElement): DocComment?
+internal interface DocCommentCreator {
+    fun create(element: PsiNamedElement): DocComment?
 }

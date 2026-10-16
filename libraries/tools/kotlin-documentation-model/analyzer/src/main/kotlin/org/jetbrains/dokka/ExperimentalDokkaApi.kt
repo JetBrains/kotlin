@@ -19,4 +19,4 @@ package org.jetbrains.dokka
             " Make sure you fully read and understand documentation of the declaration that is marked as experimental."
 )
 @Retention(AnnotationRetention.BINARY)
-public annotation class ExperimentalDokkaApi
+internal annotation class ExperimentalDokkaApi

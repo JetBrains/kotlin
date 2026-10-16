@@ -21,7 +21,7 @@ import org.jetbrains.dokka.utilities.DokkaLogger
 /**
  * Declares a capability that a project can have plugins
  */
-interface Pluggable {
+internal interface Pluggable {
     /**
      * Add a plugin instance to a project
      */
@@ -41,7 +41,7 @@ interface Pluggable {
  *
  * See [parse] and [useServices] functions to learn how to run Dokka with this project as input.
  */
-interface TestProject {
+internal interface TestProject {
 
     /**
      * Verifies that this project is valid from the user's and Dokka's perspectives.
@@ -94,7 +94,7 @@ interface TestProject {
  * @param logger logger to be used for running Dokka and tests. Custom loggers like [CollectingDokkaConsoleLogger]
  *               can be useful in verifying the behavior.
  */
-fun TestProject.parse(logger: DokkaLogger = defaultAnalysisLogger): DModule = TestProjectAnalyzer.parse(this, logger)
+internal fun TestProject.parse(logger: DokkaLogger = defaultAnalysisLogger): DModule = TestProjectAnalyzer.parse(this, logger)
 
 /**
  * Runs Dokka on the given [TestProject] and provides not only the resulting documentable model,
@@ -119,7 +119,7 @@ fun TestProject.parse(logger: DokkaLogger = defaultAnalysisLogger): DModule = Te
  * @param logger logger to be used for running Dokka and tests. Custom loggers like [CollectingDokkaConsoleLogger]
  *               can be useful in verifying the behavior.
  */
-fun TestProject.useServices(
+internal fun TestProject.useServices(
     logger: DokkaLogger = defaultAnalysisLogger,
     block: TestAnalysisServices.(context: TestAnalysisContext) -> Unit
 ): Unit = TestProjectAnalyzer.useServices(this, logger, block)

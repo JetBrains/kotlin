@@ -16,7 +16,7 @@ import kotlin.test.*
 @MustRunOnChangesInAnalysisApi
 class JavaAnnotationsTest : BaseAbstractTest() {
 
-    val configuration = dokkaConfiguration {
+    internal val configuration = dokkaConfiguration {
         sourceSets {
             sourceSet {
                 analysisPlatform = Platform.jvm.toString()

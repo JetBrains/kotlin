@@ -18,7 +18,7 @@ import utils.OnlyJavaSymbols
 import kotlin.test.*
 
 class DefaultPsiToDocumentableTranslatorTest : BaseAbstractTest() {
-    val configuration = dokkaConfiguration {
+    internal val configuration = dokkaConfiguration {
         sourceSets {
             sourceSet {
                 sourceRoots = listOf("src/main/java")

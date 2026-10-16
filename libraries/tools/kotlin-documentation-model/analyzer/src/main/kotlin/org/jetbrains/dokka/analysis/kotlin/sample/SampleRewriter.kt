@@ -7,14 +7,14 @@ package org.jetbrains.dokka.analysis.kotlin.sample
 /**
  * Represents a function name
  */
-public typealias ShortFunctionName = String
+internal typealias ShortFunctionName = String
 
 /**
  * Rewrites an expression of function call to an arbitrary string
  *
  * @see FunctionCallRewriter.rewrite
  */
-public interface FunctionCallRewriter{
+internal interface FunctionCallRewriter{
     /**
      *
      * A value argument and type arguments represents a string from source code in [arguments] and [typeArguments]
@@ -31,7 +31,7 @@ public interface FunctionCallRewriter{
      *
      * @return a string or an empty string to delete the call expression
      */
-    public fun rewrite(arguments: List<String>, typeArguments: List<String>): String
+    fun rewrite(arguments: List<String>, typeArguments: List<String>): String
 }
 
 /**
@@ -43,7 +43,7 @@ public interface FunctionCallRewriter{
  *
  * @see SampleSnippet
  */
-public interface SampleRewriter {
+internal interface SampleRewriter {
     /**
      * Allows to rewrite paths of [import directives](https://kotlinlang.org/spec/packages-and-imports.html#importing)
      * E.g., for `import org.example` the path `org.example` will be used as an argument of [rewriteImportDirective]
@@ -56,7 +56,7 @@ public interface SampleRewriter {
      *
      * @see SampleSnippet.imports
      */
-    public fun rewriteImportDirective(importPath: String): String? = importPath
+    fun rewriteImportDirective(importPath: String): String? = importPath
 
     /**
      * Allows to rewrite a function call expressions
@@ -64,6 +64,5 @@ public interface SampleRewriter {
      *
      * @return [FunctionCallRewriter] or null if a call should be left unchanged
      */
-    public fun getFunctionCallRewriter(name: String): FunctionCallRewriter?
+    fun getFunctionCallRewriter(name: String): FunctionCallRewriter?
 }
-

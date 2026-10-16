@@ -13,11 +13,13 @@ import java.net.URLEncoder
  * Replaces & with &amp;, < with &lt; and > with &gt;
  */
 @InternalDokkaApi
-public fun String.htmlEscape(): String = replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("\"", "&quot;")
+internal fun String.htmlEscape(): String = replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("\"", "&quot;")
 
 @InternalDokkaApi
-public fun String.urlEncoded(): String = URLEncoder.encode(this, "UTF-8")
+@Suppress("unused")
+internal fun String.urlEncoded(): String = URLEncoder.encode(this, "UTF-8")
 
 @InternalDokkaApi
-public fun String.formatToEndWithHtml(): String =
+@Suppress("unused")
+internal fun String.formatToEndWithHtml(): String =
     if (endsWith(".html") || contains(Regex("\\.html#"))) this else "$this.html"

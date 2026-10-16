@@ -19,7 +19,7 @@ import org.jetbrains.dokka.model.properties.PropertyContainer
 import org.jetbrains.dokka.utilities.DokkaLogger
 
 @InternalDokkaApi
-public class PsiHelper(
+internal class PsiHelper(
     private val sourceSet: DokkaConfiguration.DokkaSourceSet,
     private val logger: DokkaLogger,
     private val lightMethodChecker: BreakingAbstractionKotlinLightMethodChecker
@@ -29,7 +29,7 @@ public class PsiHelper(
     /**
      * Extracts a list of [DRI]s for checked exceptions from a [PsiMethod]'s throws clause.
      */
-    public fun getCheckedExceptionDRIs(psiMethod: PsiMethod): List<DRI> =
+    fun getCheckedExceptionDRIs(psiMethod: PsiMethod): List<DRI> =
         psiMethod.throwsList.toDriList()
 
     private fun PsiReferenceList.toDriList(): List<DRI> =
@@ -46,7 +46,7 @@ public class PsiHelper(
         } ?: PropertyContainer.empty()
 
     // requires access to annotations, so extracted here
-    public fun getBound(type: PsiType): Bound {
+    fun getBound(type: PsiType): Bound {
         //We would like to cache most of the bounds since it is not common to annotate them,
         //but if this is the case, we treat them as 'one of'
         fun PsiType.cacheBoundIfHasNoAnnotation(f: (List<Annotations.Annotation>) -> Bound): Bound {
@@ -146,7 +146,7 @@ public class PsiHelper(
         else -> Invariance(getBound(type))
     }
 
-    public fun convertAnnotations(annotations: Collection<PsiAnnotation>): List<Annotations.Annotation> =
+    fun convertAnnotations(annotations: Collection<PsiAnnotation>): List<Annotations.Annotation> =
         annotations.filter { !lightMethodChecker.isLightAnnotation(it) }.mapNotNull { convertAnnotation(it) }
 
     private fun JvmAnnotationAttribute.toValue(): AnnotationParameterValue = when (this) {
@@ -212,7 +212,7 @@ public class PsiHelper(
         else -> StringValue(text ?: "")
     }
 
-    public fun convertAnnotation(annotation: PsiAnnotation): Annotations.Annotation? {
+    fun convertAnnotation(annotation: PsiAnnotation): Annotations.Annotation? {
         // TODO Mitigating workaround for issue https://github.com/Kotlin/dokka/issues/1341
         //  Tracking https://youtrack.jetbrains.com/issue/KT-41234
         //  Needs to be removed once this issue is fixed in light classes
@@ -243,7 +243,7 @@ public class PsiHelper(
     private val PsiElement.psiReference
         get() = getChildOfType<PsiJavaCodeReferenceElement>()?.resolve()
 
-    public fun getConstantExpression(field: PsiField): Expression? {
+    fun getConstantExpression(field: PsiField): Expression? {
         val constantValue = field.computeConstantValue() ?: return null
         return when (constantValue) {
             is Byte -> IntegerConstant(constantValue.toLong())

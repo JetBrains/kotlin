@@ -24,7 +24,7 @@ import kotlin.test.assertTrue
 @MustRunOnChangesInAnalysisApi
 class InheritorsTest : AbstractModelTest("/src/main/kotlin/inheritors/Test.kt", "inheritors") {
 
-    val configuration = dokkaConfiguration {
+    internal val configuration = dokkaConfiguration {
         suppressObviousFunctions = false
         sourceSets {
             sourceSet {

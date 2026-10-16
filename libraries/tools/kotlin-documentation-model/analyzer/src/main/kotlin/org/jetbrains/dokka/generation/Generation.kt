@@ -6,14 +6,14 @@ package org.jetbrains.dokka.generation
 
 import org.jetbrains.dokka.Timer
 
-public interface Generation {
-    public fun Timer.generate()
-    public val generationName: String
+internal interface Generation {
+    fun Timer.generate()
+    val generationName: String
 }
 
 // This needs to be public for now but in the future it should be replaced with system of checks provided by EP
-public fun exitGenerationGracefully(reason: String): Nothing {
+internal fun exitGenerationGracefully(reason: String): Nothing {
     throw GracefulGenerationExit(reason)
 }
 
-public class GracefulGenerationExit(public val reason: String) : Throwable()
+internal class GracefulGenerationExit(val reason: String) : Throwable()

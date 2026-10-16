@@ -10,8 +10,8 @@ import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.plugability.DokkaContext
 import org.jetbrains.dokka.transformers.documentation.PreMergeDocumentableTransformer
 
-public class DocumentableVisibilityFilterTransformer(
-    public val context: DokkaContext
+internal class DocumentableVisibilityFilterTransformer(
+    val context: DokkaContext
 ) : PreMergeDocumentableTransformer {
 
     override fun invoke(modules: List<DModule>): List<DModule> {
