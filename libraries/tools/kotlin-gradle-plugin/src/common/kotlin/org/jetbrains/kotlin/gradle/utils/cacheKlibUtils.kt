@@ -20,8 +20,8 @@ internal fun getCacheDirectory(
     resolvedConfiguration: LazyResolvedConfigurationWithArtifacts,
     logger: Logger,
 ): File {
-    val moduleCacheDirectory = File(rootCacheDirectory, dependency.selected.moduleVersion?.name ?: "undefined")
-    val versionCacheDirectory = File(moduleCacheDirectory, dependency.selected.moduleVersion?.version ?: "undefined")
+    val moduleCacheDirectory = rootCacheDirectory.resolveInside(dependency.selected.moduleVersion?.name ?: "undefined")
+    val versionCacheDirectory = moduleCacheDirectory.resolveInside(dependency.selected.moduleVersion?.version ?: "undefined")
     val uniqueName = artifact
         ?.let {
             if (libraryFilter(it))
