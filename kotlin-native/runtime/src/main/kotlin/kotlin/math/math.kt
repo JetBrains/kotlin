@@ -581,6 +581,56 @@ external public actual fun Double.nextTowards(to: Double): Double
 @GCUnsafeCall("Kotlin_math_Double_signBit")
 external private fun Double.signBit(): Boolean
 
+/**
+ * Rounds this [Double] value to the nearest integer and converts the result to [Int].
+ * Ties are rounded towards positive infinity.
+ *
+ * Special cases:
+ *   - `x.roundToInt() == Int.MAX_VALUE` when `x > Int.MAX_VALUE`
+ *   - `x.roundToInt() == Int.MIN_VALUE` when `x < Int.MIN_VALUE`
+ *
+ * @throws IllegalArgumentException when this value is `NaN`
+ * @sample samples.math.MathSamples.Doubles.roundToInt
+ */
+@SinceKotlin("1.2")
+public actual fun Double.roundToInt(): Int = when {
+    isNaN() -> throw IllegalArgumentException("Cannot round NaN value.")
+    this > Int.MAX_VALUE -> Int.MAX_VALUE
+    this < Int.MIN_VALUE -> Int.MIN_VALUE
+    else -> {
+        // Even though `this - floor(this)` is not guaranteed to be exact when `-0.5 < x < 0` (see Sterbenz lemma), it does not matter when
+        // ties are resolved towards positive infinity, because:
+        // - `floor` is -1 for every number within the range
+        // - hence the result of the above subtraction, `d`, is `0.5 < d < 1.0` and cannot be rounded to anything below 0.5 because 0.5 is
+        // exactly representable.
+        val floored = floor(this)
+        (if (this - floored >= 0.5) floored + 1.0 else floored).toInt()
+    }
+}
+
+/**
+ * Rounds this [Double] value to the nearest integer and converts the result to [Long].
+ * Ties are rounded towards positive infinity.
+ *
+ * Special cases:
+ *   - `x.roundToLong() == Long.MAX_VALUE` when `x > Long.MAX_VALUE`
+ *   - `x.roundToLong() == Long.MIN_VALUE` when `x < Long.MIN_VALUE`
+ *
+ * @throws IllegalArgumentException when this value is `NaN`
+ * @sample samples.math.MathSamples.Doubles.roundToLong
+ */
+@SinceKotlin("1.2")
+public actual fun Double.roundToLong(): Long = when {
+    isNaN() -> throw IllegalArgumentException("Cannot round NaN value.")
+    this > Long.MAX_VALUE -> Long.MAX_VALUE
+    this < Long.MIN_VALUE -> Long.MIN_VALUE
+    else -> {
+        val floored = floor(this)
+        // See the comment in Double.roundToInt().
+        (if (this - floored >= 0.5) floored + 1.0 else floored).toLong()
+    }
+}
+
 // endregion
 
 // region ================ Float Math ========================================
@@ -1191,6 +1241,52 @@ external public fun Float.nextTowards(to: Float): Float
  */
 @GCUnsafeCall("Kotlin_math_Float_signBit")
 external private fun Float.signBit(): Boolean
+
+/**
+ * Rounds this [Float] value to the nearest integer and converts the result to [Int].
+ * Ties are rounded towards positive infinity.
+ *
+ * Special cases:
+ *   - `x.roundToInt() == Int.MAX_VALUE` when `x > Int.MAX_VALUE`
+ *   - `x.roundToInt() == Int.MIN_VALUE` when `x < Int.MIN_VALUE`
+ *
+ * @throws IllegalArgumentException when this value is `NaN`
+ * @sample samples.math.MathSamples.Floats.roundToInt
+ */
+@SinceKotlin("1.2")
+public actual fun Float.roundToInt(): Int = when {
+    isNaN() -> throw IllegalArgumentException("Cannot round NaN value.")
+    this > Int.MAX_VALUE -> Int.MAX_VALUE
+    this < Int.MIN_VALUE -> Int.MIN_VALUE
+    else -> {
+        // See the comment in Double.roundToInt().
+        val floored = floor(this)
+        (if (this - floored >= 0.5f) floored + 1.0f else floored).toInt()
+    }
+}
+
+/**
+ * Rounds this [Float] value to the nearest integer and converts the result to [Long].
+ * Ties are rounded towards positive infinity.
+ *
+ * Special cases:
+ *   - `x.roundToLong() == Long.MAX_VALUE` when `x > Long.MAX_VALUE`
+ *   - `x.roundToLong() == Long.MIN_VALUE` when `x < Long.MIN_VALUE`
+ *
+ * @throws IllegalArgumentException when this value is `NaN`
+ * @sample samples.math.MathSamples.Floats.roundToLong
+ */
+@SinceKotlin("1.2")
+public actual fun Float.roundToLong(): Long = when {
+    isNaN() -> throw IllegalArgumentException("Cannot round NaN value.")
+    this > Long.MAX_VALUE -> Long.MAX_VALUE
+    this < Long.MIN_VALUE -> Long.MIN_VALUE
+    else -> {
+        // See the comment in Double.roundToInt().
+        val floored = floor(this)
+        (if (this - floored >= 0.5f) floored + 1.0f else floored).toLong()
+    }
+}
 
 // endregion
 
