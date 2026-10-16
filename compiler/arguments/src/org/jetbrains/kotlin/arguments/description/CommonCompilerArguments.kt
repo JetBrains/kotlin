@@ -1153,6 +1153,7 @@ default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_5_0,
+            removedVersion = KotlinReleaseVersion.v2_5_20,
         )
     }
 
