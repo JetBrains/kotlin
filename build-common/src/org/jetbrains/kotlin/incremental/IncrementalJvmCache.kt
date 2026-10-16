@@ -65,6 +65,8 @@ open class IncrementalJvmCache(
         private const val INLINE_FUNCTIONS = "inline-functions"
         private const val INTERNAL_NAME_TO_SOURCE = "internal-name-to-source"
         private const val JAVA_SOURCES_PROTO_MAP = "java-sources-proto-map"
+        private const val JAVA_SUBTYPES = "java-subtypes"
+        private const val JAVA_SUPERTYPES = "java-supertypes"
         private const val METADATA_MAP = "metadata"
         private const val DIRTY_METADATA_MAP = "dirty-metadata"
 
@@ -88,6 +90,10 @@ open class IncrementalJvmCache(
     // gradle only
     private val javaSourcesProtoMap = registerMap(JavaSourcesProtoMap(JAVA_SOURCES_PROTO_MAP.storageFile, icContext))
 
+    // gradle only: direct supertypes of Java source classes reported by K2, kept apart from the Kotlin class hierarchy
+    private val javaSubtypesMap = registerMap(SubtypesMap(JAVA_SUBTYPES.storageFile, icContext))
+    private val javaSupertypesMap = registerMap(SupertypesMap(JAVA_SUPERTYPES.storageFile, icContext))
+
     private val metadataMap = registerMap(MetadataMap(METADATA_MAP.storageFile, icContext))
     private val dirtyMetadataMap = registerMap(DirtyMetadataMap(DIRTY_METADATA_MAP.storageFile, icContext))
 
@@ -109,6 +115,21 @@ open class IncrementalJvmCache(
 
     fun sourcesByInternalName(internalName: String): Collection<File> =
         internalNameToSource[internalName].orEmpty()
+
+    fun getJavaSubtypesOf(className: FqName): Sequence<FqName> =
+        javaSubtypesMap[className].orEmpty().asSequence()
+
+    fun getJavaSupertypesOf(className: FqName): Sequence<FqName> =
+        javaSupertypesMap[className].orEmpty().asSequence()
+
+    fun recordJavaClassHierarchy(child: FqName, parents: Set<FqName>) {
+        parents.forEach { javaSubtypesMap.append(it, child) }
+
+        val removedSupertypes = javaSupertypesMap[child].orEmpty().filter { it !in parents }
+        removedSupertypes.forEach { javaSubtypesMap.removeValues(it, setOf(child)) }
+
+        javaSupertypesMap[child] = parents
+    }
 
     fun getAllPartsOfMultifileFacade(facade: JvmClassName): Collection<String>? {
         return multifileFacadeToParts[facade]

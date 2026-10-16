@@ -122,6 +122,7 @@ object JvmConfigurationUpdater : ConfigurationUpdater<K2JVMCompilerArguments>() 
         inlineConstTracker = services[InlineConstTracker::class.java]
         enumWhenTracker = services[EnumWhenTracker::class.java]
         fileMappingTracker = services[ICFileMappingTracker::class.java]
+        javaSupertypeTracker = services[JavaSupertypeTracker::class.java]
         incrementalCompilationComponents = services[IncrementalCompilationComponents::class.java]
 
         if (arguments.multiPlatform && arguments.useMetadataOnIncrementalClasspath) {

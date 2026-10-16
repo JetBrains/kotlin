@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.MutableJavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.enhancement.*
+import org.jetbrains.kotlin.fir.java.javaSupertypeTracker
 import org.jetbrains.kotlin.fir.java.toFirJavaTypeRef
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
@@ -28,6 +29,8 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.classId
+import org.jetbrains.kotlin.fir.types.coneTypeOrNull
 import org.jetbrains.kotlin.fir.types.constructClassLikeType
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
@@ -132,7 +135,16 @@ class FirJavaClass @FirImplementationDetail internal constructor(
             overridden = { emptyList() },
         )
 
-        enhancement.enhanceSuperTypes(superTypesRefs)
+        enhancement.enhanceSuperTypes(superTypesRefs).also(::reportSupertypesForIncrementalCompilation)
+    }
+
+    private fun reportSupertypesForIncrementalCompilation(superTypeRefs: List<FirTypeRef>) {
+        if (origin != FirDeclarationOrigin.Java.Source) return
+        val tracker = moduleData.session.javaSupertypeTracker?.tracker ?: return
+        val supertypeFqNames = superTypeRefs.mapNotNull { superTypeRef ->
+            superTypeRef.coneTypeOrNull?.classId?.takeIf { it != StandardClassIds.Any }?.asSingleFqName()
+        }
+        tracker.report(symbol.classId.asSingleFqName(), supertypeFqNames)
     }
 
     private fun computeSuperTypeRefsByJavaClass(): List<FirTypeRef> {

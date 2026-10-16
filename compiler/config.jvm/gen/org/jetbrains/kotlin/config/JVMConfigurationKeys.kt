@@ -14,6 +14,7 @@ package org.jetbrains.kotlin.config
 
 import java.io.File
 import org.jetbrains.kotlin.incremental.components.ICJvmMetadataTracker
+import org.jetbrains.kotlin.incremental.components.JavaSupertypeTracker
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.modules.Module
 
@@ -161,6 +162,10 @@ object JVMConfigurationKeys {
     // Tracks generated in-module JVM metadata for KMP JVM IC
     @JvmField
     val IC_METADATA_TRACKER = CompilerConfigurationKey.create<ICJvmMetadataTracker>("IC_METADATA_TRACKER")
+
+    // Tracks direct supertypes of Java source classes for IC
+    @JvmField
+    val JAVA_SUPERTYPE_TRACKER = CompilerConfigurationKey.create<JavaSupertypeTracker>("JAVA_SUPERTYPE_TRACKER")
 
     // Use fragment metadata found on the compilation classpath to perform incremental compilation
     @JvmField
@@ -343,6 +348,10 @@ var CompilerConfiguration.ignoredAnnotationsForBridges: List<String>
 var CompilerConfiguration.icMetadataTracker: ICJvmMetadataTracker?
     get() = get(JVMConfigurationKeys.IC_METADATA_TRACKER)
     set(value) { putIfNotNull(JVMConfigurationKeys.IC_METADATA_TRACKER, value) }
+
+var CompilerConfiguration.javaSupertypeTracker: JavaSupertypeTracker?
+    get() = get(JVMConfigurationKeys.JAVA_SUPERTYPE_TRACKER)
+    set(value) { putIfNotNull(JVMConfigurationKeys.JAVA_SUPERTYPE_TRACKER, value) }
 
 var CompilerConfiguration.useMetadataOnIncrementalClasspath: Boolean
     get() = getBoolean(JVMConfigurationKeys.USE_METADATA_ON_INCREMENTAL_CLASSPATH)

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.checkers.registerJvmCheckers
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
+import org.jetbrains.kotlin.fir.java.FirJavaSupertypeTrackerComponent
 import org.jetbrains.kotlin.fir.java.FirJvmTargetProvider
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
 import org.jetbrains.kotlin.fir.java.deserialization.FirJvmBuiltinsSymbolProvider
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.jvm.environment.JvmCompilationEnvironment
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
+import org.jetbrains.kotlin.incremental.components.JavaSupertypeTracker
 import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.Name
@@ -211,6 +213,7 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Con
     override fun FirSession.registerSourceSessionComponents(c: Context) {
         registerLibrarySessionComponents(c)
         register(FirJvmTargetProvider::class, FirJvmTargetProvider(c.jvmTarget))
+        c.javaSupertypeTracker?.let { register(FirJavaSupertypeTrackerComponent::class, FirJavaSupertypeTrackerComponent(it)) }
     }
 
     override val requiresSpecialSetupOfSourceProvidersInHmppCompilation: Boolean
@@ -230,6 +233,7 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Con
         val registerJvmDeserializationExtension: Boolean,
         val inlineConstTracker: InlineConstTracker?,
         val javaInterop: FirJavaInterop,
+        val javaSupertypeTracker: JavaSupertypeTracker? = null,
     ) {
         constructor(
             configuration: CompilerConfiguration,
@@ -244,6 +248,7 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Con
             registerJvmDeserializationExtension = registerJvmDeserializationExtension,
             inlineConstTracker = configuration.inlineConstTracker,
             javaInterop = javaInterop,
+            javaSupertypeTracker = configuration.javaSupertypeTracker,
         )
 
         val packagePartProviderForLibraries: PackagePartProvider = projectEnvironment.getPackagePartProvider(librariesClasspath)

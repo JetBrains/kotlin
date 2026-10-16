@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.incremental.DifferenceCalculatorForPackageFacade.Com
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.ICFileMappingTracker
 import org.jetbrains.kotlin.incremental.components.ICJvmMetadataTracker
+import org.jetbrains.kotlin.incremental.components.JavaSupertypeTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.components.SubtypeTracker
 import org.jetbrains.kotlin.incremental.javaInterop.JavaInteropCoordinator
@@ -102,7 +103,8 @@ abstract class IncrementalJvmCompilerRunnerBase(
             generatedFiles, caches.platformCache, changesCollector,
             @OptIn(K1Deprecation::class)
             services[JavaClassesTracker::class.java] as? JavaClassesTrackerImpl,
-            services[ICJvmMetadataTracker::class.java] as? ICJvmMetadataTrackerImpl
+            services[ICJvmMetadataTracker::class.java] as? ICJvmMetadataTrackerImpl,
+            services[JavaSupertypeTracker::class.java] as? JavaSupertypeTrackerImpl,
         )
     }
 
@@ -193,6 +195,7 @@ abstract class IncrementalJvmCompilerRunnerBase(
             val incrementalComponents = IncrementalCompilationComponentsImpl(targetToCache)
             register(IncrementalCompilationComponents::class.java, incrementalComponents)
             register(ICJvmMetadataTracker::class.java, ICJvmMetadataTrackerImpl())
+            register(JavaSupertypeTracker::class.java, JavaSupertypeTrackerImpl())
             @OptIn(K1Deprecation::class)
             javaInteropCoordinator.makeJavaClassesTracker(caches.platformCache)?.let {
                 register(JavaClassesTracker::class.java, it)

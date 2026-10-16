@@ -110,6 +110,7 @@ fun updateIncrementalCache(
     changesCollector: ChangesCollector,
     javaChangesTracker: JavaClassesTrackerImpl?,
     jvmMetadataTracker: ICJvmMetadataTrackerImpl?,
+    javaSupertypeTracker: JavaSupertypeTrackerImpl? = null,
 ) {
     // Store common-fragment metadata before class files: an `expect` declaration and its `actual` share an FqName,
     // so the platform proto is recorded last.
@@ -129,6 +130,10 @@ fun updateIncrementalCache(
 
     javaChangesTracker?.javaClassesUpdates?.forEach { (val source, val serializedJavaClass = proto) ->
         cache.saveJavaClassProto(source, serializedJavaClass, changesCollector)
+    }
+
+    javaSupertypeTracker?.supertypesMap?.forEach { [classFqName, supertypeFqNames] ->
+        cache.recordJavaClassHierarchy(classFqName, supertypeFqNames)
     }
 
     cache.clearCacheForRemovedClasses(changesCollector)
