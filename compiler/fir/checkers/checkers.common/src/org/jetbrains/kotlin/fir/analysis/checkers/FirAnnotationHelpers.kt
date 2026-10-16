@@ -20,29 +20,13 @@ import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
-import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.name.StandardClassIds.Annotations.ParameterNames
 import org.jetbrains.kotlin.resolve.UseSiteTargetsList
 import org.jetbrains.kotlin.resolve.checkers.OptInNames
-
-private val defaultAnnotationTargets = KotlinTarget.DEFAULT_TARGET_SET
-private val defaultAnnotationTargetsWithExpression = KotlinTarget.DEFAULT_TARGET_SET + KotlinTarget.EXPRESSION
-
-fun FirAnnotation.getAllowedAnnotationTargets(session: FirSession): Set<KotlinTarget> {
-    if (annotationTypeRef is FirErrorTypeRef) return KotlinTarget.ALL_TARGET_SET
-    val annotationClassSymbol = (this.annotationTypeRef.coneType as? ConeClassLikeType)
-        ?.fullyExpandedType(session)?.lookupTag?.toSymbol(session) ?: return defaultAnnotationTargets
-    annotationClassSymbol.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
-    return annotationClassSymbol.getAllowedAnnotationTargets(session)
-}
 
 internal fun FirAnnotation.getAnnotationClassForOptInMarker(session: FirSession): FirRegularClassSymbol? {
     val lookupTag = annotationTypeRef.coneType.classLikeLookupTagIfAny ?: return null
@@ -51,35 +35,6 @@ internal fun FirAnnotation.getAnnotationClassForOptInMarker(session: FirSession)
         return null
     }
     return annotationClassSymbol
-}
-
-fun FirRegularClass.getAllowedAnnotationTargets(session: FirSession): Set<KotlinTarget> {
-    return symbol.getAllowedAnnotationTargets(session)
-}
-
-fun FirClassLikeSymbol<*>.getAllowedAnnotationTargets(session: FirSession): Set<KotlinTarget> {
-    lazyResolveToPhase(FirResolvePhase.ANNOTATION_ARGUMENTS)
-    // In KT-67014, we decided to allow EXPRESSION targets for Java annotations
-    val targetAnnotation = getTargetAnnotation(session)
-        ?: return if (isJavaOrEnhancement) defaultAnnotationTargetsWithExpression else defaultAnnotationTargets
-    val arguments =
-        targetAnnotation.findArgumentByName(ParameterNames.targetAllowedTargets)?.unwrapAndFlattenArgument(flattenArrays = true).orEmpty()
-
-    return arguments.mapNotNullTo(mutableSetOf()) { argument ->
-        val targetName = argument.extractEnumValueArgumentInfo()?.enumEntryName?.asString() ?: return@mapNotNullTo null
-        KotlinTarget.entries.firstOrNull { target -> target.name == targetName }
-    }.let {
-        // In KT-67014, we decided to allow EXPRESSION targets for Java annotations
-        if (isJavaOrEnhancement) it + KotlinTarget.EXPRESSION else it
-    }
-}
-
-fun FirDeclaration.getTargetAnnotation(session: FirSession): FirAnnotation? {
-    return getAnnotationByClassId(StandardClassIds.Annotations.Target, session)
-}
-
-fun FirClassLikeSymbol<*>.getTargetAnnotation(session: FirSession): FirAnnotation? {
-    return getAnnotationWithResolvedArgumentsByClassId(StandardClassIds.Annotations.Target, session)
 }
 
 fun FirExpression.extractClassesFromArgument(session: FirSession): List<FirRegularClassSymbol> {

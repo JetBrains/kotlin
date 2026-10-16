@@ -49,7 +49,6 @@ import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
 import org.jetbrains.kotlin.fir.types.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -62,7 +61,6 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.anySuperTypeConstructor
 import org.jetbrains.kotlin.types.model.safeSubstitute
 import org.jetbrains.kotlin.util.OperatorNameConventions
-import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import kotlin.contracts.ExperimentalContracts
@@ -287,42 +285,6 @@ fun FirAnonymousFunction.constructFunctionTypeRef(session: FirSession, kind: Fun
             this.diagnostic = diagnostic
         }
     }
-}
-
-fun createFunctionType(
-    kind: FunctionTypeKind,
-    parameters: List<ConeKotlinType>,
-    receiverType: ConeKotlinType?,
-    rawReturnType: ConeKotlinType,
-    contextParameters: List<ConeKotlinType> = emptyList(),
-): ConeClassLikeType {
-    val receiverAndParameterTypes =
-        buildList {
-            addAll(contextParameters)
-            addIfNotNull(receiverType)
-            addAll(parameters)
-            add(rawReturnType)
-        }
-
-    val functionTypeId = ClassId(kind.packageFqName, kind.numberedClassName(receiverAndParameterTypes.size - 1))
-    val attributes = when {
-        contextParameters.isNotEmpty() -> ConeAttributes.create(
-            buildList {
-                add(CompilerConeAttributes.ContextFunctionTypeParams(contextParameters.size))
-                if (receiverType != null) {
-                    add(CompilerConeAttributes.ExtensionFunctionType)
-                }
-            }
-        )
-        receiverType != null -> ConeAttributes.WithExtensionFunctionType
-        else -> ConeAttributes.Empty
-    }
-    return ConeClassLikeTypeImpl(
-        functionTypeId.toLookupTag(),
-        receiverAndParameterTypes.toTypedArray(),
-        isMarkedNullable = false,
-        attributes = attributes
-    )
 }
 
 fun createKPropertyType(
@@ -895,9 +857,6 @@ fun buildExplicitBackingFieldReference(
         hasVisibleBackingField = candidate.hasVisibleBackingField
         resolvedSymbolOrigin = candidate.originScope?.toResolvedSymbolOrigin()
     }.build()
-
-val FirTypeParameterSymbol.defaultType: ConeTypeParameterType
-    get() = ConeTypeParameterType(toLookupTag(), isMarkedNullable = false)
 
 val FirUserTypeRef.shortName: Name get() = qualifier.last().name
 
