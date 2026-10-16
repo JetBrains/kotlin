@@ -17,7 +17,8 @@ import java.io.File
  * is the `.kt` file.
  *
  * As the `LL_FIR_DIVERGENCE` directive only exists in `.ll.kt` files, [LLFirIdenticalChecker] ignores this directive when comparing the
- * LL FIR file's content to the base file's content.
+ * LL FIR file's content to the base file's content. `.ll.kt` test data should also differ from the base test data in more than
+ * `METADATA` tags, which [LLKmpMetaInfoProcessor] takes from the base test data.
  */
 class LLFirIdenticalChecker(testServices: TestServices) : AbstractAlternativeKtFileIdenticalChecker(testServices) {
     override fun checkTestDataFile(testDataFile: File) {
@@ -30,12 +31,17 @@ class LLFirIdenticalChecker(testServices: TestServices) : AbstractAlternativeKtF
         // differ in their starting whitespace.
         val baseContent = readContent(baseFile, trimLines = true).trimStart()
         val llContent = readContent(testDataFile, trimLines = false).removeLlFirDivergenceDirective(trimLines = true)
-        if (baseContent == llContent) {
-            testServices.assertions.fail {
+        when {
+            baseContent == llContent -> testServices.assertions.fail {
                 "`${testDataFile.name}` and `${baseFile.name}` are identical. Remove `$testDataFile`."
             }
-        } else {
-            assertPreprocessedTestDataAreEqual(testServices, baseFile, baseContent, testDataFile, llContent) {
+
+            baseContent.withoutMetadataCompilationTags() == llContent -> testServices.assertions.fail {
+                "`${testDataFile.name}` only differs from `${baseFile.name}` in `METADATA` tags, which LL tests take from" +
+                        " `${baseFile.name}` (see `LLKmpMetaInfoProcessor`). Remove `$testDataFile`."
+            }
+
+            else -> assertPreprocessedTestDataAreEqual(testServices, baseFile, baseContent, testDataFile, llContent) {
                 "When ignoring diagnostics, the contents of `${baseFile.name}` (expected) and `${testDataFile.name}` (actual) are not" +
                         " identical. `.ll.kt` test data may only differ from its base `.fir.kt` or `.kt` test data in the reported" +
                         " diagnostics and the `LL_FIR_DIVERGENCE` directive. Update one of these test data files."
