@@ -317,6 +317,20 @@ obj
     }
 
     @Test
+    fun testBindingsAfterEvalOfCompiledSnippetWithOtherBindings() {
+        val engine = ScriptEngineManager().getEngineByExtension("kts")!!
+        engine.put("z", 1)
+        assertEquals(1, engine.eval("bindings[\"z\"]"))
+        assertEquals(1, engine.eval("z"))
+        // The bindings of a snippet are captured when it is evaluated, which is not known when it is compiled
+        val compiled = (engine as Compilable).compile("bindings[\"z\"]")
+        assertEquals(2, compiled.eval(engine.createBindings().apply { put("z", 2) }))
+        // So the next eval must not reuse the bindings captured for the compiled snippet
+        assertEquals(1, engine.eval("bindings[\"z\"]"))
+        assertEquals(1, engine.eval("z"))
+    }
+
+    @Test
     fun testMultipleCompilable() {
         val engine = ScriptEngineManager().getEngineByExtension("kts") as KotlinJsr223ScriptEngineImpl
         val compiled1 = engine.compile("""listOf(1,2,3).joinToString(",")""")
