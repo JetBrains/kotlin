@@ -5,13 +5,16 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 
+import org.jetbrains.kotlin.KtRealPsiSourceElement
 import org.jetbrains.kotlin.analysis.api.platform.KotlinDeserializedDeclarationsOrigin
 import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformSettings
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.LLFirElementByPsiElementChooser
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.containingDeclaration
+import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.findTypeRefAnchor
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization.findNestedType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLModuleSpecificSymbolProviderAccess
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLModuleWithDependenciesSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.getClassLikeSymbolByClassIdWithoutDependencies
@@ -26,10 +29,14 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.utils.exceptions.ExceptionAttachmentBuilder
 import org.jetbrains.kotlin.utils.exceptions.withClassEntry
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
@@ -59,6 +66,36 @@ internal class FirDeclarationForCompiledElementSearcher(private val session: LLF
         is KtTypeParameter -> findNonLocalTypeParameter(ktDeclaration)
 
         else -> errorWithFirSpecificEntries("Unsupported compiled declaration of type", psi = ktDeclaration)
+    }
+
+    /**
+     * Finds the deserialized type of the compiled [typeReference]: the [FirResolvedTypeRef] of a declaration for a type reference
+     * of its signature, or a new one for a type reference nested in such a type reference.
+     *
+     * Returns `null` if [typeReference] is not a part of a declaration signature (e.g., it is a type of annotation), or if the
+     * deserialized declaration has no associated PSI ([KotlinDeserializedDeclarationsOrigin.BINARIES]).
+     */
+    fun findTypeReference(typeReference: KtTypeReference): FirResolvedTypeRef? {
+        val signatureTypeReference = typeReference.parentsWithSelf.filterIsInstance<KtTypeReference>().last()
+        val owner = when (val parent = signatureTypeReference.parent) {
+            is KtCallableDeclaration, is KtTypeParameter, is KtTypeAlias -> parent
+            is KtSuperTypeListEntry -> parent.getStrictParentOfType<KtClassOrObject>()
+            is KtTypeConstraint -> parent.getStrictParentOfType<KtTypeParameterListOwner>()
+            else -> null
+        } ?: return null
+
+        val signatureTypeRef = when (val anchor = findNonLocalDeclaration(owner).findTypeRefAnchor(signatureTypeReference)) {
+            is FirReceiverParameter -> anchor.typeRef
+            else -> anchor
+        } as? FirResolvedTypeRef ?: return null
+
+        if (signatureTypeReference === typeReference) return signatureTypeRef
+
+        val nestedType = signatureTypeRef.coneType.findNestedType(signatureTypeReference, typeReference) ?: return null
+        return buildResolvedTypeRef {
+            source = KtRealPsiSourceElement(typeReference)
+            coneType = nestedType
+        }
     }
 
     private fun findFunctionCandidates(function: KtNamedFunction): List<FirFunctionSymbol<*>> =
