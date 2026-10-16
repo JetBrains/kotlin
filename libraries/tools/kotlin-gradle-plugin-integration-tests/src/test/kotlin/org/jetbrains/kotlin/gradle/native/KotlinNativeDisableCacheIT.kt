@@ -17,12 +17,15 @@ import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInNative
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import java.net.URI
 
 @DisplayName("Kotlin/Native disable cache tests")
 @NativeGradlePluginTests
+@MustRunOnChangesInGradle
 internal class KotlinNativeDisableCacheIT : KGPBaseTest() {
 
     @GradleTest
@@ -150,6 +153,7 @@ internal class KotlinNativeDisableCacheIT : KGPBaseTest() {
     }
 }
 
+@MustRunOnChangesInNative
 internal class KotlinNativeDisableCacheUnsupportedHostIT : KGPDaemonsBaseTest() {
 
     /**
