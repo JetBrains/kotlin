@@ -8,9 +8,10 @@ plugins {
 
 dependencies {
     implementation(project(":compiler:fir:plugin.api"))
-    // TODO(KT-90146): Required to access various utility functions.
-    implementation(project(":compiler:fir:checkers:checkers.js"))
-    implementation(project(":compiler:cli-base"))
+    // Required for access to 'JsStandardClassIds'.
+    implementation(project(":core:compiler.common.js"))
+    // Required for access to 'FirBasedSymbol<*>.isEffectivelyExternal()'.
+    implementation(project(":compiler:fir:checkers:checkers.web.common"))
 
     implementation(project(":compiler:frontend.common-psi"))
     implementation(project(":compiler:psi:psi-api"))

@@ -15,8 +15,6 @@ dependencies {
     compileOnly(project(":compiler:fir:plugin.api"))
     // Needed for internal 'FirAssignExpressionAltererExtension' FIR extension.
     compileOnly(project(":compiler:fir:resolve"))
-    // TODO(KT-90146): Required to access various utility functions.
-    compileOnly(project(":compiler:fir:checkers:checkers.common"))
 
     compileOnly(intellijCore())
     runtimeOnly(kotlinStdlib())

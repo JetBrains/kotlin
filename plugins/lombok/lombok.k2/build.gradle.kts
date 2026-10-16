@@ -14,10 +14,7 @@ dependencies {
     compileOnly(project(":compiler:fir:plugin.api"))
     // Required for JVM specific FIR elements.
     compileOnly(project(":compiler:fir:fir-jvm"))
-    // TODO(KT-90146): Required to access various utility functions.
-    compileOnly(project(":compiler:fir:resolve"))
-    // TODO(KT-90146): Required to access various utility functions.
-    // Required to access FirError.
+    // Required to access 'FirErrors.MISSING_DEPENDENCY_CLASS'.
     compileOnly(project(":compiler:fir:checkers:checkers.common"))
 
     compileOnly(project(":compiler:ir.tree"))

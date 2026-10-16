@@ -17,8 +17,6 @@ dependencies {
     compileOnly(project(":compiler:fir:resolve"))
     // Required for JVM specific FIR elements.
     compileOnly(project(":compiler:fir:fir-jvm"))
-    // TODO(KT-90146): Required to access various utility functions.
-    compileOnly(project(":compiler:fir:checkers:checkers.common"))
     compileOnly(project(":compiler:cli-base"))
     compileOnly(libs.kotlinx.serialization.core)
     compileOnly(libs.kotlinx.serialization.json)
