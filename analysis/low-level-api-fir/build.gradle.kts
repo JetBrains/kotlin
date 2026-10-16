@@ -129,7 +129,6 @@ projectTests {
 
     val analysisApiProject = project(":analysis:analysis-api").isolated
     testData(analysisApiProject, "testData/components/compilerFacility/compilation/codeFragments/capturing")
-    testData(analysisApiProject, "testData/components/resolver")
     testData(analysisApiProject, "testData/sessions/sessionInvalidation")
 
     withJvmStdlibAndReflect()
