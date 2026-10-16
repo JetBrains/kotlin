@@ -41,44 +41,6 @@ public actual fun sign(x: Double): Double = when {
 public actual val Double.sign: Double get() = sign(this)
 
 /**
- * Rounds this [Double] value to the nearest integer and converts the result to [Int].
- * Ties are rounded towards positive infinity.
- *
- * Special cases:
- *   - `x.roundToInt() == Int.MAX_VALUE` when `x > Int.MAX_VALUE`
- *   - `x.roundToInt() == Int.MIN_VALUE` when `x < Int.MIN_VALUE`
- *
- * @throws IllegalArgumentException when this value is `NaN`
- * @sample samples.math.MathSamples.Doubles.roundToInt
- */
-@SinceKotlin("1.2")
-public actual fun Double.roundToInt(): Int = when {
-    isNaN() -> throw IllegalArgumentException("Cannot round NaN value.")
-    this > Int.MAX_VALUE -> Int.MAX_VALUE
-    this < Int.MIN_VALUE -> Int.MIN_VALUE
-    else -> floor(this + 0.5).toInt()
-}
-
-/**
- * Rounds this [Double] value to the nearest integer and converts the result to [Long].
- * Ties are rounded towards positive infinity.
- *
- * Special cases:
- *   - `x.roundToLong() == Long.MAX_VALUE` when `x > Long.MAX_VALUE`
- *   - `x.roundToLong() == Long.MIN_VALUE` when `x < Long.MIN_VALUE`
- *
- * @throws IllegalArgumentException when this value is `NaN`
- * @sample samples.math.MathSamples.Doubles.roundToLong
- */
-@SinceKotlin("1.2")
-public actual fun Double.roundToLong(): Long = when {
-    isNaN() -> throw IllegalArgumentException("Cannot round NaN value.")
-    this > Long.MAX_VALUE -> Long.MAX_VALUE
-    this < Long.MIN_VALUE -> Long.MIN_VALUE
-    else -> floor(this + 0.5).toLong()
-}
-
-/**
  * Returns the ulp (unit in the last place) of this value.
  *
  * An ulp is a positive distance between this value and the next nearest [Double] value larger in magnitude.
@@ -148,44 +110,6 @@ public actual fun sign(x: Float): Float = when {
 @SinceKotlin("1.2")
 public actual val Float.sign: Float
     get() = sign(this)
-
-/**
- * Rounds this [Float] value to the nearest integer and converts the result to [Int].
- * Ties are rounded towards positive infinity.
- *
- * Special cases:
- *   - `x.roundToInt() == Int.MAX_VALUE` when `x > Int.MAX_VALUE`
- *   - `x.roundToInt() == Int.MIN_VALUE` when `x < Int.MIN_VALUE`
- *
- * @throws IllegalArgumentException when this value is `NaN`
- * @sample samples.math.MathSamples.Floats.roundToInt
- */
-@SinceKotlin("1.2")
-public actual fun Float.roundToInt(): Int = when {
-    isNaN() -> throw IllegalArgumentException("Cannot round NaN value.")
-    this > Int.MAX_VALUE -> Int.MAX_VALUE
-    this < Int.MIN_VALUE -> Int.MIN_VALUE
-    else -> floor(this + 0.5f).toInt()
-}
-
-/**
- * Rounds this [Float] value to the nearest integer and converts the result to [Long].
- * Ties are rounded towards positive infinity.
- *
- * Special cases:
- *   - `x.roundToLong() == Long.MAX_VALUE` when `x > Long.MAX_VALUE`
- *   - `x.roundToLong() == Long.MIN_VALUE` when `x < Long.MIN_VALUE`
- *
- * @throws IllegalArgumentException when this value is `NaN`
- * @sample samples.math.MathSamples.Floats.roundToLong
- */
-@SinceKotlin("1.2")
-public actual fun Float.roundToLong(): Long = when {
-    isNaN() -> throw IllegalArgumentException("Cannot round NaN value.")
-    this > Long.MAX_VALUE -> Long.MAX_VALUE
-    this < Long.MIN_VALUE -> Long.MIN_VALUE
-    else -> floor(this + 0.5f).toLong()
-}
 
 // endregion
 
