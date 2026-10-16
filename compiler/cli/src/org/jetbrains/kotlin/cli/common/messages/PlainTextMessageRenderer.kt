@@ -21,6 +21,8 @@ import org.fusesource.jansi.internal.CLibrary
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.isWindows
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeAsciiOnly
+import org.jetbrains.kotlin.utils.fileUtils.descendantRelativeTo
+import java.io.File
 import java.util.*
 
 // This constructor can be used in a compilation server to still be able to generate colored output, even if stderr is not a TTY.
@@ -160,19 +162,31 @@ abstract class PlainTextMessageRenderer @JvmOverloads constructor(private val co
         private fun severityColor(severity: CompilerMessageSeverity): Ansi.Color {
             return when (severity) {
                 CompilerMessageSeverity.EXCEPTION,
-                CompilerMessageSeverity.ERROR
+                CompilerMessageSeverity.ERROR,
                     -> Ansi.Color.RED
 
                 CompilerMessageSeverity.STRONG_WARNING,
                 CompilerMessageSeverity.WARNING,
-                CompilerMessageSeverity.FIXED_WARNING
+                CompilerMessageSeverity.FIXED_WARNING,
                     -> Ansi.Color.YELLOW
 
                 CompilerMessageSeverity.INFO,
                 CompilerMessageSeverity.LOGGING,
-                CompilerMessageSeverity.OUTPUT
+                CompilerMessageSeverity.OUTPUT,
                     -> Ansi.Color.BLUE
             }
+        }
+    }
+
+    class PlainTextRelativePathMessageRenderer : PlainTextMessageRenderer() {
+        private val cwd: File = File(".").getAbsoluteFile()
+
+        override fun getPath(location: CompilerMessageSourceLocation): String {
+            return File(location.path).descendantRelativeTo(cwd).getPath()
+        }
+
+        override fun getName(): String {
+            return "RelativePath"
         }
     }
 }
