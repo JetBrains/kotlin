@@ -629,6 +629,7 @@ tasks {
 
     testLifecycleTask("documentationModelTest", QualityGate.Master) {
         dependsOn(":tools:kotlin-documentation-model:analyzer:check")
+        dependsOn(":tools:kotlin-documentation-model:model:check")
     }
 
     testLifecycleTask("miscTest", QualityGate.Master) {
