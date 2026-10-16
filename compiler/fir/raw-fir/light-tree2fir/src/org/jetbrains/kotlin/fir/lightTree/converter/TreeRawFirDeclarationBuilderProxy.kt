@@ -3151,7 +3151,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
                             val destructuringContainerVar = generateTemporaryVariable(
                                 moduleData = baseModuleData,
                                 source = declarationSource.toFirSourceElement(),
-                                name = Name.special("<destruct>"),
+                                name = SpecialNames.DESTRUCT,
                                 initializer = destructuringDeclaration.initializer,
                                 extractedAnnotations = destructuringDeclaration.annotations,
                                 origin = FirDeclarationOrigin.Synthetic.ScriptTopLevelDestructuringDeclarationContainer

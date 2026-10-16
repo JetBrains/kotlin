@@ -1494,10 +1494,9 @@ open class PsiRawFirBuilder(
                 )
             }
 
-            val destructuringContainerVar = generateTemporaryVariable(
+            val destructuringContainerVar = generateDestructuringContainerVariable(
                 moduleData = baseModuleData,
                 source = destructuringDeclaration.toFirSourceElement(),
-                specialName = "destruct",
                 initializer = firInitializer,
                 origin = origin,
                 extractAnnotationsTo = { extractAnnotationsTo(it) },
@@ -3786,10 +3785,9 @@ open class PsiRawFirBuilder(
         }
 
         override fun visitDestructuringDeclaration(multiDeclaration: KtDestructuringDeclaration, data: FirElement?): FirElement {
-            val baseVariable = generateTemporaryVariable(
+            val baseVariable = generateDestructuringContainerVariable(
                 baseModuleData,
                 multiDeclaration.toFirSourceElement(),
-                "destruct",
                 multiDeclaration.initializer.toFirExpression(
                     "Initializer required for destructuring declaration",
                     sourceWhenInvalidExpression = multiDeclaration
