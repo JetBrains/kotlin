@@ -152,8 +152,8 @@ fun configureExposedJsr223Context(context: ScriptConfigurationRefinementContext)
     // That previously caused a spurious NoClassDefFoundError on plain .main.kts scripts.
     val requiredImplicitReceivers = listOf(ScriptContext::class, ScriptWithBindings::class)
 
-    // Add each receiver only once. The engine threads a single, mutated ScriptCompilationConfiguration
-    // across evals, including nested eval-in-eval. Appending unconditionally would grow the receiver
+    // Add each receiver only once. The engine threads the resulting ScriptCompilationConfiguration
+    // from one eval into the next one compiled by the same REPL compiler. Appending unconditionally would grow the receiver
     // list per eval while the evaluator always passes exactly one of each, which surfaces as
     // `IllegalArgumentException: wrong number of arguments`
     // (KotlinJsr223ScriptEngineIT.testSimpleEvalInEval).
