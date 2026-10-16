@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
+import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.SharedApiClassesClassLoader
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
@@ -47,6 +48,7 @@ import org.jetbrains.kotlin.gradle.report.TaskExecutionInfo
 import org.jetbrains.kotlin.gradle.report.TaskExecutionResult
 import org.jetbrains.kotlin.gradle.report.collectIcTags
 import org.jetbrains.kotlin.gradle.tasks.*
+import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import java.io.File
 import javax.inject.Inject
 
@@ -175,9 +177,14 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
         val compilerMessageRenderer = ProblemsApiCompilerMessageRenderer(
             suppressLogForProblemsApi = parameters.warningModeIsAll.getOrElse(false),
         )
-        val runner = createRunner(workArguments.btaToolchain ?: error("btaToolchain is not set for task ${workArguments.taskPath}"), workArguments, metrics)
-        val backup = initializeBackup(log)
         val buildSession = obtainBuildSession()
+        val runner = createRunner(
+            workArguments.btaToolchain ?: error("btaToolchain is not set for task ${workArguments.taskPath}"),
+            workArguments,
+            metrics,
+            buildSession.kotlinToolchains.compilerReleaseVersion(),
+        )
+        val backup = initializeBackup(log)
 
         try {
             with(log) {
@@ -263,6 +270,7 @@ private fun createRunner(
     toolchain: BtaToolchain,
     workArguments: GradleKotlinCompilerWorkArguments,
     metrics: BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>,
+    compilerVersion: KotlinReleaseVersion,
 ): BtaCompilerRunner<*> {
     val icEnv = workArguments.incrementalCompilationEnvironment
     val outputDirs = workArguments.outputFiles.map(File::toPath)
@@ -276,7 +284,7 @@ private fun createRunner(
             metrics,
             JvmBuildOperationFactory(compilerArgs, workArguments.kotlinScriptExtensions.toList()),
             icEnv?.let {
-                JvmIncrementalConfigurationStrategy(icEnv, outputDirs)
+                JvmIncrementalConfigurationStrategy(icEnv, outputDirs, compilerVersion)
             } ?: IncrementalConfigurationStrategy.Default,
             daemonJvmArgs,
             compilerArgumentsLogLevel,
@@ -352,3 +360,6 @@ internal object SharedApiClassesClassLoaderProvider : ParentClassLoaderProvider 
 
     override fun equals(other: Any?) = other is SharedApiClassesClassLoaderProvider
 }
+
+private fun KotlinToolchains.compilerReleaseVersion(): KotlinReleaseVersion =
+    KotlinToolingVersion(getCompilerVersion()).let { KotlinReleaseVersion(it.major, it.minor, it.patch) }
