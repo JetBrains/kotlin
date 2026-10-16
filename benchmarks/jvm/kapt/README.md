@@ -43,11 +43,8 @@ mapstruct-sample large (2000 classes) | 20 |    6037.9 |  117.5 | [5807.6, 6268.
 ### Run a benchmark
 
 ```bash
-git clone <repo-url> kapt-benchmark
-cd kapt-benchmark
-
 # Smoke-test that everything builds:
-./gradlew :samples:synthetic-noop:kaptKotlin -PsampleSize=small
+./gradlew :benchmarks:jvm:kapt:samples:synthetic-noop:kaptKotlin -PsampleSize=small
 
 # Run the benchmark:
 gradle-profiler --benchmark \
@@ -81,7 +78,7 @@ Sizes map to class counts: small=100, medium=500, large=2000.
 
 Each scenario runs 2 warmups + 20 measured iterations. Wall time per scenario ranges from ~1 minute (synthetic small) to ~4 minutes (dagger large). Total for all 9: ~30 minutes on an M3 Max.
 
-The repository includes a wrapper script that runs a set of scenarios and prints one combined summary table at the end:
+Benchmarks include a wrapper script that runs a set of scenarios and prints one combined summary table at the end:
 
 ```bash
 ./scripts/run_all_benchmarks.sh                # the 9-cell default suite
@@ -105,7 +102,6 @@ This reads `profile-out/<workload>_<size>/benchmark.csv` for each scenario it fi
 If you'd rather drive it yourself, the equivalent loop is:
 
 ```bash
-cd kapt-benchmark
 for w in synthetic dagger mapstruct; do
     for s in small medium large; do
         gradle-profiler --benchmark \
@@ -151,8 +147,8 @@ Note: when `--output-dir` is omitted, gradle-profiler writes to `profile-out/` a
 
 - **Sample size:** `-PsampleSize=small|medium|large` (100 / 500 / 2000 generated classes).
 - **Source generator seed:** `-PgeneratorSeed=42` (any integer for deterministic source generation).
-- **Kotlin version:** edit `gradle.properties` and change `kotlin.version=2.3.21` to whatever public Kotlin release you want to benchmark (subject to plugin DSL compatibility).
-- **Dependency versions:** edit `gradle.properties` for `dagger.version` / `mapstruct.version`.
+- **Kotlin version:** please see Kotlin repo bootstrapping for options
+- **Dependency versions:** `-Pdagger.version` / `-Pmapstruct.version`.
 - **Iteration counts:** edit the `scenarios/*.scenarios` files; gradle-profiler uses the `warm-ups` and `iterations` keys.
 
 See [METHODOLOGY.md](METHODOLOGY.md) for a deep dive on what's measured, how, and known limitations.
@@ -168,7 +164,3 @@ We tested this benchmark on:
 - gradle-profiler: 0.24.0
 
 Numbers will vary on your hardware. The benchmark is designed for **relative** comparisons (version-to-version, configuration-to-configuration on the same machine), not absolute reproducibility across hardware.
-
-## License
-
-Apache-2.0. See [LICENSE](LICENSE).

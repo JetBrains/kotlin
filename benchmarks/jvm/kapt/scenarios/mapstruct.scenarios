@@ -2,8 +2,8 @@
 
 mapstruct_small {
     title = "mapstruct-sample small (100 classes)"
-    tasks = [":samples:mapstruct-sample:kaptKotlin"]
-    cleanup-tasks = [":samples:mapstruct-sample:clean"]
+    tasks = [":benchmarks:jvm:kapt:samples:mapstruct-sample:kaptKotlin"]
+    cleanup-tasks = [":benchmarks:jvm:kapt:samples:mapstruct-sample:clean"]
     gradle-args = [
         "-PsampleSize=small",
         "-Pkotlin.compiler.execution.strategy=in-process",
@@ -15,8 +15,8 @@ mapstruct_small {
 
 mapstruct_medium {
     title = "mapstruct-sample medium (500 classes)"
-    tasks = [":samples:mapstruct-sample:kaptKotlin"]
-    cleanup-tasks = [":samples:mapstruct-sample:clean"]
+    tasks = [":benchmarks:jvm:kapt:samples:mapstruct-sample:kaptKotlin"]
+    cleanup-tasks = [":benchmarks:jvm:kapt:samples:mapstruct-sample:clean"]
     gradle-args = [
         "-PsampleSize=medium",
         "-Pkotlin.compiler.execution.strategy=in-process",
@@ -28,8 +28,8 @@ mapstruct_medium {
 
 mapstruct_large {
     title = "mapstruct-sample large (2000 classes)"
-    tasks = [":samples:mapstruct-sample:kaptKotlin"]
-    cleanup-tasks = [":samples:mapstruct-sample:clean"]
+    tasks = [":benchmarks:jvm:kapt:samples:mapstruct-sample:kaptKotlin"]
+    cleanup-tasks = [":benchmarks:jvm:kapt:samples:mapstruct-sample:clean"]
     gradle-args = [
         "-PsampleSize=large",
         "-Pkotlin.compiler.execution.strategy=in-process",

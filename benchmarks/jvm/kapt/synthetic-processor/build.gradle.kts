@@ -1,10 +1,11 @@
 plugins {
+    id("common-configuration")
     `java-library`
 }
 
-java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+jvmToolchains {
+    jdkVersion = JdkMajorVersion.JDK_17_0
+    targetBytecodeVersion = JdkMajorVersion.JDK_17_0
 }
 
 // Opt-in: declare the processor incremental (isolating). Off by default so the nine default cells

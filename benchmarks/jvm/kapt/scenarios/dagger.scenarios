@@ -2,8 +2,8 @@
 
 dagger_small {
     title = "dagger-sample small (100 classes)"
-    tasks = [":samples:dagger-sample:kaptKotlin"]
-    cleanup-tasks = [":samples:dagger-sample:clean"]
+    tasks = [":benchmarks:jvm:kapt:samples:dagger-sample:kaptKotlin"]
+    cleanup-tasks = [":benchmarks:jvm:kapt:samples:dagger-sample:clean"]
     gradle-args = [
         "-PsampleSize=small",
         "-Pkotlin.compiler.execution.strategy=in-process",
@@ -15,8 +15,8 @@ dagger_small {
 
 dagger_medium {
     title = "dagger-sample medium (500 classes)"
-    tasks = [":samples:dagger-sample:kaptKotlin"]
-    cleanup-tasks = [":samples:dagger-sample:clean"]
+    tasks = [":benchmarks:jvm:kapt:samples:dagger-sample:kaptKotlin"]
+    cleanup-tasks = [":benchmarks:jvm:kapt:samples:dagger-sample:clean"]
     gradle-args = [
         "-PsampleSize=medium",
         "-Pkotlin.compiler.execution.strategy=in-process",
@@ -28,8 +28,8 @@ dagger_medium {
 
 dagger_large {
     title = "dagger-sample large (2000 classes)"
-    tasks = [":samples:dagger-sample:kaptKotlin"]
-    cleanup-tasks = [":samples:dagger-sample:clean"]
+    tasks = [":benchmarks:jvm:kapt:samples:dagger-sample:kaptKotlin"]
+    cleanup-tasks = [":benchmarks:jvm:kapt:samples:dagger-sample:clean"]
     gradle-args = [
         "-PsampleSize=large",
         "-Pkotlin.compiler.execution.strategy=in-process",

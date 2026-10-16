@@ -11,8 +11,8 @@
 
 compiler_corpus_baseline {
     title = "compiler-corpus baseline (114 real compiler files, real bodies)"
-    tasks = [":samples:compiler-corpus:kaptKotlin"]
-    cleanup-tasks = [":samples:compiler-corpus:clean"]
+    tasks = [":benchmarks:jvm:kapt:samples:compiler-corpus:kaptKotlin"]
+    cleanup-tasks = [":benchmarks:jvm:kapt:samples:compiler-corpus:clean"]
     gradle-args = [
         "-PbodyMode=baseline",
         "-Pkotlin.compiler.execution.strategy=in-process",
@@ -24,8 +24,8 @@ compiler_corpus_baseline {
 
 compiler_corpus_stripped {
     title = "compiler-corpus body-stripped (same corpus, bodies -> TODO())"
-    tasks = [":samples:compiler-corpus:kaptKotlin"]
-    cleanup-tasks = [":samples:compiler-corpus:clean"]
+    tasks = [":benchmarks:jvm:kapt:samples:compiler-corpus:kaptKotlin"]
+    cleanup-tasks = [":benchmarks:jvm:kapt:samples:compiler-corpus:clean"]
     gradle-args = [
         "-PbodyMode=stripped",
         "-Pkotlin.compiler.execution.strategy=in-process",

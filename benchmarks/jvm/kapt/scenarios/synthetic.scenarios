@@ -3,8 +3,8 @@
 
 synthetic_small {
     title = "synthetic-noop small (100 classes)"
-    tasks = [":samples:synthetic-noop:kaptKotlin"]
-    cleanup-tasks = [":samples:synthetic-noop:clean"]
+    tasks = [":benchmarks:jvm:kapt:samples:synthetic-noop:kaptKotlin"]
+    cleanup-tasks = [":benchmarks:jvm:kapt:samples:synthetic-noop:clean"]
     gradle-args = [
         "-PsampleSize=small",
         "-Pkotlin.compiler.execution.strategy=in-process",
@@ -16,8 +16,8 @@ synthetic_small {
 
 synthetic_medium {
     title = "synthetic-noop medium (500 classes)"
-    tasks = [":samples:synthetic-noop:kaptKotlin"]
-    cleanup-tasks = [":samples:synthetic-noop:clean"]
+    tasks = [":benchmarks:jvm:kapt:samples:synthetic-noop:kaptKotlin"]
+    cleanup-tasks = [":benchmarks:jvm:kapt:samples:synthetic-noop:clean"]
     gradle-args = [
         "-PsampleSize=medium",
         "-Pkotlin.compiler.execution.strategy=in-process",
@@ -29,8 +29,8 @@ synthetic_medium {
 
 synthetic_large {
     title = "synthetic-noop large (2000 classes)"
-    tasks = [":samples:synthetic-noop:kaptKotlin"]
-    cleanup-tasks = [":samples:synthetic-noop:clean"]
+    tasks = [":benchmarks:jvm:kapt:samples:synthetic-noop:kaptKotlin"]
+    cleanup-tasks = [":benchmarks:jvm:kapt:samples:synthetic-noop:clean"]
     gradle-args = [
         "-PsampleSize=large",
         "-Pkotlin.compiler.execution.strategy=in-process",
@@ -46,8 +46,8 @@ synthetic_large {
 # default 9-cell suite; run explicitly.
 synthetic_wide {
     title = "synthetic-noop wide (100 classes x 100 props)"
-    tasks = [":samples:synthetic-noop:kaptKotlin"]
-    cleanup-tasks = [":samples:synthetic-noop:clean"]
+    tasks = [":benchmarks:jvm:kapt:samples:synthetic-noop:kaptKotlin"]
+    cleanup-tasks = [":benchmarks:jvm:kapt:samples:synthetic-noop:clean"]
     gradle-args = [
         "-PsampleSize=small",
         "-PclassWidth=100",
@@ -64,8 +64,8 @@ synthetic_wide {
 # default 9-cell suite; run explicitly.
 synthetic_nested {
     title = "synthetic-noop nested (100 classes x 20 nested)"
-    tasks = [":samples:synthetic-noop:kaptKotlin"]
-    cleanup-tasks = [":samples:synthetic-noop:clean"]
+    tasks = [":benchmarks:jvm:kapt:samples:synthetic-noop:kaptKotlin"]
+    cleanup-tasks = [":benchmarks:jvm:kapt:samples:synthetic-noop:clean"]
     gradle-args = [
         "-PsampleSize=small",
         "-PclassNesting=20",
@@ -82,8 +82,8 @@ synthetic_nested {
 # cost. Not part of the default 9-cell suite; run explicitly.
 synthetic_deeppkg {
     title = "synthetic-noop deep package (2000 classes, depth 10)"
-    tasks = [":samples:synthetic-noop:kaptKotlin"]
-    cleanup-tasks = [":samples:synthetic-noop:clean"]
+    tasks = [":benchmarks:jvm:kapt:samples:synthetic-noop:kaptKotlin"]
+    cleanup-tasks = [":benchmarks:jvm:kapt:samples:synthetic-noop:clean"]
     gradle-args = [
         "-PsampleSize=large",
         "-PclassPackageDepth=10",
@@ -103,7 +103,7 @@ synthetic_deeppkg {
 # below impacts all 2000 types rather than one.
 synthetic_incremental {
     title = "synthetic-noop incremental (2000 classes, ABI change to shared base)"
-    tasks = [":samples:synthetic-noop:kaptKotlin"]
+    tasks = [":benchmarks:jvm:kapt:samples:synthetic-noop:kaptKotlin"]
     apply-abi-change-to = "samples/synthetic-noop/src/main/kotlin/research/kapt/base/Base.kt"
     gradle-args = [
         "-PsampleSize=large",
@@ -127,8 +127,8 @@ synthetic_incremental {
 # running it as part of a sweep rather than on its own.
 synthetic_bodies {
     title = "synthetic-noop body-heavy (2000 classes x 5 methods)"
-    tasks = [":samples:synthetic-noop:kaptKotlin"]
-    cleanup-tasks = [":samples:synthetic-noop:clean"]
+    tasks = [":benchmarks:jvm:kapt:samples:synthetic-noop:kaptKotlin"]
+    cleanup-tasks = [":benchmarks:jvm:kapt:samples:synthetic-noop:clean"]
     gradle-args = [
         "-PsampleSize=large",
         "-PclassBodySize=5",

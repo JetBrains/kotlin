@@ -1,10 +1,15 @@
 plugins {
+    id("common-configuration")
     kotlin("jvm")
     kotlin("kapt")
 }
 
+jvmToolchains {
+    jdkVersion = JdkMajorVersion.JDK_17_0
+    targetBytecodeVersion = JdkMajorVersion.JDK_17_0
+}
+
 kotlin {
-    jvmToolchain(17)
 
     // Extension-level, deliberately. Two earlier attempts failed silently:
     //  - on kaptGenerateStubsKotlin directly: KaptGenerateStubsConfig.kt:153-157 resets the stub
@@ -33,15 +38,14 @@ kotlin {
     }
 }
 
-val kotlinVersion: String = property("kotlin.version") as String
-
 // Step 19's corpus is real Kotlin compiler source, copied from the repo. It compiles against
 // kotlin-compiler-embeddable, which already contains these very classes plus everything they
 // reference — so the corpus resolves without reconstructing the compiler's module graph.
 dependencies {
-    compileOnly("org.jetbrains.kotlin:kotlin-compiler-embeddable:$kotlinVersion")
-    compileOnly(project(":synthetic-processor"))
-    kapt(project(":synthetic-processor"))
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:${project.bootstrapKotlinVersion}")
+    compileOnly("org.jetbrains.kotlin:kotlin-compiler-embeddable:${project.bootstrapKotlinVersion}")
+    compileOnly(project(":benchmarks:jvm:kapt:synthetic-processor"))
+    kapt(project(":benchmarks:jvm:kapt:synthetic-processor"))
 }
 
 // Arm selector. `-PbodyMode=stripped` compiles the body-stripped copy of the corpus instead of
