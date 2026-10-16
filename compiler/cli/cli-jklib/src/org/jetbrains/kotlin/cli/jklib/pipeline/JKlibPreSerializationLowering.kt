@@ -269,17 +269,11 @@ private class UnboundFieldSymbolBinder(private val symbolFinder: SymbolFinder) :
     }
 }
 
-private class JKlibPrivateFunctionInlining(context: PreSerializationLoweringContext) : FunctionInlining(
-    context,
-    JKlibPrivateInlineFunctionResolver(),
-    substitutePureArguments = true,
-)
+private class JKlibPrivateFunctionInlining(context: PreSerializationLoweringContext) :
+    FunctionInlining(context, JKlibPrivateInlineFunctionResolver())
 
-private class JKlibNonPrivateFunctionInlining(context: PreSerializationLoweringContext) : FunctionInlining(
-    context,
-    JKlibNonPrivateInlineFunctionResolver(context),
-    substitutePureArguments = true,
-)
+private class JKlibNonPrivateFunctionInlining(context: PreSerializationLoweringContext) :
+    FunctionInlining(context, JKlibNonPrivateInlineFunctionResolver(context))
 
 /**
  * The JKlib flavor of `loweringsOfTheFirstPhase`, with the intra-module and cross-module inliners always enabled.
