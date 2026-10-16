@@ -7,7 +7,6 @@ import org.gradle.api.tasks.testing.TestOutputEvent
 import org.gradle.api.tasks.testing.TestOutputListener
 import org.gradle.api.tasks.testing.TestResult
 import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.CopyOnWriteArrayList
 
 class TeamcityTestListener(
     val taskPath: String,
@@ -34,16 +33,24 @@ class TeamcityTestListener(
         suiteDescriptorWrapper.finish { flowMessage, suiteFinishedMessage ->
             val testDescriptorWrapper = TestDescriptorWrapper(testDescriptor, testNameDescriptor, flowWrapper, buildDirectoriesResolver, ignoredSuiteFormat)
             val outputs = testOutputs.remove(testDescriptorWrapper)
-            testDescriptorWrapper.flush(outputs) { testOutputServiceMessage ->
-                logger.lifecycle(testOutputServiceMessage.asString())
+            if (outputs != null) {
+                synchronized(outputs) {
+                    testDescriptorWrapper.flush(outputs) { testOutputServiceMessage ->
+                        logger.lifecycle(testOutputServiceMessage.asString())
+                    }
+                    outputs.clear()
+                }
             }
             logger.lifecycle(suiteFinishedMessage.asString())
             if (flowMessage != null) logger.lifecycle(flowMessage.asString())
         }
         if (testDescriptor.parent == null) {
             testOutputs.forEach { (key, outputs) ->
-                key.flush(outputs) { testOutputServiceMessage ->
-                    logger.lifecycle(testOutputServiceMessage.asString())
+                synchronized(outputs) {
+                    key.flush(outputs) { testOutputServiceMessage ->
+                        logger.lifecycle(testOutputServiceMessage.asString())
+                    }
+                    outputs.clear()
                 }
             }
             testOutputs.clear()
@@ -61,8 +68,13 @@ class TeamcityTestListener(
     override fun afterTest(testDescriptor: TestDescriptor, testResult: TestResult) {
         val testDescriptorWrapper = TestDescriptorWrapper(testDescriptor, testNameDescriptor, flowWrapper, buildDirectoriesResolver, ignoredSuiteFormat)
         val outputs = testOutputs.remove(testDescriptorWrapper)
-        testDescriptorWrapper.flush(outputs) { testOutputServiceMessage ->
-            logger.lifecycle(testOutputServiceMessage.asString())
+        if (outputs != null) {
+            synchronized(outputs) {
+                testDescriptorWrapper.flush(outputs) { testOutputServiceMessage ->
+                    logger.lifecycle(testOutputServiceMessage.asString())
+                }
+                outputs.clear()
+            }
         }
         if (testResult.failedTestCount > 0) {
             testDescriptorWrapper.failure(testResult, taskPath) { testFailedServiceMessage ->
@@ -76,6 +88,9 @@ class TeamcityTestListener(
     }
 
     override fun onOutput(testDescriptor: TestDescriptor, testOutputEvent: TestOutputEvent) {
+        if (testDescriptor.className == null) {
+            return
+        }
         if (testOutputEvent.destination == TestOutputEvent.Destination.StdOut && java.lang.Boolean.getBoolean(Constants.IGNORE_TEST_STDOUT_SYSTEM_PROP)) {
             return
         }
@@ -83,6 +98,15 @@ class TeamcityTestListener(
             return
         }
         val testDescriptorWrapper = TestDescriptorWrapper(testDescriptor, testNameDescriptor, flowWrapper, buildDirectoriesResolver, ignoredSuiteFormat)
-        testOutputs.computeIfAbsent(testDescriptorWrapper) { CopyOnWriteArrayList() }.add(testOutputEvent)
+        val outputs = testOutputs.computeIfAbsent(testDescriptorWrapper) { ArrayList() }
+        synchronized(outputs) {
+            outputs.add(testOutputEvent)
+            if (outputs.size > 100) {
+                testDescriptorWrapper.flush(outputs) { testOutputServiceMessage ->
+                    logger.lifecycle(testOutputServiceMessage.asString())
+                }
+                outputs.clear()
+            }
+        }
     }
 }

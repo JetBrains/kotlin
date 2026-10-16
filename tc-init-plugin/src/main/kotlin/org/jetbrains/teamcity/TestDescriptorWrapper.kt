@@ -30,6 +30,9 @@ class TestDescriptorWrapper(
     private val stackTraceLogDir: String?
         get() = System.getenv(Constants.STACKTRACE_LOG_DIR_ENV_VAR)
 
+    val isIgnored: Boolean
+        get() = descriptor.className == null
+
     private val isIgnoredSuite: Boolean
         get() = !ignoredSuiteFormat.isNullOrEmpty() &&
                 descriptor.className == null &&
