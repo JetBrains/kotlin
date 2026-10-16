@@ -5,6 +5,6 @@
   "license": "Apache-2.0",
   "devDependencies": {
     "rollup": "^4.8.0",
-    "@rollup/plugin-terser": "^0.4.4"
+    "@rollup/plugin-terser": "^1.0.0"
   }
 }
