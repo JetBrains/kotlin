@@ -402,15 +402,15 @@ abstract class DefaultNodeJsToolchainServiceImplWithKtorIT : KGPBaseTest() {
 }
 
 /**
- * Selects and configures the default Node.js toolchain service with the `kotlin.js.nodejs.toolchain*` Gradle properties.
+ * Selects and configures the default Node.js toolchain service with the `kotlin.js.nodeJsToolchain*` Gradle properties.
  */
 @DisplayName("Node.js toolchain provisioning configured with Gradle properties")
 @JsGradlePluginTests
 class DefaultNodeJsToolchainServiceImplWithKtorGradlePropertiesIT : DefaultNodeJsToolchainServiceImplWithKtorIT() {
     companion object {
-        private const val REQUEST_DEFAULT_NODE_JS_TOOLCHAIN = "-Pkotlin.js.nodejs.toolchain=DOWNLOAD"
-        private const val REQUEST_NODE_JS_INSTALLATION_DIR = "-Pkotlin.js.nodejs.toolchain.default.install.path"
-        private const val REQUEST_NODE_JS_DOWNLOAD_URL = "-Pkotlin.js.nodejs.toolchain.default.download.url"
+        private const val REQUEST_DEFAULT_NODE_JS_TOOLCHAIN = "-Pkotlin.js.nodeJsToolchainMode=download"
+        private const val REQUEST_NODE_JS_INSTALLATION_DIR = "-Pkotlin.js.nodeJsToolchainInstallationDir"
+        private const val REQUEST_NODE_JS_DOWNLOAD_URL = "-Pkotlin.js.nodeJsToolchainDownloadUrl"
     }
 
     override fun BuildOptions.withToolchainConfiguration(installationsPath: Path, distributionsBaseUrl: String): BuildOptions = copy(

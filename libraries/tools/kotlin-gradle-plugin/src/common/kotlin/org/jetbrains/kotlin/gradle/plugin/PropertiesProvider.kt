@@ -764,17 +764,28 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() = property(PropertyNames.KOTLIN_PLAYWRIGHT_BROWSERS_PATH)
 
     val nodeJsToolchainMode: NodeJsToolchainMode
-        get() = property(PropertyNames.KOTLIN_JS_NODEJS_TOOLCHAIN).orNull
-            ?.let { NodeJsToolchainMode.valueOf(it.toUpperCaseAsciiOnly()) } ?: NodeJsToolchainMode.DISABLE
+        get() = property(PropertyNames.KOTLIN_JS_NODEJS_TOOLCHAIN_MODE).orNull
+            ?.let { NodeJsToolchainMode.valueOf(it.toUpperCaseAsciiOnly()) }
+            ?.also { mode ->
+                if (mode != NodeJsToolchainMode.DISABLE) {
+                    project.reportDiagnosticOncePerBuild(
+                        KotlinToolingDiagnostics.ExperimentalFeatureWarning(
+                            "Node.js toolchain",
+                            "https://kotl.in/experimantal-nodejs-toolchain",
+                        ),
+                        key = "NodeJsToolchain"
+                    )
+                }
+            } ?: NodeJsToolchainMode.DISABLE
 
-    val nodeJsToolchainDefaultInstallPath: Provider<String>
-        get() = property(PropertyNames.KOTLIN_JS_NODEJS_TOOLCHAIN_DEFAULT_INSTALL_PATH)
+    val nodeJsToolchainInstallationDir: Provider<String>
+        get() = property(PropertyNames.KOTLIN_JS_NODEJS_TOOLCHAIN_INSTALLATION_DIR)
 
-    val nodeJsToolchainDefaultDownloadUrl: Provider<String>
-        get() = property(PropertyNames.KOTLIN_JS_NODEJS_TOOLCHAIN_DEFAULT_DOWNLOAD_URL)
+    val nodeJsToolchainDownloadUrl: Provider<String>
+        get() = property(PropertyNames.KOTLIN_JS_NODEJS_TOOLCHAIN_DOWNLOAD_URL)
 
-    val nodeJsToolchainLocalPath: Provider<String>
-        get() = property(PropertyNames.KOTLIN_JS_NODEJS_TOOLCHAIN_LOCAL_PATH)
+    val nodeJsToolchainPreinstalledExecutablePath: Provider<String>
+        get() = property(PropertyNames.KOTLIN_JS_NODEJS_TOOLCHAIN_PREINSTALLED_EXECUTABLE_PATH)
 
     /**
      * Connection URL of the debug session hosted by the IDE, set when the browser tests are being debugged.
@@ -868,11 +879,10 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_JS_KARMA_BROWSERS = property("kotlin.js.browser.karma.browsers")
         val KOTLIN_JS_GENERATE_RICH_TYPESCRIPT_DECLARATIONS = property("kotlin.js.generateRichTypeScriptDeclarations")
         val KOTLIN_PLAYWRIGHT_BROWSERS_PATH = property("kotlin.gradle.playwright.browsers.path")
-        val KOTLIN_JS_NODEJS_TOOLCHAIN = property("kotlin.js.nodejs.toolchain")
-        val KOTLIN_JS_NODEJS_TOOLCHAIN_DEFAULT_INSTALL_PATH = property("kotlin.js.nodejs.toolchain.default.install.path")
-        val KOTLIN_JS_NODEJS_TOOLCHAIN_DEFAULT_DOWNLOAD_URL = property("kotlin.js.nodejs.toolchain.default.download.url")
-
-        val KOTLIN_JS_NODEJS_TOOLCHAIN_LOCAL_PATH = property("kotlin.js.nodejs.toolchain.local.path")
+        val KOTLIN_JS_NODEJS_TOOLCHAIN_MODE = property("kotlin.js.nodeJsToolchainMode")
+        val KOTLIN_JS_NODEJS_TOOLCHAIN_INSTALLATION_DIR = property("kotlin.js.nodeJsToolchainInstallationDir")
+        val KOTLIN_JS_NODEJS_TOOLCHAIN_DOWNLOAD_URL = property("kotlin.js.nodeJsToolchainDownloadUrl")
+        val KOTLIN_JS_NODEJS_TOOLCHAIN_PREINSTALLED_EXECUTABLE_PATH = property("kotlin.js.nodeJsToolchainPreinstalledExecutablePath")
         val KOTLIN_JS_IDE_DEBUG_SESSION_URL = property("kotlin.internal.js.ideDebugSessionUrl")
         val KOTLIN_BUILD_REPORT_SINGLE_FILE = property("kotlin.build.report.single_file")
         val KOTLIN_BUILD_REPORT_HTTP_URL = property("kotlin.build.report.http.url")
