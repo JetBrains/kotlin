@@ -20,6 +20,10 @@ fun main(args: Array<String>) {
             testClass<AbstractPluginInteractionFirBlackBoxCodegenTest> {
                 model("box", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
             }
+
+            testClass<AbstractPluginInteractionLLDiagnosticsTest> {
+                model("diagnostics", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
+            }
         }
     }
 }
