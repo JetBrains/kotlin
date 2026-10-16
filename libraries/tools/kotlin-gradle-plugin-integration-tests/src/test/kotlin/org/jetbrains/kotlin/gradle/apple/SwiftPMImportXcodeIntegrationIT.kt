@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.gradle.util.isTeamCityRun
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.gradle.util.runProcess
 import org.jetbrains.kotlin.konan.target.Xcode
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
@@ -38,6 +39,7 @@ import kotlin.test.*
 @OptIn(EnvironmentalVariablesOverride::class)
 @DisplayName("SwiftPM import Xcode integration tests")
 @SwiftPMImportGradlePluginTests
+@MustRunOnChangesInGradle
 class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
 
     @GradleTest
