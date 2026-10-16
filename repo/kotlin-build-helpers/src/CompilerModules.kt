@@ -245,7 +245,6 @@ object CompilerModules {
         *analysisApiStandaloneModules,
         ":analysis:analysis-api-fir",
         ":analysis:analysis-api-fir-diagnostics",
-        ":analysis:analysis-api-impl-base",
         ":analysis:analysis-internal-utils",
         ":analysis:decompiled:decompiler",
         ":analysis:decompiled:light-classes-for-decompiled",

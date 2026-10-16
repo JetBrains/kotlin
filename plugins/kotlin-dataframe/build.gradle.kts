@@ -25,7 +25,6 @@ dependencies {
     testFixturesApi(testFixtures(project(":js:js.tests")))
     testFixturesApi(project(":compiler:fir:plugin.api"))
     testFixturesApi(testFixtures(project(":analysis:analysis-api-fir")))
-    testFixturesApi(testFixtures(project(":analysis:analysis-api-impl-base")))
     testFixturesApi(testFixtures(project(":analysis:low-level-api-fir")))
     testFixturesImplementation(testFixtures(project(":generators:test-generator")))
 
