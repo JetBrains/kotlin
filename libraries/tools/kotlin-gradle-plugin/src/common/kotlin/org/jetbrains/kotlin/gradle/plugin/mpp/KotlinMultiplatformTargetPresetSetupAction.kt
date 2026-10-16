@@ -25,7 +25,7 @@ internal val KotlinMultiplatformTargetPresetAction = KotlinProjectSetupAction {
         add(KotlinJvmWithJavaTargetPreset(project))
 
         // Note: modifying these sets should also be reflected in the DSL code generator, see 'presetEntries.kt'
-        val nativeTargetsWithHostTests = setOf(LINUX_X64, MACOS_X64, MACOS_ARM64, MINGW_X64)
+        val nativeTargetsWithHostTests = setOf(LINUX_X64, LINUX_ARM64, MACOS_X64, MACOS_ARM64, MINGW_X64)
         val nativeTargetsWithSimulatorTests = setOf(
             IOS_X64, IOS_SIMULATOR_ARM64,
             WATCHOS_X64, WATCHOS_SIMULATOR_ARM64,

@@ -21,6 +21,11 @@ nativeInteropPlugin {
     defFileName.set("clang.def")
     usePrebuiltSources.set(false)
     useBootstrapNativeDistribution.set(true)
+    providers.gradleProperty("kotlin.native.libclangInterop.prebuiltSources").orNull?.let { path ->
+        prebuiltSourcesDirectory.set(layout.projectDirectory.dir(path))
+        usePrebuiltSources.set(true)
+        useBootstrapNativeDistribution.set(false)
+    }
     commonCompilerArgs.set(emptyList<String>())
     cCompilerArgs.set(listOf("-std=c99"))
     cppCompilerArgs.set(listOf("-std=c++11"))
