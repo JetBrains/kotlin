@@ -21,6 +21,7 @@ import kotlin.script.experimental.jvm.KJvmEvaluatedSnippet
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.experimental.jvm.jsr223.getScriptContext
 import kotlin.script.experimental.jvm.jsr223.jsr223
+import kotlin.script.experimental.jvm.jsr223.jsr223EvaluatedWithCompilationContext
 import kotlin.script.experimental.jvm.util.isIncomplete
 import kotlin.script.experimental.util.LinkedSnippet
 
@@ -133,7 +134,7 @@ abstract class KotlinJsr223JvmScriptEngineBase<State>(
         lastScriptContext = context
         @Suppress("DEPRECATION_ERROR")
         val result = internalScriptingRunSuspend {
-            compileSnippet(script, nextSnippetNo())
+            compileSnippet(script, nextSnippetNo(), isEvaluatedWithCompilationContext = false)
         }
         return when (result) {
             is ResultWithDiagnostics.Success -> CompiledKotlinSnippet(this, result.value)
@@ -146,7 +147,7 @@ abstract class KotlinJsr223JvmScriptEngineBase<State>(
         return asJsr223EvalResult {
             @Suppress("DEPRECATION_ERROR")
             internalScriptingRunSuspend {
-                compileSnippet(script, nextSnippetNo()).onSuccess {
+                compileSnippet(script, nextSnippetNo(), isEvaluatedWithCompilationContext = true).onSuccess {
                     replEvaluator.eval(it, evaluationConfiguration)
                 }
             }
@@ -165,7 +166,11 @@ abstract class KotlinJsr223JvmScriptEngineBase<State>(
     ): ScriptCompilationConfiguration =
         baseConfiguration
 
-    private suspend fun compileSnippet(script: String, snippetNo: Int): ResultWithDiagnostics<LinkedSnippet<CompiledSnippet>> {
+    private suspend fun compileSnippet(
+        script: String,
+        snippetNo: Int,
+        isEvaluatedWithCompilationContext: Boolean,
+    ): ResultWithDiagnostics<LinkedSnippet<CompiledSnippet>> {
         val compiler = replCompiler
         val baseConfiguration =
             generateSequence(compiler.lastCompiledSnippet) { it.previous }
@@ -177,7 +182,10 @@ abstract class KotlinJsr223JvmScriptEngineBase<State>(
         // definition.
         val fileExtension = baseConfiguration[ScriptCompilationConfiguration.fileExtension]
         val snippet = script.toScriptSource("snippet_$snippetNo.repl.$fileExtension")
-        return compiler.compile(snippet, snippetCompilationConfiguration(baseConfiguration, snippet, snippetNo))
+        val configuration = snippetCompilationConfiguration(baseConfiguration, snippet, snippetNo).with {
+            jsr223EvaluatedWithCompilationContext(isEvaluatedWithCompilationContext)
+        }
+        return compiler.compile(snippet, configuration)
     }
 
     private fun evalCompiledSnippet(
