@@ -4,8 +4,4 @@ plugins {
     kotlin("jvm")
 }
 
-publishJarsForIde(
-    listOf(
-        ":analysis:analysis-internal-utils"
-    )
-)
+publishJarsForIde(listOf())
