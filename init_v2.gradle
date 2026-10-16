@@ -689,8 +689,25 @@ class TeamcityTestListener implements TestListener, TestOutputListener {
     void afterSuite(TestDescriptor testDescriptor, TestResult testResult) {
         def suiteDescriptorWrapper = new SuiteDescriptorWrapper(testDescriptor, flowWrapper, ignoredSuiteFormat)
         suiteDescriptorWrapper.finish { ServiceMessage flowMessage, ServiceMessage suiteFinishedMessage ->
+            def testDescriptorWrapper = new TestDescriptorWrapper(testDescriptor, testNameDescriptor, flowWrapper, buildDirectoriesResolver, ignoredSuiteFormat)
+            def outputs = testOutputs.remove(testDescriptorWrapper)
+            if (outputs != null) {
+                synchronized (outputs) {
+                    testDescriptorWrapper.flush(outputs) { ServiceMessage testOutputServiceMessage -> this.logger.lifecycle(testOutputServiceMessage.asString()) }
+                    outputs.clear()
+                }
+            }
             this.logger.lifecycle(suiteFinishedMessage.asString())
             if (flowMessage != null) this.logger.lifecycle(flowMessage.asString())
+        }
+        if (testDescriptor.parent == null) {
+            testOutputs.each { key, outputs ->
+                synchronized (outputs) {
+                    key.flush(outputs) { ServiceMessage testOutputServiceMessage -> this.logger.lifecycle(testOutputServiceMessage.asString()) }
+                    outputs.clear()
+                }
+            }
+            testOutputs.clear()
         }
     }
 
