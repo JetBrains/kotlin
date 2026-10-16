@@ -557,7 +557,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
      * Extra JVM arguments for the Swift Export worker process.
      */
     val swiftExportJvmArgs: List<String>
-        get() = get(PropertyNames.KOTLIN_SWIFT_EXPORT_JVM_ARGS).orEmpty()
+        get() = get(PropertyNames.KOTLIN_NATIVE_SWIFT_EXPORT_WORKER_JVM_ARGS).orEmpty()
             .split("\\s+".toRegex())
             // Leading or trailing whitespace leaves empty strings, which would reach the JVM as arguments
             .filterNot { it.isBlank() }
@@ -913,7 +913,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_APPLE_ALLOW_EMBED_AND_SIGN_WITH_COCOAPODS =
             property("kotlin.apple.deprecated.allowUsingEmbedAndSignWithCocoaPodsDependencies")
         val KOTLIN_SWIFT_EXPORT_EXPERIMENTAL_NOWARN = property("kotlin.swift-export.experimental.nowarn")
-        val KOTLIN_SWIFT_EXPORT_JVM_ARGS = property("kotlin.swift-export.jvmArgs")
+        val KOTLIN_NATIVE_SWIFT_EXPORT_WORKER_JVM_ARGS = property("kotlin.native.swiftExportWorkerJvmArgs")
         val KOTLIN_NATIVE_ENABLE_KLIBS_CROSSCOMPILATION = property("kotlin.native.enableKlibsCrossCompilation")
         val KOTLIN_ARCHIVES_TASK_OUTPUT_AS_FRIEND_ENABLED = property("kotlin.build.archivesTaskOutputAsFriendModule")
         val KOTLIN_KMP_PUBLICATION_STRATEGY = property("${KOTLIN_INTERNAL_NAMESPACE}.kmp.kmpPublicationStrategy")
