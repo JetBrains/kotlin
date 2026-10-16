@@ -41,6 +41,7 @@ dependencies {
     testFixturesImplementation(project(":analysis:decompiled:light-classes-for-decompiled"))
     testFixturesImplementation(project(":kotlin-util-klib-metadata"))
     testFixturesImplementation(testFixtures(project(":analysis:analysis-test-framework")))
+    testFixturesImplementation(testFixtures(project(":analysis:low-level-api-fir")))
     testFixturesImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     testFixturesCompileOnly(toolsJarApi())
 
