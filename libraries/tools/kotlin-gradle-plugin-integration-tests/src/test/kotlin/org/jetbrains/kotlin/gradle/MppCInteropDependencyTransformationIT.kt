@@ -237,7 +237,7 @@ class MppCInteropDependencyTransformationIT : KGPBaseTest() {
                         KonanTarget.IOS_ARM64,
                         KonanTarget.IOS_SIMULATOR_ARM64,
                         KonanTarget.IOS_X64,
-                        KonanTarget.MACOS_X64,
+                        KonanTarget.MACOS_ARM64,
                         KonanTarget.MINGW_X64
                     )
                 )
@@ -254,7 +254,7 @@ class MppCInteropDependencyTransformationIT : KGPBaseTest() {
                             KonanTarget.IOS_ARM64,
                             KonanTarget.IOS_SIMULATOR_ARM64,
                             KonanTarget.IOS_X64,
-                            KonanTarget.MACOS_X64
+                            KonanTarget.MACOS_ARM64
                         )
                     )
             }
@@ -267,7 +267,7 @@ class MppCInteropDependencyTransformationIT : KGPBaseTest() {
                             KonanTarget.IOS_ARM64,
                             KonanTarget.IOS_X64,
                             KonanTarget.IOS_SIMULATOR_ARM64,
-                            KonanTarget.MACOS_X64
+                            KonanTarget.MACOS_ARM64
                         )
                     )
             }
@@ -309,7 +309,7 @@ class MppCInteropDependencyTransformationIT : KGPBaseTest() {
                         KonanTarget.IOS_ARM64,
                         KonanTarget.IOS_X64,
                         KonanTarget.IOS_SIMULATOR_ARM64,
-                        KonanTarget.MACOS_X64,
+                        KonanTarget.MACOS_ARM64,
                         KonanTarget.MINGW_X64
                     )
                 )
@@ -326,7 +326,7 @@ class MppCInteropDependencyTransformationIT : KGPBaseTest() {
                             KonanTarget.IOS_ARM64,
                             KonanTarget.IOS_X64,
                             KonanTarget.IOS_SIMULATOR_ARM64,
-                            KonanTarget.MACOS_X64,
+                            KonanTarget.MACOS_ARM64,
                         )
                     )
             }

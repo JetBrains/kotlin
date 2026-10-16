@@ -346,7 +346,7 @@ class KmpPartiallyResolvedDependenciesCheckerIT : KGPBaseTest() {
                 project.applyMultiplatform {
                     jvm()
                     iosArm64()
-                    @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+                    // fixme: KT-89587 Clean up tests after iosX64 target deprecation
                     iosX64()
 
                     sourceSets.commonMain.dependencies {
@@ -378,7 +378,7 @@ class KmpPartiallyResolvedDependenciesCheckerIT : KGPBaseTest() {
                     project.applyMultiplatform {
                         jvm()
                         iosArm64()
-                        @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+                        // fixme: KT-89587 Clean up tests after iosX64 target deprecation
                         iosX64()
                         sourceSets.getByName("commonMain").compileStubSourceWithSourceSetName()
                         sourceSets.commonMain.dependencies {
@@ -442,7 +442,7 @@ class KmpPartiallyResolvedDependenciesCheckerIT : KGPBaseTest() {
                     project.applyMultiplatform {
                         jvm()
                         iosArm64()
-                        @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+                        // fixme: KT-89587 Clean up tests after iosX64 target deprecation
                         iosX64()
                         sourceSets.getByName("commonMain").compileStubSourceWithSourceSetName()
                         sourceSets.commonMain.dependencies {

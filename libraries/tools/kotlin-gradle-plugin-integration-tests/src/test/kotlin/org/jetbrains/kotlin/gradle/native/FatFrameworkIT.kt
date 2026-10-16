@@ -127,8 +127,7 @@ class FatFrameworkIT : KGPBaseTest() {
     fun testIncorrectFamily(gradleVersion: GradleVersion) {
         nativeProject("native-fat-framework/smoke", gradleVersion) {
             buildScriptInjection {
-                @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
-                val macos = kotlinMultiplatform.macosX64()
+                val macos = kotlinMultiplatform.macosArm64()
                 macos.binaries.framework("DEBUG")
                 val fat = project.tasks.getByName("fat") as FatFrameworkTask
                 fat.from(macos.binaries.getFramework("DEBUG"))

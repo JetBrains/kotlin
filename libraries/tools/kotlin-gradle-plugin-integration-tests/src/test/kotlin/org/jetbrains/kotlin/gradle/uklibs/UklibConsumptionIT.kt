@@ -51,7 +51,7 @@ class UklibConsumptionIT : KGPBaseTest() {
             androidTarget().publishLibraryVariants("debug", "release")
             linuxArm64()
             iosArm64()
-            @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+            // fixme: KT-89587 Clean up tests after iosX64 target deprecation
             iosX64()
             macosArm64()
             jvm()
@@ -676,7 +676,7 @@ class UklibConsumptionIT : KGPBaseTest() {
             buildScriptInjection {
                 project.applyMultiplatform {
                     iosArm64()
-                    @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+                    // fixme: KT-89587 Clean up tests after iosX64 target deprecation
                     iosX64()
                     jvm()
                     sourceSets.commonMain.get().compileSource(
@@ -700,7 +700,7 @@ class UklibConsumptionIT : KGPBaseTest() {
             buildScriptInjection {
                 project.applyMultiplatform {
                     iosArm64()
-                    @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+                    // fixme: KT-89587 Clean up tests after iosX64 target deprecation
                     iosX64()
                     jvm {
                         binaries {
@@ -1347,7 +1347,7 @@ class UklibConsumptionIT : KGPBaseTest() {
             buildScriptInjection {
                 project.applyMultiplatform {
                     iosArm64()
-                    @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+                    // fixme: KT-89587 Clean up tests after iosX64 target deprecation
                     iosX64()
                     js()
                     sourceSets.commonMain.get().compileSource("class Common")

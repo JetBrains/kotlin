@@ -120,10 +120,9 @@ class TryNextIT : KGPBaseTest() {
                     |:compileCommonMainKotlinMetadata: $nextKotlinLanguageVersion language version
                     |:compileKotlinLinuxX64: $nextKotlinLanguageVersion language version
                     |:compileKotlinMacosArm64: $nextKotlinLanguageVersion language version
-                    |:compileKotlinMacosX64: $nextKotlinLanguageVersion language version
                     |:compileKotlinMingwX64: $nextKotlinLanguageVersion language version
                     |:compileNativeMainKotlinMetadata: $nextKotlinLanguageVersion language version
-                    |##### 100% (6/6) tasks have been compiled with Kotlin $nextKotlinLanguageVersion #####
+                    |##### 100% (5/5) tasks have been compiled with Kotlin $nextKotlinLanguageVersion #####
                     """.trimMargin().normalizeLineEndings()
                 )
             }

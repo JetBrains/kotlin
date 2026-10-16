@@ -37,7 +37,7 @@ class LanguageSettingsTests {
                 linuxX64()
                 linuxArm64()
 
-                @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+                // fixme: KT-89587 Clean up tests after iosX64 target deprecation
                 iosX64()
                 iosArm64()
 
@@ -86,7 +86,7 @@ class LanguageSettingsTests {
                 linuxX64()
                 linuxArm64()
 
-                @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+                // fixme: KT-89587 Clean up tests after iosX64 target deprecation
                 iosX64()
                 iosArm64()
 
@@ -250,8 +250,8 @@ class LanguageSettingsTests {
             "androidRelease" to "compileReleaseKotlinAndroid",
             "androidUnitTest" to "compileDebugUnitTestKotlinAndroid",
             "androidUnitTestDebug" to "compileDebugUnitTestKotlinAndroid",
-            "appleMain" to "compileKotlinMetadata",
-            "appleTest" to "compileKotlinMetadata",
+            "appleMain" to "compileKotlinMacosArm64",
+            "appleTest" to "compileTestKotlinMacosArm64",
             "commonMain" to "compileKotlinMetadata",
             "commonTest" to "compileKotlinMetadata",
             "jsMain" to "compileKotlinJs",
@@ -267,10 +267,8 @@ class LanguageSettingsTests {
             "linuxX64Test" to "compileTestKotlinLinuxX64",
             "macosArm64Main" to "compileKotlinMacosArm64",
             "macosArm64Test" to "compileTestKotlinMacosArm64",
-            "macosMain" to "compileKotlinMetadata",
-            "macosTest" to "compileKotlinMetadata",
-            "macosX64Main" to "compileKotlinMacosX64",
-            "macosX64Test" to "compileTestKotlinMacosX64",
+            "macosMain" to "compileKotlinMacosArm64",
+            "macosTest" to "compileTestKotlinMacosArm64",
             "mingwMain" to "compileKotlinMingwX64",
             "mingwTest" to "compileTestKotlinMingwX64",
             "mingwX64Main" to "compileKotlinMingwX64",
@@ -312,8 +310,6 @@ class LanguageSettingsTests {
                     linuxX64()
                     linuxArm64()
                     mingwX64()
-                    @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
-                    macosX64()
                     macosArm64()
 
                     applyDefaultHierarchyTemplate()

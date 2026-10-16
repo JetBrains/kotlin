@@ -41,10 +41,8 @@ class CInteropCommonizerTaskTest : MultiplatformExtensionTest() {
     fun `commonizeCInteropTask configuration - avoids cinterop task configuration`() = project.runLifecycleAwareTest {
         project.enableCInteropCommonization(true)
 
-        @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
         listOf(
             kotlin.linuxX64().compilations.main.cinterops.create("anyInteropName"),
-            kotlin.macosX64().compilations.main.cinterops.create("anyInteropName"),
         ).forEach {
             project.tasks.named(it.interopProcessingTaskName).configure {
                 fail("Interop task configuration should not avoided by commonizeCInteropTask configuration")
@@ -58,8 +56,7 @@ class CInteropCommonizerTaskTest : MultiplatformExtensionTest() {
     fun `nativeMain linux macos`() = project.runLifecycleAwareTest {
         val linuxInterop = kotlin.linuxX64("linux").compilations.getByName("main").cinterops.create("anyInteropName")
 
-        @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
-        val macosInterop = kotlin.macosX64("macos").compilations.getByName("main").cinterops.create("anyInteropName")
+        val macosInterop = kotlin.macosArm64("macos").compilations.getByName("main").cinterops.create("anyInteropName")
 
         val commonMain = kotlin.sourceSets.getByName("commonMain")
         val nativeMain = kotlin.sourceSets.create("nativeMain")
@@ -78,7 +75,7 @@ class CInteropCommonizerTaskTest : MultiplatformExtensionTest() {
 
         assertEquals(
             CInteropCommonizerGroup(
-                setOf(CommonizerTarget(LINUX_X64, MACOS_X64)),
+                setOf(CommonizerTarget(LINUX_X64, MACOS_ARM64)),
                 setOf(linuxInterop.identifier, macosInterop.identifier)
             ),
             project.findCInteropCommonizerGroup(expectCInteropCommonizerDependent(nativeMain))
@@ -89,8 +86,7 @@ class CInteropCommonizerTaskTest : MultiplatformExtensionTest() {
     fun `nativeMain linux macos (no macos interop defined)`() = project.runLifecycleAwareTest {
         kotlin.linuxX64("linux").compilations.getByName("main").cinterops.create("anyInteropName")
 
-        @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
-        kotlin.macosX64("macos")
+        kotlin.macosArm64("macos")
 
         val commonMain = kotlin.sourceSets.getByName("commonMain")
         val nativeMain = kotlin.sourceSets.create("nativeMain")
@@ -116,10 +112,9 @@ class CInteropCommonizerTaskTest : MultiplatformExtensionTest() {
     fun `nativeMain iosMain linux macos iosX64 iosArm64`() = project.runLifecycleAwareTest {
         val linuxInterop = kotlin.linuxX64("linux").compilations.getByName("main").cinterops.create("anyInteropName").identifier
 
-        @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
-        val macosInterop = kotlin.macosX64("macos").compilations.getByName("main").cinterops.create("anyInteropName").identifier
+        val macosInterop = kotlin.macosArm64("macos").compilations.getByName("main").cinterops.create("anyInteropName").identifier
 
-        @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+        // fixme: KT-89587 Clean up tests after iosX64 target deprecation
         val iosX64Interop = kotlin.iosX64("iosX64").compilations.getByName("main").cinterops.create("anyInteropName").identifier
         val iosArm64Interop = kotlin.iosArm64("iosArm64").compilations.getByName("main").cinterops.create("anyInteropName").identifier
 
@@ -146,7 +141,7 @@ class CInteropCommonizerTaskTest : MultiplatformExtensionTest() {
 
         val group = CInteropCommonizerGroup(
             setOf(
-                CommonizerTarget(IOS_X64, IOS_ARM64, MACOS_X64, LINUX_X64),
+                CommonizerTarget(IOS_X64, IOS_ARM64, MACOS_ARM64, LINUX_X64),
                 CommonizerTarget(IOS_X64, IOS_ARM64)
             ),
             setOf(
@@ -176,8 +171,7 @@ class CInteropCommonizerTaskTest : MultiplatformExtensionTest() {
     ) = project.runLifecycleAwareTest {
         val linuxInterop = kotlin.linuxX64("linux").compilations.getByName("main").cinterops.create("anyInteropName").identifier
 
-        @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
-        val macosInterop = kotlin.macosX64("macos").compilations.getByName("main").cinterops.create("anyInteropName").identifier
+        val macosInterop = kotlin.macosArm64("macos").compilations.getByName("main").cinterops.create("anyInteropName").identifier
 
         val commonMain = kotlin.sourceSets.getByName("commonMain")
         val nativeMain = kotlin.sourceSets.create("nativeMain")
@@ -207,7 +201,7 @@ class CInteropCommonizerTaskTest : MultiplatformExtensionTest() {
         )
 
         val group = CInteropCommonizerGroup(
-            setOf(CommonizerTarget(LINUX_X64, MACOS_X64)),
+            setOf(CommonizerTarget(LINUX_X64, MACOS_ARM64)),
             setOf(linuxInterop, macosInterop)
         )
 
@@ -242,8 +236,7 @@ class CInteropCommonizerTaskTest : MultiplatformExtensionTest() {
     ) = project.runLifecycleAwareTest {
         val linuxInterop = kotlin.linuxX64("linux").compilations.getByName("main").cinterops.create("anyInteropName").identifier
 
-        @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
-        val macosInterop = kotlin.macosX64("macos").compilations.getByName("main").cinterops.create("anyInteropName").identifier
+        val macosInterop = kotlin.macosArm64("macos").compilations.getByName("main").cinterops.create("anyInteropName").identifier
         kotlin.linuxX64("linux").compilations.getByName("test").cinterops.create("anyOtherName").identifier
 
         val commonMain = kotlin.sourceSets.getByName("commonMain")
@@ -274,7 +267,7 @@ class CInteropCommonizerTaskTest : MultiplatformExtensionTest() {
         )
 
         val group = CInteropCommonizerGroup(
-            setOf(CommonizerTarget(LINUX_X64, MACOS_X64)),
+            setOf(CommonizerTarget(LINUX_X64, MACOS_ARM64)),
             setOf(linuxInterop, macosInterop)
         )
 
@@ -306,10 +299,9 @@ class CInteropCommonizerTaskTest : MultiplatformExtensionTest() {
         /* Define targets */
         val linux = kotlin.linuxX64("linux")
 
-        @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
-        val macos = kotlin.macosX64("macos")
+        val macos = kotlin.macosArm64("macos")
 
-        @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+        // fixme: KT-89587 Clean up tests after iosX64 target deprecation
         val iosX64 = kotlin.iosX64()
         val iosArm64 = kotlin.iosArm64()
         val windows64 = kotlin.mingwX64("windows64")

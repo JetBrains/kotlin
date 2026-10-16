@@ -27,7 +27,7 @@ class UklibFromKGPFragmentsGMTTests {
         buildProjectWithMPP {
             kotlin {
                 iosArm64()
-                @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+                // fixme: KT-89587 Clean up tests after iosX64 target deprecation
                 iosX64()
                 jvm()
 
@@ -112,7 +112,7 @@ class UklibFromKGPFragmentsGMTTests {
             androidLibrary { compileSdk = 31 }
             kotlin {
                 iosArm64()
-                @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+                // fixme: KT-89587 Clean up tests after iosX64 target deprecation
                 iosX64()
                 iosSimulatorArm64()
                 linuxArm64()

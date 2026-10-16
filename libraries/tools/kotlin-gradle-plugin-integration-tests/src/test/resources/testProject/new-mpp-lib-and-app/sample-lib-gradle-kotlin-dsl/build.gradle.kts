@@ -25,8 +25,6 @@ kotlin {
 
     linuxX64("linux64")
     mingwX64("mingw64")
-    @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
-    macosX64("macos64")
     macosArm64("macosArm64")
 
     targets {
@@ -58,7 +56,6 @@ kotlin {
 
         val nativeMain = create("nativeMain") { dependsOn(commonMain.get()) }
         val linux64Main = getByName("linux64Main") { dependsOn(nativeMain) }
-        val macos64Main = getByName("macos64Main") { dependsOn(nativeMain) }
         val macosArm64Main = getByName("macosArm64Main") { dependsOn(nativeMain) }
     }
 }

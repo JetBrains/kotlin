@@ -34,8 +34,7 @@ class InternalKotlinSourceSetTest {
         val jvm = kotlin.jvm()
         val linux = kotlin.linuxX64()
 
-        @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
-        val macos = kotlin.macosX64()
+        val macos = kotlin.macosArm64()
 
         val metadataCompilation = kotlin.metadata().compilations.getByName("main")
         val jvmCompilation = jvm.compilations.getByName("main")
@@ -44,7 +43,7 @@ class InternalKotlinSourceSetTest {
 
         val commonMain = kotlin.sourceSets.getByName("commonMain")
         val linuxX4Main = kotlin.sourceSets.getByName("linuxX64Main")
-        val macosX64Main = kotlin.sourceSets.getByName("macosX64Main")
+        val macosArm64Main = kotlin.sourceSets.getByName("macosArm64Main")
 
         val nativeMain = kotlin.sourceSets.create("nativeMain")
         nativeMain.dependsOn(commonMain)
@@ -65,7 +64,7 @@ class InternalKotlinSourceSetTest {
             nativeMain.internal.compilations
         )
 
-        macosX64Main.dependsOn(nativeMain)
+        macosArm64Main.dependsOn(nativeMain)
         assertEquals<Set<KotlinCompilation<*>>>(
             setOf(linuxCompilation, macosCompilation),
             nativeMain.internal.compilations
@@ -131,7 +130,7 @@ class InternalKotlinSourceSetTest {
                 jvm()
                 linuxX64()
                 linuxArm64()
-                @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+                // fixme: KT-89587 Clean up tests after iosX64 target deprecation
                 iosX64()
                 iosArm64()
             }
