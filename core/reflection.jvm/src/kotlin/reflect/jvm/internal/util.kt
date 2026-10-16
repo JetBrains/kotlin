@@ -88,6 +88,7 @@ internal fun ClassDescriptor.toJavaClass(): Class<*>? {
 private val SUSPEND_FUNCTION_PREFIX =
     FunctionTypeKind.SuspendFunction.packageFqName.asString() + "." + FunctionTypeKind.SuspendFunction.classNamePrefix
 
+@OptIn(ExperimentalStdlibApi::class)
 internal fun ClassLoader.loadClass(kotlinClassId: ClassId, arrayDimensions: Int = 0): Class<*>? {
     val kotlinFqName = kotlinClassId.asSingleFqName().toUnsafe()
     kotlinFqName.asString().substringAfter(SUSPEND_FUNCTION_PREFIX).toIntOrNull()?.let { suspendFunctionArity ->
@@ -95,10 +96,19 @@ internal fun ClassLoader.loadClass(kotlinClassId: ClassId, arrayDimensions: Int 
     }
 
     val javaClassId = JavaToKotlinClassMap.mapKotlinToJava(kotlinFqName) ?: kotlinClassId
+    val packageName = javaClassId.packageFqName.asString()
+    val className = javaClassId.relativeClassName.asString()
+    val isBuiltin = javaClassId != kotlinClassId
     // Pseudo-classes like `kotlin/String.Companion` can be accessible from different class loaders. To ensure that we always use the
     // same class, we always load it from the stdlib's class loader.
-    val correctClassLoader = if (javaClassId != kotlinClassId) stdlibClassLoader else this
-    return loadClass(correctClassLoader, javaClassId.packageFqName.asString(), javaClassId.relativeClassName.asString(), arrayDimensions)
+    val correctClassLoader = if (isBuiltin) stdlibClassLoader else this
+    return loadClass(correctClassLoader, packageName, className, arrayDimensions)
+        ?: ifOrNull(!isBuiltin) {
+            // JDK and kotlin-stdlib can be loaded by different class loaders. In this case, when we're trying to resolve references to
+            // classes such as `kotlin/Unit` or `kotlin/IntRange` from mapped builtin classes, we should use the kotlin-stdlib class loader,
+            // because JDK class loader cannot load Kotlin classes.
+            loadClass(stdlibClassLoader, packageName, className, arrayDimensions)
+        }
 }
 
 internal val stdlibClassLoader: ClassLoader
@@ -116,12 +126,6 @@ private fun loadClass(classLoader: ClassLoader, packageName: String, className: 
             "IntArray" -> return IntArray::class.java
             "LongArray" -> return LongArray::class.java
             "ShortArray" -> return ShortArray::class.java
-            "Unit" -> {
-                // JDK and kotlin-stdlib can be loaded by different class loaders. In this case, trying to resolve `kotlin/Unit` reference
-                // in a builtin class will use the JDK class loader which cannot load `kotlin/Unit`. This should happen for all non-mapped
-                // builtin classes referenced from builtins, but right now Unit seems to be the only one.
-                return Unit::class.java
-            }
         }
     }
 
