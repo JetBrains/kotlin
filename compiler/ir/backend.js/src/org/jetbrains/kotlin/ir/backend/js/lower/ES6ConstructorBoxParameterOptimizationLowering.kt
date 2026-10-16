@@ -106,6 +106,7 @@ class ES6ConstructorBoxParameterOptimizationLowering(private val context: JsIrBa
             annotations = original.annotations
             typeParameters = original.typeParameters
             parameters = original.parameters.memoryOptimizedFilterNot { it.isBoxParameter }
+            effects = original.effects
             body = original.body
         }
 
