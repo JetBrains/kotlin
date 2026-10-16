@@ -1,1 +1,2 @@
+warning: the argument '-Xallow-pre-17-runtime-jdk' was removed in Kotlin 2.5.20. It has no effect.
 OK

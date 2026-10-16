@@ -93,9 +93,6 @@ internal abstract class CommonCompilerArgumentsImpl() : CommonToolArgumentsImpl(
   @SerialName("X_ALLOW_KOTLIN_PACKAGE")
   internal var allowKotlinPackage: Boolean = defaultArguments.allowKotlinPackage
 
-  @SerialName("X_ALLOW_PRE_17_RUNTIME_JDK")
-  internal var allowPre17RuntimeJdk: Boolean = defaultArguments.allowPre17RuntimeJdk
-
   @SerialName("X_ALLOW_REIFIED_TYPE_IN_CATCH")
   internal var allowReifiedTypeInCatch: Boolean = defaultArguments.allowReifiedTypeInCatch
 
@@ -413,7 +410,6 @@ internal abstract class CommonCompilerArgumentsImpl() : CommonToolArgumentsImpl(
     "X_ALLOW_CONTRACTS_ON_MORE_FUNCTIONS" -> allowContractsOnMoreFunctions
     "X_ALLOW_HOLDSIN_CONTRACT" -> allowHoldsinContract
     "X_ALLOW_KOTLIN_PACKAGE" -> allowKotlinPackage
-    "X_ALLOW_PRE_17_RUNTIME_JDK" -> allowPre17RuntimeJdk
     "X_ALLOW_REIFIED_TYPE_IN_CATCH" -> allowReifiedTypeInCatch
     "X_ALLOW_RETURNS_RESULT_OF" -> allowReturnsResultOf
     "X_ANNOTATION_DEFAULT_TARGET" -> annotationDefaultTarget
@@ -526,7 +522,6 @@ internal abstract class CommonCompilerArgumentsImpl() : CommonToolArgumentsImpl(
       "X_ALLOW_CONTRACTS_ON_MORE_FUNCTIONS" -> allowContractsOnMoreFunctions = CommonCompilerArgumentValueAdapter.toImpl(value)
       "X_ALLOW_HOLDSIN_CONTRACT" -> allowHoldsinContract = CommonCompilerArgumentValueAdapter.toImpl(value)
       "X_ALLOW_KOTLIN_PACKAGE" -> allowKotlinPackage = CommonCompilerArgumentValueAdapter.toImpl(value)
-      "X_ALLOW_PRE_17_RUNTIME_JDK" -> allowPre17RuntimeJdk = CommonCompilerArgumentValueAdapter.toImpl(value)
       "X_ALLOW_REIFIED_TYPE_IN_CATCH" -> allowReifiedTypeInCatch = CommonCompilerArgumentValueAdapter.toImpl(value)
       "X_ALLOW_RETURNS_RESULT_OF" -> allowReturnsResultOf = CommonCompilerArgumentValueAdapter.toImpl(value)
       "X_ANNOTATION_DEFAULT_TARGET" -> annotationDefaultTarget = CommonCompilerArgumentValueAdapter.toImpl(value)
@@ -634,6 +629,7 @@ internal abstract class CommonCompilerArgumentsImpl() : CommonToolArgumentsImpl(
     super.toCompilerArguments(arguments)
     val unknownArgs = optionsMap.keys.filter {
       when (it) {
+        "X_ALLOW_PRE_17_RUNTIME_JDK" -> throw IllegalStateException("""Compiler parameter not recognized: X_ALLOW_PRE_17_RUNTIME_JDK. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.5.0 and removed in 2.5.20""")
         "X_CONTEXT_RECEIVERS" -> throw IllegalStateException("""Compiler parameter not recognized: X_CONTEXT_RECEIVERS. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""")
         "X_IGNORE_CONST_OPTIMIZATION_ERRORS" -> throw IllegalStateException("""Compiler parameter not recognized: X_IGNORE_CONST_OPTIMIZATION_ERRORS. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""")
         "X_INLINE_CLASSES" -> throw IllegalStateException("""Compiler parameter not recognized: X_INLINE_CLASSES. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""")
@@ -661,7 +657,6 @@ internal abstract class CommonCompilerArgumentsImpl() : CommonToolArgumentsImpl(
     arguments.allowContractsOnMoreFunctions = allowContractsOnMoreFunctions
     arguments.allowHoldsinContract = allowHoldsinContract
     arguments.allowKotlinPackage = allowKotlinPackage
-    arguments.allowPre17RuntimeJdk = allowPre17RuntimeJdk
     arguments.allowReifiedTypeInCatch = allowReifiedTypeInCatch
     arguments.allowReturnsResultOf = allowReturnsResultOf
     arguments.annotationDefaultTarget = annotationDefaultTarget?.stringValue
@@ -767,7 +762,6 @@ internal abstract class CommonCompilerArgumentsImpl() : CommonToolArgumentsImpl(
     allowContractsOnMoreFunctions = arguments.allowContractsOnMoreFunctions
     allowHoldsinContract = arguments.allowHoldsinContract
     allowKotlinPackage = arguments.allowKotlinPackage
-    allowPre17RuntimeJdk = arguments.allowPre17RuntimeJdk
     allowReifiedTypeInCatch = arguments.allowReifiedTypeInCatch
     allowReturnsResultOf = arguments.allowReturnsResultOf
     try { annotationDefaultTarget = arguments.annotationDefaultTarget?.let { AnnotationDefaultTargetMode.values().firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::annotationDefaultTarget, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xannotation-default-target value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") }
@@ -872,7 +866,6 @@ internal abstract class CommonCompilerArgumentsImpl() : CommonToolArgumentsImpl(
     arguments.allowContractsOnMoreFunctions = allowContractsOnMoreFunctions
     arguments.allowHoldsinContract = allowHoldsinContract
     arguments.allowKotlinPackage = allowKotlinPackage
-    arguments.allowPre17RuntimeJdk = allowPre17RuntimeJdk
     arguments.allowReifiedTypeInCatch = allowReifiedTypeInCatch
     arguments.allowReturnsResultOf = allowReturnsResultOf
     arguments.annotationDefaultTarget = annotationDefaultTarget?.stringValue
@@ -960,6 +953,6 @@ internal abstract class CommonCompilerArgumentsImpl() : CommonToolArgumentsImpl(
 
   public companion object {
     private val knownOptionIds: List<String> =
-        listOf("P","XX_LANGUAGE","XX_DEBUG_LEVEL_COMPILER_CHECKS","XX_DUMP_MODEL","XX_EXPLICIT_RETURN_TYPES","XX_LENIENT_MODE","X_ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS","X_ALLOW_CONDITION_IMPLIES_RETURNS_CONTRACTS","X_ALLOW_CONTRACTS_ON_MORE_FUNCTIONS","X_ALLOW_HOLDSIN_CONTRACT","X_ALLOW_KOTLIN_PACKAGE","X_ALLOW_PRE_17_RUNTIME_JDK","X_ALLOW_REIFIED_TYPE_IN_CATCH","X_ALLOW_RETURNS_RESULT_OF","X_ANNOTATION_DEFAULT_TARGET","X_ANNOTATION_TARGET_ALL","X_CALLABLE_REFERENCES_TO_CONTEXTUAL","X_CHECK_PHASE_CONDITIONS","X_COLLECTION_LITERALS","X_COMMON_SOURCES","X_COMPANION_BLOCKS","X_COMPANION_BLOCKS_AND_EXTENSIONS","X_COMPILER_PLUGIN","X_COMPILER_PLUGIN_ORDER","X_CONSISTENT_DATA_CLASS_COPY_VISIBILITY","X_CONTEXT_PARAMETERS","X_CONTEXT_SENSITIVE_RESOLUTION","X_DATA_FLOW_BASED_EXHAUSTIVENESS","X_DETAILED_PERF","X_DISABLE_DEFAULT_SCRIPTING_PLUGIN","X_DISABLE_IR_CHECKERS","X_DISABLE_PHASES","X_DO_NOT_NORMALIZE_NAN_VALUES_IN_CONST_CONTEXT","X_DONT_SORT_SOURCE_FILES","X_DONT_WARN_ON_ERROR_SUPPRESSION","X_DUMP_DIRECTORY","X_DUMP_FQNAME","X_DUMP_PERF","X_EAGER_LAMBDA_ANALYSIS","X_ENABLE_ADDITIONAL_IR_CHECKERS","X_ENABLE_INCREMENTAL_COMPILATION","X_ESCAPING_FUNCTIONS","X_EXPECT_ACTUAL_CLASSES","X_EXPLICIT_API","X_EXPLICIT_BACKING_FIELDS","X_EXPLICIT_CONTEXT_ARGUMENTS","X_FIR_AGGRESSIVE_PRUNING","X_FRAGMENT_DEPENDENCY","X_FRAGMENT_FRIEND_DEPENDENCY","X_FRAGMENT_REFINES","X_FRAGMENT_SOURCES","X_FRAGMENTS","X_FULL_VALUE_CLASSES","X_HEADER_MODE","X_HEADER_MODE_TYPE","X_INTRINSIC_CONST_EVALUATION","X_LIST_PHASES","X_LOCAL_TYPE_ALIASES","X_METADATA_KLIB","X_METADATA_VERSION","X_MULTI_DOLLAR_INTERPOLATION","X_MULTI_PLATFORM","X_NAME_BASED_DESTRUCTURING","X_NESTED_TYPE_ALIASES","X_NO_INLINE","X_NON_LOCAL_BREAK_CONTINUE","X_PHASES_TO_DUMP","X_PHASES_TO_DUMP_AFTER","X_PHASES_TO_DUMP_BEFORE","X_PHASES_TO_VALIDATE","X_PHASES_TO_VALIDATE_AFTER","X_PHASES_TO_VALIDATE_BEFORE","X_PLUGIN","X_PRINT_CONFIGURATION","X_PROFILE_PHASES","X_RENDER_INTERNAL_DIAGNOSTIC_NAMES","X_REPORT_ALL_WARNINGS","X_REPORT_OUTPUT_FILES","X_REPORT_PERF","X_RETURN_VALUE_CHECKER","X_RICH_ERRORS","X_SEPARATE_KMP_COMPILATION","X_SKIP_METADATA_VERSION_CHECK","X_SKIP_PRERELEASE_CHECK","X_STDLIB_COMPILATION","X_STRICT_EQUALITY_FOR_STRUCTURAL_CLASSES","X_SUPPRESS_VERSION_WARNINGS","X_USE_FIR_IC","X_USE_FIR_LT","X_VERBOSE_PHASES","X_VERIFY_IR","X_WHEN_GUARDS","API_VERSION","KOTLIN_HOME","LANGUAGE_VERSION","OPT_IN","PROGRESSIVE","SCRIPT","COMPILER_PLUGINS","X_WARNING_LEVEL",)
+        listOf("P","XX_LANGUAGE","XX_DEBUG_LEVEL_COMPILER_CHECKS","XX_DUMP_MODEL","XX_EXPLICIT_RETURN_TYPES","XX_LENIENT_MODE","X_ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS","X_ALLOW_CONDITION_IMPLIES_RETURNS_CONTRACTS","X_ALLOW_CONTRACTS_ON_MORE_FUNCTIONS","X_ALLOW_HOLDSIN_CONTRACT","X_ALLOW_KOTLIN_PACKAGE","X_ALLOW_REIFIED_TYPE_IN_CATCH","X_ALLOW_RETURNS_RESULT_OF","X_ANNOTATION_DEFAULT_TARGET","X_ANNOTATION_TARGET_ALL","X_CALLABLE_REFERENCES_TO_CONTEXTUAL","X_CHECK_PHASE_CONDITIONS","X_COLLECTION_LITERALS","X_COMMON_SOURCES","X_COMPANION_BLOCKS","X_COMPANION_BLOCKS_AND_EXTENSIONS","X_COMPILER_PLUGIN","X_COMPILER_PLUGIN_ORDER","X_CONSISTENT_DATA_CLASS_COPY_VISIBILITY","X_CONTEXT_PARAMETERS","X_CONTEXT_SENSITIVE_RESOLUTION","X_DATA_FLOW_BASED_EXHAUSTIVENESS","X_DETAILED_PERF","X_DISABLE_DEFAULT_SCRIPTING_PLUGIN","X_DISABLE_IR_CHECKERS","X_DISABLE_PHASES","X_DO_NOT_NORMALIZE_NAN_VALUES_IN_CONST_CONTEXT","X_DONT_SORT_SOURCE_FILES","X_DONT_WARN_ON_ERROR_SUPPRESSION","X_DUMP_DIRECTORY","X_DUMP_FQNAME","X_DUMP_PERF","X_EAGER_LAMBDA_ANALYSIS","X_ENABLE_ADDITIONAL_IR_CHECKERS","X_ENABLE_INCREMENTAL_COMPILATION","X_ESCAPING_FUNCTIONS","X_EXPECT_ACTUAL_CLASSES","X_EXPLICIT_API","X_EXPLICIT_BACKING_FIELDS","X_EXPLICIT_CONTEXT_ARGUMENTS","X_FIR_AGGRESSIVE_PRUNING","X_FRAGMENT_DEPENDENCY","X_FRAGMENT_FRIEND_DEPENDENCY","X_FRAGMENT_REFINES","X_FRAGMENT_SOURCES","X_FRAGMENTS","X_FULL_VALUE_CLASSES","X_HEADER_MODE","X_HEADER_MODE_TYPE","X_INTRINSIC_CONST_EVALUATION","X_LIST_PHASES","X_LOCAL_TYPE_ALIASES","X_METADATA_KLIB","X_METADATA_VERSION","X_MULTI_DOLLAR_INTERPOLATION","X_MULTI_PLATFORM","X_NAME_BASED_DESTRUCTURING","X_NESTED_TYPE_ALIASES","X_NO_INLINE","X_NON_LOCAL_BREAK_CONTINUE","X_PHASES_TO_DUMP","X_PHASES_TO_DUMP_AFTER","X_PHASES_TO_DUMP_BEFORE","X_PHASES_TO_VALIDATE","X_PHASES_TO_VALIDATE_AFTER","X_PHASES_TO_VALIDATE_BEFORE","X_PLUGIN","X_PRINT_CONFIGURATION","X_PROFILE_PHASES","X_RENDER_INTERNAL_DIAGNOSTIC_NAMES","X_REPORT_ALL_WARNINGS","X_REPORT_OUTPUT_FILES","X_REPORT_PERF","X_RETURN_VALUE_CHECKER","X_RICH_ERRORS","X_SEPARATE_KMP_COMPILATION","X_SKIP_METADATA_VERSION_CHECK","X_SKIP_PRERELEASE_CHECK","X_STDLIB_COMPILATION","X_STRICT_EQUALITY_FOR_STRUCTURAL_CLASSES","X_SUPPRESS_VERSION_WARNINGS","X_USE_FIR_IC","X_USE_FIR_LT","X_VERBOSE_PHASES","X_VERIFY_IR","X_WHEN_GUARDS","API_VERSION","KOTLIN_HOME","LANGUAGE_VERSION","OPT_IN","PROGRESSIVE","SCRIPT","COMPILER_PLUGINS","X_WARNING_LEVEL",)
   }
 }

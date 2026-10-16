@@ -150,7 +150,6 @@ enum class BooleanMetrics(val type: BooleanOverridePolicy, val anonymization: Bo
     CLI_ALLOW_CONTRACTS_ON_MORE_FUNCTIONS(OR, SAFE),
     CLI_ALLOW_HOLDSIN_CONTRACT(OR, SAFE),
     CLI_ALLOW_KOTLIN_PACKAGE(OR, SAFE),
-    CLI_ALLOW_PRE_17_RUNTIME_JDK(OR, SAFE),
     CLI_ALLOW_REIFIED_TYPE_IN_CATCH(OR, SAFE),
     CLI_ALLOW_RETURNS_RESULT_OF(OR, SAFE),
     CLI_ANNOTATION_TARGET_ALL_ENABLED(OR, SAFE),
@@ -305,6 +304,6 @@ enum class BooleanMetrics(val type: BooleanOverridePolicy, val anonymization: Bo
     ;
 
     companion object {
-        const val VERSION = 35
+        const val VERSION = 36
     }
 }

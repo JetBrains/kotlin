@@ -222,6 +222,19 @@ val removedCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLe
     }
 
     compilerArgument {
+        name = "Xallow-pre-17-runtime-jdk"
+        description = ("Temporarily allow running Kotlin compiler with JDK older than JDK 17. " +
+                "This option will not work starting Kotlin 2.5.20-Beta1. " +
+                "See https://jb.gg/kotlin-compiler-jdk-17-migration for more details.").asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_5_0,
+            removedVersion = KotlinReleaseVersion.v2_5_20,
+        )
+    }
+
+    compilerArgument {
         name = "Xrepl"
         compilerName = "repl"
         val introducedVersion = KotlinReleaseVersion.v2_2_0
