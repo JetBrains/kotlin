@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.npmToolingDir
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependenciesTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
-import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.locateOrRegisterGenerateModuleMapTask
+import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.locateOrRegisterImportMapGenerateTask
 import org.jetbrains.kotlin.gradle.targets.wasm.internal.isWasm
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.utils.getFile
@@ -167,7 +167,7 @@ internal abstract class EsmBundleKotlinJsTests @Inject constructor(
 
 internal fun KotlinJsIrCompilation.locateOrRegisterEsmBundleKotlinJsTestsTask(): TaskProvider<EsmBundleKotlinJsTests> {
     val npmProject = npmProject
-    val importMapTask = locateOrRegisterGenerateModuleMapTask()
+    val importMapTask = locateOrRegisterImportMapGenerateTask()
 
     val esmBundleKotlinJsTests = project.locateOrRegisterTask<EsmBundleKotlinJsTests>(
         name = disambiguateName("bundleAsEsm"), // for wasmTest name will be wasmTestBundleAsEsm
