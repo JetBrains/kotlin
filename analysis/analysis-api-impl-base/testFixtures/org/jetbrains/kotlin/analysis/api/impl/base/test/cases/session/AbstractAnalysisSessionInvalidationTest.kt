@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificatio
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibrarySourceModule
 import org.jetbrains.kotlin.analysis.api.session.KaSessionProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.AbstractSessionInvalidationTest
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.TestSession
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 
 abstract class AbstractAnalysisSessionInvalidationTest : AbstractSessionInvalidationTest<KaSession>() {
