@@ -245,30 +245,30 @@ internal class JsArgumentsImpl() : CommonJsAndWasmArgumentsImpl(), JsCompilerArg
   @Suppress("DEPRECATION")
   protected fun applyCompilerArguments(arguments: K2JSCompilerArguments) {
     super.applyCompilerArguments(arguments)
-    try { useUnknownInsteadAny = arguments.useUnknownInsteadAny } catch (_: NoSuchMethodError) {  }
-    try { extensionFunctionsInExternals = arguments.extensionFunctionsInExternals } catch (_: NoSuchMethodError) {  }
-    try { allowImplementableInterfacesExporting = arguments.allowImplementableInterfacesExporting } catch (_: NoSuchMethodError) {  }
-    try { allowExportingSuspendFunctions = arguments.allowExportingSuspendFunctions } catch (_: NoSuchMethodError) {  }
-    try { useEsArrowFunctions = arguments.useEsArrowFunctions } catch (_: NoSuchMethodError) {  }
-    try { useEsClasses = arguments.useEsClasses } catch (_: NoSuchMethodError) {  }
-    try { useEsGenerators = arguments.useEsGenerators } catch (_: NoSuchMethodError) {  }
-    try { compileLongAsBigInt = arguments.compileLongAsBigInt } catch (_: NoSuchMethodError) {  }
-    try { exportKDoc = arguments.exportKDoc } catch (_: NoSuchMethodError) {  }
-    try { generatePolyfills = arguments.generatePolyfills } catch (_: NoSuchMethodError) {  }
-    try { integerDivisionCheck = arguments.integerDivisionCheck } catch (_: NoSuchMethodError) {  }
-    try { irBuildCache = arguments.irBuildCache } catch (_: NoSuchMethodError) {  }
-    try { irGenerateInlineAnonymousFunctions = arguments.irGenerateInlineAnonymousFunctions } catch (_: NoSuchMethodError) {  }
-    try { irKeep = arguments.irKeep } catch (_: NoSuchMethodError) {  }
-    try { irMinimizedMemberNames = arguments.irMinimizedMemberNames } catch (_: NoSuchMethodError) {  }
-    try { irPerFile = arguments.irPerFile } catch (_: NoSuchMethodError) {  }
-    try { irPerModule = arguments.irPerModule } catch (_: NoSuchMethodError) {  }
-    try { irSafeExternalBoolean = arguments.irSafeExternalBoolean } catch (_: NoSuchMethodError) {  }
-    try { irSafeExternalBooleanDiagnostic = arguments.irSafeExternalBooleanDiagnostic?.let { JsIrDiagnosticMode.values().firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::irSafeExternalBooleanDiagnostic, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xir-safe-external-boolean-diagnostic value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
-    try { optimizeGeneratedJs = arguments.optimizeGeneratedJs } catch (_: NoSuchMethodError) {  }
-    try { platformArgumentsProviderJsExpression = arguments.platformArgumentsProviderJsExpression } catch (_: NoSuchMethodError) {  }
-    try { allowExportingSuspendLambdas = arguments.allowExportingSuspendLambdas } catch (_: NoSuchMethodError) {  }
-    try { moduleKind = arguments.moduleKind?.let { JsModuleKind.values().firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::moduleKind, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -module-kind value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
-    try { target = arguments.target?.let { JsEcmaVersion.values().firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::target, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -target value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    useUnknownInsteadAny = arguments.useUnknownInsteadAny
+    extensionFunctionsInExternals = arguments.extensionFunctionsInExternals
+    allowImplementableInterfacesExporting = arguments.allowImplementableInterfacesExporting
+    allowExportingSuspendFunctions = arguments.allowExportingSuspendFunctions
+    useEsArrowFunctions = arguments.useEsArrowFunctions
+    useEsClasses = arguments.useEsClasses
+    useEsGenerators = arguments.useEsGenerators
+    compileLongAsBigInt = arguments.compileLongAsBigInt
+    exportKDoc = arguments.exportKDoc
+    generatePolyfills = arguments.generatePolyfills
+    integerDivisionCheck = arguments.integerDivisionCheck
+    irBuildCache = arguments.irBuildCache
+    irGenerateInlineAnonymousFunctions = arguments.irGenerateInlineAnonymousFunctions
+    irKeep = arguments.irKeep
+    irMinimizedMemberNames = arguments.irMinimizedMemberNames
+    irPerFile = arguments.irPerFile
+    irPerModule = arguments.irPerModule
+    irSafeExternalBoolean = arguments.irSafeExternalBoolean
+    try { irSafeExternalBooleanDiagnostic = arguments.irSafeExternalBooleanDiagnostic?.let { JsIrDiagnosticMode.values().firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::irSafeExternalBooleanDiagnostic, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xir-safe-external-boolean-diagnostic value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") }
+    optimizeGeneratedJs = arguments.optimizeGeneratedJs
+    platformArgumentsProviderJsExpression = arguments.platformArgumentsProviderJsExpression
+    allowExportingSuspendLambdas = arguments.allowExportingSuspendLambdas
+    try { moduleKind = arguments.moduleKind?.let { JsModuleKind.values().firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::moduleKind, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -module-kind value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") }
+    try { target = arguments.target?.let { JsEcmaVersion.values().firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::target, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -target value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") }
     internalArguments.addAll(arguments.internalArguments.map { it.stringRepresentation })
   }
 

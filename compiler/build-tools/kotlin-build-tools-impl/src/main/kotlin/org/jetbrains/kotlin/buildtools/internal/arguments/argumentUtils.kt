@@ -67,21 +67,6 @@ internal fun CommonToolArgumentsImpl.reportArgumentParseWarnings(
     }
 }
 
-internal fun <T> CommonToolArguments.setUsingReflection(propertyName: String, value: T) {
-    this::class.declaredMemberProperties.filterIsInstance<KMutableProperty<T>>().firstOrNull { it.name == propertyName }
-        ?.let { property: KMutableProperty<T> ->
-            property.setter.call(this, value)
-        } ?: throw NoSuchMethodError("No property found with name $propertyName in ${this::class.jvmName}")
-}
-
-internal fun <T> CommonToolArguments.getUsingReflection(propertyName: String): T {
-    return this::class.declaredMemberProperties.filterIsInstance<KProperty<T>>()
-        .firstOrNull { it.name == propertyName }
-        ?.let { property: KProperty<T> ->
-            property.getter.call(this)
-        } ?: throw NoSuchMethodError("No property found with name $propertyName in ${this::class.jvmName}")
-}
-
 internal fun Path.absolutePathStringOrThrow(): String = toFile().absolutePath
 
 internal inline fun <reified T : Enum<T>> Enum<*>.toApiEnum(): T =
