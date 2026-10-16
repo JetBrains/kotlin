@@ -1,0 +1,61 @@
+FILE: declarations.kt
+    public final data class X : R|kotlin/Any| {
+        public constructor(a: R|kotlin/Int|, b: R|kotlin/String|): R|X| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val a: R|kotlin/Int| = R|<local>/a|
+            public get(): R|kotlin/Int|
+
+        public final val b: R|kotlin/String| = R|<local>/b|
+            public get(): R|kotlin/String|
+
+        public final operator fun component1(): R|kotlin/Int|
+
+        public final operator fun component2(): R|kotlin/String|
+
+        public final fun copy(a: R|kotlin/Int| = this@R|/X|.R|/X.a|, b: R|kotlin/String| = this@R|/X|.R|/X.b|): R|X|
+
+    }
+    public final class NoComponents : R|kotlin/Any| {
+        public constructor(): R|NoComponents| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = R|/X.X|(Int(1), String())
+    public final val topA: R|kotlin/String| = String()
+        public get(): R|kotlin/String|
+    public final val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = R|/X.X|(Int(1), String())
+    public final val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = R|/NoComponents.NoComponents|()
+    public final val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = R|/X.X|(Int(1), String())
+    public final class C : R|kotlin/Any| {
+        public constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = R|/X.X|(Int(1), String())
+
+        public final val a: R|kotlin/String| = String()
+            public get(): R|kotlin/String|
+
+        public final val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = R|/X.X|(Int(1), String())
+
+        public final fun use(): R|kotlin/Unit| {
+            this@R|/C|.R|/C.a|.R|kotlin/String.length|
+            <Unresolved name: b>#.<Unresolved name: length>#
+            <Unresolved name: c>#.<Unresolved name: inc>#()
+            <Unresolved name: d>#.<Unresolved name: length>#
+        }
+
+    }
+FILE: usages.kt
+    public final fun use(c: R|C|): R|kotlin/Unit| {
+        R|/topA|.R|kotlin/String.length|
+        <Unresolved name: topB>#.<Unresolved name: length>#
+        <Unresolved name: topC>#.<Unresolved name: inc>#()
+        <Unresolved name: topG># = Int(1)
+        R|<local>/c|.R|/C.a|.R|kotlin/String.length|
+        R|<local>/c|.<Unresolved name: b>#.<Unresolved name: length>#
+        R|<local>/c|.<Unresolved name: d>#.<Unresolved name: length>#
+    }

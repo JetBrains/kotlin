@@ -1,0 +1,405 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] destructuringMemberContainer.kt
+    public final? data [ResolvedTo(RAW_FIR)] class MyPair : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyPair.i] i: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyPair.b] b: Int): R|MyPair| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=/MyPair.component1, IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=/MyPair.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): Int
+
+        public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+
+        public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+
+        public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] i: Int = this@R|/MyPair|.R|/MyPair.i|, [ResolvedTo(RAW_FIR)] b: Int = this@R|/MyPair|.R|/MyPair.b|): R|MyPair|
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(RAW_FIR)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+
+    }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] destructuringMemberContainer.kt
+    public final? data [ResolvedTo(RAW_FIR)] class MyPair : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyPair.i] i: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyPair.b] b: Int): R|MyPair| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=/MyPair.component1, IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=/MyPair.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): Int
+
+        public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+
+        public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+
+        public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] i: Int = this@R|/MyPair|.R|/MyPair.i|, [ResolvedTo(RAW_FIR)] b: Int = this@R|/MyPair|.R|/MyPair.b|): R|MyPair|
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(RAW_FIR)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+
+    }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] destructuringMemberContainer.kt
+    public final? data [ResolvedTo(RAW_FIR)] class MyPair : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyPair.i] i: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyPair.b] b: Int): R|MyPair| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=/MyPair.component1, IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=/MyPair.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): Int
+
+        public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+
+        public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+
+        public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] i: Int = this@R|/MyPair|.R|/MyPair.i|, [ResolvedTo(RAW_FIR)] b: Int = this@R|/MyPair|.R|/MyPair.b|): R|MyPair|
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+
+    }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] destructuringMemberContainer.kt
+    public final? data [ResolvedTo(RAW_FIR)] class MyPair : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyPair.i] i: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyPair.b] b: Int): R|MyPair| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=/MyPair.component1, IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=/MyPair.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): Int
+
+        public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+
+        public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+
+        public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] i: Int = this@R|/MyPair|.R|/MyPair.i|, [ResolvedTo(RAW_FIR)] b: Int = this@R|/MyPair|.R|/MyPair.b|): R|MyPair|
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(COMPANION_GENERATION)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+
+    }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] destructuringMemberContainer.kt
+    public final? data [ResolvedTo(RAW_FIR)] class MyPair : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyPair.i] i: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyPair.b] b: Int): R|MyPair| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=/MyPair.component1, IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=/MyPair.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): Int
+
+        public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+
+        public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+
+        public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] i: Int = this@R|/MyPair|.R|/MyPair.i|, [ResolvedTo(RAW_FIR)] b: Int = this@R|/MyPair|.R|/MyPair.b|): R|MyPair|
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(SUPER_TYPES)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+
+    }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] destructuringMemberContainer.kt
+    public final? data [ResolvedTo(RAW_FIR)] class MyPair : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyPair.i] i: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyPair.b] b: Int): R|MyPair| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=/MyPair.component1, IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=/MyPair.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): Int
+
+        public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+
+        public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+
+        public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] i: Int = this@R|/MyPair|.R|/MyPair.i|, [ResolvedTo(RAW_FIR)] b: Int = this@R|/MyPair|.R|/MyPair.b|): R|MyPair|
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(TYPES)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+
+    }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] destructuringMemberContainer.kt
+    public final? data [ResolvedTo(RAW_FIR)] class MyPair : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyPair.i] i: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyPair.b] b: Int): R|MyPair| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=/MyPair.component1, IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=/MyPair.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): Int
+
+        public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+
+        public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+
+        public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] i: Int = this@R|/MyPair|.R|/MyPair.i|, [ResolvedTo(RAW_FIR)] b: Int = this@R|/MyPair|.R|/MyPair.b|): R|MyPair|
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+
+    }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] destructuringMemberContainer.kt
+    public final? data [ResolvedTo(RAW_FIR)] class MyPair : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyPair.i] i: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyPair.b] b: Int): R|MyPair| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=/MyPair.component1, IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=/MyPair.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): Int
+
+        public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+
+        public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+
+        public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] i: Int = this@R|/MyPair|.R|/MyPair.i|, [ResolvedTo(RAW_FIR)] b: Int = this@R|/MyPair|.R|/MyPair.b|): R|MyPair|
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+
+    }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] destructuringMemberContainer.kt
+    public final? data [ResolvedTo(RAW_FIR)] class MyPair : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyPair.i] i: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyPair.b] b: Int): R|MyPair| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=/MyPair.component1, IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=/MyPair.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): Int
+
+        public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+
+        public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+
+        public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] i: Int = this@R|/MyPair|.R|/MyPair.i|, [ResolvedTo(RAW_FIR)] b: Int = this@R|/MyPair|.R|/MyPair.b|): R|MyPair|
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(CONTRACTS)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] destructuringMemberContainer.kt
+    public final? data [ResolvedTo(RAW_FIR)] class MyPair : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyPair.i] i: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyPair.b] b: Int): R|MyPair| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=/MyPair.component1, IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=/MyPair.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): Int
+
+        public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+
+        public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+
+        public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] i: Int = this@R|/MyPair|.R|/MyPair.i|, [ResolvedTo(RAW_FIR)] b: Int = this@R|/MyPair|.R|/MyPair.b|): R|MyPair|
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+
+    }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] destructuringMemberContainer.kt
+    public final? data [ResolvedTo(RAW_FIR)] class MyPair : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyPair.i] i: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyPair.b] b: Int): R|MyPair| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=/MyPair.component1, IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=/MyPair.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): Int
+
+        public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+
+        public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+
+        public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] i: Int = this@R|/MyPair|.R|/MyPair.i|, [ResolvedTo(RAW_FIR)] b: Int = this@R|/MyPair|.R|/MyPair.b|): R|MyPair|
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(CONSTANT_EVALUATION)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+
+    }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] destructuringMemberContainer.kt
+    public final? data [ResolvedTo(RAW_FIR)] class MyPair : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyPair.i] i: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyPair.b] b: Int): R|MyPair| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=/MyPair.component1, IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=/MyPair.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): Int
+
+        public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+
+        public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+
+        public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] i: Int = this@R|/MyPair|.R|/MyPair.i|, [ResolvedTo(RAW_FIR)] b: Int = this@R|/MyPair|.R|/MyPair.b|): R|MyPair|
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] destructuringMemberContainer.kt
+    public final data [ResolvedTo(STATUS)] class MyPair : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=MyPair] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/MyPair.i] i: R|kotlin/Int|, [ResolvedTo(STATUS)] [CorrespondingProperty=/MyPair.b] b: R|kotlin/Int|): R|MyPair| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=/MyPair.component1, IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=MyPair] get(): R|kotlin/Int|
+
+        public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=/MyPair.component2, IsFromPrimaryConstructor=true] val b: R|kotlin/Int| = R|<local>/b|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=MyPair] get(): R|kotlin/Int|
+
+        public final operator [ResolvedTo(STATUS)] fun component1(): R|kotlin/Int|
+
+        public final operator [ResolvedTo(STATUS)] fun component2(): R|kotlin/Int|
+
+        public final [ResolvedTo(STATUS)] fun copy([ResolvedTo(STATUS)] i: R|kotlin/Int| = this@R|/MyPair|.R|/MyPair.i|, [ResolvedTo(STATUS)] b: R|kotlin/Int| = this@R|/MyPair|.R|/MyPair.b|): R|MyPair|
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = R|/MyPair.MyPair|(Int(1), Int(2))
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] destructuringMemberContainer.kt
+    public final data [ResolvedTo(BODY_RESOLVE)] class MyPair : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyPair] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/MyPair.i] i: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/MyPair.b] b: R|kotlin/Int|): R|MyPair| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [ComponentFunctionSymbolKey=/MyPair.component1, IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyPair] get(): R|kotlin/Int|
+
+        public final [ResolvedTo(BODY_RESOLVE)] [ComponentFunctionSymbolKey=/MyPair.component2, IsFromPrimaryConstructor=true] val b: R|kotlin/Int| = R|<local>/b|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyPair] get(): R|kotlin/Int|
+
+        public final operator [ResolvedTo(BODY_RESOLVE)] fun component1(): R|kotlin/Int|
+
+        public final operator [ResolvedTo(BODY_RESOLVE)] fun component2(): R|kotlin/Int|
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun copy([ResolvedTo(BODY_RESOLVE)] i: R|kotlin/Int| = this@R|/MyPair|.R|/MyPair.i|, [ResolvedTo(BODY_RESOLVE)] b: R|kotlin/Int| = this@R|/MyPair|.R|/MyPair.b|): R|MyPair|
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = R|/MyPair.MyPair|(Int(1), Int(2))
+
+    }
