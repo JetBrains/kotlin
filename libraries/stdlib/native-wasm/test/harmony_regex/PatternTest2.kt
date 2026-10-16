@@ -23,8 +23,6 @@ package test.text.harmony_regex
 
 import kotlin.text.*
 import kotlin.test.*
-import kotlin.text.unicode.ExperimentalUnicodeApi
-import kotlin.text.unicode.codePointAt
 
 class PatternTest2 {
 
@@ -1211,21 +1209,35 @@ class PatternTest2 {
             .toSet()
             .associateWith(::categoryPatternVariants)
 
+        fun assertMatches(regex: Regex, value: String, generalCategory: String) {
+            assertTrue(
+                regex.matches(value),
+                "$regex should match \"${value}\" (${value.formatCodePoint()}) from $generalCategory"
+            )
+        }
+
+        fun assertDoesNotMatch(regex: Regex, value: String, generalCategory: String) {
+            assertFalse(
+                regex.matches(value),
+                "$regex should not match \"${value}\" (${value.formatCodePoint()}) from $generalCategory"
+            )
+        }
+
         for (sample in unicodeCategoryTestData) {
             for (regex in categoryToRegexes[sample.generalCategory]!!) {
-                assertTrue(
-                    regex.matches(sample.value),
-                    "$regex should match \"${sample.value}\" (${sample.value.formatFirstCodePoint()}) from ${sample.generalCategory}"
-                )
+                assertMatches(regex, sample.value, sample.generalCategory)
+                if (sample.multiByteValue != null) {
+                    assertMatches(regex, sample.multiByteValue, sample.generalCategory)
+                }
             }
 
             for ([otherCategory, otherRegexes] in categoryToRegexes) {
                 if (otherCategory == sample.generalCategory) continue
                 for (otherRegex in otherRegexes) {
-                    assertFalse(
-                        otherRegex.matches(sample.value),
-                        "$otherRegex should not match \"${sample.value}\" (${sample.value.formatFirstCodePoint()}) from ${sample.generalCategory}"
-                    )
+                    assertDoesNotMatch(otherRegex, sample.value, sample.generalCategory)
+                    if (sample.multiByteValue != null) {
+                        assertDoesNotMatch(otherRegex, sample.multiByteValue, sample.generalCategory)
+                    }
                 }
             }
         }
@@ -1237,26 +1249,41 @@ class PatternTest2 {
             .toSet()
             .associateWith(::categoryPatternVariants)
 
+        fun assertMatches(regex: Regex, value: String) {
+            assertTrue(regex.matches(value), "$regex should match \"${value}\" (${value.formatCodePoint()})")
+        }
+
+        fun assertDoesNotMatch(regex: Regex, value: String) {
+            assertFalse(
+                regex.matches(value),
+                "$regex should not match \"$value}\" (${value.formatCodePoint()})"
+            )
+        }
+
         for (sample in unicodeCategoryTestData) {
             for (regex in categoryToRegexes[sample.majorCategory]!!) {
-                assertTrue(regex.matches(sample.value), "$regex should match \"${sample.value}\" (${sample.value.formatFirstCodePoint()})")
+                assertMatches(regex, sample.value)
+                if (sample.multiByteValue != null) {
+                    assertMatches(regex, sample.multiByteValue)
+                }
             }
 
             // Check that regexes for all other categories won't match it
             for ([otherCategory, otherRegexes] in categoryToRegexes) {
                 if (otherCategory == sample.majorCategory) continue
                 for (otherRegex in otherRegexes) {
-                    assertFalse(
-                        otherRegex.matches(sample.value),
-                        "$otherRegex should not match \"${sample.value}\" (${sample.value.formatFirstCodePoint()})"
-                    )
+                    assertDoesNotMatch(otherRegex, sample.value)
+                    if (sample.multiByteValue != null) {
+                        assertDoesNotMatch(otherRegex, sample.multiByteValue)
+                    }
                 }
             }
         }
     }
 
-    @OptIn(ExperimentalUnicodeApi::class)
-    private fun String.formatFirstCodePoint(): String = codePointAt(0).code.toHexString(unicodeCodePointFmt)
+    private fun String.formatCodePoint(): String = toCharArray().joinToString(separator = "") {
+        it.code.toHexString(unicodeCodePointFmt)
+    }
 
     private fun categoryPatternVariants(category: String): List<Regex> = listOf(
         Regex("\\p{$category}"),
@@ -1271,47 +1298,53 @@ class PatternTest2 {
         }
     }
 
-    private data class UnicodeCategorySample(val value: String, val majorCategory: String, val generalCategory: String)
+    private data class UnicodeCategorySample(
+        val value: String,
+        val majorCategory: String,
+        val generalCategory: String,
+        // There are only a few categories covering codepoints beyond 0xFFFF
+        val multiByteValue: String? = null,
+    )
 
     // Refer to https://www.unicode.org/Public/UCD/latest/ucd/UnicodeData.txt
     private val unicodeCategoryTestData = listOf(
         // Lu, Ll, Lt, Lm, Lo
-        UnicodeCategorySample("a", "L", "Ll"),
-        UnicodeCategorySample("\u02b6", "L", "Lm"), // ʶ
-        UnicodeCategorySample("\u01bb", "L", "Lo"), // ƻ
+        UnicodeCategorySample("a", "L", "Ll", "\ud835\udc22" /* 1D422 */),
+        UnicodeCategorySample("\u02b6", "L", "Lm", "\ud81a\udf40" /* 16B40 */), // ʶ
+        UnicodeCategorySample("\u01bb", "L", "Lo", "\ud83b\ude29" /* 1EE29 */), // ƻ
         UnicodeCategorySample("\u01c5", "L", "Lt"), // ǅ
-        UnicodeCategorySample("A", "L", "Lu"),
+        UnicodeCategorySample("A", "L", "Lu", "\ud835\udc34" /* 1D434 */),
         // Mn, Me, Mc
-        UnicodeCategorySample("\u0334", "M", "Mn"), // ̴
+        UnicodeCategorySample("\u0334", "M", "Mn", "\ud805\udc43" /* 11443 */), // ̴
         UnicodeCategorySample("\u0488", "M", "Me"), // ҈
-        UnicodeCategorySample("\u0f7f", "M", "Mc"), // ཿ
+        UnicodeCategorySample("\u0f7f", "M", "Mc", "\ud805\udc40" /* 11440 */), // ཿ
         // Nd, No, Nl
-        UnicodeCategorySample("0", "N", "Nd"),
-        UnicodeCategorySample("\u16ef", "N", "Nl"), // ᛯ
-        UnicodeCategorySample("\u00be", "N", "No"), // ¾
+        UnicodeCategorySample("0", "N", "Nd", "\ud835\udfce" /* 1D7CE */),
+        UnicodeCategorySample("\u16ef", "N", "Nl", "\ud809\udc64" /* 12464 */), // ᛯ
+        UnicodeCategorySample("\u00be", "N", "No", "\ud800\udd07"  /* 10107 */), // ¾
         // Zl, Zp, Zs
         UnicodeCategorySample("\u2028", "Z", "Zl"),
         UnicodeCategorySample("\u2029", "Z", "Zp"),
         UnicodeCategorySample(" ", "Z", "Zs"),
         // Pc, Pd, Pe, Pf, Pi, Po, Ps
         UnicodeCategorySample("_", "P", "Pc"),
-        UnicodeCategorySample("-", "P", "Pd"),
+        UnicodeCategorySample("-", "P", "Pd", "\ud803\udead" /* 10EAD */),
         UnicodeCategorySample("}", "P", "Pe"),
         UnicodeCategorySample("\u00bb", "P", "Pf"), // »
         UnicodeCategorySample("\u00ab", "P", "Pi"), // «
-        UnicodeCategorySample("@", "P", "Po"),
+        UnicodeCategorySample("@", "P", "Po", "\ud803\udf55" /* 10F55 */),
         UnicodeCategorySample("{", "P", "Ps"),
         // Sc, Sk, Sm, So
-        UnicodeCategorySample("$", "S", "Sc"),
-        UnicodeCategorySample("^", "S", "Sk"),
-        UnicodeCategorySample("+", "S", "Sm"),
-        UnicodeCategorySample("\u00b0", "S", "So"), // °
+        UnicodeCategorySample("$", "S", "Sc", "\ud807\udfdd" /* 11FDD */),
+        UnicodeCategorySample("^", "S", "Sk", "\ud83c\udffb" /* 1F3FB */),
+        UnicodeCategorySample("+", "S", "Sm", "\ud835\udec1" /* 1D6C1 */),
+        UnicodeCategorySample("\u00b0", "S", "So", "\ud83c\udd30" /* 1F130 */), // °
         // Cc, Cf, Co, Cs, Cn
         UnicodeCategorySample("\r", "C", "Cc"),
-        UnicodeCategorySample("\u00ad", "C", "Cf"),
-        UnicodeCategorySample("\ue000", "C", "Co"),
+        UnicodeCategorySample("\u00ad", "C", "Cf", "\udb40\udc7f" /* E007F */),
+        UnicodeCategorySample("\ue000", "C", "Co", "\udb80\udc00" /* F0000 */),
         UnicodeCategorySample("\ud800", "C", "Cs"),
-        UnicodeCategorySample("\u0378", "C", "Cn"),
+        UnicodeCategorySample("\u0378", "C", "Cn", "\udbff\udfff", /* 10FFFF */),
     )
 
     private class UBInfo(var low: Int, var high: Int, var name: String)
