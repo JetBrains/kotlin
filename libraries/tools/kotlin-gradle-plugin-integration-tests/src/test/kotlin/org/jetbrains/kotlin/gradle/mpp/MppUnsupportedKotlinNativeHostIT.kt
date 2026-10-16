@@ -11,9 +11,11 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInNative
 import org.junit.jupiter.api.DisplayName
 
 @DisplayName("Tests for Mpp unsupported host platforms")
+@MustRunOnChangesInNative
 class MppUnsupportedKotlinNativeHostIT : KGPDaemonsBaseTest() {
 
     /**
