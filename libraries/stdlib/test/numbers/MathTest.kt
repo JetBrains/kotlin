@@ -239,6 +239,13 @@ class DoubleMathTest {
             assertEquals(value, round(value))
         }
         val data = arrayOf( //   v floor trunc round  ceil
+                doubleArrayOf( 0.3,  0.0,  0.0,  0.0,  1.0),
+                doubleArrayOf(-0.3, -1.0, -0.0, -0.0, -0.0),
+                doubleArrayOf( 0.5,  0.0,  0.0,  0.0,  1.0),
+                doubleArrayOf(-0.5, -1.0, -0.0, -0.0, -0.0),
+                doubleArrayOf( 0.8,  0.0,  0.0,  1.0,  1.0),
+                doubleArrayOf(-0.8, -1.0, -0.0, -1.0, -0.0),
+
                 doubleArrayOf( 1.3,  1.0,  1.0,  1.0,  2.0),
                 doubleArrayOf(-1.3, -2.0, -1.0, -1.0, -1.0),
                 doubleArrayOf( 1.5,  1.0,  1.0,  2.0,  2.0),
@@ -645,6 +652,13 @@ class FloatMathTest {
             assertEquals(value, round(value))
         }
         val data = arrayOf( //   v floor trunc round  ceil
+                floatArrayOf( 0.3F,  0.0F,  0.0F,  0.0F,  1.0F),
+                floatArrayOf(-0.3F, -1.0F, -0.0F, -0.0F, -0.0F),
+                floatArrayOf( 0.5F,  0.0F,  0.0F,  0.0F,  1.0F),
+                floatArrayOf(-0.5F, -1.0F, -0.0F, -0.0F, -0.0F),
+                floatArrayOf( 0.8F,  0.0F,  0.0F,  1.0F,  1.0F),
+                floatArrayOf(-0.8F, -1.0F, -0.0F, -1.0F, -0.0F),
+
                 floatArrayOf( 1.3F,  1.0F,  1.0F,  1.0F,  2.0F),
                 floatArrayOf(-1.3F, -2.0F, -1.0F, -1.0F, -1.0F),
                 floatArrayOf( 1.5F,  1.0F,  1.0F,  2.0F,  2.0F),
