@@ -8,8 +8,21 @@ package org.jetbrains.kotlin.gradle.native
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.apple.SwiftPackageVersionRange
+import org.jetbrains.kotlin.gradle.apple.addSwiftPmGitTag
+import org.jetbrains.kotlin.gradle.apple.configureSwiftPmTestArgs
+import org.jetbrains.kotlin.gradle.apple.createLocalSwiftPackage
+import org.jetbrains.kotlin.gradle.apple.createRepo
 import org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl
 import org.jetbrains.kotlin.gradle.apple.describeSwiftPackage
+import org.jetbrains.kotlin.gradle.apple.repoDir
+import org.jetbrains.kotlin.gradle.apple.repoRef
+import org.jetbrains.kotlin.gradle.apple.withLockFileFixture
+import org.jetbrains.kotlin.gradle.apple.writePackageManifest
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.PackageResolvedSynchronization
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMDependency
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMImportExtension
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.uklibs.include
@@ -18,11 +31,14 @@ import org.jetbrains.kotlin.gradle.util.runProcess
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import java.nio.file.Path
+import kotlin.io.path.Path
 import kotlin.io.path.createDirectories
 import kotlin.io.path.isDirectory
 import kotlin.io.path.listDirectoryEntries
 import kotlin.io.path.name
+import kotlin.io.path.readLines
 import kotlin.io.path.writeText
+import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNull
@@ -420,6 +436,261 @@ class SwiftPackageExportIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("The packages of the SwiftPM import are dependencies of the exported package")
+    @GradleTest
+    @OptIn(ExperimentalKotlinGradlePluginApi::class)
+    fun testSwiftPMImportPackagesAreDeclared(
+        gradleVersion: GradleVersion,
+    ) {
+        project("emptyxcode", gradleVersion) {
+            val localPackage = projectPath.resolve("../localSwiftPackage")
+            createLocalSwiftPackage(localPackage, packageName = "LocalSwiftPackage")
+
+            plugins {
+                kotlin("multiplatform")
+            }
+            settingsBuildScriptInjection {
+                settings.rootProject.name = "shared"
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    iosSimulatorArm64()
+                    // An imported type in the API, so the exported Swift needs the imported module itself.
+                    sourceSets.appleMain.get().compileSource(
+                        """
+                            @file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+                            import swiftPMImport.shared.LocalHelper
+                            fun roundTrip(helper: LocalHelper): LocalHelper = helper
+                            fun localGreeting(): String = LocalHelper.greeting()
+                        """.trimIndent()
+                    )
+                    with(swiftImport) {
+                        localSwiftPackage(
+                            directory = project.layout.projectDirectory.dir("../localSwiftPackage"),
+                            products = listOf("LocalSwiftPackage"),
+                        )
+                    }
+                }
+                export.swift {
+                    moduleName.set("Shared")
+                    swiftPackageIntegration {
+                        outputDirectory.set(project.layout.projectDirectory.dir("package"))
+                    }
+                }
+            }
+
+            build(":exportDebugSwiftPackage") {
+                assertTasksExecuted(
+                    ":cinteropSwiftPMImportIosSimulatorArm64",
+                    ":iosSimulatorArm64SwiftPackageExport",
+                    ":exportDebugSwiftPackage",
+                )
+            }
+
+            val exportedPackage = projectPath.resolve("package/Debug")
+            assertContains(exportedPackage.resolve("Sources/Shared/Shared.swift").imports(), "LocalSwiftPackage")
+            // Relative to the exported package, so it stays valid when the project moves.
+            assertEquals(listOf("../../../localSwiftPackage"), exportedPackage.resolve("Package.swift").localPackagePaths())
+
+            val manifest = describeSwiftPackage(exportedPackage)
+            assertEquals("5.9", manifest.toolsVersion)
+            val dependency = manifest.dependencies.single()
+            assertEquals("fileSystem", dependency.type)
+            assertEquals(localPackage.toRealPath(), Path(checkNotNull(dependency.path)).toRealPath())
+            assertEquals(
+                listOf("LocalSwiftPackage"),
+                manifest.targets.single { it.name == "Shared" }.productDependencies,
+            )
+
+            // The consumer gets the imported package from the manifest and links it next to the Kotlin binary.
+            val consumer = projectPath.resolve("consumer")
+            consumer.resolve("Sources/Consumer").createDirectories()
+            consumer.resolve("Package.swift").writeText(
+                """
+                // swift-tools-version: 5.9
+                import PackageDescription
+                let package = Package(
+                    name: "Consumer",
+                    platforms: [.iOS("18.0")],
+                    dependencies: [.package(name: "Shared", path: "../package/Debug")],
+                    targets: [
+                        .executableTarget(name: "Consumer", dependencies: [.product(name: "SharedLibrary", package: "Shared")])
+                    ]
+                )
+                """.trimIndent()
+            )
+            consumer.resolve("Sources/Consumer/main.swift").writeText(
+                """
+                import Shared
+                import LocalSwiftPackage
+
+                print(localGreeting(), roundTrip(helper: LocalHelper()))
+                """.trimIndent()
+            )
+            val build = consumer.swiftBuild(SwiftDestination.IOS_SIMULATOR)
+            assertTrue(build.isSuccessful, "The consumer of the exported package failed to build:\n$build\n${build.output}")
+        }
+    }
+
+    @DisplayName("Every Kotlin dependency declares the packages it imports in a package of its own")
+    @GradleTest
+    @OptIn(ExperimentalKotlinGradlePluginApi::class)
+    fun testSwiftPMImportPackagesOfTwoDependencies(
+        gradleVersion: GradleVersion,
+    ) {
+        project("empty", gradleVersion) {
+            withLockFileFixture(packageResolvedSynchronization = PackageResolvedSynchronization.None) {
+                val lib = repoRef("Lib")
+
+                createRepo(name = lib.name, tags = emptyList(), products = listOf("CalledByA", "CalledByB"))
+                val libRepository = repoDir(lib.name)
+                addSwiftPmGitTag(
+                    libRepository,
+                    tag = "1.0.0",
+                    files = mapOf(
+                        "Sources/CalledByA/CalledByA.swift" to swiftHelper("CalledByA", "calledByA"),
+                        "Sources/CalledByB/CalledByB.swift" to swiftHelper("CalledByB", "calledByB"),
+                    ),
+                )
+                // 1.5.0 drops CalledByB.
+                libRepository.resolve("Sources/CalledByB").toFile().deleteRecursively()
+                writePackageManifest(libRepository, packageName = "Lib", products = listOf("CalledByA"))
+                addSwiftPmGitTag(libRepository, tag = "1.5.0")
+                val packageCache = cacheDirFile
+
+                plugins {
+                    kotlin("multiplatform")
+                }
+                settingsBuildScriptInjection {
+                    settings.rootProject.name = "shared"
+                }
+                buildScriptInjection {
+                    project.applyMultiplatform {
+                        iosSimulatorArm64()
+                        configureSwiftPmTestArgs(packageCache)
+                        with(swiftImport) {
+                            packageResolvedSynchronization = noSynchronization()
+                        }
+                        sourceSets.commonMain {
+                            compileSource("fun sharedApi(): String = depAApi() + depBApi()")
+                            dependencies {
+                                api(project(":depA"))
+                                api(project(":depB"))
+                            }
+                        }
+                    }
+                    export.swift {
+                        moduleName.set("Shared")
+                        swiftPackageIntegration {
+                            outputDirectory.set(project.layout.projectDirectory.dir("package"))
+                        }
+                    }
+                }
+
+                fun includeDependency(
+                    dependencyName: String,
+                    productName: String,
+                    version: SwiftPMImportExtension.() -> SwiftPMDependency.Remote.Version,
+                ) {
+                    val dependency = project("empty", gradleVersion) {
+                        buildScriptInjection {
+                            project.applyMultiplatform {
+                                iosSimulatorArm64()
+                                configureSwiftPmTestArgs(packageCache)
+                                sourceSets.appleMain.get().compileSource(
+                                    """
+                                    @file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+                                    import swiftPMImport.shared.$dependencyName.${productName}Helper
+                                    fun ${dependencyName}Api(): String = ${productName}Helper.${productName.replaceFirstChar { it.lowercase() }}()
+                                    """.trimIndent()
+                                )
+                                with(swiftImport) {
+                                    packageResolvedSynchronization = noSynchronization()
+                                    swiftPackage(
+                                        url = url(lib.url),
+                                        version = version(),
+                                        products = listOf(product(productName)),
+                                        packageName = "Lib",
+                                    )
+                                }
+                            }
+                        }
+                    }
+                    include(dependency, dependencyName)
+                }
+                includeDependency("depA", "CalledByA") { from("1.0.0") }
+                includeDependency("depB", "CalledByB") { exact("1.0.0") }
+
+                build(":exportDebugSwiftPackage") {
+                    assertTasksExecuted(
+                        ":depA:serializeSwiftPMDependenciesMetadata",
+                        ":depB:serializeSwiftPMDependenciesMetadata",
+                        ":generateDebugSwiftPackage",
+                    )
+                }
+
+                val exportedPackage = projectPath.resolve("package/Debug")
+                val manifest = describeSwiftPackage(exportedPackage)
+                // One subpackage per dependency, no direct declaration of Lib.
+                assertEquals(
+                    listOf(
+                        "_depa" to exportedPackage.resolve("subpackages/_depA").toRealPath(),
+                        "_depb" to exportedPackage.resolve("subpackages/_depB").toRealPath(),
+                    ),
+                    manifest.dependencies.map { it.identity to Path(checkNotNull(it.path)).toRealPath() },
+                )
+                assertEquals(
+                    listOf("_depA", "_depB"),
+                    manifest.targets.single { it.name == "Shared" }.productDependencies,
+                )
+
+                val depAPackage = describeSwiftPackage(exportedPackage.resolve("subpackages/_depA"))
+                val depADeclaration = depAPackage.dependencies.single()
+                assertEquals("lib", depADeclaration.identity)
+                assertEquals(lib.url, depADeclaration.url)
+                assertEquals(
+                    listOf(SwiftPackageVersionRange("1.0.0", "2.0.0")),
+                    checkNotNull(depADeclaration.requirement?.range),
+                )
+                assertEquals(listOf("CalledByA"), depAPackage.targets.single { it.name == "_depA" }.productDependencies)
+
+                val depBPackage = describeSwiftPackage(exportedPackage.resolve("subpackages/_depB"))
+                assertEquals(listOf("1.0.0"), checkNotNull(depBPackage.dependencies.single().requirement?.exact))
+                assertEquals(listOf("CalledByB"), depBPackage.targets.single { it.name == "_depB" }.productDependencies)
+
+                val consumer = projectPath.resolve("consumer")
+                consumer.resolve("Sources/Consumer").createDirectories()
+                consumer.resolve("Package.swift").writeText(
+                    """
+                    // swift-tools-version: 5.9
+                    import PackageDescription
+                    let package = Package(
+                        name: "Consumer",
+                        platforms: [.iOS("18.0")],
+                        dependencies: [.package(name: "Shared", path: "../package/Debug")],
+                        targets: [
+                            .executableTarget(name: "Consumer", dependencies: [.product(name: "SharedLibrary", package: "Shared")])
+                        ]
+                    )
+                    """.trimIndent()
+                )
+                consumer.resolve("Sources/Consumer/main.swift").writeText(
+                    """
+                    import Shared
+
+                    print(sharedApi())
+                    """.trimIndent()
+                )
+                val build = consumer.swiftBuild(
+                    SwiftDestination.IOS_SIMULATOR,
+                    extraArguments = listOf("--resolver-fingerprint-checking", "warn", "--cache-path", packageCache.path),
+                )
+                assertEquals(emptyList(), build.output.missingProducts())
+                assertTrue(build.isSuccessful, "The consumer of the exported package failed to build:\n$build\n${build.output}")
+            }
+        }
+    }
+
     /** A destination a Swift package is built for: the target triple and the SDK of `swift build`. */
     private enum class SwiftDestination(val triple: String, val sdk: String) {
         MACOS("arm64-apple-macosx15.0", "macosx"),
@@ -428,12 +699,16 @@ class SwiftPackageExportIT : KGPBaseTest() {
     }
 
     /** Builds the Swift package at this path for [destination], in a scratch directory of its own. */
-    private fun Path.swiftBuild(destination: SwiftDestination): ProcessRunResult {
+    private fun Path.swiftBuild(
+        destination: SwiftDestination,
+        extraArguments: List<String> = emptyList(),
+    ): ProcessRunResult {
         val sdk = runProcess(listOf("xcrun", "--sdk", destination.sdk, "--show-sdk-path"), toFile())
             .also { assertTrue(it.isSuccessful, it.toString()) }
             .output.trim()
         return runProcess(
-            listOf("swift", "build", "--triple", destination.triple, "--sdk", sdk, "--scratch-path", ".build-${destination.sdk}"),
+            listOf("swift", "build", "--triple", destination.triple, "--sdk", sdk, "--scratch-path", ".build-${destination.sdk}") +
+                extraArguments,
             toFile(),
         )
     }
@@ -449,10 +724,33 @@ class SwiftPackageExportIT : KGPBaseTest() {
         return lipo.output.trim().split(" ").toSet()
     }
 
+    /** The modules a Swift file imports. */
+    private fun Path.imports(): List<String> = readLines().mapNotNull { swiftImport.find(it)?.groupValues?.get(1) }
+
+    /** The paths of the local packages a manifest declares, as written. */
+    private fun Path.localPackagePaths(): List<String> = readLines().mapNotNull { localPackageEntry.find(it)?.groupValues?.get(1) }
+
     private fun Path.directoryNames(): Set<String> = listDirectoryEntries().filter { it.isDirectory() }.map { it.name }.toSet()
+
+    private fun swiftHelper(product: String, function: String): String = """
+        import Foundation
+
+        @objc public class ${product}Helper: NSObject {
+            @objc public static func $function() -> String {
+                return "$product.$function"
+            }
+        }
+    """.trimIndent() + "\n"
+
+    /** The products `swift build` reports missing from the package that should have them. */
+    private fun String.missingProducts(): List<String> = replace(ansiEscape, "")
+        .lineSequence().mapNotNull { missingProduct.find(it)?.groupValues?.get(1) }.distinct().toList()
 
     private companion object {
         val swiftError = Regex("""\.swift:\d+:\d+: error: (.*)$""")
         val ansiEscape = Regex("""\u001B\[[0-9;]*m""")
+        val swiftImport = Regex("""^import (\w+)$""")
+        val localPackageEntry = Regex("""\.package\(path: "([^"]+)"\)""")
+        val missingProduct = Regex("""error: .*product '([^']+)' required by package""")
     }
 }

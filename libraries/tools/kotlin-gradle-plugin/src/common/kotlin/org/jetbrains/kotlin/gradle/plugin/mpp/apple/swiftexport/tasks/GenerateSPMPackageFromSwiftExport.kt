@@ -9,7 +9,9 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.file.*
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.SetProperty
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.TaskProvider
@@ -19,6 +21,10 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnosti
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.ModuleMapGenerator
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.SerializationTools
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftImportFingerprintedCoordinationService
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMDependency
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.packageArguments
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.productArguments
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.toSwiftPMPlatforms
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.sharedPackageRootFor
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.GradleSwiftExportModule
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftPackagePlatform
@@ -31,6 +37,7 @@ import org.jetbrains.kotlin.gradle.utils.commaSeparatedEntries
 import org.jetbrains.kotlin.gradle.utils.emitListItems
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.newInstance
+import org.jetbrains.kotlin.gradle.utils.normalizedAbsoluteFile
 import org.jetbrains.kotlin.incremental.createDirectory
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -136,6 +143,25 @@ internal abstract class GenerateSPMPackageFromSwiftExport @Inject constructor(
     @get:Internal
     abstract val swiftPMImportCoordinationService: Property<SwiftImportFingerprintedCoordinationService>
 
+    /**
+     * The packages of the SwiftPM import, declared in the manifest as the project declares them, so the consumer
+     * of the package resolves and links them. Empty in the Xcode flow, which links them through the synthetic
+     * package in [swiftPMImportPackageRoot] instead.
+     */
+    @get:Input
+    abstract val swiftPMDependencies: SetProperty<SwiftPMDependency>
+
+    @get:Input
+    abstract val transitiveSwiftPMDependencies: MapProperty<String, Set<SwiftPMDependency>>
+
+    /**
+     * Where the package is exported to, if it is: the local packages of [swiftPMDependencies] are referenced
+     * relative to it, so the exported package stays valid when the project moves.
+     */
+    @get:Optional
+    @get:Input
+    abstract val exportDirectoryPath: Property<String>
+
     @get:OutputDirectory
     abstract val packagePath: DirectoryProperty
 
@@ -156,6 +182,10 @@ internal abstract class GenerateSPMPackageFromSwiftExport @Inject constructor(
         set(packagePath.dir(SOURCES_DIRECTORY))
     }
 
+    @get:Internal
+    val subpackagesPath: Provider<Directory>
+        get() = packagePath.dir(SUBPACKAGES)
+
     private val swiftLibrary get() = swiftLibraryName.get()
     private val swiftApiModule get() = swiftApiModuleName.get()
     private val kotlinRuntimeModule get() = kotlinRuntime.getFile().name.split('_').joinToString(separator = "") { it.capitalizeAsciiOnly() }
@@ -167,7 +197,7 @@ internal abstract class GenerateSPMPackageFromSwiftExport @Inject constructor(
         val swiftModules = targetModules.firstOrNull()?.modules ?: deserializeSwiftModules()
 
         // Gradle keeps what a previous run left in an output directory, such as the sources of a renamed module.
-        fileSystem.delete { it.delete(sourcesPath, includesPath) }
+        fileSystem.delete { it.delete(sourcesPath, includesPath, subpackagesPath) }
         createSPMSources(swiftModules, targetModules)
         createPackageManifest(swiftModules)
         createKotlinRuntimeTarget()
@@ -286,24 +316,73 @@ internal abstract class GenerateSPMPackageFromSwiftExport @Inject constructor(
 
     private fun createPackageManifest(modules: List<GradleSwiftExportModule>) {
         val manifest = packagePath.getFile().resolve("Package.swift")
-        val cinteropImport = if (
-            swiftPMImportHasDependencies.get() && swiftPMImportProductName.isPresent && swiftPMImportPackageRoot.isPresent
-        ) {
-            val root = swiftPMImportFingerprint.orNull?.asFile
-                ?.let { swiftPMImportCoordinationService.get().sharedPackageRootFor(it) }
-                ?: swiftPMImportPackageRoot.getFile()
-            CinteropPackageImport(
-                path = root.absolutePath,
-                productName = swiftPMImportProductName.get(),
-                packageIdentity = root.name,
-            )
-        } else null
         val content = SPMManifestGenerator.generateManifest(
-            swiftApiModule, swiftLibrary, kotlinRuntimeModule, modules, cinteropImport, kotlinBinaryTargetName.orNull,
+            swiftApiModule, swiftLibrary, kotlinRuntimeModule, modules,
+            listOfNotNull(syntheticPackageDependency()) + importedPackageDependencies() + createSwiftPMImportSubpackages(),
+            kotlinBinaryTargetName.orNull,
             platforms.get()
         )
         manifest.writeText(content)
     }
+
+    private fun createSwiftPMImportSubpackages(): List<SwiftPackageDependency> {
+        val exportedPackageRoot = exportDirectoryPath.orNull?.let { File(it).normalizedAbsoluteFile() }
+        return transitiveSwiftPMDependencies.get().toSortedMap().map { (identifier, dependencies) ->
+            val subpackage = subpackagesPath.get().asFile.resolve(identifier)
+            subpackage.resolve("$SOURCES_DIRECTORY/$identifier").apply { createDirectory() }
+                .resolve("$identifier.swift").writeText("")
+            subpackage.resolve("Package.swift").writeText(
+                SPMManifestGenerator.generateImportedPackagesManifest(
+                    packageName = identifier,
+                    platforms = platforms.get(),
+                    packageDependencies = importedPackageDeclarations(
+                        swiftPMDependencies = dependencies,
+                        packageRoot = exportedPackageRoot?.resolve("$SUBPACKAGES/$identifier"),
+                    ),
+                )
+            )
+            SwiftPackageDependency(
+                packageDeclaration = ".package(path: \"$SUBPACKAGES/$identifier\")",
+                productDeclarations = listOf(".product(name: \"$identifier\", package: \"$identifier\")"),
+            )
+        }
+    }
+
+    private fun syntheticPackageDependency(): SwiftPackageDependency? {
+        if (!swiftPMImportHasDependencies.get() || !swiftPMImportProductName.isPresent || !swiftPMImportPackageRoot.isPresent) {
+            return null
+        }
+        val root = swiftPMImportFingerprint.orNull?.asFile
+            ?.let { swiftPMImportCoordinationService.get().sharedPackageRootFor(it) }
+            ?: swiftPMImportPackageRoot.getFile()
+        return SwiftPackageDependency(
+            packageDeclaration = ".package(path: \"${root.absolutePath}\")",
+            productDeclarations = listOf(".product(name: \"${swiftPMImportProductName.get()}\", package: \"${root.name}\")"),
+        )
+    }
+
+    private fun importedPackageDependencies(): List<SwiftPackageDependency> = importedPackageDeclarations(
+        swiftPMDependencies = swiftPMDependencies.get(),
+        packageRoot = exportDirectoryPath.orNull?.let { File(it).normalizedAbsoluteFile() },
+    )
+
+    private fun importedPackageDeclarations(
+        swiftPMDependencies: Set<SwiftPMDependency>,
+        packageRoot: File?,
+    ): List<SwiftPackageDependency> {
+        val umbrellaPlatforms = umbrellaPlatforms()
+        return swiftPMDependencies.sortedBy { it.packageName }.map { dependency ->
+            SwiftPackageDependency(
+                packageDeclaration = ".package(${dependency.packageArguments(packageRoot).joinToString(", ")})",
+                productDeclarations = dependency.products.map { product ->
+                    ".product(${product.productArguments(dependency.packageName, null, umbrellaPlatforms).joinToString(", ")})"
+                },
+            )
+        }
+    }
+
+    private fun umbrellaPlatforms(): Set<SwiftPMDependency.Platform> =
+        targetOutputs.get().map { it.target.get() }.toSet().toSwiftPMPlatforms()
 
     private fun appendToOtherIncludes(name: String, path: File) {
         if (!collectIncludes.get()) return
@@ -316,25 +395,34 @@ internal abstract class GenerateSPMPackageFromSwiftExport @Inject constructor(
 
     companion object {
         const val SOURCES_DIRECTORY = "Sources"
+        const val SUBPACKAGES = "subpackages"
     }
 }
 
-internal data class CinteropPackageImport(
-    val path: String,
-    val productName: String,
-    val packageIdentity: String,
-) {
-    fun productExpression(): String = ".product(name: \"$productName\", package: \"$packageIdentity\")"
-}
+/**
+ * A package the generated package depends on: its `.package(...)` entry and the `.product(...)` entries the API
+ * targets take from it.
+ */
+internal data class SwiftPackageDependency(
+    val packageDeclaration: String,
+    val productDeclarations: List<String>,
+)
 
 internal object SPMManifestGenerator {
+
+    /**
+     * The modules Swift Export writes from its own templates. Keep in sync with the defaults of `SwiftExportConfig`
+     * in `swift-export-standalone` (`moduleForPackagesName`, `runtimeSupportModuleName`, `coroutineSupportModuleName`,
+     * `runtimeModuleName`): the names are not passed to the plugin, and nothing in the modules file marks them.
+     */
+    private val swiftExportSupportModules = setOf("ExportedKotlinPackages", "KotlinRuntimeSupport", "KotlinCoroutineSupport", "KotlinRuntime")
 
     fun generateManifest(
         swiftApiModule: String,
         swiftLibrary: String,
         kotlinRuntime: String,
         modules: List<GradleSwiftExportModule>,
-        cinteropImport: CinteropPackageImport? = null,
+        packageDependencies: List<SwiftPackageDependency> = emptyList(),
         kotlinBinaryTarget: String? = null,
         platforms: List<SwiftPackagePlatform> = emptyList(),
     ): String = buildStringBlock {
@@ -361,10 +449,10 @@ internal object SPMManifestGenerator {
                         }
                     }
                 }
-                if (cinteropImport != null) {
+                if (packageDependencies.isNotEmpty()) {
                     entry {
                         block("dependencies: [", "]") {
-                            line(".package(path: \"${cinteropImport.path}\")")
+                            emitListItems(packageDependencies.map { it.packageDeclaration })
                         }
                     }
                 }
@@ -374,8 +462,59 @@ internal object SPMManifestGenerator {
                             if (kotlinBinaryTarget != null) {
                                 entry { emitBinaryTarget(kotlinBinaryTarget) }
                             }
-                            emitTargetDefinitions(modules, kotlinRuntime, cinteropImport?.productExpression())
+                            emitTargetDefinitions(modules, kotlinRuntime, packageDependencies.flatMap { it.productDeclarations })
                             entry { emitTarget(kotlinRuntime, dependencies = listOfNotNull(kotlinBinaryTarget)) }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    fun generateImportedPackagesManifest(
+        packageName: String,
+        platforms: List<SwiftPackagePlatform>,
+        packageDependencies: List<SwiftPackageDependency>,
+    ): String = buildStringBlock {
+        line("// swift-tools-version: 5.9")
+        line()
+        line("import PackageDescription")
+        block("let package = Package(", ")") {
+            commaSeparatedEntries {
+                entry { line("name: \"$packageName\"") }
+                if (platforms.isNotEmpty()) {
+                    entry {
+                        block("platforms: [", "]") {
+                            emitListItems(platforms.map { ".${it.name}(\"${it.minimumVersion}\")" })
+                        }
+                    }
+                }
+                entry {
+                    block("products: [", "]") {
+                        block(".library(", ")") {
+                            commaSeparatedEntries {
+                                entry { line("name: \"$packageName\"") }
+                                entry { line("targets: [\"$packageName\"]") }
+                            }
+                        }
+                    }
+                }
+                if (packageDependencies.isNotEmpty()) {
+                    entry {
+                        block("dependencies: [", "]") {
+                            emitListItems(packageDependencies.map { it.packageDeclaration })
+                        }
+                    }
+                }
+                entry {
+                    block("targets: [", "]") {
+                        commaSeparatedEntries {
+                            entry {
+                                emitTarget(
+                                    packageName,
+                                    rawDependencies = packageDependencies.flatMap { it.productDeclarations },
+                                )
+                            }
                         }
                     }
                 }
@@ -422,12 +561,13 @@ internal object SPMManifestGenerator {
     private fun CommaSeparatedEntriesBuilder.emitTargetDefinitions(
         modules: List<GradleSwiftExportModule>,
         kotlinRuntime: String,
-        cinteropProductExpression: String?,
+        productDependencies: List<String>,
     ) {
-        // The reexported cinterop's `import`s live in the Swift API targets, so each gets the product dependency.
-        val rawDependencies = listOfNotNull(cinteropProductExpression)
+        // The `import`s of the imported packages live in the Swift API targets, so each gets the product dependencies.
+        // The support modules are generated from fixed templates and never refer to an imported type.
         modules.forEach { module ->
-            entry { emitTarget(module.name, module.spmDependencies(kotlinRuntime), rawDependencies) }
+            val moduleProductDependencies = if (module.name in swiftExportSupportModules) emptyList() else productDependencies
+            entry { emitTarget(module.name, module.spmDependencies(kotlinRuntime), moduleProductDependencies) }
             if (module is GradleSwiftExportModule.BridgesToKotlin) {
                 entry { emitTarget(module.bridgeName) }
             }
