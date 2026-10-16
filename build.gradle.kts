@@ -606,6 +606,13 @@ tasks {
         dependsOn(":core:language.version-settings:test")
     }
 
+    testLifecycleTask("miscCompilerOsSpecificTest", QualityGate.Undefined) {
+        dependsOn(scriptingTest)
+        dependsOn(":compiler:tests-integration:test")
+        dependsOn(incrementalCompilationTest)
+        dependsOn(":kotlin-daemon-tests:test")
+    }
+
     val toolsTest = testLifecycleTask("toolsTest", QualityGate.Master) {
         dependsOn(":tools:kotlinp-jvm:test")
         dependsOn(":native:kotlin-klib-commonizer:test")
