@@ -10,9 +10,6 @@ class TestTaskWrapper(
     private val ignoredSuiteFormat: String?
 ) {
     fun configure() {
-        // Enhance Gradle daemon classpath if requested
-        GradleDaemonClasspathEnhancer.enhanceWithTestClasspath(task)
-
         // Setup test filter for dependency-based test runs / split tests
         DependencyBasedTestRun.configure(task)
 
@@ -29,26 +26,12 @@ class TestTaskWrapper(
 
         // Add test JVM arguments if configured
         val testCoverageJvmArgs = System.getenv(Constants.GRADLE_TEST_COVERAGE_JVM_ARGS_ENV_VAR)
-        if (!testCoverageJvmArgs.isNullOrEmpty()) {
+        if (!testCoverageJvmArgs.isNullOrEmpty() && task is JavaForkOptions) {
             val jvmArgsList = testCoverageJvmArgs.split(" ").filter { it.isNotBlank() }
-            if (task is JavaForkOptions) {
-                if (System.getenv(Constants.TEST_TASK_JVM_ARG_PROVIDER_DISABLED_ENV_VAR)?.toBoolean() == true) {
-                    task.jvmArgs(jvmArgsList)
-                } else {
-                    task.jvmArgumentProviders.add(TestTaskJvmArgumentsProvider(jvmArgsList))
-                }
+            if (System.getenv(Constants.TEST_TASK_JVM_ARG_PROVIDER_DISABLED_ENV_VAR)?.toBoolean() == true) {
+                task.jvmArgs(jvmArgsList)
             } else {
-                try {
-                    if (System.getenv(Constants.TEST_TASK_JVM_ARG_PROVIDER_DISABLED_ENV_VAR)?.toBoolean() == true) {
-                        val method = task.javaClass.getMethod("jvmArgs", Iterable::class.java)
-                        method.invoke(task, jvmArgsList)
-                    } else {
-                        val method = task.javaClass.getMethod("getJvmArgumentProviders")
-                        @Suppress("UNCHECKED_CAST")
-                        val providers = method.invoke(task) as MutableList<Any>
-                        providers.add(TestTaskJvmArgumentsProvider(jvmArgsList))
-                    }
-                } catch (ignored: Throwable) {}
+                task.jvmArgumentProviders.add(TestTaskJvmArgumentsProvider(jvmArgsList))
             }
         }
     }

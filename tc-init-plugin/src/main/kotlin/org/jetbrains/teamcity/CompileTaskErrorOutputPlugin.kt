@@ -9,11 +9,13 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
 import org.gradle.api.tasks.compile.AbstractCompile
+import org.gradle.build.event.BuildEventsListenerRegistry
 import org.gradle.tooling.events.FinishEvent
 import org.gradle.tooling.events.OperationCompletionListener
 import org.gradle.tooling.events.task.TaskFailureResult
 import org.gradle.tooling.events.task.TaskFinishEvent
 import java.util.concurrent.ConcurrentHashMap
+import javax.inject.Inject
 
 abstract class CompileTaskErrorOutputService : BuildService<BuildServiceParameters.None>, OperationCompletionListener {
     private val taskErrorOutputs = ConcurrentHashMap<String, ErrorOutputListener>()
@@ -59,15 +61,15 @@ abstract class CompileTaskErrorOutputService : BuildService<BuildServiceParamete
     }
 }
 
-class CompileTaskErrorOutputPlugin(
-    private val buildEventsListenerRegistry: Any
+class CompileTaskErrorOutputPlugin @Inject constructor(
+    private val buildEventsListenerRegistry: BuildEventsListenerRegistry
 ) : Plugin<Project> {
     override fun apply(project: Project) {
         val gradle = project.gradle
         val compileTaskErrorOutputServiceProvider: Provider<CompileTaskErrorOutputService> =
             gradle.sharedServices.registerIfAbsent("compileTaskErrorOutputService", CompileTaskErrorOutputService::class.java) {}
 
-        gradle.addListener(AfterEvaluateListener { p ->
+        gradle.allprojects { p ->
             p.tasks.withType(AbstractCompile::class.java).configureEach { task ->
                 task.doFirst {
                     compileTaskErrorOutputServiceProvider.get().addCompileTaskErrorOutputListener(it)
@@ -80,9 +82,8 @@ class CompileTaskErrorOutputPlugin(
                     }
                 }
             }
-        })
+        }
 
-        val onTaskCompletionMethod = buildEventsListenerRegistry.javaClass.getMethod("onTaskCompletion", Provider::class.java)
-        onTaskCompletionMethod.invoke(buildEventsListenerRegistry, compileTaskErrorOutputServiceProvider)
+        buildEventsListenerRegistry.onTaskCompletion(compileTaskErrorOutputServiceProvider)
     }
 }

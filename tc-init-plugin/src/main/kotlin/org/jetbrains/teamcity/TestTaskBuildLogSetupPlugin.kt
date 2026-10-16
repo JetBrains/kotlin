@@ -6,10 +6,12 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
 import org.gradle.api.tasks.testing.AbstractTestTask
+import org.gradle.build.event.BuildEventsListenerRegistry
 import org.gradle.tooling.events.FinishEvent
 import org.gradle.tooling.events.OperationCompletionListener
 import org.gradle.tooling.events.task.TaskFinishEvent
 import java.util.concurrent.ConcurrentHashMap
+import javax.inject.Inject
 
 abstract class TestTaskBuildLogSetupService : BuildService<BuildServiceParameters.None>, OperationCompletionListener {
     val testTaskPaths: MutableSet<String> = ConcurrentHashMap.newKeySet()
@@ -30,15 +32,15 @@ abstract class TestTaskBuildLogSetupService : BuildService<BuildServiceParameter
     }
 }
 
-class TestTaskBuildLogSetupPlugin(
-    private val buildEventsListenerRegistry: Any
+class TestTaskBuildLogSetupPlugin @Inject constructor(
+    private val buildEventsListenerRegistry: BuildEventsListenerRegistry
 ) : Plugin<Project> {
     override fun apply(project: Project) {
         val gradle = project.gradle
         val testTaskBuildLogSetupServiceProvider: Provider<TestTaskBuildLogSetupService> =
             gradle.sharedServices.registerIfAbsent("testTaskBuildLogSetupService", TestTaskBuildLogSetupService::class.java) {}
 
-        gradle.addListener(AfterEvaluateListener { p ->
+        gradle.allprojects { p ->
             p.tasks.withType(AbstractTestTask::class.java).configureEach { task ->
                 task.doFirst {
                     val flowId = Util.getFlowIdForTask(task.path)
@@ -58,9 +60,8 @@ class TestTaskBuildLogSetupPlugin(
                     }
                 }
             }
-        })
+        }
 
-        val onTaskCompletionMethod = buildEventsListenerRegistry.javaClass.getMethod("onTaskCompletion", Provider::class.java)
-        onTaskCompletionMethod.invoke(buildEventsListenerRegistry, testTaskBuildLogSetupServiceProvider)
+        buildEventsListenerRegistry.onTaskCompletion(testTaskBuildLogSetupServiceProvider)
     }
 }
