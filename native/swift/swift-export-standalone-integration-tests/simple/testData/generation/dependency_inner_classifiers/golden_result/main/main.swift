@@ -3,6 +3,7 @@ import KotlinRuntime
 import KotlinRuntimeSupport
 import dependency
 
+@discardableResult
 public func today() -> ExportedKotlinPackages.datetime.LocalDate {
     return ExportedKotlinPackages.datetime.LocalDate.__createClassWrapper(externalRCRef: __root___today())
 }

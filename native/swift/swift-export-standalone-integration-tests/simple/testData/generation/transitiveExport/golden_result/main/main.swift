@@ -4,9 +4,11 @@ import KotlinRuntimeSupport
 import anotherFeature
 import feature
 
+@discardableResult
 public func bar() -> anotherFeature.FeatureC {
     return anotherFeature.FeatureC.__createClassWrapper(externalRCRef: __root___bar())
 }
+@discardableResult
 public func foo() -> ExportedKotlinPackages.oh.my.kotlin.FeatureA {
     return ExportedKotlinPackages.oh.my.kotlin.FeatureA.__createClassWrapper(externalRCRef: __root___foo())
 }

@@ -2,6 +2,7 @@
 import KotlinRuntime
 import KotlinRuntimeSupport
 
+@discardableResult
 public func consume_block_with_string_id(
     block: @escaping (Swift.String) -> Swift.String
 ) -> Swift.String {

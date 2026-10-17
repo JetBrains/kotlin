@@ -41,6 +41,7 @@ public protocol Barable: KotlinRuntime.KotlinBase, main.Foeble, main._Barable {
     var baz: any main.Foeble {
         get
     }
+    @discardableResult
     func bar(
         arg: any main.Foeble
     ) -> any main.Barable
@@ -53,6 +54,7 @@ public protocol Foeble: KotlinRuntime.KotlinBase, main._Foeble {
     var baz: any main.Foeble {
         get
     }
+    @discardableResult
     func bar(
         arg: any main.Foeble
     ) -> any main.Foeble
@@ -143,6 +145,7 @@ public final class Bar: KotlinRuntime.KotlinBase, main.Barable, main.__Barable, 
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
+    @discardableResult
     public func bar(
         arg: any main.Foeble
     ) -> main.Bar {
@@ -166,6 +169,7 @@ public final class Foo: KotlinRuntime.KotlinBase, main.Foeble, main.__Foeble {
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
+    @discardableResult
     public func bar(
         arg: any main.Foeble
     ) -> main.Foo {
@@ -437,16 +441,19 @@ public func foo(
 ) -> Swift.Void {
     return { __root___foo__TypesOfArgumentsE__anyU20main__ContainerProtocol_NestedProtocol__(receiver.__externalRCRef()); return () }()
 }
+@discardableResult
 public func list(
     value: [any main.Foeble]
 ) -> [any main.Foeble] {
     return __root___list__TypesOfArguments__Swift_Array_anyU20main_Foeble___(value) as! Swift.Array<any main.Foeble>
 }
+@discardableResult
 public func normal(
     value: any main.Foeble
 ) -> any main.Foeble {
     return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___normal__TypesOfArguments__anyU20main_Foeble__(value.__externalRCRef()), conformsTo: main.Foeble.Type.self) as! any main.Foeble
 }
+@discardableResult
 public func nullable(
     value: (any main.Foeble)?
 ) -> (any main.Foeble)? {
@@ -459,6 +466,7 @@ extension main.Barable where Self : main.__Barable {
             return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: Barable_baz_get(self.__externalRCRef()), conformsTo: main.Foeble.Type.self) as! any main.Foeble
         }
     }
+    @discardableResult
     public func bar(
         arg: any main.Foeble
     ) -> any main.Barable {
@@ -504,6 +512,7 @@ extension main.Foeble where Self : main.__Foeble {
             return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: Foeble_baz_get(self.__externalRCRef()), conformsTo: main.Foeble.Type.self) as! any main.Foeble
         }
     }
+    @discardableResult
     public func bar(
         arg: any main.Foeble
     ) -> any main.Foeble {

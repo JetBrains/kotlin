@@ -25,6 +25,7 @@ public final class Container: KotlinRuntime.KotlinBase {
     ) -> Swift.Void {
         fatalError()
     }
+    @discardableResult
     public func untouched_member(
         arg: Swift.Int32
     ) -> Swift.Int32 {
@@ -85,9 +86,11 @@ public func consume_hidden_interface(
 ) -> Swift.Void {
     fatalError()
 }
+@discardableResult
 public func produce_hidden_class() -> ExportedKotlinPackages.hidden.HiddenClass {
     fatalError()
 }
+@discardableResult
 public func untouched_function(
     arg: Swift.Int32
 ) -> Swift.Int32 {

@@ -139,6 +139,7 @@ extension ExportedKotlinPackages.namespace.main {
             return namespace_main_foo_get()
         }
     }
+    @discardableResult
     public static func foobar(
         param: Swift.Int32
     ) -> Swift.Int32 {

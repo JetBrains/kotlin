@@ -20,7 +20,7 @@ public final class Bar: KotlinRuntime.KotlinBase {
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
-    @_spi(ExperimentalApi)
+    @_spi(ExperimentalApi) @discardableResult
     public func doubleReceiverExtFun(
         _ receiver: any ExportedKotlinPackages.foo.Foo
     ) -> Swift.String {
@@ -48,6 +48,7 @@ public final class Baz: KotlinRuntime.KotlinBase {
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
+    @discardableResult
     public func doubleReceiverExtFun(
         _ receiver: any ExportedKotlinPackages.foo.Foo
     ) -> Swift.String {
@@ -86,22 +87,25 @@ public final class GenericClass: KotlinRuntime.KotlinBase {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
 }
-@available(*, unavailable, message: "Unavailable type(s): main.DeprecatedBar")
+@discardableResult @available(*, unavailable, message: "Unavailable type(s): main.DeprecatedBar")
 public func deprecatedClassFun(
     _ receiver: main.DeprecatedBar
 ) -> Swift.String {
     fatalError()
 }
+@discardableResult
 public func funExtFun(
     _ receiver: @escaping () -> Swift.Void
 ) -> Swift.Bool {
     return __root___funExtFun__TypesOfArgumentsE__U2829202D_U20Swift_Void__(Unmanaged.passRetained((receiver as () -> Swift.Void) as AnyObject).toOpaque())
 }
+@discardableResult
 public func genericExtFun(
     _ receiver: main.GenericClass
 ) -> Swift.String {
     return __root___genericExtFun__TypesOfArgumentsE__main_GenericClass__(receiver.__externalRCRef())
 }
+@discardableResult
 public func genericUpperBoundExtFun(
     _ receiver: main.GenericClass
 ) -> Swift.String {
@@ -151,7 +155,7 @@ public func getOptInSetterProp(
 ) -> Swift.String {
     return __root___optInSetterProp_get__TypesOfArgumentsE__main_Baz__(receiver.__externalRCRef())
 }
-@_spi(ExperimentalApi)
+@_spi(ExperimentalApi) @discardableResult
 public func optInExtFun(
     _ receiver: main.Baz
 ) -> Swift.Bool {
@@ -253,7 +257,7 @@ extension main.Baz {
     }
 }
 extension main.Baz {
-    @_spi(ExperimentalApi)
+    @_spi(ExperimentalApi) @discardableResult
     public func optInExtFun() -> Swift.Bool {
         let receiver = self
         return main.optInExtFun(receiver)
@@ -261,7 +265,7 @@ extension main.Baz {
 }
 @available(*, unavailable, message: "Unavailable type(s): main.DeprecatedBar")
 extension main.DeprecatedBar {
-    @available(*, unavailable, message: "Unavailable type(s): main.DeprecatedBar")
+    @discardableResult @available(*, unavailable, message: "Unavailable type(s): main.DeprecatedBar")
     public func deprecatedClassFun() -> Swift.String {
         fatalError()
     }
@@ -306,13 +310,14 @@ extension ExportedKotlinPackages.foo.Foo {
     }
 }
 extension ExportedKotlinPackages.foo.Foo {
+    @discardableResult
     public func simpleExtFun() -> Swift.String {
         let receiver = self
         return ExportedKotlinPackages.foo.simpleExtFun(receiver)
     }
 }
 extension ExportedKotlinPackages.foo.Foo {
-    @_spi(ExperimentalApi)
+    @_spi(ExperimentalApi) @discardableResult
     public func simpleExtFunWithArgs(
         arg1: Swift.Int32,
         arg2: main.Bar
@@ -322,7 +327,7 @@ extension ExportedKotlinPackages.foo.Foo {
     }
 }
 extension ExportedKotlinPackages.foo.Foo {
-    @_spi(ExperimentalApi)
+    @_spi(ExperimentalApi) @discardableResult
     public func contextExtFun(
         _ context: main.Bar,
         arg: Swift.Bool
@@ -332,6 +337,7 @@ extension ExportedKotlinPackages.foo.Foo {
     }
 }
 extension ExportedKotlinPackages.foo.Foo {
+    @discardableResult
     public func varargExtFun(
         args: Swift.String...
     ) -> Swift.Int32 {
@@ -341,7 +347,7 @@ extension ExportedKotlinPackages.foo.Foo {
 }
 @_documentation(visibility: internal)
 extension ExportedKotlinPackages.foo.Foo where Self : ExportedKotlinPackages.foo.__Foo {
-    @_spi(ExperimentalApi)
+    @_spi(ExperimentalApi) @discardableResult
     public func doubleReceiverExtFun(
         _ receiver: main.Bar
     ) -> Swift.String {
@@ -355,7 +361,7 @@ extension ExportedKotlinPackages.foo.Foo where Self : ExportedKotlinPackages.foo
     }
 }
 extension ExportedKotlinPackages.foo.Foo {
-    @_spi(ExperimentalApi)
+    @_spi(ExperimentalApi) @discardableResult
     public func doubleReceiverExtFun(
         _ receiver: main.Bar
     ) -> Swift.String {
@@ -385,12 +391,14 @@ extension main.GenericClass {
     }
 }
 extension main.GenericClass {
+    @discardableResult
     public func genericExtFun() -> Swift.String {
         let receiver = self
         return main.genericExtFun(receiver)
     }
 }
 extension main.GenericClass {
+    @discardableResult
     public func genericUpperBoundExtFun() -> Swift.String {
         let receiver = self
         return main.genericUpperBoundExtFun(receiver)
@@ -409,6 +417,7 @@ extension ExportedKotlinPackages.foo.Foo? {
     }
 }
 extension ExportedKotlinPackages.foo.Foo? {
+    @discardableResult
     public func nullableFun() -> Swift.Bool {
         let receiver = self
         return ExportedKotlinPackages.foo.nullableFun(receiver)
@@ -422,7 +431,7 @@ extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.
 }
 extension ExportedKotlinPackages.foo {
     public protocol Foo: KotlinRuntime.KotlinBase, ExportedKotlinPackages.foo._Foo {
-        @_spi(ExperimentalApi)
+        @_spi(ExperimentalApi) @discardableResult
         func doubleReceiverExtFun(
             _ receiver: main.Bar
         ) -> Swift.String
@@ -436,7 +445,7 @@ extension ExportedKotlinPackages.foo {
     }
     public protocol __Foo: KotlinRuntimeSupport._KotlinBridgeable {
     }
-    @_spi(ExperimentalApi)
+    @_spi(ExperimentalApi) @discardableResult
     public static func contextExtFun(
         _ context: main.Bar,
         _ receiver: any ExportedKotlinPackages.foo.Foo,
@@ -468,6 +477,7 @@ extension ExportedKotlinPackages.foo {
     ) -> Swift.String {
         return foo_simplePropVar_get__TypesOfArgumentsE__anyU20ExportedKotlinPackages_foo_Foo__(receiver.__externalRCRef())
     }
+    @discardableResult
     public static func nullableFun(
         _ receiver: (any ExportedKotlinPackages.foo.Foo)?
     ) -> Swift.Bool {
@@ -494,12 +504,13 @@ extension ExportedKotlinPackages.foo {
     ) -> Swift.Void {
         return { foo_simplePropVar_set__TypesOfArgumentsE__anyU20ExportedKotlinPackages_foo_Foo_Swift_String__(receiver.__externalRCRef(), `_`); return () }()
     }
+    @discardableResult
     public static func simpleExtFun(
         _ receiver: any ExportedKotlinPackages.foo.Foo
     ) -> Swift.String {
         return foo_simpleExtFun__TypesOfArgumentsE__anyU20ExportedKotlinPackages_foo_Foo__(receiver.__externalRCRef())
     }
-    @_spi(ExperimentalApi)
+    @_spi(ExperimentalApi) @discardableResult
     public static func simpleExtFunWithArgs(
         _ receiver: any ExportedKotlinPackages.foo.Foo,
         arg1: Swift.Int32,
@@ -507,6 +518,7 @@ extension ExportedKotlinPackages.foo {
     ) -> Swift.String {
         return foo_simpleExtFunWithArgs__TypesOfArgumentsE__anyU20ExportedKotlinPackages_foo_Foo_Swift_Int32_main_Bar__(receiver.__externalRCRef(), arg1, arg2.__externalRCRef())
     }
+    @discardableResult
     public static func varargExtFun(
         _ receiver: any ExportedKotlinPackages.foo.Foo,
         args: Swift.String...
@@ -533,6 +545,7 @@ extension ExportedKotlinPackages.other {
     ) -> Swift.Int32 {
         return other_otherProp_get__TypesOfArgumentsE__ExportedKotlinPackages_other_Other__(receiver.__externalRCRef())
     }
+    @discardableResult
     public static func otherExtFun(
         _ receiver: ExportedKotlinPackages.other.Other
     ) -> Swift.String {

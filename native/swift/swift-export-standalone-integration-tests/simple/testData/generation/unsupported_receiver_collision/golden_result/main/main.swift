@@ -4,14 +4,14 @@ import KotlinRuntime
 import KotlinRuntimeSupport
 
 public typealias Module = ExportedKotlinPackages.koin.like.Module
-@available(*, unavailable, message: "Declaration uses unsupported types")
+@discardableResult @available(*, unavailable, message: "Declaration uses unsupported types")
 public func module(
     _ receiver: Swift.Never
 ) -> ExportedKotlinPackages.koin.like.Module {
     fatalError()
 }
 extension ExportedKotlinPackages.hidden {
-    @available(*, unavailable, message: "Declaration uses unsupported types")
+    @discardableResult @available(*, unavailable, message: "Declaration uses unsupported types")
     public static func describe(
         _ receiver: Swift.Never
     ) -> Swift.String {
@@ -32,7 +32,7 @@ extension ExportedKotlinPackages.koin.like {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
-    @available(*, unavailable, message: "Declaration uses unsupported types")
+    @discardableResult @available(*, unavailable, message: "Declaration uses unsupported types")
     public static func module(
         _ receiver: Swift.Never
     ) -> ExportedKotlinPackages.koin.like.Module {

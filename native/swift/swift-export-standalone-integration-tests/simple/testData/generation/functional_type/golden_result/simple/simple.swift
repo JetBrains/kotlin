@@ -13,6 +13,7 @@ public var closure_property: () -> Swift.Void {
         return { __root___closure_property_set__TypesOfArguments__U2829202D_U20Swift_Void__(Unmanaged.passRetained((newValue as () -> Swift.Void) as AnyObject).toOpaque()); return () }()
     }
 }
+@discardableResult
 public func foo_1() -> () -> Swift.Void {
     return {
         let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: __root___foo_1(), options: .asBestFittingWrapper)

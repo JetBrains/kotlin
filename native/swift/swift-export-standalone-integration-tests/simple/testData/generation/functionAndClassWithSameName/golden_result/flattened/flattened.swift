@@ -4,6 +4,7 @@ import KotlinRuntime
 import KotlinRuntimeSupport
 
 public typealias FlattenedPackageClass = ExportedKotlinPackages.flattenedPackage.FlattenedPackageClass
+@discardableResult
 public func flattenedPackageClass(
     i: Swift.Int32
 ) -> ExportedKotlinPackages.flattenedPackage.FlattenedPackageClass {
@@ -23,6 +24,7 @@ extension ExportedKotlinPackages.flattenedPackage {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
+    @discardableResult
     public static func flattenedPackageClass(
         i: Swift.Int32
     ) -> ExportedKotlinPackages.flattenedPackage.FlattenedPackageClass {
@@ -73,6 +75,7 @@ extension ExportedKotlinPackages.test.factory.suffix {
             self.value = value
         }
     }
+    @discardableResult
     public static func basicFoo() -> ExportedKotlinPackages.test.factory.suffix.Foo {
         return ExportedKotlinPackages.test.factory.suffix.Foo.__createClassWrapper(externalRCRef: test_factory_suffix_BasicFoo())
     }

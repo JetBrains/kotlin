@@ -6,14 +6,18 @@ public protocol Boxed: KotlinRuntime.KotlinBase, main._Boxed {
     var boxLabel: Swift.String {
         get
     }
+    @discardableResult
     func label() -> Swift.String
+    @discardableResult
     func unbox() -> (any KotlinRuntimeSupport._KotlinBridgeable)?
 }
 public protocol Defaulter: KotlinRuntime.KotlinBase, main._Defaulter {
     var kind: Swift.String {
         get
     }
+    @discardableResult
     func describe() -> Swift.String
+    @discardableResult
     func tag() -> Swift.String
 }
 public protocol Greeter: KotlinRuntime.KotlinBase, main._Greeter {
@@ -21,13 +25,17 @@ public protocol Greeter: KotlinRuntime.KotlinBase, main._Greeter {
         get
         set
     }
+    @discardableResult
     func greet(
         name: Swift.String
     ) -> Swift.String
+    @discardableResult
     func salutation() -> Swift.String
 }
 public protocol OverloadedInterface: KotlinRuntime.KotlinBase, main._OverloadedInterface {
+    @discardableResult
     func say() -> Swift.String
+    @discardableResult
     func say(
         times: Swift.Int32
     ) -> Swift.String
@@ -65,6 +73,7 @@ open class AbstractBase: KotlinRuntime.KotlinBase {
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
+    @discardableResult
     open func abstractMethod() -> Swift.String {
         if Self.self == main.AbstractBase.self {
             return AbstractBase_abstractMethod(self.__externalRCRef())
@@ -72,6 +81,7 @@ open class AbstractBase: KotlinRuntime.KotlinBase {
             fatalError("Cannot invoke the inherited implementation of abstract member 'main.AbstractBase.abstractMethod': a Swift subclass must override it and must not call super.")
         }
     }
+    @discardableResult
     open func concreteMethod() -> Swift.Int32 {
         if Self.self == main.AbstractBase.self {
             return AbstractBase_concreteMethod(self.__externalRCRef())
@@ -127,6 +137,7 @@ open class Base: KotlinRuntime.KotlinBase {
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
+    @discardableResult
     open func count() -> Swift.Int32 {
         if Self.self == main.Base.self {
             return Base_count(self.__externalRCRef())
@@ -134,6 +145,7 @@ open class Base: KotlinRuntime.KotlinBase {
             return Base_count_direct(self.__externalRCRef())
         }
     }
+    @discardableResult
     open func greet(
         name: Swift.String
     ) -> Swift.String {
@@ -143,6 +155,7 @@ open class Base: KotlinRuntime.KotlinBase {
             return Base_greet__TypesOfArguments__Swift_String___direct(self.__externalRCRef(), name)
         }
     }
+    @discardableResult
     public final func notOpen() -> Swift.String {
         return Base_notOpen(self.__externalRCRef())
     }
@@ -180,6 +193,7 @@ open class GreeterBase: KotlinRuntime.KotlinBase, main.Greeter, main.__Greeter {
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
+    @discardableResult
     open func greet(
         name: Swift.String
     ) -> Swift.String {
@@ -189,6 +203,7 @@ open class GreeterBase: KotlinRuntime.KotlinBase, main.Greeter, main.__Greeter {
             return GreeterBase_greet__TypesOfArguments__Swift_String___direct(self.__externalRCRef(), name)
         }
     }
+    @discardableResult
     open func salutation() -> Swift.String {
         if Self.self == main.GreeterBase.self {
             return GreeterBase_salutation(self.__externalRCRef())
@@ -214,6 +229,7 @@ open class Overloaded: KotlinRuntime.KotlinBase {
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
+    @discardableResult
     open func nullable(
         arg: Swift.String?
     ) -> Swift.String {
@@ -223,6 +239,7 @@ open class Overloaded: KotlinRuntime.KotlinBase {
             return Overloaded_nullable__TypesOfArguments__Swift_Optional_Swift_String____direct(self.__externalRCRef(), arg ?? nil)
         }
     }
+    @discardableResult
     open func nullable(
         arg: Swift.String
     ) -> Swift.String {
@@ -232,9 +249,11 @@ open class Overloaded: KotlinRuntime.KotlinBase {
             return Overloaded_nullable__TypesOfArguments__Swift_String___direct(self.__externalRCRef(), arg)
         }
     }
+    @discardableResult
     public final func pick() -> Swift.String {
         return Overloaded_pick(self.__externalRCRef())
     }
+    @discardableResult
     open func pick(
         arg1: Swift.String
     ) -> Swift.String {
@@ -244,6 +263,7 @@ open class Overloaded: KotlinRuntime.KotlinBase {
             return Overloaded_pick__TypesOfArguments__Swift_String___direct(self.__externalRCRef(), arg1)
         }
     }
+    @discardableResult
     open func pick(
         arg1: Swift.String,
         arg2: Swift.Int32
@@ -254,6 +274,7 @@ open class Overloaded: KotlinRuntime.KotlinBase {
             return Overloaded_pick__TypesOfArguments__Swift_String_Swift_Int32___direct(self.__externalRCRef(), arg1, arg2)
         }
     }
+    @discardableResult
     open func same(
         arg: Swift.Int32
     ) -> Swift.String {
@@ -263,6 +284,7 @@ open class Overloaded: KotlinRuntime.KotlinBase {
             return Overloaded_same__TypesOfArguments__Swift_Int32___direct(self.__externalRCRef(), arg)
         }
     }
+    @discardableResult
     open func same(
         arg: Swift.String
     ) -> Swift.String {
@@ -290,6 +312,7 @@ open class ThrowingMembers: KotlinRuntime.KotlinBase {
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
+    @discardableResult
     open func compute(
         x: Swift.Int32
     ) throws -> Swift.String {
@@ -313,9 +336,11 @@ extension main.Boxed where Self : main.__Boxed {
             return Boxed_boxLabel_get(self.__externalRCRef())
         }
     }
+    @discardableResult
     public func label() -> Swift.String {
         return Boxed_label(self.__externalRCRef())
     }
+    @discardableResult
     public func unbox() -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
         return { switch Boxed_unbox(self.__externalRCRef()) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
     }
@@ -326,6 +351,7 @@ extension main.Boxed {
             return Boxed_boxLabel_get_direct(self.__externalRCRef())
         }
     }
+    @discardableResult
     public func label() -> Swift.String {
         return Boxed_label_direct(self.__externalRCRef())
     }
@@ -337,9 +363,11 @@ extension main.Defaulter where Self : main.__Defaulter {
             return Defaulter_kind_get(self.__externalRCRef())
         }
     }
+    @discardableResult
     public func describe() -> Swift.String {
         return Defaulter_describe(self.__externalRCRef())
     }
+    @discardableResult
     public func tag() -> Swift.String {
         return Defaulter_tag(self.__externalRCRef())
     }
@@ -350,6 +378,7 @@ extension main.Defaulter {
             return Defaulter_kind_get_direct(self.__externalRCRef())
         }
     }
+    @discardableResult
     public func describe() -> Swift.String {
         return Defaulter_describe_direct(self.__externalRCRef())
     }
@@ -364,11 +393,13 @@ extension main.Greeter where Self : main.__Greeter {
             return { Greeter_mood_set__TypesOfArguments__Swift_String__(self.__externalRCRef(), newValue); return () }()
         }
     }
+    @discardableResult
     public func greet(
         name: Swift.String
     ) -> Swift.String {
         return Greeter_greet__TypesOfArguments__Swift_String__(self.__externalRCRef(), name)
     }
+    @discardableResult
     public func salutation() -> Swift.String {
         return Greeter_salutation(self.__externalRCRef())
     }
@@ -377,9 +408,11 @@ extension main.Greeter {
 }
 @_documentation(visibility: internal)
 extension main.OverloadedInterface where Self : main.__OverloadedInterface {
+    @discardableResult
     public func say() -> Swift.String {
         return OverloadedInterface_say(self.__externalRCRef())
     }
+    @discardableResult
     public func say(
         times: Swift.Int32
     ) -> Swift.String {

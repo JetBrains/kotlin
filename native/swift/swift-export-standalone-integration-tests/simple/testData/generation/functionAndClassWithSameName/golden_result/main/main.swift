@@ -124,44 +124,53 @@ public final class UtcOffset: KotlinRuntime.KotlinBase {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
 }
+@discardableResult
 public func FlattenedPackageClass(
     f: Swift.Float
 ) -> ExportedKotlinPackages.flattenedPackage.FlattenedPackageClass {
     return ExportedKotlinPackages.flattenedPackage.FlattenedPackageClass.__createClassWrapper(externalRCRef: __root___FlattenedPackageClass__TypesOfArguments__Swift_Float__(f))
 }
-@available(*, unavailable, message: "Declaration uses unsupported types")
+@discardableResult @available(*, unavailable, message: "Declaration uses unsupported types")
 public func annotationWithFactory(
     arg: any KotlinRuntimeSupport._KotlinBridgeable
 ) -> Swift.Never {
     fatalError()
 }
+@discardableResult
 public func classWithFactoryWithoutParameters() -> main.ClassWithFactoryWithoutParameters {
     return main.ClassWithFactoryWithoutParameters.__createClassWrapper(externalRCRef: __root___ClassWithFactoryWithoutParameters())
 }
+@discardableResult
 public func enumWithFactory(
     x: Swift.Int32
 ) -> main.EnumWithFactory {
     return main.EnumWithFactory(__externalRCRefUnsafe: __root___EnumWithFactory__TypesOfArguments__Swift_Int32__(x), options: .asBestFittingWrapper)
 }
+@discardableResult
 public func interfaceWithFactory() -> any main.InterfaceWithFactory {
     return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___InterfaceWithFactory(), conformsTo: main.InterfaceWithFactory.Type.self) as! any main.InterfaceWithFactory
 }
+@discardableResult
 public func interfaceWithFactory(
     arg: any KotlinRuntimeSupport._KotlinBridgeable
 ) -> any main.InterfaceWithFactory {
     return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___InterfaceWithFactory__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(arg.__externalRCRef()), conformsTo: main.InterfaceWithFactory.Type.self) as! any main.InterfaceWithFactory
 }
+@discardableResult
 public func job() -> main.TCJ {
     return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___Job(), conformsTo: main.CompletableJob.Type.self) as! any main.CompletableJob
 }
+@discardableResult
 public func job(
     parent: (any main.Job)?
 ) -> any main.CompletableJob {
     return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___Job__TypesOfArguments__Swift_Optional_anyU20main_Job___(parent.map { it in it.__externalRCRef() } ?? nil), conformsTo: main.CompletableJob.Type.self) as! any main.CompletableJob
 }
+@discardableResult
 public func objectWithFactory() -> main.ObjectWithFactory {
     return main.ObjectWithFactory.__createClassWrapper(externalRCRef: __root___ObjectWithFactory())
 }
+@discardableResult
 public func utcOffset(
     x: Swift.Int32
 ) -> main.UtcOffset {
@@ -239,20 +248,24 @@ extension ExportedKotlinPackages.test.factory {
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
+        @discardableResult
         public func ClassWithFactoryInAPackage(
             arg: any KotlinRuntimeSupport._KotlinBridgeable
         ) -> ExportedKotlinPackages.test.factory.ClassWithFactoryInAPackage {
             return ExportedKotlinPackages.test.factory.ClassWithFactoryInAPackage.__createClassWrapper(externalRCRef: test_factory_Outer_ClassWithFactoryInAPackage__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(self.__externalRCRef(), arg.__externalRCRef()))
         }
+        @discardableResult
         public func Nested(
             x: any KotlinRuntimeSupport._KotlinBridgeable
         ) -> ExportedKotlinPackages.test.factory.Outer.Nested {
             return ExportedKotlinPackages.test.factory.Outer.Nested.__createClassWrapper(externalRCRef: test_factory_Outer_Nested__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(self.__externalRCRef(), x.__externalRCRef()))
         }
     }
+    @discardableResult
     public static func Nested() -> ExportedKotlinPackages.test.factory.Outer.Nested {
         return ExportedKotlinPackages.test.factory.Outer.Nested.__createClassWrapper(externalRCRef: test_factory_Nested())
     }
+    @discardableResult
     public static func classWithFactoryInAPackage(
         arg: any KotlinRuntimeSupport._KotlinBridgeable
     ) -> ExportedKotlinPackages.test.factory.ClassWithFactoryInAPackage {
@@ -260,6 +273,7 @@ extension ExportedKotlinPackages.test.factory {
     }
 }
 extension ExportedKotlinPackages.test.not.factory {
+    @discardableResult
     public static func ClassWithFactoryInAPackage(
         arg: any KotlinRuntimeSupport._KotlinBridgeable
     ) -> ExportedKotlinPackages.test.factory.ClassWithFactoryInAPackage {
@@ -267,6 +281,7 @@ extension ExportedKotlinPackages.test.not.factory {
     }
 }
 extension ExportedKotlinPackages.test.factory.modules {
+    @discardableResult
     public static func classFromDependency(
         arg: any KotlinRuntimeSupport._KotlinBridgeable
     ) -> ExportedKotlinPackages.test.factory.modules.ClassFromDependency {
@@ -276,6 +291,7 @@ extension ExportedKotlinPackages.test.factory.modules {
 extension ExportedKotlinPackages.typealiases {
     public typealias TypealiasWithFactoryWithoutParameters = main.ClassWithFactoryWithoutParameters
     public typealias TypealiasWithFactoryWithoutParameters2 = main.ClassWithFactoryWithoutParameters
+    @discardableResult
     public static func typealiasWithFactoryWithoutParameters() -> ExportedKotlinPackages.typealiases.TypealiasWithFactoryWithoutParameters {
         return main.ClassWithFactoryWithoutParameters.__createClassWrapper(externalRCRef: typealiases_TypealiasWithFactoryWithoutParameters())
     }

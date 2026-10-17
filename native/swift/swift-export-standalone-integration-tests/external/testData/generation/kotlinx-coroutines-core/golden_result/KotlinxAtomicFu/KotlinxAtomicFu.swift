@@ -10,6 +10,7 @@ extension ExportedKotlinPackages.kotlinx.atomicfu.locks {
         public final func lock() -> Swift.Void {
             return { kotlinx_atomicfu_locks_SynchronizedObject_lock(self.__externalRCRef()); return () }()
         }
+        @discardableResult
         public final func tryLock() -> Swift.Bool {
             return kotlinx_atomicfu_locks_SynchronizedObject_tryLock(self.__externalRCRef())
         }

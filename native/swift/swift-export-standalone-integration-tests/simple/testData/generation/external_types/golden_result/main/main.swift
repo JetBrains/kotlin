@@ -25,10 +25,11 @@ public func consume_nsdate(
 ) -> Swift.Void {
     return { __root___consume_nsdate__TypesOfArguments__Foundation_NSDate__(date); return () }()
 }
+@discardableResult
 public func produce_nsdate() -> Foundation.NSDate {
     return __root___produce_nsdate() as! Foundation.NSDate
 }
-@available(*, unavailable, message: "Declaration uses unsupported types")
+@discardableResult @available(*, unavailable, message: "Declaration uses unsupported types")
 public func produce_typealias() -> Swift.Never {
     fatalError()
 }

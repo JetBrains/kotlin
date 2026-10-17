@@ -4,13 +4,17 @@ import KotlinRuntime
 import KotlinRuntimeSupport
 
 public protocol AsyncDefaulter: KotlinRuntime.KotlinBase, main._AsyncDefaulter {
+    @discardableResult
     func describe() async throws -> Swift.String
+    @discardableResult
     func tag() async throws -> Swift.String
 }
 public protocol AsyncGreeter: KotlinRuntime.KotlinBase, main._AsyncGreeter {
+    @discardableResult
     func greet(
         name: Swift.String
     ) async throws -> Swift.String
+    @discardableResult
     func salutation() async throws -> Swift.String
 }
 @objc(_main_AsyncDefaulter)
@@ -36,6 +40,7 @@ open class AsyncAbstractBase: KotlinRuntime.KotlinBase {
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
+    @discardableResult
     open func abstractGreet() async throws -> Swift.String {
         if Self.self == main.AsyncAbstractBase.self {
             return try await withKotlinContinuation { continuation, exception, cancellation in
@@ -45,6 +50,7 @@ open class AsyncAbstractBase: KotlinRuntime.KotlinBase {
             fatalError("Cannot invoke the inherited implementation of abstract member 'main.AsyncAbstractBase.abstractGreet': a Swift subclass must override it and must not call super.")
         }
     }
+    @discardableResult
     open func concreteGreet() async throws -> Swift.String {
         if Self.self == main.AsyncAbstractBase.self {
             return try await withKotlinContinuation { continuation, exception, cancellation in
@@ -74,6 +80,7 @@ open class AsyncBase: KotlinRuntime.KotlinBase {
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
+    @discardableResult
     open func count() async throws -> Swift.Int32 {
         if Self.self == main.AsyncBase.self {
             return try await withKotlinContinuation { continuation, exception, cancellation in
@@ -85,6 +92,7 @@ open class AsyncBase: KotlinRuntime.KotlinBase {
         }
         }
     }
+    @discardableResult
     open func greet(
         name: Swift.String
     ) async throws -> Swift.String {
@@ -98,11 +106,13 @@ open class AsyncBase: KotlinRuntime.KotlinBase {
         }
         }
     }
+    @discardableResult
     public final func notOpen() async throws -> Swift.String {
         return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = AsyncBase_notOpen(self.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.String) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
+    @discardableResult
     open func sync(
         name: Swift.String
     ) -> Swift.String {
@@ -130,6 +140,7 @@ open class AsyncGreeterBase: KotlinRuntime.KotlinBase, main.AsyncGreeter, main._
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
+    @discardableResult
     open func greet(
         name: Swift.String
     ) async throws -> Swift.String {
@@ -143,6 +154,7 @@ open class AsyncGreeterBase: KotlinRuntime.KotlinBase, main.AsyncGreeter, main._
         }
         }
     }
+    @discardableResult
     open func salutation() async throws -> Swift.String {
         if Self.self == main.AsyncGreeterBase.self {
             return try await withKotlinContinuation { continuation, exception, cancellation in
@@ -172,11 +184,13 @@ open class AsyncOverloaded: KotlinRuntime.KotlinBase {
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
+    @discardableResult
     public final func overloaded() async throws -> Swift.String {
         return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = AsyncOverloaded_overloaded(self.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.String) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
+    @discardableResult
     open func overloaded(
         arg1: Swift.String
     ) async throws -> Swift.String {
@@ -190,6 +204,7 @@ open class AsyncOverloaded: KotlinRuntime.KotlinBase {
         }
         }
     }
+    @discardableResult
     open func overloaded(
         arg1: Swift.String,
         arg2: Swift.Int32
@@ -204,6 +219,7 @@ open class AsyncOverloaded: KotlinRuntime.KotlinBase {
         }
         }
     }
+    @discardableResult
     open func same(
         arg: Swift.Int32
     ) async throws -> Swift.String {
@@ -217,6 +233,7 @@ open class AsyncOverloaded: KotlinRuntime.KotlinBase {
         }
         }
     }
+    @discardableResult
     open func same(
         arg: Swift.String
     ) async throws -> Swift.String {
@@ -233,11 +250,13 @@ open class AsyncOverloaded: KotlinRuntime.KotlinBase {
 }
 @_documentation(visibility: internal)
 extension main.AsyncDefaulter where Self : main.__AsyncDefaulter {
+    @discardableResult
     public func describe() async throws -> Swift.String {
         return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = AsyncDefaulter_describe(self.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.String) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
+    @discardableResult
     public func tag() async throws -> Swift.String {
         return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = AsyncDefaulter_tag(self.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.String) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
@@ -245,6 +264,7 @@ extension main.AsyncDefaulter where Self : main.__AsyncDefaulter {
     }
 }
 extension main.AsyncDefaulter {
+    @discardableResult
     public func describe() async throws -> Swift.String {
         return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = AsyncDefaulter_describe_direct(self.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.String) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
@@ -253,6 +273,7 @@ extension main.AsyncDefaulter {
 }
 @_documentation(visibility: internal)
 extension main.AsyncGreeter where Self : main.__AsyncGreeter {
+    @discardableResult
     public func greet(
         name: Swift.String
     ) async throws -> Swift.String {
@@ -260,6 +281,7 @@ extension main.AsyncGreeter where Self : main.__AsyncGreeter {
             let _: Bool = AsyncGreeter_greet__TypesOfArguments__Swift_String__(self.__externalRCRef(), name, Unmanaged.passRetained((continuation as (Swift.String) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
+    @discardableResult
     public func salutation() async throws -> Swift.String {
         return try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = AsyncGreeter_salutation(self.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.String) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())

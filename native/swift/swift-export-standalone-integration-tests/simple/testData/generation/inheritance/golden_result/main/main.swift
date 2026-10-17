@@ -28,6 +28,7 @@ public var foo: main.Foo {
         return { __root___foo_set__TypesOfArguments__main_Foo__(newValue.__externalRCRef()); return () }()
     }
 }
+@discardableResult
 public func getFoo() -> main.Foo {
     return main.Foo.__createClassWrapper(externalRCRef: __root___getFoo())
 }
