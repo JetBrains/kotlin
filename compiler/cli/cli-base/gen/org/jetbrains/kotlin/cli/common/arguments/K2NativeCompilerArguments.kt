@@ -288,6 +288,33 @@ This library must be one of the ones passed with '-library'.""",
         }
 
     @Argument(
+        value = "-Xgenerate-signature-indices-dir",
+        valueDescription = "<path>",
+        description = """Path to the directory where the generated external signature indices should be stored.
+This argument should be used together with -Xgenerate-signature-indices-from.""",
+        delimiter = Argument.Delimiters.none,
+    )
+    var generateSignatureIndicesDir: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
+
+    @Argument(
+        value = "-Xgenerate-signature-indices-from",
+        valueDescription = "<path>",
+        description = """Path to the root directory with the libraries for which external signature indices should be generated.
+The generation of the external signature index happens only if a library does not have its own signature index.
+This argument should be used together with -Xgenerate-signature-indices-dir.""",
+        delimiter = Argument.Delimiters.none,
+    )
+    var generateSignatureIndicesFrom: Array<String> = emptyArray()
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xheader-klib-path",
         description = "Save a klib that only contains the public ABI to the given path.",
     )

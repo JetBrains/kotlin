@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.config.keys.generator.model.KeysContainer
 import org.jetbrains.kotlin.konan.library.SerializedKlibDAG
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import java.nio.file.Path
 
 @Suppress("unused")
 object NativeConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.konan.config", "NativeConfigurationKeys") {
@@ -91,4 +92,6 @@ object NativeConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.ko
         "A wrapper over the DAG of libraries that the compiler needs to build static caches for." +
                 " It's saved in the compiler configuration for spawned static cache compilation to avoid recomputing the DAG."
     )
+    val GENERATE_SIGNATURE_INDICES_FROM by key<List<Path>>("Canonical paths to the root directory with the libraries for which external signature indices should be generated.")
+    val GENERATE_SIGNATURE_INDICES_DIR by key<Path>("Canonical path to the directory where the generated external signature indices should be stored.")
 }
