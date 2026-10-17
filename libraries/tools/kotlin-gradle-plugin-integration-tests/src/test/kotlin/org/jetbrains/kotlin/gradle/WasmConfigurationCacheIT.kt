@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
 
-@MppGradlePluginTests
+@WasmJsGradlePluginTests
 class WasmConfigurationCacheIT : KGPBaseTest() {
 
     override val defaultBuildOptions: BuildOptions
