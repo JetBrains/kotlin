@@ -7402,6 +7402,51 @@
                                 "deprecatedMessage": null
                             },
                             {
+                                "name": "Xadd-exports",
+                                "shortName": null,
+                                "deprecatedName": null,
+                                "description": {
+                                    "current": "Export <package> of <module> to additional modules, or to the unnamed module if <other-module> is ALL-UNNAMED. Can be specified more than once.",
+                                    "valueInVersions": []
+                                },
+                                "delimiter": "None",
+                                "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
+                                "valueType": {
+                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
+                                    "defaultValue": {
+                                        "current": null,
+                                        "valueInVersions": []
+                                    },
+                                    "isNullable": {
+                                        "current": true,
+                                        "valueInVersions": []
+                                    }
+                                },
+                                "valueDescription": {
+                                    "current": "<module>/<package>=<other-module>(,<other-module>)*",
+                                    "valueInVersions": []
+                                },
+                                "releaseVersionsMetadata": {
+                                    "introducedVersion": "2.5.0",
+                                    "stabilizedVersion": null,
+                                    "deprecatedVersion": null,
+                                    "removedVersion": null
+                                },
+                                "argumentType": {
+                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringListType",
+                                    "defaultValue": {
+                                        "current": [],
+                                        "valueInVersions": []
+                                    },
+                                    "isNullable": {
+                                        "current": false,
+                                        "valueInVersions": []
+                                    }
+                                },
+                                "deprecatedMessage": null
+                            },
+                            {
                                 "name": "Xadd-modules",
                                 "shortName": null,
                                 "deprecatedName": null,
@@ -7429,6 +7474,51 @@
                                 },
                                 "releaseVersionsMetadata": {
                                     "introducedVersion": "1.1.4",
+                                    "stabilizedVersion": null,
+                                    "deprecatedVersion": null,
+                                    "removedVersion": null
+                                },
+                                "argumentType": {
+                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringListType",
+                                    "defaultValue": {
+                                        "current": [],
+                                        "valueInVersions": []
+                                    },
+                                    "isNullable": {
+                                        "current": false,
+                                        "valueInVersions": []
+                                    }
+                                },
+                                "deprecatedMessage": null
+                            },
+                            {
+                                "name": "Xadd-reads",
+                                "shortName": null,
+                                "deprecatedName": null,
+                                "description": {
+                                    "current": "Additional modules to be read by <module>, or the unnamed module if <other-module> is ALL-UNNAMED. Can be specified more than once.",
+                                    "valueInVersions": []
+                                },
+                                "delimiter": "None",
+                                "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
+                                "valueType": {
+                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
+                                    "defaultValue": {
+                                        "current": null,
+                                        "valueInVersions": []
+                                    },
+                                    "isNullable": {
+                                        "current": true,
+                                        "valueInVersions": []
+                                    }
+                                },
+                                "valueDescription": {
+                                    "current": "<module>=<other-module>(,<other-module>)*",
+                                    "valueInVersions": []
+                                },
+                                "releaseVersionsMetadata": {
+                                    "introducedVersion": "2.5.0",
                                     "stabilizedVersion": null,
                                     "deprecatedVersion": null,
                                     "removedVersion": null

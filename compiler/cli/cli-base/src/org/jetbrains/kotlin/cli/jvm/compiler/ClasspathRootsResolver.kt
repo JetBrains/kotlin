@@ -32,11 +32,14 @@ import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRootBase
 import org.jetbrains.kotlin.cli.jvm.config.JvmContentRootBase
 import org.jetbrains.kotlin.cli.jvm.config.JvmModulePathRoot
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
+import org.jetbrains.kotlin.cli.jvm.modules.ALL_UNNAMED
 import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleFinder
 import org.jetbrains.kotlin.cli.jvm.modules.JavaModuleGraph
+import org.jetbrains.kotlin.cli.jvm.modules.parseJavaModuleAccessOption
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.cli.reportLog
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.diagnostics.KtSourcelessDiagnosticFactory
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.name.FqName
@@ -70,6 +73,31 @@ class ClasspathRootsResolver(
     // report those errors and not the more important "no source files" error which is handled later, after the roots have been computed.
     private val reportErrors = hasKotlinSources
 
+    /**
+     * Values of `-Xadd-reads` in the module graph, from a module name to the modules it reads or `ALL-UNNAMED`. Computed by the first
+     * call to [convertClasspathRoots].
+     */
+    var additionalJavaModuleReads: Map<String, Set<String>> = emptyMap()
+        private set
+
+    /**
+     * Values of `-Xadd-exports` in the module graph, from `<module>/<package>` to the modules it is exported to or `ALL-UNNAMED`.
+     * Computed by the first call to [convertClasspathRoots].
+     */
+    var additionalJavaModuleExports: Map<String, Set<String>> = emptyMap()
+        private set
+
+    /**
+     * Modules read only from classpath roots that are also added to the module path (see [JvmModulePathRoot.isFromClasspath]). For javac,
+     * those roots are in the unnamed module. Computed by the first call to [convertClasspathRoots].
+     */
+    var javaModulesFromClasspath: Set<String> = emptySet()
+        private set
+
+    // Roots passed to a later call, such as script dependencies, are resolved without the source module, so `-Xadd-reads` and
+    // `-Xadd-exports` are only resolved on the first call.
+    private var hasConvertedRoots = false
+
     data class RootsAndModules(val roots: List<JavaRoot>, val modules: List<JavaModule>)
 
     private data class RootWithPrefix(val root: VirtualFile, val packagePrefix: String?)
@@ -78,6 +106,8 @@ class ClasspathRootsResolver(
         val javaSourceRoots = mutableListOf<RootWithPrefix>()
         val jvmClasspathRoots = mutableListOf<VirtualFile>()
         val jvmModulePathRoots = mutableListOf<VirtualFile>()
+        val jvmModulePathRootsFromClasspath = mutableSetOf<VirtualFile>()
+        val jvmModulePathRootsGiven = mutableSetOf<VirtualFile>()
 
         for (contentRoot in contentRoots) {
             if (contentRoot !is JvmContentRootBase) continue
@@ -85,18 +115,24 @@ class ClasspathRootsResolver(
             when (contentRoot) {
                 is JavaSourceRoot -> javaSourceRoots += RootWithPrefix(root, contentRoot.packagePrefix)
                 is JvmClasspathRootBase -> jvmClasspathRoots += root
-                is JvmModulePathRoot -> jvmModulePathRoots += root
+                is JvmModulePathRoot -> {
+                    jvmModulePathRoots += root
+                    (if (contentRoot.isFromClasspath) jvmModulePathRootsFromClasspath else jvmModulePathRootsGiven) += root
+                }
                 else -> error("Unknown root type: $contentRoot")
             }
         }
 
-        return computeRoots(javaSourceRoots, jvmClasspathRoots, jvmModulePathRoots)
+        // Like javac, a root given with the module path too is read from the module path.
+        val rootsFromClasspath = jvmModulePathRootsFromClasspath - jvmModulePathRootsGiven
+        return computeRoots(javaSourceRoots, jvmClasspathRoots, jvmModulePathRoots, rootsFromClasspath).also { hasConvertedRoots = true }
     }
 
     private fun computeRoots(
         javaSourceRoots: List<RootWithPrefix>,
         jvmClasspathRoots: List<VirtualFile>,
-        jvmModulePathRoots: List<VirtualFile>
+        jvmModulePathRoots: List<VirtualFile>,
+        jvmModulePathRootsFromClasspath: Set<VirtualFile>,
     ): RootsAndModules {
         val result = mutableListOf<JavaRoot>()
         val modules = mutableListOf<JavaModule>()
@@ -134,7 +170,7 @@ class ClasspathRootsResolver(
             }
         }
         if (jdkRelease == null || jdkRelease >= 9) {
-            addModularRoots(modules, result)
+            addModularRoots(modules, result, jvmModulePathRootsFromClasspath)
         } else {
             //TODO: see also `addJvmSdkRoots` usages, some refactoring is required with moving such logic into one place
             result += JavaRoot(javaModuleFinder.nonModuleRoot.file, JavaRoot.RootType.BINARY_SIG)
@@ -229,7 +265,7 @@ class ClasspathRootsResolver(
         }
     }
 
-    private fun addModularRoots(modules: List<JavaModule>, result: MutableList<JavaRoot>) {
+    private fun addModularRoots(modules: List<JavaModule>, result: MutableList<JavaRoot>, rootsFromClasspath: Set<VirtualFile>) {
         // In current implementation, at most one source module is supported. This can be relaxed in the future if we support another
         // compilation mode, similar to java's --module-source-path
         val sourceModules = modules.filterIsInstance<JavaModule.Explicit>().filter(JavaModule::isSourceModule)
@@ -255,6 +291,12 @@ class ClasspathRootsResolver(
                     "The root is ignored because a module with the same name '${module.name}' " +
                             "has been found earlier on the module path$atExistingPath", thisFile
                 )
+            }
+        }
+        if (!hasConvertedRoots) {
+            // A module of the same name given with the module path is added first, so the root from the classpath is ignored.
+            javaModulesFromClasspath = modules.mapTo(mutableSetOf(), JavaModule::name).filterTo(mutableSetOf()) { name ->
+                javaModuleFinder.findModule(name)?.moduleRoots.orEmpty().any { it.file in rootsFromClasspath }
             }
         }
 
@@ -292,6 +334,12 @@ class ClasspathRootsResolver(
             }
         }
 
+        if (!hasConvertedRoots) {
+            // Like javac, which puts the classpath roots in the unnamed module, the modules read from them are left out.
+            additionalJavaModuleReads = collectJavaModuleAccessOptions(allDependencies - javaModulesFromClasspath, isExports = false)
+            additionalJavaModuleExports = collectJavaModuleAccessOptions(allDependencies - javaModulesFromClasspath, isExports = true)
+        }
+
         log("Loading modules: $allDependencies")
 
         for (moduleName in allDependencies) {
@@ -303,13 +351,43 @@ class ClasspathRootsResolver(
             }
         }
 
-        if (requireStdlibModule && sourceModule != null && !javaModuleGraph.reads(sourceModule.name, KOTLIN_STDLIB_MODULE_NAME)) {
+        if (requireStdlibModule && sourceModule != null && !javaModuleGraph.reads(sourceModule.name, KOTLIN_STDLIB_MODULE_NAME) &&
+            !(KOTLIN_STDLIB_MODULE_NAME in allDependencies &&
+                    javaModuleGraph.readsAdditionally(additionalJavaModuleReads, sourceModule.name, KOTLIN_STDLIB_MODULE_NAME))
+        ) {
             reportError(
                 "The Kotlin standard library is not found in the module graph. " +
                         "Please ensure you have the 'requires $KOTLIN_STDLIB_MODULE_NAME' clause in your module definition",
                 sourceModule.moduleInfoFile
             )
         }
+    }
+
+    // Like javac, report and leave out the modules in -Xadd-reads and -Xadd-exports that are not in the module graph, and reject system
+    // modules on the left-hand side with -Xjdk-release.
+    private fun collectJavaModuleAccessOptions(modulesInGraph: Set<String>, isExports: Boolean): Map<String, Set<String>> {
+        val flag = if (isExports) "-Xadd-exports" else "-Xadd-reads"
+        val key = if (isExports) JVMConfigurationKeys.ADDITIONAL_JAVA_MODULE_EXPORTS else JVMConfigurationKeys.ADDITIONAL_JAVA_MODULE_READS
+
+        fun isInGraph(name: String): Boolean =
+            (name == ALL_UNNAMED || name in modulesInGraph).also { if (!it) reportWarning("Module name in `$flag` not found: $name") }
+
+        val result = HashMap<String, MutableSet<String>>()
+        for (value in configuration.getList(key)) {
+            val option = parseJavaModuleAccessOption(value, isExports) ?: continue
+            val source = option.source ?: continue
+            val moduleName = source.substringBefore('/')
+            if (!isInGraph(moduleName)) continue
+            if (jdkRelease != null && javaModuleFinder.systemModules.any { it.name == moduleName }) {
+                reportError(
+                    if (isExports) "Exporting a package from system module $moduleName is not allowed with `-Xjdk-release`"
+                    else "Adding read edges for system module $moduleName is not allowed with `-Xjdk-release`"
+                )
+                continue
+            }
+            result.getOrPut(source, ::HashSet) += option.otherModules.filter(::isInGraph)
+        }
+        return result
     }
 
     private fun reportError(message: String, file: VirtualFile? = null) {

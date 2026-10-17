@@ -5,7 +5,11 @@ where advanced options include:
                              to prevent diagnostics from being reported when using stable compilers at the call site.
                              When using the JVM IR backend, conversely, use 'unstable' to mark generated class files as unstable
                              to force diagnostics to be reported.
+  -Xadd-exports=<module>/<package>=<other-module>(,<other-module>)*
+                             Export <package> of <module> to additional modules, or to the unnamed module if <other-module> is ALL-UNNAMED. Can be specified more than once.
   -Xadd-modules=<module[,]>  Root modules to resolve in addition to the initial modules, or all modules on the module path if <module> is ALL-MODULE-PATH.
+  -Xadd-reads=<module>=<other-module>(,<other-module>)*
+                             Additional modules to be read by <module>, or the unnamed module if <other-module> is ALL-UNNAMED. Can be specified more than once.
   -Xallow-no-source-files    Allow the set of source files to be empty.
   -Xallow-unstable-dependencies Do not report errors on classes in dependencies that were compiled by an unstable version of the Kotlin compiler.
   -Xannotations-in-metadata  Write annotations on declarations into the metadata (in addition to the JVM bytecode), and read annotations from the metadata if they are present.
