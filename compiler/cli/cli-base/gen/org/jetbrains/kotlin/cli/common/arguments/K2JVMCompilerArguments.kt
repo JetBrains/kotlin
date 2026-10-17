@@ -27,11 +27,35 @@ to force diagnostics to be reported.""",
         }
 
     @Argument(
+        value = "-Xadd-exports",
+        valueDescription = "<module>/<package>=<other-module>(,<other-module>)*",
+        description = "Export <package> of <module> to additional modules, or to the unnamed module if <other-module> is ALL-UNNAMED. Can be specified more than once.",
+        delimiter = Argument.Delimiters.none,
+    )
+    var additionalJavaModuleExports: Array<String> = emptyArray()
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xadd-modules",
         valueDescription = "<module[,]>",
         description = "Root modules to resolve in addition to the initial modules, or all modules on the module path if <module> is ALL-MODULE-PATH.",
     )
     var additionalJavaModules: Array<String> = emptyArray()
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
+        value = "-Xadd-reads",
+        valueDescription = "<module>=<other-module>(,<other-module>)*",
+        description = "Additional modules to be read by <module>, or the unnamed module if <other-module> is ALL-UNNAMED. Can be specified more than once.",
+        delimiter = Argument.Delimiters.none,
+    )
+    var additionalJavaModuleReads: Array<String> = emptyArray()
         set(value) {
             checkFrozen()
             field = value

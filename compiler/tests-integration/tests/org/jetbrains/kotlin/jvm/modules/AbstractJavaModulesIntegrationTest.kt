@@ -6,16 +6,28 @@
 package org.jetbrains.kotlin.jvm.modules
 
 import com.intellij.openapi.util.io.FileUtil
+import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.cli.AbstractCliTest
 import org.jetbrains.kotlin.cli.AbstractCliTest.getNormalizedCompilerOutput
+import org.jetbrains.kotlin.cli.CliDiagnostics
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
+import org.jetbrains.kotlin.cli.common.diagnosticsCollector
+import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
+import org.jetbrains.kotlin.cli.jvm.config.addJavaSourceRoot
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.config.additionalJavaModuleReads
+import org.jetbrains.kotlin.config.jdkHome
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticWithoutSource
 import org.jetbrains.kotlin.jvm.compiler.AbstractKotlinCompilerIntegrationTest
 import org.jetbrains.kotlin.test.JavaCompilationError
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestDataAssertions
 import org.jetbrains.kotlin.test.compileJavaFiles
+import org.jetbrains.kotlin.test.testFramework.runWithDisposable
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -375,5 +387,184 @@ class ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
         val lib = module("lib")
         val unrelated = module("unrelated")
         module("main", listOf(lib, unrelated))
+    }
+
+    @Test
+    fun testAddReadsUnnamed() {
+        // The same sources as in testNoDependencyOnUnnamed, where 'lib' is compiled to a directory for the same reason.
+        val lib = module("lib", destination = File(tmpdir, "lib"))
+        module("main", additionalKotlinArguments = listOf("-classpath", lib.path, "-Xadd-reads=main=ALL-UNNAMED"))
+    }
+
+    @Test
+    fun testAddReadsUnnamedJar() {
+        // Like javac, a jar given with -classpath is in the unnamed module, although the compiler also reads it as an automatic module
+        // (see testNoDependencyOnUnnamed). With -no-stdlib, that automatic module is not in the module graph.
+        val lib = module("lib")
+        val arguments = listOf("-classpath", lib.path, "-Xadd-reads=main=ALL-UNNAMED")
+        module("main", additionalKotlinArguments = arguments)
+        module("main", additionalKotlinArguments = arguments + "-no-stdlib")
+        // Like javac, a jar given only with -classpath is not a module that -Xadd-reads can read, directly or through an automatic module.
+        module("main", additionalKotlinArguments = listOf("-classpath", lib.path, "-Xadd-reads=main=lib")) { output ->
+            assertTrue("module name in `-Xadd-reads` not found: lib" in output && "does not depend on" in output, output)
+        }
+        val autoA = module("autoA")
+        module("main", listOf(autoA), listOf("autoA"), listOf("-classpath", lib.path, "-Xadd-reads=main=autoA")) { output ->
+            assertTrue("symbol is declared in module 'lib', which the current module does not depend on" in output, output)
+        }
+    }
+
+    @Test
+    fun testAddReadsUnnamedResolved() {
+        // Like javac, a module made to read the unnamed module also reads every module in the module graph, as the unnamed module does.
+        val lib = module("lib")
+        module("main", listOf(lib), listOf("lib"), listOf("-Xadd-reads=main=ALL-UNNAMED"))
+        // Like javac, 'lib' is a module when given with -Xmodule-path, also with -classpath, or with a jar of the same module name on the
+        // classpath, so it does not export 'lib.internal' to the unnamed module.
+        val other = module("other", destination = File(tmpdir, "classpath").apply { mkdirs() }.resolve("lib.jar"))
+        for (classpath in listOf(lib, other)) {
+            module("main2", listOf(lib), listOf("lib"), listOf("-classpath", classpath.path, "-Xadd-reads=main2=ALL-UNNAMED")) { output ->
+                assertTrue("does not export package 'lib.internal'" in output, output)
+            }
+        }
+        // Like javac, kotlin.stdlib is read through ALL-UNNAMED only when it is in the module graph.
+        module("main3", additionalKotlinArguments = listOf("-Xadd-reads=main3=ALL-UNNAMED"))
+        module("main3", additionalKotlinArguments = listOf("-Xadd-reads=main3=ALL-UNNAMED", "-no-stdlib")) { output ->
+            assertTrue("standard library is not found in the module graph" in output, output)
+        }
+    }
+
+    @Test
+    fun testAddReadsNamed() {
+        // The same sources as in testNoDependencyOnNamed.
+        val lib = module("lib")
+        module("main", listOf(lib), listOf("lib"), additionalKotlinArguments = listOf("-Xadd-reads=main=lib"))
+    }
+
+    @Test
+    fun testAddReadsNamedTransitive() {
+        // Like javac, reading 'lib' also reads 'base', which 'lib' requires transitively.
+        val base = module("base")
+        val lib = module("lib", listOf(base))
+        module("main", listOf(lib, base), listOf("lib"), additionalKotlinArguments = listOf("-Xadd-reads=main=lib"))
+    }
+
+    @Test
+    fun testAddExportsNamed() {
+        val lib = module("lib")
+        val doesNotExport: (String) -> Unit = {
+            assertTrue(it.contains("does not export") && it.trimEnd().endsWith("COMPILATION_ERROR"), it)
+        }
+        module("main", listOf(lib), checkKotlinOutput = doesNotExport)
+        module(
+            "main", listOf(lib),
+            additionalKotlinArguments = listOf("-Xadd-exports=lib/foo.internal=ALL-UNNAMED"),
+            checkKotlinOutput = doesNotExport,
+        )
+        // With the PSI-based frontend, the module of the file being checked is unknown, so ALL-UNNAMED must not be applied either.
+        module(
+            "main", listOf(lib),
+            additionalKotlinArguments = listOf("-Xuse-fir-lt=false", "-Xadd-exports=lib/foo.internal=ALL-UNNAMED"),
+            checkKotlinOutput = doesNotExport,
+        )
+        module("main", listOf(lib), additionalKotlinArguments = listOf("-Xadd-exports=lib/foo.internal=main"))
+        // Like javac, targets are applied split on spaces too, even though 'other main' is reported as a bad name.
+        module(
+            "main", listOf(lib),
+            additionalKotlinArguments = listOf("-Xadd-exports=lib/foo.internal=other main"),
+            checkKotlinOutput = { assertTrue(it.contains("'other main'") && !it.contains("error:"), it) },
+        )
+    }
+
+    @Test
+    fun testAddExportsUnnamed() {
+        val lib = module("lib")
+        module("main", listOf(lib), listOf("lib"), additionalKotlinArguments = listOf("-Xadd-exports=lib/foo.internal=ALL-UNNAMED"))
+    }
+
+    @Test
+    fun testAddReadsAndExportsInvalidValues() {
+        // Values that javac rejects with "bad value for --add-reads option" or "bad value for --add-exports option".
+        module(
+            "main",
+            additionalKotlinArguments = listOf(
+                "-Xadd-reads=main", "-Xadd-reads==lib", "-Xadd-reads=main=",
+                "-Xadd-exports=lib=main", "-Xadd-exports=lib/foo=", "-Xadd-exports=lib/=main",
+            ),
+        )
+    }
+
+    @Test
+    fun testAddReadsAndExportsBadNames() {
+        // Like javac, invalid names are skipped with a warning, empty ones silently, and modules not in the module graph are reported.
+        module(
+            "main",
+            additionalKotlinArguments = listOf(
+                "-Xadd-reads=main=lib=other", "-Xadd-reads=1bad=lib", "-Xadd-reads=ALL-UNNAMED=lib", "-Xadd-reads=main=int,,lib",
+                "-Xadd-reads=main=lib other", "-Xadd-exports=lib/foo=main/bar", "-Xadd-exports=lib/foo/bar=main",
+                "-Xadd-exports=lib/foo=,int", "-Xadd-exports=1bad/foo=2bad",
+            ),
+        )
+    }
+
+    @Test
+    fun testAddExportsFromJdkModule() {
+        val doesNotExport: (String) -> Unit = {
+            assertTrue(it.contains("does not export") && it.trimEnd().endsWith("COMPILATION_ERROR"), it)
+        }
+        module("main", checkKotlinOutput = doesNotExport)
+        module("main", additionalKotlinArguments = listOf("-Xadd-exports=java.base/sun.nio.ch=ALL-UNNAMED"))
+    }
+
+    @Test
+    fun testAddReadsStdlib() {
+        // The same check as in testDependencyOnStdlib for 'namedWithoutExplicitDependency', where the read is added on the command line.
+        module("main", additionalKotlinArguments = listOf("-Xadd-reads=main=kotlin.stdlib"))
+    }
+
+    @Test
+    fun testAddReadsUnresolved() {
+        // Like javac, a module that is not in the module graph is reported and ignored, so 'main' does not read 'visible' through it.
+        val visible = module("visible")
+        val hidden = module("hidden", listOf(visible))
+        module("main", listOf(visible, hidden), listOf("visible"), additionalKotlinArguments = listOf("-Xadd-reads=main=hidden"))
+    }
+
+    @Test
+    fun testAddReadsAutomatic() {
+        // Like javac, reading one automatic module also reads the others, as in testNamedReadsAutomaticWithUnrelatedAutomatic.
+        val autoA = module("autoA")
+        val autoB = module("autoB")
+        module("main", listOf(autoA, autoB), listOf("autoA"), additionalKotlinArguments = listOf("-Xadd-reads=main=autoA"))
+    }
+
+    @Test
+    fun testAddReadsAndExportsWithJdkRelease() {
+        module(
+            "main",
+            additionalKotlinArguments = listOf(
+                "-Xjdk-release=11", "-Xadd-reads=java.base=ALL-UNNAMED", "-Xadd-exports=java.base/sun.nio.ch=ALL-UNNAMED",
+            ),
+        )
+    }
+
+    @Test
+    fun testAddReadsOnClasspathUpdate() = runWithDisposable { disposable ->
+        // Roots added later, as for a script with dependencies, are resolved without the source module, which must not be reported
+        // as missing from the module graph.
+        val configuration = KotlinTestUtils.newConfiguration().apply {
+            jdkHome = this@ModulesIntegrationTest.jdkHome
+            addJavaSourceRoot(File(testDataDirectory, "main"))
+            additionalJavaModuleReads = listOf("main=ALL-UNNAMED")
+        }
+
+        @OptIn(CoreEnvironmentDeprecation::class)
+        val environment = KotlinCoreEnvironment.createForTests(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+        environment.updateClasspath(listOf(JvmClasspathRoot(ForTestCompileRuntime.runtimeJarForTests())))
+
+        val warnings = configuration.diagnosticsCollector.diagnostics
+            .filter { it.factory == CliDiagnostics.CLASSPATH_RESOLUTION_WARNING }
+            .map { (it as KtDiagnosticWithoutSource).message }
+        assertEquals(emptyList<String>(), warnings)
     }
 }

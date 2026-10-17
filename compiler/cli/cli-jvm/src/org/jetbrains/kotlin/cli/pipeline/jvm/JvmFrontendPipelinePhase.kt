@@ -633,7 +633,11 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
 
         project.registerService(
             JavaModuleResolver::class.java,
-            CliJavaModuleResolver(classpathRootsResolver.javaModuleGraph, javaModules, javaModuleFinder.systemModules.toList(), project)
+            CliJavaModuleResolver(
+                classpathRootsResolver.javaModuleGraph, javaModules, javaModuleFinder.systemModules.toList(), project,
+                classpathRootsResolver.additionalJavaModuleReads, classpathRootsResolver.additionalJavaModuleExports,
+                classpathRootsResolver.javaModulesFromClasspath,
+            )
         )
 
         val fileFinderFactory = CliVirtualFileFinderFactory(rootsIndex, enableSearchInCtSym = jdkRelease != null, perfManager)

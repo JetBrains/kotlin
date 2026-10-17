@@ -75,7 +75,13 @@ fun CompilerConfiguration.precompiledOutputRoots(): List<JvmClasspathRootId> =
 
 data class JavaSourceRoot(override val file: File, val packagePrefix: String?) : JvmContentRoot
 
-data class JvmModulePathRoot(override val file: File) : JvmContentRoot
+/**
+ * [isFromClasspath] is `true` for a classpath root that is also added to the module path, as it is when a named module is compiled.
+ */
+data class JvmModulePathRoot @JvmOverloads constructor(
+    override val file: File,
+    val isFromClasspath: Boolean = false,
+) : JvmContentRoot
 
 fun CompilerConfiguration.addJvmClasspathRoot(file: File) {
     add(CLIConfigurationKeys.CONTENT_ROOTS, JvmClasspathRoot(file))

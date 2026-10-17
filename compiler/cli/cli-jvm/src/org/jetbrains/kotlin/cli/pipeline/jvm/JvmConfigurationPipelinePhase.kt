@@ -243,7 +243,7 @@ object JvmConfigurationUpdater : ConfigurationUpdater<K2JVMCompilerArguments>() 
         for (module in chunk) {
             for (classpathRoot in module.getClasspathRoots()) {
                 if (isJava9Module) {
-                    add(CLIConfigurationKeys.CONTENT_ROOTS, JvmModulePathRoot(File(classpathRoot)))
+                    add(CLIConfigurationKeys.CONTENT_ROOTS, JvmModulePathRoot(File(classpathRoot), isFromClasspath = true))
                 }
                 add(CLIConfigurationKeys.CONTENT_ROOTS, JvmClasspathRoot(File(classpathRoot)))
             }

@@ -1,0 +1,3 @@
+module visible {
+    exports v;
+}
