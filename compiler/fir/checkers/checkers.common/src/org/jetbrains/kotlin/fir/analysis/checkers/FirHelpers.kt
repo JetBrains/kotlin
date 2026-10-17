@@ -176,20 +176,25 @@ private fun ConeKotlinType.getValueClassTypeRecursionType(
     val valueClassRepresentation = asRegularClass.valueClassRepresentation
     val isOrWillBeFullValueClass = valueClassRepresentation is FullValueClassRepresentation ||
             valueClassRepresentation == null && asRegularClass.willBecomeKotlinValueClass(session)
-    // Recursion in Value Classes with nullable types (e.g. `value class VC(val x: VC?, ...)`) is supported only for Multi-Field Full Value Classes
-    // Generally, there is no need to disallow it for single-field value classes as well, so there is KT-86498 for that.
-    // Below we forbid recursion for all other cases
-    // Reminder: single-field value class is considered inline if it has @JvmInline annotation or if the FullValueClasses feature is disabled
+    // A nullable full value class is a reference, so recursion through it is allowed (e.g. `value class Nat(val previous: Nat?)`).
+    // An inline class is represented by its underlying type, so recursion through it is forbidden even if it is nullable,
+    // though there is no need to forbid it for a nullable one either (e.g. `inline value class Nat(val previous: Nat?)`), see KT-86498.
     val isSubjectForCheck = when {
         valueClassRepresentation is InlineClassRepresentation -> true
-        isOrWillBeFullValueClass && isNullableType() -> primaryConstructor.valueParameterSymbols.size == 1
-        else -> isOrWillBeFullValueClass
+        // Abstract and sealed value classes have no fields.
+        valueClassRepresentation is FullValueClassRepresentation && valueClassRepresentation.underlyingPropertyNamesToTypes == null -> false
+        else -> isOrWillBeFullValueClass && !isNullableType()
     }
     if (!isSubjectForCheck) return null
 
     if (!visited.add(this)) return expectedRecursionType
+    // A nullable inline class is represented by its underlying type made nullable, e.g. `I?` of `inline value class I(val a: A)` as `A?`,
+    // which is not recursive if `A` is a full value class.
+    val isNullableInlineClass = valueClassRepresentation is InlineClassRepresentation && isNullableType()
     val hasRecursionInParameters = primaryConstructor.valueParameterSymbols.any {
-        it.resolvedReturnType.getValueClassTypeRecursionType(visited, session) != null
+        val type = it.resolvedReturnType
+        val representedType = if (isNullableInlineClass) type.withNullability(nullable = true, session.typeContext) else type
+        representedType.getValueClassTypeRecursionType(visited, session) != null
     }
     return (if (hasRecursionInParameters) expectedRecursionType else null).also { visited.remove(this) }
 }

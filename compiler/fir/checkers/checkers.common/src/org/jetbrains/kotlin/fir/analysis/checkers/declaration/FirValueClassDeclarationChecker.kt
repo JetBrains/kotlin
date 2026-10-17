@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
+import org.jetbrains.kotlin.fir.scopes.platformClassMapper
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
@@ -86,6 +87,11 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
             supportsFullValueClasses = supportsFullValueClasses,
         )
 
+        // The `value` modifier of a companion object or of a local class, unless it is inner or in a REPL snippet, is reported as
+        // `WRONG_MODIFIER_TARGET`.
+        if (!kind.isWillBecomeValueClass &&
+            (declaration.isCompanion || declaration.isLocal && !declaration.isInner && declaration.isReplSnippetDeclaration != true)
+        ) return
         checkPlacement(declaration, kind)
         checkModality(declaration, kind)
         checkSupertypes(declaration, kind)
@@ -115,13 +121,17 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
         val supportsFullValueClasses: Boolean,
     ) {
         val valueModifierPrefix: String
-            get() = if (supportsFullValueClasses) "@JvmInline value" else "Value"
+            get() = when {
+                !supportsFullValueClasses -> "Value"
+                isFullValueClass -> "Final value"
+                else -> "Inline value"
+            }
 
         val finalOrInlineClassPrefix: String
             get() = when {
                 !supportsFullValueClasses -> "value"
                 isFullValueClass -> "final value"
-                else -> "@JvmInline value"
+                else -> "inline value"
             }
     }
 
@@ -155,7 +165,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
         for (supertypeEntry in declaration.superTypeRefs) {
             if (supertypeEntry is FirImplicitAnyTypeRef || supertypeEntry is FirErrorTypeRef) continue
             val supertypeSymbol = supertypeEntry.toRegularClassSymbol(context.session) ?: continue
-            if (supertypeSymbol.isInterface) continue
+            if (supertypeSymbol.isInterface || supertypeSymbol.isAny()) continue
             if (!kind.isFullValueClass) {
                 reporter.reportOn(
                     supertypeEntry.source,
@@ -204,8 +214,8 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
                 }
 
                 is FirPropertySymbol -> when {
-                    // Companion block members are static, so they aren't a part of the value class representation.
-                    innerDeclaration.isCompanionBlockMember -> return@processAllDeclarations
+                    // Companion block members and constants are static, so they aren't a part of the value class representation.
+                    innerDeclaration.isCompanionBlockMember || innerDeclaration.isConst -> return@processAllDeclarations
 
                     innerDeclaration.isRelatedToParameter(primaryConstructorParametersByName[innerDeclaration.name]) -> {
                         primaryConstructorPropertiesByName[innerDeclaration.name] = innerDeclaration
@@ -247,7 +257,8 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
         declaration.declarations.forEach { innerDeclaration ->
             if (innerDeclaration !is FirField || !innerDeclaration.isSynthetic) return@forEach
             val symbol = innerDeclaration.initializer?.toResolvedCallableSymbol(context.session)
-            if (symbol != null && symbol in primaryConstructorParameters) {
+            // A delegate to a property of a final class reuses its backing field; any other delegate needs a field of its own.
+            if (declaration.isFinal && symbol != null && symbol in primaryConstructorParameters) {
                 return@forEach
             }
             val delegatedTypeRefSource = (innerDeclaration.returnTypeRef as FirResolvedTypeRef).delegatedTypeRef?.source
@@ -390,7 +401,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
                     FirErrors.SEALED_WILL_BECOME_VALUE_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER,
                 )
 
-                !kind.isFullValueClass && parameterTypeRef.isInapplicableParameterType(context.session) -> {
+                parameterTypeRef.isInapplicableParameterType(context.session, kind.isFullValueClass, declaration.isFinal) -> {
                     reporter.reportOn(
                         parameterTypeRef.source,
                         FirErrors.VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE,
@@ -508,8 +519,9 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
         return isVararg || !primaryConstructorProperty.isVal || isOpen
     }
 
-    private fun FirTypeRef.isInapplicableParameterType(session: FirSession): Boolean =
-        coneType.fullyExpandedType(session).let { it.isUnit || it.isNothing }
+    // Unlike inline value classes, full value classes store their properties as fields, so `Unit` and `Nothing` are fine there.
+    private fun FirTypeRef.isInapplicableParameterType(session: FirSession, isFullValueClass: Boolean, isFinal: Boolean): Boolean =
+        coneType.fullyExpandedType(session).let { !isFullValueClass && (it.isUnit || it.isNothing) || isFinal && it is ConeDynamicType }
 
     private fun ConeKotlinType.isGenericArrayOfTypeParameter(): Boolean {
         if (this.typeArguments.firstOrNull() is ConeStarProjection || !isArrayOrPrimitiveArray())
@@ -535,6 +547,11 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
 
     private fun ClassId.isRecordId(): Boolean =
         relativeClassName == recordFqName && packageFqName == javaLangFqName
+
+    // `java.lang.Object` is `kotlin.Any`.
+    context(context: CheckerContext)
+    private fun FirRegularClassSymbol.isAny(): Boolean =
+        (context.session.platformClassMapper.getCorrespondingKotlinClass(classId) ?: classId) == StandardClassIds.Any
 
     context(context: CheckerContext)
     private fun FirRegularClassSymbol.isValueClassSupertype(): Boolean =

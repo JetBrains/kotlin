@@ -3,7 +3,7 @@
 class A {
     <!INLINE_CLASS_DEPRECATED, VALUE_CLASS_NOT_TOP_LEVEL!>inline<!> inner class B(val x: Int)
     fun foo() {
-        <!INLINE_CLASS_DEPRECATED, VALUE_CLASS_NOT_TOP_LEVEL, WRONG_MODIFIER_TARGET!>inline<!> class C(val x: Int)
+        <!INLINE_CLASS_DEPRECATED, WRONG_MODIFIER_TARGET!>inline<!> class C(val x: Int)
     }
     inner <!VALUE_CLASS_NOT_TOP_LEVEL!>value<!> class D(val x: Int)
 }

@@ -1,0 +1,1 @@
+/inlineClassDeprecatedWithoutExplicitSyntax.kt:6:1: warning: 'inline' modifier is deprecated. Use '@JvmInline value' instead.

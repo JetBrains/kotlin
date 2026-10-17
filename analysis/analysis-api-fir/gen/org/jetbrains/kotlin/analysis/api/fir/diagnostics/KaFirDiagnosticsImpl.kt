@@ -5670,6 +5670,7 @@ internal class InefficientEqualsOverridingInValueClassImpl(
 ) : KaAbstractFirDiagnostic<KtNamedFunction>(firDiagnostic, token), KaFirDiagnostic.InefficientEqualsOverridingInValueClass
 
 internal class InlineClassDeprecatedImpl(
+    override val replacement: String,
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.InlineClassDeprecated
@@ -6151,6 +6152,11 @@ internal class JvmInlineWithoutValueClassImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.JvmInlineWithoutValueClass
 
+internal class JvmInlineOnValueObjectImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.JvmInlineOnValueObject
+
 internal class InapplicableJvmExposeBoxedWithNameImpl(
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
@@ -6266,6 +6272,12 @@ internal class ConflictVersionAndJvmOverloadsAnnotationImpl(
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.ConflictVersionAndJvmOverloadsAnnotation
+
+internal class ValueClassExtendsValueClassCompiledAsIdentityClassImpl(
+    override val superType: KaType,
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.ValueClassExtendsValueClassCompiledAsIdentityClass
 
 internal class JavaTypeMismatchImpl(
     override val expectedType: KaType,

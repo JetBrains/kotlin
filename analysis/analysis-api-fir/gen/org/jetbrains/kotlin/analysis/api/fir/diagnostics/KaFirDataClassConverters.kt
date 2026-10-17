@@ -4040,6 +4040,7 @@ private fun KaDiagnosticConverterBuilder.addConversions86() {
     }
     add(FirErrors.INLINE_CLASS_DEPRECATED) { firDiagnostic ->
         InlineClassDeprecatedImpl(
+            firDiagnostic.a,
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -4947,6 +4948,12 @@ private fun KaDiagnosticConverterBuilder.addConversions105() {
     add(FirErrors.EXPRESSION_OF_NULLABLE_TYPE_IN_CLASS_LITERAL_LHS) { firDiagnostic ->
         ExpressionOfNullableTypeInClassLiteralLhsImpl(
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
+    add(FirJvmErrors.JVM_INLINE_ON_VALUE_OBJECT) { firDiagnostic ->
+        JvmInlineOnValueObjectImpl(
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -6612,6 +6619,13 @@ private fun KaDiagnosticConverterBuilder.addConversions138() {
     }
     add(FirErrors.MIXING_SUSPEND_AND_NON_SUSPEND_SUPERTYPES) { firDiagnostic ->
         MixingSuspendAndNonSuspendSupertypesImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
+    add(FirJvmErrors.VALUE_CLASS_EXTENDS_VALUE_CLASS_COMPILED_AS_IDENTITY_CLASS) { firDiagnostic ->
+        ValueClassExtendsValueClassCompiledAsIdentityClassImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )

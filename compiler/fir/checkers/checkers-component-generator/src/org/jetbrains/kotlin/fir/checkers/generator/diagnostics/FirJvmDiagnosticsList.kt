@@ -43,6 +43,7 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
 
         val VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION by error<PsiElement>()
         val JVM_INLINE_WITHOUT_VALUE_CLASS by error<PsiElement>()
+        val JVM_INLINE_ON_VALUE_OBJECT by error<PsiElement>()
 
         val INAPPLICABLE_JVM_EXPOSE_BOXED_WITH_NAME by error<PsiElement>()
         val USELESS_JVM_EXPOSE_BOXED by warning<PsiElement>()
@@ -86,6 +87,10 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         }
 
         val CONFLICT_VERSION_AND_JVM_OVERLOADS_ANNOTATION by warning<PsiElement>()
+
+        val VALUE_CLASS_EXTENDS_VALUE_CLASS_COMPILED_AS_IDENTITY_CLASS by warning<KtElement> {
+            parameter<ConeKotlinType>("superType")
+        }
     }
 
     val TYPES by object : DiagnosticGroup("Types") {

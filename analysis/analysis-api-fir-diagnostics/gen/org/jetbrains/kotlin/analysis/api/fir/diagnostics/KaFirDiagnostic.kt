@@ -8030,6 +8030,8 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
     public interface InlineClassDeprecated : KaFirDiagnostic<KtElement> {
         override val diagnosticClass: KClass<InlineClassDeprecated>
             get() = InlineClassDeprecated::class
+
+        public val replacement: String
     }
 
     @KaUnstableDiagnosticApi
@@ -8709,6 +8711,13 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface JvmInlineOnValueObject : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass: KClass<JvmInlineOnValueObject>
+            get() = JvmInlineOnValueObject::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface InapplicableJvmExposeBoxedWithName : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass: KClass<InapplicableJvmExposeBoxedWithName>
             get() = InapplicableJvmExposeBoxedWithName::class
@@ -8869,6 +8878,15 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
     public interface ConflictVersionAndJvmOverloadsAnnotation : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass: KClass<ConflictVersionAndJvmOverloadsAnnotation>
             get() = ConflictVersionAndJvmOverloadsAnnotation::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface ValueClassExtendsValueClassCompiledAsIdentityClass : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<ValueClassExtendsValueClassCompiledAsIdentityClass>
+            get() = ValueClassExtendsValueClassCompiledAsIdentityClass::class
+
+        public val superType: KaType
     }
 
     @KaUnstableDiagnosticApi
