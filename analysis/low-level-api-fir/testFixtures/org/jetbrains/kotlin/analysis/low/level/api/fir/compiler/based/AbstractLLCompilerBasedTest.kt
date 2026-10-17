@@ -100,6 +100,8 @@ abstract class AbstractLLCompilerBasedTest : AbstractKotlinCompilerTest() {
         }
 
         FirLowLevelCompilerBasedTestConfigurator.configureTest(this, disposable)
+        // Should run before `PsiLightTreeMetaInfoProcessor` from `configure`, which re-adds unreported diagnostics with the `LT`/`PSI` tags
+        useMetaInfoProcessors(::LLKmpMetaInfoProcessor)
         configure(this)
         defaultConfiguration(this)
         startingArtifactFactory = { ResultingArtifact.Source() }

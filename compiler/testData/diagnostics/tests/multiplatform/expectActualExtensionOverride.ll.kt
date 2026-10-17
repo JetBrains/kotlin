@@ -13,9 +13,9 @@ interface ExtensionBase {
     val Int.a : String
 }
 
-expect class A : Base
+expect <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class A<!> : Base
 
-expect class B : ExtensionBase
+expect <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class B<!> : ExtensionBase
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt
