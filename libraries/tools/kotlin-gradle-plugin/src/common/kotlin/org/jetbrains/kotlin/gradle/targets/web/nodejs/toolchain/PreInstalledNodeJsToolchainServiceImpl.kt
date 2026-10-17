@@ -104,20 +104,22 @@ internal abstract class PreInstalledNodeJsToolchainServiceImpl @Inject internal 
             gradle: Gradle,
             configureBuildServiceParameters: (PreInstalledNodeJsToolchainService.Parameters) -> Unit,
         ): Provider<PreInstalledNodeJsToolchainServiceImpl> {
-            return gradle.sharedServices.registerIfAbsent(
+            return registerIfAbsent(gradle.rootProject, configureBuildServiceParameters)
+        }
+
+        internal fun registerIfAbsent(
+            project: Project,
+            configureBuildServiceParameters: (PreInstalledNodeJsToolchainService.Parameters) -> Unit = {},
+        ): Provider<PreInstalledNodeJsToolchainServiceImpl> {
+            return project.gradle.sharedServices.registerIfAbsent(
                 nodeJsServiceName,
                 PreInstalledNodeJsToolchainServiceImpl::class.java,
             ) { spec ->
                 spec.parameters.nodeJsExecutable.convention("node")
                 configureBuildServiceParameters(spec.parameters)
-            }
-        }
-
-        internal fun registerIfAbsent(project: Project): Provider<PreInstalledNodeJsToolchainServiceImpl> {
-            return registerIfAbsent(
-                project.gradle,
-            ) { parameters ->
-                parameters.nodeJsExecutable.set(project.kotlinPropertiesProvider.nodeJsToolchainPreinstalledExecutablePath.orElse("node"))
+                if (project.kotlinPropertiesProvider.nodeJsToolchainPreinstalledExecutablePath.isPresent) {
+                    spec.parameters.nodeJsExecutable.set(project.kotlinPropertiesProvider.nodeJsToolchainPreinstalledExecutablePath)
+                }
             }
         }
     }
