@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.session.AbstractSessionInvalidationTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.AbstractResolveToFirSymbolTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.AbstractFirOutOfContentRootContextCollectionTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.AbstractFirSourceLikeContextCollectionTest
@@ -273,14 +272,6 @@ fun main(args: Array<String>) {
 
             testClass<AbstractCodeFragmentContextModificationLLFirSessionInvalidationTest> {
                 model("sessions/sessionInvalidation", excludeDirsRecursively = AbstractSessionInvalidationTest.TEST_OUTPUT_DIRECTORY_NAMES)
-            }
-
-            testClass<AbstractSourceLikeResolveCandidatesFirTreeConsistencyTest> {
-                model("components/resolver/singleByPsi", pattern = TestGeneratorUtil.KT_OR_KTS)
-            }
-
-            testClass<AbstractSourceLikeResolveCandidatesByFileFirTreeConsistencyTest> {
-                model("components/resolver/allByPsi", pattern = TestGeneratorUtil.KT_OR_KTS)
             }
         }
     }

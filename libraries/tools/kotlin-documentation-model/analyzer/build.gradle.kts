@@ -67,7 +67,6 @@ dependencies {
     runtimeOnly(project(":analysis:low-level-api-fir"))
     runtimeOnly(project(":analysis:symbol-light-classes"))
     runtimeOnly(project(":analysis:analysis-api-standalone:analysis-api-standalone-fir"))
-    runtimeOnly(project(":analysis:analysis-api-impl-base"))
 
     implementation(project(":compiler:cli-base"))
     implementation(project(":core:language.targets.jvm"))

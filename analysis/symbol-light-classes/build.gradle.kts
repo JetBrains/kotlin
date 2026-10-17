@@ -26,7 +26,6 @@ dependencies {
     testFixturesImplementation(project(":analysis:decompiled:light-classes-for-decompiled"))
     testFixturesApi(project(":analysis:decompiled:decompiler"))
     testFixturesApi(testFixtures(project(":analysis:analysis-test-framework")))
-    testFixturesApi(testFixtures(project(":analysis:analysis-api-impl-base")))
     testFixturesApi(testFixtures(project(":analysis:analysis-api-fir")))
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
     testFixturesApi(testFixtures(project(":analysis:low-level-api-fir")))

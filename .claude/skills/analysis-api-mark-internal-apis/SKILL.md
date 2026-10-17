@@ -30,7 +30,6 @@ codebase test are listed here:
 | Choice                        | Module path (project-relative)                                 | Gradle codebase test task                                                    |
 |-------------------------------|----------------------------------------------------------------|------------------------------------------------------------------------------|
 | `analysis-api-fir`            | `analysis/analysis-api-fir`                                    | `:analysis:analysis-api-fir:testCodebase`                                    |
-| `analysis-api-impl-base`      | `analysis/analysis-api-impl-base`                              | `:analysis:analysis-api-impl-base:testCodebase`                              |
 | `analysis-api-standalone-fir` | `analysis/analysis-api-standalone/analysis-api-standalone-fir` | `:analysis:analysis-api-standalone:analysis-api-standalone-fir:testCodebase` |
 | `low-level-api-fir`           | `analysis/low-level-api-fir`                                   | `:analysis:low-level-api-fir:testCodebase`                                   |
 
@@ -49,7 +48,7 @@ Throughout this skill, `<module>` and `<gradle-task>` refer to the user's select
 The codebase test owns the **initial** choice of marker for each unmarked declaration. The test's per-module logic lives in
 the `suggestedAnnotation` overrides:
 
-- `analysis-api-fir`, `analysis-api-impl-base`, `analysis-api-standalone-fir` → always `@KaImplementationDetail`.
+- `analysis-api-fir`, `analysis-api-standalone-fir` → always `@KaImplementationDetail`.
   `analysis-api-standalone-fir` additionally exempts the `org.jetbrains.kotlin.idea.references` package through an
   `isExempt` override — that package is a public surface so its declarations are never flagged and never reach this skill.
 - `low-level-api-fir` → `@KaImplementationDetail` for declarations in `org.jetbrains.kotlin.analysis.low.level.api.fir.api`

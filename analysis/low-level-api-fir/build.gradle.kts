@@ -65,7 +65,6 @@ dependencies {
     testRuntimeOnly(toolsJar())
     testFixturesApi(testFixtures(project(":compiler:tests-common")))
     testFixturesApi(testFixtures(project(":analysis:analysis-test-framework")))
-    testFixturesApi(testFixtures(project(":analysis:analysis-api-impl-base")))
     testFixturesApi(testFixtures(project(":compiler:fir:raw-fir:psi2fir")))
     testFixturesApi(kotlinTest("junit5"))
     testFixturesApi(platform(libs.junit.bom))
@@ -129,7 +128,6 @@ projectTests {
 
     val analysisApiProject = project(":analysis:analysis-api").isolated
     testData(analysisApiProject, "testData/components/compilerFacility/compilation/codeFragments/capturing")
-    testData(analysisApiProject, "testData/components/resolver")
     testData(analysisApiProject, "testData/sessions/sessionInvalidation")
 
     withJvmStdlibAndReflect()
