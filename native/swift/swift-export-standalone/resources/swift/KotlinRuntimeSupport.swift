@@ -289,7 +289,66 @@ public extension CollectionIterator {
 
 public protocol Collection<Element> : Swift.Sequence { }
 
-public protocol List<Element> : Collection, Swift.RandomAccessCollection where Index == Int32 {
+/// A `SubSequence` of a `List`.
+///
+/// # Conformance to MutableCollection
+/// A `ListSubSequence` always conforms to `MutableCollection`, however the behaviour of mutating actions depends on the `List` type:
+/// - `MutableList`: mutations are reflected in the `MutableList`
+/// - `List`: mutations are **not** reflected in the `List`, but only in this `SubSequence`
+public struct ListSubSequence<Element> : Swift.RandomAccessCollection, Swift.MutableCollection {
+    public typealias Index = Int32
+    public typealias SubSequence = ListSubSequence<Element>
+
+    internal var subList: KotlinRuntime.KotlinBase
+    private let conformsTo: ((AnyClass?) -> Bool)
+
+    public var startIndex: Int32
+    public var endIndex: Int32
+
+    internal init(
+        subList: KotlinRuntime.KotlinBase,
+        conformsTo: @escaping ((AnyClass?) -> Bool),
+        bounds: Range<Int32>
+    ) {
+        self.subList = subList
+        self.conformsTo = conformsTo
+        self.startIndex = bounds.lowerBound
+        self.endIndex = bounds.upperBound
+    }
+
+    public subscript(position: Index) -> Element {
+        get {
+            let index = position - startIndex
+            return _kotlin_swift_List_get(subList.__externalRCRef(), index).flatMap {
+                KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: $0, conformsTo: conformsTo)
+            } as! Element
+        }
+        mutating set {
+            let index = position - startIndex
+            let element = newValue as! (any KotlinRuntimeSupport._KotlinBridgeable)?
+            let externalRCRef = _kotlin_swift_SubList_set(subList.__externalRCRef(), index, element?.__externalRCRef())
+            self.subList = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: externalRCRef, conformsTo: nil)
+        }
+    }
+
+    public subscript(bounds: Range<Int32>) -> ListSubSequence<Element> {
+        get {
+            let fromIndex = bounds.lowerBound - startIndex
+            let toIndex = bounds.upperBound - startIndex
+            let externalRCRef = _kotlin_swift_List_subList(subList.__externalRCRef(), fromIndex, toIndex)
+            let subList = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: externalRCRef, conformsTo: nil)
+            return ListSubSequence(subList: subList, conformsTo: conformsTo, bounds: bounds)
+        }
+        mutating set {
+            precondition(newValue.count == (bounds.upperBound - bounds.lowerBound))
+            let index = bounds.lowerBound - startIndex
+            let externalRCRef = _kotlin_swift_SubList_setAll(subList.__externalRCRef(), index, newValue.subList.__externalRCRef())
+            self.subList = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: externalRCRef, conformsTo: nil)
+        }
+    }
+}
+
+public protocol List<Element> : Collection, Swift.RandomAccessCollection where Index == Int32, SubSequence == ListSubSequence<Element> {
     var size: Int32 { get }
     func _get(index: Int32) -> Element
 }
@@ -364,6 +423,12 @@ public extension TypedList {
             KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: $0, conformsTo: __conformsTo)
         } as! Element
     }
+
+    subscript(bounds: Range<Int32>) -> ListSubSequence<Element> {
+        let externalRCRef = _kotlin_swift_List_subList(__rawCollection.__externalRCRef(), bounds.lowerBound, bounds.upperBound)
+        let subList = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: externalRCRef, conformsTo: nil)
+        return ListSubSequence(subList: subList, conformsTo: __conformsTo, bounds: bounds)
+    }
 }
 
 public protocol TypedMutableList<Element> : TypedList, MutableList { }
@@ -375,5 +440,17 @@ public extension TypedMutableList {
         return result.flatMap {
             KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: $0, conformsTo: __conformsTo)
         } as! Element
+    }
+
+    subscript(bounds: Range<Int32>) -> ListSubSequence<Element> {
+        get {
+            let externalRCRef = _kotlin_swift_List_subList(__rawCollection.__externalRCRef(), bounds.lowerBound, bounds.upperBound)
+            let subList = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: externalRCRef, conformsTo: nil)
+            return ListSubSequence(subList: subList, conformsTo: __conformsTo, bounds: bounds)
+        }
+        nonmutating set {
+            precondition(newValue.count == (bounds.upperBound - bounds.lowerBound))
+            _kotlin_swift_SubList_setAll(__rawCollection.__externalRCRef(), bounds.lowerBound, newValue.subList.__externalRCRef())
+        }
     }
 }
