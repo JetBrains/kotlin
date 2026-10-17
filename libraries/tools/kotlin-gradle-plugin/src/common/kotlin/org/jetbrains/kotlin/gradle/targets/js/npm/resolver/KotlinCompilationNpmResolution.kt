@@ -120,7 +120,7 @@ class KotlinCompilationNpmResolution(
             .getCompilationNpmRequirements(projectPath, compilationDisambiguatedName)
 
         val otherNpmDependencies = toolsNpmDependencies + transitiveNpmDependencies
-        val allNpmDependencies = disambiguateDependencies(externalNpmDependencies, otherNpmDependencies, logger)
+        val allNpmDependencies = disambiguateDependencies(externalNpmDependencies, otherNpmDependencies, logger, compilationDisambiguatedName)
 
         return PreparedKotlinCompilationNpmResolution(
             npmResolutionManager.packagesDir.map { it.dir(npmProjectName) },
@@ -150,31 +150,32 @@ class KotlinCompilationNpmResolution(
 
         packageJson.saveTo(resolution.npmProjectDir.getFile().resolve(NpmProject.PACKAGE_JSON))
     }
+}
 
-    private fun disambiguateDependencies(
-        direct: Collection<NpmDependencyDeclaration>,
-        others: Collection<NpmDependencyDeclaration>,
-        logger: Logger,
-    ): Collection<NpmDependencyDeclaration> {
-        val unique = others.groupBy(NpmDependencyDeclaration::name)
-            .filterKeys { k -> direct.none { it.name == k } }
-            .mapNotNull { (_, dependencies) ->
-                dependencies.maxByOrNull { dep ->
-                    SemVer.from(dep.version, true)
-                }?.also { selected ->
-                    if (dependencies.size > 1) {
-                        logger.warn(
-                            """
-                            Transitive npm dependency version clash for compilation "$compilationDisambiguatedName"
-                                Candidates:
-                            ${dependencies.joinToString("\n") { "\t\t" + it.name + "@" + it.version }}
-                                Selected:
-                                    ${selected.name}@${selected.version}
-                            """.trimIndent()
-                        )
-                    }
+internal fun disambiguateDependencies(
+    direct: Collection<NpmDependencyDeclaration>,
+    others: Collection<NpmDependencyDeclaration>,
+    logger: Logger,
+    compilationDisambiguatedName: String,
+): Collection<NpmDependencyDeclaration> {
+    val unique = others.groupBy(NpmDependencyDeclaration::name)
+        .filterKeys { k -> direct.none { it.name == k } }
+        .mapNotNull { (_, dependencies) ->
+            dependencies.maxByOrNull { dep ->
+                SemVer.from(dep.version, true)
+            }?.also { selected ->
+                if (dependencies.size > 1) {
+                    logger.warn(
+                        """
+                        Transitive npm dependency version clash for compilation "$compilationDisambiguatedName"
+                            Candidates:
+                        ${dependencies.joinToString("\n") { "\t\t" + it.name + "@" + it.version }}
+                            Selected:
+                                ${selected.name}@${selected.version}
+                        """.trimIndent()
+                    )
                 }
             }
-        return direct + unique
-    }
+        }
+    return direct + unique
 }

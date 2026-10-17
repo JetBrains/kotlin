@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.targets.web.npm.KotlinSharedNpmProjectPlugin
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
@@ -96,6 +98,126 @@ class ProjectIsolationIT : KGPBaseTest() {
             )
 
             build("assembleDebug")
+        }
+    }
+
+    @DisplayName("Shared npm project should be compatible with project isolation")
+    @JsGradlePluginTests
+    @GradleTest
+    @OptIn(ExperimentalKotlinGradlePluginApi::class)
+    fun testProjectIsolationSharedNpmProject(gradleVersion: GradleVersion) {
+        project("emptyKts", gradleVersion) {
+            gradleProperties.appendText(
+                """
+                |
+                |kotlin.internal.npm.dependencyCollectionMode=ISOLATED_PROJECTS
+                """.trimMargin()
+            )
+            plugins {
+                kotlin("multiplatform").apply(false)
+            }
+            buildScriptInjection {
+                project.plugins.apply(KotlinSharedNpmProjectPlugin::class.java)
+                project.dependencies.add("kotlinNpmSharedDependencies", project.dependencies.project(mapOf("path" to ":lib-a")))
+                project.dependencies.add("kotlinNpmSharedDependencies", project.dependencies.project(mapOf("path" to ":lib-b")))
+            }
+
+            includeOtherProjectAsSubmodule("emptyKts", newSubmoduleName = "lib-a") {
+                buildScriptInjection {
+                    project.plugins.apply("org.jetbrains.kotlin.multiplatform")
+                    kotlinMultiplatform.apply {
+                        js { nodejs() }
+                        sourceSets.getByName("jsMain").dependencies {
+                            npm("is-even", "1.0.0")
+                        }
+                    }
+                }
+            }
+
+            includeOtherProjectAsSubmodule("emptyKts", newSubmoduleName = "lib-b") {
+                buildScriptInjection {
+                    project.plugins.apply("org.jetbrains.kotlin.multiplatform")
+                    kotlinMultiplatform.apply {
+                        js { nodejs() }
+                        sourceSets.getByName("jsMain").dependencies {
+                            implementation(project(":lib-a"))
+                        }
+                    }
+                }
+            }
+
+            build("kotlinSetupSharedNpmProject") {
+                assertTasksExecuted(
+                    ":lib-a:kotlinSharedPackageJson",
+                    ":lib-b:kotlinSharedPackageJson",
+                    ":kotlinSetupSharedNpmProject",
+                )
+                assertFileExists(projectPath.resolve("build/js/shared-npm-project/package.json"))
+            }
+
+            build("kotlinSetupSharedNpmProject") {
+                assertConfigurationCacheReused()
+            }
+        }
+    }
+
+    @DisplayName("Shared WasmJs npm project should be compatible with project isolation")
+    @JsGradlePluginTests
+    @GradleTest
+    @OptIn(ExperimentalKotlinGradlePluginApi::class)
+    fun testProjectIsolationWasmSharedNpmProject(gradleVersion: GradleVersion) {
+        project("emptyKts", gradleVersion) {
+            gradleProperties.appendText(
+                """
+                |
+                |kotlin.internal.npm.dependencyCollectionMode=ISOLATED_PROJECTS
+                """.trimMargin()
+            )
+            plugins {
+                kotlin("multiplatform").apply(false)
+            }
+            buildScriptInjection {
+                project.plugins.apply(KotlinSharedNpmProjectPlugin::class.java)
+                project.dependencies.add("kotlinWasmNpmSharedDependencies", project.dependencies.project(mapOf("path" to ":lib-a")))
+                project.dependencies.add("kotlinWasmNpmSharedDependencies", project.dependencies.project(mapOf("path" to ":lib-b")))
+            }
+
+            includeOtherProjectAsSubmodule("emptyKts", newSubmoduleName = "lib-a") {
+                buildScriptInjection {
+                    project.plugins.apply("org.jetbrains.kotlin.multiplatform")
+                    kotlinMultiplatform.apply {
+                        wasmJs { nodejs() }
+                        sourceSets.getByName("wasmJsMain").dependencies {
+                            npm("is-even", "1.0.0")
+                        }
+                    }
+                }
+            }
+
+            includeOtherProjectAsSubmodule("emptyKts", newSubmoduleName = "lib-b") {
+                buildScriptInjection {
+                    project.plugins.apply("org.jetbrains.kotlin.multiplatform")
+                    kotlinMultiplatform.apply {
+                        wasmJs { nodejs() }
+                        sourceSets.getByName("wasmJsMain").dependencies {
+                            implementation(project(":lib-a"))
+                        }
+                    }
+                }
+            }
+
+            build("kotlinWasmSetupSharedNpmProject") {
+                assertTasksExecuted(
+                    ":lib-a:kotlinWasmSharedPackageJson",
+                    ":lib-b:kotlinWasmSharedPackageJson",
+                    ":kotlinWasmSetupSharedNpmProject",
+                )
+                assertFileExists(projectPath.resolve("build/wasm/shared-npm-project/package.json"))
+            }
+
+            build("kotlinWasmSetupSharedNpmProject") {
+                assertConfigurationCacheReused()
+            }
         }
     }
 }
