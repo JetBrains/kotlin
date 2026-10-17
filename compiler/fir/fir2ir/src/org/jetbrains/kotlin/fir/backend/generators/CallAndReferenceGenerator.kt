@@ -978,7 +978,7 @@ class CallAndReferenceGenerator(
             irAnnotation
                 .applyReceiversAndArguments(annotationCall, declarationSiteSymbol = firConstructorSymbol, explicitReceiverExpression = null)
                 .applyTypeArgumentsWithTypealiasConstructorRemapping(firConstructorSymbol?.fir, annotationCall?.typeArguments.orEmpty())
-                .filterOutErrorArgsInAnnotation()
+                .filterOutErrorArgsInAnnotation(annotation !is FirAnnotationCall)
         }
     }
 
@@ -1010,8 +1010,8 @@ class CallAndReferenceGenerator(
         }
     }
 
-    private fun IrExpression.filterOutErrorArgsInAnnotation(): IrExpression {
-        if (!configuration.skipBodies || this !is IrAnnotation) return this
+    private fun IrExpression.filterOutErrorArgsInAnnotation(isJavaOrBinaryAnnotation: Boolean): IrExpression {
+        if ((!configuration.skipBodies && !isJavaOrBinaryAnnotation) || this !is IrAnnotation) return this
 
         fun IrElement?.cleanUp(): Boolean {
             return when (this) {
@@ -1033,7 +1033,7 @@ class CallAndReferenceGenerator(
             }
         }
 
-        // This is needed for kapt. We must ignore error nodes in annotations completely.
+        // For Kapt and annotations from Java sources or binaries, ignore error nodes completely.
         this.cleanUp()
         return this
     }

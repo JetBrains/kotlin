@@ -94,8 +94,12 @@ class FirJavaElementFinder(
 
         val fqName = FqName(qualifiedName)
 
-        for (topLevelClass in generateSequence(fqName) { it.parentOrNull() }) {
-            if (topLevelClass.isRoot) break
+        val possibleTopLevelClasses = generateSequence(fqName) { it.parentOrNull() }
+            .filterNot { it.isRoot }
+            .toList()
+            .asReversed()
+
+        for (topLevelClass in possibleTopLevelClasses) {
             val classId = ClassId.topLevel(topLevelClass)
 
             // 1. Find regular class
@@ -105,9 +109,13 @@ class FirJavaElementFinder(
             val topLevelResult = buildStub(firClass, fileStub).psi
             val tail = fqName.tail(topLevelClass).pathSegments()
 
-            return tail.fold(topLevelResult) { psiClass, segment ->
-                psiClass.findInnerClassByName(segment.identifier, false) ?: return null
+            var result: PsiClass? = topLevelResult
+            for (segment in tail) {
+                result = result?.findInnerClassByName(segment.identifier, false)
+                if (result == null) break
             }
+
+            result?.let { return it }
         }
 
         // 2. We could be asked to find class of kind "...MainKt" that was created from file "main.kt"
