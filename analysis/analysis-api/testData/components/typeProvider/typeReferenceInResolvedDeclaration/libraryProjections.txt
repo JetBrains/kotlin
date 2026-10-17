@@ -1,0 +1,12 @@
+Compiled: true
+Decompiled text loaded by type computation: false
+
+public fun <T> foo(p: kotlin.collections.Map<*, kotlin.collections.List<T>>, q: kotlin.Comparable<in T>, r: kotlin.Array<out T>): kotlin.Unit { /* compiled code */ }
+//                    ^Map<*, List<T>>(use)
+//                                              ^List<T>(use)
+//                                                                      ^T(use)
+//                                                                              ^Comparable<in T>(use)
+//                                                                                                   ^T(use)
+//                                                                                                          ^Array<out T>(use)
+//                                                                                                                           ^T(use)
+//                                                                                                                                ^Unit(use)

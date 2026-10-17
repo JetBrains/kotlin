@@ -5,10 +5,10 @@ Decompiled text loaded by type computation: false
  ^Anno(use)
 public val <T> kotlin.collections.List<T>.bar: kotlin.collections.Map<kotlin.Int, T> /* compiled code */
 //             ^List<T>(use)
-//                                     ^T(decl)
+//                                     ^T(use)
 //                                             ^Map<Int, T>(use)
 //                                                                    ^Int(use)
-//                                                                                ^T(decl)
+//                                                                                ^T(use)
     @lib.Anno
 //   ^Anno(use)
     public final get() { /* compiled code */ }

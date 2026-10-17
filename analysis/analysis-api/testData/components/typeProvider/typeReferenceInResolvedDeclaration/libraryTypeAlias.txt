@@ -1,0 +1,9 @@
+Compiled: true
+Decompiled text loaded by type computation: false
+
+public typealias MapList<T> = kotlin.collections.List<kotlin.collections.Map<T, kotlin.collections.List<T>>>
+//                            ^List<Map<T, List<T>>>(use)
+//                                                    ^Map<T, List<T>>(use)
+//                                                                           ^T(use)
+//                                                                              ^List<T>(use)
+//                                                                                                      ^T(use)

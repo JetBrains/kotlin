@@ -1,0 +1,8 @@
+Compiled: true
+Decompiled text loaded by type computation: false
+
+public fun <T> wrap(list: kotlin.collections.List<T>): kotlin.collections.MutableList<T /* platform type */> /* platform type */ { /* compiled code */ }
+//                        ^List<T>(use)
+//                                                ^T(use)
+//                                                     ^(Mutable)List<T!>!
+//                                                                                    ^T!

@@ -1,0 +1,13 @@
+Compiled: true
+Decompiled text loaded by type computation: false
+
+public fun <T> foo(p: kotlin.collections.Map<kotlin.String, T> /* from: lib.StringMap<T> */, q: kotlin.collections.List<kotlin.collections.Map<kotlin.String, kotlin.collections.List<T>> /* from: lib.StringMap<kotlin.collections.List<T>> */>): kotlin.Unit { /* compiled code */ }
+//                    ^StringMap<T>(use)
+//                                           ^String(use)
+//                                                          ^T(use)
+//                                                                                              ^List<StringMap<List<T>>>(use)
+//                                                                                                                      ^StringMap<List<T>>(use)
+//                                                                                                                                             ^String(use)
+//                                                                                                                                                            ^List<T>(use)
+//                                                                                                                                                                                    ^T(use)
+//                                                                                                                                                                                                                                                 ^Unit(use)

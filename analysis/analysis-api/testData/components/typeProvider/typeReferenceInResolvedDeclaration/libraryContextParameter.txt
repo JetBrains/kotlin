@@ -1,0 +1,9 @@
+Compiled: true
+Decompiled text loaded by type computation: false
+
+context(c: kotlin.collections.List<T>)
+//         ^List<T>(use)
+//                                 ^T(use)
+public fun <T> T.foo(): T { /* compiled code */ }
+//             ^T(use)
+//                      ^T(use)
