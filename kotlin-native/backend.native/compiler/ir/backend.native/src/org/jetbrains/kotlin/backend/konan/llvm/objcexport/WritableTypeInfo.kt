@@ -21,11 +21,17 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.kotlinFqName
 
-internal sealed interface WritableTypeInfoPointer : ConstPointer
+internal sealed interface WritableTypeInfo {
+    val pointer: ConstPointer
+}
 
-private class FixedWritableTypeInfo(global: StaticData.Global) : WritableTypeInfoPointer, ConstPointer by global.pointer
+private class FixedWritableTypeInfo(global: StaticData.Global) : WritableTypeInfo {
+    override val pointer: ConstPointer by global::pointer
+}
 
-private class OverridableWritableTypeInfo(private val global: StaticData.Global) : WritableTypeInfoPointer, ConstPointer by global.pointer {
+private class OverridableWritableTypeInfo(private val global: StaticData.Global) : WritableTypeInfo {
+    override val pointer: ConstPointer by global::pointer
+
     private var replaced = false
 
     fun tryReplaceWith(value: ConstValue): Boolean {
@@ -39,10 +45,16 @@ private class OverridableWritableTypeInfo(private val global: StaticData.Global)
     }
 }
 
+private class ExternalWritableTypeInfo(val name: String) : WritableTypeInfo {
+    override val pointer: ConstPointer
+        get() = error("ExternalWritableTypeInfo cannot be read, only overridden")
+}
+
 /**
  * Generate [WritableTypeInfoPointer] for [irClass] synthetic interface.
  */
-internal fun ContextUtils.generateWritableTypeInfoForSyntheticInterface(irClass: IrClass): WritableTypeInfoPointer? = runtime.writableTypeInfoType?.let { type ->
+internal fun ContextUtils.generateWritableTypeInfoForSyntheticInterface(irClass: IrClass): WritableTypeInfo? = runtime.writableTypeInfoType?.let { type ->
+    require(!isExternal(irClass))
     require(irClass.isInterface)
 
     FixedWritableTypeInfo(staticData.createGlobal(type, "").apply {
@@ -54,8 +66,10 @@ internal fun ContextUtils.generateWritableTypeInfoForSyntheticInterface(irClass:
  * Generate [WritableTypeInfoPointer] for [irClass] class.
  * If [irClass] is exported, its [WritableTypeInfoPointer] can later be overridden once.
  */
-internal fun ContextUtils.generateWritableTypeInfoForClass(irClass: IrClass): WritableTypeInfoPointer? = runtime.writableTypeInfoType?.let { type ->
-    if (!irClass.isExported) {
+internal fun ContextUtils.generateWritableTypeInfoForClass(irClass: IrClass): WritableTypeInfo? = runtime.writableTypeInfoType?.let { type ->
+    if (isExternal(irClass)) {
+        ExternalWritableTypeInfo(irClass.writableTypeInfoSymbolName)
+    } else if (!irClass.isExported) {
         // If the class not exported, its WritableTypeInfo cannot be replaced
         FixedWritableTypeInfo(staticData.createGlobal(type, "").apply {
             setZeroInitializer()
@@ -109,21 +123,21 @@ private fun CodeGenerator.setWritableTypeInfo(
         irClass: IrClass,
         writableTypeInfoValue: Struct,
 ) {
-    if (isExternal(irClass)) {
+    val writeableTypeInfoGlobal = generationState.llvmDeclarations.forClass(irClass).writableTypeInfo
+    if (writeableTypeInfoGlobal is ExternalWritableTypeInfo) {
         // Note: this global replaces the external one with common linkage.
         replaceExternalWeakOrCommonGlobal(
-                irClass.writableTypeInfoSymbolName,
+                writeableTypeInfoGlobal.name,
                 writableTypeInfoValue,
                 irClass
         )
-    } else {
-        val writeableTypeInfoGlobal = generationState.llvmDeclarations.forClass(irClass).writableTypeInfoGlobal
-        if (writeableTypeInfoGlobal !is OverridableWritableTypeInfo) {
-            throw WritableTypeInfoOverrideError(irClass, WritableTypeInfoOverrideError.Reason.NON_OVERRIDABLE)
-        }
-        if (!writeableTypeInfoGlobal.tryReplaceWith(writableTypeInfoValue)) {
-            throw WritableTypeInfoOverrideError(irClass, WritableTypeInfoOverrideError.Reason.ALREADY_OVERRIDDEN)
-        }
+        return
+    }
+    if (writeableTypeInfoGlobal !is OverridableWritableTypeInfo) {
+        throw WritableTypeInfoOverrideError(irClass, WritableTypeInfoOverrideError.Reason.NON_OVERRIDABLE)
+    }
+    if (!writeableTypeInfoGlobal.tryReplaceWith(writableTypeInfoValue)) {
+        throw WritableTypeInfoOverrideError(irClass, WritableTypeInfoOverrideError.Reason.ALREADY_OVERRIDDEN)
     }
 }
 
