@@ -28,6 +28,18 @@ public class SourceLikeFileBasedKotlinDeclarationProviderTestGenerated extends A
   }
 
   @Test
+  @TestMetadata("companionBlocks.kt")
+  public void testCompanionBlocks() {
+    run("companionBlocks.kt");
+  }
+
+  @Test
+  @TestMetadata("companionBlocksScript.kts")
+  public void testCompanionBlocksScript() {
+    run("companionBlocksScript.kts");
+  }
+
+  @Test
   @TestMetadata("defaultPackage.kt")
   public void testDefaultPackage() {
     run("defaultPackage.kt");
@@ -37,6 +49,30 @@ public class SourceLikeFileBasedKotlinDeclarationProviderTestGenerated extends A
   @TestMetadata("local.kt")
   public void testLocal() {
     run("local.kt");
+  }
+
+  @Test
+  @TestMetadata("namelessCallables.kt")
+  public void testNamelessCallables() {
+    run("namelessCallables.kt");
+  }
+
+  @Test
+  @TestMetadata("namelessCallablesScript.kts")
+  public void testNamelessCallablesScript() {
+    run("namelessCallablesScript.kts");
+  }
+
+  @Test
+  @TestMetadata("namelessClasses.kt")
+  public void testNamelessClasses() {
+    run("namelessClasses.kt");
+  }
+
+  @Test
+  @TestMetadata("namelessClassesScript.kts")
+  public void testNamelessClassesScript() {
+    run("namelessClassesScript.kts");
   }
 
   @Test

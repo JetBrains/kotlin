@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.analysis.api.platform.declarations
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.yieldIfNotNull
 
 @KaPlatformInterface
@@ -35,6 +35,7 @@ public class KotlinFileBasedDeclarationProvider(public val kotlinFile: KtFile) :
         return getDeclarationsByClassId(classId).filterIsInstance<KtClassOrObject>().toList()
     }
 
+    @OptIn(KtExperimentalApi::class)
     private fun getDeclarationsByClassId(classId: ClassId): Sequence<KtNamedDeclaration> {
         @OptIn(ClassIdBasedLocality::class)
         if (classId.isLocal) {
@@ -45,7 +46,7 @@ public class KotlinFileBasedDeclarationProvider(public val kotlinFile: KtFile) :
             return emptySequence()
         }
 
-        data class Task(val chunks: List<Name>, val element: KtElement)
+        data class Task(val chunks: List<Name>, val element: PsiElement)
 
         return sequence {
             val tasks = ArrayDeque<Task>()
@@ -61,7 +62,17 @@ public class KotlinFileBasedDeclarationProvider(public val kotlinFile: KtFile) :
                 val (chunks, element) = tasks.removeFirst()
                 assert(chunks.isNotEmpty())
 
-                if (element !is KtNamedDeclaration || element.nameAsName != chunks[0]) {
+                // A `companion { }` block doesn't contribute to the class IDs of its declarations
+                if (element is KtCompanionBlock) {
+                    for (child in element.body.declarationsAndCompanionBlocks) {
+                        tasks.addLast(Task(chunks, child))
+                    }
+
+                    continue
+                }
+
+                // Class IDs of nameless declarations use the safe name
+                if (element !is KtNamedDeclaration || element.nameAsSafeName != chunks[0]) {
                     continue
                 }
 
@@ -72,7 +83,8 @@ public class KotlinFileBasedDeclarationProvider(public val kotlinFile: KtFile) :
 
                 if (element is KtDeclarationContainer) {
                     val newChunks = chunks.subList(1, chunks.size)
-                    for (child in element.declarations) {
+                    val children = (element as? KtClassOrObject)?.body?.declarationsAndCompanionBlocks ?: element.declarations
+                    for (child in children) {
                         tasks.addLast(Task(newChunks, child))
                     }
                 }
@@ -149,7 +161,8 @@ public class KotlinFileBasedDeclarationProvider(public val kotlinFile: KtFile) :
 
         return buildList {
             for (declaration in topLevelDeclarations) {
-                if (declaration is T && declaration.nameAsName == name) {
+                // IDs of nameless declarations use the safe name
+                if (declaration is T && declaration.nameAsSafeName == name) {
                     add(declaration)
                 }
             }
@@ -163,8 +176,9 @@ public class KotlinFileBasedDeclarationProvider(public val kotlinFile: KtFile) :
 
         return buildSet {
             for (declaration in topLevelDeclarations) {
+                // IDs of nameless declarations use the safe name
                 if (declaration is KtNamedDeclaration && filter(declaration)) {
-                    addIfNotNull(declaration.nameAsName)
+                    add(declaration.nameAsSafeName)
                 }
             }
         }

@@ -113,7 +113,8 @@ internal class KotlinStandaloneDeclarationIndexImpl : KotlinStandaloneDeclaratio
         callable: T,
         callablesByCallableId: MutableMap<CallableId, MutableSet<T>>,
     ) {
-        val name = callable.nameAsName ?: return
+        // IDs of nameless declarations use the safe name
+        val name = callable.nameAsSafeName
 
         val packageFqName = callable.containingKtFile.packageFqName
         val callableId = CallableId(packageFqName, name)

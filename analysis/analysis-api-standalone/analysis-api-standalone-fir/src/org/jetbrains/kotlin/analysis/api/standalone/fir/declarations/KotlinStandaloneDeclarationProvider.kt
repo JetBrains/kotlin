@@ -56,14 +56,14 @@ class KotlinStandaloneDeclarationProvider internal constructor(
         val classifiers = index.classLikeDeclarationsByPackage[packageFqName].orEmpty()
         return classifiers
             .filter { it.inScope }
-            .mapNotNullTo(mutableSetOf()) { it.nameAsName }
+            .mapTo(mutableSetOf()) { it.nameAsSafeName }
     }
 
     override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name> {
         val callables = index.topLevelCallablesByPackage[packageFqName].orEmpty()
         return callables
             .filter { it.inScope }
-            .mapNotNullTo(mutableSetOf()) { it.nameAsName }
+            .mapTo(mutableSetOf()) { it.nameAsSafeName }
     }
 
     override fun findFilesForFacadeByPackage(packageFqName: FqName): Collection<KtFile> {
