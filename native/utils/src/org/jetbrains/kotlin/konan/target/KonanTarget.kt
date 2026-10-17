@@ -66,7 +66,6 @@ sealed class KonanTarget(override val name: String, val family: Family, val arch
         val toleratedDeprecatedTargets by lazy {
             setOf(
                 LINUX_ARM32_HFP,
-                ANDROID_X64, ANDROID_X86, ANDROID_ARM32, ANDROID_ARM64,
             )
         }
     }
