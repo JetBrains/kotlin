@@ -91,6 +91,8 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         val VALUE_CLASS_EXTENDS_VALUE_CLASS_COMPILED_AS_IDENTITY_CLASS by warning<KtElement> {
             parameter<ConeKotlinType>("superType")
         }
+
+        val SERIALIZABLE_VALUE_CLASS_WITHOUT_WRITE_REPLACE by warning<KtClassOrObject>(PositioningStrategy.DECLARATION_NAME)
     }
 
     val TYPES by object : DiagnosticGroup("Types") {
@@ -296,6 +298,9 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         }
         val INAPPLICABLE_JVM_FIELD_WARNING by warning<KtAnnotationEntry> {
             parameter<String>("message")
+        }
+        val IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_OBJECT by error<KtElement> {
+            parameter<ConeKotlinType>("type")
         }
         val SYNCHRONIZED_BLOCK_ON_JAVA_VALUE_BASED_CLASS by warning<KtElement> {
             parameter<ConeKotlinType>("type")

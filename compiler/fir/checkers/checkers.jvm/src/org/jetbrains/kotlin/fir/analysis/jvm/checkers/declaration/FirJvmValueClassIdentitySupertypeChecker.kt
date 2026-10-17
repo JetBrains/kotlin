@@ -43,16 +43,16 @@ object FirJvmValueClassIdentitySupertypeChecker : FirRegularClassChecker(MppChec
             }
         }
     }
+}
 
-    private fun FirRegularClassSymbol.isCompiledAsIdentityClass(session: FirSession): Boolean {
-        @OptIn(SymbolInternals::class)
-        val binaryClass = (fir.sourceElement as? KotlinJvmBinarySourceElement)?.binaryClass as? FileBasedKotlinClass
-        val isValhallaSupportEnabled = moduleData.session.languageVersionSettings.isValhallaSupportEnabled()
-        return isValueClassCompiledAsIdentityClass(binaryClass, isValhallaSupportEnabled) {
-            resolvedSuperTypes.any { supertype ->
-                val supertypeSymbol = supertype.toRegularClassSymbol(session)
-                supertypeSymbol != null && supertypeSymbol.isFullValueClass && supertypeSymbol.isCompiledAsIdentityClass(session)
-            }
+internal fun FirRegularClassSymbol.isCompiledAsIdentityClass(session: FirSession): Boolean {
+    @OptIn(SymbolInternals::class)
+    val binaryClass = (fir.sourceElement as? KotlinJvmBinarySourceElement)?.binaryClass as? FileBasedKotlinClass
+    val isValhallaSupportEnabled = moduleData.session.languageVersionSettings.isValhallaSupportEnabled()
+    return isValueClassCompiledAsIdentityClass(binaryClass, isValhallaSupportEnabled) {
+        resolvedSuperTypes.any { supertype ->
+            val supertypeSymbol = supertype.toRegularClassSymbol(session)
+            supertypeSymbol != null && supertypeSymbol.isFullValueClass && supertypeSymbol.isCompiledAsIdentityClass(session)
         }
     }
 }
