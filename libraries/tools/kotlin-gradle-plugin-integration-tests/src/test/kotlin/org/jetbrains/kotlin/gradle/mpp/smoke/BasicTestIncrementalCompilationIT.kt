@@ -11,11 +11,15 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.mpp.KmpIncrementalITBase
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInBuildToolsApi
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.DisplayName
 
 @DisplayName("Basic incremental scenarios with tests in KMP - K2")
 @MppGradlePluginTests
+@MustRunOnChangesInGradle
+@MustRunOnChangesInBuildToolsApi
 open class BasicTestIncrementalCompilationIT : KmpIncrementalITBase() {
 
     override val defaultBuildOptions: BuildOptions
