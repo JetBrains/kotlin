@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperatio
 import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertCompiledSources
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertNoCompiledSources
+import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertNoOutputDirectory
+import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputs
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.expectFailWithError
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.Scenario
@@ -115,6 +117,9 @@ internal class ClasspathMetadataIncrementalTest : BaseCompilationTest() {
             module.deleteFile("commonMain/com/example/two/foo.kt")
             module.compile {
                 assertNoCompiledSources()
+                // the stale `FooKt.class` must be gone together with the now-empty `com/example/two` package directory
+                assertOutputs("com/example/one/BarKt.class", "jvmplaceholder/PlaceholderKt.class")
+                assertNoOutputDirectory("com/example/two")
             }
 
             module.replaceFileWithVersion("commonMain/com/example/one/bar.kt", "change")

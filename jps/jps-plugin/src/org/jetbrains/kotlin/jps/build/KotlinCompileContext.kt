@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.build.joinToReadableString
 import org.jetbrains.kotlin.config.CompilerRunnerConstants.KOTLIN_COMPILER_NAME
 import org.jetbrains.kotlin.incremental.IncrementalCompilationContext
 import org.jetbrains.kotlin.incremental.LookupSymbol
+import org.jetbrains.kotlin.incremental.NonRecoverableCompilationTransaction
 import org.jetbrains.kotlin.incremental.storage.FileToPathConverter
 import org.jetbrains.kotlin.jps.KotlinJpsBundle
 import org.jetbrains.kotlin.jps.incremental.*
@@ -85,7 +86,9 @@ class KotlinCompileContext(val jpsContext: CompileContext) {
     val icContext = IncrementalCompilationContext(
         pathConverterForSourceFiles = fileToPathConverter,
         pathConverterForOutputFiles = fileToPathConverter,
-        useCompilerMapsOnly = KotlinBuilder.isKotlinBuilderInDumbMode
+        // Stale outputs are removed by JPS itself, so no empty directories cleanup is needed in the transaction. Thus, we don't pass classesDir
+        transaction = NonRecoverableCompilationTransaction(),
+        useCompilerMapsOnly = KotlinBuilder.isKotlinBuilderInDumbMode,
     )
 
     val lookupStorageManager = JpsLookupStorageManager(dataManager, icContext)
