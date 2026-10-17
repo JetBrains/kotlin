@@ -357,6 +357,7 @@ include(
     ":kotlin-metadata",
     ":kotlin-metadata-jvm",
     ":kotlinx-metadata-klib",
+    ":prepare:kotlinx-metadata-klib",
     ":prepare:build.version",
     ":kotlin-build-common",
     ":prepare:kotlin-compiler-internal-test-framework",

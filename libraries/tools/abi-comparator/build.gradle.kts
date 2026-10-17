@@ -10,8 +10,11 @@ dependencies {
     implementation(libs.apache.commons.text)
 
     implementation(project(":tools:kotlinp-jvm"))
-    implementation(project(":kotlin-metadata-jvm"))
+    implementation(project(":kotlin-metadata-jvm", "unshaded"))
     implementation(project(":kotlin-metadata"))
+    implementation(project(":core:metadata"))
+    implementation(project(":core:metadata.jvm"))
+    implementation(protobufLite())
 
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
     constraints {
