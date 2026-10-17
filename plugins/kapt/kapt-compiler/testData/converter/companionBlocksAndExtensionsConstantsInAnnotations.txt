@@ -1,0 +1,170 @@
+/**
+ * package {
+ *
+ *   // field: EXT_NUMBER:I
+ *   public final const companion val Constants.EXT_NUMBER: kotlin/Int (* = ... *)
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class CompanionBlocksAndExtensionsConstantsInAnnotationsKt {
+    public static final int EXT_NUMBER = 2;
+}
+
+////////////////////
+
+
+/**
+ * public final class Constants : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // field: NAME:Ljava/lang/String;
+ *   public final const static val NAME: kotlin/String (* = ... *)
+ *     public final get
+ *
+ *   // field: NUMBER:I
+ *   public final const static val NUMBER: kotlin/Int (* = ... *)
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class Constants {
+    @org.jetbrains.annotations.NotNull()
+    public static final java.lang.String NAME = "block";
+    public static final int NUMBER = 40;
+
+    public Constants() {
+        super();
+    }
+}
+
+////////////////////
+
+
+/**
+ * public abstract interface InterfaceConstants : kotlin/Any {
+ *
+ *   // field: NAME:Ljava/lang/String;
+ *   public final const static val NAME: kotlin/String (* = ... *)
+ *     public final get
+ *
+ *   // module name: main
+ *
+ *   // has method bodies in interface
+ *
+ *   // is compiled in compatibility mode
+ * }
+ */
+@kotlin.Metadata()
+public abstract interface InterfaceConstants {
+    @org.jetbrains.annotations.NotNull()
+    public static final java.lang.String NAME = "interface";
+}
+
+////////////////////
+
+
+/**
+ * public final class Members : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // signature: onBlockMember()I
+ *   @Tag(name = "block", number = 40)
+ *   public final static fun onBlockMember(): kotlin/Int
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class Members {
+
+    public Members() {
+        super();
+    }
+
+    @Tag(name = "block", number = 40)
+    public static final int onBlockMember() {
+        return 0;
+    }
+}
+
+////////////////////
+
+
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+/**
+ * public final annotation class Tag : kotlin/Annotation {
+ *
+ *   // signature: <init>(Ljava/lang/String;I)V
+ *   public constructor(name: kotlin/String, number: kotlin/Int)
+ *
+ *   // getter: name()Ljava/lang/String;
+ *   public final val name: kotlin/String
+ *     public final get
+ *
+ *   // getter: number()I
+ *   public final val number: kotlin/Int
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract @interface Tag {
+
+    public abstract java.lang.String name();
+
+    public abstract int number();
+}
+
+////////////////////
+
+
+@Tag(name = "block", number = 2)
+/**
+ * @Tag(name = "block", number = 2)
+ * public final class UsesConstants : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class UsesConstants {
+
+    public UsesConstants() {
+        super();
+    }
+}
+
+////////////////////
+
+
+@Tag(name = "interface-block", number = 42)
+/**
+ * @Tag(name = "interface-block", number = 42)
+ * public final class UsesExpressions : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class UsesExpressions {
+
+    public UsesExpressions() {
+        super();
+    }
+}
