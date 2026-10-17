@@ -8,9 +8,11 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 
 @JvmGradlePluginTests
+@MustRunOnChangesInGradle
 @DisplayName("Classpath Snapshots transformation tests") // related mostly to the Gradle part
 class GeneralClasspathSnapshotIT : KGPBaseTest() {
 

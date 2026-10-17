@@ -9,11 +9,13 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.internals.MINIMALLY_SUPPORTED_GRADLE_VERSION
 import org.jetbrains.kotlin.gradle.testbase.OtherGradlePluginTests
 import org.jetbrains.kotlin.gradle.testbase.TestVersions
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 @OtherGradlePluginTests
+@MustRunOnChangesInGradle
 class GradleTestVersionsSanityTest {
 
     @Test
