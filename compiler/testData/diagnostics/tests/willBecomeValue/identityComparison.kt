@@ -9,7 +9,7 @@ class Wrapper(val x: Int) {
     override fun hashCode(): Int = x
     override fun toString(): String = "Wrapper($x)"
 
-    fun isSame(other: Wrapper): Boolean = <!IDENTITY_SENSITIVE_OPERATION_INSIDE_WILL_BECOME_VALUE_CLASS!>this<!> === <!IDENTITY_SENSITIVE_OPERATION_INSIDE_WILL_BECOME_VALUE_CLASS!>other<!>
+    fun isSame(other: Wrapper): Boolean = <!IDENTITY_SENSITIVE_OPERATION_INSIDE_WILL_BECOME_VALUE_CLASS!>this === other<!>
 
     fun isSameAsNull(): Boolean = <!SENSELESS_COMPARISON!>this === null<!>
 }
@@ -17,21 +17,21 @@ class Wrapper(val x: Int) {
 class NotAValue
 
 fun test(a: Wrapper, b: Wrapper, nullable: Wrapper?, other: NotAValue) {
-    val a1 = <!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>a<!> === <!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>b<!>
-    val a2 = <!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>a<!> !== <!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>b<!>
-    val a3 = <!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>a<!> === <!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>nullable<!>
+    val a1 = <!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>a === b<!>
+    val a2 = <!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>a !== b<!>
+    val a3 = <!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>a === nullable<!>
     val a4 = nullable === null
     val a5 = other === other
 
     val a6 = a as Any === b as Any
-    val a7 = <!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>a<!> === Any()
+    val a7 = <!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>a === Any()<!>
 
-    val a8 = <!EQUALITY_NOT_APPLICABLE!><!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>a<!> === other<!>
+    val a8 = <!EQUALITY_NOT_APPLICABLE, IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>a === other<!>
 }
 
 class Nested {
     class Deeper {
-        fun test(a: Wrapper, b: Wrapper) = <!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>a<!> === <!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>b<!>
+        fun test(a: Wrapper, b: Wrapper) = <!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>a === b<!>
     }
 }
 
