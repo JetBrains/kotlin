@@ -2,8 +2,8 @@
 Current executable set to <path to executable>.
 (lldb) settings set stop-disassembly-display never
 (lldb) command script import <path to lldb script>
-(lldb) b ThrowException
-Breakpoint 1: 2 locations.
+(lldb) br s -n ThrowException -s lldb_kt42208WithInlinedFunInKli-b864c671.kexe
+Breakpoint 1: where = lldb_kt42208WithInlinedFunInKli-b864c671.kexe`ThrowException, address = <memory address>
 (lldb) r
 Process <process id> launched: <path to executable>
 Process <process id> stopped
