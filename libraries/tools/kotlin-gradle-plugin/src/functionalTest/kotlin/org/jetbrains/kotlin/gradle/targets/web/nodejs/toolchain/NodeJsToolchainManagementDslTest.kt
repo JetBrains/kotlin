@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.ExperimentalNodeJsToolchainDsl
+import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.DefaultNodeJsToolchainService
 import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.DisabledNodeJsToolchainService
 import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.NodeJsToolchainManagementDsl
 import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.PreInstalledNodeJsToolchainService
@@ -15,6 +16,7 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertIs
+import kotlin.test.assertTrue
 
 @ExperimentalNodeJsToolchainDsl
 class NodeJsToolchainManagementDslTest {
@@ -52,6 +54,30 @@ class NodeJsToolchainManagementDslTest {
 
         val service = assertIs<PreInstalledNodeJsToolchainServiceImpl>(registeredService(project))
         assertEquals("/opt/node/bin/node", service.parameters.nodeJsExecutable.get())
+    }
+
+    // KT-90287
+    @Test
+    fun `toolchainService without parameters has a default installationDir`() {
+        val (project, dsl) = buildProjectAndDsl()
+
+        dsl.toolchainService { }
+        registerNodeJsToolchainServiceIfAbsent(project)
+
+        val service = assertIs<DefaultNodeJsToolchainServiceImpl>(registeredService(project))
+        assertTrue(service.parameters.installationDir.isPresent, "installationDir has no default value")
+    }
+
+    // KT-90287
+    @Test
+    fun `toolchainService with DefaultNodeJsToolchainService has a default installationDir`() {
+        val (project, dsl) = buildProjectAndDsl()
+
+        dsl.toolchainService(DefaultNodeJsToolchainService::class) { }
+        registerNodeJsToolchainServiceIfAbsent(project)
+
+        val service = assertIs<DefaultNodeJsToolchainServiceImpl>(registeredService(project))
+        assertTrue(service.parameters.installationDir.isPresent, "installationDir has no default value")
     }
 
     @Test
