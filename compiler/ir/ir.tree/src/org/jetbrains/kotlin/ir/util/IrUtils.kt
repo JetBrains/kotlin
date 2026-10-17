@@ -1040,6 +1040,9 @@ object SetDeclarationsParentVisitor : IrVisitor<Unit, IrDeclarationParent>() {
 val IrFunction.isStatic: Boolean
     get() = parent is IrClass && dispatchReceiverParameter == null && this.visibility != DescriptorVisibilities.LOCAL
 
+val IrProperty.isStatic: Boolean
+    get() = backingField?.isStatic == true || getter?.let { it.dispatchReceiverParameter == null } == true
+
 val IrDeclaration.isTopLevel: Boolean
     get() {
         if (parent is IrPackageFragment) return true

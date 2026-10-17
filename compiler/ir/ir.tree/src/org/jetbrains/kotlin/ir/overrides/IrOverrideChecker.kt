@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.overrides.IrExternalOverridabilityCondition.Resul
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextWithAdditionalAxioms
 import org.jetbrains.kotlin.ir.types.createIrTypeCheckerState
+import org.jetbrains.kotlin.ir.util.isStatic
 import org.jetbrains.kotlin.ir.util.nonDispatchParameters
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.types.AbstractTypeChecker
@@ -74,7 +75,7 @@ class IrOverrideChecker(
             }
             is IrProperty -> {
                 if (subMember !is IrProperty) return incompatible
-                if (superMember.setter != null) superMember.setter to (subMember.setter ?: return incompatible)
+                if (superMember.setter != null && superMember.isStatic) superMember.setter to (subMember.setter ?: return incompatible)
                 else if (superMember.getter != null && subMember.getter != null) superMember.getter to subMember.getter
                 else return incompatible
             }

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.collectAndFilterRealOverrides
 import org.jetbrains.kotlin.ir.util.fileOrNull
 import org.jetbrains.kotlin.ir.util.isClass
+import org.jetbrains.kotlin.ir.util.isStatic
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
@@ -164,11 +165,8 @@ class IrFakeOverrideBuilder(
 
     private val IrOverridableMember.isStaticMember: Boolean
         get() = when (this) {
-            is IrFunction ->
-                dispatchReceiverParameter == null
-            is IrProperty ->
-                backingField?.isStatic == true ||
-                        getter?.let { it.dispatchReceiverParameter == null } == true
+            is IrFunction -> dispatchReceiverParameter == null
+            is IrProperty -> isStatic
         }
 
     private fun generateOverridesInFunctionGroup(
