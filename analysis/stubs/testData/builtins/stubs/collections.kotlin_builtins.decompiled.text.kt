@@ -83,6 +83,20 @@ public interface List<out E> : kotlin.collections.Collection<E> {
     public abstract fun listIterator(index: kotlin.Int): kotlin.collections.ListIterator<E>
 
     public abstract fun subList(fromIndex: kotlin.Int, toIndex: kotlin.Int): kotlin.collections.List<E>
+
+    companion {
+        @kotlin.ExperimentalCollectionLiteralsApi
+        @kotlin.SinceKotlin(version = "2.5")
+        public final inline operator fun <E> of(): kotlin.collections.List<E> { /* compiled code */ }
+
+        @kotlin.ExperimentalCollectionLiteralsApi
+        @kotlin.SinceKotlin(version = "2.5")
+        public final inline operator fun <E> of(element: E): kotlin.collections.List<E> { /* compiled code */ }
+
+        @kotlin.ExperimentalCollectionLiteralsApi
+        @kotlin.SinceKotlin(version = "2.5")
+        public final operator fun <E> of(vararg elements: E): kotlin.collections.List<E> { /* compiled code */ }
+    }
 }
 
 public interface ListIterator<out T> : kotlin.collections.Iterator<T> {
@@ -196,6 +210,16 @@ public interface MutableList<E> : kotlin.collections.List<E>, kotlin.collections
     public abstract fun listIterator(index: kotlin.Int): kotlin.collections.MutableListIterator<E>
 
     public abstract fun subList(fromIndex: kotlin.Int, toIndex: kotlin.Int): kotlin.collections.MutableList<E>
+
+    companion {
+        @kotlin.ExperimentalCollectionLiteralsApi
+        @kotlin.SinceKotlin(version = "2.5")
+        public final inline operator fun <E> of(): kotlin.collections.MutableList<E> { /* compiled code */ }
+
+        @kotlin.ExperimentalCollectionLiteralsApi
+        @kotlin.SinceKotlin(version = "2.5")
+        public final operator fun <E> of(vararg elements: E): kotlin.collections.MutableList<E> { /* compiled code */ }
+    }
 }
 
 public interface MutableListIterator<T> : kotlin.collections.ListIterator<T>, kotlin.collections.MutableIterator<T> {
@@ -257,6 +281,16 @@ public interface MutableSet<E> : kotlin.collections.Set<E>, kotlin.collections.M
     public abstract fun retainAll(elements: kotlin.collections.Collection<E>): kotlin.Boolean
 
     public abstract fun clear(): kotlin.Unit
+
+    companion {
+        @kotlin.ExperimentalCollectionLiteralsApi
+        @kotlin.SinceKotlin(version = "2.5")
+        public final inline operator fun <E> of(): kotlin.collections.MutableSet<E> { /* compiled code */ }
+
+        @kotlin.ExperimentalCollectionLiteralsApi
+        @kotlin.SinceKotlin(version = "2.5")
+        public final operator fun <E> of(vararg elements: E): kotlin.collections.MutableSet<E> { /* compiled code */ }
+    }
 }
 
 public interface Set<out E> : kotlin.collections.Collection<E> {
@@ -269,6 +303,20 @@ public interface Set<out E> : kotlin.collections.Collection<E> {
     public abstract operator fun iterator(): kotlin.collections.Iterator<E>
 
     public abstract fun containsAll(elements: kotlin.collections.Collection<E>): kotlin.Boolean
+
+    companion {
+        @kotlin.ExperimentalCollectionLiteralsApi
+        @kotlin.SinceKotlin(version = "2.5")
+        public final inline operator fun <E> of(): kotlin.collections.Set<E> { /* compiled code */ }
+
+        @kotlin.ExperimentalCollectionLiteralsApi
+        @kotlin.SinceKotlin(version = "2.5")
+        public final inline operator fun <E> of(element: E): kotlin.collections.Set<E> { /* compiled code */ }
+
+        @kotlin.ExperimentalCollectionLiteralsApi
+        @kotlin.SinceKotlin(version = "2.5")
+        public final operator fun <E> of(vararg elements: E): kotlin.collections.Set<E> { /* compiled code */ }
+    }
 }
 
 public abstract class ShortIterator public constructor() : kotlin.collections.Iterator<kotlin.Short> {

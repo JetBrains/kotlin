@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-81777, KT-76150
+// LANGUAGE: -CompanionBlocks
 
 // Even with enabled collection literals and implemented fallback we might want "unresolved" collection literal in some cases,
 // e.g. when standard library is missing.

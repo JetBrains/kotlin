@@ -1,0 +1,20 @@
+Module: companionsOn
+FILE: withCompanions.kt
+    public final fun testOn(): R|kotlin/Unit| {
+        lval a: R|kotlin/collections/List<kotlin/String>| = Q|kotlin/collections/List|.R|kotlin/collections/List.of*s|<R|kotlin/String|>()
+        lval b: R|kotlin/collections/List<kotlin/Any?>| = Q|kotlin/collections/List|.R|kotlin/collections/List.of*s|<R|kotlin/Any?|>(Null(null))
+        lval c: R|kotlin/collections/List<kotlin/Int>| = Q|kotlin/collections/List|.R|kotlin/collections/List.of*s|<R|kotlin/Int|>(vararg(Int(1), Int(2), Int(3)))
+        lval x: R|kotlin/collections/List<kotlin/String>| = Q|kotlin/collections/List|.R|kotlin/collections/List.of*s|<R|kotlin/String|>()
+        lval y: R|kotlin/collections/List<kotlin/Any?>| = Q|kotlin/collections/List|.R|kotlin/collections/List.of*s|<R|kotlin/Any?|>(Null(null))
+        lval z: R|kotlin/collections/List<kotlin/Int>| = Q|kotlin/collections/List|.R|kotlin/collections/List.of*s|<R|kotlin/Int|>(vararg(Int(1), Int(2), Int(3)))
+    }
+Module: companionsOff
+FILE: withoutCompanions.kt
+    public final fun testOff(): R|kotlin/Unit| {
+        lval a: R|kotlin/collections/List<kotlin/String>| = Q|kotlin/collections/List|.R|kotlin/collections/List.of*s<Inapplicable(INAPPLICABLE): kotlin/collections/List.of>#|<R|kotlin/String|>()
+        lval b: R|kotlin/collections/List<kotlin/Any?>| = Q|kotlin/collections/List|.R|kotlin/collections/List.of*s<Inapplicable(INAPPLICABLE): kotlin/collections/List.of>#|<R|kotlin/Any?|>(Null(null))
+        lval c: R|kotlin/collections/List<kotlin/Int>| = Q|kotlin/collections/List|.R|kotlin/collections/List.of*s<Inapplicable(INAPPLICABLE): kotlin/collections/List.of>#|<R|kotlin/Int|>(vararg(Int(1), Int(2), Int(3)))
+        lval x: R|kotlin/collections/List<kotlin/String>| = Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/String|>()
+        lval y: R|kotlin/collections/List<kotlin/Any?>| = Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/Any?|>(Null(null))
+        lval z: R|kotlin/collections/List<kotlin/Int>| = Q|kotlin/collections|.R|kotlin/collections/listOf|<R|kotlin/Int|>(vararg(Int(1), Int(2), Int(3)))
+    }

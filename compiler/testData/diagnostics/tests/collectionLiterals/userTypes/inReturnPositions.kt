@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-79330
+// LANGUAGE: +CompanionBlocks
 
 class MyList<T> {
     companion object {
@@ -13,13 +14,13 @@ fun returnBoolean() = true
 fun <V> myNullableList(): MyList<V>? = null
 fun myNullableListInt() = myNullableList<Int>()
 
-fun returnCollectionWithNoExpectedType() = <!UNRESOLVED_REFERENCE!>[1, 2, 3]<!>
+fun returnCollectionWithNoExpectedType() = [1, 2, 3]
 fun returnMyListInt(): MyList<Int> = [1, 2, 3]
 fun <A> returnMyEmptyList(): MyList<A> = []
 fun <B> returnMyListWithStrings(): MyList<B> = [<!ARGUMENT_TYPE_MISMATCH!>"1"<!>, <!ARGUMENT_TYPE_MISMATCH!>"2"<!>, <!ARGUMENT_TYPE_MISMATCH!>"3"<!>]
 fun <C> returnMyListOf(c: C): MyList<C> = [c]
 fun returnUnit() {
-    return <!UNRESOLVED_REFERENCE!>[1, 2, 3]<!>
+    return <!RETURN_TYPE_MISMATCH!>[1, 2, 3]<!>
 }
 fun returnWrappedInRunLike() = runLikeListInt { [1, 2, 3] }
 fun returnWrappedInRunLikeWrongType() = runLikeListInt { [<!ARGUMENT_TYPE_MISMATCH!>"1"<!>, <!ARGUMENT_TYPE_MISMATCH!>"2"<!>, <!ARGUMENT_TYPE_MISMATCH!>"3"<!>] }

@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: -CompanionBlocks
 
 fun <T> id(t: T): T = t
 

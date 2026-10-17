@@ -1524,6 +1524,12 @@ public class SourceLikeGetOrBuildFirTestGenerated extends AbstractSourceLikeGetO
     }
 
     @Test
+    @TestMetadata("stdlibMutableSetOperator.kt")
+    public void testStdlibMutableSetOperator() {
+      run("stdlibMutableSetOperator.kt");
+    }
+
+    @Test
     @TestMetadata("stdlibSequenceOperator.kt")
     public void testStdlibSequenceOperator() {
       run("stdlibSequenceOperator.kt");

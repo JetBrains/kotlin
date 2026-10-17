@@ -3,11 +3,11 @@ FIR element: FirFunctionCallImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-Q|kotlin/collections|.<Unresolved name: listOf>#(ERROR_EXPR(Missing stdlib class: kotlin/ULong), ERROR_EXPR(Missing stdlib class: kotlin/ULong))
+Q|kotlin/collections/List|.R|kotlin/collections/List.of<Inapplicable(INAPPLICABLE): kotlin/collections/List.of>#|<<ERROR TYPE REF: Cannot infer argument for type parameter E>>(vararg(ERROR_EXPR(Missing stdlib class: kotlin/ULong), ERROR_EXPR(Missing stdlib class: kotlin/ULong)))
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] stdlibULongArrayOperator.kt
     public final [ResolvedTo(STATUS)] fun accept([ResolvedTo(STATUS)] array: <ERROR TYPE REF: Symbol not found for ULongArray>): R|kotlin/Unit| { LAZY_BLOCK }
     public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/Unit| {
-        R|/accept<Inapplicable(INAPPLICABLE): /accept>#|(Q|kotlin/collections|.<Unresolved name: listOf>#(ERROR_EXPR(Missing stdlib class: kotlin/ULong), ERROR_EXPR(Missing stdlib class: kotlin/ULong)))
+        R|/accept<Inapplicable(INAPPLICABLE): /accept>#|(Q|kotlin/collections/List|.R|kotlin/collections/List.of<Inapplicable(INAPPLICABLE): kotlin/collections/List.of>#|<<ERROR TYPE REF: Cannot infer argument for type parameter E>>(vararg(ERROR_EXPR(Missing stdlib class: kotlin/ULong), ERROR_EXPR(Missing stdlib class: kotlin/ULong))))
     }

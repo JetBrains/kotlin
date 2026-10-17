@@ -30,6 +30,11 @@ fun test() {
     val strings = Array.<!OPT_IN_USAGE_ERROR!>of<!>("a", "b", "c")
     val nullables = Array.<!OPT_IN_USAGE_ERROR!>of<!>(1, null, 3)
     val anys: Array<Any> = Array.<!OPT_IN_USAGE_ERROR!>of<!>(Any())
+
+    val list: List<Int> = List.<!OPT_IN_USAGE_ERROR!>of<!>()
+    val mutableList: MutableList<Int> = MutableList.<!OPT_IN_USAGE_ERROR!>of<!>()
+    val set = Set.<!OPT_IN_USAGE_ERROR!>of<!>(1)
+    val mutableSet = MutableSet.<!OPT_IN_USAGE_ERROR!>of<!>("a")
 }
 
 @OptIn(ExperimentalCollectionLiteralsApi::class)
@@ -59,6 +64,11 @@ fun testWithOptIn() {
     val strings = Array.of("a", "b", "c")
     val nullables = Array.of(1, null, 3)
     val anys: Array<Any> = Array.of(Any())
+
+    val list: List<Int> = List.of()
+    val mutableList: MutableList<Int> = MutableList.of()
+    val set = Set.of(1)
+    val mutableSet = MutableSet.of("a")
 }
 
 /* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, classReference, functionDeclaration, integerLiteral, localProperty,

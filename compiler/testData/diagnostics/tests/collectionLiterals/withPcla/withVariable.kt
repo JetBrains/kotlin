@@ -2,6 +2,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-88681
 // RENDER_DIAGNOSTIC_ARGUMENTS
+// LANGUAGE: -CompanionBlocks
 
 interface Box<T> {
     var x: T

@@ -1,6 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // RENDER_DIAGNOSTIC_ARGUMENTS
 // WITH_STDLIB
+// LANGUAGE: -CompanionBlocks
 
 class WithPrivateOf {
     companion object {

@@ -5,5 +5,5 @@ fun test() {
     accept(<expr>[1]</expr>)
 }
 
-// LANGUAGE: +CollectionLiterals
+// LANGUAGE: +CollectionLiterals -CompanionBlocks
 // WITH_STDLIB
