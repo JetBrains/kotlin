@@ -80,8 +80,9 @@ tasks.withType<Test>().configureEach {
             environment(TEST_FEDERATION_AUTO_SMOKE_TEST_PERCENTAGE_ENV_KEY, percentage)
         }
 
-        for (testSubset in subsets.get()) {
-            println("##teamcity[addBuildTag '$testSubset']")
+        // Iterate in reverse order to make TeamCity display the tags in the original order
+        for (testSubset in subsets.get().reversed()) {
+            println("##teamcity[addBuildTag '${testSubset.toEmoji()}']")
         }
 
         // Exclude nightly tests if not specifically running in 'nightly' mode
