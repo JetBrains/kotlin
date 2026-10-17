@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.junit.jupiter.api.Disabled
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.toScriptSource
+import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvm.JvmDependencyFromClassLoader
 import kotlin.script.experimental.jvm.baseClassLoader
 import kotlin.script.experimental.jvm.jvm
@@ -28,7 +29,27 @@ class ResolveDependenciesTest {
         updateClasspath(classpathFromClass(ShouldBeVisibleFromScript::class))
     }
 
+    private val classLoaderOnlyCompilationConfiguration = ScriptCompilationConfiguration {
+        dependencies.append(JvmDependencyFromClassLoader { ShouldBeVisibleFromScript::class.java.classLoader })
+    }
+
+    private val mixedJvmAndClassLoaderDependenciesCompilationConfiguration = ScriptCompilationConfiguration {
+        dependencies.append(
+            JvmDependency(classpathFromClass(ShouldBeVisibleFromScript::class) ?: error("Test classpath is unavailable"))
+        )
+        dependencies.append(JvmDependencyFromClassLoader { ShouldBeVisibleFromScript::class.java.classLoader })
+    }
+
+    private val evaluationConfigurationWithTestClassLoader = ScriptEvaluationConfiguration {
+        jvm {
+            baseClassLoader(ShouldBeVisibleFromScript::class.java.classLoader)
+        }
+    }
+
     private val thisPackage = ShouldBeVisibleFromScript::class.java.`package`.name
+
+    private val classLoaderDependencyScript =
+        """hashMapOf(1 to "a")[1]!! + $thisPackage.ShouldBeVisibleFromScript().x""".toScriptSource()
 
     private val classAccessScript = "${thisPackage}.ShouldBeVisibleFromScript().x".toScriptSource()
     private val classImportScript = "import ${thisPackage}.ShouldBeVisibleFromScript\nShouldBeVisibleFromScript().x".toScriptSource()
@@ -56,6 +77,26 @@ class ResolveDependenciesTest {
     fun testResolveClassFromClasspath() {
         runScriptAndCheckResult(classAccessScript, configurationWithDependenciesFromClasspath, null, 42)
         runScriptAndCheckResult(classImportScript, configurationWithDependenciesFromClasspath, null, 42)
+    }
+
+    @Test
+    fun testClassLoaderOnlyDependency() {
+        runScriptAndCheckResult(
+            classLoaderDependencyScript,
+            classLoaderOnlyCompilationConfiguration,
+            evaluationConfigurationWithTestClassLoader,
+            "a42"
+        )
+    }
+
+    @Test
+    fun testMixedJvmAndClassLoaderDependencies() {
+        runScriptAndCheckResult(
+            classLoaderDependencyScript,
+            mixedJvmAndClassLoaderDependenciesCompilationConfiguration,
+            evaluationConfigurationWithTestClassLoader,
+            "a42"
+        )
     }
 
     @Test

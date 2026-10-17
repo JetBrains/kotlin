@@ -202,6 +202,7 @@ internal fun configureLibrarySessionIfNeeded(
     state: K2ScriptingCompilerEnvironment,
     compilerConfiguration: CompilerConfiguration,
     classpath: List<File>,
+    extensionRegistrars: List<FirExtensionRegistrar> = state.extensionRegistrars,
 ): FirSession? {
     (state as? K2ScriptingCompilerEnvironmentInternal)
         ?: error("Expected the state of type K2ScriptingCompilerEnvironmentInternal, got ${state::class}")
@@ -215,7 +216,7 @@ internal fun configureLibrarySessionIfNeeded(
             state.sessionFactoryContext,
             state.moduleDataProvider,
             state.sharedLibrarySession,
-            state.extensionRegistrars,
+            extensionRegistrars,
             compilerConfiguration,
         )
     }

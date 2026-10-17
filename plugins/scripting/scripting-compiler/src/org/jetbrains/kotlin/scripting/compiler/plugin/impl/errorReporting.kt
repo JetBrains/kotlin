@@ -176,9 +176,6 @@ internal fun reportArgumentsIgnoredFromRefinement(
         K2JVMCompilerArguments::classpath,
         K2JVMCompilerArguments::noStdlib,
         K2JVMCompilerArguments::noReflect,
-        K2JVMCompilerArguments::pluginClasspaths,
-        K2JVMCompilerArguments::pluginOptions,
-        K2JVMCompilerArguments::pluginConfigurations,
     )
 
 

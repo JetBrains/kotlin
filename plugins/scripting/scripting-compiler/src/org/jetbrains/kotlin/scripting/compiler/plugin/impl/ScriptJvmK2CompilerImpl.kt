@@ -11,6 +11,10 @@ import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.cli.common.fir.reportToMessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.extensionsStorage
+import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
+import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.MessageCollectorAccess
 import org.jetbrains.kotlin.config.jvmTarget
 import org.jetbrains.kotlin.config.languageVersionSettings
@@ -22,6 +26,7 @@ import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirScript
+import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
 import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.pipeline.AllModulesFrontendOutput
@@ -44,7 +49,6 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.collectScript
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
-import kotlin.script.experimental.host.withDefaultsFrom
 import kotlin.script.experimental.impl._languageVersion
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.experimental.jvm.util.toClassPathOrEmpty
@@ -55,11 +59,17 @@ class ScriptJvmK2CompilerIsolated(val hostConfiguration: ScriptingHostConfigurat
         scriptCompilationConfiguration: ScriptCompilationConfiguration,
     ): ResultWithDiagnostics<CompiledScript> =
         withMessageCollector { messageCollector ->
-            withScriptCompilationCache(script, scriptCompilationConfiguration, messageCollector) {
+            val configWithEffectiveHost = scriptCompilationConfiguration.with {
+                hostConfiguration(
+                    effectiveHostConfiguration(
+                        this@ScriptJvmK2CompilerIsolated.hostConfiguration,
+                        scriptCompilationConfiguration,
+                    )
+                )
+            }
+            withScriptCompilationCache(script, configWithEffectiveHost, messageCollector) {
                 withK2ScriptCompilerWithLightTree(
-                    scriptCompilationConfiguration.with {
-                        hostConfiguration(this@ScriptJvmK2CompilerIsolated.hostConfiguration)
-                    },
+                    configWithEffectiveHost,
                     messageCollector
                 ) {
                     if (messageCollector.hasErrors()) failure(messageCollector)
@@ -78,10 +88,11 @@ class ScriptJvmK2CompilerFromEnvironment(
         scriptCompilationConfiguration: ScriptCompilationConfiguration,
     ): ResultWithDiagnostics<CompiledScript> =
         withMessageCollector(script = script) { messageCollector ->
-            val configWithUpdatedHost = scriptCompilationConfiguration.updateWithHostConfiguration(hostConfiguration)
-            withScriptCompilationCache(script, configWithUpdatedHost, messageCollector) {
+            val effectiveHostConfig = effectiveHostConfiguration(hostConfiguration, scriptCompilationConfiguration)
+            val configWithEffectiveHost = scriptCompilationConfiguration.with { hostConfiguration(effectiveHostConfig) }
+            withScriptCompilationCache(script, configWithEffectiveHost, messageCollector) {
                 val compiler = ScriptJvmK2CompilerImpl(
-                    createCompilerStateFromEnvironment(environment, messageCollector, configWithUpdatedHost, hostConfiguration),
+                    createCompilerStateFromEnvironment(environment, messageCollector, configWithEffectiveHost, effectiveHostConfig),
                     SourceCode::convertToFirViaLightTree
                 )
                 if (messageCollector.hasErrors()) failure(messageCollector)
@@ -92,10 +103,7 @@ class ScriptJvmK2CompilerFromEnvironment(
 
 fun ScriptCompilationConfiguration.updateWithHostConfiguration(hostConfiguration: ScriptingHostConfiguration) =
     with {
-        val providedHostConfiguration = this[ScriptCompilationConfiguration.hostConfiguration] ?: defaultJvmScriptingHostConfiguration
-        hostConfiguration(
-            hostConfiguration.withDefaultsFrom(providedHostConfiguration)
-        )
+        hostConfiguration(effectiveHostConfiguration(hostConfiguration, this@updateWithHostConfiguration))
     }
 
 class ScriptJvmK2CompilerImpl(
@@ -186,64 +194,84 @@ class ScriptJvmK2CompilerImpl(
         // The imported scripts should be analyzed before the main one.
         allSourceFiles.addAll(0, newSources)
 
-        val ignoredOptionsReportingState = state.compilerContext.ignoredOptionsReportingState
-        val updatedCompilerOptions = allSourceFiles.flatMapTo(mutableListOf()) {
-            getRefinedConfiguration(it)[ScriptCompilationConfiguration.compilerOptions] ?: emptyList()
-        }
-        if (updatedCompilerOptions.isNotEmpty() && updatedCompilerOptions != state.baseScriptCompilationConfiguration[ScriptCompilationConfiguration.compilerOptions]) {
-            compilerConfiguration.updateWithCompilerOptions(
-                updatedCompilerOptions,
-                reportingCtx.messageCollector,
-                ignoredOptionsReportingState,
-                true
-            )
-            state.updateContext(compilerConfiguration)
-        }
-
-        if (reportingCtx.messageCollector.hasErrors()) return failure(reportingCtx.diagnosticsCollector)
-
-        configureLibrarySessionIfNeeded(state, compilerConfiguration, classpath)
-
-        val compilerEnvironment = ModuleCompilerEnvironment(state.projectEnvironment, reportingCtx.diagnosticsCollector)
-        val renderDiagnosticName = compilerConfiguration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
-        val targetId = TargetId(script.name ?: "main", "java-production")
-
-        val moduleData = state.moduleDataProvider.addNewScriptModuleData(Name.special("<script-${script.name ?: "main"}>"))
-
-        val session = createScriptSourceSession(
-            moduleData, state.extensionRegistrars, compilerConfiguration, state.sessionFactoryContext, state.hostConfiguration
+        compilerConfiguration.applyRefinedCompilerOptions(
+            state.compilerContext, allSourceFiles, reportingCtx.messageCollector, ::getRefinedConfiguration
         )
+        state.updateContext(compilerConfiguration)
 
-        state.hostConfiguration[ScriptingHostConfiguration.configureFirSession]?.also {
-            it.invoke(session)
-        }
-
-        val sourcesToFir = allSourceFiles.associateWith { it.convertToFir(session, reportingCtx.diagnosticsCollector) }
-
-        if (reportingCtx.diagnosticsCollector.hasErrors) return failure(reportingCtx.diagnosticsCollector)
         if (reportingCtx.messageCollector.hasErrors()) return failure(reportingCtx.diagnosticsCollector)
 
-        val outputs = listOf(resolveAndCheckFir(session, sourcesToFir.values.toList(), reportingCtx.diagnosticsCollector)).also {
-            it.runPlatformCheckers(reportingCtx.diagnosticsCollector)
-        }
-        val frontendOutput = AllModulesFrontendOutput(outputs)
-
-        val [irInput, generationState] = generateCodeIfNoErrors(
-            compilerConfiguration, targetId, frontendOutput, compilerEnvironment, reportingCtx.messageCollector, renderDiagnosticName
-        ).valueOr { return it }
-
-        return makeCompiledScript(
-            generationState,
-            script,
-            {
-                sourcesToFir[it]?.declarations?.firstIsInstanceOrNull<FirScript>()
-                    ?.let { it.symbol.packageFqName().child(NameUtils.getScriptTargetClassName(it.name)) }
-            },
-            sourceDependencies,
+        val baseCompilerOptions =
+            state.compilerContext.baseScriptCompilationConfiguration[ScriptCompilationConfiguration.compilerOptions].orEmpty()
+        val scriptCompilerPlugins = collectScriptCompilerPlugins(
+            baseCompilerOptions,
+            allSourceFiles,
             ::getRefinedConfiguration,
-            extractResultFields(irInput.irModuleFragment)
-        ).onSuccess { compiledScript ->
-            ResultWithDiagnostics.Success(compiledScript, reportingCtx.messageCollector.diagnostics)
+            reportingCtx.messageCollector,
+        )
+        if (reportingCtx.messageCollector.hasErrors()) return failure(reportingCtx.diagnosticsCollector)
+
+        val pluginDisposable = if (scriptCompilerPlugins.isNotEmpty()) Disposer.newDisposable("Script compiler plugins") else null
+        var pluginCompilerConfiguration: CompilerConfiguration? = null
+        try {
+            val effectiveCompilerConfiguration = if (pluginDisposable != null) {
+                compilerConfiguration.withScriptCompilerPlugins(
+                    scriptCompilerPlugins, baseCompilerOptions, pluginDisposable, reportingCtx.messageCollector
+                )
+                    ?.also { if (it !== compilerConfiguration) pluginCompilerConfiguration = it }
+                    ?: return failure(reportingCtx.diagnosticsCollector)
+            } else {
+                compilerConfiguration
+            }
+            val extensionRegistrars = pluginCompilerConfiguration?.getCompilerExtensions(FirExtensionRegistrar) ?: state.extensionRegistrars
+
+            configureLibrarySessionIfNeeded(state, effectiveCompilerConfiguration, classpath, extensionRegistrars)
+
+            val compilerEnvironment = ModuleCompilerEnvironment(state.projectEnvironment, reportingCtx.diagnosticsCollector)
+            val renderDiagnosticName = effectiveCompilerConfiguration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
+            val targetId = TargetId(script.name ?: "main", "java-production")
+
+            val moduleData = state.moduleDataProvider.addNewScriptModuleData(Name.special("<script-${script.name ?: "main"}>"))
+
+            val session = createScriptSourceSession(
+                moduleData, extensionRegistrars, effectiveCompilerConfiguration, state.sessionFactoryContext, state.hostConfiguration
+            )
+
+            state.hostConfiguration[ScriptingHostConfiguration.configureFirSession]?.also {
+                it.invoke(session)
+            }
+
+            val sourcesToFir = allSourceFiles.associateWith { it.convertToFir(session, reportingCtx.diagnosticsCollector) }
+
+            if (reportingCtx.diagnosticsCollector.hasErrors) return failure(reportingCtx.diagnosticsCollector)
+            if (reportingCtx.messageCollector.hasErrors()) return failure(reportingCtx.diagnosticsCollector)
+
+            val outputs = listOf(resolveAndCheckFir(session, sourcesToFir.values.toList(), reportingCtx.diagnosticsCollector)).also {
+                it.runPlatformCheckers(reportingCtx.diagnosticsCollector)
+            }
+            val frontendOutput = AllModulesFrontendOutput(outputs)
+
+            val [irInput, generationState] = generateCodeIfNoErrors(
+                effectiveCompilerConfiguration, targetId, frontendOutput, compilerEnvironment,
+                reportingCtx.messageCollector, renderDiagnosticName
+            ).valueOr { return it }
+
+            return makeCompiledScript(
+                generationState,
+                script,
+                {
+                    sourcesToFir[it]?.declarations?.firstIsInstanceOrNull<FirScript>()
+                        ?.let { it.symbol.packageFqName().child(NameUtils.getScriptTargetClassName(it.name)) }
+                },
+                sourceDependencies,
+                ::getRefinedConfiguration,
+                extractResultFields(irInput.irModuleFragment)
+            ).onSuccess { compiledScript ->
+                ResultWithDiagnostics.Success(compiledScript, reportingCtx.messageCollector.diagnostics)
+            }
+        } finally {
+            pluginCompilerConfiguration?.extensionsStorage?.disposables?.forEach { it.dispose() }
+            pluginDisposable?.let(Disposer::dispose)
         }
     }
 
@@ -264,7 +292,8 @@ fun <T> withK2ScriptCompilerWithLightTree(
                 createIsolatedCompilerState(
                     ScriptDiagnosticsMessageCollector(parentMessageCollector), disposable,
                     scriptCompilationConfiguration,
-                    scriptCompilationConfiguration[ScriptCompilationConfiguration.hostConfiguration] ?: defaultJvmScriptingHostConfiguration
+                    scriptCompilationConfiguration[ScriptCompilationConfiguration.hostConfiguration]
+                        ?: defaultJvmScriptingHostConfiguration
                 ),
                 SourceCode::convertToFirViaLightTree
             )
@@ -301,4 +330,3 @@ private fun K2ScriptingCompilerEnvironmentInternal.getOrCreateSessionForAnnotati
         hostConfiguration,
     ).also { dummySessionForAnnotationResolution = it }
 }
-

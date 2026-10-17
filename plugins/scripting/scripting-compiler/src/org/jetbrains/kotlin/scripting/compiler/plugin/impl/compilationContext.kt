@@ -31,10 +31,8 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingK2CompilerPluginR
 import org.jetbrains.kotlin.scripting.compiler.plugin.requiresLegacyScriptRuntime
 import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.ScriptsCompilationDependencies
 import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.collectScriptsCompilationDependencies
-import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.K1SpecificScriptingServiceAccessor
 import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
-import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.jvm.*
@@ -268,11 +266,6 @@ private fun createInitialCompilerConfiguration(
 
         put(JVMConfigurationKeys.USE_FAST_JAR_FILE_SYSTEM, true)
 
-        add(
-            ScriptingConfigurationKeys.SCRIPT_DEFINITIONS,
-            ScriptDefinition.FromConfigurations(hostConfiguration, scriptCompilationConfiguration, null)
-        )
-
         val pluginClasspaths = baseArguments.pluginClasspaths.asList()
         val pluginOptions = baseArguments.pluginOptions.asList()
         val pluginConfigurations = baseArguments.pluginConfigurations.asList()
@@ -314,25 +307,40 @@ internal fun collectRefinedSourcesAndUpdateEnvironment(
     sourceFiles.addAll(newSources)
 
     // collectScriptsCompilationDependencies calls resolver for every file, so at this point all updated configurations are collected in the ScriptDependenciesProvider
-    context.environment.configuration.updateWithRefinedConfigurations(context, sourceFiles, messageCollector, getScriptCompilationConfiguration)
+    context.environment.configuration.applyRefinedCompilerOptions(context, sourceFiles, messageCollector) {
+        getScriptCompilationConfiguration(it)?.valueOrNull()?.configuration
+    }
     return sourceFiles to sourceDependencies
 }
 
-private fun CompilerConfiguration.updateWithRefinedConfigurations(
+/**
+ * The refined configurations usually extend the base compiler options, so the options added by the refinement of each source
+ * are collected and applied together with the base options.
+ * The base options cannot be omitted, since the options are applied as a whole and the reporting of the ignored options
+ * compares them with the base ones.
+ * Identical additions of several sources (e.g. of a script and its imported script) are applied once.
+ */
+internal fun CompilerConfiguration.applyRefinedCompilerOptions(
     context: SharedScriptCompilationContext,
-    sourceFiles: List<SourceCode>,
+    sources: List<SourceCode>,
     messageCollector: ScriptDiagnosticsMessageCollector,
-    @Suppress("DEPRECATION")
-    getScriptCompilationConfiguration: (SourceCode) -> org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationResult?
+    getRefinedConfiguration: (SourceCode) -> ScriptCompilationConfiguration?,
 ) {
-    val updatedCompilerOptions = sourceFiles.flatMapTo(mutableListOf()) {
-        getScriptCompilationConfiguration(it)?.valueOrNull()?.configuration?.get(
-            ScriptCompilationConfiguration.compilerOptions
-        ) ?: emptyList()
-    }
-    if (updatedCompilerOptions.isNotEmpty() &&
-        updatedCompilerOptions != context.baseScriptCompilationConfiguration[ScriptCompilationConfiguration.compilerOptions]
-    ) {
-        updateWithCompilerOptions(updatedCompilerOptions, messageCollector, context.ignoredOptionsReportingState, true)
+    val baseCompilerOptions = context.baseScriptCompilationConfiguration[ScriptCompilationConfiguration.compilerOptions].orEmpty()
+    val refinedCompilerOptions = sources.mapNotNull { source ->
+        getRefinedConfiguration(source)?.get(ScriptCompilationConfiguration.compilerOptions)
+            ?.let { refinedCompilerOptionsDelta(baseCompilerOptions, it) }
+            ?.takeIf { it.isNotEmpty() }
+    }.distinct().flatten()
+    if (refinedCompilerOptions.isNotEmpty()) {
+        updateWithCompilerOptions(
+            baseCompilerOptions + refinedCompilerOptions, messageCollector, context.ignoredOptionsReportingState, isRefinement = true
+        )
     }
 }
+
+internal fun refinedCompilerOptionsDelta(baseCompilerOptions: List<String>, refinedCompilerOptions: List<String>): List<String> =
+    if (refinedCompilerOptions.size >= baseCompilerOptions.size &&
+        refinedCompilerOptions.subList(0, baseCompilerOptions.size) == baseCompilerOptions
+    ) refinedCompilerOptions.subList(baseCompilerOptions.size, refinedCompilerOptions.size)
+    else refinedCompilerOptions

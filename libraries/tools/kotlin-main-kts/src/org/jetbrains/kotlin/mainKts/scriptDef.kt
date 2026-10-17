@@ -42,12 +42,17 @@ const val SCRIPT_FILE_LOCATION_DEFAULT_VARIABLE_NAME = "__FILE__"
 
 class MainKtsScriptDefinition : ScriptCompilationConfiguration(
     {
-        defaultImports(DependsOn::class, Repository::class, Import::class, CompilerOptions::class, ScriptFileLocation::class)
+        defaultImports(
+            DependsOn::class, Repository::class, Import::class, CompilerOptions::class, CompilerPlugin::class, ScriptFileLocation::class,
+        )
         jvm {
             dependenciesFromClassContext(MainKtsScriptDefinition::class, "kotlin-main-kts")
         }
         refineConfiguration {
-            onAnnotations(DependsOn::class, Repository::class, Import::class, CompilerOptions::class, handler = MainKtsConfigurator())
+            onAnnotations(
+                DependsOn::class, Repository::class, Import::class, CompilerOptions::class, CompilerPlugin::class,
+                handler = MainKtsConfigurator(),
+            )
             onAnnotations(ScriptFileLocation::class, handler = ScriptFileLocationCustomConfigurator())
             beforeCompiling(MainKtsDependencyResolver())
             beforeCompiling(::configureScriptFileLocationPathVariablesForCompilation)
@@ -181,6 +186,33 @@ class MainKtsConfigurator : RefineScriptCompilationConfigurationHandler {
             it.annotation.options.toList()
         }
 
+        val scriptCompilerPlugins = annotations.filterByAnnotationType<CompilerPlugin>().mapNotNull { scriptAnnotation ->
+            val args = scriptAnnotation.annotation.args
+            val reference = args.firstOrNull()
+            if (reference == null) {
+                diagnostics.add(
+                    ScriptDiagnostic(
+                        ScriptDiagnostic.unspecifiedError, "CompilerPlugin annotation requires a plugin id or jar path.",
+                        sourcePath = context.script.locationId, location = scriptAnnotation.location?.locationInText
+                    )
+                )
+                null
+            } else {
+                val isPath = '/' in reference || '\\' in reference || reference.endsWith(".jar")
+                val classpath = if (isPath) {
+                    reference.split(',').map { path -> (scriptBaseDir?.resolve(path) ?: File(path)).normalize() }
+                } else {
+                    emptyList()
+                }
+                ScriptCompilerPlugin(
+                    id = reference.takeUnless { isPath },
+                    classpath = classpath,
+                    options = args.drop(1),
+                )
+            }
+        }
+        if (diagnostics.isNotEmpty()) return ResultWithDiagnostics.Failure(diagnostics)
+
         val (dependencyCoordinates, dependencyRepositories) = externalDependenciesFromScriptAnnotations(
             annotations.filter {
                 when (it.annotation) {
@@ -200,6 +232,7 @@ class MainKtsConfigurator : RefineScriptCompilationConfigurationHandler {
             if (dependencyRepositories.isNotEmpty()) this.dependencyRepositories.append(dependencyRepositories)
             if (importedSources.isNotEmpty()) importScripts.append(importedSources.values.map { FileScriptSource(it.first) })
             if (compileOptions.isNotEmpty()) compilerOptions.append(compileOptions)
+            if (scriptCompilerPlugins.isNotEmpty()) compilerPlugins.append(scriptCompilerPlugins)
         }.asSuccess()
     }
 }
@@ -268,4 +301,3 @@ private fun compiledScriptUniqueName(script: SourceCode, scriptCompilationConfig
 private fun ByteArray.toHexString(): String = joinToString("", transform = { "%02x".format(it) })
 
 private fun Int.toByteArray() = ByteBuffer.allocate(Int.SIZE_BYTES).also { it.putInt(this) }.array()
-
