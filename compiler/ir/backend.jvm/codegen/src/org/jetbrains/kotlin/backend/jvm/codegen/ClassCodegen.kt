@@ -227,8 +227,9 @@ class ClassCodegen private constructor(
             owner != null && namedClass == owner -> false
             // Neither is an abstract value class (matches javac): only concrete value classes can be flattened or scalarized.
             namedClass?.modality == Modality.ABSTRACT || namedClass?.modality == Modality.SEALED -> false
-            // A Kotlin value class compiled as a Valhalla value class
-            namedClass?.isKotlinValhallaValueClass(config.languageVersionSettings) == true -> true
+            // A Kotlin value class compiled as a Valhalla value class, or of a library expected to be recompiled like this compilation.
+            namedClass?.isCompiledAsValhallaValueClass(config.languageVersionSettings) == true ||
+                    namedClass?.isKotlinValhallaValueClass(config.languageVersionSettings) == true -> true
             // A Kotlin value class compiled as an identity class because of its superclass becomes a value class once its superclass is
             // recompiled, so it is listed just the same, like a class annotated with `@WillBecomeValue`.
             namedClass?.isKotlinValueClassCompiledAsIdentityClassBySuperclass(config.languageVersionSettings) == true -> true

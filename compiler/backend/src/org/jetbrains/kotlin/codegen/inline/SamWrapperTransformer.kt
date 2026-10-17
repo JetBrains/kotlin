@@ -60,10 +60,17 @@ class SamWrapperTransformer(transformationInfo: SamWrapperTransformationInfo, pr
         val classBuilder = createRemappingClassBuilderViaFactory(inliningContext)
 
         classReader.accept(object : ClassVisitor(Opcodes.API_VERSION, classBuilder.visitor) {
+            private var originalVersion = 0
+
             override fun visit(version: Int, access: Int, name: String, signature: String?, superName: String, interfaces: Array<String>) {
+                originalVersion = version
                 classBuilder.defineClass(
                     regeneratedClassVersion(version, state.config.classFileVersion), access, name, signature, superName, interfaces,
                 )
+            }
+
+            override fun visitInnerClass(name: String, outerName: String?, innerName: String?, access: Int) {
+                super.visitInnerClass(name, outerName, innerName, regeneratedInnerClassAccess(access, originalVersion, state.config.classFileVersion))
             }
 
         }, LOADABLE_DESCRIPTORS_ATTRIBUTE_PROTOTYPES, ClassReader.SKIP_FRAMES)
