@@ -142,6 +142,20 @@ fun AbstractNativeSimpleTest.compileToLibrary(
     return compilationResult.resultingArtifact
 }
 
+fun AbstractNativeSimpleTest.compileToLibraryIncludeBinaryOnly(binary: File): TestCompilationArtifact.KLIB {
+    val emptySource = buildDir.resolve("stub.kt")
+    assert(emptySource.createNewFile())
+
+    return compileToLibrary(
+        emptySource,
+        outputDir = buildDir,
+        freeCompilerArgs = TestCompilerArgs(
+            "-include-binary", binary.canonicalPath,
+        ),
+        dependencies = emptyList()
+    )
+}
+
 fun AbstractNativeSimpleTest.cinteropToLibrary(
     defFile: File,
     outputDir: File,
