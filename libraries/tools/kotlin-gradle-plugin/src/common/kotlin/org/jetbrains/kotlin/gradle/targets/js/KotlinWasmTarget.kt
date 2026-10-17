@@ -45,10 +45,11 @@ internal constructor(
     // Specify if webpack should be used as a bundler.
     // It is captured on the first access to [browserLazyDelegate] and can't be changed afterwards,
     // because the corresponding configurator registers its tasks during configuration.
-    private var bundler: KotlinBrowserBundler? = null
+    internal var bundler: KotlinBrowserBundler? = null
+        private set
 
     override fun KotlinBrowserJsIr.bundleConfigurator() {
-        val bundlerValue = bundler ?: error("Bundler should be defined in ${this@KotlinWasmTarget.name}")
+        val bundlerValue = this@KotlinWasmTarget.bundler ?: error("Bundler should be defined in ${this@KotlinWasmTarget.name}")
         when (bundlerValue) {
             KotlinBrowserBundler.WEBPACK -> {
                 subTargetConfigurators.add(WebpackConfigurator(this))
