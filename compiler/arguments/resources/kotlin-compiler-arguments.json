@@ -398,6 +398,12 @@
             "patch": 0
         },
         {
+            "name": "2.5.20",
+            "major": 2,
+            "minor": 5,
+            "patch": 20
+        },
+        {
             "name": "2.6.0",
             "major": 2,
             "minor": 6,
@@ -2657,7 +2663,7 @@
                             "introducedVersion": "2.5.0",
                             "stabilizedVersion": null,
                             "deprecatedVersion": null,
-                            "removedVersion": null
+                            "removedVersion": "2.5.20"
                         },
                         "argumentType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",

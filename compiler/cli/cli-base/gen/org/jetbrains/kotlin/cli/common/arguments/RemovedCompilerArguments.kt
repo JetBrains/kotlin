@@ -16,6 +16,20 @@ class RemovedCompilerArguments {
         level = DeprecationLevel.ERROR,
     )
     @Argument(
+        value = "-Xallow-pre-17-runtime-jdk",
+        description = "Temporarily allow running Kotlin compiler with JDK older than JDK 17. This option will not work starting Kotlin 2.5.20-Beta1. See https://jb.gg/kotlin-compiler-jdk-17-migration for more details.",
+        removedVersion = "2.5.20",
+    )
+    var allowPre17RuntimeJdk: Boolean = false
+        set(value) {
+            field = value
+        }
+
+    @all:Deprecated(
+        message = "",
+        level = DeprecationLevel.ERROR,
+    )
+    @Argument(
         value = "-Xcontext-receivers",
         description = "Enable experimental context receivers.",
         removedVersion = "2.5.0",
