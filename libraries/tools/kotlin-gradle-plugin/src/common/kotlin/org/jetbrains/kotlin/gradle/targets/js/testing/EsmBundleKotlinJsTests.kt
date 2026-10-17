@@ -8,10 +8,12 @@ package org.jetbrains.kotlin.gradle.targets.js.testing
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileSystemOperations
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
+import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.PathSensitive
@@ -30,6 +32,7 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.nodeJsRoot
 import org.jetbrains.kotlin.gradle.targets.js.ir.npmToolingDir
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependenciesTask
+import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.locateOrRegisterImportMapGenerateTask
 import org.jetbrains.kotlin.gradle.targets.wasm.internal.isWasm
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.utils.getFile
@@ -62,6 +65,10 @@ internal abstract class EsmBundleKotlinJsTests @Inject constructor(
     @get:Input
     abstract val testEntryFileName: Property<String>
 
+    @get:InputFile
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    internal abstract val importMapLoaderFile: RegularFileProperty
+
     @get:Internal
     override val requiredNpmDependencies: Set<RequiredKotlinJsDependency> = setOf(
         compilation.nodeJsRoot().versions.kotlinWebHelpers
@@ -80,11 +87,15 @@ internal abstract class EsmBundleKotlinJsTests @Inject constructor(
     val kotlinJsTestLocation: KotlinDefaultJsTestLocation
         get() {
             val httpServerService = this.httpServerService
+            val npmRootPackageDirectory = this.npmRootPackageDirectory
+            val npmRootPackagePrefix = this.npmRootPackagePrefix
             val uniqueBundleName = this.path
             return KotlinDefaultJsTestLocation(
                 bundleLocation = outputDirectory,
                 testHtmlFileName = providers.provider { "test.html" },
                 url = outputDirectory.zip(httpServerService) { bundleDir, httpServer ->
+                    // serve is idempotent, i.e. it is ok to request serving the same prefix and path from multiple test tasks
+                    httpServer.serve(npmRootPackagePrefix.get(), npmRootPackageDirectory.get())
                     httpServer.serve(uniqueBundleName, bundleDir).resolve("test.html")
                 }
             )
@@ -92,6 +103,18 @@ internal abstract class EsmBundleKotlinJsTests @Inject constructor(
 
     @get:Internal
     internal abstract val npmToolingEnvDir: DirectoryProperty
+
+    /**
+     * Root npm package directory (e.g. `build/wasm`), that contains `node_modules` referenced by the import map.
+     */
+    @get:Internal
+    internal abstract val npmRootPackageDirectory: DirectoryProperty
+
+    /**
+     * URL prefix at which [npmRootPackageDirectory] is served, e.g. `build/wasm`.
+     */
+    @get:Internal
+    internal abstract val npmRootPackagePrefix: Property<String>
 
     @TaskAction
     fun action() {
@@ -115,6 +138,7 @@ internal abstract class EsmBundleKotlinJsTests @Inject constructor(
         fs.copy { copySpec ->
             copySpec.from(modules.require("mocha/mocha.js"))
             copySpec.from(modules.require("mocha/mocha.css"))
+            copySpec.from(importMapLoaderFile)
             copySpec.into(outputDirectory)
         }
 
@@ -129,7 +153,10 @@ internal abstract class EsmBundleKotlinJsTests @Inject constructor(
         val testHtmlFileContent = testHtmlFileTemplate
             .readText().replace(
                 oldValue = "<script src=\"tests.bundle-kotlinTestRunner.js\"></script>",
-                newValue = "<script type=\"module\" src=\"testFramework/kotlin-test-mocha-browser-runner.js\"></script>"
+                newValue = """
+                    <script src="importmap-loader.js"></script>
+                    <script type="module" src="testFramework/kotlin-test-mocha-browser-runner.js"></script>
+                """.trimIndent()
             ).replace(
                 oldValue = entryPointPlaceholder,
                 newValue = "kotlinWasmJsTestsEntry: '$entryPointEscaped',"
@@ -155,6 +182,8 @@ internal abstract class EsmBundleKotlinJsTests @Inject constructor(
 }
 
 internal fun KotlinJsIrCompilation.locateOrRegisterEsmBundleKotlinJsTestsTask(): TaskProvider<EsmBundleKotlinJsTests> {
+    val importMapTask = locateOrRegisterImportMapGenerateTask()
+
     val esmBundleKotlinJsTests = project.locateOrRegisterTask<EsmBundleKotlinJsTests>(
         name = disambiguateName("bundleAsEsm"), // for wasmTest name will be wasmTestBundleAsEsm
         args = listOf(this),
@@ -168,6 +197,11 @@ internal fun KotlinJsIrCompilation.locateOrRegisterEsmBundleKotlinJsTestsTask():
         ).single()
 
         task.npmToolingEnvDir.value(npmToolingDir).finalizeValue()
+        val rootProjectDir = project.rootDir
+        val npmRootPackageDirectory = nodeJsRoot().rootPackageDirectory
+        task.npmRootPackageDirectory.set(npmRootPackageDirectory)
+        task.npmRootPackagePrefix.set(npmRootPackageDirectory.map { it.asFile.relativeTo(rootProjectDir).invariantSeparatorsPath })
+        task.importMapLoaderFile.set(importMapTask.flatMap { it.importMapLoaderFile })
         task.kotlinLinkerOutputFiles.fileProvider(binary.linkSyncTask.flatMap { it.destinationDirectory })
         task.testEntryFileName.convention(binary.mainFileSyncPath.map { it.asFile.name })
         task.outputDirectory.set(project.layout.buildDirectory.dir("kotlin/${task.name}"))

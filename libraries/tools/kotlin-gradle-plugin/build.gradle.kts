@@ -748,6 +748,11 @@ jvmToolchains {
         jdkVersion = JdkMajorVersion.JDK_17_0
         targetBytecodeVersion = JdkMajorVersion.JDK_17_0
     }
+
+    configureForSourceSet("test") {
+        jdkVersion = JdkMajorVersion.JDK_17_0
+        targetBytecodeVersion = JdkMajorVersion.JDK_17_0
+    }
 }
 
 val functionalTestCompilation = kotlin.target.compilations.getByName("functionalTest")
