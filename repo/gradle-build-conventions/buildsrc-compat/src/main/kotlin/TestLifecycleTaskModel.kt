@@ -6,6 +6,7 @@
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.invocation.Gradle
 import org.gradle.api.tasks.testing.AbstractTestTask
 import org.gradle.kotlin.dsl.findByType
 import org.gradle.kotlin.dsl.support.serviceOf
@@ -47,9 +48,11 @@ interface TestLifecycleTasksModel : Serializable {
         val allDependencies: Set<String>
 
         /**
-         * Direct dependencies of this lifecycle task
+         * Direct dependencies of this lifecycle task. For every dependency:
+         * the [toArgumentString] representation of the domains of all test tasks
+         * that are resolved (transitively) from that dependency.
          */
-        val dependencies: Set<String>
+        val dependencies: Map<String, String>
 
         /**
          * The earliest TeamCity quality gate expected to execute this lifecycle task.
@@ -58,7 +61,7 @@ interface TestLifecycleTasksModel : Serializable {
     }
 
     /**
-     * The [org.jetbrains.kotlin.testFederation.toArgumentString] representation of the set of domains
+     * The [toArgumentString] representation of the set of domains
      * this project belongs to
      */
     val domains: String
@@ -89,7 +92,7 @@ internal data class TestLifecycleTaskModelImpl(
 internal data class TestLifecycleTaskImpl(
     override val path: String,
     override val allDependencies: Set<String>,
-    override val dependencies: Set<String>,
+    override val dependencies: Map<String, String>,
     override val qualityGate: String,
 ) : TestLifecycleTasksModel.TestLifecycleTask
 
@@ -135,18 +138,31 @@ class TestLifecycleTasksModelBuilder : ToolingModelBuilder {
 
         return TestLifecycleTaskImpl(
             path = task.identityPath.asString(),
-            dependencies = task.taskDependencies.getDependencies(task)
+            allDependencies = task.allTaskDependencies(build)
+                .filter { it.isRelevant() }
                 .mapNotNull { it.identityPathOrNull() }
                 .toSet(),
-            allDependencies = task.closure<Task> { current ->
-                if (current.project.gradle == build) {
-                    current.taskDependencies.getDependencies(current).toList()
-                } else emptyList()
-            }.filter { it.isRelevant() }.mapNotNull { it.identityPathOrNull() }.toSet(),
+            dependencies = task.taskDependencies.getDependencies(task)
+                .filter { it.identityPathOrNull() != null }
+                .associate { it.identityPathOrNull()!! to it.allDomains(build) },
             qualityGate = task.qualityGate.get().name,
         )
     }
 
+    private fun Task.allTaskDependencies(build: Gradle): Set<Task> =
+        closure<Task> { currentTask ->
+            if (currentTask.project.gradle == build) {
+                currentTask.taskDependencies.getDependencies(currentTask).toList()
+            } else emptyList()
+        }
+
+    private fun Task.allDomains(build: Gradle): String =
+        allTaskDependencies(build)
+            .plus(this)
+            .filterIsInstance<AbstractTestTask>()
+            .filter { it.isRelevantTest() }
+            .flatMap { it.testFederationDomains.get() }
+            .toArgumentString()
 
     private fun Task.isRelevant(): Boolean {
         if (this is AbstractTestTask) return isRelevantTest()
