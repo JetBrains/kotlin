@@ -591,6 +591,9 @@ internal class SymbolKotlinAsJavaSupport(private val project: Project) : KotlinA
      *   In this case, [getResolutionScope] just provides an identical scope.
      * - If the original declaration was in a common module, the first found JVM implementation module is passed as a context.
      *   In this case, [getResolutionScope] returns the scope of this implementation module.
+     *
+     * The only exception is when [isMultiplatformSupportAvailable] is `true`.
+     * Then, the declaration-site module is used as a context, so [getResolutionScope] returns the scope of that (possibly non-JVM) module.
      */
     override fun getResolutionScope(file: FakeFileForLightClass): GlobalSearchScope {
         val analysisScopesForContextModules = file.classes.mapNotNullTo(mutableSetOf()) { lightClass ->
@@ -641,12 +644,19 @@ internal class SymbolKotlinAsJavaSupport(private val project: Project) : KotlinA
      * [moduleFilter] is called on the containing module to ensure that this module is allowed for the light class creation.
      * If [moduleFilter] returns `false` on the containing module, returns `null`.
      * If [scope] is `null`, the containing module is returned.
+     *
+     * When [isMultiplatformSupportAvailable] is `true`, [scope] is ignored and the containing module is always returned.
+     * The [calculatedContextModuleCache] is bypassed in this case, so results computed in one mode never leak into the other.
      */
     private fun KtElement.findContextModule(
         scope: GlobalSearchScope? = null,
         moduleFilter: (KaModule) -> Boolean = { true }
     ): KaModule? {
         val declarationModule = getContainingModule().takeIf(moduleFilter) ?: return null
+        if (isMultiplatformSupportAvailable) {
+            return declarationModule
+        }
+
         return calculatedContextModuleCache
             .getOrPut(moduleKeyInterner.intern(declarationModule), scope) { declarationModule, scope ->
                 findContextModuleNonCached(declarationModule, scope)

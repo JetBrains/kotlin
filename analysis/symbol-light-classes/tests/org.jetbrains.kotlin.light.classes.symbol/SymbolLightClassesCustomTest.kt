@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.light.classes.symbol
 
 import com.intellij.psi.*
 import com.intellij.psi.impl.PsiSuperMethodImplUtil
+import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.diagnostics.diagnostics
 import org.jetbrains.kotlin.analysis.api.javaInterop.asFacadePsiClass
@@ -277,5 +278,23 @@ class SymbolLightClassesCustomTest : AbstractAnalysisApiExecutionTest(testDirPat
         testServices.assertions.assertEquals(typeParameter, (returnType.componentType as PsiClassType).resolve()) {
             "Unexpected type parameter in the return type of $toArray"
         }
+    }
+
+    @Test
+    fun multiplatformExpectTypeInCommonModule(file: KtFile, testServices: TestServices) {
+        val project = file.project
+
+        fun findCommonClassMethod(): PsiMethod {
+            val lightClass = JavaPsiFacade.getInstance(project).findClass("test.pkg.CommonClass", GlobalSearchScope.allScope(project))
+                ?: error("Light class for 'test.pkg.CommonClass' was not found")
+            return lightClass.findMethodsByName("common", false).single()
+        }
+
+        val jvmMethod = findCommonClassMethod()
+        testServices.assertions.assertEquals("java.lang.String", jvmMethod.returnType?.canonicalText)
+
+        @OptIn(KaNonPublicApi::class)
+        val kmpMethod = withMultiplatformLightClassSupport(project) { findCommonClassMethod() }
+        testServices.assertions.assertEquals("test.pkg.Foo", kmpMethod.returnType?.canonicalText)
     }
 }
