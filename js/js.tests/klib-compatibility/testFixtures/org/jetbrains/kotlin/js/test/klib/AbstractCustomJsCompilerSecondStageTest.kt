@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
 import org.jetbrains.kotlin.test.grouping.AbstractTwoStageKotlinCompilerJsTest
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerSecondStageTestSuppressor
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerTestSuppressor
+import org.jetbrains.kotlin.test.klib.KlibOnlyFirstStageStateReleaser
 import org.jetbrains.kotlin.test.klib.KlibZipFileSystemCacheCloser
 import org.jetbrains.kotlin.test.klib.KlibZipFileSystemCacheConfigurator
 import org.jetbrains.kotlin.test.klib.setupCustomLVForKlibForwardCompatibilityTest
@@ -74,7 +75,7 @@ open class AbstractCustomJsCompilerSecondStageTest : AbstractTwoStageKotlinCompi
             useMetaTestConfigurators(::UnsupportedFeaturesTestConfigurator)
         }
         nonGroupingStage {
-            useGroupingTestIsolators(::JsGroupingTestIsolator)
+            useGroupingTestIsolators({ JsGroupingTestIsolator(it, customCompilerStage = CompilationStage.SECOND) })
             useSourcePreprocessor(::JsExportBoxPreprocessor)
 
             setUpDefaultDirectivesForJsBoxTest(FirParser.LightTree)
@@ -82,7 +83,7 @@ open class AbstractCustomJsCompilerSecondStageTest : AbstractTwoStageKotlinCompi
             commonConfigurationForJsTest()
             // The first stage is compiled by the current compiler in-process, against the zipped stdlib KLIB.
             useConfigurators(::KlibZipFileSystemCacheConfigurator)
-            useAfterAnalysisCheckers(::KlibZipFileSystemCacheCloser)
+            useAfterAnalysisCheckers(::KlibZipFileSystemCacheCloser, ::KlibOnlyFirstStageStateReleaser)
             // A grouped batch links several per-test KLIBs at once, so the helper sources must live in a single shared KLIB
             // instead of being duplicated in every per-test KLIB.
             @OptIn(TestInfrastructureInternals::class)

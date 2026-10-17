@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.wasm.test.blackbox
 
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives
+import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives.CHECK_STATE_MACHINE
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
@@ -35,6 +37,7 @@ class WasmGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolato
             CodegenTestDirectives,
             LanguageSettingsDirectives,
             CustomKlibCompilerTestDirectives,
+            AdditionalFilesDirectives, // for directives WITH_COROUTINES, CHECK_STATE_MACHINE
         )
 
     override fun computeBatchToken(moduleStructure: TestModuleStructure): BatchToken {
@@ -82,15 +85,25 @@ class WasmGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolato
         if (hasCompanionJsFile)
             return BatchToken.Isolated
 
+        // A top-level `main` is exported as `_start`, and the JS glue a released compiler generates for a batch declares
+        // `_start` once per such function: two of them in a batch make the whole batch fail to load.
+        // Like the JS isolator, this takes an indented `main` for a top-level one too: over-isolation is harmless.
+        val declaresMain = moduleStructure.modules.any { module ->
+            module.files.any { !it.isAdditional && it.originalContent.contains(TOP_LEVEL_MAIN_REGEX) }
+        }
+        if (declaresMain)
+            return BatchToken.Isolated
+
         val specificTokens = listOfNotNull(
             computeEHToken(moduleStructure),
             computeLanguageSettingsToken(moduleStructure),
             computeToggledCheckersToken(moduleStructure.allDirectives),
+            computeCoroutineHelpersToken(moduleStructure.allDirectives),
         )
         return when (specificTokens.size) {
             0 -> BatchToken.Regular
             1 -> specificTokens.single()
-            else -> BatchToken.Isolated
+            else -> Custom(specificTokens.joinToString("; "))
         }
     }
 
@@ -103,12 +116,22 @@ class WasmGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolato
             token.takeIf { directive in moduleStructure.allDirectives }
         }
 
+    private fun computeCoroutineHelpersToken(registeredDirectives: RegisteredDirectives): BatchToken? {
+        if (AdditionalFilesDirectives.WITH_COROUTINES !in registeredDirectives) return null
+        val extraHelperDirectives = listOf(
+            CHECK_STATE_MACHINE, // adds helpers: `CoroutineUtil.kt` + `StateMachineChecker.kt`
+        ).filter { it in registeredDirectives }
+        // The default set of helper files is the same for all such tests, so they may be grouped as usual.
+        return extraHelperDirectives.ifNotEmpty { Custom("coroutine helpers: ${joinToString { it.name }}") }
+    }
+
     private fun computeLanguageSettingsToken(moduleStructure: TestModuleStructure): BatchToken? {
-        val languageFeatures = moduleStructure.allDirectives[LanguageSettingsDirectives.LANGUAGE].sorted()
-        val optIns = moduleStructure.allDirectives[LanguageSettingsDirectives.OPT_IN].sorted()
-        val apiVersion = moduleStructure.allDirectives[LanguageSettingsDirectives.API_VERSION]
-        val languageVersion = moduleStructure.allDirectives[LanguageSettingsDirectives.LANGUAGE_VERSION]
-        val returnValueCheckerMode = moduleStructure.allDirectives[LanguageSettingsDirectives.RETURN_VALUE_CHECKER_MODE]
+        // `distinct()` below is used to match directive lists for tests having different amount of modules, like `[2.2]` vs `[2.2, 2.2]`
+        val languageFeatures = moduleStructure.allDirectives[LanguageSettingsDirectives.LANGUAGE].distinct().sorted()
+        val optIns = moduleStructure.allDirectives[LanguageSettingsDirectives.OPT_IN].distinct().sorted()
+        val apiVersion = moduleStructure.allDirectives[LanguageSettingsDirectives.API_VERSION].distinct()
+        val languageVersion = moduleStructure.allDirectives[LanguageSettingsDirectives.LANGUAGE_VERSION].distinct()
+        val returnValueCheckerMode = moduleStructure.allDirectives[LanguageSettingsDirectives.RETURN_VALUE_CHECKER_MODE].distinct()
         val progressiveMode = LanguageSettingsDirectives.PROGRESSIVE_MODE in moduleStructure.allDirectives
 
         if (languageFeatures.isEmpty()
@@ -126,7 +149,7 @@ class WasmGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolato
 
     private fun computeToggledCheckersToken(registeredDirectives: RegisteredDirectives): ToggledCheckersToken? =
         registeredDirectives.collectToggledCheckers().let { [additional, disabled] -> additional + disabled }
-            .ifNotEmpty { ToggledCheckersToken(this) }
+            .ifNotEmpty { ToggledCheckersToken(toSortedSet()) }
 
     private fun RegisteredDirectives.collectToggledCheckers(): Pair<Set<String>, Set<String>> {
         val additionalCheckers = IrCheckersEnabledByTestDirectives.filter { it.key in this }.values.toSet()
@@ -136,5 +159,8 @@ class WasmGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolato
 
         return additionalCheckers to disabledIrCheckers
     }
-}
 
+    companion object {
+        private val TOP_LEVEL_MAIN_REGEX = Regex("""(?m)^\s*(?:suspend\s+)?fun\s+main\s*\(""")
+    }
+}

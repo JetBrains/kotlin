@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectiv
 import org.jetbrains.kotlin.test.grouping.AbstractTwoStageKotlinCompilerWasmTest
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerSecondStageTestSuppressor
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerTestSuppressor
+import org.jetbrains.kotlin.test.klib.KlibOnlyFirstStageStateReleaser
 import org.jetbrains.kotlin.test.klib.isolateReflectionPackageNameDependentTestsIfNeeded
 import org.jetbrains.kotlin.test.klib.setupCustomLVForKlibForwardCompatibilityTest
 import org.jetbrains.kotlin.test.klib.useReflectionPackageNameAnnotationIfSupported
@@ -142,6 +143,7 @@ open class AbstractCustomWasmJsCompilerSecondStageTest(val testDataRoot: String 
                 // where `X.Y.Z` matches to `customWasmJsCompilerSettings.version`
                 ::CustomKlibCompilerSecondStageTestSuppressor.bind(customWasmJsCompilerSettings.defaultLanguageVersion),
             )
+            useAfterAnalysisCheckers(::KlibOnlyFirstStageStateReleaser)
 
             forTestsNotMatching(
                 "compiler/testData/codegen/box/diagnostics/functions/tailRecursion/*" or
