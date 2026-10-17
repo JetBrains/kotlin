@@ -5,11 +5,15 @@
 
 package org.jetbrains.kotlin.buildtools.internal.arguments
 
+import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.buildtools.api.arguments.CompilerPlugin
+import org.jetbrains.kotlin.buildtools.api.arguments.CompilerPluginOption
+import org.jetbrains.kotlin.buildtools.api.arguments.CompilerPluginPartialOrder
 import org.jetbrains.kotlin.buildtools.api.arguments.CompilerPluginPartialOrderRelation
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import java.nio.file.Path
 
-internal fun CommonCompilerArguments.applyCompilerPlugins(plugins: List<CompilerPlugin>) {
+internal fun CommonCompilerArguments.applyCompilerPlugins(plugins: List<CompilerPluginImpl>) {
     val filteredPlugins = plugins.filter { it.pluginId != RAW_PLUGIN_ID }
     validatePluginsConfiguration(filteredPlugins)
     pluginClasspaths += filteredPlugins.flatMap { it.classpath }.map { it.absolutePathStringOrThrow() }.toTypedArray()
@@ -18,8 +22,8 @@ internal fun CommonCompilerArguments.applyCompilerPlugins(plugins: List<Compiler
     pluginOrderConstraints += filteredPlugins.flatMap { plugin ->
         plugin.orderingRequirements.map { order ->
             when (order.relation) {
-                CompilerPluginPartialOrderRelation.BEFORE -> "${plugin.pluginId}>${order.otherPluginId}"
-                CompilerPluginPartialOrderRelation.AFTER -> "${order.otherPluginId}>${plugin.pluginId}"
+                CompilerPluginPartialOrderRelationImpl.BEFORE -> "${plugin.pluginId}>${order.otherPluginId}"
+                CompilerPluginPartialOrderRelationImpl.AFTER -> "${order.otherPluginId}>${plugin.pluginId}"
             }
         }
     }
@@ -27,7 +31,7 @@ internal fun CommonCompilerArguments.applyCompilerPlugins(plugins: List<Compiler
         .toTypedArray()
 }
 
-private fun validatePluginsConfiguration(plugins: List<CompilerPlugin>) {
+private fun validatePluginsConfiguration(plugins: List<CompilerPluginImpl>) {
     for (plugin in plugins) {
         // Empty plugin id
         if (plugin.pluginId.isBlank()) {
@@ -47,14 +51,14 @@ private fun validatePluginsConfiguration(plugins: List<CompilerPlugin>) {
 internal const val RAW_PLUGIN_ID = "___RAW_PLUGINS_APPLIED___"
 
 internal fun applyCompilerPlugins(
-    currentValue: List<CompilerPlugin>,
+    currentValue: List<CompilerPluginImpl>,
     compilerArgs: CommonCompilerArguments,
-): List<CompilerPlugin> {
+): List<CompilerPluginImpl> {
     val rawValue = if (compilerArgs.pluginClasspaths.isEmpty() && compilerArgs.pluginConfigurations.isEmpty()) {
         emptyList()
     } else {
         listOf(
-            CompilerPlugin(
+            CompilerPluginImpl(
                 pluginId = RAW_PLUGIN_ID,
                 classpath = emptyList(),
                 rawArguments = emptyList(),
@@ -64,3 +68,55 @@ internal fun applyCompilerPlugins(
     }
     return currentValue + rawValue
 }
+
+@Serializable
+public class CompilerPluginOptionImpl(public val key: String, public val value: String) {
+    internal fun toApi(): CompilerPluginOption = CompilerPluginOption(key, value)
+}
+
+internal fun CompilerPluginOption.toImpl(): CompilerPluginOptionImpl = CompilerPluginOptionImpl(key, value)
+
+public enum class CompilerPluginPartialOrderRelationImpl {
+    BEFORE,
+    AFTER,
+    ;
+
+    internal fun toApi(): CompilerPluginPartialOrderRelation = CompilerPluginPartialOrderRelation.valueOf(name)
+}
+
+internal fun CompilerPluginPartialOrderRelation.toImpl(): CompilerPluginPartialOrderRelationImpl =
+    CompilerPluginPartialOrderRelationImpl.valueOf(name)
+
+@Serializable
+public class CompilerPluginPartialOrderImpl(
+    public val relation: CompilerPluginPartialOrderRelationImpl,
+    public val otherPluginId: String,
+) {
+    internal fun toApi(): CompilerPluginPartialOrder = CompilerPluginPartialOrder(relation.toApi(), otherPluginId)
+}
+
+internal fun CompilerPluginPartialOrder.toImpl(): CompilerPluginPartialOrderImpl =
+    CompilerPluginPartialOrderImpl(relation.toImpl(), otherPluginId)
+
+
+@Serializable
+public class CompilerPluginImpl(
+    public val pluginId: String,
+    public val classpath: List<Path>,
+    public val rawArguments: List<CompilerPluginOptionImpl>,
+    public val orderingRequirements: Set<CompilerPluginPartialOrderImpl>,
+) {
+    internal fun toApi(): CompilerPlugin = CompilerPlugin(
+        pluginId,
+        classpath,
+        rawArguments.map(CompilerPluginOptionImpl::toApi),
+        orderingRequirements.map(CompilerPluginPartialOrderImpl::toApi).toSet()
+    )
+}
+
+internal fun CompilerPlugin.toImpl(): CompilerPluginImpl = CompilerPluginImpl(
+    pluginId,
+    classpath,
+    rawArguments.map { it.toImpl() },
+    orderingRequirements.map { it.toImpl() }.toSet()
+)
