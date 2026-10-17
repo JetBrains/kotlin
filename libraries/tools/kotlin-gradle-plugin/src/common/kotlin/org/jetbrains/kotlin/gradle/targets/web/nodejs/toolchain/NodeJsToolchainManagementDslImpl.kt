@@ -22,7 +22,7 @@ class NodeJsToolchainManagementDslImpl(
     private var configured = false
 
     override fun toolchainService(configure: DefaultNodeJsToolchainService.Parameters.() -> Unit) {
-        toolchainService(DefaultNodeJsToolchainServiceImpl::class) {
+        toolchainService(DefaultNodeJsToolchainService::class) {
             offline.set(gradle.startParameter.isOffline)
             configure()
         }

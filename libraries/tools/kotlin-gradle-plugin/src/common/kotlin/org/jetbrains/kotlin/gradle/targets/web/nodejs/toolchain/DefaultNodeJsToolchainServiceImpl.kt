@@ -86,19 +86,31 @@ internal abstract class DefaultNodeJsToolchainServiceImpl @Inject internal const
             gradle: Gradle,
             configureBuildServiceParameters: (DefaultNodeJsToolchainService.Parameters) -> Unit,
         ): Provider<DefaultNodeJsToolchainServiceImpl> {
-            return gradle.sharedServices.registerIfAbsent(nodeJsServiceName, DefaultNodeJsToolchainServiceImpl::class.java) { spec ->
-                spec.parameters.downloadBaseUrl.convention(OFFICIAL_NODE_JS_DOWNLOAD_BASE_URL)
-                spec.parameters.offline.convention(gradle.startParameter.isOffline)
-                configureBuildServiceParameters(spec.parameters)
-            }
+            return registerIfAbsent(gradle.rootProject, configureBuildServiceParameters)
         }
 
-        internal fun registerIfAbsent(project: Project): Provider<DefaultNodeJsToolchainServiceImpl> {
-            return registerIfAbsent(project.gradle) { parameters ->
-                parameters.installationDir.fileProvider(project.nodeJsToolchainInstallationDir)
-                parameters.downloadBaseUrl.set(
-                    project.kotlinPropertiesProvider.nodeJsToolchainDownloadUrl.orElse(OFFICIAL_NODE_JS_DOWNLOAD_BASE_URL)
+        internal fun registerIfAbsent(
+            project: Project,
+            configureBuildServiceParameters: (DefaultNodeJsToolchainService.Parameters) -> Unit = {},
+        ): Provider<DefaultNodeJsToolchainServiceImpl> {
+            return project.gradle.sharedServices.registerIfAbsent(
+                nodeJsServiceName,
+                DefaultNodeJsToolchainServiceImpl::class.java
+            ) { spec ->
+                spec.parameters.downloadBaseUrl.convention(OFFICIAL_NODE_JS_DOWNLOAD_BASE_URL)
+                spec.parameters.offline.convention(project.gradle.startParameter.isOffline)
+                spec.parameters.installationDir.fileProvider(
+                    project.provider { project.userKotlinPersistentDir.resolve(NODE_JS_TOOLCHAINS_DIR_NAME) }
                 )
+                configureBuildServiceParameters(spec.parameters)
+                project.kotlinPropertiesProvider.nodeJsToolchainDownloadUrl.orNull?.also {
+                    spec.parameters.downloadBaseUrl.set(it)
+                }
+                if (project.kotlinPropertiesProvider.nodeJsToolchainInstallationDir.isPresent) {
+                    spec.parameters.installationDir.fileProvider(
+                        project.kotlinPropertiesProvider.nodeJsToolchainInstallationDir.map { File(it) }
+                    )
+                }
             }
         }
 
@@ -109,20 +121,6 @@ internal abstract class DefaultNodeJsToolchainServiceImpl @Inject internal const
          */
         private const val OFFICIAL_NODE_JS_DOWNLOAD_BASE_URL = "https://nodejs.org/dist"
 
-        /**
-         * The directory all Node.js installations are shared through, `<user.home>/.kotlin/toolchains/nodejs`.
-         *
-         * The base directory can be customized with the `kotlin.user.home` Gradle property,
-         * and defaults to `~/.kotlin`.
-         */
-        private val Project.nodeJsToolchainInstallationDir: Provider<File>
-            get() {
-                if (kotlinPropertiesProvider.nodeJsToolchainInstallationDir.isPresent) {
-                    return kotlinPropertiesProvider.nodeJsToolchainInstallationDir.map { File(it) }
-                }
-
-                return providers.provider { userKotlinPersistentDir.resolve(NODE_JS_TOOLCHAINS_DIR_NAME) }
-            }
     }
 
     private data class NodeJsDistribution(
