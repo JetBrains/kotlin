@@ -12,11 +12,11 @@
     },
     "isLocal": false
   },
-  "classAbiHash": -7461721083474450867,
+  "classAbiHash": 6080175213331035933,
   "classMemberLevelSnapshot": {
     "classAbiExcludingMembers": {
       "name": "com/example/SimpleClass",
-      "abiHash": -8065457033051012820
+      "abiHash": -1281978324851116160
     },
     "fieldsAbi": [
       {
@@ -27,11 +27,11 @@
     "methodsAbi": [
       {
         "name": "\u003cinit\u003e",
-        "abiHash": -8759916777630832503
+        "abiHash": -128995387587966260
       },
       {
         "name": "publicMethod",
-        "abiHash": -2324043488859145462
+        "abiHash": 6488922784965681426
       }
     ]
   },
