@@ -111,6 +111,24 @@ public class FirIdeNormalAnalysisSourceLikeModuleCompilerFacilityTestGenerated e
   }
 
   @Test
+  @TestMetadata("explicitInlineValueClass.kt")
+  public void testExplicitInlineValueClass() {
+    run("explicitInlineValueClass.kt");
+  }
+
+  @Test
+  @TestMetadata("explicitInlineValueClassFromAbiJar.kt")
+  public void testExplicitInlineValueClassFromAbiJar() {
+    run("explicitInlineValueClassFromAbiJar.kt");
+  }
+
+  @Test
+  @TestMetadata("explicitInlineValueClassFromLibrary.kt")
+  public void testExplicitInlineValueClassFromLibrary() {
+    run("explicitInlineValueClassFromLibrary.kt");
+  }
+
+  @Test
   @TestMetadata("fullValueClassFromAbiJar.kt")
   public void testFullValueClassFromAbiJar() {
     run("fullValueClassFromAbiJar.kt");
