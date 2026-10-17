@@ -1,0 +1,8 @@
+warning: module name in `-Xadd-reads` not found: hidden
+compiler/tests-integration/testData/javaModules/addReadsUnresolved/main/usage.kt:3:13: error: symbol is declared in module 'visible', which the current module does not depend on.
+fun test(): V = V()
+            ^
+compiler/tests-integration/testData/javaModules/addReadsUnresolved/main/usage.kt:3:17: error: symbol is declared in module 'visible', which the current module does not depend on.
+fun test(): V = V()
+                ^
+COMPILATION_ERROR

@@ -29,14 +29,51 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModule
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
+import javax.lang.model.SourceVersion
 
+
+internal const val ALL_UNNAMED = "ALL-UNNAMED"
+
+/**
+ * A value of `-Xadd-reads` (`<module>=<other-module>(,<other-module>)*`) or `-Xadd-exports`
+ * (`<module>/<package>=<other-module>(,<other-module>)*`). Names that are not valid Java names are in [badNames] and left out of
+ * [otherModules]. If the left-hand side contains such a name, [source] is `null` and [otherModules] is empty.
+ */
+class JavaModuleAccessOption(val source: String?, val otherModules: List<String>, val badNames: List<String>)
+
+private val ADD_READS_VALUE = Regex("([^=]+)=(,*[^,].*)")
+private val ADD_EXPORTS_VALUE = Regex("([^/]+)/([^=]+)=(,*[^,].*)")
+private val TARGET_SEPARATORS = Regex("[ ,]+")
+
+/**
+ * Parses a value of `-Xadd-reads` or `-Xadd-exports` the way javac parses `--add-reads` and `--add-exports`, or returns `null` if the
+ * value is malformed.
+ */
+fun parseJavaModuleAccessOption(value: String, isExports: Boolean): JavaModuleAccessOption? {
+    val groups = (if (isExports) ADD_EXPORTS_VALUE else ADD_READS_VALUE).matchEntire(value)?.groupValues?.drop(1) ?: return null
+    val sourceParts = groups.dropLast(1)
+    val targets = groups.last()
+    val badSourceParts = sourceParts.filterNot(SourceVersion::isName)
+    // Like javac, names are checked split on commas, but applied split on spaces and commas.
+    val badNames = badSourceParts + targets.split(',').filterNot { it.isEmpty() || isValidTarget(it) }
+    if (badSourceParts.isNotEmpty()) return JavaModuleAccessOption(null, emptyList(), badNames)
+    return JavaModuleAccessOption(sourceParts.joinToString("/"), targets.split(TARGET_SEPARATORS).filter(::isValidTarget), badNames)
+}
+
+private fun isValidTarget(name: String): Boolean = name == ALL_UNNAMED || SourceVersion.isName(name)
 
 class CliJavaModuleResolver(
     private val moduleGraph: JavaModuleGraph,
     private val userModules: List<JavaModule>,
     private val systemModules: List<JavaModule.Explicit>,
-    private val project: Project
+    private val project: Project,
+    // Values of -Xadd-reads and -Xadd-exports, see ClasspathRootsResolver.additionalJavaModuleReads.
+    private val additionalReads: Map<String, Set<String>> = emptyMap(),
+    private val additionalExports: Map<String, Set<String>> = emptyMap(),
+    // See ClasspathRootsResolver.javaModulesFromClasspath.
+    private val javaModulesFromClasspath: Set<String> = emptySet(),
 ) : JavaModuleResolver {
+
     init {
         assert(userModules.count(JavaModule::isSourceModule) <= 1) {
             "Modules computed by ClasspathRootsResolver cannot have more than one source module: $userModules"
@@ -77,15 +114,29 @@ class CliJavaModuleResolver(
         if (ourModule?.name == theirModule?.name) return null
 
         if (theirModule == null) {
+            if (ourModule != null && moduleGraph.readsAdditionally(additionalReads, ourModule.name, ALL_UNNAMED)) return null
             return JavaModuleResolver.AccessError.ModuleDoesNotReadUnnamedModule
         }
 
-        if (ourModule != null && !moduleGraph.reads(ourModule.name, theirModule.name)) {
+        // For javac, a module read from the classpath is in the unnamed module, which exports all its packages.
+        if (ourModule != null && theirModule.name in javaModulesFromClasspath &&
+            moduleGraph.readsAdditionally(additionalReads, ourModule.name, ALL_UNNAMED)
+        ) {
+            return null
+        }
+
+        if (ourModule != null && !moduleGraph.reads(ourModule.name, theirModule.name) &&
+            !moduleGraph.readsAdditionally(additionalReads, ourModule.name, theirModule.name, javaModulesFromClasspath)
+        ) {
             return JavaModuleResolver.AccessError.ModuleDoesNotReadModule(theirModule.name)
         }
 
         val fqName = referencedPackage ?: return null
-        if (!theirModule.exports(fqName) && (ourModule == null || !theirModule.exportsTo(fqName, ourModule.name))) {
+        // Without a file from our module, it's unknown whether our module is named, so ALL-UNNAMED is not applied.
+        val ourModuleName = ourModule?.name ?: ALL_UNNAMED.takeIf { fileFromOurModule != null }
+        if (!theirModule.exports(fqName) && (ourModule == null || !theirModule.exportsTo(fqName, ourModule.name)) &&
+            (ourModuleName == null || ourModuleName !in additionalExports["${theirModule.name}/${fqName.asString()}"].orEmpty())
+        ) {
             return JavaModuleResolver.AccessError.ModuleDoesNotExportPackage(theirModule.name)
         }
 
