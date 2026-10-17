@@ -13,7 +13,7 @@ private object DestructuringDeclarationContainerVariableMarkerKey : FirDeclarati
 
 /*
  * For properties created from destructuring declaration entries, contains the symbol of the corresponding container variable
- *   Currently used only for script top-level destructuring declarations, and therefore only set for them too
+ *   Currently used only for non-local destructuring declarations, and therefore only set for them too
  */
 var FirProperty.destructuringDeclarationContainerVariable: FirVariableSymbol<*>? by FirDeclarationDataRegistry.data(DestructuringDeclarationContainerVariableKey)
 

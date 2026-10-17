@@ -686,6 +686,8 @@ fun KtStringTemplateExpression.isPlainWithEscapes() =
  */
 val KtDeclaration.containingClassOrObject: KtClassOrObject?
     get() {
+        if (this is KtDestructuringDeclarationEntry) return destructuringDeclaration.containingClassOrObject
+
         // Class bodies and parameter lists are always stubbed, so they cannot be the AST parent of a dangling stub
         if (danglingStubParent != null) return null
 
@@ -693,7 +695,6 @@ val KtDeclaration.containingClassOrObject: KtClassOrObject?
             is KtClassBody -> parent.containingClassOrObject
             is KtClassOrObject -> parent
             is KtParameterList -> (parent.parent as? KtPrimaryConstructor)?.getContainingClassOrObject()
-            is KtDestructuringDeclaration if this is KtDestructuringDeclarationEntry -> parent.containingClassOrObject
             else -> null
         }
     }
@@ -747,12 +748,13 @@ val KtDeclarationWithReturnType.isCompanion: Boolean
 @KtExperimentalApi
 val KtDeclaration.containingScript: KtScript?
     get() {
+        if (this is KtDestructuringDeclarationEntry) return destructuringDeclaration.containingScript
+
         // The script block is not stubbed, so the parent stub of script declarations is the script itself
         danglingStubParent?.let { return it as? KtScript }
 
         return when (val parent = parent) {
             is KtBlockExpression -> parent.containingScript
-            is KtDestructuringDeclaration if this is KtDestructuringDeclarationEntry -> parent.containingScript
             else -> null
         }
     }

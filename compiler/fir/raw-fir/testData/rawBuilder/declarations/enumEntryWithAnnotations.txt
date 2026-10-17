@@ -16,7 +16,14 @@ FILE: enumEntryWithAnnotations.kt
             @FunAnno(String(fun)) public? final? fun foo(): @Anno(String(return type)) A<@Anno(String(nested return type)) B> {
             }
 
-            @ErrorPlace(String(destructuring declaration)) public final val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = IntegerLiteral(1).to#(IntegerLiteral(2))
+            @ErrorPlace(String(destructuring declaration)) private final [DestructuringDeclarationContainerVariableMarkerKey=true] val <destruct>: <implicit> = IntegerLiteral(1).to#(IntegerLiteral(2))
+                private get(): <implicit>
+
+            @A(String(a)) public final [DestructuringDeclarationContainerVariableKey=/<anonymous>.<destruct>] val a: <implicit> = R|/<anonymous>.<destruct>|.component1#()
+                public get(): <implicit>
+
+            @B(String(b)) public final [DestructuringDeclarationContainerVariableKey=/<anonymous>.<destruct>] val b: <implicit> = R|/<anonymous>.<destruct>|.component2#()
+                public get(): <implicit>
 
         }
 

@@ -196,7 +196,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
                 KtNodeTypes.FUNCTION_ID -> firDeclarationList += convertFunctionDeclaration(child) as FirDeclaration
                 KtNodeTypes.PROPERTY_ID -> firDeclarationList += convertPropertyDeclaration(child)
                 KtNodeTypes.TYPEALIAS_ID -> firDeclarationList += convertTypeAlias(child)
-                KtNodeTypes.DESTRUCTURING_DECLARATION_ID -> firDeclarationList += buildErrorNonLocalDestructuringDeclaration(child)
+                KtNodeTypes.DESTRUCTURING_DECLARATION_ID -> addNonLocalDestructuringDeclaration(firDeclarationList, child)
                 KtNodeTypes.SCRIPT_ID -> scriptNodes += child
                 KtNodeTypes.MODIFIER_LIST_ID -> modifierList += child
             }
@@ -1102,7 +1102,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
             } //anonymousInitializer
             KtNodeTypes.SECONDARY_CONSTRUCTOR_ID -> container += convertSecondaryConstructor(node, classWrapper!!)
             KtNodeTypes.MODIFIER_LIST_ID -> modifierLists += node
-            KtNodeTypes.DESTRUCTURING_DECLARATION_ID -> container += buildErrorNonLocalDestructuringDeclaration(node)
+            KtNodeTypes.DESTRUCTURING_DECLARATION_ID -> addNonLocalDestructuringDeclaration(container, node)
             KtNodeTypes.COMPANION_BLOCK_ID -> {
                 classWrapper?.companionBlockCollector?.collect(node.toFirSourceElement(), isNested = isDirectlyInsideCompanionBlock)
                 context.withCompanionBlock {
@@ -1121,28 +1121,38 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
         }
     }
 
-    private fun buildErrorNonLocalDestructuringDeclaration(destructuringDeclaration: Node): FirErrorProperty {
-        val initializer = buildFirDestructuringDeclarationInitializer(destructuringDeclaration)
-        return buildErrorNonLocalDestructuringDeclaration(
-            destructuringDeclaration.toFirSourceElement(),
-            initializer,
+    private fun addNonLocalDestructuringDeclaration(destination: MutableList<FirDeclaration>, node: Node) {
+        val symbol = createNonLocalDestructuringDeclarationContainerSymbol()
+
+        // The annotations are converted later along with the container, and the entries' ones are copied to the entries
+        val destructuringDeclaration = context.withContainerSymbol(symbol) {
+            convertDestructingDeclaration(node, convertAnnotations = false)
+        }
+
+        val container = buildNonLocalDestructuringDeclarationContainer(
+            destructuringDeclaration.source,
+            symbol,
+            destructuringDeclaration.initializer,
             baseModuleData,
         ) { annotationContainer ->
-            destructuringDeclaration.getChildNodeByTokenId(KtNodeTypes.MODIFIER_LIST_ID)?.let {
+            node.getChildNodeByTokenId(KtNodeTypes.MODIFIER_LIST_ID)?.let {
                 convertAnnotationsOnlyTo(it, annotationContainer.annotations)
             }
         }
-    }
 
-    private fun buildFirDestructuringDeclarationInitializer(destructuringDeclaration: Node): FirExpression {
-        val initializer = destructuringDeclaration.getFirstChildExpression().takeUnless {
-            it?.toTokenId() == KtNodeTypes.PROPERTY_DELEGATE_ID
+        addDestructuringStatements(
+            destination,
+            context,
+            baseModuleData,
+            destructuringDeclaration,
+            container,
+            isTmpVariable = true,
+            forceLocal = false,
+            isMember = true,
+            isCompanionBlockMember = isDirectlyInsideCompanionBlock,
+        ) {
+            configureNonLocalDestructuringDeclarationEntry(it, container)
         }
-        return expressionConverter.getAsFirExpression(
-            initializer,
-            "Initializer required for destructuring declaration",
-            sourceWhenInvalidExpression = destructuringDeclaration
-        )
     }
 
     private fun buildErrorNonLocalDeclarationForDanglingModifierList(node: Node): FirDanglingModifierList {
@@ -1797,7 +1807,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
     /**
      * see PsiRawFirBuilder.Visitor.visitDestructuringDeclaration
      */
-    fun convertDestructingDeclaration(node: Node): DestructuringDeclaration {
+    fun convertDestructingDeclaration(node: Node, convertAnnotations: Boolean = true): DestructuringDeclaration {
         val annotations = mutableListOf<FirAnnotationCall>()
         var isVar = false
         var hasSquareBrackets = false
@@ -1807,13 +1817,27 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
         node.forEachChildren {
             when (it.toTokenId()) {
                 KtTokens.LBRACKET_ID -> hasSquareBrackets = true
-                KtNodeTypes.MODIFIER_LIST_ID -> convertAnnotationsOnlyTo(it, annotations)
+                KtNodeTypes.MODIFIER_LIST_ID -> if (convertAnnotations) convertAnnotationsOnlyTo(it, annotations)
                 KtTokens.VAR_KEYWORD_ID -> isVar = true
                 KtNodeTypes.DESTRUCTURING_DECLARATION_ENTRY_ID -> entries += convertDestructingDeclarationEntry(it, isVar)
                 // Property delegates should be ignored as they aren't a valid initializer
                 KtNodeTypes.PROPERTY_DELEGATE_ID -> {}
                 else -> if (it.isExpression()) firExpression =
                     expressionConverter.getAsFirExpression(it, "Initializer required for destructuring declaration")
+            }
+        }
+
+        // The parser wraps the brackets and the entries of a non-local destructuring declaration in an error element (KT-58563),
+        // which `forEachChildren` skips
+        if (entries.isEmpty()) {
+            for (child in node.getChildren()) {
+                if (child.toTokenId() != SyntaxElementTypesWithIds.NO_ID) continue
+                for (errorChild in child.getChildren()) {
+                    when (errorChild.toTokenId()) {
+                        KtTokens.LBRACKET_ID -> hasSquareBrackets = true
+                        KtNodeTypes.DESTRUCTURING_DECLARATION_ENTRY_ID -> entries += convertDestructingDeclarationEntry(errorChild, isVar)
+                    }
+                }
             }
         }
 
@@ -1834,18 +1858,18 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseMultiDeclarationEntry
      */
     private fun convertDestructingDeclarationEntry(entry: Node, isVar: Boolean): DestructuringEntry {
-        val annotations = mutableListOf<FirAnnotationCall>()
+        var modifierList: Node? = null
         var identifier: String? = null
-        var firType: FirTypeRef? = null
+        var typeReference: Node? = null
         var isVar = isVar
         var initializerName: Name? = null
         var initializerSource: KtSourceElement? = null
         var isFullForm = false
         entry.forEachChildren {
             when (it.toTokenId()) {
-                KtNodeTypes.MODIFIER_LIST_ID -> convertAnnotationsOnlyTo(it, annotations)
+                KtNodeTypes.MODIFIER_LIST_ID -> modifierList = it
                 KtTokens.IDENTIFIER_ID -> identifier = it.asText
-                KtNodeTypes.TYPE_REFERENCE_ID -> firType = convertType(it)
+                KtNodeTypes.TYPE_REFERENCE_ID -> typeReference = it
                 KtTokens.VAL_KEYWORD_ID -> isFullForm = true
                 KtTokens.VAR_KEYWORD_ID -> {
                     isFullForm = true
@@ -1864,15 +1888,16 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
             identifier.nameAsSafeName()
         }
 
+        // The type and the annotations are converted on demand, under the symbol of the entry, as in PsiRawFirBuilder
         return DestructuringEntry(
             source = entry.toFirSourceElement(),
             initializerSource = initializerSource,
-            returnTypeRef = firType ?: implicitType,
+            convertReturnTypeRef = { typeReference?.let(::convertType) ?: implicitType },
             name = name,
             initializerName = initializerName,
             isVar = isVar,
             isFullForm = isFullForm,
-            annotations = annotations,
+            convertAnnotationsTo = { annotations -> modifierList?.let { convertAnnotationsOnlyTo(it, annotations) } },
         )
     }
 
@@ -3126,7 +3151,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
                             val destructuringContainerVar = generateTemporaryVariable(
                                 moduleData = baseModuleData,
                                 source = declarationSource.toFirSourceElement(),
-                                name = Name.special("<destruct>"),
+                                name = SpecialNames.DESTRUCT,
                                 initializer = destructuringDeclaration.initializer,
                                 extractedAnnotations = destructuringDeclaration.annotations,
                                 origin = FirDeclarationOrigin.Synthetic.ScriptTopLevelDestructuringDeclarationContainer
@@ -3143,7 +3168,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
                                 isTmpVariable = true,
                                 forceLocal = false,
                             ) {
-                                configureScriptDestructuringDeclarationEntry(it, destructuringContainerVar)
+                                configureNonLocalDestructuringDeclarationEntry(it, destructuringContainerVar)
                                 it.isScriptTopLevelDeclaration = true
                             }
                         }
@@ -3221,7 +3246,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
                         isTmpVariable = true,
                         forceLocal = false,
                     ) {
-                        configureScriptDestructuringDeclarationEntry(it, destructuringContainerVar)
+                        configureNonLocalDestructuringDeclarationEntry(it, destructuringContainerVar)
                     }
                 }
 

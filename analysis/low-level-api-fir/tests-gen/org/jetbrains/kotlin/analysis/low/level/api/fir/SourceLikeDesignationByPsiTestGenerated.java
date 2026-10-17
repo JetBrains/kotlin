@@ -64,15 +64,45 @@ public class SourceLikeDesignationByPsiTestGenerated extends AbstractSourceLikeD
   }
 
   @Test
+  @TestMetadata("destructuringEntryCompanionBlock.kt")
+  public void testDestructuringEntryCompanionBlock() {
+    run("destructuringEntryCompanionBlock.kt");
+  }
+
+  @Test
+  @TestMetadata("destructuringEntryMember.kt")
+  public void testDestructuringEntryMember() {
+    run("destructuringEntryMember.kt");
+  }
+
+  @Test
   @TestMetadata("destructuringEntryScript.kts")
   public void testDestructuringEntryScript() {
     run("destructuringEntryScript.kts");
   }
 
   @Test
+  @TestMetadata("destructuringEntryTopLevel.kt")
+  public void testDestructuringEntryTopLevel() {
+    run("destructuringEntryTopLevel.kt");
+  }
+
+  @Test
+  @TestMetadata("destructuringMember.kt")
+  public void testDestructuringMember() {
+    run("destructuringMember.kt");
+  }
+
+  @Test
   @TestMetadata("destructuringScript.kts")
   public void testDestructuringScript() {
     run("destructuringScript.kts");
+  }
+
+  @Test
+  @TestMetadata("destructuringTopLevel.kt")
+  public void testDestructuringTopLevel() {
+    run("destructuringTopLevel.kt");
   }
 
   @Test

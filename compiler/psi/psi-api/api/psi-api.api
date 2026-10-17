@@ -1416,6 +1416,7 @@ public class org/jetbrains/kotlin/psi/KtDestructuringDeclarationEntry : org/jetb
 	public static final field EMPTY_ARRAY [Lorg/jetbrains/kotlin/psi/KtDestructuringDeclarationEntry;
 	public fun accept (Lorg/jetbrains/kotlin/psi/KtVisitor;Ljava/lang/Object;)Ljava/lang/Object;
 	public fun getColon ()Lcom/intellij/psi/PsiElement;
+	public fun getDestructuringDeclaration ()Lorg/jetbrains/kotlin/psi/KtDestructuringDeclaration;
 	public fun getEqualsToken ()Lcom/intellij/psi/PsiElement;
 	public fun getFqName ()Lorg/jetbrains/kotlin/name/FqName;
 	public synthetic fun getInitializer ()Lorg/jetbrains/kotlin/psi/KtExpression;

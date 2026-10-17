@@ -518,7 +518,6 @@ open class PsiRawFirBuilder(
                         ownerClassBuilder.ownerRegularOrAnonymousObjectSymbol
                     )
                 }
-                is KtDestructuringDeclaration -> buildErrorNonLocalDestructuringDeclaration(this)
                 is KtClassInitializer -> {
                     buildAnonymousInitializer(this, ownerClassBuilder.ownerRegularOrAnonymousObjectSymbol)
                         .apply {
@@ -1415,10 +1414,10 @@ open class PsiRawFirBuilder(
                     declarations += convertCodeFragment(file, this)
                 } else {
                     for (declaration in file.declarations) {
-                        declarations += when (declaration) {
-                            is KtScript -> convertScriptOrSnippets(declaration, psiSourceFile, this@buildFile)
-                            is KtDestructuringDeclaration -> buildErrorNonLocalDestructuringDeclaration(declaration)
-                            else -> declaration.convert()
+                        when (declaration) {
+                            is KtScript -> declarations += convertScriptOrSnippets(declaration, psiSourceFile, this@buildFile)
+                            is KtDestructuringDeclaration -> addNonLocalDestructuringDeclaration(declarations, declaration)
+                            else -> declarations += declaration.convert<FirDeclaration>()
                         }
                     }
 
@@ -1443,13 +1442,37 @@ open class PsiRawFirBuilder(
             return packageName
         }
 
-        protected fun buildErrorNonLocalDestructuringDeclaration(destructuringDeclaration: KtDestructuringDeclaration): FirErrorProperty {
-            val initializer = destructuringDeclaration.toInitializerExpression()
-            return this@PsiRawFirBuilder.buildErrorNonLocalDestructuringDeclaration(
+        protected fun buildNonLocalDestructuringDeclarationContainer(destructuringDeclaration: KtDestructuringDeclaration): FirProperty {
+            val symbol = createNonLocalDestructuringDeclarationContainerSymbol()
+            val initializer = this@PsiRawFirBuilder.context.withContainerSymbol(symbol) {
+                destructuringDeclaration.toInitializerExpression()
+            }
+
+            return this@PsiRawFirBuilder.buildNonLocalDestructuringDeclarationContainer(
                 destructuringDeclaration.toFirSourceElement(),
+                symbol,
                 initializer,
                 baseModuleData,
             ) { destructuringDeclaration.extractAnnotationsTo(it) }
+        }
+
+        private fun addNonLocalDestructuringDeclaration(
+            destination: MutableList<FirDeclaration>,
+            destructuringDeclaration: KtDestructuringDeclaration,
+        ) {
+            val container = buildNonLocalDestructuringDeclarationContainer(destructuringDeclaration)
+            addDestructuringVariables(
+                destination,
+                baseModuleData,
+                destructuringDeclaration,
+                container,
+                tmpVariable = true,
+                forceLocal = false,
+                isMember = true,
+                isCompanionBlockMember = isDirectlyInsideCompanionBlock,
+            ) {
+                configureNonLocalDestructuringDeclarationEntry(it, container)
+            }
         }
 
         protected fun buildScriptDestructuringDeclaration(destructuringDeclaration: KtDestructuringDeclaration): FirVariable {
@@ -1471,10 +1494,9 @@ open class PsiRawFirBuilder(
                 )
             }
 
-            val destructuringContainerVar = generateTemporaryVariable(
+            val destructuringContainerVar = generateDestructuringContainerVariable(
                 moduleData = baseModuleData,
                 source = destructuringDeclaration.toFirSourceElement(),
-                specialName = "destruct",
                 initializer = firInitializer,
                 origin = origin,
                 extractAnnotationsTo = { extractAnnotationsTo(it) },
@@ -1536,7 +1558,7 @@ open class PsiRawFirBuilder(
                                     tmpVariable = false,
                                     forceLocal = false,
                                 ) {
-                                    configureScriptDestructuringDeclarationEntry(it, destructuringContainerVar)
+                                    configureNonLocalDestructuringDeclarationEntry(it, destructuringContainerVar)
                                     it.isScriptTopLevelDeclaration = true
                                 }
                             }
@@ -1609,7 +1631,7 @@ open class PsiRawFirBuilder(
                             tmpVariable = false,
                             forceLocal = false,
                         ) {
-                            configureScriptDestructuringDeclarationEntry(it, destructuringContainerVar)
+                            configureNonLocalDestructuringDeclarationEntry(it, destructuringContainerVar)
                         }
                     }
                     is KtProperty -> {
@@ -2012,6 +2034,7 @@ open class PsiRawFirBuilder(
         ) {
             classBody?.declarationsAndCompanionBlocks?.forEach {
                 when (it) {
+                    is KtDestructuringDeclaration -> addNonLocalDestructuringDeclaration(declarations, it)
                     is KtDeclaration -> {
                         declarations += it.toFirDeclaration(
                             delegatedSuperType,
@@ -3762,10 +3785,9 @@ open class PsiRawFirBuilder(
         }
 
         override fun visitDestructuringDeclaration(multiDeclaration: KtDestructuringDeclaration, data: FirElement?): FirElement {
-            val baseVariable = generateTemporaryVariable(
+            val baseVariable = generateDestructuringContainerVariable(
                 baseModuleData,
                 multiDeclaration.toFirSourceElement(),
-                "destruct",
                 multiDeclaration.initializer.toFirExpression(
                     "Initializer required for destructuring declaration",
                     sourceWhenInvalidExpression = multiDeclaration

@@ -124,7 +124,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
                     buildScriptDestructuringDeclaration(element)
                 }
             } else {
-                buildErrorNonLocalDestructuringDeclaration(element)
+                buildNonLocalDestructuringDeclarationContainer(element)
             }
         }
 
@@ -142,20 +142,16 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
                 moduleData = baseModuleData,
                 container = container,
                 element,
-                kind = with(element.parent as KtDestructuringDeclaration) {
+                kind = with(element.destructuringDeclaration) {
                     destructuringKindOf(hasSquareBrackets = hasSquareBrackets(), isFullForm = isFullForm)
                 },
                 forceLocal = false,
                 index = element.index(),
-                configure = { configureScriptDestructuringDeclarationEntry(it, container) },
+                configure = { configureNonLocalDestructuringDeclarationEntry(it, container) },
             )
         }
 
-        private fun KtDestructuringDeclarationEntry.index(): Int {
-            val destructuringDeclaration = parent
-            requireIsInstance<KtDestructuringDeclaration>(destructuringDeclaration)
-            return destructuringDeclaration.entries.indexOf(this)
-        }
+        private fun KtDestructuringDeclarationEntry.index(): Int = destructuringDeclaration.entries.indexOf(this)
 
         fun convertAnonymousInitializer(element: KtAnonymousInitializer, containingDeclaration: FirDeclaration): FirAnonymousInitializer {
             return buildAnonymousInitializer(element, containingDeclaration.symbol)

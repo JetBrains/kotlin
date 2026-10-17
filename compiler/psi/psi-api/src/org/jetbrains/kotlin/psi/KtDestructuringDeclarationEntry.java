@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.TokenType;
+import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.impl.ResolveScopeManager;
 import com.intellij.psi.search.LocalSearchScope;
 import com.intellij.psi.search.SearchScope;
@@ -159,7 +159,7 @@ public class KtDestructuringDeclarationEntry extends KtNamedDeclarationStub<Kotl
             return stub.isVar();
         }
 
-        return findChildByType(KtTokens.VAR_KEYWORD) != null || getParentNode().findChildByType(KtTokens.VAR_KEYWORD) != null;
+        return findChildByType(KtTokens.VAR_KEYWORD) != null || getDestructuringDeclaration().getNode().findChildByType(KtTokens.VAR_KEYWORD) != null;
     }
 
     /**
@@ -190,22 +190,36 @@ public class KtDestructuringDeclarationEntry extends KtNamedDeclarationStub<Kotl
         return getInitializer() != null;
     }
 
+    /**
+     * Returns the destructuring declaration that contains this entry.
+     *
+     * <h3>Example:</h3>
+     * <pre>{@code
+     * val (x, y) = pair
+     * //^_____________^
+     * }</pre>
+     */
     @NotNull
-    private ASTNode getParentNode() {
-        ASTNode parent = getNode().getTreeParent();
-        if (parent.getElementType() == TokenType.ERROR_ELEMENT) {
-            // For top-level destructuring declarations we report an error in the parser.
+    public KtDestructuringDeclaration getDestructuringDeclaration() {
+        KotlinDestructuringDeclarationEntryStub stub = getGreenStub();
+        PsiElement parent = stub != null ? stub.getParentStub().getPsi() : getParent();
+        if (parent instanceof PsiErrorElement) {
+            // For top-level destructuring declarations we report an error in the parser, so the entries are wrapped in an error element.
             // TODO(KT-58563): After the reporting is moved out of the parser, this workaround can be removed.
-            parent = parent.getTreeParent();
+            parent = parent.getParent();
         }
-        assert parent.getElementType() == KtNodeTypes.DESTRUCTURING_DECLARATION :
-                "parent is " + parent.getElementType();
-        return parent;
+
+        if (!(parent instanceof KtDestructuringDeclaration)) {
+            String parentClass = parent != null ? parent.getClass().getName() : null;
+            throw new IllegalStateException("Unexpected parent of a destructuring declaration entry: " + parentClass);
+        }
+
+        return (KtDestructuringDeclaration) parent;
     }
 
     @Override
     public PsiElement getValOrVarKeyword() {
-        ASTNode node = getParentNode().findChildByType(KtTokens.VAL_VAR);
+        ASTNode node = getDestructuringDeclaration().getNode().findChildByType(KtTokens.VAL_VAR);
         if (node == null) return null;
         return node.getPsi();
     }

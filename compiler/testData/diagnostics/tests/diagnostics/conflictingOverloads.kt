@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// LATEST_LV_DIFFERENCE
 <!CONFLICTING_OVERLOADS!>fun test(x: Int)<!> {}
 
 <!CONFLICTING_OVERLOADS!>fun test(y: Int)<!> {}
@@ -34,8 +35,8 @@ enum class <!CLASSIFIER_REDECLARATION!>B<!>
 val <!REDECLARATION!>u<!> = 10
 val <!REDECLARATION!>u<!> = 20
 
-val <!SYNTAX!>(a,b)<!> = 30 <!UNRESOLVED_REFERENCE!>to<!> 40
-val <!SYNTAX!>(c,d)<!> = 50 <!UNRESOLVED_REFERENCE!>to<!> 60
+val <!SYNTAX!>(a,b)<!> = <!COMPONENT_FUNCTION_MISSING, COMPONENT_FUNCTION_MISSING!>30 <!UNRESOLVED_REFERENCE!>to<!> 40<!>
+val <!SYNTAX!>(c,d)<!> = <!COMPONENT_FUNCTION_MISSING, COMPONENT_FUNCTION_MISSING!>50 <!UNRESOLVED_REFERENCE!>to<!> 60<!>
 
 typealias <!CLASSIFIER_REDECLARATION!>TA<!> = A
 typealias <!CLASSIFIER_REDECLARATION!>TA<!> = B
@@ -72,8 +73,8 @@ class <!CONFLICTING_OVERLOADS!>mest<!>
 private <!FUNCTION_DECLARATION_WITH_NO_NAME!>fun()<!> {}
 
 class ErrorDestructuring {
-    val <!SYNTAX!>(a, b)<!> = 1 <!UNRESOLVED_REFERENCE!>to<!> 2
-    val <!SYNTAX!>(c, d)<!> = 1 <!UNRESOLVED_REFERENCE!>to<!> 2
+    val <!SYNTAX!>(a, b)<!> = <!COMPONENT_FUNCTION_MISSING, COMPONENT_FUNCTION_MISSING!>1 <!UNRESOLVED_REFERENCE!>to<!> 2<!>
+    val <!SYNTAX!>(c, d)<!> = <!COMPONENT_FUNCTION_MISSING, COMPONENT_FUNCTION_MISSING!>1 <!UNRESOLVED_REFERENCE!>to<!> 2<!>
 }
 
 /* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, companionObject, enumDeclaration,

@@ -82,11 +82,6 @@ class ConeRecursiveTypeParameterDuringErasureError(val typeParameterName: Name) 
         get() = "self-recursive type parameter $typeParameterName"
 }
 
-object ConeDestructuringDeclarationsOnTopLevel : ConeDiagnostic {
-    override val reason: String
-        get() = "Destructuring declarations are only allowed for local variables/values"
-}
-
 object ConeDanglingModifierOnTopLevel : ConeDiagnostic {
     override val reason: String
         get() = "Top level declaration expected"

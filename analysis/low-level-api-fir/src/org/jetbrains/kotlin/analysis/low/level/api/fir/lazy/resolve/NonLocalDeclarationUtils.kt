@@ -24,12 +24,12 @@ internal fun elementCanBeLazilyResolved(element: KtElement?): Boolean = when (el
     is KtFile -> element !is KtCodeFragment
     is KtParameter -> elementCanBeLazilyResolved(element.ownerDeclaration)
     is KtScriptInitializer -> elementCanBeLazilyResolved(element.containingDeclaration)
+    is KtDestructuringDeclarationEntry -> elementCanBeLazilyResolved(element.destructuringDeclaration)
     is KtCallableDeclaration, is KtEnumEntry, is KtDestructuringDeclaration, is KtClassInitializer -> {
         val parentToCheck = when (val parent = element.parent) {
             is KtClassOrObject, is KtFile -> parent
             is KtClassBody -> parent.containingClassOrObject
             is KtBlockExpression -> parent.containingScript
-            is KtDestructuringDeclaration -> parent.containingScript
             else -> null
         }
 

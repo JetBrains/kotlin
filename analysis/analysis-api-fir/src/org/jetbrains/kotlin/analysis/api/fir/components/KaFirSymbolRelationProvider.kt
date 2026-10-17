@@ -45,7 +45,6 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationOverloadabilityHelper
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
-import org.jetbrains.kotlin.fir.diagnostics.ConeDestructuringDeclarationsOnTopLevel
 import org.jetbrains.kotlin.fir.resolve.FirSamResolver
 import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
 import org.jetbrains.kotlin.fir.resolve.calls.FirSimpleSyntheticPropertySymbol
@@ -103,10 +102,6 @@ internal class KaFirSymbolRelationProvider(
             ?: symbol.firSymbol
         val symbolFirSession = firSymbol.llFirSession
         val symbolModule = symbolFirSession.ktModule
-
-        if (firSymbol is FirErrorPropertySymbol && firSymbol.diagnostic is ConeDestructuringDeclarationsOnTopLevel) {
-            return null
-        }
 
         if (symbolModule is KaDanglingFileModule && symbolModule.resolutionMode == KaDanglingFileResolutionMode.IGNORE_SELF) {
             if (hasParentPsi(symbol)) {

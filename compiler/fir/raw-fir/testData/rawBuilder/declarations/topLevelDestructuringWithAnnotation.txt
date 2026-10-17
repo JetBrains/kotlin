@@ -1,2 +1,7 @@
 FILE: topLevelDestructuringWithAnnotation.kt
-    @Destructuring(<strcat>(String(destr ), prop#)) public final val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = Pair#(IntegerLiteral(0), IntegerLiteral(1))
+    @Destructuring(<strcat>(String(destr ), prop#)) private final [DestructuringDeclarationContainerVariableMarkerKey=true] val <destruct>: <implicit> = Pair#(IntegerLiteral(0), IntegerLiteral(1))
+        private get(): <implicit>
+    @LeftAnno(<strcat>(String(a ), prop#)) public final [DestructuringDeclarationContainerVariableKey=util/<destruct>] val a: <implicit> = R|util/<destruct>|.component1#()
+        public get(): <implicit>
+    @RightAnno(<strcat>(String(b ), prop#)) public final [DestructuringDeclarationContainerVariableKey=util/<destruct>] val b: <implicit> = R|util/<destruct>|.component2#()
+        public get(): <implicit>

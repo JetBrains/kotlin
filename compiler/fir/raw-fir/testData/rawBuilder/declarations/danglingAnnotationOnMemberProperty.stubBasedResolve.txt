@@ -5,11 +5,15 @@ FILE: [ResolvedTo(BODY_RESOLVE)] danglingAnnotationOnMemberProperty.kt
         }
 
     }
-    public final [ResolvedTo(BODY_RESOLVE)] class C : R|kotlin/Any| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class C : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] constructor(): R|C| {
             super<R|kotlin/Any|>()
         }
 
-        @R|Ann|[Types]() public final [ResolvedTo(BODY_RESOLVE)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = ERROR_EXPR(Initializer required for destructuring declaration)
+        @R|Ann|[Types]() private final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableMarkerKey=true] val <destruct>: <ERROR TYPE REF: Initializer required for destructuring declaration> = ERROR_EXPR(Initializer required for destructuring declaration)
+            private [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Initializer required for destructuring declaration>
+
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [DestructuringDeclarationContainerVariableKey=/C.<destruct>] val x: R|kotlin/Int| = LAZY_EXPRESSION
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int|
 
     }
