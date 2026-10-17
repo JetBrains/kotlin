@@ -51,7 +51,7 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     put(SAVE_LLVM_IR, arguments.saveLlvmIrAfter.toList())
 
     if (arguments.optimization && arguments.debug) {
-        report(KONAN_ARGUMENT_WARNING, "Unsupported combination of flags: -opt and -g. Please pick one.")
+        report(KONAN_ARGUMENT_ERROR, "Unsupported combination of flags: -opt and -g. Please pick one.")
     }
 
     val outputKind = konanProducedArtifactKind!!

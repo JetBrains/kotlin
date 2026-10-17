@@ -82,10 +82,10 @@ internal class KotlinNativeLinkIT : KGPBaseTest() {
                 }
             }
 
-            build(":linkDebugStaticLinuxX64") {
+            buildAndFail(":linkDebugStaticLinuxX64") {
                 assertHasDiagnostic(KotlinToolingDiagnostics.IncompatibleBinaryTaskConfiguration)
                 assertNoDiagnostic(KotlinToolingDiagnostics.IncompatibleBinaryConfiguration)
-                assertOutputContains("w: Unsupported combination of flags: -opt and -g. Please pick one.")
+                assertOutputContains("e: Unsupported combination of flags: -opt and -g. Please pick one.")
             }
         }
     }
