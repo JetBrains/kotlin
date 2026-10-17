@@ -24,6 +24,7 @@ abstract class SirProtocol : SirBridged(), SirScopeDefiningDeclaration, SirMutab
     abstract override val superClass: SirNominalType?
     abstract override val protocols: List<SirProtocol>
     abstract override val bridges: List<SirBridge>
+    abstract val primaryAssociatedTypes: List<String>
     override fun toString(): String {
         return this.debugString
     }

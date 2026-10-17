@@ -32,12 +32,11 @@ import org.jetbrains.kotlin.sir.util.SirSwiftModule
 
 public class SirCustomTypeTranslatorImpl(
     private val session: SirSession,
-    private val collectionsV2: Boolean = false,
 ) : SirCustomTypeTranslator {
     private val dynamicTypeToWrapperMap = mutableMapOf<SirNominalType, SirCustomTypeTranslator.BridgeWrapper>()
 
     public override fun isFqNameSupported(fqName: FqName): Boolean {
-        return supportedFqNames.contains(fqName) && (!collectionsV2 || fqName !in collectionFqNames)
+        return supportedFqNames.contains(fqName) && (!session.collectionsV2 || fqName !in collectionFqNames)
     }
 
     context(kaSession: KaSession)
