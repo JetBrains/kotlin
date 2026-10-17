@@ -71,6 +71,54 @@ public fun SomeInterface_repeat__TypesOfArgumentsE__Swift_String_Swift_Int32____
     return interpretObjCPointer<kotlin.collections.List<kotlin.String>>(_result)
 }
 
+@ImportedBridge("SomeInterface_somethingWithContext_get__TypesOfArgumentsEC2__anyU20edge_cases_Baz_anyU20ExportedKotlinPackages_conflictingTypealiases_Foo_Swift_String____reverse_swift")
+internal external fun SomeInterface_somethingWithContext_get__TypesOfArgumentsEC2__anyU20edge_cases_Baz_anyU20ExportedKotlinPackages_conflictingTypealiases_Foo_Swift_String____reverse_swift(self: kotlin.native.internal.NativePtr, _0: kotlin.native.internal.NativePtr, _1: kotlin.native.internal.NativePtr, `receiver`: kotlin.native.internal.NativePtr): Int
+
+@BindReverseBridgeToMethod(SomeInterface::class, "<get-somethingWithContext>")
+public fun SomeInterface_somethingWithContext_get__TypesOfArgumentsEC2__anyU20edge_cases_Baz_anyU20ExportedKotlinPackages_conflictingTypealiases_Foo_Swift_String____reverse(self: SomeInterface, _0: Baz, _1: conflictingTypealiases.Foo, `receiver`: kotlin.String): Int {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val ___0 = kotlin.native.internal.ref.createRetainedExternalRCRef(_0)
+    val ___1 = kotlin.native.internal.ref.createRetainedExternalRCRef(_1)
+    val __receiver = `receiver`.objcPtr()
+    val _result = SomeInterface_somethingWithContext_get__TypesOfArgumentsEC2__anyU20edge_cases_Baz_anyU20ExportedKotlinPackages_conflictingTypealiases_Foo_Swift_String____reverse_swift(__self, ___0, ___1, __receiver)
+    return _result
+}
+
+@ImportedBridge("SomeInterface_somethingWithContext_set__TypesOfArgumentsEC2__anyU20edge_cases_Baz_anyU20ExportedKotlinPackages_conflictingTypealiases_Foo_Swift_String_Swift_Int32____reverse_swift")
+internal external fun SomeInterface_somethingWithContext_set__TypesOfArgumentsEC2__anyU20edge_cases_Baz_anyU20ExportedKotlinPackages_conflictingTypealiases_Foo_Swift_String_Swift_Int32____reverse_swift(self: kotlin.native.internal.NativePtr, _0: kotlin.native.internal.NativePtr, _1: kotlin.native.internal.NativePtr, `receiver`: kotlin.native.internal.NativePtr, value: Int): Boolean
+
+@BindReverseBridgeToMethod(SomeInterface::class, "<set-somethingWithContext>")
+public fun SomeInterface_somethingWithContext_set__TypesOfArgumentsEC2__anyU20edge_cases_Baz_anyU20ExportedKotlinPackages_conflictingTypealiases_Foo_Swift_String_Swift_Int32____reverse(self: SomeInterface, _0: Baz, _1: conflictingTypealiases.Foo, `receiver`: kotlin.String, value: Int): Unit {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val ___0 = kotlin.native.internal.ref.createRetainedExternalRCRef(_0)
+    val ___1 = kotlin.native.internal.ref.createRetainedExternalRCRef(_1)
+    val __receiver = `receiver`.objcPtr()
+    val _result = SomeInterface_somethingWithContext_set__TypesOfArgumentsEC2__anyU20edge_cases_Baz_anyU20ExportedKotlinPackages_conflictingTypealiases_Foo_Swift_String_Swift_Int32____reverse_swift(__self, ___0, ___1, __receiver, value)
+    return run<Unit> { _result }
+}
+
+@ImportedBridge("SomeInterface_something_get__TypesOfArgumentsE__Swift_String____reverse_swift")
+internal external fun SomeInterface_something_get__TypesOfArgumentsE__Swift_String____reverse_swift(self: kotlin.native.internal.NativePtr, `receiver`: kotlin.native.internal.NativePtr): Int
+
+@BindReverseBridgeToMethod(SomeInterface::class, "<get-something>")
+public fun SomeInterface_something_get__TypesOfArgumentsE__Swift_String____reverse(self: SomeInterface, `receiver`: kotlin.String): Int {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __receiver = `receiver`.objcPtr()
+    val _result = SomeInterface_something_get__TypesOfArgumentsE__Swift_String____reverse_swift(__self, __receiver)
+    return _result
+}
+
+@ImportedBridge("SomeInterface_something_set__TypesOfArgumentsE__Swift_String_Swift_Int32____reverse_swift")
+internal external fun SomeInterface_something_set__TypesOfArgumentsE__Swift_String_Swift_Int32____reverse_swift(self: kotlin.native.internal.NativePtr, `receiver`: kotlin.native.internal.NativePtr, value: Int): Boolean
+
+@BindReverseBridgeToMethod(SomeInterface::class, "<set-something>")
+public fun SomeInterface_something_set__TypesOfArgumentsE__Swift_String_Swift_Int32____reverse(self: SomeInterface, `receiver`: kotlin.String, value: Int): Unit {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __receiver = `receiver`.objcPtr()
+    val _result = SomeInterface_something_set__TypesOfArgumentsE__Swift_String_Swift_Int32____reverse_swift(__self, __receiver, value)
+    return run<Unit> { _result }
+}
+
 @ExportedBridge("Baz_foo__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__")
 public fun Baz_foo__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(self: kotlin.native.internal.NativePtr, result: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Baz

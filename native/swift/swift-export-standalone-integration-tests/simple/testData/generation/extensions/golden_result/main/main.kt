@@ -6,6 +6,7 @@
 @file:kotlin.native.internal.objc.BindClassToObjCName(Baz::class, "4main3BazC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(DeprecatedBar::class, "4main13DeprecatedBarC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(GenericClass::class, "4main12GenericClassC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(OpenBaz::class, "4main7OpenBazC")
 
 import kotlin.native.internal.objc.BindReverseBridgeToMethod
 import kotlin.native.internal.ImportedBridge
@@ -23,6 +24,39 @@ import foo.varargExtFun as foo_varargExtFun
 import other.otherExtFun as other_otherExtFun
 import other.otherProp as other_otherProp
 
+@ImportedBridge("OpenBaz_doubleReceiverExtFun__TypesOfArgumentsE__anyU20ExportedKotlinPackages_foo_Foo____reverse_swift")
+internal external fun OpenBaz_doubleReceiverExtFun__TypesOfArgumentsE__anyU20ExportedKotlinPackages_foo_Foo____reverse_swift(self: kotlin.native.internal.NativePtr, `receiver`: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(OpenBaz::class, "doubleReceiverExtFun")
+public fun OpenBaz_doubleReceiverExtFun__TypesOfArgumentsE__anyU20ExportedKotlinPackages_foo_Foo____reverse(self: OpenBaz, `receiver`: foo.Foo): kotlin.String {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __receiver = kotlin.native.internal.ref.createRetainedExternalRCRef(`receiver`)
+    val _result = OpenBaz_doubleReceiverExtFun__TypesOfArgumentsE__anyU20ExportedKotlinPackages_foo_Foo____reverse_swift(__self, __receiver)
+    return interpretObjCPointer<kotlin.String>(_result)
+}
+
+@ImportedBridge("OpenBaz_doubleReceiverExtProp_get__TypesOfArgumentsE__anyU20ExportedKotlinPackages_foo_Foo____reverse_swift")
+internal external fun OpenBaz_doubleReceiverExtProp_get__TypesOfArgumentsE__anyU20ExportedKotlinPackages_foo_Foo____reverse_swift(self: kotlin.native.internal.NativePtr, `receiver`: kotlin.native.internal.NativePtr): Int
+
+@BindReverseBridgeToMethod(OpenBaz::class, "<get-doubleReceiverExtProp>")
+public fun OpenBaz_doubleReceiverExtProp_get__TypesOfArgumentsE__anyU20ExportedKotlinPackages_foo_Foo____reverse(self: OpenBaz, `receiver`: foo.Foo): Int {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __receiver = kotlin.native.internal.ref.createRetainedExternalRCRef(`receiver`)
+    val _result = OpenBaz_doubleReceiverExtProp_get__TypesOfArgumentsE__anyU20ExportedKotlinPackages_foo_Foo____reverse_swift(__self, __receiver)
+    return _result
+}
+
+@ImportedBridge("OpenBaz_doubleReceiverExtProp_set__TypesOfArgumentsE__anyU20ExportedKotlinPackages_foo_Foo_Swift_Int32____reverse_swift")
+internal external fun OpenBaz_doubleReceiverExtProp_set__TypesOfArgumentsE__anyU20ExportedKotlinPackages_foo_Foo_Swift_Int32____reverse_swift(self: kotlin.native.internal.NativePtr, `receiver`: kotlin.native.internal.NativePtr, value: Int): Boolean
+
+@BindReverseBridgeToMethod(OpenBaz::class, "<set-doubleReceiverExtProp>")
+public fun OpenBaz_doubleReceiverExtProp_set__TypesOfArgumentsE__anyU20ExportedKotlinPackages_foo_Foo_Swift_Int32____reverse(self: OpenBaz, `receiver`: foo.Foo, value: Int): Unit {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __receiver = kotlin.native.internal.ref.createRetainedExternalRCRef(`receiver`)
+    val _result = OpenBaz_doubleReceiverExtProp_set__TypesOfArgumentsE__anyU20ExportedKotlinPackages_foo_Foo_Swift_Int32____reverse_swift(__self, __receiver, value)
+    return run<Unit> { _result }
+}
+
 @ImportedBridge("foo_Foo_doubleReceiverExtFun__TypesOfArgumentsE__main_Bar____reverse_swift")
 internal external fun foo_Foo_doubleReceiverExtFun__TypesOfArgumentsE__main_Bar____reverse_swift(self: kotlin.native.internal.NativePtr, `receiver`: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
 
@@ -32,6 +66,17 @@ public fun foo_Foo_doubleReceiverExtFun__TypesOfArgumentsE__main_Bar____reverse(
     val __receiver = kotlin.native.internal.ref.createRetainedExternalRCRef(`receiver`)
     val _result = foo_Foo_doubleReceiverExtFun__TypesOfArgumentsE__main_Bar____reverse_swift(__self, __receiver)
     return interpretObjCPointer<kotlin.String>(_result)
+}
+
+@ImportedBridge("foo_Foo_doubleReceiverExtProp_get__TypesOfArgumentsE__main_Bar____reverse_swift")
+internal external fun foo_Foo_doubleReceiverExtProp_get__TypesOfArgumentsE__main_Bar____reverse_swift(self: kotlin.native.internal.NativePtr, `receiver`: kotlin.native.internal.NativePtr): Int
+
+@BindReverseBridgeToMethod(foo.Foo::class, "<get-doubleReceiverExtProp>")
+public fun foo_Foo_doubleReceiverExtProp_get__TypesOfArgumentsE__main_Bar____reverse(self: foo.Foo, `receiver`: Bar): Int {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __receiver = kotlin.native.internal.ref.createRetainedExternalRCRef(`receiver`)
+    val _result = foo_Foo_doubleReceiverExtProp_get__TypesOfArgumentsE__main_Bar____reverse_swift(__self, __receiver)
+    return _result
 }
 
 @ImportedBridge("main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
@@ -69,6 +114,56 @@ public fun Baz_doubleReceiverExtProp_get__TypesOfArgumentsE__anyU20ExportedKotli
     val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as foo.Foo
     val _result = __self.run { __receiver.doubleReceiverExtProp }
     return _result
+}
+
+@ExportedBridge("OpenBaz_doubleReceiverExtFun__TypesOfArgumentsE__anyU20ExportedKotlinPackages_foo_Foo__")
+public fun OpenBaz_doubleReceiverExtFun__TypesOfArgumentsE__anyU20ExportedKotlinPackages_foo_Foo__(self: kotlin.native.internal.NativePtr, `receiver`: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as OpenBaz
+    val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as foo.Foo
+    val _result = __self.run { __receiver.doubleReceiverExtFun() }
+    return _result.objcPtr()
+}
+
+@ExportedBridge("OpenBaz_doubleReceiverExtFun__TypesOfArgumentsE__anyU20ExportedKotlinPackages_foo_Foo___direct", nonVirtualTargetMethod = "doubleReceiverExtFun")
+public fun OpenBaz_doubleReceiverExtFun__TypesOfArgumentsE__anyU20ExportedKotlinPackages_foo_Foo___direct(self: kotlin.native.internal.NativePtr, `receiver`: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as OpenBaz
+    val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as foo.Foo
+    val _result = __self.run { __receiver.doubleReceiverExtFun() }
+    return _result.objcPtr()
+}
+
+@ExportedBridge("OpenBaz_doubleReceiverExtProp_get__TypesOfArgumentsE__anyU20ExportedKotlinPackages_foo_Foo__")
+public fun OpenBaz_doubleReceiverExtProp_get__TypesOfArgumentsE__anyU20ExportedKotlinPackages_foo_Foo__(self: kotlin.native.internal.NativePtr, `receiver`: kotlin.native.internal.NativePtr): Int {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as OpenBaz
+    val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as foo.Foo
+    val _result = __self.run { __receiver.doubleReceiverExtProp }
+    return _result
+}
+
+@ExportedBridge("OpenBaz_doubleReceiverExtProp_get__TypesOfArgumentsE__anyU20ExportedKotlinPackages_foo_Foo___direct", nonVirtualTargetMethod = "<get-doubleReceiverExtProp>")
+public fun OpenBaz_doubleReceiverExtProp_get__TypesOfArgumentsE__anyU20ExportedKotlinPackages_foo_Foo___direct(self: kotlin.native.internal.NativePtr, `receiver`: kotlin.native.internal.NativePtr): Int {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as OpenBaz
+    val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as foo.Foo
+    val _result = __self.run { __receiver.doubleReceiverExtProp }
+    return _result
+}
+
+@ExportedBridge("OpenBaz_doubleReceiverExtProp_set__TypesOfArgumentsE__anyU20ExportedKotlinPackages_foo_Foo_Swift_Int32__")
+public fun OpenBaz_doubleReceiverExtProp_set__TypesOfArgumentsE__anyU20ExportedKotlinPackages_foo_Foo_Swift_Int32__(self: kotlin.native.internal.NativePtr, `receiver`: kotlin.native.internal.NativePtr, value: Int): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as OpenBaz
+    val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as foo.Foo
+    val __value = value
+    __self.run { __receiver.doubleReceiverExtProp = __value }
+    return true
+}
+
+@ExportedBridge("OpenBaz_doubleReceiverExtProp_set__TypesOfArgumentsE__anyU20ExportedKotlinPackages_foo_Foo_Swift_Int32___direct", nonVirtualTargetMethod = "<set-doubleReceiverExtProp>")
+public fun OpenBaz_doubleReceiverExtProp_set__TypesOfArgumentsE__anyU20ExportedKotlinPackages_foo_Foo_Swift_Int32___direct(self: kotlin.native.internal.NativePtr, `receiver`: kotlin.native.internal.NativePtr, value: Int): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as OpenBaz
+    val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as foo.Foo
+    val __value = value
+    __self.run { __receiver.doubleReceiverExtProp = __value }
+    return true
 }
 
 @ExportedBridge("__root___Bar_init_allocate")
@@ -115,6 +210,19 @@ public fun __root___GenericClass_init_allocate(): kotlin.native.internal.NativeP
 public fun __root___GenericClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     kotlin.native.internal.initInstance(____kt, GenericClass<kotlin.Any?>())
+    return true
+}
+
+@ExportedBridge("__root___OpenBaz_init_allocate")
+public fun __root___OpenBaz_init_allocate(): kotlin.native.internal.NativePtr {
+    val _result = kotlin.native.internal.createUninitializedInstance<OpenBaz>()
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("__root___OpenBaz_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
+public fun __root___OpenBaz_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
+    kotlin.native.internal.initInstance(____kt, OpenBaz())
     return true
 }
 
