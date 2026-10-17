@@ -115,6 +115,16 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
         JvmCompilerArgument("X_ABI_STABILITY", KotlinReleaseVersion(1, 4, 30))
 
     /**
+     * Export <package> of <module> to additional modules, or to the unnamed module if <other-module> is ALL-UNNAMED. Can be specified more than once.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_ADD_EXPORTS: JvmCompilerArgument<List<String>> =
+        JvmCompilerArgument("X_ADD_EXPORTS", KotlinReleaseVersion(2, 5, 0))
+
+    /**
      * Root modules to resolve in addition to the initial modules, or all modules on the module path if <module> is ALL-MODULE-PATH.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
@@ -123,6 +133,16 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
     @ExperimentalCompilerArgument
     public val X_ADD_MODULES: JvmCompilerArgument<List<String>> =
         JvmCompilerArgument("X_ADD_MODULES", KotlinReleaseVersion(1, 1, 4))
+
+    /**
+     * Additional modules to be read by <module>, or the unnamed module if <other-module> is ALL-UNNAMED. Can be specified more than once.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_ADD_READS: JvmCompilerArgument<List<String>> =
+        JvmCompilerArgument("X_ADD_READS", KotlinReleaseVersion(2, 5, 0))
 
     /**
      * Allow the set of source files to be empty.
