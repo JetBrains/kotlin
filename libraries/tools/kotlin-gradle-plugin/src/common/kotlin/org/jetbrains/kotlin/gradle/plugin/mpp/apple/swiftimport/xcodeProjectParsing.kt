@@ -22,7 +22,7 @@ internal open class JsonElementBacked {
     var jsonElement: JsonElement? = null
 }
 
-private class JsonElementBackedSerializer<T : JsonElementBacked>(
+internal open class JsonElementBackedSerializer<T : JsonElementBacked>(
     private val typeSerializer: KSerializer<T>,
 ) : KSerializer<T> {
 
@@ -216,7 +216,7 @@ internal class XcodeProject(
     val rootObject: String,
 ) : JsonElementBacked()
 
-internal fun deserializeXcodeProject(
+internal fun deserializePbxprojJson(
     pbxprojPath: File,
     execOps: ExecOperations,
 ): XcodeProject {
@@ -230,16 +230,16 @@ internal fun deserializeXcodeProject(
             "-o", "-"
         )
     }
-    return deserializeXcodeProject(output.toByteArray())
+    return deserializePbxprojJson(output.toByteArray())
 }
 
-internal fun deserializeXcodeProject(byteArray: ByteArray) =
+internal fun deserializePbxprojJson(byteArray: ByteArray) =
     json.decodeFromStream(
         JsonElementBackedSerializer(XcodeProject.serializer()),
         ByteArrayInputStream(byteArray)
     )
 
-internal fun XcodeProject.serializeXcodeProject(outputStream: OutputStream) =
+internal fun XcodeProject.serializePbxprojJson(outputStream: OutputStream) =
     json.encodeToStream(
         JsonElementBackedSerializer(XcodeProject.serializer()),
         this,

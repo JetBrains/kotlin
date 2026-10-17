@@ -11,7 +11,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.PbxShellScriptBuildPhase
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.XcodeProject
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.deserializeXcodeProject
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.deserializePbxprojJson
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.runProcess
 import org.junit.jupiter.api.DisplayName
@@ -33,6 +33,24 @@ import kotlin.test.assertTrue
 @DisplayName("integrateEmbedAndSign task tests")
 @SwiftPMImportGradlePluginTests
 class IntegrateEmbedAndSignIntoXcodeProjectIT : KGPBaseTest() {
+
+    @GradleTest
+    @RequiredXCodeVersion(minSupportedMajor = 27, minSupportedMinor = 2)
+    fun `xcproj integrateEmbedAndSign and integrateLinkagePackage are idempotent`(version: GradleVersion) {
+        project("emptyxcproj", version) {
+            initDefaultKmpWithLocalSPM()
+            val xcproj = projectPath.resolve("iosApp/iosApp.xcodeproj/project.xcproj")
+            val environment = EnvironmentalVariables(
+                "XCODEPROJ_PATH" to "iosApp/iosApp.xcodeproj",
+                "GRADLEW_PATH" to projectPath.resolve("gradlew").absolutePathString(),
+                "GRADLE_PROJECT_PATH" to ":",
+            )
+            build(":integrateEmbedAndSign", ":integrateLinkagePackage", "--rerun-tasks", environmentVariables = environment)
+            val initial = xcproj.readText()
+            build(":integrateEmbedAndSign", ":integrateLinkagePackage", "--rerun-tasks", environmentVariables = environment)
+            assertEquals(initial, xcproj.readText())
+        }
+    }
 
     @GradleTest
     fun `integrateEmbedAndSign uses root project task path without duplicate separators`(version: GradleVersion) {
@@ -254,7 +272,7 @@ private fun Path.readPbxprojAsXcodeProject(): XcodeProject {
     check(result.isSuccessful) {
         "plutil failed (exit=${result.exitCode}) on $this: ${result.stdErr}"
     }
-    return deserializeXcodeProject(result.output.toByteArray())
+    return deserializePbxprojJson(result.output.toByteArray())
 }
 
 private fun Path.kotlinPhaseShellScripts(): List<String> {
