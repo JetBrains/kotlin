@@ -5,11 +5,11 @@
 
 #include "mm/MemoryDump.hpp"
 
-#include <algorithm>
+#include <cerrno>
 #include <cstdio>
 #include <cstring>
-#include <unordered_set>
 #include <queue>
+#include <unordered_set>
 
 #include "Porting.h"
 #include "TypeInfo.h"
@@ -26,11 +26,12 @@ namespace kotlin::mm {
 
 class MemoryDumper {
 public:
-    explicit MemoryDumper(FILE* file) : file_(file) {}
+    explicit MemoryDumper(FILE* file, bool omitPrimitiveArrayPayloads)
+        : file_(file), omitPrimitiveArrayPayloads_(omitPrimitiveArrayPayloads) {}
 
-    // Dumps the memory and returns the success flag.
+    // Dumps the memory.
     void Dump() {
-        RuntimeLogInfo({kTagMemDump}, "Starting to dump memory into %p", file_);
+        RuntimeLogInfo({kTagMemDump}, "Starting to dump memory omitPrimitiveArrayPayloads=%d", omitPrimitiveArrayPayloads_ ? 1 : 0);
 
         DumpStr("Kotlin/Native dump 1.0.8");
         DumpBool(konan::isLittleEndian());
@@ -145,6 +146,14 @@ private:
         DumpU32(count);
 
         int32_t elementSize = -type->instanceSize_;
+
+        // Keep object and native-ptr arrays: they are the heap graph. Primitive
+        // arrays (including String contents) are the bulky/sensitive payloads.
+        if (omitPrimitiveArrayPayloads_ && type != theArrayTypeInfo && type != theNativePtrArrayTypeInfo) {
+            DumpU32(0);
+            return;
+        }
+
         size_t dataOffset = alignUp(sizeof(ArrayHeader), elementSize);
         size_t dataSize = elementSize * count;
         DumpU32(dataSize);
@@ -335,8 +344,8 @@ private:
     const uint8_t TYPE_FLAG_EXTENDED = 1 << 1;
     const uint8_t TYPE_FLAG_OBJECT_ARRAY = 1 << 2;
 
-    // Target file.
     FILE* file_;
+    bool omitPrimitiveArrayPayloads_;
 
     // A set of already dumped type pointers.
     std::unordered_set<const TypeInfo*> dumpedTypes_;
@@ -352,25 +361,26 @@ void PrepareForMemoryDump() {
     mm::GlobalData::Instance().threadRegistry().PublishAll();
 }
 
-void DumpMemoryOrThrow(int fd) {
+void DumpMemoryOrThrow(int fd, bool omitPrimitiveArrayPayloads) {
     FILE* file = fdopen(fd, "w");
     if (file == nullptr) {
         throw std::system_error(errno, std::generic_category());
     }
 
-    MemoryDumper(file).Dump();
+    MemoryDumper(file, omitPrimitiveArrayPayloads).Dump();
 
+    // fflush only: fclose would close the caller's fd.
     if (fflush(file) == EOF) {
         throw std::system_error(errno, std::generic_category());
     }
 }
 
-bool DumpMemory(int fd) noexcept {
+bool DumpMemory(int fd, bool omitPrimitiveArrayPayloads) noexcept {
     PrepareForMemoryDump();
 
     bool success = true;
     try {
-        DumpMemoryOrThrow(fd);
+        DumpMemoryOrThrow(fd, omitPrimitiveArrayPayloads);
     } catch (const std::system_error& e) {
         success = false;
         RuntimeLogError({kTagMemDump}, "Memory dump error: %s", e.what());
