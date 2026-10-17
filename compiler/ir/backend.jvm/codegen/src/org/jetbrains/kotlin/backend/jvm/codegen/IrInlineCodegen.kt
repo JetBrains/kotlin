@@ -362,7 +362,7 @@ class IrInlineCodegen(
         //hack to keep linenumber info, otherwise jdi will skip begin of linenumber chain
         adapter.visitInsn(Opcodes.NOP)
 
-        val result = inliner.doInline(adapter, remapper, true, mapOf())
+        val result = inliner.doInline(adapter, remapper, true, mapOf(), codegen.finallyDepth)
         result.reifiedTypeParametersUsages.mergeAll(reificationResult)
 
         val infos = MethodInliner.processReturns(adapter, sourceCompiler.getContextLabels(), null)
@@ -406,7 +406,7 @@ class IrInlineCodegen(
         val extensionPoints = insertPoints.associateBy { it.beforeIns }
         val processor = DefaultProcessor(intoNode, offsetForFinallyLocalVar)
 
-        var curFinallyDepth = 0
+        var curFinallyDepth = codegen.finallyDepth
         var curInstr: AbstractInsnNode? = intoNode.instructions.first
         var curLineNumber = -1
         while (curInstr != null) {
