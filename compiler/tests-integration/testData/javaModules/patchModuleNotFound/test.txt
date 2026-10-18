@@ -1,0 +1,2 @@
+error: module in `-Xpatch-module` not found: nosuch
+COMPILATION_ERROR

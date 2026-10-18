@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmModulePathRoot
 import org.jetbrains.kotlin.cli.jvm.modules.CoreJrtFileSystem
 import org.jetbrains.kotlin.cli.jvm.modules.parseJavaModuleAccessOption
+import org.jetbrains.kotlin.cli.jvm.modules.parseJavaModulePatch
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.cli.reportInfo
 import org.jetbrains.kotlin.cli.reportLog
@@ -149,6 +150,7 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
     addJavaModuleAccessOptions(
         JVMConfigurationKeys.ADDITIONAL_JAVA_MODULE_EXPORTS, "-Xadd-exports", arguments.additionalJavaModuleExports, isExports = true,
     )
+    addJavaModulePatches(arguments.javaModulePatches)
 
     put(JVMConfigurationKeys.IGNORED_ANNOTATIONS_FOR_BRIDGES, arguments.ignoredAnnotationsForBridges?.toList().orEmpty())
 
@@ -171,6 +173,22 @@ private fun CompilerConfiguration.addJavaModuleAccessOptions(
             this.report(COMPILER_ARGUMENTS_WARNING, "Bad name in value for `$flag`: '$name'")
         }
         add(key, value)
+    }
+}
+
+private fun CompilerConfiguration.addJavaModulePatches(values: Array<String>) {
+    val patchedModules = HashSet<String>()
+    for (value in values) {
+        val moduleName = parseJavaModulePatch(value)?.first
+        if (moduleName == null) {
+            this.report(
+                COMPILER_ARGUMENTS_ERROR, "Bad value for `-Xpatch-module`: '$value'\nExpected: <module>=<path>(<path-separator><path>)*"
+            )
+        } else if (!patchedModules.add(moduleName)) {
+            this.report(COMPILER_ARGUMENTS_ERROR, "`-Xpatch-module` is specified more than once for module $moduleName")
+        } else {
+            add(JVMConfigurationKeys.JAVA_MODULE_PATCHES, value)
+        }
     }
 }
 
