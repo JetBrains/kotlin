@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.group.isDisabledNative
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.isIgnoredTarget
 import org.jetbrains.kotlin.konan.test.blackbox.support.testKind
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
+import org.jetbrains.kotlin.test.directives.KlibAbiDumpDirectives
 import org.jetbrains.kotlin.test.directives.model.Directive
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
@@ -28,8 +29,11 @@ import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
 /**
  * @param customCompilerStage the stage compiled by a custom (previously released) compiler in KLIB compatibility tests, or `null` otherwise.
- *   Only the `IGNORE_KLIB_*_WITH_CUSTOM_<STAGE>` directives of that stage expect a failure (see `CustomKlibCompilerFirstStageTestSuppressor`
- *   and `CustomKlibCompilerSecondStageTestSuppressor`), so only they isolate a test: an expected failure must not break a whole batch.
+ *   The `IGNORE_KLIB_*_WITH_CUSTOM_<STAGE>` directives of that stage, and only of it, expect a failure (see
+ *   `CustomKlibCompilerFirstStageTestSuppressor` and `CustomKlibCompilerSecondStageTestSuppressor`), so they isolate a test: an expected
+ *   failure must not break a whole batch.
+ *   In forward-compatibility tests ([CompilationStage.SECOND]), [KlibAbiDumpDirectives.DUMP_KLIB_ABI] isolates a test too:
+ *   their first stage checks the KLIB ABI dump, which a test renamed for a batch would not match.
  */
 class NativeGroupingTestIsolator(
     testServices: TestServices,
@@ -40,21 +44,22 @@ class NativeGroupingTestIsolator(
             BatchToken.Custom("AssertionMode: ${it.name}")
         }
 
-        private val CUSTOM_FIRST_STAGE_IGNORE_DIRECTIVES: List<Directive> = listOf(
+        private val CUSTOM_FIRST_STAGE_ISOLATION_DIRECTIVES: List<Directive> = listOf(
             CustomKlibCompilerTestDirectives.IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_STAGE,
             CustomKlibCompilerTestDirectives.IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_FIRST_STAGE,
         )
 
-        private val CUSTOM_SECOND_STAGE_IGNORE_DIRECTIVES: List<Directive> = listOf(
+        private val CUSTOM_SECOND_STAGE_ISOLATION_DIRECTIVES: List<Directive> = listOf(
             CustomKlibCompilerTestDirectives.IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_SECOND_STAGE,
             CustomKlibCompilerTestDirectives.IGNORE_KLIB_FRONTEND_ERRORS_WITH_CUSTOM_SECOND_STAGE,
             CustomKlibCompilerTestDirectives.IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE,
+            KlibAbiDumpDirectives.DUMP_KLIB_ABI,
         )
     }
 
-    private val customCompilerIgnoreDirectives: List<Directive> = when (customCompilerStage) {
-        CompilationStage.FIRST -> CUSTOM_FIRST_STAGE_IGNORE_DIRECTIVES
-        CompilationStage.SECOND -> CUSTOM_SECOND_STAGE_IGNORE_DIRECTIVES
+    private val customCompilerIsolationDirectives: List<Directive> = when (customCompilerStage) {
+        CompilationStage.FIRST -> CUSTOM_FIRST_STAGE_ISOLATION_DIRECTIVES
+        CompilationStage.SECOND -> CUSTOM_SECOND_STAGE_ISOLATION_DIRECTIVES
         null -> emptyList()
     }
 
@@ -63,6 +68,7 @@ class NativeGroupingTestIsolator(
             CodegenTestDirectives,
             TestDirectives,
             CustomKlibCompilerTestDirectives.takeIf { customCompilerStage != null },
+            KlibAbiDumpDirectives.takeIf { customCompilerStage == CompilationStage.SECOND },
         )
 
     override fun computeBatchToken(moduleStructure: TestModuleStructure): BatchToken {
@@ -71,7 +77,7 @@ class NativeGroupingTestIsolator(
             TestDirectives.FILECHECK_STAGE,
             TestDirectives.EXPECTED_TIMEOUT_FAILURE,
             TestDirectives.MUTED,
-        ) + customCompilerIgnoreDirectives
+        ) + customCompilerIsolationDirectives
 
         // KT-84713: Migrate here full grouping logic from TestRunProvider.withTestExecutable(): respect ignores, difference of compiler args, etc.
         val registeredDirectives = moduleStructure.allDirectives
