@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.extensions.declarationGenerators
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.plugin.createCompanionObject
 import org.jetbrains.kotlin.fir.plugin.createDefaultPrivateConstructor
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
@@ -70,12 +71,16 @@ class LombokCompanionObjectGenerator(session: FirSession) : FirDeclarationGenera
         }.orEmpty()
     }
 
+    @OptIn(SymbolInternals::class)
     override fun generateNestedClassLikeDeclaration(
         owner: FirClassSymbol<*>,
         name: Name,
         context: NestedClassGenerationContext,
     ): FirClassLikeSymbol<*>? {
-        return runIf(name == DEFAULT_NAME_FOR_COMPANION_OBJECT) { companionObjectsCache.getValue(owner, context) }
+        // check `companionObjectSymbol` because another plugin might've generated a companion object
+        return runIf(name == DEFAULT_NAME_FOR_COMPANION_OBJECT && (owner as? FirRegularClassSymbol)?.companionObjectSymbol == null) {
+            companionObjectsCache.getValue(owner, context)
+        }
     }
 
     override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): Set<Name> {

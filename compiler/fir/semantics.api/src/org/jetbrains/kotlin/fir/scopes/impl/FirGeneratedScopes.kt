@@ -284,6 +284,8 @@ class FirGeneratedMemberDeclarationsStorage(private val session: FirSession) : F
 
             val extensions = extensionsByClassifierName[name] ?: return null
 
+            val hasNoUserDefinedCompanionObject = classSymbol is FirRegularClassSymbol && classSymbol.companionObjectSymbol == null
+
             val generatedClasses = buildList {
                 for (extension in extensions) {
                     val symbol = extension.generateNestedClassLikeDeclaration(classSymbol, name, generationContext) ?: continue
@@ -292,9 +294,13 @@ class FirGeneratedMemberDeclarationsStorage(private val session: FirSession) : F
                     if (classSymbol.isLocal) {
                         symbol.fir.containingClassForLocalAttr = classSymbol.toLookupTag()
                     }
-                    if (symbol.isCompanion) break
+                    if (symbol.isCompanion && symbol is FirRegularClassSymbol && hasNoUserDefinedCompanionObject) {
+                        classSymbol.fir.replaceCompanionObjectSymbol(symbol)
+                    }
                 }
             }
+
+            if (hasNoUserDefinedCompanionObject) classSymbol.fir.replaceCompanionObjectSymbol(null)
 
             val generatedClass = when (generatedClasses.size) {
                 0 -> return null
