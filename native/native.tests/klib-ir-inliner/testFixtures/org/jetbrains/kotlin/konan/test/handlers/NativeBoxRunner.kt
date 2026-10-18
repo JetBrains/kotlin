@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.test.services.BatchingPackageInserter
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.moduleStructure
+import org.jetbrains.kotlin.test.services.sourceProviders.AbstractLauncherAdditionalSourceProvider.Companion.LAUNCHER_FACADE_CLASS_NAME_PATTERN
 import org.jetbrains.kotlin.test.testInfraError
 import java.io.File
 import kotlin.test.assertIs
@@ -222,10 +223,18 @@ class PrettyResultsHandler(
     companion object {
         // failedResults reasons for failed test contain test name in the format:
         //   in isolated mode: `__launcher__Kt.runTest`
-        //   in grouped mode: `<long_test_name>.__launcher__Kt.runTest`
+        //   in grouped mode: `<long_test_name>.__launcher_<hash>__Kt.runTest`,
+        //     since the launcher file is named after the hash of the module name (see `AbstractLauncherAdditionalSourceProvider`)
         @Suppress("RegExpRepeatedSpace")
         val failedRegexWithoutTCLogger = """\[  FAILED  ] (.*)__launcher__Kt.runTest""".toRegex()
-        val failedRegexWithTCLogger = """-\s+(.*)__launcher__Kt.runTest""".toRegex()
+        private val failedRegexWithTCLogger = """-\s+(.*)$LAUNCHER_FACADE_CLASS_NAME_PATTERN\.runTest""".toRegex()
+
+        /** The packages of the failed tests that the reason of a failed check of a batch lists. */
+        fun findFailedTestsWithTCLogger(failureReason: String): List<String> {
+            return failedRegexWithTCLogger.findAll(failureReason)
+                .map { it.groupValues }.distinct()
+                .map { it[1].removeSuffix(".") }.toList()
+        }
     }
 
     override fun handle() {
@@ -309,12 +318,6 @@ class PrettyResultsHandler(
 
     private fun findFailedTestsWithoutTCLogger(output: String): List<String> {
         return failedRegexWithoutTCLogger.findAll(output)
-            .map { it.groupValues }.distinct()
-            .map { it[1].removeSuffix(".") }.toList()
-    }
-
-    private fun findFailedTestsWithTCLogger(output: String): List<String> {
-        return failedRegexWithTCLogger.findAll(output)
             .map { it.groupValues }.distinct()
             .map { it[1].removeSuffix(".") }.toList()
     }
