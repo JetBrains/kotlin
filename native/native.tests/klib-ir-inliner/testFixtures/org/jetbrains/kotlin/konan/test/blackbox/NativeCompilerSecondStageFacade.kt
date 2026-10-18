@@ -97,9 +97,14 @@ class NativeCompilerSecondStageFacade private constructor(
         }
     }
 
+    /**
+     * @param isCompatibilityTesting whether the KLIBs of the batch were produced by a previously released compiler,
+     *   whose IR is not required to pass the IR validation of the current one.
+     */
     class Grouping(
         val testServices: TestServices,
-        private val customNativeCompilerSettings: CustomNativeCompilerSettings
+        private val customNativeCompilerSettings: CustomNativeCompilerSettings,
+        private val isCompatibilityTesting: Boolean,
     ) : AbstractGroupingStageTestFacade<GroupingStageInputArtifact, BinaryArtifacts.Native>() {
         override fun transform(inputArtifact: GroupingStageInputArtifact): BinaryArtifacts.Native {
             val servicesOfSomeModule = inputArtifact.nonGroupingStageOutputs.first().testServices
@@ -147,7 +152,7 @@ class NativeCompilerSecondStageFacade private constructor(
                 enableAssertions = AssertionsMode.ALWAYS_DISABLE !in someModule.directives[ASSERTIONS_MODE],
                 withPlatformLibs = someModule.directives.contains(WITH_PLATFORM_LIBS),
                 freeArgs = freeArgs + irCheckersArguments(someModule) + "-Xklib-duplicated-unique-name-strategy=allow-all-with-warning",
-                verifyIrMode = VerifyIrMode.ERROR,
+                verifyIrMode = if (isCompatibilityTesting) VerifyIrMode.NONE else VerifyIrMode.ERROR,
             )
 
             if (exitCode == ExitCode.OK) {
