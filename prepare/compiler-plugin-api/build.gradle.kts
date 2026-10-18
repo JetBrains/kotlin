@@ -22,8 +22,6 @@ dependencies {
     artifactContent(project(":compiler:plugin-api"))
 }
 
-runtimeJar()
-sourcesJar()
-javadocJar()
-
 publish()
+
+standardPublicJars()

@@ -482,5 +482,8 @@ fun Project.cleanArtifacts() {
     }
 }
 
-fun Project.configurePublishedComponent(configure: AdhocComponentWithVariants.() -> Unit) =
-    (components.findByName(KotlinBuildPublishingPlugin.ADHOC_COMPONENT_NAME) as AdhocComponentWithVariants?)?.apply(configure)
+fun Project.configurePublishedComponent(configure: AdhocComponentWithVariants.() -> Unit) {
+    components.withType(AdhocComponentWithVariants::class.java).matching { it.name == KotlinBuildPublishingPlugin.ADHOC_COMPONENT_NAME }.all {
+        configure()
+    }
+}
