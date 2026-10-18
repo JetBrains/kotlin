@@ -99,8 +99,8 @@ class NativeCompilerSecondStageFacade private constructor(
     }
 
     /**
-     * @param isCompatibilityTesting whether the KLIBs of the batch were produced by a previously released compiler,
-     *   whose IR is not required to pass the IR validation of the current one.
+     * @param isCompatibilityTesting whether the batch is linked in a KLIB compatibility test, where either the KLIBs or the linker
+     *   come from a previously released compiler, so the IR of the KLIBs is not required to pass the IR validation of the linker.
      */
     class Grouping(
         val testServices: TestServices,

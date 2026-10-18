@@ -140,10 +140,12 @@ fun Project.customCompilerTest(
 }
 
 /**
- * The custom-first-stage tests are migrated to the two-stage grouping test infrastructure
- * (`AbstractCustomNativeCompilerFirstStageTest`), so the grouping test engine must be enabled for them.
- * A batch of such tests is linked into a single executable by the current compiler.
- * The defaults gave the shortest run of the boxInline tests among batches of 10 to 100 tests, 2 to 16 at a time.
+ * Both custom-first-stage and custom-second-stage tests run on the two-stage grouping test infrastructure
+ * (`AbstractCustomNativeCompilerFirstStageTest`, `AbstractCustomNativeCompilerSecondStageTest`), so the grouping test engine must be
+ * enabled for them. A batch of such tests is linked into a single executable: by the current compiler for the custom first stage,
+ * and by the custom compiler for the custom second stage.
+ * The defaults gave the shortest run of the boxInline tests among batches of 10 to 100 tests, 2 to 16 at a time,
+ * and of all custom-second-stage tests among 20 tests 4 at a time, 50 and 100 tests 8 at a time.
  */
 fun Test.groupingEngineSettings(batchSize: Int = 100, simultaneousBatches: Int = 8) {
     systemProperty("kotlin.test.grouping.engine.simultaneous.methods.group.size", batchSize)
@@ -172,20 +174,22 @@ fun Project.customSecondStageTest(rawVersion: String): TaskProvider<out Task> {
     return customCompilerTest(
         version = version,
         taskName = "testCustomSecondStage_$version",
-        tag = "custom-second-stage"
-    )
+        tag = "custom-second-stage",
+        enableGroupingTestEngine = true,
+    ) {
+        groupingEngineSettings()
+    }
 }
 
 fun Project.customStagesAggregateTest(rawVersion: String, customStage: String): TaskProvider<out Task> {
     val version = CustomCompilerVersion(rawVersion)
-    val isFirstStage = customStage == "first"
     return customCompilerTest(
         version = version,
         taskName = "testMinimalInAggregate_${customStage}Stage",
         tag = "custom-${customStage}-stage",
-        enableGroupingTestEngine = isFirstStage,
+        enableGroupingTestEngine = true,
     ) {
-        if (isFirstStage) groupingEngineSettings()
+        groupingEngineSettings()
     }
 }
 

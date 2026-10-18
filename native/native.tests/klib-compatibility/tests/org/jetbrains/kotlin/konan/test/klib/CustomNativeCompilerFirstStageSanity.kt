@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.konan.test.klib
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseDummyTestCaseGroupProvider
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.test.klib.runSanityTest
+import org.jetbrains.kotlin.test.klib.runSanityTestNotMuted
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -68,17 +69,5 @@ class CustomNativeCompilerFirstStageSanity : AbstractCustomNativeCompilerFirstSt
     fun checkRecompilePassed() {
         // `// RECOMPILE` test directive is unknown to Native testinfra, so it must not affect test runs
         runSanityTestNotMuted(testDataRoot + "recompile.kt")
-    }
-
-    /**
-     * Runs a test which must pass for real. A muted test is reported as skipped rather than failed, so without this check, a problem
-     * muting every grouped test (like the first-stage compiler failing to compile the reflection helper module) would go unnoticed.
-     */
-    private fun runSanityTestNotMuted(filePath: String) {
-        try {
-            runSanityTest(filePath)
-        } catch (e: TestAbortedException) {
-            throw AssertionError("The test is expected to pass, but it was muted", e)
-        }
     }
 }

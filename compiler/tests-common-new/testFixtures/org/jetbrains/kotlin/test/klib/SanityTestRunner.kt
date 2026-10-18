@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.test.klib
 import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.test.NonGroupingStageOutput
 import org.jetbrains.kotlin.test.grouping.AbstractTwoStageKotlinCompilerTest
+import org.opentest4j.TestAbortedException
 
 /**
  * This helper executes sanity tests for klib backward/forward compatibility testsuite,
@@ -38,5 +39,17 @@ fun AbstractTwoStageKotlinCompilerTest.runSanityTest(@TestDataFile filePath: Str
         nonGroupingRunner.failuresInterceptor.reportFailures(checkForUnmuting = true)
     } finally {
         nonGroupingRunner.finalizeAndDispose()
+    }
+}
+
+/**
+ * Runs a sanity test which must pass for real. A muted test is reported as skipped rather than failed, so without this check,
+ * a problem muting every grouped test (like an unresolved annotation added to the files of a batched test) would go unnoticed.
+ */
+fun AbstractTwoStageKotlinCompilerTest.runSanityTestNotMuted(@TestDataFile filePath: String) {
+    try {
+        runSanityTest(filePath)
+    } catch (e: TestAbortedException) {
+        throw AssertionError("The test is expected to pass, but it was muted", e)
     }
 }
