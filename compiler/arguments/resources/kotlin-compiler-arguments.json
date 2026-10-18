@@ -9629,6 +9629,51 @@
                                 "deprecatedMessage": null
                             },
                             {
+                                "name": "Xpatch-module",
+                                "shortName": null,
+                                "deprecatedName": null,
+                                "description": {
+                                    "current": "Override or augment <module> with the classes and sources in .jar files or directories. Can be specified once for each module.",
+                                    "valueInVersions": []
+                                },
+                                "delimiter": "None",
+                                "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
+                                "valueType": {
+                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
+                                    "defaultValue": {
+                                        "current": null,
+                                        "valueInVersions": []
+                                    },
+                                    "isNullable": {
+                                        "current": true,
+                                        "valueInVersions": []
+                                    }
+                                },
+                                "valueDescription": {
+                                    "current": "<module>=<path>(<path-separator><path>)*",
+                                    "valueInVersions": []
+                                },
+                                "releaseVersionsMetadata": {
+                                    "introducedVersion": "2.5.0",
+                                    "stabilizedVersion": null,
+                                    "deprecatedVersion": null,
+                                    "removedVersion": null
+                                },
+                                "argumentType": {
+                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringListType",
+                                    "defaultValue": {
+                                        "current": [],
+                                        "valueInVersions": []
+                                    },
+                                    "isNullable": {
+                                        "current": false,
+                                        "valueInVersions": []
+                                    }
+                                },
+                                "deprecatedMessage": null
+                            },
+                            {
                                 "name": "Xprofile",
                                 "shortName": null,
                                 "deprecatedName": null,

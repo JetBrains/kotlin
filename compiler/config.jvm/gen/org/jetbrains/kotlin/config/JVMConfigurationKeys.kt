@@ -90,6 +90,9 @@ object JVMConfigurationKeys {
     val ADDITIONAL_JAVA_MODULE_EXPORTS = CompilerConfigurationKey.create<List<String>>("ADDITIONAL_JAVA_MODULE_EXPORTS")
 
     @JvmField
+    val JAVA_MODULE_PATCHES = CompilerConfigurationKey.create<List<String>>("JAVA_MODULE_PATCHES")
+
+    @JvmField
     val EMIT_JVM_TYPE_ANNOTATIONS = CompilerConfigurationKey.create<Boolean>("EMIT_JVM_TYPE_ANNOTATIONS")
 
     @JvmField
@@ -269,6 +272,10 @@ var CompilerConfiguration.additionalJavaModuleReads: List<String>
 var CompilerConfiguration.additionalJavaModuleExports: List<String>
     get() = getList(JVMConfigurationKeys.ADDITIONAL_JAVA_MODULE_EXPORTS)
     set(value) { put(JVMConfigurationKeys.ADDITIONAL_JAVA_MODULE_EXPORTS, value) }
+
+var CompilerConfiguration.javaModulePatches: List<String>
+    get() = getList(JVMConfigurationKeys.JAVA_MODULE_PATCHES)
+    set(value) { put(JVMConfigurationKeys.JAVA_MODULE_PATCHES, value) }
 
 var CompilerConfiguration.emitJvmTypeAnnotations: Boolean
     get() = getBoolean(JVMConfigurationKeys.EMIT_JVM_TYPE_ANNOTATIONS)

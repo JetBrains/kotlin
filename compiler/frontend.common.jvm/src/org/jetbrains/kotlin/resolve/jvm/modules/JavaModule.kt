@@ -30,8 +30,8 @@ interface JavaModule {
     val moduleInfoFile: VirtualFile?
 
     /**
-     * `true` if this module is an explicit module loaded from module-info.java, `false` otherwise. This usually corresponds to the module
-     * currently being compiled.
+     * `true` if this module is an explicit module loaded from module-info.java, or a module that the sources being compiled were added to
+     * with `-Xpatch-module`, `false` otherwise. This usually corresponds to the module currently being compiled.
      * Note that in case of partial/incremental compilation, the source module may contain both binary roots and non-binary roots.
      */
     val isSourceModule: Boolean
@@ -57,10 +57,12 @@ interface JavaModule {
 
     data class Root(val file: VirtualFile, val isBinary: Boolean, val isBinarySignature: Boolean = false)
 
-    class Automatic(override val name: String, override val moduleRoots: List<Root>) : JavaModule {
+    class Automatic(
+        override val name: String,
+        override val moduleRoots: List<Root>,
+        override val isSourceModule: Boolean = false,
+    ) : JavaModule {
         override val moduleInfoFile: VirtualFile? get() = null
-
-        override val isSourceModule: Boolean get() = false
 
         override fun exports(packageFqName: FqName): Boolean = true
 
@@ -73,13 +75,15 @@ interface JavaModule {
         val moduleInfo: JavaModuleInfo,
         override val moduleRoots: List<Root>,
         override val moduleInfoFile: VirtualFile,
-        val isJdkModuleFromCtSym: Boolean = false
+        val isJdkModuleFromCtSym: Boolean = false,
+        private val hasPatchedSources: Boolean = false,
     ) : JavaModule {
         override val name: String
             get() = moduleInfo.moduleName
 
         override val isSourceModule: Boolean
-            get() = moduleInfoFile.extension == JavaFileType.DEFAULT_EXTENSION || moduleInfoFile.fileType == JavaFileType.INSTANCE
+            get() = hasPatchedSources ||
+                    moduleInfoFile.extension == JavaFileType.DEFAULT_EXTENSION || moduleInfoFile.fileType == JavaFileType.INSTANCE
 
         override fun exports(packageFqName: FqName): Boolean {
             return moduleInfo.exports.any { (val fqName = packageFqName, val toModules) ->

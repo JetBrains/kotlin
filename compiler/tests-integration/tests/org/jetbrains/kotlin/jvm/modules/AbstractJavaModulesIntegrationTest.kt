@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.cli.CliDiagnostics
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
+import org.jetbrains.kotlin.cli.common.isWindows
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
@@ -35,6 +36,7 @@ import org.junit.jupiter.api.Test
 import java.io.File
 import java.util.concurrent.TimeUnit
 import java.util.jar.Manifest
+import kotlin.io.path.createSymbolicLinkPointingTo
 import kotlin.test.fail
 
 class ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
@@ -51,6 +53,7 @@ class ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
         modulePath: List<File> = emptyList(),
         addModules: List<String> = emptyList(),
         additionalKotlinArguments: List<String> = emptyList(),
+        additionalJavaArguments: List<String> = emptyList(),
         manifest: Manifest? = null,
         destination: File? = null,
         checkKotlinOutput: (String) -> Unit = this.checkKotlinOutput(name),
@@ -83,6 +86,7 @@ class ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
                     javaOptions += "--add-modules"
                     javaOptions += addModules.joinToString()
                 }
+                javaOptions += additionalJavaArguments
                 compileJavaFiles(javaFiles, javaOptions, KtTestUtil.getJdk11Home())
             },
             checkKotlinOutput,
@@ -566,5 +570,216 @@ class ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
             .filter { it.factory == CliDiagnostics.CLASSPATH_RESOLUTION_WARNING }
             .map { (it as KtDiagnosticWithoutSource).message }
         assertEquals(emptyList<String>(), warnings)
+    }
+
+    private fun patchModule(moduleName: String, vararg paths: String): String =
+        "-Xpatch-module=$moduleName=" + paths.joinToString(File.pathSeparator) { File(testDataDirectory, it).path }
+
+    private fun assertCompilationError(vararg expected: String): (String) -> Unit = { output ->
+        assertTrue(expected.all(output::contains) && output.trimEnd().endsWith("COMPILATION_ERROR"), output)
+    }
+
+    @Test
+    fun testPatchModuleSources() {
+        // Like javac, sources in a patch path are members of the patched module, which is then the root module.
+        val lib = module("lib")
+        val javacPatch = listOf("--patch-module", "lib=" + File(testDataDirectory, "test").path)
+        module(
+            "test", listOf(lib), listOf("lib"), additionalJavaArguments = javacPatch,
+            checkKotlinOutput = assertCompilationError("does not export package 'lib.internal'"),
+        )
+        for (javaDirect in listOf(true, false)) {
+            module(
+                "test", listOf(lib), additionalKotlinArguments = listOf(patchModule("lib", "test"), "-Xjava-direct=$javaDirect"),
+                additionalJavaArguments = javacPatch,
+            )
+        }
+    }
+
+    @Test
+    fun testPatchModuleReadsUnnamed() {
+        // Like javac, the patched module reads only the modules it requires, so -Xadd-reads is needed for sources that use the classpath.
+        val lib = module("lib")
+        val assertions = module("assertions", destination = File(tmpdir, "assertions"))
+        val arguments = listOf("-classpath", assertions.path, patchModule("lib", "test"))
+        module("test", listOf(lib), additionalKotlinArguments = arguments, checkKotlinOutput = assertCompilationError("unnamed module"))
+        module("test", listOf(lib), additionalKotlinArguments = arguments + "-Xadd-reads=lib=ALL-UNNAMED")
+    }
+
+    @Test
+    fun testPatchModuleBinary() {
+        // Like javac, classes in a patch path are members of the patched module, so a package added by the patch is not exported.
+        val lib = module("lib")
+        val extra = module("extra", destination = File(tmpdir, "extra"))
+        val patch = "-Xpatch-module=lib=${extra.path}"
+        module(
+            "main", listOf(lib), listOf("lib"), listOf(patch),
+            checkKotlinOutput = assertCompilationError("does not export package 'lib.extra'"),
+        )
+        module("main", listOf(lib), listOf("lib"), listOf(patch, "-Xadd-exports=lib/lib.extra=ALL-UNNAMED"))
+    }
+
+    @Test
+    fun testPatchModuleOutsideGraph() {
+        // Like javac, a patch of a module outside the module graph has no effect, so the classes in the patch path stay in the unnamed
+        // module.
+        val lib = module("lib")
+        val extra = module("extra", destination = File(tmpdir, "extra"))
+        module("main", listOf(lib), additionalKotlinArguments = listOf("-classpath", extra.path, "-Xpatch-module=lib=${extra.path}"))
+    }
+
+    @Test
+    fun testPatchModuleAutomatic() {
+        // Like javac, an automatic module can be patched, and its sources read the unnamed module without -Xadd-reads.
+        val auto = module("auto")
+        val assertions = module("assertions", destination = File(tmpdir, "assertions"))
+        module("test", listOf(auto), additionalKotlinArguments = listOf("-classpath", assertions.path, patchModule("auto", "test")))
+        // Unlike for an explicit module, ALL-MODULE-PATH is allowed, so 'lib' is in the module graph.
+        val lib = module("lib")
+        module(
+            "test2", listOf(auto, lib), additionalKotlinArguments = listOf(patchModule("auto", "test2")),
+            checkKotlinOutput = assertCompilationError(),
+        )
+        module("test2", listOf(auto, lib), listOf("ALL-MODULE-PATH"), listOf(patchModule("auto", "test2")))
+    }
+
+    @Test
+    fun testPatchModuleSourceDirectory() {
+        // A directory source root is compiled recursively, so a patch path inside it contains sources. Like javac, sources outside the
+        // patch path are then members of the patched module too, and sources in the patch paths of two modules are an error.
+        val lib = module("lib")
+        val other = module("other")
+        module("test", listOf(lib, other), additionalKotlinArguments = listOf(patchModule("lib", "test/lib")))
+        module(
+            "test", listOf(lib, other),
+            additionalKotlinArguments = listOf(patchModule("lib", "test/lib"), patchModule("other", "test/other")),
+            checkKotlinOutput = assertCompilationError("too many patched modules: lib, other"),
+        )
+    }
+
+    @Test
+    fun testPatchModuleNotFound() {
+        // Like javac, sources in a patch path of a module that is not found, or is only on the classpath, are an error.
+        val lib = module("lib")
+        module("test", additionalKotlinArguments = listOf(patchModule("nosuch", "test")))
+        module("test2", additionalKotlinArguments = listOf("-classpath", lib.path, patchModule("lib", "test2")))
+        // Module handling is skipped with -Xjdk-release below 9, the patches included.
+        module("test", additionalKotlinArguments = listOf("-Xjdk-release=8", patchModule("nosuch", "test"), patchModule("other", "test"))) {
+            assertEquals("OK", it.trim())
+        }
+    }
+
+    @Test
+    fun testPatchModuleInvalidValues() {
+        // Values that javac rejects with "bad value for --patch-module option", and a module patched twice. An empty source root in the
+        // patch path of a module that is not found contains no sources, so it is not reported.
+        val empty = File(tmpdir, "empty").apply { mkdirs() }
+        module(
+            "main",
+            additionalKotlinArguments = listOf(
+                "-Xpatch-module=lib", "-Xpatch-module==lib", "-Xpatch-module=lib=", "-Xpatch-module=lib/foo=dir",
+                "-Xpatch-module=lib=a", "-Xpatch-module=lib=b",
+                "-Xjava-source-roots=${empty.path}", "-Xpatch-module=nosuch=${empty.path}",
+            ),
+        )
+    }
+
+    @Test
+    fun testPatchModuleIncremental() {
+        // As in incremental compilation, the output directory is on the classpath, and the classes compiled into it earlier are members
+        // of the patched module too.
+        val lib = module("lib")
+        val output = File(tmpdir, "output")
+        module("test", listOf(lib), additionalKotlinArguments = listOf(patchModule("lib", "test")), destination = output)
+        module(
+            "test2", listOf(lib), additionalKotlinArguments = listOf("-classpath", output.path, patchModule("lib", "test2")),
+            destination = output,
+        )
+    }
+
+    private fun compileJdkPatch(): File {
+        // Compiled with javac as a member of java.base.
+        val sources = File(testDataDirectory, "jdkPatch")
+        val output = File(tmpdir, "jdkPatch")
+        compileJavaFiles(
+            listOf(File(sources, "java/lang/extra/Extra.java")),
+            listOf("-d", output.path, "--patch-module", "java.base=${sources.path}"),
+            jdkHome,
+        ).assertSuccessful()
+        return output
+    }
+
+    @Test
+    fun testPatchModuleJdkBinary() {
+        // Like javac, a class added to a JDK module by a binary patch is a member of that module, with and without -Xjdk-release.
+        val patch = "-Xpatch-module=java.base=${compileJdkPatch().path}"
+        val doesNotExport = assertCompilationError("does not export package 'java.lang.extra'")
+        module("main", additionalKotlinArguments = listOf(patch), checkKotlinOutput = doesNotExport)
+        module("main", additionalKotlinArguments = listOf(patch, "-Xadd-exports=java.base/java.lang.extra=ALL-UNNAMED"))
+        module("main", additionalKotlinArguments = listOf(patch, "-Xjdk-release=10"), checkKotlinOutput = doesNotExport)
+    }
+
+    @Test
+    fun testPatchModuleJdkSources() {
+        // Like javac, sources in a patch path of a JDK module are members of it and use its packages that are not exported.
+        module("test", checkKotlinOutput = assertCompilationError("does not export package 'jdk.internal.misc'"))
+        module(
+            "test", additionalKotlinArguments = listOf(patchModule("java.base", "test")),
+            checkKotlinOutput = assertCompilationError("add `-Xadd-reads=java.base=kotlin.stdlib`"),
+        )
+        module("test", additionalKotlinArguments = listOf(patchModule("java.base", "test"), "-Xadd-reads=java.base=kotlin.stdlib"))
+    }
+
+    @Test
+    fun testPatchModuleSymlink() {
+        // Symlinks do not work on Windows
+        if (isWindows) return
+        // Like javac, a source file counts as being in a patch path when its real path is, whatever path it is compiled through.
+        val lib = module("lib")
+        val linked = File(testDataDirectory, "linked")
+        val sources = File(tmpdir, "sources").apply { mkdirs() }
+        File(sources, "link").toPath().createSymbolicLinkPointingTo(linked.toPath())
+        module("main", listOf(lib), additionalKotlinArguments = listOf(sources.path, patchModule("lib", "linked")))
+        val patch = File(tmpdir, "patch").apply { mkdirs() }
+        File(patch, "link").toPath().createSymbolicLinkPointingTo(linked.toPath())
+        module(
+            "main", listOf(lib), additionalKotlinArguments = listOf(patch.path, "-Xpatch-module=lib=${patch.path}"),
+            checkKotlinOutput = assertCompilationError("unresolved reference 'Impl'"),
+        )
+    }
+
+    @Test
+    fun testPatchModuleClasspathOnly() {
+        // Like javac, which puts a jar given with -classpath in the unnamed module, a patch of the module read from it has no effect.
+        val foo = module("foo")
+        val extra = module("extra", destination = File(tmpdir, "extra"))
+        val arguments = listOf("-classpath", foo.path, "-Xpatch-module=foo=${extra.path}", "-Xadd-reads=main=ALL-UNNAMED")
+        module("main", additionalKotlinArguments = arguments, checkKotlinOutput = assertCompilationError("unresolved reference 'foo2'"))
+    }
+
+    @Test
+    fun testPatchModuleReplacedClass() {
+        // Like javac, a class in a patch path replaces the class of the module, also when the module is given with -classpath too.
+        val lib = module("lib")
+        val sources = File(testDataDirectory, "patch")
+        val patch = File(tmpdir, "patch")
+        compileJavaFiles(
+            listOf(File(sources, "p/C.java")),
+            listOf("-d", patch.path, "--patch-module", "lib=${sources.path}", "--module-path", lib.path),
+            jdkHome,
+        ).assertSuccessful()
+        for (arguments in listOf(emptyList(), listOf("-classpath", lib.path))) {
+            module("main", listOf(lib), additionalKotlinArguments = arguments + "-Xpatch-module=lib=${patch.path}")
+        }
+    }
+
+    @Test
+    fun testPatchModuleSourceFile() {
+        // Like javac, a source file given as the patch path is not in it, since a patch path is a directory or a jar.
+        val lib = module("lib")
+        module(
+            "test", listOf(lib), additionalKotlinArguments = listOf(patchModule("lib", "test/lib/internal/implTest.kt")),
+            checkKotlinOutput = assertCompilationError("unresolved reference 'Impl'"),
+        )
     }
 }
