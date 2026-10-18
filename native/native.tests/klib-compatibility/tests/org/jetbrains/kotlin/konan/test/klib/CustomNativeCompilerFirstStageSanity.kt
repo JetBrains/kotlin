@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.konan.test.klib
 
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseDummyTestCaseGroupProvider
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.test.klib.runSanityTest
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -18,13 +19,13 @@ private const val testDataRoot = "compiler/testData/klib/klib-compatibility/sani
 class CustomNativeCompilerFirstStageSanity : AbstractCustomNativeCompilerFirstStageTest() {
     @Test
     fun checkPassed() {
-        runTest(testDataRoot + "green.kt")
+        runSanityTestNotMuted(testDataRoot + "green.kt")
     }
 
     @Test
     fun checkGreenNeedsUnmuting() {
         val exception = assertThrows<AssertionError> {
-            runTest(testDataRoot + "greenNeedsUnmuting.kt")
+            runSanityTest(testDataRoot + "greenNeedsUnmuting.kt")
         }
         val expected = "Looks like this test can be unmuted. " +
                 "Remove ${customNativeCompilerSettings.defaultLanguageVersion} from the IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_STAGE directive"
@@ -34,7 +35,7 @@ class CustomNativeCompilerFirstStageSanity : AbstractCustomNativeCompilerFirstSt
     @Test
     fun checkIncorrectBoxResult() {
         val exception = assertThrows<AssertionError> {
-            runTest(testDataRoot + "incorrectBoxResult.kt")
+            runSanityTest(testDataRoot + "incorrectBoxResult.kt")
         }
         assertTrue(exception.message?.contains("Test failed with: FAIL. Expected <OK>, actual <FAIL>") == true, exception.message)
     }
@@ -42,7 +43,7 @@ class CustomNativeCompilerFirstStageSanity : AbstractCustomNativeCompilerFirstSt
     @Test
     fun checkMutedWithIgnoreRuntimeErrors1stStage() {
         val exception = assertThrows<TestAbortedException> {
-            runTest(testDataRoot + "mutedWithIgnoreRuntimeErrors1stStage.kt")
+            runSanityTest(testDataRoot + "mutedWithIgnoreRuntimeErrors1stStage.kt")
         }
         assertEquals(null, exception.message)
     }
@@ -50,7 +51,7 @@ class CustomNativeCompilerFirstStageSanity : AbstractCustomNativeCompilerFirstSt
     @Test
     fun checkNotMutedWithIgnoreRuntimeErrors2ndStage() {
         val exception = assertThrows<AssertionError> {
-            runTest(testDataRoot + "mutedWithIgnoreRuntimeErrors2ndStage.kt")
+            runSanityTest(testDataRoot + "mutedWithIgnoreRuntimeErrors2ndStage.kt")
         }
         assertTrue(exception.message?.contains("Test failed with: FAIL. Expected <OK>, actual <FAIL>") == true, exception.message)
     }
@@ -58,7 +59,7 @@ class CustomNativeCompilerFirstStageSanity : AbstractCustomNativeCompilerFirstSt
     @Test
     fun checkMutedDueToFrontendErrorWithCustom1stStage() {
         val exception = assertThrows<TestAbortedException> {
-            runTest(testDataRoot + "mutedDueToFrontendErrorWithCustom1stStage.kt")
+            runSanityTest(testDataRoot + "mutedDueToFrontendErrorWithCustom1stStage.kt")
         }
         assertEquals(null, exception.message)
     }
@@ -66,6 +67,18 @@ class CustomNativeCompilerFirstStageSanity : AbstractCustomNativeCompilerFirstSt
     @Test
     fun checkRecompilePassed() {
         // `// RECOMPILE` test directive is unknown to Native testinfra, so it must not affect test runs
-        runTest(testDataRoot + "recompile.kt")
+        runSanityTestNotMuted(testDataRoot + "recompile.kt")
+    }
+
+    /**
+     * Runs a test which must pass for real. A muted test is reported as skipped rather than failed, so without this check, a problem
+     * muting every grouped test (like the first-stage compiler failing to compile the reflection helper module) would go unnoticed.
+     */
+    private fun runSanityTestNotMuted(filePath: String) {
+        try {
+            runSanityTest(filePath)
+        } catch (e: TestAbortedException) {
+            throw AssertionError("The test is expected to pass, but it was muted", e)
+        }
     }
 }
