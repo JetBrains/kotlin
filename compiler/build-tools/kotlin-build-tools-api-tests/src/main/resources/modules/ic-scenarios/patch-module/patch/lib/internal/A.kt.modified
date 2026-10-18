@@ -1,0 +1,3 @@
+package lib.internal
+
+fun a(): String = Impl.impl() + "a"
