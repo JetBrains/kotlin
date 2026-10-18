@@ -279,7 +279,8 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
             // the `@JvmStatic` `builder()` functions of its containing entity, emulating Java's static factory
             // methods. Hence the annotations are looked up on that entity — `extractBuilderWithDeclarations`
             // collects both the entity's own ones and any declared inside this very companion.
-            classSymbol.getContainingClassSymbol() as FirClassSymbol<*>
+            classSymbol.getContainingClassSymbol() as? FirClassSymbol<*>
+                ?: return null // Ignore malformed top-level `companion object` (KT-89378)
         } else {
             // Builder functions always belong to builder class in Java and Kotlin.
             context(generatedFunctions, generatedVariables) {
