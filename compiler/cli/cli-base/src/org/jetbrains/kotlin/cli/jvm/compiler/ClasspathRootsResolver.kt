@@ -206,12 +206,13 @@ class ClasspathRootsResolver(
 
     /**
      * Like javac, finds the module given with `-Xpatch-module` that the sources are members of: the module with a patch path that contains
-     * the real path of a source file being compiled. A directory source root is compiled recursively.
+     * the real path of a source file being compiled. A file source root is compiled whatever its extension, such as a script, and a
+     * directory source root is compiled recursively.
      */
     private fun findModuleWithPatchedSources(sourceRootFiles: List<SourceRootFile>): String? {
         if (javaModulePatches.isEmpty()) return null
         val sourceFiles = sourceRootFiles.flatMap { (val file, val extension) ->
-            file.walk().filter { it.isFile && it.extension == extension }.map(File::getCanonicalFile).toList()
+            file.walk().filter { it.isFile && (it == file || it.extension == extension) }.map(File::getCanonicalFile).toList()
         }
         val moduleNames = javaModulePatches.filterValues { paths ->
             paths.any { path ->
