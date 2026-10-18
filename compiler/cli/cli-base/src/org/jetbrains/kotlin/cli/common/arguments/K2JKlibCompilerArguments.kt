@@ -267,6 +267,7 @@ The default value is 'indy'.""",
         value = "-Xklib-manifest-property",
         valueDescription = "<key=value>",
         description = "Provide a custom property (key=value) to be added to the KLIB manifest.",
+        delimiter = Argument.Delimiters.none,
     )
     var klibManifestProperties: Array<String>? = null
         set(value) {

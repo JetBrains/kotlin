@@ -1,0 +1,5 @@
+// EXISTS: default/manifest
+// CONTAINS: default/manifest, customKey=customValue
+// CONTAINS: default/manifest, is_header=false
+// CONTAINS: default/manifest, commaKey=a,b,c
+// NOT_CONTAINS: default/manifest, is_header=true
