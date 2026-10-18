@@ -55,7 +55,8 @@ class NativeCompilerSecondStageFacade private constructor(
             return NativeEnvironmentConfigurator.isMainModule(module, testServices.moduleStructure)
         }
 
-        override fun collectDependencies(module: TestModule): Pair<Set<String>, Set<String>> = module.collectDependencies(testServices)
+        override fun collectDependencies(module: TestModule): Pair<Set<String>, Set<String>> =
+            module.collectDependencies(testServices, CompilationStage.SECOND)
 
         override fun compileBinary(
             module: TestModule,
@@ -117,7 +118,7 @@ class NativeCompilerSecondStageFacade private constructor(
             val mainLibraries = mutableListOf<String>()
             for ((val services = testServices, val _ = catchingExecutor) in inputArtifact.nonGroupingStageOutputs) {
                 val mainModule = services.moduleStructure.modules.last()
-                mainModule.collectDependencies(services).let { [regular, friend] ->
+                mainModule.collectDependencies(services, CompilationStage.SECOND).let { [regular, friend] ->
                     regularDependencies += regular
                     friendDependencies += friend
                 }

@@ -15,8 +15,10 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.FREE_COMP
 import org.jetbrains.kotlin.test.frontend.objcinterop.ObjCInteropFacade
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerException
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerFirstStageFacade
+import org.jetbrains.kotlin.test.klib.ReflectionPackageNameHelperModuleTransformer
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.services.CompilationStage
 import org.jetbrains.kotlin.test.services.TestServices
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -34,7 +36,7 @@ class CustomNativeCompilerFirstStageFacade(testServices: TestServices) : CustomK
         return super.shouldTransform(module) && module.files.none { it.name.endsWith(".def") }
     }
 
-    override fun collectDependencies(module: TestModule) = module.collectDependencies(testServices)
+    override fun collectDependencies(module: TestModule) = module.collectDependencies(testServices, CompilationStage.FIRST)
 
     override fun compileKlib(
         module: TestModule,
@@ -60,6 +62,10 @@ class CustomNativeCompilerFirstStageFacade(testServices: TestServices) : CustomK
                     K2NativeCompilerArguments::kotlinHome.cliArgument, customNativeCompilerSettings.nativeHome.absolutePath,
                     K2NativeCompilerArguments::nodefaultlibs.cliArgument,
                     K2NativeCompilerArguments::optIn.cliArgument("kotlin.native.internal.InternalForKotlinNative"),
+                    // The helper declares `kotlin.internal.ReflectionPackageName` for the stdlibs older than 2.5 missing it.
+                    // Other test modules are not allowed to declare anything in the `kotlin` package, as before.
+                    CommonCompilerArguments::allowKotlinPackage.cliArgument
+                        .takeIf { ReflectionPackageNameHelperModuleTransformer.isHelperModule(module) },
                 ),
                 regularAndFriendDependencies.flatMap {
                     listOf(K2NativeCompilerArguments::libraries.cliArgument, it)
