@@ -95,6 +95,7 @@ fun createJavaOrKotlinMemberFunction(
     symbol: FirNamedFunctionSymbol? = null,
     typeParameters: Collection<FirTypeParameter> = emptyList(),
     isOverride: Boolean = false,
+    isOperator: Boolean = false,
     source: KtSourceElement? = null,
 ): FirNamedFunctionSymbol {
     return if (owner.hasJavaOrigin) {
@@ -127,6 +128,7 @@ fun createJavaOrKotlinMemberFunction(
 
             status {
                 this@status.isOverride = isOverride
+                this@status.isOperator = isOperator
             }
 
             // `DeclarationBuildingContext.source` falls back to a fake element over the owner's source only while it
