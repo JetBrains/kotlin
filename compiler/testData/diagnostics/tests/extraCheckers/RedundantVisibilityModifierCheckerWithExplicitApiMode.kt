@@ -118,7 +118,7 @@ public sealed class Sealed <!REDUNDANT_VISIBILITY_MODIFIER!>protected<!> constru
     <!NON_PRIVATE_OR_PROTECTED_CONSTRUCTOR_IN_SEALED!>public constructor(byte: Byte) : this(byte.toInt())<!>
 
     <!REDUNDANT_VISIBILITY_MODIFIER!>protected<!> constructor(x: Double): this(x.toInt())
-    <!NO_EXPLICIT_VISIBILITY_IN_API_MODE!>constructor<!>(z: Float): this(z.toInt())
+    constructor(z: Float): this(z.toInt())
 
     public object SealedImpl : Sealed()
 }

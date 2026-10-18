@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.context.findClosest
 import org.jetbrains.kotlin.fir.analysis.checkers.syntax.FirDeclarationSyntaxChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.syntax.FirExplicitApiDeclarationChecker.isExplicitVisibilityRequired
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
@@ -129,15 +130,25 @@ object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<Fi
             return
         }
 
-        // In explicit API mode, `public` is explicitly required.
-        val explicitApiMode = context.languageVersionSettings.getFlag(AnalysisFlags.explicitApiMode)
-        if (explicitApiMode != ExplicitApiMode.DISABLED && explicitVisibility == Visibilities.Public) {
+        if (isRequiredByExplicitApi(element, explicitVisibility)) {
             return
         }
 
         if (explicitVisibility == implicitVisibility) {
             reportElement(element)
         }
+    }
+
+    /**
+     * A modifier that explicit API mode forces to write can't also be redundant.
+     * This applies to `public` and any other modifier the explicit API checker would report as missing.
+     */
+    context(context: CheckerContext)
+    private fun isRequiredByExplicitApi(element: FirMemberDeclaration, explicitVisibility: Visibility?): Boolean {
+        if (explicitVisibility == null) return false
+        if (context.languageVersionSettings.getFlag(AnalysisFlags.explicitApiMode) == ExplicitApiMode.DISABLED) return false
+
+        return explicitVisibility == Visibilities.Public || isExplicitVisibilityRequired(element)
     }
 
     private val FirElement.isPropertyFromParameter: Boolean

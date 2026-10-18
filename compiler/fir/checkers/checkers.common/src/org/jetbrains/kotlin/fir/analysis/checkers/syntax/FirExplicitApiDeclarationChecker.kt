@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
 import org.jetbrains.kotlin.fir.declarations.utils.isData
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
+import org.jetbrains.kotlin.fir.declarations.utils.isSealed
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.resolve.transformers.publishedApiEffectiveVisibility
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -56,14 +57,8 @@ object FirExplicitApiDeclarationChecker : FirDeclarationSyntaxChecker<FirDeclara
         if (explicitApiState == null && explicitReturnTypesState == null) return
         // Enum entries do not have visibilities
         if (element is FirEnumEntry) return
-        val containerEffectiveVisibility = when (val lastContainingDeclaration = context.containingDeclarations.lastOrNull()) {
-            is FirClassSymbol<*> -> lastContainingDeclaration.effectiveVisibility
-            is FirCallableSymbol<*> -> lastContainingDeclaration.effectiveVisibility
-            else -> null
-        }
 
-        val shouldReportExplicitApi = (element.effectiveVisibility.publicApi || element.publishedApiEffectiveVisibility != null)
-                && containerEffectiveVisibility?.publicApi != false
+        val shouldReportExplicitApi = isPublicApi(element)
         val shouldReportNonLocalFunction = explicitReturnTypesState != null && element is FirNamedFunction && !element.isLocal
         if (!shouldReportExplicitApi && !shouldReportNonLocalFunction) {
             return
@@ -96,6 +91,22 @@ object FirExplicitApiDeclarationChecker : FirDeclarationSyntaxChecker<FirDeclara
         reporter.reportOn(source, factory)
     }
 
+    context(context: CheckerContext)
+    private fun isPublicApi(element: FirMemberDeclaration): Boolean {
+        val containerEffectiveVisibility = when (val last = context.containingDeclarations.lastOrNull()) {
+            is FirClassSymbol<*> -> last.effectiveVisibility
+            is FirCallableSymbol<*> -> last.effectiveVisibility
+            else -> null
+        }
+        return (element.effectiveVisibility.publicApi || element.publishedApiEffectiveVisibility != null)
+                && containerEffectiveVisibility?.publicApi != false
+    }
+
+    /** True if explicit API mode would demand a visibility modifier on this declaration. */
+    context(context: CheckerContext)
+    fun isExplicitVisibilityRequired(element: FirMemberDeclaration): Boolean =
+        element !is FirEnumEntry && isPublicApi(element) && !explicitVisibilityIsNotRequired(element)
+
     /**
      * Exclusion list:
      * 1. Primary constructors of public API classes
@@ -106,6 +117,7 @@ object FirExplicitApiDeclarationChecker : FirDeclarationSyntaxChecker<FirDeclara
      * 6. Value parameter declaration
      * 7. An anonymous function
      * 8. A local named function
+     * 9. Sealed class secondary constructors (because they can't be public)
      */
     context(context: CheckerContext)
     private fun explicitVisibilityIsNotRequired(declaration: FirMemberDeclaration): Boolean {
@@ -122,6 +134,11 @@ object FirExplicitApiDeclarationChecker : FirDeclarationSyntaxChecker<FirDeclara
                     if (containingClass != null && (containingClass.isData || containingClass.isFullValueClass || containingClass.classKind == ClassKind.ANNOTATION_CLASS)) {
                         return true
                     }
+                }
+
+                // 9
+                if (declaration is FirConstructor && containingClass?.isSealed == true) {
+                    return true
                 }
 
                 // 3, 8
