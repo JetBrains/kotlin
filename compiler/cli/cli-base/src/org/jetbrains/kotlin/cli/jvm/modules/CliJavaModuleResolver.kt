@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModule
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
+import java.io.File
 import javax.lang.model.SourceVersion
 
 
@@ -62,6 +63,17 @@ fun parseJavaModuleAccessOption(value: String, isExports: Boolean): JavaModuleAc
 
 private fun isValidTarget(name: String): Boolean = name == ALL_UNNAMED || SourceVersion.isName(name)
 
+private val PATCH_MODULE_VALUE = Regex("([^/]+)=(,*[^,].*)")
+
+/**
+ * Parses a value of `-Xpatch-module` (`<module>=<path>(<path-separator><path>)*`) the way javac parses `--patch-module` into the module
+ * name and the paths, or returns `null` if the value is malformed.
+ */
+fun parseJavaModulePatch(value: String): Pair<String, List<String>>? {
+    if (!PATCH_MODULE_VALUE.matches(value)) return null
+    return value.substringBefore('=') to value.substringAfter('=').split(File.pathSeparatorChar).filter(String::isNotEmpty)
+}
+
 class CliJavaModuleResolver(
     private val moduleGraph: JavaModuleGraph,
     private val userModules: List<JavaModule>,
@@ -90,6 +102,11 @@ class CliJavaModuleResolver(
 
     private val sourceModule: JavaModule? = userModules.firstOrNull(JavaModule::isSourceModule)
 
+    // JDK modules with roots given with -Xpatch-module, which are the roots outside the runtime image and ct.sym.
+    private val patchedSystemModules: List<JavaModule> = systemModules.filter { module ->
+        module.moduleRoots.any { root -> !root.isBinarySignature && root.file.fileSystem.protocol != StandardFileSystems.JRT_PROTOCOL }
+    }
+
     private fun findJavaModule(file: VirtualFile): JavaModule? {
         if (file.fileSystem.protocol == StandardFileSystems.JRT_PROTOCOL || file.extension == "sig") {
             return systemModules.firstOrNull { module -> file in module }
@@ -97,7 +114,8 @@ class CliJavaModuleResolver(
 
         return when (file.fileType) {
             KotlinFileType.INSTANCE, JavaFileType.INSTANCE -> sourceModule
-            JavaClassFileType.INSTANCE -> userModules.firstOrNull { module -> file in module }
+            JavaClassFileType.INSTANCE ->
+                userModules.firstOrNull { module -> file in module } ?: patchedSystemModules.firstOrNull { module -> file in module }
             else -> null
         }
     }
@@ -114,6 +132,8 @@ class CliJavaModuleResolver(
         if (ourModule?.name == theirModule?.name) return null
 
         if (theirModule == null) {
+            // An automatic module reads the unnamed module, which matters for an automatic module patched with sources.
+            if (ourModule is JavaModule.Automatic) return null
             if (ourModule != null && moduleGraph.readsAdditionally(additionalReads, ourModule.name, ALL_UNNAMED)) return null
             return JavaModuleResolver.AccessError.ModuleDoesNotReadUnnamedModule
         }
