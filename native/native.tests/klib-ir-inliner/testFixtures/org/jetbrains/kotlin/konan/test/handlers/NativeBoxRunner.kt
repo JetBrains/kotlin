@@ -222,10 +222,11 @@ class PrettyResultsHandler(
     companion object {
         // failedResults reasons for failed test contain test name in the format:
         //   in isolated mode: `__launcher__Kt.runTest`
-        //   in grouped mode: `<long_test_name>.__launcher__Kt.runTest`
+        //   in grouped mode: `<long_test_name>.__launcher_<hash>__Kt.runTest`,
+        //     since the launcher file is named after the hash of the module name (see `AbstractLauncherAdditionalSourceProvider`)
         @Suppress("RegExpRepeatedSpace")
-        val failedRegexWithoutTCLogger = """\[  FAILED  ] (.*)__launcher__Kt.runTest""".toRegex()
-        val failedRegexWithTCLogger = """-\s+(.*)__launcher__Kt.runTest""".toRegex()
+        val failedRegexWithoutTCLogger = """\[  FAILED  ] (.*)__launcher(?:_[0-9a-z]+)?__Kt\.runTest""".toRegex()
+        val failedRegexWithTCLogger = """-\s+(.*)__launcher(?:_[0-9a-z]+)?__Kt\.runTest""".toRegex()
     }
 
     override fun handle() {
