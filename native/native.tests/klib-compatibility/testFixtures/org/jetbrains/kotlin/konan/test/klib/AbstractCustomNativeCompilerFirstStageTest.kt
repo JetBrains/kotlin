@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.services.CompilationStage
+import org.jetbrains.kotlin.test.services.ReflectionPackageNameAnnotation
 import org.jetbrains.kotlin.test.services.TargetBackendTestSkipper
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.NativeFirstStageEnvironmentConfigurator
@@ -68,6 +69,8 @@ open class AbstractCustomNativeCompilerFirstStageTest : AbstractTwoStageNativeCo
                 ::FileCheckTestTotalSkipper,
             )
             useDirectives(TestDirectives)
+            // A first-stage stdlib older than 2.5 lacks the annotation, which is then supplied by the helper module below.
+            useAdditionalService { ReflectionPackageNameAnnotation }
         }
         nonGroupingStage {
             useConfigurators(
