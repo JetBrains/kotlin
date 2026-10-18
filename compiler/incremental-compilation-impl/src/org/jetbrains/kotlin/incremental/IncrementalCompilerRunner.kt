@@ -157,7 +157,7 @@ abstract class IncrementalCompilerRunner<
                 "Configuration inputs: $configurationInputs"
             }
         }
-        val hashedConfigurationInputs = configurationInputs?.computeHashedConfigurationInputs()
+        val hashedConfigurationInputs = computeHashedConfigurationInputs(configurationInputs, untrackedInputs(allSourceFiles, args))
         val trackChangedFiles = changedFiles is DeterminableFiles.ToBeComputed
         val result = when (val result = tryCompileIncrementally(allSourceFiles, changedFiles, args, fileLocations, messageCollector, hashedConfigurationInputs)) {
             is ICResult.Completed -> {
@@ -270,6 +270,7 @@ abstract class IncrementalCompilerRunner<
                 } catch (e: Throwable) {
                     return ICResult.Failed(IC_FAILED_TO_GET_CHANGED_FILES, e)
                 }
+                rebuildReason(allSourceFiles, args)?.let { return ICResult.RequiresRebuild(it) }
 
                 // Step 2: Compute files to recompile
                 val compilationMode = try {
@@ -427,6 +428,15 @@ abstract class IncrementalCompilerRunner<
             removed = sourceLevelChanges.removed + removedLibrarySentinels,
         )
     }
+
+    /** A reason to compile [allSourceFiles] non-incrementally that depends only on the sources and [args], or `null`. */
+    protected open fun rebuildReason(allSourceFiles: List<File>, args: Args): BuildAttribute? = null
+
+    /**
+     * Inputs of the compilation of [allSourceFiles] that are not tracked otherwise, from the reason to report to a description. A build
+     * is compiled non-incrementally when they differ from the last successful build.
+     */
+    protected open fun untrackedInputs(allSourceFiles: List<File>, args: Args): Map<BuildAttribute, String> = emptyMap()
 
     protected abstract fun calculateSourcesToCompile(
         caches: CacheManager,
