@@ -17,9 +17,21 @@ class ReflectionPackageNameDependentTestIsolator(
         else BatchToken.Regular
 
     companion object {
+        /**
+         * Besides `KClass.qualifiedName`, Kotlin/Native and Kotlin/Wasm render the qualified names in `KClass.toString()` and
+         * `KType.toString()`, so a renamed test doing it cannot match the expected names either.
+         * This is a heuristic: a test missed by it (e.g. comparing `Throwable.toString()` on Kotlin/Native) fails in its batch,
+         * and is then retried in isolation.
+         */
         private val REFLECTIVE_PACKAGE_NAME_ACCESSES = listOf(
             Regex("""\.qualifiedName\b"""),
             Regex("""::class\.toString\(\)"""),
+            Regex(""""class """), // an expected result of `KClass.toString()`
+            Regex("""\$\{[^}]*::class\b"""), // `KClass.toString()` in a string template
+            Regex("""\btypeOf\b"""),
+            Regex("""\bKType\b"""),
+            Regex("""\.returnType\b"""),
+            Regex("""\.type\b"""),
         )
     }
 }
