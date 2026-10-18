@@ -24,47 +24,14 @@ import org.jetbrains.kotlin.konan.test.blackbox.testRunSettings
 import org.jetbrains.kotlin.native.executors.Executor
 import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.checkTestInfrastructure
-import org.jetbrains.kotlin.test.backend.handlers.NativeBinaryArtifactHandler
 import org.jetbrains.kotlin.test.groupingStageInputs
 import org.jetbrains.kotlin.test.model.*
-import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.BatchingPackageInserter
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.testInfraError
 import java.io.File
 import kotlin.test.assertIs
-
-class NativeBoxRunner(testServices: TestServices) : NativeBinaryArtifactHandler(testServices) {
-    private var artifact: BinaryArtifacts.Native? = null
-    override fun processModule(module: TestModule, info: BinaryArtifacts.Native) {
-        if (NativeEnvironmentConfigurator.isMainModule(module, testServices.moduleStructure)) {
-            checkTestInfrastructure(artifact == null) {
-                // Test-infrastructure invariant violation (not a failure of the code under test): throw a
-                // TestInfrastructureException so it is never masked by failure suppressors (e.g. an IGNORE_BACKEND directive).
-                "Internal error: more than one executable for the testcase: ${artifact!!.executable.name} and ${info.executable.name}\n" +
-                        "Only one module may have no incoming dependencies"
-            }
-            artifact = info
-        }
-    }
-
-    override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
-        // Test-infrastructure invariant violation (not a failure of the code under test): throw a
-        // TestInfrastructureException so it is never masked by failure suppressors (e.g. an IGNORE_BACKEND directive).
-        val executable = artifact?.executable ?: testInfraError("One main module is expected to be in the test.")
-        val testRun = createTestRun(
-            executable,
-            testServices,
-            TestCaseId.TestDataFile(testServices.moduleStructure.originalTestDataFiles.first()),
-            addTeamCityLogger = true,
-            addTestFilter = true,
-        )
-        val testRunner = createProperTestRunner(testRun, testServices.testRunSettings)
-        testRunner.run()
-    }
-}
 
 class NativeBoxRunnerGroupingStage(testServices: TestServices) : GroupingStageHandler<BinaryArtifacts.Native>(
     testServices,
