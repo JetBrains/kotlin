@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.mapToFile
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject.Companion.SYNTHETIC_IMPORT_TARGET_MAGIC_NAME
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.xcproj.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.ExportExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportConfigurationCompat
 import org.jetbrains.kotlin.gradle.utils.reportXcodeError
@@ -447,9 +448,12 @@ internal fun checkIfTheLinkageProjectIsConnectedToTheXcodeProject(
     rootProjectDir: File,
     integrationName: String,
 ) {
-    val xcodeProject = deserializeXcodeProject(xcodeProjectThatCalledEmbedAndSign.resolve("project.pbxproj"), execOperations)
-    val linkageProducts = linkageProductsReferencedInPBXObjects(xcodeProject)
-    val hasSyntheticImportProjectReference = linkageProducts.isNotEmpty()
+    val projectFile = xcodeProjectThatCalledEmbedAndSign.xcodeProjectFile()
+    val hasSyntheticImportProjectReference = if (projectFile.isXcproj()) {
+        deserializeXcprojProject(projectFile).hasLinkagePackageReference()
+    } else {
+        linkageProductsReferencedInPBXObjects(deserializePbxprojJson(projectFile, execOperations)).isNotEmpty()
+    }
     if (!hasSyntheticImportProjectReference) {
         val taskCall = if (gradleProjectPath == ":") {
             ":${IntegrateLinkagePackageIntoXcodeProject.TASK_NAME}"

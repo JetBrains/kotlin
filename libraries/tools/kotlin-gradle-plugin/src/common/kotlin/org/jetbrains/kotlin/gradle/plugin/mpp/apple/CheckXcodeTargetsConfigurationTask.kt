@@ -26,6 +26,8 @@ import org.jetbrains.kotlin.gradle.plugin.ide.Idea222Api
 import org.jetbrains.kotlin.gradle.plugin.ide.ideaImportDependsOn
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.xcproj.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.xcproj.XcprojNativeTarget.Companion.NATIVE_TARGET_KIND
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.konan.target.Family
@@ -37,7 +39,7 @@ import javax.inject.Inject
 
 /**
  * Registers two tasks:
- * 1. A producer task that converts the `.pbxproj` file to JSON.
+ * 1. A producer task that converts `.pbxproj` to JSON, or copies an existing `.xcproj` JSON file.
  * 2. A consumer task that reads the JSON and performs the configuration check.
  * This ensures the expensive `plutil` command is only run when the Xcode project changes,
  * while the cheap validation task runs whenever the JSON changes, consistently re-issuing warnings.
@@ -93,11 +95,11 @@ private suspend fun Project.getAppleTargetsWithFrameworkBinaries(): List<KonanTa
 
 private fun Project.registerConvertPbxprojToJsonTask(
     projectPath: File,
-): TaskProvider<ConvertPbxprojToJsonTask> {
-    return locateOrRegisterTask(ConvertPbxprojToJsonTask.TASK_NAME) {
+): TaskProvider<ConvertXcodeProjectFileToJsonTask> {
+    return locateOrRegisterTask(ConvertXcodeProjectFileToJsonTask.TASK_NAME) {
         it.group = "xcode"
-        it.description = "Converts .pbxproj file to JSON for inspection"
-        it.pbxprojFile.set(projectPath.resolve("project.pbxproj"))
+        it.description = "Prepares Xcode project JSON for inspection"
+        it.xcodeProjectFile.set(projectPath.xcodeProjectFile())
         it.jsonFile.set(layout.buildDirectory.file("xcode-check/project.json"))
     }
 }
@@ -105,7 +107,7 @@ private fun Project.registerConvertPbxprojToJsonTask(
 private fun Project.registerCheckXcodeTargetsConfigurationTask(
     targets: List<KonanTarget>,
     projectPath: File,
-    convertTask: TaskProvider<ConvertPbxprojToJsonTask>,
+    convertTask: TaskProvider<ConvertXcodeProjectFileToJsonTask>,
 ) {
     locateOrRegisterTask<CheckXcodeTargetsConfigurationTask>(
         CheckXcodeTargetsConfigurationTask.TASK_NAME,
@@ -125,11 +127,11 @@ private fun Project.registerCheckXcodeTargetsConfigurationTask(
 }
 
 /**
- * Producer Task: Converts the `.pbxproj` file to JSON using `plutil`.
+ * Producer Task: Converts `.pbxproj` to JSON using `plutil`, or copies `.xcproj` without conversion.
  * This task is fully cacheable.
  */
 @CacheableTask
-internal abstract class ConvertPbxprojToJsonTask : DefaultTask() {
+internal abstract class ConvertXcodeProjectFileToJsonTask : DefaultTask() {
     init {
         onlyIf("Task can only run on macOS") { HostManager.hostIsMac }
     }
@@ -144,28 +146,34 @@ internal abstract class ConvertPbxprojToJsonTask : DefaultTask() {
     @get:InputFile
     @get:NormalizeLineEndings
     @get:PathSensitive(PathSensitivity.RELATIVE)
-    abstract val pbxprojFile: RegularFileProperty
+    abstract val xcodeProjectFile: RegularFileProperty
 
     @get:OutputFile
     abstract val jsonFile: RegularFileProperty
 
     @TaskAction
     fun run() {
-        try {
-            execOperations.exec { spec ->
-                spec.commandLine(
-                    "plutil",
-                    "-convert", "json",
-                    "-o", jsonFile.get().asFile.absolutePath,
-                    pbxprojFile.get().asFile.absolutePath
+        val projectFile = xcodeProjectFile.get().asFile
+        if (projectFile.isXcproj()) {
+            projectFile.copyTo(jsonFile.get().asFile, overwrite = true)
+        } else {
+            // pbxproj
+            try {
+                execOperations.exec { spec ->
+                    spec.commandLine(
+                        "plutil",
+                        "-convert", "json",
+                        "-o", jsonFile.get().asFile.absolutePath,
+                        projectFile.absolutePath
+                    )
+                }
+            } catch (exception: Exception) {
+                logger.error(
+                    "Failed to execute 'plutil' on '${projectFile.path}'. The file might be malformed or 'plutil' is not in PATH.",
+                    exception
                 )
+                jsonFile.get().asFile.writeText("{}") // Write empty JSON on failure
             }
-        } catch (exception: Exception) {
-            logger.error(
-                "Failed to execute 'plutil' on '${pbxprojFile.get().asFile.path}'. The file might be malformed or 'plutil' is not in PATH.",
-                exception
-            )
-            jsonFile.get().asFile.writeText("{}") // Write empty JSON on failure
         }
     }
 }
@@ -248,17 +256,26 @@ internal abstract class CheckXcodeTargetsConfigurationTask : DefaultTask(), Uses
         logger: Logger,
     ): Set<XcodeProjectStructure.XcodeTarget>? {
         try {
-            val pbxproj = gson.fromJson(pbxprojContent, XcodeProjectStructure.Pbxproj::class.java)
-            val objects = pbxproj.objects
+            if (xcodeProjectPath.getFile().xcodeProjectFile().isXcproj()) {
+                val project = deserializeXcprojProject(pbxprojContent)
+                return project.nativeTargets.mapNotNull { target ->
+                    val platforms = platforms(target)
+                    if (platforms.isEmpty()) null else XcodeProjectStructure.XcodeTarget(
+                        target.name, target.resolvedProductType, platforms,
+                    )
+                }.toSet()
+            } else {
+                val pbxproj = gson.fromJson(pbxprojContent, XcodeProjectStructure.Pbxproj::class.java)
+                val objects = pbxproj.objects
 
-            val rootProjectJson = objects[pbxproj.rootObject] ?: return emptySet()
-            val rootProject = gson.fromJson(rootProjectJson, XcodeProjectStructure.PbxProject::class.java)
-            val projectConfigs = getConfigurationMap(objects, rootProject.buildConfigurationList, gson)
+                val rootProjectJson = objects[pbxproj.rootObject] ?: return emptySet()
+                val rootProject = gson.fromJson(rootProjectJson, XcodeProjectStructure.PbxProject::class.java)
+                val projectConfigs = getConfigurationMap(objects, rootProject.buildConfigurationList, gson)
 
-            return rootProject.targets.mapNotNull { targetId ->
-                parseSingleNativeTarget(targetId, objects, projectConfigs, gson)
-            }.toSet()
-
+                return rootProject.targets.mapNotNull { targetId ->
+                    parseSingleNativeTarget(targetId, objects, projectConfigs, gson)
+                }.toSet()
+            }
         } catch (exception: Exception) {
             logger.error(
                 "Failed to parse the JSON file for '${xcodeProjectPath.getFile().path}'. The file might be malformed.",
@@ -366,7 +383,7 @@ private object XcodeProjectStructure {
 
     data class XcodeTarget(
         val name: String,
-        val productType: String,
+        val productType: String?,
         val platforms: Set<String>,
     ) : Serializable
 }

@@ -141,7 +141,7 @@ class XcodeprojPathValidationTests {
 
         assertEquals(
             """
-            '$emptyBundle' is not a valid Xcode project: it does not contain a project.pbxproj file.
+            '$emptyBundle' is not a valid Xcode project: it does not contain a project.pbxproj or project.xcproj file.
             Please verify the path set in the $XCODEPROJ_PATH_ENV environment variable points to a valid .xcodeproj bundle.
             """.trimIndent(),
             failure.message,
@@ -165,7 +165,7 @@ class XcodeprojPathValidationTests {
 
         assertEquals(
             """
-            '$emptyBundle' is not a valid Xcode project: it does not contain a project.pbxproj file.
+            '$emptyBundle' is not a valid Xcode project: it does not contain a project.pbxproj or project.xcproj file.
             Please verify the path set in the $XCODEPROJ_PATH_ENV environment variable points to a valid .xcodeproj bundle.
             """.trimIndent(),
             failure.message,
