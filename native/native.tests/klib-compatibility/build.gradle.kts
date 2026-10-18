@@ -186,7 +186,7 @@ fun Project.customStagesAggregateTest(rawVersion: String, customStage: String): 
     return customCompilerTest(
         version = version,
         taskName = "testMinimalInAggregate_${customStage}Stage",
-        tag = "custom-${customStage}-stage",
+        tag = "aggregate-${customStage}-stage",
         enableGroupingTestEngine = true,
     ) {
         groupingEngineSettings()
