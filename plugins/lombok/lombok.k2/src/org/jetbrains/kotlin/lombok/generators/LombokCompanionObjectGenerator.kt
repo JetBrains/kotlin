@@ -12,21 +12,15 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
 import org.jetbrains.kotlin.fir.extensions.NestedClassGenerationContext
-import org.jetbrains.kotlin.fir.extensions.UnsafePluginApi
 import org.jetbrains.kotlin.fir.extensions.declarationGenerators
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.plugin.createCompanionObject
 import org.jetbrains.kotlin.fir.plugin.createDefaultPrivateConstructor
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.lombok.generators.kotlin.isCompanionNeeded
-import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
@@ -59,8 +53,8 @@ class LombokCompanionObjectGenerator(session: FirSession) : FirDeclarationGenera
      * Resolved lazily: the extensions are still being constructed while this one is, so asking the session for
      * them in an initializer would come back short.
      */
-    private val contributors: List<FirDeclarationGenerationExtension> by lazy {
-        session.extensionService.declarationGenerators.filter { it is LombokCompanionObjectContributor }
+    private val contributors: List<LombokCompanionObjectContributor> by lazy {
+        session.extensionService.declarationGenerators.filterIsInstance<LombokCompanionObjectContributor>()
     }
 
     private val companionObjectsCache: FirCache<FirClassSymbol<*>, FirRegularClassSymbol?, NestedClassGenerationContext> =
@@ -88,10 +82,8 @@ class LombokCompanionObjectGenerator(session: FirSession) : FirDeclarationGenera
         if (!classSymbol.isGeneratedLombokCompanionObject) return emptySet()
 
         return buildSet {
-            // The companion object is generated, so its constructor has to be too, and only this generator can:
-            // the contributors no longer see a key of their own on it.
+            // The companion object is generated, so its constructor has to be too.
             add(SpecialNames.INIT)
-            contributors.flatMapTo(this) { it.getCallableNamesForClass(classSymbol, context) }
         }
     }
 
@@ -100,43 +92,8 @@ class LombokCompanionObjectGenerator(session: FirSession) : FirDeclarationGenera
 
         return buildList {
             add(createDefaultPrivateConstructor(context.owner, LombokCompanionObjectKey).symbol)
-            contributors.flatMapTo(this) { it.generateConstructors(context) }
         }
     }
-
-    override fun generateFunctions(callableId: CallableId, context: MemberGenerationContext?): List<FirNamedFunctionSymbol> {
-        return fanOut(callableId, context) { generateFunctions(callableId, context) }
-    }
-
-    override fun generateProperties(callableId: CallableId, context: MemberGenerationContext?): List<FirPropertySymbol> {
-        return fanOut(callableId, context) { generateProperties(callableId, context) }
-    }
-
-    @UnsafePluginApi
-    override fun generateFields(callableId: CallableId, context: MemberGenerationContext?): List<FirFieldSymbol> {
-        return fanOut(callableId, context) { generateFields(callableId, context) }
-    }
-
-    /**
-     * Everything the contributors generate for [callableId], and nothing else.
-     *
-     * The name filter is what makes the fan-out safe: a contributor asked for one name hands back everything it has
-     * for the owner, [callableId] being of no interest to a generator the platform only ever asks about names it
-     * reported itself. Fanned out, each of them is asked for every other one's names too, and without the filter
-     * `LoggerGenerator` answered the request for the static factory with its logger - the same symbol then landing
-     * under both names, which fir2ir met as "IrSimpleFunctionSymbolImpl is already bound".
-     */
-    private inline fun <T : FirCallableSymbol<*>> fanOut(
-        callableId: CallableId,
-        context: MemberGenerationContext?,
-        generate: FirDeclarationGenerationExtension.() -> List<T>,
-    ): List<T> {
-        if (context?.owner?.isGeneratedLombokCompanionObject != true) return emptyList()
-        return contributors.flatMap { contributor -> contributor.generate().filter { it.name == callableId.callableName } }
-    }
-
-    private fun FirDeclarationGenerationExtension.needsCompanionObject(owner: FirClassSymbol<*>): Boolean =
-        (this as LombokCompanionObjectContributor).needsCompanionObject(owner)
 }
 
 val FirClassSymbol<*>.isGeneratedLombokCompanionObject: Boolean
