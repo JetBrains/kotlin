@@ -37,6 +37,7 @@ object JvmConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.confi
     val ADDITIONAL_JAVA_MODULES by key<List<String>>()
     val ADDITIONAL_JAVA_MODULE_READS by key<List<String>>()
     val ADDITIONAL_JAVA_MODULE_EXPORTS by key<List<String>>()
+    val JAVA_MODULE_PATCHES by key<List<String>>()
     val EMIT_JVM_TYPE_ANNOTATIONS by key<Boolean>()
     val STRING_CONCAT by key<JvmStringConcat>()
     val JDK_RELEASE by key<Int>()

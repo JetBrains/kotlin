@@ -495,6 +495,18 @@ Modes:
         }
 
     @Argument(
+        value = "-Xpatch-module",
+        valueDescription = "<module>=<path>(<path-separator><path>)*",
+        description = "Override or augment <module> with the classes and sources in .jar files or directories. Can be specified once for each module.",
+        delimiter = Argument.Delimiters.none,
+    )
+    var javaModulePatches: Array<String> = emptyArray()
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xprofile",
         valueDescription = "<profilerPath:command:outputDir>",
         description = """Debug option: Run the compiler with the async profiler and save snapshots to `outputDir`; `command` is passed to the async profiler on start.

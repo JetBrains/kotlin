@@ -592,6 +592,16 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
         JvmCompilerArgument("X_OUTPUT_BUILTINS_METADATA", KotlinReleaseVersion(2, 1, 20))
 
     /**
+     * Override or augment <module> with the classes and sources in .jar files or directories. Can be specified once for each module.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_PATCH_MODULE: JvmCompilerArgument<List<String>> =
+        JvmCompilerArgument("X_PATCH_MODULE", KotlinReleaseVersion(2, 5, 0))
+
+    /**
      * Select the code generation scheme for SAM conversions.
      * -Xsam-conversions=indy          Generate SAM conversions using 'invokedynamic' with 'LambdaMetafactory.metafactory'.
      * -Xsam-conversions=class         Generate SAM conversions as explicit classes.

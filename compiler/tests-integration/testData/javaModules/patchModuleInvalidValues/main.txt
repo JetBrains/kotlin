@@ -1,0 +1,10 @@
+error: bad value for `-Xpatch-module`: 'lib'
+Expected: <module>=<path>(<path-separator><path>)*
+error: bad value for `-Xpatch-module`: '=lib'
+Expected: <module>=<path>(<path-separator><path>)*
+error: bad value for `-Xpatch-module`: 'lib='
+Expected: <module>=<path>(<path-separator><path>)*
+error: bad value for `-Xpatch-module`: 'lib/foo=dir'
+Expected: <module>=<path>(<path-separator><path>)*
+error: `-Xpatch-module` is specified more than once for module lib
+COMPILATION_ERROR
