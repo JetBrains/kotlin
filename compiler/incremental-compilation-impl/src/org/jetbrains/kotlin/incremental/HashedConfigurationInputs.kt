@@ -14,6 +14,15 @@ internal class HashedConfigurationInputs(
     val inputs: Map<RebuildReason, ByteArray>,
 )
 
+internal fun computeHashedConfigurationInputs(
+    configurationInputs: ConfigurationInputs?,
+    untrackedInputs: Map<RebuildReason, String>,
+): HashedConfigurationInputs? {
+    val inputs = configurationInputs?.computeHashedConfigurationInputs()?.inputs.orEmpty() +
+            untrackedInputs.mapValues { computeConfigurationInputsHash(listOf(it.value)) }
+    return if (configurationInputs == null && inputs.isEmpty()) null else HashedConfigurationInputs(inputs)
+}
+
 internal fun ConfigurationInputs.computeHashedConfigurationInputs(): HashedConfigurationInputs {
     return HashedConfigurationInputs(
         mapOf(
