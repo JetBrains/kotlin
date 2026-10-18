@@ -14,7 +14,7 @@ open class CallSuperBase {
     return other is CallSuperBase
   }
 
-  override fun equals(other: Any?): Boolean {
+  override operator fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
     }
@@ -59,7 +59,7 @@ class CallSuperDerived : CallSuperBase {
     return other is CallSuperDerived
   }
 
-  override fun equals(other: Any?): Boolean {
+  override operator fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
     }
@@ -104,7 +104,7 @@ class CallSuperWithComputedPropertyFirst : CallSuperBase {
     return other is CallSuperWithComputedPropertyFirst
   }
 
-  override fun equals(other: Any?): Boolean {
+  override operator fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
     }
@@ -154,7 +154,7 @@ data class DataClassDefault {
 
   }
 
-  override fun equals(other: Any?): Boolean {
+  override operator fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
     }
@@ -213,7 +213,7 @@ class DataWithExplicitToString : CallSuperBase {
     return other is DataWithExplicitToString
   }
 
-  override fun equals(other: Any?): Boolean {
+  override operator fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
     }
@@ -258,7 +258,7 @@ class Simple {
 
   }
 
-  override fun equals(other: Any?): Boolean {
+  override operator fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
     }
@@ -316,7 +316,7 @@ class WithArrays {
 
   }
 
-  override fun equals(other: Any?): Boolean {
+  override operator fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
     }
@@ -372,7 +372,7 @@ class WithBackingFieldAndGetter {
 
   }
 
-  override fun equals(other: Any?): Boolean {
+  override operator fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
     }
@@ -406,7 +406,7 @@ class WithComputedProperties {
 
   }
 
-  override fun equals(other: Any?): Boolean {
+  override operator fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
     }
@@ -444,7 +444,7 @@ class WithComputedPropertyFirst {
 
   }
 
-  override fun equals(other: Any?): Boolean {
+  override operator fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
     }
@@ -491,7 +491,7 @@ class WithComputedPropertyInTheMiddle {
 
   }
 
-  override fun equals(other: Any?): Boolean {
+  override operator fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
     }
@@ -546,7 +546,7 @@ class WithDollarPrefixedProperties {
 
   }
 
-  override fun equals(other: Any?): Boolean {
+  override operator fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
     }
@@ -588,7 +588,7 @@ class WithExclude {
 
   }
 
-  override fun equals(other: Any?): Boolean {
+  override operator fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
     }
@@ -630,7 +630,7 @@ class WithExistingNonConflictingToString {
 
   }
 
-  override fun equals(other: Any?): Boolean {
+  override operator fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
     }
@@ -675,7 +675,7 @@ class WithExistingToString {
 
   }
 
-  override fun equals(other: Any?): Boolean {
+  override operator fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
     }
@@ -713,7 +713,7 @@ class WithImplicitReturnTypeProperty {
 
   }
 
-  override fun equals(other: Any?): Boolean {
+  override operator fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
     }
@@ -755,7 +755,7 @@ class WithIncludeCustomName {
 
   }
 
-  override fun equals(other: Any?): Boolean {
+  override operator fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
     }
@@ -797,7 +797,7 @@ class WithNonConflictingContextualFunction {
 
   }
 
-  override fun equals(other: Any?): Boolean {
+  override operator fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
     }
@@ -840,7 +840,7 @@ class WithNonConflictingExtensionFunction {
 
   }
 
-  override fun equals(other: Any?): Boolean {
+  override operator fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
     }
@@ -890,7 +890,7 @@ class WithRank {
 
   }
 
-  override fun equals(other: Any?): Boolean {
+  override operator fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
     }
@@ -944,7 +944,7 @@ class WithSameRank {
 
   }
 
-  override fun equals(other: Any?): Boolean {
+  override operator fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
     }
@@ -1043,7 +1043,7 @@ fun box(): String {
 
     }
 
-    override fun equals(other: Any?): Boolean {
+    override operator fun equals(other: Any?): Boolean {
       when {
         EQEQEQ(arg0 = <this>, arg1 = other) -> return true
       }

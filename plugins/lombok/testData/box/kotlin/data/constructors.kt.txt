@@ -7,7 +7,7 @@ class OnlySecondary {
     <this>(super<OnlySecondary>).#x = x
   }
 
-  override fun equals(other: Any?): Boolean {
+  override operator fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
     }
@@ -54,7 +54,7 @@ class WithNonNullVar {
 
   }
 
-  override fun equals(other: Any?): Boolean {
+  override operator fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
     }
@@ -100,7 +100,7 @@ class WithPlainParameter {
 
   }
 
-  override fun equals(other: Any?): Boolean {
+  override operator fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
     }
@@ -143,7 +143,7 @@ class WithVar {
 
   }
 
-  override fun equals(other: Any?): Boolean {
+  override operator fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
     }

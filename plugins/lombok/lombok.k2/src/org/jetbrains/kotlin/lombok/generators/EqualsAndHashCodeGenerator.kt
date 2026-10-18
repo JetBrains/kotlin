@@ -172,6 +172,7 @@ class EqualsAndHashCodeGenerator(session: FirSession) : FirDeclarationGeneration
             visibility = Visibilities.Public,
             modality = Modality.OPEN,
             isOverride = true,
+            isOperator = true,
             key = key,
         )
         val hashCodeSymbol = createJavaOrKotlinMemberFunction(
