@@ -51,11 +51,7 @@ abstract class AbstractLauncherAdditionalSourceProvider(testServices: TestServic
         val launcherContent = allLauncherContents.joinToString("\n\n")
 
         val tempDir = testServices.temporaryDirectoryManager.getOrCreateTempDirectory("launcher")
-        val fileName = if (isGrouped) {
-            "__launcher_${module.name.hashCode().toUInt().toString(36)}__.kt"
-        } else {
-            LAUNCHER_FILE_NAME
-        }
+        val fileName = if (isGrouped) groupedLauncherFileName(module.name) else LAUNCHER_FILE_NAME
         val launcherFile = tempDir.resolve(fileName).also {
             it.writeText(launcherContent)
         }
@@ -63,6 +59,18 @@ abstract class AbstractLauncherAdditionalSourceProvider(testServices: TestServic
     }
 
     companion object {
+        /**
+         * Matches the name of the file facade class of a launcher: `__launcher__Kt` for an isolated test, and
+         * `__launcher_<hash>__Kt` in a grouped batch (see [groupedLauncherFileName]).
+         */
+        const val LAUNCHER_FACADE_CLASS_NAME_PATTERN: String = "__launcher(?:_[0-9a-z]+)?__Kt"
+
+        /**
+         * The launchers of the tests of a grouped batch are compiled together, so each is named after the hash of its module name,
+         * in base 36, as [LAUNCHER_FACADE_CLASS_NAME_PATTERN] expects.
+         */
+        fun groupedLauncherFileName(moduleName: String): String = "__launcher_${moduleName.hashCode().toUInt().toString(36)}__.kt"
+
         /**
          * Returns `true` when the test is being executed by the grouping engine (`ESCAPE_MODULE_NAME`
          * directive is set globally) and is *not* isolated from its batch by
