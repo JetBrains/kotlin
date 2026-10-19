@@ -56,15 +56,17 @@ internal fun nodeJsArchiveExtension(platform: BuildPlatform): String =
 // copy from NodeJsPluginApplier#addPlatform
 internal fun ProviderFactory.detectBuildPlatform(): Provider<BuildPlatform> {
     val uname = unameExecResult
-    return currentHostPlatform().zip(systemProperty("os.arch")) { osType, osArch ->
+    return currentHostOs().zip(systemProperty("os.arch")) { osType, osArch ->
         val platform = parsePlatform(osType, osArch, uname)
         BuildPlatform(platform.name, platform.arch)
     }
 }
 
-internal fun ProviderFactory.currentHostPlatform(): Provider<OsType> = systemProperty("os.name").map {
+internal fun ProviderFactory.currentHostOs(): Provider<OsType> = systemProperty("os.name").map {
     parseOsType(it)
 }
+
+internal fun ProviderFactory.isCurrentHostOsWindows(): Provider<Boolean> = currentHostOs().map { it == OsType.WINDOWS }
 
 internal fun ArchiveOperations.extractNodeJs(
     fs: FileSystemOperations,
