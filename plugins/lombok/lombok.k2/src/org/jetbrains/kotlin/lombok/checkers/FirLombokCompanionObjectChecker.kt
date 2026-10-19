@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.extensions.declarationGenerators
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics
-import org.jetbrains.kotlin.lombok.generators.LombokCompanionObjectContributor
+import org.jetbrains.kotlin.lombok.generators.LombokCompanionObjectGenerator
 import org.jetbrains.kotlin.name.SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
 
 /**
@@ -58,7 +58,7 @@ object FirLombokCompanionObjectChecker : FirRegularClassChecker(MppCheckerKind.P
         // The generators decide what needs a companion object; asking them keeps this from re-deriving which
         // annotation on which declaration generates a static member.
         val needsCompanionObject = context.session.extensionService.declarationGenerators.any {
-            it is LombokCompanionObjectContributor && it.needsCompanionObject(declaration.symbol)
+            it is LombokCompanionObjectGenerator && it.needsCompanionObject(declaration.symbol)
         }
         if (!needsCompanionObject) return
 

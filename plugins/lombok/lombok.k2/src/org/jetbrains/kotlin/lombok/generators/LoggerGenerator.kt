@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.buildResolvedArgumentList
 import org.jetbrains.kotlin.fir.expressions.buildUnaryArgumentList
 import org.jetbrains.kotlin.fir.expressions.builder.*
-import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
 import org.jetbrains.kotlin.fir.extensions.UnsafePluginApi
@@ -68,7 +67,7 @@ fun FirDeclarationOrigin.isLogger(logAnnotation: FirAnnotation): Boolean {
     } == true
 }
 
-class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(session), LombokCompanionObjectContributor {
+class LoggerGenerator(session: FirSession) : LombokCompanionObjectGenerator(session) {
     companion object {
         private val JAVA_PROPERTY_NAME = Name.identifier("java")
         private val JAVA_GET_NAME = Name.identifier("getName")

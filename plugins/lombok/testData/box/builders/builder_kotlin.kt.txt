@@ -71,6 +71,20 @@ class User {
     field = info
     get
 
+  companion object Companion {
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    @JvmStatic
+    fun builder(): UserBuilder {
+      return UserBuilder()
+    }
+
+  }
+
   open class UserBuilder {
     internal constructor() /* primary */ {
       super/*Any*/()
@@ -111,20 +125,6 @@ class User {
     private var name: String
       private get
       private set
-
-  }
-
-  companion object Companion {
-    private constructor() /* primary */ {
-      super/*Any*/()
-      /* <init>() */
-
-    }
-
-    @JvmStatic
-    fun builder(): UserBuilder {
-      return UserBuilder()
-    }
 
   }
 

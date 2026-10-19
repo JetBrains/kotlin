@@ -10,15 +10,6 @@ FILE: buildersOnGenericClasses_kotlin.kt
         public final val list: R|kotlin/collections/List<T>| = R|<local>/list|
             public get(): R|kotlin/collections/List<T>|
 
-        public final companion object Companion : R|kotlin/Any| {
-            @R|kotlin/jvm/JvmStatic|() public final fun <T> builder(): R|GenericBuilder.GenericBuilderBuilder<T>|
-
-            private constructor(): R|GenericBuilder.Companion| {
-                super<R|kotlin/Any|>()
-            }
-
-        }
-
         public open class GenericBuilderBuilder<T> : R|kotlin/Any| {
             public open fun build(): R|GenericBuilder<T>|
 
@@ -40,6 +31,15 @@ FILE: buildersOnGenericClasses_kotlin.kt
 
         }
 
+        public final companion object Companion : R|kotlin/Any| {
+            @R|kotlin/jvm/JvmStatic|() public final fun <T> builder(): R|GenericBuilder.GenericBuilderBuilder<T>|
+
+            private constructor(): R|GenericBuilder.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
     }
     public final class Outer<K> : R|kotlin/Any| {
         public constructor<K>(): R|Outer<K>| {
@@ -54,15 +54,6 @@ FILE: buildersOnGenericClasses_kotlin.kt
             public final val value: R|T| = R|<local>/value|
                 public get(): R|T|
 
-            public final companion object Companion : R|kotlin/Any| {
-                @R|kotlin/jvm/JvmStatic|() public final fun <T> builder(): R|Outer.Nested.NestedBuilder<T>|
-
-                private constructor(): R|Outer.Nested.Companion| {
-                    super<R|kotlin/Any|>()
-                }
-
-            }
-
             public open class NestedBuilder<T> : R|kotlin/Any| {
                 public open fun build(): R|Outer.Nested<T>|
 
@@ -73,6 +64,15 @@ FILE: buildersOnGenericClasses_kotlin.kt
                     private set(value: R|T|): R|kotlin/Unit|
 
                 internal constructor<T>(): R|Outer.Nested.NestedBuilder<T>| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+            public final companion object Companion : R|kotlin/Any| {
+                @R|kotlin/jvm/JvmStatic|() public final fun <T> builder(): R|Outer.Nested.NestedBuilder<T>|
+
+                private constructor(): R|Outer.Nested.Companion| {
                     super<R|kotlin/Any|>()
                 }
 

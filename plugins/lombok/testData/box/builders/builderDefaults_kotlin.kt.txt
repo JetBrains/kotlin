@@ -8,6 +8,20 @@ class ChainedDefaults {
     field = b
     get
 
+  companion object Companion {
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    @JvmStatic
+    fun builder(): ChainedDefaultsBuilder {
+      return ChainedDefaultsBuilder()
+    }
+
+  }
+
   open class ChainedDefaultsBuilder {
     internal constructor() /* primary */ {
       super/*Any*/()
@@ -57,20 +71,6 @@ class ChainedDefaults {
 
   }
 
-  companion object Companion {
-    private constructor() /* primary */ {
-      super/*Any*/()
-      /* <init>() */
-
-    }
-
-    @JvmStatic
-    fun builder(): ChainedDefaultsBuilder {
-      return ChainedDefaultsBuilder()
-    }
-
-  }
-
   constructor(a: Int = 1, b: Int = a.plus(other = 1)) /* primary */ {
     super/*Any*/()
     /* <init>() */
@@ -84,6 +84,20 @@ class DefaultAnn {
   val ann: String
     field = ann
     get
+
+  companion object Companion {
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    @JvmStatic
+    fun builder(): DefaultAnnBuilder {
+      return DefaultAnnBuilder()
+    }
+
+  }
 
   open class DefaultAnnBuilder {
     internal constructor() /* primary */ {
@@ -116,20 +130,6 @@ class DefaultAnn {
 
   }
 
-  companion object Companion {
-    private constructor() /* primary */ {
-      super/*Any*/()
-      /* <init>() */
-
-    }
-
-    @JvmStatic
-    fun builder(): DefaultAnnBuilder {
-      return DefaultAnnBuilder()
-    }
-
-  }
-
   constructor(ann: String = "default") /* primary */ {
     super/*Any*/()
     /* <init>() */
@@ -147,6 +147,20 @@ class DefaultDependsOnPlain {
   val derived: Int
     field = derived
     get
+
+  companion object Companion {
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    @JvmStatic
+    fun builder(): DefaultDependsOnPlainBuilder {
+      return DefaultDependsOnPlainBuilder()
+    }
+
+  }
 
   open class DefaultDependsOnPlainBuilder {
     internal constructor() /* primary */ {
@@ -189,20 +203,6 @@ class DefaultDependsOnPlain {
 
   }
 
-  companion object Companion {
-    private constructor() /* primary */ {
-      super/*Any*/()
-      /* <init>() */
-
-    }
-
-    @JvmStatic
-    fun builder(): DefaultDependsOnPlainBuilder {
-      return DefaultDependsOnPlainBuilder()
-    }
-
-  }
-
   constructor(base: Int, derived: Int = base.times(other = 2)) /* primary */ {
     super/*Any*/()
     /* <init>() */
@@ -216,6 +216,20 @@ class NotNullable {
   val notNullable: String
     field = notNullable
     get
+
+  companion object Companion {
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    @JvmStatic
+    fun builder(): NotNullableBuilder {
+      return NotNullableBuilder()
+    }
+
+  }
 
   open class NotNullableBuilder {
     internal constructor() /* primary */ {
@@ -237,20 +251,6 @@ class NotNullable {
     private var notNullable: String
       private get
       private set
-
-  }
-
-  companion object Companion {
-    private constructor() /* primary */ {
-      super/*Any*/()
-      /* <init>() */
-
-    }
-
-    @JvmStatic
-    fun builder(): NotNullableBuilder {
-      return NotNullableBuilder()
-    }
 
   }
 
@@ -283,6 +283,20 @@ class PrimitivesAndNullables {
   val nullable: String?
     field = nullable
     get
+
+  companion object Companion {
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    @JvmStatic
+    fun builder(): PrimitivesAndNullablesBuilder {
+      return PrimitivesAndNullablesBuilder()
+    }
+
+  }
 
   open class PrimitivesAndNullablesBuilder {
     internal constructor() /* primary */ {
@@ -344,20 +358,6 @@ class PrimitivesAndNullables {
     private var uint: UInt
       private get
       private set
-
-  }
-
-  companion object Companion {
-    private constructor() /* primary */ {
-      super/*Any*/()
-      /* <init>() */
-
-    }
-
-    @JvmStatic
-    fun builder(): PrimitivesAndNullablesBuilder {
-      return PrimitivesAndNullablesBuilder()
-    }
 
   }
 
