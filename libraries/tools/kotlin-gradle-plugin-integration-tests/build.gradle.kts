@@ -567,13 +567,6 @@ tasks.withType<Test>().configureEach {
     if (runAllIntegrationTestsOnMacos) {
         systemProperty("runAllIntegrationTestsOnMacos", runAllIntegrationTestsOnMacos)
     }
-    /**
-     * We run all tests on macOS once a week and this property makes sure that tests that are correctly marked @BrokenOnMacosTest are skipped in this run
-     */
-    val skipIntegrationTestsMarkedBroken = kotlinBuildProperties.booleanProperty("skipIntegrationTestsMarkedBroken", false).get()
-    if (skipIntegrationTestsMarkedBroken) {
-        systemProperty("skipIntegrationTestsMarkedBroken", skipIntegrationTestsMarkedBroken)
-    }
 
     val installCocoapods = project.findProperty("installCocoapods") as String?
     if (installCocoapods != null) {
