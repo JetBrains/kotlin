@@ -659,8 +659,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
             CliJavaModuleResolver(
                 classpathRootsResolver.javaModuleGraph, javaModules, javaModuleFinder.systemModules.toList(),
                 fileFinderFactory.create(JvmClasspath.ProjectLibraries()),
-                classpathRootsResolver.additionalJavaModuleReads, classpathRootsResolver.additionalJavaModuleExports,
-                classpathRootsResolver.javaModulesFromClasspath,
+                classpathRootsResolver.javaModuleAccess,
             )
         )
 
