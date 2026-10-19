@@ -30,8 +30,8 @@ internal sealed interface AdditionalAnnotationsProvider {
     fun addAllAnnotations(currentRawAnnotations: MutableList<in PsiAnnotation>, foundQualifiers: MutableSet<String>, owner: PsiElement)
 
     /**
-     * @return **true** if this qualifier should be treated as a **special** in [GranularAnnotationsBox.findAnnotation]
-     * (should be processed without [GranularAnnotationsBox.getOrComputeCachedAnnotations] call)
+     * @return **true** if this qualifier should be treated as a **special** in [GranularAnnotationsBox.findAnnotation] and
+     * [GranularAnnotationsBox.hasAnnotation] (should be processed without [GranularAnnotationsBox.getOrComputeCachedAnnotations] call)
      */
     fun isSpecialQualifier(qualifiedName: String): Boolean
 

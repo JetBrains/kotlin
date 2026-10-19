@@ -12,6 +12,7 @@ public static final class Companion /* Foo.Companion*/ {
   private  Companion();//  .ctor()
 }
 
+@kotlin.jvm.JvmInline()
 public final class StringWrapper /* StringWrapper*/ {
   @org.jetbrains.annotations.NotNull()
   private final @org.jetbrains.annotations.NotNull() java.lang.String s;
