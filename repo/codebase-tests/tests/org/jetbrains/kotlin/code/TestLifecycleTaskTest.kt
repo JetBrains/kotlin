@@ -42,11 +42,14 @@ class TestLifecycleTaskTest {
         get() = (System.getProperty("quality.gate.nightly.tasks") ?: error("Missing 'quality.gate.nightly.tasks' property"))
             .split(";").toSet()
 
-    private val domainsDeclaredInTeamCity: Map<String, Set<Domain>>
+    /**
+     * Several builds can run the same task with different `@Domains`, so a task can appear more than once.
+     */
+    private val domainsDeclaredInTeamCity: List<Pair<String, Set<Domain>>>
         get() = (System.getProperty("quality.gate.domains.per.task") ?: error("Missing 'quality.gate.domains.per.task' property"))
             .split(";")
             .filter { it.isNotBlank() }
-            .associate { entry ->
+            .map { entry ->
                 val [task, domains] = entry.split("=", limit = 2)
                 task to Domain.fromArgumentStringOrThrow(domains.replace('+', ';'))
             }
