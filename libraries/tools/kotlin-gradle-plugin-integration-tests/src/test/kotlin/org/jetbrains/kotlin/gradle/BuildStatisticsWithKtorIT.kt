@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.BuildOptions.IsolatedProjectsMode
 import org.jetbrains.kotlin.gradle.util.awaitInitialization
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import java.io.IOException
 import java.net.HttpURLConnection
@@ -38,6 +39,7 @@ import java.util.concurrent.TimeUnit
 import kotlin.test.*
 
 @DisplayName("Build statistics")
+@MustRunOnChangesInGradle
 class BuildStatisticsWithKtorIT : KGPBaseTest() {
 
     companion object {
