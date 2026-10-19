@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import org.jetbrains.kotlin.gradle.util.useCompilerVersion
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import java.nio.file.Path
 import kotlin.io.path.appendText
@@ -28,6 +29,7 @@ import kotlin.test.assertEquals
 
 @DisplayName("'-Xjvm-default' override")
 @JvmGradlePluginTests
+@MustRunOnChangesInGradle
 internal class JvmDefaultIT : KGPBaseTest() {
 
     override val defaultBuildOptions: BuildOptions = super.defaultBuildOptions.copy(
