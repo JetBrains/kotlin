@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.build.report.reportPerformanceData
 import org.jetbrains.kotlin.buildtools.api.*
 import org.jetbrains.kotlin.daemon.common.serialization.HasSerializationHooks
-import org.jetbrains.kotlin.daemon.common.serialization.deserialize
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.ExitCode
@@ -43,6 +42,7 @@ import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.daemon.common.serialization.Message
 import org.jetbrains.kotlin.daemon.common.serialization.SerializationFormat
 import org.jetbrains.kotlin.daemon.common.serialization.SupportsNewDaemonMode
+import org.jetbrains.kotlin.daemon.common.serialization.deserialize
 import org.jetbrains.kotlin.daemon.common.serialization.serialize
 import org.jetbrains.kotlin.daemon.report.CompileServicesFacadeMessageCollector
 import org.jetbrains.kotlin.daemon.report.DaemonMessageReporter
@@ -66,7 +66,6 @@ import org.jetbrains.kotlin.util.getValueOrNull
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.ObjectOutputStream
-import java.net.URLClassLoader
 import java.rmi.NoSuchObjectException
 import java.rmi.registry.Registry
 import java.rmi.server.UnicastRemoteObject

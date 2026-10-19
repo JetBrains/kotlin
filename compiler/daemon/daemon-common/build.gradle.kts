@@ -3,6 +3,7 @@ plugins {
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("gradle-plugin-compiler-dependency-configuration") // via daemon-client
+    kotlin("plugin.serialization")
 }
 
 dependencies {
