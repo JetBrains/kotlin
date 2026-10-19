@@ -20,40 +20,33 @@ import org.jetbrains.kotlin.fir.analysis.extensions.FirAdditionalCheckersExtensi
 
 class AtomicfuFirCheckers(session: FirSession) : FirAdditionalCheckersExtension(session) {
     override val declarationCheckers: DeclarationCheckers = object : DeclarationCheckers() {
-        override val propertyCheckers: Set<FirPropertyChecker>
-            get() = setOf(AtomicfuPropertyChecker)
+        override val propertyCheckers: Set<FirPropertyChecker> = setOf(AtomicfuPropertyChecker)
 
-        override val functionCheckers: Set<FirFunctionChecker>
-            get() = setOf(AtomicfuFunctionChecker)
+        override val functionCheckers: Set<FirFunctionChecker> = setOf(AtomicfuFunctionChecker)
     }
 
     override val expressionCheckers: ExpressionCheckers = object : ExpressionCheckers() {
-        override val functionCallCheckers: Set<FirFunctionCallChecker>
-            get() = setOf(
-                AtomicfuAtomicRefToPrimitiveCallChecker,
-                AtomicfuFactoryCallChecker,
-                AtomicfuIllegalFunctionCallChecker
-            )
+        override val functionCallCheckers: Set<FirFunctionCallChecker> = setOf(
+            AtomicfuAtomicRefToPrimitiveCallChecker,
+            AtomicfuFactoryCallChecker,
+            AtomicfuIllegalFunctionCallChecker
+        )
 
-        override val typeOperatorCallCheckers: Set<FirTypeOperatorCallChecker>
-            get() = setOf(
-                AtomicfuTypeOperatorChecker
-            )
+        override val typeOperatorCallCheckers: Set<FirTypeOperatorCallChecker> = setOf(
+            AtomicfuTypeOperatorChecker
+        )
 
-        override val propertyAccessExpressionCheckers: Set<FirPropertyAccessExpressionChecker>
-            get() = setOf(
-                AtomicfuPropertyAccessChecker
-            )
+        override val propertyAccessExpressionCheckers: Set<FirPropertyAccessExpressionChecker> = setOf(
+            AtomicfuPropertyAccessChecker
+        )
 
-        override val callableReferenceAccessCheckers: Set<FirCallableReferenceAccessChecker>
-            get() = setOf(
-                AtomicCallableReferenceChecker
-            )
+        override val callableReferenceAccessCheckers: Set<FirCallableReferenceAccessChecker> = setOf(
+            AtomicCallableReferenceChecker
+        )
     }
 
     override val typeCheckers: TypeCheckers = object : TypeCheckers() {
-        override val resolvedTypeRefCheckers: Set<FirResolvedTypeRefChecker>
-            get() = setOf(
-            )
+        override val resolvedTypeRefCheckers: Set<FirResolvedTypeRefChecker> = setOf(
+        )
     }
 }

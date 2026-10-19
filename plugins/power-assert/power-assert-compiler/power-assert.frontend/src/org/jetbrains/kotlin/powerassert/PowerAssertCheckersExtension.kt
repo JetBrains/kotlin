@@ -17,13 +17,10 @@ import org.jetbrains.kotlin.powerassert.checkers.PowerAssertRuntimeChecker
 
 class PowerAssertCheckersExtension(session: FirSession) : FirAdditionalCheckersExtension(session) {
     override val expressionCheckers: ExpressionCheckers = object : ExpressionCheckers() {
-        override val annotationCheckers: Set<FirAnnotationChecker>
-            get() = setOf(PowerAssertAnnotationChecker)
+        override val annotationCheckers: Set<FirAnnotationChecker> = setOf(PowerAssertAnnotationChecker)
 
-        override val functionCallCheckers: Set<FirFunctionCallChecker>
-            get() = setOf(PowerAssertRuntimeChecker)
+        override val functionCallCheckers: Set<FirFunctionCallChecker> = setOf(PowerAssertRuntimeChecker)
 
-        override val propertyAccessExpressionCheckers: Set<FirPropertyAccessExpressionChecker>
-            get() = setOf(PowerAssertExplanationAccessChecker)
+        override val propertyAccessExpressionCheckers: Set<FirPropertyAccessExpressionChecker> = setOf(PowerAssertExplanationAccessChecker)
     }
 }
