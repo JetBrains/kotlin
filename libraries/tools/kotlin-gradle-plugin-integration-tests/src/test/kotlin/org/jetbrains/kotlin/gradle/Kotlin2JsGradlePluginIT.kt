@@ -279,6 +279,13 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                     projectPath.resolve("build/js/packages/kotlin-js-multiplatform-app-project/kotlin/kotlin-js-multiplatform-app-project.d.ts"),
                     "function best(): number",
                 )
+
+                assertOutputContains("Long: 9007199254740993")
+                // The es5 output must not contain BigInt literals, even if the compiler itself produces the latest JS version
+                assertFileDoesNotContain(
+                    projectPath.resolve("build/js/packages/kotlin-js-multiplatform-app-project/kotlin/kotlin-js-multiplatform-app-project.js"),
+                    "9007199254740993n",
+                )
             }
 
             build("jsNodeProductionRun") {
@@ -296,6 +303,12 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                 assertFileDoesNotContain(
                     projectPath.resolve("build/js/packages/kotlin-js-multiplatform-app-project/.swcrc"),
                     "\"module\"",
+                )
+
+                assertOutputContains("Long: 9007199254740993")
+                assertFileDoesNotContain(
+                    projectPath.resolve("build/js/packages/kotlin-js-multiplatform-app-project/kotlin/kotlin-js-multiplatform-app-project.js"),
+                    "9007199254740993n",
                 )
             }
 
