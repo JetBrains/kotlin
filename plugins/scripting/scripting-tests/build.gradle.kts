@@ -58,6 +58,11 @@ projectTests {
         )
     ) {
         workingDir = rootDir
+        // `kotlinc` launcher script started by the tests must run on JDK 17+
+        val jdkHome = project.getToolchainJdkHomeFor(JdkMajorVersion.JDK_17_0)
+        doFirst {
+            environment("JAVA_HOME", jdkHome.get())
+        }
         addClasspathProperty(testSourceSet.output.classesDirs, "kotlin.test.script.classpath")
         addClasspathProperty(powerAssertCompilerPluginJar, "kotlin.power.assert.compiler.plugin.jar")
         addClasspathProperty(kotlinxSerializationGradlePluginClasspath, "kotlin.script.test.kotlinx.serialization.plugin.classpath")

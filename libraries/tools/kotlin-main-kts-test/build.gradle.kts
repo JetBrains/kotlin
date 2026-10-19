@@ -36,7 +36,7 @@ sourceSets {
 }
 
 projectTests {
-    testTask {
+    testTask(javaLauncher = JdkMajorVersion.JDK_17_0) {
         dependsOn(":dist", ":kotlinx-serialization-compiler-plugin.embeddable:embeddable")
         workingDir = rootDir
         val localKotlinxSerializationPluginClasspath: FileCollection = kotlinxSerializationGradlePluginClasspath
