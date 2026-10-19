@@ -173,6 +173,12 @@ public class PsiParsingTestGenerated extends AbstractPsiParsingTest {
   }
 
   @Test
+  @TestMetadata("classFileVersion.kt")
+  public void testClassFileVersion() {
+    run("classFileVersion.kt");
+  }
+
+  @Test
   @TestMetadata("classMembers.kt")
   public void testClassMembers() {
     run("classMembers.kt");

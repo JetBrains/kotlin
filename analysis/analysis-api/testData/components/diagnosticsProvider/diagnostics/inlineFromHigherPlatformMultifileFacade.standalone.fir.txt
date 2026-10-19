@@ -1,0 +1,7 @@
+Diagnostics from file:
+  for PSI element of type KtNameReferenceExpression at (28,5-28)
+    INLINE_FROM_HIGHER_PLATFORM      text ranges: [(122,145)]
+      PSI: KtNameReferenceExpression at (28,5-28)
+  for PSI element of type KtNameReferenceExpression at (29,5-28)
+    INLINE_FROM_HIGHER_PLATFORM      text ranges: [(152,175)]
+      PSI: KtNameReferenceExpression at (29,5-28)
