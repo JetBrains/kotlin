@@ -7,10 +7,12 @@ package org.jetbrains.kotlin.gradle.android
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import kotlin.test.assertNull
 
 @MppGradlePluginTests
+@MustRunOnChangesInGradle
 @DisplayName("Multiplatform Android Source Set Layout 2")
 class MultiplatformAndroidSourceSetLayoutV2IT : KGPBaseTest() {
 
