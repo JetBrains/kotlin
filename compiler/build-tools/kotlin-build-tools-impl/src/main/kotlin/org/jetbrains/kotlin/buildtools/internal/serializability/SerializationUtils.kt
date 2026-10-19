@@ -13,6 +13,7 @@ import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
+import org.jetbrains.kotlin.buildtools.api.CompilationResult
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges.*
 import org.jetbrains.kotlin.buildtools.api.jvm.AccessibleClassSnapshot
@@ -288,4 +289,12 @@ internal object JvmSnapshotBasedIncrementalCompilationConfigurationImplSerialize
             trackConfigurationInputs = surrogate.trackConfigurationInputs
         }
     }
+}
+
+internal object CompilationResultSerializer : KSerializer<CompilationResult> {
+    override val descriptor = PrimitiveSerialDescriptor("CompilationResult", PrimitiveKind.STRING)
+
+    override fun serialize(encoder: Encoder, value: CompilationResult) = encoder.encodeString(value.name)
+
+    override fun deserialize(decoder: Decoder): CompilationResult = CompilationResult.valueOf(decoder.decodeString())
 }

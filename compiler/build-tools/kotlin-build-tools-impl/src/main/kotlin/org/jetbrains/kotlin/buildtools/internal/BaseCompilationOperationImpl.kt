@@ -115,6 +115,22 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
         setPropertyByName(propertyAccessMap, key.id, value)
     }
 
+    override fun executeInDaemon(
+        projectId: ProjectId,
+        executionPolicy: DaemonExecutionPolicyImpl,
+        logger: KotlinLogger,
+        executionContext: ExecutionContext
+    ): CompilationResult {
+        val messageCollector = createMessageCollector(logger)
+        if (reportArgumentWarningsAndErrors(logger, messageCollector)) return COMPILATION_ERROR
+        val hasArgumentParsingErrors = messageCollector.hasErrors()
+        val result = super.executeInDaemon(projectId, executionPolicy, logger, executionContext)
+        return if (hasArgumentParsingErrors && result == COMPILATION_SUCCESS) {
+            COMPILATION_ERROR
+        } else {
+            result
+        }
+    }
 
     override fun executeCancellableImpl(
         projectId: ProjectId,
@@ -190,9 +206,9 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
 
         val requestedCompilationResults = listOfNotNull(
             CompilationResultCategory.IC_COMPILE_ITERATION.code,
-            CompilationResultCategory.BUILD_METRICS.code.takeIf { this[METRICS_COLLECTOR] != null || this[XX_KGP_METRICS_COLLECTOR] },
+            CompilationResultCategory.BUILD_METRICS.code.takeIf { metricsCollector != null || kgpMetricsCollector },
             // Daemon would report log lines only if debug logging is enabled or metrics are requested
-            CompilationResultCategory.VERBOSE_BUILD_REPORT_LINES.code.takeIf { this[METRICS_COLLECTOR] != null || this[XX_KGP_METRICS_COLLECTOR] || isDebugLoggingEnabled },
+            CompilationResultCategory.VERBOSE_BUILD_REPORT_LINES.code.takeIf { metricsCollector != null || kgpMetricsCollector || isDebugLoggingEnabled },
         ).toTypedArray()
 
         return getIcOptionsOrNull(reportCategories, reportSeverity, requestedCompilationResults, arguments)
@@ -273,8 +289,8 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
         BaseCompilerServicesWithResultsFacade(messageCollector, lookupTracker)
 
     protected fun populateMetricsCollector(metricsReporter: BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>) {
-        if (this[XX_KGP_METRICS_COLLECTOR] && metricsReporter is BuildMetricsReporterImpl) {
-            this[XX_KGP_METRICS_COLLECTOR_OUT] = ByteArrayOutputStream().apply {
+        if (kgpMetricsCollector && metricsReporter is BuildMetricsReporterImpl) {
+            kgpMetricsCollectorOut = ByteArrayOutputStream().apply {
                 ObjectOutputStream(this).writeObject(metricsReporter)
             }.toByteArray()
         }
