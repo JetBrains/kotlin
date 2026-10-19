@@ -52,9 +52,21 @@ public class SymbolLightClassesAnnotationEqualityForSourceTestGenerated extends 
   }
 
   @Test
+  @TestMetadata("InlineValueClass.kt")
+  public void testInlineValueClass() {
+    run("InlineValueClass.kt");
+  }
+
+  @Test
   @TestMetadata("JavaRepeatable.kt")
   public void testJavaRepeatable() {
     run("JavaRepeatable.kt");
+  }
+
+  @Test
+  @TestMetadata("JvmInlineValueClass.kt")
+  public void testJvmInlineValueClass() {
+    run("JvmInlineValueClass.kt");
   }
 
   @Test
