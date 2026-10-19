@@ -8,7 +8,10 @@ package org.jetbrains.kotlin.code.review
 private const val DIFF_MINUS_MINUS_GIT = "diff --git "
 
 fun parseGitDiffText(diffText: String): List<GitDiff.ChangedFile> {
-    val diffLines = ArrayDeque(diffText.lines())
+    // Git separates lines with `\n`, while `lines()` would also split at `\r` in the file contents.
+    val diffLines = ArrayDeque(diffText.split('\n'))
+    // The last line is terminated too (unless the output has been trimmed), but no `git diff` line is empty.
+    if (diffLines.last().isEmpty()) diffLines.removeLast()
 
     val changedFiles = mutableListOf<GitDiff.ChangedFile>()
 
