@@ -350,8 +350,10 @@ class ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
         // This is a test on the JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE diagnostic.
         val lib = module("lib")
         module("main", listOf(lib), listOf("lib"))
-        // With the PSI-based frontend, the module of the file being checked is unknown, so the read is not checked.
-        module("main", listOf(lib), listOf("lib"), listOf("-Xuse-fir-lt=false"), checkKotlinOutput = assertNoErrors)
+        module(
+            "main", listOf(lib), listOf("lib"), listOf("-Xuse-fir-lt=false"),
+            checkKotlinOutput = assertCompilationError("which the current module does not depend on"),
+        )
     }
 
     @Test
@@ -368,8 +370,10 @@ class ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
         // In this test we're checking the diagnostic about using symbols from unnamed modules, so we need to compile 'lib' to a directory.
         val lib = module("lib", destination = File(tmpdir, testInfo.testMethod.get().name))
         module("main", additionalKotlinArguments = listOf("-classpath", lib.path))
-        // With the PSI-based frontend, the module of the file being checked is unknown, so the read is not checked.
-        module("main", additionalKotlinArguments = listOf("-classpath", lib.path, "-Xuse-fir-lt=false"), checkKotlinOutput = assertNoErrors)
+        module(
+            "main", additionalKotlinArguments = listOf("-classpath", lib.path, "-Xuse-fir-lt=false"),
+            checkKotlinOutput = assertCompilationError("which is not read by current module"),
+        )
     }
 
     @Test
@@ -474,7 +478,6 @@ class ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
             additionalKotlinArguments = listOf("-Xadd-exports=lib/foo.internal=ALL-UNNAMED"),
             checkKotlinOutput = doesNotExport,
         )
-        // With the PSI-based frontend, the module of the file being checked is unknown, so ALL-UNNAMED must not be applied either.
         module(
             "main", listOf(lib),
             additionalKotlinArguments = listOf("-Xuse-fir-lt=false", "-Xadd-exports=lib/foo.internal=ALL-UNNAMED"),
@@ -484,7 +487,7 @@ class ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
         module(
             "main", listOf(lib),
             additionalKotlinArguments = listOf("-Xuse-fir-lt=false", "-Xadd-exports=lib/foo.internal=main"),
-            checkKotlinOutput = doesNotExport,
+            checkKotlinOutput = assertNoErrors,
         )
         // Like javac, targets are applied split on spaces too, even though 'other main' is reported as a bad name.
         module(
@@ -501,7 +504,7 @@ class ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
         module(
             "main", listOf(lib), listOf("lib"),
             additionalKotlinArguments = listOf("-Xuse-fir-lt=false", "-Xadd-exports=lib/foo.internal=ALL-UNNAMED"),
-            checkKotlinOutput = assertCompilationError("does not export package 'foo.internal'"),
+            checkKotlinOutput = assertNoErrors,
         )
     }
 
