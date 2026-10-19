@@ -238,7 +238,7 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
                           Kotlin compiler warning
                             'constructor(): A' is deprecated. deprecated for test.
                             Location: ${mainKt.toRealPath().absolutePathString().normalizePath()}
-                        """.trimIndent()
+                        """.trimIndent().normalizeLineEndings()
                     )
                 }
             }
