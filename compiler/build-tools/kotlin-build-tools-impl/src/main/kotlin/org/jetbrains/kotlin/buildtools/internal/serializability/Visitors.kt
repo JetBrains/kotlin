@@ -3,14 +3,11 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:OptIn(InternalBuildToolsApi::class)
+package org.jetbrains.kotlin.buildtools.internal.serializability
 
-package org.jetbrains.kotlin.buildtools.internal
-
-import org.jetbrains.kotlin.buildtools.api.jps.InternalBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.trackers.BuildMetricsCollector
-import org.jetbrains.kotlin.buildtools.internal.serializability.Message
-import org.jetbrains.kotlin.buildtools.internal.serializability.MessageVisitor
+import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
+import org.jetbrains.kotlin.buildtools.internal.KotlinLoggerMessageCollectorAdapter
 
 internal class MetricsCollectorVisitor(private val metricsCollector: BuildMetricsCollector) : MessageVisitor {
 
@@ -19,6 +16,36 @@ internal class MetricsCollectorVisitor(private val metricsCollector: BuildMetric
             metricsCollector.collectMetric(message.name, message.type, message.value)
             true
         }
-        // else -> false // when other message types are added
+        else -> false
+    }
+}
+
+internal class CompilerMessageVisitor(private val logger: KotlinLoggerMessageCollectorAdapter) : MessageVisitor {
+
+    override fun accept(message: Message): Boolean = when (message) {
+        is Message.CompilerMessage.Report -> {
+            logger.report(message.severity, message.message, message.location, message.diagnosticId)
+            true
+        }
+        is Message.CompilerMessage.Clear -> {
+            logger.clear()
+            true
+        }
+        else -> false
+    }
+}
+
+internal class LookupMessageVisitor(private val lookupTracker: CompilerLookupTracker) : MessageVisitor {
+
+    override fun accept(message: Message): Boolean = when (message) {
+        is Message.LookupTracker.Record -> {
+            lookupTracker.recordLookup(message.filePath, message.scopeFqName, message.scopeKind, message.name)
+            true
+        }
+        is Message.LookupTracker.Clear -> {
+            lookupTracker.clear()
+            true
+        }
+        else -> false
     }
 }

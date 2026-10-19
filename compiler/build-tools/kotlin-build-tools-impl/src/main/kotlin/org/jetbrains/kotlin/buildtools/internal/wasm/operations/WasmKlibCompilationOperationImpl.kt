@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.build.report.BuildReporter
 import org.jetbrains.kotlin.build.report.metrics.endMeasureGc
 import org.jetbrains.kotlin.build.report.metrics.startMeasureGc
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
+import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.wasm.IncrementalModule
 import org.jetbrains.kotlin.buildtools.api.wasm.WasmHistoryBasedIncrementalCompilationConfiguration
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.buildtools.internal.wasm.WasmHistoryBasedIncremental
 import org.jetbrains.kotlin.buildtools.internal.wasm.WasmHistoryBasedIncrementalCompilationConfigurationImpl.Companion.ROOT_PROJECT_BUILD_DIR
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.arguments.KotlinWasmCompilerArguments
+import org.jetbrains.kotlin.cli.common.messages.MessageCollectorWithDiagnosticId
 import org.jetbrains.kotlin.cli.js.KotlinWasmCompiler
 import org.jetbrains.kotlin.daemon.common.CompileService
 import org.jetbrains.kotlin.daemon.common.CompilerMode
@@ -46,9 +48,9 @@ internal class WasmKlibCompilationOperationImpl private constructor(
     override val options: Options = Options(WasmKlibCompilationOperation::class),
     override val sources: List<Path>,
     override val destination: Path,
-    compilerArguments: WasmArgumentsImpl = WasmArgumentsImpl(),
+    override val compilerArguments: WasmArgumentsImpl = WasmArgumentsImpl(),
     private val compilerVersion: String,
-) : BaseCompilationOperationImpl<WasmArgumentsImpl, KotlinWasmCompilerArguments>(compilerArguments),
+) : BaseCompilationOperationImpl<WasmArgumentsImpl, KotlinWasmCompilerArguments>(),
     WasmKlibCompilationOperation, WasmKlibCompilationOperation.Builder,
     DeepCopyable<WasmKlibCompilationOperationImpl> {
     constructor(
@@ -149,7 +151,7 @@ internal class WasmKlibCompilationOperationImpl private constructor(
                     buildDir = aggregatedIcConfiguration[MODULE_BUILD_DIR]?.toFile(),
                     icFeatures = aggregatedIcConfiguration.extractIncrementalCompilationFeatures(),
                     useJvmFirRunner = false,
-                    generateCompilerRefIndex = get(GENERATE_COMPILER_REF_INDEX),
+                    generateCompilerRefIndex = generateCompilerRefIndex,
                     configurationInputs = makeConfigurationInputs(aggregatedIcConfiguration),
                 )
             }
@@ -208,7 +210,8 @@ internal class WasmKlibCompilationOperationImpl private constructor(
 
     override fun compileIncrementallyInProcess(
         arguments: KotlinWasmCompilerArguments,
-        loggerAdapter: KotlinLoggerMessageCollectorAdapter,
+        logger: KotlinLogger,
+        messageCollector: MessageCollectorWithDiagnosticId,
         executionContext: ExecutionContext
     ): CompilationResult {
         val icConfiguration = get(INCREMENTAL_COMPILATION)
@@ -235,7 +238,7 @@ internal class WasmKlibCompilationOperationImpl private constructor(
         metricsReporter.startMeasureGc()
         val buildReporter = BuildReporter(
             icReporter = BuildToolsApiBuildICReporter(
-                kotlinLogger = loggerAdapter.kotlinLogger,
+                kotlinLogger = logger,
                 rootProjectDir = projectDir,
                 buildMetricsReporter = metricsReporter,
             ), buildMetricsReporter = metricsReporter
@@ -259,7 +262,7 @@ internal class WasmKlibCompilationOperationImpl private constructor(
         )
 
         arguments.incrementalCompilation = true
-        logCompilerArguments(loggerAdapter, arguments, get(COMPILER_ARGUMENTS_LOG_LEVEL))
+        logCompilerArguments(logger, arguments, compilerArgumentsLogLevel)
 
         val fileLocations = if (projectDir != null && buildDir != null) {
             FileLocations(projectDir, buildDir)
@@ -267,7 +270,7 @@ internal class WasmKlibCompilationOperationImpl private constructor(
         val compilationResult = incrementalCompiler.compile(
             kotlinSources,
             arguments,
-            loggerAdapter,
+            messageCollector,
             icConfiguration.sourcesChanges.asChangedFiles,
             fileLocations,
             makeConfigurationInputs(icConfiguration)
