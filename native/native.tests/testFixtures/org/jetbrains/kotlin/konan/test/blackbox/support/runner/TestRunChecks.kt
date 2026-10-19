@@ -103,6 +103,19 @@ sealed interface TestRunCheck {
         Output.ALL -> processOutput.stdOut.filteredOutput + processOutput.stdErr
     }
 
+    /**
+     * Aborts the test run if a known flakiness is detected.
+     *
+     * Unlike the other checks, this one never reports a failure: [mute] must either throw a [TestAbortedException],
+     * making the test skipped, or do nothing.
+     */
+    class MuteKnownFlakiness(val mute: TestRunCheck.(RunResult) -> Unit) : TestRunCheck {
+        override fun apply(testRun: TestRun, runResult: RunResult): Result {
+            mute(runResult)
+            return Result.Passed
+        }
+    }
+
     class OutputDataFile(
         val output: Output = Output.ALL,
         val file: File,
@@ -313,9 +326,12 @@ data class TestRunChecks(
     val outputDataFile: OutputDataFile?,
     val outputMatcher: OutputMatcher?,
     val fileCheckMatcher: FileCheckMatcher?,
+    val knownFlakinessMute: MuteKnownFlakiness? = null,
 ) : Iterable<TestRunCheck> {
 
     override fun iterator() = iterator {
+        // Must come first: it is the only check that can make the test skipped instead of failed.
+        yieldIfNotNull(knownFlakinessMute)
         yield(executionTimeoutCheck)
         yield(testFiltering)
         yieldIfNotNull(exitCodeCheck)
