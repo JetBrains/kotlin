@@ -15,29 +15,25 @@ import org.jetbrains.kotlin.fir.analysis.web.common.checkers.expression.FirJsQua
 import org.jetbrains.kotlin.fir.analysis.web.common.checkers.expression.FirWebReflectionAPICallChecker
 
 object WasmBaseExpressionCheckers : ExpressionCheckers() {
-    override val basicExpressionCheckers: Set<FirBasicExpressionChecker>
-        get() = setOf(
-            FirWasmDefinedExternallyCallChecker,
-            FirWasmExternalRttiChecker,
-            FirWebReflectionAPICallChecker(isWasm = true),
-        )
+    override val basicExpressionCheckers: Set<FirBasicExpressionChecker> = setOf(
+        FirWasmDefinedExternallyCallChecker,
+        FirWasmExternalRttiChecker,
+        FirWebReflectionAPICallChecker(isWasm = true),
+    )
 
-    override val functionCallCheckers: Set<FirFunctionCallChecker>
-        get() = setOf(
-            FirSuperCallWithDefaultsChecker,
-            FirWasmReifiedExternalChecker
-        )
+    override val functionCallCheckers: Set<FirFunctionCallChecker> = setOf(
+        FirSuperCallWithDefaultsChecker,
+        FirWasmReifiedExternalChecker
+    )
 }
 
 object WasmJsExpressionCheckers : ExpressionCheckers() {
-    override val annotationCallCheckers: Set<FirAnnotationCallChecker>
-        get() = setOf(
-            FirJsQualifierChecker,
-        )
+    override val annotationCallCheckers: Set<FirAnnotationCallChecker> = setOf(
+        FirJsQualifierChecker,
+    )
 
-    override val functionCallCheckers: Set<FirFunctionCallChecker>
-        get() = setOf(
-            FirJsCodeConstantArgumentChecker,
-            FirWasmJsCodeCallChecker,
-        )
+    override val functionCallCheckers: Set<FirFunctionCallChecker> = setOf(
+        FirJsCodeConstantArgumentChecker,
+        FirWasmJsCodeCallChecker,
+    )
 }

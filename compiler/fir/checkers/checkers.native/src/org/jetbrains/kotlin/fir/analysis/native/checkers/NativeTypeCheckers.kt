@@ -8,8 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.native.checkers
 import org.jetbrains.kotlin.fir.analysis.checkers.type.*
 
 object NativeTypeCheckers : TypeCheckers() {
-    override val resolvedTypeRefCheckers: Set<FirResolvedTypeRefChecker>
-        get() = setOf(
-            FirDynamicUnsupportedChecker,
-        )
+    override val resolvedTypeRefCheckers: Set<FirResolvedTypeRefChecker> = setOf(
+        FirDynamicUnsupportedChecker,
+    )
 }
