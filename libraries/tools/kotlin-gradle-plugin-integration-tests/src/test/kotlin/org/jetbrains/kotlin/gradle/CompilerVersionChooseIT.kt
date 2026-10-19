@@ -9,6 +9,7 @@ import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.internals.KOTLIN_BUILD_TOOLS_API_CLASSPATH_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 
 /**
@@ -18,6 +19,7 @@ import org.junit.jupiter.api.DisplayName
  */
 @DisplayName("Tests for compiler version choosing via the Build Tools API")
 @JvmGradlePluginTests
+@MustRunOnChangesInGradle
 class CompilerVersionChooseIT : KGPBaseTest() {
     override val defaultBuildOptions = super.defaultBuildOptions.copy(runViaBuildToolsApi = true)
 

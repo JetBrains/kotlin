@@ -10,9 +10,13 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinBrowserBundler
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInWasm
 import org.junit.jupiter.api.DisplayName
 
 @MppGradlePluginTests
+@MustRunOnChangesInGradle
+@MustRunOnChangesInWasm
 class KotlinWasmBuiltinTasksGradlePluginIT : KGPBaseTest() {
     override val defaultBuildOptions: BuildOptions
         // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm

@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.gradle.incapt.IncrementalBinaryIsolatingProcessor
 import org.jetbrains.kotlin.gradle.incapt.IncrementalIsolatingProcessor
 import org.jetbrains.kotlin.gradle.incapt.IncrementalProcessor
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCompilerPlugins
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import java.io.File
 import kotlin.io.path.createDirectories
@@ -21,6 +23,8 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 @DisplayName("Kapt incremental tests with aggregating apt")
+@MustRunOnChangesInGradle
+@MustRunOnChangesInCompilerPlugins
 class KaptIncrementalWithAggregatingApt : KaptIncrementalIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copy(
         incremental = true,

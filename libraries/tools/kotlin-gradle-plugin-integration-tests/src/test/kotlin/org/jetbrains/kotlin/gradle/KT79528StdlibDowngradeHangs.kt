@@ -3,8 +3,10 @@ package org.jetbrains.kotlin.gradle
 import kotlin.test.Test
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.jetbrains.kotlin.util.assertThrows
 
+@MustRunOnChangesInGradle
 class KT79528StdlibDowngradeHangs {
 
     @Test
