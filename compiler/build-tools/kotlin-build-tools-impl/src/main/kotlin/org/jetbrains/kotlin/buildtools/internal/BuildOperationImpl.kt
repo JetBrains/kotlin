@@ -23,7 +23,7 @@ import kotlin.reflect.KMutableProperty1
 @Serializable
 internal abstract class BuildOperationImpl<R> : BuildOperation<R>, BuildOperation.Builder, BtaSerializable {
 
-    protected abstract val options: Options // to be removed when subclasses are also converted to serializable
+    protected open val options: Options get() = Options(this::class) // to be removed when subclasses are also converted to serializable
 
     @SerialName("METRICS_COLLECTOR")
     @Transient
