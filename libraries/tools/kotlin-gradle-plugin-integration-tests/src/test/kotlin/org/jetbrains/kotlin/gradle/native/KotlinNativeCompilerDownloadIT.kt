@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.util.capitalize
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.presetName
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
@@ -27,6 +28,7 @@ import kotlin.test.fail
 @OsCondition(supportedOn = [OS.MAC, OS.LINUX], enabledOnCI = [OS.LINUX]) // disabled for Windows because of tmp dir problem: KT-62761
 @DisplayName("This test class contains different scenarios with downloading Kotlin Native Compiler during build.")
 @NativeGradlePluginTests
+@MustRunOnChangesInGradle
 class KotlinNativeCompilerDownloadIT : KGPBaseTest() {
 
     private val currentPlatform = HostManager.platformName()
