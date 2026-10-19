@@ -7,11 +7,13 @@ package org.jetbrains.kotlin.gradle.android
 
 import org.jetbrains.kotlin.gradle.testbase.AndroidGradlePluginTests
 import org.jetbrains.kotlin.gradle.testbase.TestVersions
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.Test
 import java.lang.reflect.Modifier
 import kotlin.test.assertTrue
 
 @AndroidGradlePluginTests
+@MustRunOnChangesInGradle
 class AgpCompatibilityMatrixSanityTest {
 
     @Test
