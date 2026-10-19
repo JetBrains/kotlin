@@ -122,7 +122,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
     @JvmField
     @ExperimentalCompilerArgument
     public val X_ADD_EXPORTS: JvmCompilerArgument<List<String>> =
-        JvmCompilerArgument("X_ADD_EXPORTS", KotlinReleaseVersion(2, 5, 0))
+        JvmCompilerArgument("X_ADD_EXPORTS", KotlinReleaseVersion(2, 5, 20))
 
     /**
      * Root modules to resolve in addition to the initial modules, or all modules on the module path if <module> is ALL-MODULE-PATH.
@@ -142,7 +142,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
     @JvmField
     @ExperimentalCompilerArgument
     public val X_ADD_READS: JvmCompilerArgument<List<String>> =
-        JvmCompilerArgument("X_ADD_READS", KotlinReleaseVersion(2, 5, 0))
+        JvmCompilerArgument("X_ADD_READS", KotlinReleaseVersion(2, 5, 20))
 
     /**
      * Allow the set of source files to be empty.
@@ -599,7 +599,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
     @JvmField
     @ExperimentalCompilerArgument
     public val X_PATCH_MODULE: JvmCompilerArgument<List<String>> =
-        JvmCompilerArgument("X_PATCH_MODULE", KotlinReleaseVersion(2, 5, 0))
+        JvmCompilerArgument("X_PATCH_MODULE", KotlinReleaseVersion(2, 5, 20))
 
     /**
      * Select the code generation scheme for SAM conversions.

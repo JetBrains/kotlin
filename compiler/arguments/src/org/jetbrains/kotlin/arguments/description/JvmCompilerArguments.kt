@@ -297,7 +297,7 @@ The default value is 1.""".asReleaseDependent()
         delimiter = KotlinCompilerArgument.Delimiter.None
 
         lifecycle(
-            introducedVersion = KotlinReleaseVersion.v2_5_0,
+            introducedVersion = KotlinReleaseVersion.v2_5_20,
         )
     }
 
@@ -313,7 +313,7 @@ The default value is 1.""".asReleaseDependent()
         delimiter = KotlinCompilerArgument.Delimiter.None
 
         lifecycle(
-            introducedVersion = KotlinReleaseVersion.v2_5_0,
+            introducedVersion = KotlinReleaseVersion.v2_5_20,
         )
     }
 
@@ -329,7 +329,7 @@ The default value is 1.""".asReleaseDependent()
         delimiter = KotlinCompilerArgument.Delimiter.None
 
         lifecycle(
-            introducedVersion = KotlinReleaseVersion.v2_5_0,
+            introducedVersion = KotlinReleaseVersion.v2_5_20,
         )
     }
 
