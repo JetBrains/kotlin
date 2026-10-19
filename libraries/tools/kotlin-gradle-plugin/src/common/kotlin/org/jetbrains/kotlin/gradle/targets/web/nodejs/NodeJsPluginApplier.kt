@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsSetupTask
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.parsePlatform
 import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
-import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.currentHostPlatform
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.currentHostOs
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import kotlin.reflect.KClass
 
@@ -85,7 +85,7 @@ internal class NodeJsPluginApplier(
             .unameExecResult
 
         extension.platform.value(
-            project.providers.currentHostPlatform()
+            project.providers.currentHostOs()
                 .zip(
                     project.providers.systemProperty("os.arch")
                 ) { osType, arch ->
