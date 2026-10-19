@@ -153,6 +153,34 @@ class IncrementalCompilationSmokeTest : BaseCompilationTest() {
         }
     }
 
+    // KT-90388
+    @DisplayName("FORCE_RECOMPILATION rebuilds all sources of a JS module")
+    @BtaV2StrategyAgnosticCompilationTest
+    @TestMetadata("js-ic-basic")
+    fun jsForceRecompilationRebuildsAllSources(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jsProject(strategyConfig) {
+            val libModule = module("js-ic-basic-lib")
+            libModule.compileIncrementally(SourcesChanges.ToBeCalculated)
+            libModule.compileIncrementally(SourcesChanges.ToBeCalculated, forceNonIncrementalCompilation = true) {
+                assertCompiledSources("A.kt", "DummyInLibMain.kt", "useAInLibMain.kt")
+            }
+        }
+    }
+
+    // KT-90388
+    @DisplayName("FORCE_RECOMPILATION rebuilds all sources of a Wasm module")
+    @BtaV2StrategyAgnosticCompilationTest
+    @TestMetadata("js-ic-basic")
+    fun wasmForceRecompilationRebuildsAllSources(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        wasmProject(strategyConfig) {
+            val libModule = module("js-ic-basic-lib")
+            libModule.compileIncrementally(SourcesChanges.ToBeCalculated)
+            libModule.compileIncrementally(SourcesChanges.ToBeCalculated, forceNonIncrementalCompilation = true) {
+                assertCompiledSources("A.kt", "DummyInLibMain.kt", "useAInLibMain.kt")
+            }
+        }
+    }
+
     private fun runMixedModuleTest(strategyConfig: CompilerExecutionStrategyConfiguration, useTrackedModules: Boolean) {
         jvmScenario(strategyConfig) {
             val compilerArgumentsConf: (JvmCompilationOperation.Builder) -> Unit = {
