@@ -158,8 +158,11 @@ The only observable effect is that a custom ABI version is written to KLIB manif
         )
 
         lifecycle(
-            introducedVersion = KotlinReleaseVersion.v2_3_0
+            introducedVersion = KotlinReleaseVersion.v2_3_0,
+            deprecatedVersion = KotlinReleaseVersion.v2_5_20,
         )
+
+        deprecatedMessage = "The compiler is able to automatically adjust the number of cached klibs now."
     }
 
     compilerArgument {

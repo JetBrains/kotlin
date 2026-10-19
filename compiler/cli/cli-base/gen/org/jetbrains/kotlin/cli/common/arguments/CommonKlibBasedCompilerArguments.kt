@@ -72,9 +72,11 @@ Note: The prefixes are applied in the same order as they are passed in this CLI 
             field = value
         }
 
+    @all:Deprecated("The compiler is able to automatically adjust the number of cached klibs now.")
     @Argument(
         value = "-Xklib-zip-file-accessor-cache-limit",
         description = "Maximum number of klibs that can be cached during compilation. Default is 64.",
+        deprecatedVersion = "2.5.20",
     )
     var klibZipFileAccessorCacheLimit: String = "64"
         set(value) {

@@ -7,6 +7,7 @@ import kotlin.Boolean
 import kotlin.Int
 import kotlin.String
 import kotlin.jvm.JvmField
+import org.jetbrains.kotlin.buildtools.api.DeprecatedCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.RemovedCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.DuplicatedUniqueNameStrategy
@@ -88,9 +89,12 @@ public interface CommonKlibBasedArguments : CommonCompilerArguments {
      * Maximum number of klibs that can be cached during compilation. Default is 64.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     *
+     * Deprecated in Kotlin version 2.5.20.
      */
     @JvmField
     @ExperimentalCompilerArgument
+    @DeprecatedCompilerArgument
     public val X_KLIB_ZIP_FILE_ACCESSOR_CACHE_LIMIT: CommonKlibBasedArgument<Int> =
         CommonKlibBasedArgument("X_KLIB_ZIP_FILE_ACCESSOR_CACHE_LIMIT", KotlinReleaseVersion(2, 3, 0))
   }
