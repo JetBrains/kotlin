@@ -336,29 +336,6 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=WithParameterKt]]
         REFERENCE_EXPRESSION[referencedName=Any]
     PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
       VALUE_PARAMETER_LIST
-      FUNCTION[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=null]
-        VALUE_PARAMETER_LIST
-        TYPE_REFERENCE
-          MODIFIER_LIST[]
-            ANNOTATION_ENTRY[hasValueArguments=false, shortName=Foo]
-              CONSTRUCTOR_CALLEE
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION[referencedName=Foo]
-          FUNCTION_TYPE
-            VALUE_PARAMETER_LIST
-              VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION[referencedName=Coomparable]
-                    TYPE_ARGUMENT_LIST
-                      TYPE_PROJECTION[projectionKind=NONE]
-                        TYPE_REFERENCE
-                          USER_TYPE
-                            REFERENCE_EXPRESSION[referencedName=Nothing]
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=Unit]
   FUNCTION[fqName=foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
     VALUE_PARAMETER_LIST
   FUNCTION[fqName=foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]

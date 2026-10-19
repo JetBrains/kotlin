@@ -20,7 +20,10 @@ import org.jetbrains.kotlin.psi.KtDeclarationWithBody
 internal object StubBuildingLexing {
     /**
      * Keywords which start every declaration that can be stubbed inside a code block outside of scripts: local classes, interfaces,
-     * objects (including object literals), and functions (including anonymous ones).
+     * objects (including object literals), and functions.
+     * Anonymous functions are not stubbed, but the `fun` keyword alone doesn't tell them apart from local functions. It would take
+     * a lookahead past the parentheses, as they may hold a receiver type (e.g., `fun (() -> Unit).foo()`), and anonymous functions
+     * are too rare for such a fragile check to pay off.
      *
      * Other declarations inside a code block (e.g., local properties or type aliases) are never stubbed unless they are nested in
      * one of the declarations above.
