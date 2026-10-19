@@ -236,14 +236,18 @@ abstract class IncrementalCompilerRunner<
      * - [changedFiles] are loosely-defined. It is not guaranteed that they are relative to the last preserved IC state:
      *      - [ChangedFiles.DeterminableFiles.ToBeComputed] to hint us to compute it here
      *      - [ChangedFiles.DeterminableFiles.Known] to hint us that it comes from a build tool. It might be unsound,
-     *          we trust it (e.g. Gradle's fingerprinting]), and it might be the source of various IC bugs.
+     *          we trust it (e.g. Gradle's fingerprinting), and it might be the source of various IC bugs.
      *          If a caller crafts [ChangedFiles.DeterminableFiles.Known] manually, its soundness won't be checked at all.
+ *          - [ChangedFiles.Unknown] a caller cannot decide on the state (e.g. Gradle's `isIncremental == false`), falling back to a full rebuild.
+     *            - Used when an external entity (not a compiler) tracks source-file changes, and it failed
      *      - Specific compiler backend implementation still can decide to fall back to a full rebuild (e.g. because it detected some IC-incompatible change)
      *
-     * - This function manages the IC state on its own, transactionally:
+     * - This function manages the IC state on its own:
      *     - If the compilation is successful, the whole IC state is properly preserved
      *     - If it's not, the state can be rolled back to pre-compilation state (unless full rebuild is triggered, then it's a full clean)
-     *         - For Gradle+BTA, it's a recoverable transaction that rolls back on an error
+     *         - Recoverability depends on the specific mode (Gradle, standalone BTA) and controlled by a separate knob
+     *         - Without a recovery, a partially updated state on error will be preserved. Later on (on the next invocation)
+     *              it can be recovered, or, if _too_ incorrect, the full rebuild will be triggered
      *         - For standalone BTA, it's partially bookkeep'ed, and at this point I am too afraid to ask
      *
      * In a rough outline, the implementation goes as following:
