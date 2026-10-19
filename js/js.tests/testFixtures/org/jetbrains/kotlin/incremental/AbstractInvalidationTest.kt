@@ -88,7 +88,7 @@ abstract class AbstractInvalidationTest(
         return directory.resolve(PROJECT_INFO_FILE)
     }
 
-    private val zipAccessor = ZipFileSystemCacheableAccessor(2)
+    private val zipAccessor = ZipFileSystemCacheableAccessor()
 
     protected abstract val rootDisposable: TestDisposable
 

@@ -193,12 +193,7 @@ object JKlibConfigurationUpdater : ConfigurationUpdater<K2JKlibCompilerArguments
         }
         arguments.friendModules?.let { configuration.friendPaths = it.split(File.pathSeparator).filterNot(String::isEmpty) }
 
-        // TODO(KT-87172): call configuration.setupCommonKlibArguments() instead of manual setup.
-        configuration.zipFileSystemAccessor = arguments.getZipFileSystemAccessor(
-            zipFileAccessorCacheLimitArgument = K2JKlibCompilerArguments::klibZipFileAccessorCacheLimit,
-            configuration = configuration,
-            rootDisposable = input.rootDisposable,
-        )
+        configuration.zipFileSystemAccessor = DisposableZipFileSystemAccessor(input.rootDisposable)
     }
 }
 

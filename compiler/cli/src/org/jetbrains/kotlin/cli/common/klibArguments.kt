@@ -9,17 +9,15 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_ARGUMENTS_ERROR
 import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_ARGUMENTS_WARNING
-import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.CommonKlibBasedCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS
 import org.jetbrains.kotlin.io.ZipFileSystemAccessor
 import org.jetbrains.kotlin.io.ZipFileSystemCacheableAccessor
-import org.jetbrains.kotlin.io.ZipFileSystemInPlaceAccessor
 import org.jetbrains.kotlin.library.KotlinAbiVersion
-import kotlin.reflect.KProperty1
+import java.nio.file.FileSystem
+import java.nio.file.Path
 
 /**
  * Important: If you add or remove some argument from [setupCommonKlibArguments],
@@ -53,11 +51,7 @@ fun CompilerConfiguration.setupCommonKlibArguments(
         setupKlibAbiCompatibilityLevel()
     }
 
-    zipFileSystemAccessor = arguments.getZipFileSystemAccessor(
-        zipFileAccessorCacheLimitArgument = CommonKlibBasedCompilerArguments::klibZipFileAccessorCacheLimit,
-        configuration = this,
-        rootDisposable = rootDisposable
-    )
+    zipFileSystemAccessor = DisposableZipFileSystemAccessor(rootDisposable)
 }
 
 /**
@@ -104,39 +98,15 @@ private fun CompilerConfiguration.parseCustomKotlinAbiVersion(customKlibAbiVersi
     return KotlinAbiVersion(version[0], version[1], version[2])
 }
 
-fun <A : CommonCompilerArguments> A.getZipFileSystemAccessor(
-    zipFileAccessorCacheLimitArgument: KProperty1<A, String>,
-    configuration: CompilerConfiguration,
-    rootDisposable: Disposable,
-): ZipFileSystemAccessor? {
-    val cacheLimitRawValue: String = zipFileAccessorCacheLimitArgument.get(this)
-    val cacheLimit: Int? = cacheLimitRawValue.toIntOrNull()
+class DisposableZipFileSystemAccessor(rootDisposable: Disposable) : Disposable, ZipFileSystemAccessor {
+    private val delegate = ZipFileSystemCacheableAccessor()
 
-    if (cacheLimit == null || cacheLimit < 0) {
-        configuration.report(
-            COMPILER_ARGUMENTS_ERROR,
-            buildString {
-                append("Cannot parse ${zipFileAccessorCacheLimitArgument.cliArgument} value: \"$cacheLimitRawValue\". ")
-                append("It must be an integer >= 0.")
-            }
-        )
-        return null
+    init {
+        Disposer.register(rootDisposable, this)
     }
-    return if (cacheLimit > 0) {
-        DisposableZipFileSystemAccessor(cacheLimit).also { Disposer.register(rootDisposable, it) }
-    } else {
-        ZipFileSystemInPlaceAccessor
-    }
-}
 
-private class DisposableZipFileSystemAccessor(
-    private val zipAccessor: ZipFileSystemCacheableAccessor,
-) : Disposable, ZipFileSystemAccessor by zipAccessor {
-    constructor(cacheLimit: Int) : this(ZipFileSystemCacheableAccessor(cacheLimit))
-
-    override fun dispose() {
-        zipAccessor.reset()
-    }
+    override fun <T> withZipFileSystem(zipFile: Path, action: (FileSystem) -> T): T = delegate.withZipFileSystem(zipFile, action)
+    override fun dispose() = delegate.reset()
 }
 
 fun CompilerConfiguration.setupKlibAbiCompatibilityLevel() {
