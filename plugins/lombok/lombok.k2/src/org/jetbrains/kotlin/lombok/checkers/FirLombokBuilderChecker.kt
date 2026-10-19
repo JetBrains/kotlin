@@ -194,7 +194,7 @@ object FirLombokBuilderChecker : FirRegularClassChecker(MppCheckerKind.Platform)
         primaryConstructor: FirConstructorSymbol,
         lombokService: LombokService,
     ) {
-        val promotedProperties = declaration.promotedPropertiesByName()
+        val promotedProperties = declaration.symbol.promotedPropertiesByName(context.session)
 
         for (parameter in primaryConstructor.valueParameterSymbols) {
             // `AbstractBuilderGenerator` builds nothing out of a property the parser could not read a name off,

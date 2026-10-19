@@ -7,10 +7,8 @@ package org.jetbrains.kotlin.lombok.generators.kotlin
 
 import org.jetbrains.kotlin.descriptors.isObject
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
-import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.getCompilerRequiredAnnotationByClassId
+import org.jetbrains.kotlin.fir.declarations.processAllDeclaredCallables
 import org.jetbrains.kotlin.fir.declarations.utils.fromPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
@@ -52,12 +50,14 @@ internal fun FirPropertySymbol.findAnnotationOnPropertyOrField(classId: ClassId)
  * property's initializer and so would force body resolution from inside a generation callback. A promoted
  * property always carries its parameter's name, and no two declarations of a class can share one.
  */
-@OptIn(DirectDeclarationsAccess::class)
-fun FirRegularClass.promotedPropertiesByName(): Map<Name, FirPropertySymbol> =
-    declarations.asSequence()
-        .filterIsInstance<FirProperty>()
-        .filter { it.fromPrimaryConstructor == true }
-        .associateBy({ it.name }, { it.symbol })
+fun FirRegularClassSymbol.promotedPropertiesByName(session: FirSession): Map<Name, FirPropertySymbol> =
+    buildMap {
+        processAllDeclaredCallables(session) {
+            if (it is FirPropertySymbol && it.fromPrimaryConstructor) {
+                put(it.name, it)
+            }
+        }
+    }
 
 /**
  * Builds `@JvmStatic` annotation call. If `JvmStatic` symbol can't be found (stdlib is missing), then an error reference is generated.
