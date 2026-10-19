@@ -312,7 +312,7 @@ class ClasspathRootsResolver(
             // in them are members because the module is the source module, see CliJavaModuleResolver.findJavaModule.
             val roots = javaModuleOptionsResolver.patchRoots(moduleName) + listOfNotNull(outputDirectoryRoot)
             javaModuleFinder.patchModule(moduleName, roots, hasPatchedSources = true)
-                ?: null.also { reportError("Module in `-Xpatch-module` not found: $moduleName") }
+                ?: null.also { reportError("Module in '-Xpatch-module' not found: '$moduleName'.") }
         }
 
         if (javaModuleFinder.allObservableModules.none()) return
@@ -390,7 +390,7 @@ class ClasspathRootsResolver(
         ) {
             reportError(
                 "The Kotlin standard library is not found in the module graph. " + if (patchedSourceModuleName != null) {
-                    "To compile the sources in `-Xpatch-module`, add `-Xadd-reads=${sourceModule.name}=$KOTLIN_STDLIB_MODULE_NAME`"
+                    "To compile the sources in '-Xpatch-module', add '-Xadd-reads=${sourceModule.name}=$KOTLIN_STDLIB_MODULE_NAME'."
                 } else {
                     "Please ensure you have the 'requires $KOTLIN_STDLIB_MODULE_NAME' clause in your module definition"
                 },

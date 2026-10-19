@@ -166,11 +166,11 @@ private fun CompilerConfiguration.addJavaModuleAccessOptions(
         if (option == null) {
             val syntax =
                 if (isExports) "<module>/<package>=<other-module>(,<other-module>)*" else "<module>=<other-module>(,<other-module>)*"
-            this.report(COMPILER_ARGUMENTS_ERROR, "Bad value for `$flag`: '$value'\nExpected: $syntax")
+            this.report(COMPILER_ARGUMENTS_ERROR, "Bad value for '$flag': '$value'.\nExpected: '$syntax'.")
             continue
         }
         for (name in option.badNames) {
-            this.report(COMPILER_ARGUMENTS_WARNING, "Bad name in value for `$flag`: '$name'")
+            this.report(COMPILER_ARGUMENTS_WARNING, "Bad name in value for '$flag': '$name'.")
         }
         add(key, value)
     }
@@ -182,10 +182,10 @@ private fun CompilerConfiguration.addJavaModulePatches(values: Array<String>) {
         val moduleName = parseJavaModulePatch(value)?.first
         if (moduleName == null) {
             this.report(
-                COMPILER_ARGUMENTS_ERROR, "Bad value for `-Xpatch-module`: '$value'\nExpected: <module>=<path>(<path-separator><path>)*"
+                COMPILER_ARGUMENTS_ERROR, "Bad value for '-Xpatch-module': '$value'.\nExpected: '<module>=<path>(<path-separator><path>)*'."
             )
         } else if (!patchedModules.add(moduleName)) {
-            this.report(COMPILER_ARGUMENTS_ERROR, "`-Xpatch-module` is specified more than once for module $moduleName")
+            this.report(COMPILER_ARGUMENTS_ERROR, "'-Xpatch-module' is specified more than once for module '$moduleName'.")
         } else {
             add(JVMConfigurationKeys.JAVA_MODULE_PATCHES, value)
         }
