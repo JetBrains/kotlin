@@ -154,25 +154,18 @@ class IncrementalCompilationSmokeTest : BaseCompilationTest() {
     }
 
     // KT-90388
-    @DisplayName("FORCE_RECOMPILATION rebuilds all sources of a JS module")
-    @BtaV2StrategyAgnosticCompilationTest
-    @TestMetadata("js-ic-basic")
-    fun jsForceRecompilationRebuildsAllSources(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jsProject(strategyConfig) {
-            val libModule = module("js-ic-basic-lib")
-            libModule.compileIncrementally(SourcesChanges.ToBeCalculated)
-            libModule.compileIncrementally(SourcesChanges.ToBeCalculated, forceNonIncrementalCompilation = true) {
-                assertCompiledSources("A.kt", "DummyInLibMain.kt", "useAInLibMain.kt")
+    @DisplayName("IC with the FORCE_RECOMPILATION option rebuilds all sources")
+    @BtaV2StrategyAndPlatformAgnosticCompilationTest
+    @TestMetadata("js-ic-basic-lib")
+    fun forceRecompilationRebuildsAllSources(project: ProjectCreator) {
+        project {
+            assumeFalse(this is MetadataProject, "Metadata compilation doesn't support incremental compilation")
+            if (this !is JvmProject) {
+                assumeTrue(
+                    KotlinToolingVersion(kotlinToolchain.getCompilerVersion()) >= KotlinToolingVersion(2, 5, 0, "snapshot"),
+                    "FORCE_RECOMPILATION is respected by JS and Wasm IC only since Kotlin 2.5.0: KT-90388, the current version is ${kotlinToolchain.getCompilerVersion()}"
+                )
             }
-        }
-    }
-
-    // KT-90388
-    @DisplayName("FORCE_RECOMPILATION rebuilds all sources of a Wasm module")
-    @BtaV2StrategyAgnosticCompilationTest
-    @TestMetadata("js-ic-basic")
-    fun wasmForceRecompilationRebuildsAllSources(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        wasmProject(strategyConfig) {
             val libModule = module("js-ic-basic-lib")
             libModule.compileIncrementally(SourcesChanges.ToBeCalculated)
             libModule.compileIncrementally(SourcesChanges.ToBeCalculated, forceNonIncrementalCompilation = true) {
