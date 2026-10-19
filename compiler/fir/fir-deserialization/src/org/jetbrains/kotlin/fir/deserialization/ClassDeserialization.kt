@@ -210,6 +210,7 @@ fun deserializeClassToSymbol(
                     replaceAnnotations(
                         context.annotationDeserializer.loadEnumEntryAnnotations(classId, enumEntryProto, context.nameResolver)
                     )
+                    replaceDeprecationsProvider(getDeprecationsProvider(session))
                 }
 
                 property

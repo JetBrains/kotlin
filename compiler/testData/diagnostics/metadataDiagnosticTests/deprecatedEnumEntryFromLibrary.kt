@@ -28,8 +28,8 @@ enum class SourceEnum {
 }
 
 fun test() {
-    MyEnum.Foo.toString()
-    MyEnum.Bar.toString()
+    MyEnum.<!DEPRECATION!>Foo<!>.toString()
+    MyEnum.<!DEPRECATION_ERROR!>Bar<!>.toString()
     MyEnum.Baz.toString()
     <!DEPRECATION!>deprecatedFunction<!>()
     SourceEnum.<!DEPRECATION!>Foo<!>.toString()

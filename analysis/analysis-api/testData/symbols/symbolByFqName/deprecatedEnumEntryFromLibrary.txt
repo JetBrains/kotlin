@@ -31,5 +31,5 @@ KaEnumEntrySymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: lib.MyEnum
   getContainingModule: KaLibraryModule "Library lib"
-  deprecation: null
+  deprecation: KaDeprecation(level=WARNING, isPropagatedToOverrides=true)
   importableFqName: lib.MyEnum.Foo
