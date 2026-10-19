@@ -9,6 +9,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.gradle.util.runProcess
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.extension.ExtensionContext
@@ -24,6 +25,7 @@ import kotlin.test.assertEquals
 @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
 @DisplayName("Tests for Xcode <-> Kotlin direct integration")
 @NativeGradlePluginTests
+@MustRunOnChangesInGradle
 class XcodeDirectIntegrationIT : KGPBaseTest() {
 
     @DisplayName("Xcode direct integration")

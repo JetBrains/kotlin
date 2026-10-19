@@ -12,11 +12,13 @@ import org.jetbrains.kotlin.gradle.testing.*
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.*
 import org.jetbrains.kotlin.gradle.idea.testFixtures.utils.*
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import kotlin.test.assertEquals
 
 @MppGradlePluginTests
 @DisplayName("Smoke test uklib interproject consumption")
+@MustRunOnChangesInGradle
 class UklibInterprojectConsumptionIT : KGPBaseTest() {
 
     @GradleTest
