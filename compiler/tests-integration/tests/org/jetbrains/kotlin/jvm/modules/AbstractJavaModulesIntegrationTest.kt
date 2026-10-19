@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.test.testFramework.runWithDisposable
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assumptions.assumeFalse
 import org.junit.jupiter.api.Test
 import java.io.File
 import java.util.concurrent.TimeUnit
@@ -732,8 +733,7 @@ class ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
 
     @Test
     fun testPatchModuleSymlink() {
-        // Symlinks do not work on Windows
-        if (isWindows) return
+        assumeFalse(isWindows, "Symlinks do not work on Windows")
         // Like javac, a source file counts as being in a patch path when its real path is, whatever path it is compiled through.
         val lib = module("lib")
         val linked = File(testDataDirectory, "linked")
@@ -771,6 +771,27 @@ class ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
         for (arguments in listOf(emptyList(), listOf("-classpath", lib.path))) {
             module("main", listOf(lib), additionalKotlinArguments = arguments + "-Xpatch-module=lib=${patch.path}")
         }
+    }
+
+    @Test
+    fun testPatchModuleSourceOverPatchClass() {
+        // Like javac, a Java source being compiled takes precedence over a class of the same name in a patch path.
+        val lib = module("lib")
+        val sources = File(testDataDirectory, "patch")
+        val patch = File(tmpdir, "patch")
+
+        @Suppress("DEPRECATION")
+        val modulePath = lib.path + File.pathSeparator + ForTestCompileRuntime.runtimeJarFromDistForTests().path
+        compileJavaFiles(
+            listOf(File(sources, "p/C.java")),
+            listOf("-d", patch.path, "--patch-module", "lib=${sources.path}", "--module-path", modulePath),
+            jdkHome,
+        ).assertSuccessful()
+        val paths = File(testDataDirectory, "test").path + File.pathSeparator + patch.path
+        module(
+            "test", listOf(lib), additionalKotlinArguments = listOf("-Xpatch-module=lib=$paths"),
+            additionalJavaArguments = listOf("--patch-module", "lib=$paths"),
+        )
     }
 
     @Test
