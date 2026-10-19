@@ -32,7 +32,7 @@ private class K1CExportableType(private val type: KotlinType) : CExportableType 
     override fun referenceClassOrNull(): CExportableClass? =
             (type.computeBinaryType() as? BinaryType.Reference)?.types?.first()?.let(::K1CExportableClass)
 
-    override fun <R> unwrapToPrimitiveOrReference(
+    override fun <R : Any> unwrapToPrimitiveOrReference(
             eachInlinedClass: (CExportableClass) -> R?,
             ifPrimitive: (KonanPrimitiveType) -> R,
             ifReference: (CExportableClass) -> R,

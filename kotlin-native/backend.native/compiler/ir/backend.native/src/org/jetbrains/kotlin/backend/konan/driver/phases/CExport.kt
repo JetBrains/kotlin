@@ -35,8 +35,11 @@ internal val BuildCExportsFromIr = createSimpleNamedCompilerPhase<NativeBackendP
     val config = context.config
     val prefix = config.cExportPrefix
     val exportedLibraries = (config.loadedKlibs.included + config.loadedKlibs.exported).toSet()
-    // `input.irModules` is in reverse-topological order(a dependency before its dependent), which matches the K1 path.
-    val orderedFragments = input.irModules.filter { it.kotlinLibrary in exportedLibraries }
+    // Emit the exported modules in the same stable reverse-topological order as the K1 path
+    val fragmentByLibrary = input.irModules.associateBy { it.kotlinLibrary }
+    val orderedFragments = config.cacheSupport.klibDag.librariesReverseTopoSorted
+            .filter { it in exportedLibraries }
+            .mapNotNull { fragmentByLibrary[it] }
     CAdapterIrGenerator(prefix, input.irBuiltIns).buildExports(orderedFragments)
 }
 

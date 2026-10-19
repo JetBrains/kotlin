@@ -84,7 +84,7 @@ internal interface CExportableType {
      * short-circuit by returning a non-null value; otherwise the terminal is [ifPrimitive] for a primitive or
      * [ifReference] for a reference.
      */
-    fun <R> unwrapToPrimitiveOrReference(
+    fun <R : Any> unwrapToPrimitiveOrReference(
             eachInlinedClass: (CExportableClass) -> R?,
             ifPrimitive: (KonanPrimitiveType) -> R,
             ifReference: (CExportableClass) -> R,

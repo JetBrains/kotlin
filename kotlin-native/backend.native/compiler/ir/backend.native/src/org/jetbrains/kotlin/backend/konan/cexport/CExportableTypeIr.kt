@@ -31,7 +31,7 @@ private class IrCExportableType(private val type: IrType) : CExportableType {
     override fun referenceClassOrNull(): CExportableClass? =
             (type.computeBinaryType() as? BinaryType.Reference)?.types?.first()?.let(::IrCExportableClass)
 
-    override fun <R> unwrapToPrimitiveOrReference(
+    override fun <R : Any> unwrapToPrimitiveOrReference(
             eachInlinedClass: (CExportableClass) -> R?,
             ifPrimitive: (KonanPrimitiveType) -> R,
             ifReference: (CExportableClass) -> R,

@@ -256,7 +256,7 @@ internal class CAdapterIrGenerator(
             }
         }
 
-        assert(FqName.ROOT in packageTree)
+        check(FqName.ROOT in packageTree)
         visitPackage(FqName.ROOT)
 
         return CAdapterExportedElements(prefix, mutableListOf(top))
@@ -368,20 +368,16 @@ private fun IrSimpleFunction.hasExtensionReceiver(): Boolean =
 // Reconstruct the full package tree by closing the file packages under their parents. Subpackages of a package are
 // ordered by fq name, matching the sort of currentPackageFragments.
 // The root package is always present, even for an empty input.
-private fun reconstructPackageTree(names: Collection<FqName>): HashMap<FqName, MutableList<FqName>> {
-    val packages = HashMap<FqName, MutableList<FqName>>()
-    packages[FqName.ROOT] = mutableListOf()
+private fun reconstructPackageTree(names: Collection<FqName>): Map<FqName, List<FqName>> {
+    val packages = HashMap<FqName, MutableSet<FqName>>()
+    packages[FqName.ROOT] = linkedSetOf()
     for (pkg in names) {
         var current = pkg
         while (!current.isRoot) {
             val parent = current.parent()
-            val siblings = packages.getOrPut(parent) { mutableListOf() }
-            if (current !in siblings) siblings += current
+            packages.getOrPut(parent) { linkedSetOf() } += current
             current = parent
         }
     }
-    for (siblings in packages.values) {
-        siblings.sortBy { it.asString() }
-    }
-    return packages
+    return packages.mapValues { entry -> entry.value.sortedBy { it.asString() } }
 }

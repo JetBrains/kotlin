@@ -84,19 +84,16 @@ object HeaderTestModuleMarkers {
                 test.files.forEach { files += TestFile.createUncommitted(sourcesDir.resolve(it.name), this, it.text) }
             }
         )
-        is HeaderTest.MultiModule -> {
-            val modulesByName = test.modules.associate { it.name to newModule(it.name, it.dependencies) }
-            test.modules.forEach { parsed ->
-                val module = modulesByName.getValue(parsed.name)
+        is HeaderTest.MultiModule -> test.modules.map { parsed ->
+            newModule(parsed.name, parsed.dependencies).apply {
                 parsed.files.forEach { sourceFile ->
-                    module.files += TestFile.createUncommitted(
+                    files += TestFile.createUncommitted(
                         sourcesDir.resolve(parsed.name).resolve(sourceFile.name),
-                        module,
+                        this,
                         sourceFile.text,
                     )
                 }
             }
-            test.modules.map { modulesByName.getValue(it.name) }
         }
     }
 
@@ -147,6 +144,14 @@ object HeaderTestModuleMarkers {
         if (lines.none { it.startsWith(FILE_MARKER) }) {
             return if (lines.all { it.isBlank() }) emptyList()
             else listOf(ParsedFile(defaultFileName, buildString { lines.forEach { appendLine(it) } }))
+        }
+
+        // Lines before the first `// FILE:` are dropped; keep that intentional but visible — only blank or comment
+        // lines are allowed there, so a stray declaration placed before the first marker fails loudly.
+        val preamble = lines.takeWhile { !it.startsWith(FILE_MARKER) }
+        require(preamble.all { it.isBlank() || it.trimStart().startsWith("//") }) {
+            "Content before the first `// FILE:` marker is dropped; it must be blank or a comment. Offending lines:\n" +
+                    preamble.filterNot { it.isBlank() || it.trimStart().startsWith("//") }.joinToString("\n")
         }
 
         val files = mutableListOf<ParsedFile>()
