@@ -48,9 +48,9 @@ internal val SetupSharedPackageJsonSideEffect = KotlinTargetSideEffect { target 
     val packageJsonsForRoot = project.maybeCreatePackageJsonsForRoot(platform)
 
     target.compilations.all { compilation ->
-        val resolver = project.createCompilationPackageJsonResolver(compilation)
+        val packageJsonsFromDependencies = project.createPackageJsonsFromDependenciesResolver(compilation)
         sharedPackageJsonTask.configure { task ->
-            task.compilations.add(project.compilationPackageJsonInputs(compilation, resolver, platform))
+            task.compilations.add(project.compilationPackageJsonInputs(compilation, packageJsonsFromDependencies, platform))
         }
 
         val packageJsonFile = sharedPackageJsonTask.flatMap { task ->
@@ -65,7 +65,7 @@ internal val SetupSharedPackageJsonSideEffect = KotlinTargetSideEffect { target 
 
 private fun Project.compilationPackageJsonInputs(
     compilation: KotlinJsIrCompilation,
-    resolver: Configuration,
+    packageJsonsFromDependencies: Configuration,
     platform: HasPlatformDisambiguator,
 ): CompilationPackageJsonInputs = objects.newInstance(CompilationPackageJsonInputs::class.java).apply {
     val npmProject = compilation.npmProject
@@ -75,7 +75,7 @@ private fun Project.compilationPackageJsonInputs(
     types.set(npmProject.typesFilePath)
     directDependencies.set(provider { collectDirectDeclaredNpmDependencies(compilation) })
     toolDependencies.set(provider { collectDevNpmDependencies(compilation) })
-    transitiveArtifacts.from(sharedPackageJsonArtifacts(resolver, platform))
+    transitiveArtifacts.from(sharedPackageJsonArtifacts(packageJsonsFromDependencies, platform))
 }
 
 private fun collectDirectDeclaredNpmDependencies(compilation: KotlinJsIrCompilation): Set<DefaultKotlinNpmDependency> =

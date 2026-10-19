@@ -36,26 +36,26 @@ import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.maybeCreateConsumable
 import org.jetbrains.kotlin.gradle.utils.setInvisibleIfSupported
 
-internal val HasPlatformDisambiguator.npmSharedPackageJsonFilesConfigurationName: String
-    get() = extensionName("npmSharedPackageJsonFiles")
+internal val HasPlatformDisambiguator.npmSharedPackageJsonFilesForRootConfigurationName: String
+    get() = extensionName("npmSharedPackageJsonFilesForRoot")
 
 internal val HasPlatformDisambiguator.npmSharedDependenciesConfigurationName: String
     get() = extensionName("npmSharedDependencies")
 
-internal val HasPlatformDisambiguator.npmSharedDependenciesResolverConfigurationName: String
-    get() = extensionName("npmSharedDependenciesResolver")
+internal val HasPlatformDisambiguator.npmSharedPackageJsonFilesFromSubprojectsResolverConfigurationName: String
+    get() = extensionName("npmSharedPackageJsonFilesFromSubprojectsResolver")
 
-internal val KotlinJsIrTarget.sharedPackageJsonElementsConfigurationName: String
-    get() = lowerCamelCaseName(disambiguationClassifier, "sharedPackageJsonElements")
+internal val KotlinJsIrTarget.npmSharedPackageJsonForDependentsConfigurationName: String
+    get() = lowerCamelCaseName(disambiguationClassifier, "npmSharedPackageJsonForDependents")
 
-internal val KotlinJsIrCompilation.sharedPackageJsonResolverConfigurationName: String
-    get() = disambiguateName("sharedPackageJsonResolver")
+internal val KotlinJsIrCompilation.npmSharedPackageJsonFromDependenciesResolverConfigurationName: String
+    get() = disambiguateName("npmSharedPackageJsonFromDependenciesResolver")
 
-internal val HasPlatformDisambiguator.npmSharedPackageJsonFilesUsageName: String
-    get() = extensionName("npmSharedPackageJsonFiles")
+internal val HasPlatformDisambiguator.npmSharedPackageJsonFilesForRootUsageName: String
+    get() = extensionName("npmSharedPackageJsonFilesForRoot")
 
-internal val HasPlatformDisambiguator.sharedPackageJsonUsageName: String
-    get() = extensionName("npmSharedPackageJsonElements")
+internal val HasPlatformDisambiguator.npmSharedPackageJsonForDependentsUsageName: String
+    get() = extensionName("npmSharedPackageJsonForDependents")
 
 private fun Project.sharedPackageJsonAttributes(attributes: AttributeContainer, usageName: String) {
     attributes.attribute(Usage.USAGE_ATTRIBUTE, usageByName(usageName))
@@ -63,23 +63,23 @@ private fun Project.sharedPackageJsonAttributes(attributes: AttributeContainer, 
 }
 
 internal fun Project.maybeCreatePackageJsonsForRoot(platform: HasPlatformDisambiguator): Configuration =
-    configurations.maybeCreateConsumable(platform.npmSharedPackageJsonFilesConfigurationName) {
+    configurations.maybeCreateConsumable(platform.npmSharedPackageJsonFilesForRootConfigurationName) {
         setInvisibleIfSupported()
         description = "Kotlin package.json files of this project for the shared-npm-project."
-        sharedPackageJsonAttributes(attributes, platform.npmSharedPackageJsonFilesUsageName)
+        sharedPackageJsonAttributes(attributes, platform.npmSharedPackageJsonFilesForRootUsageName)
     }
 
-internal fun Project.createSubprojectPackageJsonsResolver(platform: HasPlatformDisambiguator): Configuration {
+internal fun Project.createPackageJsonsFromSubprojectsResolver(platform: HasPlatformDisambiguator): Configuration {
     val sharedDependencies = configurations.createDependencyScope(platform.npmSharedDependenciesConfigurationName) {
         setInvisibleIfSupported()
         description = "Projects contributing to the shared-npm-project."
     }
 
-    return configurations.createResolvable(platform.npmSharedDependenciesResolverConfigurationName) {
+    return configurations.createResolvable(platform.npmSharedPackageJsonFilesFromSubprojectsResolverConfigurationName) {
         setInvisibleIfSupported()
-        description = "Resolves the '${platform.npmSharedPackageJsonFilesConfigurationName}' package.json files of the projects in '${platform.npmSharedDependenciesConfigurationName}'."
+        description = "Resolves the '${platform.npmSharedPackageJsonFilesForRootConfigurationName}' package.json files of the projects in '${platform.npmSharedDependenciesConfigurationName}'."
         extendsFrom(sharedDependencies.get())
-        sharedPackageJsonAttributes(attributes, platform.npmSharedPackageJsonFilesUsageName)
+        sharedPackageJsonAttributes(attributes, platform.npmSharedPackageJsonFilesForRootUsageName)
     }
 }
 
@@ -87,15 +87,15 @@ internal fun Project.maybeCreatePackageJsonForDependents(
     target: KotlinJsIrTarget,
     platform: HasPlatformDisambiguator,
 ): Configuration =
-    configurations.maybeCreateConsumable(target.sharedPackageJsonElementsConfigurationName) {
+    configurations.maybeCreateConsumable(target.npmSharedPackageJsonForDependentsConfigurationName) {
         setInvisibleIfSupported()
         description = "Shared package.json of the '${target.name}' target for dependent projects."
-        sharedPackageJsonAttributes(attributes, platform.sharedPackageJsonUsageName)
+        sharedPackageJsonAttributes(attributes, platform.npmSharedPackageJsonForDependentsUsageName)
     }
 
-internal fun Project.createCompilationPackageJsonResolver(compilation: KotlinJsIrCompilation): Configuration {
+internal fun Project.createPackageJsonsFromDependenciesResolver(compilation: KotlinJsIrCompilation): Configuration {
     val runtimeDependencies = declaredRuntimeDependencies(compilation)
-    return configurations.createResolvable(compilation.sharedPackageJsonResolverConfigurationName) {
+    return configurations.createResolvable(compilation.npmSharedPackageJsonFromDependenciesResolverConfigurationName) {
         setInvisibleIfSupported()
         description = "Resolves the runtime dependencies of $compilation to collect their npm dependencies."
         usesPlatformOf(compilation.target)
@@ -116,7 +116,7 @@ internal fun Project.sharedPackageJsonArtifacts(resolver: Configuration, platfor
         view.withVariantReselection()
         view.componentFilter { it is ProjectComponentIdentifier }
         view.attributes { attributes ->
-            sharedPackageJsonAttributes(attributes, platform.sharedPackageJsonUsageName)
+            sharedPackageJsonAttributes(attributes, platform.npmSharedPackageJsonForDependentsUsageName)
         }
         view.lenient(true)
     }
@@ -125,11 +125,11 @@ internal fun Project.sharedPackageJsonArtifacts(resolver: Configuration, platfor
         view.lenient(true)
     }
     return files(
-        projectView.sharedPackageJsonElementsFiles(platform.sharedPackageJsonUsageName),
+        projectView.npmSharedPackageJsonForDependentsFiles(platform.npmSharedPackageJsonForDependentsUsageName),
         moduleView.files,
     )
 }
 
 /** Reselection also matches variants that declare no Usage at all, so drop everything that is not ours: KT-85517. */
-private fun ArtifactView.sharedPackageJsonElementsFiles(usageName: String) = artifacts.resolvedArtifacts
+private fun ArtifactView.npmSharedPackageJsonForDependentsFiles(usageName: String) = artifacts.resolvedArtifacts
     .map { artifacts -> artifacts.filter { it.variant.attributes.getAttributeSafely(Usage.USAGE_ATTRIBUTE) == usageName }.map { it.file } }
