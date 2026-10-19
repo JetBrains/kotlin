@@ -2,6 +2,7 @@ PrivateValue.class:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
+  @kotlin.jvm.JvmInline
   public final inline value class PrivateValue public constructor(value: kotlin.String) {
       private final val value: kotlin.String /* compiled code */
 
@@ -16,6 +17,7 @@ PublicValue.class:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
+  @kotlin.jvm.JvmInline
   public final inline value class PublicValue public constructor(value: kotlin.String) {
       public final val value: kotlin.String /* compiled code */
 
