@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.presetName
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
@@ -36,6 +37,7 @@ import kotlin.io.path.writeText
 @ExperimentalPathApi
 @DisplayName("Local build cache")
 @JvmGradlePluginTests
+@MustRunOnChangesInGradle
 class BuildCacheIT : KGPBaseTest() {
 
     override val defaultBuildOptions: BuildOptions =
