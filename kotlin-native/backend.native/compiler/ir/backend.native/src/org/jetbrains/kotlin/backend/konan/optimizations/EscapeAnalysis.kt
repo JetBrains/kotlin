@@ -347,7 +347,8 @@ internal object EscapeAnalysis {
             val callGraph: CallGraph,
             val moduleDFG: ModuleDFG,
             val lifetimes: MutableMap<IrElement, Lifetime>,
-            val propagateExiledToHeapObjects: Boolean
+            val propagateExiledToHeapObjects: Boolean,
+            val forbidStackObjectsInFields: Boolean
     ) {
         private val irBuiltIns = context.irBuiltIns
         private val throwable = irBuiltIns.throwableClass.owner
@@ -1640,10 +1641,36 @@ internal object EscapeAnalysis {
                     findReferencing(node, referencingEscapeOrigins)
             }
 
+            // With compressed references, fields can't point to the stack. So objects stored into fields of stack objects
+            // are exiled to the heap, and so are parameters, as they may point to stack objects of the caller.
+            private fun exileStackObjectsStoredInFields() {
+                fun isStackObject(ptgNode: PointsToGraphNode) =
+                        ptgNode.node is DataFlowIR.Node.Alloc && lifetimeOf(ptgNode) == Lifetime.STACK
+
+                val drains = allNodes.filter { isStackObject(it) }.map { it.drain }.toSet()
+                for (drain in drains) {
+                    for (edge in drain.edges) {
+                        if (edge !is PointsToGraphEdge.Field) continue
+                        val storedValues = mutableSetOf<PointsToGraphNode>()
+                        findReachable(edge.node, storedValues, true, null)
+                        for (value in storedValues) {
+                            if (value.node is DataFlowIR.Node.Parameter || isStackObject(value)) {
+                                context.log { "Forcing node ${nodeToString(value.node!!)} to escape" }
+                                escapeOrigins += value
+                                propagateEscapeOrigin(value)
+                            }
+                        }
+                    }
+                }
+            }
+
             private fun computeLifetimes() {
                 propagateLifetimes()
 
                 escapeOrigins.forEach { propagateEscapeOrigin(it) }
+
+                if (forbidStackObjectsInFields)
+                    exileStackObjectsStoredInFields()
 
                 // TODO: To a setting?
                 val allowedToAlloc = 65536
@@ -1801,7 +1828,8 @@ internal object EscapeAnalysis {
         try {
             InterproceduralAnalysis(context, generationState, callGraph,
                     moduleDFG, lifetimes,
-                    propagateExiledToHeapObjects = context.config.escapeAnalysisPropagateExiledToHeapObjects
+                    propagateExiledToHeapObjects = context.config.escapeAnalysisPropagateExiledToHeapObjects,
+                    forbidStackObjectsInFields = context.config.compressedRefs
             ).analyze()
         } catch (t: Throwable) {
             val extraUserInfo =
