@@ -216,28 +216,23 @@ private val IrFunction.isStaticFakeOverrideForKotlin: Boolean
  * To preserve the old behavior of never allowing accidental overrides by synthetic/generated code,
  * only allow it for source-defined functions and property accessors.
  */
-private val IrFunction.isDefined: Boolean
-    get() = origin == IrDeclarationOrigin.DEFINED || origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
+private val IrFunction.isDefinedMember: Boolean
+    get() = !isStatic && (origin == IrDeclarationOrigin.DEFINED || origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR)
 
 private fun IrOverrideChecker.canIgnoreConflict(a: IrFunction, b: IrFunction): Boolean {
     if (a === b) return true
 
     // Allow "accidental overrides" between two declarations if:
-    // 1. One is static and the other is not.
-    // 2. One is a static fake override and the other is member defined in source code.
+    // 1. One of them is a static fake override created for method from Kotlin.
+    // 2. The other one is a member defined in source code.
+    // 2. They "override"/hide each other.
+    //
     //    Note: This is overly restrictive but needed for preserving behavior of JvmStatic/JvmOverloads-generated
     //          methods before companion blocks where introduced, such as
     //          compiler/testData/diagnostics/tests/jvm/duplicateJvmSignature/jvmStatic/jvmStaticInCompanionObject.kt
-    // 3. Neither of them is a fake override created for a static method from Java.
-    // 4. They "override"/hide each other.
 
-    if (!((a.isDefined && !a.isStatic && b.isStaticFakeOverrideForKotlin) ||
-                (a.isStaticFakeOverrideForKotlin && b.isDefined && !b.isStatic))
-    ) {
-        return false
-    }
-    if (a !is IrOverridableMember || b !is IrOverridableMember) return false
-    if (!getBothWaysOverridability(MemberWithOriginal(a, null), MemberWithOriginal(b, null)).overridable) return false
-
-    return true
+    return (a.isStaticFakeOverrideForKotlin xor b.isStaticFakeOverrideForKotlin) &&
+            (a.isDefinedMember xor b.isDefinedMember) &&
+            (a is IrOverridableMember && b is IrOverridableMember) &&
+            getBothWaysOverridability(MemberWithOriginal(a, null), MemberWithOriginal(b, null)).overridable
 }
