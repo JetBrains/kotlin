@@ -255,3 +255,24 @@ Unknown:
 ignore:
   - "tests/mute-common.csv"
 
+  # Fast track all readme files (except for those in resource folders)
+  - "ReadMe.md"
+  - "**/ReadMe.md"
+  - "**/README.md"
+  - "**/readme.md"
+  - "!**/resources/**"
+  - "!license"
+
+  # Fast track top level documents
+  - "SECURITY.md"
+  - "CODE_OF_CONDUCT.md"
+
+  # Fast track AI rules
+  - ".junie"
+  - ".claude"
+  - ".ai"
+  - "AGENTS.md"
+  - "CLAUDE.md"
+
+  # Ignore docs
+  - "docs"

@@ -105,9 +105,7 @@ Wasm:
 Js:
  - compiler/ir/backend.js
  - compiler/ir/serialization.js
- - js/ReadMe.md
  - js/js.ast
- - js/js.config/ReadMe.md
  - js/js.config/build.gradle.kts
  - js/js.config/gen
  - js/js.config/src/org/jetbrains/kotlin/incremental
@@ -115,13 +113,11 @@ Js:
  - js/js.config/src/org/jetbrains/kotlin/platform
  - js/js.config/src/org/jetbrains/kotlin/utils
  - js/js.parser
- - js/js.tests/ReadMe.md
  - js/js.tests/build.gradle.kts
  - js/js.tests/klib-compatibility
  - js/js.tests/testFixtures/com
  - js/js.tests/testFixturesResources
  - js/js.tests/tests
- - js/js.translator/ReadMe.md
  - js/js.translator/build.gradle.kts
  - js/js.translator/src
  - js/npm
@@ -173,7 +169,6 @@ AnalysisApi:
 BuildToolsApi:
  - compiler/build-tools/AGENTS.md
  - compiler/build-tools/CLAUDE.md
- - compiler/build-tools/README.md
  - compiler/build-tools/kotlin-build-tools-api
  - compiler/build-tools/kotlin-build-tools-api-backports
  - compiler/build-tools/kotlin-build-tools-api-forward-tests
@@ -264,29 +259,19 @@ BuildInfrastructure:
  - settings.gradle.kts
 
 Unknown:
- - .ai
- - .claude
  - .editorconfig
  - .gitattributes
  - .github
  - .gitignore
- - .junie
- - AGENTS.md
- - CLAUDE.md
- - CODE_OF_CONDUCT.md
  - ChangeLog.md
- - ReadMe.md
- - SECURITY.md
  - annotations
  - benchmarks
  - code-rules.md
  - compiler/AGENTS.md
  - compiler/CLAUDE.md
- - compiler/ir/ReadMe.md
  - compiler/ir/code-rules.md
  - compiler/test-coverage
  - dependencies
- - docs
  - generators
  - gradlew
  - gradlew.bat
@@ -296,7 +281,6 @@ Unknown:
  - kotlin-js-store
  - libraries/.gitignore
  - libraries/.mvn
- - libraries/ReadMe.md
  - libraries/examples
  - libraries/kotlin-dom-api-compat
  - libraries/lib
