@@ -16,12 +16,16 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.parseCompilerArgumentsFromBuildOutput
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInFrontend
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
 import kotlin.io.path.appendText
 
 @DisplayName("'kotlin.experimental.tryNext' option")
+@MustRunOnChangesInGradle
+@MustRunOnChangesInFrontend
 class TryNextIT : KGPBaseTest() {
 
     @DisplayName("Produces single warning message in multi-project when enabled")
