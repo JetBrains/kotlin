@@ -29,6 +29,10 @@ internal abstract class KtStubSerializingElementFactory<Stub : StubElement<Psi>,
 
     /**
      * An element is stubbed only if its parent is stubbed as well.
+     *
+     * Overrides which stub an element regardless of its parent (e.g., local classes and functions) must be kept in sync with
+     * [org.jetbrains.kotlin.psi.stubs.StubBuildingLexing.mayContainStubbedDeclarations], which allows the stub builder to skip
+     * code blocks without such elements.
      */
     override fun shouldCreateStub(node: ASTNode): Boolean {
         val parent = node.treeParent

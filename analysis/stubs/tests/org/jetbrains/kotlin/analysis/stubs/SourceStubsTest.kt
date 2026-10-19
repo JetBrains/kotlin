@@ -71,8 +71,8 @@ class SourceStubsTest : AbstractAnalysisApiExecutionTest("testData/source/custom
 
         fun bodyOf(name: String): ASTNode? = functions.getValue(name).findChildByType(KtNodeTypes.BLOCK)
 
-        // Neither a stubbed declaration nor a contract can be found inside, but the body is still parsed
-        testServices.assertions.assertTrue(isParsed(bodyOf("withoutDeclarations")))
+        // Neither a stubbed declaration nor a contract can be found inside, so the body is skipped
+        testServices.assertions.assertFalse(isParsed(bodyOf("withoutDeclarations")))
 
         // The local class has to be stubbed
         testServices.assertions.assertTrue(isParsed(bodyOf("withLocalClass")))
@@ -81,6 +81,6 @@ class SourceStubsTest : AbstractAnalysisApiExecutionTest("testData/source/custom
         testServices.assertions.assertTrue(isParsed(bodyOf("withContract")))
 
         val lambda = PsiTreeUtil.findChildOfType(freshFile, KtLambdaExpression::class.java, /* strict = */ true)
-        testServices.assertions.assertTrue(isParsed(lambda?.node))
+        testServices.assertions.assertFalse(isParsed(lambda?.node))
     }
 }
