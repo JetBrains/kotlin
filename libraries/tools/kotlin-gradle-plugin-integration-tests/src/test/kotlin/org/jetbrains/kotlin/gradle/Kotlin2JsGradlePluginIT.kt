@@ -230,6 +230,20 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                     "\"module\"",
                 )
             }
+
+            buildScriptInjection {
+                kotlinMultiplatform.js {
+                    compilerOptions.target.set("es2015")
+                }
+            }
+
+            build("jsNodeDevelopmentRun") {
+                assertOutputContains("Hello, World!")
+            }
+
+            build("jsNodeProductionRun") {
+                assertOutputContains("Hello, World!")
+            }
         }
     }
 
@@ -386,6 +400,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
             }
         }
     }
+
 
     @DisplayName("delegated transpilation is turned off by default for library")
     @GradleTest
