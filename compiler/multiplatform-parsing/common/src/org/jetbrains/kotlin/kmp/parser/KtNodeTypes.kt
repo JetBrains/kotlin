@@ -315,8 +315,8 @@ object KtNodeTypes : SyntaxElementTypesWithIds() {
     val LOOP_RANGE: SyntaxElementType = register(LOOP_RANGE_ID, "LOOP_RANGE")
     val BODY: SyntaxElementType = register(BODY_ID, "BODY")
 
-    val BLOCK: SyntaxElementType = register(BLOCK_ID, "BLOCK")
-    val LAMBDA_EXPRESSION: SyntaxElementType = register(LAMBDA_EXPRESSION_ID, "LAMBDA_EXPRESSION")
+    val BLOCK: SyntaxElementType = register(BLOCK_ID, "BLOCK", KotlinBlockLazyParser)
+    val LAMBDA_EXPRESSION: SyntaxElementType = register(LAMBDA_EXPRESSION_ID, "LAMBDA_EXPRESSION", KotlinLambdaLazyParser)
     val FUNCTION_LITERAL: SyntaxElementType = register(FUNCTION_LITERAL_ID, "FUNCTION_LITERAL")
     val ANNOTATED_EXPRESSION: SyntaxElementType = register(ANNOTATED_EXPRESSION_ID, "ANNOTATED_EXPRESSION")
     val OPERATION_REFERENCE: SyntaxElementType = register(OPERATION_REFERENCE_ID, "OPERATION_REFERENCE")

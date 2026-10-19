@@ -1100,7 +1100,7 @@ internal open class KotlinExpressionParsing(
     /**
      * If it has no ->, it's a block, otherwise a function literal
      *
-     * Please update [org.jetbrains.kotlin.BlockExpressionElementType.isParsable] if any changes occurs!
+     * Please update [org.jetbrains.kotlin.kmp.parser.KotlinBlockLazyParser.isReparseableBlock] if any changes occurs!
      */
     fun parseFunctionLiteral(preferBlock: Boolean, collapse: Boolean) {
         require(at(KtTokens.LBRACE))

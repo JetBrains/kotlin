@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.kmp.utils
 
+import com.intellij.platform.syntax.LazyParser
 import com.intellij.platform.syntax.SyntaxElementType
 
 @Suppress("DEPRECATION")
@@ -26,8 +27,8 @@ abstract class SyntaxElementTypesWithIds {
      */
     fun getElementTypeId(syntaxElementType: SyntaxElementType?): Int = syntaxElementType?.index?.let { indexToIdMap[it] } ?: NO_ID
 
-    fun register(id: Int, name: String): SyntaxElementType {
-        return SyntaxElementType(name).also {
+    fun register(id: Int, name: String, lazyParser: LazyParser? = null): SyntaxElementType {
+        return SyntaxElementType(name, lazyParser).also {
             if (indexToIdMap.containsValue(id)) {
                 error("The element with id $id is already registered. Please fix the constant.")
             }
