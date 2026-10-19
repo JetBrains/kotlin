@@ -115,12 +115,10 @@ class WasmGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolato
         }
 
     private fun computeCoroutineHelpersToken(registeredDirectives: RegisteredDirectives): BatchToken? {
+        // The default coroutine helpers are the same for all tests, so only extra ones need a separate batch.
         if (AdditionalFilesDirectives.WITH_COROUTINES !in registeredDirectives) return null
-        val extraHelperDirectives = listOf(
-            CHECK_STATE_MACHINE, // adds helpers: `CoroutineUtil.kt` + `StateMachineChecker.kt`
-        ).filter { it in registeredDirectives }
-        // The default set of helper files is the same for all such tests, so they may be grouped as usual.
-        return extraHelperDirectives.ifNotEmpty { Custom("coroutine helpers: ${joinToString { it.name }}") }
+        if (CHECK_STATE_MACHINE !in registeredDirectives) return null
+        return Custom("coroutine helpers: $CHECK_STATE_MACHINE")
     }
 
     private fun computeLanguageSettingsToken(moduleStructure: TestModuleStructure): BatchToken? {
