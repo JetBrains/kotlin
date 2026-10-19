@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.buildtools.internal.jvm.operations
 
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.report.BuildReporter
+import org.jetbrains.kotlin.build.report.CompositeICReporter
+import org.jetbrains.kotlin.build.report.events.EventICReporter
 import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
 import org.jetbrains.kotlin.build.report.metrics.endMeasureGc
@@ -281,12 +283,20 @@ internal class JvmCompilationOperationImpl private constructor(
         val classpathChanges = snapshotBasedIcOptionsAccessor.classpathChanges
         val metricsReporter = getMetricsReporter()
         metricsReporter.startMeasureGc()
+        val icReporter = BuildToolsApiBuildICReporter(
+            kotlinLogger = loggerAdapter.kotlinLogger,
+            rootProjectDir = projectDir,
+            buildMetricsReporter = metricsReporter,
+        )
+        val icEventCollector = this[IC_EVENT_COLLECTOR]
+        val eventReporter = if (icEventCollector != null) EventICReporter() else null
         val buildReporter = BuildReporter(
-            icReporter = BuildToolsApiBuildICReporter(
-                kotlinLogger = loggerAdapter.kotlinLogger,
-                rootProjectDir = projectDir,
-                buildMetricsReporter = metricsReporter,
-            ), buildMetricsReporter = metricsReporter
+            icReporter = if (eventReporter != null) {
+                CompositeICReporter(listOf(icReporter, eventReporter))
+            } else {
+                icReporter
+            },
+            buildMetricsReporter = metricsReporter
         )
         val verifiedPreciseJavaTracking = getEffectivePreciseJavaTrackingState(snapshotBasedIcOptionsAccessor, arguments)
         val icFeatures = snapshotBasedIcOptionsAccessor.extractIncrementalCompilationFeatures().copy(
@@ -320,14 +330,18 @@ internal class JvmCompilationOperationImpl private constructor(
         } else null
         val configurationInputs =
             makeConfigurationInputs(snapshotBasedIcOptionsAccessor, verifiedPreciseJavaTracking)
-        val compilationResult = incrementalCompiler.compile(
-            kotlinSources,
-            arguments,
-            loggerAdapter,
-            snapshotBasedIcOptionsAccessor.sourcesChanges.asChangedFiles,
-            fileLocations,
-            configurationInputs,
-        ).asCompilationResult
+        val compilationResult = try {
+            incrementalCompiler.compile(
+                kotlinSources,
+                arguments,
+                loggerAdapter,
+                snapshotBasedIcOptionsAccessor.sourcesChanges.asChangedFiles,
+                fileLocations,
+                configurationInputs,
+            )
+        } finally {
+            eventReporter?.let { icEventCollector?.collectEvents(it.events.toIcEvents()) }
+        }.asCompilationResult
 
         metricsReporter.endMeasureGc()
         populateMetricsCollector(metricsReporter)
