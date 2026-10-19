@@ -11,6 +11,7 @@ import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileCollection
 import org.gradle.api.model.ObjectFactory
@@ -98,6 +99,9 @@ constructor(
     final override val toolOptions: KotlinCommonCompilerToolOptions = objectFactory
         .newInstance<KotlinCommonCompilerToolOptionsDefault>()
 
+    // Other tasks put files next to the binary (KT-89241), so the directory is not an
+    // output. The task declares the files it writes, see outputFiles and outputDirectories.
+    @get:Internal
     override val destinationDirectory: DirectoryProperty = binary.outputDirectoryProperty
 
     @Suppress("DEPRECATION_ERROR")
@@ -430,13 +434,22 @@ constructor(
     @get:NormalizeLineEndings
     protected val friendModule: FileCollection = objectFactory.fileCollection().from({ compilation.friendPaths })
 
-    private val linkOutputs: Provider<KotlinNativeLinkOutputs> = destinationDirectory.map {
-        KotlinNativeLinkOutputs(it.asFile, outputKind, konanTarget, baseName)
-    }
+    // Not kept on the task: the configuration cache would serialize the helper as a bean
+    private fun linkOutputs(destinationDirectory: Directory) =
+        KotlinNativeLinkOutputs(destinationDirectory.asFile, outputKind, konanTarget, baseName)
 
     @get:Internal
     open val outputFile: Provider<File>
-        get() = linkOutputs.map { it.mainOutput }
+        get() = destinationDirectory.map { linkOutputs(it).mainOutput }
+
+    @get:OutputFiles
+    internal val outputFiles: Provider<List<File>> = destinationDirectory.map { linkOutputs(it).files }
+
+    @get:OutputDirectories
+    internal val outputDirectories: Provider<List<File>> =
+        destinationDirectory.zip(toolOptions.freeCompilerArgs) { directory, freeCompilerArgs ->
+            linkOutputs(directory).directories(debuggable, isStaticFramework, freeCompilerArgs)
+        }
 
     @Internal
     val compilerPluginOptions = CompilerPluginOptions()
