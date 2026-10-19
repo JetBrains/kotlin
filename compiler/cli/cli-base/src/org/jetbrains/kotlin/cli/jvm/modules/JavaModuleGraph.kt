@@ -64,16 +64,16 @@ class JavaModuleGraph(finder: JavaModuleFinder) {
     }
 
     /**
-     * `true` if [moduleName] reads [dependencyName] through one of the [additionalReads] given with `-Xadd-reads`, keyed by module name.
-     * As in javac, a module made to read `ALL-UNNAMED` reads every module, as the unnamed module does. The [modulesFromClasspath] are
-     * read from classpath roots, which javac puts in the unnamed module.
+     * `true` if [moduleName] reads [dependencyName] through one of the reads given with `-Xadd-reads` in [access]. As in javac, a module
+     * made to read `ALL-UNNAMED` reads every module, as the unnamed module does. The [modulesFromClasspath] are read from classpath roots,
+     * which javac puts in the unnamed module.
      */
     fun readsAdditionally(
-        additionalReads: Map<String, Set<String>>,
+        access: JavaModuleAccess,
         moduleName: String,
         dependencyName: String,
-        modulesFromClasspath: Set<String> = emptySet(),
-    ): Boolean = additionalReads[moduleName].orEmpty().any {
+        modulesFromClasspath: Set<String> = access.modulesFromClasspath,
+    ): Boolean = access.additionalReads[moduleName].orEmpty().any {
         it == dependencyName || it == ALL_UNNAMED || requiresTransitively(it, dependencyName, modulesFromClasspath)
     }
 

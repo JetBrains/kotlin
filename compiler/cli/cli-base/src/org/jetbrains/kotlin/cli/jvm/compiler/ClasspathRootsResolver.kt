@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.cli.jvm.compiler
 
 import com.intellij.ide.highlighter.JavaFileType
-import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
@@ -31,20 +30,16 @@ import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.MessageUtil
 import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
-import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRootBase
 import org.jetbrains.kotlin.cli.jvm.config.JvmContentRootBase
 import org.jetbrains.kotlin.cli.jvm.config.JvmModulePathRoot
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
-import org.jetbrains.kotlin.cli.jvm.modules.ALL_UNNAMED
 import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleFinder
+import org.jetbrains.kotlin.cli.jvm.modules.JavaModuleAccess
 import org.jetbrains.kotlin.cli.jvm.modules.JavaModuleGraph
-import org.jetbrains.kotlin.cli.jvm.modules.parseJavaModuleAccessOption
-import org.jetbrains.kotlin.cli.jvm.modules.parseJavaModulePatch
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.cli.reportLog
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.diagnostics.KtSourcelessDiagnosticFactory
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.load.java.JavaClassFinder
@@ -81,34 +76,19 @@ class ClasspathRootsResolver(
     private val reportErrors = hasKotlinSources
 
     /**
-     * Values of `-Xadd-reads` in the module graph, from a module name to the modules it reads or `ALL-UNNAMED`. Computed by the first
-     * call to [convertClasspathRoots].
+     * Values of `-Xadd-reads` and `-Xadd-exports` for the module graph, computed by the first call to [convertClasspathRoots].
      */
-    var additionalJavaModuleReads: Map<String, Set<String>> = emptyMap()
-        private set
-
-    /**
-     * Values of `-Xadd-exports` in the module graph, from `<module>/<package>` to the modules it is exported to or `ALL-UNNAMED`.
-     * Computed by the first call to [convertClasspathRoots].
-     */
-    var additionalJavaModuleExports: Map<String, Set<String>> = emptyMap()
-        private set
-
-    /**
-     * Modules read only from classpath roots that are also added to the module path (see [JvmModulePathRoot.isFromClasspath]). For javac,
-     * those roots are in the unnamed module. Computed by the first call to [convertClasspathRoots].
-     */
-    var javaModulesFromClasspath: Set<String> = emptySet()
+    var javaModuleAccess: JavaModuleAccess = JavaModuleAccess.EMPTY
         private set
 
     // Roots passed to a later call, such as script dependencies, are resolved without the source module, so `-Xadd-reads`,
     // `-Xadd-exports`, and `-Xpatch-module` are only resolved on the first call.
     private var hasConvertedRoots = false
 
-    // Values of -Xpatch-module, from a module name to its paths. Each module is patched at most once, which is checked in jvmArguments.kt.
-    private val javaModulePatches: Map<String, List<File>> =
-        configuration.getList(JVMConfigurationKeys.JAVA_MODULE_PATCHES).mapNotNull(::parseJavaModulePatch)
-            .associate { it.first to it.second.map(::File) }
+    private val javaModuleOptionsResolver = JavaModuleOptionsResolver(
+        configuration, javaModuleFinder, contentRootToVirtualFile, jdkRelease, reportError = { reportError(it) },
+        reportWarning = { reportWarning(it) },
+    )
 
     data class RootsAndModules(val roots: List<JavaRoot>, val modules: List<JavaModule>)
 
@@ -144,9 +124,6 @@ class ClasspathRootsResolver(
             .also { hasConvertedRoots = true }
     }
 
-    // A Kotlin or Java source root, and the extension of the source files compiled from it.
-    private data class SourceRootFile(val file: File, val extension: String)
-
     private fun computeRoots(
         javaSourceRoots: List<RootWithPrefix>,
         jvmClasspathRoots: List<VirtualFile>,
@@ -176,7 +153,9 @@ class ClasspathRootsResolver(
         // Like javac, the sources are members of a patched module only when no module-info.java is among them.
         val hasModularRoots = jdkRelease == null || jdkRelease >= 9
         val patchedSourceModuleName =
-            if (!hasConvertedRoots && modules.isEmpty() && hasModularRoots) findModuleWithPatchedSources(sourceRootFiles) else null
+            if (!hasConvertedRoots && modules.isEmpty() && hasModularRoots) {
+                javaModuleOptionsResolver.findModuleWithPatchedSources(sourceRootFiles)
+            } else null
 
         for (root in jvmClasspathRoots) {
             result += JavaRoot(root, JavaRoot.RootType.BINARY)
@@ -203,34 +182,6 @@ class ClasspathRootsResolver(
 
         return RootsAndModules(result, modules)
     }
-
-    /**
-     * Like javac, finds the module given with `-Xpatch-module` that the sources are members of: the module with a patch path that contains
-     * the real path of a source file being compiled. A file source root is compiled whatever its extension, such as a script, and a
-     * directory source root is compiled recursively.
-     */
-    private fun findModuleWithPatchedSources(sourceRootFiles: List<SourceRootFile>): String? {
-        if (javaModulePatches.isEmpty()) return null
-        val sourceFiles = sourceRootFiles.flatMap { (val file, val extension) ->
-            file.walk().filter { it.isFile && (it == file || it.extension == extension) }.map(File::getCanonicalFile).toList()
-        }
-        val moduleNames = javaModulePatches.filterValues { paths ->
-            paths.any { path ->
-                val patchPath = path.canonicalFile
-                sourceFiles.any { FileUtil.isAncestor(patchPath, it, true) }
-            }
-        }.keys
-        if (moduleNames.size > 1) {
-            reportError("Too many patched modules: ${moduleNames.joinToString()}")
-            return null
-        }
-        return moduleNames.singleOrNull()
-    }
-
-    private fun patchRoots(moduleName: String): List<JavaModule.Root> =
-        javaModulePatches[moduleName].orEmpty().filter(File::exists).mapNotNull { file ->
-            contentRootToVirtualFile(JvmClasspathRoot(file, isSdkRoot = false))?.let { JavaModule.Root(it, isBinary = true) }
-        }
 
     private fun findSourceModuleInfo(root: VirtualFile): Pair<VirtualFile, PsiJavaModule>? {
         val moduleInfoFile =
@@ -353,18 +304,14 @@ class ClasspathRootsResolver(
                 )
             }
         }
-        if (!hasConvertedRoots) {
-            // A module of the same name given with the module path is added first, so the root from the classpath is ignored.
-            javaModulesFromClasspath = modules.mapTo(mutableSetOf(), JavaModule::name).filterTo(mutableSetOf()) { name ->
-                javaModuleFinder.findUnpatchedModule(name)?.moduleRoots.orEmpty().any { it.file in rootsFromClasspath }
-            }
-        }
-
         val sourceModule = sourceModules.singleOrNull() ?: patchedSourceModuleName?.let { moduleName ->
             // Classes compiled earlier from the sources are in the output directory, which incremental compilation puts on the classpath.
             val outputDirectoryRoot =
                 outputDirectory?.takeIf { hasOutputDirectoryInClasspath }?.let { JavaModule.Root(it, isBinary = true) }
-            javaModuleFinder.patchModule(moduleName, patchRoots(moduleName) + listOfNotNull(outputDirectoryRoot), hasPatchedSources = true)
+            // As for any patched module, the patch paths are binary roots, so the classes in them are members of the module. The sources
+            // in them are members because the module is the source module, see CliJavaModuleResolver.findJavaModule.
+            val roots = javaModuleOptionsResolver.patchRoots(moduleName) + listOfNotNull(outputDirectoryRoot)
+            javaModuleFinder.patchModule(moduleName, roots, hasPatchedSources = true)
                 ?: null.also { reportError("Module in `-Xpatch-module` not found: $moduleName") }
         }
 
@@ -405,16 +352,12 @@ class ClasspathRootsResolver(
         }
 
         if (!hasConvertedRoots) {
-            // Like javac, a patch of a module outside the module graph has no effect, and neither has a patch of a module read from the
-            // classpath, which javac puts in the unnamed module.
-            for (moduleName in javaModulePatches.keys) {
-                if (moduleName != patchedSourceModuleName && moduleName in allDependencies && moduleName !in javaModulesFromClasspath) {
-                    javaModuleFinder.patchModule(moduleName, patchRoots(moduleName))
-                }
+            // Modules read only from classpath roots that are also added to the module path. A module of the same name given with the
+            // module path is added first, so the root from the classpath is ignored.
+            val modulesFromClasspath = modules.mapTo(hashSetOf(), JavaModule::name).filterTo(hashSetOf()) { name ->
+                javaModuleFinder.findUnpatchedModule(name)?.moduleRoots.orEmpty().any { it.file in rootsFromClasspath }
             }
-            // Like javac, which puts the classpath roots in the unnamed module, the modules read from them are left out.
-            additionalJavaModuleReads = collectJavaModuleAccessOptions(allDependencies - javaModulesFromClasspath, isExports = false)
-            additionalJavaModuleExports = collectJavaModuleAccessOptions(allDependencies - javaModulesFromClasspath, isExports = true)
+            javaModuleAccess = javaModuleOptionsResolver.resolve(allDependencies, modulesFromClasspath, patchedSourceModuleName)
         }
         // These modules are passed on to CliJavaModuleResolver, so they are replaced with the patched copies, and the module of the sources
         // is added even if it is a JDK module. A module ignored because of another one with the same name is left as is.
@@ -428,7 +371,7 @@ class ClasspathRootsResolver(
         log("Loading modules: $allDependencies")
 
         // Like javac, the classes in a patch path replace those of the module, also when the module is given with the classpath too.
-        val patchRootFiles = javaModulePatches.keys.flatMapTo(hashSetOf()) { moduleName -> patchRoots(moduleName).map { it.file } }
+        val patchRootFiles = javaModuleOptionsResolver.patchRootFiles
         for (moduleName in allDependencies) {
             val module = javaModuleFinder.findModule(moduleName)
             if (module == null) {
@@ -441,8 +384,9 @@ class ClasspathRootsResolver(
         }
 
         if (requireStdlibModule && sourceModule != null && !javaModuleGraph.reads(sourceModule.name, KOTLIN_STDLIB_MODULE_NAME) &&
-            !(KOTLIN_STDLIB_MODULE_NAME in allDependencies &&
-                    javaModuleGraph.readsAdditionally(additionalJavaModuleReads, sourceModule.name, KOTLIN_STDLIB_MODULE_NAME))
+            !(KOTLIN_STDLIB_MODULE_NAME in allDependencies && javaModuleGraph.readsAdditionally(
+                javaModuleAccess, sourceModule.name, KOTLIN_STDLIB_MODULE_NAME, modulesFromClasspath = emptySet()
+            ))
         ) {
             reportError(
                 "The Kotlin standard library is not found in the module graph. " + if (patchedSourceModuleName != null) {
@@ -453,33 +397,6 @@ class ClasspathRootsResolver(
                 sourceModule.moduleInfoFile
             )
         }
-    }
-
-    // Like javac, report and leave out the modules in -Xadd-reads and -Xadd-exports that are not in the module graph, and reject system
-    // modules on the left-hand side with -Xjdk-release.
-    private fun collectJavaModuleAccessOptions(modulesInGraph: Set<String>, isExports: Boolean): Map<String, Set<String>> {
-        val flag = if (isExports) "-Xadd-exports" else "-Xadd-reads"
-        val key = if (isExports) JVMConfigurationKeys.ADDITIONAL_JAVA_MODULE_EXPORTS else JVMConfigurationKeys.ADDITIONAL_JAVA_MODULE_READS
-
-        fun isInGraph(name: String): Boolean =
-            (name == ALL_UNNAMED || name in modulesInGraph).also { if (!it) reportWarning("Module name in `$flag` not found: $name") }
-
-        val result = HashMap<String, MutableSet<String>>()
-        for (value in configuration.getList(key)) {
-            val option = parseJavaModuleAccessOption(value, isExports) ?: continue
-            val source = option.source ?: continue
-            val moduleName = source.substringBefore('/')
-            if (!isInGraph(moduleName)) continue
-            if (jdkRelease != null && javaModuleFinder.systemModules.any { it.name == moduleName }) {
-                reportError(
-                    if (isExports) "Exporting a package from system module $moduleName is not allowed with `-Xjdk-release`"
-                    else "Adding read edges for system module $moduleName is not allowed with `-Xjdk-release`"
-                )
-                continue
-            }
-            result.getOrPut(source, ::HashSet) += option.otherModules.filter(::isInGraph)
-        }
-        return result
     }
 
     private fun reportError(message: String, file: VirtualFile? = null) {

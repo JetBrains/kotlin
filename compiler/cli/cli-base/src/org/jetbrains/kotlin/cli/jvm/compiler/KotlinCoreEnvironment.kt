@@ -283,8 +283,7 @@ class KotlinCoreEnvironment private constructor(
             JavaModuleResolver::class.java,
             CliJavaModuleResolver(
                 classpathRootsResolver.javaModuleGraph, javaModules, javaModuleFinder.systemModules.toList(), project,
-                classpathRootsResolver.additionalJavaModuleReads, classpathRootsResolver.additionalJavaModuleExports,
-                classpathRootsResolver.javaModulesFromClasspath,
+                classpathRootsResolver.javaModuleAccess,
             )
         )
 
