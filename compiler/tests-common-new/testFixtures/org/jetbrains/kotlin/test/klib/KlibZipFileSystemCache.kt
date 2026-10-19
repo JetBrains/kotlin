@@ -19,15 +19,9 @@ import org.jetbrains.kotlin.test.services.service
 /**
  * Cache for test pipelines. It avoids re-opening a zipped KLIB by the frontend, and rebuilding the whole index of the archive
  * on every metadata lookup, which takes most of the time of a test against the zipped stdlib.
- * In contrast, the CLI pipeline caches the opened KLIBs by default (`-Xklib-zip-file-accessor-cache-limit`).
  */
 class KlibZipFileSystemCache : TestService {
-    val accessor: ZipFileSystemCacheableAccessor = ZipFileSystemCacheableAccessor(cacheLimit = CACHE_LIMIT)
-
-    private companion object {
-        /** The same as the default of `-Xklib-zip-file-accessor-cache-limit`. */
-        const val CACHE_LIMIT = 64
-    }
+    val accessor: ZipFileSystemCacheableAccessor = ZipFileSystemCacheableAccessor()
 }
 
 private val TestServices.klibZipFileSystemCache: KlibZipFileSystemCache by TestServices.testServiceAccessor()

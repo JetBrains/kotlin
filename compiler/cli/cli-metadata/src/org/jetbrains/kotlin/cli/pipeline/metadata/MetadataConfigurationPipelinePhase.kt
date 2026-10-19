@@ -9,9 +9,9 @@ import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_ARGUMENTS_ERROR
 import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_ARGUMENTS_WARNING
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.DisposableZipFileSystemAccessor
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
-import org.jetbrains.kotlin.cli.common.getZipFileSystemAccessor
 import org.jetbrains.kotlin.cli.jvm.config.K2MetadataConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.cli.pipeline.AbstractConfigurationPhase
@@ -109,11 +109,7 @@ object MetadataConfigurationUpdater : ConfigurationUpdater<K2MetadataCompilerArg
             configuration.report(COMPILER_ARGUMENTS_ERROR, "Specify destination via -d")
         }
 
-        configuration.zipFileSystemAccessor = arguments.getZipFileSystemAccessor(
-            zipFileAccessorCacheLimitArgument = K2MetadataCompilerArguments::klibZipFileAccessorCacheLimit,
-            configuration = configuration,
-            rootDisposable = rootDisposable,
-        )
+        configuration.zipFileSystemAccessor = DisposableZipFileSystemAccessor(rootDisposable)
     }
 
     fun computeTargetPlatformOrNull(
