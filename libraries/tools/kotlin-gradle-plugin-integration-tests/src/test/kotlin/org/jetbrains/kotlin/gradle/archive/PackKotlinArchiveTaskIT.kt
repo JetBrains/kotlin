@@ -149,6 +149,28 @@ class PackKotlinArchiveTaskIT : KGPBaseTest() {
         }
     }
 
+    @GradleTest
+    @OsCondition(supportedOn = [OS.MAC, OS.LINUX, OS.WINDOWS], enabledOnCI = [OS.LINUX, OS.WINDOWS])
+    fun testIncompleteArchiveIsPackedWhenSharedAppleSourceSetUsesCInterop(gradleVersion: GradleVersion) {
+        packKotlinArchive(
+            gradleVersion,
+            projectName = "producerWithHostSpecificSharedSourceSet",
+            "-P${PropertyNames.KOTLIN_ALLOW_INCOMPLETE_KOTLIN_ARCHIVE_PUBLICATION}=true",
+            "-P${PropertyNames.KOTLIN_MPP_ENABLE_CINTEROP_COMMONIZATION}=true",
+        ) {
+            iosArm64 { createCInterop("first", packageName = "first") }
+            iosSimulatorArm64 { createCInterop("first", packageName = "first") }
+            sourceSets.iosMain {
+                compileSource(
+                    """
+                @file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+                fun useInterop() = first.first()
+                """.trimIndent()
+                )
+            }
+        }
+    }
+
     private fun packKotlinArchive(
         gradleVersion: GradleVersion,
         projectName: String,
@@ -281,11 +303,12 @@ private fun KotlinMultiplatformExtension.setupHostSpecificKarTestTargets() {
     sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
 }
 
-private fun KotlinNativeTarget.createCInterop(interopName: String) {
+private fun KotlinNativeTarget.createCInterop(interopName: String, packageName: String? = null) {
     val definitionFile = project.layout.projectDirectory.file("$interopName.def")
     definitionFile.asFile.writeText(
         """
         language = C
+        ${packageName?.let { "package = $it" }.orEmpty()}
         ---
         void $interopName(void);
         """.trimIndent()
