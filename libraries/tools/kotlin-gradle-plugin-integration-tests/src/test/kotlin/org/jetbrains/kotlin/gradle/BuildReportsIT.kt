@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.util.BuildOperationRecordImpl
 import org.jetbrains.kotlin.gradle.util.readJsonReport
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import java.io.ObjectInputStream
 import java.nio.file.Files
@@ -40,6 +41,7 @@ import kotlin.streams.asSequence
 import kotlin.test.*
 
 @DisplayName("Build reports")
+@MustRunOnChangesInGradle
 class BuildReportsIT : KGPBaseTest() {
     override val defaultBuildOptions: BuildOptions
         get() = super.defaultBuildOptions.copy(
