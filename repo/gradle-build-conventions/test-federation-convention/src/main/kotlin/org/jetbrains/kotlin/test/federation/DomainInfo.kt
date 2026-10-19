@@ -38,7 +38,8 @@ sealed interface DomainInfo {
 }
 
 
-data class RepositoryPath(private val root: Path, val value: Path) {
+/** A [value] relative to the repository [root]. */
+data class RepositoryPath(val root: Path, val value: Path) {
     /**
      * Resolves the absolute path relative to the repository root
      */
