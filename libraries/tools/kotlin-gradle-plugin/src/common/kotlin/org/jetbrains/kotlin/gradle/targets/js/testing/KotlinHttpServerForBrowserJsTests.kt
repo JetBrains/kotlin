@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.js.testing
 import com.sun.net.httpserver.HttpServer
 import org.gradle.api.Project
 import org.gradle.api.file.Directory
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.logging.Logging
 import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
@@ -24,18 +25,25 @@ import kotlin.io.path.inputStream
 import kotlin.io.path.isDirectory
 import kotlin.io.path.isRegularFile
 import kotlin.jvm.java
+import kotlin.text.endsWith
 
 private val logger = Logging.getLogger(KotlinHttpServerForBrowserJsTests::class.java)
 
-internal abstract class KotlinHttpServerForBrowserJsTests : BuildService<BuildServiceParameters.None>, AutoCloseable {
+internal abstract class KotlinHttpServerForBrowserJsTests : BuildService<KotlinHttpServerForBrowserJsTests.Params>, AutoCloseable {
     @Volatile
     private var jdkHttpServer: SimpleJdkHttpServer? = null
+
+    internal interface Params : BuildServiceParameters {
+        val rootProjectDir: DirectoryProperty
+    }
 
     private fun createAndStart(): SimpleJdkHttpServer {
         synchronized(this) {
             if (jdkHttpServer != null) return jdkHttpServer!!
 
-            val jdkHttpServer = SimpleJdkHttpServer()
+            val jdkHttpServer = SimpleJdkHttpServer(
+                rootDir = parameters.rootProjectDir.get().asFile.toPath()
+            )
             jdkHttpServer.start()
             logger.debug("HTTP server for js tests started at ${jdkHttpServer.serverAddress}")
             this.jdkHttpServer = jdkHttpServer
@@ -43,7 +51,10 @@ internal abstract class KotlinHttpServerForBrowserJsTests : BuildService<BuildSe
         }
     }
 
-    fun serve(fullTaskPath: String, bundleDirectory: Directory): URI {
+    fun serve(
+        fullTaskPath: String,
+        bundleDirectory: Directory,
+    ): URI {
         val path = bundleDirectory.asFile.toPath()
         require(path.isDirectory()) { "Can't serve files from non-directory $path" }
 
@@ -66,9 +77,17 @@ internal abstract class KotlinHttpServerForBrowserJsTests : BuildService<BuildSe
 }
 
 internal fun Project.kotlinHttpServerForBrowserJsTests(): Provider<KotlinHttpServerForBrowserJsTests> =
-    gradle.registerClassLoaderScopedBuildService(KotlinHttpServerForBrowserJsTests::class) {}
+    gradle.registerClassLoaderScopedBuildService(KotlinHttpServerForBrowserJsTests::class) {
+        it.parameters.rootProjectDir.set(rootDir)
+    }
 
-internal class SimpleJdkHttpServer {
+internal class SimpleJdkHttpServer(
+    /**
+     * This directory should be used as fallback when files are not resolvable from [locator]
+     * Mainly needed for resolving files defined by import-map e.g. pointing to {root_project}/build/wasm/node_modules for example.
+     */
+    private val rootDir: Path
+) {
     class PrefixLocator<V : Any>() {
         private val locations: ConcurrentHashMap<String, V> = ConcurrentHashMap()
 
@@ -112,16 +131,17 @@ internal class SimpleJdkHttpServer {
         server.createContext("/") { exchange ->
             val requestPath = exchange.requestURI.path.trimStart('/')
 
-            val (prefix, root) = locator.findClosestGreaterPrefix(requestPath) ?: run {
-                exchange.sendResponseHeaders(404, -1)
-                exchange.close()
-                return@createContext
+            val prefixAndDir = locator.findClosestGreaterPrefix(requestPath)
+
+            val (file, contentDir) = if (prefixAndDir != null) {
+                val (prefix, dir) = prefixAndDir
+                val relativePath = requestPath.removePrefix(prefix).trimStart('/')
+                dir.resolve(relativePath).normalize() to dir
+            } else {
+                rootDir.resolve(requestPath).normalize() to rootDir
             }
 
-            val relativePath = requestPath.removePrefix(prefix).trimStart('/')
-            val file: Path = root.resolve(relativePath).normalize()
-
-            if (!file.startsWith(root) || !file.isRegularFile()) {
+            if (!file.startsWith(contentDir) || !file.isRegularFile()) {
                 exchange.sendResponseHeaders(404, -1)
                 exchange.close()
                 return@createContext
