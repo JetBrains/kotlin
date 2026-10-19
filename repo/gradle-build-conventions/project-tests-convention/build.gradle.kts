@@ -21,6 +21,14 @@ kotlin {
     }
 }
 
+tasks.withType<Test>().configureEach {
+    useJUnitPlatform()
+}
+
+tasks.register("checkBuild") {
+    dependsOn("test")
+}
+
 dependencies {
     api(project(":utilities"))
 
@@ -31,6 +39,11 @@ dependencies {
     compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin:${project.bootstrapKotlinVersion}")
     compileOnly(libs.node.gradlePlugin)
 
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
+    testImplementation(kotlin("test-junit5"))
+
     constraints {
         api(libs.apache.commons.lang)
     }
@@ -38,6 +51,7 @@ dependencies {
 
 listOf(
     org.jetbrains.kotlin.gradle.plugin.PLUGIN_CLASSPATH_CONFIGURATION_NAME + "Main",
+    org.jetbrains.kotlin.gradle.plugin.PLUGIN_CLASSPATH_CONFIGURATION_NAME + "Test",
     "compilePluginsBlocksPluginClasspathElements",
 ).forEach { confName ->
     project.configurations.named(confName) {

@@ -12,6 +12,10 @@ internal fun Project.configureTestInventory() {
 
         val testInventoryListener = TestInventoryListener(name, project.layout.buildDirectory.asFile)
         addTestListener(testInventoryListener)
-        outputs.file(testInventoryListener.inventoryFile)
+        outputs.file(testInventoryListener.inventoryFile).withPropertyName("testInventory")
+
+        val testExecutionsListener = TestExecutionsListener(name, path, project.layout.buildDirectory.asFile)
+        addTestListener(testExecutionsListener)
+        outputs.file(testExecutionsListener.executionsFile).withPropertyName("testExecutions")
     }
 }
