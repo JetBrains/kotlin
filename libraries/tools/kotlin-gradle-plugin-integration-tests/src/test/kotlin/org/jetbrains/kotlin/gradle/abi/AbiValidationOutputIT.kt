@@ -18,9 +18,11 @@ import org.jetbrains.kotlin.gradle.abi.utils.abiValidation
 import org.jetbrains.kotlin.gradle.abi.utils.jvmProject
 import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 
 @JvmGradlePluginTests
+@MustRunOnChangesInGradle
 class AbiValidationOutputIT : KGPBaseTest() {
 
     /**
