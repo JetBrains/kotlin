@@ -4,12 +4,16 @@
  */
 package org.jetbrains.kotlin.psi.stubs.elements
 
+import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiFile
+import com.intellij.psi.impl.source.tree.LazyParseableElement
 import com.intellij.psi.stubs.DefaultStubBuilder
 import com.intellij.psi.stubs.StubElement
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.JvmFileClassUtil
+import org.jetbrains.kotlin.psi.stubs.StubBuildingLexing
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubKindImpl
 
@@ -20,6 +24,28 @@ class KtFileStubBuilder : DefaultStubBuilder() {
         }
 
         return super.buildStubTree(file)
+    }
+
+    /**
+     * Skips not yet parsed code blocks and lambdas which cannot contain stubbed declarations, so they are not parsed only to be traversed.
+     *
+     * Skipping a node without stubbed declarations doesn't change the stub tree, so the result may differ between building the stub tree
+     * and binding it to the AST. Hence, already parsed nodes are just traversed without lexing them once again.
+     */
+    override fun skipChildProcessingWhenBuildingStubs(parent: ASTNode, node: ASTNode): Boolean {
+        if (node !is LazyParseableElement || node.isParsed) return false
+
+        val elementType = node.elementType
+        val isCodeBlock = elementType == KtNodeTypes.LAMBDA_EXPRESSION ||
+                // Script blocks contain stubbed top-level declarations
+                elementType == KtNodeTypes.BLOCK && parent.elementType != KtNodeTypes.SCRIPT
+        if (!isCodeBlock) return false
+
+        (parent.psi?.containingFile as? KtFile)?.customStubBuilder?.let {
+            return it.skipChildProcessingWhenBuildingStubs(parent, node)
+        }
+
+        return !StubBuildingLexing.mayContainStubbedDeclarations(node.chars)
     }
 
     override fun createStubForFile(file: PsiFile): StubElement<*> {
