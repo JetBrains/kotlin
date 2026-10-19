@@ -23,6 +23,7 @@ import org.junit.jupiter.api.DisplayName
 @MppGradlePluginTests
 @MustRunOnChangesInGradle
 @DisplayName("Test resources consumption APIs")
+@MustRunOnChangesInGradle
 class MultiplatformResourcesConsumptionIT : KGPBaseTest() {
 
     @DisplayName("Resolve resources with consumption API using variant reselection")

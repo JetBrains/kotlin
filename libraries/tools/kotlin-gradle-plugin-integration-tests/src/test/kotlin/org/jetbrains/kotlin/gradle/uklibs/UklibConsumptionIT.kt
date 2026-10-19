@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.gradle.testing.PrettyPrint
 import org.jetbrains.kotlin.gradle.testing.ResolvedComponentWithArtifacts
 import org.jetbrains.kotlin.gradle.util.resolveIdeDependencies
 import org.jetbrains.kotlin.gradle.utils.named
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import java.io.File
 import java.io.Serializable
@@ -39,6 +40,7 @@ import kotlin.test.assertTrue
 @OptIn(ExperimentalWasmDsl::class)
 @MppGradlePluginTests
 @DisplayName("Smoke test uklib consumption")
+@MustRunOnChangesInGradle
 class UklibConsumptionIT : KGPBaseTest() {
 
     @GradleAndroidTest

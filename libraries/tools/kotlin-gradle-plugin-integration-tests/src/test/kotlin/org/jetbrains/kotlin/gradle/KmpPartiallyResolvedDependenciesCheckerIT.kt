@@ -33,10 +33,12 @@ import org.jetbrains.kotlin.gradle.uklibs.includeBuild
 import org.jetbrains.kotlin.gradle.uklibs.publish
 import org.jetbrains.kotlin.gradle.uklibs.publishJava
 import org.jetbrains.kotlin.gradle.util.resolveIdeDependencies
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 
 @DisplayName("Tests for diagnostic about partially unresolved KMP dependencies")
 @MppGradlePluginTests
+@MustRunOnChangesInGradle
 class KmpPartiallyResolvedDependenciesCheckerIT : KGPBaseTest() {
 
     @GradleTest
