@@ -20,11 +20,18 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.Optional
 import org.gradle.work.NormalizeLineEndings
+import org.gradle.workers.WorkAction
+import org.gradle.workers.WorkParameters
+import org.gradle.workers.WorkerExecutor
+import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
+import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
+import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.commonizer.KonanDistribution
 import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.internal.UsesClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext
@@ -34,10 +41,12 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.useXcodeMessageStyle
+import org.jetbrains.kotlin.gradle.plugin.statistics.BuildFusService
 import org.jetbrains.kotlin.gradle.plugin.statistics.CompilerArgumentMetrics
 import org.jetbrains.kotlin.gradle.plugin.statistics.UsesBuildFusService
 import org.jetbrains.kotlin.gradle.report.UsesBuildMetricsService
 import org.jetbrains.kotlin.gradle.targets.native.DisableNativeCacheSettings
+import org.jetbrains.kotlin.gradle.targets.native.KonanPropertiesBuildService
 import org.jetbrains.kotlin.gradle.targets.native.UsesKonanPropertiesBuildService
 import org.jetbrains.kotlin.gradle.targets.native.internal.getOriginalPlatformLibrariesForTargetWithKonanDistribution
 import org.jetbrains.kotlin.gradle.targets.native.tasks.CompilerPluginData
@@ -69,6 +78,7 @@ constructor(
     @Transient // This property can't be accessed in the execution phase
     val binary: NativeBinary,
     private val objectFactory: ObjectFactory,
+    private val workerExecutor: WorkerExecutor,
 ) : AbstractKotlinCompileTool<K2NativeCompilerArguments>(objectFactory),
     UsesKonanPropertiesBuildService,
     UsesBuildMetricsService,
@@ -466,20 +476,6 @@ constructor(
     private val forceDisableRunningInProcess = project.nativeProperties.forceDisableRunningInProcess
     private val useXcodeMessageStyle = project.useXcodeMessageStyle
 
-    @get:Internal
-    internal val nativeCompilerRunner
-        get() = objectFactory.KotlinNativeCompilerRunner(
-            metrics,
-            classLoadersCachingService,
-            forceDisableRunningInProcess,
-            useXcodeMessageStyle,
-            actualNativeHomeDirectory,
-            runnerJvmArgs,
-            konanPropertiesService,
-            buildFusService,
-            simpleKotlinNativeVersion
-        )
-
     @TaskAction
     fun compile() {
         val metricsReporter = metrics.get()
@@ -519,13 +515,26 @@ constructor(
                 CompilerArgumentMetrics.collectMetrics(arguments, buildArguments.toTypedArray(), logger, it)
             }
 
-            nativeCompilerRunner.runTool(
-                KotlinNativeToolRunner.ToolArguments(
-                    shouldRunInProcessMode = !forceDisableRunningInProcess.get(),
-                    compilerArgumentsLogLevel = kotlinCompilerArgumentsLogLevel.get(),
-                    arguments = buildArguments
-                )
-            )
+            // Run the actual link invocation in its own worker, so that link tasks for different
+            // targets/build types that end up in the same work queue can execute concurrently.
+            // 'noIsolation' is used, but Gradle still isolates (deep-copies) work parameters even in this
+            // mode, so we can't pass a pre-built KotlinNativeToolRunner (it wraps live, non-serializable
+            // build services). Instead, we pass the raw, serializable ingredients and build the runner
+            // inside the worker itself - see KotlinNativeLinkWorkAction and CInteropWorkAction for the same pattern.
+            val workQueue = workerExecutor.noIsolation()
+            workQueue.submit(KotlinNativeLinkWorkAction::class.java) { parameters ->
+                parameters.metricsReporter.set(metrics)
+                parameters.classLoadersCachingService.set(classLoadersCachingService)
+                parameters.forceDisableRunningInProcess.set(forceDisableRunningInProcess)
+                parameters.useXcodeMessageStyle.set(useXcodeMessageStyle)
+                parameters.actualNativeHomeDirectory.set(actualNativeHomeDirectory)
+                parameters.runnerJvmArgs.set(runnerJvmArgs)
+                parameters.konanPropertiesService.set(konanPropertiesService)
+                parameters.buildFusService.set(buildFusService)
+                parameters.kotlinNativeVersion.set(simpleKotlinNativeVersion)
+                parameters.compilerArgumentsLogLevel.set(kotlinCompilerArgumentsLogLevel.get())
+                parameters.arguments.set(buildArguments)
+            }
         }
     }
 
@@ -538,3 +547,63 @@ internal val String.asValidFrameworkName get() = replace('-', '_')
 
 private val KotlinNativeLink.hasDisabledNativeCache get() = disableCacheSettings.get().isNotEmpty()
 private val KotlinNativeLink.hasIncompatibleConfiguration get() = (debuggable && optimized) || (!debuggable && !optimized)
+
+/**
+ * Runs a single [KotlinNativeCompilerRunner] invocation inside a Gradle worker.
+ *
+ * This lets several [KotlinNativeLink] tasks (e.g. one per target/build type) submit their work to the same
+ * [org.gradle.workers.WorkQueue] and have the compiler/linker invocations run concurrently, instead of being
+ * executed one after another as part of the task's own action.
+ *
+ * `noIsolation` is used when submitting this action, but Gradle still isolates (deep-copies) the submitted
+ * [Parameters], so only plain, serializable values and build-service references are accepted here - the
+ * [KotlinNativeCompilerRunner]/[KotlinNativeToolRunner] itself is built from those parameters *inside* [execute],
+ * instead of being passed in directly. See [CInteropWorkAction] for the same pattern used by cinterop tasks.
+ */
+internal abstract class KotlinNativeLinkWorkAction @Inject constructor(
+    private val objectFactory: ObjectFactory,
+) : WorkAction<KotlinNativeLinkWorkAction.Parameters> {
+    internal interface Parameters : WorkParameters {
+        // Runner configuration
+        val metricsReporter: Property<BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>>
+        val classLoadersCachingService: Property<ClassLoadersCachingBuildService>
+        val forceDisableRunningInProcess: Property<Boolean>
+        val useXcodeMessageStyle: Property<Boolean>
+        val actualNativeHomeDirectory: Property<File>
+        val runnerJvmArgs: ListProperty<String>
+        val konanPropertiesService: Property<KonanPropertiesBuildService>
+        val buildFusService: Property<BuildFusService<out BuildFusService.Parameters>?>
+        val kotlinNativeVersion: Property<String>
+
+        // Tool invocation
+        val compilerArgumentsLogLevel: Property<KotlinCompilerArgumentsLogLevel>
+        val arguments: ListProperty<String>
+    }
+
+    override fun execute() {
+        // TODO: Report this WorkParameters generic-erasure issue to Gradle if it is not tracked yet.
+        // runnerJvmArgs reaches us as Provider<List<Object>>, which breaks
+        // KotlinNativeCompilerRunner's internal listProperty<String>().value(provider) call.
+        // Wrapping it with .map { it } strips the element-type metadata Gradle (incorrectly) checks against,
+        // the same workaround already used by CInteropWorkAction for the identical issue.
+        val runner = objectFactory.KotlinNativeCompilerRunner(
+            parameters.metricsReporter,
+            parameters.classLoadersCachingService,
+            parameters.forceDisableRunningInProcess,
+            parameters.useXcodeMessageStyle,
+            parameters.actualNativeHomeDirectory,
+            parameters.runnerJvmArgs.map { it },
+            parameters.konanPropertiesService,
+            parameters.buildFusService,
+            parameters.kotlinNativeVersion
+        )
+
+        runner.runTool(
+            KotlinNativeToolRunner.ToolArguments(
+                shouldRunInProcessMode = !parameters.forceDisableRunningInProcess.get(),
+                compilerArgumentsLogLevel = parameters.compilerArgumentsLogLevel.get(),
+                arguments = parameters.arguments.get()
+            )
+        )
+    }
+}
