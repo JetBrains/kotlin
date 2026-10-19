@@ -292,6 +292,7 @@ class FirGeneratedMemberDeclarationsStorage(private val session: FirSession) : F
                     if (classSymbol.isLocal) {
                         symbol.fir.containingClassForLocalAttr = classSymbol.toLookupTag()
                     }
+                    // Take the first generated companion, so no error is produced KT-62194
                     if (symbol.isCompanion) break
                 }
             }
@@ -323,6 +324,8 @@ class FirGeneratedMemberDeclarationsStorage(private val session: FirSession) : F
         require(session === classSymbol.moduleData.session) {
             "Class $classSymbol is declared in ${classSymbol.moduleData.session}, but generated storage for it taken from $session"
         }
+        // We share generated companion between extensions
+        // for other classes, we only allow ownerGenerator (the generator that created it) to generate its members
         return if (classSymbol.origin.generated && !classSymbol.isLocal && !classSymbol.isCompanion) {
             listOf(classSymbol.fir.ownerGenerator!!)
         } else {
