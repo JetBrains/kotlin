@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.parcelize.fir
 
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize
 
@@ -17,6 +15,7 @@ class FirParcelizeExtensionRegistrar(
 ) : FirExtensionRegistrar() {
     override fun ExtensionRegistrarContext.configurePlugin() {
         +FirParcelizeService.getFactory(parcelizeAnnotationFqNames, experimentalCodeGeneration)
+        +::FirParcelizeSupertypesExtension.bind(parcelizeAnnotationFqNames)
         +::FirParcelizeDeclarationGenerator.bind(parcelizeAnnotationFqNames)
         +::FirParcelizeCheckersExtension
 

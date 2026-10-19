@@ -7,17 +7,17 @@ import android.os.Parcelable
 interface <!PARCELABLE_CANT_BE_NON_SEALED_INTERFACE!>Intf<!> : Parcelable
 
 @Parcelize
-object <!NO_PARCELABLE_SUPERTYPE!>Obj<!>
+object Obj
 
 class A {
     @Parcelize
-    companion <!NO_PARCELABLE_SUPERTYPE!>object<!> {
+    companion object {
         fun foo() {}
     }
 }
 
 @Parcelize
-enum class <!NO_PARCELABLE_SUPERTYPE!>Enum<!> {
+enum class Enum {
     WHITE, BLACK
 }
 
