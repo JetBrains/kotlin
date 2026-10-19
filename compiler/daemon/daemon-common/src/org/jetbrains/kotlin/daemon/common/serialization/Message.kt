@@ -25,6 +25,11 @@ sealed class Message {
         val value: Long,
     ) : Message()
 
+    @Serializable
+    class PopulateKgpMetricsMessage(
+        val metricsData: ByteArray
+    ) : Message()
+
     object LookupTracker {
         @Serializable
         data class Record(

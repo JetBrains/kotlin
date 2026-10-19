@@ -7,17 +7,15 @@ package org.jetbrains.kotlin.buildtools.internal.daemon
 
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerializationStrategy
 import kotlinx.serialization.protobuf.ProtoBuf
 import kotlinx.serialization.serializer
-import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.daemon.common.SerializedDataContainer
 import org.jetbrains.kotlin.daemon.common.serialization.SerializationFormat
 import java.io.Serializable
 
 @OptIn(ExperimentalSerializationApi::class)
-internal object ProtoBufFormat : SerializationFormat {
+internal class ProtoBufFormat : SerializationFormat {
 
     override val format = ProtoBuf { serializersModule = btaSerializersModule }
     override fun <T> serialize(serializationStrategy: SerializationStrategy<T>, data: T): SerializedDataContainer {

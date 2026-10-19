@@ -5,17 +5,48 @@
 
 package org.jetbrains.kotlin.buildtools.internal.daemon
 
+import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.trackers.BuildMetricsCollector
 import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
 import org.jetbrains.kotlin.buildtools.api.trackers.IcEventCollector
 import org.jetbrains.kotlin.buildtools.internal.KotlinLoggerMessageCollectorAdapter
+import org.jetbrains.kotlin.buildtools.internal.LogLevel
 import org.jetbrains.kotlin.daemon.common.serialization.Message
 import org.jetbrains.kotlin.daemon.common.serialization.MessageVisitor
+import java.io.ByteArrayInputStream
+import java.io.ObjectInputStream
+
+internal class LogLineVisitor(private val logger: KotlinLogger) : MessageVisitor {
+
+    override fun accept(message: Message): Boolean = when (message) {
+        is Message.Logger.LogLine -> {
+            val throwable = if (message.throwable != null) {
+                try {
+                    val ois = ObjectInputStream(ByteArrayInputStream(message.throwable))
+                    ois.readObject() as Throwable
+                } catch (e: Exception) {
+                    logger.error("Failed to deserialize throwable", e)
+                    null
+                }
+            } else null
+
+            when (message.level) {
+                LogLevel.ERROR.name -> logger.error(message.logLine, throwable)
+                LogLevel.WARN.name -> logger.warn(message.logLine, throwable)
+                LogLevel.LIFECYCLE.name -> logger.lifecycle(message.logLine)
+                LogLevel.INFO.name -> logger.info(message.logLine)
+                LogLevel.DEBUG.name -> logger.debug(message.logLine)
+            }
+            true
+        }
+        else -> false
+    }
+}
 
 internal class MetricsCollectorVisitor(private val metricsCollector: BuildMetricsCollector) : MessageVisitor {
 
     override fun accept(message: Message): Boolean = when (message) {
-        is CollectMetricMessage -> {
+        is Message.CollectMetricMessage -> {
             metricsCollector.collectMetric(message.name, message.type, message.value)
             true
         }
