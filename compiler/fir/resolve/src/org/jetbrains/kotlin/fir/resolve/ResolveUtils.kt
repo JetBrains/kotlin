@@ -630,7 +630,7 @@ fun FirSafeCallExpression.propagateTypeFromQualifiedAccessAfterNullCheck(
     session.lookupTracker?.recordTypeResolveAsLookup(resultingType, source, file.source)
 }
 
-private fun ConeKotlinType.unionSuperTypeOrNull(session: FirSession): ConeUnionType? {
+internal fun ConeKotlinType.unionSuperTypeOrNull(session: FirSession): ConeUnionType? {
     if (this is ConeUnionType) return this
 
     session.typeContext.newTypeCheckerState(
@@ -643,7 +643,7 @@ private fun ConeKotlinType.unionSuperTypeOrNull(session: FirSession): ConeUnionT
             if (it is ConeUnionType) return it
             false
         },
-        // If we encounter a class-like type, we can stop looking.
+        // Optimization: if we encounter a class-like type, we can stop looking.
         supertypesPolicy = { if (it is ConeClassLikeType) None else LowerIfFlexible }
     )
 

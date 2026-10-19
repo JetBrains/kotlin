@@ -85,3 +85,7 @@
 /unsafeCallOnUnion.kt:73:5: warning: Expression is unused.
 
 /unsafeCallOnUnion.kt:73:8: error: Bound callable reference cannot be created on receiver of nullable type 'String?'.
+
+/unsafeCallOnUnion.kt:77:6: error: Unsafe call on receiver of union type 'T (of fun <T : String | Foo> typeParameter)'. Consider using an error-safe call '|.'.
+
+/unsafeCallOnUnion.kt:78:7: error: Candidate 'fun String.foo(): Unit' is inapplicable because of a receiver type mismatch. Actual receiver type is 'T (of fun <T : String | Foo> typeParameter)'.

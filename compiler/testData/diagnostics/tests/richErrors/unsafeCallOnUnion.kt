@@ -73,6 +73,11 @@ fun testCallableReference(x: String | Foo, y: String? | Foo, z: String?) {
     z::<!UNSAFE_CALLABLE_REFERENCE("on receiver of nullable type 'String?'")!>foo<!>
 }
 
+fun <T : String | Foo> typeParameter(t: T) {
+    t<!UNSAFE_CALL("on receiver of union type 'T (of fun <T : String | Foo> typeParameter)'. Consider using an error-safe call '|.'")!>.<!>length
+    t.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER("fun String.foo(): Unit; T (of fun <T : String | Foo> typeParameter)")!>foo<!>()
+}
+
 /* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, forLoop, funWithExtensionReceiver, functionDeclaration,
 functionalType, infix, localProperty, multiplicativeExpression, nullableType, operator, propertyDeclaration, safeCall,
 stringLiteral */
