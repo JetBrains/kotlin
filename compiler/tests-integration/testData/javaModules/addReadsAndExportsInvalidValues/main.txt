@@ -1,13 +1,13 @@
-error: bad value for `-Xadd-reads`: 'main'
-Expected: <module>=<other-module>(,<other-module>)*
-error: bad value for `-Xadd-reads`: '=lib'
-Expected: <module>=<other-module>(,<other-module>)*
-error: bad value for `-Xadd-reads`: 'main='
-Expected: <module>=<other-module>(,<other-module>)*
-error: bad value for `-Xadd-exports`: 'lib=main'
-Expected: <module>/<package>=<other-module>(,<other-module>)*
-error: bad value for `-Xadd-exports`: 'lib/foo='
-Expected: <module>/<package>=<other-module>(,<other-module>)*
-error: bad value for `-Xadd-exports`: 'lib/=main'
-Expected: <module>/<package>=<other-module>(,<other-module>)*
+error: bad value for '-Xadd-reads': 'main'.
+Expected: '<module>=<other-module>(,<other-module>)*'.
+error: bad value for '-Xadd-reads': '=lib'.
+Expected: '<module>=<other-module>(,<other-module>)*'.
+error: bad value for '-Xadd-reads': 'main='.
+Expected: '<module>=<other-module>(,<other-module>)*'.
+error: bad value for '-Xadd-exports': 'lib=main'.
+Expected: '<module>/<package>=<other-module>(,<other-module>)*'.
+error: bad value for '-Xadd-exports': 'lib/foo='.
+Expected: '<module>/<package>=<other-module>(,<other-module>)*'.
+error: bad value for '-Xadd-exports': 'lib/=main'.
+Expected: '<module>/<package>=<other-module>(,<other-module>)*'.
 COMPILATION_ERROR
