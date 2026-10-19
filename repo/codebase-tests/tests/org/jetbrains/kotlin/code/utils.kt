@@ -53,20 +53,3 @@ internal suspend fun forEachCompiledClass(
             }
     }
 }
-
-/**
- * Converts an absolute or working-directory-relative path to a normalized repository path without accessing the filesystem.
- * The path need not exist (for example, a deleted file listed in a dump).
- * @throws IllegalArgumentException if the normalized path is outside the repository root.
- */
-internal fun Path.toRepositoryPath(): RepositoryPath {
-    val absolutePath = absolute().normalize()
-    require(absolutePath.startsWith(absoluteRepositoryRoot)) {
-        "Path '$this' is not within the repository root '$absoluteRepositoryRoot'"
-    }
-    return RepositoryPath(absoluteRepositoryRoot, absoluteRepositoryRoot.relativize(absolutePath))
-}
-
-internal fun File.toRepositoryPath(): RepositoryPath {
-    return toPath().toRepositoryPath()
-}

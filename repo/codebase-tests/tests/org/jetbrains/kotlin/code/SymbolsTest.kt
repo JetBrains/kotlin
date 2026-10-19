@@ -9,7 +9,7 @@ import com.ibm.icu.text.SpoofChecker
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.code.tools.FileMatcher
 import org.jetbrains.kotlin.repoTestFixtures.isGitIgnored
-import org.jetbrains.kotlin.testFederation.isTestFederationIgnored
+import org.jetbrains.kotlin.repoTestFixtures.isTestFederationIgnored
 import org.junit.jupiter.api.Test
 import java.io.File
 import kotlin.test.fail
@@ -61,7 +61,6 @@ class SymbolsTest {
                 "compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1/neg/1.2.txt",
                 "compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/neg/1.2.kt",
                 "compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/neg/1.2.txt",
-                "docs/changelogs",
                 "js/js.parser/src/org/jetbrains/kotlin/js/parser/sourcemaps/ECMA426BasedSourceMapParser.kt",
                 "kotlin-native/backend.native/tests/samples/win32/src/win32Main/kotlin/MessageBox.kt",
                 "kotlin-native/performance/ring/src/commonMain/kotlin/org/jetbrains/ring/zdf-win.kt",
@@ -148,7 +147,7 @@ class SymbolsTest {
         for (file in gitTrackedFiles()) {
             if (!file.isFile) continue
             if (file.extension in binaryExtensions) continue
-            if (file.toRepositoryPath().isTestFederationIgnored) continue
+            if (file.isTestFederationIgnored()) continue
 
             val bytes = file.readBytes()
             val text = bytes.toString(Charsets.UTF_8)
