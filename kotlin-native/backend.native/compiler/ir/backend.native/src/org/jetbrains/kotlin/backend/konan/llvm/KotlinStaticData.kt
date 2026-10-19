@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.konan.llvm
 import kotlinx.cinterop.cValuesOf
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
+import org.jetbrains.kotlin.backend.konan.binaryTypeIsReference
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.konan.target.BinaryFormat
@@ -21,6 +22,11 @@ private fun ConstPointer.addBits(llvm: CodegenLlvmHelpers, bits: Int): ConstPoin
 
 internal class KotlinStaticData(override val generationState: NativeGenerationState, override val llvm: CodegenLlvmHelpers, module: LLVMModuleRef) : ContextUtils, StaticData(module, llvm) {
     private val stringLiterals = mutableMapOf<String, ConstPointer>()
+
+    class PermanentRefFixup(val slot: ConstPointer, val target: ConstValue)
+
+    // With compressed references, reference slots of permanent objects are emitted zeroed and filled in by the runtime.
+    val permanentRefFixups = mutableListOf<PermanentRefFixup>()
 
     // Must match OBJECT_TAG_PERMANENT in C++.
     private fun permanentTag(typeInfo: ConstPointer): ConstPointer {
@@ -38,20 +44,26 @@ internal class KotlinStaticData(override val generationState: NativeGenerationSt
     }
 
     // With compressed references, the runtime places the heap next to this section, see HeapReservation.cpp.
-    fun placeInPermanentsSection(global: Global) {
+    fun placeInPermanentsSection(global: Global, isMutable: Boolean = false) {
         if (!generationState.config.compressedRefs) return
         global.setSection(when (generationState.config.target.binaryFormat()) {
-            BinaryFormat.MACH_O -> "__DATA_CONST,__kperm"
-            BinaryFormat.ELF -> "kperm"
+            BinaryFormat.MACH_O -> if (isMutable) "__DATA,__kperm_rw" else "__DATA_CONST,__kperm"
+            BinaryFormat.ELF -> if (isMutable) "kperm_rw" else "kperm"
             BinaryFormat.PE_COFF -> error("Compressed references are not supported for PE/COFF")
         })
     }
 
-    private fun createConstant(value: ConstValue): ConstPointer {
+    private fun createConstant(value: ConstValue, refs: List<Pair<Int, ConstValue>> = emptyList()): ConstPointer {
         val global = placeGlobal("", value)
-        global.setUnnamedAddr(true)
-        global.setConstant(true)
-        placeInPermanentsSection(global)
+        val nonNullRefs = refs.filter { LLVMIsNull(it.second.llvm) == 0 }
+        if (nonNullRefs.isEmpty()) {
+            global.setUnnamedAddr(true)
+            global.setConstant(true)
+        }
+        placeInPermanentsSection(global, isMutable = nonNullRefs.isNotEmpty())
+        nonNullRefs.forEach {
+            permanentRefFixups += PermanentRefFixup(global.pointer.addBits(llvm, it.first), it.second)
+        }
         // value should be of struct type with first element having the object/array header layout
         return global.pointer.getElementPtr(llvm, global.type, 0)
     }
@@ -89,14 +101,27 @@ internal class KotlinStaticData(override val generationState: NativeGenerationSt
 
     fun createConstKotlinArray(arrayClass: IrClass, elements: List<ConstValue>): ConstPointer {
         val arrayHeader = arrayHeader(arrayClass.typeInfoPtr, elements.size)
+        if (generationState.config.compressedRefs && arrayClass.symbol == context.irBuiltIns.arrayClass) {
+            val arrayBody = ConstArray(llvm.int32Type, elements.map { llvm.constInt32(0) })
+            val value = llvm.struct(arrayHeader, arrayBody)
+            val bodyOffset = runtime.offsetOf(value.llvmType, 1)
+            return createConstant(value, elements.mapIndexed { index, element -> bodyOffset + index * Int.SIZE_BYTES to element })
+        }
         // (use [0 x i8] as body if there are no elements)
         val arrayBody = ConstArray(elements.firstOrNull()?.llvmType ?: llvm.int8Type, elements)
         return createConstant(llvm.struct(arrayHeader, arrayBody))
     }
 
     fun createConstKotlinObject(type: IrClass, vararg fields: ConstValue): ConstPointer {
-        return createConstant(createConstKotlinObjectBody(type, *fields))
+        if (!generationState.config.compressedRefs) return createConstant(createConstKotlinObjectBody(type, *fields))
+        val isRef = context.getLayoutBuilder(type).getFields(llvm).map { it.type.binaryTypeIsReference() }
+        val value = createConstKotlinObjectBody(type, *fields.mapIndexed { index, field -> if (isRef[index]) llvm.constInt32(0) else field }.toTypedArray())
+        // Element 0 is the object header.
+        val refs = fields.indices.filter { isRef[it] }.map { runtime.offsetOf(value.llvmType, it + 1) to fields[it] }
+        return createConstant(value, refs)
     }
+
+    fun createConstKotlinBox(type: IrClass, value: ConstValue) = createConstant(createConstKotlinObjectBody(type, value))
 
     fun createConstKotlinObjectBody(type: IrClass, vararg fields: ConstValue): ConstValue {
         // TODO: handle padding here

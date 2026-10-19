@@ -32,13 +32,17 @@
 
 using namespace kotlin;
 
-// Bounds of the section with permanent objects, see `KotlinStaticData.placeInPermanentsSection` in the compiler.
+// Bounds of the sections with permanent objects, see `KotlinStaticData.placeInPermanentsSection` in the compiler.
 #if KONAN_APPLE
 extern "C" char Kotlin_permanentsStart[] __asm("section$start$__DATA_CONST$__kperm");
 extern "C" char Kotlin_permanentsEnd[] __asm("section$end$__DATA_CONST$__kperm");
+extern "C" char Kotlin_mutablePermanentsStart[] __asm("section$start$__DATA$__kperm_rw");
+extern "C" char Kotlin_mutablePermanentsEnd[] __asm("section$end$__DATA$__kperm_rw");
 #else
 extern "C" char Kotlin_permanentsStart[] __asm("__start_kperm") __attribute__((weak));
 extern "C" char Kotlin_permanentsEnd[] __asm("__stop_kperm") __attribute__((weak));
+extern "C" char Kotlin_mutablePermanentsStart[] __asm("__start_kperm_rw") __attribute__((weak));
+extern "C" char Kotlin_mutablePermanentsEnd[] __asm("__stop_kperm_rw") __attribute__((weak));
 #endif
 
 namespace {
@@ -153,6 +157,12 @@ alloc::HeapReservation::HeapReservation() noexcept {
     auto permanentsStart = reinterpret_cast<uintptr_t>(Kotlin_permanentsStart);
     auto permanentsEnd = reinterpret_cast<uintptr_t>(Kotlin_permanentsEnd);
     RuntimeCheck(permanentsStart != 0 && permanentsStart <= permanentsEnd, "No section with permanent objects found");
+    auto mutablePermanentsStart = reinterpret_cast<uintptr_t>(Kotlin_mutablePermanentsStart);
+    auto mutablePermanentsEnd = reinterpret_cast<uintptr_t>(Kotlin_mutablePermanentsEnd);
+    if (mutablePermanentsStart != mutablePermanentsEnd) {
+        permanentsStart = std::min(permanentsStart, mutablePermanentsStart);
+        permanentsEnd = std::max(permanentsEnd, mutablePermanentsEnd);
+    }
 
     // The base is placed one page below the lowest object, so that offset 0 always means null.
     uint64_t windowSize = mm::kCompressedRefsWindowSize - pageSize_;

@@ -434,6 +434,7 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
     val getTypeInfo = importRtFunction("Kotlin_Any_getTypeInfo", false)
     val throwExceptionFunction = importRtFunction("ThrowException", false)
     val appendToInitalizersTail = importRtFunction("AppendToInitializersTail", false)
+    val appendPermanentRefFixups = importRtFunction("AppendPermanentRefFixups", false)
     val callInitGlobalPossiblyLock = importRtFunction("CallInitGlobalPossiblyLock", false)
     val callInitThreadLocal = importRtFunction("CallInitThreadLocal", false)
     val addTLSRecord = importRtFunction("AddTLSRecord", false)
