@@ -46,7 +46,7 @@ internal class WasmLinkingOperationImpl private constructor(
             klib,
             destination,
             compilerArguments.deepCopy(),
-        )
+        ).also { it.copyFrom(this) }
     }
 
     @UseFromImplModuleRestricted

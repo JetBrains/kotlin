@@ -87,7 +87,7 @@ internal class JsKlibCompilationOperationImpl private constructor(
             destination,
             compilerArguments.deepCopy(),
             compilerVersion
-        )
+        ).also { it.copyFrom(this) }
     }
 
     @UseFromImplModuleRestricted

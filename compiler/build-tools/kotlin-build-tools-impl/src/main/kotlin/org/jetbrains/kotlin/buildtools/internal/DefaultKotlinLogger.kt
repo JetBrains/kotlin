@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.buildtools.internal
 
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 
-private enum class LogLevel {
+public enum class LogLevel {
     ERROR,
     WARN,
     LIFECYCLE,
@@ -15,8 +15,8 @@ private enum class LogLevel {
     DEBUG,
     ;
 
-    companion object {
-        fun fromString(rawValue: String) = entries.firstOrNull { it.name.equals(rawValue, ignoreCase = true) }
+    public companion object {
+        public fun fromString(rawValue: String): LogLevel = entries.firstOrNull { it.name.equals(rawValue, ignoreCase = true) }
             ?: error("Unknown log level for the DefaultKotlinLogger: $rawValue")
     }
 }
