@@ -11,8 +11,6 @@ import org.jetbrains.kotlin.buildtools.api.*
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation.CompilerArgumentsLogLevel
 import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
 import org.jetbrains.kotlin.buildtools.internal.arguments.*
-import org.jetbrains.kotlin.buildtools.internal.arguments.CommonToolArgumentsImpl.Companion.VERBOSE
-import org.jetbrains.kotlin.buildtools.internal.arguments.CommonToolArgumentsImpl.Companion.WERROR
 import org.jetbrains.kotlin.buildtools.internal.trackers.LookupTrackerAdapter
 import org.jetbrains.kotlin.buildtools.internal.trackers.getMetricsReporter
 import org.jetbrains.kotlin.cli.common.CLICompiler
@@ -69,7 +67,7 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
             compilerArguments.reportValidationErrors(kotlinLogger)
             return CompilationResult.COMPILATION_ERROR
         }
-        val loggerAdapter = KotlinLoggerMessageCollectorAdapter(kotlinLogger, compilerMessageRenderer, compilerArguments[WERROR])
+        val loggerAdapter = KotlinLoggerMessageCollectorAdapter(kotlinLogger, compilerMessageRenderer, compilerArguments.allWarningsAsErrors)
         compilerArguments.reportArgumentParseWarnings(loggerAdapter, createAndPrepareCompilerArguments())
         val hasArgumentParsingErrors = loggerAdapter.hasErrors()
         val result = when (executionPolicy) {
@@ -111,7 +109,7 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
             }
         }.toTypedArray()
 
-        val reportSeverity = if (VERBOSE in compilerArguments && compilerArguments[VERBOSE]) {
+        val reportSeverity = if (compilerArguments.verbose) {
             ReportSeverity.DEBUG.code
         } else {
             ReportSeverity.INFO.code
@@ -119,9 +117,9 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
 
         val requestedCompilationResults = listOfNotNull(
             CompilationResultCategory.IC_COMPILE_ITERATION.code,
-            CompilationResultCategory.BUILD_METRICS.code.takeIf { this[METRICS_COLLECTOR] != null || this[XX_KGP_METRICS_COLLECTOR] },
+            CompilationResultCategory.BUILD_METRICS.code.takeIf { metricsCollector != null || kgpMetricsCollector },
             // Daemon would report log lines only if debug logging is enabled or metrics are requested
-            CompilationResultCategory.VERBOSE_BUILD_REPORT_LINES.code.takeIf { this[METRICS_COLLECTOR] != null || this[XX_KGP_METRICS_COLLECTOR] || isDebugLoggingEnabled },
+            CompilationResultCategory.VERBOSE_BUILD_REPORT_LINES.code.takeIf { metricsCollector != null || kgpMetricsCollector || isDebugLoggingEnabled },
         ).toTypedArray()
 
         return getIcOptionsOrNull(reportCategories, reportSeverity, requestedCompilationResults, arguments)
@@ -197,8 +195,8 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
         BaseCompilerServicesWithResultsFacade(loggerAdapter, get(LOOKUP_TRACKER))
 
     protected fun populateMetricsCollector(metricsReporter: BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>) {
-        if (this[XX_KGP_METRICS_COLLECTOR] && metricsReporter is BuildMetricsReporterImpl) {
-            this[XX_KGP_METRICS_COLLECTOR_OUT] = ByteArrayOutputStream().apply {
+        if (kgpMetricsCollector && metricsReporter is BuildMetricsReporterImpl) {
+            kgpMetricsCollectorOut = ByteArrayOutputStream().apply {
                 ObjectOutputStream(this).writeObject(metricsReporter)
             }.toByteArray()
         }

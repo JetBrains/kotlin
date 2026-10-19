@@ -15,23 +15,26 @@ import kotlin.OptIn
 import kotlin.String
 import kotlin.Suppress
 import kotlin.collections.List
+import kotlin.collections.Map
 import kotlin.collections.MutableList
 import kotlin.collections.MutableMap
 import kotlin.collections.MutableSet
 import kotlin.collections.Set
+import kotlin.collections.buildMap
 import kotlin.collections.emptyList
 import kotlin.collections.emptySet
 import kotlin.collections.mutableListOf
 import kotlin.collections.mutableMapOf
 import kotlin.collections.mutableSetOf
+import kotlin.reflect.KMutableProperty1
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import kotlinx.serialization.UseSerializers
 import org.jetbrains.kotlin.buildtools.`internal`.UseFromImplModuleRestricted
 import org.jetbrains.kotlin.buildtools.`internal`.serializability.PathAsStringSerializer
-import org.jetbrains.kotlin.buildtools.`internal`.serializability.getPropertyWithSerialNameValue
-import org.jetbrains.kotlin.buildtools.`internal`.serializability.setPropertyWithSerialNameValue
+import org.jetbrains.kotlin.buildtools.`internal`.serializability.getPropertyByName
+import org.jetbrains.kotlin.buildtools.`internal`.serializability.setPropertyByName
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonToolArguments as ArgumentsCommonToolArguments
@@ -98,24 +101,15 @@ internal abstract class CommonToolArgumentsImpl() : ArgumentsCommonToolArguments
   public abstract fun createDefaultArguments(): CommonToolArguments
 
   @Suppress("UNCHECKED_CAST")
-  public operator fun <V> `get`(key: CommonToolArgument<V>): V = CommonToolArgumentsImpl::class.getPropertyWithSerialNameValue(this, key.id)
-
-  public operator fun <V> `set`(key: CommonToolArgument<V>, `value`: V) {
-    CommonToolArgumentsImpl::class.setPropertyWithSerialNameValue(this, key.id, value)
-  }
-
-  public operator fun contains(key: CommonToolArgument<*>): Boolean = true
-
-  @Suppress("UNCHECKED_CAST")
   @UseFromImplModuleRestricted
-  override operator fun <V> `get`(key: ArgumentsCommonToolArguments.CommonToolArgument<V>): V = try { CommonToolArgumentValueAdapter.toApi(CommonToolArgumentsImpl::class.getPropertyWithSerialNameValue(this, key.id)) } catch (_: IllegalStateException) { optionsMap[key.id] } as V
+  override operator fun <V> `get`(key: ArgumentsCommonToolArguments.CommonToolArgument<V>): V = try { CommonToolArgumentValueAdapter.toApi(getPropertyByName(propertyAccessMap, key.id)) } catch (_: IllegalStateException) { optionsMap[key.id] } as V
 
   @UseFromImplModuleRestricted
   override operator fun <V> `set`(key: ArgumentsCommonToolArguments.CommonToolArgument<V>, `value`: V) {
     if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 0)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
-    try { CommonToolArgumentsImpl::class.setPropertyWithSerialNameValue(this, key.id, CommonToolArgumentValueAdapter.toImpl(value)) } catch (_: IllegalStateException) { optionsMap[key.id] = value }
+    try { setPropertyByName(propertyAccessMap, key.id, CommonToolArgumentValueAdapter.toImpl(value)) } catch (_: IllegalStateException) { optionsMap[key.id] = value }
   }
 
   @Deprecated(
@@ -165,28 +159,15 @@ internal abstract class CommonToolArgumentsImpl() : ArgumentsCommonToolArguments
     _restrictedArgViolations.clear()
   }
 
-  public class CommonToolArgument<V>(
-    public val id: String,
-  ) {
-    init {
-      knownArguments.add(id)}
-  }
-
   public companion object {
-    private val knownArguments: MutableSet<String> = mutableSetOf()
-
-    public val WERROR: CommonToolArgument<Boolean> = CommonToolArgument("WERROR")
-
-    public val WEXTRA: CommonToolArgument<Boolean> = CommonToolArgument("WEXTRA")
-
-    public val X: CommonToolArgument<Boolean> = CommonToolArgument("X")
-
-    public val HELP: CommonToolArgument<Boolean> = CommonToolArgument("HELP")
-
-    public val NOWARN: CommonToolArgument<Boolean> = CommonToolArgument("NOWARN")
-
-    public val VERBOSE: CommonToolArgument<Boolean> = CommonToolArgument("VERBOSE")
-
-    public val VERSION: CommonToolArgument<Boolean> = CommonToolArgument("VERSION")
+    private val propertyAccessMap: Map<String, KMutableProperty1<*, *>> = buildMap {
+      put("WERROR", CommonToolArgumentsImpl::allWarningsAsErrors)
+      put("WEXTRA", CommonToolArgumentsImpl::extraWarnings)
+      put("X", CommonToolArgumentsImpl::extraHelp)
+      put("HELP", CommonToolArgumentsImpl::help)
+      put("NOWARN", CommonToolArgumentsImpl::suppressWarnings)
+      put("VERBOSE", CommonToolArgumentsImpl::verbose)
+      put("VERSION", CommonToolArgumentsImpl::version)
+    }
   }
 }
