@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.targets.js.testing
 import com.sun.net.httpserver.HttpServer
 import org.gradle.api.Project
 import org.gradle.api.file.Directory
-import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.logging.Logging
 import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
@@ -17,6 +16,7 @@ import org.jetbrains.kotlin.gradle.utils.registerClassLoaderScopedBuildService
 import java.net.InetAddress
 import java.net.InetSocketAddress
 import java.net.URI
+import java.nio.file.InvalidPathException
 import java.nio.file.Path
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.io.path.extension
@@ -25,25 +25,18 @@ import kotlin.io.path.inputStream
 import kotlin.io.path.isDirectory
 import kotlin.io.path.isRegularFile
 import kotlin.jvm.java
-import kotlin.text.endsWith
 
 private val logger = Logging.getLogger(KotlinHttpServerForBrowserJsTests::class.java)
 
-internal abstract class KotlinHttpServerForBrowserJsTests : BuildService<KotlinHttpServerForBrowserJsTests.Params>, AutoCloseable {
+internal abstract class KotlinHttpServerForBrowserJsTests : BuildService<BuildServiceParameters.None>, AutoCloseable {
     @Volatile
     private var jdkHttpServer: SimpleJdkHttpServer? = null
-
-    internal interface Params : BuildServiceParameters {
-        val rootProjectDir: DirectoryProperty
-    }
 
     private fun createAndStart(): SimpleJdkHttpServer {
         synchronized(this) {
             if (jdkHttpServer != null) return jdkHttpServer!!
 
-            val jdkHttpServer = SimpleJdkHttpServer(
-                rootDir = parameters.rootProjectDir.get().asFile.toPath()
-            )
+            val jdkHttpServer = SimpleJdkHttpServer()
             jdkHttpServer.start()
             logger.debug("HTTP server for js tests started at ${jdkHttpServer.serverAddress}")
             this.jdkHttpServer = jdkHttpServer
@@ -51,19 +44,19 @@ internal abstract class KotlinHttpServerForBrowserJsTests : BuildService<KotlinH
         }
     }
 
-    fun serve(
-        fullTaskPath: String,
-        bundleDirectory: Directory,
-    ): URI {
-        val path = bundleDirectory.asFile.toPath()
+    /**
+     * Serves files from [directory] at [prefix], i.e. `{serverAddress}/{prefix}/{relative path in directory}`.
+     * Returns the URL with `serverAddress` and [prefix]` i.e. http://localhost:8080/prefix
+     */
+    fun serve(prefix: String, directory: Directory): URI {
+        val path = directory.asFile.toPath()
         require(path.isDirectory()) { "Can't serve files from non-directory $path" }
 
         val server = jdkHttpServer ?: createAndStart()
         check(server.isActive) { "Can't serve files HTTP Server is already stopped" }
 
-        val bundleDirPath = bundleDirectory.asFile.toPath()
-        val url = server.serveStaticFiles(fullTaskPath, bundleDirPath)
-        logger.debug("Serving JS test bundle directory ($bundleDirPath) at $url")
+        val url = server.serveStaticFiles(prefix, path)
+        logger.debug("Serving static files directory ($path) at $url")
         return url
     }
 
@@ -77,17 +70,9 @@ internal abstract class KotlinHttpServerForBrowserJsTests : BuildService<KotlinH
 }
 
 internal fun Project.kotlinHttpServerForBrowserJsTests(): Provider<KotlinHttpServerForBrowserJsTests> =
-    gradle.registerClassLoaderScopedBuildService(KotlinHttpServerForBrowserJsTests::class) {
-        it.parameters.rootProjectDir.set(rootDir)
-    }
+    gradle.registerClassLoaderScopedBuildService(KotlinHttpServerForBrowserJsTests::class) {}
 
-internal class SimpleJdkHttpServer(
-    /**
-     * This directory should be used as fallback when files are not resolvable from [locator]
-     * Mainly needed for resolving files defined by import-map e.g. pointing to {root_project}/build/wasm/node_modules for example.
-     */
-    private val rootDir: Path
-) {
+internal class SimpleJdkHttpServer {
     class PrefixLocator<V : Any>() {
         private val locations: ConcurrentHashMap<String, V> = ConcurrentHashMap()
 
@@ -129,19 +114,8 @@ internal class SimpleJdkHttpServer(
 
     init {
         server.createContext("/") { exchange ->
-            val requestPath = exchange.requestURI.path.trimStart('/')
-
-            val prefixAndDir = locator.findClosestGreaterPrefix(requestPath)
-
-            val (file, contentDir) = if (prefixAndDir != null) {
-                val (prefix, dir) = prefixAndDir
-                val relativePath = requestPath.removePrefix(prefix).trimStart('/')
-                dir.resolve(relativePath).normalize() to dir
-            } else {
-                rootDir.resolve(requestPath).normalize() to rootDir
-            }
-
-            if (!file.startsWith(contentDir) || !file.isRegularFile()) {
+            val file = resolveFile(exchange.requestURI.path)
+            if (file == null) {
                 exchange.sendResponseHeaders(404, -1)
                 exchange.close()
                 return@createContext
@@ -161,7 +135,27 @@ internal class SimpleJdkHttpServer(
         }
     }
 
+    private fun resolveFile(rawRequestPath: String): Path? {
+        val requestPath = rawRequestPath.trimStart('/')
+        val (prefix, dir) = locator.findClosestGreaterPrefix(requestPath) ?: return null
+
+        val relativePath = requestPath.removePrefix(prefix)
+        // prefix should match only complete path segments, e.g. prefix "build/wasm" shouldn't match "build/wasmFoo/file.js"
+        if (relativePath.isNotEmpty() && !relativePath.startsWith('/')) return null
+
+        val file = try {
+            dir.resolve(relativePath.trimStart('/')).normalize()
+        } catch (_: InvalidPathException) {
+            return null
+        }
+
+        if (!file.startsWith(dir) || !file.isRegularFile()) return null
+        return file
+    }
+
     fun serveStaticFiles(prefix: String, location: Path): URI {
+        val prefix = prefix.trim('/')
+        val location = location.toAbsolutePath().normalize()
         val previousLocation = locator.add(prefix, location)
         if (previousLocation != null && previousLocation != location) {
             throw IllegalArgumentException("Can't register path $location at prefix $prefix, as it is already registered to a different location $previousLocation")
