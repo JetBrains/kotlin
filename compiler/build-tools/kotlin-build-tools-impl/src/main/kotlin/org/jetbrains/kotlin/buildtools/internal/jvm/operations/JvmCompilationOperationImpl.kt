@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.buildtools.internal.jvm.toOptions
 import org.jetbrains.kotlin.buildtools.internal.trackers.getMetricsReporter
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.messages.MessageCollectorWithDiagnosticId
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.jvm.compiler.setupIdeaStandaloneExecution
 import org.jetbrains.kotlin.config.LanguageVersion
@@ -52,9 +53,9 @@ internal class JvmCompilationOperationImpl private constructor(
     override val options: Options = Options(JvmCompilationOperation::class),
     override val sources: List<Path>,
     override val destinationDirectory: Path,
-    compilerArguments: JvmCompilerArgumentsImpl = JvmCompilerArgumentsImpl(),
+    override val compilerArguments: JvmCompilerArgumentsImpl = JvmCompilerArgumentsImpl(),
     private val compilerVersion: String,
-) : BaseCompilationOperationImpl<JvmCompilerArgumentsImpl, K2JVMCompilerArguments>(compilerArguments),
+) : BaseCompilationOperationImpl<JvmCompilerArgumentsImpl, K2JVMCompilerArguments>(),
     JvmCompilationOperation,
     JvmCompilationOperation.Builder,
     DeepCopyable<JvmCompilationOperationImpl> {
@@ -186,13 +187,16 @@ internal class JvmCompilationOperationImpl private constructor(
         }
     }
 
-    override fun createCompilerServicesFacade(loggerAdapter: KotlinLoggerMessageCollectorAdapter): CompilerServicesFacadeBase {
+    override fun createCompilerServicesFacade(
+        logger: KotlinLogger,
+        messageCollector: MessageCollectorWithDiagnosticId,
+    ): CompilerServicesFacadeBase {
         val icConfiguration = get(INCREMENTAL_COMPILATION)
         if (icConfiguration is JvmClientManagedIncrementalCompilationConfiguration) {
-            return icConfiguration.createCompilerServicesFacadeBase(loggerAdapter, cancellationHandle)
+            return icConfiguration.createCompilerServicesFacadeBase(logger, messageCollector, cancellationHandle)
         }
 
-        return super.createCompilerServicesFacade(loggerAdapter)
+        return super.createCompilerServicesFacade(logger, messageCollector)
     }
 
     private fun getSnapshotBasedIncrementalCompilationOptions(
@@ -225,7 +229,7 @@ internal class JvmCompilationOperationImpl private constructor(
             kotlinScriptExtensions = get(KOTLINSCRIPT_EXTENSIONS),
             icFeatures = aggregatedIcConfigurationOptions.extractIncrementalCompilationFeatures(),
             useJvmFirRunner = aggregatedIcConfigurationOptions[USE_FIR_RUNNER],
-            generateCompilerRefIndex = get(GENERATE_COMPILER_REF_INDEX),
+            generateCompilerRefIndex = generateCompilerRefIndex,
             configurationInputs = makeConfigurationInputs(
                 aggregatedIcConfigurationOptions,
                 getEffectivePreciseJavaTrackingState(
@@ -246,11 +250,12 @@ internal class JvmCompilationOperationImpl private constructor(
     }
 
     override fun compileInProcess(
-        loggerAdapter: KotlinLoggerMessageCollectorAdapter,
+        logger: KotlinLogger,
+        messageCollector: MessageCollectorWithDiagnosticId,
         executionContext: ExecutionContext,
     ): CompilationResult {
         setupIdeaStandaloneExecution()
-        return super.compileInProcess(loggerAdapter, executionContext)
+        return super.compileInProcess(logger, messageCollector, executionContext)
     }
 
     override fun createCompiler(): CLICompiler<K2JVMCompilerArguments> {
@@ -263,7 +268,8 @@ internal class JvmCompilationOperationImpl private constructor(
 
     override fun compileIncrementallyInProcess(
         arguments: K2JVMCompilerArguments,
-        loggerAdapter: KotlinLoggerMessageCollectorAdapter,
+        logger: KotlinLogger,
+        messageCollector: MessageCollectorWithDiagnosticId,
         executionContext: ExecutionContext,
     ): CompilationResult {
         val snapshotBasedIcOptionsAccessor = getIcOptionsAccessorOrNull() ?: error("Missing INCREMENTAL_COMPILATION option.")
@@ -281,7 +287,7 @@ internal class JvmCompilationOperationImpl private constructor(
         metricsReporter.startMeasureGc()
         val buildReporter = BuildReporter(
             icReporter = BuildToolsApiBuildICReporter(
-                kotlinLogger = loggerAdapter.kotlinLogger,
+                kotlinLogger = logger,
                 rootProjectDir = projectDir,
                 buildMetricsReporter = metricsReporter,
             ), buildMetricsReporter = metricsReporter
@@ -311,7 +317,7 @@ internal class JvmCompilationOperationImpl private constructor(
             )
         }
 
-        logCompilerArguments(loggerAdapter, arguments, get(COMPILER_ARGUMENTS_LOG_LEVEL))
+        logCompilerArguments(logger, arguments, compilerArgumentsLogLevel)
 
         val fileLocations = if (projectDir != null && buildDir != null) {
             FileLocations(projectDir, buildDir)
@@ -321,7 +327,7 @@ internal class JvmCompilationOperationImpl private constructor(
         val compilationResult = incrementalCompiler.compile(
             kotlinSources,
             arguments,
-            loggerAdapter,
+            messageCollector,
             snapshotBasedIcOptionsAccessor.sourcesChanges.asChangedFiles,
             fileLocations,
             configurationInputs,
@@ -400,7 +406,7 @@ internal class JvmCompilationOperationImpl private constructor(
             kotlinSourceFilesExtensions = kotlinFilenameExtensions,
             icFeatures = icFeatures,
             compilationCanceledStatus = cancellationHandle,
-            generateCompilerRefIndex = get(GENERATE_COMPILER_REF_INDEX),
+            generateCompilerRefIndex = generateCompilerRefIndex,
             lookupTrackerDelegate = getLookupTrackerAdapter(),
             pluginsLoader = executionContext.classloadersCache?.asPluginsLoader()
         )
@@ -421,7 +427,7 @@ internal class JvmCompilationOperationImpl private constructor(
             kotlinSourceFilesExtensions = kotlinFilenameExtensions,
             icFeatures = icFeatures,
             compilationCanceledStatus = cancellationHandle,
-            generateCompilerRefIndex = get(GENERATE_COMPILER_REF_INDEX),
+            generateCompilerRefIndex = generateCompilerRefIndex,
             lookupTrackerDelegate = getLookupTrackerAdapter(),
         )
 

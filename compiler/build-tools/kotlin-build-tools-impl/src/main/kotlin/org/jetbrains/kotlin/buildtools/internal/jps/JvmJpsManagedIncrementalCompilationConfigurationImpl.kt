@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.buildtools.internal.jps.incremental.IncrementalCompi
 import org.jetbrains.kotlin.buildtools.internal.jps.incremental.trackers.*
 import org.jetbrains.kotlin.buildtools.internal.jvm.operations.JvmCompilationOperationImpl
 import org.jetbrains.kotlin.buildtools.internal.trackers.LookupTrackerAdapter
+import org.jetbrains.kotlin.cli.common.messages.MessageCollectorWithDiagnosticId
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.common.CompilationOptions
 import org.jetbrains.kotlin.daemon.common.CompileService
@@ -31,7 +32,6 @@ import org.jetbrains.kotlin.daemon.common.CompilerServicesFacadeBase
 import org.jetbrains.kotlin.incremental.components.*
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
-import org.jetbrains.kotlin.buildtools.internal.BaseCompilationOperationImpl.Companion.LOOKUP_TRACKER as BASE_LOOKUP_TRACKER
 
 /**
  * Marks a client-managed incremental compilation configuration, so that it can be recognized without mentioning any
@@ -67,7 +67,8 @@ internal fun JvmClientManagedIncrementalCompilationConfiguration.getClientManage
 @OptIn(DelicateBuildToolsApi::class, InternalBuildToolsApi::class)
 context(operation: JvmCompilationOperationImpl)
 internal fun JvmClientManagedIncrementalCompilationConfiguration.createCompilerServicesFacadeBase(
-    loggerAdapter: KotlinLoggerMessageCollectorAdapter,
+    logger: KotlinLogger,
+    messageCollector: MessageCollectorWithDiagnosticId,
     compilationCanceledStatus: CompilationCanceledStatus,
 ): CompilerServicesFacadeBase {
     check(this is JvmJpsManagedIncrementalCompilationConfigurationImpl) {
@@ -75,8 +76,8 @@ internal fun JvmClientManagedIncrementalCompilationConfiguration.createCompilerS
     }
 
     val lookupTracker = this[LOOKUP_TRACKER]?.let { tracker ->
-        if (operation[BASE_LOOKUP_TRACKER] != null) {
-            loggerAdapter.kotlinLogger.warn(
+        if (operation.lookupTracker != null) {
+            logger.warn(
                 "A lookup tracker is set both as BaseCompilationOperation.LOOKUP_TRACKER and as " +
                         "JvmJpsManagedIncrementalCompilationConfiguration.LOOKUP_TRACKER. " +
                         "The latter takes precedence."
@@ -84,10 +85,10 @@ internal fun JvmClientManagedIncrementalCompilationConfiguration.createCompilerS
         }
 
         LookupTrackerAdapter(tracker)
-    } ?: operation[BASE_LOOKUP_TRACKER]?.let(::LookupTrackerAdapter)
+    } ?: operation.lookupTracker?.let(::LookupTrackerAdapter)
 
     return JpsManagedCompilerServicesWithResultsFacade(
-        loggerAdapter,
+        messageCollector,
         incrementalCompilationComponents = IncrementalCompilationComponentsAdapter(incrementalCompilationComponents),
         lookupTracker = lookupTracker,
         inlineConstTracker = this[INLINE_CONST_TRACKER]?.let(::InlineConstTrackerAdapter),
@@ -111,7 +112,7 @@ internal fun JvmClientManagedIncrementalCompilationConfiguration.registerPlatfor
     )
 
     this[LOOKUP_TRACKER]?.let { tracker ->
-        if (operation[BASE_LOOKUP_TRACKER] != null) {
+        if (operation.lookupTracker != null) {
             logger.warn(
                 "A lookup tracker is set both as BaseCompilationOperation.LOOKUP_TRACKER and as " +
                         "JvmJpsManagedIncrementalCompilationConfiguration.LOOKUP_TRACKER. The latter takes precedence."
