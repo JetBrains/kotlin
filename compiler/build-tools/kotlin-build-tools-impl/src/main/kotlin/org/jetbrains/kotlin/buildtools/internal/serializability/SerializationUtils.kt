@@ -14,24 +14,22 @@ import kotlinx.serialization.encoding.Encoder
 import java.nio.file.Path
 import kotlin.io.path.Path
 import kotlin.io.path.pathString
-import kotlin.reflect.KClass
-import kotlin.reflect.KMutableProperty
-import kotlin.reflect.full.declaredMemberProperties
+import kotlin.reflect.KMutableProperty1
 
-
-private fun KClass<*>.findPropertyWithSerialName(name: String): KMutableProperty<*> {
-    return this.declaredMemberProperties.filterIsInstance<KMutableProperty<*>>()
-        .firstOrNull { it.annotations.any { ann -> ann is SerialName && ann.value == name } }
-        ?: error("Property with serial name $name not found in $this")
-}
-
-internal fun <T, K : Any> KClass<K>.getPropertyWithSerialNameValue(obj: K, name: String): T {
+internal fun <T, K : Any> K.getPropertyByName(
+    propertyAccessors: Map<String, KMutableProperty1<*, out Any?>>,
+    name: String,
+): T {
     @Suppress("UNCHECKED_CAST")
-    return findPropertyWithSerialName(name).getter.call(obj) as T
+    return (propertyAccessors[name] ?: error("Property with name $name not found in $this")).getter.call(this) as T
 }
 
-internal fun <T, K : Any> KClass<K>.setPropertyWithSerialNameValue(obj: K, name: String, value: T) {
-    findPropertyWithSerialName(name).setter.call(obj, value)
+internal fun <T, K : Any> K.setPropertyByName(
+    propertyAccessors: Map<String, KMutableProperty1<*, out Any?>>,
+    name: String,
+    value: T,
+) {
+    (propertyAccessors[name] ?: error("Property with name $name not found in $this")).setter.call(this, value)
 }
 
 internal object PathAsStringSerializer : KSerializer<Path> {

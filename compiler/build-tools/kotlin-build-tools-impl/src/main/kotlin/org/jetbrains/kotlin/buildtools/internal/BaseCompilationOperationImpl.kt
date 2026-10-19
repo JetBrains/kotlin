@@ -11,8 +11,6 @@ import org.jetbrains.kotlin.buildtools.api.*
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation.CompilerArgumentsLogLevel
 import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
 import org.jetbrains.kotlin.buildtools.internal.arguments.*
-import org.jetbrains.kotlin.buildtools.internal.arguments.CommonToolArgumentsImpl.Companion.VERBOSE
-import org.jetbrains.kotlin.buildtools.internal.arguments.CommonToolArgumentsImpl.Companion.WERROR
 import org.jetbrains.kotlin.buildtools.internal.trackers.LookupTrackerAdapter
 import org.jetbrains.kotlin.buildtools.internal.trackers.getMetricsReporter
 import org.jetbrains.kotlin.cli.common.CLICompiler
@@ -69,7 +67,7 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
             compilerArguments.reportValidationErrors(kotlinLogger)
             return CompilationResult.COMPILATION_ERROR
         }
-        val loggerAdapter = KotlinLoggerMessageCollectorAdapter(kotlinLogger, compilerMessageRenderer, compilerArguments[WERROR])
+        val loggerAdapter = KotlinLoggerMessageCollectorAdapter(kotlinLogger, compilerMessageRenderer, compilerArguments.allWarningsAsErrors)
         compilerArguments.reportArgumentParseWarnings(loggerAdapter, createAndPrepareCompilerArguments())
         val hasArgumentParsingErrors = loggerAdapter.hasErrors()
         val result = when (executionPolicy) {
@@ -111,7 +109,7 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
             }
         }.toTypedArray()
 
-        val reportSeverity = if (VERBOSE in compilerArguments && compilerArguments[VERBOSE]) {
+        val reportSeverity = if (compilerArguments.verbose) {
             ReportSeverity.DEBUG.code
         } else {
             ReportSeverity.INFO.code

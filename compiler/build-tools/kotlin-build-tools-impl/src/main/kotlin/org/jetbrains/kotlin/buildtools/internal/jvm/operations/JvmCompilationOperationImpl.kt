@@ -24,19 +24,20 @@ import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfig
 import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfigurationImpl.Companion.ROOT_PROJECT_DIR
 import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfigurationImpl.Companion.TRACK_CONFIGURATION_INPUTS
 import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfigurationImpl.Companion.UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM
-import org.jetbrains.kotlin.buildtools.internal.arguments.CommonCompilerArgumentsImpl
-import org.jetbrains.kotlin.buildtools.internal.arguments.CommonCompilerArgumentsImpl.Companion.LANGUAGE_VERSION
-import org.jetbrains.kotlin.buildtools.internal.arguments.CommonCompilerArgumentsImpl.Companion.X_USE_FIR_IC
 import org.jetbrains.kotlin.buildtools.internal.arguments.JvmCompilerArgumentsImpl
 import org.jetbrains.kotlin.buildtools.internal.arguments.absolutePathStringOrThrow
 import org.jetbrains.kotlin.buildtools.internal.jps.JvmClientManagedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.internal.jps.createCompilerServicesFacadeBase
 import org.jetbrains.kotlin.buildtools.internal.jps.getClientManagedIncrementalCompilationOptions
 import org.jetbrains.kotlin.buildtools.internal.jps.registerPlatformServices
-import org.jetbrains.kotlin.buildtools.internal.jvm.*
+import org.jetbrains.kotlin.buildtools.internal.jvm.HasSnapshotBasedIcOptionsAccessor
+import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationConfigurationImpl
+import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationOptionsImpl
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationOptionsImpl.Companion.PRECISE_JAVA_TRACKING
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationOptionsImpl.Companion.USE_FIR_RUNNER
+import org.jetbrains.kotlin.buildtools.internal.jvm.KaptConfigurationImpl
 import org.jetbrains.kotlin.buildtools.internal.jvm.KaptConfigurationImpl.Companion.SOURCE_OUTPUT_DIR
+import org.jetbrains.kotlin.buildtools.internal.jvm.toOptions
 import org.jetbrains.kotlin.buildtools.internal.trackers.getMetricsReporter
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
@@ -343,7 +344,7 @@ internal class JvmCompilationOperationImpl private constructor(
 
     private fun addKaptCompilerPluginOptions(workingDirectory: Path? = null) {
         get(KAPT_CONFIGURATION)?.let { kaptConfiguration ->
-            val compilerPlugins = compilerArguments[CommonCompilerArgumentsImpl.COMPILER_PLUGINS].toMutableList()
+            val compilerPlugins = compilerArguments.compilerPlugins.toMutableList()
             val kaptBuilder = kaptConfiguration.deepCopy()
             workingDirectory?.let { path ->
                 kaptBuilder[KaptConfigurationImpl.INCREMENTAL_DATA_OUTPUT_DIR] = path
@@ -352,7 +353,7 @@ internal class JvmCompilationOperationImpl private constructor(
                 kaptBuilder[SOURCE_OUTPUT_DIR] = destinationDirectory // not used but must be provided
             }
             compilerPlugins += kaptBuilder.toCompilerPlugin()
-            compilerArguments[CommonCompilerArgumentsImpl.COMPILER_PLUGINS] = compilerPlugins
+            compilerArguments.compilerPlugins = compilerPlugins
         }
     }
 
@@ -461,18 +462,14 @@ internal class JvmCompilationOperationImpl private constructor(
 private fun checkJvmFirRequirements(
     arguments: JvmCompilerArgumentsImpl,
 ): Boolean {
-    val languageVersion = if (LANGUAGE_VERSION in arguments) {
-        arguments[LANGUAGE_VERSION]
-    } else {
-        null
-    }?.let {
+    val languageVersion = arguments.languageVersion?.let {
         LanguageVersion.fromVersionString(it.stringValue)
     } ?: LanguageVersion.LATEST_STABLE
 
     check(languageVersion >= LanguageVersion.KOTLIN_2_0) {
         "FIR incremental compiler runner is only compatible with Kotlin Language Version 2.0"
     }
-    check(X_USE_FIR_IC in arguments && arguments[X_USE_FIR_IC]) {
+    check(arguments.useFirIC) {
         "FIR incremental compiler runner requires '-Xuse-fir-ic' to be present in arguments"
     }
 
