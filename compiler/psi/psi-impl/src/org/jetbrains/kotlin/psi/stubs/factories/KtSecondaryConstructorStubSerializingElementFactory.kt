@@ -12,6 +12,7 @@ import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.psi.KtSecondaryConstructor
 import org.jetbrains.kotlin.psi.psiUtil.isLegacyContractPresentPsiCheck
+import org.jetbrains.kotlin.psi.stubs.StubBuildingLexing.mayHaveLegacyContract
 import org.jetbrains.kotlin.psi.stubs.StubUtils.deserializeKdocText
 import org.jetbrains.kotlin.psi.stubs.StubUtils.serializeKdocText
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinSecondaryConstructorStubImpl
@@ -33,7 +34,7 @@ internal object KtSecondaryConstructorStubSerializingElementFactory :
         val delegationCall = psi.getDelegationCallOrNull()
         val isDelegatedCallToThis = delegationCall?.isCallToThis ?: true
         val isExplicitDelegationCall = delegationCall?.isImplicit == false
-        val mayHaveContract = psi.isLegacyContractPresentPsiCheck()
+        val mayHaveContract = psi.mayHaveLegacyContract() && psi.isLegacyContractPresentPsiCheck()
         return KotlinSecondaryConstructorStubImpl(
             parent = parentStub,
             containingClassName = StringRef.fromString(psi.name),

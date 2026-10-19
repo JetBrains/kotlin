@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.psiUtil.safeFqNameForLazyResolve
+import org.jetbrains.kotlin.psi.stubs.StubBuildingLexing.mayHaveLegacyContract
 import org.jetbrains.kotlin.psi.stubs.StubUtils.deserializeKdocText
 import org.jetbrains.kotlin.psi.stubs.StubUtils.readContract
 import org.jetbrains.kotlin.psi.stubs.StubUtils.serializeKdocText
@@ -48,7 +49,7 @@ internal object KtFunctionStubSerializingElementFactory :
         hasNoExpressionBody = psi.hasBlockBody(),
         hasBody = psi.hasBody(),
         hasTypeParameterListBeforeFunctionName = psi.hasTypeParameterListBeforeFunctionName(),
-        mayHaveContract = psi.mayHaveContract(),
+        mayHaveContract = psi.mayHaveLegacyContract() && psi.mayHaveContract(),
         kdocText = null,
         contract = null,
         origin = null,
