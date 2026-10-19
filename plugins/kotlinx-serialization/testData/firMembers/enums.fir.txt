@@ -65,15 +65,6 @@ FILE: enums.kt
         public final val w: R|WithNames| = R|<local>/w|
             public get(): R|WithNames|
 
-        public final companion object Companion : R|kotlin/Any| {
-            public final fun serializer(): R|kotlinx/serialization/KSerializer<Holder>|
-
-            private constructor(): R|Holder.Companion| {
-                super<R|kotlin/Any|>()
-            }
-
-        }
-
         @R|kotlin/Deprecated|(message = String(This synthesized declaration should not be used directly), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|) public final object $serializer : R|kotlinx/serialization/internal/GeneratedSerializer<Holder>| {
             public final override fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|Holder|): R|kotlin/Unit|
 
@@ -85,6 +76,15 @@ FILE: enums.kt
             public final override fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
 
             private constructor(): R|Holder.$serializer| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            public final fun serializer(): R|kotlinx/serialization/KSerializer<Holder>|
+
+            private constructor(): R|Holder.Companion| {
                 super<R|kotlin/Any|>()
             }
 

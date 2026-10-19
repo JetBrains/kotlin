@@ -13,15 +13,6 @@ FILE: classWithGenericParameters.kt
         public final val vs: R|kotlin/collections/List<V>| = R|<local>/vs|
             public get(): R|kotlin/collections/List<V>|
 
-        public final companion object Companion : R|kotlin/Any| {
-            public final fun <T, V> serializer(typeSerial0: R|kotlinx/serialization/KSerializer<T>|, typeSerial1: R|kotlinx/serialization/KSerializer<V>|): R|kotlinx/serialization/KSerializer<GenericBox<T, V>>|
-
-            private constructor(): R|GenericBox.Companion| {
-                super<R|kotlin/Any|>()
-            }
-
-        }
-
         @R|kotlin/Deprecated|(message = String(This synthesized declaration should not be used directly), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|) public final class $serializer<T, V> : R|kotlinx/serialization/internal/GeneratedSerializer<GenericBox<T, V>>| {
             public final override fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|GenericBox<T, V>|): R|kotlin/Unit|
 
@@ -39,6 +30,15 @@ FILE: classWithGenericParameters.kt
             }
 
             public constructor<T, V>(typeSerial0: R|kotlinx/serialization/KSerializer<T>|, typeSerial1: R|kotlinx/serialization/KSerializer<V>|): R|GenericBox.$serializer<T, V>|
+
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            public final fun <T, V> serializer(typeSerial0: R|kotlinx/serialization/KSerializer<T>|, typeSerial1: R|kotlinx/serialization/KSerializer<V>|): R|kotlinx/serialization/KSerializer<GenericBox<T, V>>|
+
+            private constructor(): R|GenericBox.Companion| {
+                super<R|kotlin/Any|>()
+            }
 
         }
 
