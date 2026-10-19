@@ -408,7 +408,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                             source = newSource
                         }.symbol
                     } else {
-                        val substitutedType = substitutor.substituteOrSelf(item.returnTypeRef.coneType)
+                        val substitutedType = substitutor.substituteOrSelf(itemSymbol.resolvedReturnType)
                         // A `@Singular` builder field always holds a nullable, mutable collection (`null` == "not yet
                         // created"), regardless of the entity property's own type/nullability — mirrors Lombok's
                         // Java codegen, which always backs a `@Singular` field with a lazily initialized mutable collection.
@@ -792,7 +792,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                         typeRef = if (builderSymbol.hasJavaOrigin)
                             item.fir.returnTypeRef
                         else
-                            substitutor.substituteOrSelf(item.fir.returnTypeRef.coneType).toFirResolvedTypeRef()
+                            substitutor.substituteOrSelf(item.resolvedReturnType).toFirResolvedTypeRef()
                     )
                 ),
                 returnTypeRef = builderType.toFirResolvedTypeRef(),
@@ -856,7 +856,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         builderSymbol: FirClassSymbol<*>,
         existingFunctionNames: Set<Name>,
     ) {
-        @OptIn(SymbolInternals::class) val typeRef = item.fir.returnTypeRef
+        @OptIn(SymbolInternals::class) val typeRef = if (builderSymbol.hasJavaOrigin) item.fir.returnTypeRef else item.resolvedReturnTypeRef
 
         val typeId = when (typeRef) {
             is FirJavaTypeRef -> ((typeRef.type as? JavaClassifierType)?.classifier as? JavaClass)?.fqName?.let(ClassId::topLevel)

@@ -1,5 +1,4 @@
-// IGNORE_NON_REVERSED_RESOLVE
-// -> ISSUE: KT-90359
+// ISSUE: KT-90359
 // FILE: Usages.kt
 
 fun builderUsages() {
