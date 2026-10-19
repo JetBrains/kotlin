@@ -295,6 +295,41 @@ class ParseGitDiffTextTests {
         newPath = "link",
     )
 
+    private val modifiedFileWithQuotedPath = """
+        diff --git "a/a b/caf\303\251.txt" "b/a b/caf\303\251.txt"
+        index 6537b0e..8b77123 100644
+        --- "a/a b/caf\303\251.txt"${'\t'}
+        +++ "b/a b/caf\303\251.txt"${'\t'}
+        @@ -1,5 +1,5 @@
+         café.txt line 1
+         café.txt line 2
+        -café.txt line 3
+        +café.txt line 3 changed
+         café.txt line 4
+         café.txt line 5
+    """.trimIndent()
+
+    @Test
+    fun `modified file with quoted path`() = assertChangedFile(
+        modifiedFileWithQuotedPath,
+        oldPath = "a b/café.txt",
+        newPath = "a b/café.txt",
+    )
+
+    private val renamedFileToQuotedPath = """
+        diff --git a/plain.txt "b/say \"hi\" \303\274.txt"
+        similarity index 100%
+        rename from plain.txt
+        rename to "say \"hi\" \303\274.txt"
+    """.trimIndent()
+
+    @Test
+    fun `renamed file to quoted path`() = assertChangedFile(
+        renamedFileToQuotedPath,
+        oldPath = "plain.txt",
+        newPath = "say \"hi\" ü.txt",
+    )
+
     // U+2028 and U+0085 are line terminators for the `.` in Java regular expressions.
     // Generated with `-c core.quotePath=false`, so that these characters are not escaped.
     private val modifiedFileWithLineTerminatorsInPath = """
@@ -314,6 +349,26 @@ class ParseGitDiffTextTests {
         modifiedFileWithLineTerminatorsInPath,
         oldPath = "ls\u2028nel\u0085.txt",
         newPath = "ls\u2028nel\u0085.txt",
+    )
+
+    // Generated with `-c core.quotePath=false`, so that U+2028 and U+0085 are not escaped.
+    private val modifiedFileWithLineTerminatorsInQuotedPath = """
+        diff --git "a/quoted \"ls${'\u2028'}nel${'\u0085'}\".txt" "b/quoted \"ls${'\u2028'}nel${'\u0085'}\".txt"
+        index a92d664..48721fb 100644
+        --- "a/quoted \"ls${'\u2028'}nel${'\u0085'}\".txt"${'\t'}
+        +++ "b/quoted \"ls${'\u2028'}nel${'\u0085'}\".txt"${'\t'}
+        @@ -1,3 +1,3 @@
+         line 1
+        -line 2
+        +line 2 changed
+         line 3
+    """.trimIndent()
+
+    @Test
+    fun `modified file with U+2028 and U+0085 in quoted path`() = assertChangedFile(
+        modifiedFileWithLineTerminatorsInQuotedPath,
+        oldPath = "quoted \"ls\u2028nel\u0085\".txt",
+        newPath = "quoted \"ls\u2028nel\u0085\".txt",
     )
 
     // Generated with `-C -C`, which is what `diff.renames=copies` does.
@@ -358,7 +413,10 @@ class ParseGitDiffTextTests {
             modifiedBinaryFile,
             addedBinaryFileWithSpaces,
             addedSymlink,
+            modifiedFileWithQuotedPath,
+            renamedFileToQuotedPath,
             modifiedFileWithLineTerminatorsInPath,
+            modifiedFileWithLineTerminatorsInQuotedPath,
             copiedFileWithSpaces,
         )
 

@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.code.review
 
+import org.eclipse.jgit.util.QuotedString
+
 private const val DIFF_MINUS_MINUS_GIT = "diff --git "
 
 fun parseGitDiffText(diffText: String): List<GitDiff.ChangedFile> {
@@ -54,7 +56,7 @@ internal fun parseChangedFile(lines: List<String>): GitDiff.ChangedFile {
     val headerLines = lines.drop(1).takeWhile { !it.startsWith(DIFF_SRC_LINE_PREFIX) }
 
     fun findHeaderPath(prefix: String): String? =
-        headerLines.firstOrNull { it.startsWith(prefix) }?.removePrefix(prefix)
+        headerLines.firstOrNull { it.startsWith(prefix) }?.removePrefix(prefix)?.let(::unquoteGitPath)
 
     fun findHeaderPaths(fromPrefix: String, toPrefix: String): Pair<String, String>? {
         val fromPath = findHeaderPath(fromPrefix) ?: return null
@@ -88,9 +90,13 @@ internal fun parseChangedFile(lines: List<String>): GitDiff.ChangedFile {
 // It can't be split at a space, since <path> may contain spaces; the backreference `\1` finds the split.
 // `DOT_MATCHES_ALL`: <path> may contain characters like U+2028, which `.` doesn't match by default.
 private val SAME_PATH_TWICE = Regex("""a/(.*) b/\1""", RegexOption.DOT_MATCHES_ALL)
+private val SAME_QUOTED_PATH_TWICE = Regex(""""a/(.*)" "b/\1"""", RegexOption.DOT_MATCHES_ALL)
 
 private fun parseSamePathFromDiffGitLine(line: String): String {
     val paths = line.removePrefix(DIFF_MINUS_MINUS_GIT)
+    SAME_QUOTED_PATH_TWICE.matchEntire(paths)?.let {
+        return unquoteGitPath("\"${it.groupValues[1]}\"")
+    }
     SAME_PATH_TWICE.matchEntire(paths)?.let {
         return it.groupValues[1]
     }
@@ -102,3 +108,9 @@ private fun parseSamePathFromDiffGitLine(line: String): String {
         """.trimMargin()
     )
 }
+
+/**
+ * Git quotes paths with "unusual" characters in the C style (see `core.quotePath` in `git help config`),
+ * e.g. `"caf\303\251.txt"` for `café.txt`. Unquoted paths are returned as is.
+ */
+private fun unquoteGitPath(path: String): String = QuotedString.GIT_PATH.dequote(path)
