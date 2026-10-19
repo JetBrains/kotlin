@@ -79,7 +79,7 @@ internal class JavaModuleOptionsResolver(
             }
         }.keys
         if (moduleNames.size > 1) {
-            reportError("Too many patched modules: ${moduleNames.joinToString()}")
+            reportError("Too many patched modules: ${moduleNames.joinToString { "'$it'" }}.")
             return null
         }
         return moduleNames.singleOrNull()
@@ -118,7 +118,7 @@ internal class JavaModuleOptionsResolver(
         val flag = if (isExports) "-Xadd-exports" else "-Xadd-reads"
 
         fun isInGraph(name: String): Boolean =
-            (name == ALL_UNNAMED || name in modulesInGraph).also { if (!it) reportWarning("Module name in `$flag` not found: $name") }
+            (name == ALL_UNNAMED || name in modulesInGraph).also { if (!it) reportWarning("Module name in '$flag' not found: '$name'.") }
 
         val result = HashMap<String, MutableSet<String>>()
         for (value in values) {
@@ -128,8 +128,8 @@ internal class JavaModuleOptionsResolver(
             if (!isInGraph(moduleName)) continue
             if (moduleName in systemModuleNames) {
                 reportError(
-                    if (isExports) "Exporting a package from system module $moduleName is not allowed with `-Xjdk-release`"
-                    else "Adding read edges for system module $moduleName is not allowed with `-Xjdk-release`"
+                    if (isExports) "Exporting a package from system module '$moduleName' is not allowed with '-Xjdk-release'."
+                    else "Adding read edges for system module '$moduleName' is not allowed with '-Xjdk-release'."
                 )
                 continue
             }
