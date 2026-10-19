@@ -14,6 +14,7 @@ fun copyCommonKlibBasedCompilerArguments(from: CommonKlibBasedCompilerArguments,
     to.duplicatedUniqueNameStrategy = from.duplicatedUniqueNameStrategy
     to.enableSignatureClashChecks = from.enableSignatureClashChecks
     to.irInlinerBeforeKlibSerialization = from.irInlinerBeforeKlibSerialization
+    @Suppress("DEPRECATION")
     to.klibZipFileAccessorCacheLimit = from.klibZipFileAccessorCacheLimit
     to.partialLinkageLogLevel = from.partialLinkageLogLevel
     @Suppress("DEPRECATION")

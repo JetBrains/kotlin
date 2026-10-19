@@ -11464,7 +11464,7 @@
                                 "releaseVersionsMetadata": {
                                     "introducedVersion": "2.3.0",
                                     "stabilizedVersion": null,
-                                    "deprecatedVersion": null,
+                                    "deprecatedVersion": "2.5.20",
                                     "removedVersion": null
                                 },
                                 "argumentType": {
@@ -11478,7 +11478,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "deprecatedMessage": null
+                                "deprecatedMessage": "The compiler is able to automatically adjust the number of cached klibs now."
                             },
                             {
                                 "name": "Xpartial-linkage",
@@ -20221,7 +20221,7 @@
                                 "releaseVersionsMetadata": {
                                     "introducedVersion": "2.4.0",
                                     "stabilizedVersion": null,
-                                    "deprecatedVersion": null,
+                                    "deprecatedVersion": "2.5.20",
                                     "removedVersion": null
                                 },
                                 "argumentType": {
@@ -20235,7 +20235,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "deprecatedMessage": null
+                                "deprecatedMessage": "The compiler is able to automatically adjust the number of cached klibs now."
                             },
                             {
                                 "name": "Xlegacy-metadata-jar-k2",

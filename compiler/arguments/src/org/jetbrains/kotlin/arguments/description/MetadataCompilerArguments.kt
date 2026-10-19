@@ -113,7 +113,10 @@ val actualMetadataArguments by compilerArgumentsLevel(CompilerArgumentsLevelName
         )
 
         lifecycle(
-            introducedVersion = KotlinReleaseVersion.v2_4_0
+            introducedVersion = KotlinReleaseVersion.v2_4_0,
+            deprecatedVersion = KotlinReleaseVersion.v2_5_20,
         )
+
+        deprecatedMessage = "The compiler is able to automatically adjust the number of cached klibs now."
     }
 }

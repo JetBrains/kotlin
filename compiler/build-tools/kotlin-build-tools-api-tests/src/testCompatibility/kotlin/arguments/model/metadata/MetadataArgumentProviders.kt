@@ -3,10 +3,11 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:OptIn(ExperimentalCompilerArgument::class)
+@file:OptIn(ExperimentalCompilerArgument::class, DeprecatedCompilerArgument::class)
 
 package org.jetbrains.kotlin.buildtools.tests.arguments.model.metadata
 
+import org.jetbrains.kotlin.buildtools.api.DeprecatedCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.MetadataArguments.Companion.CLASSPATH
 import org.jetbrains.kotlin.buildtools.api.arguments.MetadataArguments.Companion.MODULE_NAME

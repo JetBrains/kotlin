@@ -96,6 +96,7 @@ where advanced options include:
                              Note: The prefixes are applied in the same order as they are passed in this CLI argument.
   -Xklib-zip-file-accessor-cache-limit
                              Maximum number of klibs that can be cached during compilation. Default is 64.
+                             The option is deprecated since Kotlin 2.5.20. It will be removed in one of the future releases. The compiler is able to automatically adjust the number of cached klibs now.
   -Xpartial-linkage={enable|disable}
                              Enables partial linkage mode.
                              The option is deprecated since Kotlin 2.4.0. It will be removed in one of the future releases. The partial linkage engine is always turned on. If you want to adjust the compile-time log level for partial linkage, use -Xpartial-linkage-loglevel.
