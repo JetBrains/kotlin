@@ -67,8 +67,7 @@ projectTests {
         enableGroupingTestEngine = true,
         maxHeapSize = testMaxHeapSizeLarge
     ) {
-        systemProperty("kotlin.test.grouping.engine.simultaneous.methods.group.size", "20")
-        systemProperty("kotlin.test.grouping.engine.simultaneous.methods.groups", "4")
+        groupingEngineSettings(batchSize = 20, simultaneousBatches = 4)
 
         val testTarget = providers.gradleProperty("kotlin.internal.native.test.target")
             .orElse(providers.gradleProperty("kn.target"))

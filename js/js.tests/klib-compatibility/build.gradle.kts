@@ -96,11 +96,6 @@ fun Project.customCompilerTest(
     }
 }
 
-fun Test.groupingEngineSettings(batchSize: Int, simultaneousBatches: Int) {
-    systemProperty("kotlin.test.grouping.engine.simultaneous.methods.group.size", batchSize)
-    systemProperty("kotlin.test.grouping.engine.simultaneous.methods.groups", simultaneousBatches)
-}
-
 fun Project.customFirstStageTest(
     rawVersion: String,
 ): TaskProvider<out Task> {

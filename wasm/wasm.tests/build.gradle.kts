@@ -404,8 +404,7 @@ projectTests {
             }
             setupGradlePropertiesForwarding()
 
-            systemProperty("kotlin.test.grouping.engine.simultaneous.methods.group.size", "50")
-            systemProperty("kotlin.test.grouping.engine.simultaneous.methods.groups", "12")
+            groupingEngineSettings(batchSize = 50, simultaneousBatches = 12)
 
             addAbsoluteDirectoryProperty(layout.buildDirectory, "kotlin.wasm.test.root.out.dir")
             addAbsoluteDirectoryProperty(node.nodeProjectDir, "kotlin.wasm.test.node.dir")
