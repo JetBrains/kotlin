@@ -213,7 +213,9 @@ private object TypeStateKeepers {
 
     private val VALUE_PARAMETER: StateKeeper<FirValueParameter, Unit> = stateKeeper { builder, _, context ->
         builder.add(CALLABLE_DECLARATION, context)
-        builder.add(FirValueParameter::equalityBoundType.getter, FirValueParameter::equalityBoundType.setter)
+        builder.add(FirValueParameter::equalityBoundType) { parameter, value ->
+            parameter.equalityBoundType = value
+        }
     }
 
     /**
