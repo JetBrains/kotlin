@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.fir.scopes.impl
 
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.caches.*
@@ -12,6 +14,7 @@ import org.jetbrains.kotlin.fir.containingClassForLocalAttr
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
+import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.declarations.validate
 import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.ownerGenerator
@@ -285,16 +288,22 @@ class FirGeneratedMemberDeclarationsStorage(private val session: FirSession) : F
 
             val extensions = extensionsByClassifierName[name] ?: return null
 
-            val generatedClasses = buildList {
-                for (extension in extensions) {
-                    val symbol = extension.generateNestedClassLikeDeclaration(classSymbol, name, generationContext) ?: continue
-                    add(symbol)
+            val generatedClasses = extensions.mapNotNull { extension ->
+                extension.generateNestedClassLikeDeclaration(classSymbol, name, generationContext)?.also { symbol ->
                     symbol.fir.ownerGenerator = extension
                     if (classSymbol.isLocal) {
                         symbol.fir.containingClassForLocalAttr = classSymbol.toLookupTag()
                     }
+                }
+            }
+
+            val generatedClass = when (generatedClasses.size) {
+                0 -> return null
+                1 -> generatedClasses.first()
+
+                else if name == DEFAULT_NAME_FOR_COMPANION_OBJECT -> {
                     /**
-                     * Only the first generated companion is used, so the duplicate check below reports no error (KT-62194).
+                     * The most-visible generated companion is used instead of reporting an error (KT-62194).
                      *
                      * Contract: a generated class is a `companion object` exactly when an extension generates it for the name
                      * [DEFAULT_NAME_FOR_COMPANION_OBJECT]:
@@ -306,13 +315,8 @@ class FirGeneratedMemberDeclarationsStorage(private val session: FirSession) : F
                      * The generated symbol itself can have a name other than `DEFAULT_NAME_FOR_COMPANION_OBJECT`. This code makes
                      * no assumption about it.
                      */
-                    if (name == DEFAULT_NAME_FOR_COMPANION_OBJECT) break
+                    generatedClasses.maxWith(compareBy(orderedVisibilityComparator) { it.visibility })
                 }
-            }
-
-            val generatedClass = when (generatedClasses.size) {
-                0 -> return null
-                1 -> generatedClasses.first()
                 else -> error(
                     """
                      Multiple plugins generated nested class with same name $name for class ${classSymbol.classId}:
@@ -351,5 +355,11 @@ class FirGeneratedMemberDeclarationsStorage(private val session: FirSession) : F
         }
     }
 }
+
+/**
+ * Compares visibilities using [Visibilities.compare], preferring ordered visibilities.
+ */
+private val orderedVisibilityComparator = Comparator<Visibility> { a, b -> Visibilities.compare(a, b) ?: 0 }
+    .thenBy { Visibilities.compare(it, Visibilities.Public) != null }
 
 private val FirSession.generatedDeclarationsStorage: FirGeneratedMemberDeclarationsStorage by FirSession.sessionComponentAccessor()
