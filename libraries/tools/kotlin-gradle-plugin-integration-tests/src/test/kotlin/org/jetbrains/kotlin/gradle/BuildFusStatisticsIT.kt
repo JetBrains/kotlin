@@ -8,9 +8,11 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 
 @DisplayName("Build FUS statistics")
+@MustRunOnChangesInGradle
 class BuildFusStatisticsIT : KGPDaemonsBaseTest() {
     @DisplayName("works for project with buildSrc and kotlinDsl plugin")
     @GradleTest
