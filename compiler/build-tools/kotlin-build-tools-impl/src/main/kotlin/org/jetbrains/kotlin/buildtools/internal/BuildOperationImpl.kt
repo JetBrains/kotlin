@@ -5,33 +5,80 @@
 
 package org.jetbrains.kotlin.buildtools.internal
 
-import org.jetbrains.kotlin.buildtools.api.BuildOperation
-import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
-import org.jetbrains.kotlin.buildtools.api.KotlinLogger
-import org.jetbrains.kotlin.buildtools.api.ProjectId
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
+import org.jetbrains.kotlin.buildtools.api.*
 import org.jetbrains.kotlin.buildtools.api.trackers.BuildMetricsCollector
+import org.jetbrains.kotlin.buildtools.internal.serializability.*
+import org.jetbrains.kotlin.daemon.common.CompilerServicesFacadeBase
 import kotlin.concurrent.atomics.AtomicBoolean
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
+import kotlin.reflect.KMutableProperty1
 
 @OptIn(ExperimentalAtomicApi::class)
-internal abstract class BuildOperationImpl<R> : BuildOperation<R>, BuildOperation.Builder {
-    protected abstract val options: Options
+@Serializable
+internal abstract class BuildOperationImpl<R> : BuildOperation<R>, BuildOperation.Builder, BtaSerializable {
+
+    protected abstract val options: Options // to be removed when subclasses are also converted to serializable
+
+    @SerialName("METRICS_COLLECTOR")
+    @Transient
+    internal var metricsCollector: BuildMetricsCollector? = null
+        set(value) {
+            hasMetricsCollector = value != null
+            field = value
+        }
+
+    @SerialName("HAS_METRICS_COLLECTOR")
+    private var hasMetricsCollector = false
+
+    @SerialName("XX_KGP_METRICS_COLLECTOR")
+    internal var kgpMetricsCollector: Boolean = false
+
+    @SerialName("XX_KGP_METRICS_COLLECTOR_OUT")
+    internal var kgpMetricsCollectorOut: ByteArray? = null
+
+    @SerialName("ENABLE_CLASSLOADER_CACHE")
+    internal var enableClassloaderCache: Boolean = true
+
+    internal open fun copyFrom(other: BuildOperationImpl<R>) {
+        metricsCollector = other.metricsCollector
+        kgpMetricsCollector = other.kgpMetricsCollector
+        kgpMetricsCollectorOut = other.kgpMetricsCollectorOut
+        enableClassloaderCache = other.enableClassloaderCache
+    }
+
+    @Transient
     private val executionStarted = AtomicBoolean(false)
 
+    @Transient
+    open val compilerMessageRenderer: CompilerMessageRenderer = DefaultCompilerMessageRenderer
+
+    override fun afterDeserialization(messageReporter: (Message) -> Unit, compilerFacade: CompilerServicesFacadeBase?) {
+        if (hasMetricsCollector) {
+            metricsCollector = MessageReportingMetricsCollector(messageReporter)
+        }
+    }
+
+    override fun beforeSerialization(logger: KotlinLogger): List<MessageVisitor> = buildList {
+        metricsCollector?.let { add(MetricsCollectorVisitor(it)) }
+    }
+
     @UseFromImplModuleRestricted
-    override fun <V> get(key: BuildOperation.Option<V>): V = options[key.id]
+    override fun <V> get(key: BuildOperation.Option<V>): V = getPropertyByName(propertyAccessMap, key.id)
 
     @UseFromImplModuleRestricted
     override fun <V> set(key: BuildOperation.Option<V>, value: V) {
         checkOptionIsAvailableForVersion(key)
-        options[key] = value
+        setPropertyByName(propertyAccessMap, key.id, value)
     }
 
-    fun execute(
+    internal fun execute(
         projectId: ProjectId,
         executionPolicy: ExecutionPolicy,
         logger: KotlinLogger? = null,
-        executionContext: ExecutionContext
+        executionContext: ExecutionContext,
     ): R {
         check(executionStarted.compareAndSet(expectedValue = false, newValue = true)) {
             "Build operation $this already started execution."
@@ -39,11 +86,11 @@ internal abstract class BuildOperationImpl<R> : BuildOperation<R>, BuildOperatio
         return executeImpl(projectId, executionPolicy, logger, executionContext)
     }
 
-    abstract fun executeImpl(
+    internal abstract fun executeImpl(
         projectId: ProjectId,
         executionPolicy: ExecutionPolicy,
         logger: KotlinLogger? = null,
-        executionContext: ExecutionContext
+        executionContext: ExecutionContext,
     ): R
 
     /**
@@ -52,21 +99,26 @@ internal abstract class BuildOperationImpl<R> : BuildOperation<R>, BuildOperatio
      * The value is checked only for in-process executions. The daemon uses `keepalive` mechanism of the compiler to cache it for the entire
      * lifetime of the daemon.
      */
-    abstract val usesApplicationEnvironment: Boolean
+    internal abstract val usesApplicationEnvironment: Boolean
 
-    operator fun <V> get(key: Option<V>): V = options[key]
-
-    @OptIn(UseFromImplModuleRestricted::class)
-    operator fun <V> set(key: Option<V>, value: V) {
-        options[key] = value
+    internal companion object {
+        private val propertyAccessMap: Map<String, KMutableProperty1<BuildOperationImpl<*>, out Any?>> = buildMap {
+            put("METRICS_COLLECTOR", BuildOperationImpl<*>::metricsCollector)
+            put("XX_KGP_METRICS_COLLECTOR", BuildOperationImpl<*>::kgpMetricsCollector)
+            put("XX_KGP_METRICS_COLLECTOR_OUT", BuildOperationImpl<*>::kgpMetricsCollectorOut)
+            put("ENABLE_CLASSLOADER_CACHE", BuildOperationImpl<*>::enableClassloaderCache)
+        }
     }
+}
 
-    class Option<V>(id: String, default: V) : BaseOptionWithDefault<V>(id, defaultValue = default)
-
-    companion object {
-        val METRICS_COLLECTOR: Option<BuildMetricsCollector?> = Option("METRICS_COLLECTOR", default = null)
-        val XX_KGP_METRICS_COLLECTOR: Option<Boolean> = Option("XX_KGP_METRICS_COLLECTOR", default = false)
-        val XX_KGP_METRICS_COLLECTOR_OUT: Option<ByteArray?> = Option("XX_KGP_METRICS_COLLECTOR_OUT", default = null)
-        val ENABLE_CLASSLOADER_CACHE: Option<Boolean> = Option("ENABLE_CLASSLOADER_CACHE", true)
+private class MessageReportingMetricsCollector(private val messageReporter: (Message) -> Unit) : BuildMetricsCollector {
+    override fun collectMetric(
+        name: String,
+        type: BuildMetricsCollector.ValueType,
+        value: Long,
+    ) {
+        messageReporter(
+            Message.CollectMetricMessage(name, type, value)
+        )
     }
 }

@@ -53,7 +53,7 @@ internal class KotlinMetadataKlibCompilationOperationImpl private constructor(
             destination,
             compilerArguments.deepCopy(),
             compilerVersion
-        )
+        ).also { it.copyFrom(this) }
     }
 
     @UseFromImplModuleRestricted
