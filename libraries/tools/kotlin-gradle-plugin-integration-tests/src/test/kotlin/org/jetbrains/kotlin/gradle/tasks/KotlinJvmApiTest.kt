@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
 import kotlin.io.path.createDirectories
@@ -14,6 +15,7 @@ import kotlin.io.path.deleteRecursively
 import kotlin.io.path.writeText
 
 @DisplayName("JVM API validation")
+@MustRunOnChangesInGradle
 class KotlinJvmApiTest : KGPBaseTest() {
     @DisplayName("Kotlin compilation can be set up using APIs")
     @JvmGradlePluginTests
