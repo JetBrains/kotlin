@@ -16,6 +16,7 @@ dependencies {
     implementation(kotlinStdlib())
     implementation(libs.kotlinx.serialization.core)
     implementation(libs.kotlinx.serialization.protobuf)
+    implementation(libs.kotlinx.serialization.json)
     compileOnly(libs.guava)
     compileOnly(project(":compiler:cli"))
     compileOnly(project(":compiler:cli-jvm"))

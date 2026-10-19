@@ -29,6 +29,7 @@ import java.util.concurrent.*
 
 private const val DEFAULT_CLASSLOADERS_CACHE_SIZE = 10
 private const val PROPERTY_CLASSLOADERS_CACHE_SIZE = "kotlin.buildtools.classloaders.cache.size"
+private const val PROPERTY_DAEMON_LEGACY_MODE = "kotlin.buildtools.daemon.legacy.mode"
 
 public class KotlinToolchainsImpl : KotlinToolchains {
     public val toolchains: ConcurrentHashMap<Class<*>, KotlinToolchains.Toolchain> = ConcurrentHashMap()
@@ -36,6 +37,7 @@ public class KotlinToolchainsImpl : KotlinToolchains {
         System.getProperty(PROPERTY_CLASSLOADERS_CACHE_SIZE)?.toIntOrNull() ?: DEFAULT_CLASSLOADERS_CACHE_SIZE,
         this::class.java.classLoader
     )
+    private val daemonLegacyMode = System.getProperty(PROPERTY_DAEMON_LEGACY_MODE)?.toBoolean() ?: false
 
     override fun <T : KotlinToolchains.Toolchain> getToolchain(type: Class<T>): T {
         @Suppress("UNCHECKED_CAST")
@@ -103,11 +105,14 @@ public class KotlinToolchainsImpl : KotlinToolchains {
             executionPolicy: ExecutionPolicy,
             logger: KotlinLogger?,
         ): R {
+            val logger = logger ?: DefaultKotlinLogger
             closeableGuard.requireNotClosed()
             check(operation is BuildOperationImpl<R>) { "Unknown operation type: ${operation::class.qualifiedName}" }
+            val classloadersCacheWithLogger =
+                classloadersCache.takeIf { operation.enableClassloaderCache }?.withLogger(logger)
+            val executionContext = ExecutionContext(classloadersCacheWithLogger, daemonConnectionRegistry)
+
             val operationBody: Callable<R> = {
-                val classloadersCacheWithLogger =
-                    classloadersCache.takeIf { operation.enableClassloaderCache }?.withLogger(logger)
                 operation.execute(
                     projectId,
                     executionPolicy,
@@ -123,7 +128,12 @@ public class KotlinToolchainsImpl : KotlinToolchains {
                 }
                 unwrapExecutionException(executor.submit(operationBody))
             } else {
-                operationBody.call()
+                require(executionPolicy is DaemonExecutionPolicyImpl)
+                if (operation is SupportsNewDaemonMode<*> && !kotlinToolchains.daemonLegacyMode){
+                    operation.executeInDaemon(projectId, executionPolicy, logger, executionContext)
+                } else {
+                    operationBody.call()
+                }
             }
         }
 
@@ -175,5 +185,6 @@ internal sealed interface BtaApiVersion {
 
 internal class ExecutionContext(
     val classloadersCache: LruClassLoadersCache?,
-    val daemonConnectionRegistry: DaemonConnectionRegistry
+    val daemonConnectionRegistry: DaemonConnectionRegistry,
 )
+

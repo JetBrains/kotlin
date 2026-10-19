@@ -115,6 +115,22 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
         setPropertyByName(propertyAccessMap, key.id, value)
     }
 
+    override fun executeInDaemon(
+        projectId: ProjectId,
+        executionPolicy: DaemonExecutionPolicyImpl,
+        logger: KotlinLogger,
+        executionContext: ExecutionContext
+    ): CompilationResult {
+        val messageCollector = createMessageCollector(logger)
+        if (reportArgumentWarningsAndErrors(logger, messageCollector)) return COMPILATION_ERROR
+        val hasArgumentParsingErrors = messageCollector.hasErrors()
+        val result = super.executeInDaemon(projectId, executionPolicy, logger, executionContext)
+        return if (hasArgumentParsingErrors && result == COMPILATION_SUCCESS) {
+            COMPILATION_ERROR
+        } else {
+            result
+        }
+    }
 
     override fun executeCancellableImpl(
         projectId: ProjectId,
