@@ -460,6 +460,7 @@ internal class DokkaPsiParser(
             extra = psi.additionalExtras().let {
                 PropertyContainer.withAll(
                     inheritedFrom?.let { InheritedMember(it.toSourceSetDependent()) },
+                    OverriddenMembers(psi.findSuperMethods().map { method -> DRI.from(method) }.toSourceSetDependent()),
                     it.toSourceSetDependent().toAdditionalModifiers(),
                     (helper.convertAnnotations(psi.annotations.toList()) + it.toListOfAnnotations()).toSourceSetDependent()
                         .toAnnotations(),

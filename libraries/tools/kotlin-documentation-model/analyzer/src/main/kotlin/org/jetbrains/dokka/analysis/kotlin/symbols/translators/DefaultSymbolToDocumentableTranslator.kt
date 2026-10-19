@@ -585,6 +585,7 @@ internal class DokkaSymbolVisitor(
                 isExpectActual = (isExpect || isActual),
                 extra = PropertyContainer.withAll(
                     additionalExtrasOfProperty(propertySymbol)?.toSourceSetDependent()?.toAdditionalModifiers(),
+                    overriddenMembers(propertySymbol),
                     getDokkaAnnotationsFrom(propertySymbol)?.toSourceSetDependent()?.toAnnotations(),
                     propertySymbol.getDefaultValue()?.let { DefaultValue(it.toSourceSetDependent()) },
                     inheritedFrom?.let { InheritedMember(it.toSourceSetDependent()) },
@@ -815,6 +816,7 @@ internal class DokkaSymbolVisitor(
                 isExpectActual = (isExpect || isActual),
                 extra = PropertyContainer.withAll(
                     inheritedFrom?.let { InheritedMember(it.toSourceSetDependent()) },
+                    overriddenMembers(functionSymbol),
                     additionalExtrasOfFunction(functionSymbol)?.toSourceSetDependent()?.toAdditionalModifiers(),
                     getDokkaAnnotationsFrom(functionSymbol)
                         ?.toSourceSetDependent()?.toAnnotations(),
@@ -992,6 +994,25 @@ internal class DokkaSymbolVisitor(
     private fun DRI.getInheritedFromDRI(dri: DRI): DRI? {
         return this.copy(callable = null)
             .takeIf { dri.classNames != this.classNames || dri.packageName != this.packageName }
+    }
+
+    context(_: KaSession)
+    private fun overriddenMembers(symbol: KaCallableSymbol): OverriddenMembers {
+        // Inherited copies share the declaring member's ID and therefore its override relationships.
+        val declaration = if (symbol.origin == KaSymbolOrigin.SUBSTITUTION_OVERRIDE ||
+            symbol.origin == KaSymbolOrigin.INTERSECTION_OVERRIDE
+        ) {
+            symbol.allOverriddenSymbols.firstOrNull {
+                it.origin != KaSymbolOrigin.SUBSTITUTION_OVERRIDE && it.origin != KaSymbolOrigin.INTERSECTION_OVERRIDE
+            } ?: symbol
+        } else symbol
+        val members = declaration.directlyOverriddenSymbols.mapNotNull { overridden ->
+            when (overridden) {
+                is KaNamedFunctionSymbol, is KaPropertySymbol -> createDRIWithOverridden(overridden).origin
+                else -> null
+            }
+        }.distinct().toList()
+        return OverriddenMembers(members.toSourceSetDependent())
     }
 
     data class DRIWithOverridden(val origin: DRI, val overridden: DRI? = null)
