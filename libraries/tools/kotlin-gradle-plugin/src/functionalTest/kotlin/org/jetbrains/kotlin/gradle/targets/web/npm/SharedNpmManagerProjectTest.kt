@@ -53,8 +53,8 @@ class SharedNpmManagerProjectTest {
 
     @Test
     fun `package json files of all compilations are collected per platform`() {
-        assertEquals(packageJsonFiles(jsBrowser, jsNodejs), resolvedFiles("kotlinNpmSharedDependenciesResolver"))
-        assertEquals(packageJsonFiles(wasmJsBrowser), resolvedFiles("kotlinWasmNpmSharedDependenciesResolver"))
+        assertEquals(packageJsonFiles(jsBrowser, jsNodejs), resolvedFiles("kotlinNpmSharedPackageJsonFilesFromSubprojectsResolver"))
+        assertEquals(packageJsonFiles(wasmJsBrowser), resolvedFiles("kotlinWasmNpmSharedPackageJsonFilesFromSubprojectsResolver"))
     }
 
     @Test

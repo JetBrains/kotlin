@@ -60,15 +60,15 @@ class SharedNpmSubprojectTest {
 
         assertEquals(
             project.jsTarget().compilations.map { it.sharedPackageJsonFile() }.sorted(),
-            project.packageJsonsForRootProject("kotlinNpmSharedPackageJsonFiles"),
+            project.packageJsonsForRootProject("kotlinNpmSharedPackageJsonFilesForRoot"),
         )
         assertEquals(
             project.wasmJsTarget().compilations.map { it.sharedPackageJsonFile() }.sorted(),
-            project.packageJsonsForRootProject("kotlinWasmNpmSharedPackageJsonFiles"),
+            project.packageJsonsForRootProject("kotlinWasmNpmSharedPackageJsonFilesForRoot"),
         )
         assertEquals(
-            listOf("kotlinNpmSharedPackageJsonFiles", "kotlinWasmNpmSharedPackageJsonFiles"),
-            project.configurations.names.filter { it.endsWith("NpmSharedPackageJsonFiles") }.sorted(),
+            listOf("kotlinNpmSharedPackageJsonFilesForRoot", "kotlinWasmNpmSharedPackageJsonFilesForRoot"),
+            project.configurations.names.filter { it.endsWith("NpmSharedPackageJsonFilesForRoot") }.sorted(),
         )
         assertEquals(
             listOf("kotlinSharedPackageJson", "kotlinWasmSharedPackageJson"),
@@ -106,8 +106,8 @@ class SharedNpmSubprojectTest {
         project.evaluate()
 
         val expected = listOf(
-            Triple(project.jsTarget(), "jsSharedPackageJsonElements", "kotlinNpmSharedPackageJsonElements"),
-            Triple(project.wasmJsTarget(), "wasmJsSharedPackageJsonElements", "kotlinWasmNpmSharedPackageJsonElements"),
+            Triple(project.jsTarget(), "jsNpmSharedPackageJsonForDependents", "kotlinNpmSharedPackageJsonForDependents"),
+            Triple(project.wasmJsTarget(), "wasmJsNpmSharedPackageJsonForDependents", "kotlinWasmNpmSharedPackageJsonForDependents"),
         )
         for ((target, configurationName, usageName) in expected) {
             val configuration = project.configurations.getByName(configurationName)
