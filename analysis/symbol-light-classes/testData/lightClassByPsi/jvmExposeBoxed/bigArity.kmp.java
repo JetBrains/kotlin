@@ -7,6 +7,7 @@ public final class Child /* Child*/ implements BigArity<@org.jetbrains.annotatio
   public  Child();//  .ctor()
 }
 
+@kotlin.jvm.JvmInline()
 public final class Id /* Id*/ {
   private final long value;
 

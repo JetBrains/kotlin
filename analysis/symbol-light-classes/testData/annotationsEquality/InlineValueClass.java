@@ -1,3 +1,4 @@
+@kotlin.jvm.JvmInline()
 public final class MyValue /* MyValue*/ {
   private final int value;
 

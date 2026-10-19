@@ -24,8 +24,10 @@ import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_FOR_NON_ORIGIN_METHOD
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.light.classes.symbol.annotations.EmptyAdditionalAnnotationsProvider
 import org.jetbrains.kotlin.light.classes.symbol.annotations.ExcludeAnnotationFilter
 import org.jetbrains.kotlin.light.classes.symbol.annotations.GranularAnnotationsBox
+import org.jetbrains.kotlin.light.classes.symbol.annotations.JvmInlineAdditionalAnnotationsProvider
 import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolAnnotationsProvider
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightField
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForEnumEntry
@@ -96,6 +98,11 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
             modifiersBox = GranularModifiersBox(computer = ::computeModifiers),
             annotationsBox = GranularAnnotationsBox(
                 annotationsProvider = SymbolAnnotationsProvider(useSiteModule, symbolPointer),
+                additionalAnnotationsProvider = if (isInlineClass) {
+                    JvmInlineAdditionalAnnotationsProvider
+                } else {
+                    EmptyAdditionalAnnotationsProvider
+                },
                 annotationFilter = ExcludeAnnotationFilter.JvmExposeBoxed,
             ),
         )
