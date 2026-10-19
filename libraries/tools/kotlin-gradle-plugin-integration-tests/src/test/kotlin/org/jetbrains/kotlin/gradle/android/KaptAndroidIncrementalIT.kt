@@ -10,6 +10,8 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.KaptBaseIT
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.checkedReplace
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCompilerPlugins
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import java.nio.file.Path
 import kotlin.io.path.appendText
@@ -18,6 +20,8 @@ import kotlin.io.path.writeText
 
 @DisplayName("Android with kapt incremental build tests")
 @AndroidGradlePluginTests
+@MustRunOnChangesInGradle
+@MustRunOnChangesInCompilerPlugins
 open class KaptAndroidIncrementalIT : KaptBaseIT() {
     @DisplayName("stubs generation is incremental on changes in android variant java sources")
     @GradleAndroidTest
