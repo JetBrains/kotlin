@@ -1,13 +1,13 @@
-warning: module name in `-Xadd-reads` not found: main
-warning: module name in `-Xadd-exports` not found: lib
-warning: bad name in value for `-Xadd-reads`: 'lib=other'
-warning: bad name in value for `-Xadd-reads`: '1bad'
-warning: bad name in value for `-Xadd-reads`: 'ALL-UNNAMED'
-warning: bad name in value for `-Xadd-reads`: 'int'
-warning: bad name in value for `-Xadd-reads`: 'lib other'
-warning: bad name in value for `-Xadd-exports`: 'main/bar'
-warning: bad name in value for `-Xadd-exports`: 'foo/bar'
-warning: bad name in value for `-Xadd-exports`: 'int'
-warning: bad name in value for `-Xadd-exports`: '1bad'
-warning: bad name in value for `-Xadd-exports`: '2bad'
+warning: module name in '-Xadd-reads' not found: 'main'.
+warning: module name in '-Xadd-exports' not found: 'lib'.
+warning: bad name in value for '-Xadd-reads': 'lib=other'.
+warning: bad name in value for '-Xadd-reads': '1bad'.
+warning: bad name in value for '-Xadd-reads': 'ALL-UNNAMED'.
+warning: bad name in value for '-Xadd-reads': 'int'.
+warning: bad name in value for '-Xadd-reads': 'lib other'.
+warning: bad name in value for '-Xadd-exports': 'main/bar'.
+warning: bad name in value for '-Xadd-exports': 'foo/bar'.
+warning: bad name in value for '-Xadd-exports': 'int'.
+warning: bad name in value for '-Xadd-exports': '1bad'.
+warning: bad name in value for '-Xadd-exports': '2bad'.
 OK

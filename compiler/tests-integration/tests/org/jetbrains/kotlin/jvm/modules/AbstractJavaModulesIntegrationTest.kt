@@ -410,7 +410,7 @@ class ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
         module("main", additionalKotlinArguments = arguments + "-no-stdlib")
         // Like javac, a jar given only with -classpath is not a module that -Xadd-reads can read, directly or through an automatic module.
         module("main", additionalKotlinArguments = listOf("-classpath", lib.path, "-Xadd-reads=main=lib")) { output ->
-            assertTrue("module name in `-Xadd-reads` not found: lib" in output && "does not depend on" in output, output)
+            assertTrue("module name in '-Xadd-reads' not found: 'lib'" in output && "does not depend on" in output, output)
         }
         val autoA = module("autoA")
         module("main", listOf(autoA), listOf("autoA"), listOf("-classpath", lib.path, "-Xadd-reads=main=autoA")) { output ->
@@ -653,7 +653,7 @@ class ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
         module(
             "test", listOf(lib, other),
             additionalKotlinArguments = listOf(patchModule("lib", "test/lib"), patchModule("other", "test/other")),
-            checkKotlinOutput = assertCompilationError("too many patched modules: lib, other"),
+            checkKotlinOutput = assertCompilationError("too many patched modules: 'lib', 'other'"),
         )
     }
 
@@ -725,7 +725,7 @@ class ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
         module("test", checkKotlinOutput = assertCompilationError("does not export package 'jdk.internal.misc'"))
         module(
             "test", additionalKotlinArguments = listOf(patchModule("java.base", "test")),
-            checkKotlinOutput = assertCompilationError("add `-Xadd-reads=java.base=kotlin.stdlib`"),
+            checkKotlinOutput = assertCompilationError("add '-Xadd-reads=java.base=kotlin.stdlib'"),
         )
         module("test", additionalKotlinArguments = listOf(patchModule("java.base", "test"), "-Xadd-reads=java.base=kotlin.stdlib"))
     }

@@ -1,2 +1,2 @@
-error: module in `-Xpatch-module` not found: lib
+error: module in '-Xpatch-module' not found: 'lib'.
 COMPILATION_ERROR
