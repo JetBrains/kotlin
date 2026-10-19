@@ -38,21 +38,26 @@ abstract class FirDeclarationGenerationExtension(session: FirSession) : FirExten
 
     final override val extensionType: KClass<out FirExtension> = FirDeclarationGenerationExtension::class
 
-    /*
+    /**
      * Can be called on SUPERTYPES stage
-     *
-     * If classId has `outerClassId.Companion` format then generated class should be a companion object
      */
     @ExperimentalTopLevelDeclarationsGenerationApi
     open fun generateTopLevelClassLikeDeclaration(classId: ClassId): FirClassLikeSymbol<*>? = null
 
+    /**
+     * Can be called on SUPERTYPES stage
+     *
+     * The [name] decides whether the generated class is a `companion object`:
+     * - `Companion`: the generated class must be a `companion object`.
+     * - Any other name: the generated class must not be a `companion object`.
+     */
     open fun generateNestedClassLikeDeclaration(
         owner: FirClassSymbol<*>,
         name: Name,
         context: NestedClassGenerationContext
     ): FirClassLikeSymbol<*>? = null
 
-    // Can be called on STATUS stage
+    /** Can be called on STATUS stage */
     open fun generateFunctions(callableId: CallableId, context: MemberGenerationContext?): List<FirNamedFunctionSymbol> = emptyList()
 
     /**
@@ -65,10 +70,10 @@ abstract class FirDeclarationGenerationExtension(session: FirSession) : FirExten
 
     open fun generateConstructors(context: MemberGenerationContext): List<FirConstructorSymbol> = emptyList()
 
-    // Can be called on IMPORTS stage
+    /** Can be called on IMPORTS stage */
     open fun hasPackage(packageFqName: FqName): Boolean = false
 
-    /*
+    /**
      * Can be called on SUPERTYPES stage
      *
      * `generate...` methods will be called only if `get...Names/ClassIds/CallableIds` returned corresponding

@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.name.SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
 import org.jetbrains.kotlin.utils.addToStdlib.flatGroupBy
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
@@ -292,8 +293,20 @@ class FirGeneratedMemberDeclarationsStorage(private val session: FirSession) : F
                     if (classSymbol.isLocal) {
                         symbol.fir.containingClassForLocalAttr = classSymbol.toLookupTag()
                     }
-                    // Take the first generated companion, so no error is produced KT-62194
-                    if (symbol.isCompanion) break
+                    /**
+                     * Only the first generated companion is used, so the duplicate check below reports no error (KT-62194).
+                     *
+                     * Contract: a generated class is a `companion object` exactly when an extension generates it for the name
+                     * [DEFAULT_NAME_FOR_COMPANION_OBJECT]:
+                     * - `FirCompanionGenerationTransformer` looks up that name and passes the result to
+                     *   `replaceCompanionObjectSymbol`, so a class generated for that name must be a `companion object`.
+                     * - `FirCompanionGenerationTransformer` doesn't find a `companion object` generated for another name,
+                     *   so such an object never becomes the `resolvedCompanionObjectSymbol` of the owner.
+                     *
+                     * The generated symbol itself can have a name other than `DEFAULT_NAME_FOR_COMPANION_OBJECT`. This code makes
+                     * no assumption about it.
+                     */
+                    if (name == DEFAULT_NAME_FOR_COMPANION_OBJECT) break
                 }
             }
 
@@ -324,8 +337,13 @@ class FirGeneratedMemberDeclarationsStorage(private val session: FirSession) : F
         require(session === classSymbol.moduleData.session) {
             "Class $classSymbol is declared in ${classSymbol.moduleData.session}, but generated storage for it taken from $session"
         }
-        // We share generated companion between extensions
-        // for other classes, we only allow ownerGenerator (the generator that created it) to generate its members
+        /**
+         * Extensions share a generated `companion object`, so every generator can generate its members. Every other generated
+         * class gets its members only from its [ownerGenerator], the generator that created it.
+         *
+         * The check reads [isCompanion] and not the class name, because a generated `companion object` can have a name other than
+         * [DEFAULT_NAME_FOR_COMPANION_OBJECT]. The contract in `generateNestedClassifier` makes [isCompanion] a valid check.
+         */
         return if (classSymbol.origin.generated && !classSymbol.isLocal && !classSymbol.isCompanion) {
             listOf(classSymbol.fir.ownerGenerator!!)
         } else {
