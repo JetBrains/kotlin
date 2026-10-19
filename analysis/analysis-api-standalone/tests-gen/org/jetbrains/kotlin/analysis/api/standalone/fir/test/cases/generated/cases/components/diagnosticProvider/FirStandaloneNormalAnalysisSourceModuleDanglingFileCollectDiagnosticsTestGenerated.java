@@ -237,6 +237,18 @@ public class FirStandaloneNormalAnalysisSourceModuleDanglingFileCollectDiagnosti
   }
 
   @Test
+  @TestMetadata("inlineFromHigherPlatformMembers.kt")
+  public void testInlineFromHigherPlatformMembers() {
+    run("inlineFromHigherPlatformMembers.kt");
+  }
+
+  @Test
+  @TestMetadata("inlineFromHigherPlatformMultifileFacade.kt")
+  public void testInlineFromHigherPlatformMultifileFacade() {
+    run("inlineFromHigherPlatformMultifileFacade.kt");
+  }
+
+  @Test
   @TestMetadata("inlineFromHigherPlatformUnspecifiedJvmTarget.kt")
   public void testInlineFromHigherPlatformUnspecifiedJvmTarget() {
     run("inlineFromHigherPlatformUnspecifiedJvmTarget.kt");

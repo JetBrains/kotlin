@@ -1,4 +1,10 @@
 Diagnostics from file:
-  for PSI element of type KtNameReferenceExpression at (22,5-19)
-    INLINE_FROM_HIGHER_PLATFORM      text ranges: [(245,259)]
-      PSI: KtNameReferenceExpression at (22,5-19)
+  for PSI element of type KtNameReferenceExpression at (29,5-19)
+    INLINE_FROM_HIGHER_PLATFORM      text ranges: [(252,266)]
+      PSI: KtNameReferenceExpression at (29,5-19)
+  for PSI element of type KtNameReferenceExpression at (31,5-19)
+    INLINE_FROM_HIGHER_PLATFORM      text ranges: [(296,310)]
+      PSI: KtNameReferenceExpression at (31,5-19)
+  for PSI element of type KtNameReferenceExpression at (33,5-29)
+    INLINE_FROM_HIGHER_PLATFORM      text ranges: [(344,368)]
+      PSI: KtNameReferenceExpression at (33,5-29)
