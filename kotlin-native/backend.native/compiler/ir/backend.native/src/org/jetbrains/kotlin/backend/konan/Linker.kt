@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
+import org.jetbrains.kotlin.backend.konan.serialization.PartialCacheInfo
 import org.jetbrains.kotlin.backend.konan.util.toObsoleteKind
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.nativeBinaryOptions.AndroidProgramType
@@ -71,6 +72,7 @@ internal class Linker(
         private val linkerOutput: LinkerOutputKind,
         private val outputFiles: OutputFiles,
         private val tempFiles: TempFiles,
+        private val cacheInfo: PartialCacheInfo?,
 ) {
     private val platform = config.platform
     private val linker = platform.linker
@@ -87,7 +89,7 @@ internal class Linker(
     ): List<Command> {
         val nativeDependencies = dependenciesTrackingResult.nativeDependenciesToLink
 
-        val includedBinariesLibraries = config.libraryToCache?.let { listOf(it.klib) }
+        val includedBinariesLibraries = cacheInfo?.let { listOf(it.klib) }
                 ?: nativeDependencies.filterNot { config.cachedLibraries.isLibraryCached(it) }
         val includedBinaries = includedBinariesLibraries.flatMap { library ->
             library.nativeIncludedBinaries(config.target)?.nativeIncludedBinaryFilePaths?.map { it.pathString }.orEmpty()

@@ -128,6 +128,12 @@ object BinaryOptions : BinaryOptionRegistry() {
     val perFileCacheForStdlib by booleanOption()
 
     /**
+     * When `true`, the per-file caches of the libraries that need a full rebuild are
+     * built together in a single spawned compilation instead of one compilation per library.
+     */
+    val batchedCacheBuild by booleanOption()
+
+    /**
      * When `true`, llvm postprocessing will be done in Kotlin compiler;
      * when `false`, new custom llvm C++ passes will be used.
      * This option exists as a workaround, if new passes introduce regressions.
