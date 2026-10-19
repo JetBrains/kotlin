@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.types.isNullableAny
 import org.jetbrains.kotlin.lombok.LombokNames
 import org.jetbrains.kotlin.lombok.config.ConeLombokAnnotations
 import org.jetbrains.kotlin.lombok.config.lombokService
@@ -219,7 +218,7 @@ class EqualsAndHashCodeGenerator(session: FirSession) : FirDeclarationGeneration
 
             // Match the canonical `equals(other: Any?)` or `hashCode` signatures only.
             found = found || (it.name == EQUALS_NAME &&
-                    it.valueParameterSymbols.singleOrNull()?.resolvedReturnType?.isNullableAny == true ||
+                    it.valueParameterSymbols.singleOrNull()?.isAnyOrJavaObjectType == true ||
                     it.name == HASHCODE_NAME &&
                     it.valueParameterSymbols.isEmpty())
         }
