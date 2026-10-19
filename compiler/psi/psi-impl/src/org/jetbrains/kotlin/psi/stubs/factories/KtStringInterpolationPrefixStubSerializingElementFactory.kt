@@ -5,12 +5,16 @@
 
 package org.jetbrains.kotlin.psi.stubs.factories
 
+import com.intellij.lang.LighterAST
+import com.intellij.lang.LighterASTNode
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtStringInterpolationPrefix
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinStringInterpolationPrefixStubImpl
+import org.jetbrains.kotlin.psi.stubs.light.firstChildOfType
 
 internal object KtStringInterpolationPrefixStubSerializingElementFactory :
     KtStubSerializingElementFactory<KotlinStringInterpolationPrefixStubImpl, KtStringInterpolationPrefix>(
@@ -27,6 +31,17 @@ internal object KtStringInterpolationPrefixStubSerializingElementFactory :
     ): KotlinStringInterpolationPrefixStubImpl = KotlinStringInterpolationPrefixStubImpl(
         parent = parentStub,
         dollarSignCount = psi.interpolationPrefixElement?.textLength ?: 0,
+    )
+
+    override fun createStub(
+        tree: LighterAST,
+        node: LighterASTNode,
+        parentStub: StubElement<*>,
+    ): KotlinStringInterpolationPrefixStubImpl = KotlinStringInterpolationPrefixStubImpl(
+        parent = parentStub,
+        dollarSignCount = tree.firstChildOfType(node, KtTokens.INTERPOLATION_PREFIX)
+            ?.let { it.endOffset - it.startOffset }
+            ?: 0,
     )
 
     override fun serialize(stub: KotlinStringInterpolationPrefixStubImpl, dataStream: StubOutputStream) {

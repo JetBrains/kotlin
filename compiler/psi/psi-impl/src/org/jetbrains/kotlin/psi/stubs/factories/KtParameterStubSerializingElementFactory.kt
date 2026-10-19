@@ -5,12 +5,15 @@
 
 package org.jetbrains.kotlin.psi.stubs.factories
 
+import com.intellij.lang.LighterAST
+import com.intellij.lang.LighterASTNode
 import com.intellij.psi.stubs.IndexSink
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
 import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.stubs.StubUtils.deserializeKdocText
 import org.jetbrains.kotlin.psi.stubs.StubUtils.serializeKdocText
@@ -20,6 +23,11 @@ import org.jetbrains.kotlin.psi.stubs.elements.serializeTypeBean
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinParameterStubImpl
 import org.jetbrains.kotlin.psi.stubs.impl.deserializeConstantValue
 import org.jetbrains.kotlin.psi.stubs.impl.serializeConstantValue
+import org.jetbrains.kotlin.psi.stubs.light.VAL_VAR_TOKENS
+import org.jetbrains.kotlin.psi.stubs.light.declarationName
+import org.jetbrains.kotlin.psi.stubs.light.firstChildOfType
+import org.jetbrains.kotlin.psi.stubs.light.initializerAfterEq
+import org.jetbrains.kotlin.psi.stubs.light.realFqName
 
 internal object KtParameterStubSerializingElementFactory :
     KtStubSerializingElementFactory<KotlinParameterStubImpl, KtParameter>(
@@ -38,6 +46,23 @@ internal object KtParameterStubSerializingElementFactory :
         isMutable = psi.isMutable,
         hasValOrVar = psi.hasValOrVar(),
         hasDefaultValue = psi.hasDefaultValue(),
+        functionTypeParameterName = null,
+        equalityBoundType = null,
+        kdocText = null,
+        constantInitializer = null,
+    )
+
+    override fun createStub(
+        tree: LighterAST,
+        node: LighterASTNode,
+        parentStub: StubElement<*>,
+    ): KotlinParameterStubImpl = KotlinParameterStubImpl(
+        parent = parentStub,
+        fqNameRef = StringRef.fromString(tree.realFqName(node, parentStub)?.asString()),
+        name = StringRef.fromString(tree.declarationName(node)),
+        isMutable = tree.firstChildOfType(node, KtTokens.VAR_KEYWORD) != null,
+        hasValOrVar = tree.firstChildOfType(node, VAL_VAR_TOKENS) != null,
+        hasDefaultValue = tree.initializerAfterEq(node) != null,
         functionTypeParameterName = null,
         equalityBoundType = null,
         kdocText = null,

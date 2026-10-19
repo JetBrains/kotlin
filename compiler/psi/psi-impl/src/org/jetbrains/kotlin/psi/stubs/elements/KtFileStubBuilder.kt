@@ -17,6 +17,13 @@ import org.jetbrains.kotlin.psi.stubs.StubBuildingLexing
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubKindImpl
 
+/**
+ * Builds Kotlin stubs from the fully parsed PSI/AST.
+ *
+ * Production stub building goes through the light-tree-based [KtFileLightStubBuilder] (see
+ * [org.jetbrains.kotlin.psi.stubs.KotlinLanguageStubDefinition]); this builder is kept as the AST-based reference
+ * implementation, which must produce identical stubs.
+ */
 class KtFileStubBuilder : DefaultStubBuilder() {
     override fun buildStubTree(file: PsiFile): StubElement<*> {
         (file as? KtFile)?.customStubBuilder?.let {

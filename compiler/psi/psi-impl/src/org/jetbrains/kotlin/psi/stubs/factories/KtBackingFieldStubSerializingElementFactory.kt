@@ -5,12 +5,15 @@
 
 package org.jetbrains.kotlin.psi.stubs.factories
 
+import com.intellij.lang.LighterAST
+import com.intellij.lang.LighterASTNode
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.psi.KtBackingField
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinBackingFieldStubImpl
+import org.jetbrains.kotlin.psi.stubs.light.initializerAfterEq
 
 internal object KtBackingFieldStubSerializingElementFactory :
     KtStubSerializingElementFactory<KotlinBackingFieldStubImpl, KtBackingField>(
@@ -25,6 +28,15 @@ internal object KtBackingFieldStubSerializingElementFactory :
     ): KotlinBackingFieldStubImpl = KotlinBackingFieldStubImpl(
         parent = parentStub,
         hasInitializer = psi.hasInitializer(),
+    )
+
+    override fun createStub(
+        tree: LighterAST,
+        node: LighterASTNode,
+        parentStub: StubElement<*>,
+    ): KotlinBackingFieldStubImpl = KotlinBackingFieldStubImpl(
+        parent = parentStub,
+        hasInitializer = tree.initializerAfterEq(node) != null,
     )
 
     override fun serialize(stub: KotlinBackingFieldStubImpl, dataStream: StubOutputStream) {

@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.psi.stubs.factories
 
+import com.intellij.lang.LighterAST
+import com.intellij.lang.LighterASTNode
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
@@ -12,6 +14,7 @@ import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.psi.KtConstantExpression
 import org.jetbrains.kotlin.psi.stubs.ConstantValueKind
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinConstantExpressionStubImpl
+import org.jetbrains.kotlin.psi.stubs.light.nodeText
 import org.jetbrains.kotlin.psi.utils.toConstantExpressionElementType
 
 /**
@@ -32,6 +35,16 @@ internal class KtConstantExpressionStubSerializingElementFactory(
         parent = parentStub,
         kind = kind,
         valueRef = StringRef.fromString(psi.text)!!,
+    )
+
+    override fun createStub(
+        tree: LighterAST,
+        node: LighterASTNode,
+        parentStub: StubElement<*>,
+    ): KotlinConstantExpressionStubImpl = KotlinConstantExpressionStubImpl(
+        parent = parentStub,
+        kind = kind,
+        valueRef = StringRef.fromString(tree.nodeText(node))!!,
     )
 
     override fun serialize(stub: KotlinConstantExpressionStubImpl, dataStream: StubOutputStream) {
