@@ -12,7 +12,7 @@ val jvmAbiGenPlugin = configurations.create("jvmAbiGenPlugin") {
 }
 
 dependencies {
-    compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
+    implementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 
     api(project(":compiler:psi:psi-api"))
     api(project(":compiler:fir:fir2ir"))
