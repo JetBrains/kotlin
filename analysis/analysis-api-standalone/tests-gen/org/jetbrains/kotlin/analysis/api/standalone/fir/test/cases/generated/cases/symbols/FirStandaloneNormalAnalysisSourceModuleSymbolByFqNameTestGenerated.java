@@ -80,6 +80,12 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByFqNameTestGenerated 
   }
 
   @Test
+  @TestMetadata("enumEntryWithAnnotationsFromLibrary.kt")
+  public void testEnumEntryWithAnnotationsFromLibrary() {
+    run("enumEntryWithAnnotationsFromLibrary.kt");
+  }
+
+  @Test
   @TestMetadata("explicitBackingField.kt")
   public void testExplicitBackingField() {
     run("explicitBackingField.kt");

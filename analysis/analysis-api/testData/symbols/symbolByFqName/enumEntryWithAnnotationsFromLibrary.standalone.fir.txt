@@ -1,0 +1,37 @@
+KaEnumEntrySymbol:
+  anchorPsi: null
+  annotations: [
+    lib/MyOptIn()
+      psi: null
+    lib/Anno(value = "foo")
+      psi: null
+  ]
+  callableId: lib/MyEnum.Foo
+  contextParameters: []
+  contextReceivers: []
+  initializer: null
+  isActual: false
+  isCompanion: true
+  isDelegated: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isVal: true
+  location: CLASS
+  modality: FINAL
+  name: Foo
+  origin: LIBRARY
+  psi: null
+  realPsi: null
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: lib/MyEnum
+  typeParameters: []
+  visibility: PUBLIC
+  getContainingFileSymbol: null
+  getContainingJvmClassName: lib.MyEnum
+  getContainingModule: KaLibraryModule "Library lib"
+  deprecation: null
+  importableFqName: lib.MyEnum.Foo
