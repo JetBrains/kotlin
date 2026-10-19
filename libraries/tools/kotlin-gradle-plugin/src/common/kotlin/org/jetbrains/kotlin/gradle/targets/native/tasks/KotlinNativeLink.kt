@@ -98,6 +98,9 @@ constructor(
     final override val toolOptions: KotlinCommonCompilerToolOptions = objectFactory
         .newInstance<KotlinCommonCompilerToolOptionsDefault>()
 
+    // Other tasks put files next to the binary (KT-89241), so the directory is not an
+    // output. The task declares the files it writes, see outputFiles and outputDirectories.
+    @get:Internal
     override val destinationDirectory: DirectoryProperty = binary.outputDirectoryProperty
 
     @Suppress("DEPRECATION_ERROR")
@@ -417,13 +420,22 @@ constructor(
     @get:NormalizeLineEndings
     protected val friendModule: FileCollection = objectFactory.fileCollection().from({ compilation.friendPaths })
 
-    private val linkOutputs: Provider<KotlinNativeLinkOutputs> = destinationDirectory.map {
-        KotlinNativeLinkOutputs(it.asFile, outputKind, konanTarget, baseName)
-    }
+    private val linkOutputs: Provider<KotlinNativeLinkOutputs> =
+        destinationDirectory.zip(toolOptions.freeCompilerArgs) { directory, freeCompilerArgs ->
+            KotlinNativeLinkOutputs(
+                directory.asFile, outputKind, konanTarget, baseName, debuggable, isStaticFramework, freeCompilerArgs
+            )
+        }
 
     @get:Internal
     open val outputFile: Provider<File>
         get() = linkOutputs.map { it.mainOutput }
+
+    @get:OutputFiles
+    internal val outputFiles: Provider<List<File>> = linkOutputs.map { it.files }
+
+    @get:OutputDirectories
+    internal val outputDirectories: Provider<List<File>> = linkOutputs.map { it.directories }
 
     @Internal
     val compilerPluginOptions = CompilerPluginOptions()
