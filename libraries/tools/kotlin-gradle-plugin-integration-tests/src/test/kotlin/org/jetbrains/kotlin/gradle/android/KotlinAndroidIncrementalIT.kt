@@ -9,12 +9,14 @@ import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
 import kotlin.io.path.writeText
 
 @DisplayName("kotlin-android incremental compilation tests")
 @AndroidGradlePluginTests
+@MustRunOnChangesInGradle
 open class KotlinAndroidIncrementalIT : KGPBaseTest() {
     @DisplayName("incremental compilation works with single-module android projects")
     @GradleAndroidTest
