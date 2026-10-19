@@ -6,12 +6,16 @@
 package org.jetbrains.kotlin.psi.stubs.factories
 
 import com.intellij.lang.ASTNode
+import com.intellij.lang.LighterAST
+import com.intellij.lang.LighterASTNode
 import com.intellij.psi.stubs.IndexSink
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
+import com.intellij.psi.tree.IFileElementType
 import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.psiUtil.safeFqNameForLazyResolve
@@ -24,6 +28,14 @@ import org.jetbrains.kotlin.psi.stubs.impl.KotlinPropertyStubImpl
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinStubOrigin
 import org.jetbrains.kotlin.psi.stubs.impl.deserializeConstantValue
 import org.jetbrains.kotlin.psi.stubs.impl.serializeConstantValue
+import org.jetbrains.kotlin.psi.stubs.light.declarationName
+import org.jetbrains.kotlin.psi.stubs.light.firstChildOfType
+import org.jetbrains.kotlin.psi.stubs.light.firstExpressionChild
+import org.jetbrains.kotlin.psi.stubs.light.initializerAfterEq
+import org.jetbrains.kotlin.psi.stubs.light.isTopLevelDeclaration
+import org.jetbrains.kotlin.psi.stubs.light.propertyReceiverTypeReference
+import org.jetbrains.kotlin.psi.stubs.light.returnTypeReferenceAfterColon
+import org.jetbrains.kotlin.psi.stubs.light.safeFqNameForLazyResolve
 
 internal object KtPropertyStubSerializingElementFactory :
     KtStubSerializingElementFactory<KotlinPropertyStubImpl, KtProperty>(
@@ -72,6 +84,48 @@ internal object KtPropertyStubSerializingElementFactory :
             isExtension = psi.receiverTypeReference != null,
             hasReturnTypeRef = psi.typeReference != null,
             fqName = psi.safeFqNameForLazyResolve(),
+            constantInitializer = null,
+            origin = null,
+            hasBackingField = null,
+            kdocText = null,
+        )
+    }
+
+    override fun shouldCreateStub(tree: LighterAST, node: LighterASTNode, parentStub: StubElement<*>): Boolean {
+        val parent = tree.getParent(node) ?: return false
+        val parentType = parent.tokenType
+
+        // Simple check for non-local properties inside classes and files
+        if (parentType == KtNodeTypes.CLASS_BODY || parentType is IFileElementType) {
+            return true
+        }
+
+        // Properties inside blocks are stubbed only at the top level of scripts; everywhere else they are local,
+        // matching the `isLocal` fallback of the AST-based check
+        if (parentType == KtNodeTypes.BLOCK) {
+            return tree.getParent(parent)?.tokenType == KtNodeTypes.SCRIPT
+        }
+
+        return false
+    }
+
+    override fun createStub(
+        tree: LighterAST,
+        node: LighterASTNode,
+        parentStub: StubElement<*>,
+    ): KotlinPropertyStubImpl {
+        val delegate = tree.firstChildOfType(node, KtNodeTypes.PROPERTY_DELEGATE)
+        return KotlinPropertyStubImpl(
+            parent = parentStub,
+            name = StringRef.fromString(tree.declarationName(node)),
+            isVar = tree.firstChildOfType(node, KtTokens.VAR_KEYWORD) != null,
+            isTopLevel = tree.isTopLevelDeclaration(node),
+            hasDelegate = delegate != null,
+            hasDelegateExpression = delegate != null && tree.firstExpressionChild(delegate) != null,
+            hasInitializer = tree.initializerAfterEq(node) != null,
+            isExtension = tree.propertyReceiverTypeReference(node) != null,
+            hasReturnTypeRef = tree.returnTypeReferenceAfterColon(node) != null,
+            fqName = tree.safeFqNameForLazyResolve(node, parentStub),
             constantInitializer = null,
             origin = null,
             hasBackingField = null,

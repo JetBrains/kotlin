@@ -5,16 +5,22 @@
 
 package org.jetbrains.kotlin.psi.stubs.factories
 
+import com.intellij.lang.LighterAST
+import com.intellij.lang.LighterASTNode
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.psi.psiUtil.isLegacyContractPresentPsiCheck
 import org.jetbrains.kotlin.psi.stubs.StubBuildingLexing.mayHaveLegacyContract
 import org.jetbrains.kotlin.psi.stubs.StubUtils.readContract
 import org.jetbrains.kotlin.psi.stubs.StubUtils.writeContract
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinPropertyAccessorStubImpl
+import org.jetbrains.kotlin.psi.stubs.light.firstChildOfType
+import org.jetbrains.kotlin.psi.stubs.light.firstExpressionChild
+import org.jetbrains.kotlin.psi.stubs.light.isLegacyContractPresent
 
 internal object KtPropertyAccessorStubSerializingElementFactory :
     KtStubSerializingElementFactory<KotlinPropertyAccessorStubImpl, KtPropertyAccessor>(
@@ -32,6 +38,19 @@ internal object KtPropertyAccessorStubSerializingElementFactory :
         hasBody = psi.hasBody(),
         hasNoExpressionBody = psi.hasBlockBody(),
         mayHaveContract = psi.mayHaveLegacyContract() && psi.isLegacyContractPresentPsiCheck(),
+        contract = null,
+    )
+
+    override fun createStub(
+        tree: LighterAST,
+        node: LighterASTNode,
+        parentStub: StubElement<*>,
+    ): KotlinPropertyAccessorStubImpl = KotlinPropertyAccessorStubImpl(
+        parent = parentStub,
+        isGetter = tree.firstChildOfType(node, KtTokens.GET_KEYWORD) != null,
+        hasBody = tree.firstExpressionChild(node) != null,
+        hasNoExpressionBody = tree.firstChildOfType(node, KtTokens.EQ) == null,
+        mayHaveContract = tree.isLegacyContractPresent(node),
         contract = null,
     )
 

@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.psi.stubs.factories
 
+import com.intellij.lang.LighterAST
+import com.intellij.lang.LighterASTNode
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
@@ -12,6 +14,8 @@ import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinNameReferenceExpressionStubImpl
+import org.jetbrains.kotlin.psi.stubs.light.NAME_REFERENCE_NAME_ELEMENT_TYPES
+import org.jetbrains.kotlin.psi.stubs.light.referencedName
 
 internal object KtNameReferenceExpressionStubSerializingElementFactory :
     KtStubSerializingElementFactory<KotlinNameReferenceExpressionStubImpl, KtNameReferenceExpression>(
@@ -28,6 +32,16 @@ internal object KtNameReferenceExpressionStubSerializingElementFactory :
     ): KotlinNameReferenceExpressionStubImpl = KotlinNameReferenceExpressionStubImpl(
         parent = parentStub,
         referencedNameRef = StringRef.fromString(psi.getReferencedName())!!,
+        isClassRef = false,
+    )
+
+    override fun createStub(
+        tree: LighterAST,
+        node: LighterASTNode,
+        parentStub: StubElement<*>,
+    ): KotlinNameReferenceExpressionStubImpl = KotlinNameReferenceExpressionStubImpl(
+        parent = parentStub,
+        referencedNameRef = StringRef.fromString(tree.referencedName(node, NAME_REFERENCE_NAME_ELEMENT_TYPES))!!,
         isClassRef = false,
     )
 

@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.psi.stubs.factories
 
+import com.intellij.lang.LighterAST
+import com.intellij.lang.LighterASTNode
 import com.intellij.psi.stubs.IndexSink
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
@@ -15,10 +17,13 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.stubs.StubUtils.readNullableMap
 import org.jetbrains.kotlin.psi.stubs.StubUtils.writeNullableMap
+import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets
 import org.jetbrains.kotlin.psi.stubs.elements.StubIndexService
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinAnnotationEntryStubImpl
 import org.jetbrains.kotlin.psi.stubs.impl.deserializeConstantValue
 import org.jetbrains.kotlin.psi.stubs.impl.serializeConstantValue
+import org.jetbrains.kotlin.psi.stubs.light.firstChildOfType
+import org.jetbrains.kotlin.psi.stubs.light.userTypeReferencedName
 
 internal object KtAnnotationEntryStubSerializingElementFactory :
     KtStubSerializingElementFactory<KotlinAnnotationEntryStubImpl, KtAnnotationEntry>(
@@ -36,6 +41,31 @@ internal object KtAnnotationEntryStubSerializingElementFactory :
             hasValueArguments = valueArgumentList != null && valueArgumentList.arguments.isNotEmpty(),
             valueArguments = null,
         )
+    }
+
+    override fun createStub(
+        tree: LighterAST,
+        node: LighterASTNode,
+        parentStub: StubElement<*>,
+    ): KotlinAnnotationEntryStubImpl {
+        val valueArgumentList = tree.firstChildOfType(node, KtNodeTypes.VALUE_ARGUMENT_LIST)
+        return KotlinAnnotationEntryStubImpl(
+            parent = parentStub,
+            shortNameRef = StringRef.fromString(shortName(tree, node)),
+            hasValueArguments = valueArgumentList != null &&
+                    tree.firstChildOfType(valueArgumentList, KtNodeTypes.VALUE_ARGUMENT) != null,
+            valueArguments = null,
+        )
+    }
+
+    /** Mirrors `KtAnnotationEntry.getShortName`: the referenced name of the callee's user type. */
+    private fun shortName(tree: LighterAST, node: LighterASTNode): String? {
+        val callee = tree.firstChildOfType(node, KtNodeTypes.CONSTRUCTOR_CALLEE) ?: return null
+        val typeReference = tree.firstChildOfType(callee, KtNodeTypes.TYPE_REFERENCE) ?: return null
+        val userType = tree.firstChildOfType(typeReference, KtTokenSets.TYPE_ELEMENT_TYPES)
+            ?.takeIf { it.tokenType == KtNodeTypes.USER_TYPE }
+            ?: return null
+        return tree.userTypeReferencedName(userType)
     }
 
     override fun serialize(stub: KotlinAnnotationEntryStubImpl, dataStream: StubOutputStream) {

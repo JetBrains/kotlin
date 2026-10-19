@@ -26,7 +26,10 @@ internal class KotlinStubRegistryExtension : StubRegistryExtension {
         registry.registerStubSerializer(KtFileElementType, KtFileStubSerializer)
 
         for ((key, value) in KtStubElementFactories.factories) {
-            registry.registerStubSerializingFactory(key, value)
+            // A light factory may not go through `registerStubSerializingFactory`, which rejects light factories;
+            // registering the light factory also registers it as a regular one
+            registry.registerLightStubFactory(key, value)
+            registry.registerStubSerializer(key, value)
         }
     }
 }

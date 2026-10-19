@@ -5,18 +5,48 @@
 
 package org.jetbrains.kotlin.psi.stubs
 
+import com.intellij.lang.ASTNode
+import com.intellij.lang.LighterASTNode
+import com.intellij.lang.PsiBuilderFactory
+import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.psi.StubBuilder
-import com.intellij.psi.stubs.LanguageStubDefinition
-import org.jetbrains.kotlin.psi.stubs.elements.KtFileStubBuilder
+import com.intellij.psi.stubs.LightLanguageStubDefinition
+import com.intellij.util.diff.FlyweightCapableTreeStructure
+import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.jetbrains.kotlin.parsing.KotlinLightParser
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.stubs.elements.KtFileLightStubBuilder
 
 /**
- * Kotlin builds stubs from the full PSI/AST (see [KtFileStubBuilder]), not from a light tree, so this
- * implements [LanguageStubDefinition] rather than [com.intellij.psi.stubs.LightLanguageStubDefinition].
+ * Kotlin builds stubs from a light tree (see [KtFileLightStubBuilder]): during indexing the file is parsed with
+ * [parseContentsLight] without materializing the PSI tree, and for files with a loaded AST the same builder works
+ * over a tree-backed light view.
  */
-internal class KotlinLanguageStubDefinition : LanguageStubDefinition {
+internal class KotlinLanguageStubDefinition : LightLanguageStubDefinition {
     override val stubVersion: Int
         get() = KotlinStubVersions.SOURCE_STUB_VERSION
 
     override val builder: StubBuilder
-        get() = KtFileStubBuilder()
+        get() = KtFileLightStubBuilder()
+
+    override fun parseContentsLight(chameleon: ASTNode): FlyweightCapableTreeStructure<LighterASTNode> {
+        val psi = chameleon.psi
+        val builder = PsiBuilderFactory.getInstance().createBuilder(
+            psi.project,
+            chameleon,
+            null,
+            KotlinLanguage.INSTANCE,
+            chameleon.chars,
+        )
+
+        // Mirrors the file-vs-script decision of `KotlinParser.parse`
+        val file = psi.containingFile
+        val extension = FileUtilRt.getExtension(file.name)
+        val isScript = !extension.isEmpty() &&
+                extension != KotlinFileType.EXTENSION &&
+                (file as? KtFile)?.isCompiled != true
+
+        return KotlinLightParser.parse(builder, isScript)
+    }
 }

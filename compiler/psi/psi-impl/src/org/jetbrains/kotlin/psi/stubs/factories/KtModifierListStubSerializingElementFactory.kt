@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.psi.stubs.factories
 
+import com.intellij.lang.LighterAST
+import com.intellij.lang.LighterASTNode
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
@@ -13,6 +15,7 @@ import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.psi.KtDeclarationModifierList
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinModifierListStubImpl
 import org.jetbrains.kotlin.psi.stubs.impl.ModifierMaskUtils
+import org.jetbrains.kotlin.psi.stubs.light.firstChildOfType
 
 internal object KtModifierListStubSerializingElementFactory :
     KtStubSerializingElementFactory<KotlinModifierListStubImpl, KtDeclarationModifierList>(
@@ -29,6 +32,15 @@ internal object KtModifierListStubSerializingElementFactory :
     ): KotlinModifierListStubImpl = KotlinModifierListStubImpl(
         parent = parentStub,
         mask = ModifierMaskUtils.computeMaskFromModifierList(psi),
+    )
+
+    override fun createStub(
+        tree: LighterAST,
+        node: LighterASTNode,
+        parentStub: StubElement<*>,
+    ): KotlinModifierListStubImpl = KotlinModifierListStubImpl(
+        parent = parentStub,
+        mask = ModifierMaskUtils.computeMask { tree.firstChildOfType(node, it) != null },
     )
 
     override fun serialize(stub: KotlinModifierListStubImpl, dataStream: StubOutputStream) {

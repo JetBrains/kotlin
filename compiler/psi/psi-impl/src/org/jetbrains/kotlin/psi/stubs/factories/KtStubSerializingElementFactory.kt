@@ -6,7 +6,10 @@
 package org.jetbrains.kotlin.psi.stubs.factories
 
 import com.intellij.lang.ASTNode
+import com.intellij.lang.LighterAST
+import com.intellij.lang.LighterASTNode
 import com.intellij.psi.stubs.IndexSink
+import com.intellij.psi.stubs.LightStubElementFactory
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubSerializingElementFactory
 import com.intellij.psi.tree.IElementType
@@ -16,10 +19,14 @@ import org.jetbrains.kotlin.psi.stubs.KtStubElementFactories
 
 /**
  * A base class for all factories.
+ *
+ * Each factory can build its stub both from the PSI/AST (see [createStub]) and from a light tree (see the
+ * [LighterAST]-based [createStub] overload); the two paths must produce identical stubs because indexing builds
+ * stubs from the light tree while other clients build them from the AST.
  */
 internal abstract class KtStubSerializingElementFactory<Stub : StubElement<Psi>, Psi : KtElement>(
     protected val type: IElementType,
-) : StubSerializingElementFactory<Stub, Psi> {
+) : StubSerializingElementFactory<Stub, Psi>, LightStubElementFactory<Stub, Psi> {
 
     final override fun getExternalId(): String = "kotlin.$type"
 
@@ -43,5 +50,19 @@ internal abstract class KtStubSerializingElementFactory<Stub : StubElement<Psi>,
 
         val parentFactory = KtStubElementFactories[parentType]
         return parentFactory?.shouldCreateStub(parent) == true
+    }
+
+    /**
+     * The light-tree mirror of [shouldCreateStub]: an element is stubbed only if its parent is stubbed as well.
+     */
+    override fun shouldCreateStub(tree: LighterAST, node: LighterASTNode, parentStub: StubElement<*>): Boolean {
+        val parent = tree.getParent(node) ?: return false
+        val parentType = parent.tokenType
+        if (parentType is IFileElementType) {
+            return true
+        }
+
+        val parentFactory = KtStubElementFactories[parentType]
+        return parentFactory?.shouldCreateStub(tree, parent, parentStub) == true
     }
 }

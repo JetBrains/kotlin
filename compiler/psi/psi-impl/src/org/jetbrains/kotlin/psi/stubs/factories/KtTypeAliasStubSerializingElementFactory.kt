@@ -5,19 +5,26 @@
 
 package org.jetbrains.kotlin.psi.stubs.factories
 
+import com.intellij.lang.LighterAST
+import com.intellij.lang.LighterASTNode
 import com.intellij.psi.stubs.IndexSink
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
 import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.psi.KtTypeAlias
 import org.jetbrains.kotlin.psi.psiUtil.safeFqNameForLazyResolve
+import org.jetbrains.kotlin.psi.stubs.StubUtils
 import org.jetbrains.kotlin.psi.stubs.StubUtils.createClassId
 import org.jetbrains.kotlin.psi.stubs.StubUtils.deserializeClassId
 import org.jetbrains.kotlin.psi.stubs.StubUtils.serializeClassId
 import org.jetbrains.kotlin.psi.stubs.elements.StubIndexService
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinTypeAliasStubImpl
+import org.jetbrains.kotlin.psi.stubs.light.declarationName
+import org.jetbrains.kotlin.psi.stubs.light.isTopLevelDeclaration
+import org.jetbrains.kotlin.psi.stubs.light.safeFqNameForLazyResolve
 
 internal object KtTypeAliasStubSerializingElementFactory :
     KtStubSerializingElementFactory<KotlinTypeAliasStubImpl, KtTypeAlias>(
@@ -37,6 +44,21 @@ internal object KtTypeAliasStubSerializingElementFactory :
             qualifiedName = fqName,
             classId = classId,
             isTopLevel = isTopLevel,
+        )
+    }
+
+    override fun createStub(
+        tree: LighterAST,
+        node: LighterASTNode,
+        parentStub: StubElement<*>,
+    ): KotlinTypeAliasStubImpl {
+        val name = tree.declarationName(node)
+        return KotlinTypeAliasStubImpl(
+            parent = parentStub,
+            name = StringRef.fromString(name),
+            qualifiedName = StringRef.fromString(tree.safeFqNameForLazyResolve(node, parentStub)?.asString()),
+            classId = StubUtils.createClassId(parentStub, KtPsiUtil.safeName(name), isEnumEntry = false),
+            isTopLevel = tree.isTopLevelDeclaration(node),
         )
     }
 

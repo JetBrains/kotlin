@@ -6,12 +6,15 @@
 package org.jetbrains.kotlin.psi.stubs.factories
 
 import com.intellij.lang.ASTNode
+import com.intellij.lang.LighterAST
+import com.intellij.lang.LighterASTNode
 import com.intellij.psi.stubs.IndexSink
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
 import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
@@ -24,6 +27,14 @@ import org.jetbrains.kotlin.psi.stubs.StubUtils.writeContract
 import org.jetbrains.kotlin.psi.stubs.elements.StubIndexService
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFunctionStubImpl
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinStubOrigin
+import org.jetbrains.kotlin.psi.stubs.light.declarationName
+import org.jetbrains.kotlin.psi.stubs.light.firstChildOfType
+import org.jetbrains.kotlin.psi.stubs.light.firstExpressionChild
+import org.jetbrains.kotlin.psi.stubs.light.functionReceiverTypeReference
+import org.jetbrains.kotlin.psi.stubs.light.isLegacyContractPresent
+import org.jetbrains.kotlin.psi.stubs.light.isTopLevelDeclaration
+import org.jetbrains.kotlin.psi.stubs.light.nameIdentifier
+import org.jetbrains.kotlin.psi.stubs.light.safeFqNameForLazyResolve
 
 internal object KtFunctionStubSerializingElementFactory :
     KtStubSerializingElementFactory<KotlinFunctionStubImpl, KtNamedFunction>(
@@ -54,6 +65,34 @@ internal object KtFunctionStubSerializingElementFactory :
         contract = null,
         origin = null,
     )
+
+    override fun shouldCreateStub(tree: LighterAST, node: LighterASTNode, parentStub: StubElement<*>): Boolean = true
+
+    override fun createStub(
+        tree: LighterAST,
+        node: LighterASTNode,
+        parentStub: StubElement<*>,
+    ): KotlinFunctionStubImpl = KotlinFunctionStubImpl(
+        parent = parentStub,
+        nameRef = StringRef.fromString(tree.declarationName(node)),
+        isTopLevel = tree.isTopLevelDeclaration(node),
+        fqName = tree.safeFqNameForLazyResolve(node, parentStub),
+        isExtension = tree.functionReceiverTypeReference(node) != null,
+        hasNoExpressionBody = tree.firstChildOfType(node, KtTokens.EQ) == null,
+        hasBody = tree.firstExpressionChild(node) != null,
+        hasTypeParameterListBeforeFunctionName = hasTypeParameterListBeforeFunctionName(tree, node),
+        mayHaveContract = tree.isLegacyContractPresent(node),
+        kdocText = null,
+        contract = null,
+        origin = null,
+    )
+
+    /** Mirrors `KtNamedFunction.hasTypeParameterListBeforeFunctionName` computed over the tree. */
+    private fun hasTypeParameterListBeforeFunctionName(tree: LighterAST, node: LighterASTNode): Boolean {
+        val typeParameterList = tree.firstChildOfType(node, KtNodeTypes.TYPE_PARAMETER_LIST) ?: return false
+        val nameIdentifier = tree.nameIdentifier(node) ?: return true
+        return nameIdentifier.startOffset > typeParameterList.startOffset
+    }
 
     override fun serialize(stub: KotlinFunctionStubImpl, dataStream: StubOutputStream) {
         dataStream.writeName(stub.name)

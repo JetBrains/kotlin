@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.psi.stubs.factories
 
+import com.intellij.lang.LighterAST
+import com.intellij.lang.LighterASTNode
 import com.intellij.psi.stubs.IndexSink
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
@@ -16,6 +18,8 @@ import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.psiUtil.safeFqNameForLazyResolve
 import org.jetbrains.kotlin.psi.stubs.elements.StubIndexService
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinEnumEntryStubImpl
+import org.jetbrains.kotlin.psi.stubs.light.declarationName
+import org.jetbrains.kotlin.psi.stubs.light.safeFqNameForLazyResolve
 
 internal object KtEnumEntryStubSerializingElementFactory :
     KtStubSerializingElementFactory<KotlinEnumEntryStubImpl, KtClass>(
@@ -33,6 +37,16 @@ internal object KtEnumEntryStubSerializingElementFactory :
             name = StringRef.fromString(name),
         )
     }
+
+    override fun createStub(
+        tree: LighterAST,
+        node: LighterASTNode,
+        parentStub: StubElement<*>,
+    ): KotlinEnumEntryStubImpl = KotlinEnumEntryStubImpl(
+        parent = parentStub,
+        qualifiedName = StringRef.fromString(tree.safeFqNameForLazyResolve(node, parentStub)?.asString()),
+        name = StringRef.fromString(tree.declarationName(node)),
+    )
 
     override fun serialize(stub: KotlinEnumEntryStubImpl, dataStream: StubOutputStream) {
         dataStream.writeName(stub.fqName?.asString())
