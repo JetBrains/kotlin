@@ -90,7 +90,7 @@
                 org.apache.maven.plugins:maven-install-plugin:3.0.1:install
               </install>
               <deploy>
-                org.apache.maven.plugins:maven-deploy-plugin:3.3.0:deploy
+                org.apache.maven.plugins:maven-deploy-plugin:3.0.0:deploy
               </deploy>
             </phases>
 
@@ -139,7 +139,7 @@
                 org.apache.maven.plugins:maven-install-plugin:3.0.1:install
               </install>
               <deploy>
-                org.apache.maven.plugins:maven-deploy-plugin:3.3.0:deploy
+                org.apache.maven.plugins:maven-deploy-plugin:3.0.0:deploy
               </deploy>
             </phases>
 
@@ -188,7 +188,7 @@
                 org.apache.maven.plugins:maven-install-plugin:3.0.1:install
               </install>
               <deploy>
-                org.apache.maven.plugins:maven-deploy-plugin:3.3.0:deploy
+                org.apache.maven.plugins:maven-deploy-plugin:3.0.0:deploy
               </deploy>
             </phases>
 
