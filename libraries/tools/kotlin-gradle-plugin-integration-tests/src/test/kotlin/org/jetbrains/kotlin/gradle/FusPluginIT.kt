@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import java.nio.file.Path
 import kotlin.io.path.absolutePathString
@@ -17,6 +18,7 @@ import kotlin.test.assertNotEquals
 
 @DisplayName("FUS statistic")
 @JvmGradlePluginTests
+@MustRunOnChangesInGradle
 class FusPluginIT : KGPBaseTest() {
     private val reportRelativePath = "reports"
 
