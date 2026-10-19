@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.internal.serializability.PathAsStringSerializer
 import org.jetbrains.kotlin.buildtools.internal.arguments.absolutePathStringOrThrow
 import org.jetbrains.kotlin.buildtools.internal.serializability.cast
+import org.jetbrains.kotlin.buildtools.internal.serializability.throwPropertyNotFound
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.compilerRunner.KotlinCompilerRunnerUtils
 import org.jetbrains.kotlin.daemon.client.CompileServiceSession
@@ -52,7 +53,7 @@ internal data class DaemonExecutionPolicyImpl private constructor(
             "LOGS_PATH" -> logsPath
             "LOGS_FILE_SIZE_LIMIT" -> logsFileSizeLimit
             "LOGS_FILE_COUNT_LIMIT" -> logsFileCountLimit
-            else -> error("Property with name ${key.id} not found in $this")
+            else -> throwPropertyNotFound(key.id)
         } as V
 
     @UseFromImplModuleRestricted
@@ -65,7 +66,7 @@ internal data class DaemonExecutionPolicyImpl private constructor(
             "LOGS_PATH" -> logsPath = value.cast()
             "LOGS_FILE_SIZE_LIMIT" -> logsFileSizeLimit = value.cast()
             "LOGS_FILE_COUNT_LIMIT" -> logsFileCountLimit = value.cast()
-            else -> error("Property with name ${key.id} not found in $this")
+            else -> throwPropertyNotFound(key.id)
         }
     }
 

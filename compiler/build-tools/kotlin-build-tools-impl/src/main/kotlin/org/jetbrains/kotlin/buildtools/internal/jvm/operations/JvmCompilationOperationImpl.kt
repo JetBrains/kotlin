@@ -87,7 +87,7 @@ internal class JvmCompilationOperationImpl private constructor(
             destinationDirectory,
             compilerArguments.deepCopy(),
             compilerVersion,
-        )
+        ).also { it.copyFrom(this) }
     }
 
     @UseFromImplModuleRestricted
