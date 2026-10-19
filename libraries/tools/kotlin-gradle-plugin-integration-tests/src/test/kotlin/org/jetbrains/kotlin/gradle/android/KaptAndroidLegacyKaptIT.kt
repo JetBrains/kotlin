@@ -8,12 +8,14 @@ package org.jetbrains.kotlin.gradle.android
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.KaptBaseIT
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.createDirectories
 import kotlin.io.path.writeText
 
 @DisplayName("kapt with AGP 9 com.android.legacy-kapt plugin")
 @AndroidGradlePluginTests
+@MustRunOnChangesInGradle
 class KaptAndroidLegacyKaptIT : KaptBaseIT() {
 
     @DisplayName("kapt generates sources via com.android.legacy-kapt on AGP 9 new DSL")
