@@ -5,9 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.jsonObject
-import kotlinx.serialization.json.jsonPrimitive
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileSystemOperations
@@ -15,8 +12,7 @@ import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.tasks.*
 import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject.Companion.NODE_MODULES
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject.Companion.PACKAGE_JSON
-import org.jetbrains.kotlin.gradle.utils.getFile
+import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinWebImportMap
 import java.io.File
 import javax.inject.Inject
 
@@ -71,6 +67,7 @@ internal abstract class DistributionWithImportMapTask : DefaultTask() {
 
     @TaskAction
     fun distribute() {
+        val importMap = KotlinWebImportMap.readFrom(importMapFile.get().asFile)
         fs.copy { copy ->
             copy.from(mainDirectory) {
                 // mainDirectory contains its own import map, but it has relative import maps.
@@ -79,46 +76,19 @@ internal abstract class DistributionWithImportMapTask : DefaultTask() {
                 it.exclude("importmap-loader.js")
             }
             copy.from(importMapLoader)
-            copy.from(
-                parseImportMapModuleDirectories(importMapFile.getFile(), rootDir)
-            ) {
+            copy.from(importMap.resolveAllModuleDirectories(rootDir)) {
                 it.includeEmptyDirs = false
                 it.into(VENDORS_FOLDER)
                 it.eachFile { file ->
-                    file.path = File(VENDORS_FOLDER).resolve(file.file.relativeTo(file.file.closestNodeModules())).path
+                    // For example:
+                    // /path/to/project/node_modules/pkg/index.js -> vendors/pkg/index.js
+                    // /path/to/project/node_modules/pkg/node_modules/nested-pkg/index.js -> vendors/nested-pkg/index.js
+                    val relativePath = file.file.relativeTo(file.file.closestNodeModules())
+                    file.path = File(VENDORS_FOLDER).resolve(relativePath).path
                 }
             }
             copy.into(outputDirectory)
         }
-    }
-
-    private fun parseImportMapModuleDirectories(importMapFile: File, rootDir: File): Set<File> {
-        val importMapContent = importMapFile.readText()
-        val importMapObject = json.parseToJsonElement(importMapContent).jsonObject
-        val imports = importMapObject["imports"] ?: error("No imports in import map $importMapFile")
-
-        return imports.jsonObject.entries
-            .map { (_, path) ->
-                val relativePath = path.jsonPrimitive.content.trimStart('/')
-                val moduleMainFile = rootDir.resolve(relativePath)
-                moduleMainFile.resolveModuleDirectory()
-            }.distinct()
-            .toSet()
-    }
-
-    /**
-     * Resolves the module directory by traversing up from the current file location
-     * until a directory containing a "package.json" file is found.
-     *
-     * @return The parent directory containing the "package.json" file.
-     */
-    private fun File.resolveModuleDirectory(): File {
-        var packageJsonCandidate = resolveSibling(PACKAGE_JSON)
-        while (!packageJsonCandidate.exists()) {
-            packageJsonCandidate = packageJsonCandidate.parentFile.resolveSibling(PACKAGE_JSON)
-        }
-
-        return packageJsonCandidate.parentFile
     }
 
     private fun File.closestNodeModules(): File {
@@ -132,9 +102,5 @@ internal abstract class DistributionWithImportMapTask : DefaultTask() {
 
     companion object {
         internal const val VENDORS_FOLDER = "vendors"
-
-        private val json = Json {
-            prettyPrint = true
-        }
     }
 }
