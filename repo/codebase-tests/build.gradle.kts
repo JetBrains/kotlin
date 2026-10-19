@@ -64,7 +64,7 @@ open class TestSystemPropertiesProvider @Inject constructor(
 
     @get:Input
     @get:Optional
-    val declaredDomains = objectFactory.property<String>()
+    val qualityGateDomainsPerTask = objectFactory.property<String>()
 
     @get:Input
     val teamcity = objectFactory.property<Boolean>()
@@ -75,7 +75,7 @@ open class TestSystemPropertiesProvider @Inject constructor(
         "-Dteamcity=${teamcity.get()}",
         qualityGateMasterTasks.orNull?.let { "-Dquality.gate.master.tasks=$it" },
         qualityGateNightlyTasks.orNull?.let { "-Dquality.gate.nightly.tasks=$it" },
-        declaredDomains.orNull?.let { "-Dteamcity.declared.domains=$it" },
+        qualityGateDomainsPerTask.orNull?.let { "-Dquality.gate.domains.per.task=$it" },
     )
 }
 
@@ -92,7 +92,7 @@ projectTests {
             teamcity = kotlinBuildProperties.isTeamcityBuild
             qualityGateMasterTasks.set(providers.gradleProperty("quality.gate.master.tasks"))
             qualityGateNightlyTasks.set(providers.gradleProperty("quality.gate.nightly.tasks"))
-            declaredDomains.set(providers.gradleProperty("teamcity.declared.domains"))
+            qualityGateDomainsPerTask.set(providers.gradleProperty("quality.gate.domains.per.task"))
         })
 
         testFederation {
