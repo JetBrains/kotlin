@@ -183,6 +183,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleDanglingFileCollectDiagnosticsT
   }
 
   @Test
+  @TestMetadata("deprecatedEnumEntryFromLibrary.kt")
+  public void testDeprecatedEnumEntryFromLibrary() {
+    run("deprecatedEnumEntryFromLibrary.kt");
+  }
+
+  @Test
   @TestMetadata("deprecationFromLibrary.kt")
   public void testDeprecationFromLibrary() {
     run("deprecationFromLibrary.kt");

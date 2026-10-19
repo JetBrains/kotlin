@@ -74,6 +74,12 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByFqNameTestGenerated 
   }
 
   @Test
+  @TestMetadata("deprecatedEnumEntryFromLibrary.kt")
+  public void testDeprecatedEnumEntryFromLibrary() {
+    run("deprecatedEnumEntryFromLibrary.kt");
+  }
+
+  @Test
   @TestMetadata("enumEntry.kt")
   public void testEnumEntry() {
     run("enumEntry.kt");
