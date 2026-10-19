@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.buildtools.internal
 
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import org.jetbrains.kotlin.buildtools.api.*
 import org.jetbrains.kotlin.progress.CompilationCanceledException
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
@@ -15,8 +17,12 @@ import kotlin.concurrent.atomics.ExperimentalAtomicApi
 import kotlin.concurrent.atomics.incrementAndFetch
 
 @OptIn(ExperimentalAtomicApi::class)
+@Serializable
 internal abstract class CancellableBuildOperationImpl<R> : BuildOperationImpl<R>(), CancellableBuildOperation<R> {
+    @Transient
     private val isCancelled: AtomicBoolean = AtomicBoolean(false)
+
+    @Transient
     private val onCancelAction: AtomicReference<(() -> Unit)?> = AtomicReference(null)
     protected val compilationId: Int = compilationIdCounter.incrementAndFetch()
 
@@ -32,6 +38,7 @@ internal abstract class CancellableBuildOperationImpl<R> : BuildOperationImpl<R>
         check(actionWasSet) { "onCancel action was already set. Setting it again is an error." }
     }
 
+    @Transient
     protected val cancellationHandle = object : CompilationCanceledStatus {
         override fun checkCanceled() {
             if (isCancelled.load()) {
