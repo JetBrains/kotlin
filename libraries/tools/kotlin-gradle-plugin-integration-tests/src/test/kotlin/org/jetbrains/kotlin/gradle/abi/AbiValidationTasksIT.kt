@@ -20,8 +20,10 @@ import org.jetbrains.kotlin.gradle.testbase.assertTasksAreNotInTaskGraph
 import org.jetbrains.kotlin.gradle.testbase.assertTasksExecuted
 import org.jetbrains.kotlin.gradle.testbase.build
 import org.jetbrains.kotlin.gradle.testbase.buildAndAssertAllTasks
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 
 @JvmGradlePluginTests
+@MustRunOnChangesInGradle
 class AbiValidationTasksIT : KGPBaseTest() {
     @GradleTest
     fun testForDisabledAbiValidation(
