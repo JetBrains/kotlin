@@ -35,10 +35,9 @@ import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
 import org.jetbrains.kotlin.ir.util.isTrivialGetter
+import org.jetbrains.kotlin.ir.util.moduleFragment
 import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
-import java.nio.file.Path
 import java.util.concurrent.ConcurrentHashMap
 
 private var IrClass.layoutBuilder: ClassLayoutBuilder? by irAttribute(copyByDefault = false)
@@ -139,9 +138,8 @@ internal class NativeBackendContext(
 
     fun ghaEnabled() = ::globalHierarchyAnalysisResult.isInitialized
 
-    @OptIn(K1Deprecation::class)
     val stdlibModule
-        get() = this.builtIns.any.module
+        get() = this.irBuiltIns.anyClass.owner.moduleFragment
 
     val declaredLocalArrays: MutableMap<String, LLVMTypeRef> = HashMap()
 
