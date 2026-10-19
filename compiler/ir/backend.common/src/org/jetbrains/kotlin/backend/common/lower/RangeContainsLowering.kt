@@ -37,9 +37,10 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 /**
- * Optimizes calls to `contains` (`in` operator) for [ClosedRange]s.
+ * Optimizes calls to `contains` (`in` operator) for [ClosedRange]s and [OpenEndRange]s.
  *
  * For example, the expression `X in A..B` is transformed into `A <= X && X <= B`.
+ * The expression `X in A..<B` is transformed into `A <= X && X < B`.
  */
 class RangeContainsLowering(val context: CommonBackendContext) : BodyLoweringPass {
     override fun lower(irBody: IrBody, container: IrDeclaration) {
@@ -57,8 +58,10 @@ private class Transformer(
 
     private fun matchStdlibExtensionContainsCall(expression: IrCall): Boolean {
         val callee = expression.symbol.owner
+        val receiverType = callee.parameters.firstOrNull()?.type ?: return false
         return callee.hasShape(extensionReceiver = true, regularParameters = 1) &&
-                callee.parameters[0].type.isSubtypeOfClass(context.symbols.closedRange) &&
+                (receiverType.isSubtypeOfClass(context.symbols.closedRange) ||
+                        receiverType.isSubtypeOfClass(context.symbols.openEndRange)) &&
                 callee.kotlinFqName == FqName("kotlin.ranges.${OperatorNameConventions.CONTAINS}")
     }
 
@@ -179,16 +182,16 @@ private class Transformer(
             }
             is FloatingPointRangeHeaderInfo -> {
                 lower = headerInfo.start
-                upper = headerInfo.endInclusive
-                isUpperInclusive = true
+                upper = headerInfo.end
+                isUpperInclusive = headerInfo.isEndInclusive
                 shouldUpperComeFirst = false
                 useCompareTo = false
                 isNumericRange = true
             }
             is ComparableRangeInfo -> {
                 lower = headerInfo.start
-                upper = headerInfo.endInclusive
-                isUpperInclusive = true
+                upper = headerInfo.end
+                isUpperInclusive = headerInfo.isEndInclusive
                 shouldUpperComeFirst = false
                 useCompareTo = true
                 isNumericRange = false
@@ -400,7 +403,9 @@ internal open class RangeHeaderInfoBuilder(context: CommonBackendContext, scopeO
 
     override val callHandlers = listOf(
         FloatingPointRangeToHandler,
+        FloatingPointRangeUntilHandler,
         ComparableRangeToHandler(context),
+        ComparableRangeUntilHandler(context),
         ReversedHandler(context, this)
     )
 
@@ -420,7 +425,25 @@ internal object FloatingPointRangeToHandler : HeaderInfoHandler<IrCall, Nothing?
     override fun build(expression: IrCall, data: Nothing?, scopeOwner: IrSymbol) =
         FloatingPointRangeHeaderInfo(
             start = expression.arguments[0]!!,
-            endInclusive = expression.arguments[1]!!
+            end = expression.arguments[1]!!
+        )
+}
+
+/** Builds a [HeaderInfo] for open-ended floating-point ranges built using the `rangeUntil` function. */
+internal object FloatingPointRangeUntilHandler : HeaderInfoHandler<IrCall, Nothing?> {
+    override fun matchIterable(expression: IrCall): Boolean {
+        val callee = expression.symbol.owner
+        return callee.hasShape(extensionReceiver = true, regularParameters = 1) &&
+                callee.parameters[0].let { it.type.isFloat() || it.type.isDouble() } &&
+                callee.parameters[1].let { it.type.isFloat() || it.type.isDouble() } &&
+                callee.kotlinFqName == FqName("kotlin.ranges.${OperatorNameConventions.RANGE_UNTIL}")
+    }
+
+    override fun build(expression: IrCall, data: Nothing?, scopeOwner: IrSymbol) =
+        FloatingPointRangeHeaderInfo(
+            start = expression.arguments[0]!!,
+            end = expression.arguments[1]!!,
+            isEndInclusive = false
         )
 }
 
@@ -436,6 +459,23 @@ internal class ComparableRangeToHandler(private val context: CommonBackendContex
     override fun build(expression: IrCall, data: Nothing?, scopeOwner: IrSymbol) =
         ComparableRangeInfo(
             start = expression.arguments[0]!!,
-            endInclusive = expression.arguments[1]!!
+            end = expression.arguments[1]!!
+        )
+}
+
+/** Builds a [HeaderInfo] for open-ended ranges of Comparables built using the `rangeUntil` extension function. */
+internal class ComparableRangeUntilHandler(private val context: CommonBackendContext) : HeaderInfoHandler<IrCall, Nothing?> {
+    override fun matchIterable(expression: IrCall): Boolean {
+        val callee = expression.symbol.owner
+        return callee.hasShape(extensionReceiver = true, regularParameters = 1) &&
+                callee.parameters[0].type.isSubtypeOfClass(context.irBuiltIns.comparableClass) &&
+                callee.kotlinFqName == FqName("kotlin.ranges.${OperatorNameConventions.RANGE_UNTIL}")
+    }
+
+    override fun build(expression: IrCall, data: Nothing?, scopeOwner: IrSymbol) =
+        ComparableRangeInfo(
+            start = expression.arguments[0]!!,
+            end = expression.arguments[1]!!,
+            isEndInclusive = false
         )
 }
