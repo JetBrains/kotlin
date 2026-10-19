@@ -754,6 +754,44 @@ open class KaptIT : KaptBaseIT() {
         }
     }
 
+    @DisplayName("KT-89502: memory leaks in annotation processors are detected")
+    @GradleTest
+    fun testDetectMemoryLeaks(gradleVersion: GradleVersion) {
+        project(
+            "localAnnotationProcessor".withPrefix,
+            gradleVersion,
+            dependencyManagement = DependencyManagement.DefaultDependencyManagement(setOf("https://jitpack.io")),
+        ) {
+            subProject("annotation-processor").javaSourcesDir().resolve("TestAnnotationProcessor.kt").modify { text ->
+                text
+                    .replace(
+                        "const val KAPT_KOTLIN_GENERATED_OPTION_NAME = \"kapt.kotlin.generated\"",
+                        "const val KAPT_KOTLIN_GENERATED_OPTION_NAME = \"kapt.kotlin.generated\"\n        @JvmStatic var leaked: Any? = null"
+                    )
+                    .replace("val annotatedElements = ", "leaked = this\n        val annotatedElements = ")
+            }
+            subProject("example").buildGradle.append(
+                //language=Gradle
+                """
+                kapt {
+                    detectMemoryLeaks = "paranoid"
+                }
+                """.trimIndent()
+            )
+
+            build(":example:kaptKotlin") {
+                assertOutputContains("Memory leak detected!")
+                assertOutputContains("Location: 'org.kotlin.annotationProcessor.TestAnnotationProcessor', static field 'leaked'")
+                val cacheWarning = "Kapt memory leak detection may report incorrect results"
+                if ((buildOptions.kaptOptions?.classLoadersCacheSize ?: 0) > 0) {
+                    assertOutputContains(cacheWarning)
+                } else {
+                    assertOutputDoesNotContain(cacheWarning)
+                }
+            }
+        }
+    }
+
     @MustRunOnChangesInGradle
     @DisplayName("Should re-run kapt on changes in local annotation processor")
     @GradleTest

@@ -53,6 +53,9 @@ abstract class KaptWithoutKotlincTask @Inject constructor(
     @get:Input
     var disableClassloaderCacheForProcessors: Set<String> = emptySet()
 
+    @get:Internal
+    var detectMemoryLeaks: String = "none"
+
     @get:Input
     var mapDiagnosticLocations: Boolean = false
 
@@ -162,6 +165,7 @@ abstract class KaptWithoutKotlincTask @Inject constructor(
 
             kaptFlagsForWorker,
             stubGenerationScheme.get().optionValue,
+            detectMemoryLeaks,
 
             disableClassloaderCacheForProcessors
         )
@@ -301,6 +305,13 @@ abstract class KaptWithoutKotlincTask @Inject constructor(
                         + "\nIf you disable discovery, declare every annotation processor in a 'kapt' configuration."
             )
         }
+        if (classLoadersCacheSize > 0 && detectMemoryLeaks != "none") {
+            logger.warn(
+                "Kapt memory leak detection may report incorrect results while the annotation processor classloaders cache is enabled:"
+                        + " cached classloaders are kept alive between builds on purpose."
+                        + "\nSet 'kapt.classloaders.cache.size=0' for reliable leak detection."
+            )
+        }
     }
 }
 
@@ -399,8 +410,9 @@ private class KaptExecution @Inject constructor(
         val mode = classLoader.kaptClass("AptMode")
             .enumConstants.single { (it as Enum<*>).name == "APT_ONLY" }
 
+        val detectMemoryLeaksModeName = if (detectMemoryLeaks == "default") "STANDARD" else detectMemoryLeaks.uppercase()
         val detectMemoryLeaksMode = classLoader.kaptClass("DetectMemoryLeaksMode")
-            .enumConstants.single { (it as Enum<*>).name == "NONE" }
+            .enumConstants.single { (it as Enum<*>).name == detectMemoryLeaksModeName }
 
         val stubGenerationSchemeEnum = classLoader.kaptClass("StubGenerationScheme")
             .enumConstants.single { (it as Enum<*>).name == stubGenerationScheme.uppercase() }
@@ -489,6 +501,7 @@ internal data class KaptOptionsForWorker(
 
     val flags: Set<String>,
     val stubGenerationScheme: String,
+    val detectMemoryLeaks: String,
 
     val disableClassloaderCacheForProcessors: Set<String>
 ) : Serializable

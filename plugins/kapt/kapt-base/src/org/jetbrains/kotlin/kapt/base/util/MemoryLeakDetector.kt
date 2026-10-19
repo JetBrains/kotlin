@@ -3,12 +3,15 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.utils.kapt
+package org.jetbrains.kotlin.kapt.base.util
 
-import org.jetbrains.kotlin.utils.getSafe
+import org.jetbrains.kotlin.kapt.base.DetectMemoryLeaksMode
+import org.jetbrains.kotlin.kapt.base.KaptOptions
+import org.jetbrains.kotlin.kapt.base.LoadedProcessors
 import java.lang.ref.WeakReference
+import java.lang.reflect.Field
 import java.lang.reflect.Modifier
-import java.util.*
+import java.util.function.Supplier
 import javax.annotation.processing.*
 import javax.lang.model.AnnotatedConstruct
 import javax.lang.model.util.Elements
@@ -35,7 +38,7 @@ class MemoryLeak(val className: String, val fieldName: String, val description: 
     }
 }
 
-private class ClassLoaderData(classLoader: ClassLoader, val loadedClasses: (ClassLoader) -> Collection<Class<*>>?) {
+private class ClassLoaderData(classLoader: ClassLoader, val loadedClasses: (ClassLoader) -> Collection<Class<*>>) {
     val ref = WeakReference(classLoader)
 
     @Volatile
@@ -46,13 +49,16 @@ object MemoryLeakDetector {
     private val classLoaderData = mutableListOf<ClassLoaderData>()
 
     /**
-     * [loadedClasses] returns the classes defined by the given classloader, or `null` to fall back to reading
-     * `ClassLoader.classes` reflectively (works only on JDK 8 and below).
+     * [loadedClasses] returns the classes defined by the given classloader. There is no supported way to enumerate them,
+     * and `ClassLoader.classes` is filtered from reflection since JDK 12, so the classloader has to track them itself.
+     *
+     * A classloader that is already registered is not registered again.
      *
      * [loadedClasses] must not capture [classLoader], otherwise the classloader would never be collected.
      */
-    fun add(classLoader: ClassLoader, loadedClasses: (ClassLoader) -> Collection<Class<*>>? = { null }) {
+    fun add(classLoader: ClassLoader, loadedClasses: (ClassLoader) -> Collection<Class<*>>) {
         synchronized(classLoaderData) {
+            if (classLoaderData.any { it.ref.get() === classLoader }) return
             classLoaderData.add(ClassLoaderData(classLoader, loadedClasses))
         }
     }
@@ -82,8 +88,8 @@ object MemoryLeakDetector {
         return memoryLeaks
     }
 
-    private fun inspectStatics(classLoader: ClassLoader, loadedClasses: (ClassLoader) -> Collection<Class<*>>?): Set<MemoryLeak> {
-        val classes = loadedClasses(classLoader) ?: classLoader.loadedClasses()
+    private fun inspectStatics(classLoader: ClassLoader, loadedClasses: (ClassLoader) -> Collection<Class<*>>): Set<MemoryLeak> {
+        val classes = loadedClasses(classLoader)
         val loadedClassesSet = try {
             classes.mapTo(mutableSetOf()) { it }
         } catch (e: ConcurrentModificationException) {
@@ -136,13 +142,50 @@ private fun Any.isPrimitiveOrString(): Boolean {
     }
 }
 
-private fun ClassLoader.loadedClasses(): Vector<Class<*>> {
-    try {
-        val classesField = ClassLoader::class.java.getDeclaredField("classes")
+private fun Field.getSafe(obj: Any?): Any? {
+    return try {
+        val oldIsAccessible = isAccessible
 
-        @Suppress("UNCHECKED_CAST")
-        return classesField.getSafe(this) as? Vector<Class<*>> ?: Vector()
+        try {
+            isAccessible = true
+            get(obj)
+        } finally {
+            isAccessible = oldIsAccessible
+        }
     } catch (e: Throwable) {
-        return Vector()
+        null
     }
 }
+
+/**
+ * Registers the classloaders [processors] were loaded from with [MemoryLeakDetector] and reports the leaks found.
+ *
+ * A classloader can be inspected only if it tracks the classes it defines and exposes them as
+ * `Supplier<Collection<Class<*>>>`, like [ClassTrackingURLClassLoader]. The supplier interface comes from the JDK, so that
+ * classloaders created outside kapt (e.g. by the Gradle classloaders cache) can be inspected too.
+ */
+fun runMemoryLeakDetection(options: KaptOptions, processors: LoadedProcessors, logger: KaptLogger) {
+    if (options.detectMemoryLeaks == DetectMemoryLeaksMode.NONE) return
+
+    val processingClassLoaders = generateSequence(options.processingClassLoader) { it.parent }.takeWhile { it is Supplier<*> }
+    for (classLoader in sequenceOf(processors.classLoader) + processingClassLoaders) {
+        if (classLoader is Supplier<*>) MemoryLeakDetector.add(classLoader, ::trackedClasses)
+    }
+
+    val isParanoid = options.detectMemoryLeaks == DetectMemoryLeaksMode.PARANOID
+    val leakDetectionStart = System.currentTimeMillis()
+    val leaks = MemoryLeakDetector.process(isParanoid)
+    logger.info { "Leak detection took ${System.currentTimeMillis() - leakDetectionStart} ms" }
+
+    for (leak in leaks) {
+        logger.warn(buildString {
+            appendLine("Memory leak detected!")
+            appendLine("Location: '${leak.className}', static field '${leak.fieldName}'")
+            append(leak.description)
+        })
+    }
+}
+
+@Suppress("UNCHECKED_CAST")
+private fun trackedClasses(classLoader: ClassLoader): Collection<Class<*>> =
+    (classLoader as Supplier<Collection<Class<*>>>).get()
