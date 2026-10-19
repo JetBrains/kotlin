@@ -16,13 +16,14 @@ import kotlin.OptIn
 import kotlin.String
 import kotlin.Suppress
 import kotlin.collections.List
+import kotlin.collections.Map
 import kotlin.collections.MutableMap
-import kotlin.collections.MutableSet
 import kotlin.collections.Set
+import kotlin.collections.buildMap
 import kotlin.collections.emptyList
 import kotlin.collections.emptySet
 import kotlin.collections.mutableMapOf
-import kotlin.collections.mutableSetOf
+import kotlin.reflect.KMutableProperty1
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -33,8 +34,8 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.JsEcmaVersion
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.JsIrDiagnosticMode
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.JsModuleKind
 import org.jetbrains.kotlin.buildtools.`internal`.serializability.PathAsStringSerializer
-import org.jetbrains.kotlin.buildtools.`internal`.serializability.getPropertyWithSerialNameValue
-import org.jetbrains.kotlin.buildtools.`internal`.serializability.setPropertyWithSerialNameValue
+import org.jetbrains.kotlin.buildtools.`internal`.serializability.getPropertyByName
+import org.jetbrains.kotlin.buildtools.`internal`.serializability.setPropertyByName
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.DelicateBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
@@ -151,48 +152,48 @@ internal class JsArgumentsImpl() : CommonJsAndWasmArgumentsImpl(), JsCompilerArg
   override fun createDefaultArguments(): K2JSCompilerArguments = K2JSCompilerArguments()
 
   @Suppress("UNCHECKED_CAST")
-  public operator fun <V> `get`(key: JsArgument<V>): V = JsArgumentsImpl::class.getPropertyWithSerialNameValue(this, key.id)
-
-  public operator fun <V> `set`(key: JsArgument<V>, `value`: V) {
-    JsArgumentsImpl::class.setPropertyWithSerialNameValue(this, key.id, value)
-  }
-
-  public operator fun contains(key: JsArgument<*>): Boolean = true
-
-  @Suppress("UNCHECKED_CAST")
   @UseFromImplModuleRestricted
-  override operator fun <V> `get`(key: JsCompilerArguments.JsCompilerArgument<V>): V = try { JsArgumentValueAdapter.toApi(JsArgumentsImpl::class.getPropertyWithSerialNameValue(this, key.id)) } catch (_: IllegalStateException) { optionsMap[key.id] } as V
+  override operator fun <V> `get`(key: JsCompilerArguments.JsCompilerArgument<V>): V = try { JsArgumentValueAdapter.toApi(getPropertyByName(propertyAccessMap, key.id)) } catch (_: IllegalStateException) {
+      check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
+      optionsMap[key.id]                    
+  } as V
 
   @UseFromImplModuleRestricted
   override operator fun <V> `set`(key: JsCompilerArguments.JsCompilerArgument<V>, `value`: V) {
     if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 0)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
-    try { JsArgumentsImpl::class.setPropertyWithSerialNameValue(this, key.id, JsArgumentValueAdapter.toImpl(value)) } catch (_: IllegalStateException) { optionsMap[key.id] = value }
+    try { setPropertyByName(propertyAccessMap, key.id, JsArgumentValueAdapter.toImpl(value)) } catch (_: IllegalStateException) { optionsMap[key.id] = value }
   }
 
   @Suppress("UNCHECKED_CAST")
   @UseFromImplModuleRestricted
-  override operator fun <V> `get`(key: JsCompilerKlibArguments.JsCompilerKlibArgument<V>): V = try { JsArgumentValueAdapter.toApi(JsArgumentsImpl::class.getPropertyWithSerialNameValue(this, key.id)) } catch (_: IllegalStateException) { optionsMap[key.id] } as V
+  override operator fun <V> `get`(key: JsCompilerKlibArguments.JsCompilerKlibArgument<V>): V = try { JsArgumentValueAdapter.toApi(getPropertyByName(propertyAccessMap, key.id)) } catch (_: IllegalStateException) {
+      check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
+      optionsMap[key.id]                    
+  } as V
 
   @UseFromImplModuleRestricted
   override operator fun <V> `set`(key: JsCompilerKlibArguments.JsCompilerKlibArgument<V>, `value`: V) {
     if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 0)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
-    try { JsArgumentsImpl::class.setPropertyWithSerialNameValue(this, key.id, JsArgumentValueAdapter.toImpl(value)) } catch (_: IllegalStateException) { optionsMap[key.id] = value }
+    try { setPropertyByName(propertyAccessMap, key.id, JsArgumentValueAdapter.toImpl(value)) } catch (_: IllegalStateException) { optionsMap[key.id] = value }
   }
 
   @Suppress("UNCHECKED_CAST")
   @UseFromImplModuleRestricted
-  override operator fun <V> `get`(key: JsCompilerLinkingArguments.JsCompilerLinkingArgument<V>): V = try { JsArgumentValueAdapter.toApi(JsArgumentsImpl::class.getPropertyWithSerialNameValue(this, key.id)) } catch (_: IllegalStateException) { optionsMap[key.id] } as V
+  override operator fun <V> `get`(key: JsCompilerLinkingArguments.JsCompilerLinkingArgument<V>): V = try { JsArgumentValueAdapter.toApi(getPropertyByName(propertyAccessMap, key.id)) } catch (_: IllegalStateException) {
+      check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
+      optionsMap[key.id]                    
+  } as V
 
   @UseFromImplModuleRestricted
   override operator fun <V> `set`(key: JsCompilerLinkingArguments.JsCompilerLinkingArgument<V>, `value`: V) {
     if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 0)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
-    try { JsArgumentsImpl::class.setPropertyWithSerialNameValue(this, key.id, JsArgumentValueAdapter.toImpl(value)) } catch (_: IllegalStateException) { optionsMap[key.id] = value }
+    try { setPropertyByName(propertyAccessMap, key.id, JsArgumentValueAdapter.toImpl(value)) } catch (_: IllegalStateException) { optionsMap[key.id] = value }
   }
 
   override fun deepCopy(): JsArgumentsImpl = JsArgumentsImpl(argumentValidationErrors = argumentValidationErrors.toSet(), restrictedArgViolations = restrictedArgViolations.toList(), argumentParseDiagnostics = argumentParseDiagnostics.copy()).also { newArgs -> newArgs.applyCompilerArguments(toCompilerArguments()) }
@@ -339,73 +340,32 @@ internal class JsArgumentsImpl() : CommonJsAndWasmArgumentsImpl(), JsCompilerArg
    */
   public fun toCompilationInputs(): List<String> = toCompilerArgumentsAffectingOutcome().compilerToArgumentStrings(allowArgFileInValues = false).sorted()
 
-  public class JsArgument<V>(
-    public val id: String,
-  ) {
-    init {
-      knownArguments.add(id)}
-  }
-
   public companion object {
-    private val knownArguments: MutableSet<String> = mutableSetOf()
-
-    public val X_DTS_USE_UNKNOWN_INSTEAD_ANY: JsArgument<Boolean> =
-        JsArgument("X_DTS_USE_UNKNOWN_INSTEAD_ANY")
-
-    public val X_ENABLE_EXTENSION_FUNCTIONS_IN_EXTERNALS: JsArgument<Boolean> =
-        JsArgument("X_ENABLE_EXTENSION_FUNCTIONS_IN_EXTERNALS")
-
-    public val X_ENABLE_IMPLEMENTING_INTERFACES_FROM_TYPESCRIPT: JsArgument<Boolean> =
-        JsArgument("X_ENABLE_IMPLEMENTING_INTERFACES_FROM_TYPESCRIPT")
-
-    public val X_ENABLE_SUSPEND_FUNCTION_EXPORTING: JsArgument<Boolean> =
-        JsArgument("X_ENABLE_SUSPEND_FUNCTION_EXPORTING")
-
-    public val X_ES_ARROW_FUNCTIONS: JsArgument<Boolean?> = JsArgument("X_ES_ARROW_FUNCTIONS")
-
-    public val X_ES_CLASSES: JsArgument<Boolean?> = JsArgument("X_ES_CLASSES")
-
-    public val X_ES_GENERATORS: JsArgument<Boolean?> = JsArgument("X_ES_GENERATORS")
-
-    public val X_ES_LONG_AS_BIGINT: JsArgument<Boolean?> = JsArgument("X_ES_LONG_AS_BIGINT")
-
-    public val X_EXPORT_KDOC: JsArgument<Boolean> = JsArgument("X_EXPORT_KDOC")
-
-    public val X_GENERATE_POLYFILLS: JsArgument<Boolean> = JsArgument("X_GENERATE_POLYFILLS")
-
-    public val X_INTEGER_DIVISION_CHECK: JsArgument<Boolean> =
-        JsArgument("X_INTEGER_DIVISION_CHECK")
-
-    public val X_IR_BUILD_CACHE: JsArgument<Boolean> = JsArgument("X_IR_BUILD_CACHE")
-
-    public val X_IR_GENERATE_INLINE_ANONYMOUS_FUNCTIONS: JsArgument<Boolean> =
-        JsArgument("X_IR_GENERATE_INLINE_ANONYMOUS_FUNCTIONS")
-
-    public val X_IR_KEEP: JsArgument<String?> = JsArgument("X_IR_KEEP")
-
-    public val X_IR_MINIMIZED_MEMBER_NAMES: JsArgument<Boolean> =
-        JsArgument("X_IR_MINIMIZED_MEMBER_NAMES")
-
-    public val X_IR_PER_FILE: JsArgument<Boolean> = JsArgument("X_IR_PER_FILE")
-
-    public val X_IR_PER_MODULE: JsArgument<Boolean> = JsArgument("X_IR_PER_MODULE")
-
-    public val X_IR_SAFE_EXTERNAL_BOOLEAN: JsArgument<Boolean> =
-        JsArgument("X_IR_SAFE_EXTERNAL_BOOLEAN")
-
-    public val X_IR_SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC: JsArgument<JsIrDiagnosticMode?> =
-        JsArgument("X_IR_SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC")
-
-    public val X_OPTIMIZE_GENERATED_JS: JsArgument<Boolean> = JsArgument("X_OPTIMIZE_GENERATED_JS")
-
-    public val X_PLATFORM_ARGUMENTS_IN_MAIN_FUNCTION: JsArgument<String?> =
-        JsArgument("X_PLATFORM_ARGUMENTS_IN_MAIN_FUNCTION")
-
-    public val X_SUSPEND_LAMBDA_EXPORTING: JsArgument<Boolean> =
-        JsArgument("X_SUSPEND_LAMBDA_EXPORTING")
-
-    public val MODULE_KIND: JsArgument<JsModuleKind?> = JsArgument("MODULE_KIND")
-
-    public val TARGET: JsArgument<JsEcmaVersion?> = JsArgument("TARGET")
+    private val propertyAccessMap: Map<String, KMutableProperty1<*, *>> = buildMap {
+      put("X_DTS_USE_UNKNOWN_INSTEAD_ANY", JsArgumentsImpl::useUnknownInsteadAny)
+      put("X_ENABLE_EXTENSION_FUNCTIONS_IN_EXTERNALS", JsArgumentsImpl::extensionFunctionsInExternals)
+      put("X_ENABLE_IMPLEMENTING_INTERFACES_FROM_TYPESCRIPT", JsArgumentsImpl::allowImplementableInterfacesExporting)
+      put("X_ENABLE_SUSPEND_FUNCTION_EXPORTING", JsArgumentsImpl::allowExportingSuspendFunctions)
+      put("X_ES_ARROW_FUNCTIONS", JsArgumentsImpl::useEsArrowFunctions)
+      put("X_ES_CLASSES", JsArgumentsImpl::useEsClasses)
+      put("X_ES_GENERATORS", JsArgumentsImpl::useEsGenerators)
+      put("X_ES_LONG_AS_BIGINT", JsArgumentsImpl::compileLongAsBigInt)
+      put("X_EXPORT_KDOC", JsArgumentsImpl::exportKDoc)
+      put("X_GENERATE_POLYFILLS", JsArgumentsImpl::generatePolyfills)
+      put("X_INTEGER_DIVISION_CHECK", JsArgumentsImpl::integerDivisionCheck)
+      put("X_IR_BUILD_CACHE", JsArgumentsImpl::irBuildCache)
+      put("X_IR_GENERATE_INLINE_ANONYMOUS_FUNCTIONS", JsArgumentsImpl::irGenerateInlineAnonymousFunctions)
+      put("X_IR_KEEP", JsArgumentsImpl::irKeep)
+      put("X_IR_MINIMIZED_MEMBER_NAMES", JsArgumentsImpl::irMinimizedMemberNames)
+      put("X_IR_PER_FILE", JsArgumentsImpl::irPerFile)
+      put("X_IR_PER_MODULE", JsArgumentsImpl::irPerModule)
+      put("X_IR_SAFE_EXTERNAL_BOOLEAN", JsArgumentsImpl::irSafeExternalBoolean)
+      put("X_IR_SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC", JsArgumentsImpl::irSafeExternalBooleanDiagnostic)
+      put("X_OPTIMIZE_GENERATED_JS", JsArgumentsImpl::optimizeGeneratedJs)
+      put("X_PLATFORM_ARGUMENTS_IN_MAIN_FUNCTION", JsArgumentsImpl::platformArgumentsProviderJsExpression)
+      put("X_SUSPEND_LAMBDA_EXPORTING", JsArgumentsImpl::allowExportingSuspendLambdas)
+      put("MODULE_KIND", JsArgumentsImpl::moduleKind)
+      put("TARGET", JsArgumentsImpl::target)
+    }
   }
 }

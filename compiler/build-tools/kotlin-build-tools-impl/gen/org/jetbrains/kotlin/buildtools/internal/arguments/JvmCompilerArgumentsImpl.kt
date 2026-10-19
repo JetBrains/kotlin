@@ -19,16 +19,17 @@ import kotlin.OptIn
 import kotlin.String
 import kotlin.Suppress
 import kotlin.collections.List
+import kotlin.collections.Map
 import kotlin.collections.MutableMap
-import kotlin.collections.MutableSet
 import kotlin.collections.Set
+import kotlin.collections.buildMap
 import kotlin.collections.emptyList
 import kotlin.collections.emptySet
 import kotlin.collections.joinToString
 import kotlin.collections.map
 import kotlin.collections.mutableMapOf
-import kotlin.collections.mutableSetOf
 import kotlin.collections.toTypedArray
+import kotlin.reflect.KMutableProperty1
 import kotlin.text.split
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -48,8 +49,8 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.SamConversions
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.StringConcatMode
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.WhenExpressionsMode
 import org.jetbrains.kotlin.buildtools.`internal`.serializability.PathAsStringSerializer
-import org.jetbrains.kotlin.buildtools.`internal`.serializability.getPropertyWithSerialNameValue
-import org.jetbrains.kotlin.buildtools.`internal`.serializability.setPropertyWithSerialNameValue
+import org.jetbrains.kotlin.buildtools.`internal`.serializability.getPropertyByName
+import org.jetbrains.kotlin.buildtools.`internal`.serializability.setPropertyByName
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.DelicateBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
@@ -316,31 +317,25 @@ internal class JvmCompilerArgumentsImpl() : CommonCompilerArgumentsImpl(), JvmCo
   override fun createDefaultArguments(): K2JVMCompilerArguments = K2JVMCompilerArguments()
 
   @Suppress("UNCHECKED_CAST")
-  public operator fun <V> `get`(key: JvmCompilerArgument<V>): V = JvmCompilerArgumentsImpl::class.getPropertyWithSerialNameValue(this, key.id)
-
-  public operator fun <V> `set`(key: JvmCompilerArgument<V>, `value`: V) {
-    JvmCompilerArgumentsImpl::class.setPropertyWithSerialNameValue(this, key.id, value)
-  }
-
-  public operator fun contains(key: JvmCompilerArgument<*>): Boolean = true
-
-  @Suppress("UNCHECKED_CAST")
   @UseFromImplModuleRestricted
-  override operator fun <V> `get`(key: JvmCompilerArguments.JvmCompilerArgument<V>): V = try { JvmCompilerArgumentValueAdapter.toApi(JvmCompilerArgumentsImpl::class.getPropertyWithSerialNameValue(this, key.id)) } catch (_: IllegalStateException) { optionsMap[key.id] } as V
+  override operator fun <V> `get`(key: JvmCompilerArguments.JvmCompilerArgument<V>): V = try { JvmCompilerArgumentValueAdapter.toApi(getPropertyByName(propertyAccessMap, key.id)) } catch (_: IllegalStateException) {
+      check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
+      optionsMap[key.id]                    
+  } as V
 
   @UseFromImplModuleRestricted
   override operator fun <V> `set`(key: JvmCompilerArguments.JvmCompilerArgument<V>, `value`: V) {
     if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 0)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
-    try { JvmCompilerArgumentsImpl::class.setPropertyWithSerialNameValue(this, key.id, JvmCompilerArgumentValueAdapter.toImpl(value)) } catch (_: IllegalStateException) { optionsMap[key.id] = value }
+    try { setPropertyByName(propertyAccessMap, key.id, JvmCompilerArgumentValueAdapter.toImpl(value)) } catch (_: IllegalStateException) { optionsMap[key.id] = value }
   }
 
   @Deprecated(
     message = "This method is no longer useful when compiling with Kotlin compiler 2.3.20 and above, as the arguments instance now contains default values for all arguments.",
     level = DeprecationLevel.ERROR,
   )
-  override operator fun contains(key: JvmCompilerArguments.JvmCompilerArgument<*>): Boolean = key.id in optionsMap
+  override operator fun contains(key: JvmCompilerArguments.JvmCompilerArgument<*>): Boolean = key.id in propertyAccessMap
 
   override fun deepCopy(): JvmCompilerArgumentsImpl = JvmCompilerArgumentsImpl(argumentValidationErrors = argumentValidationErrors.toSet(), restrictedArgViolations = restrictedArgViolations.toList(), argumentParseDiagnostics = argumentParseDiagnostics.copy()).also { newArgs -> newArgs.applyCompilerArguments(toCompilerArguments()) }
 
@@ -639,206 +634,77 @@ internal class JvmCompilerArgumentsImpl() : CommonCompilerArgumentsImpl(), JvmCo
    */
   public fun toCompilationInputs(): List<String> = toCompilerArgumentsAffectingOutcome().compilerToArgumentStrings(allowArgFileInValues = false).sorted()
 
-  public class JvmCompilerArgument<V>(
-    public val id: String,
-  ) {
-    init {
-      knownArguments.add(id)}
-  }
-
   public companion object {
-    private val knownArguments: MutableSet<String> = mutableSetOf()
-
-    public val X_ABI_STABILITY: JvmCompilerArgument<AbiStabilityMode?> =
-        JvmCompilerArgument("X_ABI_STABILITY")
-
-    public val X_ADD_MODULES: JvmCompilerArgument<List<String>> =
-        JvmCompilerArgument("X_ADD_MODULES")
-
-    public val X_ALLOW_NO_SOURCE_FILES: JvmCompilerArgument<Boolean> =
-        JvmCompilerArgument("X_ALLOW_NO_SOURCE_FILES")
-
-    public val X_ALLOW_UNSTABLE_DEPENDENCIES: JvmCompilerArgument<Boolean> =
-        JvmCompilerArgument("X_ALLOW_UNSTABLE_DEPENDENCIES")
-
-    public val X_ANNOTATIONS_IN_METADATA: JvmCompilerArgument<Boolean> =
-        JvmCompilerArgument("X_ANNOTATIONS_IN_METADATA")
-
-    public val X_ASSERTIONS: JvmCompilerArgument<AssertionsMode?> =
-        JvmCompilerArgument("X_ASSERTIONS")
-
-    public val X_BACKEND_THREADS: JvmCompilerArgument<Int> =
-        JvmCompilerArgument("X_BACKEND_THREADS")
-
-    public val X_BUILD_FILE: JvmCompilerArgument<String?> = JvmCompilerArgument("X_BUILD_FILE")
-
-    public val X_DEBUG: JvmCompilerArgument<Boolean> = JvmCompilerArgument("X_DEBUG")
-
-    public val X_DEFAULT_SCRIPT_EXTENSION: JvmCompilerArgument<String?> =
-        JvmCompilerArgument("X_DEFAULT_SCRIPT_EXTENSION")
-
-    public val X_DIRECT_JAVA_ACTUALIZATION: JvmCompilerArgument<Boolean> =
-        JvmCompilerArgument("X_DIRECT_JAVA_ACTUALIZATION")
-
-    public val X_DISABLE_STANDARD_SCRIPT: JvmCompilerArgument<Boolean> =
-        JvmCompilerArgument("X_DISABLE_STANDARD_SCRIPT")
-
-    public val X_EMIT_JVM_TYPE_ANNOTATIONS: JvmCompilerArgument<Boolean> =
-        JvmCompilerArgument("X_EMIT_JVM_TYPE_ANNOTATIONS")
-
-    public val X_ENHANCED_COROUTINES_DEBUGGING: JvmCompilerArgument<Boolean> =
-        JvmCompilerArgument("X_ENHANCED_COROUTINES_DEBUGGING")
-
-    public val X_FRIEND_PATHS: JvmCompilerArgument<List<Path>> =
-        JvmCompilerArgument("X_FRIEND_PATHS")
-
-    public val X_GENERATE_STRICT_METADATA_VERSION: JvmCompilerArgument<Boolean> =
-        JvmCompilerArgument("X_GENERATE_STRICT_METADATA_VERSION")
-
-    public val X_IGNORED_ANNOTATIONS_FOR_BRIDGES: JvmCompilerArgument<List<String>> =
-        JvmCompilerArgument("X_IGNORED_ANNOTATIONS_FOR_BRIDGES")
-
-    public val X_INDY_ALLOW_ANNOTATED_LAMBDAS: JvmCompilerArgument<Boolean?> =
-        JvmCompilerArgument("X_INDY_ALLOW_ANNOTATED_LAMBDAS")
-
-    public val X_JAVA_DIRECT: JvmCompilerArgument<Boolean> = JvmCompilerArgument("X_JAVA_DIRECT")
-
-    public val X_JAVA_PACKAGE_PREFIX: JvmCompilerArgument<String?> =
-        JvmCompilerArgument("X_JAVA_PACKAGE_PREFIX")
-
-    public val X_JAVA_SOURCE_ROOTS: JvmCompilerArgument<List<Path>> =
-        JvmCompilerArgument("X_JAVA_SOURCE_ROOTS")
-
-    public val X_JDK_RELEASE: JvmCompilerArgument<JdkRelease?> =
-        JvmCompilerArgument("X_JDK_RELEASE")
-
-    public val X_JSPECIFY_ANNOTATIONS: JvmCompilerArgument<JspecifyAnnotationsMode?> =
-        JvmCompilerArgument("X_JSPECIFY_ANNOTATIONS")
-
-    public val X_JVM_DEFAULT: JvmCompilerArgument<String?> = JvmCompilerArgument("X_JVM_DEFAULT")
-
-    public val X_JVM_ENABLE_PREVIEW: JvmCompilerArgument<Boolean> =
-        JvmCompilerArgument("X_JVM_ENABLE_PREVIEW")
-
-    public val X_JVM_EXPOSE_BOXED: JvmCompilerArgument<Boolean> =
-        JvmCompilerArgument("X_JVM_EXPOSE_BOXED")
-
-    public val X_LAMBDAS: JvmCompilerArgument<LambdasMode?> = JvmCompilerArgument("X_LAMBDAS")
-
-    public val X_MODULE_PATH: JvmCompilerArgument<List<Path>?> =
-        JvmCompilerArgument("X_MODULE_PATH")
-
-    public val X_MULTIFILE_PARTS_INHERIT: JvmCompilerArgument<Boolean> =
-        JvmCompilerArgument("X_MULTIFILE_PARTS_INHERIT")
-
-    public val X_NO_CALL_ASSERTIONS: JvmCompilerArgument<Boolean> =
-        JvmCompilerArgument("X_NO_CALL_ASSERTIONS")
-
-    public val X_NO_NEW_JAVA_ANNOTATION_TARGETS: JvmCompilerArgument<Boolean> =
-        JvmCompilerArgument("X_NO_NEW_JAVA_ANNOTATION_TARGETS")
-
-    public val X_NO_OPTIMIZE: JvmCompilerArgument<Boolean> = JvmCompilerArgument("X_NO_OPTIMIZE")
-
-    public val X_NO_PARAM_ASSERTIONS: JvmCompilerArgument<Boolean> =
-        JvmCompilerArgument("X_NO_PARAM_ASSERTIONS")
-
-    public val X_NO_RECEIVER_ASSERTIONS: JvmCompilerArgument<Boolean> =
-        JvmCompilerArgument("X_NO_RECEIVER_ASSERTIONS")
-
-    public val X_NO_RESET_JAR_TIMESTAMPS: JvmCompilerArgument<Boolean> =
-        JvmCompilerArgument("X_NO_RESET_JAR_TIMESTAMPS")
-
-    public val X_NO_SOURCE_DEBUG_EXTENSION: JvmCompilerArgument<Boolean> =
-        JvmCompilerArgument("X_NO_SOURCE_DEBUG_EXTENSION")
-
-    public val X_NO_UNIFIED_NULL_CHECKS: JvmCompilerArgument<Boolean> =
-        JvmCompilerArgument("X_NO_UNIFIED_NULL_CHECKS")
-
-    public val X_OUTPUT_BUILTINS_METADATA: JvmCompilerArgument<Boolean> =
-        JvmCompilerArgument("X_OUTPUT_BUILTINS_METADATA")
-
-    public val X_SAM_CONVERSIONS: JvmCompilerArgument<SamConversionsMode?> =
-        JvmCompilerArgument("X_SAM_CONVERSIONS")
-
-    public val X_SANITIZE_PARENTHESES: JvmCompilerArgument<Boolean> =
-        JvmCompilerArgument("X_SANITIZE_PARENTHESES")
-
-    public val X_SCRIPT_RESOLVER_ENVIRONMENT: JvmCompilerArgument<List<String>> =
-        JvmCompilerArgument("X_SCRIPT_RESOLVER_ENVIRONMENT")
-
-    public val X_STRING_CONCAT: JvmCompilerArgument<StringConcatMode?> =
-        JvmCompilerArgument("X_STRING_CONCAT")
-
-    public val X_SUPPORT_COMPATQUAL_CHECKER_FRAMEWORK_ANNOTATIONS:
-        JvmCompilerArgument<CompatqualAnnotationsMode?> =
-        JvmCompilerArgument("X_SUPPORT_COMPATQUAL_CHECKER_FRAMEWORK_ANNOTATIONS")
-
-    public val X_SUPPRESS_MISSING_BUILTINS_ERROR: JvmCompilerArgument<Boolean> =
-        JvmCompilerArgument("X_SUPPRESS_MISSING_BUILTINS_ERROR")
-
-    public val X_USE_14_INLINE_CLASSES_MANGLING_SCHEME: JvmCompilerArgument<Boolean> =
-        JvmCompilerArgument("X_USE_14_INLINE_CLASSES_MANGLING_SCHEME")
-
-    public val X_USE_FAST_JAR_FILE_SYSTEM: JvmCompilerArgument<Boolean?> =
-        JvmCompilerArgument("X_USE_FAST_JAR_FILE_SYSTEM")
-
-    public val X_USE_INLINE_SCOPES_NUMBERS: JvmCompilerArgument<Boolean> =
-        JvmCompilerArgument("X_USE_INLINE_SCOPES_NUMBERS")
-
-    public val X_USE_METADATA_ON_INCREMENTAL_CLASSPATH: JvmCompilerArgument<Boolean> =
-        JvmCompilerArgument("X_USE_METADATA_ON_INCREMENTAL_CLASSPATH")
-
-    public val X_USE_OLD_CLASS_FILES_READING: JvmCompilerArgument<Boolean> =
-        JvmCompilerArgument("X_USE_OLD_CLASS_FILES_READING")
-
-    public val X_USE_TYPE_TABLE: JvmCompilerArgument<Boolean> =
-        JvmCompilerArgument("X_USE_TYPE_TABLE")
-
-    public val X_VALHALLA_VALUE_CLASSES: JvmCompilerArgument<Boolean> =
-        JvmCompilerArgument("X_VALHALLA_VALUE_CLASSES")
-
-    public val X_VALIDATE_BYTECODE: JvmCompilerArgument<Boolean> =
-        JvmCompilerArgument("X_VALIDATE_BYTECODE")
-
-    public val X_WHEN_EXPRESSIONS: JvmCompilerArgument<WhenExpressionsMode?> =
-        JvmCompilerArgument("X_WHEN_EXPRESSIONS")
-
-    public val CLASSPATH: JvmCompilerArgument<List<Path>?> = JvmCompilerArgument("CLASSPATH")
-
-    public val D: JvmCompilerArgument<String?> = JvmCompilerArgument("D")
-
-    public val EXPRESSION: JvmCompilerArgument<String?> = JvmCompilerArgument("EXPRESSION")
-
-    public val INCLUDE_RUNTIME: JvmCompilerArgument<Boolean> =
-        JvmCompilerArgument("INCLUDE_RUNTIME")
-
-    public val JAVA_PARAMETERS: JvmCompilerArgument<Boolean> =
-        JvmCompilerArgument("JAVA_PARAMETERS")
-
-    public val JDK_HOME: JvmCompilerArgument<Path?> = JvmCompilerArgument("JDK_HOME")
-
-    public val JVM_DEFAULT: JvmCompilerArgument<JvmDefaultMode?> =
-        JvmCompilerArgument("JVM_DEFAULT")
-
-    public val JVM_TARGET: JvmCompilerArgument<JvmTarget?> = JvmCompilerArgument("JVM_TARGET")
-
-    public val MODULE_NAME: JvmCompilerArgument<String?> = JvmCompilerArgument("MODULE_NAME")
-
-    public val NO_JDK: JvmCompilerArgument<Boolean> = JvmCompilerArgument("NO_JDK")
-
-    public val NO_REFLECT: JvmCompilerArgument<Boolean> = JvmCompilerArgument("NO_REFLECT")
-
-    public val NO_STDLIB: JvmCompilerArgument<Boolean> = JvmCompilerArgument("NO_STDLIB")
-
-    public val SCRIPT_TEMPLATES: JvmCompilerArgument<List<String>> =
-        JvmCompilerArgument("SCRIPT_TEMPLATES")
-
-    public val X_PROFILE: JvmCompilerArgument<ProfileCompilerCommandImpl?> =
-        JvmCompilerArgument("X_PROFILE")
-
-    public val X_NULLABILITY_ANNOTATIONS: JvmCompilerArgument<List<NullabilityAnnotationImpl>> =
-        JvmCompilerArgument("X_NULLABILITY_ANNOTATIONS")
-
-    public val X_JSR305: JvmCompilerArgument<List<Jsr305Impl>> = JvmCompilerArgument("X_JSR305")
+    private val propertyAccessMap: Map<String, KMutableProperty1<*, *>> = buildMap {
+      put("X_ABI_STABILITY", JvmCompilerArgumentsImpl::abiStability)
+      put("X_ADD_MODULES", JvmCompilerArgumentsImpl::additionalJavaModules)
+      put("X_ALLOW_NO_SOURCE_FILES", JvmCompilerArgumentsImpl::allowNoSourceFiles)
+      put("X_ALLOW_UNSTABLE_DEPENDENCIES", JvmCompilerArgumentsImpl::allowUnstableDependencies)
+      put("X_ANNOTATIONS_IN_METADATA", JvmCompilerArgumentsImpl::annotationsInMetadata)
+      put("X_ASSERTIONS", JvmCompilerArgumentsImpl::assertionsMode)
+      put("X_BACKEND_THREADS", JvmCompilerArgumentsImpl::backendThreads)
+      put("X_BUILD_FILE", JvmCompilerArgumentsImpl::buildFile)
+      put("X_DEBUG", JvmCompilerArgumentsImpl::enableDebugMode)
+      put("X_DEFAULT_SCRIPT_EXTENSION", JvmCompilerArgumentsImpl::defaultScriptExtension)
+      put("X_DIRECT_JAVA_ACTUALIZATION", JvmCompilerArgumentsImpl::directJavaActualization)
+      put("X_DISABLE_STANDARD_SCRIPT", JvmCompilerArgumentsImpl::disableStandardScript)
+      put("X_EMIT_JVM_TYPE_ANNOTATIONS", JvmCompilerArgumentsImpl::emitJvmTypeAnnotations)
+      put("X_ENHANCED_COROUTINES_DEBUGGING", JvmCompilerArgumentsImpl::enhancedCoroutinesDebugging)
+      put("X_FRIEND_PATHS", JvmCompilerArgumentsImpl::friendPaths)
+      put("X_GENERATE_STRICT_METADATA_VERSION", JvmCompilerArgumentsImpl::strictMetadataVersionSemantics)
+      put("X_IGNORED_ANNOTATIONS_FOR_BRIDGES", JvmCompilerArgumentsImpl::ignoredAnnotationsForBridges)
+      put("X_INDY_ALLOW_ANNOTATED_LAMBDAS", JvmCompilerArgumentsImpl::indyAllowAnnotatedLambdas)
+      put("X_JAVA_DIRECT", JvmCompilerArgumentsImpl::javaDirect)
+      put("X_JAVA_PACKAGE_PREFIX", JvmCompilerArgumentsImpl::javaPackagePrefix)
+      put("X_JAVA_SOURCE_ROOTS", JvmCompilerArgumentsImpl::javaSourceRoots)
+      put("X_JDK_RELEASE", JvmCompilerArgumentsImpl::jdkRelease)
+      put("X_JSPECIFY_ANNOTATIONS", JvmCompilerArgumentsImpl::jspecifyAnnotations)
+      put("X_JVM_DEFAULT", JvmCompilerArgumentsImpl::jvmDefault)
+      put("X_JVM_ENABLE_PREVIEW", JvmCompilerArgumentsImpl::enableJvmPreview)
+      put("X_JVM_EXPOSE_BOXED", JvmCompilerArgumentsImpl::jvmExposeBoxed)
+      put("X_LAMBDAS", JvmCompilerArgumentsImpl::lambdas)
+      put("X_MODULE_PATH", JvmCompilerArgumentsImpl::javaModulePath)
+      put("X_MULTIFILE_PARTS_INHERIT", JvmCompilerArgumentsImpl::inheritMultifileParts)
+      put("X_NO_CALL_ASSERTIONS", JvmCompilerArgumentsImpl::noCallAssertions)
+      put("X_NO_NEW_JAVA_ANNOTATION_TARGETS", JvmCompilerArgumentsImpl::noNewJavaAnnotationTargets)
+      put("X_NO_OPTIMIZE", JvmCompilerArgumentsImpl::noOptimize)
+      put("X_NO_PARAM_ASSERTIONS", JvmCompilerArgumentsImpl::noParamAssertions)
+      put("X_NO_RECEIVER_ASSERTIONS", JvmCompilerArgumentsImpl::noReceiverAssertions)
+      put("X_NO_RESET_JAR_TIMESTAMPS", JvmCompilerArgumentsImpl::noResetJarTimestamps)
+      put("X_NO_SOURCE_DEBUG_EXTENSION", JvmCompilerArgumentsImpl::noSourceDebugExtension)
+      put("X_NO_UNIFIED_NULL_CHECKS", JvmCompilerArgumentsImpl::noUnifiedNullChecks)
+      put("X_OUTPUT_BUILTINS_METADATA", JvmCompilerArgumentsImpl::outputBuiltinsMetadata)
+      put("X_SAM_CONVERSIONS", JvmCompilerArgumentsImpl::samConversions)
+      put("X_SANITIZE_PARENTHESES", JvmCompilerArgumentsImpl::sanitizeParentheses)
+      put("X_SCRIPT_RESOLVER_ENVIRONMENT", JvmCompilerArgumentsImpl::scriptResolverEnvironment)
+      put("X_STRING_CONCAT", JvmCompilerArgumentsImpl::stringConcat)
+      put("X_SUPPORT_COMPATQUAL_CHECKER_FRAMEWORK_ANNOTATIONS", JvmCompilerArgumentsImpl::supportCompatqualCheckerFrameworkAnnotations)
+      put("X_SUPPRESS_MISSING_BUILTINS_ERROR", JvmCompilerArgumentsImpl::suppressMissingBuiltinsError)
+      put("X_USE_14_INLINE_CLASSES_MANGLING_SCHEME", JvmCompilerArgumentsImpl::useOldInlineClassesManglingScheme)
+      put("X_USE_FAST_JAR_FILE_SYSTEM", JvmCompilerArgumentsImpl::useFastJarFileSystem)
+      put("X_USE_INLINE_SCOPES_NUMBERS", JvmCompilerArgumentsImpl::useInlineScopesNumbers)
+      put("X_USE_METADATA_ON_INCREMENTAL_CLASSPATH", JvmCompilerArgumentsImpl::useMetadataOnIncrementalClasspath)
+      put("X_USE_OLD_CLASS_FILES_READING", JvmCompilerArgumentsImpl::useOldClassFilesReading)
+      put("X_USE_TYPE_TABLE", JvmCompilerArgumentsImpl::useTypeTable)
+      put("X_VALHALLA_VALUE_CLASSES", JvmCompilerArgumentsImpl::valhallaValueClasses)
+      put("X_VALIDATE_BYTECODE", JvmCompilerArgumentsImpl::validateBytecode)
+      put("X_WHEN_EXPRESSIONS", JvmCompilerArgumentsImpl::whenExpressionsGeneration)
+      put("CLASSPATH", JvmCompilerArgumentsImpl::classpath)
+      put("D", JvmCompilerArgumentsImpl::destination)
+      put("EXPRESSION", JvmCompilerArgumentsImpl::expression)
+      put("INCLUDE_RUNTIME", JvmCompilerArgumentsImpl::includeRuntime)
+      put("JAVA_PARAMETERS", JvmCompilerArgumentsImpl::javaParameters)
+      put("JDK_HOME", JvmCompilerArgumentsImpl::jdkHome)
+      put("JVM_DEFAULT", JvmCompilerArgumentsImpl::jvmDefaultStable)
+      put("JVM_TARGET", JvmCompilerArgumentsImpl::jvmTarget)
+      put("MODULE_NAME", JvmCompilerArgumentsImpl::moduleName)
+      put("NO_JDK", JvmCompilerArgumentsImpl::noJdk)
+      put("NO_REFLECT", JvmCompilerArgumentsImpl::noReflect)
+      put("NO_STDLIB", JvmCompilerArgumentsImpl::noStdlib)
+      put("SCRIPT_TEMPLATES", JvmCompilerArgumentsImpl::scriptTemplates)
+      put("X_PROFILE", JvmCompilerArgumentsImpl::profile)
+      put("X_NULLABILITY_ANNOTATIONS", JvmCompilerArgumentsImpl::nullabilityAnnotations)
+      put("X_JSR305", JvmCompilerArgumentsImpl::jsr305)
+    }
   }
 }

@@ -24,8 +24,6 @@ import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfig
 import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfigurationImpl.Companion.ROOT_PROJECT_DIR
 import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfigurationImpl.Companion.TRACK_CONFIGURATION_INPUTS
 import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfigurationImpl.Companion.UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM
-import org.jetbrains.kotlin.buildtools.internal.arguments.CommonCompilerArgumentsImpl.Companion.LANGUAGE_VERSION
-import org.jetbrains.kotlin.buildtools.internal.arguments.CommonCompilerArgumentsImpl.Companion.X_USE_FIR_IC
 import org.jetbrains.kotlin.buildtools.internal.arguments.JvmCompilerArgumentsImpl
 import org.jetbrains.kotlin.buildtools.internal.arguments.absolutePathStringOrThrow
 import org.jetbrains.kotlin.buildtools.internal.jps.JvmClientManagedIncrementalCompilationConfiguration
@@ -438,18 +436,14 @@ internal class JvmCompilationOperationImpl private constructor(
 private fun checkJvmFirRequirements(
     arguments: JvmCompilerArgumentsImpl,
 ): Boolean {
-    val languageVersion = if (LANGUAGE_VERSION in arguments) {
-        arguments[LANGUAGE_VERSION]
-    } else {
-        null
-    }?.let {
+    val languageVersion = arguments.languageVersion?.let {
         LanguageVersion.fromVersionString(it.stringValue)
     } ?: LanguageVersion.LATEST_STABLE
 
     check(languageVersion >= LanguageVersion.KOTLIN_2_0) {
         "FIR incremental compiler runner is only compatible with Kotlin Language Version 2.0"
     }
-    check(X_USE_FIR_IC in arguments && arguments[X_USE_FIR_IC]) {
+    check(arguments.useFirIC) {
         "FIR incremental compiler runner requires '-Xuse-fir-ic' to be present in arguments"
     }
 

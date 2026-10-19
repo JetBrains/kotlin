@@ -7,11 +7,12 @@
 package org.jetbrains.kotlin.buildtools.internal
 
 import kotlinx.serialization.*
+import org.jetbrains.kotlin.buildtools.api.DelicateBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.internal.serializability.PathAsStringSerializer
 import org.jetbrains.kotlin.buildtools.internal.arguments.absolutePathStringOrThrow
-import org.jetbrains.kotlin.buildtools.internal.serializability.getPropertyWithSerialNameValue
-import org.jetbrains.kotlin.buildtools.internal.serializability.setPropertyWithSerialNameValue
+import org.jetbrains.kotlin.buildtools.internal.serializability.getPropertyByName
+import org.jetbrains.kotlin.buildtools.internal.serializability.setPropertyByName
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.compilerRunner.KotlinCompilerRunnerUtils
 import org.jetbrains.kotlin.daemon.client.CompileServiceSession
@@ -42,12 +43,12 @@ internal data class DaemonExecutionPolicyImpl private constructor(
     @Suppress("UNCHECKED_CAST")
     @UseFromImplModuleRestricted
     override fun <V> get(key: ExecutionPolicy.WithDaemon.Option<V>): V =
-        DaemonExecutionPolicyImpl::class.getPropertyWithSerialNameValue(this, key.id)
+        getPropertyByName(propertyAccessMap, key.id)
 
     @UseFromImplModuleRestricted
     override fun <V> set(key: ExecutionPolicy.WithDaemon.Option<V>, value: V) {
         checkOptionIsAvailableForVersion(key)
-        DaemonExecutionPolicyImpl::class.setPropertyWithSerialNameValue(this, key.id, value)
+        setPropertyByName(propertyAccessMap, key.id, value)
     }
 
     override fun build(): ExecutionPolicy.WithDaemon = deepCopy()
@@ -63,6 +64,17 @@ internal data class DaemonExecutionPolicyImpl private constructor(
             logsFileSizeLimit,
             logsFileCountLimit
         )
+    }
+
+    companion object {
+        private val propertyAccessMap = buildMap {
+            put("JVM_ARGUMENTS", DaemonExecutionPolicyImpl::jvmArguments)
+            put("SHUTDOWN_DELAY_MILLIS", DaemonExecutionPolicyImpl::shutdownDelayMillis)
+            put("DAEMON_RUN_DIR_PATH", DaemonExecutionPolicyImpl::daemonRunDirPath)
+            put("LOGS_PATH", DaemonExecutionPolicyImpl::logsPath)
+            put("LOGS_FILE_SIZE_LIMIT", DaemonExecutionPolicyImpl::logsFileSizeLimit)
+            put("LOGS_FILE_COUNT_LIMIT", DaemonExecutionPolicyImpl::logsFileCountLimit)
+        }
     }
 }
 
