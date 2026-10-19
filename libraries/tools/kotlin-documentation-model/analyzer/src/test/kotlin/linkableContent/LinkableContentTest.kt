@@ -67,7 +67,7 @@ class LinkableContentTest : BaseAbstractTest() {
                 assertEquals(2, it.documentation.size)
                 assertEquals(2, it.packages.size)
                 assertEquals(1, it.packages.first().documentation.size)
-                assertEquals(0, it.packages.last().documentation.size)
+                assertEquals(1, it.packages.last().documentation.size)
             }
         }
 
