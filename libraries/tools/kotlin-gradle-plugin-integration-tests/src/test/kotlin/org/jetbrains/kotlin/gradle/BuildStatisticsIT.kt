@@ -9,10 +9,12 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 
 @DisplayName("Build statistics")
 @JvmGradlePluginTests
+@MustRunOnChangesInGradle
 class BuildStatisticsIT : KGPBaseTest() {
 
     @TestMetadata("incrementalMultiproject")
