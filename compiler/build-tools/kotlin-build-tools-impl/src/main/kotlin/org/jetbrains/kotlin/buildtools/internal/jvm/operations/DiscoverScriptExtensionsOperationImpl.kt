@@ -59,7 +59,7 @@ internal class DiscoverScriptExtensionsOperationImpl private constructor(
 
     override fun build(): DiscoverScriptExtensionsOperation = deepCopy()
 
-    override fun deepCopy(): DiscoverScriptExtensionsOperationImpl = DiscoverScriptExtensionsOperationImpl(options.deepCopy(), classpath)
+    override fun deepCopy(): DiscoverScriptExtensionsOperationImpl = DiscoverScriptExtensionsOperationImpl(options.deepCopy(), classpath).also { it.copyFrom(this) }
 
     private operator fun <V> get(key: Option<V>): V = options[key]
 

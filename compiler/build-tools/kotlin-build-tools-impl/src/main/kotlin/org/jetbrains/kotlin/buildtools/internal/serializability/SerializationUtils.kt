@@ -17,6 +17,8 @@ import kotlin.io.path.Path
 @Suppress("UNCHECKED_CAST", "NOTHING_TO_INLINE")
 internal inline fun <T> Any?.cast(): T = this as T
 
+internal fun Any.throwPropertyNotFound(key: String): Nothing = error("Property with name $key not found in $this")
+
 internal object PathAsStringSerializer : KSerializer<Path> {
     override val descriptor = PrimitiveSerialDescriptor("Path", PrimitiveKind.STRING)
 

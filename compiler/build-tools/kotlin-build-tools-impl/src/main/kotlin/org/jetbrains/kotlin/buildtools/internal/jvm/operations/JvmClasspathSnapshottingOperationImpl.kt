@@ -34,7 +34,7 @@ internal class JvmClasspathSnapshottingOperationImpl private constructor(
     override fun build(): JvmClasspathSnapshottingOperation = deepCopy()
 
     override fun deepCopy(): JvmClasspathSnapshottingOperationImpl =
-        JvmClasspathSnapshottingOperationImpl(options.deepCopy(), classpathEntry)
+        JvmClasspathSnapshottingOperationImpl(options.deepCopy(), classpathEntry).also { it.copyFrom(this) }
 
     @UseFromImplModuleRestricted
     override fun <V> get(key: JvmClasspathSnapshottingOperation.Option<V>): V = options[key]
