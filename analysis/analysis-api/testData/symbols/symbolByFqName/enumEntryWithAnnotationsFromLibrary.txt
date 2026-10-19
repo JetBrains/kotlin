@@ -1,6 +1,11 @@
 KaEnumEntrySymbol:
   anchorPsi: KtEnumEntry
-  annotations: []
+  annotations: [
+    lib/MyOptIn()
+      psi: null
+    lib/Anno(value = "foo")
+      psi: null
+  ]
   callableId: lib/MyEnum.Foo
   contextParameters: []
   contextReceivers: []

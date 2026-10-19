@@ -1,2 +1,0 @@
-@lib.MyOptIn
-@lib.Anno(value = "foo") Foo
