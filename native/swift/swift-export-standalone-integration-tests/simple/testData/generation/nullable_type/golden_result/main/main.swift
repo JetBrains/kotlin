@@ -56,6 +56,7 @@ public final class Foo: KotlinRuntime.KotlinBase {
     ) -> Swift.Void {
         return { Foo_accept__TypesOfArguments__Swift_Optional_main_Bar___(self.__externalRCRef(), b.map { it in it.__externalRCRef() } ?? nil); return () }()
     }
+    @discardableResult
     public func produce() -> main.Bar? {
         return { switch Foo_produce(self.__externalRCRef()) { case nil: .none; case let res?: main.Bar.__createClassWrapper(externalRCRef: res); } }()
     }
@@ -106,9 +107,11 @@ public func opt_to_non_opt_usage(
 ) -> Swift.Void {
     return { __root___opt_to_non_opt_usage__TypesOfArguments__Swift_Optional_main_Bar___(i.map { it in it.__externalRCRef() } ?? nil); return () }()
 }
+@discardableResult
 public func p() -> main.Bar? {
     return { switch __root___p() { case nil: .none; case let res?: main.Bar.__createClassWrapper(externalRCRef: res); } }()
 }
+@discardableResult
 public func p_any() -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
     return { switch __root___p_any() { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
 }
@@ -117,6 +120,7 @@ public func p_opt_opt_in(
 ) -> Swift.Void {
     return { __root___p_opt_opt_in__TypesOfArguments__Swift_Optional_main_Bar___(input.map { it in it.__externalRCRef() } ?? nil); return () }()
 }
+@discardableResult
 public func p_opt_opt_out() -> main.OptOptRef {
     return { switch __root___p_opt_opt_out() { case nil: .none; case let res?: main.Bar.__createClassWrapper(externalRCRef: res); } }()
 }
@@ -136,9 +140,11 @@ public func primitive_in(
 ) -> Swift.Void {
     return { __root___primitive_in__TypesOfArguments__Swift_Optional_Swift_Bool__Swift_Optional_Swift_Int8__Swift_Optional_Swift_Int16__Swift_Optional_Swift_Int32__Swift_Optional_Swift_Int64__Swift_Optional_Swift_UInt8__Swift_Optional_Swift_UInt16__Swift_Optional_Swift_UInt32__Swift_Optional_Swift_UInt64__Swift_Optional_Swift_Float__Swift_Optional_Swift_Double__Swift_Optional_Swift_Unicode_UTF16_CodeUnit___(arg1.map { it in NSNumber(value: it) } ?? nil, arg2.map { it in NSNumber(value: it) } ?? nil, arg3.map { it in NSNumber(value: it) } ?? nil, arg4.map { it in NSNumber(value: it) } ?? nil, arg5.map { it in NSNumber(value: it) } ?? nil, arg6.map { it in NSNumber(value: it) } ?? nil, arg7.map { it in NSNumber(value: it) } ?? nil, arg8.map { it in NSNumber(value: it) } ?? nil, arg9.map { it in NSNumber(value: it) } ?? nil, arg10.map { it in NSNumber(value: it) } ?? nil, arg11.map { it in NSNumber(value: it) } ?? nil, arg12.map { it in NSNumber(value: it) } ?? nil); return () }()
 }
+@discardableResult
 public func primitive_out() -> Swift.Bool? {
     return __root___primitive_out().map { it in it.boolValue }
 }
+@discardableResult
 public func produceNullableUnit() -> Swift.Void? {
     return (__root___produceNullableUnit() ? () : nil)
 }
@@ -147,6 +153,7 @@ public func string_in(
 ) -> Swift.Void {
     return { __root___string_in__TypesOfArguments__Swift_Optional_Swift_String___(a ?? nil); return () }()
 }
+@discardableResult
 public func string_out() -> Swift.String? {
     return __root___string_out()
 }

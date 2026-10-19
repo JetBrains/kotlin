@@ -20,7 +20,7 @@ public protocol MyInterface: KotlinRuntime.KotlinBase, main._MyInterface {
         set
     }
     func bar() -> Swift.Void
-    @_spi(ExperimentalLibApi)
+    @_spi(ExperimentalLibApi) @discardableResult
     func bazFun(
         _ receiver: lib.ExperimentalLibClass
     ) -> Swift.Bool
@@ -190,15 +190,15 @@ public func optInFunctionA() -> Swift.Void {
 public func optInFunctionB() -> Swift.Void {
     return { __root___optInFunctionB(); return () }()
 }
-@_spi(ExperimentalLibApi)
+@_spi(ExperimentalLibApi) @discardableResult
 public func optInFunctionC() -> lib.ExperimentalLibClass {
     return lib.ExperimentalLibClass.__createClassWrapper(externalRCRef: __root___optInFunctionC())
 }
-@_spi(InternalLibApi)
+@_spi(InternalLibApi) @discardableResult
 public func optInFunctionD() -> main.MyInterfaceAlias {
     return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___optInFunctionD(), conformsTo: lib.InternalLibInterface.Type.self) as! any lib.InternalLibInterface
 }
-@_spi(InternalLibApi)
+@_spi(InternalLibApi) @discardableResult
 public func optInFunctionE() -> main.MyAliasAlias {
     return __root___optInFunctionE()
 }
@@ -212,6 +212,7 @@ public func regularFunctionA() -> Swift.Void {
 public func regularFunctionB() -> Swift.Void {
     return { __root___regularFunctionB(); return () }()
 }
+@discardableResult
 public func regularFunctionC() -> lib.RegularLibClass {
     return lib.RegularLibClass.__createClassWrapper(externalRCRef: __root___regularFunctionC())
 }
@@ -239,7 +240,7 @@ extension main.MyInterface where Self : main.__MyInterface {
     public func bar() -> Swift.Void {
         return { MyInterface_bar(self.__externalRCRef()); return () }()
     }
-    @_spi(ExperimentalLibApi)
+    @_spi(ExperimentalLibApi) @discardableResult
     public func bazFun(
         _ receiver: lib.ExperimentalLibClass
     ) -> Swift.Bool {
@@ -279,7 +280,7 @@ extension main.MyInterface {
             fatalError("'optInProp' is an @_spi requirement that must be implemented by Swift conformers")
         }
     }
-    @_spi(ExperimentalLibApi)
+    @_spi(ExperimentalLibApi) @discardableResult
     public func bazFun(
         _ receiver: lib.ExperimentalLibClass
     ) -> Swift.Bool {

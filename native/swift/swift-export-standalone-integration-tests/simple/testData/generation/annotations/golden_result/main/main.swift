@@ -27,6 +27,7 @@ public protocol SomeInterface: KotlinRuntime.KotlinBase, main._SomeInterface {
         get
         set
     }
+    @discardableResult
     func fooB() -> Swift.String
 }
 @available(*, unavailable, message: "Obsoleted")
@@ -943,14 +944,14 @@ open class normalT: KotlinRuntime.KotlinBase {
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
-    @available(*, unavailable, message: "Obsoleted")
+    @available(*, unavailable, message: "Obsoleted") @discardableResult
     public static func +(
         this: main.normalT,
         increment: main.normalT.normalT
     ) -> main.normalT.normalT {
         fatalError()
     }
-    @available(*, unavailable, message: "Obsoleted")
+    @available(*, unavailable, message: "Obsoleted") @discardableResult
     public final func _plus(
         increment: main.normalT.normalT
     ) -> main.normalT.normalT {
@@ -1288,11 +1289,11 @@ public func acceptPublicClassImplHiddenInterface(
 ) -> Swift.Void {
     return { __root___acceptPublicClassImplHiddenInterface__TypesOfArguments__main_PublicClassImplHiddenInterface__(arg.__externalRCRef()); return () }()
 }
-@_spi(Barnnotation) @_spi(Foonnotation)
+@_spi(Barnnotation) @_spi(Foonnotation) @discardableResult
 public func bar() -> main.Bar {
     return main.Bar.__createClassWrapper(externalRCRef: __root___bar())
 }
-@available(*, deprecated, message: "message")
+@available(*, deprecated, message: "message") @discardableResult
 public func constMessage() -> Swift.Never {
     return { __root___constMessage(); fatalError() }()
 }
@@ -1307,11 +1308,11 @@ public func deprecatedImplicitlyF() -> Swift.Void {
 public func expressionOptIn() -> Swift.Void {
     return { __root___expressionOptIn(); return () }()
 }
-@_spi(Foonnotation)
+@_spi(Foonnotation) @discardableResult
 public func foo() -> main.Foo {
     return main.Foo.__createClassWrapper(externalRCRef: __root___foo())
 }
-@available(*, deprecated, message: "->message<-")
+@available(*, deprecated, message: "->message<-") @discardableResult
 public func formattedMessage() -> Swift.Never {
     return { __root___formattedMessage(); fatalError() }()
 }
@@ -1330,7 +1331,7 @@ public func localDeclarations() -> Swift.Void {
     message
     line2
 
-""")
+""") @discardableResult
 public func multilineFormattedMessage() -> Swift.Never {
     return { __root___multilineFormattedMessage(); fatalError() }()
 }
@@ -1339,7 +1340,7 @@ public func multilineFormattedMessage() -> Swift.Never {
     line1
     line2
 
-""")
+""") @discardableResult
 public func multilineMessage() -> Swift.Never {
     return { __root___multilineMessage(); fatalError() }()
 }
@@ -1347,7 +1348,7 @@ public func multilineMessage() -> Swift.Never {
 public func obsoletedF() -> Swift.Void {
     fatalError()
 }
-@available(*, deprecated, message: ". Replacement: something")
+@available(*, deprecated, message: ". Replacement: something") @discardableResult
 public func renamed(
     x: Swift.Int32,
     y: Swift.Float
@@ -1358,61 +1359,66 @@ public func renamed(
 public func renamedF() -> Swift.Void {
     return { __root___renamedF(); return () }()
 }
-@available(*, deprecated, message: ". Replacement: something.else")
+@available(*, deprecated, message: ". Replacement: something.else") @discardableResult
 public func renamedQualified(
     x: Swift.Int32,
     y: Swift.Float
 ) -> Swift.Never {
     return { __root___renamedQualified__TypesOfArguments__Swift_Int32_Swift_Float__(x, y); fatalError() }()
 }
-@available(*, deprecated, message: ". Replacement: something.else(x, y)")
+@available(*, deprecated, message: ". Replacement: something.else(x, y)") @discardableResult
 public func renamedQualifiedWithArguments(
     x: Swift.Int32,
     y: Swift.Float
 ) -> Swift.Never {
     return { __root___renamedQualifiedWithArguments__TypesOfArguments__Swift_Int32_Swift_Float__(x, y); fatalError() }()
 }
-@available(*, deprecated, message: ". Replacement: something(y, x)")
+@available(*, deprecated, message: ". Replacement: something(y, x)") @discardableResult
 public func renamedWithArguments(
     x: Swift.Int32,
     y: Swift.Float
 ) -> Swift.Never {
     return { __root___renamedWithArguments__TypesOfArguments__Swift_Int32_Swift_Float__(x, y); fatalError() }()
 }
+@discardableResult
 public func returnClassA(
     value: main.SwiftClassA
 ) -> main.SwiftClassA {
     return main.SwiftClassA.__createClassWrapper(externalRCRef: __root___returnClassA__TypesOfArguments__main_SwiftClassA__(value.__externalRCRef()))
 }
-@available(*, unavailable, message: "Unavailable type(s): main.DeprecatedInterface")
+@discardableResult @available(*, unavailable, message: "Unavailable type(s): main.DeprecatedInterface")
 public func returnDeprecatedInterface() -> any main.DeprecatedInterface {
     fatalError()
 }
-@available(*, unavailable, message: "Declaration uses unsupported types")
+@discardableResult @available(*, unavailable, message: "Declaration uses unsupported types")
 public func returnHiddenChildT() -> Swift.Never {
     fatalError()
 }
-@available(*, unavailable, message: "Declaration uses unsupported types")
+@discardableResult @available(*, unavailable, message: "Declaration uses unsupported types")
 public func returnHiddenInterface() -> Swift.Never {
     fatalError()
 }
-@available(*, unavailable, message: "Declaration uses unsupported types")
+@discardableResult @available(*, unavailable, message: "Declaration uses unsupported types")
 public func returnHiddenT() -> Swift.Never {
     fatalError()
 }
+@discardableResult
 public func returnInterfaceC(
     value: any main.SwiftInterfaceC
 ) -> any main.SwiftInterfaceC {
     return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___returnInterfaceC__TypesOfArguments__anyU20main_SwiftInterfaceC__(value.__externalRCRef()), conformsTo: main.SwiftInterfaceC.Type.self) as! any main.SwiftInterfaceC
 }
+@discardableResult
 public func returnObjectB(
     value: main.ObjCObjectB
 ) -> main.ObjCObjectB {
     return main.ObjCObjectB.__createClassWrapper(externalRCRef: __root___returnObjectB__TypesOfArguments__main_ObjCObjectB__(value.__externalRCRef()))
 }
+@discardableResult
 public func returnPublicClassImplDeprecatedInterface() -> main.PublicClassImplDeprecatedInterface {
     return main.PublicClassImplDeprecatedInterface.__createClassWrapper(externalRCRef: __root___returnPublicClassImplDeprecatedInterface())
 }
+@discardableResult
 public func returnPublicClassImplHiddenInterface() -> main.PublicClassImplHiddenInterface {
     return main.PublicClassImplHiddenInterface.__createClassWrapper(externalRCRef: __root___returnPublicClassImplHiddenInterface())
 }
@@ -1423,7 +1429,7 @@ public func setDeprecatedInterfacePropertyWithContext(
 ) -> Swift.Void {
     fatalError()
 }
-@available(*, deprecated, message: ". Replacement: unrenamed")
+@available(*, deprecated, message: ". Replacement: unrenamed") @discardableResult
 public func unrenamed() -> Swift.Never {
     return { __root___unrenamed(); fatalError() }()
 }
@@ -1476,6 +1482,7 @@ extension main.SomeInterface where Self : main.__SomeInterface {
             return { SomeInterface_barC_set__TypesOfArguments__Swift_String__(self.__externalRCRef(), newValue); return () }()
         }
     }
+    @discardableResult
     public func fooB() -> Swift.String {
         return SomeInterface_fooB(self.__externalRCRef())
     }

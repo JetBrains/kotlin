@@ -12,6 +12,7 @@ public protocol A: KotlinRuntime.KotlinBase, main._A {
     }
 }
 public protocol AFactory: KotlinRuntime.KotlinBase, main._AFactory {
+    @discardableResult
     func create() -> any main.A
 }
 public protocol B: KotlinRuntime.KotlinBase, main._B {
@@ -29,11 +30,13 @@ public protocol ConsumerProducer: KotlinRuntime.KotlinBase, main.Consumer, main.
 public protocol Foo: KotlinRuntime.KotlinBase, main._Foo {
 }
 public protocol Processor: KotlinRuntime.KotlinBase, main._Processor {
+    @discardableResult
     func process(
         input: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> (any KotlinRuntimeSupport._KotlinBridgeable)?
 }
 public protocol Producer: KotlinRuntime.KotlinBase, main._Producer {
+    @discardableResult
     func produce() -> (any KotlinRuntimeSupport._KotlinBridgeable)?
 }
 @objc(_main_A)
@@ -250,6 +253,7 @@ public final class Holder: KotlinRuntime.KotlinBase {
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
+    @discardableResult
     public func headOrNull() -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
         return { switch Holder_headOrNull(self.__externalRCRef()) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
     }
@@ -279,6 +283,7 @@ public final class IdentityProcessor: KotlinRuntime.KotlinBase {
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
+    @discardableResult
     public func process(
         input: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
@@ -328,6 +333,7 @@ open class StringProducer: KotlinRuntime.KotlinBase {
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
+    @discardableResult
     open func produce() -> Swift.String {
         if Self.self == main.StringProducer.self {
             return StringProducer_produce(self.__externalRCRef())
@@ -359,26 +365,31 @@ public var baz: main.Holder {
         return main.Holder.__createClassWrapper(externalRCRef: __root___baz_get())
     }
 }
+@discardableResult
 public func a() -> any main.A {
     return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___A(), conformsTo: main.A.Type.self) as! any main.A
 }
+@discardableResult
 public func bar(
     param1: (any KotlinRuntimeSupport._KotlinBridgeable)?,
     param2: (any KotlinRuntimeSupport._KotlinBridgeable)?
 ) -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
     return { switch __root___bar__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(param1.map { it in it.__externalRCRef() } ?? nil, param2.map { it in it.__externalRCRef() } ?? nil) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
 }
+@discardableResult
 public func createMap(
     pairs: [main.Pair]
 ) -> [Swift.AnyHashable?: (any KotlinRuntimeSupport._KotlinBridgeable)?] {
     return __root___createMap__TypesOfArguments__Swift_Array_main_Pair___(pairs) as! Swift.Dictionary<Swift.Optional<Swift.AnyHashable>,Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>
 }
+@discardableResult
 public func customFilter(
     _ receiver: [(any KotlinRuntimeSupport._KotlinBridgeable)?],
     predicate: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?) -> Swift.Bool
 ) -> [(any KotlinRuntimeSupport._KotlinBridgeable)?] {
     return __root___customFilter__TypesOfArgumentsE__Swift_Array_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U29202D_U20Swift_Bool__(receiver.map { it in it as! NSObject? ?? NSNull() }, Unmanaged.passRetained((predicate as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Bool) as AnyObject).toOpaque()) as! Swift.Array<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>
 }
+@discardableResult
 public func foo(
     param1: (any KotlinRuntimeSupport._KotlinBridgeable)?,
     param2: (any KotlinRuntimeSupport._KotlinBridgeable)?
@@ -395,24 +406,28 @@ public func produceBoxUpperBound(
 ) -> Swift.Void {
     return { __root___produceBoxUpperBound__TypesOfArguments__U28main_BoxU29202D_U20Swift_Void__(Unmanaged.passRetained((box as (main.Box) -> Swift.Void) as AnyObject).toOpaque()); return () }()
 }
+@discardableResult
 public func returnBFun() -> main.BFun {
     return {
         let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: __root___returnBFun(), options: .asBestFittingWrapper)
         return { _1 in return { main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20main_B__(pointerToBlock.__externalRCRef(), _1.__externalRCRef()); return () }() }
     }()
 }
+@discardableResult
 public func returnBoxFun() -> main.BoxFun {
     return {
         let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: __root___returnBoxFun(), options: .asBestFittingWrapper)
         return { return main.Box.__createClassWrapper(externalRCRef: main_internal_functional_type_caller_mainU2EBox__TypesOfArguments__Swift_UnsafeMutableRawPointer__(pointerToBlock.__externalRCRef())) }
     }()
 }
+@discardableResult
 public func returnGenericConstraintToGeneric(
     arg1: (any KotlinRuntimeSupport._KotlinBridgeable)?,
     arg2: (any KotlinRuntimeSupport._KotlinBridgeable)?
 ) -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
     return { switch __root___returnGenericConstraintToGeneric__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(arg1.map { it in it.__externalRCRef() } ?? nil, arg2.map { it in it.__externalRCRef() } ?? nil) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
 }
+@discardableResult
 public func returnSomeBoxForArg(
     arg: (any KotlinRuntimeSupport._KotlinBridgeable)?
 ) -> main.Box {
@@ -445,6 +460,7 @@ extension main.A {
 }
 @_documentation(visibility: internal)
 extension main.AFactory where Self : main.__AFactory {
+    @discardableResult
     public func create() -> any main.A {
         return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: AFactory_create(self.__externalRCRef()), conformsTo: main.A.Type.self) as! any main.A
     }
@@ -452,6 +468,7 @@ extension main.AFactory where Self : main.__AFactory {
 extension main.AFactory {
 }
 extension [(any KotlinRuntimeSupport._KotlinBridgeable)?] {
+    @discardableResult
     public func customFilter(
         predicate: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?) -> Swift.Bool
     ) -> [(any KotlinRuntimeSupport._KotlinBridgeable)?] {
@@ -491,6 +508,7 @@ extension main.Foo {
 }
 @_documentation(visibility: internal)
 extension main.Processor where Self : main.__Processor {
+    @discardableResult
     public func process(
         input: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
@@ -501,6 +519,7 @@ extension main.Processor {
 }
 @_documentation(visibility: internal)
 extension main.Producer where Self : main.__Producer {
+    @discardableResult
     public func produce() -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
         return { switch Producer_produce(self.__externalRCRef()) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
     }

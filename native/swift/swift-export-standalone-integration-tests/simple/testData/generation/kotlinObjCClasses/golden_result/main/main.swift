@@ -30,17 +30,19 @@ public func consumePlain(
 ) -> Swift.Void {
     fatalError()
 }
+@discardableResult
 public func produceCopyable() -> any Foundation.NSCopying {
     return __root___produceCopyable() as! any Foundation.NSCopying
 }
-@available(*, unavailable, message: "Declaration uses unsupported types")
+@discardableResult @available(*, unavailable, message: "Declaration uses unsupported types")
 public func producePlain() -> Swift.Never {
     fatalError()
 }
+@discardableResult
 public func produceZar() -> any Zar {
     return __root___produceZar() as! any Zar
 }
-@available(*, unavailable, message: "Declaration uses unsupported types")
+@discardableResult @available(*, unavailable, message: "Declaration uses unsupported types")
 public func produceZarImpl() -> Swift.Never {
     fatalError()
 }

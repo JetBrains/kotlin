@@ -195,21 +195,21 @@ public func fooA(
     let (a) = context
     return { __root___fooA__TypesOfArgumentsC1__anyU20lib_InternalLibInterface_lib_ExperimentalLibClass__(a.__externalRCRef(), b.__externalRCRef()); return () }()
 }
-@_spi(ExperimentalLibApi) @_spi(InternalLibApi)
+@_spi(ExperimentalLibApi) @_spi(InternalLibApi) @discardableResult
 public func fooB(
     _ receiver: any lib.InternalLibInterface
 ) -> lib.ExperimentalLibClass {
     return lib.ExperimentalLibClass.__createClassWrapper(externalRCRef: __root___fooB__TypesOfArgumentsE__anyU20lib_InternalLibInterface__(receiver.__externalRCRef()))
 }
-@_spi(InternalLibApi)
+@_spi(InternalLibApi) @discardableResult
 public func fooC() -> any lib.InternalLibInterface {
     return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___fooC(), conformsTo: lib.InternalLibInterface.Type.self) as! any lib.InternalLibInterface
 }
-@_spi(ExperimentalLibApi)
+@_spi(ExperimentalLibApi) @discardableResult
 public func fooD() -> lib.ExperimentalLibClass {
     return lib.ExperimentalLibClass.__createClassWrapper(externalRCRef: __root___fooD())
 }
-@_spi(InternalLibApi)
+@_spi(InternalLibApi) @discardableResult
 public func genericFunction(
     a: any lib.InternalLibInterface
 ) -> Swift.String {
@@ -228,7 +228,7 @@ public func internalLibFunction() -> Swift.Void {
 public func normalLibFunction() -> Swift.Void {
     return { __root___normalLibFunction(); return () }()
 }
-@_spi(InternalLibApi)
+@_spi(InternalLibApi) @discardableResult
 public func returnAlias() -> lib.InternalLibAlias {
     return __root___returnAlias()
 }
@@ -253,7 +253,7 @@ extension lib.InternalLibInterface {
     }
 }
 extension lib.InternalLibInterface {
-    @_spi(ExperimentalLibApi) @_spi(InternalLibApi)
+    @_spi(ExperimentalLibApi) @_spi(InternalLibApi) @discardableResult
     public func fooB() -> lib.ExperimentalLibClass {
         let receiver = self
         return lib.fooB(receiver)

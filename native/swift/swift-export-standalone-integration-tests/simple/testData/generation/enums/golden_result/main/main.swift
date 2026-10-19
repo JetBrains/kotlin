@@ -64,6 +64,7 @@ public enum Enum: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable, Sw
         default: fatalError()
         }
     }
+    @discardableResult
     public func print() -> Swift.String {
         return Enum_print(self.__externalRCRef())
     }
@@ -192,12 +193,15 @@ public enum EnumWithAbstractMembers: KotlinRuntimeSupport._KotlinBridgeable, Swi
         default: fatalError()
         }
     }
+    @discardableResult
     public func blue() -> Swift.Int32 {
         return EnumWithAbstractMembers_blue(self.__externalRCRef())
     }
+    @discardableResult
     public func green() -> Swift.Int32 {
         return EnumWithAbstractMembers_green(self.__externalRCRef())
     }
+    @discardableResult
     public func ordinalSquare() -> Swift.Int32 {
         return EnumWithAbstractMembers_ordinalSquare(self.__externalRCRef())
     }
@@ -260,18 +264,22 @@ public enum EnumWithMembers: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseI
         default: fatalError()
         }
     }
+    @discardableResult
     public func foo() -> Swift.String {
         return EnumWithMembers_foo(self.__externalRCRef())
     }
 }
+@discardableResult
 public func enumId(
     e: ExportedKotlinPackages.kotlin.Enum
 ) -> ExportedKotlinPackages.kotlin.Enum {
     return ExportedKotlinPackages.kotlin.Enum.__createClassWrapper(externalRCRef: __root___enumId__TypesOfArguments__ExportedKotlinPackages_kotlin_Enum__(e.__externalRCRef()))
 }
+@discardableResult
 public func ewamValues() -> ExportedKotlinPackages.kotlin.Array {
     return ExportedKotlinPackages.kotlin.Array.__createClassWrapper(externalRCRef: __root___ewamValues())
 }
+@discardableResult
 public func yellow() -> main.EnumWithAbstractMembers {
     return main.EnumWithAbstractMembers(__externalRCRefUnsafe: __root___yellow(), options: .asBestFittingWrapper)
 }

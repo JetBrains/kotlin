@@ -75,6 +75,7 @@ extension ExportedKotlinPackages.datetime {
             ) {
                 super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
             }
+            @discardableResult
             public func Format(
                 block: @escaping (any dependency._ExportedKotlinPackages_datetime_DateTimeFormatBuilder_WithDate) -> Swift.Void
             ) -> any ExportedKotlinPackages.datetime.DateTimeFormat {

@@ -31,12 +31,14 @@ public final class Foo: KotlinRuntime.KotlinBase {
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
+        @discardableResult
         public static func +(
             this: main.Foo.Nested,
             other: Swift.Int32
         ) -> main.Foo.Nested {
             this._plus(other: other)
         }
+        @discardableResult
         public func _plus(
             other: Swift.Int32
         ) -> main.Foo.Nested {

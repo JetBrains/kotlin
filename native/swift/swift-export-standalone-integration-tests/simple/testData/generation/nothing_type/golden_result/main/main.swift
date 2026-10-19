@@ -43,62 +43,74 @@ public var variable: Swift.Never {
         fatalError()
     }
 }
+@discardableResult
 public func meaningOfLife() -> Swift.Never {
     return { __root___meaningOfLife(); fatalError() }()
 }
+@discardableResult
 public func meaningOfLife(
     input: Swift.Int32
 ) -> Swift.Never? {
     return { __root___meaningOfLife__TypesOfArguments__Swift_Int32__(input); return nil }()
 }
+@discardableResult
 public func meaningOfLife(
     input: Swift.Never?
 ) -> Swift.String {
     return __root___meaningOfLife__TypesOfArguments__Swift_Optional_Swift_Never___({ input; return true }())
 }
+@discardableResult
 public func meaningOfLife(
     p: Swift.Never
 ) -> Swift.Never {
     fatalError()
 }
+@discardableResult
 public func nothingClosure(
     block: @escaping () -> Swift.Never
 ) -> Swift.Never {
     return { __root___nothingClosure__TypesOfArguments__U2829202D_U20Swift_Never__(Unmanaged.passRetained((block as () -> Swift.Never) as AnyObject).toOpaque()); fatalError() }()
 }
+@discardableResult
 public func nothingClosureParam(
     block: @escaping (Swift.Never) -> Swift.String
 ) -> Swift.String {
     return __root___nothingClosureParam__TypesOfArguments__U28Swift_NeverU29202D_U20Swift_String__(Unmanaged.passRetained((block as (Swift.Never) -> Swift.String) as AnyObject).toOpaque())
 }
+@discardableResult
 public func nothingFunctional() -> () -> Swift.Never {
     return {
         let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: __root___nothingFunctional(), options: .asBestFittingWrapper)
         return { return { main_internal_functional_type_caller_SwiftU2ENever__TypesOfArguments__Swift_UnsafeMutableRawPointer__(pointerToBlock.__externalRCRef()); fatalError() }() }
     }()
 }
+@discardableResult
 public func nothingFunctionalParam() -> (Swift.Never) -> Swift.String {
     return {
         let _ = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: __root___nothingFunctionalParam(), options: .asBestFittingWrapper)
         return { _ in fatalError() }
     }()
 }
+@discardableResult
 public func nothingOptClosure(
     block: @escaping () -> Swift.Never?
 ) -> Swift.Never {
     return { __root___nothingOptClosure__TypesOfArguments__U2829202D_U20Swift_Optional_Swift_Never___(Unmanaged.passRetained((block as () -> Swift.Optional<Swift.Never>) as AnyObject).toOpaque()); fatalError() }()
 }
+@discardableResult
 public func nothingOptClosureParam(
     block: @escaping (Swift.Never?) -> Swift.String
 ) -> Swift.String {
     return __root___nothingOptClosureParam__TypesOfArguments__U28Swift_Optional_Swift_Never_U29202D_U20Swift_String__(Unmanaged.passRetained((block as (Swift.Optional<Swift.Never>) -> Swift.String) as AnyObject).toOpaque())
 }
+@discardableResult
 public func nothingOptFunctional() -> () -> Swift.Never? {
     return {
         let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: __root___nothingOptFunctional(), options: .asBestFittingWrapper)
         return { return { main_internal_functional_type_caller_SwiftU2EOptionalU3CSwiftU2ENeverU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer__(pointerToBlock.__externalRCRef()); return nil }() }
     }()
 }
+@discardableResult
 public func nothingOptFunctionalParam() -> (Swift.Never?) -> Swift.String {
     return {
         let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: __root___nothingOptFunctionalParam(), options: .asBestFittingWrapper)
@@ -110,6 +122,7 @@ public func nullableNothingInput(
 ) -> Swift.Void {
     return { __root___nullableNothingInput__TypesOfArguments__Swift_Optional_Swift_Never___({ input; return true }()); return () }()
 }
+@discardableResult
 public func nullableNothingOutput() -> Swift.Never? {
     return { __root___nullableNothingOutput(); return nil }()
 }

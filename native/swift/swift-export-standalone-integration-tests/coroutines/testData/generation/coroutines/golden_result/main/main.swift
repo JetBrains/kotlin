@@ -37,6 +37,7 @@ public func accept_suspend_function_type(
 ) -> Swift.Void {
     return { __root___accept_suspend_function_type__TypesOfArguments__U282920asyncU20throwsU202D_U20Swift_Int32__(Unmanaged.passRetained((block as () async throws -> Swift.Int32) as AnyObject).toOpaque()); return () }()
 }
+@discardableResult
 public func alwaysFails() async throws -> Swift.Never {
     return try await withKotlinContinuation { continuation, exception, cancellation in
         let _: Bool = __root___alwaysFails(Unmanaged.passRetained((continuation as (Swift.Never) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
@@ -52,12 +53,15 @@ public func consume_flow(
 ) -> Swift.Void {
     return { __root___consume_flow__TypesOfArguments__anyU20KotlinCoroutineSupport_KotlinTypedFlow_main_Foo___(flow.wrapped.__externalRCRef()); return () }()
 }
+@discardableResult
 public func demo() -> any KotlinCoroutineSupport.KotlinTypedFlow<main.Foo> {
     return KotlinCoroutineSupport._KotlinTypedFlowImpl<main.Foo>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___demo(), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, main.Foo.Type.self)
 }
+@discardableResult
 public func flowOfNullableUnit() -> any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>> {
     return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___flowOfNullableUnit(), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
 }
+@discardableResult
 public func flowOfUnit() -> any KotlinCoroutineSupport.KotlinTypedFlow<any KotlinRuntimeSupport._KotlinBridgeable> {
     return KotlinCoroutineSupport._KotlinTypedFlowImpl<any KotlinRuntimeSupport._KotlinBridgeable>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___flowOfUnit(), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
 }
@@ -66,12 +70,15 @@ public func functionalInterfaceWithSuspendFunction(
 ) -> any main.FunctionalInterfaceWithSuspendFunction {
     return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___FunctionalInterfaceWithSuspendFunction__TypesOfArguments__U282920asyncU20throwsU202D_U20Swift_Void__(Unmanaged.passRetained((function as () async throws -> Swift.Void) as AnyObject).toOpaque()), conformsTo: main.FunctionalInterfaceWithSuspendFunction.Type.self) as! any main.FunctionalInterfaceWithSuspendFunction
 }
+@discardableResult
 public func mutableStateFlowOfUnit() -> any KotlinCoroutineSupport.KotlinTypedMutableStateFlow<any KotlinRuntimeSupport._KotlinBridgeable> {
     return KotlinCoroutineSupport._KotlinTypedMutableStateFlowImpl<any KotlinRuntimeSupport._KotlinBridgeable>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___mutableStateFlowOfUnit(), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.MutableStateFlow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.MutableStateFlow, KotlinRuntimeSupport._KotlinBridgeable.Type.self)
 }
+@discardableResult
 public func produce_flow() -> any KotlinCoroutineSupport.KotlinTypedFlow<Swift.Int32> {
     return KotlinCoroutineSupport._KotlinTypedFlowImpl<Swift.Int32>.create(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___produce_flow(), conformsTo: ExportedKotlinPackages.kotlinx.coroutines.flow.Flow.Type.self) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, Swift.Int32.Type.self)
 }
+@discardableResult
 public func produce_function() -> (Swift.Int32) async throws -> Swift.Int32 {
     return {
         let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: __root___produce_function(), options: .asBestFittingWrapper)
@@ -80,31 +87,37 @@ public func produce_function() -> (Swift.Int32) async throws -> Swift.Int32 {
     } }
     }()
 }
+@discardableResult
 public func produce_function_typealias() async throws -> main.AliasedFunctionType {
     return try await withKotlinContinuation { continuation, exception, cancellation in
         let _: Bool = __root___produce_function_typealias(Unmanaged.passRetained((continuation as (@escaping (Swift.Float) -> Swift.Int32) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
     }
 }
+@discardableResult
 public func produce_suspend_function() async throws -> (Swift.Double) async throws -> Swift.Int32 {
     return try await withKotlinContinuation { continuation, exception, cancellation in
         let _: Bool = __root___produce_suspend_function(Unmanaged.passRetained((continuation as (@escaping (Swift.Double) async throws -> Swift.Int32) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
     }
 }
+@discardableResult
 public func produce_suspend_function_typealias() async throws -> main.AliasedAsyncFunctionType {
     return try await withKotlinContinuation { continuation, exception, cancellation in
         let _: Bool = __root___produce_suspend_function_typealias(Unmanaged.passRetained((continuation as (@escaping (Swift.Float) async throws -> Swift.Int64) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
     }
 }
+@discardableResult
 public func retunsListOfSuspend() async throws -> [() async throws -> Swift.Void] {
     return try await withKotlinContinuation { continuation, exception, cancellation in
         let _: Bool = __root___retunsListOfSuspend(Unmanaged.passRetained((continuation as (Swift.Array<() async throws -> Swift.Void>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
     }
 }
+@discardableResult
 public func returnSuspendGeneric() async throws -> any KotlinRuntimeSupport._KotlinBridgeable {
     return try await withKotlinContinuation { continuation, exception, cancellation in
         let _: Bool = __root___returnSuspendGeneric(Unmanaged.passRetained((continuation as (any KotlinRuntimeSupport._KotlinBridgeable) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
     }
 }
+@discardableResult
 public func returnSuspendUnit() -> () async throws -> Swift.Void {
     return {
         let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: __root___returnSuspendUnit(), options: .asBestFittingWrapper)
@@ -118,11 +131,13 @@ public func returnUnit() async throws -> Swift.Void {
         let _: Bool = __root___returnUnit(Unmanaged.passRetained((continuation as (Swift.Void) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
     }
 }
+@discardableResult
 public func returnsList() async throws -> [Swift.String] {
     return try await withKotlinContinuation { continuation, exception, cancellation in
         let _: Bool = __root___returnsList(Unmanaged.passRetained((continuation as (Swift.Array<Swift.String>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
     }
 }
+@discardableResult
 public func returnsListOfSuspendNullables() async throws -> [(() async throws -> Swift.Void)?] {
     return try await withKotlinContinuation { continuation, exception, cancellation in
         let _: Bool = __root___returnsListOfSuspendNullables(Unmanaged.passRetained((continuation as (Swift.Array<Swift.Optional<() async throws -> Swift.Void>>) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())

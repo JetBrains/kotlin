@@ -234,6 +234,7 @@ open class Child: overrides.Parent {
             return { Child_actuallyOverride__TypesOfArguments__Swift_Optional_Swift_Int32__overrides_Parent_Swift_Optional_overrides_Parent____direct(self.__externalRCRef(), nullable.map { it in NSNumber(value: it) } ?? nil, poly.__externalRCRef(), nullablePoly.map { it in it.__externalRCRef() } ?? nil); return () }()
         }
     }
+    @discardableResult
     open override func contains(
         element: Swift.Int32
     ) -> Swift.Bool {
@@ -246,6 +247,7 @@ open class Child: overrides.Parent {
     public final override func finalOverrideFunc() -> Swift.Void {
         return { Child_finalOverrideFunc(self.__externalRCRef()); return () }()
     }
+    @discardableResult
     open func genericReturnTypeFunc() -> [overrides.Child] {
         if Self.self == overrides.Child.self {
             return Child_genericReturnTypeFunc(self.__externalRCRef()) as! Swift.Array<overrides.Child>
@@ -253,6 +255,7 @@ open class Child: overrides.Parent {
             return Child_genericReturnTypeFunc_direct(self.__externalRCRef()) as! Swift.Array<overrides.Child>
         }
     }
+    @discardableResult
     open func nonoverride() -> Swift.Never {
         if Self.self == overrides.Child.self {
             return { Child_nonoverride(self.__externalRCRef()); fatalError() }()
@@ -260,6 +263,7 @@ open class Child: overrides.Parent {
             return { Child_nonoverride_direct(self.__externalRCRef()); fatalError() }()
         }
     }
+    @discardableResult
     open override func objectFunc(
         arg: overrides.Child
     ) -> overrides.Parent {
@@ -269,6 +273,7 @@ open class Child: overrides.Parent {
             return overrides.Parent.__createClassWrapper(externalRCRef: Child_objectFunc__TypesOfArguments__overrides_Child___direct(self.__externalRCRef(), arg.__externalRCRef()))
         }
     }
+    @discardableResult
     open override func objectOptionalFunc(
         arg: overrides.Child
     ) -> overrides.Parent? {
@@ -285,6 +290,7 @@ open class Child: overrides.Parent {
             return { Child_overrideChainFunc_direct(self.__externalRCRef()); return () }()
         }
     }
+    @discardableResult
     open override func primitiveTypeFunc(
         arg: Swift.Int32
     ) -> Swift.Int32 {
@@ -294,6 +300,7 @@ open class Child: overrides.Parent {
             return Child_primitiveTypeFunc__TypesOfArguments__Swift_Int32___direct(self.__externalRCRef(), arg)
         }
     }
+    @discardableResult
     open override func subtypeObjectFunc(
         arg: overrides.Child
     ) -> overrides.Child {
@@ -303,6 +310,7 @@ open class Child: overrides.Parent {
             return overrides.Child.__createClassWrapper(externalRCRef: Child_subtypeObjectFunc__TypesOfArguments__overrides_Child___direct(self.__externalRCRef(), arg.__externalRCRef()))
         }
     }
+    @discardableResult
     open override func subtypeOptionalObjectFunc() -> overrides.Child {
         if Self.self == overrides.Child.self {
             return overrides.Child.__createClassWrapper(externalRCRef: Child_subtypeOptionalObjectFunc(self.__externalRCRef()))
@@ -310,6 +318,7 @@ open class Child: overrides.Parent {
             return overrides.Child.__createClassWrapper(externalRCRef: Child_subtypeOptionalObjectFunc_direct(self.__externalRCRef()))
         }
     }
+    @discardableResult
     open override func subtypeOptionalPrimitiveFunc() -> Swift.Int32 {
         if Self.self == overrides.Child.self {
             return Child_subtypeOptionalPrimitiveFunc(self.__externalRCRef())
@@ -317,6 +326,7 @@ open class Child: overrides.Parent {
             return Child_subtypeOptionalPrimitiveFunc_direct(self.__externalRCRef())
         }
     }
+    @discardableResult
     public static func ~=(
         this: overrides.Child,
         element: Swift.Int32
@@ -524,6 +534,7 @@ open class Parent: KotlinRuntime.KotlinBase {
             return { Parent_actuallyOverride__TypesOfArguments__Swift_Int32_overrides_Child_overrides_Child___direct(self.__externalRCRef(), nullable, poly.__externalRCRef(), nullablePoly.__externalRCRef()); return () }()
         }
     }
+    @discardableResult
     open func contains(
         element: Swift.Int32
     ) -> Swift.Bool {
@@ -547,6 +558,7 @@ open class Parent: KotlinRuntime.KotlinBase {
             return { Parent_finalOverrideHopFunc_direct(self.__externalRCRef()); return () }()
         }
     }
+    @discardableResult
     open func genericReturnTypeFunc() -> [overrides.Parent] {
         if Self.self == overrides.Parent.self {
             return Parent_genericReturnTypeFunc(self.__externalRCRef()) as! Swift.Array<overrides.Parent>
@@ -561,6 +573,7 @@ open class Parent: KotlinRuntime.KotlinBase {
             return { Parent_hopFunc_direct(self.__externalRCRef()); return () }()
         }
     }
+    @discardableResult
     open func nonoverride() -> Swift.Int32 {
         if Self.self == overrides.Parent.self {
             return Parent_nonoverride(self.__externalRCRef())
@@ -568,6 +581,7 @@ open class Parent: KotlinRuntime.KotlinBase {
             return Parent_nonoverride_direct(self.__externalRCRef())
         }
     }
+    @discardableResult
     open func objectFunc(
         arg: overrides.Child
     ) -> overrides.Parent {
@@ -577,6 +591,7 @@ open class Parent: KotlinRuntime.KotlinBase {
             return overrides.Parent.__createClassWrapper(externalRCRef: Parent_objectFunc__TypesOfArguments__overrides_Child___direct(self.__externalRCRef(), arg.__externalRCRef()))
         }
     }
+    @discardableResult
     open func objectOptionalFunc(
         arg: overrides.Child
     ) -> overrides.Parent? {
@@ -593,6 +608,7 @@ open class Parent: KotlinRuntime.KotlinBase {
             return { Parent_overrideChainFunc_direct(self.__externalRCRef()); return () }()
         }
     }
+    @discardableResult
     open func primitiveTypeFunc(
         arg: Swift.Int32
     ) -> Swift.Int32 {
@@ -602,6 +618,7 @@ open class Parent: KotlinRuntime.KotlinBase {
             return Parent_primitiveTypeFunc__TypesOfArguments__Swift_Int32___direct(self.__externalRCRef(), arg)
         }
     }
+    @discardableResult
     open func subtypeObjectFunc(
         arg: overrides.Child
     ) -> overrides.Parent {
@@ -611,6 +628,7 @@ open class Parent: KotlinRuntime.KotlinBase {
             return overrides.Parent.__createClassWrapper(externalRCRef: Parent_subtypeObjectFunc__TypesOfArguments__overrides_Child___direct(self.__externalRCRef(), arg.__externalRCRef()))
         }
     }
+    @discardableResult
     open func subtypeOptionalObjectFunc() -> overrides.Parent? {
         if Self.self == overrides.Parent.self {
             return { switch Parent_subtypeOptionalObjectFunc(self.__externalRCRef()) { case nil: .none; case let res?: overrides.Parent.__createClassWrapper(externalRCRef: res); } }()
@@ -618,6 +636,7 @@ open class Parent: KotlinRuntime.KotlinBase {
             return { switch Parent_subtypeOptionalObjectFunc_direct(self.__externalRCRef()) { case nil: .none; case let res?: overrides.Parent.__createClassWrapper(externalRCRef: res); } }()
         }
     }
+    @discardableResult
     open func subtypeOptionalPrimitiveFunc() -> Swift.Int32? {
         if Self.self == overrides.Parent.self {
             return Parent_subtypeOptionalPrimitiveFunc(self.__externalRCRef()).map { it in it.int32Value }
@@ -625,6 +644,7 @@ open class Parent: KotlinRuntime.KotlinBase {
             return Parent_subtypeOptionalPrimitiveFunc_direct(self.__externalRCRef()).map { it in it.int32Value }
         }
     }
+    @discardableResult
     public static func ~=(
         this: overrides.Parent,
         element: Swift.Int32

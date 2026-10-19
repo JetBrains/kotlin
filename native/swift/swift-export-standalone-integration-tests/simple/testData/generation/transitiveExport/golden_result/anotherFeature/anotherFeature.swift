@@ -20,6 +20,7 @@ public final class FeatureC: KotlinRuntime.KotlinBase {
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
+    @discardableResult
     public func baz() -> ExportedKotlinPackages.oh.my.state.ToExtract {
         return ExportedKotlinPackages.oh.my.state.ExtractedByTypealias.__createClassWrapper(externalRCRef: FeatureC_baz(self.__externalRCRef()))
     }

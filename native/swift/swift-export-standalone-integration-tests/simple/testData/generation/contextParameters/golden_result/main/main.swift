@@ -69,6 +69,7 @@ public final class Foo: KotlinRuntime.KotlinBase {
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
+    @discardableResult
     public func bar(
         _ context: main.Context,
         arg: any KotlinRuntimeSupport._KotlinBridgeable
@@ -76,6 +77,7 @@ public final class Foo: KotlinRuntime.KotlinBase {
         let (ctx) = context
         return KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: Foo_bar__TypesOfArgumentsC1__main_Context_anyU20KotlinRuntimeSupport__KotlinBridgeable__(self.__externalRCRef(), ctx.__externalRCRef(), arg.__externalRCRef()))
     }
+    @discardableResult
     public func complexContextFunction(
         _ context: (contextA: main.ContextA, context: main.Context, contextB: main.ContextB),
         _ receiver: Swift.String,
@@ -131,6 +133,7 @@ public final class Foo: KotlinRuntime.KotlinBase {
         return { Foo_unnamedContextParametersFunction__TypesOfArgumentsC2__main_Context_main_ContextB__(self.__externalRCRef(), _0.__externalRCRef(), ctx.__externalRCRef()); return () }()
     }
 }
+@discardableResult
 public func bar(
     _ context: main.Context,
     arg: any KotlinRuntimeSupport._KotlinBridgeable
@@ -138,6 +141,7 @@ public func bar(
     let (ctx) = context
     return KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: __root___bar__TypesOfArgumentsC1__main_Context_anyU20KotlinRuntimeSupport__KotlinBridgeable__(ctx.__externalRCRef(), arg.__externalRCRef()))
 }
+@discardableResult
 public func combine(
     _ context: main.Bar,
     bar2: main.Bar
@@ -145,18 +149,21 @@ public func combine(
     let (bar) = context
     return main.Bar.__createClassWrapper(externalRCRef: __root___combine__TypesOfArgumentsC1__main_Bar_main_Bar__(bar.__externalRCRef(), bar2.__externalRCRef()))
 }
+@discardableResult
 public func combine(
     _ receiver: main.Bar,
     bar: main.Bar
 ) -> main.Bar {
     return main.Bar.__createClassWrapper(externalRCRef: __root___combine__TypesOfArgumentsE__main_Bar_main_Bar__(receiver.__externalRCRef(), bar.__externalRCRef()))
 }
+@discardableResult
 public func combine(
     bar: main.Bar,
     bar2: main.Bar
 ) -> main.Bar {
     return main.Bar.__createClassWrapper(externalRCRef: __root___combine__TypesOfArguments__main_Bar_main_Bar__(bar.__externalRCRef(), bar2.__externalRCRef()))
 }
+@discardableResult
 public func complexContextFunction(
     _ context: (context: main.Context, contextA: main.ContextA, contextB: main.ContextB),
     _ receiver: Swift.String,
@@ -170,6 +177,7 @@ public func contextBlockA(
 ) -> Swift.Void {
     return { __root___contextBlockA__TypesOfArguments__U2828main_ContextA_U20main_ContextBU29_U20Swift_Int32_U20Swift_StringU29202D_U20Swift_Void__(Unmanaged.passRetained((block as ((main.ContextA, main.ContextB), Swift.Int32, Swift.String) -> Swift.Void) as AnyObject).toOpaque()); return () }()
 }
+@discardableResult
 public func contextBlockB() -> ((main.ContextB, main.ContextA), Swift.String, Swift.Int32) -> Swift.Void {
     return {
         let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: __root___contextBlockB(), options: .asBestFittingWrapper)
@@ -181,6 +189,7 @@ public func contextBlockC(
 ) -> Swift.Void {
     return { __root___contextBlockC__TypesOfArguments__U28main_Context_U20Swift_StringU29202D_U20Swift_Void__(Unmanaged.passRetained((block as (main.Context, Swift.String) -> Swift.Void) as AnyObject).toOpaque()); return () }()
 }
+@discardableResult
 public func contextBlockD() -> (main.Context, Swift.Int32) -> Swift.Void {
     return {
         let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: __root___contextBlockD(), options: .asBestFittingWrapper)
@@ -234,6 +243,7 @@ public func unnamedContextParametersFunction(
     return { __root___unnamedContextParametersFunction__TypesOfArgumentsC2__main_Context_main_ContextB__(ctx.__externalRCRef(), _1.__externalRCRef()); return () }()
 }
 extension main.Bar {
+    @discardableResult
     public func combine(
         bar: main.Bar
     ) -> main.Bar {
@@ -259,6 +269,7 @@ extension Swift.String {
     }
 }
 extension Swift.String {
+    @discardableResult
     public func complexContextFunction(
         _ context: (context: main.Context, contextA: main.ContextA, contextB: main.ContextB),
         yes: Swift.Bool

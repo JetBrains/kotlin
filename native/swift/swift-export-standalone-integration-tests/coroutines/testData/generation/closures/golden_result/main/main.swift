@@ -3,11 +3,13 @@
 import KotlinRuntime
 import KotlinRuntimeSupport
 
+@discardableResult
 public func accept_suspend_fun_with_context(
     block: @escaping (Swift.String) async throws -> Swift.Int32
 ) -> Swift.Int32 {
     return __root___accept_suspend_fun_with_context__TypesOfArguments__U28Swift_StringU2920asyncU20throwsU202D_U20Swift_Int32__(Unmanaged.passRetained((block as (Swift.String) async throws -> Swift.Int32) as AnyObject).toOpaque())
 }
+@discardableResult
 public func accept_suspend_function_type(
     block: @escaping () async throws -> Swift.Int32
 ) -> Swift.Int32 {

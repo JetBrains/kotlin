@@ -34,6 +34,7 @@ open class Cousin: overrides.Parent {
     public final override func finalOverrideFunc() -> Swift.Void {
         return { Cousin_finalOverrideFunc(self.__externalRCRef()); return () }()
     }
+    @discardableResult
     open override func primitiveTypeFunc(
         arg: Swift.Int32
     ) -> Swift.Int32 {
