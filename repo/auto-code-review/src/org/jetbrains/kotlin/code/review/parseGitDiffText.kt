@@ -34,7 +34,7 @@ fun parseGitDiffText(diffText: String): List<GitDiff.ChangedFile> {
 private const val DIFF_SRC_LINE_PREFIX = "--- "
 private const val DIFF_DST_LINE_PREFIX = "+++ "
 
-private fun parseChangedFile(lines: List<String>): GitDiff.ChangedFile {
+internal fun parseChangedFile(lines: List<String>): GitDiff.ChangedFile {
     // It starts with `diff --git`.
     // Then goes an arbitrary number of header lines. Look for `---` and `+++`.
     val oldFileLineIndex = lines.indexOfFirst { it.startsWith(DIFF_SRC_LINE_PREFIX) }
