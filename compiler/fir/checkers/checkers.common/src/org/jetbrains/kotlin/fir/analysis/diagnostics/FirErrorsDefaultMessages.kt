@@ -143,6 +143,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ATOMIC_REF_CALL_A
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.BACKING_FIELD_FOR_DELEGATED_PROPERTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.BACKING_FIELD_IN_INTERFACE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.BARE_INFERENCE_WILL_CHANGE_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.BOUNDS_NOT_ALLOWED_IF_BOUNDED_BY_TYPE_PARAMETER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.BOUND_ON_TYPE_ALIAS_PARAMETER_NOT_ALLOWED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY
@@ -3854,6 +3855,12 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             NEW_BARE_INFERENCE_FAILED,
             "New bare inference failed, this will become an error in the future.",
+        )
+        map.put(
+            BARE_INFERENCE_WILL_CHANGE_TYPE,
+            "Inferred type will change. Current type: ''{0}'', future type: ''{1}''.",
+            RENDER_TYPE,
+            RENDER_TYPE,
         )
         map.put(
             NEW_CHECK_FOR_ERASED_BECAME_NOT_ERASED,

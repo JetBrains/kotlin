@@ -36,6 +36,7 @@ fun FirSession.staticallyKnownTypeArgumentsByTypeParameterInheritance(
     castClass: FirRegularClassSymbol,
     originalType: ConeKotlinType,
     requireEqualBounds: Boolean,
+    requireFullInference: Boolean
 ): Array<ConeTypeProjection>? {
     val preparedType = originalType.lowerBoundIfFlexible().fullyExpandedType(this)
 
@@ -44,7 +45,7 @@ fun FirSession.staticallyKnownTypeArgumentsByTypeParameterInheritance(
         val result: Array<ConeTypeProjection> = Array(parameterCount) { ConeStarProjection }
         for (intersectedType in preparedType.intersectedTypes) {
             val fromIntersected =
-                staticallyKnownTypeArgumentsByTypeParameterInheritance(castClass, intersectedType, requireEqualBounds) ?: continue
+                staticallyKnownTypeArgumentsByTypeParameterInheritance(castClass, intersectedType, requireEqualBounds, false) ?: continue
             for (index in 0 until parameterCount) {
                 // Prefer the first non-star argument available among the intersected types.
                 if (result[index] == ConeStarProjection && fromIntersected[index] != ConeStarProjection) {
@@ -59,7 +60,7 @@ fun FirSession.staticallyKnownTypeArgumentsByTypeParameterInheritance(
         preparedType,
         TypeApproximatorConfiguration.FinalApproximationAfterResolutionAndInference
     )?.let {
-        return staticallyKnownTypeArgumentsByTypeParameterInheritance(castClass, it, requireEqualBounds)
+        return staticallyKnownTypeArgumentsByTypeParameterInheritance(castClass, it, requireEqualBounds, requireFullInference)
     }
 
     val originalLookupTag = preparedType.classLikeLookupTagIfAny ?: return null
@@ -131,7 +132,7 @@ fun FirSession.staticallyKnownTypeArgumentsByTypeParameterInheritance(
     return Array(castTypeParameters.size) { index ->
         val originalIndex = inheritanceMapping[index]
         if (originalIndex == -1) {
-            if (requireEqualBounds) {
+            if (requireFullInference) {
                 return null
             } else {
                 return@Array ConeStarProjection
