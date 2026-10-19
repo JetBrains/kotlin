@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.jvm.checkers.expression
 
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.KtVirtualFileSourceFile
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -101,7 +102,11 @@ object FirJvmModuleAccessibilityQualifiedAccessChecker : FirQualifiedAccessExpre
         element: FirElement,
         check: (fileFromOurModule: VirtualFile?, JavaModuleResolver) -> AccessError?,
     ) {
-        val fileFromOurModule = (context.containingFileSymbol?.sourceFile as? KtVirtualFileSourceFile)?.virtualFile
+        val fileFromOurModule = when (val sourceFile = context.containingFileSymbol?.sourceFile) {
+            is KtVirtualFileSourceFile -> sourceFile.virtualFile
+            is KtPsiSourceFile -> sourceFile.psiFile.virtualFile
+            else -> null
+        }
 
         val diagnostic = check(fileFromOurModule, context.session.javaModuleResolverProvider.javaModuleResolver) ?: return
 
