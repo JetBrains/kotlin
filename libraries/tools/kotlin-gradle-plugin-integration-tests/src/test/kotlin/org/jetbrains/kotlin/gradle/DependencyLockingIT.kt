@@ -8,9 +8,11 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 
+@MustRunOnChangesInGradle
 class DependencyLockingIT : KGPBaseTest() {
     @JvmGradlePluginTests
     @DisplayName("KT-71549: dependency locking does not cause build failure")

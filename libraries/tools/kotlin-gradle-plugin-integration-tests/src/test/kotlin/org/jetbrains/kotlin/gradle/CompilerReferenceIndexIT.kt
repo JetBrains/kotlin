@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInBuildToolsApi
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.div
 import kotlin.io.path.invariantSeparatorsPathString
@@ -30,6 +31,7 @@ import kotlin.test.*
 
 @OptIn(ExperimentalBuildToolsApi::class, EnvironmentalVariablesOverride::class)
 @DisplayName("Gradle / Compiler Reference Index")
+@MustRunOnChangesInGradle
 @MustRunOnChangesInBuildToolsApi
 class CompilerReferenceIndexIT : KGPDaemonsBaseTest() {
 
