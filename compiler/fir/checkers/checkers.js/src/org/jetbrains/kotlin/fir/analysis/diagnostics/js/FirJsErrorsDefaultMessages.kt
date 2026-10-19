@@ -68,7 +68,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.OVERRIDING_E
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.PROPERTY_DELEGATION_BY_DYNAMIC
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.RUNTIME_ANNOTATION_ON_EXTERNAL_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.SPREAD_OPERATOR_IN_DYNAMIC_CALL
-import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.WRONG_EXPORTED_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.WRONG_MULTIPLE_INHERITANCE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.WRONG_OPERATION_WITH_DYNAMIC
 
@@ -205,10 +204,6 @@ object FirJsErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             CommonRenderers.STRING,
         )
         map.put(NAMED_COMPANION_IN_EXPORTED_INTERFACE, "Named companions are not allowed inside exported interfaces.")
-        map.put(
-            NOT_EXPORTED_OR_EXTERNAL_ACTUAL_DECLARATION_WHILE_EXPECT_IS_EXPORTED,
-            "The corresponding expect declaration is marked as exported, but the actual one is not.\nTo fix it, mark the actual declaration with '@JsExport' as well, remove @JsExport.Ignore if there is one, or remove the '@JsExport' annotation from the expect declaration."
-        )
         map.put(JS_STATIC_NOT_IN_OBJECT, "Only members in named objects and companion objects of classes can be annotated with '@JsStatic'.")
         map.put(JS_STATIC_ON_NON_PUBLIC_MEMBER, "Only public members of objects can be annotated with '@JsStatic'.")
         map.put(JS_STATIC_ON_CONST, "'@JsStatic' annotation is redundant for const properties.")
