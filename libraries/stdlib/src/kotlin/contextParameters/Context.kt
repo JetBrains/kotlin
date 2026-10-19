@@ -14,7 +14,7 @@ package kotlin
 /**
  * Runs the specified [block] with the given value in context scope.
  *
- * As opposed to [with], [context] only makes the value available for
+ * As opposed to [with][kotlin.with], [context] only makes the value available for
  * context parameter resolution, but not as implicit receiver.
  *
  * @sample samples.misc.ContextParameters.useContext
@@ -33,7 +33,7 @@ public inline fun <T, R> context(with: T, block: context(T) () -> R): R {
 /**
  * Runs the specified [block] with the given values in context scope.
  *
- * As opposed to [with], [context] only makes the values available for
+ * As opposed to [with][kotlin.with], [context] only makes the values available for
  * context parameter resolution, but not as implicit receivers.
  *
  * @sample samples.misc.ContextParameters.useContext
@@ -52,7 +52,7 @@ public inline fun <A, B, R> context(a: A, b: B, block: context(A, B) () -> R): R
 /**
  * Runs the specified [block] with the given values in context scope.
  *
- * As opposed to [with], [context] only makes the values available for
+ * As opposed to [with][kotlin.with], [context] only makes the values available for
  * context parameter resolution, but not as implicit receivers.
  *
  * @sample samples.misc.ContextParameters.useContext
@@ -71,7 +71,7 @@ public inline fun <A, B, C, R> context(a: A, b: B, c: C, block: context(A, B, C)
 /**
  * Runs the specified [block] with the given values in context scope.
  *
- * As opposed to [with], [context] only makes the values available for
+ * As opposed to [with][kotlin.with], [context] only makes the values available for
  * context parameter resolution, but not as implicit receivers.
  *
  * @sample samples.misc.ContextParameters.useContext
@@ -90,7 +90,7 @@ public inline fun <A, B, C, D, R> context(a: A, b: B, c: C, d: D, block: context
 /**
  * Runs the specified [block] with the given values in context scope.
  *
- * As opposed to [with], [context] only makes the values available for
+ * As opposed to [with][kotlin.with], [context] only makes the values available for
  * context parameter resolution, but not as implicit receivers.
  *
  * @sample samples.misc.ContextParameters.useContext
@@ -109,7 +109,7 @@ public inline fun <A, B, C, D, E, R> context(a: A, b: B, c: C, d: D, e: E, block
 /**
  * Runs the specified [block] with the given values in context scope.
  *
- * As opposed to [with], [context] only makes the values available for
+ * As opposed to [with][kotlin.with], [context] only makes the values available for
  * context parameter resolution, but not as implicit receivers.
  *
  * @sample samples.misc.ContextParameters.useContext
