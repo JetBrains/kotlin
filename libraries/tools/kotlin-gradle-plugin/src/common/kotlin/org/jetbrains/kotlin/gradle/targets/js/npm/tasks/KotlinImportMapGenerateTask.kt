@@ -13,9 +13,14 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
+import org.jetbrains.kotlin.gradle.targets.js.ir.nodeJsRoot
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject.Companion.NODE_MODULES
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules.Companion.JS_SUFFIX
+import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.isCurrentHostOsWindows
+import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.utils.getFile
 import java.io.File
 import java.io.IOException
@@ -233,3 +238,13 @@ abstract class KotlinImportMapGenerateTask : DefaultTask() {
     }
 }
 
+internal fun KotlinJsIrCompilation.locateOrRegisterImportMapGenerateTask(): TaskProvider<KotlinImportMapGenerateTask> =
+    project.locateOrRegisterTask<KotlinImportMapGenerateTask>(npmProject.generateImportMapTaskName) {
+        it.nodeModulesDirectory.set(npmProject.nodeModulesDir)
+        it.rootDirectory.set(project.rootDir)
+        it.installArtifacts.from(nodeJsRoot().npmInstallTaskProvider.map { it.additionalFiles })
+        it.inputDirectory.set(npmProject.dir)
+        it.importMapFile.set(project.layout.buildDirectory.file("kotlin/${it.name}/importmap.json"))
+        it.importMapLoaderFile.set(project.layout.buildDirectory.file("kotlin/${it.name}/importmap-loader.js"))
+        it.getIsWindows.set(project.providers.isCurrentHostOsWindows())
+    }

@@ -7,13 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.js.npm.tasks
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
-import org.jetbrains.kotlin.gradle.targets.js.ir.nodeJsRoot
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
-import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
-import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.isCurrentHostOsWindows
-import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import java.io.File
 
 /**
@@ -62,14 +56,3 @@ internal data class KotlinWebImportMap(
         fun readFrom(file: File): KotlinWebImportMap = json.decodeFromString(serializer(), file.readText())
     }
 }
-
-internal fun KotlinJsIrCompilation.locateOrRegisterGenerateModuleMapTask(): TaskProvider<KotlinImportMapGenerateTask> =
-    project.locateOrRegisterTask<KotlinImportMapGenerateTask>(npmProject.generateImportMapTaskName) {
-        it.nodeModulesDirectory.set(npmProject.nodeModulesDir)
-        it.rootDirectory.set(project.rootDir)
-        it.installArtifacts.from(nodeJsRoot().npmInstallTaskProvider.map { it.additionalFiles })
-        it.inputDirectory.set(npmProject.dir)
-        it.importMapFile.set(project.layout.buildDirectory.file("kotlin/${it.name}/importmap.json"))
-        it.importMapLoaderFile.set(project.layout.buildDirectory.file("kotlin/${it.name}/importmap-loader.js"))
-        it.getIsWindows.set(project.providers.isCurrentHostOsWindows())
-    }
