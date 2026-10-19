@@ -303,6 +303,12 @@ public class FirStandaloneNormalAnalysisSourceModuleDanglingFileCollectDiagnosti
   }
 
   @Test
+  @TestMetadata("optInEnumEntryFromLibrary.kt")
+  public void testOptInEnumEntryFromLibrary() {
+    run("optInEnumEntryFromLibrary.kt");
+  }
+
+  @Test
   @TestMetadata("overrideProtectedClassReturnFromLibrary.kt")
   public void testOverrideProtectedClassReturnFromLibrary() {
     run("overrideProtectedClassReturnFromLibrary.kt");
