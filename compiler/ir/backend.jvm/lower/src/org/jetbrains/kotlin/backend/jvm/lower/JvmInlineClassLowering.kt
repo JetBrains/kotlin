@@ -500,7 +500,8 @@ internal class JvmInlineClassLowering(private val context: JvmBackendContext) : 
         if (field.origin == IrDeclarationOrigin.PROPERTY_BACKING_FIELD &&
             parent is IrClass &&
             parent.isInlineClass &&
-            field.name == parent.inlineClassFieldName
+            field.name == parent.inlineClassFieldName &&
+            !field.isStatic
         ) {
             val receiver = expression.receiver!!.transform(this, null)
             // If we get the field of nullable variable, we can be sure, that type is not null,
