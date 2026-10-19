@@ -293,19 +293,12 @@ abstract class KotlinIrLinker(
         }
     }
 
-    fun getOrCreateDeserializerForModule(
-        moduleDescriptor: ModuleDescriptor,
-        kotlinLibrary: KotlinLibrary,
-        deserializationStrategy: (String) -> DeserializationStrategy,
-    ): IrModuleDeserializer = klibDeserializers[kotlinLibrary]
-        ?: createAndRegisterModuleDeserializer(moduleDescriptor, kotlinLibrary, deserializationStrategy)
-
     fun deserializeIrModuleHeader(
         moduleDescriptor: ModuleDescriptor,
         kotlinLibrary: KotlinLibrary,
         deserializationStrategy: (String) -> DeserializationStrategy = { DeserializationStrategy.ONLY_REFERENCED },
     ): IrModuleFragment {
-        val deserializer = getOrCreateDeserializerForModule(moduleDescriptor, kotlinLibrary, deserializationStrategy)
+        val deserializer = createAndRegisterModuleDeserializer(moduleDescriptor, kotlinLibrary, deserializationStrategy)
         // The IrModule and its IrFiles have been created during module initialization.
         return deserializer.moduleFragment
     }
