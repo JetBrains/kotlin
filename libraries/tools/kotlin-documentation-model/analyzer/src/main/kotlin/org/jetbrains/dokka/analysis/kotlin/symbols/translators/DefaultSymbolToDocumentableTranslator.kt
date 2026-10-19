@@ -123,6 +123,10 @@ internal class DokkaSymbolVisitor(
         val sourceModule = analysisContext.getModule(sourceSet)
         val sourceFiles = analysisContext.modulesWithFiles[sourceModule] ?: throw IllegalStateException("No source files for a source module ${sourceModule.name} of source set ${sourceSet.sourceSetID}")
 
+        val ancestorKtFiles = sourceModule.transitiveDependsOnDependencies
+            .flatMapTo(mutableSetOf()) { ancestorModule ->
+                (analysisContext.modulesWithFiles[ancestorModule] ?: emptySet()).filterIsInstance<KtFile>()
+            }
         val ktFiles = sourceFiles.filterIsInstance<KtFile>().toSet()
         val javaFiles = if (InternalConfiguration.enableExperimentalSymbolsJavaAnalysis) sourceFiles.filterIsInstance<PsiJavaFile>().toSet() else emptySet()
 
@@ -136,11 +140,11 @@ internal class DokkaSymbolVisitor(
                     }
                     processedPackages.add(packageFqName)
                     findPackage(packageFqName)?.let { packageSymbol ->
-                        visitPackageSymbol(packageSymbol, ktFiles, javaFiles)
+                        visitPackageSymbol(packageSymbol, ktFiles, ancestorKtFiles, javaFiles)
                     }
                 }
 
-            val packages = ktFiles.collectPackages { it.packageFqName } + javaFiles.collectPackages { FqName(it.packageName) }
+            val packages = (ktFiles + ancestorKtFiles).collectPackages { it.packageFqName } + javaFiles.collectPackages { FqName(it.packageName) }
 
             DModule(
                 name = moduleName,
@@ -156,19 +160,22 @@ internal class DokkaSymbolVisitor(
     private fun visitPackageSymbol(
         packageSymbol: KaPackageSymbol,
         moduleKtFiles: Set<KtFile>,
+        ancestorKtFiles: Set<KtFile>,
         moduleJavaFiles: Set<PsiJavaFile>
     ): DPackage {
         val dri = getDRIFromPackage(packageSymbol)
         val scope = packageSymbol.packageScope
         val callables = scope.callables.filterSymbolsInSourceSet(moduleKtFiles, moduleJavaFiles).toList()
-        val classifiers = scope.classifiers.filterSymbolsInSourceSet(moduleKtFiles, moduleJavaFiles).toList()
+        val classifiers = scope.classifiers.filterSymbolsInSourceSet(moduleKtFiles + ancestorKtFiles, moduleJavaFiles).toList()
 
         val functions = callables.filterIsInstance<KaNamedFunctionSymbol>().map { visitFunctionSymbol(it, dri, isJavaContext = it.isJavaSource()) }
         val properties = callables.filterIsInstance<KaPropertySymbol>().map { visitPropertySymbol(it, dri, isJavaContext = it.isJavaSource()) }
         val classlikes =
             classifiers.filterIsInstance<KaNamedClassSymbol>()
                 .map { visitClassSymbol(it, dri) }
-        val typealiases = classifiers.filterIsInstance<KaTypeAliasSymbol>().map { visitTypeAliasSymbol(it, dri) }
+        val typealiases = classifiers.filterIsInstance<KaTypeAliasSymbol>()
+            .filter { it.psi?.containingFile !in ancestorKtFiles }
+            .map { visitTypeAliasSymbol(it, dri) }
 
         val packageInfo = moduleJavaFiles.singleOrNull { it.name == "package-info.java" }
         val documentation = packageInfo?.let {
