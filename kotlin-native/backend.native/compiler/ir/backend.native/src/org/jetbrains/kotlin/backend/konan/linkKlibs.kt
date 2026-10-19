@@ -122,7 +122,7 @@ internal fun LinkKlibsContext.linkKlibs(
     }
 
     val irModulesForLinkKlibsOutput: List<IrModuleFragment> = sortedUsefulModuleDependencies.allDependencies
-            .filter { it.name != FORWARD_DECLARATIONS_MODULE_NAME && it.descriptor !== moduleDescriptor }
+            .filter { it.name != FORWARD_DECLARATIONS_MODULE_NAME }
 
     return if (config.librariesToCache.isEmpty()) {
         val mainModule = IrModuleFragmentImpl(moduleDescriptor)
