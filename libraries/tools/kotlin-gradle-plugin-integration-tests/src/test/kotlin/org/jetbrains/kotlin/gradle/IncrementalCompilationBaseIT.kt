@@ -13,8 +13,10 @@ import org.jetbrains.kotlin.gradle.testbase.TestProject
 import org.jetbrains.kotlin.gradle.testbase.project
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInBuildToolsApi
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCompilerInfrastructure
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import kotlin.io.path.appendText
 
+@MustRunOnChangesInGradle
 @MustRunOnChangesInCompilerInfrastructure
 @MustRunOnChangesInBuildToolsApi
 abstract class IncrementalCompilationBaseIT : KGPBaseTest() {
