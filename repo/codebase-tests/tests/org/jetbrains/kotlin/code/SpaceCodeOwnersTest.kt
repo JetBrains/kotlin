@@ -6,13 +6,11 @@
 package org.jetbrains.kotlin.code
 
 import org.eclipse.jgit.ignore.FastIgnoreRule
-import org.eclipse.jgit.ignore.IgnoreNode
-import org.jetbrains.kotlin.testFederation.isTestFederationIgnored
+import org.jetbrains.kotlin.repoTestFixtures.ignoreLevel
 import org.junit.jupiter.api.Test
 import java.io.File
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
-import kotlin.test.assertTrue
 import kotlin.test.fail
 
 class SpaceCodeOwnersTest {
@@ -166,7 +164,7 @@ class SpaceCodeOwnersTest {
 
     private class FileOwnershipChecker(
         owners: CodeOwners,
-        val root: File
+        val root: File,
     ) {
         val matchers =
             owners.patterns
@@ -176,8 +174,6 @@ class SpaceCodeOwnersTest {
         val fallbackMatcher = matchers.last()
 
         val fileMatchers = matchers.filterNot { (val _ = item, val rule) -> rule.dirOnly() }
-
-        val ignoreTracker = GitIgnoreTracker()
 
         val unmatchedFilesTop = mutableListOf<File>()
 
@@ -220,10 +216,8 @@ class SpaceCodeOwnersTest {
         }
 
         fun visitFile(file: File, parentMatch: ItemUse?) {
+            if (file.ignoreLevel != null) return
             val path = file.path.replace(File.separatorChar, '/')
-            if (ignoreTracker.isIgnored(path, isDirectory = false)) return
-            if (file.toRepositoryPath().isTestFederationIgnored) return
-
             val matchedItem = findMatchLine(path, isDirectory = false, parentMatch)
             if (matchedItem != fallbackMatcher) return
             if (unmatchedFilesTop.size < 10) {
@@ -232,23 +226,19 @@ class SpaceCodeOwnersTest {
         }
 
         fun visitDirectory(directory: File, parentMatch: ItemUse?, depth: Int) {
+            if (directory.ignoreLevel != null) return
             val path = directory.path.replace(File.separatorChar, '/')
-
-            if (ignoreTracker.isIgnored(path, isDirectory = true)) return
-            if (directory.toRepositoryPath().isTestFederationIgnored) return
             val directoryMatch = findMatchLine(path, isDirectory = true, parentMatch)
-            ignoreTracker.withDirectory(directory) {
-                for (childName in (directory.list() ?: emptyArray())) {
-                    val child = if (directory == root) {
-                        File(childName)
-                    } else {
-                        File(directory, childName)
-                    }
-                    if (child.isDirectory) {
-                        visitDirectory(child, directoryMatch, depth + 1)
-                    } else {
-                        visitFile(child, directoryMatch)
-                    }
+            for (childName in (directory.list() ?: emptyArray())) {
+                val child = if (directory == root) {
+                    File(childName)
+                } else {
+                    File(directory, childName)
+                }
+                if (child.isDirectory) {
+                    visitDirectory(child, directoryMatch, depth + 1)
+                } else {
+                    visitFile(child, directoryMatch)
                 }
             }
         }
@@ -269,35 +259,7 @@ class SpaceCodeOwnersTest {
             val literalPrefix = path.takeWhile { it !in "*?[\\" }
             // For globs, only an ignored literal parent directory proves that all matches are ignored.
             val ignoredPath = if (literalPrefix == path) path else literalPrefix.substringBeforeLast('/', "")
-            return ignoredPath.isNotEmpty() && File(ignoredPath).toRepositoryPath().isTestFederationIgnored
-        }
-    }
-}
-
-
-private class GitIgnoreTracker {
-    private val ignoreNodeStack = mutableListOf(
-        IgnoreNode(listOf(FastIgnoreRule("/.git")))
-    )
-    private val reversedIgnoreNodeStack = ignoreNodeStack.asReversed()
-
-    fun isIgnored(path: String, isDirectory: Boolean): Boolean {
-        return reversedIgnoreNodeStack.firstNotNullOfOrNull { ignoreNode -> ignoreNode.checkIgnored(path, isDirectory) } ?: false
-    }
-
-    inline fun withDirectory(directory: File, action: () -> Unit) {
-        val ignoreFile = directory.resolve(".gitignore").takeIf { it.exists() }
-        if (ignoreFile != null) {
-            val ignoreNode = IgnoreNode().apply {
-                ignoreFile.inputStream().use {
-                    parse(ignoreFile.path, ignoreFile.inputStream())
-                }
-            }
-            ignoreNodeStack.add(ignoreNode)
-        }
-        action()
-        if (ignoreFile != null) {
-            ignoreNodeStack.removeAt(ignoreNodeStack.lastIndex)
+            return ignoredPath.isNotEmpty() && (File(ignoredPath).ignoreLevel != null)
         }
     }
 }
