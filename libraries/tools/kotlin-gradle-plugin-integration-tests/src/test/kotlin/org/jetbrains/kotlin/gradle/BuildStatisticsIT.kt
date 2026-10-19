@@ -9,10 +9,12 @@ import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 
 @DisplayName("Build statistics")
 @JvmGradlePluginTests
+@MustRunOnChangesInGradle
 class BuildStatisticsIT : KGPBaseTest() {
 
     @DisplayName("Http build report url problems are logged only ones")
