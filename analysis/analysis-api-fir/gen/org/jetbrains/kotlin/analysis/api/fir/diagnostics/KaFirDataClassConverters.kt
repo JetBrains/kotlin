@@ -5092,6 +5092,14 @@ private fun KaDiagnosticConverterBuilder.addConversions107() {
             token,
         )
     }
+    add(FirErrors.BARE_INFERENCE_WILL_CHANGE_TYPE) { firDiagnostic ->
+        BareInferenceWillChangeTypeImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirJvmErrors.JVM_SERIALIZABLE_LAMBDA_ON_INLINED_FUNCTION_LITERALS.warningFactory) { firDiagnostic ->
         JvmSerializableLambdaOnInlinedFunctionLiteralsWarningImpl(
             firDiagnostic as KtDiagnosticWithSource,

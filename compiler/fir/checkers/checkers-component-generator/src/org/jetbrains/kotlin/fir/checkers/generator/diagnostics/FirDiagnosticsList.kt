@@ -2050,6 +2050,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<ConeKotlinType>("type")
         }
         val NEW_BARE_INFERENCE_FAILED by warning<PsiElement>()
+        val BARE_INFERENCE_WILL_CHANGE_TYPE by warning<PsiElement>() {
+            parameter<ConeKotlinType>("currentType")
+            parameter<ConeKotlinType>("futureType")
+        }
         val NEW_CHECK_FOR_ERASED_BECAME_NOT_ERASED by warning<PsiElement> {
             parameter<ConeKotlinType>("type")
         }

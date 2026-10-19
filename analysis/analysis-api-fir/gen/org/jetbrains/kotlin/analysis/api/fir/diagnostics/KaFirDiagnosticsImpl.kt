@@ -4972,6 +4972,13 @@ internal class NewBareInferenceFailedImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.NewBareInferenceFailed
 
+internal class BareInferenceWillChangeTypeImpl(
+    override val currentType: KaType,
+    override val futureType: KaType,
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.BareInferenceWillChangeType
+
 internal class NewCheckForErasedBecameNotErasedImpl(
     override val type: KaType,
     firDiagnostic: KtDiagnosticWithSource,
