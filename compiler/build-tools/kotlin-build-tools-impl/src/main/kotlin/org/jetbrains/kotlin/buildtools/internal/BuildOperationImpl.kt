@@ -5,16 +5,17 @@
 
 package org.jetbrains.kotlin.buildtools.internal
 
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import org.jetbrains.kotlin.buildtools.api.*
 import org.jetbrains.kotlin.buildtools.api.trackers.BuildMetricsCollector
 import org.jetbrains.kotlin.buildtools.internal.serializability.*
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
+import org.jetbrains.kotlin.cli.common.messages.MessageCollectorWithDiagnosticId
 import org.jetbrains.kotlin.daemon.common.CompilerServicesFacadeBase
 import kotlin.concurrent.atomics.AtomicBoolean
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
-import kotlin.reflect.KMutableProperty1
 
 @OptIn(ExperimentalAtomicApi::class)
 @Serializable
@@ -46,6 +47,9 @@ internal abstract class BuildOperationImpl<R> : BuildOperation<R>, BuildOperatio
 
     @Transient
     private val executionStarted = AtomicBoolean(false)
+
+    protected open val warningsAsError: Boolean
+        get() = false
 
     @Transient
     open val compilerMessageRenderer: CompilerMessageRenderer = DefaultCompilerMessageRenderer
@@ -108,6 +112,33 @@ internal abstract class BuildOperationImpl<R> : BuildOperation<R>, BuildOperatio
      * lifetime of the daemon.
      */
     internal abstract val usesApplicationEnvironment: Boolean
+
+    protected open fun createMessageCollector(logger: KotlinLogger): MessageCollectorWithDiagnosticId =
+        DoNothingMessageCollector()
+
+    protected open fun createCompilerServicesFacade(
+        logger: KotlinLogger,
+        messageCollector: MessageCollectorWithDiagnosticId
+    ): CompilerServicesFacadeBase? = null
+}
+
+private class DoNothingMessageCollector : MessageCollectorWithDiagnosticId {
+    override fun report(
+        severity: CompilerMessageSeverity,
+        message: String,
+        location: CompilerMessageSourceLocation?,
+        diagnosticId: String?,
+    ) {
+
+    }
+
+    override fun clear() {
+
+    }
+
+    override fun hasErrors(): Boolean {
+        return false
+    }
 }
 
 private class MessageReportingMetricsCollector(private val messageReporter: (Message) -> Unit) : BuildMetricsCollector {
