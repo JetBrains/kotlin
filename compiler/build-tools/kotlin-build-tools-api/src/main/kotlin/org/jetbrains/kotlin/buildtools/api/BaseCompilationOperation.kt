@@ -77,7 +77,7 @@ public interface BaseCompilationOperation : BuildOperation<CompilationResult> {
         public val LOOKUP_TRACKER: Option<CompilerLookupTracker?> = Option("LOOKUP_TRACKER", KotlinReleaseVersion(2, 3, 0))
 
         /**
-         * Adds a collector that allows BTA-impl to pass events to the Build Tool consumer. Events are only emitted in daemon mode.
+         * Adds a collector that allows BTA-impl to pass IC events from the incremental compiler to the Build Tool consumer.
          */
         @JvmField
         public val IC_EVENT_COLLECTOR: Option<IcEventCollector?> = Option("IC_EVENT_COLLECTOR", KotlinReleaseVersion(2, 5, 20))
