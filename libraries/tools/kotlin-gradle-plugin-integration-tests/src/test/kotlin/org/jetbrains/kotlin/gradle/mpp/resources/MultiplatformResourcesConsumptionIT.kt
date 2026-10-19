@@ -17,10 +17,12 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.*
 import org.jetbrains.kotlin.incremental.testingUtils.assertEqualDirectoriesIgnoringDotFiles
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 
 @MppGradlePluginTests
 @DisplayName("Test resources consumption APIs")
+@MustRunOnChangesInGradle
 class MultiplatformResourcesConsumptionIT : KGPBaseTest() {
 
     @DisplayName("Resolve resources with consumption API using variant reselection")

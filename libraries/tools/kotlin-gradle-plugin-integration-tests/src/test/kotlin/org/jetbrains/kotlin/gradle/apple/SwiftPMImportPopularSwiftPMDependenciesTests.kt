@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.uklibs.include
 import org.jetbrains.kotlin.konan.target.Xcode
 import org.jetbrains.kotlin.konan.target.XcodeVersion
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import kotlin.test.assertEquals
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
@@ -35,6 +36,7 @@ import kotlin.io.path.*
     enabledOnCI = [OS.MAC],
 )
 @SwiftPMImportGradlePluginTests
+@MustRunOnChangesInGradle
 class SwiftPMImportPopularSwiftPMDependenciesTests : KGPBaseTest() {
 
     @DisplayName("direct dependency on Firebase")

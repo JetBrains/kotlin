@@ -13,6 +13,8 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
+import org.jetbrains.kotlin.konan.target.Xcode
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import kotlin.io.path.*
@@ -26,6 +28,7 @@ import kotlin.test.assertTrue
 @OptIn(EnvironmentalVariablesOverride::class)
 @DisplayName("SwiftPM import integration tests for local packages")
 @SwiftPMImportGradlePluginTests
+@MustRunOnChangesInGradle
 class SwiftPMImportLocalPackagesIT : KGPBaseTest() {
 
     @GradleTest

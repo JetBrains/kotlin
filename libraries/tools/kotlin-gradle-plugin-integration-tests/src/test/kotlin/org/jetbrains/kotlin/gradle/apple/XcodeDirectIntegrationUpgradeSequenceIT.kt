@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.apple
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.KOTLIN_VERSION
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.extension.ExtensionContext
@@ -20,6 +21,7 @@ import java.util.stream.Stream
 @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
 @DisplayName("Tests an Upgrade sequence for Kotlin direct integration")
 @NativeGradlePluginTests
+@MustRunOnChangesInGradle
 class XcodeDirectIntegrationUpgradeSequenceIT : KGPBaseTest() {
 
     /**

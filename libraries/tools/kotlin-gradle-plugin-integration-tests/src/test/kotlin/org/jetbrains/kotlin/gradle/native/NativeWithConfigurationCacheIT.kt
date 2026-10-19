@@ -7,10 +7,12 @@ package org.jetbrains.kotlin.gradle.native
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 
 @DisplayName("Tests for K/N with enabled configuration cache")
 @NativeGradlePluginTests
+@MustRunOnChangesInGradle
 class NativeWithConfigurationCacheIT : KGPBaseTest() {
 
     @DisplayName(

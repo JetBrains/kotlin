@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.gradle.uklibs.publish
 import org.jetbrains.kotlin.gradle.util.runProcess
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.condition.OS
 import kotlin.io.path.createDirectories
 import kotlin.test.assertEquals
@@ -36,6 +37,7 @@ import kotlin.test.assertEquals
     enabledOnCI = [OS.MAC],
 )
 @SwiftPMImportGradlePluginTests
+@MustRunOnChangesInGradle
 class SwiftPMImportFUSIT : KGPBaseTest() {
 
     @GradleTest

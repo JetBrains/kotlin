@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
 import org.jetbrains.kotlin.gradle.util.MavenModule
 import org.jetbrains.kotlin.gradle.util.parsePom
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import java.io.Serializable
 import java.nio.file.Path
@@ -36,6 +37,7 @@ import kotlin.test.assertEquals
 @OptIn(ExperimentalSerializationApi::class, ExperimentalWasmDsl::class)
 @MppGradlePluginTests
 @DisplayName("Smoke test uklib artifact publication")
+@MustRunOnChangesInGradle
 class UklibPublicationIT : KGPBaseTest() {
 
     @GradleTest

@@ -10,12 +10,14 @@ import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import kotlin.test.assertEquals
 
 @OptIn(ExperimentalKotlinGradlePluginApi::class)
 @MppGradlePluginTests
 @DisplayName("Test the GMT runtime behavior")
+@MustRunOnChangesInGradle
 class UklibConsumptionGranularMetadataTransformationIT : KGPBaseTest() {
 
     /**

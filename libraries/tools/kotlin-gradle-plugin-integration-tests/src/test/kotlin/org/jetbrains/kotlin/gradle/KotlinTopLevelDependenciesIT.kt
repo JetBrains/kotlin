@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.gradle.uklibs.publishJavaPlatform
 import org.jetbrains.kotlin.gradle.util.MavenModule
 import org.jetbrains.kotlin.gradle.util.parsePom
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
 import kotlin.io.path.exists
@@ -30,6 +31,7 @@ import kotlin.io.path.writeText
 import kotlin.test.assertEquals
 
 @MppGradlePluginTests
+@MustRunOnChangesInGradle
 class KotlinTopLevelDependenciesIT : KGPBaseTest() {
 
     override val defaultBuildOptions =
