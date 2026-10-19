@@ -22,10 +22,16 @@ FILE: errorSafeCallResolution.kt
             public get(): R|union(primary=kotlin/String, errors=Bar)|
 
     }
-    public final fun test(a: R|union(primary=kotlin/String, errors=Foo)|, b: R|union(primary=C, errors=Foo)|, c: R|union(errors=Foo | Bar)|): R|kotlin/Unit| {
+    public final fun R|C|.extensionFun(): R|union(primary=kotlin/String, errors=Bar)| {
+        ^extensionFun String()
+    }
+    public final fun <T : R|union(primary=C, errors=Foo)|> test(a: R|union(primary=kotlin/String, errors=Foo)|, b: R|union(primary=C, errors=Foo)|, c: R|union(errors=Foo | Bar)|, d: R|T|): R|kotlin/Unit| {
         lval x1: R|union(primary=kotlin/Int, errors=Foo)| = R|<local>/a||.{ $subj$.R|kotlin/String.length| }
         lval x2: R|union(primary=kotlin/String, errors=Bar | Foo)| = R|<local>/b||.{ $subj$.R|/C.memberFun|() }
         lval x3: R|union(primary=kotlin/String, errors=Bar | Foo)| = R|<local>/b||.{ $subj$.R|/C.memberVal| }
         lval x4: R|union(primary=kotlin/String, errors=Foo | Bar)| = R|<local>/c||.{ $subj$.R|kotlin/toString|() }
-        lval x5: R|kotlin/Int| = String()|.{ $subj$.R|kotlin/String.length| }
+        lval x4_: R|union(primary=ERROR CLASS: Unresolved name: hashCode, errors=Foo | Bar)| = R|<local>/c||.{ $subj$.<Unresolved name: hashCode>#() }
+        lval x5: R|union(primary=kotlin/Int, errors=kotlin/RichError)| = String()|.{ $subj$.R|kotlin/String.length| }
+        lval x6: R|union(primary=kotlin/String, errors=Bar | Foo)| = R|<local>/d||.{ $subj$.R|/C.memberFun|() }
+        lval x7: R|union(primary=kotlin/String, errors=Bar | Foo)| = R|<local>/d||.{ $subj$.R|/extensionFun<Candidate is inapplicable because of receiver type mismatch: /extensionFun>#|() }
     }

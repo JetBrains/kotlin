@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -18,8 +19,8 @@ import org.jetbrains.kotlin.fir.expressions.FirSafeCallKind
 import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.ConeUnionType
 import org.jetbrains.kotlin.fir.types.canBeNull
+import org.jetbrains.kotlin.fir.types.isSubtypeOf
 import org.jetbrains.kotlin.fir.types.resolvedType
 
 abstract class AbstractFirUnnecessarySafeCallChecker : FirSafeCallExpressionChecker(MppCheckerKind.Common) {
@@ -33,7 +34,7 @@ abstract class AbstractFirUnnecessarySafeCallChecker : FirSafeCallExpressionChec
             NullSafe -> if (!receiverType.canBeNull() && LanguageFeature.EnableDfaWarningsInK2.isEnabled()) {
                 reporter.reportOn(source, FirErrors.UNNECESSARY_SAFE_CALL, "non-null", receiverType)
             }
-            ErrorSafe -> if (receiverType !is ConeUnionType) {
+            ErrorSafe -> if (receiverType.isSubtypeOf(StandardTypes.NullableNonError, context.session)) {
                 reporter.reportOn(source, FirErrors.UNNECESSARY_SAFE_CALL, "non-union", receiverType)
             }
         }

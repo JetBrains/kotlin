@@ -590,9 +590,11 @@ fun FirCheckedSafeCallSubject.propagateTypeFromOriginalReceiver(
     val safeReceiverType = when (kind) {
         NullSafe -> receiverType.makeConeTypeDefinitelyNotNullOrNotNull(session.typeContext)
         ErrorSafe -> if (receiverType is ConeUnionType) {
+            // Mostly an optimization, though it also behaves differently if primaryType is Nothing
+            // until we teach ConeTypeIntersector to handle unions.
             receiverType.primaryType
         } else {
-            receiverType
+            ConeTypeIntersector.intersectTypes(session.typeContext, [receiverType, StandardTypes.NullableNonError])
         }
     }
 
@@ -612,12 +614,8 @@ fun FirSafeCallExpression.propagateTypeFromQualifiedAccessAfterNullCheck(
             when (kind) {
                 NullSafe -> type.withNullability(nullable = true, session.typeContext)
                 ErrorSafe -> {
-                    val receiverType = receiver.resolvedType
-                    if (receiverType is ConeUnionType) {
-                        ConeTypeUnifier.unify(type, receiverType.richErrorTypes, attributes = ConeAttributes.Empty, session.typeContext)
-                    } else {
-                        type
-                    }
+                    val richErrors = receiver.resolvedType.unionSuperTypeOrNull(session)?.richErrorTypes ?: [StandardTypes.RichError]
+                    ConeTypeUnifier.unify(type, richErrors, attributes = ConeAttributes.Empty, session.typeContext)
                 }
             }
         }
@@ -630,6 +628,26 @@ fun FirSafeCallExpression.propagateTypeFromQualifiedAccessAfterNullCheck(
 
     replaceConeTypeOrNull(resultingType)
     session.lookupTracker?.recordTypeResolveAsLookup(resultingType, source, file.source)
+}
+
+private fun ConeKotlinType.unionSuperTypeOrNull(session: FirSession): ConeUnionType? {
+    if (this is ConeUnionType) return this
+
+    session.typeContext.newTypeCheckerState(
+        errorTypesEqualToAnything = false,
+        stubTypesEqualToAnything = true,
+        dnnTypesEqualToFlexible = false
+    ).anySupertype(
+        this.lowerBoundIfFlexible(),
+        predicate = {
+            if (it is ConeUnionType) return it
+            false
+        },
+        // If we encounter a class-like type, we can stop looking.
+        supertypesPolicy = { if (it is ConeClassLikeType) None else LowerIfFlexible }
+    )
+
+    return null
 }
 
 fun FirAnnotation.getCorrespondingClassSymbolOrNull(session: FirSession): FirRegularClassSymbol? {

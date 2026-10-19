@@ -9,39 +9,35 @@ import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.ConeTypeProjection
-import org.jetbrains.kotlin.fir.types.ConeClassLikeTypeImpl
-import org.jetbrains.kotlin.fir.types.toLookupTag
+import org.jetbrains.kotlin.fir.types.constructClassLikeType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
 
 object StandardTypes {
-    val Boolean: ConeClassLikeType = StandardClassIds.Boolean.createType()
-    val Char: ConeClassLikeType = StandardClassIds.Char.createType()
-    val Byte: ConeClassLikeType = StandardClassIds.Byte.createType()
-    val Short: ConeClassLikeType = StandardClassIds.Short.createType()
-    val Int: ConeClassLikeType = StandardClassIds.Int.createType()
-    val Long: ConeClassLikeType = StandardClassIds.Long.createType()
-    val Float: ConeClassLikeType = StandardClassIds.Float.createType()
-    val Double: ConeClassLikeType = StandardClassIds.Double.createType()
+    val Boolean: ConeClassLikeType = StandardClassIds.Boolean.constructClassLikeType()
+    val Char: ConeClassLikeType = StandardClassIds.Char.constructClassLikeType()
+    val Byte: ConeClassLikeType = StandardClassIds.Byte.constructClassLikeType()
+    val Short: ConeClassLikeType = StandardClassIds.Short.constructClassLikeType()
+    val Int: ConeClassLikeType = StandardClassIds.Int.constructClassLikeType()
+    val Long: ConeClassLikeType = StandardClassIds.Long.constructClassLikeType()
+    val Float: ConeClassLikeType = StandardClassIds.Float.constructClassLikeType()
+    val Double: ConeClassLikeType = StandardClassIds.Double.constructClassLikeType()
 
-    val Any: ConeClassLikeType = StandardClassIds.Any.createType()
-    val RichError: ConeClassLikeType = StandardClassIds.RichError.createType()
-    val NullableAny: ConeClassLikeType = StandardClassIds.Any.createType(isNullable = true)
-    val Nothing: ConeClassLikeType = StandardClassIds.Nothing.createType()
-    val NullableNothing: ConeClassLikeType = StandardClassIds.Nothing.createType(isNullable = true)
-    val Unit: ConeClassLikeType = StandardClassIds.Unit.createType()
+    val Any: ConeClassLikeType = StandardClassIds.Any.constructClassLikeType()
+    val RichError: ConeClassLikeType = StandardClassIds.RichError.constructClassLikeType()
+    val NullableNonError: ConeClassLikeType = StandardClassIds.NonError.constructClassLikeType(isMarkedNullable = true)
+    val NullableAny: ConeClassLikeType = StandardClassIds.Any.constructClassLikeType(isMarkedNullable = true)
+    val Nothing: ConeClassLikeType = StandardClassIds.Nothing.constructClassLikeType()
+    val NullableNothing: ConeClassLikeType = StandardClassIds.Nothing.constructClassLikeType(isMarkedNullable = true)
+    val Unit: ConeClassLikeType = StandardClassIds.Unit.constructClassLikeType()
 
-    val String: ConeClassLikeType = StandardClassIds.String.createType()
+    val String: ConeClassLikeType = StandardClassIds.String.constructClassLikeType()
 
-    val UByte: ConeClassLikeType = StandardClassIds.UByte.createType()
-    val UShort: ConeClassLikeType = StandardClassIds.UShort.createType()
-    val UInt: ConeClassLikeType = StandardClassIds.UInt.createType()
-    val ULong: ConeClassLikeType = StandardClassIds.ULong.createType()
+    val UByte: ConeClassLikeType = StandardClassIds.UByte.constructClassLikeType()
+    val UShort: ConeClassLikeType = StandardClassIds.UShort.constructClassLikeType()
+    val UInt: ConeClassLikeType = StandardClassIds.UInt.constructClassLikeType()
+    val ULong: ConeClassLikeType = StandardClassIds.ULong.constructClassLikeType()
 }
-
-private fun ClassId.createType(isNullable: Boolean = false): ConeClassLikeType =
-    ConeClassLikeTypeImpl(this.toLookupTag(), ConeTypeProjection.EMPTY_ARRAY, isNullable)
 
 fun ConeClassLikeType.isDouble(): Boolean = lookupTag.classId == StandardClassIds.Double
 fun ConeClassLikeType.isFloat(): Boolean = lookupTag.classId == StandardClassIds.Float
