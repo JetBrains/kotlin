@@ -102,17 +102,13 @@ private class ClassClsStubBuilder(
 
     private fun createClassOrObjectStubAndModifierListStub(): StubElement<out PsiElement> {
         val classOrObjectStub = doCreateClassOrObjectStub()
-        val annotations = c.components.annotationLoader.loadClassAnnotations(thisAsProtoContainer)
-        val modifierList = createModifierListForClass(classOrObjectStub, annotations)
-        createAnnotationStubs(annotations, modifierList)
+        val modifierList = createModifierListForClass(classOrObjectStub)
+        createAnnotationStubs(c.components.annotationLoader.loadClassAnnotations(thisAsProtoContainer), modifierList)
         typeStubBuilder.createContextReceiverStubs(modifierList, classProto.contextReceiverTypes(c.typeTable))
         return classOrObjectStub
     }
 
-    private fun createModifierListForClass(
-        parent: StubElement<out PsiElement>,
-        annotations: List<AnnotationWithArgs>,
-    ): KotlinModifierListStubImpl {
+    private fun createModifierListForClass(parent: StubElement<out PsiElement>): KotlinModifierListStubImpl {
         val relevantFlags = arrayListOf(
             VISIBILITY,
             EXTERNAL_CLASS,
@@ -137,7 +133,7 @@ private class ClassClsStubBuilder(
                 else -> {}
             }
 
-            if (isInlineClassWithoutJvmInline(annotations)) add(KtTokens.INLINE_KEYWORD)
+            if (classProto.hasInlineClassUnderlyingPropertyName()) add(KtTokens.INLINE_KEYWORD)
         }
 
         return createModifierListStubForDeclaration(
@@ -147,20 +143,6 @@ private class ClassClsStubBuilder(
             additionalModifiers,
             returnValueStatus = null,
         )
-    }
-
-    /**
-     * Whether the class is an inline value class that has to be spelled `inline value class`, as opposed to a full value class.
-     *
-     * The metadata marks both kinds with the same [Flags.IS_VALUE_CLASS] flag, which is translated to a sole `value` modifier.
-     * On its own, that modifier denotes a full value class once `FullValueClasses` is enabled, even if the class has a single underlying
-     * property. Only an inline class names its underlying property in the class itself, so this name is what tells the two kinds apart.
-     *
-     * A `@JvmInline` annotation already makes the class an inline one, so the modifier is not added on top of it.
-     */
-    private fun isInlineClassWithoutJvmInline(annotations: List<AnnotationWithArgs>): Boolean {
-        return classProto.hasInlineClassUnderlyingPropertyName() &&
-                annotations.none { it.classId == JvmStandardClassIds.Annotations.JvmInline }
     }
 
     private fun doCreateClassOrObjectStub(): StubElement<out PsiElement> {
