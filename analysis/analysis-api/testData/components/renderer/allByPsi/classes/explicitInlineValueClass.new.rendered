@@ -3,4 +3,4 @@ inline value class ExplicitInlineValueClass(val value: Int)
 inline value class ReversedModifiers(val value: String)
 
 @JvmInline
-value class AnnotatedExplicitInlineValueClass(val value: Long)
+inline value class AnnotatedExplicitInlineValueClass(val value: Long)
