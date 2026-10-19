@@ -9694,15 +9694,6 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
-    public interface WrongExportedDeclaration : KaFirDiagnostic<KtElement> {
-        override val diagnosticClass: KClass<WrongExportedDeclaration>
-            get() = WrongExportedDeclaration::class
-
-        public val kind: String
-    }
-
-    @KaUnstableDiagnosticApi
-    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface NonExportableType : KaFirDiagnostic<KtElement> {
         override val diagnosticClass: KClass<NonExportableType>
             get() = NonExportableType::class
@@ -9747,13 +9738,6 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
-    public interface NotExportedOrExternalActualDeclarationWhileExpectIsExported : KaFirDiagnostic<KtElement> {
-        override val diagnosticClass: KClass<NotExportedOrExternalActualDeclarationWhileExpectIsExported>
-            get() = NotExportedOrExternalActualDeclarationWhileExpectIsExported::class
-    }
-
-    @KaUnstableDiagnosticApi
-    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface ExposedNotExportedSuperInterfaceError : KaFirDiagnostic<KtElement> {
         override val diagnosticClass: KClass<ExposedNotExportedSuperInterfaceError>
             get() = ExposedNotExportedSuperInterfaceError::class
@@ -9789,6 +9773,22 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
     public interface WrongJsExportTargetVisibility : KaFirDiagnostic<KtElement> {
         override val diagnosticClass: KClass<WrongJsExportTargetVisibility>
             get() = WrongJsExportTargetVisibility::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface WrongExportedDeclaration : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<WrongExportedDeclaration>
+            get() = WrongExportedDeclaration::class
+
+        public val kind: String
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface NotExportedOrExternalActualDeclarationWhileExpectIsExported : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<NotExportedOrExternalActualDeclarationWhileExpectIsExported>
+            get() = NotExportedOrExternalActualDeclarationWhileExpectIsExported::class
     }
 
     @KaUnstableDiagnosticApi

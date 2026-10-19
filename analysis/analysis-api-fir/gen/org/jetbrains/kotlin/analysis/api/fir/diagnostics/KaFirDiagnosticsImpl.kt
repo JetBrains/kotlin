@@ -6845,12 +6845,6 @@ internal class JsExternalArgumentImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.JsExternalArgument
 
-internal class WrongExportedDeclarationImpl(
-    override val kind: String,
-    firDiagnostic: KtDiagnosticWithSource,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.WrongExportedDeclaration
-
 internal class NonExportableTypeImpl(
     override val kind: String,
     override val type: KaType,
@@ -6881,11 +6875,6 @@ internal class NamedCompanionInExportedInterfaceImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.NamedCompanionInExportedInterface
 
-internal class NotExportedOrExternalActualDeclarationWhileExpectIsExportedImpl(
-    firDiagnostic: KtDiagnosticWithSource,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.NotExportedOrExternalActualDeclarationWhileExpectIsExported
-
 internal class ExposedNotExportedSuperInterfaceErrorImpl(
     override val restrictingDeclaration: KaClassLikeSymbol,
     firDiagnostic: KtDiagnosticWithSource,
@@ -6912,6 +6901,17 @@ internal class WrongJsExportTargetVisibilityImpl(
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.WrongJsExportTargetVisibility
+
+internal class WrongExportedDeclarationImpl(
+    override val kind: String,
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.WrongExportedDeclaration
+
+internal class NotExportedOrExternalActualDeclarationWhileExpectIsExportedImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.NotExportedOrExternalActualDeclarationWhileExpectIsExported
 
 internal class DelegationByDynamicImpl(
     firDiagnostic: KtDiagnosticWithSource,
