@@ -1370,7 +1370,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
 
     private data class BareTypeInferenceResult(
         val typeRef: FirTypeRef,
-        val divergedOldType: ConeKotlinType? = null,
+        val divergedNewType: ConeKotlinType? = null,
         val newInferenceFailed: Boolean = false,
     )
 
@@ -1390,7 +1390,6 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         val oldType = components.computeRepresentativeTypeForBareType(type, originalType)
         val newType = components.computeRepresentativeTypeForBareTypeByInheritance(type, originalType)
         val resultingType = when {
-            newType != null -> newType
             oldType != null -> oldType
             firClass.isLocal && firClass.typeParameters.none { it.symbol.containingDeclarationSymbol in outerClasses } &&
                     (operation == NOT_IS || operation == IS || operation == AS || operation == SAFE_AS) -> {
@@ -1403,7 +1402,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 },
             )
         }
-        val divergedOldType = oldType.takeIf {
+        val divergedNewType = newType.takeIf {
             oldType != null && newType != null && !AbstractTypeChecker.isSubtypeOf(
                 session.typeContext,
                 newType,
@@ -1412,7 +1411,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             )
         }
         val resultingTypeRef = if (resultingType.typeArguments.isEmpty()) this else withReplacedConeType(resultingType)
-        return BareTypeInferenceResult(resultingTypeRef, divergedOldType, newType == null)
+        return BareTypeInferenceResult(resultingTypeRef, divergedNewType, newType == null)
     }
 
     override fun transformTypeOperatorCall(
@@ -1439,7 +1438,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         val bareTypeInferenceResult =
             resolved.conversionTypeRef.withTypeArgumentsForBareType(resolved.argument, typeOperatorCall.operation)
         val conversionTypeRef = bareTypeInferenceResult.typeRef
-        val divergedOldType = bareTypeInferenceResult.divergedOldType
+        val divergedNewType = bareTypeInferenceResult.divergedNewType
         resolved.transformChildren(object : FirDefaultTransformer<Any?>() {
             override fun <E : FirElement> transformElement(element: E, data: Any?): E {
                 return element
@@ -1468,7 +1467,12 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             }
             else -> error("Unknown type operator: ${resolved.operation}")
         }
-        dataFlowAnalyzer.exitTypeOperatorCall(resolved, divergedOldType)
+        dataFlowAnalyzer.exitTypeOperatorCall(resolved, null)
+        if (divergedNewType != null) {
+            typeOperatorCall.replaceNonFatalDiagnostics(
+                typeOperatorCall.nonFatalDiagnostics + DivergingBareInference(divergedNewType)
+            )
+        }
         if (bareTypeInferenceResult.newInferenceFailed) {
             typeOperatorCall.replaceNonFatalDiagnostics(
                 typeOperatorCall.nonFatalDiagnostics + DivergingBareInference(null)

@@ -268,6 +268,7 @@ private fun findStaticallyKnownSubtypeByTypeParameterInheritance(
         subTypeClassSymbol,
         supertype,
         requireEqualBounds = false,
+        requireFullInference = false
     )
 
     if (knownArguments == null) {

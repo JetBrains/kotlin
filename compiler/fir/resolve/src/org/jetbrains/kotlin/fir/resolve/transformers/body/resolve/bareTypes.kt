@@ -91,6 +91,7 @@ fun BodyResolveComponents.computeRepresentativeTypeForBareTypeByInheritance(
         castClass,
         originalType,
         requireEqualBounds = true,
+        requireFullInference = true,
     ) ?: return null
 
     return expandedCastType.withArguments(newArguments)
