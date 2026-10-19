@@ -5144,6 +5144,12 @@ public class SourceStubsTestGenerated extends AbstractSourceStubsTest {
     }
 
     @Test
+    @TestMetadata("anonymousFunctionsScript.kts")
+    public void testAnonymousFunctionsScript() {
+      run("anonymousFunctionsScript.kts");
+    }
+
+    @Test
     @TestMetadata("companionsInsideNamelessClassesScript.kts")
     public void testCompanionsInsideNamelessClassesScript() {
       run("companionsInsideNamelessClassesScript.kts");

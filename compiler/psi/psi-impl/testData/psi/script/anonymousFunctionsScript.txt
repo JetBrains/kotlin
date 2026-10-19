@@ -1,0 +1,76 @@
+KtFile: anonymousFunctionsScript.kts
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  SCRIPT
+    BLOCK
+      PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')
+      PsiWhiteSpace('\n\n')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('anonymous')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        FUNCTION
+          PsiElement(fun)('fun')
+          VALUE_PARAMETER_LIST
+            PsiElement(LPAR)('(')
+            VALUE_PARAMETER
+              PsiElement(IDENTIFIER)('a')
+              PsiElement(COLON)(':')
+              PsiWhiteSpace(' ')
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('Int')
+            PsiElement(RPAR)(')')
+          PsiWhiteSpace(' ')
+          PsiElement(EQ)('=')
+          PsiWhiteSpace(' ')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('a')
+      PsiWhiteSpace('\n\n')
+      SCRIPT_INITIALIZER
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('run')
+          VALUE_ARGUMENT_LIST
+            PsiElement(LPAR)('(')
+            VALUE_ARGUMENT
+              FUNCTION
+                PsiElement(fun)('fun')
+                VALUE_PARAMETER_LIST
+                  PsiElement(LPAR)('(')
+                  PsiElement(RPAR)(')')
+                PsiWhiteSpace(' ')
+                BLOCK
+                  PsiElement(LBRACE)('{')
+                  PsiWhiteSpace('\n    ')
+                  FUNCTION
+                    PsiElement(fun)('fun')
+                    PsiWhiteSpace(' ')
+                    PsiElement(IDENTIFIER)('localInAnonymous')
+                    VALUE_PARAMETER_LIST
+                      PsiElement(LPAR)('(')
+                      PsiElement(RPAR)(')')
+                    PsiWhiteSpace(' ')
+                    BLOCK
+                      PsiElement(LBRACE)('{')
+                      PsiElement(RBRACE)('}')
+                  PsiWhiteSpace('\n')
+                  PsiElement(RBRACE)('}')
+            PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n\n')
+      FUNCTION
+        PsiElement(fun)('fun')
+        PsiWhiteSpace(' ')
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        BLOCK
+          PsiElement(LBRACE)('{')
+          PsiElement(RBRACE)('}')

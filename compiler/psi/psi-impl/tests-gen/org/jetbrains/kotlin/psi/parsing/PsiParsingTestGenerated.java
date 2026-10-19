@@ -5144,6 +5144,12 @@ public class PsiParsingTestGenerated extends AbstractPsiParsingTest {
     }
 
     @Test
+    @TestMetadata("anonymousFunctionsScript.kts")
+    public void testAnonymousFunctionsScript() {
+      run("anonymousFunctionsScript.kts");
+    }
+
+    @Test
     @TestMetadata("companionsInsideNamelessClassesScript.kts")
     public void testCompanionsInsideNamelessClassesScript() {
       run("companionsInsideNamelessClassesScript.kts");
