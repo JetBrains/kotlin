@@ -985,6 +985,7 @@ internal class StubBasedFirMemberDeserializer(
             }
             isLocal = false
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
+            annotations += c.annotationDeserializer.loadAnnotations(declaration)
         }.apply {
             containingClassForStaticMemberAttr = c.dispatchReceiver!!.lookupTag
         }
