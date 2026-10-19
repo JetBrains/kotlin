@@ -142,17 +142,24 @@ class ParseGitDiffTextTests {
     fun `diff is split into changed files`() {
         val diffFragments = listOf(
             modifiedFile,
+            modifiedFileWithCrlf,
             addedFile,
             deletedFile,
             addedSymlink,
             modifiedFileWithLineTerminatorsInPath,
         )
 
-        val diffText = diffFragments.joinToString(separator = "\n")
+        // Git terminates each line with a line break, including the last one.
+        val diffText = diffFragments.joinToString(separator = "") { "$it\n" }
 
         assertEquals(
             diffFragments.map { it.split('\n') },
             parseGitDiffText(diffText).map { it.patchLines },
         )
+    }
+
+    @Test
+    fun `empty diff has no changed files`() {
+        assertEquals(emptyList(), parseGitDiffText(""))
     }
 }
