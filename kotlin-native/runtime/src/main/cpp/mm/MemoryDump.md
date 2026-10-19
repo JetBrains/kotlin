@@ -118,3 +118,10 @@
 - thread_id (id): thread ID
 - object_id (id): object ID
 ```
+
+## Optional omit
+
+When primitive-array payloads are omitted, the ARRAY record still stores `count`, but
+the following size field is `0` and `element_data` is empty. Object arrays and
+native-pointer arrays are never omitted. `kdumputil` zero-fills omitted primitive
+arrays when converting to hprof.
