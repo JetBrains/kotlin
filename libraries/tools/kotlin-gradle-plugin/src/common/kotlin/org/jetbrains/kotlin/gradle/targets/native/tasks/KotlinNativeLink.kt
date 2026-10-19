@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.gradle.targets.native.DisableNativeCacheSettings
 import org.jetbrains.kotlin.gradle.targets.native.UsesKonanPropertiesBuildService
 import org.jetbrains.kotlin.gradle.targets.native.internal.getOriginalPlatformLibrariesForTargetWithKonanDistribution
 import org.jetbrains.kotlin.gradle.targets.native.tasks.CompilerPluginData
+import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeLinkOutputs
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeFromToolchainProvider
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeProvider
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.NoopKotlinNativeProvider
@@ -416,23 +417,13 @@ constructor(
     @get:NormalizeLineEndings
     protected val friendModule: FileCollection = objectFactory.fileCollection().from({ compilation.friendPaths })
 
+    private val linkOutputs: Provider<KotlinNativeLinkOutputs> = destinationDirectory.map {
+        KotlinNativeLinkOutputs(it.asFile, outputKind, konanTarget, baseName)
+    }
+
     @get:Internal
     open val outputFile: Provider<File>
-        get() = destinationDirectory.flatMap {
-            val prefix = outputKind.prefix(konanTarget)
-            val suffix = outputKind.suffix(konanTarget)
-            val filename = "$prefix${baseName}$suffix".let {
-                when {
-                    outputKind == CompilerOutputKind.FRAMEWORK ->
-                        it.asValidFrameworkName
-                    outputKind in listOf(CompilerOutputKind.STATIC, CompilerOutputKind.DYNAMIC) ->
-                        it.replace('-', '_')
-                    else -> it
-                }
-            }
-
-            objectFactory.property(it.file(filename).asFile)
-        }
+        get() = linkOutputs.map { it.mainOutput }
 
     @Internal
     val compilerPluginOptions = CompilerPluginOptions()
