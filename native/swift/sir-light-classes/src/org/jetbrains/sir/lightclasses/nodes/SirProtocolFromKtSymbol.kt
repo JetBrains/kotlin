@@ -561,7 +561,7 @@ internal class SirAuxiliaryProtocolDeclarationsFromKtSymbol(
         val defaultFunctions = members.filterIsInstance<SirFunction>().mapNotNull { function ->
             when (function) {
                 is SirFunctionFromKtSymbol -> function.directDispatchProtocolWitnessOrNull()
-                // TODO: Support direct dispatch protocol witness on SirFunctionFromKtPropertySymbol (KT-87795)
+                is SirFunctionFromKtPropertySymbol -> function.directDispatchProtocolWitnessOrNull()
                 else -> null
             } ?: runIf(isSpiMember(function)) {
                 buildFunctionCopy(function) {
