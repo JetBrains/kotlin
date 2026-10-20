@@ -9,8 +9,10 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 
 @MppGradlePluginTests
+@MustRunOnChangesInGradle
 class MppIncorrectCompileOnlyDependenciesValidationIT : KGPBaseTest() {
 
     override val defaultBuildOptions: BuildOptions
