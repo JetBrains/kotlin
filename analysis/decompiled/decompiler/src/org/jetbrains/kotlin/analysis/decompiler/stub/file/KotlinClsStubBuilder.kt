@@ -171,27 +171,11 @@ private class JvmClsAnnotationLoader(
         kind != PROPERTY
 
     /**
-     * Loads class annotations from bytecode like [AbstractBinaryClassAnnotationLoader.loadClassAnnotations] does, except for value
-     * classes: the JVM backend adds `@kotlin.jvm.JvmInline` to inline classes, which their `HAS_ANNOTATIONS` flag doesn't account for,
-     * so the bytecode of a value class is read even without the flag, as `JvmBinaryAnnotationDeserializer` does.
+     * The JVM backend adds `@kotlin.jvm.JvmInline` to inline classes, which their `HAS_ANNOTATIONS` flag doesn't account for, so the
+     * bytecode of a value class is read even without the flag, as `JvmBinaryAnnotationDeserializer` does.
      */
-    override fun loadClassAnnotations(container: ProtoContainer.Class): List<AnnotationWithArgs> {
-        val flags = container.classProto.flags
-        if (!Flags.HAS_ANNOTATIONS.get(flags) && !Flags.IS_VALUE_CLASS.get(flags)) return emptyList()
-
-        val kotlinClass = (container.source as? KotlinJvmBinarySourceElement)?.binaryClass
-            ?: error("Class for loading annotations is not found: ${container.debugFqName()}")
-
-        val result = mutableListOf<AnnotationWithArgs>()
-        kotlinClass.loadClassAnnotations(object : KotlinJvmBinaryClass.AnnotationVisitor {
-            override fun visitAnnotation(classId: ClassId, source: SourceElement): KotlinJvmBinaryClass.AnnotationArgumentVisitor? =
-                loadAnnotationIfNotSpecial(classId, source, result)
-
-            override fun visitEnd() {}
-        }, getCachedFileContent(kotlinClass))
-
-        return result
-    }
+    override fun noClassAnnotationsInBytecode(classFlags: Int): Boolean =
+        super.noClassAnnotationsInBytecode(classFlags) && !Flags.IS_VALUE_CLASS.get(classFlags)
 
     override fun loadPropertyInitializer(container: ProtoContainer, proto: ProtoBuf.Property): ConstantValue<*>? {
         val specialCase = getSpecialCaseContainerClass(
