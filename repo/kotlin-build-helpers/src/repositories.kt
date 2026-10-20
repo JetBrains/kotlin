@@ -373,6 +373,24 @@ fun RepositoryHandler.wasmtimeDistributions() {
     }
 }
 
+fun RepositoryHandler.wasmToolsDistributions() {
+    exclusiveContent {
+        forRepository {
+            ivy {
+                name = "wasm-tools Distributions"
+                setUrl("https://cache-redirector.jetbrains.com/github.com/bytecodealliance/wasm-tools/releases/download")
+                patternLayout {
+                    artifact("v[revision]/[artifact]-[revision]-[classifier].[ext]")
+                }
+                metadataSources { artifact() }
+            }
+        }
+        filter {
+            includeModule("bytecodealliance.wasm-tools", "wasm-tools")
+        }
+    }
+}
+
 fun RepositoryHandler.androidRepository() {
     exclusiveContent {
         forRepository {
