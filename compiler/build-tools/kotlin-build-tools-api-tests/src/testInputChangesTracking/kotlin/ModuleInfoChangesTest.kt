@@ -106,7 +106,7 @@ class ModuleInfoChangesTest : BaseCompilationTest() {
                 expectedLogLevelForRebuildReason(strategyConfig),
                 "Non-incremental compilation will be performed: ${BuildAttribute.MODULE_INFO_CHANGED.readableString}"
             )
-            assertLogContainsPatterns(LogLevel.ERROR, ".*/a.kt:5:30 Unresolved reference 'SQLException'.".toRegex())
+            assertLogContainsPatterns(LogLevel.ERROR, ".*/a.kt:5:39 Unresolved reference 'SQLException'.".toRegex())
             assertCompiledSources("a.kt", "b.kt")
         }
     }
