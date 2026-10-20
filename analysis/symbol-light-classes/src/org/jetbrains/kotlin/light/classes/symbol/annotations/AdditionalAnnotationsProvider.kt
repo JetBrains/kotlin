@@ -30,22 +30,21 @@ internal sealed interface AdditionalAnnotationsProvider {
     fun addAllAnnotations(currentRawAnnotations: MutableList<in PsiAnnotation>, foundQualifiers: MutableSet<String>, owner: PsiElement)
 
     /**
-     * @return **true** if this provider may add an annotation with [qualifiedName] which [GranularAnnotationsBox] looks up among the
-     * declared annotations only (a **special** annotation), so the box asks [findSpecialAnnotation] when no declared annotation matches
-     */
-    fun isSpecialQualifier(qualifiedName: String): Boolean
-
-    /**
-     * The resulted annotation must be presented among all annotations after [addAllAnnotations]
+     * Returns the special annotation with [qualifiedName] if this provider adds it.
      *
-     * @param annotationsBox an owner of [AdditionalAnnotationsProvider]
-     * @param qualifiedName a **special** ([isSpecialQualifier] must be **true** for it) qualified name for a new annotation,
-     * which no declared annotation has
-     * @param owner an owner for a new annotation
+     * [GranularAnnotationsBox] looks up a **special** annotation, which the compiler resolves in an early phase, among the declared
+     * annotations only, without computing all annotations. When no declared annotation matches, it calls this function instead.
+     * A provider which adds a special annotation overrides this function, and any other provider keeps the default implementation,
+     * which returns **null**.
      *
-     * @return a new annotation with [qualifiedName]
+     * The returned annotation must be equal to the one which [addAllAnnotations] adds.
+     *
+     * @param qualifiedName the qualified name of a special annotation which no declared annotation has
+     * @param owner the owner of the new annotation
+     *
+     * @return a new annotation with [qualifiedName] if this provider adds one, or **null** otherwise
      */
-    fun findSpecialAnnotation(annotationsBox: GranularAnnotationsBox, qualifiedName: String, owner: PsiElement): PsiAnnotation?
+    fun findSpecialAnnotation(qualifiedName: String, owner: PsiElement): PsiAnnotation? = null
 
     /**
      * Adds a new annotation with [qualifier] name to [currentRawAnnotations] and [foundQualifiers] if not already present

@@ -22,16 +22,4 @@ internal class CollectionAdditionalAnnotationsProvider(
             addSimpleAnnotationIfMissing(qualifiedName, currentRawAnnotations, foundQualifiers, owner)
         }
     }
-
-    override fun findSpecialAnnotation(
-        annotationsBox: GranularAnnotationsBox,
-        qualifiedName: String,
-        owner: PsiElement,
-    ): PsiAnnotation? {
-        if (qualifiedName !in additionalAnnotationQualifiers) return null
-
-        return createSimpleAnnotationIfMatches(qualifiedName, qualifiedName, owner)
-    }
-
-    override fun isSpecialQualifier(qualifiedName: String): Boolean = false
 }

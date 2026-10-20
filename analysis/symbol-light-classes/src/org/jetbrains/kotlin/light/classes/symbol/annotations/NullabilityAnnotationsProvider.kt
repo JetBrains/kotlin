@@ -10,7 +10,6 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.light.classes.symbol.utils.NullabilityAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.utils.asAnnotationQualifier
-import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 
 internal class NullabilityAnnotationsProvider(private val lazyNullabilityType: Lazy<NullabilityAnnotation>) : AdditionalAnnotationsProvider {
     constructor(initializer: () -> NullabilityAnnotation) : this(lazyPub(initializer))
@@ -23,23 +22,4 @@ internal class NullabilityAnnotationsProvider(private val lazyNullabilityType: L
         val qualifier = lazyNullabilityType.value.asAnnotationQualifier ?: return
         addSimpleAnnotationIfMissing(qualifier, currentRawAnnotations, foundQualifiers, owner)
     }
-
-    override fun findSpecialAnnotation(
-        annotationsBox: GranularAnnotationsBox,
-        qualifiedName: String,
-        owner: PsiElement,
-    ): PsiAnnotation? {
-        if (!qualifiedName.isNullOrNotNullQualifiedName) {
-            return null
-        }
-
-        val expectedQualifier = lazyNullabilityType.value.asAnnotationQualifier ?: return null
-        return createSimpleAnnotationIfMatches(qualifiedName, expectedQualifier, owner)
-    }
-
-    override fun isSpecialQualifier(qualifiedName: String): Boolean = false
 }
-
-private val String.isNullOrNotNullQualifiedName: Boolean
-    get() = this == JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION.asString() ||
-            this == JvmAnnotationNames.JETBRAINS_NULLABLE_ANNOTATION.asString()

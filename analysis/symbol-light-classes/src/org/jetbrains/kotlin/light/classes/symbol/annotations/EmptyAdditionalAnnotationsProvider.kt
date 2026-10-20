@@ -14,12 +14,4 @@ internal object EmptyAdditionalAnnotationsProvider : AdditionalAnnotationsProvid
         foundQualifiers: MutableSet<String>,
         owner: PsiElement,
     ) = Unit
-
-    override fun findSpecialAnnotation(
-        annotationsBox: GranularAnnotationsBox,
-        qualifiedName: String,
-        owner: PsiElement,
-    ): PsiAnnotation? = null
-
-    override fun isSpecialQualifier(qualifiedName: String): Boolean = false
 }

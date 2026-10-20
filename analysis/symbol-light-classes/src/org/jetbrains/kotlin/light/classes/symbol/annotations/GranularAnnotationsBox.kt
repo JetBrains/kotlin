@@ -42,12 +42,7 @@ internal class GranularAnnotationsBox(
         return getOrComputeCachedAnnotations(owner).toArrayIfNotEmptyOrDefault(PsiAnnotation.EMPTY_ARRAY)
     }
 
-    override fun findAnnotation(
-        owner: PsiElement,
-        qualifiedName: String,
-    ): PsiAnnotation? = findAnnotation(owner, qualifiedName, withAdditionalAnnotations = true)
-
-    fun findAnnotation(owner: PsiElement, qualifiedName: String, withAdditionalAnnotations: Boolean): PsiAnnotation? {
+    override fun findAnnotation(owner: PsiElement, qualifiedName: String): PsiAnnotation? {
         if (!annotationFilter.isAllowed(qualifiedName)) return null
 
         cachedAnnotations?.let { annotations ->
@@ -59,11 +54,7 @@ internal class GranularAnnotationsBox(
                 return SymbolLightLazyAnnotation(annotationsProvider, annotationApplication, owner)
             }
 
-            return if (withAdditionalAnnotations && additionalAnnotationsProvider.isSpecialQualifier(qualifiedName)) {
-                additionalAnnotationsProvider.findSpecialAnnotation(this, qualifiedName, owner)
-            } else {
-                null
-            }
+            return additionalAnnotationsProvider.findSpecialAnnotation(qualifiedName, owner)
         }
 
         return getOrComputeCachedAnnotations(owner).find { it.qualifiedName == qualifiedName }
@@ -78,8 +69,7 @@ internal class GranularAnnotationsBox(
 
         specialAnnotationsList[qualifiedName]?.let { specialAnnotationClassId ->
             return specialAnnotationClassId in annotationsProvider ||
-                    additionalAnnotationsProvider.isSpecialQualifier(qualifiedName) &&
-                    additionalAnnotationsProvider.findSpecialAnnotation(this, qualifiedName, owner) != null
+                    additionalAnnotationsProvider.findSpecialAnnotation(qualifiedName, owner) != null
         }
 
         return getOrComputeCachedAnnotations(owner).any { it.qualifiedName == qualifiedName }

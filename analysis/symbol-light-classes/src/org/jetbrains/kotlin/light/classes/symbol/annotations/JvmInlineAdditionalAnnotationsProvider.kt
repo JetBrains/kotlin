@@ -33,11 +33,6 @@ internal object JvmInlineAdditionalAnnotationsProvider : AdditionalAnnotationsPr
         )
     }
 
-    override fun findSpecialAnnotation(
-        annotationsBox: GranularAnnotationsBox,
-        qualifiedName: String,
-        owner: PsiElement,
-    ): PsiAnnotation? = createSimpleAnnotationIfMatches(qualifier = qualifiedName, expectedQualifier = JVM_INLINE_QUALIFIER, owner = owner)
-
-    override fun isSpecialQualifier(qualifiedName: String): Boolean = qualifiedName == JVM_INLINE_QUALIFIER
+    override fun findSpecialAnnotation(qualifiedName: String, owner: PsiElement): PsiAnnotation? =
+        createSimpleAnnotationIfMatches(qualifier = qualifiedName, expectedQualifier = JVM_INLINE_QUALIFIER, owner = owner)
 }

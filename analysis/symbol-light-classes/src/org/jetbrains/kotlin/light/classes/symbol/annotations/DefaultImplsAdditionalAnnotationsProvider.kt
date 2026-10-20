@@ -29,24 +29,6 @@ internal object DefaultImplsAdditionalAnnotationsProvider : AdditionalAnnotation
             )
         }
     }
-
-    override fun findSpecialAnnotation(
-        annotationsBox: GranularAnnotationsBox,
-        qualifiedName: String,
-        owner: PsiElement,
-    ): PsiAnnotation? {
-        return if (owner.parent.isDefaultImplsCompatibilityDelegate()) {
-            createSimpleAnnotationIfMatches(
-                qualifier = qualifiedName,
-                expectedQualifier = CommonClassNames.JAVA_LANG_DEPRECATED,
-                owner = owner,
-            )
-        } else {
-            null
-        }
-    }
-
-    override fun isSpecialQualifier(qualifiedName: String): Boolean = false
 }
 
 private fun PsiElement.isDefaultImplsCompatibilityDelegate(): Boolean =

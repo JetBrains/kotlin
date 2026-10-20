@@ -31,21 +31,6 @@ internal object JvmExposeBoxedAdditionalAnnotationsProvider : AdditionalAnnotati
             )
         }
     }
-
-    override fun findSpecialAnnotation(
-        annotationsBox: GranularAnnotationsBox,
-        qualifiedName: String,
-        owner: PsiElement,
-    ): PsiAnnotation? = if (owner.parent.isJvmExposeBoxed())
-        createSimpleAnnotationIfMatches(
-            qualifier = qualifiedName,
-            expectedQualifier = JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME.asString(),
-            owner = owner,
-        )
-    else
-        null
-
-    override fun isSpecialQualifier(qualifiedName: String): Boolean = false
 }
 
 private fun PsiElement.isJvmExposeBoxed(): Boolean = this is SymbolLightMethodBase && isJvmExposeBoxed

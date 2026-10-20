@@ -21,21 +21,6 @@ internal object MethodAdditionalAnnotationsProvider : AdditionalAnnotationsProvi
             addSimpleAnnotationIfMissing(JvmAnnotationNames.OVERRIDE_ANNOTATION.asString(), currentRawAnnotations, foundQualifiers, owner)
         }
     }
-
-    override fun findSpecialAnnotation(
-        annotationsBox: GranularAnnotationsBox,
-        qualifiedName: String,
-        owner: PsiElement,
-    ): PsiAnnotation? = if (owner.parent.isMethodWithOverride())
-        createSimpleAnnotationIfMatches(
-            qualifier = qualifiedName,
-            expectedQualifier = JvmAnnotationNames.OVERRIDE_ANNOTATION.asString(),
-            owner = owner,
-        )
-    else
-        null
-
-    override fun isSpecialQualifier(qualifiedName: String): Boolean = false
 }
 
 /**
