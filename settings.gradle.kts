@@ -608,6 +608,7 @@ include(
     ":prepare:ide-plugin-dependencies:kotlin-jps-plugin-classpath",
     ":prepare:ide-plugin-dependencies:kotlin-jps-plugin-tests-for-ide",
     ":prepare:ide-plugin-dependencies:kotlin-jps-plugin-testdata-for-ide",
+    ":prepare:ide-plugin-dependencies:kotlin-build-tools-impl-for-ide",
     ":prepare:ide-plugin-dependencies:kotlinx-serialization-compiler-plugin-for-ide",
     ":prepare:ide-plugin-dependencies:kotlin-dataframe-compiler-plugin-for-ide",
     ":prepare:ide-plugin-dependencies:noarg-compiler-plugin-for-ide",

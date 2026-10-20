@@ -80,24 +80,15 @@ dependencies {
     testImplementation(libs.kotlinx.serialization.json)
 }
 
-val btaImplSnapshot = configurations.dependencyScope("btaImplSnapshot")
-val btaImplSnapshotResolvable = configurations.resolvable("btaImplSnapshotResolvable") {
-    extendsFrom(btaImplSnapshot.get())
+// The directory with the Build Tools API implementation for the 'testWithBuildToolsApi' task. The IDE gets the same
+// directory as the published `kotlin-build-tools-impl-for-ide` jar.
+val btaImplHome = configurations.dependencyScope("btaImplHome")
+val btaImplHomeResolvable = configurations.resolvable("btaImplHomeResolvable") {
+    extendsFrom(btaImplHome.get())
 }
 
 dependencies {
-    btaImplSnapshot(project(":compiler:build-tools:kotlin-build-tools-impl"))
-    btaImplSnapshot(project(":compiler:build-tools:kotlin-build-tools-cri-impl"))
-    // `compileOnly` in the implementation's build script, but needed at run time
-    btaImplSnapshot(project(":kotlin-reflect"))
-    btaImplSnapshot(project(":kotlin-daemon-client"))
-}
-
-val btaImplHome = layout.buildDirectory.dir("btaImplHome")
-val prepareBtaImplHome = tasks.register<Sync>("prepareBtaImplHome") {
-    description = "Collects the Build Tools API implementation for the 'testWithBuildToolsApi' task."
-    from(btaImplSnapshotResolvable)
-    into(btaImplHome)
+    btaImplHome(project(":prepare:ide-plugin-dependencies:kotlin-build-tools-impl-for-ide", configuration = "btaImplHomeElements"))
 }
 
 sourceSets {
@@ -196,11 +187,7 @@ projectTests {
         skipInLocalBuild = false,
     ) {
         configureJpsTests()
-        inputs.files(prepareBtaImplHome).withPropertyName("btaImplHome").withNormalizer(ClasspathNormalizer::class)
-        systemProperty(
-            "kotlin.jps.build.tools.impl.home",
-            providers.gradleProperty("kotlin.jps.build.tools.impl.home").getOrElse(btaImplHome.get().asFile.absolutePath)
-        )
+        addClasspathProperty(btaImplHomeResolvable.get(), "kotlin.jps.build.tools.impl.home")
     }
 
     testGenerator("org.jetbrains.kotlin.jps.GenerateJpsPluginTestsKt", doNotSetFixturesSourceSetDependency = true) {
