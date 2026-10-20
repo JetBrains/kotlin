@@ -54,7 +54,7 @@ abstract class KaptWithoutKotlincTask @Inject constructor(
     var disableClassloaderCacheForProcessors: Set<String> = emptySet()
 
     @get:Internal
-    var detectMemoryLeaks: String = "none"
+    var detectMemoryLeaks: String = "standard"
 
     @get:Input
     var mapDiagnosticLocations: Boolean = false
@@ -307,9 +307,10 @@ abstract class KaptWithoutKotlincTask @Inject constructor(
         }
         if (classLoadersCacheSize > 0 && detectMemoryLeaks != "none") {
             logger.warn(
-                "Kapt memory leak detection may report incorrect results while the annotation processor classloaders cache is enabled:"
-                        + " cached classloaders are kept alive between builds on purpose."
-                        + "\nSet 'kapt.classloaders.cache.size=0' for reliable leak detection."
+                "Kapt memory leak detection may report false positives while the annotation processor classloaders cache is enabled:"
+                        + " cached classloaders are kept alive between builds on purpose, so the 'standard' mode cannot tell them"
+                        + " from leaked ones and reports suspicious static fields of cached processors as the 'paranoid' mode does."
+                        + "\nSet 'kapt.classloaders.cache.size=0' or 'kapt.detectMemoryLeaks = \"none\"' to avoid this."
             )
         }
     }

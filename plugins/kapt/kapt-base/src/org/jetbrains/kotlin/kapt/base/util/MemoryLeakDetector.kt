@@ -43,6 +43,9 @@ private class ClassLoaderData(classLoader: ClassLoader, val loadedClasses: (Clas
 
     @Volatile
     var age: Int = 0
+
+    @Volatile
+    var inspected: Boolean = false
 }
 
 object MemoryLeakDetector {
@@ -52,7 +55,7 @@ object MemoryLeakDetector {
      * [loadedClasses] returns the classes defined by the given classloader. There is no supported way to enumerate them,
      * and `ClassLoader.classes` is filtered from reflection since JDK 12, so the classloader has to track them itself.
      *
-     * A classloader that is already registered is not registered again.
+     * A classloader that is already registered is not registered again, so each classloader is inspected at most once.
      *
      * [loadedClasses] must not capture [classLoader], otherwise the classloader would never be collected.
      */
@@ -70,14 +73,15 @@ object MemoryLeakDetector {
             val newClassLoaderData = mutableListOf<ClassLoaderData>()
             for (data in classLoaderData) {
                 val classLoader = data.ref.get() ?: continue
+                // Keep inspected classloaders until they are collected: a long-lived (e.g. cached) classloader is
+                // registered again on every execution, and must not be inspected and reported again.
+                newClassLoaderData += data
+                if (data.inspected) continue
                 data.age += 1
 
                 if (isParanoid || data.age >= 5) {
-                    // Inspect statics just once.
-                    // Note the 'data' is not added to 'nextClassLoaderData' used the next time.
+                    data.inspected = true
                     memoryLeaks += inspectStatics(classLoader, data.loadedClasses)
-                } else {
-                    newClassLoaderData += data
                 }
             }
 
