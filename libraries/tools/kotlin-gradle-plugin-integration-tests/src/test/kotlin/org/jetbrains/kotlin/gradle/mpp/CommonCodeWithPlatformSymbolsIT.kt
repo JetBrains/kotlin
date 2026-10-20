@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.util.replaceWithVersion
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInBuildToolsApi
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCompilerInfrastructure
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 
 /**
@@ -24,6 +25,7 @@ import org.junit.jupiter.api.DisplayName
 
 @MustRunOnChangesInCompilerInfrastructure
 @MustRunOnChangesInBuildToolsApi
+@MustRunOnChangesInGradle
 abstract class CommonCodeWithPlatformSymbolsITBase(
     val platformType: KotlinPlatformType,
     val taskToExecute: String,
