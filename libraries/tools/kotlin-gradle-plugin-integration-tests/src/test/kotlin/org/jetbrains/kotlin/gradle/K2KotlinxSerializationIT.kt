@@ -9,6 +9,8 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.BuildOptions.ConfigurationCacheValue
 import org.jetbrains.kotlin.gradle.util.resolveRepoPath
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCompilerPlugins
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
@@ -16,6 +18,8 @@ import kotlin.io.path.listDirectoryEntries
 import kotlin.test.assertTrue
 
 @OtherGradlePluginTests
+@MustRunOnChangesInGradle
+@MustRunOnChangesInCompilerPlugins
 class K2KotlinxSerializationIT : KGPBaseTest() {
     @DisplayName("Compile common code to metadata with kotlinx.serialization and K2")
     @GradleTest
