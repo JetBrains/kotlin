@@ -133,6 +133,7 @@ class FirDefaultPropertyGetter(
         effectiveVisibility: EffectiveVisibility? = null,
         isInline: Boolean = false,
         isOverride: Boolean = false,
+        isStatic: Boolean = false,
         symbol: FirPropertyAccessorSymbol = FirPropertyAccessorSymbol(),
         resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR,
         attributes: FirDeclarationAttributes = FirDeclarationAttributes()
@@ -142,7 +143,7 @@ class FirDefaultPropertyGetter(
         origin,
         propertyTypeRef,
         propertySymbol,
-        status = createStatus(visibility, modality, effectiveVisibility, isInline, isOverride),
+        status = createStatus(visibility, modality, effectiveVisibility, isInline, isOverride, isStatic),
         symbol = symbol,
         resolvePhase = resolvePhase,
         attributes = attributes,
@@ -201,6 +202,7 @@ class FirDefaultPropertySetter(
         effectiveVisibility: EffectiveVisibility? = null,
         isInline: Boolean = false,
         isOverride: Boolean = false,
+        isStatic: Boolean = false,
         propertyAccessorSymbol: FirPropertyAccessorSymbol = FirPropertyAccessorSymbol(),
         parameterSource: KtSourceElement? = null,
         parameterAnnotations: List<FirAnnotation> = emptyList(),
@@ -212,7 +214,7 @@ class FirDefaultPropertySetter(
         origin,
         propertyTypeRef,
         propertySymbol,
-        status = createStatus(visibility, modality, effectiveVisibility, isInline, isOverride),
+        status = createStatus(visibility, modality, effectiveVisibility, isInline, isOverride, isStatic),
         propertyAccessorSymbol,
         parameterSource,
         parameterAnnotations,
@@ -227,10 +229,12 @@ private fun createStatus(
     effectiveVisibility: EffectiveVisibility?,
     isInline: Boolean,
     isOverride: Boolean,
+    isStatic: Boolean,
 ): FirDeclarationStatusImpl = when (effectiveVisibility) {
     null -> FirDeclarationStatusImpl(visibility, modality)
     else -> FirResolvedDeclarationStatusImpl(visibility, modality ?: Modality.FINAL, effectiveVisibility)
 }.apply {
     this.isInline = isInline
     this.isOverride = isOverride
+    this.isStatic = isStatic
 }

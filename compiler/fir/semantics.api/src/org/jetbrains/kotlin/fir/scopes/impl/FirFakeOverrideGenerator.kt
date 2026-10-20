@@ -556,6 +556,7 @@ object FirFakeOverrideGenerator {
             effectiveVisibility = effectiveVisibility,
             resolvePhase = origin.resolvePhaseForCopy,
             isOverride = true,
+            isStatic = isStatic,
             attributes = attributes.copy(),
         ).apply {
             replaceAnnotations(this@buildCopy.annotations)
@@ -572,6 +573,7 @@ object FirFakeOverrideGenerator {
             resolvePhase = origin.resolvePhaseForCopy,
             parameterSource = newSource ?: valueParameters.first().source,
             isOverride = true,
+            isStatic = isStatic,
             attributes = attributes.copy(),
         ).apply {
             replaceAnnotations(this@buildCopy.annotations)
