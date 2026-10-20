@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.gradle.unitTests.compilerArgumetns
+package org.jetbrains.kotlin.gradle.unitTests.compilerArguments
 
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils.convertArgumentsToStringList
