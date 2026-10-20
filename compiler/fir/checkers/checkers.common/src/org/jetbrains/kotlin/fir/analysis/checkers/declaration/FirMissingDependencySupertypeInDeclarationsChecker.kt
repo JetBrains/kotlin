@@ -28,7 +28,7 @@ object FirMissingDependencySupertypeInDeclarationsChecker : FirBasicDeclarationC
 
         if (declaration is FirTypeParameterRefsOwner) {
             for (typeParameter in declaration.typeParameters) {
-                for (upperBound in typeParameter.toConeType().collectUpperBounds(context.session.typeContext)) {
+                for (upperBound in typeParameter.toConeType().collectUpperBounds(context.session.typeContext, collectUnions = true)) {
                     checkMissingDependencySuperTypes(upperBound, typeParameter.source)
                 }
             }
