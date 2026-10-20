@@ -143,6 +143,11 @@ internal class OtherErrorWithReasonImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.OtherErrorWithReason
 
+internal class TypeParameterCanBeMadeOutImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.TypeParameterCanBeMadeOut
+
 internal class IllegalConstExpressionImpl(
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,

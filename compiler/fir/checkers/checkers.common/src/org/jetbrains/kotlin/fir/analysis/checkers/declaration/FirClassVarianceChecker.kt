@@ -34,6 +34,55 @@ import org.jetbrains.kotlin.types.Variance
 object FirClassVarianceChecker : FirClassChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirClass) {
+        val outCandidates = collectOutCandidates(declaration)
+        with(VarianceCheckState(mutableSetOf(), reportErrors = true)) {
+            checkClass(declaration)
+        }
+        for (candidate in outCandidates) {
+            val state = VarianceCheckState(mutableSetOf(candidate), reportErrors = false)
+            with(state) {
+                checkClass(declaration)
+            }
+            if (candidate in state.candidates) {
+                reporter.reportOn(candidate.source, FirErrors.TYPE_PARAMETER_CAN_BE_MADE_OUT)
+            }
+        }
+    }
+
+    private class VarianceCheckState(val candidates: MutableSet<FirTypeParameterSymbol>, val reportErrors: Boolean)
+
+    context(context: CheckerContext)
+    private fun collectOutCandidates(declaration: FirClass): MutableSet<FirTypeParameterSymbol> {
+        val candidates = mutableSetOf<FirTypeParameterSymbol>()
+        for (parameter in declaration.typeParameters.filterIsInstance<FirTypeParameter>()) {
+            if (parameter.variance != Variance.INVARIANT) continue
+            var hasOutUsage = false
+            var hasOtherUsage = false
+            for (superTypeRef in declaration.superTypeRefs) {
+                val superType = superTypeRef.coneType.fullyExpandedType() as? ConeClassLikeType ?: continue
+                val superClass = superType.lookupTag.toSymbol() as? FirClassSymbol<*> ?: continue
+                for ([index, argument] in superType.typeArguments.withIndex()) {
+                    val argumentType = argument.type?.fullyExpandedType() ?: continue
+                    if (!argumentType.contains { it is ConeTypeParameterType && it.lookupTag.typeParameterSymbol == parameter.symbol }) {
+                        continue
+                    }
+                    if (argumentType is ConeTypeParameterType && !argumentType.isMarkedNullable &&
+                        argument.kind == ProjectionKind.INVARIANT &&
+                        superClass.typeParameterSymbols.getOrNull(index)?.variance == Variance.OUT_VARIANCE
+                    ) {
+                        hasOutUsage = true
+                    } else {
+                        hasOtherUsage = true
+                    }
+                }
+            }
+            if (hasOutUsage && !hasOtherUsage) candidates.add(parameter.symbol)
+        }
+        return candidates
+    }
+
+    context(context: CheckerContext, reporter: DiagnosticReporter, state: VarianceCheckState)
+    private fun checkClass(declaration: FirClass) {
         checkTypeParameters(
             declaration.typeParameters.filterIsInstance<FirTypeParameter>().map { it.symbol },
             Variance.OUT_VARIANCE
@@ -63,7 +112,7 @@ object FirClassVarianceChecker : FirClassChecker(MppCheckerKind.Common) {
         }
     }
 
-    context(context: CheckerContext, reporter: DiagnosticReporter)
+    context(context: CheckerContext, reporter: DiagnosticReporter, state: VarianceCheckState)
     private fun checkCallableDeclaration(
         member: FirCallableSymbol<*>,
     ) {
@@ -100,7 +149,7 @@ object FirClassVarianceChecker : FirClassChecker(MppCheckerKind.Common) {
         }
     }
 
-    context(context: CheckerContext, reporter: DiagnosticReporter)
+    context(context: CheckerContext, reporter: DiagnosticReporter, state: VarianceCheckState)
     private fun checkTypeParameters(
         typeParameters: List<FirTypeParameterSymbol>, variance: Variance,
     ) {
@@ -111,7 +160,7 @@ object FirClassVarianceChecker : FirClassChecker(MppCheckerKind.Common) {
         }
     }
 
-    context(context: CheckerContext, reporter: DiagnosticReporter)
+    context(context: CheckerContext, reporter: DiagnosticReporter, state: VarianceCheckState)
     private fun checkVarianceConflict(
         typeRef: FirTypeRef, variance: Variance,
         source: KtSourceElement? = null
@@ -126,7 +175,7 @@ object FirClassVarianceChecker : FirClassChecker(MppCheckerKind.Common) {
         )
     }
 
-    context(context: CheckerContext, reporter: DiagnosticReporter)
+    context(context: CheckerContext, reporter: DiagnosticReporter, state: VarianceCheckState)
     private fun checkVarianceConflict(
         type: ConeKotlinType,
         variance: Variance,
@@ -140,7 +189,12 @@ object FirClassVarianceChecker : FirClassChecker(MppCheckerKind.Common) {
                 val fullyExpandedType = type.fullyExpandedType()
                 val typeParameterSymbol = type.lookupTag.typeParameterSymbol
                 val resultSource = source ?: typeRef?.source
-                if (resultSource != null &&
+                if (resultSource != null && !Variance.OUT_VARIANCE.allowsPosition(variance) &&
+                    !fullyExpandedType.attributes.contains(CompilerConeAttributes.UnsafeVariance)
+                ) {
+                    state.candidates.remove(typeParameterSymbol)
+                }
+                if (state.reportErrors && resultSource != null &&
                     !typeParameterSymbol.variance.allowsPosition(variance) &&
                     !fullyExpandedType.attributes.contains(CompilerConeAttributes.UnsafeVariance)
                 ) {
@@ -162,7 +216,8 @@ object FirClassVarianceChecker : FirClassChecker(MppCheckerKind.Common) {
                 if (classSymbol is FirClassSymbol<*>) {
                     val typeRefAndSourcesForArguments = extractArgumentsTypeRefAndSource(typeRef)
                     for ([index, typeArgument] in fullyExpandedType.typeArguments.withIndex()) {
-                        val paramVariance = classSymbol.typeParameterSymbols.getOrNull(index)?.variance ?: continue
+                        val parameter = classSymbol.typeParameterSymbols.getOrNull(index) ?: continue
+                        val paramVariance = if (parameter in state.candidates) Variance.OUT_VARIANCE else parameter.variance
 
                         val argVariance = when (typeArgument.kind) {
                             ProjectionKind.IN -> Variance.IN_VARIANCE

@@ -2507,6 +2507,12 @@ private fun KaDiagnosticConverterBuilder.addConversions52() {
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions53() {
+    add(FirErrors.TYPE_PARAMETER_CAN_BE_MADE_OUT) { firDiagnostic ->
+        TypeParameterCanBeMadeOutImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirErrors.VALUE_CLASS_NOT_TOP_LEVEL) { firDiagnostic ->
         ValueClassNotTopLevelImpl(
             firDiagnostic as KtDiagnosticWithSource,

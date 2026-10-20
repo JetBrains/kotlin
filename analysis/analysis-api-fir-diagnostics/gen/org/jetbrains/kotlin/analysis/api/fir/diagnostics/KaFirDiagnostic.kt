@@ -166,6 +166,13 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface TypeParameterCanBeMadeOut : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<TypeParameterCanBeMadeOut>
+            get() = TypeParameterCanBeMadeOut::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface IllegalConstExpression : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass: KClass<IllegalConstExpression>
             get() = IllegalConstExpression::class
