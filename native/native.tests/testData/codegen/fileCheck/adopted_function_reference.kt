@@ -8,7 +8,8 @@ inline fun foo(x: () -> Unit): String {
 
 fun String.id(s: String = this, vararg xs: Int): String = s
 
-// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
+// CHECK-EAGER_SHADOW_STACK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
+// CHECK-LATE_SHADOW_STACK-LABEL: define ptr addrspace(1) @"kfun:#box(){}kotlin.String"
 fun box(): String {
     // CHECK-LABEL: entry
     // CHECK-NOT: call ptr @AllocInstance

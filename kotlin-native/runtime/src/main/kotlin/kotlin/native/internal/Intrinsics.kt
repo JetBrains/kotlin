@@ -8,6 +8,7 @@ package kotlin.native.internal
 
 import kotlinx.cinterop.*
 import kotlin.internal.UsedFromCompilerGeneratedCode
+import kotlin.native.internal.escapeAnalysis.Escapes
 
 @TypedIntrinsic(IntrinsicType.ARE_EQUAL_BY_VALUE)
 @PublishedApi
@@ -77,3 +78,9 @@ external internal fun <T, R> T.reinterpret(): R
 @ExportForCompiler
 @UsedFromCompilerGeneratedCode
 external internal fun theUnitInstance(): Unit
+
+@TypedIntrinsic(IntrinsicType.KEEP_ALIVE)
+@PublishedApi
+@UsedFromCompilerGeneratedCode
+@Escapes.Nothing
+external internal fun keepAlive(value: Any?)

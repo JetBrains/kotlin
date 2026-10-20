@@ -54,7 +54,8 @@ fun f6ButHereIsMyNumber1(arg: Float): Float {
 
 // CHECK-LABEL: ptr @"objc2kotlin_kfun:#f7SoCallMeMaybe1(kotlin.Any?){}kotlin.Any?"(ptr %0, ptr %1, ptr %2)
 fun f7SoCallMeMaybe1(arg: Any?): Any? {
-    // CHECK: invoke ptr @"kfun:#f7SoCallMeMaybe1(kotlin.Any?){}kotlin.Any?"(ptr {{.*}}, ptr {{.*}})
+    // CHECK-EAGER_SHADOW_STACK: invoke ptr @"kfun:#f7SoCallMeMaybe1(kotlin.Any?){}kotlin.Any?"(ptr {{.*}}, ptr {{.*}})
+    // CHECK-LATE_SHADOW_STACK: invoke ptr addrspace(1) @"kfun:#f7SoCallMeMaybe1(kotlin.Any?){}kotlin.Any?"(ptr addrspace(1) {{.*}})
     return arg
 }
 

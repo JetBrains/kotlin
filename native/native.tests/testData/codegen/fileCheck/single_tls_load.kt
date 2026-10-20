@@ -23,7 +23,8 @@ fun f(x: Int, s: String): String {
     return buildString {
         for (i in a) { appendLine("$s i") }
     }
-// CHECK-LABEL: epilogue:
+// CHECK-EAGER_SHADOW_STACK-LABEL: epilogue:
+// CHECK-LATE_SHADOW_STACK: {{^[}]$}}
 }
 
 fun box(): String {

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Binaries
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.BinaryLibraryKind
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.HeaderTestModuleMarkers
+import org.jetbrains.kotlin.konan.test.blackbox.support.util.assumeCExportSupported
 import org.jetbrains.kotlin.test.TestDataAssertions
 import org.junit.jupiter.api.Tag
 import java.io.File
@@ -26,6 +27,7 @@ abstract class AbstractNativeCExportInterfaceV1HeaderTest() : AbstractNativeSimp
     private val testCompilationFactory = TestCompilationFactory()
 
     protected fun runTest(@TestDataFile testFile: String) {
+        testRunSettings.assumeCExportSupported()
         val path = File(ForTestCompileRuntime.transformTestDataPath(testFile).path)
         val goldenDataHeaderFile = HeaderTestModuleMarkers.resolveTargetSpecificGoldenDataFile(
             path, targets.testTarget.toString(), extension = "h"

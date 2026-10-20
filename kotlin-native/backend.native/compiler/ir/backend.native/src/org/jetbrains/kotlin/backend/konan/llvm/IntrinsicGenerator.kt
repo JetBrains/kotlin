@@ -147,6 +147,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
                 IntrinsicType.INTEROP_GET_NATIVE_NULL_PTR -> emitGetNativeNullPtr()
                 IntrinsicType.IDENTITY -> emitIdentity(args)
                 IntrinsicType.THE_UNIT_INSTANCE -> theUnitInstanceRef.llvm
+                IntrinsicType.KEEP_ALIVE -> emitKeepAlive(args)
                 IntrinsicType.ATOMIC_GET_FIELD -> reportNonLoweredIntrinsic(intrinsicType)
                 IntrinsicType.ATOMIC_SET_FIELD -> reportNonLoweredIntrinsic(intrinsicType)
                 IntrinsicType.COMPARE_AND_SET -> emitCompareAndSet(callSite, args)
@@ -221,6 +222,13 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
 
     private fun FunctionGenerationContext.emitIdentity(args: List<LLVMValueRef>): LLVMValueRef =
             args.single()
+
+    private fun FunctionGenerationContext.emitKeepAlive(args: List<LLVMValueRef>): LLVMValueRef {
+        if (useLateShadowStack) {
+            call(llvm.gcKeepAliveMarker, listOf(args.single()))
+        }
+        return theUnitInstanceRef.llvm
+    }
 
     // cmpxcgh llvm instruction return pair. idnex is index of required element of this pair
     enum class CmpExchangeMode(val index:Int) {

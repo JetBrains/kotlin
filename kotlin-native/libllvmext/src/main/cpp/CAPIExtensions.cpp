@@ -42,6 +42,10 @@ void LLVMKotlinSetNoTailCall(LLVMValueRef Call) {
   unwrap<CallInst>(Call)->setTailCallKind(CallInst::TCK_NoTail);
 }
 
+void LLVMKotlinSetOnlyAccessesInaccessibleMemory(LLVMValueRef Fn) {
+  unwrap<Function>(Fn)->setOnlyAccessesInaccessibleMemory();
+}
+
 namespace {
 
 class KotlinRunPassesCommandLineHolder {

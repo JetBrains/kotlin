@@ -130,25 +130,30 @@ fun checkInlineClasses() {
     id(CharWrapper('c'))
 }
 
-// CHECK-LABEL: define ptr @"kfun:#nullableId(kotlin.Byte?){}kotlin.Byte?"(ptr %0, ptr %1)
+// CHECK-EAGER_SHADOW_STACK-LABEL: define ptr @"kfun:#nullableId(kotlin.Byte?){}kotlin.Byte?"(ptr %0, ptr %1)
+// CHECK-LATE_SHADOW_STACK-LABEL: define ptr addrspace(1) @"kfun:#nullableId(kotlin.Byte?){}kotlin.Byte?"(ptr addrspace(1) %0)
 fun nullableId(arg: Byte?): Byte? {
     return arg
 }
 
-// CHECK-LABEL: define ptr @"kfun:#nullableId(CharWrapper?){}CharWrapper?"(ptr %0, ptr %1)
+// CHECK-EAGER_SHADOW_STACK-LABEL: define ptr @"kfun:#nullableId(CharWrapper?){}CharWrapper?"(ptr %0, ptr %1)
+// CHECK-LATE_SHADOW_STACK-LABEL: define ptr addrspace(1) @"kfun:#nullableId(CharWrapper?){}CharWrapper?"(ptr addrspace(1) %0)
 fun nullableId(arg: CharWrapper?): CharWrapper? {
     return arg
 }
 
 // Check that we don't pass primitive-specific attributes to their boxes
 fun checkBoxes() {
-    // CHECK: call ptr @"kfun:#nullableId(kotlin.Byte?){}kotlin.Byte?"(ptr {{.*}}, ptr {{.*}})
+    // CHECK-EAGER_SHADOW_STACK: call ptr @"kfun:#nullableId(kotlin.Byte?){}kotlin.Byte?"(ptr {{.*}}, ptr {{.*}})
+    // CHECK-LATE_SHADOW_STACK: call ptr addrspace(1) @"kfun:#nullableId(kotlin.Byte?){}kotlin.Byte?"(ptr addrspace(1) {{.*}})
     nullableId(1.toByte())
-    // CHECK: call ptr @"kfun:#nullableId(CharWrapper?){}CharWrapper?"(ptr {{.*}}, ptr {{.*}})
+    // CHECK-EAGER_SHADOW_STACK: call ptr @"kfun:#nullableId(CharWrapper?){}CharWrapper?"(ptr {{.*}}, ptr {{.*}})
+    // CHECK-LATE_SHADOW_STACK: call ptr addrspace(1) @"kfun:#nullableId(CharWrapper?){}CharWrapper?"(ptr addrspace(1) {{.*}})
     nullableId(CharWrapper('a'))
 }
 
-// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
+// CHECK-EAGER_SHADOW_STACK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
+// CHECK-LATE_SHADOW_STACK-LABEL: define ptr addrspace(1) @"kfun:#box(){}kotlin.String"
 fun box(): String {
     checkPrimitives()
     checkInlineClasses()

@@ -9,6 +9,7 @@
 #include "Passes/PrepareStackProtector.h"
 #include "Passes/PrepareThreadSanitizer.h"
 #include "Passes/RemoveRedundantSafepoints.h"
+#include "Passes/BuildShadowStack.h"
 
 #include "llvm/Passes/PassBuilder.h"
 #include "llvm/Support/Error.h"
@@ -47,6 +48,22 @@ static Expected<bool> ParseShouldInlineSafepoints(StringRef Params) {
       inconvertibleErrorCode());
 }
 
+static Expected<SlotClearing> ParseSlotClearing(StringRef Params) {
+  if (Params.empty() || Params == "clear-dead-slots=off") {
+    return SlotClearing::Off;
+  }
+  if (Params == "clear-dead-slots=early") {
+    return SlotClearing::Early;
+  }
+  if (Params == "clear-dead-slots=late") {
+    return SlotClearing::Late;
+  }
+  return make_error<StringError>(
+      formatv("invalid kotlin-build-shadow-stack pass parameter '{0}'", Params)
+          .str(),
+      inconvertibleErrorCode());
+}
+
 static bool parsePass(StringRef Name, StringRef PassName) {
   return Name == PassName;
 }
@@ -77,6 +94,11 @@ PassPluginLibraryInfo getKotlinPluginInfo() {
                   }
                   if (parsePass(Name, "kotlin-calls-checker-module")) {
                     PM.addPass(ModuleCallsCheckerPass());
+                    return true;
+                  }
+                  if (auto Param = parsePass(Name, "kotlin-build-shadow-stack",
+                                             ParseSlotClearing)) {
+                    PM.addPass(BuildShadowStackPass(*Param));
                     return true;
                   }
                   return false;

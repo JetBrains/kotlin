@@ -21,6 +21,7 @@ import objcTests.*
     assertTrue(deallocListener.deallocExecutorIsNil())
 }
 
+@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 private fun testObjCWeakRef0(deallocListener: DeallocListener) = withWorker {
     assertTrue(deallocListener.deallocExecutorIsNil())
 
@@ -47,4 +48,5 @@ private fun testObjCWeakRef0(deallocListener: DeallocListener) = withWorker {
         // Process release of Kotlin reference to [obj] in any case:
         kotlin.native.runtime.GC.collect()
     }
+    kotlin.native.internal.keepAlive(obj)
 }
