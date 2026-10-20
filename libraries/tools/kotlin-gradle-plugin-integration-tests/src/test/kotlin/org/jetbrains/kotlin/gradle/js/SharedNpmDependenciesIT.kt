@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
 import org.jetbrains.kotlin.gradle.targets.web.npm.KotlinSharedNpmProjectPlugin
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import java.nio.file.Path
 import kotlin.io.path.createTempFile
@@ -21,6 +22,7 @@ import kotlin.io.path.readText
 import kotlin.test.assertEquals
 
 @JsGradlePluginTests
+@MustRunOnChangesInGradle
 class SharedNpmDependenciesIT : KGPBaseTest() {
 
     override val defaultBuildOptions: BuildOptions
