@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.unitTests.compilerArguments
 import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.kotlinBuildDeps
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.mavenCentralCacheRedirector
-import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.default
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.lenient
@@ -62,13 +61,6 @@ class KotlinNativeCompileArgumentsTest {
         kotlin.linuxX64()
         kotlin.linuxArm64()
 
-        /* Enable K2 if necessary */
-        if (KotlinVersion.DEFAULT < KotlinVersion.KOTLIN_2_0) {
-            kotlin.sourceSets.all {
-                it.languageSettings.languageVersion = "2.0"
-            }
-        }
-
         val commonMainSourceFile = project.file("src/commonMain/kotlin/CommonMain.kt")
         commonMainSourceFile.parentFile.mkdirs()
         commonMainSourceFile.writeText("object CommonMain")
@@ -109,13 +101,6 @@ class KotlinNativeCompileArgumentsTest {
         val project = buildProjectWithMPP()
         val kotlin = project.multiplatformExtension
         kotlin.linuxX64()
-
-        /* Enable K2 if necessary */
-        if (KotlinVersion.DEFAULT < KotlinVersion.KOTLIN_2_0) {
-            kotlin.sourceSets.all {
-                it.languageSettings.languageVersion = "2.0"
-            }
-        }
 
         val linuxX64SourceFile = project.file("src/linuxX64Main/kotlin/CommonMain.kt")
         linuxX64SourceFile.parentFile.mkdirs()
