@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.internal.CustomizeKotlinDependenciesSetupAction
 import org.jetbrains.kotlin.gradle.plugin.abi.internal.AbiValidationSetupAction
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectChecker
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.BlankFreeCompilerArgsSetupAction
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsSetupAction
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.*
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImportActionSetupAction
@@ -68,6 +69,7 @@ internal fun Project.registerKotlinPluginExtensions() {
         register(project, @Suppress("DEPRECATION") AddNpmDependencyExtensionProjectSetupAction)
         register(project, RegisterBuildKotlinToolingMetadataTask)
         register(project, KotlinToolingDiagnosticsSetupAction)
+        register(project, BlankFreeCompilerArgsSetupAction)
         register(project, SyncLanguageSettingsWithKotlinExtensionSetupAction)
         register(project, UserDefinedAttributesSetupAction)
         register(project, CustomizeKotlinDependenciesSetupAction)

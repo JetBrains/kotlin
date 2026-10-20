@@ -11,10 +11,10 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.buildtools.api.abi.KlibTargetType
 import org.jetbrains.kotlin.gradle.ExperimentalNodeJsToolchainDsl
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.dsl.KotlinBrowserBundler
 import org.jetbrains.kotlin.gradle.dsl.KotlinSourceSetConvention.isAccessedByKotlinSourceSetConventionAt
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
-import org.jetbrains.kotlin.gradle.internal.KOTLIN_BUILD_TOOLS_API_IMPL
-import org.jetbrains.kotlin.gradle.internal.KOTLIN_MODULE_GROUP
+import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.NodeJsVersion
 import org.jetbrains.kotlin.gradle.internal.properties.NativeProperties
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
@@ -26,15 +26,12 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_APPLY_DEFAULT_HIERARCHY_TEMPLATE
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_ENABLE_KLIBS_CROSSCOMPILATION
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_IGNORE_DISABLED_TARGETS
-
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.CompilationDependenciesPair.Companion.toFormattedString
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsSeverity.*
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.NpmDependencyInGradleScopeUsage
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.UnresolvedKmpDependency.ResolvedVariant
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.UnresolvedKmpDependency.UnresolvedComponent
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib
-import org.jetbrains.kotlin.gradle.dsl.KotlinBrowserBundler
-import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.NodeJsVersion
 import org.jetbrains.kotlin.gradle.targets.jvm.JAVA_TEST_FIXTURES_PLUGIN_ID
 import org.jetbrains.kotlin.gradle.targets.wasm.WasmCompilationMode
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.normalized
@@ -2095,6 +2092,18 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
+    object BlankFreeCompilerArgs : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+        operator fun invoke(taskPath: String) = build {
+            title("Blank Free Compiler Arguments")
+                .description {
+                    "Task '$taskPath' has blank values in 'freeCompilerArgs'. " +
+                            "The Kotlin compiler can interpret them as source paths, " +
+                            "which can fail the compilation or compile unrelated files."
+                }
+                .solution { "Remove blank values from 'freeCompilerArgs'" }
+        }
+    }
+
     object AbiValidationUnsupportedTarget : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Experimental) {
         operator fun invoke(targetType: KlibTargetType): ToolingDiagnostic = build {
             title("ABI Validation: unsupported target")
@@ -2712,7 +2721,7 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-internal object SharedNpmProjectInvalidPackageJson : ToolingDiagnosticFactory(
+    internal object SharedNpmProjectInvalidPackageJson : ToolingDiagnosticFactory(
         WARNING,
         DiagnosticGroup.Kgp.Misconfiguration,
     ) {

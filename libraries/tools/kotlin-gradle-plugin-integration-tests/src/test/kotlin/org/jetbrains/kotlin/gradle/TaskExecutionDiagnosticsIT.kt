@@ -247,4 +247,30 @@ class TaskExecutionDiagnosticsIT : KGPBaseTest() {
             }
         }
     }
+
+    @DisplayName("KT-69682: blank free compiler arguments are reported")
+    @JvmGradlePluginTests
+    @GradleTest
+    fun blankFreeCompilerArgsAreReported(gradleVersion: GradleVersion) {
+        project("emptyKts", gradleVersion) {
+            plugins {
+                kotlin("jvm")
+            }
+            buildScriptInjection {
+                project.applyJvm {
+                    compilerOptions.freeCompilerArgs.add("")
+                }
+            }
+
+            kotlinSourcesDir().source("main.kt") {
+                """
+                |fun main() {}
+                """.trimMargin()
+            }
+
+            build("compileKotlin") {
+                assertHasDiagnostic(KotlinToolingDiagnostics.BlankFreeCompilerArgs)
+            }
+        }
+    }
 }
