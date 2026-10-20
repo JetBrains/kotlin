@@ -68,6 +68,9 @@ object WASM_DIAGNOSTICS_LIST : DiagnosticList("FirWasmErrors") {
         val RESERVED_WORD_AS_JS_EXPORT_NAME by error<KtElement>() {
             parameter<String>("name")
         }
+        val INTERNAL_WASM_EXPORT_NAME_AS_JS_EXPORT_NAME by error<KtElement>() {
+            parameter<String>("name")
+        }
     }
 
     val WASI by object : DiagnosticGroup("WASI") {

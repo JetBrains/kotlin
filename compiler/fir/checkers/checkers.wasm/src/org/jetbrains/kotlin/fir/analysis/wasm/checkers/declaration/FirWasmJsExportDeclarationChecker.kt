@@ -54,13 +54,14 @@ object FirWasmJsExportDeclarationChecker : FirBasicDeclarationChecker(MppChecker
             declaration.valueParameters.any { it.isVararg } -> reportWrongExportedDeclaration("function with vararg parameter")
         }
 
-        checkExportedNameIsNotReservedWord(declaration)
+        checkExportedName(declaration)
     }
 
     // Names that are not valid identifiers are exported as string literals, but reserved words are exported as variable names,
     // which makes the generated JS module invalid.
+    // Names used by Kotlin/Wasm for its own exports are dropped from the generated JS module.
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    private fun checkExportedNameIsNotReservedWord(declaration: FirNamedFunction) {
+    private fun checkExportedName(declaration: FirNamedFunction) {
 
         // already reported FUNCTION_DECLARATION_WITH_NO_NAME.
         if (declaration.nameOrSpecialName.isSpecial) {
@@ -70,10 +71,16 @@ object FirWasmJsExportDeclarationChecker : FirBasicDeclarationChecker(MppChecker
         val jsNameArgument = declaration.symbol.getAnnotationFirstArgument(WebCommonStandardClassIds.Annotations.JsName, context.session)
         val name = (jsNameArgument as? FirLiteralExpression)?.value as? String ?: declaration.name.asString()
 
-        if (name !in RESERVED_KEYWORDS) {
-            return
+        val source = jsNameArgument?.source ?: declaration.source
+        when {
+            name in RESERVED_KEYWORDS -> reporter.reportOn(source, FirWasmErrors.RESERVED_WORD_AS_JS_EXPORT_NAME, name)
+            isInternalWasmExportName(name) -> reporter.reportOn(source, FirWasmErrors.INTERNAL_WASM_EXPORT_NAME_AS_JS_EXPORT_NAME, name)
         }
-
-        reporter.reportOn(jsNameArgument?.source ?: declaration.source, FirWasmErrors.RESERVED_WORD_AS_JS_EXPORT_NAME, name)
     }
+
+    // Must be kept in sync with `isWasmInternalUsageExport` in the Kotlin/Wasm backend.
+    private val internalWasmExportNamePrefixes = listOf("__callFunction_", "__vt$", "__it$", "__rt$", "__fn$")
+
+    private fun isInternalWasmExportName(name: String): Boolean =
+        name == "memory" || internalWasmExportNamePrefixes.any { name.startsWith(it) }
 }
