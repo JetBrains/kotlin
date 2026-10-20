@@ -193,8 +193,9 @@ class CinteropIT : KGPBaseTest() {
             build(":runDebugExecutableNative") {
                 assertOutputContains("5")
             }
-            // The first incremental build may rerun the link task for unrelated setup changes.
-            build(":runDebugExecutableNative")
+            build(":runDebugExecutableNative") {
+                assertTasksUpToDate(":linkDebugExecutableNative")
+            }
 
             projectPath.resolve("lib.c").replaceText("return globalCounter;", "return globalCounter + 1;")
             buildStaticLibrary(projectPath)
