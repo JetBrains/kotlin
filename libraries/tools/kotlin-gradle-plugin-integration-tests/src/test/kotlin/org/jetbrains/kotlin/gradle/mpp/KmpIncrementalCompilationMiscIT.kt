@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.util.replaceWithVersion
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInBuildToolsApi
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCompilerInfrastructure
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 
@@ -20,6 +21,7 @@ import org.junit.jupiter.api.DisplayName
 @DisplayName("Specific incremental scenarios with local classes in KMP - K2")
 @MustRunOnChangesInCompilerInfrastructure
 @MustRunOnChangesInBuildToolsApi
+@MustRunOnChangesInGradle
 class KmpIncrementalCompilationWithLocalClassesIT : KGPBaseTest() {
 
     /**
@@ -164,6 +166,7 @@ class KmpIncrementalCompilationWithLocalClassesIT : KGPBaseTest() {
 @DisplayName("Scenarios with multi-step incremental compilation in KMP - K2")
 @MustRunOnChangesInCompilerInfrastructure
 @MustRunOnChangesInBuildToolsApi
+@MustRunOnChangesInGradle
 class KmpIncrementalCompilationSetExpansionIT : KGPBaseTest() {
     override val defaultBuildOptions: BuildOptions
         get() = super.defaultBuildOptions.copy(
