@@ -36,24 +36,37 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
  * a JVM facade class (`MainKt.FOO`), class member property, companion-object property. Returns
  * `null` if [classQualifier] is `null` (unqualified — not supported across languages) or if none
  * of the cases resolves to a const value.
+ *
+ * [qualifierClassId] is the class [classQualifier] resolves to, if any. A qualified name like
+ * `p.X.Y` is classified left to right (JLS 6.5.4.2), so it may denote the nested class `p.X.Y`,
+ * and it never falls back to a class `Y` of a package `p.X` once `p.X` is a class. Without a
+ * class, [classQualifier] can still name a JVM facade class, which is split at its last dot.
  */
 internal fun FirSession.resolveExternalFieldValue(
     classQualifier: String?,
+    qualifierClassId: ClassId?,
     fieldName: String,
     currentPackage: FqName,
 ): Any? {
     if (classQualifier == null) return null
     val propertyName = Name.identifier(fieldName)
     val lastDotIndex = classQualifier.lastIndexOf('.')
-    val qualifierPackage = if (lastDotIndex == -1) currentPackage else FqName(classQualifier.substring(0, lastDotIndex))
-    val qualifierClassName = classQualifier.substring(lastDotIndex + 1)
 
-    tryResolveAsTopLevelPropertyValue(qualifierPackage, qualifierClassName, propertyName)?.let { return it }
+    // A facade class is top-level, so a nested qualifier class cannot be one.
+    if (qualifierClassId == null || !qualifierClassId.isNestedClass) {
+        val qualifierPackage = when {
+            qualifierClassId != null -> qualifierClassId.packageFqName
+            lastDotIndex == -1 -> currentPackage
+            else -> FqName(classQualifier.substring(0, lastDotIndex))
+        }
+        val qualifierClassName = qualifierClassId?.shortClassName?.asString() ?: classQualifier.substring(lastDotIndex + 1)
+        tryResolveAsTopLevelPropertyValue(qualifierPackage, qualifierClassName, propertyName)?.let { return it }
+    }
 
-    val classIds = if (lastDotIndex == -1) {
-        listOf(ClassId(currentPackage, Name.identifier(classQualifier)), ClassId.topLevel(FqName(classQualifier)))
-    } else {
-        listOf(ClassId.topLevel(FqName(classQualifier)))
+    val classIds = when {
+        qualifierClassId != null -> listOf(qualifierClassId)
+        lastDotIndex == -1 -> listOf(ClassId(currentPackage, Name.identifier(classQualifier)), ClassId.topLevel(FqName(classQualifier)))
+        else -> return null
     }
 
     return tryResolveAsClassMember(classIds, propertyName)
@@ -144,6 +157,11 @@ internal fun FirSession.resolveConstFieldValue(classId: ClassId, fieldName: Name
     // top-level const val FOO).
     return tryResolveAsTopLevelPropertyValue(classId.packageFqName, classId.relativeClassName.asString(), fieldName)
 }
+
+/** Whether [classId] resolves to an enum, for annotation references that must stay enum-shaped. */
+context(c: JavaResolutionContext)
+internal fun isEnumClass(classId: ClassId): Boolean =
+    (c.fileContext.session.cycleSafeClassLikeSymbol(classId) as? FirRegularClassSymbol)?.classKind == ClassKind.ENUM_CLASS
 
 /**
  * Reads a `const val` property declared on [classId] (by simple name [propertyName]) through

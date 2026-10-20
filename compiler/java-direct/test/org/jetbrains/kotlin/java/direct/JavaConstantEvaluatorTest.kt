@@ -49,7 +49,7 @@ class JavaConstantEvaluatorTest : JavaParsingTestBase() {
             ?: error("Could not find the 'MAX' reference expression in the parsed field initializer")
 
         var captured: Pair<String?, String>? = null
-        val evaluator = ConstantEvaluator(javaClass) { classQualifier, fieldName ->
+        val evaluator = ConstantEvaluator(javaClass) { classQualifier, _, fieldName ->
             captured = classQualifier to fieldName
             if (classQualifier == "com.example.Constants" && fieldName == "MAX") 42 else null
         }
@@ -83,7 +83,7 @@ class JavaConstantEvaluatorTest : JavaParsingTestBase() {
             ?: error("Could not find the 'MISSING' reference expression in the parsed field initializer")
 
         var captured: Pair<String?, String>? = null
-        val evaluator = ConstantEvaluator(javaClass) { classQualifier, fieldName ->
+        val evaluator = ConstantEvaluator(javaClass) { classQualifier, _, fieldName ->
             captured = classQualifier to fieldName
             null
         }

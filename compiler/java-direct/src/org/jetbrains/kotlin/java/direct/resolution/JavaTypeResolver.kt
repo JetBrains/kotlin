@@ -383,8 +383,8 @@ internal fun isTypeUseAnnotationClass(classId: ClassId): Boolean =
  * `Foo` is a Kotlin class / facade. Returns `null` when no `const val` is found.
  */
 context(c: JavaResolutionContext)
-internal fun resolveExternalFieldValue(classQualifier: String?, fieldName: String): Any? =
-    c.fileContext.session.resolveExternalFieldValue(classQualifier, fieldName, c.packageFqName)
+internal fun resolveExternalFieldValue(classQualifier: String?, qualifierClassId: ClassId?, fieldName: String): Any? =
+    c.fileContext.session.resolveExternalFieldValue(classQualifier, qualifierClassId, fieldName, c.packageFqName)
 
 /**
  * Const-vs-enum-entry disambiguation for annotation arguments that look syntactically like enum
@@ -594,6 +594,13 @@ internal fun getSimpleImport(simpleName: String): FqName? = c.fileContext.import
  */
 context(c: JavaResolutionContext)
 internal fun getStaticImport(simpleName: String): FqName? = c.fileContext.imports.staticSingleImports[simpleName]
+
+/**
+ * Resolves the class named in an import, e.g. the class part of a single-static import, the same
+ * way as imported types are resolved: classified left to right, see [resolveAsClassId].
+ */
+context(c: JavaResolutionContext)
+internal fun resolveImportedClassName(fqName: FqName): ClassId? = resolveAsClassId(fqName, fullResolution = true)
 
 /** Parsed imports of this context's file, exposed to avoid re-extracting them from the AST. */
 context(c: JavaResolutionContext)
