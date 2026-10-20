@@ -10,9 +10,11 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.BuildOptions.ConfigurationCacheProblems
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 
 @JsGradlePluginTests
+@MustRunOnChangesInGradle
 class JsIrConfigurationCacheIT : KGPBaseTest() {
 
     override val defaultBuildOptions: BuildOptions
