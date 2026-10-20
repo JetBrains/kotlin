@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
+import org.jetbrains.kotlin.ir.builders.declarations.irFunction
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetEnumValueImpl
@@ -634,13 +635,12 @@ class TestProcessor(
             //   InfrastructureDumpedTestListingTest.testListingCompiledFromIncludedLibrary
             //   InfrastructureDumpedTestListingTest.testListingCompiledFromSources
             // ).
-            context.irFactory.buildFun {
+            context.irFactory.irFunction {
                 startOffset = SYNTHETIC_OFFSET
                 endOffset = SYNTHETIC_OFFSET
                 name = "createTestSuites".synthesizedName
                 visibility = DescriptorVisibilities.PRIVATE
                 returnType = context.irBuiltIns.unitType
-            }.apply {
                 parent = irFile
                 irFile.declarations.add(this)
                 symbols.testInitializer.let { testInitializerSymbol ->
@@ -648,7 +648,7 @@ class TestProcessor(
                 }
                 body = context.createIrBuilder(symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
                     statements.forEach {
-                        it.accept(SetDeclarationsParentVisitor, this@apply)
+                        it.accept(SetDeclarationsParentVisitor, this@irFunction)
                         +it
                     }
                 }

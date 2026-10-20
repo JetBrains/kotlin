@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addFunction
+import org.jetbrains.kotlin.ir.builders.declarations.declareFunction
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind.DispatchReceiver
 import org.jetbrains.kotlin.ir.expressions.*
@@ -535,7 +536,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
         isTypeParameter() && eraseTypeParameters().isPrimitiveType()
 
     private fun IrClass.addSpecialBridge(specialBridge: SpecialBridge, target: IrSimpleFunction): IrSimpleFunction =
-        addFunction {
+        declareFunction {
             startOffset = this@addSpecialBridge.startOffset
             endOffset = this@addSpecialBridge.startOffset
             modality = if (specialBridge.isFinal) Modality.FINAL else Modality.OPEN
@@ -543,7 +544,6 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
             name = Name.identifier(specialBridge.signature.name)
             returnType = specialBridge.substitutedReturnType?.eraseToScope(target.parentAsClass)
                 ?: specialBridge.overridden.returnType.eraseTypeParameters()
-        }.apply {
             copyParametersWithErasure(this@addSpecialBridge, specialBridge.overridden, specialBridge.substitutedParameterTypes)
             copyBridgeAnnotationsIfNeeded(specialBridge.overridden, target, true)
 
@@ -552,10 +552,10 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
                     nonDispatchParameters
                         .take(info.argumentsToCheck)
                         .forEach {
-                            +parameterTypeCheck(it, target.parameters[it.indexInParameters].type, info.defaultValueGenerator(this@apply))
+                            +parameterTypeCheck(it, target.parameters[it.indexInParameters].type, info.defaultValueGenerator(this@declareFunction))
                         }
                 }
-                +irReturn(delegatingCall(this@apply, target, specialBridge.superQualifierSymbol))
+                +irReturn(delegatingCall(this@declareFunction, target, specialBridge.superQualifierSymbol))
             }
 
             if (specialBridge.isOverriding) {

@@ -9,7 +9,9 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
-import org.jetbrains.kotlin.ir.builders.declarations.buildClass
+import org.jetbrains.kotlin.ir.builders.declarations.declareFunction
+import org.jetbrains.kotlin.ir.builders.declarations.declareValueParameter
+import org.jetbrains.kotlin.ir.builders.declarations.irClass
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
@@ -51,9 +53,14 @@ class JvmReflectSymbols(val context: JvmBackendContext, irModule: IrModuleFragme
             klass.addFunction("setAccessible", irBuiltIns.unitType).apply {
                 addValueParameter("isAccessible", irBuiltIns.booleanType)
             }
-            klass.addFunction("invoke", irBuiltIns.anyNType).apply {
-                addValueParameter("receiver", irBuiltIns.anyNType)
-                addValueParameter {
+            klass.declareFunction {
+                name = Name.identifier("invoke")
+                returnType = irBuiltIns.anyNType
+                declareValueParameter {
+                    name = Name.identifier("receiver")
+                    type = irBuiltIns.anyNType
+                }
+                declareValueParameter {
                     name = Name.identifier("args")
                     type = irBuiltIns.arrayClass.typeWith(irBuiltIns.anyNType)
                     varargElementType = irBuiltIns.anyNType
@@ -66,8 +73,10 @@ class JvmReflectSymbols(val context: JvmBackendContext, irModule: IrModuleFragme
             klass.addFunction("setAccessible", irBuiltIns.unitType).apply {
                 addValueParameter("isAccessible", irBuiltIns.booleanType)
             }
-            klass.addFunction("newInstance", irBuiltIns.anyNType).apply {
-                addValueParameter {
+            klass.declareFunction {
+                name = Name.identifier("newInstance")
+                returnType = irBuiltIns.anyNType
+                declareValueParameter {
                     name = Name.identifier("args")
                     type = irBuiltIns.arrayClass.typeWith(irBuiltIns.anyNType)
                     varargElementType = irBuiltIns.anyNType
@@ -133,11 +142,10 @@ class JvmReflectSymbols(val context: JvmBackendContext, irModule: IrModuleFragme
         classModality: Modality = Modality.FINAL,
         block: (IrClass) -> Unit = {}
     ): IrClassSymbol =
-        context.irFactory.buildClass {
+        context.irFactory.irClass {
             name = fqName.shortName()
             kind = classKind
             modality = classModality
-        }.apply {
             parent = javaLangReflectPackage
             createThisReceiverParameter()
             block(this)

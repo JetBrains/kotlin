@@ -238,7 +238,7 @@ class JvmCachedDeclarations(
 
     fun getDefaultImplsClass(interfaceClass: IrClass): IrClass =
         interfaceClass::defaultImplsClass.getOrSetIfNull {
-            context.irFactory.buildClass {
+            context.irFactory.irClass {
                 startOffset = interfaceClass.startOffset
                 endOffset = interfaceClass.endOffset
                 origin = JvmLoweredDeclarationOrigin.DEFAULT_IMPLS
@@ -247,7 +247,6 @@ class JvmCachedDeclarations(
                 // it also should not be protected or internal as a nested class of an interface. So,
                 // the safest option is to make it public.
                 visibility = DescriptorVisibilities.PUBLIC
-            }.apply {
                 parent = interfaceClass
                 createThisReceiverParameter()
             }
