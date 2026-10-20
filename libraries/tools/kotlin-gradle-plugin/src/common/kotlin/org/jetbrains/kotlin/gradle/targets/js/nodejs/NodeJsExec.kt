@@ -90,9 +90,15 @@ constructor(
                 emptySet()
             }
 
+    internal fun resolveExecutableIfNotCustomized() {
+        // A custom executable set by the user takes precedence over the toolchain
+        if (executable.isNullOrBlank()) {
+            executable = nodeJsToolchainService.get().resolveNodeJsExecutable(nodeExecutable, nodeJsRequest)
+        }
+    }
+
     override fun exec() {
-        // Resolved at execution time, because it may provision Node.js
-        executable = nodeJsToolchainService.get().resolveNodeJsExecutable(nodeExecutable, nodeJsRequest)
+        resolveExecutableIfNotCustomized()
 
         val newArgs = mutableListOf<String>()
         newArgs.addAll(nodeArgs)
