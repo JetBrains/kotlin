@@ -52,6 +52,12 @@ public class JvmLookupTrackerTestGenerated extends AbstractJvmLookupTrackerTest 
   }
 
   @Test
+  @TestMetadata("fullyQualifiedQualifier")
+  public void testFullyQualifiedQualifier() {
+    runTest("jps/jps-plugin/testData/incremental/lookupTracker/jvm/fullyQualifiedQualifier/");
+  }
+
+  @Test
   @TestMetadata("java")
   public void testJava() {
     runTest("jps/jps-plugin/testData/incremental/lookupTracker/jvm/java/");
