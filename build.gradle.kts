@@ -516,6 +516,16 @@ tasks {
         dependsOn(":native:native.tests:klib-ir-inliner:check")
     }
 
+    // TODO(KTI-3725): Promote to QualityGate.Master once the Windows Klib/IR TeamCity configuration uses it instead of `klibIrTest`
+    testLifecycleTask("klibIrWindowsTest", QualityGate.Undefined) {
+        dependsOn(":native:native.tests:klib-ir-inliner:windowsTest")
+    }
+
+    // TODO(KTI-3725): Promote to QualityGate.Nightly once the nightly Windows Klib/IR TeamCity configuration is created
+    testLifecycleTask("klibIrWindowsNightlyTest", QualityGate.Undefined) {
+        dependsOn(":native:native.tests:klib-ir-inliner:windowsNightlyTest")
+    }
+
     testLifecycleTask("compilerFrontendTest", QualityGate.Master) {
         dependsOn(":compiler:fir:raw-fir:psi2fir:test")
         dependsOn(":compiler:fir:raw-fir:light-tree2fir:test")

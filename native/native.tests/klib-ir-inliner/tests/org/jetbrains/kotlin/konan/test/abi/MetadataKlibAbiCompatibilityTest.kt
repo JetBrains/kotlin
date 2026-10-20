@@ -14,12 +14,14 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.TestCompilerArgs
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.CompilationToolException
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
 import org.jetbrains.kotlin.library.KotlinAbiVersion
+import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import java.io.File
 
 /**
  * Test that metadata klibs can be consumed even though their ABI version is not compatible with compiler version.
  */
+@Tag("host-independent")
 class MetadataKlibAbiCompatibilityTest : AbstractNativeSimpleTest() {
     @Test
     fun testMetadataKlibWithIncompatibleAbiVersion() {

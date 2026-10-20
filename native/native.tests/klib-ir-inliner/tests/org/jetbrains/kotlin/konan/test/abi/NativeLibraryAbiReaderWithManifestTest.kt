@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 
 @Tag("klib")
+@Tag("host-independent")
 @OptIn(ExperimentalLibraryAbiReader::class)
 class NativeLibraryAbiReaderWithManifestTest : AbstractNativeSimpleTest() {
     @Test

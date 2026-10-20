@@ -50,6 +50,7 @@ import kotlin.io.path.name
 import kotlin.io.path.pathString
 
 @Tag("klib")
+@Tag("host-independent")
 @Execution(ExecutionMode.SAME_THREAD)
 class KlibDAGBuilderTest : AbstractNativeSimpleTest() {
     @ParameterizedTest
