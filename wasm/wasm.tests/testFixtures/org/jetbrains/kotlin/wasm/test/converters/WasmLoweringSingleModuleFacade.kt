@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmSingleModuleBackendIrGener
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.js.config.outputDir
-import org.jetbrains.kotlin.js.config.outputName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.test.backend.ir.DeserializedFromKlibBackendInput
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
@@ -23,7 +22,6 @@ import org.jetbrains.kotlin.test.frontend.fir.processErrorFromCliPhase
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
-import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.defaultsProvider
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.testInfraError
@@ -36,22 +34,29 @@ import org.jetbrains.kotlin.wasm.test.precompiledKotlinTestOutputName
 import org.jetbrains.kotlin.wasm.test.precompiledStdlibOutputName
 import java.io.File
 
-class WasmLoweringSingleModuleFacade(testServices: TestServices) :
-    BackendFacade<IrBackendInput, BinaryArtifacts.Wasm>(testServices, BackendKinds.IrBackend, ArtifactKinds.Wasm) {
+/**
+ * Compiles one module alone in the single-module mode (`WASM_INCLUDED_MODULE_ONLY`), against the precompiled stdlib and
+ * kotlin-test which its wrapper finds through the dependency resolution map.
+ *
+ * @param artifactsDir the directory the artifact is going to be written into, which the resolution map is relative to;
+ * by default, the output directory of the test. A grouping stage facade writes the modules of a whole batch into one directory.
+ */
+class WasmLoweringSingleModuleFacade(
+    testServices: TestServices,
+    private val artifactsDir: File? = null,
+) : BackendFacade<IrBackendInput, BinaryArtifacts.Wasm>(testServices, BackendKinds.IrBackend, ArtifactKinds.Wasm) {
 
     override fun shouldTransform(module: TestModule): Boolean {
         require(with(testServices.defaultsProvider) { backendKind == inputKind && artifactKind == outputKind })
         return true
     }
 
-    private fun configureModuleResolutionMap(configuration: CompilerConfiguration,currentSetup: PrecompileSetup) {
+    private fun configureModuleResolutionMap(configuration: CompilerConfiguration, currentSetup: PrecompileSetup, artifactsDir: File) {
         val stdlibInitFile = File(currentSetup.stdlibOutputDir, "$precompiledStdlibOutputName.mjs")
         val kotlinTestInitFile = File(currentSetup.kotlinTestOutputDir, "$precompiledKotlinTestOutputName.mjs")
 
-        val outputDir = testServices.getWasmTestOutputDirectory()
-
-        val relativeStdlibPath = stdlibInitFile.relativeTo(outputDir).path.replace('\\', '/').substringBeforeLast('.')
-        val relativeKotlinTestPath = kotlinTestInitFile.relativeTo(outputDir).path.replace('\\', '/').substringBeforeLast('.')
+        val relativeStdlibPath = stdlibInitFile.relativeTo(artifactsDir).path.replace('\\', '/').substringBeforeLast('.')
+        val relativeKotlinTestPath = kotlinTestInitFile.relativeTo(artifactsDir).path.replace('\\', '/').substringBeforeLast('.')
 
         configuration.wasmDependencyResolutionMap = "<kotlin>:$relativeStdlibPath,<kotlin-test>:$relativeKotlinTestPath"
     }
@@ -65,9 +70,10 @@ class WasmLoweringSingleModuleFacade(testServices: TestServices) :
         val testPackage = extractTestPackage(testServices)
         configuration.wasmTestBoxFunctionToExport = FqName.fromSegments(listOfNotNull(testPackage, "box"))
 
+        val artifactsDir = this.artifactsDir ?: testServices.getWasmTestOutputDirectory()
         with(configuration) {
             configureWith(testServices.moduleStructure.allDirectives)
-            outputDir = testServices.getWasmTestOutputDirectory()
+            outputDir = artifactsDir
         }
 
         configuration.perfManager?.notifyPhaseFinished(PhaseType.Initialization)
@@ -79,11 +85,7 @@ class WasmLoweringSingleModuleFacade(testServices: TestServices) :
             else -> PrecompileSetup.REGULAR
         }
         precompileWasmModules(currentSetup)
-        configureModuleResolutionMap(configuration, currentSetup)
-
-        if (WasmEnvironmentConfigurator.isMainModule(module, testServices)) {
-            configuration.outputName = WasmEnvironmentConfigurator.WASM_BASE_FILE_NAME
-        }
+        configureModuleResolutionMap(configuration, currentSetup, artifactsDir)
 
         val compileResult =
             (WasmIrLinkingPipelinePhase then
