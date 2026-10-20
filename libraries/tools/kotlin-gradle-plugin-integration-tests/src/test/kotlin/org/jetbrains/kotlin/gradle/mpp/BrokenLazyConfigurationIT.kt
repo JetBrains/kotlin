@@ -8,11 +8,13 @@ package org.jetbrains.kotlin.gradle.mpp
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
 import kotlin.io.path.readText
 
 @DisplayName("Broken task configuration avoidance doesn't lead to build failures at least with simple setups")
+@MustRunOnChangesInGradle
 class BrokenLazyConfigurationIT : KGPBaseTest() {
     @JvmGradlePluginTests
     @GradleTest
