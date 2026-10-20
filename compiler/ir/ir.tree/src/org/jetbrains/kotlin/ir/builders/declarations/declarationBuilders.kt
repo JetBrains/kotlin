@@ -5,17 +5,25 @@
 
 package org.jetbrains.kotlin.ir.builders.declarations
 
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.IrImplementationDetail
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.copyTo
@@ -23,6 +31,7 @@ import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.types.Variance
 
 @PublishedApi
@@ -52,6 +61,101 @@ inline fun IrFactory.buildClass(builder: IrClassBuilder.() -> Unit) =
         builder()
         buildClass(this)
     }
+
+inline fun IrFactory.irClass(
+    symbol: IrClassSymbol = IrClassSymbolImpl(),
+    source: SourceElement = SourceElement.NO_SOURCE,
+    builder: IrClassImpl.() -> Unit
+): IrClass =
+    irClassImpl(symbol, source).apply(builder).declarationCreated()
+
+@OptIn(IrImplementationDetail::class)
+@PublishedApi
+internal fun IrFactory.irClassImpl(
+    symbol: IrClassSymbol = IrClassSymbolImpl(),
+    source: SourceElement
+): IrClassImpl =
+    IrClassImpl(
+        startOffset = UNDEFINED_OFFSET,
+        endOffset = UNDEFINED_OFFSET,
+        origin = IrDeclarationOrigin.DEFINED,
+        factory = this,
+        name = Name.special("<unnamed>"),
+        visibility = DescriptorVisibilities.PUBLIC,
+        symbol = symbol,
+        kind = ClassKind.CLASS,
+        modality = Modality.FINAL,
+        source = source,
+    )
+
+inline fun IrFactory.irFunction(
+    symbol: IrFunctionSymbol = IrSimpleFunctionSymbolImpl(),
+    containerSource: DeserializedContainerSource? = null,
+    builder: context(UpdateFrom) IrFunctionImpl.() -> Unit
+): IrSimpleFunction =
+    irFunctionImpl(symbol, containerSource).apply {
+        context(UpdateFrom) {
+            builder()
+        }
+    }.declarationCreated()
+
+object UpdateFrom
+
+context(_: UpdateFrom)
+fun IrFunctionImpl.updateFrom(from: IrFunction) {
+    // Change to mutable?
+    // containerSource = from.containerSource
+
+    isInline = from.isInline
+    isExternal = from.isExternal
+    isExpect = from.isExpect
+
+    if (from is IrSimpleFunction) {
+        modality = from.modality
+        isTailrec = from.isTailrec
+        isSuspend = from.isSuspend
+        isOperator = from.isOperator
+        isInfix = from.isInfix
+        isFakeOverride = from.isFakeOverride
+    } else {
+        modality = Modality.FINAL
+        isTailrec = false
+        isSuspend = false
+        isOperator = false
+        isInfix = false
+    }
+
+//    if (this is IrConstructor && from is IrConstructor) {
+//        isPrimary = from.isPrimary
+//    }
+}
+
+@OptIn(IrImplementationDetail::class)
+@PublishedApi
+internal fun IrFactory.irFunctionImpl(
+    symbol: IrFunctionSymbol,
+    containerSource: DeserializedContainerSource?,
+): IrFunctionImpl =
+    IrFunctionImpl(
+        startOffset = UNDEFINED_OFFSET,
+        endOffset = UNDEFINED_OFFSET,
+        origin = IrDeclarationOrigin.DEFINED,
+        factory = this,
+        name = Name.special("<unnamed>"),
+        isExternal = false,
+        visibility = DescriptorVisibilities.PUBLIC,
+        containerSource = containerSource,
+        isInline = false,
+        isExpect = false,
+        modality = Modality.FINAL,
+        isFakeOverride = false,
+        symbol = symbol as IrSimpleFunctionSymbol,
+        isTailrec = false,
+        isSuspend = false,
+        isOperator = false,
+        isInfix = false,
+        companionExtensionClass = null,
+    )
 
 @PublishedApi
 internal fun IrFactory.buildField(builder: IrFieldBuilder): IrField = with(builder) {

@@ -16,8 +16,9 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
+import org.jetbrains.kotlin.ir.builders.declarations.irFunction
+import org.jetbrains.kotlin.ir.builders.declarations.updateFrom
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
@@ -806,7 +807,7 @@ open class LocalDeclarationsLowering(
             // TODO: consider using fields to access the closure of enclosing class.
             val (capturedValues, capturedTypeParameters) = localFunctionContext.closure
 
-            val newDeclaration = context.irFactory.buildFun {
+            val newDeclaration = context.irFactory.irFunction {
                 updateFrom(oldDeclaration)
                 name = oldDeclaration.inventedNameForLocalFunction ?: oldDeclaration.name
                 visibility = visibilityPolicy.forSimpleFunction(oldDeclaration)

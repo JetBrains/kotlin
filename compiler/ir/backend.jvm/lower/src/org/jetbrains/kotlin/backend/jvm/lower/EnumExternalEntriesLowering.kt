@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.backend.jvm.ir.isEnumClassWhichRequiresExternalEntri
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.declarations.addField
-import org.jetbrains.kotlin.ir.builders.declarations.buildClass
+import org.jetbrains.kotlin.ir.builders.declarations.irClass
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irExprBody
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -73,10 +73,9 @@ internal class EnumExternalEntriesLowering(private val context: JvmBackendContex
     private inner class EntriesMappingState {
         val mappings = mutableMapOf<IrClass /* enum */, IrField>()
         val mappingsClass by lazy {
-            context.irFactory.buildClass {
+            context.irFactory.irClass {
                 name = Name.identifier("EntriesMappings")
                 origin = JvmLoweredDeclarationOrigin.ENUM_MAPPINGS_FOR_ENTRIES
-            }.apply {
                 createThisReceiverParameter()
             }
         }
