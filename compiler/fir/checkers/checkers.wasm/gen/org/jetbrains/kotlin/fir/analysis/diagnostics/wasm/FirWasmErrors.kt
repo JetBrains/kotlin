@@ -43,6 +43,7 @@ object FirWasmErrors : KtDiagnosticsContainer() {
     // Wasm interop
     val NESTED_WASM_EXPORT: KtDiagnosticFactory0 = KtDiagnosticFactory0("NESTED_WASM_EXPORT", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
     val WASM_EXPORT_ON_EXTERNAL_DECLARATION: KtDiagnosticFactory0 = KtDiagnosticFactory0("WASM_EXPORT_ON_EXTERNAL_DECLARATION", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
+    val WASM_EXPORT_UNSUPPORTED_FUNCTION_KIND: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("WASM_EXPORT_UNSUPPORTED_FUNCTION_KIND", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())
     val JS_AND_WASM_EXPORTS_ON_SAME_DECLARATION: KtDiagnosticFactory0 = KtDiagnosticFactory0("JS_AND_WASM_EXPORTS_ON_SAME_DECLARATION", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
     val NESTED_WASM_IMPORT: KtDiagnosticFactory0 = KtDiagnosticFactory0("NESTED_WASM_IMPORT", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
     val WASM_IMPORT_ON_NON_EXTERNAL_DECLARATION: KtDiagnosticFactory0 = KtDiagnosticFactory0("WASM_IMPORT_ON_NON_EXTERNAL_DECLARATION", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
