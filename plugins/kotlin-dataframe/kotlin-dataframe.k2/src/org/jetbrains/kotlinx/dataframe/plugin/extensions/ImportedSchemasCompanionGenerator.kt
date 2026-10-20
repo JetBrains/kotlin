@@ -9,26 +9,22 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.extensions.predicate.LookupPredicate
-import org.jetbrains.kotlin.fir.plugin.createCompanionObject
 import org.jetbrains.kotlin.fir.plugin.createConeType
-import org.jetbrains.kotlin.fir.plugin.createConstructor
 import org.jetbrains.kotlin.fir.plugin.createMemberFunction
 import org.jetbrains.kotlin.fir.plugin.createMemberProperty
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
-import org.jetbrains.kotlin.fir.symbols.SymbolInternals
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.constructClassLikeType
-import org.jetbrains.kotlin.name.*
+import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlinx.dataframe.plugin.ImportedSchemaCompanionKey
 import org.jetbrains.kotlinx.dataframe.plugin.ImportedSchemaMetadata
 import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
-import kotlin.collections.get
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -108,34 +104,14 @@ class ImportedSchemasCompanionGenerator(
         return emptyList()
     }
 
-    override fun generateConstructors(context: MemberGenerationContext): List<FirConstructorSymbol> {
-        val metadata = context.metadata() ?: return emptyList()
-        val constructor = createConstructor(context.owner, ImportedSchemaCompanionKey(metadata), isPrimary = true)
-        return listOf(constructor.symbol)
-    }
+    override fun needsCompanionObject(classSymbol: FirClassSymbol<*>, context: NestedClassGenerationContext): Boolean =
+        session.predicateBasedProvider.matches(predicate, classSymbol) && topLevelMetadata[context.owner.classId.shortClassName] != null
 
-    override fun getNestedClassifiersNames(classSymbol: FirClassSymbol<*>, context: NestedClassGenerationContext): Set<Name> {
-        if (!session.predicateBasedProvider.matches(predicate, classSymbol)) return emptySet()
-        return setOf(SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT)
-    }
-
-    override fun generateNestedClassLikeDeclaration(
+    override fun getCompanionObjectInfo(
         owner: FirClassSymbol<*>,
-        name: Name,
         context: NestedClassGenerationContext,
-    ): FirClassLikeSymbol<*>? {
-        @OptIn(SymbolInternals::class)
-        if (owner is FirRegularClassSymbol && owner.companionObjectSymbol != null) {
-            return null
-        }
-        val metadata = topLevelMetadata[context.owner.classId.shortClassName] ?: return null
-        if (name == SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT) {
-            return createCompanionObject(owner, ImportedSchemaCompanionKey(metadata)) {
-                val type = Names.DATAFRAME_PROVIDER
-                    .constructClassLikeType(arrayOf(owner.defaultType()))
-                superType(type)
-            }.symbol
-        }
-        return super.generateNestedClassLikeDeclaration(owner, name, context)
+    ): CompanionObjectInfo {
+        val type = Names.DATAFRAME_PROVIDER.constructClassLikeType(arrayOf(owner.defaultType()))
+        return CompanionObjectInfo(superTypes = listOf(type))
     }
 }
