@@ -143,7 +143,7 @@ fun main(args: Array<String>) {
         }
 
         testGroup(testsRoot, "compiler/testData", testRunnerMethodName = "runTest0") {
-            testClass<AbstractFirWasmJsCodegenSingleModuleBoxTest> {
+            testClass<AbstractWasmJsCodegenSingleModuleTest> {
                 model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests)
             }
 
