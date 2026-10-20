@@ -213,12 +213,18 @@ class FirGeneratedMemberDeclarationsStorage(private val session: FirSession) : F
 
     private val callableStorageByClass: FirCache<FirClassSymbol<*>, CallableStorage, ExtensionsByName> =
         cachesFactory.createCache { classSymbol, extensionsMap ->
-            CallableStorage(cachesFactory, classSymbol, extensionsMap)
+            CallableStorage(cachesFactory, session, classSymbol, extensionsMap)
         }
 
     private val classifierStorageByClass: FirCache<FirClassSymbol<*>, ClassifierStorage, ClassifierStorage.Context> =
         cachesFactory.createCache { classSymbol, context ->
-            ClassifierStorage(cachesFactory, classSymbol, context.extensionsByClassifierName, context.extensionsNeedingCompanionObject)
+            ClassifierStorage(
+                cachesFactory,
+                session,
+                classSymbol,
+                context.extensionsByClassifierName,
+                context.extensionsNeedingCompanionObject
+            )
         }
 
     object GeneratedCompanionKey : GeneratedDeclarationKey()
@@ -234,6 +240,7 @@ class FirGeneratedMemberDeclarationsStorage(private val session: FirSession) : F
      */
     internal class CallableStorage(
         cachesFactory: FirCachesFactory,
+        private val session: FirSession,
         val classSymbol: FirClassSymbol<*>,
         private val extensionsByCallableName: Map<Name, List<FirDeclarationGenerationExtension>>
     ) {
@@ -247,9 +254,8 @@ class FirGeneratedMemberDeclarationsStorage(private val session: FirSession) : F
             cachesFactory.createLazyValueWithContext { context -> generateConstructors(context) }
 
         val allCallableNames: Set<Name>
-            get() = extensionsByCallableName.keys + if (isSharedGeneratedCompanion) setOf(SpecialNames.INIT) else emptySet()
+            get() = if (isSharedGeneratedCompanion) extensionsByCallableName.keys + SpecialNames.INIT else extensionsByCallableName.keys
 
-        private val session get() = classSymbol.moduleData.session
         private val isSharedGeneratedCompanion = classSymbol.origin == GeneratedCompanionKey.origin
 
         private fun generateMemberFunctions(name: Name, generationContext: MemberGenerationContext): List<FirNamedFunctionSymbol> {
@@ -279,7 +285,6 @@ class FirGeneratedMemberDeclarationsStorage(private val session: FirSession) : F
                 .ifEmpty { if (isSharedGeneratedCompanion) listOf(generateCompanionObjectConstructorForPlugins(classSymbol).symbol) else emptyList() }
         }
 
-        /** A copy of `createDefaultPrivateConstructor(owner, GeneratedCompanionKey)`, which this module can't access. */
         private fun generateCompanionObjectConstructorForPlugins(owner: FirClassSymbol<*>): FirConstructor = buildPrimaryConstructor {
             symbol = FirConstructorSymbol(owner.classId)
             source = owner.source?.fakeElement(KtFakeSourceElementKind.PluginGenerated.Default)
@@ -327,6 +332,7 @@ class FirGeneratedMemberDeclarationsStorage(private val session: FirSession) : F
      */
     internal class ClassifierStorage(
         cachesFactory: FirCachesFactory,
+        private val session: FirSession,
         private val classSymbol: FirClassSymbol<*>,
         private val extensionsByClassifierName: ExtensionsByName,
         private val extensionsNeedingCompanionObject: List<FirDeclarationGenerationExtension>,
@@ -340,9 +346,9 @@ class FirGeneratedMemberDeclarationsStorage(private val session: FirSession) : F
             cachesFactory.createCache { name, context -> generateNestedClassifier(name, context) }
 
         val allClassifierNames: Set<Name>
-            get() = extensionsByClassifierName.keys + if (needsCompanionObject) setOf(DEFAULT_NAME_FOR_COMPANION_OBJECT) else emptyList()
+            get() = if (needsCompanionObject) extensionsByClassifierName.keys + DEFAULT_NAME_FOR_COMPANION_OBJECT
+            else extensionsByClassifierName.keys
 
-        private val session get() = classSymbol.moduleData.session
         private val needsCompanionObject get() = extensionsNeedingCompanionObject.isNotEmpty()
 
         private fun generateNestedClassifier(name: Name, generationContext: NestedClassGenerationContext): FirRegularClassSymbol? {
@@ -401,7 +407,6 @@ class FirGeneratedMemberDeclarationsStorage(private val session: FirSession) : F
             return generatedClass
         }
 
-        /** A copy of `createCompanionObject(owner, GeneratedCompanionKey)`, which this module can't access. */
         private fun generateCompanionObjectForPlugins(
             owner: FirClassSymbol<*>,
             configure: FirRegularClassBuilder.() -> Unit,
