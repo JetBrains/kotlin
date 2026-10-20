@@ -7,10 +7,14 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInWasm
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
 
 @WasmJsGradlePluginTests
+@MustRunOnChangesInGradle
+@MustRunOnChangesInWasm
 class WasmConfigurationCacheIT : KGPBaseTest() {
 
     override val defaultBuildOptions: BuildOptions
