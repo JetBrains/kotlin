@@ -51,13 +51,6 @@ abstract class AbstractWasmJsCodegenSingleModuleTestBase(
     }
 }
 
-open class AbstractFirWasmJsCodegenSingleModuleBoxTest(
-    testGroupOutputDirPrefix: String = "codegen/singleModuleBox/",
-) : AbstractWasmJsCodegenSingleModuleTestBase(
-    pathToTestDir = "compiler/testData/codegen/box/",
-    testGroupOutputDirPrefix = testGroupOutputDirPrefix
-)
-
 open class AbstractFirWasmJsCodegenSingleModuleInteropTest : AbstractWasmJsCodegenSingleModuleTestBase(
     pathToTestDir = "compiler/testData/codegen/boxWasmJsInterop",
     testGroupOutputDirPrefix = "codegen/wasmJsSingleModuleInterop"

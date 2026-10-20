@@ -50,15 +50,17 @@ data class PerTestOutput(val testServices: TestServices, val testModule: TestMod
 data class DependencyPaths(val regular: Set<String>, val friend: Set<String>)
 
 /**
- * Base class for the two Stage-2 grouping facades for K/Wasm:
+ * Base class for the Stage-2 grouping facades for K/Wasm:
  *
  *  - [CustomWasmSecondStageFacade.Grouping] — the CLI-based implementation for KLib forward compatibility tests.
  *  - [org.jetbrains.kotlin.wasm.test.converters.WasmInProcessSecondStageFacade.Grouping] — the in-process counterpart.
+ *  - [org.jetbrains.kotlin.wasm.test.converters.WasmInProcessSingleModuleSecondStageFacade.Grouping] — the in-process
+ *    facade of the single-module mode, which compiles a batch module by module.
  *
  * It hosts the shared, target-agnostic batch-analysis helpers (collecting the per-test KLIB outputs,
  * generating the groupedBatch proxy launcher source, aggregating batch-wide language settings and dependencies,
- * and deduplicating the synthetic `helpers.klib` artifacts) so both implementations can reuse the exact
- * same logic instead of one delegating to a throwaway instance of the other.
+ * and deduplicating the synthetic `helpers.klib` artifacts) so all implementations can reuse the exact
+ * same logic instead of one delegating to a throwaway instance of another.
  */
 abstract class AbstractWasmSecondStageGroupingFacade(
     val testServices: TestServices,
