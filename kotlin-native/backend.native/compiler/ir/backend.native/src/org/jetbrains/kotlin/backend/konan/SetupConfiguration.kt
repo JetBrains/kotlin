@@ -272,6 +272,8 @@ internal fun CompilerConfiguration.setupCommonOptionsForCaches(config: NativeSec
     put(ALLOCATION_MODE, config.allocationMode)
     put(BinaryOptions.gc, config.gc)
     put(BinaryOptions.gcSchedulerType, config.gcSchedulerType)
+    put(BinaryOptions.gcStackMapScheme, config.gcStackMapScheme)
+    put(BinaryOptions.gcStackMapLazy, config.gcStackMapLazy)
     put(BinaryOptions.runtimeAssertionsMode, config.runtimeAssertsMode)
     put(BinaryOptions.swiftExport, config.swiftExport)
     put(CommonConfigurationKeys.PARALLEL_BACKEND_THREADS, config.threadsCount)

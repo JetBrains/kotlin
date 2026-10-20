@@ -546,6 +546,11 @@ class NativeSecondStageCompilationConfig(
             append("-ccall_mode${cCallMode.name}")
         if (latin1Strings != defaultLatin1Strings)
             append("-latin1_strings${if (latin1Strings) "ENABLE" else "DISABLE"}")
+        if (gcStackMapScheme != defaultGCStackMapScheme)
+            append("-gc_stack_map_scheme${gcStackMapScheme.name}")
+        // The lazy flag changes the code of a cache only for delta-main.
+        if (gcStackMapScheme == GCStackMapScheme.DELTA_MAIN && !gcStackMapLazy)
+            append("-gc_stack_map_lazyFALSE")
     }
 
     private val systemCacheFlavorString = buildString {
@@ -605,7 +610,6 @@ class NativeSecondStageCompilationConfig(
 
     internal val ignoreCacheReason = when {
         optimizationsEnabled && !enableReleaseBinaryCache -> "with global optimizations"
-        gcStackMapScheme == GCStackMapScheme.DELTA_MAIN -> "with delta-main GC stack maps"
         forceNativeThreadStateForFunctions != defaultForceNativeThreadStateForFunctions -> "with non-default forceNativeThreadStateForFunctions"
         else -> null
     }
