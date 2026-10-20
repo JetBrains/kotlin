@@ -25,3 +25,6 @@ fun <T> genericToString(x: T): String = x.toString()
 fun anyString(): Any = "hello"
 fun anyInt(): Any = 42
 fun anyBool(): Any = true
+fun anyList(): Any = listOf("a", "b", "c")
+fun anySet(): Any = setOf("xyz")
+fun anyMap(): Any = mapOf("key" to "value")

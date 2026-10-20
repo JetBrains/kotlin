@@ -192,19 +192,19 @@ extension Swift.Array: KotlinRuntimeSupport._KotlinBridgeable {
 
 extension Swift.Set: KotlinRuntimeSupport._KotlinBridgeable {
     public init(__externalRCRefUnsafe ref: UnsafeMutableRawPointer, options: KotlinRuntime.KotlinBaseConstructionOptions) {
-        self = Unmanaged<NSSet>.fromOpaque(KotlinBridgeable_Set_unbox(ref)).takeUnretainedValue() as! Set<Element>
+        self = KotlinBridgeable_Set_unbox(ref) as! Set<Element>
     }
     public func __externalRCRef() -> UnsafeMutableRawPointer {
-        return KotlinBridgeable_Set_box(Unmanaged.passUnretained(self as NSSet).toOpaque())
+        return KotlinBridgeable_Set_box(self)
     }
 }
 
 extension Swift.Dictionary: KotlinRuntimeSupport._KotlinBridgeable {
     public init(__externalRCRefUnsafe ref: UnsafeMutableRawPointer, options: KotlinRuntime.KotlinBaseConstructionOptions) {
-        self = Unmanaged<NSDictionary>.fromOpaque(KotlinBridgeable_Dictionary_unbox(ref)).takeUnretainedValue() as! [Key: Value]
+        self = KotlinBridgeable_Dictionary_unbox(ref) as! [Key: Value]
     }
     public func __externalRCRef() -> UnsafeMutableRawPointer {
-        return KotlinBridgeable_Dictionary_box(Unmanaged.passUnretained(self as NSDictionary).toOpaque())
+        return KotlinBridgeable_Dictionary_box(self)
     }
 }
 
@@ -222,27 +222,22 @@ extension KotlinBase {
     package static func __createBridgeable(externalRCRef ref: UnsafeMutableRawPointer, conformsTo: ((AnyClass?) -> Bool)? = nil) -> any _KotlinBridgeable {
         let tag = KotlinBridgeable_getTypeTag(ref)
         switch tag {
-        case 1:  let v = KotlinBridgeable_String_unbox(ref);  KotlinBridgeable_disposeRef(ref); return v
-        case 2:  let v = KotlinBridgeable_Int8_unbox(ref);    KotlinBridgeable_disposeRef(ref); return v
-        case 3:  let v = KotlinBridgeable_Int16_unbox(ref);   KotlinBridgeable_disposeRef(ref); return v
-        case 4:  let v = KotlinBridgeable_Int32_unbox(ref);   KotlinBridgeable_disposeRef(ref); return v
-        case 5:  let v = KotlinBridgeable_Int64_unbox(ref);   KotlinBridgeable_disposeRef(ref); return v
-        case 6:  let v = KotlinBridgeable_UInt8_unbox(ref);   KotlinBridgeable_disposeRef(ref); return v
-        case 7:  let v = KotlinBridgeable_UInt16_unbox(ref);  KotlinBridgeable_disposeRef(ref); return v
-        case 8:  let v = KotlinBridgeable_UInt32_unbox(ref);  KotlinBridgeable_disposeRef(ref); return v
-        case 9:  let v = KotlinBridgeable_UInt64_unbox(ref);  KotlinBridgeable_disposeRef(ref); return v
-        case 10: let v = KotlinBridgeable_Bool_unbox(ref);    KotlinBridgeable_disposeRef(ref); return v
-        case 11: let v = KotlinBridgeable_Float_unbox(ref);   KotlinBridgeable_disposeRef(ref); return v
-        case 12: let v = KotlinBridgeable_Double_unbox(ref);  KotlinBridgeable_disposeRef(ref); return v
-        case 13: let v: [Any] = KotlinBridgeable_Array_unbox(ref) as! [Any]; KotlinBridgeable_disposeRef(ref); return v
-        case 14:
-            let v = Unmanaged<NSSet>.fromOpaque(KotlinBridgeable_Set_unbox(ref)).takeUnretainedValue() as! Set<AnyHashable>
-            KotlinBridgeable_disposeRef(ref); return v
-        case 15:
-            let v = Unmanaged<NSDictionary>.fromOpaque(KotlinBridgeable_Dictionary_unbox(ref)).takeUnretainedValue() as! [AnyHashable: Any]
-            KotlinBridgeable_disposeRef(ref); return v
-        default:
-            return __createProtocolWrapper(externalRCRef: ref, conformsTo: conformsTo)
+        case 1:  let v = KotlinBridgeable_String_unbox(ref);                             KotlinBridgeable_disposeRef(ref); return v
+        case 2:  let v = KotlinBridgeable_Int8_unbox(ref);                               KotlinBridgeable_disposeRef(ref); return v
+        case 3:  let v = KotlinBridgeable_Int16_unbox(ref);                              KotlinBridgeable_disposeRef(ref); return v
+        case 4:  let v = KotlinBridgeable_Int32_unbox(ref);                              KotlinBridgeable_disposeRef(ref); return v
+        case 5:  let v = KotlinBridgeable_Int64_unbox(ref);                              KotlinBridgeable_disposeRef(ref); return v
+        case 6:  let v = KotlinBridgeable_UInt8_unbox(ref);                              KotlinBridgeable_disposeRef(ref); return v
+        case 7:  let v = KotlinBridgeable_UInt16_unbox(ref);                             KotlinBridgeable_disposeRef(ref); return v
+        case 8:  let v = KotlinBridgeable_UInt32_unbox(ref);                             KotlinBridgeable_disposeRef(ref); return v
+        case 9:  let v = KotlinBridgeable_UInt64_unbox(ref);                             KotlinBridgeable_disposeRef(ref); return v
+        case 10: let v = KotlinBridgeable_Bool_unbox(ref);                               KotlinBridgeable_disposeRef(ref); return v
+        case 11: let v = KotlinBridgeable_Float_unbox(ref);                              KotlinBridgeable_disposeRef(ref); return v
+        case 12: let v = KotlinBridgeable_Double_unbox(ref);                             KotlinBridgeable_disposeRef(ref); return v
+        case 13: let v: [Any] = KotlinBridgeable_Array_unbox(ref) as! [Any];             KotlinBridgeable_disposeRef(ref); return v
+        case 14: let v = KotlinBridgeable_Set_unbox(ref) as! Set<AnyHashable>;           KotlinBridgeable_disposeRef(ref); return v
+        case 15: let v = KotlinBridgeable_Dictionary_unbox(ref) as! [AnyHashable: Any];  KotlinBridgeable_disposeRef(ref); return v
+        default: return __createProtocolWrapper(externalRCRef: ref, conformsTo: conformsTo)
         }
     }
 
