@@ -63,6 +63,13 @@ Input can be a single test class or a list of test classes; all of them live und
 8. **Imports:** add the corresponding `org.jetbrains.kotlin.testFederation.MustRunOnChangesIn<Domain>` import(s), keeping
    import ordering consistent with the file's existing style.
 
+## Workflow
+
+- If input is a list of test classes, work on every class sequentially, not in parallel.
+- Before proceeding to the next class, ask the user to validate the changes and commit them manually.
+- Wait for the user's approval before proceeding to the next class.
+- Never commit changes automatically.
+
 ## Running table
 
 Maintain a running table across the whole session/effort, with exactly these 3 columns, and append one row per class
@@ -79,14 +86,6 @@ assessed (keep "Changes made" very brief — a few words, not a sentence):
 Use `Annotated` / `Already annotated` / `Annotated (per-method)` etc. for Status.
 
 Print the table at the end of the run in Markdown format, so it can be included in the pull request description.
-
-## Commit conventions
-
-- A separate commit should be created for every modified class. 
-- Commit message subject: `Mark <ClassName> with <AnnotationName>` (e.g. `Mark DifferentClassloadersIT with MustRunOnChangesInGradle`).
-  If multiple annotations were added, name the most relevant one or summarize concisely.
-- Commit description: only the ticket ID, `KT-87614` — nothing else.
-- Before committing, check `git status`/`git diff` to confirm exactly which file(s) are pending and uncommitted.
 
 ## Verification
 
