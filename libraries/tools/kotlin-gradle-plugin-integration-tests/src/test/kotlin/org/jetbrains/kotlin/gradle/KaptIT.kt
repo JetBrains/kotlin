@@ -779,10 +779,16 @@ open class KaptIT : KaptBaseIT() {
                 """.trimIndent()
             )
 
+            val cacheWarning = "Kapt memory leak detection may report false positives"
             build(":example:kaptKotlin") {
                 assertOutputContains("Memory leak detected!")
                 assertOutputContains("Location: 'org.kotlin.annotationProcessor.TestAnnotationProcessor', static field 'leaked'")
-                val cacheWarning = "Kapt memory leak detection may report false positives"
+                // The warning is about the 'standard' mode only.
+                assertOutputDoesNotContain(cacheWarning)
+            }
+
+            subProject("example").buildGradle.modify { it.replace("detectMemoryLeaks = \"paranoid\"", "detectMemoryLeaks = \"standard\"") }
+            build(":example:kaptKotlin", "--rerun-tasks") {
                 if ((buildOptions.kaptOptions?.classLoadersCacheSize ?: 0) > 0) {
                     assertOutputContains(cacheWarning)
                 } else {

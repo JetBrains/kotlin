@@ -67,29 +67,22 @@ object MemoryLeakDetector {
     }
 
     fun process(isParanoid: Boolean): Set<MemoryLeak> {
-        val memoryLeaks = mutableSetOf<MemoryLeak>()
-
-        synchronized(classLoaderData) {
-            val newClassLoaderData = mutableListOf<ClassLoaderData>()
-            for (data in classLoaderData) {
-                val classLoader = data.ref.get() ?: continue
-                // Keep inspected classloaders until they are collected: a long-lived (e.g. cached) classloader is
-                // registered again on every execution, and must not be inspected and reported again.
-                newClassLoaderData += data
-                if (data.inspected) continue
+        // Only pick the classloaders to inspect under the lock, the inspection itself runs outside of it.
+        val toInspect = synchronized(classLoaderData) {
+            // Inspected classloaders are kept until they are collected: a long-lived (e.g. cached) classloader is
+            // registered again on every execution, and must not be inspected and reported again.
+            classLoaderData.removeAll { it.ref.get() == null }
+            classLoaderData.mapNotNull { data ->
+                val classLoader = data.ref.get()
+                if (classLoader == null || data.inspected) return@mapNotNull null
                 data.age += 1
-
-                if (isParanoid || data.age >= 5) {
-                    data.inspected = true
-                    memoryLeaks += inspectStatics(classLoader, data.loadedClasses)
-                }
+                if (!isParanoid && data.age < 5) return@mapNotNull null
+                data.inspected = true
+                classLoader to data.loadedClasses
             }
-
-            classLoaderData.clear()
-            classLoaderData.addAll(newClassLoaderData)
         }
 
-        return memoryLeaks
+        return toInspect.flatMapTo(mutableSetOf()) { inspectStatics(it.first, it.second) }
     }
 
     private fun inspectStatics(classLoader: ClassLoader, loadedClasses: (ClassLoader) -> Collection<Class<*>>): Set<MemoryLeak> {

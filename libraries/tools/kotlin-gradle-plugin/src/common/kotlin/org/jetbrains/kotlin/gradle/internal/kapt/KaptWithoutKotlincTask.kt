@@ -305,7 +305,8 @@ abstract class KaptWithoutKotlincTask @Inject constructor(
                         + "\nIf you disable discovery, declare every annotation processor in a 'kapt' configuration."
             )
         }
-        if (classLoadersCacheSize > 0 && detectMemoryLeaks != "none") {
+        // The 'paranoid' mode inspects every classloader right after annotation processing anyway, whatever its lifetime.
+        if (classLoadersCacheSize > 0 && (detectMemoryLeaks == "standard" || detectMemoryLeaks == "default")) {
             logger.warn(
                 "Kapt memory leak detection may report false positives while the annotation processor classloaders cache is enabled:"
                         + " cached classloaders are kept alive between builds on purpose, so the 'standard' mode cannot tell them"
