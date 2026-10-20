@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceWithVersion
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInBuildToolsApi
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCompilerInfrastructure
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import java.nio.file.Path
 
 /**
@@ -21,6 +22,7 @@ import java.nio.file.Path
  */
 @MustRunOnChangesInCompilerInfrastructure
 @MustRunOnChangesInBuildToolsApi
+@MustRunOnChangesInGradle
 abstract class KmpIncrementalITBase : KGPBaseTest() {
 
     override val defaultBuildOptions: BuildOptions
