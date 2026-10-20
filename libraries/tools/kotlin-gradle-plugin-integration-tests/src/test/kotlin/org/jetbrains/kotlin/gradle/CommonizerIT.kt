@@ -760,12 +760,12 @@ open class CommonizerIT : KGPBaseTest() {
                 ":compileNativeMainKotlinMetadata",
             ) {
                 assertTasksFailed(":compileNativeMainKotlinMetadata")
-                assertOutputContains("Unresolved reference 'linux'")
+                assertOutputContains("unresolved reference 'linux'")
             }
 
             buildAndFail(":compileNativeMainKotlinMetadata") {
                 assertTasksFailed(":compileNativeMainKotlinMetadata")
-                assertOutputContains("Unresolved reference 'linux'")
+                assertOutputContains("unresolved reference 'linux'")
             }
         }
     }

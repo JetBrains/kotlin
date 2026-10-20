@@ -74,7 +74,7 @@ class MppOptionalExpectationIT : KGPBaseTest() {
             }
 
             buildAndFail("compileKotlinLinux64") {
-                assertOutputContains("Declaration annotated with '@OptionalExpectation' can only be used in common module sources")
+                assertOutputContains("declaration annotated with '@OptionalExpectation' can only be used in common module sources")
             }
         }
     }

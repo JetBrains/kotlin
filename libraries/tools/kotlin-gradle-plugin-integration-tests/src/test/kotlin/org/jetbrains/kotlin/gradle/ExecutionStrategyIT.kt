@@ -228,7 +228,7 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
             build("build") {
                 val mainKt = subProject("app").kotlinSourcesDir().resolve("main.kt")
                 // ensure warnings are properly parsed
-                assertOutputContains("w: ${mainKt.toRealPath().toUri()}:9:5 'constructor(): A' is deprecated. deprecated for test")
+                assertOutputContains("${mainKt.toRealPath().toUri().path}:9:5: warning: 'constructor(): A' is deprecated. deprecated for test")
             }
         }
     }

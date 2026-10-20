@@ -440,12 +440,12 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
                 val outputPerTask = compileTasks.associateWith { getOutputForTask(it, logLevel = LogLevel.INFO) }
                 for ([task, taskOutput] in outputPerTask) {
                     assertFalse(
-                        taskOutput.contains("generatedSource_commonMain_\\d+.kt:\\d+:\\d+ Unresolved reference 'commonMain'".toRegex()),
+                        taskOutput.contains("generatedSource_commonMain_\\d+.kt:\\d+:\\d+(?:: error:)? [Uu]nresolved reference 'commonMain'".toRegex()),
                         "$task should be able to resolve `commonMain()`\n$taskOutput"
                     )
                     for (sourceSet in specificSourceSets) {
                         assertTrue(
-                            taskOutput.contains("generatedSource_commonMain_\\d+.kt:\\d+:\\d+ Unresolved reference '$sourceSet'".toRegex()),
+                            taskOutput.contains("generatedSource_commonMain_\\d+.kt:\\d+:\\d+(?:: error:)? [Uu]nresolved reference '$sourceSet'".toRegex()),
                             "`$sourceSet()` should be unresolvable for $task\n$taskOutput"
                         )
                     }
