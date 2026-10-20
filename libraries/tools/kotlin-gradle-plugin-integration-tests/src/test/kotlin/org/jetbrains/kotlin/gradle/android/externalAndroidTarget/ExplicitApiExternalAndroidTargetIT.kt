@@ -8,10 +8,13 @@ package org.jetbrains.kotlin.gradle.android.externalAndroidTarget
 import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInFrontend
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 
 // Used AGP 9.0 as the minimal stable version supported for the android library
 @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_90)
 @AndroidGradlePluginTests
+@MustRunOnChangesInFrontend
 class ExplicitApiExternalAndroidTargetIT : KGPBaseTest() {
 
     // Uses `com.android.kotlin.multiplatform.library`, requires AGP new DSL.
@@ -19,6 +22,7 @@ class ExplicitApiExternalAndroidTargetIT : KGPBaseTest() {
         get() = super.defaultBuildOptions.copy(enableLegacyAgpDsl = false)
 
     @GradleAndroidTest
+    @MustRunOnChangesInGradle
     fun `test - disabled - builds with implicit declarations`(
         gradleVersion: GradleVersion, androidVersion: String, jdkVersion: JdkVersions.ProvidedJdk,
     ) {
