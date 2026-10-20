@@ -88,6 +88,9 @@ internal abstract class DefaultNodeJsToolchainServiceImpl @Inject internal const
         ): Provider<DefaultNodeJsToolchainServiceImpl> {
             return gradle.sharedServices.registerIfAbsent(nodeJsServiceName, DefaultNodeJsToolchainServiceImpl::class.java) { spec ->
                 spec.parameters.downloadBaseUrl.convention(OFFICIAL_NODE_JS_DOWNLOAD_BASE_URL)
+                spec.parameters.installationDir.fileValue(
+                    File(System.getProperty("user.home")).resolve(".kotlin").resolve(NODE_JS_TOOLCHAINS_DIR_NAME)
+                )
                 spec.parameters.offline.convention(gradle.startParameter.isOffline)
                 configureBuildServiceParameters(spec.parameters)
             }
