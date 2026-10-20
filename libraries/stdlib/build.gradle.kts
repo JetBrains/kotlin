@@ -41,6 +41,8 @@ plugins {
     id("binaryen-configuration")
     id("nodejs-configuration")
     id("wasmtime-configuration")
+    // TODO(remove after bootstrap): runs the WASI tests as components
+    id("wasi-component-tests-bootstrap-workaround")
 }
 
 description = "Kotlin Standard Library"

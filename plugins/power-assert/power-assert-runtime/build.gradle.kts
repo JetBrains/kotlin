@@ -15,6 +15,8 @@ plugins {
     id("signing-convention")
     id("nodejs-configuration")
     id("binaryen-configuration")
+    // TODO(remove after bootstrap): runs the WASI tests as components
+    id("wasi-component-tests-bootstrap-workaround")
 }
 
 description = "Kotlin Power-Assert Runtime"
