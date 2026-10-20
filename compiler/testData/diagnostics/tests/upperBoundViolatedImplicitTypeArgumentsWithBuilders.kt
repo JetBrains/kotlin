@@ -59,7 +59,7 @@ fun testA(target: SimpleShape) {
 
 fun testB(target: SimpleShape) {
     // The type the diagnostic in `testA` suggests
-    val builder: AbstractShapeBuilder<*, *> = <!INAPPLICABLE_CANDIDATE!>shapeToBuilder<!><<!UPPER_BOUND_VIOLATED!>AbstractShapeBuilder<<!UPPER_BOUND_VIOLATED!>AbstractShapeBuilder<<!UPPER_BOUND_VIOLATED!>out AbstractShapeBuilder<*, *><!>, SimpleShape><!>, SimpleShape><!>, SimpleShape>(target)
+    val builder: AbstractShapeBuilder<*, *> = shapeToBuilder<<!UPPER_BOUND_VIOLATED!>AbstractShapeBuilder<<!UPPER_BOUND_VIOLATED!>AbstractShapeBuilder<<!UPPER_BOUND_VIOLATED!>out AbstractShapeBuilder<*, *><!>, SimpleShape><!>, SimpleShape><!>, SimpleShape>(target)
 }
 
 fun testC(target: SimpleShape) {

@@ -49,7 +49,7 @@ fun <T> bar(a: Any): T = a <!UNCHECKED_CAST!>as T<!>
 fun <T> foo() {
     foo<Color.<!ENUM_ENTRY_AS_TYPE!>RED<!>>()
     foo<RedAlias>()
-    <!INAPPLICABLE_CANDIDATE!>bar<!><Color.<!ENUM_ENTRY_AS_TYPE!>RED<!>>(Color.RED)
+    bar<Color.<!ENUM_ENTRY_AS_TYPE!>RED<!>>(Color.RED)
 }
 
 fun Array<Color.<!ENUM_ENTRY_AS_TYPE!>RED<!>>.foo(entries: Array<Color.<!ENUM_ENTRY_AS_TYPE!>RED<!>>): Array<Color.<!ENUM_ENTRY_AS_TYPE!>RED<!>> = null!!
