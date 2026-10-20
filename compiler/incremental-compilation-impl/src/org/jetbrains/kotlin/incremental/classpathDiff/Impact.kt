@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.incremental.classpathDiff
 
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import java.util.*
 
@@ -55,10 +56,12 @@ internal interface ImpactingClassesResolver {
  *   1. [SupertypesInheritorsImpact]
  *   2. [ConstantsInCompanionObjectsImpact]
  *   3. [TypeAliasExpansionImpact]
+ *   4. [PackageInfoImpact]
  */
 internal object AllImpacts : Impact {
 
-    private val allImpacts = listOf(SupertypesInheritorsImpact, ConstantsInCompanionObjectsImpact, TypeAliasExpansionImpact)
+    private val allImpacts =
+        listOf(SupertypesInheritorsImpact, ConstantsInCompanionObjectsImpact, TypeAliasExpansionImpact, PackageInfoImpact)
 
     override fun getResolver(allClasses: Iterable<AccessibleClassSnapshot>): ImpactedSymbolsResolver {
         val resolvers = allImpacts.map { it.getResolver(allClasses) }
@@ -139,6 +142,7 @@ private object SupertypesInheritorsImpact : Impact {
                     emptySet()
                 }
                 is JavaClassSnapshot -> clazz.supertypes.mapNotNullTo(mutableSetOf()) { classNameToClassId[it] }
+                is PackageInfoClassSnapshot -> emptySet()
             }
             if (supertypes.isNotEmpty()) {
                 clazz.classId to supertypes
@@ -286,6 +290,48 @@ private object TypeAliasExpansionImpact : Impact {
                 getOrPut(snapshot.classId) { mutableSetOf() }.addAll(snapshot.typeAliases.orEmpty().map { it.expandedClassId })
             }
         }
+}
+
+/**
+ * Describes the impact of a package's `package-info.class` on the classes of that package: package-level annotations (e.g. nullability
+ * defaults) change how every class in the package is seen by consumers.
+ *   - Forward ([getResolver]): if `pkg.package-info` has changed, every class in `pkg` is impacted (and, transitively via
+ *     [SupertypesInheritorsImpact], their subclasses).
+ *   - Reverse ([getReverseResolver]): when a class in `pkg` is retained during classpath shrinking, `pkg.package-info` must be retained
+ *     too, otherwise a later change in it could not be detected.
+ */
+private object PackageInfoImpact : Impact {
+
+    override fun getResolver(allClasses: Iterable<AccessibleClassSnapshot>): ImpactedSymbolsResolver {
+        val packageInfoClassIds: Set<ClassId> = allClasses.filterIsInstance<PackageInfoClassSnapshot>().mapTo(mutableSetOf()) { it.classId }
+        val packageToClasses: Map<FqName, Set<ClassId>> = buildMap<FqName, MutableSet<ClassId>> {
+            allClasses.forEach { clazz ->
+                if (clazz !is PackageInfoClassSnapshot) {
+                    getOrPut(clazz.classId.packageFqName) { mutableSetOf() }.add(clazz.classId)
+                }
+            }
+        }
+
+        return object : ImpactedSymbolsResolver {
+            override fun getImpactedClasses(classId: ClassId): Set<ClassId> {
+                return if (classId in packageInfoClassIds) packageToClasses[classId.packageFqName] ?: emptySet() else emptySet()
+            }
+
+            override fun getImpactedClassMembers(classMembers: ClassMembers): Set<ClassMembers> = emptySet()
+        }
+    }
+
+    override fun getReverseResolver(allClasses: Iterable<AccessibleClassSnapshot>): ImpactingClassesResolver {
+        val packageToPackageInfoClassId: Map<FqName, ClassId> =
+            allClasses.filterIsInstance<PackageInfoClassSnapshot>().associate { it.classId.packageFqName to it.classId }
+
+        return object : ImpactingClassesResolver {
+            override fun getImpactingClasses(classId: ClassId): Set<ClassId> {
+                val packageInfoClassId = packageToPackageInfoClassId[classId.packageFqName]
+                return if (packageInfoClassId != null && packageInfoClassId != classId) setOf(packageInfoClassId) else emptySet()
+            }
+        }
+    }
 }
 
 internal object BreadthFirstSearch {

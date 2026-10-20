@@ -35,13 +35,6 @@ class ClasspathEntrySnapshot(
      * rebuild of a consuming module (see the diffing logic).
      */
     val moduleInfoHash: Long? = null,
-
-    /**
-     * These are intentionally excluded from [classSnapshots] (nobody looks up the synthetic `package-info` symbol), so a change to a
-     * dependency's package-level annotations — e.g. nullability defaults — would otherwise be invisible to incremental compilation. Keying
-     * by package lets the diffing logic recompile only consumers of the changed package.
-     */
-    val packageInfoHashes: Map<String, Long> = emptyMap(),
 )
 
 /**
@@ -127,6 +120,16 @@ class JavaClassSnapshot(
     /** Snapshot of this class when [ClassSnapshotGranularity] == [CLASS_MEMBER_LEVEL], null otherwise. */
     val classMemberLevelSnapshot: JavaClassMemberLevelSnapshot?,
     val supertypes: List<JvmClassName>
+) : AccessibleClassSnapshot()
+
+/**
+ * [ClassSnapshot] of a `package-info.class`.
+ *
+ * @see PackageInfoImpact
+ */
+class PackageInfoClassSnapshot(
+    override val classId: ClassId,
+    override val classAbiHash: Long,
 ) : AccessibleClassSnapshot()
 
 /** Snapshot of a Java class when [ClassSnapshotGranularity] == [CLASS_MEMBER_LEVEL]. */
