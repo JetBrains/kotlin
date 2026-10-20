@@ -12,9 +12,12 @@ import org.jetbrains.kotlin.backend.jvm.localClassType
 import org.jetbrains.kotlin.codegen.sanitizeNameIfNeeded
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationContainer
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.MetadataSource
+import org.jetbrains.kotlin.ir.util.file
+import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
@@ -25,6 +28,51 @@ import org.jetbrains.org.objectweb.asm.Type
     MainMethodGenerationLowering::class,
 )
 internal class JvmInventNamesForLocalClasses(private val context: JvmBackendContext) : InventNamesForLocalClasses() {
+    private val localClassNames = mutableSetOf<String>()
+    private val memberClassNames = mutableMapOf<IrDeclarationContainer, Set<String>>()
+
+    override fun disambiguateLocalClassName(clazz: IrClass, data: NameBuilder, localClassName: String): NameBuilder {
+        if (clazz.name.isSpecial || localClassNames.add(localClassName)) return data
+
+        val enclosingClass = clazz.parentClassOrNull!!
+        val enclosingClassName = context.defaultTypeMapper.classLikeDeclarationInternalName(enclosingClass)
+        val fileClassNames = collectMemberClassNames(clazz.file)
+        val nestedClassNames = collectMemberClassNames(enclosingClass)
+        // Java 8 derives the simple name from the binary name, removing digits immediately after the enclosing class name.
+        // Keep that convention, so Kotlin reflection can still remove the enclosing function name and recover the source name.
+        var newData: NameBuilder
+        var newName: String
+        var index = 0
+        do {
+            newData = data.withClassNameIndex(enclosingClassName, ++index)
+            newName = sanitizeNameIfNeeded(newData.build())
+        } while (newName in fileClassNames || newName in nestedClassNames || !localClassNames.add(newName))
+        return newData
+    }
+
+    private fun collectMemberClassNames(container: IrDeclarationContainer): Set<String> = memberClassNames.getOrPut(container) {
+        buildSet {
+            fun collect(container: IrDeclarationContainer) {
+                for (declaration in container.declarations) {
+                    if (declaration is IrClass) {
+                        add(context.defaultTypeMapper.classLikeDeclarationInternalName(declaration))
+                        collect(declaration)
+                    }
+                }
+            }
+            collect(container)
+        }
+    }
+
+    private fun NameBuilder.withClassNameIndex(enclosingClassName: String, index: Int): NameBuilder {
+        val parent = checkNotNull(parent) { "Enclosing class $enclosingClassName is missing from ${build()}" }
+        return if (sanitizeNameIfNeeded(parent.build()) == enclosingClassName) {
+            copy(currentName = "$index$currentName")
+        } else {
+            copy(parent = parent.withClassNameIndex(enclosingClassName, index))
+        }
+    }
+
     override fun computeTopLevelClassName(clazz: IrClass): String {
         val file = clazz.parent as? IrFile
             ?: throw AssertionError("Top-level class expected: ${clazz.render()}")
