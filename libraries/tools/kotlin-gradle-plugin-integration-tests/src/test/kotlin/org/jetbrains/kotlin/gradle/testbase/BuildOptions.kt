@@ -33,7 +33,7 @@ data class BuildOptions(
     val logLevel: LogLevel = DEFAULT_LOG_LEVEL,
     val stacktraceMode: String? = StacktraceOption.FULL_STACKTRACE_LONG_OPTION,
     val kotlinVersion: String = TestVersions.Kotlin.CURRENT,
-    val warningMode: WarningMode = WarningMode.Fail,
+    val warningMode: WarningMode = WarningMode.All,
     val ignoreWarningModeSeverityOverride: Boolean? = null, // Do not change ToolingDiagnostic severity when warningMode is defined as Fail
     val configurationCache: ConfigurationCacheValue = ConfigurationCacheValue.ENABLED,
     val isolatedProjects: IsolatedProjectsMode = IsolatedProjectsMode.ENABLED,
@@ -505,41 +505,6 @@ fun BuildOptions.suppressWarningForOldKotlinVersion(
         Old Kotlin versions produces deprecation warnings with latest Gradle release.
         """.trimIndent()
 )
-
-// Lint tasks produces deprecation warning since Gradle 8.14: https://issuetracker.google.com/issues/408334529
-// On a non-first run if WarningMode was not changed, the Lint task does not produce a deprecation warning!
-// Fixed in AGP 8.12-alpha06
-fun BuildOptions.suppressAgpWarningSinceGradle814(
-    currentGradleVersion: GradleVersion,
-    currentAgpVersion: TestVersions.AgpCompatibilityMatrix,
-    warningMode: WarningMode = WarningMode.Summary,
-): BuildOptions {
-    return when {
-        warningMode == WarningMode.Summary &&
-                currentAgpVersion < TestVersions.AgpCompatibilityMatrix.AGP_812 -> suppressDeprecationWarningsSinceGradleVersion(
-            gradleVersion = TestVersions.Gradle.G_8_14,
-            currentGradleVersion = currentGradleVersion,
-            reason = "AGP produces deprecation warning on resolve: https://issuetracker.google.com/issues/408334529"
-        )
-        currentGradleVersion >= GradleVersion.version(TestVersions.Gradle.G_8_14) &&
-                currentAgpVersion < TestVersions.AgpCompatibilityMatrix.AGP_812 -> copy(warningMode = warningMode)
-        else -> this
-    }
-}
-
-// https://issuetracker.google.com/issues/399393875, was fixed in AGP 8.11.0
-fun BuildOptions.suppressAgpWarningIsProperty(
-    currentGradleVersion: GradleVersion,
-): BuildOptions {
-    val currentAgpVersion = androidVersion?.let { TestVersions.AgpCompatibilityMatrix.fromVersion(it) }
-    return if (currentAgpVersion != null && currentAgpVersion < TestVersions.AgpCompatibilityMatrix.AGP_811) {
-        suppressDeprecationWarningsSinceGradleVersion(
-            gradleVersion = TestVersions.Gradle.G_8_14,
-            currentGradleVersion = currentGradleVersion,
-            reason = "APG produces deprecation warning for is-property: https://issuetracker.google.com/issues/399393875"
-        )
-    } else this
-}
 
 fun BuildOptions.suppressDeprecatedJdkWarningWithGradle814(
     currentGradleVersion: GradleVersion,

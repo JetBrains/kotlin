@@ -104,7 +104,7 @@ class TaskExecutionDiagnosticsIT : KGPBaseTest() {
         emitDiagnosticOnUnsupportedVersionAlongKotlinDsl(
             gradleVersion,
             btaVersion = null,
-            expectedSeverity = KotlinToolingDiagnosticsSeverity.ERROR, // it's rendered as ERROR because of warning-mode=fail
+            expectedSeverity = KotlinToolingDiagnosticsSeverity.WARNING,
             customizedKotlinVersion = KotlinVersion.firstSupported, // FIXME(KT-69597): Previously hardcoded to language version 2.0.
         )
 
@@ -118,7 +118,7 @@ class TaskExecutionDiagnosticsIT : KGPBaseTest() {
         emitDiagnosticOnUnsupportedVersionAlongKotlinDsl(
             gradleVersion,
             btaVersion = "2.2.10",
-            expectedSeverity = KotlinToolingDiagnosticsSeverity.ERROR, // it's rendered as ERROR because of warning-mode=fail
+            expectedSeverity = KotlinToolingDiagnosticsSeverity.WARNING,
         )
 
     // Gradle 9.4.0 brings it Kotlin runtime 2.3.0 which metadata is not compatible with Kotlin compiler 2.1.20
@@ -167,7 +167,7 @@ class TaskExecutionDiagnosticsIT : KGPBaseTest() {
             }
 
         val expectFail = when (expectedSeverity) {
-            KotlinToolingDiagnosticsSeverity.ERROR -> false // ERROR == WARNING because of warning-mode=fail
+            KotlinToolingDiagnosticsSeverity.WARNING -> false
             KotlinToolingDiagnosticsSeverity.STRONG_WARNING -> true
             null -> false
             else -> error("Impossible expected severity: $expectedSeverity")

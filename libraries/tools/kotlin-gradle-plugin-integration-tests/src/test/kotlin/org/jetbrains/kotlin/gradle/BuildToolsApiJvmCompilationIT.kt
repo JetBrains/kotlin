@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.internals.asFinishLogMessage
@@ -95,7 +96,11 @@ class BuildToolsApiJvmCompilationIT : KGPBaseTest() {
     @GradleTest
     @DisplayName("Test logging produces errors with e: prefix and no [KOTLIN] prefix")
     fun compileErrorCorrectPrefix(gradleVersion: GradleVersion) {
-        project("simpleProject", gradleVersion) {
+        project(
+            "simpleProject",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(warningMode = WarningMode.Fail),
+        ) {
             kotlinSourcesDir().resolve("helloWorld.kt").writeText("fun f() = fffffffffffffffff")
             buildAndFail("assemble", forwardBuildOutput = true) {
                 assertOutputContainsExactlyTimes(

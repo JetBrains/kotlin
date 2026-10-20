@@ -160,6 +160,11 @@ class NativeDownloadAndPlatformLibsIT : KGPBaseTest() {
             "native-platform-libraries",
             gradleVersion = gradleVersion,
             buildOptions = defaultBuildOptions.disableConfigurationCacheForNativeDistGeneration()
+                .suppressDeprecationWarningsSinceGradleVersion(
+                    TestVersions.Gradle.G_9_8,
+                    gradleVersion,
+                    "KT-90282"
+                )
         ) {
             includeOtherProjectAsSubmodule("native-platform-libraries", "", "subproject", true)
 
@@ -255,6 +260,11 @@ class NativeDownloadAndPlatformLibsIT : KGPBaseTest() {
             "linuxX64",
             gradleVersion = gradleVersion,
             buildOptions = defaultBuildOptions.disableConfigurationCacheForNativeDistGeneration()
+                .suppressDeprecationWarningsSinceGradleVersion(
+                    TestVersions.Gradle.G_9_8,
+                    gradleVersion,
+                    "KT-90282"
+                )
         ) {
             // Install the compiler at the first time. Don't build to reduce execution time.
             buildWithLightDist("tasks") {
@@ -348,6 +358,11 @@ class NativeDownloadAndPlatformLibsIT : KGPBaseTest() {
             "native-download-maven",
             gradleVersion = gradleVersion,
             buildOptions = defaultBuildOptions.disableConfigurationCacheForNativeDistGeneration()
+                .suppressDeprecationWarningsSinceGradleVersion(
+                    TestVersions.Gradle.G_9_8,
+                    gradleVersion,
+                    "KT-90282"
+                )
         ) {
             val nativeOptions = buildOptions.nativeOptions.copy(
                 distributionType = "light",

@@ -5,10 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.test
 
-import org.gradle.api.provider.Provider
-
 internal class DeprecationBuildOperationListener(
-    private val warningsReporter: Provider<GradleWarningsReporter>
+    private val warningsReporter: GradleWarningsReporter
 ) : org.gradle.internal.operations.BuildOperationListener {
     override fun started(
         buildOperation: org.gradle.internal.operations.BuildOperationDescriptor,
@@ -22,8 +20,17 @@ internal class DeprecationBuildOperationListener(
         progressEvent: org.gradle.internal.operations.OperationProgressEvent
     ) {
         val details = progressEvent.details
-        if (details is org.gradle.internal.featurelifecycle.DefaultDeprecatedUsageProgressDetails) {
-            warningsReporter.get().hasWarnings = true
+        if (details is org.gradle.internal.featurelifecycle.DeprecatedUsageProgressDetails) {
+            warningsReporter.report(
+                description = describeDeprecationWarning(
+                    details.summary,
+                    details.removalDetails,
+                    details.contextualAdvice,
+                    details.advice,
+                    details.documentationUrl,
+                ),
+                stackTraceClassNames = details.stackTrace.orEmpty().map { it.className },
+            )
         }
     }
 
@@ -34,3 +41,15 @@ internal class DeprecationBuildOperationListener(
         // no-op
     }
 }
+
+private val whitespaceRun = Regex("""\s+""")
+
+/**
+ * Joins the [fragments] of a deprecation warning into the single line that [IgnoredWarning] patterns are matched
+ * against.
+ */
+internal fun describeDeprecationWarning(vararg fragments: String?): String = fragments
+    .filterNot { it.isNullOrEmpty() }
+    .joinToString(" ")
+    .replace(whitespaceRun, " ")
+    .trim()
