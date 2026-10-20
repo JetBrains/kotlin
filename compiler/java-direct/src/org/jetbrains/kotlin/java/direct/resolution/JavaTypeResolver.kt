@@ -379,23 +379,6 @@ internal fun isTypeUseAnnotationClass(classId: ClassId): Boolean =
     c.fileContext.session.isTypeUseAnnotationClass(classId)
 
 /**
- * Cross-language constant-field resolution for qualified references such as `Foo.BAR` where
- * `Foo` is a Kotlin class / facade. Returns `null` when no `const val` is found.
- */
-context(c: JavaResolutionContext)
-internal fun resolveExternalFieldValue(classQualifier: String?, fieldName: String): Any? =
-    c.fileContext.session.resolveExternalFieldValue(classQualifier, fieldName, c.packageFqName)
-
-/**
- * Const-vs-enum-entry disambiguation for annotation arguments that look syntactically like enum
- * entries but may denote a Kotlin `const val`. Returns `null` when the reference is a real enum
- * entry or unresolvable.
- */
-context(c: JavaResolutionContext)
-internal fun resolveConstFieldValue(classId: ClassId, fieldName: Name): Any? =
-    c.fileContext.session.resolveConstFieldValue(classId, fieldName)
-
-/**
  * Materialises [classId] into a navigable [JavaClass]:
  *  - source Java: the finder's canonical instance — required, not just preferred, because FIR
  *    matches `FirJavaTypeParameter` to `JavaTypeParameter` by reference identity;
@@ -594,6 +577,13 @@ internal fun getSimpleImport(simpleName: String): FqName? = c.fileContext.import
  */
 context(c: JavaResolutionContext)
 internal fun getStaticImport(simpleName: String): FqName? = c.fileContext.imports.staticSingleImports[simpleName]
+
+/**
+ * Resolves the class named in an import, e.g. the class part of a single-static import, the same
+ * way as imported types are resolved: classified left to right, see [resolveAsClassId].
+ */
+context(c: JavaResolutionContext)
+internal fun resolveImportedClassName(fqName: FqName): ClassId? = resolveAsClassId(fqName, fullResolution = true)
 
 /** Parsed imports of this context's file, exposed to avoid re-extracting them from the AST. */
 context(c: JavaResolutionContext)

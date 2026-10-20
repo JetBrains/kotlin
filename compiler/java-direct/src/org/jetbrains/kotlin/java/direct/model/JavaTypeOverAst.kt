@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTagImpl
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.java.direct.resolution.*
+import org.jetbrains.kotlin.java.direct.util.typeReferenceNameParts
 import org.jetbrains.kotlin.kmp.tree.LightNode
 import org.jetbrains.kotlin.kmp.tree.LightSyntaxTree
 import org.jetbrains.kotlin.load.java.structure.*
@@ -58,32 +59,6 @@ abstract class JavaTypeOverAst(
     override fun findAnnotation(fqName: FqName): JavaAnnotation? = annotations.find { it.classId?.asSingleFqName() == fqName }
 }
 
-/**
- * Extracts identifier segments from a JAVA_CODE_REFERENCE node via the AST,
- * so type-argument lists cannot be confused with package/class separators. Handles:
- * - Simple: "Object" → ["Object"]
- * - Qualified: "java.util.List" → ["java", "util", "List"]
- * - Annotated: "@NotNull Object" → ["Object"]
- * - Generic: "List<String>" → ["List"]
- * - Nested generic: "Outer<T>.Inner<U>" → ["Outer", "Inner"]
- */
-private fun LightSyntaxTree.extractReferenceNameParts(node: LightNode): List<String> {
-    val parts = mutableListOf<String>()
-
-    fun collectIdentifiers(current: LightNode) {
-        for (child in getChildren(current)) {
-            when (getType(child)) {
-                JavaSyntaxTokenType.IDENTIFIER -> parts.add(getText(child).toString())
-                JavaSyntaxElementType.JAVA_CODE_REFERENCE -> collectIdentifiers(child)
-                // Skip: ANNOTATION, REFERENCE_PARAMETER_LIST, WHITE_SPACE, DOT, etc.
-            }
-        }
-    }
-
-    collectIdentifiers(node)
-    return parts
-}
-
 class JavaClassifierTypeOverAst(
     node: LightNode,
     tree: LightSyntaxTree,
@@ -93,7 +68,7 @@ class JavaClassifierTypeOverAst(
 ) : JavaTypeOverAst(node, tree, resolutionContext, extraAnnotations, memberAnnotations), JavaClassifierType {
 
     private val rawTypeNameParts: List<String> by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        tree.extractReferenceNameParts(node)
+        tree.typeReferenceNameParts(node)
     }
 
     private val rawTypeName: String
