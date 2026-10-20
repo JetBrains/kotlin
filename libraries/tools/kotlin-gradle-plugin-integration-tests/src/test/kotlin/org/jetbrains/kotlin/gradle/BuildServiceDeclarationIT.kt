@@ -10,9 +10,11 @@ import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 
 @DisplayName("Build services usages in tasks are declared with `usesService`")
+@MustRunOnChangesInGradle
 class BuildServiceDeclarationIT : KGPBaseTest() {
 
     @DisplayName("Build services are registered for Kotlin/JVM projects")
