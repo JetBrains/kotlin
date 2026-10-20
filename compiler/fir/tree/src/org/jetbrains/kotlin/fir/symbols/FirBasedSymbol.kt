@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.classLikeLookupTagIfAny
 import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolIdEntry
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolIdentifierEntry
 import org.jetbrains.kotlin.mpp.DeclarationSymbolMarker
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
@@ -64,7 +64,7 @@ abstract class FirBasedSymbol<out E : FirDeclaration>(symbolId: FirSymbolId<FirB
     val fir: E
         get() = _fir
             ?: errorWithAttachment("Fir is not initialized for ${this::class}") {
-                withFirSymbolIdEntry("symbol", this@FirBasedSymbol)
+                withFirSymbolIdentifierEntry("symbol", this@FirBasedSymbol)
             }
 
     init {

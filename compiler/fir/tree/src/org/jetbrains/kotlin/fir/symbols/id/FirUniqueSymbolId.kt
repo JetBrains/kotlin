@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.symbols.id
 
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolIdEntry
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolIdentifierEntry
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 /**
@@ -37,7 +37,7 @@ class FirUniqueSymbolId<S : FirBasedSymbol<*>> : FirSymbolId<S>() {
         val boundSymbol = _symbol
         if (boundSymbol != null) {
             errorWithAttachment("A unique symbol ID cannot be bound to multiple symbols") {
-                withFirSymbolIdEntry("boundSymbol", boundSymbol)
+                withFirSymbolIdentifierEntry("boundSymbol", boundSymbol)
 
                 // `bind` is called during the construction of the new symbol, so its properties might not be initialized yet.
                 withEntry("newSymbolClass", symbol::class.simpleName)
