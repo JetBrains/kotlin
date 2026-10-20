@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.gradle.testbase.plugins
 import org.jetbrains.kotlin.gradle.testbase.project
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.util.runProcess
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInNative
 import org.junit.jupiter.api.condition.OS
 import java.nio.file.Path
 import kotlin.io.path.absolutePathString
@@ -47,6 +48,7 @@ import kotlin.test.assertEquals
 class SwiftPMImportBinaryTargetsIT : KGPBaseTest() {
 
     @GradleTest
+    @MustRunOnChangesInNative
     fun `local package with binaryTarget static framework xcframework`(version: GradleVersion) {
         testLocalPackageWithBinaryTargetXcframework(
             version,
@@ -56,6 +58,7 @@ class SwiftPMImportBinaryTargetsIT : KGPBaseTest() {
     }
 
     @GradleTest
+    @MustRunOnChangesInNative
     fun `local package with binaryTarget dynamic framework xcframework`(version: GradleVersion) {
         testLocalPackageWithBinaryTargetXcframework(
             version,
@@ -65,6 +68,7 @@ class SwiftPMImportBinaryTargetsIT : KGPBaseTest() {
     }
 
     @GradleTest
+    @MustRunOnChangesInNative
     fun `local package with binaryTarget static library xcframework`(version: GradleVersion) {
         testLocalPackageWithBinaryTargetXcframework(
             version,
