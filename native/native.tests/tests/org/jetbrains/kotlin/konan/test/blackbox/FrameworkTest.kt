@@ -433,8 +433,8 @@ class FrameworkTest : AbstractNativeSimpleTest() {
             TestCompilerArgs("-module-name", moduleName, "-Xbinary=bundleId=$testName"),
             givenDependencies = setOf(
                 TestModule.Given(receivers.klibFile),
-                TestModule.Given(first.klibFile),
-                TestModule.Given(second.klibFile),
+                TestModule.Given(first.klibFile, setOf(TestModule.Given(receivers.klibFile))),
+                TestModule.Given(second.klibFile, setOf(TestModule.Given(receivers.klibFile))),
             ),
         )
         testCompilationFactory
