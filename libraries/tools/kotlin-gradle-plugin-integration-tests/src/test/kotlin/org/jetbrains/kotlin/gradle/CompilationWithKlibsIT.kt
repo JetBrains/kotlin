@@ -9,9 +9,13 @@ import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCommonBackend
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 
 @DisplayName("Klib compilation")
+@MustRunOnChangesInGradle
+@MustRunOnChangesInCommonBackend
 class CompilationWithKlibsIT : KGPBaseTest() {
 
     @DisplayName("KT-64115: duplicated klibs are excluded in the JS test compilations")
