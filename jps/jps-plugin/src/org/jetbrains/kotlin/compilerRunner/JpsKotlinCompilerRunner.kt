@@ -90,6 +90,7 @@ class JpsKotlinCompilerRunner {
         const val FAIL_ON_FALLBACK_PROPERTY = "test.kotlin.jps.compiler.runner.fail.on.fallback"
     }
 
+    @Deprecated("Should be removed after migration to BTA runner")
     fun classesFqNamesByFiles(
         environment: JpsCompilerEnvironment,
         files: Set<File>,

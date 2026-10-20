@@ -120,9 +120,8 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
             }
             environment.messageCollector.report(
                 CompilerMessageSeverity.STRONG_WARNING,
-                "Circular dependencies are only partially supported. " +
-                        "The following modules depend on each other: ${chunk.presentableShortName}. " +
-                        "Kotlin will compile them, but some strange effect may happen"
+                "Support for circular dependencies will be dropped starting with Kotlin 2.6.0. " +
+                        "The following modules depend on each other: ${chunk.presentableShortName}. "
             )
         }
 

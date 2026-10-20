@@ -134,9 +134,13 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         initProject(JVM_MOCK_RUNTIME)
         val buildResult = buildAllModules()
         buildResult.assertSuccessful()
-        val warnings = buildResult.getMessages(BuildMessage.Kind.WARNING)
-        assertEquals(1, warnings.size, "Warning about invalid package prefix in module 2 is expected: $warnings")
-        assertEquals("Invalid package prefix name is ignored: invalid-prefix.test", warnings.first().messageText)
+        val warnings = buildResult.getMessages(BuildMessage.Kind.WARNING).map { it.messageText }
+        val expectedWarnings = listOf("Invalid package prefix name is ignored: invalid-prefix.test") + expectedLegacyModesWarnings()
+        assertEquals(
+            expectedWarnings.sorted(),
+            warnings.sorted(),
+            "Warning about invalid package prefix in module 2 is expected: $warnings",
+        )
     }
 
     @Test
@@ -711,7 +715,8 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         result.assertSuccessful()
 
         val actualWarnings = result.getMessages(BuildMessage.Kind.WARNING).map { it.messageText }
-        val expectedWarnings = filesToBeReported.map { "Classpath entry points to a non-existent location: $it" }
+        val expectedWarnings = filesToBeReported.map { "Classpath entry points to a non-existent location: $it" } +
+                expectedLegacyModesWarnings()
 
         val expectedText = expectedWarnings.sorted().joinToString("\n")
         val actualText = actualWarnings.sorted().joinToString("\n")
@@ -726,10 +731,13 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
 
         val result = buildAllModules()
         result.assertSuccessful()
-        val warning = result.getMessages(BuildMessage.Kind.WARNING).single()
+        val warnings = result.getMessages(BuildMessage.Kind.WARNING).map { it.messageText }
+        val legacyModesWarning = expectedLegacyModesWarnings().single()
+        assertTrue(legacyModesWarning in warnings, "Deprecation of legacy modes is expected: $warnings")
+        val warning = warnings.filterNot { it == legacyModesWarning }.single()
 
         val expectedText = StringUtil.convertLineSeparators(Usage.render(K2JVMCompiler(), K2JVMCompilerArguments()))
-        assertEquals(expectedText, warning.messageText)
+        assertEquals(expectedText, warning)
     }
 
     @Test
@@ -883,8 +891,8 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
             val aClass = File(workDir, "customOut/A.class")
             assert(aClass.exists()) { "$aClass does not exist!" }
 
-            val warnings = getMessages(BuildMessage.Kind.WARNING)
-            assert(warnings.isEmpty()) { "Unexpected warnings: \n${warnings.joinToString("\n")}" }
+            val warnings = getMessages(BuildMessage.Kind.WARNING).map { it.messageText }
+            assertEquals(expectedLegacyModesWarnings(), warnings, "Unexpected warnings")
         }
     }
 
@@ -1231,6 +1239,35 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
     private fun JpsModule.outDir(forTests: Boolean) = JpsJavaExtensionService.getInstance().getOutputDirectory(this, forTests)!!
 
     protected fun createTouchAction(path: String): Action = TouchAction(File(workDir, path).absolutePath)
+
+    private fun expectedLegacyModesWarnings(): List<String> = listOfNotNull(KotlinBuilder.legacyModesDeprecationMessageIfAny())
+
+    @Test
+    @LegacyRunnerOnly
+    @WorkingDir("KotlinProject")
+    fun testLegacyModesDeprecationWarning() {
+        initProject(JVM_MOCK_RUNTIME)
+
+        val result = buildAllModules()
+        result.assertSuccessful()
+
+        val warning = result.getMessages(BuildMessage.Kind.WARNING).single { "2.6.0" in it.messageText }
+        assertEquals(KotlinBuilder.legacyModesDeprecationMessageIfAny(), warning.messageText)
+    }
+
+    @Test
+    @BuildToolsApiOnly
+    @WorkingDir("KotlinProject")
+    fun testNoLegacyModesDeprecationWarningWithBuildToolsApi() {
+        initProject(JVM_MOCK_RUNTIME)
+
+        val result = buildAllModules()
+        result.assertSuccessful()
+
+        assertNull(KotlinBuilder.legacyModesDeprecationMessageIfAny())
+        val warnings = result.getMessages(BuildMessage.Kind.WARNING).map { it.messageText }
+        assertTrue(warnings.none { "2.6.0" in it }, "Unexpected deprecation of legacy modes: $warnings")
+    }
 
     protected fun createDeleteAction(path: String): Action = DeleteAction(File(workDir, path).absolutePath)
 
