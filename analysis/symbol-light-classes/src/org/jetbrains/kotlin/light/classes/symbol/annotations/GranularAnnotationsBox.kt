@@ -83,9 +83,11 @@ internal class GranularAnnotationsBox(
         )
 
         /**
-         * We can safety reduce resolve only for annotations without arguments
+         * Special annotations without parameters, which [GranularAnnotationsBox.findAnnotation] looks up among the declared
+         * annotations only.
          *
-         * @see org.jetbrains.kotlin.fir.declarations.FirAnnotationsPlatformSpecificSupportComponent
+         * Unlike [GranularAnnotationsBox.hasAnnotation], [GranularAnnotationsBox.findAnnotation] converts the arguments of the found
+         * annotation, which would resolve them for an annotation with parameters.
          */
         private val specialAnnotationsListWithSafeArgumentsResolve: Map<String, ClassId> = listOf(
             JvmStandardClassIds.Annotations.JvmRecord,
@@ -93,16 +95,22 @@ internal class GranularAnnotationsBox(
         ).associateBy { it.asFqNameString() }
 
         /**
-         * @see org.jetbrains.kotlin.fir.declarations.FirAnnotationsPlatformSpecificSupportComponent
+         * Special annotations, which [GranularAnnotationsBox.hasAnnotation] looks up among the declared annotations only, without
+         * computing all annotations.
+         *
+         * Each of them must be an annotation which the compiler resolves in the `COMPILER_REQUIRED_ANNOTATIONS` phase instead of
+         * `TYPES` (see `FirAnnotationsPlatformSpecificSupportComponent.requiredAnnotations`). An [AdditionalAnnotationsProvider]
+         * which adds one of them must override [AdditionalAnnotationsProvider.findSpecialAnnotation].
          */
         private val specialAnnotationsList: Map<String, ClassId> = listOf(
             StandardClassIds.Annotations.Deprecated,
             StandardClassIds.Annotations.DeprecatedSinceKotlin,
+            StandardClassIds.Annotations.SinceKotlin,
             StandardClassIds.Annotations.WasExperimental,
             StandardClassIds.Annotations.Target,
-            StandardClassIds.Annotations.IntroducedAt,
             StandardClassIds.Annotations.EqualityBound,
             StandardClassIds.Annotations.NumericClass,
+            JvmStandardClassIds.Annotations.JvmName,
         ).associateBy { it.asFqNameString() } + specialAnnotationsListWithSafeArgumentsResolve
     }
 }
