@@ -226,7 +226,16 @@ constructor(
 
     @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:InputFiles
-    internal val linkerOptsFiles: ConfigurableFileCollection = objectFactory.fileCollection()
+    internal val linkerOptsFiles: ConfigurableFileCollection = objectFactory.fileCollection().apply {
+        val projectDirectory = project.layout.projectDirectory
+        // linkerOpts is still an input itself. Register existing options that point to files
+        // lazily so that files created after task initialization are also tracked.
+        val linkerOptPaths = objectFactory.fileCollection()
+        linkerOptPaths.from({
+            linkerOpts.map { projectDirectory.file(it) }
+        })
+        from(linkerOptPaths.filter { it.isFile })
+    }
 
     /**
      * FIXME: KT-85118 This @Input annotation is incorrect and will not be part of KotlinNativeLink fingerprint because it is now used to
@@ -234,14 +243,6 @@ constructor(
      */
     @get:Input
     internal val additionalLinkerOpts: MutableList<String> = mutableListOf()
-
-    init {
-        // linkerOpts is still an input itself. Register existing options that point to files
-        // separately so that their contents participate in the up-to-date check.
-        linkerOptsFiles.from(linkerOpts.mapNotNull { linkerOpt ->
-            project.file(linkerOpt).takeIf { it.isFile }
-        })
-    }
 
     @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:InputFiles
