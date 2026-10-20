@@ -5,7 +5,6 @@ import org.jetbrains.kotlin.backend.konan.util.toObsoleteKind
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.nativeBinaryOptions.AndroidProgramType
 import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
-import org.jetbrains.kotlin.config.nativeBinaryOptions.GCStackMapScheme
 import org.jetbrains.kotlin.konan.KonanExternalToolFailure
 import org.jetbrains.kotlin.konan.TempFiles
 import org.jetbrains.kotlin.konan.config.NativeConfigurationKeys
@@ -98,10 +97,6 @@ internal class Linker(
         return runLinker(outputFile, objectFiles, includedBinaries, libraryProvidedLinkerFlags, extraLinkerFlags, caches)
     }
 
-    private val stackMapLinkerFlags: List<String>
-        get() = if (target.family.isAppleFamily && config.gcStackMapScheme != GCStackMapScheme.DELTA_MAIN)
-            listOf("-U", "__LLVM_StackMaps") else emptyList()
-
     private fun resolveExecutableTarget(outputFile: String): ExecutableTarget = when (config.produce) {
         CompilerOutputKind.TEST_BUNDLE -> {
             require(target.family.isAppleFamily) {
@@ -113,7 +108,7 @@ internal class Linker(
 
             ExecutableTarget(
                     path = bundleDir.resolve(bundleRelativePath).absolutePathString(),
-                    flags = listOf("-bundle", "-dead_strip") + stackMapLinkerFlags
+                    flags = listOf("-bundle", "-dead_strip")
             )
         }
         CompilerOutputKind.FRAMEWORK -> {
@@ -127,7 +122,7 @@ internal class Linker(
 
             ExecutableTarget(
                     path = framework.resolve(dylibRelativePath).absolutePathString(),
-                    flags = listOf("-dead_strip", "-install_name", "@rpath/${framework.name}/$dylibRelativePath") + stackMapLinkerFlags
+                    flags = listOf("-dead_strip", "-install_name", "@rpath/${framework.name}/$dylibRelativePath")
             )
         }
         else -> {
@@ -138,7 +133,7 @@ internal class Linker(
                 }
             } else emptyList()
 
-            ExecutableTarget(outputFiles.nativeBinaryFile, flags + stackMapLinkerFlags)
+            ExecutableTarget(outputFiles.nativeBinaryFile, flags)
         }
     }
 

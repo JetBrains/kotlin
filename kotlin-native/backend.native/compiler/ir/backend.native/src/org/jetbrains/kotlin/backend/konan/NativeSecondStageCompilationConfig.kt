@@ -265,6 +265,9 @@ class NativeSecondStageCompilationConfig(
     val concurrentWeakSweep: Boolean
         get() = configuration.get(BinaryOptions.concurrentWeakSweep) ?: true
 
+    val gcStackMapLazy: Boolean
+        get() = configuration.get(BinaryOptions.gcStackMapLazy) ?: true
+
     val concurrentMarkMaxIterations: UInt
         get() = configuration.get(BinaryOptions.concurrentMarkMaxIterations) ?: 100U
 

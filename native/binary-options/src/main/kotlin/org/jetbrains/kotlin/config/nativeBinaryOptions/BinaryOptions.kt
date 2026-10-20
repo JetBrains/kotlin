@@ -54,6 +54,8 @@ object BinaryOptions : BinaryOptionRegistry() {
 
     val gcStackMapScheme by option<GCStackMapScheme>(shortcut = { it.shortcut })
 
+    val gcStackMapLazy by booleanOption()
+
     val gcMarkSingleThreaded by booleanOption()
 
     val fixedBlockPageSize by uintOption()

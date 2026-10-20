@@ -29,4 +29,5 @@ object NativeRuntimeConstants {
     const val FIXED_BLOCK_PAGE_SIZE: String = "Kotlin_fixedBlockPageSize"
     const val PAGED_ALLOCATOR: String = "Kotlin_pagedAllocator"
     const val GC_STACK_MAP_SCHEME: String = "Kotlin_gcStackMapScheme"
+    const val GC_STACK_MAP_LAZY: String = "Kotlin_gcStackMapLazy"
 }

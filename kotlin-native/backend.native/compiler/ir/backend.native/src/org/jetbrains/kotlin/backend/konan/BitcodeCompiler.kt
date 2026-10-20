@@ -65,6 +65,9 @@ internal class BitcodeCompiler(
                     // An outlined call has no stack-map entry (the map is keyed by the return pc), so its roots would be lost.
                     if (config.gcStackMapScheme == GCStackMapScheme.DELTA_MAIN) {
                         addNonEmpty(listOf("-mllvm", "-enable-machine-outliner=never"))
+                        if (!config.gcStackMapLazy) {
+                            addNonEmpty(listOf("-mllvm", "-kn-lazy-stackmap=false"))
+                        }
                     }
                 }
         val bitcodePath = bitcodeFile.absoluteFile.normalize().path

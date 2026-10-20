@@ -32,6 +32,7 @@ extern "C" const int32_t Kotlin_gcMarkSingleThreaded;
 extern "C" const int32_t Kotlin_fixedBlockPageSize;
 extern "C" const int32_t Kotlin_pagedAllocator;
 extern "C" const char* Kotlin_gcStackMapScheme;
+extern "C" const int32_t Kotlin_gcStackMapLazy;
 
 class SourceInfo;
 
@@ -86,6 +87,10 @@ ALWAYS_INLINE inline bool concurrentWeakSweep() noexcept {
 
 ALWAYS_INLINE inline bool gcMarkSingleThreaded() noexcept {
     return Kotlin_gcMarkSingleThreaded != 0;
+}
+
+ALWAYS_INLINE inline bool gcStackMapLazy() noexcept {
+    return Kotlin_gcStackMapLazy != 0;
 }
 
 ALWAYS_INLINE inline constexpr int32_t fixedBlockPageSize() noexcept {

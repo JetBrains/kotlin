@@ -102,6 +102,7 @@ extern const TypeInfo* theCleanerImplTypeInfo = theCleanerImplTypeInfoHolder.typ
 extern const TypeInfo* theRegularWeakReferenceImplTypeInfo = theRegularWeakReferenceImplTypeInfoHolder.typeInfo();
 
 extern const char* Kotlin_gcStackMapScheme = kotlin::compiler::SHADOW_STACK;
+extern const int32_t Kotlin_gcStackMapLazy = 1;
 
 extern const ArrayHeader theEmptyArray = {theArrayTypeInfoHolder.typeInfo(), /* element count */ 0};
 

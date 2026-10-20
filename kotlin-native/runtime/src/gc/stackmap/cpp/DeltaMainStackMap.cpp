@@ -1,124 +1,141 @@
 #include "DeltaMainStackMap.hpp"
 
+#include "CompilerConstants.hpp"
+#include "DeltaMath.hpp"
 #include "KAssert.h"
-#include "Logging.hpp"
+#include "VarIntCodec.hpp"
 
 #include <algorithm>
 #include <cinttypes>
 #include <set>
 #include <utility>
+#include <vector>
+
+#if defined(__APPLE__)
+#include <dlfcn.h>
+#include <mach-o/getsect.h>
+#endif
 
 namespace kotlin::stackMap {
 
-Delta DeltaMainStackMapBuilder::Reader::getNextDelta() {
+namespace {
+
+constexpr size_t kRecordHeaderSize = 8;
+
+std::pair<uint8_t*, uint8_t*> findSection() noexcept {
+#if defined(__APPLE__)
+    Dl_info info;
+    if (dladdr(reinterpret_cast<const void*>(&findSection), &info) == 0) return {nullptr, nullptr};
+    unsigned long size = 0;
+    uint8_t* begin = getsectiondata(
+            reinterpret_cast<const mach_header_64*>(info.dli_fbase), "__LLVM_STACKMAPS", "__llvm_stackmaps", &size);
+    if (begin == nullptr) return {nullptr, nullptr};
+    return {begin, begin + size};
+#else
+    return {nullptr, nullptr};
+#endif
+}
+
+Delta readDelta(ByteReader& reader) {
     Delta delta;
-    delta.slots = bytes_.nextULEB128BitVector();
+    delta.slots = reader.nextULEB128BitVector();
     return delta;
 }
 
-void DeltaMainStackMapBuilder::Reader::getRootsInfo(
-        uint64_t baseOffset, FunctionAddress functionAddress, std::unordered_map<FunctionAddress, RootsInfo>& pc2RootsInfo) {
-    Delta base = getNextDelta();
-
+struct Record {
+    uintptr_t functionStart;
+    int64_t baseOffset;
+    Delta base;
     std::vector<std::pair<uint64_t, uint64_t>> pc2delta;
-    std::set<uint64_t> deltaIndices;
-    uint64_t pc2deltaSize = bytes_.nextULEB128();
-    for (uint64_t i = 0; i < pc2deltaSize; i++) {
-        uint64_t pc = bytes_.nextULEB128();
-        uint64_t deltaIdx = bytes_.nextULEB128();
-        deltaIndices.insert(deltaIdx);
-        pc2delta.emplace_back(pc, deltaIdx);
-    }
-
     std::vector<Delta> deltas;
-    deltas.reserve(deltaIndices.size());
-    for (uint64_t i = 0; i < deltaIndices.size(); i++) {
-        deltas.push_back(getNextDelta());
-    }
+    uint8_t* end;
 
-    for (const auto& [pc, deltaIdx] : pc2delta) {
+    RootsInfo rootsInfo(uint64_t deltaIdx) const {
         RuntimeCheck(deltaIdx < deltas.size(), "Delta index is out of range");
-        Delta callsiteDelta = base ^ deltas[deltaIdx];
-        RootsInfo rootsInfo = callsiteDelta.toRootInfo(baseOffset);
-        rootsInfo.log(functionAddress, functionAddress + pc);
-        pc2RootsInfo[functionAddress + pc] = std::move(rootsInfo);
+        return (base ^ deltas[deltaIdx]).toRootInfo(baseOffset);
     }
-}
+};
 
-void DeltaMainStackMapBuilder::verifyMagic(uint8_t magic) {
-    // Assumes the LLVM encoder's EmitRegisters is hardcoded false (see
-    // KotlinNativeGCPrinter.cpp) and so never contributes a register bit to
-    // the magic byte. If that ever changes on the LLVM side without a
-    // corresponding change here, wire-format version-byte compatibility
-    // would break.
-    uint8_t expected = (DELTA_MAIN_VERSION << 4) | LAZY_ENABLED_MAGIC;
+Record readRecord(uint8_t* record) {
+    ByteReader reader(record);
+    Record result;
+    result.functionStart = reinterpret_cast<uintptr_t>(record) + static_cast<uintptr_t>(reader.nextInt(4));
+    reader.nextInt(4);
+    result.baseOffset = reader.nextSLEB128();
+    reader.nextULEB128();
+    result.base = readDelta(reader);
 
-    RuntimeCheck(magic == expected,
-                 "Delta-main stack map magic mismatch: section was built with incompatible "
-                 "ENABLE_LAZY_STACKMAP/DELTA_MAIN_VERSION settings "
-                 "(expected 0x%x, got 0x%x)",
-                 expected, magic);
-}
-
-void DeltaMainStackMapBuilder::collect() {
-    uint64_t sectionStart = reinterpret_cast<uint64_t>(sectionStart_);
-    uint64_t functionCount = reader_.getNextULEB128();
-    RuntimeLogDebug({kTagGC}, "DeltaMainStackMap: collecting %" PRIu64 " functions", functionCount);
-
-    for (uint64_t i = 0; i < functionCount; i++) {
-        uint64_t funcOffset = static_cast<uint64_t>(reader_.getNextInt(4));
-        FunctionAddress funcAddress = funcOffset + sectionStart;
-
-        int64_t baseOffset = reader_.getNextSLEB128();
-        [[maybe_unused]] uint64_t stackSize = reader_.getNextULEB128();
-
-        reader_.getRootsInfo(baseOffset, funcAddress, pc2RootsInfo_);
-    }
-}
-
-void DeltaMainStackMapBuilder::collectLazy(uintptr_t functionPC, uintptr_t currentPC, uint64_t* funcStackMapAddr, RootsInfo& rootsInfo) {
-    reader_.setP(reinterpret_cast<uint8_t*>(funcStackMapAddr));
-
-    // Function offset and stack size are only meaningful when scanning the
-    // section sequentially (collect()); when jumping directly to a known
-    // function's record, only baseOffset is needed to decode its deltas.
-    reader_.getNextInt(4);
-    int64_t baseOffset = reader_.getNextSLEB128();
-    reader_.getNextULEB128(); // stack size
-
-    Delta base = reader_.getNextDelta();
-
-    std::vector<std::pair<uint64_t, uint64_t>> pc2delta;
     std::set<uint64_t> deltaIndices;
-    uint64_t pc2deltaSize = reader_.getNextULEB128();
+    uint64_t pc2deltaSize = reader.nextULEB128();
     for (uint64_t i = 0; i < pc2deltaSize; i++) {
-        uint64_t pc = reader_.getNextULEB128();
-        uint64_t deltaIdx = reader_.getNextULEB128();
+        uint64_t pc = reader.nextULEB128();
+        uint64_t deltaIdx = reader.nextULEB128();
         deltaIndices.insert(deltaIdx);
-        pc2delta.emplace_back(pc, deltaIdx);
+        result.pc2delta.emplace_back(pc, deltaIdx);
     }
 
-    std::vector<Delta> deltas;
-    deltas.reserve(deltaIndices.size());
+    result.deltas.reserve(deltaIndices.size());
     for (uint64_t i = 0; i < deltaIndices.size(); i++) {
-        deltas.push_back(reader_.getNextDelta());
+        result.deltas.push_back(readDelta(reader));
+    }
+    result.end = reader.pos();
+    return result;
+}
+
+} // namespace
+
+DeltaMainStackMap::DeltaMainStackMap() noexcept : lazy_(compiler::gcStackMapLazy()) {
+    std::tie(begin_, end_) = findSection();
+    if (compiler::gcStackMapScheme() == compiler::GCStackMapScheme::kDeltaMain) {
+        RuntimeCheck(begin_ != nullptr && begin_ < end_, "Delta-main stack map section is not found or corrupted");
+        if (!lazy_) {
+            collect();
+        }
+    }
+}
+
+void DeltaMainStackMap::collect() {
+    uint8_t* position = begin_;
+    while (position < end_) {
+        Record record = readRecord(position);
+        for (const auto& [pc, deltaIdx] : record.pc2delta) {
+            RootsInfo info = record.rootsInfo(deltaIdx);
+            info.log(record.functionStart, record.functionStart + pc);
+            pc2RootsInfo_[record.functionStart + pc] = std::move(info);
+        }
+        position = record.end;
+    }
+    RuntimeCheck(position == end_, "Stack map records do not fill the section");
+}
+
+bool DeltaMainStackMap::tryGetRootsInfo(const uint64_t* fp, uintptr_t pc, RootsInfo& rootsInfo) const {
+    if (!lazy_) {
+        auto it = pc2RootsInfo_.find(pc);
+        if (it == pc2RootsInfo_.end()) return false;
+        rootsInfo = it->second;
+        return true;
     }
 
-    uint64_t targetPC = currentPC - functionPC;
+    auto address = static_cast<uintptr_t>(fp[-2]);
+    auto begin = reinterpret_cast<uintptr_t>(begin_);
+    auto end = reinterpret_cast<uintptr_t>(end_);
+    if (address < begin || address > end - kRecordHeaderSize) return false;
 
-    // pc2delta is sorted by pc (DeltaMainStackMapEncoder::emit writes
-    // PcToDelta in call-recording order, which is program order within a
-    // function, so PC offsets are monotonically increasing).
+    ByteReader header(reinterpret_cast<uint8_t*>(address));
+    uintptr_t functionStart = address + static_cast<uintptr_t>(header.nextInt(4));
+    auto functionSize = static_cast<uint32_t>(header.nextInt(4));
+    if (pc - functionStart >= functionSize) return false;
+
+    Record record = readRecord(reinterpret_cast<uint8_t*>(address));
+    uint64_t targetPc = pc - functionStart;
     auto it = std::lower_bound(
-            pc2delta.begin(), pc2delta.end(), targetPC, [](const auto& pair, uint64_t val) { return pair.first < val; });
+            record.pc2delta.begin(), record.pc2delta.end(), targetPc, [](const auto& pair, uint64_t val) { return pair.first < val; });
+    RuntimeCheck(it != record.pc2delta.end() && it->first == targetPc,
+            "No stack map for pc offset %" PRIu64 " in function at %p", targetPc, reinterpret_cast<void*>(functionStart));
 
-    RuntimeAssert(it != pc2delta.end() && it->first == targetPC,
-                 "collectLazy: no delta-main record for PC offset %" PRIu64 " within function at %p", targetPC,
-                 reinterpret_cast<void*>(functionPC));
-
-    Delta callsiteDelta = base ^ deltas[it->second];
-    rootsInfo = callsiteDelta.toRootInfo(baseOffset);
-    rootsInfo.log();
+    rootsInfo = record.rootsInfo(it->second);
+    rootsInfo.log(functionStart, pc);
+    return true;
 }
 
 } // namespace kotlin::stackMap

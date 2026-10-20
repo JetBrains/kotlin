@@ -137,11 +137,11 @@ void collectRootSetForThread(GCHandle gcHandle, typename Traits::MarkQueue& mark
 
 #if defined(__aarch64__)
 template <typename Traits>
-void collectRootSetFromMapForThread(GCHandle gcHandle, typename Traits::MarkQueue& markQueue, kotlin::stackMap::DeltaMainStackMapBuilder& stackMapBuilder, mm::ThreadData& thread) {
+void collectRootSetFromMapForThread(GCHandle gcHandle, typename Traits::MarkQueue& markQueue, kotlin::stackMap::DeltaMainStackMap& stackMap, mm::ThreadData& thread) {
     auto handle = gcHandle.collectThreadRoots(thread);
 
-    auto collectRoots = [&](mm::KotlinFrameAnchor anchor) {
-        for (const auto& rootsInfo : stackMapBuilder.getRootsInfoForPC(anchor.pc).bases()) {
+    auto collectRoots = [&](mm::KotlinFrameAnchor anchor, const stackMap::RootsInfo& frameRoots) {
+        for (const auto& rootsInfo : frameRoots.bases()) {
             if (rootsInfo.Type == stackMap::RootLocation::Indirect) {
                 uint8_t* address = (uint8_t*) anchor.fp + rootsInfo.Offset;
                 ObjHeader* object = *reinterpret_cast<ObjHeader**>(address);
@@ -173,8 +173,9 @@ void collectRootSetFromMapForThread(GCHandle gcHandle, typename Traits::MarkQueu
         while (anchor.fp != 0 && (anchorIndex <= 0 || anchor.fp < anchors[anchorIndex - 1].fp)) {
             RuntimeLogDebug({logging::Tag::kGC}, "Visit frame pc=%p fp=%p", anchor.pc, anchor.fp);
 
-            if (stackMapBuilder.hasMapForPC(anchor.pc)) {
-                collectRoots(anchor);
+            stackMap::RootsInfo frameRoots;
+            if (stackMap.tryGetRootsInfo(anchor.fp, reinterpret_cast<uintptr_t>(anchor.pc), frameRoots)) {
+                collectRoots(anchor, frameRoots);
             }
 
             auto next = anchor.next();

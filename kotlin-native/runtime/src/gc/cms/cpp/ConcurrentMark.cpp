@@ -143,8 +143,8 @@ void gc::mark::ConcurrentMark::tryCollectRootSet(mm::ThreadData& thread, MarkTra
 
 #if defined(__aarch64__)
     if (compiler::gcStackMapScheme() == compiler::GCStackMapScheme::kDeltaMain) {
-        auto& stackMapBuilder = thread.gc().impl().stackMapBuilder_;
-        collectRootSetFromMapForThread<MarkTraits>(gcHandle(), markQueue, stackMapBuilder, thread);
+        auto& stackMap = thread.gc().impl().stackMap_;
+        collectRootSetFromMapForThread<MarkTraits>(gcHandle(), markQueue, stackMap, thread);
         // Kotlin frames are not in the shadow stack under delta-main, so this reads the frames of runtime
         // `ObjHolder`s and the thread-local roots.
         collectRootSetForThread<MarkTraits>(gcHandle(), markQueue, thread);

@@ -30,7 +30,7 @@ struct Delta {
 /// cleanly: for any Delta D, `(D ^ D)` decodes to no live locations, and
 /// `(base ^ (base ^ other))` decodes to the same locations as `other` (the
 /// actual reconstruction, `base ^ delta`, is how
-/// DeltaMainStackMapBuilder::Reader recovers a callsite's live-location set
+/// DeltaMainStackMap::tryGetRootsInfo recovers a callsite's live-location set
 /// from its function's base Delta plus its stored per-callsite Delta).
 Delta operator^(const Delta& lhs, const Delta& rhs);
 
