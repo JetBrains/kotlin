@@ -407,7 +407,6 @@ include(
     ":gradle:gradle-warnings-detector",
     ":gradle:kotlin-compiler-args-properties",
     ":gradle:regression-benchmark-templates",
-    ":gradle:regression-benchmarks",
     ":libraries:tools:gradle:fus-statistics-gradle-plugin",
     ":kotlin-tooling-metadata",
     ":kotlin-tooling-core",
@@ -937,7 +936,6 @@ project(":gradle:documentation").projectDir = File("$rootDir/libraries/tools/gra
 project(":gradle:gradle-warnings-detector").projectDir = File("$rootDir/libraries/tools/gradle/gradle-warnings-detector")
 project(":gradle:kotlin-compiler-args-properties").projectDir = File("$rootDir/libraries/tools/gradle/kotlin-compiler-args-properties")
 project(":gradle:regression-benchmark-templates").projectDir = File("$rootDir/libraries/tools/gradle/regression-benchmark-templates")
-project(":gradle:regression-benchmarks").projectDir = File("$rootDir/libraries/tools/gradle/regression-benchmarks")
 project(":kotlin-tooling-metadata").projectDir = File("$rootDir/libraries/tools/kotlin-tooling-metadata")
 project(":kotlin-tooling-core").projectDir = File("$rootDir/libraries/tools/kotlin-tooling-core")
 project(":compose-compiler-gradle-plugin").projectDir = File("$rootDir/libraries/tools/kotlin-compose-compiler")
