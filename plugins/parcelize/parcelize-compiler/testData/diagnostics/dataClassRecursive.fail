@@ -1,0 +1,1 @@
+Caused by: java.lang.StackOverflowError // https://issuetracker.google.com/575732249
