@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.gradle.util.capitalize
 import org.jetbrains.kotlin.gradle.util.resolveRepoArtifactPath
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInFrontend
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.io.TempDir
@@ -39,6 +40,7 @@ import kotlin.test.assertTrue
 
 @MppGradlePluginTests
 @DisplayName("Separate KMP compilation a.k.a. the new KMP compilation scheme: KT-77546")
+@MustRunOnChangesInGradle
 class SeparateKmpCompilationIT : KGPBaseTest() {
     @DisplayName("fragment dependencies are configured for shared source sets in a single-target project")
     @GradleTest
@@ -254,12 +256,14 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
 
     @DisplayName("inaccessible symbols: local kmp library -> compile consumer")
     @GradleTest
+    @MustRunOnChangesInAnyCompiler
     fun localKmpConsumer(gradleVersion: GradleVersion) {
         doTestInaccessibleSymbols(gradleVersion)
     }
 
     @DisplayName("inaccessible symbols: published kmp library -> compile consumer")
     @GradleTest
+    @MustRunOnChangesInAnyCompiler
     fun remoteKmpConsumer(gradleVersion: GradleVersion, @TempDir localRepository: Path) {
         doTestInaccessibleSymbols(gradleVersion, localRepository)
     }
@@ -695,7 +699,7 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
 
     @DisplayName("JVM metadata serialization for IC enabled with separate compilation")
     @GradleTest
-    @MustRunOnChangesInFrontend
+    @MustRunOnChangesInAnyCompiler
     fun jvmIcEnabledWithSeparateCompilation(gradleVersion: GradleVersion) {
         defaultProject(
             gradleVersion,
@@ -735,6 +739,7 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
 
     @DisplayName("commonMain type implementing Continuation<K> is usable from commonTest with JS+Wasm targets")
     @GradleTest
+    @MustRunOnChangesInAnyCompiler
     fun `commonMain Continuation subtype is usable from commonTest with js and wasm targets`(gradleVersion: GradleVersion) {
         project(
             "empty",
@@ -772,6 +777,7 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
     @DisplayName("Non-default `concurrentMain` sourceSet in project with tests")
     @GradleTest
     @Disabled("KT-89505")
+    @MustRunOnChangesInAnyCompiler
     fun `test of concurrentMain sourceSet`(gradleVersion: GradleVersion) {
         project(
             "empty",

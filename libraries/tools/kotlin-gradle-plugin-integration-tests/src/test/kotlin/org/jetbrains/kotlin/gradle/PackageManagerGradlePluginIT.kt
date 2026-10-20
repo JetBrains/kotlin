@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.fromSrcPackageJson
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import kotlin.io.path.deleteRecursively
@@ -189,6 +190,7 @@ class YarnGradlePluginIT : PackageManagerGradlePluginIT() {
     }
 }
 
+@MustRunOnChangesInGradle
 abstract class PackageManagerGradlePluginIT : KGPBaseTest() {
 
     abstract val yarn: Boolean

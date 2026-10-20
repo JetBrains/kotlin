@@ -10,6 +10,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
@@ -27,6 +28,7 @@ import kotlin.test.assertTrue
 
 @DisplayName("KLibs in K2")
 @MppGradlePluginTests
+@MustRunOnChangesInGradle
 open class KlibBasedMppIT : KGPBaseTest() {
 
     override val defaultBuildOptions: BuildOptions = super.defaultBuildOptions
@@ -36,6 +38,7 @@ open class KlibBasedMppIT : KGPBaseTest() {
 
     @DisplayName("Could be compiled with project dependency")
     @GradleTest
+    @MustRunOnChangesInAnyCompiler
     fun testBuildWithProjectDependency(
         gradleVersion: GradleVersion,
         @TempDir localRepo: Path,
