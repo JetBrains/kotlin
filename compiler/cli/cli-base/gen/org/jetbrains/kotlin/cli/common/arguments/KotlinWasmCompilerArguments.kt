@@ -117,9 +117,9 @@ class KotlinWasmCompilerArguments : CommonJsAndWasmCompilerArguments() {
 
     @Argument(
         value = "-Xwasm-enable-tail-calls",
-        description = "Emit WebAssembly tail call instructions (return_call / return_call_indirect).",
+        description = "Emit WebAssembly tail call instructions (return_call / return_call_ref) for calls in tail position. Frames of tail-calling functions are omitted from stack traces. Ignored with -Xwasm-debug-friendly.",
     )
-    var wasmEnableTailCalls: Boolean = false
+    var wasmEnableTailCalls: Boolean = true
         set(value) {
             checkFrozen()
             field = value

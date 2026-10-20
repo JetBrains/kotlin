@@ -310,8 +310,14 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
 
     compilerArgument {
         name = "Xwasm-enable-tail-calls"
-        description = "Emit WebAssembly tail call instructions (return_call / return_call_indirect).".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
+        description = "Emit WebAssembly tail call instructions (return_call / return_call_ref) for calls in tail position. Frames of tail-calling functions are omitted from stack traces. Ignored with -Xwasm-debug-friendly.".asReleaseDependent()
+        valueType = BooleanType(
+            isNullable = false.asReleaseDependent(),
+            defaultValue = ReleaseDependent(
+                true,
+                KotlinReleaseVersion.v2_4_20..KotlinReleaseVersion.v2_5_0 to false,
+            )
+        )
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_4_20,
