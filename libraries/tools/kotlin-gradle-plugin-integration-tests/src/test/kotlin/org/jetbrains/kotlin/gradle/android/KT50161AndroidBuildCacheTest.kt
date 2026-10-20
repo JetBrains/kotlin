@@ -9,6 +9,7 @@ import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.BuildTask
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.fail
 import org.junit.jupiter.api.io.TempDir
@@ -16,6 +17,7 @@ import java.nio.file.Path
 
 @AndroidGradlePluginTests
 @DisplayName("Android Build Cache Test for KT-50161")
+@MustRunOnChangesInGradle
 class KT50161AndroidBuildCacheTest : KGPBaseTest() {
 
     @GradleAndroidTest
