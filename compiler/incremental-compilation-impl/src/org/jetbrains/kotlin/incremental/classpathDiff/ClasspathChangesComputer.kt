@@ -130,8 +130,10 @@ internal object ClasspathChangesComputer {
         previousClassSnapshots: List<AccessibleClassSnapshot>,
         metrics: BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>,
     ): ProgramSymbolSet {
-        val [currentKotlinClassSnapshots, currentJavaClassSnapshots] = currentClassSnapshots.partition { it is KotlinClassSnapshot }
-        val [previousKotlinClassSnapshots, previousJavaClassSnapshots] = previousClassSnapshots.partition { it is KotlinClassSnapshot }
+        val [currentPackageInfoSnapshots, currentRegularClassSnapshots] = currentClassSnapshots.partition { it is PackageInfoClassSnapshot }
+        val [previousPackageInfoSnapshots, previousRegularClassSnapshots] = previousClassSnapshots.partition { it is PackageInfoClassSnapshot }
+        val [currentKotlinClassSnapshots, currentJavaClassSnapshots] = currentRegularClassSnapshots.partition { it is KotlinClassSnapshot }
+        val [previousKotlinClassSnapshots, previousJavaClassSnapshots] = previousRegularClassSnapshots.partition { it is KotlinClassSnapshot }
 
         @Suppress("UNCHECKED_CAST")
         val kotlinClassChanges = metrics.measure(COMPUTE_KOTLIN_CLASS_CHANGES) {
@@ -149,7 +151,12 @@ internal object ClasspathChangesComputer {
             )
         }
 
-        return kotlinClassChanges + javaClassChanges
+        val packageInfoChanges = ProgramSymbolSet.Collector().run {
+            addClasses((currentPackageInfoSnapshots + previousPackageInfoSnapshots).map { it.classId })
+            getResult()
+        }
+
+        return kotlinClassChanges + javaClassChanges + packageInfoChanges
     }
 
     private fun computeKotlinClassChanges(
