@@ -13,11 +13,13 @@ import org.jetbrains.kotlin.gradle.util.checkBytecodeContains
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.Disabled
 import kotlin.test.assertTrue
 
 @MppGradlePluginTests
+@MustRunOnChangesInGradle
 class MppDslAssociateCompilationsIT : KGPBaseTest() {
 
     @GradleTest
