@@ -13,7 +13,9 @@ import org.jetbrains.kotlin.backend.common.serialization.cityHash64
 import org.jetbrains.kotlin.backend.wasm.*
 import org.jetbrains.kotlin.backend.wasm.utils.fitsLatin1
 import org.jetbrains.kotlin.backend.wasm.wasmInitializeExportName
+import org.jetbrains.kotlin.backend.wasm.wasmJsUnitTestsExportName
 import org.jetbrains.kotlin.backend.wasm.wasmWasiPreview2StartExportName
+import org.jetbrains.kotlin.backend.wasm.wasmWasiUnitTestsExportName
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import org.jetbrains.kotlin.wasm.ir.*
@@ -618,7 +620,8 @@ class WasmCompiledModuleFragment(
             }
             buildCall(Synthetics.Functions.runRootSuitesBuiltIn, serviceCodeLocation)
         }
-        exports.add(WasmExport.Function("startUnitTests", startUnitTestsFunction))
+        val startUnitTestsExportName = if (isWasmJsTarget) wasmJsUnitTestsExportName else wasmWasiUnitTestsExportName
+        exports.add(WasmExport.Function(startUnitTestsExportName, startUnitTestsFunction))
         definedDeclarations.functions[Synthetics.Functions.startUnitTestsFunction.value] = startUnitTestsFunction
     }
 

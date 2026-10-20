@@ -150,6 +150,9 @@ data class WasmModuleDependencyImport(val name: String, val fileName: String)
 const val wasmInitializeExportName = "_initialize"
 const val wasmStartExportName = "_start"
 const val wasmWasiPreview2StartExportName = "wasi:cli/run@0.2.12#run"
+const val wasmJsUnitTestsExportName = "startUnitTests"
+// NOTE: WASI tests run as components to support WASI 0.2+; components don't allow camelCase names
+const val wasmWasiUnitTestsExportName = "startunittests"
 const val jsBuiltinsModulePrefix = "wasm:"
 const val importedStringConstants = "'"
 
