@@ -129,6 +129,7 @@ dependencyResolutionManagement {
         binaryenDistributions()
         d8Distributions()
         wasmtimeDistributions()
+        wasmToolsDistributions()
         swcDistributions()
         androidRepository()
         androidSystemImages()
