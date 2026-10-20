@@ -173,6 +173,9 @@ internal fun Collection<LookupSymbol>.toProgramSymbolSet(allClasses: Iterable<Ac
                 }
                 collector.addPackageMembers(clazz.classId.packageFqName, packageMemberNames.intersect(lookupNamesInScope))
             }
+            is PackageInfoClassSnapshot -> {
+                // Never the target of a lookup
+            }
         }
     }
     return collector.getResult()

@@ -63,14 +63,12 @@ object ClasspathEntrySnapshotExternalizer : DataExternalizer<ClasspathEntrySnaps
     override fun save(output: DataOutput, snapshot: ClasspathEntrySnapshot) {
         LinkedHashMapExternalizer(StringExternalizer, ClassSnapshotExternalizer).save(output, snapshot.classSnapshots)
         NullableValueExternalizer(LongExternalizer).save(output, snapshot.moduleInfoHash)
-        LinkedHashMapExternalizer(StringExternalizer, LongExternalizer).save(output, LinkedHashMap(snapshot.packageInfoHashes))
     }
 
     override fun read(input: DataInput): ClasspathEntrySnapshot {
         return ClasspathEntrySnapshot(
             classSnapshots = LinkedHashMapExternalizer(StringExternalizer, ClassSnapshotExternalizer).read(input),
             moduleInfoHash = NullableValueExternalizer(LongExternalizer).read(input),
-            packageInfoHashes = LinkedHashMapExternalizer(StringExternalizer, LongExternalizer).read(input)
         )
     }
 }
@@ -81,8 +79,8 @@ internal object ClassSnapshotExternalizer : DataExternalizer<ClassSnapshot> by D
 )
 
 internal object AccessibleClassSnapshotExternalizer : DataExternalizer<AccessibleClassSnapshot> by DelegateDataExternalizer(
-    types = listOf(KotlinClassSnapshot::class.java, JavaClassSnapshot::class.java),
-    typesExternalizers = listOf(KotlinClassSnapshotExternalizer, JavaClassSnapshotExternalizer)
+    types = listOf(KotlinClassSnapshot::class.java, JavaClassSnapshot::class.java, PackageInfoClassSnapshot::class.java),
+    typesExternalizers = listOf(KotlinClassSnapshotExternalizer, JavaClassSnapshotExternalizer, PackageInfoClassSnapshotExternalizer)
 )
 
 private object KotlinClassSnapshotExternalizer : DataExternalizer<KotlinClassSnapshot> by DelegateDataExternalizer(
@@ -238,6 +236,22 @@ private object JavaClassSnapshotExternalizer : DataExternalizer<JavaClassSnapsho
             classAbiHash = LongExternalizer.read(input),
             classMemberLevelSnapshot = NullableValueExternalizer(JavaClassMemberLevelSnapshotExternalizer).read(input),
             supertypes = ListExternalizer(JvmClassNameExternalizerWithInterning).read(input)
+        )
+    }
+}
+
+private object PackageInfoClassSnapshotExternalizer : DataExternalizer<PackageInfoClassSnapshot> {
+
+    override fun save(output: DataOutput, snapshot: PackageInfoClassSnapshot) {
+        ClassIdExternalizer.save(output, snapshot.classId)
+        LongExternalizer.save(output, snapshot.classAbiHash)
+    }
+
+    override fun read(input: DataInput): PackageInfoClassSnapshot {
+        return PackageInfoClassSnapshot(
+            // To reduce memory usage, apply object interning to classId's package name as they are commonly shared
+            classId = ClassIdExternalizerWithInterning.read(input),
+            classAbiHash = LongExternalizer.read(input)
         )
     }
 }
