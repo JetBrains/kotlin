@@ -9,6 +9,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.BuildOptions.ConfigurationCacheProblems
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 
@@ -18,6 +19,7 @@ import org.junit.jupiter.api.condition.OS
 // This allows us to keep CI configuration simpler.
 @OsCondition(supportedOn = [OS.LINUX, OS.MAC, OS.WINDOWS], enabledOnCI = [OS.LINUX, OS.MAC, OS.WINDOWS])
 @NativeGradlePluginTests
+@MustRunOnChangesInGradle
 class JsSetupConfigurationCacheIT : KGPBaseTest() {
 
     override val defaultBuildOptions: BuildOptions
