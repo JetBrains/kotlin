@@ -156,8 +156,8 @@ internal fun createAnnotationArgumentFromValue(
  * through the session-backed `resolveExternalFieldValue`, as they do for fields.
  */
 private fun annotationConstantEvaluator(tree: LightSyntaxTree, resolutionContext: JavaResolutionContext): ConstantEvaluator =
-    ConstantEvaluator(tree, resolutionContext) { classQualifier, fieldName ->
-        with(resolutionContext) { resolveExternalFieldValue(classQualifier, fieldName) }
+    ConstantEvaluator(tree, resolutionContext) { classQualifier, qualifierClassId, fieldName ->
+        with(resolutionContext) { resolveExternalFieldValue(classQualifier, qualifierClassId, fieldName) }
     }
 
 class JavaLiteralAnnotationArgumentOverAst(

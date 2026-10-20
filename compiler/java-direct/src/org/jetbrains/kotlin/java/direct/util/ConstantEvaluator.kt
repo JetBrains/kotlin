@@ -17,8 +17,11 @@ import org.jetbrains.kotlin.java.direct.resolution.JavaResolutionContext
 import org.jetbrains.kotlin.java.direct.resolution.findClassInCurrentScope
 import org.jetbrains.kotlin.java.direct.resolution.getStaticImport
 import org.jetbrains.kotlin.java.direct.resolution.resolve
+import org.jetbrains.kotlin.java.direct.resolution.resolveImportedClassName
 import org.jetbrains.kotlin.kmp.tree.LightNode
 import org.jetbrains.kotlin.kmp.tree.LightSyntaxTree
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import kotlin.experimental.inv
 
 /**
@@ -27,18 +30,19 @@ import kotlin.experimental.inv
  *
  * @param containingClass the class the expression is written in, if any; simple names are looked up
  *   among its fields first.
- * @param resolveExternalReference optional callback to resolve references to external classes (e.g., Kotlin classes)
+ * @param resolveExternalReference optional callback to resolve references to external classes (e.g., Kotlin classes); it
+ *   receives the qualifier as written or imported, the class it resolves to, if any, and the field name
  */
 class ConstantEvaluator private constructor(
     private val tree: LightSyntaxTree,
     private val resolutionContext: JavaResolutionContext,
     private val containingClass: JavaClassOverAst?,
-    private val resolveExternalReference: ((classQualifier: String?, fieldName: String) -> Any?)?,
+    private val resolveExternalReference: ((classQualifier: String?, qualifierClassId: ClassId?, fieldName: String) -> Any?)?,
 ) {
     /** Evaluator for an expression written inside [containingClass], i.e. a field initializer. */
     constructor(
         containingClass: JavaClassOverAst,
-        resolveExternalReference: ((classQualifier: String?, fieldName: String) -> Any?)? = null,
+        resolveExternalReference: ((classQualifier: String?, qualifierClassId: ClassId?, fieldName: String) -> Any?)? = null,
     ) : this(containingClass.tree, containingClass.resolutionContext, containingClass, resolveExternalReference)
 
     /**
@@ -48,7 +52,7 @@ class ConstantEvaluator private constructor(
     constructor(
         tree: LightSyntaxTree,
         resolutionContext: JavaResolutionContext,
-        resolveExternalReference: ((classQualifier: String?, fieldName: String) -> Any?)? = null,
+        resolveExternalReference: ((classQualifier: String?, qualifierClassId: ClassId?, fieldName: String) -> Any?)? = null,
     ) : this(tree, resolutionContext, resolutionContext.scopeContext.containingClass as? JavaClassOverAst, resolveExternalReference)
 
     /**
@@ -195,6 +199,7 @@ class ConstantEvaluator private constructor(
 
         val className: String
         val fieldName: String
+        val classId: ClassId?
         if (lastDot < 0) {
             val localValue = containingClass?.let { resolveFieldValue(it, refText) }
             if (localValue != null) return localValue
@@ -202,13 +207,16 @@ class ConstantEvaluator private constructor(
             val staticImportFqn = with(resolutionContext) { getStaticImport(refText) }?.asString()
             val importDot = staticImportFqn?.lastIndexOf('.') ?: -1
             if (staticImportFqn == null || importDot < 0) {
-                return resolveExternalReference?.invoke(null, refText)
+                return resolveExternalReference?.invoke(null, null, refText)
             }
             className = staticImportFqn.substring(0, importDot)
             fieldName = staticImportFqn.substring(importDot + 1)
+            // The class of a single-static import is a canonical name (JLS 7.5.3), not looked up in the file's scope.
+            classId = with(resolutionContext) { resolveImportedClassName(FqName(className)) }
         } else {
             className = refText.substring(0, lastDot)
             fieldName = refText.substring(lastDot + 1)
+            classId = null
         }
 
         val targetClass = findLocalClass(className)
@@ -216,20 +224,16 @@ class ConstantEvaluator private constructor(
             return resolveFieldValue(targetClass, fieldName)
         }
 
-        // Promote a simple class name to its FQN (via the unit's imports + same-package + java.lang
-        // probes) before passing to the cross-language callback. Without this, `SdkConstants.R_CLASS`
-        // — written under `import com.android.SdkConstants;` in a Java source — would reach the
-        // callback as the simple name `"SdkConstants"`, which it can only interpret as either a
-        // current-package class or a `<root>.SdkConstants` top-level class — neither of which
-        // exists. Passing the resolved FQN `"com.android.SdkConstants"` lets the callback construct
-        // `ClassId(com.android, SdkConstants)` and look up the `FirJavaField` on the binary class.
-        val resolvedClassQualifier = if (className.contains('.')) {
-            className
-        } else {
-            with(resolutionContext) { resolve(className) }?.asSingleFqName()?.asString() ?: className
-        }
+        // Resolve the class qualifier as a type name (via the unit's imports + same-package + java.lang
+        // probes, JLS 6.5.5) before passing it to the cross-language callback. Without this,
+        // `SdkConstants.R_CLASS` — written under `import com.android.SdkConstants;` in a Java source —
+        // could only be interpreted as either a current-package class or a `<root>.SdkConstants`
+        // top-level class — neither of which exists. A qualified name like `p.X.Y` is classified left
+        // to right (JLS 6.5.4.2): it is the nested class `p.X.Y` if `p.X` is a class, never a class `Y`
+        // of a package `p.X`, which splitting the string at its last dot would suggest.
+        val resolvedClassId = classId ?: with(resolutionContext) { resolve(className) }
 
-        return resolveExternalReference?.invoke(resolvedClassQualifier, fieldName)
+        return resolveExternalReference?.invoke(className, resolvedClassId, fieldName)
     }
 
     private fun findLocalClass(name: String): JavaClassOverAst? {
