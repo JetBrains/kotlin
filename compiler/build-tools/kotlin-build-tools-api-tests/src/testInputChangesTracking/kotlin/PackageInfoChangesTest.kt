@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAg
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.ScenarioModule
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.jvmScenario
 import org.jetbrains.kotlin.test.TestMetadata
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 
 class PackageInfoChangesTest : BaseCompilationTest() {
@@ -290,7 +289,6 @@ class PackageInfoChangesTest : BaseCompilationTest() {
     }
 
     @DefaultStrategyAgnosticCompilationTest
-    @Disabled("Follow-up of KT-62261: a fully qualified reference does not make the consumer file dirty")
     @DisplayName("Changing dependency package-info nullability recompiles a consumer using fully qualified names (externally tracked)")
     @TestMetadata("ic-scenarios/dependency-package-info-nullability")
     fun testDependencyPackageInfoNullabilityChangeRecompilesFullyQualifiedConsumerExternallyTracked(
@@ -311,7 +309,6 @@ class PackageInfoChangesTest : BaseCompilationTest() {
     }
 
     @DefaultStrategyAgnosticCompilationTest
-    @Disabled("Follow-up of KT-62261: a fully qualified reference does not make the consumer file dirty")
     @DisplayName("Changing dependency package-info nullability recompiles a consumer using fully qualified names (internally tracked)")
     @TestMetadata("ic-scenarios/dependency-package-info-nullability")
     fun testDependencyPackageInfoNullabilityChangeRecompilesFullyQualifiedConsumerInternallyTracked(
