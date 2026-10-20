@@ -80,15 +80,6 @@ class MethodInliner(
         val inlinedFunctionMarkerVariableName: String?,
     )
 
-    fun doInline(
-        adapter: MethodVisitor,
-        remapper: LocalVarRemapper,
-        remapReturn: Boolean,
-        returnLabels: Map<String, Label?>
-    ): InlineResult {
-        return doInline(adapter, remapper, remapReturn, returnLabels, 0)
-    }
-
     private fun recordTransformation(info: TransformationInfo) {
         if (!inliningContext.isInliningLambda) {
             inliningContext.root.state.globalInlineContext.recordTypeFromInlineFunction(info.oldClassName)
@@ -99,7 +90,7 @@ class MethodInliner(
         transformations.add(info)
     }
 
-    private fun doInline(
+    fun doInline(
         adapter: MethodVisitor,
         remapper: LocalVarRemapper,
         remapReturn: Boolean,
@@ -651,7 +642,7 @@ class MethodInliner(
         val [toDelete, toReplaceWithPop] = markObsoleteInstruction(instructions, sources)
 
         var awaitClassReification = false
-        var currentFinallyDeep = 0
+        var currentFinallyDeep = finallyDeepShift
 
         InsnSequence(instructions).forEach { cur ->
             val frame = sources[instructions.indexOf(cur)]
