@@ -10,6 +10,8 @@ import org.gradle.kotlin.dsl.withType
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInFrontend
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
@@ -32,6 +34,8 @@ class K2CommonizerHierarchicalIT : CommonizerHierarchicalIT()
 
 @MppGradlePluginTests
 @DisplayName("K2: custom tests")
+@MustRunOnChangesInGradle
+@MustRunOnChangesInFrontend
 class CustomK2Tests : KGPBaseTest() {
     override val defaultBuildOptions: BuildOptions get() = super.defaultBuildOptions.copyEnsuringK2()
 
@@ -232,6 +236,8 @@ class CustomK2Tests : KGPBaseTest() {
 @NativeGradlePluginTests
 @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
 @DisplayName("K2: custom MacOS tests")
+@MustRunOnChangesInGradle
+@MustRunOnChangesInFrontend
 class CustomK2MacOSTests : KGPBaseTest() {
     override val defaultBuildOptions: BuildOptions get() = super.defaultBuildOptions.copyEnsuringK2()
 
