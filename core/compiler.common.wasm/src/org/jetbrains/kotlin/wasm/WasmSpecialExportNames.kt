@@ -19,7 +19,10 @@ object WasmSpecialExportNames {
     const val MEMORY = "memory"
     const val INITIALIZE = "_initialize"
     const val START = "_start"
-    const val START_UNIT_TESTS = "startUnitTests"
+
+    const val START_UNIT_TESTS_EXPORT_NAME_WASM_JS = "startUnitTests"
+    // NOTE: WASI tests will soon run as components to support WASI 0.2+; components don't allow camelCase names
+    const val START_UNIT_TESTS_EXPORT_NAME_WASM_WASI = "startunittests"
     const val CALL_FUNCTION_PREFIX = "__callFunction_"
 
     /**

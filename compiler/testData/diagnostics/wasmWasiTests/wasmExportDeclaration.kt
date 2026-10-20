@@ -23,7 +23,7 @@ fun exportedAsInitialize(): Int = 1
 @WasmExport("_start")
 fun exportedAsStart(): Int = 1
 
-@WasmExport("startUnitTests")
+@WasmExport("startunittests")
 fun exportedAsStartUnitTests(): Int = 1
 
 // JS reserved words

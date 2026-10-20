@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
+import org.jetbrains.kotlin.gradle.targets.js.WASM_WASI_START_UNIT_TESTS_EXPORT
 import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJvm
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
@@ -62,7 +63,7 @@ internal class KotlinWasmtime(
         )
 
         val args = mutableListOf<String>().apply {
-            addAll(wasmtimeInvokeArgs("startUnitTests"))
+            addAll(wasmtimeInvokeArgs(WASM_WASI_START_UNIT_TESTS_EXPORT))
             add(compiledFile.absolutePath)
             addAll(cliArgs.toList())
         }

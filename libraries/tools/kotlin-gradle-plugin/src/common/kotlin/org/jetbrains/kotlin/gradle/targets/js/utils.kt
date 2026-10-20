@@ -32,7 +32,11 @@ const val META_JS = "meta.js"
 @Deprecated("Unused string constant. Scheduled for removal in Kotlin 2.6.", ReplaceWith(""""html""""))
 const val HTML = "html"
 
-internal fun writeWasmUnitTestRunner(workingDir: File, compiledFile: File): File {
+// The K/Wasm compiler exports the unit test runner under these names; the all lowercase WASI name is required by the Wasm component model
+internal const val WASM_JS_START_UNIT_TESTS_EXPORT = "startUnitTests"
+internal const val WASM_WASI_START_UNIT_TESTS_EXPORT = "startunittests"
+
+internal fun writeWasmUnitTestRunner(workingDir: File, compiledFile: File, startUnitTestsExport: String): File {
     val static = workingDir.resolve("static").also {
         it.mkdirs()
     }
@@ -41,7 +45,7 @@ internal fun writeWasmUnitTestRunner(workingDir: File, compiledFile: File): File
     testRunnerFile.writeText(
         """
         import * as exports from './${compiledFile.relativeTo(static).invariantSeparatorsPath}';
-        exports["startUnitTests"]?.();
+        exports["$startUnitTestsExport"]?.();
         """.trimIndent()
     )
     return testRunnerFile
