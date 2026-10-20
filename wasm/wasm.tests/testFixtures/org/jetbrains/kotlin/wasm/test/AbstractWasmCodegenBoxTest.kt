@@ -41,9 +41,13 @@ import org.jetbrains.kotlin.test.services.configuration.WasmSecondStageEnvironme
 import org.jetbrains.kotlin.test.services.configuration.enableByConfigurationKey
 import org.jetbrains.kotlin.utils.bind
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys.WASM_GENERATE_CLOSED_WORLD_MULTIMODULE
+import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys.WASM_INCLUDED_MODULE_ONLY
+import org.jetbrains.kotlin.wasm.test.blackbox.AbstractWasmSecondStageGroupingFacade
 import org.jetbrains.kotlin.wasm.test.blackbox.WasmGroupingTestIsolator
 import org.jetbrains.kotlin.wasm.test.converters.WasmInProcessSecondStageFacade
+import org.jetbrains.kotlin.wasm.test.converters.WasmInProcessSingleModuleSecondStageFacade
 import org.jetbrains.kotlin.wasm.test.handlers.WasmCompilationSetsGroupingStageBoxRunner
+import org.jetbrains.kotlin.wasm.test.handlers.WasmGroupingStageIrHandler
 import org.jetbrains.kotlin.wasm.test.handlers.WasmJsCoroutinesStackSwitchingBoxRunner
 import org.jetbrains.kotlin.wasm.test.providers.WasmJsLauncherAdditionalSourceProvider
 import org.jetbrains.kotlin.wasm.test.utils.configureIgnoredTestSuppressor
@@ -56,6 +60,7 @@ abstract class AbstractWasmCodegenBoxTest(
 ): AbstractTwoStageKotlinCompilerWasmTest() {
     abstract val additionalSourceProviders: List<Constructor<AdditionalSourceProvider>>
     open val wasmCompilationSetsBoxRunner: Constructor<GroupingStageHandler<BinaryArtifacts.Wasm>> = ::WasmCompilationSetsGroupingStageBoxRunner
+    open val groupingSecondStageFacade: Constructor<AbstractWasmSecondStageGroupingFacade> = WasmInProcessSecondStageFacade::Grouping
 
     // Allow subclasses to contribute ignore directives for BlackBoxCodegenSuppressor,
     // mirroring the single-stage base `AbstractWasmBlackBoxCodegenTestBase`.
@@ -132,9 +137,10 @@ abstract class AbstractWasmCodegenBoxTest(
             }
         }
         groupingStage {
-            facadeStep(WasmInProcessSecondStageFacade::Grouping)
+            facadeStep(groupingSecondStageFacade)
             handlersStep(ArtifactKinds.Wasm, CompilationStage.SECOND) {
                 useHandlers(wasmCompilationSetsBoxRunner)
+                useHandlers(::WasmGroupingStageIrHandler)
             }
         }
     }
@@ -210,5 +216,20 @@ abstract class AbstractWasmJsCodegenCoroutinesStackSwitchingMultiModuleTest : Ab
                 +WasmEnvironmentConfigurationDirectives.USE_STACK_SWITCHING_PROPOSAL
             }
         }
+    }
+}
+
+/**
+ * Box tests in the single-module mode (`WASM_INCLUDED_MODULE_ONLY`): every module is compiled alone against the
+ * precompiled stdlib and kotlin-test, see [WasmInProcessSingleModuleSecondStageFacade].
+ */
+@WasmFirCompilerExtraTest
+abstract class AbstractWasmJsCodegenSingleModuleTest : AbstractWasmJsCodegenBoxTest() {
+    override val groupingSecondStageFacade: Constructor<AbstractWasmSecondStageGroupingFacade> =
+        WasmInProcessSingleModuleSecondStageFacade::Grouping
+
+    override fun configure(builder: TwoStageTestConfigurationBuilder): Unit = with(builder) {
+        super.configure(this)
+        nonGroupingStageBuilder.enableByConfigurationKey(WASM_INCLUDED_MODULE_ONLY)
     }
 }

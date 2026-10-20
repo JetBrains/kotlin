@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.wasm.test.isHelpersModule
+import org.jetbrains.kotlin.wasm.test.utils.DirectiveTestUtils
 
 class WasmGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolator(testServices, affectsFileGenerators = true) {
     override val directiveContainers: List<DirectivesContainer>
@@ -95,6 +96,13 @@ class WasmGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolato
             module.files.any { !it.isAdditional && it.originalContent.contains(MAIN_MODULE_NAME_LITERAL) }
         }
         if (mentionsMainModuleName) return BatchToken.Isolated
+
+        // The Wasm IR of a batch doesn't tell its tests apart, so `WasmGroupingStageIrHandler` checks the in-text Wasm IR
+        // directives of a test only when it is alone in its batch, with its original names.
+        val checksWasmIr = moduleStructure.modules.any { module ->
+            module.files.any { !it.isAdditional && DirectiveTestUtils.hasDirectives(it.originalContent) }
+        }
+        if (checksWasmIr) return BatchToken.Isolated
 
         val specificTokens = listOfNotNull(
             computeEHToken(moduleStructure),
