@@ -125,6 +125,30 @@ class NodeJsToolchainTaskWiringTest {
     }
 
     @Test
+    fun `node js exec keeps a custom executable`() {
+        val project = buildProjectWithMPP(
+            preApplyCode = {
+                propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_JS_NODEJS_TOOLCHAIN_MODE, "download")
+            }
+        ) {
+            with(multiplatformExtension) {
+                js {
+                    nodejs()
+                    binaries.executable()
+                }
+            }
+        }
+        project.evaluate()
+        assertIs<DefaultNodeJsToolchainServiceImpl>(project.registeredService())
+
+        val task = project.tasks.withType(NodeJsExec::class.java).first()
+        task.executable = "/custom/node"
+        task.resolveExecutableIfNotCustomized()
+
+        assertEquals("/custom/node", task.executable)
+    }
+
+    @Test
     fun `playwright framework resolves the legacy executable when the toolchain is disabled`() {
         val project = buildProjectWithMPP {
             with(multiplatformExtension) {
