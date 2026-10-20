@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.types.*
 /**
  * Collects the upper bounds as [ConeClassLikeType].
  */
-fun ConeKotlinType?.collectUpperBounds(typeContext: ConeTypeContext): Set<ConeClassLikeType> {
+fun ConeKotlinType?.collectUpperBounds(typeContext: ConeTypeContext, collectUnions: Boolean = false): Set<ConeClassLikeType> {
     if (this == null) return emptySet()
 
     val upperBounds = mutableSetOf<ConeClassLikeType>()
@@ -39,7 +39,7 @@ fun ConeKotlinType?.collectUpperBounds(typeContext: ConeTypeContext): Set<ConeCl
             }
             is ConeDefinitelyNotNullType -> collect(type.original)
             is ConeIntersectionType -> type.intersectedTypes.forEach(::collect)
-            is ConeUnionType -> {
+            is ConeUnionType -> if (collectUnions) {
                 collect(type.primaryType)
                 type.richErrorTypes.forEach { collect(it) }
             }
