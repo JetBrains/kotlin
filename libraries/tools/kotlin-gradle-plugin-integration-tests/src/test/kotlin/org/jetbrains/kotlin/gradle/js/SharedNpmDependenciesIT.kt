@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.fromSrcPackageJson
 import org.jetbrains.kotlin.gradle.targets.web.npm.KotlinSharedNpmProjectPlugin
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
+import java.io.File
 import java.nio.file.Path
 import kotlin.test.assertEquals
 
@@ -202,6 +203,66 @@ class SharedNpmDependenciesIT : KGPBaseTest() {
                     ":kotlinSetupSharedNpmProject",
                     ":kotlinWasmSetupSharedNpmProject",
                 )
+            }
+        }
+    }
+
+    @DisplayName("KT-90085 - Shared package json of a dependent project picks up npm changes of its dependency project")
+    @GradleTest
+    fun testSharedPackageJsonPicksUpDependencyNpmChanges(gradleVersion: GradleVersion) {
+        project("emptyKts", gradleVersion) {
+            plugins {
+                kotlin("multiplatform").apply(false)
+            }
+            buildScriptInjection {
+                project.plugins.apply(KotlinSharedNpmProjectPlugin::class.java)
+                project.dependencies.add("kotlinNpmSharedDependencies", project.dependencies.project(mapOf("path" to ":lib-a")))
+                project.dependencies.add("kotlinNpmSharedDependencies", project.dependencies.project(mapOf("path" to ":lib-b")))
+            }
+
+            includeOtherProjectAsSubmodule("emptyKts", newSubmoduleName = "lib-a") {
+                buildScriptInjection {
+                    project.plugins.apply("org.jetbrains.kotlin.multiplatform")
+                    kotlinMultiplatform.apply {
+                        js { nodejs() }
+                        sourceSets.getByName("jsMain").dependencies {
+                            implementation(npm("is-even", "1.0.0"))
+                            if (project.hasProperty("addLeftPad")) {
+                                implementation(npm("left-pad", "1.3.0"))
+                            }
+                        }
+                    }
+                }
+            }
+
+            includeOtherProjectAsSubmodule("emptyKts", newSubmoduleName = "lib-b") {
+                buildScriptInjection {
+                    project.plugins.apply("org.jetbrains.kotlin.multiplatform")
+                    kotlinMultiplatform.apply {
+                        js { nodejs() }
+                        sourceSets.getByName("jsMain").dependencies {
+                            implementation(project(":lib-a"))
+                        }
+                    }
+                }
+            }
+
+            fun TestProject.libBSharedPackageJson(): PackageJson =
+                projectPath.resolve("lib-b/build/kotlin-npm/js/shared-package-json/emptyKts-lib-b/package.json").toFile()
+                    .let { fromSrcPackageJson(it) ?: error("Cannot parse $it") }
+
+            build(":lib-b:kotlinSharedPackageJson") {
+                assertTasksExecuted(":lib-a:kotlinSharedPackageJson")
+                assertEquals(null, libBSharedPackageJson().dependencies["left-pad"])
+            }
+
+            build(":lib-b:kotlinSharedPackageJson", "-PaddLeftPad=true") {
+                assertTasksExecuted(":lib-a:kotlinSharedPackageJson")
+                assertEquals("1.3.0", libBSharedPackageJson().dependencies["left-pad"])
+            }
+
+            build(":lib-b:kotlinSharedPackageJson", "-PaddLeftPad=true") {
+                assertTasksUpToDate(":lib-a:kotlinSharedPackageJson", ":lib-b:kotlinSharedPackageJson")
             }
         }
     }
