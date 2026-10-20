@@ -376,8 +376,8 @@ class ModuleStructureExtractorImpl(
             // can inspect the files already seen. This mirrors the same guard in BatchingPackageInserter.processModule.
             if (testServices.testConfiguration is NonGroupingStageTestConfiguration) {
                 // Include a synthetic module for the current (not-yet-finalized) module so that
-                // directive-based isolators can inspect its directives (e.g. WASM_STANDALONE added
-                // via defaultDirectives, which is merged into moduleDirectives at finishModule time).
+                // directive-based isolators can inspect its directives, including the ones added via defaultDirectives,
+                // which are merged into moduleDirectives at finishModule time.
                 val currentModuleDirectives = testServices.defaultDirectives + globalDirectives + moduleDirectivesBuilder.build()
                 val syntheticModuleForDirectives = TestModule(
                     name = name,

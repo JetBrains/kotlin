@@ -5,13 +5,11 @@
 
 package org.jetbrains.kotlin.wasm.test.blackbox
 
+import org.jetbrains.kotlin.backend.common.serialization.cityHash64String
 import org.jetbrains.kotlin.test.TargetBackend
-import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives
-import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives.CHECK_STATE_MACHINE
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
-import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.DISABLE_WASM_EXCEPTION_HANDLING
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.USE_NEW_EXCEPTION_HANDLING_PROPOSAL
@@ -27,6 +25,7 @@ import org.jetbrains.kotlin.test.services.IrCheckersEnabledByTestDirectives
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
+import org.jetbrains.kotlin.wasm.test.isHelpersModule
 
 class WasmGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolator(testServices, affectsFileGenerators = true) {
     override val directiveContainers: List<DirectivesContainer>
@@ -35,9 +34,7 @@ class WasmGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolato
             JvmEnvironmentConfigurationDirectives, // for directive WITH_REFLECT
             JsEnvironmentConfigurationDirectives, // for directive CALL_MAIN
             CodegenTestDirectives,
-            LanguageSettingsDirectives,
             CustomKlibCompilerTestDirectives,
-            AdditionalFilesDirectives, // for directives WITH_COROUTINES, CHECK_STATE_MACHINE
         )
 
     override fun computeBatchToken(moduleStructure: TestModuleStructure): BatchToken {
@@ -53,6 +50,8 @@ class WasmGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolato
             WasmEnvironmentConfigurationDirectives.WASM_IGNORE_FOR,
             // other isolation reasons
             WasmEnvironmentConfigurationDirectives.WASM_STANDALONE,
+            // The launcher of a batch is compiled and run with or without JSTag, as its first test needs
+            WasmEnvironmentConfigurationDirectives.WASM_NO_JS_TAG,
             WasmEnvironmentConfigurationDirectives.RUN_THIRD_PARTY_OPTIMIZER,
             WasmEnvironmentConfigurationDirectives.RUN_UNIT_TESTS,
             JvmEnvironmentConfigurationDirectives.WITH_REFLECT,
@@ -90,11 +89,17 @@ class WasmGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolato
         }
         if (declaresMain) return BatchToken.Isolated
 
+        // The modules of a batched test get escaped names, so a test checking the name of its main module, as it appears
+        // in a stack trace, must keep the original one.
+        val mentionsMainModuleName = moduleStructure.modules.any { module ->
+            module.files.any { !it.isAdditional && it.originalContent.contains(MAIN_MODULE_NAME_LITERAL) }
+        }
+        if (mentionsMainModuleName) return BatchToken.Isolated
+
         val specificTokens = listOfNotNull(
             computeEHToken(moduleStructure),
-            computeLanguageSettingsToken(moduleStructure),
             computeToggledCheckersToken(moduleStructure.allDirectives),
-            computeCoroutineHelpersToken(moduleStructure.allDirectives),
+            computeHelpersToken(moduleStructure),
         )
         return when (specificTokens.size) {
             0 -> BatchToken.Regular
@@ -112,33 +117,14 @@ class WasmGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolato
             token.takeIf { directive in moduleStructure.allDirectives }
         }
 
-    private fun computeCoroutineHelpersToken(registeredDirectives: RegisteredDirectives): BatchToken? {
-        // The default coroutine helpers are the same for all tests, so only extra ones need a separate batch.
-        if (AdditionalFilesDirectives.WITH_COROUTINES !in registeredDirectives) return null
-        if (CHECK_STATE_MACHINE !in registeredDirectives) return null
-        return Custom("coroutine helpers: $CHECK_STATE_MACHINE")
-    }
-
-    private fun computeLanguageSettingsToken(moduleStructure: TestModuleStructure): BatchToken? {
-        // `distinct()` below is used to match directive lists for tests having different amount of modules, like `[2.2]` vs `[2.2, 2.2]`
-        val languageFeatures = moduleStructure.allDirectives[LanguageSettingsDirectives.LANGUAGE].distinct().sorted()
-        val optIns = moduleStructure.allDirectives[LanguageSettingsDirectives.OPT_IN].distinct().sorted()
-        val apiVersion = moduleStructure.allDirectives[LanguageSettingsDirectives.API_VERSION].distinct()
-        val languageVersion = moduleStructure.allDirectives[LanguageSettingsDirectives.LANGUAGE_VERSION].distinct()
-        val returnValueCheckerMode = moduleStructure.allDirectives[LanguageSettingsDirectives.RETURN_VALUE_CHECKER_MODE].distinct()
-        val progressiveMode = LanguageSettingsDirectives.PROGRESSIVE_MODE in moduleStructure.allDirectives
-
-        if (languageFeatures.isEmpty()
-            && optIns.isEmpty()
-            && apiVersion.isEmpty()
-            && languageVersion.isEmpty()
-            && returnValueCheckerMode.isEmpty()
-            && !progressiveMode
-        ) {
-            return null
-        }
-
-        return BatchToken.Custom("Lang settings: $languageFeatures, $optIns, $apiVersion, $languageVersion, $returnValueCheckerMode, progressive=$progressiveMode")
+    /**
+     * A batch links the helpers KLIB of one of its tests only (see `deduplicateHelperKlibPaths`), so all its tests must
+     * have got the very same helpers: the coroutine helpers vary with the directives, and the common files with the directory.
+     */
+    private fun computeHelpersToken(moduleStructure: TestModuleStructure): BatchToken? {
+        val helpersModule = moduleStructure.modules.find { it.isHelpersModule } ?: return null
+        val helpers = helpersModule.files.map { "${it.name}#${it.originalContent.cityHash64String()}" }.sorted()
+        return Custom("Helpers: $helpers")
     }
 
     private fun computeToggledCheckersToken(registeredDirectives: RegisteredDirectives): ToggledCheckersToken? =
@@ -156,6 +142,7 @@ class WasmGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolato
 
     companion object {
         private val TOP_LEVEL_MAIN_REGEX = Regex("""(?m)^\s*(?:suspend\s+)?fun\s+main\s*\(""")
+        private const val MAIN_MODULE_NAME_LITERAL = "\"<main>\""
     }
 }
 

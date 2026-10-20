@@ -62,6 +62,9 @@ abstract class AbstractWasmCodegenBoxTest(
     open val customIgnoreDirective: ValueDirective<TargetBackend>? = null
     open val additionalIgnoreDirectives: List<ValueDirective<TargetBackend>>? = null
 
+    // So that a batch declares the common files once, see `WasmTestHelpersModuleTransformer`
+    open val extractCommonFilesToHelpersModule: Boolean get() = true
+
     override fun configure(builder: TwoStageTestConfigurationBuilder): Unit = with(builder) {
         commonConfiguration {
             globalDefaults {
@@ -74,6 +77,7 @@ abstract class AbstractWasmCodegenBoxTest(
                 additionalSourceProvider = null,
                 customIgnoreDirective,
                 additionalIgnoreDirectives,
+                extractCommonFilesToHelpersModule = extractCommonFilesToHelpersModule,
             )
             defaultDirectives {
                 +LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE
@@ -158,6 +162,9 @@ abstract class AbstractWasmJsCodegenSplittingTest : AbstractWasmJsCodegenBoxTest
     override val additionalIgnoreDirectives: List<ValueDirective<TargetBackend>>?
         get() = listOf(CodegenTestDirectives.IGNORE_BACKEND_MULTI_MODULE)
 
+    // `SplittingModuleTransformerForBoxTests` splits only a test of a single module, into exactly two.
+    override val extractCommonFilesToHelpersModule: Boolean get() = false
+
     override fun configure(builder: TwoStageTestConfigurationBuilder): Unit = with(builder) {
         super.configure(this)
         @OptIn(TestInfrastructureInternals::class)
@@ -190,14 +197,6 @@ abstract class AbstractWasmJsCodegenMultiModuleTest : AbstractWasmJsCodegenBoxTe
     override fun configure(builder: TwoStageTestConfigurationBuilder): Unit = with(builder) {
         super.configure(this)
         nonGroupingStageBuilder.enableByConfigurationKey(WASM_GENERATE_CLOSED_WORLD_MULTIMODULE)
-        commonConfiguration {
-            defaultDirectives {
-                // Closed-world multi-module compilation is incompatible with the current grouped-batch path: the grouped runner uses `startUnitTests`
-                // (unit-test runner) for multi-test batches, but these are box tests that export `box()` and have no `startUnitTests`.
-                // WASM_STANDALONE directive routes tests through the standalone box-export path, matching the non-grouping runner behavior.
-                +WasmEnvironmentConfigurationDirectives.WASM_STANDALONE
-            }
-        }
     }
 }
 

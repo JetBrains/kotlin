@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBo
 import org.jetbrains.kotlin.test.services.sourceProviders.SourceContentView
 import org.jetbrains.kotlin.test.services.targetPlatform
 import org.jetbrains.kotlin.test.services.testInfo
-import org.jetbrains.kotlin.wasm.test.WasmCoroutineHelpersModuleTransformer
+import org.jetbrains.kotlin.wasm.test.isHelpersModule
 import java.io.File
 
 data class PerTestOutput(val testServices: TestServices, val testModule: TestModule, val klib: BinaryArtifacts.KLib)
@@ -265,11 +265,11 @@ abstract class AbstractWasmSecondStageGroupingFacade(
      * Deduplicates the per-test KLIB paths so that at most one `helpers.klib` survives in the
      * resulting library list.
      *
-     * When `WITH_COROUTINES` is used, each test in the batch contributes a separate
-     * `helpers.klib` produced by `WasmCoroutineHelpersModuleTransformer`. All such helpers
-     * KLIBs are byte-equivalent in a single batch (built from the same synthetic `helpers`
-     * package files) and all carry the same KLIB `unique_name = "helpers"`. We keep only the
-     * first one so the linker doesn't fail with `The same 'unique_name=helpers' found in more
+     * Each test in the batch may contribute a separate `helpers.klib`: produced by `WasmTestHelpersModuleTransformer`
+     * from its coroutine helpers and common files in the grouped box suites, or by `WasmCoroutineHelpersModuleTransformer`
+     * from its coroutine helpers alone in the others. All such helpers KLIBs are byte-equivalent in a single batch
+     * (`WasmGroupingTestIsolator` batches tests by their helpers) and all carry the same KLIB `unique_name = "helpers"`.
+     * We keep only the first one so the linker doesn't fail with `The same 'unique_name=helpers' found in more
      * than one library`.
      *
      * Note: per-test KLIBs may have OS-specific filenames (e.g. `kt19475-helpers.klib`), but
@@ -281,8 +281,8 @@ abstract class AbstractWasmSecondStageGroupingFacade(
     ): List<String> =
         filteredOutputs
             .distinctBy { [_, module, artifact] ->
-                if (module.name == WasmCoroutineHelpersModuleTransformer.HELPERS_MODULE_NAME) {
-                    WasmCoroutineHelpersModuleTransformer.HELPERS_MODULE_NAME
+                if (module.isHelpersModule) {
+                    module.name
                 } else {
                     artifact.outputFile.absolutePath
                 }
@@ -303,7 +303,7 @@ abstract class AbstractWasmSecondStageGroupingFacade(
         perTestKlibPaths: List<String>,
     ): MutableSet<String> {
         val helperKlibsInPerTest = filteredOutputs
-            .filter { it.testModule.name == WasmCoroutineHelpersModuleTransformer.HELPERS_MODULE_NAME }
+            .filter { it.testModule.isHelpersModule }
             .map { it.klib.outputFile.absolutePath }
             .toSet()
         val keptHelperKlib = perTestKlibPaths.firstOrNull { it in helperKlibsInPerTest }
