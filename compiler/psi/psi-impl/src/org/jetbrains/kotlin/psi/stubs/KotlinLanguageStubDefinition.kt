@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtFileLightStubBuilder
  * Kotlin builds stubs from a light tree (see [KtFileLightStubBuilder]): during indexing the file is parsed with
  * [parseContentsLight] without materializing the PSI tree, and for files with a loaded AST the same builder works
  * over a tree-backed light view.
+ *
+ * As in the AST, code blocks and lambdas of the light tree are collapsed lazily parseable nodes.
  */
 internal class KotlinLanguageStubDefinition : LightLanguageStubDefinition {
     override val stubVersion: Int
@@ -47,6 +49,8 @@ internal class KotlinLanguageStubDefinition : LightLanguageStubDefinition {
                 extension != KotlinFileType.EXTENSION &&
                 (file as? KtFile)?.isCompiled != true
 
-        return KotlinLightParser.parse(builder, isScript)
+        // Code blocks and lambdas are collapsed and parsed on demand, so the ones without stubbed declarations are never parsed (see
+        // `KtFileLightStubBuilder.skipChildProcessingWhenBuildingStubs`)
+        return KotlinLightParser.parse(builder, isScript, isLazy = true)
     }
 }

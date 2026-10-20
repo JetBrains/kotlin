@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.psi.stubs.light
 import com.intellij.lang.LighterAST
 import com.intellij.lang.LighterASTNode
 import com.intellij.lang.LighterASTTokenNode
+import com.intellij.lang.LighterLazyParseableNode
 import com.intellij.psi.TokenType
 import com.intellij.psi.impl.source.tree.LightTreeUtil
 import com.intellij.psi.tree.IElementType
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.KtPsiUtil
+import org.jetbrains.kotlin.psi.stubs.StubBuildingLexing
 import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets
 
 /**
@@ -215,6 +217,10 @@ internal fun LighterAST.unwrapParenthesesLabelsAndAnnotations(node: LighterASTNo
  */
 internal fun LighterAST.isLegacyContractPresent(declarationWithBody: LighterASTNode): Boolean {
     val block = firstChildOfType(declarationWithBody, KtNodeTypes.BLOCK) ?: return false
+
+    // A collapsed body is lexed first, so it is parsed only if its first statement might be a contract
+    if (block is LighterLazyParseableNode && !StubBuildingLexing.mayHaveLegacyContract(block.text)) return false
+
     val firstStatement = firstExpressionChild(block) ?: return false
     val unwrapped = unwrapParenthesesLabelsAndAnnotations(firstStatement)
     return isContractDescriptionCall(unwrapped)

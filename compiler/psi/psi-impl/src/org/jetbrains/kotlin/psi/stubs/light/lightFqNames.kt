@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.stubs.KotlinFileStub
+import org.jetbrains.kotlin.psi.stubs.KotlinFileStubKind
 import org.jetbrains.kotlin.psi.stubs.KotlinScriptStub
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl
 
@@ -147,7 +148,7 @@ internal fun LighterAST.parentFqName(declaration: LighterASTNode, parentStub: St
 
     val parentType = parent.tokenType
     return when {
-        parentType is IFileElementType -> packageFqName()
+        parentType is IFileElementType -> filePackageFqName(parentStub)
 
         parentType == KtNodeTypes.FUN ||
                 parentType == KtNodeTypes.CLASS ||
@@ -165,6 +166,20 @@ internal fun LighterAST.parentFqName(declaration: LighterASTNode, parentStub: St
 
         else -> null
     }
+}
+
+/**
+ * The package name of the file, taken from the file stub when possible: it is created before any other stub and already knows the
+ * package, which saves walking the package directive for every declaration.
+ */
+private fun LighterAST.filePackageFqName(parentStub: StubElement<*>): FqName {
+    var stub: StubElement<*>? = parentStub
+    while (stub != null && stub !is KotlinFileStub) {
+        stub = stub.parentStub
+    }
+
+    val kind = stub?.kind as? KotlinFileStubKind.WithPackage
+    return kind?.packageFqName ?: packageFqName()
 }
 
 /**

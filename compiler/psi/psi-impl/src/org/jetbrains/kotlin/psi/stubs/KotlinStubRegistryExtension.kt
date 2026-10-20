@@ -422,9 +422,21 @@ internal object KtStubElementFactories {
     }
 
     /**
+     * [factories] indexed by [IElementType.getIndex], as a map lookup is noticeable on hot paths.
+     */
+    private val factoriesByIndex: Array<KtStubSerializingElementFactory<*, *>?> =
+        arrayOfNulls<KtStubSerializingElementFactory<*, *>>(factories.keys.maxOf { it.index.toInt() } + 1).also { array ->
+            for ([type, factory] in factories) {
+                array[type.index.toInt()] = factory
+            }
+        }
+
+    /**
      * Returns the factory registered for [type], or `null` if the element type is not stubbed.
      */
-    operator fun get(type: IElementType): KtStubSerializingElementFactory<*, *>? = factories[type]
+    operator fun get(type: IElementType): KtStubSerializingElementFactory<*, *>? =
+        // Indices of registered element types are unique, and unregistered ones have a negative index
+        factoriesByIndex.getOrNull(type.index.toInt())
 }
 
 /**
