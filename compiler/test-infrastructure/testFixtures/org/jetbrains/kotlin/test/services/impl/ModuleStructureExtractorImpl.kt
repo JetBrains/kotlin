@@ -395,11 +395,7 @@ class ModuleStructureExtractorImpl(
             return computeEscapedModuleName(name)
         }
 
-        private fun computeEscapedModuleName(name: String): String {
-            (val className, val methodName, val _ = tags) = testServices.testInfo
-            val classPart = className.substringAfter("$").replace("$", ".")
-            return "$classPart.$methodName.$name"
-        }
+        private fun computeEscapedModuleName(name: String): String = testServices.escapedModuleNamePrefix + name
 
         private fun finishFile(lineNumber: Int) {
             val actualDefaultFileName = if (currentModuleName == null) {
