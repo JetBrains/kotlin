@@ -10,72 +10,50 @@ import kotlin.wasm.ExperimentalWasmInterop
 import kotlin.wasm.unsafe.*
 
 /**
- * Read command-line argument data. The size of the array should match that returned by
- * `args_sizes_get`. Each argument is expected to be `\0` terminated.
+ * `wasi:cli/environment.get-arguments`, i.e. `func() -> list<string>` in the Canonical ABI: the result is written into
+ * a return area (pointer, length), and each element is a (pointer, length) pair of UTF-8 bytes. 
+ *
+ * The memory for the list itself is automatically allocated by cabi_realloc, and needs to be freed manually
+ *
+ * NOTE: This cannot simply be done by implementing commandline arguments for the WASI subtarget in general, as those wouldn't easily be accessible from this generic `getArguments` interface.
  */
 @ExperimentalWasmInterop
-@WasmImport("wasi_snapshot_preview1", "args_get")
-private external fun wasiRawArgsGet(
-    argvPtr: Int,
-    argvBuf: Int,
-): Int
+@WasmImport("wasi:cli/environment@0.2.12", "get-arguments")
+private external fun wasiCliGetArguments(returnArea: Int)
 
+private const val POINTER_AND_LENGTH_SIZE = 2 * Int.SIZE_BYTES
 
-/** Return command-line argument data sizes. */
-@ExperimentalWasmInterop
-@WasmImport("wasi_snapshot_preview1", "args_sizes_get")
-private external fun wasiRawArgsSizesGet(
-    argumentNumberPtr: Int,
-    argumentStringSizePtr: Int,
-): Int
-
-@OptIn(UnsafeWasmMemoryApi::class, ExperimentalWasmInterop::class)
+@OptIn(ComponentModelInternalApi::class, UnsafeWasmMemoryApi::class, ExperimentalWasmInterop::class)
 internal actual fun getArguments(): List<String> = withScopedMemoryAllocator { allocator ->
-    val numberOfArgumentsPtr = allocator.allocate(4)
-    val sizeOfArgumentStringPtr = allocator.allocate(4)
-    val argNumRes = wasiRawArgsSizesGet(
-        argumentNumberPtr = numberOfArgumentsPtr.address.toInt(),
-        argumentStringSizePtr = sizeOfArgumentStringPtr.address.toInt()
-    )
-    if (argNumRes != 0) {
-        throw IllegalStateException("Wasi error code $argNumRes")
-    }
+    val returnArea = allocator.allocate(POINTER_AND_LENGTH_SIZE)
+    wasiCliGetArguments(returnArea.address.toInt())
 
-    val argumentNumber = numberOfArgumentsPtr.loadInt()
-    if (argumentNumber <= 2) return emptyList()
+    val listElementsPtr = returnArea.loadInt()
+    val listSize = (returnArea + Int.SIZE_BYTES).loadInt()
 
-    val argumentStringSize = sizeOfArgumentStringPtr.loadInt()
-    val stringBufferPtr = allocator.allocate(argumentStringSize)
-
-    val argvPtr = allocator.allocate(argumentNumber * Int.SIZE_BYTES)
-
-    val argRes = wasiRawArgsGet(argvPtr.address.toInt(), stringBufferPtr.address.toInt())
-    if (argRes != 0) {
-        throw IllegalStateException("Wasi error code $argNumRes")
-    }
-
-    val startAddress = (argvPtr + 2 * Int.SIZE_BYTES).loadInt().toUInt()
-    val endAddress = stringBufferPtr.address + argumentStringSize.toUInt()
-    decodeStrings(argumentStringSize, startAddress, endAddress)
-}
-
-@OptIn(UnsafeWasmMemoryApi::class, ExperimentalWasmInterop::class)
-private fun decodeStrings(arraySize: Int, startAddress: UInt, endAddress: UInt): List<String> {
-    val buffer = ByteArray(arraySize)
-    val result = mutableListOf<String>()
-
-    var currentPtr = Pointer(startAddress)
-    var currentIndex = 0
-    while (currentPtr.address < endAddress) {
-        val byte = currentPtr.loadByte()
-        if (byte.toInt() == 0) {
-            result.add(buffer.decodeToString(0, currentIndex))
-            currentIndex = 0
-        } else {
-            buffer[currentIndex] = byte
-            currentIndex++
+    // the first argument is the program name, everything after it is a test runner argument, so drop(1) after
+    List(listSize) { index ->
+        val element = Pointer((listElementsPtr + index * POINTER_AND_LENGTH_SIZE).toUInt())
+        val stringPtr = element.loadInt()
+        val stringSize = (element + Int.SIZE_BYTES).loadInt()
+        loadString(Pointer(stringPtr.toUInt()), stringSize).also{
+            // free the string memory allocated by cabi_realloc by the host
+            componentModelRealloc(stringPtr, /* each element (string char) is 1B big */ stringSize, /* newSize = 0 means 'free it' */ 0)
         }
-        currentPtr += 1
+    }.drop(1).also {
+        // free the list memory allocated by cabi_realloc by the host
+        componentModelRealloc(listElementsPtr, listSize * POINTER_AND_LENGTH_SIZE, /* free */ 0);
     }
-    return result
+
+    // the return area is freed automatically by withScopedMmeoryALlocator
 }
+
+@OptIn(UnsafeWasmMemoryApi::class)
+private fun loadString(address: Pointer, length: Int): String {
+    val bytes = ByteArray(length)
+    for (index in 0 until length) {
+        bytes[index] = (address + index).loadByte()
+    }
+    return bytes.decodeToString()
+}
+
