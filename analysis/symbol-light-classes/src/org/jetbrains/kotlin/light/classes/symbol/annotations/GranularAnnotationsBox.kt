@@ -54,14 +54,16 @@ internal class GranularAnnotationsBox(
             return annotations.find { it.qualifiedName == qualifiedName }
         }
 
-        // Goes first, as an additional annotation may also be a special one, e.g., `@JvmInline` of an inline value class
-        if (withAdditionalAnnotations && additionalAnnotationsProvider.isSpecialQualifier(qualifiedName)) {
-            return additionalAnnotationsProvider.findSpecialAnnotation(this, qualifiedName, owner)
-        }
-
         specialAnnotationsListWithSafeArgumentsResolve[qualifiedName]?.let { specialAnnotationClassId ->
-            val annotationApplication = annotationsProvider[specialAnnotationClassId].firstOrNull() ?: return null
-            return SymbolLightLazyAnnotation(annotationsProvider, annotationApplication, owner)
+            annotationsProvider[specialAnnotationClassId].firstOrNull()?.let { annotationApplication ->
+                return SymbolLightLazyAnnotation(annotationsProvider, annotationApplication, owner)
+            }
+
+            return if (withAdditionalAnnotations && additionalAnnotationsProvider.isSpecialQualifier(qualifiedName)) {
+                additionalAnnotationsProvider.findSpecialAnnotation(this, qualifiedName, owner)
+            } else {
+                null
+            }
         }
 
         return getOrComputeCachedAnnotations(owner).find { it.qualifiedName == qualifiedName }
@@ -74,17 +76,13 @@ internal class GranularAnnotationsBox(
             return annotations.any { it.qualifiedName == qualifiedName }
         }
 
-        // Consistent with `findAnnotation`, as the shortcut for special annotations below would miss an additional one
-        if (additionalAnnotationsProvider.isSpecialQualifier(qualifiedName)) {
-            return additionalAnnotationsProvider.findSpecialAnnotation(this, qualifiedName, owner) != null
+        specialAnnotationsList[qualifiedName]?.let { specialAnnotationClassId ->
+            return specialAnnotationClassId in annotationsProvider ||
+                    additionalAnnotationsProvider.isSpecialQualifier(qualifiedName) &&
+                    additionalAnnotationsProvider.findSpecialAnnotation(this, qualifiedName, owner) != null
         }
 
-        val specialAnnotationClassId = specialAnnotationsList[qualifiedName]
-        return if (specialAnnotationClassId != null) {
-            specialAnnotationClassId in annotationsProvider
-        } else {
-            getOrComputeCachedAnnotations(owner).any { it.qualifiedName == qualifiedName }
-        }
+        return getOrComputeCachedAnnotations(owner).any { it.qualifiedName == qualifiedName }
     }
 
     companion object {

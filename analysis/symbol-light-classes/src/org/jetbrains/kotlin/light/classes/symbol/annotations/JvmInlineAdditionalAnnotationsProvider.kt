@@ -37,8 +37,7 @@ internal object JvmInlineAdditionalAnnotationsProvider : AdditionalAnnotationsPr
         annotationsBox: GranularAnnotationsBox,
         qualifiedName: String,
         owner: PsiElement,
-    ): PsiAnnotation? = annotationsBox.findAnnotation(owner, qualifiedName, withAdditionalAnnotations = false)
-        ?: createSimpleAnnotationIfMatches(qualifier = qualifiedName, expectedQualifier = JVM_INLINE_QUALIFIER, owner = owner)
+    ): PsiAnnotation? = createSimpleAnnotationIfMatches(qualifier = qualifiedName, expectedQualifier = JVM_INLINE_QUALIFIER, owner = owner)
 
     override fun isSpecialQualifier(qualifiedName: String): Boolean = qualifiedName == JVM_INLINE_QUALIFIER
 }
