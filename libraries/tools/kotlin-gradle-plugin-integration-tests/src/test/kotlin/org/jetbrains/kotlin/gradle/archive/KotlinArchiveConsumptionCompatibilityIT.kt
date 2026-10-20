@@ -18,9 +18,11 @@ import org.jetbrains.kotlin.gradle.uklibs.addPublishedProjectToRepositories
 import org.jetbrains.kotlin.gradle.uklibs.applyJvm
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.uklibs.publish
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 
 @DisplayName("Consumption of a project published in the Kotlin Archive format by the previous Kotlin release")
+@MustRunOnChangesInGradle
 class KotlinArchiveConsumptionCompatibilityIT : KGPBaseTest() {
 
     override val defaultBuildOptions: BuildOptions
