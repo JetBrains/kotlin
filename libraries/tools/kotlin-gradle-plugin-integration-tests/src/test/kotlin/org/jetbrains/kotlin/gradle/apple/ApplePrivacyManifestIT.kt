@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
@@ -23,6 +24,7 @@ import java.io.File
     enabledOnCI = [OS.MAC],
 )
 @NativeGradlePluginTests
+@MustRunOnChangesInGradle
 class ApplePrivacyManifestIT : KGPBaseTest() {
 
     override val defaultBuildOptions: BuildOptions
