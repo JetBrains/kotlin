@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer
@@ -176,12 +175,6 @@ class K2MultiplatformStructureTest {
                 parentFile.mkdirs()
                 writeText("object ${sourceSet.name}")
             }
-        }
-
-        /* Enable K2 if necessary */
-        if (KotlinVersion.DEFAULT < KotlinVersion.KOTLIN_2_0) {
-            @Suppress("Deprecation")
-            compilation.compilerOptions.options.languageVersion.set(KotlinVersion.KOTLIN_2_0)
         }
 
         val compileTask = compilation.compileTaskProvider.get() as K2MultiplatformCompilationTask
