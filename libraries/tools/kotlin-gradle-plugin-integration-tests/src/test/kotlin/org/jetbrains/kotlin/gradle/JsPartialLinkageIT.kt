@@ -8,9 +8,11 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 
 @JsGradlePluginTests
+@MustRunOnChangesInGradle
 class JsPartialLinkageIT : KGPBaseTest() {
 
     override val defaultBuildOptions: BuildOptions
