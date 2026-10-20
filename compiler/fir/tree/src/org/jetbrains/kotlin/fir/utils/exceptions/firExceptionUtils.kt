@@ -49,7 +49,7 @@ fun ExceptionAttachmentBuilder.withFirEntry(name: String, fir: FirElement?) {
     withSourceEntry("${name}Source", fir.source)
 }
 
-fun ExceptionAttachmentBuilder.withFirSymbolIdEntry(name: String, symbol: FirBasedSymbol<*>?) {
+fun ExceptionAttachmentBuilder.withFirSymbolIdentifierEntry(name: String, symbol: FirBasedSymbol<*>?) {
     when (symbol) {
         is FirClassifierSymbol -> withFirLookupTagEntry(name, symbol.toLookupTag())
         is FirCallableSymbol -> withEntry(name, symbol.callableId.toString())
