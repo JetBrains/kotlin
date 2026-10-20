@@ -1,7 +1,5 @@
 // TARGET_BACKEND: JVM
 // ISSUE: KT-90787
-// IGNORE_BACKEND: JVM
-// USE_PSI_JAVA_FACADE: false
 
 // FILE: p/Ann.java
 package p;

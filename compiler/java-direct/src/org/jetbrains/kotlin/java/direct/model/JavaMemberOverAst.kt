@@ -12,8 +12,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.java.direct.resolution.JavaResolutionContext
-import org.jetbrains.kotlin.java.direct.resolution.getSimpleImport
-import org.jetbrains.kotlin.java.direct.resolution.resolveExternalFieldValue
+import org.jetbrains.kotlin.java.direct.resolution.getStaticImport
 import org.jetbrains.kotlin.java.direct.util.ConstantEvaluator
 import org.jetbrains.kotlin.java.direct.util.JavaLiteralParser
 import org.jetbrains.kotlin.java.direct.util.computeTypeParameters
@@ -21,6 +20,7 @@ import org.jetbrains.kotlin.java.direct.util.isDeprecatedInJavaDoc
 import org.jetbrains.kotlin.kmp.tree.LightNode
 import org.jetbrains.kotlin.kmp.tree.LightSyntaxTree
 import org.jetbrains.kotlin.load.java.structure.*
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
@@ -244,26 +244,40 @@ class JavaFieldOverAst(
     }
 
     private fun isSimpleNamePotentiallyConstant(name: String): Boolean {
-        val localField = containingClass.fields.find { it.name.asString() == name } as? JavaFieldOverAst
-        if (localField != null) {
-            return localField.isFinal
+        var currentClass: JavaClass? = containingClass
+        while (currentClass != null) {
+            findFieldInHierarchy(currentClass, name, mutableSetOf())?.let { return it.isFinal }
+            currentClass = currentClass.outerClass
         }
-        return with(containingClass.resolutionContext) { getSimpleImport(name) } != null
+        return getStaticImport(name, c = containingClass.resolutionContext) != null ||
+                containingClass.resolutionContext.fileContext.imports.staticStarImports.isNotEmpty()
+    }
+
+    private fun findFieldInHierarchy(
+        javaClass: JavaClass,
+        name: String,
+        visited: MutableSet<ClassId>,
+    ): JavaField? {
+        val classId = javaClass.classId ?: return null
+        if (!visited.add(classId)) return null
+
+        javaClass.fields.find { it.name.asString() == name }?.let { return it }
+        for (supertype in javaClass.supertypes) {
+            val superClass = supertype.classifier as? JavaClass ?: continue
+            findFieldInHierarchy(superClass, name, visited)?.let { return it }
+        }
+        return null
     }
 
     /**
-     * Evaluates the field's initializer using the local [ConstantEvaluator]; qualified references
-     * to Kotlin `const val`s (e.g. `Foo.BAR`) are routed through
-     * `JavaResolutionContext.resolveExternalFieldValue`, which delegates to the session-backed
-     * cross-language resolver in `JavaExternalConstResolver.kt`.
+     * Evaluates the field's initializer using the local [ConstantEvaluator], which also resolves
+     * qualified references to Kotlin `const val`s through the session-backed cross-language resolver.
      */
     override val initializerValue: Any?
         get() {
             if (!hasConstantNotNullInitializer) return null
             val init = initializerNode ?: return null
-            val evaluator = ConstantEvaluator(containingClass) { classQualifier, fieldName ->
-                with(containingClass.resolutionContext) { resolveExternalFieldValue(classQualifier, fieldName) }
-            }
+            val evaluator = ConstantEvaluator(containingClass)
             return coerceConstantToFieldType(evaluator.evaluate(init))
         }
 
