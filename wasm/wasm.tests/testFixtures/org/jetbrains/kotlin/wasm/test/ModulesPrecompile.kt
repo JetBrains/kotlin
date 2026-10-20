@@ -72,9 +72,15 @@ internal enum class PrecompileSetup(
         stdlibOutputDir = File(outputDir, "out/precompile_debug_friendly/$precompiledStdlibOutputName"),
         kotlinTestOutputDir = File(outputDir, "out/precompile_debug_friendly/$precompiledKotlinTestOutputName")
     ),
+    ;
+
+    internal val precompilation: Lazy<Unit> = lazy { precompileWasmModulesNow(this) }
 }
 
-internal fun precompileWasmModules(setup: PrecompileSetup) {
+/** Precompiles the stdlib and kotlin-test of [setup] once per JVM; a failed precompilation is retried on the next call. */
+internal fun precompileWasmModules(setup: PrecompileSetup): Unit = setup.precompilation.value
+
+private fun precompileWasmModulesNow(setup: PrecompileSetup) {
     val debugMode = DebugMode.fromSystemProperty("kotlin.wasm.debugMode")
 
     val languageSettings = KotlinWasmCompilerArguments().toLanguageVersionSettings(

@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.wasm.config.*
 import org.jetbrains.kotlin.wasm.test.PrecompileSetup
 import org.jetbrains.kotlin.wasm.test.handlers.getWasmTestOutputDirectory
+import org.jetbrains.kotlin.wasm.test.precompileWasmModules
 import org.jetbrains.kotlin.wasm.test.precompiledKotlinTestOutputName
 import org.jetbrains.kotlin.wasm.test.precompiledStdlibOutputName
 import java.io.File
@@ -77,6 +78,7 @@ class WasmLoweringSingleModuleFacade(testServices: TestServices) :
             configuration.wasmUseStackSwitchingProposal -> PrecompileSetup.STACK_SWITCHING_PROPOSAL
             else -> PrecompileSetup.REGULAR
         }
+        precompileWasmModules(currentSetup)
         configureModuleResolutionMap(configuration, currentSetup)
 
         if (WasmEnvironmentConfigurator.isMainModule(module, testServices)) {
