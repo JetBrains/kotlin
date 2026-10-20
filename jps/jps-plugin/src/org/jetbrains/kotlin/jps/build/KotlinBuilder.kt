@@ -74,6 +74,16 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         val isKotlinBuilderInDumbMode = System.getProperty("kotlin.jps.dumb.mode", "false")!!.toBoolean()
         val enableLookupStorageFillingInDumbMode = System.getProperty("kotlin.jps.enable.lookups.in.dumb.mode", "false")!!.toBoolean()
 
+        fun legacyModesDeprecationMessageIfAny(): String? {
+            val legacyModes = buildList {
+                if (!useBuildToolsApi) add("Build Tools API is disabled (${JpsBtaToolchainLoader.IMPL_HOME_PROPERTY} is not set)")
+                if (!useDependencyGraph) add("jps.use.dependency.graph=false")
+                if (!isKotlinBuilderInDumbMode) add("kotlin.jps.dumb.mode=false")
+            }
+            if (legacyModes.isEmpty()) return null
+            return KotlinJpsBundle.message("warning.text.legacy.jps.modes.are.deprecated", legacyModes.joinToString("; "))
+        }
+
         private val classesToLoadByParentFromRegistry =
             System.getProperty("kotlin.jps.classesToLoadByParent")?.split(',')?.map { it.trim() } ?: emptyList()
         private val classPrefixesToLoadByParentFromRegistry =
@@ -110,6 +120,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
 
     override fun buildStarted(context: CompileContext) {
         logSettings(context)
+        reportLegacyModesDeprecationIfAny(context)
         val reportService = JpsStatisticsReportService.create()
         context.putUserData(statisticsReportServiceKey, reportService)
         reportService.buildStarted(context)
@@ -141,6 +152,12 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         if (historyLabel != null) {
             LOG.info("Label in local history: $historyLabel")
         }
+    }
+
+    private fun reportLegacyModesDeprecationIfAny(context: CompileContext) {
+        val message = legacyModesDeprecationMessageIfAny() ?: return
+        LOG.warn(message)
+        context.processMessage(CompilerMessage(CompilerRunnerConstants.KOTLIN_COMPILER_NAME, BuildMessage.Kind.WARNING, message))
     }
 
     /**
@@ -275,6 +292,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             val dirtyFiles = dirtyFilesHolder.getDirtyFiles(target.jpsModuleBuildTarget).keys
             val removedFiles = dirtyFilesHolder.getRemovedFiles(target.jpsModuleBuildTarget)
 
+            @Suppress("DEPRECATION")
             val existingClasses = JpsKotlinCompilerRunner().classesFqNamesByFiles(environment, dirtyFiles)
             val previousClasses = cache.classesFqNamesBySources(dirtyFiles + removedFiles)
             for (jvmClassName in previousClasses) {
