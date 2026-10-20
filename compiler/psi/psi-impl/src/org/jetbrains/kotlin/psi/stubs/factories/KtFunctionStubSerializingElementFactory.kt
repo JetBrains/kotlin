@@ -10,12 +10,15 @@ import com.intellij.psi.stubs.IndexSink
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
+import com.intellij.psi.tree.IFileElementType
 import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.psiUtil.safeFqNameForLazyResolve
+import org.jetbrains.kotlin.psi.stubs.StubBuildingLexing.mayHaveLegacyContract
 import org.jetbrains.kotlin.psi.stubs.StubUtils.deserializeKdocText
 import org.jetbrains.kotlin.psi.stubs.StubUtils.readContract
 import org.jetbrains.kotlin.psi.stubs.StubUtils.serializeKdocText
@@ -32,9 +35,25 @@ internal object KtFunctionStubSerializingElementFactory :
     override fun createPsi(stub: KotlinFunctionStubImpl): KtNamedFunction = KtNamedFunction(stub)
 
     /**
-     * Functions always stubbed since we want to index even local ones
+     * Functions are stubbed even when local, so that they can be indexed by name.
+     * Anonymous functions have no name to index, so they are not stubbed, just like lambdas.
+     *
+     * The check mirrors [KtNamedFunction.isAnonymous] on the AST, as it is a part of the stubbed spine computation,
+     * and the PSI of the spine may access its AST only through the spine.
      */
-    override fun shouldCreateStub(node: ASTNode): Boolean = true
+    override fun shouldCreateStub(node: ASTNode): Boolean = node.findChildByType(KtTokens.IDENTIFIER) != null || !isLocal(node)
+
+    /**
+     * @see KtNamedFunction.isLocal
+     */
+    private fun isLocal(node: ASTNode): Boolean {
+        val parent = node.treeParent ?: return false
+        return when (parent.elementType) {
+            is IFileElementType, KtNodeTypes.CLASS_BODY -> false
+            KtNodeTypes.BLOCK -> parent.treeParent?.elementType != KtNodeTypes.SCRIPT
+            else -> true
+        }
+    }
 
     override fun createStub(
         psi: KtNamedFunction,
@@ -48,7 +67,7 @@ internal object KtFunctionStubSerializingElementFactory :
         hasNoExpressionBody = psi.hasBlockBody(),
         hasBody = psi.hasBody(),
         hasTypeParameterListBeforeFunctionName = psi.hasTypeParameterListBeforeFunctionName(),
-        mayHaveContract = psi.mayHaveContract(),
+        mayHaveContract = psi.mayHaveLegacyContract() && psi.mayHaveContract(),
         kdocText = null,
         contract = null,
         origin = null,

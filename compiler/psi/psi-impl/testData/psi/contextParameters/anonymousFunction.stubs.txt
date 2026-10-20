@@ -4,39 +4,8 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=AnonymousFunctionKt]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   PROPERTY[fqName=t, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=t]
-    FUNCTION[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=null]
-      MODIFIER_LIST[]
-        CONTEXT_PARAMETER_LIST
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=A]
-      VALUE_PARAMETER_LIST
   PROPERTY[fqName=t, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=t]
-    FUNCTION[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=null]
-      MODIFIER_LIST[]
-        CONTEXT_PARAMETER_LIST
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=A]
-      TYPE_PARAMETER_LIST
-        TYPE_PARAMETER[fqName=null, name=A]
-      VALUE_PARAMETER_LIST
   PROPERTY[fqName=t, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=t]
-    FUNCTION[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=null]
-      MODIFIER_LIST[]
-        ANNOTATION_ENTRY[hasValueArguments=false, shortName=Ann]
-          CONSTRUCTOR_CALLEE
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=Ann]
-        CONTEXT_PARAMETER_LIST
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=A]
-      VALUE_PARAMETER_LIST
   PROPERTY[fqName=t, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=t]
     CALL_EXPRESSION
       REFERENCE_EXPRESSION[referencedName=context]
@@ -50,17 +19,6 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=AnonymousFunctionKt]]
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Boolean]
         CALL_EXPRESSION
-          FUNCTION[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=null]
-            MODIFIER_LIST[]
-              CONTEXT_PARAMETER_LIST
-                VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
-                  TYPE_REFERENCE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION[referencedName=Boolean]
-            VALUE_PARAMETER_LIST
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=Boolean]
           VALUE_ARGUMENT_LIST
             VALUE_ARGUMENT[isSpread=false]
               BOOLEAN_CONSTANT[kind=BOOLEAN_CONSTANT, value=true]
@@ -72,80 +30,14 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=AnonymousFunctionKt]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=Boolean]
           CALL_EXPRESSION
-            FUNCTION[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=null]
-              MODIFIER_LIST[]
-                CONTEXT_PARAMETER_LIST
-                  VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
-                    TYPE_REFERENCE
-                      USER_TYPE
-                        REFERENCE_EXPRESSION[referencedName=Boolean]
-              VALUE_PARAMETER_LIST
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION[referencedName=Boolean]
             VALUE_ARGUMENT_LIST
               VALUE_ARGUMENT[isSpread=false]
                 BOOLEAN_CONSTANT[kind=BOOLEAN_CONSTANT, value=true]
   FUNCTION[fqName=f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=f]
     VALUE_PARAMETER_LIST
-    FUNCTION[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=null]
-      MODIFIER_LIST[]
-        CONTEXT_PARAMETER_LIST
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=Boolean]
-      VALUE_PARAMETER_LIST
-      TYPE_REFERENCE
-        USER_TYPE
-          REFERENCE_EXPRESSION[referencedName=Boolean]
-    FUNCTION[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=null]
-      MODIFIER_LIST[]
-        CONTEXT_PARAMETER_LIST
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=Boolean]
-      VALUE_PARAMETER_LIST
-      TYPE_REFERENCE
-        USER_TYPE
-          REFERENCE_EXPRESSION[referencedName=Boolean]
-    FUNCTION[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=null]
-      MODIFIER_LIST[]
-        CONTEXT_PARAMETER_LIST
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=Boolean]
-      VALUE_PARAMETER_LIST
-      TYPE_REFERENCE
-        USER_TYPE
-          REFERENCE_EXPRESSION[referencedName=Boolean]
-    FUNCTION[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=null]
-      MODIFIER_LIST[]
-        CONTEXT_PARAMETER_LIST
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=Boolean]
-      VALUE_PARAMETER_LIST
-      TYPE_REFERENCE
-        USER_TYPE
-          REFERENCE_EXPRESSION[referencedName=IntRange]
   PROPERTY[fqName=t, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=true, isTopLevel=true, isVar=false, name=t]
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=String]
     PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
       VALUE_PARAMETER_LIST
-      FUNCTION[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=null]
-        MODIFIER_LIST[]
-          CONTEXT_PARAMETER_LIST
-            VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION[referencedName=String]
-        TYPE_REFERENCE
-          USER_TYPE
-            REFERENCE_EXPRESSION[referencedName=String]
-        VALUE_PARAMETER_LIST

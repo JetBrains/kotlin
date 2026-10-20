@@ -35,6 +35,12 @@ public class LibraryGetOrBuildFirTestGenerated extends AbstractLibraryGetOrBuild
   }
 
   @Test
+  @TestMetadata("annotatedEnumEntry.kt")
+  public void testAnnotatedEnumEntry() {
+    run("annotatedEnumEntry.kt");
+  }
+
+  @Test
   @TestMetadata("annotatedProperties.kt")
   public void testAnnotatedProperties() {
     run("annotatedProperties.kt");

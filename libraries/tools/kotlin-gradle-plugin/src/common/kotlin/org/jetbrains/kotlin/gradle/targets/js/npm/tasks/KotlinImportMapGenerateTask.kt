@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm.tasks
 
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
@@ -15,9 +13,14 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
+import org.jetbrains.kotlin.gradle.targets.js.ir.nodeJsRoot
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject.Companion.NODE_MODULES
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules.Companion.JS_SUFFIX
+import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.isCurrentHostOsWindows
+import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.utils.getFile
 import java.io.File
 import java.io.IOException
@@ -126,8 +129,6 @@ abstract class KotlinImportMapGenerateTask : DefaultTask() {
 
     @TaskAction
     fun generate() {
-        val importMap = mutableMapOf<String, String>()
-
         val nodeModulesDir = nodeModulesDirectory.getFile()
 
         val modules = NpmProjectModules(
@@ -136,15 +137,14 @@ abstract class KotlinImportMapGenerateTask : DefaultTask() {
             indexFileSuffixes = listOf(JS_SUFFIX, ".mjs")
         )
 
-        collectModuleNames(nodeModulesDir.toPath()).forEach { moduleName ->
-            val resolvedPath = modulePath(modules, moduleName)
-            importMap[moduleName] = resolvedPath
-        }
+        val importMap = KotlinWebImportMap(
+            imports = collectModuleNames(nodeModulesDir.toPath()).associateWith { moduleName ->
+                modulePath(modules, moduleName)
+            }
+        )
 
-        val result = mapOf("imports" to importMap)
-        val resultImportMapFile = importMapFile.getFile()
-        val text = json.encodeToString(result)
-        resultImportMapFile.writeText(text)
+        val text = importMap.toJson()
+        importMapFile.getFile().writeText(text)
 
         importMapLoaderFile.getFile().writeText(
             """
@@ -235,9 +235,16 @@ abstract class KotlinImportMapGenerateTask : DefaultTask() {
 
     companion object {
         const val NAME = "generateImportMap"
-
-        private val json = Json {
-            prettyPrint = true
-        }
     }
 }
+
+internal fun KotlinJsIrCompilation.locateOrRegisterImportMapGenerateTask(): TaskProvider<KotlinImportMapGenerateTask> =
+    project.locateOrRegisterTask<KotlinImportMapGenerateTask>(npmProject.generateImportMapTaskName) {
+        it.nodeModulesDirectory.set(npmProject.nodeModulesDir)
+        it.rootDirectory.set(project.rootDir)
+        it.installArtifacts.from(nodeJsRoot().npmInstallTaskProvider.map { it.additionalFiles })
+        it.inputDirectory.set(npmProject.dir)
+        it.importMapFile.set(project.layout.buildDirectory.file("kotlin/${it.name}/importmap.json"))
+        it.importMapLoaderFile.set(project.layout.buildDirectory.file("kotlin/${it.name}/importmap-loader.js"))
+        it.getIsWindows.set(project.providers.isCurrentHostOsWindows())
+    }

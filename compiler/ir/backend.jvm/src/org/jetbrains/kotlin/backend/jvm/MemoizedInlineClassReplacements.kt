@@ -157,8 +157,8 @@ class MemoizedInlineClassReplacements(
                     else
                         null
 
-                // Mangle all functions in the body of an inline class
-                (it.parent as? IrClass)?.isInlineClass == true ->
+                // Mangle all functions in the body of an inline class except for companion block members
+                (it.parent as? IrClass)?.isInlineClass == true && !(it is IrSimpleFunction && it.isStatic) ->
                     when {
                         it.isValueClassTypedEquals -> createStaticReplacement(it).also {
                             it.name = InlinedEqualsNames.SPECIALIZED_EQUALS_NAME

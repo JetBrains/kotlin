@@ -11,6 +11,7 @@ import com.intellij.psi.stubs.StubOutputStream
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.psi.psiUtil.isLegacyContractPresentPsiCheck
+import org.jetbrains.kotlin.psi.stubs.StubBuildingLexing.mayHaveLegacyContract
 import org.jetbrains.kotlin.psi.stubs.StubUtils.readContract
 import org.jetbrains.kotlin.psi.stubs.StubUtils.writeContract
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinPropertyAccessorStubImpl
@@ -30,7 +31,7 @@ internal object KtPropertyAccessorStubSerializingElementFactory :
         isGetter = psi.isGetter,
         hasBody = psi.hasBody(),
         hasNoExpressionBody = psi.hasBlockBody(),
-        mayHaveContract = psi.isLegacyContractPresentPsiCheck(),
+        mayHaveContract = psi.mayHaveLegacyContract() && psi.isLegacyContractPresentPsiCheck(),
         contract = null,
     )
 

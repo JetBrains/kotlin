@@ -1,0 +1,14 @@
+FILE[kind=Script[packageFqName=<root>]]
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  SCRIPT[fqName=AnonymousFunctionsScript, fqName=AnonymousFunctionsScript, name=AnonymousFunctionsScript]
+    PROPERTY[fqName=AnonymousFunctionsScript.anonymous, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=anonymous]
+    SCRIPT_INITIALIZER
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION[referencedName=run]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            FUNCTION[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=localInAnonymous]
+              VALUE_PARAMETER_LIST
+    FUNCTION[fqName=AnonymousFunctionsScript.<no name provided>, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=null]
+      VALUE_PARAMETER_LIST

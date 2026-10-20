@@ -11,55 +11,47 @@ import org.jetbrains.kotlin.fir.analysis.web.common.checkers.declaration.FirJsEx
 import org.jetbrains.kotlin.fir.analysis.web.common.checkers.declaration.FirWebCommonExternalPropertyAccessorChecker
 
 object WasmBaseDeclarationCheckers : DeclarationCheckers() {
-    override val classCheckers: Set<FirClassChecker>
-        get() = setOf(
-            FirWasmExternalInheritanceChecker.Regular,
-            FirWasmExternalInheritanceChecker.ForExpectClass,
-        )
+    override val classCheckers: Set<FirClassChecker> = setOf(
+        FirWasmExternalInheritanceChecker.Regular,
+        FirWasmExternalInheritanceChecker.ForExpectClass,
+    )
 
-    override val basicDeclarationCheckers: Set<FirBasicDeclarationChecker>
-        get() = setOf(
-            FirWasmImportAnnotationChecker,
-            FirWasmExportAnnotationChecker,
-            FirWasmExternalChecker,
-        )
+    override val basicDeclarationCheckers: Set<FirBasicDeclarationChecker> = setOf(
+        FirWasmImportAnnotationChecker,
+        FirWasmExportAnnotationChecker,
+        FirWasmExternalChecker,
+    )
 
-    override val propertyAccessorCheckers: Set<FirPropertyAccessorChecker>
-        get() = setOf(
-            FirWebCommonExternalPropertyAccessorChecker,
-        )
+    override val propertyAccessorCheckers: Set<FirPropertyAccessorChecker> = setOf(
+        FirWebCommonExternalPropertyAccessorChecker,
+    )
 
-    override val propertyCheckers: Set<FirPropertyChecker>
-        get() = setOf(
-            FirWasmEagerInitializationChecker,
-        )
+    override val propertyCheckers: Set<FirPropertyChecker> = setOf(
+        FirWasmEagerInitializationChecker,
+    )
 }
 
 object WasmJsDeclarationCheckers : DeclarationCheckers() {
-    override val basicDeclarationCheckers: Set<FirBasicDeclarationChecker>
-        get() = setOf(
-            FirWasmJsInteropTypesChecker,
-            FirWasmJsFunAnnotationChecker,
-            FirJsExportAnnotationChecker,
-            FirWasmJsModuleChecker,
-            FirWasmExternalFileChecker,
-            FirWasmJsAssociatedObjectChecker,
-        )
+    override val basicDeclarationCheckers: Set<FirBasicDeclarationChecker> = setOf(
+        FirWasmJsInteropTypesChecker,
+        FirWasmJsFunAnnotationChecker,
+        FirJsExportAnnotationChecker,
+        FirWasmJsModuleChecker,
+        FirWasmExternalFileChecker,
+        FirWasmJsAssociatedObjectChecker,
+    )
 
-    override val namedFunctionCheckers: Set<FirNamedFunctionChecker>
-        get() = setOf(
-            FirWasmJsNativeInvokeChecker,
-        )
+    override val namedFunctionCheckers: Set<FirNamedFunctionChecker> = setOf(
+        FirWasmJsNativeInvokeChecker,
+    )
 
-    override val propertyCheckers: Set<FirPropertyChecker>
-        get() = setOf(
-            FirWasmJsVarInJsModuleFileChecker,
-        )
+    override val propertyCheckers: Set<FirPropertyChecker> = setOf(
+        FirWasmJsVarInJsModuleFileChecker,
+    )
 }
 
 object WasmWasiDeclarationCheckers : DeclarationCheckers() {
-    override val basicDeclarationCheckers: Set<FirBasicDeclarationChecker>
-        get() = setOf(
-            FirWasmWasiExternalDeclarationChecker,
-        )
+    override val basicDeclarationCheckers: Set<FirBasicDeclarationChecker> = setOf(
+        FirWasmWasiExternalDeclarationChecker,
+    )
 }

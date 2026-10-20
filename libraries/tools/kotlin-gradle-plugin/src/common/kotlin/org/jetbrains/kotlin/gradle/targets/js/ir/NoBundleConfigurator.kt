@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Action
-import org.gradle.api.tasks.TaskProvider
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
@@ -18,6 +17,7 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin.Companion.kotl
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinImportMapGenerateTask
+import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.locateOrRegisterImportMapGenerateTask
 import org.jetbrains.kotlin.gradle.targets.js.webTargetVariant
 import org.jetbrains.kotlin.gradle.tasks.KotlinWasmDevServer
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
@@ -47,26 +47,6 @@ internal class NoBundleConfigurator(
 
     private val runTaskConfigurations = project.objects.domainObjectSet<Action<KotlinWasmDevServer>>()
 
-    private lateinit var importMapTaskHolder: TaskProvider<KotlinImportMapGenerateTask>
-
-    private fun importMapTask(compilation: KotlinJsIrCompilation): TaskProvider<KotlinImportMapGenerateTask> {
-        if (::importMapTaskHolder.isInitialized) return importMapTaskHolder
-
-        val npmProject = compilation.npmProject
-
-        importMapTaskHolder = project.registerTask<KotlinImportMapGenerateTask>(npmProject.generateImportMapTaskName) {
-            it.nodeModulesDirectory.set(npmProject.nodeModulesDir)
-            it.rootDirectory.set(project.rootDir)
-            it.installArtifacts.from(nodeJsRoot.npmInstallTaskProvider.map { it.additionalFiles })
-            it.inputDirectory.set(npmProject.dir)
-            it.importMapFile.set(project.layout.buildDirectory.file("kotlin/${it.name}/importmap.json"))
-            it.importMapLoaderFile.set(project.layout.buildDirectory.file("kotlin/${it.name}/importmap-loader.js"))
-            it.getIsWindows.set(nodeJs.env.map { it.isWindows })
-        }
-
-        return importMapTaskHolder
-    }
-
     /**
      * Configures production distribution with an import map.
      *
@@ -80,7 +60,7 @@ internal class NoBundleConfigurator(
     override fun setupBuild(compilation: KotlinJsIrCompilation) {
         val npmProject = compilation.npmProject
 
-        val importMapTaskHolder = importMapTask(compilation)
+        val importMapTaskHolder = compilation.locateOrRegisterImportMapGenerateTask()
 
         compilation.binaries
             .withType<Executable>()
@@ -124,7 +104,7 @@ internal class NoBundleConfigurator(
 
     override fun setupRun(compilation: KotlinJsIrCompilation) {
 
-        val importMapTaskHolder = importMapTask(compilation)
+        val importMapTaskHolder = compilation.locateOrRegisterImportMapGenerateTask()
 
         compilation.binaries
             .withType<Executable>()

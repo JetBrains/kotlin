@@ -152,7 +152,7 @@ internal fun writePackageManifest(
 ) {
     localPackageDir.resolve("Package.swift").writeText(
         """
-            // swift-tools-version: 5.9
+            // swift-tools-version: 6.1
             import PackageDescription
 
             let package = Package(
@@ -923,7 +923,7 @@ internal fun BuildResult.assertResolvedVersions(
                 )
             )
         },
-        version = 2,
+        version = 3,
     )
 
     assertEquals(expected.sortedPins(), actual.sortedPins().ignoreRevisions())
@@ -1500,9 +1500,9 @@ fun PublishedProject.assertSwiftPMMetadataVariantExistsInRootComponent() {
 
 fun TestProject.commonizeAndDumpCinteropSignatures(
     commonizerBasePath: Path = projectPath,
-    commonizeTask: String = "commonizeCInterop",
+    vararg extraArgs: String = arrayOf(),
 ): String {
-    build(commonizeTask)
+    build("commonizeCInterop", *extraArgs)
 
     val commonizerResult = commonizerBasePath.resolve("build/classes/kotlin/commonizer/swiftPMImport")
         .listDirectoryEntries()

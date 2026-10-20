@@ -8,54 +8,47 @@ package org.jetbrains.kotlin.fir.analysis.native.checkers
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.*
 
 object NativeDeclarationCheckers : DeclarationCheckers() {
-    override val basicDeclarationCheckers: Set<FirBasicDeclarationChecker>
-        get() = setOf(
-            FirNativeThrowsChecker.Regular,
-            FirNativeThrowsChecker.ForExpectClass,
-            FirNativeSharedImmutableChecker,
-            FirNativeThreadLocalChecker,
-            FirNativeIdentifierChecker,
-            FirNativeObjCNameChecker,
-            FirNativeExternalDeclarationChecker,
-        )
+    override val basicDeclarationCheckers: Set<FirBasicDeclarationChecker> = setOf(
+        FirNativeThrowsChecker.Regular,
+        FirNativeThrowsChecker.ForExpectClass,
+        FirNativeSharedImmutableChecker,
+        FirNativeThreadLocalChecker,
+        FirNativeIdentifierChecker,
+        FirNativeObjCNameChecker,
+        FirNativeExternalDeclarationChecker,
+    )
 
-    override val functionCheckers: Set<FirFunctionChecker>
-        get() = setOf(
-            FirNativeObjcOverrideApplicabilityChecker,
-            FirNativeObjCVariadicMethodOverrideChecker,
-        )
+    override val functionCheckers: Set<FirFunctionChecker> = setOf(
+        FirNativeObjcOverrideApplicabilityChecker,
+        FirNativeObjCVariadicMethodOverrideChecker,
+    )
 
-    override val propertyCheckers: Set<FirPropertyChecker>
-        get() = setOf(
-            FirNativeEagerInitializationChecker,
-        )
+    override val propertyCheckers: Set<FirPropertyChecker> = setOf(
+        FirNativeEagerInitializationChecker,
+    )
 
-    override val callableDeclarationCheckers: Set<FirCallableDeclarationChecker>
-        get() = setOf(
-            FirNativeObjCRefinementChecker,
-            FirNativeObjCNameCallableChecker.Regular,
-            FirNativeObjCNameCallableChecker.ForExpectClass,
-        )
+    override val callableDeclarationCheckers: Set<FirCallableDeclarationChecker> = setOf(
+        FirNativeObjCRefinementChecker,
+        FirNativeObjCNameCallableChecker.Regular,
+        FirNativeObjCNameCallableChecker.ForExpectClass,
+    )
 
-    override val classCheckers: Set<FirClassChecker>
-        get() = setOf(
-            FirNativeObjCRefinementOverridesChecker.Regular,
-            FirNativeObjCRefinementOverridesChecker.ForExpectClass,
-            FirNativeObjCNameOverridesChecker.Regular,
-            FirNativeObjCNameOverridesChecker.ForExpectClass,
-            FirNativeObjCOutletChecker,
-            FirNativeObjCActionChecker,
-            FirNativeObjCOverrideInitChecker,
-        )
+    override val classCheckers: Set<FirClassChecker> = setOf(
+        FirNativeObjCRefinementOverridesChecker.Regular,
+        FirNativeObjCRefinementOverridesChecker.ForExpectClass,
+        FirNativeObjCNameOverridesChecker.Regular,
+        FirNativeObjCNameOverridesChecker.ForExpectClass,
+        FirNativeObjCOutletChecker,
+        FirNativeObjCActionChecker,
+        FirNativeObjCOverrideInitChecker,
+    )
 
-    override val regularClassCheckers: Set<FirRegularClassChecker>
-        get() = setOf(
-            FirNativeObjCRefinementAnnotationChecker,
-            FirNativeHiddenFromObjCInheritanceChecker,
-        )
+    override val regularClassCheckers: Set<FirRegularClassChecker> = setOf(
+        FirNativeObjCRefinementAnnotationChecker,
+        FirNativeHiddenFromObjCInheritanceChecker,
+    )
 
-    override val fileCheckers: Set<FirFileChecker>
-        get() = setOf(
-            FirNativePackageDirectiveChecker,
-        )
+    override val fileCheckers: Set<FirFileChecker> = setOf(
+        FirNativePackageDirectiveChecker,
+    )
 }

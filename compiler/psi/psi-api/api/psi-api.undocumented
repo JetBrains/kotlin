@@ -947,5 +947,3 @@ org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets:TYPE_ELEMENT_TYPES
 org.jetbrains.kotlin.psi.typeRefHelpers.setReceiverTypeReference(KtTypeReference?)
 org.jetbrains.kotlin.psi.typeRefHelpers.setReceiverTypeReference(KtTypeReference?)
 org.jetbrains.kotlin.psi.typeRefHelpers.setTypeReference(KtCallableDeclaration, PsiElement?, KtTypeReference?)
-org.jetbrains.kotlin.references.utils.KotlinKDocResolutionStrategyProviderService.Companion.getService(Project)
-org.jetbrains.kotlin.references.utils.KotlinKDocResolutionStrategyProviderService.shouldUseExperimentalStrategy()

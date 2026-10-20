@@ -1211,6 +1211,12 @@ public class SourceStubsTestGenerated extends AbstractSourceStubsTest {
   }
 
   @Test
+  @TestMetadata("stubbedDeclarationsInBodies.kt")
+  public void testStubbedDeclarationsInBodies() {
+    run("stubbedDeclarationsInBodies.kt");
+  }
+
+  @Test
   @TestMetadata("suggestGuardSyntax.kt")
   public void testSuggestGuardSyntax() {
     run("suggestGuardSyntax.kt");
@@ -2499,6 +2505,12 @@ public class SourceStubsTestGenerated extends AbstractSourceStubsTest {
     @TestMetadata("annotatedContract.kt")
     public void testAnnotatedContract() {
       run("annotatedContract.kt");
+    }
+
+    @Test
+    @TestMetadata("contractFirstStatementForms.kt")
+    public void testContractFirstStatementForms() {
+      run("contractFirstStatementForms.kt");
     }
 
     @Test
@@ -5129,6 +5141,12 @@ public class SourceStubsTestGenerated extends AbstractSourceStubsTest {
     @Test
     public void testAllFilesPresentInScript() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/psi/psi-impl/testData/psi/script"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("anonymousFunctionsScript.kts")
+    public void testAnonymousFunctionsScript() {
+      run("anonymousFunctionsScript.kts");
     }
 
     @Test

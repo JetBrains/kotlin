@@ -1,0 +1,111 @@
+FILE[kind=Facade[packageFqName=<root>, facadeFqName=ContractFirstStatementFormsKt]]
+  facadeFqName: ContractFirstStatementFormsKt
+  partSimpleName: "ContractFirstStatementFormsKt"
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+    IMPORT_DIRECTIVE[importedFqName=kotlin.contracts, isAllUnder=true, isValid=true]
+      DOT_QUALIFIED_EXPRESSION
+        REFERENCE_EXPRESSION[referencedName=kotlin]
+        REFERENCE_EXPRESSION[referencedName=contracts]
+    IMPORT_DIRECTIVE[importedFqName=kotlin.contracts.contract, isAllUnder=false, isValid=true]
+      DOT_QUALIFIED_EXPRESSION
+        DOT_QUALIFIED_EXPRESSION
+          REFERENCE_EXPRESSION[referencedName=kotlin]
+          REFERENCE_EXPRESSION[referencedName=contracts]
+        REFERENCE_EXPRESSION[referencedName=contract]
+      IMPORT_ALIAS[name=aliasedContract]
+  FUNCTION[fqName=plain, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=plain]
+    VALUE_PARAMETER_LIST
+      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=Boolean]
+  FUNCTION[fqName=qualified, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=qualified]
+    VALUE_PARAMETER_LIST
+      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=Boolean]
+  FUNCTION[fqName=withLeadingCommentsAndSemicolon, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=withLeadingCommentsAndSemicolon]
+    VALUE_PARAMETER_LIST
+      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=Boolean]
+  FUNCTION[fqName=parenthesized, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=parenthesized]
+    VALUE_PARAMETER_LIST
+      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=Boolean]
+  FUNCTION[fqName=labeled, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=labeled]
+    VALUE_PARAMETER_LIST
+      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=Boolean]
+  FUNCTION[fqName=annotated, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=annotated]
+    VALUE_PARAMETER_LIST
+      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=Boolean]
+  FUNCTION[fqName=backticked, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=backticked]
+    VALUE_PARAMETER_LIST
+      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=Boolean]
+  FUNCTION[fqName=notFirst, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=notFirst]
+    VALUE_PARAMETER_LIST
+      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=Boolean]
+  FUNCTION[fqName=aliased, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=aliased]
+    VALUE_PARAMETER_LIST
+      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=Boolean]
+  FUNCTION[fqName=spacedQualified, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=spacedQualified]
+    VALUE_PARAMETER_LIST
+      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=Boolean]
+  FUNCTION[fqName=otherCall, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=otherCall]
+    VALUE_PARAMETER_LIST
+  FUNCTION[fqName=labeledOtherCall, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=labeledOtherCall]
+    VALUE_PARAMETER_LIST
+  FUNCTION[fqName=otherQualifiedCall, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=otherQualifiedCall]
+    VALUE_PARAMETER_LIST
+  FUNCTION[fqName=emptyBody, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=emptyBody]
+    VALUE_PARAMETER_LIST
+  FUNCTION[fqName=expressionBody, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=expressionBody]
+    VALUE_PARAMETER_LIST
+    CALL_EXPRESSION
+      REFERENCE_EXPRESSION[referencedName=contract]
+      LAMBDA_ARGUMENT[isSpread=false]
+  PROPERTY[fqName=property, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=property]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=Int]
+    PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=true]
+      VALUE_PARAMETER_LIST
+  PROPERTY[fqName=propertyWithoutContract, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=propertyWithoutContract]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=Int]
+    PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
+      VALUE_PARAMETER_LIST
+  CLASS[classId=/C, fqName=C, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=C, superNames=[]]
+    CLASS_BODY
+      SECONDARY_CONSTRUCTOR[fqName=null, hasBody=true, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=true, name=C]
+        VALUE_PARAMETER_LIST
+      SECONDARY_CONSTRUCTOR[fqName=null, hasBody=true, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=C]
+        VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Int]

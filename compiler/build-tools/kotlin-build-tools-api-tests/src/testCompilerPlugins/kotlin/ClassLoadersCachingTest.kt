@@ -68,7 +68,9 @@ class ClassLoadersCachingTest : BaseCompilationTest() {
     private fun KotlinToolchains.clearClassloadersCache() {
         val cache = javaClass.declaredFields.single { it.name == "classloadersCache" }.apply { isAccessible = true }
             .get(this)
-        cache?.javaClass?.methods?.find { it.name == "close" }?.invoke(cache)
+        val cachePrivate = cache.javaClass.declaredFields.single { it.name == "cache"}.apply { isAccessible = true }.get(cache)
+        val cacheInterface = cachePrivate?.javaClass?.interfaces?.single { it.name == "org.jetbrains.kotlin.com.google.common.cache.Cache" }
+        cacheInterface?.methods?.find { it.name == "invalidateAll" && it.parameterCount == 0 }?.invoke(cachePrivate)
     }
 
     @DefaultStrategyAndPlatformAgnosticCompilationTest

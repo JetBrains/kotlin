@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.build.report.metrics
 
 object DoNothingBuildMetricsReporter : BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric> {
+    override val isEnabled: Boolean
+        get() = false
+
     override fun startMeasure(time: BuildTimeMetric) {
     }
 

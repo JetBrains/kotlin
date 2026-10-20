@@ -36,7 +36,7 @@ class GenerateContextFunctions(out: PrintWriter) : BuiltInsSourceGenerator(out) 
 /**
  * Runs the specified [block] with the given $values in context scope.
  *
- * As opposed to [with], [context] only makes the $values available for
+ * As opposed to [with][kotlin.with], [context] only makes the $values available for
  * context parameter resolution, but not as implicit $receivers.
  *
  * @sample samples.misc.ContextParameters.useContext
