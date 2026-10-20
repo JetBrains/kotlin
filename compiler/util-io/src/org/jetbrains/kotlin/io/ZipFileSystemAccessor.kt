@@ -25,10 +25,12 @@ object ZipFileSystemInPlaceAccessor : ZipFileSystemAccessor {
  * (for example, the Kotlin/Native backend with `-Xbackend-threads`).
  */
 class ZipFileSystemCacheableAccessor(private val cacheLimit: Int) : ZipFileSystemAccessor {
-    private val loadFactor = 0.75f
-    private val initialCapacity = (1f + cacheLimit.toFloat() / loadFactor).toInt()
-
-    private val openedFileSystems = object : LinkedHashMap<Path, FileSystem>(initialCapacity, loadFactor, true) {
+    @Suppress("InconsistentCommentForJavaParameter")
+    private val cache = object : LinkedHashMap<Path, FileSystem>(
+        /* initialCapacity = */ computeInitialCapacity(cacheLimit),
+        /* loadFactor = */ LOAD_FACTOR,
+        /* accessOrder = */ true,
+    ) {
         override fun removeEldestEntry(eldest: Map.Entry<Path, FileSystem>?): Boolean {
             if (size > cacheLimit) {
                 eldest?.value?.close()
@@ -40,24 +42,30 @@ class ZipFileSystemCacheableAccessor(private val cacheLimit: Int) : ZipFileSyste
 
     @Synchronized
     override fun <T> withZipFileSystem(zipFile: Path, action: (FileSystem) -> T): T {
-        val fileSystem = openedFileSystems.getOrPut(zipFile) { zipFile.zipFileSystem() }
+        val fileSystem = cache.getOrPut(zipFile) { zipFile.zipFileSystem() }
         return action(fileSystem)
     }
 
     @Synchronized
     fun reset() {
         var lastException: Exception? = null
-        for (fileSystem in openedFileSystems.values) {
+        for (fileSystem in cache.values) {
             try {
                 fileSystem.close()
             } catch (e: Exception) {
                 lastException = e
             }
         }
-        openedFileSystems.clear()
+        cache.clear()
 
         lastException?.let {
             throw it
         }
+    }
+
+    companion object {
+        private const val LOAD_FACTOR = 0.75f
+
+        private fun computeInitialCapacity(cacheLimit: Int) = (1f + cacheLimit.toFloat() / LOAD_FACTOR).toInt()
     }
 }
