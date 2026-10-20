@@ -3,7 +3,15 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+NSString * OpenBaz_doubleReceiverExtFun__TypesOfArgumentsE__anyU20ExportedKotlinPackages_foo_Foo____reverse_swift(void * self, void * receiver);
+
+int32_t OpenBaz_doubleReceiverExtProp_get__TypesOfArgumentsE__anyU20ExportedKotlinPackages_foo_Foo____reverse_swift(void * self, void * receiver);
+
+_Bool OpenBaz_doubleReceiverExtProp_set__TypesOfArgumentsE__anyU20ExportedKotlinPackages_foo_Foo_Swift_Int32____reverse_swift(void * self, void * receiver, int32_t value);
+
 NSString * foo_Foo_doubleReceiverExtFun__TypesOfArgumentsE__main_Bar____reverse_swift(void * self, void * receiver);
+
+int32_t foo_Foo_doubleReceiverExtProp_get__TypesOfArgumentsE__main_Bar____reverse_swift(void * self, void * receiver);
 
 _Bool main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * pointerToClosure);
 
@@ -14,6 +22,18 @@ int32_t Bar_doubleReceiverExtProp_get__TypesOfArgumentsE__anyU20ExportedKotlinPa
 NSString * Baz_doubleReceiverExtFun__TypesOfArgumentsE__anyU20ExportedKotlinPackages_foo_Foo__(void * self, void * receiver);
 
 int32_t Baz_doubleReceiverExtProp_get__TypesOfArgumentsE__anyU20ExportedKotlinPackages_foo_Foo__(void * self, void * receiver);
+
+NSString * OpenBaz_doubleReceiverExtFun__TypesOfArgumentsE__anyU20ExportedKotlinPackages_foo_Foo__(void * self, void * receiver);
+
+NSString * OpenBaz_doubleReceiverExtFun__TypesOfArgumentsE__anyU20ExportedKotlinPackages_foo_Foo___direct(void * self, void * receiver);
+
+int32_t OpenBaz_doubleReceiverExtProp_get__TypesOfArgumentsE__anyU20ExportedKotlinPackages_foo_Foo__(void * self, void * receiver);
+
+int32_t OpenBaz_doubleReceiverExtProp_get__TypesOfArgumentsE__anyU20ExportedKotlinPackages_foo_Foo___direct(void * self, void * receiver);
+
+_Bool OpenBaz_doubleReceiverExtProp_set__TypesOfArgumentsE__anyU20ExportedKotlinPackages_foo_Foo_Swift_Int32__(void * self, void * receiver, int32_t value);
+
+_Bool OpenBaz_doubleReceiverExtProp_set__TypesOfArgumentsE__anyU20ExportedKotlinPackages_foo_Foo_Swift_Int32___direct(void * self, void * receiver, int32_t value);
 
 void * __root___Bar_init_allocate();
 
@@ -28,6 +48,10 @@ _Bool __root___DeprecatedBar_init_initialize__TypesOfArguments__Swift_UnsafeMuta
 void * __root___GenericClass_init_allocate();
 
 _Bool __root___GenericClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
+void * __root___OpenBaz_init_allocate();
+
+_Bool __root___OpenBaz_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
 _Bool __root___deprecatedSetterProp_get__TypesOfArgumentsE__main_Bar__(void * receiver);
 

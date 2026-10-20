@@ -86,6 +86,52 @@ public final class GenericClass: KotlinRuntime.KotlinBase {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
 }
+open class OpenBaz: KotlinRuntime.KotlinBase {
+    public override init() {
+         let __kt: Swift.UnsafeMutableRawPointer!
+         if Self.self == main.OpenBaz.self {
+             __kt = __root___OpenBaz_init_allocate()
+         } else {
+             __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+         }
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+        { __root___OpenBaz_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
+    }
+    package override init(
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
+        options: KotlinRuntime.KotlinBaseConstructionOptions
+    ) {
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+    }
+    open func doubleReceiverExtFun(
+        _ receiver: any ExportedKotlinPackages.foo.Foo
+    ) -> Swift.String {
+        if Self.self == main.OpenBaz.self {
+            return OpenBaz_doubleReceiverExtFun__TypesOfArgumentsE__anyU20ExportedKotlinPackages_foo_Foo__(self.__externalRCRef(), receiver.__externalRCRef())
+        } else {
+            return OpenBaz_doubleReceiverExtFun__TypesOfArgumentsE__anyU20ExportedKotlinPackages_foo_Foo___direct(self.__externalRCRef(), receiver.__externalRCRef())
+        }
+    }
+    open func getDoubleReceiverExtProp(
+        _ receiver: any ExportedKotlinPackages.foo.Foo
+    ) -> Swift.Int32 {
+        if Self.self == main.OpenBaz.self {
+            return OpenBaz_doubleReceiverExtProp_get__TypesOfArgumentsE__anyU20ExportedKotlinPackages_foo_Foo__(self.__externalRCRef(), receiver.__externalRCRef())
+        } else {
+            return OpenBaz_doubleReceiverExtProp_get__TypesOfArgumentsE__anyU20ExportedKotlinPackages_foo_Foo___direct(self.__externalRCRef(), receiver.__externalRCRef())
+        }
+    }
+    open func setDoubleReceiverExtProp(
+        _ receiver: any ExportedKotlinPackages.foo.Foo,
+        value: Swift.Int32
+    ) -> Swift.Void {
+        if Self.self == main.OpenBaz.self {
+            return { OpenBaz_doubleReceiverExtProp_set__TypesOfArgumentsE__anyU20ExportedKotlinPackages_foo_Foo_Swift_Int32__(self.__externalRCRef(), receiver.__externalRCRef(), value); return () }()
+        } else {
+            return { OpenBaz_doubleReceiverExtProp_set__TypesOfArgumentsE__anyU20ExportedKotlinPackages_foo_Foo_Swift_Int32___direct(self.__externalRCRef(), receiver.__externalRCRef(), value); return () }()
+        }
+    }
+}
 @available(*, unavailable, message: "Unavailable type(s): main.DeprecatedBar")
 public func deprecatedClassFun(
     _ receiver: main.DeprecatedBar
@@ -545,10 +591,38 @@ extension ExportedKotlinPackages.other {
         return { other_otherProp_set__TypesOfArgumentsE__ExportedKotlinPackages_other_Other_Swift_Int32__(receiver.__externalRCRef(), value); return () }()
     }
 }
+@_cdecl("OpenBaz_doubleReceiverExtFun__TypesOfArgumentsE__anyU20ExportedKotlinPackages_foo_Foo____reverse_swift")
+package func OpenBaz_doubleReceiverExtFun__TypesOfArgumentsE__anyU20ExportedKotlinPackages_foo_Foo____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ receiver: Swift.UnsafeMutableRawPointer) -> Swift.String {
+    let _self = main.OpenBaz.__createClassWrapper(externalRCRef: `self`)
+    let _result: Swift.String = _self.doubleReceiverExtFun(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: receiver, conformsTo: ExportedKotlinPackages.foo.Foo.Type.self) as! any ExportedKotlinPackages.foo.Foo)
+    return _result
+}
+
+@_cdecl("OpenBaz_doubleReceiverExtProp_get__TypesOfArgumentsE__anyU20ExportedKotlinPackages_foo_Foo____reverse_swift")
+package func OpenBaz_doubleReceiverExtProp_get__TypesOfArgumentsE__anyU20ExportedKotlinPackages_foo_Foo____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ receiver: Swift.UnsafeMutableRawPointer) -> Swift.Int32 {
+    let _self = main.OpenBaz.__createClassWrapper(externalRCRef: `self`)
+    let _result: Swift.Int32 = _self.getDoubleReceiverExtProp(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: receiver, conformsTo: ExportedKotlinPackages.foo.Foo.Type.self) as! any ExportedKotlinPackages.foo.Foo)
+    return _result
+}
+
+@_cdecl("OpenBaz_doubleReceiverExtProp_set__TypesOfArgumentsE__anyU20ExportedKotlinPackages_foo_Foo_Swift_Int32____reverse_swift")
+package func OpenBaz_doubleReceiverExtProp_set__TypesOfArgumentsE__anyU20ExportedKotlinPackages_foo_Foo_Swift_Int32____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ receiver: Swift.UnsafeMutableRawPointer, _ value: Swift.Int32) -> Swift.Bool {
+    let _self = main.OpenBaz.__createClassWrapper(externalRCRef: `self`)
+    let _result: Swift.Void = _self.setDoubleReceiverExtProp(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: receiver, conformsTo: ExportedKotlinPackages.foo.Foo.Type.self) as! any ExportedKotlinPackages.foo.Foo, value: value)
+    return { _result; return true }()
+}
+
 @_cdecl("foo_Foo_doubleReceiverExtFun__TypesOfArgumentsE__main_Bar____reverse_swift")
 package func foo_Foo_doubleReceiverExtFun__TypesOfArgumentsE__main_Bar____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ receiver: Swift.UnsafeMutableRawPointer) -> Swift.String {
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: ExportedKotlinPackages.foo.Foo.Type.self) as! any ExportedKotlinPackages.foo.Foo
     let _result: Swift.String = _self.doubleReceiverExtFun(main.Bar.__createClassWrapper(externalRCRef: receiver))
+    return _result
+}
+
+@_cdecl("foo_Foo_doubleReceiverExtProp_get__TypesOfArgumentsE__main_Bar____reverse_swift")
+package func foo_Foo_doubleReceiverExtProp_get__TypesOfArgumentsE__main_Bar____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ receiver: Swift.UnsafeMutableRawPointer) -> Swift.Int32 {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: ExportedKotlinPackages.foo.Foo.Type.self) as! any ExportedKotlinPackages.foo.Foo
+    let _result: Swift.Int32 = _self.getDoubleReceiverExtProp(main.Bar.__createClassWrapper(externalRCRef: receiver))
     return _result
 }
 
