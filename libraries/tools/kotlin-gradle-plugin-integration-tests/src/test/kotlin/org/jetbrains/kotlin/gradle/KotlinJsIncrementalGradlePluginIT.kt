@@ -10,6 +10,8 @@ import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.tasks.USING_JS_INCREMENTAL_COMPILATION_MESSAGE
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInBuildToolsApi
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 
 class KotlinJsIrK2IncrementalGradlePluginIT : AbstractKotlinJsIncrementalGradlePluginIT(irBackend = true) {
@@ -18,6 +20,8 @@ class KotlinJsIrK2IncrementalGradlePluginIT : AbstractKotlinJsIncrementalGradleP
 }
 
 @JsGradlePluginTests
+@MustRunOnChangesInGradle
+@MustRunOnChangesInBuildToolsApi
 abstract class AbstractKotlinJsIncrementalGradlePluginIT(
     protected val irBackend: Boolean
 ) : KGPBaseTest() {
