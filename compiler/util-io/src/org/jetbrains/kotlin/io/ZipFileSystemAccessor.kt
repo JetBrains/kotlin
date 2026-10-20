@@ -25,6 +25,8 @@ object ZipFileSystemInPlaceAccessor : ZipFileSystemAccessor {
  * (for example, the Kotlin/Native backend with `-Xbackend-threads`).
  */
 class ZipFileSystemCacheableAccessor(private val cacheLimit: Int) : ZipFileSystemAccessor {
+    private val lock = Any()
+
     @Suppress("InconsistentCommentForJavaParameter")
     private val cache = object : LinkedHashMap<Path, FileSystem>(
         /* initialCapacity = */ computeInitialCapacity(cacheLimit),
@@ -40,14 +42,14 @@ class ZipFileSystemCacheableAccessor(private val cacheLimit: Int) : ZipFileSyste
         }
     }
 
-    @Synchronized
     override fun <T> withZipFileSystem(zipFile: Path, action: (FileSystem) -> T): T {
-        val fileSystem = cache.getOrPut(zipFile) { zipFile.zipFileSystem() }
+        val fileSystem = synchronized(lock) {
+            cache.getOrPut(zipFile) { zipFile.zipFileSystem() }
+        }
         return action(fileSystem)
     }
 
-    @Synchronized
-    fun reset() {
+    fun reset() = synchronized(lock) {
         var lastException: Exception? = null
         for (fileSystem in cache.values) {
             try {
