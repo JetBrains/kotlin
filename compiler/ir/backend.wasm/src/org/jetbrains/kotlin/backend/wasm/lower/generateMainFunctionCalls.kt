@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
+import org.jetbrains.kotlin.wasm.config.wasmCommandModule
 import org.jetbrains.kotlin.wasm.config.wasmTarget
 
 /**
@@ -39,13 +40,15 @@ class GenerateMainFunctionWrappers(private val backendContext: WasmBackendContex
             val mainFunction = detector.getMainFunctionOrNull(file) ?: continue
             val generateArgv = mainFunction.parameters.firstOrNull()?.isStringArrayParameter() ?: false
             val generateContinuation = mainFunction.isLoweredSuspendFunction(backendContext)
-            val isWasi = backendContext.configuration.wasmTarget == WasmTarget.WASI
+            // NOTE: with command module initialization, the compiler exports main as `_initialize`, which must have the type `() -> ()`
+            val exportedAsWasiCliRun = backendContext.configuration.wasmTarget == WasmTarget.WASI &&
+                    !backendContext.configuration.wasmCommandModule
 
             val fileContext = backendContext.getFileContext(file)
 
 
-            // in the case of WASI, we always need to generate a wrapper, in order to have a function to export that adheres to the canonical ABI
-            if (!generateArgv && !generateContinuation && !isWasi) {
+            // an export as wasi:cli/run always needs a wrapper, because the export must follow the canonical ABI
+            if (!generateArgv && !generateContinuation && !exportedAsWasiCliRun) {
                 fileContext.mainFunctionWrapper = mainFunction
                 continue
             }
@@ -55,7 +58,7 @@ class GenerateMainFunctionWrappers(private val backendContext: WasmBackendContex
                     backendContext,
                     generateArgv,
                     generateContinuation,
-                    isWasi
+                    exportedAsWasiCliRun
                 )
             }
             fileContext.mainFunctionWrapper = wrapper
@@ -67,10 +70,10 @@ private fun IrSimpleFunction.createMainFunctionWrapper(
     backendContext: WasmBackendContext,
     generateArgv: Boolean,
     generateContinuation: Boolean,
-    isWasi: Boolean,
+    exportedAsWasiCliRun: Boolean,
 ): IrSimpleFunction {
-    // NOTE: the key difference that WASI makes, is that it's main function (wasi:cli/run) needs to return an integer
-    val returnType = if (!isWasi)
+    // NOTE: the key difference is that wasi:cli/run must return an integer
+    val returnType = if (!exportedAsWasiCliRun)
         backendContext.irBuiltIns.unitType
     else
         backendContext.irBuiltIns.intType
@@ -121,7 +124,7 @@ private fun IrSimpleFunction.createMainFunctionWrapper(
             listOfNotNull(argv, continuation).forEachIndexed { index: Int, arg: IrExpression -> call.arguments[index] = arg }
         }
 
-        if (!isWasi) {
+        if (!exportedAsWasiCliRun) {
             wrapperBody.statements += irReturn(call)
         } else {
             wrapperBody.statements += irBlock {
