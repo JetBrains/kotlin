@@ -20,7 +20,9 @@ object WasmSpecialExportNames {
     const val INITIALIZE = "_initialize"
     const val START_WASM_JS = "_start"
     const val START_WASM_WASI = "wasi:cli/run@0.2.12#run"
-    const val START_UNIT_TESTS = "startUnitTests"
+    const val START_UNIT_TESTS_WASM_JS = "startUnitTests"
+    // NOTE: WASI tests run as components to support WASI 0.2+; components don't allow camelCase names
+    const val START_UNIT_TESTS_WASM_WASI = "startunittests"
     const val CALL_FUNCTION_PREFIX = "__callFunction_"
 
     /**

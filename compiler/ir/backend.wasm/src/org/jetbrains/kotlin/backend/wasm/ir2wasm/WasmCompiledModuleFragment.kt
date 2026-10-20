@@ -608,8 +608,7 @@ class WasmCompiledModuleFragment(
     private fun createStartUnitTestsFunction(definedDeclarations: DefinedDeclarationsResolver, exports: MutableList<WasmExport<*>>) {
         if (!definedDeclarations.functions.containsKey(Synthetics.Functions.runRootSuitesBuiltIn.value)) return
 
-        val startUnitTestsFunction =
-            WasmFunction.Defined(WasmSpecialExportNames.START_UNIT_TESTS, Synthetics.FunctionHeapTypes.parameterlessNoReturnFunctionType)
+        val startUnitTestsFunction = WasmFunction.Defined(WasmSpecialExportNames.START_UNIT_TESTS_WASM_JS, Synthetics.FunctionHeapTypes.parameterlessNoReturnFunctionType)
         with(WasmExpressionBuilder(startUnitTestsFunction.instructions)) {
             forEachLinkerData { linkerData ->
                 linkerData.testFunctionDeclarators.forEach { declarator ->
@@ -618,7 +617,11 @@ class WasmCompiledModuleFragment(
             }
             buildCall(Synthetics.Functions.runRootSuitesBuiltIn, serviceCodeLocation)
         }
-        exports.add(WasmExport.Function(WasmSpecialExportNames.START_UNIT_TESTS, startUnitTestsFunction))
+        val startUnitTestsExportName = if (isWasmJsTarget) 
+            WasmSpecialExportNames.START_UNIT_TESTS_WASM_JS 
+        else 
+            WasmSpecialExportNames.START_UNIT_TESTS_WASM_WASI
+        exports.add(WasmExport.Function(startUnitTestsExportName, startUnitTestsFunction))
         definedDeclarations.functions[Synthetics.Functions.startUnitTestsFunction.value] = startUnitTestsFunction
     }
 
