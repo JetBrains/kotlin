@@ -2,11 +2,13 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import kotlin.test.assertTrue
 
 @DisplayName("Plugins DSL is working correctly")
 @OtherGradlePluginTests
+@MustRunOnChangesInGradle
 class PluginsDslIT : KGPBaseTest() {
 
     @DisplayName("Allopen plugin")
