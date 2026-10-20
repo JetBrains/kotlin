@@ -392,6 +392,30 @@ class KotlinOnlyClasspathChangesComputerTest : ClasspathChangesComputerTest() {
     }
 
     /**
+     * KT-90252: when [ClasspathEntrySnapshotter.Settings.expandTypeAliases] is enabled only for the current snapshot, the aliases newly
+     * collected for the (otherwise unchanged) facade must still be used, so the change in the expanded class reaches the alias.
+     */
+    @Test
+    fun testImpactComputation_TypeAliasExpansions_EnabledAfterDisabled() {
+        val changes = computeClasspathChanges(
+            File(testDataDir, "KotlinOnly/testImpactComputation_TypeAliasExpansions/src"), tmpDir,
+            expandTypeAliases = true, previousExpandTypeAliases = false,
+        )
+        Changes(
+            lookupSymbols = setOf(
+                LookupSymbol(name = "changedFunction", scope = "com.example.B"),
+                LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.B"),
+                LookupSymbol(name = "changedFunction", scope = "com.example.AliasOfB"),
+                LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.AliasOfB"),
+            ),
+            fqNames = setOf(
+                "com.example.B",
+                "com.example.AliasOfB"
+            )
+        ).assertEquals(changes)
+    }
+
+    /**
      * Tests granularity transition with a companion object where only the companion's ABI changes.
      * Without the fix in computeKotlinClassChanges, this triggers IllegalStateException:
      * "The following FqNames can't be derived from DirtyData.dirtyLookupSymbols"
@@ -683,9 +707,11 @@ private fun computeClasspathChanges(
     tmpDir: File,
     granularity: ClassSnapshotGranularity? = null,
     expandTypeAliases: Boolean = false,
+    previousExpandTypeAliases: Boolean = expandTypeAliases,
 ): Changes {
     val currentSnapshot = snapshotClasspath(File(classpathSourceDir, "current-classpath"), tmpDir, granularity, expandTypeAliases)
-    val previousSnapshot = snapshotClasspath(File(classpathSourceDir, "previous-classpath"), tmpDir, granularity, expandTypeAliases)
+    val previousSnapshot =
+        snapshotClasspath(File(classpathSourceDir, "previous-classpath"), tmpDir, granularity, previousExpandTypeAliases)
     return computeClasspathChanges(currentSnapshot, previousSnapshot)
 }
 

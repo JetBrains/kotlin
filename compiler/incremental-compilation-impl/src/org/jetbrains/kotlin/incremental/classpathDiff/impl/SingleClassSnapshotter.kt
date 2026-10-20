@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.incremental.impl.ClassNodeSnapshotter.snapshotMethod
 import org.jetbrains.kotlin.incremental.impl.ClassNodeSnapshotter.sortClassMembers
 import org.jetbrains.kotlin.incremental.impl.SelectiveClassVisitor
 import org.jetbrains.kotlin.incremental.impl.hashToLong
+import org.jetbrains.kotlin.incremental.storage.ListExternalizer
 import org.jetbrains.kotlin.incremental.storage.toByteArray
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader.Kind.*
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMemberSignature
@@ -43,7 +44,8 @@ internal object SingleClassSnapshotter {
         kotlinClassInfo: KotlinClassInfo,
     ): KotlinClassSnapshot {
         val classId = kotlinClassInfo.classId
-        val classAbiHash = KotlinClassInfoExternalizer.toByteArray(kotlinClassInfo).hashToLong()
+        val classInfoBytes = KotlinClassInfoExternalizer.toByteArray(kotlinClassInfo)
+        val classAbiHash = classInfoBytes.hashToLong()
         val classMemberLevelSnapshot = kotlinClassInfo.takeIf { settings.granularity == CLASS_MEMBER_LEVEL }
 
         return when (kotlinClassInfo.classKind) {
@@ -55,10 +57,19 @@ internal object SingleClassSnapshotter {
             )
             FILE_FACADE, MULTIFILE_CLASS_PART -> {
                 val packagePartProtoData = kotlinClassInfo.protoData as PackagePartProtoData
+                val typeAliases = packagePartProtoData.getTypeAliasSnapshotsOrNull(settings.expandTypeAliases)
                 PackageFacadeKotlinClassSnapshot(
-                    classId, classAbiHash, classMemberLevelSnapshot,
+                    classId,
+                    // Impact computation sees the current type aliases of a facade only if its hash changed, so newly collected aliases
+                    // (e.g., after enabling `expandTypeAliases`) must change the hash too (KT-90252). Facades without aliases keep it.
+                    classAbiHash = if (typeAliases.isNullOrEmpty()) {
+                        classAbiHash
+                    } else {
+                        (classInfoBytes + ListExternalizer(TypeAliasSnapshotExternalizer).toByteArray(typeAliases)).hashToLong()
+                    },
+                    classMemberLevelSnapshot,
                     packageMemberNames = packagePartProtoData.getNonPrivateMembers().toSet(),
-                    typeAliases = packagePartProtoData.getTypeAliasSnapshotsOrNull(settings.expandTypeAliases)
+                    typeAliases = typeAliases
                 )
             }
             MULTIFILE_CLASS -> MultifileClassKotlinClassSnapshot(
