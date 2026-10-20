@@ -52,7 +52,7 @@ internal class JavaKNamedFunction(
     // `SignatureEnhancement.enhanceSignature` in the compiler.
     override val predefinedEnhancementInfo: PredefinedFunctionEnhancementInfo?
         get() = PREDEFINED_FUNCTION_ENHANCEMENT_INFO_BY_SIGNATURE[
-            SignatureBuildingComponents.signature(jMethod.declaringClass.classId.internalName, jMethod.jvmSignature)
+            SignatureBuildingComponents.signature(container.methodOwner.classId.internalName, jMethod.jvmSignature)
         ]?.takeIf { it.errorsSinceLanguageVersion == null }
 
     override fun computeOverriddenFunctionsForEnhancement(): Collection<ReflectKFunction> {
