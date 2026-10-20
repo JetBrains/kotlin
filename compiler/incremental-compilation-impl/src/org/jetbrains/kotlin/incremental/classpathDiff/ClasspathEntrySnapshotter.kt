@@ -35,7 +35,6 @@ object ClasspathEntrySnapshotter {
         !isDirectory
                 && unixStyleRelativePath.endsWith(".class", ignoreCase = true)
                 && !unixStyleRelativePath.equals(MODULE_INFO_CLASS, ignoreCase = true)
-                && !isPackageInfoClassPath(unixStyleRelativePath)
                 && !unixStyleRelativePath.startsWith("meta-inf/", ignoreCase = true)
     }
 
@@ -65,14 +64,9 @@ object ClasspathEntrySnapshotter {
                 directoryOrJarReader,
                 directoryOrJarReader.getUnixStyleRelativePaths { path, isDirectory -> !isDirectory && isModuleInfoClassPath(path) }
             )
-            val packageInfoHashes = directoryOrJarReader
-                .getUnixStyleRelativePaths { path, isDirectory -> !isDirectory && isPackageInfoClassPath(path) }
-                .groupBy { packageNameOfPackageInfo(it) }
-                .mapValues { combinedContentHash(directoryOrJarReader, it.value)!! }
             return ClasspathEntrySnapshot(
                 classSnapshots = classes.map { it.classFile.unixStyleRelativePath }.zip(snapshots).toMap(LinkedHashMap()),
                 moduleInfoHash = moduleInfoHash,
-                packageInfoHashes = packageInfoHashes,
             )
         }
     }
@@ -87,19 +81,6 @@ object ClasspathEntrySnapshotter {
         ) return false
         val version = unixStyleRelativePath.substring(prefix.length, unixStyleRelativePath.length - suffix.length)
         return version.toIntOrNull() != null
-    }
-
-    private fun isPackageInfoClassPath(unixStyleRelativePath: String): Boolean =
-        unixStyleRelativePath.equals(PACKAGE_INFO_CLASS, ignoreCase = true)
-                || unixStyleRelativePath.endsWith("/$PACKAGE_INFO_CLASS", ignoreCase = true)
-
-    private fun packageNameOfPackageInfo(unixStyleRelativePath: String): String {
-        var path = unixStyleRelativePath
-        if (path.startsWith("META-INF/versions/", ignoreCase = true)) {
-            // Drop the "META-INF/versions/<n>/" prefix (three path segments) to get the logical package path.
-            path = path.substringAfter('/').substringAfter('/').substringAfter('/', missingDelimiterValue = "")
-        }
-        return path.removeSuffix(PACKAGE_INFO_CLASS).removeSuffix("/").replace('/', '.')
     }
 
     /**
@@ -119,7 +100,6 @@ object ClasspathEntrySnapshotter {
         }
 
     private const val MODULE_INFO_CLASS = "module-info.class"
-    private const val PACKAGE_INFO_CLASS = "package-info.class"
 }
 
 private sealed interface DirectoryOrJarReader : Closeable {

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.incremental.classpathDiff.impl
 
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
+import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity.CLASS_LEVEL
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity.CLASS_MEMBER_LEVEL
 import org.jetbrains.kotlin.incremental.DifferenceCalculatorForPackageFacade.Companion.getNonPrivateMembers
 import org.jetbrains.kotlin.incremental.DifferenceCalculatorForPackageFacade.Companion.getVisibleTypeAliasExpansions
@@ -133,6 +134,17 @@ internal object SingleClassSnapshotter {
             classAbiHash = classAbiHash,
             classMemberLevelSnapshot = classMemberLevelSnapshot,
             supertypes = classFile.classInfo.supertypes
+        )
+    }
+
+    /**
+     * Computes a [PackageInfoClassSnapshot] of the given `package-info.class`. Granularity is forced to [CLASS_LEVEL]: the class has no
+     * members, its ABI is the package-level annotations only.
+     */
+    fun snapshotPackageInfoClass(classFile: ClassFileWithContents): PackageInfoClassSnapshot {
+        return PackageInfoClassSnapshot(
+            classId = classFile.classInfo.classId,
+            classAbiHash = snapshotJavaClass(classFile, CLASS_LEVEL).classAbiHash,
         )
     }
 

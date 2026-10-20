@@ -28,7 +28,6 @@ internal class LazyClasspathSnapshot(
 ) {
     private var currentClasspathSnapshot: List<AccessibleClassSnapshot>? = null
     private var currentModuleInfoHashes: Set<Long>? = null
-    private var currentPackageInfoHashes: Map<String, Long>? = null
     private var computedShrunkClasspathAgainstPreviousLookups: List<AccessibleClassSnapshot>? = null
     private var savedShrunkClasspathSnapshot: List<AccessibleClassSnapshot>? = null
 
@@ -44,19 +43,12 @@ internal class LazyClasspathSnapshot(
                 val classpathSnapshot =
                     CachedClasspathSnapshotSerializer.load(classpathSnapshotFiles.currentClasspathEntrySnapshotFiles, reporter)
                 currentModuleInfoHashes = classpathSnapshot.classpathEntrySnapshots.mapNotNullTo(mutableSetOf()) { it.moduleInfoHash }
-                currentPackageInfoHashes = buildMap {
-                    // First entry on the classpath wins for a given package, matching how the compiler resolves duplicate descriptors.
-                    classpathSnapshot.classpathEntrySnapshots.forEach { entry ->
-                        entry.packageInfoHashes.forEach { putIfAbsent(it.key, it.value) }
-                    }
-                }
                 reporter.measure(metricToReportIfComputing.removeDuplicateClassesTag) {
                     classpathSnapshot.removeDuplicateAndInaccessibleClasses()
                 }
             }
             else -> {
                 currentModuleInfoHashes = emptySet()
-                currentPackageInfoHashes = emptyMap()
                 emptyList()
             }
         }
@@ -69,13 +61,6 @@ internal class LazyClasspathSnapshot(
         currentModuleInfoHashes?.let { return it }
         getCurrentClasspathSnapshot(metricToReportIfComputing)
         return currentModuleInfoHashes!!
-    }
-
-    /** Content hashes of the `package-info.class` files on the current classpath, keyed by package (see [ClasspathEntrySnapshot.packageInfoHashes]). */
-    fun getCurrentPackageInfoHashes(metricToReportIfComputing: LazySnapshotLoadingMetrics): Map<String, Long> {
-        currentPackageInfoHashes?.let { return it }
-        getCurrentClasspathSnapshot(metricToReportIfComputing)
-        return currentPackageInfoHashes!!
     }
 
     fun getComputedShrunkClasspathAgainstPreviousLookups(lookupStorage: LookupStorage, metricToReportIfComputing: LazySnapshotLoadingMetrics): List<AccessibleClassSnapshot> {
