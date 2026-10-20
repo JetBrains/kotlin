@@ -5,100 +5,47 @@
 
 package org.jetbrains.kotlin.backend.konan.cexport
 
-import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.builtins.UnsignedType
-import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.resolve.descriptorUtil.classId
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.typeUtil.isNothing
-import org.jetbrains.kotlin.types.typeUtil.isUnit
-import org.jetbrains.kotlin.K1Deprecation
+import org.jetbrains.kotlin.backend.konan.KonanPrimitiveType
 
-internal class CAdapterTypeTranslator(
-        val prefix: String,
-        @OptIn(K1Deprecation::class)
-        val builtIns: KonanBuiltIns,
-) {
-    private fun translateTypeFull(type: KotlinType): Pair<String, String> =
-            if (isMappedToVoid(type)) {
-                "void" to "void"
-            } else {
-                translateNonVoidTypeFull(type)
-            }
+/**
+ * Maps a [CExportableType] to its C export spellings. A single translator serves both the K1 and IR modes — the
+ * only representation-specific logic lives behind [CExportableType], not here.
+ */
+internal class CAdapterTypeTranslator(val prefix: String) {
+    private val primitiveTypeMapping = KonanPrimitiveType.entries.associateWith { CAdapterCAbi.primitiveCType(prefix, it) }
+    private val unsignedTypeMapping = CAdapterCAbi.unsignedCTypesByClassId(prefix)
 
-    internal fun isMappedToReference(type: KotlinType) =
-            !isMappedToVoid(type) && !isMappedToString(type) &&
-                    type.binaryTypeIsReference()
+    fun isMappedToVoid(type: CExportableType): Boolean = type.isUnit() || type.isNothing()
 
-    fun isMappedToString(binaryType: BinaryType<ClassDescriptor>): Boolean =
-            @OptIn(K1Deprecation::class)
-            when (binaryType) {
-                is BinaryType.Primitive -> false
-                is BinaryType.Reference -> binaryType.types.first() == builtIns.string
-            }
+    fun isMappedToString(type: CExportableType): Boolean =
+            !isMappedToVoid(type) && type.referenceClassOrNull()?.isString() == true
 
-    fun isMappedToString(type: KotlinType): Boolean =
-            isMappedToString(type.computeBinaryType())
+    fun isMappedToReference(type: CExportableType): Boolean =
+            !isMappedToVoid(type) && !isMappedToString(type) && type.binaryTypeIsReference()
 
-    internal fun isMappedToVoid(type: KotlinType): Boolean {
-        return type.isUnit() || type.isNothing()
-    }
+    fun translateType(type: CExportableType): String = translateTypeFull(type).first
 
-    fun translateType(element: SignatureElement): String =
-            translateTypeFull(element.type).first
+    fun translateTypeBridge(type: CExportableType): String = translateTypeFull(type).second
 
-    fun translateType(type: KotlinType): String
-            = translateTypeFull(type).first
+    fun exportedType(type: CExportableType): CExportedType = TranslatedType(type)
 
-    fun translateTypeBridge(type: KotlinType): String = translateTypeFull(type).second
+    private fun translateTypeFull(type: CExportableType): Pair<String, String> =
+            if (isMappedToVoid(type)) "void" to "void" else translateNonVoidTypeFull(type)
 
-    fun translateTypeFqName(name: String): String {
-        return name.replace('.', '_')
-    }
-
-    private fun translateNonVoidTypeFull(type: KotlinType): Pair<String, String> = type.unwrapToPrimitiveOrReference(
-            eachInlinedClass = { inlinedClass, _ ->
-                unsignedTypeMapping[inlinedClass.classId]?.let {
-                    return it to it
-                }
+    private fun translateNonVoidTypeFull(type: CExportableType): Pair<String, String> = type.unwrapToPrimitiveOrReference(
+            eachInlinedClass = { clazz -> clazz.classId?.let { unsignedTypeMapping[it] }?.let { it to it } },
+            ifPrimitive = { primitiveTypeMapping.getValue(it).let { cType -> cType to cType } },
+            ifReference = { clazz ->
+                if (clazz.isString()) "const char*" to "KObjHeader*"
+                else CAdapterCAbi.krefTypeName(prefix, clazz.fqName) to "KObjHeader*"
             },
-            ifPrimitive = { primitiveType, _ ->
-                primitiveTypeMapping[primitiveType]!!.let { it to it }
-            },
-            ifReference = {
-                val clazz = (it.computeBinaryType() as BinaryType.Reference).types.first()
-                @OptIn(K1Deprecation::class)
-                if (clazz == builtIns.string) {
-                    "const char*" to "KObjHeader*"
-                } else {
-                    "${prefix}_kref_${translateTypeFqName(clazz.fqNameSafe.asString())}" to "KObjHeader*"
-                }
-            }
     )
 
-    private val primitiveTypeMapping = KonanPrimitiveType.values().associate {
-        it to when (it) {
-            KonanPrimitiveType.BOOLEAN -> "${prefix}_KBoolean"
-            KonanPrimitiveType.CHAR -> "${prefix}_KChar"
-            KonanPrimitiveType.BYTE -> "${prefix}_KByte"
-            KonanPrimitiveType.SHORT -> "${prefix}_KShort"
-            KonanPrimitiveType.INT -> "${prefix}_KInt"
-            KonanPrimitiveType.LONG -> "${prefix}_KLong"
-            KonanPrimitiveType.FLOAT -> "${prefix}_KFloat"
-            KonanPrimitiveType.DOUBLE -> "${prefix}_KDouble"
-            KonanPrimitiveType.NON_NULL_NATIVE_PTR -> "void*"
-            KonanPrimitiveType.VECTOR128 -> "${prefix}_KVector128"
-        }
-    }
-
-    private val unsignedTypeMapping = UnsignedType.values().associate {
-        it.classId to when (it) {
-            UnsignedType.UBYTE -> "${prefix}_KUByte"
-            UnsignedType.USHORT -> "${prefix}_KUShort"
-            UnsignedType.UINT -> "${prefix}_KUInt"
-            UnsignedType.ULONG -> "${prefix}_KULong"
-        }
+    private inner class TranslatedType(private val type: CExportableType) : CExportedType() {
+        override fun translateType(): String = this@CAdapterTypeTranslator.translateType(type)
+        override fun translateTypeBridge(): String = this@CAdapterTypeTranslator.translateTypeBridge(type)
+        override fun isMappedToVoid(): Boolean = this@CAdapterTypeTranslator.isMappedToVoid(type)
+        override fun isMappedToString(): Boolean = this@CAdapterTypeTranslator.isMappedToString(type)
+        override fun isMappedToReference(): Boolean = this@CAdapterTypeTranslator.isMappedToReference(type)
     }
 }

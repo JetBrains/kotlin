@@ -92,6 +92,14 @@ object BinaryOptions : BinaryOptionRegistry() {
 
     val cInterfaceMode by option<CInterfaceGenerationMode>()
 
+    /**
+     * Experimental: build the C export model from the linked IR instead of K1 descriptors.
+     * The default (`false`) keeps the descriptor-based discovery. Only affects `cInterfaceMode=v1`.
+     * See kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/driver/phases/CExport.kt
+     * for details.
+     */
+    val cExportUseIrDiscovery by booleanOption()
+
     val globalDataLazyInit by booleanOption()
 
     val swiftExport by booleanOption()

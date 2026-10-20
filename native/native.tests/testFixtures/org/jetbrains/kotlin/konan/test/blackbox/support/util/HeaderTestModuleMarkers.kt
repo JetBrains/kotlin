@@ -24,14 +24,12 @@ import java.io.File
  * [org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives] machinery, which builds a full runnable
  * test case (entry points, test runner, test dump) out of the test data.
  *
- * The one thing these tests need from the test data that a single-module fixture cannot express is the
- * **order** of the modules: declaration order is the order the modules are passed to `-Xinclude`, and
- * declaring a dependent module before its dependency is what makes the CLI order contradict the topological
- * order. [parseHeaderTestModules] therefore preserves declaration order, and same-named files in different
- * modules stay distinct because each module gets its own source directory.
+ * [parse] is the single place that understands the test-data format; it classifies a fixture into one of the
+ * [HeaderTest] shapes. Which compilation entry point to use and which artifact to produce is left to the caller.
  */
 object HeaderTestModuleMarkers {
     private val MODULE_HEADER = Regex("""// MODULE:\s*(\w+)\s*(?:\(([^)]*)\))?\s*""")
+    private const val MODULE_MARKER = "// MODULE:"
     private const val FILE_MARKER = "// FILE: "
 
     class ParsedModule(val name: String, val dependencies: Set<String>) {
@@ -41,69 +39,66 @@ object HeaderTestModuleMarkers {
     class ParsedFile(val name: String, val text: String)
 
     /**
-     * Parses `// MODULE: name(dep1, dep2)` blocks, each optionally split into `// FILE: <name>` source files (a
-     * module with no `// FILE:` marker becomes a single `<module>.kt` file). Only regular dependencies are
-     * supported. Module declaration order is preserved. Any text before the first `// MODULE:` marker is
-     * treated as a preamble and dropped.
+     * The shape of a header-test fixture, as classified by [parse]. The three shapes correspond one-to-one to the
+     * three ways a fixture can be written; how each is compiled is the caller's decision.
      */
-    fun parseHeaderTestModules(lines: List<String>): List<ParsedModule> {
-        val modules = mutableListOf<ParsedModule>()
-        var currentFileName: String? = null
-        val currentText = StringBuilder()
+    sealed interface HeaderTest {
+        /** No markers at all: the test data [file] is compiled as-is. */
+        data class SingleFile(val file: File) : HeaderTest
 
-        fun flushFile() {
-            val module = modules.lastOrNull() ?: run { currentText.clear(); return }
-            val name = currentFileName ?: if (currentText.isBlank()) return else "${module.name}.kt"
-            module.files += ParsedFile(name, currentText.toString())
-            currentText.clear()
-            currentFileName = null
-        }
+        /** `// FILE:` markers only: one module whose sources are the split [files]. */
+        data class SplitFiles(val files: List<ParsedFile>) : HeaderTest
 
-        for (line in lines) {
-            val moduleMatch = MODULE_HEADER.matchEntire(line.trim())
-            when {
-                moduleMatch != null -> {
-                    flushFile()
-                    val name = moduleMatch.groupValues[1]
-                    val deps = moduleMatch.groupValues[2].split(',').map(String::trim).filter(String::isNotEmpty).toSet()
-                    modules += ParsedModule(name, deps)
-                }
-                line.startsWith(FILE_MARKER) -> {
-                    flushFile()
-                    currentFileName = line.removePrefix(FILE_MARKER).trim()
-                }
-                else -> currentText.appendLine(line)
-            }
-        }
-        flushFile()
-        return modules
+        /** `// MODULE:` markers: several ordered [modules], each optionally split by `// FILE:`. */
+        data class MultiModule(val modules: List<ParsedModule>) : HeaderTest
     }
-
-    /** `true` if [lines] use `// MODULE:` markers, i.e. describe a multi-module fixture. */
-    fun hasModuleMarkers(lines: List<String>): Boolean = lines.any { it.startsWith("// MODULE:") }
 
     /**
-     * Turns parsed modules into [TestModule.Exclusive]s **in declaration order**, writing each module's sources
-     * under its own directory below [sourcesDir] so that same-named files in different modules do not collide.
+     * Reads [file] and classifies it:
+     *  - a `// MODULE:` marker anywhere -> [HeaderTest.MultiModule];
+     *  - otherwise a `// FILE:` marker anywhere -> [HeaderTest.SplitFiles];
+     *  - otherwise -> [HeaderTest.SingleFile].
      */
-    fun createOrderedTestModules(parsedModules: List<ParsedModule>, sourcesDir: File): List<TestModule.Exclusive> {
-        val modulesByName = parsedModules.associate { parsed ->
-            parsed.name to TestModule.Exclusive(parsed.name, parsed.dependencies, emptySet(), emptySet())
+    fun parse(file: File): HeaderTest {
+        val lines = file.readLines()
+        return when {
+            lines.any { it.startsWith(MODULE_MARKER) } -> HeaderTest.MultiModule(parseModules(lines))
+            lines.any { it.startsWith(FILE_MARKER) } -> HeaderTest.SplitFiles(splitFiles(lines, "${file.nameWithoutExtension}.kt"))
+            else -> HeaderTest.SingleFile(file)
         }
+    }
 
-        parsedModules.forEach { parsed ->
-            val module = modulesByName.getValue(parsed.name)
-            parsed.files.forEach { sourceFile ->
-                module.files += TestFile.createUncommitted(
-                    sourcesDir.resolve(parsed.name).resolve(sourceFile.name),
-                    module,
-                    sourceFile.text,
-                )
+    /**
+     * Materializes a parsed [test] into [TestModule.Exclusive]s ready to be compiled, writing any generated sources
+     * under [sourcesDir]. [moduleName] names the single module of the [HeaderTest.SingleFile] / [HeaderTest.SplitFiles]
+     * shapes (it is ignored for [HeaderTest.MultiModule], whose modules are named by their `// MODULE:` markers).
+     * Modules are returned **in declaration order**; same-named files in different modules stay distinct because
+     * each module gets its own source directory.
+     */
+    fun toTestModules(test: HeaderTest, moduleName: String, sourcesDir: File): List<TestModule.Exclusive> = when (test) {
+        is HeaderTest.SingleFile -> listOf(
+            newModule(moduleName).apply { files += TestFile.createCommitted(test.file, this) }
+        )
+        is HeaderTest.SplitFiles -> listOf(
+            newModule(moduleName).apply {
+                test.files.forEach { files += TestFile.createUncommitted(sourcesDir.resolve(it.name), this, it.text) }
+            }
+        )
+        is HeaderTest.MultiModule -> test.modules.map { parsed ->
+            newModule(parsed.name, parsed.dependencies).apply {
+                parsed.files.forEach { sourceFile ->
+                    files += TestFile.createUncommitted(
+                        sourcesDir.resolve(parsed.name).resolve(sourceFile.name),
+                        this,
+                        sourceFile.text,
+                    )
+                }
             }
         }
-
-        return parsedModules.map { modulesByName.getValue(it.name) }
     }
+
+    private fun newModule(name: String, dependencies: Set<String> = emptySet()) =
+        TestModule.Exclusive(name, dependencies, emptySet(), emptySet())
 
     /**
      * Builds the [TestCase] that owns [modules], and initializes it.
@@ -138,5 +133,79 @@ object HeaderTestModuleMarkers {
         val parentDirectory = pathToTestFile.parentFile
         val targetSpecificFile = parentDirectory.resolve("$testName.$testTarget.$extension")
         return if (targetSpecificFile.exists()) targetSpecificFile else parentDirectory.resolve("$testName.$extension")
+    }
+
+    /**
+     * Splits one module's worth of [lines] into files -- the single `// FILE:` reader shared by every shape:
+     *  - with `// FILE:` markers: each marked section is a file; text before the first marker is dropped;
+     *  - without markers: the whole (non-blank) block becomes a single file named [defaultFileName].
+     */
+    private fun splitFiles(lines: List<String>, defaultFileName: String): List<ParsedFile> {
+        if (lines.none { it.startsWith(FILE_MARKER) }) {
+            return if (lines.all { it.isBlank() }) emptyList()
+            else listOf(ParsedFile(defaultFileName, buildString { lines.forEach { appendLine(it) } }))
+        }
+
+        // Lines before the first `// FILE:` are dropped; keep that intentional but visible — only blank or comment
+        // lines are allowed there, so a stray declaration placed before the first marker fails loudly.
+        val preamble = lines.takeWhile { !it.startsWith(FILE_MARKER) }
+        require(preamble.all { it.isBlank() || it.trimStart().startsWith("//") }) {
+            "Content before the first `// FILE:` marker is dropped; it must be blank or a comment. Offending lines:\n" +
+                    preamble.filterNot { it.isBlank() || it.trimStart().startsWith("//") }.joinToString("\n")
+        }
+
+        val files = mutableListOf<ParsedFile>()
+        var currentName: String? = null
+        val currentText = StringBuilder()
+
+        fun flush() {
+            val name = currentName ?: return
+            files += ParsedFile(name, currentText.toString())
+            currentText.clear()
+            currentName = null
+        }
+
+        for (line in lines) {
+            if (line.startsWith(FILE_MARKER)) {
+                flush()
+                currentName = line.removePrefix(FILE_MARKER).trim()
+            } else if (currentName != null) {
+                currentText.appendLine(line)
+            }
+        }
+        flush()
+        return files
+    }
+
+    /**
+     * Parses `// MODULE: name(dep1, dep2)` blocks, each split into files by [splitFiles] (a module with no
+     * `// FILE:` marker becomes a single `<module>.kt` file). Only regular dependencies are supported. Module
+     * declaration order is preserved. Any text before the first `// MODULE:` marker is treated as a preamble and
+     * dropped.
+     */
+    private fun parseModules(lines: List<String>): List<ParsedModule> {
+        val modules = mutableListOf<ParsedModule>()
+        var current: ParsedModule? = null
+        val currentLines = mutableListOf<String>()
+
+        fun flushModule() {
+            val module = current ?: run { currentLines.clear(); return }
+            module.files += splitFiles(currentLines, "${module.name}.kt")
+            currentLines.clear()
+        }
+
+        for (line in lines) {
+            val moduleMatch = MODULE_HEADER.matchEntire(line.trim())
+            if (moduleMatch != null) {
+                flushModule()
+                val name = moduleMatch.groupValues[1]
+                val deps = moduleMatch.groupValues[2].split(',').map(String::trim).filter(String::isNotEmpty).toSet()
+                current = ParsedModule(name, deps).also { modules += it }
+            } else {
+                currentLines += line
+            }
+        }
+        flushModule()
+        return modules
     }
 }
