@@ -56,15 +56,15 @@ internal object TsArtifactProducer : JsArtifactProducer<ProcessedModule, FileArt
 
             override fun List<TsModules>.merge(): TsModules = single() // TypeScript artifacts should already be merged
 
-            override fun FileArtifactKey.generateArtifact(module: ProcessedModule): TsModules? {
-                val exportModel = module.declarationsGroupedByFile[this] ?: return null
-                return TsModules(
+            override fun FileArtifactKey.generateArtifacts(module: ProcessedModule): List<TsModules> {
+                val exportModel = module.declarationsGroupedByFile[this] ?: return []
+                return [TsModules(
                     TypeScriptModuleArtifact(
                         externalModuleName = getExternalModuleName(module),
                         exportModel,
                         packageFqn = packageFqName.asString(),
                     ),
-                )
+                )]
             }
 
             private fun FileArtifactKey.getExternalModuleName(module: ProcessedModule): String = buildString {

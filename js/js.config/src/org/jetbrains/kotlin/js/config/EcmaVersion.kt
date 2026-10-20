@@ -29,3 +29,6 @@ val EcmaVersion?.supportsEsModules: Boolean
 
 val EcmaVersion?.supportsPerFileGranularity: Boolean
     get() = this != null && this >= EcmaVersion.es2015
+
+val EcmaVersion?.supportsPerClassGranularity: Boolean
+    get() = this != null && this >= EcmaVersion.es2015
