@@ -48,6 +48,9 @@ object WASM_DIAGNOSTICS_LIST : DiagnosticList("FirWasmErrors") {
     val WASM_INTEROP by object : DiagnosticGroup("Wasm interop") {
         val NESTED_WASM_EXPORT by error<KtElement>()
         val WASM_EXPORT_ON_EXTERNAL_DECLARATION by error<KtElement>()
+        val WASM_EXPORT_UNSUPPORTED_FUNCTION_KIND by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
+            parameter<String>("kind")
+        }
         val JS_AND_WASM_EXPORTS_ON_SAME_DECLARATION by error<KtElement>()
         val NESTED_WASM_IMPORT by error<KtElement>()
         val WASM_IMPORT_ON_NON_EXTERNAL_DECLARATION by error<KtElement>()
