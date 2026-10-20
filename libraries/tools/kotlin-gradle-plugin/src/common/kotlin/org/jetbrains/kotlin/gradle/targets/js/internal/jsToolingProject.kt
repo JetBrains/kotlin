@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.js.internal
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.utils.isProjectIsolationEnabled
+import org.jetbrains.kotlin.gradle.utils.isRootProject
 
 /**
  * Returns the project to use for JS and WasmJS tooling plugins.
@@ -17,10 +18,12 @@ import org.jetbrains.kotlin.gradle.utils.isProjectIsolationEnabled
  * Only intended for internal use, to prototype Isolated Projects support.
  */
 internal fun Project.jsToolingProject(): Project {
-    return if (npmSharedProjectsPerProject && isProjectIsolationEnabled) {
-        this
-    } else {
-        rootProject
+    return when {
+        // The root project's tooling project is always itself, so skip reading its properties.
+        // subprojects call this on the root project, and that read would violate Isolated Projects (KT-89532).
+        project.isRootProject() -> this
+        npmSharedProjectsPerProject && isProjectIsolationEnabled -> this
+        else -> rootProject
     }
 }
 
