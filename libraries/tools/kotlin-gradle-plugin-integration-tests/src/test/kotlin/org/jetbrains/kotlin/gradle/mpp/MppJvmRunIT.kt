@@ -7,9 +7,11 @@ package org.jetbrains.kotlin.gradle.mpp
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import kotlin.io.path.appendText
 
 @MppGradlePluginTests
+@MustRunOnChangesInGradle
 class MppJvmRunIT : KGPBaseTest() {
 
     @GradleTest
