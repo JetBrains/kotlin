@@ -4,8 +4,10 @@
  */
 package org.jetbrains.kotlin.psi.stubs.elements
 
+import com.intellij.lang.ASTNode
 import com.intellij.lang.LighterAST
 import com.intellij.lang.LighterASTNode
+import com.intellij.lang.LighterLazyParseableNode
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.PsiFileImpl
 import com.intellij.psi.stubs.LightStubBuilder
@@ -17,6 +19,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.PackagePartClassUtils
+import org.jetbrains.kotlin.psi.stubs.StubBuildingLexing
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubKindImpl
 import org.jetbrains.kotlin.psi.stubs.light.firstChildOfType
@@ -33,6 +36,8 @@ import org.jetbrains.kotlin.psi.stubs.light.userTypeReferencedName
  * [KtFileStubBuilder] builds.
  */
 internal class KtFileLightStubBuilder : LightStubBuilder() {
+    private val astStubBuilder = KtFileStubBuilder()
+
     override fun buildStubTree(file: PsiFile): StubElement<*> {
         (file as? KtFile)?.customStubBuilder?.let {
             return it.buildStubTree(file)
@@ -44,11 +49,34 @@ internal class KtFileLightStubBuilder : LightStubBuilder() {
         if (FORCED_AST.get() == null) {
             val treeElement = (file as? PsiFileImpl)?.treeElement
             if (treeElement != null && treeElement.isParsed) {
-                return KtFileStubBuilder().buildStubTree(file)
+                return astStubBuilder.buildStubTree(file)
             }
         }
 
         return super.buildStubTree(file)
+    }
+
+    /**
+     * The AST-based traversal (binding stubs to a loaded AST, or building them over a tree-backed light view) skips the same
+     * not yet parsed code blocks as [KtFileStubBuilder], so they are not parsed only to be traversed.
+     */
+    override fun skipChildProcessingWhenBuildingStubs(parent: ASTNode, node: ASTNode): Boolean =
+        astStubBuilder.skipChildProcessingWhenBuildingStubs(parent, node)
+
+    /**
+     * The light tree counterpart of [KtFileStubBuilder.skipChildProcessingWhenBuildingStubs]: skips collapsed code blocks and lambdas
+     * which cannot contain stubbed declarations, so they are not parsed only to be traversed.
+     */
+    override fun skipChildProcessingWhenBuildingStubs(tree: LighterAST, parent: LighterASTNode, node: LighterASTNode): Boolean {
+        if (node !is LighterLazyParseableNode) return false
+
+        val elementType = node.tokenType
+        val isCodeBlock = elementType == KtNodeTypes.LAMBDA_EXPRESSION ||
+                // Script blocks contain stubbed top-level declarations
+                elementType == KtNodeTypes.BLOCK && parent.tokenType != KtNodeTypes.SCRIPT
+        if (!isCodeBlock) return false
+
+        return !StubBuildingLexing.mayContainStubbedDeclarations(node)
     }
 
     override fun createStubForFile(file: PsiFile, tree: LighterAST): StubElement<*> {

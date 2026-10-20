@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.stubs.elements.KtFileStubBuilder
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import java.lang.management.ManagementFactory
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -79,6 +80,8 @@ class StubBuilderBenchmarkTest : AbstractAnalysisApiExecutionTest("testData/sour
 }
 
 private class BenchmarkRunner(private val project: Project) {
+    private val threadMXBean = ManagementFactory.getThreadMXBean() as com.sun.management.ThreadMXBean
+
     private val astBuilder = KtFileStubBuilder()
 
     private val lightBuilder: StubBuilder = StubElementRegistryService.getInstance()
@@ -193,34 +196,51 @@ private class BenchmarkRunner(private val project: Project) {
             var astNanos = 0L
             var lightNanos = 0L
             var parseNanos = 0L
+            var lightParseNanos = 0L
+            var astAllocatedBytes = 0L
+            var lightAllocatedBytes = 0L
             var astFailures = 0
             var lightFailures = 0
 
             for ([path, text] in texts) {
-                // Full AST parse alone, for the breakdown; touching the first child expands the lazy file element
+                // AST parse alone, for the breakdown; touching the first child expands the lazy file element, but not the lazy code
+                // blocks and lambdas inside
                 val parseFile = createKtFile(path, text)
                 val parseStart = System.nanoTime()
                 try { parseFile.node.firstChildNode } catch (_: Exception) { }
                 parseNanos += System.nanoTime() - parseStart
 
+                // Light parse alone, for the breakdown; an unparsed file builds its light tree via `parseContentsLight`
+                val lightParseFile = createKtFile(path, text)
+                val lightParseStart = System.nanoTime()
+                try { lightParseFile.node.lighterAST } catch (_: Exception) { }
+                lightParseNanos += System.nanoTime() - lightParseStart
+
                 val astFile = createKtFile(path, text)
+                val astAllocatedBefore = threadMXBean.currentThreadAllocatedBytes
                 val astStart = System.nanoTime()
                 try { astBuilder.buildStubTree(astFile) } catch (_: Exception) { astFailures++ }
                 astNanos += System.nanoTime() - astStart
+                astAllocatedBytes += threadMXBean.currentThreadAllocatedBytes - astAllocatedBefore
 
                 val lightFile = createKtFile(path, text)
+                val lightAllocatedBefore = threadMXBean.currentThreadAllocatedBytes
                 val lightStart = System.nanoTime()
                 try { lightBuilder.buildStubTree(lightFile) } catch (_: Exception) { lightFailures++ }
                 lightNanos += System.nanoTime() - lightStart
+                lightAllocatedBytes += threadMXBean.currentThreadAllocatedBytes - lightAllocatedBefore
             }
 
             fun ms(nanos: Long) = nanos / 1_000_000
+            fun gb(bytes: Long) = "%.1f".format(bytes / 1024.0 / 1024.0 / 1024.0)
             println(
                 "Iteration ${iteration + 1}: " +
-                        "full parse only: ${ms(parseNanos)} ms, " +
+                        "AST parse only: ${ms(parseNanos)} ms, " +
+                        "light parse only: ${ms(lightParseNanos)} ms, " +
                         "AST stub build (parse + walk): ${ms(astNanos)} ms, " +
                         "light stub build: ${ms(lightNanos)} ms, " +
-                        "speedup: ${"%.2f".format(astNanos.toDouble() / lightNanos)}x" +
+                        "speedup: ${"%.2f".format(astNanos.toDouble() / lightNanos)}x, " +
+                        "allocated: AST ${gb(astAllocatedBytes)} GB, light ${gb(lightAllocatedBytes)} GB" +
                         (if (astFailures + lightFailures > 0) ", FAILURES: ast=$astFailures light=$lightFailures" else ""),
             )
         }

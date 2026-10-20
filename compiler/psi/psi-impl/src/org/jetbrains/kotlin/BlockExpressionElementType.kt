@@ -7,18 +7,24 @@ package org.jetbrains.kotlin
 
 import com.intellij.lang.ASTNode
 import com.intellij.lang.Language
+import com.intellij.lang.LighterASTNode
+import com.intellij.lang.LighterLazyParseableNode
 import com.intellij.lang.PsiBuilderFactory
 import com.intellij.openapi.project.Project
 import com.intellij.psi.tree.ICompositeElementType
 import com.intellij.psi.tree.IErrorCounterReparseableElementType
+import com.intellij.psi.tree.ILightLazyParseableElementType
+import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.KtNodeTypes.*
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.lexer.KotlinLexer
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.parsing.KotlinLightParser
 import org.jetbrains.kotlin.parsing.KotlinParser
 import org.jetbrains.kotlin.psi.KtBlockExpression
 
-class BlockExpressionElementType : IErrorCounterReparseableElementType("BLOCK", KotlinLanguage.INSTANCE), ICompositeElementType {
+class BlockExpressionElementType : IErrorCounterReparseableElementType("BLOCK", KotlinLanguage.INSTANCE), ICompositeElementType,
+    ILightLazyParseableElementType {
 
     override fun createCompositeNode() = KtBlockExpression(null)
 
@@ -40,6 +46,13 @@ class BlockExpressionElementType : IErrorCounterReparseableElementType("BLOCK", 
         )
 
         return KotlinParser.parseBlockExpression(builder).firstChildNode
+    }
+
+    /** The light tree counterpart of [parseContents] for code blocks collapsed by the lazy light parsing of stub building. */
+    override fun parseContents(chameleon: LighterLazyParseableNode): FlyweightCapableTreeStructure<LighterASTNode> {
+        val project = chameleon.containingFile?.project ?: error("A lazily parseable code block without a containing file")
+        val builder = PsiBuilderFactory.getInstance().createBuilder(project, chameleon)
+        return KotlinLightParser.parseBlockExpression(builder)
     }
 
     companion object {

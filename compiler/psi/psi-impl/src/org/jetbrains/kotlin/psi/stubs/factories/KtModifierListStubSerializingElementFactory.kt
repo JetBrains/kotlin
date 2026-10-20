@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.psi.KtDeclarationModifierList
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinModifierListStubImpl
 import org.jetbrains.kotlin.psi.stubs.impl.ModifierMaskUtils
-import org.jetbrains.kotlin.psi.stubs.light.firstChildOfType
 
 internal object KtModifierListStubSerializingElementFactory :
     KtStubSerializingElementFactory<KotlinModifierListStubImpl, KtDeclarationModifierList>(
@@ -40,8 +39,17 @@ internal object KtModifierListStubSerializingElementFactory :
         parentStub: StubElement<*>,
     ): KotlinModifierListStubImpl = KotlinModifierListStubImpl(
         parent = parentStub,
-        mask = ModifierMaskUtils.computeMask { tree.firstChildOfType(node, it) != null },
+        mask = modifierMask(tree, node),
     )
+
+    /**
+     * Mirrors [ModifierMaskUtils.computeMaskFromModifierList]. The children are read once, as a light tree rebuilds them on every
+     * access, while the mask checks every modifier keyword.
+     */
+    private fun modifierMask(tree: LighterAST, node: LighterASTNode): Long {
+        val childTypes = tree.getChildren(node).map { it.tokenType }
+        return ModifierMaskUtils.computeMask { it in childTypes }
+    }
 
     override fun serialize(stub: KotlinModifierListStubImpl, dataStream: StubOutputStream) {
         DataInputOutputUtil.writeLONG(dataStream, stub.mask)
