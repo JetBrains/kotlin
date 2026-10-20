@@ -29,6 +29,8 @@ package kotlin
  * The annotation is applicable to final classes, to `abstract`/`sealed` classes intended as base types,
  * and to object declarations. It is not applicable to `value class`es, interfaces, annotation classes, enums, `open` classes,
  * companion objects, or anonymous objects.
+ *
+ * Before Kotlin 2.5.20, the compiler reported no diagnostics for the annotation.
  */
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.BINARY)
