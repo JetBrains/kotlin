@@ -148,6 +148,7 @@ class WasmCompiledModuleFragment(
         exceptionTagType: ExceptionTagType,
         wasmCommandModuleInitialization: Boolean,
         useStackSwitching: Boolean,
+        useReifiedFibers: Boolean = false,
         importWasmMemoryInsteadOfExport: Boolean,
     ): WasmModule {
         val definedDeclarations = getDefinedDeclarationsFromFragments()
@@ -196,11 +197,15 @@ class WasmCompiledModuleFragment(
             definedDeclarations = definedDeclarations,
         )
 
-        val globals = getGlobals(definedDeclarations)
-
         if (useStackSwitching) {
             createContTypes(definedDeclarations, isStdlibOrMonolith)
         }
+
+        if (useReifiedFibers) {
+            createFiberDeclarations(definedDeclarations, isStdlibOrMonolith)
+        }
+
+        val globals = getGlobals(definedDeclarations)
 
         val tags = getTags(
             definedDeclarations = definedDeclarations,
@@ -325,6 +330,56 @@ class WasmCompiledModuleFragment(
                 definedDeclarations.functionTypes.putIfAbsent(funTypeSignature, funType)
                 definedDeclarations.gcTypes[getContTypeSignature(funType)] =
                     WasmContType("cont_${arity + 2}", FunctionHeapTypeSymbol(funTypeSignature))
+            }
+        }
+    }
+
+    private fun createFiberDeclarations(definedDeclarations: DefinedDeclarationsResolver, isStdlibOrMonolith: Boolean) {
+        val anyRefNull = WasmRefNullType(Synthetics.HeapTypes.anyBuiltInType)
+        val boundContFuncType = WasmFunctionType(emptyList(), listOf(anyRefNull))
+        definedDeclarations.functionTypes[Synthetics.FunctionHeapTypes.boundContFuncType.type] = boundContFuncType
+        definedDeclarations.gcTypes[Synthetics.HeapTypes.boundFiberType.type] =
+            WasmFiberType("fiber_0", Synthetics.FunctionHeapTypes.boundContFuncType)
+
+        if (isStdlibOrMonolith) {
+            val boundFiberRef = WasmRefType(Synthetics.HeapTypes.boundFiberType)
+            val boundFiberRefNull = WasmRefNullType(Synthetics.HeapTypes.boundFiberType)
+            val currentFiberInit = buildWasmExpression {
+                buildRefNull(Synthetics.HeapTypes.boundFiberType, serviceCodeLocation)
+            }
+            definedDeclarations.globalFields[Synthetics.Globals.currentFiberGlobal.value] =
+                WasmGlobal("currentFiber", boundFiberRefNull, true, currentFiberInit)
+
+            for (arity in 0..2) {
+                val invokeFunType = suspendFunctionInvokeWasmType(arity)
+                val invokeFunTypeSignature = getFunctionTypeSignature(invokeFunType)
+                definedDeclarations.functionTypes.putIfAbsent(invokeFunTypeSignature, invokeFunType)
+                val invokeFunRefNull = WasmRefNullType(FunctionHeapTypeSymbol(invokeFunTypeSignature))
+
+                val entryParamTypes = buildList {
+                    add(boundFiberRef)
+                    repeat(arity + 2) { add(anyRefNull) }
+                    add(invokeFunRefNull)
+                }
+                val entryFunType = WasmFunctionType(entryParamTypes, listOf(anyRefNull))
+                val entryFunTypeSignature = getFunctionTypeSignature(entryFunType)
+                definedDeclarations.functionTypes.putIfAbsent(entryFunTypeSignature, entryFunType)
+
+                val entryLocals = entryParamTypes.mapIndexedTo(mutableListOf()) { idx, type ->
+                    WasmLocal(idx, "p$idx", type, isParameter = true)
+                }
+                val entryFunction = WasmFunction.Defined(
+                    name = "_fiberEntry_$arity",
+                    type = FunctionHeapTypeSymbol(entryFunTypeSignature),
+                    locals = entryLocals,
+                )
+                with(WasmExpressionBuilder(entryFunction.instructions)) {
+                    for (i in 1..(arity + 3)) {
+                        buildGetLocal(entryLocals[i], serviceCodeLocation)
+                    }
+                    buildInstr(WasmOp.CALL_REF, serviceCodeLocation, FunctionTypeSymbol(invokeFunTypeSignature))
+                }
+                definedDeclarations.functions[Synthetics.Functions.fiberEntry(arity).value] = entryFunction
             }
         }
     }

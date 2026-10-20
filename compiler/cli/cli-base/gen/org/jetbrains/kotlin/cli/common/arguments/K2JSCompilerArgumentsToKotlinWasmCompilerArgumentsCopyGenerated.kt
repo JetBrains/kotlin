@@ -32,6 +32,7 @@ fun copyK2JSCompilerArguments(from: K2JSCompilerArguments, to: KotlinWasmCompile
     to.wasmNoJsTag = from.wasmNoJsTag
     to.wasmTarget = from.wasmTarget
     to.wasmUseNewExceptionProposal = from.wasmUseNewExceptionProposal
+    to.wasmUseReifiedFibers = from.wasmUseReifiedFibers
     to.wasmUseStackSwitchingProposal = from.wasmUseStackSwitchingProposal
     to.wasmUseTrapsInsteadOfExceptions = from.wasmUseTrapsInsteadOfExceptions
 

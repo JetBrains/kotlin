@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.wasm.config.wasmTarget
+import org.jetbrains.kotlin.wasm.config.wasmUseReifiedFibers
 import org.jetbrains.kotlin.wasm.config.wasmUseStackSwitchingProposal
 
 class BackendWasmSymbols(
@@ -223,12 +224,14 @@ class BackendWasmSymbols(
 
     val interceptedIntrinsic by CallableIds.interceptedIntrinsic.functionSymbol()
 
+    private val useStackSwitching = configuration.wasmUseStackSwitchingProposal || configuration.wasmUseReifiedFibers
+
     val coroutinesStackSwitchingIntrinsics =
-        if (configuration.wasmUseStackSwitchingProposal)
+        if (useStackSwitching)
             CoroutinesStackSwitchingIntrinsics()
         else null
     val coroutinesStateMachineIntrinsics =
-        if (!configuration.wasmUseStackSwitchingProposal)
+        if (!useStackSwitching)
             CoroutinesStateMachineIntrinsics()
         else null
 

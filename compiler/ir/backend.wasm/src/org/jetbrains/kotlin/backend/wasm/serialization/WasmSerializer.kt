@@ -160,12 +160,18 @@ class WasmSerializer(outputStream: OutputStream) {
             serializeWasmHeapType(funcType.funType)
         }
 
+    private fun serializeWasmFiberType(funcType: WasmFiberType) =
+        serializeNamedModuleField(funcType) {
+            serializeWasmHeapType(funcType.funType)
+        }
+
     private fun serializeWasmTypeDeclaration(typeDecl: WasmTypeDeclaration): Unit =
         when (typeDecl) {
             is WasmFunctionType -> withTag(TypeDeclarationTags.FUNCTION) { serializeWasmFunctionType(typeDecl) }
             is WasmStructDeclaration -> withTag(TypeDeclarationTags.STRUCT) { serializeWasmStructDeclaration(typeDecl) }
             is WasmArrayDeclaration -> withTag(TypeDeclarationTags.ARRAY) { serializeWasmArrayDeclaration(typeDecl) }
             is WasmContType -> withTag(TypeDeclarationTags.CONT) { serializeWasmContType(typeDecl) }
+            is WasmFiberType -> withTag(TypeDeclarationTags.FIBER) { serializeWasmFiberType(typeDecl) }
         }
 
     private fun serializeWasmStructDeclaration(structDecl: WasmStructDeclaration) {

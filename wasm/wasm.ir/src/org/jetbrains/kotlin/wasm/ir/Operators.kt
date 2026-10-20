@@ -440,6 +440,12 @@ enum class WasmOp(
     RESUME_THROW_REF("resume_throw_ref", 0xE5, listOf(TYPE_IDX, CONST_I32, RESUME_ON_VECTOR)),
     SWITCH("switch", 0xE6, listOf(TYPE_IDX, TAG_IDX)),
 
+    // Reified Fibers
+    FIBER_NEW("fiber.new", 0xE7, listOf(TYPE_IDX, FUNC_IDX)),
+    FIBER_RESUME("fiber.resume", 0xE8, listOf(TYPE_IDX, LABEL_IDX)),
+    FIBER_SUSPEND("fiber.suspend", 0xE9, TYPE_IDX),
+    FIBER_RESUME_THROW("fiber.resume_throw", 0xEA, listOf(TYPE_IDX, TAG_IDX, LABEL_IDX)),
+
     // ============================================================
     // Exception handling
     // WIP: https://github.com/WebAssembly/exception-handling

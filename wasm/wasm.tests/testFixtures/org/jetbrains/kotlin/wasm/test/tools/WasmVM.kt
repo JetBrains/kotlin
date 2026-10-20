@@ -49,7 +49,7 @@ internal sealed class WasmVM(
                 *jsFiles.toTypedArray(),
                 "--module",
                 *if (useNewExceptionHandling) arrayOf("--no-experimental-wasm-legacy-eh") else emptyArray(),
-                *if (useStackSwitching) arrayOf("--experimental-wasm-wasmfx") else emptyArray(),
+                *if (useStackSwitching) arrayOf("--wasm-wasmfx", "--wasm-reified-fibers") else emptyArray(),
                 entryFile,
                 workingDirectory = workingDirectory,
             )

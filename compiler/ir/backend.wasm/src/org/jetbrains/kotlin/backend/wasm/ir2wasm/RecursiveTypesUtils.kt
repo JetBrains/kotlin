@@ -46,6 +46,9 @@ internal class RecursiveGroupBuilder(private val resolver: (WasmHeapType.Type) -
             is WasmContType -> {
                 yield(resolver(type.funType))
             }
+            is WasmFiberType -> {
+                yield(resolver(type.funType))
+            }
         }
     }
 
@@ -111,6 +114,7 @@ private fun wasmTypeDeclarationOrderKey(
             // Subtype depth
             declaration.superType?.let { wasmTypeDeclarationOrderKey(resolver(it), resolver) + 1 } ?: 0
         is WasmContType -> 0
+        is WasmFiberType -> 0
     }
 }
 
@@ -144,6 +148,7 @@ private class WasmTypeDeclaratorByFingerprint(
         private val function2Hash = Hash128Bits(k2, k3)
         private val arrayHash = Hash128Bits(k3, k4)
         private val contHash = Hash128Bits(k4, k0)
+        private val fiberHash = Hash128Bits(k0, k2)
     }
 
     private fun combine(hash: Hash128Bits, type: WasmType): Hash128Bits {
@@ -175,6 +180,10 @@ private class WasmTypeDeclaratorByFingerprint(
         is WasmContType -> {
             val contHash = hash.combineWith(contHash)
             combine(contHash, resolver(declaration.funType))
+        }
+        is WasmFiberType -> {
+            val fiberHash = hash.combineWith(fiberHash)
+            combine(fiberHash, resolver(declaration.funType))
         }
     }
 

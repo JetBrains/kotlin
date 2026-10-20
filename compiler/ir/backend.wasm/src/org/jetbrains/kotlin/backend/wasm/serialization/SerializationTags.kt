@@ -15,6 +15,7 @@ internal object TypeDeclarationTags {
     const val STRUCT = 1u
     const val ARRAY = 2u
     const val CONT = 3u
+    const val FIBER = 4u
 }
 
 internal object TypeTags {

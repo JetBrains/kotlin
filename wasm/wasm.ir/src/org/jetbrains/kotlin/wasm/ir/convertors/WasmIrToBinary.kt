@@ -25,6 +25,7 @@ private object WasmBinary {
     const val STRUCT_TYPE: Byte = -0x21 // 0x5F
     const val ARRAY_TYPE: Byte = -0x22 // 0x5E
     const val CONT_TYPE: Byte = -0x23 // 0x5D
+    const val FIBER_TYPE: Byte = -0x29 // 0x57
     const val SUB_TYPE: Byte = -0x30 // 0x50
     const val SUB_FINAL_TYPE: Byte = -0x31 // 0x4F
     const val REC_GROUP: Byte = -0x32 // 0x4E
@@ -113,12 +114,18 @@ class WasmIrToBinary(
                 is WasmArrayDeclaration -> appendArrayTypeDeclaration(type)
                 is WasmFunctionType -> appendFunctionTypeDeclaration(type)
                 is WasmContType -> appendContTypeDeclaration(type)
+                is WasmFiberType -> appendFiberTypeDeclaration(type)
             }
         }
     }
 
     private fun appendContTypeDeclaration(type: WasmContType) {
         b.writeVarInt7(WasmBinary.CONT_TYPE)
+        appendHeapType(type.funType)
+    }
+
+    private fun appendFiberTypeDeclaration(type: WasmFiberType) {
+        b.writeVarInt7(WasmBinary.FIBER_TYPE)
         appendHeapType(type.funType)
     }
 

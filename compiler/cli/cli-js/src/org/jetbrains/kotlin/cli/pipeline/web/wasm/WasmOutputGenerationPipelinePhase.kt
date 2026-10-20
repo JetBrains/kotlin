@@ -70,12 +70,14 @@ object WasmOutputGenerationPipelinePhase : PipelinePhase<WasmIntermediatePipelin
         val wasmCommandModuleInitialization = configuration.get(WasmConfigurationKeys.WASM_COMMAND_MODULE) ?: false
 
         val useStackSwitching = configuration.wasmUseStackSwitchingProposal
+        val useReifiedFibers = configuration.wasmUseReifiedFibers
 
         return wasmCompiledModuleFragment.linkWasmCompiledFragments(
             multimoduleOptions = multimoduleParameters,
             exceptionTagType = exceptionTagType,
             wasmCommandModuleInitialization = wasmCommandModuleInitialization,
             useStackSwitching = useStackSwitching,
+            useReifiedFibers = useReifiedFibers,
             importWasmMemoryInsteadOfExport = isWasmJsTarget,
         )
     }

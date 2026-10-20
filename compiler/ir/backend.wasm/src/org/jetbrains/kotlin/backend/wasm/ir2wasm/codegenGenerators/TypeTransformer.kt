@@ -151,7 +151,11 @@ class WasmTypeTransformer(
                     check(arity == 0) {
                         "typedcontref supports only the bound coroutine continuation, got arity: $arity"
                     }
-                    WasmRefNullType(Synthetics.HeapTypes.boundContType)
+                    if (backendContext.wasmUseReifiedFibers) {
+                        WasmRefNullType(Synthetics.HeapTypes.boundFiberType)
+                    } else {
+                        WasmRefNullType(Synthetics.HeapTypes.boundContType)
+                    }
                 }
                 else -> error("Unknown reference type $name")
             }

@@ -510,6 +510,53 @@ open class WasmExpressionBuilder(
             contHandle
         )
     }
+
+    fun buildFiberNew(
+        fiberType: WasmImmediate.TypeIdx,
+        funcIdx: WasmImmediate.FuncIdx,
+        location: SourceLocation,
+    ) {
+        buildInstr(WasmOp.FIBER_NEW, location, fiberType, funcIdx)
+    }
+
+    fun buildFiberResume(
+        fiberType: WasmImmediate.TypeIdx,
+        absoluteBlockLevel: Int,
+        location: SourceLocation,
+    ) {
+        val relativeLevel = numberOfNestedBlocks - absoluteBlockLevel
+        assert(relativeLevel >= 0) { "Negative relative block index" }
+        buildInstr(
+            WasmOp.FIBER_RESUME,
+            location,
+            fiberType,
+            WasmImmediate.LabelIdx.get(relativeLevel),
+        )
+    }
+
+    fun buildFiberSuspend(
+        fiberType: WasmImmediate.TypeIdx,
+        location: SourceLocation,
+    ) {
+        buildInstr(WasmOp.FIBER_SUSPEND, location, fiberType)
+    }
+
+    fun buildFiberResumeThrow(
+        fiberType: WasmImmediate.TypeIdx,
+        exceptionTag: WasmSymbol<Int>,
+        absoluteBlockLevel: Int,
+        location: SourceLocation,
+    ) {
+        val relativeLevel = numberOfNestedBlocks - absoluteBlockLevel
+        assert(relativeLevel >= 0) { "Negative relative block index" }
+        buildInstr(
+            WasmOp.FIBER_RESUME_THROW,
+            location,
+            fiberType,
+            WasmImmediate.TagIdx(exceptionTag),
+            WasmImmediate.LabelIdx.get(relativeLevel),
+        )
+    }
 }
 
 inline fun buildWasmExpression(body: WasmExpressionBuilder.() -> Unit): MutableList<WasmInstr> {

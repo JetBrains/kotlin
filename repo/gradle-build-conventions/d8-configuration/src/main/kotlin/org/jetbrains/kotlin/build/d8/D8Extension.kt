@@ -22,13 +22,21 @@ abstract class D8Extension(
     val v8Version: String
         get() = project.kotlinBuildProperties.versionsProperty("v8").get()
 
-    val v8ExecutablePath: Provider<String> = d8envSpec.executable.also {
+    private val customV8ExecutablePath: Provider<String> =
+        project.providers.gradleProperty("fd.javascript.engine.path.V8")
+            .orElse(project.providers.gradleProperty("javascript.engine.path.V8"))
+            .orElse(project.kotlinBuildProperties.stringProperty("fd.javascript.engine.path.V8"))
+            .orElse(project.kotlinBuildProperties.stringProperty("javascript.engine.path.V8"))
+
+    val v8ExecutablePath: Provider<String> = customV8ExecutablePath.orElse(d8envSpec.executable).also {
         project.extra["javascript.engine.path.V8"] = it
     }
 
     fun Test.setupV8() {
-        with(d8envSpec) {
-            dependsOn(project.d8SetupTaskProvider)
+        if (!customV8ExecutablePath.isPresent) {
+            with(d8envSpec) {
+                dependsOn(project.d8SetupTaskProvider)
+            }
         }
 
         val v8ExecutablePath = v8ExecutablePath

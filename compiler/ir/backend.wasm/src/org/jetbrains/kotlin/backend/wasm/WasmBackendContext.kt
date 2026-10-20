@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import org.jetbrains.kotlin.wasm.config.wasmTarget
+import org.jetbrains.kotlin.wasm.config.wasmUseReifiedFibers
 import org.jetbrains.kotlin.wasm.config.wasmUseStackSwitchingProposal
 
 class WasmBackendContext(
@@ -186,7 +187,8 @@ class WasmBackendContext(
         }
     }
 
-    val wasmUseStackSwitching = configuration.wasmUseStackSwitchingProposal
+    val wasmUseReifiedFibers = configuration.wasmUseReifiedFibers
+    val wasmUseStackSwitching = configuration.wasmUseStackSwitchingProposal || wasmUseReifiedFibers
 
     override var effectAnalysisFinished: Boolean = false
 }

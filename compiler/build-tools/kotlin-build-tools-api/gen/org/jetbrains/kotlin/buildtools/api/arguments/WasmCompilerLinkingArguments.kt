@@ -241,6 +241,16 @@ public interface WasmCompilerLinkingArguments : WasmCompilerArguments,
         WasmCompilerLinkingArgument("X_WASM_USE_NEW_EXCEPTION_PROPOSAL", KotlinReleaseVersion(2, 1, 20))
 
     /**
+     * Compile Kotlin Coroutines with WebAssembly Reified Fibers
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_WASM_USE_REIFIED_FIBERS: WasmCompilerLinkingArgument<Boolean> =
+        WasmCompilerLinkingArgument("X_WASM_USE_REIFIED_FIBERS", KotlinReleaseVersion(2, 4, 20))
+
+    /**
      * Compile Kotlin Coroutines with WebAssembly Stack Switching Proposal
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.

@@ -140,6 +140,7 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
                 TypeDeclarationTags.STRUCT -> deserializeStructDeclaration()
                 TypeDeclarationTags.ARRAY -> deserializeArrayDeclaration()
                 TypeDeclarationTags.CONT -> deserializeContDeclaration()
+                TypeDeclarationTags.FIBER -> deserializeFiberDeclaration()
                 else -> tagError(tag)
             }
         }
@@ -148,6 +149,12 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
         deserializeNamedModuleField { name, _ ->
             val funType = deserializeHeapType() as WasmHeapType.Type.FunctionType
             WasmContType(name, funType)
+        }
+
+    private fun deserializeFiberDeclaration(): WasmFiberType =
+        deserializeNamedModuleField { name, _ ->
+            val funType = deserializeHeapType() as WasmHeapType.Type.FunctionType
+            WasmFiberType(name, funType)
         }
 
     private fun deserializeStructDeclaration(): WasmStructDeclaration =

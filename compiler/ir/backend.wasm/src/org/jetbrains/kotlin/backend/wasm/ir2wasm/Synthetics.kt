@@ -50,6 +50,17 @@ object Synthetics {
         val unitGetInstanceBuiltIn = FuncSymbol("unitGetInstanceBuiltInFunction".toSyntheticSignature())
         val runRootSuitesBuiltIn = FuncSymbol("runRootSuitesBuiltInFunction".toSyntheticSignature())
         val registerModuleDescriptorBuiltIn = FuncSymbol("registerModuleDescriptorBuiltInFunction".toSyntheticSignature())
+
+        val fiberEntry0 = FuncSymbol("fiberEntry0Function".toSyntheticSignature())
+        val fiberEntry1 = FuncSymbol("fiberEntry1Function".toSyntheticSignature())
+        val fiberEntry2 = FuncSymbol("fiberEntry2Function".toSyntheticSignature())
+
+        fun fiberEntry(arity: Int): FuncSymbol = when (arity) {
+            0 -> fiberEntry0
+            1 -> fiberEntry1
+            2 -> fiberEntry2
+            else -> error("Unsupported fiber entry arity: $arity")
+        }
     }
 
     // GLOBALS
@@ -57,6 +68,7 @@ object Synthetics {
         val addressesAndLengthsGlobal = FieldGlobalSymbol("addressesAndLengthsGlobal".toSyntheticSignature())
         val stringPoolGlobal = FieldGlobalSymbol("stringPoolGlobal".toSyntheticSignature())
         val wasmMemoryGlobal = FieldGlobalSymbol("wasmMemoryGlobal".toSyntheticSignature())
+        val currentFiberGlobal = FieldGlobalSymbol("currentFiberGlobal".toSyntheticSignature())
     }
 
     // GC TYPES
@@ -75,8 +87,9 @@ object Synthetics {
     private val jsExceptionTagFuncTypeSignature = "jsExceptionTagFuncType".toSyntheticSignature()
     private val wasmContTagFuncTypeSignature = "wasmContTagFuncType".toSyntheticSignature()
 
-    // bound Stack Switching continuation
+    // bound Stack Switching continuation / Reified Fiber
     private val boundContTypeSignature = "boundContType".toSyntheticSignature()
+    private val boundFiberTypeSignature = "boundFiberType".toSyntheticSignature()
     private val boundContFuncTypeSignature = "boundContFuncType".toSyntheticSignature()
 
     private val throwableBuiltInTypeSignature = "throwableBuiltInType".toSyntheticSignature()
@@ -95,6 +108,7 @@ object Synthetics {
         val throwableBuiltInType = GcHeapTypeSymbol(throwableBuiltInTypeSignature)
         val anyBuiltInType = GcHeapTypeSymbol(anyBuiltInTypeSignature)
         val boundContType = GcHeapTypeSymbol(boundContTypeSignature)
+        val boundFiberType = GcHeapTypeSymbol(boundFiberTypeSignature)
     }
 
     object GcTypes {
@@ -109,6 +123,7 @@ object Synthetics {
         val stringLiteralFunctionType = FunctionTypeSymbol(stringLiteralFunctionTypeSignature)
         val stringLiteralJsStringFunctionType = FunctionTypeSymbol(stringLiteralJsStringFunctionTypeSignature)
         val boundContType = GcTypeSymbol(boundContTypeSignature)
+        val boundFiberType = GcTypeSymbol(boundFiberTypeSignature)
     }
 
     object FunctionHeapTypes {

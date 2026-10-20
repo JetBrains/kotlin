@@ -69,6 +69,7 @@ object WasmConfigurationUpdater : ConfigurationUpdater<KotlinWasmCompilerArgumen
         )
 
         configuration.put(WasmConfigurationKeys.WASM_USE_STACK_SWITCHING_PROPOSAL, arguments.wasmUseStackSwitchingProposal)
+        configuration.put(WasmConfigurationKeys.WASM_USE_REIFIED_FIBERS, arguments.wasmUseReifiedFibers)
         configuration.put(WasmConfigurationKeys.WASM_ENABLE_TAIL_CALLS, arguments.wasmEnableTailCalls)
         configuration.put(WasmConfigurationKeys.WASM_NO_JS_TAG, arguments.wasmNoJsTag)
         configuration.put(WasmConfigurationKeys.WASM_GENERATE_DWARF, arguments.generateDwarf)

@@ -177,6 +177,11 @@ class WasmContType(
     val funType: WasmHeapType.Type.FunctionType,
 ) : WasmTypeDeclaration(name)
 
+class WasmFiberType(
+    name: String,
+    val funType: WasmHeapType.Type.FunctionType,
+) : WasmTypeDeclaration(name)
+
 data class WasmFunctionType(
     val parameterTypes: List<WasmType>,
     val resultTypes: List<WasmType>

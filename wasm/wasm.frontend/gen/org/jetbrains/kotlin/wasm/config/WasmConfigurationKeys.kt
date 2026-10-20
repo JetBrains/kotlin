@@ -45,6 +45,9 @@ object WasmConfigurationKeys {
     @JvmField
     val WASM_USE_STACK_SWITCHING_PROPOSAL = CompilerConfigurationKey.create<Boolean>("WASM_USE_STACK_SWITCHING_PROPOSAL")
 
+    @JvmField
+    val WASM_USE_REIFIED_FIBERS = CompilerConfigurationKey.create<Boolean>("WASM_USE_REIFIED_FIBERS")
+
     // Don't use WebAssembly.JSTag for throwing and catching exceptions
     @JvmField
     val WASM_NO_JS_TAG = CompilerConfigurationKey.create<Boolean>("WASM_NO_JS_TAG")
@@ -129,6 +132,10 @@ var CompilerConfiguration.wasmUseNewExceptionProposal: Boolean
 var CompilerConfiguration.wasmUseStackSwitchingProposal: Boolean
     get() = getBoolean(WasmConfigurationKeys.WASM_USE_STACK_SWITCHING_PROPOSAL)
     set(value) { put(WasmConfigurationKeys.WASM_USE_STACK_SWITCHING_PROPOSAL, value) }
+
+var CompilerConfiguration.wasmUseReifiedFibers: Boolean
+    get() = getBoolean(WasmConfigurationKeys.WASM_USE_REIFIED_FIBERS)
+    set(value) { put(WasmConfigurationKeys.WASM_USE_REIFIED_FIBERS, value) }
 
 var CompilerConfiguration.wasmNoJsTag: Boolean
     get() = getBoolean(WasmConfigurationKeys.WASM_NO_JS_TAG)

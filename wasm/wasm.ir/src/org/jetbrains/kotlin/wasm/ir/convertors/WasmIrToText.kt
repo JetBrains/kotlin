@@ -317,6 +317,15 @@ class WasmIrToText(
         }
     }
 
+    private fun appendFiberType(type: WasmFiberType) {
+        newLineList("type") {
+            appendModuleFieldReference(type)
+            sameLineList("fiber") {
+                appendModuleFieldReference(resolver.resolve(type.funType))
+            }
+        }
+    }
+
     private fun appendWasmTypeList(typeList: List<WasmTypeDeclaration>) {
         typeList.forEach { type ->
             when (type) {
@@ -327,6 +336,7 @@ class WasmIrToText(
                 is WasmFunctionType ->
                     appendFunctionTypeDeclaration(type)
                 is WasmContType -> appendContType(type)
+                is WasmFiberType -> appendFiberType(type)
             }
         }
     }

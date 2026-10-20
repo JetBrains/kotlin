@@ -227,6 +227,16 @@ class KotlinWasmCompilerArguments : CommonJsAndWasmCompilerArguments() {
         }
 
     @Argument(
+        value = "-Xwasm-use-reified-fibers",
+        description = "Compile Kotlin Coroutines with WebAssembly Reified Fibers",
+    )
+    var wasmUseReifiedFibers: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xwasm-use-stack-switching-proposal",
         description = "Compile Kotlin Coroutines with WebAssembly Stack Switching Proposal",
     )

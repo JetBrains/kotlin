@@ -1066,7 +1066,9 @@ class BodyGenerator(
     }
 
     private fun generateResumeIntrinsicsEpilogue(wasmContinuation: WasmLocal, location: SourceLocation) {
-        body.buildSetLocal(wasmContinuation, location)
+        if (!backendContext.wasmUseReifiedFibers) {
+            body.buildSetLocal(wasmContinuation, location)
+        }
 
         // cast to WasmContinuationBox
         val wasmContBoxTypeSymbol =
@@ -1099,13 +1101,17 @@ class BodyGenerator(
     ) {
         val suspendFunctionClassType = function.parameters[0].type
         val suspendFunctionInvoke = irBuiltIns.suspendFunctionN(invokeArity).getSimpleFunction("invoke")!!
-        val contType = GcTypeSymbol(getContTypeSignature(suspendFunctionInvokeWasmType(invokeArity)))
-        val boundContType = Synthetics.GcTypes.boundContType
 
         body.buildGetLocal(functionContext.referenceLocal(0), location)
         castAnyToInvokable(suspendFunctionInvoke.owner, suspendFunctionClassType.classOrFail.owner, location)
-        body.buildContNew(contType, location)
-        body.buildContBind(contType, boundContType, location)
+        if (backendContext.wasmUseReifiedFibers) {
+            body.buildFiberNew(Synthetics.GcTypes.boundFiberType, Synthetics.Functions.fiberEntry(invokeArity), location)
+        } else {
+            val contType = GcTypeSymbol(getContTypeSignature(suspendFunctionInvokeWasmType(invokeArity)))
+            val boundContType = Synthetics.GcTypes.boundContType
+            body.buildContNew(contType, location)
+            body.buildContBind(contType, boundContType, location)
+        }
     }
 
     // Return true if generated.
@@ -1341,7 +1347,13 @@ class BodyGenerator(
 
 
             wasmSymbols.coroutinesStackSwitchingIntrinsics?.suspendIntrinsic -> {
-                body.buildSuspend(contTagId, location)
+                if (backendContext.wasmUseReifiedFibers) {
+                    body.buildGetGlobal(Synthetics.Globals.currentFiberGlobal, location)
+                    body.buildInstr(WasmOp.REF_AS_NOT_NULL, location)
+                    body.buildFiberSuspend(Synthetics.GcTypes.boundFiberType, location)
+                } else {
+                    body.buildSuspend(contTagId, location)
+                }
             }
 
             /**
@@ -1362,19 +1374,48 @@ class BodyGenerator(
                 val exceptionToResume = functionContext.referenceLocal(0)
                 val wasmContinuation = functionContext.referenceLocal(1)
 
-                val boundContType = Synthetics.GcTypes.boundContType
-
-                body.buildFunctionTypedBlock("on_suspend", referenceContSuspendHandlerBlockType()) { idx ->
-                    // Throwable
-                    body.buildGetLocal(exceptionToResume, location)
-                    if (backendContext.isWasmJsTarget) {
-                        body.buildCall(declarationCodegenContext.referenceFunction(wasmSymbols.jsRelatedSymbols.getJsError), location)
-                    }
-
+                if (backendContext.wasmUseReifiedFibers) {
+                    val prevFiber = functionContext.referenceLocal(SyntheticLocalType.PREV_FIBER)
+                    body.buildGetGlobal(Synthetics.Globals.currentFiberGlobal, location)
+                    body.buildSetLocal(prevFiber, location)
                     body.buildGetLocal(wasmContinuation, location)
-                    val contHandle = body.createNewContHandle(contTagId, idx)
-                    body.buildResumeThrow(boundContType, exceptionTagId, contHandle, location)
-                    body.buildInstr(WasmOp.RETURN, location)
+                    body.buildSetGlobal(Synthetics.Globals.currentFiberGlobal, location)
+
+                    val anyRefNull = WasmRefNullType(Synthetics.HeapTypes.anyBuiltInType)
+                    body.buildBlock("on_suspend", anyRefNull) { idx ->
+                        body.buildBlock("on_exn", WasmExnRefType) { exnIdx ->
+                            val catchAll = body.createNewCatchAllRef(exnIdx)
+                            body.buildTryTable(catchAll) {
+                                body.buildGetLocal(wasmContinuation, location)
+                                body.buildInstr(WasmOp.REF_AS_NOT_NULL, location)
+                                body.buildFiberResume(Synthetics.GcTypes.boundFiberType, idx, location)
+                                body.buildGetLocal(prevFiber, location)
+                                body.buildSetGlobal(Synthetics.Globals.currentFiberGlobal, location)
+                                body.buildInstr(WasmOp.RETURN, location)
+                            }
+                            body.buildUnreachableForVerifier()
+                        }
+                        body.buildGetLocal(prevFiber, location)
+                        body.buildSetGlobal(Synthetics.Globals.currentFiberGlobal, location)
+                        body.buildThrowRef(location)
+                    }
+                    body.buildGetLocal(prevFiber, location)
+                    body.buildSetGlobal(Synthetics.Globals.currentFiberGlobal, location)
+                } else {
+                    val boundContType = Synthetics.GcTypes.boundContType
+
+                    body.buildFunctionTypedBlock("on_suspend", referenceContSuspendHandlerBlockType()) { idx ->
+                        // Throwable
+                        body.buildGetLocal(exceptionToResume, location)
+                        if (backendContext.isWasmJsTarget) {
+                            body.buildCall(declarationCodegenContext.referenceFunction(wasmSymbols.jsRelatedSymbols.getJsError), location)
+                        }
+
+                        body.buildGetLocal(wasmContinuation, location)
+                        val contHandle = body.createNewContHandle(contTagId, idx)
+                        body.buildResumeThrow(boundContType, exceptionTagId, contHandle, location)
+                        body.buildInstr(WasmOp.RETURN, location)
+                    }
                 }
                 generateResumeIntrinsicsEpilogue(wasmContinuation, location)
             }
@@ -1383,8 +1424,12 @@ class BodyGenerator(
             // Used as a placeholder to be stored in WasmContinuationBox.wasmContinuation.
             // Substituted by the actual wasm continuation, when the coroutine suspends.
             wasmSymbols.coroutinesStackSwitchingIntrinsics?.nullContrefIntrinsic -> {
-                val boundContType = Synthetics.GcTypes.boundContType
-                body.buildInstr(WasmOp.REF_NULL, location, boundContType)
+                if (backendContext.wasmUseReifiedFibers) {
+                    body.buildRefNull(Synthetics.HeapTypes.boundFiberType, location)
+                } else {
+                    val boundContType = Synthetics.GcTypes.boundContType
+                    body.buildInstr(WasmOp.REF_NULL, location, boundContType)
+                }
             }
 
             /**
@@ -1402,13 +1447,42 @@ class BodyGenerator(
             wasmSymbols.coroutinesStackSwitchingIntrinsics?.resumeWithIntrinsic -> {
                 val wasmContinuation = functionContext.referenceLocal(0)
 
-                val boundContType = Synthetics.GcTypes.boundContType
-
-                body.buildFunctionTypedBlock("on_suspend", referenceContSuspendHandlerBlockType()) { idx ->
+                if (backendContext.wasmUseReifiedFibers) {
+                    val prevFiber = functionContext.referenceLocal(SyntheticLocalType.PREV_FIBER)
+                    body.buildGetGlobal(Synthetics.Globals.currentFiberGlobal, location)
+                    body.buildSetLocal(prevFiber, location)
                     body.buildGetLocal(wasmContinuation, location)
-                    val contHandle = body.createNewContHandle(contTagId, idx)
-                    body.buildResume(boundContType, contHandle, location)
-                    body.buildInstr(WasmOp.RETURN, location)
+                    body.buildSetGlobal(Synthetics.Globals.currentFiberGlobal, location)
+
+                    val anyRefNull = WasmRefNullType(Synthetics.HeapTypes.anyBuiltInType)
+                    body.buildBlock("on_suspend", anyRefNull) { idx ->
+                        body.buildBlock("on_exn", WasmExnRefType) { exnIdx ->
+                            val catchAll = body.createNewCatchAllRef(exnIdx)
+                            body.buildTryTable(catchAll) {
+                                body.buildGetLocal(wasmContinuation, location)
+                                body.buildInstr(WasmOp.REF_AS_NOT_NULL, location)
+                                body.buildFiberResume(Synthetics.GcTypes.boundFiberType, idx, location)
+                                body.buildGetLocal(prevFiber, location)
+                                body.buildSetGlobal(Synthetics.Globals.currentFiberGlobal, location)
+                                body.buildInstr(WasmOp.RETURN, location)
+                            }
+                            body.buildUnreachableForVerifier()
+                        }
+                        body.buildGetLocal(prevFiber, location)
+                        body.buildSetGlobal(Synthetics.Globals.currentFiberGlobal, location)
+                        body.buildThrowRef(location)
+                    }
+                    body.buildGetLocal(prevFiber, location)
+                    body.buildSetGlobal(Synthetics.Globals.currentFiberGlobal, location)
+                } else {
+                    val boundContType = Synthetics.GcTypes.boundContType
+
+                    body.buildFunctionTypedBlock("on_suspend", referenceContSuspendHandlerBlockType()) { idx ->
+                        body.buildGetLocal(wasmContinuation, location)
+                        val contHandle = body.createNewContHandle(contTagId, idx)
+                        body.buildResume(boundContType, contHandle, location)
+                        body.buildInstr(WasmOp.RETURN, location)
+                    }
                 }
                 generateResumeIntrinsicsEpilogue(wasmContinuation, location)
             }

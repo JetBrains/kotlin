@@ -115,6 +115,7 @@ class WasmBinaryToIR(val b: MyByteReader) {
                                     gcTypes += type
                                 is WasmArrayDeclaration -> {}
                                 is WasmContType -> {}
+                                is WasmFiberType -> {}
                             }
                         }
                     }
