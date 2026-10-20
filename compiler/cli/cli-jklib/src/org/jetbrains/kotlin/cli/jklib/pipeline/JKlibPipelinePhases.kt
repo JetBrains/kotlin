@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.arguments.K2JKlibCompilerArguments
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.diagnosticFactoriesStorage
+import org.jetbrains.kotlin.cli.jklib.IrCompilationResult
 import org.jetbrains.kotlin.cli.jklib.config.jklibCompileIr
 import org.jetbrains.kotlin.cli.jklib.config.jklibManifestProperties
 import org.jetbrains.kotlin.cli.jklib.config.jklibOutputDestination
@@ -335,6 +336,16 @@ private fun AllModulesFrontendOutput.convertToIrAndActualize(
             { listOfNotNull(FirDirectJavaActualDeclarationExtractor.initializeIfNeeded(it)) }
         },
     )
+}
+
+/**
+ * Hands the lowered IR produced by FIR2IR over as the result of the IR compilation, instead of serializing the module into a KLIB.
+ */
+object JKlibIrCompilationResultPhase : PipelinePhase<JKlibFir2IrPipelineArtifact, IrCompilationResult>(
+    name = "JKlibIrCompilationResultPhase",
+) {
+    override fun executePhase(input: JKlibFir2IrPipelineArtifact): IrCompilationResult =
+        IrCompilationResult(input.result.irModuleFragment, input.result.pluginContext, input.configuration)
 }
 
 object JKlibKlibSerializationPhase : PipelinePhase<JKlibFir2IrPipelineArtifact, JKlibSerializationArtifact>(
