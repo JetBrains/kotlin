@@ -16,6 +16,8 @@ plugins {
     id("nodejs-configuration")
     id("binaryen-configuration")
     id("wasmtime-configuration")
+    // TODO(KT-XXXXX): Remove when the bootstrap KGP componentizes WASI test binaries.
+    id("wasi-component-tests-bootstrap-workaround")
 }
 
 description = "Kotlin Power-Assert Runtime"

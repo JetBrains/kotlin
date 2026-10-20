@@ -41,6 +41,8 @@ plugins {
     id("binaryen-configuration")
     id("nodejs-configuration")
     id("wasmtime-configuration")
+    // TODO(KT-XXXXX): Remove when the bootstrap KGP componentizes WASI test binaries.
+    id("wasi-component-tests-bootstrap-workaround")
 }
 
 description = "Kotlin Standard Library"
