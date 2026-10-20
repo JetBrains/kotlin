@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.uklibs.include
 import org.jetbrains.kotlin.gradle.util.runProcess
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInNative
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.extension.ExtensionContext
@@ -34,6 +35,7 @@ import kotlin.test.assertEquals
 
 @DisplayName("SwiftPM import XCFrameworks integration")
 @SwiftPMImportGradlePluginTests
+@MustRunOnChangesInNative
 class SwiftPMImportXCFrameworksIT : KGPBaseTest() {
 
     @DisplayName("E2E smoke XCFramework emits a package that can be wired with a generic SwiftPM package and ran on the simulator")
