@@ -142,6 +142,35 @@ class TypeAliasExpansionClasspathSnapshotterTest : ClasspathSnapshotTestCommon()
 
         assertNull((snapshot as PackageFacadeKotlinClassSnapshot).typeAliases)
     }
+
+    /** KT-90252: enabling the setting must be visible as an ABI change of the facade, otherwise its new aliases are never diffed. */
+    @Test
+    fun testTypeAliasExpansionsAffectClassAbiHash() {
+        val classFile = aliasesSourceFile.compileSingle()
+
+        assertNotEquals(
+            (classFile.snapshot() as AccessibleClassSnapshot).classAbiHash,
+            (classFile.snapshot(expandTypeAliases = true) as AccessibleClassSnapshot).classAbiHash
+        )
+    }
+
+    /** Facades without type aliases must keep their hash when the setting is toggled, to avoid needless rebuilds. */
+    @Test
+    fun testTypeAliasExpansionsDoNotAffectClassAbiHashWithoutAliases() {
+        val classFile = TestSourceFile(
+            KotlinSourceFile(
+                baseDir = File("$testDataDir/kotlin/testPackageFacadeClasses/src"), relativePath = "com/example/FileFacade.kt",
+                preCompiledClassFile = ClassFile(
+                    File("$testDataDir/kotlin/testPackageFacadeClasses/classes"), "com/example/FileFacadeKt.class"
+                )
+            ), tmpDir
+        ).compileSingle()
+
+        assertEquals(
+            (classFile.snapshot() as AccessibleClassSnapshot).classAbiHash,
+            (classFile.snapshot(expandTypeAliases = true) as AccessibleClassSnapshot).classAbiHash
+        )
+    }
 }
 
 class JavaOnlyClasspathSnapshotterTest : ClasspathSnapshotTestCommon() {

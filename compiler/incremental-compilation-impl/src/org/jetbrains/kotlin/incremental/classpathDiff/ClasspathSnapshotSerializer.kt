@@ -140,7 +140,7 @@ private object PackageFacadeKotlinClassSnapshotExternalizer : DataExternalizer<P
     }
 }
 
-private object TypeAliasSnapshotExternalizer : DataExternalizer<TypeAliasSnapshot> {
+internal object TypeAliasSnapshotExternalizer : DataExternalizer<TypeAliasSnapshot> {
 
     override fun save(output: DataOutput, value: TypeAliasSnapshot) {
         ClassIdExternalizer.save(output, value.aliasClassId)
