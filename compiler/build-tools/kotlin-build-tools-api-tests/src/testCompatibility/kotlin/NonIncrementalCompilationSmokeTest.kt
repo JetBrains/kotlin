@@ -149,8 +149,9 @@ class NonIncrementalCompilationSmokeTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     @TestMetadata("js-ic-basic-app")
     fun basicJsRichDtsGeneration(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        if (strategyConfig.first.getCompilerVersion() < "2.5.0") {
-            // The rich dts generation is not available in pre 2.5.0 versions of Kotlin
+        val kotlinToolingVersion = KotlinToolingVersion(strategyConfig.first.getCompilerVersion())
+        if (kotlinToolingVersion <= KotlinToolingVersion(2, 5, 0, "Beta1")) {
+            // The rich dts generation is not available in pre 2.5.0-Beta1 versions of Kotlin
             return
         }
 
