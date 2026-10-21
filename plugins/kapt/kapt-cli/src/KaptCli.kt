@@ -57,6 +57,9 @@ internal fun transformArgs(args: List<String>, messageCollector: MessageCollecto
     }
 }
 
+// Repeatable options that also accept a comma-separated list.
+private val LIST_OPTIONS = setOf(KaptCliOption.CLASSPATH_CHANGES, KaptCliOption.ANNOTATION_PROCESSORS_OPTION)
+
 private const val KAPT_COMPILER_PLUGIN_JAR_NAME = "kotlin-annotation-processing.jar"
 
 private fun transformKaptToolArgs(args: List<String>, messageCollector: MessageCollector, isTest: Boolean): List<String> {
@@ -97,6 +100,16 @@ private fun transformKaptToolArgs(args: List<String>, messageCollector: MessageC
         }
 
         val transformedOption = option.cliToolOption.transform(arg)
+
+        // kotlinc splits `-P` and `-Xplugin` values on ',', so such a value cannot reach the plugin as is.
+        if (',' in transformedOption) {
+            if (option.pluginOption !in LIST_OPTIONS) {
+                argError("$arg: values containing ',' are not supported by ${option.cliToolOption.name}")
+            }
+            transformedOption.split(',').map { it.trim() }.filter { it.isNotEmpty() }
+                .forEach { transformed += kaptArg(option.pluginOption, it) }
+            continue
+        }
 
         when (option.pluginOption) {
             KaptCliOption.TOOLS_JAR_OPTION -> {

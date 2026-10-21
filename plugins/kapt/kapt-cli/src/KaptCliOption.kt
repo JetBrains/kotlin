@@ -101,6 +101,7 @@ enum class KaptCliOption(
         "classpathChange",
         "<jvmInternalName,[jvmInternalName,...]>",
         "Use only in apt mode. Classpath jvm internal names that changed.",
+        true,
         cliToolOption = CliToolOption("-Kapt-classpath-changes", VALUE)
     ),
 

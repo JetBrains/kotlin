@@ -1,0 +1,5 @@
+# before
+-Kapt-option:k=a,b
+
+# after
+error: -Kapt-option:k=a,b: values containing ',' are not supported by -Kapt-option
