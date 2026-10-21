@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgno
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.jvmProject
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.junit.jupiter.api.DisplayName
 
 class CompilerPluginsConfigurationInputsTrackingTest : BaseCompilationTest() {
@@ -99,5 +100,7 @@ class CompilerPluginsConfigurationInputsTrackingTest : BaseCompilationTest() {
     }
 
     private fun expectedLogLevel(strategyConfig: CompilerExecutionStrategyConfiguration): LogLevel =
-        if (strategyConfig.second is ExecutionPolicy.WithDaemon) LogLevel.DEBUG else LogLevel.INFO // TODO: KT-85024
+        if (strategyConfig.second is ExecutionPolicy.WithDaemon
+            && KotlinToolingVersion(strategyConfig.first.getCompilerVersion()) < KotlinToolingVersion("2.5.20-SNAPSHOT")
+        ) LogLevel.DEBUG else LogLevel.INFO
 }

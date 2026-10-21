@@ -11,11 +11,8 @@ import org.jetbrains.kotlin.daemon.common.CompilerServicesFacadeBase
 import org.jetbrains.kotlin.daemon.common.SerializedDataContainer
 
 public interface BtaSerializable {
-    public fun beforeSerialization(logger: KotlinLogger): List<MessageVisitor> {
-        return emptyList()
-    }
-
-    public fun afterDeserialization(messageReporter: (Message) -> Unit, compilerFacade: CompilerServicesFacadeBase? = null) {}
+    public fun beforeSerialization(logger: KotlinLogger): List<MessageVisitor>
+    public fun afterDeserialization(messageReporter: (Message) -> Unit, compilerFacade: CompilerServicesFacadeBase? = null)
 }
 
 public interface SupportsNewDaemonMode<T> : BuildOperation<T>, BtaSerializable {

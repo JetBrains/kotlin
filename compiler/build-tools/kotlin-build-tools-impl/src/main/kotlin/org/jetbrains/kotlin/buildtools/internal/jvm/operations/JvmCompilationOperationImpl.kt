@@ -43,11 +43,9 @@ import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalC
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationOptionsImpl.Companion.USE_FIR_RUNNER
 import org.jetbrains.kotlin.buildtools.internal.jvm.toOptions
 import org.jetbrains.kotlin.buildtools.internal.serializability.BtaSerializable
-import org.jetbrains.kotlin.buildtools.internal.serializability.CompilationResultSerializer
 import org.jetbrains.kotlin.buildtools.internal.serializability.Message
 import org.jetbrains.kotlin.buildtools.internal.serializability.MessageVisitor
 import org.jetbrains.kotlin.buildtools.internal.serializability.PathAsStringSerializer
-import org.jetbrains.kotlin.buildtools.internal.serializability.SupportsNewDaemonMode
 import org.jetbrains.kotlin.buildtools.internal.serializability.getPropertyByName
 import org.jetbrains.kotlin.buildtools.internal.serializability.setPropertyByName
 import org.jetbrains.kotlin.buildtools.internal.trackers.getMetricsReporter
@@ -73,8 +71,7 @@ internal class JvmCompilationOperationImpl(
 ) : BaseCompilationOperationImpl<JvmCompilerArgumentsImpl, @Contextual K2JVMCompilerArguments>(),
     JvmCompilationOperation,
     JvmCompilationOperation.Builder,
-    DeepCopyable<JvmCompilationOperationImpl>,
-    SupportsNewDaemonMode<CompilationResult> {
+    DeepCopyable<JvmCompilationOperationImpl> {
 
     @SerialName("INCREMENTAL_COMPILATION")
     internal var incrementalCompilation: JvmIncrementalCompilationConfiguration? = null
@@ -87,14 +84,14 @@ internal class JvmCompilationOperationImpl(
     override fun toBuilder(): JvmCompilationOperation.Builder = deepCopy()
 
     override fun beforeSerialization(logger: KotlinLogger): List<MessageVisitor> = buildList {
-        addAll(super<BaseCompilationOperationImpl>.beforeSerialization(logger))
+        addAll(super.beforeSerialization(logger))
         (incrementalCompilation as? BtaSerializable)?.let { incrementalCompilation ->
             addAll(incrementalCompilation.beforeSerialization(logger))
         }
     }
 
     override fun afterDeserialization(messageReporter: (Message) -> Unit, compilerFacade: CompilerServicesFacadeBase?) {
-        super<BaseCompilationOperationImpl>.afterDeserialization(messageReporter, compilerFacade)
+        super.afterDeserialization(messageReporter, compilerFacade)
         (incrementalCompilation as? BtaSerializable)?.afterDeserialization(messageReporter, compilerFacade)
     }
 
@@ -449,15 +446,6 @@ internal class JvmCompilationOperationImpl(
             generateCompilerRefIndex = generateCompilerRefIndex,
             lookupTrackerDelegate = getLookupTrackerAdapter(),
         )
-
-    override fun deserializeResult(serializedData: SerializedDataContainer): CompilationResult {
-        return KotlinToolchainsImpl.serializer.deserialize(CompilationResultSerializer, serializedData)
-    }
-
-    override fun serializeResult(result: CompilationResult): SerializedDataContainer {
-        return KotlinToolchainsImpl.serializer.serialize(CompilationResultSerializer, result)
-    }
-
 
     companion object {
         private val propertyAccessMap = mapOf(
