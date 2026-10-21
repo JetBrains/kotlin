@@ -251,24 +251,14 @@ internal class StubBasedFirTypeDeserializer(
         if (constructor !is ConeClassLikeLookupTag) return null
 
         val typeElement = typeReference.typeElement?.unwrapNullability()
-        val arguments = when (typeElement) {
-            is KtUserType -> buildList {
-                // The type for Outer<T>.Inner<S> needs to have type args <S, T>
-                var current: KtUserType? = typeElement
-                while (current != null) {
-                    current.typeArguments.forEach { add(typeArgument(it)) }
-                    current = current.qualifier
-                }
-            }.toTypedArray()
-            is KtFunctionType -> buildList {
-                typeElement.contextReceiversTypeReferences.mapTo(this) { type(it).toTypeProjection(Variance.INVARIANT) }
-                typeElement.receiver?.let { add(type(it.typeReference).toTypeProjection(Variance.INVARIANT)) }
-                typeElement.parameters.mapTo(this) { type(it.typeReference!!).toTypeProjection(Variance.INVARIANT) }
-                add(type(typeElement.returnTypeReference!!).toTypeProjection(Variance.INVARIANT))
-            }.toTypedArray()
-            else -> errorWithAttachment("not supported ${typeElement?.let { it::class }}") {
-                withPsiEntry("typeElement", typeElement)
+        val arguments = typeElement?.mapTypeArguments { argumentTypeReference, projectionKind ->
+            if (projectionKind == KtProjectionKind.STAR) {
+                ConeStarProjection
+            } else {
+                typeArgument(type(argumentTypeReference!!), projectionKind)
             }
+        }?.toTypedArray() ?: errorWithAttachment("not supported ${typeElement?.let { it::class }}") {
+            withPsiEntry("typeElement", typeElement)
         }
 
         return ConeClassLikeTypeImpl(
@@ -352,16 +342,6 @@ internal class StubBasedFirTypeDeserializer(
         return ClassId(internalComposePackageFqName, name)
     }
 
-
-    private fun typeArgument(projection: KtTypeProjection): ConeTypeProjection {
-        if (projection.projectionKind == KtProjectionKind.STAR) {
-            return ConeStarProjection
-        }
-
-        val type = type(projection.typeReference!!)
-        return typeArgument(type, projection.projectionKind)
-    }
-
     private fun typeArgument(
         type: ConeKotlinType,
         projectionKind: KtProjectionKind
@@ -415,4 +395,32 @@ internal fun KtUserType.classId(): ClassId {
         FqName.fromSegments(classFragments),
         isLocal = false
     )
+}
+
+/**
+ * Maps type arguments of [this] type element in the order of the arguments of the [ConeClassLikeType] which
+ * [StubBasedFirTypeDeserializer] builds for it, or returns `null` if the element has no type arguments of its own (e.g., `T & Any`).
+ *
+ * [transform] receives the type reference of an argument (`null` for a star projection) and its projection kind.
+ */
+private inline fun <R> KtTypeElement.mapTypeArguments(
+    transform: (typeReference: KtTypeReference?, projectionKind: KtProjectionKind) -> R,
+): List<R>? = when (this) {
+    is KtUserType -> buildList {
+        // The type for Outer<T>.Inner<S> needs to have type args <S, T>
+        var current: KtUserType? = this@mapTypeArguments
+        while (current != null) {
+            current.typeArguments.forEach { add(transform(it.typeReference, it.projectionKind)) }
+            current = current.qualifier
+        }
+    }
+
+    is KtFunctionType -> buildList {
+        contextReceiversTypeReferences.forEach { add(transform(it, KtProjectionKind.NONE)) }
+        receiver?.let { add(transform(it.typeReference, KtProjectionKind.NONE)) }
+        parameters.forEach { add(transform(it.typeReference, KtProjectionKind.NONE)) }
+        add(transform(returnTypeReference, KtProjectionKind.NONE))
+    }
+
+    else -> null
 }
