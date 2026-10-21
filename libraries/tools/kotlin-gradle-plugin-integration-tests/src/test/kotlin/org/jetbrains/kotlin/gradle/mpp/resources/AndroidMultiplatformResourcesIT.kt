@@ -12,11 +12,13 @@ import org.jetbrains.kotlin.gradle.uklibs.addPublishedProjectToRepositories
 import org.jetbrains.kotlin.gradle.uklibs.include
 import org.jetbrains.kotlin.gradle.uklibs.publish
 import org.jetbrains.kotlin.incremental.testingUtils.assertEqualDirectoriesIgnoringDotFiles
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import java.io.File
 import java.nio.file.Path
 
 @MppGradlePluginTests
+@MustRunOnChangesInGradle
 @DisplayName("Test multiplatform resources consumption and publication in androidTarget()")
 class AndroidMultiplatformResourcesIT : KGPBaseTest() {
 
