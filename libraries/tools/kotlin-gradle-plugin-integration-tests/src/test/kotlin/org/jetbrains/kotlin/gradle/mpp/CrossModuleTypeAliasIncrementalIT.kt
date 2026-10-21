@@ -10,9 +10,13 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.uklibs.include
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInBuildToolsApi
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 
 @MppGradlePluginTests
+@MustRunOnChangesInGradle
+@MustRunOnChangesInBuildToolsApi
 @DisplayName("Cross-module type alias KMP incremental compilation")
 class CrossModuleTypeAliasIncrementalIT : KGPBaseTest() {
 
