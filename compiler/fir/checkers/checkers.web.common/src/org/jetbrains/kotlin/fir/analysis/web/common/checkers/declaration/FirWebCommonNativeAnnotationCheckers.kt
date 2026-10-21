@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.fir.analysis.checkers.isTopLevel
 import org.jetbrains.kotlin.fir.declarations.utils.isNativeObject
+import org.jetbrains.kotlin.name.WebCommonStandardClassIds
 
 abstract class FirWebCommonAbstractNativeAnnotationChecker(
     private val requiredAnnotation: ClassId,
@@ -45,4 +46,11 @@ abstract class FirWebCommonAbstractNativeAnnotationChecker(
             )
         }
     }
+}
+
+object FirWebCommonNativeInvokeChecker : FirWebCommonAbstractNativeAnnotationChecker(
+    WebCommonStandardClassIds.Annotations.JsNativeInvoke,
+) {
+    override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
+        get() = true
 }
