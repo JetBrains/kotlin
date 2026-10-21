@@ -41,18 +41,12 @@ fun box() {
 // test.kt:24 box:
 
 // EXPECTATIONS JS_IR
-// test.kt:8 <init properties test.kt>:
-// test.kt:8 <init properties test.kt>:
-// test.kt:8 <init properties test.kt>:
 // test.kt:4 <init>: x=1:number
 // test.kt:4 <init>: x=1:number, y="":kotlin.String
 // test.kt:4 <init>: x=1:number, y="":kotlin.String, z=48:number
 // test.kt:4 <init>: x=1:number, y="":kotlin.String, z=48:number
 // test.kt:4 <init>: x=1:number, y="":kotlin.String, z=48:number
 // test.kt:4 <init>: x=1:number, y="":kotlin.String, z=48:number
-// test.kt:8 <init properties test.kt>:
-// test.kt:8 <init properties test.kt>:
-// test.kt:8 <init properties test.kt>:
 // test.kt:12 box:
 // test.kt:4 <init>: x=1:number
 // test.kt:4 <init>: x=1:number, y="":kotlin.String
