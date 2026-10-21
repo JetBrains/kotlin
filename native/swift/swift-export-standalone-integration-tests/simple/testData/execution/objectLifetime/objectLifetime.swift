@@ -119,16 +119,28 @@ struct ObjectLifetimeTests {
         try #require(!isTrackedAlive())
     }
 
-    // Permanent objects get a fresh uncached wrapper per return, whose lifetime is the plain NSObject refcount.
+    // Permanent objects cannot be associated with a wrapper, so each return allocates a fresh uncached one.
+    // Kotlin never collects permanent objects, so the wrappers themselves are checked instead: their
+    // retain/release/_tryRetain fall through to NSObject, so a Swift weak reference tracks the wrapper lifetime.
     @Test
-    func permanentObjectWrappersAreBalanced() throws {
-        try autoreleasepool {
-            let first = unitAsAny()
-            try #require(isPermanentObject(value: first))
-            for _ in 0..<100 {
-                try #require(isPermanentObject(value: unitAsAny()))
-            }
-            try #require(first is KotlinBase)
+    func permanentObjectWrappersAreReleased() throws {
+        final class WeakBox {
+            weak var value: KotlinBase?
+            init(_ value: KotlinBase) { self.value = value }
         }
+
+        var boxes: [WeakBox] = []
+        try autoreleasepool {
+            let held = unitAsAny() as! KotlinBase
+            try #require(isPermanentObject(value: held))
+            boxes.append(WeakBox(held))
+            for _ in 0..<100 {
+                let wrapper = unitAsAny() as! KotlinBase
+                try #require(wrapper !== held)
+                boxes.append(WeakBox(wrapper))
+            }
+            try withExtendedLifetime(held) { try #require(boxes[0].value === held) }
+        }
+        try #require(boxes.allSatisfy { $0.value == nil })
     }
 }

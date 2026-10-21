@@ -60,6 +60,9 @@ fun unitAsAny(): Any = Unit
 fun isPermanentObject(value: Any): Boolean = value.isPermanent()
 
 fun isTrackedAlive(): Boolean {
+    // The rirst one is for the initial cleanup and for running the finalizers,
+    // second to cleanup after the previous finalizers,
+    // and a third one to ~~rule them all~~ for good measure.
     repeat(3) { GC.collect() }
     return tracked?.get() != null
 }
