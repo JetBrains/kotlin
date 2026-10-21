@@ -8,10 +8,12 @@ package org.jetbrains.kotlin.gradle.native
 import org.gradle.api.JavaVersion
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 
 @DisplayName("KotlinNative isolated class loader test")
+@MustRunOnChangesInGradle
 @NativeGradlePluginTests
 internal class KotlinNativeIsolatedClassloaderIT : KGPBaseTest() {
 
