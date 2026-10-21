@@ -10,10 +10,14 @@ import org.gradle.kotlin.dsl.invoke
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInBuildToolsApi
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.deleteExisting
 
 @MppGradlePluginTests
+@MustRunOnChangesInGradle
+@MustRunOnChangesInBuildToolsApi
 @DisplayName("JVM classpath metadata incremental compilation")
 class JvmClasspathMetadataIncrementalIT : KGPBaseTest() {
 
