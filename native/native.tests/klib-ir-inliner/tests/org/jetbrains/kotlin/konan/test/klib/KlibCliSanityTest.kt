@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.library.packageFqName
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.utils.patchManifestAsMap
 import org.jetbrains.kotlin.test.utils.patchManifestToBumpAbiVersion
+import org.jetbrains.kotlin.testFederation.HostDependent
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.Tag
@@ -44,6 +45,7 @@ import kotlin.io.path.absolutePathString
 import kotlin.reflect.KProperty1
 
 @Tag("klib")
+@HostDependent
 class KlibCliSanityTest : AbstractNativeSimpleTest() {
     @Test
     fun `Compiler consumes unpacked KLIBs passed by absolute paths via CLI arguments`() {

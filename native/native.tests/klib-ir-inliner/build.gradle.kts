@@ -60,7 +60,7 @@ projectTests {
 
     withStdlibCommon()
 
-    fun klibIrInlinerTestTask(taskName: String, tag: String? = null) = nativeTestTask(
+    fun commonBackendTestTask(taskName: String, tag: String? = null) = nativeTestTask(
         taskName,
         tag = tag,
         allowParallelExecution = true,
@@ -89,11 +89,10 @@ projectTests {
         systemProperty("user.dir", layout.buildDirectory.asFile.get().absolutePath)
     }
 
-    klibIrInlinerTestTask("test")
-    // Windows-specific subset of `test`: host-independent tests are covered on Linux and macOS hosts,
-    klibIrInlinerTestTask("windowsTest", tag = "!host-independent & !windows-nightly")
-    // Windows-specific subset of `test`: tests running native binaries with host-independent behavior are run on Windows only nightly.
-    klibIrInlinerTestTask("windowsNightlyTest", tag = "windows-nightly")
+    commonBackendTestTask("test")
+    // Windows-specific subset of `test` for pre-merge checks: only explicitly host-dependent tests.
+    // All tests, including the rest of `test`, are run on Windows nightly, which reveals tests that should be tagged `host-dependent`.
+    commonBackendTestTask("commonBackendTestOnWindows", tag = "host-dependent")
 
     testGenerator("org.jetbrains.kotlin.generators.tests.GenerateKlibNativeTestsKt", generateTestsInBuildDirectory = true) {
         javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))

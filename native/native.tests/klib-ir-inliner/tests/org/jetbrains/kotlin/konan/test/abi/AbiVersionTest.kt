@@ -11,10 +11,8 @@ import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
-import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 
-@Tag("host-independent")
 class AbiVersionTest {
     @Test
     fun `Current ABI version less or equal to the latest stable LV`() {

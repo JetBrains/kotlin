@@ -14,12 +14,10 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilat
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UsePartialLinkage
 import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
 
-@Tag("windows-nightly")
 abstract class NativePartialLinkageDiagnosticsTest : AbstractNativeSimpleTest() {
     fun prepareExecutable(): TestCompilationResult<out TestCompilationArtifact.Executable> {
         val lib11Source = buildDir.resolve("lib1.kt").apply { writeText(lib11SourceText) }

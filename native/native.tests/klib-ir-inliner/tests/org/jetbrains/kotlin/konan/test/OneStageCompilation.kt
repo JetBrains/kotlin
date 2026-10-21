@@ -11,10 +11,8 @@ import org.jetbrains.kotlin.konan.test.blackbox.compileToExecutableInOneStage
 import org.jetbrains.kotlin.konan.test.blackbox.generateTestCaseWithSingleFile
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
 import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 
-@Tag("windows-nightly")
 class OneStageCompilation : AbstractNativeSimpleTest() {
     @Test
     @DisplayName("Test one-stage compilation (KT-80298)")

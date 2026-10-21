@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.konan.test.syntheticAccessors.AbstractNativeKlibSynt
 import org.jetbrains.kotlin.konan.test.dump.AbstractNativeLoadCompiledKotlinTest
 import org.jetbrains.kotlin.konan.test.headerMode.AbstractNativeCodegenBoxCoreHeaderModeTest
 import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
+import org.jetbrains.kotlin.testFederation.HostDependent
 import org.junit.jupiter.api.Tag
 
 fun main(args: Array<String>) {
@@ -42,10 +43,10 @@ fun main(args: Array<String>) {
     generateTestGroupSuiteWithJUnit5(args) {
         // irText tests
         testGroup(testsRoot, "compiler/testData/ir/irText") {
-            testClass<AbstractLightTreeNativeIrTextTest>(annotations = listOf(hostIndependent())) {
+            testClass<AbstractLightTreeNativeIrTextTest> {
                 model()
             }
-            testClass<AbstractPsiNativeIrTextTest>(annotations = listOf(hostIndependent())) {
+            testClass<AbstractPsiNativeIrTextTest> {
                 model()
             }
         }
@@ -54,7 +55,7 @@ fun main(args: Array<String>) {
         testGroup(testsRoot = testsRoot, testDataRoot = "compiler/testData/diagnostics") {
             testClass<AbstractPsiNativeDiagnosticsWithBackendTestBase>(
                 suiteTestClassName = "PsiNativeKlibDiagnosticsTestGenerated",
-                annotations = listOf(klib(), hostIndependent())
+                annotations = listOf(klib())
             ) {
                 model("klibSerializationTests", excludedPattern = excludedCustomTestdataPattern)
                 // KT-67300: TODO: extract specialBackendChecks into own test runner, invoking Native backend facade at the end
@@ -63,7 +64,7 @@ fun main(args: Array<String>) {
 
             testClass<AbstractLightTreeNativeDiagnosticsWithBackendTestBase>(
                 suiteTestClassName = "LightTreeNativeKlibDiagnosticsTestGenerated",
-                annotations = listOf(klib(), hostIndependent())
+                annotations = listOf(klib())
             ) {
                 model("klibSerializationTests", excludedPattern = excludedCustomTestdataPattern)
                 // KT-67300: TODO: extract specialBackendChecks into own test runner, invoking Native backend facade at the end
@@ -77,7 +78,6 @@ fun main(args: Array<String>) {
             testClass<AbstractNativeKlibDumpMetadataTest>(
                 annotations = listOf(
                     provider<UseDummyTestCaseGroupProvider>(),
-                    hostIndependent(),
                 )
             ) {
                 model(pattern = "^([^_](.+)).kt$", recursive = true)
@@ -88,7 +88,6 @@ fun main(args: Array<String>) {
             testClass<AbstractNativeKlibDumpMetadataSerializationTest>(
                 annotations = listOf(
                     provider<UseDummyTestCaseGroupProvider>(),
-                    hostIndependent(),
                 )
             ) {
                 model(pattern = "^([^_](.+)).kt$", recursive = true)
@@ -100,7 +99,6 @@ fun main(args: Array<String>) {
             testClass<AbstractNativeKlibDumpIrTest>(
                 annotations = listOf(
                     provider<UseDummyTestCaseGroupProvider>(),
-                    hostIndependent(),
                 )
             ) {
                 model(pattern = "^([^_](.+)).kt$", recursive = true)
@@ -112,7 +110,6 @@ fun main(args: Array<String>) {
             testClass<AbstractNativeKlibDumpSignaturesTest>(
                 annotations = listOf(
                     provider<UseDummyTestCaseGroupProvider>(),
-                    hostIndependent(),
                 )
             ) {
                 model(pattern = "^([^_](.+)).(kt|def)$", recursive = true)
@@ -121,20 +118,20 @@ fun main(args: Array<String>) {
 
         // Header klib comparison tests
         testGroup(testsRoot, "native/native.tests/testData/klib/header-klibs/comparison") {
-            testClass<AbstractNativeHeaderKlibComparisonTest>(annotations = listOf(hostIndependent())) {
+            testClass<AbstractNativeHeaderKlibComparisonTest> {
                 model(extension = null, recursive = false)
             }
         }
 
         // Header klib compilation tests
         testGroup(testsRoot, "native/native.tests/testData/klib/header-klibs/compilation") {
-            testClass<AbstractNativeHeaderKlibCompilationTest>(annotations = listOf(hostIndependent())) {
+            testClass<AbstractNativeHeaderKlibCompilationTest> {
                 model(extension = null, recursive = false)
             }
         }
 
         testGroup(testsRoot, "compiler/testData/codegen") {
-            testClass<AbstractNativeIrDeserializationTest>(annotations = listOf(hostIndependent())) {
+            testClass<AbstractNativeIrDeserializationTest> {
                 model("box", excludeDirs = k1BoxTestDir)
                 model("boxInline")
             }
@@ -143,7 +140,6 @@ fun main(args: Array<String>) {
                 suiteTestClassName = "NativeCodegenBoxTestGenerated",
                 annotations = listOf(
                     provider<UseDummyTestCaseGroupProvider>(),
-                    windowsNightly(),
                 )
             ) {
                 model("box", excludeDirs = k1BoxTestDir)
@@ -154,7 +150,6 @@ fun main(args: Array<String>) {
                 suiteTestClassName = "NativeCodegenBoxHeaderModeTestGenerated",
                 annotations = listOf(
                     provider<UseDummyTestCaseGroupProvider>(),
-                    hostIndependent(),
                 )
             ) {
                 model("box", excludeDirs = k1BoxTestDir)
@@ -167,6 +162,7 @@ fun main(args: Array<String>) {
                 suiteTestClassName = "NativeSpecificCodegenBoxTestGenerated",
                 annotations = listOf(
                     provider<UseDummyTestCaseGroupProvider>(),
+                    hostDependent(),
                 )
             ) {
                 model()
@@ -179,7 +175,6 @@ fun main(args: Array<String>) {
                 suiteTestClassName = "NativeKlibSyntheticAccessorsBoxTestGenerated",
                 annotations = listOf(
                     provider<UseExtTestCaseGroupProvider>(),
-                    windowsNightly(),
                 )
             ) {
                 model()
@@ -191,7 +186,6 @@ fun main(args: Array<String>) {
             testClass<AbstractNativeKlibSyntheticAccessorTest>(
                 annotations = listOf(
                     *klibSyntheticAccessors(),
-                    hostIndependent(),
                 )
             ) {
                 model()
@@ -200,19 +194,19 @@ fun main(args: Array<String>) {
 
         // KLIB cross-compilation tests.
         testGroup(testsRoot, "native/native.tests/testData/klib/cross-compilation/identity") {
-            testClass<AbstractKlibCrossCompilationIdentityTest> {
+            testClass<AbstractKlibCrossCompilationIdentityTest>(annotations = listOf(hostDependent())) {
                 model()
             }
         }
 
         testGroup(testsRoot, "compiler/testData/klib/dump-abi/content") {
-            testClass<AbstractNativeLibraryAbiReaderTest>(annotations = listOf(hostIndependent())) {
+            testClass<AbstractNativeLibraryAbiReaderTest> {
                 model()
             }
         }
 
         testGroup(testsRoot, "compiler/testData/loadJava", testRunnerMethodName = "runTest0") {
-            testClass<AbstractNativeLoadCompiledKotlinTest>(annotations = listOf(hostIndependent())) {
+            testClass<AbstractNativeLoadCompiledKotlinTest> {
                 model("compiledKotlin", extension = "kt")
                 model("compiledKotlinWithStdlib", extension = "kt")
             }
@@ -222,11 +216,7 @@ fun main(args: Array<String>) {
 
 private fun klib() = annotation(Tag::class.java, "klib")
 
-// Tests not depending on the host: they are excluded from the Windows-specific `windowsTest` task, while Linux and macOS cover them.
-private fun hostIndependent() = annotation(Tag::class.java, "host-independent")
-
-// Tests running native binaries, but checking host-independent behavior: on Windows, they are run only in `windowsNightlyTest`.
-private fun windowsNightly() = annotation(Tag::class.java, "windows-nightly")
+private fun hostDependent() = annotation(HostDependent::class.java)
 
 fun klibSyntheticAccessors() = arrayOf(
     annotation(
