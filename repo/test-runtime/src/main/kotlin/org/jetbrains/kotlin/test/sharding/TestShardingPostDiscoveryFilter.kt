@@ -30,6 +30,7 @@ internal val testsShardByMethodTag = TestTag.create(testsShardByMethodTagKey)
  *
  * A `@TestFactory` still runs on a single shard.
  * A `@TestTemplate` also runs on a single shard, unless it uses [ParameterizedTestSharding].
+ * Ignored for the classes listed in the timings, which run whole on their shard (see [TimedTestSharding]).
  */
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
@@ -48,11 +49,13 @@ internal class TestShardingPostDiscoveryFilter(
         if (!configuration.isShardingEnabled) return included("No shards configured")
         val isTestMethod = test.type == TestDescriptor.Type.TEST || test.mayRegisterTests()
         if (!isTestMethod) return included("Classes/Containers are always enabled")
-        if (testsShardParameterizedTag in test.tags) return included("Test invocations are sharded by parameters")
+        val timedShard = test.timedShard()
+        if (timedShard == null && testsShardParameterizedTag in test.tags) return included("Test invocations are sharded by parameters")
 
         val shardIndex = configuration.shardIndex
-        val distributionKey = test.shardingDistributionKey(configuration).encodeToByteArray()
-        val thisTestShard = calculateTestShard(distributionKey, configuration.shardCount, configuration.shardSeed)
+        val thisTestShard = timedShard ?: calculateTestShard(
+            test.shardingDistributionKey(configuration).encodeToByteArray(), configuration.shardCount, configuration.shardSeed
+        )
         return if (thisTestShard == shardIndex) {
             included("Current shard index: '$shardIndex'. Test shard index: '$thisTestShard'")
         } else {
@@ -67,13 +70,7 @@ internal class TestShardingPostDiscoveryFilter(
  */
 internal fun TestDescriptor.shardingDistributionKey(configuration: TestShardingConfiguration): String {
     val uniqueId = this.uniqueId
-
-    /*
-    If the test is contained within a class, then we can find the class by traversing the parents
-     */
-    val classDescriptor = generateSequence(this) { it.parent.getOrNull() }
-        .filterIsInstance<ClassBasedTestDescriptor>()
-        .firstOrNull()
+    val classDescriptor = findClassDescriptor()
 
     /*
     Certain test engines may at least require some thought on how to put tests into shards.
@@ -97,6 +94,25 @@ internal fun TestDescriptor.shardingDistributionKey(configuration: TestShardingC
         else -> error("Unexpected Test Engine ID: ${uniqueId.engineId}")
     }
 }
+
+/**
+ * The innermost class containing this test, found by traversing the parents,
+ * or `null` if the test is not contained within a class.
+ */
+private fun TestDescriptor.findClassDescriptor(): ClassBasedTestDescriptor? =
+    generateSequence(this) { it.parent.getOrNull() }.filterIsInstance<ClassBasedTestDescriptor>().firstOrNull()
+
+/**
+ * The shard of the test's class in the timings (see [TimedTestSharding]),
+ * or `null` if the timings do not list the class.
+ */
+private fun TestDescriptor.timedShard(): Int? {
+    val testClass = findClassDescriptor()?.testClass ?: return null
+    return timedTestSharding?.shardFor(testClass.name)
+}
+
+/** Execution-time counterpart of [TestDescriptor.timedShard] */
+internal fun ExtensionContext.timedShard(): Int? = timedTestSharding?.shardFor(requiredTestClass.name)
 
 /**
  * Execution-time counterpart of [TestDescriptor.shardingDistributionKey], used to salt the invocations of a test template (see [shard]):

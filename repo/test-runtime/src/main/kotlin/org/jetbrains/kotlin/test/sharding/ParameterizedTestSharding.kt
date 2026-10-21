@@ -43,7 +43,8 @@ annotation class ParameterizedTestSharding
 
 /**
  * Returns the [Arguments] of the current shard, in their original order.
- * Returns all [Arguments] if sharding is disabled or the test is not annotated with [ParameterizedTestSharding].
+ * Returns all [Arguments] if sharding is disabled, the test is not annotated with [ParameterizedTestSharding],
+ * or the timings list its class (see [TimedTestSharding]).
  *
  * Pass the [context] given to the arguments source.
  * Every shard must compute the same split, so all arguments must be [Comparable] or have a stable `toString()`.
@@ -67,6 +68,9 @@ fun Iterable<Arguments>.shard(context: ExtensionContext): Iterable<Arguments> {
     /* Sharding is disabled: every shard runs everything */
     val configuration = readTestShardingConfiguration(context)
     if (!configuration.isShardingEnabled) return this
+
+    /* The class is in the timings: the discovery-time sharding assigned the whole template to the shard of its class */
+    if (templateContext.timedShard() != null) return this
 
     val list = toList()
     if (list.isEmpty()) return list

@@ -27,7 +27,8 @@ import kotlin.test.fail
  * End-to-end check of the test sharding with nested Gradle builds:
  * the `-Pkotlin.build.test.shard.*` properties reach the test JVM, the sharding filter is registered by the service loader,
  * and `tests.shardByMethod` is passed through.
- * The detailed sharding behaviour is tested by the fast tests in `repo/test-runtime/src/test`.
+ * The detailed sharding behaviour is tested by the fast tests in `repo/test-runtime/src/test`,
+ * except for the timings, which are read once per test JVM (see `TimedTestSharding`).
  */
 class TestShardingFunctionalTest {
 
@@ -120,6 +121,109 @@ class TestShardingFunctionalTest {
     }
 
     @Test
+    fun `test shard timings keep every listed class on its shard`() {
+        shardTimingsFile.createParentDirectories().writeText(
+            listOf("Templates" to 100, "MyTest1" to 60, "MyTest2" to 50, "Outer\$Inner" to 40, "MyTest3" to 10, "Outer" to 5)
+                .joinToString("") { [className, time] -> "$targetProjectPath:junit5Tests\t$className\t$time\n" }
+        )
+        for (index in 1..3) {
+            junit5SourcesDirectory.resolve("MyTest$index.kt").writeCode(
+                """
+                import kotlin.test.Test
+
+                class MyTest$index {
+                    @Test fun a() = Unit
+                    @Test fun b() = Unit
+                    @Test fun c() = Unit
+                    @Test fun d() = Unit
+                    @Test fun e() = Unit
+                    @Test fun f() = Unit
+                    @Test fun g() = Unit
+                    @Test fun h() = Unit
+                }
+                """.trimIndent()
+            )
+        }
+        junit5SourcesDirectory.resolve("Outer.kt").writeCode(
+            """
+            import kotlin.test.Test
+            import org.junit.jupiter.api.Nested
+
+            class Outer {
+                @Test fun a() = Unit
+
+                @Nested
+                inner class Inner {
+                    @Test fun b() = Unit
+                }
+            }
+            """.trimIndent()
+        )
+        junit5SourcesDirectory.resolve("Templates.kt").writeCode(
+            """
+            import org.jetbrains.kotlin.test.sharding.ParameterizedTestSharding
+            import org.jetbrains.kotlin.test.sharding.shard
+            import org.junit.jupiter.api.extension.ExtensionContext
+            import org.junit.jupiter.params.ParameterizedTest
+            import org.junit.jupiter.params.provider.Arguments
+            import org.junit.jupiter.params.provider.ArgumentsProvider
+            import org.junit.jupiter.params.provider.ArgumentsSource
+            import org.junit.jupiter.params.support.ParameterDeclarations
+
+            class Templates {
+                @ParameterizedTest
+                @ParameterizedTestSharding
+                @ArgumentsSource(Values::class)
+                fun test(value: String) = Unit
+
+                class Values : ArgumentsProvider {
+                    override fun provideArguments(parameters: ParameterDeclarations, context: ExtensionContext) =
+                        listOf("a", "b", "c", "d", "e", "f").map { Arguments.of(it) }.shard(context).toList().stream()
+                }
+            }
+            """.trimIndent()
+        )
+
+        val runner = createGradleRunner()
+        val allTests = runner.runTests().parseExecutedTests()
+        /* Sharding by method would split every class: the timings keep them whole, with a nested class on a shard of its own */
+        val shards = (0 until 3).map { shard ->
+            runner.runTests(shardIndex = shard, shardCount = 3, shardByMethod = true, shardTimings = shardTimingsFile.nameWithoutExtension)
+        }
+        assertContains(
+            shards[0].output,
+            "Running tests in shard index 0 (shard count: 3), by the timings of 'repo/test-timings/${shardTimingsFile.name}'",
+        )
+
+        val shardTests = shards.map { it.parseExecutedTests() }
+        checkShardDistribution(allTests, *shardTests.toTypedArray())
+        assertEquals(
+            listOf(setOf("Templates > test(String)"), setOf("MyTest1", "MyTest3", "Outer"), setOf("MyTest2", "Outer > Inner")),
+            shardTests.map { shard -> shard.map { it.className }.toSet() },
+        )
+    }
+
+    @Test
+    fun `missing test shard timings fall back to hashing`() {
+        junit5SourcesDirectory.resolve("Test.kt").writeCode(
+            """
+            import kotlin.test.Test
+            import kotlin.test.assertNull
+
+            class MyTest {
+                @Test fun configuration() {
+                    assertNull(System.getProperty("kotlin.build.test.shard.timings"))
+                }
+            }
+            """.trimIndent()
+        )
+
+        val result = createGradleRunner().runTests(shardIndex = 0, shardCount = 1, shardTimings = shardTimingsFile.nameWithoutExtension)
+        assertEquals(1, result.parseExecutedTests().size)
+        assertContains(result.output, "by hash, missing 'repo/test-timings/${shardTimingsFile.name}'")
+    }
+
+    @Test
     fun `invalid shard indices and counts are rejected`() {
         junit5SourcesDirectory.resolve("Test.kt").writeCode(
             """
@@ -147,12 +251,14 @@ class TestShardingFunctionalTest {
     private val targetProjectPath = ":repo:test-runtime"
     private val junit5ResultsDirectory = Path("repo/test-runtime/build/test-results/junit5Tests")
     private val junit5SourcesDirectory = Path("repo/test-runtime/src/junit5Tests/kotlin")
+    private val shardTimingsFile = Path("repo/test-timings/TestShardingFunctionalTest.tsv")
 
     @BeforeEach
     @AfterEach
     fun cleanup() {
         junit5ResultsDirectory.deleteRecursively()
         junit5SourcesDirectory.deleteRecursively()
+        shardTimingsFile.deleteIfExists()
     }
 
     data class TestResult(
@@ -165,7 +271,7 @@ class TestShardingFunctionalTest {
      */
     private fun GradleRunner.runTests(
         shardIndex: Int? = null, shardCount: Int? = null, shardByMethod: Boolean = false,
-        shardSeed: Int? = null, expectFailure: Boolean = false,
+        shardSeed: Int? = null, shardTimings: String? = null, expectFailure: Boolean = false,
     ): BuildResult {
         withArguments(
             *listOfNotNull(
@@ -175,6 +281,7 @@ class TestShardingFunctionalTest {
                 if (shardCount != null) "-Pkotlin.build.test.shard.count=$shardCount" else null,
                 if (shardSeed != null) "-Pkotlin.build.test.shard.seed=$shardSeed" else null,
                 if (shardByMethod) "-Ptests.shardByMethod=true" else null,
+                if (shardTimings != null) "-Pkotlin.build.test.shard.timings=$shardTimings" else null,
 
                 /* Allow debugging of test Gradle process */
                 *defaultGradleArguments(xmx = "1g").toTypedArray(),
