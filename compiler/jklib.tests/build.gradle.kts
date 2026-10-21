@@ -33,6 +33,7 @@ sourceSets {
 projectTests {
     testData(project(":compiler").isolated, "testData/ir/irText")
     testData(project(":compiler").isolated, "testData/cli")
+    testData(project(":compiler").isolated, "testData/klib/jklibIrInliner")
     testData(rootProject.isolated, "third-party/mockJDKs/mockJDK")
 
     withJvmStdlibAndReflect()

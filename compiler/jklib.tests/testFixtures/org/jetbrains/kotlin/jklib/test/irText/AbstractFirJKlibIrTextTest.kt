@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
+import org.jetbrains.kotlin.test.backend.handlers.IrPreprocessedInlineFunctionDumpHandler
+import org.jetbrains.kotlin.test.backend.handlers.IrTextDumpHandler
 import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.configuration.*
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
@@ -58,9 +60,26 @@ abstract class AbstractFirJKlibIrTextTest : AbstractKotlinCompilerJKlibTest() {
 
         facadeStep(::Fir2IrCliJKlibFacade)
         irHandlersStep {
-            useHandlers({ JKlibSerializedIrDumpHandler(it, isAfterDeserialization = false) })
             commonIrHandlersForCodegenTest()
             setupIrTextDumpHandlers()
+        }
+
+        facadeStep(::PreSerializationLoweringCliJKlibFacade)
+        loweredIrHandlersStep {
+            useHandlers({ JKlibSerializedIrDumpHandler(it, isAfterDeserialization = false) })
+            useHandlers(
+                { testServices, artifactKind ->
+                    IrTextDumpHandler(
+                        testServices = testServices,
+                        artifactKind = artifactKind,
+                        customExtension = "inlined.ir",
+                        directive = CodegenTestDirectives.DUMP_IR_AFTER_INLINE,
+                        directiveForIrDifference = CodegenTestDirectives.DUMP_IR_AFTER_INLINE_DIFFERENCE,
+                        showOffsets = true,
+                    )
+                },
+                ::IrPreprocessedInlineFunctionDumpHandler,
+            )
         }
 
         facadeStep(::SerializationCliJKlibFacade)

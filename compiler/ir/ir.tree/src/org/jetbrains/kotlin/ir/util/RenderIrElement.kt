@@ -523,7 +523,7 @@ class RenderIrElementVisitor(
     private fun StringBuilder.appendSuperQualifierSymbol(expression: IrFieldAccessExpression) {
         val superQualifierSymbol = expression.superQualifierSymbol ?: return
         append(" superQualifierSymbol=")
-        superQualifierSymbol.owner.renderDeclarationFqn(this, options)
+        append(superQualifierSymbol.renderClassifierFqn(options))
     }
 
     override fun visitGetObjectValue(expression: IrGetObjectValue, data: Nothing?): String =
