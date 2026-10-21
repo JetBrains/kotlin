@@ -233,6 +233,36 @@ class CompilerReferenceIndexIT : KGPDaemonsBaseTest() {
     }
 
     @GradleTest
+    @DisplayName("Explicitly disabled CRI is not generated outside CI")
+    fun testExplicitlyDisabledCriOutsideCi(gradleVersion: GradleVersion) {
+        project("kotlinProject", gradleVersion, environmentVariables = localEnvironment) {
+            val criDir = projectPath / "build/kotlin/compileKotlin/cacheable" / DATA_PATH
+
+            build("assemble", buildOptions = buildOptions.copy(generateCompilerRefIndex = false)) {
+                assertTasksExecuted(":compileKotlin")
+            }
+            assertDirectoryDoesNotExist(criDir)
+        }
+    }
+
+    @GradleTest
+    @DisplayName("Default CRI generation outside CI works for KMP project with JVM and JS targets")
+    fun testDefaultCriOutsideCiInKmpWithJvmAndJs(gradleVersion: GradleVersion) {
+        project(
+            "jvm-and-js-hmpp",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
+            environmentVariables = localEnvironment,
+        ) {
+            build("compileKotlinJvm", "compileKotlinJs", "compileJvmAndJsMainKotlinMetadata") {
+                assertTasksExecuted(":compileKotlinJvm", ":compileKotlinJs", ":compileJvmAndJsMainKotlinMetadata")
+                assertNoDiagnostic(KotlinToolingDiagnostics.GeneratingCompilerRefIndexWithoutBuildToolsApi)
+            }
+            assertFileExists(projectPath / "build/kotlin/compileKotlinJvm/cacheable" / DATA_PATH / LOOKUPS_FILENAME)
+        }
+    }
+
+    @GradleTest
     @DisplayName("Enabling CRI invalidates compileKotlin UP-TO-DATE state. KT-86118")
     fun testEnablingCriInvalidatesCompileKotlinUpToDate(gradleVersion: GradleVersion) {
         project("kotlinProject", gradleVersion) {
