@@ -56,15 +56,69 @@ public class FirIdeNormalAnalysisSourceLikeModuleTypeReferenceInResolvedDeclarat
   }
 
   @Test
+  @TestMetadata("libraryContextParameter.kt")
+  public void testLibraryContextParameter() {
+    run("libraryContextParameter.kt");
+  }
+
+  @Test
+  @TestMetadata("libraryDefinitelyNotNullType.kt")
+  public void testLibraryDefinitelyNotNullType() {
+    run("libraryDefinitelyNotNullType.kt");
+  }
+
+  @Test
+  @TestMetadata("libraryFlexibleType.kt")
+  public void testLibraryFlexibleType() {
+    run("libraryFlexibleType.kt");
+  }
+
+  @Test
   @TestMetadata("libraryFunction.kt")
   public void testLibraryFunction() {
     run("libraryFunction.kt");
   }
 
   @Test
+  @TestMetadata("libraryFunctionType.kt")
+  public void testLibraryFunctionType() {
+    run("libraryFunctionType.kt");
+  }
+
+  @Test
+  @TestMetadata("libraryInnerClassType.kt")
+  public void testLibraryInnerClassType() {
+    run("libraryInnerClassType.kt");
+  }
+
+  @Test
+  @TestMetadata("libraryMemberFunction.kt")
+  public void testLibraryMemberFunction() {
+    run("libraryMemberFunction.kt");
+  }
+
+  @Test
+  @TestMetadata("libraryProjections.kt")
+  public void testLibraryProjections() {
+    run("libraryProjections.kt");
+  }
+
+  @Test
   @TestMetadata("libraryProperty.kt")
   public void testLibraryProperty() {
     run("libraryProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("libraryTypeAlias.kt")
+  public void testLibraryTypeAlias() {
+    run("libraryTypeAlias.kt");
+  }
+
+  @Test
+  @TestMetadata("libraryTypeAliasUsage.kt")
+  public void testLibraryTypeAliasUsage() {
+    run("libraryTypeAliasUsage.kt");
   }
 
   @Test
