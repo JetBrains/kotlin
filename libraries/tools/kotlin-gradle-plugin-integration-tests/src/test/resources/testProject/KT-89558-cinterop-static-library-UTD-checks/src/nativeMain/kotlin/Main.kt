@@ -3,5 +3,5 @@
 import lib.getGlobalCounter
 
 fun main() {
-    println(getGlobalCounter())
+    println("KT89558_RESULT=${getGlobalCounter()}")
 }
