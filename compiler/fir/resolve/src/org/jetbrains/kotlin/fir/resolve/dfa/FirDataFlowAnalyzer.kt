@@ -267,8 +267,6 @@ abstract class FirDataFlowAnalyzer(
 
     private val graphBuilder get() = context.graphBuilder
 
-    private val nullableNothing = components.session.builtinTypes.nullableNothingType.coneType
-
     // ----------------------------------- Requests -----------------------------------
 
     private fun DataFlowVariable.getStability(flow: Flow, targetTypes: Set<ConeKotlinType>?): SmartcastStability {
@@ -578,7 +576,7 @@ abstract class FirDataFlowAnalyzer(
                 val isType = operation == FirOperation.IS
                 when (type) {
                     // x is Nothing? <=> x == null
-                    nullableNothing -> processEqNull(flow, typeOperatorCall, typeOperatorCall.argument, isType)
+                    StandardTypes.NullableNothing -> processEqNull(flow, typeOperatorCall, typeOperatorCall.argument, isType)
                     // x is Any <=> x != null
                     StandardTypes.Any -> processEqNull(flow, typeOperatorCall, typeOperatorCall.argument, !isType)
                     else -> {

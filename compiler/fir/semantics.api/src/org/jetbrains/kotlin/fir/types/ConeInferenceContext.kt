@@ -41,7 +41,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
     val symbolProvider: FirSymbolProvider get() = session.symbolProvider
 
     override fun nullableNothingType(): ConeClassLikeType {
-        return session.builtinTypes.nullableNothingType.coneType
+        return StandardTypes.NullableNothing
     }
 
     override fun nullableAnyType(): ConeClassLikeType {

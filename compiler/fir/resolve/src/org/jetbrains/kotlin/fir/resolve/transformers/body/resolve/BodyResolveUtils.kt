@@ -141,7 +141,7 @@ fun ConstantValueKind.expectedConeType(session: FirSession): ConeKotlinType {
         return symbol.toLookupTag().constructClassType()
     }
     return when (this) {
-        ConstantValueKind.Null -> session.builtinTypes.nullableNothingType.coneType
+        ConstantValueKind.Null -> StandardTypes.NullableNothing
         ConstantValueKind.Boolean -> StandardTypes.Boolean
         ConstantValueKind.Char -> constructLiteralType(StandardClassIds.Char)
         ConstantValueKind.Byte -> constructLiteralType(StandardClassIds.Byte)

@@ -194,7 +194,7 @@ fun mergeRows(schema: SimpleColumnGroup, otherSchema: SimpleColumnGroup): List<S
     val intersections = (schema.columns() + otherSchema.columns()).groupBy { it.name }
         .mapValues {
             if (it.value.size == 1) {
-                it.value + simpleColumnOf(it.key, facade.session.builtinTypes.nullableNothingType.coneType)
+                it.value + simpleColumnOf(it.key, StandardTypes.NullableNothing)
             } else {
                 it.value
             }
