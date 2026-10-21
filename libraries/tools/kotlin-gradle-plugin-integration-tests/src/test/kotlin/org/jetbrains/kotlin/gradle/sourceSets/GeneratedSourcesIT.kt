@@ -23,10 +23,12 @@ import org.jetbrains.kotlin.gradle.testbase.build
 import org.jetbrains.kotlin.gradle.testbase.buildScriptInjection
 import org.jetbrains.kotlin.gradle.testbase.project
 import org.jetbrains.kotlin.gradle.testbase.source
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 
 @OptIn(ExperimentalKotlinGradlePluginApi::class)
 @DisplayName("Kotlin: generated sources")
+@MustRunOnChangesInGradle
 class GeneratedSourcesIT : KGPBaseTest() {
 
     @JvmGradlePluginTests
