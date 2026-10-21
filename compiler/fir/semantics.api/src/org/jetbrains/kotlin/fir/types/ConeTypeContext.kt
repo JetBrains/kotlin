@@ -624,7 +624,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
             val substitution =
                 declaration.typeParameters.zip(type.typeArguments).associate { [parameter, argument] ->
                     parameter.symbol to ((argument as? ConeKotlinTypeProjection)?.type
-                        ?: StandardTypes.NullableAny)//StandardClassIds.Any(session.firSymbolProvider).constructType(emptyArray(), isNullable = true))
+                        ?: StandardTypes.NullableAny)
                 }
             substitutorByMap(substitution, session)
         } else {
