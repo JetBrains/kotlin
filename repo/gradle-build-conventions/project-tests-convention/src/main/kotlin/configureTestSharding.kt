@@ -12,7 +12,10 @@ import org.gradle.kotlin.dsl.withType
 internal fun Project.configureTestSharding() {
     tasks.withType<Test>().configureEach {
         val testShardingArguments = project.testShardingArguments
+        val taskPath = path
+        testShardingArguments.shardTask.set(testShardingArguments.shardTimings.map { taskPath })
         jvmArgumentProviders.add(testShardingArguments)
+        val shardTimingsPath = project.providers.gradleProperty(TEST_SHARD_TIMINGS_KEY).map { "$TEST_SHARD_TIMINGS_DIRECTORY/$it.tsv" }
 
         doFirst {
             if (testShardingArguments.shardIndex.isPresent) {
@@ -20,8 +23,14 @@ internal fun Project.configureTestSharding() {
                     error("Test sharding is only supported on 'Junit5'")
                 }
 
+                val timingsPath = shardTimingsPath.orNull
+                val shardTimings = when {
+                    timingsPath == null -> "by hash"
+                    testShardingArguments.shardTimings.isPresent -> "by the timings of '$timingsPath'"
+                    else -> "by hash, missing '$timingsPath'"
+                }
                 logger.quiet(
-                    "Running tests in shard index ${testShardingArguments.shardIndex.get()} (shard count: ${testShardingArguments.shardCount.get()})"
+                    "Running tests in shard index ${testShardingArguments.shardIndex.get()} (shard count: ${testShardingArguments.shardCount.get()}), $shardTimings"
                 )
             }
         }
