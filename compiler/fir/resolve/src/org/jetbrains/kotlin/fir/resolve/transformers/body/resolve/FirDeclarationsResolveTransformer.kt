@@ -282,7 +282,7 @@ open class FirDeclarationsResolveTransformer(
                             transformer,
                             ResolutionMode.UpdateImplicitTypeRef(
                                 buildResolvedTypeRef {
-                                    coneType = session.builtinTypes.unitType.coneType
+                                    coneType = StandardTypes.Unit
                                 }
                             )
                         )

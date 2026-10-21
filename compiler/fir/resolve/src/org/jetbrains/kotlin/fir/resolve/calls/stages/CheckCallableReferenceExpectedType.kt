@@ -159,7 +159,7 @@ private fun buildResultingTypeAndAdaptation(
                 ) {
                     returnTypeWithoutCoercion
                 } else {
-                    context.session.builtinTypes.unitType.coneType
+                    StandardTypes.Unit
                 }
             }
 

@@ -460,7 +460,7 @@ private class FirPartialBodyExpressionResolveTransformer(
         block.transformOtherChildren(transformer, data)
 
         // This makes the compiler think the declaration is fully resolved (see 'FirExpression.isResolved')
-        block.writeResultType(session)
+        block.writeResultType()
 
         publishPartialAnalysisState(
             request = request,

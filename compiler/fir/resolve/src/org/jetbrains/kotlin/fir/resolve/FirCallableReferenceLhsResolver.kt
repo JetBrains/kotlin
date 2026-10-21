@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
@@ -96,7 +97,7 @@ class FirCallableReferenceLhsResolver(
         val type =
             // Preserve strange behavior until KT-84336 is fixed
             if (expression is FirResolvedQualifier && expression.qualifierSymbol is FirTypeAliasSymbol && expression.typeArguments.isNotEmpty()) {
-                session.builtinTypes.unitType.coneType
+                StandardTypes.Unit
             } else {
                 expression.resolvedType
             }

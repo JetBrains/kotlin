@@ -1152,7 +1152,7 @@ class FirCallCompletionResultsWriterTransformer(
         val initialReturnType = anonymousFunction.returnTypeRef.coneTypeSafe<ConeKotlinType>()
         val expectedReturnType = initialReturnType?.let { finallySubstituteOrSelf(it) }
             ?: runIf(returnExpressions.any { it.expression.source?.kind is KtFakeSourceElementKind.ImplicitUnit.Return })
-            { session.builtinTypes.unitType.coneType }
+            { StandardTypes.Unit }
             ?: (expectedType as? ConeClassLikeType)?.returnType(session) as? ConeClassLikeType
             ?: runUnless(containingCallIsError) { (data as? ExpectedArgumentType.ArgumentsMap)?.lambdasReturnTypes?.get(anonymousFunction) }
 
@@ -1278,7 +1278,7 @@ class FirCallCompletionResultsWriterTransformer(
     override fun transformBlock(block: FirBlock, data: ExpectedArgumentType?): FirStatement {
         transformElement(block, data)
         if (!block.isUnitCoerced) {
-            block.writeResultType(session)
+            block.writeResultType()
         }
         return block
     }
@@ -1297,7 +1297,7 @@ class FirCallCompletionResultsWriterTransformer(
                 else -> null
             }
         }.apply {
-            replaceReturnTypeIfNotExhaustive(session)
+            replaceReturnTypeIfNotExhaustive()
         }
     }
 

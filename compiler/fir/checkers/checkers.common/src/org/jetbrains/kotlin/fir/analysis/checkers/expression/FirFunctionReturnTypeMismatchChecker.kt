@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.hasExplicitReturnType
@@ -52,7 +53,7 @@ object FirFunctionReturnTypeMismatchChecker : FirReturnExpressionChecker(MppChec
         if (resultExpression is FirWhenExpression && !resultExpression.isExhaustive) return
 
         val functionReturnType = if (targetElement is FirConstructor)
-            context.session.builtinTypes.unitType.coneType
+            StandardTypes.Unit
         else
             targetElement.returnTypeRef.coneType.fullyExpandedType()
         if (targetElement is FirAnonymousFunction) {

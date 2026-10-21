@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.backend
 
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.*
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.contracts.description.LogicOperationKind
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -15,6 +14,7 @@ import org.jetbrains.kotlin.descriptors.isObject
 import org.jetbrains.kotlin.diagnostics.findChildByType
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.backend.generators.ClassMemberGenerator
 import org.jetbrains.kotlin.fir.backend.generators.OperatorExpressionGenerator
 import org.jetbrains.kotlin.fir.backend.utils.*
@@ -86,7 +86,6 @@ class Fir2IrVisitor(
 
     val annotationMode: Boolean
         get() = _annotationMode
-    private val unitType: ConeClassLikeType = session.builtinTypes.unitType.coneType
 
     private val generateNoWhenBranchMatchedExceptionWithMessage: Boolean = LanguageFeature.NoWhenBranchMatchedExceptionWithMessage.isEnabled()
 
@@ -1058,7 +1057,7 @@ class Fir2IrVisitor(
                     // In all other cases, the block should have the type of the last statement, not the expected type.
                     expectedType =
                         if (origin == IrStatementOrigin.FOR_LOOP || expectedType?.isUnit == true)
-                            unitType
+                            StandardTypes.Unit
                         else if (expectedType?.isNothing == true)
                             expectedType
                         else null
@@ -1446,7 +1445,7 @@ class Fir2IrVisitor(
                 }
                 val isProperlyExhaustive = whenExpression.isDeeplyProperlyExhaustive()
                 val whenExpressionType =
-                    if (isProperlyExhaustive) whenExpression.resolvedType else unitType
+                    if (isProperlyExhaustive) whenExpression.resolvedType else StandardTypes.Unit
                 val irBranches = whenExpression.convertWhenBranchesTo(
                     mutableListOf(),
                     whenExpressionType,
@@ -1620,7 +1619,7 @@ class Fir2IrVisitor(
                 loopMap[doWhileLoop] = this
                 label = doWhileLoop.label?.name
                 body = runUnless(doWhileLoop.block is FirEmptyExpressionBlock) {
-                    doWhileLoop.block.convertToIrExpressionOrBlock(origin, expectedType = unitType)
+                    doWhileLoop.block.convertToIrExpressionOrBlock(origin, expectedType = StandardTypes.Unit)
                 }
                 condition = convertToIrExpression(doWhileLoop.condition)
                 loopMap.remove(doWhileLoop)
@@ -1679,7 +1678,7 @@ class Fir2IrVisitor(
                                 addIfNotNull(convertedForLoopVar)
                                 destructuredLoopVariables.forEach { addIfNotNull(it.toIrStatement()) }
                                 if (firBlock !is FirEmptyExpressionBlock) {
-                                    add(firBlock.convertToIrExpressionOrBlock(origin = null, unitType))
+                                    add(firBlock.convertToIrExpressionOrBlock(origin = null, StandardTypes.Unit))
                                 }
                             }
 
@@ -1692,7 +1691,7 @@ class Fir2IrVisitor(
                             )
                         }
                     } else {
-                        firLoopBody.convertToIrExpressionOrBlock(null, unitType)
+                        firLoopBody.convertToIrExpressionOrBlock(null, StandardTypes.Unit)
                     }
                 }
                 loopMap.remove(whileLoop)
@@ -1748,7 +1747,7 @@ class Fir2IrVisitor(
                     .convertToIrBlock(origin = null, expectedType = tryExpression.tryBlock.resolvedType)
                     .prepareExpressionForGivenExpectedType(expression = tryExpression.tryBlock, expectedType = tryExpression.resolvedType, forReceiver = false),
                 tryExpression.catches.map { convertCatch(it, tryExpression.resolvedType) },
-                tryExpression.finallyBlock?.convertToIrBlock(origin = null, expectedType = unitType)
+                tryExpression.finallyBlock?.convertToIrBlock(origin = null, expectedType = StandardTypes.Unit)
             )
         }
     }

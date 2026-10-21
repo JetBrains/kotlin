@@ -91,7 +91,7 @@ internal fun FirAnonymousFunction.computeReturnType(
     returnExpressions: Collection<FirAnonymousFunctionReturnExpressionInfo>,
 ): ConeKotlinType {
     val expandedExpectedReturnType = expectedReturnType?.fullyExpandedType(session)
-    val unitType = session.builtinTypes.unitType.coneType
+    val unitType = StandardTypes.Unit
     if (isLambda) {
         if (expandedExpectedReturnType?.isUnitOrFlexibleUnit == true) {
             // If the expected type is Unit or flexible Unit, always infer the lambda's type to Unit.
@@ -422,7 +422,7 @@ fun FirAbstractResolvedQualifierBuilder.initTypeAndObjectAccess() {
             }
         }
     }
-    coneTypeOrNull = components.session.builtinTypes.unitType.coneType
+    coneTypeOrNull = StandardTypes.Unit
 }
 
 internal fun typeForReifiedParameterReference(parameterReferenceBuilder: FirResolvedReifiedParameterReferenceBuilder): ConeLookupTagBasedType {
