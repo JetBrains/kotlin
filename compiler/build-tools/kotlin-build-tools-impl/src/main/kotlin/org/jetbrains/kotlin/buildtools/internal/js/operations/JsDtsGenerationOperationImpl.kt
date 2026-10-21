@@ -98,11 +98,14 @@ internal class JsDtsGenerationOperationImpl private constructor(
             .librariesStdlibFirst
             .map { KlibInputModule(it.uniqueName, it.path, TypeScriptModuleConfig(outputName = it.jsOutputName)) }
 
-    @Suppress("EnumValuesSoftDeprecate")
     override fun configureFrom(linkingOperation: JsLinkingOperation) {
         check(linkingOperation is JsLinkingOperationImpl) { "Unexpected linking operation: ${linkingOperation::class}." }
 
-        this[COMPILE_LONG_AS_BIG_INT] = linkingOperation.compilerArguments[JsArgumentsImpl.X_ES_LONG_AS_BIGINT] ?: false
+        val target = linkingOperation.compilerArguments[JsArgumentsImpl.TARGET]
+            ?.let { from -> JsEcmaVersion.entries.first { it.name == from.name } }
+
+        this[COMPILE_LONG_AS_BIG_INT] = linkingOperation.compilerArguments[JsArgumentsImpl.X_ES_LONG_AS_BIGINT]
+            ?: (target != null && target >= JsEcmaVersion.ES2020)
         this[IMPLEMENT_INTERFACES] = linkingOperation.compilerArguments[JsArgumentsImpl.X_ENABLE_IMPLEMENTING_INTERFACES_FROM_TYPESCRIPT]
         this[EXPORT_SUSPEND_LAMBDAS] = linkingOperation.compilerArguments[JsArgumentsImpl.X_SUSPEND_LAMBDA_EXPORTING]
         this[DATA_CLASS_COPY_RESPECTS_CONSTRUCTOR_VISIBILITY] =
@@ -111,11 +114,7 @@ internal class JsDtsGenerationOperationImpl private constructor(
             linkingOperation.compilerArguments[JsArgumentsImpl.X_DTS_USE_UNKNOWN_INSTEAD_ANY]
 
         this[MODULE_KIND] = linkingOperation.compilerArguments[JsArgumentsImpl.MODULE_KIND]
-            ?: JsModuleKind.ES.takeIf {
-                val target = linkingOperation.compilerArguments[JsArgumentsImpl.TARGET]
-                    ?.let { from -> JsEcmaVersion.values().first { it.name == from.name } }
-                target != null && target >= JsEcmaVersion.ES2015
-            }
+            ?: JsModuleKind.ES.takeIf { target != null && target >= JsEcmaVersion.ES2015 }
             ?: JsModuleKind.UMD
 
         this[GRANULARITY] = when {

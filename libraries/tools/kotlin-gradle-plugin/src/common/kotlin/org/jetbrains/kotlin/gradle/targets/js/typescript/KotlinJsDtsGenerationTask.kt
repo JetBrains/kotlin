@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.targets.js.typescript
 
 import org.gradle.api.DefaultTask
-import org.gradle.api.GradleException
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.model.ObjectFactory
@@ -16,7 +15,6 @@ import org.gradle.api.tasks.Classpath
 import org.gradle.api.tasks.IgnoreEmptyDirectories
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
-import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.PathSensitive
@@ -24,6 +22,7 @@ import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.SkipWhenEmpty
 import org.gradle.api.tasks.TaskAction
 import org.gradle.work.NormalizeLineEndings
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.JsEcmaVersion
 import org.jetbrains.kotlin.buildtools.api.js.JsDtsGranularity
 import org.jetbrains.kotlin.buildtools.api.js.JsPlatformToolchain.Companion.js
 import org.jetbrains.kotlin.buildtools.api.js.operations.JsDtsGenerationOperation.Companion.COMPILE_LONG_AS_BIG_INT
@@ -112,21 +111,32 @@ internal abstract class KotlinJsDtsGenerationTask @Inject constructor(
             outputDirectory = outputDirectory.get().asFile.toPath(),
         )
             .apply {
+                val target = linkCompilerOptions.target.orNull?.let { target ->
+                    JsEcmaVersion.entries.first { it.stringValue == target }
+                }
                 val moduleKind = linkCompilerOptions.moduleKind.orNull ?: JsModuleKind.MODULE_UMD
                 val compilerArguments = linkCompilerOptions.freeCompilerArgs.get()
 
-                this[MODULE_KIND] = BtaJsModuleKind.values().single { it.stringValue == moduleKind.kind }
+                this[MODULE_KIND] = BtaJsModuleKind.entries.single { it.stringValue == moduleKind.kind }
                 this[GRANULARITY] = when (granularity.get()) {
                     KotlinJsIrOutputGranularity.PER_FILE -> JsDtsGranularity.PER_FILE
                     else -> JsDtsGranularity.WHOLE_PROGRAM
                 }
 
-                this[COMPILE_LONG_AS_BIG_INT] = K2JSCompilerArguments::compileLongAsBigInt.cliArgument in compilerArguments
-                this[IMPLEMENT_INTERFACES] = K2JSCompilerArguments::allowImplementableInterfacesExporting.cliArgument in compilerArguments
-                this[EXPORT_SUSPEND_LAMBDAS] = K2JSCompilerArguments::allowExportingSuspendLambdas.cliArgument in compilerArguments
-                this[EXPORT_UNTYPED_AS_UNKNOWN] = K2JSCompilerArguments::useUnknownInsteadAny.cliArgument in compilerArguments
+                // The same default as the compiler uses: Long is compiled as BigInt for ES2020 target unless specified explicitly
+                this[COMPILE_LONG_AS_BIG_INT] =
+                    compilerArguments.explicitBooleanArgument(K2JSCompilerArguments::compileLongAsBigInt.cliArgument)
+                        ?: (target != null && target >= JsEcmaVersion.ES2020)
+
+                this[IMPLEMENT_INTERFACES] =
+                    compilerArguments.explicitBooleanArgument(K2JSCompilerArguments::allowImplementableInterfacesExporting.cliArgument) == true
+
+                this[EXPORT_SUSPEND_LAMBDAS] =
+                    compilerArguments.explicitBooleanArgument(K2JSCompilerArguments::allowExportingSuspendLambdas.cliArgument) == true
+                this[EXPORT_UNTYPED_AS_UNKNOWN] =
+                    compilerArguments.explicitBooleanArgument(K2JSCompilerArguments::useUnknownInsteadAny.cliArgument) == true
                 this[DATA_CLASS_COPY_RESPECTS_CONSTRUCTOR_VISIBILITY] =
-                    CommonCompilerArguments::consistentDataClassCopyVisibility.cliArgument in compilerArguments
+                    compilerArguments.explicitBooleanArgument(CommonCompilerArguments::consistentDataClassCopyVisibility.cliArgument) == true
             }
             .build()
 
@@ -136,6 +146,11 @@ internal abstract class KotlinJsDtsGenerationTask @Inject constructor(
             GradleKotlinLogger(logger)
         )
     }
+
+    private fun List<String>.explicitBooleanArgument(argument: String): Boolean? =
+        lastOrNull { it == argument || it.startsWith("$argument=") }
+            ?.substringAfter("=", missingDelimiterValue = "true")
+            ?.toBooleanStrictOrNull()
 
     companion object {
         const val NAME = "generateTypeScriptDefinitions"
