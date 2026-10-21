@@ -47,7 +47,7 @@ class DataFrameBuilderRandomInt : AbstractSchemaModificationInterpreter() {
     val Arguments.nrow by ignore()
 
     override fun Arguments.interpret(): PluginDataFrameSchema =
-        fixedTypeSchema(receiver, session.builtinTypes.intType.coneType)
+        fixedTypeSchema(receiver, StandardTypes.Int)
 }
 
 class DataFrameBuilderRandomIntRange : AbstractSchemaModificationInterpreter() {
@@ -56,7 +56,7 @@ class DataFrameBuilderRandomIntRange : AbstractSchemaModificationInterpreter() {
     val Arguments.range by ignore()
 
     override fun Arguments.interpret(): PluginDataFrameSchema =
-        fixedTypeSchema(receiver, session.builtinTypes.intType.coneType)
+        fixedTypeSchema(receiver, StandardTypes.Int)
 }
 
 class DataFrameBuilderRandomDouble : AbstractSchemaModificationInterpreter() {
@@ -64,7 +64,7 @@ class DataFrameBuilderRandomDouble : AbstractSchemaModificationInterpreter() {
     val Arguments.nrow by ignore()
 
     override fun Arguments.interpret(): PluginDataFrameSchema =
-        fixedTypeSchema(receiver, session.builtinTypes.doubleType.coneType)
+        fixedTypeSchema(receiver, StandardTypes.Double)
 }
 
 class DataFrameBuilderRandomDoubleRange : AbstractSchemaModificationInterpreter() {
@@ -73,7 +73,7 @@ class DataFrameBuilderRandomDoubleRange : AbstractSchemaModificationInterpreter(
     val Arguments.range by ignore()
 
     override fun Arguments.interpret(): PluginDataFrameSchema =
-        fixedTypeSchema(receiver, session.builtinTypes.doubleType.coneType)
+        fixedTypeSchema(receiver, StandardTypes.Double)
 }
 
 class DataFrameBuilderRandomFloat : AbstractSchemaModificationInterpreter() {
@@ -81,7 +81,7 @@ class DataFrameBuilderRandomFloat : AbstractSchemaModificationInterpreter() {
     val Arguments.nrow by ignore()
 
     override fun Arguments.interpret(): PluginDataFrameSchema =
-        fixedTypeSchema(receiver, session.builtinTypes.floatType.coneType)
+        fixedTypeSchema(receiver, StandardTypes.Float)
 }
 
 class DataFrameBuilderRandomLong : AbstractSchemaModificationInterpreter() {
@@ -89,7 +89,7 @@ class DataFrameBuilderRandomLong : AbstractSchemaModificationInterpreter() {
     val Arguments.nrow by ignore()
 
     override fun Arguments.interpret(): PluginDataFrameSchema =
-        fixedTypeSchema(receiver, session.builtinTypes.longType.coneType)
+        fixedTypeSchema(receiver, StandardTypes.Long)
 }
 
 class DataFrameBuilderRandomLongRange : AbstractSchemaModificationInterpreter() {
@@ -98,7 +98,7 @@ class DataFrameBuilderRandomLongRange : AbstractSchemaModificationInterpreter() 
     val Arguments.range by ignore()
 
     override fun Arguments.interpret(): PluginDataFrameSchema =
-        fixedTypeSchema(receiver, session.builtinTypes.longType.coneType)
+        fixedTypeSchema(receiver, StandardTypes.Long)
 }
 
 class DataFrameBuilderRandomBoolean : AbstractSchemaModificationInterpreter() {
@@ -201,7 +201,7 @@ class DataFrameGenerator : AbstractSchemaModificationInterpreter() {
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
         val dsl = CreateDataFrameDslImplApproximation()
-        body(dsl, mapOf("typeArg0" to Interpreter.Success(session.builtinTypes.intType.coneType)))
+        body(dsl, mapOf("typeArg0" to Interpreter.Success(StandardTypes.Int)))
         return dsl.toPluginDataFrameSchema()
     }
 }

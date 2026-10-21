@@ -57,7 +57,7 @@ class FirParcelizeDeclarationGenerator(
                             it.fullyExpandedType(session).toRegularClassSymbol(session)?.hasDescribeContentsImplementation() ?: false
                         }
                 runIf(!hasDescribeContentImplementation) {
-                    createMemberFunctionForParcelize(owner, callableId.callableName, session.builtinTypes.intType.coneType)
+                    createMemberFunctionForParcelize(owner, callableId.callableName, StandardTypes.Int)
                 }
             }
             WRITE_TO_PARCEL_NAME -> {
@@ -65,7 +65,7 @@ class FirParcelizeDeclarationGenerator(
                 runIf(declaredFunctions.none { it.isWriteToParcel() }) {
                     createMemberFunctionForParcelize(owner, callableId.callableName, StandardTypes.Unit) {
                         valueParameter(DEST_NAME, PARCEL_ID.createConeType(session))
-                        valueParameter(FLAGS_NAME, session.builtinTypes.intType.coneType)
+                        valueParameter(FLAGS_NAME, StandardTypes.Int)
                     }
                 }
             }

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.plugin.sandbox.fir.generators
 
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.createCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
@@ -79,7 +80,7 @@ class DataFrameLikeTypeMembersGenerator(session: FirSession) : FirDeclarationGen
             scopeSymbol,
             DataFrameLikeCallsRefinementExtension.DataFrameLikeCallsRefinementExtensionGeneratorKey,
             propName,
-            session.builtinTypes.intType.coneType
+            StandardTypes.Int
         ) {
             visibility = Visibilities.Local
             extensionReceiverType {
@@ -107,7 +108,7 @@ class DataFrameLikeTypeMembersGenerator(session: FirSession) : FirDeclarationGen
             tokenSymbol,
             DataFrameLikeCallsRefinementExtension.DataFrameLikeCallsRefinementExtensionGeneratorKey,
             propName,
-            session.builtinTypes.intType.coneType
+            StandardTypes.Int
         ) {
             visibility = Visibilities.Local
             withGeneratedDefaultInitializer()

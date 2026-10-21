@@ -234,17 +234,17 @@ internal class StubBasedAnnotationDeserializer(private val session: FirSession) 
 
             return when (firstValue) {
                 is BooleanValue -> StandardTypes.Boolean
-                is ByteValue -> session.builtinTypes.byteType.coneType
-                is CharValue -> session.builtinTypes.charType.coneType
-                is ShortValue -> session.builtinTypes.shortType.coneType
-                is IntValue -> session.builtinTypes.intType.coneType
-                is LongValue -> session.builtinTypes.longType.coneType
-                is UByteValue -> session.builtinTypes.byteType.coneType
-                is UShortValue -> session.builtinTypes.shortType.coneType
-                is UIntValue -> session.builtinTypes.intType.coneType
-                is ULongValue -> session.builtinTypes.longType.coneType
-                is DoubleValue -> session.builtinTypes.doubleType.coneType
-                is FloatValue -> session.builtinTypes.floatType.coneType
+                is ByteValue -> StandardTypes.Byte
+                is CharValue -> StandardTypes.Char
+                is ShortValue -> StandardTypes.Short
+                is IntValue -> StandardTypes.Int
+                is LongValue -> StandardTypes.Long
+                is UByteValue -> StandardTypes.Byte
+                is UShortValue -> StandardTypes.Short
+                is UIntValue -> StandardTypes.Int
+                is ULongValue -> StandardTypes.Long
+                is DoubleValue -> StandardTypes.Double
+                is FloatValue -> StandardTypes.Float
                 is AnnotationValue -> session.builtinTypes.annotationType.coneType
                 is StringValue -> session.builtinTypes.stringType.coneType
                 is EnumValue -> firstValue.enumClassId.constructClassLikeType(ConeTypeProjection.EMPTY_ARRAY, isMarkedNullable = false)

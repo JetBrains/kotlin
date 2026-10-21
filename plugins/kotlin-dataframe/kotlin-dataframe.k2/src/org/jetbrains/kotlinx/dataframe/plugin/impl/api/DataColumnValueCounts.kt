@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlinx.dataframe.plugin.impl.api
 
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlinx.dataframe.plugin.impl.*
 
 class DataColumnValueCounts : AbstractSchemaModificationInterpreter() {
@@ -18,7 +19,7 @@ class DataColumnValueCounts : AbstractSchemaModificationInterpreter() {
         val value = receiver.col.column
         val countName = if (value.name == resultColumn) resultColumn + "1" else resultColumn
         return PluginDataFrameSchema(
-            listOf(receiver.col.column, simpleColumnOf(countName, session.builtinTypes.intType.coneType))
+            listOf(receiver.col.column, simpleColumnOf(countName, StandardTypes.Int))
         )
     }
 }

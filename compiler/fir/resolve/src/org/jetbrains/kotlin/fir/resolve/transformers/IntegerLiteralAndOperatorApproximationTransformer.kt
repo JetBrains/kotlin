@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.FirIntegerLiteralOperatorCall
@@ -105,14 +106,14 @@ class IntegerLiteralAndOperatorApproximationTransformer(
         val typeBeforeConversion = if (operatorType.isUnsigned) {
             session.builtinTypes.uIntType.coneType
         } else {
-            session.builtinTypes.intType.coneType
+            StandardTypes.Int
         }
         call.replaceConeTypeOrNull(typeBeforeConversion)
 
         return buildFunctionCall {
             val fakeSource = call.source?.fakeElement(KtFakeSourceElementKind.IntToLongConversion)
             source = fakeSource
-            coneTypeOrNull = session.builtinTypes.longType.coneType
+            coneTypeOrNull = StandardTypes.Long
             explicitReceiver = call
             dispatchReceiver = call
             this.calleeReference = buildResolvedNamedReference {
