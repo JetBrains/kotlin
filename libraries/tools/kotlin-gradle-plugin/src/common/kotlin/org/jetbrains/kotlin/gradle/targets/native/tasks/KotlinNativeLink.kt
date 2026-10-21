@@ -7,6 +7,7 @@
 package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.Action
+import org.gradle.api.Project
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
@@ -17,6 +18,8 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import org.gradle.api.services.BuildService
+import org.gradle.api.services.BuildServiceParameters
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.Optional
 import org.gradle.work.NormalizeLineEndings
@@ -96,6 +99,10 @@ constructor(
                 is NoopKotlinNativeProvider -> true
             }
         }
+
+        // Demo: limit the number of KotlinNativeLink tasks that can execute concurrently, since each
+        // invocation is a memory-heavy native compiler/linker process - see KotlinNativeLinkConcurrencyLimitService.
+        usesService(KotlinNativeLinkConcurrencyLimitService.registerIfAbsent(project))
     }
 
     // Used by IDEA import, should be addressed via KTIJ-38346
@@ -547,6 +554,42 @@ internal val String.asValidFrameworkName get() = replace('-', '_')
 
 private val KotlinNativeLink.hasDisabledNativeCache get() = disableCacheSettings.get().isNotEmpty()
 private val KotlinNativeLink.hasIncompatibleConfiguration get() = (debuggable && optimized) || (!debuggable && !optimized)
+
+/**
+ * Demo build service used to cap the number of [KotlinNativeLink] tasks that Gradle is allowed to run at the
+ * same time in this build.
+ *
+ * Each [KotlinNativeLink] invocation spawns a memory-hungry Kotlin/Native compiler/linker process. Normally,
+ * a project with several targets/build types ends up with many `link<BuildType><Kind><Target>` tasks, and - as
+ * seen above with the Workers API migration or with the Configuration Cache enabled - Gradle can execute quite a
+ * few of them concurrently, which risks exhausting the Gradle daemon's memory.
+ *
+ * The fix, as described in the Gradle docs on "accessing a build service concurrently"
+ * (https://docs.gradle.org/current/userguide/build_services.html#accessing_the_build_service_concurrently), is to
+ * register a shared [BuildService] with [org.gradle.api.services.BuildServiceSpec.getMaxParallelUsages] set to the
+ * desired concurrency limit, and have every task that should be throttled declare its usage via [Task.usesService].
+ * Gradle then makes sure that at most that many tasks using the service run at once, regardless of how much
+ * parallelism would otherwise be available.
+ *
+ * This is a demo implementation: the concurrency limit is just a hardcoded constant here, it isn't wired up to any
+ * DSL/property, and it isn't covered by tests.
+ */
+internal abstract class KotlinNativeLinkConcurrencyLimitService : BuildService<BuildServiceParameters.None> {
+    companion object {
+        private const val SERVICE_NAME = "kotlinNativeLinkConcurrencyLimit"
+
+        // Demo value: at most this many KotlinNativeLink tasks are allowed to execute concurrently in this build.
+        private const val MAX_PARALLEL_LINK_TASKS = 3
+
+        fun registerIfAbsent(project: Project): Provider<KotlinNativeLinkConcurrencyLimitService> =
+            project.gradle.sharedServices.registerIfAbsent(
+                SERVICE_NAME,
+                KotlinNativeLinkConcurrencyLimitService::class.java
+            ) { spec ->
+                spec.maxParallelUsages.set(MAX_PARALLEL_LINK_TASKS)
+            }
+    }
+}
 
 /**
  * Runs a single [KotlinNativeCompilerRunner] invocation inside a Gradle worker.
