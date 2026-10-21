@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfig
 import org.jetbrains.kotlin.buildtools.internal.arguments.JvmCompilerArgumentsImpl
 import org.jetbrains.kotlin.buildtools.internal.arguments.absolutePathStringOrThrow
 import org.jetbrains.kotlin.buildtools.internal.daemon.CompilationResultSerializer
+import org.jetbrains.kotlin.buildtools.internal.daemon.LookupMessageVisitor
 import org.jetbrains.kotlin.buildtools.internal.jps.JvmClientManagedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.internal.jps.createCompilerServicesFacadeBase
 import org.jetbrains.kotlin.buildtools.internal.jps.getClientManagedIncrementalCompilationOptions
@@ -115,14 +116,17 @@ internal class JvmCompilationOperationImpl : BaseCompilationOperationImpl<JvmCom
     override fun toBuilder(): JvmCompilationOperation.Builder = deepCopy()
 
     override fun beforeSerialization(logger: KotlinLogger): List<MessageVisitor> = buildList {
-        addAll(super<BaseCompilationOperationImpl>.beforeSerialization(logger))
+        addAll(super.beforeSerialization(logger))
         (incrementalCompilation as? HasSerializationHooks)?.let { incrementalCompilation ->
             addAll(incrementalCompilation.beforeSerialization(logger))
+            // special case for JPS duplicating lookupTracker in its IC configuration
+            val lookupVisitorsToIgnore = filterIsInstance<LookupMessageVisitor>().dropLast(1)
+            removeAll(lookupVisitorsToIgnore)
         }
     }
 
     override fun afterDeserialization(messageReporter: (Message) -> Unit, compilerFacade: CompilerServicesFacadeBase?) {
-        super<BaseCompilationOperationImpl>.afterDeserialization(messageReporter, compilerFacade)
+        super.afterDeserialization(messageReporter, compilerFacade)
         (incrementalCompilation as? HasSerializationHooks)?.afterDeserialization(messageReporter, compilerFacade)
     }
 

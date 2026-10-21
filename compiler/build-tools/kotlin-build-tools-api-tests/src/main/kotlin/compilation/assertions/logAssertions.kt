@@ -8,19 +8,24 @@ package org.jetbrains.kotlin.buildtools.tests.compilation.assertions
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.CompilationOutcome
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.JvmModule
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.JvmProject
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.Project
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.BaseScenarioModule
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.ScenarioModule
+import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 
 // TODO: KT-85024 — the daemon forwards IC messages as plain build report lines, so they always land on the DEBUG level
 fun Project.expectedLogLevelForRebuildReason(strategyConfig: CompilerExecutionStrategyConfiguration): LogLevel =
-    if (strategyConfig.second is ExecutionPolicy.WithDaemon && this !is JvmProject) LogLevel.DEBUG else LogLevel.INFO
+    if (strategyConfig.second is ExecutionPolicy.WithDaemon
+        && KotlinToolingVersion(kotlinToolchain.getCompilerVersion()) < KotlinToolingVersion("2.5.20-SNAPSHOT")
+    ) LogLevel.DEBUG else LogLevel.INFO
 
 fun ScenarioModule.expectedLogLevelForRebuildReason(strategyConfig: CompilerExecutionStrategyConfiguration): LogLevel =
-    if (strategyConfig.second is ExecutionPolicy.WithDaemon && (this as BaseScenarioModule<*, *>).module !is JvmModule) LogLevel.DEBUG else LogLevel.INFO
+    if (strategyConfig.second is ExecutionPolicy.WithDaemon
+        && KotlinToolingVersion((this as BaseScenarioModule<*, *>).module.project.kotlinToolchain.getCompilerVersion()) < KotlinToolingVersion(
+            "2.5.20-SNAPSHOT"
+        )
+    ) LogLevel.DEBUG else LogLevel.INFO
 
 fun CompilationOutcome.assertLogContainsLines(logLevel: LogLevel, vararg expectedLines: String) {
     assertLogContainsLines(logLevel, expectedLines.toSet())
