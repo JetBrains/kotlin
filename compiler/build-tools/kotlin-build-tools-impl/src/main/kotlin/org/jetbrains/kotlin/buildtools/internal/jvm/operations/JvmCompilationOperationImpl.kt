@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfig
 import org.jetbrains.kotlin.buildtools.internal.arguments.JvmCompilerArgumentsImpl
 import org.jetbrains.kotlin.buildtools.internal.arguments.absolutePathStringOrThrow
 import org.jetbrains.kotlin.buildtools.internal.daemon.CompilationResultSerializer
+import org.jetbrains.kotlin.buildtools.internal.daemon.LookupMessageVisitor
 import org.jetbrains.kotlin.buildtools.internal.jps.JvmClientManagedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.internal.jps.createCompilerServicesFacadeBase
 import org.jetbrains.kotlin.buildtools.internal.jps.getClientManagedIncrementalCompilationOptions
@@ -115,14 +116,14 @@ internal class JvmCompilationOperationImpl : BaseCompilationOperationImpl<JvmCom
     override fun toBuilder(): JvmCompilationOperation.Builder = deepCopy()
 
     override fun beforeSerialization(logger: KotlinLogger): List<MessageVisitor> = buildList {
-        addAll(super<BaseCompilationOperationImpl>.beforeSerialization(logger))
+        addAll(super.beforeSerialization(logger))
         incrementalCompilation.asSerializationHooksProvider()?.let { incrementalCompilation ->
             addAll(incrementalCompilation.beforeSerialization(logger))
         }
     }
 
     override fun afterDeserialization(messageReporter: (Message) -> Unit, compilerFacade: CompilerServicesFacadeBase?) {
-        super<BaseCompilationOperationImpl>.afterDeserialization(messageReporter, compilerFacade)
+        super.afterDeserialization(messageReporter, compilerFacade)
         incrementalCompilation.asSerializationHooksProvider()?.afterDeserialization(messageReporter, compilerFacade)
     }
 
