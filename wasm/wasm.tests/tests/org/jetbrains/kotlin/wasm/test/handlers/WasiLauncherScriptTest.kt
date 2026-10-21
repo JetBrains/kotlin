@@ -15,32 +15,32 @@ class WasiLauncherScriptTest {
     fun `given a batch with the generated driver then the launcher calls it`() {
         val script = startUnitTestsWasiScript(callGroupedTestsDriver = true)
 
-        assertTrue("jsModule.startTest();" in script, script)
-        assertFalse("startUnitTests" in script, script)
+        assertTrue("jsModule.starttest();" in script, script)
+        assertFalse("startunittests" in script, script)
     }
 
     @Test
     fun `given a batch without the driver then the launcher calls the unit-test runner`() {
         val script = startUnitTestsWasiScript(callGroupedTestsDriver = false)
 
-        assertTrue("jsModule.startUnitTests();" in script, script)
-        assertFalse("startTest" in script, script)
+        assertTrue("jsModule.startunittests();" in script, script)
+        assertFalse("starttest" in script, script)
     }
 
     @Test
     fun `given a driverless unit-test run then the standalone VMs invoke the unit-test runner export`() {
-        assertEquals("startUnitTests", wasiStandaloneEntryExport(hasGroupedTestsDriver = false, runUnitTests = true))
+        assertEquals("startunittests", wasiStandaloneEntryExport(hasGroupedTestsDriver = false, runUnitTests = true))
     }
 
     @Test
     fun `given a driver-linked batch then the standalone VMs invoke the driver even when unit tests are requested`() {
-        assertEquals("startTest", wasiStandaloneEntryExport(hasGroupedTestsDriver = true, runUnitTests = true))
-        assertEquals("startTest", wasiStandaloneEntryExport(hasGroupedTestsDriver = true, runUnitTests = false))
+        assertEquals("starttest", wasiStandaloneEntryExport(hasGroupedTestsDriver = true, runUnitTests = true))
+        assertEquals("starttest", wasiStandaloneEntryExport(hasGroupedTestsDriver = true, runUnitTests = false))
     }
 
     @Test
     fun `given a driverless box run then the standalone VMs invoke the box helper`() {
-        assertEquals("startTest", wasiStandaloneEntryExport(hasGroupedTestsDriver = false, runUnitTests = false))
+        assertEquals("starttest", wasiStandaloneEntryExport(hasGroupedTestsDriver = false, runUnitTests = false))
     }
 
     @Test

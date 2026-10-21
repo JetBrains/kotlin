@@ -3,9 +3,6 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-// This `startTest` shares its export name with the grouped batches' result-collecting driver on purpose; the two never
-// end up in the same binary, see `wasmWasiGroupedTestsEntryPointSource`.
-
 @kotlin.wasm.WasmExport
 fun runBoxTest(): Boolean {
     val boxResult: String = box()
@@ -16,18 +13,23 @@ fun runBoxTest(): Boolean {
     return isOk
 }
 
-@kotlin.wasm.WasmImport("wasi_snapshot_preview1", "proc_exit")
-private external fun wasiProcExit(code: Int)
+// only takes 1 for failure, 0 for success
+// (originally stems from a WIT result<> type (without payload), which the canonical abi lowers to a single i32 representing failure or success)
+@kotlin.wasm.WasmImport("wasi:cli/exit@0.2.12", "exit")
+private external fun wasiExit(status: Int)
 
-@kotlin.wasm.WasmExport
+// This `starttest` has the same export name as the result-collecting driver of grouped batches. The two are never in the
+// same binary, see `wasmWasiGroupedTestsEntryPointSource`.
+
+@kotlin.wasm.WasmExport("starttest")
 fun startTest() {
     try {
         if (!runBoxTest()) {
-            wasiProcExit(1)
+            wasiExit(1)
         }
     } catch (e: Throwable) {
         println("Failed with exception!")
         println(e)
-        wasiProcExit(1)
+        wasiExit(1)
     }
 }

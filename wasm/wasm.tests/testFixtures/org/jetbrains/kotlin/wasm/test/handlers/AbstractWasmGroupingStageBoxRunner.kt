@@ -174,7 +174,7 @@ abstract class AbstractWasmGroupingStageBoxRunner(
                 "Sanity check failed: the grouped batch printed no '${GroupedTestsResultProtocol.BEGIN}' block, " +
                         "so not a single test reported a result. The launcher's result-collecting driver was " +
                         "never invoked — most likely its exported entry point " +
-                        "(`runGroupedTests` on wasm-js, `startTest` on wasm-wasi) was missing or renamed, which " +
+                        "(`runGroupedTests` on wasm-js, `starttest` on wasm-wasi) was missing or renamed, which " +
                         "means no test of this batch actually ran.",
             )
             return

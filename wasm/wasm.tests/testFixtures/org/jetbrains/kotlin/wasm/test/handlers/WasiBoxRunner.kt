@@ -28,13 +28,13 @@ import java.io.File
  * directly, chosen by [wasiStandaloneEntryExport] (see [WasmVM.WasmEdge] and [WasmVM.Wasmtime]).
  *
  * [callGroupedTestsDriver] must come from the artifact the stage-2 facade produced, not from probing the exports:
- * `wasiBoxTestRun.kt` exports a `startTest()` of its own that merely runs `box()`, so a probe would run `box()` in
- * place of `startUnitTests()` for an isolated `// RUN_UNIT_TESTS` test that also has a `box()`.
+ * `wasiBoxTestRun.kt` exports a `starttest()` of its own that merely runs `box()`, so a probe would run `box()` in
+ * place of `startunittests()` for an isolated `// RUN_UNIT_TESTS` test that also has a `box()`.
  */
 internal fun startUnitTestsWasiScript(callGroupedTestsDriver: Boolean): String = """
     try {
         let jsModule = await import('./$WASM_BASE_FILE_NAME.mjs');
-        ${if (callGroupedTestsDriver) "jsModule.startTest();" else "jsModule.startUnitTests();"}
+        ${if (callGroupedTestsDriver) "jsModule.$WASI_BOX_ENTRY_EXPORT();" else "jsModule.$WASI_UNIT_TESTS_ENTRY_EXPORT();"}
     } catch(e) {
         console.log('Failed with exception!');
         console.log(e);
@@ -43,9 +43,9 @@ internal fun startUnitTestsWasiScript(callGroupedTestsDriver: Boolean): String =
     """.trimIndent()
 
 /**
- * The export the standalone WASI VMs invoke. In a driver-linked batch, `startTest` is the result-collecting driver.
- * Otherwise a `// RUN_UNIT_TESTS` test is isolated, and its `startTest` export is `wasiBoxTestRun.kt`'s glue that runs
- * `box()` alone. Such a test runs `startUnitTests` instead: the compiler exports it from every binary with
+ * The export the standalone WASI VMs invoke. In a driver-linked batch, `starttest` is the result-collecting driver.
+ * Otherwise a `// RUN_UNIT_TESTS` test is isolated, and its `starttest` export is `wasiBoxTestRun.kt`'s glue that runs
+ * `box()` alone. Such a test runs `startunittests` instead: the compiler exports it from every binary with
  * `@kotlin.test.Test` functions, and the `@Test` launcher of `WasmJsLauncherAdditionalSourceProvider` calls `box()`
  * inside the suite, so that one export covers the unit tests and the box verdict alike.
  */
@@ -58,13 +58,9 @@ internal fun wasiStandaloneEntryExport(hasGroupedTestsDriver: Boolean, runUnitTe
 // TODO reduce amount of duplicated code between this class and WasmBoxRunner
 class WasiBoxRunner(
     testServices: TestServices,
-    executeWithNodeJsOnly: Boolean = false, // Klib backward compatibility testsuite needs only one best Wasi runner
 ) : AbstractWasmArtifactsCollector(testServices) {
-    internal val vmsToCheck: List<WasmVM> = if (executeWithNodeJsOnly) {
-        listOf(WasmVM.NodeJs)
-    } else {
-        listOf(WasmVM.NodeJs, WasmVM.WasmEdge, WasmVM.Wasmtime)
-    }
+    // TODO: run on WasmEdge again when it can run Wasm components
+    internal val vmsToCheck: List<WasmVM> = listOf(WasmVM.Wasmtime)
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         if (!someAssertionWasFailed) {
@@ -73,7 +69,7 @@ class WasiBoxRunner(
     }
 
     /**
-     * Runs the WASI compilation set on the WASI VMs (NodeJs / WasmEdge / Wasmtime).
+     * Runs the WASI compilation set on the WASI VMs ([vmsToCheck]).
      *
      * Mirrors [WasmBoxRunner.runWasmCode] so that the IN_PROCESS grouping stage
      * ([WasmCompilationSetsGroupingStageBoxRunner]) can delegate WASI runs here instead of to the
@@ -101,7 +97,7 @@ class WasiBoxRunner(
             let boxTestPassed = false;
             try {
                 let jsModule = await import('./$WASM_BASE_FILE_NAME.mjs');
-                ${if (startUnitTests) "jsModule.startUnitTests();" else ""}
+                ${if (startUnitTests) "jsModule.$WASI_UNIT_TESTS_ENTRY_EXPORT();" else ""}
                 boxTestPassed = jsModule.runBoxTest();
             } catch(e) {
                 console.log('Failed with exception!');
@@ -182,7 +178,8 @@ open class WasmWasiFolderGroupingStageBoxRunner(
 ) : AbstractWasmGroupingStageBoxRunner(testServices), WasmArtifactsCollector {
     private val firstNonGroupingTestServices: TestServices
         get() = testServices.groupingStageInputs.first().testServices
-    private val vmsToCheck: List<WasmVM> = listOf(WasmVM.NodeJs, WasmVM.WasmEdge, WasmVM.Wasmtime)
+    // TODO: run on WasmEdge again when it can run Wasm components
+    private val vmsToCheck: List<WasmVM> = listOf(WasmVM.Wasmtime)
 
     override fun shouldUseBoxExportModeWhenDriverless(): Boolean {
         // WASI tests always use the unit-test runner, never box export mode
