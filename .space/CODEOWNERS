@@ -62,6 +62,8 @@
 # USER_OWNER: gleb.lukianets@jetbrains.com glukianets
 # USER_OWNER: sebastian.sellmair@jetbrains.com sellmair
 # USER_OWNER: anton.bannykh@jetbrains.com anton-bannykh
+# USER_OWNER: dmitriy.dolovov@jetbrains.com ddolovov
+# USER_OWNER: pavel.kunyavskiy@jetbrains.com kunyavskiy
 
 # SPACE_TO_GITHUB_OWNER: "Google Compose" ShikaSD bentrengrove andrewbailey chuckjaz derekxu16
 # SPACE_TO_GITHUB_OWNER: "Parcelize" troelsbjerre blueshiftlabs jsjeon jaschdoc francescoo22 spawankartik-google
@@ -301,6 +303,8 @@
 
 # UNKNOWN: /idea/
 
+/inspections/ alexander.udalov@jetbrains.com dmitriy.dolovov@jetbrains.com dmitriy.novozhilov@jetbrains.com pavel.kunyavskiy@jetbrains.com simon.ogorodnik@jetbrains.com svyatoslav.scherbina@jetbrains.com
+
 /jps/ "Kotlin Build Tools"
 
 /js/ "Kotlin JS"
@@ -498,6 +502,7 @@
 /CLAUDE.md "Kotlin Build Infrastructure"
 /AGENTS.md "Kotlin Build Infrastructure"
 /code-rules.md "Kotlin"
+/qodana.yaml alexander.udalov@jetbrains.com dmitriy.dolovov@jetbrains.com dmitriy.novozhilov@jetbrains.com pavel.kunyavskiy@jetbrains.com simon.ogorodnik@jetbrains.com svyatoslav.scherbina@jetbrains.com
 
 # Diagnostic Messages
 /compiler/fir/checkers/checkers.common/src/org/jetbrains/kotlin/fir/analysis/diagnostics/FirErrorsDefaultMessages.kt alejandro.serrano.mena@jetbrains.com brian.norman@jetbrains.com ilya.chernikov@jetbrains.com kirill.rakhman@jetbrains.com
