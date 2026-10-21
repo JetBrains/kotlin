@@ -35,6 +35,7 @@ kotlin {
             // severity, which Gradle only surfaces at --debug.
             freeCompilerArgs.add("-Xdump-perf=" + (findProperty("perfOut") as String? ?: "/tmp/perf") + "/")
         }
+        freeCompilerArgs.add("-Xdetailed-perf")
     }
 }
 

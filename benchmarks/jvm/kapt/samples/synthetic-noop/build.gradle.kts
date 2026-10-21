@@ -4,6 +4,12 @@ plugins {
     kotlin("kapt")
 }
 
+kotlin {
+    compilerOptions {
+        freeCompilerArgs.add("-Xdetailed-perf")
+    }
+}
+
 jvmToolchains {
     jdkVersion = JdkMajorVersion.JDK_17_0
     targetBytecodeVersion = JdkMajorVersion.JDK_17_0
