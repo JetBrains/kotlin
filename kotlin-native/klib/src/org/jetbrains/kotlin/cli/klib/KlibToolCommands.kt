@@ -55,6 +55,13 @@ internal sealed class KlibToolCommand(
         } else true
     }
 
+    protected fun checkLibraryHasRealOrSyntheticIr(library: KotlinLibrary): Boolean {
+        return if (library.ir == null && !library.isCInteropLibrary()) {
+            output.logError("This library does not have IR and is not a C-interop library: ${args.library.path}")
+            false
+        } else true
+    }
+
     protected inline fun <T : Any> chooseAppropriateComponentOrReturnNull(
             library: KotlinLibrary,
             whenIrFullLibrary: (KotlinLibrary) -> T,
@@ -168,7 +175,7 @@ internal class Info(output: KlibToolOutput, args: ParsedArguments) : KlibToolCom
 
 internal class DumpIr(output: KlibToolOutput, args: ParsedArguments) : KlibToolCommand(output, args) {
     override fun execute() {
-        if (!checkLibraryHasIr(args.library)) return
+        if (!checkLibraryHasRealOrSyntheticIr(args.library)) return
 
         if (args.signatureVersion != null && args.signatureVersion != KotlinIrSignatureVersion.V2) {
             // TODO: support passing any signature version through `DumpIrTreeOptions`, KT-62828
@@ -180,6 +187,7 @@ internal class DumpIr(output: KlibToolOutput, args: ParsedArguments) : KlibToolC
 
         val linker = KlibToolIrLinker(output, symbolTable)
         val irFragment = linker.deserializeFullModule(moduleDescriptor, args.library)
+        // TODO: how to force full deserialization?
         linker.modulesWithReachableTopLevels.forEach(IrModuleDeserializer::deserializeReachableDeclarations)
 
         val dumpOptions = DumpIrTreeOptions(
@@ -199,7 +207,7 @@ internal class DumpIr(output: KlibToolOutput, args: ParsedArguments) : KlibToolC
 
 internal class DumpIrInlinableFunctions(output: KlibToolOutput, args: ParsedArguments) : KlibToolCommand(output, args) {
     override fun execute() {
-        if (!checkLibraryHasIr(args.library)) return
+        if (!checkLibraryHasRealOrSyntheticIr(args.library)) return
 
         val inlinableFunctionsIr = args.library.inlinableFunctionsIr
         if (inlinableFunctionsIr == null) {

@@ -11,12 +11,16 @@ import org.jetbrains.kotlin.backend.common.serialization.BasicIrModuleDeserializ
 import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.KotlinIrLinker
+import org.jetbrains.kotlin.backend.konan.serialization.KonanInteropModuleDeserializer
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
+import org.jetbrains.kotlin.resolve.CommonCompilerDeserializationConfiguration
 
 internal class KlibToolIrLinker(
         output: KlibToolOutput,
@@ -38,11 +42,23 @@ internal class KlibToolIrLinker(
             moduleFragment: IrModuleFragment,
             klib: KotlinLibrary?,
             strategyResolver: (String) -> DeserializationStrategy,
-    ): IrModuleDeserializer = KlibToolModuleDeserializer(
-            moduleFragment = moduleFragment,
-            klib = klib ?: error("Expecting kotlin library for $moduleFragment"),
-            strategyResolver = strategyResolver
-    )
+    ): IrModuleDeserializer = when {
+        klib == null -> error("Expecting kotlin library for $moduleFragment")
+
+        klib.isCInteropLibrary() -> KonanInteropModuleDeserializer(
+                deserializationConfiguration = CommonCompilerDeserializationConfiguration(LanguageVersionSettingsImpl.DEFAULT),
+                moduleFragment = moduleFragment,
+                klib = klib,
+                isLibraryCached = false,
+                linker = this,
+        )
+
+        else -> KlibToolModuleDeserializer(
+                moduleFragment = moduleFragment,
+                klib = klib,
+                strategyResolver = strategyResolver
+        )
+    }
 
     override fun isBuiltInModule(module: IrModuleFragment) = false
 

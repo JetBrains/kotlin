@@ -11,6 +11,7 @@ import kotlinx.metadata.klib.fqName
 import org.jetbrains.kotlin.backend.common.linkage.IrDeserializer.TopLevelSymbolKind
 import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializer
+import org.jetbrains.kotlin.backend.common.serialization.KotlinIrLinker
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.SourceElement
@@ -58,7 +59,7 @@ class KonanInteropModuleDeserializer(
     moduleFragment: IrModuleFragment,
     override val klib: KotlinLibrary,
     private val isLibraryCached: Boolean,
-    private val linker: KonanIrLinker,
+    private val linker: KotlinIrLinker,
 ) : IrModuleDeserializer(moduleFragment, klib.versions.abiVersion ?: KotlinAbiVersion.CURRENT), CInteropModuleDeserializer {
     init {
         require(klib.isCInteropLibrary())
