@@ -20,7 +20,6 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.Optional
 import org.gradle.work.NormalizeLineEndings
-import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.commonizer.KonanDistribution
 import org.jetbrains.kotlin.compilerRunner.*
@@ -71,7 +70,6 @@ constructor(
     @Transient // This property can't be accessed in the execution phase
     val binary: NativeBinary,
     private val objectFactory: ObjectFactory,
-    private val workerExecutor: WorkerExecutor,
 ) : AbstractKotlinCompileTool<K2NativeCompilerArguments>(objectFactory),
     UsesKonanPropertiesBuildService,
     UsesBuildMetricsService,
@@ -536,7 +534,6 @@ constructor(
             // concurrencyLimitService registered above (and declared via usesService in init) caps how many
             // KotlinNativeLink tasks can actually run at once, via Gradle's own task scheduling.
             nativeCompilerRunner.runToolInWorker(
-                workerExecutor,
                 KotlinNativeToolRunner.ToolArguments(
                     shouldRunInProcessMode = !forceDisableRunningInProcess.get(),
                     compilerArgumentsLogLevel = kotlinCompilerArgumentsLogLevel.get(),

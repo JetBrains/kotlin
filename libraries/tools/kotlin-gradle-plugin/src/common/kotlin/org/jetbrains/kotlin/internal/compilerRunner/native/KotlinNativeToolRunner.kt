@@ -55,6 +55,7 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
     private val toolSpec: ToolSpec,
     private val fusMetricsConsumer: Provider<out BuildFusService<out BuildFusService.Parameters>>,
     private val execOperations: ExecOperations,
+    private val workerExecutor: WorkerExecutor,
 ) {
 
     companion object {
@@ -91,11 +92,11 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
      * Concurrency across several [runToolInWorker] calls (e.g. one per Kotlin/Native link task) is capped by the
      * caller declaring [org.gradle.api.Task.usesService] with the provider returned from
      * [registerKotlinNativeConcurrencyLimitService] - this call site doesn't need to know about that.
+     *
+     * The [WorkerExecutor] is injected into this runner (see the primary constructor) rather than taken as a
+     * parameter, so callers don't need to inject/pass their own instance just to call this method.
      */
-    fun runToolInWorker(
-        workerExecutor: WorkerExecutor,
-        args: ToolArguments,
-    ): WorkQueue =
+    fun runToolInWorker(args: ToolArguments): WorkQueue =
         workerExecutor.noIsolation().apply {
             submit(KotlinNativeToolWorkAction::class.java) { it.from(this@KotlinNativeToolRunner, args) }
         }

@@ -58,6 +58,7 @@ import org.jetbrains.kotlin.gradle.targets.native.toolchain.UsesKotlinNativeBund
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeCompilerRunner
 import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeToolRunner
+import org.jetbrains.kotlin.internal.compilerRunner.native.registerKotlinNativeConcurrencyLimitService
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind.*
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -264,6 +265,15 @@ internal constructor(
     UsesClassLoadersCachingBuildService,
     UsesKonanPropertiesBuildService,
     UsesKotlinToolingDiagnostics {
+
+    init {
+        // Demo: limit the number of KotlinNativeCompile tasks that can execute concurrently, since each
+        // invocation is a memory-heavy native compiler process.
+        val maxParallelCompileTasks = 3
+        usesService(
+            project.registerKotlinNativeConcurrencyLimitService("KotlinNativeCompile", maxParallelCompileTasks)
+        )
+    }
 
     @get:Input
     override val outputKind = LIBRARY
@@ -495,7 +505,13 @@ internal constructor(
                 buildArguments
             }
 
-            nativeCompilerRunner.runTool(
+            // Run the actual compile invocation in its own worker, so that compile tasks for different
+            // targets/compilations that end up in the same work queue can execute concurrently. The generic
+            // KotlinNativeToolRunner.runToolInWorker takes care of flattening the runner's configuration into
+            // worker-safe parameters and rebuilding it inside the worker - see KotlinNativeToolWorkAction. The
+            // concurrencyLimitService registered above (and declared via usesService in init) caps how many
+            // KotlinNativeCompile tasks can actually run at once, via Gradle's own task scheduling.
+            nativeCompilerRunner.runToolInWorker(
                 KotlinNativeToolRunner.ToolArguments(
                     shouldRunInProcessMode = !forceDisableRunningInProcess.get(),
                     compilerArgumentsLogLevel = kotlinCompilerArgumentsLogLevel.get(),
