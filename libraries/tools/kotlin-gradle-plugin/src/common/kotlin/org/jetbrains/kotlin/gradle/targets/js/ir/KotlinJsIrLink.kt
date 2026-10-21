@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.gradle.tasks.K2MultiplatformStructure
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.tasks.TaskOutputsBackup
 import org.jetbrains.kotlin.gradle.utils.KotlinJsCompilerOptionsDefault
+import org.jetbrains.kotlin.js.config.EcmaVersion
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import javax.inject.Inject
 
@@ -152,6 +153,7 @@ abstract class KotlinJsIrLink
             }
 
             if (delegateTranspilationToExternalTool && !isWasmPlatformValue) {
+                val userDefinedTarget = args.target?.let(EcmaVersion::fromName) ?: EcmaVersion.defaultVersion()
                 // If the delegated transpilation used, we should compile to the latest supported JS version
                 // so that the third-party transpilation tool (swc) will transpile it by the rules defined by users
                 args.target = JsPlatforms.latestSupportedTarget
@@ -160,6 +162,11 @@ abstract class KotlinJsIrLink
                 // and we can delegate module system transpilation to SWC too
                 if (args.moduleKind == null) {
                     args.moduleKind = JsModuleKind.MODULE_UMD.kind
+                }
+                // The latest supported target implies Long compilation as BigInt, which can't be transpiled by SWC
+                // to the older JS versions, so we keep the behavior defined by the user-defined target
+                if (args.compileLongAsBigInt == null) {
+                    args.compileLongAsBigInt = userDefinedTarget >= EcmaVersion.es2020
                 }
             }
         }
