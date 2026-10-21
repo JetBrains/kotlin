@@ -29,8 +29,6 @@ import org.jetbrains.kotlin.buildtools.internal.arguments.WasmArgumentsImpl
 import org.jetbrains.kotlin.buildtools.internal.arguments.absolutePathStringOrThrow
 import org.jetbrains.kotlin.buildtools.internal.trackers.getMetricsReporter
 import org.jetbrains.kotlin.buildtools.internal.wasm.WasmHistoryBasedIncrementalCompilationConfigurationImpl
-import org.jetbrains.kotlin.buildtools.internal.wasm.WasmHistoryBasedIncrementalCompilationConfigurationImpl.Companion.HISTORY_FILE_DIR
-import org.jetbrains.kotlin.buildtools.internal.wasm.WasmHistoryBasedIncrementalCompilationConfigurationImpl.Companion.ROOT_PROJECT_BUILD_DIR
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.arguments.KotlinWasmCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorWithDiagnosticId
@@ -74,7 +72,9 @@ internal class WasmKlibCompilationOperationImpl private constructor(
         sourcesChanges: SourcesChanges,
         modulesInformation: List<IncrementalModule>,
     ): WasmHistoryBasedIncrementalCompilationConfiguration.Builder {
-        return WasmHistoryBasedIncrementalCompilationConfigurationImpl(rootProjectDir, workingDirectory, sourcesChanges, modulesInformation)
+        return WasmHistoryBasedIncrementalCompilationConfigurationImpl(workingDirectory, sourcesChanges, modulesInformation).also {
+            it.rootProjectDir = rootProjectDir
+        }
     }
 
     override fun toBuilder(): WasmKlibCompilationOperation.Builder = deepCopy()
@@ -109,7 +109,7 @@ internal class WasmKlibCompilationOperationImpl private constructor(
     class Option<V>(id: String, default: V) : BaseOptionWithDefault<V>(id, defaultValue = default)
 
     override fun getRootProjectDir(): Path? {
-        return (get(INCREMENTAL_COMPILATION) as? WasmHistoryBasedIncrementalCompilationConfigurationImpl)?.get(ROOT_PROJECT_DIR)
+        return (get(INCREMENTAL_COMPILATION) as? WasmHistoryBasedIncrementalCompilationConfigurationImpl)?.rootProjectDir
     }
 
     override fun createAndPrepareCompilerArguments(): KotlinWasmCompilerArguments =
@@ -139,16 +139,16 @@ internal class WasmKlibCompilationOperationImpl private constructor(
                     reportCategories = reportCategories,
                     reportSeverity = reportSeverity,
                     requestedCompilationResults = requestedCompilationResults,
-                    outputFiles = aggregatedIcConfiguration[OUTPUT_DIRS]?.map { it.toFile() },
+                    outputFiles = aggregatedIcConfiguration.outputDirs?.map { it.toFile() },
                     multiModuleICSettings = MultiModuleICSettings(
                         aggregatedIcConfiguration.historyFile.toFile(),
                         false
                     ),
                     modulesInfo = aggregatedIcConfiguration.modulesInformation.toIncrementalModuleInfo(
-                        aggregatedIcConfiguration[ROOT_PROJECT_BUILD_DIR]
+                        aggregatedIcConfiguration.rootProjectBuildDir
                     ),
-                    rootProjectDir = aggregatedIcConfiguration[ROOT_PROJECT_DIR]?.toFile(),
-                    buildDir = aggregatedIcConfiguration[MODULE_BUILD_DIR]?.toFile(),
+                    rootProjectDir = aggregatedIcConfiguration.rootProjectDir?.toFile(),
+                    buildDir = aggregatedIcConfiguration.moduleBuildDir?.toFile(),
                     icFeatures = aggregatedIcConfiguration.extractIncrementalCompilationFeatures(),
                     useJvmFirRunner = false,
                     generateCompilerRefIndex = generateCompilerRefIndex,
@@ -167,16 +167,16 @@ internal class WasmKlibCompilationOperationImpl private constructor(
     private fun makeConfigurationInputs(
         icConfiguration: WasmHistoryBasedIncrementalCompilationConfigurationImpl,
     ): ConfigurationInputs? {
-        return if (icConfiguration[TRACK_CONFIGURATION_INPUTS]) {
+        return if (icConfiguration.trackConfigurationInputs) {
             ConfigurationInputs(
                 mapOf(
-                    "rootProjectBuildDir" to "${icConfiguration[ROOT_PROJECT_BUILD_DIR]}",
-                    "historyFileDir" to "${icConfiguration[HISTORY_FILE_DIR]}",
-                    "rootProjectDir" to "${icConfiguration[ROOT_PROJECT_DIR]}",
-                    "moduleBuildDir" to "${icConfiguration[MODULE_BUILD_DIR]}",
-                    "outputDirs" to "${icConfiguration[OUTPUT_DIRS]}",
-                    "unsafeIncrementalCompilationForMultiplatform" to "${icConfiguration[UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM]}",
-                    "monotonousIncrementalCompileSetExpansion" to "${icConfiguration[MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION]}",
+                    "rootProjectBuildDir" to "${icConfiguration.rootProjectBuildDir}",
+                    "historyFileDir" to "${icConfiguration.historyFileDir}",
+                    "rootProjectDir" to "${icConfiguration.rootProjectDir}",
+                    "moduleBuildDir" to "${icConfiguration.moduleBuildDir}",
+                    "outputDirs" to "${icConfiguration.outputDirs}",
+                    "unsafeIncrementalCompilationForMultiplatform" to "${icConfiguration.unsafeIncrementalCompilationForMultiplatform}",
+                    "monotonousIncrementalCompileSetExpansion" to "${icConfiguration.monotonousIncrementalCompileSetExpansion}",
                     "kotlinVersion" to compilerVersion,
                 ),
                 compilerArguments.toCompilationInputs(),
@@ -220,8 +220,8 @@ internal class WasmKlibCompilationOperationImpl private constructor(
             "Unexpected incremental compilation configuration: ${icConfiguration::class}. In this version, it must be an instance of WasmHistoryBasedIncrementalCompilationConfiguration for incremental compilation, or null for non-incremental compilation."
         }
 
-        val projectDir = icConfiguration[ROOT_PROJECT_DIR]?.toFile()
-        val buildDir = icConfiguration[MODULE_BUILD_DIR]?.toFile()
+        val projectDir = icConfiguration.rootProjectDir?.toFile()
+        val buildDir = icConfiguration.moduleBuildDir?.toFile()
 
         @Suppress("DEPRECATION")
         check(
@@ -250,9 +250,9 @@ internal class WasmKlibCompilationOperationImpl private constructor(
             buildReporter,
             icConfiguration.historyFile.toFile(),
             ModulesApiHistoryJs(
-                (icConfiguration[ROOT_PROJECT_DIR] ?: icConfiguration.workingDirectory).toFile(),
+                (icConfiguration.rootProjectDir ?: icConfiguration.workingDirectory).toFile(),
                 icConfiguration.modulesInformation.toIncrementalModuleInfo(
-                    icConfiguration[ROOT_PROJECT_BUILD_DIR]
+                    icConfiguration.rootProjectBuildDir
                 )
             ),
             CompileScopeExpansionMode.ALWAYS,
@@ -286,10 +286,10 @@ internal class WasmKlibCompilationOperationImpl private constructor(
     private fun WasmHistoryBasedIncrementalCompilationConfigurationImpl.extractIncrementalCompilationFeatures(): IncrementalCompilationFeatures {
         return IncrementalCompilationFeatures(
             usePreciseJavaTracking = false,
-            preciseCompilationResultsBackup = this[BACKUP_CLASSES],
-            keepIncrementalCompilationCachesInMemory = this[KEEP_IC_CACHES_IN_MEMORY],
-            enableUnsafeIncrementalCompilationForMultiplatform = this[UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM],
-            enableMonotonousIncrementalCompileSetExpansion = this[MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION],
+            preciseCompilationResultsBackup = this.backupClasses,
+            keepIncrementalCompilationCachesInMemory = this.keepIcCachesInMemory,
+            enableUnsafeIncrementalCompilationForMultiplatform = this.unsafeIncrementalCompilationForMultiplatform,
+            enableMonotonousIncrementalCompileSetExpansion = this.monotonousIncrementalCompileSetExpansion,
         )
     }
 
