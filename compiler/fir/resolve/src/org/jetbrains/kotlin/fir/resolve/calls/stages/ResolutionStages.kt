@@ -1233,7 +1233,7 @@ internal object CheckLambdaAgainstTypeVariableContradiction : ResolutionStage() 
 
         // We use Function<Nothing> as our representative type for "some function type".
         val lambdaType = StandardClassIds.Function
-            .constructClassLikeType(arrayOf(context.session.builtinTypes.nothingType.coneType))
+            .constructClassLikeType(arrayOf(StandardTypes.Nothing))
 
         // We don't add the constraint to the system in the end, we only check for contradictions and roll back the transaction.
         // This ensures we don't get any issues if a different function type constraint is added later, e.g., during completion.
