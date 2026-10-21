@@ -49,7 +49,10 @@ internal fun executeTests(configuration: TestShardingConfiguration, vararg testC
     return succeeded
 }
 
-/** All settings as JUnit configuration parameters (e.g., for a `LauncherDiscoveryRequestBuilder`), including the disabled ones. */
+/**
+ * All settings as JUnit configuration parameters (e.g., for a `LauncherDiscoveryRequestBuilder`), including the disabled ones,
+ * except for the timings, which are only read from the system properties (see [timedTestSharding]).
+ */
 internal fun TestShardingConfiguration.toConfigurationParameters(): Map<String, String> = mapOf(
     shardIndexKey to shardIndex.toString(),
     shardCountKey to shardCount.toString(),
