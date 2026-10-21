@@ -4,10 +4,10 @@ class Outer<T> {
     inner class Inner {
         companion {
             val innerProp: Inner
-                get() = Inner()
+                get() = <!INNER_CLASS_CONSTRUCTOR_NO_RECEIVER!>Inner<!>()
 
             fun foo(x: Inner) {
-                val x: Inner = Inner()
+                val x: Inner = <!INNER_CLASS_CONSTRUCTOR_NO_RECEIVER!>Inner<!>()
             }
         }
     }
@@ -20,7 +20,7 @@ class Outer<T> {
     class Static {
          companion {
              val innerProp: <!OUTER_CLASS_ARGUMENTS_REQUIRED!>Inner<!>
-                 get() = <!INACCESSIBLE_OUTER_CLASS_RECEIVER!>Inner<!>()
+                 get() = <!INNER_CLASS_CONSTRUCTOR_NO_RECEIVER!>Inner<!>()
         }
     }
 
@@ -52,28 +52,28 @@ class Outer2<T> {
     }
 }
 
-class Outer3 { fun o() = 1; inner class Inner { companion { fun f() = o() } } }            // ERR, crash
-class Outer4 { val o = 1; inner class Inner { companion { fun f() = o } } }                // ERR, crash
-class Outer5 { val o = 1; inner class Inner { companion { val x get() = o } } }            // ERR, crash
-class Outer6 { val o = 1; inner class Inner { companion { val x = o } } }                  // ERR, crash in <clinit>
-class Outer7 { fun o() = 1; inner class Inner { companion { val r = ::o } } }              // ERR, crash in <clinit>
-class Outer8 { fun o() = 1; inner class Inner { companion { fun f() = run { o() } } } }    // ERR, crash
+class Outer3 { fun o() = 1; inner class Inner { companion { fun f() = <!UNRESOLVED_REFERENCE!>o<!>() } } }            // ERR, crash
+class Outer4 { val o = 1; inner class Inner { companion { fun f() = <!UNRESOLVED_REFERENCE!>o<!> } } }                // ERR, crash
+class Outer5 { val o = 1; inner class Inner { companion { val x get() = <!UNRESOLVED_REFERENCE!>o<!> } } }            // ERR, crash
+class Outer6 { val o = 1; inner class Inner { companion { val x = <!UNRESOLVED_REFERENCE!>o<!> } } }                  // ERR, crash in <clinit>
+class Outer7 { fun o() = 1; inner class Inner { companion { val r = ::<!UNRESOLVED_REFERENCE!>o<!> } } }              // ERR, crash in <clinit>
+class Outer8 { fun o() = 1; inner class Inner { companion { fun f() = <!CANNOT_INFER_PARAMETER_TYPE!>run<!> { <!UNRESOLVED_REFERENCE!>o<!>() } } } }    // ERR, crash
 class Outer9 { inner class Inner { companion { fun f() = this<!UNRESOLVED_LABEL!>@Outer<!> } } }                  // ERR, crash
-class Outer10 { inner class Inner { companion { fun f() = this } } }                        // ERR, crash, `this` is Outer
-class Outer11 { inner class Inner { companion { fun f() = super<!UNRESOLVED_LABEL!>@Outer<!>.hashCode() } } }      // ERR, crash
-class Outer12 { inner class Other {}; inner class Inner { companion { fun f() = Other() } } } // ERR, crash
-class Outer13<T>(val t: T) { inner class Inner { companion { fun f() = t } } }              // ERR, crash
-class Outer14 { fun Int.ext() = 1; inner class Inner { companion { fun f() = 1.ext() } } }  // ERR, crash
+class Outer10 { inner class Inner { companion { fun f() = <!NO_THIS!>this<!> } } }                        // ERR, crash, `this` is Outer
+class Outer11 { inner class Inner { companion { fun f() = <!SUPER_NOT_AVAILABLE!>super@Outer<!>.hashCode() } } }      // ERR, crash
+class Outer12 { inner class Other {}; inner class Inner { companion { fun f() = <!INNER_CLASS_CONSTRUCTOR_NO_RECEIVER!>Other<!>() } } } // ERR, crash
+class Outer13<T>(val t: T) { inner class Inner { companion { fun f() = <!UNRESOLVED_REFERENCE!>t<!> } } }              // ERR, crash
+class Outer14 { fun Int.ext() = 1; inner class Inner { companion { fun f() = 1.<!UNRESOLVED_REFERENCE!>ext<!>() } } }  // ERR, crash
 
 open class Base { fun b() = 1 }
-class Outer15 : Base() { inner class Inner { companion { fun f() = b() } } }   // ERR, crash
+class Outer15 : Base() { inner class Inner { companion { fun f() = <!UNRESOLVED_REFERENCE!>b<!>() } } }   // ERR, crash
 
-enum class E { A; inner class I { companion { fun f() = name } } }   // ERR, crash
-class Outer16 { fun o() = 1; inner class Mid { fun m() = 2; inner class Inner { companion { fun f() = o() + m() } } } }   // ERR, crash
-class Outer17 { inner class Mid { inner class Inner { companion { fun f() = Mid() } } } }   // ERR, crash
-class Outer18 { fun o() = 1; fun m() = object { inner class I { companion { fun f() = o() } } } }   // ERR, crash
+enum class E { A; inner class I { companion { fun f() = <!UNRESOLVED_REFERENCE!>name<!> } } }   // ERR, crash
+class Outer16 { fun o() = 1; inner class Mid { fun m() = 2; inner class Inner { companion { fun f() = <!UNRESOLVED_REFERENCE!>o<!>() + <!UNRESOLVED_REFERENCE!>m<!>() } } } }   // ERR, crash
+class Outer17 { inner class Mid { inner class Inner { companion { fun f() = <!INNER_CLASS_CONSTRUCTOR_NO_RECEIVER!>Mid<!>() } } } }   // ERR, crash
+class Outer18 { fun o() = 1; fun m() = object { inner class I { companion { fun f() = <!UNRESOLVED_REFERENCE!>o<!>() } } } }   // ERR, crash
 
-class Outer19 { fun o() = 1; fun m() { class L { companion { fun f() = o() } } } }   // ERR, crash in lowering: No dispatch receiver parameter for FUN f [companion]
+class Outer19 { fun o() = 1; fun m() { class L { companion { fun f() = <!UNRESOLVED_REFERENCE!>o<!>() } } } }   // ERR, crash in lowering: No dispatch receiver parameter for FUN f [companion]
 fun g(): Int { val v = 1; class L { companion { fun f() = v } }; return L.f() }    // ERR, same lowering crash, also on JS and Wasm
 
 // must keep compiling (OK)
