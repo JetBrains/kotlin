@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.analysis.api.impl.base.util.withPsiEntry
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
-import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLModuleSpecificSymbolProviderAccess
@@ -30,7 +29,6 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -40,7 +38,6 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.utils.addToStdlib.requireIsInstance
 import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
-import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 
 /**
  * An entry point for a FIR Low Level API resolution. Represents a project view from a use-site [KaModule].
@@ -154,25 +151,17 @@ class LLResolutionFacade internal constructor(
             "Declaration should be resolvable module, instead it had ${targetModule::class}"
         }
 
-        // All elements inside a code fragment are local
-        val nonLocalContainer = ktDeclaration.containingKtFile as? KtCodeFragment
-            ?: ktDeclaration.getNonLocalContainingOrThisElement()
+        val nonLocalContainer = ktDeclaration.nonLocalContainerForFirLookup
             ?: errorWithAttachment("Declaration should have non-local container") {
                 withPsiEntry("ktDeclaration", ktDeclaration, ::getModule)
                 withEntry("module", targetModule) { it.moduleDescription }
             }
 
-        val firDeclaration = if ((nonLocalContainer as? KtDeclaration) == ktDeclaration) {
-            val session = sessionProvider.getResolvableSession(targetModule)
-            nonLocalContainer.findSourceNonLocalFirDeclaration(
-                firFileBuilder = session.moduleComponents.firFileBuilder,
-                provider = session.firProvider,
-            )
+        return if (nonLocalContainer == ktDeclaration) {
+            sessionProvider.getResolvableSession(targetModule).findSourceNonLocalFirSymbol(ktDeclaration)
         } else {
-            findSourceFirDeclarationViaResolve(ktDeclaration)
+            findSourceFirDeclarationViaResolve(ktDeclaration).symbol
         }
-
-        return firDeclaration.symbol
     }
 
     private fun findSourceFirDeclarationViaResolve(ktDeclaration: KtExpression): FirDeclaration {
@@ -188,19 +177,8 @@ class LLResolutionFacade internal constructor(
         }
     }
 
-    private fun findCompiledFirSymbol(ktDeclaration: KtDeclaration, module: KaModule): FirBasedSymbol<*> {
-        requireWithAttachment(
-            ktDeclaration.containingKtFile.isCompiled,
-            { "`findFirCompiledSymbol` only works on compiled declarations, but the given declaration is not compiled." },
-        ) {
-            withPsiEntry("declaration", ktDeclaration, module)
-        }
-
-        val session = getSessionFor(module)
-        val searcher = FirDeclarationForCompiledElementSearcher(session)
-        val firDeclaration = searcher.findNonLocalDeclaration(ktDeclaration)
-        return firDeclaration.symbol
-    }
+    private fun findCompiledFirSymbol(ktDeclaration: KtDeclaration, module: KaModule): FirBasedSymbol<*> =
+        getSessionFor(module).findCompiledFirSymbol(ktDeclaration)
 
     /**
      * Resolves a **non-Kotlin** [PsiClass] to a [FirRegularClassSymbol].
