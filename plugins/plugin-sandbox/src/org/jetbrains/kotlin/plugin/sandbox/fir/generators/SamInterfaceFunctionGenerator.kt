@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.plugin.sandbox.fir.generators
 import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
@@ -45,7 +46,7 @@ class SamInterfaceFunctionGenerator(session: FirSession) : FirDeclarationGenerat
             context.owner,
             SamInterfaceFunctionGeneratorKey,
             callableId.callableName,
-            session.builtinTypes.unitType.coneType,
+            StandardTypes.Unit,
         ) {
             modality = Modality.ABSTRACT
         }

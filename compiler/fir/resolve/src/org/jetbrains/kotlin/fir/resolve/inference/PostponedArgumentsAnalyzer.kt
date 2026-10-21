@@ -232,7 +232,7 @@ class PostponedArgumentsAnalyzer(
             )
         }
 
-        val unitType = components.session.builtinTypes.unitType.coneType
+        val unitType = StandardTypes.Unit
         val currentSubstitutor = c.buildCurrentSubstitutor(inferenceSession.semiFixedVariables)
 
         fun substitute(type: ConeKotlinType) = currentSubstitutor.safeSubstitute(c, type).asCone()
@@ -360,7 +360,7 @@ class PostponedArgumentsAnalyzer(
                     }
 
                     if (!expression.hasResolvedType ||
-                        !builder.isSubtypeConstraintCompatible(expression.resolvedType, session.builtinTypes.unitType.coneType)
+                        !builder.isSubtypeConstraintCompatible(expression.resolvedType, StandardTypes.Unit)
                     ) {
                         candidate.usesCoercionToUnitInLambda = true
                     }
@@ -409,9 +409,8 @@ class PostponedArgumentsAnalyzer(
             lambda.anonymousFunction,
             anonymousFunctionReturnExpression = null,
         )
-        val unitType = components.session.builtinTypes.unitType.coneType
         if (!builder.addSubtypeConstraintIfCompatible(
-                unitType,
+                StandardTypes.Unit,
                 lambdaReturnType,
                 position
             )
@@ -433,7 +432,7 @@ class PostponedArgumentsAnalyzer(
                 // Fallback situation, probably quite rare or even impossible, though it's hard to proof that.
                 // But we're still forcing some constraint error, not to leave the candidate falsely successful.
                 builder.addSubtypeConstraint(
-                    unitType,
+                    StandardTypes.Unit,
                     lambdaReturnType,
                     position,
                 )

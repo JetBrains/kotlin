@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.extensions.predicate.LookupPredicate
 import org.jetbrains.kotlin.fir.plugin.createTopLevelFunction
@@ -44,7 +45,7 @@ internal class TopLevelPrivateSuspendFunctionGenerator(session: FirSession) : Fi
         if (context != null) return emptyList()
         if (callableId.callableName != TEST_FUN_NAME) return emptyList()
         val function = createTopLevelFunction(
-            TopLevelPrivateSuspendFunctionGeneratorKey, callableId, session.builtinTypes.unitType.coneType,
+            TopLevelPrivateSuspendFunctionGeneratorKey, callableId, StandardTypes.Unit,
         ) {
             visibility = Visibilities.Private
             status { isSuspend = true }
