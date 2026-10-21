@@ -17,7 +17,6 @@ import kotlin.math.max
 
 abstract class LogicSystem(private val context: ConeInferenceContext) {
     val session: FirSession get() = context.session
-    private val nullableNothingType = session.builtinTypes.nullableNothingType.coneType
 
     protected open fun ConeKotlinType.isAcceptableForSmartcast(): Boolean {
         return !isNullableNothing
@@ -325,7 +324,7 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
             val operation = next.operation
             val variable = next.variable
 
-            val impliedType = if (operation == Operation.EqNull) nullableNothingType else StandardTypes.Any
+            val impliedType = if (operation == Operation.EqNull) StandardTypes.NullableNothing else StandardTypes.Any
             val resultStatement = result.getOrPut(variable) { MutableTypeStatement(variable) }
             resultStatement.upperTypes.add(impliedType)
             // We could additionally imply the opposite lower type, but it won't bring us anything new
