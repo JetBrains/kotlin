@@ -489,12 +489,14 @@ internal class SymbolLightAccessorMethod private constructor(
             val hasInlineClassInParameterType = context.hasInlineClassInParameterType(accessor)
             val hasInlineClassInReturnType = context.hasInlineClassInReturnType(accessor)
 
-            val hasMangledNameDueToInlineClassesInSignature = hasMangledNameDueToInlineClassesInSignature(
-                // Not every inline class in a parameter position mangles the name, so 'hasInlineClassInParameterType' cannot be reused
-                hasManglingInlineClassInParameterType = context.hasManglingInlineClassInParameterType(accessor),
-                hasInlineClassInReturnType = hasInlineClassInReturnType,
-                isTopLevel = context.isTopLevel,
-            )
+            val hasMangledNameDueToInlineClassesInSignature = !property.hasPrefixlessAccessorNames &&
+                    hasMangledNameDueToInlineClassesInSignature(
+                        // Not every inline class in a parameter position mangles the name,
+                        // so 'hasInlineClassInParameterType' cannot be reused
+                        hasManglingInlineClassInParameterType = context.hasManglingInlineClassInParameterType(accessor),
+                        hasInlineClassInReturnType = hasInlineClassInReturnType,
+                        isTopLevel = context.isTopLevel,
+                    )
 
             val isNonMaterializableInlineClassProperty =
                 // Accessors with JvmStatic should be materialized inside the containing inline class
