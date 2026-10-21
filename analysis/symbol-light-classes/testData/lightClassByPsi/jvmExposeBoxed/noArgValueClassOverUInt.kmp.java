@@ -16,8 +16,7 @@ public final class P /* P*/ {
 @kotlin.OptIn(markerClass = {kotlin.ExperimentalStdlibApi.class})
 @kotlin.jvm.JvmInline()
 public final class Z /* Z*/ {
-  @org.jetbrains.annotations.NotNull()
-  private final @org.jetbrains.annotations.NotNull() int a;
+  private final int a;
 
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.lang.String toString();//  toString()
