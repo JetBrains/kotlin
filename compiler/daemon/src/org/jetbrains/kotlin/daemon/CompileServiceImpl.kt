@@ -4,6 +4,7 @@
  */
 
 @file:Suppress("DEPRECATION_ERROR", "OVERRIDE_DEPRECATION")
+@file:OptIn(ExperimentalBuildToolsApi::class)
 
 package org.jetbrains.kotlin.daemon
 
@@ -18,7 +19,9 @@ import org.jetbrains.kotlin.build.report.RemoteBuildReporter
 import org.jetbrains.kotlin.build.report.RemoteReporter
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.build.report.reportPerformanceData
-import org.jetbrains.kotlin.buildtools.api.SourcesChanges
+import org.jetbrains.kotlin.buildtools.api.*
+import org.jetbrains.kotlin.daemon.common.serialization.HasSerializationHooks
+import org.jetbrains.kotlin.daemon.common.serialization.deserialize
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.ExitCode
@@ -37,6 +40,10 @@ import org.jetbrains.kotlin.cli.metadata.KotlinMetadataCompiler
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.common.*
+import org.jetbrains.kotlin.daemon.common.serialization.Message
+import org.jetbrains.kotlin.daemon.common.serialization.SerializationFormat
+import org.jetbrains.kotlin.daemon.common.serialization.SupportsNewDaemonMode
+import org.jetbrains.kotlin.daemon.common.serialization.serialize
 import org.jetbrains.kotlin.daemon.report.CompileServicesFacadeMessageCollector
 import org.jetbrains.kotlin.daemon.report.DaemonMessageReporter
 import org.jetbrains.kotlin.daemon.report.getBuildReporter
@@ -55,12 +62,16 @@ import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.Time
 import org.jetbrains.kotlin.util.forEachPhaseMeasurement
 import org.jetbrains.kotlin.util.getLinesPerSecond
+import org.jetbrains.kotlin.util.getValueOrNull
+import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.ObjectOutputStream
+import java.net.URLClassLoader
 import java.rmi.NoSuchObjectException
 import java.rmi.registry.Registry
 import java.rmi.server.UnicastRemoteObject
 import java.util.*
-import java.util.concurrent.ConcurrentSkipListSet
+import java.util.concurrent.ConcurrentSkipListMap
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
@@ -74,6 +85,7 @@ import kotlin.concurrent.write
 import kotlin.io.path.Path
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.exists
+import kotlin.jvm.java
 
 const val REMOTE_STREAM_BUFFER_SIZE = 4096
 
@@ -536,7 +548,7 @@ abstract class CompileServiceImplBase(
         log.fine("alive!")
         withValidClientOrSessionProxy(sessionId) { session: ClientOrSessionProxy<Any>? ->
             val runningCompilations = compilationId?.let { compilationId ->
-                (session?.data as? RunningCompilations)?.also { runningCompilations ->
+                (session?.data as? CompileSessionData)?.runningCompilations?.also { runningCompilations ->
                     runningCompilations.add(compilationId)
                 }
             }
@@ -858,6 +870,17 @@ class CompileServiceImpl(
 
     private val rwlock = ReentrantReadWriteLock()
 
+    private val kotlinToolchainsLazy = lazy {
+        KotlinToolchains.loadImplementation(CompileServiceImpl::class.java.classLoader)
+    }
+
+    val kotlinToolchains by kotlinToolchainsLazy
+
+    private val serializerFormat by lazy {
+        ServiceLoader.load(SerializationFormat::class.java, CompileServiceImpl::class.java.classLoader).singleOrNull()
+            ?: error("The classpath contains zero or more than one implementation of SerializationFormat.")
+    }
+
     // RMI-exposed API
 
     override fun getDaemonInfo(): CompileService.CallResult<String> = ifAlive(minAliveness = Aliveness.Dying) {
@@ -895,14 +918,8 @@ class CompileServiceImpl(
     // TODO: consider tying a session to a client and use this info to cleanup
     override fun leaseCompileSession(aliveFlagPath: String?): CompileService.CallResult<Int> = ifAlive(minAliveness = Aliveness.Alive) {
         CompileService.CallResult.Good(
-            state.sessions.leaseSession(run {
-                val runningCompilations = RunningCompilations()
-                @Suppress("ObjectLiteralToLambda")
-                ClientOrSessionProxy(aliveFlagPath, runningCompilations, object : Disposable {
-                    override fun dispose() {
-                        runningCompilations.cancelAll()
-                    }
-                }.asOneShot())
+            state.sessions.leaseSession(CompileSessionData(kotlinToolchainsLazy).let { sessionData ->
+                ClientOrSessionProxy(aliveFlagPath, sessionData, sessionData.asOneShot())
             }).apply {
                 log.info("leased a new session $this, session alive file: $aliveFlagPath")
             })
@@ -985,8 +1002,10 @@ class CompileServiceImpl(
 
     override fun cancelCompilation(sessionId: Int, compilationId: Int): CompileService.CallResult<Nothing> = ifAlive {
         withValidClientOrSessionProxy(sessionId) { session: ClientOrSessionProxy<Any>? ->
-            (session?.data as? RunningCompilations)?.remove(compilationId)
-            CompileService.CallResult.Ok()
+            if ((session?.data as? CompileSessionData)?.runningCompilations?.remove(compilationId) == true)
+                CompileService.CallResult.Ok()
+            else
+                CompileService.CallResult.Error("Compilation $compilationId not found or has not started yet")
         }
     }
 
@@ -1048,6 +1067,59 @@ class CompileServiceImpl(
 
     override fun replCompile(sessionId: Int, replStateId: Int, codeLine: ReplCodeLine): CompileService.CallResult<ReplCompileResult> =
         CompileService.CallResult.Error(REPL_IS_NOT_SUPPORTED)
+
+    override fun execute(
+        sessionId: Int,
+        compilationId: Int,
+        operation: SerializedDataContainer,
+        callbackChannel: DaemonCallbackChannel,
+        servicesFacade: CompilerServicesFacadeBase?,
+        loggerDebugEnabled: Boolean,
+    ): CompileService.CallResult<SerializedDataContainer> = ifAlive {
+        maybeWaitForTestStart()
+        log.info { "Executing operation $compilationId" }
+        withValidClientOrSessionProxy(sessionId) { session: ClientOrSessionProxy<Any>? ->
+            val buildOperation = serializerFormat.deserialize<HasSerializationHooks>(operation) as BuildOperation<*>
+            require(buildOperation is SupportsNewDaemonMode<*>)
+
+            @Suppress("ObjectLiteralToLambda")
+            val disposable = if (buildOperation is CancellableBuildOperation<*>) {
+                object : Disposable {
+                    override fun dispose() {
+                        log.info { "Dispose: canceling operation $compilationId" }
+                        buildOperation.cancel()
+                    }
+                }
+            } else null
+            val sessionData = session?.data as? CompileSessionData
+            sessionData?.runningCompilations?.add(compilationId, disposable)
+
+            val messageSender = { message: Message ->
+                callbackChannel.report(
+                    serializerFormat.serialize<Message>(message)
+                )
+            }
+            val logger = MessageReportingLogger(loggerDebugEnabled, messageSender)
+            buildOperation.afterDeserialization(messageSender, servicesFacade)
+
+            val result = if (sessionData != null) {
+                buildOperation.executeAndSerializeResult(sessionData.buildSession, logger)
+            } else {
+                kotlinToolchains.createBuildSession().use { buildSession ->
+                    buildOperation.executeAndSerializeResult(buildSession, logger)
+                }
+            }
+            CompileService.CallResult.Good(result)
+        }
+    }
+
+    fun <B, T> B.executeAndSerializeResult(
+        session: KotlinToolchains.BuildSession,
+        logger: KotlinLogger
+    ): SerializedDataContainer where B : BuildOperation<T>, B : SupportsNewDaemonMode<T> {
+        return serializeResult(session.executeOperation(this, logger = logger))
+    }
+
 
     override fun periodicAndAfterSessionCheck() {
 
@@ -1319,16 +1391,75 @@ class CompileServiceImpl(
     }
 }
 
-@PublishedApi
-internal class RunningCompilations() {
-    private val compilations = ConcurrentSkipListSet<Int>()
+class MessageReportingLogger(override val isDebugEnabled: Boolean, private val messageReporter: (Message) -> Unit) : KotlinLogger {
 
-    fun remove(compilationId: Int) {
-        compilations.remove(compilationId)
+    private fun reportMessage(level: String, message: String, throwable: Throwable? = null) {
+        val throwableBytes = if (throwable != null) {
+            ByteArrayOutputStream().use { bos ->
+                ObjectOutputStream(bos).use { oos ->
+                    oos.writeObject(throwable)
+                }
+                bos
+            }.toByteArray()
+        } else null
+        messageReporter(Message.Logger.LogLine(level, message, throwableBytes))
     }
 
-    fun add(compilationId: Int) {
-        compilations.add(compilationId)
+    override fun error(msg: String, throwable: Throwable?) {
+        reportMessage("ERROR", msg, throwable)
+    }
+
+    override fun warn(msg: String, throwable: Throwable?) {
+        reportMessage("WARN", msg, throwable)
+    }
+
+    override fun info(msg: String) {
+        reportMessage("INFO", msg)
+    }
+
+    override fun debug(msg: String) {
+        reportMessage("DEBUG", msg)
+    }
+
+    override fun lifecycle(msg: String) {
+        reportMessage("LIFECYCLE", msg)
+    }
+}
+
+@PublishedApi
+internal class CompileSessionData(private val kotlinToolchains: Lazy<KotlinToolchains>) : Disposable {
+    val runningCompilations = RunningCompilations()
+
+    private val buildSessionLazy = lazy {
+        kotlinToolchains.value.createBuildSession()
+    }
+    val buildSession: KotlinToolchains.BuildSession by buildSessionLazy
+
+    override fun dispose() {
+        try {
+            runningCompilations.cancelAll()
+        } finally {
+            buildSessionLazy.getValueOrNull()?.close()
+        }
+    }
+}
+
+@PublishedApi
+internal class RunningCompilations {
+    private val compilations = ConcurrentSkipListMap<Int, Disposable>()
+
+    fun remove(compilationId: Int) =
+        compilations.remove(compilationId).let { disposable: Disposable? ->
+            if (disposable != null) {
+                Disposer.dispose(disposable)
+                true
+            } else {
+                false
+            }
+        }
+
+    fun add(compilationId: Int, disposable: Disposable? = null) {
+        compilations[compilationId] = disposable ?: Disposer.newDisposable("Empty disposable for running compilation")
     }
 
     fun getCompilationCanceledStatus(compilationId: Int) = object : CompilationCanceledStatus {
@@ -1340,7 +1471,12 @@ internal class RunningCompilations() {
     }
 
     fun cancelAll() {
-        compilations.clear()
+        val iter = compilations.iterator()
+        while (iter.hasNext()) {
+            val item = iter.next()
+            Disposer.dispose(item.value)
+            iter.remove()
+        }
     }
 }
 

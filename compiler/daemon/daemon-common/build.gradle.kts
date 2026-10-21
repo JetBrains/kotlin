@@ -14,6 +14,7 @@ dependencies {
     api(project(":kotlin-build-common"))
     val coreDepsVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()
     api(kotlin("stdlib", coreDepsVersion))
+    compileOnly(libs.kotlinx.serialization.protobuf)
 }
 
 sourceSets {

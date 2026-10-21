@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.buildtools.internal.cri.CriToolchainImpl
 import org.jetbrains.kotlin.buildtools.internal.js.JsPlatformToolchainImpl
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmPlatformToolchainImpl
 import org.jetbrains.kotlin.buildtools.internal.metadata.KotlinMetadataPlatformToolchainImpl
+import org.jetbrains.kotlin.buildtools.internal.daemon.ProtoBufFormat
+import org.jetbrains.kotlin.daemon.common.serialization.SerializationFormat
 import org.jetbrains.kotlin.buildtools.internal.wasm.WasmPlatformToolchainImpl
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
@@ -158,6 +160,8 @@ internal class KotlinToolchainsImpl : KotlinToolchains {
         } catch (_: NoSuchMethodError) {
             BtaApiVersion.Before2_4_20
         }
+
+        val serializer: SerializationFormat = ProtoBufFormat
     }
 }
 

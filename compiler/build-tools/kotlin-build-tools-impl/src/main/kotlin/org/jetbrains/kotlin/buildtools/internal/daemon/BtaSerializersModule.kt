@@ -6,13 +6,16 @@
 package org.jetbrains.kotlin.buildtools.internal.daemon
 
 import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.contextual
 import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.modules.subclass
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmIncrementalCompilationConfiguration
+import org.jetbrains.kotlin.buildtools.api.trackers.IcEvent
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationConfigurationImpl
 import org.jetbrains.kotlin.buildtools.internal.jvm.operations.JvmCompilationOperationImpl
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
+import org.jetbrains.kotlin.daemon.common.serialization.HasSerializationHooks
 
-// currently unused, but will be useful for actually setting up a serialization method (e.g. Protobuf) in the future
 internal val btaSerializersModule: SerializersModule = SerializersModule {
     polymorphic(HasSerializationHooks::class) {
         subclass(JvmCompilationOperationImpl::class)
@@ -23,4 +26,6 @@ internal val btaSerializersModule: SerializersModule = SerializersModule {
             JvmSnapshotBasedIncrementalCompilationConfigurationImplSerializer
         )
     }
+    contextual<CompilerMessageSourceLocation>(CompilerMessageSourceLocationSerializer)
+    contextual<IcEvent>(IcEventSerializer)
 }

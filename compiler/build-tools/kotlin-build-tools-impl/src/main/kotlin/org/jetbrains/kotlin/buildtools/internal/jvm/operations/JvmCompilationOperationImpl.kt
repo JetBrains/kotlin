@@ -46,9 +46,9 @@ import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalC
 import org.jetbrains.kotlin.buildtools.internal.jvm.KaptConfigurationImpl
 import org.jetbrains.kotlin.buildtools.internal.jvm.KaptConfigurationImpl.Companion.SOURCE_OUTPUT_DIR
 import org.jetbrains.kotlin.buildtools.internal.jvm.toOptions
-import org.jetbrains.kotlin.buildtools.internal.daemon.HasSerializationHooks
-import org.jetbrains.kotlin.buildtools.internal.daemon.Message
-import org.jetbrains.kotlin.buildtools.internal.daemon.MessageVisitor
+import org.jetbrains.kotlin.daemon.common.serialization.HasSerializationHooks
+import org.jetbrains.kotlin.daemon.common.serialization.Message
+import org.jetbrains.kotlin.daemon.common.serialization.MessageVisitor
 import org.jetbrains.kotlin.buildtools.internal.daemon.PathAsStringSerializer
 import org.jetbrains.kotlin.buildtools.internal.daemon.cast
 import org.jetbrains.kotlin.buildtools.internal.daemon.throwPropertyNotFound
