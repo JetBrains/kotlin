@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.buildtools.api.jvm.JvmIncrementalCompilationConfigur
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationConfigurationImpl
 import org.jetbrains.kotlin.buildtools.internal.jvm.operations.JvmCompilationOperationImpl
 
-// currently unused, but will be useful for actually setting up a serialization method (e.g. Protobuf) in the future
 internal val btaSerializersModule: SerializersModule = SerializersModule {
     polymorphic(BtaSerializable::class) {
         subclass(JvmCompilationOperationImpl::class)
