@@ -4,45 +4,55 @@
  */
 
 @file:Suppress("DEPRECATION")
+@file:UseSerializers(PathAsStringSerializer::class)
 
 package org.jetbrains.kotlin.buildtools.internal.wasm
 
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.UseSerializers
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.wasm.IncrementalModule
 import org.jetbrains.kotlin.buildtools.api.wasm.WasmHistoryBasedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.internal.*
+import org.jetbrains.kotlin.buildtools.internal.daemon.PathAsStringSerializer
+import org.jetbrains.kotlin.buildtools.internal.daemon.SourcesChangesSerializer
+import org.jetbrains.kotlin.buildtools.internal.daemon.WasmIncrementalModuleSerializer
+import org.jetbrains.kotlin.buildtools.internal.daemon.cast
+import org.jetbrains.kotlin.buildtools.internal.daemon.throwPropertyNotFound
 import org.jetbrains.kotlin.incremental.IncrementalCompilerRunner
 import java.nio.file.Path
 
-internal class WasmHistoryBasedIncrementalCompilationConfigurationImpl private constructor(
-    override val workingDirectory: Path,
-    override val sourcesChanges: SourcesChanges,
-    override val modulesInformation: List<IncrementalModule>,
-    override val options: Options = Options(
-        WasmHistoryBasedIncrementalCompilationConfiguration::class
-    ),
-) : BaseIncrementalCompilationConfigurationImpl(), WasmHistoryBasedIncrementalCompilationConfiguration,
+@Serializable
+internal class WasmHistoryBasedIncrementalCompilationConfigurationImpl : BaseIncrementalCompilationConfigurationImpl, WasmHistoryBasedIncrementalCompilationConfiguration,
     WasmHistoryBasedIncrementalCompilationConfiguration.Builder,
     DeepCopyable<WasmHistoryBasedIncrementalCompilationConfigurationImpl> {
 
     constructor(
-        rootProjectDir: Path,
         workingDirectory: Path,
         sourcesChanges: SourcesChanges,
-        modulesInformation: List<IncrementalModule>,
-    ) : this(
-        workingDirectory,
-        sourcesChanges,
-        modulesInformation,
-        Options(WasmHistoryBasedIncrementalCompilationConfiguration::class)
-    ) {
-        initializeOptions(this::class, options)
-        options[ROOT_PROJECT_DIR] = rootProjectDir
+        modulesInformation: List<IncrementalModule>
+    ) : super() {
+        this.modulesInformation = modulesInformation
+        this.sourcesChanges = sourcesChanges
+        this.workingDirectory = workingDirectory
     }
 
+    private constructor(other: WasmHistoryBasedIncrementalCompilationConfigurationImpl) : super(other) {
+        modulesInformation = other.modulesInformation
+        sourcesChanges = other.sourcesChanges
+        workingDirectory = other.workingDirectory
+        rootProjectBuildDir = other.rootProjectBuildDir
+        historyFileDir = other.historyFileDir
+    }
+
+    override val modulesInformation: List<@Serializable(with = WasmIncrementalModuleSerializer::class) IncrementalModule>
+
+    @Serializable(SourcesChangesSerializer::class)
+    override val sourcesChanges: SourcesChanges
+    override val workingDirectory: Path
     internal val historyFile: Path
         get() {
-            return (this[HISTORY_FILE_DIR] ?: workingDirectory).resolve(
+            return (historyFileDir ?: workingDirectory).resolve(
                 IncrementalCompilerRunner.BUILD_HISTORY_FILE_NAME
             )
         }
@@ -52,37 +62,26 @@ internal class WasmHistoryBasedIncrementalCompilationConfigurationImpl private c
     override fun toBuilder(): WasmHistoryBasedIncrementalCompilationConfiguration.Builder = deepCopy()
 
     override fun deepCopy(): WasmHistoryBasedIncrementalCompilationConfigurationImpl =
-        WasmHistoryBasedIncrementalCompilationConfigurationImpl(
-            workingDirectory,
-            sourcesChanges,
-            modulesInformation,
-            options.deepCopy()
-        )
+        WasmHistoryBasedIncrementalCompilationConfigurationImpl(this)
 
-
+    @Suppress("UNCHECKED_CAST")
     @UseFromImplModuleRestricted
-    override fun <V> get(key: WasmHistoryBasedIncrementalCompilationConfiguration.Option<V>): V {
-        return options[key]
-    }
+    override fun <V> get(key: WasmHistoryBasedIncrementalCompilationConfiguration.Option<V>): V = when (key.id) {
+        "ROOT_PROJECT_BUILD_DIR" -> rootProjectBuildDir
+        "HISTORY_FILE_DIR" -> historyFileDir
+        else -> throwPropertyNotFound(key.id)
+    } as V
 
     @UseFromImplModuleRestricted
     override fun <V> set(key: WasmHistoryBasedIncrementalCompilationConfiguration.Option<V>, value: V) {
         checkOptionIsAvailableForVersion(key)
-        options[key] = value
+        when (key.id) {
+            "ROOT_PROJECT_BUILD_DIR" -> rootProjectBuildDir = value.cast()
+            "HISTORY_FILE_DIR" -> historyFileDir = value.cast()
+            else -> throwPropertyNotFound(key.id)
+        }
     }
 
-    operator fun <V> get(key: Option<V>): V {
-        return options[key]
-    }
-
-    operator fun <V> set(key: Option<V>, value: V) {
-        options[key] = value
-    }
-
-    class Option<V>(id: String, default: V) : BaseOptionWithDefault<V>(id, defaultValue = default)
-
-    companion object {
-        val ROOT_PROJECT_BUILD_DIR: Option<Path?> = Option("ROOT_PROJECT_BUILD_DIR", null)
-        val HISTORY_FILE_DIR: Option<Path?> = Option("HISTORY_FILE_DIR", null)
-    }
+    var rootProjectBuildDir: Path? = null
+    var historyFileDir: Path? = null
 }
