@@ -1,13 +1,12 @@
 public final class Rec /* Rec*/ {
-  @org.jetbrains.annotations.NotNull()
-  private final @org.jetbrains.annotations.NotNull() int u;
-
   private final int i;
+
+  private final int u;
 
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.lang.String toString();//  toString()
 
-  private  Rec(int, @org.jetbrains.annotations.NotNull() int);//  .ctor(int, @org.jetbrains.annotations.NotNull() int)
+  private  Rec(int, int);//  .ctor(int, int)
 
   public boolean equals(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Object);//  equals(@org.jetbrains.annotations.Nullable() java.lang.Object)
 

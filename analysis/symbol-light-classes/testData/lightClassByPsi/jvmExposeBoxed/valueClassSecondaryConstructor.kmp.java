@@ -1,7 +1,6 @@
 @kotlin.jvm.JvmInline()
 public final class Container /* Container*/ {
-  @org.jetbrains.annotations.NotNull()
-  private final @org.jetbrains.annotations.NotNull() int a;
+  private final int a;
 
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.lang.String toString();//  toString()
@@ -13,8 +12,7 @@ public final class Container /* Container*/ {
 
 @kotlin.jvm.JvmInline()
 public final class Explicit /* Explicit*/ {
-  @org.jetbrains.annotations.NotNull()
-  private final @org.jetbrains.annotations.NotNull() int a;
+  private final int a;
 
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.lang.String toString();//  toString()
@@ -26,8 +24,7 @@ public final class Explicit /* Explicit*/ {
 
 @kotlin.jvm.JvmInline()
 public final class NonExposed /* NonExposed*/ {
-  @org.jetbrains.annotations.NotNull()
-  private final @org.jetbrains.annotations.NotNull() int a;
+  private final int a;
 
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.lang.String toString();//  toString()
@@ -39,8 +36,7 @@ public final class NonExposed /* NonExposed*/ {
 
 @kotlin.jvm.JvmInline()
 public final class PrimaryClaims /* PrimaryClaims*/ {
-  @org.jetbrains.annotations.NotNull()
-  private final @org.jetbrains.annotations.NotNull() int a;
+  private final int a;
 
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.lang.String toString();//  toString()
@@ -52,8 +48,7 @@ public final class PrimaryClaims /* PrimaryClaims*/ {
 
 @kotlin.jvm.JvmInline()
 public final class SecondaryClaims /* SecondaryClaims*/ {
-  @org.jetbrains.annotations.NotNull()
-  private final @org.jetbrains.annotations.NotNull() int a;
+  private final int a;
 
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.lang.String toString();//  toString()
