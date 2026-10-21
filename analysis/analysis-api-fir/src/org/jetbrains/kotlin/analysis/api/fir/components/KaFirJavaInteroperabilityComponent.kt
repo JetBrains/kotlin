@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightParameter
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
+import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
@@ -54,6 +55,7 @@ import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
+import org.jetbrains.kotlin.fir.declarations.valueClassRepresentation
 import org.jetbrains.kotlin.fir.java.MutableJavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.javaSymbolProvider
 import org.jetbrains.kotlin.fir.java.resolveIfJavaType
@@ -65,6 +67,7 @@ import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.jvm.buildJavaTypeRef
 import org.jetbrains.kotlin.light.classes.symbol.annotations.annotateByKtType
@@ -294,10 +297,13 @@ internal class KaFirJavaInteroperabilityComponent(
 
                 val classSymbol = type.symbol
                 if (classSymbol is KaNamedClassSymbol && classSymbol.isInline) {
-                    val onlyProperty = classSymbol.memberScope.callables
-                        .singleOrNull { it is KaKotlinPropertySymbol && it.primaryConstructorParameter != null }
+                    // Kotlin metadata doesn't record which properties come from the primary constructor, so a deserialized
+                    // inline class, e.g., `UInt` from a klib, has no such property. The underlying type is stored explicitly
+                    // and ends up in the class representation, which works for both source and deserialized classes
+                    val representation = (classSymbol.firSymbol as? FirRegularClassSymbol)?.valueClassRepresentation
+                    val underlyingType = (representation as? InlineClassRepresentation)?.underlyingType
 
-                    if (onlyProperty != null && isPrimitiveBacked(onlyProperty.returnType)) {
+                    if (underlyingType != null && isPrimitiveBacked(underlyingType.asKaType())) {
                         return true
                     }
                 }
