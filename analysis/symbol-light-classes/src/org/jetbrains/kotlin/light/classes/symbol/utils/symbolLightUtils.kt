@@ -282,8 +282,33 @@ private fun AnnotationValue.KClass.toAnnotationMemberValue(parent: PsiElement): 
     return SymbolPsiClassObjectAccessExpression(sourcePsi, parent, psiType)
 }
 
+/**
+ * The value of this constant as the JVM backend stores it.
+ *
+ * An unsigned value is stored as its signed counterpart of the same width, e.g., `UInt.MAX_VALUE` as `-1`.
+ */
+internal val KaConstantValue.jvmValue: Any?
+    get() = when (this) {
+        is KaConstantValue.UByteValue -> value.toByte()
+        is KaConstantValue.UShortValue -> value.toShort()
+        is KaConstantValue.UIntValue -> value.toInt()
+        is KaConstantValue.ULongValue -> value.toLong()
+        is KaConstantValue.NullValue,
+        is KaConstantValue.BooleanValue,
+        is KaConstantValue.CharValue,
+        is KaConstantValue.ByteValue,
+        is KaConstantValue.ShortValue,
+        is KaConstantValue.IntValue,
+        is KaConstantValue.LongValue,
+        is KaConstantValue.FloatValue,
+        is KaConstantValue.DoubleValue,
+        is KaConstantValue.StringValue,
+        is KaConstantValue.ErrorValue,
+            -> value
+    }
+
 private fun KaConstantValue.asStringForPsiExpression(): String =
-    when (val value = value) {
+    when (val value = jvmValue) {
         Double.NEGATIVE_INFINITY -> "-1.0 / 0.0"
         Double.NaN -> "0.0 / 0.0"
         Double.POSITIVE_INFINITY -> "1.0 / 0.0"
