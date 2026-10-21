@@ -21,9 +21,7 @@ import org.jetbrains.kotlin.daemon.common.SerializedDataContainer
  * these callbacks can be reconstructed based on the recorded information, and using a mechanism for sending remote [Message]s.
  */
 interface HasSerializationHooks {
-    fun beforeSerialization(logger: KotlinLogger): List<MessageVisitor> {
-        return emptyList()
-    }
+    fun beforeSerialization(logger: KotlinLogger): List<MessageVisitor>
 
     /**
      * Called after deserialization, usually in the daemon process. Can be used to reconstruct any callbacks or other state that was removed
@@ -32,7 +30,7 @@ interface HasSerializationHooks {
      * The new mechanism using [messageReporter] should be preferred for new callbacks. The [compilerFacade] is provided as a fallback for
      * operations that cannot be performed using the new mechanism at this time, such as JPS incremental caches passing.
      */
-    fun afterDeserialization(messageReporter: (Message) -> Unit, compilerFacade: CompilerServicesFacadeBase? = null) {}
+    fun afterDeserialization(messageReporter: (Message) -> Unit, compilerFacade: CompilerServicesFacadeBase? = null)
 }
 
 @OptIn(ExperimentalBuildToolsApi::class)

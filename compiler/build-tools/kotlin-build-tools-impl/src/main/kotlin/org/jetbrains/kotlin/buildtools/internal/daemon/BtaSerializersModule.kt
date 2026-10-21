@@ -14,15 +14,25 @@ import org.jetbrains.kotlin.buildtools.api.jvm.JvmIncrementalCompilationConfigur
 import org.jetbrains.kotlin.buildtools.api.wasm.WasmIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.internal.js.JsHistoryBasedIncrementalCompilationConfigurationImpl
 import org.jetbrains.kotlin.buildtools.api.trackers.IcEvent
+import org.jetbrains.kotlin.buildtools.internal.js.operations.JsKlibCompilationOperationImpl
+import org.jetbrains.kotlin.buildtools.internal.js.operations.JsLinkingOperationImpl
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationConfigurationImpl
 import org.jetbrains.kotlin.buildtools.internal.jvm.operations.JvmCompilationOperationImpl
+import org.jetbrains.kotlin.buildtools.internal.metadata.operations.KotlinMetadataKlibCompilationOperationImpl
 import org.jetbrains.kotlin.buildtools.internal.wasm.WasmHistoryBasedIncrementalCompilationConfigurationImpl
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.daemon.common.serialization.HasSerializationHooks
+import org.jetbrains.kotlin.buildtools.internal.wasm.operations.WasmKlibCompilationOperationImpl
+import org.jetbrains.kotlin.buildtools.internal.wasm.operations.WasmLinkingOperationImpl
 
 internal val btaSerializersModule: SerializersModule = SerializersModule {
     polymorphic(HasSerializationHooks::class) {
         subclass(JvmCompilationOperationImpl::class)
+        subclass(JsKlibCompilationOperationImpl::class)
+        subclass(WasmKlibCompilationOperationImpl::class)
+        subclass(KotlinMetadataKlibCompilationOperationImpl::class)
+        subclass(JsLinkingOperationImpl::class)
+        subclass(WasmLinkingOperationImpl::class)
     }
     polymorphic(JvmIncrementalCompilationConfiguration::class) {
         subclass(
