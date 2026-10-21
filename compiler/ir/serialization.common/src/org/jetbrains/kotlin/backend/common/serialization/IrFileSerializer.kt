@@ -288,7 +288,10 @@ open class IrFileSerializer(
             is IrReturnableBlockSymbol ->
                 BinarySymbolData.SymbolKind.RETURNABLE_BLOCK_SYMBOL
             is IrFieldSymbol ->
-                if (symbol.owner.correspondingPropertySymbol?.owner.let {
+                // An unbound field symbol can only be referenced by an inline function body deserialized from another KLIB. Such a body
+                // can't access a Kotlin backing field, only its accessors, so the field is a Java field, which is a standalone field.
+                // `FIELD_SYMBOL` and `STANDALONE_FIELD_SYMBOL` are deserialized the same way anyway.
+                if (!symbol.isBound || symbol.owner.correspondingPropertySymbol?.owner.let {
                         it == null || it.isDelegated || it.getter == null && it.setter == null
                     })
                     BinarySymbolData.SymbolKind.STANDALONE_FIELD_SYMBOL

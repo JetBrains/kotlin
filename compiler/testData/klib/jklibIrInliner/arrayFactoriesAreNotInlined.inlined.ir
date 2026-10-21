@@ -1,0 +1,12 @@
+FILE fqName:<root> fileName:/arrayFactoriesAreNotInlined.kt lineStartOffsets: [0, 100, 101, 169]
+  FUN[101, 168] name:test visibility:public modality:FINAL returnType:kotlin.Any
+    BLOCK_BODY[119, 168]
+      RETURN[168, 168] type=kotlin.Nothing from='public final fun test (): kotlin.Any declared in <root>'
+        CALL[119, 168] 'public final fun arrayOf <T> (vararg elements: T of kotlin.arrayOf): kotlin.Array<T of kotlin.arrayOf> declared in kotlin' type=kotlin.Array<kotlin.Any> origin=null
+          TYPE_ARG T: kotlin.Any
+          ARG elements: VARARG[132, 167] type=kotlin.Array<out kotlin.Any> varargElementType=kotlin.Any
+            CALL[132, 152] 'public final fun emptyArray <T> (): kotlin.Array<T of kotlin.emptyArray> declared in kotlin' type=kotlin.Array<kotlin.String> origin=null
+              TYPE_ARG T: kotlin.String
+            CALL[154, 167] 'public final fun intArrayOf (vararg elements: kotlin.Int): kotlin.IntArray declared in kotlin' type=kotlin.IntArray origin=null
+              ARG elements: VARARG[165, 166] type=kotlin.IntArray varargElementType=kotlin.Int
+                CONST[165, 166] Int type=kotlin.Int value=1

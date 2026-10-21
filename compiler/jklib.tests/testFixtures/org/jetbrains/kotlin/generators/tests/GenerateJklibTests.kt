@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUni
 import org.jetbrains.kotlin.generators.model.annotation
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.jklib.test.cli.AbstractJKlibCliTest
+import org.jetbrains.kotlin.jklib.test.irText.AbstractFirJKlibIrInlinerTest
 import org.jetbrains.kotlin.jklib.test.irText.AbstractFirJKlibIrTextTest
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
@@ -24,6 +25,9 @@ fun main(args: Array<String>) {
                 annotations = listOf(annotation<Execution>("value" to ExecutionMode.SAME_THREAD))
             ) {
                 model("cli/jklib", extension = "args", testMethod = "doJklibTest", recursive = false)
+            }
+            testClass<AbstractFirJKlibIrInlinerTest> {
+                model("klib/jklibIrInliner")
             }
         }
     }

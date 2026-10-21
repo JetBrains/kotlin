@@ -30,7 +30,7 @@ class JKlibCliPipeline(
                 JKlibFrontendPipelinePhase.thenIf(
                     condition = ::skipIrGeneration,
                     onTrue = JKlibMetadataSerializationPhase,
-                    onFalse = JKlibFir2IrPipelinePhase then JKlibKlibSerializationPhase,
+                    onFalse = JKlibFir2IrPipelinePhase then JKlibPreSerializationLoweringPhase then JKlibKlibSerializationPhase,
                 )
 
         return if (arguments.compileIr) {
