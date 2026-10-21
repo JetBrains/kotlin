@@ -115,8 +115,10 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                 """
                 |package com.example
                 |
+                |@JsExport
+                |val value: Long = 1234567890123L
+                |
                 |fun main() {
-                |    val value: Long = 1234567890123L
                 |    println(value.toString())
                 |}
                 """.trimMargin()
@@ -125,12 +127,14 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                 kotlinMultiplatform.js {
                     compilerOptions {
                         target.set("es2020")
+                        generateTypeScriptDefinitions()
                     }
                 }
             }
             build("build") {
                 // es2020 implies ES modules, just like es2015, so the output uses the `.mjs` extension.
-                val outputFile = projectPath.resolve("build/js/packages/js-executable/kotlin/js-executable.mjs")
+                val outputDir = projectPath.resolve("build/js/packages/js-executable/kotlin/")
+                val outputFile = outputDir.resolve("js-executable.mjs")
 
                 assertFileExists(outputFile)
                 // es2020 enables `-Xes-long-as-bigint` by default, so Long literals are emitted as bigint (`<value>n`).
@@ -141,6 +145,9 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                     .let { Gson().fromJson(it.readText(), PackageJson::class.java) }
 
                 assertEquals("kotlin/js-executable.mjs", packageJson.main)
+
+                val outputDtsFile = outputDir.resolve("js-executable.d.ts")
+                assertFileContains(outputDtsFile, "const value: bigint;")
             }
         }
     }
