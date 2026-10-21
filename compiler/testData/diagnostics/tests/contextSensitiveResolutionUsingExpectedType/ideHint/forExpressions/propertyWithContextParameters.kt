@@ -19,7 +19,7 @@ fun foo(p: C) {}
 
 context(_: Context)
 fun test() {
-    foo(<!DEBUG_INFO_CSR_MIGHT_BE_USED!>C.withContext<!>)
+    foo(C.withContext)
     foo(<!DEBUG_INFO_CSR_MIGHT_BE_USED!>C.noContext<!>)
 }
 

@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.hasContextParameters
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.asCone
@@ -192,9 +193,12 @@ fun BodyResolveComponents.runContextSensitiveResolutionForSimpleName(
         val shouldTakeNewExpression = when (newExpression) {
             is FirPropertyAccessExpression -> {
                 val newCalleeReference = newExpression.calleeReference
-                // TODO: Consider using references with candidates, too (KT-89593)
                 val shouldTake = newCalleeReference is FirResolvedNamedReference && newCalleeReference !is FirResolvedErrorReference
                 if (shouldTake) {
+                    // Properties with context parameters are not eligible for CSR
+                    if ((newCalleeReference.symbol as? FirCallableSymbol<*>)?.hasContextParameters == true) {
+                        return null
+                    }
                     if (newExpression.extensionReceiver === additionalQualifier) {
                         // By KEEP, we have to filter here properties with extension receiver
                         if (!isValidContextSensitiveResolutionToExtension(

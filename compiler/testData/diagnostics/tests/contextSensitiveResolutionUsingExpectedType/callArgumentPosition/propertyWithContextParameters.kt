@@ -23,9 +23,9 @@ fun foo(p: C) {}
 context(_: Context<String>)
 fun testWithContext() {
     foo(<!UNRESOLVED_REFERENCE!>generic<!>)
-    foo(simple)
+    foo(<!UNRESOLVED_REFERENCE!>simple<!>)
     foo(noContext)
-    val c: C = simple
+    val c: C = <!UNRESOLVED_REFERENCE!>simple<!>
 }
 
 fun testWithoutContext() {
