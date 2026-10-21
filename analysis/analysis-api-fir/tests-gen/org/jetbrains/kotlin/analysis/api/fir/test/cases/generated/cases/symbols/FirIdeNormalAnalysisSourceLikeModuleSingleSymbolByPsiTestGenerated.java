@@ -69,6 +69,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleSingleSymbolByPsiTestGenerated 
   }
 
   @Test
+  @TestMetadata("annotationPropertyOfUnsignedType.kt")
+  public void testAnnotationPropertyOfUnsignedType() {
+    run("annotationPropertyOfUnsignedType.kt");
+  }
+
+  @Test
   @TestMetadata("annotationPropertyWithComplexDefaultValue.kt")
   public void testAnnotationPropertyWithComplexDefaultValue() {
     run("annotationPropertyWithComplexDefaultValue.kt");
@@ -246,6 +252,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleSingleSymbolByPsiTestGenerated 
   @TestMetadata("internalFunctionWithEscapedName.kt")
   public void testInternalFunctionWithEscapedName() {
     run("internalFunctionWithEscapedName.kt");
+  }
+
+  @Test
+  @TestMetadata("jvmRecordPropertyOfUnsignedType.kt")
+  public void testJvmRecordPropertyOfUnsignedType() {
+    run("jvmRecordPropertyOfUnsignedType.kt");
   }
 
   @Test
