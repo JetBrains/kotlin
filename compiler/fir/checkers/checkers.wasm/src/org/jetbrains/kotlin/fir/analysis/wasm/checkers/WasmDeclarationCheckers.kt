@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.*
 import org.jetbrains.kotlin.fir.analysis.wasm.checkers.declaration.*
 import org.jetbrains.kotlin.fir.analysis.web.common.checkers.declaration.FirJsExportAnnotationChecker
 import org.jetbrains.kotlin.fir.analysis.web.common.checkers.declaration.FirWebCommonExternalPropertyAccessorChecker
+import org.jetbrains.kotlin.fir.analysis.web.common.checkers.declaration.FirWebCommonNativeInvokeChecker
 
 object WasmBaseDeclarationCheckers : DeclarationCheckers() {
     override val classCheckers: Set<FirClassChecker> = setOf(
@@ -42,7 +43,7 @@ object WasmJsDeclarationCheckers : DeclarationCheckers() {
     )
 
     override val namedFunctionCheckers: Set<FirNamedFunctionChecker> = setOf(
-        FirWasmJsNativeInvokeChecker,
+        FirWebCommonNativeInvokeChecker,
     )
 
     override val propertyCheckers: Set<FirPropertyChecker> = setOf(
