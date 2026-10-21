@@ -7,12 +7,16 @@ package org.jetbrains.kotlin.gradle.mpp
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCommonBackend
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Files
 import java.nio.file.Path
 
 @MppGradlePluginTests
+@MustRunOnChangesInGradle
+@MustRunOnChangesInCommonBackend
 @DisplayName("Tests for KLIB resolver inside the Kotlin compiler")
 class KlibResolverInsideCompilerIT : KGPBaseTest() {
     @DisplayName("KLIBs with duplicated unique_name not discriminated, library + composite build, LV=2.0 (KT-63573)")
