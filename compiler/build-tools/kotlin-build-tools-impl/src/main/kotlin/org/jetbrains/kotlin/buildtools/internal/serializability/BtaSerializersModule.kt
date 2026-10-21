@@ -8,9 +8,13 @@ package org.jetbrains.kotlin.buildtools.internal.serializability
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.modules.subclass
+import org.jetbrains.kotlin.buildtools.api.js.JsIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmIncrementalCompilationConfiguration
+import org.jetbrains.kotlin.buildtools.api.wasm.WasmIncrementalCompilationConfiguration
+import org.jetbrains.kotlin.buildtools.internal.js.JsHistoryBasedIncrementalCompilationConfigurationImpl
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationConfigurationImpl
 import org.jetbrains.kotlin.buildtools.internal.jvm.operations.JvmCompilationOperationImpl
+import org.jetbrains.kotlin.buildtools.internal.wasm.WasmHistoryBasedIncrementalCompilationConfigurationImpl
 
 internal val btaSerializersModule: SerializersModule = SerializersModule {
     polymorphic(BtaSerializable::class) {
@@ -22,5 +26,14 @@ internal val btaSerializersModule: SerializersModule = SerializersModule {
             JvmSnapshotBasedIncrementalCompilationConfigurationImplSerializer
         )
     }
-
+    polymorphic(JsIncrementalCompilationConfiguration::class) {
+        subclass(
+            JsHistoryBasedIncrementalCompilationConfigurationImpl::class
+        )
+    }
+    polymorphic(WasmIncrementalCompilationConfiguration::class) {
+        subclass(
+            WasmHistoryBasedIncrementalCompilationConfigurationImpl::class
+        )
+    }
 }

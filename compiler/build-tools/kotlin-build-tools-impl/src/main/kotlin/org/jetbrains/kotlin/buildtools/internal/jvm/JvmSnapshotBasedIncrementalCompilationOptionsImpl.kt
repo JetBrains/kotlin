@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.buildtools.internal.*
 import java.nio.file.Path
 
 internal class JvmSnapshotBasedIncrementalCompilationOptionsImpl internal constructor(
-    public override val options: Options = Options(JvmSnapshotBasedIncrementalCompilationOptions::class),
+    val options: Options = Options(JvmSnapshotBasedIncrementalCompilationOptions::class),
 ) : BaseIncrementalCompilationConfigurationImpl(), JvmSnapshotBasedIncrementalCompilationOptions,
     DeepCopyable<JvmSnapshotBasedIncrementalCompilationOptionsImpl>, HasSnapshotBasedIcOptionsAccessor {
 
