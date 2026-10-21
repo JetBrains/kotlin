@@ -22,6 +22,8 @@ data class ModularizedTestConfig(
     val jvmTarget: String = "1.8",
     val kotlinHome: String? = null,
     val composePluginClasspath: String? = null,
+    /** The JDK for module dumps that record none (no `-jdk-home`, no modular JDK root), e.g. those of a Bazel build; `fir.bench.jdk.home`. */
+    val fallbackJdkHome: File? = null,
 )
 
 fun modularizedTestConfigFromSingleModelFile(modelFile: File): ModularizedTestConfig = ModularizedTestConfig(
@@ -41,6 +43,7 @@ fun modularizedTestConfigFromSystemProperties(): ModularizedTestConfig = Modular
     jvmTarget = System.getProperty("fir.bench.jvm.target", "1.8"),
     kotlinHome = null,
     composePluginClasspath = System.getProperty("fir.bench.compose.plugin.classpath"),
+    fallbackJdkHome = System.getProperty("fir.bench.jdk.home")?.takeIf { it.isNotBlank() }?.let(::File),
 )
 
 /**
@@ -98,6 +101,7 @@ fun modularizedTestConfigFromArgs(args: Array<String>): ModularizedTestConfig {
         jvmTarget = strNonNull("fir.bench.jvm.target", "1.8"),
         kotlinHome = str("fir.bench.kotlin.home", null),
         composePluginClasspath = str("fir.bench.compose.plugin.classpath", null),
+        fallbackJdkHome = str("fir.bench.jdk.home", null)?.takeIf { it.isNotBlank() }?.let(::File),
     )
 }
 

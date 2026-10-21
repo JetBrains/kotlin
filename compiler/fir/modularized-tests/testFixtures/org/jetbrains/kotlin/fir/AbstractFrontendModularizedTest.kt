@@ -72,6 +72,7 @@ abstract class AbstractFrontendModularizedTest(config: ModularizedTestConfig) : 
             moduleData.modularJdkRoot
                 ?: moduleData.jdkHome?.absoluteFile
                 ?: originalArguments?.jdkHome?.fixPath(config.rootPathPrefix)?.absoluteFile
+                ?: config.fallbackJdkHome?.absoluteFile
 
         if (originalArguments != null) {
             configuration.put(JVMConfigurationKeys.NO_JDK, originalArguments.noJdk)
