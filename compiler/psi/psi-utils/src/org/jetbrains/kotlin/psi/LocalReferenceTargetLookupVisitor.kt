@@ -7,10 +7,10 @@
 
 package org.jetbrains.kotlin.psi
 
-import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.TokenType
 import com.intellij.psi.util.elementType
+import com.intellij.psi.util.siblings
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.name.Name
@@ -126,18 +126,45 @@ val KtNameReferenceExpression.localLookupContextKind: LocalLookupContextKind?
 private class LocalReferenceTargetLookupVisitor(val element: KtNameReferenceExpression, val contextKind: LocalLookupContextKind) :
     KtVisitorVoid() {
     fun lookup(): KtNamedDeclaration? {
-        var current: KtElement = element
+        val s = sequence {
+            // invariant: current is always yielded
+            var current: KtElement = element
+            yield(current to LastDirection.INITIAL)
 
-        while (true) {
-            current.accept(this)
+            while (true) {
+                if (current.isStopElement) break
+
+                when (val p = current.nonContainerParent) {
+                    is KtBlockExpression -> {
+                        for (sibling in current.siblings(forward = false, withSelf = false).filterIsInstance<KtElement>()) {
+                            yield(sibling to LastDirection.BACKWARDS)
+                        }
+                        current = p
+                        yield(current to LastDirection.PARENT)
+                    }
+
+                    null -> break
+
+                    else -> {
+                        current = p
+                        yield(current to LastDirection.PARENT)
+                    }
+                }
+            }
+        }
+
+        for ([element, direction] in s) {
+            myLastDirection = direction
+            processMove(element)
+            element.accept(this)
             if (_stopResolution) return null
 
             _found?.let { return it }
 
-            previousElement = current
-            current = next(current) ?: return null
-            processMove(current)
+            previousElement = element
         }
+
+        return null
     }
 
     private var _found: KtNamedDeclaration? = null
@@ -172,15 +199,6 @@ private class LocalReferenceTargetLookupVisitor(val element: KtNameReferenceExpr
         LocalLookupContextKind.VALUE -> element.typeMatchesForValueContext
         LocalLookupContextKind.TYPE -> element.typeMatchesForTypeContext
         LocalLookupContextKind.VALUE_OR_TYPE -> element.typeMatchesForValueContext || element.typeMatchesForTypeContext
-    }
-
-    fun PsiElement.prevKtSibling(): KtElement? {
-        var current: PsiElement? = this.prevSibling
-        while (current != null) {
-            if (current is KtElement) return current
-            current = current.prevSibling
-        }
-        return null
     }
 
     private enum class LastDirection {
@@ -222,36 +240,6 @@ private class LocalReferenceTargetLookupVisitor(val element: KtNameReferenceExpr
             LocalLookupContextKind.VALUE_OR_TYPE -> isStopElementInValueContext || isStopElementInTypeContext
         }
 
-    private fun shouldStopBeforeProcessing(element: KtElement): Boolean =
-        element is KtFile && element.elementType !in CODE_FRAGMENTS
-
-    /**
-     * Given the current element, this function returns the next element we should visit.
-     */
-    private fun next(element: KtElement): KtElement? {
-        if (element.isStopElement) return null
-
-        myLastDirection = LastDirection.UNKNOWN
-        return when (val p = element.parent) {
-            is KtBlockExpression -> {
-                val prev = element.prevKtSibling()
-                if (prev != null) {
-                    myLastDirection = LastDirection.BACKWARDS
-                    return prev
-                }
-
-                myLastDirection = LastDirection.PARENT
-                p
-            }
-
-            else -> {
-                myLastDirection = LastDirection.PARENT
-                element.nonContainerParent
-            }
-        }
-            ?.takeUnless(::shouldStopBeforeProcessing)
-    }
-
     private fun lastDirectionIs(@Suppress("SameParameterValue") value: LastDirection): Boolean =
         when (val d = myLastDirection) {
             LastDirection.UNKNOWN -> throw IllegalStateException("Last direction is unknown")
@@ -270,7 +258,6 @@ private class LocalReferenceTargetLookupVisitor(val element: KtNameReferenceExpr
      * etc.
      *
      * @see ignore
-     * @see next
      */
     private fun processMove(current: KtElement) {
         if (previousElement is KtClass) constructorParametersAllowed = false
@@ -536,7 +523,6 @@ private class LocalReferenceTargetLookupVisitor(val element: KtNameReferenceExpr
 
         for (element in this) {
             f(element)
-            if (_found != null) return
         }
     }
 }
