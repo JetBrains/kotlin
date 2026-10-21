@@ -25,9 +25,23 @@ public final record Rec /* Rec*/(int u, int i, int ic) {
 
   private  Rec(int, int, int);//  .ctor(int, int, int)
 
+  public final int body();//  body()
+
   public final int component2();//  component2()
 
+  public final int ext(int);//  ext(int)
+
   public final int i();//  i()
+
+  public final int ic();//  ic()
+
+  public final int mutable();//  mutable()
+
+  public final int receiverExt(int);//  receiverExt(int)
+
+  public final int u();//  u()
+
+  public final void mutable(int);//  mutable(int)
 
   class Companion ...
 }

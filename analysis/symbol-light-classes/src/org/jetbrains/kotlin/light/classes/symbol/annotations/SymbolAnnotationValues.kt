@@ -122,7 +122,16 @@ internal class SymbolPsiLiteral(
     private val psiLiteral: PsiLiteralExpression,
 ) : SymbolPsiAnnotationMemberValue(kotlinOrigin, lightParent), PsiLiteralExpression {
     override fun getValue(): Any? = psiLiteral.value
+
+    /**
+     * The text of the argument as written in the Kotlin source, e.g., `FeatureConstants.FLAG` or `4u`, or the Java text of the
+     * value if there is no source.
+     *
+     * Unlike [getValue], which is the value as the JVM backend stores it, e.g., `4` for `4u`, the text is intentionally not
+     * converted to Java: clients such as Lint inspect the argument as written, see KT-74733.
+     */
     override fun getText(): String = kotlinOrigin?.text ?: psiLiteral.text
+
     override fun getType(): PsiType? = psiLiteral.type
     override fun getReference(): PsiReference? = references.firstOrNull()
     override fun getReferences(): Array<out PsiReference> = kotlinOrigin?.references ?: PsiReference.EMPTY_ARRAY

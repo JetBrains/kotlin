@@ -889,6 +889,8 @@ private fun hasMangledNameDueToInlineClasses(symbol: KaCallableSymbol): Boolean 
     // On the JVM, an accessor has the receiver, the context parameters, and the type of its property, while the symbol
     // itself only has the receiver
     val declaration = (symbol as? KaPropertyAccessorSymbol)?.containingDeclaration as? KaCallableSymbol ?: symbol
+    if (declaration is KaPropertySymbol && declaration.hasPrefixlessAccessorNames) return false
+
     val hasInlineClassInReturnType = hasInlineClassInReturnType(declaration)
     val isSetter = symbol is KaPropertySetterSymbol
 
