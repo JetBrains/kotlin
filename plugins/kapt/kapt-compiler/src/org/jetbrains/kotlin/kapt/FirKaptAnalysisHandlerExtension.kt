@@ -380,8 +380,19 @@ open class FirKaptAnalysisHandlerExtension(
             return true
         }
 
-        if (KaptFlag.INCREMENTAL_APT in flags && incrementalCache == null) {
-            logger.warn("Incremental annotation processing is enabled, but no incremental cache was provided, this will lead to a full rebuild.")
+        if (KaptFlag.INCREMENTAL_APT in flags) {
+            if (incrementalCache == null) {
+                logger.warn(
+                    "Incremental annotation processing is enabled, but no incremental cache was provided, this will lead to a full rebuild, " +
+                            "which clears the generated sources and classes output directories."
+                )
+            }
+            if (compiledSources.isEmpty()) {
+                logger.warn(
+                    "Incremental annotation processing is enabled, but no compiled sources directories were provided, " +
+                            "this will lead to a full rebuild on every run, which clears the generated sources and classes output directories."
+                )
+            }
         }
 
         if (usedDefaultDetectMemoryLeaks) {
