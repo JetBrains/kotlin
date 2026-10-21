@@ -2,15 +2,20 @@
  * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+@file:UseSerializers(PathAsStringSerializer::class)
 
 package org.jetbrains.kotlin.buildtools.internal.js.operations
 
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.UseSerializers
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.js.operations.JsLinkingOperation
 import org.jetbrains.kotlin.buildtools.internal.*
 import org.jetbrains.kotlin.buildtools.internal.arguments.JsArgumentsImpl
 import org.jetbrains.kotlin.buildtools.internal.arguments.absolutePathStringOrThrow
+import org.jetbrains.kotlin.buildtools.internal.serializability.PathAsStringSerializer
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorWithDiagnosticId
@@ -19,33 +24,19 @@ import org.jetbrains.kotlin.daemon.common.CompileService
 import org.jetbrains.kotlin.daemon.common.IncrementalCompilationOptions
 import java.nio.file.Path
 
-
-internal class JsLinkingOperationImpl private constructor(
-    override val options: Options = Options(JsLinkingOperation::class),
+@Serializable
+internal class JsLinkingOperationImpl(
     override val klib: Path,
     override val destination: Path,
     override val compilerArguments: JsArgumentsImpl = JsArgumentsImpl(),
-) : BaseCompilationOperationImpl<JsArgumentsImpl, K2JSCompilerArguments>(),
+) : BaseCompilationOperationImpl<JsArgumentsImpl, @Contextual K2JSCompilerArguments>(),
     JsLinkingOperation, JsLinkingOperation.Builder,
     DeepCopyable<JsLinkingOperationImpl> {
-    constructor(
-        klib: Path,
-        destination: Path,
-        compilerArguments: JsArgumentsImpl = JsArgumentsImpl(),
-    ) : this(
-        options = Options(JsLinkingOperation::class),
-        klib = klib,
-        destination = destination,
-        compilerArguments = compilerArguments,
-    ) {
-        initializeOptions(this::class, options)
-    }
 
     override fun toBuilder(): JsLinkingOperation.Builder = deepCopy()
 
     override fun deepCopy(): JsLinkingOperationImpl {
         return JsLinkingOperationImpl(
-            options.deepCopy(),
             klib,
             destination,
             compilerArguments.deepCopy(),
@@ -62,14 +53,6 @@ internal class JsLinkingOperationImpl private constructor(
     }
 
     override fun build(): JsLinkingOperation = deepCopy()
-
-    private operator fun <V> get(key: Option<V>): V = options[key]
-
-    private operator fun <V> set(key: Option<V>, value: V) {
-        options[key] = value
-    }
-
-    class Option<V>(id: String, default: V) : BaseOptionWithDefault<V>(id, defaultValue = default)
 
     override fun getRootProjectDir(): Path? {
         return null

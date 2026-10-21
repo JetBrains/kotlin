@@ -3,10 +3,14 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:OptIn(ExperimentalCompilerArgument::class)
+@file:UseSerializers(PathAsStringSerializer::class)
 
 package org.jetbrains.kotlin.buildtools.internal.js.operations
 
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.UseSerializers
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.report.BuildReporter
 import org.jetbrains.kotlin.build.report.metrics.endMeasureGc
@@ -14,7 +18,6 @@ import org.jetbrains.kotlin.build.report.metrics.startMeasureGc
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
-import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.js.IncrementalModule
 import org.jetbrains.kotlin.buildtools.api.js.JsHistoryBasedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.js.JsIncrementalCompilationConfiguration
@@ -23,6 +26,9 @@ import org.jetbrains.kotlin.buildtools.internal.*
 import org.jetbrains.kotlin.buildtools.internal.arguments.JsArgumentsImpl
 import org.jetbrains.kotlin.buildtools.internal.arguments.absolutePathStringOrThrow
 import org.jetbrains.kotlin.buildtools.internal.js.JsHistoryBasedIncrementalCompilationConfigurationImpl
+import org.jetbrains.kotlin.buildtools.internal.serializability.PathAsStringSerializer
+import org.jetbrains.kotlin.buildtools.internal.serializability.getPropertyByName
+import org.jetbrains.kotlin.buildtools.internal.serializability.setPropertyByName
 import org.jetbrains.kotlin.buildtools.internal.trackers.getMetricsReporter
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
@@ -37,29 +43,16 @@ import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistoryJs
 import org.jetbrains.kotlin.incremental.storage.FileLocations
 import java.nio.file.Path
 
-internal class JsKlibCompilationOperationImpl private constructor(
-    override val options: Options = Options(JsKlibCompilationOperation::class),
+@Serializable
+internal class JsKlibCompilationOperationImpl(
     override val sources: List<Path>,
     override val destination: Path,
     override val compilerArguments: JsArgumentsImpl = JsArgumentsImpl(),
     private val compilerVersion: String,
-) : BaseCompilationOperationImpl<JsArgumentsImpl, K2JSCompilerArguments>(),
+    @SerialName("INCREMENTAL_COMPILATION") internal var incrementalCompilation: JsIncrementalCompilationConfiguration? = null,
+) : BaseCompilationOperationImpl<JsArgumentsImpl, @Contextual K2JSCompilerArguments>(),
     JsKlibCompilationOperation, JsKlibCompilationOperation.Builder,
     DeepCopyable<JsKlibCompilationOperationImpl> {
-    constructor(
-        sources: List<Path>,
-        destination: Path,
-        compilerArguments: JsArgumentsImpl = JsArgumentsImpl(),
-        compilerVersion: String,
-    ) : this(
-        options = Options(JsKlibCompilationOperation::class),
-        sources = sources,
-        destination = destination,
-        compilerArguments = compilerArguments,
-        compilerVersion = compilerVersion,
-    ) {
-        initializeOptions(this::class, options)
-    }
 
     override fun historyBasedIcConfigurationBuilder(
         rootProjectDir: Path,
@@ -75,36 +68,30 @@ internal class JsKlibCompilationOperationImpl private constructor(
     override fun toBuilder(): JsKlibCompilationOperation.Builder = deepCopy()
 
     override fun deepCopy(): JsKlibCompilationOperationImpl {
+        @Suppress("UNCHECKED_CAST")
         return JsKlibCompilationOperationImpl(
-            options.deepCopy(),
-            sources,
+            sources.toList(),
             destination,
             compilerArguments.deepCopy(),
-            compilerVersion
+            compilerVersion,
+            (incrementalCompilation as? DeepCopyable<JsIncrementalCompilationConfiguration>)?.deepCopy() ?: incrementalCompilation,
         ).also { it.copyFrom(this) }
     }
 
     @UseFromImplModuleRestricted
-    override fun <V> get(key: JsKlibCompilationOperation.Option<V>): V = options[key]
+    override fun <V> get(key: JsKlibCompilationOperation.Option<V>): V =
+        getPropertyByName(propertyAccessMap, key.id)
 
     @UseFromImplModuleRestricted
     override fun <V> set(key: JsKlibCompilationOperation.Option<V>, value: V) {
         checkOptionIsAvailableForVersion(key)
-        options[key] = value
+        setPropertyByName(propertyAccessMap, key.id, value)
     }
 
     override fun build(): JsKlibCompilationOperation = deepCopy()
 
-    private operator fun <V> get(key: Option<V>): V = options[key]
-
-    private operator fun <V> set(key: Option<V>, value: V) {
-        options[key] = value
-    }
-
-    class Option<V>(id: String, default: V) : BaseOptionWithDefault<V>(id, defaultValue = default)
-
     override fun getRootProjectDir(): Path? {
-        return (get(INCREMENTAL_COMPILATION) as? JsHistoryBasedIncrementalCompilationConfigurationImpl)?.rootProjectDir
+        return (incrementalCompilation as? JsHistoryBasedIncrementalCompilationConfigurationImpl)?.rootProjectDir
     }
 
     override fun createAndPrepareCompilerArguments(): K2JSCompilerArguments =
@@ -120,7 +107,7 @@ internal class JsKlibCompilationOperationImpl private constructor(
         requestedCompilationResults: Array<Int>,
         arguments: K2JSCompilerArguments,
     ): IncrementalCompilationOptions? {
-        return when (val aggregatedIcConfiguration: JsIncrementalCompilationConfiguration? = get(INCREMENTAL_COMPILATION)) {
+        return when (val aggregatedIcConfiguration: JsIncrementalCompilationConfiguration? = incrementalCompilation) {
             is JsHistoryBasedIncrementalCompilationConfigurationImpl -> {
                 val sourcesChanges = aggregatedIcConfiguration.sourcesChanges
                 val classpathChanges = ClasspathChanges.NotAvailableForJSCompiler
@@ -182,7 +169,7 @@ internal class JsKlibCompilationOperationImpl private constructor(
     }
 
     override fun shouldCompileIncrementally(): Boolean {
-        return when (val icConfig = get(INCREMENTAL_COMPILATION)) {
+        return when (val icConfig = incrementalCompilation) {
             is JsHistoryBasedIncrementalCompilationConfigurationImpl -> {
                 true
             }
@@ -209,7 +196,7 @@ internal class JsKlibCompilationOperationImpl private constructor(
         messageCollector: MessageCollectorWithDiagnosticId,
         executionContext: ExecutionContext
     ): CompilationResult {
-        val icConfiguration = get(INCREMENTAL_COMPILATION)
+        val icConfiguration = incrementalCompilation
         requireNotNull(icConfiguration) { "Missing INCREMENTAL_COMPILATION option." }
         check(icConfiguration is JsHistoryBasedIncrementalCompilationConfigurationImpl) {
             "Unexpected incremental compilation configuration: ${icConfiguration::class}. In this version, it must be an instance of JsHistoryBasedIncrementalCompilationConfiguration for incremental compilation, or null for non-incremental compilation."
@@ -289,7 +276,9 @@ internal class JsKlibCompilationOperationImpl private constructor(
     }
 
     companion object {
-        val INCREMENTAL_COMPILATION: Option<JsIncrementalCompilationConfiguration?> = Option("INCREMENTAL_COMPILATION", null)
+        private val propertyAccessMap = mapOf(
+            "INCREMENTAL_COMPILATION" to JsKlibCompilationOperationImpl::incrementalCompilation
+        )
     }
 }
 
