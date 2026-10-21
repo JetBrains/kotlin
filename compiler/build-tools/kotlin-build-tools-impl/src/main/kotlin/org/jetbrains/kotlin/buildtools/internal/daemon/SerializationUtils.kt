@@ -2,7 +2,7 @@
  * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-@file:UseSerializers(PathAsStringSerializer::class)
+@file:UseSerializers(AbsolutePathAsStringSerializer::class)
 @file:OptIn(ExperimentalSerializationApi::class)
 
 package org.jetbrains.kotlin.buildtools.internal.daemon
@@ -16,22 +16,24 @@ import kotlinx.serialization.encoding.Encoder
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges.*
+import org.jetbrains.kotlin.buildtools.api.js.IncrementalModule
 import org.jetbrains.kotlin.buildtools.api.jvm.AccessibleClassSnapshot
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshot
 import org.jetbrains.kotlin.buildtools.api.jvm.ClasspathEntrySnapshot
 import org.jetbrains.kotlin.buildtools.api.jvm.InaccessibleClassSnapshot
-import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationConfigurationImpl
 import org.jetbrains.kotlin.buildtools.api.trackers.IcEvent
 import org.jetbrains.kotlin.buildtools.internal.CompilationStartedEvent
 import org.jetbrains.kotlin.buildtools.internal.CompileIterationEvent
 import org.jetbrains.kotlin.buildtools.internal.FileCompilationReasonBasic
+import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationConfigurationImpl
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocationWithRange
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.daemon.common.serialization.AbsolutePathAsStringSerializer
-import org.jetbrains.kotlin.daemon.common.serialization.PathAsStringSerializer
 import java.io.File
 import java.nio.file.Path
+import org.jetbrains.kotlin.buildtools.api.wasm.IncrementalModule as WasmIncrementalModule
+
 
 @Suppress("UNCHECKED_CAST", "NOTHING_TO_INLINE")
 internal inline fun <T> Any?.cast(): T = this as T
@@ -191,25 +193,21 @@ internal object SourcesChangesSerializer : KSerializer<SourcesChanges> {
 
 @Serializable
 private class JvmSnapshotBasedIncrementalCompilationConfigurationImplSurrogate(
-    @Serializable(with = AbsolutePathAsStringSerializer::class)
     val workingDirectory: Path,
     @Serializable(with = SourcesChangesSerializer::class)
     val sourcesChanges: SourcesChanges,
-    val dependenciesSnapshotFiles: List<@Serializable(with = AbsolutePathAsStringSerializer::class) Path>,
-    @Serializable(with = AbsolutePathAsStringSerializer::class)
+    val dependenciesSnapshotFiles: List<Path>,
     val shrunkClasspathSnapshot: Path,
     val preciseJavaTracking: Boolean = false,
     val assuredNoClasspathSnapshotChanges: Boolean = false,
     val useFirRunner: Boolean = false,
     val enableErrorRecoveryRound: Boolean = true,
-    @Serializable(with = AbsolutePathAsStringSerializer::class)
     val rootProjectDir: Path? = null,
-    @Serializable(with = AbsolutePathAsStringSerializer::class)
     val moduleBuildDir: Path? = null,
     val backupClasses: Boolean = false,
     val keepIcCachesInMemory: Boolean = false,
     val forceRecompilation: Boolean = false,
-    val outputDirs: Set<@Serializable(with = AbsolutePathAsStringSerializer::class) Path>? = null,
+    val outputDirs: Set<Path>? = null,
     val unsafeIncrementalCompilationForMultiplatform: Boolean = false,
     val monotonousIncrementalCompileSetExpansion: Boolean = true,
     val trackConfigurationInputs: Boolean = false,
@@ -360,6 +358,81 @@ internal sealed interface IcEventSurrogate {
     }
 }
 
+
+// JS IC
+
+@Serializable
+private class JsIncrementalModuleSurrogate(
+    val name: String,
+    val output: Path,
+    val buildDir: Path,
+    val buildHistoryDir: Path? = null,
+)
+
+internal object JsIncrementalModuleSerializer :
+    KSerializer<IncrementalModule> {
+    override val descriptor: SerialDescriptor =
+        JsIncrementalModuleSurrogate.serializer().descriptor
+
+    override fun serialize(encoder: Encoder, value: IncrementalModule) {
+        val surrogate = JsIncrementalModuleSurrogate(
+            name = value.name,
+            output = value.output,
+            buildDir = value.buildDir,
+            buildHistoryDir = value.buildHistoryDir,
+        )
+        encoder.encodeSerializableValue(JsIncrementalModuleSurrogate.serializer(), surrogate)
+    }
+
+    override fun deserialize(decoder: Decoder): IncrementalModule {
+        val surrogate = decoder.decodeSerializableValue(JsIncrementalModuleSurrogate.serializer())
+        return IncrementalModule(
+            name = surrogate.name,
+            output = surrogate.output,
+            buildDir = surrogate.buildDir,
+            buildHistoryDir = surrogate.buildHistoryDir,
+        )
+    }
+}
+
+// Wasm IC
+
+@Serializable
+private class WasmIncrementalModuleSurrogate(
+    val name: String,
+    val output: Path,
+    val buildDir: Path,
+    val buildHistoryDir: Path? = null,
+)
+
+internal object WasmIncrementalModuleSerializer :
+    KSerializer<WasmIncrementalModule> {
+    override val descriptor: SerialDescriptor =
+        WasmIncrementalModuleSurrogate.serializer().descriptor
+
+    override fun serialize(encoder: Encoder, value: WasmIncrementalModule) {
+        val surrogate = WasmIncrementalModuleSurrogate(
+            name = value.name,
+            output = value.output,
+            buildDir = value.buildDir,
+            buildHistoryDir = value.buildHistoryDir,
+        )
+        encoder.encodeSerializableValue(WasmIncrementalModuleSurrogate.serializer(), surrogate)
+    }
+
+    override fun deserialize(decoder: Decoder): WasmIncrementalModule {
+        val surrogate = decoder.decodeSerializableValue(WasmIncrementalModuleSurrogate.serializer())
+        return WasmIncrementalModule(
+            name = surrogate.name,
+            output = surrogate.output,
+            buildDir = surrogate.buildDir,
+            buildHistoryDir = surrogate.buildHistoryDir,
+        )
+    }
+}
+
+
+// BaseCompilationOperation
 
 internal object CompilationResultSerializer : KSerializer<CompilationResult> {
     override val descriptor = PrimitiveSerialDescriptor("CompilationResult", PrimitiveKind.STRING)
