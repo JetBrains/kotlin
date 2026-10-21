@@ -120,6 +120,49 @@ class TestShardingFunctionalTest {
     }
 
     @Test
+    fun `test shard timings are passed to the runtime`() {
+        shardTimingsFile.createParentDirectories().writeText("$targetProjectPath:junit5Tests\tMyTest\t1\n")
+        junit5SourcesDirectory.resolve("Test.kt").writeCode(
+            """
+            import java.io.File
+            import kotlin.test.Test
+            import kotlin.test.assertEquals
+
+            class MyTest {
+                @Test fun configuration() {
+                    assertEquals("${shardTimingsFile.name}", File(System.getProperty("kotlin.build.test.shard.timings")).name)
+                    assertEquals("$targetProjectPath:junit5Tests", System.getProperty("kotlin.build.test.shard.task"))
+                }
+            }
+            """.trimIndent()
+        )
+
+        val result = createGradleRunner().runTests(shardIndex = 0, shardCount = 1, shardTimings = shardTimingsFile.nameWithoutExtension)
+        assertEquals(1, result.parseExecutedTests().size)
+        assertContains(result.output, "Running tests in shard index 0 (shard count: 1), by the timings of")
+    }
+
+    @Test
+    fun `missing test shard timings fall back to hashing`() {
+        junit5SourcesDirectory.resolve("Test.kt").writeCode(
+            """
+            import kotlin.test.Test
+            import kotlin.test.assertNull
+
+            class MyTest {
+                @Test fun configuration() {
+                    assertNull(System.getProperty("kotlin.build.test.shard.timings"))
+                }
+            }
+            """.trimIndent()
+        )
+
+        val result = createGradleRunner().runTests(shardIndex = 0, shardCount = 1, shardTimings = shardTimingsFile.nameWithoutExtension)
+        assertEquals(1, result.parseExecutedTests().size)
+        assertContains(result.output, "by hash, missing 'repo/test-shard-timings/${shardTimingsFile.name}'")
+    }
+
+    @Test
     fun `invalid shard indices and counts are rejected`() {
         junit5SourcesDirectory.resolve("Test.kt").writeCode(
             """
@@ -147,12 +190,14 @@ class TestShardingFunctionalTest {
     private val targetProjectPath = ":repo:test-runtime"
     private val junit5ResultsDirectory = Path("repo/test-runtime/build/test-results/junit5Tests")
     private val junit5SourcesDirectory = Path("repo/test-runtime/src/junit5Tests/kotlin")
+    private val shardTimingsFile = Path("repo/test-shard-timings/TestShardingFunctionalTest.tsv")
 
     @BeforeEach
     @AfterEach
     fun cleanup() {
         junit5ResultsDirectory.deleteRecursively()
         junit5SourcesDirectory.deleteRecursively()
+        shardTimingsFile.deleteIfExists()
     }
 
     data class TestResult(
@@ -165,7 +210,7 @@ class TestShardingFunctionalTest {
      */
     private fun GradleRunner.runTests(
         shardIndex: Int? = null, shardCount: Int? = null, shardByMethod: Boolean = false,
-        shardSeed: Int? = null, expectFailure: Boolean = false,
+        shardSeed: Int? = null, shardTimings: String? = null, expectFailure: Boolean = false,
     ): BuildResult {
         withArguments(
             *listOfNotNull(
@@ -175,6 +220,7 @@ class TestShardingFunctionalTest {
                 if (shardCount != null) "-Pkotlin.build.test.shard.count=$shardCount" else null,
                 if (shardSeed != null) "-Pkotlin.build.test.shard.seed=$shardSeed" else null,
                 if (shardByMethod) "-Ptests.shardByMethod=true" else null,
+                if (shardTimings != null) "-Pkotlin.build.test.shard.timings=$shardTimings" else null,
 
                 /* Allow debugging of test Gradle process */
                 *defaultGradleArguments(xmx = "1g").toTypedArray(),

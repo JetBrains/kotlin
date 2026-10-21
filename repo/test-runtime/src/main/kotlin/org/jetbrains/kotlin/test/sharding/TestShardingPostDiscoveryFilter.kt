@@ -48,11 +48,13 @@ internal class TestShardingPostDiscoveryFilter(
         if (!configuration.isShardingEnabled) return included("No shards configured")
         val isTestMethod = test.type == TestDescriptor.Type.TEST || test.mayRegisterTests()
         if (!isTestMethod) return included("Classes/Containers are always enabled")
-        if (testsShardParameterizedTag in test.tags) return included("Test invocations are sharded by parameters")
+        val timedShard = test.timedShard(configuration)
+        if (timedShard == null && testsShardParameterizedTag in test.tags) return included("Test invocations are sharded by parameters")
 
         val shardIndex = configuration.shardIndex
-        val distributionKey = test.shardingDistributionKey(configuration).encodeToByteArray()
-        val thisTestShard = calculateTestShard(distributionKey, configuration.shardCount, configuration.shardSeed)
+        val thisTestShard = timedShard ?: calculateTestShard(
+            test.shardingDistributionKey(configuration).encodeToByteArray(), configuration.shardCount, configuration.shardSeed
+        )
         return if (thisTestShard == shardIndex) {
             included("Current shard index: '$shardIndex'. Test shard index: '$thisTestShard'")
         } else {
@@ -96,6 +98,26 @@ internal fun TestDescriptor.shardingDistributionKey(configuration: TestShardingC
         "kotlin-compiler-grouping-engine" -> classDescriptor?.uniqueId?.toString() ?: uniqueId.removeLastSegment().toString()
         else -> error("Unexpected Test Engine ID: ${uniqueId.engineId}")
     }
+}
+
+/**
+ * The shard of the test's class in the timings (see [TimedTestSharding]),
+ * or `null` if the timings do not list the class or its tests are sharded by method.
+ */
+private fun TestDescriptor.timedShard(configuration: TestShardingConfiguration): Int? {
+    val timedTestSharding = configuration.timedTestSharding ?: return null
+    if (configuration.shardByMethod || testsShardByMethodTag in tags) return null
+    val testClass = generateSequence(this) { it.parent.getOrNull() }
+        .filterIsInstance<ClassBasedTestDescriptor>()
+        .firstOrNull()?.testClass
+    return testClass?.let { timedTestSharding.shardFor(it.name) }
+}
+
+/** Execution-time counterpart of [TestDescriptor.timedShard] */
+internal fun ExtensionContext.timedShard(configuration: TestShardingConfiguration): Int? {
+    val timedTestSharding = configuration.timedTestSharding ?: return null
+    if (configuration.shardByMethod || testsShardByMethodTagKey in tags) return null
+    return timedTestSharding.shardFor(requiredTestClass.name)
 }
 
 /**

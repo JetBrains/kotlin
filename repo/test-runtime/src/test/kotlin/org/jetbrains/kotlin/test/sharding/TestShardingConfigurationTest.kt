@@ -48,8 +48,12 @@ class TestShardingConfigurationTest {
                 "kotlin.build.test.shard.count" to "3",
                 "kotlin.build.test.shard.seed" to "42",
                 "tests.shardByMethod" to "false",
+                "kotlin.build.test.shard.timings" to "timings.tsv",
+                "kotlin.build.test.shard.task" to ":p:test",
             ),
-            TestShardingConfiguration(shardIndex = 0, shardCount = 3, shardSeed = 42).toConfigurationParameters()
+            TestShardingConfiguration(
+                shardIndex = 0, shardCount = 3, shardSeed = 42, shardTimings = "timings.tsv", shardTask = ":p:test"
+            ).toConfigurationParameters()
         )
     }
 }
