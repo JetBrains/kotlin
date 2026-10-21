@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.collectUpperBounds
 import org.jetbrains.kotlin.fir.declarations.isFullValueClass
@@ -70,7 +71,7 @@ internal fun ConeKotlinType.isClass(session: FirSession): Boolean = toRegularCla
 fun ConeKotlinType.toTypeInfo(session: FirSession): TypeInfo {
     val bounds = collectUpperBounds(session.typeContext).map { it.replaceArgumentsWithStarProjections() }
     val type = bounds.ifNotEmpty { ConeTypeIntersector.intersectTypes(session.typeContext, this) }?.fullyExpandedType(session)
-        ?: session.builtinTypes.nullableAnyType.coneType
+        ?: StandardTypes.NullableAny
     val notNullType = type.withNullability(nullable = false, session.typeContext)
     val boundsSymbols = bounds.mapNotNull { it.toClassSymbol(session) }
 

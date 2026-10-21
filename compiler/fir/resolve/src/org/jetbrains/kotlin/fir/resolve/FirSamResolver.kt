@@ -340,7 +340,7 @@ private fun FirTypeParameterRefsOwner.buildSubstitutorWithUpperBounds(type: Cone
                             ConeErrorType(diagnostic)
                         }
                     }
-                ?: c.session.builtinTypes.nullableAnyType.coneType
+                ?: StandardTypes.NullableAny
         Pair(parameter.symbol, typeArgument)
     }
 

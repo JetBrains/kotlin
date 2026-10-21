@@ -7,6 +7,7 @@ package org.jetbrains.kotlinx.dataframe.plugin
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionHolder
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.analysis.checkers.toClassLikeSymbol
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.declaredProperties
@@ -75,7 +76,7 @@ fun <T> KotlinTypeFacade.interpret(
             val value: Any = if (lens == Interpreter.Id) {
                 firTypeProjection.toConeTypeProjection()
             } else {
-                val type = firTypeProjection.toConeTypeProjection().type ?: session.builtinTypes.nullableAnyType.coneType
+                val type = firTypeProjection.toConeTypeProjection().type ?: StandardTypes.NullableAny
                 ColumnType(type.approximateIntersections())
             }
             put(key, Interpreter.Success(value))
@@ -379,7 +380,7 @@ private fun KotlinTypeFacade.columnWithPathApproximations(propertyAccess: FirPro
         val column = when (it.classId) {
             Names.DATA_COLUMN_CLASS_ID -> {
                 val type = when (val arg = it.typeArguments.single()) {
-                    is ConeStarProjection -> session.builtinTypes.nullableAnyType.coneType
+                    is ConeStarProjection -> StandardTypes.NullableAny
                     is ConeKotlinTypeProjection -> arg.type
                 }
                 simpleColumnOf(propertyAccess.columnName(), type)

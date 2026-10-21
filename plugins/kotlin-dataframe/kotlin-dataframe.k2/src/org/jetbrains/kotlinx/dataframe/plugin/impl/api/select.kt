@@ -747,7 +747,7 @@ internal class StringInvokeUntyped : AbstractInterpreter<SingleColumnApproximati
     val Arguments.receiver: String by arg()
 
     override fun Arguments.interpret(): SingleColumnApproximation {
-        return stringApiColumnResolver(path = pathOf(receiver), session.builtinTypes.nullableAnyType.coneType)
+        return stringApiColumnResolver(path = pathOf(receiver), StandardTypes.NullableAny)
     }
 }
 
@@ -845,7 +845,7 @@ class ColByIndexUntyped : AbstractInterpreter<SingleColumnApproximation>() {
     val Arguments.index: Int by arg()
 
     override fun Arguments.interpret(): SingleColumnApproximation {
-        return columnByIndexResolver(name = null, session.builtinTypes.nullableAnyType.coneType, index)
+        return columnByIndexResolver(name = null, StandardTypes.NullableAny, index)
     }
 }
 
@@ -904,7 +904,7 @@ internal class ColByStringUntyped : AbstractInterpreter<SingleColumnApproximatio
     val Arguments.name: String by arg()
 
     override fun Arguments.interpret(): SingleColumnApproximation {
-        return stringApiColumnResolver(pathOf(name), session.builtinTypes.nullableAnyType.coneType)
+        return stringApiColumnResolver(pathOf(name), StandardTypes.NullableAny)
     }
 }
 
@@ -914,7 +914,7 @@ internal class StringNestedColUntyped : AbstractInterpreter<SingleColumnApproxim
     val Arguments.name: String by arg()
 
     override fun Arguments.interpret(): SingleColumnApproximation {
-        return stringApiColumnResolver(pathOf(receiver, name), session.builtinTypes.nullableAnyType.coneType)
+        return stringApiColumnResolver(pathOf(receiver, name), StandardTypes.NullableAny)
     }
 }
 
@@ -935,7 +935,7 @@ internal class ColumnPathColUntyped : AbstractInterpreter<SingleColumnApproximat
     val Arguments.name: String by arg()
 
     override fun Arguments.interpret(): SingleColumnApproximation {
-        return stringApiColumnResolver(receiver.path + name, session.builtinTypes.nullableAnyType.coneType)
+        return stringApiColumnResolver(receiver.path + name, StandardTypes.NullableAny)
     }
 }
 
@@ -993,7 +993,7 @@ class ColumnPathApproximation(
 
 fun Arguments.ColumnPathApproximation(
     path: List<String>,
-    type: ConeKotlinType = session.builtinTypes.nullableAnyType.coneType,
+    type: ConeKotlinType = StandardTypes.NullableAny,
 ): ColumnPathApproximation {
     val columnPath = ColumnPath(path)
     return ColumnPathApproximation(

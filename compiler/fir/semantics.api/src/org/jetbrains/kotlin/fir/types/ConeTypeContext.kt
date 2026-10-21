@@ -267,7 +267,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     override fun TypeConstructorMarker.supertypes(): Collection<ConeKotlinType> {
         require(this is ConeTypeConstructorMarker)
         return when (this) {
-            is ConeStubTypeConstructor -> listOf(session.builtinTypes.nullableAnyType.coneType)
+            is ConeStubTypeConstructor -> listOf(StandardTypes.NullableAny)
             is ConeTypeVariableTypeConstructor -> emptyList()
             is ConeClassifierLookupTag -> {
                 when (val symbol = toSymbol(session).also { it?.lazyResolveToPhase(FirResolvePhase.TYPES) }) {
@@ -280,7 +280,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
             is ConeCapturedTypeConstructor -> supertypes.orEmpty()
             is ConeIntersectionType -> intersectedTypes
             is ConeUnionType -> if (primaryType.canBeNull(session)) {
-                [session.builtinTypes.nullableAnyType.coneType]
+                [StandardTypes.NullableAny]
             } else {
                 [StandardTypes.Any]
             }
@@ -485,7 +485,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         return toClassLikeSymbol()?.fir as? FirRegularClass
     }
 
-    override fun nullableAnyType(): ConeClassLikeType = session.builtinTypes.nullableAnyType.coneType
+    override fun nullableAnyType(): ConeClassLikeType = StandardTypes.NullableAny
 
     override fun arrayType(componentType: KotlinTypeMarker): ConeClassLikeType {
         require(componentType is ConeKotlinType)
@@ -571,7 +571,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     override fun TypeParameterMarker.getRepresentativeUpperBound(): ConeKotlinType {
         require(this is ConeTypeParameterLookupTag)
         return this.bounds().getOrNull(0)?.coneType
-            ?: session.builtinTypes.nullableAnyType.coneType
+            ?: StandardTypes.NullableAny
     }
 
     @Suppress("NOTHING_TO_INLINE")
@@ -624,7 +624,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
             val substitution =
                 declaration.typeParameters.zip(type.typeArguments).associate { [parameter, argument] ->
                     parameter.symbol to ((argument as? ConeKotlinTypeProjection)?.type
-                        ?: session.builtinTypes.nullableAnyType.coneType)//StandardClassIds.Any(session.firSymbolProvider).constructType(emptyArray(), isNullable = true))
+                        ?: StandardTypes.NullableAny)//StandardClassIds.Any(session.firSymbolProvider).constructType(emptyArray(), isNullable = true))
                 }
             substitutorByMap(substitution, session)
         } else {

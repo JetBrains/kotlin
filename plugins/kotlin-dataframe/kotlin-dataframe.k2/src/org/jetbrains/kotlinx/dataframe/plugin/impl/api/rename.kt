@@ -1,5 +1,6 @@
 package org.jetbrains.kotlinx.dataframe.plugin.impl.api
 
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlinx.dataframe.api.pathOf
 import org.jetbrains.kotlinx.dataframe.api.rename
@@ -64,7 +65,7 @@ class RenameMapping : AbstractSchemaModificationInterpreter() {
                 return mappings.flatMap {
                     stringApiColumnResolver(
                         pathOf(it.first),
-                        session.builtinTypes.nullableAnyType.coneType
+                        StandardTypes.NullableAny
                     ).resolve(df)
                 }
             }
