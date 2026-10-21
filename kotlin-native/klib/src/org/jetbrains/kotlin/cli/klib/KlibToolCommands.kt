@@ -56,6 +56,19 @@ internal sealed class KlibToolCommand(
         } else true
     }
 
+    protected inline fun <T : Any> chooseAppropriateComponentOrReturnNull(
+            library: KotlinLibrary,
+            whenIrFullLibrary: (KotlinLibrary) -> T,
+            whenCInteropLibrary: (KotlinLibrary) -> T,
+    ): T? = when {
+        library.isCInteropLibrary() -> whenCInteropLibrary(library)
+        library.ir != null -> whenIrFullLibrary(library)
+        else -> {
+            output.logError("This library does not have IR and is not a C-interop library: ${args.library.path}")
+            return null
+        }
+    }
+
     protected fun KotlinIrSignatureVersion?.checkSupportedInLibrary(library: KotlinLibrary): Boolean {
         if (this != null) {
             if (library.isCInteropLibrary()) {
@@ -288,8 +301,7 @@ internal class DumpAbi(output: KlibToolOutput, args: ParsedArguments) : KlibTool
                         renderManifest = false,
                         renderDeclarations = true,
                         indentationString = "    ",
-
-                        )
+                )
         )
     }
 }
@@ -306,14 +318,11 @@ internal class DumpSignatures(output: KlibToolOutput, args: ParsedArguments) : K
 
         val idSignatureRenderer = args.signatureVersion.getMostSuitableSignatureRenderer() ?: return
 
-        val signaturesExtractor = when {
-            args.library.isCInteropLibrary() -> IdSignaturesExtractorFromCInteropKlib(args.library)
-            args.library.ir != null -> IdSignaturesExtractorFromRegularKlib(args.library)
-            else -> {
-                output.logError("This library does not have IR and is not a C-interop library: ${args.library.path}")
-                return
-            }
-        }
+        val signaturesExtractor = chooseAppropriateComponentOrReturnNull(
+                args.library,
+                whenIrFullLibrary = ::IdSignaturesExtractorFromRegularKlib,
+                whenCInteropLibrary = ::IdSignaturesExtractorFromCInteropKlib
+        ) ?: return
 
         val signatures = when (args.dumpSignaturesMode) {
             SignaturesDumpMode.ALL_SIGNATURES, null -> signaturesExtractor.extractAllPublicSignatures()
