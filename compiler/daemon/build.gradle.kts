@@ -7,11 +7,14 @@ plugins {
 }
 
 dependencies {
+    implementation(libs.kotlinx.serialization.core)
+    implementation(libs.kotlinx.serialization.protobuf)
     compileOnly(project(":compiler:cli"))
     compileOnly(project(":compiler:incremental-compilation-impl"))
     compileOnly(intellijCore())
     compileOnly(libs.intellij.fastutil)
     compileOnly(libs.guava)
+    compileOnly(project(":compiler:build-tools:kotlin-build-tools-impl"))
 
     runtimeOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 

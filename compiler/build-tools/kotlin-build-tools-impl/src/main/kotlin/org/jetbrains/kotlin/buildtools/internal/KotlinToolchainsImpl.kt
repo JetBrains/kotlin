@@ -19,6 +19,9 @@ import org.jetbrains.kotlin.buildtools.internal.cri.CriToolchainImpl
 import org.jetbrains.kotlin.buildtools.internal.js.JsPlatformToolchainImpl
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmPlatformToolchainImpl
 import org.jetbrains.kotlin.buildtools.internal.metadata.KotlinMetadataPlatformToolchainImpl
+import org.jetbrains.kotlin.buildtools.internal.serializability.ProtoBufFormat
+import org.jetbrains.kotlin.buildtools.internal.serializability.SerializationFormat
+import org.jetbrains.kotlin.buildtools.internal.serializability.SupportsNewDaemonMode
 import org.jetbrains.kotlin.buildtools.internal.wasm.WasmPlatformToolchainImpl
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
@@ -27,9 +30,9 @@ import java.util.concurrent.*
 private const val DEFAULT_CLASSLOADERS_CACHE_SIZE = 10
 private const val PROPERTY_CLASSLOADERS_CACHE_SIZE = "kotlin.buildtools.classloaders.cache.size"
 
-internal class KotlinToolchainsImpl : KotlinToolchains {
-    val toolchains: ConcurrentHashMap<Class<*>, KotlinToolchains.Toolchain> = ConcurrentHashMap()
-    val classloadersCache = LruClassLoadersCache(
+public class KotlinToolchainsImpl : KotlinToolchains {
+    public val toolchains: ConcurrentHashMap<Class<*>, KotlinToolchains.Toolchain> = ConcurrentHashMap()
+    private val classloadersCache = LruClassLoadersCache(
         System.getProperty(PROPERTY_CLASSLOADERS_CACHE_SIZE)?.toIntOrNull() ?: DEFAULT_CLASSLOADERS_CACHE_SIZE,
         this::class.java.classLoader
     )
@@ -56,7 +59,7 @@ internal class KotlinToolchainsImpl : KotlinToolchains {
         replaceWith = ReplaceWith("jvmCompilationOperationBuilder(sources, destinationDirectory)"),
         level = DeprecationLevel.HIDDEN
     )
-    fun createDaemonExecutionPolicy(): ExecutionPolicy.WithDaemon = DaemonExecutionPolicyImpl()
+    public fun createDaemonExecutionPolicy(): ExecutionPolicy.WithDaemon = DaemonExecutionPolicyImpl()
 
     override fun daemonExecutionPolicyBuilder(): ExecutionPolicy.WithDaemon.Builder = DaemonExecutionPolicyImpl()
 
@@ -152,12 +155,16 @@ internal class KotlinToolchainsImpl : KotlinToolchains {
         }
     }
 
-    companion object {
+    public val serializer: SerializationFormat get() = KotlinToolchainsImpl.serializer
+
+    public companion object {
         internal fun getBtaApiVersion(): BtaApiVersion = try {
             BtaApiVersion.Exact(KotlinToolingVersion(KotlinToolchains.getVersion()))
         } catch (_: NoSuchMethodError) {
             BtaApiVersion.Before2_4_20
         }
+
+        public val serializer: SerializationFormat = ProtoBufFormat
     }
 }
 

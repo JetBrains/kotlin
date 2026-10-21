@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.buildtools.internal.serializability
 
+import org.jetbrains.kotlin.buildtools.api.BuildOperation
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.daemon.common.CompilerServicesFacadeBase
+import org.jetbrains.kotlin.daemon.common.SerializedDataContainer
 
 /**
  * Marker interface for classes that can be serialized and deserialized for communication between BTA and the Daemon.
@@ -30,4 +32,9 @@ public interface BtaSerializable {
      * operations that cannot be performed using the new mechanism at this time, such as JPS incremental caches passing.
      */
     public fun afterDeserialization(messageReporter: (Message) -> Unit, compilerFacade: CompilerServicesFacadeBase? = null) {}
+}
+
+public interface SupportsNewDaemonMode<T> : BuildOperation<T>, BtaSerializable {
+    public fun deserializeResult(serializedData: SerializedDataContainer): T
+    public fun serializeResult(result: T): SerializedDataContainer
 }
