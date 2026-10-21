@@ -363,9 +363,9 @@ static VTableElement nonRecursiveAnyMemberImpl(KRef obj, const KotlinToObjCMetho
     KRef obj = [self toKotlin:holder.slot()];
     if (VTableElement impl = nonRecursiveAnyMemberImpl(obj, anyReverseAdapters.hashCode)) {
         using HashCode = KInt (*)(KRef);
-        return (NSUInteger)reinterpret_cast<HashCode>(const_cast<void *>(impl))(obj);
+        return (NSUInteger)(uint32_t)reinterpret_cast<HashCode>(const_cast<void *>(impl))(obj);
     }
-    return (NSUInteger)Kotlin_hashCode(obj);
+    return (NSUInteger)(uint32_t)Kotlin_hashCode(obj);
 }
 
 - (BOOL)isEqual:(id)other {

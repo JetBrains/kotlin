@@ -87,7 +87,8 @@ private func testCallingSuperMethodsOfAny() throws {
 
     // kotlin.Any.toString() calls hashCode() virtually, so the rendering above also went through
     // `super.hash`.
-    try assertEquals(actual: Int(OverrideMethodsOfAnyKt.callHashCode(obj: obj)), expected: obj.hash)
+    let hashCode = try UInt(UInt32(bitPattern: OverrideMethodsOfAnyKt.callHashCode(obj: obj)))
+    try assertEquals(actual: Int(bitPattern: hashCode), expected: obj.hash)
 
     // `super.isEqual:` reaches kotlin.Any's reference equality.
     try assertTrue(obj.isEqual(obj))
