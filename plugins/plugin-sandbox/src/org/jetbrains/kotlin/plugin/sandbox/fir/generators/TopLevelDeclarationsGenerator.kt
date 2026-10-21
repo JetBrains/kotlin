@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.plugin.sandbox.fir.generators
 import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
@@ -50,7 +51,7 @@ class TopLevelDeclarationsGenerator(session: FirSession) : FirDeclarationGenerat
         val function = createTopLevelFunction(
             TopLevelDeclarationsGeneratorKey,
             callableId,
-            session.builtinTypes.stringType.coneType,
+            StandardTypes.String,
             containingFileName = containingFileName,
         ) {
             valueParameter(Name.identifier("value"), matchedClassSymbol.constructStarProjectedType())

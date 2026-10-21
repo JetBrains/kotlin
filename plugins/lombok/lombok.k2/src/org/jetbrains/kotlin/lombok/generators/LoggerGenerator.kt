@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.lombok.generators
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.isObject
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
@@ -399,7 +400,7 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
                             name = JAVA_GET_NAME
                             diagnostic = ConeUnresolvedReferenceError(JAVA_GET_NAME)
                         }
-                        coneTypeOrNull = session.builtinTypes.stringType.coneType
+                        coneTypeOrNull = StandardTypes.String
                     }
                 }
                 is ConeLombokAnnotations.Slf4jLog,

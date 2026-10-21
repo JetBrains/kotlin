@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.plugin.sandbox.fir.generators
 
 import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.extensions.predicate.LookupPredicate
 import org.jetbrains.kotlin.fir.plugin.createConstructor
@@ -67,11 +68,11 @@ class AdditionalMembersGenerator(session: FirSession) : FirDeclarationGeneration
             }
             ID_WITH_DEFAULT_NAME -> {
                 createMemberFunction(
-                    context.owner, AdditionalMembersGeneratorKey, callableId.callableName, session.builtinTypes.stringType.coneType,
+                    context.owner, AdditionalMembersGeneratorKey, callableId.callableName, StandardTypes.String,
                 ) {
                     valueParameter(
                         name = Name.identifier("x"),
-                        type = session.builtinTypes.stringType.coneType,
+                        type = StandardTypes.String,
                         hasDefaultValue = true,
                     )
                     withGeneratedDefaultBody()

@@ -246,7 +246,7 @@ internal class StubBasedAnnotationDeserializer(private val session: FirSession) 
                 is DoubleValue -> StandardTypes.Double
                 is FloatValue -> StandardTypes.Float
                 is AnnotationValue -> session.builtinTypes.annotationType.coneType
-                is StringValue -> session.builtinTypes.stringType.coneType
+                is StringValue -> StandardTypes.String
                 is EnumValue -> firstValue.enumClassId.constructClassLikeType(ConeTypeProjection.EMPTY_ARRAY, isMarkedNullable = false)
                 is ArrayValue -> values.firstNotNullOfOrNull { inferArrayValueType((it as ArrayValue).value) }?.createArrayType()
                 is KClassValue -> {
