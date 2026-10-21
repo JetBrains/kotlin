@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErro
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.utils.isInterface
 import org.jetbrains.kotlin.fir.declarations.utils.isEffectivelyExternal
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -31,6 +33,17 @@ abstract class FirWebCommonJsModuleChecker : FirBasicDeclarationChecker(MppCheck
 
         val isExternal = declaration.symbol.isEffectivelyExternal(context.session)
         val isTopLevel = context.isTopLevel
+
+        if (!isTopLevel) {
+            reporter.reportOn(declaration.source, FirWebCommonErrors.JS_MODULE_PROHIBITED_ON_MEMBER, annotationType)
+        }
+
+        // An external interface has no runtime value, unless its companion object is imported from the module.
+        if (isTopLevel && isExternal && declaration is FirRegularClass && declaration.isInterface &&
+            declaration.companionObjectSymbol == null
+        ) {
+            reporter.reportOn(declaration.source, FirWebCommonErrors.JS_MODULE_PROHIBITED_ON_EXTERNAL_INTERFACE, annotationType)
+        }
 
         if (declaration is FirProperty && declaration.isVar) {
             reporter.reportOn(declaration.source, FirWebCommonErrors.JS_MODULE_PROHIBITED_ON_VAR, annotationType)
