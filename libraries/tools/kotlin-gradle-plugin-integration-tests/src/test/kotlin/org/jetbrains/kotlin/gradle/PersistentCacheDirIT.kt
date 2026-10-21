@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.testbase.buildScriptInjection
 import org.jetbrains.kotlin.gradle.testbase.project
 import org.jetbrains.kotlin.gradle.testbase.projectPersistentCache
 import org.jetbrains.kotlin.gradle.testbase.source
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
@@ -27,6 +28,7 @@ import kotlin.io.path.writeText
 import kotlin.test.assertTrue
 
 @DisplayName("Kotlin project persistent cache directory")
+@MustRunOnChangesInGradle
 @JvmGradlePluginTests
 class PersistentCacheDirIT : KGPBaseTest() {
     @TempDir
