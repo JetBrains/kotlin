@@ -66,11 +66,11 @@ class MemberFunctionWithAnnotatedParametersGenerator(session: FirSession) : FirD
         ) {
             valueParameter(
                 name = Name.identifier("x"),
-                type = session.builtinTypes.intType.coneType,
+                type = StandardTypes.Int,
             )
             valueParameter(
                 name = Name.identifier("y"),
-                type = session.builtinTypes.intType.coneType,
+                type = StandardTypes.Int,
             )
             withGeneratedDefaultBody()
         }

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.plugin.sandbox.fir.generators
 import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.extensions.predicate.LookupPredicate
@@ -41,7 +42,7 @@ class CompanionGenerator(session: FirSession) : FirDeclarationGenerationExtensio
         val ownerKey = (owner.origin as? FirDeclarationOrigin.Plugin)?.key ?: return emptyList()
         if (ownerKey != CompanionGeneratorKey) return emptyList()
         if (callableId.callableName != FOO_NAME) return emptyList()
-        val function = createMemberFunction(owner, CompanionGeneratorKey, callableId.callableName, session.builtinTypes.intType.coneType) {
+        val function = createMemberFunction(owner, CompanionGeneratorKey, callableId.callableName, StandardTypes.Int) {
             withGeneratedDefaultBody()
         }
         return listOf(function.symbol)

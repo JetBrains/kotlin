@@ -1,5 +1,6 @@
 package org.jetbrains.kotlinx.dataframe.plugin.impl.api
 
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlinx.dataframe.plugin.impl.*
 
 class GroupByCount0 : AbstractSchemaModificationInterpreter() {
@@ -8,6 +9,6 @@ class GroupByCount0 : AbstractSchemaModificationInterpreter() {
     val Arguments.predicate by ignore()
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        return receiver.keys.add(resultName, session.builtinTypes.intType.coneType, context = this)
+        return receiver.keys.add(resultName, StandardTypes.Int, context = this)
     }
 }
