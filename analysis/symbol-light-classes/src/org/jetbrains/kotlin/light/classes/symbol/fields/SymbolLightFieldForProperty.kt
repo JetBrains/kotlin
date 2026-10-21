@@ -264,7 +264,7 @@ internal class SymbolLightFieldForProperty private constructor(
     override fun getInitializer(): PsiExpression? = _initializer
 
     private val _constantValue by lazyPub {
-        _initializerValue?.value?.takeIf {
+        _initializerValue?.jvmValue?.takeIf {
             withPropertySymbol { propertySymbol ->
                 // val => final
                 propertySymbol.isVal &&

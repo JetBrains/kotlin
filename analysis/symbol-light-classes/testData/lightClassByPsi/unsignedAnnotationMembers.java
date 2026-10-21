@@ -1,4 +1,4 @@
-@Unsigned(ui = UInt.MAX_VALUE - 1u, ul = ULong.MAX_VALUE - 1u, uis = {UInt.MAX_VALUE - 1u})
+@Unsigned(ui = -2, ul = -2L, uis = {-2})
 public final class Annotated /* Annotated*/ {
   public  Annotated();//  .ctor()
 }
