@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory3
 import org.jetbrains.kotlin.diagnostics.rendering.appendDeprecationWarningSuffix
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.*
@@ -253,7 +254,7 @@ object FirReturnJavaNullabilityWarningChecker : FirReturnExpressionChecker(MppCh
 context(context: CheckerContext, reporter: DiagnosticReporter)
 private fun FirExpression.checkConditionForEnhancedTypeMismatch() {
     checkExpressionForEnhancedTypeMismatch(
-        context.session.builtinTypes.booleanType.coneType,
+        StandardTypes.Boolean,
         FirJvmErrors.TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS
     )
 }

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.contracts.description.*
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionHolder
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.contracts.description.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
@@ -228,7 +229,7 @@ class ConeEffectExtractor(
         index: Int,
         name: String
     ): ConeValueParameterReference {
-        return if (type == session.builtinTypes.booleanType.coneType) {
+        return if (type == StandardTypes.Boolean) {
             ConeBooleanValueParameterReference(index, name)
         } else {
             ConeValueParameterReference(index, name)

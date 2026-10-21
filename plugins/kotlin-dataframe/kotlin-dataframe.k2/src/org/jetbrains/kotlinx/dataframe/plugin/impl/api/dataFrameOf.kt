@@ -1,5 +1,6 @@
 package org.jetbrains.kotlinx.dataframe.plugin.impl.api
 
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.FirVarargArgumentsExpression
@@ -105,7 +106,7 @@ class DataFrameBuilderRandomBoolean : AbstractSchemaModificationInterpreter() {
     val Arguments.nrow by ignore()
 
     override fun Arguments.interpret(): PluginDataFrameSchema =
-        fixedTypeSchema(receiver, session.builtinTypes.booleanType.coneType)
+        fixedTypeSchema(receiver, StandardTypes.Boolean)
 }
 
 class DataFrameBuilderNulls : AbstractSchemaModificationInterpreter() {

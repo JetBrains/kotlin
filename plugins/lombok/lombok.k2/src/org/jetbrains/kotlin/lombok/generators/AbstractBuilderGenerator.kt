@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.analysis.checkers.getAllowedAnnotationTargets
 import org.jetbrains.kotlin.fir.analysis.checkers.typeParameterSymbols
 import org.jetbrains.kotlin.fir.caches.FirCache
@@ -437,7 +438,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                             owner = builderSymbol,
                             key = BuilderGeneratorKey(BuilderDeclarationType.DefaultFlagField(item.name)),
                             name = it,
-                            returnType = session.builtinTypes.booleanType.coneType,
+                            returnType = StandardTypes.Boolean,
                             isVal = false,
                         ) {
                             modality = Modality.FINAL
