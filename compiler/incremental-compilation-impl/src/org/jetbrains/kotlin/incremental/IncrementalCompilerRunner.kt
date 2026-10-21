@@ -242,7 +242,7 @@ abstract class IncrementalCompilerRunner<
             null
         }
 
-        return createTransaction().runWithin(::incrementalCompilationExceptionTransformer) { transaction ->
+        return createTransaction(args).runWithin(::incrementalCompilationExceptionTransformer) { transaction ->
             val icContext = createIncrementalCompilationContext(
                 fileLocations,
                 transaction,
@@ -334,7 +334,7 @@ abstract class IncrementalCompilerRunner<
         }
         val icContext = createIncrementalCompilationContext(
             fileLocations,
-            NonRecoverableCompilationTransaction(),
+            NonRecoverableCompilationTransaction(outputDir = destinationDir(args).toPath()),
         )
         return createCacheManager(icContext, args).use { caches ->
             if (trackChangedFiles) {
@@ -498,10 +498,13 @@ abstract class IncrementalCompilerRunner<
         return exitCode
     }
 
-    private fun createTransaction() = if (icFeatures.preciseCompilationResultsBackup) {
-        RecoverableCompilationTransaction(reporter, Files.createTempDirectory("kotlin-backups"))
-    } else {
-        NonRecoverableCompilationTransaction()
+    private fun createTransaction(args: Args): CompilationTransaction {
+        val outputDir = destinationDir(args).toPath()
+        return if (icFeatures.preciseCompilationResultsBackup) {
+            RecoverableCompilationTransaction(reporter, Files.createTempDirectory("kotlin-backups"), outputDir)
+        } else {
+            NonRecoverableCompilationTransaction(outputDir)
+        }
     }
 
     protected open fun performWorkBeforeCompilation(compilationMode: CompilationMode, args: Args) {}
@@ -555,6 +558,7 @@ abstract class IncrementalCompilerRunner<
             caches.platformCache.markDirty(dirtySources)
             caches.inputsCache.removeOutputForSourceFiles(dirtySources)
             caches.compilerPluginFilesCache.removeOutputsGeneratedByPlugins()
+            transaction.deleteEmptyOutputDirectories()
 
             val lookupTracker = LookupTrackerImpl(lookupTrackerDelegate)
             val expectActualTracker = ExpectActualTrackerImpl()
