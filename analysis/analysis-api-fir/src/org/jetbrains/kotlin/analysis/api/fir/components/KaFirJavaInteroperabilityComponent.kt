@@ -534,7 +534,7 @@ internal class KaFirJavaInteroperabilityComponent(
         }
 
         val identifier = property.name.identifierOrNullIfSpecial ?: return null
-        if (hasPrefixlessAccessorNames(property)) {
+        if (with(lightClassBridge) { property.hasPrefixlessAccessorNames }) {
             return identifier
         }
 
@@ -543,18 +543,6 @@ internal class KaFirJavaInteroperabilityComponent(
         } else {
             JvmAbi.setterName(identifier)
         }
-    }
-
-    /**
-     * Whether accessors of [property] are named after the property itself, without the `get`/`set` prefix.
-     *
-     * @see org.jetbrains.kotlin.backend.jvm.mapping.MethodSignatureMapper
-     */
-    context(_: KaSession)
-    private fun hasPrefixlessAccessorNames(property: KaPropertySymbol): Boolean {
-        val containingClass = property.containingDeclaration as? KaClassSymbol ?: return false
-        return containingClass.classKind == KaClassKind.ANNOTATION_CLASS ||
-                JvmStandardClassIds.Annotations.JvmRecord in containingClass.annotations
     }
 
 }
