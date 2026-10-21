@@ -111,7 +111,9 @@ open class AbstractIsolatedFullPipelineModularizedTest(private val config: Modul
             args.allowKotlinPackage = true
         }
         args.reportPerf = true
-        args.jdkHome = moduleData.jdkHome?.absolutePath ?: originalArguments?.jdkHome?.fixPath(config.rootPathPrefix)?.absolutePath
+        args.jdkHome = config.jdkHome?.absolutePath
+            ?: moduleData.jdkHome?.absolutePath
+            ?: originalArguments?.jdkHome?.fixPath(config.rootPathPrefix)?.absolutePath
         args.renderInternalDiagnosticNames = true
         args.debugLevelCompilerChecks = config.enableSlowAssertions
 
@@ -129,7 +131,8 @@ open class AbstractIsolatedFullPipelineModularizedTest(private val config: Modul
             javaSourceRoots = moduleData.javaSourceRoots.map { JvmSourceRoot(it.path, it.packagePrefix) },
             classpathRoots = moduleData.classpath,
             commonSourceFiles = emptyList(),
-            modularJdkRoot = moduleData.modularJdkRoot,
+            // the build file's modularJdkRoot takes precedence over -jdk-home in the compiler, so drop it when the JDK is overridden
+            modularJdkRoot = if (config.jdkHome != null) null else moduleData.modularJdkRoot,
             "java-production",
             isTests = false,
             emptySet(),

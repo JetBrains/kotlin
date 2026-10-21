@@ -69,7 +69,8 @@ abstract class AbstractFrontendModularizedTest(config: ModularizedTestConfig) : 
         }
 
         val jdkHome =
-            moduleData.modularJdkRoot
+            config.jdkHome?.absoluteFile
+                ?: moduleData.modularJdkRoot
                 ?: moduleData.jdkHome?.absoluteFile
                 ?: originalArguments?.jdkHome?.fixPath(config.rootPathPrefix)?.absoluteFile
 
