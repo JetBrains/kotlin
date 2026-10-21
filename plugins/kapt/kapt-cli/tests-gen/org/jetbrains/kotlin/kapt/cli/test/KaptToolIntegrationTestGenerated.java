@@ -40,6 +40,12 @@ public class KaptToolIntegrationTestGenerated extends AbstractKaptToolIntegratio
   }
 
   @Test
+  @TestMetadata("classpathChanges")
+  public void testClasspathChanges() {
+    runTest("plugins/kapt/kapt-cli/testData/integration/classpathChanges/");
+  }
+
+  @Test
   @TestMetadata("compileModeUnsupported")
   public void testCompileModeUnsupported() {
     runTest("plugins/kapt/kapt-cli/testData/integration/compileModeUnsupported/");

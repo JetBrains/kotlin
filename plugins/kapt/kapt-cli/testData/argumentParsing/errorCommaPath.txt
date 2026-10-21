@@ -1,0 +1,5 @@
+# before
+-Kapt-classpath=a,b
+
+# after
+error: -Kapt-classpath=a,b: values containing ',' are not supported by -Kapt-classpath

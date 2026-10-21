@@ -79,7 +79,7 @@ class KaptCommandLineProcessor : CommandLineProcessor {
             CHANGED_FILES -> changedFiles.add(File(value))
             COMPILED_SOURCES_DIR -> compiledSources.addAll(value.split(File.pathSeparator).map { File(it) })
             INCREMENTAL_CACHE -> incrementalCache = File(value)
-            CLASSPATH_CHANGES -> classpathChanges.add(value)
+            CLASSPATH_CHANGES -> classpathChanges.addAll(value.split(',').map { it.trim() }.filter { it.isNotEmpty() })
             PROCESS_INCREMENTALLY -> setFlag(KaptFlag.INCREMENTAL_APT, value)
 
             ANNOTATION_PROCESSOR_CLASSPATH_OPTION -> processingClasspath += File(value)
