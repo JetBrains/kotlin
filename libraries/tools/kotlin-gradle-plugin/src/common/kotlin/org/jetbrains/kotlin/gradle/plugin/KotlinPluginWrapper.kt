@@ -25,6 +25,7 @@ import org.gradle.api.logging.Logging
 import org.gradle.internal.operations.BuildOperationListenerManager
 import org.jetbrains.kotlin.compilerRunner.btapi.BuildSessionService
 import org.jetbrains.kotlin.compilerRunner.maybeCreateCommonizerClasspathConfiguration
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinToolchainDsl
 import org.jetbrains.kotlin.gradle.ExperimentalNodeJsToolchainDsl
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.fus.BuildUidService
@@ -55,6 +56,10 @@ import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerArt
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropKlibLibraryElements
 import org.jetbrains.kotlin.gradle.targets.native.internal.CommonizerTargetAttribute
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeBundleBuildService
+import org.jetbrains.kotlin.gradle.targets.js.swc.toolchain.registerSwcToolchainServiceIfAbsent
+import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.toolchain.registerBinaryenToolchainServiceIfAbsent
+import org.jetbrains.kotlin.gradle.targets.wasm.d8.toolchain.registerD8ToolchainServiceIfAbsent
+import org.jetbrains.kotlin.gradle.targets.wasm.wasmtime.toolchain.registerWasmtimeToolchainServiceIfAbsent
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.registerNodeJsToolchainServiceIfAbsent
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompileTool
 import org.jetbrains.kotlin.gradle.tasks.publishing.addPgpSignatureHelpers
@@ -82,7 +87,7 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
     private val logger = Logging.getLogger(DefaultKotlinBasePlugin::class.java)
     override val pluginVersion: String = getKotlinPluginVersion(logger)
 
-    @OptIn(ExperimentalNodeJsToolchainDsl::class)
+    @OptIn(ExperimentalNodeJsToolchainDsl::class, ExperimentalKotlinToolchainDsl::class)
     override fun apply(project: Project) {
         project.checkCompilerEmbeddableInClasspath()
         project.registerDefaultVariantImplementations()
@@ -119,6 +124,10 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
         KotlinNativeBundleBuildService.registerIfAbsent(project)
 
         registerNodeJsToolchainServiceIfAbsent(project)
+        registerD8ToolchainServiceIfAbsent(project)
+        registerBinaryenToolchainServiceIfAbsent(project)
+        registerWasmtimeToolchainServiceIfAbsent(project)
+        registerSwcToolchainServiceIfAbsent(project)
     }
 
     private fun addKotlinCompilerConfiguration(project: Project) {

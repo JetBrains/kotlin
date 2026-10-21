@@ -11,6 +11,9 @@ import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.plugins.ExtensionContainer
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.js.internal.jsToolingProject
+import org.jetbrains.kotlin.gradle.targets.wasm.d8.toolchain.DEFAULT_D8_EDITION
+import org.jetbrains.kotlin.gradle.targets.wasm.d8.toolchain.DEFAULT_D8_VERSION
+import org.jetbrains.kotlin.gradle.targets.wasm.d8.toolchain.isD8ToolchainDisabled
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.tasks.registerTask
@@ -22,6 +25,14 @@ abstract class D8Plugin internal constructor() : Plugin<Project> {
         project.plugins.apply(BasePlugin::class.java)
 
         val spec = project.extensions.createD8EnvSpec()
+
+        if (!project.isD8ToolchainDisabled()) {
+            // The D8 toolchain provisions D8 once for the whole build, so neither the root project extension
+            // nor the setup task is needed here. Not touching the root project is what makes the D8 tooling
+            // compatible with Isolated Projects.
+            spec.initializeD8EnvSpec(project)
+            return
+        }
 
         if (project.isRootProject()) {
             @Suppress("DEPRECATION_ERROR")
@@ -69,6 +80,21 @@ abstract class D8Plugin internal constructor() : Plugin<Project> {
         version.convention(d8.versionProperty)
         edition.convention(d8.edition)
         command.convention(d8.commandProperty)
+    }
+
+    /**
+     * Initializes the spec without reaching out to the root project, for the case when the D8 toolchain
+     * provisions D8 and the spec itself is not used to resolve the executable.
+     */
+    private fun D8EnvSpec.initializeD8EnvSpec(project: Project) {
+        download.convention(false)
+        allowInsecureProtocol.convention(false)
+        installationDirectory.convention(
+            project.objects.directoryProperty().fileValue(project.gradle.gradleUserHomeDir.resolve("d8"))
+        )
+        version.convention(DEFAULT_D8_VERSION)
+        edition.convention(DEFAULT_D8_EDITION)
+        command.convention("d8")
     }
 
     companion object : HasPlatformDisambiguator by WasmPlatformDisambiguator {

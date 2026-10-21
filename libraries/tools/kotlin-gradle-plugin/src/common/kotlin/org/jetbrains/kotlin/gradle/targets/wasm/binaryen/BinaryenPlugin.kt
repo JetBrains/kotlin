@@ -10,6 +10,7 @@ import org.gradle.api.Project
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.plugins.ExtensionContainer
 import org.jetbrains.kotlin.gradle.internal.unameExecResult
+import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.toolchain.isBinaryenToolchainDisabled
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.tasks.registerTask
@@ -32,6 +33,12 @@ abstract class BinaryenPlugin internal constructor() : Plugin<Project> {
         spec.initializeBinaryenRootEnvSpec(settings)
 
         addPlatform(project, settings)
+
+        if (!project.isBinaryenToolchainDisabled()) {
+            // The Binaryen toolchain provisions `wasm-opt` once for the whole build,
+            // so the per-project setup task and its detached configuration are not needed.
+            return
+        }
 
         project.registerTask<BinaryenSetupTask>(
             WasmPlatformDisambiguator.extensionName(

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.wasm.testing
 
 import org.gradle.api.file.Directory
 import org.gradle.api.provider.Provider
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinToolchainDsl
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
@@ -17,10 +18,14 @@ import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTestFramework
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinTestRunnerCliArgs
 import org.jetbrains.kotlin.gradle.targets.wasm.wasmtime.WasmtimePlugin
+import org.jetbrains.kotlin.gradle.targets.wasm.wasmtime.toolchain.registerWasmtimeToolchainServiceIfAbsent
+import org.jetbrains.kotlin.gradle.targets.wasm.wasmtime.toolchain.requestDefaultWasmtime
+import org.jetbrains.kotlin.gradle.targets.wasm.wasmtime.toolchain.resolveWasmtimeExecutable
 import org.jetbrains.kotlin.gradle.targets.wasm.wasmtimeInvokeArgs
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.processes.ProcessLaunchOptions
 
+@OptIn(ExperimentalKotlinToolchainDsl::class)
 @ExperimentalWasmDsl
 internal class KotlinWasmtime(
     kotlinJsTest: KotlinJsTest,
@@ -34,11 +39,16 @@ internal class KotlinWasmtime(
 
     private val projectLayout = kotlinJsTest.project.layout
     private val wasmtime = WasmtimePlugin.applyWithEnvSpec(kotlinJsTest.project)
+    private val wasmtimeToolchainService = registerWasmtimeToolchainServiceIfAbsent(kotlinJsTest.project)
+    private val wasmtimeRequest = kotlinJsTest.project.requestDefaultWasmtime()
 
     override val workingDir: Provider<Directory> =
         projectLayout.dir(kotlinJsTest.inputFileProperty.asFile.map { it.parentFile })
 
-    override val executable: Provider<String> = wasmtime.executable
+    // Resolved lazily, because the Wasmtime toolchain provisions Wasmtime only when the executable is needed.
+    override val executable: Provider<String> = wasmtimeToolchainService.map {
+        it.resolveWasmtimeExecutable(wasmtime.executable, wasmtimeRequest)
+    }
 
     override fun createTestExecutionSpec(
         task: KotlinJsTest,

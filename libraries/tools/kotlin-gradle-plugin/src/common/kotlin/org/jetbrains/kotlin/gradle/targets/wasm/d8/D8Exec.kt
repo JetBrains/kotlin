@@ -7,18 +7,27 @@ package org.jetbrains.kotlin.gradle.targets.wasm.d8
 
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinToolchainDsl
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.dsl.toolchain.ToolchainRequest
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
+import org.jetbrains.kotlin.gradle.targets.wasm.d8.toolchain.isD8ToolchainDisabled
+import org.jetbrains.kotlin.gradle.targets.wasm.d8.toolchain.requestDefaultD8
+import org.jetbrains.kotlin.gradle.targets.wasm.d8.toolchain.resolveD8Executable
 import org.jetbrains.kotlin.gradle.tasks.registerTask
+import org.jetbrains.kotlin.gradle.tasks.toolchain.UsesD8ToolchainService
 import org.jetbrains.kotlin.gradle.utils.newFileProperty
 
+@OptIn(ExperimentalKotlinToolchainDsl::class)
 @ExperimentalWasmDsl
 @DisableCachingByDefault
 @Suppress("DEPRECATION_ERROR")
-abstract class D8Exec internal constructor() : AbstractExecTask<D8Exec>(D8Exec::class.java) {
+abstract class D8Exec internal constructor() : AbstractExecTask<D8Exec>(D8Exec::class.java), UsesD8ToolchainService {
     init {
         this.onlyIf {
             !inputFileProperty.isPresent || inputFileProperty.asFile.map { it.exists() }.get()
@@ -28,6 +37,16 @@ abstract class D8Exec internal constructor() : AbstractExecTask<D8Exec>(D8Exec::
     @get:Input
     abstract val d8Args: ListProperty<String>
 
+    /**
+     * The D8 executable of the old, environment spec based setup. It is empty when the D8 toolchain provisions D8.
+     */
+    @get:Input
+    @get:Optional
+    internal abstract val legacyExecutable: Property<String>
+
+    @get:Nested
+    internal val d8Request: Provider<ToolchainRequest> = project.requestDefaultD8()
+
     @Optional
     @PathSensitive(PathSensitivity.ABSOLUTE)
     @InputFile
@@ -35,6 +54,9 @@ abstract class D8Exec internal constructor() : AbstractExecTask<D8Exec>(D8Exec::
     val inputFileProperty: RegularFileProperty = project.newFileProperty()
 
     override fun exec() {
+        // Resolved at execution time, because it may provision D8
+        executable = d8ToolchainService.get().resolveD8Executable(legacyExecutable, d8Request)
+
         val newArgs = mutableListOf<String>()
         newArgs.addAll(d8Args.get())
         if (inputFileProperty.isPresent) {
@@ -62,12 +84,15 @@ abstract class D8Exec internal constructor() : AbstractExecTask<D8Exec>(D8Exec::
             val target = compilation.target
             val project = target.project
             val d8 = D8Plugin.applyWithEnvSpec(project)
+            val toolchainDisabled = project.isD8ToolchainDisabled()
             return project.registerTask(
                 name
             ) {
-                it.executable = d8.executable.get()
-                with(d8) {
-                    it.dependsOn(project.d8SetupTaskProvider)
+                if (toolchainDisabled) {
+                    it.legacyExecutable.set(d8.executable)
+                    with(d8) {
+                        it.dependsOn(project.d8SetupTaskProvider)
+                    }
                 }
                 it.dependsOn(compilation.compileTaskProvider)
                 it.d8Args.convention(listOf("--experimental-wasm-wasmfx"))

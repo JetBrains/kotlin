@@ -8,23 +8,32 @@ package org.jetbrains.kotlin.gradle.targets.wasm.binaryen
 import org.gradle.api.file.*
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.MapProperty
+import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
 import org.gradle.workers.WorkerExecutor
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinToolchainDsl
+import org.jetbrains.kotlin.gradle.dsl.toolchain.ToolchainRequest
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
+import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.toolchain.isBinaryenToolchainDisabled
+import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.toolchain.requestDefaultBinaryen
+import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.toolchain.resolveBinaryenExecutable
 import org.jetbrains.kotlin.gradle.targets.wasm.internal.supportsPerKlibCompilation
 import org.jetbrains.kotlin.gradle.tasks.registerTask
+import org.jetbrains.kotlin.gradle.tasks.toolchain.UsesBinaryenToolchainService
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.platform.wasm.BinaryenConfig
 import java.io.File
 import javax.inject.Inject
 
+@OptIn(ExperimentalKotlinToolchainDsl::class)
 @DisableCachingByDefault
 abstract class BinaryenExec
 @Inject
-constructor() : AbstractExecTask<BinaryenExec>(BinaryenExec::class.java) {
+constructor() : AbstractExecTask<BinaryenExec>(BinaryenExec::class.java), UsesBinaryenToolchainService {
     @get:Inject
     internal abstract val workerExecutor: WorkerExecutor
 
@@ -81,7 +90,21 @@ constructor() : AbstractExecTask<BinaryenExec>(BinaryenExec::class.java) {
     @get:OutputDirectory
     abstract val outputDirectory: DirectoryProperty
 
+    /**
+     * The `wasm-opt` executable of the old, environment spec based setup.
+     * It is empty when the Binaryen toolchain provisions Binaryen.
+     */
+    @get:Input
+    @get:Optional
+    internal abstract val legacyExecutable: Property<String>
+
+    @get:Nested
+    internal val binaryenRequest: Provider<ToolchainRequest> = project.requestDefaultBinaryen()
+
     override fun exec() {
+        // Resolved at execution time, because it may provision Binaryen
+        executable = binaryenToolchainService.get().resolveBinaryenExecutable(legacyExecutable, binaryenRequest)
+
         val workQueue = workerExecutor.noIsolation()
 
         inputFiles.forEach { inputFile ->
@@ -106,12 +129,15 @@ constructor() : AbstractExecTask<BinaryenExec>(BinaryenExec::class.java) {
             val target = compilation.target
             val project = target.project
             val binaryen = BinaryenPlugin.applyWithEnvSpec(project)
+            val toolchainDisabled = project.isBinaryenToolchainDisabled()
             return project.registerTask(
                 name,
             ) {
-                it.executable = binaryen.executable.get()
-                with(binaryen) {
-                    it.dependsOn(project.binaryenSetupTaskProvider)
+                if (toolchainDisabled) {
+                    it.legacyExecutable.set(binaryen.executable)
+                    with(binaryen) {
+                        it.dependsOn(project.binaryenSetupTaskProvider)
+                    }
                 }
                 it.dependsOn(compilation.compileTaskProvider)
                 val isOpenWorld = project.kotlinPropertiesProvider.wasmCompilationMode.isOpenWorld()

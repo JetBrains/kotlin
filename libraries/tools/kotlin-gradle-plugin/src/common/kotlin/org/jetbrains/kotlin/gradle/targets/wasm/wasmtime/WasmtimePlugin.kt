@@ -11,6 +11,8 @@ import org.gradle.api.plugins.BasePlugin
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmPlatformDisambiguator
+import org.jetbrains.kotlin.gradle.targets.wasm.wasmtime.toolchain.DEFAULT_WASMTIME_VERSION
+import org.jetbrains.kotlin.gradle.targets.wasm.wasmtime.toolchain.isWasmtimeToolchainDisabled
 import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 
@@ -20,6 +22,12 @@ abstract class WasmtimePlugin internal constructor() : Plugin<Project> {
         project.plugins.apply(BasePlugin::class.java)
 
         val spec = project.createWasmtimeEnvSpec()
+
+        if (!project.isWasmtimeToolchainDisabled()) {
+            // The Wasmtime toolchain provisions Wasmtime once for the whole build, so the per-project setup task
+            // and its detached configuration are not needed.
+            return
+        }
 
         project.registerTask<WasmtimeSetupTask>(
             WasmPlatformDisambiguator.extensionName(WasmtimeSetupTask.BASE_NAME),
@@ -51,7 +59,7 @@ abstract class WasmtimePlugin internal constructor() : Plugin<Project> {
             installationDirectory.convention(
                 gradleHome.dir("wasmtime")
             )
-            version.convention("49.0.1")
+            version.convention(DEFAULT_WASMTIME_VERSION)
             command.convention("wasmtime")
         }
     }

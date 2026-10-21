@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.js.testing
 
 import org.gradle.api.file.Directory
 import org.gradle.api.provider.Provider
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinToolchainDsl
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
@@ -15,8 +16,12 @@ import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJv
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.writeWasmUnitTestRunner
 import org.jetbrains.kotlin.gradle.targets.wasm.d8.D8Plugin
+import org.jetbrains.kotlin.gradle.targets.wasm.d8.toolchain.registerD8ToolchainServiceIfAbsent
+import org.jetbrains.kotlin.gradle.targets.wasm.d8.toolchain.requestDefaultD8
+import org.jetbrains.kotlin.gradle.targets.wasm.d8.toolchain.resolveD8Executable
 import org.jetbrains.kotlin.gradle.utils.processes.ProcessLaunchOptions
 
+@OptIn(ExperimentalKotlinToolchainDsl::class)
 @ExperimentalWasmDsl
 internal class KotlinWasmD8(
     kotlinJsTest: KotlinJsTest,
@@ -30,10 +35,15 @@ internal class KotlinWasmD8(
 
     private val projectLayout = kotlinJsTest.project.layout
     private val d8 = D8Plugin.applyWithEnvSpec(kotlinJsTest.project)
+    private val d8ToolchainService = registerD8ToolchainServiceIfAbsent(kotlinJsTest.project)
+    private val d8Request = kotlinJsTest.project.requestDefaultD8()
 
     override val workingDir: Provider<Directory> = projectLayout.dir(kotlinJsTest.inputFileProperty.asFile.map { it.parentFile })
 
-    override val executable: Provider<String> = d8.executable
+    // Resolved lazily, because the D8 toolchain provisions D8 only when the executable is actually needed.
+    override val executable: Provider<String> = d8ToolchainService.map {
+        it.resolveD8Executable(d8.executable, d8Request)
+    }
 
     override fun createTestExecutionSpec(
         task: KotlinJsTest,
