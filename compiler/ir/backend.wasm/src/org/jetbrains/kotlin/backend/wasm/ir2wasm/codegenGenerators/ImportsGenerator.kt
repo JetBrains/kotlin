@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.superClass
+import org.jetbrains.kotlin.wasm.WasmServiceImportExportKind
 import org.jetbrains.kotlin.wasm.ir.WasmFunction
 import org.jetbrains.kotlin.wasm.ir.WasmGlobal
 import org.jetbrains.kotlin.wasm.ir.WasmImportDescriptor
