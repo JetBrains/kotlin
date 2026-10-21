@@ -7,10 +7,16 @@ package org.jetbrains.kotlin.gradle.compilerPlugins
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInAnalysisApi
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCompilerPlugins
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
 
 @DisplayName("Sandbox plugin tests")
+@MustRunOnChangesInGradle
+@MustRunOnChangesInCompilerPlugins
+@MustRunOnChangesInAnalysisApi
 @OtherGradlePluginTests
 class SandboxPluginIT : KGPBaseTest() {
     private val pluginClasspath: String get() = System.getProperty("sandboxPluginClasspath")
