@@ -3,9 +3,9 @@ Decompiled text loaded by type computation: false
 
 public final fun <R> map(f: (T) -> R): lib.Box<kotlin.collections.Map<T, R>> { /* compiled code */ }
 //                          ^(T) -> R(use)
-//                           ^T(decl)
-//                                 ^R(decl)
+//                           ^T(use)
+//                                 ^R(use)
 //                                     ^Box<Map<T, R>>(use)
 //                                             ^Map<T, R>(use)
-//                                                                    ^T(decl)
-//                                                                       ^R(decl)
+//                                                                    ^T(use)
+//                                                                       ^R(use)
