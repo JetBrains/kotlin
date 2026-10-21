@@ -523,12 +523,12 @@ abstract class AbstractTypeApproximator(
                 else projection.getType()!!
             }
         }
-        val baseSubType = capturedType.lowerType() ?: nothingType()
+        val baseSubType = capturedType.lowerType() ?: runIf(conf.approximateToNothingSubtype) { nothingType() }
 
         val approximatedSuperType by lazy(LazyThreadSafetyMode.NONE) {
             approximateToSuperType(baseSuperType, depth)
         }
-        val approximatedSubType by lazy(LazyThreadSafetyMode.NONE) { approximateToSubType(baseSubType, depth) }
+        val approximatedSubType by lazy(LazyThreadSafetyMode.NONE) { baseSubType?.let { approximateToSubType(it, depth) } }
 
         if (!conf.shouldApproximateCapturedType(capturedType)) {
             /**
@@ -549,7 +549,10 @@ abstract class AbstractTypeApproximator(
                 return null
             }
         }
-        val baseResult = if (toSuper) approximatedSuperType ?: baseSuperType else approximatedSubType ?: baseSubType
+        val baseResult = when {
+            toSuper -> approximatedSuperType ?: baseSuperType
+            else -> approximatedSubType ?: baseSubType ?: capturedType
+        }
 
         // C = in Int, Int <: C => Int? <: C?
         // C = out Number, C <: Number => C? <: Number?
@@ -832,8 +835,10 @@ abstract class AbstractTypeApproximator(
                     // like if Inv would be declared as `interface Inv<T : CharSequence>` (see test approximationLeavesNonTrivialLowerBound.kt)
                     //
                     // In that case the next condition after that doesn't help because in case of both non-trivial bounds, it chooses the upper one
-                    if (argumentType.typeConstructor().isCapturedTypeConstructor()) {
-                        val subType = approximateToSubType(argumentType, depth) ?: continue@loop
+                    val typeConstructor = argumentType.typeConstructor()
+                    if (typeConstructor is CapturedTypeConstructorMarker) {
+                        val approximated = approximateToSubType(argumentType, depth) ?: continue@loop
+                        val subType = approximated.takeIf { it != argumentType } ?: nothingType()
                         if (shouldUseSubTypeForCapturedArgument(subType, argumentType, depth)) {
                             newArguments[index] = createTypeArgument(subType, TypeVariance.IN)
                             continue@loop

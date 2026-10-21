@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.createTypeSubstitutorByTypeConstructor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
+import org.jetbrains.kotlin.fir.resolve.toTypeParameterSymbol
 import org.jetbrains.kotlin.fir.resolve.typeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.asCone
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
@@ -159,6 +160,11 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
 
     override fun createStarProjection(typeParameter: TypeParameterMarker): ConeStarProjection {
         return ConeStarProjection
+    }
+
+    override fun createTypeParameterType(typeParameter: TypeParameterMarker): SimpleTypeMarker {
+        require(typeParameter is ConeTypeParameterLookupTag)
+        return typeParameter.constructType()
     }
 
     override fun newTypeCheckerState(
@@ -335,6 +341,29 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
                 constructorSupertypes as List<ConeKotlinType>
             )
         )
+    }
+
+    override fun createCapturedTypeForSelReferentialfSupertypes(
+        typeParameter: TypeParameterMarker,
+        status: CaptureStatus,
+        supertypes: List<KotlinTypeMarker>,
+    ): CapturedTypeMarker? {
+        require(typeParameter is ConeTypeParameterLookupTag)
+        val parameterSymbol = typeParameter.toTypeParameterSymbol() ?: return null
+        val capturedType = ConeCapturedType(
+            constructor = ConeCapturedTypeConstructor(
+                projection = createStarProjection(typeParameter),
+                lowerType = null,
+                captureStatus = status,
+                supertypes = null, // Initialized further down - self-referential
+                typeParameterMarker = typeParameter
+            )
+        )
+        val substitutor = substitutorByMap(mapOf(parameterSymbol to capturedType), session)
+        capturedType.constructor.supertypes = supertypes.map {
+            substitutor.safeSubstitute(this, it) as ConeKotlinType
+        }
+        return capturedType
     }
 
     override fun createStubTypeForBuilderInference(typeVariable: TypeVariableMarker): StubTypeMarker {

@@ -117,6 +117,8 @@ interface TypeSystemTypeFactoryContext : TypeSystemContext, TypeSystemBuiltInsCo
     fun createTypeArgument(type: KotlinTypeMarker, variance: TypeVariance): TypeArgumentMarker
     fun createStarProjection(typeParameter: TypeParameterMarker): TypeArgumentMarker
 
+    fun createTypeParameterType(typeParameter: TypeParameterMarker): SimpleTypeMarker
+
     fun createErrorType(debugName: String, delegatedType: RigidTypeMarker?): SimpleTypeMarker
     fun createUninferredType(constructor: TypeConstructorMarker): KotlinTypeMarker
 }
@@ -227,6 +229,12 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
         lowerType: KotlinTypeMarker?,
         captureStatus: CaptureStatus
     ): CapturedTypeMarker
+
+    fun createCapturedTypeForSelReferentialfSupertypes(
+        typeParameter: TypeParameterMarker,
+        status: CaptureStatus,
+        supertypes: List<KotlinTypeMarker>,
+    ): CapturedTypeMarker?
 
     fun createStubTypeForBuilderInference(typeVariable: TypeVariableMarker): StubTypeMarker
     fun createStubTypeForTypeVariablesInSubtyping(typeVariable: TypeVariableMarker): StubTypeMarker
@@ -369,20 +377,19 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
         typesForRecursiveTypeParameters: List<KotlinTypeMarker>,
     ): SimpleTypeMarker? {
         val typeParameter = typeVariable.typeParameter ?: return null
-        val starProjection = createStarProjection(typeParameter)
         val superType = intersectTypes(
             typesForRecursiveTypeParameters.map { type ->
                 type.replaceArgumentsDeeply {
                     when (val typeConstructor = it.getType()?.typeConstructor()) {
-                        typeVariable -> starProjection
+                        // A substitutor will later replace the parameter type with the captured type itself.
+                        typeVariable -> it.replaceType(createTypeParameterType(typeParameter))
                         is TypeVariableTypeConstructorMarker -> createTypeArgument(createUninferredType(typeConstructor), it.getVariance())
                         else -> it
                     }
                 }
             }
         )
-
-        return createCapturedType(starProjection, listOf(superType), lowerType = null, CaptureStatus.FROM_EXPRESSION)
+        return createCapturedTypeForSelReferentialfSupertypes(typeParameter, CaptureStatus.FROM_EXPRESSION, listOf(superType))
     }
 
     fun createSubstitutorForSuperTypes(baseType: KotlinTypeMarker): TypeSubstitutorMarker?

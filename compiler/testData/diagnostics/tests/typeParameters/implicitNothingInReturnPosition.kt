@@ -48,11 +48,11 @@ fun <T> Any.decodeOut2(typeFrom: Context<out T>): T {
 
 fun <T> Any.decodeOut3(typeFrom: Context<out T>): T {
     val x = this.decodeIn(typeFrom)
-}
+<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 
 fun <T> Any.decodeOut4(typeFrom: Context<out T>): T {
     val x: Any = this.decodeIn(typeFrom)
-}
+<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 
 class TrieNode<out E> {
     companion object {

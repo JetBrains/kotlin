@@ -365,6 +365,11 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
 
     override fun createStarProjection(typeParameter: TypeParameterMarker) = IrStarProjectionImpl
 
+    override fun createTypeParameterType(typeParameter: TypeParameterMarker): SimpleTypeMarker {
+        require(typeParameter is IrTypeParameterSymbol)
+        return typeParameter.defaultType
+    }
+
     override fun KotlinTypeMarker.canHaveUndefinedNullability() = this is IrSimpleType && classifier is IrTypeParameterSymbol
 
     override fun RigidTypeMarker.isExtensionFunction(): Boolean {
