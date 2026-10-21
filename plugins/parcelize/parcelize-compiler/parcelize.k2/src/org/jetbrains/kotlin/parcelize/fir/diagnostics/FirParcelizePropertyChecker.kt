@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.isEnumClass
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirPropertyChecker
@@ -135,7 +136,7 @@ object FirParcelizePropertyChecker : FirPropertyChecker(MppCheckerKind.Platform)
 
         if (fqName in BuiltinParcelableTypes.PARCELABLE_CONTAINER_FQNAMES) {
             return upperBound.typeArguments.fold(emptySet()) { acc, arg ->
-                val elementType = arg.type ?: session.builtinTypes.nullableAnyType.coneType
+                val elementType = arg.type ?: StandardTypes.NullableAny
                 acc union checkParcelableType(elementType, customParcelerTypes, context)
             }
         }

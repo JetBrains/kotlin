@@ -738,7 +738,7 @@ fun FirElement.isLhsOfAssignment(): Boolean {
 
 fun ConeKotlinType.leastUpperBound(session: FirSession): ConeKotlinType {
     val upperBounds = collectUpperBounds(session.typeContext).takeIf { it.isNotEmpty() }
-        ?: return session.builtinTypes.nullableAnyType.coneType
+        ?: return StandardTypes.NullableAny
     return ConeTypeIntersector.intersectTypes(session.typeContext, upperBounds)
 }
 

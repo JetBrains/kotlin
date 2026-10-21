@@ -88,7 +88,7 @@ private fun JavaType?.toConeKotlinType(
     additionalAnnotations: Collection<JavaAnnotation>? = null
 ): ConeKotlinType =
     toConeTypeProjection(session, javaTypeParameterStack, Variance.INVARIANT, mode, source, additionalAnnotations).type
-        ?: ConeFlexibleType(StandardTypes.Any, session.builtinTypes.nullableAnyType.coneType, isTrivial = true)
+        ?: ConeFlexibleType(StandardTypes.Any, StandardTypes.NullableAny, isTrivial = true)
 
 private fun JavaType?.toConeTypeProjection(
     session: FirSession, javaTypeParameterStack: JavaTypeParameterStack,

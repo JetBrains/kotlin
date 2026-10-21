@@ -288,7 +288,7 @@ class Fir2IrReplSnippetConfiguratorExtensionImpl(
                 )
                 classKind = ClassKind.OBJECT
                 symbol = firReplStateSymbol
-                val nullableAnyType = session.builtinTypes.nullableAnyType.coneType
+                val nullableAnyType = StandardTypes.NullableAny
                 superTypeRefs += hashMapClassSymbol.constructType(
                     Array(hashMapClassSymbol.typeParameterSymbols.size) { nullableAnyType },
                 ).toFirResolvedTypeRef(null)

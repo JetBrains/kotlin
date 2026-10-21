@@ -45,7 +45,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
     }
 
     override fun nullableAnyType(): ConeClassLikeType {
-        return session.builtinTypes.nullableAnyType.coneType
+        return StandardTypes.NullableAny
     }
 
     override fun nothingType(): ConeClassLikeType {

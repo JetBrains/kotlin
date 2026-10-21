@@ -407,9 +407,9 @@ class FirCallCompletionResultsWriterTransformer(
             session.typeContext.commonSuperTypeOrNull(arrayLiteral.arguments.map { it.resolvedType })?.let {
                 typeApproximator.approximateToSuperType(
                     it,
-                    TypeApproximatorConfiguration.IntermediateApproximationToSupertypeAfterCompletionInK2
+                    IntermediateApproximationToSupertypeAfterCompletionInK2
                 ) ?: it
-            } ?: expectedArrayElementType ?: session.builtinTypes.nullableAnyType.coneType
+            } ?: expectedArrayElementType ?: StandardTypes.NullableAny
         arrayLiteral.resultType =
             arrayElementType.createArrayType(createPrimitiveArrayTypeIfPossible = expectedArrayType?.fullyExpandedType()?.isPrimitiveArray == true)
         return arrayLiteral

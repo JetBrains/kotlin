@@ -730,9 +730,9 @@ class FirSyntheticCallGenerator(
             SyntheticCallableId.EQUALITY.callableName,
             session.builtinTypes.booleanType
         ).apply {
-            valueParameters += session.builtinTypes.nullableAnyType.coneType
+            valueParameters += StandardTypes.NullableAny
                 .toValueParameter("x", functionSymbol)
-            valueParameters += session.builtinTypes.nullableAnyType.coneType
+            valueParameters += StandardTypes.NullableAny
                 .toValueParameter("y", functionSymbol)
         }.build()
     }

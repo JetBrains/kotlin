@@ -646,7 +646,7 @@ internal object ArgumentCheckingProcessor {
         }.withNullability(expectedFunctionType.isMarkedNullable, c.session.typeContext)
 
         val typeArguments =
-            functionType.typeArguments.map { it.type ?: c.session.builtinTypes.nullableAnyType.coneType }
+            functionType.typeArguments.map { it.type ?: StandardTypes.NullableAny }
                 .ifEmpty { return null }
         return ConversionData(
             typeAfterConversion = createFunctionType(

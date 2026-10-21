@@ -120,7 +120,7 @@ fun ConeDynamicType.Companion.create(
     attributes: ConeAttributes = ConeAttributes.Empty,
 ): ConeDynamicType = ConeDynamicType(
     session.builtinTypes.nothingType.coneType.withAttributes(attributes),
-    session.builtinTypes.nullableAnyType.coneType.withAttributes(attributes),
+    StandardTypes.NullableAny.withAttributes(attributes),
 )
 
 fun ConeKotlinType.makeConeTypeDefinitelyNotNullOrNotNull(

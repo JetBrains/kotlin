@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.builtins.functions.isBasicFunctionOrKFunction
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.computeTypeAttributes
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -306,7 +307,7 @@ fun ConeKotlinType.receiverType(session: FirSession): ConeKotlinType? {
 
 fun ConeClassLikeType.returnType(session: FirSession): ConeKotlinType {
     // TODO: add requirement
-    return fullyExpandedType(session).typeArguments.last().typeOrDefault(session.builtinTypes.nullableAnyType.coneType)
+    return fullyExpandedType(session).typeArguments.last().typeOrDefault(StandardTypes.NullableAny)
 }
 
 fun ConeClassLikeType.valueParameterTypesWithoutReceivers(session: FirSession): List<ConeKotlinType> {

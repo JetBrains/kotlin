@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlinx.dataframe.plugin.impl
 
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 import org.jetbrains.kotlinx.dataframe.api.insert
 import org.jetbrains.kotlinx.dataframe.api.under
@@ -17,7 +18,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColumnsResolver
  */
 context(arguments: Arguments)
 fun PluginDataFrameSchema.insertImpliedColumns(selector: List<String>): PluginDataFrameSchema {
-    val nullableAny = arguments.session.builtinTypes.nullableAnyType.coneType
+    val nullableAny = StandardTypes.NullableAny
     val topLevelColumns = columns().mapToSetOrEmpty { it.name }
     val assumedColumns = selector.filter { it !in topLevelColumns }
         .map { simpleColumnOf(it, nullableAny) }
