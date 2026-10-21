@@ -132,4 +132,16 @@ public class FirStandaloneNormalAnalysisSourceModuleIsPrimitiveBackedTestGenerat
   public void testRegularClass() {
     run("regularClass.kt");
   }
+
+  @Test
+  @TestMetadata("uInt.kt")
+  public void testUInt() {
+    run("uInt.kt");
+  }
+
+  @Test
+  @TestMetadata("uIntJs.kt")
+  public void testUIntJs() {
+    run("uIntJs.kt");
+  }
 }
