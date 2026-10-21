@@ -305,6 +305,12 @@ public class SymbolLightClassesByPsiForSourceTestGenerated extends AbstractSymbo
   }
 
   @Test
+  @TestMetadata("jvmRecordWithUnsignedComponent.kt")
+  public void testJvmRecordWithUnsignedComponent() {
+    run("jvmRecordWithUnsignedComponent.kt");
+  }
+
+  @Test
   @TestMetadata("jvmStaticInInterfaceCompanion.kt")
   public void testJvmStaticInInterfaceCompanion() {
     run("jvmStaticInInterfaceCompanion.kt");
@@ -464,6 +470,18 @@ public class SymbolLightClassesByPsiForSourceTestGenerated extends AbstractSymbo
   @TestMetadata("unsafePropertyInitializers.kt")
   public void testUnsafePropertyInitializers() {
     run("unsafePropertyInitializers.kt");
+  }
+
+  @Test
+  @TestMetadata("unsignedAnnotationMembers.kt")
+  public void testUnsignedAnnotationMembers() {
+    run("unsignedAnnotationMembers.kt");
+  }
+
+  @Test
+  @TestMetadata("unsignedConstants.kt")
+  public void testUnsignedConstants() {
+    run("unsignedConstants.kt");
   }
 
   @Test
