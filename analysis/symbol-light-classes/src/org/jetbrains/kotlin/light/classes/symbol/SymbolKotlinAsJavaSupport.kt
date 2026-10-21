@@ -62,6 +62,7 @@ import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 import java.time.Duration
 import java.util.*
 import org.jetbrains.kotlin.light.classes.symbol.classes.computeJavaMethodName as computeJavaMethodNameImpl
+import org.jetbrains.kotlin.light.classes.symbol.classes.hasPrefixlessAccessorNames as hasPrefixlessAccessorNamesImpl
 
 private val KMP_CACHE: ThreadLocal<WeakHashMap<KaSymbol, KtLightClass?>> = ThreadLocal.withInitial { null }
 
@@ -744,6 +745,10 @@ internal class SymbolKotlinAsJavaSupport(private val project: Project) : KotlinA
     context(_: KaSession)
     override fun computeJavaMethodName(symbol: KaCallableSymbol, defaultName: String, ignoreInlineClassMangling: Boolean): String? =
         computeJavaMethodNameImpl(symbol, defaultName, ignoreInlineClassMangling)
+
+    context(_: KaSession)
+    override val KaPropertySymbol.hasPrefixlessAccessorNames: Boolean
+        get() = hasPrefixlessAccessorNamesImpl
 
     //endregion
 
