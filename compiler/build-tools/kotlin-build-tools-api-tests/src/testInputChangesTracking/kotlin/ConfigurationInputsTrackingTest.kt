@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogDoe
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.AbstractProject
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAndPlatformAgnosticCompilationTest
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.JvmProject
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.MetadataProject
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.ProjectCreator
@@ -536,7 +537,7 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
     }
 
     private fun AbstractProject<*, *, *>.expectedLogLevel(): LogLevel =
-        if (defaultStrategyConfig is ExecutionPolicy.WithDaemon) LogLevel.DEBUG else LogLevel.INFO // TODO: KT-85024
+        if (defaultStrategyConfig is ExecutionPolicy.WithDaemon && this !is JvmProject) LogLevel.DEBUG else LogLevel.INFO // TODO: KT-85024
 
     private fun AbstractProject<*, *, *>.assumeNotMetadata() {
         assumeFalse(this is MetadataProject)
