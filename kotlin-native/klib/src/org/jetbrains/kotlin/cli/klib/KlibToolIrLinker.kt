@@ -19,44 +19,44 @@ import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibrary
 
 internal class KlibToolIrLinker(
-    output: KlibToolOutput,
-    symbolTable: SymbolTable,
+        output: KlibToolOutput,
+        symbolTable: SymbolTable,
 ) : KotlinIrLinker(symbolTable, errorCallback = output::logError) {
     override val irMangler: KotlinMangler.IrMangler = KonanManglerIr
 
     override val fakeOverrideBuilder = IrLinkerFakeOverrideProvider(
-        linker = this,
-        symbolTable = symbolTable,
-        mangler = irMangler,
-        friendModules = emptyMap(), // TODO(KT-62534) can be removed when ModuleDescriptorImpl.shouldSeeInternalsOf is fixed
-        partialLinkageSupport = PartialLinkageSupportForLinker.DISABLED,
+            linker = this,
+            symbolTable = symbolTable,
+            mangler = irMangler,
+            friendModules = emptyMap(), // TODO(KT-62534) can be removed when ModuleDescriptorImpl.shouldSeeInternalsOf is fixed
+            partialLinkageSupport = PartialLinkageSupportForLinker.DISABLED,
     )
 
     override val returnUnboundSymbolsIfSignatureNotFound get() = true
 
     override fun createModuleDeserializer(
-        moduleFragment: IrModuleFragment,
-        klib: KotlinLibrary?,
-        strategyResolver: DeserializationStrategyResolver,
+            moduleFragment: IrModuleFragment,
+            klib: KotlinLibrary?,
+            strategyResolver: DeserializationStrategyResolver,
     ): IrModuleDeserializer = KlibToolModuleDeserializer(
-        moduleFragment = moduleFragment,
-        klib = klib ?: error("Expecting kotlin library for $moduleFragment"),
-        strategyResolver = strategyResolver
+            moduleFragment = moduleFragment,
+            klib = klib ?: error("Expecting kotlin library for $moduleFragment"),
+            strategyResolver = strategyResolver
     )
 
     override fun isBuiltInModule(module: IrModuleFragment) = false
 
     private inner class KlibToolModuleDeserializer(
-        moduleFragment: IrModuleFragment,
-        klib: KotlinLibrary,
-        strategyResolver: DeserializationStrategyResolver,
+            moduleFragment: IrModuleFragment,
+            klib: KotlinLibrary,
+            strategyResolver: DeserializationStrategyResolver,
     ) : BasicIrModuleDeserializer(
-        linker = this,
-        moduleFragment = moduleFragment,
-        strategyResolver = strategyResolver,
-        klib = klib,
-        libraryAbiVersion = klib.versions.abiVersion ?: KotlinAbiVersion.CURRENT,
-        allowErrorNodes = true,
-        deserializeTypeAliases = true,
+            linker = this,
+            moduleFragment = moduleFragment,
+            strategyResolver = strategyResolver,
+            klib = klib,
+            libraryAbiVersion = klib.versions.abiVersion ?: KotlinAbiVersion.CURRENT,
+            allowErrorNodes = true,
+            deserializeTypeAliases = true,
     )
 }
