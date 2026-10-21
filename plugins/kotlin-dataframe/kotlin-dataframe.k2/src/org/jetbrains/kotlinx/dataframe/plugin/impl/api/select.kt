@@ -1,6 +1,7 @@
 package org.jetbrains.kotlinx.dataframe.plugin.impl.api
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeStarProjection
 import org.jetbrains.kotlin.fir.types.constructClassLikeType
@@ -247,10 +248,10 @@ fun SimpleCol.isColOf(type: ConeKotlinType, session: FirSession): Boolean {
     val columnType = when (this) {
         is SimpleDataColumn -> this.type.coneType
         is SimpleColumnGroup -> Names.DATA_ROW_CLASS_ID.constructClassLikeType(
-            typeArguments = arrayOf(session.builtinTypes.anyType.coneType)
+            typeArguments = arrayOf(StandardTypes.Any)
         )
         is SimpleFrameColumn -> Names.DF_CLASS_ID.constructClassLikeType(
-            typeArguments = arrayOf(session.builtinTypes.anyType.coneType)
+            typeArguments = arrayOf(StandardTypes.Any)
         )
     }
     return columnType.isSubtypeOf(type, session)

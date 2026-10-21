@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionHolder
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.*
@@ -273,7 +274,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
                     is FirTypeParameterSymbol -> symbol.resolvedBounds.map { it.coneType }
                     is FirClassSymbol<*> -> symbol.fir.superConeTypes
                     is FirTypeAliasSymbol -> listOfNotNull(symbol.fir.expandedConeType)
-                    null -> listOf(session.builtinTypes.anyType.coneType)
+                    null -> listOf(StandardTypes.Any)
                 }
             }
             is ConeCapturedTypeConstructor -> supertypes.orEmpty()
@@ -281,7 +282,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
             is ConeUnionType -> if (primaryType.canBeNull(session)) {
                 [session.builtinTypes.nullableAnyType.coneType]
             } else {
-                [session.builtinTypes.anyType.coneType]
+                [StandardTypes.Any]
             }
             is ConeIntegerLiteralType -> supertypes
         }

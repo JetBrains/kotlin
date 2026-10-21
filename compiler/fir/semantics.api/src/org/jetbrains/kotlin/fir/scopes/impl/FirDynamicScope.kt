@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.createCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
@@ -63,8 +64,8 @@ class FirDynamicScope @FirDynamicScopeConstructor constructor(
     override fun getClassifierNames(): Set<Name> = emptySet()
 
     private val anyTypeScope by lazy {
-        session.builtinTypes.anyType.coneType.scope(
-            CallableCopyTypeCalculator.DoNothing,
+        StandardTypes.Any.scope(
+            DoNothing,
             requiredMembersPhase = null,
         )
     }

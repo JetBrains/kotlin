@@ -2,6 +2,7 @@ package org.jetbrains.kotlinx.dataframe.plugin.impl.api
 
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.analysis.checkers.fullyExpandedClassId
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
@@ -275,7 +276,7 @@ internal fun KotlinTypeFacade.toDataFrame(
                     if (returnType.canBeNull()) {
                         session.builtinTypes.nullableAnyType.coneType
                     } else {
-                        session.builtinTypes.anyType.coneType
+                        StandardTypes.Any
                     }
                 } else {
                     returnType.withArguments {
