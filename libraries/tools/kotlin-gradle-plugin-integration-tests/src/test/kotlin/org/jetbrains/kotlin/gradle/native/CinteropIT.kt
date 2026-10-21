@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.gradle.native
 
+import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceText
+import org.jetbrains.kotlin.gradle.util.runProcess
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import java.nio.file.Path
@@ -191,7 +193,7 @@ class CinteropIT : KGPBaseTest() {
             buildStaticLibrary(projectPath)
 
             build(":runDebugExecutableNative") {
-                assertOutputContains("5")
+                assertGlobalCounterValue(5)
             }
             build(":runDebugExecutableNative") {
                 assertTasksUpToDate(":linkDebugExecutableNative")
@@ -202,7 +204,7 @@ class CinteropIT : KGPBaseTest() {
 
             build(":runDebugExecutableNative") {
                 assertTasksExecuted(":linkDebugExecutableNative")
-                assertOutputContains("6")
+                assertGlobalCounterValue(6)
             }
         }
     }
@@ -243,7 +245,7 @@ class CinteropIT : KGPBaseTest() {
 
             build(":checkLinkerInputs", ":runDebugExecutableNative") {
                 assertTasksExecuted(":archiveStaticLibrary", ":linkDebugExecutableNative")
-                assertEquals(listOf("5"), output.lineSequence().map { it.trim() }.filter { it.matches(Regex("[0-9]+")) }.toList())
+                assertGlobalCounterValue(5)
             }
             // Allow unrelated first incremental build setup changes to settle.
             build(":checkLinkerInputs", ":runDebugExecutableNative")
@@ -256,7 +258,7 @@ class CinteropIT : KGPBaseTest() {
             build(":checkLinkerInputs", ":runDebugExecutableNative") {
                 assertConfigurationCacheReused()
                 assertTasksExecuted(":compileStaticLibrary", ":archiveStaticLibrary", ":linkDebugExecutableNative")
-                assertEquals(listOf("6"), output.lineSequence().map { it.trim() }.filter { it.matches(Regex("[0-9]+")) }.toList())
+                assertGlobalCounterValue(6)
             }
         }
     }
@@ -313,5 +315,24 @@ class CinteropIT : KGPBaseTest() {
                 }
             }
         }
+    }
+}
+
+private fun BuildResult.assertGlobalCounterValue(expected: Int) {
+    val actual = output.lineSequence()
+        .map { it.trim() }
+        .filter { it.startsWith("KT89558_RESULT=") }
+        .toList()
+    assertEquals(listOf("KT89558_RESULT=$expected"), actual)
+}
+
+private fun buildStaticLibrary(projectPath: Path) {
+    val workingDir = projectPath.toFile()
+    runProcess(listOf("cc", "-c", "lib.c", "-Iinclude", "-o", "lib.o"), workingDir).also {
+        check(it.isSuccessful) { "Compiling lib.c failed: $it" }
+    }
+    projectPath.resolve("lib.a").deleteIfExists()
+    runProcess(listOf("ar", "rcs", "lib.a", "lib.o"), workingDir).also {
+        check(it.isSuccessful) { "Archiving lib.a failed: $it" }
     }
 }
