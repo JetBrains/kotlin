@@ -8,10 +8,12 @@ package org.jetbrains.kotlin.gradle.native
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import java.io.File
 
 @DisplayName("Tests for K/N builds with embeddable compiler jar")
+@MustRunOnChangesInGradle
 @NativeGradlePluginTests
 internal class NativeEmbeddableCompilerJarIT : KGPBaseTest() {
     private fun String.isRegularJar() = this.endsWith("${File.separator}kotlin-native.jar")
