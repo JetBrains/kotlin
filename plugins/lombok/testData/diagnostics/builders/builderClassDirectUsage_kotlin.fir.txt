@@ -7,15 +7,6 @@ FILE: Owner.kt
         public final val a: R|kotlin/Int| = R|<local>/a|
             public get(): R|kotlin/Int|
 
-        public final companion object Companion : R|kotlin/Any| {
-            @R|kotlin/jvm/JvmStatic|() public final fun builder(): R|Owner.OwnerBuilder|
-
-            private constructor(): R|Owner.Companion| {
-                super<R|kotlin/Any|>()
-            }
-
-        }
-
         public open class OwnerBuilder : R|kotlin/Any| {
             public open fun build(): R|Owner|
 
@@ -26,6 +17,15 @@ FILE: Owner.kt
                 private set(value: R|kotlin/Int|): R|kotlin/Unit|
 
             internal constructor(): R|Owner.OwnerBuilder| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            @R|kotlin/jvm/JvmStatic|() public final fun builder(): R|Owner.OwnerBuilder|
+
+            private constructor(): R|Owner.Companion| {
                 super<R|kotlin/Any|>()
             }
 

@@ -61,15 +61,6 @@ FILE: abstractAndSealed.kt
             super<R|Y|>()
         }
 
-        public final companion object Companion : R|kotlin/Any| {
-            public final fun serializer(): R|kotlinx/serialization/KSerializer<Bottom>|
-
-            private constructor(): R|Bottom.Companion| {
-                super<R|kotlin/Any|>()
-            }
-
-        }
-
         @R|kotlin/Deprecated|(message = String(This synthesized declaration should not be used directly), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|) public final object $serializer : R|kotlinx/serialization/internal/GeneratedSerializer<Bottom>| {
             public final override fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|Bottom|): R|kotlin/Unit|
 
@@ -81,6 +72,15 @@ FILE: abstractAndSealed.kt
             public final override fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
 
             private constructor(): R|Bottom.$serializer| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            public final fun serializer(): R|kotlinx/serialization/KSerializer<Bottom>|
+
+            private constructor(): R|Bottom.Companion| {
                 super<R|kotlin/Any|>()
             }
 

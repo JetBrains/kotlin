@@ -28,15 +28,6 @@ FILE: metaSerializable.kt
         public final val language: R|kotlin/String| = R|<local>/language|
             public get(): R|kotlin/String|
 
-        public final companion object Companion : R|kotlin/Any| {
-            public final fun serializer(): R|kotlinx/serialization/KSerializer<Project1>|
-
-            private constructor(): R|Project1.Companion| {
-                super<R|kotlin/Any|>()
-            }
-
-        }
-
         @R|kotlin/Deprecated|(message = String(This synthesized declaration should not be used directly), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|) public final object $serializer : R|kotlinx/serialization/internal/GeneratedSerializer<Project1>| {
             public final override fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|Project1|): R|kotlin/Unit|
 
@@ -48,6 +39,15 @@ FILE: metaSerializable.kt
             public final override fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
 
             private constructor(): R|Project1.$serializer| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            public final fun serializer(): R|kotlinx/serialization/KSerializer<Project1>|
+
+            private constructor(): R|Project1.Companion| {
                 super<R|kotlin/Any|>()
             }
 
@@ -65,15 +65,6 @@ FILE: metaSerializable.kt
         public final val language: R|kotlin/String| = R|<local>/language|
             public get(): R|kotlin/String|
 
-        public final companion object Companion : R|kotlin/Any| {
-            public final fun serializer(): R|kotlinx/serialization/KSerializer<Project2>|
-
-            private constructor(): R|Project2.Companion| {
-                super<R|kotlin/Any|>()
-            }
-
-        }
-
         @R|kotlin/Deprecated|(message = String(This synthesized declaration should not be used directly), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|) public final object $serializer : R|kotlinx/serialization/internal/GeneratedSerializer<Project2>| {
             public final override fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|Project2|): R|kotlin/Unit|
 
@@ -90,6 +81,15 @@ FILE: metaSerializable.kt
 
         }
 
+        public final companion object Companion : R|kotlin/Any| {
+            public final fun serializer(): R|kotlinx/serialization/KSerializer<Project2>|
+
+            private constructor(): R|Project2.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
     }
     @R|kotlinx/serialization/Serializable|() public final class Wrapper : R|kotlin/Any| {
         public constructor(project: R|Project2|): R|Wrapper| {
@@ -98,15 +98,6 @@ FILE: metaSerializable.kt
 
         @R|MySerializableWithInfo|(value = Int(234) [evaluated = Int(234)], kclass = <getClass>(Q|kotlin/Int|) [evaluated = <getClass>(Q|kotlin/Int|)]) public final val project: R|Project2| = R|<local>/project|
             public get(): R|Project2|
-
-        public final companion object Companion : R|kotlin/Any| {
-            public final fun serializer(): R|kotlinx/serialization/KSerializer<Wrapper>|
-
-            private constructor(): R|Wrapper.Companion| {
-                super<R|kotlin/Any|>()
-            }
-
-        }
 
         @R|kotlin/Deprecated|(message = String(This synthesized declaration should not be used directly), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|) public final object $serializer : R|kotlinx/serialization/internal/GeneratedSerializer<Wrapper>| {
             public final override fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|Wrapper|): R|kotlin/Unit|
@@ -124,6 +115,15 @@ FILE: metaSerializable.kt
 
         }
 
+        public final companion object Companion : R|kotlin/Any| {
+            public final fun serializer(): R|kotlinx/serialization/KSerializer<Wrapper>|
+
+            private constructor(): R|Wrapper.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
     }
     @R|kotlinx/serialization/Serializable|() @R|MySerializableWithInfo|(value = Int(123) [evaluated = Int(123)], kclass = <getClass>(Q|kotlin/String|) [evaluated = <getClass>(Q|kotlin/String|)]) public final class Project3 : R|kotlin/Any| {
         public constructor(name: R|kotlin/String|, language: R|kotlin/String|): R|Project3| {
@@ -136,15 +136,6 @@ FILE: metaSerializable.kt
         public final val language: R|kotlin/String| = R|<local>/language|
             public get(): R|kotlin/String|
 
-        public final companion object Companion : R|kotlin/Any| {
-            public final fun serializer(): R|kotlinx/serialization/KSerializer<Project3>|
-
-            private constructor(): R|Project3.Companion| {
-                super<R|kotlin/Any|>()
-            }
-
-        }
-
         @R|kotlin/Deprecated|(message = String(This synthesized declaration should not be used directly), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|) public final object $serializer : R|kotlinx/serialization/internal/GeneratedSerializer<Project3>| {
             public final override fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|Project3|): R|kotlin/Unit|
 
@@ -156,6 +147,15 @@ FILE: metaSerializable.kt
             public final override fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
 
             private constructor(): R|Project3.$serializer| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            public final fun serializer(): R|kotlinx/serialization/KSerializer<Project3>|
+
+            private constructor(): R|Project3.Companion| {
                 super<R|kotlin/Any|>()
             }
 
@@ -196,15 +196,6 @@ FILE: metaSerializable.kt
             public final val value1: R|kotlin/String| = R|<local>/value1|
                 public get(): R|kotlin/String|
 
-            public final companion object Companion : R|kotlin/Any| {
-                public final fun serializer(): R|kotlinx/serialization/KSerializer<TestSealed.A>|
-
-                private constructor(): R|TestSealed.A.Companion| {
-                    super<R|kotlin/Any|>()
-                }
-
-            }
-
             @R|kotlin/Deprecated|(message = String(This synthesized declaration should not be used directly), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|) public final object $serializer : R|kotlinx/serialization/internal/GeneratedSerializer<TestSealed.A>| {
                 public final override fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|TestSealed.A|): R|kotlin/Unit|
 
@@ -221,6 +212,15 @@ FILE: metaSerializable.kt
 
             }
 
+            public final companion object Companion : R|kotlin/Any| {
+                public final fun serializer(): R|kotlinx/serialization/KSerializer<TestSealed.A>|
+
+                private constructor(): R|TestSealed.A.Companion| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
         }
 
         @R|MySerializableWithInfo|(value = Int(123) [evaluated = Int(123)], kclass = <getClass>(Q|kotlin/String|) [evaluated = <getClass>(Q|kotlin/String|)]) public final class B : R|TestSealed| {
@@ -230,15 +230,6 @@ FILE: metaSerializable.kt
 
             public final val value2: R|kotlin/String| = R|<local>/value2|
                 public get(): R|kotlin/String|
-
-            public final companion object Companion : R|kotlin/Any| {
-                public final fun serializer(): R|kotlinx/serialization/KSerializer<TestSealed.B>|
-
-                private constructor(): R|TestSealed.B.Companion| {
-                    super<R|kotlin/Any|>()
-                }
-
-            }
 
             @R|kotlin/Deprecated|(message = String(This synthesized declaration should not be used directly), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|) public final object $serializer : R|kotlinx/serialization/internal/GeneratedSerializer<TestSealed.B>| {
                 public final override fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|TestSealed.B|): R|kotlin/Unit|
@@ -251,6 +242,15 @@ FILE: metaSerializable.kt
                 public final override fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
 
                 private constructor(): R|TestSealed.B.$serializer| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+            public final companion object Companion : R|kotlin/Any| {
+                public final fun serializer(): R|kotlinx/serialization/KSerializer<TestSealed.B>|
+
+                private constructor(): R|TestSealed.B.Companion| {
                     super<R|kotlin/Any|>()
                 }
 
@@ -281,15 +281,6 @@ FILE: metaSerializable.kt
             public final val value1: R|kotlin/String| = R|<local>/value1|
                 public get(): R|kotlin/String|
 
-            public final companion object Companion : R|kotlin/Any| {
-                public final fun serializer(): R|kotlinx/serialization/KSerializer<TestAbstract.A>|
-
-                private constructor(): R|TestAbstract.A.Companion| {
-                    super<R|kotlin/Any|>()
-                }
-
-            }
-
             @R|kotlin/Deprecated|(message = String(This synthesized declaration should not be used directly), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|) public final object $serializer : R|kotlinx/serialization/internal/GeneratedSerializer<TestAbstract.A>| {
                 public final override fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|TestAbstract.A|): R|kotlin/Unit|
 
@@ -306,6 +297,15 @@ FILE: metaSerializable.kt
 
             }
 
+            public final companion object Companion : R|kotlin/Any| {
+                public final fun serializer(): R|kotlinx/serialization/KSerializer<TestAbstract.A>|
+
+                private constructor(): R|TestAbstract.A.Companion| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
         }
 
         @R|MySerializableWithInfo|(value = Int(123) [evaluated = Int(123)], kclass = <getClass>(Q|kotlin/String|) [evaluated = <getClass>(Q|kotlin/String|)]) public final class B : R|TestSealed| {
@@ -315,15 +315,6 @@ FILE: metaSerializable.kt
 
             public final val value2: R|kotlin/String| = R|<local>/value2|
                 public get(): R|kotlin/String|
-
-            public final companion object Companion : R|kotlin/Any| {
-                public final fun serializer(): R|kotlinx/serialization/KSerializer<TestAbstract.B>|
-
-                private constructor(): R|TestAbstract.B.Companion| {
-                    super<R|kotlin/Any|>()
-                }
-
-            }
 
             @R|kotlin/Deprecated|(message = String(This synthesized declaration should not be used directly), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|) public final object $serializer : R|kotlinx/serialization/internal/GeneratedSerializer<TestAbstract.B>| {
                 public final override fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|TestAbstract.B|): R|kotlin/Unit|
@@ -336,6 +327,15 @@ FILE: metaSerializable.kt
                 public final override fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
 
                 private constructor(): R|TestAbstract.B.$serializer| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+            public final companion object Companion : R|kotlin/Any| {
+                public final fun serializer(): R|kotlinx/serialization/KSerializer<TestAbstract.B>|
+
+                private constructor(): R|TestAbstract.B.Companion| {
                     super<R|kotlin/Any|>()
                 }
 

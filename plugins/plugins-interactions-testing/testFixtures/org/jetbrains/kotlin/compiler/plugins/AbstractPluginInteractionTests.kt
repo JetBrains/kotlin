@@ -5,6 +5,7 @@
 package org.jetbrains.kotlin.compiler.plugins
 
 import org.jetbrains.kotlin.allopen.AllOpenEnvironmentConfigurator
+import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.AbstractLLDiagnosticsTest
 import org.jetbrains.kotlin.assignment.plugin.AssignmentPluginEnvironmentConfigurator
 import org.jetbrains.kotlin.lombok.LombokEnvironmentConfigurator
 import org.jetbrains.kotlin.lombok.LombokRuntimeClassPathProvider
@@ -29,6 +30,15 @@ import org.jetbrains.kotlinx.serialization.enableSerializationRuntimeProviders
 // ---------------------------- box ----------------------------
 
 open class AbstractPluginInteractionFirBlackBoxCodegenTest : AbstractFirLightTreeBlackBoxCodegenTest() {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.enablePlugins()
+    }
+}
+
+// ---------------------------- LL FIR (IDE) diagnostics ----------------------------
+
+abstract class AbstractPluginInteractionLLDiagnosticsTest : AbstractLLDiagnosticsTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.enablePlugins()
