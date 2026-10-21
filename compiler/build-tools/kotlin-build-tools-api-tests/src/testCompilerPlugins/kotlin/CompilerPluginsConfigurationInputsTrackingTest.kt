@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.Project
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.jvmProject
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.junit.jupiter.api.DisplayName
 
 class CompilerPluginsConfigurationInputsTrackingTest : BaseCompilationTest() {
@@ -100,6 +101,8 @@ class CompilerPluginsConfigurationInputsTrackingTest : BaseCompilationTest() {
         }
     }
 
-    private fun Project.expectedLogLevel(strategyConfig: CompilerExecutionStrategyConfiguration): LogLevel =
-        if (strategyConfig.second is ExecutionPolicy.WithDaemon && this !is JvmProject) LogLevel.DEBUG else LogLevel.INFO // TODO: KT-85024
+    private fun expectedLogLevel(strategyConfig: CompilerExecutionStrategyConfiguration): LogLevel =
+        if (strategyConfig.second is ExecutionPolicy.WithDaemon
+            && KotlinToolingVersion(strategyConfig.first.getCompilerVersion()) < KotlinToolingVersion("2.5.20-SNAPSHOT")
+        ) LogLevel.DEBUG else LogLevel.INFO
 }

@@ -14,12 +14,14 @@ import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
 import org.jetbrains.kotlin.buildtools.api.trackers.IcEvent
 import org.jetbrains.kotlin.buildtools.api.trackers.IcEventCollector
 import org.jetbrains.kotlin.buildtools.internal.arguments.*
+import org.jetbrains.kotlin.buildtools.internal.serializability.CompilationResultSerializer
 import org.jetbrains.kotlin.buildtools.internal.serializability.CompilerMessageVisitor
 import org.jetbrains.kotlin.buildtools.internal.serializability.IcEventVisitor
 import org.jetbrains.kotlin.buildtools.internal.serializability.LookupMessageVisitor
 import org.jetbrains.kotlin.buildtools.internal.serializability.Message
 import org.jetbrains.kotlin.buildtools.internal.serializability.MessageReportingMessageCollectorWithDiagnosticId
 import org.jetbrains.kotlin.buildtools.internal.serializability.MessageVisitor
+import org.jetbrains.kotlin.buildtools.internal.serializability.SupportsNewDaemonMode
 import org.jetbrains.kotlin.buildtools.internal.serializability.cast
 import org.jetbrains.kotlin.buildtools.internal.serializability.throwPropertyNotFound
 import org.jetbrains.kotlin.buildtools.internal.trackers.LookupTrackerAdapter
@@ -43,7 +45,8 @@ import java.nio.file.Path
 
 @kotlinx.serialization.Serializable
 internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCompilerArgumentsImpl, CompilerArgs : CommonCompilerArguments> :
-    CancellableBuildOperationImpl<CompilationResult>, BaseCompilationOperation, BaseCompilationOperation.Builder {
+    CancellableBuildOperationImpl<CompilationResult>, BaseCompilationOperation, BaseCompilationOperation.Builder,
+    SupportsNewDaemonMode<CompilationResult> {
 
     protected constructor() : super()
     protected constructor(other: BaseCompilationOperationImpl<BtaCompilerArgs, CompilerArgs>) : super(other) {
@@ -80,6 +83,14 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
                 )
             )
         )
+    }
+
+    override fun deserializeResult(serializedData: SerializedDataContainer): CompilationResult {
+        return KotlinToolchainsImpl.serializer.deserialize(CompilationResultSerializer, serializedData)
+    }
+
+    override fun serializeResult(result: CompilationResult): SerializedDataContainer {
+        return KotlinToolchainsImpl.serializer.serialize(CompilationResultSerializer, result)
     }
 
     @Transient

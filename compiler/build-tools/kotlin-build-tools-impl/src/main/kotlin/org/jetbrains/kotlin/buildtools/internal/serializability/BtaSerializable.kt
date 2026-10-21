@@ -20,9 +20,8 @@ import org.jetbrains.kotlin.daemon.common.SerializedDataContainer
  * these callbacks can be reconstructed based on the recorded information, and using a mechanism for sending remote [Message]s.
  */
 public interface BtaSerializable {
-    public fun beforeSerialization(logger: KotlinLogger): List<MessageVisitor> {
-        return emptyList()
-    }
+    public fun beforeSerialization(logger: KotlinLogger): List<MessageVisitor>
+
 
     /**
      * Called after deserialization, usually in the daemon process. Can be used to reconstruct any callbacks or other state that was removed
@@ -31,7 +30,7 @@ public interface BtaSerializable {
      * The new mechanism using [messageReporter] should be preferred for new callbacks. The [compilerFacade] is provided as a fallback for
      * operations that cannot be performed using the new mechanism at this time, such as JPS incremental caches passing.
      */
-    public fun afterDeserialization(messageReporter: (Message) -> Unit, compilerFacade: CompilerServicesFacadeBase? = null) {}
+    public fun afterDeserialization(messageReporter: (Message) -> Unit, compilerFacade: CompilerServicesFacadeBase? = null)
 }
 
 public interface SupportsNewDaemonMode<T> : BuildOperation<T>, BtaSerializable {

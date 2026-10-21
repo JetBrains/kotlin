@@ -3,8 +3,13 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:UseSerializers(PathAsStringSerializer::class)
+
 package org.jetbrains.kotlin.buildtools.internal.wasm.operations
 
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.UseSerializers
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.report.BuildReporter
 import org.jetbrains.kotlin.build.report.metrics.endMeasureGc
@@ -17,16 +22,11 @@ import org.jetbrains.kotlin.buildtools.api.wasm.WasmHistoryBasedIncrementalCompi
 import org.jetbrains.kotlin.buildtools.api.wasm.WasmIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.wasm.operations.WasmKlibCompilationOperation
 import org.jetbrains.kotlin.buildtools.internal.*
-import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfigurationImpl.Companion.BACKUP_CLASSES
-import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfigurationImpl.Companion.KEEP_IC_CACHES_IN_MEMORY
-import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfigurationImpl.Companion.MODULE_BUILD_DIR
-import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfigurationImpl.Companion.MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION
-import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfigurationImpl.Companion.OUTPUT_DIRS
-import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfigurationImpl.Companion.ROOT_PROJECT_DIR
-import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfigurationImpl.Companion.TRACK_CONFIGURATION_INPUTS
-import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfigurationImpl.Companion.UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM
 import org.jetbrains.kotlin.buildtools.internal.arguments.WasmArgumentsImpl
 import org.jetbrains.kotlin.buildtools.internal.arguments.absolutePathStringOrThrow
+import org.jetbrains.kotlin.buildtools.internal.serializability.PathAsStringSerializer
+import org.jetbrains.kotlin.buildtools.internal.serializability.cast
+import org.jetbrains.kotlin.buildtools.internal.serializability.throwPropertyNotFound
 import org.jetbrains.kotlin.buildtools.internal.trackers.getMetricsReporter
 import org.jetbrains.kotlin.buildtools.internal.wasm.WasmHistoryBasedIncrementalCompilationConfigurationImpl
 import org.jetbrains.kotlin.cli.common.CLICompiler
@@ -42,14 +42,15 @@ import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistoryJs
 import org.jetbrains.kotlin.incremental.storage.FileLocations
 import java.nio.file.Path
 
-internal class WasmKlibCompilationOperationImpl : BaseCompilationOperationImpl<WasmArgumentsImpl, KotlinWasmCompilerArguments>,
+@Serializable
+internal class WasmKlibCompilationOperationImpl : BaseCompilationOperationImpl<WasmArgumentsImpl, @Contextual KotlinWasmCompilerArguments>,
     WasmKlibCompilationOperation, WasmKlibCompilationOperation.Builder,
     DeepCopyable<WasmKlibCompilationOperationImpl> {
-    override val options: Options
     override val sources: List<Path>
     override val destination: Path
     override val compilerArguments: WasmArgumentsImpl
     private val compilerVersion: String
+    internal var incrementalCompilation: WasmIncrementalCompilationConfiguration? = null
 
     constructor(
         sources: List<Path>,
@@ -57,20 +58,19 @@ internal class WasmKlibCompilationOperationImpl : BaseCompilationOperationImpl<W
         compilerArguments: WasmArgumentsImpl = WasmArgumentsImpl(),
         compilerVersion: String,
     ) : super() {
-        this.options = Options(WasmKlibCompilationOperation::class)
         this.sources = sources
         this.destination = destination
         this.compilerArguments = compilerArguments
         this.compilerVersion = compilerVersion
-        initializeOptions(this::class, options)
     }
 
+    @Suppress("UNCHECKED_CAST")
     private constructor(other: WasmKlibCompilationOperationImpl) : super(other) {
-        this.options = other.options.deepCopy()
         this.sources = other.sources
         this.destination = other.destination
         this.compilerArguments = other.compilerArguments.deepCopy()
         this.compilerVersion = other.compilerVersion
+        this.incrementalCompilation = (other.incrementalCompilation as? DeepCopyable<WasmIncrementalCompilationConfiguration>)?.deepCopy() ?: other.incrementalCompilation
     }
 
     override fun historyBasedIcConfigurationBuilder(
@@ -88,27 +88,26 @@ internal class WasmKlibCompilationOperationImpl : BaseCompilationOperationImpl<W
 
     override fun deepCopy(): WasmKlibCompilationOperationImpl = WasmKlibCompilationOperationImpl(this)
 
+    @Suppress("UNCHECKED_CAST")
     @UseFromImplModuleRestricted
-    override fun <V> get(key: WasmKlibCompilationOperation.Option<V>): V = options[key]
+    override fun <V> get(key: WasmKlibCompilationOperation.Option<V>): V = when (key.id) {
+        "INCREMENTAL_COMPILATION" -> incrementalCompilation
+        else -> throwPropertyNotFound(key.id)
+    } as V
 
     @UseFromImplModuleRestricted
     override fun <V> set(key: WasmKlibCompilationOperation.Option<V>, value: V) {
         checkOptionIsAvailableForVersion(key)
-        options[key] = value
+        when (key.id) {
+            "INCREMENTAL_COMPILATION" -> incrementalCompilation = value.cast()
+            else -> throwPropertyNotFound(key.id)
+        }
     }
 
     override fun build(): WasmKlibCompilationOperation = deepCopy()
 
-    private operator fun <V> get(key: Option<V>): V = options[key]
-
-    private operator fun <V> set(key: Option<V>, value: V) {
-        options[key] = value
-    }
-
-    class Option<V>(id: String, default: V) : BaseOptionWithDefault<V>(id, defaultValue = default)
-
     override fun getRootProjectDir(): Path? {
-        return (get(INCREMENTAL_COMPILATION) as? WasmHistoryBasedIncrementalCompilationConfigurationImpl)?.rootProjectDir
+        return (incrementalCompilation as? WasmHistoryBasedIncrementalCompilationConfigurationImpl)?.rootProjectDir
     }
 
     override fun createAndPrepareCompilerArguments(): KotlinWasmCompilerArguments =
@@ -124,7 +123,7 @@ internal class WasmKlibCompilationOperationImpl : BaseCompilationOperationImpl<W
         requestedCompilationResults: Array<Int>,
         arguments: KotlinWasmCompilerArguments,
     ): IncrementalCompilationOptions? {
-        return when (val aggregatedIcConfiguration: WasmIncrementalCompilationConfiguration? = get(INCREMENTAL_COMPILATION)) {
+        return when (val aggregatedIcConfiguration: WasmIncrementalCompilationConfiguration? = incrementalCompilation) {
             is WasmHistoryBasedIncrementalCompilationConfigurationImpl -> {
                 val sourcesChanges = aggregatedIcConfiguration.sourcesChanges
                 val classpathChanges = ClasspathChanges.NotAvailableForJSCompiler
@@ -186,7 +185,7 @@ internal class WasmKlibCompilationOperationImpl : BaseCompilationOperationImpl<W
     }
 
     override fun shouldCompileIncrementally(): Boolean {
-        return when (val icConfig = get(INCREMENTAL_COMPILATION)) {
+        return when (val icConfig = incrementalCompilation) {
             is WasmHistoryBasedIncrementalCompilationConfiguration -> {
                 true
             }
@@ -213,7 +212,7 @@ internal class WasmKlibCompilationOperationImpl : BaseCompilationOperationImpl<W
         messageCollector: MessageCollectorWithDiagnosticId,
         executionContext: ExecutionContext,
     ): CompilationResult {
-        val icConfiguration = get(INCREMENTAL_COMPILATION)
+        val icConfiguration = incrementalCompilation
         requireNotNull(icConfiguration) { "Missing INCREMENTAL_COMPILATION option." }
         check(icConfiguration is WasmHistoryBasedIncrementalCompilationConfigurationImpl) {
             "Unexpected incremental compilation configuration: ${icConfiguration::class}. In this version, it must be an instance of WasmHistoryBasedIncrementalCompilationConfiguration for incremental compilation, or null for non-incremental compilation."
@@ -290,10 +289,6 @@ internal class WasmKlibCompilationOperationImpl : BaseCompilationOperationImpl<W
             enableUnsafeIncrementalCompilationForMultiplatform = this.unsafeIncrementalCompilationForMultiplatform,
             enableMonotonousIncrementalCompileSetExpansion = this.monotonousIncrementalCompileSetExpansion,
         )
-    }
-
-    companion object {
-        val INCREMENTAL_COMPILATION: Option<WasmIncrementalCompilationConfiguration?> = Option("INCREMENTAL_COMPILATION", null)
     }
 }
 
