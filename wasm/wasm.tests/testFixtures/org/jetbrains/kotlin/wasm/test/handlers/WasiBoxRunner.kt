@@ -24,9 +24,9 @@ import org.jetbrains.kotlin.wasm.test.tools.WASI_UNIT_TESTS_ENTRY_EXPORT
 import java.io.File
 
 /**
- * The export the WASI VMs invoke. In a driver-linked batch, `startTest` is the result-collecting driver.
- * Otherwise a `// RUN_UNIT_TESTS` test is isolated, and its `startTest` export is `wasiBoxTestRun.kt`'s glue that runs
- * `box()` alone. Such a test runs `startUnitTests` instead: the compiler exports it from every binary with
+ * The export the WASI VMs invoke. In a driver-linked batch, `starttest` is the result-collecting driver.
+ * Otherwise a `// RUN_UNIT_TESTS` test is isolated, and its `starttest` export is `wasiBoxTestRun.kt`'s glue that runs
+ * `box()` alone. Such a test runs `startunittests` instead: the compiler exports it from every binary with
  * `@kotlin.test.Test` functions, and the `@Test` launcher of `WasmJsLauncherAdditionalSourceProvider` calls `box()`
  * inside the suite, so that one export covers the unit tests and the box verdict alike.
  */
