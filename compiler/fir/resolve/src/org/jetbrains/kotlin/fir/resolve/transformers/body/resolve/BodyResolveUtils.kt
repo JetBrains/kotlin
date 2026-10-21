@@ -142,7 +142,7 @@ fun ConstantValueKind.expectedConeType(session: FirSession): ConeKotlinType {
     }
     return when (this) {
         ConstantValueKind.Null -> session.builtinTypes.nullableNothingType.coneType
-        ConstantValueKind.Boolean -> session.builtinTypes.booleanType.coneType
+        ConstantValueKind.Boolean -> StandardTypes.Boolean
         ConstantValueKind.Char -> constructLiteralType(StandardClassIds.Char)
         ConstantValueKind.Byte -> constructLiteralType(StandardClassIds.Byte)
         ConstantValueKind.Short -> constructLiteralType(StandardClassIds.Short)

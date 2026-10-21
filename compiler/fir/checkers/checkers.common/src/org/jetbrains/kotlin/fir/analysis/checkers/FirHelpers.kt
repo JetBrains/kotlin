@@ -567,7 +567,7 @@ context(context: CheckerContext, reporter: DiagnosticReporter)
 internal fun checkCondition(condition: FirExpression) {
     val coneType = condition.resolvedType.fullyExpandedType().lowerBoundIfFlexible()
     if (coneType !is ConeErrorType &&
-        !coneType.isSubtypeOf(context.session.typeContext, context.session.builtinTypes.booleanType.coneType)
+        !coneType.isSubtypeOf(context.session.typeContext, StandardTypes.Boolean)
     ) {
         if (condition is FirFunctionCall &&
             condition.origin == FirFunctionCallOrigin.Operator &&

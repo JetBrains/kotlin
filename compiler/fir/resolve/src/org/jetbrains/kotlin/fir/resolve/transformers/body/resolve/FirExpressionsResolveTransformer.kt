@@ -1430,7 +1430,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
 
         when (resolved.operation) {
             IS, NOT_IS -> {
-                resolved.resultType = session.builtinTypes.booleanType.coneType
+                resolved.resultType = StandardTypes.Boolean
             }
             AS -> {
                 resolved.resultType = conversionTypeRef.coneType

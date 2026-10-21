@@ -233,7 +233,7 @@ internal class StubBasedAnnotationDeserializer(private val session: FirSession) 
             }
 
             return when (firstValue) {
-                is BooleanValue -> session.builtinTypes.booleanType.coneType
+                is BooleanValue -> StandardTypes.Boolean
                 is ByteValue -> session.builtinTypes.byteType.coneType
                 is CharValue -> session.builtinTypes.charType.coneType
                 is ShortValue -> session.builtinTypes.shortType.coneType
