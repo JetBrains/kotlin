@@ -104,7 +104,6 @@ class DependenciesVerificationMetadataTest {
         val verificationMetadata = mapper.readValue<VerificationMetadata>(File("gradle/verification-metadata.xml"))
 
         val trustedArtifactsExceptions = listOf(
-            TrustedArtifact(group = "org.jetbrains.intellij.deps", name = "jdom"),
             TrustedArtifact(file = ".*-javadoc[.]jar", regex = "true"),
             TrustedArtifact(file = ".*-sources[.]jar", regex = "true"),
             TrustedArtifact(file = ".*[.]module", regex = "true"),
