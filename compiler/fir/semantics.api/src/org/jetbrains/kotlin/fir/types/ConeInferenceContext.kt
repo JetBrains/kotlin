@@ -49,7 +49,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
     }
 
     override fun nothingType(): ConeClassLikeType {
-        return session.builtinTypes.nothingType.coneType
+        return StandardTypes.Nothing
     }
 
     override fun anyType(): ConeClassLikeType {

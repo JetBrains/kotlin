@@ -648,7 +648,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                 } else if (typeRef.isMarkedNullable) {
                     session.builtinTypes.nullableNothingType.coneType
                 } else {
-                    session.builtinTypes.nothingType.coneType
+                    StandardTypes.Nothing
                 }
 
                 val unionType = ConeTypeUnifier.unify(primaryType, coneTypes, ConeAttributes.Empty, session.typeContext)

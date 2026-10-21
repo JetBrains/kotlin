@@ -119,7 +119,7 @@ fun ConeDynamicType.Companion.create(
     session: FirSession,
     attributes: ConeAttributes = ConeAttributes.Empty,
 ): ConeDynamicType = ConeDynamicType(
-    session.builtinTypes.nothingType.coneType.withAttributes(attributes),
+    StandardTypes.Nothing.withAttributes(attributes),
     StandardTypes.NullableAny.withAttributes(attributes),
 )
 
