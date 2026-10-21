@@ -12,8 +12,12 @@ import java.lang.Boolean.getBoolean
 
 private val toolLogsEnabled: Boolean = getBoolean("kotlin.js.test.verbose")
 
-/** The export that runs box(). This function's behavior changes depending on the grouping test infrastructure. */
-internal const val WASI_BOX_ENTRY_EXPORT = "startTest"
+/**
+ * The export that runs box(). This function's behavior changes depending on the grouping test infrastructure.
+ *
+ * For maximum compatibility, use identifiers that are both valid JS identifiers (no kebab-case) and valid component model identifiers (no camelCase).
+ */
+internal const val WASI_BOX_ENTRY_EXPORT = "starttest"
 
 internal sealed class WasmVM(
     val property: String,
@@ -100,15 +104,18 @@ internal sealed class WasmVM(
             useStackSwitching: Boolean,
             toolArgs: List<String>,
             wasiEntryExport: String,
-        ) =
-            tool.run(
+        ): String {
+            // The Wasm/WASI target requires running components, so that the standard libraries WASI 0.2+ imports are available
+            val component = WasiComponentizer.componentize(File(workingDirectory, entryFile), wasiEntryExport)
+            return tool.run(
                 *toolArgs.toTypedArray(),
                 *if (useStackSwitching) arrayOf("-W", "stack-switching") else emptyArray(),
                 "--invoke",
-                wasiEntryExport,
-                entryFile,
+                "$wasiEntryExport()", // `--invoke` takes a call expression for a component
+                component.absolutePath,
                 workingDirectory = workingDirectory,
             )
+        }
     }
 
     object NodeJs : WasmVM(property = "wasm.javascript.engine.path.NodeJs", entryPointIsJsFile = true) {

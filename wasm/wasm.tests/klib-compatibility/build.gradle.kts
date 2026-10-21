@@ -10,6 +10,7 @@ plugins {
     id("binaryen-configuration")
     id("nodejs-configuration")
     id("wasmtime-configuration")
+    id("wasm-tools-configuration")
     id("test-inputs-check")
 }
 
@@ -73,9 +74,17 @@ fun Project.customCompilerTest(
         with(binaryenKotlinBuild) {
             setupBinaryen()
         }
+        // the WASI tests run as components on Wasmtime, see `WasiComponentizer`
         with(wasmtimeKotlinBuild) {
             setupWasmtime()
         }
+        with(wasmToolsKotlinBuild) {
+            setupWasmTools()
+        }
+        addAbsoluteDirectoryProperty(
+            project(":kotlin-stdlib").isolated.projectDirectory.dir("wasm/wasi/internal/wit"),
+            "kotlin.wasm.wasi.stdlib.wit.dir"
+        )
         val buildFeatures = project.serviceOf<BuildFeatures>()
         if (!buildFeatures.isolatedProjects.active.get()) {
             with(wasmNodeJsKotlinBuild) {
@@ -149,6 +158,7 @@ projectTests {
     testGenerator("org.jetbrains.kotlin.generators.tests.GenerateWasmKlibCompatibilityTestsKt", generateTestsInBuildDirectory = true)
     testData(project(":compiler").isolated, "testData/codegen")
     testData(project(":compiler").isolated, "testData/klib/klib-compatibility/sanity")
+    testData(project(":kotlin-stdlib").isolated, "wasm/wasi/internal/wit")
 
     withWasmRuntime()
     withStdlibCommon()
