@@ -12,6 +12,13 @@ func assertReversed<T: Equatable>(reversed: any KotlinRuntimeSupport.List<T>, or
     }
 }
 
+func assertEquals<T: Equatable>(actual: any KotlinRuntimeSupport.List<T>, expected: any KotlinRuntimeSupport.List<T>) throws {
+    try #require(actual.count == expected.count)
+    for i in actual.indices {
+        try #require(actual[i] == expected[i])
+    }
+}
+
 // TODO: Create generic listOf() and toList functions KT-88831
 let array = [4, 8, 5, 16, 23, 42]
 
@@ -214,4 +221,68 @@ func testMyMutableListImpl() throws {
     original[1] = 64
     let expected = listOf(elements: Int32(4), 64, 5, 16, 23, 42)
     try assertReversed(reversed: reverseMyListImpl(l: original), original: expected)
+}
+
+@Test
+func testListSubSequenceGet() throws {
+    let list = listOf(elements: Int32(4), 8, 5, 16, 23, 42)
+    let subList = list[1..<4]
+    try #require(subList[2] == 5)
+    // subList[2] = 6 // error: cannot assign through subscript: 'subList' is a 'let' constant
+}
+
+@Test
+func testListSubSequenceSet() throws {
+    let list = listOf(elements: Int32(4), 8, 5, 16, 23, 42)
+    var subList = list[1..<4]
+    try #require(subList[2] == 5)
+    subList[2] = 6
+    try #require(subList[2] == 6)
+    // list is immutable so only the subList should have been changed
+    try assertEquals(actual: list, expected: listOf(elements:  Int32(4), 8, 5, 16, 23, 42))
+}
+
+@Test
+func testMutableListSubSequenceSet() throws {
+    let mutableList = mutableListOf(elements: Int32(4), 8, 5, 16, 23, 42)
+    var mutableSubList = mutableList[1..<4]
+    try #require(mutableSubList[2] == 5)
+    mutableSubList[2] = 6
+    try #require(mutableSubList[2] == 6)
+    // list is mutable and should have been changed
+    try assertEquals(actual: mutableList, expected: listOf(elements: Int32(4), 8, 6, 16, 23, 42))
+}
+
+@Test
+func testListSubSequenceSetRange() throws {
+    let list = listOf(elements: Int32(4), 8, 5, 16, 23, 42)
+    var subListA = list[0..<3]
+    var subListB = list[3..<6]
+    try #require(subListA[0] == 4)
+    try #require(subListB[3] == 16)
+    subListA[0..<3] = subListB
+    try #require(subListA[0] == 16)
+    // list is immutable so only the subList should have been changed
+    try assertEquals(actual: list, expected: listOf(elements: Int32(4), 8, 5, 16, 23, 42))
+}
+
+@Test
+func testMutableListSubSequenceSetRange() throws {
+    let mutableList = mutableListOf(elements: Int32(4), 8, 5, 16, 23, 42)
+    var mutableSubListA = mutableList[0..<3]
+    var mutableSubListB = mutableList[3..<6]
+    try #require(mutableSubListA[0] == 4)
+    try #require(mutableSubListB[3] == 16)
+    mutableSubListA[0..<3] = mutableSubListB
+    try #require(mutableSubListA[0] == 16)
+    // list is mutable and should have been changed
+    try assertEquals(actual: mutableList, expected: listOf(elements: Int32(16), 23, 42, 16, 23, 42))
+}
+
+@Test
+func testMutableListSetSubSequence() throws {
+    let mutableList = mutableListOf(elements: Int32(4), 8, 5, 16, 23, 42)
+    let list = listOf(elements: Int32(9), 6, 2, 7, 3)
+    mutableList[2..<5] = list[1..<4]
+    try assertEquals(actual: mutableList, expected: listOf(elements: Int32(4), 8, 6, 2, 7, 42))
 }
