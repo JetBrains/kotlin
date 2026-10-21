@@ -15,6 +15,7 @@ plugins {
     id("java-test-fixtures")
     id("test-inputs-check")
     id("wasmtime-configuration")
+    id("wasm-tools-configuration")
 }
 
 node {
@@ -348,6 +349,14 @@ projectTests {
             with(wasmtimeKotlinBuild) {
                 setupWasmtime()
             }
+            // the WASI tests run as components, see `WasiComponentizer`
+            with(wasmToolsKotlinBuild) {
+                setupWasmTools()
+            }
+            addAbsoluteDirectoryProperty(
+                project(":kotlin-stdlib").isolated.projectDirectory.dir("wasm/wasi/internal/wit"),
+                "kotlin.wasm.wasi.stdlib.wit.dir"
+            )
             with(binaryenKotlinBuild) {
                 setupBinaryen()
             }
@@ -419,6 +428,7 @@ projectTests {
     testData(project(":js:js.translator").isolated, "testData/incremental")
     testData(project(":js:js.translator").isolated, "testData/box")
     testData(project(":js:js.translator").isolated, "testData/typescript-export/wasm/")
+    testData(project(":kotlin-stdlib").isolated, "wasm/wasi/internal/wit")
 
     withWasmRuntime()
     withStdlibCommon()
