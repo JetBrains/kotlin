@@ -76,9 +76,22 @@ open class KaptContext(val options: KaptOptions, val withJdk: Boolean, val logge
 
             if (sourcesToReprocess == SourcesToReprocess.FullRebuild) {
                 // remove all generated sources and classes
+                val compiledSourceRoots = options.compiledSources.map { it.canonicalFile }
                 fun deleteAndCreate(dir: File) {
+                    // Directories shared with compiler output are not owned by kapt.
+                    val canonicalDir = dir.canonicalFile
+                    val sharedRoot = compiledSourceRoots.firstOrNull {
+                        canonicalDir.startsWith(it) || it.startsWith(canonicalDir)
+                    }
+                    if (sharedRoot != null) {
+                        logger.warn(
+                            "Not deleting $dir before the full rebuild because it overlaps the compiled sources directory $sharedRoot. " +
+                                    "Stale generated files may remain."
+                        )
+                        return
+                    }
                     if (!dir.deleteRecursively()) logger.warn("Unable to delete $dir.")
-                    if (!dir.mkdir()) logger.warn("Unable to create $dir.")
+                    if (!dir.mkdirs()) logger.warn("Unable to create $dir.")
                 }
                 deleteAndCreate(options.sourcesOutputDir)
                 deleteAndCreate(options.classesOutputDir)
