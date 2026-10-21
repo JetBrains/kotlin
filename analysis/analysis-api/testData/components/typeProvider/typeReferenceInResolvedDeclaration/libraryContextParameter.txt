@@ -3,7 +3,7 @@ Decompiled text loaded by type computation: false
 
 context(c: kotlin.collections.List<T>)
 //         ^List<T>(use)
-//                                 ^T(decl)
+//                                 ^T(use)
 public fun <T> T.foo(): T { /* compiled code */ }
-//             ^T(decl)
-//                      ^T(decl)
+//             ^T(use)
+//                      ^T(use)

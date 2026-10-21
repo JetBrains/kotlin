@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.psiUtil.hasSuspendModifier
+import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.psi.psiUtil.unwrapNullability
 import org.jetbrains.kotlin.psi.stubs.impl.*
 import org.jetbrains.kotlin.types.ConstantValueKind
@@ -423,4 +424,52 @@ private inline fun <R> KtTypeElement.mapTypeArguments(
     }
 
     else -> null
+}
+
+/**
+ * Returns the part of [this] type which corresponds to [nestedTypeReference], a type reference nested in [typeReference],
+ * or `null` if there is no such part.
+ *
+ * [this] type has to be deserialized from [typeReference] by [StubBasedFirTypeDeserializer], as the type arguments are matched
+ * with the PSI by [mapTypeArguments].
+ */
+internal fun ConeKotlinType.findNestedType(typeReference: KtTypeReference, nestedTypeReference: KtTypeReference): ConeKotlinType? {
+    if (typeReference === nestedTypeReference) return this
+
+    val path = nestedTypeReference.parentsWithSelf
+        .takeWhile { it !== typeReference }
+        .filterIsInstance<KtTypeReference>()
+        .toSet()
+
+    return findNestedType(typeReference, nestedTypeReference, path)
+}
+
+private fun ConeKotlinType.findNestedType(
+    typeReference: KtTypeReference,
+    nestedTypeReference: KtTypeReference,
+    path: Set<KtTypeReference>,
+): ConeKotlinType? {
+    if (typeReference === nestedTypeReference) return this
+
+    // The PSI of a flexible type represents its lower bound
+    val type = lowerBoundIfFlexible()
+    val typeElement = typeReference.typeElement?.unwrapNullability() ?: return null
+
+    // `T & Any` is deserialized as a definitely non-nullable type, which has no part for `Any`
+    if (typeElement is KtIntersectionType) {
+        val leftTypeReference = typeElement.getLeftTypeRef()?.takeIf { it in path } ?: return null
+        val originalType = (type as? ConeDefinitelyNotNullType)?.original ?: type
+        return originalType.findNestedType(leftTypeReference, nestedTypeReference, path)
+    }
+
+    val argumentTypeReferences = typeElement.mapTypeArguments { argumentTypeReference, _ -> argumentTypeReference } ?: return null
+
+    val typeArguments = (type as? ConeClassLikeType)?.typeArguments ?: return null
+    if (typeArguments.size != argumentTypeReferences.size) return null
+
+    val index = argumentTypeReferences.indexOfFirst { it != null && it in path }
+    if (index == -1) return null
+
+    val argumentType = typeArguments[index].type ?: return null
+    return argumentType.findNestedType(argumentTypeReferences[index]!!, nestedTypeReference, path)
 }
