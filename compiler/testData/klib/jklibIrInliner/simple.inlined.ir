@@ -1,0 +1,48 @@
+Module: lib
+FILE fqName:lib fileName:/lib.kt lineStartOffsets: [0, 15, 31, 43, 44, 83, 84]
+  FUN[51, 82] name:double visibility:public modality:FINAL returnType:kotlin.Int [inline]
+    VALUE_PARAMETER[62, 68] kind:Regular name:x index:0 type:kotlin.Int
+    BLOCK_BODY[77, 82]
+      RETURN[82, 82] type=kotlin.Nothing from='public final fun double (x: kotlin.Int): kotlin.Int declared in lib'
+        CALL[77, 82] 'public final fun times (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=MUL
+          ARG <this>: GET_VAR[77, 78] 'x: kotlin.Int declared in lib.double' type=kotlin.Int origin=null
+          ARG other: CONST[81, 82] Int type=kotlin.Int value=2
+Module: main
+FILE fqName:test fileName:/main.kt lineStartOffsets: [0, 1, 2, 3, 4, 5, 6, 27, 44, 57, 58, 76, 77, 116, 117, 159]
+  FUN[117, 158] name:test visibility:public modality:FINAL returnType:kotlin.Int
+    BLOCK_BODY[135, 158]
+      RETURN[158, 158] type=kotlin.Nothing from='public final fun test (): kotlin.Int declared in test'
+        CALL[135, 158] 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
+          ARG <this>: BLOCK[135, 145] type=kotlin.Int origin=INLINE_ARGS_CONTAINER
+            VAR[-1, -1] IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Int [val]
+              CONST[142, 144] Int type=kotlin.Int value=21
+            RETURNABLE_BLOCK[135, 145] type=kotlin.Int origin=null
+              INLINED_BLOCK[135, 145]->[51, 82] type=kotlin.Int origin=null
+                inlinedFunctionSymbol: public final fun double (x: kotlin.Int): kotlin.Int declared in lib
+                inlinedFunctionFileEntry: FILE_ENTRY path:/lib.kt
+                VAR[-1, -1] IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER name:x type:kotlin.Int [val]
+                  GET_VAR[-1, -1] 'val tmp_0: kotlin.Int declared in test.test' type=kotlin.Int origin=null
+                RETURN[82, 82] type=kotlin.Nothing from='{IrReturnableBlockImpl}'
+                  CALL[77, 82] 'UNBOUND IrSimpleFunctionSymbolImpl' type=kotlin.Int origin=MUL
+                    ARG 1: GET_VAR[77, 78] 'val x: kotlin.Int declared in test.test' type=kotlin.Int origin=null
+                    ARG 2: CONST[81, 82] Int type=kotlin.Int value=2
+          ARG other: BLOCK[148, 158] type=kotlin.Int origin=INLINE_ARGS_CONTAINER
+            VAR[-1, -1] IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.Int [val]
+              CONST[155, 157] Int type=kotlin.Int value=14
+            RETURNABLE_BLOCK[148, 158] type=kotlin.Int origin=null
+              INLINED_BLOCK[148, 158]->[84, 115] type=kotlin.Int origin=null
+                inlinedFunctionSymbol: public final fun triple (x: kotlin.Int): kotlin.Int declared in test
+                inlinedFunctionFileEntry: FILE_ENTRY path:/main.kt
+                VAR[-1, -1] IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER name:x type:kotlin.Int [val]
+                  GET_VAR[-1, -1] 'val tmp_1: kotlin.Int declared in test.test' type=kotlin.Int origin=null
+                RETURN[115, 115] type=kotlin.Nothing from='{IrReturnableBlockImpl}'
+                  CALL[110, 115] 'public final fun times (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=MUL
+                    ARG <this>: GET_VAR[110, 111] 'val x: kotlin.Int declared in test.test' type=kotlin.Int origin=null
+                    ARG other: CONST[114, 115] Int type=kotlin.Int value=3
+  FUN[84, 115] name:triple visibility:public modality:FINAL returnType:kotlin.Int [inline]
+    VALUE_PARAMETER[95, 101] kind:Regular name:x index:0 type:kotlin.Int
+    BLOCK_BODY[110, 115]
+      RETURN[115, 115] type=kotlin.Nothing from='public final fun triple (x: kotlin.Int): kotlin.Int declared in test'
+        CALL[110, 115] 'public final fun times (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=MUL
+          ARG <this>: GET_VAR[110, 111] 'x: kotlin.Int declared in test.triple' type=kotlin.Int origin=null
+          ARG other: CONST[114, 115] Int type=kotlin.Int value=3
