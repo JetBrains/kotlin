@@ -25,19 +25,14 @@ class JKlibCliPipeline(
     override fun createCompoundPhase(
         arguments: K2JKlibCompilerArguments,
     ): CompilerPhase<PipelineContext, ArgumentsPipelineArtifact<K2JKlibCompilerArguments>, *> {
-        val phases =
-            JKlibConfigurationPhase then
+        // When compiling to IR, end the pipeline with the lowered IR instead of serializing it into a KLIB.
+        val lastIrPhase = if (arguments.compileIr) JKlibIrCompilationResultPhase else JKlibKlibSerializationPhase
+        return JKlibConfigurationPhase then
                 JKlibFrontendPipelinePhase.thenIf(
                     condition = ::skipIrGeneration,
                     onTrue = JKlibMetadataSerializationPhase,
-                    onFalse = JKlibFir2IrPipelinePhase then JKlibPreSerializationLoweringPhase then JKlibKlibSerializationPhase,
+                    onFalse = JKlibFir2IrPipelinePhase then JKlibPreSerializationLoweringPhase then lastIrPhase,
                 )
-
-        return if (arguments.compileIr) {
-            phases then JKlibIrCompilationPhase
-        } else {
-            phases
-        }
     }
 
     /**

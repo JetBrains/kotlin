@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.arguments.K2JKlibCompilerArguments
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.diagnosticFactoriesStorage
-import org.jetbrains.kotlin.cli.jklib.config.jklibCompileIr
+import org.jetbrains.kotlin.cli.jklib.IrCompilationResult
 import org.jetbrains.kotlin.cli.jklib.config.jklibManifestProperties
 import org.jetbrains.kotlin.cli.jklib.config.jklibOutputDestination
 import org.jetbrains.kotlin.cli.jklib.config.klibPaths
@@ -175,7 +175,6 @@ object JKlibConfigurationUpdater : ConfigurationUpdater<K2JKlibCompilerArguments
         configuration.renderDiagnosticInternalName = arguments.renderInternalDiagnosticNames
 
         arguments.destination?.let { configuration.jklibOutputDestination = it }
-        configuration.jklibCompileIr = arguments.compileIr
         arguments.klibManifestProperties?.let { properties ->
             val parsedProperties = LinkedHashMap<String, String>(properties.size)
             for (property in properties) {
@@ -337,6 +336,16 @@ private fun AllModulesFrontendOutput.convertToIrAndActualize(
     )
 }
 
+/**
+ * Hands the lowered IR produced by FIR2IR over as the result of the IR compilation, instead of serializing the module into a KLIB.
+ */
+object JKlibIrCompilationResultPhase : PipelinePhase<JKlibFir2IrPipelineArtifact, IrCompilationResult>(
+    name = "JKlibIrCompilationResultPhase",
+) {
+    override fun executePhase(input: JKlibFir2IrPipelineArtifact): IrCompilationResult =
+        IrCompilationResult(input.result.irModuleFragment, input.result.pluginContext, input.configuration)
+}
+
 object JKlibKlibSerializationPhase : PipelinePhase<JKlibFir2IrPipelineArtifact, JKlibSerializationArtifact>(
     name = "JKlibKlibSerializationPhase",
     postActions = setOf(CheckCompilationErrors.CheckDiagnosticCollector)
@@ -378,7 +387,7 @@ object JKlibKlibSerializationPhase : PipelinePhase<JKlibFir2IrPipelineArtifact, 
         KlibWriter {
             // Skip ZIP archive creation and write directly to a directory for better performance when the generated Klib is immediately
             // deserialized.
-            format(if (configuration.jklibCompileIr) KlibFormat.Directory else KlibFormat.ZipArchive)
+            format(KlibFormat.ZipArchive)
             manifest {
                 moduleName(configuration.moduleName ?: JvmProtoBufUtil.DEFAULT_MODULE_NAME)
                 versions(versions)

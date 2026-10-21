@@ -64,12 +64,18 @@ import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.hasShape
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.util.resolveFakeOverrideOrSelf
+import org.jetbrains.kotlin.ir.validation.IrValidationError
+import org.jetbrains.kotlin.ir.validation.IrValidationSeverity
+import org.jetbrains.kotlin.ir.validation.IrValidatorConfig
+import org.jetbrains.kotlin.ir.validation.validateIr
+import org.jetbrains.kotlin.library.metadata.KlibDeserializedContainerSource
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 /**
  * The [PreSerializationSymbols] of the JKlib first phase.
@@ -196,15 +202,21 @@ private class JKlibPrivateInlineFunctionResolver : JKlibPreSerializationInlineFu
 private class JKlibNonPrivateInlineFunctionResolver(
     context: PreSerializationLoweringContext,
 ) : JKlibPreSerializationInlineFunctionResolver(InlineMode.ALL_INLINE_FUNCTIONS) {
+    private val symbolResolver = JKlibInlineFunctionSymbolResolver(context)
+
     private val deserializer = NonLinkingIrInlineFunctionDeserializer(
         irBuiltIns = context.irBuiltIns,
         signatureComputer = PublicIdSignatureComputer(context.irMangler),
+        symbolResolver = symbolResolver::resolve,
     )
 
     override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
         val callee = super.getFunctionDeclaration(symbol) ?: return null
         if (callee.hasAnnotation(DO_NOT_INLINE_ON_FIRST_STAGE)) return null
         if (callee.body != null || callee !is IrSimpleFunction) return callee
+        // The top-level IR-only declarations referenced by the inlined body are looked up in the KLIBs whose inline functions are
+        // inlined (see `JKlibIrOnlyDeclarationDeserializer`).
+        (callee.containerSource as? KlibDeserializedContainerSource)?.let { symbolResolver.dependencyLibraries += it.klib }
         return deserializer.deserializeInlineFunction(callee)
     }
 
@@ -218,6 +230,30 @@ private class JKlibPrivateFunctionInlining(context: PreSerializationLoweringCont
 
 private class JKlibNonPrivateFunctionInlining(context: PreSerializationLoweringContext) :
     FunctionInlining(context, JKlibNonPrivateInlineFunctionResolver(context))
+
+/**
+ * Reports the symbols that the first phase left unbound.
+ *
+ * The other KLIB-based backends can't run this check: they deliberately leave the references of the inlined bodies unbound and let
+ * the consumer of the KLIB link them. The JKlib pipeline resolves them eagerly instead (see `JKlibInlineFunctionSymbolResolver`),
+ * so it can require that nothing is left unbound.
+ *
+ * Unlike the other IR validations, this one isn't gated behind `-Xverify-ir`. It checks the single invariant that the eager
+ * resolution above is responsible for, and a violation of it means that the IR refers to a declaration that was never linked.
+ * Only [org.jetbrains.kotlin.ir.symbols.IrSymbol.isBound] is checked, so this costs one traversal rather than the whole IR validation.
+ */
+private class JKlibValidateNoUnboundSymbols(private val context: JKlibPreSerializationLoweringContext) : ModuleLoweringPass {
+    override fun lower(irModule: IrModuleFragment) {
+        validateIr(
+            irModule,
+            context.irBuiltIns,
+            IrValidatorConfig(checkUnboundSymbols = true),
+            context.diagnosticReporter,
+            getSeverity = { error -> runIf(error.cause == IrValidationError.Cause.UnboundSymbol) { IrValidationSeverity.ERROR } },
+            phaseName = "JKlibValidateNoUnboundSymbols",
+        )
+    }
+}
 
 /**
  * The JKlib flavor of `loweringsOfTheFirstPhase`, with the intra-module and cross-module inliners always enabled.
@@ -255,6 +291,7 @@ fun jklibLoweringsOfTheFirstPhase(
         this += ::createSyntheticAccessorGeneration
         this += ::JKlibNonPrivateFunctionInlining
         this += ::createInlineFunctionSerializationPreProcessing
+        this += ::JKlibValidateNoUnboundSymbols
     }
     return createModulePhases(*phases.toTypedArray())
 }

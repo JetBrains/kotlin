@@ -63,7 +63,7 @@ FILE fqName:test fileName:/main.kt lineStartOffsets: [0, 1, 2, 3, 4, 5, 6, 7, 8,
               VAR[-1, -1] IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER name:this type:lib.C [val]
                 GET_VAR[-1, -1] 'val tmp_0: lib.C declared in test.test' type=lib.C origin=null
               RETURN[299, 299] type=kotlin.Nothing from='{IrReturnableBlockImpl}'
-                CALL[254, 299] 'UNBOUND IrSimpleFunctionSymbolImpl' type=kotlin.Int origin=PLUS
-                  ARG 1: CALL[254, 271] 'UNBOUND IrSimpleFunctionSymbolImpl' type=kotlin.Int origin=null
-                    ARG 1: GET_VAR[254, 271] 'val this: lib.C declared in test.test' type=lib.C origin=IMPLICIT_ARGUMENT
-                  ARG 2: CALL[274, 299] 'UNBOUND IrSimpleFunctionSymbolImpl' type=kotlin.Int origin=null
+                CALL[254, 299] 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
+                  ARG <this>: CALL[254, 271] 'internal final fun access$privateFunction ($this: lib.C): kotlin.Int declared in lib.C' type=kotlin.Int origin=null
+                    ARG $this: GET_VAR[254, 271] 'val this: lib.C declared in test.test' type=lib.C origin=IMPLICIT_ARGUMENT
+                  ARG other: CALL[274, 299] 'internal final fun access$privateTopLevelFunction$tLibKt (): kotlin.Int declared in lib' type=kotlin.Int origin=null

@@ -66,7 +66,6 @@ abstract class AbstractFirJKlibIrTextTest : AbstractKotlinCompilerJKlibTest() {
 
         facadeStep(::PreSerializationLoweringCliJKlibFacade)
         loweredIrHandlersStep {
-            useHandlers({ JKlibSerializedIrDumpHandler(it, isAfterDeserialization = false) })
             useHandlers(
                 { testServices, artifactKind ->
                     IrTextDumpHandler(
@@ -84,11 +83,6 @@ abstract class AbstractFirJKlibIrTextTest : AbstractKotlinCompilerJKlibTest() {
 
         facadeStep(::SerializationCliJKlibFacade)
         klibArtifactsHandlersStep()
-
-        facadeStep(::JKlibIrCompilationCliFacade)
-        deserializedIrHandlersStep {
-            useHandlers({ JKlibSerializedIrDumpHandler(it, isAfterDeserialization = true) })
-        }
 
         setupDefaultDirectivesForIrTextTest()
         defaultDirectives {
