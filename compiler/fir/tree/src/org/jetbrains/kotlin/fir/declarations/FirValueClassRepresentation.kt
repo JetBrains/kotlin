@@ -6,10 +6,11 @@
 package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
-import org.jetbrains.kotlin.descriptors.FullValueClassRepresentation
 import org.jetbrains.kotlin.descriptors.ValueClassBackendAgnosticApi
 import org.jetbrains.kotlin.descriptors.ValueClassRepresentation
 import org.jetbrains.kotlin.descriptors.interpretAsInlineClassRepresentationOrNull
+import org.jetbrains.kotlin.fir.declarations.utils.isInline
+import org.jetbrains.kotlin.fir.declarations.utils.isValue
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
@@ -34,15 +35,15 @@ fun FirRegularClassSymbol.inlineClassRepresentationInJvm(): InlineClassRepresent
     )
 
 val FirRegularClassSymbol.isFullValueClass: Boolean
-    get() = valueClassRepresentation is FullValueClassRepresentation
+    get() = isValue && !isInline
 
 @SymbolInternals
 val FirRegularClass.isFullValueClass: Boolean
-    get() = valueClassRepresentation is FullValueClassRepresentation
+    get() = isValue && !isInline
+
+val FirRegularClassSymbol.isInlineClass: Boolean
+    get() = isValue && isInline
 
 @SymbolInternals
 val FirRegularClass.isInlineClass: Boolean
-    get() = valueClassRepresentation is InlineClassRepresentation
-
-val FirRegularClassSymbol.isInlineClass: Boolean
-    get() = valueClassRepresentation is InlineClassRepresentation
+    get() = isValue && isInline

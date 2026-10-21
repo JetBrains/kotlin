@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirWillBecomeValueDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
-import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
+import org.jetbrains.kotlin.fir.declarations.utils.isValue
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -38,7 +38,7 @@ private fun FirClassSymbol<*>.hasWillBecomeValueAnnotation(session: FirSession):
  * and neither enums nor 'open' classes are going to become value classes.
  */
 fun FirRegularClassSymbol.willBecomeValueInapplicableTarget(): String? = when {
-    isInlineOrValue -> "a value class"
+    isValue -> "a value class"
     classKind == ClassKind.INTERFACE -> "an interface"
     classKind == ClassKind.ANNOTATION_CLASS -> "an annotation class"
     classKind == ClassKind.ENUM_CLASS -> "an enum class"

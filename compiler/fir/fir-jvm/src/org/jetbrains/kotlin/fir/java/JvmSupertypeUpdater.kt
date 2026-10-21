@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.SuspiciousValueClassCheck
 import org.jetbrains.kotlin.fir.declarations.utils.isData
 import org.jetbrains.kotlin.fir.declarations.utils.isValue
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
@@ -38,7 +37,6 @@ import org.jetbrains.kotlin.name.StandardClassIds
 class JvmSupertypeUpdater(private val session: FirSession) : PlatformSupertypeUpdater() {
     private val jvmRecordUpdater = DelegatedConstructorCallTransformer(session)
 
-    @OptIn(SuspiciousValueClassCheck::class)
     override fun updateSupertypesIfNeeded(firClass: FirClass, scopeSession: ScopeSession) {
         if (firClass !is FirRegularClass) return
         if (!firClass.hasAnnotationUltraSafe(JvmStandardClassIds.Annotations.JvmRecord)) return

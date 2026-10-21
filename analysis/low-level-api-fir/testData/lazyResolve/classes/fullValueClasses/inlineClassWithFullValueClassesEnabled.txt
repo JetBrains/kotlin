@@ -72,7 +72,7 @@ FILE: [ResolvedTo(IMPORTS)] inlineClassWithFullValueClassesEnabled.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] inlineClassWithFullValueClassesEnabled.kt
-    @R|kotlin/jvm/JvmInline|[Types]() public final value [ResolvedTo(STATUS)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Inline : R|kotlin/Any| {
+    @R|kotlin/jvm/JvmInline|[Types]() public final inline value [ResolvedTo(STATUS)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Inline : R|kotlin/Any| {
         public? [ResolvedTo(TYPES)] [ContainingClassKey=Inline] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/Inline.value] value: R|kotlin/Int|): R|pack/Inline| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -84,7 +84,7 @@ FILE: [ResolvedTo(IMPORTS)] inlineClassWithFullValueClassesEnabled.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] inlineClassWithFullValueClassesEnabled.kt
-    @R|kotlin/jvm/JvmInline|[Types]() public final value [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Inline : R|kotlin/Any| {
+    @R|kotlin/jvm/JvmInline|[Types]() public final inline value [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Inline : R|kotlin/Any| {
         public? [ResolvedTo(TYPES)] [ContainingClassKey=Inline] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/Inline.value] value: R|kotlin/Int|): R|pack/Inline| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -96,7 +96,7 @@ FILE: [ResolvedTo(IMPORTS)] inlineClassWithFullValueClassesEnabled.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] inlineClassWithFullValueClassesEnabled.kt
-    @R|kotlin/jvm/JvmInline|[Types]() public final value [ResolvedTo(CONTRACTS)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Inline : R|kotlin/Any| {
+    @R|kotlin/jvm/JvmInline|[Types]() public final inline value [ResolvedTo(CONTRACTS)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Inline : R|kotlin/Any| {
         public? [ResolvedTo(TYPES)] [ContainingClassKey=Inline] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/Inline.value] value: R|kotlin/Int|): R|pack/Inline| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -108,7 +108,7 @@ FILE: [ResolvedTo(IMPORTS)] inlineClassWithFullValueClassesEnabled.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] inlineClassWithFullValueClassesEnabled.kt
-    @R|kotlin/jvm/JvmInline|[Types]() public final value [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Inline : R|kotlin/Any| {
+    @R|kotlin/jvm/JvmInline|[Types]() public final inline value [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Inline : R|kotlin/Any| {
         public? [ResolvedTo(TYPES)] [ContainingClassKey=Inline] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/Inline.value] value: R|kotlin/Int|): R|pack/Inline| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -120,7 +120,7 @@ FILE: [ResolvedTo(IMPORTS)] inlineClassWithFullValueClassesEnabled.kt
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] inlineClassWithFullValueClassesEnabled.kt
-    @R|kotlin/jvm/JvmInline|[Types]() public final value [ResolvedTo(CONSTANT_EVALUATION)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Inline : R|kotlin/Any| {
+    @R|kotlin/jvm/JvmInline|[Types]() public final inline value [ResolvedTo(CONSTANT_EVALUATION)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Inline : R|kotlin/Any| {
         public? [ResolvedTo(TYPES)] [ContainingClassKey=Inline] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/Inline.value] value: R|kotlin/Int|): R|pack/Inline| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -132,7 +132,7 @@ FILE: [ResolvedTo(IMPORTS)] inlineClassWithFullValueClassesEnabled.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] inlineClassWithFullValueClassesEnabled.kt
-    @R|kotlin/jvm/JvmInline|[Types]() public final value [ResolvedTo(ANNOTATION_ARGUMENTS)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Inline : R|kotlin/Any| {
+    @R|kotlin/jvm/JvmInline|[Types]() public final inline value [ResolvedTo(ANNOTATION_ARGUMENTS)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Inline : R|kotlin/Any| {
         public? [ResolvedTo(TYPES)] [ContainingClassKey=Inline] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/Inline.value] value: R|kotlin/Int|): R|pack/Inline| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -144,7 +144,7 @@ FILE: [ResolvedTo(IMPORTS)] inlineClassWithFullValueClassesEnabled.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] inlineClassWithFullValueClassesEnabled.kt
-    @R|kotlin/jvm/JvmInline|[Types]() public final value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Inline : R|kotlin/Any| {
+    @R|kotlin/jvm/JvmInline|[Types]() public final inline value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Inline : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Inline] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/Inline.value] value: R|kotlin/Int|): R|pack/Inline| {
             super<R|kotlin/Any|>()
         }
@@ -156,7 +156,7 @@ FILE: [ResolvedTo(IMPORTS)] inlineClassWithFullValueClassesEnabled.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] inlineClassWithFullValueClassesEnabled.kt
-    @R|kotlin/jvm/JvmInline|[Types]() public final value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Inline : R|kotlin/Any| {
+    @R|kotlin/jvm/JvmInline|[Types]() public final inline value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Inline : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Inline] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/Inline.value] value: R|kotlin/Int|): R|pack/Inline| {
             super<R|kotlin/Any|>()
         }

@@ -394,6 +394,7 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
                 isCompanion = irClass.isCompanion
                 isData = irClass.isData
                 isInline = irClass.isValue
+                isValue = irClass.isValue
                 isFun = irClass.isFun
                 isExternal = irClass.isExternal
             }

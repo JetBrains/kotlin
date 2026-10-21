@@ -74,7 +74,7 @@ object FirExpectConsistencyChecker : FirBasicDeclarationChecker(MppCheckerKind.C
         containingClass: FirClassSymbol<*>?,
     ): List<FirValueParameter> {
         if (declaration is FirPrimaryConstructor &&
-            containingClass != null && containingClass.classKind != ClassKind.ANNOTATION_CLASS && !containingClass.isInlineOrValue
+            containingClass != null && containingClass.classKind != ClassKind.ANNOTATION_CLASS && !containingClass.isValue
         ) {
             return declaration.valueParameters.filter { it.source.valOrVarKeyword != null }
         }

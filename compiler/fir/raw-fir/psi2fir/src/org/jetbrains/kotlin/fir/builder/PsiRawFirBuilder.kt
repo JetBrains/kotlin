@@ -1897,7 +1897,7 @@ open class PsiRawFirBuilder(
                         isCompanion = (classOrObject as? KtObjectDeclaration)?.isCompanion() == true
                         isData = classOrObject.hasModifier(DATA_KEYWORD)
                         isInline = classOrObject.hasModifier(INLINE_KEYWORD)
-                        isValue = classOrObject.hasModifier(VALUE_KEYWORD)
+                        isValue = classOrObject.hasModifier(VALUE_KEYWORD) || classOrObject.hasModifier(INLINE_KEYWORD)
                         isFun = classOrObject.hasModifier(FUN_KEYWORD)
                         isExternal = classOrObject.hasModifier(EXTERNAL_KEYWORD)
                         isRichError = classOrObject.hasModifier(ERROR_KEYWORD)

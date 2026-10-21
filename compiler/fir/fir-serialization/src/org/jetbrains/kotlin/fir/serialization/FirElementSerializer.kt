@@ -167,7 +167,7 @@ class FirElementSerializer private constructor(
             regularClass?.isData == true,
             regularClass?.isExternal == true,
             regularClass?.isExpect == true,
-            regularClass?.isInlineOrValue == true,
+            regularClass?.isValue == true,
             regularClass?.isFun == true,
             hasEnumEntries,
         )
@@ -453,7 +453,7 @@ class FirElementSerializer private constructor(
                 val dispatchReceiverLookupTag = declaration.dispatchReceiverClassLookupTagOrNull()
                 // Special case for data/value class equals/hashCode/toString, see KT-57510
                 val isFakeOverrideOfAnyFunctionInDataOrValueClass = this@collectDeclarations is FirRegularClass &&
-                        (this@collectDeclarations.isData || this@collectDeclarations.isInlineOrValue && this@collectDeclarations.isFinal) &&
+                        (this@collectDeclarations.isData || this@collectDeclarations.isValue && this@collectDeclarations.isFinal) &&
                         dispatchReceiverLookupTag?.classId == StandardClassIds.Any && !declaration.isFinal
                 // Related: https://youtrack.jetbrains.com/issue/KT-20427#focus=Comments-27-8652759.0-0
                 if (isFakeOverrideOfAnyFunctionInDataOrValueClass && !this@collectDeclarations.isExpect ||
