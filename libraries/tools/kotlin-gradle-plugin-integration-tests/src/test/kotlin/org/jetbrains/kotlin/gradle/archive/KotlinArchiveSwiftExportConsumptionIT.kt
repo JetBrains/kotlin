@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.uklibs.addPublishedProjectToRepositories
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.uklibs.publish
 import org.jetbrains.kotlin.gradle.util.swiftExportEmbedAndSignEnvVariables
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
@@ -25,6 +26,7 @@ import kotlin.test.assertNotNull
 
 @SwiftExportGradlePluginTests
 @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
+@MustRunOnChangesInGradle
 @DisplayName("Swift Export of a project published in the Kotlin Archive format")
 class KotlinArchiveSwiftExportConsumptionIT : KGPBaseTest() {
 
