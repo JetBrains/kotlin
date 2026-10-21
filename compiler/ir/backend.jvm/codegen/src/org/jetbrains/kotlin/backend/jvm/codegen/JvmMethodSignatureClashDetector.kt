@@ -225,7 +225,7 @@ private fun IrOverrideChecker.canIgnoreConflict(a: IrFunction, b: IrFunction): B
     // Allow "accidental overrides" between two declarations if:
     // 1. One of them is a static fake override created for method from Kotlin.
     // 2. The other one is a member defined in source code.
-    // 2. They "override"/hide each other.
+    // 3. They "override"/hide each other.
     //
     //    Note: This is overly restrictive but needed for preserving behavior of JvmStatic/JvmOverloads-generated
     //          methods before companion blocks where introduced, such as
