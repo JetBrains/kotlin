@@ -73,7 +73,7 @@ public expect annotation class JsQualifier(val value: String)
 
 /**
  *
- * Marks a member function of an external declaration or extension function as the "invoke operator" of a JavaScript object.
+ * Marks a member function of an external declaration as the "invoke operator" of a JavaScript object.
  * Every call to this function will be translated into a call of the object itself.
  *
  * Example:
