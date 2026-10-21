@@ -44,6 +44,11 @@ class JvmBackendContext(
     val irPluginContext: IrPluginContext?,
     val evaluatorData: JvmEvaluatorData?,
 ) : CommonBackendContext {
+
+    init {
+        val a = 1
+    }
+
     class SharedLocalDeclarationsData(
         val closureBuilders: MutableMap<IrDeclaration, ClosureBuilder> = mutableMapOf<IrDeclaration, ClosureBuilder>(),
         val transformedDeclarations: MutableMap<IrSymbolOwner, IrDeclaration> = mutableMapOf<IrSymbolOwner, IrDeclaration>(),
