@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.KtRealPsiSourceElement
 import org.jetbrains.kotlin.constant.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
@@ -187,7 +188,7 @@ internal class StubBasedAnnotationDeserializer(private val session: FirSession) 
                 buildCollectionLiteral {
                     source = KtRealPsiSourceElement(sourceElement)
                     // Not quite precise, yet doesn't require annotation resolution
-                    coneTypeOrNull = (inferArrayValueType(value.value) ?: session.builtinTypes.anyType.coneType).createArrayType()
+                    coneTypeOrNull = (inferArrayValueType(value.value) ?: StandardTypes.Any).createArrayType()
 
                     argumentList = buildArgumentList {
                         value.value.mapTo(arguments) { resolveValue(sourceElement, it) }
@@ -249,7 +250,7 @@ internal class StubBasedAnnotationDeserializer(private val session: FirSession) 
                 is EnumValue -> firstValue.enumClassId.constructClassLikeType(ConeTypeProjection.EMPTY_ARRAY, isMarkedNullable = false)
                 is ArrayValue -> values.firstNotNullOfOrNull { inferArrayValueType((it as ArrayValue).value) }?.createArrayType()
                 is KClassValue -> {
-                    val kClassType = session.builtinTypes.anyType.coneType
+                    val kClassType = StandardTypes.Any
                     StandardClassIds.KClass.constructClassLikeType(arrayOf(kClassType), isMarkedNullable = false)
                 }
                 else -> null

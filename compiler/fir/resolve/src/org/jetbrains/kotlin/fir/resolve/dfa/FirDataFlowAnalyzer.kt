@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.contracts.description.LogicOperationKind
 import org.jetbrains.kotlin.contracts.description.canBeRevisited
 import org.jetbrains.kotlin.descriptors.isObject
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.contracts.description.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
@@ -266,7 +267,6 @@ abstract class FirDataFlowAnalyzer(
 
     private val graphBuilder get() = context.graphBuilder
 
-    private val any = components.session.builtinTypes.anyType.coneType
     private val nullableNothing = components.session.builtinTypes.nullableNothingType.coneType
 
     // ----------------------------------- Requests -----------------------------------
@@ -580,7 +580,7 @@ abstract class FirDataFlowAnalyzer(
                     // x is Nothing? <=> x == null
                     nullableNothing -> processEqNull(flow, typeOperatorCall, typeOperatorCall.argument, isType)
                     // x is Any <=> x != null
-                    any -> processEqNull(flow, typeOperatorCall, typeOperatorCall.argument, !isType)
+                    StandardTypes.Any -> processEqNull(flow, typeOperatorCall, typeOperatorCall.argument, !isType)
                     else -> {
                         val expressionVariable = SyntheticVariable(typeOperatorCall)
                         if (operandVariable.isReal()) {

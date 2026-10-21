@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
@@ -145,7 +146,7 @@ private fun ConeKotlinType.scope(
     is ConeCapturedType -> {
         val supertypes =
             constructor.supertypes?.takeIf { it.isNotEmpty() }
-                ?: listOf(useSiteSession.builtinTypes.anyType.coneType)
+                ?: listOf(StandardTypes.Any)
         useSiteSession.typeContext.intersectTypes(supertypes).scope(useSiteSession, scopeSession, requiredMembersPhase)
     }
     is ConeUnionType -> primaryType.scope(useSiteSession, scopeSession, requiredMembersPhase)

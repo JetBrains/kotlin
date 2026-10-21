@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.builtins.functions.AllowedToUsedOnlyInK1
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.diagnostics.ConeIntermediateDiagnostic
 import org.jetbrains.kotlin.fir.isPrimitiveNumberOrUnsignedNumberType
@@ -52,7 +53,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
     }
 
     override fun anyType(): ConeClassLikeType {
-        return session.builtinTypes.anyType.coneType
+        return StandardTypes.Any
     }
 
     override fun createFlexibleType(lowerBound: RigidTypeMarker, upperBound: RigidTypeMarker): ConeKotlinType {

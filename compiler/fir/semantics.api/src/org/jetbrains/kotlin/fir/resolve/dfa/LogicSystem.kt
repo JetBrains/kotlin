@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.dfa
 import kotlinx.collections.immutable.*
 import org.jetbrains.kotlin.fir.DfaType
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.AbstractTypeChecker
@@ -17,7 +18,6 @@ import kotlin.math.max
 abstract class LogicSystem(private val context: ConeInferenceContext) {
     val session: FirSession get() = context.session
     private val nullableNothingType = session.builtinTypes.nullableNothingType.coneType
-    private val anyType = session.builtinTypes.anyType.coneType
 
     protected open fun ConeKotlinType.isAcceptableForSmartcast(): Boolean {
         return !isNullableNothing
@@ -325,7 +325,7 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
             val operation = next.operation
             val variable = next.variable
 
-            val impliedType = if (operation == Operation.EqNull) nullableNothingType else anyType
+            val impliedType = if (operation == Operation.EqNull) nullableNothingType else StandardTypes.Any
             val resultStatement = result.getOrPut(variable) { MutableTypeStatement(variable) }
             resultStatement.upperTypes.add(impliedType)
             // We could additionally imply the opposite lower type, but it won't bring us anything new

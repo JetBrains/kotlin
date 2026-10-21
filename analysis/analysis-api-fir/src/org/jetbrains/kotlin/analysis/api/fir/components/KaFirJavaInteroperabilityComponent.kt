@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmTypeMapper
 import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.FirProperty
@@ -705,7 +706,7 @@ private class AnonymousTypesSubstitutor(
         firClassNode?.resolvedSuperTypes?.singleOrNull()?.let { return it }
 
         return if (type.isMarkedNullable) session.builtinTypes.nullableAnyType.coneType
-        else session.builtinTypes.anyType.coneType
+        else StandardTypes.Any
     }
 
     private fun ConeKotlinType.hasRecursiveTypeArgument(

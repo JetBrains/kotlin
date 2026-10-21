@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.builtins.StandardNames.DATA_CLASS_COPY
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.backend.Fir2IrCommonMemberStorage.DataValueClassGeneratedMembersInfo
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.FirMetadataSource
@@ -271,8 +272,8 @@ class Fir2IrDataClassGeneratedMemberBodyGenerator(private val irBuiltins: IrBuil
          */
         private fun ConeKotlinType.coerceToAny(): ConeKotlinType {
             return when {
-                this.isNothingOrNullableNothing -> session.builtinTypes.anyType.coneType
-                this is ConeDynamicType -> session.builtinTypes.anyType.coneType
+                this.isNothingOrNullableNothing -> StandardTypes.Any
+                this is ConeDynamicType -> StandardTypes.Any
                 else -> this
             }
         }
@@ -311,7 +312,7 @@ class Fir2IrDataClassGeneratedMemberBodyGenerator(private val irBuiltins: IrBuil
             private fun getHashCodeFunction(klass: FirRegularClass): FirNamedFunctionSymbol {
                 if (klass.classId == StandardClassIds.Nothing) {
                     // scope of kotlin.Nothing is empty, so we need to search for `hashCode` in the scope of kotlin.Any
-                    return getHashCodeFunction(session.builtinTypes.anyType.coneType.toRegularClassSymbol()!!.fir)
+                    return getHashCodeFunction(StandardTypes.Any.toRegularClassSymbol()!!.fir)
                 }
                 val scope = klass.symbol.unsubstitutedScope()
                 return scope.getFunctions(HASH_CODE).first { symbol ->

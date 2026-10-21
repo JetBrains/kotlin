@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
@@ -368,7 +369,7 @@ fun FirClassSymbol<*>.getSuperClassSymbolOrAny(session: FirSession): FirRegularC
         val symbol = superType.fullyExpandedType(session).toRegularClassSymbol(session) ?: continue
         if (symbol.classKind == ClassKind.CLASS) return symbol
     }
-    return session.builtinTypes.anyType.coneType.toRegularClassSymbol(session)
+    return StandardTypes.Any.toRegularClassSymbol(session)
 }
 
 fun FirClassLikeSymbol<*>.getSuperTypes(

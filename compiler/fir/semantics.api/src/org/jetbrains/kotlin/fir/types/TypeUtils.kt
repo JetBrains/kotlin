@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionHolder
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.copyWithNewSource
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
@@ -974,7 +975,7 @@ private fun FirTypeParameter.eraseToUpperBound(
                 // their bounds aren't yet resolved. See KT-56630 and comments inside.
                 // Yet we are replacing these bounds with just 'Any'.
                 // TODO: think how can we replace it with more correct decision.
-                else -> session.builtinTypes.anyType.coneType
+                else -> StandardTypes.Any
             }
         }
     }

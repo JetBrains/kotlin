@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.calls
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.isClass
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.utils.modality
@@ -65,7 +66,7 @@ private fun BodyResolveComponents.resolveSupertypesForMethodOfAny(
         getFunctionMembers(it, calleeName)
     }
     return typesWithConcreteOverride.ifEmpty {
-        listOf(session.builtinTypes.anyType.coneType)
+        listOf(StandardTypes.Any)
     }
 }
 
