@@ -9,11 +9,13 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 
 @DisplayName("tests for the K/N XCode simulator test infrastructure")
 @NativeGradlePluginTests
+@MustRunOnChangesInGradle
 @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
 class NativeXcodeSimulatorTestsIT : KGPBaseTest() {
     @DisplayName("A user-friendly error message is produced when the standalone mode is disabled and no simulator has booted")
