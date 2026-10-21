@@ -195,25 +195,6 @@ fun wrongJsInteropTypesInJsCodeFunction(
     userDefinedObject: <!WRONG_JS_INTEROP_TYPE!>UserDefinedObject<!>,
 ): Nothing = js("42")
 
-@JsExport
-fun wrongJsInteropTypesInJsExportFunction(
-    // Unit and Nothing
-    unit: <!WRONG_JS_INTEROP_TYPE!>Unit<!>,
-    nothing: <!WRONG_JS_INTEROP_TYPE!>Nothing<!>,
-    // built-in types
-    any: <!WRONG_JS_INTEROP_TYPE!>Any<!>,
-    number: <!WRONG_JS_INTEROP_TYPE!>Number<!>,
-    charSequence: <!WRONG_JS_INTEROP_TYPE!>CharSequence<!>,
-    specializedArray: <!WRONG_JS_INTEROP_TYPE!>IntArray<!>,
-    pair: <!WRONG_JS_INTEROP_TYPE!>Pair<Int, Int><!>,
-    list: <!WRONG_JS_INTEROP_TYPE!>List<Int><!>,
-    genericArray: <!WRONG_JS_INTEROP_TYPE!>Array<Int><!>,
-    // user-defined types
-    userDefinedInterface: <!WRONG_JS_INTEROP_TYPE!>UserDefinedInterface<!>,
-    userDefinedOpenClass: <!WRONG_JS_INTEROP_TYPE!>UserDefinedOpenClass<!>,
-    userDefinedObject: <!WRONG_JS_INTEROP_TYPE!>UserDefinedObject<!>,
-) {}
-
 
 typealias AliasedUnit = Unit
 typealias AliasedNothing = Nothing

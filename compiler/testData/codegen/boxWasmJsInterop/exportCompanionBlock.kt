@@ -31,6 +31,9 @@ fun setCompanionMutable(value: String): String {
     return Test.mutable
 }
 
+@JsExport
+companion fun Test.companionExtension(value: String): String = Test.foo + value
+
 fun box(): String = "OK"
 
 // FILE: entry.mjs
@@ -41,6 +44,7 @@ import {
     companionFoo,
     companionMutable,
     setCompanionMutable,
+    companionExtension,
 } from "./index.mjs"
 
 if (companionBarDefault() !== "O") {
@@ -60,4 +64,7 @@ if (setCompanionMutable("CHANGED") !== "CHANGED") {
 }
 if (companionMutable() !== "CHANGED") {
     throw "FAIL: mutable read after write";
+}
+if (companionExtension("O") !== "KO") {
+    throw "FAIL: companion extension";
 }
