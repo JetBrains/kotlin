@@ -17,4 +17,9 @@ analysisApiArtifact {
     content {
         projects(analysisApiSyntaxImplementationModules)
     }
+
+    validateClasspath(
+        proguardConfiguration = file("analysis-api-syntax-implementation.pro"),
+        permittedDuplicatesFile = file("api/analysis-api-syntax-implementation.permitted-duplicates"),
+    )
 }
