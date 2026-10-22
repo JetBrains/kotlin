@@ -46,7 +46,6 @@ import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.impl._languageVersion
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
-import kotlin.script.experimental.jvm.util.toClassPathOrEmpty
 
 class ScriptJvmK2CompilerIsolated(val hostConfiguration: ScriptingHostConfiguration) : ScriptCompilerProxy {
     override fun compile(
@@ -97,12 +96,9 @@ class ScriptJvmK2CompilerFromEnvironment(
 }
 
 class ScriptJvmK2CompilerImpl(
-    state: ScriptCompilerState,
+    private val state: ScriptCompilerState,
     private val convertToFir: SourceCode.(FirSession, BaseDiagnosticsCollector) -> FirFile
 ) {
-
-    private val state = (state as? ScriptCompilerStateInternal)
-        ?: error("Expected the state of type ScriptCompilerStateInternal, got ${state::class}")
 
     fun compile(script: SourceCode) = compile(script, state.baseScriptCompilationConfiguration)
 
@@ -119,10 +115,10 @@ class ScriptJvmK2CompilerImpl(
         ErrorReportingContext(
             state.messageCollector,
             DiagnosticsCollectorImpl(),
-            state.compilerContext.environment.configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
+            state.compilerConfiguration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
         )
     ) {
-        if (state.compilerContext.environment.configuration.languageVersionSettings.languageVersion.major < 2)
+        if (state.compilerConfiguration.languageVersionSettings.languageVersion.major < 2)
             makeFailureResult("This script compiler implementatione is not compatible with Kotlin 1.9 and earlier")
         else scriptCompilationConfiguration.refineAll(script)
             .onSuccess {
@@ -139,7 +135,7 @@ class ScriptJvmK2CompilerImpl(
             convertToFir
         ).onSuccess {
             it.with {
-                _languageVersion(state.compilerContext.environment.configuration.languageVersionSettings.languageVersion.versionString)
+                _languageVersion(state.compilerConfiguration.languageVersionSettings.languageVersion.versionString)
             }.asSuccess()
         }
 
@@ -159,7 +155,7 @@ class ScriptJvmK2CompilerImpl(
         scriptRefinedCompilationConfiguration: ScriptCompilationConfiguration,
     ): ResultWithDiagnostics<CompiledScript> {
 
-        val compilerConfiguration = state.compilerContext.environment.configuration.copy().apply {
+        val compilerConfiguration = state.compilerConfiguration.copy().apply {
             jvmTarget = selectJvmTarget(scriptRefinedCompilationConfiguration, reportingCtx.messageCollector)
             @OptIn(MessageCollectorAccess::class) // write access
             messageCollector = reportingCtx.messageCollector
@@ -184,7 +180,7 @@ class ScriptJvmK2CompilerImpl(
         // The imported scripts should be analyzed before the main one.
         allSourceFiles.addAll(0, newSources)
 
-        val ignoredOptionsReportingState = state.compilerContext.ignoredOptionsReportingState
+        val ignoredOptionsReportingState = state.ignoredOptionsReportingState
         val updatedCompilerOptions = allSourceFiles.flatMapTo(mutableListOf()) {
             getRefinedConfiguration(it)[ScriptCompilationConfiguration.compilerOptions] ?: emptyList()
         }
@@ -282,20 +278,4 @@ fun SourceCode.convertToFirViaLightTree(session: FirSession, diagnosticsReporter
         (session.firProvider as FirProviderImpl).recordFile(firFile)
         sourcesToPathsMapper.registerFileSource(firFile.source!!, locationId ?: name!!)
     }
-}
-
-private fun ScriptCompilerStateInternal.getOrCreateSessionForAnnotationResolution(
-    scriptCompilationConfiguration: ScriptCompilationConfiguration
-): FirSession {
-    val dependencies = scriptCompilationConfiguration[ScriptCompilationConfiguration.dependencies].toClassPathOrEmpty()
-    if (dependencies.isNotEmpty()) {
-        configureLibrarySessionIfNeeded(this, compilerContext.environment.configuration, dependencies)
-    }
-    return dummySessionForAnnotationResolution ?: createScriptSourceSession(
-        moduleDataProvider.addNewScriptModuleData(Name.special("<raw-script>"), isDummy = true),
-        extensionRegistrars,
-        compilerContext.environment.configuration,
-        sessionFactoryContext,
-        hostConfiguration,
-    ).also { dummySessionForAnnotationResolution = it }
 }
