@@ -12,6 +12,7 @@ object Namer {
     val BIND_FUNCTION = "bind"
 
     val SLICE_FUNCTION = "slice"
+    val INDEXOF_FUNCTION = "indexOf"
 
     val OUTER_NAME = "\$outer"
     val UNREACHABLE_NAME = "\$unreachable"

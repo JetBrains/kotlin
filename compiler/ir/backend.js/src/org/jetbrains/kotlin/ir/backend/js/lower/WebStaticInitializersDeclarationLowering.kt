@@ -126,7 +126,7 @@ abstract class WebStaticInitializersDeclarationLowering : FileLoweringPass {
             when (it) {
                 is IrEnumEntry -> it.correspondingField?.isStatic == true
                 is IrField -> it.isStatic && it.origin != IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE &&
-                        it.correspondingPropertySymbol?.owner?.isLateinit == false
+                        it.correspondingPropertySymbol?.owner?.isLateinit != true
                 is IrProperty -> it.backingField?.isStatic == true && !it.isLateinit
                 // A companion object is initialized together with its container, so the container needs
                 // a static_init as soon as the companion has anything observable to initialize. Otherwise, we omit it to
