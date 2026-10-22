@@ -323,6 +323,7 @@ private class ClassClsStubBuilder(
                 classBody,
                 qualifiedName = c.containerFqName.child(name).ref(),
                 name = name.ref(),
+                kdocText = entry.getExtensionOrNull(KlibMetadataProtoBuf.enumEntryKdoc),
             )
 
             if (annotations.isNotEmpty()) {

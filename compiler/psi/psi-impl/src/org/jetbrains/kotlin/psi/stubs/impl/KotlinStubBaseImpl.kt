@@ -24,6 +24,8 @@ private val IGNORED_NULL_VALUES: Map<Class<out StubElement<*>>, Set<String>> = b
     put(KotlinConstructorStub::class.java, setOf(KotlinCallableStubBase<*>::kdocText.name))
     put(KotlinClassStub::class.java, setOf(KotlinClassOrObjectStub<*>::kdocText.name))
     put(KotlinObjectStub::class.java, setOf(KotlinClassOrObjectStub<*>::kdocText.name))
+    put(KotlinTypeAliasStub::class.java, setOf(KotlinTypeAliasStub::kdocText.name))
+    put(KotlinPropertyAccessorStub::class.java, setOf(KotlinPropertyAccessorStub::kdocText.name))
 }
 
 @KtImplementationDetail

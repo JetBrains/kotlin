@@ -42,9 +42,12 @@ import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.psi.psiUtil.isFromCompanionBlock
 import org.jetbrains.kotlin.psi.stubs.KotlinConstructorStub
 import org.jetbrains.kotlin.psi.stubs.KotlinModifierListStub
+import org.jetbrains.kotlin.psi.stubs.impl.KotlinEnumEntryStubImpl
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinModifierListStubImpl
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinParameterStubImpl
+import org.jetbrains.kotlin.psi.stubs.impl.KotlinPropertyAccessorStubImpl
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinPropertyStubImpl
+import org.jetbrains.kotlin.psi.stubs.impl.KotlinTypeAliasStubImpl
 import org.jetbrains.kotlin.resolve.ReturnValueStatus
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -223,6 +226,9 @@ internal class StubBasedFirMemberDeserializer(
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
             typeParameters += local.typeDeserializer.ownTypeParameters.map { it.fir }
             deprecationsProvider = annotations.getDeprecationsProviderFromAnnotations(c.session, fromJava = false)
+
+            val typeAliasStub: KotlinTypeAliasStubImpl = typeAlias.compiledStub
+            applyKDoc(typeAliasStub.kdocText)
         }.apply {
             sourceElement = c.containerSource
         }
@@ -359,6 +365,9 @@ internal class StubBasedFirMemberDeserializer(
         return accessor.apply {
             if (psiPropertyAccessor != null) {
                 replaceAnnotations(c.annotationDeserializer.loadAnnotations(psiPropertyAccessor))
+
+                val accessorStub: KotlinPropertyAccessorStubImpl = psiPropertyAccessor.compiledStub
+                attributes.applyKDoc(accessorStub.kdocText)
             }
 
             replaceDeprecationsProvider(getDeprecationsProviderForStubAccessor(c.session))
@@ -986,6 +995,9 @@ internal class StubBasedFirMemberDeserializer(
             isLocal = false
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
             annotations += c.annotationDeserializer.loadAnnotations(declaration)
+
+            val enumEntryStub: KotlinEnumEntryStubImpl = declaration.compiledStub
+            attributes.applyKDoc(enumEntryStub.kdocText)
         }.apply {
             containingClassForStaticMemberAttr = c.dispatchReceiver!!.lookupTag
         }

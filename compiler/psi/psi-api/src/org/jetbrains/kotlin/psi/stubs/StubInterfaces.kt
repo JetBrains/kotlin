@@ -80,6 +80,15 @@ interface KotlinClassifierStub<T : KtClassLikeDeclaration> : KotlinStubElement<T
 interface KotlinTypeAliasStub : KotlinClassifierStub<KtTypeAlias>, KotlinStubWithFqName<KtTypeAlias> {
     @KtImplementationDetail
     val isTopLevel: Boolean
+
+    /**
+     * Raw KDoc text, if available.
+     *
+     * Currently, KDoc is only available for decompiled declaration.
+     * For source ones one can read the KDoc content from the PSI directly.
+     */
+    @KtImplementationDetail
+    val kdocText: String?
 }
 
 @SubclassOptInRequired(KtImplementationDetail::class)
@@ -279,6 +288,15 @@ interface KotlinParameterStub : KotlinStubWithFqName<KtParameter> {
 interface KotlinPropertyAccessorStub : KotlinDeclarationWithBodyStub<KtPropertyAccessor> {
     @KtImplementationDetail
     val isGetter: Boolean
+
+    /**
+     * Raw KDoc text, if available.
+     *
+     * Currently, KDoc is only available for decompiled declaration.
+     * For source ones one can read the KDoc content from the PSI directly.
+     */
+    @KtImplementationDetail
+    val kdocText: String?
 }
 
 @SubclassOptInRequired(KtImplementationDetail::class)
