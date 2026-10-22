@@ -59,11 +59,11 @@ fun usage(
     base17.<!INLINE_FROM_HIGHER_PLATFORM!>inlineFunction<!>("base")
     base17.<!INLINE_FROM_HIGHER_PLATFORM!>inlineProperty<!>
 
-    derived17.<!INLINE_FROM_HIGHER_PLATFORM!>inlineFunction<!>("inherited")
-    derived17.<!INLINE_FROM_HIGHER_PLATFORM!>inlineProperty<!>
+    derived17.inlineFunction("inherited")
+    derived17.inlineProperty
 
-    derived11.inlineFunction("inherited")
-    derived11.inlineProperty
+    derived11.<!INLINE_FROM_HIGHER_PLATFORM!>inlineFunction<!>("inherited")
+    derived11.<!INLINE_FROM_HIGHER_PLATFORM!>inlineProperty<!>
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, getter, inline, integerLiteral, nullableType,

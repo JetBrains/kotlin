@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 import org.jetbrains.kotlin.load.kotlin.JvmClassFileBacked
 import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
@@ -57,7 +58,9 @@ object FirJvmInlineTargetQualifiedAccessChecker : FirQualifiedAccessExpressionCh
     ) {
         val currentJvmTarget = context.session.jvmTargetProvider?.jvmTarget ?: return
 
-        val containingClass = callableSymbol.containingClassLookupTag()
+        // The inline body belongs to the original declaration, not to a fake override in a subclass.
+        val declarationSymbol = callableSymbol.unwrapFakeOverrides()
+        val containingClass = declarationSymbol.containingClassLookupTag()
         // Stub-based library declarations in the Analysis API have no binary class, so their sources provide the version themselves
         val binaryEntity = if (containingClass != null) {
             val containingClassSymbol = containingClass.toRegularClassSymbol() ?: return
@@ -68,7 +71,7 @@ object FirJvmInlineTargetQualifiedAccessChecker : FirQualifiedAccessExpressionCh
                 else -> sourceElement
             }
         } else {
-            when (val containerSource = callableSymbol.containerSource) {
+            when (val containerSource = declarationSymbol.containerSource) {
                 is JvmPackagePartSource -> containerSource.knownJvmBinaryClass
                 else -> containerSource
             }
