@@ -8,6 +8,8 @@
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.serializer
+import org.jetbrains.kotlin.buildtools.api.abi.KlibTargetId
+import org.jetbrains.kotlin.buildtools.api.abi.KlibTargetType
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.trackers.IcEvent
@@ -19,6 +21,7 @@ import org.jetbrains.kotlin.buildtools.internal.arguments.enums.WasmTarget
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationConfigurationImpl
 import org.jetbrains.kotlin.buildtools.internal.jvm.operations.JvmCompilationOperationImpl
 import org.jetbrains.kotlin.buildtools.internal.daemon.IcEventSerializer
+import org.jetbrains.kotlin.buildtools.internal.daemon.KlibTargetIdSerializer
 import org.jetbrains.kotlin.daemon.common.serialization.PathAsStringSerializer
 import org.jetbrains.kotlin.buildtools.internal.daemon.btaSerializersModule
 import org.junit.jupiter.api.DisplayName
@@ -204,6 +207,14 @@ class SerializationTest {
         withDaemon.jvmArguments = listOf("abc")
         val withDaemon2 = serializer.serializeAndDeserialize<DaemonExecutionPolicyImpl>(withDaemon)
         assertEquals(withDaemon, withDaemon2)
+    }
+
+    @Test
+    @DisplayName("KlibTargetId is serialized correctly")
+    fun klibTargetId() {
+        val targetId = KlibTargetId(KlibTargetType.IOS_ARM64, "iosArm64Custom")
+        val deserialized = serializer.serializeAndDeserialize(targetId, KlibTargetIdSerializer)
+        assertEquals(targetId, deserialized)
     }
 
     @Test

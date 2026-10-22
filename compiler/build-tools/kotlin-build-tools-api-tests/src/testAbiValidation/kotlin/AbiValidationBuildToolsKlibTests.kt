@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.buildtools.api.abi.dumpKlibAbiToStringOperation
 import org.jetbrains.kotlin.buildtools.api.abi.operations.DumpKlibAbiToStringOperation
 import org.jetbrains.kotlin.buildtools.api.abi.operations.filters
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.jsProject
 import org.jetbrains.kotlin.buildtools.tests.compilation.util.btaClassloader
 import org.jetbrains.kotlin.test.TestMetadata
@@ -24,12 +25,11 @@ import org.junit.jupiter.api.Test
 
 class AbiValidationBuildToolsKlibTests : BaseCompilationTest() {
 
-    @Test
+    @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Smoke test of ABI validation for klib")
     @TestMetadata("js-ic-basic-lib")
-    fun testJsKlibDump() {
-        val toolchain = KotlinToolchains.loadImplementation(btaClassloader)
-        jsProject(toolchain, toolchain.createInProcessExecutionPolicy()) {
+    fun testJsKlibDump(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jsProject(strategyConfig) {
             val module = module("js-ic-basic-lib")
             module.compile()
 
@@ -38,7 +38,7 @@ class AbiValidationBuildToolsKlibTests : BaseCompilationTest() {
                 dump,
                 mapOf(KlibTargetId(KlibTargetType.JS, "myJs") to module.outputDirectory)
             )
-            kotlinToolchain.createBuildSession().use { it.executeOperation(operation) }
+            kotlinToolchain.createBuildSession().use { it.executeOperation(operation, strategyConfig.second) }
 
             val expectedDump = """
                 // Klib ABI Dump
@@ -68,12 +68,11 @@ class AbiValidationBuildToolsKlibTests : BaseCompilationTest() {
         }
     }
 
-    @Test
+    @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Smoke test of ABI validation filters for klib")
     @TestMetadata("js-ic-basic-lib")
-    fun testJsKlibDumpWithFilters() {
-        val toolchain = KotlinToolchains.loadImplementation(btaClassloader)
-        jsProject(toolchain, toolchain.createInProcessExecutionPolicy()) {
+    fun testJsKlibDumpWithFilters(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jsProject(strategyConfig) {
             val module = module("js-ic-basic-lib")
             module.compile()
 
@@ -87,7 +86,7 @@ class AbiValidationBuildToolsKlibTests : BaseCompilationTest() {
                     this[AbiFilters.EXCLUDE_NAMED] = setOf("DummyInLibMain")
                 }
             }
-            kotlinToolchain.createBuildSession().use { it.executeOperation(operation) }
+            kotlinToolchain.createBuildSession().use { it.executeOperation(operation, strategyConfig.second) }
 
             val expectedDump = """
                 // Klib ABI Dump
