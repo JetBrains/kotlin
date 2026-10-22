@@ -13,16 +13,20 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.noarg.gradle.NoArgExtension
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCompilerPlugins
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import kotlin.io.path.writeText
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
 @MppGradlePluginTests
+@MustRunOnChangesInGradle
 class MppCompilerPluginsIT : KGPBaseTest() {
 
     @GradleTest
     @TestMetadata(value = "new-mpp-lib-and-app/sample-lib")
+    @MustRunOnChangesInCompilerPlugins
     fun testMppBuildWithCompilerPluginsJvm(gradleVersion: GradleVersion) {
         testMppBuildWithCompilerPlugins(
             gradleVersion = gradleVersion,
@@ -39,6 +43,7 @@ class MppCompilerPluginsIT : KGPBaseTest() {
 
     @GradleTest
     @TestMetadata(value = "new-mpp-lib-and-app/sample-lib")
+    @MustRunOnChangesInCompilerPlugins
     fun testMppBuildWithCompilerPluginsJs(gradleVersion: GradleVersion) {
         testMppBuildWithCompilerPlugins(
             gradleVersion = gradleVersion,
@@ -67,7 +72,7 @@ class MppCompilerPluginsIT : KGPBaseTest() {
         targetSourceSet: String?,
         compileTask: String,
         sourceSets: List<String>,
-        additionalAssertions: TestProject.() -> Unit = {}
+        additionalAssertions: TestProject.() -> Unit = {},
     ) {
         project(
             projectName = "new-mpp-lib-and-app/sample-lib",
@@ -200,7 +205,7 @@ class MppCompilerPluginsIT : KGPBaseTest() {
     private fun validatePluginsPresent(
         sourceSet: String,
         argsBySourceSet: Map<String, String>,
-        classpathBySourceSet: Map<String, String>
+        classpathBySourceSet: Map<String, String>,
     ) {
         val expectedArgs = listOf(
             "plugin:org.jetbrains.kotlin.allopen:annotation=com.example.Annotation",
@@ -219,7 +224,7 @@ class MppCompilerPluginsIT : KGPBaseTest() {
     private fun validatePluginsAbsent(
         sourceSet: String,
         argsBySourceSet: Map<String, String>,
-        classpathBySourceSet: Map<String, String>
+        classpathBySourceSet: Map<String, String>,
     ) {
         val actualPluginArgs = argsBySourceSet[sourceSet]
         val expectedArgs = "[]" // Empty args list
