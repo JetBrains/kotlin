@@ -4,6 +4,13 @@ public abstract @interface Ann /* Ann*/ {
   @org.jetbrains.annotations.NotNull()
   public static final @org.jetbrains.annotations.NotNull() Ann.Companion Companion;
 
+  @kotlin.jvm.JvmExposeBoxed()
+  @org.jetbrains.annotations.NotNull()
+  public static @org.jetbrains.annotations.NotNull() StringWrapper getBaz();//  getBaz()
+
+  @kotlin.jvm.JvmExposeBoxed()
+  public static void setBaz(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() StringWrapper);//  setBaz(@org.jetbrains.annotations.NotNull() StringWrapper)
+
   public abstract int i();//  i()
 
   class Companion ...

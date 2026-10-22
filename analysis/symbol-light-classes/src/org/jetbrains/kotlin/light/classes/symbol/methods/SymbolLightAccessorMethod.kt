@@ -143,10 +143,12 @@ internal class SymbolLightAccessorMethod private constructor(
         )
 
         in GranularModifiersBox.MODALITY_MODIFIERS -> {
-            val modality = when {
-                // Annotation class members are abstract on the JVM regardless of their Kotlin modality
-                containingClass.isAnnotationType -> PsiModifier.ABSTRACT
-                else -> withPropertySymbol { computeMethodModality(it, containingClass) }
+            val modality = withPropertySymbol { propertySymbol ->
+                when {
+                    // Annotation class members are abstract on the JVM regardless of their Kotlin modality
+                    propertySymbol.isAnnotationClassMember -> PsiModifier.ABSTRACT
+                    else -> computeMethodModality(propertySymbol, containingClass)
+                }
             }
 
             GranularModifiersBox.MODALITY_MODIFIERS_MAP.with(modality)
@@ -319,6 +321,9 @@ internal class SymbolLightAccessorMethod private constructor(
         if (!containingClass.isAnnotationType) return@lazyPub null
 
         withPropertySymbol { propertySymbol ->
+            // The static accessors copied from the companion object have no default value
+            if (!propertySymbol.isAnnotationClassMember) return@withPropertySymbol null
+
             when (val initializer = propertySymbol.initializer) {
                 is KaConstantInitializerValue -> {
                     initializer.constant.createPsiExpression(this@SymbolLightAccessorMethod)
@@ -461,7 +466,7 @@ internal class SymbolLightAccessorMethod private constructor(
                 }
 
                 val setter = declaration.takeIf { isMutable }?.setter
-                if (setter != null && !lightClass.isAnnotationType) {
+                if (setter != null && !declaration.isAnnotationClassMember) {
                     produceSymbolLightAccessorMethodIfNeeded(
                         accessor = setter,
                         result = result,

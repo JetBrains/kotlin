@@ -67,7 +67,6 @@ internal abstract class SymbolLightParameterCommon(
         if (isDeclaredAsVararg()) return NullabilityAnnotation.NON_NULLABLE
 
         val nullabilityApplicable = !method.hasModifierProperty(PsiModifier.PRIVATE) &&
-                !method.containingClass.isAnnotationType &&
                 // `enum` synthetic members (e.g., values or valueOf) are not applicable for nullability.
                 // In other words, `enum` non-synthetic members are applicable for nullability.
                 // Technically, we should retrieve the symbol for the containing method and see if its origin is not synthetic.
