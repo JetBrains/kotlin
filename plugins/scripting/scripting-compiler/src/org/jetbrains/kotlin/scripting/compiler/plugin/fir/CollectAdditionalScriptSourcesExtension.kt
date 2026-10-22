@@ -11,11 +11,8 @@ import org.jetbrains.kotlin.KtVirtualFileSourceFile
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.cli.CliDiagnostics
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.javaInterop
 import org.jetbrains.kotlin.cli.report
-import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
-import org.jetbrains.kotlin.compiler.plugin.registerInProject
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.disableStandardScriptDefinition
 import org.jetbrains.kotlin.config.languageVersionSettings
@@ -24,10 +21,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.extensions.CollectAdditionalSourceFilesExtension
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
-import org.jetbrains.kotlin.fir.session.FirJvmSessionFactory
-import org.jetbrains.kotlin.fir.session.KmpModuleKind
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingK2CompilerPluginRegistrar
 import org.jetbrains.kotlin.scripting.compiler.plugin.legacyScriptRuntimeToAdd
 import org.jetbrains.kotlin.scripting.compiler.plugin.requiresLegacyScriptRuntime
 import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.*
@@ -36,12 +30,14 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptingModuleDataPr
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.collectAndResolveScriptAnnotationsViaFir
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.compilationClasspathOf
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.convertToFirViaLightTree
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.createScriptingLibrarySessions
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.createScriptSourceSession
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.createScriptingSessionFactoryContext
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.effectiveHostConfiguration
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.refineAllForK2
 import org.jetbrains.kotlin.scripting.compiler.plugin.report
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.resolve.toSourceCode
-import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.utils.topologicalSort
 import java.io.File
 import kotlin.script.experimental.api.*
@@ -186,13 +182,6 @@ class CollectAdditionalScriptSourcesExtension : CollectAdditionalSourceFilesExte
         projectEnvironment: VfsBasedProjectEnvironment,
     ): FirSession =
         dummySessionForAnnotationResolution ?: run {
-
-            val extensionStorage = CompilerPluginRegistrar.ExtensionStorage()
-            with(ScriptingK2CompilerPluginRegistrar()) { extensionStorage.registerExtensions(configuration) }
-            extensionStorage.registerInProject(projectEnvironment.project) {
-                "Error on plugin registration: ${it.javaClass.name}"
-            }
-
             val extensionRegistrars = configuration.getCompilerExtensions(FirExtensionRegistrar)
 
             val dependencies = hostConfiguration[ScriptingHostConfiguration.configurationDependencies].orEmpty() +
@@ -202,42 +191,22 @@ class CollectAdditionalScriptSourcesExtension : CollectAdditionalSourceFilesExte
 
             val moduleDataProvider = ScriptingModuleDataProvider("dummy", classpath.map(File::toPath))
 
-            val sessionFactoryContext = FirJvmSessionFactory.Context(
-                configuration = configuration,
-                projectEnvironment = projectEnvironment,
-                librariesClasspath = JvmClasspath.ProjectLibraries(),
-                javaInterop = projectEnvironment.javaInterop(configuration, withJavaSources = false),
-            )
-            val sharedLibrarySession = FirJvmSessionFactory.createSharedLibrarySession(
-                mainModuleName = Name.special("<dummy>"),
-                extensionRegistrars = extensionRegistrars,
-                languageVersionSettings = configuration.languageVersionSettings,
-                context = sessionFactoryContext,
+            val sessionFactoryContext = createScriptingSessionFactoryContext(configuration, projectEnvironment)
+            createScriptingLibrarySessions(
+                Name.special("<dummy>"),
+                moduleDataProvider,
+                extensionRegistrars,
+                configuration.languageVersionSettings,
+                sessionFactoryContext,
             )
 
-            FirJvmSessionFactory.createLibrarySession(
-                sharedLibrarySession,
-                moduleDataProvider = moduleDataProvider,
-                extensionRegistrars = extensionRegistrars,
-                languageVersionSettings = configuration.languageVersionSettings,
-                context = sessionFactoryContext,
-            )
-
-            FirJvmSessionFactory.createSourceSession(
-                moduleData = moduleDataProvider.addNewScriptModuleData(Name.special("<raw-script>"), isDummy = true),
-                createIncrementalCompilationSymbolProviders = { null },
-                extensionRegistrars = extensionRegistrars,
-                configuration = configuration,
-                context = sessionFactoryContext,
-                kmpModuleKind = KmpModuleKind.SingleModule,
-                init = {},
-            ).apply {
-                register(
-                    FirScriptCompilationComponent::class,
-                    FirScriptCompilationComponent(hostConfiguration)
-                )
-                dummySessionForAnnotationResolution = this
-            }
+            createScriptSourceSession(
+                moduleDataProvider.addNewScriptModuleData(Name.special("<raw-script>"), isDummy = true),
+                extensionRegistrars,
+                configuration,
+                sessionFactoryContext,
+                hostConfiguration,
+            ).also { dummySessionForAnnotationResolution = it }
         }
 
     private var dummySessionForAnnotationResolution: FirSession? = null
