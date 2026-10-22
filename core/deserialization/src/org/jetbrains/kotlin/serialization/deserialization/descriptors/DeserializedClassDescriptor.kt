@@ -423,8 +423,10 @@ class DeserializedClassDescriptor(
         }
     }
 
+    fun findEnumEntryProto(name: Name): ProtoBuf.EnumEntry? = enumEntries?.enumEntryProtos?.get(name)
+
     private inner class EnumEntryClassDescriptors {
-        private val enumEntryProtos = classProto.enumEntryList.associateBy { c.nameResolver.getName(it.name) }
+        val enumEntryProtos = classProto.enumEntryList.associateBy { c.nameResolver.getName(it.name) }
 
         private val enumEntryByName = c.storageManager.createMemoizedFunctionWithNullableValues<Name, ClassDescriptor> { name ->
 

@@ -21,15 +21,23 @@ val FirDeclaration.kdocText: String?
 
 interface FirKDocDeserializer : FirSessionComponent {
     fun loadPropertyKDoc(proto: ProtoBuf.Property): String?
+    fun loadPropertyGetterKDoc(proto: ProtoBuf.Property): String?
+    fun loadPropertySetterKDoc(proto: ProtoBuf.Property): String?
     fun loadFunctionKDoc(proto: ProtoBuf.Function): String?
     fun loadConstructorKDoc(proto: ProtoBuf.Constructor): String?
     fun loadClassKDoc(proto: ProtoBuf.Class): String?
+    fun loadTypeAliasKDoc(proto: ProtoBuf.TypeAlias): String?
+    fun loadEnumEntryKDoc(proto: ProtoBuf.EnumEntry): String?
 
     object Empty : FirKDocDeserializer {
         override fun loadPropertyKDoc(proto: ProtoBuf.Property): String? = null
+        override fun loadPropertyGetterKDoc(proto: ProtoBuf.Property): String? = null
+        override fun loadPropertySetterKDoc(proto: ProtoBuf.Property): String? = null
         override fun loadFunctionKDoc(proto: ProtoBuf.Function): String? = null
         override fun loadConstructorKDoc(proto: ProtoBuf.Constructor): String? = null
         override fun loadClassKDoc(proto: ProtoBuf.Class): String? = null
+        override fun loadTypeAliasKDoc(proto: ProtoBuf.TypeAlias): String? = null
+        override fun loadEnumEntryKDoc(proto: ProtoBuf.EnumEntry): String? = null
     }
 }
 
@@ -42,7 +50,11 @@ private var FirDeclarationAttributes.kdocText: String?
         by FirDeclarationDataRegistry.attributesAccessor(KDocTextKey)
 
 fun FirDeclarationBuilder.applyKDoc(text: String?) {
+    attributes.applyKDoc(text)
+}
+
+fun FirDeclarationAttributes.applyKDoc(text: String?) {
     if (text != null) {
-        attributes.kdocText = text
+        kdocText = text
     }
 }
