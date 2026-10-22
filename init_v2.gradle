@@ -659,7 +659,7 @@ class TeamcityTestListener implements TestListener, TestOutputListener {
     private final TestNameDescriptor testNameDescriptor
     private final Pattern ignoredSuiteFormat
     private final FlowWrapper flowWrapper
-    private final ConcurrentMap<TestDescriptorWrapper, List> testOutputs = new ConcurrentHashMap()
+    private final ConcurrentMap<TestDescriptor, List<TestOutputEvent>> testOutputs = new ConcurrentHashMap<>()
 
     TeamcityTestListener(Logger logger, TestTaskWrapper testTaskWrapper, Project project, AtomicLong testCounter, TestNameDescriptor testNameDescriptor, String ignoredSuiteFormat) {
         this.logger = logger
@@ -683,8 +683,20 @@ class TeamcityTestListener implements TestListener, TestOutputListener {
     void afterSuite(TestDescriptor testDescriptor, TestResult testResult) {
         def suiteDescriptorWrapper = new SuiteDescriptorWrapper(testDescriptor, flowWrapper, ignoredSuiteFormat)
         suiteDescriptorWrapper.finish { ServiceMessage flowMessage, ServiceMessage suiteFinishedMessage ->
+            suiteDescriptorWrapper.flush(testOutputs.remove(testDescriptor)) { ServiceMessage testOutputServiceMessage -> this.logger.lifecycle(testOutputServiceMessage.asString()) }
             this.logger.lifecycle(suiteFinishedMessage.asString())
             if (flowMessage != null) this.logger.lifecycle(flowMessage.asString())
+        }
+
+        if (testDescriptor.parent == null) {
+            for (Map.Entry<TestDescriptor, List<TestOutputEvent>> entry : testOutputs.entrySet()) {
+                List<TestOutputEvent> remaining = entry.value
+                if (remaining != null && !remaining.isEmpty()) {
+                    def descWrapper = new TestDescriptorWrapper(entry.key, testNameDescriptor, flowWrapper, buildDirectoriesResolver, ignoredSuiteFormat)
+                    descWrapper.flush(remaining) { ServiceMessage msg -> this.logger.lifecycle(msg.asString()) }
+                }
+            }
+            testOutputs.clear()
         }
     }
 
@@ -701,7 +713,7 @@ class TeamcityTestListener implements TestListener, TestOutputListener {
     void afterTest(TestDescriptor testDescriptor, TestResult testResult) {
         def testDescriptorWrapper = new TestDescriptorWrapper(testDescriptor, testNameDescriptor, flowWrapper, buildDirectoriesResolver, ignoredSuiteFormat)
         testDescriptorWrapper.finish(testResult) { ServiceMessage flowMessage, ServiceMessage testFinished ->
-            testDescriptorWrapper.flush(testOutputs.remove(testDescriptorWrapper)) { ServiceMessage testOutputServiceMessage -> this.logger.lifecycle(testOutputServiceMessage.asString()) }
+            testDescriptorWrapper.flush(testOutputs.remove(testDescriptor)) { ServiceMessage testOutputServiceMessage -> this.logger.lifecycle(testOutputServiceMessage.asString()) }
             testDescriptorWrapper.result(testResult, testCounter) { List<ServiceMessage> messages -> messages.each{ message -> this.logger.lifecycle(message.asString()) } }
 
             this.logger.lifecycle(testFinished.asString())
@@ -711,9 +723,7 @@ class TeamcityTestListener implements TestListener, TestOutputListener {
 
     @Override
     void onOutput(TestDescriptor testDescriptor, TestOutputEvent outputEvent) {
-        def testDescriptorWrapper = new TestDescriptorWrapper(testDescriptor, testNameDescriptor, flowWrapper, buildDirectoriesResolver, ignoredSuiteFormat)
-        if (testDescriptorWrapper.ignored) {
-            // this is not a real test output
+        if (testDescriptor.className == null) {
             return
         }
 
@@ -727,10 +737,10 @@ class TeamcityTestListener implements TestListener, TestOutputListener {
             default: return
         }
 
-        List outputs = testOutputs[testDescriptorWrapper]
+        List<TestOutputEvent> outputs = testOutputs.get(testDescriptor)
         if (outputs == null) {
-            outputs = []
-            def prev = testOutputs.putIfAbsent(testDescriptorWrapper, outputs)
+            outputs = new ArrayList<>()
+            List<TestOutputEvent> prev = testOutputs.putIfAbsent(testDescriptor, outputs)
             if (prev != null) {
                 outputs = prev
             }
@@ -739,8 +749,9 @@ class TeamcityTestListener implements TestListener, TestOutputListener {
         synchronized (outputs) {
             outputs.add(outputEvent)
 
-            if (outputs.size() > 100) {
-                testDescriptorWrapper.flush(outputs) { msg -> this.logger.lifecycle(msg.asString()) }
+            if (outputs.size() >= 100) {
+                def testDescriptorWrapper = new TestDescriptorWrapper(testDescriptor, testNameDescriptor, flowWrapper, buildDirectoriesResolver, ignoredSuiteFormat)
+                testDescriptorWrapper.flush(outputs) { ServiceMessage msg -> this.logger.lifecycle(msg.asString()) }
                 outputs.clear()
             }
         }
@@ -1036,13 +1047,13 @@ public class TestDescriptorWrapper extends DescriptorWrapper {
         };
     }
 
-    void flush(List outputs, Closure action) {
-        if (outputs == null) return
+    void flush(List<TestOutputEvent> outputs, Closure action) {
+        if (outputs == null || outputs.isEmpty()) return
         StringBuilder stdout = new StringBuilder()
         StringBuilder stderr = new StringBuilder()
 
         synchronized (outputs) {
-            for (oe in outputs) {
+            for (TestOutputEvent oe : outputs) {
                 switch (oe.destination) {
                     case TestOutputEvent.Destination.StdErr:
                         stderr.append(oe.message)
@@ -1053,63 +1064,77 @@ public class TestDescriptorWrapper extends DescriptorWrapper {
                 }
             }
 
-            flushOutputMessage("testStdOut", stdout.toString() - ~/\r?\n\z/, action)
-            flushOutputMessage("testStdErr", stderr.toString() - ~/\r?\n\z/, action)
-        }
-    }
-
-    private void flushOutputMessage(String type, String message, Closure action) {
-        while (!message.isEmpty()) {
-            switch (OUTPUT_PARSER) {
-                case "disabled":
-                    final String msg = getMessageWithoutParsing(message, MAX_MESSAGE_SIZE)
-                    message = message.substring(msg.length())
-                    action(new ServiceMessage(name: type, attributes: [name  : testName,
-                                                                       out   : msg,
-                                                                       flowId: flowId]))
-
-                    break
-                case "ServiceMessage":
-                default:
-                    final String msg = getMessageWithParsing(message, MAX_MESSAGE_SIZE)
-                    message = message.substring(msg.length())
-                    action(new ServiceMessage(name: type, attributes: [name     : testName,
-                                                                       out      : msg,
-                                                                       "tc:tags": "tc:parseServiceMessagesInside",
-                                                                       flowId   : flowId]))
-                    break
+            if (stdout.length() > 0) {
+                flushOutputMessage("testStdOut", trimTrailingNewline(stdout.toString()), action)
+            }
+            if (stderr.length() > 0) {
+                flushOutputMessage("testStdErr", trimTrailingNewline(stderr.toString()), action)
             }
         }
     }
 
-    private String getMessageWithoutParsing(String message, int maxLength) {
-        if (message.length() <= maxLength) return message
-        return message.substring(0, maxLength)
+    private static String trimTrailingNewline(String text) {
+        if (text.endsWith("\r\n")) {
+            return text.substring(0, text.length() - 2)
+        } else if (text.endsWith("\n") || text.endsWith("\r")) {
+            return text.substring(0, text.length() - 1)
+        }
+        return text
     }
 
-    private String getMessageWithParsing(String message, int maxLength) {
-        if (message.length() <= maxLength) return message
+    private void flushOutputMessage(String type, String message, Closure action) {
+        int offset = 0
+        int length = message.length()
+        while (offset < length) {
+            String msg
+            switch (OUTPUT_PARSER) {
+                case "disabled":
+                    msg = getMessageWithoutParsing(message, offset, MAX_MESSAGE_SIZE)
+                    break
+                case "ServiceMessage":
+                default:
+                    msg = getMessageWithParsing(message, offset, MAX_MESSAGE_SIZE)
+                    break
+            }
+            offset += msg.length()
+            action(new ServiceMessage(name: type, attributes: [name     : testName,
+                                                               out      : msg,
+                                                               "tc:tags": (OUTPUT_PARSER == "disabled" ? null : "tc:parseServiceMessagesInside"),
+                                                               flowId   : flowId]))
+        }
+    }
+
+    private static String getMessageWithoutParsing(String message, int offset, int maxLength) {
+        int end = Math.min(offset + maxLength, message.length())
+        return message.substring(offset, end)
+    }
+
+    private static String getMessageWithParsing(String message, int offset, int maxLength) {
+        int remaining = message.length() - offset
+        if (remaining <= maxLength) return message.substring(offset)
+
+        int maxEnd = offset + maxLength
 
         // Find inner service messages and try not to split each message
-        def start = message.indexOf(ServiceMessage.START_MESSAGE)
-        if (start == -1 || start > maxLength) return message.substring(0, maxLength)
+        int start = message.indexOf(ServiceMessage.START_MESSAGE, offset)
+        if (start == -1 || start > maxEnd) return message.substring(offset, maxEnd)
 
-        def end = getEndMessage(message, start)
-        if (end == -1) return message.substring(0, maxLength)
-        if (end > maxLength) return message.substring(0, start > 0 ? start : maxLength)
+        int end = getEndMessage(message, start)
+        if (end == -1) return message.substring(offset, maxEnd)
+        if (end > maxEnd) return message.substring(offset, start > offset ? start : maxEnd)
 
-        while (end < maxLength) {
+        while (end < maxEnd) {
             int newStart = message.indexOf(ServiceMessage.START_MESSAGE, end)
-            if (newStart == -1 || newStart >= maxLength) return message.substring(0, maxLength)
+            if (newStart == -1 || newStart >= maxEnd) return message.substring(offset, maxEnd)
 
             int newEnd = getEndMessage(message, newStart)
-            if (newEnd == -1) return message.substring(0, maxLength)
+            if (newEnd == -1) return message.substring(offset, maxEnd)
 
-            if (newEnd >= maxLength) return message.substring(0, newStart)
+            if (newEnd >= maxEnd) return message.substring(offset, newStart)
 
             end = newEnd
         }
-        return message.substring(0, end)
+        return message.substring(offset, end)
     }
 
     private int getEndMessage(String msg, int position) {
@@ -1225,7 +1250,7 @@ class DescriptorWrapper {
     }
 
     protected String getFlowId() {
-        return "${flow.id}-${System.identityHashCode(descriptor)}"
+        return "${flow.id}-${descriptor.hashCode()}"
     }
 }
 
