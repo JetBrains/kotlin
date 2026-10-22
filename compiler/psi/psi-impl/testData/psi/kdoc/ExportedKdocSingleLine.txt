@@ -249,6 +249,12 @@ KtFile: ExportedKdocSingleLine.kt
           PsiElement(IDENTIFIER)('Int')
     PsiWhiteSpace('\n    ')
     PROPERTY_ACCESSOR
+      KDoc
+        PsiElement(KDOC_START)('/**')
+        KDOC_SECTION
+          PsiElement(KDOC_TEXT)(' Top-level property getter documentation. ')
+        PsiElement(KDOC_END)('*/')
+      PsiWhiteSpace('\n    ')
       PsiElement(get)('get')
       VALUE_PARAMETER_LIST
         PsiElement(LPAR)('(')
