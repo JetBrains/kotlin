@@ -30,7 +30,7 @@ class KotlinNativeWorkersIT : KGPBaseTest() {
     @DisplayName("Smoke test for KT-90576 Migrate select Native tasks to Workers API")
     @GradleTest
     @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
-    fun testRunsLinkTasksWithConfigurationCachingDisabled(gradleVersion: GradleVersion) {
+    fun testRunsNativeTasksWithConfigurationCachingDisabled(gradleVersion: GradleVersion) {
         val buildOptions = defaultBuildOptions.copy(
             configurationCache = ConfigurationCacheValue.DISABLED,
             isolatedProjects = IsolatedProjectsMode.DISABLED,
@@ -62,6 +62,8 @@ class KotlinNativeWorkersIT : KGPBaseTest() {
 
             build("assemble") {
                 assertTasksExecuted(
+                    ":compileKotlinIosArm64",
+                    ":compileKotlinIosX64",
                     ":linkDebugFrameworkIosArm64",
                     ":linkDebugFrameworkIosX64",
                     ":linkReleaseFrameworkIosArm64",
