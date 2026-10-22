@@ -185,19 +185,7 @@ private fun compileImpl(
         }.valueOr { return it }
     allSourceFiles.addAll(0, newSources)
 
-    // Updating compiler options
-    val baseCompilerOptions = state.baseScriptCompilationConfiguration[ScriptCompilationConfiguration.compilerOptions]
-    val updatedCompilerOptions = allSourceFiles.flatMapTo(mutableListOf()) { file ->
-        getRefinedConfiguration(file)[ScriptCompilationConfiguration.compilerOptions]?.takeIf { it != baseCompilerOptions } ?: emptyList()
-    }
-    if (updatedCompilerOptions.isNotEmpty()) {
-        compilerConfiguration.updateWithCompilerOptions(
-            updatedCompilerOptions,
-            messageCollector,
-            state.ignoredOptionsReportingState,
-            true
-        )
-    }
+    state.applyRefinedCompilerOptions(compilerConfiguration, allSourceFiles, messageCollector, ::getRefinedConfiguration)
 
     val [libModuleData, newClassPath] = state.moduleDataProvider.addNewLibraryModuleDataIfNeeded(classpath.map(File::toPath))
 

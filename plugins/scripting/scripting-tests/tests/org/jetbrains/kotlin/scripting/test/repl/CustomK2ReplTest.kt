@@ -77,6 +77,28 @@ class CustomK2ReplTest {
     }
 
     @Test
+    fun testSnippetJvmTargetFromRefinementReachesSession() {
+        if (System.getProperty("java.specification.version").substringAfter("1.").toInt() < 16) {
+            abort<Nothing>("Records need java.lang.Record from the JDK the tests run on")
+        }
+        evalAndCheckSnippetsResultVals(
+            sequenceOf(
+                "@JvmRecord data class R(val x: Int)\nR(1).x",
+                "R(2).x",
+            ),
+            sequenceOf(1, 2),
+            baseCompilationConfiguration.with {
+                refineConfiguration {
+                    beforeCompiling { ctx ->
+                        if (!ctx.script.text.contains("@JvmRecord")) ctx.compilationConfiguration.asSuccess()
+                        else ctx.compilationConfiguration.with { compilerOptions.append("-jvm-target", "17") }.asSuccess()
+                    }
+                }
+            }
+        )
+    }
+
+    @Test
     fun testSimple() {
         evalAndCheckSnippetsResultVals(
             sequenceOf(
