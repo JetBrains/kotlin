@@ -39,6 +39,8 @@ object LombokNames {
     val XSLF4J = FqName("lombok.extern.slf4j.XSlf4j")
     val TO_STRING = FqName("lombok.ToString")
     val EQUALS_AND_HASH_CODE = FqName("lombok.EqualsAndHashCode")
+    val KOTLINX_SERIALIZATION_SERIALIZABLE = FqName("kotlinx.serialization.Serializable")
+    val KOTLINX_SERIALIZATION_META_SERIALIZABLE = FqName("kotlinx.serialization.MetaSerializable")
 
     val ACCESSORS_ID = ClassId.topLevel(ACCESSORS)
     val GETTER_ID = ClassId.topLevel(GETTER)
@@ -73,6 +75,7 @@ object LombokNames {
     val EQUALS_AND_HASH_CODE_ID = ClassId.topLevel(EQUALS_AND_HASH_CODE)
     val EQUALS_AND_HASH_CODE_INCLUDE_ID = EQUALS_AND_HASH_CODE_ID.createNestedClassId(INCLUDE_NAME)
     val EQUALS_AND_HASH_CODE_EXCLUDE_ID = EQUALS_AND_HASH_CODE_ID.createNestedClassId(EXCLUDE_NAME)
+    val KOTLINX_SERIALIZATION_SERIALIZABLE_ID = ClassId.topLevel(KOTLINX_SERIALIZATION_SERIALIZABLE)
 
     // Shared by `AccessorGenerator` (Data/Value's own `canEqual`) and `EqualsAndHashCodeGenerator`.
     val CAN_EQUAL = Name.identifier("canEqual")
