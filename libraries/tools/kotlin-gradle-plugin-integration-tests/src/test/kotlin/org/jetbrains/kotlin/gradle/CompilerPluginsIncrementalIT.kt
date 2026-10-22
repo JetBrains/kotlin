@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCompilerPlugins
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
@@ -18,7 +19,7 @@ import org.junit.jupiter.api.condition.OS
 @OtherGradlePluginTests
 @MustRunOnChangesInGradle
 @MustRunOnChangesInCompilerPlugins
-abstract class CompilerPluginsIncrementalIT : KGPBaseTest() {
+class CompilerPluginsIncrementalIT : KGPBaseTest() {
     override val defaultBuildOptions: BuildOptions
         get() = super.defaultBuildOptions.copy(
             incremental = true
@@ -27,8 +28,9 @@ abstract class CompilerPluginsIncrementalIT : KGPBaseTest() {
     @DisabledOnOs(OS.WINDOWS, disabledReason = "Kotlin compiler holds an open file descriptor to plugin jar file")
     @DisplayName("KT-38570: After changing compiler plugin code, next incremental build picks it up")
     @GradleTest
-    open fun afterChangeInPluginBuildDoesIncrementalProcessing(gradleVersion: GradleVersion) {
-        project("incrementalChangeInPlugin".prefix, gradleVersion) {
+    @TestMetadata("compilerPlugins/incrementalChangeInPlugin")
+    fun afterChangeInPluginBuildDoesIncrementalProcessing(gradleVersion: GradleVersion) {
+        project("compilerPlugins/incrementalChangeInPlugin", gradleVersion) {
             val classesDirectory = subProject("library").kotlinClassesDir("main")
             build("assemble") {
                 assertClassDeclarationsContain(
@@ -126,10 +128,4 @@ abstract class CompilerPluginsIncrementalIT : KGPBaseTest() {
             }
         }
     }
-
-    private val String.prefix get() = "compilerPlugins/$this"
-}
-
-class CompilerPluginsK2IncrementalIT : CompilerPluginsIncrementalIT() {
-    override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
 }
