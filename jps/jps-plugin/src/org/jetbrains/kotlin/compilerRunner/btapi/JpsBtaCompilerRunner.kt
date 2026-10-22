@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.jps.build.KotlinBuilder
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.modules.TargetId
 import java.io.File
+import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -47,6 +48,7 @@ internal class JpsBtaJvmCompilationRequest(
     val javaSourceRoots: List<JvmSourceRoot>,
     val friendDirectories: List<File>,
     val modularJdkRoot: File?,
+    val compilerReferenceIndexDirectory: Path?,
 )
 
 internal class JpsBtaCompilerRunner {
@@ -105,6 +107,9 @@ internal class JpsBtaCompilerRunner {
 
         builder[JvmCompilationOperation.INCREMENTAL_COMPILATION] = buildIncrementalConfiguration(builder, request, environment)
         builder[BaseCompilationOperation.COMPILER_MESSAGE_RENDERER] = JpsBtaMessageRenderer(environment.messageCollector)
+        if (request.compilerReferenceIndexDirectory != null) {
+            builder[BaseCompilationOperation.GENERATE_COMPILER_REF_INDEX] = true
+        }
 
         return builder.build()
     }
@@ -216,6 +221,9 @@ internal class JpsBtaCompilerRunner {
         }
         icBuilder[JvmJpsManagedIncrementalCompilationConfiguration.FILE_MAPPING_TRACKER] =
             JpsBtaFileMappingTracker(environment.outputItemsCollector)
+        request.compilerReferenceIndexDirectory?.let {
+            icBuilder[JvmJpsManagedIncrementalCompilationConfiguration.COMPILER_REF_INDEX_DIRECTORY] = it
+        }
 
         return icBuilder.build()
     }
