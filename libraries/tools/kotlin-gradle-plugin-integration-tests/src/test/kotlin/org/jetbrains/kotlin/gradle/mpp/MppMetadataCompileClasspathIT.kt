@@ -8,9 +8,11 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.testResolveAllConfigurations
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import kotlin.test.assertTrue
 
 @MppGradlePluginTests
+@MustRunOnChangesInGradle
 class MppMetadataCompileClasspathIT : KGPBaseTest() {
 
     override val defaultBuildOptions: BuildOptions = super.defaultBuildOptions.copy(
