@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.cli.klib
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSupportForLinker
 import org.jetbrains.kotlin.backend.common.overrides.IrLinkerFakeOverrideProvider
 import org.jetbrains.kotlin.backend.common.serialization.BasicIrModuleDeserializer
-import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
+import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategyResolver
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.KotlinIrLinker
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
@@ -37,7 +37,7 @@ internal class KlibToolIrLinker(
     override fun createModuleDeserializer(
         moduleFragment: IrModuleFragment,
         klib: KotlinLibrary?,
-        strategyResolver: (String) -> DeserializationStrategy,
+        strategyResolver: DeserializationStrategyResolver,
     ): IrModuleDeserializer = KlibToolModuleDeserializer(
         moduleFragment = moduleFragment,
         klib = klib ?: error("Expecting kotlin library for $moduleFragment"),
@@ -49,7 +49,7 @@ internal class KlibToolIrLinker(
     private inner class KlibToolModuleDeserializer(
         moduleFragment: IrModuleFragment,
         klib: KotlinLibrary,
-        strategyResolver: (String) -> DeserializationStrategy,
+        strategyResolver: DeserializationStrategyResolver,
     ) : BasicIrModuleDeserializer(
         linker = this,
         moduleFragment = moduleFragment,

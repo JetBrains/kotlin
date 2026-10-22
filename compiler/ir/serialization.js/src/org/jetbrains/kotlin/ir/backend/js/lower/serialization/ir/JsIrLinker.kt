@@ -68,7 +68,7 @@ class JsIrLinker(
     override fun createModuleDeserializer(
         moduleFragment: IrModuleFragment,
         klib: KotlinLibrary?,
-        strategyResolver: (String) -> DeserializationStrategy,
+        strategyResolver: DeserializationStrategyResolver,
     ): IrModuleDeserializer {
         require(klib != null) { "Expecting kotlin library" }
         val libraryAbiVersion = klib.versions.abiVersion ?: KotlinAbiVersion.CURRENT
@@ -80,7 +80,7 @@ class JsIrLinker(
     private inner class JsModuleDeserializer(
         moduleFragment: IrModuleFragment,
         klib: KotlinLibrary,
-        strategyResolver: (String) -> DeserializationStrategy,
+        strategyResolver: DeserializationStrategyResolver,
         libraryAbiVersion: KotlinAbiVersion,
     ) : BasicIrModuleDeserializer(this, moduleFragment, klib, strategyResolver, libraryAbiVersion) {
         init {

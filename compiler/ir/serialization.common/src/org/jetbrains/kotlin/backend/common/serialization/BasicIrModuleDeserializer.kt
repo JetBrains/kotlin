@@ -34,7 +34,7 @@ abstract class BasicIrModuleDeserializer(
     val linker: KotlinIrLinker,
     moduleFragment: IrModuleFragment,
     override val klib: KotlinLibrary,
-    override val strategyResolver: (String) -> DeserializationStrategy,
+    override val strategyResolver: DeserializationStrategyResolver,
     libraryAbiVersion: KotlinAbiVersion,
     private val allowErrorNodes: Boolean = false,
     private val deserializeTypeAliases: Boolean = false,
