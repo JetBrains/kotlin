@@ -9,6 +9,7 @@ public final class KlibMetadataProtoBuf {
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite registry) {
     registry.add(org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.packageFqName);
     registry.add(org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.typeAliasFile);
+    registry.add(org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.typeAliasKdoc);
     registry.add(org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.classAnnotation);
     registry.add(org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.classFile);
     registry.add(org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.classKdoc);
@@ -27,8 +28,11 @@ public final class KlibMetadataProtoBuf {
     registry.add(org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.compileTimeValue);
     registry.add(org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.propertyFile);
     registry.add(org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.propertyKdoc);
+    registry.add(org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.propertyGetterKdoc);
+    registry.add(org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.propertySetterKdoc);
     registry.add(org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.enumEntryAnnotation);
     registry.add(org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.enumEntryOrdinal);
+    registry.add(org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.enumEntryKdoc);
     registry.add(org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.parameterAnnotation);
     registry.add(org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.typeAnnotation);
     registry.add(org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.typeParameterAnnotation);
@@ -991,6 +995,22 @@ public final class KlibMetadataProtoBuf {
         170,
         org.jetbrains.kotlin.protobuf.WireFormat.FieldType.INT32,
         java.lang.Integer.class);
+  public static final int TYPE_ALIAS_KDOC_FIELD_NUMBER = 171;
+  /**
+   * <code>extend .org.jetbrains.kotlin.metadata.TypeAlias { ... }</code>
+   */
+  public static final
+    org.jetbrains.kotlin.protobuf.GeneratedMessageLite.GeneratedExtension<
+      org.jetbrains.kotlin.metadata.ProtoBuf.TypeAlias,
+      java.lang.String> typeAliasKdoc = org.jetbrains.kotlin.protobuf.GeneratedMessageLite
+          .newSingularGeneratedExtension(
+        org.jetbrains.kotlin.metadata.ProtoBuf.TypeAlias.getDefaultInstance(),
+        "",
+        null,
+        null,
+        171,
+        org.jetbrains.kotlin.protobuf.WireFormat.FieldType.STRING,
+        java.lang.String.class);
   public static final int CLASS_ANNOTATION_FIELD_NUMBER = 170;
   /**
    * <code>extend .org.jetbrains.kotlin.metadata.Class { ... }</code>
@@ -1279,6 +1299,38 @@ public final class KlibMetadataProtoBuf {
         180,
         org.jetbrains.kotlin.protobuf.WireFormat.FieldType.STRING,
         java.lang.String.class);
+  public static final int PROPERTY_GETTER_KDOC_FIELD_NUMBER = 184;
+  /**
+   * <code>extend .org.jetbrains.kotlin.metadata.Property { ... }</code>
+   */
+  public static final
+    org.jetbrains.kotlin.protobuf.GeneratedMessageLite.GeneratedExtension<
+      org.jetbrains.kotlin.metadata.ProtoBuf.Property,
+      java.lang.String> propertyGetterKdoc = org.jetbrains.kotlin.protobuf.GeneratedMessageLite
+          .newSingularGeneratedExtension(
+        org.jetbrains.kotlin.metadata.ProtoBuf.Property.getDefaultInstance(),
+        "",
+        null,
+        null,
+        184,
+        org.jetbrains.kotlin.protobuf.WireFormat.FieldType.STRING,
+        java.lang.String.class);
+  public static final int PROPERTY_SETTER_KDOC_FIELD_NUMBER = 185;
+  /**
+   * <code>extend .org.jetbrains.kotlin.metadata.Property { ... }</code>
+   */
+  public static final
+    org.jetbrains.kotlin.protobuf.GeneratedMessageLite.GeneratedExtension<
+      org.jetbrains.kotlin.metadata.ProtoBuf.Property,
+      java.lang.String> propertySetterKdoc = org.jetbrains.kotlin.protobuf.GeneratedMessageLite
+          .newSingularGeneratedExtension(
+        org.jetbrains.kotlin.metadata.ProtoBuf.Property.getDefaultInstance(),
+        "",
+        null,
+        null,
+        185,
+        org.jetbrains.kotlin.protobuf.WireFormat.FieldType.STRING,
+        java.lang.String.class);
   public static final int ENUM_ENTRY_ANNOTATION_FIELD_NUMBER = 170;
   /**
    * <code>extend .org.jetbrains.kotlin.metadata.EnumEntry { ... }</code>
@@ -1311,6 +1363,22 @@ public final class KlibMetadataProtoBuf {
         171,
         org.jetbrains.kotlin.protobuf.WireFormat.FieldType.INT32,
         java.lang.Integer.class);
+  public static final int ENUM_ENTRY_KDOC_FIELD_NUMBER = 173;
+  /**
+   * <code>extend .org.jetbrains.kotlin.metadata.EnumEntry { ... }</code>
+   */
+  public static final
+    org.jetbrains.kotlin.protobuf.GeneratedMessageLite.GeneratedExtension<
+      org.jetbrains.kotlin.metadata.ProtoBuf.EnumEntry,
+      java.lang.String> enumEntryKdoc = org.jetbrains.kotlin.protobuf.GeneratedMessageLite
+          .newSingularGeneratedExtension(
+        org.jetbrains.kotlin.metadata.ProtoBuf.EnumEntry.getDefaultInstance(),
+        "",
+        null,
+        null,
+        173,
+        org.jetbrains.kotlin.protobuf.WireFormat.FieldType.STRING,
+        java.lang.String.class);
   public static final int PARAMETER_ANNOTATION_FIELD_NUMBER = 170;
   /**
    * <code>extend .org.jetbrains.kotlin.metadata.ValueParameter { ... }</code>

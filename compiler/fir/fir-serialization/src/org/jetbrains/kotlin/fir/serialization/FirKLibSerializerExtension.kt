@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.serialization
 
 import com.intellij.lang.LighterASTNode
 import com.intellij.openapi.util.Ref
+import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
@@ -63,7 +64,13 @@ class FirKLibSerializerExtension(
 
     override fun serializeTypeAlias(typeAlias: FirTypeAlias, proto: ProtoBuf.TypeAlias.Builder) {
         typeAlias.setFileId(proto, KlibMetadataProtoBuf.typeAliasFile)
+        typeAlias.setKDoc(proto, KlibMetadataProtoBuf.typeAliasKdoc)
         super.serializeTypeAlias(typeAlias, proto)
+    }
+
+    override fun serializeEnumEntry(enumEntry: FirEnumEntry, proto: ProtoBuf.EnumEntry.Builder) {
+        enumEntry.setKDoc(proto, KlibMetadataProtoBuf.enumEntryKdoc)
+        super.serializeEnumEntry(enumEntry, proto)
     }
 
     override fun serializeProperty(
@@ -74,6 +81,8 @@ class FirKLibSerializerExtension(
     ) {
         property.setFileId(proto, KlibMetadataProtoBuf.propertyFile)
         property.setKDoc(proto, KlibMetadataProtoBuf.propertyKdoc)
+        property.getter?.setAccessorKDoc(proto, KlibMetadataProtoBuf.propertyGetterKdoc)
+        property.setter?.setAccessorKDoc(proto, KlibMetadataProtoBuf.propertySetterKdoc)
         super.serializeProperty(property, proto, versionRequirementTable, childSerializer)
     }
 
@@ -109,6 +118,15 @@ class FirKLibSerializerExtension(
             val docComment = kidsRef.get().firstOrNull { it?.tokenType == KtTokens.DOC_COMMENT } ?: return@let null
             source.treeStructure.toString(docComment).toString()
         }
+
+    private fun FirPropertyAccessor.setAccessorKDoc(
+        proto: ProtoBuf.Property.Builder,
+        extension: GeneratedMessageLite.GeneratedExtension<ProtoBuf.Property, String>,
+    ) {
+        if (source?.kind is KtRealSourceElementKind) {
+            setKDoc(proto, extension)
+        }
+    }
 
     @Suppress("Reformat")
     private fun <

@@ -205,6 +205,7 @@ fun deserializeClassToSymbol(
                     }
                     isLocal = false
                     resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
+                    attributes.applyKDoc(context.kdocDeserializer.loadEnumEntryKDoc(enumEntryProto))
                 }.apply {
                     containingClassForStaticMemberAttr = context.dispatchReceiver!!.lookupTag
                     replaceAnnotations(
