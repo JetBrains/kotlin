@@ -1,5 +1,5 @@
 STATUS:
-TARGET: @R|test/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] [ImportedFromObjectOrStaticClassIdKey=ImportedFromObjectOrStaticData(objectClassId=test/O, original=FirNamedFunctionSymbol test/O.foo)] fun foo([ResolvedTo(STATUS)] @R|test/Anno|[Types](LAZY_EXPRESSION) i: R|kotlin/Int| = LAZY_EXPRESSION): <implicit> { LAZY_BLOCK }
+TARGET: @R|test/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] [DeferredCallableCopyReturnTypeKey=DeferredReturnTypeOfSubstitution(substitutor=Empty, baseSymbol=FirNamedFunctionSymbol test/O.foo), ImportedFromObjectOrStaticClassIdKey=ImportedFromObjectOrStaticData(objectClassId=test/O, original=FirNamedFunctionSymbol test/O.foo)] fun foo([ResolvedTo(STATUS)] @R|test/Anno|[Types](LAZY_EXPRESSION) i: R|kotlin/Int|): <implicit>
 
 FILE: [ResolvedTo(IMPORTS)] importedFromObjectFunctionWithImplicitType.kt
     public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -23,7 +23,7 @@ FILE: [ResolvedTo(IMPORTS)] importedFromObjectFunctionWithImplicitType.kt
     }
 
 EXPECT_ACTUAL_MATCHING:
-TARGET: @R|test/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ImportedFromObjectOrStaticClassIdKey=ImportedFromObjectOrStaticData(objectClassId=test/O, original=FirNamedFunctionSymbol test/O.foo)] fun foo([ResolvedTo(EXPECT_ACTUAL_MATCHING)] @R|test/Anno|[Types](LAZY_EXPRESSION) i: R|kotlin/Int| = LAZY_EXPRESSION): <implicit> { LAZY_BLOCK }
+TARGET: @R|test/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [DeferredCallableCopyReturnTypeKey=DeferredReturnTypeOfSubstitution(substitutor=Empty, baseSymbol=FirNamedFunctionSymbol test/O.foo), ImportedFromObjectOrStaticClassIdKey=ImportedFromObjectOrStaticData(objectClassId=test/O, original=FirNamedFunctionSymbol test/O.foo)] fun foo([ResolvedTo(EXPECT_ACTUAL_MATCHING)] @R|test/Anno|[Types](LAZY_EXPRESSION) i: R|kotlin/Int|): <implicit>
 
 FILE: [ResolvedTo(IMPORTS)] importedFromObjectFunctionWithImplicitType.kt
     public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -42,12 +42,12 @@ FILE: [ResolvedTo(IMPORTS)] importedFromObjectFunctionWithImplicitType.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        @R|test/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] fun foo([ResolvedTo(EXPECT_ACTUAL_MATCHING)] @R|test/Anno|[Types](LAZY_EXPRESSION) i: R|kotlin/Int| = LAZY_EXPRESSION): <implicit> { LAZY_BLOCK }
+        @R|test/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] @R|test/Anno|[Types](LAZY_EXPRESSION) i: R|kotlin/Int| = LAZY_EXPRESSION): <implicit> { LAZY_BLOCK }
 
     }
 
 CONTRACTS:
-TARGET: @R|test/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONTRACTS)] [ImportedFromObjectOrStaticClassIdKey=ImportedFromObjectOrStaticData(objectClassId=test/O, original=FirNamedFunctionSymbol test/O.foo)] fun foo([ResolvedTo(CONTRACTS)] @R|test/Anno|[Types](LAZY_EXPRESSION) i: R|kotlin/Int| = LAZY_EXPRESSION): <implicit> { LAZY_BLOCK }
+TARGET: @R|test/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONTRACTS)] [DeferredCallableCopyReturnTypeKey=DeferredReturnTypeOfSubstitution(substitutor=Empty, baseSymbol=FirNamedFunctionSymbol test/O.foo), ImportedFromObjectOrStaticClassIdKey=ImportedFromObjectOrStaticData(objectClassId=test/O, original=FirNamedFunctionSymbol test/O.foo)] fun foo([ResolvedTo(CONTRACTS)] @R|test/Anno|[Types](LAZY_EXPRESSION) i: R|kotlin/Int|): <implicit>
 
 FILE: [ResolvedTo(IMPORTS)] importedFromObjectFunctionWithImplicitType.kt
     public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -66,14 +66,12 @@ FILE: [ResolvedTo(IMPORTS)] importedFromObjectFunctionWithImplicitType.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        @R|test/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] fun foo([ResolvedTo(CONTRACTS)] @R|test/Anno|[Types](LAZY_EXPRESSION) i: R|kotlin/Int| = LAZY_EXPRESSION): <implicit> { LAZY_BLOCK }
+        @R|test/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] @R|test/Anno|[Types](LAZY_EXPRESSION) i: R|kotlin/Int| = LAZY_EXPRESSION): <implicit> { LAZY_BLOCK }
 
     }
 
 IMPLICIT_TYPES_BODY_RESOLVE:
-TARGET: @R|test/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ImportedFromObjectOrStaticClassIdKey=ImportedFromObjectOrStaticData(objectClassId=test/O, original=FirNamedFunctionSymbol test/O.foo)] fun foo([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] @R|test/Anno|[Types](LAZY_EXPRESSION) i: R|kotlin/Int| = IntegerLiteral(42)): R|kotlin/String| {
-    ^foo String(body).R|kotlin/String.plus|(R|<local>/i|)
-}
+TARGET: @R|test/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ImportedFromObjectOrStaticClassIdKey=ImportedFromObjectOrStaticData(objectClassId=test/O, original=FirNamedFunctionSymbol test/O.foo)] fun foo([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] @R|test/Anno|[Types](LAZY_EXPRESSION) i: R|kotlin/Int|): R|kotlin/String|
 
 FILE: [ResolvedTo(IMPORTS)] importedFromObjectFunctionWithImplicitType.kt
     public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -92,14 +90,14 @@ FILE: [ResolvedTo(IMPORTS)] importedFromObjectFunctionWithImplicitType.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        @R|test/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] fun foo([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] @R|test/Anno|[Types](LAZY_EXPRESSION) i: R|kotlin/Int| = IntegerLiteral(42)): <implicit> { LAZY_BLOCK }
+        @R|test/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun foo([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] @R|test/Anno|[Types](LAZY_EXPRESSION) i: R|kotlin/Int| = IntegerLiteral(42)): R|kotlin/String| {
+            ^foo String(body).R|kotlin/String.plus|(R|<local>/i|)
+        }
 
     }
 
 CONSTANT_EVALUATION:
-TARGET: @R|test/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] [ImportedFromObjectOrStaticClassIdKey=ImportedFromObjectOrStaticData(objectClassId=test/O, original=FirNamedFunctionSymbol test/O.foo)] fun foo([ResolvedTo(CONSTANT_EVALUATION)] @R|test/Anno|[Types](LAZY_EXPRESSION) i: R|kotlin/Int| = IntegerLiteral(42)): R|kotlin/String| {
-    ^foo String(body).R|kotlin/String.plus|(R|<local>/i|)
-}
+TARGET: @R|test/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] [ImportedFromObjectOrStaticClassIdKey=ImportedFromObjectOrStaticData(objectClassId=test/O, original=FirNamedFunctionSymbol test/O.foo)] fun foo([ResolvedTo(CONSTANT_EVALUATION)] @R|test/Anno|[Types](LAZY_EXPRESSION) i: R|kotlin/Int|): R|kotlin/String|
 
 FILE: [ResolvedTo(IMPORTS)] importedFromObjectFunctionWithImplicitType.kt
     public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -118,14 +116,14 @@ FILE: [ResolvedTo(IMPORTS)] importedFromObjectFunctionWithImplicitType.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        @R|test/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] fun foo([ResolvedTo(CONSTANT_EVALUATION)] @R|test/Anno|[Types](LAZY_EXPRESSION) i: R|kotlin/Int| = IntegerLiteral(42)): <implicit> { LAZY_BLOCK }
+        @R|test/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun foo([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] @R|test/Anno|[Types](LAZY_EXPRESSION) i: R|kotlin/Int| = IntegerLiteral(42)): R|kotlin/String| {
+            ^foo String(body).R|kotlin/String.plus|(R|<local>/i|)
+        }
 
     }
 
 ANNOTATION_ARGUMENTS:
-TARGET: @R|test/Anno|[Types](s = String(function).R|kotlin/String.plus|(R|test/C|) [evaluated = String(functionc)]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ImportedFromObjectOrStaticClassIdKey=ImportedFromObjectOrStaticData(objectClassId=test/O, original=FirNamedFunctionSymbol test/O.foo)] fun foo([ResolvedTo(ANNOTATION_ARGUMENTS)] @R|test/Anno|[Types](s = String(param).R|kotlin/String.plus|(R|test/C|) [evaluated = String(paramc)]) i: R|kotlin/Int| = IntegerLiteral(42)): R|kotlin/String| {
-    ^foo String(body).R|kotlin/String.plus|(R|<local>/i|)
-}
+TARGET: @R|test/Anno|[Types](s = String(function).R|kotlin/String.plus|(R|test/C|) [evaluated = String(functionc)]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ImportedFromObjectOrStaticClassIdKey=ImportedFromObjectOrStaticData(objectClassId=test/O, original=FirNamedFunctionSymbol test/O.foo)] fun foo([ResolvedTo(ANNOTATION_ARGUMENTS)] @R|test/Anno|[Types](s = String(param).R|kotlin/String.plus|(R|test/C|) [evaluated = String(paramc)]) i: R|kotlin/Int|): R|kotlin/String|
 
 FILE: [ResolvedTo(IMPORTS)] importedFromObjectFunctionWithImplicitType.kt
     public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
@@ -151,9 +149,7 @@ FILE: [ResolvedTo(IMPORTS)] importedFromObjectFunctionWithImplicitType.kt
     }
 
 BODY_RESOLVE:
-TARGET: @R|test/Anno|[Types](s = String(function).R|kotlin/String.plus|(R|test/C|) [evaluated = String(functionc)]) public final [ResolvedTo(BODY_RESOLVE)] [ImportedFromObjectOrStaticClassIdKey=ImportedFromObjectOrStaticData(objectClassId=test/O, original=FirNamedFunctionSymbol test/O.foo)] fun foo([ResolvedTo(BODY_RESOLVE)] @R|test/Anno|[Types](s = String(param).R|kotlin/String.plus|(R|test/C|) [evaluated = String(paramc)]) i: R|kotlin/Int| = Int(42)): R|kotlin/String| {
-    ^foo String(body).R|kotlin/String.plus|(R|<local>/i|)
-}
+TARGET: @R|test/Anno|[Types](s = String(function).R|kotlin/String.plus|(R|test/C|) [evaluated = String(functionc)]) public final [ResolvedTo(BODY_RESOLVE)] [ImportedFromObjectOrStaticClassIdKey=ImportedFromObjectOrStaticData(objectClassId=test/O, original=FirNamedFunctionSymbol test/O.foo)] fun foo([ResolvedTo(BODY_RESOLVE)] @R|test/Anno|[Types](s = String(param).R|kotlin/String.plus|(R|test/C|) [evaluated = String(paramc)]) i: R|kotlin/Int|): R|kotlin/String|
 
 FILE: [ResolvedTo(IMPORTS)] importedFromObjectFunctionWithImplicitType.kt
     public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
@@ -172,7 +168,7 @@ FILE: [ResolvedTo(IMPORTS)] importedFromObjectFunctionWithImplicitType.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        @R|test/Anno|[Types](s = String(function).R|kotlin/String.plus|(R|test/C|) [evaluated = String(functionc)]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo([ResolvedTo(BODY_RESOLVE)] @R|test/Anno|[Types](s = String(param).R|kotlin/String.plus|(R|test/C|) [evaluated = String(paramc)]) i: R|kotlin/Int| = Int(42)): R|kotlin/String| {
+        @R|test/Anno|[Types](s = String(function).R|kotlin/String.plus|(R|test/C|) [evaluated = String(functionc)]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo([ResolvedTo(ANNOTATION_ARGUMENTS)] @R|test/Anno|[Types](s = String(param).R|kotlin/String.plus|(R|test/C|) [evaluated = String(paramc)]) i: R|kotlin/Int| = IntegerLiteral(42)): R|kotlin/String| {
             ^foo String(body).R|kotlin/String.plus|(R|<local>/i|)
         }
 
