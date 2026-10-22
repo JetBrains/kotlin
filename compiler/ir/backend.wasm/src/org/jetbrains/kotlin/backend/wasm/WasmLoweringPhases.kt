@@ -184,6 +184,12 @@ val wasmLowerings: List<NamedCompilerPhase<WasmBackendContext, IrModuleFragment,
     ::TryCatchCanonicalization,
 
     ::WasmForLoopsLowering,
+
+    ::WasmDefaultArgumentStubGenerator,
+    ::WasmDefaultParameterPatchOverridenSymbolsLowering,
+    ::WasmDefaultParameterInjector,
+    ::createDefaultParameterCleanerPhase,
+
     ::WasmPropertyLazyInitLowering,
     ::RemoveInitializersForLazyProperties,
 
@@ -193,11 +199,6 @@ val wasmLowerings: List<NamedCompilerPhase<WasmBackendContext, IrModuleFragment,
     ::WasmPropertyAccessorInlineLowering,
 
     ::WasmStringConcatenationLowering,
-
-    ::WasmDefaultArgumentStubGenerator,
-    ::WasmDefaultParameterPatchOverridenSymbolsLowering,
-    ::WasmDefaultParameterInjector,
-    ::createDefaultParameterCleanerPhase,
 
 //            TODO:
 //            multipleCatchesLoweringPhase,

@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: WASM_JS, WASM_WASI
-// ^^^ KT-89487
 // FILE: another.kt
 
 private val prop: String = computeProp()
