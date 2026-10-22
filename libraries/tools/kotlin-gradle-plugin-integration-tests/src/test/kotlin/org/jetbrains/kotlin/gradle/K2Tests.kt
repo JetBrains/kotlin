@@ -5,40 +5,19 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.gradle.kotlin.dsl.kotlin
-import org.gradle.kotlin.dsl.withType
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInFrontend
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
-import kotlin.test.Ignore
 import kotlin.test.assertEquals
-
-// FIXME(KT-69597): Previously hardcoded to language version 2.0.
-@Disabled("Used for local testing only")
-@MppGradlePluginTests
-@DisplayName("K2: Hierarchical multiplatform")
-class K2HierarchicalMppIT : HierarchicalMppIT()
-
-// FIXME(KT-69597): Previously hardcoded to language version 2.0.
-@Disabled("Used for local testing only")
-class K2CommonizerIT : CommonizerIT()
-
-// FIXME(KT-69597): Previously hardcoded to language version 2.0.
-@Ignore
-class K2CommonizerHierarchicalIT : CommonizerHierarchicalIT()
 
 @MppGradlePluginTests
 @DisplayName("K2: custom tests")
 @MustRunOnChangesInGradle
 @MustRunOnChangesInFrontend
-class CustomK2Tests : KGPBaseTest() {
-    override val defaultBuildOptions: BuildOptions get() = super.defaultBuildOptions.copyEnsuringK2()
-
+class CustomTests : KGPBaseTest() {
     @GradleTest
     @DisplayName("Serialization plugin in common source set. KT-56911")
     fun testHmppDependenciesInJsTests(gradleVersion: GradleVersion) {
@@ -238,8 +217,7 @@ class CustomK2Tests : KGPBaseTest() {
 @DisplayName("K2: custom MacOS tests")
 @MustRunOnChangesInGradle
 @MustRunOnChangesInFrontend
-class CustomK2MacOSTests : KGPBaseTest() {
-    override val defaultBuildOptions: BuildOptions get() = super.defaultBuildOptions.copyEnsuringK2()
+class CustomMacOSTests : KGPBaseTest() {
 
     @GradleTest
     @DisplayName("Universal metadata compilation with constant expressions (KT-63835)")

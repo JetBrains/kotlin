@@ -9,12 +9,7 @@ import org.gradle.api.logging.LogLevel
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinResolvedBinaryDependency
-import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.assertMatches
-import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.binaryCoordinates
-import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.dependsOnDependency
-import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.friendSourceDependency
-import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.getOrFail
-import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.regularSourceDependency
+import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.*
 import org.jetbrains.kotlin.gradle.idea.testFixtures.utils.kotlinStdlibDependencies
 import org.jetbrains.kotlin.gradle.idea.testFixtures.utils.unresolvedDependenciesDiagnosticMatcher
 import org.jetbrains.kotlin.gradle.internals.MULTIPLATFORM_PROJECT_METADATA_JSON_FILE_NAME
@@ -25,7 +20,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.ModuleDependencyIdentifier
 import org.jetbrains.kotlin.gradle.plugin.mpp.SourceSetMetadataLayout
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.checkedReplace
-import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.gradle.util.resolveIdeDependencies
 import org.jetbrains.kotlin.gradle.util.resolveRepoArtifactPath
 import org.jetbrains.kotlin.test.TestMetadata
@@ -35,14 +29,17 @@ import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.nio.file.Path
 import java.util.zip.ZipFile
-import kotlin.io.path.*
+import kotlin.io.path.appendText
+import kotlin.io.path.exists
+import kotlin.io.path.readText
+import kotlin.io.path.writeText
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import kotlin.test.fail
 
 @MppGradlePluginTests
 @DisplayName("Hierarchical multiplatform")
-open class HierarchicalMppIT : KGPBaseTest() {
+class HierarchicalMppIT : KGPBaseTest() {
 
     override val defaultBuildOptions: BuildOptions
         get() = super.defaultBuildOptions
@@ -333,7 +330,11 @@ open class HierarchicalMppIT : KGPBaseTest() {
         ) {
             val testClassesTaskName = "jvmTestClasses"
 
-            build("assemble", testClassesTaskName, buildOptions = buildOptions.suppressingGradlePluginErrors("KotlinTargetAlreadyDeclaredError")) {
+            build(
+                "assemble",
+                testClassesTaskName,
+                buildOptions = buildOptions.suppressingGradlePluginErrors("KotlinTargetAlreadyDeclaredError")
+            ) {
                 assertTasksExecuted(
                     ":dependsOnPlainJvm:compileKotlinJvm",
                     ":dependsOnPlainJvm:compileJvmMainJava",
@@ -960,7 +961,10 @@ open class HierarchicalMppIT : KGPBaseTest() {
                 if (gradleModuleFileContent.contains(variantName)) fail("Variant '$variantName' shouldn't be published")
             }
 
-            assertNoSourcesPublished(tempDir.resolveRepoArtifactPath("test", "lib", "1.0", classifier = "sources"), "metadataSourcesElements")
+            assertNoSourcesPublished(
+                tempDir.resolveRepoArtifactPath("test", "lib", "1.0", classifier = "sources"),
+                "metadataSourcesElements"
+            )
             assertNoSourcesPublished(
                 tempDir.resolveRepoArtifactPath("test", "lib-linuxx64", "1.0", classifier = "sources"),
                 "linuxX64SourcesElements-published",
@@ -1117,7 +1121,7 @@ open class HierarchicalMppIT : KGPBaseTest() {
     @GradleTest
     @DisplayName("K2: Check native stdlib is not shadowed by commonMain stdlib metadata")
     fun testK2NativeStdlibConflict(gradleVersion: GradleVersion) {
-        nativeProject("kt61430", gradleVersion, buildOptions = defaultBuildOptions.copyEnsuringK2()) {
+        nativeProject("kt61430", gradleVersion) {
             build("assemble")
         }
     }

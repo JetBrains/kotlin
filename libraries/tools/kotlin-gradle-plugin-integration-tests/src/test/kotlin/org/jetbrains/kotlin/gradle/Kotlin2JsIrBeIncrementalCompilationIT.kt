@@ -20,22 +20,9 @@ import kotlin.test.assertFalse
 import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
-@DisplayName("Incremental compilation tests for Kotlin JS IR backend with K2")
-@JsGradlePluginTests
-class Kotlin2JsK2IrBeIncrementalCompilationIT : Kotlin2JsIrBeIncrementalCompilationIT() {
-    override val defaultBuildOptions: BuildOptions
-        get() = super.defaultBuildOptions.copyEnsuringK2()
-
-    @Disabled("Not found way to fail BE compilation with successful FE 2.0 compilation")
-    @GradleTest
-    override fun testRebuildAfterError(gradleVersion: GradleVersion) {
-        super.testRebuildAfterError(gradleVersion)
-    }
-}
-
 @DisplayName("Incremental compilation tests for Kotlin JS IR backend")
 @JsGradlePluginTests
-abstract class Kotlin2JsIrBeIncrementalCompilationIT : KGPBaseTest() {
+class Kotlin2JsIrBeIncrementalCompilationIT : KGPBaseTest() {
     override val defaultBuildOptions = BuildOptions(
         jsOptions = BuildOptions.JsOptions(
             incrementalJsKlib = true,
@@ -45,7 +32,8 @@ abstract class Kotlin2JsIrBeIncrementalCompilationIT : KGPBaseTest() {
 
     @DisplayName("Test rebuild after backend error")
     @GradleTest
-    open fun testRebuildAfterError(gradleVersion: GradleVersion) {
+    @Disabled("Not found way to fail BE compilation with successful FE 2.0 compilation")
+    fun testRebuildAfterError(gradleVersion: GradleVersion) {
         project("kotlin-js-ir-ic-rebuild-after-error", gradleVersion) {
             fun readCacheFiles(): Map<String, Int> {
                 val cacheFiles = mutableMapOf<String, Int>()
@@ -154,7 +142,11 @@ abstract class Kotlin2JsIrBeIncrementalCompilationIT : KGPBaseTest() {
                 val libKlibCacheDirs = klibCacheDirs?.filter { dir -> dir.startsWith("lib.klib.") }
                 assertEquals(1, libKlibCacheDirs?.size, "cache should contain 1 dirs for lib.klib")
                 val mainKlibCacheDirs = klibCacheDirs?.filter { dir -> dir.startsWith("main") }
-                assertEquals(2, mainKlibCacheDirs?.size, "cache should contain 2 dirs starting from main (1 for main of lib + 1 main of app)")
+                assertEquals(
+                    2,
+                    mainKlibCacheDirs?.size,
+                    "cache should contain 2 dirs starting from main (1 for main of lib + 1 main of app)"
+                )
 
                 var lib = false
                 var libOther = false

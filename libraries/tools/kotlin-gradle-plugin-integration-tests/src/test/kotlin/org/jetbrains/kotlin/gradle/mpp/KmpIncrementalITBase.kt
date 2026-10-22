@@ -26,7 +26,7 @@ import java.nio.file.Path
 abstract class KmpIncrementalITBase : KGPBaseTest() {
 
     override val defaultBuildOptions: BuildOptions
-        get() = super.defaultBuildOptions.copyEnsuringK2().copy(
+        get() = super.defaultBuildOptions.copy(
             /**
              * disable IC-breaking feature; it's tested separately in [org.jetbrains.kotlin.gradle.mpp.CommonCodeWithPlatformSymbolsITBase]
              */
@@ -63,7 +63,7 @@ abstract class KmpIncrementalITBase : KGPBaseTest() {
 
     protected open fun TestProject.checkIncrementalBuild(
         tasksExpectedToExecute: Set<String>,
-        assertions: BuildResult.() -> Unit = {}
+        assertions: BuildResult.() -> Unit = {},
     ) {
         build(gradleTask, buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
             assertTasksExecuted(tasksExpectedToExecute)
@@ -76,7 +76,7 @@ abstract class KmpIncrementalITBase : KGPBaseTest() {
         incrementalPath: Path,
         steps: List<String>,
         tasksExpectedToExecuteOnEachStep: Set<String>,
-        afterEachStep: BuildResult.() -> Unit = {}
+        afterEachStep: BuildResult.() -> Unit = {},
     ) {
         for (step in steps) {
             incrementalPath.replaceWithVersion(step)
