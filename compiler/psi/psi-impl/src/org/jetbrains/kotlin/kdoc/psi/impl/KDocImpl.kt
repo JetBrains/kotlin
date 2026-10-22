@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
-import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 class KDocImpl(buffer: CharSequence?) : LazyParseablePsiElement(KDocTokens.KDOC, buffer), KDoc {
 
@@ -44,4 +43,12 @@ class KDocImpl(buffer: CharSequence?) : LazyParseablePsiElement(KDocTokens.KDOC,
         getChildrenOfType<KDocSection>().firstOrNull {
             it.name == tag.name.toLowerCaseAsciiOnly() && it.getSubjectName() == subjectName
         }
+}
+
+private fun String.toLowerCaseAsciiOnly(): String {
+    val builder = StringBuilder(length)
+    for (c in this) {
+        builder.append(if (c in 'A'..'Z') c.lowercaseChar() else c)
+    }
+    return builder.toString()
 }
