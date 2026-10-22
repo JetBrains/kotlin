@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.code
 
 import org.jetbrains.kotlin.test.KtAssert.fail
 import org.jetbrains.kotlin.testFederation.Domain
+import org.jetbrains.kotlin.testFederation.NightlyTest
 import org.jetbrains.kotlin.testFederation.TestSubset
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty
 import kotlin.test.Test
@@ -17,6 +18,7 @@ import kotlin.test.Test
  * The TeamCity DSL keeps its own copies of both enums. Their entries are passed in as
  * `test.federation.teamcity.domains` and `test.federation.teamcity.test.subsets`
  */
+@NightlyTest
 @EnabledIfSystemProperty(named = "teamcity", matches = "true")
 class TestFederationEnumsTest {
 
