@@ -6,6 +6,11 @@
 package org.jetbrains.kotlin.buildtools.internal.serializability
 
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
+import org.jetbrains.kotlin.buildtools.api.jps.InternalBuildToolsApi
+import org.jetbrains.kotlin.buildtools.api.jps.jvm.incremental.trackers.CompilerEnumWhenTracker
+import org.jetbrains.kotlin.buildtools.api.jps.jvm.incremental.trackers.CompilerFileMappingTracker
+import org.jetbrains.kotlin.buildtools.api.jps.jvm.incremental.trackers.CompilerImportTracker
+import org.jetbrains.kotlin.buildtools.api.jps.jvm.incremental.trackers.CompilerInlineConstTracker
 import org.jetbrains.kotlin.buildtools.api.trackers.BuildMetricsCollector
 import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
 import org.jetbrains.kotlin.buildtools.internal.KotlinLoggerMessageCollectorAdapter
@@ -74,6 +79,66 @@ internal class LookupMessageVisitor(private val lookupTracker: CompilerLookupTra
         }
         is Message.LookupTracker.Clear -> {
             lookupTracker.clear()
+            true
+        }
+        else -> false
+    }
+}
+
+@OptIn(InternalBuildToolsApi::class)
+internal class FileMappingVisitor(private val tracker: CompilerFileMappingTracker) : MessageVisitor {
+
+    override fun accept(message: Message): Boolean = when (message) {
+        is Message.FileMappingTracker.RecordOutputFileGeneratedForPlugin -> {
+            tracker.recordOutputFileGeneratedForPlugin(message.outputFilePath)
+            true
+        }
+        is Message.FileMappingTracker.RecordSourceFileGeneratedForPlugin -> {
+            tracker.recordSourceFileGeneratedForPlugin(message.sourceFilePath)
+            true
+        }
+        is Message.FileMappingTracker.RecordSourceFilesToOutputFileMapping -> {
+            tracker.recordSourceFilesToOutputFileMapping(message.sourceFilePaths, message.outputFilePath)
+            true
+        }
+        is Message.FileMappingTracker.RecordSourceReferencedByCompilerPlugin -> {
+            tracker.recordSourceReferencedByCompilerPlugin(message.sourceFilePath)
+            true
+        }
+        else -> false
+    }
+}
+
+@OptIn(InternalBuildToolsApi::class)
+internal class EnumWhenVisitor(private val tracker: CompilerEnumWhenTracker) : MessageVisitor {
+
+    override fun accept(message: Message): Boolean = when (message) {
+        is Message.EnumWhenTracker.Report -> {
+            tracker.report(message.whenExpressionFilePath, message.enumClassFqName)
+            true
+        }
+        else -> false
+    }
+}
+
+@OptIn(InternalBuildToolsApi::class)
+internal class ImportVisitor(private val tracker: CompilerImportTracker) : MessageVisitor {
+
+    override fun accept(message: Message): Boolean = when (message) {
+        is Message.ImportTracker.Report -> {
+            tracker.report(message.filePath, message.importedFqName)
+            true
+        }
+        else -> false
+    }
+}
+
+@OptIn(InternalBuildToolsApi::class)
+internal class InlineConstVisitor(private val tracker: CompilerInlineConstTracker) : MessageVisitor {
+
+    override fun accept(message: Message): Boolean = when (message) {
+        is Message.InlineConstTracker.Report -> {
+            tracker.report(message.filePath, message.owner, message.name, message.constType)
             true
         }
         else -> false

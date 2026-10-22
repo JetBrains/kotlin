@@ -3,14 +3,18 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:UseSerializers(PathAsStringSerializer::class)
+
 package org.jetbrains.kotlin.buildtools.internal.serializability
 
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.UseSerializers
 import org.jetbrains.kotlin.buildtools.api.trackers.BuildMetricsCollector
 import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
 import org.jetbrains.kotlin.buildtools.internal.LogLevel
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
+import java.nio.file.Path
 
 @Serializable
 public sealed class Message {
@@ -55,5 +59,34 @@ public sealed class Message {
             public val logLine: String,
             public val throwable: ByteArray? = null
         ) : Message()
+    }
+
+    public object FileMappingTracker {
+        @Serializable
+        public data class RecordSourceFilesToOutputFileMapping(val sourceFilePaths: List<Path>, val outputFilePath: Path) : Message()
+
+        @Serializable
+        public data class RecordSourceReferencedByCompilerPlugin(val sourceFilePath: Path) : Message()
+
+        @Serializable
+        public data class RecordOutputFileGeneratedForPlugin(val outputFilePath: Path) : Message()
+
+        @Serializable
+        public data class RecordSourceFileGeneratedForPlugin(val sourceFilePath: Path) : Message()
+    }
+
+    public object EnumWhenTracker {
+        @Serializable
+        public data class Report(val whenExpressionFilePath: Path, val enumClassFqName: String) : Message()
+    }
+
+    public object ImportTracker {
+        @Serializable
+        public data class Report(val filePath: Path, val importedFqName: String) : Message()
+    }
+
+    public object InlineConstTracker {
+        @Serializable
+        public data class Report(val filePath: Path, val owner: String, val name: String, val constType: String) : Message()
     }
 }
