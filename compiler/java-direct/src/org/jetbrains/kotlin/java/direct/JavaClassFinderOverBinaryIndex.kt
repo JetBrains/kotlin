@@ -5,14 +5,14 @@
 
 package org.jetbrains.kotlin.java.direct
 
-import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.K1Deprecation
+import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaPackage
-import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassFileHandle
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryJavaClassCache
+import org.jetbrains.kotlin.load.java.structure.impl.classFiles.contains
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.readBinaryJavaClass
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -83,11 +83,6 @@ class JavaClassFinderOverBinaryIndex(
     private companion object {
         private val PACKAGE_INFO_NAME = Name.identifier("package-info")
     }
-}
-
-internal operator fun JvmClasspath.contains(classFile: BinaryClassFileHandle): Boolean = when (this) {
-    is JvmClasspath.Roots -> roots.any(classFile::isUnder)
-    is JvmClasspath.ProjectLibraries -> excludedRoots.none(classFile::isUnder)
 }
 
 /**
