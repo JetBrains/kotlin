@@ -686,22 +686,15 @@ fun KtStringTemplateExpression.isPlainWithEscapes() =
  */
 val KtDeclaration.containingClassOrObject: KtClassOrObject?
     get() {
-        // Class bodies and parameter lists are always stubbed, so they cannot be the AST parent of a dangling stub.
-        // The only exception is a non-local destructuring entry, which the parser wraps in an error element (KT-58563).
-        danglingStubParent?.let { stubParent ->
-            return if (this is KtDestructuringDeclarationEntry && stubParent is KtDestructuringDeclaration) {
-                stubParent.containingClassOrObject
-            } else {
-                null
-            }
-        }
+        if (this is KtDestructuringDeclarationEntry) return destructuringDeclaration.containingClassOrObject
+
+        // Class bodies and parameter lists are always stubbed, so they cannot be the AST parent of a dangling stub
+        if (danglingStubParent != null) return null
 
         return when (val parent = parent) {
             is KtClassBody -> parent.containingClassOrObject
             is KtClassOrObject -> parent
             is KtParameterList -> (parent.parent as? KtPrimaryConstructor)?.getContainingClassOrObject()
-            is KtDestructuringDeclaration if this is KtDestructuringDeclarationEntry -> parent.containingClassOrObject
-            is PsiErrorElement if this is KtDestructuringDeclarationEntry -> (parent.parent as? KtDestructuringDeclaration)?.containingClassOrObject
             else -> null
         }
     }
@@ -755,12 +748,13 @@ val KtDeclarationWithReturnType.isCompanion: Boolean
 @KtExperimentalApi
 val KtDeclaration.containingScript: KtScript?
     get() {
+        if (this is KtDestructuringDeclarationEntry) return destructuringDeclaration.containingScript
+
         // The script block is not stubbed, so the parent stub of script declarations is the script itself
         danglingStubParent?.let { return it as? KtScript }
 
         return when (val parent = parent) {
             is KtBlockExpression -> parent.containingScript
-            is KtDestructuringDeclaration if this is KtDestructuringDeclarationEntry -> parent.containingScript
             else -> null
         }
     }

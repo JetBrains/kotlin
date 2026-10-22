@@ -1,5 +1,5 @@
 FILE: [ResolvedTo(BODY_RESOLVE)] invalidDestructing.kt
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class A : R|kotlin/Any| {
+    public final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
@@ -7,10 +7,10 @@ FILE: [ResolvedTo(BODY_RESOLVE)] invalidDestructing.kt
         private final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableMarkerKey=true] val <destruct>: <ERROR TYPE REF: Unresolved name: to> = IntegerLiteral(1).<Unresolved name: to>#(Int(2))
             private [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: to>
 
-        public final [ResolvedTo(CONTRACTS)] [DestructuringDeclarationContainerVariableKey=/A.<destruct>] val a: <implicit> = LAZY_EXPRESSION
-            public [ResolvedTo(CONTRACTS)] get(): <implicit>
+        public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=/A.<destruct>] val a: <ERROR TYPE REF: Unresolved name: component1> = R|/A.<destruct>|.<Unresolved name: component1>#()
+            public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: component1>
 
-        public final [ResolvedTo(CONTRACTS)] [DestructuringDeclarationContainerVariableKey=/A.<destruct>] val b: <implicit> = LAZY_EXPRESSION
-            public [ResolvedTo(CONTRACTS)] get(): <implicit>
+        public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=/A.<destruct>] val b: <ERROR TYPE REF: Unresolved name: component2> = R|/A.<destruct>|.<Unresolved name: component2>#()
+            public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: component2>
 
     }

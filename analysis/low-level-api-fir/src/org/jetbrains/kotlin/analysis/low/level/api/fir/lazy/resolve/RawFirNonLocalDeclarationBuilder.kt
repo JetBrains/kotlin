@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve
 
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiErrorElement
 import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.analysis.api.impl.base.util.withPsiEntry
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
@@ -153,14 +152,6 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
         }
 
         private fun KtDestructuringDeclarationEntry.index(): Int = destructuringDeclaration.entries.indexOf(this)
-
-        private val KtDestructuringDeclarationEntry.destructuringDeclaration: KtDestructuringDeclaration
-            get() {
-                // The parser wraps the entries of a top-level or member destructuring declaration in an error element (KT-58563)
-                val destructuringDeclaration = parent.let { if (it is PsiErrorElement) it.parent else it }
-                requireIsInstance<KtDestructuringDeclaration>(destructuringDeclaration)
-                return destructuringDeclaration
-            }
 
         fun convertAnonymousInitializer(element: KtAnonymousInitializer, containingDeclaration: FirDeclaration): FirAnonymousInitializer {
             return buildAnonymousInitializer(element, containingDeclaration.symbol)
