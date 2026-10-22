@@ -532,7 +532,7 @@ constructor(
                 CompilerArgumentMetrics.collectMetrics(arguments, buildArguments.toTypedArray(), logger, it)
             }
 
-            nativeCompilerRunner.runTool(
+            nativeCompilerRunner.runToolWithWorkers(
                 KotlinNativeToolRunner.ToolArguments(
                     shouldRunInProcessMode = !forceDisableRunningInProcess.get(),
                     compilerArgumentsLogLevel = kotlinCompilerArgumentsLogLevel.get(),
