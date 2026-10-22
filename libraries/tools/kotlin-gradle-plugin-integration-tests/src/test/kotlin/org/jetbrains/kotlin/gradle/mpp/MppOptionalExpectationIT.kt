@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.mpp
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import kotlin.io.path.createFile
 import kotlin.io.path.createParentDirectories
 import kotlin.io.path.exists
@@ -15,6 +16,8 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 @MppGradlePluginTests
+// TODO KT-90600 Replace MppOptionalExpectationIT with a KGP functional test on -Xcommon-sources
+@MustRunOnChangesInGradle
 class MppOptionalExpectationIT : KGPBaseTest() {
 
     @GradleTest
