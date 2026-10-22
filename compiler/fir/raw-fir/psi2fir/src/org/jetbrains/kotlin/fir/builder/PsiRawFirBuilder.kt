@@ -1133,7 +1133,7 @@ open class PsiRawFirBuilder(
                 origin = FirDeclarationOrigin.Synthetic.DelegateField
                 name = NameUtils.delegateFieldName(fieldOrd)
                 symbol = FirFieldSymbol(CallableId(this@PsiRawFirBuilder.context.currentClassId, name))
-                returnTypeRef = type
+                returnTypeRef = type.copyWithNewSourceKind(KtFakeSourceElementKind.ClassDelegationField)
                 this@PsiRawFirBuilder.context.withContainerSymbol(symbol) {
                     initializer = buildOrLazyExpression(delegateSource) {
                         entry.delegateExpression.toFirExpression("Should have delegate", sourceWhenInvalidExpression = entry)

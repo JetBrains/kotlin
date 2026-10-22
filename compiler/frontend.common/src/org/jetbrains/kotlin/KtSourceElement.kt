@@ -741,6 +741,8 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
     /**
      * for the implicit field storing the delegated object for class delegation
      * with a fake source that refers to the KtExpression that creates the delegate
+     *
+     * also for the return type of this field, which is a copy of the delegated supertype reference
      */
     object ClassDelegationField : KtFakeSourceElementKind()
 

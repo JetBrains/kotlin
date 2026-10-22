@@ -2520,7 +2520,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
             origin = FirDeclarationOrigin.Synthetic.DelegateField
             name = NameUtils.delegateFieldName(delegateFieldsMap.size)
             symbol = FirFieldSymbol(CallableId(context.currentClassId, name))
-            returnTypeRef = firTypeRef
+            returnTypeRef = firTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.ClassDelegationField)
             context.withContainerSymbol(symbol) {
                 val errorReason = "Should have delegate"
                 initializer = expressionNode?.let {

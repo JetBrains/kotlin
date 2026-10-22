@@ -86,31 +86,35 @@ KtSuperTypeList(88,94): 'T by i'
   null
 
 KtDelegatedSuperTypeEntry(88,94): 'T by i'
-  KaSimpleSymbolResolutionSuccess:
-    symbols = [
+  KaSimpleSymbolResolutionError:
+    candidateSymbols = [
       T
     ]
+    diagnostic = ERROR<SUPERTYPE_NOT_A_CLASS_OR_INTERFACE: Supertype is not a class or interface.>
 
 KtTypeReference(88,89): 'T'
-  KaSimpleSymbolResolutionSuccess:
-    symbols = [
+  KaSimpleSymbolResolutionError:
+    candidateSymbols = [
       T
     ]
+    diagnostic = ERROR<SUPERTYPE_NOT_A_CLASS_OR_INTERFACE: Supertype is not a class or interface.>
 
 KtUserType(88,89): 'T'
-  KaSimpleSymbolResolutionSuccess:
-    symbols = [
+  KaSimpleSymbolResolutionError:
+    candidateSymbols = [
       T
     ]
+    diagnostic = ERROR<SUPERTYPE_NOT_A_CLASS_OR_INTERFACE: Supertype is not a class or interface.>
 
 KtNameReferenceExpression(88,89): 'T'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSimpleSymbolResolutionSuccess:
-    symbols = [
+  KaSimpleSymbolResolutionError:
+    candidateSymbols = [
       T
     ]
+    diagnostic = ERROR<SUPERTYPE_NOT_A_CLASS_OR_INTERFACE: Supertype is not a class or interface.>
 
 KtNameReferenceExpression(93,94): 'i'
   isImplicitReferenceToCompanion: false
@@ -131,31 +135,35 @@ KtSuperTypeList(109,115): 'T by i'
   null
 
 KtDelegatedSuperTypeEntry(109,115): 'T by i'
-  KaSimpleSymbolResolutionSuccess:
-    symbols = [
+  KaSimpleSymbolResolutionError:
+    candidateSymbols = [
       T
     ]
+    diagnostic = ERROR<SUPERTYPE_NOT_A_CLASS_OR_INTERFACE: Supertype is not a class or interface.>
 
 KtTypeReference(109,110): 'T'
-  KaSimpleSymbolResolutionSuccess:
-    symbols = [
+  KaSimpleSymbolResolutionError:
+    candidateSymbols = [
       T
     ]
+    diagnostic = ERROR<SUPERTYPE_NOT_A_CLASS_OR_INTERFACE: Supertype is not a class or interface.>
 
 KtUserType(109,110): 'T'
-  KaSimpleSymbolResolutionSuccess:
-    symbols = [
+  KaSimpleSymbolResolutionError:
+    candidateSymbols = [
       T
     ]
+    diagnostic = ERROR<SUPERTYPE_NOT_A_CLASS_OR_INTERFACE: Supertype is not a class or interface.>
 
 KtNameReferenceExpression(109,110): 'T'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSimpleSymbolResolutionSuccess:
-    symbols = [
+  KaSimpleSymbolResolutionError:
+    candidateSymbols = [
       T
     ]
+    diagnostic = ERROR<SUPERTYPE_NOT_A_CLASS_OR_INTERFACE: Supertype is not a class or interface.>
 
 KtNameReferenceExpression(114,115): 'i'
   isImplicitReferenceToCompanion: false
