@@ -58,7 +58,6 @@ class FirDumpHandler(
             val builderForModule = dumper.builderForModule(currentModule)
 
             val allFiles = collectFilesForRendering(module, info, part)
-            part.session.lazyDeclarationResolver.startResolvingPhase(FirResolvePhase.BODY_RESOLVE)
 
             val declarationRenderer = if (RENDER_SPECIFIC_FIR_DECLARATION_ATTRIBUTES in module.directives) {
                 FirDeclarationRendererWithSpecificAttributes(module.directives[RENDER_SPECIFIC_FIR_DECLARATION_ATTRIBUTES].toSet())
@@ -76,7 +75,6 @@ class FirDumpHandler(
             allFiles.forEach {
                 renderer.renderElementAsString(it)
             }
-            part.session.lazyDeclarationResolver.finishResolvingPhase(FirResolvePhase.BODY_RESOLVE)
         }
     }
 

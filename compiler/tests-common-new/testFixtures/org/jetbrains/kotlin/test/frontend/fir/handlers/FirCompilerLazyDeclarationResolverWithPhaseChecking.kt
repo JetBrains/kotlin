@@ -57,7 +57,9 @@ class FirCompilerLazyDeclarationResolverWithPhaseChecking : FirLazyDeclarationRe
 
     override fun finishResolvingPhase(phase: FirResolvePhase) {
         checkTestInfrastructure(currentTransformerPhase == phase)  { "currentTransformerPhase must be $phase"}
-        currentTransformerPhase = null
+        // We can trigger lazy resolution after resolution is done from handlers that render diagnostics.
+        // To prevent bogus errors, keep the current phase if it's the last.
+        if (phase != FirResolvePhase.entries.last()) currentTransformerPhase = null
     }
 
     private fun checkIfCanLazyResolveToPhase(requestedPhase: FirResolvePhase, elementPhase: FirResolvePhase) {
