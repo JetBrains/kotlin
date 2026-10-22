@@ -92,12 +92,8 @@ internal class SymbolLightAccessorMethod private constructor(
     private val _name: String by lazyPub {
         withPropertySymbol { propertySymbol ->
             val accessorSymbol = propertySymbol.accessorSymbol
-            val outerClass = this@SymbolLightAccessorMethod.containingClass
             val defaultName = propertySymbol.name.identifier.let {
-                if (outerClass.isAnnotationType || outerClass.isRecord)
-                    it
-                else
-                    it.abiName()
+                if (propertySymbol.hasPrefixlessAccessorNames) it else it.abiName()
             }
 
             computeMethodName(accessorSymbol, defaultName)
