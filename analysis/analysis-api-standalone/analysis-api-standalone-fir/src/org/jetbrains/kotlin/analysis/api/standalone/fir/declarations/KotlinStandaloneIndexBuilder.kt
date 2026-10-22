@@ -12,9 +12,11 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileVisitor
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import com.intellij.psi.compiled.ClassFileDecompilers
 import com.intellij.psi.impl.source.PsiFileImpl
+import com.intellij.psi.stubs.StubElement
 import com.intellij.testFramework.LightVirtualFile
 import org.jetbrains.kotlin.analysis.api.standalone.fir.declarations.KotlinStandaloneIndexCache.SharedIndexableDecompiledFile
 import org.jetbrains.kotlin.analysis.decompiler.konan.KlibDecompiledFile
@@ -48,10 +50,9 @@ internal class KotlinStandaloneIndexBuilder private constructor(
     private val cacheService = ApplicationManager.getApplication().serviceOrNull<KotlinStandaloneIndexCache>()
 
     /**
-     * Synchronization is not needed since either this code is executed in a single thread right away
-     * or guarded by the next synchronized `lazyIndex` property
+     * Synchronization is needed since [SharedIndexedFile]s bind their stubs on demand from different threads.
      */
-    private val setStubTreeMethod by lazy(NONE) {
+    private val setStubTreeMethod by lazy {
         val setStubTreeMethodName = "setStubTree"
 
         PsiFileImpl::class
@@ -95,43 +96,91 @@ internal class KotlinStandaloneIndexBuilder private constructor(
     private fun index(): KotlinStandaloneDeclarationIndex {
         val rawIndex = KotlinStandaloneDeclarationIndexImpl()
 
-        decompiledFilesFromBuiltins.forEach { rawIndex.indexStubRecursively(it) }
+        decompiledFilesFromBuiltins.forEach { rawIndex.indexDecompiledFile(it) }
 
         val [decompiledBuiltinsFilesFromBinaryRoots, decompiledFilesFromOtherFiles] = decompiledFilesFromBinaryRoots.partition { entry ->
             entry.virtualFile.fileType == KotlinBuiltInFileType
         }
 
-        decompiledFilesFromOtherFiles.forEach { rawIndex.indexStubRecursively(it) }
+        decompiledFilesFromOtherFiles.forEach { rawIndex.indexDecompiledFile(it) }
 
         // Due to KT-78748, we have to index builtin declarations last so that class declarations are preferred. Note that this currently
         // only affects Analysis API tests, since production Standalone doesn't index binary declarations as stubs.
-        decompiledBuiltinsFilesFromBinaryRoots.forEach { rawIndex.indexStubRecursively(it) }
-
-        val astBasedIndexer = rawIndex.AstBasedIndexer()
+        decompiledBuiltinsFilesFromBinaryRoots.forEach { rawIndex.indexDecompiledFile(it) }
 
         for (file in providedSourceFiles) when {
             !file.isCompiled -> {
                 val stub = file.stub
                 if (stub != null) {
-                    rawIndex.indexStubRecursively(stub)
+                    rawIndex.indexStubEagerly(file, stub)
                 } else {
+                    val astBasedIndexer = KotlinStandaloneAstBasedIndexer()
                     file.accept(astBasedIndexer)
+
+                    val indexedFile = KotlinStandaloneEagerIndexedFile(file.virtualFile, astBasedIndexer.elements)
+                    rawIndex.indexFile(indexedFile, astBasedIndexer.records)
                 }
             }
 
-            shouldBuildStubsForDecompiledFiles -> rawIndex.indexStubRecursively(file.forcedStub)
+            shouldBuildStubsForDecompiledFiles -> rawIndex.indexStubEagerly(file, file.forcedStub)
         }
 
         return rawIndex
     }
 
-    private fun KotlinStandaloneDeclarationIndexImpl.indexStubRecursively(indexableFile: IndexableFile) {
-        val virtualFile = indexableFile.virtualFile
-        val ktFile = indexableFile.ktFile
-
-        // Stub calculation
+    private fun KotlinStandaloneDeclarationIndexImpl.indexDecompiledFile(indexableFile: IndexableFile) {
         if (indexableFile.isShared && cacheService != null) {
-            val stub = cacheService.getOrBuildStub(virtualFile) {
+            val virtualFile = indexableFile.virtualFile
+            val cachedRecords = cacheService.getIndexRecords(virtualFile)
+            val sharedFile = SharedIndexedFile(indexableFile, cacheService, cachedRecords?.indexedElementCount)
+
+            val fileRecords = cachedRecords ?: sharedFile.computeIndexRecords().also { cacheService.putIndexRecords(virtualFile, it) }
+            indexFile(sharedFile, fileRecords.records)
+        } else {
+            indexStubEagerly(indexableFile.ktFile, indexableFile.ktFile.forcedStub)
+        }
+    }
+
+    private fun KotlinStandaloneDeclarationIndexImpl.indexStubEagerly(file: KtFile, fileStub: StubElement<*>) {
+        val indexedStubs = collectIndexedStubs(fileStub)
+        indexFile(KotlinStandaloneEagerIndexedFile(file.virtualFile, indexedStubs.map { it.psi }), collectIndexRecords(indexedStubs))
+    }
+
+    /**
+     * A file shared between projects, whose stub is bound to its [KtFile] only when one of its elements is requested.
+     *
+     * The binding copies the cached stub, so binding all library files would take most of the time of a test, while a test usually
+     * needs only a few of them. Index records of the file don't depend on the project, so they are taken from [KotlinStandaloneIndexCache].
+     *
+     * @param expectedIndexedElementCount the number of indexed elements of the cached records, if the file is indexed with them.
+     *  The cached records refer to the elements by their ordinals, so a mismatch would silently give the PSI of another declaration.
+     */
+    private inner class SharedIndexedFile(
+        private val indexableFile: IndexableFile,
+        private val cacheService: KotlinStandaloneIndexCache,
+        private val expectedIndexedElementCount: Int?,
+    ) : KotlinStandaloneIndexedFile(indexableFile.virtualFile) {
+        private val indexedStubs: List<StubElement<*>> by lazy {
+            val indexedStubs = collectIndexedStubs(bindStub())
+            if (expectedIndexedElementCount != null) {
+                check(indexedStubs.size == expectedIndexedElementCount) {
+                    "`$virtualFile` has ${indexedStubs.size} indexed elements," +
+                            " but its cached index records were computed for $expectedIndexedElementCount elements"
+                }
+            }
+
+            // The PSI is created right away, so it's created only once even if the elements are requested from different threads
+            indexedStubs.onEach { it.psi }
+        }
+
+        override fun getElement(ordinal: Int): PsiElement = indexedStubs[ordinal].psi
+
+        fun computeIndexRecords(): KotlinStandaloneFileIndexRecords =
+            KotlinStandaloneFileIndexRecords(collectIndexRecords(indexedStubs), indexedStubs.size)
+
+        private fun bindStub(): KotlinFileStubImpl {
+            val ktFile = indexableFile.ktFile
+            val stub = cacheService.getOrBuildStub(indexableFile.virtualFile) {
                 ktFile.forcedStub
             }
 
@@ -141,10 +190,9 @@ internal class KotlinStandaloneIndexBuilder private constructor(
                 // A hack to avoid costly stub builder execution
                 setStubTreeMethod.invoke(ktFile, clonedStub)
             }
-        }
 
-        val stub = ktFile.forcedStub
-        indexStubRecursively(stub)
+            return ktFile.forcedStub
+        }
     }
 
     private val decompiledFilesFromBinaryRoots = mutableSetOf<IndexableFile>()

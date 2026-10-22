@@ -21,20 +21,25 @@ internal class KotlinStandaloneLazyDeclarationIndexImpl(
 ) : KotlinStandaloneDeclarationIndex {
     private val computedIndex: KotlinStandaloneDeclarationIndex get() = lazyIndex.value
 
-    override val facadeFileMap: Map<FqName, Set<KtFile>> get() = computedIndex.facadeFileMap
-    override val multiFileClassPartMap: Map<FqName, Set<KtFile>> get() = computedIndex.multiFileClassPartMap
-    override val scriptMap: Map<FqName, Set<KtScript>> get() = computedIndex.scriptMap
+    override val facadeFileMap: Map<FqName, Set<KotlinStandaloneIndexEntry<KtFile>>> get() = computedIndex.facadeFileMap
+    override val multiFileClassPartMap: Map<FqName, Set<KotlinStandaloneIndexEntry<KtFile>>> get() = computedIndex.multiFileClassPartMap
+    override val scriptMap: Map<FqName, Set<KotlinStandaloneIndexEntry<KtScript>>> get() = computedIndex.scriptMap
 
-    override val classesByClassId: Map<ClassId, Set<KtClassOrObject>> get() = computedIndex.classesByClassId
-    override val typeAliasesByClassId: Map<ClassId, Set<KtTypeAlias>> get() = computedIndex.typeAliasesByClassId
-    override val topLevelFunctionsByCallableId: Map<CallableId, Set<KtNamedFunction>> get() = computedIndex.topLevelFunctionsByCallableId
-    override val topLevelPropertiesByCallableId: Map<CallableId, Set<KtProperty>> get() = computedIndex.topLevelPropertiesByCallableId
+    override val classesByClassId: Map<ClassId, Set<KotlinStandaloneIndexEntry<KtClassOrObject>>> get() = computedIndex.classesByClassId
+    override val typeAliasesByClassId: Map<ClassId, Set<KotlinStandaloneIndexEntry<KtTypeAlias>>> get() = computedIndex.typeAliasesByClassId
+    override val topLevelFunctionsByCallableId: Map<CallableId, Set<KotlinStandaloneIndexEntry<KtNamedFunction>>>
+        get() = computedIndex.topLevelFunctionsByCallableId
+    override val topLevelPropertiesByCallableId: Map<CallableId, Set<KotlinStandaloneIndexEntry<KtProperty>>>
+        get() = computedIndex.topLevelPropertiesByCallableId
 
-    override val classLikeDeclarationsByPackage: Map<FqName, Set<KtClassLikeDeclaration>>
+    override val classLikeDeclarationsByPackage: Map<FqName, Set<KotlinStandaloneIndexEntry<KtClassLikeDeclaration>>>
         get() = computedIndex.classLikeDeclarationsByPackage
 
-    override val topLevelCallablesByPackage: Map<FqName, Set<KtCallableDeclaration>> get() = computedIndex.topLevelCallablesByPackage
+    override val topLevelCallablesByPackage: Map<FqName, Set<KotlinStandaloneIndexEntry<KtCallableDeclaration>>>
+        get() = computedIndex.topLevelCallablesByPackage
 
-    override val classesBySupertypeName: Map<Name, Set<KtClassOrObject>> get() = computedIndex.classesBySupertypeName
-    override val inheritableTypeAliasesByAliasedName: Map<Name, Set<KtTypeAlias>> get() = computedIndex.inheritableTypeAliasesByAliasedName
+    override val classesBySupertypeName: Map<Name, Set<KotlinStandaloneIndexEntry<KtClassOrObject>>>
+        get() = computedIndex.classesBySupertypeName
+    override val inheritableTypeAliasesByAliasedName: Map<Name, Set<KotlinStandaloneIndexEntry<KtTypeAlias>>>
+        get() = computedIndex.inheritableTypeAliasesByAliasedName
 }

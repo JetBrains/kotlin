@@ -11,6 +11,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileVisitor
+import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.*
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
@@ -24,7 +25,6 @@ import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.stubs.impl.*
 import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.kotlin.utils.addToStdlib.flattenTo
 
 @KaImplementationDetail
 class KotlinStandaloneDeclarationProvider internal constructor(
@@ -34,8 +34,11 @@ class KotlinStandaloneDeclarationProvider internal constructor(
     private val environment: CoreApplicationEnvironment,
     private val shouldComputeBinaryLibraryPackageSets: Boolean,
 ) : KotlinDeclarationProvider {
-    private val KtElement.inScope: Boolean
-        get() = containingKtFile.virtualFile in scope
+    private val KotlinStandaloneIndexEntry<*>.inScope: Boolean
+        get() = virtualFile?.let { it in scope } == true
+
+    private fun <T : PsiElement> Set<KotlinStandaloneIndexEntry<T>>?.elementsInScope(): List<T> =
+        this?.mapNotNull { entry -> if (entry.inScope) entry.element else null } ?: emptyList()
 
     override fun getClassLikeDeclarationByClassId(classId: ClassId): KtClassLikeDeclaration? {
         return getAllClassesByClassId(classId).firstOrNull()
@@ -43,31 +46,27 @@ class KotlinStandaloneDeclarationProvider internal constructor(
     }
 
     override fun getAllClassesByClassId(classId: ClassId): Collection<KtClassOrObject> =
-        index.classesByClassId[classId]
-            ?.filter { it.inScope }
-            ?: emptyList()
+        index.classesByClassId[classId].elementsInScope()
 
     override fun getAllTypeAliasesByClassId(classId: ClassId): Collection<KtTypeAlias> =
-        index.typeAliasesByClassId[classId]
-            ?.filter { it.inScope }
-            ?: emptyList()
+        index.typeAliasesByClassId[classId].elementsInScope()
 
     override fun getTopLevelKotlinClassLikeDeclarationNamesInPackage(packageFqName: FqName): Set<Name> {
         val classifiers = index.classLikeDeclarationsByPackage[packageFqName].orEmpty()
         return classifiers
             .filter { it.inScope }
-            .mapTo(mutableSetOf()) { it.nameAsSafeName }
+            .mapNotNullTo(mutableSetOf()) { it.name }
     }
 
     override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name> {
         val callables = index.topLevelCallablesByPackage[packageFqName].orEmpty()
         return callables
             .filter { it.inScope }
-            .mapTo(mutableSetOf()) { it.nameAsSafeName }
+            .mapNotNullTo(mutableSetOf()) { it.name }
     }
 
     override fun findFilesForFacadeByPackage(packageFqName: FqName): Collection<KtFile> {
-        return index.facadeFileMap[packageFqName].orEmpty().filter { it.virtualFile in scope }
+        return index.facadeFileMap[packageFqName].elementsInScope()
     }
 
     override fun findFilesForFacade(facadeFqName: FqName): Collection<KtFile> {
@@ -77,11 +76,11 @@ class KotlinStandaloneDeclarationProvider internal constructor(
     }
 
     override fun findInternalFilesForFacade(facadeFqName: FqName): Collection<KtFile> {
-        return index.multiFileClassPartMap[facadeFqName].orEmpty().filter { it.virtualFile in scope }
+        return index.multiFileClassPartMap[facadeFqName].elementsInScope()
     }
 
     override fun findFilesForScript(scriptFqName: FqName): Collection<KtScript> {
-        return index.scriptMap[scriptFqName].orEmpty().filter { it.containingKtFile.virtualFile in scope }
+        return index.scriptMap[scriptFqName].elementsInScope()
     }
 
     // It is generally an *advantage* to have non-specific package set computations, as some components only work with general package sets.
@@ -115,7 +114,7 @@ class KotlinStandaloneDeclarationProvider internal constructor(
         addPackageNamesInScope(index.topLevelCallablesByPackage)
     }
 
-    private fun <T : KtDeclaration> MutableSet<String>.addPackageNamesInScope(map: Map<FqName, Set<T>>) {
+    private fun MutableSet<String>.addPackageNamesInScope(map: Map<FqName, Set<KotlinStandaloneIndexEntry<*>>>) {
         map.forEach { [fqName, declarations] ->
             if (declarations.any { it.inScope }) {
                 add(fqName.asString())
@@ -167,14 +166,10 @@ class KotlinStandaloneDeclarationProvider internal constructor(
     }
 
     override fun getTopLevelProperties(callableId: CallableId): Collection<KtProperty> =
-        index.topLevelPropertiesByCallableId[callableId]
-            ?.filter { it.inScope }
-            ?: emptyList()
+        index.topLevelPropertiesByCallableId[callableId].elementsInScope()
 
     override fun getTopLevelFunctions(callableId: CallableId): Collection<KtNamedFunction> =
-        index.topLevelFunctionsByCallableId[callableId]
-            ?.filter { it.inScope }
-            ?: emptyList()
+        index.topLevelFunctionsByCallableId[callableId].elementsInScope()
 
     override fun getTopLevelCallableFiles(callableId: CallableId): Collection<KtFile> = buildSet {
         getTopLevelProperties(callableId).mapTo(this) { it.containingKtFile }
@@ -246,13 +241,13 @@ class KotlinStandaloneDeclarationProviderFactory(
         return indexData.decompiledFilePackageNames
     }
 
-    fun getAllKtClasses(): List<KtClassOrObject> = index.classesByClassId.values.flattenTo(mutableListOf())
+    fun getAllKtClasses(): List<KtClassOrObject> = index.classesByClassId.values.flatMap { entries -> entries.map { it.element } }
 
     fun getDirectInheritorCandidates(baseClassName: Name): Set<KtClassOrObject> =
-        index.classesBySupertypeName[baseClassName].orEmpty()
+        index.classesBySupertypeName[baseClassName].orEmpty().mapTo(mutableSetOf()) { it.element }
 
     fun getInheritableTypeAliases(aliasedName: Name): Set<KtTypeAlias> =
-        index.inheritableTypeAliasesByAliasedName[aliasedName].orEmpty()
+        index.inheritableTypeAliasesByAliasedName[aliasedName].orEmpty().mapTo(mutableSetOf()) { it.element }
 }
 
 @KaImplementationDetail

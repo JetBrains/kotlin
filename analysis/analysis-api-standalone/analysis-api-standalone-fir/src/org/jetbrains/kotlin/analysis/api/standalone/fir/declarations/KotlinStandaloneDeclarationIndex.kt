@@ -12,22 +12,22 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 
 internal interface KotlinStandaloneDeclarationIndex {
-    val facadeFileMap: Map<FqName, Set<KtFile>>
-    val multiFileClassPartMap: Map<FqName, Set<KtFile>>
-    val scriptMap: Map<FqName, Set<KtScript>>
+    val facadeFileMap: Map<FqName, Set<KotlinStandaloneIndexEntry<KtFile>>>
+    val multiFileClassPartMap: Map<FqName, Set<KotlinStandaloneIndexEntry<KtFile>>>
+    val scriptMap: Map<FqName, Set<KotlinStandaloneIndexEntry<KtScript>>>
 
-    val classesByClassId: Map<ClassId, Set<KtClassOrObject>>
-    val typeAliasesByClassId: Map<ClassId, Set<KtTypeAlias>>
-    val topLevelFunctionsByCallableId: Map<CallableId, Set<KtNamedFunction>>
-    val topLevelPropertiesByCallableId: Map<CallableId, Set<KtProperty>>
+    val classesByClassId: Map<ClassId, Set<KotlinStandaloneIndexEntry<KtClassOrObject>>>
+    val typeAliasesByClassId: Map<ClassId, Set<KotlinStandaloneIndexEntry<KtTypeAlias>>>
+    val topLevelFunctionsByCallableId: Map<CallableId, Set<KotlinStandaloneIndexEntry<KtNamedFunction>>>
+    val topLevelPropertiesByCallableId: Map<CallableId, Set<KotlinStandaloneIndexEntry<KtProperty>>>
 
-    val classLikeDeclarationsByPackage: Map<FqName, Set<KtClassLikeDeclaration>>
-    val topLevelCallablesByPackage: Map<FqName, Set<KtCallableDeclaration>>
+    val classLikeDeclarationsByPackage: Map<FqName, Set<KotlinStandaloneIndexEntry<KtClassLikeDeclaration>>>
+    val topLevelCallablesByPackage: Map<FqName, Set<KotlinStandaloneIndexEntry<KtCallableDeclaration>>>
 
     /**
      * Allows quickly finding [KtClassOrObject]s which have a given simple name as a supertype. The map may contain local classes as well.
      */
-    val classesBySupertypeName: Map<Name, Set<KtClassOrObject>>
+    val classesBySupertypeName: Map<Name, Set<KotlinStandaloneIndexEntry<KtClassOrObject>>>
 
     /**
      * Maps a simple name `N` to type aliases `A` in whose definition `N` occurs as the topmost user type, which is a prerequisite for other
@@ -51,5 +51,5 @@ internal interface KotlinStandaloneDeclarationIndex {
      *
      * The index contains the following entry: `"C" -> A`.
      */
-    val inheritableTypeAliasesByAliasedName: Map<Name, Set<KtTypeAlias>>
+    val inheritableTypeAliasesByAliasedName: Map<Name, Set<KotlinStandaloneIndexEntry<KtTypeAlias>>>
 }
