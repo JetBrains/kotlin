@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.light.classes.symbol.classes
 
 import com.intellij.psi.*
+import com.intellij.psi.util.ClassUtil
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.scopes.memberScope
 import org.jetbrains.kotlin.analysis.api.symbols.*
@@ -13,12 +14,14 @@ import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
+import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSignatures
 import org.jetbrains.kotlin.light.classes.symbol.methods.MethodSignature
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodForMappedJavaCollectionStubMethod
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodForMappedKotlinCollectionMethod
 import org.jetbrains.kotlin.load.java.BuiltinSpecialProperties
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.SpecialGenericSignatures
+import org.jetbrains.kotlin.load.kotlin.SignatureBuildingComponents
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -212,7 +215,9 @@ internal fun processPossiblyMappedCollectionMethod(
  * For each method from the Java collection interface that isn't already present:
  * - Methods that map to Kotlin properties (e.g., `size()` → `size` property): generates both
  *   a final bridge method with the Java name and an abstract/concrete method with the Kotlin name (`getSize`)
- * - Methods not in the Kotlin interface: generates open bridge methods
+ * - Methods not in the Kotlin interface: generates open bridge methods.
+ *   Java default methods get them only if the Kotlin interface is read-only and only its mutable counterpart has them
+ *   (e.g., `removeIf`)
  * - Methods in the Kotlin interface with special signatures: generates appropriate bridge methods with type substitution
  *
  * Generated stubs are added to the result list only if their signatures don't already exist.
@@ -250,7 +255,7 @@ internal fun generateJavaCollectionMethodStubsIfNeeded(
     val javaCollectionPsiClass = javaCollectionSymbol.psi as? PsiClass ?: return
     val substitutor = createPsiSubstitutor(javaCollectionPsiClass, closestMappedSupertype, containingClass)
 
-    generateJavaCollectionMethodStubs(containingClass, javaCollectionPsiClass, kotlinCollectionSymbol, substitutor, result)
+    generateJavaCollectionMethodStubs(containingClass, javaCollectionPsiClass, javaClassId, kotlinCollectionSymbol, substitutor, result)
 }
 
 /**
@@ -309,6 +314,7 @@ context(session: KaSession)
 private fun generateJavaCollectionMethodStubs(
     containingClass: SymbolLightClassForClassOrObject,
     javaCollectionPsiClass: PsiClass,
+    javaClassId: ClassId,
     kotlinCollectionSymbol: KaClassSymbol,
     substitutor: PsiSubstitutor,
     result: MutableList<PsiMethod>,
@@ -320,8 +326,15 @@ private fun generateJavaCollectionMethodStubs(
         .mapNotNull { it.name?.asString() }
         .toSet()
 
-    val javaMethods = javaCollectionPsiClass.methods
-        .filterNot { it.hasModifierProperty(PsiModifier.DEFAULT) || it.hasModifierProperty(PsiModifier.STATIC) }
+    val isReadOnlyCollection = JavaToKotlinClassMap.isReadOnly(kotlinCollectionSymbol.classId)
+    val javaMethods = javaCollectionPsiClass.methods.filter { method ->
+        when {
+            method.hasModifierProperty(PsiModifier.STATIC) -> false
+            // The JVM backend generates stubs only for the default methods that read-only Kotlin collections don't have
+            method.hasModifierProperty(PsiModifier.DEFAULT) -> isReadOnlyCollection && method.isMutableOnlyJdkMethod(javaClassId)
+            else -> true
+        }
+    }
 
     val candidateMethods = javaMethods.flatMap { method ->
         createWrappersForJavaCollectionMethod(containingClass, method, javaCollectionPsiClass, kotlinNames, substitutor)
@@ -330,6 +343,17 @@ private fun generateJavaCollectionMethodStubs(
     result += candidateMethods.filter { candidateMethod ->
         candidateMethod.getSignature(substitutor) !in existingSignatures
     }
+}
+
+/**
+ * Whether only the mutable Kotlin counterpart of the JDK collection [javaClassId] has this method,
+ * like `removeIf` of `java.util.Collection`, which `kotlin.collections.MutableCollection` has, but `kotlin.collections.Collection` doesn't.
+ *
+ * @see JvmBuiltInsSignatures.MUTABLE_METHOD_SIGNATURES
+ */
+private fun PsiMethod.isMutableOnlyJdkMethod(javaClassId: ClassId): Boolean {
+    val jvmDescriptor = name + ClassUtil.getAsmMethodSignature(this)
+    return SignatureBuildingComponents.signature(javaClassId, jvmDescriptor) in JvmBuiltInsSignatures.MUTABLE_METHOD_SIGNATURES
 }
 
 private fun createWrappersForJavaCollectionMethod(

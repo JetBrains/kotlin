@@ -1,9 +1,27 @@
 public abstract class CMap /* test.CMap*/<KElem, VElem>  implements test.IMap<KElem, VElem> {
   @java.lang.Override()
+  public VElem compute(KElem, java.util.function.BiFunction<? super KElem, ? super VElem, ? extends VElem>);//  compute(KElem, java.util.function.BiFunction<? super KElem, ? super VElem, ? extends VElem>)
+
+  @java.lang.Override()
+  public VElem computeIfAbsent(KElem, java.util.function.Function<? super KElem, ? extends VElem>);//  computeIfAbsent(KElem, java.util.function.Function<? super KElem, ? extends VElem>)
+
+  @java.lang.Override()
+  public VElem computeIfPresent(KElem, java.util.function.BiFunction<? super KElem, ? super VElem, ? extends VElem>);//  computeIfPresent(KElem, java.util.function.BiFunction<? super KElem, ? super VElem, ? extends VElem>)
+
+  @java.lang.Override()
+  public VElem merge(KElem, VElem, java.util.function.BiFunction<? super VElem, ? super VElem, ? extends VElem>);//  merge(KElem, VElem, java.util.function.BiFunction<? super VElem, ? super VElem, ? extends VElem>)
+
+  @java.lang.Override()
   public VElem put(KElem, VElem);//  put(KElem, VElem)
 
   @java.lang.Override()
+  public VElem putIfAbsent(KElem, VElem);//  putIfAbsent(KElem, VElem)
+
+  @java.lang.Override()
   public VElem remove(java.lang.Object);//  remove(java.lang.Object)
+
+  @java.lang.Override()
+  public VElem replace(KElem, VElem);//  replace(KElem, VElem)
 
   @java.lang.Override()
   public abstract int getSize();//  getSize()
@@ -16,6 +34,12 @@ public abstract class CMap /* test.CMap*/<KElem, VElem>  implements test.IMap<KE
 
   @java.lang.Override()
   public abstract java.util.Set<java.util.Map.Entry<KElem, VElem>> getEntries();//  getEntries()
+
+  @java.lang.Override()
+  public boolean remove(java.lang.Object, java.lang.Object);//  remove(java.lang.Object, java.lang.Object)
+
+  @java.lang.Override()
+  public boolean replace(KElem, VElem, VElem);//  replace(KElem, VElem, VElem)
 
   @java.lang.Override()
   public final int size();//  size()
@@ -34,6 +58,9 @@ public abstract class CMap /* test.CMap*/<KElem, VElem>  implements test.IMap<KE
 
   @java.lang.Override()
   public void putAll(java.util.Map<? extends KElem, ? extends VElem>);//  putAll(java.util.Map<? extends KElem, ? extends VElem>)
+
+  @java.lang.Override()
+  public void replaceAll(java.util.function.BiFunction<? super KElem, ? super VElem, ? extends VElem>);//  replaceAll(java.util.function.BiFunction<? super KElem, ? super VElem, ? extends VElem>)
 
   public  CMap();//  .ctor()
 }
@@ -56,10 +83,28 @@ public abstract class CMap2 /* test.CMap2*/<KElem, VElem>  implements test.IMap<
   public VElem get(java.lang.Object);//  get(java.lang.Object)
 
   @java.lang.Override()
+  public VElem compute(KElem, java.util.function.BiFunction<? super KElem, ? super VElem, ? extends VElem>);//  compute(KElem, java.util.function.BiFunction<? super KElem, ? super VElem, ? extends VElem>)
+
+  @java.lang.Override()
+  public VElem computeIfAbsent(KElem, java.util.function.Function<? super KElem, ? extends VElem>);//  computeIfAbsent(KElem, java.util.function.Function<? super KElem, ? extends VElem>)
+
+  @java.lang.Override()
+  public VElem computeIfPresent(KElem, java.util.function.BiFunction<? super KElem, ? super VElem, ? extends VElem>);//  computeIfPresent(KElem, java.util.function.BiFunction<? super KElem, ? super VElem, ? extends VElem>)
+
+  @java.lang.Override()
+  public VElem merge(KElem, VElem, java.util.function.BiFunction<? super VElem, ? super VElem, ? extends VElem>);//  merge(KElem, VElem, java.util.function.BiFunction<? super VElem, ? super VElem, ? extends VElem>)
+
+  @java.lang.Override()
   public VElem put(KElem, VElem);//  put(KElem, VElem)
 
   @java.lang.Override()
+  public VElem putIfAbsent(KElem, VElem);//  putIfAbsent(KElem, VElem)
+
+  @java.lang.Override()
   public VElem remove(java.lang.Object);//  remove(java.lang.Object)
+
+  @java.lang.Override()
+  public VElem replace(KElem, VElem);//  replace(KElem, VElem)
 
   @java.lang.Override()
   public boolean containsKey(java.lang.Object);//  containsKey(java.lang.Object)
@@ -69,6 +114,12 @@ public abstract class CMap2 /* test.CMap2*/<KElem, VElem>  implements test.IMap<
 
   @java.lang.Override()
   public boolean isEmpty();//  isEmpty()
+
+  @java.lang.Override()
+  public boolean remove(java.lang.Object, java.lang.Object);//  remove(java.lang.Object, java.lang.Object)
+
+  @java.lang.Override()
+  public boolean replace(KElem, VElem, VElem);//  replace(KElem, VElem, VElem)
 
   @java.lang.Override()
   public final int size();//  size()
@@ -90,6 +141,9 @@ public abstract class CMap2 /* test.CMap2*/<KElem, VElem>  implements test.IMap<
 
   @java.lang.Override()
   public void putAll(java.util.Map<? extends KElem, ? extends VElem>);//  putAll(java.util.Map<? extends KElem, ? extends VElem>)
+
+  @java.lang.Override()
+  public void replaceAll(java.util.function.BiFunction<? super KElem, ? super VElem, ? extends VElem>);//  replaceAll(java.util.function.BiFunction<? super KElem, ? super VElem, ? extends VElem>)
 
   public  CMap2(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() test.IMap<KElem, VElem>);//  .ctor(@org.jetbrains.annotations.NotNull() test.IMap<KElem, VElem>)
 }
@@ -112,13 +166,31 @@ public class CMap3 /* test.CMap3*/<KElem, VElem>  implements test.IMap<KElem, VE
   public VElem get(java.lang.Object);//  get(java.lang.Object)
 
   @java.lang.Override()
+  public VElem compute(KElem, java.util.function.BiFunction<? super KElem, ? super VElem, ? extends VElem>);//  compute(KElem, java.util.function.BiFunction<? super KElem, ? super VElem, ? extends VElem>)
+
+  @java.lang.Override()
+  public VElem computeIfAbsent(KElem, java.util.function.Function<? super KElem, ? extends VElem>);//  computeIfAbsent(KElem, java.util.function.Function<? super KElem, ? extends VElem>)
+
+  @java.lang.Override()
+  public VElem computeIfPresent(KElem, java.util.function.BiFunction<? super KElem, ? super VElem, ? extends VElem>);//  computeIfPresent(KElem, java.util.function.BiFunction<? super KElem, ? super VElem, ? extends VElem>)
+
+  @java.lang.Override()
   public VElem getOrDefault(java.lang.Object, VElem);//  getOrDefault(java.lang.Object, VElem)
+
+  @java.lang.Override()
+  public VElem merge(KElem, VElem, java.util.function.BiFunction<? super VElem, ? super VElem, ? extends VElem>);//  merge(KElem, VElem, java.util.function.BiFunction<? super VElem, ? super VElem, ? extends VElem>)
 
   @java.lang.Override()
   public VElem put(KElem, VElem);//  put(KElem, VElem)
 
   @java.lang.Override()
+  public VElem putIfAbsent(KElem, VElem);//  putIfAbsent(KElem, VElem)
+
+  @java.lang.Override()
   public VElem remove(java.lang.Object);//  remove(java.lang.Object)
+
+  @java.lang.Override()
+  public VElem replace(KElem, VElem);//  replace(KElem, VElem)
 
   @java.lang.Override()
   public boolean containsKey(java.lang.Object);//  containsKey(java.lang.Object)
@@ -128,6 +200,12 @@ public class CMap3 /* test.CMap3*/<KElem, VElem>  implements test.IMap<KElem, VE
 
   @java.lang.Override()
   public boolean isEmpty();//  isEmpty()
+
+  @java.lang.Override()
+  public boolean remove(java.lang.Object, java.lang.Object);//  remove(java.lang.Object, java.lang.Object)
+
+  @java.lang.Override()
+  public boolean replace(KElem, VElem, VElem);//  replace(KElem, VElem, VElem)
 
   @java.lang.Override()
   public final int size();//  size()
@@ -149,6 +227,9 @@ public class CMap3 /* test.CMap3*/<KElem, VElem>  implements test.IMap<KElem, VE
 
   @java.lang.Override()
   public void putAll(java.util.Map<? extends KElem, ? extends VElem>);//  putAll(java.util.Map<? extends KElem, ? extends VElem>)
+
+  @java.lang.Override()
+  public void replaceAll(java.util.function.BiFunction<? super KElem, ? super VElem, ? extends VElem>);//  replaceAll(java.util.function.BiFunction<? super KElem, ? super VElem, ? extends VElem>)
 
   public  CMap3();//  .ctor()
 }

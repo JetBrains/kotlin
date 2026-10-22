@@ -18,6 +18,9 @@ public abstract class CCollection /* test.CCollection*/<Elem>  implements test.I
   public boolean removeAll(java.util.Collection<?>);//  removeAll(java.util.Collection<?>)
 
   @java.lang.Override()
+  public boolean removeIf(java.util.function.Predicate<? super Elem>);//  removeIf(java.util.function.Predicate<? super Elem>)
+
+  @java.lang.Override()
   public boolean retainAll(java.util.Collection<?>);//  retainAll(java.util.Collection<?>)
 
   @java.lang.Override()
@@ -59,6 +62,9 @@ public abstract class CCollection3 /* test.CCollection3*/ extends test.Foo imple
   public boolean removeAll(java.util.Collection<?>);//  removeAll(java.util.Collection<?>)
 
   @java.lang.Override()
+  public boolean removeIf(java.util.function.Predicate<? super @org.jetbrains.annotations.NotNull() java.lang.String>);//  removeIf(java.util.function.Predicate<? super @org.jetbrains.annotations.NotNull() java.lang.String>)
+
+  @java.lang.Override()
   public boolean retainAll(java.util.Collection<?>);//  retainAll(java.util.Collection<?>)
 
   @java.lang.Override()
@@ -97,6 +103,9 @@ public abstract class CCollection4 /* test.CCollection4*/ extends test.Foo imple
 
   @java.lang.Override()
   public boolean removeAll(java.util.Collection<?>);//  removeAll(java.util.Collection<?>)
+
+  @java.lang.Override()
+  public boolean removeIf(java.util.function.Predicate<? super @org.jetbrains.annotations.NotNull() java.lang.String>);//  removeIf(java.util.function.Predicate<? super @org.jetbrains.annotations.NotNull() java.lang.String>)
 
   @java.lang.Override()
   public boolean retainAll(java.util.Collection<?>);//  retainAll(java.util.Collection<?>)
@@ -151,6 +160,9 @@ public final class CCollection6 /* test.CCollection6*/ implements java.util.Coll
 
   @java.lang.Override()
   public boolean removeAll(java.util.Collection<?>);//  removeAll(java.util.Collection<?>)
+
+  @java.lang.Override()
+  public boolean removeIf(java.util.function.Predicate<? super @org.jetbrains.annotations.NotNull() java.lang.String>);//  removeIf(java.util.function.Predicate<? super @org.jetbrains.annotations.NotNull() java.lang.String>)
 
   @java.lang.Override()
   public boolean retainAll(java.util.Collection<?>);//  retainAll(java.util.Collection<?>)
