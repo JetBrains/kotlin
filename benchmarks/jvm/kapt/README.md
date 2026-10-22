@@ -7,8 +7,6 @@ A reproducible benchmark for measuring Kotlin annotation processing (kapt) perfo
 ```bash
 brew install gradle-profiler          # one-time (macOS); see Prerequisites for Linux/Windows
 ./scripts/run_all_benchmarks.sh        # runs the 9-cell default suite
-./scripts/run_all_benchmarks.sh --list # show every scenario the repo defines
-./scripts/summarize_all.sh             # prints one combined results table
 ```
 
 Requires JDK 17 and Python 3.7+. See [Quickstart](#quickstart) for prerequisites and [METHODOLOGY.md](METHODOLOGY.md) for what's measured.
@@ -51,7 +49,7 @@ cd kapt-benchmark
 
 # Run the benchmark:
 gradle-profiler --benchmark \
-    --scenario-file scenarios/synthetic.scenarios \
+    --scenario-file kapt.scenarios \
     synthetic_large
 
 # Summarize the output:
@@ -67,79 +65,21 @@ synthetic-noop large (2000 classes)   | 20 |     1180.5 |   26.3 | [1128.9, 1232
 
 To run the full suite (all 9 scenarios), see [Run all benchmarks](#run-all-benchmarks) below.
 
-## Available scenarios
-
-| Scenario file | Scenario keys |
-|---|---|
-| `scenarios/synthetic.scenarios` | `synthetic_small`, `synthetic_medium`, `synthetic_large` |
-| `scenarios/dagger.scenarios` | `dagger_small`, `dagger_medium`, `dagger_large` |
-| `scenarios/mapstruct.scenarios` | `mapstruct_small`, `mapstruct_medium`, `mapstruct_large` |
-
-Sizes map to class counts: small=100, medium=500, large=2000.
-
 ## Run all benchmarks
 
 Each scenario runs 2 warmups + 20 measured iterations. Wall time per scenario ranges from ~1 minute (synthetic small) to ~4 minutes (dagger large). Total for all 9: ~30 minutes on an M3 Max.
 
-The repository includes a wrapper script that runs a set of scenarios and prints one combined summary table at the end:
+Sizes map to class counts: small=100, medium=500, large=2000.
 
-```bash
-./scripts/run_all_benchmarks.sh                # the 9-cell default suite
-./scripts/run_all_benchmarks.sh --list         # every scenario defined, and whether it is in the suite
-./scripts/run_all_benchmarks.sh --all          # every scenario except the ones that are not comparable
-./scripts/run_all_benchmarks.sh synthetic_wide # or name the cells you want
-```
+The repository includes a wrapper script that runs a set of scenarios and prints one combined summary table at the end.
 
-The script writes each scenario's output to `profile-out/<scenario>/`, then summarizes them in a single table.
-
-**Scenarios are discovered from `scenarios/*.scenarios`**, so adding a cell there is enough to make it runnable — no edit to the script needed. Beyond the 9-cell default suite the repo also defines opt-in cells (`synthetic_wide`, `synthetic_nested`, `synthetic_deeppkg`, `synthetic_bodies`, `synthetic_incremental`, `compiler_corpus_baseline` / `_stripped`); run `--list` to see them. Two are excluded even from `--all` because they are not comparable with the clean-build cells: `synthetic_incremental` (the only non-clean cell) and the `compiler_corpus_*` A/B pair (meaningful only against each other).
+The script writes each scenario's output to `profile-out`, then summarizes them in a single table.
 
 To re-render the combined table from results already on disk (without rerunning anything):
 
 ```bash
-./scripts/summarize_all.sh
-```
-
-This reads `profile-out/<workload>_<size>/benchmark.csv` for each scenario it finds and prints one table; scenarios that haven't been run yet are listed but skipped.
-
-If you'd rather drive it yourself, the equivalent loop is:
-
-```bash
-cd kapt-benchmark
-for w in synthetic dagger mapstruct; do
-    for s in small medium large; do
-        gradle-profiler --benchmark \
-            --output-dir profile-out/${w}_${s} \
-            --scenario-file scenarios/${w}.scenarios \
-            ${w}_${s}
-    done
-done
-
-# One combined summary table for all 9 scenarios:
-python3 scripts/summarize_benchmark.py profile-out/*/benchmark.csv
-```
-
-Run just one workload at all 3 sizes:
-
-```bash
-for s in small medium large; do
-    gradle-profiler --benchmark \
-        --output-dir profile-out/synthetic_${s} \
-        --scenario-file scenarios/synthetic.scenarios \
-        synthetic_${s}
-done
-```
-
-Run a single scenario:
-
-```bash
-gradle-profiler --benchmark \
-    --scenario-file scenarios/dagger.scenarios \
-    dagger_medium
 python3 scripts/summarize_benchmark.py profile-out/benchmark.csv
 ```
-
-Note: when `--output-dir` is omitted, gradle-profiler writes to `profile-out/` and overwrites prior results, so use distinct directories when running multiple scenarios back-to-back.
 
 ## Workloads
 
@@ -153,7 +93,7 @@ Note: when `--output-dir` is omitted, gradle-profiler writes to `profile-out/` a
 - **Source generator seed:** `-PgeneratorSeed=42` (any integer for deterministic source generation).
 - **Kotlin version:** edit `gradle.properties` and change `kotlin.version=2.3.21` to whatever public Kotlin release you want to benchmark (subject to plugin DSL compatibility).
 - **Dependency versions:** edit `gradle.properties` for `dagger.version` / `mapstruct.version`.
-- **Iteration counts:** edit the `scenarios/*.scenarios` files; gradle-profiler uses the `warm-ups` and `iterations` keys.
+- **Iteration counts:** edit the `kapt.scenarios` file; gradle-profiler uses the `warm-ups` and `iterations` keys.
 
 See [METHODOLOGY.md](METHODOLOGY.md) for a deep dive on what's measured, how, and known limitations.
 
