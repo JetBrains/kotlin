@@ -1,0 +1,4 @@
+KtNameReferenceExpression(106,107): 'b'
+  KaSimpleCallResolutionError:
+    candidateCalls = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'b'.>

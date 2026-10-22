@@ -112,6 +112,18 @@ public class SourceLikePsiBasedContainingClassCalculatorConsistencyTestGenerated
   }
 
   @Test
+  @TestMetadata("destructuringInCompanionBlock.kt")
+  public void testDestructuringInCompanionBlock() {
+    run("destructuringInCompanionBlock.kt");
+  }
+
+  @Test
+  @TestMetadata("destructuringNonLocal.kt")
+  public void testDestructuringNonLocal() {
+    run("destructuringNonLocal.kt");
+  }
+
+  @Test
   @TestMetadata("enumClass.kt")
   public void testEnumClass() {
     run("enumClass.kt");

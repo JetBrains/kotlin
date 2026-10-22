@@ -347,6 +347,36 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
   }
 
   @Test
+  @TestMetadata("destructuringCompanionBlockEntry.kt")
+  public void testDestructuringCompanionBlockEntry() {
+    run("destructuringCompanionBlockEntry.kt");
+  }
+
+  @Test
+  @TestMetadata("destructuringMemberContainer.kt")
+  public void testDestructuringMemberContainer() {
+    run("destructuringMemberContainer.kt");
+  }
+
+  @Test
+  @TestMetadata("destructuringMemberEntry.kt")
+  public void testDestructuringMemberEntry() {
+    run("destructuringMemberEntry.kt");
+  }
+
+  @Test
+  @TestMetadata("destructuringMemberEntryWithAnnotatedType.kt")
+  public void testDestructuringMemberEntryWithAnnotatedType() {
+    run("destructuringMemberEntryWithAnnotatedType.kt");
+  }
+
+  @Test
+  @TestMetadata("destructuringTopLevelEntry.kt")
+  public void testDestructuringTopLevelEntry() {
+    run("destructuringTopLevelEntry.kt");
+  }
+
+  @Test
   @TestMetadata("enumEntries.kt")
   public void testEnumEntries() {
     run("enumEntries.kt");

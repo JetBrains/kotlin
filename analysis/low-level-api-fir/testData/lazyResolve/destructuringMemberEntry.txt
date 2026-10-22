@@ -1,0 +1,63 @@
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] destructuringMemberEntry.kt
+    public final? data [ResolvedTo(RAW_FIR)] class MyPair : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyPair.i] i: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyPair.b] b: Int): R|MyPair| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=/MyPair.component1, IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=/MyPair.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] get(): Int
+
+        public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+
+        public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+
+        public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] i: Int = this@R|/MyPair|.R|/MyPair.i|, [ResolvedTo(RAW_FIR)] b: Int = this@R|/MyPair|.R|/MyPair.b|): R|MyPair|
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] val pair: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] get(): <implicit>
+
+        public final [ResolvedTo(BODY_RESOLVE)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = <Unresolved name: pair>#
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] destructuringMemberEntry.kt
+    public final data [ResolvedTo(BODY_RESOLVE)] class MyPair : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyPair] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/MyPair.i] i: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/MyPair.b] b: R|kotlin/Int|): R|MyPair| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [ComponentFunctionSymbolKey=/MyPair.component1, IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyPair] get(): R|kotlin/Int|
+
+        public final [ResolvedTo(BODY_RESOLVE)] [ComponentFunctionSymbolKey=/MyPair.component2, IsFromPrimaryConstructor=true] val b: R|kotlin/Int| = R|<local>/b|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyPair] get(): R|kotlin/Int|
+
+        public final operator [ResolvedTo(BODY_RESOLVE)] fun component1(): R|kotlin/Int|
+
+        public final operator [ResolvedTo(BODY_RESOLVE)] fun component2(): R|kotlin/Int|
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun copy([ResolvedTo(BODY_RESOLVE)] i: R|kotlin/Int| = this@R|/MyPair|.R|/MyPair.i|, [ResolvedTo(BODY_RESOLVE)] b: R|kotlin/Int| = this@R|/MyPair|.R|/MyPair.b|): R|MyPair|
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] val pair: R|MyPair| = R|/MyPair.MyPair|(Int(1), Int(2))
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] get(): R|MyPair|
+
+        public final [ResolvedTo(BODY_RESOLVE)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = this@R|/A|.R|/A.pair|
+
+    }

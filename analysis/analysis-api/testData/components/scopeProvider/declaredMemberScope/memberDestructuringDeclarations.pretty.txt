@@ -1,0 +1,7 @@
+val `<error property>`: ERROR(Destructuring declarations are only allowed for local variables/values)
+
+val `<error property>`: ERROR(Destructuring declarations are only allowed for local variables/values)
+
+val e: kotlin.Int
+
+constructor()

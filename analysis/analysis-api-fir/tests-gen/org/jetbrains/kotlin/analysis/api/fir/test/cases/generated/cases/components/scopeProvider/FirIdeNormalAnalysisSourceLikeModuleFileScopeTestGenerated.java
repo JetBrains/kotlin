@@ -60,4 +60,10 @@ public class FirIdeNormalAnalysisSourceLikeModuleFileScopeTestGenerated extends 
   public void testSimpleFileScope() {
     run("simpleFileScope.kt");
   }
+
+  @Test
+  @TestMetadata("topLevelDestructuringDeclarations.kt")
+  public void testTopLevelDestructuringDeclarations() {
+    run("topLevelDestructuringDeclarations.kt");
+  }
 }

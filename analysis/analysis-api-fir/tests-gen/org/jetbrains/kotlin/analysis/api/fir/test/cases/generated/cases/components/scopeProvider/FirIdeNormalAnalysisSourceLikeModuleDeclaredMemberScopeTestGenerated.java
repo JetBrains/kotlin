@@ -176,6 +176,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleDeclaredMemberScopeTestGenerate
   }
 
   @Test
+  @TestMetadata("memberDestructuringDeclarations.kt")
+  public void testMemberDestructuringDeclarations() {
+    run("memberDestructuringDeclarations.kt");
+  }
+
+  @Test
   @TestMetadata("properties.kt")
   public void testProperties() {
     run("properties.kt");
@@ -191,6 +197,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleDeclaredMemberScopeTestGenerate
   @TestMetadata("scriptWithClassDeclaration.kts")
   public void testScriptWithClassDeclaration() {
     run("scriptWithClassDeclaration.kts");
+  }
+
+  @Test
+  @TestMetadata("scriptWithDestructuringDeclarations.kts")
+  public void testScriptWithDestructuringDeclarations() {
+    run("scriptWithDestructuringDeclarations.kts");
   }
 
   @Test
