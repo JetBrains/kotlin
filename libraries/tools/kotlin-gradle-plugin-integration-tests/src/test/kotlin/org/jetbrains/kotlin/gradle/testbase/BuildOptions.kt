@@ -12,7 +12,6 @@ import org.gradle.api.logging.LogLevel
 import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.internal.logging.LoggingConfigurationBuildOptions.StacktraceOption
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.targets.wasm.WasmCompilationMode
 import org.jetbrains.kotlin.gradle.targets.wasm.WasmCompilationMode.Companion.toArgument
@@ -143,15 +142,6 @@ data class BuildOptions(
             ENABLED -> true
         }
     }
-
-    val isK2ByDefault
-        get() = KotlinVersion.DEFAULT >= KotlinVersion.KOTLIN_2_0
-
-    fun copyEnsuringK1(): BuildOptions =
-        copy(languageVersion = if (isK2ByDefault) "1.9" else null)
-
-    fun copyEnsuringK2(): BuildOptions =
-        copy(languageVersion = if (isK2ByDefault) null else "2.0")
 
     val safeAndroidVersion: String
         get() = androidVersion ?: error("AGP version is expected to be set")
@@ -508,7 +498,7 @@ fun BuildOptions.suppressWarningForOldKotlinVersion(
 
 fun BuildOptions.suppressDeprecatedJdkWarningWithGradle814(
     currentGradleVersion: GradleVersion,
-    jdk: JdkVersions.ProvidedJdk
+    jdk: JdkVersions.ProvidedJdk,
 ): BuildOptions = if (currentGradleVersion == GradleVersion.version(TestVersions.Gradle.G_8_14) &&
     jdk.version < JavaVersion.VERSION_17
 ) {

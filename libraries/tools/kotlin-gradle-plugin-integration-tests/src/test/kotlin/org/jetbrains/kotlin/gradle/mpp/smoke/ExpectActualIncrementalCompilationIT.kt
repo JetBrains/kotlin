@@ -21,10 +21,13 @@ import kotlin.io.path.writeText
  * Touch file with actual fun, target IC adds expect to the build set
  * Variants: expect class
  */
+@DisplayName("Incremental scenarios with expect/actual")
 @MppGradlePluginTests
-abstract class AbstractExpectActualIncrementalCompilationIT : KGPBaseTest() {
+@MustRunOnChangesInFrontend
+@MustRunOnChangesInBuildToolsApi
+class ExpectActualIncrementalCompilationIT : KGPBaseTest() {
     override val defaultBuildOptions: BuildOptions
-        get() = super.defaultBuildOptions.copyEnsuringK2().copy(
+        get() = super.defaultBuildOptions.copy(
             // disable IC-breaking feature; it's tested separately in [org.jetbrains.kotlin.gradle.mpp.CommonCodeWithPlatformSymbolsITBase]
             enableJvmIncrementalCompilationOfCommonSources = true,
             enableJsUnsafeIncrementalCompilationForMultiplatform = true,
@@ -118,13 +121,6 @@ abstract class AbstractExpectActualIncrementalCompilationIT : KGPBaseTest() {
             }
         }
     }
-
-}
-
-@DisplayName("Incremental scenarios with expect/actual - K2")
-@MustRunOnChangesInFrontend
-@MustRunOnChangesInBuildToolsApi
-class ExpectActualIncrementalCompilationK2IT : AbstractExpectActualIncrementalCompilationIT() {
 
     @DisplayName("Incremental compilation with lenient mode")
     @GradleTest

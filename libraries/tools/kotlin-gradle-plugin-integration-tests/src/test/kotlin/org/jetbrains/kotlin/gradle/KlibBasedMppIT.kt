@@ -27,10 +27,9 @@ import kotlin.test.assertTrue
 
 @DisplayName("KLibs in K2")
 @MppGradlePluginTests
-open class KlibBasedMppIT : KGPBaseTest() {
+class KlibBasedMppIT : KGPBaseTest() {
 
     override val defaultBuildOptions: BuildOptions = super.defaultBuildOptions
-        .copyEnsuringK2()
         // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
         .disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
 

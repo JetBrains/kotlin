@@ -19,8 +19,6 @@ import kotlin.io.path.appendText
 @MustRunOnChangesInGradle
 @MustRunOnChangesInCompilerPlugins
 class KaptCompilerPluginsIT : KaptBaseIT() {
-    override val defaultBuildOptions: BuildOptions =
-        super.defaultBuildOptions.copyEnsuringK2()
 
     @DisplayName("K2 kapt stubs use kotlin.jvm.functions.Function0 instead of compiler plugin function kinds")
     @GradleTest

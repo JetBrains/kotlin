@@ -17,7 +17,7 @@ import org.junit.jupiter.api.condition.OS
     enabledOnCI = [OS.LINUX, OS.MAC, OS.WINDOWS])
 @DisplayName("K/N tests for hierarchical commonizer")
 @NativeGradlePluginTests
-open class CommonizerHierarchicalIT : KGPBaseTest() {
+class CommonizerHierarchicalIT : KGPBaseTest() {
 
     @DisplayName("Commonize hierarchically metadata compilations")
     @GradleTest
