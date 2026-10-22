@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.build.report.events
 
 import org.jetbrains.kotlin.build.report.ICReporter
 import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.resolve.sam.SAM_LOOKUP_NAME
 import java.io.File
 
 open class EventICReporter : ICReporter {
@@ -58,17 +59,15 @@ open class EventICReporter : ICReporter {
     ) {
         dirtySymbols.forEach {
             symbolReasons.getOrPut(it) { mutableSetOf() }.add(
-                if (it.second == "<SAM-CONSTRUCTOR>")
-                    "Uses ${it.first}, which has changed, in a SAM conversion"
-                else
-                    "Uses ${if (it.first.isEmpty()) it.second else "${it.first}.${it.second}"}, which has changed"
+                if (it.second == SAM_LOOKUP_NAME.asString()) ScopeExpansionReason.usesInSamConversion(it.first)
+                else ScopeExpansionReason.usesAffectedSymbol(it.first, it.second)
             )
         }
         dirtyClasses.forEach {
-            fqNameReasons.getOrPut(it) { mutableSetOf() }.add("Declares $it – a class or subtype affected by changes")
+            fqNameReasons.getOrPut(it) { mutableSetOf() }.add(ScopeExpansionReason.declaresAffectedClass(it))
         }
         dirtySealed.forEach {
-            fqNameReasons.getOrPut(it) { mutableSetOf() }.add("Declares sealed class $it, whose subclasses may have changed")
+            fqNameReasons.getOrPut(it) { mutableSetOf() }.add(ScopeExpansionReason.declaresSealedClass(it))
         }
     }
 
