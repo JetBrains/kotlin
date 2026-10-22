@@ -16,6 +16,7 @@ import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.ProjectScope
 import com.intellij.util.io.URLUtil.JAR_SEPARATOR
+import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionConfiguration
@@ -232,17 +233,26 @@ fun VfsBasedProjectEnvironment.psiJavaInterop(
 }
 
 
-fun KotlinCoreEnvironment.toVfsBasedProjectEnvironment(): VfsBasedProjectEnvironment =
-    VfsBasedProjectEnvironment(
+fun KotlinCoreEnvironment.toVfsBasedProjectEnvironment(): VfsBasedProjectEnvironment {
+    val coreEnvironment = this
+    return object : VfsBasedProjectEnvironment(
         project,
         listOfNotNull(
             projectEnvironment.jarFileSystem,
             projectEnvironment.environment.jrtFileSystem,
             projectEnvironment.environment.localFileSystem,
         ),
-    ) { createPackagePartProvider(it) }.also {
+        { createPackagePartProvider(it) },
+    ) {
+        override fun updateClasspath(classpath: List<File>) {
+            if (coreEnvironment.updateClasspath(classpath.map(::JvmClasspathRoot)) != null) {
+                registerIndexedClasspathRoots(coreEnvironment.indexedClasspathRoots)
+            }
+        }
+    }.also {
         it.registerIndexedClasspathRoots(indexedClasspathRoots)
     }
+}
 
 
 inline fun <reified T : PsiElementFinder> ExtensionPoint<PsiElementFinder>.unregisterFinders() {
