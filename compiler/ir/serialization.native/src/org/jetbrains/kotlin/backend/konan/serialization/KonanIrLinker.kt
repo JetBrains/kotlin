@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageIssueSi
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSupportForLinker
 import org.jetbrains.kotlin.backend.common.linkage.partial.createPartialLinkageSupportForLinker
 import org.jetbrains.kotlin.backend.common.overrides.IrLinkerFakeOverrideProvider
-import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
+import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategyResolver
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializerWithBuiltIns
 import org.jetbrains.kotlin.backend.common.serialization.KotlinIrLinker
 import org.jetbrains.kotlin.backend.common.serialization.kotlinLibrary
@@ -78,7 +78,7 @@ class KonanIrLinker(
     override fun createModuleDeserializer(
         moduleFragment: IrModuleFragment,
         klib: KotlinLibrary?,
-        strategyResolver: (String) -> DeserializationStrategy,
+        strategyResolver: DeserializationStrategyResolver,
     ) = when {
         moduleFragment.descriptor.isForwardDeclarationModule -> {
             KonanForwardDeclarationModuleDeserializer(moduleFragment, this)

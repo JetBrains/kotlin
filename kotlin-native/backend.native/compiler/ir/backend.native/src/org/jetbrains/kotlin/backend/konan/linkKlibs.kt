@@ -203,14 +203,14 @@ private fun LinkKlibsContext.scheduleDependenciesForDeserialization(
 
         val isFullyCachedLibrary = config.cachedLibraries.isLibraryCached(library) && library !in config.librariesToCache
 
-        val strategyResolver: (String) -> DeserializationStrategy = when {
-            isFullyCachedLibrary && library.isHeader -> { _: String -> DeserializationStrategy.WITH_INLINE_BODIES }
-            isFullyCachedLibrary -> { _: String -> DeserializationStrategy.ONLY_DECLARATION_HEADERS }
-            library in exportedDependencies -> { _: String -> DeserializationStrategy.ALL }
-            else -> { _: String -> DeserializationStrategy.EXPLICITLY_EXPORTED }
+        val deserializationStrategy = when {
+            isFullyCachedLibrary && library.isHeader -> DeserializationStrategy.WITH_INLINE_BODIES
+            isFullyCachedLibrary -> DeserializationStrategy.ONLY_DECLARATION_HEADERS
+            library in exportedDependencies -> DeserializationStrategy.ALL
+            else -> DeserializationStrategy.EXPLICITLY_EXPORTED
         }
 
-        linker.createAndRegisterModuleDeserializer(dependencyModuleDescriptor, library, strategyResolver)
+        linker.createAndRegisterModuleDeserializer(dependencyModuleDescriptor, library, deserializationStrategy)
     }
 
     // Make sure the library-to-be-cached is also scheduled for deserialization.
@@ -219,7 +219,7 @@ private fun LinkKlibsContext.scheduleDependenciesForDeserialization(
 
     // Finally, add the forward declarations module (if there is any). It does not have any associated KLIB.
     moduleDescriptors.firstOrNull { it.isForwardDeclarationModule }?.let {
-        linker.createAndRegisterModuleDeserializer(it, kotlinLibrary = null) { DeserializationStrategy.ALL }
+        linker.createAndRegisterModuleDeserializer(it, kotlinLibrary = null, DeserializationStrategy.ALL)
     }
 }
 

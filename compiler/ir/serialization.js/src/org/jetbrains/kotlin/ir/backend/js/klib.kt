@@ -61,14 +61,14 @@ private fun deserializeDependencies(
 ): IrModuleDependencies {
     val dependencies = klibs.all.map { klib: KotlinLibrary ->
         val descriptor: ModuleDescriptor = mapping(klib)
-        val deserializationStrategy: (String) -> DeserializationStrategy = when {
-            klibs.included == null -> { _: String -> DeserializationStrategy.EXPLICITLY_EXPORTED }
+        val deserializationStrategy: DeserializationStrategyResolver = when {
+            klibs.included == null -> DeserializationStrategy.EXPLICITLY_EXPORTED
             filesToLoad != null && klib == klibs.included -> { filePath: String ->
                 if (filePath in filesToLoad) DeserializationStrategy.ALL else DeserializationStrategy.WITH_INLINE_BODIES
             }
-            filesToLoad != null && klib != klibs.included -> { _: String -> DeserializationStrategy.WITH_INLINE_BODIES }
-            klib == klibs.included -> { _: String -> DeserializationStrategy.ALL }
-            else -> { _: String -> DeserializationStrategy.EXPLICITLY_EXPORTED }
+            filesToLoad != null && klib != klibs.included -> DeserializationStrategy.WITH_INLINE_BODIES
+            klib == klibs.included -> DeserializationStrategy.ALL
+            else -> DeserializationStrategy.EXPLICITLY_EXPORTED
         }
 
         irLinker.createAndRegisterModuleDeserializer(descriptor, klib, deserializationStrategy).moduleFragment
@@ -128,10 +128,8 @@ fun loadIrForSingleModule(
     var mainFragment: IrModuleFragment? = null
     val deserializedFragments = modulesStructure.klibs.all.map { klib ->
         val moduleDescriptor = modulesStructure.getModuleDescriptor(klib)
-        val deserializationStrategy: (String) -> DeserializationStrategy = if (klib == modulesStructure.klibs.included)
-            { _: String -> DeserializationStrategy.ALL }
-        else
-            { _: String -> DeserializationStrategy.WITH_INLINE_BODIES }
+        val deserializationStrategy =
+            if (klib == modulesStructure.klibs.included) DeserializationStrategy.ALL else DeserializationStrategy.WITH_INLINE_BODIES
 
         val fragment = irLinker.createAndRegisterModuleDeserializer(moduleDescriptor, klib, deserializationStrategy).moduleFragment
 

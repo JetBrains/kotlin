@@ -192,10 +192,8 @@ class NativeDeserializerFacade(
     ): IrModuleDependencies = IrModuleDependencies(
         libraries.map { klib: KotlinLibrary ->
             val descriptor: ModuleDescriptor = mapping(klib)
-            val deserializationStrategy: (String) -> DeserializationStrategy = if (klib != mainModuleLib)
-                { _: String -> DeserializationStrategy.EXPLICITLY_EXPORTED }
-            else
-                { _: String -> DeserializationStrategy.ALL }
+            val deserializationStrategy =
+                if (klib != mainModuleLib) DeserializationStrategy.EXPLICITLY_EXPORTED else DeserializationStrategy.ALL
 
             irLinker.createAndRegisterModuleDeserializer(descriptor, klib, deserializationStrategy).moduleFragment
         }

@@ -184,7 +184,7 @@ abstract class KotlinIrLinker(
     protected abstract fun createModuleDeserializer(
         moduleFragment: IrModuleFragment,
         klib: KotlinLibrary?,
-        strategyResolver: (String) -> DeserializationStrategy,
+        strategyResolver: DeserializationStrategyResolver,
     ): IrModuleDeserializer
 
     protected abstract fun isBuiltInModule(module: IrModuleFragment): Boolean
@@ -296,7 +296,7 @@ abstract class KotlinIrLinker(
     fun createAndRegisterModuleDeserializer(
         moduleDescriptor: ModuleDescriptor,
         kotlinLibrary: KotlinLibrary?,
-        deserializationStrategy: (String) -> DeserializationStrategy,
+        strategyResolver: DeserializationStrategyResolver,
     ): IrModuleDeserializer {
         val moduleFragment = IrModuleFragmentImpl(moduleDescriptor)
         moduleFragment.kotlinLibrary = kotlinLibrary
@@ -305,7 +305,7 @@ abstract class KotlinIrLinker(
             createModuleDeserializer(
                 moduleFragment = moduleFragment,
                 klib = kotlinLibrary,
-                strategyResolver = deserializationStrategy
+                strategyResolver = strategyResolver
             )
         )
 
@@ -356,13 +356,19 @@ enum class DeserializationStrategy(
     val explicitlyExported: Boolean,
     val theWholeWorld: Boolean,
     val inlineBodies: Boolean
-) {
+) : DeserializationStrategyResolver {
     ON_DEMAND(true, false, false, false, false),
     ONLY_REFERENCED(false, true, false, false, true),
     ALL(false, true, true, true, true),
     EXPLICITLY_EXPORTED(false, true, true, false, true),
     ONLY_DECLARATION_HEADERS(false, false, false, false, false),
-    WITH_INLINE_BODIES(false, false, false, false, true)
+    WITH_INLINE_BODIES(false, false, false, false, true);
+
+    override fun invoke(filePath: String) = this
+}
+
+fun interface DeserializationStrategyResolver {
+    operator fun invoke(filePath: String): DeserializationStrategy
 }
 
 /**
