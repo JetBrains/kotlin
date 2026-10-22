@@ -9,16 +9,17 @@ plugins {
 }
 
 val analysisApiSurfaceDependencies: List<String> = CompilerModules.analysisApiSurfaceDependencies
+val analysisApiSyntaxSurfaceDependencies: List<String> = CompilerModules.analysisApiSyntaxSurfaceDependencies
 val analysisApiSurfaceModules: Array<String> = CompilerModules.analysisApiSurfaceModules
 
 dependencies {
-    api(project(":prepare:analysis-api:kotlin-analysis-api-intellij-api-surface-components"))
-    api(libs.org.jetbrains.annotations)
+    api(project(":prepare:analysis-api:kotlin-analysis-api-syntax-surface"))
 }
 
 analysisApiArtifact {
     content {
-        projects(analysisApiSurfaceDependencies)
+        // Avoid copying content of 'kotlin-analysis-api-syntax-surface'
+        projects(analysisApiSurfaceDependencies - analysisApiSyntaxSurfaceDependencies)
         projects(analysisApiSurfaceModules)
     }
 }

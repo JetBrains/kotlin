@@ -640,6 +640,7 @@ include(
 include(
     ":prepare:analysis-api:kotlin-analysis-api",
     ":prepare:analysis-api:kotlin-analysis-api-surface",
+    ":prepare:analysis-api:kotlin-analysis-api-syntax-surface",
     ":prepare:analysis-api:kotlin-analysis-api-platform-interface",
     ":prepare:analysis-api:kotlin-analysis-api-implementation",
     ":prepare:analysis-api:kotlin-analysis-api-fir-diagnostics",
