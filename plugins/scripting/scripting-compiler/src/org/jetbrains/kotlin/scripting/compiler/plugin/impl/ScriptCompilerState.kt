@@ -40,10 +40,8 @@ import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import java.io.File
 import java.nio.file.Path
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
-import kotlin.script.experimental.api.dependencies
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.host.with
-import kotlin.script.experimental.jvm.JvmDependency
 
 interface ScriptCompilerState {
     val baseScriptCompilationConfiguration: ScriptCompilationConfiguration
@@ -209,9 +207,7 @@ fun createCompilerState(
     with(ScriptingK2CompilerPluginRegistrar()) { extensionStorage.registerExtensions(compilerConfiguration) }
     extensionStorage.registerInProject(project) { "Error on plugin registration: ${it.javaClass.name}" }
 
-    val classpath = scriptCompilationConfiguration[ScriptCompilationConfiguration.dependencies].orEmpty().flatMap {
-        (it as? JvmDependency)?.classpath ?: emptyList()
-    }
+    val classpath = scriptCompilationConfiguration.baseCompilationClasspath()
     compilerContext.environment.updateClasspath(classpath.map { JvmClasspathRoot(it) })
     val projectEnvironment = compilerContext.environment.toVfsBasedProjectEnvironment()
     val extensionRegistrars = compilerConfiguration.getCompilerExtensions(FirExtensionRegistrar)
