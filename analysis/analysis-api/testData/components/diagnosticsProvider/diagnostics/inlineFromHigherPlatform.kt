@@ -24,7 +24,6 @@ package main
 
 import lib.*
 
-// The check needs the class file version of the library declaration. Stub-based deserialization of libraries doesn't provide it.
 fun usage() {
     inlineFunction {}
     regularFunction()

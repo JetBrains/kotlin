@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserializatio
 
 import org.jetbrains.kotlin.descriptors.SourceFile
 import org.jetbrains.kotlin.load.kotlin.FacadeClassSource
+import org.jetbrains.kotlin.load.kotlin.JvmClassFileBacked
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerAbiStability
@@ -15,8 +16,9 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.PreRelease
 internal class JvmStubDeserializedFacadeContainerSource(
     override val className: JvmClassName,
     override val jvmClassName: JvmClassName?,
-    override val facadeClassName: JvmClassName?
-) : DeserializedContainerSourceWithJvmClassName, FacadeClassSource {
+    override val facadeClassName: JvmClassName?,
+    override val classFileMajorVersion: Int?,
+) : DeserializedContainerSourceWithJvmClassName, FacadeClassSource, JvmClassFileBacked {
     override val incompatibility: IncompatibleVersionErrorData<*>?
         get() = null
 
