@@ -1480,6 +1480,12 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveAllByPsiTestGenerated
     }
 
     @Test
+    @TestMetadata("typeParameterAsDelegatedSuperTypeInLocalClass.kt")
+    public void testTypeParameterAsDelegatedSuperTypeInLocalClass() {
+      run("typeParameterAsDelegatedSuperTypeInLocalClass.kt");
+    }
+
+    @Test
     @TestMetadata("typeParameterAsSuperCall.kt")
     public void testTypeParameterAsSuperCall() {
       run("typeParameterAsSuperCall.kt");
