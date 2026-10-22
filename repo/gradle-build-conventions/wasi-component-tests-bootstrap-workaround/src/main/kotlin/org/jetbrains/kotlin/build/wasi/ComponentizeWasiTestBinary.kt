@@ -34,7 +34,8 @@ internal const val WASI_UNIT_TESTS_EXPORT_NAME = "startunittests"
  * TODO(remove after bootstrap): Turns a WASI test binary of the bootstrap compiler into a WASI 0.2 component, with the
  *  same steps as `WasiComponentizer` in `wasm/wasm.tests`.
  *
- *  [BOOTSTRAP_UNIT_TESTS_EXPORT_NAME] isn't a WIT label, so the task first adds the alias [WASI_UNIT_TESTS_EXPORT_NAME].
+ *  [BOOTSTRAP_UNIT_TESTS_EXPORT_NAME] isn't a WIT label, so the task first adds the alias [WASI_UNIT_TESTS_EXPORT_NAME],
+ *  if the binary doesn't export it yet.
  */
 @DisableCachingByDefault(because = "Not worth caching")
 abstract class ComponentizeWasiTestBinary : DefaultTask() {
@@ -66,7 +67,9 @@ abstract class ComponentizeWasiTestBinary : DefaultTask() {
 
         val aliased = workDir.resolve("aliased").resolve(inputModule.name).apply {
             parentFile.mkdirs()
-            writeBytes(addFunctionExportAlias(inputModule.readBytes(), BOOTSTRAP_UNIT_TESTS_EXPORT_NAME, WASI_UNIT_TESTS_EXPORT_NAME))
+            writeBytes(
+                addFunctionExportAliasIfNecessary(inputModule.readBytes(), BOOTSTRAP_UNIT_TESTS_EXPORT_NAME, WASI_UNIT_TESTS_EXPORT_NAME)
+            )
         }
 
         val entryPointWit = workDir.resolve("entry-point").apply {
@@ -110,12 +113,13 @@ private const val EXPORT_SECTION_ID = 7
 private const val FUNCTION_EXPORT_KIND = 0
 
 /**
- * Returns [module] with the additional export [alias] of the function that [module] exports as [name].
+ * Returns [module] with the additional export [alias] of the function that [module] exports as [name]. Returns [module]
+ * unchanged if it already has an export named [alias], as the WASI test binaries of the current compiler have.
  *
  * No part of a module refers to an export by its position, so only the export section changes. The offsets of the later
  * sections change too. Only source maps use these offsets, and the WASI test binaries have no source maps.
  */
-internal fun addFunctionExportAlias(module: ByteArray, name: String, alias: String): ByteArray {
+internal fun addFunctionExportAliasIfNecessary(module: ByteArray, name: String, alias: String): ByteArray {
     val result = ByteArrayOutputStream()
     result.write(module, 0, 8) // magic number and version
     var position = 8
@@ -141,6 +145,9 @@ internal fun addFunctionExportAlias(module: ByteArray, name: String, alias: Stri
                 position += nameLength
                 val kind = module[position++].toInt()
                 val index = readU32()
+                if (exportName == alias) {
+                    return module
+                }
                 if (kind == FUNCTION_EXPORT_KIND && exportName == name) {
                     functionIndex = index
                 }
