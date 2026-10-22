@@ -195,6 +195,9 @@ class ResultTypeResolver(
         // compiler/testData/diagnostics/tests/unsignedTypes/conversions/inferenceForSignedAndUnsignedTypes.kt
         if (resultType.typeConstructor().isIntegerLiteralTypeConstructor()) return false
 
+        // Such approximations are likely useless, and even counter-productive.
+        if (approximatedResultType.isNothing()) return true
+
         return !c.isEqualityConstraintCompatible(approximatedResultType, variableWithConstraints.typeVariable.defaultType(c))
     }
 
