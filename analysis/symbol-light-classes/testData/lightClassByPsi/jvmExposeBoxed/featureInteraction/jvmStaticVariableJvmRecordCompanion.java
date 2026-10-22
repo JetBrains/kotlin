@@ -8,10 +8,10 @@ public final record Rec /* Rec*/(int i) {
 
   @kotlin.jvm.JvmExposeBoxed()
   @org.jetbrains.annotations.NotNull()
-  public static final @org.jetbrains.annotations.NotNull() StringWrapper baz();//  baz()
+  public static final @org.jetbrains.annotations.NotNull() StringWrapper getBaz();//  getBaz()
 
   @kotlin.jvm.JvmExposeBoxed()
-  public static final void baz(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() StringWrapper);//  baz(@org.jetbrains.annotations.NotNull() StringWrapper)
+  public static final void setBaz(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() StringWrapper);//  setBaz(@org.jetbrains.annotations.NotNull() StringWrapper)
 
   @org.jetbrains.annotations.NotNull()
   public final @org.jetbrains.annotations.NotNull() Rec copy(int);//  copy(int)
