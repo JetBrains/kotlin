@@ -11,17 +11,21 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.TestJdkKind
+import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.configuration.configureModernJavaTest
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
+import org.jetbrains.kotlin.test.model.TestFailureSuppressor
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.RuntimeClasspathJsProvider
 import org.jetbrains.kotlin.test.services.RuntimeClasspathProvider
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.utils.bind
 import org.jetbrains.kotlinx.serialization.SerializationDirectives.ENABLE_SERIALIZATION
+import org.jetbrains.kotlinx.serialization.SerializationDirectives.EXPECTED_COMPILER_CRASH
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationComponentRegistrar
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationIntrinsicsState
 import java.io.File
@@ -67,6 +71,36 @@ class SerializationRuntimeClasspathJsProvider(testServices: TestServices) : Runt
     }
 }
 
+/**
+ * Allows pinning known compiler crash as a test. Such test is expected to fail at compile time.
+ * The stack trace must contain every `// EXPECTED_COMPILER_CRASH: <text>` line for
+ * the test to succeed. Any other outcome will fail the test.
+ */
+class SerializationExpectedCrashSuppressor(testServices: TestServices) : TestFailureSuppressor(testServices) {
+    override val directiveContainers: List<DirectivesContainer>
+        get() = listOf(SerializationDirectives)
+
+    private fun expectedFragments(): List<String> = testServices.moduleStructure.allDirectives[EXPECTED_COMPILER_CRASH]
+
+    override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
+        val expected = expectedFragments()
+        if (expected.isEmpty()) return failedAssertions
+        val actual = failedAssertions.joinToString("\n") { it.cause.stackTraceToString() }
+        val missing = expected.filter { it !in actual }
+        if (missing.isEmpty()) return emptyList()
+        val error = AssertionError(
+            "The test failed, but not with the expected compiler crash. Missing: $missing\nActual failures:\n$actual"
+        )
+        return failedAssertions + error.wrap()
+    }
+
+    override fun checkIfTestShouldBeUnmuted() {
+        if (expectedFragments().isNotEmpty()) {
+            throw AssertionError("Test contains $EXPECTED_COMPILER_CRASH directive but no failure was reported. Please remove the directive")
+        }
+    }
+}
+
 fun TestConfigurationBuilder.configureForKotlinxSerialization(
     noLibraries: Boolean = false,
     target: TargetBackend = TargetBackend.JVM,
@@ -97,4 +131,8 @@ fun TestConfigurationBuilder.enableSerializationRuntimeProviders(target: TargetB
 
 object SerializationDirectives : SimpleDirectivesContainer() {
     val ENABLE_SERIALIZATION by directive("Enables serialization plugin")
+    val EXPECTED_COMPILER_CRASH by stringDirective(
+        "The test is expected to crash the compiler; the stack trace must contain the provided lines",
+        multiLine = true,
+    )
 }

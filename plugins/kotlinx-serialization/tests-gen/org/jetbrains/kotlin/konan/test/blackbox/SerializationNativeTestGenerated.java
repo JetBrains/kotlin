@@ -371,6 +371,12 @@ public class SerializationNativeTestGenerated extends AbstractNativeCodegenBoxTe
   }
 
   @Test
+  @TestMetadata("pinnedBugSerializationGh2241.kt")
+  public void testPinnedBugSerializationGh2241() {
+    run("pinnedBugSerializationGh2241.kt");
+  }
+
+  @Test
   @TestMetadata("polymorphic.kt")
   public void testPolymorphic() {
     run("polymorphic.kt");

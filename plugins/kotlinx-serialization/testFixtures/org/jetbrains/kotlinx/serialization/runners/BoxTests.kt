@@ -12,11 +12,14 @@ import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.runners.codegen.AbstractFirLightTreeBlackBoxCodegenTest
 import org.jetbrains.kotlin.test.runners.codegen.AbstractValhallaBlackBoxSmokeTest
 import org.jetbrains.kotlinx.serialization.configureForKotlinxSerialization
+import org.jetbrains.kotlinx.serialization.SerializationExpectedCrashSuppressor
 
 open class AbstractSerializationFirLightTreeBlackBoxTest : AbstractFirLightTreeBlackBoxCodegenTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.configureForKotlinxSerialization()
+        // Allows tests to successfully fail at compile-time. Needed for the pinned bugs tests.
+        builder.useFailureSuppressors(::SerializationExpectedCrashSuppressor)
 
         with(builder) {
             // Necessary because AbstractSerializationFirPsiDiagnosticTest, that runs on the same test data, configures it.
