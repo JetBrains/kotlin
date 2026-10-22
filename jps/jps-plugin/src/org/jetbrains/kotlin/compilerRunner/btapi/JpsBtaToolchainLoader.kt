@@ -19,6 +19,7 @@ import java.nio.file.Path
  */
 object JpsBtaToolchainLoader {
     const val IMPL_HOME_PROPERTY: String = "kotlin.jps.build.tools.impl.home"
+    const val GENERATE_COMPILER_REF_INDEX_PROPERTY: String = "kotlin.jps.build.tools.generate.compiler.ref.index"
 
     val implHomeProperty: String?
         get() = System.getProperty(IMPL_HOME_PROPERTY)
