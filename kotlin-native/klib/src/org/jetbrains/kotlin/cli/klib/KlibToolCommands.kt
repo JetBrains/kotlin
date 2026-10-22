@@ -221,7 +221,7 @@ internal class DumpIr(output: KlibToolOutput, args: ParsedArguments) : KlibToolC
 
 internal class DumpIrInlinableFunctions(output: KlibToolOutput, args: ParsedArguments) : KlibToolCommand(output, args) {
     override fun execute() {
-        if (!checkLibraryHasIr(args.library)) return
+        if (!checkLibraryHasRealOrSyntheticIr(args.library)) return
 
         val inlinableFunctionsIr = args.library.inlinableFunctionsIr
         if (inlinableFunctionsIr == null) {
