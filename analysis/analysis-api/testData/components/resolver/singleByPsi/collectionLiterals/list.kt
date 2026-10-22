@@ -2,5 +2,5 @@ fun test() {
     val x: List<Boolean> = <expr>[]</expr>
 }
 
-// LANGUAGE: +CollectionLiterals
+// LANGUAGE: +CollectionLiterals -CompanionBlocks
 // WITH_STDLIB

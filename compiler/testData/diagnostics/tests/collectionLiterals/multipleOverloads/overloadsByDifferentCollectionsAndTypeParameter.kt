@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-79330
+// LANGUAGE: +CompanionBlocks
 
 class MyList<T> {
     companion object {
@@ -19,7 +20,7 @@ fun acceptList(l: OtherList<Int>) = Unit
 fun test() {
     acceptList([1, 2, 3])
     acceptList(["1", "2", "3"])
-    <!OVERLOAD_RESOLUTION_AMBIGUITY!>acceptList<!>(<!UNRESOLVED_REFERENCE!>[]<!>)
+    <!OVERLOAD_RESOLUTION_AMBIGUITY!>acceptList<!>(<!CANNOT_INFER_PARAMETER_TYPE!>[]<!>)
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, integerLiteral, nullableType,

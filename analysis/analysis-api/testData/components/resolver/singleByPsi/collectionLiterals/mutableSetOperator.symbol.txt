@@ -1,0 +1,5 @@
+KtCollectionLiteralExpression(45,50): '["a"]'
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      kotlin/collections/MutableSet.of(vararg elements: E): kotlin.collections.MutableSet<E>
+    ]

@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // DUMP_INFERENCE_LOGS: FIXATION, MARKDOWN
+// LANGUAGE: +CompanionBlocks
 
 interface A {
     companion object {
@@ -20,8 +21,8 @@ fun viaSmartcast(x: Any) {
     x as A
     x as B
 
-    expectThroughTV(x, <!UNRESOLVED_REFERENCE!>[42]<!>)
-    expectThroughTV(x, <!UNRESOLVED_REFERENCE!>[]<!>)
+    expectThroughTV(x, [42])
+    expectThroughTV(x, <!CANNOT_INFER_PARAMETER_TYPE!>[]<!>)
 }
 
 fun viaWhen() {
@@ -30,7 +31,7 @@ fun viaWhen() {
             true -> object : A, B {}
             else -> object : B, A {}
         },
-        <!UNRESOLVED_REFERENCE!>["42"]<!>,
+        ["42"],
     )
 }
 
@@ -48,14 +49,14 @@ fun intersectionWithOuterTvInPCLA() {
     buildBox {
         val x = get()
         x as B
-        expectThroughTV(<!UNRESOLVED_REFERENCE!>[42]<!> /*resolved to A.of() */, x)
+        expectThroughTV([42] /*resolved to List.of() */, x)
         put(A.of())
     }
 
-    <!CANNOT_INFER_PARAMETER_TYPE!>buildBox<!> {
+    buildBox {
         val x = get()
         x as B
-        <!CANNOT_INFER_PARAMETER_TYPE!>expectThroughTV<!>(<!UNRESOLVED_REFERENCE!>[42]<!>, x)
+        expectThroughTV([42], x)
         Unit
     }
 }

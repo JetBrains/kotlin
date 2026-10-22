@@ -339,6 +339,43 @@ public actual interface List<out E> : Collection<E> {
         @SinceKotlin("2.4")
         public fun <E> fromJsArray(array: JsReadonlyArray<E>): List<E> = array.toList()
     }
+
+    companion {
+        /**
+         * Returns an empty read-only list.
+         *
+         * @sample samples.collections.Collections.Lists.emptyReadOnlyListLiteral
+         */
+        @JsExport.Ignore
+        @ExperimentalCollectionLiteralsApi
+        @SinceKotlin("2.5")
+        @Suppress("NOTHING_TO_INLINE")
+        public actual inline operator fun <E> of(): List<E> =
+            emptyList()
+
+        /**
+         * Returns a new read-only list containing only the specified [element].
+         *
+         * @sample samples.collections.Collections.Lists.singletonReadOnlyListLiteral
+         */
+        @JsExport.Ignore
+        @ExperimentalCollectionLiteralsApi
+        @SinceKotlin("2.5")
+        @Suppress("NOTHING_TO_INLINE")
+        public actual inline operator fun <E> of(element: E): List<E> =
+            listOf(element)
+
+        /**
+         * Returns a new read-only list of given elements.
+         *
+         * @sample samples.collections.Collections.Lists.readOnlyListLiteral
+         */
+        @JsExport.Ignore
+        @ExperimentalCollectionLiteralsApi
+        @SinceKotlin("2.5")
+        public actual operator fun <E> of(vararg elements: E): List<E> =
+            if (elements.size > 0) elements.asList() else emptyList()
+    }
 }
 
 /**
@@ -506,6 +543,30 @@ public actual interface MutableList<E> : List<E>, MutableCollection<E> {
         @SinceKotlin("2.4")
         public fun <E> fromJsArray(array: JsReadonlyArray<E>): MutableList<E> = array.toMutableList()
     }
+
+    companion {
+        /**
+         * Returns an empty new [MutableList].
+         *
+         * @sample samples.collections.Collections.Lists.emptyMutableListLiteral
+         */
+        @JsExport.Ignore
+        @ExperimentalCollectionLiteralsApi
+        @SinceKotlin("2.5")
+        @Suppress("NOTHING_TO_INLINE")
+        public actual inline operator fun <E> of(): MutableList<E> = mutableListOf()
+
+        /**
+         * Returns a new [MutableList] with the given elements.
+         *
+         * @sample samples.collections.Collections.Lists.mutableListLiteral
+         */
+        @JsExport.Ignore
+        @ExperimentalCollectionLiteralsApi
+        @SinceKotlin("2.5")
+        public actual operator fun <E> of(vararg elements: E): MutableList<E> =
+            if (elements.size == 0) ArrayList() else elements.asArrayList()
+    }
 }
 
 /**
@@ -580,6 +641,42 @@ public actual interface Set<out E> : Collection<E> {
         @Deprecated("Only for use from JavaScript", level = DeprecationLevel.HIDDEN)
         @SinceKotlin("2.4")
         public fun <E> fromJsSet(set: JsReadonlySet<E>): Set<E> = set.toSet()
+    }
+
+    companion {
+        /**
+         * Returns an empty read-only set.
+         *
+         * @sample samples.collections.Collections.Sets.emptyReadOnlySetLiteral
+         */
+        @JsExport.Ignore
+        @ExperimentalCollectionLiteralsApi
+        @SinceKotlin("2.5")
+        @Suppress("NOTHING_TO_INLINE")
+        public actual inline operator fun <E> of(): Set<E> = setOf()
+
+        /**
+         * Returns a new read-only set containing only the specified object [element].
+         *
+         * @sample samples.collections.Collections.Sets.singletonReadOnlySetLiteral
+         */
+        @JsExport.Ignore
+        @ExperimentalCollectionLiteralsApi
+        @SinceKotlin("2.5")
+        @Suppress("NOTHING_TO_INLINE")
+        public actual inline operator fun <E> of(element: E): Set<E> = setOf(element)
+
+        /**
+         * Returns a new read-only set with the given elements.
+         *
+         * Elements of the set are iterated in the order they were specified.
+         *
+         * @sample samples.collections.Collections.Sets.readOnlySetLiteral
+         */
+        @JsExport.Ignore
+        @ExperimentalCollectionLiteralsApi
+        @SinceKotlin("2.5")
+        public actual operator fun <E> of(vararg elements: E): Set<E> = elements.toSet()
     }
 }
 
@@ -661,6 +758,34 @@ public actual interface MutableSet<E> : Set<E>, MutableCollection<E> {
         @Deprecated("Only for use from JavaScript", level = DeprecationLevel.HIDDEN)
         @SinceKotlin("2.4")
         public fun <E> fromJsSet(set: JsReadonlySet<E>): MutableSet<E> = set.toMutableSet()
+    }
+
+    companion {
+        /**
+         * Returns an empty new [MutableSet].
+         *
+         * The returned set preserves the element iteration order.
+         *
+         * @sample samples.collections.Collections.Sets.emptyMutableSetLiteral
+         */
+        @JsExport.Ignore
+        @ExperimentalCollectionLiteralsApi
+        @SinceKotlin("2.5")
+        @Suppress("NOTHING_TO_INLINE")
+        public actual inline operator fun <E> of(): MutableSet<E> = mutableSetOf()
+
+        /**
+         * Returns a new [MutableSet] with the given elements.
+         *
+         * Elements of the set are iterated in the order they were specified.
+         *
+         * @sample samples.collections.Collections.Sets.mutableSetLiteral
+         */
+        @JsExport.Ignore
+        @ExperimentalCollectionLiteralsApi
+        @SinceKotlin("2.5")
+        public actual operator fun <E> of(vararg elements: E): MutableSet<E> =
+            elements.toCollection(LinkedHashSet(mapCapacity(elements.size)))
     }
 }
 

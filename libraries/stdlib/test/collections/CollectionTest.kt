@@ -109,6 +109,23 @@ class CollectionTest {
         assertEquals(setOf("value1", "value2"), l3)
     }
 
+    @Test fun collectionInterfacesOperatorOf() {
+        assertEquals(listOf("a", "b"), List.of("a", "b"))
+
+        val mutableList = MutableList.of(1)
+        mutableList.add(2)
+        assertEquals(listOf(1, 2), mutableList)
+
+        val set = Set.of(2, 1)
+        assertEquals(setOf(1, 2), set)
+        assertEquals(listOf(2, 1), set.toList())
+
+        val mutableSet = MutableSet.of('a')
+        mutableSet.add('a')
+        mutableSet.add('b')
+        assertEquals(setOf('a', 'b'), mutableSet)
+    }
+
     @Test fun filterIntoSet() {
         val data = listOf("foo", "bar")
         val foo = data.filterTo(hashSetOf<String>()) { it.startsWith("f") }
