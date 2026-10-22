@@ -9,7 +9,6 @@ dependencies {
     implementation(project(":kotlin-util-klib"))
     implementation(project(":compiler:ir.serialization.jvm"))
     implementation(project(":compiler:frontend"))
-    implementation(project(":compiler:frontend.java"))
     implementation(project(":core:compiler.common.jvm"))
     implementation(project(":core:descriptors"))
     implementation(project(":core:descriptors.jvm"))
