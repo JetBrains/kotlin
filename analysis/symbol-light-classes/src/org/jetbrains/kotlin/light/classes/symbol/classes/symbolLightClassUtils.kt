@@ -926,6 +926,16 @@ internal val KaPropertySymbol.hasPrefixlessAccessorNames: Boolean
     }
 
 /**
+ * Whether this property is a member of an annotation class, which the JVM backend compiles to an abstract annotation method.
+ *
+ * Unlike checking the light class that receives the accessor, this excludes the static accessors which `@JvmStatic` copies from
+ * the companion object into the annotation class.
+ */
+context(_: KaSession)
+internal val KaPropertySymbol.isAnnotationClassMember: Boolean
+    get() = (containingDeclaration as? KaClassSymbol)?.classKind == KaClassKind.ANNOTATION_CLASS
+
+/**
  * The declaration that owns the JVM method for [symbol], or `null` if the method is placed into a file facade class.
  *
  * For a property accessor, the owner of the property is used, as an accessor is never owned by its property on the JVM.

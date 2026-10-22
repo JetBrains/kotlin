@@ -46,6 +46,7 @@ internal open class SymbolLightClassForAnnotationClass : SymbolLightClassForInte
             .filterNot { it is KaConstructorSymbol }
 
         createMethods(this@SymbolLightClassForAnnotationClass, visibleDeclarations, result)
+        addMethodsFromCompanionIfNeeded(result, classSymbol)
         result
     }
 

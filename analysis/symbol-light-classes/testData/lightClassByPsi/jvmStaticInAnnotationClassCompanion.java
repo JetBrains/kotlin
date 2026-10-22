@@ -5,7 +5,29 @@ public abstract @interface KtAnnotation /* KtAnnotation*/ {
 
   public static final int CONSTANT = 2 /* initializer type: int */ /* constant value 2 */;
 
+  @kotlin.jvm.JvmStatic()
+  @org.jetbrains.annotations.NotNull()
+  public static @org.jetbrains.annotations.NotNull() java.lang.Class<?> staticFun(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() kotlin.reflect.KClass<?>);//  staticFun(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() kotlin.reflect.KClass<?>)
+
+  @org.jetbrains.annotations.NotNull()
+  public static @org.jetbrains.annotations.NotNull() java.lang.Class<?> getKClassProperty();//  getKClassProperty()
+
+  @org.jetbrains.annotations.NotNull()
+  public static @org.jetbrains.annotations.NotNull() java.lang.String getLateinitVariable();//  getLateinitVariable()
+
+  @org.jetbrains.annotations.NotNull()
+  public static @org.jetbrains.annotations.NotNull() java.lang.String getStaticVariable();//  getStaticVariable()
+
+  @org.jetbrains.annotations.NotNull()
+  public static @org.jetbrains.annotations.NotNull() java.lang.String getStringProperty();//  getStringProperty()
+
   public abstract int i();//  i()
+
+  public static int getStaticProperty();//  getStaticProperty()
+
+  public static void setLateinitVariable(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  setLateinitVariable(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  public static void setStaticVariable(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  setStaticVariable(@org.jetbrains.annotations.NotNull() java.lang.String)
 
   class Companion ...
 }
