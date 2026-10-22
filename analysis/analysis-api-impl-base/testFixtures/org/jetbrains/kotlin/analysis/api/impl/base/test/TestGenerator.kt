@@ -650,35 +650,7 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTestsForSourceLike
     }
 
     component("typeRelationChecker") {
-        test<AbstractTypeEqualityTest> {
-            model(it, "subtypingAndEquality")
-        }
-
-        test<AbstractLenientTypeEqualityTest> {
-            model(it, "subtypingAndEquality")
-        }
-
-        test<AbstractSubtypingTest> {
-            model(it, "subtypingAndEquality")
-        }
-
-        test<AbstractLenientSubtypingTest> {
-            model(it, "subtypingAndEquality")
-        }
-
-        test<AbstractNonLenientClassIdSubtypingTypeRelationTest> {
-            model(it, "subtypingAndEquality")
-        }
-
-        test<AbstractLenientClassIdSubtypingTypeRelationTest> {
-            model(it, "subtypingAndEquality")
-        }
-
-        test<AbstractNonLenientClassSymbolSubtypingTypeRelationTest> {
-            model(it, "subtypingAndEquality")
-        }
-
-        test<AbstractLenientClassSymbolSubtypingTypeRelationTest> {
+        test<AbstractTypeRelationCheckerTest> {
             model(it, "subtypingAndEquality")
         }
     }
