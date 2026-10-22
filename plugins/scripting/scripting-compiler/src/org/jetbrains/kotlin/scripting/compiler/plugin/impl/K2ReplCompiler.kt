@@ -11,10 +11,6 @@ import org.jetbrains.kotlin.cli.common.fir.reportToMessageCollector
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.renderDiagnosticInternalName
-import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.javaInterop
-import org.jetbrains.kotlin.cli.jvm.compiler.toVfsBasedProjectEnvironment
-import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.*
@@ -27,15 +23,10 @@ import org.jetbrains.kotlin.fir.builder.FirSyntaxErrors
 import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirReplSnippet
-import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.pipeline.*
-import org.jetbrains.kotlin.fir.session.FirJvmSessionFactory
-import org.jetbrains.kotlin.fir.symbols.impl.FirReplSnippetSymbol
-import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
 import org.jetbrains.kotlin.scripting.compiler.plugin.ReplCompilerPluginRegistrar
 import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.*
@@ -43,18 +34,13 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.collectScript
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.FirReplHistoryProviderImpl
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.firReplHistoryProvider
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.isReplSnippetSource
-import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
-import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.File
-import java.nio.file.Path
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
-import kotlin.script.experimental.host.with
 import kotlin.script.experimental.impl._isSyntheticSnippet
 import kotlin.script.experimental.jvm.*
 import kotlin.script.experimental.util.LinkedSnippet
-import kotlin.script.experimental.util.LinkedSnippetImpl
 import kotlin.script.experimental.util.add
 
 class K2ReplCompiler(
@@ -108,7 +94,7 @@ class K2ReplCompiler(
     }
 
     suspend fun compile(snippet: SourceCode): ResultWithDiagnostics<LinkedSnippet<CompiledSnippet>> =
-        compile(snippet, state.scriptCompilationConfiguration)
+        compile(snippet, state.baseScriptCompilationConfiguration)
 
     companion object {
 
@@ -125,178 +111,24 @@ class K2ReplCompiler(
                 }
         ): ReplCompilerState {
 
-            val moduleName = Name.special("<REPL>")
             val effectiveHostConfig = effectiveHostConfiguration(hostConfiguration, scriptCompilationConfiguration)
-            val compilerContext = createIsolatedCompilationContext(
+            return createIsolatedScriptingState(
                 scriptCompilationConfiguration,
                 effectiveHostConfig,
                 messageCollector,
-                rootDisposable
-            ) {
-                add(CompilerPluginRegistrar.COMPILER_PLUGIN_REGISTRARS, ReplCompilerPluginRegistrar(effectiveHostConfig))
+                rootDisposable,
+                { add(CompilerPluginRegistrar.COMPILER_PLUGIN_REGISTRARS, ReplCompilerPluginRegistrar(effectiveHostConfig)) },
+            ) { _, compilerConfiguration, projectEnvironment, ignoredOptionsReportingState ->
+                ReplCompilerState(
+                    scriptCompilationConfiguration,
+                    compilerConfiguration,
+                    projectEnvironment,
+                    ignoredOptionsReportingState,
+                    messageCollector,
+                    effectiveHostConfig,
+                )
             }
-
-            val compilerConfiguration = compilerContext.environment.configuration
-            compilerConfiguration.add(
-                ScriptingConfigurationKeys.SCRIPT_DEFINITIONS,
-                ScriptDefinition.FromConfigurations(effectiveHostConfig, scriptCompilationConfiguration, null)
-            )
-            val definitionSources = compilerConfiguration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS_SOURCES)
-            val definitions = compilerConfiguration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS)
-            val scriptDefinitionProvider = CliScriptDefinitionProvider(
-                compilerConfiguration.disableStandardScriptDefinition
-            ).also {
-                it.setScriptDefinitionsSources(definitionSources)
-                it.setScriptDefinitions(definitions)
-            }
-            val hostConfigurationWithProvider = effectiveHostConfig.with {
-                scriptCompilationConfigurationProvider(ScriptCompilationConfigurationProviderOverDefinitionProvider(scriptDefinitionProvider))
-                scriptRefinedCompilationConfigurationsCache(ScriptRefinedCompilationConfigurationCacheImpl())
-            }
-            val project = compilerContext.environment.project
-            val languageVersionSettings = compilerContext.environment.configuration.languageVersionSettings
-            val classpath = scriptCompilationConfiguration.baseCompilationClasspath()
-            compilerContext.environment.updateClasspath(classpath.map { JvmClasspathRoot(it) })
-            val projectEnvironment = compilerContext.environment.toVfsBasedProjectEnvironment()
-            val extensionRegistrars = compilerContext.environment.configuration.getCompilerExtensions(FirExtensionRegistrar)
-            val librariesClasspath = JvmClasspath.ProjectLibraries()
-
-            val moduleDataProvider = ReplModuleDataProvider(classpath.map(File::toPath))
-
-            val sessionFactoryContext = FirJvmSessionFactory.Context(
-                configuration = compilerContext.environment.configuration,
-                projectEnvironment = projectEnvironment,
-                librariesClasspath = librariesClasspath,
-                javaInterop = projectEnvironment.javaInterop(compilerContext.environment.configuration, withJavaSources = false),
-            )
-            val sharedLibrarySession = FirJvmSessionFactory.createSharedLibrarySession(
-                mainModuleName = moduleName,
-                extensionRegistrars = extensionRegistrars,
-                languageVersionSettings = languageVersionSettings,
-                context = sessionFactoryContext,
-            )
-
-            FirJvmSessionFactory.createLibrarySession(
-                sharedLibrarySession,
-                moduleDataProvider = moduleDataProvider,
-                extensionRegistrars = extensionRegistrars,
-                languageVersionSettings = languageVersionSettings,
-                context = sessionFactoryContext,
-            )
-
-            return ReplCompilerState(
-                scriptCompilationConfiguration,
-                hostConfigurationWithProvider,
-                projectEnvironment,
-                moduleDataProvider,
-                messageCollector,
-                compilerContext,
-                sharedLibrarySession,
-                sessionFactoryContext,
-            )
         }
-    }
-}
-
-class ReplCompilerState(
-    internal val scriptCompilationConfiguration: ScriptCompilationConfiguration,
-    internal val hostConfiguration: ScriptingHostConfiguration,
-    internal val projectEnvironment: VfsBasedProjectEnvironment,
-    internal val moduleDataProvider: ReplModuleDataProvider,
-    internal val messageCollector: ScriptDiagnosticsMessageCollector,
-    internal val compilerContext: SharedScriptCompilationContext,
-    internal val sharedLibrarySession: FirSession,
-    internal val sessionFactoryContext: FirJvmSessionFactory.Context,
-) {
-    var lastCompiledSnippet: LinkedSnippetImpl<CompiledSnippet>? = null
-
-    /**
-     * Failed snippets consume their numbers too, matching the hosts that count snippets themselves (e.g. JSR-223).
-     */
-    var nextSnippetNo: Int = hostConfiguration[ScriptingHostConfiguration.repl.firReplHistoryProvider]?.getSnippetCount() ?: 0
-
-    internal class HistoryCheckpoint(val snippets: Set<FirReplSnippetSymbol>, val moduleDataCount: Int)
-
-    internal fun makeHistoryCheckpoint(): HistoryCheckpoint = HistoryCheckpoint(
-        hostConfiguration[ScriptingHostConfiguration.repl.firReplHistoryProvider]?.getSnippets()?.toSet().orEmpty(),
-        moduleDataProvider.moduleDataHistory.size
-    )
-
-    /**
-     * The declarations of a failed snippet and its imported scripts must not be visible to the later snippets.
-     */
-    internal fun rollbackHistory(checkpoint: HistoryCheckpoint) {
-        hostConfiguration[ScriptingHostConfiguration.repl.firReplHistoryProvider]?.let { historyProvider ->
-            historyProvider.removeSnippets(historyProvider.getSnippets().filter { it !in checkpoint.snippets })
-        }
-        moduleDataProvider.removeSnippetModuleDataAddedAfter(checkpoint.moduleDataCount)
-    }
-
-    /**
-     * Stripped down FirSession needed to resolve annotations with their arguments before starting the actual snippet compilation.
-     */
-    internal var dummySessionForAnnotationResolution: FirSession? = null
-
-    val project get() = projectEnvironment.project
-}
-
-class ReplModuleDataProvider(baseLibraryPaths: List<Path>) : ModuleDataProvider() {
-
-    val baseDependenciesModuleData = makeLibraryModuleData(Name.special("<REPL-base>"))
-
-    private fun makeLibraryModuleData(name: Name): FirModuleData = FirBinaryDependenciesModuleData(name)
-
-    val pathToModuleData: MutableMap<Path, FirModuleData> = mutableMapOf()
-    val moduleDataHistory: MutableList<FirModuleData> = mutableListOf()
-
-    init {
-        baseLibraryPaths.map { it.toAbsolutePath().normalize() }.associateWithTo(pathToModuleData) { baseDependenciesModuleData }
-        moduleDataHistory.add(baseDependenciesModuleData)
-    }
-
-    override val allModuleData: Collection<FirModuleData>
-        get() = moduleDataHistory
-
-    override val regularDependenciesModuleData: FirModuleData
-        get() = baseDependenciesModuleData
-
-    override fun getModuleData(path: Path?): FirModuleData? {
-        val normalizedPath = path?.toAbsolutePath()?.normalize() ?: return null
-        pathToModuleData[normalizedPath]?.let { return it }
-        for ([libPath, moduleData] in pathToModuleData) {
-            if (normalizedPath.startsWith(libPath)) return moduleData
-        }
-        return null
-    }
-
-    override fun getModuleDataPaths(moduleData: FirModuleData): Set<Path>? =
-        pathToModuleData.entries.mapNotNullTo(mutableSetOf()) { if (it.value == moduleData) it.key else null }.takeIf { it.isNotEmpty() }
-
-    fun addNewLibraryModuleDataIfNeeded(libraryPaths: List<Path>): Pair<FirModuleData?, List<Path>> {
-        val newLibraryPaths = libraryPaths.map { it.toAbsolutePath().normalize() }.filter { it !in pathToModuleData }
-        if (newLibraryPaths.isEmpty()) return null to emptyList()
-        val newDependenciesModuleData = makeLibraryModuleData(Name.special("<REPL-lib-${moduleDataHistory.size + 1}>"))
-        newLibraryPaths.associateWithTo(pathToModuleData) { newDependenciesModuleData }
-        moduleDataHistory.add(newDependenciesModuleData)
-        return newDependenciesModuleData to newLibraryPaths
-    }
-
-    fun addNewSnippetModuleData(name: Name, isDummy: Boolean = false): FirModuleData =
-        FirSourceModuleData(
-            name,
-            dependencies = moduleDataHistory.filter { it.dependencies.isEmpty() },
-            dependsOnDependencies = emptyList(),
-            friendDependencies = moduleDataHistory.filter { it.dependencies.isNotEmpty() },
-            JvmPlatforms.defaultJvmPlatform,
-        ).also { if (!isDummy) moduleDataHistory.add(it) }
-
-    /**
-     * Library module data stay, since the environment classpath is already updated with their paths.
-     */
-    fun removeSnippetModuleDataAddedAfter(moduleDataCount: Int) {
-        if (moduleDataHistory.size <= moduleDataCount) return
-        val added = moduleDataHistory.subList(moduleDataCount, moduleDataHistory.size)
-        added.removeAll { it is FirSourceModuleData }
     }
 }
 
@@ -310,7 +142,7 @@ private fun compileImpl(
     val initialScriptCompilationConfiguration = scriptCompilationConfiguration.with { repl.currentSnippetNo(state.nextSnippetNo) }
     val project = state.projectEnvironment.project
     val messageCollector = state.messageCollector
-    val compilerConfiguration = state.compilerContext.environment.configuration.copy().apply {
+    val compilerConfiguration = state.compilerConfiguration.copy().apply {
         jvmTarget = selectJvmTarget(scriptCompilationConfiguration, messageCollector)
     }
     val diagnosticsReporter = DiagnosticsCollectorImpl()
@@ -319,13 +151,13 @@ private fun compileImpl(
     val targetId = TargetId(snippet.name!!, "java-production")
 
     fun ScriptCompilationConfiguration.refineAll(source: SourceCode): ResultWithDiagnostics<ScriptCompilationConfiguration> =
-        refineAllViaFir(source, state.hostConfiguration, { _, _ -> state.getOrCreateSessionForAnnotationResolution() }, convertToFir)
+        refineAllViaFir(source, state.hostConfiguration, { _, _ -> state.sessionForAnnotationResolution }, convertToFir)
 
     // The annotation-based refinement converts the snippet and fails on its syntax errors before the check below,
     // so the incomplete snippet should be recognized here as well.
     var snippetRefinementRawFir: Pair<BaseDiagnosticsCollector, KtSourceFile?>? = null
     val refinedSnippetConfiguration = initialScriptCompilationConfiguration.refineAllViaFir(
-        snippet, state.hostConfiguration, { _, _ -> state.getOrCreateSessionForAnnotationResolution() }
+        snippet, state.hostConfiguration, { _, _ -> state.sessionForAnnotationResolution }
     ) { session, collector ->
         convertToFir(session, collector).also { snippetRefinementRawFir = collector to it.sourceFile }
     }.valueOr { failure ->
@@ -354,7 +186,7 @@ private fun compileImpl(
     allSourceFiles.addAll(0, newSources)
 
     // Updating compiler options
-    val baseCompilerOptions = state.scriptCompilationConfiguration[ScriptCompilationConfiguration.compilerOptions]
+    val baseCompilerOptions = state.baseScriptCompilationConfiguration[ScriptCompilationConfiguration.compilerOptions]
     val updatedCompilerOptions = allSourceFiles.flatMapTo(mutableListOf()) { file ->
         getRefinedConfiguration(file)[ScriptCompilationConfiguration.compilerOptions]?.takeIf { it != baseCompilerOptions } ?: emptyList()
     }
@@ -362,7 +194,7 @@ private fun compileImpl(
         compilerConfiguration.updateWithCompilerOptions(
             updatedCompilerOptions,
             messageCollector,
-            state.compilerContext.ignoredOptionsReportingState,
+            state.ignoredOptionsReportingState,
             true
         )
     }
@@ -370,7 +202,7 @@ private fun compileImpl(
     val [libModuleData, newClassPath] = state.moduleDataProvider.addNewLibraryModuleDataIfNeeded(classpath.map(File::toPath))
 
     if (newClassPath.isNotEmpty()) {
-        state.compilerContext.environment.updateClasspath(newClassPath.map { JvmClasspathRoot(it.toFile()) })
+        state.projectEnvironment.updateClasspath(newClassPath.map { it.toFile() })
     }
 
     val extensionRegistrars = compilerConfiguration.getCompilerExtensions(FirExtensionRegistrar)
@@ -433,18 +265,6 @@ private fun compileImpl(
         ResultWithDiagnostics.Success(compiledScript, messageCollector.diagnostics)
     }
 }
-
-private fun ReplCompilerState.getOrCreateSessionForAnnotationResolution(): FirSession =
-    dummySessionForAnnotationResolution ?: run {
-        val compilerConfiguration = compilerContext.environment.configuration
-        createScriptSourceSession(
-            moduleDataProvider.addNewSnippetModuleData(Name.special("<raw-snippet>"), isDummy = true),
-            compilerConfiguration.getCompilerExtensions(FirExtensionRegistrar),
-            compilerConfiguration,
-            sessionFactoryContext,
-            hostConfiguration,
-        ).also { dummySessionForAnnotationResolution = it }
-    }
 
 private fun BaseDiagnosticsCollector.isIncompleteSnippet(snippet: SourceCode, snippetFile: KtSourceFile?): Boolean {
     if (snippetFile == null) return false

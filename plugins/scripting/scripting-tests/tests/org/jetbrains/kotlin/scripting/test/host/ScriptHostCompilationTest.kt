@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.scripting.test.host
 
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.cli.common.ExitCode
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.MessageCollectorAccess
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.config.useFir
@@ -31,6 +33,8 @@ import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmK2CompilerFromEnvironment
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmK2CompilerIsolated
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptDiagnosticsMessageCollector
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.createIsolatedCompilerState
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
@@ -99,6 +103,24 @@ class ScriptHostCompilationTest {
         assertEquals("Hello from required!", out)
     }
 
+    @Test
+    fun testHostDefinitionIsRegisteredOnceInIsolatedState() {
+        val disposable = Disposer.newDisposable("host definition registration test")
+        try {
+            lateinit var compilerConfiguration: CompilerConfiguration
+            val state = createIsolatedCompilerState(
+                ScriptDiagnosticsMessageCollector(null), disposable, ScriptCompilationConfiguration {}, defaultJvmScriptingHostConfiguration
+            ) { compilerConfiguration = this }
+
+            assertEquals(
+                1,
+                compilerConfiguration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS)
+                    .count { it.compilationConfiguration == state.baseScriptCompilationConfiguration },
+            )
+        } finally {
+            ApplicationManager.getApplication().runWriteAction { Disposer.dispose(disposable) }
+        }
+    }
 
     @Test
     fun testExplicitHostConfigurationWinsInK2Proxies() {
