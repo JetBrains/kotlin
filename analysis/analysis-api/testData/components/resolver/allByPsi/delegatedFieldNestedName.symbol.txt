@@ -238,7 +238,6 @@ KtConstantExpression(231,232): '0'
 KtOperationReferenceExpression(233,234): '+'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
@@ -334,7 +333,6 @@ KtConstantExpression(253,254): '1'
 KtOperationReferenceExpression(255,256): '+'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
@@ -430,7 +428,6 @@ KtConstantExpression(275,276): '2'
 KtOperationReferenceExpression(277,278): '+'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
@@ -535,7 +532,6 @@ KtConstantExpression(316,317): '4'
 KtOperationReferenceExpression(318,319): '+'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
@@ -631,7 +627,6 @@ KtConstantExpression(340,341): '5'
 KtOperationReferenceExpression(342,343): '+'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
@@ -772,7 +767,6 @@ KtConstantExpression(406,407): '6'
 KtOperationReferenceExpression(408,409): '+'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionError:
     candidateSymbols = [
       kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Byte): kotlin.Int,
@@ -916,7 +910,6 @@ KtConstantExpression(428,429): '7'
 KtOperationReferenceExpression(430,431): '+'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionError:
     candidateSymbols = [
       kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Byte): kotlin.Int,
@@ -1060,7 +1053,6 @@ KtConstantExpression(450,451): '8'
 KtOperationReferenceExpression(452,453): '+'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionError:
     candidateSymbols = [
       kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Byte): kotlin.Int,
@@ -1207,7 +1199,6 @@ KtConstantExpression(565,566): '9'
 KtOperationReferenceExpression(567,568): '+'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
@@ -1303,7 +1294,6 @@ KtConstantExpression(589,591): '10'
 KtOperationReferenceExpression(592,593): '+'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int

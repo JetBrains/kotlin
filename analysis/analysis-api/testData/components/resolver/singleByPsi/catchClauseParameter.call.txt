@@ -1,0 +1,16 @@
+KtNameReferenceExpression(76,77): 'x'
+  KaSimpleCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = x
+        receiverType = null
+        returnType = kotlin.Throwable
+        symbol = val x: kotlin.Throwable
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}

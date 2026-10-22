@@ -145,7 +145,6 @@ KtNameReferenceExpression(115,116): 'a'
 KtOperationReferenceExpression(117,119): '=='
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /A.equals(<dispatch receiver>: A, other: kotlin.Any?): kotlin.Boolean
@@ -178,7 +177,6 @@ KtNameReferenceExpression(126,127): 'a'
 KtOperationReferenceExpression(128,130): '!='
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
       /A.equals(<dispatch receiver>: A, other: kotlin.Any?): kotlin.Boolean
@@ -208,7 +206,6 @@ KtNameReferenceExpression(137,138): 'a'
 KtOperationReferenceExpression(139,142): '==='
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtNameReferenceExpression(143,144): 'b'
@@ -235,7 +232,6 @@ KtNameReferenceExpression(149,150): 'a'
 KtOperationReferenceExpression(151,154): '!=='
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
-  lookupLocally: false
   null
 
 KtNameReferenceExpression(155,156): 'b'
