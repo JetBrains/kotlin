@@ -16,6 +16,6 @@ annotation class MySerializable
 
 @Log
 @MySerializable
-class Sample(val name: String) {
-    fun info() = log.info(name)
+class <!COMPANION_OBJECT_SERIALIZABLE_CONFLICT!>Sample<!>(val name: String) {
+    fun info() = <!UNRESOLVED_REFERENCE!>log<!>.info(name)
 }
