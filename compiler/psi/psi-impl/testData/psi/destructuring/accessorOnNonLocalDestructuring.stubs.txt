@@ -10,7 +10,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=AccessorOnNonLocalDestructur
       INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
       OPERATION_REFERENCE[operationToken=IDENTIFIER, referencedName=to]
       INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
-  DESTRUCTURING_DECLARATION[hasInitializer=true, hasSquareBrackets=false, isFullForm=false, isVar=false]
+  DESTRUCTURING_DECLARATION[hasInitializer=true, hasSquareBrackets=true, isFullForm=false, isVar=false]
     DESTRUCTURING_DECLARATION_ENTRY[fqName=null, isSingleUnderscore=false, isVar=false, name=c]
     DESTRUCTURING_DECLARATION_ENTRY[fqName=null, isSingleUnderscore=false, isVar=false, name=d]
     BINARY_EXPRESSION
