@@ -7694,6 +7694,18 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveCandidatesTestGenerat
     }
 
     @Test
+    @TestMetadata("referenceToNonLocalDestructuringEntry.kt")
+    public void testReferenceToNonLocalDestructuringEntry() {
+      run("referenceToNonLocalDestructuringEntry.kt");
+    }
+
+    @Test
+    @TestMetadata("referenceToTopLevelDestructuringEntryFromOtherFile.kt")
+    public void testReferenceToTopLevelDestructuringEntryFromOtherFile() {
+      run("referenceToTopLevelDestructuringEntryFromOtherFile.kt");
+    }
+
+    @Test
     @TestMetadata("resolveCallInSuperConstructorParam.kt")
     public void testResolveCallInSuperConstructorParam() {
       run("resolveCallInSuperConstructorParam.kt");

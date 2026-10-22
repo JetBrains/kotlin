@@ -176,6 +176,12 @@ public class FirStandaloneNormalAnalysisSourceModuleDeclaredMemberScopeTestGener
   }
 
   @Test
+  @TestMetadata("memberDestructuringDeclarations.kt")
+  public void testMemberDestructuringDeclarations() {
+    run("memberDestructuringDeclarations.kt");
+  }
+
+  @Test
   @TestMetadata("properties.kt")
   public void testProperties() {
     run("properties.kt");

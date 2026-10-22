@@ -124,6 +124,12 @@ public class LightClassUtilTestGenerated extends AbstractLightClassUtilTest {
   }
 
   @Test
+  @TestMetadata("memberDestructuringEntry.kt")
+  public void testMemberDestructuringEntry() {
+    run("memberDestructuringEntry.kt");
+  }
+
+  @Test
   @TestMetadata("primaryConstructorWithDefaultParameter.kt")
   public void testPrimaryConstructorWithDefaultParameter() {
     run("primaryConstructorWithDefaultParameter.kt");
@@ -175,6 +181,18 @@ public class LightClassUtilTestGenerated extends AbstractLightClassUtilTest {
   @TestMetadata("propertyWithJvmNameOnGetterAndSetter.kt")
   public void testPropertyWithJvmNameOnGetterAndSetter() {
     run("propertyWithJvmNameOnGetterAndSetter.kt");
+  }
+
+  @Test
+  @TestMetadata("scriptDestructuringEntry.kts")
+  public void testScriptDestructuringEntry() {
+    run("scriptDestructuringEntry.kts");
+  }
+
+  @Test
+  @TestMetadata("topLevelDestructuringEntry.kt")
+  public void testTopLevelDestructuringEntry() {
+    run("topLevelDestructuringEntry.kt");
   }
 
   @Test

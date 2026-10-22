@@ -220,6 +220,12 @@ public class FirSourceLikeContextCollectionTestGenerated extends AbstractFirSour
   }
 
   @Test
+  @TestMetadata("destructuringNonLocal.kt")
+  public void testDestructuringNonLocal() {
+    run("destructuringNonLocal.kt");
+  }
+
+  @Test
   @TestMetadata("enum.kt")
   public void testEnum() {
     run("enum.kt");
