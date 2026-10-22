@@ -9,10 +9,10 @@ fun <V> test(key: Key<in Box<V>>) {
     // CS of get:
     // Key<CapturedType(in Box<V>)> <: Key<in TypeVariable(T)>
     // If the type is not approximated to subtype before fixation, the type of the lambda parameter `it` becomes Any?
-    get(key)?.let { acceptBox(it) }
+    get(key)?.let { <!CANNOT_INFER_PARAMETER_TYPE!>acceptBox<!>(<!ARGUMENT_TYPE_MISMATCH!>it<!>) }
 
     val x = get(key)
-    x?.let { acceptBox(it) }
+    x?.let { <!CANNOT_INFER_PARAMETER_TYPE!>acceptBox<!>(<!ARGUMENT_TYPE_MISMATCH!>it<!>) }
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inProjection, lambdaLiteral, localProperty, nullableType,

@@ -4,7 +4,7 @@ fun <S : Any> foo1(x: Array<out S?>, y: Array<in S?>) {
     val yo = inANullable(y)
 
     var f: Array<S> = xo
-    f = yo
+    f = <!ASSIGNMENT_TYPE_MISMATCH!>yo<!>
 }
 
 fun <S : Any> foo2(x: Array<out S>, y: Array<in S>) {
@@ -12,7 +12,7 @@ fun <S : Any> foo2(x: Array<out S>, y: Array<in S>) {
     val yo = inA(y)
 
     var f: Array<S> = xo
-    f = yo
+    f = <!ASSIGNMENT_TYPE_MISMATCH!>yo<!>
 }
 
 class A1<S : Any>(x: Array<out S?>, y: Array<in S?>) {

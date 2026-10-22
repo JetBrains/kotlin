@@ -700,7 +700,7 @@ R?C|<local>/otvOwner|.createDerivativeTypeVariable#(R?C|<local>/otvOwner|.R?C|/T
 R?C|<local>/otvOwner|.constrain#(R|/ScopeOwner.ScopeOwner|())
 ```
 
-#### Candidate 1: `FirNamedFunctionSymbol /TypeVariableOwner.constrain` --- `fun constrain(subtypeValue: BaseType): Unit`
+#### Candidate 1: `FirNamedFunctionSymbol /TypeVariableOwner.constrain` --- `fun constrain(subtypeValue: Any?): Unit`
 ##### Resolution Stages > CheckArguments:
 
 1. `ScopeOwner <: TypeVariable(OT)` _from Argument R|/ScopeOwner.ScopeOwner|()_
@@ -711,12 +711,14 @@ R?C|<local>/otvOwner|.constrain#(R|/ScopeOwner.ScopeOwner|())
 R?C|<local>/pntvOwner|.provide#()
 ```
 
-#### Candidate 1: `FirNamedFunctionSymbol /TypeVariableOwner.provide` --- `fun provide(): BaseType`
+#### Candidate 1: `FirNamedFunctionSymbol /TypeVariableOwner.provide` --- `fun provide(): CapturedType(in Any?)`
 ##### Call Completion:
 
-1. `TypeVariable(PNT) == TypeVariable(OT)` _from Fix variable PNT_
-2. Combine `TypeVariable(PNT) == TypeVariable(OT)` with `TypeVariable(PNT) <: CapturedType(in TypeVariable(OT))`
-    1. `TypeVariable(OT) <: CapturedType(in TypeVariable(OT))`
+1. `TypeVariable(PNT) == CapturedType(in TypeVariable(OT))` _from Fix variable PNT_
+2. Combine `TypeVariable(PNT) == CapturedType(in TypeVariable(OT))` with `TypeVariable(PNT) <: TypeVariable(OT)`
+    1. `CapturedType(in TypeVariable(OT)) <: TypeVariable(OT)`
+    2. `TypeVariable(OT) <: TypeVariable(OT)`
+    3. `kotlin/Any? <: TypeVariable(OT)`
 
 ### Call 18
 
@@ -724,7 +726,7 @@ R?C|<local>/pntvOwner|.provide#()
 R?C|<local>/otvOwner|.constrain#(Q|Interloper|)
 ```
 
-#### Candidate 1: `FirNamedFunctionSymbol /TypeVariableOwner.constrain` --- `fun constrain(subtypeValue: BaseType): Unit`
+#### Candidate 1: `FirNamedFunctionSymbol /TypeVariableOwner.constrain` --- `fun constrain(subtypeValue: Any?): Unit`
 ##### Resolution Stages > CheckArguments:
 
 1. `Interloper <: TypeVariable(OT)` _from Argument Q|Interloper|_
@@ -735,7 +737,7 @@ R?C|<local>/otvOwner|.constrain#(Q|Interloper|)
 R?C|<local>/pntvOwner|.constrain#(Q|Interloper|)
 ```
 
-#### Candidate 1: `FirNamedFunctionSymbol /TypeVariableOwner.constrain` --- `fun constrain(subtypeValue: BaseType): Unit`
+#### Candidate 1: `FirNamedFunctionSymbol /TypeVariableOwner.constrain` --- `fun constrain(subtypeValue: CapturedType(in Any?)): Unit`
 ##### Resolution Stages > CheckArguments:
 
 1. `Interloper <: TypeVariable(PNT)` _from Argument Q|Interloper|_
@@ -791,16 +793,14 @@ pcla#(<L> = pcla@fun <implicit>.<anonymous>(otvOwner: <implicit>): <implicit> <i
        	false HAS_PROPER_EQUALITY_CONSTRAINT
        	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
-3. `TypeVariable(OT) == BaseType` _from Fix variable OT_
-4. Combine `TypeVariable(PNT) <: TypeVariable(OT)` with `TypeVariable(OT) == BaseType`
-    1. `TypeVariable(PNT) <: BaseType`
-5. Combine `TypeVariable(OT) == BaseType` with `TypeVariable(OT) <: CapturedType(in TypeVariable(OT))`
-    1. `BaseType <: TypeVariable(OT)`
-6. Combine `TypeVariable(PNT) == TypeVariable(OT)` with `TypeVariable(PNT) <: BaseType`
-    1. `TypeVariable(OT) <: BaseType`
-7. `TypeVariable(PNT) <: CapturedType(in BaseType)` _from Fix variable OT_
-8. `TypeVariable(PNT) == BaseType` _from Fix variable OT_
-9. Choose `TypeVariable(PNT)` with `Readiness(
+3. `TypeVariable(OT) == kotlin/Any?` _from Fix variable OT_
+4. Combine `TypeVariable(PNT) <: TypeVariable(OT)` with `TypeVariable(OT) == kotlin/Any?`
+    1. `TypeVariable(PNT) <: kotlin/Any?`
+5. Combine `CapturedType(in TypeVariable(OT)) <: TypeVariable(OT)` with `TypeVariable(OT) == kotlin/Any?`
+    1. `kotlin/Any? <: TypeVariable(OT)`
+6. `TypeVariable(PNT) <: CapturedType(in kotlin/Any?)` _from Fix variable OT_
+7. `TypeVariable(PNT) == CapturedType(in kotlin/Any?)` _from Fix variable OT_
+8. Choose `TypeVariable(PNT)` with `Readiness(
    	 true ALLOWED
    	 true HAS_PROPER_CONSTRAINTS
    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY

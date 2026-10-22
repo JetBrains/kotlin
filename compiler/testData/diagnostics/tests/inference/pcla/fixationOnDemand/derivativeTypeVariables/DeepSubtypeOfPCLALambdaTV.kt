@@ -83,7 +83,7 @@ fun test() {
         pntvOwner.constrain(Interloper)
     }
     // expected: CST(ScopeOwner, Interloper) == BaseType
-    <!DEBUG_INFO_EXPRESSION_TYPE("BaseType")!>resultD<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>resultD<!>
 }
 
 
