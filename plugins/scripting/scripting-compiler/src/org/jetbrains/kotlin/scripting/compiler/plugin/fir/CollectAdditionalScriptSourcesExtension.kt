@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.*
 import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.toSystemIndependentScriptPath
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptingModuleDataProvider
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.collectAndResolveScriptAnnotationsViaFir
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.compilationClasspathOf
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.convertToFirViaLightTree
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.effectiveHostConfiguration
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.refineAllForK2
@@ -48,7 +49,6 @@ import kotlin.script.experimental.host.FileBasedScriptSource
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.host.configurationDependencies
 import kotlin.script.experimental.host.with
-import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.experimental.jvm.util.toClassPathOrEmpty
 
@@ -197,9 +197,8 @@ class CollectAdditionalScriptSourcesExtension : CollectAdditionalSourceFilesExte
 
             val dependencies = hostConfiguration[ScriptingHostConfiguration.configurationDependencies].orEmpty() +
                     scriptCompilationConfiguration[ScriptCompilationConfiguration.dependencies].orEmpty()
-            val classpath = dependencies.flatMap {
-                (it as? JvmDependency)?.classpath ?: emptyList()
-            }
+            val classpath = dependencies.compilationClasspathOf(scriptCompilationConfiguration)
+            projectEnvironment.updateClasspath(classpath)
 
             val moduleDataProvider = ScriptingModuleDataProvider("dummy", classpath.map(File::toPath))
 
