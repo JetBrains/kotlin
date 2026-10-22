@@ -16,6 +16,9 @@ fun main(args: Array<String>) {
             testClass<AbstractIncrementalJvmWithPluginCompilerRunnerTest> {
                 model("pureKotlin", extension = null, recursive = false)
             }
+            testClass<AbstractIncrementalJvmWithPluginRelocatableCachesCompilerRunnerTest> {
+                model("pureKotlin", extension = null, recursive = false)
+            }
             testClass<AbstractIncrementalJsKlibWithPluginCompilerRunnerTest> {
                 model("pureKotlin", extension = null, recursive = false)
             }
