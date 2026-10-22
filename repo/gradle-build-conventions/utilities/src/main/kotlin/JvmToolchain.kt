@@ -81,11 +81,16 @@ fun Project.getToolchainLauncherFor(
 
 fun Project.getNativeImageToolchainLauncherFor(
     jdkVersion: JdkMajorVersion,
+    requireOracleJdk: Boolean = false,
 ): Provider<JavaLauncher> {
     val service = project.extensions.getByType<JavaToolchainService>()
     return service.launcherFor {
         this.languageVersion.set(JavaLanguageVersion.of(jdkVersion.majorVersion))
-        this.vendor.set(JvmVendorSpec.GRAAL_VM)
+        if (requireOracleJdk) {
+            this.vendor.set(JvmVendorSpec.ORACLE)
+        } else {
+            this.vendor.set(JvmVendorSpec.GRAAL_VM)
+        }
     }
 }
 
