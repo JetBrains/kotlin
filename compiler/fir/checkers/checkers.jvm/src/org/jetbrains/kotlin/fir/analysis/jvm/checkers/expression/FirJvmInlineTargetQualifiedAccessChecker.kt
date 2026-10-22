@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.load.kotlin.FileBasedKotlinClass
+import org.jetbrains.kotlin.load.kotlin.JvmClassFileBacked
 import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
 
@@ -58,18 +58,23 @@ object FirJvmInlineTargetQualifiedAccessChecker : FirQualifiedAccessExpressionCh
         val currentJvmTarget = context.session.jvmTargetProvider?.jvmTarget ?: return
 
         val containingClass = callableSymbol.containingClassLookupTag()
-        val binaryClass = if (containingClass != null) {
+        // Stub-based library declarations in the Analysis API have no binary class, so their sources provide the version themselves
+        val binaryEntity = if (containingClass != null) {
             val containingClassSymbol = containingClass.toRegularClassSymbol() ?: return
 
             @OptIn(SymbolInternals::class)
-            val sourceElement = containingClassSymbol.fir.sourceElement as? KotlinJvmBinarySourceElement ?: return
-            sourceElement.binaryClass
+            when (val sourceElement = containingClassSymbol.fir.sourceElement) {
+                is KotlinJvmBinarySourceElement -> sourceElement.binaryClass
+                else -> sourceElement
+            }
         } else {
-            val containerSource = callableSymbol.containerSource as? JvmPackagePartSource ?: return
-            containerSource.knownJvmBinaryClass
+            when (val containerSource = callableSymbol.containerSource) {
+                is JvmPackagePartSource -> containerSource.knownJvmBinaryClass
+                else -> containerSource
+            }
         }
 
-        val inlinedVersion = (binaryClass as? FileBasedKotlinClass)?.classVersion?.major ?: return
+        val inlinedVersion = (binaryEntity as? JvmClassFileBacked)?.classFileMajorVersion ?: return
         val currentVersion = currentJvmTarget.majorVersion
 
         if (currentVersion < inlinedVersion) {

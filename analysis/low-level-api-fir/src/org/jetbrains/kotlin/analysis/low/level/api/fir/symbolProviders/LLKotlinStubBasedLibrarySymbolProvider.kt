@@ -203,7 +203,7 @@ internal open class LLKotlinStubBasedLibrarySymbolProvider(
             StubBasedAnnotationDeserializer(session),
             kotlinScopeProvider,
             parentContext = parentContext,
-            containerSource = deserializedContainerSourceProvider.getClassContainerSource(classId),
+            containerSource = deserializedContainerSourceProvider.getClassContainerSource(classId, declaration),
             deserializeNestedClassLikeDeclaration = this::getNestedClassLikeDeclaration,
             initialOrigin = parentContext?.initialOrigin ?: getDeclarationOriginFor(declaration.containingKtFile)
         )
