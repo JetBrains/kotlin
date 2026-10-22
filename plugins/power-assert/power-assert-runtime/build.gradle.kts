@@ -15,6 +15,7 @@ plugins {
     id("signing-convention")
     id("nodejs-configuration")
     id("binaryen-configuration")
+    id("wasmtime-configuration")
 }
 
 description = "Kotlin Power-Assert Runtime"
