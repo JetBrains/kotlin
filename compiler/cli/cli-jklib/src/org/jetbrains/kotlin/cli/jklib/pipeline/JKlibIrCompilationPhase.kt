@@ -139,7 +139,7 @@ object JKlibIrCompilationPhase :
             } else {
                 DeserializationStrategy.WITH_INLINE_BODIES
             }
-            val moduleFragment = linker.deserializeIrModuleHeader(descriptor, dep, { strategy })
+            val moduleFragment = linker.createAndRegisterModuleDeserializer(descriptor, dep, { strategy }).moduleFragment
             if (descriptor == mainModule) {
                 mainModuleFragment = moduleFragment
             }

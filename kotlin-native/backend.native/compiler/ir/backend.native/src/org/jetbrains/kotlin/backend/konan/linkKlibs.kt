@@ -188,6 +188,8 @@ private fun LinkKlibsContext.scheduleDependenciesForDeserialization(
         moduleDescriptors: List<ModuleDescriptor>,
         linker: KonanIrLinker,
 ) {
+    val exportedDependencies: Set<KotlinLibrary> = (config.loadedKlibs.exported + config.loadedKlibs.included + config.librariesToCache.keys).toSet()
+
     val libraryToModuleDescriptor: Map<KotlinLibrary, ModuleDescriptor> = moduleDescriptors
             .filterNot {
                 // The forward declarations module and the current (source-based) modules do not have
@@ -203,11 +205,14 @@ private fun LinkKlibsContext.scheduleDependenciesForDeserialization(
 
         val isFullyCachedLibrary = config.cachedLibraries.isLibraryCached(library) && library !in config.librariesToCache
 
-        when {
-            isFullyCachedLibrary && library.isHeader -> linker.deserializeHeadersWithInlineBodies(dependencyModuleDescriptor, library)
-            isFullyCachedLibrary -> linker.deserializeOnlyHeaderModule(dependencyModuleDescriptor, library)
-            else -> linker.deserializeIrModuleHeader(dependencyModuleDescriptor, library)
+        val strategyResolver: (String) -> DeserializationStrategy = when {
+            isFullyCachedLibrary && library.isHeader -> { _: String -> DeserializationStrategy.WITH_INLINE_BODIES }
+            isFullyCachedLibrary -> { _: String -> DeserializationStrategy.ONLY_DECLARATION_HEADERS }
+            library in exportedDependencies -> { _: String -> DeserializationStrategy.ALL }
+            else -> { _: String -> DeserializationStrategy.EXPLICITLY_EXPORTED }
         }
+
+        linker.createAndRegisterModuleDeserializer(dependencyModuleDescriptor, library, strategyResolver)
     }
 
     // Make sure the library-to-be-cached is also scheduled for deserialization.
