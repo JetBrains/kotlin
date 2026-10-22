@@ -496,7 +496,7 @@ internal constructor(
                 buildArguments
             }
 
-            nativeCompilerRunner.runTool(
+            nativeCompilerRunner.runToolWithWorkers(
                 KotlinNativeToolRunner.ToolArguments(
                     shouldRunInProcessMode = !forceDisableRunningInProcess.get(),
                     compilerArgumentsLogLevel = kotlinCompilerArgumentsLogLevel.get(),
