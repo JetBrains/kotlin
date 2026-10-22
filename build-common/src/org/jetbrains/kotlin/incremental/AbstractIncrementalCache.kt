@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.incremental
 
+import org.jetbrains.kotlin.build.report.events.ScopeExpansionReason
+import org.jetbrains.kotlin.build.report.reportMarkDirty
 import org.jetbrains.kotlin.incremental.components.SubtypeTracker
 import org.jetbrains.kotlin.incremental.storage.*
 import org.jetbrains.kotlin.metadata.ProtoBuf
@@ -330,7 +332,7 @@ abstract class AbstractIncrementalCache<ClassName>(
         filesQueue.addAll(expectOfLenientStubs.keys)
         icContext.reporter.reportMarkDirty(
             expectOfLenientStubs.keys - dirtyFiles.toSet(),
-            "Declares expect without actual; Recompiled in case actual is added"
+            ScopeExpansionReason.EXPECT_LENIENT_STUB
         )
 
         val processedClasses = HashSet<FqName>()
@@ -347,7 +349,7 @@ abstract class AbstractIncrementalCache<ClassName>(
                     filesQueue.add(it)
                     icContext.reporter.reportMarkDirty(
                         listOf(it),
-                        "Contains expect/actual counterpart of a changed declaration in ${file.path}"
+                        ScopeExpansionReason.hasExpectActualCounterpartIn(file.path)
                     )
                 }
             }
@@ -363,7 +365,7 @@ abstract class AbstractIncrementalCache<ClassName>(
                 filesQueue.addAll(files2add)
                 icContext.reporter.reportMarkDirty(
                     files2add - dirtyFiles.toSet(),
-                    "Declares class in a sealed hierarchy, to which the recompiled $class2recompile belongs"
+                    ScopeExpansionReason.inSealedHierarchyOf(class2recompile.toString())
                 )
             }
         }
