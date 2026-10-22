@@ -59,7 +59,7 @@ class ArgumentUpdaterImpl(val session: Session, val nodeBuilder: NodeBuilder) : 
                     it.control = normal as Controlling
                 }
                 val valueReplacement =
-                    if (node is ValueNode && (replacement is BlockExit || replacement is BlockEntry)) context(nodeBuilder) { NoValue() }
+                    if (node is ValueNode && (replacement is BlockExit)) context(nodeBuilder) { NoValue() }
                     else replacement
                 node.replaceValueUsesAndKill(valueReplacement)
             } else {
