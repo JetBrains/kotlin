@@ -11,6 +11,7 @@ import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.model.PluginExecution;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.classworlds.realm.ClassRealm;
 import org.codehaus.plexus.logging.LogEnabled;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
@@ -46,10 +47,23 @@ public class KotlinLifecycleParticipant extends AbstractMavenLifecycleParticipan
     public void afterProjectsRead(MavenSession session) {
         for (MavenProject project : session.getProjects()) {
             Plugin kotlinMavenPlugin = getKotlinMavenPlugin(project);
-            if (kotlinMavenPlugin != null && isExtensionsEnabled(kotlinMavenPlugin) && isSmartDefaultsEnabled(project)) {
+            if (kotlinMavenPlugin != null &&
+                    isExtensionsEnabled(kotlinMavenPlugin) &&
+                    isSmartDefaultsEnabled(project) &&
+                    isProjectOwnedByThisParticipant(project)
+            ) {
                 configureSmartDefaults(project, kotlinMavenPlugin);
             }
         }
+    }
+
+    private static boolean isProjectOwnedByThisParticipant(MavenProject project) {
+        // Maven records extension imports even when no Java packages are exported.
+        ClassRealm projectRealm = project.getClassRealm();
+        ClassLoader participantRealm = KotlinLifecycleParticipant.class.getClassLoader();
+        return projectRealm != null &&
+               participantRealm instanceof ClassRealm &&
+               projectRealm.getImportRealms().contains((ClassRealm) participantRealm);
     }
 
     private boolean isSmartDefaultsEnabled(MavenProject project) {
