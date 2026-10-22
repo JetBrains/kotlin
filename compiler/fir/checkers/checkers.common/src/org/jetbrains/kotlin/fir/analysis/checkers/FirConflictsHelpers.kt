@@ -80,7 +80,7 @@ private fun FirBasedSymbol<*>.isCollectable(): Boolean {
         // explicitly.
         // The container of a non-local destructuring declaration has no name in the code either.
         is FirPropertySymbol -> source?.kind !is KtFakeSourceElementKind.EnumGeneratedDeclaration &&
-                origin != FirDeclarationOrigin.Synthetic.NonLocalDestructuringDeclarationContainer
+                origin != FirDeclarationOrigin.Synthetic.DestructuringDeclarationContainer
         // class delegation field will be renamed after by the IR backend in a case of a name clash
         is FirFieldSymbol -> source?.kind != KtFakeSourceElementKind.ClassDelegationField
         else -> true

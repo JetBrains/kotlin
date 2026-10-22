@@ -148,7 +148,7 @@ open class FirDeclarationsResolveTransformer(
 
         // script top level destructuring declaration container variables should be treated as properties here
         // to avoid CFG/DFA complications
-        if (property.symbol is FirLocalPropertySymbol && property.origin != FirDeclarationOrigin.Synthetic.ScriptTopLevelDestructuringDeclarationContainer) {
+        if (property.symbol is FirLocalPropertySymbol && property.origin != FirDeclarationOrigin.Synthetic.DestructuringDeclarationContainer) {
             // approximation is required for properties in snippets because they may "leak" to the next snippet
             // it is also reflects the current script behavior (in contrast to a local context), i.e. the code
             // `val x = object { val v = 42 }; x.v`

@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 import org.jetbrains.kotlin.name.ClassId
@@ -301,8 +302,9 @@ internal val FirElementWithResolveState.body: FirBlock?
  */
 internal val FirCallableSymbol<*>.isLocalForLazyResolutionPurposes: Boolean
     get() = when (fir.origin) {
-        // Destructuring declaration container should be treated as a non-local as it is a top-level script declaration
-        FirDeclarationOrigin.Synthetic.ScriptTopLevelDestructuringDeclarationContainer -> false
+        // A script destructuring declaration container should be treated as a non-local as it is a top-level script declaration.
+        // Containers outside of scripts are properties, so they are local only in local classes, as other members there
+        FirDeclarationOrigin.Synthetic.DestructuringDeclarationContainer if this is FirLocalPropertySymbol -> false
 
         // Script parameters should be treated as non-locals as they are visible from FirScript
         FirDeclarationOrigin.ScriptCustomization.Parameter, FirDeclarationOrigin.ScriptCustomization.ParameterFromBaseClass -> false

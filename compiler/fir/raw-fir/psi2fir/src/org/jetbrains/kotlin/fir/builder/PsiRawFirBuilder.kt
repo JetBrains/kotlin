@@ -1478,7 +1478,7 @@ open class PsiRawFirBuilder(
         protected fun buildScriptDestructuringDeclaration(destructuringDeclaration: KtDestructuringDeclaration): FirVariable {
             return buildDestructuringDeclaration(
                 destructuringDeclaration,
-                FirDeclarationOrigin.Synthetic.ScriptTopLevelDestructuringDeclarationContainer,
+                FirDeclarationOrigin.Synthetic.DestructuringDeclarationContainer,
             )
         }
 

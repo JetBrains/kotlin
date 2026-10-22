@@ -231,7 +231,7 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
         return buildProperty {
             this.source = source
             moduleData = baseModuleData
-            origin = FirDeclarationOrigin.Synthetic.NonLocalDestructuringDeclarationContainer
+            origin = FirDeclarationOrigin.Synthetic.DestructuringDeclarationContainer
             name = SpecialNames.DESTRUCT
             this.symbol = symbol
             returnTypeRef = implicitType
