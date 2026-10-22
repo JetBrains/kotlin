@@ -8,7 +8,7 @@ enum class E {
     ENTRY {
         val <!SYNTAX!>(a, b)<!> = X(1, "")
 
-        fun use() = <!UNRESOLVED_REFERENCE!>b<!>.length
+        fun use() = b.length
     };
 }
 
@@ -16,16 +16,16 @@ fun local() {
     class Local {
         val <!SYNTAX!>(a, b)<!> = X(1, "")
 
-        fun use() = <!UNRESOLVED_REFERENCE!>b<!>.length
+        fun use() = b.length
     }
 
-    Local().<!UNRESOLVED_REFERENCE!>b<!>.length
+    Local().b.length
 
     val o = object {
         val <!SYNTAX!>(a, b)<!> = X(1, "")
     }
 
-    o.<!UNRESOLVED_REFERENCE!>b<!>.length
+    o.b.length
 }
 
 /* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, data, enumDeclaration, enumEntry,

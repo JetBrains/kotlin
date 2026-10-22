@@ -17,20 +17,39 @@ FILE: [ResolvedTo(BODY_RESOLVE)] destructuringNonLocal.kt
         public final [ResolvedTo(BODY_RESOLVE)] fun copy([ResolvedTo(BODY_RESOLVE)] a: R|kotlin/Int| = this@R|/X|.R|/X.a|, [ResolvedTo(BODY_RESOLVE)] b: R|kotlin/Int| = this@R|/X|.R|/X.b|): R|X|
 
     }
-    public final [ResolvedTo(BODY_RESOLVE)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = R|/X.X|(Int(1), Int(2))
+    private final [ResolvedTo(BODY_RESOLVE)] val <destruct>: R|X| = R|/X.X|(Int(1), Int(2))
+        private [ResolvedTo(BODY_RESOLVE)] get(): R|X|
+    public final [ResolvedTo(BODY_RESOLVE)] val a: R|kotlin/Int| = R|/<destruct>|.R|/X.component1|()
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+    public final [ResolvedTo(BODY_RESOLVE)] val b: R|kotlin/Int| = R|/<destruct>|.R|/X.component2|()
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
     public final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = R|/X.X|(Int(1), Int(2))
+        private final [ResolvedTo(BODY_RESOLVE)] val <destruct>: R|X| = R|/X.X|(Int(1), Int(2))
+            private [ResolvedTo(BODY_RESOLVE)] get(): R|X|
+
+        public final [ResolvedTo(BODY_RESOLVE)] val c: R|kotlin/Int| = R|/A.<destruct>|.R|/X.component1|()
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+        public final [ResolvedTo(BODY_RESOLVE)] val d: R|kotlin/Int| = R|/A.<destruct>|.R|/X.component2|()
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
 
         public final [ResolvedTo(BODY_RESOLVE)] class Nested : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] constructor(): R|A.Nested| {
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(BODY_RESOLVE)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = R|/X.X|(Int(1), Int(2))
+            private final [ResolvedTo(BODY_RESOLVE)] val <destruct>: R|X| = R|/X.X|(Int(1), Int(2))
+                private [ResolvedTo(BODY_RESOLVE)] get(): R|X|
+
+            public final [ResolvedTo(BODY_RESOLVE)] val e: R|kotlin/Int| = R|/A.Nested.<destruct>|.R|/X.component1|()
+                public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+            public final [ResolvedTo(BODY_RESOLVE)] val f: R|kotlin/Int| = R|/A.Nested.<destruct>|.R|/X.component2|()
+                public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
 
         }
 
@@ -45,7 +64,14 @@ FILE: [ResolvedTo(BODY_RESOLVE)] destructuringNonLocal.kt
                 super<R|E|>()
             }
 
-            public final [ResolvedTo(BODY_RESOLVE)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = R|/X.X|(Int(1), Int(2))
+            private final [ResolvedTo(BODY_RESOLVE)] val <destruct>: R|X| = R|/X.X|(Int(1), Int(2))
+                private [ResolvedTo(BODY_RESOLVE)] get(): R|X|
+
+            public final [ResolvedTo(BODY_RESOLVE)] val g: R|kotlin/Int| = R|/<anonymous>.<destruct>|.R|/X.component1|()
+                public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+            public final [ResolvedTo(BODY_RESOLVE)] val h: R|kotlin/Int| = R|/<anonymous>.<destruct>|.R|/X.component2|()
+                public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
 
         }
 
@@ -65,7 +91,14 @@ FILE: [ResolvedTo(BODY_RESOLVE)] destructuringNonLocal.kt
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(BODY_RESOLVE)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = R|/X.X|(Int(1), Int(2))
+            private final [ResolvedTo(BODY_RESOLVE)] val <destruct>: R|X| = R|/X.X|(Int(1), Int(2))
+                private [ResolvedTo(BODY_RESOLVE)] get(): R|X|
+
+            public final [ResolvedTo(BODY_RESOLVE)] val i: R|kotlin/Int| = R|<local>/<destruct>|.R|/X.component1|()
+                public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+            public final [ResolvedTo(BODY_RESOLVE)] val j: R|kotlin/Int| = R|<local>/<destruct>|.R|/X.component2|()
+                public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
 
         }
 
@@ -74,7 +107,14 @@ FILE: [ResolvedTo(BODY_RESOLVE)] destructuringNonLocal.kt
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(BODY_RESOLVE)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = R|/X.X|(Int(1), Int(2))
+            private final [ResolvedTo(BODY_RESOLVE)] val <destruct>: R|X| = R|/X.X|(Int(1), Int(2))
+                private [ResolvedTo(BODY_RESOLVE)] get(): R|X|
+
+            public final [ResolvedTo(BODY_RESOLVE)] val k: R|kotlin/Int| = R|/<anonymous>.<destruct>|.R|/X.component1|()
+                public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+            public final [ResolvedTo(BODY_RESOLVE)] val l: R|kotlin/Int| = R|/<anonymous>.<destruct>|.R|/X.component2|()
+                public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
 
         }
 

@@ -518,7 +518,6 @@ open class PsiRawFirBuilder(
                         ownerClassBuilder.ownerRegularOrAnonymousObjectSymbol
                     )
                 }
-                is KtDestructuringDeclaration -> buildErrorNonLocalDestructuringDeclaration(this)
                 is KtClassInitializer -> {
                     buildAnonymousInitializer(this, ownerClassBuilder.ownerRegularOrAnonymousObjectSymbol)
                         .apply {
@@ -1415,10 +1414,10 @@ open class PsiRawFirBuilder(
                     declarations += convertCodeFragment(file, this)
                 } else {
                     for (declaration in file.declarations) {
-                        declarations += when (declaration) {
-                            is KtScript -> convertScriptOrSnippets(declaration, psiSourceFile, this@buildFile)
-                            is KtDestructuringDeclaration -> buildErrorNonLocalDestructuringDeclaration(declaration)
-                            else -> declaration.convert()
+                        when (declaration) {
+                            is KtScript -> declarations += convertScriptOrSnippets(declaration, psiSourceFile, this@buildFile)
+                            is KtDestructuringDeclaration -> addNonLocalDestructuringDeclaration(declarations, declaration)
+                            else -> declarations += declaration.convert<FirDeclaration>()
                         }
                     }
 
@@ -1443,13 +1442,37 @@ open class PsiRawFirBuilder(
             return packageName
         }
 
-        protected fun buildErrorNonLocalDestructuringDeclaration(destructuringDeclaration: KtDestructuringDeclaration): FirErrorProperty {
-            val initializer = destructuringDeclaration.toInitializerExpression()
-            return this@PsiRawFirBuilder.buildErrorNonLocalDestructuringDeclaration(
+        protected fun buildNonLocalDestructuringDeclarationContainer(destructuringDeclaration: KtDestructuringDeclaration): FirProperty {
+            val symbol = createNonLocalDestructuringDeclarationContainerSymbol()
+            val initializer = this@PsiRawFirBuilder.context.withContainerSymbol(symbol) {
+                destructuringDeclaration.toInitializerExpression()
+            }
+
+            return this@PsiRawFirBuilder.buildNonLocalDestructuringDeclarationContainer(
                 destructuringDeclaration.toFirSourceElement(),
+                symbol,
                 initializer,
                 baseModuleData,
             ) { destructuringDeclaration.extractAnnotationsTo(it) }
+        }
+
+        private fun addNonLocalDestructuringDeclaration(
+            destination: MutableList<FirDeclaration>,
+            destructuringDeclaration: KtDestructuringDeclaration,
+        ) {
+            val container = buildNonLocalDestructuringDeclarationContainer(destructuringDeclaration)
+            addDestructuringVariables(
+                destination,
+                baseModuleData,
+                destructuringDeclaration,
+                container,
+                tmpVariable = true,
+                forceLocal = false,
+                isMember = true,
+                isCompanionBlockMember = isDirectlyInsideCompanionBlock,
+            ) {
+                configureScriptDestructuringDeclarationEntry(it, container)
+            }
         }
 
         protected fun buildScriptDestructuringDeclaration(destructuringDeclaration: KtDestructuringDeclaration): FirVariable {
@@ -2012,6 +2035,7 @@ open class PsiRawFirBuilder(
         ) {
             classBody?.declarationsAndCompanionBlocks?.forEach {
                 when (it) {
+                    is KtDestructuringDeclaration -> addNonLocalDestructuringDeclaration(declarations, it)
                     is KtDeclaration -> {
                         declarations += it.toFirDeclaration(
                             delegatedSuperType,

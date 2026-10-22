@@ -1,9 +1,16 @@
 FILE: [ResolvedTo(BODY_RESOLVE)] classLevelDestructuringWithAnnotation.kt
-    public final [ResolvedTo(BODY_RESOLVE)] class Foo : R|kotlin/Any| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Foo : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] constructor(): R|util/Foo| {
             super<R|kotlin/Any|>()
         }
 
-        @<ERROR TYPE REF: Symbol not found for Destructuring>[Types]() public final [ResolvedTo(BODY_RESOLVE)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = <Unresolved name: Pair>#(Int(0), Int(1))
+        @<ERROR TYPE REF: Symbol not found for Destructuring>[Types]() private final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableMarkerKey=true] val <destruct>: <ERROR TYPE REF: Unresolved name: Pair> = <Unresolved name: Pair>#(Int(0), Int(1))
+            private [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: Pair>
+
+        @<ERROR TYPE REF: Symbol not found for LeftAnno>[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONTRACTS)] [DestructuringDeclarationContainerVariableKey=util/Foo.<destruct>] val a: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(CONTRACTS)] get(): <implicit>
+
+        @<ERROR TYPE REF: Symbol not found for RightAnno>[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONTRACTS)] [DestructuringDeclarationContainerVariableKey=util/Foo.<destruct>] val b: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(CONTRACTS)] get(): <implicit>
 
     }

@@ -4,6 +4,13 @@ FILE: invalidDestructing.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+        private final [DestructuringDeclarationContainerVariableMarkerKey=true] val <destruct>: <implicit> = LAZY_EXPRESSION
+            private get(): <implicit>
+
+        public final [DestructuringDeclarationContainerVariableKey=/A.<destruct>] val a: <implicit> = LAZY_EXPRESSION
+            public get(): <implicit>
+
+        public final [DestructuringDeclarationContainerVariableKey=/A.<destruct>] val b: <implicit> = LAZY_EXPRESSION
+            public get(): <implicit>
 
     }

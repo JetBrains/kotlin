@@ -1,5 +1,8 @@
 Classifier names:
 
 Callable names:
-  <destructuring>
+  a
+  b
+  c
+  d
   e

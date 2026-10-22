@@ -1,4 +1,5 @@
 KT element: KtDestructuringDeclaration
-Resolve target: destructuringMember.kt -> A -> <destructuring>
+Resolve target: destructuringMember.kt -> A -> <destruct>
 FIR:
-  public final val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+  private final val <destruct>: <implicit> = LAZY_EXPRESSION
+      private get(): <implicit>

@@ -154,6 +154,8 @@ internal fun AbstractRawFirBuilder<*, *>.addDestructuringVariables(
     container: FirVariable,
     tmpVariable: Boolean,
     forceLocal: Boolean,
+    isMember: Boolean = false,
+    isCompanionBlockMember: Boolean = false,
     configure: (FirVariable) -> Unit = {}
 ) {
     addDestructuringVariables(
@@ -165,6 +167,8 @@ internal fun AbstractRawFirBuilder<*, *>.addDestructuringVariables(
         kind = destructuringKindOf(hasSquareBrackets = multiDeclaration.hasSquareBrackets(), isFullForm = multiDeclaration.isFullForm),
         isTmpVariable = tmpVariable,
         forceLocal = forceLocal,
+        isMember = isMember,
+        isCompanionBlockMember = isCompanionBlockMember,
         configure,
     )
 }

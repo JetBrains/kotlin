@@ -18,11 +18,18 @@ FILE: [ResolvedTo(IMPORTS)] annotatedDestructuringNonLocalType.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val x: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final? [ResolvedTo(RAW_FIR)] class C : R|kotlin/Any| {
+    public final? [ResolvedTo(TYPES)] class C : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|C| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        @R|Ann|[Types](LAZY_EXPRESSION) public final [ResolvedTo(TYPES)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+        @R|Ann|[Types](LAZY_EXPRESSION) private final [ResolvedTo(TYPES)] [DestructuringDeclarationContainerVariableMarkerKey=true] val <destruct>: <implicit> = LAZY_EXPRESSION
+            private [ResolvedTo(TYPES)] get(): <implicit>
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=/C.<destruct>] val a: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=/C.<destruct>] val b: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
     }

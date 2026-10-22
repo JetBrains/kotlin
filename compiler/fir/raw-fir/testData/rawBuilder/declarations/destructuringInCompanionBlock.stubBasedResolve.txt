@@ -23,13 +23,29 @@ FILE: [ResolvedTo(BODY_RESOLVE)] destructuringInCompanionBlock.kt
         public final [ResolvedTo(BODY_RESOLVE)] fun copy([ResolvedTo(BODY_RESOLVE)] a: R|kotlin/Int| = this@R|/X|.R|/X.a|, [ResolvedTo(BODY_RESOLVE)] b: R|kotlin/Int| = this@R|/X|.R|/X.b|): R|X|
 
     }
-    public final [ResolvedTo(BODY_RESOLVE)] [FirCompanionBlockDataKey=[valid=1 nested=0]] class A : R|kotlin/Any| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [FirCompanionBlockDataKey=[valid=1 nested=0]] class A : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = R|/X.X|(Int(1), Int(2))
+        private final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A, DestructuringDeclarationContainerVariableMarkerKey=true] val <destruct>: R|X| = R|/X.X|(Int(1), Int(2))
+            private static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] get(): R|X|
 
-        public final [ResolvedTo(BODY_RESOLVE)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = R|/X.X|(Int(1), Int(2))
+        public final static [ResolvedTo(CONTRACTS)] [ContainingClassKey=A, DestructuringDeclarationContainerVariableKey=/A.<destruct>] val a: <implicit> = LAZY_EXPRESSION
+            public static [ResolvedTo(CONTRACTS)] [ContainingClassKey=A] get(): <implicit>
+
+        @R|Anno|[Types]() public final static [ResolvedTo(CONTRACTS)] [ContainingClassKey=A, DestructuringDeclarationContainerVariableKey=/A.<destruct>] val b: <implicit> = LAZY_EXPRESSION
+            public static [ResolvedTo(CONTRACTS)] [ContainingClassKey=A] get(): <implicit>
+
+        private final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A, DestructuringDeclarationContainerVariableMarkerKey=true] val <destruct>: R|X| = R|/X.X|(Int(1), Int(2))
+            private static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] get(): R|X|
+
+        public final static [ResolvedTo(CONTRACTS)] [ContainingClassKey=A, DestructuringDeclarationContainerVariableKey=/A.<destruct>] var c: <implicit> = LAZY_EXPRESSION
+            public static [ResolvedTo(CONTRACTS)] [ContainingClassKey=A] get(): <implicit>
+            public static [ResolvedTo(CONTRACTS)] [ContainingClassKey=A] set([ResolvedTo(CONTRACTS)] value: <implicit>): R|kotlin/Unit|
+
+        public final static [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=A, DestructuringDeclarationContainerVariableKey=/A.<destruct>] var d: R|kotlin/Int| = LAZY_EXPRESSION
+            public static [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=A] get(): R|kotlin/Int|
+            public static [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=A] set([ResolvedTo(ANNOTATION_ARGUMENTS)] value: R|kotlin/Int|): R|kotlin/Unit|
 
     }

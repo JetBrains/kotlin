@@ -1,3 +1,3 @@
 @Ann()
-owner -> FirErrorPropertySymbol /<error property>
-context -> FirErrorPropertySymbol /<error property>
+owner -> FirRegularPropertySymbol /C.<destruct>
+context -> FirRegularPropertySymbol /C.<destruct>

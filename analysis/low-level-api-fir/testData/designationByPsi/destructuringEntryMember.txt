@@ -1,4 +1,5 @@
 KT element: KtDestructuringDeclarationEntry
-Resolve target: null
+Resolve target: destructuringEntryMember.kt -> A -> aaa
 FIR:
-  null
+  public final val aaa: <implicit> = LAZY_EXPRESSION
+      public get(): <implicit>

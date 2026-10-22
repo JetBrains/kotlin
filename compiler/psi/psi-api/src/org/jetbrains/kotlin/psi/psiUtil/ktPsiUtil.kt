@@ -686,14 +686,22 @@ fun KtStringTemplateExpression.isPlainWithEscapes() =
  */
 val KtDeclaration.containingClassOrObject: KtClassOrObject?
     get() {
-        // Class bodies and parameter lists are always stubbed, so they cannot be the AST parent of a dangling stub
-        if (danglingStubParent != null) return null
+        // Class bodies and parameter lists are always stubbed, so they cannot be the AST parent of a dangling stub.
+        // The only exception is a non-local destructuring entry, which the parser wraps in an error element (KT-58563).
+        danglingStubParent?.let { stubParent ->
+            return if (this is KtDestructuringDeclarationEntry && stubParent is KtDestructuringDeclaration) {
+                stubParent.containingClassOrObject
+            } else {
+                null
+            }
+        }
 
         return when (val parent = parent) {
             is KtClassBody -> parent.containingClassOrObject
             is KtClassOrObject -> parent
             is KtParameterList -> (parent.parent as? KtPrimaryConstructor)?.getContainingClassOrObject()
             is KtDestructuringDeclaration if this is KtDestructuringDeclarationEntry -> parent.containingClassOrObject
+            is PsiErrorElement if this is KtDestructuringDeclarationEntry -> (parent.parent as? KtDestructuringDeclaration)?.containingClassOrObject
             else -> null
         }
     }

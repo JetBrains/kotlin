@@ -20,8 +20,12 @@ import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
+import org.jetbrains.kotlin.fir.declarations.utils.isSynthetic
 import org.jetbrains.kotlin.name.Name
 
+/**
+ * Synthetic properties, such as destructuring declaration containers, are skipped, as declared member scopes skip them too.
+ */
 internal class KaFirFileScope(
     private val owner: KaFirFileSymbol,
     private val builder: KaSymbolByFirBuilder
@@ -41,7 +45,7 @@ internal class KaFirFileScope(
             .mapNotNullTo(result) { firDeclaration ->
                 when (firDeclaration) {
                     is FirNamedFunction -> firDeclaration.name
-                    is FirProperty -> firDeclaration.name
+                    is FirProperty -> firDeclaration.name.takeUnless { firDeclaration.isSynthetic }
                     else -> null
                 }
             }
@@ -70,7 +74,7 @@ internal class KaFirFileScope(
             owner.firSymbol.fir.declarations.forEach { firDeclaration ->
                 val callableDeclaration = when (firDeclaration) {
                     is FirNamedFunction -> firDeclaration.takeIf { nameFilter(firDeclaration.name) }
-                    is FirProperty -> firDeclaration.takeIf { nameFilter(firDeclaration.name) }
+                    is FirProperty -> firDeclaration.takeIf { !it.isSynthetic && nameFilter(it.name) }
                     else -> null
                 }
 
