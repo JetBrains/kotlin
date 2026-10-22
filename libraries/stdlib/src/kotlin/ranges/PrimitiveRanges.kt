@@ -44,8 +44,6 @@ public class CharRange(start: Char, endInclusive: Char) : CharProgression(start,
      */
     override fun equals(other: Any?): Boolean = super.equals(other)
 
-    override fun hashCode(): Int = super.hashCode()
-
     override fun toString(): String = "$first..$last"
 
     public companion object {
@@ -89,8 +87,6 @@ public class IntRange(start: Int, endInclusive: Int) : IntProgression(start, end
      */
     override fun equals(other: Any?): Boolean = super.equals(other)
 
-    override fun hashCode(): Int = super.hashCode()
-
     override fun toString(): String = "$first..$last"
 
     public companion object {
@@ -133,8 +129,6 @@ public class LongRange(start: Long, endInclusive: Long) : LongProgression(start,
      * and they are both [empty][isEmpty] or have the same first element [first], last element [last], and [step].
      */
     override fun equals(other: Any?): Boolean = super.equals(other)
-
-    override fun hashCode(): Int = super.hashCode()
 
     override fun toString(): String = "$first..$last"
 
