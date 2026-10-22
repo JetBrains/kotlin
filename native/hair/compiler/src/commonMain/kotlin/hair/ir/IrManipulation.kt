@@ -40,7 +40,7 @@ class RegisteringNodeBuilder(session: Session) : NormalizingGvnNodeBuilder(sessi
     }
 }
 
-class ArgumentUpdaterImpl(val session: Session, nodeBuilder: NodeBuilder) : ArgumentUpdater {
+class ArgumentUpdaterImpl(val session: Session, val nodeBuilder: NodeBuilder) : ArgumentUpdater {
     val normalization = Normalization(session, nodeBuilder, this)
     override fun onArgUpdate(node: Node, index: Int, oldValue: Node?, newValue: Node?) {
         require(newValue != oldValue)
@@ -58,7 +58,10 @@ class ArgumentUpdaterImpl(val session: Session, nodeBuilder: NodeBuilder) : Argu
                 (node as? Controlling)?.nextOrNull?.let {
                     it.control = normal as Controlling
                 }
-                node.replaceValueUsesAndKill(replacement)
+                val valueReplacement =
+                    if (node is ValueNode && (replacement is BlockExit)) context(nodeBuilder) { NoValue() }
+                    else replacement
+                node.replaceValueUsesAndKill(valueReplacement)
             } else {
                 newValue.addUse(replacement)
             }
@@ -185,6 +188,7 @@ fun Node.kill() {
 
 context(_: ArgumentUpdater)
 fun Node.replaceValueUsesAndKill(replacement: Node) {
+    require(this !is Controlling || nextOrNull == null) { "$this is still in the control chain; use removeFromControl()" }
     replaceValueUses(replacement)
     kill()
 }
