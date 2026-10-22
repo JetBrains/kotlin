@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalC
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationOptionsImpl.Companion.USE_FIR_RUNNER
 import org.jetbrains.kotlin.buildtools.internal.jvm.toOptions
 import org.jetbrains.kotlin.buildtools.internal.serializability.BtaSerializable
+import org.jetbrains.kotlin.buildtools.internal.serializability.LookupMessageVisitor
 import org.jetbrains.kotlin.buildtools.internal.serializability.Message
 import org.jetbrains.kotlin.buildtools.internal.serializability.MessageVisitor
 import org.jetbrains.kotlin.buildtools.internal.serializability.PathAsStringSerializer
@@ -87,6 +88,9 @@ internal class JvmCompilationOperationImpl(
         addAll(super.beforeSerialization(logger))
         (incrementalCompilation as? BtaSerializable)?.let { incrementalCompilation ->
             addAll(incrementalCompilation.beforeSerialization(logger))
+            // special case for JPS duplicating lookupTracker in its IC configuration
+            val lookupVisitorsToIgnore = filterIsInstance<LookupMessageVisitor>().dropLast(1)
+            removeAll(lookupVisitorsToIgnore)
         }
     }
 

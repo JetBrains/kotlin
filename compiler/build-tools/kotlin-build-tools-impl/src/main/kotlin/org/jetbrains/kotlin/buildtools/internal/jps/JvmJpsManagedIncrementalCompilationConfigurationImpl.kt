@@ -3,35 +3,51 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:OptIn(InternalBuildToolsApi::class)
+
 package org.jetbrains.kotlin.buildtools.internal.jps
 
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import org.jetbrains.kotlin.buildtools.api.DelicateBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.jps.InternalBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.jps.jvm.JvmJpsManagedIncrementalCompilationConfiguration
+import org.jetbrains.kotlin.buildtools.api.jps.jvm.incremental.CompilerIncrementalCache
 import org.jetbrains.kotlin.buildtools.api.jps.jvm.incremental.CompilerIncrementalCompilationComponents
+import org.jetbrains.kotlin.buildtools.api.jps.jvm.incremental.CompilerTargetId
 import org.jetbrains.kotlin.buildtools.api.jps.jvm.incremental.trackers.*
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
 import org.jetbrains.kotlin.buildtools.internal.*
-import org.jetbrains.kotlin.buildtools.internal.jps.JvmJpsManagedIncrementalCompilationConfigurationImpl.Companion.ENUM_WHEN_TRACKER
-import org.jetbrains.kotlin.buildtools.internal.jps.JvmJpsManagedIncrementalCompilationConfigurationImpl.Companion.FILE_MAPPING_TRACKER
-import org.jetbrains.kotlin.buildtools.internal.jps.JvmJpsManagedIncrementalCompilationConfigurationImpl.Companion.IMPORT_TRACKER
-import org.jetbrains.kotlin.buildtools.internal.jps.JvmJpsManagedIncrementalCompilationConfigurationImpl.Companion.INLINE_CONST_TRACKER
-import org.jetbrains.kotlin.buildtools.internal.jps.JvmJpsManagedIncrementalCompilationConfigurationImpl.Companion.LOOKUP_TRACKER
+import org.jetbrains.kotlin.buildtools.internal.jps.incremental.CompilerIncrementalCompilationComponentsAdapter
 import org.jetbrains.kotlin.buildtools.internal.jps.incremental.IncrementalCompilationComponentsAdapter
 import org.jetbrains.kotlin.buildtools.internal.jps.incremental.trackers.*
 import org.jetbrains.kotlin.buildtools.internal.jvm.operations.JvmCompilationOperationImpl
+import org.jetbrains.kotlin.buildtools.internal.serializability.BtaSerializable
+import org.jetbrains.kotlin.buildtools.internal.serializability.EnumWhenVisitor
+import org.jetbrains.kotlin.buildtools.internal.serializability.FileMappingVisitor
+import org.jetbrains.kotlin.buildtools.internal.serializability.ImportVisitor
+import org.jetbrains.kotlin.buildtools.internal.serializability.InlineConstVisitor
+import org.jetbrains.kotlin.buildtools.internal.serializability.LookupMessageVisitor
+import org.jetbrains.kotlin.buildtools.internal.serializability.Message
+import org.jetbrains.kotlin.buildtools.internal.serializability.MessageVisitor
+import org.jetbrains.kotlin.buildtools.internal.serializability.getPropertyByName
+import org.jetbrains.kotlin.buildtools.internal.serializability.setPropertyByName
 import org.jetbrains.kotlin.buildtools.internal.trackers.LookupTrackerAdapter
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorWithDiagnosticId
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.common.CompilationOptions
 import org.jetbrains.kotlin.daemon.common.CompileService
+import org.jetbrains.kotlin.daemon.common.CompilerCallbackServicesFacade
 import org.jetbrains.kotlin.daemon.common.CompilerMode
 import org.jetbrains.kotlin.daemon.common.CompilerServicesFacadeBase
+import org.jetbrains.kotlin.daemon.common.RemoteIncrementalCompilationComponentsClient
 import org.jetbrains.kotlin.incremental.components.*
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
+import java.nio.file.Path
 
 /**
  * Marks a client-managed incremental compilation configuration, so that it can be recognized without mentioning any
@@ -75,7 +91,7 @@ internal fun JvmClientManagedIncrementalCompilationConfiguration.createCompilerS
         "Unexpected JPS incremental compilation configuration: ${this::class}. It must be an instance of JvmJpsManagedIncrementalCompilationConfigurationImpl."
     }
 
-    val lookupTracker = this[LOOKUP_TRACKER]?.let { tracker ->
+    val lookupTracker = lookupTracker?.let { tracker ->
         if (operation.lookupTracker != null) {
             logger.warn(
                 "A lookup tracker is set both as BaseCompilationOperation.LOOKUP_TRACKER and as " +
@@ -91,10 +107,10 @@ internal fun JvmClientManagedIncrementalCompilationConfiguration.createCompilerS
         messageCollector,
         incrementalCompilationComponents = IncrementalCompilationComponentsAdapter(incrementalCompilationComponents),
         lookupTracker = lookupTracker,
-        inlineConstTracker = this[INLINE_CONST_TRACKER]?.let(::InlineConstTrackerAdapter),
-        enumWhenTracker = this[ENUM_WHEN_TRACKER]?.let(::EnumWhenTrackerAdapter),
-        importTracker = this[IMPORT_TRACKER]?.let(::ImportTrackerAdapter),
-        icFileMappingTracker = this[FILE_MAPPING_TRACKER]?.let(::FileMappingTrackerAdapter),
+        inlineConstTracker = inlineConstTracker?.let(::InlineConstTrackerAdapter),
+        enumWhenTracker = enumWhenTracker?.let(::EnumWhenTrackerAdapter),
+        importTracker = importTracker?.let(::ImportTrackerAdapter),
+        icFileMappingTracker = fileMappingTracker?.let(::FileMappingTrackerAdapter),
         compilationCanceledStatus = compilationCanceledStatus
     )
 }
@@ -111,7 +127,7 @@ internal fun JvmClientManagedIncrementalCompilationConfiguration.registerPlatfor
         IncrementalCompilationComponentsAdapter(this.incrementalCompilationComponents),
     )
 
-    this[LOOKUP_TRACKER]?.let { tracker ->
+    lookupTracker?.let { tracker ->
         if (operation.lookupTracker != null) {
             logger.warn(
                 "A lookup tracker is set both as BaseCompilationOperation.LOOKUP_TRACKER and as " +
@@ -122,35 +138,69 @@ internal fun JvmClientManagedIncrementalCompilationConfiguration.registerPlatfor
         serviceBuilder.register(LookupTracker::class.java, LookupTrackerAdapter(tracker))
     }
 
-    this[IMPORT_TRACKER]?.let { tracker ->
+    importTracker?.let { tracker ->
         serviceBuilder.register(ImportTracker::class.java, ImportTrackerAdapter(tracker))
     }
-    this[FILE_MAPPING_TRACKER]?.let { tracker ->
+    fileMappingTracker?.let { tracker ->
         serviceBuilder.register(ICFileMappingTracker::class.java, FileMappingTrackerAdapter(tracker))
     }
-    this[ENUM_WHEN_TRACKER]?.let { tracker ->
+    enumWhenTracker?.let { tracker ->
         serviceBuilder.register(EnumWhenTracker::class.java, EnumWhenTrackerAdapter(tracker))
     }
-    this[INLINE_CONST_TRACKER]?.let { tracker ->
+    inlineConstTracker?.let { tracker ->
         serviceBuilder.register(InlineConstTracker::class.java, InlineConstTrackerAdapter(tracker))
+    }
+}
+
+private object CompilerIncrementalCompilationComponentsPlaceholder : CompilerIncrementalCompilationComponents {
+    override fun getIncrementalCache(target: CompilerTargetId): CompilerIncrementalCache {
+        error("Placeholder only for serialization")
     }
 }
 
 @DelicateBuildToolsApi
 @OptIn(InternalBuildToolsApi::class)
-internal class JvmJpsManagedIncrementalCompilationConfigurationImpl private constructor(
-    override val incrementalCompilationComponents: CompilerIncrementalCompilationComponents,
-    private val options: Options,
+@Serializable
+internal class JvmJpsManagedIncrementalCompilationConfigurationImpl(
+    @Transient
+    override var incrementalCompilationComponents: CompilerIncrementalCompilationComponents = CompilerIncrementalCompilationComponentsPlaceholder,
 ) : JvmJpsManagedIncrementalCompilationConfiguration,
     JvmJpsManagedIncrementalCompilationConfiguration.Builder,
     JvmClientManagedIncrementalCompilationConfiguration,
-    DeepCopyable<JvmJpsManagedIncrementalCompilationConfigurationImpl> {
+    DeepCopyable<JvmJpsManagedIncrementalCompilationConfigurationImpl>,
+    BtaSerializable {
 
-    constructor(incrementalCompilationComponents: CompilerIncrementalCompilationComponents) : this(
-        incrementalCompilationComponents,
-        Options(JvmJpsManagedIncrementalCompilationConfiguration::class),
-    ) {
-        initializeOptions(this::class, options)
+    override fun beforeSerialization(logger: KotlinLogger): List<MessageVisitor> {
+        val messageVisitors = mutableListOf<MessageVisitor>()
+        lookupTracker?.let { messageVisitors.add(LookupMessageVisitor(it)) }
+        fileMappingTracker?.let { messageVisitors.add(FileMappingVisitor(it)) }
+        enumWhenTracker?.let { messageVisitors.add(EnumWhenVisitor(it)) }
+        importTracker?.let { messageVisitors.add(ImportVisitor(it)) }
+        inlineConstTracker?.let { messageVisitors.add(InlineConstVisitor(it)) }
+        return messageVisitors
+    }
+
+    override fun afterDeserialization(messageReporter: (Message) -> Unit, compilerFacade: CompilerServicesFacadeBase?) {
+        if (hasLookupTracker) {
+            lookupTracker = MessageReportingCompilerLookupTracker(messageReporter)
+        }
+        if (hasFileMappingTracker) {
+            fileMappingTracker = MessageReportingCompilerFileMappingTracker(messageReporter)
+        }
+        if (hasEnumWhenTracker) {
+            enumWhenTracker = MessageReportingCompilerEnumWhenTracker(messageReporter)
+        }
+        if (hasImportTracker) {
+            importTracker = MessageReportingCompilerImportTracker(messageReporter)
+        }
+        if (hasInlineConstTracker) {
+            inlineConstTracker = MessageReportingCompilerInlineConstTracker(messageReporter)
+        }
+        @Suppress("DEPRECATION")
+        if (compilerFacade is CompilerCallbackServicesFacade) {
+            incrementalCompilationComponents =
+                CompilerIncrementalCompilationComponentsAdapter(RemoteIncrementalCompilationComponentsClient(compilerFacade))
+        }
     }
 
     override fun build(): JvmJpsManagedIncrementalCompilationConfiguration = deepCopy()
@@ -158,30 +208,147 @@ internal class JvmJpsManagedIncrementalCompilationConfigurationImpl private cons
     override fun toBuilder(): JvmJpsManagedIncrementalCompilationConfiguration.Builder = deepCopy()
 
     override fun deepCopy(): JvmJpsManagedIncrementalCompilationConfigurationImpl =
-        JvmJpsManagedIncrementalCompilationConfigurationImpl(incrementalCompilationComponents, options.deepCopy())
+        JvmJpsManagedIncrementalCompilationConfigurationImpl(incrementalCompilationComponents).also {
+            it.copyFrom(this)
+        }
+
+    fun copyFrom(other: JvmJpsManagedIncrementalCompilationConfigurationImpl) {
+        lookupTracker = other.lookupTracker
+        fileMappingTracker = other.fileMappingTracker
+        enumWhenTracker = other.enumWhenTracker
+        importTracker = other.importTracker
+        inlineConstTracker = other.inlineConstTracker
+    }
 
     @UseFromImplModuleRestricted
-    override fun <V> get(key: JvmJpsManagedIncrementalCompilationConfiguration.Option<V>): V = options[key]
+    override fun <V> get(key: JvmJpsManagedIncrementalCompilationConfiguration.Option<V>): V = getPropertyByName(propertyAccessMap, key.id)
 
     @UseFromImplModuleRestricted
     override fun <V> set(key: JvmJpsManagedIncrementalCompilationConfiguration.Option<V>, value: V) {
         checkOptionIsAvailableForVersion(key)
-        options[key] = value
+        setPropertyByName(propertyAccessMap, key.id, value)
     }
 
-    operator fun <V> get(key: Option<V>): V = options[key]
+    @SerialName("LOOKUP_TRACKER")
+    @Transient
+    var lookupTracker: CompilerLookupTracker? = null
+        set(value) {
+            hasLookupTracker = value != null
+            field = value
+        }
 
-    class Option<V>(id: String, default: V) : BaseOptionWithDefault<V>(id, defaultValue = default)
+    @SerialName("HAS_LOOKUP_TRACKER")
+    private var hasLookupTracker: Boolean = false
+
+    @SerialName("FILE_MAPPING_TRACKER")
+    @Transient
+    var fileMappingTracker: CompilerFileMappingTracker? = null
+        set(value) {
+            hasFileMappingTracker = value != null
+            field = value
+        }
+
+    @SerialName("HAS_FILE_MAPPING_TRACKER")
+    private var hasFileMappingTracker: Boolean = false
+
+    @SerialName("ENUM_WHEN_TRACKER")
+    @Transient
+    var enumWhenTracker: CompilerEnumWhenTracker? = null
+        set(value) {
+            hasEnumWhenTracker = value != null
+            field = value
+        }
+
+    @SerialName("HAS_ENUM_WHEN_TRACKER")
+    private var hasEnumWhenTracker: Boolean = false
+
+    @SerialName("IMPORT_TRACKER")
+    @Transient
+    var importTracker: CompilerImportTracker? = null
+        set(value) {
+            hasImportTracker = value != null
+            field = value
+        }
+
+    @SerialName("HAS_IMPORT_TRACKER")
+    private var hasImportTracker: Boolean = false
+
+    @SerialName("INLINE_CONST_TRACKER")
+    @Transient
+    var inlineConstTracker: CompilerInlineConstTracker? = null
+        set(value) {
+            hasInlineConstTracker = value != null
+            field = value
+        }
+
+    @SerialName("HAS_INLINE_CONST_TRACKER")
+    private var hasInlineConstTracker: Boolean = false
 
     companion object {
-        val LOOKUP_TRACKER: Option<CompilerLookupTracker?> = Option("LOOKUP_TRACKER", null)
+        private val propertyAccessMap = mapOf(
+            "LOOKUP_TRACKER" to JvmJpsManagedIncrementalCompilationConfigurationImpl::lookupTracker,
+            "FILE_MAPPING_TRACKER" to JvmJpsManagedIncrementalCompilationConfigurationImpl::fileMappingTracker,
+            "ENUM_WHEN_TRACKER" to JvmJpsManagedIncrementalCompilationConfigurationImpl::enumWhenTracker,
+            "IMPORT_TRACKER" to JvmJpsManagedIncrementalCompilationConfigurationImpl::importTracker,
+            "INLINE_CONST_TRACKER" to JvmJpsManagedIncrementalCompilationConfigurationImpl::inlineConstTracker
+        )
+    }
+}
 
-        val FILE_MAPPING_TRACKER: Option<CompilerFileMappingTracker?> = Option("FILE_MAPPING_TRACKER", null)
+private class MessageReportingCompilerFileMappingTracker(private val messageReporter: (Message) -> Unit) : CompilerFileMappingTracker {
+    override fun recordSourceFilesToOutputFileMapping(
+        sourceFilePaths: Collection<Path>,
+        outputFilePath: Path,
+    ) {
+        messageReporter(
+            Message.FileMappingTracker.RecordSourceFilesToOutputFileMapping(sourceFilePaths.toList(), outputFilePath)
+        )
+    }
 
-        val ENUM_WHEN_TRACKER: Option<CompilerEnumWhenTracker?> = Option("ENUM_WHEN_TRACKER", null)
+    override fun recordSourceReferencedByCompilerPlugin(sourceFilePath: Path) {
+        messageReporter(
+            Message.FileMappingTracker.RecordSourceReferencedByCompilerPlugin(sourceFilePath)
+        )
+    }
 
-        val IMPORT_TRACKER: Option<CompilerImportTracker?> = Option("IMPORT_TRACKER", null)
+    override fun recordOutputFileGeneratedForPlugin(outputFilePath: Path) {
+        messageReporter(
+            Message.FileMappingTracker.RecordOutputFileGeneratedForPlugin(outputFilePath)
+        )
+    }
 
-        val INLINE_CONST_TRACKER: Option<CompilerInlineConstTracker?> = Option("INLINE_CONST_TRACKER", null)
+    override fun recordSourceFileGeneratedForPlugin(sourceFilePath: Path) {
+        messageReporter(
+            Message.FileMappingTracker.RecordSourceFileGeneratedForPlugin(sourceFilePath)
+        )
+    }
+}
+
+private class MessageReportingCompilerEnumWhenTracker(private val messageReporter: (Message) -> Unit) : CompilerEnumWhenTracker {
+    override fun report(whenExpressionFilePath: Path, enumClassFqName: String) {
+        messageReporter(
+            Message.EnumWhenTracker.Report(whenExpressionFilePath, enumClassFqName)
+        )
+    }
+}
+
+private class MessageReportingCompilerImportTracker(private val messageReporter: (Message) -> Unit) : CompilerImportTracker {
+    override fun report(filePath: Path, importedFqName: String) {
+        messageReporter(
+            Message.ImportTracker.Report(filePath, importedFqName)
+        )
+    }
+}
+
+private class MessageReportingCompilerInlineConstTracker(private val messageReporter: (Message) -> Unit) : CompilerInlineConstTracker {
+    override fun report(
+        filePath: Path,
+        owner: String,
+        name: String,
+        constType: String,
+    ) {
+        messageReporter(
+            Message.InlineConstTracker.Report(filePath, owner, name, constType)
+        )
     }
 }
