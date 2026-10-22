@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.buildtools.tests
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.abi.AbiValidationToolchain.Companion.abiValidation
 import org.jetbrains.kotlin.buildtools.api.abi.compareAbiTextFilesOperation
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.util.btaClassloader
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.DisplayName
@@ -16,10 +17,10 @@ import kotlin.io.path.createTempFile
 import kotlin.io.path.writeText
 
 class AbiValidationBuildToolsCompareTests {
-    @Test
+    @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Test that compare operation produces the expected diff")
-    fun testSimpleCompare() {
-        val toolchain = KotlinToolchains.loadImplementation(btaClassloader)
+    fun testSimpleCompare(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        val toolchain = strategyConfig.first
 
         val appendable = StringBuilder()
         val expected = createTempFile().also { it.toFile().deleteOnExit() }
@@ -44,7 +45,7 @@ class AbiValidationBuildToolsCompareTests {
         )
 
         val operation = toolchain.abiValidation.compareAbiTextFilesOperation(appendable, expected, actual)
-        toolchain.createBuildSession().use { it.executeOperation(operation) }
+        toolchain.createBuildSession().use { it.executeOperation(operation, strategyConfig.second) }
 
         // skip the first two lines with file names
         val actualDiff = "@@" + appendable.toString().substringAfter("@@")
@@ -61,10 +62,10 @@ class AbiValidationBuildToolsCompareTests {
         assertEquals(expectedDiff, actualDiff)
     }
 
-    @Test
+    @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Test that compare operation produces no diff when files are equal")
-    fun testNoChanges() {
-        val toolchain = KotlinToolchains.loadImplementation(btaClassloader)
+    fun testNoChanges(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        val toolchain = strategyConfig.first
 
         val appendable = StringBuilder()
         val content = """
@@ -78,7 +79,7 @@ class AbiValidationBuildToolsCompareTests {
         actual.writeText(content)
 
         val operation = toolchain.abiValidation.compareAbiTextFilesOperation(appendable, expected, actual)
-        toolchain.createBuildSession().use { it.executeOperation(operation) }
+        toolchain.createBuildSession().use { it.executeOperation(operation, strategyConfig.second) }
 
         assertEquals("", appendable.toString())
 

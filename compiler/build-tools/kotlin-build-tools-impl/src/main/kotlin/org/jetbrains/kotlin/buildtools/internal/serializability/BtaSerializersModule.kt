@@ -9,9 +9,14 @@ import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.modules.subclass
 import org.jetbrains.kotlin.buildtools.api.DelicateBuildToolsApi
+import org.jetbrains.kotlin.buildtools.api.abi.AbiFilters
 import org.jetbrains.kotlin.buildtools.api.js.JsIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.wasm.WasmIncrementalCompilationConfiguration
+import org.jetbrains.kotlin.buildtools.internal.abi.AbiFiltersImpl
+import org.jetbrains.kotlin.buildtools.internal.abi.operations.CompareAbiTextFilesOperationImpl
+import org.jetbrains.kotlin.buildtools.internal.abi.operations.DumpJvmAbiToStringOperationImpl
+import org.jetbrains.kotlin.buildtools.internal.abi.operations.DumpKlibAbiToStringOperationImpl
 import org.jetbrains.kotlin.buildtools.internal.jps.JvmJpsManagedIncrementalCompilationConfigurationImpl
 import org.jetbrains.kotlin.buildtools.internal.js.JsHistoryBasedIncrementalCompilationConfigurationImpl
 import org.jetbrains.kotlin.buildtools.internal.js.operations.JsKlibCompilationOperationImpl
@@ -33,6 +38,9 @@ internal val btaSerializersModule: SerializersModule = SerializersModule {
         subclass(JsLinkingOperationImpl::class)
         subclass(WasmLinkingOperationImpl::class)
         subclass(DiscoverScriptExtensionsOperationImpl::class)
+        subclass(CompareAbiTextFilesOperationImpl::class)
+        subclass(DumpKlibAbiToStringOperationImpl::class)
+        subclass(DumpJvmAbiToStringOperationImpl::class)
     }
     polymorphic(JvmIncrementalCompilationConfiguration::class) {
         subclass(
@@ -57,5 +65,8 @@ internal val btaSerializersModule: SerializersModule = SerializersModule {
         subclass(
             WasmHistoryBasedIncrementalCompilationConfigurationImpl::class
         )
+    }
+    polymorphic(AbiFilters::class) {
+        subclass(AbiFiltersImpl::class)
     }
 }
