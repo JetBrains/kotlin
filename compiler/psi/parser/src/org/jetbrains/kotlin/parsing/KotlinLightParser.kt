@@ -8,26 +8,20 @@ import com.intellij.lang.LighterASTNode
 import com.intellij.lang.PsiBuilder
 import com.intellij.lang.PsiBuilderFactory
 import com.intellij.openapi.util.Ref
-import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.psi.TokenType
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.KtLiteralPrefixAndSuffix
-import org.jetbrains.kotlin.KtSourceFile
-import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.lexer.KotlinLexer
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 
 object KotlinLightParser {
     fun buildLightTree(
         code: CharSequence,
-        sourceFile: KtSourceFile?,
+        isScript: Boolean,
         errorListener: LightTreeParsingErrorListener?,
     ): FlyweightCapableTreeStructure<LighterASTNode> {
         val builder = PsiBuilderFactory.getInstance().createBuilder(KotlinParserDefinition(), KotlinLexer(), code)
-        return parse(
-            builder,
-            isScript = sourceFile?.let { FileUtilRt.getExtension(it.name) != KotlinFileType.EXTENSION } ?: false
-        ).also {
+        return parse(builder, isScript).also {
             if (errorListener != null) checkOrReportSyntaxErrors(it.root, it, errorListener)
         }
     }
