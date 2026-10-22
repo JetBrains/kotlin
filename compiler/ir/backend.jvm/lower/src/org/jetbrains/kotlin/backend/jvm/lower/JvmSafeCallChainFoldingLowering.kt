@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredStatementOrigin
-import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.backend.common.lower.optimizations.*
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrVariable
@@ -429,82 +429,4 @@ internal class JvmSafeCallChainFoldingLowering(val context: JvmBackendContext) :
             return expression
         }
     }
-
-}
-
-
-internal class SafeCallInfo(
-    val block: IrBlock,
-    val tmpVal: IrVariable,
-    val ifNullBranch: IrBranch,
-    val ifNotNullBranch: IrBranch
-)
-
-internal fun IrBlock.parseSafeCall(irBuiltIns: IrBuiltIns): SafeCallInfo? {
-    //  {
-    //      val tmp = <safe_receiver>
-    //      when {
-    //          tmp == null -> null
-    //          else -> <safe_call_result>
-    //      }
-    //  }
-
-    if (this.statements.size != 2) return null
-    val tmpVal = this.statements[0] as? IrVariable ?: return null
-    val whenExpr = this.statements[1] as? IrWhen ?: return null
-    if (whenExpr.branches.size != 2) return null
-
-    val ifNullBranch = whenExpr.branches[0]
-    val ifNullBranchCondition = ifNullBranch.condition
-    if (ifNullBranchCondition !is IrCall) return null
-    if (ifNullBranchCondition.symbol != irBuiltIns.eqeqSymbol) return null
-    val arg0 = ifNullBranchCondition.arguments[0]
-    if (arg0 !is IrGetValue || arg0.symbol != tmpVal.symbol) return null
-    val arg1 = ifNullBranchCondition.arguments[1]
-    if (arg1 !is IrConst || arg1.value != null) return null
-    val ifNullBranchResult = ifNullBranch.result
-    if (ifNullBranchResult !is IrConst || ifNullBranchResult.value != null) return null
-
-    val ifNotNullBranch = whenExpr.branches[1]
-    return SafeCallInfo(this, tmpVal, ifNullBranch, ifNotNullBranch)
-}
-
-
-internal class ElvisInfo(
-    val block: IrBlock,
-    val tmpVal: IrVariable,
-    val elvisLhs: IrExpression,
-    val elvisRhs: IrExpression
-)
-
-internal fun IrBlock.parseElvis(irBuiltIns: IrBuiltIns): ElvisInfo? {
-    //  {
-    //      val tmp = <elvis_lhs>
-    //      when {
-    //          tmp == null -> <elvis_rhs>
-    //          else -> tmp
-    //      }
-    //  }
-
-    if (this.statements.size != 2) return null
-    val tmpVal = this.statements[0] as? IrVariable ?: return null
-    val whenExpr = this.statements[1] as? IrWhen ?: return null
-    if (whenExpr.branches.size != 2) return null
-
-    val elvisLhs = tmpVal.initializer ?: return null
-    val ifNullBranch = whenExpr.branches[0]
-    val ifNullBranchCondition = ifNullBranch.condition
-    if (ifNullBranchCondition !is IrCall) return null
-    if (ifNullBranchCondition.symbol != irBuiltIns.eqeqSymbol) return null
-    val arg0 = ifNullBranchCondition.arguments[0]
-    if (arg0 !is IrGetValue || arg0.symbol != tmpVal.symbol) return null
-    val arg1 = ifNullBranchCondition.arguments[1]
-    if (arg1 !is IrConst || arg1.value != null) return null
-    val elvisRhs = ifNullBranch.result
-
-    val ifNonNullBranch = whenExpr.branches[1]
-    val ifNonNullBranchResult = ifNonNullBranch.result
-    if (ifNonNullBranchResult !is IrGetValue || ifNonNullBranchResult.symbol != tmpVal.symbol) return null
-
-    return ElvisInfo(this, tmpVal, elvisLhs, elvisRhs)
 }
