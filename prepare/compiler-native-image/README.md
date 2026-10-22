@@ -38,6 +38,7 @@ You can also produce native image distribution release artifacts in
 Additional build properties that require Oracle GraalVM:
 * `-Pkotlin.build.native-image.use-g1=true` enables the G1 garbage collector for the compiler native image. It provides significant performance benefits.
 * `-Pkotlin.build.native-image.dynamic-plugins=true` enables dynamic plugin loading support, see [Plugins](#plugins) for more details.
+* `-Pkotlin.build.native-image.use-pgo=true` enables profile-guided optimizations.
 
 ## Running
 
