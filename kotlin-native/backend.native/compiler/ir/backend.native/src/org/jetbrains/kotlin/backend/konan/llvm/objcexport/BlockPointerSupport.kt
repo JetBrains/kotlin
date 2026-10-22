@@ -11,6 +11,7 @@ import llvm.LLVMValueRef
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.objcexport.BlockPointerBridge
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.util.simpleFunctions
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -28,12 +29,16 @@ internal fun ObjCExportCodeGeneratorBase.generateBlockToKotlinFunctionConverter(
     val objectBodyType = if (useSeparateHolder) {
         ObjectBodyType(
                 llvm.structType(codegen.kObjHeader, llvm.pointerType),
-                objectFieldIndices = listOf(1)
+                mapOf(IrFieldSymbolImpl() to 1),
+                objectFieldIndices = listOf(1),
+                runtime.objectAlignment
         )
     } else {
         ObjectBodyType(
                 llvm.structType(codegen.kObjHeader),
-                objectFieldIndices = emptyList()
+                emptyMap(),
+                objectFieldIndices = emptyList(),
+                runtime.objectAlignment
         )
     }
     val bodyType = objectBodyType.llvmBodyType

@@ -230,6 +230,23 @@ internal interface ContextUtils : RuntimeAware {
     val IrClass.llvmTypeInfoPtr: LLVMValueRef
         get() = typeInfoPtr.llvm
 
+    val IrClass.objectBodyType: ObjectBodyType
+        get() {
+            return if (isExternal(this)) {
+                runtime.addedLLVMExternalObjectBodyTypes.getOrPut(this) {
+                    val classBodyTypeName = if (KonanBinaryInterface.isExported(this)) {
+                        this.computeClassBodyTypeName()
+                    } else {
+                        this.computePrivateClassBodyTypeName(file.path)
+                    }
+
+                    generationState.dependenciesTracker.add(this)
+                    createClassBody(classBodyTypeName, this)
+                }
+            } else {
+                generationState.llvmDeclarations.forClass(this).bodyType
+            }
+        }
 }
 
 /**
