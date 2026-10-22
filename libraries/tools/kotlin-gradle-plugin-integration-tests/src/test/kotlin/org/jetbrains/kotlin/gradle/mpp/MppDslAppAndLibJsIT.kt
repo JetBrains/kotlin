@@ -9,11 +9,13 @@ import org.jetbrains.kotlin.gradle.plugin.ProjectLocalConfigurations
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import kotlin.io.path.deleteRecursively
 import kotlin.io.path.exists
 import kotlin.io.path.name
 
 @MppGradlePluginTests
+@MustRunOnChangesInGradle
 class MppDslAppAndLibJsIT : KGPBaseTest() {
 
     override val defaultBuildOptions: BuildOptions
