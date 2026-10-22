@@ -9,12 +9,17 @@ import org.jetbrains.kotlin.kapt.base.*
 import org.jetbrains.kotlin.kapt.base.incremental.RuntimeProcType
 import org.jetbrains.kotlin.kapt.base.incremental.SourcesToReprocess
 import org.jetbrains.kotlin.kapt.base.util.WriterBackedKaptLogger
+import org.jetbrains.kotlin.kapt.base.util.doOpenInternalPackagesIfRequired
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 
 class IncrementalKaptTest {
+    init {
+        doOpenInternalPackagesIfRequired()
+    }
+
     @Test
     fun testIncrementalRun(
         @TempDir baseSourcesDir: File,

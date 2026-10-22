@@ -75,15 +75,11 @@ projectTests {
             // JDK21 is required by KaptStubConverterTestGenerated.testJvmRecord
             defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_21_0)
         ) {
-            useJUnitPlatform {
-                excludeTags("IgnoreJDK11")
-            }
+            useJUnitPlatform()
         }
     }
 
-    kaptTestTask("test", JdkMajorVersion.JDK_1_8)
-    kaptTestTask("testJdk11", JdkMajorVersion.JDK_11_0)
-    kaptTestTask("testJdk17", JdkMajorVersion.JDK_17_0)
+    kaptTestTask("test", JdkMajorVersion.JDK_17_0)
     kaptTestTask("testJdk21", JdkMajorVersion.JDK_21_0)
 
     testGenerator("org.jetbrains.kotlin.kapt.test.TestGeneratorKt", generateTestsInBuildDirectory = true)
