@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.idea.tcs
 import org.jetbrains.kotlin.tooling.core.WeakInterner
 import java.io.File
 import java.io.Serializable
+import java.util.concurrent.locks.ReentrantLock
 
 fun IdeaKotlinClasspath(files: Iterable<File>): IdeaKotlinClasspath = IdeaKotlinClasspath.from(files)
 
@@ -80,7 +81,7 @@ class IdeaKotlinClasspath private constructor(private val files: MutableSet<File
     internal companion object {
         private const val serialVersionUID = 0L
 
-        private val interner = WeakInterner()
+        private val interner = WeakInterner(ReentrantLock())
 
         fun normalise(file: File): File {
             val normalized = file.absoluteFile.normalize()

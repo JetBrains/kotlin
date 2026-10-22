@@ -6,8 +6,9 @@
 package org.jetbrains.kotlin.gradle.idea.utils
 
 import org.jetbrains.kotlin.tooling.core.WeakInterner
+import java.util.concurrent.locks.ReentrantLock
 
 /**
  * Can be used for all entities in this module to intern strings
  */
-internal val stringInterner = WeakInterner()
+internal val stringInterner = WeakInterner(ReentrantLock())
