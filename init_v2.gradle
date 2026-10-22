@@ -664,7 +664,7 @@ class TeamcityTestListener implements TestListener, TestOutputListener {
 
     TeamcityTestListener(Logger logger, TestTaskWrapper testTaskWrapper, Project project, AtomicLong testCounter, TestNameDescriptor testNameDescriptor, String ignoredSuiteFormat) {
         this.logger = logger
-        this.buildDirectoriesResolver = new BuildDirectoriesResolver(project)
+        this.buildDirectoriesResolver = new BuildDirectoriesResolver(project.getLayout().getBuildDirectory().getAsFile().get())
         this.testCounter = testCounter
         this.testNameDescriptor = testNameDescriptor
         this.ignoredSuiteFormat = ignoredSuiteFormat?.trim() ? Pattern.compile(ignoredSuiteFormat) : null
@@ -870,15 +870,16 @@ abstract class TestTaskBuildLogSetupPlugin implements Plugin<Gradle> {
     }
 }
 
-class BuildDirectoriesResolver {
+@CompileStatic
+class BuildDirectoriesResolver implements Serializable {
     private String buildStacktraceLogDir
     private final String buildTempDir
     private final File buildDir
 
-    BuildDirectoriesResolver(Project project) {
+    BuildDirectoriesResolver(File buildDir) {
         this.buildStacktraceLogDir = System.getenv(Constants.STACKTRACE_LOG_DIR_ENV_VAR)
         this.buildTempDir = System.getenv(Constants.BUILD_TEMP_DIR_ENV_VAR)
-        this.buildDir = project.getLayout().getBuildDirectory().getAsFile().get()
+        this.buildDir = buildDir
     }
 
     String getBuildStacktraceLogDir() {
