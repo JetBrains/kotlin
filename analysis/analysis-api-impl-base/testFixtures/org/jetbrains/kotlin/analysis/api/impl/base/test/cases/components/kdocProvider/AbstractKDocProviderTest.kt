@@ -16,7 +16,9 @@ import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBase
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.configuration.AnalysisApiBinaryLibraryIndexingMode
 import org.jetbrains.kotlin.analysis.test.framework.services.configuration.AnalysisApiIndexingConfiguration
+import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolution.KtResolvable
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
@@ -56,25 +58,42 @@ abstract class AbstractKDocProviderTest : AbstractAnalysisApiBasedTest() {
                         override fun visitDeclaration(declaration: KtDeclaration, indent: Int): Void? {
                             val symbol = declaration.symbol
                             appendLine(symbol.renderKDoc())
-                            if (symbol is KaValueParameterSymbol) {
-                                symbol.primaryConstructorProperty?.let { property ->
-                                    property.getter?.let { appendLine(it.renderKDoc()) }
-                                    property.setter?.let { appendLine(it.renderKDoc()) }
-                                }
-                            } else if (symbol is KaPropertySymbol) {
-                                symbol.getter?.let { appendLine(it.renderKDoc()) }
-                                symbol.setter?.let { appendLine(it.renderKDoc()) }
-                            }
+                            renderAccessorsKDoc(symbol)
 
                             appendLine()
 
                             return super.visitDeclaration(declaration, indent + 2)
                         }
                     }, 0)
+
+                    val expressionMarkerProvider = testServices.expressionMarkerProvider
+                    for (selection in expressionMarkerProvider.getAllSelections(contextFile)) {
+                        val resolvable = expressionMarkerProvider.getBottommostSelectedElementOfType<KtResolvable>(contextFile, selection.qualifier)
+                        appendLine("${selection.tagText}:")
+                        resolvable.tryResolveSymbols()?.symbols?.forEach { symbol ->
+                            if (symbol !is KaDeclarationSymbol) return@forEach
+                            appendLine(symbol.renderKDoc())
+                            renderAccessorsKDoc(symbol)
+                            appendLine()
+                        }
+                    }
                 }
             }
         }
         testServices.assertions.assertEqualsToTestOutputFile(actual)
+    }
+}
+
+context(session: KaSession)
+private fun StringBuilder.renderAccessorsKDoc(symbol: KaSymbol) {
+    if (symbol is KaValueParameterSymbol) {
+        symbol.primaryConstructorProperty?.let { property ->
+            property.getter?.let { appendLine(it.renderKDoc()) }
+            property.setter?.let { appendLine(it.renderKDoc()) }
+        }
+    } else if (symbol is KaPropertySymbol) {
+        symbol.getter?.let { appendLine(it.renderKDoc()) }
+        symbol.setter?.let { appendLine(it.renderKDoc()) }
     }
 }
 

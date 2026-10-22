@@ -13,9 +13,39 @@ FILE[kind=File[packageFqName=<root>]]
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Int]
           isClassRef: true
-    PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
+    PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, kdocText=/**
+         * Top-level
+         * property
+         * getter
+         * documentation.
+         */, mayHaveContract=false]
       MODIFIER_LIST[public final]
       VALUE_PARAMETER_LIST
+  PROPERTY[fqName=topLevelVar, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=true, kdocText=/**
+   * Top-level
+   * mutable
+   * property
+   * documentation.
+   */, name=topLevelVar]
+    MODIFIER_LIST[public]
+    TYPE_REFERENCE
+      USER_TYPE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=kotlin]
+        REFERENCE_EXPRESSION[referencedName=Int]
+          isClassRef: true
+    PROPERTY_ACCESSOR[hasBody=false, hasNoExpressionBody=true, isGetter=true, kdocText=/**
+         * Bodyless
+         * getter
+         * documentation.
+         */, mayHaveContract=false]
+      MODIFIER_LIST[public final]
+    PROPERTY_ACCESSOR[hasBody=false, hasNoExpressionBody=true, isGetter=false, kdocText=/**
+         * Bodyless
+         * setter
+         * documentation.
+         */, mayHaveContract=false]
+      MODIFIER_LIST[public final]
   FUNCTION[fqName=bar, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, kdocText=/**
    * Top-level
    * function

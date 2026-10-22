@@ -248,6 +248,7 @@ include(
     ":native:external-projects-test-utils:testLibraryC",
     ":native:external-projects-test-utils:testInternalLibrary",
     ":native:external-projects-test-utils:testExtensionsLibrary",
+    ":native:external-projects-test-utils:testKDocLibrary",
     ":native:cinterop.deserialization",
     ":core:names",
     ":core:language.model",
@@ -858,6 +859,8 @@ project(":native:external-projects-test-utils:testInternalLibrary").projectDir =
     File("$rootDir/native/external-projects-test-utils/testDependencies/testInternalLibrary")
 project(":native:external-projects-test-utils:testExtensionsLibrary").projectDir =
     File("$rootDir/native/external-projects-test-utils/testDependencies/testExtensionsLibrary")
+project(":native:external-projects-test-utils:testKDocLibrary").projectDir =
+    File("$rootDir/native/external-projects-test-utils/testDependencies/testKDocLibrary")
 project(":kotlin-parcelize-compiler").projectDir = File("$rootDir/prepare/parcelize-compiler-gradle")
 
 project(":kotlin-allopen-compiler-plugin").projectDir = File("$rootDir/plugins/allopen")

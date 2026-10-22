@@ -86,6 +86,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleKDocProviderTestGenerated exten
   }
 
   @Test
+  @TestMetadata("libraryBinaryJsExportedTypeAliasEnumEntryAccessors.kt")
+  public void testLibraryBinaryJsExportedTypeAliasEnumEntryAccessors() {
+    run("libraryBinaryJsExportedTypeAliasEnumEntryAccessors.kt");
+  }
+
+  @Test
   @TestMetadata("libraryBinaryJvm.kt")
   public void testLibraryBinaryJvm() {
     run("libraryBinaryJvm.kt");

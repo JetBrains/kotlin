@@ -4,6 +4,10 @@
 public val topLevelProp: kotlin.Int /* compiled code */
     public final get() { /* compiled code */ }
 
+public var topLevelVar: kotlin.Int /* compiled code */
+    public final get
+    public final set
+
 public fun bar(number: kotlin.Int): kotlin.Unit { /* compiled code */ }
 
 public typealias MyString = kotlin.String

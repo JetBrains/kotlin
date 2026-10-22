@@ -158,3 +158,43 @@ CONTENT:
 Top-level
 property
 documentation.
+
+ORIGINAL KDOC:
+* Top-level
+     * property
+     * getter
+     * documentation.
+CONTENT:
+Top-level
+property
+getter
+documentation.
+
+ORIGINAL KDOC:
+* Top-level
+ * mutable
+ * property
+ * documentation.
+CONTENT:
+Top-level
+mutable
+property
+documentation.
+
+ORIGINAL KDOC:
+* Bodyless
+     * getter
+     * documentation.
+CONTENT:
+Bodyless
+getter
+documentation.
+
+ORIGINAL KDOC:
+* Bodyless
+     * setter
+     * documentation.
+CONTENT:
+Bodyless
+setter
+documentation.
