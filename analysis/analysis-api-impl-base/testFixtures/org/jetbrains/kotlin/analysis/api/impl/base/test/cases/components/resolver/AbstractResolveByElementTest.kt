@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.resolution.KaSymbolResolutionAttempt
 import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
@@ -20,7 +22,7 @@ abstract class AbstractResolveByElementTest : AbstractResolveTest<KtElement>() {
     override fun configureTest(builder: TestConfigurationBuilder) {
         super.configureTest(builder)
         builder.apply {
-            useDirectives(Directives)
+            useDirectives(Directives, ResolveSymbolTestDirectives)
             forTestsMatching("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/*") {
                 defaultDirectives {
                     +Directives.BOTTOMMOST_ELEMENT
@@ -37,13 +39,32 @@ abstract class AbstractResolveByElementTest : AbstractResolveTest<KtElement>() {
     }
 
     final override fun generateResolveOutput(
+        resolveKind: ResolveKind,
         context: ResolveTestCaseContext<KtElement>,
         file: KtFile,
         module: KtTestModule,
         testServices: TestServices,
-    ): String = generateResolveOutput(context.element, testServices)
+    ): String = generateResolveOutput(resolveKind, context.element, testServices)
 
-    abstract fun generateResolveOutput(mainElement: KtElement, testServices: TestServices): String
+    protected open fun generateResolveOutput(
+        resolveKind: ResolveKind,
+        mainElement: KtElement,
+        testServices: TestServices,
+    ): String = when (resolveKind) {
+        ResolveKind.CALL -> analyzeForTest(mainElement) { generateCallOutput(mainElement, testServices) }
+        ResolveKind.CANDIDATES -> analyzeForTest(mainElement) { generateCandidatesOutput(mainElement, testServices) }
+        ResolveKind.SYMBOL -> analyzeSymbolElement(mainElement, testServices) { generateSymbolOutput(mainElement, testServices) }
+    }
+
+    open fun <R> analyzeSymbolElement(element: KtElement, testServices: TestServices, action: context(KaSession) () -> R): R {
+        return analyzeForTest(element, action)
+    }
+
+    /**
+     * Additional information about the resolved symbols, rendered in the [ResolveKind.SYMBOL] output.
+     */
+    context(session: KaSession)
+    open fun additionalSymbolInfo(attempt: KaSymbolResolutionAttempt): String? = null
 
     override fun collectElementsToResolve(
         file: KtFile,
@@ -99,4 +120,24 @@ abstract class AbstractResolveByElementTest : AbstractResolveTest<KtElement>() {
             "Forces the test to search for the bottommost element at the caret position"
         )
     }
+}
+
+/**
+ * Checks call, candidate, and symbol resolution of the elements at carets or selections at once, so the test setup is shared.
+ */
+abstract class AbstractResolveSingleByPsiTest : AbstractResolveByElementTest() {
+    override val resolveKinds: List<ResolveKind> get() = ResolveKind.entries
+}
+
+/**
+ * Checks call, candidate, and symbol resolution of all elements of the file at once, so the test setup is shared.
+ */
+abstract class AbstractResolveAllByPsiTest : AbstractResolveByElementTest() {
+    override val resolveKinds: List<ResolveKind> get() = ResolveKind.entries
+
+    override fun collectElementsToResolve(
+        file: KtFile,
+        module: KtTestModule,
+        testServices: TestServices,
+    ): Collection<ResolveTestCaseContext<KtElement>> = collectAllKtElements(file)
 }
