@@ -870,6 +870,7 @@ class KotlinWasmWasiGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    // TODO KT-90605 Remove wasm output size asserts from KotlinWasmGradlePluginIT
     @TestMetadata("new-mpp-wasm-wasi-test")
     @DisplayName("Check wasi target with binaryen")
     @GradleTest
