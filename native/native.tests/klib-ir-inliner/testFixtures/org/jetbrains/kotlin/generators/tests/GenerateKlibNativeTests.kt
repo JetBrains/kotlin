@@ -103,7 +103,7 @@ fun main(args: Array<String>) {
                     provider<UseDummyTestCaseGroupProvider>(),
                 )
             ) {
-                model(pattern = KT_WITHOUT_UNDERSCORE_PREFIX, recursive = true)
+                model(pattern = "^([^_](.+)).(kt|def)$", recursive = true)
             }
         }
 

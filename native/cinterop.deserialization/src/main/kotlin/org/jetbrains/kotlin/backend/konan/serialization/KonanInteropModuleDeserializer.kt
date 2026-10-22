@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
 import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
 import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategyResolver
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializer
+import org.jetbrains.kotlin.backend.common.serialization.KotlinIrLinker
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.SourceElement
@@ -60,7 +61,7 @@ class KonanInteropModuleDeserializer(
     moduleFragment: IrModuleFragment,
     override val klib: KotlinLibrary,
     private val isLibraryCached: Boolean,
-    private val linker: KonanIrLinker,
+    private val linker: KotlinIrLinker,
     override val strategyResolver: DeserializationStrategyResolver = DeserializationStrategy.ONLY_REFERENCED,
 ) : IrModuleDeserializer(moduleFragment, klib.versions.abiVersion ?: KotlinAbiVersion.CURRENT), CInteropModuleDeserializer {
     // Interop Klibs have no real IR files, so the strategy is resolved once for the synthetic file name.
@@ -95,7 +96,15 @@ class KonanInteropModuleDeserializer(
 
     override fun getDefinedPackageNames(): Set<FqName> = setOf(definedPackageFqName)
 
-    private var externalIrPackageFragment: IrExternalPackageFragment? = null
+    /**
+     * The package fragment with all deserialized declarations that are not put into a special [IrFile] inside [moduleFragment]
+     * (that file holds C structs and enums, unless the library is cached, see [getOrCreateContainingPackageFragment]).
+     * Unlike that file, this package fragment is not reachable from [moduleFragment].
+     * `null` if no such declaration has been deserialized yet.
+     */
+    var externalIrPackageFragment: IrExternalPackageFragment? = null
+        private set
+
     private var typeDefinitionsIrFile: IrFile? = null
 
     /** The cache of the declarations deserialized by the current deserializer. */
