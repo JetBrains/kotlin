@@ -1471,7 +1471,7 @@ open class PsiRawFirBuilder(
                 isMember = true,
                 isCompanionBlockMember = isDirectlyInsideCompanionBlock,
             ) {
-                configureScriptDestructuringDeclarationEntry(it, container)
+                configureNonLocalDestructuringDeclarationEntry(it, container)
             }
         }
 
@@ -1558,7 +1558,7 @@ open class PsiRawFirBuilder(
                                     tmpVariable = false,
                                     forceLocal = false,
                                 ) {
-                                    configureScriptDestructuringDeclarationEntry(it, destructuringContainerVar)
+                                    configureNonLocalDestructuringDeclarationEntry(it, destructuringContainerVar)
                                     it.isScriptTopLevelDeclaration = true
                                 }
                             }
@@ -1631,7 +1631,7 @@ open class PsiRawFirBuilder(
                             tmpVariable = false,
                             forceLocal = false,
                         ) {
-                            configureScriptDestructuringDeclarationEntry(it, destructuringContainerVar)
+                            configureNonLocalDestructuringDeclarationEntry(it, destructuringContainerVar)
                         }
                     }
                     is KtProperty -> {
