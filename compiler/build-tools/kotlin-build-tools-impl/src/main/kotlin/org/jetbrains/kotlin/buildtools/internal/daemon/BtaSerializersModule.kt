@@ -9,9 +9,11 @@ import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.contextual
 import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.modules.subclass
+import org.jetbrains.kotlin.buildtools.api.DelicateBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.js.JsIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.wasm.WasmIncrementalCompilationConfiguration
+import org.jetbrains.kotlin.buildtools.internal.jps.JvmJpsManagedIncrementalCompilationConfigurationImpl
 import org.jetbrains.kotlin.buildtools.internal.js.JsHistoryBasedIncrementalCompilationConfigurationImpl
 import org.jetbrains.kotlin.buildtools.api.trackers.IcEvent
 import org.jetbrains.kotlin.buildtools.internal.js.operations.JsKlibCompilationOperationImpl
@@ -39,6 +41,14 @@ internal val btaSerializersModule: SerializersModule = SerializersModule {
             JvmSnapshotBasedIncrementalCompilationConfigurationImpl::class,
             JvmSnapshotBasedIncrementalCompilationConfigurationImplSerializer
         )
+        try {
+            Class.forName("org.jetbrains.kotlin.buildtools.api.jps.jvm.JvmJpsManagedIncrementalCompilationConfiguration").let {
+                @OptIn(DelicateBuildToolsApi::class)
+                subclass(JvmJpsManagedIncrementalCompilationConfigurationImpl::class)
+            }
+        } catch (_: ClassNotFoundException) {
+            // ignore - optional JPS module was not loaded, JPS classes will not be used
+        }
     }
     polymorphic(JsIncrementalCompilationConfiguration::class) {
         subclass(

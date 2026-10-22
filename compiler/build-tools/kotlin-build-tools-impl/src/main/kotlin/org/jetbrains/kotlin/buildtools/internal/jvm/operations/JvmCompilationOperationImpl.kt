@@ -51,7 +51,7 @@ import org.jetbrains.kotlin.buildtools.internal.jvm.toOptions
 import org.jetbrains.kotlin.daemon.common.serialization.HasSerializationHooks
 import org.jetbrains.kotlin.daemon.common.serialization.Message
 import org.jetbrains.kotlin.daemon.common.serialization.MessageVisitor
-import org.jetbrains.kotlin.buildtools.internal.daemon.PathAsStringSerializer
+import org.jetbrains.kotlin.daemon.common.serialization.PathAsStringSerializer
 import org.jetbrains.kotlin.buildtools.internal.daemon.cast
 import org.jetbrains.kotlin.buildtools.internal.daemon.throwPropertyNotFound
 import org.jetbrains.kotlin.buildtools.internal.trackers.getMetricsReporter

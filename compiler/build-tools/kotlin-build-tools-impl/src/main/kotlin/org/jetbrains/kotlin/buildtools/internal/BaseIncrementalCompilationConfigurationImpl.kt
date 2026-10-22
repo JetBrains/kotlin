@@ -9,7 +9,7 @@ package org.jetbrains.kotlin.buildtools.internal
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
 import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration
-import org.jetbrains.kotlin.buildtools.internal.daemon.PathAsStringSerializer
+import org.jetbrains.kotlin.daemon.common.serialization.PathAsStringSerializer
 import org.jetbrains.kotlin.buildtools.internal.daemon.cast
 import org.jetbrains.kotlin.buildtools.internal.daemon.throwPropertyNotFound
 import java.nio.file.Path
