@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.buildtools.api.trackers.IcEvent
 import org.jetbrains.kotlin.buildtools.internal.js.operations.JsKlibCompilationOperationImpl
 import org.jetbrains.kotlin.buildtools.internal.js.operations.JsLinkingOperationImpl
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationConfigurationImpl
+import org.jetbrains.kotlin.buildtools.internal.jvm.operations.DiscoverScriptExtensionsOperationImpl
 import org.jetbrains.kotlin.buildtools.internal.jvm.operations.JvmCompilationOperationImpl
 import org.jetbrains.kotlin.buildtools.internal.metadata.operations.KotlinMetadataKlibCompilationOperationImpl
 import org.jetbrains.kotlin.buildtools.internal.wasm.WasmHistoryBasedIncrementalCompilationConfigurationImpl
@@ -35,6 +36,7 @@ internal val btaSerializersModule: SerializersModule = SerializersModule {
         subclass(KotlinMetadataKlibCompilationOperationImpl::class)
         subclass(JsLinkingOperationImpl::class)
         subclass(WasmLinkingOperationImpl::class)
+        subclass(DiscoverScriptExtensionsOperationImpl::class)
     }
     polymorphic(JvmIncrementalCompilationConfiguration::class) {
         subclass(
