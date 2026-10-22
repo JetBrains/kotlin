@@ -11,12 +11,15 @@ import org.gradle.api.tasks.testing.TestFilter
 import org.gradle.api.tasks.testing.TestResult
 import org.gradle.api.tasks.testing.TestResult.ResultType
 import org.gradle.build.event.BuildEventsListenerRegistry
+import org.gradle.tooling.Failure
 import org.gradle.tooling.events.FinishEvent
 import org.gradle.tooling.events.OperationCompletionListener
 import org.gradle.tooling.events.task.TaskFailureResult
 import org.gradle.tooling.events.task.TaskFinishEvent
 
 import javax.inject.Inject
+import java.lang.reflect.Field
+import java.lang.reflect.Method
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentMap
 import java.util.concurrent.atomic.AtomicLong
@@ -32,6 +35,7 @@ initscript {
     }
 }
 
+@CompileStatic
 class Constants {
     // Environment variable which points to the TeamCity build properties file. Is set by the agent's core logic.
     public static final String BUILD_PROPERTIES_FILE_ENV_VAR = "TEAMCITY_BUILD_PROPERTIES_FILE"
@@ -88,6 +92,7 @@ class Constants {
 // This is quite complicated for setups that use the configuration cache, as it can lead unnecessary configuration cache invalidations.
 // Possibly, a better approach would be to avoid extending project.ext altogether.
 // The property extension can be kept for older Gradle versions and removed for newer versions.
+@CompileStatic
 class ProjectExtraPropertiesExtender {
 
     static void extend(Project project, Logger logger) {
@@ -116,18 +121,24 @@ class ProjectExtraPropertiesExtender {
             // When the configuration cache is not used,
             // we can simply read the file and directly add the properties from it to the project's extra properties,
             // as we did in the older init script.
-            properties.each { key, value -> project.ext.set(key, value) }
-            project.ext.teamcity = properties
+            for (String key : properties.stringPropertyNames()) {
+                project.getExtensions().getExtraProperties().set(key, properties.getProperty(key))
+            }
+            project.getExtensions().getExtraProperties().set("teamcity", properties)
         } else {
             // When the configuration cache is used, we add only the properties we consider non-volatile to 'project.ext'.
             // All properties, including volatile ones, can be accessed through the 'project.ext.teamcity' map.
             // This is done to ensure backwards compatibility with the previous integration logic (see init_since_8.gradle).
             // These properties are configured as configuration inputs, so a change to any of their values will invalidate the configuration cache.
             // In particular, a change to any of the non-volatile properties will invalidate the cache, even if the property is never accessed during the build.
-            Map<Object, Object> nonVolatileProperties = project.providers.of(TeamCityNonVolatilePropertiesValueSource.class) {}.getOrNull()
-            nonVolatileProperties.each { key, value -> project.ext.set(key, value) }
-            Map<String, String> tcExtraPropertiesMap = new TeamCityExtraPropertiesMap(project.providers, properties)
-            project.ext.teamcity = tcExtraPropertiesMap
+            Map<Object, Object> nonVolatileProperties = (Map<Object, Object>) project.getProviders().of(TeamCityNonVolatilePropertiesValueSource.class) {}.getOrNull()
+            if (nonVolatileProperties != null) {
+                for (Map.Entry<Object, Object> entry : nonVolatileProperties.entrySet()) {
+                    project.getExtensions().getExtraProperties().set(entry.getKey().toString(), entry.getValue())
+                }
+            }
+            Map<String, String> tcExtraPropertiesMap = new TeamCityExtraPropertiesMap(project.getProviders(), properties)
+            project.getExtensions().getExtraProperties().set("teamcity", tcExtraPropertiesMap)
         }
     }
 
@@ -146,6 +157,7 @@ class ProjectExtraPropertiesExtender {
     }
 }
 
+@CompileStatic
 class PropertiesFileReader {
     // This method reads the file using RandomAccessFile, so that the file is not tracked as a configuration phase input.
     // Thus, changes to the file do not invalidate the configuration cache.
@@ -158,10 +170,13 @@ class PropertiesFileReader {
         def debugServiceMessage = new ServiceMessage(name: "message", attributes: [text: "Reading the Teamcity build properties file '$filePath'", "tc:tags": "tc:internal"])
         println(debugServiceMessage.asString())
         Properties properties = new Properties()
-        new RandomAccessFile(filePath, "r").withCloseable { RandomAccessFile randomAccessFile ->
+        RandomAccessFile randomAccessFile = new RandomAccessFile(filePath, "r")
+        try {
             byte[] data = new byte[(int) randomAccessFile.length()]
             randomAccessFile.readFully(data)
             properties.load(new ByteArrayInputStream(data))
+        } finally {
+            randomAccessFile.close()
         }
 
         return properties
@@ -170,11 +185,12 @@ class PropertiesFileReader {
 
 // This class filters the properties we consider "non-volatile", meaning their values do not change from build to build.
 // The heuristics used are quite unreliable. They are kept only for backwards compatibility with the previous integration logic (see init_since_8.gradle).
+@CompileStatic
 class NonVolatileBuildPropertiesFilter {
     static Map<Object, Object> filterNonVolatileProperties(Properties properties) {
-        return properties.findAll { Object key, Object value ->
+        return (Map<Object, Object>) properties.findAll { Object key, Object value ->
             isANonVolatileProperty(key)
-        } as Map<Object, Object>
+        }
     }
 
     private static boolean isANonVolatileProperty(Object key) {
@@ -209,6 +225,7 @@ class NonVolatileBuildPropertiesFilter {
 // Because TeamCityPropertyValueSource is used to retrieve property values,
 // accessing a property by get(), getOrDefault(), or containsKey() will make the configuration cache invalidate
 // for a later build if the property value changes.
+@CompileStatic
 class TeamCityExtraPropertiesMap extends AbstractMap<String, String> {
     private final ProviderFactory providerFactory
     private final Properties properties
@@ -221,8 +238,8 @@ class TeamCityExtraPropertiesMap extends AbstractMap<String, String> {
     @Override
     String get(Object key) {
         if (key == null) return null
-        return this.providerFactory.of(TeamCityPropertyValueSource.class) {
-            parameters.propertyKey.set(key.toString())
+        return this.providerFactory.of(TeamCityPropertyValueSource.class) { ValueSourceSpec<TeamCityPropertyValueSource.Parameters> spec ->
+            spec.getParameters().getPropertyKey().set(key.toString())
         }.getOrNull()
     }
 
@@ -242,13 +259,16 @@ class TeamCityExtraPropertiesMap extends AbstractMap<String, String> {
 
     @Override
     Set<Entry<String, String>> entrySet() {
-        return Collections.unmodifiableSet(properties.keySet().collect { key ->
-            new AbstractMap.SimpleImmutableEntry<String, String>((String)key, get(key))
-        } as Set)
+        Set<Entry<String, String>> entries = new LinkedHashSet<>()
+        for (String key : properties.stringPropertyNames()) {
+            entries.add(new AbstractMap.SimpleImmutableEntry<String, String>(key, get(key)))
+        }
+        return Collections.unmodifiableSet(entries)
     }
 }
 
 // ValueSource used to track accessed build properties as configuration phase inputs.
+@CompileStatic
 abstract class TeamCityPropertyValueSource implements ValueSource<String, Parameters>, Describable {
     interface Parameters extends ValueSourceParameters {
         Property<String> getPropertyKey()
@@ -266,12 +286,13 @@ abstract class TeamCityPropertyValueSource implements ValueSource<String, Parame
 
     @Override
     String getDisplayName() {
-        return "TeamCity build property '${parameters.propertyKey.get()}'"
+        return "TeamCity build property '${parameters.propertyKey.get()}'".toString()
     }
 }
 
 // ValueSource used to track all non-volatile build properties as a single configuration phase input.
 // Used to populate 'project.ext' without re-reading the file for each property.
+@CompileStatic
 abstract class TeamCityNonVolatilePropertiesValueSource implements ValueSource<Map<Object, Object>, ValueSourceParameters.None>, Describable {
     @Override
     Map<Object, Object> obtain() {
@@ -376,10 +397,12 @@ class ServiceMessage {
     }
 }
 
+@CompileStatic
 class BuildFeatures {
     static boolean isConfigurationCacheRequested(Gradle gradle) {
         try {
-            return gradle.services.get(org.gradle.api.configuration.BuildFeatures).configurationCache.requested.getOrElse(false)
+            org.gradle.api.configuration.BuildFeatures bf = ((org.gradle.api.internal.GradleInternal) gradle).getServices().get(org.gradle.api.configuration.BuildFeatures)
+            return bf.getConfigurationCache().getRequested().getOrElse(false)
         } catch (Throwable ignored) {
             return false
         }
@@ -387,7 +410,8 @@ class BuildFeatures {
 
     static boolean areIsolatedProjectsEnabled(Gradle gradle) {
         try {
-            return gradle.services.get(org.gradle.api.configuration.BuildFeatures).isolatedProjects.active.getOrElse(false)
+            org.gradle.api.configuration.BuildFeatures bf = ((org.gradle.api.internal.GradleInternal) gradle).getServices().get(org.gradle.api.configuration.BuildFeatures)
+            return bf.getIsolatedProjects().getActive().getOrElse(false)
         } catch (Throwable ignored) {
             return false
         }
@@ -396,17 +420,6 @@ class BuildFeatures {
 
 @CompileStatic
 class Util {
-    static boolean isInstance(Class clazz, String name) {
-        if (clazz == null) return false
-        if (clazz.name == name) return true
-        if (clazz.name == "java.lang.Object") return false
-        for (Class clazz0 : clazz.interfaces) {
-            if (isInstance(clazz0, name)) return true
-        }
-        if (isInstance(clazz.superclass, name)) return true
-        return false
-    }
-
     static String getFlowIdForTask(String taskPath) {
         String flowIfPrefix = "%%teamcity%%-"
         return flowIfPrefix + String.valueOf(taskPath.hashCode())
@@ -416,117 +429,96 @@ class Util {
 // region Setup of build log presentation for compile tasks stderr
 
 /**
- * Collects stderr output for compile tasks and reports them as compilation error messages on failure,
- * creating a "compilation error" build problem in TeamCity with bounded memory consumption.
+ * Traverses failure exceptions from failed compile tasks and reports them as compilation error messages,
+ * creating a "compilation error" build problem in TeamCity without requiring task standard error listeners.
  */
 @CompileStatic
-abstract class CompileTaskErrorOutputService implements BuildService<BuildServiceParameters.None>, OperationCompletionListener {
+abstract class CompileTaskErrorOutputService implements BuildService<BuildServiceParameters.None>, OperationCompletionListener, AutoCloseable {
     private static final Logger logger = Logging.getLogger(CompileTaskErrorOutputService)
-
-    private final ConcurrentMap<String, ErrorOutputListener> errorOutputListeners = new ConcurrentHashMap<>()
-
-    void addCompileTaskErrorOutputListener(Task task) {
-        ErrorOutputListener errorOutputListener = new ErrorOutputListener()
-        errorOutputListeners.put(task.getPath(), errorOutputListener)
-        task.getLogging().addStandardErrorListener(errorOutputListener)
-    }
-
-    void removeCompileTaskErrorOutputListener(Task task) {
-        ErrorOutputListener errorOutputListener = errorOutputListeners.remove(task.getPath())
-        if (errorOutputListener != null) {
-            task.getLogging().removeStandardErrorListener(errorOutputListener)
-            errorOutputListener.clear()
-        }
-    }
 
     @Override
     void onFinish(FinishEvent finishEvent) {
         if (!(finishEvent instanceof TaskFinishEvent)) return
 
         TaskFinishEvent taskFinishEvent = (TaskFinishEvent) finishEvent
+        if (!(taskFinishEvent.getResult() instanceof TaskFailureResult)) return
+
         String taskPath = taskFinishEvent.getDescriptor().getTaskPath()
-        ErrorOutputListener errorOutputListener = errorOutputListeners.remove(taskPath)
-        if (errorOutputListener == null) return
+        if (!isCompileTaskPath(taskPath)) return
 
-        try {
-            if (!(taskFinishEvent.getResult() instanceof TaskFailureResult)) return
-            if (!errorOutputListener.hasOutput()) return
+        TaskFailureResult failureResult = (TaskFailureResult) taskFinishEvent.getResult()
+        List<String> messages = extractDiagnosticMessages(failureResult.getFailures())
+        if (messages.isEmpty()) {
+            messages = Collections.singletonList("Compilation failed for task '" + taskPath + "'. See raw build log for details.")
+        }
 
-            String flowId = Util.getFlowIdForTask(taskPath)
-            logger.lifecycle(new ServiceMessage(name: "compilationStarted", attributes: [compiler: taskPath]).withFlowId(flowId).asString())
-            for (String msg : errorOutputListener.getMessages()) {
-                logger.lifecycle(new ServiceMessage(name: "message", attributes: [text: msg, status: "ERROR"]).withFlowId(flowId).asString())
+        String flowId = Util.getFlowIdForTask(taskPath)
+        logger.lifecycle(new ServiceMessage(name: "compilationStarted", attributes: [compiler: taskPath]).withFlowId(flowId).asString())
+        for (String msg : messages) {
+            logger.lifecycle(new ServiceMessage(name: "message", attributes: [text: msg, status: "ERROR"]).withFlowId(flowId).asString())
+        }
+        logger.lifecycle(new ServiceMessage(name: "compilationFinished", attributes: [compiler: taskPath]).withFlowId(flowId).asString())
+    }
+
+    private static boolean isCompileTaskPath(String taskPath) {
+        if (taskPath == null) return false
+        int lastColon = taskPath.lastIndexOf(":")
+        String taskName = lastColon >= 0 ? taskPath.substring(lastColon + 1) : taskPath
+        return taskName.startsWith("compile") || taskName.contains("Compile")
+    }
+
+    private static List<String> extractDiagnosticMessages(List<? extends Failure> failures) {
+        if (failures == null || failures.isEmpty()) return Collections.emptyList()
+        List<String> messages = new ArrayList<>()
+        Set<String> seen = new HashSet<>()
+        collectFailureMessages(failures, messages, seen)
+        return messages
+    }
+
+    private static void collectFailureMessages(List<? extends Failure> failures, List<String> messages, Set<String> seen) {
+        if (failures == null) return
+        for (Failure failure : failures) {
+            if (failure == null) continue
+
+            String msg = failure.getMessage()
+            if (msg != null && !msg.trim().isEmpty()) {
+                for (String line : msg.split("\r?\n")) {
+                    String trimmed = line.trim()
+                    if (!trimmed.isEmpty() && seen.add(trimmed)) {
+                        messages.add(line)
+                    }
+                }
             }
-            logger.lifecycle(new ServiceMessage(name: "compilationFinished", attributes: [compiler: taskPath]).withFlowId(flowId).asString())
-        } finally {
-            errorOutputListener.clear()
+
+            String desc = failure.getDescription()
+            if (desc != null && !desc.trim().isEmpty()) {
+                for (String line : desc.split("\r?\n")) {
+                    String trimmed = line.trim()
+                    if (!trimmed.isEmpty() && isRelevantDiagnosticLine(trimmed) && seen.add(trimmed)) {
+                        messages.add(line)
+                    }
+                }
+            }
+
+            collectFailureMessages(failure.getCauses(), messages, seen)
         }
     }
 
-    @CompileStatic
-    private static class ErrorOutputListener implements StandardOutputListener {
-        private static final int MAX_BUFFER_SIZE = Integer.getInteger(Constants.COMPILE_ERROR_MAX_LENGTH_SYSTEM_PROP, 64 * 1024)
-        private StringBuilder stringBuilder = null
-        private volatile boolean truncated = false
+    private static boolean isRelevantDiagnosticLine(String line) {
+        if (line.startsWith("at ") || line.startsWith("\tat ")) return false
+        if (line.startsWith("Caused by:")) return false
+        if (line.startsWith("org.gradle.") || line.startsWith("java.lang.")) return false
+        if (line.startsWith("...") || line.startsWith("\t...")) return false
+        return true
+    }
 
-        @Override
-        synchronized void onOutput(CharSequence chars) {
-            if (truncated) {
-                return
-            }
-
-            if (stringBuilder == null) {
-                stringBuilder = new StringBuilder(Math.min(chars.length(), 1024))
-            }
-
-            if (stringBuilder.length() + chars.length() > MAX_BUFFER_SIZE) {
-                int remaining = MAX_BUFFER_SIZE - stringBuilder.length()
-                if (remaining > 0) {
-                    stringBuilder.append(chars.subSequence(0, remaining))
-                }
-                truncated = true
-                return
-            }
-
-            stringBuilder.append(chars)
-        }
-
-        synchronized boolean hasOutput() {
-            return stringBuilder != null && stringBuilder.length() > 0
-        }
-
-        synchronized List<String> getMessages() {
-            if (stringBuilder == null || stringBuilder.length() == 0) return Collections.emptyList()
-
-            List<String> messages = new ArrayList<>()
-            String text = stringBuilder.toString()
-            for (String line : text.split("\r?\n")) {
-                String trimmed = line.trim()
-                if (trimmed.length() > 0) {
-                    messages.add(line)
-                }
-            }
-
-            if (truncated) {
-                messages.add("TeamCity truncated compile error output because it exceeded the buffer limit. See raw build log for full stderr.")
-            }
-
-            return messages
-        }
-
-        synchronized void clear() {
-            if (stringBuilder != null) {
-                stringBuilder.setLength(0)
-                stringBuilder.trimToSize()
-                stringBuilder = null
-            }
-            truncated = false
-        }
+    @Override
+    void close() {
     }
 }
 
 /**
- * Registers {@link CompileTaskErrorOutputService} and sets it up to handle task starts and completions.
+ * Registers {@link CompileTaskErrorOutputService} to receive task completion events.
  */
 @CompileStatic
 abstract class CompileTaskErrorOutputPlugin implements Plugin<Gradle> {
@@ -535,23 +527,10 @@ abstract class CompileTaskErrorOutputPlugin implements Plugin<Gradle> {
 
     @Override
     void apply(Gradle gradle) {
+        if (gradle.parent != null) return
         Provider<CompileTaskErrorOutputService> compileTaskErrorOutputServiceProvider =
                 gradle.getSharedServices().registerIfAbsent("compileTaskErrorOutputService", CompileTaskErrorOutputService) {}
         buildEventsListenerRegistry.onTaskCompletion(compileTaskErrorOutputServiceProvider)
-
-        gradle.lifecycle.beforeProject { Project project ->
-            Provider<CompileTaskErrorOutputService> serviceProvider =
-                    project.getGradle().getSharedServices().registerIfAbsent("compileTaskErrorOutputService", CompileTaskErrorOutputService) {}
-
-            project.getTasks().withType(AbstractCompile).configureEach { Task task ->
-                task.doFirst {
-                    serviceProvider.get().addCompileTaskErrorOutputListener(task)
-                }
-                task.doLast {
-                    serviceProvider.get().removeCompileTaskErrorOutputListener(task)
-                }
-            }
-        }
     }
 }
 
@@ -563,6 +542,7 @@ abstract class CompileTaskErrorOutputPlugin implements Plugin<Gradle> {
  * Converts Gradle test lifecycle and output callbacks into TeamCity service messages,
  * including suite/test events, test stdout and stderr, and failure metadata.
  */
+@CompileStatic
 class TeamcityTestListener implements TestListener, TestOutputListener {
     public boolean skipStdErr = false
     public boolean skipStdOut = false
@@ -573,20 +553,20 @@ class TeamcityTestListener implements TestListener, TestOutputListener {
     private final TestNameDescriptor testNameDescriptor
     private final Pattern ignoredSuiteFormat
     private final FlowWrapper flowWrapper
-    private final ConcurrentMap<TestDescriptor, List> testOutputs = new ConcurrentHashMap()
+    private final ConcurrentMap<TestDescriptor, List<TestOutputEvent>> testOutputs = new ConcurrentHashMap<TestDescriptor, List<TestOutputEvent>>()
 
     TeamcityTestListener(Logger logger, TestTaskWrapper testTaskWrapper, Project project, AtomicLong testCounter, TestNameDescriptor testNameDescriptor, String ignoredSuiteFormat) {
         this.logger = logger
         this.buildDirectoriesResolver = new BuildDirectoriesResolver(project)
         this.testCounter = testCounter
         this.testNameDescriptor = testNameDescriptor
-        this.ignoredSuiteFormat = ignoredSuiteFormat?.trim() ? Pattern.compile(ignoredSuiteFormat) : null
-        flowWrapper = new FlowWrapper(Util.getFlowIdForTask(testTaskWrapper.getTaskPath()))
+        this.ignoredSuiteFormat = ignoredSuiteFormat != null && ignoredSuiteFormat.trim().length() > 0 ? Pattern.compile(ignoredSuiteFormat) : null
+        this.flowWrapper = new FlowWrapper(Util.getFlowIdForTask(testTaskWrapper.getTaskPath()))
     }
 
     @Override
     void beforeSuite(TestDescriptor testDescriptor) {
-        def suiteDescriptorWrapper = new SuiteDescriptorWrapper(testDescriptor, flowWrapper, ignoredSuiteFormat)
+        SuiteDescriptorWrapper suiteDescriptorWrapper = new SuiteDescriptorWrapper(testDescriptor, flowWrapper, ignoredSuiteFormat)
         suiteDescriptorWrapper.start { ServiceMessage flowMessage, ServiceMessage suiteStartedMessage ->
             if (flowMessage != null) this.logger.lifecycle(flowMessage.asString())
             this.logger.lifecycle(suiteStartedMessage.asString())
@@ -595,10 +575,10 @@ class TeamcityTestListener implements TestListener, TestOutputListener {
 
     @Override
     void afterSuite(TestDescriptor testDescriptor, TestResult testResult) {
-        def suiteDescriptorWrapper = new SuiteDescriptorWrapper(testDescriptor, flowWrapper, ignoredSuiteFormat)
+        SuiteDescriptorWrapper suiteDescriptorWrapper = new SuiteDescriptorWrapper(testDescriptor, flowWrapper, ignoredSuiteFormat)
         suiteDescriptorWrapper.finish { ServiceMessage flowMessage, ServiceMessage suiteFinishedMessage ->
-            def testDescriptorWrapper = new TestDescriptorWrapper(testDescriptor, testNameDescriptor, flowWrapper, buildDirectoriesResolver, ignoredSuiteFormat)
-            def outputs = testOutputs.remove(testDescriptor)
+            TestDescriptorWrapper testDescriptorWrapper = new TestDescriptorWrapper(testDescriptor, testNameDescriptor, flowWrapper, buildDirectoriesResolver, ignoredSuiteFormat)
+            List<TestOutputEvent> outputs = testOutputs.remove(testDescriptor)
             if (outputs != null) {
                 synchronized (outputs) {
                     testDescriptorWrapper.flush(outputs) { ServiceMessage testOutputServiceMessage -> this.logger.lifecycle(testOutputServiceMessage.asString()) }
@@ -608,10 +588,12 @@ class TeamcityTestListener implements TestListener, TestOutputListener {
             this.logger.lifecycle(suiteFinishedMessage.asString())
             if (flowMessage != null) this.logger.lifecycle(flowMessage.asString())
         }
-        if (testDescriptor.parent == null) {
-            testOutputs.each { descriptor, outputs ->
+        if (testDescriptor.getParent() == null) {
+            for (Map.Entry<TestDescriptor, List<TestOutputEvent>> entry : testOutputs.entrySet()) {
+                TestDescriptor descriptor = entry.getKey()
+                List<TestOutputEvent> outputs = entry.getValue()
                 synchronized (outputs) {
-                    def testDescriptorWrapper = new TestDescriptorWrapper(descriptor, testNameDescriptor, flowWrapper, buildDirectoriesResolver, ignoredSuiteFormat)
+                    TestDescriptorWrapper testDescriptorWrapper = new TestDescriptorWrapper(descriptor, testNameDescriptor, flowWrapper, buildDirectoriesResolver, ignoredSuiteFormat)
                     testDescriptorWrapper.flush(outputs) { ServiceMessage testOutputServiceMessage -> this.logger.lifecycle(testOutputServiceMessage.asString()) }
                     outputs.clear()
                 }
@@ -622,7 +604,7 @@ class TeamcityTestListener implements TestListener, TestOutputListener {
 
     @Override
     void beforeTest(TestDescriptor testDescriptor) {
-        def testDescriptorWrapper = new TestDescriptorWrapper(testDescriptor, testNameDescriptor, flowWrapper, buildDirectoriesResolver, ignoredSuiteFormat)
+        TestDescriptorWrapper testDescriptorWrapper = new TestDescriptorWrapper(testDescriptor, testNameDescriptor, flowWrapper, buildDirectoriesResolver, ignoredSuiteFormat)
         testDescriptorWrapper.start { ServiceMessage flowMessage, ServiceMessage testStartedMessage ->
             if (flowMessage != null) this.logger.lifecycle(flowMessage.asString())
             this.logger.lifecycle(testStartedMessage.asString())
@@ -631,16 +613,20 @@ class TeamcityTestListener implements TestListener, TestOutputListener {
 
     @Override
     void afterTest(TestDescriptor testDescriptor, TestResult testResult) {
-        def testDescriptorWrapper = new TestDescriptorWrapper(testDescriptor, testNameDescriptor, flowWrapper, buildDirectoriesResolver, ignoredSuiteFormat)
+        TestDescriptorWrapper testDescriptorWrapper = new TestDescriptorWrapper(testDescriptor, testNameDescriptor, flowWrapper, buildDirectoriesResolver, ignoredSuiteFormat)
         testDescriptorWrapper.finish(testResult) { ServiceMessage flowMessage, ServiceMessage testFinished ->
-            def outputs = testOutputs.remove(testDescriptor)
+            List<TestOutputEvent> outputs = testOutputs.remove(testDescriptor)
             if (outputs != null) {
                 synchronized (outputs) {
                     testDescriptorWrapper.flush(outputs) { ServiceMessage testOutputServiceMessage -> this.logger.lifecycle(testOutputServiceMessage.asString()) }
                     outputs.clear()
                 }
             }
-            testDescriptorWrapper.result(testResult, testCounter) { List<ServiceMessage> messages -> messages.each{ message -> this.logger.lifecycle(message.asString()) } }
+            testDescriptorWrapper.result(testResult, testCounter) { List<ServiceMessage> messages ->
+                for (ServiceMessage message : messages) {
+                    this.logger.lifecycle(message.asString())
+                }
+            }
 
             this.logger.lifecycle(testFinished.asString())
             if (flowMessage != null) this.logger.lifecycle(flowMessage.asString())
@@ -649,11 +635,11 @@ class TeamcityTestListener implements TestListener, TestOutputListener {
 
     @Override
     void onOutput(TestDescriptor testDescriptor, TestOutputEvent outputEvent) {
-        if (testDescriptor.className == null) {
+        if (testDescriptor.getClassName() == null) {
             return
         }
 
-        switch (outputEvent.destination) {
+        switch (outputEvent.getDestination()) {
             case TestOutputEvent.Destination.StdErr:
                 if (skipStdErr) return
                 break
@@ -663,10 +649,10 @@ class TeamcityTestListener implements TestListener, TestOutputListener {
             default: return
         }
 
-        List outputs = testOutputs[testDescriptor]
+        List<TestOutputEvent> outputs = testOutputs.get(testDescriptor)
         if (outputs == null) {
-            outputs = []
-            def prev = testOutputs.putIfAbsent(testDescriptor, outputs)
+            outputs = new ArrayList<TestOutputEvent>()
+            List<TestOutputEvent> prev = testOutputs.putIfAbsent(testDescriptor, outputs)
             if (prev != null) {
                 outputs = prev
             }
@@ -676,8 +662,8 @@ class TeamcityTestListener implements TestListener, TestOutputListener {
             outputs.add(outputEvent)
 
             if (outputs.size() > 100) {
-                def testDescriptorWrapper = new TestDescriptorWrapper(testDescriptor, testNameDescriptor, flowWrapper, buildDirectoriesResolver, ignoredSuiteFormat)
-                testDescriptorWrapper.flush(outputs) { msg -> this.logger.lifecycle(msg.asString()) }
+                TestDescriptorWrapper testDescriptorWrapper = new TestDescriptorWrapper(testDescriptor, testNameDescriptor, flowWrapper, buildDirectoriesResolver, ignoredSuiteFormat)
+                testDescriptorWrapper.flush(outputs) { ServiceMessage msg -> this.logger.lifecycle(msg.asString()) }
                 outputs.clear()
             }
         }
@@ -1082,6 +1068,7 @@ class DescriptorWrapper {
 
 // region Build problem reporting
 
+@CompileStatic
 abstract class TeamcityBuildProblemReportingPlugin implements Plugin<Gradle> {
     @Inject
     abstract FlowScope getFlowScope()
@@ -1090,8 +1077,9 @@ abstract class TeamcityBuildProblemReportingPlugin implements Plugin<Gradle> {
     abstract FlowProviders getFlowProviders()
 
     void apply(Gradle gradle) {
-        flowScope.always(TeamcityBuildProblemAction) { spec ->
-            spec.parameters.buildResult.set(flowProviders.buildWorkResult)
+        if (gradle.parent != null) return
+        getFlowScope().always(TeamcityBuildProblemAction) { FlowActionSpec<TeamcityBuildProblemAction.Parameters> spec ->
+            spec.getParameters().getBuildResult().set(getFlowProviders().getBuildWorkResult())
         }
     }
 }
@@ -1099,6 +1087,7 @@ abstract class TeamcityBuildProblemReportingPlugin implements Plugin<Gradle> {
 /**
  * Reports the build failure as a build problem, if eligible.
  */
+@CompileStatic
 abstract class TeamcityBuildProblemAction implements FlowAction<Parameters> {
     interface Parameters extends FlowParameters {
         @Input
@@ -1107,8 +1096,8 @@ abstract class TeamcityBuildProblemAction implements FlowAction<Parameters> {
 
     @Override
     void execute(Parameters parameters) {
-        BuildWorkResult buildWorkResult = parameters.buildResult.get()
-        if (!buildWorkResult.failure.present) return
+        BuildWorkResult buildWorkResult = parameters.getBuildResult().get()
+        if (!buildWorkResult.getFailure().isPresent()) return
 
         Throwable failure = getRootCauseOfFailure(buildWorkResult)
         String message = getMessageForFailure(failure)
@@ -1120,14 +1109,14 @@ abstract class TeamcityBuildProblemAction implements FlowAction<Parameters> {
         ServiceMessage serviceMessage = new ServiceMessage(
                 name: "buildProblem",
                 attributes: [type       : "gradleBuildProblem",
-                             identity   : ("gradleBuildProblem ${message}" as String).hashCode(),
+                             identity   : ("gradleBuildProblem " + message).hashCode().toString(),
                              description: message
                 ])
         println(serviceMessage.asString())
     }
 
     private static Throwable getRootCauseOfFailure(BuildWorkResult buildWorkResult) {
-        Throwable failure = buildWorkResult.failure.get()
+        Throwable failure = buildWorkResult.getFailure().get()
         while (!(failure instanceof TaskExecutionException) && failure != failure.getCause() && failure.getCause() != null) {
             failure = failure.getCause()
         }
@@ -1137,9 +1126,9 @@ abstract class TeamcityBuildProblemAction implements FlowAction<Parameters> {
 
     private static String getMessageForFailure(Throwable failure) {
         if (failure instanceof TaskExecutionException && failure.getCause() != null) {
-            return "${failure.getMessage()} ${failure.getCause().getClass().getName()}: ${failure.getCause().getMessage()}"
+            return failure.getMessage() + " " + failure.getCause().getClass().getName() + ": " + failure.getCause().getMessage()
         }
-        return "${failure.getClass().getName()}: ${failure.getMessage()}"
+        return failure.getClass().getName() + ": " + failure.getMessage()
     }
 }
 
@@ -1148,6 +1137,7 @@ abstract class TeamcityBuildProblemAction implements FlowAction<Parameters> {
 /**
  * Use WrappedException if you need to make a error message shorter
  */
+@CompileStatic
 class WrappedException extends Exception {
     private static final int MAX_MESSAGE_SIZE = Integer.getInteger(Constants.STACKTRACE_MAX_LENGTH_SYSTEM_PROP, 18 * 1024)
     private static final int MIN_ATTACHED_MESSAGE_SIZE = Integer.getInteger(Constants.MIN_ATTACHED_TEST_EXCEPTION_SYSTEM_PROP, MAX_MESSAGE_SIZE)
@@ -1170,7 +1160,7 @@ class WrappedException extends Exception {
      * @param length max message length
      */
     WrappedException(Throwable th, int maxLength) {
-        this.th = th ?: new Exception() {
+        this.th = th != null ? th : new Exception() {
             @Override void printStackTrace(PrintWriter printWriter) { }
             @Override void printStackTrace(PrintStream ps) { }
             @Override void printStackTrace() { }
@@ -1180,7 +1170,7 @@ class WrappedException extends Exception {
         }
 
         this.maxLength = maxLength
-        int size = maxLength / 1024
+        int size = (int) (maxLength / 1024)
         DELIMITER = "***** A part of the stacktrace was cut by TeamCity build agent because the stacktrace size exceeded ${size} KB *****"
         thMessage = this.th.toString()
         message = trim(thMessage, maxLength)
@@ -1197,22 +1187,33 @@ class WrappedException extends Exception {
 
     public boolean isSmall() {
         if (MIN_ATTACHED_MESSAGE_SIZE == -1) return true
-        if (MIN_ATTACHED_MESSAGE_SIZE > size) return true
-        if (size <= maxLength) return true
+        if (MIN_ATTACHED_MESSAGE_SIZE > getSize()) return true
+        if (getSize() <= maxLength) return true
         return false
     }
 
     public ServiceMessage getServiceMessage(String testName) {
-        if (thMessage == "") return new ServiceMessage(name: "testFailed", attributes: [name: testName, message: message, details: stacktrace])
+        if (thMessage.length() == 0) return new ServiceMessage(name: "testFailed", attributes: [name: testName, message: message, details: getStacktrace()])
         Map.Entry<String, String> cfd = extractComparisonFailure(th)
         if (cfd != null) {
             return new ServiceMessage(name: "testFailed", attributes: [name    : testName,
                                                                        message : message,
-                                                                       details : stacktrace,
+                                                                       details : getStacktrace(),
                                                                        actual  : trim(cfd.key, maxLength),
                                                                        expected: trim(cfd.value, maxLength)])
         } else {
-            return new ServiceMessage(name: "testFailed", attributes: [name: testName, message: message, details: stacktrace])
+            return new ServiceMessage(name: "testFailed", attributes: [name: testName, message: message, details: getStacktrace()])
+        }
+    }
+
+    private static String getFieldValue(Throwable th, String fieldName) {
+        try {
+            Field field = th.getClass().getDeclaredField(fieldName)
+            field.setAccessible(true)
+            Object val = field.get(th)
+            return val != null ? val.toString() : null
+        } catch (Throwable ignored) {
+            return null
         }
     }
 
@@ -1220,23 +1221,58 @@ class WrappedException extends Exception {
         Map.Entry<String, String> comparisonFailure = extractComparisonFailureWithComparisonFailureUtil(th)
         if (comparisonFailure != null) return comparisonFailure
 
-        def message = th.localizedMessage
+        comparisonFailure = extractOpenTest4jFailure(th)
+        if (comparisonFailure != null) return comparisonFailure
+
+        String actual = getFieldValue(th, 'fActual')
+        String expected = getFieldValue(th, 'fExpected')
+        if (actual != null && expected != null) return new AbstractMap.SimpleEntry<String, String>(actual, expected)
+
+        String message = th.getLocalizedMessage()
         if (message == null) return null
 
-        return parseComparison(message, "expected:<", "> but was:<", ">") ?:
-                parseComparison(message, "expected [", "] but found [", "]")
+        Map.Entry<String, String> res = parseComparison(message, "expected:<", "> but was:<", ">") // JUnit 4 (no spaces after ':' or 'was:')
+        if (res != null) return res
+        res = parseComparison(message, "expected: <", "> but was: <", ">") // JUnit 5 / OpenTest4j (spaces after ':' and 'was:')
+        if (res != null) return res
+        return parseComparison(message, "expected [", "] but found [", "]") // TestNG
+    }
+
+    private Map.Entry<String, String> extractOpenTest4jFailure(Throwable th) {
+        try {
+            Method getExpected = th.getClass().getMethod("getExpected")
+            Method getActual = th.getClass().getMethod("getActual")
+            Object expectedObj = getExpected.invoke(th)
+            Object actualObj = getActual.invoke(th)
+            if (expectedObj != null && actualObj != null) {
+                Method getValueExpected = expectedObj.getClass().getMethod("getValue")
+                Method getValueActual = actualObj.getClass().getMethod("getValue")
+                Object expectedVal = getValueExpected.invoke(expectedObj)
+                Object actualVal = getValueActual.invoke(actualObj)
+                if (expectedVal != null && actualVal != null) {
+                    return new AbstractMap.SimpleEntry<String, String>(actualVal.toString(), expectedVal.toString())
+                }
+            }
+        } catch (Throwable ignored) { }
+        return null
     }
 
     private Map.Entry<String, String> extractComparisonFailureWithComparisonFailureUtil(Throwable th) {
         try {
-            def utilClass = Class.forName('jetbrains.buildServer.ComparisonFailureUtil')
-            def cfd = utilClass.extractComparisonFailure(th)
-            return cfd
-                    ? new AbstractMap.SimpleEntry<String, String>(cfd.actual, cfd.expected)
-                    : null
-        } catch (Exception ignored) {
-            return null
-        }
+            Class<?> utilClass = Class.forName('jetbrains.buildServer.ComparisonFailureUtil')
+            Method method = utilClass.getMethod("extractComparisonFailure", Throwable)
+            Object cfd = method.invoke(null, th)
+            if (cfd != null) {
+                Method getActual = cfd.getClass().getMethod("getActual")
+                Method getExpected = cfd.getClass().getMethod("getExpected")
+                Object actual = getActual.invoke(cfd)
+                Object expected = getExpected.invoke(cfd)
+                if (actual != null && expected != null) {
+                    return new AbstractMap.SimpleEntry<String, String>(actual.toString(), expected.toString())
+                }
+            }
+        } catch (Throwable ignored) { }
+        return null
     }
 
     private Map.Entry<String, String> parseComparison(String msg, String start, String separator, String end) {
@@ -1244,10 +1280,10 @@ class WrappedException extends Exception {
         if (expectedIdx >= 0) {
             int butWasIdx = msg.indexOf(separator, expectedIdx + start.length())
             if (butWasIdx >= 0) {
-                int endIdx = msg.lastIndexOf(end);
-                if (endIdx >= 0) {
-                    def expected = msg.substring(expectedIdx + start.length(), butWasIdx)
-                    def actual = msg.substring(butWasIdx + separator.length(), endIdx)
+                int endIdx = msg.lastIndexOf(end)
+                if (endIdx >= 0 && endIdx > butWasIdx) {
+                    String expected = msg.substring(expectedIdx + start.length(), butWasIdx)
+                    String actual = msg.substring(butWasIdx + separator.length(), endIdx)
                     return new AbstractMap.SimpleEntry<String, String>(actual, expected)
                 }
             }
@@ -1293,6 +1329,7 @@ ${DELIMITER}
     }
 }
 
+@CompileStatic
 class TestTaskWrapper {
     private final AbstractTestTask testTask
 
@@ -1301,11 +1338,11 @@ class TestTaskWrapper {
      */
     private TestTaskWrapper(AbstractTestTask testTask) { this.testTask = testTask }
 
-    void addTestListener(Object listener) { testTask.addTestListener(listener as org.gradle.api.tasks.testing.TestListener) }
+    void addTestListener(TestListener listener) { testTask.addTestListener(listener) }
 
-    void addTestOutputListener(Object listener) { testTask.addTestOutputListener(listener as org.gradle.api.tasks.testing.TestOutputListener) }
+    void addTestOutputListener(TestOutputListener listener) { testTask.addTestOutputListener(listener) }
 
-    String getTaskPath() { testTask.path }
+    String getTaskPath() { testTask.getPath() }
 
     TestTaskWrapper jvmArgs(String[] arguments) {
         if (testTask instanceof Test && arguments != null && arguments.length > 0) {
@@ -1315,7 +1352,7 @@ class TestTaskWrapper {
     }
 
     TestTaskWrapper setTmpDirectory(String path) {
-        if (testTask instanceof Test && path != null && !path.isEmpty()) {
+        if (testTask instanceof Test && path != null && path.length() > 0) {
             ((Test) testTask).systemProperty("java.io.tmpdir", path)
         }
         return this
@@ -1323,7 +1360,7 @@ class TestTaskWrapper {
 
     TestFilterWrapper getFilter() {
         if (testTask instanceof Test) {
-            return new TestFilterWrapper(((Test) testTask).filter)
+            return new TestFilterWrapper(((Test) testTask).getFilter())
         }
         return new TestFilterWrapper(null)
     }
@@ -1332,16 +1369,17 @@ class TestTaskWrapper {
      * Creates an instance of the {@link TestTaskWrapper} for every instance of the Test in the TaskCollection.
      * The Closure action is applied lazily via configureEach
      */
-    static void forAllTestTasks(TaskCollection taskCollection, Closure action) {
+    static void forAllTestTasks(TaskCollection<AbstractTestTask> taskCollection, Closure action) {
         // Use lazy task configuration:
         // https://docs.gradle.org/current/userguide/task_configuration_avoidance.html
-        taskCollection.configureEach { task ->
-            TestTaskWrapper wrapper = new TestTaskWrapper(task as AbstractTestTask)
-            action(wrapper)
+        taskCollection.configureEach { AbstractTestTask task ->
+            TestTaskWrapper wrapper = new TestTaskWrapper(task)
+            action.call(wrapper)
         }
     }
 }
 
+@CompileStatic
 class TestTaskJvmArgumentsProvider implements org.gradle.process.CommandLineArgumentProvider {
     private final List<String> arguments
 
@@ -1355,6 +1393,7 @@ class TestTaskJvmArgumentsProvider implements org.gradle.process.CommandLineArgu
     }
 }
 
+@CompileStatic
 class TestFilterWrapper {
     final TestFilter filter
 
@@ -1364,12 +1403,12 @@ class TestFilterWrapper {
 
     void setFailOnNoMatchingTests(boolean failOnNoMatchingTests) {
         if (filter != null) {
-            filter.failOnNoMatchingTests = failOnNoMatchingTests
+            filter.setFailOnNoMatchingTests(failOnNoMatchingTests)
         }
     }
 
     void excludeTest(String className, String methodName) {
-        if (filter != null && className != null && !className.trim().isEmpty()) {
+        if (filter != null && className != null && className.trim().length() > 0) {
             filter.excludeTest(className, methodName)
         }
     }
@@ -1379,17 +1418,19 @@ class TestFilterWrapper {
     }
 
     void updateFilters(String fileName, Logger logger) {
-        if (fileName == null || fileName.trim().length() == 0 || !new File(fileName).exists()) {
-            // log
+        if (fileName == null || fileName.trim().length() == 0) {
             return
         }
-        if (!supported) {
-            // log
+        File file = new File(fileName)
+        if (!file.exists()) {
+            return
+        }
+        if (!isSupported()) {
             return
         }
 
-        failOnNoMatchingTests = false
-        new File(fileName).eachLine { line ->
+        setFailOnNoMatchingTests(false)
+        file.eachLine { String line ->
             if (!line.startsWith("#")) excludeTest(line, null)
         }
     }
