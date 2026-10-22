@@ -86,107 +86,6 @@ class Constants {
     public static final String GRADLE_UNSAFE_ISOLATED_PROJECTS_SYSTEM_PROP = "org.gradle.unsafe.isolated-projects"
 }
 
-public class DependencyBasedTestRun {
-
-    Logger logger
-
-    public DependencyBasedTestRun(Logger logger) {
-        this.logger = logger
-    }
-
-    public def configureGradle(Gradle gradle) {
-        def rootProject = gradle.rootProject
-        def incrementalOption = System.getenv(Constants.GRADLE_INCREMENTAL_MODE_ENV_VAR)
-        logger.debug("Received following incremental setting: ${incrementalOption}")
-
-        switch(incrementalOption) {
-            case "skip_incremental":
-                logger.debug("Incremental building is enabled, but full rebuild is forced");
-                gradle.startParameter.taskNames = ["build"];
-                break;
-
-            case "do_incremental":
-                if (BuildFeatures.areIsolatedProjectsEnabled(gradle)) {
-                    logger.lifecycle("Incremental mode is not compatible with Gradle Isolated Projects. Falling back to a full build.")
-                    gradle.startParameter.taskNames = ["build"]
-                    break
-                }
-                logger.debug("Will look for affected projects")
-                def modifiedProjects = findAffectedProjects(rootProject);
-                if (modifiedProjects.empty) {
-                    logger.debug("No affected projects found. Running full build.")
-                    gradle.startParameter.taskNames = ["build"]
-                } else {
-                    gradle.startParameter.taskNames = modifiedProjects.collect {
-                        def taskName = it as String
-                        if (!taskName.endsWith(":")) taskName += ":"
-                        return taskName + "buildDependents"
-                    }
-                    logger.debug("Will start with following tasks: ${gradle.startParameter.taskNames}")
-                }
-                break;
-
-            default:
-                logger.debug("Incremental building is not enabled");
-        }
-    }
-
-
-    private def findAffectedProjects(Project project) {
-        String changedFilesFile = System.getenv(Constants.CHANGED_FILES_FILE_ENV_VAR)
-
-        if (changedFilesFile != null && !changedFilesFile.isEmpty()) {
-            def changedFiles = readChangedFiles(changedFilesFile)
-            def sourceSetsToProject = readSourceSets(project);
-
-            logger.debug("Modified Files: ${changedFiles}")
-            logger.debug("SourceSets to Project: ${sourceSetsToProject}")
-
-            def changedProjects = []
-            changedFiles.each { path ->
-                sourceSetsToProject.findAll({
-                    path.startsWith(it.key)
-                }).collect(changedProjects) {it.value}
-            }
-
-            logger.debug("Changes detected in following projects:")
-            logger.debug("${changedProjects}")
-
-            return changedProjects
-        }
-    }
-
-    private def readSourceSets(Project proj) {
-        def result = [:]
-        proj.allprojects {
-            def collectRelativePath = { File file ->
-                def path = proj.relativePath(file.getAbsolutePath()).replace('\\','/')
-                result[path] = project.getPath()
-            }
-            if (delegate.hasProperty("sourceSets")) {
-                sourceSets*.allSource.srcDirs*.each collectRelativePath
-                sourceSets*.resources.srcDirs*.each collectRelativePath
-            }
-        }
-        return result
-    }
-
-    private def readChangedFiles(String changedFilesFile) {
-        def lines = new File(changedFilesFile).readLines()
-        def personalMatch = /(.*):(.*):<personal>/
-        def allMatch = /(.*):(.*):(.*)/
-
-        if (lines.any { it ==~ personalMatch }) {
-            return lines.grep(~personalMatch).collect {
-                (it =~ personalMatch)[0][1]
-            }
-        } else {
-            return lines.collect {
-                (it =~ allMatch)[0][1]
-            }
-        }
-    }
-}
 
 // region Extension of the project's extra properties with TeamCity build properties
 
@@ -469,29 +368,36 @@ class ServiceMessage {
     }
 }
 
+@CompileStatic
 class BuildFeatures {
     static boolean isConfigurationCacheRequested(Gradle gradle) {
         try {
-            return getBuildFeatures(gradle).configurationCache.requested.getOrElse(false)
-        } catch (ClassNotFoundException ignored) {
-            def startParameter = gradle.startParameter
-            return startParameter.class.getMethod("isConfigurationCacheRequested").invoke(startParameter)
+            org.gradle.api.configuration.BuildFeatures buildFeatures = (org.gradle.api.configuration.BuildFeatures) getBuildFeatures(gradle)
+            if (buildFeatures != null) {
+                return buildFeatures.getConfigurationCache().getActive().getOrElse(false)
+            }
+        } catch (Throwable ignored) {
         }
+        return false
     }
 
     static boolean areIsolatedProjectsEnabled(Gradle gradle) {
         try {
-            return getBuildFeatures(gradle).isolatedProjects.active.getOrElse(false)
-        } catch (ClassNotFoundException ignored) {
-            def value = System.getProperty(Constants.GRADLE_UNSAFE_ISOLATED_PROJECTS_SYSTEM_PROP)
-            return value != null && value.toBoolean()
+            org.gradle.api.configuration.BuildFeatures buildFeatures = (org.gradle.api.configuration.BuildFeatures) getBuildFeatures(gradle)
+            if (buildFeatures != null) {
+                return buildFeatures.getIsolatedProjects().getActive().getOrElse(false)
+            }
+        } catch (Throwable ignored) {
         }
+        return false
     }
 
     private static Object getBuildFeatures(Gradle gradle) {
-        Class buildFeaturesClass = Class.forName("org.gradle.api.configuration.BuildFeatures", false, gradle.class.classLoader)
-        def services = gradle.class.getMethod("getServices").invoke(gradle)
-        return services.get(buildFeaturesClass)
+        try {
+            return gradle.getServices().get(org.gradle.api.configuration.BuildFeatures)
+        } catch (Throwable ignored) {
+            return null
+        }
     }
 }
 
@@ -1475,68 +1381,57 @@ ${DELIMITER}
     }
 }
 
+@CompileStatic
 class TestTaskWrapper {
-    private final def testTask
+    private final AbstractTestTask testTask
 
     /**
      * Use {@link TestTaskWrapper#forAllTestTasks} to instantiate this object correctly.
      */
-    private TestTaskWrapper(def testTask) { this.testTask = testTask }
+    private TestTaskWrapper(AbstractTestTask testTask) { this.testTask = testTask }
 
-    void addTestListener(def listener) { testTask.addTestListener(listener) }
+    void addTestListener(TestListener listener) { testTask.addTestListener(listener) }
 
-    void addTestOutputListener(def listener) { testTask.addTestOutputListener(listener) }
+    void addTestOutputListener(TestOutputListener listener) { testTask.addTestOutputListener(listener) }
 
-    String getTaskPath() { testTask.path }
-
-    void enhanceGradleDaemonClasspath(Logger logger, List<String> classNames) {
-        if (!classNames.isEmpty() && testTask instanceof Test) {
-            testTask.doFirst(new GradleDaemonClasspathEnhancer(logger, classNames))
-        }
-    }
+    String getTaskPath() { testTask.getPath() }
 
     TestTaskWrapper jvmArgs(String[] arguments) {
-        if (testTask instanceof Test) {
-            Boolean jvmArgsProviderDisabled = Boolean.valueOf(System.getenv(Constants.TEST_TASK_JVM_ARG_PROVIDER_DISABLED_ENV_VAR))
-            if (jvmArgsProviderDisabled) {
-                testTask.jvmArgs(arguments)
-            } else {
-                testTask.jvmArgumentProviders.add(new TestTaskJvmArgumentsProvider(arguments))
-            }
+        if (testTask instanceof Test && arguments != null && arguments.length > 0) {
+            ((Test) testTask).jvmArgumentProviders.add(new TestTaskJvmArgumentsProvider(arguments))
         }
         return this
     }
 
     TestTaskWrapper setTmpDirectory(String path) {
-        if (testTask instanceof Test &&
-                path != null && path != "") {
-            testTask.systemProperty("java.io.tmpdir", path)
+        if (testTask instanceof Test && path != null && path.length() > 0) {
+            ((Test) testTask).systemProperty("java.io.tmpdir", path)
         }
         return this
     }
 
     TestFilterWrapper getFilter() {
-        if(testTask.metaClass.respondsTo(testTask, 'getFilter')) {
-            return new TestFilterWrapper(testTask.filter)
-        } else {
-            return new TestFilterWrapper(null)
+        if (testTask instanceof Test) {
+            return new TestFilterWrapper(((Test) testTask).getFilter())
         }
+        return new TestFilterWrapper(null)
     }
 
     /**
      * Creates an instance of the {@link TestTaskWrapper} for every instance of the Test in the TaskCollection.
      * The Closure action is applied lazily via configureEach
      */
-    static void forAllTestTasks(TaskCollection taskCollection, Closure action) {
+    static void forAllTestTasks(TaskCollection<AbstractTestTask> taskCollection, Closure action) {
         // Use lazy task configuration:
         // https://docs.gradle.org/current/userguide/task_configuration_avoidance.html
-        taskCollection.configureEach { task ->
+        taskCollection.configureEach { AbstractTestTask task ->
             TestTaskWrapper wrapper = new TestTaskWrapper(task)
-            action(wrapper)
+            action.call(wrapper)
         }
     }
 }
 
+@CompileStatic
 class TestTaskJvmArgumentsProvider implements org.gradle.process.CommandLineArgumentProvider {
     private final List<String> arguments
 
@@ -1550,117 +1445,23 @@ class TestTaskJvmArgumentsProvider implements org.gradle.process.CommandLineArgu
     }
 }
 
-/**
- * Adds jars from a Gradle test task classpath to the Gradle daemon classloader.
- * The enhancer searches the task classpath for jars that contain all requested class names,
- * then adds only those jars to the daemon classloader before the test task starts.
- */
-class GradleDaemonClasspathEnhancer implements Action<Test> {
-
-    private final Logger logger
-    private final List<String> classNames
-
-    GradleDaemonClasspathEnhancer(Logger logger, List<String> classNames) {
-        this.logger = logger
-        this.classNames = classNames
-    }
-
-    @Override
-    void execute(Test task) {
-        enhanceGradleDaemonClasspath(logger, task, classNames)
-    }
-
-    private static void enhanceGradleDaemonClasspath(Logger logger, Test task, List<String> classNames) {
-        try {
-            def testClasspath = getTestClasspath(task)
-            def classpath = findJarsForClasses(testClasspath, classNames)
-            logger.debug("Test classpath:")
-            for (def url : testClasspath) {
-                logger.debug(url.toString())
-            }
-            logger.debug("Reduced classpath:")
-            for (def url : classpath) {
-                logger.debug(url.toString())
-            }
-            logger.debug("End of classpath")
-            if (!classpath.isEmpty()) {
-                def classLoader = getDaemonClassLoader()
-                addClasspath(classLoader, classpath)
-            }
-        } catch (Throwable t) {
-            logger.error("Unable to enhance Gradle Daemon by $classNames", t)
-        }
-    }
-
-    private static URLClassLoader getDaemonClassLoader() {
-        try {
-            def daemonMainClass = Class.forName("org.gradle.launcher.daemon.bootstrap.DaemonMain")
-            def classLoader = daemonMainClass.getClassLoader()
-            if (classLoader instanceof URLClassLoader) {
-                return classLoader
-            }
-            throw new IllegalStateException("Unsupported Gradle daemon class loader: $classLoader")
-        } catch (ClassNotFoundException exception) {
-            throw new IllegalStateException("Daemon class loader not found.", exception)
-        }
-    }
-
-    private static List<URL> getTestClasspath(Test task) {
-        return task.classpath.files.collect { it.toURI().toURL() }
-    }
-
-    private static List<URL> findJarsForClasses(List<URL> classpath, List<String> classNames) {
-        def foundClassNames = new HashSet<String>()
-        def reducedClasspath = new ArrayList<URL>()
-        for (def url : classpath) {
-            new URLClassLoader([url] as URL[]).withCloseable { classLoader ->
-                for (def className : classNames) {
-                    if (hasClass(classLoader, className)) {
-                        foundClassNames.add(className)
-                        reducedClasspath.add(url)
-                        break
-                    }
-                }
-            }
-        }
-        if (foundClassNames.size() != classNames.size()) {
-            return []
-        }
-        return reducedClasspath
-    }
-
-    private static boolean hasClass(URLClassLoader classLoader, String className) {
-        def classFile = className.replace(".", "/") + ".class"
-        return classLoader.findResource(classFile) != null
-    }
-
-    private static void addClasspath(URLClassLoader classLoader, Iterable<URL> classpath) {
-        for (def url : classpath) {
-            classLoader.addURL(url)
-        }
-    }
-}
-
+@CompileStatic
 class TestFilterWrapper {
-    final def filter
-    TestFilterWrapper(def filter) {
-        if (filter == null) {
-            this.filter = null
-        } else if (filter.metaClass.respondsTo(filter, 'excludeTest') &&
-                filter.metaClass.respondsTo(filter, 'setFailOnNoMatchingTests')) {
-            this.filter = filter
-        } else {
-            this.filter = null
-        }
+    final TestFilter filter
+
+    TestFilterWrapper(TestFilter filter) {
+        this.filter = filter
     }
 
     void setFailOnNoMatchingTests(boolean failOnNoMatchingTests) {
-        filter?.setFailOnNoMatchingTests(failOnNoMatchingTests)
+        if (filter != null) {
+            filter.setFailOnNoMatchingTests(failOnNoMatchingTests)
+        }
     }
 
     void excludeTest(String className, String methodName) {
-        if (className != null && !className.trim().isEmpty()) {
-            filter?.excludeTest(className, methodName)
+        if (filter != null && className != null && className.trim().length() > 0) {
+            filter.excludeTest(className, methodName)
         }
     }
 
@@ -1669,33 +1470,21 @@ class TestFilterWrapper {
     }
 
     void updateFilters(String fileName, Logger logger) {
-        if (fileName == null || fileName.trim().length() == 0 || !new File(fileName).exists()) {
-            // log
+        if (fileName == null || fileName.trim().length() == 0) {
             return
         }
-        if (!supported) {
-            // log
+        File file = new File(fileName)
+        if (!file.exists()) {
+            return
+        }
+        if (!isSupported()) {
             return
         }
 
-        failOnNoMatchingTests = false
-        new File(fileName).eachLine { line ->
+        setFailOnNoMatchingTests(false)
+        file.eachLine { String line ->
             if (!line.startsWith("#")) excludeTest(line, null)
         }
-    }
-}
-
-List<String> getGradleDaemonEnhancementClassNames() {
-    try {
-        def classNames = System.getenv(Constants.GRADLE_DAEMON_ENHANCEMENT_CLASSES_ENV_VAR)
-        if (classNames == null) {
-            return []
-        } else {
-            return classNames.split(File.pathSeparator).toList()
-        }
-    } catch (Throwable t) {
-        logger.debug("Error while trying to initialize class names for Gradle daemon classpath enhancing", t)
-        return []
     }
 }
 
@@ -1707,7 +1496,6 @@ ProjectExtraPropertiesExtender.logBuildPropertiesUsageWarningMessageIfNeeded(gra
 gradle.addListener(new ProjectExtraPropertiesExtender(logger))
 
 final AtomicLong testCounter = new AtomicLong(0)
-final List<String> gradleDaemonEnhancementClassNames = getGradleDaemonEnhancementClassNames()
 gradle.addListener(new AfterEvaluateListener({ Project project ->
     // init jvm args
     final String jvmargs = System.getenv(Constants.GRADLE_TEST_COVERAGE_JVM_ARGS_ENV_VAR)
@@ -1730,8 +1518,6 @@ gradle.addListener(new AfterEvaluateListener({ Project project ->
         testTask.filter.updateFilters(System.getenv(Constants.PARALLEL_TESTS_ARTIFACT_PATH_ENV_VAR), logger)
         // will be empty if parallel tests enabled
         testTask.filter.updateFilters(System.getenv(Constants.RISK_TESTS_ARTIFACT_PATH_ENV_VAR), logger)
-
-        testTask.enhanceGradleDaemonClasspath(logger, gradleDaemonEnhancementClassNames)
     }
 }))
 
@@ -1746,6 +1532,3 @@ gradle.addListener(new AfterEvaluateListener({ Project project ->
     }
 }))
 
-gradle.projectsEvaluated { Gradle gradle ->
-    new DependencyBasedTestRun(logger).configureGradle(gradle)
-}
