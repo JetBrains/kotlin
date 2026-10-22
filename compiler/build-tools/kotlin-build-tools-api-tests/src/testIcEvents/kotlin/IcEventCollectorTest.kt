@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 import org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jvm
@@ -8,11 +13,6 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaVersionsOnlyCo
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Assertions.assertEquals
 import java.nio.file.Paths
-
-/*
- * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
- * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
- */
 
 class IcEventCollectorTest : BaseCompilationTest() {
 
