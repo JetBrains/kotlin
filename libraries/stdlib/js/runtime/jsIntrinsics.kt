@@ -83,22 +83,22 @@ internal fun jsUnaryMinus(a: Any?): Any?
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
-@Effects(EffectsKind.PURE)
+@Effects(EffectsKind.WRITE)
 internal fun jsPrefixInc(a: Any?): Any?
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
-@Effects(EffectsKind.PURE)
+@Effects(EffectsKind.WRITE)
 internal fun jsPostfixInc(a: Any?): Any?
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
-@Effects(EffectsKind.PURE)
+@Effects(EffectsKind.WRITE)
 internal fun jsPrefixDec(a: Any?): Any?
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
-@Effects(EffectsKind.PURE)
+@Effects(EffectsKind.WRITE)
 internal fun jsPostfixDec(a: Any?): Any?
 
 @JsIntrinsic
@@ -128,27 +128,27 @@ internal fun jsMod(a: Any?, b: Any?): Any?
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
-@Effects(EffectsKind.PURE)
+@Effects(EffectsKind.WRITE)
 internal fun jsPlusAssign(a: Any?, b: Any?): Any?
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
-@Effects(EffectsKind.PURE)
+@Effects(EffectsKind.WRITE)
 internal fun jsMinusAssign(a: Any?, b: Any?): Any?
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
-@Effects(EffectsKind.PURE)
+@Effects(EffectsKind.WRITE)
 internal fun jsMultAssign(a: Any?, b: Any?): Any?
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
-@Effects(EffectsKind.PURE)
+@Effects(EffectsKind.WRITE)
 internal fun jsDivAssign(a: Any?, b: Any?): Any?
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
-@Effects(EffectsKind.PURE)
+@Effects(EffectsKind.WRITE)
 internal fun jsModAssign(a: Any?, b: Any?): Any?
 
 @JsIntrinsic
@@ -213,7 +213,7 @@ internal fun emptyObject(a: Any?): Any?
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
-@Effects(EffectsKind.PURE)
+@Effects(EffectsKind.WRITE)
 internal fun openInitializerBox(a: Any?, b: Any?): Any?
 
 @JsIntrinsic
@@ -228,7 +228,7 @@ internal fun jsArrayGet(a: Any?, b: Any?): Any?
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
-@Effects(EffectsKind.PURE)
+@Effects(EffectsKind.WRITE)
 internal fun jsArraySet(a: Any?, b: Any?, c: Any?): Any?
 
 @JsIntrinsic
