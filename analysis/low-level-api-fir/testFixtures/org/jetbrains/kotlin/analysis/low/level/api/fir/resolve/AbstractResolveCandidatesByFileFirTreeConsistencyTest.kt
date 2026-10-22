@@ -23,9 +23,9 @@ import org.jetbrains.kotlin.test.services.assertions
  * @see AbstractResolveCandidatesFirTreeConsistencyTest
  */
 abstract class AbstractResolveCandidatesByFileFirTreeConsistencyTest : AbstractResolveCandidatesByFileTest() {
-    override fun generateResolveOutput(mainElement: KtElement, testServices: TestServices): String {
+    override fun generateResolveOutput(resolveKind: ResolveKind, mainElement: KtElement, testServices: TestServices): String {
         return testServices.assertions.assertFirTreeConsistency(mainElement.containingKtFile) {
-            super.generateResolveOutput(mainElement, testServices)
+            super.generateResolveOutput(resolveKind, mainElement, testServices)
         }
     }
 }

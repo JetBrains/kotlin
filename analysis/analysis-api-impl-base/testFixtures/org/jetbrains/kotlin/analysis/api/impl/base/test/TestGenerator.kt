@@ -114,18 +114,14 @@ fun AnalysisApiTestGroup.generateAnalysisApiTests() {
             model(data, "singleByPsi", excludeDirsRecursively = excludeDirs)
         }
 
-        test<AbstractResolveCallTest>(init = singleByPsiInit)
-        test<AbstractResolveCandidatesTest>(init = singleByPsiInit)
-        test<AbstractResolveSymbolTest>(init = singleByPsiInit)
+        test<AbstractResolveSingleByPsiTest>(init = singleByPsiInit)
 
         group(filter = testModuleKindIs(TestModuleKind.SourceLike)) {
             val allByPsiInit: TestGroup.TestClass.(data: AnalysisApiTestConfiguratorFactoryData) -> Unit = { data ->
                 model(data, "allByPsi")
             }
 
-            test<AbstractResolveCallByFileTest>(init = allByPsiInit)
-            test<AbstractResolveCandidatesByFileTest>(init = allByPsiInit)
-            test<AbstractResolveSymbolByFileTest>(init = allByPsiInit)
+            test<AbstractResolveAllByPsiTest>(init = allByPsiInit)
 
             test<AbstractResolveSymbolWithResolveExtensionTest> {
                 model(it, "resolveExtensions")

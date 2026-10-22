@@ -22,9 +22,22 @@ import org.jetbrains.kotlin.test.services.assertions
  * The test supports multiple modules each with a main file. When we have multiple test files in total, the test output contains a separate
  * section for each file/module pair, with the output for each file indented under a header. For a single test file, neither a header nor
  * the indentation are generated.
+ *
+ * The test may check several [resolveKinds] at once. The elements to resolve are collected once, and the output of each kind is checked
+ * against its own `<id>.txt` file (see [ResolveKind.id]).
  */
 abstract class AbstractResolveTest<T> : AbstractAnalysisApiBasedTest() {
-    protected abstract val resolveKind: String
+    /**
+     * @property id The name of the output file (`<id>.txt`) and the value of the `IGNORE_STABILITY` directive that suppresses stability
+     * failures of this kind.
+     */
+    protected enum class ResolveKind(val id: String) {
+        CALL("call"),
+        CANDIDATES("candidates"),
+        SYMBOL("symbol"),
+    }
+
+    protected abstract val resolveKinds: List<ResolveKind>
 
     override val additionalDirectives: List<DirectivesContainer>
         get() = super.additionalDirectives + listOf(Directives)
@@ -51,21 +64,6 @@ abstract class AbstractResolveTest<T> : AbstractAnalysisApiBasedTest() {
 
         require(fileResolutionTargets.isNotEmpty()) { "Expected at least one target file with at least one target element." }
 
-        val actual = prettyPrint {
-            if (fileResolutionTargets.size == 1) {
-                printFileResolutionOutput(fileResolutionTargets.single(), testServices)
-            } else {
-                printCollection(fileResolutionTargets, separator = "\n\n") { target ->
-                    appendLine("${target.module.testModule.name} - ${target.file.name}:")
-                    withIndent {
-                        printFileResolutionOutput(target, testServices)
-                    }
-                }
-            }
-        }
-
-        testServices.assertions.assertEqualsToTestOutputFile(actual, extension = "$resolveKind.txt")
-
         val lastTestModule = modules.last().testModule
         val directives = ComposedRegisteredDirectives(
             // Use the last file to avoid offsets changes
@@ -75,7 +73,39 @@ abstract class AbstractResolveTest<T> : AbstractAnalysisApiBasedTest() {
             lastTestModule.directives,
         )
 
-        checkSuppressedExceptions(directives, testServices)
+        val checks = resolveKinds.map { resolveKind ->
+            { checkResolveKind(resolveKind, fileResolutionTargets, directives, testServices) }
+        }
+
+        if (checks.size == 1) {
+            checks.single().invoke()
+        } else {
+            testServices.assertions.assertAll(checks)
+        }
+    }
+
+    private fun checkResolveKind(
+        resolveKind: ResolveKind,
+        fileResolutionTargets: List<FileResolutionTarget<T>>,
+        directives: RegisteredDirectives,
+        testServices: TestServices,
+    ) {
+        suppressedStabilityExceptions.clear()
+        val actual = prettyPrint {
+            if (fileResolutionTargets.size == 1) {
+                printFileResolutionOutput(resolveKind, fileResolutionTargets.single(), testServices)
+            } else {
+                printCollection(fileResolutionTargets, separator = "\n\n") { target ->
+                    appendLine("${target.module.testModule.name} - ${target.file.name}:")
+                    withIndent {
+                        printFileResolutionOutput(resolveKind, target, testServices)
+                    }
+                }
+            }
+        }
+
+        testServices.assertions.assertEqualsToTestOutputFile(actual, extension = "${resolveKind.id}.txt")
+        checkSuppressedExceptions(resolveKind, directives, testServices)
     }
 
     private class FileResolutionTarget<T>(
@@ -84,7 +114,11 @@ abstract class AbstractResolveTest<T> : AbstractAnalysisApiBasedTest() {
         val module: KtTestModule,
     )
 
-    private fun PrettyPrinter.printFileResolutionOutput(fileResolutionTarget: FileResolutionTarget<T>, testServices: TestServices) {
+    private fun PrettyPrinter.printFileResolutionOutput(
+        resolveKind: ResolveKind,
+        fileResolutionTarget: FileResolutionTarget<T>,
+        testServices: TestServices,
+    ) {
         val elementsByMarker = fileResolutionTarget.targetElements.groupBy { it.marker }
 
         printMap(
@@ -114,6 +148,7 @@ abstract class AbstractResolveTest<T> : AbstractAnalysisApiBasedTest() {
             ) { context, byMarkerAndContext ->
                 printCollection(byMarkerAndContext, separator = "\n\n") { contextTestCase ->
                     val output = generateResolveOutput(
+                        resolveKind,
                         contextTestCase,
                         fileResolutionTarget.file,
                         fileResolutionTarget.module,
@@ -163,6 +198,7 @@ abstract class AbstractResolveTest<T> : AbstractAnalysisApiBasedTest() {
     ): Collection<ResolveTestCaseContext<T>>
 
     protected abstract fun generateResolveOutput(
+        resolveKind: ResolveKind,
         context: ResolveTestCaseContext<T>,
         file: KtFile,
         module: KtTestModule,
@@ -186,18 +222,22 @@ abstract class AbstractResolveTest<T> : AbstractAnalysisApiBasedTest() {
         return Directives.IGNORE_STABILITY.takeIf { it in this }
     }
 
+    /**
+     * Stability failures of the resolve kind being checked. They are collected separately for each kind, since `IGNORE_STABILITY` may be
+     * limited to some kinds.
+     */
     private val suppressedStabilityExceptions: MutableList<Throwable> = mutableListOf()
 
-    protected fun ignoreStabilityIfNeeded(body: () -> Unit): Unit = try {
+    internal fun ignoreStabilityIfNeeded(body: () -> Unit): Unit = try {
         body()
     } catch (e: Throwable) {
         suppressedStabilityExceptions += e
     }
 
-    private fun checkSuppressedExceptions(directives: RegisteredDirectives, testServices: TestServices) {
+    private fun checkSuppressedExceptions(resolveKind: ResolveKind, directives: RegisteredDirectives, testServices: TestServices) {
         val directive = directives.doNotCheckSymbolRestoreDirective()
         val isStabilitySuppressed = directive != null && directives[directive].let { values ->
-            values.isEmpty() || values.any { it == resolveKind }
+            values.isEmpty() || values.any { it == resolveKind.id }
         }
 
         if (isStabilitySuppressed) {
