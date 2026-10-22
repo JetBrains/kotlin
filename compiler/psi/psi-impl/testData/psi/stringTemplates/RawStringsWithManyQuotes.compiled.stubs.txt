@@ -4,7 +4,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=RawStringsWithManyQuotesKt]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   FUNCTION[fqName=foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
-    origin: Facade(className=RawStringsWithManyQuotesKt, jvmClassName=null)
+    origin: Facade(className=RawStringsWithManyQuotesKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
     TYPE_REFERENCE

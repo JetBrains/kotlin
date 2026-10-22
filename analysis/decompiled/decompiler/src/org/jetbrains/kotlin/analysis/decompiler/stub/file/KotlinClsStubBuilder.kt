@@ -103,12 +103,22 @@ object KotlinClsStubBuilder : ClsStubBuilder() {
                     return null
                 }
 
-                val context = components.createContext(nameResolver, packageFqName, TypeTable(classProto.typeTable))
+                val context = components.createContext(
+                    nameResolver,
+                    packageFqName,
+                    TypeTable(classProto.typeTable),
+                    packagePartClassFileMajorVersion = null,
+                )
                 createTopLevelClassStub(classId, classProto, KotlinJvmBinarySourceElement(kotlinClass), context, header.isScript)
             }
             KotlinClassHeader.Kind.FILE_FACADE, KotlinClassHeader.Kind.MULTIFILE_CLASS_PART -> {
                 val [nameResolver, packageProto] = JvmProtoBufUtil.readPackageDataFrom(annotationData, strings)
-                val context = components.createContext(nameResolver, packageFqName, TypeTable(packageProto.typeTable))
+                val context = components.createContext(
+                    nameResolver,
+                    packageFqName,
+                    TypeTable(packageProto.typeTable),
+                    packagePartClassFileMajorVersion = kotlinClass.classFileMajorVersion,
+                )
                 val facadeFqName = packageFqName.child(classId.shortClassName)
                 createFileFacadeStub(
                     packageFqName = packageFqName,

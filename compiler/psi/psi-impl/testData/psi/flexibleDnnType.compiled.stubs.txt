@@ -2,6 +2,7 @@ FILE[kind=File[packageFqName=<root>]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   CLASS[classId=/FlexibleDnnType, fqName=FlexibleDnnType, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=FlexibleDnnType, superNames=[]]
+    classFileMajorVersion: <current_major_version>
     MODIFIER_LIST[public abstract]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=T]

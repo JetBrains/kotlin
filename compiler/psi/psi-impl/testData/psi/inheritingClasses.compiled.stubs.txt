@@ -3,12 +3,14 @@ FILE[kind=File[packageFqName=a]]
     REFERENCE_EXPRESSION[referencedName=a]
   IMPORT_LIST
   CLASS[classId=a/InheritingClasses, fqName=a.InheritingClasses, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=InheritingClasses, superNames=[]]
+    classFileMajorVersion: <current_major_version>
     MODIFIER_LIST[public final]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=InheritingClasses]
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
     CLASS_BODY
       CLASS[classId=a/InheritingClasses.A, fqName=a.InheritingClasses.A, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=A, superNames=[C]]
+        classFileMajorVersion: <current_major_version>
         MODIFIER_LIST[public abstract]
         PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=A]
           MODIFIER_LIST[public]
@@ -76,6 +78,7 @@ FILE[kind=File[packageFqName=a]]
                 REFERENCE_EXPRESSION[referencedName=Int]
                   isClassRef: true
       CLASS[classId=a/InheritingClasses.B, fqName=a.InheritingClasses.B, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=B, superNames=[A]]
+        classFileMajorVersion: <current_major_version>
         MODIFIER_LIST[public open]
         PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=B]
           MODIFIER_LIST[public]
@@ -127,6 +130,7 @@ FILE[kind=File[packageFqName=a]]
                 REFERENCE_EXPRESSION[referencedName=Int]
                   isClassRef: true
       CLASS[classId=a/InheritingClasses.C, fqName=a.InheritingClasses.C, isClsStubCompiledToJvmDefaultImplementation=true, isInterface=true, isTopLevel=false, name=C, superNames=[]]
+        classFileMajorVersion: <current_major_version>
         MODIFIER_LIST[public]
         CLASS_BODY
           PROPERTY[fqName=a.InheritingClasses.C.c, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c]
@@ -138,6 +142,7 @@ FILE[kind=File[packageFqName=a]]
                 REFERENCE_EXPRESSION[referencedName=Int]
                   isClassRef: true
       CLASS[classId=a/InheritingClasses.D, fqName=a.InheritingClasses.D, isClsStubCompiledToJvmDefaultImplementation=true, isInterface=true, isTopLevel=false, name=D, superNames=[C]]
+        classFileMajorVersion: <current_major_version>
         MODIFIER_LIST[public]
         TYPE_PARAMETER_LIST
           TYPE_PARAMETER[fqName=null, name=T]
@@ -162,9 +167,11 @@ FILE[kind=File[packageFqName=a]]
                 REFERENCE_EXPRESSION[referencedName=Int]
                   isClassRef: true
       CLASS[classId=a/InheritingClasses.E, fqName=a.InheritingClasses.E, isClsStubCompiledToJvmDefaultImplementation=true, isInterface=true, isTopLevel=false, name=E, superNames=[]]
+        classFileMajorVersion: <current_major_version>
         MODIFIER_LIST[public]
         CLASS_BODY
       CLASS[classId=a/InheritingClasses.G, fqName=a.InheritingClasses.G, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=G, superNames=[B, C, D, E]]
+        classFileMajorVersion: <current_major_version>
         MODIFIER_LIST[public final]
         PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=G]
           MODIFIER_LIST[public]
@@ -220,30 +227,36 @@ FILE[kind=File[packageFqName=a]]
                   isClassRef: true
         CLASS_BODY
       CLASS[classId=a/InheritingClasses.InheritAny, fqName=a.InheritingClasses.InheritAny, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=InheritAny, superNames=[]]
+        classFileMajorVersion: <current_major_version>
         MODIFIER_LIST[public final]
         PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=InheritAny]
           MODIFIER_LIST[public]
           VALUE_PARAMETER_LIST
         CLASS_BODY
           CLASS[classId=a/InheritingClasses.InheritAny.SomeTrait, fqName=a.InheritingClasses.InheritAny.SomeTrait, isClsStubCompiledToJvmDefaultImplementation=true, isInterface=true, isTopLevel=false, name=SomeTrait, superNames=[]]
+            classFileMajorVersion: <current_major_version>
             MODIFIER_LIST[public]
             CLASS_BODY
           CLASS[classId=a/InheritingClasses.InheritAny.SomeTrait2, fqName=a.InheritingClasses.InheritAny.SomeTrait2, isClsStubCompiledToJvmDefaultImplementation=true, isInterface=true, isTopLevel=false, name=SomeTrait2, superNames=[]]
+            classFileMajorVersion: <current_major_version>
             MODIFIER_LIST[public]
             CLASS_BODY
           CLASS[classId=a/InheritingClasses.InheritAny.ImplicitAny, fqName=a.InheritingClasses.InheritAny.ImplicitAny, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=ImplicitAny, superNames=[]]
+            classFileMajorVersion: <current_major_version>
             MODIFIER_LIST[public final]
             PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=ImplicitAny]
               MODIFIER_LIST[public]
               VALUE_PARAMETER_LIST
             CLASS_BODY
           CLASS[classId=a/InheritingClasses.InheritAny.ExplicitAny, fqName=a.InheritingClasses.InheritAny.ExplicitAny, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=ExplicitAny, superNames=[]]
+            classFileMajorVersion: <current_major_version>
             MODIFIER_LIST[public final]
             PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=ExplicitAny]
               MODIFIER_LIST[public]
               VALUE_PARAMETER_LIST
             CLASS_BODY
           CLASS[classId=a/InheritingClasses.InheritAny.OnlyTrait, fqName=a.InheritingClasses.InheritAny.OnlyTrait, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=OnlyTrait, superNames=[SomeTrait]]
+            classFileMajorVersion: <current_major_version>
             MODIFIER_LIST[public final]
             PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=OnlyTrait]
               MODIFIER_LIST[public]
@@ -264,6 +277,7 @@ FILE[kind=File[packageFqName=a]]
                       isClassRef: true
             CLASS_BODY
           CLASS[classId=a/InheritingClasses.InheritAny.OnlyTraits, fqName=a.InheritingClasses.InheritAny.OnlyTraits, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=OnlyTraits, superNames=[SomeTrait, SomeTrait2]]
+            classFileMajorVersion: <current_major_version>
             MODIFIER_LIST[public final]
             PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=OnlyTraits]
               MODIFIER_LIST[public]
@@ -297,6 +311,7 @@ FILE[kind=File[packageFqName=a]]
                       isClassRef: true
             CLASS_BODY
           CLASS[classId=a/InheritingClasses.InheritAny.TraitWithExplicitAny, fqName=a.InheritingClasses.InheritAny.TraitWithExplicitAny, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=TraitWithExplicitAny, superNames=[Any, SomeTrait]]
+            classFileMajorVersion: <current_major_version>
             MODIFIER_LIST[public final]
             PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=TraitWithExplicitAny]
               MODIFIER_LIST[public]
@@ -324,6 +339,7 @@ FILE[kind=File[packageFqName=a]]
                       isClassRef: true
             CLASS_BODY
           CLASS[classId=a/InheritingClasses.InheritAny.TraitsWithExplicitAny, fqName=a.InheritingClasses.InheritAny.TraitsWithExplicitAny, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=TraitsWithExplicitAny, superNames=[SomeTrait2, Any, SomeTrait]]
+            classFileMajorVersion: <current_major_version>
             MODIFIER_LIST[public final]
             PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=TraitsWithExplicitAny]
               MODIFIER_LIST[public]
@@ -364,6 +380,7 @@ FILE[kind=File[packageFqName=a]]
                       isClassRef: true
             CLASS_BODY
       CLASS[classId=a/InheritingClasses.InheritFunctionType, fqName=a.InheritingClasses.InheritFunctionType, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=InheritFunctionType, superNames=[]]
+        classFileMajorVersion: <current_major_version>
         MODIFIER_LIST[public abstract]
         PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=InheritFunctionType]
           MODIFIER_LIST[public]

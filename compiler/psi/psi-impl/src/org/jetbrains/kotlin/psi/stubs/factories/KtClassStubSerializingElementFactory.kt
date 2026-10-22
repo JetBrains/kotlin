@@ -18,8 +18,10 @@ import org.jetbrains.kotlin.psi.psiUtil.safeFqNameForLazyResolve
 import org.jetbrains.kotlin.psi.stubs.StubUtils.createClassId
 import org.jetbrains.kotlin.psi.stubs.StubUtils.deserializeClassId
 import org.jetbrains.kotlin.psi.stubs.StubUtils.deserializeKdocText
+import org.jetbrains.kotlin.psi.stubs.StubUtils.readNullableNonNegativeVarInt
 import org.jetbrains.kotlin.psi.stubs.StubUtils.serializeClassId
 import org.jetbrains.kotlin.psi.stubs.StubUtils.serializeKdocText
+import org.jetbrains.kotlin.psi.stubs.StubUtils.writeNullableNonNegativeVarInt
 import org.jetbrains.kotlin.psi.stubs.elements.StubIndexService
 import org.jetbrains.kotlin.psi.stubs.elements.deserializeValueClassRepresentation
 import org.jetbrains.kotlin.psi.stubs.elements.serializeValueClassRepresentation
@@ -56,6 +58,7 @@ internal object KtClassStubSerializingElementFactory :
             isTopLevel = isTopLevel,
             kdocText = null,
             valueClassRepresentation = null,
+            classFileMajorVersion = null,
         )
     }
 
@@ -77,6 +80,7 @@ internal object KtClassStubSerializingElementFactory :
         }
 
         serializeValueClassRepresentation(dataStream, stub.valueClassRepresentation)
+        dataStream.writeNullableNonNegativeVarInt(stub.classFileMajorVersion)
     }
 
     override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>?): KotlinClassStubImpl {
@@ -97,6 +101,7 @@ internal object KtClassStubSerializingElementFactory :
         }
 
         val valueClassRepresentation = deserializeValueClassRepresentation(dataStream)
+        val classFileMajorVersion = dataStream.readNullableNonNegativeVarInt()
 
         return KotlinClassStubImpl(
             parent = parentStub,
@@ -109,6 +114,7 @@ internal object KtClassStubSerializingElementFactory :
             isTopLevel = isTopLevel,
             kdocText = kdocText,
             valueClassRepresentation = valueClassRepresentation,
+            classFileMajorVersion = classFileMajorVersion,
         )
     }
 

@@ -5,7 +5,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=WithInfixFunctionKt]]
   IMPORT_LIST
   FUNCTION[fqName=shl, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=true, name=shl]
     contract: [ effect:param(-1) != null -> Returns(NOT_NULL) ]
-    origin: Facade(className=WithInfixFunctionKt, jvmClassName=null)
+    origin: Facade(className=WithInfixFunctionKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
     MODIFIER_LIST[public infix]
     TYPE_REFERENCE
       NULLABLE_TYPE

@@ -5,7 +5,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=InapplicableKt]]
   IMPORT_LIST
   FUNCTION[fqName=wrongFalse, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=wrongFalse]
     contract: [ effect:Returns(FALSE) -> param(0) != null ]
-    origin: Facade(className=InapplicableKt, jvmClassName=null)
+    origin: Facade(className=InapplicableKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
@@ -24,7 +24,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=InapplicableKt]]
           isClassRef: true
   FUNCTION[fqName=wrongTrue, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=wrongTrue]
     contract: [ effect:Returns(TRUE) -> param(0) != null ]
-    origin: Facade(className=InapplicableKt, jvmClassName=null)
+    origin: Facade(className=InapplicableKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
@@ -42,7 +42,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=InapplicableKt]]
         REFERENCE_EXPRESSION[referencedName=Boolean]
           isClassRef: true
   FUNCTION[fqName=nullableConstant, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=nullableConstant]
-    origin: Facade(className=InapplicableKt, jvmClassName=null)
+    origin: Facade(className=InapplicableKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
@@ -61,7 +61,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=InapplicableKt]]
           REFERENCE_EXPRESSION[referencedName=Any]
             isClassRef: true
   FUNCTION[fqName=string, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=string]
-    origin: Facade(className=InapplicableKt, jvmClassName=null)
+    origin: Facade(className=InapplicableKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
     TYPE_REFERENCE
@@ -71,7 +71,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=InapplicableKt]]
         REFERENCE_EXPRESSION[referencedName=String]
           isClassRef: true
   FUNCTION[fqName=nullableReturn, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=nullableReturn]
-    origin: Facade(className=InapplicableKt, jvmClassName=null)
+    origin: Facade(className=InapplicableKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
@@ -91,7 +91,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=InapplicableKt]]
             isClassRef: true
   FUNCTION[fqName=returnsNull, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=returnsNull]
     contract: [ effect:Returns(NOT_NULL) -> param(0) != null ]
-    origin: Facade(className=InapplicableKt, jvmClassName=null)
+    origin: Facade(className=InapplicableKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
@@ -111,7 +111,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=InapplicableKt]]
             isClassRef: true
   FUNCTION[fqName=wrongReturnType, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=wrongReturnType]
     contract: [ effect:Returns(TRUE) -> param(0) != null ]
-    origin: Facade(className=InapplicableKt, jvmClassName=null)
+    origin: Facade(className=InapplicableKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]

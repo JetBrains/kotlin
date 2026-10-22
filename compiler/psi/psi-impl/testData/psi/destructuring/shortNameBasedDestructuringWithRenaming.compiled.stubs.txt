@@ -3,6 +3,7 @@ Box.class:
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/Box, fqName=Box, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Box, superNames=[]]
+      classFileMajorVersion: <current_major_version>
       MODIFIER_LIST[public final data]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Box]
         MODIFIER_LIST[public]
@@ -91,7 +92,7 @@ ShortNameBasedDestructuringWithRenamingKt.class:
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     FUNCTION[fqName=declaration, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=declaration]
-      origin: Facade(className=ShortNameBasedDestructuringWithRenamingKt, jvmClassName=null)
+      origin: Facade(className=ShortNameBasedDestructuringWithRenamingKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
@@ -106,7 +107,7 @@ ShortNameBasedDestructuringWithRenamingKt.class:
           REFERENCE_EXPRESSION[referencedName=Unit]
             isClassRef: true
     FUNCTION[fqName=loop, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=loop]
-      origin: Facade(className=ShortNameBasedDestructuringWithRenamingKt, jvmClassName=null)
+      origin: Facade(className=ShortNameBasedDestructuringWithRenamingKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
@@ -131,7 +132,7 @@ ShortNameBasedDestructuringWithRenamingKt.class:
           REFERENCE_EXPRESSION[referencedName=Unit]
             isClassRef: true
     FUNCTION[fqName=lambda, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=lambda]
-      origin: Facade(className=ShortNameBasedDestructuringWithRenamingKt, jvmClassName=null)
+      origin: Facade(className=ShortNameBasedDestructuringWithRenamingKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
       TYPE_REFERENCE

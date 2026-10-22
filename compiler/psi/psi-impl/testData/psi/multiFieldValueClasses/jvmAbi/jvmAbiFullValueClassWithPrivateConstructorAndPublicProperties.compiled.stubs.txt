@@ -2,12 +2,14 @@ FILE[kind=File[packageFqName=<root>]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   CLASS[classId=/ThreadLocalDelegate, fqName=ThreadLocalDelegate, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=ThreadLocalDelegate, superNames=[]]
+    classFileMajorVersion: <current_major_version>
     valueClassRepresentation: full [ ]
     MODIFIER_LIST[public final value]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=T]
     CLASS_BODY
       OBJECT_DECLARATION[classId=/ThreadLocalDelegate.Companion, fqName=ThreadLocalDelegate.Companion, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+        classFileMajorVersion: <current_major_version>
         MODIFIER_LIST[public companion]
         CLASS_BODY
           FUNCTION[fqName=ThreadLocalDelegate.Companion.create, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=create]

@@ -4,6 +4,7 @@ MyBuilder.class:
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST
     CLASS[classId=test/MyBuilder, fqName=test.MyBuilder, isClsStubCompiledToJvmDefaultImplementation=true, isInterface=true, isTopLevel=true, name=MyBuilder, superNames=[]]
+      classFileMajorVersion: <current_major_version>
       MODIFIER_LIST[public]
       CLASS_BODY
         PROPERTY[fqName=test.MyBuilder.name, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=name]
@@ -22,6 +23,7 @@ VarargArgumentWithFunctionalType.class:
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST
     CLASS[classId=test/VarargArgumentWithFunctionalType, fqName=test.VarargArgumentWithFunctionalType, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=VarargArgumentWithFunctionalType, superNames=[]]
+      classFileMajorVersion: <current_major_version>
       MODIFIER_LIST[public final]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=VarargArgumentWithFunctionalType]
         MODIFIER_LIST[public]

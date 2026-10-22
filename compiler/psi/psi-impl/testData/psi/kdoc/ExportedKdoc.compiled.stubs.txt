@@ -3,6 +3,7 @@ Anno.class:
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/Anno, fqName=Anno, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Anno, superNames=[Annotation]]
+      classFileMajorVersion: <current_major_version>
       MODIFIER_LIST[public final annotation]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Anno]
         MODIFIER_LIST[public]
@@ -23,6 +24,7 @@ Direction.class:
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/Direction, fqName=Direction, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Direction, superNames=[Enum]]
+      classFileMajorVersion: <current_major_version>
       MODIFIER_LIST[public final enum]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Direction]
         MODIFIER_LIST[private]
@@ -52,7 +54,7 @@ ExportedKdocKt.class:
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     PROPERTY[fqName=topLevelProp, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=topLevelProp]
-      origin: Facade(className=ExportedKdocKt, jvmClassName=null)
+      origin: Facade(className=ExportedKdocKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       TYPE_REFERENCE
         USER_TYPE
@@ -64,7 +66,7 @@ ExportedKdocKt.class:
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
     PROPERTY[fqName=topLevelVar, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=true, name=topLevelVar]
-      origin: Facade(className=ExportedKdocKt, jvmClassName=null)
+      origin: Facade(className=ExportedKdocKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       TYPE_REFERENCE
         USER_TYPE
@@ -73,7 +75,7 @@ ExportedKdocKt.class:
           REFERENCE_EXPRESSION[referencedName=Int]
             isClassRef: true
     FUNCTION[fqName=bar, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=bar]
-      origin: Facade(className=ExportedKdocKt, jvmClassName=null)
+      origin: Facade(className=ExportedKdocKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=number]
@@ -104,6 +106,7 @@ Foo.class:
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/Foo, fqName=Foo, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Foo, superNames=[]]
+      classFileMajorVersion: <current_major_version>
       MODIFIER_LIST[public final]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Foo]
         MODIFIER_LIST[public]
@@ -117,6 +120,7 @@ Foo.class:
                   isClassRef: true
       CLASS_BODY
         OBJECT_DECLARATION[classId=/Foo.Companion, fqName=Foo.Companion, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+          classFileMajorVersion: <current_major_version>
           MODIFIER_LIST[public companion]
           CLASS_BODY
         SECONDARY_CONSTRUCTOR[fqName=null, hasBody=true, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Foo]
@@ -161,5 +165,6 @@ Obj.class:
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     OBJECT_DECLARATION[classId=/Obj, fqName=Obj, isObjectLiteral=false, isTopLevel=true, name=Obj, superNames=[]]
+      classFileMajorVersion: <current_major_version>
       MODIFIER_LIST[public]
       CLASS_BODY

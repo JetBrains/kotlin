@@ -3,6 +3,7 @@ PairList.class:
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/PairList, fqName=PairList, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=PairList, superNames=[]]
+      classFileMajorVersion: <current_major_version>
       MODIFIER_LIST[public final]
       TYPE_PARAMETER_LIST
         TYPE_PARAMETER[fqName=null, name=T]
@@ -51,7 +52,7 @@ WithDestructuringDeclarationKt.class:
     IMPORT_LIST
     FUNCTION[fqName=component1, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=true, isTopLevel=true, mayHaveContract=true, name=component1]
       contract: [ effect:param(-1) != null -> Returns(NOT_NULL) ]
-      origin: Facade(className=WithDestructuringDeclarationKt, jvmClassName=null)
+      origin: Facade(className=WithDestructuringDeclarationKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public operator]
       TYPE_PARAMETER_LIST
         TYPE_PARAMETER[fqName=null, name=T]

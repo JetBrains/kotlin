@@ -3,6 +3,7 @@ Aliased.class:
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/Aliased, fqName=Aliased, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Aliased, superNames=[Base]]
+      classFileMajorVersion: <current_major_version>
       MODIFIER_LIST[public final]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Aliased]
         MODIFIER_LIST[public]
@@ -39,6 +40,7 @@ Base.class:
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/Base, fqName=Base, isClsStubCompiledToJvmDefaultImplementation=true, isInterface=true, isTopLevel=true, name=Base, superNames=[]]
+      classFileMajorVersion: <current_major_version>
       MODIFIER_LIST[public]
       CLASS_BODY
         FUNCTION[fqName=Base.equals, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=equals]
@@ -66,6 +68,7 @@ Data.class:
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/Data, fqName=Data, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Data, superNames=[]]
+      classFileMajorVersion: <current_major_version>
       MODIFIER_LIST[public final data]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Data]
         MODIFIER_LIST[public]
@@ -167,6 +170,7 @@ Generic.class:
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/Generic, fqName=Generic, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Generic, superNames=[]]
+      classFileMajorVersion: <current_major_version>
       MODIFIER_LIST[public final]
       TYPE_PARAMETER_LIST
         TYPE_PARAMETER[fqName=null, name=T]
@@ -199,6 +203,7 @@ Inherited.class:
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/Inherited, fqName=Inherited, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Inherited, superNames=[Base]]
+      classFileMajorVersion: <current_major_version>
       MODIFIER_LIST[public final]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Inherited]
         MODIFIER_LIST[public]

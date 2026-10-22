@@ -24,7 +24,12 @@ class KotlinObjectStubImpl(
     private val superNameRefs: Array<StringRef>,
     override val isTopLevel: Boolean,
     override val isObjectLiteral: Boolean,
-    override val kdocText: String?
+    override val kdocText: String?,
+    /**
+     * The major version of the JVM class file the declaration is compiled to.
+     * Only stubs built from class files have this information; it is always `null` for other stubs.
+     */
+    val classFileMajorVersion: Int?,
 ) : KotlinStubBaseImpl<KtObjectDeclaration>(parent, KtNodeTypes.OBJECT_DECLARATION), KotlinObjectStub {
     override fun getName(): String? = name?.string
     override val superNames: List<String>
@@ -40,6 +45,7 @@ class KotlinObjectStubImpl(
         isTopLevel = isTopLevel,
         isObjectLiteral = isObjectLiteral,
         kdocText = kdocText,
+        classFileMajorVersion = classFileMajorVersion,
     )
 
     @KtImplementationDetail
@@ -51,5 +57,6 @@ class KotlinObjectStubImpl(
                 other.isTopLevel == isTopLevel &&
                 other.isObjectLiteral == isObjectLiteral &&
                 other.kdocText == kdocText &&
+                other.classFileMajorVersion == classFileMajorVersion &&
                 other.superNameRefs.contentEquals(superNameRefs)
 }

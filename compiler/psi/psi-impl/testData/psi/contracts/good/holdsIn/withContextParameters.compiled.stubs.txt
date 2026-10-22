@@ -5,7 +5,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=WithContextParametersKt]]
   IMPORT_LIST
   FUNCTION[fqName=conditionInContext, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=conditionInContext]
     contract: [ effect:param(1) HoldsIn(param(0)) ]
-    origin: Facade(className=WithContextParametersKt, jvmClassName=null)
+    origin: Facade(className=WithContextParametersKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
     MODIFIER_LIST[public inline]
       CONTEXT_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
@@ -34,7 +34,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=WithContextParametersKt]]
           isClassRef: true
   FUNCTION[fqName=lambdaInContext, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=lambdaInContext]
     contract: [ effect:param(0) HoldsIn(param(1)) ]
-    origin: Facade(className=WithContextParametersKt, jvmClassName=null)
+    origin: Facade(className=WithContextParametersKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
     MODIFIER_LIST[public inline]
       CONTEXT_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]

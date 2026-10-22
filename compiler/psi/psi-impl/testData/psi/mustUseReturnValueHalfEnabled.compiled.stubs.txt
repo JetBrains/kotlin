@@ -3,6 +3,7 @@ Marked.class:
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/Marked, fqName=Marked, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Marked, superNames=[]]
+      classFileMajorVersion: <current_major_version>
       MODIFIER_LIST[public final]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=MustUseReturnValues]
           valueArguments: [ ]
@@ -74,7 +75,7 @@ MarkedTopLevelKt.class:
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     PROPERTY[fqName=markedTopProperty, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=markedTopProperty]
-      origin: Facade(className=MarkedTopLevelKt, jvmClassName=null)
+      origin: Facade(className=MarkedTopLevelKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public MustUseReturnValue]
       TYPE_REFERENCE
         USER_TYPE
@@ -86,7 +87,7 @@ MarkedTopLevelKt.class:
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
     FUNCTION[fqName=markedTopFunction, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=markedTopFunction]
-      origin: Facade(className=MarkedTopLevelKt, jvmClassName=null)
+      origin: Facade(className=MarkedTopLevelKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public MustUseReturnValue]
       VALUE_PARAMETER_LIST
       TYPE_REFERENCE
@@ -102,6 +103,7 @@ MyEnum.class:
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/MyEnum, fqName=MyEnum, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=MyEnum, superNames=[Enum]]
+      classFileMajorVersion: <current_major_version>
       MODIFIER_LIST[public final enum]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=MyEnum]
         MODIFIER_LIST[private]
@@ -139,6 +141,7 @@ Unmarked.class:
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/Unmarked, fqName=Unmarked, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Unmarked, superNames=[]]
+      classFileMajorVersion: <current_major_version>
       MODIFIER_LIST[public final]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Unmarked]
         MODIFIER_LIST[public]
@@ -201,7 +204,7 @@ UnmarkedTopLevelKt.class:
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     PROPERTY[fqName=unmarkedTopProperty, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=unmarkedTopProperty]
-      origin: Facade(className=UnmarkedTopLevelKt, jvmClassName=null)
+      origin: Facade(className=UnmarkedTopLevelKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       TYPE_REFERENCE
         USER_TYPE
@@ -213,7 +216,7 @@ UnmarkedTopLevelKt.class:
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
     FUNCTION[fqName=unmarkedTopFunction, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=unmarkedTopFunction]
-      origin: Facade(className=UnmarkedTopLevelKt, jvmClassName=null)
+      origin: Facade(className=UnmarkedTopLevelKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
       TYPE_REFERENCE
@@ -223,7 +226,7 @@ UnmarkedTopLevelKt.class:
           REFERENCE_EXPRESSION[referencedName=String]
             isClassRef: true
     FUNCTION[fqName=ignorableTopLvl, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=ignorableTopLvl]
-      origin: Facade(className=UnmarkedTopLevelKt, jvmClassName=null)
+      origin: Facade(className=UnmarkedTopLevelKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public IgnorableReturnValue]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
           valueArguments: [ ]

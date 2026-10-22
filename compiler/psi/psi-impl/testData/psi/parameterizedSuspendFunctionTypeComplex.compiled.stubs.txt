@@ -5,7 +5,7 @@ FILE[kind=Facade[packageFqName=test, facadeFqName=test.ParameterizedSuspendFunct
     REFERENCE_EXPRESSION[referencedName=test]
   IMPORT_LIST
   PROPERTY[fqName=test.explicitInt, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=explicitInt]
-    origin: Facade(className=test/ParameterizedSuspendFunctionTypeComplexKt, jvmClassName=null)
+    origin: Facade(className=test/ParameterizedSuspendFunctionTypeComplexKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
     MODIFIER_LIST[public]
     TYPE_REFERENCE
       MODIFIER_LIST[suspend]
@@ -47,7 +47,7 @@ FILE[kind=Facade[packageFqName=test, facadeFqName=test.ParameterizedSuspendFunct
       MODIFIER_LIST[public final]
       VALUE_PARAMETER_LIST
   PROPERTY[fqName=test.explicitAny, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=explicitAny]
-    origin: Facade(className=test/ParameterizedSuspendFunctionTypeComplexKt, jvmClassName=null)
+    origin: Facade(className=test/ParameterizedSuspendFunctionTypeComplexKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
     MODIFIER_LIST[public]
     TYPE_REFERENCE
       MODIFIER_LIST[suspend]
@@ -91,7 +91,7 @@ FILE[kind=Facade[packageFqName=test, facadeFqName=test.ParameterizedSuspendFunct
       MODIFIER_LIST[public final]
       VALUE_PARAMETER_LIST
   PROPERTY[fqName=test.explicitStar, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=explicitStar]
-    origin: Facade(className=test/ParameterizedSuspendFunctionTypeComplexKt, jvmClassName=null)
+    origin: Facade(className=test/ParameterizedSuspendFunctionTypeComplexKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
     MODIFIER_LIST[public]
     TYPE_REFERENCE
       MODIFIER_LIST[suspend]

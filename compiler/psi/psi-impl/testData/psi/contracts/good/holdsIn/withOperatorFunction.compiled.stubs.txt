@@ -5,7 +5,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=WithOperatorFunctionKt]]
   IMPORT_LIST
   FUNCTION[fqName=invoke, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=true, name=invoke]
     contract: [ effect:param(-1) HoldsIn(param(0)) ]
-    origin: Facade(className=WithOperatorFunctionKt, jvmClassName=null)
+    origin: Facade(className=WithOperatorFunctionKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
     MODIFIER_LIST[public inline operator]
     TYPE_REFERENCE
       USER_TYPE

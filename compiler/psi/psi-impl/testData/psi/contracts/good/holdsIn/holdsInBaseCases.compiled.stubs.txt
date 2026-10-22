@@ -5,7 +5,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=HoldsInBaseCasesKt]]
   IMPORT_LIST
   FUNCTION[fqName=runIf, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=true, name=runIf]
     contract: [ effect:param(0) HoldsIn(param(1)) ]
-    origin: Facade(className=HoldsInBaseCasesKt, jvmClassName=null)
+    origin: Facade(className=HoldsInBaseCasesKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
     MODIFIER_LIST[public inline]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=R]
@@ -32,7 +32,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=HoldsInBaseCasesKt]]
             isClassRef: true
   FUNCTION[fqName=runIfNot, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=true, name=runIfNot]
     contract: [ effect:param(0) HoldsIn(param(1)) ]
-    origin: Facade(className=HoldsInBaseCasesKt, jvmClassName=null)
+    origin: Facade(className=HoldsInBaseCasesKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
     MODIFIER_LIST[public inline]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=R]
@@ -65,7 +65,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=HoldsInBaseCasesKt]]
       effect:CallsInPlace(param(2), UNKNOWN)
       effect:CallsInPlace(param(3), UNKNOWN)
     ]
-    origin: Facade(className=HoldsInBaseCasesKt, jvmClassName=null)
+    origin: Facade(className=HoldsInBaseCasesKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
     MODIFIER_LIST[public inline]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=R]

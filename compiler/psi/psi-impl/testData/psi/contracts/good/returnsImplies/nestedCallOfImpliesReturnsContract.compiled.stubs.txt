@@ -5,7 +5,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=NestedCallOfImpliesReturnsCo
   IMPORT_LIST
   FUNCTION[fqName=impliesReturn, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=impliesReturn]
     contract: [ effect:param(0) != null -> Returns(NOT_NULL) ]
-    origin: Facade(className=NestedCallOfImpliesReturnsContractKt, jvmClassName=null)
+    origin: Facade(className=NestedCallOfImpliesReturnsContractKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=encoded]
@@ -25,7 +25,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=NestedCallOfImpliesReturnsCo
             isClassRef: true
   FUNCTION[fqName=returnNotNullImplies, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=returnNotNullImplies]
     contract: [ effect:Returns(NOT_NULL) -> param(0) is KotlinClassTypeBean(classId=kotlin/String, arguments=[], nullable=false, abbreviatedType=null) ]
-    origin: Facade(className=NestedCallOfImpliesReturnsContractKt, jvmClassName=null)
+    origin: Facade(className=NestedCallOfImpliesReturnsContractKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]

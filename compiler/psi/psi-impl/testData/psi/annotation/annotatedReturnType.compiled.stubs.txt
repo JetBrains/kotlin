@@ -3,6 +3,7 @@ MyInterface.class:
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/MyInterface, fqName=MyInterface, isClsStubCompiledToJvmDefaultImplementation=true, isInterface=true, isTopLevel=true, name=MyInterface, superNames=[]]
+      classFileMajorVersion: <current_major_version>
       MODIFIER_LIST[public]
       CLASS_BODY
         PROPERTY[fqName=MyInterface.property, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=property]
@@ -82,6 +83,7 @@ RegularAnno.class:
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/RegularAnno, fqName=RegularAnno, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=RegularAnno, superNames=[Annotation]]
+      classFileMajorVersion: <current_major_version>
       MODIFIER_LIST[public final annotation]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=RegularAnno]
         MODIFIER_LIST[public]
@@ -102,6 +104,7 @@ TypeAnno.class:
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/TypeAnno, fqName=TypeAnno, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=TypeAnno, superNames=[Annotation]]
+      classFileMajorVersion: <current_major_version>
       MODIFIER_LIST[public final annotation]
         ANNOTATION_ENTRY[hasValueArguments=true, shortName=Target]
           valueArguments: [ allowedTargets -> [AnnotationTarget.TYPE] ]

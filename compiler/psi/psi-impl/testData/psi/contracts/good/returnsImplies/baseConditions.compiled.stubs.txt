@@ -5,7 +5,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=BaseConditionsKt]]
   IMPORT_LIST
   FUNCTION[fqName=decode, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=decode]
     contract: [ effect:param(0) != null -> Returns(NOT_NULL) ]
-    origin: Facade(className=BaseConditionsKt, jvmClassName=null)
+    origin: Facade(className=BaseConditionsKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=encoded]
@@ -25,7 +25,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=BaseConditionsKt]]
             isClassRef: true
   FUNCTION[fqName=decodeFake, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=decodeFake]
     contract: [ effect:param(0) == null -> Returns(NOT_NULL) ]
-    origin: Facade(className=BaseConditionsKt, jvmClassName=null)
+    origin: Facade(className=BaseConditionsKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=encoded]
@@ -45,7 +45,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=BaseConditionsKt]]
             isClassRef: true
   FUNCTION[fqName=decodeIfString, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=decodeIfString]
     contract: [ effect:param(0) is KotlinClassTypeBean(classId=kotlin/String, arguments=[], nullable=false, abbreviatedType=null) -> Returns(NOT_NULL) ]
-    origin: Facade(className=BaseConditionsKt, jvmClassName=null)
+    origin: Facade(className=BaseConditionsKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=encoded]
@@ -64,7 +64,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=BaseConditionsKt]]
             isClassRef: true
   FUNCTION[fqName=decodeNotNumber, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=decodeNotNumber]
     contract: [ effect:param(0) !is KotlinClassTypeBean(classId=kotlin/Number, arguments=[], nullable=false, abbreviatedType=null) -> Returns(NOT_NULL) ]
-    origin: Facade(className=BaseConditionsKt, jvmClassName=null)
+    origin: Facade(className=BaseConditionsKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=encoded]

@@ -8,7 +8,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=EqNotEqKt]]
       effect:Returns(TRUE) -> param(0) != null
       effect:Returns(FALSE) -> param(0) == null
     ]
-    origin: Facade(className=EqNotEqKt, jvmClassName=null)
+    origin: Facade(className=EqNotEqKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
@@ -27,7 +27,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=EqNotEqKt]]
           isClassRef: true
   FUNCTION[fqName=trickyRequireNotNull, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=trickyRequireNotNull]
     contract: [ effect:Returns(WILDCARD) -> param(0) != null ]
-    origin: Facade(className=EqNotEqKt, jvmClassName=null)
+    origin: Facade(className=EqNotEqKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]

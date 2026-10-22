@@ -3,6 +3,7 @@ PrivateValue.class:
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/PrivateValue, fqName=PrivateValue, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=PrivateValue, superNames=[]]
+      classFileMajorVersion: <current_major_version>
       valueClassRepresentation: inline [ underlying property -> kotlin.String ]
       MODIFIER_LIST[public final value]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=JvmInline]
@@ -77,6 +78,7 @@ PublicValue.class:
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/PublicValue, fqName=PublicValue, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=PublicValue, superNames=[]]
+      classFileMajorVersion: <current_major_version>
       valueClassRepresentation: inline [ underlying property -> kotlin.String ]
       MODIFIER_LIST[public final value]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=JvmInline]

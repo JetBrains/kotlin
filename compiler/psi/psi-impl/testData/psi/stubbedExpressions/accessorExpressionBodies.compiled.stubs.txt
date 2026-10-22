@@ -6,7 +6,7 @@ AccessorExpressionBodiesKt.class:
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST
     PROPERTY[fqName=test.getter, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=getter]
-      origin: Facade(className=test/AccessorExpressionBodiesKt, jvmClassName=null)
+      origin: Facade(className=test/AccessorExpressionBodiesKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       TYPE_REFERENCE
         USER_TYPE
@@ -18,7 +18,7 @@ AccessorExpressionBodiesKt.class:
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
     PROPERTY[fqName=test.inlineGetter, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=inlineGetter]
-      origin: Facade(className=test/AccessorExpressionBodiesKt, jvmClassName=null)
+      origin: Facade(className=test/AccessorExpressionBodiesKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       TYPE_REFERENCE
         USER_TYPE
@@ -30,7 +30,7 @@ AccessorExpressionBodiesKt.class:
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
     PROPERTY[fqName=test.withBothAccessors, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=true, name=withBothAccessors]
-      origin: Facade(className=test/AccessorExpressionBodiesKt, jvmClassName=null)
+      origin: Facade(className=test/AccessorExpressionBodiesKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       TYPE_REFERENCE
         USER_TYPE
@@ -59,6 +59,7 @@ WithMember.class:
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST
     CLASS[classId=test/WithMember, fqName=test.WithMember, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=WithMember, superNames=[]]
+      classFileMajorVersion: <current_major_version>
       MODIFIER_LIST[public final]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=WithMember]
         MODIFIER_LIST[public]
