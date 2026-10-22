@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ContextClassReceiver
 import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
+import org.jetbrains.kotlin.types.model.RigidTypeMarker
 import org.jetbrains.kotlin.utils.addToStdlib.flatMapToNullable
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
@@ -227,6 +228,45 @@ class DeserializedClassDescriptor(
         }
         return null
     }
+
+    private fun <T : RigidTypeMarker> ProtoBuf.Class.loadValueClassRepresentation(
+        tryLoadFullValueClass: Boolean,
+        nameResolver: NameResolver,
+        typeTable: TypeTable,
+        typeDeserializer: (ProtoBuf.Type) -> T,
+        typeOfPublicProperty: (Name) -> T?,
+    ): ValueClassRepresentation<T>? {
+        val hasJvmInline = annotationList.any {
+            val annotationId = nameResolver.getClassId(it.id)
+            annotationId.relativeClassName.asString() == "JvmInline" && annotationId.packageFqName.asString() == "kotlin.jvm"
+        }
+        if (!hasJvmInline && tryLoadFullValueClass && Flags.IS_VALUE_CLASS.get(flags) && !hasInlineClassUnderlyingPropertyName()) {
+            val modality = Flags.MODALITY.get(flags)
+            val isAbstractOrSealed = modality == ProtoBuf.Modality.ABSTRACT || modality == ProtoBuf.Modality.SEALED
+            val fields = if (isAbstractOrSealed) {
+                null
+            } else {
+                // jvm-abi-gen strips a private primary constructor, and its parameters aren't needed outside the class anyway.
+                val primaryConstructor = constructorList.singleOrNull { !Flags.IS_SECONDARY.get(it.flags) }
+                    ?: return FullValueClassRepresentation(emptyList())
+                primaryConstructor.valueParameterList.map {
+                    nameResolver.getName(it.name) to typeDeserializer(it.type(typeTable))
+                }
+            }
+            return FullValueClassRepresentation(fields)
+        }
+
+        if (hasInlineClassUnderlyingPropertyName()) {
+            val propertyName = nameResolver.getName(inlineClassUnderlyingPropertyName)
+            val propertyType = inlineClassUnderlyingType(typeTable)?.let(typeDeserializer)
+                ?: typeOfPublicProperty(propertyName)
+                ?: error("cannot determine underlying type for value class ${nameResolver.getName(fqName)} with property $propertyName")
+            return InlineClassRepresentation(propertyName, propertyType)
+        }
+
+        return null
+    }
+
 
     private fun getValueClassPropertyType(propertyName: Name): SimpleType? =
         memberScope.getContributedVariables(propertyName, NoLookupLocation.FROM_DESERIALIZATION)

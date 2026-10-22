@@ -7,7 +7,10 @@ package org.jetbrains.kotlin.fir.deserialization
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
+import org.jetbrains.kotlin.descriptors.FullValueClassRepresentation
+import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.ValueClassRepresentation
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
@@ -16,6 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusIm
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusWithLazyEffectiveVisibility
 import org.jetbrains.kotlin.fir.declarations.utils.addDeclarations
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
+import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
 import org.jetbrains.kotlin.fir.declarations.utils.moduleName
 import org.jetbrains.kotlin.fir.declarations.utils.sourceElement
 import org.jetbrains.kotlin.fir.resolve.providers.getRegularClassSymbolByClassId
@@ -41,7 +45,6 @@ import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.serialization.deserialization.getName
-import org.jetbrains.kotlin.serialization.deserialization.loadValueClassRepresentation
 
 fun deserializeClassToSymbol(
     classId: ClassId,
@@ -246,18 +249,14 @@ fun deserializeClassToSymbol(
             setSealedClassInheritors(inheritors)
         }
 
-        valueClassRepresentation =
-            classProto.loadValueClassRepresentation(
-                session.deserializationExtension?.isMaybeFullValueClass(containerSource) ?: true,
-                context.nameResolver,
-                context.typeTable,
-                context.typeDeserializer::rigidType,
-            ) { name ->
-                val member = declarations.singleOrNull {
-                    it is FirProperty && it.receiverParameter == null && it.contextParameters.isEmpty() && it.name == name && !it.status.isStatic
-                }
-                (member as FirProperty?)?.returnTypeRef?.coneType as ConeRigidType
-            } ?: computeValueClassRepresentation(this, session)
+        if (isInlineOrValue) {
+            valueClassRepresentation =
+                classProto.loadValueClassRepresentation(
+                    session.deserializationExtension?.isMaybeFullValueClass(containerSource) ?: true,
+                    context,
+                    declarations,
+                )
+        }
 
         replaceAnnotations(
             context.annotationDeserializer.loadClassAnnotations(classProto, context.nameResolver)
@@ -354,6 +353,51 @@ private fun ProtoBuf.ClassOrBuilder.propertiesInOrder(
     } else {
         orderedProperties + properties.filter { it.name !in orderFromExtension }
     }
+}
+
+private fun ProtoBuf.Class.loadValueClassRepresentation(
+    tryLoadFullValueClass: Boolean,
+    context: FirDeserializationContext,
+    declarations: List<FirDeclaration>,
+): ValueClassRepresentation<ConeRigidType> {
+    val primaryConstructor = declarations.filterIsInstance<FirConstructor>().singleOrNull { it.isPrimary }
+
+    // TODO: KT-90593. Expect inline value classes without constructors
+    //  (AllowExpectValueClassesWithNoPrimaryConstructor) are loaded as
+    //  full value classes.
+    if (tryLoadFullValueClass && !hasInlineClassUnderlyingPropertyName()) {
+        val modality = Flags.MODALITY.get(flags)
+        val isAbstractOrSealed = modality == ProtoBuf.Modality.ABSTRACT || modality == ProtoBuf.Modality.SEALED
+        val fields = if (isAbstractOrSealed) {
+            null
+        } else {
+            // jvm-abi-gen strips a private primary constructor, and its parameters aren't needed outside the class anyway.
+            primaryConstructor?.valueParameters?.map { it.name to it.returnTypeRef.coneType as ConeRigidType }.orEmpty()
+        }
+        return FullValueClassRepresentation(fields)
+    }
+
+    val className = context.nameResolver.getQualifiedClassName(fqName)
+
+    if (hasInlineClassUnderlyingPropertyName()) {
+        val propertyName = context.nameResolver.getName(inlineClassUnderlyingPropertyName)
+
+        // inlineClassUnderlyingType is only written to metadata if the property is not publicAPI
+        val propertyType = inlineClassUnderlyingType(context.typeTable)?.let(context.typeDeserializer::rigidType)
+            ?: declarations.filterIsInstance<FirProperty>().singleOrNull {
+                it.receiverParameter == null && it.contextParameters.isEmpty() && it.name == propertyName && !it.status.isStatic
+            }?.returnTypeRef?.coneType as? ConeRigidType
+            ?: error("cannot determine underlying type for value class $className with property $propertyName")
+
+        return InlineClassRepresentation(propertyName, propertyType)
+    }
+
+    // Versions before 1.5 did not write inlineClassUnderlyingPropertyName.
+    // We can legitimately throw here if inline class was declared with private constructor
+    // or private property.
+    val parameter = primaryConstructor?.valueParameters?.singleOrNull()
+        ?: error("cannot determine underlying property for value class $className")
+    return InlineClassRepresentation(parameter.name, parameter.returnTypeRef.coneType as ConeRigidType)
 }
 
 val FirSession.deserializationExtension: FirDeserializationExtension? by FirSession.nullableSessionComponentAccessor()
