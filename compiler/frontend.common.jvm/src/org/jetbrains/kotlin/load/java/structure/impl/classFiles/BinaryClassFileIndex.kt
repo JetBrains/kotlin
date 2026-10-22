@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.load.java.structure.impl.classFiles
 
+import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.jvm.environment.JvmClasspathRootId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -44,4 +45,9 @@ interface BinaryClassFileHandle {
     fun isUnder(classpathRoot: JvmClasspathRootId): Boolean
 
     fun readBytes(): ByteArray
+}
+
+operator fun JvmClasspath.contains(classFile: BinaryClassFileHandle): Boolean = when (this) {
+    is JvmClasspath.Roots -> roots.any(classFile::isUnder)
+    is JvmClasspath.ProjectLibraries -> excludedRoots.none(classFile::isUnder)
 }
