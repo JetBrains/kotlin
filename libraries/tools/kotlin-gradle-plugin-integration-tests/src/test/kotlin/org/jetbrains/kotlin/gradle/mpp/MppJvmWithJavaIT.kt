@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.D
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Disabled
 import java.nio.file.Path
@@ -17,6 +18,7 @@ import kotlin.io.path.*
 import kotlin.test.assertContains
 
 @MppGradlePluginTests
+@MustRunOnChangesInGradle
 class MppJvmWithJavaIT : KGPBaseTest() {
 
     @GradleTest
