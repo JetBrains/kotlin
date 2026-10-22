@@ -24,19 +24,15 @@ class JKlibCliPipeline(
     override fun createCompoundPhase(
         arguments: K2JKlibCompilerArguments,
     ): CompilerPhase<PipelineContext, ArgumentsPipelineArtifact<K2JKlibCompilerArguments>, *> {
-        val phases =
-            JKlibConfigurationPhase then
-                JKlibFrontendPipelinePhase.thenIf(
-                    condition = ::skipIrGeneration,
-                    onTrue = JKlibMetadataSerializationPhase,
-                    onFalse = JKlibFir2IrPipelinePhase then JKlibPreSerializationLoweringPhase then JKlibKlibSerializationPhase,
-                )
-
-        return if (arguments.compileIr) {
-            phases then JKlibIrCompilationPhase
-        } else {
-            phases
-        }
+        val frontendPhases = JKlibConfigurationPhase then JKlibFrontendPipelinePhase
+        // `K2JKlibCompiler.compileToIr` hands the lowered IR over instead of serializing it into a KLIB.
+        val irPhases = JKlibFir2IrPipelinePhase then JKlibPreSerializationLoweringPhase then
+                if (arguments.compileIr) JKlibIrCompilationResultPhase else JKlibKlibSerializationPhase
+        return frontendPhases.thenIf(
+            condition = ::skipIrGeneration,
+            onTrue = JKlibMetadataSerializationPhase,
+            onFalse = irPhases,
+        )
     }
 
     /**
