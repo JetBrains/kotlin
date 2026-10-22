@@ -1,31 +1,199 @@
-KaLocalVariableSymbol:
-  anchorPsi: KtDestructuringDeclaration
+KaKotlinPropertySymbol:
+  anchorPsi: KtDestructuringDeclarationEntry
   annotations: []
-  callableId: null
+  backingFieldSymbol: null
+  callableId: /B.a
   contextParameters: []
   contextReceivers: []
+  getter: KaPropertyGetterSymbol:
+    anchorPsi: KtDestructuringDeclarationEntry
+    annotations: []
+    callableId: null
+    contextParameters: []
+    contextReceivers: []
+    hasStableParameterNames: true
+    isActual: false
+    isCompanion: false
+    isExpect: false
+    isExtension: false
+    isExternal: false
+    isInline: false
+    isNotDefault: false
+    isOverride: false
+    location: PROPERTY
+    modality: FINAL
+    origin: SOURCE
+    psi: null
+    realPsi: null
+    receiverParameter: null
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/Int
+    typeParameters: []
+    valueParameters: []
+    visibility: PUBLIC
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: B
+    getContainingFileSymbol: KaFileSymbol(memberLevelDestructuringDeclarationEntryMutable.kt)
+    getContainingJvmClassName: B
+    getContainingModule: KaSourceModule "Sources of main"
+    deprecation: null
+    javaMethodName: getA
+    importableFqName: null
+  hasBackingField: true
+  hasGetter: true
+  hasSetter: true
+  initializer: KaNonConstantInitializerValue(a)
   isActual: false
   isCompanion: false
+  isConst: false
   isDelegated: false
   isExpect: false
   isExtension: false
   isExternal: false
   isLateInit: false
-  isVal: true
-  location: LOCAL
+  isOverride: false
+  isStatic: false
+  isVal: false
+  location: CLASS
   modality: FINAL
-  name: <error property>
+  name: a
   origin: SOURCE
-  psi: KtDestructuringDeclaration
-  realPsi: null
+  primaryConstructorParameter: null
+  psi: KtDestructuringDeclarationEntry
+  realPsi: KtDestructuringDeclarationEntry
   receiverParameter: null
-  returnType: KaErrorType:
+  returnType: KaUsualClassType:
     annotations: []
-    type: ERROR_TYPE
+    typeArguments: []
+    type: kotlin/Int
+  setter: KaPropertySetterSymbol:
+    anchorPsi: KtDestructuringDeclarationEntry
+    annotations: []
+    callableId: null
+    contextParameters: []
+    contextReceivers: []
+    hasStableParameterNames: true
+    isActual: false
+    isCompanion: false
+    isExpect: false
+    isExtension: false
+    isExternal: false
+    isInline: false
+    isNotDefault: false
+    isOverride: false
+    location: PROPERTY
+    modality: FINAL
+    origin: SOURCE
+    parameter: KaValueParameterSymbol:
+      anchorPsi: KtDestructuringDeclarationEntry
+      annotations: []
+      callableId: null
+      contextParameters: []
+      contextReceivers: []
+      hasDeclaredDefaultValue: false
+      hasDefaultValue: false
+      isActual: false
+      isCompanion: false
+      isCrossinline: false
+      isDelegated: false
+      isExpect: false
+      isExtension: false
+      isExternal: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVal: true
+      isVararg: false
+      location: LOCAL
+      modality: FINAL
+      name: value
+      origin: SOURCE
+      primaryConstructorProperty: null
+      psi: null
+      realPsi: null
+      receiverParameter: null
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: kotlin/Int
+      typeParameters: []
+      visibility: PUBLIC
+      getContainingFileSymbol: KaFileSymbol(memberLevelDestructuringDeclarationEntryMutable.kt)
+      getContainingJvmClassName: null
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecation: null
+      importableFqName: null
+    psi: null
+    realPsi: null
+    receiverParameter: null
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/Unit
+    typeParameters: []
+    valueParameters: [
+      KaValueParameterSymbol:
+        anchorPsi: KtDestructuringDeclarationEntry
+        annotations: []
+        callableId: null
+        contextParameters: []
+        contextReceivers: []
+        hasDeclaredDefaultValue: false
+        hasDefaultValue: false
+        isActual: false
+        isCompanion: false
+        isCrossinline: false
+        isDelegated: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isImplicitLambdaParameter: false
+        isNoinline: false
+        isVal: true
+        isVararg: false
+        location: LOCAL
+        modality: FINAL
+        name: value
+        origin: SOURCE
+        primaryConstructorProperty: null
+        psi: null
+        realPsi: null
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: kotlin/Int
+        typeParameters: []
+        visibility: PUBLIC
+        getContainingFileSymbol: KaFileSymbol(memberLevelDestructuringDeclarationEntryMutable.kt)
+        getContainingJvmClassName: null
+        getContainingModule: KaSourceModule "Sources of main"
+        deprecation: null
+        importableFqName: null
+    ]
+    visibility: PUBLIC
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: B
+    getContainingFileSymbol: KaFileSymbol(memberLevelDestructuringDeclarationEntryMutable.kt)
+    getContainingJvmClassName: B
+    getContainingModule: KaSourceModule "Sources of main"
+    deprecation: null
+    javaMethodName: setA
+    importableFqName: null
   typeParameters: []
-  visibility: LOCAL
+  visibility: PUBLIC
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: B
   getContainingFileSymbol: KaFileSymbol(memberLevelDestructuringDeclarationEntryMutable.kt)
-  getContainingJvmClassName: null
+  getContainingJvmClassName: B
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
+  isInline: false
   importableFqName: null

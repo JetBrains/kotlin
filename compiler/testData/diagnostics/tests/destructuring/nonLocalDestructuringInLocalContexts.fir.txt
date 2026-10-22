@@ -27,10 +27,17 @@ FILE: nonLocalDestructuringInLocalContexts.kt
                 super<R|E|>()
             }
 
-            public final val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = R|/X.X|(Int(1), String())
+            private final val <destruct>: R|X| = R|/X.X|(Int(1), String())
+                private get(): R|X|
 
-            public final fun use(): <ERROR TYPE REF: Unresolved name: length> {
-                ^use <Unresolved name: b>#.<Unresolved name: length>#
+            public final val a: R|kotlin/Int| = R|/<anonymous>.<destruct>|.R|/X.component1|()
+                public get(): R|kotlin/Int|
+
+            public final val b: R|kotlin/String| = R|/<anonymous>.<destruct>|.R|/X.component2|()
+                public get(): R|kotlin/String|
+
+            public final fun use(): R|kotlin/Int| {
+                ^use this@R|/<anonymous>|.R|/<anonymous>.b|.R|kotlin/String.length|
             }
 
         }
@@ -51,23 +58,37 @@ FILE: nonLocalDestructuringInLocalContexts.kt
                 super<R|kotlin/Any|>()
             }
 
-            public final val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = R|/X.X|(Int(1), String())
+            private final val <destruct>: R|X| = R|/X.X|(Int(1), String())
+                private get(): R|X|
 
-            public final fun use(): <ERROR TYPE REF: Unresolved name: length> {
-                ^use <Unresolved name: b>#.<Unresolved name: length>#
+            public final val a: R|kotlin/Int| = R|<local>/<destruct>|.R|/X.component1|()
+                public get(): R|kotlin/Int|
+
+            public final val b: R|kotlin/String| = R|<local>/<destruct>|.R|/X.component2|()
+                public get(): R|kotlin/String|
+
+            public final fun use(): R|kotlin/Int| {
+                ^use this@R|<local>/Local|.R|<local>/b|.R|kotlin/String.length|
             }
 
         }
 
-        R|<local>/Local.Local|().<Unresolved name: b>#.<Unresolved name: length>#
+        R|<local>/Local.Local|().R|<local>/b|.R|kotlin/String.length|
         lval o: R|<anonymous>| = object : R|kotlin/Any| {
             private constructor(): R|<anonymous>| {
                 super<R|kotlin/Any|>()
             }
 
-            public final val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = R|/X.X|(Int(1), String())
+            private final val <destruct>: R|X| = R|/X.X|(Int(1), String())
+                private get(): R|X|
+
+            public final val a: R|kotlin/Int| = R|/<anonymous>.<destruct>|.R|/X.component1|()
+                public get(): R|kotlin/Int|
+
+            public final val b: R|kotlin/String| = R|/<anonymous>.<destruct>|.R|/X.component2|()
+                public get(): R|kotlin/String|
 
         }
 
-        R|<local>/o|.<Unresolved name: b>#.<Unresolved name: length>#
+        R|<local>/o|.R|/<anonymous>.b|.R|kotlin/String.length|
     }

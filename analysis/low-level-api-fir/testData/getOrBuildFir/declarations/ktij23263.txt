@@ -1,17 +1,22 @@
 KT element: KtDestructuringDeclaration
-FIR element: FirErrorPropertyImpl
+FIR element: FirPropertyImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-public final [ResolvedTo(BODY_RESOLVE)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = ERROR_EXPR(Initializer required for destructuring declaration)
+private final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableMarkerKey=true] val <destruct>: <ERROR TYPE REF: Initializer required for destructuring declaration> = ERROR_EXPR(Initializer required for destructuring declaration)
+    private [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Initializer required for destructuring declaration>
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] ktij23263.kt
-    public final? [ResolvedTo(RAW_FIR)] class InitOrderDemo : R|kotlin/Any| {
-        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=InitOrderDemo] constructor([ResolvedTo(RAW_FIR)] name: String): R|InitOrderDemo| {
+    public final [ResolvedTo(STATUS)] class InitOrderDemo : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=InitOrderDemo] constructor([ResolvedTo(STATUS)] name: R|kotlin/String|): R|InitOrderDemo| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = ERROR_EXPR(Initializer required for destructuring declaration)
+        private final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableMarkerKey=true] val <destruct>: <ERROR TYPE REF: Initializer required for destructuring declaration> = ERROR_EXPR(Initializer required for destructuring declaration)
+            private [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Initializer required for destructuring declaration>
+
+        public final [ResolvedTo(STATUS)] [DestructuringDeclarationContainerVariableKey=/InitOrderDemo.<destruct>] val firstProperty: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(STATUS)] get(): <implicit>
 
     }

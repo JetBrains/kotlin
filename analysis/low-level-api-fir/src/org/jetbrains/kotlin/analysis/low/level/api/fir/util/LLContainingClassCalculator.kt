@@ -103,7 +103,9 @@ internal object LLContainingClassCalculator {
 
             is KtRealSourceElementKind -> when (symbol) {
                 is FirCallableSymbol<*>, is FirClassLikeSymbol<*> -> when (val selfCallable = source.psi) {
-                    is KtCallableDeclaration, is KtEnumEntry, is KtClassLikeDeclaration, is KtScriptInitializer -> {
+                    is KtCallableDeclaration, is KtEnumEntry, is KtClassLikeDeclaration, is KtScriptInitializer,
+                    is KtDestructuringDeclaration, // The container of a non-local destructuring declaration
+                        -> {
                         computeContainingClass(symbol, selfCallable.containingClassOrScript)
                     }
 

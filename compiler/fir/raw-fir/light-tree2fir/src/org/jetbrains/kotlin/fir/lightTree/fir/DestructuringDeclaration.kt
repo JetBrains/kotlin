@@ -15,10 +15,8 @@ import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.addDestructuringVariables
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCallCopy
 import org.jetbrains.kotlin.fir.expressions.builder.buildBlock
 import org.jetbrains.kotlin.fir.generateTemporaryVariable
 import org.jetbrains.kotlin.fir.lightTree.converter.AbstractTreeRawFirBuilder
@@ -66,19 +64,23 @@ data class DestructuringDeclaration(
     }
 }
 
+/**
+ * @param convertReturnTypeRef converts the type reference of the entry, so it is called once under the symbol of the entry
+ * @param convertAnnotationsTo converts the annotations of the entry, so it is called once under the symbol of the entry
+ */
 class DestructuringEntry(
     val source: KtSourceElement,
     val initializerSource: KtSourceElement?,
-    val returnTypeRef: FirTypeRef,
+    private val convertReturnTypeRef: () -> FirTypeRef,
     val name: Name,
     val initializerName: Name?,
     val isVar: Boolean,
     val isFullForm: Boolean,
-    val annotations: List<FirAnnotationCall>,
+    private val convertAnnotationsTo: (MutableList<FirAnnotation>) -> Unit,
 ) {
     @Suppress("EXTENSION_SHADOWED_BY_MEMBER")
     companion object : DestructuringContext<DestructuringEntry> {
-        override val DestructuringEntry.returnTypeRef: FirTypeRef get() = returnTypeRef
+        override val DestructuringEntry.returnTypeRef: FirTypeRef get() = convertReturnTypeRef()
         override val DestructuringEntry.name: Name get() = name
         override val DestructuringEntry.initializerName: Name? get() = initializerName
         override val DestructuringEntry.isVar: Boolean get() = isVar
@@ -86,11 +88,7 @@ class DestructuringEntry(
         override val DestructuringEntry.initializerSource: KtSourceElement? get() = initializerSource
 
         override fun DestructuringEntry.extractAnnotationsTo(target: FirAnnotationContainerBuilder, containerSymbol: FirBasedSymbol<*>) {
-            target.annotations += annotations.map {
-                buildAnnotationCallCopy(it) {
-                    containingDeclarationSymbol = containerSymbol
-                }
-            }
+            convertAnnotationsTo(target.annotations)
         }
     }
 }
@@ -103,6 +101,8 @@ fun AbstractTreeRawFirBuilder<*, *>.addDestructuringStatements(
     container: FirVariable,
     isTmpVariable: Boolean,
     forceLocal: Boolean,
+    isMember: Boolean = false,
+    isCompanionBlockMember: Boolean = false,
     configure: (FirVariable) -> Unit = {}
 ) {
     with(DestructuringEntry.Companion) {
@@ -115,6 +115,8 @@ fun AbstractTreeRawFirBuilder<*, *>.addDestructuringStatements(
             kind = multiDeclaration.kind,
             isTmpVariable = isTmpVariable,
             forceLocal = forceLocal,
+            isMember = isMember,
+            isCompanionBlockMember = isCompanionBlockMember,
             configure,
         )
     }

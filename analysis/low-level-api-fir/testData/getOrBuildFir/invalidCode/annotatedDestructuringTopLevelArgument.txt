@@ -18,4 +18,9 @@ FILE: [ResolvedTo(IMPORTS)] annotatedDestructuringTopLevelArgument.kt
     }
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val x: R|kotlin/String| = String(str)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
-    @R|Ann|[Types](s = R|/x| [evaluated = String(str)]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+    @R|Ann|[Types](s = R|/x| [evaluated = String(str)]) private final [ResolvedTo(ANNOTATION_ARGUMENTS)] [DestructuringDeclarationContainerVariableMarkerKey=true] val <destruct>: <ERROR TYPE REF: Unresolved name: to> = IntegerLiteral(1).<Unresolved name: to>#(Int(2))
+        private [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): <ERROR TYPE REF: Unresolved name: to>
+    public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=/<destruct>] val a: <implicit> = LAZY_EXPRESSION
+        public [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=/<destruct>] val b: <implicit> = LAZY_EXPRESSION
+        public [ResolvedTo(RAW_FIR)] get(): <implicit>

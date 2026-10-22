@@ -2,5 +2,8 @@ Classifier names:
   X
 
 Callable names:
-  <destructuring>
+  a
+  b
+  c
+  d
   e

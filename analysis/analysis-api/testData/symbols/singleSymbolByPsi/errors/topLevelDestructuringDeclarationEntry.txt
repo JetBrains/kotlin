@@ -1,31 +1,77 @@
-KaLocalVariableSymbol:
-  anchorPsi: KtDestructuringDeclaration
+KaKotlinPropertySymbol:
+  anchorPsi: KtDestructuringDeclarationEntry
   annotations: []
-  callableId: null
+  backingFieldSymbol: null
+  callableId: /a
   contextParameters: []
   contextReceivers: []
+  getter: KaPropertyGetterSymbol:
+    anchorPsi: KtDestructuringDeclarationEntry
+    annotations: []
+    callableId: null
+    contextParameters: []
+    contextReceivers: []
+    hasStableParameterNames: true
+    isActual: false
+    isCompanion: false
+    isExpect: false
+    isExtension: false
+    isExternal: false
+    isInline: false
+    isNotDefault: false
+    isOverride: false
+    location: PROPERTY
+    modality: FINAL
+    origin: SOURCE
+    psi: null
+    realPsi: null
+    receiverParameter: null
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/Int
+    typeParameters: []
+    valueParameters: []
+    visibility: PUBLIC
+    getContainingFileSymbol: KaFileSymbol(topLevelDestructuringDeclarationEntry.kt)
+    getContainingJvmClassName: TopLevelDestructuringDeclarationEntryKt
+    getContainingModule: KaSourceModule "Sources of main"
+    deprecation: null
+    javaMethodName: getA
+    importableFqName: null
+  hasBackingField: true
+  hasGetter: true
+  hasSetter: false
+  initializer: KaNonConstantInitializerValue(a)
   isActual: false
   isCompanion: false
+  isConst: false
   isDelegated: false
   isExpect: false
   isExtension: false
   isExternal: false
   isLateInit: false
+  isOverride: false
+  isStatic: false
   isVal: true
-  location: LOCAL
+  location: TOP_LEVEL
   modality: FINAL
-  name: <error property>
+  name: a
   origin: SOURCE
-  psi: KtDestructuringDeclaration
-  realPsi: null
+  primaryConstructorParameter: null
+  psi: KtDestructuringDeclarationEntry
+  realPsi: KtDestructuringDeclarationEntry
   receiverParameter: null
-  returnType: KaErrorType:
+  returnType: KaUsualClassType:
     annotations: []
-    type: ERROR_TYPE
+    typeArguments: []
+    type: kotlin/Int
+  setter: null
   typeParameters: []
-  visibility: LOCAL
+  visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(topLevelDestructuringDeclarationEntry.kt)
-  getContainingJvmClassName: null
+  getContainingJvmClassName: TopLevelDestructuringDeclarationEntryKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecation: null
-  importableFqName: null
+  isInline: false
+  importableFqName: a

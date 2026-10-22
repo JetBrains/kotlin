@@ -1,3 +1,11 @@
 FILE: topLevelDestructuring.kt
-    public final val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = <Unresolved name: Pair>#(Int(1), Int(2))
-    public final val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = ERROR_EXPR(Initializer required for destructuring declaration)
+    private final val <destruct>: <ERROR TYPE REF: Unresolved name: Pair> = <Unresolved name: Pair>#(Int(1), Int(2))
+        private get(): <ERROR TYPE REF: Unresolved name: Pair>
+    public final val x: <ERROR TYPE REF: Unresolved name: component1> = R|/<destruct>|.<Unresolved name: component1>#()
+        public get(): <ERROR TYPE REF: Unresolved name: component1>
+    public final val y: <ERROR TYPE REF: Unresolved name: component2> = R|/<destruct>|.<Unresolved name: component2>#()
+        public get(): <ERROR TYPE REF: Unresolved name: component2>
+    private final val <destruct>: <ERROR TYPE REF: Initializer required for destructuring declaration> = ERROR_EXPR(Initializer required for destructuring declaration)
+        private get(): <ERROR TYPE REF: Initializer required for destructuring declaration>
+    public final val e: <ERROR TYPE REF: Unresolved name: component1> = R|/<destruct>|.<Unresolved name: component1>#()
+        public get(): <ERROR TYPE REF: Unresolved name: component1>

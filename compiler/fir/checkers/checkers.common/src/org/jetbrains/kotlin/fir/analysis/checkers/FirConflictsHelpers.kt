@@ -78,7 +78,9 @@ private fun FirBasedSymbol<*>.isCollectable(): Boolean {
         // it generates a static function that has
         // the same signature as the function defined
         // explicitly.
-        is FirPropertySymbol -> source?.kind !is KtFakeSourceElementKind.EnumGeneratedDeclaration
+        // The container of a non-local destructuring declaration has no name in the code either.
+        is FirPropertySymbol -> source?.kind !is KtFakeSourceElementKind.EnumGeneratedDeclaration &&
+                origin != FirDeclarationOrigin.Synthetic.NonLocalDestructuringDeclarationContainer
         // class delegation field will be renamed after by the IR backend in a case of a name clash
         is FirFieldSymbol -> source?.kind != KtFakeSourceElementKind.ClassDelegationField
         else -> true

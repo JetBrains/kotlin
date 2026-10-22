@@ -2,6 +2,7 @@ KtNameReferenceExpression(106,107): 'b'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSimpleSymbolResolutionError:
-    candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'b'.>
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      val b: kotlin.String
+    ]

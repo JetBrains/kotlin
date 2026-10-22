@@ -1,6 +1,5 @@
 // KT-74654
-// KT-90199: InvalidFirElementTypeException, the type reference has no FIR
-// IGNORE_FIR
+// KT-90199
 annotation class Ann
 
 class C {

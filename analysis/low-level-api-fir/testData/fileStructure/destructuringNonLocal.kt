@@ -1,12 +1,12 @@
 /* RootStructureElement */data class X(val a: Int, val b: Int)/* DeclarationStructureElement *//* ClassDeclarationStructureElement */
 
-val (a, b) = X(1, 2)/* DeclarationStructureElement */
+val (a/* DeclarationStructureElement */, b/* DeclarationStructureElement */) = X(1, 2)/* DeclarationStructureElement */
 
 class A {/* ClassDeclarationStructureElement */
-    val (c, d) = X(1, 2)/* DeclarationStructureElement */
+    val (c/* DeclarationStructureElement */, d/* DeclarationStructureElement */) = X(1, 2)/* DeclarationStructureElement */
 
     class Nested {/* ClassDeclarationStructureElement */
-        val [e, f] = X(1, 2)/* DeclarationStructureElement */
+        val [e/* DeclarationStructureElement */, f/* DeclarationStructureElement */] = X(1, 2)/* DeclarationStructureElement */
     }
 }
 
