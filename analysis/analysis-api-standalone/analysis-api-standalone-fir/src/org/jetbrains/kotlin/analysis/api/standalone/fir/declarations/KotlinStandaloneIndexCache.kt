@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl
 internal class KotlinStandaloneIndexCache {
     private val stubs = CollectionFactory.createConcurrentWeakKeySoftValueMap<VirtualFile, KotlinFileStubImpl>()
     private val packageNames = CollectionFactory.createConcurrentWeakKeySoftValueMap<VirtualFile, FqName>()
+    private val indexRecords = CollectionFactory.createConcurrentWeakKeySoftValueMap<VirtualFile, KotlinStandaloneFileIndexRecords>()
     private val roots = CollectionFactory.createConcurrentWeakKeySoftValueMap<VirtualFile, Set<SharedIndexableDecompiledFile>>()
 
     fun getOrBuildStub(
@@ -40,6 +41,15 @@ internal class KotlinStandaloneIndexCache {
         compiledFile: VirtualFile,
         packageNameComputer: (VirtualFile) -> FqName,
     ): FqName = packageNames.computeIfAbsent(compiledFile, packageNameComputer)
+
+    /**
+     * The records refer to the indexed elements only by their ordinals, so they can be shared between projects.
+     */
+    fun getIndexRecords(compiledFile: VirtualFile): KotlinStandaloneFileIndexRecords? = indexRecords[compiledFile]
+
+    fun putIndexRecords(compiledFile: VirtualFile, records: KotlinStandaloneFileIndexRecords) {
+        indexRecords[compiledFile] = records
+    }
 
     /** @see SharedIndexableDecompiledFile */
     fun getOrProcessBinaryRoot(
