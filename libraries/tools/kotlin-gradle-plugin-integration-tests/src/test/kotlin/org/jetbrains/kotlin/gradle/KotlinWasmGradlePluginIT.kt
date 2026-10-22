@@ -33,6 +33,9 @@ import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.gradle.utils.normalizedAbsolutePath
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInBuildToolsApi
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInWasm
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import java.io.File
@@ -42,6 +45,7 @@ import kotlin.io.path.*
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
+@MustRunOnChangesInWasm
 class KotlinWasmGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
 
     @TestMetadata("new-mpp-wasm-js")
@@ -52,6 +56,7 @@ class KotlinWasmGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
         jsTargetWithBrowser(gradleVersion, 1)
     }
 
+    // TODO KT-90605 Remove wasm output size asserts from KotlinWasmGradlePluginIT
     @TestMetadata("new-mpp-wasm-js")
     @DisplayName("Check js target with binaryen per-module closed world")
     @GradleTest
@@ -136,6 +141,7 @@ class KotlinWasmGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
         }
     }
 
+    // TODO KT-90605 Remove wasm output size asserts from KotlinWasmGradlePluginIT
     @DisplayName("Check js target per-module closed world dev only")
     @TestMetadata(value = "new-mpp-wasm-js")
     @GradleTest
@@ -214,6 +220,7 @@ class KotlinWasmGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
         }
     }
 
+    @MustRunOnChangesInBuildToolsApi
     @TestMetadata("new-mpp-wasm-js")
     @DisplayName("Check js target with per-module closed world incremental build with rerun tasks")
     @GradleTest
@@ -272,6 +279,7 @@ class KotlinWasmGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
     @DisplayName("Check wasm target compiles when switch compilation mode with IC enabled")
     @GradleTest
     @WasmJsGradlePluginTests
+    @MustRunOnChangesInBuildToolsApi
     fun jsTargetIncrementalMonolithToPerModuleClosedWorld(gradleVersion: GradleVersion) {
         project("new-mpp-wasm-js", gradleVersion) {
             buildGradleKts.modify {
@@ -433,6 +441,7 @@ class KotlinWasmGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
     @DisplayName("Check that wasm-js optimizer is executed if a dependent .wasm file is changed")
     @GradleTest
     @WasmJsGradlePluginTests
+    @MustRunOnChangesInGradle
     fun dependencyChangeTriggersOptimizerWasmJsPerModuleClosedWorld(gradleVersion: GradleVersion) {
         project("wasm-js-per-module-closed-world", gradleVersion) {
             build(":app:wasmJsD8ProductionRun") {
@@ -619,12 +628,14 @@ class KotlinWasmGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
     @TestMetadata("wasm-browser-several-modules")
     @DisplayName("Change in a dependency should invalidate up-to-date check")
     @GradleTest
+    @MustRunOnChangesInGradle
     @WasmJsGradlePluginTests
     fun testMultiModuleWasmDist(gradleVersion: GradleVersion) {
         testMultiModuleWasmDistDoTest(gradleVersion, "foo")
     }
 }
 
+@MustRunOnChangesInWasm
 class KotlinWasmPerModuleGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
     override val defaultBuildOptions: BuildOptions
         get() = super.defaultBuildOptions.copy(
@@ -642,6 +653,7 @@ class KotlinWasmPerModuleGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
         jsTargetWithBrowser(gradleVersion, 2)
     }
 
+    // TODO KT-90605 Remove wasm output size asserts from KotlinWasmGradlePluginIT
     @TestMetadata("new-mpp-wasm-js")
     @DisplayName("Check that js target all wasm files' size less in production")
     @GradleTest
@@ -683,6 +695,7 @@ class KotlinWasmPerModuleGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
     @DisplayName("Change in a dependency should invalidate up-to-date check")
     @GradleTest
     @WasmJsGradlePluginTests
+    @MustRunOnChangesInGradle
     fun testMultiModuleWasmDist(gradleVersion: GradleVersion) {
         testMultiModuleWasmDistDoTest(gradleVersion, "bar")
     }
@@ -749,6 +762,7 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    // TODO KT-90605 Remove wasm output size asserts from KotlinWasmGradlePluginIT
     @TestMetadata("new-mpp-wasm-js")
     @DisplayName("Check js target with binaryen")
     @GradleTest
@@ -926,6 +940,7 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    // TODO KT-90604 Move KotlinWasmGradlePluginIT testBrowserNullPrint to a wasm box test
     @TestMetadata("kt-63230")
     @DisplayName("Browser print works with null type")
     @GradleTest
@@ -1052,6 +1067,7 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    // TODO KT-90602 Delete KotlinWasmGradlePluginIT testWasmCustomFormattersUsage, which asserts nothing
     @TestMetadata("wasm-browser-simple-project")
     @DisplayName("Browser case works correctly with custom formatters")
     @GradleTest
