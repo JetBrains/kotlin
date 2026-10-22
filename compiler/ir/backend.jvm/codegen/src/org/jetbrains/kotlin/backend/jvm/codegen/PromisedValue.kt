@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.codegen
 
 import org.jetbrains.kotlin.backend.jvm.InlineClassAbi
-import org.jetbrains.kotlin.backend.jvm.inlineClassFieldName
+import org.jetbrains.kotlin.backend.jvm.inlineClassField
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClass
 import org.jetbrains.kotlin.ir.util.eraseIfTypeParameter
 import org.jetbrains.kotlin.backend.jvm.mapping.IrTypeMapper
@@ -55,7 +55,7 @@ abstract class PromisedValue(val codegen: ExpressionCodegen, val type: Type, val
             val irClass = codegen.irFunction.parent
             if (irClass is IrClass && irClass.isInlineClass && irClass.symbol == irType.classifierOrNull && !irType.isNullable()) {
                 // Use getfield instead of unbox-impl inside inline classes
-                codegen.mv.getfield(boxed.internalName, irClass.inlineClassFieldName.asString(), target.descriptor)
+                codegen.mv.getfield(boxed.internalName, irClass.inlineClassField.name.asString(), target.descriptor)
             } else {
                 StackValue.unboxInlineClass(type, boxed, target, erasedTargetType.isNullable(), mv)
             }

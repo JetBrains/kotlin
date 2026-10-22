@@ -496,13 +496,7 @@ internal class JvmInlineClassLowering(private val context: JvmBackendContext) : 
 
     override fun visitGetField(expression: IrGetField): IrExpression {
         val field = expression.symbol.owner
-        val parent = field.parent
-        if (field.origin == IrDeclarationOrigin.PROPERTY_BACKING_FIELD &&
-            parent is IrClass &&
-            parent.isInlineClass &&
-            field.name == parent.inlineClassFieldName &&
-            !field.isStatic
-        ) {
+        if (field.isInlineClassField) {
             val receiver = expression.receiver!!.transform(this, null)
             // If we get the field of nullable variable, we can be sure, that type is not null,
             // since we first generate null check.
