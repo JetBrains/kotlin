@@ -22,12 +22,14 @@ import org.jetbrains.kotlin.build.GeneratedJvmClass
 import org.jetbrains.kotlin.build.JvmBuildMetaInfo
 import org.jetbrains.kotlin.build.JvmSourceRoot
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
+import org.jetbrains.kotlin.buildtools.api.cri.CriToolchain
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.compilerRunner.JpsCompilerEnvironment
 import org.jetbrains.kotlin.compilerRunner.JpsKotlinCompilerRunner
 import org.jetbrains.kotlin.compilerRunner.btapi.JpsBtaCompilerRunner
 import org.jetbrains.kotlin.compilerRunner.btapi.JpsBtaJvmCompilationRequest
+import org.jetbrains.kotlin.compilerRunner.btapi.JpsBtaToolchainLoader.GENERATE_COMPILER_REF_INDEX_PROPERTY
 import org.jetbrains.kotlin.compilerRunner.btapi.JpsBtaToolchainLoader.useBuildToolsApi
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.Services
@@ -222,6 +224,7 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
             javaSourceRoots = findJavaSourceRoots(dirtyFilesHolder.context),
             friendDirectories = friendOutputDirs,
             modularJdkRoot = findModularJdkRoot(),
+            compilerReferenceIndexDirectory = compilerReferenceIndexDirectory(),
         )
 
         JpsBtaCompilerRunner().runJvmCompilation(
@@ -235,6 +238,11 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
         )
 
         return true
+    }
+
+    private fun compilerReferenceIndexDirectory(): Path? {
+        if (!System.getProperty(GENERATE_COMPILER_REF_INDEX_PROPERTY, "false").toBoolean()) return null
+        return kotlinContext.dataPaths.getTargetDataRootDir(jpsModuleBuildTarget).resolve(CriToolchain.DATA_PATH)
     }
 
     override fun registerOutputItems(outputConsumer: ModuleLevelBuilder.OutputConsumer, outputItems: List<GeneratedFile>) {
