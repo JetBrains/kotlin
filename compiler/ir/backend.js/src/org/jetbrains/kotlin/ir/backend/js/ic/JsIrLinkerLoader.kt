@@ -198,12 +198,9 @@ internal class JsIrLinkerLoader(
                 else -> DeserializationStrategy.EXPLICITLY_EXPORTED
             }
             val modified = modifiedFiles[libraryFile]?.keys?.mapTo(hashSetOf()) { it.path } ?: emptySet()
-            libraryFile to linker.deserializeIrModuleHeader(descriptor, module, {
-                when (it) {
-                    in modified -> modifiedStrategy
-                    else -> DeserializationStrategy.WITH_INLINE_BODIES
-                }
-            })
+            libraryFile to linker.createAndRegisterModuleDeserializer(descriptor, module) { filePath: String ->
+                if (filePath in modified) modifiedStrategy else DeserializationStrategy.WITH_INLINE_BODIES
+            }.moduleFragment
         }
 
         @OptIn(InternalSymbolFinderAPI::class)
