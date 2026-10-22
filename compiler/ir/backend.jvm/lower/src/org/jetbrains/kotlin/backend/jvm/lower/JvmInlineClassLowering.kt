@@ -171,9 +171,7 @@ internal class JvmInlineClassLowering(private val context: JvmBackendContext) : 
         source.body = context.createIrBuilder(source.symbol, source.startOffset, source.endOffset).run {
             irExprBody(irCall(target).apply {
                 passTypeArgumentsFrom(source)
-                for ([index, parameter] in source.parameters.withIndex()) {
-                    arguments[index] = irExposedArgument(parameter, target.parameters[index])
-                }
+                passExposedArguments(this, source.parameters)
             })
         }
     }
@@ -327,8 +325,16 @@ internal class JvmInlineClassLowering(private val context: JvmBackendContext) : 
         }
     }
 
+    // Passes the parameters of an exposed declaration to its target call.
+    private fun IrBuilderWithScope.passExposedArguments(call: IrFunctionAccessExpression, parameters: List<IrValueParameter>) {
+        val targetParameters = call.symbol.owner.parameters
+        for ([index, parameter] in parameters.withIndex()) {
+            call.arguments[index] = irConvertExposedArgument(parameter, targetParameters[index])
+        }
+    }
+
     // Passes the parameter of an exposed declaration to the parameter of its target, converting `Array<UInt>` to `UIntArray`.
-    private fun IrBuilderWithScope.irExposedArgument(parameter: IrValueParameter, targetParameter: IrValueParameter): IrExpression =
+    private fun IrBuilderWithScope.irConvertExposedArgument(parameter: IrValueParameter, targetParameter: IrValueParameter): IrExpression =
         if (parameter.type.isArray() && targetParameter.type.isUnsignedArray())
             irUnsignedArrayFromBoxedArray(irGet(parameter), targetParameter.type)
         else
@@ -358,9 +364,7 @@ internal class JvmInlineClassLowering(private val context: JvmBackendContext) : 
             annotations = original.annotations.withJvmExposeBoxedAnnotation(original, context)
             body = context.createIrBuilder(this.symbol).irBlockBody(this) {
                 +irDelegatingConstructorCall(constructor).apply {
-                    for ([index, param] in parameters.withIndex()) {
-                        arguments[index] = irExposedArgument(param, constructor.parameters[index])
-                    }
+                    passExposedArguments(this, parameters)
                     arguments[constructor.parameters.size - 1] = irNull()
                 }
             }
@@ -379,9 +383,7 @@ internal class JvmInlineClassLowering(private val context: JvmBackendContext) : 
             annotations = constructor.annotations.withJvmExposeBoxedAnnotation(constructor, context)
             body = context.createIrBuilder(this.symbol).irBlockBody(this) {
                 +irDelegatingConstructorCall(constructor).apply {
-                    for ([index, param] in parameters.withIndex()) {
-                        arguments[index] = irExposedArgument(param, constructor.parameters[index])
-                    }
+                    passExposedArguments(this, parameters)
                 }
             }
         }
@@ -754,9 +756,7 @@ internal class JvmInlineClassLowering(private val context: JvmBackendContext) : 
             body = this@JvmInlineClassLowering.context.createIrBuilder(symbol).irBlockBody(this) {
                 val underlying = irUnderlyingValueFromConstructorImpl(constructorImpl, primaryConstructor) {
                     passTypeArgumentsFrom(primaryConstructor)
-                    for ([index, parameter] in exposedParameters.withIndex()) {
-                        arguments[index] = irExposedArgument(parameter, constructorImpl.parameters[index])
-                    }
+                    passExposedArguments(this, exposedParameters)
                 }
                 +irDelegatingConstructorCall(primaryConstructor).apply {
                     passTypeArgumentsFrom(primaryConstructor)
@@ -913,12 +913,13 @@ internal class JvmInlineClassLowering(private val context: JvmBackendContext) : 
                         return null
                     }
 
-                    val exposed = listOfNotNull(
+                    val declarations = listOfNotNull(
+                        function,
                         createOrdinaryClassExposedConstructor(function, false),
                         if (function.hasUnsignedVararg) createOrdinaryClassExposedConstructor(function, true) else null,
                     )
                     function.annotations = function.annotations.withoutJvmExposeBoxedAnnotation()
-                    return listOf(function) + exposed
+                    return declarations
                 }
 
                 // Non-mangled functions can override mangled functions under some conditions, e.g., a function
@@ -1015,7 +1016,7 @@ internal class JvmInlineClassLowering(private val context: JvmBackendContext) : 
         }
 
         val bridgeFunction = createBridgeFunction(function, replacement, false)
-        val boxedVarargBridgeFunction = if(
+        val boxedVarargBridgeFunction = if (
             function.hasUnsignedVararg && bridgeFunction.hasAnnotation(JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME) &&
             !(bridgeFunction.isFakeOverride && bridgeFunction.parentAsClass.isInlineClass)
         ) {

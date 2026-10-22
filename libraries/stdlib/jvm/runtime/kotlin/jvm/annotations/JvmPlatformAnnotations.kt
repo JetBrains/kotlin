@@ -209,6 +209,9 @@ public actual annotation class JvmRecord
  *
  * - A constructor is made available from Java.
  *
+ * - A `vararg` parameter of an unsigned type, e.g. `vararg xs: UInt`, is exposed twice:
+ *   as a Java vararg of boxed elements (`UInt...`) and as the unsigned array (`UIntArray`).
+ *
  * These changes maintain backward compatibility, allowing existing API to be safely marked.
  *
  * @property jvmName optional wrapper name. Only applicable to functions, getters and setters.
