@@ -10,6 +10,8 @@ import kotlinx.metadata.klib.KlibModuleMetadata
 import kotlinx.metadata.klib.fqName
 import org.jetbrains.kotlin.backend.common.linkage.IrDeserializer.TopLevelSymbolKind
 import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
+import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
+import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategyResolver
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -59,9 +61,20 @@ class KonanInteropModuleDeserializer(
     override val klib: KotlinLibrary,
     private val isLibraryCached: Boolean,
     private val linker: KonanIrLinker,
+    override val strategyResolver: DeserializationStrategyResolver = DeserializationStrategy.ONLY_REFERENCED,
 ) : IrModuleDeserializer(moduleFragment, klib.versions.abiVersion ?: KotlinAbiVersion.CURRENT), CInteropModuleDeserializer {
+    // Interop Klibs have no real IR files, so the strategy is resolved once for the synthetic file name.
+    private val isFullDeserializationRequested: Boolean =
+        strategyResolver(NativeStandardInteropNames.cTypeDefinitionsFileName).theWholeWorld
+
     init {
         require(klib.isCInteropLibrary())
+
+        if (isFullDeserializationRequested) {
+            // Schedule the full deserialization, but don't run it right away: at this point the current module deserializer
+            // is not yet registered in the linker, so references between declarations of this module would not be resolved.
+            linker.modulesWithReachableTopLevels.add(this)
+        }
     }
 
     // Allow to link against a declaration from another C interop module, even if this module also defines one with the same signature.
@@ -201,6 +214,22 @@ class KonanInteropModuleDeserializer(
     }
 
     override fun deserializedSymbolNotFound(idSig: IdSignature): Nothing = error("No C-Interop symbol found for $idSig")
+
+    override fun deserializeReachableDeclarations() {
+        // Unless full deserialization is requested, declarations are deserialized on demand, in `tryDeserializeIrSymbol()`.
+        if (!isFullDeserializationRequested) return
+
+        // Take a snapshot, as deserialization may reload the metadata of the Klib.
+        for (id in metadataReader.getDeclaredDeclarationIds().toList()) {
+            // Nested classes cannot be loaded here directly, as all class members should be loaded only when deserializing
+            // their parent class.
+            if (id.kind == TopLevelSymbolKind.CLASS_SYMBOL && !id.relativeDeclarationName.isOneSegmentFQN()) continue
+
+            // Declarations that have already been converted to IR (e.g., by `contains()` or when referenced from another declaration)
+            // are not retrieved again, so nothing is deserialized twice, even if this function is called more than once.
+            deserializeTopLevelDeclarations(id)
+        }
+    }
 
     private fun deserializeTopLevelDeclarations(id: MetadataDeclarationId) {
         val kmDeclarations = metadataReader.retrieveDeclarationsById(id, removeMetadataRepresentation = true) ?: return
