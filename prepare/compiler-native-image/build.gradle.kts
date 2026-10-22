@@ -77,13 +77,16 @@ sourceSets {
 val useG1Gc = kotlinBuildProperties
     .booleanProperty("kotlin.build.native-image.use-g1", false)
     .get()
+val pgoProfile = kotlinBuildProperties
+    .stringProperty("kotlin.build.native-image.pgo-profile")
+    .orNull
 val dynamicPluginsEnabled = kotlinBuildProperties
     .booleanProperty("kotlin.build.native-image.dynamic-plugins", false)
     .get()
 
 val graalLauncher = getNativeImageToolchainLauncherFor(
     JdkMajorVersion.JDK_25_0,
-    requireOracleJdk = useG1Gc || dynamicPluginsEnabled,
+    requireOracleJdk = useG1Gc || (pgoProfile != null) || dynamicPluginsEnabled,
 )
 
 projectTests {
@@ -179,6 +182,7 @@ val kotlincNativeImageTask = tasks.register<Exec>("kotlincNativeImage") {
     val nativeArgs = buildList {
         addAll(basicNativeArgs)
         if (useG1Gc) add("--gc=G1")
+        if (pgoProfile != null) add("--pgo=$pgoProfile")
         if (dynamicPluginsEnabled) {
             add("-H:+RuntimeClassLoading")
             addAll(
@@ -192,9 +196,15 @@ val kotlincNativeImageTask = tasks.register<Exec>("kotlincNativeImage") {
         }
     }
 
-    inputs.files(nativeImageClasspath, resources, launcher.map { it.metadata.installationPath.asFile })
+    inputs.files(nativeImageClasspath, resources)
         .withNormalizer(ClasspathNormalizer::class)
         .withPropertyName("nativeImageClasspath")
+    inputs.file(launcher.map { it.metadata.installationPath.file("release") })
+        .withNormalizer(ClasspathNormalizer::class)
+        .withPropertyName("graalVmRelease")
+    inputs.files(preservedPackagesFile, pgoProfile)
+        .withNormalizer(ClasspathNormalizer::class)
+        .withPropertyName("nativeImageConfiguration")
 
     inputs.property("nativeArgs", nativeArgs)
     inputs.property("os", currentOs.name)

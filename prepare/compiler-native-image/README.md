@@ -38,6 +38,8 @@ You can also produce native image distribution release artifacts in
 Additional build properties that require Oracle GraalVM:
 * `-Pkotlin.build.native-image.use-g1=true` enables the G1 garbage collector for the compiler native image. It provides significant performance benefits.
 * `-Pkotlin.build.native-image.dynamic-plugins=true` enables dynamic plugin loading support, see [Plugins](#plugins) for more details.
+* `-Pkotlin.build.native-image.pgo-profile=file.iprof` enable profile-guided optimizations using `file.iprof` as an input profile. 
+See [Profile-Guided Optimizations](#profile-guided-optimizations) for more details.
 
 ## Running
 
@@ -139,3 +141,14 @@ of the native image size.
 dynamically loading currently bundled compiler plugins. This list may not be complete, meaning that attmpting to load other compiler plugins
 may result in a runtime error. In that case, you may need to add the missing packages to the file and rebuild the native image.
 
+## Profile-Guided Optimizations
+
+GraalVM Native Image supports [Profile-Guided Optimizations](https://www.graalvm.org/latest/reference-manual/native-image/optimizations-and-performance/PGO/).
+PGO provides native image a way to compete with JVM's JIT compiler: a way to optimize the performance and size of the native image based
+on the execution profile of the application. However, while JIT can do that at the runtime using the actual runtime behaviour, native image
+requires the profile to be collected ahead of time.
+
+Currently, we do not provide a ready-to-use profile, however our experiments show that even basic up-to-date profile can provide some
+[performance benefits](https://youtrack.jetbrains.com/issue/KT-90902/Native-Image-enable-g1-garbage-collector#focus=Comments-27-14594504.0-0).
+We are planning to collect and provide a comprehensive profile for the Kotlin compiler in the future, for now one can collect a custom profile
+if necessary.
