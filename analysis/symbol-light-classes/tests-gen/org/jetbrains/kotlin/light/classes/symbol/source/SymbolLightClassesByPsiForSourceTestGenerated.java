@@ -305,6 +305,12 @@ public class SymbolLightClassesByPsiForSourceTestGenerated extends AbstractSymbo
   }
 
   @Test
+  @TestMetadata("jvmRecordWithInternalProperties.kt")
+  public void testJvmRecordWithInternalProperties() {
+    run("jvmRecordWithInternalProperties.kt");
+  }
+
+  @Test
   @TestMetadata("jvmRecordWithUnsignedComponent.kt")
   public void testJvmRecordWithUnsignedComponent() {
     run("jvmRecordWithUnsignedComponent.kt");
@@ -2422,6 +2428,12 @@ public class SymbolLightClassesByPsiForSourceTestGenerated extends AbstractSymbo
       @TestMetadata("jvmStaticVariableCompanionClassAnnotation.kt")
       public void testJvmStaticVariableCompanionClassAnnotation() {
         run("jvmStaticVariableCompanionClassAnnotation.kt");
+      }
+
+      @Test
+      @TestMetadata("jvmStaticVariableJvmRecordCompanion.kt")
+      public void testJvmStaticVariableJvmRecordCompanion() {
+        run("jvmStaticVariableJvmRecordCompanion.kt");
       }
 
       @Test

@@ -305,6 +305,12 @@ public class JsSymbolLightClassesByPsiForLibraryTestGenerated extends AbstractJs
   }
 
   @Test
+  @TestMetadata("jvmRecordWithInternalProperties.kt")
+  public void testJvmRecordWithInternalProperties() {
+    run("jvmRecordWithInternalProperties.kt");
+  }
+
+  @Test
   @TestMetadata("jvmRecordWithUnsignedComponent.kt")
   public void testJvmRecordWithUnsignedComponent() {
     run("jvmRecordWithUnsignedComponent.kt");
@@ -2384,6 +2390,12 @@ public class JsSymbolLightClassesByPsiForLibraryTestGenerated extends AbstractJs
       @TestMetadata("jvmStaticVariableCompanionClassAnnotation.kt")
       public void testJvmStaticVariableCompanionClassAnnotation() {
         run("jvmStaticVariableCompanionClassAnnotation.kt");
+      }
+
+      @Test
+      @TestMetadata("jvmStaticVariableJvmRecordCompanion.kt")
+      public void testJvmStaticVariableJvmRecordCompanion() {
+        run("jvmStaticVariableJvmRecordCompanion.kt");
       }
 
       @Test
