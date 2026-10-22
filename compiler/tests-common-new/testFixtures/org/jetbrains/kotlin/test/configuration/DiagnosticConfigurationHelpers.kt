@@ -24,6 +24,9 @@ val DEFAULT_UNUSED_DIAGNOSTICS = listOf(
     "UNUSED_CHANGED_VALUE",
     "UNUSED_EXPRESSION",
     "UNUSED_LAMBDA_EXPRESSION",
+    "HOME_PACKAGE_RESOLUTION_INVESTIGATION_1",
+    "HOME_PACKAGE_RESOLUTION_INVESTIGATION_2",
+    "HOME_PACKAGE_RESOLUTION_NON_HPR_EXTENSION",
 )
 
 fun TestStepBuilder.HandlersStepBuilder.NonGroupingStage<FirOutputArtifact, FrontendKinds.FIR>.setupHandlersForDiagnosticTest() {

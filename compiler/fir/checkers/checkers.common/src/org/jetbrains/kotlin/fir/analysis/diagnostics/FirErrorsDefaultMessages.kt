@@ -425,6 +425,9 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.HAS_NEXT_FUNCTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.HAS_NEXT_FUNCTION_NONE_APPLICABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.HAS_NEXT_FUNCTION_TYPE_MISMATCH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.HAS_NEXT_MISSING
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.HOME_PACKAGE_RESOLUTION_INVESTIGATION_1
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.HOME_PACKAGE_RESOLUTION_INVESTIGATION_2
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.HOME_PACKAGE_RESOLUTION_NON_HPR_EXTENSION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS
@@ -1016,6 +1019,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.renderReadable
 import org.jetbrains.kotlin.resolve.ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE
+import org.jetbrains.kotlin.resolve.RequireKotlinConstants.FQ_NAME
 import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
 
 /**
@@ -4032,6 +4036,21 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
                     "Use original class ''{1}'' instead or rewrite calls with ''{0}'' as a qualifier. " +
                     "See https://youtrack.jetbrains.com/issue/KT-64431.",
             NAME, NAME
+        )
+        map.put(
+            HOME_PACKAGE_RESOLUTION_INVESTIGATION_1,
+            "HPR1 - {0} - {1} - {2}",
+            TO_STRING, TO_STRING, TO_STRING
+        )
+        map.put(
+            HOME_PACKAGE_RESOLUTION_INVESTIGATION_2,
+            "HPR2 - {0} - {1} - {2}",
+            TO_STRING, TO_STRING, TO_STRING
+        )
+        map.put(
+            HOME_PACKAGE_RESOLUTION_NON_HPR_EXTENSION,
+            "HPR3 - {0}",
+            DECLARATION_FQ_NAME
         )
 
         // Suspend

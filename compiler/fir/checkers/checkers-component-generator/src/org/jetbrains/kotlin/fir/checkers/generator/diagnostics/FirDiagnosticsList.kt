@@ -2452,6 +2452,20 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<Name>("typealiasName")
             parameter<Name>("originalClassName")
         }
+
+        val HOME_PACKAGE_RESOLUTION_INVESTIGATION_1 by warning<KtElement> {
+            parameter<Int>("hpr")
+            parameter<Int>("extensionNotHpr")
+            parameter<Int>("notExtension")
+        }
+        val HOME_PACKAGE_RESOLUTION_INVESTIGATION_2 by warning<KtElement> {
+            parameter<Int>("star")
+            parameter<Int>("rest")
+            parameter<Int>("problematic")
+        }
+        val HOME_PACKAGE_RESOLUTION_NON_HPR_EXTENSION by warning<KtElement> {
+            parameter<FirClassLikeSymbol<*>>("type")
+        }
     }
 
     val SUSPEND by object : DiagnosticGroup("Suspend errors") {

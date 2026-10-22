@@ -8285,6 +8285,37 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface HomePackageResolutionInvestigation1 : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<HomePackageResolutionInvestigation1>
+            get() = HomePackageResolutionInvestigation1::class
+
+        public val hpr: Int
+        public val extensionNotHpr: Int
+        public val notExtension: Int
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface HomePackageResolutionInvestigation2 : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<HomePackageResolutionInvestigation2>
+            get() = HomePackageResolutionInvestigation2::class
+
+        public val star: Int
+        public val rest: Int
+        public val problematic: Int
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface HomePackageResolutionNonHprExtension : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<HomePackageResolutionNonHprExtension>
+            get() = HomePackageResolutionNonHprExtension::class
+
+        public val type: KaClassLikeSymbol
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface IllegalSuspendFunctionCall : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass: KClass<IllegalSuspendFunctionCall>
             get() = IllegalSuspendFunctionCall::class

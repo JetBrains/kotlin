@@ -2,6 +2,7 @@
 // DIAGNOSTICS: -UNUSED_EXPRESSION
 // FIR_DUMP
 // LANGUAGE: +HomePackageResolution
+// RENDER_DIAGNOSTIC_ARGUMENTS
 
 // FILE: a.kt
 
@@ -39,11 +40,11 @@ import second.B
 fun checkC(a: A, b: B) {
     a.foo()
     a.bar()
-    <!UNRESOLVED_REFERENCE!>baz<!>(a)
+    <!UNRESOLVED_REFERENCE("baz")!>baz<!>(a)
 
     b.foo()
     b.bar()
-    <!UNRESOLVED_REFERENCE!>baz<!>(b)
+    <!UNRESOLVED_REFERENCE("baz")!>baz<!>(b)
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration */
