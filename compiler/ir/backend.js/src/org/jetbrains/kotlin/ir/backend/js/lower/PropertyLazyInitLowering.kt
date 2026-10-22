@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.ir.isPure
+import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
@@ -119,6 +120,7 @@ abstract class PropertyLazyInitLowering(
     }
 }
 
+@PhasePrerequisites(JsDefaultArgumentStubGenerator::class)
 class JsPropertyLazyInitLowering(context: JsIrBackendContext) : PropertyLazyInitLowering(context) {
     override val initializationGenerator = JsLazyGlobalInitializationGenerator(context)
 }
