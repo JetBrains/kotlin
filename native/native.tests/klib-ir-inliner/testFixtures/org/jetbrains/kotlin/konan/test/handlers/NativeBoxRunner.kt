@@ -225,8 +225,6 @@ class PrettyResultsHandler(
         //   in isolated mode: `__launcher__Kt.runTest`
         //   in grouped mode: `<long_test_name>.__launcher_<hash>__Kt.runTest`,
         //     since the launcher file is named after the hash of the module name (see `AbstractLauncherAdditionalSourceProvider`)
-        @Suppress("RegExpRepeatedSpace")
-        val failedRegexWithoutTCLogger = """\[  FAILED  ] (.*)__launcher__Kt.runTest""".toRegex()
         private val failedRegexWithTCLogger = """-\s+(.*)$LAUNCHER_FACADE_CLASS_NAME_PATTERN\.runTest""".toRegex()
 
         /** The packages of the failed tests that the reason of a failed check of a batch lists. */
@@ -279,11 +277,8 @@ class PrettyResultsHandler(
 
     override fun processNonExpectedFailure(failedResults: List<TestRunCheck.Result.Failed>) {
         val output = getLoggedRun().toString()
-        val failedTests = if (testRun.runParameters.contains(TestRunParameter.WithTCTestLogger)) {
-            failedResults.flatMap { findFailedTestsWithTCLogger(it.reason) }
-        } else {
-            findFailedTestsWithoutTCLogger(output)
-        }
+        // The batch always runs with the TeamCity logger (see `NativeBoxRunnerGroupingStage`).
+        val failedTests = failedResults.flatMap { findFailedTestsWithTCLogger(it.reason) }
         val phaseInputs = testServices.groupingStageInputs
 
         checkTestInfrastructure(failedResults.isEmpty() || failedTests.isNotEmpty()) {
@@ -314,11 +309,5 @@ class PrettyResultsHandler(
                 super.processNonExpectedFailure(failedResults)
             }
         }
-    }
-
-    private fun findFailedTestsWithoutTCLogger(output: String): List<String> {
-        return failedRegexWithoutTCLogger.findAll(output)
-            .map { it.groupValues }.distinct()
-            .map { it[1].removeSuffix(".") }.toList()
     }
 }
