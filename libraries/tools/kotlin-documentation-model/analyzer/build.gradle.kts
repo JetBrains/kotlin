@@ -105,7 +105,6 @@ projectTests {
 
                     testTask(
                         taskName = testTask.name,
-                        javaLauncher = JdkMajorVersion.JDK_1_8,
                         maxHeapSize = testMaxHeapSizeLarge,
                         skipInLocalBuild = false,
                     ) {
@@ -122,7 +121,6 @@ projectTests {
                 val testJavaSymbolsTarget = targets.register("testJavaSymbols") {
                     testTask(
                         taskName = testTask.name,
-                        javaLauncher = JdkMajorVersion.JDK_1_8,
                         maxHeapSize = testMaxHeapSizeLarge,
                         skipInLocalBuild = false,
                     ) {
@@ -142,7 +140,6 @@ projectTests {
                     projectTests {
                         testTask(
                             taskName = testTask.name,
-                            javaLauncher = JdkMajorVersion.JDK_1_8,
                             skipInLocalBuild = false,
                         ) {
                             onlyIf { false }
