@@ -9,8 +9,11 @@ import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.javaInterop
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.disableStandardScriptDefinition
+import org.jetbrains.kotlin.config.inlineConstTracker
+import org.jetbrains.kotlin.config.jvmTarget
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.scriptingHostConfiguration
 import org.jetbrains.kotlin.fir.FirModuleData
@@ -25,6 +28,8 @@ import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import java.io.File
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
+import kotlin.script.experimental.api.SourceCode
+import kotlin.script.experimental.api.compilerOptions
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.host.with
 
@@ -64,13 +69,23 @@ abstract class AbstractScriptingCompilerState<P : ModuleDataProvider> internal c
         )
     }
 
-    internal fun updateContext(configuration: CompilerConfiguration) {
-        sessionFactoryContext = FirJvmSessionFactory.Context(
-            configuration = configuration,
-            projectEnvironment = sessionFactoryContext.projectEnvironment,
-            librariesClasspath = sessionFactoryContext.librariesClasspath,
-            javaInterop = sessionFactoryContext.javaInterop,
+    /**
+     * Applies the refined compiler options of the [sources] to the [configuration] and updates the session factory context for it.
+     */
+    internal fun applyRefinedCompilerOptions(
+        configuration: CompilerConfiguration,
+        sources: List<SourceCode>,
+        messageCollector: ScriptDiagnosticsMessageCollector,
+        getRefinedConfiguration: (SourceCode) -> ScriptCompilationConfiguration?,
+    ) {
+        configuration.applyRefinedCompilerOptions(
+            baseScriptCompilationConfiguration[ScriptCompilationConfiguration.compilerOptions].orEmpty(),
+            ignoredOptionsReportingState,
+            sources,
+            messageCollector,
+            getRefinedConfiguration,
         )
+        sessionFactoryContext = sessionFactoryContext.updatedFor(configuration)
     }
 
     /**
@@ -86,6 +101,19 @@ abstract class AbstractScriptingCompilerState<P : ModuleDataProvider> internal c
 
     val project get() = projectEnvironment.project
 }
+
+/**
+ * Recreates the context only if the JVM target or the inline constant tracker changed.
+ * Keep in sync with what the [FirJvmSessionFactory.Context] constructor reads from the configuration.
+ */
+private fun FirJvmSessionFactory.Context.updatedFor(configuration: CompilerConfiguration): FirJvmSessionFactory.Context =
+    if ((configuration.jvmTarget ?: JvmTarget.DEFAULT) == jvmTarget && configuration.inlineConstTracker === inlineConstTracker) this
+    else FirJvmSessionFactory.Context(
+        configuration = configuration,
+        projectEnvironment = projectEnvironment,
+        librariesClasspath = librariesClasspath,
+        javaInterop = javaInterop,
+    )
 
 private fun CompilerConfiguration.addScriptDefinitionAndConfigureHost(
     hostConfiguration: ScriptingHostConfiguration,
