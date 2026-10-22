@@ -163,7 +163,7 @@ abstract class ClasspathSnapshotTestCommon {
 
             val classpathOption =
                 if (classpath.isNotEmpty()) listOf("-classpath", classpath.joinToString(File.pathSeparator)) else emptyList()
-            compileJavaFiles(javaFiles, listOf("-d", classesDir.path) + classpathOption).assertSuccessful()
+            compileJavaFiles(javaFiles, listOf("-d", classesDir.path, "--release", "8") + classpathOption).assertSuccessful()
         }
 
         private fun getClassFilesInDir(classesDir: File): List<ClassFile> {

@@ -18,4 +18,5 @@ public interface SubclassOfCollection</*0*/ E> : kotlin.collections.MutableColle
     @kotlin.IgnorableReturnValue public abstract override /*1*/ /*fake_override*/ fun retainAll(/*0*/ kotlin.collections.Collection<E>): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun spliterator(): java.util.Spliterator<E!>
     public open override /*1*/ /*fake_override*/ fun stream(): java.util.stream.Stream<E>
+    @kotlin.Deprecated(level = ..., message = "This member is not fully supported by Kotlin compiler, so it may be absent or have different signature in next major version", replaceWith = ...) public open override /*1*/ /*fake_override*/ fun </*0*/ T : kotlin.Any!> toArray(/*0*/ java.util.function.IntFunction<kotlin.Array<(out) T!>!>!): kotlin.Array<(out) T!>!
 }
