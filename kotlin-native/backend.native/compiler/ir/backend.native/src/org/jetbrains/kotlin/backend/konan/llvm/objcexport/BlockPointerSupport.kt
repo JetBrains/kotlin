@@ -28,12 +28,16 @@ internal fun ObjCExportCodeGeneratorBase.generateBlockToKotlinFunctionConverter(
     val objectBodyType = if (useSeparateHolder) {
         ObjectBodyType(
                 llvm.structType(codegen.kObjHeader, llvm.pointerType),
-                objectFieldIndices = listOf(1)
+                emptyMap(),
+                objectFieldIndices = listOf(1),
+                runtime.objectAlignment
         )
     } else {
         ObjectBodyType(
                 llvm.structType(codegen.kObjHeader),
-                objectFieldIndices = emptyList()
+                emptyMap(),
+                objectFieldIndices = emptyList(),
+                runtime.objectAlignment
         )
     }
     val bodyType = objectBodyType.llvmBodyType

@@ -56,7 +56,12 @@ internal class LlvmDeclarations(private val unique: Map<UniqueKind, UniqueLlvmDe
 
 }
 
-internal class ObjectBodyType(val llvmBodyType: LLVMTypeRef, objectFieldIndices: List<Int>) {
+internal class ObjectBodyType(
+        val llvmBodyType: LLVMTypeRef,
+        val fieldsIndices: Map<IrFieldSymbol, Int>,
+        objectFieldIndices: List<Int>,
+        val alignment: Int,
+) {
     val sortedIndicesOfObjectFields = objectFieldIndices.sorted()
 }
 
@@ -66,8 +71,6 @@ internal class ClassLlvmDeclarations(
         val writableTypeInfoGlobal: WritableTypeInfoPointer?,
         val typeInfo: ConstPointer,
         val objCDeclarations: KotlinObjCClassLlvmDeclarations?,
-        val alignment: Int,
-        val fieldIndices: Map<IrFieldSymbol, Int>
 )
 
 internal class KotlinObjCClassLlvmDeclarations(
@@ -81,13 +84,8 @@ internal class StaticFieldLlvmDeclarations(val storageAddressAccess: AddressAcce
 
 internal class UniqueLlvmDeclarations(val pointer: ConstPointer)
 
-internal data class ClassBodyAndAlignmentInfo(
-        val body: LLVMTypeRef,
-        val alignment: Int,
-        val fieldsIndices: Map<IrFieldSymbol, Int>
-)
-
-private fun ContextUtils.createClassBody(name: String, fields: List<ClassLayoutBuilder.FieldInfo>): ClassBodyAndAlignmentInfo {
+internal fun ContextUtils.createClassBody(name: String, declaration: IrClass): ObjectBodyType {
+    val fields = context.getLayoutBuilder(declaration).getFields(llvm)
     val classType = LLVMStructCreateNamed(LLVMGetModuleContext(llvm.module), name)!!
     val packed = context.config.packFields ||
         fields.any { LLVMABIAlignmentOfType(runtime.targetData, it.type.toLLVMType(llvm)) != it.alignment }
@@ -127,7 +125,24 @@ private fun ContextUtils.createClassBody(name: String, fields: List<ClassLayoutB
         +"  Resulting type is ${classType.toTypeString()}"
     }
 
-    return ClassBodyAndAlignmentInfo(classType, alignment, indices)
+    val objectFieldIndices = fields.mapNotNull {
+        if (it.type.binaryTypeIsReference()) {
+            indices.getValue(it.irFieldSymbol)
+        } else {
+            null
+        }
+    }
+
+    require(alignment == runtime.objectAlignment) {
+        "Over-aligned objects are not supported yet: expected alignment for ${declaration.fqNameWhenAvailable} is ${alignment}"
+    }
+
+    return ObjectBodyType(
+            classType,
+            indices,
+            objectFieldIndices,
+            alignment
+    )
 }
 
 private class DeclarationsGeneratorVisitor(override val generationState: NativeGenerationState)
@@ -206,21 +221,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
             }
         }
 
-        val fields = context.getLayoutBuilder(declaration).getFields(llvm)
-        (val bodyType = body, val alignment, val fieldIndices = fieldsIndices) = createClassBody(classBodyTypeName, fields)
-
-        val objectFieldIndices = fields.mapNotNull {
-            if (it.type.binaryTypeIsReference()) {
-                fieldIndices.getValue(it.irFieldSymbol)
-            } else {
-                null
-            }
-        }
-
-        require(alignment == runtime.objectAlignment) {
-            "Over-aligned objects are not supported yet: expected alignment for ${declaration.fqNameWhenAvailable} is $alignment"
-        }
-
+        val body = createClassBody(classBodyTypeName, declaration)
 
         val typeInfoPtr: ConstPointer
         val typeInfoGlobal: StaticData.Global
@@ -273,7 +274,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
         }
 
         if (declaration.isUnit() || declaration.isKotlinArray())
-            createUniqueDeclarations(declaration, typeInfoPtr, bodyType)
+            createUniqueDeclarations(declaration, typeInfoPtr, body.llvmBodyType)
 
         val objCDeclarations = if (declaration.isKotlinObjCClass()) {
             createKotlinObjCClassDeclarations(declaration)
@@ -284,13 +285,11 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
         val writableTypeInfoGlobal = generateWritableTypeInfoForClass(declaration)
 
         return ClassLlvmDeclarations(
-                ObjectBodyType(bodyType, objectFieldIndices),
+                body,
                 typeInfoGlobal,
                 writableTypeInfoGlobal,
                 typeInfoPtr,
                 objCDeclarations,
-                alignment,
-                fieldIndices
         )
     }
 
@@ -347,7 +346,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
             if (!containingClass.requiresRtti()) return
             val classDeclarations = (containingClass.metadata as? KonanMetadata.Class)?.llvm
                     ?: error(containingClass.render())
-            val index = classDeclarations.fieldIndices[declaration.symbol]!!
+            val index = classDeclarations.bodyType.fieldsIndices[declaration.symbol]!!
             val bodyType = classDeclarations.bodyType.llvmBodyType
             declaration.metadata = KonanMetadata.InstanceField(
                     declaration,

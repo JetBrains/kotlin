@@ -443,11 +443,11 @@ internal class StackLocalsManagerImpl(
             alloca(llvm.pointerType, true)
 
     override fun alloc(irClass: IrClass): LLVMValueRef = with(functionGenerationContext) {
-        val classInfo = llvmDeclarations.forClass(irClass)
-        val type = classInfo.bodyType.llvmBodyType
+        val bodyType = irClass.objectBodyType
+        val type = bodyType.llvmBodyType
         val stackLocal = appendingTo(bbInitStackLocals) {
             val stackSlot = LLVMBuildAlloca(builder, type, "")!!
-            LLVMSetAlignment(stackSlot, classInfo.alignment)
+            LLVMSetAlignment(stackSlot, bodyType.alignment)
 
             memset(stackSlot, 0, LLVMSizeOfTypeInBits(codegen.llvmTargetData, type).toInt() / 8)
 
@@ -544,17 +544,14 @@ internal class StackLocalsManagerImpl(
                 )
             }
         } else {
-            val info = llvmDeclarations.forClass(stackLocal.irClass)
-            val type = info.bodyType.llvmBodyType
-            for ([fieldSymbol, fieldIndex] in info.fieldIndices.entries.sortedBy{ e -> e.value }) {
-
-                if (fieldSymbol.owner.type.binaryTypeIsReference()) {
-                    val fieldPtr = structGep(type, stackLocal.stackAllocationPtr, fieldIndex, "")
-                    if (refsOnly)
-                        storeHeapRef(llvm.kNull, fieldPtr)
-                    else
-                        call(llvm.zeroHeapRefFunction, listOf(fieldPtr))
-                }
+            val bodyType = stackLocal.irClass.objectBodyType
+            val type = bodyType.llvmBodyType
+            for (fieldIndex in bodyType.sortedIndicesOfObjectFields) {
+                val fieldPtr = structGep(type, stackLocal.stackAllocationPtr, fieldIndex, "")
+                if (refsOnly)
+                    storeHeapRef(llvm.kNull, fieldPtr)
+                else
+                    call(llvm.zeroHeapRefFunction, listOf(fieldPtr))
             }
 
             if (!refsOnly) {

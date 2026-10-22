@@ -259,7 +259,7 @@ internal class RTTIGenerator(
                     irClass.symbol == context.irBuiltIns.arrayClass -> llvm.Kotlin_processArrayInMark.toConstPointer()
                     else -> genProcessObjectInMark(llvmDeclarations.bodyType)
                 },
-                requiredAlignment = llvmDeclarations.alignment
+                requiredAlignment = llvmDeclarations.bodyType.alignment
         )
 
         val typeInfoGlobalValue = if (!irClass.typeInfoHasVtableAttached) {
@@ -438,7 +438,7 @@ internal class RTTIGenerator(
             val objectFieldIndices = llvmDeclarations.bodyType.sortedIndicesOfObjectFields.toSet()
 
             val fields = context.getLayoutBuilder(irClass).getFields(llvm).map {
-                val index = llvmDeclarations.fieldIndices[it.irFieldSymbol]!!
+                val index = llvmDeclarations.bodyType.fieldsIndices[it.irFieldSymbol]!!
                 val isObjectType = index in objectFieldIndices
                 FieldRecord(
                         LLVMOffsetOfElement(llvmTargetData, bodyType, index).toInt(),
