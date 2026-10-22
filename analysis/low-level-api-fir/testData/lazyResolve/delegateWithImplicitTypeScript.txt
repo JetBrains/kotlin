@@ -39,7 +39,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
         }
 
         public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithImplicitTypeScript.kts>, ScriptTopLevelDeclaration=true] interface Interface : R|kotlin/Any| {
-            public open [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun implicitType(): <implicit> { LAZY_BLOCK }
+            public open [ResolvedTo(STATUS)] fun implicitType(): <implicit> { LAZY_BLOCK }
 
         }
 
@@ -48,9 +48,9 @@ CONTRACTS:
 TARGET: public open override [ResolvedTo(CONTRACTS)] [DeferredCallableCopyReturnTypeKey=DeferredReturnTypeOfSubstitution(substitutor=Empty, baseSymbol=FirNamedFunctionSymbol /Interface.implicitType), DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /Interface.implicitType, containingClass=Aaa, delegateFieldSymbol=FirFieldSymbol /Aaa.$$delegate_0] fun implicitType(): <implicit>
 
 FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
-    SCRIPT: [ResolvedTo(TYPES)] <script-delegateWithImplicitTypeScript.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
-        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-delegateWithImplicitTypeScript.kts>
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithImplicitTypeScript.kts>, DelegateFieldsMapKey={0=/Aaa.$$delegate_0}, ScriptTopLevelDeclaration=true] class Aaa : R|Interface| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Aaa] constructor([ResolvedTo(STATUS)] i: R|Interface|): R|Aaa| {
@@ -62,7 +62,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
         }
 
         public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithImplicitTypeScript.kts>, ScriptTopLevelDeclaration=true] interface Interface : R|kotlin/Any| {
-            public open [ResolvedTo(CONTRACTS)] fun implicitType(): <implicit> { LAZY_BLOCK }
+            public open [ResolvedTo(STATUS)] fun implicitType(): <implicit> { LAZY_BLOCK }
 
         }
 
@@ -110,7 +110,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
         }
 
         public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithImplicitTypeScript.kts>, ScriptTopLevelDeclaration=true] interface Interface : R|kotlin/Any| {
-            public open [ResolvedTo(CONSTANT_EVALUATION)] fun implicitType(): R|kotlin/Int| {
+            public open [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun implicitType(): R|kotlin/Int| {
                 ^implicitType Int(42)
             }
 
@@ -135,7 +135,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
         }
 
         public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithImplicitTypeScript.kts>, ScriptTopLevelDeclaration=true] interface Interface : R|kotlin/Any| {
-            public open [ResolvedTo(ANNOTATION_ARGUMENTS)] fun implicitType(): R|kotlin/Int| {
+            public open [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun implicitType(): R|kotlin/Int| {
                 ^implicitType Int(42)
             }
 
@@ -160,7 +160,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
         }
 
         public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithImplicitTypeScript.kts>, ScriptTopLevelDeclaration=true] interface Interface : R|kotlin/Any| {
-            public open [ResolvedTo(ANNOTATION_ARGUMENTS)] fun implicitType(): R|kotlin/Int| {
+            public open [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun implicitType(): R|kotlin/Int| {
                 ^implicitType Int(42)
             }
 

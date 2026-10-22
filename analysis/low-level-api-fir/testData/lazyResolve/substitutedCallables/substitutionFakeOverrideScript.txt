@@ -46,8 +46,8 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideScript.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public abstract [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val [ResolvedTo(EXPECT_ACTUAL_MATCHING)] R|T|.property: R|T|
-                public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=AbstractClass] get(): R|T|
+            public abstract [ResolvedTo(STATUS)] val [ResolvedTo(STATUS)] R|T|.property: R|T|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] get(): R|T|
 
         }
 
@@ -57,9 +57,9 @@ TARGET: public abstract override [ResolvedTo(CONTRACTS)] [SubstitutedOverrideOri
     public [ResolvedTo(CONTRACTS)] [ContainingClassKey=SubClass] get(): R|kotlin/Int|
 
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideScript.kts
-    SCRIPT: [ResolvedTo(TYPES)] <script-substitutionFakeOverrideScript.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
-        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-substitutionFakeOverrideScript.kts>
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-substitutionFakeOverrideScript.kts>, ScriptTopLevelDeclaration=true] class SubClass : R|AbstractClass<kotlin/Int>| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] constructor(): R|SubClass| {
@@ -73,8 +73,8 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideScript.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public abstract [ResolvedTo(CONTRACTS)] val [ResolvedTo(CONTRACTS)] R|T|.property: R|T|
-                public [ResolvedTo(CONTRACTS)] [ContainingClassKey=AbstractClass] get(): R|T|
+            public abstract [ResolvedTo(STATUS)] val [ResolvedTo(STATUS)] R|T|.property: R|T|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] get(): R|T|
 
         }
 
@@ -84,9 +84,9 @@ TARGET: public abstract override [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [Subs
     public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=SubClass] get(): R|kotlin/Int|
 
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideScript.kts
-    SCRIPT: [ResolvedTo(TYPES)] <script-substitutionFakeOverrideScript.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
-        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-substitutionFakeOverrideScript.kts>
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-substitutionFakeOverrideScript.kts>, ScriptTopLevelDeclaration=true] class SubClass : R|AbstractClass<kotlin/Int>| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] constructor(): R|SubClass| {
@@ -100,8 +100,8 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideScript.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public abstract [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] R|T|.property: R|T|
-                public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=AbstractClass] get(): R|T|
+            public abstract [ResolvedTo(STATUS)] val [ResolvedTo(STATUS)] R|T|.property: R|T|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] get(): R|T|
 
         }
 
@@ -111,9 +111,9 @@ TARGET: public abstract override [ResolvedTo(CONSTANT_EVALUATION)] [SubstitutedO
     public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=SubClass] get(): R|kotlin/Int|
 
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideScript.kts
-    SCRIPT: [ResolvedTo(TYPES)] <script-substitutionFakeOverrideScript.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
-        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-substitutionFakeOverrideScript.kts>
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-substitutionFakeOverrideScript.kts>, ScriptTopLevelDeclaration=true] class SubClass : R|AbstractClass<kotlin/Int>| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] constructor(): R|SubClass| {
@@ -127,8 +127,8 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideScript.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public abstract [ResolvedTo(CONSTANT_EVALUATION)] val [ResolvedTo(CONSTANT_EVALUATION)] R|T|.property: R|T|
-                public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=AbstractClass] get(): R|T|
+            public abstract [ResolvedTo(STATUS)] val [ResolvedTo(STATUS)] R|T|.property: R|T|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] get(): R|T|
 
         }
 
@@ -138,9 +138,9 @@ TARGET: public abstract override [ResolvedTo(ANNOTATION_ARGUMENTS)] [Substituted
     public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=SubClass] get(): R|kotlin/Int|
 
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideScript.kts
-    SCRIPT: [ResolvedTo(TYPES)] <script-substitutionFakeOverrideScript.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
-        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-substitutionFakeOverrideScript.kts>
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-substitutionFakeOverrideScript.kts>, ScriptTopLevelDeclaration=true] class SubClass : R|AbstractClass<kotlin/Int>| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] constructor(): R|SubClass| {
@@ -154,8 +154,8 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideScript.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public abstract [ResolvedTo(ANNOTATION_ARGUMENTS)] val [ResolvedTo(ANNOTATION_ARGUMENTS)] R|T|.property: R|T|
-                public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=AbstractClass] get(): R|T|
+            public abstract [ResolvedTo(STATUS)] val [ResolvedTo(STATUS)] R|T|.property: R|T|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] get(): R|T|
 
         }
 
@@ -165,9 +165,9 @@ TARGET: public abstract override [ResolvedTo(BODY_RESOLVE)] [SubstitutedOverride
     public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=SubClass] get(): R|kotlin/Int|
 
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideScript.kts
-    SCRIPT: [ResolvedTo(TYPES)] <script-substitutionFakeOverrideScript.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
-        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-substitutionFakeOverrideScript.kts>
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-substitutionFakeOverrideScript.kts>, ScriptTopLevelDeclaration=true] class SubClass : R|AbstractClass<kotlin/Int>| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] constructor(): R|SubClass| {
@@ -181,8 +181,8 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideScript.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public abstract [ResolvedTo(ANNOTATION_ARGUMENTS)] val [ResolvedTo(ANNOTATION_ARGUMENTS)] R|T|.property: R|T|
-                public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=AbstractClass] get(): R|T|
+            public abstract [ResolvedTo(STATUS)] val [ResolvedTo(STATUS)] R|T|.property: R|T|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] get(): R|T|
 
         }
 
@@ -209,4 +209,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] substitutionFakeOverrideScript.kts
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AbstractClass] get(): R|T|
 
         }
-
