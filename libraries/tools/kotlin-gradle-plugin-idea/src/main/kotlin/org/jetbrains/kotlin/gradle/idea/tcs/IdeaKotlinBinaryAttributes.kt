@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.idea.tcs
 import org.jetbrains.kotlin.gradle.idea.utils.stringInterner
 import org.jetbrains.kotlin.tooling.core.WeakInterner
 import java.io.Serializable
+import java.util.concurrent.locks.ReentrantLock
 
 fun IdeaKotlinBinaryAttributes(attributes: Map<String, String>): IdeaKotlinBinaryAttributes {
     return IdeaKotlinBinaryAttributesImpl.createAndIntern(attributes)
@@ -45,7 +46,7 @@ private class IdeaKotlinBinaryAttributesImpl private constructor(
     companion object {
         const val serialVersionUID = 0L
 
-        private val interner = WeakInterner()
+        private val interner = WeakInterner(ReentrantLock())
 
         internal fun createAndIntern(attributes: Map<String, String>): IdeaKotlinBinaryAttributes {
             val internedMap = attributes.map { (key, value) -> stringInterner.getOrPut(key) to stringInterner.getOrPut(value) }.toMap()
