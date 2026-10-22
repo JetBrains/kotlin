@@ -74,11 +74,17 @@ sourceSets {
     "testFixtures" { projectDefault() }
 }
 
+val useG1Gc = kotlinBuildProperties
+    .booleanProperty("kotlin.build.native-image.use-g1", false)
+    .get()
 val dynamicPluginsEnabled = kotlinBuildProperties
     .booleanProperty("kotlin.build.native-image.dynamic-plugins", false)
     .get()
 
-val graalLauncher = getNativeImageToolchainLauncherFor(JdkMajorVersion.JDK_25_0)
+val graalLauncher = getNativeImageToolchainLauncherFor(
+    JdkMajorVersion.JDK_25_0,
+    requireOracleJdk = useG1Gc || dynamicPluginsEnabled,
+)
 
 projectTests {
     testData(project(":compiler").isolated, "testData/codegen")
@@ -170,18 +176,21 @@ val kotlincNativeImageTask = tasks.register<Exec>("kotlincNativeImage") {
         "--add-opens", "java.desktop/javax.swing=ALL-UNNAMED",
     )
 
-    val dynamicPluginsNativeArgs = if (dynamicPluginsEnabled) listOf(
-        "-H:+RuntimeClassLoading",
-        *providers.fileContents(preservedPackagesFile)
-            .asText.get()
-            .trim()
-            .lineSequence()
-            .filterNot { it.isBlank() || it.startsWith("#") }
-            .map { "-H:Preserve=package=$it" }
-            .toList().toTypedArray(),
-    ) else emptyList()
-
-    val nativeArgs = basicNativeArgs + dynamicPluginsNativeArgs
+    val nativeArgs = buildList {
+        addAll(basicNativeArgs)
+        if (useG1Gc) add("--gc=G1")
+        if (dynamicPluginsEnabled) {
+            add("-H:+RuntimeClassLoading")
+            addAll(
+                providers.fileContents(preservedPackagesFile)
+                    .asText.get()
+                    .trim()
+                    .lineSequence()
+                    .filterNot { it.isBlank() || it.startsWith("#") }
+                    .map { "-H:Preserve=package=$it" }
+            )
+        }
+    }
 
     inputs.files(nativeImageClasspath, resources, launcher.map { it.metadata.installationPath.asFile })
         .withNormalizer(ClasspathNormalizer::class)
