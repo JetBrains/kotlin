@@ -23,9 +23,9 @@ FILE fqName:test fileName:/main.kt lineStartOffsets: [0, 1, 2, 3, 4, 5, 6, 27, 4
                 VAR[-1, -1] IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER name:x type:kotlin.Int [val]
                   GET_VAR[-1, -1] 'val tmp_0: kotlin.Int declared in test.test' type=kotlin.Int origin=null
                 RETURN[82, 82] type=kotlin.Nothing from='{IrReturnableBlockImpl}'
-                  CALL[77, 82] 'UNBOUND IrSimpleFunctionSymbolImpl' type=kotlin.Int origin=MUL
-                    ARG 1: GET_VAR[77, 78] 'val x: kotlin.Int declared in test.test' type=kotlin.Int origin=null
-                    ARG 2: CONST[81, 82] Int type=kotlin.Int value=2
+                  CALL[77, 82] 'public final fun times (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=MUL
+                    ARG <this>: GET_VAR[77, 78] 'val x: kotlin.Int declared in test.test' type=kotlin.Int origin=null
+                    ARG other: CONST[81, 82] Int type=kotlin.Int value=2
           ARG other: BLOCK[148, 158] type=kotlin.Int origin=INLINE_ARGS_CONTAINER
             VAR[-1, -1] IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.Int [val]
               CONST[155, 157] Int type=kotlin.Int value=14

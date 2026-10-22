@@ -1,4 +1,5 @@
-// IGNORE_BACKEND: JKLIB
+// DUMP_IR_DIFFERENCE: JKLIB
+//   JKlib tests compile against a real JDK, whose default methods (`forEach`, `stream`, `spliterator`, ...) add fake overrides.
 // FULL_JDK
 // TARGET_BACKEND: JVM
 
