@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.metadata.ProtoBuf.Type
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmFlags
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException
@@ -96,7 +95,7 @@ open class JvmClassFileBasedSymbolProvider(
         val moduleData = moduleDataProvider.getModuleData(kotlinClass.containingLibraryPath?.asNioPath()) ?: return null
 
         val [nameResolver, packageProto] = parseProto(kotlinClass) {
-            JvmProtoBufUtil.readPackageDataFrom(data, strings)
+            JvmParsedMetadataCache.readPackageData(data, strings)
         } ?: return null
 
         val source = JvmPackagePartSource(
@@ -188,7 +187,7 @@ open class JvmClassFileBasedSymbolProvider(
         val data = kotlinClass.classHeader.data ?: kotlinClass.classHeader.incompatibleData ?: return null
         val strings = kotlinClass.classHeader.strings ?: return null
         val [nameResolver, classProto] = parseProto(kotlinClass) {
-            JvmProtoBufUtil.readClassDataFrom(data, strings)
+            JvmParsedMetadataCache.readClassData(data, strings)
         } ?: return null
 
         return ClassMetadataFindResult.Metadata(
