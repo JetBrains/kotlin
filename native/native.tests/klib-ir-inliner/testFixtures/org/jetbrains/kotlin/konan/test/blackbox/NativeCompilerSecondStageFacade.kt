@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
 import org.jetbrains.kotlin.config.nativeBinaryOptions.RuntimeAssertsMode
 import org.jetbrains.kotlin.konan.config.konanTarget
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.test.blackbox.support.AssertionsMode
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.ASSERTIONS_MODE
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.FILECHECK_STAGE
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.test.klib.CustomKlibCompilerSecondStageFacade
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.nativeEnvironmentConfigurator
 import org.jetbrains.kotlin.test.testInfraError
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import java.io.ByteArrayOutputStream
@@ -116,7 +118,9 @@ class NativeCompilerSecondStageFacade private constructor(
             val regularDependencies = mutableSetOf<String>()
             val friendDependencies = mutableSetOf<String>()
             val mainLibraries = mutableListOf<String>()
+            val facade = NativeCompilerSecondStageFacade(testServices, customNativeCompilerSettings)
             for ((val services = testServices, val _ = catchingExecutor) in inputArtifact.nonGroupingStageOutputs) {
+                checkTargetOfTest(services, facade.kotlinNativeTargets.testTarget)
                 val mainModule = services.moduleStructure.modules.last()
                 mainModule.collectDependencies(services, CompilationStage.SECOND).let { [regular, friend] ->
                     regularDependencies += regular
@@ -134,8 +138,6 @@ class NativeCompilerSecondStageFacade private constructor(
                     }
                 }
             }
-
-            val facade = NativeCompilerSecondStageFacade(testServices, customNativeCompilerSettings)
 
             // In grouping mode the module name is being escaped with the test info, which could produce
             // quite a big executable file path. This leads to problems on windows, as there is a hard
@@ -162,6 +164,25 @@ class NativeCompilerSecondStageFacade private constructor(
             } else {
                 // Throw an exception to abort further test execution.
                 throw CustomKlibCompilerException(exitCode, output.toString(Charsets.UTF_8.name()))
+            }
+        }
+
+        /**
+         * Checks that every module of a test is configured for the [linkTarget] of its batch. A test class enforcing the host target
+         * leaves the target of its modules unconfigured. The target is not taken from the compiler configuration of the test:
+         * building it runs the environment configurators, whose side effects (like setting `kotlin.native.home`) are not meant for
+         * the thread of the batch.
+         */
+        private fun checkTargetOfTest(services: TestServices, linkTarget: KonanTarget) {
+            if (services.testInfo.enforcedHostTarget) return
+            for (module in services.moduleStructure.modules) {
+                val moduleTarget = services.nativeEnvironmentConfigurator.getNativeTarget(module)
+                // Test-infrastructure invariant violation (not a failure of the code under test): throw a
+                // TestInfrastructureException so it is never masked by failure suppressors (e.g. an IGNORE_BACKEND directive).
+                checkTestInfrastructure(moduleTarget == linkTarget) {
+                    "Internal error: module ${module.name} of test ${services.testInfo.methodName} is configured for $moduleTarget, " +
+                            "but its batch is linked for $linkTarget."
+                }
             }
         }
 
