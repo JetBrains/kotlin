@@ -13,14 +13,20 @@ import com.intellij.util.io.URLUtil.JAR_SEPARATOR
 import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.jvm.environment.JvmClasspathRootId
 import org.jetbrains.kotlin.jvm.environment.asJvmClasspathRootId
+import org.jetbrains.kotlin.jvm.environment.containsFile
+import org.jetbrains.kotlin.jvm.environment.containsRoot
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassFileHandle
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.asBinaryClassFileHandle
+import org.jetbrains.kotlin.load.java.structure.impl.classFiles.contains
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
+import java.nio.file.Files
 import java.nio.file.Path
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
@@ -123,6 +129,54 @@ class ClasspathRestrictionTest {
         val jar = tempDir.resolve("lib/lib.jar").createParentsAndWriteJar("pkg/A.class")
         val jarRoot = checkNotNull(CoreJarFileSystem().findFileByPath(jar.pathForVfs() + JAR_SEPARATOR))
         assertEquals(JvmClasspathRootId.of(jar), jarRoot.asJvmClasspathRootId())
+    }
+
+    @Test
+    fun testPathIdentityNormalizationAndCase(@TempDir tempDir: Path) {
+        val root = tempDir.resolve("out")
+        val rootId = JvmClasspathRootId.of(root)
+
+        assertEquals(rootId, JvmClasspathRootId.of(root.resolve("nested/..")))
+        assertEquals(rootId, JvmClasspathRootId.of(root.fileSystem.getPath("${root}/")))
+        assertNotEquals(JvmClasspathRootId.of(tempDir.resolve("CaseRoot")), JvmClasspathRootId.of(tempDir.resolve("caseroot")))
+    }
+
+    @Test
+    fun testSymbolicLinkHasDistinctRootIdentity(@TempDir tempDir: Path) {
+        val target = tempDir.resolve("target").createDirectories()
+        val link = tempDir.resolve("link")
+        val symbolicLinkResult = runCatching { Files.createSymbolicLink(link, target) }
+        assumeTrue(symbolicLinkResult.isSuccess)
+
+        assertNotEquals(JvmClasspathRootId.of(target), JvmClasspathRootId.of(link))
+    }
+
+    @Test
+    fun testClasspathRootMatching(@TempDir tempDir: Path) {
+        val listedDirectory = tempDir.resolve("out").createDirectories()
+        val nestedDirectory = listedDirectory.resolve("nested").createDirectories()
+        val jar = listedDirectory.resolve("lib.jar").createParentsAndWriteJar("pkg/A.class")
+        val jarRoot = checkNotNull(CoreJarFileSystem().findFileByPath(jar.pathForVfs() + JAR_SEPARATOR))
+        val classpath = JvmClasspath.Roots(rootIds(listedDirectory))
+
+        assertTrue(classpath.containsRoot(listedDirectory.asLocalVirtualFile()))
+        assertTrue(classpath.containsRoot(nestedDirectory.asLocalVirtualFile()))
+        assertFalse(classpath.containsRoot(jarRoot), "a jar under a listed directory is a different classpath root")
+        assertTrue(JvmClasspath.Roots(rootIds(jar)).containsRoot(jarRoot))
+
+        val libraries = JvmClasspath.ProjectLibraries(rootIds(listedDirectory))
+        assertFalse(libraries.containsRoot(nestedDirectory.asLocalVirtualFile()))
+        assertTrue(libraries.containsRoot(jarRoot))
+    }
+
+    @Test
+    fun testClasspathContainsFile(@TempDir tempDir: Path) {
+        val listedDirectory = tempDir.resolve("out").createDirectories()
+        val nestedClassFile = listedDirectory.resolve("pkg/A.class").createParentsAndWrite().asLocalVirtualFile()
+        val excluded = JvmClasspathRootId.of(listedDirectory)
+
+        assertTrue(JvmClasspath.Roots(listOf(excluded)).containsFile(nestedClassFile))
+        assertFalse(JvmClasspath.ProjectLibraries(listOf(excluded)).containsFile(nestedClassFile))
     }
 
     /**

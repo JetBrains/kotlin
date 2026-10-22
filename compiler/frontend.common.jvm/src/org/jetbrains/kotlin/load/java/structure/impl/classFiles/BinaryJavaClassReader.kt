@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.load.java.structure.impl.classFiles
 
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.util.io.URLUtil.JAR_SEPARATOR
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
 import org.jetbrains.kotlin.jvm.environment.JvmClasspathRootId
+import org.jetbrains.kotlin.jvm.environment.isUnder
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.name.ClassId
 
@@ -82,16 +82,7 @@ private class VirtualFileBinaryClassFileHandle(val virtualFile: VirtualFile) : B
     override val nameWithoutExtension: String
         get() = virtualFile.nameWithoutExtension
 
-    override fun isUnder(classpathRoot: JvmClasspathRootId): Boolean {
-        val root = classpathRoot.id
-        val path = virtualFile.path
-        val archiveSeparator = path.indexOf(JAR_SEPARATOR)
-        return when {
-            // An entry of an archive: the root is the archive itself; see `VfsBasedProjectEnvironment.psiSearchScope`.
-            archiveSeparator >= 0 -> archiveSeparator == root.length && path.startsWith(root)
-            else -> path.length > root.length && path[root.length] == '/' && path.startsWith(root)
-        }
-    }
+    override fun isUnder(classpathRoot: JvmClasspathRootId): Boolean = virtualFile.isUnder(classpathRoot)
 
     override fun readBytes(): ByteArray = virtualFile.contentsToByteArray()
 
