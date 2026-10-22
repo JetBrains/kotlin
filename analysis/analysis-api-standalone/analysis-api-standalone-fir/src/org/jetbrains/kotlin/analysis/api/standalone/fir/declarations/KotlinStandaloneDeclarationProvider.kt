@@ -239,8 +239,11 @@ class KotlinStandaloneDeclarationProviderFactory(
         return KotlinStandaloneDeclarationProvider(index, scope, contextualModule, environment, shouldComputeBinaryLibraryPackageSets)
     }
 
-    fun getAdditionalCreatedKtFiles(): List<KtFile> {
-        return indexData.fakeKtFiles
+    /**
+     * Package names of the decompiled files created for builtins and binary roots, keyed by their virtual files.
+     */
+    fun getDecompiledFilePackageNames(): Map<VirtualFile, FqName> {
+        return indexData.decompiledFilePackageNames
     }
 
     fun getAllKtClasses(): List<KtClassOrObject> = index.classesByClassId.values.flattenTo(mutableListOf())

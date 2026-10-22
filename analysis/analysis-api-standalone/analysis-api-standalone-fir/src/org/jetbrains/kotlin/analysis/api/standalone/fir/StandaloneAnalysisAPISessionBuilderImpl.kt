@@ -136,7 +136,8 @@ internal class StandaloneAnalysisAPISessionBuilderImpl(
                 KotlinPackageProviderFactory::class.java,
                 KotlinStandalonePackageProviderFactory(
                     project,
-                    sourceKtFiles + declarationProviderFactory.getAdditionalCreatedKtFiles(),
+                    sourceKtFiles,
+                    declarationProviderFactory,
                     libraryRoots
                 )
             )
