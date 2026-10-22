@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrSetField
 import org.jetbrains.kotlin.ir.expressions.IrStatementOriginImpl
 import org.jetbrains.kotlin.ir.irAttribute
+import org.jetbrains.kotlin.ir.suspendFunction
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isTopLevel
 import org.jetbrains.kotlin.name.Name
@@ -223,7 +224,14 @@ private val IrDeclaration.correspondingProperty: IrProperty?
     }
 
 private fun IrDeclaration.isCompatibleDeclaration(context: JsCommonBackendContext): Boolean {
-    if (origin !in compatibleOrigins) return false
+    val effectiveOrigin = when (this) {
+        // Functions with continuation inherit compatibility from their original suspend function,
+        // e.g. lifted suspend lambdas in Wasm (LIFTED_CALLABLE_REFERENCE_FUNCTION) must not trigger file initialization.
+        is IrSimpleFunction if origin == IrDeclarationOrigin.LOWERED_SUSPEND_FUNCTION ->
+            suspendFunction?.origin
+        else -> origin
+    }
+    if (effectiveOrigin !in compatibleOrigins) return false
 
     val property = correspondingProperty ?: return true
     if (property.isExternal) return false
