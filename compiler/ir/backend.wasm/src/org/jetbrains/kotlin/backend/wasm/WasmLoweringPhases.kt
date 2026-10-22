@@ -106,6 +106,8 @@ val wasmLowerings: List<NamedCompilerPhase<WasmBackendContext, IrModuleFragment,
 
     ::WasmCoroutinesSymbolsResolver,
 
+    ::WasmSafeCallChainFoldingLowering,
+
     ::createConstEvaluationPhase,
     ::createSpecializeSharedVariableBoxesPhase,
     ::RemoveInlineDeclarationsWithReifiedTypeParametersLowering,
