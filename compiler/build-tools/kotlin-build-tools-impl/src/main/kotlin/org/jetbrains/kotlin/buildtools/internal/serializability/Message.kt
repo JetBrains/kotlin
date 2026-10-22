@@ -57,7 +57,7 @@ public sealed class Message {
         public data class LogLine(
             public val level: LogLevel,
             public val logLine: String,
-            public val throwable: ByteArray? = null
+            public val throwable: ByteArray? = null,
         ) : Message()
     }
 
@@ -88,5 +88,10 @@ public sealed class Message {
     public object InlineConstTracker {
         @Serializable
         public data class Report(val filePath: Path, val owner: String, val name: String, val constType: String) : Message()
+    }
+
+    public object Appendable {
+        @Serializable
+        public data class Append(val string: String) : Message()
     }
 }

@@ -3,8 +3,13 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:UseSerializers(PathAsStringSerializer::class, KlibTargetIdSerializer::class)
+
 package org.jetbrains.kotlin.buildtools.internal.abi.operations
 
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.UseSerializers
 import org.jetbrains.kotlin.abi.tools.AbiTools
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
@@ -12,44 +17,32 @@ import org.jetbrains.kotlin.buildtools.api.ProjectId
 import org.jetbrains.kotlin.buildtools.api.abi.AbiFilters
 import org.jetbrains.kotlin.buildtools.api.abi.KlibTargetId
 import org.jetbrains.kotlin.buildtools.api.abi.operations.DumpKlibAbiToStringOperation
-import org.jetbrains.kotlin.buildtools.internal.BaseOptionWithDefault
-import org.jetbrains.kotlin.buildtools.internal.BuildOperationImpl
-import org.jetbrains.kotlin.buildtools.internal.ExecutionContext
 import org.jetbrains.kotlin.buildtools.internal.DeepCopyable
-import org.jetbrains.kotlin.buildtools.internal.Options
+import org.jetbrains.kotlin.buildtools.internal.ExecutionContext
 import org.jetbrains.kotlin.buildtools.internal.UseFromImplModuleRestricted
 import org.jetbrains.kotlin.buildtools.internal.abi.AbiFiltersImpl
 import org.jetbrains.kotlin.buildtools.internal.abi.AbiValidationUtils
-import org.jetbrains.kotlin.buildtools.internal.initializeOptions
+import org.jetbrains.kotlin.buildtools.internal.serializability.KlibTargetIdSerializer
+import org.jetbrains.kotlin.buildtools.internal.serializability.PathAsStringSerializer
+import org.jetbrains.kotlin.buildtools.internal.serializability.getPropertyByName
+import org.jetbrains.kotlin.buildtools.internal.serializability.setPropertyByName
 import java.nio.file.Path
 
-internal class DumpKlibAbiToStringOperationImpl private constructor(
-    private val appendable: Appendable,
+@Serializable
+internal class DumpKlibAbiToStringOperationImpl(
+    override var appendable: Appendable = DoNothingAppendable,
     override val klibs: Map<KlibTargetId, Path>,
-    private val abiTools: AbiTools,
-    override val options: Options,
-) : BuildOperationImpl<Unit>(), DumpKlibAbiToStringOperation, DumpKlibAbiToStringOperation.Builder,
+    private val abiTools: AbiTools = AbiTools.getInstance(),
+) : BaseAbiOperationImpl(), DumpKlibAbiToStringOperation, DumpKlibAbiToStringOperation.Builder,
     DeepCopyable<DumpKlibAbiToStringOperation> {
-
-    constructor(appendable: Appendable, klibs: Map<KlibTargetId, Path>, abiTools: AbiTools) : this(
-        appendable,
-        klibs,
-        abiTools,
-        Options(DumpKlibAbiToStringOperation::class)
-    ) {
-        initializeOptions(this::class, options)
-    }
-
-    override val usesApplicationEnvironment: Boolean
-        get() = false
 
     override fun executeImpl(
         projectId: ProjectId,
         executionPolicy: ExecutionPolicy,
         logger: KotlinLogger?,
-        executionContext: ExecutionContext
+        executionContext: ExecutionContext,
     ) {
-        val filters = options[PATTERN_FILTERS]?.let { AbiValidationUtils.convert(it) } ?: org.jetbrains.kotlin.abi.tools.AbiFilters.EMPTY
+        val filters = patternFilters?.let { AbiValidationUtils.convert(it) } ?: org.jetbrains.kotlin.abi.tools.AbiFilters.EMPTY
 
         val mergedDump = abiTools.createKlibDump()
         klibs.forEach { [target, klibDir] ->
@@ -61,11 +54,7 @@ internal class DumpKlibAbiToStringOperationImpl private constructor(
             mergedDump.merge(dump)
         }
 
-        val targetsToInfer = options[TARGETS_TO_INFER]
-
         if (targetsToInfer.isNotEmpty()) {
-            val referenceDumpFile = options[REFERENCE_DUMP_FILE]
-
             val reference = referenceDumpFile?.toFile()
             val referenceDump = if (reference != null && reference.exists() && reference.isFile) {
                 abiTools.loadKlibDump(reference)
@@ -82,13 +71,11 @@ internal class DumpKlibAbiToStringOperationImpl private constructor(
 
 
     @UseFromImplModuleRestricted
-    override fun <V> get(key: DumpKlibAbiToStringOperation.Option<V>): V {
-        return options[key]
-    }
+    override fun <V> get(key: DumpKlibAbiToStringOperation.Option<V>): V = getPropertyByName(propertyAccessMap, key.id)
 
     @UseFromImplModuleRestricted
     override fun <V> set(key: DumpKlibAbiToStringOperation.Option<V>, value: V) {
-        options[key] = value
+        setPropertyByName(propertyAccessMap, key.id, value)
     }
 
     override fun filtersBuilder(): AbiFilters.Builder {
@@ -96,23 +83,37 @@ internal class DumpKlibAbiToStringOperationImpl private constructor(
     }
 
     override fun deepCopy(): DumpKlibAbiToStringOperationImpl {
-        return DumpKlibAbiToStringOperationImpl(appendable, klibs.toMap(), abiTools, options.deepCopy())
+        return DumpKlibAbiToStringOperationImpl(appendable, klibs.toMap(), abiTools).also { it.copyFrom(this) }
+    }
+
+    private fun copyFrom(other: DumpKlibAbiToStringOperationImpl) {
+        super.copyFrom(other)
+        patternFilters = other.patternFilters
+        referenceDumpFile = other.referenceDumpFile
+        targetsToInfer = other.targetsToInfer
     }
 
     override fun build(): DumpKlibAbiToStringOperation {
         return deepCopy()
     }
 
-    class Option<V>(id: String, default: V) : BaseOptionWithDefault<V>(id, defaultValue = default)
+    /**
+     * Filters with declarations of patterns containing `**`, `*` and `?` wildcards.
+     */
+    @SerialName("PATTERN_FILTERS")
+    var patternFilters: AbiFilters? = null
+
+    @SerialName("REFERENCE_DUMP_FILE")
+    var referenceDumpFile: Path? = null
+
+    @SerialName("TARGETS_TO_INFER")
+    var targetsToInfer: Set<KlibTargetId> = emptySet()
 
     companion object {
-        /**
-         * Filters with declarations of patterns containing `**`, `*` and `?` wildcards.
-         */
-        val PATTERN_FILTERS: Option<AbiFilters?> = Option("PATTERN_FILTERS", null)
-
-        val REFERENCE_DUMP_FILE: Option<Path?> = Option("REFERENCE_DUMP_FILE", null)
-
-        val TARGETS_TO_INFER: Option<Set<KlibTargetId>> = Option("TARGETS_TO_INFER", emptySet())
+        private val propertyAccessMap = mapOf(
+            "PATTERN_FILTERS" to DumpKlibAbiToStringOperationImpl::patternFilters,
+            "REFERENCE_DUMP_FILE" to DumpKlibAbiToStringOperationImpl::referenceDumpFile,
+            "TARGETS_TO_INFER" to DumpKlibAbiToStringOperationImpl::targetsToInfer
+        )
     }
 }

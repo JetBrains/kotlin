@@ -144,3 +144,13 @@ internal class InlineConstVisitor(private val tracker: CompilerInlineConstTracke
         else -> false
     }
 }
+
+internal class AppendableVisitor(private val appendable: Appendable) : MessageVisitor {
+    override fun accept(message: Message): Boolean = when(message) {
+        is Message.Appendable.Append -> {
+            appendable.append(message.string)
+            true
+        }
+        else -> false
+    }
+}
