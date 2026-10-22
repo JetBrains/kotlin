@@ -1,0 +1,318 @@
+RAW_FIR:
+TARGET: public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=E, ImportedFromObjectOrStaticClassIdKey=ImportedFromObjectOrStaticData(objectClassId=test/E, original=FirNamedFunctionSymbol test/E.valueOf)] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|test/E| {
+}
+
+FILE: [ResolvedTo(IMPORTS)] importedStaticEnumValueOf.kt
+    public final? [ResolvedTo(RAW_FIR)] enum class E : R|kotlin/Enum<test/E>| {
+        private [ResolvedTo(RAW_FIR)] [ContainingClassKey=E] constructor(): R|test/E| {
+            LAZY_super<R|kotlin/Enum<test/E>|>
+        }
+
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=E] enum entry A: R|test/E|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=E] enum entry B: R|test/E|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=E] fun values(): R|kotlin/Array<test/E>| {
+        }
+
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=E] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|test/E| {
+        }
+
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=E, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<test/E>|
+            public static [ResolvedTo(RAW_FIR)] [ContainingClassKey=E] get(): R|kotlin/enums/EnumEntries<test/E>|
+
+    }
+
+IMPORTS:
+TARGET: public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=E, ImportedFromObjectOrStaticClassIdKey=ImportedFromObjectOrStaticData(objectClassId=test/E, original=FirNamedFunctionSymbol test/E.valueOf)] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|test/E| {
+}
+
+FILE: [ResolvedTo(IMPORTS)] importedStaticEnumValueOf.kt
+    public final? [ResolvedTo(RAW_FIR)] enum class E : R|kotlin/Enum<test/E>| {
+        private [ResolvedTo(RAW_FIR)] [ContainingClassKey=E] constructor(): R|test/E| {
+            LAZY_super<R|kotlin/Enum<test/E>|>
+        }
+
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=E] enum entry A: R|test/E|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=E] enum entry B: R|test/E|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=E] fun values(): R|kotlin/Array<test/E>| {
+        }
+
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=E] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|test/E| {
+        }
+
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=E, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<test/E>|
+            public static [ResolvedTo(RAW_FIR)] [ContainingClassKey=E] get(): R|kotlin/enums/EnumEntries<test/E>|
+
+    }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+TARGET: public final static [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=E, ImportedFromObjectOrStaticClassIdKey=ImportedFromObjectOrStaticData(objectClassId=test/E, original=FirNamedFunctionSymbol test/E.valueOf)] fun valueOf([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] value: R|kotlin/String|): R|test/E| {
+}
+
+FILE: [ResolvedTo(IMPORTS)] importedStaticEnumValueOf.kt
+    public final? [ResolvedTo(RAW_FIR)] enum class E : R|kotlin/Enum<test/E>| {
+        private [ResolvedTo(RAW_FIR)] [ContainingClassKey=E] constructor(): R|test/E| {
+            LAZY_super<R|kotlin/Enum<test/E>|>
+        }
+
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=E] enum entry A: R|test/E|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=E] enum entry B: R|test/E|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=E] fun values(): R|kotlin/Array<test/E>| {
+        }
+
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=E] fun valueOf([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] value: R|kotlin/String|): R|test/E| {
+        }
+
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=E, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<test/E>|
+            public static [ResolvedTo(RAW_FIR)] [ContainingClassKey=E] get(): R|kotlin/enums/EnumEntries<test/E>|
+
+    }
+
+COMPANION_GENERATION:
+TARGET: public final static [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=E, ImportedFromObjectOrStaticClassIdKey=ImportedFromObjectOrStaticData(objectClassId=test/E, original=FirNamedFunctionSymbol test/E.valueOf)] fun valueOf([ResolvedTo(COMPANION_GENERATION)] value: R|kotlin/String|): R|test/E| {
+}
+
+FILE: [ResolvedTo(IMPORTS)] importedStaticEnumValueOf.kt
+    public final? [ResolvedTo(RAW_FIR)] enum class E : R|kotlin/Enum<test/E>| {
+        private [ResolvedTo(RAW_FIR)] [ContainingClassKey=E] constructor(): R|test/E| {
+            LAZY_super<R|kotlin/Enum<test/E>|>
+        }
+
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=E] enum entry A: R|test/E|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=E] enum entry B: R|test/E|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=E] fun values(): R|kotlin/Array<test/E>| {
+        }
+
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=E] fun valueOf([ResolvedTo(COMPANION_GENERATION)] value: R|kotlin/String|): R|test/E| {
+        }
+
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=E, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<test/E>|
+            public static [ResolvedTo(RAW_FIR)] [ContainingClassKey=E] get(): R|kotlin/enums/EnumEntries<test/E>|
+
+    }
+
+SUPER_TYPES:
+TARGET: public final static [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=E, ImportedFromObjectOrStaticClassIdKey=ImportedFromObjectOrStaticData(objectClassId=test/E, original=FirNamedFunctionSymbol test/E.valueOf)] fun valueOf([ResolvedTo(SUPER_TYPES)] value: R|kotlin/String|): R|test/E| {
+}
+
+FILE: [ResolvedTo(IMPORTS)] importedStaticEnumValueOf.kt
+    public final? [ResolvedTo(SUPER_TYPES)] enum class E : R|kotlin/Enum<test/E>| {
+        private [ResolvedTo(RAW_FIR)] [ContainingClassKey=E] constructor(): R|test/E| {
+            LAZY_super<R|kotlin/Enum<test/E>|>
+        }
+
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=E] enum entry A: R|test/E|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=E] enum entry B: R|test/E|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=E] fun values(): R|kotlin/Array<test/E>| {
+        }
+
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=E] fun valueOf([ResolvedTo(SUPER_TYPES)] value: R|kotlin/String|): R|test/E| {
+        }
+
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=E, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<test/E>|
+            public static [ResolvedTo(RAW_FIR)] [ContainingClassKey=E] get(): R|kotlin/enums/EnumEntries<test/E>|
+
+    }
+
+TYPES:
+TARGET: public final static [ResolvedTo(TYPES)] [ContainingClassKey=E, ImportedFromObjectOrStaticClassIdKey=ImportedFromObjectOrStaticData(objectClassId=test/E, original=FirNamedFunctionSymbol test/E.valueOf)] fun valueOf([ResolvedTo(TYPES)] value: R|kotlin/String|): R|test/E| {
+}
+
+FILE: [ResolvedTo(IMPORTS)] importedStaticEnumValueOf.kt
+    public final? [ResolvedTo(TYPES)] enum class E : R|kotlin/Enum<test/E>| {
+        private [ResolvedTo(RAW_FIR)] [ContainingClassKey=E] constructor(): R|test/E| {
+            LAZY_super<R|kotlin/Enum<test/E>|>
+        }
+
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=E] enum entry A: R|test/E|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=E] enum entry B: R|test/E|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=E] fun values(): R|kotlin/Array<test/E>| {
+        }
+
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=E] fun valueOf([ResolvedTo(TYPES)] value: R|kotlin/String|): R|test/E| {
+        }
+
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=E, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<test/E>|
+            public static [ResolvedTo(RAW_FIR)] [ContainingClassKey=E] get(): R|kotlin/enums/EnumEntries<test/E>|
+
+    }
+
+STATUS:
+TARGET: public final static [ResolvedTo(STATUS)] [ContainingClassKey=E, ImportedFromObjectOrStaticClassIdKey=ImportedFromObjectOrStaticData(objectClassId=test/E, original=FirNamedFunctionSymbol test/E.valueOf)] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|test/E| {
+}
+
+FILE: [ResolvedTo(IMPORTS)] importedStaticEnumValueOf.kt
+    public final [ResolvedTo(STATUS)] enum class E : R|kotlin/Enum<test/E>| {
+        private [ResolvedTo(STATUS)] [ContainingClassKey=E] constructor(): R|test/E| {
+            LAZY_super<R|kotlin/Enum<test/E>|>
+        }
+
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=E] enum entry A: R|test/E|
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=E] enum entry B: R|test/E|
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=E] fun values(): R|kotlin/Array<test/E>| {
+        }
+
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=E] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|test/E| {
+        }
+
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=E, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<test/E>|
+            public static [ResolvedTo(STATUS)] [ContainingClassKey=E] get(): R|kotlin/enums/EnumEntries<test/E>|
+
+    }
+
+EXPECT_ACTUAL_MATCHING:
+TARGET: public final static [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=E, ImportedFromObjectOrStaticClassIdKey=ImportedFromObjectOrStaticData(objectClassId=test/E, original=FirNamedFunctionSymbol test/E.valueOf)] fun valueOf([ResolvedTo(EXPECT_ACTUAL_MATCHING)] value: R|kotlin/String|): R|test/E| {
+}
+
+FILE: [ResolvedTo(IMPORTS)] importedStaticEnumValueOf.kt
+    public final [ResolvedTo(STATUS)] enum class E : R|kotlin/Enum<test/E>| {
+        private [ResolvedTo(STATUS)] [ContainingClassKey=E] constructor(): R|test/E| {
+            LAZY_super<R|kotlin/Enum<test/E>|>
+        }
+
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=E] enum entry A: R|test/E|
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=E] enum entry B: R|test/E|
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=E] fun values(): R|kotlin/Array<test/E>| {
+        }
+
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=E] fun valueOf([ResolvedTo(EXPECT_ACTUAL_MATCHING)] value: R|kotlin/String|): R|test/E| {
+        }
+
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=E, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<test/E>|
+            public static [ResolvedTo(STATUS)] [ContainingClassKey=E] get(): R|kotlin/enums/EnumEntries<test/E>|
+
+    }
+
+CONTRACTS:
+TARGET: public final static [ResolvedTo(CONTRACTS)] [ContainingClassKey=E, ImportedFromObjectOrStaticClassIdKey=ImportedFromObjectOrStaticData(objectClassId=test/E, original=FirNamedFunctionSymbol test/E.valueOf)] fun valueOf([ResolvedTo(CONTRACTS)] value: R|kotlin/String|): R|test/E| {
+}
+
+FILE: [ResolvedTo(IMPORTS)] importedStaticEnumValueOf.kt
+    public final [ResolvedTo(STATUS)] enum class E : R|kotlin/Enum<test/E>| {
+        private [ResolvedTo(STATUS)] [ContainingClassKey=E] constructor(): R|test/E| {
+            LAZY_super<R|kotlin/Enum<test/E>|>
+        }
+
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=E] enum entry A: R|test/E|
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=E] enum entry B: R|test/E|
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=E] fun values(): R|kotlin/Array<test/E>| {
+        }
+
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=E] fun valueOf([ResolvedTo(CONTRACTS)] value: R|kotlin/String|): R|test/E| {
+        }
+
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=E, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<test/E>|
+            public static [ResolvedTo(STATUS)] [ContainingClassKey=E] get(): R|kotlin/enums/EnumEntries<test/E>|
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+TARGET: public final static [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=E, ImportedFromObjectOrStaticClassIdKey=ImportedFromObjectOrStaticData(objectClassId=test/E, original=FirNamedFunctionSymbol test/E.valueOf)] fun valueOf([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] value: R|kotlin/String|): R|test/E| {
+}
+
+FILE: [ResolvedTo(IMPORTS)] importedStaticEnumValueOf.kt
+    public final [ResolvedTo(STATUS)] enum class E : R|kotlin/Enum<test/E>| {
+        private [ResolvedTo(STATUS)] [ContainingClassKey=E] constructor(): R|test/E| {
+            LAZY_super<R|kotlin/Enum<test/E>|>
+        }
+
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=E] enum entry A: R|test/E|
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=E] enum entry B: R|test/E|
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=E] fun values(): R|kotlin/Array<test/E>| {
+        }
+
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=E] fun valueOf([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] value: R|kotlin/String|): R|test/E| {
+        }
+
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=E, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<test/E>|
+            public static [ResolvedTo(STATUS)] [ContainingClassKey=E] get(): R|kotlin/enums/EnumEntries<test/E>|
+
+    }
+
+CONSTANT_EVALUATION:
+TARGET: public final static [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=E, ImportedFromObjectOrStaticClassIdKey=ImportedFromObjectOrStaticData(objectClassId=test/E, original=FirNamedFunctionSymbol test/E.valueOf)] fun valueOf([ResolvedTo(CONSTANT_EVALUATION)] value: R|kotlin/String|): R|test/E| {
+}
+
+FILE: [ResolvedTo(IMPORTS)] importedStaticEnumValueOf.kt
+    public final [ResolvedTo(STATUS)] enum class E : R|kotlin/Enum<test/E>| {
+        private [ResolvedTo(STATUS)] [ContainingClassKey=E] constructor(): R|test/E| {
+            LAZY_super<R|kotlin/Enum<test/E>|>
+        }
+
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=E] enum entry A: R|test/E|
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=E] enum entry B: R|test/E|
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=E] fun values(): R|kotlin/Array<test/E>| {
+        }
+
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=E] fun valueOf([ResolvedTo(CONSTANT_EVALUATION)] value: R|kotlin/String|): R|test/E| {
+        }
+
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=E, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<test/E>|
+            public static [ResolvedTo(STATUS)] [ContainingClassKey=E] get(): R|kotlin/enums/EnumEntries<test/E>|
+
+    }
+
+ANNOTATION_ARGUMENTS:
+TARGET: public final static [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=E, ImportedFromObjectOrStaticClassIdKey=ImportedFromObjectOrStaticData(objectClassId=test/E, original=FirNamedFunctionSymbol test/E.valueOf)] fun valueOf([ResolvedTo(ANNOTATION_ARGUMENTS)] value: R|kotlin/String|): R|test/E| {
+}
+
+FILE: [ResolvedTo(IMPORTS)] importedStaticEnumValueOf.kt
+    public final [ResolvedTo(STATUS)] enum class E : R|kotlin/Enum<test/E>| {
+        private [ResolvedTo(STATUS)] [ContainingClassKey=E] constructor(): R|test/E| {
+            LAZY_super<R|kotlin/Enum<test/E>|>
+        }
+
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=E] enum entry A: R|test/E|
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=E] enum entry B: R|test/E|
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=E] fun values(): R|kotlin/Array<test/E>| {
+        }
+
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=E] fun valueOf([ResolvedTo(ANNOTATION_ARGUMENTS)] value: R|kotlin/String|): R|test/E| {
+        }
+
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=E, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<test/E>|
+            public static [ResolvedTo(STATUS)] [ContainingClassKey=E] get(): R|kotlin/enums/EnumEntries<test/E>|
+
+    }
+
+BODY_RESOLVE:
+TARGET: public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=E, ImportedFromObjectOrStaticClassIdKey=ImportedFromObjectOrStaticData(objectClassId=test/E, original=FirNamedFunctionSymbol test/E.valueOf)] fun valueOf([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/String|): R|test/E| {
+}
+
+FILE: [ResolvedTo(IMPORTS)] importedStaticEnumValueOf.kt
+    public final [ResolvedTo(STATUS)] enum class E : R|kotlin/Enum<test/E>| {
+        private [ResolvedTo(STATUS)] [ContainingClassKey=E] constructor(): R|test/E| {
+            LAZY_super<R|kotlin/Enum<test/E>|>
+        }
+
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=E] enum entry A: R|test/E|
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=E] enum entry B: R|test/E|
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=E] fun values(): R|kotlin/Array<test/E>| {
+        }
+
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=E] fun valueOf([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/String|): R|test/E| {
+        }
+
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=E, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<test/E>|
+            public static [ResolvedTo(STATUS)] [ContainingClassKey=E] get(): R|kotlin/enums/EnumEntries<test/E>|
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] importedStaticEnumValueOf.kt
+    public final [ResolvedTo(BODY_RESOLVE)] enum class E : R|kotlin/Enum<test/E>| {
+        private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=E] constructor(): R|test/E| {
+            super<R|kotlin/Enum<test/E>|>()
+        }
+
+        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=E] enum entry A: R|test/E|
+        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=E] enum entry B: R|test/E|
+        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=E] fun values(): R|kotlin/Array<test/E>| {
+        }
+
+        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=E] fun valueOf([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/String|): R|test/E| {
+        }
+
+        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=E, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<test/E>|
+            public static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=E] get(): R|kotlin/enums/EnumEntries<test/E>|
+
+    }
