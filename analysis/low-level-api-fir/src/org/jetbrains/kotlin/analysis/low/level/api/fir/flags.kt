@@ -27,5 +27,5 @@ const val SOURCE_BASED_SYMBOL_IDS_REGISTRY_KEY: String = "kotlin.analysis.ll.sou
  */
 @OptIn(LLFirInternals::class)
 internal val areSourceBasedSymbolIdsEnabled: Boolean by lazy(LazyThreadSafetyMode.PUBLICATION) {
-    Registry.`is`(SOURCE_BASED_SYMBOL_IDS_REGISTRY_KEY, false)
+    Registry.`is`(SOURCE_BASED_SYMBOL_IDS_REGISTRY_KEY, true)
 }

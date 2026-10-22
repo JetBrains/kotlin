@@ -31,7 +31,7 @@
     />
 
     <registryKey
-        defaultValue="false"
+        defaultValue="true"
         description="Create source-based FIR symbol IDs in the Analysis API. Experimental: a prerequisite for evicting FIR symbols from caches (KT-87712)."
         key="kotlin.analysis.ll.sourceBasedSymbolIds"
         restartRequired="true"
