@@ -7,87 +7,56 @@ package org.jetbrains.kotlin.scripting.compiler.plugin.impl
 
 import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.javaInterop
 import org.jetbrains.kotlin.cli.jvm.compiler.toVfsBasedProjectEnvironment
-import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
-import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
-import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
-import org.jetbrains.kotlin.compiler.plugin.registerInProject
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.disableStandardScriptDefinition
-import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.config.scriptingHostConfiguration
 import org.jetbrains.kotlin.fir.FirBinaryDependenciesModuleData
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceModuleData
 import org.jetbrains.kotlin.fir.deserialization.LibraryPathFilter
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
-import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
-import org.jetbrains.kotlin.fir.session.FirJvmSessionFactory
-import org.jetbrains.kotlin.fir.session.FirSharableJavaComponents
-import org.jetbrains.kotlin.fir.session.firCachesFactoryForCliMode
-import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
-import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingK2CompilerPluginRegistrar
-import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.*
-import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
-import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import java.io.File
 import java.nio.file.Path
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
+import kotlin.script.experimental.api.dependencies
 import kotlin.script.experimental.host.ScriptingHostConfiguration
-import kotlin.script.experimental.host.with
+import kotlin.script.experimental.jvm.util.toClassPathOrEmpty
 
-interface ScriptCompilerState {
-    val baseScriptCompilationConfiguration: ScriptCompilationConfiguration
-    val hostConfiguration: ScriptingHostConfiguration
-    val projectEnvironment: VfsBasedProjectEnvironment
-    val moduleDataProvider: ScriptingModuleDataProvider
-    val messageCollector: ScriptDiagnosticsMessageCollector
-    val extensionRegistrars: List<FirExtensionRegistrar>
-    val sharedLibrarySession: FirSession
-    val dummySessionForAnnotationResolution: FirSession?
-}
+class ScriptCompilerState internal constructor(
+    baseScriptCompilationConfiguration: ScriptCompilationConfiguration,
+    compilerConfiguration: CompilerConfiguration,
+    projectEnvironment: VfsBasedProjectEnvironment,
+    ignoredOptionsReportingState: IgnoredOptionsReportingState,
+    messageCollector: ScriptDiagnosticsMessageCollector,
+    hostConfiguration: ScriptingHostConfiguration,
+) : AbstractScriptingCompilerState<ScriptingModuleDataProvider>(
+    baseScriptCompilationConfiguration,
+    compilerConfiguration,
+    projectEnvironment,
+    ignoredOptionsReportingState,
+    messageCollector,
+    hostConfiguration,
+    compilerConfiguration.scriptModuleName,
+    { ScriptingModuleDataProvider(compilerConfiguration.scriptModuleName.asStringStripSpecialMarkers(), it.map(File::toPath)) },
+) {
+    override fun createModuleDataForAnnotationResolution(): FirModuleData =
+        moduleDataProvider.addNewScriptModuleData(Name.special("<raw-script>"), isDummy = true)
 
-internal interface ScriptCompilerStateInternal : ScriptCompilerState {
-    override var dummySessionForAnnotationResolution: FirSession?
-    val predefinedJavaComponents: FirSharableJavaComponents
-    val compilerContext: SharedScriptCompilationContext
-    val packagePartProvider: PackagePartProvider
-    val sessionFactoryContext: FirJvmSessionFactory.Context
-    fun updateContext(configuration: CompilerConfiguration)
-}
-
-internal open class ScriptCompilerStateImpl(
-    override val baseScriptCompilationConfiguration: ScriptCompilationConfiguration,
-    override val hostConfiguration: ScriptingHostConfiguration,
-    override val predefinedJavaComponents: FirSharableJavaComponents,
-    override val projectEnvironment: VfsBasedProjectEnvironment,
-    override val moduleDataProvider: ScriptingModuleDataProvider,
-    override val messageCollector: ScriptDiagnosticsMessageCollector,
-    override val compilerContext: SharedScriptCompilationContext,
-    override val packagePartProvider: PackagePartProvider,
-    override val extensionRegistrars: List<FirExtensionRegistrar>,
-    override val sharedLibrarySession: FirSession,
-    override var dummySessionForAnnotationResolution: FirSession?,
-    override var sessionFactoryContext: FirJvmSessionFactory.Context
-) : ScriptCompilerStateInternal {
-
-    override fun updateContext(configuration: CompilerConfiguration) {
-        val previous = sessionFactoryContext
-        sessionFactoryContext = FirJvmSessionFactory.Context(
-            configuration = configuration,
-            projectEnvironment = previous.projectEnvironment,
-            librariesClasspath = previous.librariesClasspath,
-            javaInterop = previous.javaInterop,
-        )
+    internal fun getOrCreateSessionForAnnotationResolution(scriptCompilationConfiguration: ScriptCompilationConfiguration): FirSession {
+        val dependencies = scriptCompilationConfiguration[ScriptCompilationConfiguration.dependencies].toClassPathOrEmpty()
+        if (dependencies.isNotEmpty()) {
+            configureLibrarySessionIfNeeded(this, compilerConfiguration, dependencies)
+        }
+        return sessionForAnnotationResolution
     }
 }
+
+private val CompilerConfiguration.scriptModuleName: Name
+    get() = get(CommonConfigurationKeys.MODULE_NAME)?.let { Name.guessByFirstCharacter(it) } ?: Name.special("<script-module>")
 
 open class ScriptingModuleDataProvider(private val baseName: String, baseLibraryPaths: List<Path>) : ModuleDataProvider() {
 
@@ -147,110 +116,39 @@ fun createIsolatedCompilerState(
     baseScriptCompilationConfiguration: ScriptCompilationConfiguration,
     hostConfiguration: ScriptingHostConfiguration,
     configureCompiler: CompilerConfiguration.() -> Unit = {},
-): ScriptCompilerState {
-    val compilerContext = createIsolatedCompilationContext(
-        baseScriptCompilationConfiguration,
-        hostConfiguration,
-        messageCollector,
-        rootDisposable,
-        configureCompiler
-    )
-    return createCompilerState(compilerContext, messageCollector, hostConfiguration)
-}
+): ScriptCompilerState =
+    createIsolatedScriptingState(
+        baseScriptCompilationConfiguration, hostConfiguration, messageCollector, rootDisposable, configureCompiler
+    ) { initialConfiguration, compilerConfiguration, projectEnvironment, ignoredOptionsReportingState ->
+        ScriptCompilerState(
+            initialConfiguration,
+            compilerConfiguration,
+            projectEnvironment,
+            ignoredOptionsReportingState,
+            messageCollector,
+            hostConfiguration,
+        )
+    }
 
+/**
+ * The scripting compiler plugin should be already registered in the [environment].
+ */
 fun createCompilerStateFromEnvironment(
     environment: KotlinCoreEnvironment,
     messageCollector: ScriptDiagnosticsMessageCollector,
     baseScriptCompilationConfiguration: ScriptCompilationConfiguration,
     hostConfiguration: ScriptingHostConfiguration,
 ): ScriptCompilerState {
-    val compilerContext = createCompilationContextFromEnvironment(baseScriptCompilationConfiguration, environment, messageCollector)
-    return createCompilerState(compilerContext, messageCollector, hostConfiguration)
-}
-
-fun createCompilerState(
-    compilerContext: SharedScriptCompilationContext,
-    messageCollector: ScriptDiagnosticsMessageCollector,
-    hostConfiguration: ScriptingHostConfiguration,
-): ScriptCompilerState {
-    val project = compilerContext.environment.project
-    val compilerConfiguration = compilerContext.environment.configuration
-    val languageVersionSettings = compilerConfiguration.languageVersionSettings
-    val moduleName = (compilerConfiguration.get(CommonConfigurationKeys.MODULE_NAME)?.let { Name.guessByFirstCharacter(it) }
-        ?: Name.special("<script-module>"))
-
-    val extensionStorage = CompilerPluginRegistrar.ExtensionStorage()
-
-    val scriptCompilationConfiguration = compilerContext.baseScriptCompilationConfiguration
-
-    compilerConfiguration.add(
-        ScriptingConfigurationKeys.SCRIPT_DEFINITIONS,
-        ScriptDefinition.FromConfigurations(hostConfiguration, scriptCompilationConfiguration, null)
+    val ignoredOptionsReportingState = IgnoredOptionsReportingState()
+    val initialConfiguration = environment.configuration.applyScriptCompilationConfiguration(
+        baseScriptCompilationConfiguration, messageCollector, ignoredOptionsReportingState
     )
-
-    val definitionSources = compilerConfiguration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS_SOURCES)
-    val definitions = compilerConfiguration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS)
-    val scriptDefinitionProvider = CliScriptDefinitionProvider(
-        compilerConfiguration.disableStandardScriptDefinition
-    ).also {
-        it.setScriptDefinitionsSources(definitionSources)
-        it.setScriptDefinitions(definitions)
-    }
-
-    val hostConfigurationWithProvider = hostConfiguration.with {
-        scriptCompilationConfigurationProvider(ScriptCompilationConfigurationProviderOverDefinitionProvider(scriptDefinitionProvider))
-        scriptRefinedCompilationConfigurationsCache(ScriptRefinedCompilationConfigurationCacheImpl())
-    }
-
-    compilerConfiguration.scriptingHostConfiguration = hostConfigurationWithProvider
-
-    with(ScriptingK2CompilerPluginRegistrar()) { extensionStorage.registerExtensions(compilerConfiguration) }
-    extensionStorage.registerInProject(project) { "Error on plugin registration: ${it.javaClass.name}" }
-
-    val classpath = scriptCompilationConfiguration.baseCompilationClasspath()
-    compilerContext.environment.updateClasspath(classpath.map { JvmClasspathRoot(it) })
-    val projectEnvironment = compilerContext.environment.toVfsBasedProjectEnvironment()
-    val extensionRegistrars = compilerConfiguration.getCompilerExtensions(FirExtensionRegistrar)
-    val librariesClasspath = JvmClasspath.ProjectLibraries()
-    val javaInterop = projectEnvironment.javaInterop(compilerConfiguration, withJavaSources = false)
-    val packagePartProvider = projectEnvironment.getPackagePartProvider(librariesClasspath)
-    val predefinedJavaComponents = FirSharableJavaComponents(firCachesFactoryForCliMode)
-
-    val moduleDataProvider = ScriptingModuleDataProvider(moduleName.asStringStripSpecialMarkers(), classpath.map(File::toPath))
-
-    val sessionFactoryContext = FirJvmSessionFactory.Context(
-        configuration = compilerConfiguration,
-        projectEnvironment = projectEnvironment,
-        librariesClasspath = librariesClasspath,
-        javaInterop = javaInterop,
-    )
-    val sharedLibrarySession = FirJvmSessionFactory.createSharedLibrarySession(
-        mainModuleName = moduleName,
-        extensionRegistrars = extensionRegistrars,
-        languageVersionSettings = languageVersionSettings,
-        context = sessionFactoryContext,
-    )
-
-    FirJvmSessionFactory.createLibrarySession(
-        sharedLibrarySession,
-        moduleDataProvider = moduleDataProvider,
-        extensionRegistrars = extensionRegistrars,
-        languageVersionSettings = languageVersionSettings,
-        context = sessionFactoryContext,
-    )
-
-    return ScriptCompilerStateImpl(
-        scriptCompilationConfiguration,
-        hostConfigurationWithProvider,
-        predefinedJavaComponents,
-        projectEnvironment,
-        moduleDataProvider,
+    return ScriptCompilerState(
+        initialConfiguration,
+        environment.configuration,
+        environment.toVfsBasedProjectEnvironment(),
+        ignoredOptionsReportingState,
         messageCollector,
-        compilerContext,
-        packagePartProvider,
-        extensionRegistrars,
-        sharedLibrarySession,
-        dummySessionForAnnotationResolution = null,
-        sessionFactoryContext,
+        hostConfiguration,
     )
 }
