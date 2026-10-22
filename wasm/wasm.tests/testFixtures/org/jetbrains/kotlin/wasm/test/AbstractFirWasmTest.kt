@@ -115,6 +115,17 @@ open class AbstractFirWasmJsCodegenInteropTest : AbstractFirWasmJsTest(
     }
 }
 
+open class AbstractFirWasmJsCodegenIrCheckTest : AbstractFirWasmJsTest(
+    "compiler/testData/codegen/wasmIrChecks",
+    "codegen/wasmIrChecks"
+) {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.configureCodegenFirHandlerSteps()
+        builder.configureCodegenIrHandlerSteps()
+    }
+}
+
 open class AbstractFirWasmJsSteppingTest(
     pathToTestDir: String = "compiler/testData/debug/stepping/",
     testGroupOutputDirPrefix: String = "debug/stepping/firBox"
