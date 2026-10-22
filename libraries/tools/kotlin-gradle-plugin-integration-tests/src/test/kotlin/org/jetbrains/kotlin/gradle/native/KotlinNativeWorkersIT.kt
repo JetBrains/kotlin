@@ -40,12 +40,26 @@ class KotlinNativeWorkersIT : KGPBaseTest() {
                 kotlin("multiplatform")
             }
             buildScriptInjection {
+                // Same cinterop name is attached to more than one native target below, which is exactly
+                // what makes CInteropCommonizerTask (registered as ':commonizeCInterop') have actual
+                // work to do, instead of ending up with an empty commonizer group.
+                val defFile = project.layout.projectDirectory.dir("src/nativeInterop/cinterop").file("myInterop.def").asFile
+                defFile.parentFile.mkdirs()
+                defFile.writeText(
+                    """
+                    language = Objective-C
+                    """.trimIndent()
+                )
+
                 project.applyMultiplatform {
                     iosX64 {
                         binaries {
                             framework {
                                 baseName = "libFramework"
                             }
+                        }
+                        compilations.getByName("main").cinterops.create("myInterop") {
+                            it.definitionFile.set(defFile)
                         }
                     }
                     iosArm64 {
@@ -54,13 +68,20 @@ class KotlinNativeWorkersIT : KGPBaseTest() {
                                 baseName = "libFramework"
                             }
                         }
+                        compilations.getByName("main").cinterops.create("myInterop") {
+                            it.definitionFile.set(defFile)
+                        }
                     }
 
                     sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
                 }
             }
 
-            build("assemble") {
+            build(
+                "assemble",
+                // CInteropCommonizerTask is only registered when c-interop commonization is enabled.
+                "-Pkotlin.mpp.enableCInteropCommonization=true",
+            ) {
                 assertTasksExecuted(
                     ":compileKotlinIosArm64",
                     ":compileKotlinIosX64",
@@ -68,6 +89,7 @@ class KotlinNativeWorkersIT : KGPBaseTest() {
                     ":linkDebugFrameworkIosX64",
                     ":linkReleaseFrameworkIosArm64",
                     ":linkReleaseFrameworkIosX64",
+                    ":commonizeCInterop",
                 )
             }
         }
