@@ -175,6 +175,7 @@ include(
     ":compiler:serialization",
     ":compiler:psi:psi-api",
     ":compiler:psi:psi-impl",
+    ":compiler:psi:stubs",
     ":compiler:psi:psi-utils",
     ":compiler:psi:psi-frontend-utils",
     ":compiler:psi:parser",
