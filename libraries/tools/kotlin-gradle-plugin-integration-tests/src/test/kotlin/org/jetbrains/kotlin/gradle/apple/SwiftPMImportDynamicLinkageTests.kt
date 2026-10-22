@@ -29,6 +29,10 @@ import kotlin.test.assertTrue
     enabledOnCI = [OS.MAC],
 )
 @SwiftPMImportGradlePluginTests
+@GradleTestVersions(
+    // KT-90453: These tests mostly don't have Gradle-specific behavior
+    minVersion = TestVersions.Gradle.MAX_SUPPORTED
+)
 class SwiftPMImportDynamicLinkageTests : KGPBaseTest() {
 
     /**

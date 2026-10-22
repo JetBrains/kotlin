@@ -35,6 +35,10 @@ import kotlin.io.path.*
     enabledOnCI = [OS.MAC],
 )
 @SwiftPMImportGradlePluginTests
+@GradleTestVersions(
+    // KT-90453: Most of these tests don't test anything Gradle-specific and they are quite slow, so only run these with latest Gradle version
+    minVersion = TestVersions.Gradle.MAX_SUPPORTED
+)
 class SwiftPMImportPopularSwiftPMDependenciesTests : KGPBaseTest() {
 
     @DisplayName("direct dependency on Firebase")
@@ -442,6 +446,10 @@ class SwiftPMImportPopularSwiftPMDependenciesTests : KGPBaseTest() {
         )
     }
 
+    @GradleTestVersions(
+        // This test is relatively fast, run it on min version as well
+        minVersion = TestVersions.Gradle.MIN_SUPPORTED
+    )
     @DisplayName("direct dependency on Tun2SocksKit")
     @ParameterizedTest(name = "{displayName} with {0} and isStatic={1}")
     @ArgumentsSource(SpmImportArgumentsProvider::class)
@@ -946,6 +954,10 @@ class SwiftPMImportPopularSwiftPMDependenciesTests : KGPBaseTest() {
      * - Framework binaries (Shared.framework)
      * - iosApp uses root's framework for Xcode linkage testing
      */
+    @GradleTestVersions(
+        // This test is relatively fast, run it on min version as well
+        minVersion = TestVersions.Gradle.MIN_SUPPORTED
+    )
     @DisplayName("multiproject local SwiftPM dependency with producer and consumer")
     @ParameterizedTest(name = "{displayName} with {0} and isStatic={1}")
     @ArgumentsSource(SpmImportArgumentsProvider::class)
