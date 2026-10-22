@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.buildtools.forward.tests.compilation
 import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
 import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration.Companion.TRACK_CONFIGURATION_INPUTS
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.COMPILER_PLUGINS
 import org.jetbrains.kotlin.buildtools.forward.tests.CompilerExecutionStrategyConfiguration
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.buildtools.forward.tests.compilation.model.BtaV2Stra
 import org.jetbrains.kotlin.buildtools.forward.tests.compilation.model.LogLevel
 import org.jetbrains.kotlin.buildtools.forward.tests.compilation.model.jvmProject
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.junit.jupiter.api.DisplayName
 
 class CompilerPluginsConfigurationInputsTrackingTest : BaseCompilationTest() {
@@ -38,7 +40,7 @@ class CompilerPluginsConfigurationInputsTrackingTest : BaseCompilationTest() {
                 },
             ) {
                 assertLogContainsPatterns(
-                    expectedLogLevel(strategyConfig),
+                    expectedLogLevel(strategyConfig, kotlinToolchain),
                     ".*Non-incremental compilation will be performed: ${BuildAttribute.COMPILER_ARGS_CHANGED.readableString}".toRegex(),
                 )
             }
@@ -66,7 +68,7 @@ class CompilerPluginsConfigurationInputsTrackingTest : BaseCompilationTest() {
                 },
             ) {
                 assertLogContainsPatterns(
-                    expectedLogLevel(strategyConfig),
+                    expectedLogLevel(strategyConfig, kotlinToolchain),
                     ".*Non-incremental compilation will be performed: ${BuildAttribute.COMPILER_ARGS_CHANGED.readableString}".toRegex(),
                 )
             }
@@ -91,13 +93,15 @@ class CompilerPluginsConfigurationInputsTrackingTest : BaseCompilationTest() {
                 icOptionsConfigAction = { it[TRACK_CONFIGURATION_INPUTS] = true },
             ) {
                 assertLogContainsPatterns(
-                    expectedLogLevel(strategyConfig),
+                    expectedLogLevel(strategyConfig, kotlinToolchain),
                     ".*Non-incremental compilation will be performed: ${BuildAttribute.COMPILER_ARGS_CHANGED.readableString}".toRegex(),
                 )
             }
         }
     }
 
-    private fun expectedLogLevel(strategyConfig: CompilerExecutionStrategyConfiguration): LogLevel =
-        if (strategyConfig.second is ExecutionPolicy.WithDaemon) LogLevel.DEBUG else LogLevel.INFO // TODO: KT-85024
+    private fun expectedLogLevel(strategyConfig: CompilerExecutionStrategyConfiguration, kotlinToolchains: KotlinToolchains): LogLevel =
+        if (strategyConfig.second is ExecutionPolicy.WithDaemon &&
+            KotlinToolingVersion(kotlinToolchains.getCompilerVersion()) < KotlinToolingVersion("2.5.20-SNAPSHOT")
+        ) LogLevel.DEBUG else LogLevel.INFO // TODO: KT-85024
 }

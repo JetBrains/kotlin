@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfigurati
 import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration.Companion.TRACK_CONFIGURATION_INPUTS
 import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration.Companion.UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonToolArguments
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.buildtools.forward.tests.compilation.model.BtaV2Stra
 import org.jetbrains.kotlin.buildtools.forward.tests.compilation.model.LogLevel
 import org.jetbrains.kotlin.buildtools.forward.tests.compilation.model.jvmProject
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.junit.jupiter.api.DisplayName
 
 class ConfigurationInputsTrackingTest : BaseCompilationTest() {
@@ -39,7 +41,7 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
                 icOptionsConfigAction = { it[TRACK_CONFIGURATION_INPUTS] = true },
             ) {
                 assertLogContainsPatterns(
-                    expectedLogLevel(strategyConfig),
+                    expectedLogLevel(strategyConfig, kotlinToolchain),
                     ".*Non-incremental compilation will be performed: ${BuildAttribute.UNKNOWN_CHANGES_IN_GRADLE_INPUTS.readableString}".toRegex(),
                 )
             }
@@ -62,7 +64,7 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
             ) {
                 assertLogContainsPatterns(LogLevel.DEBUG, ".*Incremental compilation completed".toRegex())
                 assertLogDoesNotContainPatterns(
-                    expectedLogLevel(strategyConfig),
+                    expectedLogLevel(strategyConfig, kotlinToolchain),
                     ".*Non-incremental compilation will be performed.*".toRegex(),
                 )
             }
@@ -85,7 +87,7 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
                 compilationConfigAction = { it.compilerArguments[JvmCompilerArguments.JVM_TARGET] = JvmTarget.JVM_11 },
             ) {
                 assertLogContainsPatterns(
-                    expectedLogLevel(strategyConfig),
+                    expectedLogLevel(strategyConfig, kotlinToolchain),
                     ".*Non-incremental compilation will be performed: ${BuildAttribute.COMPILER_ARGS_CHANGED.readableString}".toRegex(),
                 )
             }
@@ -109,7 +111,7 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
                 compilationConfigAction = { it.compilerArguments[JvmCompilerArguments.JVM_TARGET] = JvmTarget.JVM_17 },
             ) {
                 assertLogContainsPatterns(
-                    expectedLogLevel(strategyConfig),
+                    expectedLogLevel(strategyConfig, kotlinToolchain),
                     ".*Non-incremental compilation will be performed: ${BuildAttribute.COMPILER_ARGS_CHANGED.readableString}".toRegex(),
                 )
             }
@@ -132,7 +134,7 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
                 icOptionsConfigAction = { it[TRACK_CONFIGURATION_INPUTS] = true },
             ) {
                 assertLogContainsPatterns(
-                    expectedLogLevel(strategyConfig),
+                    expectedLogLevel(strategyConfig, kotlinToolchain),
                     ".*Non-incremental compilation will be performed: ${BuildAttribute.COMPILER_ARGS_CHANGED.readableString}".toRegex(),
                 )
             }
@@ -156,7 +158,7 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
             ) {
                 assertLogContainsPatterns(LogLevel.DEBUG, ".*Incremental compilation completed".toRegex())
                 assertLogDoesNotContainPatterns(
-                    expectedLogLevel(strategyConfig),
+                    expectedLogLevel(strategyConfig, kotlinToolchain),
                     ".*Non-incremental compilation will be performed.*".toRegex(),
                 )
             }
@@ -181,7 +183,7 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
             ) {
                 assertLogContainsPatterns(LogLevel.DEBUG, ".*Incremental compilation completed".toRegex())
                 assertLogDoesNotContainPatterns(
-                    expectedLogLevel(strategyConfig),
+                    expectedLogLevel(strategyConfig, kotlinToolchain),
                     ".*Non-incremental compilation will be performed.*".toRegex(),
                 )
             }
@@ -205,7 +207,7 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
             ) {
                 assertLogContainsPatterns(LogLevel.DEBUG, ".*Incremental compilation completed".toRegex())
                 assertLogDoesNotContainPatterns(
-                    expectedLogLevel(strategyConfig),
+                    expectedLogLevel(strategyConfig, kotlinToolchain),
                     ".*Non-incremental compilation will be performed.*".toRegex(),
                 )
             }
@@ -231,7 +233,7 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
                 },
             ) {
                 assertLogContainsPatterns(
-                    expectedLogLevel(strategyConfig),
+                    expectedLogLevel(strategyConfig, kotlinToolchain),
                     ".*Non-incremental compilation will be performed: ${BuildAttribute.INCREMENTAL_COMPILATION_CONFIGURATION_CHANGED.readableString}".toRegex(),
                 )
             }
@@ -260,7 +262,7 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
                 },
             ) {
                 assertLogContainsPatterns(
-                    expectedLogLevel(strategyConfig),
+                    expectedLogLevel(strategyConfig, kotlinToolchain),
                     ".*Non-incremental compilation will be performed: ${BuildAttribute.INCREMENTAL_COMPILATION_CONFIGURATION_CHANGED.readableString}".toRegex(),
                 )
             }
@@ -286,7 +288,7 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
                 icOptionsConfigAction = { it[TRACK_CONFIGURATION_INPUTS] = true },
             ) {
                 assertLogContainsPatterns(
-                    expectedLogLevel(strategyConfig),
+                    expectedLogLevel(strategyConfig, kotlinToolchain),
                     ".*Non-incremental compilation will be performed: ${BuildAttribute.INCREMENTAL_COMPILATION_CONFIGURATION_CHANGED.readableString}".toRegex(),
                 )
             }
@@ -312,7 +314,7 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
             ) {
                 assertLogContainsPatterns(LogLevel.DEBUG, ".*Incremental compilation completed".toRegex())
                 assertLogDoesNotContainPatterns(
-                    expectedLogLevel(strategyConfig),
+                    expectedLogLevel(strategyConfig, kotlinToolchain),
                     ".*Non-incremental compilation will be performed.*".toRegex(),
                 )
             }
@@ -341,7 +343,7 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
             ) {
                 assertLogContainsPatterns(LogLevel.DEBUG, ".*Incremental compilation completed".toRegex())
                 assertLogDoesNotContainPatterns(
-                    expectedLogLevel(strategyConfig),
+                    expectedLogLevel(strategyConfig, kotlinToolchain),
                     ".*Non-incremental compilation will be performed.*".toRegex(),
                 )
             }
@@ -367,7 +369,7 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
             ) {
                 assertLogContainsPatterns(LogLevel.DEBUG, ".*Incremental compilation completed".toRegex())
                 assertLogDoesNotContainPatterns(
-                    expectedLogLevel(strategyConfig),
+                    expectedLogLevel(strategyConfig, kotlinToolchain),
                     ".*Non-incremental compilation will be performed.*".toRegex(),
                 )
             }
@@ -398,7 +400,7 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
                 compilationConfigAction = { it.compilerArguments[JvmCompilerArguments.JVM_TARGET] = JvmTarget.JVM_17 },
             ) {
                 assertLogContainsPatterns(
-                    expectedLogLevel(strategyConfig),
+                    expectedLogLevel(strategyConfig, kotlinToolchain),
                     ".*Non-incremental compilation will be performed: ${BuildAttribute.INCREMENTAL_COMPILATION_CONFIGURATION_CHANGED.readableString}".toRegex()
                 )
             }
@@ -428,7 +430,7 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
             ) {
                 assertLogContainsPatterns(LogLevel.DEBUG, ".*Incremental compilation completed".toRegex())
                 assertLogDoesNotContainPatterns(
-                    expectedLogLevel(strategyConfig),
+                    expectedLogLevel(strategyConfig, kotlinToolchain),
                     ".*Non-incremental compilation will be performed.*".toRegex(),
                 )
             }
@@ -453,7 +455,7 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
             ) {
                 assertLogContainsPatterns(LogLevel.DEBUG, ".*Incremental compilation completed".toRegex())
                 assertLogDoesNotContainPatterns(
-                    expectedLogLevel(strategyConfig),
+                    expectedLogLevel(strategyConfig, kotlinToolchain),
                     ".*Non-incremental compilation will be performed.*".toRegex(),
                 )
             }
@@ -478,7 +480,7 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
             ) {
                 assertLogContainsPatterns(LogLevel.DEBUG, ".*Incremental compilation completed".toRegex())
                 assertLogDoesNotContainPatterns(
-                    expectedLogLevel(strategyConfig),
+                    expectedLogLevel(strategyConfig, kotlinToolchain),
                     ".*Non-incremental compilation will be performed.*".toRegex(),
                 )
             }
@@ -507,13 +509,15 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
                 },
             ) {
                 assertLogContainsPatterns(
-                    expectedLogLevel(strategyConfig),
+                    expectedLogLevel(strategyConfig, kotlinToolchain),
                     ".*Non-incremental compilation will be performed: ${BuildAttribute.UNKNOWN_CHANGES_IN_GRADLE_INPUTS.readableString}".toRegex(),
                 )
             }
         }
     }
 
-    private fun expectedLogLevel(strategyConfig: CompilerExecutionStrategyConfiguration): LogLevel =
-        if (strategyConfig.second is ExecutionPolicy.WithDaemon) LogLevel.DEBUG else LogLevel.INFO // TODO: KT-85024
+    private fun expectedLogLevel(strategyConfig: CompilerExecutionStrategyConfiguration, kotlinToolchains: KotlinToolchains): LogLevel =
+        if (strategyConfig.second is ExecutionPolicy.WithDaemon &&
+            KotlinToolingVersion(kotlinToolchains.getCompilerVersion()) < KotlinToolingVersion("2.5.20-SNAPSHOT")
+        ) LogLevel.DEBUG else LogLevel.INFO // TODO: KT-85024
 }
