@@ -11,11 +11,19 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.abi.utils.*
 import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInBuildToolsApi
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import kotlin.test.assertTrue
 
+@MustRunOnChangesInGradle
 @AndroidGradlePluginTests
 class AbiValidationAndroidIT : KGPBaseTest() {
+
+    /**
+     * **Test Federation**:
+     * Gradle only. Asserts `checkKotlinAbi` is absent from the task graph, ABI tool never runs.
+     */
     @GradleAndroidTest
     fun testForDisabledAbiValidation(
         gradleVersion: GradleVersion,
@@ -42,6 +50,7 @@ class AbiValidationAndroidIT : KGPBaseTest() {
     }
 
     @GradleAndroidTest
+    @MustRunOnChangesInBuildToolsApi // Runs ABI tool via BTA
     fun testForEnabledAbiValidation(
         gradleVersion: GradleVersion,
         agpVersion: String,
@@ -71,6 +80,7 @@ class AbiValidationAndroidIT : KGPBaseTest() {
 
     @DisplayName("KT-78525 (Android)")
     @GradleAndroidTest
+    @MustRunOnChangesInBuildToolsApi // Runs ABI tool via BTA
     fun testAndroidCompatibilityWithBcv(
         gradleVersion: GradleVersion,
         agpVersion: String,
@@ -89,6 +99,7 @@ class AbiValidationAndroidIT : KGPBaseTest() {
 
     @DisplayName("KT-78525 (KMP)")
     @GradleAndroidTest
+    @MustRunOnChangesInBuildToolsApi // Runs ABI tool via BTA
     fun testKmpCompatibilityWithBcv(
         gradleVersion: GradleVersion,
         agpVersion: String,
