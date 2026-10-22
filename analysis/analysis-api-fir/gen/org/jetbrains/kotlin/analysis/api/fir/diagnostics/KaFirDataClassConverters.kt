@@ -2035,6 +2035,15 @@ private fun KaDiagnosticConverterBuilder.addConversions39() {
             token,
         )
     }
+    add(FirErrors.HOME_PACKAGE_RESOLUTION_INVESTIGATION) { firDiagnostic ->
+        HomePackageResolutionInvestigationImpl(
+            firDiagnostic.a,
+            firDiagnostic.b,
+            firDiagnostic.c,
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions40() {
