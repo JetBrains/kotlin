@@ -195,8 +195,19 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
     private fun createClassDeclarations(declaration: IrClass): ClassLlvmDeclarations {
         val internalName = qualifyInternalName(declaration)
 
+        val classBodyTypeName = if (declaration.isExported) {
+            declaration.computeClassBodyTypeName()
+        } else {
+            if (!context.config.producePerFileCache)
+                "${KonanBinaryInterface.MANGLE_CLASS_BODY_PREFIX}:$internalName"
+            else {
+                val containerName = (generationState.cacheDeserializationStrategy as CacheDeserializationStrategy.SingleFile).filePath
+                declaration.computePrivateClassBodyTypeName(containerName)
+            }
+        }
+
         val fields = context.getLayoutBuilder(declaration).getFields(llvm)
-        (val bodyType = body, val alignment, val fieldIndices = fieldsIndices) = createClassBody("kclassbody:$internalName", fields)
+        (val bodyType = body, val alignment, val fieldIndices = fieldsIndices) = createClassBody(classBodyTypeName, fields)
 
         val objectFieldIndices = fields.mapNotNull {
             if (it.type.binaryTypeIsReference()) {
