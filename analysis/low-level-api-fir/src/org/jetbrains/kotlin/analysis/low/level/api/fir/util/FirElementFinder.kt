@@ -378,6 +378,9 @@ private sealed class FirFileStructureNode(val element: FirDeclaration) {
             is KtClassInitializer -> SpecialNames.ANONYMOUS
             is KtCodeFragment -> SpecialNames.NO_NAME_PROVIDED
 
+            // The container of a non-local destructuring declaration, both in scripts and outside of them
+            is KtDestructuringDeclaration -> SpecialNames.DESTRUCT
+
             is KtClassOrObject,
             is KtTypeAlias,
             is KtNamedFunction,
