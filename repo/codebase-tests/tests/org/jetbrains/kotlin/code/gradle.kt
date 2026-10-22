@@ -15,8 +15,9 @@ val projectDir = Path("").also { path ->
 
 const val defaultGradleXmx = "2g"
 
-fun defaultGradleArguments(xmx: String = defaultGradleXmx) = buildList {
-    add("-Dkotlin.daemon.options=\"autoshutdownIdleSeconds=10\"")
+fun defaultGradleArguments(xmx: String = "1g") = buildList {
+    add("-Dkotlin.compiler.execution.strategy=in-process") // Prevents spawning a 3rd Kotlin compiler daemon
+    add("-Dkotlin.daemon.options=\"autoshutdownIdleSeconds=5\"")
     add("-Dorg.gradle.daemon.idletimeout=1000")
     add("-Dorg.gradle.jvmargs=${defaultGradleJvmArguments(xmx = xmx).joinToString(" ")}")
 }
