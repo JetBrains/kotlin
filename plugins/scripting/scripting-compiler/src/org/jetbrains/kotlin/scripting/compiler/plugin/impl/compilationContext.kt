@@ -333,25 +333,45 @@ internal fun collectRefinedSourcesAndUpdateEnvironment(
     sourceFiles.addAll(newSources)
 
     // collectScriptsCompilationDependencies calls resolver for every file, so at this point all updated configurations are collected in the ScriptDependenciesProvider
-    context.environment.configuration.updateWithRefinedConfigurations(context, sourceFiles, messageCollector, getScriptCompilationConfiguration)
+    context.environment.configuration.applyRefinedCompilerOptions(
+        context.baseScriptCompilationConfiguration[ScriptCompilationConfiguration.compilerOptions].orEmpty(),
+        context.ignoredOptionsReportingState,
+        sourceFiles,
+        messageCollector,
+    ) {
+        getScriptCompilationConfiguration(it)?.valueOrNull()?.configuration
+    }
     return sourceFiles to sourceDependencies
 }
 
-private fun CompilerConfiguration.updateWithRefinedConfigurations(
-    context: SharedScriptCompilationContext,
-    sourceFiles: List<SourceCode>,
+/**
+ * Applies the options added by the refinement of each source, without repetitions, together with the [baseCompilerOptions],
+ * since the options are applied as a whole and the reporting of the ignored options compares them with the base ones.
+ */
+internal fun CompilerConfiguration.applyRefinedCompilerOptions(
+    baseCompilerOptions: List<String>,
+    ignoredOptionsReportingState: IgnoredOptionsReportingState,
+    sources: List<SourceCode>,
     messageCollector: ScriptDiagnosticsMessageCollector,
-    @Suppress("DEPRECATION")
-    getScriptCompilationConfiguration: (SourceCode) -> org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationResult?
+    getRefinedConfiguration: (SourceCode) -> ScriptCompilationConfiguration?,
 ) {
-    val updatedCompilerOptions = sourceFiles.flatMapTo(mutableListOf()) {
-        getScriptCompilationConfiguration(it)?.valueOrNull()?.configuration?.get(
-            ScriptCompilationConfiguration.compilerOptions
-        ) ?: emptyList()
-    }
-    if (updatedCompilerOptions.isNotEmpty() &&
-        updatedCompilerOptions != context.baseScriptCompilationConfiguration[ScriptCompilationConfiguration.compilerOptions]
-    ) {
-        updateWithCompilerOptions(updatedCompilerOptions, messageCollector, context.ignoredOptionsReportingState, true)
+    val refinedCompilerOptions = sources.mapNotNull { source ->
+        getRefinedConfiguration(source)?.get(ScriptCompilationConfiguration.compilerOptions)
+            ?.let { refinedCompilerOptionsDelta(baseCompilerOptions, it) }
+            ?.takeIf { it.isNotEmpty() }
+    }.distinct().flatten()
+    if (refinedCompilerOptions.isNotEmpty()) {
+        updateWithCompilerOptions(
+            baseCompilerOptions + refinedCompilerOptions, messageCollector, ignoredOptionsReportingState, isRefinement = true
+        )
     }
 }
+
+/**
+ * The lists are compared as token sequences, so reordered base options or partially overlapping deltas may leave duplicates.
+ */
+internal fun refinedCompilerOptionsDelta(baseCompilerOptions: List<String>, refinedCompilerOptions: List<String>): List<String> =
+    if (refinedCompilerOptions.size >= baseCompilerOptions.size &&
+        refinedCompilerOptions.subList(0, baseCompilerOptions.size) == baseCompilerOptions
+    ) refinedCompilerOptions.subList(baseCompilerOptions.size, refinedCompilerOptions.size)
+    else refinedCompilerOptions
