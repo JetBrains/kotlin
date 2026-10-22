@@ -21,6 +21,7 @@ class KotlinEnumEntryStubImpl(
     parent: StubElement<*>?,
     private val qualifiedName: StringRef?,
     private val name: StringRef?,
+    override val kdocText: String?,
 ) : KotlinStubBaseImpl<KtClass>(
     parent = parent,
     elementType = KtNodeTypes.ENUM_ENTRY,
@@ -54,14 +55,12 @@ class KotlinEnumEntryStubImpl(
             return listOf(enumClassName)
         }
 
-    override val kdocText: String?
-        get() = null
-
     @KtImplementationDetail
     override fun copyInto(newParent: StubElement<*>?): KotlinEnumEntryStubImpl = KotlinEnumEntryStubImpl(
         parent = newParent,
         qualifiedName = qualifiedName,
         name = name,
+        kdocText = kdocText,
     )
 
     @KtImplementationDetail

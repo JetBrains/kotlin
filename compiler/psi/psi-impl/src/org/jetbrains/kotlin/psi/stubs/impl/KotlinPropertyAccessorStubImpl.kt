@@ -20,6 +20,7 @@ class KotlinPropertyAccessorStubImpl(
     override val hasNoExpressionBody: Boolean,
     override val mayHaveContract: Boolean,
     val contract: List<KtContractDescriptionElement<KotlinTypeBean, Nothing?>>?,
+    override val kdocText: String?,
 ) : KotlinStubBaseImpl<KtPropertyAccessor>(parent, KtNodeTypes.PROPERTY_ACCESSOR), KotlinPropertyAccessorStub {
     @KtImplementationDetail
     override fun copyInto(newParent: StubElement<*>?): KotlinPropertyAccessorStubImpl = KotlinPropertyAccessorStubImpl(
@@ -29,6 +30,7 @@ class KotlinPropertyAccessorStubImpl(
         hasNoExpressionBody = hasNoExpressionBody,
         mayHaveContract = mayHaveContract,
         contract = contract,
+        kdocText = kdocText,
     )
 
     @KtImplementationDetail
@@ -38,5 +40,6 @@ class KotlinPropertyAccessorStubImpl(
                 other.hasBody == hasBody &&
                 other.hasNoExpressionBody == hasNoExpressionBody &&
                 other.mayHaveContract == mayHaveContract &&
-                other.contract == contract
+                other.contract == contract &&
+                other.kdocText == kdocText
 }
