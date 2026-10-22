@@ -22,6 +22,7 @@ common {
     gradle-args = [
         "-Pkotlin.compiler.execution.strategy=in-process",
         "-Dorg.gradle.parallel=false",
+        "-Pkotlin.build.report.output=json",
         "--no-build-cache",
     ]
     warm-ups = 2
