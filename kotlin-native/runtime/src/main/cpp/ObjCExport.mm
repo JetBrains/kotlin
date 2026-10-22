@@ -44,7 +44,7 @@ using namespace kotlin;
 + (instancetype)createRetainedWrapper:(struct ObjHeader*)obj;
 // Implemented for KotlinBase
 + (id)_createProtocolWrapperForExternalRCRef:(void*)ref
-                                  conformsTo:(NS_NOESCAPE BOOL (^)(Class candidate))conformsTo;
+                                  conformsTo:(NS_NOESCAPE BOOL (^)(Class candidate))conformsTo NS_RETURNS_RETAINED;
 @end
 
 namespace {
