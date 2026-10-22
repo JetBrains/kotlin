@@ -424,6 +424,7 @@ object FirFakeOverrideGenerator {
         baseBackingField: FirBackingField? = null,
         explicitBackingFieldNewReturnType: ConeKotlinType? = null,
         explicitBackingFieldCopySubstitutionForTypeUpdater: DeferredCallableCopyReturnType? = null,
+        markAsOverride: Boolean = true,
     ): FirProperty = buildProperty {
         source = newSource ?: baseProperty.source
         moduleData = session.nullableModuleData ?: baseProperty.moduleData
@@ -431,7 +432,12 @@ object FirFakeOverrideGenerator {
         name = baseProperty.name
         isVar = baseProperty.isVar
         this.symbol = newSymbol
-        status = baseProperty.status.copy(newVisibility, newModality, isExpect = isExpect, isOverride = true)
+        status = baseProperty.status.copy(
+            newVisibility,
+            newModality,
+            isExpect = isExpect,
+            isOverride = if (markAsOverride) true else baseProperty.status.isOverride,
+        )
         isLocal = baseProperty.isLocal
 
         resolvePhase = origin.resolvePhaseForCopy
@@ -460,6 +466,7 @@ object FirFakeOverrideGenerator {
                 newSource = newSource ?: getter.source,
                 newVisibility = newVisibility ?: getter.visibility,
                 newModality = newModality ?: getter.modality,
+                markAsOverride = markAsOverride,
             )
         }
 
@@ -475,6 +482,7 @@ object FirFakeOverrideGenerator {
                 newSource = newSource ?: baseProperty.setter?.source,
                 newVisibility = newSetterVisibility ?: setter.visibility,
                 newModality = newModality ?: setter.modality,
+                markAsOverride = markAsOverride,
             )
         }
 
@@ -514,9 +522,11 @@ object FirFakeOverrideGenerator {
         newSource: KtSourceElement? = source,
         newVisibility: Visibility = visibility,
         newModality: Modality? = modality,
+        markAsOverride: Boolean,
     ): FirPropertyAccessor? = when {
         annotations.isNotEmpty() || newVisibility != baseProperty.visibility ||
                 origin == FirDeclarationOrigin.Delegated ||
+                origin == FirDeclarationOrigin.ImportedFromObjectOrStatic ||
                 origin is FirDeclarationOrigin.SubstitutionOverride ||
                 origin is FirDeclarationOrigin.IntersectionOverride -> buildCopy(
             moduleData,
@@ -529,6 +539,7 @@ object FirFakeOverrideGenerator {
             newSource,
             newVisibility,
             newModality,
+            markAsOverride,
         )
         else -> null
     }
@@ -544,6 +555,7 @@ object FirFakeOverrideGenerator {
         newSource: KtSourceElement? = source,
         newVisibility: Visibility = visibility,
         newModality: Modality? = modality,
+        markAsOverride: Boolean,
     ): FirPropertyAccessor = when (this) {
         is FirDefaultPropertyGetter -> FirDefaultPropertyGetter(
             source = newSource,
@@ -555,7 +567,7 @@ object FirFakeOverrideGenerator {
             modality = newModality,
             effectiveVisibility = effectiveVisibility,
             resolvePhase = origin.resolvePhaseForCopy,
-            isOverride = true,
+            isOverride = markAsOverride,
             isStatic = isStatic,
             attributes = attributes.copy(),
         ).apply {
@@ -572,7 +584,7 @@ object FirFakeOverrideGenerator {
             effectiveVisibility = effectiveVisibility,
             resolvePhase = origin.resolvePhaseForCopy,
             parameterSource = newSource ?: valueParameters.first().source,
-            isOverride = true,
+            isOverride = markAsOverride,
             isStatic = isStatic,
             attributes = attributes.copy(),
         ).apply {
