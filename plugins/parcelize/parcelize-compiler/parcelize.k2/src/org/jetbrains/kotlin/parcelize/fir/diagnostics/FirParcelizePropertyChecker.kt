@@ -79,13 +79,31 @@ object FirParcelizePropertyChecker : FirPropertyChecker(MppCheckerKind.Platform)
         val customParcelerTypes = getCustomParcelerTypes(
             property.annotations + containingClassSymbol.resolvedAnnotationsWithClassIds, session
         )
-        val unsupported = checkParcelableType(type, ParcelizeTypeCheckState(context, customParcelerTypes, property.returnTypeRef.source))
-        if (type in unsupported) {
-            reporter.reportOn(property.returnTypeRef.source, KtErrorsParcelize.PARCELABLE_TYPE_NOT_SUPPORTED, context)
-        } else {
-            unsupported.forEach {
-                reporter.reportOn(property.returnTypeRef.source, KtErrorsParcelize.PARCELABLE_TYPE_CONTAINS_NOT_SUPPORTED, it, context)
+        val source = property.returnTypeRef.source
+        val unsupported = checkParcelableType(type, ParcelizeTypeCheckState(context, customParcelerTypes, source))
+        if (UnsupportedType(type, UnsupportedType.Reason.NOT_SUPPORTED) in unsupported) {
+            reporter.reportOn(source, KtErrorsParcelize.PARCELABLE_TYPE_NOT_SUPPORTED, context)
+            return
+        }
+        for (unsupportedType in unsupported) {
+            when (unsupportedType.reason) {
+                UnsupportedType.Reason.NOT_SUPPORTED ->
+                    reporter.reportOn(source, KtErrorsParcelize.PARCELABLE_TYPE_CONTAINS_NOT_SUPPORTED, unsupportedType.type, context)
+                UnsupportedType.Reason.RECURSIVE_DATA_CLASS ->
+                    reporter.reportOn(
+                        source,
+                        KtErrorsParcelize.PARCELABLE_RECURSIVE_DATA_CLASS_NOT_SUPPORTED,
+                        unsupportedType.type,
+                        context
+                    )
             }
+        }
+    }
+
+    private data class UnsupportedType(val type: ConeKotlinType, val reason: Reason) {
+        enum class Reason {
+            NOT_SUPPORTED, // The type cannot be serialized by 'Parcelize'.
+            RECURSIVE_DATA_CLASS, // The type is a data class which (transitively) contains itself.
         }
     }
 
@@ -105,12 +123,13 @@ object FirParcelizePropertyChecker : FirPropertyChecker(MppCheckerKind.Platform)
         val source: KtSourceElement?,
         val inDataClass: Boolean = false,
         val fromDataClassProperty: Boolean = false,
+        val dataClassesInProgress: List<ConeClassLikeType> = emptyList(),
     )
 
     // Returns the set of types that are *not* supported. This set can include types other than `type`
     // if it is a generally supported container type that contains unsupported elements in this instantiation.
-    private fun checkParcelableType(type: ConeKotlinType, state: ParcelizeTypeCheckState): Set<ConeKotlinType> {
-        val (context, customParcelerTypes, inDataClass) = state
+    private fun checkParcelableType(type: ConeKotlinType, state: ParcelizeTypeCheckState): Set<UnsupportedType> {
+        val (context, customParcelerTypes, inDataClass, dataClassesInProgress) = state
         val session = context.session
         if (
             type.hasParcelerAnnotation(session) ||
@@ -122,7 +141,7 @@ object FirParcelizePropertyChecker : FirPropertyChecker(MppCheckerKind.Platform)
 
         val upperBound = type.getErasedUpperBound(session)
         val symbol = upperBound?.toRegularClassSymbol(session)
-            ?: return setOf(type)
+            ?: return setOf(UnsupportedType(type, UnsupportedType.Reason.NOT_SUPPORTED))
 
         // The checks below depend on the signature of this class (kind, modifiers, supertypes, constructor).
         if (state.fromDataClassProperty) {
@@ -149,8 +168,22 @@ object FirParcelizePropertyChecker : FirPropertyChecker(MppCheckerKind.Platform)
             return emptySet()
         }
 
+        // A data class which occurs again while its own properties are being checked is recursive and cannot be serialized inline.
+        if (symbol.isData) {
+            val recursiveDataClass = dataClassesInProgress.firstOrNull { outer ->
+                outer.lookupTag == upperBound.lookupTag && !outer.hasNestedTypeArgument(upperBound, session)
+            }
+            if (recursiveDataClass != null) {
+                val recursiveDataClassType = recursiveDataClass
+                    .withNullability(nullable = false, session.typeContext)
+                    .withAttributes(ConeAttributes.Empty)
+                return setOf(UnsupportedType(recursiveDataClassType, UnsupportedType.Reason.RECURSIVE_DATA_CLASS))
+            }
+        }
+
         if (symbol.isData && (inDataClass || type.customAnnotations.any { it.fqName(session) == ParcelizeNames.DATA_CLASS_ANNOTATION_FQ_NAME })) {
-            val properties = symbol.dataClassPrimaryConstructorPropertiesOrNull(session) ?: return setOf(type)
+            val properties = symbol.dataClassPrimaryConstructorPropertiesOrNull(session)
+                ?: return setOf(UnsupportedType(type, UnsupportedType.Reason.NOT_SUPPORTED))
 
             // The code generated for a `@DataClass` type calls the property getters of the data class directly,
             // so it has to be regenerated whenever any of them changes.
@@ -158,7 +191,7 @@ object FirParcelizePropertyChecker : FirPropertyChecker(MppCheckerKind.Platform)
 
             // Serialization uses the property getters, deserialization uses the constructor.
             if (properties.any { !it.isVisible(context) } || symbol.primaryConstructorIfAny(session)?.isVisible(context) != true) {
-                return setOf(type)
+                return setOf(UnsupportedType(type, UnsupportedType.Reason.NOT_SUPPORTED))
             }
             val typeMapping = symbol.typeParameterSymbols.zip(type.typeArguments).mapNotNull { [parameter, arg] ->
                 when (arg) {
@@ -170,7 +203,14 @@ object FirParcelizePropertyChecker : FirPropertyChecker(MppCheckerKind.Platform)
             val substitutor = substitutorByMap(typeMapping, context.session)
             return properties.fold(emptySet()) { acc, property ->
                 val elementType = substitutor.substituteOrSelf(property.resolvedReturnType)
-                acc union checkParcelableType(elementType, state.copy(inDataClass = true, fromDataClassProperty = true))
+                acc union checkParcelableType(
+                    elementType,
+                    state.copy(
+                        inDataClass = true,
+                        fromDataClassProperty = true,
+                        dataClassesInProgress = dataClassesInProgress + upperBound,
+                    ),
+                )
             }
         }
 
@@ -178,7 +218,7 @@ object FirParcelizePropertyChecker : FirPropertyChecker(MppCheckerKind.Platform)
             return emptySet()
         }
 
-        return setOf(type)
+        return setOf(UnsupportedType(type, UnsupportedType.Reason.NOT_SUPPORTED))
     }
 
     private fun recordDataClassPropertyLookups(
@@ -195,6 +235,17 @@ object FirParcelizePropertyChecker : FirPropertyChecker(MppCheckerKind.Platform)
 
     private fun ConeKotlinType.anySuperTypeConstructor(session: FirSession, predicate: (ConeKotlinType) -> Boolean): Boolean =
         with(session.typeContext) { anySuperTypeConstructor { it is ConeKotlinType && predicate(it) } }
+
+    /**
+     * Returns true if 'type' occurs, ignoring nullability, among the (possibly nested) type arguments of this type.
+     */
+    private fun ConeKotlinType.hasNestedTypeArgument(type: ConeClassLikeType, session: FirSession): Boolean =
+        typeArguments.any { argument ->
+            val argumentType = argument.type?.fullyExpandedType(session) ?: return@any false
+            (argumentType is ConeClassLikeType && argumentType.lookupTag == type.lookupTag &&
+                    argumentType.typeArguments.contentEquals(type.typeArguments)) ||
+                    argumentType.hasNestedTypeArgument(type, session)
+        }
 
     private fun FirCallableSymbol<*>.isVisible(context: CheckerContext): Boolean {
         return context.session.visibilityChecker.isVisible(
