@@ -7,11 +7,11 @@ package org.jetbrains.kotlin.test.services
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
-import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.test.model.*
 
 abstract class CompilerConfigurationProvider(val testServices: TestServices) : TestService {
@@ -67,7 +67,7 @@ abstract class CompilerConfigurationProvider(val testServices: TestServices) : T
         }
     }
 
-    open fun getPackagePartProviderFactory(module: TestModule): (GlobalSearchScope) -> JvmPackagePartProvider {
+    open fun getPackagePartProviderFactory(module: TestModule): (JvmClasspath) -> JvmPackagePartProvider {
         return getKotlinCoreEnvironment(module)::createPackagePartProvider
     }
 }

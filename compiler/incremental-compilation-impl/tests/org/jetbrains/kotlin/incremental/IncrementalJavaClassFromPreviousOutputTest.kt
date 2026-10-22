@@ -5,14 +5,24 @@
 
 package org.jetbrains.kotlin.incremental
 
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.local.CoreLocalFileSystem
 import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.cli.jvm.compiler.CliVirtualFileFinder
+import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
+import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndexImpl
+import org.jetbrains.kotlin.jvm.environment.JvmClasspath
+import org.jetbrains.kotlin.jvm.environment.JvmClasspathRootId
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.test.compileJavaFiles
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.ClassWriter
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
 import java.io.File
 
 /**
@@ -29,6 +39,47 @@ import java.io.File
  * library that session may not see.
  */
 class IncrementalJavaClassFromPreviousOutputTest : AbstractIncrementalJvmCompilerRunnerTest() {
+
+    /**
+     * Pins the current first-classfile-then-filter result for KT-88892; it may not be the desired duplicate-class precedence.
+     */
+    @Test
+    fun testFirstClassFileInPreviousOutputShadowsTheLibraryForLibrariesSession_KT88892(@TempDir tempDir: File) {
+        val outputRoot = File(tempDir, "out").apply { mkdirs() }
+        val libraryRoot = File(tempDir, "library").apply { mkdirs() }
+        val outputClass = File(outputRoot, "p/Shadow.class").apply {
+            parentFile.mkdirs()
+            writeBytes(ByteArray(0))
+        }
+        File(libraryRoot, "p/Shadow.class").apply {
+            parentFile.mkdirs()
+            writeBytes(ByteArray(0))
+        }
+        fun localVirtualFile(file: File): VirtualFile = checkNotNull(
+            CoreLocalFileSystem().findFileByPath(file.absolutePath.replace('\\', '/'))
+        )
+
+        val outputRootFile = localVirtualFile(outputRoot)
+        val libraryRootFile = localVirtualFile(libraryRoot)
+        val index = JvmDependenciesIndexImpl(
+            listOf(
+                JavaRoot(outputRootFile, JavaRoot.RootType.BINARY),
+                JavaRoot(libraryRootFile, JavaRoot.RootType.BINARY),
+            )
+        )
+        val classId = ClassId.fromString("p/Shadow")
+        val outputRootId = JvmClasspathRootId.of(outputRoot.toPath())
+        val outputFinder = CliVirtualFileFinder(index, JvmClasspath.Roots(listOf(outputRootId)), false, null)
+        val librariesFinder = CliVirtualFileFinder(
+            index,
+            JvmClasspath.ProjectLibraries(excludedRoots = listOf(outputRootId)),
+            false,
+            null,
+        )
+
+        assertEquals(outputClass.absolutePath.replace('\\', '/'), outputFinder.findVirtualFileWithHeader(classId)?.path)
+        assertNull(librariesFinder.findVirtualFileWithHeader(classId))
+    }
 
     /**
      * The reference as `javac` records it. The `InnerClasses` attribute tells the reader `p/Lib$Nested` is
