@@ -70,6 +70,29 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     fun generateDtsWithRichTypeScriptSchema(gradleVersion: GradleVersion) {
         project("kotlin2JsIrDtsGeneration", gradleVersion) {
             gradleProperties.appendText("\nkotlin.js.generateRichTypeScriptDeclarations=true\n")
+            buildScriptInjection {
+                kotlinMultiplatform.js {
+                    compilerOptions {
+                        freeCompilerArgs.set(listOf("-Xexport-kdoc"))
+                    }
+                }
+            }
+            build("assemble") {
+                val dts = projectPath.resolve("build/js/packages/kotlin2JsIrDtsGeneration/kotlin/kotlin2JsIrDtsGeneration.d.ts")
+
+                assertOutputContains("GenerateTypeScriptDefinitions")
+
+                assertFileExists(dts)
+                assertFileContains(dts, "function bar(): string")
+                assertFileContains(dts, "A declaration generated from KLIB metadata.")
+            }
+            buildScriptInjection {
+                kotlinMultiplatform.js {
+                    compilerOptions {
+                        freeCompilerArgs.set(listOf("-XXLanguage:+ExportKDocDocumentationToKlib"))
+                    }
+                }
+            }
             build("assemble") {
                 val dts = projectPath.resolve("build/js/packages/kotlin2JsIrDtsGeneration/kotlin/kotlin2JsIrDtsGeneration.d.ts")
 
@@ -146,8 +169,39 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
 
                 assertEquals("kotlin/js-executable.mjs", packageJson.main)
 
-                val outputDtsFile = outputDir.resolve("js-executable.d.ts")
-                assertFileContains(outputDtsFile, "const value: bigint;")
+                val outputDtsFile = outputDir.resolve("js-executable.d.mts")
+                assertFileContains(
+                    outputDtsFile,
+                    """
+                    |export declare const value: {
+                    |    get(): bigint;
+                    |};
+                    """.trimMargin()
+                )
+            }
+            buildScriptInjection {
+                kotlinMultiplatform.js {
+                    compilerOptions {
+                        freeCompilerArgs.set(listOf("-Xes-long-as-bigint=false"))
+                    }
+                }
+            }
+            build("build") {
+                val outputDir = projectPath.resolve("build/js/packages/js-executable/kotlin/")
+                val outputFile = outputDir.resolve("js-executable.mjs")
+
+                assertFileExists(outputFile)
+                assertFileDoesNotContain(outputFile, "1234567890123n")
+
+                val outputDtsFile = outputDir.resolve("js-executable.d.mts")
+                assertFileContains(
+                    outputDtsFile,
+                    """
+                    |export declare const value: {
+                    |    get(): any /*Long*/;
+                    |};
+                    """.trimMargin()
+                )
             }
         }
     }

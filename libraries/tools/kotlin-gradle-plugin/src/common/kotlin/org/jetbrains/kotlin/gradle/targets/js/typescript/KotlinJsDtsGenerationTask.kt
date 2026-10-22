@@ -22,22 +22,17 @@ import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.SkipWhenEmpty
 import org.gradle.api.tasks.TaskAction
 import org.gradle.work.NormalizeLineEndings
-import org.jetbrains.kotlin.buildtools.api.arguments.enums.JsEcmaVersion
+import org.jetbrains.kotlin.buildtools.api.DelicateBuildToolsApi
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.js.JsDtsGranularity
 import org.jetbrains.kotlin.buildtools.api.js.JsPlatformToolchain.Companion.js
-import org.jetbrains.kotlin.buildtools.api.js.operations.JsDtsGenerationOperation.Companion.COMPILE_LONG_AS_BIG_INT
-import org.jetbrains.kotlin.buildtools.api.js.operations.JsDtsGenerationOperation.Companion.DATA_CLASS_COPY_RESPECTS_CONSTRUCTOR_VISIBILITY
-import org.jetbrains.kotlin.buildtools.api.js.operations.JsDtsGenerationOperation.Companion.EXPORT_SUSPEND_LAMBDAS
-import org.jetbrains.kotlin.buildtools.api.js.operations.JsDtsGenerationOperation.Companion.EXPORT_UNTYPED_AS_UNKNOWN
 import org.jetbrains.kotlin.buildtools.api.js.operations.JsDtsGenerationOperation.Companion.GRANULARITY
-import org.jetbrains.kotlin.buildtools.api.js.operations.JsDtsGenerationOperation.Companion.IMPLEMENT_INTERFACES
-import org.jetbrains.kotlin.buildtools.api.js.operations.JsDtsGenerationOperation.Companion.MODULE_KIND
-import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.buildtools.api.js.operations.JsLinkingOperation
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.compilerRunner.btapi.UsesBuildSessionService
-import org.jetbrains.kotlin.gradle.dsl.JsModuleKind
+import org.jetbrains.kotlin.compilerRunner.toArgumentStrings
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptionsHelper
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptionsDefault
 import org.jetbrains.kotlin.gradle.internal.UsesClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.logging.GradleKotlinLogger
@@ -48,7 +43,6 @@ import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.jetbrains.kotlin.tooling.core.toKotlinVersion
 import java.io.File
 import javax.inject.Inject
-import org.jetbrains.kotlin.buildtools.api.arguments.enums.JsModuleKind as BtaJsModuleKind
 
 @CacheableTask
 internal abstract class KotlinJsDtsGenerationTask @Inject constructor(
@@ -111,32 +105,13 @@ internal abstract class KotlinJsDtsGenerationTask @Inject constructor(
             outputDirectory = outputDirectory.get().asFile.toPath(),
         )
             .apply {
-                val target = linkCompilerOptions.target.orNull?.let { target ->
-                    JsEcmaVersion.entries.first { it.stringValue == target }
-                }
-                val moduleKind = linkCompilerOptions.moduleKind.orNull ?: JsModuleKind.MODULE_UMD
-                val compilerArguments = linkCompilerOptions.freeCompilerArgs.get()
-
-                this[MODULE_KIND] = BtaJsModuleKind.entries.single { it.stringValue == moduleKind.kind }
+                // Let BTA derive all the settings from the link compiler arguments the same way the compiler does it
+                // (defaults implied by the target, language features enabled via `-XXLanguage:` or `-language-version`, etc.)
+                configureFrom(createLinkingOperation(buildSession.kotlinToolchains))
                 this[GRANULARITY] = when (granularity.get()) {
                     KotlinJsIrOutputGranularity.PER_FILE -> JsDtsGranularity.PER_FILE
                     else -> JsDtsGranularity.WHOLE_PROGRAM
                 }
-
-                // The same default as the compiler uses: Long is compiled as BigInt for ES2020 target unless specified explicitly
-                this[COMPILE_LONG_AS_BIG_INT] =
-                    compilerArguments.explicitBooleanArgument(K2JSCompilerArguments::compileLongAsBigInt.cliArgument)
-                        ?: (target != null && target >= JsEcmaVersion.ES2020)
-
-                this[IMPLEMENT_INTERFACES] =
-                    compilerArguments.explicitBooleanArgument(K2JSCompilerArguments::allowImplementableInterfacesExporting.cliArgument) == true
-
-                this[EXPORT_SUSPEND_LAMBDAS] =
-                    compilerArguments.explicitBooleanArgument(K2JSCompilerArguments::allowExportingSuspendLambdas.cliArgument) == true
-                this[EXPORT_UNTYPED_AS_UNKNOWN] =
-                    compilerArguments.explicitBooleanArgument(K2JSCompilerArguments::useUnknownInsteadAny.cliArgument) == true
-                this[DATA_CLASS_COPY_RESPECTS_CONSTRUCTOR_VISIBILITY] =
-                    compilerArguments.explicitBooleanArgument(CommonCompilerArguments::consistentDataClassCopyVisibility.cliArgument) == true
             }
             .build()
 
@@ -147,10 +122,20 @@ internal abstract class KotlinJsDtsGenerationTask @Inject constructor(
         )
     }
 
-    private fun List<String>.explicitBooleanArgument(argument: String): Boolean? =
-        lastOrNull { it == argument || it.startsWith("$argument=") }
-            ?.substringAfter("=", missingDelimiterValue = "true")
-            ?.toBooleanStrictOrNull()
+    private fun createLinkingOperation(kotlinToolchains: KotlinToolchains): JsLinkingOperation {
+        val linkArguments = K2JSCompilerArguments()
+        KotlinJsCompilerOptionsHelper.fillCompilerArguments(linkCompilerOptions, linkArguments)
+
+        return kotlinToolchains.js.jsLinkingOperationBuilder(
+            klib = entryModule.get().asFile.toPath(),
+            destination = outputDirectory.get().asFile.toPath(),
+        )
+            .apply {
+                @OptIn(DelicateBuildToolsApi::class)
+                compilerArguments.applyCommandLineArguments(linkArguments.toArgumentStrings(allowArgFileInValues = false))
+            }
+            .build()
+    }
 
     companion object {
         const val NAME = "generateTypeScriptDefinitions"
