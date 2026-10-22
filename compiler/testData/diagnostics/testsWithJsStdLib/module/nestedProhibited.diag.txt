@@ -1,6 +1,6 @@
-/nestedProhibited.kt:7:16: error: '@JsModule' cannot appear here since the file is already marked with a module annotation.
+/nestedProhibited.kt:6:1: error: '@JsModule' cannot appear here since the file is already marked with a module annotation.
 
-/nestedProhibited.kt:12:10: error: '@JsModule' cannot appear here since the file is already marked with a module annotation.
+/nestedProhibited.kt:11:1: error: '@JsModule' cannot appear here since the file is already marked with a module annotation.
 
 /nestedProhibited.kt:14:1: error: '@JsModule' cannot appear here since the file is already marked with a module annotation.
 

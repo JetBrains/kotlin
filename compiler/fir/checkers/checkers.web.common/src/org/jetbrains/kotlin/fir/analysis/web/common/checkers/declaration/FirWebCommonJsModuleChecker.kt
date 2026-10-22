@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.utils.isInterface
 import org.jetbrains.kotlin.fir.declarations.utils.isEffectivelyExternal
@@ -32,20 +33,21 @@ abstract class FirWebCommonJsModuleChecker : FirBasicDeclarationChecker(MppCheck
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirDeclaration) {
         if (declaration is FirFile) return
-        val annotationType = declaration.symbol.findModuleAnnotation(context.session)?.resolvedType ?: return
+        val annotation = declaration.symbol.findModuleAnnotation(context.session) ?: return
+        val annotationType = annotation.resolvedType
 
         val isExternal = declaration.symbol.isEffectivelyExternal(context.session)
         val isTopLevel = context.isTopLevel
 
         if (!isTopLevel) {
-            reporter.reportOn(declaration.source, FirWebCommonErrors.JS_MODULE_PROHIBITED_ON_MEMBER, annotationType)
+            reporter.reportOn(annotation.source, FirWebCommonErrors.JS_MODULE_PROHIBITED_ON_MEMBER, annotationType)
         }
 
         // An external interface has no runtime value, unless its companion object is imported from the module.
         if (isTopLevel && isExternal && declaration is FirRegularClass && declaration.isInterface &&
             declaration.companionObjectSymbol == null
         ) {
-            reporter.reportOn(declaration.source, FirWebCommonErrors.JS_MODULE_PROHIBITED_ON_EXTERNAL_INTERFACE, annotationType)
+            reporter.reportOn(annotation.source, FirWebCommonErrors.JS_MODULE_PROHIBITED_ON_EXTERNAL_INTERFACE, annotationType)
         }
 
         if (declaration is FirProperty && declaration.isVar) {
@@ -53,18 +55,19 @@ abstract class FirWebCommonJsModuleChecker : FirBasicDeclarationChecker(MppCheck
         }
 
         if (!isExternal) {
-            reporter.reportOn(declaration.source, FirWebCommonErrors.JS_MODULE_PROHIBITED_ON_NON_EXTERNAL, annotationType)
+            reporter.reportOn(annotation.source, FirWebCommonErrors.JS_MODULE_PROHIBITED_ON_NON_EXTERNAL, annotationType)
         }
 
         if (isTopLevel && context.containingFileSymbol?.findModuleAnnotation(context.session) != null) {
-            reporter.reportOn(declaration.source, FirWebCommonErrors.NESTED_JS_MODULE_PROHIBITED, annotationType)
+            reporter.reportOn(annotation.source, FirWebCommonErrors.NESTED_JS_MODULE_PROHIBITED, annotationType)
         }
 
         // A file qualifier is not applied consistently to a declaration that is imported from its own module.
-        if (isTopLevel && declaration.symbol.hasAnnotation(JsModule, context.session) &&
+        val jsModuleAnnotation = declaration.symbol.resolvedAnnotationsWithClassIds.getAnnotationByClassId(JsModule, context.session)
+        if (isTopLevel && jsModuleAnnotation != null &&
             context.containingFileSymbol?.hasAnnotation(JsQualifier, context.session) == true
         ) {
-            reporter.reportOn(declaration.source, FirWebCommonErrors.JS_MODULE_PROHIBITED_IN_FILE_WITH_JS_QUALIFIER)
+            reporter.reportOn(jsModuleAnnotation.source, FirWebCommonErrors.JS_MODULE_PROHIBITED_IN_FILE_WITH_JS_QUALIFIER)
         }
     }
 }

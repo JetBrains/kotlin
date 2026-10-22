@@ -22,7 +22,7 @@ external class Cls {
     var memberVar: Int
 }
 
-<!JS_MODULE_PROHIBITED_ON_VAR, NESTED_JS_MODULE_PROHIBITED!>@JsModule("annotated")
+<!JS_MODULE_PROHIBITED_ON_VAR!><!NESTED_JS_MODULE_PROHIBITED!>@JsModule("annotated")<!>
 external var annotatedVar: Int<!>
 
 // FILE: nonModuleFile.kt
