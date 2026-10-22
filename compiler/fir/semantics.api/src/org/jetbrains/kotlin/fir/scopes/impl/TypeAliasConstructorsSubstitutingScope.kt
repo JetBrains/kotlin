@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildConstructedClassTypePa
 import org.jetbrains.kotlin.fir.declarations.builder.buildConstructor
 import org.jetbrains.kotlin.fir.declarations.builder.buildReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameterCopy
+import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.defaultType
@@ -133,12 +134,17 @@ class TypeAliasConstructorsSubstitutingScope private constructor(
                 }
             }
 
-            originalConstructor.valueParameters.mapTo(valueParameters) {
-                buildValueParameterCopy(it) {
+            originalConstructor.valueParameters.mapTo(valueParameters) { originalParameter ->
+                buildValueParameterCopy(originalParameter) {
                     symbol = FirValueParameterSymbol()
                     moduleData = typeAliasSymbol.moduleData
                     origin = FirDeclarationOrigin.Synthetic.TypeAliasConstructor
                     containingDeclarationSymbol = newConstructorSymbol
+                    // As in fake overrides, only the presence of a default value matters,
+                    // so we shouldn't share the original expression which can be replaced during resolution
+                    defaultValue = originalParameter.defaultValue?.let {
+                        buildExpressionStub { coneTypeOrNull = originalParameter.returnTypeRef.coneTypeOrNull }
+                    }
                 }
             }
 
@@ -150,10 +156,7 @@ class TypeAliasConstructorsSubstitutingScope private constructor(
                 }
             }
 
-            contractDescription = originalConstructor.contractDescription
             annotations.addAll(originalConstructor.annotations)
-            delegatedConstructor = originalConstructor.delegatedConstructor
-            body = originalConstructor.body
 
             val outerType = (typeAliasSymbol.resolvedExpandedTypeRef.coneType as? ConeClassLikeType)?.let { expandedType ->
                 outerType(expandedType, session) { session.firProvider.getContainingClass(it) }
