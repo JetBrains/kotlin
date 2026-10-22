@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirEle
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.tryCollectDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirResolveDesignationCollector.shouldBeResolved
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
-import org.jetbrains.kotlin.fir.canHaveDeferredReturnTypeCalculation
 import org.jetbrains.kotlin.fir.declarations.*
 
 /**
@@ -66,7 +65,7 @@ internal object LLFirResolveDesignationCollector {
             is FirTypeParameter -> getFirDesignationToResolve(target.containingDeclarationSymbol.fir)
             is FirValueParameter -> getFirDesignationToResolve(target.containingDeclarationSymbol.fir)
             is FirReceiverParameter -> getFirDesignationToResolve(target.containingDeclarationSymbol.fir)
-            is FirCallableDeclaration if target.canHaveDeferredReturnTypeCalculation -> FirDesignation(target)
+            is FirCallableDeclaration if target.isFakeDeclaration -> FirDesignation(target)
             else -> target.tryCollectDesignation()
         }
     }
