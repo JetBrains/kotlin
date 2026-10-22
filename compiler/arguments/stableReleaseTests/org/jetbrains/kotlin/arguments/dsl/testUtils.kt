@@ -40,6 +40,7 @@ private val temporaryExceptions: Set<String> = setOf(
     "Xir-do-not-clear-binding-context",
     "Xdirect-java-actualization",
     "Xrepl",
+    "Xjava-direct",
 )
 
 internal fun Set<StableKotlinCompilerArgument>.filterNonDeprecated() = filter {
