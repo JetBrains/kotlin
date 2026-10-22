@@ -1,0 +1,29 @@
+KT element: KtTypeReference
+FIR element: FirErrorTypeRefImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+<ERROR TYPE REF: Type parameter T cannot be a supertype>
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] delegatedTypeParameterSuperType.kt
+    public final? [ResolvedTo(RAW_FIR)] interface MyInterface : R|kotlin/Any| {
+    }
+    public final? [ResolvedTo(TYPES)] class MyClass<[ResolvedTo(TYPES)] T : R|MyInterface|> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(TYPES)] T : R|MyInterface|>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyClass.i] i: T): R|MyClass<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: T = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] get(): T
+
+        public final? inner [ResolvedTo(TYPES)] [DelegateFieldsMapKey={0=/MyClass.Inner.$$delegate_0}] class Inner<[ResolvedTo(TYPES)] Outer(T) : R|MyInterface|> : <ERROR TYPE REF: Type parameter T cannot be a supertype> {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Inner] MyClass<T>.constructor(): R|MyClass.Inner<T>| {
+                LAZY_super<<implicit>>
+            }
+
+            private final [ResolvedTo(RAW_FIR)] field $$delegate_0: T = LAZY_EXPRESSION
+
+        }
+
+    }

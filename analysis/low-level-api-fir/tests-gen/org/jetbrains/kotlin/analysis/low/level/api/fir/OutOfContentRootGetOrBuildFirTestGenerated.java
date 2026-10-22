@@ -1268,6 +1268,30 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     }
 
     @Test
+    @TestMetadata("delegatedSuperTypeEntry.kt")
+    public void testDelegatedSuperTypeEntry() {
+      run("delegatedSuperTypeEntry.kt");
+    }
+
+    @Test
+    @TestMetadata("delegatedSuperTypeEntryInLocalClass.kt")
+    public void testDelegatedSuperTypeEntryInLocalClass() {
+      run("delegatedSuperTypeEntryInLocalClass.kt");
+    }
+
+    @Test
+    @TestMetadata("delegatedSuperTypeExpression.kt")
+    public void testDelegatedSuperTypeExpression() {
+      run("delegatedSuperTypeExpression.kt");
+    }
+
+    @Test
+    @TestMetadata("delegatedSuperTypeExpressionInLocalClass.kt")
+    public void testDelegatedSuperTypeExpressionInLocalClass() {
+      run("delegatedSuperTypeExpressionInLocalClass.kt");
+    }
+
+    @Test
     @TestMetadata("destructionWithNoRValue.kt")
     public void testDestructionWithNoRValue() {
       run("destructionWithNoRValue.kt");
@@ -2381,6 +2405,36 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     @TestMetadata("definitelyNotNullType.kt")
     public void testDefinitelyNotNullType() {
       run("definitelyNotNullType.kt");
+    }
+
+    @Test
+    @TestMetadata("delegatedSuperTypeInLocalClass.kt")
+    public void testDelegatedSuperTypeInLocalClass() {
+      run("delegatedSuperTypeInLocalClass.kt");
+    }
+
+    @Test
+    @TestMetadata("delegatedTypeParameterSuperType.kt")
+    public void testDelegatedTypeParameterSuperType() {
+      run("delegatedTypeParameterSuperType.kt");
+    }
+
+    @Test
+    @TestMetadata("delegatedTypeParameterSuperTypeBodyResolved.kt")
+    public void testDelegatedTypeParameterSuperTypeBodyResolved() {
+      run("delegatedTypeParameterSuperTypeBodyResolved.kt");
+    }
+
+    @Test
+    @TestMetadata("delegatedTypeParameterSuperTypeInAnonymousObject.kt")
+    public void testDelegatedTypeParameterSuperTypeInAnonymousObject() {
+      run("delegatedTypeParameterSuperTypeInAnonymousObject.kt");
+    }
+
+    @Test
+    @TestMetadata("delegatedTypeParameterSuperTypeInLocalClass.kt")
+    public void testDelegatedTypeParameterSuperTypeInLocalClass() {
+      run("delegatedTypeParameterSuperTypeInLocalClass.kt");
     }
 
     @Test

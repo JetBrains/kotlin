@@ -1,0 +1,126 @@
+KtFile: 'typeParameterAsDelegatedSuperTypeInLocalClass.kt'
+  null
+
+KtPackageDirective(0,11): 'package bar'
+  null
+
+KtNameReferenceExpression(8,11): 'bar'
+  null
+
+KtImportList(11,11): ''
+  null
+
+KtClass(13,34): 'interface MyInterface'
+  null
+
+KtNamedFunction(36,120): 'fun <T : MyInterface> foo(i: T) {'
+  null
+
+KtTypeParameterList(40,57): '<T : MyInterface>'
+  null
+
+KtTypeParameter(41,56): 'T : MyInterface'
+  null
+
+KtTypeReference(45,56): 'MyInterface'
+  null
+
+KtUserType(45,56): 'MyInterface'
+  null
+
+KtNameReferenceExpression(45,56): 'MyInterface'
+  null
+
+KtParameterList(61,67): '(i: T)'
+  null
+
+KtParameter(62,66): 'i: T'
+  null
+
+KtTypeReference(65,66): 'T'
+  null
+
+KtUserType(65,66): 'T'
+  null
+
+KtNameReferenceExpression(65,66): 'T'
+  null
+
+KtBlockExpression(68,120): '{'
+  null
+
+KtClass(74,94): 'class Local : T by i'
+  null
+
+KtSuperTypeList(88,94): 'T by i'
+  null
+
+KtDelegatedSuperTypeEntry(88,94): 'T by i'
+  null
+
+KtTypeReference(88,89): 'T'
+  null
+
+KtUserType(88,89): 'T'
+  null
+
+KtNameReferenceExpression(88,89): 'T'
+  null
+
+KtNameReferenceExpression(93,94): 'i'
+  KaSimpleCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = i
+        receiverType = null
+        returnType = T
+        symbol = i: T
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+
+KtObjectLiteralExpression(100,118): 'object : T by i {}'
+  null
+
+KtObjectDeclaration(100,118): 'object : T by i {}'
+  null
+
+KtSuperTypeList(109,115): 'T by i'
+  null
+
+KtDelegatedSuperTypeEntry(109,115): 'T by i'
+  null
+
+KtTypeReference(109,110): 'T'
+  null
+
+KtUserType(109,110): 'T'
+  null
+
+KtNameReferenceExpression(109,110): 'T'
+  null
+
+KtNameReferenceExpression(114,115): 'i'
+  KaSimpleCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = i
+        receiverType = null
+        returnType = T
+        symbol = i: T
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+
+KtClassBody(116,118): '{}'
+  null
