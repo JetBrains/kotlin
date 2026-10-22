@@ -20,14 +20,16 @@ import org.jetbrains.kotlin.buildtools.internal.DeepCopyable
 import org.jetbrains.kotlin.buildtools.internal.ExecutionContext
 import org.jetbrains.kotlin.buildtools.internal.Options
 import org.jetbrains.kotlin.buildtools.internal.UseFromImplModuleRestricted
-import org.jetbrains.kotlin.buildtools.internal.arguments.CommonCompilerArgumentsImpl
 import org.jetbrains.kotlin.buildtools.internal.arguments.JsArgumentValueAdapter
 import org.jetbrains.kotlin.buildtools.internal.arguments.JsArgumentsImpl
 import org.jetbrains.kotlin.buildtools.internal.arguments.enums.JsEcmaVersion
 import org.jetbrains.kotlin.buildtools.internal.arguments.enums.JsModuleKind
 import org.jetbrains.kotlin.buildtools.internal.checkOptionIsAvailableForVersion
 import org.jetbrains.kotlin.buildtools.internal.initializeOptions
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArgumentsConfigurator
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.toLanguageVersionSettings
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.js.config.JsGenerationGranularity
 import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.js.config.TsCompilationStrategy
@@ -106,10 +108,16 @@ internal class JsDtsGenerationOperationImpl private constructor(
 
         this[COMPILE_LONG_AS_BIG_INT] = linkingOperation.compilerArguments[JsArgumentsImpl.X_ES_LONG_AS_BIGINT]
             ?: (target != null && target >= JsEcmaVersion.ES2020)
-        this[IMPLEMENT_INTERFACES] = linkingOperation.compilerArguments[JsArgumentsImpl.X_ENABLE_IMPLEMENTING_INTERFACES_FROM_TYPESCRIPT]
-        this[EXPORT_SUSPEND_LAMBDAS] = linkingOperation.compilerArguments[JsArgumentsImpl.X_SUSPEND_LAMBDA_EXPORTING]
+
+        // Resolve the language features the same way the compiler does, so that features enabled via
+        // dedicated arguments, `-XXLanguage:` or `-language-version` are all taken into account
+        val languageVersionSettings = linkingOperation.compilerArguments.toCompilerArguments()
+            .toLanguageVersionSettings(CommonCompilerArgumentsConfigurator.Reporter.DoNothing)
+
+        this[IMPLEMENT_INTERFACES] = languageVersionSettings.supportsFeature(LanguageFeature.JsExportInterfacesInImplementableWay)
+        this[EXPORT_SUSPEND_LAMBDAS] = languageVersionSettings.supportsFeature(LanguageFeature.JsExportingSuspendLambdas)
         this[DATA_CLASS_COPY_RESPECTS_CONSTRUCTOR_VISIBILITY] =
-            linkingOperation.compilerArguments[CommonCompilerArgumentsImpl.X_CONSISTENT_DATA_CLASS_COPY_VISIBILITY]
+            languageVersionSettings.supportsFeature(LanguageFeature.DataClassCopyRespectsConstructorVisibility)
         this[USE_UNKNOWN_INSTEAD_ANY] =
             linkingOperation.compilerArguments[JsArgumentsImpl.X_DTS_USE_UNKNOWN_INSTEAD_ANY]
 
