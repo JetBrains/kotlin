@@ -213,12 +213,8 @@ private val IrDeclaration.correspondingProperty: IrProperty?
 
         return when (this) {
             is IrProperty -> this
-            is IrSimpleFunction -> propertyWithPersistentSafe {
-                correspondingPropertySymbol?.owner
-            }
-            is IrField -> propertyWithPersistentSafe {
-                correspondingPropertySymbol?.owner
-            }
+            is IrSimpleFunction -> correspondingPropertySymbol?.owner
+            is IrField -> correspondingPropertySymbol?.owner
             else -> compilationException(
                 "Can be only IrProperty, IrSimpleFunction or IrField",
                 this
@@ -226,14 +222,8 @@ private val IrDeclaration.correspondingProperty: IrProperty?
         }
     }
 
-private fun IrDeclaration.propertyWithPersistentSafe(transform: IrDeclaration.() -> IrProperty?): IrProperty? =
-    withPersistentSafe(transform)
-
-private fun <T> IrDeclaration.withPersistentSafe(transform: IrDeclaration.() -> T?): T? =
-    transform()
-
 private fun IrDeclaration.isCompatibleDeclaration(context: JsCommonBackendContext): Boolean {
-    if (withPersistentSafe { origin in compatibleOrigins } != true) return false
+    if (origin !in compatibleOrigins) return false
 
     val property = correspondingProperty ?: return true
     if (property.isExternal) return false
