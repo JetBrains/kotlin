@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.scopes.impl
 
-import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
@@ -226,8 +225,6 @@ class FirGeneratedMemberDeclarationsStorage(private val session: FirSession) : F
                 context.extensionsNeedingCompanionObject
             )
         }
-
-    object GeneratedCompanionKey : GeneratedDeclarationKey()
 
     /**
      * A storage for compiler plugin-generated callables.
