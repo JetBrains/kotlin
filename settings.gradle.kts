@@ -711,7 +711,9 @@ if (buildProperties.isSwiftImportEnabled.get()) {
         ":native:swift:kir-light-classes",
         ":native:swift:kir-printer",
         ":native:swift:kir-providers",
-        ":native:swift:swift-import-standalone"
+        ":native:swift:swift-import-standalone",
+        ":native:swift:swift-import-standalone-integration-tests",
+        ":native:swift:swift-import-standalone-integration-tests:simple",
     )
 }
 
