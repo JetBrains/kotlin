@@ -46,3 +46,4 @@ Custom LLVM passes live in the [Passes](src/main/cpp/Passes) directory:
 - External calls checker instrumentation ([docs](../runtime/src/externalCallsChecker))
   - `ModuleCallsCheckerPass` (`kotlin-calls-checker-module`): module pass; creates module contructor; should be run after DCE
   - `CallsCheckerPass` (`kotlin-calls-checker`): function pass; performs the instrumentation
+  - `ArrayLoadMetadataPass` (`kotlin-array-load-metadata`): function pass; attaches `!invariant.load` and `!range [0, INT_MAX]` metadata to `ArrayHeader::count_` loads identified by their TBAA tag.
