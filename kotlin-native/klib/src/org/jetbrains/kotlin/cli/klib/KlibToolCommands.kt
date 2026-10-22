@@ -8,13 +8,14 @@ package org.jetbrains.kotlin.cli.klib
 import org.jetbrains.kotlin.backend.common.DumpIrReferenceRenderingAsSignatureStrategy
 import org.jetbrains.kotlin.backend.common.IdSignaturesExtractorFromKlibWithIndices
 import org.jetbrains.kotlin.backend.common.IdSignaturesExtractorFromRegularKlib
+import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
 import org.jetbrains.kotlin.backend.common.serialization.InternalIrInlineDeserializerAPI
 import org.jetbrains.kotlin.backend.common.serialization.IrInterningService
-import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.NonLinkingIrInlineFunctionDeserializer
 import org.jetbrains.kotlin.backend.common.signatureIndex
 import org.jetbrains.kotlin.backend.konan.serialization.IdSignaturesExtractorFromCInteropKlib
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIdSignaturer
+import org.jetbrains.kotlin.backend.konan.serialization.KonanInteropModuleDeserializer
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerDesc
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
 import org.jetbrains.kotlin.cli.klib.KlibToolArgumentsParserResult.ParsedArguments
@@ -51,6 +52,13 @@ internal sealed class KlibToolCommand(
     protected fun checkLibraryHasIr(library: KotlinLibrary): Boolean {
         return if (library.ir == null) {
             output.logError("Library ${library.path} is an IR-less library")
+            false
+        } else true
+    }
+
+    protected fun checkLibraryHasRealOrSyntheticIr(library: KotlinLibrary): Boolean {
+        return if (library.ir == null && !library.isCInteropLibrary()) {
+            output.logError("This library does not have IR and is not a C-interop library: ${args.library.path}")
             false
         } else true
     }
@@ -168,19 +176,32 @@ internal class Info(output: KlibToolOutput, args: ParsedArguments) : KlibToolCom
 
 internal class DumpIr(output: KlibToolOutput, args: ParsedArguments) : KlibToolCommand(output, args) {
     override fun execute() {
-        if (!checkLibraryHasIr(args.library)) return
+        if (!checkLibraryHasRealOrSyntheticIr(args.library)) return
 
         if (args.signatureVersion != null && args.signatureVersion != KotlinIrSignatureVersion.V2) {
             // TODO: support passing any signature version through `DumpIrTreeOptions`, KT-62828
             output.logWarning("using a non-default signature version in \"dump-ir\" is not supported yet")
         }
 
-        val moduleDescriptor = createFakeModuleDescriptor(args.library)
-        val symbolTable = SymbolTable(KonanIdSignaturer(KonanManglerDesc), IrFactoryImpl)
+        val linker = KlibToolIrLinker(output, SymbolTable(KonanIdSignaturer(KonanManglerDesc), IrFactoryImpl))
+        val irFragment = linker.deserializeFullModule(createFakeModuleDescriptor(args.library), args.library)
 
-        val linker = KlibToolIrLinker(output, symbolTable)
-        val irFragment = linker.deserializeFullModule(moduleDescriptor, args.library)
-        linker.modulesWithReachableTopLevels.forEach(IrModuleDeserializer::deserializeReachableDeclarations)
+        if (args.library.isCInteropLibrary()) {
+            // TODO: add an explanation
+            linker.createAndRegisterModuleDeserializer(
+                    moduleDescriptor = createEmulatedStandardLibraryModuleDescriptor(),
+                    kotlinLibrary = null,
+                    deserializationStrategy = { DeserializationStrategy.ON_DEMAND },
+            )
+        }
+
+        linker.deserializeAllReachableTopLevels()
+
+        // Most declarations of a C-interop library are not reachable from the module fragment, see `externalPackageFragment`.
+        val interopExternalPackageFragment = linker.allModuleDeserializers
+                .filterIsInstance<KonanInteropModuleDeserializer>()
+                .singleOrNull()
+                ?.externalIrPackageFragment
 
         val dumpOptions = DumpIrTreeOptions(
                 printSignatures = true,
@@ -193,6 +214,7 @@ internal class DumpIr(output: KlibToolOutput, args: ParsedArguments) : KlibToolC
                 referenceRenderingStrategy = DumpIrReferenceRenderingAsSignatureStrategy(KonanManglerIr)
         )
 
+        interopExternalPackageFragment?.let { output.append(it.dumpOrFail(dumpOptions)) }
         output.append(irFragment.dumpOrFail(dumpOptions))
     }
 }
