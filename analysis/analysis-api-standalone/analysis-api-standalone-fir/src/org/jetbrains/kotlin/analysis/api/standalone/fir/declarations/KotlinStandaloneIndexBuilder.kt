@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.analysis.decompiler.psi.*
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtClsFile
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtDecompiledFile
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.ClsClassFinder
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtPlatformInterface
@@ -33,7 +34,15 @@ internal class KotlinStandaloneIndexBuilder private constructor(
     project: Project,
     private val shouldBuildStubsForDecompiledFiles: Boolean,
 ) {
-    class IndexData(val fakeKtFiles: List<KtFile>, val index: KotlinStandaloneDeclarationIndex)
+    class IndexData(
+        decompiledFilePackageNamesComputer: () -> Map<VirtualFile, FqName>,
+        val index: KotlinStandaloneDeclarationIndex,
+    ) {
+        /**
+         * Package names of the decompiled files created for builtins and binary roots, computed on the first access.
+         */
+        val decompiledFilePackageNames: Map<VirtualFile, FqName> by lazy(decompiledFilePackageNamesComputer)
+    }
 
     private val psiManager = PsiManager.getInstance(project)
     private val cacheService = ApplicationManager.getApplication().serviceOrNull<KotlinStandaloneIndexCache>()
@@ -61,10 +70,27 @@ internal class KotlinStandaloneIndexBuilder private constructor(
         }
 
         return IndexData(
-            fakeKtFiles = decompiledFilesFromBuiltins.map(IndexableFile::ktFile) + decompiledFilesFromBinaryRoots.map(IndexableFile::ktFile),
+            decompiledFilePackageNamesComputer = ::computeDecompiledFilePackageNames,
             index = initializedIndex,
         )
     }
+
+    private fun computeDecompiledFilePackageNames(): Map<VirtualFile, FqName> = buildMap {
+        for (indexableFile in decompiledFilesFromBuiltins + decompiledFilesFromBinaryRoots) {
+            put(indexableFile.virtualFile, indexableFile.packageFqName)
+        }
+    }
+
+    /**
+     * Shared files take their package name from [cacheService], since [KtFile.packageFqName] of a decompiled file builds its stub,
+     * which would otherwise happen in each project.
+     */
+    private val IndexableFile.packageFqName: FqName
+        get() = if (isShared && cacheService != null) {
+            cacheService.getOrComputePackageName(virtualFile) { ktFile.packageFqName }
+        } else {
+            ktFile.packageFqName
+        }
 
     private fun index(): KotlinStandaloneDeclarationIndex {
         val rawIndex = KotlinStandaloneDeclarationIndexImpl()

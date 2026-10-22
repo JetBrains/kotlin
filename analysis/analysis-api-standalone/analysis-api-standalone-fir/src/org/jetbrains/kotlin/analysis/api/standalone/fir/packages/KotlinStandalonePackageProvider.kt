@@ -14,6 +14,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.platform.mergeSpecificProviders
 import org.jetbrains.kotlin.analysis.api.platform.packages.*
+import org.jetbrains.kotlin.analysis.api.standalone.fir.declarations.KotlinStandaloneDeclarationProviderFactory
 import org.jetbrains.kotlin.library.KlibConstants.KLIB_FILE_EXTENSION
 import org.jetbrains.kotlin.library.components.metadata
 import org.jetbrains.kotlin.library.loader.KlibLoader
@@ -53,7 +54,8 @@ internal class KotlinStandalonePackageProvider(
 @KaImplementationDetail
 class KotlinStandalonePackageProviderFactory(
     private val project: Project,
-    private val indexedFiles: Collection<KtFile>,
+    private val sourceKtFiles: Collection<KtFile>,
+    private val declarationProviderFactory: KotlinStandaloneDeclarationProviderFactory,
     libraryRoots: List<VirtualFile>
 ) : KotlinCachingPackageProviderFactory(project) {
     /** A mapping between the library root and its containing KLib file. */
@@ -91,10 +93,16 @@ class KotlinStandalonePackageProviderFactory(
 
     override fun createNewPackageProvider(searchScope: GlobalSearchScope): KotlinPackageProvider {
         val matchingPackageNames = buildSet {
-            for (sourceKtFile in indexedFiles) {
+            for (sourceKtFile in sourceKtFiles) {
                 val sourceVirtualFile = sourceKtFile.virtualFile ?: continue
                 if (searchScope.contains(sourceVirtualFile)) {
                     add(sourceKtFile.packageFqName)
+                }
+            }
+
+            for ([decompiledVirtualFile, packageFqName] in declarationProviderFactory.getDecompiledFilePackageNames()) {
+                if (searchScope.contains(decompiledVirtualFile)) {
+                    add(packageFqName)
                 }
             }
 
