@@ -9,22 +9,13 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
-import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
-import org.jetbrains.kotlin.fir.extensions.NestedClassGenerationContext
-import org.jetbrains.kotlin.fir.extensions.UnsafePluginApi
-import org.jetbrains.kotlin.fir.extensions.declarationGenerators
-import org.jetbrains.kotlin.fir.extensions.extensionService
+import org.jetbrains.kotlin.fir.declarations.getCompilerRequiredAnnotationByClassId
+import org.jetbrains.kotlin.fir.extensions.*
+import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
 import org.jetbrains.kotlin.fir.plugin.createCompanionObject
 import org.jetbrains.kotlin.fir.plugin.createDefaultPrivateConstructor
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.lombok.LombokNames
 import org.jetbrains.kotlin.lombok.generators.kotlin.isCompanionNeeded
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
@@ -55,6 +46,18 @@ interface LombokCompanionObjectContributor {
  * So exactly one extension may produce it.
  */
 class LombokCompanionObjectGenerator(session: FirSession) : FirDeclarationGenerationExtension(session) {
+    companion object {
+        val hasMetaSerializableAnnotation = DeclarationPredicate.create {
+            metaAnnotated(LombokNames.KOTLINX_SERIALIZATION_META_SERIALIZABLE, includeItself = false)
+        }
+
+        /** KT-90321 workaround; checks for @Serializable and @MetaSerializable */
+        fun FirClassSymbol<*>.hasSerializableCompanion(session: FirSession): Boolean {
+            return getCompilerRequiredAnnotationByClassId(LombokNames.KOTLINX_SERIALIZATION_SERIALIZABLE_ID) != null ||
+                    session.predicateBasedProvider.matches(hasMetaSerializableAnnotation, this)
+        }
+    }
+
     /**
      * Resolved lazily: the extensions are still being constructed while this one is, so asking the session for
      * them in an initializer would come back short.
@@ -65,7 +68,11 @@ class LombokCompanionObjectGenerator(session: FirSession) : FirDeclarationGenera
 
     private val companionObjectsCache: FirCache<FirClassSymbol<*>, FirRegularClassSymbol?, NestedClassGenerationContext> =
         session.firCachesFactory.createCache { owner: FirClassSymbol<*>, context: NestedClassGenerationContext ->
-            runIf(isCompanionNeeded(owner, context) && contributors.any { it.needsCompanionObject(owner) }) {
+            runIf(
+                isCompanionNeeded(owner, context) &&
+                        !owner.hasSerializableCompanion(session) &&
+                        contributors.any { it.needsCompanionObject(owner) }
+            ) {
                 createCompanionObject(owner, LombokCompanionObjectKey).symbol
             }
         }
@@ -115,6 +122,10 @@ class LombokCompanionObjectGenerator(session: FirSession) : FirDeclarationGenera
     @UnsafePluginApi
     override fun generateFields(callableId: CallableId, context: MemberGenerationContext?): List<FirFieldSymbol> {
         return fanOut(callableId, context) { generateFields(callableId, context) }
+    }
+
+    override fun FirDeclarationPredicateRegistrar.registerPredicates() {
+        register(hasMetaSerializableAnnotation)
     }
 
     /**
