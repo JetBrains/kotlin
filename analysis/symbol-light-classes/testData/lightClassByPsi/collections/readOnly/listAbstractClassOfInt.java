@@ -59,6 +59,12 @@ public abstract class SList /* test.SList*/ implements java.util.List<@org.jetbr
   @java.lang.Override()
   public void clear();//  clear()
 
+  @java.lang.Override()
+  public void replaceAll(java.util.function.UnaryOperator<@org.jetbrains.annotations.NotNull() java.lang.Integer>);//  replaceAll(java.util.function.UnaryOperator<@org.jetbrains.annotations.NotNull() java.lang.Integer>)
+
+  @java.lang.Override()
+  public void sort(java.util.Comparator<? super @org.jetbrains.annotations.NotNull() java.lang.Integer>);//  sort(java.util.Comparator<? super @org.jetbrains.annotations.NotNull() java.lang.Integer>)
+
   public  SList();//  .ctor()
 }
 
@@ -149,6 +155,12 @@ public abstract class SList2 /* test.SList2*/ implements java.util.List<@org.jet
   @java.lang.Override()
   public void clear();//  clear()
 
+  @java.lang.Override()
+  public void replaceAll(java.util.function.UnaryOperator<@org.jetbrains.annotations.NotNull() java.lang.Integer>);//  replaceAll(java.util.function.UnaryOperator<@org.jetbrains.annotations.NotNull() java.lang.Integer>)
+
+  @java.lang.Override()
+  public void sort(java.util.Comparator<? super @org.jetbrains.annotations.NotNull() java.lang.Integer>);//  sort(java.util.Comparator<? super @org.jetbrains.annotations.NotNull() java.lang.Integer>)
+
   public  SList2();//  .ctor()
 }
 
@@ -238,6 +250,12 @@ public class SList3 /* test.SList3*/ implements java.util.List<@org.jetbrains.an
 
   @java.lang.Override()
   public void clear();//  clear()
+
+  @java.lang.Override()
+  public void replaceAll(java.util.function.UnaryOperator<@org.jetbrains.annotations.NotNull() java.lang.Integer>);//  replaceAll(java.util.function.UnaryOperator<@org.jetbrains.annotations.NotNull() java.lang.Integer>)
+
+  @java.lang.Override()
+  public void sort(java.util.Comparator<? super @org.jetbrains.annotations.NotNull() java.lang.Integer>);//  sort(java.util.Comparator<? super @org.jetbrains.annotations.NotNull() java.lang.Integer>)
 
   public  SList3();//  .ctor()
 }

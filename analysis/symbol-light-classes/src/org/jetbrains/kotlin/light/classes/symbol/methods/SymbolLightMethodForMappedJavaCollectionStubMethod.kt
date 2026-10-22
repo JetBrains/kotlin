@@ -106,6 +106,20 @@ internal class SymbolLightMethodForMappedJavaCollectionStubMethod(
      * Computes the type of the stub parameter mirroring [javaParameter], the parameter of [javaMethod] at [index].
      *
      * It is called lazily by [SymbolLightParameterForMappedJavaCollectionStubMethod].
+     *
+     * The type is taken from [providedSignature] if it is present. Otherwise, it is the type of [javaParameter] substituted with
+     * [methodSubstitutor], with `Object` replaced by [substituteObjectWith].
+     *
+     * A boxed primitive type is then unboxed, e.g., `Integer` becomes `int`, if the parameter mirrors a Kotlin parameter of the element,
+     * key, or value type:
+     * - the type comes from [providedSignature], like `K` in the Kotlin variant `get(int)` of `get(Object)` in `Map<Int, V>`;
+     * - `Object` is replaced by [substituteObjectWith], like in the Kotlin variant `contains(int)` of `contains(Object)` in
+     *   `Collection<Int>`;
+     * - the Java type is a type parameter of the collection, like `E` in `add(E)`, which becomes `add(int)` in `List<Int>`.
+     *   The stubs of JDK default methods, such as `replace(K, V, V)` of `java.util.Map`, are an exception: the mutable Kotlin
+     *   collection gets these methods from Java along with their Java types, so `Map<Int, Int>` gets `replace(Integer, Integer, Integer)`.
+     *
+     * Other types stay as they are, like `Object` in the final bridge `contains(Object)` or `Collection<? extends E>` in `addAll`.
      */
     internal fun computeParameterType(javaParameter: PsiParameter, index: Int): PsiType {
         val typeFromJava = javaParameter.type
@@ -113,7 +127,7 @@ internal class SymbolLightMethodForMappedJavaCollectionStubMethod(
         val candidateType = providedType ?: substituteType(typeFromJava)
         val shouldTryToUnbox = providedType != null ||
                 (typeFromJava.isJavaLangObject() && substituteObjectWith == candidateType) ||
-                typeFromJava.isTypeParameter()
+                (typeFromJava.isTypeParameter() && !javaMethod.hasModifierProperty(PsiModifier.DEFAULT))
         return if (shouldTryToUnbox) candidateType.unboxedOrSelf() else candidateType
     }
 

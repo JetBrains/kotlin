@@ -59,6 +59,12 @@ public abstract class CList /* test.CList*/ implements test.IList {
   @java.lang.Override()
   public void clear();//  clear()
 
+  @java.lang.Override()
+  public void replaceAll(java.util.function.UnaryOperator<@org.jetbrains.annotations.NotNull() java.lang.Integer>);//  replaceAll(java.util.function.UnaryOperator<@org.jetbrains.annotations.NotNull() java.lang.Integer>)
+
+  @java.lang.Override()
+  public void sort(java.util.Comparator<? super @org.jetbrains.annotations.NotNull() java.lang.Integer>);//  sort(java.util.Comparator<? super @org.jetbrains.annotations.NotNull() java.lang.Integer>)
+
   public  CList();//  .ctor()
 }
 
@@ -149,6 +155,12 @@ public abstract class CList2 /* test.CList2*/ implements test.IList {
   @java.lang.Override()
   public void clear();//  clear()
 
+  @java.lang.Override()
+  public void replaceAll(java.util.function.UnaryOperator<@org.jetbrains.annotations.NotNull() java.lang.Integer>);//  replaceAll(java.util.function.UnaryOperator<@org.jetbrains.annotations.NotNull() java.lang.Integer>)
+
+  @java.lang.Override()
+  public void sort(java.util.Comparator<? super @org.jetbrains.annotations.NotNull() java.lang.Integer>);//  sort(java.util.Comparator<? super @org.jetbrains.annotations.NotNull() java.lang.Integer>)
+
   public  CList2(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() test.IList);//  .ctor(@org.jetbrains.annotations.NotNull() test.IList)
 }
 
@@ -238,6 +250,12 @@ public class CList3 /* test.CList3*/ implements test.IList {
 
   @java.lang.Override()
   public void clear();//  clear()
+
+  @java.lang.Override()
+  public void replaceAll(java.util.function.UnaryOperator<@org.jetbrains.annotations.NotNull() java.lang.Integer>);//  replaceAll(java.util.function.UnaryOperator<@org.jetbrains.annotations.NotNull() java.lang.Integer>)
+
+  @java.lang.Override()
+  public void sort(java.util.Comparator<? super @org.jetbrains.annotations.NotNull() java.lang.Integer>);//  sort(java.util.Comparator<? super @org.jetbrains.annotations.NotNull() java.lang.Integer>)
 
   public  CList3();//  .ctor()
 }
