@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInFrontend
@@ -27,9 +26,6 @@ class EnumEntriesWithOutdatedStdlibTest : KGPBaseTest() {
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(warningMode = WarningMode.Fail),
         ) {
-            // FIXME(KT-69597): Previously hardcoded to language version 2.0.
-            buildGradleKts.replaceText("<language-version>", "KotlinVersion.${KotlinVersion.DEFAULT.name}")
-
             buildAndFail(":compileKotlin") {
                 assertOutputContains("Main.kt:13:20 Unresolved reference 'entries'.")
                 assertOutputContains("Main.kt:14:30 Unresolved reference 'entries'.")
@@ -43,9 +39,6 @@ class EnumEntriesWithOutdatedStdlibTest : KGPBaseTest() {
         project("enumEntriesNotAccessible", gradleVersion) {
             projectPath.resolve("src/main/kotlin/Main.kt")
                 .replaceText("entries", "values()")
-
-            // FIXME(KT-69597): Previously hardcoded to language version 2.0.
-            buildGradleKts.replaceText("<language-version>", "KotlinVersion.${KotlinVersion.DEFAULT.name}")
             build(":compileKotlin")
         }
     }

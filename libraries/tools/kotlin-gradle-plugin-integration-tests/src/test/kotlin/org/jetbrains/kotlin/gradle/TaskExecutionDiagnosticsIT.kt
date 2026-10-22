@@ -108,7 +108,7 @@ class TaskExecutionDiagnosticsIT : KGPBaseTest() {
             gradleVersion,
             btaVersion = null,
             expectedSeverity = KotlinToolingDiagnosticsSeverity.WARNING,
-            customizedKotlinVersion = KotlinVersion.firstSupported, // FIXME(KT-69597): Previously hardcoded to language version 2.0.
+            customizedKotlinVersion = KotlinVersion.firstDeprecatedSupported,
         )
 
     @DisplayName("KT-79851: emit unsupported language version kotlin-dsl diagnostic, custom compiler via BTA with deprecation")

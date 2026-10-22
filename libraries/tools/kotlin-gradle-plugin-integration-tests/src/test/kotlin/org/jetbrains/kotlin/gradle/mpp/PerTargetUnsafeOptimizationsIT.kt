@@ -31,10 +31,9 @@ import kotlin.io.path.writeText
 class PerTargetUnsafeOptimizationsIT : KGPBaseTest() {
 
     override val defaultBuildOptions: BuildOptions
-        get() = super.defaultBuildOptions.copy(
-            logLevel = LogLevel.DEBUG,
-            // FIXME(KT-69597): Previously hardcoded to language version 2.0.
-        ).disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
+        get() = super.defaultBuildOptions
+            .copy(logLevel = LogLevel.DEBUG)
+            .disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
 
     @GradleTest
     @DisplayName("Enabling it for JVM only keeps the whole-module rebuild for JS")
