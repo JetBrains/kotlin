@@ -8,14 +8,19 @@
 package org.jetbrains.kotlin.buildtools.internal.serializability
 
 import kotlinx.serialization.*
+import kotlinx.serialization.builtins.ListSerializer
+import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.descriptors.StructureKind
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges.*
+import org.jetbrains.kotlin.buildtools.api.abi.KlibTargetId
+import org.jetbrains.kotlin.buildtools.api.abi.KlibTargetType
 import org.jetbrains.kotlin.buildtools.api.js.IncrementalModule
 import org.jetbrains.kotlin.buildtools.api.jvm.AccessibleClassSnapshot
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshot
@@ -376,3 +381,47 @@ internal object CompilationResultSerializer : KSerializer<CompilationResult> {
 
     override fun deserialize(decoder: Decoder): CompilationResult = CompilationResult.valueOf(decoder.decodeString())
 }
+
+// ABI / BCV
+
+@Serializable
+private class KlibTargetIdSurrogate(
+    val targetType: KlibTargetType,
+    val customizedName: String,
+)
+
+internal object KlibTargetIdSerializer : KSerializer<KlibTargetId> {
+    override val descriptor: SerialDescriptor =
+        KlibTargetIdSurrogate.serializer().descriptor
+
+    override fun serialize(encoder: Encoder, value: KlibTargetId) {
+        val surrogate = KlibTargetIdSurrogate(
+            targetType = value.targetType,
+            customizedName = value.customizedName,
+        )
+        encoder.encodeSerializableValue(KlibTargetIdSurrogate.serializer(), surrogate)
+    }
+
+    override fun deserialize(decoder: Decoder): KlibTargetId {
+        val surrogate = decoder.decodeSerializableValue(KlibTargetIdSurrogate.serializer())
+        return KlibTargetId(
+            targetType = surrogate.targetType,
+            customizedName = surrogate.customizedName,
+        )
+    }
+}
+
+internal object PathIterableAsListSerializer : KSerializer<Iterable<Path>> {
+    private val listSerializer = ListSerializer(PathAsStringSerializer)
+    override val descriptor: SerialDescriptor = SerialDescriptor("Iterable<Path>", listSerializer.descriptor)
+
+    override fun serialize(encoder: Encoder, value: Iterable<Path>) {
+        encoder.encodeSerializableValue(ListSerializer(PathAsStringSerializer), value.toList())
+    }
+
+    override fun deserialize(decoder: Decoder): Iterable<Path> {
+        return decoder.decodeSerializableValue(listSerializer)
+    }
+
+}
+
