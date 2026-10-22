@@ -429,7 +429,9 @@ internal class ObjCExportCodeGenerator(
             dataGenerator.emitEmptyClass(it.binaryName, namer.kotlinAnyName.binaryName)
         }
 
-        emitTypeAdapters(objCTypeAdapters)
+        val categoryAdapters = spec?.categories.orEmpty().map { createCategoryAdapter(it) }
+
+        emitTypeAdapters(objCTypeAdapters, categoryAdapters)
     }
 
     internal fun generate(spec: ObjCExportCodeSpec?) {
@@ -455,9 +457,10 @@ internal class ObjCExportCodeGenerator(
         emitKt42254Hint()
     }
 
-    private fun emitTypeAdapters(objCTypeAdapters: List<ObjCTypeAdapter>) {
+    private fun emitTypeAdapters(objCTypeAdapters: List<ObjCTypeAdapter>, objCCategoryAdapters: List<ObjCTypeAdapter>) {
         val placedClassAdapters = mutableMapOf<String, ConstPointer>()
         val placedInterfaceAdapters = mutableMapOf<String, ConstPointer>()
+        val placedCategoryAdapters = objCCategoryAdapters.map { it.objCName to staticData.placeGlobal("", it).pointer }
 
         objCTypeAdapters.forEach { adapter ->
             val typeAdapter = staticData.placeGlobal("", adapter).pointer
@@ -493,8 +496,8 @@ internal class ObjCExportCodeGenerator(
             placedInterfaceAdapters.putIfAbsent(name, ptr)
         }
 
-        fun emitSortedAdapters(nameToAdapter: Map<String, ConstPointer>, prefix: String) {
-            val sortedAdapters = nameToAdapter.toList().sortedBy { it.first }.map {
+        fun emitSortedAdapters(nameToAdapter: List<Pair<String, ConstPointer>>, prefix: String) {
+            val sortedAdapters = nameToAdapter.sortedBy { it.first }.map {
                 it.second
             }
 
@@ -508,8 +511,9 @@ internal class ObjCExportCodeGenerator(
             }
         }
 
-        emitSortedAdapters(placedClassAdapters, "Kotlin_ObjCExport_sortedClassAdapters")
-        emitSortedAdapters(placedInterfaceAdapters, "Kotlin_ObjCExport_sortedProtocolAdapters")
+        emitSortedAdapters(placedClassAdapters.toList(), "Kotlin_ObjCExport_sortedClassAdapters")
+        emitSortedAdapters(placedInterfaceAdapters.toList(), "Kotlin_ObjCExport_sortedProtocolAdapters")
+        emitSortedAdapters(placedCategoryAdapters, "Kotlin_ObjCExport_sortedCategoryAdapters")
 
         if (generationState.llvmModuleSpecification.importsKotlinDeclarationsFromOtherSharedLibraries()) {
             codegen.replaceExternalWeakOrCommonGlobalFromNativeRuntime(
@@ -553,7 +557,6 @@ internal class ObjCExportCodeGenerator(
                 val baseMethod = createObjCMethodSpecBaseMethod(mapper, namer, irFunction.symbol, descriptor)
                 ObjCMethodForKotlinMethod(baseMethod)
             },
-            categoryMethods = emptyList(),
             superClassNotAny = null
     )
 
@@ -1453,6 +1456,26 @@ private fun ObjCExportCodeGenerator.createTypeAdapterForFileClass(
     )
 }
 
+private fun ObjCExportCodeGenerator.createCategoryAdapter(
+        category: ObjCCategoryForKotlinClass
+): ObjCTypeAdapter {
+    val adapters = category.methods.map { createFinalMethodAdapter(it.baseMethod) }
+    val reverseAdapters = category.methods.map { nonOverridableAdapter(it.baseMethod.selector, hasSelectorAmbiguity = false) }
+
+    return codegen.ObjCTypeAdapter(
+            irClass = null,
+            vtable = null,
+            vtableSize = -1,
+            itable = emptyList(),
+            itableSize = -1,
+            objCName = category.classBinaryName,
+            directAdapters = adapters,
+            classAdapters = emptyList(),
+            virtualAdapters = emptyList(),
+            reverseAdapters = reverseAdapters
+    )
+}
+
 private fun ObjCExportCodeGenerator.createTypeAdapter(
         type: ObjCTypeForKotlinType,
         superClass: ObjCClassForKotlinClass?,
@@ -1493,15 +1516,7 @@ private fun ObjCExportCodeGenerator.createTypeAdapter(
         }.let {} // Force exhaustive.
     }
 
-    val additionalReverseAdapters = mutableListOf<KotlinToObjCMethodAdapter>()
-
     if (type is ObjCClassForKotlinClass) {
-
-        type.categoryMethods.forEach {
-            adapters += createFinalMethodAdapter(it.baseMethod)
-            additionalReverseAdapters += nonOverridableAdapter(it.baseMethod.selector, hasSelectorAmbiguity = false)
-        }
-
         adapters += createDirectAdapters(type, superClass)
     }
 
@@ -1544,7 +1559,7 @@ private fun ObjCExportCodeGenerator.createTypeAdapter(
             adapters,
             classAdapters,
             virtualAdapters,
-            reverseAdapters + additionalReverseAdapters
+            reverseAdapters
     )
 }
 
