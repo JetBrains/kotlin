@@ -678,7 +678,6 @@ tasks {
 
     testLifecycleTask("kaptTests", QualityGate.Master) {
         dependsOn(":kotlin-annotation-processing:test")
-        dependsOn(":kotlin-annotation-processing:testJdk11")
         dependsOn(":kotlin-annotation-processing-base:test")
         dependsOn(":kotlin-annotation-processing-cli:test")
     }
