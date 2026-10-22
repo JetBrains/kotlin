@@ -93,21 +93,11 @@ class Constants {
 // This is quite complicated for setups that use the configuration cache, as it can lead unnecessary configuration cache invalidations.
 // Possibly, a better approach would be to avoid extending project.ext altogether.
 // The property extension can be kept for older Gradle versions and removed for newer versions.
-class ProjectExtraPropertiesExtender implements ProjectEvaluationListener {
+class ProjectExtraPropertiesExtender {
 
-    private final Logger logger
-
-    ProjectExtraPropertiesExtender(Logger logger) {
-        this.logger = logger
+    static void extend(Project project, Logger logger) {
+        addTeamCityPropertiesToExtraProperties(project, logger)
     }
-
-    @Override
-    void beforeEvaluate(Project project) {
-        addTeamCityPropertiesToExtraProperties(project)
-    }
-
-    @Override
-    void afterEvaluate(Project project, ProjectState projectState) {}
 
     static void logBuildPropertiesUsageWarningMessageIfNeeded(Gradle gradle, Logger logger) {
         if (doNotPopulateGradleProperties() || !BuildFeatures.isConfigurationCacheRequested(gradle)) return
@@ -123,7 +113,7 @@ class ProjectExtraPropertiesExtender implements ProjectEvaluationListener {
         logger.lifecycle(warningMessage)
     }
 
-    private void addTeamCityPropertiesToExtraProperties(Project project) {
+    private static void addTeamCityPropertiesToExtraProperties(Project project, Logger logger) {
         if (doNotPopulateGradleProperties()) return
 
         Properties properties = getPropertiesFromFile(logger)
@@ -418,22 +408,6 @@ class Util {
     }
 }
 
-class AfterEvaluateListener implements ProjectEvaluationListener {
-    private final Closure action
-
-    AfterEvaluateListener(Closure action) {
-        this.action = action
-    }
-
-    @Override
-    void beforeEvaluate(Project project) {
-    }
-
-    @Override
-    void afterEvaluate(Project project, ProjectState projectState) {
-        action(project)
-    }
-}
 
 // region Setup of build log presentation for compile tasks stderr
 
@@ -1493,10 +1467,11 @@ apply plugin: TestTaskBuildLogSetupPlugin
 apply plugin: TeamcityBuildProblemReportingPlugin
 
 ProjectExtraPropertiesExtender.logBuildPropertiesUsageWarningMessageIfNeeded(gradle, logger)
-gradle.addListener(new ProjectExtraPropertiesExtender(logger))
 
 final AtomicLong testCounter = new AtomicLong(0)
-gradle.addListener(new AfterEvaluateListener({ Project project ->
+gradle.lifecycle.beforeProject { Project project ->
+    ProjectExtraPropertiesExtender.extend(project, logger)
+
     // init jvm args
     final String jvmargs = System.getenv(Constants.GRADLE_TEST_COVERAGE_JVM_ARGS_ENV_VAR)
     final String[] arguments = jvmargs == null || jvmargs.isEmpty() ? new String[0] : jvmargs.split("\n")
@@ -1519,16 +1494,5 @@ gradle.addListener(new AfterEvaluateListener({ Project project ->
         // will be empty if parallel tests enabled
         testTask.filter.updateFilters(System.getenv(Constants.RISK_TESTS_ARTIFACT_PATH_ENV_VAR), logger)
     }
-}))
-
-gradle.addListener(new AfterEvaluateListener({ Project project ->
-    project.tasks.matching { Task task -> task.name == "junitPlatformTest" }.configureEach { Task task ->
-        task.doFirst {
-            task.outputs?.files?.each { file ->
-                def message = new ServiceMessage(name: "importData", attributes: [type: "junit", path: "$file.absolutePath/*.xml".toString()])
-                println(message.asString())
-            }
-        }
-    }
-}))
+}
 
