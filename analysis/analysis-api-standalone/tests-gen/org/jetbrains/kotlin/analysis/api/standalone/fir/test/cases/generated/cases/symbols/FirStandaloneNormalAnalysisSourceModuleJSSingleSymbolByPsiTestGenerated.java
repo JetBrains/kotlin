@@ -249,6 +249,12 @@ public class FirStandaloneNormalAnalysisSourceModuleJSSingleSymbolByPsiTestGener
   }
 
   @Test
+  @TestMetadata("jvmRecordInternalProperty.kt")
+  public void testJvmRecordInternalProperty() {
+    run("jvmRecordInternalProperty.kt");
+  }
+
+  @Test
   @TestMetadata("jvmRecordPropertyOfUnsignedType.kt")
   public void testJvmRecordPropertyOfUnsignedType() {
     run("jvmRecordPropertyOfUnsignedType.kt");

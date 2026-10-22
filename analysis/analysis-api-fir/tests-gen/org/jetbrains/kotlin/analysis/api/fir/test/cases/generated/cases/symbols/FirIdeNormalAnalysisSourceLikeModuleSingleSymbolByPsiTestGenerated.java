@@ -255,6 +255,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleSingleSymbolByPsiTestGenerated 
   }
 
   @Test
+  @TestMetadata("jvmRecordInternalProperty.kt")
+  public void testJvmRecordInternalProperty() {
+    run("jvmRecordInternalProperty.kt");
+  }
+
+  @Test
   @TestMetadata("jvmRecordPropertyOfUnsignedType.kt")
   public void testJvmRecordPropertyOfUnsignedType() {
     run("jvmRecordPropertyOfUnsignedType.kt");
