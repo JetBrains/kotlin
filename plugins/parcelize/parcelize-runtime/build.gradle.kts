@@ -18,6 +18,7 @@ plugins {
     id("signing-convention")
     id("nodejs-configuration")
     id("binaryen-configuration")
+    id("wasmtime-configuration")
 }
 
 val publishedArtifactId = "kotlin-parcelize-runtime"
