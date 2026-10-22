@@ -7,10 +7,12 @@ package org.jetbrains.kotlin.gradle.mpp
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import kotlin.io.path.appendText
 import kotlin.test.assertTrue
 
 @MppGradlePluginTests
+@MustRunOnChangesInGradle
 class MppDslPublishedMetadataIT : KGPBaseTest() {
 
     override val defaultBuildOptions: BuildOptions
