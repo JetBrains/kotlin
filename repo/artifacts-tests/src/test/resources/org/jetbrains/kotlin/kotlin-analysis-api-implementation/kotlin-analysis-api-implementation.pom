@@ -47,6 +47,12 @@
     </dependency>
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
+      <artifactId>kotlin-analysis-api-syntax-implementation</artifactId>
+      <version>ArtifactsTest.version</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jetbrains.kotlin</groupId>
       <artifactId>kotlin-analysis-api-fir-diagnostics</artifactId>
       <version>ArtifactsTest.version</version>
       <scope>runtime</scope>
