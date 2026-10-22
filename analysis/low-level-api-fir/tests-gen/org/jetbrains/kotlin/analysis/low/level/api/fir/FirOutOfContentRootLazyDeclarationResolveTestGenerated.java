@@ -1958,6 +1958,36 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("importedFromObjectFunction.kt")
+    public void testImportedFromObjectFunction() {
+      run("importedFromObjectFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("importedFromObjectFunctionWithImplicitType.kt")
+    public void testImportedFromObjectFunctionWithImplicitType() {
+      run("importedFromObjectFunctionWithImplicitType.kt");
+    }
+
+    @Test
+    @TestMetadata("importedFromObjectPropertyWithExplicitBackingField.kt")
+    public void testImportedFromObjectPropertyWithExplicitBackingField() {
+      run("importedFromObjectPropertyWithExplicitBackingField.kt");
+    }
+
+    @Test
+    @TestMetadata("importedFromObjectPropertyWithExplicitBackingFieldAndImplicitType.kt")
+    public void testImportedFromObjectPropertyWithExplicitBackingFieldAndImplicitType() {
+      run("importedFromObjectPropertyWithExplicitBackingFieldAndImplicitType.kt");
+    }
+
+    @Test
+    @TestMetadata("importedFromObjectPropertyWithImplicitType.kt")
+    public void testImportedFromObjectPropertyWithImplicitType() {
+      run("importedFromObjectPropertyWithImplicitType.kt");
+    }
+
+    @Test
     @TestMetadata("samConstructor.kt")
     public void testSamConstructor() {
       run("samConstructor.kt");
