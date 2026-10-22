@@ -1,0 +1,110 @@
+Module: lib
+FILE fqName:lib fileName:/lib.kt lineStartOffsets: [0, 15, 31, 43, 44, 66, 99, 133, 134, 149, 173, 208, 244, 246, 247, 275, 303, 305, 306, 346, 384, 386, 387]
+  PROPERTY[44, 132] name:topLevel visibility:public modality:FINAL [var]
+    FIELD[44, 132] PROPERTY_BACKING_FIELD name:topLevel type:kotlin.Int visibility:private [static]
+      EXPRESSION_BODY[64, 65]
+        CONST[64, 65] Int type=kotlin.Int value=0
+    FUN[70, 98] DEFAULT_PROPERTY_ACCESSOR name:<get-topLevel> visibility:public modality:FINAL returnType:kotlin.Int
+      annotations:
+        JvmName(name = "readTopLevel")
+      correspondingProperty: PROPERTY[44, 132] name:topLevel visibility:public modality:FINAL [var]
+      BLOCK_BODY[70, 98]
+        RETURN[70, 98] type=kotlin.Nothing from='public final fun <get-topLevel> (): kotlin.Int declared in lib'
+          GET_FIELD[70, 98] 'FIELD PROPERTY_BACKING_FIELD name:topLevel type:kotlin.Int visibility:private [static]' type=kotlin.Int origin=null
+    FUN[103, 132] DEFAULT_PROPERTY_ACCESSOR name:<set-topLevel> visibility:public modality:FINAL returnType:kotlin.Unit
+      VALUE_PARAMETER[103, 132] kind:Regular name:<set-?> index:0 type:kotlin.Int
+      annotations:
+        JvmName(name = "writeTopLevel")
+      correspondingProperty: PROPERTY[44, 132] name:topLevel visibility:public modality:FINAL [var]
+      BLOCK_BODY[103, 132]
+        SET_FIELD[103, 132] 'FIELD PROPERTY_BACKING_FIELD name:topLevel type:kotlin.Int visibility:private [static]' type=kotlin.Unit origin=null
+          value: GET_VAR[103, 132] '<set-?>: kotlin.Int declared in lib.<set-topLevel>' type=kotlin.Int origin=null
+  CLASS[134, 245] CLASS name:Holder modality:FINAL visibility:public superTypes:[kotlin.Any]
+    thisReceiver: VALUE_PARAMETER[134, 245] INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:lib.Holder
+    PROPERTY[153, 243] name:member visibility:public modality:FINAL [var]
+      FIELD[153, 243] PROPERTY_BACKING_FIELD name:member type:kotlin.Int visibility:private
+        EXPRESSION_BODY[171, 172]
+          CONST[171, 172] Int type=kotlin.Int value=0
+      FUN[181, 207] DEFAULT_PROPERTY_ACCESSOR name:<get-member> visibility:public modality:FINAL returnType:kotlin.Int
+        VALUE_PARAMETER[181, 207] kind:DispatchReceiver name:<this> index:0 type:lib.Holder
+        annotations:
+          JvmName(name = "readMember")
+        correspondingProperty: PROPERTY[153, 243] name:member visibility:public modality:FINAL [var]
+        BLOCK_BODY[181, 207]
+          RETURN[181, 207] type=kotlin.Nothing from='public final fun <get-member> (): kotlin.Int declared in lib.Holder'
+            GET_FIELD[181, 207] 'FIELD PROPERTY_BACKING_FIELD name:member type:kotlin.Int visibility:private' type=kotlin.Int origin=null
+              receiver: GET_VAR[181, 207] '<this>: lib.Holder declared in lib.Holder.<get-member>' type=lib.Holder origin=null
+      FUN[216, 243] DEFAULT_PROPERTY_ACCESSOR name:<set-member> visibility:public modality:FINAL returnType:kotlin.Unit
+        VALUE_PARAMETER[216, 243] kind:DispatchReceiver name:<this> index:0 type:lib.Holder
+        VALUE_PARAMETER[216, 243] kind:Regular name:<set-?> index:1 type:kotlin.Int
+        annotations:
+          JvmName(name = "writeMember")
+        correspondingProperty: PROPERTY[153, 243] name:member visibility:public modality:FINAL [var]
+        BLOCK_BODY[216, 243]
+          SET_FIELD[216, 243] 'FIELD PROPERTY_BACKING_FIELD name:member type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
+            receiver: GET_VAR[216, 243] '<this>: lib.Holder declared in lib.Holder.<set-member>' type=lib.Holder origin=null
+            value: GET_VAR[216, 243] '<set-?>: kotlin.Int declared in lib.Holder.<set-member>' type=kotlin.Int origin=null
+    CONSTRUCTOR[134, 245] visibility:public returnType:lib.Holder [primary]
+      BLOCK_BODY[134, 245]
+        DELEGATING_CONSTRUCTOR_CALL[134, 245] 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL[134, 245] classDescriptor='CLASS CLASS name:Holder modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN[-2, -2] FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER[-2, -2] kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+    FUN[-2, -2] FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+    FUN[-2, -2] FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+  FUN[313, 385] name:bumpMember visibility:public modality:FINAL returnType:kotlin.Unit [inline]
+    VALUE_PARAMETER[328, 342] kind:Regular name:holder index:0 type:lib.Holder
+    BLOCK_BODY[344, 385]
+      CALL[357, 383] 'public final fun <set-member> (<set-?>: kotlin.Int): kotlin.Unit declared in lib.Holder' type=kotlin.Unit origin=EQ
+        ARG <this>: GET_VAR[350, 356] 'holder: lib.Holder declared in lib.bumpMember' type=lib.Holder origin=null
+        ARG <set-?>: CALL[366, 383] 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
+          ARG <this>: CALL[373, 379] 'public final fun <get-member> (): kotlin.Int declared in lib.Holder' type=kotlin.Int origin=GET_PROPERTY
+            ARG <this>: GET_VAR[366, 372] 'holder: lib.Holder declared in lib.bumpMember' type=lib.Holder origin=null
+          ARG other: CONST[382, 383] Int type=kotlin.Int value=1
+  FUN[254, 304] name:bumpTopLevel visibility:public modality:FINAL returnType:kotlin.Unit [inline]
+    BLOCK_BODY[273, 304]
+      CALL[279, 302] 'public final fun <set-topLevel> (<set-?>: kotlin.Int): kotlin.Unit declared in lib' type=kotlin.Unit origin=EQ
+        ARG <set-?>: CALL[290, 302] 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
+          ARG <this>: CALL[290, 298] 'public final fun <get-topLevel> (): kotlin.Int declared in lib' type=kotlin.Int origin=GET_PROPERTY
+          ARG other: CONST[301, 302] Int type=kotlin.Int value=1
+Module: main
+FILE fqName:test fileName:/main.kt lineStartOffsets: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 43, 60, 73, 74, 92, 114, 138, 139, 166, 185, 208, 210]
+  FUN[139, 209] name:test visibility:public modality:FINAL returnType:kotlin.Unit
+    VALUE_PARAMETER[148, 162] kind:Regular name:holder index:0 type:lib.Holder
+    BLOCK_BODY[164, 209]
+      RETURNABLE_BLOCK[170, 184] type=kotlin.Unit origin=null
+        INLINED_BLOCK[170, 184]->[254, 304] type=kotlin.Unit origin=null
+          inlinedFunctionSymbol: public final fun bumpTopLevel (): kotlin.Unit declared in lib
+          inlinedFunctionFileEntry: FILE_ENTRY path:/lib.kt
+          CALL[279, 302] 'public final fun <set-topLevel> (<set-?>: kotlin.Int): kotlin.Unit declared in lib' type=kotlin.Unit origin=EQ
+            ARG <set-?>: CALL[290, 302] 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
+              ARG <this>: CALL[290, 298] 'public final fun <get-topLevel> (): kotlin.Int declared in lib' type=kotlin.Int origin=GET_PROPERTY
+              ARG other: CONST[301, 302] Int type=kotlin.Int value=1
+          RETURN[304, 304] type=kotlin.Nothing from='{IrReturnableBlockImpl}'
+            GET_OBJECT[304, 304] 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+      BLOCK[189, 207] type=kotlin.Unit origin=INLINE_ARGS_CONTAINER
+        VAR[-1, -1] IR_TEMPORARY_VARIABLE name:tmp_0 type:lib.Holder [val]
+          GET_VAR[200, 206] 'holder: lib.Holder declared in test.test' type=lib.Holder origin=null
+        RETURNABLE_BLOCK[189, 207] type=kotlin.Unit origin=null
+          INLINED_BLOCK[189, 207]->[313, 385] type=kotlin.Unit origin=null
+            inlinedFunctionSymbol: public final fun bumpMember (holder: lib.Holder): kotlin.Unit declared in lib
+            inlinedFunctionFileEntry: FILE_ENTRY path:/lib.kt
+            VAR[-1, -1] IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER name:holder type:lib.Holder [val]
+              GET_VAR[-1, -1] 'val tmp_0: lib.Holder declared in test.test' type=lib.Holder origin=null
+            CALL[357, 383] 'public final fun <set-member> (<set-?>: kotlin.Int): kotlin.Unit declared in lib.Holder' type=kotlin.Unit origin=EQ
+              ARG <this>: GET_VAR[350, 356] 'val holder: lib.Holder declared in test.test' type=lib.Holder origin=null
+              ARG <set-?>: CALL[366, 383] 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
+                ARG <this>: CALL[373, 379] 'public final fun <get-member> (): kotlin.Int declared in lib.Holder' type=kotlin.Int origin=GET_PROPERTY
+                  ARG <this>: GET_VAR[366, 372] 'val holder: lib.Holder declared in test.test' type=lib.Holder origin=null
+                ARG other: CONST[382, 383] Int type=kotlin.Int value=1
+            RETURN[385, 385] type=kotlin.Nothing from='{IrReturnableBlockImpl}'
+              GET_OBJECT[385, 385] 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit

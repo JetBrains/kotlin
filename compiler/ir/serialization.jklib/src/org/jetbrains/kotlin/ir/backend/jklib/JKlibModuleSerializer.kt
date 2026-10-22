@@ -8,8 +8,9 @@ package org.jetbrains.kotlin.ir.backend.jklib
 import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
+import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
 
-class JKlibGlobalDeclarationTable(builtIns: IrBuiltIns) : GlobalDeclarationTable(JKlibIrMangler()) {
+class JKlibGlobalDeclarationTable(builtIns: IrBuiltIns) : GlobalDeclarationTable(JvmIrMangler) {
     init {
         loadKnownBuiltins(builtIns)
     }

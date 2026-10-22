@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.ir.InternalSymbolFinderAPI
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
-import org.jetbrains.kotlin.ir.backend.jklib.JKlibIrMangler
+import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
 import org.jetbrains.kotlin.ir.classSymbol
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -64,12 +64,18 @@ import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.hasShape
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.util.resolveFakeOverrideOrSelf
+import org.jetbrains.kotlin.ir.validation.IrValidationError
+import org.jetbrains.kotlin.ir.validation.IrValidationSeverity
+import org.jetbrains.kotlin.ir.validation.IrValidatorConfig
+import org.jetbrains.kotlin.ir.validation.validateIr
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 /**
  * The [PreSerializationSymbols] of the JKlib first phase.
@@ -115,12 +121,13 @@ class JKlibPreSerializationLoweringContext(
     irBuiltIns: IrBuiltIns,
     configuration: CompilerConfiguration,
     diagnosticReporter: IrDiagnosticReporter,
+    val resolvedLibraries: List<KotlinLibrary>,
 ) : PreSerializationLoweringContext(irBuiltIns, configuration, diagnosticReporter) {
     override val symbols: PreSerializationSymbols = JKlibPreSerializationSymbols(irBuiltIns)
 
     // Must be the mangler that `JKlibFir2IrPipelinePhase` and `JKlibModuleSerializer` use. Otherwise, the signatures computed to look up
     // the inline function bodies in the dependency KLIBs would not match.
-    override val irMangler: KotlinMangler.IrMangler = JKlibIrMangler()
+    override val irMangler: KotlinMangler.IrMangler = JvmIrMangler
 
     override val sharedVariablesManager: SharedVariablesManager
         get() = error("The JKlib first phase does not lower shared variables")
@@ -194,11 +201,14 @@ private class JKlibPrivateInlineFunctionResolver : JKlibPreSerializationInlineFu
  * `inlinableFunctionsIr` component of the dependency KLIBs.
  */
 private class JKlibNonPrivateInlineFunctionResolver(
-    context: PreSerializationLoweringContext,
+    context: JKlibPreSerializationLoweringContext,
 ) : JKlibPreSerializationInlineFunctionResolver(InlineMode.ALL_INLINE_FUNCTIONS) {
+    private val symbolResolver = JKlibInlineFunctionSymbolResolver(context)
+
     private val deserializer = NonLinkingIrInlineFunctionDeserializer(
         irBuiltIns = context.irBuiltIns,
         signatureComputer = PublicIdSignatureComputer(context.irMangler),
+        symbolResolver = symbolResolver::resolve,
     )
 
     override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
@@ -216,8 +226,32 @@ private class JKlibNonPrivateInlineFunctionResolver(
 private class JKlibPrivateFunctionInlining(context: PreSerializationLoweringContext) :
     FunctionInlining(context, JKlibPrivateInlineFunctionResolver())
 
-private class JKlibNonPrivateFunctionInlining(context: PreSerializationLoweringContext) :
+private class JKlibNonPrivateFunctionInlining(context: JKlibPreSerializationLoweringContext) :
     FunctionInlining(context, JKlibNonPrivateInlineFunctionResolver(context))
+
+/**
+ * Reports the symbols that the first phase left unbound.
+ *
+ * The other KLIB-based backends can't run this check: they deliberately leave the references of the inlined bodies unbound and let
+ * the consumer of the KLIB link them. The JKlib pipeline resolves them eagerly instead (see `JKlibInlineFunctionSymbolResolver`),
+ * so it can require that nothing is left unbound.
+ *
+ * Unlike the other IR validations, this one isn't gated behind `-Xverify-ir`. It checks the single invariant that the eager
+ * resolution above is responsible for, and a violation of it means that the IR refers to a declaration that was never linked.
+ * Only [org.jetbrains.kotlin.ir.symbols.IrSymbol.isBound] is checked, so this costs one traversal rather than the whole IR validation.
+ */
+private class JKlibValidateNoUnboundSymbols(private val context: JKlibPreSerializationLoweringContext) : ModuleLoweringPass {
+    override fun lower(irModule: IrModuleFragment) {
+        validateIr(
+            irModule,
+            context.irBuiltIns,
+            IrValidatorConfig(checkUnboundSymbols = true),
+            context.diagnosticReporter,
+            getSeverity = { error -> runIf(error.cause == IrValidationError.Cause.UnboundSymbol) { IrValidationSeverity.ERROR } },
+            phaseName = "JKlibValidateNoUnboundSymbols",
+        )
+    }
+}
 
 /**
  * The JKlib flavor of `loweringsOfTheFirstPhase`, with the intra-module and cross-module inliners always enabled.
@@ -255,6 +289,7 @@ fun jklibLoweringsOfTheFirstPhase(
         this += ::createSyntheticAccessorGeneration
         this += ::JKlibNonPrivateFunctionInlining
         this += ::createInlineFunctionSerializationPreProcessing
+        this += ::JKlibValidateNoUnboundSymbols
     }
     return createModulePhases(*phases.toTypedArray())
 }
@@ -276,7 +311,7 @@ object JKlibPreSerializationLoweringPhase : PipelinePhase<JKlibFir2IrPipelineArt
         val result = PhaseEngine(
             configuration.phaseConfig ?: PhaseConfig(),
             PhaserState(),
-            JKlibPreSerializationLoweringContext(input.result.irBuiltIns, configuration, irDiagnosticReporter),
+            JKlibPreSerializationLoweringContext(input.result.irBuiltIns, configuration, irDiagnosticReporter, input.resolvedLibraries),
         ).runPreSerializationLoweringPhases(input.result, jklibLoweringsOfTheFirstPhase(configuration.languageVersionSettings))
         return input.copy(result = result)
     }
