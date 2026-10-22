@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.library.KLIB_PROPERTY_DEPENDS
 import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInNative
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.fail
 
@@ -43,13 +42,8 @@ class MppSharedNativeCompileIT : KGPBaseTest() {
         }
     }
 
-    /**
-     *
-     */
     @GradleTest
-    @Disabled("KT-60943: Will be fixed in K2")
-    fun `test - K2 - shared native compilation - assemble`(gradleVersion: GradleVersion) {
-        // FIXME(KT-69597): Previously hardcoded to language version 2.0.
+    fun `test - shared native compilation - assemble`(gradleVersion: GradleVersion) {
         project("kt-57944-k2-native-compilation", gradleVersion) {
             build("assemble") {
                 assertTasksExecuted(":compileCommonMainKotlinMetadata")

@@ -22,7 +22,6 @@ import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.gradle.dsl.KaptExtensionConfig
 import org.jetbrains.kotlin.gradle.dsl.KaptStubGenerationScheme
 import org.jetbrains.kotlin.gradle.tasks.USING_JVM_INCREMENTAL_COMPILATION_MESSAGE
@@ -736,8 +735,7 @@ open class KaptIT : KaptBaseIT() {
 
             buildAndFail("build") {
                 val actual = getErrorMessages()
-                val expectedPropertyLineNumber = if (buildOptions.languageVersion == LanguageVersion.KOTLIN_1_9.versionString) 4 else 5
-                assertEquals(expected = genKotlinErrorString(expectedPropertyLineNumber, 7), actual = actual)
+                assertEquals(expected = genKotlinErrorString(5, 7), actual = actual)
             }
         }
     }
@@ -1474,7 +1472,8 @@ open class KaptIT : KaptBaseIT() {
     @GradleTest
     fun testRedeclarationInDataClass(gradleVersion: GradleVersion) {
         project("simple".withPrefix, gradleVersion) {
-            javaSourcesDir().resolve("invalid.kt").writeText("""
+            javaSourcesDir().resolve("invalid.kt").writeText(
+                """
                 data class ClassWithDupProps(
                     val rock: String,
                     val paper: String,
@@ -1482,7 +1481,8 @@ open class KaptIT : KaptBaseIT() {
                     val rock: String, // This would cause KAPT K2 to crash
                 )
 
-            """.trimIndent())
+            """.trimIndent()
+            )
 
             build(":kaptGenerateStubsKotlin") {
                 assertFileExists(projectPath.resolve("build/tmp/kapt3/stubs/main/ClassWithDupProps.java"))
