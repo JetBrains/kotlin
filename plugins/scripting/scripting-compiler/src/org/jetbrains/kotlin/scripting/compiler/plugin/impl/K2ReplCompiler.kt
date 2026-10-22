@@ -53,7 +53,6 @@ import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.host.with
 import kotlin.script.experimental.impl._isSyntheticSnippet
 import kotlin.script.experimental.jvm.*
-import kotlin.script.experimental.jvm.util.scriptCompilationClasspathFromContext
 import kotlin.script.experimental.util.LinkedSnippet
 import kotlin.script.experimental.util.LinkedSnippetImpl
 import kotlin.script.experimental.util.add
@@ -157,22 +156,7 @@ class K2ReplCompiler(
             }
             val project = compilerContext.environment.project
             val languageVersionSettings = compilerContext.environment.configuration.languageVersionSettings
-            val classpath = scriptCompilationConfiguration[ScriptCompilationConfiguration.dependencies].orEmpty().flatMap {
-                when (it) {
-                    is JvmDependency -> it.classpath
-                    // JvmDependencyFromClassLoader (for example when
-                    // `kotlin.jsr223.experimental.resolve.dependencies.from.context.classloader=true`)
-                    // is honored in K1 via PackageFragmentFromClassLoaderProviderExtension. K2 FIR does
-                    // not use that extension point, so eagerly extract the classpath from the classloader.
-                    // This drops the K1 laziness for K2, but lets stdlib (HashMap, etc.) resolve in FIR.
-                    is JvmDependencyFromClassLoader -> scriptCompilationClasspathFromContext(
-                        classLoader = it.getClassLoader(scriptCompilationConfiguration),
-                        wholeClasspath = true,
-                        unpackJarCollections = true,
-                    )
-                    else -> emptyList()
-                }
-            }
+            val classpath = scriptCompilationConfiguration.baseCompilationClasspath()
             compilerContext.environment.updateClasspath(classpath.map { JvmClasspathRoot(it) })
             val projectEnvironment = compilerContext.environment.toVfsBasedProjectEnvironment()
             val extensionRegistrars = compilerContext.environment.configuration.getCompilerExtensions(FirExtensionRegistrar)
