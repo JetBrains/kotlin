@@ -317,6 +317,12 @@ public class SymbolLightClassesByPsiForSourceTestGenerated extends AbstractSymbo
   }
 
   @Test
+  @TestMetadata("jvmStaticInAnnotationClassCompanion.kt")
+  public void testJvmStaticInAnnotationClassCompanion() {
+    run("jvmStaticInAnnotationClassCompanion.kt");
+  }
+
+  @Test
   @TestMetadata("jvmStaticInInterfaceCompanion.kt")
   public void testJvmStaticInInterfaceCompanion() {
     run("jvmStaticInInterfaceCompanion.kt");
@@ -2410,6 +2416,12 @@ public class SymbolLightClassesByPsiForSourceTestGenerated extends AbstractSymbo
       @TestMetadata("jvmStaticVariable.kt")
       public void testJvmStaticVariable() {
         run("jvmStaticVariable.kt");
+      }
+
+      @Test
+      @TestMetadata("jvmStaticVariableAnnotationClassCompanion.kt")
+      public void testJvmStaticVariableAnnotationClassCompanion() {
+        run("jvmStaticVariableAnnotationClassCompanion.kt");
       }
 
       @Test
