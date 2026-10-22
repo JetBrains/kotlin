@@ -156,7 +156,9 @@ fun PsiElement.siblings(forward: Boolean = true, withItself: Boolean = true): Se
             var next: PsiElement? = this@siblings
             return object : Iterator<PsiElement> {
                 init {
-                    if (!withItself) next()
+                    if (!withItself) {
+                        val _ = next()
+                    }
                 }
 
                 override fun hasNext(): Boolean = next != null
