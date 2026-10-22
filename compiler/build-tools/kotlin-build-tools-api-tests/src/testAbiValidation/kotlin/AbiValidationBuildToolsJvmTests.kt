@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.buildtools.api.abi.dumpJvmAbiToStringOperation
 import org.jetbrains.kotlin.buildtools.api.abi.operations.DumpJvmAbiToStringOperation
 import org.jetbrains.kotlin.buildtools.api.abi.operations.filters
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.jvmProject
 import org.jetbrains.kotlin.buildtools.tests.compilation.util.btaClassloader
 import org.jetbrains.kotlin.test.TestMetadata
@@ -26,11 +27,11 @@ import kotlin.io.path.walk
 
 class AbiValidationBuildToolsJvmTests : BaseCompilationTest() {
 
-    @Test
+    @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Smoke test of ABI validation for JVM")
     @TestMetadata("basic-multimodule-project/module-1")
-    fun testJvmDump() {
-        val toolchain = KotlinToolchains.loadImplementation(btaClassloader)
+    fun testJvmDump(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        val toolchain = strategyConfig.first
         jvmProject(toolchain, toolchain.createInProcessExecutionPolicy()) {
             val module = module("basic-multimodule-project/module-1")
             module.compile()
@@ -41,7 +42,7 @@ class AbiValidationBuildToolsJvmTests : BaseCompilationTest() {
 
             val dumpAppender = StringBuilder()
             val operation = kotlinToolchain.abiValidation.dumpJvmAbiToStringOperation(dumpAppender, classFiles)
-            kotlinToolchain.createBuildSession().use { it.executeOperation(operation) }
+            kotlinToolchain.createBuildSession().use { it.executeOperation(operation, strategyConfig.second) }
 
             val expectedDump = """
                 public final class Bar {
@@ -64,11 +65,11 @@ class AbiValidationBuildToolsJvmTests : BaseCompilationTest() {
         }
     }
 
-    @Test
+    @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Smoke test of ABI validation filters: every filter form in one run")
     @TestMetadata("jvm-module-abi-filters")
-    fun testJvmDumpAllFilters() {
-        val toolchain = KotlinToolchains.loadImplementation(btaClassloader)
+    fun testJvmDumpAllFilters(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        val toolchain = strategyConfig.first
         jvmProject(toolchain, toolchain.createInProcessExecutionPolicy()) {
             val module = module("jvm-module-abi-filters")
             module.compile()
@@ -95,7 +96,7 @@ class AbiValidationBuildToolsJvmTests : BaseCompilationTest() {
                     this[AbiFilters.EXCLUDE_ANNOTATED_WITH] = setOf("org.example.api.InternalApi")
                 }
             }
-            kotlinToolchain.createBuildSession().use { it.executeOperation(operation) }
+            kotlinToolchain.createBuildSession().use { it.executeOperation(operation, strategyConfig.second) }
 
             val expectedDump = """
                 public final class org/example/PublicEntryPoint {

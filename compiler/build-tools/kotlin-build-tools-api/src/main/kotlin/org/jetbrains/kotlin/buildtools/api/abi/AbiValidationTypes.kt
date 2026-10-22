@@ -183,7 +183,7 @@ public class KlibTargetId(
      * Usually, it's the same name as [KlibTargetType.canonicalName] from [targetType].
      */
     public val customizedName: String
-): Serializable {
+) : Serializable {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is KlibTargetId) return false
