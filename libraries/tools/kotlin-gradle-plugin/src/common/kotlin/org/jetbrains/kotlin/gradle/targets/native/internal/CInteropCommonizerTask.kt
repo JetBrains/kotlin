@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.gradle.targets.native.toolchain.NoopKotlinNativeProv
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.UsesKotlinNativeBundleBuildService
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 import org.jetbrains.kotlin.gradle.utils.*
+import org.jetbrains.kotlin.internal.compilerRunner.native.registerKotlinNativeConcurrencyLimitService
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 import javax.inject.Inject
@@ -55,6 +56,16 @@ internal abstract class CInteropCommonizerTask
 ) : AbstractCInteropCommonizerTask(),
     UsesClassLoadersCachingBuildService,
     UsesKotlinNativeBundleBuildService {
+
+    init {
+        // Demo: limit the number of CInteropCommonizerTask instances (and, transitively, the per-group worker
+        // invocations submitted from commonize()) that can run concurrently, since each commonizer invocation is
+        // a memory-heavy process - see KotlinNativeToolConcurrencyLimitService.kt for the general pattern.
+        val maxParallelCommonizeTasks = 3
+        usesService(
+            project.registerKotlinNativeConcurrencyLimitService("CInteropCommonizerTask", maxParallelCommonizeTasks)
+        )
+    }
 
     internal class CInteropGist(
         @get:Input val identifier: CInteropIdentifier,
@@ -239,10 +250,22 @@ internal abstract class CInteropCommonizerTask
         outputDirectory.deleteRecursively()
         if (cinteropsForTarget.isEmpty()) return
 
-        GradleCliCommonizer(
-            commonizerToolRunner.get(),
-            kotlinCompilerArgumentsLogLevel.get(),
-        ).commonizeLibraries(
+        val runner = commonizerToolRunner.get()
+        val compilerArgumentsLogLevel = kotlinCompilerArgumentsLogLevel.get()
+
+        // Submit the actual commonizer invocation to its own worker instead of blocking here, so that groups
+        // processed one after another in commonizeCInteropLibraries() can actually execute concurrently - Gradle
+        // automatically awaits all work submitted by this task before considering it finished. The concurrencyLimitService
+        // registered in init (via usesService) caps how many of these worker invocations can actually run at once.
+        CliCommonizer { arguments ->
+            runner.runToolInWorker(
+                KotlinNativeToolRunner.ToolArguments(
+                    shouldRunInProcessMode = false,
+                    compilerArgumentsLogLevel = compilerArgumentsLogLevel,
+                    arguments = arguments,
+                )
+            )
+        }.commonizeLibraries(
             konanHome = konanHome.get(),
             outputTargets = group.targets,
             inputLibraries = cinteropsForTarget.map { it.libraryFile.get() }.filter { it.exists() }.toSet(),
