@@ -425,6 +425,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.HAS_NEXT_FUNCTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.HAS_NEXT_FUNCTION_NONE_APPLICABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.HAS_NEXT_FUNCTION_TYPE_MISMATCH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.HAS_NEXT_MISSING
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.HOME_PACKAGE_RESOLUTION_INVESTIGATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS
@@ -3999,6 +4000,11 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
                     "Use original class ''{1}'' instead or rewrite calls with ''{0}'' as a qualifier. " +
                     "See https://youtrack.jetbrains.com/issue/KT-64431.",
             NAME, NAME
+        )
+        map.put(
+            HOME_PACKAGE_RESOLUTION_INVESTIGATION,
+            "HPR / {0} / {1} / {2}",
+            TO_STRING, TO_STRING, TO_STRING
         )
 
         // Suspend

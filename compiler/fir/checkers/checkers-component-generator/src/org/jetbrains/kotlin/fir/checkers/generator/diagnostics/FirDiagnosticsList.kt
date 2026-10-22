@@ -2439,6 +2439,12 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<Name>("typealiasName")
             parameter<Name>("originalClassName")
         }
+
+        val HOME_PACKAGE_RESOLUTION_INVESTIGATION by warning<KtElement> {
+            parameter<Int>("total")
+            parameter<Int>("star")
+            parameter<Int>("hpr")
+        }
     }
 
     val SUSPEND by object : DiagnosticGroup("Suspend errors") {

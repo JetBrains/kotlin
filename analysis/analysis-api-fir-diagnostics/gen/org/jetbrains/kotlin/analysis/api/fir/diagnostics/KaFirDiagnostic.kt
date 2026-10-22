@@ -8203,6 +8203,17 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface HomePackageResolutionInvestigation : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<HomePackageResolutionInvestigation>
+            get() = HomePackageResolutionInvestigation::class
+
+        public val total: Int
+        public val star: Int
+        public val hpr: Int
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface IllegalSuspendFunctionCall : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass: KClass<IllegalSuspendFunctionCall>
             get() = IllegalSuspendFunctionCall::class

@@ -1,20 +1,21 @@
 // RUN_PIPELINE_TILL: CODEGEN
 // DIAGNOSTICS: -UNUSED_EXPRESSION
 // LANGUAGE: +HomePackageResolution
+// RENDER_DIAGNOSTIC_ARGUMENTS
 
 // FILE: a.kt
 
-package first
+<!HOME_PACKAGE_RESOLUTION_INVESTIGATION("0; 0; 0")!>package first
 
 open class A
 
 fun A.foo() {}
 fun A.bar() {}
-fun baz(a: A) { }
+fun baz(a: A) { }<!>
 
 // FILE: b.kt
 
-package second
+<!HOME_PACKAGE_RESOLUTION_INVESTIGATION("3; 0; 2")!>package second
 
 import first.A
 import first.foo
@@ -28,6 +29,6 @@ fun baz(b: B) { }
 fun checkB(b: B) {
     b.foo()
     b.bar()
-}
+}<!>
 
 /* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration */
