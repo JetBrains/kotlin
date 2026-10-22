@@ -8,36 +8,21 @@
 package org.jetbrains.kotlin.gradle.abi
 
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.abi.utils.*
 import org.jetbrains.kotlin.gradle.abi.utils.AbiValidationTestDumps.assertDumpsEqual
-import org.jetbrains.kotlin.gradle.abi.utils.abiValidation
-import org.jetbrains.kotlin.gradle.abi.utils.androidKmpLibraryProject
-import org.jetbrains.kotlin.gradle.abi.utils.androidLibrary
-import org.jetbrains.kotlin.gradle.abi.utils.referenceKlibDumpFile
-import org.jetbrains.kotlin.gradle.abi.utils.referenceMixedAndroidDumpFile
-import org.jetbrains.kotlin.gradle.abi.utils.referenceMixedJvmDumpFile
 import org.jetbrains.kotlin.gradle.dsl.abi.BinariesSource
 import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
-import org.jetbrains.kotlin.gradle.testbase.AndroidGradlePluginTests
-import org.jetbrains.kotlin.gradle.testbase.AndroidTestVersions
-import org.jetbrains.kotlin.gradle.testbase.GradleAndroidTest
-import org.jetbrains.kotlin.gradle.testbase.JdkVersions
-import org.jetbrains.kotlin.gradle.testbase.KGPBaseTest
-import org.jetbrains.kotlin.gradle.testbase.TestVersions
-import org.jetbrains.kotlin.gradle.testbase.assertFileContains
-import org.jetbrains.kotlin.gradle.testbase.assertFileExists
-import org.jetbrains.kotlin.gradle.testbase.assertOutputContains
-import org.jetbrains.kotlin.gradle.testbase.assertTasksFailed
-import org.jetbrains.kotlin.gradle.testbase.build
-import org.jetbrains.kotlin.gradle.testbase.buildAndFail
-import org.jetbrains.kotlin.gradle.testbase.buildScriptInjection
-import org.jetbrains.kotlin.gradle.testbase.makeSnapshotTo
-import org.jetbrains.kotlin.gradle.testbase.source
+import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInBuildToolsApi
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 
+@MustRunOnChangesInGradle
 @AndroidGradlePluginTests
 class AbiValidationAndroidKmpIT : KGPBaseTest() {
 
     @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_88, additionalVersions = [TestVersions.AGP.AGP_811])
     @GradleAndroidTest
+    @MustRunOnChangesInBuildToolsApi // Runs ABI tool via BTA
     fun testAndroidOnly(
         gradleVersion: GradleVersion,
         agpVersion: String,
@@ -72,6 +57,7 @@ class AbiValidationAndroidKmpIT : KGPBaseTest() {
 
     @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_88, additionalVersions = [TestVersions.AGP.AGP_811])
     @GradleAndroidTest
+    @MustRunOnChangesInBuildToolsApi // Runs ABI tool via BTA
     fun testMixed(
         gradleVersion: GradleVersion,
         agpVersion: String,
@@ -127,6 +113,7 @@ class AbiValidationAndroidKmpIT : KGPBaseTest() {
 
     @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_88, additionalVersions = [TestVersions.AGP.AGP_811])
     @GradleAndroidTest
+    @MustRunOnChangesInBuildToolsApi // Runs ABI tool via BTA
     fun testCheckFailsOnAndroidAbiChange(
         gradleVersion: GradleVersion,
         agpVersion: String,
@@ -152,6 +139,9 @@ class AbiValidationAndroidKmpIT : KGPBaseTest() {
         }
     }
 
+    /**
+     * Test Federation: Gradle only. Fails on a KGP diagnostic before the ABI tool runs.
+     */
     @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_88, additionalVersions = [TestVersions.AGP.AGP_811])
     @GradleAndroidTest
     fun testMavenPublicationsRejectedForAndroidTarget(
@@ -178,6 +168,7 @@ class AbiValidationAndroidKmpIT : KGPBaseTest() {
 
     @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_88, additionalVersions = [TestVersions.AGP.AGP_811])
     @GradleAndroidTest
+    @MustRunOnChangesInBuildToolsApi // Runs ABI tool via BTA
     fun testAndroidWithNativeTarget(
         gradleVersion: GradleVersion,
         agpVersion: String,
@@ -216,6 +207,7 @@ class AbiValidationAndroidKmpIT : KGPBaseTest() {
 
     @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_88, additionalVersions = [TestVersions.AGP.AGP_811])
     @GradleAndroidTest
+    @MustRunOnChangesInBuildToolsApi // Runs ABI tool via BTA
     fun testNonTestCompilationsExcludeTestSources(
         gradleVersion: GradleVersion,
         agpVersion: String,
