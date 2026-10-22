@@ -162,7 +162,7 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
         return status.isActual && (status.isInline || status.isValue || classKind == ClassKind.ANNOTATION_CLASS)
     }
 
-    protected fun configureScriptDestructuringDeclarationEntry(declaration: FirVariable, container: FirVariable) {
+    protected fun configureNonLocalDestructuringDeclarationEntry(declaration: FirVariable, container: FirVariable) {
         (declaration as FirProperty).destructuringDeclarationContainerVariable = container.symbol
     }
 
