@@ -179,19 +179,7 @@ class KonanInteropModuleDeserializer(
                 BinarySymbolData.SymbolKind.ENUM_ENTRY_SYMBOL -> error("This declaration cannot be top-level: $searchForSymbolKind")
                 else -> error("Symbol kind is unsupported by C-interop Klib: $searchForSymbolKind")
             }
-            val id = MetadataDeclarationId(declarationKind, packageFqName, declarationFqName)
-
-            val kmDeclarations = metadataReader.retrieveDeclarationsById(id, removeMetadataRepresentation = true)
-            if (kmDeclarations != null) {
-                for (kmDeclaration in kmDeclarations) {
-                    when (kmDeclaration) {
-                        is KmClass -> transformer.transformTopLevelClass(kmDeclaration)
-                        is KmFunction -> transformer.transformTopLevelFunction(kmDeclaration)
-                        is KmProperty -> transformer.transformTopLevelProperty(kmDeclaration)
-                        else -> error(kmDeclaration.javaClass.name)
-                    }
-                }
-            }
+            deserializeTopLevelDeclarations(MetadataDeclarationId(declarationKind, packageFqName, declarationFqName))
         }
 
         // If the deserialization process above found a declaration with the requested signature, it should store it in this map.
@@ -213,6 +201,18 @@ class KonanInteropModuleDeserializer(
     }
 
     override fun deserializedSymbolNotFound(idSig: IdSignature): Nothing = error("No C-Interop symbol found for $idSig")
+
+    private fun deserializeTopLevelDeclarations(id: MetadataDeclarationId) {
+        val kmDeclarations = metadataReader.retrieveDeclarationsById(id, removeMetadataRepresentation = true) ?: return
+        for (kmDeclaration in kmDeclarations) {
+            when (kmDeclaration) {
+                is KmClass -> transformer.transformTopLevelClass(kmDeclaration)
+                is KmFunction -> transformer.transformTopLevelFunction(kmDeclaration)
+                is KmProperty -> transformer.transformTopLevelProperty(kmDeclaration)
+                else -> error(kmDeclaration.javaClass.name)
+            }
+        }
+    }
 
     fun deserializeAllCStructsAndEnums() {
         for (id in metadataReader.getDeclaredDeclarationIds()) {
