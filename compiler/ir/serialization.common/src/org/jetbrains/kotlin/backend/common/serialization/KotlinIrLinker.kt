@@ -293,16 +293,6 @@ abstract class KotlinIrLinker(
         }
     }
 
-    fun deserializeIrModuleHeader(
-        moduleDescriptor: ModuleDescriptor,
-        kotlinLibrary: KotlinLibrary,
-        deserializationStrategy: (String) -> DeserializationStrategy = { DeserializationStrategy.ONLY_REFERENCED },
-    ): IrModuleFragment {
-        val deserializer = createAndRegisterModuleDeserializer(moduleDescriptor, kotlinLibrary, deserializationStrategy)
-        // The IrModule and its IrFiles have been created during module initialization.
-        return deserializer.moduleFragment
-    }
-
     fun createAndRegisterModuleDeserializer(
         moduleDescriptor: ModuleDescriptor,
         kotlinLibrary: KotlinLibrary?,
@@ -352,22 +342,6 @@ abstract class KotlinIrLinker(
                 moduleDeserializer
             )
         } else moduleDeserializer
-
-    fun deserializeFullModule(moduleDescriptor: ModuleDescriptor, kotlinLibrary: KotlinLibrary): IrModuleFragment =
-        deserializeIrModuleHeader(moduleDescriptor, kotlinLibrary, { DeserializationStrategy.ALL })
-
-    fun deserializeOnlyHeaderModule(moduleDescriptor: ModuleDescriptor, kotlinLibrary: KotlinLibrary): IrModuleFragment =
-        deserializeIrModuleHeader(moduleDescriptor, kotlinLibrary, { DeserializationStrategy.ONLY_DECLARATION_HEADERS })
-
-    fun deserializeHeadersWithInlineBodies(moduleDescriptor: ModuleDescriptor, kotlinLibrary: KotlinLibrary): IrModuleFragment =
-        deserializeIrModuleHeader(moduleDescriptor, kotlinLibrary, { DeserializationStrategy.WITH_INLINE_BODIES })
-
-    fun deserializeDirtyFiles(moduleDescriptor: ModuleDescriptor, kotlinLibrary: KotlinLibrary, dirtyFiles: Collection<String>): IrModuleFragment {
-        return deserializeIrModuleHeader(moduleDescriptor, kotlinLibrary, {
-            if (it in dirtyFiles) DeserializationStrategy.ALL
-            else DeserializationStrategy.WITH_INLINE_BODIES
-        })
-    }
 
     fun getAllMatchingSignatures(callableId: CallableId, signatureKind: IrDeserializer.TopLevelSymbolKind): List<IdSignature> {
         return allModuleDeserializers.flatMap { moduleDeserializer ->

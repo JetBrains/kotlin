@@ -150,7 +150,6 @@ internal fun LinkKlibsContext.linkKlibs(
 
 private fun LinkKlibsContext.createIrLinker(moduleDescriptor: ModuleDescriptor): KonanIrLinker {
     val symbolTable = symbolTable!!
-    val exportedDependencies = (config.loadedKlibs.exported + config.loadedKlibs.included + config.librariesToCache.keys).toSet()
 
     val deserializationConfiguration = CommonCompilerDeserializationConfiguration(config.configuration.languageVersionSettings)
     val cInteropModuleDeserializerFactory = KonanCInteropModuleDeserializerFactory(
@@ -174,7 +173,6 @@ private fun LinkKlibsContext.createIrLinker(moduleDescriptor: ModuleDescriptor):
             symbolTable = symbolTable,
             friendModules = friendModulesMap,
             cInteropModuleDeserializerFactory = cInteropModuleDeserializerFactory,
-            exportedDependencies = exportedDependencies,
             partialLinkageConfig = config.configuration.partialLinkageConfig,
             irDiagnosticReporter = irDiagnosticReporter,
             librariesBeingCached = config.librariesToCache,
