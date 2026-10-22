@@ -5,18 +5,13 @@ fun <T> assertEquals(a: T, b: T) {
     require(a == b) { "Assertion failed: $a != $b" }
 }
 
-inline fun <reified E : Throwable> assertFailsWith(block: () -> Unit) {
-    try { block() } catch (e: IllegalArgumentException) { return }
-    throw kotlin.AssertionError("The lambda should have failed")
-}
-
-fun foo() = assertFailsWith<kotlin.AssertionError> {
+fun foo() {
     val o: dynamic = js("({ n: 5 })")
     if (o.n is Int) o.n++
     assertEquals(6, o.n as Int)
 }
 
-fun bar() = assertFailsWith<kotlin.AssertionError> {
+fun bar() {
     val o: dynamic = js("({ n: 5 })")
     ++o.n
     assertEquals(6, o.n as Int)
@@ -24,7 +19,7 @@ fun bar() = assertFailsWith<kotlin.AssertionError> {
     assertEquals(7, o.n as Int)
 }
 
-fun baz() = assertFailsWith<kotlin.AssertionError> {
+fun baz() {
     val o: dynamic = js("({ n: 5 })")
     o.n++
     assertEquals(6, o.n as Int)
