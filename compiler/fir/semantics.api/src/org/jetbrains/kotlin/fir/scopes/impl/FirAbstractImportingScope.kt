@@ -194,7 +194,11 @@ private object ImportedFromObjectOrStaticClassIdKey : FirDeclarationDataKey()
 class ImportedFromObjectOrStaticData<D : FirCallableDeclaration>(
     val objectClassId: ClassId,
     val original: D,
-)
+) {
+    override fun toString(): String {
+        return "ImportedFromObjectOrStaticData(objectClassId=$objectClassId, original=${original.symbol})"
+    }
+}
 
 var <D : FirCallableDeclaration> D.importedFromObjectOrStaticData: ImportedFromObjectOrStaticData<D>?
         by FirDeclarationDataRegistry.data(ImportedFromObjectOrStaticClassIdKey)
