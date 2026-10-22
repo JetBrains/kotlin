@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.light.classes.symbol.methods.MethodSignature
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodForMappedJavaCollectionStubMethod
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodForMappedKotlinCollectionMethod
 import org.jetbrains.kotlin.load.java.BuiltinSpecialProperties
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.SpecialGenericSignatures
 import org.jetbrains.kotlin.load.kotlin.SignatureBuildingComponents
@@ -437,8 +438,16 @@ private fun createMethodsWithSpecialSignature(
 internal fun PsiType.isTypeParameter(): Boolean =
     this is PsiClassType && this.resolve() is PsiTypeParameter
 
-internal fun PsiType.unboxedOrSelf(): PsiType =
-    PsiPrimitiveType.getUnboxedType(this)?.annotate(TypeAnnotationProvider.EMPTY) ?: this
+/**
+ * Returns the primitive type for this boxed primitive type, e.g., `int` for `Integer`. Other types are returned unchanged.
+ *
+ * A type annotated with `@Nullable` stays boxed: it comes from a nullable Kotlin type, like `Int?` in `List<Int?>`,
+ * which can't be primitive.
+ */
+internal fun PsiType.unboxedOrSelf(): PsiType {
+    if (hasAnnotation(JvmAnnotationNames.JETBRAINS_NULLABLE_ANNOTATION.asString())) return this
+    return PsiPrimitiveType.getUnboxedType(this)?.annotate(TypeAnnotationProvider.EMPTY) ?: this
+}
 
 internal fun PsiType.isJavaLangObject(): Boolean =
     this is PsiClassType && this.canonicalText == CommonClassNames.JAVA_LANG_OBJECT

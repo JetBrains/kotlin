@@ -12,7 +12,7 @@ public abstract class CMap /* test.CMap*/ implements test.IMap {
   public @org.jetbrains.annotations.Nullable() java.lang.Integer merge(@org.jetbrains.annotations.Nullable() java.lang.Integer, @org.jetbrains.annotations.Nullable() java.lang.Integer, java.util.function.BiFunction<? super @org.jetbrains.annotations.Nullable() java.lang.Integer, ? super @org.jetbrains.annotations.Nullable() java.lang.Integer, ? extends @org.jetbrains.annotations.Nullable() java.lang.Integer>);//  merge(@org.jetbrains.annotations.Nullable() java.lang.Integer, @org.jetbrains.annotations.Nullable() java.lang.Integer, java.util.function.BiFunction<? super @org.jetbrains.annotations.Nullable() java.lang.Integer, ? super @org.jetbrains.annotations.Nullable() java.lang.Integer, ? extends @org.jetbrains.annotations.Nullable() java.lang.Integer>)
 
   @java.lang.Override()
-  public @org.jetbrains.annotations.Nullable() java.lang.Integer put(int, int);//  put(int, int)
+  public @org.jetbrains.annotations.Nullable() java.lang.Integer put(@org.jetbrains.annotations.Nullable() java.lang.Integer, @org.jetbrains.annotations.Nullable() java.lang.Integer);//  put(@org.jetbrains.annotations.Nullable() java.lang.Integer, @org.jetbrains.annotations.Nullable() java.lang.Integer)
 
   @java.lang.Override()
   public @org.jetbrains.annotations.Nullable() java.lang.Integer putIfAbsent(@org.jetbrains.annotations.Nullable() java.lang.Integer, @org.jetbrains.annotations.Nullable() java.lang.Integer);//  putIfAbsent(@org.jetbrains.annotations.Nullable() java.lang.Integer, @org.jetbrains.annotations.Nullable() java.lang.Integer)
@@ -24,13 +24,13 @@ public abstract class CMap /* test.CMap*/ implements test.IMap {
   public @org.jetbrains.annotations.Nullable() java.lang.Integer replace(@org.jetbrains.annotations.Nullable() java.lang.Integer, @org.jetbrains.annotations.Nullable() java.lang.Integer);//  replace(@org.jetbrains.annotations.Nullable() java.lang.Integer, @org.jetbrains.annotations.Nullable() java.lang.Integer)
 
   @java.lang.Override()
-  public abstract @org.jetbrains.annotations.Nullable() java.lang.Integer get(int);//  get(int)
+  public abstract @org.jetbrains.annotations.Nullable() java.lang.Integer get(@org.jetbrains.annotations.Nullable() java.lang.Integer);//  get(@org.jetbrains.annotations.Nullable() java.lang.Integer)
 
   @java.lang.Override()
-  public abstract boolean containsKey(int);//  containsKey(int)
+  public abstract boolean containsKey(@org.jetbrains.annotations.Nullable() java.lang.Integer);//  containsKey(@org.jetbrains.annotations.Nullable() java.lang.Integer)
 
   @java.lang.Override()
-  public abstract boolean containsValue(int);//  containsValue(int)
+  public abstract boolean containsValue(@org.jetbrains.annotations.Nullable() java.lang.Integer);//  containsValue(@org.jetbrains.annotations.Nullable() java.lang.Integer)
 
   @java.lang.Override()
   public abstract int getSize();//  getSize()
@@ -117,7 +117,7 @@ public abstract class CMap2 /* test.CMap2*/ implements test.IMap {
   public @org.jetbrains.annotations.Nullable() java.lang.Integer merge(@org.jetbrains.annotations.Nullable() java.lang.Integer, @org.jetbrains.annotations.Nullable() java.lang.Integer, java.util.function.BiFunction<? super @org.jetbrains.annotations.Nullable() java.lang.Integer, ? super @org.jetbrains.annotations.Nullable() java.lang.Integer, ? extends @org.jetbrains.annotations.Nullable() java.lang.Integer>);//  merge(@org.jetbrains.annotations.Nullable() java.lang.Integer, @org.jetbrains.annotations.Nullable() java.lang.Integer, java.util.function.BiFunction<? super @org.jetbrains.annotations.Nullable() java.lang.Integer, ? super @org.jetbrains.annotations.Nullable() java.lang.Integer, ? extends @org.jetbrains.annotations.Nullable() java.lang.Integer>)
 
   @java.lang.Override()
-  public @org.jetbrains.annotations.Nullable() java.lang.Integer put(int, int);//  put(int, int)
+  public @org.jetbrains.annotations.Nullable() java.lang.Integer put(@org.jetbrains.annotations.Nullable() java.lang.Integer, @org.jetbrains.annotations.Nullable() java.lang.Integer);//  put(@org.jetbrains.annotations.Nullable() java.lang.Integer, @org.jetbrains.annotations.Nullable() java.lang.Integer)
 
   @java.lang.Override()
   public @org.jetbrains.annotations.Nullable() java.lang.Integer putIfAbsent(@org.jetbrains.annotations.Nullable() java.lang.Integer, @org.jetbrains.annotations.Nullable() java.lang.Integer);//  putIfAbsent(@org.jetbrains.annotations.Nullable() java.lang.Integer, @org.jetbrains.annotations.Nullable() java.lang.Integer)
@@ -127,15 +127,6 @@ public abstract class CMap2 /* test.CMap2*/ implements test.IMap {
 
   @java.lang.Override()
   public @org.jetbrains.annotations.Nullable() java.lang.Integer replace(@org.jetbrains.annotations.Nullable() java.lang.Integer, @org.jetbrains.annotations.Nullable() java.lang.Integer);//  replace(@org.jetbrains.annotations.Nullable() java.lang.Integer, @org.jetbrains.annotations.Nullable() java.lang.Integer)
-
-  @java.lang.Override()
-  public abstract @org.jetbrains.annotations.Nullable() java.lang.Integer get(int);//  get(int)
-
-  @java.lang.Override()
-  public abstract boolean containsKey(int);//  containsKey(int)
-
-  @java.lang.Override()
-  public abstract boolean containsValue(int);//  containsValue(int)
 
   @java.lang.Override()
   public boolean containsKey(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Integer);//  containsKey(@org.jetbrains.annotations.Nullable() java.lang.Integer)
@@ -212,7 +203,7 @@ public class CMap3 /* test.CMap3*/ implements test.IMap {
 
   @java.lang.Override()
   @org.jetbrains.annotations.Nullable()
-  public final @org.jetbrains.annotations.Nullable() java.lang.Integer getOrDefault(@org.jetbrains.annotations.Nullable() java.lang.Object, @org.jetbrains.annotations.Nullable() int);//  getOrDefault(java.lang.Object, int)
+  public final @org.jetbrains.annotations.Nullable() java.lang.Integer getOrDefault(@org.jetbrains.annotations.Nullable() java.lang.Object, @org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Integer);//  getOrDefault(java.lang.Object, @org.jetbrains.annotations.Nullable() java.lang.Integer)
 
   @java.lang.Override()
   public @org.jetbrains.annotations.Nullable() java.lang.Integer compute(@org.jetbrains.annotations.Nullable() java.lang.Integer, java.util.function.BiFunction<? super @org.jetbrains.annotations.Nullable() java.lang.Integer, ? super @org.jetbrains.annotations.Nullable() java.lang.Integer, ? extends @org.jetbrains.annotations.Nullable() java.lang.Integer>);//  compute(@org.jetbrains.annotations.Nullable() java.lang.Integer, java.util.function.BiFunction<? super @org.jetbrains.annotations.Nullable() java.lang.Integer, ? super @org.jetbrains.annotations.Nullable() java.lang.Integer, ? extends @org.jetbrains.annotations.Nullable() java.lang.Integer>)
@@ -227,7 +218,7 @@ public class CMap3 /* test.CMap3*/ implements test.IMap {
   public @org.jetbrains.annotations.Nullable() java.lang.Integer merge(@org.jetbrains.annotations.Nullable() java.lang.Integer, @org.jetbrains.annotations.Nullable() java.lang.Integer, java.util.function.BiFunction<? super @org.jetbrains.annotations.Nullable() java.lang.Integer, ? super @org.jetbrains.annotations.Nullable() java.lang.Integer, ? extends @org.jetbrains.annotations.Nullable() java.lang.Integer>);//  merge(@org.jetbrains.annotations.Nullable() java.lang.Integer, @org.jetbrains.annotations.Nullable() java.lang.Integer, java.util.function.BiFunction<? super @org.jetbrains.annotations.Nullable() java.lang.Integer, ? super @org.jetbrains.annotations.Nullable() java.lang.Integer, ? extends @org.jetbrains.annotations.Nullable() java.lang.Integer>)
 
   @java.lang.Override()
-  public @org.jetbrains.annotations.Nullable() java.lang.Integer put(int, int);//  put(int, int)
+  public @org.jetbrains.annotations.Nullable() java.lang.Integer put(@org.jetbrains.annotations.Nullable() java.lang.Integer, @org.jetbrains.annotations.Nullable() java.lang.Integer);//  put(@org.jetbrains.annotations.Nullable() java.lang.Integer, @org.jetbrains.annotations.Nullable() java.lang.Integer)
 
   @java.lang.Override()
   public @org.jetbrains.annotations.Nullable() java.lang.Integer putIfAbsent(@org.jetbrains.annotations.Nullable() java.lang.Integer, @org.jetbrains.annotations.Nullable() java.lang.Integer);//  putIfAbsent(@org.jetbrains.annotations.Nullable() java.lang.Integer, @org.jetbrains.annotations.Nullable() java.lang.Integer)
@@ -237,15 +228,6 @@ public class CMap3 /* test.CMap3*/ implements test.IMap {
 
   @java.lang.Override()
   public @org.jetbrains.annotations.Nullable() java.lang.Integer replace(@org.jetbrains.annotations.Nullable() java.lang.Integer, @org.jetbrains.annotations.Nullable() java.lang.Integer);//  replace(@org.jetbrains.annotations.Nullable() java.lang.Integer, @org.jetbrains.annotations.Nullable() java.lang.Integer)
-
-  @java.lang.Override()
-  public abstract @org.jetbrains.annotations.Nullable() java.lang.Integer get(int);//  get(int)
-
-  @java.lang.Override()
-  public abstract boolean containsKey(int);//  containsKey(int)
-
-  @java.lang.Override()
-  public abstract boolean containsValue(int);//  containsValue(int)
 
   @java.lang.Override()
   public boolean containsKey(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Integer);//  containsKey(@org.jetbrains.annotations.Nullable() java.lang.Integer)
