@@ -7,12 +7,14 @@ package org.jetbrains.kotlin.gradle.mpp
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import java.nio.file.Path
 import java.util.jar.JarFile
 import kotlin.io.path.appendText
 import kotlin.test.assertEquals
 
 @MppGradlePluginTests
+@MustRunOnChangesInGradle
 class MppDslSourcesJarIT : KGPBaseTest() {
 
     @GradleTest
