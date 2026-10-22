@@ -1247,7 +1247,8 @@ class Fir2IrVisitor(
         // This expression may reference things like `<array>` or `<indexN>` if it's an array access,
         // but it's definitely going to be something `++` or `--` could assign a value to
         val operationReceiver = (unary?.initializer ?: statements.lastOrNull())
-            ?.unwrapDesugaredAssignmentValueReference() as? FirQualifiedAccessExpression
+            ?.unwrapDesugaredAssignmentValueReference()?.let { it as? FirExpression }
+            ?.unwrapSmartcastExpression()?.let { it as? FirQualifiedAccessExpression }
             ?: return null
 
         if (operationReceiver.resolvedType !is ConeDynamicType) {
