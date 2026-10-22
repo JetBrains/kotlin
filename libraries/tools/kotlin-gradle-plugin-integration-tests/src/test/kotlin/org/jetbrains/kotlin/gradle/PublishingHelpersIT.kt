@@ -18,14 +18,16 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.tasks.publishing.CheckSigningTask
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.awaitInitialization
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import java.nio.file.Path
 import kotlin.io.path.listDirectoryEntries
 
+@MustRunOnChangesInGradle
 @OtherGradlePluginTests
 @DisplayName("Library publishing helper tasks")
-class PublishingHelpersTest : KGPBaseTest() {
+class PublishingHelpersIT : KGPBaseTest() {
     @GradleTest
     @DisplayName("Verify generated pom.xml")
     internal fun verifyGeneratedPom(gradleVersion: GradleVersion) {
