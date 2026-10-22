@@ -9,7 +9,6 @@ import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.KotlinIconProviderService
 import org.jetbrains.kotlin.psi.KtPlatformInterface
-import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import javax.swing.Icon
 
 /**
@@ -23,7 +22,7 @@ object KotlinBuiltInFileType : FileType {
         KotlinLabelProviderService.getService()?.getLabelForBuiltInFileType()
             ?: DEFAULT_DESCRIPTION
 
-    override fun getDefaultExtension(): String = BuiltInSerializerProtocol.BUILTINS_FILE_EXTENSION
+    override fun getDefaultExtension(): String = DEFAULT_EXTENSION
 
     override fun getIcon(): Icon = KotlinIconProviderService.getInstance().builtInFileIcon
 
@@ -34,4 +33,5 @@ object KotlinBuiltInFileType : FileType {
     override fun getCharset(file: VirtualFile, content: ByteArray): String? = null
 
     private const val DEFAULT_DESCRIPTION = "Kotlin built-in declarations"
+    private const val DEFAULT_EXTENSION = "kotlin_builtins"
 }
