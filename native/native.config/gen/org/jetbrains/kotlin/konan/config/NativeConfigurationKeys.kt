@@ -80,6 +80,10 @@ object NativeConfigurationKeys {
     @JvmField
     val MAKE_PER_FILE_CACHE = CompilerConfigurationKey.create<Boolean>("MAKE_PER_FILE_CACHE")
 
+    // Build the incremental caches of user libraries using the facts tracked by the previous compilation.
+    @JvmField
+    val FACTS_CACHE_ENABLED = CompilerConfigurationKey.create<Boolean>("FACTS_CACHE_ENABLED")
+
     // Combined fingerprint of external cached dependencies of the library being cached.
     @JvmField
     val CACHED_LIBRARY_DEPENDENCIES_FINGERPRINT = CompilerConfigurationKey.create<String>("CACHED_LIBRARY_DEPENDENCIES_FINGERPRINT")
@@ -342,6 +346,10 @@ var CompilerConfiguration.filesToCache: List<String>
 var CompilerConfiguration.makePerFileCache: Boolean
     get() = getBoolean(NativeConfigurationKeys.MAKE_PER_FILE_CACHE)
     set(value) { put(NativeConfigurationKeys.MAKE_PER_FILE_CACHE, value) }
+
+var CompilerConfiguration.factsCacheEnabled: Boolean
+    get() = getBoolean(NativeConfigurationKeys.FACTS_CACHE_ENABLED)
+    set(value) { put(NativeConfigurationKeys.FACTS_CACHE_ENABLED, value) }
 
 var CompilerConfiguration.cachedLibraryDependenciesFingerprint: String?
     get() = get(NativeConfigurationKeys.CACHED_LIBRARY_DEPENDENCIES_FINGERPRINT)

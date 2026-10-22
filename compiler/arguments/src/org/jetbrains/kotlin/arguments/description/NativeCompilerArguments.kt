@@ -533,6 +533,17 @@ Currently this option is disabled by default on other platforms.""".asReleaseDep
     }
 
     compilerArgument {
+        name = "Xfacts-cache-enabled"
+        description = """Build the incremental caches of user libraries using the facts tracked by the previous compilation (experimental).
+The stdlib and the other libraries are cached as usual. Requires incremental compilation.""".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_5_0,
+        )
+    }
+
+    compilerArgument {
         name = "Xbackend-threads"
         description = """Run codegen by file in N parallel threads.
 0 means use one thread per processor core.
