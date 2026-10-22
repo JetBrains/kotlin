@@ -15,57 +15,22 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunParameter
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunners.createProperTestRunner
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.TestRoots
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.TCTestOutputFilter
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.TestOutputFilter
-import org.jetbrains.kotlin.konan.test.blackbox.support.util.computePackageName
 import org.jetbrains.kotlin.konan.test.blackbox.testRunSettings
 import org.jetbrains.kotlin.native.executors.Executor
 import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.checkTestInfrastructure
-import org.jetbrains.kotlin.test.backend.handlers.NativeBinaryArtifactHandler
 import org.jetbrains.kotlin.test.groupingStageInputs
 import org.jetbrains.kotlin.test.model.*
-import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.BatchingPackageInserter
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.services.sourceProviders.AbstractLauncherAdditionalSourceProvider.Companion.LAUNCHER_FACADE_CLASS_NAME_PATTERN
 import org.jetbrains.kotlin.test.testInfraError
 import java.io.File
 import kotlin.test.assertIs
-
-class NativeBoxRunner(testServices: TestServices) : NativeBinaryArtifactHandler(testServices) {
-    private var artifact: BinaryArtifacts.Native? = null
-    override fun processModule(module: TestModule, info: BinaryArtifacts.Native) {
-        if (NativeEnvironmentConfigurator.isMainModule(module, testServices.moduleStructure)) {
-            checkTestInfrastructure(artifact == null) {
-                // Test-infrastructure invariant violation (not a failure of the code under test): throw a
-                // TestInfrastructureException so it is never masked by failure suppressors (e.g. an IGNORE_BACKEND directive).
-                "Internal error: more than one executable for the testcase: ${artifact!!.executable.name} and ${info.executable.name}\n" +
-                        "Only one module may have no incoming dependencies"
-            }
-            artifact = info
-        }
-    }
-
-    override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
-        // Test-infrastructure invariant violation (not a failure of the code under test): throw a
-        // TestInfrastructureException so it is never masked by failure suppressors (e.g. an IGNORE_BACKEND directive).
-        val executable = artifact?.executable ?: testInfraError("One main module is expected to be in the test.")
-        val testRun = createTestRun(
-            executable,
-            testServices,
-            TestCaseId.TestDataFile(testServices.moduleStructure.originalTestDataFiles.first()),
-            addTeamCityLogger = true,
-            addTestFilter = true,
-        )
-        val testRunner = createProperTestRunner(testRun, testServices.testRunSettings)
-        testRunner.run()
-    }
-}
 
 class NativeBoxRunnerGroupingStage(testServices: TestServices) : GroupingStageHandler<BinaryArtifacts.Native>(
     testServices,
@@ -76,14 +41,7 @@ class NativeBoxRunnerGroupingStage(testServices: TestServices) : GroupingStageHa
         get() = ArtifactKinds.Native
 
     override fun processArtifact(artifact: BinaryArtifacts.Native) {
-        val executable = artifact.executable
-        val testRun = createTestRun(
-            executable,
-            testServices,
-            TestCaseId.Named("batch"),
-            addTeamCityLogger = true,
-            addTestFilter = false,
-        )
+        val testRun = createTestRun(artifact.executable, testServices)
         val testRunner = createProperTestRunner(testRun, testServices.testRunSettings) { executor, testRun ->
             RunnerWithExecutorAndPrettyHandler(executor, testRun, testServices) { e -> WrappedException.FromGroupingHandler(e, this) }
         }
@@ -91,13 +49,7 @@ class NativeBoxRunnerGroupingStage(testServices: TestServices) : GroupingStageHa
     }
 }
 
-private fun createTestRun(
-    executable: File,
-    testServices: TestServices,
-    caseId: TestCaseId,
-    addTeamCityLogger: Boolean,
-    addTestFilter: Boolean,
-): TestRun {
+private fun createTestRun(executable: File, testServices: TestServices): TestRun {
     val testKind = testServices.testRunSettings.testKind(testServices.moduleStructure.modules.firstOrNull()?.directives)
     val checks = TestRunChecks(
         executionTimeoutCheck = TestRunCheck.ExecutionTimeout.ShouldNotExceed(testServices.testRunSettings.get<Timeouts>().executionTimeout),
@@ -118,18 +70,13 @@ private fun createTestRun(
         ),
         LoggedData.dummyCompilerCall, // TODO: populate at least real compiler invocation arguments
     )
-    val testName = null // TODO: see `TestRunProvider.getTestRuns()`, how to generate test names
-    val runParameters = getTestRunParameters(
-        testKind, testName, checks, testServices,
-        addTeamCityLogger = addTeamCityLogger,
-        addTestFilter = addTestFilter
-    )
+    val runParameters = getTestRunParameters(testKind, checks)
     val testRun = TestRun(
         displayName = /* Unimportant. Used only in dynamic tests. */ "",
         executable = TestExecutable.fromCompilationResult(testKind, success),
         runParameters = runParameters,
         testCase = TestCase(
-            id = caseId,
+            id = TestCaseId.Named("batch"),
             kind = TestKind.STANDALONE,
             modules = emptySet(),
             freeCompilerArgs = TestCompilerArgs(),
@@ -145,53 +92,15 @@ private fun createTestRun(
     return testRun
 }
 
-private fun getTestRunParameters(
-    testKind: TestKind,
-    testName: TestName?,
-    checks: TestRunChecks,
-    testServices: TestServices,
-    addTeamCityLogger: Boolean,
-    addTestFilter: Boolean,
-): List<TestRunParameter> = buildList {
-    when (testKind) {
-        TestKind.STANDALONE -> {
-            // WithTCLogger relies on TCTestOutputFilter to be present in the checkers.
-            assertIs<TCTestOutputFilter>(checks.testFiltering.testOutputFilter)
-            add(TestRunParameter.WithTCTestLogger)
-            if (testName != null)
-                add(TestRunParameter.WithTestFilter(testName))
-            else {
-//                    val ignoredTests = (testCase.extras as TestCase.WithTestRunnerExtras).ignoredTests
-//                    if (ignoredTests.isNotEmpty()) {
-//                        add(TestRunParameter.WithGTestPatterns(negativePatterns = ignoredTests))
-//                    }
-            }
-        }
-        TestKind.REGULAR -> {
-            if (addTeamCityLogger) {
-                // WithTCLogger relies on TCTestOutputFilter to be present in the checkers.
-                assertIs<TCTestOutputFilter>(checks.testFiltering.testOutputFilter)
-                add(TestRunParameter.WithTCTestLogger)
-            }
-
-            if (addTestFilter) {
-                if (testName != null)
-                    add(TestRunParameter.WithTestFilter(testName))
-                else {
-                    // TODO: questionable place for batch mode
-                    val testRoots = testServices.testRunSettings.get<TestRoots>()
-                    val nominalPackageName = computePackageName(
-                        testDataBaseDir = testRoots.baseDir,
-                        testDataFile = testServices.moduleStructure.originalTestDataFiles.first(),
-                    )
-                    TestRunParameter.WithPackageFilter(nominalPackageName)
-                }
-            }
-        }
-        // Test-infrastructure invariant violation (not a failure of the code under test): throw a
-        // TestInfrastructureException so it is never masked by failure suppressors (e.g. an IGNORE_BACKEND directive).
-        else -> testInfraError("Not yet supported test kind: $testKind")
+private fun getTestRunParameters(testKind: TestKind, checks: TestRunChecks): List<TestRunParameter> = when (testKind) {
+    TestKind.STANDALONE, TestKind.REGULAR -> {
+        // WithTCLogger relies on TCTestOutputFilter to be present in the checkers.
+        assertIs<TCTestOutputFilter>(checks.testFiltering.testOutputFilter)
+        listOf(TestRunParameter.WithTCTestLogger)
     }
+    // Test-infrastructure invariant violation (not a failure of the code under test): throw a
+    // TestInfrastructureException so it is never masked by failure suppressors (e.g. an IGNORE_BACKEND directive).
+    else -> testInfraError("Not yet supported test kind: $testKind")
 }
 
 class RunnerWithExecutorAndPrettyHandler(
@@ -277,7 +186,7 @@ class PrettyResultsHandler(
 
     override fun processNonExpectedFailure(failedResults: List<TestRunCheck.Result.Failed>) {
         val output = getLoggedRun().toString()
-        // The batch always runs with the TeamCity logger (see `NativeBoxRunnerGroupingStage`).
+        // The batch always runs with the TeamCity logger (see `getTestRunParameters`).
         val failedTests = failedResults.flatMap { findFailedTestsWithTCLogger(it.reason) }
         val phaseInputs = testServices.groupingStageInputs
 
