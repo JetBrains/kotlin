@@ -100,7 +100,7 @@ fun RegisteredDirectivesBuilder.setupCustomLVForKlibForwardCompatibilityTest(sec
             // OK, versions match.
         }
 
-        secondStageCompilerDefaultLanguageVersion == LanguageVersion.entries[firstStageCompilerDefaultLanguageVersion.ordinal - 1] -> {
+        secondStageCompilerDefaultLanguageVersion == oldestKlibForwardCompatibilityLanguageVersion -> {
             // We need to set the custom LV to let `UnsupportedFeaturesTestConfigurator` skip tests with
             // the language features that are not supported in the given custom LV.
             setupCustomLanguageVersionForKlibCompatibilityTest(secondStageCompilerDefaultLanguageVersion)
@@ -121,6 +121,20 @@ fun RegisteredDirectivesBuilder.setupCustomLVForKlibForwardCompatibilityTest(sec
                 - 2nd stage compiler default LV: $secondStageCompilerDefaultLanguageVersion
             """.trimIndent()
         )
+    }
+}
+
+private val oldestKlibForwardCompatibilityLanguageVersion: LanguageVersion
+    get() = LanguageVersion.entries[LanguageVersion.LATEST_STABLE.ordinal - 1]
+
+/**
+ * Skips a sanity test of KLIB forward compatibility if its tests are all skipped with a second-stage compiler of
+ * [secondStageCompilerDefaultLanguageVersion] (see [setupCustomLVForKlibForwardCompatibilityTest]). It skips them from within the test
+ * runner, where the checks of a sanity test would take that for an unexpected result.
+ */
+fun assumeKlibForwardCompatibilityTestsRun(secondStageCompilerDefaultLanguageVersion: LanguageVersion) {
+    Assumptions.assumeFalse(secondStageCompilerDefaultLanguageVersion < oldestKlibForwardCompatibilityLanguageVersion) {
+        "KLIB forward-compatibility tests are skipped with a second-stage compiler of LV $secondStageCompilerDefaultLanguageVersion"
     }
 }
 
