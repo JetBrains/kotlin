@@ -51,13 +51,17 @@ sealed class FirDeclarationOrigin(
         object TypeAliasConstructor : Synthetic()
         object FakeFunction : Synthetic()
         object ForwardDeclaration : Synthetic()
-        object ScriptTopLevelDestructuringDeclarationContainer : Synthetic()
 
         /**
-         * The container of a top-level or member destructuring declaration outside of scripts.
-         * Such declarations are not allowed, but their entries are still desugared into properties.
+         * The container of a destructuring declaration that is not a statement of a body: a script top-level one, or a top-level or
+         * member one outside of scripts. It holds the initializer and the annotations of the declaration, and the entries are
+         * initialized from it.
+         *
+         * A script top-level container is a local variable of the script. A container outside of scripts is a private property: such
+         * declarations are not allowed (KT-58563), but their entries are still desugared into properties.
+         * Containers of local destructuring declarations have the [Source] origin.
          */
-        object NonLocalDestructuringDeclarationContainer : Synthetic()
+        object DestructuringDeclarationContainer : Synthetic()
         object FakeHiddenInPreparationForNewJdk : Synthetic()
         object ImplicitWhenSubject : Synthetic()
 

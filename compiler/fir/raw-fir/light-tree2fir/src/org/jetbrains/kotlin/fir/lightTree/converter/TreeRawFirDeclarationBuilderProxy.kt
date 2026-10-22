@@ -3154,7 +3154,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
                                 name = SpecialNames.DESTRUCT,
                                 initializer = destructuringDeclaration.initializer,
                                 extractedAnnotations = destructuringDeclaration.annotations,
-                                origin = FirDeclarationOrigin.Synthetic.ScriptTopLevelDestructuringDeclarationContainer
+                                origin = FirDeclarationOrigin.Synthetic.DestructuringDeclarationContainer
                             ).apply {
                                 isScriptTopLevelDeclaration = true
                                 isDestructuringDeclarationContainerVariable = true

@@ -193,7 +193,7 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
             val symbol = property.symbol
             // Destructuring declaration containers cannot be referenced by name, so they are not indexed by their callable id
             val isDestructuringDeclarationContainer =
-                property.origin == FirDeclarationOrigin.Synthetic.NonLocalDestructuringDeclarationContainer
+                property.origin == FirDeclarationOrigin.Synthetic.DestructuringDeclarationContainer
 
             registerCallable(symbol, data, data.state.propertyMap.takeUnless { isDestructuringDeclarationContainer })
             property.getter?.let { visitPropertyAccessor(it, data) }
