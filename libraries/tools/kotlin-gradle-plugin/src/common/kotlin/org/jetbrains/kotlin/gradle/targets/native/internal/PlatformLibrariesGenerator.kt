@@ -172,13 +172,17 @@ internal class PlatformLibrariesGenerator(
                 args.addArg("-cache-arg", it)
             }
         }
-        libraryGenerationRunner.runTool(
+        // Submit the generation call to its own worker instead of calling runTool() directly. This still runs
+        // synchronously from the caller's point of view (await() blocks until the worker finishes), since
+        // generatePlatformLibsIfNeeded() needs the libraries/caches to be in place as soon as this call returns -
+        // see KotlinNativeToolRunner.runToolInWorker for the generic Workers API migration this plugs into.
+        libraryGenerationRunner.runToolInWorker(
             KotlinNativeToolRunner.ToolArguments(
                 shouldRunInProcessMode = false,
                 compilerArgumentsLogLevel = kotlinCompilerArgumentsLogLevel.get(),
                 arguments = args
             )
-        )
+        ).await()
     }
 
     fun generatePlatformLibsIfNeeded() {
