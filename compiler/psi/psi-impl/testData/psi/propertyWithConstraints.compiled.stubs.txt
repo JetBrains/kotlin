@@ -5,7 +5,7 @@ FooKt.class:
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     PROPERTY[fqName=foo, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=false, name=foo]
-      origin: Facade(className=FooKt, jvmClassName=null)
+      origin: Facade(className=FooKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       TYPE_PARAMETER_LIST
         TYPE_PARAMETER[fqName=null, name=T]
@@ -41,6 +41,7 @@ I1.class:
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/I1, fqName=I1, isClsStubCompiledToJvmDefaultImplementation=true, isInterface=true, isTopLevel=true, name=I1, superNames=[]]
+      classFileMajorVersion: <current_major_version>
       MODIFIER_LIST[public]
       CLASS_BODY
 
@@ -50,5 +51,6 @@ I2.class:
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/I2, fqName=I2, isClsStubCompiledToJvmDefaultImplementation=true, isInterface=true, isTopLevel=true, name=I2, superNames=[]]
+      classFileMajorVersion: <current_major_version>
       MODIFIER_LIST[public]
       CLASS_BODY

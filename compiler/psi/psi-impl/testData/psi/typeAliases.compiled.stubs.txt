@@ -4,6 +4,7 @@ Ann.class:
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST
     CLASS[classId=test/Ann, fqName=test.Ann, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Ann, superNames=[Annotation]]
+      classFileMajorVersion: <current_major_version>
       MODIFIER_LIST[public final annotation]
         ANNOTATION_ENTRY[hasValueArguments=true, shortName=Target]
           valueArguments: [ allowedTargets -> [AnnotationTarget.TYPEALIAS] ]
@@ -50,7 +51,7 @@ DependencyKt.class:
       REFERENCE_EXPRESSION[referencedName=dependency]
     IMPORT_LIST
     FUNCTION[fqName=dependency.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
-      origin: Facade(className=dependency/DependencyKt, jvmClassName=null)
+      origin: Facade(className=dependency/DependencyKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
@@ -89,6 +90,7 @@ Outer.class:
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST
     CLASS[classId=test/Outer, fqName=test.Outer, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Outer, superNames=[]]
+      classFileMajorVersion: <current_major_version>
       MODIFIER_LIST[public final]
       TYPE_PARAMETER_LIST
         TYPE_PARAMETER[fqName=null, name=E]
@@ -98,6 +100,7 @@ Outer.class:
         VALUE_PARAMETER_LIST
       CLASS_BODY
         CLASS[classId=test/Outer.Inner, fqName=test.Outer.Inner, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=Inner, superNames=[]]
+          classFileMajorVersion: <current_major_version>
           MODIFIER_LIST[public final inner]
           TYPE_PARAMETER_LIST
             TYPE_PARAMETER[fqName=null, name=G]
@@ -166,6 +169,7 @@ SomeClass.class:
       REFERENCE_EXPRESSION[referencedName=dependency]
     IMPORT_LIST
     CLASS[classId=dependency/SomeClass, fqName=dependency.SomeClass, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=SomeClass, superNames=[]]
+      classFileMajorVersion: <current_major_version>
       MODIFIER_LIST[public final]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=SomeClass]
         MODIFIER_LIST[public]
@@ -179,6 +183,7 @@ TypeAliases.class:
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST
     CLASS[classId=test/TypeAliases, fqName=test.TypeAliases, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=TypeAliases, superNames=[]]
+      classFileMajorVersion: <current_major_version>
       MODIFIER_LIST[public final]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=TypeAliases]
         MODIFIER_LIST[public]
@@ -319,12 +324,14 @@ TypeAliases.class:
               REFERENCE_EXPRESSION[referencedName=Unit]
                 isClassRef: true
         CLASS[classId=test/TypeAliases.OrderB, fqName=test.TypeAliases.OrderB, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=OrderB, superNames=[]]
+          classFileMajorVersion: <current_major_version>
           MODIFIER_LIST[public final]
           PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=OrderB]
             MODIFIER_LIST[public]
             VALUE_PARAMETER_LIST
           CLASS_BODY
         CLASS[classId=test/TypeAliases.OrderA, fqName=test.TypeAliases.OrderA, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=OrderA, superNames=[]]
+          classFileMajorVersion: <current_major_version>
           MODIFIER_LIST[public final]
           PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=OrderA]
             MODIFIER_LIST[public]

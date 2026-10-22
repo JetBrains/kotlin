@@ -2,6 +2,7 @@ FILE[kind=File[packageFqName=<root>]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   CLASS[classId=/InnerClassEnumEntry, fqName=InnerClassEnumEntry, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=InnerClassEnumEntry, superNames=[Enum]]
+    classFileMajorVersion: <current_major_version>
     MODIFIER_LIST[public final enum]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=InnerClassEnumEntry]
       MODIFIER_LIST[private]

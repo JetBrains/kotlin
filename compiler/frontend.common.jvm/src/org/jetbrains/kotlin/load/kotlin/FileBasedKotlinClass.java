@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 import static org.jetbrains.org.objectweb.asm.ClassReader.*;
 import static org.jetbrains.org.objectweb.asm.Opcodes.API_VERSION;
 
-public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
+public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass, JvmClassFileBacked {
     private final ClassId classId;
     private final JvmClassFileVersion classVersion;
     private final KotlinClassHeader classHeader;
@@ -127,6 +127,12 @@ public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
     @NotNull
     public JvmClassFileVersion getClassVersion() {
         return classVersion;
+    }
+
+    @NotNull
+    @Override
+    public Integer getClassFileMajorVersion() {
+        return classVersion.getMajor();
     }
 
     @NotNull

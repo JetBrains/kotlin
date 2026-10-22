@@ -2,6 +2,7 @@ FILE[kind=File[packageFqName=<root>]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   CLASS[classId=/IMap, fqName=IMap, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=IMap, superNames=[]]
+    classFileMajorVersion: <current_major_version>
     MODIFIER_LIST[public open]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=K]

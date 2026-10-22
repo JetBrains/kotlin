@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.builtins.isNumberedFunctionClassFqName
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
+import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
@@ -58,6 +59,9 @@ private class ClassClsStubBuilder(
         classProto, nameResolver, TypeTable(classProto.typeTable), source, outerContext.protoContainer
     )
     private val classKind = thisAsProtoContainer.kind
+
+    private val classFileMajorVersion =
+        (source as? KotlinJvmBinarySourceElement)?.binaryClass?.classFileMajorVersion
 
     private val c = outerContext.child(
         classProto.typeParameterList, classId.shortClassName, nameResolver, thisAsProtoContainer.typeTable, thisAsProtoContainer
@@ -163,6 +167,7 @@ private class ClassClsStubBuilder(
                     isTopLevel = isTopLevel,
                     isObjectLiteral = false,
                     kdocText = kdoc,
+                    classFileMajorVersion = classFileMajorVersion,
                 )
             }
 
@@ -180,6 +185,7 @@ private class ClassClsStubBuilder(
                     isTopLevel = isTopLevel,
                     kdocText = kdoc,
                     valueClassRepresentation = createValueClassRepresentation(),
+                    classFileMajorVersion = classFileMajorVersion,
                 )
             }
         }

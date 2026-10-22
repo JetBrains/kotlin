@@ -5,7 +5,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ContractsUsageKt]]
   IMPORT_LIST
   FUNCTION[fqName=bar, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=bar]
     contract: [ effect:CallsInPlace(param(0), EXACTLY_ONCE) ]
-    origin: Facade(className=ContractsUsageKt, jvmClassName=null)
+    origin: Facade(className=ContractsUsageKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
@@ -26,7 +26,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ContractsUsageKt]]
           isClassRef: true
   FUNCTION[fqName=baz, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=true, name=baz]
     contract: [ effect:CallsInPlace(param(-1), AT_MOST_ONCE) ]
-    origin: Facade(className=ContractsUsageKt, jvmClassName=null)
+    origin: Facade(className=ContractsUsageKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
     MODIFIER_LIST[public]
     TYPE_REFERENCE
       FUNCTION_TYPE
@@ -49,7 +49,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ContractsUsageKt]]
       effect:CallsInPlace(param(0), AT_LEAST_ONCE)
       effect:CallsInPlace(param(1), AT_MOST_ONCE)
     ]
-    origin: Facade(className=ContractsUsageKt, jvmClassName=null)
+    origin: Facade(className=ContractsUsageKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]

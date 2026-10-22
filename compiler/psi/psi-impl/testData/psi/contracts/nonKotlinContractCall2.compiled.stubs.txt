@@ -5,7 +5,7 @@ MainKt.class:
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     FUNCTION[fqName=testBuilder, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=testBuilder]
-      origin: Facade(className=MainKt, jvmClassName=null)
+      origin: Facade(className=MainKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=id]
@@ -36,7 +36,7 @@ MainKt.class:
           REFERENCE_EXPRESSION[referencedName=Test]
             isClassRef: true
     FUNCTION[fqName=test, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=test]
-      origin: Facade(className=MainKt, jvmClassName=null)
+      origin: Facade(className=MainKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
       TYPE_REFERENCE
@@ -46,7 +46,7 @@ MainKt.class:
           REFERENCE_EXPRESSION[referencedName=Unit]
             isClassRef: true
     FUNCTION[fqName=contract, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=contract]
-      origin: Facade(className=MainKt, jvmClassName=null)
+      origin: Facade(className=MainKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=test]
@@ -67,6 +67,7 @@ Test.class:
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/Test, fqName=Test, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Test, superNames=[]]
+      classFileMajorVersion: <current_major_version>
       MODIFIER_LIST[public final]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Test]
         MODIFIER_LIST[public]

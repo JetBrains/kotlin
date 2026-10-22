@@ -329,7 +329,7 @@ private class FunctionClsStubBuilder(
                     contractOwner = ClsContractOwner.Function(functionProto),
                 )
             },
-            origin = createStubOrigin(protoContainer)
+            origin = createStubOrigin(protoContainer, c)
         )
     }
 }
@@ -412,7 +412,7 @@ private class PropertyClsStubBuilder(
             hasReturnTypeRef = true,
             fqName = c.containerFqName.child(callableName),
             initializer,
-            origin = createStubOrigin(protoContainer),
+            origin = createStubOrigin(protoContainer, c),
             hasBackingField = propertyProto.getExtensionOrNull(JvmProtoBuf.propertySignature)?.hasField(),
             kdocText = propertyProto.getExtensionOrNull(KlibMetadataProtoBuf.propertyKdoc),
         )

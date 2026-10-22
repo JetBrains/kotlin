@@ -2,6 +2,7 @@ FILE[kind=File[packageFqName=<root>]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   OBJECT_DECLARATION[classId=/DataObject, fqName=DataObject, isObjectLiteral=false, isTopLevel=true, name=DataObject, superNames=[]]
+    classFileMajorVersion: <current_major_version>
     MODIFIER_LIST[public data]
     CLASS_BODY
       FUNCTION[fqName=DataObject.equals, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=equals]

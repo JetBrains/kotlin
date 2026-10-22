@@ -6,7 +6,7 @@ CallInitializersKt.class:
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST
     PROPERTY[fqName=test.call, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=call]
-      origin: Facade(className=test/CallInitializersKt, jvmClassName=null)
+      origin: Facade(className=test/CallInitializersKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       TYPE_REFERENCE
         USER_TYPE
@@ -15,7 +15,7 @@ CallInitializersKt.class:
           REFERENCE_EXPRESSION[referencedName=Int]
             isClassRef: true
     PROPERTY[fqName=test.callWithArguments, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=callWithArguments]
-      origin: Facade(className=test/CallInitializersKt, jvmClassName=null)
+      origin: Facade(className=test/CallInitializersKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       TYPE_REFERENCE
         USER_TYPE
@@ -24,7 +24,7 @@ CallInitializersKt.class:
           REFERENCE_EXPRESSION[referencedName=Int]
             isClassRef: true
     PROPERTY[fqName=test.callWithNamedArguments, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=callWithNamedArguments]
-      origin: Facade(className=test/CallInitializersKt, jvmClassName=null)
+      origin: Facade(className=test/CallInitializersKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       TYPE_REFERENCE
         USER_TYPE
@@ -33,7 +33,7 @@ CallInitializersKt.class:
           REFERENCE_EXPRESSION[referencedName=Int]
             isClassRef: true
     PROPERTY[fqName=test.nestedCall, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=nestedCall]
-      origin: Facade(className=test/CallInitializersKt, jvmClassName=null)
+      origin: Facade(className=test/CallInitializersKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       TYPE_REFERENCE
         USER_TYPE
@@ -42,7 +42,7 @@ CallInitializersKt.class:
           REFERENCE_EXPRESSION[referencedName=Int]
             isClassRef: true
     PROPERTY[fqName=test.qualifiedCall, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=qualifiedCall]
-      origin: Facade(className=test/CallInitializersKt, jvmClassName=null)
+      origin: Facade(className=test/CallInitializersKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       TYPE_REFERENCE
         USER_TYPE
@@ -51,7 +51,7 @@ CallInitializersKt.class:
           REFERENCE_EXPRESSION[referencedName=String]
             isClassRef: true
     PROPERTY[fqName=test.parenthesizedCall, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=parenthesizedCall]
-      origin: Facade(className=test/CallInitializersKt, jvmClassName=null)
+      origin: Facade(className=test/CallInitializersKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       TYPE_REFERENCE
         USER_TYPE
@@ -60,7 +60,7 @@ CallInitializersKt.class:
           REFERENCE_EXPRESSION[referencedName=Int]
             isClassRef: true
     PROPERTY[fqName=test.doublyParenthesizedCall, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=doublyParenthesizedCall]
-      origin: Facade(className=test/CallInitializersKt, jvmClassName=null)
+      origin: Facade(className=test/CallInitializersKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       TYPE_REFERENCE
         USER_TYPE
@@ -69,7 +69,7 @@ CallInitializersKt.class:
           REFERENCE_EXPRESSION[referencedName=Int]
             isClassRef: true
     PROPERTY[fqName=test.callWithParenthesizedArguments, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=callWithParenthesizedArguments]
-      origin: Facade(className=test/CallInitializersKt, jvmClassName=null)
+      origin: Facade(className=test/CallInitializersKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       TYPE_REFERENCE
         USER_TYPE
@@ -78,7 +78,7 @@ CallInitializersKt.class:
           REFERENCE_EXPRESSION[referencedName=Int]
             isClassRef: true
     PROPERTY[fqName=test.getterCall, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=getterCall]
-      origin: Facade(className=test/CallInitializersKt, jvmClassName=null)
+      origin: Facade(className=test/CallInitializersKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       TYPE_REFERENCE
         USER_TYPE
@@ -90,7 +90,7 @@ CallInitializersKt.class:
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
     FUNCTION[fqName=test.compute, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=compute]
-      origin: Facade(className=test/CallInitializersKt, jvmClassName=null)
+      origin: Facade(className=test/CallInitializersKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
       TYPE_REFERENCE
@@ -100,7 +100,7 @@ CallInitializersKt.class:
           REFERENCE_EXPRESSION[referencedName=Int]
             isClassRef: true
     FUNCTION[fqName=test.sum, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=sum]
-      origin: Facade(className=test/CallInitializersKt, jvmClassName=null)
+      origin: Facade(className=test/CallInitializersKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=left]
@@ -124,7 +124,7 @@ CallInitializersKt.class:
           REFERENCE_EXPRESSION[referencedName=Int]
             isClassRef: true
     FUNCTION[fqName=test.expressionBodyCall, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=expressionBodyCall]
-      origin: Facade(className=test/CallInitializersKt, jvmClassName=null)
+      origin: Facade(className=test/CallInitializersKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
       TYPE_REFERENCE
@@ -134,7 +134,7 @@ CallInitializersKt.class:
           REFERENCE_EXPRESSION[referencedName=Int]
             isClassRef: true
     FUNCTION[fqName=test.expressionBodyNestedCall, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=expressionBodyNestedCall]
-      origin: Facade(className=test/CallInitializersKt, jvmClassName=null)
+      origin: Facade(className=test/CallInitializersKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
       TYPE_REFERENCE
@@ -144,7 +144,7 @@ CallInitializersKt.class:
           REFERENCE_EXPRESSION[referencedName=Int]
             isClassRef: true
     FUNCTION[fqName=test.expressionBodyParenthesizedCall, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=expressionBodyParenthesizedCall]
-      origin: Facade(className=test/CallInitializersKt, jvmClassName=null)
+      origin: Facade(className=test/CallInitializersKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
       TYPE_REFERENCE
@@ -154,7 +154,7 @@ CallInitializersKt.class:
           REFERENCE_EXPRESSION[referencedName=Int]
             isClassRef: true
     FUNCTION[fqName=test.withCallDefault, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=withCallDefault]
-      origin: Facade(className=test/CallInitializersKt, jvmClassName=null)
+      origin: Facade(className=test/CallInitializersKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=value]
@@ -179,6 +179,7 @@ WithConstructorCallDefault.class:
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST
     CLASS[classId=test/WithConstructorCallDefault, fqName=test.WithConstructorCallDefault, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=WithConstructorCallDefault, superNames=[]]
+      classFileMajorVersion: <current_major_version>
       MODIFIER_LIST[public final]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=WithConstructorCallDefault]
         MODIFIER_LIST[public]

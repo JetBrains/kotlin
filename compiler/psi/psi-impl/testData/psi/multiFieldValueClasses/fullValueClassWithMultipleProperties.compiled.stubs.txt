@@ -3,6 +3,7 @@ PrivateValue.class:
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/PrivateValue, fqName=PrivateValue, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=PrivateValue, superNames=[]]
+      classFileMajorVersion: <current_major_version>
       valueClassRepresentation: full [
         first -> kotlin.String
         second -> kotlin.Int
@@ -84,6 +85,7 @@ PublicValue.class:
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/PublicValue, fqName=PublicValue, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=PublicValue, superNames=[]]
+      classFileMajorVersion: <current_major_version>
       valueClassRepresentation: full [
         first -> kotlin.String
         second -> kotlin.Int

@@ -5,7 +5,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=InternalConstKt]]
   IMPORT_LIST
   PROPERTY[fqName=FOO2, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=FOO2]
     constantInitializer: 3.14.toDouble()
-    origin: Facade(className=InternalConstKt, jvmClassName=null)
+    origin: Facade(className=InternalConstKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
     MODIFIER_LIST[private const]
     TYPE_REFERENCE
       USER_TYPE
@@ -16,7 +16,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=InternalConstKt]]
     FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=3.14]
   PROPERTY[fqName=FOO, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=FOO]
     constantInitializer: 6.28.toDouble()
-    origin: Facade(className=InternalConstKt, jvmClassName=null)
+    origin: Facade(className=InternalConstKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
     MODIFIER_LIST[internal const]
     TYPE_REFERENCE
       USER_TYPE

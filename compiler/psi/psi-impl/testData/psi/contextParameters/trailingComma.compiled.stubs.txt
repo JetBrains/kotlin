@@ -4,7 +4,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=TrailingCommaKt]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   PROPERTY[fqName=foo, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=foo]
-    origin: Facade(className=TrailingCommaKt, jvmClassName=null)
+    origin: Facade(className=TrailingCommaKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
     MODIFIER_LIST[public]
       CONTEXT_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=s]
@@ -24,7 +24,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=TrailingCommaKt]]
       MODIFIER_LIST[public final]
       VALUE_PARAMETER_LIST
   PROPERTY[fqName=foo, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=foo]
-    origin: Facade(className=TrailingCommaKt, jvmClassName=null)
+    origin: Facade(className=TrailingCommaKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
     MODIFIER_LIST[public]
       CONTEXT_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=s]
@@ -51,7 +51,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=TrailingCommaKt]]
       MODIFIER_LIST[public final]
       VALUE_PARAMETER_LIST
   FUNCTION[fqName=foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
-    origin: Facade(className=TrailingCommaKt, jvmClassName=null)
+    origin: Facade(className=TrailingCommaKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
     MODIFIER_LIST[public]
       CONTEXT_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=s]
@@ -69,7 +69,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=TrailingCommaKt]]
         REFERENCE_EXPRESSION[referencedName=Unit]
           isClassRef: true
   FUNCTION[fqName=foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
-    origin: Facade(className=TrailingCommaKt, jvmClassName=null)
+    origin: Facade(className=TrailingCommaKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
     MODIFIER_LIST[public]
       CONTEXT_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=s]

@@ -3,6 +3,7 @@ Annotation.class:
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/Annotation, fqName=Annotation, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Annotation, superNames=[]]
+      classFileMajorVersion: <current_major_version>
       MODIFIER_LIST[public final]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Annotation]
         MODIFIER_LIST[public]
@@ -50,7 +51,7 @@ AnnotationAsArgKt.class:
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     FUNCTION[fqName=foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
-      origin: Facade(className=AnnotationAsArgKt, jvmClassName=null)
+      origin: Facade(className=AnnotationAsArgKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=annotation]

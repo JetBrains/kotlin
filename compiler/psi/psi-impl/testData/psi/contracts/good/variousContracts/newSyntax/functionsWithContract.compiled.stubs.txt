@@ -5,7 +5,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=FunctionsWithContractKt]]
   IMPORT_LIST
   FUNCTION[fqName=test1, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=test1]
     contract: [ effect:Returns(WILDCARD) -> param(0) != null ]
-    origin: Facade(className=FunctionsWithContractKt, jvmClassName=null)
+    origin: Facade(className=FunctionsWithContractKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=arg]
@@ -27,7 +27,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=FunctionsWithContractKt]]
       effect:Returns(WILDCARD) -> param(0) != null
       effect:CallsInPlace(param(1), EXACTLY_ONCE)
     ]
-    origin: Facade(className=FunctionsWithContractKt, jvmClassName=null)
+    origin: Facade(className=FunctionsWithContractKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=s]
@@ -56,7 +56,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=FunctionsWithContractKt]]
           isClassRef: true
   FUNCTION[fqName=test3, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=test3]
     contract: [ effect:Returns(TRUE) -> param(0) != null ]
-    origin: Facade(className=FunctionsWithContractKt, jvmClassName=null)
+    origin: Facade(className=FunctionsWithContractKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=arg]

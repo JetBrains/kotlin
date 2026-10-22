@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.load.kotlin.FacadeClassSource
+import org.jetbrains.kotlin.load.kotlin.JvmClassFileBacked
 import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.kotlin.metadata.ProtoBuf
@@ -111,7 +112,12 @@ fun createMultifileClassStub(
 
         val partHeader = partFile.classHeader
         val [nameResolver, packageProto] = JvmProtoBufUtil.readPackageDataFrom(partHeader.data!!, partHeader.strings!!)
-        val partContext = components.createContext(nameResolver, packageFqName, TypeTable(packageProto.typeTable))
+        val partContext = components.createContext(
+            nameResolver,
+            packageFqName,
+            TypeTable(packageProto.typeTable),
+            packagePartClassFileMajorVersion = partFile.classFileMajorVersion,
+        )
         val container = ProtoContainer.Package(
             packageFqName, partContext.nameResolver, partContext.typeTable,
             JvmPackagePartSource(partFile, packageProto, nameResolver)
@@ -320,22 +326,29 @@ fun createTargetedAnnotationStubs(
     }
 }
 
-internal fun createStubOrigin(protoContainer: ProtoContainer): KotlinStubOrigin? {
+internal fun createStubOrigin(protoContainer: ProtoContainer, c: ClsStubBuilderContext): KotlinStubOrigin? {
     if (protoContainer is ProtoContainer.Package) {
         val source = protoContainer.source
         if (source is FacadeClassSource) {
             val className = source.className.internalName
             val facadeClassName = source.facadeClassName?.internalName
             if (facadeClassName != null) {
-                return KotlinStubOrigin.MultiFileFacade(className, facadeClassName)
+                return KotlinStubOrigin.MultiFileFacade(className, facadeClassName, c.packagePartClassFileMajorVersion)
             }
             val jvmClassName = if (source is JvmPackagePartSource) source.jvmClassName?.internalName else null
-            return KotlinStubOrigin.Facade(className = className, jvmClassName = if (jvmClassName != className) jvmClassName else null)
+            return KotlinStubOrigin.Facade(
+                className = className,
+                jvmClassName = if (jvmClassName != className) jvmClassName else null,
+                classFileMajorVersion = c.packagePartClassFileMajorVersion,
+            )
         }
     }
 
     return null
 }
+
+internal val KotlinJvmBinaryClass.classFileMajorVersion: Int?
+    get() = (this as? JvmClassFileBacked)?.classFileMajorVersion
 
 val MessageLite.annotatedCallableKind: AnnotatedCallableKind
     get() = when (this) {

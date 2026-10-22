@@ -3,6 +3,7 @@ FILE[kind=File[packageFqName=test]]
     REFERENCE_EXPRESSION[referencedName=test]
   IMPORT_LIST
   CLASS[classId=test/NestedClasses, fqName=test.NestedClasses, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=NestedClasses, superNames=[]]
+    classFileMajorVersion: <current_major_version>
     MODIFIER_LIST[public final]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=TOuter]
@@ -28,6 +29,7 @@ FILE[kind=File[packageFqName=test]]
             REFERENCE_EXPRESSION[referencedName=Unit]
               isClassRef: true
       CLASS[classId=test/NestedClasses.Nested, fqName=test.NestedClasses.Nested, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=Nested, superNames=[]]
+        classFileMajorVersion: <current_major_version>
         MODIFIER_LIST[private final]
         TYPE_PARAMETER_LIST
           TYPE_PARAMETER[fqName=null, name=TN]
@@ -58,6 +60,7 @@ FILE[kind=File[packageFqName=test]]
                 REFERENCE_EXPRESSION[referencedName=Unit]
                   isClassRef: true
           CLASS[classId=test/NestedClasses.Nested.NN, fqName=test.NestedClasses.Nested.NN, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=NN, superNames=[]]
+            classFileMajorVersion: <current_major_version>
             MODIFIER_LIST[public final]
             TYPE_PARAMETER_LIST
               TYPE_PARAMETER[fqName=null, name=TNN]
@@ -88,6 +91,7 @@ FILE[kind=File[packageFqName=test]]
                     REFERENCE_EXPRESSION[referencedName=Unit]
                       isClassRef: true
           CLASS[classId=test/NestedClasses.Nested.NI, fqName=test.NestedClasses.Nested.NI, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=NI, superNames=[]]
+            classFileMajorVersion: <current_major_version>
             MODIFIER_LIST[public final inner]
             TYPE_PARAMETER_LIST
               TYPE_PARAMETER[fqName=null, name=TNI]
@@ -119,6 +123,7 @@ FILE[kind=File[packageFqName=test]]
                     REFERENCE_EXPRESSION[referencedName=Unit]
                       isClassRef: true
       CLASS[classId=test/NestedClasses.Inner, fqName=test.NestedClasses.Inner, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=Inner, superNames=[]]
+        classFileMajorVersion: <current_major_version>
         MODIFIER_LIST[public final inner]
         TYPE_PARAMETER_LIST
           TYPE_PARAMETER[fqName=null, name=TI]
@@ -145,6 +150,7 @@ FILE[kind=File[packageFqName=test]]
                 REFERENCE_EXPRESSION[referencedName=Unit]
                   isClassRef: true
           CLASS[classId=test/NestedClasses.Inner.II, fqName=test.NestedClasses.Inner.II, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=II, superNames=[]]
+            classFileMajorVersion: <current_major_version>
             MODIFIER_LIST[private final inner]
             TYPE_PARAMETER_LIST
               TYPE_PARAMETER[fqName=null, name=TII]

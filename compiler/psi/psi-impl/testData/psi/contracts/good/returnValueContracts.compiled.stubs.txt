@@ -8,7 +8,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ReturnValueContractsKt]]
       effect:CallsInPlace(param(0), EXACTLY_ONCE)
       effect:ReturnsParameter(param(-1))
     ]
-    origin: Facade(className=ReturnValueContractsKt, jvmClassName=null)
+    origin: Facade(className=ReturnValueContractsKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
     MODIFIER_LIST[public inline]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=T]
@@ -41,7 +41,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ReturnValueContractsKt]]
       effect:CallsInPlace(param(0), EXACTLY_ONCE)
       effect:ReturnsResultOf(param(0))
     ]
-    origin: Facade(className=ReturnValueContractsKt, jvmClassName=null)
+    origin: Facade(className=ReturnValueContractsKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
     MODIFIER_LIST[public inline]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=T]

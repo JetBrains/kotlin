@@ -3,6 +3,7 @@ Foo.class:
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/Foo, fqName=Foo, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Foo, superNames=[]]
+      classFileMajorVersion: <current_major_version>
       MODIFIER_LIST[public final]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Foo]
         MODIFIER_LIST[public]
@@ -17,7 +18,7 @@ MixOfRegularAndStaticCompanionMethodsKt.class:
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     PROPERTY[fqName=static1, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=false, name=static1]
-      origin: Facade(className=MixOfRegularAndStaticCompanionMethodsKt, jvmClassName=null)
+      origin: Facade(className=MixOfRegularAndStaticCompanionMethodsKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public companion]
       TYPE_REFERENCE
         USER_TYPE
@@ -33,7 +34,7 @@ MixOfRegularAndStaticCompanionMethodsKt.class:
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
     PROPERTY[fqName=regular2, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=false, name=regular2]
-      origin: Facade(className=MixOfRegularAndStaticCompanionMethodsKt, jvmClassName=null)
+      origin: Facade(className=MixOfRegularAndStaticCompanionMethodsKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       TYPE_REFERENCE
         USER_TYPE
@@ -49,7 +50,7 @@ MixOfRegularAndStaticCompanionMethodsKt.class:
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
     PROPERTY[fqName=static2, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=false, name=static2]
-      origin: Facade(className=MixOfRegularAndStaticCompanionMethodsKt, jvmClassName=null)
+      origin: Facade(className=MixOfRegularAndStaticCompanionMethodsKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public companion]
       TYPE_REFERENCE
         USER_TYPE
@@ -65,7 +66,7 @@ MixOfRegularAndStaticCompanionMethodsKt.class:
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
     FUNCTION[fqName=regular1, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=regular1]
-      origin: Facade(className=MixOfRegularAndStaticCompanionMethodsKt, jvmClassName=null)
+      origin: Facade(className=MixOfRegularAndStaticCompanionMethodsKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       TYPE_REFERENCE
         USER_TYPE
@@ -79,7 +80,7 @@ MixOfRegularAndStaticCompanionMethodsKt.class:
           REFERENCE_EXPRESSION[referencedName=Unit]
             isClassRef: true
     FUNCTION[fqName=regular3, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=regular3]
-      origin: Facade(className=MixOfRegularAndStaticCompanionMethodsKt, jvmClassName=null)
+      origin: Facade(className=MixOfRegularAndStaticCompanionMethodsKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       TYPE_REFERENCE
         USER_TYPE
@@ -93,7 +94,7 @@ MixOfRegularAndStaticCompanionMethodsKt.class:
           REFERENCE_EXPRESSION[referencedName=Unit]
             isClassRef: true
     FUNCTION[fqName=static3, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=static3]
-      origin: Facade(className=MixOfRegularAndStaticCompanionMethodsKt, jvmClassName=null)
+      origin: Facade(className=MixOfRegularAndStaticCompanionMethodsKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public companion]
       TYPE_REFERENCE
         USER_TYPE

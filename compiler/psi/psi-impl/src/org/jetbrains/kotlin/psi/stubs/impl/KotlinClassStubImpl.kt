@@ -31,6 +31,11 @@ class KotlinClassStubImpl(
      * Only stubs built from compiled metadata have this information; it is always `null` for stubs built from sources.
      */
     val valueClassRepresentation: KotlinValueClassRepresentation?,
+    /**
+     * The major version of the JVM class file the declaration is compiled to.
+     * Only stubs built from class files have this information; it is always `null` for other stubs.
+     */
+    val classFileMajorVersion: Int?,
 ) : KotlinStubBaseImpl<KtClass>(
     parent = parent,
     elementType = KtNodeTypes.CLASS,
@@ -55,6 +60,7 @@ class KotlinClassStubImpl(
         isTopLevel = isTopLevel,
         valueClassRepresentation = valueClassRepresentation,
         kdocText = kdocText,
+        classFileMajorVersion = classFileMajorVersion,
     )
 
     @KtImplementationDetail
@@ -68,5 +74,6 @@ class KotlinClassStubImpl(
                 other.isInterface == isInterface &&
                 other.kdocText == kdocText &&
                 other.valueClassRepresentation == valueClassRepresentation &&
+                other.classFileMajorVersion == classFileMajorVersion &&
                 other.superNameRefs.contentEquals(superNameRefs)
 }

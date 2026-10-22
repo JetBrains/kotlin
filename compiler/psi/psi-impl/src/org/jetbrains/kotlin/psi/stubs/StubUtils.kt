@@ -97,6 +97,15 @@ internal object StubUtils {
     }
 
     @JvmStatic
+    internal fun StubOutputStream.writeNullableNonNegativeVarInt(value: Int?) {
+        require(value == null || value >= 0) { "Negative value: $value" }
+        writeVarInt(value?.plus(1) ?: 0) // +1 since 0 is reserved for null value
+    }
+
+    @JvmStatic
+    internal fun StubInputStream.readNullableNonNegativeVarInt(): Int? = readVarInt().takeIf { it != 0 }?.minus(1)
+
+    @JvmStatic
     internal fun StubInputStream.readFqName(): FqName = FqName(readNameString()!!)
 
     @JvmStatic

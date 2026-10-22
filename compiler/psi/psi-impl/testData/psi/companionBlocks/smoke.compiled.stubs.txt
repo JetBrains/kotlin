@@ -3,6 +3,7 @@ C.class:
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/C, fqName=C, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=C, superNames=[]]
+      classFileMajorVersion: <current_major_version>
       MODIFIER_LIST[public final]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=C]
         MODIFIER_LIST[public]
@@ -15,6 +16,7 @@ C2.class:
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/C2, fqName=C2, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=C2, superNames=[]]
+      classFileMajorVersion: <current_major_version>
       MODIFIER_LIST[public final]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=C2]
         MODIFIER_LIST[public]
@@ -27,6 +29,7 @@ C3.class:
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/C3, fqName=C3, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=C3, superNames=[]]
+      classFileMajorVersion: <current_major_version>
       MODIFIER_LIST[public final]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=C3]
         MODIFIER_LIST[public]
@@ -60,6 +63,7 @@ C4.class:
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/C4, fqName=C4, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=C4, superNames=[]]
+      classFileMajorVersion: <current_major_version>
       MODIFIER_LIST[public final]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=C4]
         MODIFIER_LIST[public]

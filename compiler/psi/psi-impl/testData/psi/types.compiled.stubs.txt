@@ -3,6 +3,7 @@ FILE[kind=File[packageFqName=test]]
     REFERENCE_EXPRESSION[referencedName=test]
   IMPORT_LIST
   CLASS[classId=test/Types, fqName=test.Types, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Types, superNames=[]]
+    classFileMajorVersion: <current_major_version>
     MODIFIER_LIST[public abstract]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Types]
       MODIFIER_LIST[public]

@@ -3,7 +3,7 @@ FILE[kind=File[packageFqName=kotlin]]
     REFERENCE_EXPRESSION[referencedName=kotlin]
   IMPORT_LIST
   FUNCTION[fqName=kotlin.arrayOf, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=arrayOf]
-    origin: Facade(className=kotlin/LibraryKt, jvmClassName=null)
+    origin: Facade(className=kotlin/LibraryKt, jvmClassName=null, classFileMajorVersion=null)
     MODIFIER_LIST[public inline MustUseReturnValue]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=T]
@@ -28,7 +28,7 @@ FILE[kind=File[packageFqName=kotlin]]
                 REFERENCE_EXPRESSION[referencedName=T]
                   isClassRef: true
   FUNCTION[fqName=kotlin.arrayOfNulls, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=arrayOfNulls]
-    origin: Facade(className=kotlin/LibraryKt, jvmClassName=null)
+    origin: Facade(className=kotlin/LibraryKt, jvmClassName=null, classFileMajorVersion=null)
     MODIFIER_LIST[public MustUseReturnValue]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=T]
@@ -55,7 +55,7 @@ FILE[kind=File[packageFqName=kotlin]]
                   REFERENCE_EXPRESSION[referencedName=T]
                     isClassRef: true
   FUNCTION[fqName=kotlin.booleanArrayOf, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=booleanArrayOf]
-    origin: Facade(className=kotlin/LibraryKt, jvmClassName=null)
+    origin: Facade(className=kotlin/LibraryKt, jvmClassName=null, classFileMajorVersion=null)
     MODIFIER_LIST[public MustUseReturnValue]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=elements]
@@ -73,7 +73,7 @@ FILE[kind=File[packageFqName=kotlin]]
         REFERENCE_EXPRESSION[referencedName=BooleanArray]
           isClassRef: true
   FUNCTION[fqName=kotlin.byteArrayOf, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=byteArrayOf]
-    origin: Facade(className=kotlin/LibraryKt, jvmClassName=null)
+    origin: Facade(className=kotlin/LibraryKt, jvmClassName=null, classFileMajorVersion=null)
     MODIFIER_LIST[public MustUseReturnValue]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=elements]
@@ -91,7 +91,7 @@ FILE[kind=File[packageFqName=kotlin]]
         REFERENCE_EXPRESSION[referencedName=ByteArray]
           isClassRef: true
   FUNCTION[fqName=kotlin.charArrayOf, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=charArrayOf]
-    origin: Facade(className=kotlin/LibraryKt, jvmClassName=null)
+    origin: Facade(className=kotlin/LibraryKt, jvmClassName=null, classFileMajorVersion=null)
     MODIFIER_LIST[public MustUseReturnValue]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=elements]
@@ -109,7 +109,7 @@ FILE[kind=File[packageFqName=kotlin]]
         REFERENCE_EXPRESSION[referencedName=CharArray]
           isClassRef: true
   FUNCTION[fqName=kotlin.doubleArrayOf, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=doubleArrayOf]
-    origin: Facade(className=kotlin/LibraryKt, jvmClassName=null)
+    origin: Facade(className=kotlin/LibraryKt, jvmClassName=null, classFileMajorVersion=null)
     MODIFIER_LIST[public MustUseReturnValue]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=elements]
@@ -127,7 +127,7 @@ FILE[kind=File[packageFqName=kotlin]]
         REFERENCE_EXPRESSION[referencedName=DoubleArray]
           isClassRef: true
   FUNCTION[fqName=kotlin.emptyArray, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=emptyArray]
-    origin: Facade(className=kotlin/LibraryKt, jvmClassName=null)
+    origin: Facade(className=kotlin/LibraryKt, jvmClassName=null, classFileMajorVersion=null)
     MODIFIER_LIST[public inline MustUseReturnValue]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=T]
@@ -146,7 +146,7 @@ FILE[kind=File[packageFqName=kotlin]]
                 REFERENCE_EXPRESSION[referencedName=T]
                   isClassRef: true
   FUNCTION[fqName=kotlin.enumValueOf, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=enumValueOf]
-    origin: Facade(className=kotlin/LibraryKt, jvmClassName=null)
+    origin: Facade(className=kotlin/LibraryKt, jvmClassName=null, classFileMajorVersion=null)
     MODIFIER_LIST[public inline MustUseReturnValue]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=SinceKotlin]
         valueArguments: [ version -> "1.1" ]
@@ -191,7 +191,7 @@ FILE[kind=File[packageFqName=kotlin]]
         REFERENCE_EXPRESSION[referencedName=T]
           isClassRef: true
   FUNCTION[fqName=kotlin.enumValues, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=enumValues]
-    origin: Facade(className=kotlin/LibraryKt, jvmClassName=null)
+    origin: Facade(className=kotlin/LibraryKt, jvmClassName=null, classFileMajorVersion=null)
     MODIFIER_LIST[public inline MustUseReturnValue]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=SinceKotlin]
         valueArguments: [ version -> "1.1" ]
@@ -237,7 +237,7 @@ FILE[kind=File[packageFqName=kotlin]]
                 REFERENCE_EXPRESSION[referencedName=T]
                   isClassRef: true
   FUNCTION[fqName=kotlin.floatArrayOf, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=floatArrayOf]
-    origin: Facade(className=kotlin/LibraryKt, jvmClassName=null)
+    origin: Facade(className=kotlin/LibraryKt, jvmClassName=null, classFileMajorVersion=null)
     MODIFIER_LIST[public MustUseReturnValue]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=elements]
@@ -255,7 +255,7 @@ FILE[kind=File[packageFqName=kotlin]]
         REFERENCE_EXPRESSION[referencedName=FloatArray]
           isClassRef: true
   FUNCTION[fqName=kotlin.intArrayOf, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=intArrayOf]
-    origin: Facade(className=kotlin/LibraryKt, jvmClassName=null)
+    origin: Facade(className=kotlin/LibraryKt, jvmClassName=null, classFileMajorVersion=null)
     MODIFIER_LIST[public MustUseReturnValue]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=elements]
@@ -273,7 +273,7 @@ FILE[kind=File[packageFqName=kotlin]]
         REFERENCE_EXPRESSION[referencedName=IntArray]
           isClassRef: true
   FUNCTION[fqName=kotlin.longArrayOf, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=longArrayOf]
-    origin: Facade(className=kotlin/LibraryKt, jvmClassName=null)
+    origin: Facade(className=kotlin/LibraryKt, jvmClassName=null, classFileMajorVersion=null)
     MODIFIER_LIST[public MustUseReturnValue]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=elements]
@@ -291,7 +291,7 @@ FILE[kind=File[packageFqName=kotlin]]
         REFERENCE_EXPRESSION[referencedName=LongArray]
           isClassRef: true
   FUNCTION[fqName=kotlin.plus, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=plus]
-    origin: Facade(className=kotlin/LibraryKt, jvmClassName=null)
+    origin: Facade(className=kotlin/LibraryKt, jvmClassName=null, classFileMajorVersion=null)
     MODIFIER_LIST[public operator MustUseReturnValue]
     TYPE_REFERENCE
       NULLABLE_TYPE
@@ -316,7 +316,7 @@ FILE[kind=File[packageFqName=kotlin]]
         REFERENCE_EXPRESSION[referencedName=String]
           isClassRef: true
   FUNCTION[fqName=kotlin.shortArrayOf, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=shortArrayOf]
-    origin: Facade(className=kotlin/LibraryKt, jvmClassName=null)
+    origin: Facade(className=kotlin/LibraryKt, jvmClassName=null, classFileMajorVersion=null)
     MODIFIER_LIST[public MustUseReturnValue]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=elements]
@@ -334,7 +334,7 @@ FILE[kind=File[packageFqName=kotlin]]
         REFERENCE_EXPRESSION[referencedName=ShortArray]
           isClassRef: true
   FUNCTION[fqName=kotlin.toString, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=toString]
-    origin: Facade(className=kotlin/LibraryKt, jvmClassName=null)
+    origin: Facade(className=kotlin/LibraryKt, jvmClassName=null, classFileMajorVersion=null)
     MODIFIER_LIST[public MustUseReturnValue]
     TYPE_REFERENCE
       NULLABLE_TYPE

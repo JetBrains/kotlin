@@ -3,6 +3,7 @@ A.class:
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=true, isInterface=true, isTopLevel=true, name=A, superNames=[]]
+      classFileMajorVersion: <current_major_version>
       MODIFIER_LIST[public]
       CLASS_BODY
         FUNCTION[fqName=A.foo, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
@@ -23,7 +24,7 @@ PropertyAccessorsKt.class:
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     PROPERTY[fqName=isNotNull, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=true, name=isNotNull]
-      origin: Facade(className=PropertyAccessorsKt, jvmClassName=null)
+      origin: Facade(className=PropertyAccessorsKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       TYPE_REFERENCE
         NULLABLE_TYPE

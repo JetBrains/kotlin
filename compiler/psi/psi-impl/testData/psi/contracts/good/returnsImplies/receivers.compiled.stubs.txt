@@ -3,6 +3,7 @@ A.class:
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=true, isInterface=true, isTopLevel=true, name=A, superNames=[]]
+      classFileMajorVersion: <current_major_version>
       MODIFIER_LIST[public]
       CLASS_BODY
 
@@ -14,7 +15,7 @@ ReceiversKt.class:
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     FUNCTION[fqName=foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=foo]
-      origin: Facade(className=ReceiversKt, jvmClassName=null)
+      origin: Facade(className=ReceiversKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       TYPE_REFERENCE
         USER_TYPE
@@ -29,7 +30,7 @@ ReceiversKt.class:
             isClassRef: true
     FUNCTION[fqName=myRequireNotNull, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=true, name=myRequireNotNull]
       contract: [ effect:Returns(WILDCARD) -> param(-1) != null ]
-      origin: Facade(className=ReceiversKt, jvmClassName=null)
+      origin: Facade(className=ReceiversKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       TYPE_REFERENCE
         NULLABLE_TYPE

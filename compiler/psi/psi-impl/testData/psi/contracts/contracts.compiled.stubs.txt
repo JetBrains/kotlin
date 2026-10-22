@@ -6,7 +6,7 @@ FILE[kind=Facade[packageFqName=test, facadeFqName=test.ContractsKt]]
   IMPORT_LIST
   FUNCTION[fqName=test.myRequire, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=myRequire]
     contract: [ effect:Returns(TRUE) -> param(0) ]
-    origin: Facade(className=test/ContractsKt, jvmClassName=null)
+    origin: Facade(className=test/ContractsKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]

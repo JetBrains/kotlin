@@ -19,8 +19,10 @@ import org.jetbrains.kotlin.psi.psiUtil.safeFqNameForLazyResolve
 import org.jetbrains.kotlin.psi.stubs.StubUtils.createClassId
 import org.jetbrains.kotlin.psi.stubs.StubUtils.deserializeClassId
 import org.jetbrains.kotlin.psi.stubs.StubUtils.deserializeKdocText
+import org.jetbrains.kotlin.psi.stubs.StubUtils.readNullableNonNegativeVarInt
 import org.jetbrains.kotlin.psi.stubs.StubUtils.serializeClassId
 import org.jetbrains.kotlin.psi.stubs.StubUtils.serializeKdocText
+import org.jetbrains.kotlin.psi.stubs.StubUtils.writeNullableNonNegativeVarInt
 import org.jetbrains.kotlin.psi.stubs.elements.StubIndexService
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinObjectStubImpl
 import org.jetbrains.kotlin.psi.stubs.impl.Utils
@@ -49,6 +51,7 @@ internal object KtObjectStubSerializingElementFactory :
         isTopLevel = psi.isTopLevel(),
         isObjectLiteral = psi.isObjectLiteral(),
         kdocText = null,
+        classFileMajorVersion = null,
     )
 
     override fun serialize(stub: KotlinObjectStubImpl, dataStream: StubOutputStream) {
@@ -66,6 +69,8 @@ internal object KtObjectStubSerializingElementFactory :
         for (name in superNames) {
             dataStream.writeName(name)
         }
+
+        dataStream.writeNullableNonNegativeVarInt(stub.classFileMajorVersion)
     }
 
     override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>?): KotlinObjectStubImpl {
@@ -84,6 +89,8 @@ internal object KtObjectStubSerializingElementFactory :
             superNames[i] = dataStream.readName()
         }
 
+        val classFileMajorVersion = dataStream.readNullableNonNegativeVarInt()
+
         return KotlinObjectStubImpl(
             parent = parentStub,
             name = name,
@@ -93,6 +100,7 @@ internal object KtObjectStubSerializingElementFactory :
             isTopLevel = isTopLevel,
             isObjectLiteral = isObjectLiteral,
             kdocText = kdocText,
+            classFileMajorVersion = classFileMajorVersion,
         )
     }
 

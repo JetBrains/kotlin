@@ -5,7 +5,7 @@ AccessorsAllowedKt.class:
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     PROPERTY[fqName=prop, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=true, name=prop]
-      origin: Facade(className=AccessorsAllowedKt, jvmClassName=null)
+      origin: Facade(className=AccessorsAllowedKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       TYPE_REFERENCE
         NULLABLE_TYPE
@@ -41,7 +41,7 @@ AccessorsAllowedKt.class:
                   REFERENCE_EXPRESSION[referencedName=Int]
                     isClassRef: true
     PROPERTY[fqName=isError, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=false, name=isError]
-      origin: Facade(className=AccessorsAllowedKt, jvmClassName=null)
+      origin: Facade(className=AccessorsAllowedKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
       TYPE_REFERENCE
         USER_TYPE
@@ -58,7 +58,7 @@ AccessorsAllowedKt.class:
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
     PROPERTY[fqName=isContextError, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=isContextError]
-      origin: Facade(className=AccessorsAllowedKt, jvmClassName=null)
+      origin: Facade(className=AccessorsAllowedKt, jvmClassName=null, classFileMajorVersion=<current_major_version>)
       MODIFIER_LIST[public]
         CONTEXT_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=s]
@@ -83,12 +83,14 @@ Status.class:
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/Status, fqName=Status, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Status, superNames=[]]
+      classFileMajorVersion: <current_major_version>
       MODIFIER_LIST[public sealed]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Status]
         MODIFIER_LIST[protected]
         VALUE_PARAMETER_LIST
       CLASS_BODY
         CLASS[classId=/Status.Ok, fqName=Status.Ok, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=Ok, superNames=[Status]]
+          classFileMajorVersion: <current_major_version>
           MODIFIER_LIST[public final]
           PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Ok]
             MODIFIER_LIST[public]
@@ -101,6 +103,7 @@ Status.class:
                     isClassRef: true
           CLASS_BODY
         CLASS[classId=/Status.Error, fqName=Status.Error, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=Error, superNames=[Status]]
+          classFileMajorVersion: <current_major_version>
           MODIFIER_LIST[public final]
           PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Error]
             MODIFIER_LIST[public]
