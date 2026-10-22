@@ -202,7 +202,7 @@ private class ClassClsStubBuilder(
      * A value object needs no representation of its own: it declares no underlying properties, and the `value` modifier in its modifier
      * list is enough to restore the representation on the fly.
      *
-     * @see org.jetbrains.kotlin.serialization.deserialization.loadValueClassRepresentation
+     * @see org.jetbrains.kotlin.fir.deserialization.loadValueClassRepresentation
      */
     private fun createValueClassRepresentation(): KotlinValueClassRepresentation? = when {
         // An inline class is the only kind of value class which names its underlying property in the class itself

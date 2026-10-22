@@ -28,7 +28,12 @@ abstract class FirDeserializationExtension(val session: FirSession) : FirComposa
 
     open fun loadHasBackingFieldFlag(propertyProto: ProtoBuf.Property): Boolean? = null
 
-    // Metadata of klibs has the underlying property of every inline class, so a value class without it is a full value class.
+    /**
+     * We need to distinguish full value class from inline value class compiled
+     * with the version < 1.5: the latter don't write `inlineClassUnderlyingPropertyName`.
+     *  - On JVM: we check that metadata version is >= 2.4;
+     *  - On Klib: we can't compile against such an old library anyway.
+     */
     open fun isMaybeFullValueClass(containerSource: DeserializedContainerSource?): Boolean = true
 
     open val isLoadingOfAnnotationsOnAnnotationPropertiesEnabled: Boolean get() = true
