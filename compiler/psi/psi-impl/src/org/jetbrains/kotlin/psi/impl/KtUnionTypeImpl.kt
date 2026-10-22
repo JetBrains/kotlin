@@ -8,12 +8,17 @@ package org.jetbrains.kotlin.psi.impl
 import com.intellij.lang.ASTNode
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.psi.KtElementImplStub
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.psi.KtUnionType
 import org.jetbrains.kotlin.psi.KtVisitor
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
 
-internal class KtUnionTypeImpl : KtElementImplStub<KotlinPlaceHolderStub<KtUnionTypeImpl>>, KtUnionType {
+/**
+ * The PSI implementation of [KtUnionType].
+ */
+@KtImplementationDetail
+class KtUnionTypeImpl : KtElementImplStub<KotlinPlaceHolderStub<KtUnionTypeImpl>>, KtUnionType {
     constructor(node: ASTNode) : super(node)
     constructor(stub: KotlinPlaceHolderStub<KtUnionTypeImpl>) : super(stub, KtNodeTypes.UNION_TYPE)
 

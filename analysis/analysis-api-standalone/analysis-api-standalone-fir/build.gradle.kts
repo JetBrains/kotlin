@@ -13,6 +13,7 @@ dependencies {
     implementation(project(":analysis:decompiled:light-classes-for-decompiled"))
     implementation(project(":compiler:psi:psi-utils"))
     implementation(project(":compiler:psi:parser"))
+    implementation(project(":compiler:psi:psi-stubs"))
     implementation(project(":core:descriptors"))
     implementation(project(":core:language.targets.jvm"))
     implementation(project(":kotlin-util-klib"))
