@@ -1,7 +1,7 @@
 STATUS:
-TARGET: @R|test/Anno|[Types](LAZY_EXPRESSION) field:@R|test/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] [ImportedFromObjectOrStaticClassIdKey=ImportedFromObjectOrStaticData(objectClassId=test/O, original=FirRegularPropertySymbol test/O.bar)] val bar: R|test/I|
-    @R|test/Anno|[Types](LAZY_EXPRESSION) private final [ResolvedTo(STATUS)] [ContainingClassKey=O] backing field field: <implicit> = LAZY_EXPRESSION
-    public [ResolvedTo(STATUS)] [ContainingClassKey=O] get(): R|test/I|
+TARGET: @R|test/Anno|[Types](LAZY_EXPRESSION) field:@R|test/Anno|[Types](LAZY_EXPRESSION) @R|test/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] [ImportedFromObjectOrStaticClassIdKey=ImportedFromObjectOrStaticData(objectClassId=test/O, original=FirRegularPropertySymbol test/O.bar)] val bar: R|test/I|
+    @R|test/Anno|[Types](LAZY_EXPRESSION) @R|test/Anno|[Types](LAZY_EXPRESSION) private final [ResolvedTo(STATUS)] [DeferredCallableCopyReturnTypeKey=DeferredReturnTypeOfSubstitution(substitutor=Empty, baseSymbol=FirBackingFieldSymbol <local>/field)] backing field field: <implicit>
+    public [ResolvedTo(STATUS)] get(): R|test/I|
 
 FILE: [ResolvedTo(IMPORTS)] importedFromObjectPropertyWithExplicitBackingField.kt
     public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -35,9 +35,9 @@ FILE: [ResolvedTo(IMPORTS)] importedFromObjectPropertyWithExplicitBackingField.k
     }
 
 EXPECT_ACTUAL_MATCHING:
-TARGET: @R|test/Anno|[Types](LAZY_EXPRESSION) field:@R|test/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ImportedFromObjectOrStaticClassIdKey=ImportedFromObjectOrStaticData(objectClassId=test/O, original=FirRegularPropertySymbol test/O.bar)] val bar: R|test/I|
-    @R|test/Anno|[Types](LAZY_EXPRESSION) private final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=O] backing field field: <implicit> = LAZY_EXPRESSION
-    public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=O] get(): R|test/I|
+TARGET: @R|test/Anno|[Types](LAZY_EXPRESSION) field:@R|test/Anno|[Types](LAZY_EXPRESSION) @R|test/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ImportedFromObjectOrStaticClassIdKey=ImportedFromObjectOrStaticData(objectClassId=test/O, original=FirRegularPropertySymbol test/O.bar)] val bar: R|test/I|
+    @R|test/Anno|[Types](LAZY_EXPRESSION) @R|test/Anno|[Types](LAZY_EXPRESSION) private final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [DeferredCallableCopyReturnTypeKey=DeferredReturnTypeOfSubstitution(substitutor=Empty, baseSymbol=FirBackingFieldSymbol <local>/field)] backing field field: <implicit>
+    public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): R|test/I|
 
 FILE: [ResolvedTo(IMPORTS)] importedFromObjectPropertyWithExplicitBackingField.kt
     public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -65,15 +65,15 @@ FILE: [ResolvedTo(IMPORTS)] importedFromObjectPropertyWithExplicitBackingField.k
         }
 
         @R|test/Anno|[Types](LAZY_EXPRESSION) field:@R|test/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] val bar: R|test/I|
-            @R|test/Anno|[Types](LAZY_EXPRESSION) private final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=O] backing field field: <implicit> = LAZY_EXPRESSION
-            public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=O] get(): R|test/I|
+            @R|test/Anno|[Types](LAZY_EXPRESSION) private final [ResolvedTo(STATUS)] [ContainingClassKey=O] backing field field: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(STATUS)] [ContainingClassKey=O] get(): R|test/I|
 
     }
 
 CONTRACTS:
-TARGET: @R|test/Anno|[Types](LAZY_EXPRESSION) field:@R|test/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONTRACTS)] [ImportedFromObjectOrStaticClassIdKey=ImportedFromObjectOrStaticData(objectClassId=test/O, original=FirRegularPropertySymbol test/O.bar)] val bar: R|test/I|
-    @R|test/Anno|[Types](LAZY_EXPRESSION) private final [ResolvedTo(CONTRACTS)] [ContainingClassKey=O] backing field field: <implicit> = LAZY_EXPRESSION
-    public [ResolvedTo(CONTRACTS)] [ContainingClassKey=O] get(): R|test/I|
+TARGET: @R|test/Anno|[Types](LAZY_EXPRESSION) field:@R|test/Anno|[Types](LAZY_EXPRESSION) @R|test/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONTRACTS)] [ImportedFromObjectOrStaticClassIdKey=ImportedFromObjectOrStaticData(objectClassId=test/O, original=FirRegularPropertySymbol test/O.bar)] val bar: R|test/I|
+    @R|test/Anno|[Types](LAZY_EXPRESSION) @R|test/Anno|[Types](LAZY_EXPRESSION) private final [ResolvedTo(CONTRACTS)] [DeferredCallableCopyReturnTypeKey=DeferredReturnTypeOfSubstitution(substitutor=Empty, baseSymbol=FirBackingFieldSymbol <local>/field)] backing field field: <implicit>
+    public [ResolvedTo(CONTRACTS)] get(): R|test/I|
 
 FILE: [ResolvedTo(IMPORTS)] importedFromObjectPropertyWithExplicitBackingField.kt
     public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -101,15 +101,15 @@ FILE: [ResolvedTo(IMPORTS)] importedFromObjectPropertyWithExplicitBackingField.k
         }
 
         @R|test/Anno|[Types](LAZY_EXPRESSION) field:@R|test/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] val bar: R|test/I|
-            @R|test/Anno|[Types](LAZY_EXPRESSION) private final [ResolvedTo(CONTRACTS)] [ContainingClassKey=O] backing field field: <implicit> = LAZY_EXPRESSION
-            public [ResolvedTo(CONTRACTS)] [ContainingClassKey=O] get(): R|test/I|
+            @R|test/Anno|[Types](LAZY_EXPRESSION) private final [ResolvedTo(STATUS)] [ContainingClassKey=O] backing field field: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(STATUS)] [ContainingClassKey=O] get(): R|test/I|
 
     }
 
 IMPLICIT_TYPES_BODY_RESOLVE:
-TARGET: @R|test/Anno|[Types](LAZY_EXPRESSION) field:@R|test/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ImportedFromObjectOrStaticClassIdKey=ImportedFromObjectOrStaticData(objectClassId=test/O, original=FirRegularPropertySymbol test/O.bar)] val bar: R|test/I|
-    @R|test/Anno|[Types](LAZY_EXPRESSION) private final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=O] backing field field: R|test/Impl| = R|test/Impl.Impl|()
-    public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=O] get(): R|test/I|
+TARGET: @R|test/Anno|[Types](LAZY_EXPRESSION) field:@R|test/Anno|[Types](LAZY_EXPRESSION) @R|test/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ImportedFromObjectOrStaticClassIdKey=ImportedFromObjectOrStaticData(objectClassId=test/O, original=FirRegularPropertySymbol test/O.bar)] val bar: R|test/I|
+    @R|test/Anno|[Types](LAZY_EXPRESSION) @R|test/Anno|[Types](LAZY_EXPRESSION) private final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] backing field field: R|test/Impl|
+    public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|test/I|
 
 FILE: [ResolvedTo(IMPORTS)] importedFromObjectPropertyWithExplicitBackingField.kt
     public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -136,16 +136,16 @@ FILE: [ResolvedTo(IMPORTS)] importedFromObjectPropertyWithExplicitBackingField.k
             LAZY_super<R|kotlin/Any|>
         }
 
-        @R|test/Anno|[Types](LAZY_EXPRESSION) field:@R|test/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] val bar: R|test/I|
+        @R|test/Anno|[Types](LAZY_EXPRESSION) field:@R|test/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val bar: R|test/I|
             @R|test/Anno|[Types](LAZY_EXPRESSION) private final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=O] backing field field: R|test/Impl| = R|test/Impl.Impl|()
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=O] get(): R|test/I|
 
     }
 
 CONSTANT_EVALUATION:
-TARGET: @R|test/Anno|[Types](LAZY_EXPRESSION) field:@R|test/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] [ImportedFromObjectOrStaticClassIdKey=ImportedFromObjectOrStaticData(objectClassId=test/O, original=FirRegularPropertySymbol test/O.bar)] val bar: R|test/I|
-    @R|test/Anno|[Types](LAZY_EXPRESSION) private final [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=O] backing field field: R|test/Impl| = R|test/Impl.Impl|()
-    public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=O] get(): R|test/I|
+TARGET: @R|test/Anno|[Types](LAZY_EXPRESSION) field:@R|test/Anno|[Types](LAZY_EXPRESSION) @R|test/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] [ImportedFromObjectOrStaticClassIdKey=ImportedFromObjectOrStaticData(objectClassId=test/O, original=FirRegularPropertySymbol test/O.bar)] val bar: R|test/I|
+    @R|test/Anno|[Types](LAZY_EXPRESSION) @R|test/Anno|[Types](LAZY_EXPRESSION) private final [ResolvedTo(CONSTANT_EVALUATION)] backing field field: R|test/Impl|
+    public [ResolvedTo(CONSTANT_EVALUATION)] get(): R|test/I|
 
 FILE: [ResolvedTo(IMPORTS)] importedFromObjectPropertyWithExplicitBackingField.kt
     public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -172,16 +172,16 @@ FILE: [ResolvedTo(IMPORTS)] importedFromObjectPropertyWithExplicitBackingField.k
             LAZY_super<R|kotlin/Any|>
         }
 
-        @R|test/Anno|[Types](LAZY_EXPRESSION) field:@R|test/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] val bar: R|test/I|
-            @R|test/Anno|[Types](LAZY_EXPRESSION) private final [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=O] backing field field: R|test/Impl| = R|test/Impl.Impl|()
-            public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=O] get(): R|test/I|
+        @R|test/Anno|[Types](LAZY_EXPRESSION) field:@R|test/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val bar: R|test/I|
+            @R|test/Anno|[Types](LAZY_EXPRESSION) private final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=O] backing field field: R|test/Impl| = R|test/Impl.Impl|()
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=O] get(): R|test/I|
 
     }
 
 ANNOTATION_ARGUMENTS:
-TARGET: @R|test/Anno|[Types](s = String(property).R|kotlin/String.plus|(R|test/C|) [evaluated = String(propertyc)]) field:@R|test/Anno|[Types](s = String(field).R|kotlin/String.plus|(R|test/C|) [evaluated = String(fieldc)]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ImportedFromObjectOrStaticClassIdKey=ImportedFromObjectOrStaticData(objectClassId=test/O, original=FirRegularPropertySymbol test/O.bar)] val bar: R|test/I|
-    @R|test/Anno|[Types](s = String(field).R|kotlin/String.plus|(R|test/C|) [evaluated = String(fieldc)]) private final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=O] backing field field: R|test/Impl| = R|test/Impl.Impl|()
-    public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=O] get(): R|test/I|
+TARGET: @R|test/Anno|[Types](s = String(property).R|kotlin/String.plus|(R|test/C|) [evaluated = String(propertyc)]) field:@R|test/Anno|[Types](s = String(field).R|kotlin/String.plus|(R|test/C|) [evaluated = String(fieldc)]) @R|test/Anno|[Types](s = String(field).R|kotlin/String.plus|(R|test/C|) [evaluated = String(fieldc)]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ImportedFromObjectOrStaticClassIdKey=ImportedFromObjectOrStaticData(objectClassId=test/O, original=FirRegularPropertySymbol test/O.bar)] val bar: R|test/I|
+    @R|test/Anno|[Types](s = String(field).R|kotlin/String.plus|(R|test/C|) [evaluated = String(fieldc)]) @R|test/Anno|[Types](s = String(field).R|kotlin/String.plus|(R|test/C|) [evaluated = String(fieldc)]) private final [ResolvedTo(ANNOTATION_ARGUMENTS)] backing field field: R|test/Impl|
+    public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|test/I|
 
 FILE: [ResolvedTo(IMPORTS)] importedFromObjectPropertyWithExplicitBackingField.kt
     public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
@@ -215,9 +215,9 @@ FILE: [ResolvedTo(IMPORTS)] importedFromObjectPropertyWithExplicitBackingField.k
     }
 
 BODY_RESOLVE:
-TARGET: @R|test/Anno|[Types](s = String(property).R|kotlin/String.plus|(R|test/C|) [evaluated = String(propertyc)]) field:@R|test/Anno|[Types](s = String(field).R|kotlin/String.plus|(R|test/C|) [evaluated = String(fieldc)]) public final [ResolvedTo(BODY_RESOLVE)] [ImportedFromObjectOrStaticClassIdKey=ImportedFromObjectOrStaticData(objectClassId=test/O, original=FirRegularPropertySymbol test/O.bar)] val bar: R|test/I|
-    @R|test/Anno|[Types](s = String(field).R|kotlin/String.plus|(R|test/C|) [evaluated = String(fieldc)]) private final [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=O] backing field field: R|test/Impl| = R|test/Impl.Impl|()
-    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=O] get(): R|test/I|
+TARGET: @R|test/Anno|[Types](s = String(property).R|kotlin/String.plus|(R|test/C|) [evaluated = String(propertyc)]) field:@R|test/Anno|[Types](s = String(field).R|kotlin/String.plus|(R|test/C|) [evaluated = String(fieldc)]) @R|test/Anno|[Types](s = String(field).R|kotlin/String.plus|(R|test/C|) [evaluated = String(fieldc)]) public final [ResolvedTo(BODY_RESOLVE)] [ImportedFromObjectOrStaticClassIdKey=ImportedFromObjectOrStaticData(objectClassId=test/O, original=FirRegularPropertySymbol test/O.bar)] val bar: R|test/I|
+    @R|test/Anno|[Types](s = String(field).R|kotlin/String.plus|(R|test/C|) [evaluated = String(fieldc)]) @R|test/Anno|[Types](s = String(field).R|kotlin/String.plus|(R|test/C|) [evaluated = String(fieldc)]) private final [ResolvedTo(BODY_RESOLVE)] backing field field: R|test/Impl|
+    public [ResolvedTo(BODY_RESOLVE)] get(): R|test/I|
 
 FILE: [ResolvedTo(IMPORTS)] importedFromObjectPropertyWithExplicitBackingField.kt
     public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
@@ -245,8 +245,8 @@ FILE: [ResolvedTo(IMPORTS)] importedFromObjectPropertyWithExplicitBackingField.k
         }
 
         @R|test/Anno|[Types](s = String(property).R|kotlin/String.plus|(R|test/C|) [evaluated = String(propertyc)]) field:@R|test/Anno|[Types](s = String(field).R|kotlin/String.plus|(R|test/C|) [evaluated = String(fieldc)]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val bar: R|test/I|
-            @R|test/Anno|[Types](s = String(field).R|kotlin/String.plus|(R|test/C|) [evaluated = String(fieldc)]) private final [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=O] backing field field: R|test/Impl| = R|test/Impl.Impl|()
-            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=O] get(): R|test/I|
+            @R|test/Anno|[Types](s = String(field).R|kotlin/String.plus|(R|test/C|) [evaluated = String(fieldc)]) private final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=O] backing field field: R|test/Impl| = R|test/Impl.Impl|()
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=O] get(): R|test/I|
 
     }
 

@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.scopes.impl
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.builder.buildNamedFunctionCopy
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.resolve.scopeSessionKey
@@ -22,7 +21,6 @@ import org.jetbrains.kotlin.fir.scopes.impl.ConvertibleIntegerOperators.binaryOp
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.name.Name
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
@@ -75,13 +73,18 @@ class FirIntegerConstantOperatorScope(
 
     private fun wrapIntOperator(originalSymbol: FirNamedFunctionSymbol): FirNamedFunctionSymbol {
         val originalFunction = originalSymbol.fir
-        val wrappedFunction = buildNamedFunctionCopy(originalFunction) {
-            symbol = FirNamedFunctionSymbol(originalSymbol.callableId)
-            origin = FirDeclarationOrigin.WrappedIntegerOperator
-            returnTypeRef = buildResolvedTypeRef {
-                coneType = ConeIntegerConstantOperatorTypeImpl(isUnsigned, isMarkedNullable = false)
-            }
-        }.also {
+        // The copy has its own parameters, so it doesn't depend on the resolution of the original function.
+        // Calls are replaced with calls of the original function after the resolution, see IntegerLiteralAndOperatorApproximationTransformer
+        val wrappedFunction = FirFakeOverrideGenerator.createCopyForFirFunction(
+            newSymbol = FirNamedFunctionSymbol(originalSymbol.callableId),
+            baseFunction = originalFunction,
+            derivedClassLookupTag = null,
+            session = session,
+            origin = FirDeclarationOrigin.WrappedIntegerOperator,
+            newDispatchReceiverType = originalFunction.dispatchReceiverType,
+            newReturnType = ConeIntegerConstantOperatorTypeImpl(isUnsigned, isMarkedNullable = false),
+            markAsOverride = false,
+        ).also {
             it.originalForWrappedIntegerOperator = originalSymbol
             it.isUnsignedWrappedIntegerOperator = isUnsigned
         }

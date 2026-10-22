@@ -1179,7 +1179,7 @@ FILE: [ResolvedTo(IMPORTS)] Primitives.kt
 
         @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final actual operator [ResolvedTo(STATUS)] fun plus([ResolvedTo(STATUS)] other: R|kotlin/Short|): R|kotlin/Int|
 
-        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final actual operator [ResolvedTo(STATUS)] fun plus([ResolvedTo(EXPECT_ACTUAL_MATCHING)] other: R|kotlin/Int|): R|kotlin/Int|
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final actual operator [ResolvedTo(STATUS)] fun plus([ResolvedTo(STATUS)] other: R|kotlin/Int|): R|kotlin/Int|
 
         @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final actual operator [ResolvedTo(STATUS)] fun plus([ResolvedTo(STATUS)] other: R|kotlin/Long|): R|kotlin/Long|
 
@@ -2035,7 +2035,7 @@ FILE: [ResolvedTo(IMPORTS)] Primitives.kt
 
         @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final actual operator [ResolvedTo(STATUS)] fun plus([ResolvedTo(STATUS)] other: R|kotlin/Short|): R|kotlin/Int|
 
-        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final actual operator [ResolvedTo(STATUS)] fun plus([ResolvedTo(CONTRACTS)] other: R|kotlin/Int|): R|kotlin/Int|
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final actual operator [ResolvedTo(STATUS)] fun plus([ResolvedTo(STATUS)] other: R|kotlin/Int|): R|kotlin/Int|
 
         @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final actual operator [ResolvedTo(STATUS)] fun plus([ResolvedTo(STATUS)] other: R|kotlin/Long|): R|kotlin/Long|
 
@@ -2891,7 +2891,7 @@ FILE: [ResolvedTo(IMPORTS)] Primitives.kt
 
         @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final actual operator [ResolvedTo(STATUS)] fun plus([ResolvedTo(STATUS)] other: R|kotlin/Short|): R|kotlin/Int|
 
-        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final actual operator [ResolvedTo(STATUS)] fun plus([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] other: R|kotlin/Int|): R|kotlin/Int|
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final actual operator [ResolvedTo(STATUS)] fun plus([ResolvedTo(STATUS)] other: R|kotlin/Int|): R|kotlin/Int|
 
         @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final actual operator [ResolvedTo(STATUS)] fun plus([ResolvedTo(STATUS)] other: R|kotlin/Long|): R|kotlin/Long|
 
@@ -3747,7 +3747,7 @@ FILE: [ResolvedTo(IMPORTS)] Primitives.kt
 
         @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final actual operator [ResolvedTo(STATUS)] fun plus([ResolvedTo(STATUS)] other: R|kotlin/Short|): R|kotlin/Int|
 
-        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final actual operator [ResolvedTo(STATUS)] fun plus([ResolvedTo(CONSTANT_EVALUATION)] other: R|kotlin/Int|): R|kotlin/Int|
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final actual operator [ResolvedTo(STATUS)] fun plus([ResolvedTo(STATUS)] other: R|kotlin/Int|): R|kotlin/Int|
 
         @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final actual operator [ResolvedTo(STATUS)] fun plus([ResolvedTo(STATUS)] other: R|kotlin/Long|): R|kotlin/Long|
 
@@ -5459,7 +5459,7 @@ FILE: [ResolvedTo(IMPORTS)] Primitives.kt
 
         @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final actual operator [ResolvedTo(STATUS)] fun plus([ResolvedTo(STATUS)] other: R|kotlin/Short|): R|kotlin/Int|
 
-        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final actual operator [ResolvedTo(ANNOTATION_ARGUMENTS)] fun plus([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Int|): R|kotlin/Int|
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final actual operator [ResolvedTo(ANNOTATION_ARGUMENTS)] fun plus([ResolvedTo(ANNOTATION_ARGUMENTS)] other: R|kotlin/Int|): R|kotlin/Int|
 
         @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final actual operator [ResolvedTo(STATUS)] fun plus([ResolvedTo(STATUS)] other: R|kotlin/Long|): R|kotlin/Long|
 
