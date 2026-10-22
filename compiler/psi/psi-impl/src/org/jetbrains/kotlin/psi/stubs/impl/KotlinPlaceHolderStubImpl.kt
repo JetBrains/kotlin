@@ -7,13 +7,13 @@ package org.jetbrains.kotlin.psi.stubs.impl
 
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.tree.IElementType
-import org.jetbrains.kotlin.psi.KtElementImplStub
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
 import org.jetbrains.kotlin.psi.stubs.KotlinStubElement
 
 @KtImplementationDetail
-open class KotlinPlaceHolderStubImpl<T : KtElementImplStub<*>>(
+open class KotlinPlaceHolderStubImpl<T : KtElement>(
     parent: StubElement<*>?,
     elementType: IElementType,
 ) : KotlinStubBaseImpl<T>(parent, elementType), KotlinPlaceHolderStub<T> {

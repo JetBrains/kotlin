@@ -279,8 +279,6 @@ org.jetbrains.kotlin.psi.KtCollectionLiteralExpression:constructor(ASTNode)
 org.jetbrains.kotlin.psi.KtCollectionLiteralExpression:constructor(KotlinCollectionLiteralExpressionStub)
 org.jetbrains.kotlin.psi.KtCommonFile.greenStub
 org.jetbrains.kotlin.psi.KtCommonFile.importLists
-org.jetbrains.kotlin.psi.KtCompanionBlock:constructor(ASTNode)
-org.jetbrains.kotlin.psi.KtCompanionBlock:constructor(KotlinPlaceHolderStub<KtCompanionBlock>)
 org.jetbrains.kotlin.psi.KtConstantExpression:constructor(ASTNode)
 org.jetbrains.kotlin.psi.KtConstantExpression:constructor(KotlinConstantExpressionStub)
 org.jetbrains.kotlin.psi.KtConstructor:constructor(ASTNode)
