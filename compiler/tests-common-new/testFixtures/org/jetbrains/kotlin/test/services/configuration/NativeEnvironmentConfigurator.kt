@@ -49,15 +49,6 @@ abstract class NativeEnvironmentConfigurator(
         fun getRuntimePathsForModule(module: TestModule, testServices: TestServices): List<String> {
             return testServices.nativeEnvironmentConfigurator.getRuntimeLibraryProviders(module).flatMap { it.getLibraryPaths() }
         }
-
-        /**
-         * Determines if the module is main.
-         * Note: During test initialization, `useAdditionalSourceProviders()` step, a TestModuleStructure under construction is not yet registered
-         * into TestServices, so an explicit `testModuleStructure` param is used instead of `testServices.moduleStructure`.
-         */
-        fun isMainModule(module: TestModule, testModuleStructure: TestModuleStructure): Boolean {
-            return module.isLeafModule(testModuleStructure)
-        }
     }
 
     private val nativeHome: File by lazy {
