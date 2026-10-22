@@ -22,6 +22,17 @@
 #include "Exceptions.h"
 #include "Types.h"
 
+#if __has_builtin(__builtin_roundeven) && (defined(__aarch64__) || defined(__SSE4_1__))
+// On aarch64 and on x86 with SSE 4.1, LLVM emits __builtin_roundeven as instructions, on other targets it emits a call
+// to the actual roundeven function, which is not present in the glibc version(s) that Kotlin runtime currently depends on
+// on Linux and Windows, leading to linking errors on those platforms, hence the fallback path.
+//
+// Once all platforms have roundeven available, the fallback path can be removed.
+#define KONAN_USE_BUILTIN_ROUNDEVEN 1
+#else
+#define KONAN_USE_BUILTIN_ROUNDEVEN 0
+#endif
+
 #if (__MINGW32__ || __MINGW64__)
 #define KONAN_NEED_ASINH_ACOSH 1
 #else
@@ -143,7 +154,29 @@ KDouble Kotlin_math_ln1p(KDouble x) { return log1p(x); }
 
 KDouble Kotlin_math_ceil(KDouble x) { return ceil(x); }
 KDouble Kotlin_math_floor(KDouble x) { return floor(x); }
-KDouble Kotlin_math_round(KDouble x) { return rint(x); }
+KDouble Kotlin_math_round(KDouble x) {
+#if KONAN_USE_BUILTIN_ROUNDEVEN
+    return __builtin_roundeven(x);
+#else
+    // Check if x is already integral, infinity or NaN. The inverted condition short-circuits NaNs.
+    // The check also guarantees that x can be cast to int64_t below without undefined behavior.
+    if (!(fabs(x) < 0x1p52)) {
+        return x;
+    }
+
+    KDouble rounded = __builtin_trunc(x);
+    // The subtraction is exact according to https://en.wikipedia.org/wiki/Sterbenz_lemma.
+    KDouble fraction = fabs(x - rounded);
+    const bool isOdd = static_cast<int64_t>(rounded) % 2 != 0;
+
+    if (fraction > 0.5 || (fraction == 0.5 && isOdd)) {
+        // Also exact because of the initial range check: all integers are exactly representable.
+        rounded += copysign(1.0, x);
+    }
+
+    return copysign(rounded, x);
+#endif
+}
 
 KDouble Kotlin_math_abs(KDouble x) { return fabs(x); }
 
@@ -221,7 +254,29 @@ KFloat Kotlin_math_ln1pf(KFloat x) { return log1pf(x); }
 
 KFloat Kotlin_math_ceilf(KFloat x) { return ceilf(x); }
 KFloat Kotlin_math_floorf(KFloat x) { return floorf(x); }
-KFloat Kotlin_math_roundf(KFloat x) { return rintf(x); }
+KFloat Kotlin_math_roundf(KFloat x) {
+#if KONAN_USE_BUILTIN_ROUNDEVEN
+    return __builtin_roundevenf(x);
+#else
+    // Check if x is already integral, infinity or NaN. The inverted condition short-circuits NaNs.
+    // The check also guarantees that x can be cast to int32_t below without undefined behavior.
+    if (!(fabsf(x) < 0x1p23f)) {
+        return x;
+    }
+
+    KFloat rounded = __builtin_truncf(x);
+    // The subtraction is exact according to https://en.wikipedia.org/wiki/Sterbenz_lemma.
+    KFloat fraction = fabsf(x - rounded);
+    const bool isOdd = static_cast<int32_t>(rounded) % 2 != 0;
+
+    if (fraction > 0.5f || (fraction == 0.5f && isOdd)) {
+        // Also exact because of the initial range check: all integers are exactly representable.
+        rounded += copysignf(1.0f, x);
+    }
+
+    return copysignf(rounded, x);
+#endif
+}
 
 KFloat Kotlin_math_absf(KFloat x) { return fabsf(x); }
 
