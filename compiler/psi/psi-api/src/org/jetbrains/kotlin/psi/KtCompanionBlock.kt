@@ -5,10 +5,6 @@
 
 package org.jetbrains.kotlin.psi
 
-import com.intellij.lang.ASTNode
-import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
-
 /**
  * Represents a companion block.
  *
@@ -27,30 +23,17 @@ import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
  * [KEEP-0449](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0449-companions-block-extension.md)
  */
 @KtExperimentalApi
-@OptIn(KtImplementationDetail::class)
-class KtCompanionBlock : KtElementImplStub<KotlinPlaceHolderStub<KtCompanionBlock>>, KtDeclarationContainer {
-    @KtImplementationDetail
-    constructor(stub: KotlinPlaceHolderStub<KtCompanionBlock>) : super(stub, KtNodeTypes.COMPANION_BLOCK)
-
-    @KtImplementationDetail
-    constructor(node: ASTNode) : super(node)
-
-    override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R {
-        return visitor.visitCompanionBlock(this, data)
-    }
-
+@SubclassOptInRequired(KtImplementationDetail::class)
+interface KtCompanionBlock : KtElement, KtDeclarationContainer {
     /**
      * The body of the companion block.
      */
     val body: KtClassBody
-        get() = getRequiredStubOrPsiChild(KtNodeTypes.CLASS_BODY, KtClassBody::class.java)
 
     /**
      * The list of declarations inside the companion block.
      */
-    override fun getDeclarations(): List<KtDeclaration> {
-        return body.declarations
-    }
+    override fun getDeclarations(): List<KtDeclaration>
 
     @KtExperimentalApi
     companion object {

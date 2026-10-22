@@ -22,7 +22,7 @@ KtObjectDeclaration(65,120): 'object O {'
 KtClassBody(74,120): '{'
   null
 
-KtCompanionBlock(80,118): 'companion {'
+KtCompanionBlockImpl(80,118): 'companion {'
   null
 
 KtDeclarationModifierList(80,89): 'companion'
@@ -55,7 +55,7 @@ KtEnumEntry(141,210): 'Entry {'
 KtClassBody(147,209): '{'
   null
 
-KtCompanionBlock(157,203): 'companion {'
+KtCompanionBlockImpl(157,203): 'companion {'
   null
 
 KtDeclarationModifierList(157,166): 'companion'

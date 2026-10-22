@@ -11,6 +11,7 @@ import com.intellij.psi.stubs.StubRegistryExtension
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.KtNodeType
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.impl.KtCompanionBlockImpl
 import org.jetbrains.kotlin.psi.impl.KtUnionTypeImpl
 import org.jetbrains.kotlin.psi.stubs.elements.KtFileElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
@@ -152,7 +153,7 @@ internal object KtStubElementFactories {
 
         registerPlaceHolderFactory(
             type = KtStubElementTypes.COMPANION_BLOCK,
-            psiFactory = ::KtCompanionBlock,
+            psiFactory = ::KtCompanionBlockImpl,
         )
 
         registerPlaceHolderFactory(
