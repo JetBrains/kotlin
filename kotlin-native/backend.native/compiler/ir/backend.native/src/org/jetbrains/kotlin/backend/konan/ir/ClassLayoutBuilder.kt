@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.common.getCompilerMessageLocation
 import org.jetbrains.kotlin.backend.common.lower.coroutines.getOrCreateFunctionWithContinuationStub
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.llvm.CodegenLlvmHelpers
+import org.jetbrains.kotlin.backend.konan.llvm.alignTo
 import org.jetbrains.kotlin.backend.konan.llvm.computeFunctionName
 import org.jetbrains.kotlin.backend.konan.llvm.localHash
 import org.jetbrains.kotlin.backend.konan.llvm.needsCacheEntryPointForFinalFakeOverride
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import kotlin.math.min
 
 internal class OverriddenFunctionInfo(
         val function: IrSimpleFunction,
@@ -453,7 +455,8 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: NativeBacke
 
     /**
      * All fields of the class instance.
-     * The order respects the class hierarchy, i.e. a class [fields] contains superclass [fields] as a prefix.
+     * The fields are in the order they end up in the binary (pseudo fields used for padding are missing).
+     * The fields of a subclass may be inside the padding bits of the superclass.
      */
     fun getFields(llvm: CodegenLlvmHelpers): List<FieldInfo> = getFieldsInternal(llvm)
 
@@ -466,16 +469,10 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: NativeBacke
 
         val superClass = irClass.getSuperClassNotAny()
         val superFields = if (superClass != null) context.getLayoutBuilder(superClass).getFieldsInternal(llvm) else emptyList()
-
         val declaredFields = getDeclaredFields(llvm)
-        val sortedDeclaredFields = if (irClass.hasAnnotation(KonanFqNames.noReorderFields))
-            declaredFields
-        else
-            declaredFields.sortedByDescending {
-                with(llvm) { LLVMStoreSizeOfType(runtime.targetData, it.type.toLLVMType(this)) }
-            }
+        val packedFields = packFields(llvm, superFields, declaredFields)
 
-        return (superFields + sortedDeclaredFields).also { fields = it }
+        return packedFields.also { fields = it }
     }
 
     val associatedObjects by lazy {
@@ -540,6 +537,70 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: NativeBacke
                 else -> null
             }
         }
+    }
+
+    /**
+     * Given fields of the superclass and the declared fields of the current class, produce an optimally packed
+     * order of fields.
+     */
+    private fun packFields(llvm: CodegenLlvmHelpers, superFields: List<FieldInfo>, declaredFields: List<FieldInfo>): List<FieldInfo> {
+        // The NoReorderFields annotation is internal, and only occurs on final classes with no inherited fields.
+        if (irClass.hasAnnotation(KonanFqNames.noReorderFields)) {
+            return superFields + declaredFields
+        }
+        val fields = superFields + declaredFields.sortedByDescending {
+            with(llvm) { LLVMStoreSizeOfType(runtime.targetData, it.type.toLLVMType(this)) }
+        }
+        // When packFields is disabled, reorder only the fields inside the current class.
+        if (!context.config.packFields) {
+            return fields
+        }
+
+        // offsetN indicates at what offset, if any, an N-byte appropriately aligned block can be packed.
+        // If no such block exists that does not overlap with a better aligned free block, offsetN will be -1.
+        var offset1 = -1L
+        var offset2 = -1L
+        var offset4 = -1L
+        var offset8 = 0L // == size of allocated fields rounded up to multiple of 8 bytes
+
+        // Allocates a block of the given size. Sizes smaller than 8 bytes will be rounded up to a power of 2 and
+        // aligned according to that size. Other sizes will be rounded up to a multiple of 8 and will be 8 byte aligned.
+        fun nextOffset(size: Long): Long = when (size) {
+            /* Algorithm:
+            N -> {
+                if we have a saved block of size N, return it and forget about it
+                else split a block of size 2N in two, return the first, and save the second for later.
+             */
+            1L -> {
+                if (offset1 != -1L) offset1.also { offset1 = -1 }
+                else nextOffset(2).also { offset1 = it + 1 }
+            }
+            2L -> {
+                if (offset2 != -1L) offset2.also { offset2 = -1 }
+                else nextOffset(4).also { offset2 = it + 2 }
+            }
+            4L -> {
+                if (offset4 != -1L) offset4.also { offset4 = -1 }
+                else nextOffset(8).also { offset4 = it + 4 }
+            }
+            /* Base case:
+            else -> the size is big enough that it needs one or more 8-byte blocks by itself.
+             */
+            else -> offset8.also { offset8 += alignTo(size, 8) }
+        }
+
+        class IndexedField(val offset: Long, val field: FieldInfo)
+
+        val packedFields = mutableListOf<IndexedField>()
+        for (field in fields) {
+            val size = LLVMStoreSizeOfType(llvm.runtime.targetData, field.type.toLLVMType(llvm))
+            check(size == 1L || size == 2L || size == 4L || size % 8 == 0L)
+            check(min(size, 8L) % field.alignment == 0L)
+            val offset = nextOffset(size)
+            packedFields.add(IndexedField(offset, field))
+        }
+        packedFields.sortBy { it.offset }
+        return packedFields.map { it.field }
     }
 
     /**
