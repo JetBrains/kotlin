@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.backend.wasm.lower
 
+import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.ir.backend.js.lower.PropertyLazyInitLowering
 
+@PhasePrerequisites(WasmDefaultArgumentStubGenerator::class)
 class WasmPropertyLazyInitLowering(context: WasmBackendContext) : PropertyLazyInitLowering(context) {
     override val initializationGenerator = WasmLazyGlobalInitializationGenerator(context)
 }
