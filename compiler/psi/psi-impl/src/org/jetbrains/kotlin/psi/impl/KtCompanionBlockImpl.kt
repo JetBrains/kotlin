@@ -11,10 +11,15 @@ import org.jetbrains.kotlin.psi.KtClassBody
 import org.jetbrains.kotlin.psi.KtCompanionBlock
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElementImplStub
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtVisitor
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
 
-internal class KtCompanionBlockImpl : KtElementImplStub<KotlinPlaceHolderStub<KtCompanionBlockImpl>>, KtCompanionBlock {
+/**
+ * The PSI implementation of [KtCompanionBlock].
+ */
+@KtImplementationDetail
+class KtCompanionBlockImpl : KtElementImplStub<KotlinPlaceHolderStub<KtCompanionBlockImpl>>, KtCompanionBlock {
     constructor(node: ASTNode) : super(node)
     constructor(stub: KotlinPlaceHolderStub<KtCompanionBlockImpl>) : super(stub, KtNodeTypes.COMPANION_BLOCK)
 

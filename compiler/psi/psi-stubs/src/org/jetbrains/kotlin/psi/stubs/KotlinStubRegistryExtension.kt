@@ -10,10 +10,10 @@ import com.intellij.psi.stubs.StubRegistry
 import com.intellij.psi.stubs.StubRegistryExtension
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.KtNodeType
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.impl.KtCompanionBlockImpl
 import org.jetbrains.kotlin.psi.impl.KtUnionTypeImpl
-import org.jetbrains.kotlin.psi.stubs.elements.KtFileElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.factories.*
 import org.jetbrains.kotlin.psi.utils.toConstantExpressionElementType
@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.psi.utils.toConstantExpressionElementType
  */
 internal class KotlinStubRegistryExtension : StubRegistryExtension {
     override fun register(registry: StubRegistry) {
-        registry.registerStubSerializer(KtFileElementType, KtFileStubSerializer)
+        registry.registerStubSerializer(KtNodeTypes.FILE, KtFileStubSerializer)
 
         for ((key, value) in KtStubElementFactories.factories) {
             registry.registerStubSerializingFactory(key, value)

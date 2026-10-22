@@ -10,8 +10,16 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IFileElementType
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.parsing.KotlinParser
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 
-internal object KtFileElementType : IFileElementType(KtFileElementType.NAME, KotlinLanguage.INSTANCE) {
+/**
+ * The element type of a Kotlin file node, which parses the file content on demand.
+ */
+@KtImplementationDetail
+object KtFileElementType : IFileElementType(KtFileElementType.NAME, KotlinLanguage.INSTANCE) {
+    /**
+     * The debug name of the type, which also serves as the external ID of the file stub.
+     */
     const val NAME: String = "kotlin.FILE"
 
     override fun doParseContents(chameleon: ASTNode, psi: PsiElement): ASTNode? {
