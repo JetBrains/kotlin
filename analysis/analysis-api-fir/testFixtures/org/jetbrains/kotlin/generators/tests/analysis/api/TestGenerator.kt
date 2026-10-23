@@ -8,6 +8,9 @@ package org.jetbrains.kotlin.generators.tests.analysis.api
 import org.jetbrains.kotlin.analysis.api.fir.test.cases.annotations.*
 import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.analysisScopeProvider.AbstractCanBeAnalysedTest
 import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.compileTimeConstantProvider.AbstractCompileTimeConstantEvaluatorTest
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.compilerFacility.AbstractCompilerFacilityTest
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.compilerFacility.AbstractFirPluginPrototypeCompilerFacilityTestWithAnalysis
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.compilerFacility.AbstractFirPluginPrototypeMultiModuleCompilerFacilityTest
 import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.compilerPluginGeneratedDeclarationsProvider.AbstractCompilerPluginGeneratedDeclarationsTest
 import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.containingDeclarationProvider.*
 import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.dataFlowInfoProvider.AbstractExitPointSnapshotTest
@@ -20,6 +23,9 @@ import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.expressionInf
 import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.expressionInfoProvider.AbstractIsUsedAsExpressionTest
 import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.expressionInfoProvider.AbstractReturnTargetSymbolTest
 import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.expressionInfoProvider.AbstractWhenMissingCasesTest
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.expressionTypeProvider.AbstractDeclarationReturnTypeTest
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.expressionTypeProvider.AbstractExpectedExpressionTypeTest
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.expressionTypeProvider.AbstractExpressionTypeTest
 import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.fileAnnotationProvider.AbstractContainingFileAnnotationProviderTest
 import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.inheritorsProvider.AbstractDanglingFileSealedInheritorsTest
 import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.inheritorsProvider.AbstractSealedInheritorsTest
@@ -63,12 +69,6 @@ import org.jetbrains.kotlin.analysis.api.fir.test.cases.session.*
 import org.jetbrains.kotlin.analysis.api.fir.test.cases.symbols.*
 import org.jetbrains.kotlin.analysis.api.fir.test.cases.types.*
 import org.jetbrains.kotlin.analysis.api.fir.test.cases.types.typeCreation.AbstractTypeCreatorDslTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compilerFacility.AbstractCompilerFacilityTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compilerFacility.AbstractFirPluginPrototypeCompilerFacilityTestWithAnalysis
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compilerFacility.AbstractFirPluginPrototypeMultiModuleCompilerFacilityTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.expressionTypeProvider.AbstractDeclarationReturnTypeTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.expressionTypeProvider.AbstractExpectedExpressionTypeTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.expressionTypeProvider.AbstractExpressionTypeTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.AbstractSessionInvalidationTest
 import org.jetbrains.kotlin.analysis.test.framework.services.TargetPlatformEnum
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode
