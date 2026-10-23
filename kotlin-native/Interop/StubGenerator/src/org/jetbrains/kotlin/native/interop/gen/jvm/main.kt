@@ -447,6 +447,16 @@ private fun processCLib(
     }
 
     val compilerArgs = stubIrContext.libraryForCStubs.compilerArgs.toTypedArray()
+
+    fun compileStubsToBitcode(compilerArgs: Array<String>, outLib: File): String {
+        // Note that the output bitcode contains the source file path, which can lead to non-deterministc builds (see KT-54284).
+        // The source file is passed in via stdin to ensure the output library is deterministic.
+        val compilerCmd = arrayOf(compiler, *compilerArgs,
+                "-emit-llvm", "-x", library.language.clangLanguageName, "-c", "-", "-o", outLib.absolutePath, "-Xclang", "-detailed-preprocessing-record")
+        runCmd(compilerCmd, verbose, redirectInputFile = outCFile.absolute().toFile())
+        return outLib.absolutePath
+    }
+
     val nativeOutputPath: String? = if (cinteropArguments.headerMode) null else {
         when (flavor) {
             KotlinPlatform.JVM -> {
@@ -471,15 +481,7 @@ private fun processCLib(
                 // We could introduce another flag to control that, but let's keep things simple for now.
                 null
             }
-            KotlinPlatform.NATIVE -> {
-                val outLib = File(nativeLibsDir, "$libName.bc")
-                // Note that the output bitcode contains the source file path, which can lead to non-deterministc builds (see KT-54284).
-                // The source file is passed in via stdin to ensure the output library is deterministic.
-                val compilerCmd = arrayOf(compiler, *compilerArgs,
-                        "-emit-llvm", "-x", library.language.clangLanguageName, "-c", "-", "-o", outLib.absolutePath, "-Xclang", "-detailed-preprocessing-record")
-                runCmd(compilerCmd, verbose, redirectInputFile = outCFile.absolute().toFile())
-                outLib.absolutePath
-            }
+            KotlinPlatform.NATIVE -> compileStubsToBitcode(compilerArgs, File(nativeLibsDir, "$libName.bc"))
         }
     }
 
