@@ -9,12 +9,14 @@ import org.gradle.api.tasks.Copy
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.kotlin.dsl.withType
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.mpp.TestExecutable
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
 import kotlin.io.path.appendText
@@ -98,12 +100,48 @@ internal class KotlinNativeLinkIT : KGPBaseTest() {
     @DisplayName("Test link task is restored from the build cache")
     @GradleTest
     fun testLinkIsRestoredFromBuildCache(gradleVersion: GradleVersion, @TempDir localBuildCacheDir: Path) {
-        linkTestProject(gradleVersion, localBuildCacheDir, copyResourcesIntoLinkDir = false) {
+        linkTestProject(gradleVersion, localBuildCacheDir) {
             build(":linkDebugTestLinuxX64")
             build("clean")
             build(":linkDebugTestLinuxX64") {
                 assertTasksFromCache(":linkDebugTestLinuxX64")
                 assertFileInProjectExists("build/bin/linuxX64/debugTest/test.kexe")
+            }
+        }
+    }
+
+    @DisplayName("Shared library link task is restored from the build cache together with its C header")
+    @GradleTest
+    fun testSharedLibraryLinkIsRestoredFromBuildCache(gradleVersion: GradleVersion, @TempDir localBuildCacheDir: Path) {
+        linkTestProject(gradleVersion, localBuildCacheDir, targets = { linuxX64().binaries.sharedLib() }) {
+            build(":linkDebugSharedLinuxX64")
+            build("clean")
+            build(":linkDebugSharedLinuxX64") {
+                assertTasksFromCache(":linkDebugSharedLinuxX64")
+                assertFileInProjectExists("build/bin/linuxX64/debugShared/libempty.so")
+                assertFileInProjectExists("build/bin/linuxX64/debugShared/libempty_api.h")
+            }
+        }
+    }
+
+    @DisplayName("Apple link task is restored from the build cache together with its dSYM bundle")
+    @GradleTest
+    @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
+    fun testAppleLinkIsRestoredFromBuildCacheWithDsym(gradleVersion: GradleVersion, @TempDir localBuildCacheDir: Path) {
+        val targets: KotlinMultiplatformExtension.() -> Unit = {
+            macosArm64().binaries.executable()
+            sourceSets.commonMain.get().compileSource("fun main() {}")
+        }
+        linkTestProject(gradleVersion, localBuildCacheDir, targets = targets) {
+            // Release, so the dSYM comes from light debug info rather than from -g
+            build(":linkReleaseExecutableMacosArm64") {
+                assertDirectoryExists(projectPath.resolve("build/bin/macosArm64/releaseExecutable/empty.kexe.dSYM"))
+            }
+            build("clean")
+            build(":linkReleaseExecutableMacosArm64") {
+                assertTasksFromCache(":linkReleaseExecutableMacosArm64")
+                assertFileInProjectExists("build/bin/macosArm64/releaseExecutable/empty.kexe")
+                assertDirectoryExists(projectPath.resolve("build/bin/macosArm64/releaseExecutable/empty.kexe.dSYM"))
             }
         }
     }
@@ -131,12 +169,13 @@ internal class KotlinNativeLinkIT : KGPBaseTest() {
         }
     }
 
-    // Same wiring as Compose's IosResources.kt: a Copy task writes into the test executable's
-    // output directory and the link task depends on it.
+    // With copyResourcesIntoLinkDir this is the same wiring as Compose's IosResources.kt: a Copy
+    // task writes into the test executable's output directory and the link task depends on it.
     private fun linkTestProject(
         gradleVersion: GradleVersion,
         localBuildCacheDir: Path,
-        copyResourcesIntoLinkDir: Boolean,
+        copyResourcesIntoLinkDir: Boolean = false,
+        targets: KotlinMultiplatformExtension.() -> Unit = { linuxX64() },
         test: TestProject.() -> Unit,
     ) {
         project(
@@ -148,17 +187,18 @@ internal class KotlinNativeLinkIT : KGPBaseTest() {
                 kotlin("multiplatform")
             }
             enableLocalBuildCache(localBuildCacheDir)
-            projectPath.resolve("resources").toFile().mkdirs()
-            projectPath.resolve("resources/sample.txt").writeText("sample")
+            if (copyResourcesIntoLinkDir) {
+                projectPath.resolve("resources").toFile().mkdirs()
+                projectPath.resolve("resources/sample.txt").writeText("sample")
+            }
 
             buildScriptInjection {
                 project.applyMultiplatform {
-                    linuxX64()
+                    targets()
+                    sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
                     sourceSets.commonTest.get().compileStubSourceWithSourceSetName()
-                }
 
-                if (copyResourcesIntoLinkDir) {
-                    project.applyMultiplatform {
+                    if (copyResourcesIntoLinkDir) {
                         linuxX64().binaries.withType(TestExecutable::class.java).configureEach { testExecutable ->
                             val copyTask = project.tasks.register("copyTestResourcesForLinuxX64", Copy::class.java) {
                                 it.from(project.layout.projectDirectory.dir("resources"))
