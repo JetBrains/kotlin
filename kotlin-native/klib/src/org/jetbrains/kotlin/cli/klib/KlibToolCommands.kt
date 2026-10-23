@@ -187,7 +187,8 @@ internal class DumpIr(output: KlibToolOutput, args: ParsedArguments) : KlibToolC
         val irFragment = linker.deserializeFullModule(createFakeModuleDescriptor(args.library), args.library)
 
         if (args.library.isCInteropLibrary()) {
-            // TODO: add an explanation
+            // Add an artificial module deserializer that emulates the part of the Kotlin standard library which is referenced
+            // from annotations in C-interop libraries. For more details, see KlibToolIrLinker.EmulatedStandardLibraryModuleDeserializer.
             linker.createAndRegisterModuleDeserializer(
                     moduleDescriptor = createEmulatedStandardLibraryModuleDescriptor(),
                     kotlinLibrary = null,
