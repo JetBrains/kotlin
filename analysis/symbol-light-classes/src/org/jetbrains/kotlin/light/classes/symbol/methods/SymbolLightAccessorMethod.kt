@@ -146,8 +146,9 @@ internal class SymbolLightAccessorMethod private constructor(
         in GranularModifiersBox.MODALITY_MODIFIERS -> {
             val modality = withPropertySymbol { propertySymbol ->
                 when {
-                    // Annotation class members are abstract on the JVM regardless of their Kotlin modality
-                    propertySymbol.isAnnotationClassMember -> PsiModifier.ABSTRACT
+                    // Annotation class members are abstract on the JVM regardless of their Kotlin modality.
+                    // Only an annotation light class can contain them, and its kind is cheaper to check than the containing class.
+                    containingClass.isAnnotationType && propertySymbol.isAnnotationClassMember -> PsiModifier.ABSTRACT
                     else -> computeMethodModality(propertySymbol, containingClass)
                 }
             }
@@ -467,7 +468,7 @@ internal class SymbolLightAccessorMethod private constructor(
                 }
 
                 val setter = declaration.takeIf { isMutable }?.setter
-                if (setter != null && !declaration.isAnnotationClassMember) {
+                if (setter != null && !(lightClass.isAnnotationType && declaration.isAnnotationClassMember)) {
                     produceSymbolLightAccessorMethodIfNeeded(
                         accessor = setter,
                         result = result,
@@ -491,14 +492,14 @@ internal class SymbolLightAccessorMethod private constructor(
             val hasInlineClassInParameterType = context.hasInlineClassInParameterType(accessor)
             val hasInlineClassInReturnType = context.hasInlineClassInReturnType(accessor)
 
-            val hasMangledNameDueToInlineClassesInSignature = !property.hasPrefixlessAccessorNames &&
-                    hasMangledNameDueToInlineClassesInSignature(
-                        // Not every inline class in a parameter position mangles the name,
-                        // so 'hasInlineClassInParameterType' cannot be reused
-                        hasManglingInlineClassInParameterType = context.hasManglingInlineClassInParameterType(accessor),
-                        hasInlineClassInReturnType = hasInlineClassInReturnType,
-                        isTopLevel = context.isTopLevel,
-                    )
+            // The signature is checked first, as it doesn't require the containing class
+            val hasMangledNameDueToInlineClassesInSignature = hasMangledNameDueToInlineClassesInSignature(
+                // Not every inline class in a parameter position mangles the name,
+                // so 'hasInlineClassInParameterType' cannot be reused
+                hasManglingInlineClassInParameterType = context.hasManglingInlineClassInParameterType(accessor),
+                hasInlineClassInReturnType = hasInlineClassInReturnType,
+                isTopLevel = context.isTopLevel,
+            ) && !property.hasPrefixlessAccessorNames
 
             val isNonMaterializableInlineClassProperty =
                 // Accessors with JvmStatic should be materialized inside the containing inline class
@@ -516,9 +517,9 @@ internal class SymbolLightAccessorMethod private constructor(
                 isAffectedByInlineClass = hasMangledNameDueToInlineClassesInSignature || isNonMaterializableInlineClassProperty,
                 hasJvmNameAnnotation = hasJvmNameAnnotation,
                 isSuspend = false,
-                isOverridable = accessor.isOverridable(),
+                isOverridable = { accessor.isOverridable() },
                 // An accessor may be private while its property is not (e.g. `var p: IC; private set(value) {}`)
-                isEffectivelyPrivate = accessor.visibility == KaSymbolVisibility.PRIVATE || property.isEffectivelyPrivate(),
+                isEffectivelyPrivate = { accessor.visibility == KaSymbolVisibility.PRIVATE || property.isEffectivelyPrivate() },
             ) ?: return
 
             val lightMemberOrigin = getLightMemberOriginForAccessor(accessor)

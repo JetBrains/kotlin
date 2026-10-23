@@ -851,16 +851,18 @@ context(_: KaSession)
 internal fun computeJavaMethodName(symbol: KaCallableSymbol, defaultName: String, ignoreInlineClassMangling: Boolean): String? {
     symbol.jvmNameFromAnnotation?.let { return it }
 
+    // Finding the owner requires the containing class, which is costly, so it is found once for all the checks below
+    val owner = jvmMethodOwner(symbol)
+
     // Neither of the manglings below applies to such accessors
-    val property = (symbol as? KaPropertyAccessorSymbol)?.containingDeclaration as? KaPropertySymbol
-    if (property?.hasPrefixlessAccessorNames == true) return defaultName
+    if (symbol is KaPropertyAccessorSymbol && (owner as? KaClassSymbol)?.hasPrefixlessPropertyAccessorNames == true) return defaultName
 
     // 'JvmName' above wins over inline class mangling, so the check has to be performed afterwards
-    if (!ignoreInlineClassMangling && hasMangledNameDueToInlineClasses(symbol)) return null
+    if (!ignoreInlineClassMangling && hasMangledNameDueToInlineClasses(symbol, owner)) return null
 
     // Top-level declarations are placed into a file facade class, and their names are never mangled.
     // Note: script declarations are members of a script class, so they are affected by mangling
-    if (jvmMethodOwner(symbol) == null) return defaultName
+    if (owner == null) return defaultName
 
     // Only the current module has a name to mangle with; library declarations already have mangled names
     val module = symbol.containingModule.baseContextModuleOrSelf as? KaSourceModule ?: return defaultName
@@ -887,16 +889,17 @@ private fun KaAnnotatedSymbol.stringArgumentFromAnnotation(classId: ClassId): St
  *
  * Unlike [hasMangledNameDueToInlineClassesInSignature], the entire decision is made from [symbol] alone, so there is no way
  * to narrow the checked value parameters down.
+ *
+ * @param owner the [jvmMethodOwner] of [symbol]
  */
 context(_: KaSession)
-private fun hasMangledNameDueToInlineClasses(symbol: KaCallableSymbol): Boolean {
+private fun hasMangledNameDueToInlineClasses(symbol: KaCallableSymbol, owner: KaDeclarationSymbol?): Boolean {
     // On the JVM, an accessor has the receiver, the context parameters, and the type of its property, while the symbol
     // itself only has the receiver
     val declaration = (symbol as? KaPropertyAccessorSymbol)?.containingDeclaration as? KaCallableSymbol ?: symbol
     val hasInlineClassInReturnType = hasInlineClassInReturnType(declaration)
     val isSetter = symbol is KaPropertySetterSymbol
 
-    val owner = jvmMethodOwner(symbol)
     val isMangledBySignature = hasMangledNameDueToInlineClassesInSignature(
         hasManglingInlineClassInParameterType = hasManglingInlineClassInParameterPosition(declaration) ||
                 // The type of a property is the parameter type of its setter
@@ -919,11 +922,15 @@ private fun hasMangledNameDueToInlineClasses(symbol: KaCallableSymbol): Boolean 
  */
 context(_: KaSession)
 internal val KaPropertySymbol.hasPrefixlessAccessorNames: Boolean
-    get() {
-        val containingClass = containingDeclaration as? KaClassSymbol ?: return false
-        return containingClass.classKind == KaClassKind.ANNOTATION_CLASS ||
-                JvmStandardClassIds.Annotations.JvmRecord in containingClass.annotations
-    }
+    get() = (containingDeclaration as? KaClassSymbol)?.hasPrefixlessPropertyAccessorNames == true
+
+/**
+ * Whether the accessors of the properties of this class are prefixless.
+ *
+ * @see hasPrefixlessAccessorNames
+ */
+private val KaClassSymbol.hasPrefixlessPropertyAccessorNames: Boolean
+    get() = classKind == KaClassKind.ANNOTATION_CLASS || JvmStandardClassIds.Annotations.JvmRecord in annotations
 
 /**
  * Whether this property is a member of an annotation class, which the JVM backend compiles to an abstract annotation method.

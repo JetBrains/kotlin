@@ -168,8 +168,10 @@ internal fun KaDeclarationSymbol.isEffectivelyPrivate(): Boolean {
  * @param isAffectedByInlineClass Whether the method's name is mangled due to inline classes, or the method is declared inside
  * an inline class and not materialized.
  * @param hasJvmNameAnnotation Whether the method has a [JvmName] annotation.
- * @param isOverridable Whether the method can be overridden.
- * @param isEffectivelyPrivate Whether the method is effectively private and therefore must not be exposed. @see isEffectivelyPrivate
+ * @param isOverridable Whether the method can be overridden. Only called when the method can have a boxed variant, as the check
+ * requires the containing class.
+ * @param isEffectivelyPrivate Whether the method is effectively private and therefore must not be exposed. Only called when the method
+ * can have a boxed variant, as the check requires the containing classes. @see isEffectivelyPrivate
  * @return the [MethodGenerationMode] of the methods to generate, or `null` if no method is required
  */
 internal fun methodGeneration(
@@ -179,13 +181,13 @@ internal fun methodGeneration(
     isAffectedByInlineClass: Boolean,
     hasJvmNameAnnotation: Boolean,
     isSuspend: Boolean,
-    isOverridable: Boolean,
-    isEffectivelyPrivate: Boolean,
+    isOverridable: () -> Boolean,
+    isEffectivelyPrivate: () -> Boolean,
 ): MethodGenerationMode? {
     // Explicit mode -> a boxed method is requested (even if it is a JVM name clash)
     val isBoxedMethodRequestedExplicitly = exposeBoxedMode == JvmExposeBoxedMode.EXPLICIT &&
-            !isEffectivelyPrivate &&
-            (hasInlineClassInParameterType || hasInlineClassInReturnType || isAffectedByInlineClass)
+            (hasInlineClassInParameterType || hasInlineClassInReturnType || isAffectedByInlineClass) &&
+            !isEffectivelyPrivate()
 
     val isRegularMethodRequired = if (isAffectedByInlineClass) {
         // JvmName -> unmangled method can be generated
@@ -199,17 +201,17 @@ internal fun methodGeneration(
         // The check already performed by the explicit mode
         isBoxedMethodRequestedExplicitly -> true
 
-        // Private declarations are inaccessible from Java -> no boxed methods can be auto-generated
-        isEffectivelyPrivate -> false
-
         // No implicit feature -> no boxed methods can be auto-generated
         exposeBoxedMode != JvmExposeBoxedMode.IMPLICIT -> false
+
+        // Private declarations are inaccessible from Java -> no boxed methods can be auto-generated
+        isEffectivelyPrivate() -> false
 
         // Suspend function -> no boxed methods can be auto-generated
         isSuspend -> false
 
         // In interface or in open class -> no boxed methods can be auto-generated. @JvmName problem
-        isOverridable -> false
+        isOverridable() -> false
 
         // No JvmName -> the default method has a mangled name, so the boxed method can be generated
         isAffectedByInlineClass && !hasJvmNameAnnotation -> true
@@ -237,14 +239,15 @@ internal fun methodGeneration(
  */
 context(_: KaSession)
 internal fun KaDeclarationSymbol.isOverridable(): Boolean {
+    // The containing class is the most expensive to compute, so it is checked last
+    if (visibility == KaSymbolVisibility.PRIVATE || modality == KaSymbolModality.FINAL) return false
+
     val containingClass = when (this) {
         is KaPropertyAccessorSymbol -> containingDeclaration?.containingDeclaration
         else -> containingDeclaration
     } as? KaClassSymbol ?: return false
 
-    return visibility != KaSymbolVisibility.PRIVATE &&
-            modality != KaSymbolModality.FINAL &&
-            !containingClass.isEffectivelyFinal
+    return !containingClass.isEffectivelyFinal
 }
 
 private val KaClassSymbol.isEffectivelyFinal: Boolean

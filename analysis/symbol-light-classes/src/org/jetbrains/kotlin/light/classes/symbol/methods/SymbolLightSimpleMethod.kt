@@ -254,8 +254,6 @@ internal open class SymbolLightSimpleMethod protected constructor(
                     !functionSymbol.isOverride
 
             val isSuspend = functionSymbol.isSuspend
-            val isOverridable = functionSymbol.isOverridable()
-            val isEffectivelyPrivate = functionSymbol.isEffectivelyPrivate()
             createMethodsJvmOverloadsAware(
                 declaration = functionSymbol,
                 methodIndexBase = methodIndex,
@@ -277,8 +275,8 @@ internal open class SymbolLightSimpleMethod protected constructor(
                     isAffectedByInlineClass = hasMangledNameDueToInlineClassesInSignature || isNonMaterializableInlineClassFunction,
                     hasJvmNameAnnotation = hasJvmNameAnnotation,
                     isSuspend = isSuspend,
-                    isOverridable = isOverridable,
-                    isEffectivelyPrivate = isEffectivelyPrivate,
+                    isOverridable = { functionSymbol.isOverridable() },
+                    isEffectivelyPrivate = { functionSymbol.isEffectivelyPrivate() },
                 ) ?: return@createMethodsJvmOverloadsAware
 
                 result += SymbolLightSimpleMethod(
