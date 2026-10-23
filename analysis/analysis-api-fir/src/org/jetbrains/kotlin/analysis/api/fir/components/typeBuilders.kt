@@ -6,57 +6,17 @@
 package org.jetbrains.kotlin.analysis.api.fir.components
 
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
-import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaArrayTypeBuilder
 import org.jetbrains.kotlin.analysis.api.components.KaClassTypeBuilder
 import org.jetbrains.kotlin.analysis.api.components.KaTypeParameterTypeBuilder
-import org.jetbrains.kotlin.analysis.api.fir.types.KaBaseStarTypeProjection
 import org.jetbrains.kotlin.analysis.api.fir.types.KaBaseTypeArgumentWithVariance
-import org.jetbrains.kotlin.analysis.api.internals.KaInternalsTypeCreator
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.Variance
-
-@KaImplementationDetail
-abstract class KaBaseTypeCreator<T : KaSession> : KaBaseSessionComponent<T>(), KaInternalsTypeCreator {
-    override fun buildStarTypeProjection(): KaStarTypeProjection = KaBaseStarTypeProjection(token)
-
-    override fun buildArrayType(elementType: KaType, init: KaArrayTypeBuilder.() -> Unit): KaType = withValidityAssertion {
-        with(analysisSession) {
-            val builder = KaBaseArrayTypeBuilder.ByElementType(elementType, token).apply(init)
-
-            val builderElementType = builder.elementType
-
-            if (builderElementType is KaClassType && builder.shouldPreferPrimitiveTypes && !builderElementType.isMarkedNullable) {
-                val classId = builderElementType.classId
-                val primitiveArrayId =
-                    StandardClassIds.primitiveArrayTypeByElementType[classId]
-                        ?: StandardClassIds.unsignedArrayTypeByElementType[classId]
-                if (primitiveArrayId != null) {
-                    return buildClassType(primitiveArrayId) {
-                        isMarkedNullable = builder.isMarkedNullable
-                    }
-                }
-            }
-
-            return buildClassType(StandardClassIds.Array) {
-                isMarkedNullable = builder.isMarkedNullable
-                argument(builderElementType, builder.variance)
-            }
-        }
-    }
-
-    override fun buildVarargArrayType(elementType: KaType): KaType = withValidityAssertion {
-        buildArrayType(elementType) {
-            variance = Variance.OUT_VARIANCE
-        }
-    }
-}
 
 @KaImplementationDetail
 sealed class KaBaseClassTypeBuilder : KaClassTypeBuilder {
