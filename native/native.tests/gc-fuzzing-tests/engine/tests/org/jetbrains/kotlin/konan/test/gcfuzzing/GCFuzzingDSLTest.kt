@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSimpleTest
 import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedProperty
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
 import org.jetbrains.kotlin.konan.test.gcfuzzing.dsl.*
 import org.jetbrains.kotlin.konan.test.gcfuzzing.execution.*
@@ -47,7 +48,9 @@ class GCFuzzingDSLTest : AbstractNativeSimpleTest() {
         output.save(dslGeneratedDir)
         val goldenDataDir = testDataDir.resolve(name)
         assertDirectoriesEqual(goldenDataDir, dslGeneratedDir)
-        runDSL(name, output, testRunSettings.get<Timeouts>().executionTimeout)
+        if (testRunSettings.get<KotlinNativeTargets>().testTarget.family.isAppleFamily) {
+            runDSL(name, output, testRunSettings.get<Timeouts>().executionTimeout)
+        }
     }
 
     private inline fun runTest(testInfo: TestInfo, block: () -> Program) = runTest(testInfo.testMethod.get().name, block())
