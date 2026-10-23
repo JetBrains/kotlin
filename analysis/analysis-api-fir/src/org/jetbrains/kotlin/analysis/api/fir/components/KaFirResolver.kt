@@ -14,11 +14,8 @@ import org.jetbrains.kotlin.analysis.api.fir.components.resolver.*
 import org.jetbrains.kotlin.analysis.api.fir.getCandidateSymbols
 import org.jetbrains.kotlin.analysis.api.fir.isInvokeFunction
 import org.jetbrains.kotlin.analysis.api.fir.resolution.*
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirArrayOfSymbolProvider.arrayOfSymbol
-import org.jetbrains.kotlin.analysis.api.fir.types.KaFirEmptySubstitutor
 import org.jetbrains.kotlin.analysis.api.fir.utils.KaNonBoundToPsiErrorDiagnostic
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
-import org.jetbrains.kotlin.analysis.api.fir.utils.processEqualsFunctions
 import org.jetbrains.kotlin.analysis.api.fir.utils.withSymbolAttachment
 import org.jetbrains.kotlin.analysis.api.impl.base.util.withPsiEntry
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsResolver
@@ -29,7 +26,6 @@ import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaVariableSignature
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbolOfTypeSafe
@@ -58,7 +54,6 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeDiagnosticWithCandidates
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeHiddenCandidateError
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
-import org.jetbrains.kotlin.fir.resolve.toArrayOfFactoryName
 import org.jetbrains.kotlin.fir.resolve.transformers.unwrapAtoms
 import org.jetbrains.kotlin.fir.scopes.getDeclaredConstructors
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
@@ -78,7 +73,6 @@ import org.jetbrains.kotlin.psi.psiUtil.getPossiblyQualifiedCallExpression
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
 import org.jetbrains.kotlin.resolution.KtResolvable
 import org.jetbrains.kotlin.resolution.KtResolvableCall
-import org.jetbrains.kotlin.resolve.ArrayFqNames
 import org.jetbrains.kotlin.resolve.calls.inference.buildCurrentSubstitutor
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.toKtPsiSourceElement
@@ -525,7 +519,7 @@ internal class KaFirResolver(
         )
     }
 
-    private val equalsSymbolInAny: FirNamedFunctionSymbol? by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    internal val equalsSymbolInAny: FirNamedFunctionSymbol? by lazy(LazyThreadSafetyMode.PUBLICATION) {
         val session = analysisSession.firSession
         val anyFirClass = session.builtinTypes.anyType.toRegularClassSymbol(session) ?: return@lazy null
         val scope = session.declaredMemberScope(
@@ -1753,12 +1747,6 @@ internal class KaFirResolver(
         return functionCall as KaFunctionCall<KaNamedFunctionSymbol>
     }
 
-    private fun FirCollectionLiteral.toTypeArgumentsMapping(symbol: KaDeclarationSymbol): Map<KaTypeParameterSymbol, KaType> {
-        val elementType = resolvedType.arrayElementType()?.asKaType() ?: return emptyMap()
-        val typeParameter = symbol.typeParameters.singleOrNull() ?: return emptyMap()
-        return mapOf(typeParameter to elementType)
-    }
-
     // TODO: Refactor common code with FirElement.toKtCallInfo() when other FirResolvables are handled
     private fun FirElement.collectCallCandidates(
         psi: KtElement,
@@ -2021,115 +2009,6 @@ internal class KaFirResolver(
                 }
             }
         }
-
-    private val unresolvedArrayOfDiagnostic: KaDiagnostic
-        get() = KaNonBoundToPsiErrorDiagnostic(
-            factoryName = FirErrors.OTHER_ERROR.name,
-            defaultMessage = "type of arrayOf call is not resolved",
-            token = token
-        )
-
-    private fun FirCollectionLiteral.toKaResolutionAttempt(): KaCallResolutionAttempt? {
-        val arrayOfSymbol = with(analysisSession) {
-            val type = resolvedType as? ConeClassLikeType ?: return run {
-                val defaultArrayOfSymbol = arrayOfSymbol(ArrayFqNames.ARRAY_OF_FUNCTION) ?: return null
-                val substitutor = createSubstitutorFromTypeArguments(defaultArrayOfSymbol)
-                val partiallyAppliedSymbol = KaFirPartiallyAppliedSymbol(
-                    backingSignature = with(useSiteSession) { defaultArrayOfSymbol.substitute(substitutor) },
-                    dispatchReceiver = null,
-                    extensionReceiver = null,
-                    contextArguments = emptyList(),
-                )
-
-                KaFirSimpleCallResolutionError(
-                    backedDiagnostic = unresolvedArrayOfDiagnostic,
-                    backingCandidateCalls = listOf(
-                        KaFirSimpleFunctionCall(
-                            backingPartiallyAppliedSymbol = partiallyAppliedSymbol,
-                            backingArgumentMapping = createArgumentMapping(defaultArrayOfSymbol, substitutor),
-                            backingTypeArgumentsMapping = toTypeArgumentsMapping(defaultArrayOfSymbol),
-                        )
-                    ),
-                )
-            }
-
-            val factoryName = toArrayOfFactoryName(
-                expectedType = type,
-                session = analysisSession.firSession,
-                eagerlyReturnNonPrimitive = true
-            ) ?: return null
-
-            arrayOfSymbol(factoryName)
-        } ?: return null
-
-        val substitutor = createSubstitutorFromTypeArguments(arrayOfSymbol)
-        val partiallyAppliedSymbol = KaFirPartiallyAppliedSymbol(
-            backingSignature = with(analysisSession) { arrayOfSymbol.substitute(substitutor) },
-            dispatchReceiver = null,
-            extensionReceiver = null,
-            contextArguments = emptyList(),
-        )
-
-        return KaFirSimpleCallResolutionSuccess(
-            backingCall = KaFirSimpleFunctionCall(
-                backingPartiallyAppliedSymbol = partiallyAppliedSymbol,
-                backingArgumentMapping = createArgumentMapping(arrayOfSymbol, substitutor),
-                backingTypeArgumentsMapping = toTypeArgumentsMapping(arrayOfSymbol),
-            )
-        )
-    }
-
-    private fun FirCollectionLiteral.createSubstitutorFromTypeArguments(arrayOfSymbol: KaNamedFunctionSymbol): KaSubstitutor {
-        val firSymbol = arrayOfSymbol.firSymbol
-        // No type parameter means this is an arrayOf call of primitives, in which case there is no type arguments
-        val typeParameter = firSymbol.fir.typeParameters.singleOrNull() ?: return KaFirEmptySubstitutor(token)
-
-        val elementType = resolvedType.arrayElementType() ?: return KaFirEmptySubstitutor(token)
-        val coneSubstitutor = substitutorByMap(mapOf(typeParameter.symbol to elementType), rootModuleSession)
-        return firSymbolBuilder.typeBuilder.buildSubstitutor(coneSubstitutor)
-    }
-
-    private fun FirEqualityOperatorCall.toKaResolutionAttempt(psi: KtElement): KaCallResolutionAttempt? {
-        val binaryExpression = deparenthesize(psi as? KtExpression) as? KtBinaryExpression ?: return null
-        val leftPsi = binaryExpression.left ?: return null
-        val rightPsi = binaryExpression.right ?: return null
-        return when (operation) {
-            FirOperation.EQ, FirOperation.NOT_EQ -> {
-                val leftOperand = arguments.firstOrNull() ?: return null
-
-                val equalsSymbol = getEqualsSymbol() ?: return null
-                val kaSignature = equalsSymbol.toKaSignature()
-                KaFirSimpleCallResolutionSuccess(
-                    backingCall = KaFirSimpleFunctionCall(
-                        backingPartiallyAppliedSymbol = KaFirPartiallyAppliedSymbol(
-                            backingSignature = kaSignature,
-                            dispatchReceiver = KaFirExplicitReceiverValue(
-                                expression = leftPsi,
-                                backingType = leftOperand.resolvedType.asKaType(),
-                                isSafeNavigation = false,
-                            ),
-                            extensionReceiver = null,
-                            contextArguments = emptyList(),
-                        ),
-                        backingArgumentMapping = mapOf(rightPsi to kaSignature.valueParameters.first()),
-                        backingTypeArgumentsMapping = emptyMap(),
-                    )
-                )
-            }
-
-            else -> null
-        }
-    }
-
-    private fun FirEqualityOperatorCall.getEqualsSymbol(): FirNamedFunctionSymbol? {
-        var equalsSymbol: FirNamedFunctionSymbol? = null
-        processEqualsFunctions(analysisSession.firSession, analysisSession) {
-            if (equalsSymbol != null) return@processEqualsFunctions
-            equalsSymbol = it
-        }
-
-        return equalsSymbol ?: equalsSymbolInAny
-    }
 
     private inline fun <R> wrapError(element: KtElement, action: () -> R): R = try {
         action()
