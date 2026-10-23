@@ -84,6 +84,6 @@ FILE fqName:test fileName:/main.kt lineStartOffsets: [0, 1, 2, 3, 4, 5, 6, 7, 8,
               VAR[-1, -1] IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER name:this type:lib.A.B [val]
                 GET_VAR[-1, -1] 'val tmp_0: lib.A.B declared in test.test' type=lib.A.B origin=null
               RETURN[122, 122] type=kotlin.Nothing from='{IrReturnableBlockImpl}'
-                CALL[121, 122] 'UNBOUND IrSimpleFunctionSymbolImpl' type=kotlin.Int origin=GET_PROPERTY
-                  ARG 1: CALL[121, 122] 'UNBOUND IrSimpleFunctionSymbolImpl' type=lib.A origin=null
-                    ARG 1: GET_VAR[121, 122] 'val this: lib.A.B declared in test.test' type=lib.A.B origin=null
+                CALL[121, 122] 'public final fun <get-x> (): kotlin.Int declared in lib.A' type=kotlin.Int origin=GET_PROPERTY
+                  ARG <this>: CALL[121, 122] 'public final fun access$<outer-this-0> ($this: lib.A.B): lib.A declared in lib.A.B' type=lib.A origin=null
+                    ARG $this: GET_VAR[121, 122] 'val this: lib.A.B declared in test.test' type=lib.A.B origin=null

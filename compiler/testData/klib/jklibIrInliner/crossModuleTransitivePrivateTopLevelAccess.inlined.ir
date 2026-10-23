@@ -1,0 +1,45 @@
+Module: lib
+FILE fqName:lib fileName:/lib.kt lineStartOffsets: [0, 15, 31, 43, 44, 91, 92, 140, 213, 214]
+  FUN[0, 0] SYNTHETIC_ACCESSOR name:access$privateTopLevelFunction$tLibKt visibility:internal modality:FINAL returnType:kotlin.Int
+    BLOCK_BODY[0, 0]
+      RETURN[0, 0] type=kotlin.Nothing from='internal final fun access$privateTopLevelFunction$tLibKt (): kotlin.Int declared in lib'
+        CALL[0, 0] 'private final fun privateTopLevelFunction (): kotlin.Int declared in lib' type=kotlin.Int origin=null
+  FUN[156, 212] name:libInlineFunction visibility:internal modality:FINAL returnType:kotlin.Int [inline]
+    annotations:
+      Suppress(names = ["NON_PUBLIC_CALL_FROM_PUBLIC_INLINE"] type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String)
+    BLOCK_BODY[187, 212]
+      RETURN[212, 212] type=kotlin.Nothing from='internal final fun libInlineFunction (): kotlin.Int declared in lib'
+        CALL[187, 212] 'internal final fun access$privateTopLevelFunction$tLibKt (): kotlin.Int declared in lib' type=kotlin.Int origin=null
+  FUN[52, 90] name:privateTopLevelFunction visibility:private modality:FINAL returnType:kotlin.Int
+    BLOCK_BODY[89, 90]
+      RETURN[90, 90] type=kotlin.Nothing from='private final fun privateTopLevelFunction (): kotlin.Int declared in lib'
+        CONST[89, 90] Int type=kotlin.Int value=1
+Module: middle
+FILE fqName:middle fileName:/middle.kt lineStartOffsets: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 34, 53, 68, 69, 98, 99, 154, 215, 216]
+  FUN[161, 214] name:middleInlineFunction visibility:public modality:FINAL returnType:kotlin.Int [inline]
+    annotations:
+      Suppress(names = ["NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE"] type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String)
+    BLOCK_BODY[195, 214]
+      RETURN[214, 214] type=kotlin.Nothing from='public final fun middleInlineFunction (): kotlin.Int declared in middle'
+        RETURNABLE_BLOCK[195, 214] type=kotlin.Int origin=null
+          INLINED_BLOCK[195, 214]->[156, 212] type=kotlin.Int origin=null
+            inlinedFunctionSymbol: internal final fun libInlineFunction (): kotlin.Int declared in lib
+            inlinedFunctionFileEntry: FILE_ENTRY path:/lib.kt
+            RETURN[212, 212] type=kotlin.Nothing from='{IrReturnableBlockImpl}'
+              CALL[187, 212] 'internal final fun access$privateTopLevelFunction$tLibKt (): kotlin.Int declared in lib' type=kotlin.Int origin=null
+Module: main
+FILE fqName:test fileName:/main.kt lineStartOffsets: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 47, 64, 77, 78, 113, 114, 155]
+  FUN[114, 154] name:test visibility:public modality:FINAL returnType:kotlin.Int
+    BLOCK_BODY[132, 154]
+      RETURN[154, 154] type=kotlin.Nothing from='public final fun test (): kotlin.Int declared in test'
+        RETURNABLE_BLOCK[132, 154] type=kotlin.Int origin=null
+          INLINED_BLOCK[132, 154]->[161, 214] type=kotlin.Int origin=null
+            inlinedFunctionSymbol: public final fun middleInlineFunction (): kotlin.Int declared in middle
+            inlinedFunctionFileEntry: FILE_ENTRY path:/middle.kt
+            RETURN[214, 214] type=kotlin.Nothing from='{IrReturnableBlockImpl}'
+              RETURNABLE_BLOCK[195, 214] type=kotlin.Int origin=null
+                INLINED_BLOCK[195, 214]->[156, 212] type=kotlin.Int origin=null
+                  inlinedFunctionSymbol: internal final fun libInlineFunction (): kotlin.Int declared in lib
+                  inlinedFunctionFileEntry: FILE_ENTRY path:/lib.kt
+                  RETURN[212, 212] type=kotlin.Nothing from='{IrReturnableBlockImpl}'
+                    CALL[187, 212] 'internal final fun access$privateTopLevelFunction$tLibKt (): kotlin.Int declared in lib' type=kotlin.Int origin=null
