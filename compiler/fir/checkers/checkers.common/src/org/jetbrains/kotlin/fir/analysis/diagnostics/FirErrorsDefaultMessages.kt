@@ -4218,13 +4218,13 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             COMPANION_EXTENSION_RECEIVER_IS_OBJECT,
-            "Companion extension receiver type ''{0}'' resolves to an object. Companion extensions can only be declared on classes and interfaces.",
-            RENDER_TYPE,
+            "Companion extension receiver type resolves to ''{0}''. Companion extensions can only be declared on classes and interfaces.",
+            SYMBOL,
         )
         map.put(
             COMPANION_EXTENSION_RECEIVER_IS_TYPE_PARAMETER,
-            "Companion extension receiver type ''{0}'' resolves to a type parameter. Companion extensions can only be declared on classes and interfaces.",
-            RENDER_TYPE,
+            "Companion extension receiver type resolves to type parameter ''{0}''. Companion extensions can only be declared on classes and interfaces.",
+            SYMBOL,
         )
         map.put(
             COMPANION_EXTENSION_RECEIVER_ANNOTATED,

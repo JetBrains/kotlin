@@ -6283,7 +6283,7 @@ private fun KaDiagnosticConverterBuilder.addConversions131() {
     }
     add(FirErrors.COMPANION_EXTENSION_RECEIVER_IS_TYPE_PARAMETER) { firDiagnostic ->
         CompanionExtensionReceiverIsTypeParameterImpl(
-            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firSymbolBuilder.classifierBuilder.buildTypeParameterSymbol(firDiagnostic.a),
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -8728,7 +8728,7 @@ private fun KaDiagnosticConverterBuilder.addConversions189() {
     }
     add(FirErrors.COMPANION_EXTENSION_RECEIVER_IS_OBJECT) { firDiagnostic ->
         CompanionExtensionReceiverIsObjectImpl(
-            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(firDiagnostic.a),
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )

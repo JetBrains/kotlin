@@ -1,11 +1,13 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: -ForbidUselessTypeArgumentsIn26 +CompanionBlocks +CompanionExtensions
+// RENDER_DIAGNOSTICS_FULL_TEXT
 class C<T>
 object O
 
 typealias TA = C<String>
 typealias TA2<T> = C<T>
 typealias TA3<T> = C<T>?
+typealias TA4<T> = O
 
 companion fun C.correct1() {}
 companion fun TA.correct2() {}
@@ -22,6 +24,7 @@ companion inline fun <reified T> <!COMPANION_EXTENSION_RECEIVER_IS_TYPE_PARAMETE
 companion fun <!COMPANION_EXTENSION_RECEIVER_IS_OBJECT!>O<!>.incorrect6() {}
 companion fun <!COMPANION_EXTENSION_NULLABLE_RECEIVER!>C?<!>.incorrect7() {}
 companion fun <!DYNAMIC_RECEIVER_NOT_ALLOWED, UNSUPPORTED!>dynamic<!>.incorrect8() {}
+companion fun <!COMPANION_EXTENSION_RECEIVER_IS_OBJECT("object O : Any")!>TA4<!>.incorrect9() {}
 
 fun test() {
     C.correct1()
