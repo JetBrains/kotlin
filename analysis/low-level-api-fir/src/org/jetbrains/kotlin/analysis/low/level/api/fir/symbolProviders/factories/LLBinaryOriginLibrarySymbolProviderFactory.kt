@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fir.session.KlibBasedSymbolProvider
 import org.jetbrains.kotlin.fir.session.MetadataSymbolProvider
 import org.jetbrains.kotlin.fir.session.NativeForwardDeclarationsSymbolProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.io.ZipFileSystemAccessor
 import org.jetbrains.kotlin.library.KlibConstants.KLIB_FILE_EXTENSION
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.loader.KlibLoader
@@ -159,15 +160,19 @@ internal object LLBinaryOriginLibrarySymbolProviderFactory : LLLibrarySymbolProv
 
     private fun LLFirModuleData.getLibraryKLibs(): List<KotlinLibrary> {
         val ktLibraryModule = ktModule as? KaLibraryModule ?: return emptyList()
+        val zipFileSystemAccessor = LLKlibZipFileSystemAccessor.getInstance(ktLibraryModule.project)
 
         return ktLibraryModule.binaryRoots
             .filter { it.isDirectory() || it.extension == KLIB_FILE_EXTENSION }
-            .mapNotNull { it.tryResolveAsKLib() }
+            .mapNotNull { it.tryResolveAsKLib(zipFileSystemAccessor) }
     }
 
-    private fun Path.tryResolveAsKLib(): KotlinLibrary? {
+    private fun Path.tryResolveAsKLib(zipFileSystemAccessor: ZipFileSystemAccessor): KotlinLibrary? {
         return try {
-            KlibLoader { libraryPaths(absolutePathString()) }.load().librariesStdlibFirst.singleOrNull()
+            KlibLoader {
+                libraryPaths(absolutePathString())
+                zipFileSystemAccessor(zipFileSystemAccessor)
+            }.load().librariesStdlibFirst.singleOrNull()
         } catch (e: Exception) {
             rethrowIntellijPlatformExceptionIfNeeded(e)
             LOG.warn("Cannot resolve a KLib $this", e)

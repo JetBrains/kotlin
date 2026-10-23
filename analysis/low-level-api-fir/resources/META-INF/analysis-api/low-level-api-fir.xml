@@ -52,6 +52,9 @@
     <projectService
         serviceImplementation="org.jetbrains.kotlin.analysis.low.level.api.fir.statistics.LLStatisticsService"
     />
+    <projectService
+        serviceImplementation="org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.factories.LLKlibZipFileSystemAccessor"
+    />
 
     <applicationService
         serviceInterface="org.jetbrains.kotlin.analysis.api.platform.resolution.KaResolutionActivityTracker"
