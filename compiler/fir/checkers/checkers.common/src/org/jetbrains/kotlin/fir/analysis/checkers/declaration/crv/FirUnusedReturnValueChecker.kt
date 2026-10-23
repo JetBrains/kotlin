@@ -88,8 +88,11 @@ object FirUnusedReturnValueChecker : FirUnusedCheckerBase() {
 
     context(context: CheckerContext, visitor: UsageVisitor)
     private fun hasContractAndCanBeIgnored(functionCall: FirFunctionCall, resolvedSymbol: FirFunctionSymbol<*>, data: UsageState): Boolean {
+        // The contract is taken from the original, but the argument mapping refers to the value parameters of the called function,
+        // which can be a fake override of the original
+        val calledSymbol = functionCall.toResolvedCallableSymbol() as? FirFunctionSymbol<*> ?: return false
         val fpSymbols = resolvedSymbol.indicesOfPropagatingFunctionalParameters()
-            .let { resolvedSymbol.declarationIndicesToValueParameters(it) }
+            .let { calledSymbol.declarationIndicesToValueParameters(it) }
         if (fpSymbols.isEmpty()) return false
         val resolvedArgumentMapping = functionCall.resolvedArgumentMapping ?: return false
         val functionalArguments =
