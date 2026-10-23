@@ -81,7 +81,7 @@ internal abstract class SymbolLightClassForClassLike<SType : KaClassSymbol> prot
     abstract override fun getImplementsList(): PsiReferenceList?
 
     private val _typeParameterList: PsiTypeParameterList? by lazyPub {
-        hasTypeParameters().ifTrue {
+        withClassSymbol { it.typeParameters.isNotEmpty() }.ifTrue {
             SymbolLightTypeParameterList(
                 owner = this,
                 symbolWithTypeParameterPointer = symbolPointer,
@@ -91,7 +91,7 @@ internal abstract class SymbolLightClassForClassLike<SType : KaClassSymbol> prot
         }
     }
 
-    override fun hasTypeParameters(): Boolean = withClassSymbol { it.typeParameters.isNotEmpty() }
+    override fun hasTypeParameters(): Boolean = _typeParameterList != null
 
     override fun getTypeParameterList(): PsiTypeParameterList? = _typeParameterList
 

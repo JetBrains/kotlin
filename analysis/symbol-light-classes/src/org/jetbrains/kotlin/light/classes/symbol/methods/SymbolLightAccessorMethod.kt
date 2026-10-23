@@ -103,7 +103,10 @@ internal class SymbolLightAccessorMethod private constructor(
     override fun getName(): String = _name
 
     private val _typeParameterList: PsiTypeParameterList? by lazyPub {
-        hasTypeParameters().ifTrue {
+        val hasTypeParameters = withPropertySymbol { it.typeParameters.isNotEmpty() } ||
+                containingClass.isDefaultImplsForInterfaceWithTypeParameters
+
+        hasTypeParameters.ifTrue {
             SymbolLightTypeParameterList(
                 owner = this,
                 symbolWithTypeParameterPointer = containingPropertySymbolPointer,
@@ -113,9 +116,7 @@ internal class SymbolLightAccessorMethod private constructor(
         }
     }
 
-    override fun hasTypeParameters(): Boolean {
-        return withPropertySymbol { it.typeParameters.isNotEmpty() } || containingClass.isDefaultImplsForInterfaceWithTypeParameters
-    }
+    override fun hasTypeParameters(): Boolean = _typeParameterList != null
 
     override fun getTypeParameterList(): PsiTypeParameterList? = _typeParameterList
     override fun getTypeParameters(): Array<PsiTypeParameter> = _typeParameterList?.typeParameters ?: PsiTypeParameter.EMPTY_ARRAY
