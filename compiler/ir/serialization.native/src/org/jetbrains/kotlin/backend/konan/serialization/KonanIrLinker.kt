@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializerWit
 import org.jetbrains.kotlin.backend.common.serialization.KotlinIrLinker
 import org.jetbrains.kotlin.backend.common.serialization.kotlinLibrary
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.PartialLinkageConfig
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.objcinterop.isObjCClass
@@ -32,7 +31,6 @@ class KonanIrLinker(
     symbolTable: SymbolTable,
     friendModules: Map<String, Collection<String>>,
     private val cInteropModuleDeserializerFactory: CInteropModuleDeserializerFactory<*>,
-    partialLinkageConfig: PartialLinkageConfig,
     irDiagnosticReporter: IrDiagnosticReporter,
     private val librariesBeingCached: Map<KotlinLibrary, PartialCacheInfo>,
     externalOverridabilityConditions: List<IrExternalOverridabilityCondition>,
@@ -46,7 +44,6 @@ class KonanIrLinker(
     override val irMangler: KotlinMangler.IrMangler = KonanManglerIr
 
     override val partialLinkageSupport: PartialLinkageSupportForLinker = createPartialLinkageSupportForLinker(
-        partialLinkageConfig = partialLinkageConfig,
         irFactory = symbolTable.irFactory,
         anyClass = anyClass,
         nothingClass = nothingClass,

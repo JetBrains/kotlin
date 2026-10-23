@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.ir.backend.js.ic
 import org.jetbrains.kotlin.backend.common.IrBuiltInsForLinker
 import org.jetbrains.kotlin.backend.common.IrModuleDependencies
 import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
-import org.jetbrains.kotlin.backend.common.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
 import org.jetbrains.kotlin.backend.common.serialization.checkIsFunctionInterface
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
@@ -136,7 +135,6 @@ internal class JsIrLinkerLoader(
         return JsIrLinker(
             configuration = compilerConfiguration,
             symbolTable = symbolTable,
-            partialLinkageConfig = compilerConfiguration.partialLinkageConfig,
             irDiagnosticReporter = irDiagnosticReporter,
             friendModules = mapOf(mainLibrary.uniqueName to mainModuleFriends.map { it.uniqueName })
         )

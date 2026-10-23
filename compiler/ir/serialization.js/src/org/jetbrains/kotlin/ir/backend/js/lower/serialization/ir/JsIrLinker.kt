@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.common.linkage.partial.createPartialLinkageS
 import org.jetbrains.kotlin.backend.common.overrides.IrLinkerFakeOverrideProvider
 import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.PartialLinkageConfig
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -27,7 +26,6 @@ import org.jetbrains.kotlin.utils.memoryOptimizedMap
 class JsIrLinker(
     configuration: CompilerConfiguration,
     symbolTable: SymbolTable,
-    partialLinkageConfig: PartialLinkageConfig,
     irDiagnosticReporter: IrDiagnosticReporter,
     friendModules: Map<String, Collection<String>> = emptyMap(),
 ) : KotlinIrLinker(
@@ -41,7 +39,6 @@ class JsIrLinker(
     }) {
 
     override val partialLinkageSupport: PartialLinkageSupportForLinker = createPartialLinkageSupportForLinker(
-        partialLinkageConfig = partialLinkageConfig,
         irFactory = symbolTable.irFactory,
         anyClass = anyClass,
         nothingClass = nothingClass,

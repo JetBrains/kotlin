@@ -19,11 +19,10 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSources.File as PLFile
 
 fun createPartialLinkageSupportForLowerings(
-    partialLinkageConfig: PartialLinkageConfig,
     diagnosticReporter: IrDiagnosticReporter,
     issueSink: PartialLinkageIssueSink? = null,
 ): PartialLinkageSupportForLowerings = PartialLinkageSupportForLoweringsImpl(
-    PartialLinkageLogger(diagnosticReporter, partialLinkageConfig.logLevel, issueSink)
+    PartialLinkageLogger(diagnosticReporter, issueSink)
 )
 
 internal class PartialLinkageSupportForLoweringsImpl(
