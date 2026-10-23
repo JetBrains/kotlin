@@ -198,4 +198,10 @@ public class FirStandaloneNormalAnalysisSourceModuleDeclaredMemberScopeTestGener
   public void testSubstitutionOverrideOfKotlinInJava() {
     run("substitutionOverrideOfKotlinInJava.kt");
   }
+
+  @Test
+  @TestMetadata("unsignedAnnotationArgumentsCompiled.kt")
+  public void testUnsignedAnnotationArgumentsCompiled() {
+    run("unsignedAnnotationArgumentsCompiled.kt");
+  }
 }
