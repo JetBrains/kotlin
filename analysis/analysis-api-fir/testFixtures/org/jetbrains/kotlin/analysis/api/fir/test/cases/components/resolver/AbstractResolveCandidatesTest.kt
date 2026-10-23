@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.api.fir.test.cases.components.resolver
 
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.resolveToCallCandidates
-import org.jetbrains.kotlin.analysis.api.fir.components.asKaCallCandidate
+import org.jetbrains.kotlin.analysis.api.fir.resolution.asKaCallCandidate
 import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.assertStableSymbolResult
 import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.compareCalls
 import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.stringRepresentation
