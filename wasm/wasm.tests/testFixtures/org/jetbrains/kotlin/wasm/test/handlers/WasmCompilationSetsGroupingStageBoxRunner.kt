@@ -84,3 +84,10 @@ class WasmJsCoroutinesStackSwitchingBoxRunner(
     override val wasmBoxRunner: WasmBoxRunner
         get() = WasmStackSwitchingRunner(firstNonGroupingTestServices)
 }
+
+class WasmWasiCoroutinesStackSwitchingBoxRunner(
+    testServices: TestServices
+) : WasmCompilationSetsGroupingStageBoxRunner(testServices) {
+    override val wasiBoxRunner: WasiBoxRunner
+        get() = WasiBoxRunner(firstNonGroupingTestServices, executeWithWasmtimeOnly = true)
+}

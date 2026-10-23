@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.wasm.test.handlers
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.test.DebugMode
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.RUN_UNIT_TESTS
+import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.USE_STACK_SWITCHING_PROPOSAL
 import org.jetbrains.kotlin.test.groupingStageInputs
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.WasmCompilationSet
@@ -59,11 +60,12 @@ internal fun wasiStandaloneEntryExport(hasGroupedTestsDriver: Boolean, runUnitTe
 class WasiBoxRunner(
     testServices: TestServices,
     executeWithNodeJsOnly: Boolean = false, // Klib backward compatibility testsuite needs only one best Wasi runner
+    executeWithWasmtimeOnly: Boolean = false, // Stack switching proposal is supported only by Wasmtime among Wasi runners
 ) : AbstractWasmArtifactsCollector(testServices) {
-    internal val vmsToCheck: List<WasmVM> = if (executeWithNodeJsOnly) {
-        listOf(WasmVM.NodeJs)
-    } else {
-        listOf(WasmVM.NodeJs, WasmVM.WasmEdge, WasmVM.Wasmtime)
+    internal val vmsToCheck: List<WasmVM> = when {
+        executeWithNodeJsOnly -> listOf(WasmVM.NodeJs)
+        executeWithWasmtimeOnly -> listOf(WasmVM.Wasmtime)
+        else -> listOf(WasmVM.NodeJs, WasmVM.WasmEdge, WasmVM.Wasmtime)
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
@@ -134,12 +136,13 @@ class WasiBoxRunner(
             }
 
             val useNewExceptionProposal = testServices.useNewExceptionHandling(WasmTarget.WASI)
+            val useStackSwitchingProposal = USE_STACK_SWITCHING_PROPOSAL in testServices.moduleStructure.allDirectives
 
             val exceptions = vmsToCheck.mapNotNull { vm ->
                 vm.runWithCaughtExceptions(
                     debugMode = debugMode,
                     useNewExceptionHandling = useNewExceptionProposal,
-                    useStackSwitching = false,
+                    useStackSwitching = useStackSwitchingProposal,
                     entryFile = if (!vm.entryPointIsJsFile) "$WASM_BASE_FILE_NAME.wasm" else collectedJsArtifacts.entryPath ?: "test.mjs",
                     jsFilePaths = jsFilePaths,
                     workingDirectory = dir,

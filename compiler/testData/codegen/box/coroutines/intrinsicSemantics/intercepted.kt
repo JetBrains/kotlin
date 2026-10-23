@@ -5,6 +5,12 @@
 // WASM_IGNORE_FOR: mode=single-module runner=org.jetbrains.kotlin.wasm.test.FirWasmJsCodegenCoroutinesStackSwitchingSingleModuleTestGenerated
 // WASM_IGNORE_FOR: mode=multi-module runner=org.jetbrains.kotlin.wasm.test.WasmJsCodegenCoroutinesStackSwitchingMultiModuleTestGenerated
 
+// WASM_IGNORE_FOR: mode=regular runner=org.jetbrains.kotlin.wasm.test.WasmWasiCodegenCoroutinesStackSwitchingTestGenerated
+// WASM_IGNORE_FOR: mode=single-module runner=org.jetbrains.kotlin.wasm.test.FirWasmWasiCodegenCoroutinesStackSwitchingSingleModuleTestGenerated
+// WASM_IGNORE_FOR: mode=multi-module runner=org.jetbrains.kotlin.wasm.test.WasmWasiCodegenCoroutinesStackSwitchingMultiModuleTestGenerated
+
+// Unmute after KT-89625 [Wasm] remove WasmContinuationBox and fix inner resumptions with `startCoroutine...`
+
 // WITH_STDLIB
 // WITH_COROUTINES
 
