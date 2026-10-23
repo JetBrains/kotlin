@@ -1,5 +1,14 @@
-expression: fdfd
-expected type: KaUsualClassType:
-  annotations: []
-  typeArguments: []
-  type: kotlin/Boolean
+expression:
+  fdfd
+
+expectedType:
+  KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/Boolean
+
+inferredExpectedType:
+  KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/Boolean

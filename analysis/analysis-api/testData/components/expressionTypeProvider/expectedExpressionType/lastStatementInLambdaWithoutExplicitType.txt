@@ -1,4 +1,12 @@
-expression: av
-expected type: KaTypeParameterType:
-  annotations: []
-  type: R
+expression:
+  av
+
+expectedType:
+  KaTypeParameterType:
+    annotations: []
+    type: R
+
+inferredExpectedType:
+  KaTypeParameterType:
+    annotations: []
+    type: R
