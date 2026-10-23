@@ -48,6 +48,17 @@ var <T : FirFunction> T.typeAliasConstructorInfo: TypeAliasConstructorInfo<T>? b
 val FirConstructorSymbol.typeAliasConstructorInfo: TypeAliasConstructorInfo<*>?
     get() = fir.typeAliasConstructorInfo
 
+/**
+ * Typealiased constructors don't copy the contract of the original constructor,
+ * so it should be taken from [TypeAliasConstructorInfo.originalConstructor].
+ */
+fun <T : FirFunction> T.originalIfTypeAliasConstructor(): T = typeAliasConstructorInfo?.originalConstructor ?: this
+
+/**
+ * @see originalIfTypeAliasConstructor
+ */
+fun FirFunctionSymbol<*>.originalIfTypeAliasConstructor(): FirFunctionSymbol<*> = fir.originalIfTypeAliasConstructor().symbol
+
 class FirTypealiasConstructorStorage(val session: FirSession) : FirSessionComponent {
     private val cachesFactory = session.firCachesFactory
 
