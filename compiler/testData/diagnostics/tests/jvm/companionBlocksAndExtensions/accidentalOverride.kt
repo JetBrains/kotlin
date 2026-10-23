@@ -53,7 +53,7 @@ class B : A() {
         <!ACCIDENTAL_OVERRIDE!>fun compBaz4(x: List<String>, @IntroducedAt("1.1") y: Int = 0) {}<!>
 
         // KT-90607
-        <!CONFLICTING_JVM_DECLARATIONS!><!CONFLICTING_JVM_DECLARATIONS!>fun compWithInlineClass(s: InlineString)<!> {}<!>
+        fun compWithInlineClass(s: InlineString) {}
     }
 }
 
