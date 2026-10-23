@@ -16,7 +16,10 @@ import org.jetbrains.kotlin.config.nativeBinaryOptions.CCallMode
 import org.jetbrains.kotlin.config.nativeBinaryOptions.CInterfaceGenerationMode
 import org.jetbrains.kotlin.config.nativeBinaryOptions.GC
 import org.jetbrains.kotlin.config.nativeBinaryOptions.GCSchedulerType
+import org.jetbrains.kotlin.io.propertyList
 import org.jetbrains.kotlin.konan.file.isBitcode
+import org.jetbrains.kotlin.konan.library.components.KlibBitcodeConstants.KLIB_ARM64E_FOLDER_NAME
+import org.jetbrains.kotlin.konan.library.components.KlibBitcodeConstants.KLIB_PROPERTY_NATIVE_BITCODE_VARIANTS
 import org.jetbrains.kotlin.konan.library.components.bitcode
 import org.jetbrains.kotlin.konan.library.linkerOpts
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
@@ -112,7 +115,10 @@ private fun collectLlvmModules(generationState: NativeGenerationState, generated
             .toList()
             .map { libraries ->
                 libraries.flatMap { library ->
-                    library.bitcode(config.target)?.bitcodeFilePaths.orEmpty().filter { it.isBitcode }
+                    // arm64e binaries link the bitcode compiled for arm64e, if the library has it.
+                    val arm64e = config.arm64e &&
+                            KLIB_ARM64E_FOLDER_NAME in library.manifestProperties.propertyList(KLIB_PROPERTY_NATIVE_BITCODE_VARIANTS)
+                    library.bitcode(config.target, arm64e)?.bitcodeFilePaths.orEmpty().filter { it.isBitcode }
                             .onEach { libraryNamesOfBitcode[it.pathString] = library.uniqueName }
                 }
             }
@@ -219,6 +225,7 @@ private fun checkArm64eBitcode(config: NativeSecondStageCompilationConfig, modul
     val bitcode = if (library == null) "Bitcode '$bitcodeFile'" else "Bitcode '${File(bitcodeFile).name}' of library '$library'"
     config.configuration.reportCompilationErrorAndThrow(
             "$bitcode is compiled for '$triple', so it cannot be linked into an arm64e binary. " +
+                    "To compile the bitcode of a C interop library for arm64e, use the cinterop option '-Xarm64e-bitcode'. " +
                     "To use a C interop library that supports direct calls without its bitcode, use '-Xbinary=cCallMode=direct'."
     )
 }

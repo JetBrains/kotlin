@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.konan.test.blackbox
 
 import com.intellij.testFramework.TestDataPath
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
+import org.jetbrains.kotlin.konan.library.components.KlibBitcodeConstants.KLIB_ARM64E_FOLDER_NAME
+import org.jetbrains.kotlin.konan.library.components.KlibBitcodeConstants.KLIB_PROPERTY_NATIVE_BITCODE_VARIANTS
 import org.jetbrains.kotlin.konan.target.AppleConfigurables
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty
@@ -28,13 +30,16 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.BinaryLibraryKi
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.configurables
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.ClangDistribution
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.compileWithClang
+import org.jetbrains.kotlin.library.KLIB_PROPERTY_NATIVE_TARGETS
 import org.jetbrains.kotlin.native.executors.runProcess
 import org.jetbrains.kotlin.test.KtAssert.fail
+import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.io.File
+import java.util.Properties
 import kotlin.time.Duration
 
 /**
@@ -164,6 +169,31 @@ class Arm64eTest : AbstractNativeSimpleTest() {
         assertTrue(result is TestCompilationResult.CompilationToolFailure && "is compiled for 'arm64-apple-ios" in result.loggedData.toolOutput) {
             "Expected the arm64e framework to reject arm64 bitcode, got: $result"
         }
+    }
+
+    @Test
+    fun testCInteropArm64eBitcode() {
+        val testName = "arm64e_bitcode"
+        val interopLibrary = cinterop(
+            testName,
+            listOf(
+                "-nopack", "-Xarm64e-bitcode",
+                "-Xccall-mode", "indirect", "-Xcompile-source", testSuiteDir.resolve("$testName/compiled.cpp").absolutePath,
+            ),
+        ).klibFile
+        val targetDir = interopLibrary.resolve("default/targets/ios_arm64")
+        val bitcodeFiles = setOf("cstubs.bc", "0_compiled.bc")
+        assertEquals(bitcodeFiles, targetDir.resolve("native").list()?.toSet())
+        assertEquals(bitcodeFiles, targetDir.resolve("$KLIB_ARM64E_FOLDER_NAME/native").list()?.toSet())
+        val manifest = interopLibrary.resolve("default/manifest").bufferedReader().use { Properties().apply { load(it) } }
+        // Compilers and tools that don't know the arm64e variant see an ordinary ios_arm64 library.
+        assertEquals("ios_arm64", manifest.getProperty(KLIB_PROPERTY_NATIVE_TARGETS))
+        assertEquals(KLIB_ARM64E_FOLDER_NAME, manifest.getProperty(KLIB_PROPERTY_NATIVE_BITCODE_VARIANTS))
+
+        compileFrameworkAndCheckIr(
+            testSuiteDir.resolve("$testName/$testName.kt"), "LinkBitcodeDependencies",
+            givenDependencies = setOf(TestModule.Given(interopLibrary)),
+        )
     }
 
     /** An Objective-C library without bitcode: with direct C calls, cinterop compiles no stubs. */
