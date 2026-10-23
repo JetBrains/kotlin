@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM
 // FIR_DUMP
 // DUMP_KT_IR
 

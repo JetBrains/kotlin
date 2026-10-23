@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM
 // FIR_DUMP
 
 import lombok.Builder;

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM
 // FILE: main.kt
 import lombok.Builder
 import lombok.Data

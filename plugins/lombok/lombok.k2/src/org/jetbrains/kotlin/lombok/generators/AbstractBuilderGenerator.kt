@@ -705,6 +705,9 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
      */
     @OptIn(SymbolInternals::class, DirectDeclarationsAccess::class)
     private fun extractBuilderWithDeclarations(classSymbol: FirClassSymbol<*>): List<BuilderWithDeclaration<T>>? {
+        // Builders in Kotlin code are not supported (KT-90666).
+        if (!classSymbol.isSuitableJavaClass()) return null
+
         // A companion object is never an entity in its own right: the Builder class always nests under the
         // containing entity class, never under its companion, so the companion's own `@Builder`-annotated
         // functions are only ever collected as part of the containing class's view (below).
@@ -751,7 +754,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
             // FIR's lazy-resolve contract forbids (`FirLazyResolveContractViolationException`). An explicitly
             // source-declared companion (the only kind relevant here — we never generate one) already has its
             // raw symbol populated well before this phase, so the fast path suffices.
-            (classSymbol as? FirRegularClassSymbol)?.companionObjectSymbol?.let { addAnnotatedCallables(it) }
+            classSymbol.companionObjectSymbol?.let { addAnnotatedCallables(it) }
         }.takeIf { it.isNotEmpty() }
     }
 

@@ -2,9 +2,9 @@
 
 import lombok.Builder
 
-@Builder
+<!ANNOTATION_IS_NOT_SUPPORTED!>@Builder<!>
 class BoundedTypeParameter<T : CharSequence>(val value: T)
 
 fun test() {
-    BoundedTypeParameter.builder<<!UPPER_BOUND_VIOLATED!>Int<!>>().value(1).build()
+    BoundedTypeParameter.<!UNRESOLVED_REFERENCE!>builder<!><Int>().value(1).build()
 }
