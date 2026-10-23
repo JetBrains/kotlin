@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
 import org.jetbrains.kotlin.buildtools.internal.arguments.*
 import org.jetbrains.kotlin.buildtools.internal.arguments.CommonToolArgumentsImpl.Companion.VERBOSE
 import org.jetbrains.kotlin.buildtools.internal.arguments.CommonToolArgumentsImpl.Companion.WERROR
+import org.jetbrains.kotlin.buildtools.internal.cri.CompilerReferenceIndexCollector
 import org.jetbrains.kotlin.buildtools.internal.trackers.LookupTrackerAdapter
 import org.jetbrains.kotlin.buildtools.internal.trackers.getMetricsReporter
 import org.jetbrains.kotlin.cli.common.CLICompiler
@@ -20,12 +21,15 @@ import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginsLoader
 import org.jetbrains.kotlin.compilerRunner.toArgumentStrings
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.client.BasicCompilerServicesWithResultsFacadeServer
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.incremental.components.LookupInfo
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
+import org.jetbrains.kotlin.util.toMetadataVersion
 import java.io.ByteArrayOutputStream
 import java.io.ObjectOutputStream
 import java.io.Serializable
@@ -258,6 +262,12 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
         metricsReporter.endMeasureGc()
 
         populateMetricsCollector(metricsReporter)
+
+        val compilerReferenceIndexCollector = services[CompilerReferenceIndexCollector::class.java]
+        if (compilationResult == CompilationResult.COMPILATION_SUCCESS && compilerReferenceIndexCollector != null) {
+            val metadataVersion = LanguageVersion.fromVersionString(arguments.languageVersion)?.toMetadataVersion() ?: MetadataVersion.INSTANCE
+            compilerReferenceIndexCollector.write(metadataVersion)
+        }
 
         return compilationResult
     }
