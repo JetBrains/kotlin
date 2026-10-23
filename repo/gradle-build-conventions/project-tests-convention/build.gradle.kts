@@ -25,6 +25,10 @@ tasks.withType<Test>().configureEach {
     useJUnitPlatform()
 }
 
+tasks.register("checkBuild") {
+    dependsOn("test")
+}
+
 dependencies {
     api(project(":utilities"))
 
