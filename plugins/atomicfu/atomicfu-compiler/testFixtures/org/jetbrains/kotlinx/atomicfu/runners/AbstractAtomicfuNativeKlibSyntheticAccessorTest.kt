@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlinx.atomicfu.runners
 
-import org.jetbrains.kotlin.config.PartialLinkageLogLevel
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.NativeTestSupport.createSimpleTestRunSettings
@@ -22,14 +21,7 @@ import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.api.extension.RegisterExtension
 import java.io.File
 
-abstract class AbstractAtomicfuNativeKlibSyntheticAccessorTest : AbstractNativeKlibSyntheticAccessorTest(
-    /*
-     * As we skip C-interop KLIBs in the classpath, we don't need to fail the test if PL detects any incompatibilities.
-     *
-     * TODO (KT-85312): Switch to the default log level (ERROR).
-     */
-    partialLinkageLogLevel = PartialLinkageLogLevel.SILENT
-) {
+abstract class AbstractAtomicfuNativeKlibSyntheticAccessorTest : AbstractNativeKlibSyntheticAccessorTest() {
     private lateinit var extensionContext: ExtensionContext
 
     @RegisterExtension

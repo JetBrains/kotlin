@@ -5,11 +5,8 @@
 
 package org.jetbrains.kotlin.backend.common.linkage.partial
 
-import org.jetbrains.kotlin.backend.common.linkage.issues.PartialLinkageErrorsLogged
 import org.jetbrains.kotlin.backend.common.linkage.partial.ClassifierPartialLinkageStatus.Unusable.*
 import org.jetbrains.kotlin.backend.common.overrides.IrLinkerFakeOverrideProvider
-import org.jetbrains.kotlin.config.PartialLinkageConfig
-import org.jetbrains.kotlin.config.PartialLinkageLogLevel
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
@@ -20,13 +17,11 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeAliasSymbol
-import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.defaultTypeWithoutArguments
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.defaultType
 
 fun createPartialLinkageSupportForLinker(
-    partialLinkageConfig: PartialLinkageConfig,
     irFactory: IrFactory,
     anyClass: IrClassSymbol,
     nothingClass: IrClassSymbol,
@@ -36,14 +31,14 @@ fun createPartialLinkageSupportForLinker(
     irFactory,
     anyClass,
     nothingClass,
-    PartialLinkageLogger(diagnosticReporter, partialLinkageConfig.logLevel, issueSink)
+    PartialLinkageLogger(diagnosticReporter, issueSink)
 )
 
 internal class PartialLinkageSupportForLinkerImpl(
     irFactory: IrFactory,
     private val anyClass: IrClassSymbol,
     nothingClass: IrClassSymbol,
-    private val logger: PartialLinkageLogger,
+    logger: PartialLinkageLogger,
 ) : PartialLinkageSupportForLinker {
     private val stubGenerator = MissingDeclarationStubGenerator(irFactory, nothingClass.defaultTypeWithoutArguments)
     private val classifierExplorer = ClassifierExplorer(anyClass, stubGenerator)
@@ -103,11 +98,6 @@ internal class PartialLinkageSupportForLinkerImpl(
             // Patch all IR declarations scheduled so far.
             patcher.patchDeclarations(declarationsEnqueuedForProcessing.getCopyAndClear())
         }
-
-        // Make sure that there are no linkage issues that have been reported with the 'error' severity.
-        // If there are, abort the current compilation.
-        if (logger.logLevel == PartialLinkageLogLevel.ERROR && patcher.linkageIssuesLogged > 0)
-            PartialLinkageErrorsLogged.raiseIssue(logger.diagnosticReporter)
     }
 
     override fun preprocessBeforeFakeOverridesBuilding(symbolTable: SymbolTable, fakeOverrideBuilder: IrLinkerFakeOverrideProvider) {
