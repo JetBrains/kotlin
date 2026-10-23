@@ -47,11 +47,11 @@ class TestLifecycleTaskTest {
      */
     private val domainsDeclaredInTeamCity: List<Pair<String, Set<Domain>>>
         get() = (System.getProperty("quality.gate.domains.per.task") ?: error("Missing 'quality.gate.domains.per.task' property"))
-            .split(";")
+            .split(",")
             .filter { it.isNotBlank() }
             .map { entry ->
                 val [task, domains] = entry.split("=", limit = 2)
-                task to Domain.fromArgumentStringOrThrow(domains.replace('+', ';'))
+                task to Domain.fromArgumentStringOrThrow(domains)
             }
 
     @Test
