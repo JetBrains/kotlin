@@ -1,8 +1,9 @@
 // TARGET_BACKEND: WASM
+// DISABLE_TAIL_CALLS
 
-// Without ENABLE_TAIL_CALLS (the default), calls in tail position must be emitted as
-// plain calls. Tail-call emission preserves program results, so only these
-// instruction-level checks can detect an accidentally enabled default.
+// With DISABLE_TAIL_CALLS (`-Xwasm-enable-tail-calls=false`), calls in tail position must be
+// emitted as plain calls. Tail-call emission preserves program results, so only these
+// instruction-level checks can detect the flag being ignored.
 
 // Direct static tail call must stay a plain call
 // WASM_CHECK_INSTRUCTION_NOT_IN_FUNCTION: instruction=return_call inFunction=staticTailCaller

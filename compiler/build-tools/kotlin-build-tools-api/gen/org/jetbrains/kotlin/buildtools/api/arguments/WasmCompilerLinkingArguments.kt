@@ -150,7 +150,7 @@ public interface WasmCompilerLinkingArguments : WasmCompilerArguments,
         WasmCompilerLinkingArgument("X_WASM_ENABLE_ASSERTS", KotlinReleaseVersion(2, 1, 20))
 
     /**
-     * Emit WebAssembly tail call instructions (return_call / return_call_indirect).
+     * Emit WebAssembly tail call instructions (return_call / return_call_ref) for calls in tail position. Frames of tail-calling functions are omitted from stack traces. Ignored with -Xwasm-debug-friendly.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
      */

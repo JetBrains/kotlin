@@ -31,8 +31,8 @@ object WasmEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         description = "Use WebAssembly Stack Switching proposal for compiling Kotlin Coroutines"
     )
 
-    val ENABLE_TAIL_CALLS by directive(
-        description = "Emit WebAssembly tail call instructions (return_call / return_call_indirect)"
+    val DISABLE_TAIL_CALLS by directive(
+        description = "Do not emit WebAssembly tail call instructions (return_call / return_call_ref)"
     )
 
     @OptIn(SensitiveDirectiveAPI::class)

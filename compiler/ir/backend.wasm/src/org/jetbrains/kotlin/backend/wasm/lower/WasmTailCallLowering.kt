@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.isClassWithFqName
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
-import org.jetbrains.kotlin.wasm.config.wasmEnableTailCalls
 
 val WASM_TAIL_CALL by IrStatementOriginImpl
 
@@ -28,7 +27,7 @@ val WASM_TAIL_CALL by IrStatementOriginImpl
  * the final IR shape. Placed at the very end of the Wasm lowering pipeline.
  */
 internal class WasmTailCallLowering(context: WasmBackendContext) : BodyLoweringPass {
-    private val enabled = context.configuration.wasmEnableTailCalls
+    private val enabled = context.emitTailCalls
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         if (!enabled) return

@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.js.config.propertyLazyInitialization
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
+import org.jetbrains.kotlin.wasm.config.wasmEnableTailCalls
 import org.jetbrains.kotlin.wasm.config.wasmTarget
 import org.jetbrains.kotlin.wasm.config.wasmUseStackSwitchingProposal
 
@@ -49,6 +50,9 @@ class WasmBackendContext(
 ) : JsCommonBackendContext {
     val phaseConfig = configuration.phaseConfig ?: PhaseConfig()
     val isDebugFriendlyCompilation = configuration.getBoolean(WasmConfigurationKeys.WASM_FORCE_DEBUG_FRIENDLY_COMPILATION)
+
+    // Tail calls drop the caller's frame, which breaks stepping and stack traces in debug-friendly (development) builds.
+    val emitTailCalls = configuration.wasmEnableTailCalls && !isDebugFriendlyCompilation
 
     override val typeSystem: IrTypeSystemContext = IrTypeSystemContextImpl(irBuiltIns)
     override var inVerbosePhase: Boolean = false
