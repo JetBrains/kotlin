@@ -105,6 +105,36 @@ class TestExecutionsListenerTest {
     }
 
     @Test
+    fun `every kind of source is written with the fields of its kind`() {
+        val listener = listener()
+        val run = suite("Gradle Test Run $TASK_PATH")
+        val sources = listOf(
+            fileSource(File("Some.kt"), position(12, column = 3)),
+            fileSource(File("Some.kt"), position(12)),
+            fileSource(File("Some.kt"), position = null),
+            directorySource(File("data")),
+            classpathResourceSource("data/some.txt", position(4)),
+            otherSource(),
+        )
+
+        listener.inSuite(run) {
+            sources.forEachIndexed { index, source -> listener.passed(descriptor("test$index", parent = run, source = source)) }
+        }
+
+        assertEquals(
+            listOf(
+                mapOf("kind" to "file", "file" to "Some.kt", "line" to 12, "column" to 3),
+                mapOf("kind" to "file", "file" to "Some.kt", "line" to 12),
+                mapOf("kind" to "file", "file" to "Some.kt"),
+                mapOf("kind" to "directory", "file" to "data"),
+                mapOf("kind" to "classpathResource", "classpathResourceName" to "data/some.txt", "line" to 4),
+                mapOf("kind" to "other"),
+            ),
+            recorded().filter { it["type"] == "test" }.map { it["source"] },
+        )
+    }
+
+    @Test
     fun `the events of forks running in parallel each refer to their own suite`() {
         val listener = listener()
         val run = suite("Gradle Test Run $TASK_PATH")

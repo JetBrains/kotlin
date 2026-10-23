@@ -8,8 +8,14 @@ import org.gradle.api.tasks.testing.TestFailure
 import org.gradle.api.tasks.testing.TestResult
 import org.gradle.api.tasks.testing.TestResult.ResultType
 import org.gradle.api.tasks.testing.source.ClassSource
+import org.gradle.api.tasks.testing.source.ClasspathResourceSource
+import org.gradle.api.tasks.testing.source.DirectorySource
+import org.gradle.api.tasks.testing.source.FilePosition
+import org.gradle.api.tasks.testing.source.FileSource
 import org.gradle.api.tasks.testing.source.MethodSource
+import org.gradle.api.tasks.testing.source.OtherSource
 import org.gradle.api.tasks.testing.source.TestSource
+import java.io.File
 
 /** What Gradle hands a [org.gradle.api.tasks.testing.TestListener], with nothing behind it. */
 internal fun descriptor(
@@ -30,6 +36,25 @@ internal fun classSource(className: String): TestSource = ClassSource { classNam
 internal fun methodSource(className: String, methodName: String): TestSource = object : MethodSource {
     override fun getClassName(): String = className
     override fun getMethodName(): String = methodName
+}
+
+internal fun fileSource(file: File, position: FilePosition?): TestSource = object : FileSource {
+    override fun getFile(): File = file
+    override fun getPosition(): FilePosition? = position
+}
+
+internal fun directorySource(directory: File): TestSource = DirectorySource { directory }
+
+internal fun classpathResourceSource(name: String, position: FilePosition?): TestSource = object : ClasspathResourceSource {
+    override fun getClasspathResourceName(): String = name
+    override fun getPosition(): FilePosition? = position
+}
+
+internal fun otherSource(): TestSource = object : OtherSource {}
+
+internal fun position(line: Int, column: Int? = null): FilePosition = object : FilePosition {
+    override fun getLine(): Int = line
+    override fun getColumn(): Int? = column
 }
 
 private class FakeTestDescriptor(
