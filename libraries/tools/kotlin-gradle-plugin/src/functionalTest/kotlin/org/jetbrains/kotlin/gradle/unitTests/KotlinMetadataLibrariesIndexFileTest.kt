@@ -67,15 +67,53 @@ class KotlinMetadataLibrariesIndexFileTest {
             ),
             TransformedMetadataLibraryRecord(
                 moduleId = KmpModuleIdentifier(
-                    groupAndName = KmpModuleIdentifier.GradleGroupAndName("group3", "name3"),
-                    componentId = KmpModuleIdentifier.ModuleComponentId("version3", "")
+                    groupAndName = null,
+                    componentId = KmpModuleIdentifier.ProjectComponentId(projectPath = ":lib", buildPath = ":")
                 ),
                 file = "file3.jar",
-                sourceSetName = "sourceSet3"
+                sourceSetName = null
             )
         )
         index.write(records)
         assertEquals(records, index.read())
+    }
+
+    @Test
+    fun `test - written file layout`() {
+        val index = KotlinMetadataLibrariesIndexFile(temporaryFolder.resolve("index"))
+        val record = TransformedMetadataLibraryRecord(
+            moduleId = KmpModuleIdentifier(
+                groupAndName = KmpModuleIdentifier.GradleGroupAndName("group", "name"),
+                componentId = KmpModuleIdentifier.ProjectComponentId(projectPath = ":lib", buildPath = ":")
+            ),
+            file = "lib.klib",
+            sourceSetName = null
+        )
+        //language=JSON
+        val written = """
+            [
+                {
+                    "moduleId": {
+                        "groupAndName": {
+                            "group": "group",
+                            "name": "name"
+                        },
+                        "componentId": {
+                            "type": "project",
+                            "projectPath": ":lib",
+                            "buildPath": ":"
+                        }
+                    },
+                    "file": "lib.klib",
+                    "sourceSetName": null
+                }
+            ]
+        """.trimIndent()
+
+        index.write(listOf(record))
+
+        assertEquals(written, temporaryFolder.resolve("index").readText())
+        assertEquals(listOf(record), index.read())
     }
 
 
