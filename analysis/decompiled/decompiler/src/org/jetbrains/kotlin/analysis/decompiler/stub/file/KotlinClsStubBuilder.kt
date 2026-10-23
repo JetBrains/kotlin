@@ -180,6 +180,13 @@ private class JvmClsAnnotationLoader(
     override fun maySynthesizeExtraCallableAnnotations(kind: AnnotatedCallableKind): Boolean =
         kind != PROPERTY
 
+    /**
+     * The JVM backend adds `@kotlin.jvm.JvmInline` to inline classes, which their `HAS_ANNOTATIONS` flag doesn't account for, so the
+     * bytecode of a value class is read even without the flag, as `JvmBinaryAnnotationDeserializer` does.
+     */
+    override fun noClassAnnotationsInBytecode(classFlags: Int): Boolean =
+        super.noClassAnnotationsInBytecode(classFlags) && !Flags.IS_VALUE_CLASS.get(classFlags)
+
     override fun loadPropertyInitializer(container: ProtoContainer, proto: ProtoBuf.Property): ConstantValue<*>? {
         val specialCase = getSpecialCaseContainerClass(
             container, property = true, field = true,

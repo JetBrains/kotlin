@@ -1,7 +1,7 @@
 KT element: KtClass
 KT element text:
 @kotlin.jvm.JvmInline
-public final value class Box<T> {
+public final inline value class Box<T> {
     public companion object {
         public final fun <T> of(element: T): Box<T> { /* compiled code */ }
     }

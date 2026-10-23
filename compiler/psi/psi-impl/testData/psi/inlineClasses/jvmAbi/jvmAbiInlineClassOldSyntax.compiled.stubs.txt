@@ -4,7 +4,18 @@ FILE[kind=File[packageFqName=<root>]]
   CLASS[classId=/Box, fqName=Box, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Box, superNames=[]]
     classFileMajorVersion: <current_major_version>
     valueClassRepresentation: inline [ element -> T ]
-    MODIFIER_LIST[public final value]
+    MODIFIER_LIST[public final inline value]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=JvmInline]
+        valueArguments: [ ]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=jvm]
+              REFERENCE_EXPRESSION[referencedName=JvmInline]
+                isClassRef: true
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=T]
     CLASS_BODY

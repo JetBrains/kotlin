@@ -52,7 +52,7 @@ abstract class AbstractBinaryClassAnnotationLoader<A : Any, S : AbstractBinaryCl
     protected open fun getCachedFileContent(kotlinClass: KotlinJvmBinaryClass): ByteArray? = null
 
     override fun loadClassAnnotations(container: ProtoContainer.Class): List<A> {
-        if (noAnnotationsInBytecode(container.classProto.flags)) return emptyList()
+        if (noClassAnnotationsInBytecode(container.classProto.flags)) return emptyList()
         val kotlinClass = container.toBinaryClass() ?: error("Class for loading annotations is not found: ${container.debugFqName()}")
 
         val result = ArrayList<A>(1)
@@ -229,6 +229,9 @@ abstract class AbstractBinaryClassAnnotationLoader<A : Any, S : AbstractBinaryCl
 
     private fun noAnnotationsInBytecode(flags: Int): Boolean =
         !Flags.HAS_ANNOTATIONS.get(flags)
+
+    protected open fun noClassAnnotationsInBytecode(classFlags: Int): Boolean =
+        noAnnotationsInBytecode(classFlags)
 
     override fun loadTypeAnnotations(proto: ProtoBuf.Type, nameResolver: NameResolver): List<A> {
         return proto.annotationList.map { loadAnnotation(it, nameResolver) }

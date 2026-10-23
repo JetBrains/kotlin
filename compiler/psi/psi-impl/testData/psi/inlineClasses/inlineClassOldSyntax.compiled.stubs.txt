@@ -4,7 +4,18 @@ FILE[kind=File[packageFqName=<root>]]
   CLASS[classId=/PublicValue, fqName=PublicValue, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=PublicValue, superNames=[]]
     classFileMajorVersion: <current_major_version>
     valueClassRepresentation: inline [ value -> kotlin.String ]
-    MODIFIER_LIST[public final value]
+    MODIFIER_LIST[public final inline value]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=JvmInline]
+        valueArguments: [ ]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=jvm]
+              REFERENCE_EXPRESSION[referencedName=JvmInline]
+                isClassRef: true
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=PublicValue]
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST

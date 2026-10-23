@@ -3,6 +3,7 @@ public final class Baz /* Baz*/ {
   private  Baz(int, int);//  .ctor(int, int)
 }
 
+@kotlin.jvm.JvmInline()
 public final class IntWrapper /* IntWrapper*/ {
   private final int s;
 

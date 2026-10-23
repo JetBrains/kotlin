@@ -1,7 +1,8 @@
 // IntelliJ API Decompiler stub source generated from a class file
 // Implementation of methods is not available
 
-public final value class Box<T> {
+@kotlin.jvm.JvmInline
+public final inline value class Box<T> {
     public companion object {
         public final fun <T> makeThreadLocalBox(element: java.lang.ThreadLocal<T>): Box<java.lang.ThreadLocal<T>> { /* compiled code */ }
     }

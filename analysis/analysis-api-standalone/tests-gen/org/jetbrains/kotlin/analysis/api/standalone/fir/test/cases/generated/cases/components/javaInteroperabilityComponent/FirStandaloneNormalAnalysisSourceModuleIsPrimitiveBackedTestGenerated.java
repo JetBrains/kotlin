@@ -50,6 +50,18 @@ public class FirStandaloneNormalAnalysisSourceModuleIsPrimitiveBackedTestGenerat
   }
 
   @Test
+  @TestMetadata("explicitInlineValueClass.kt")
+  public void testExplicitInlineValueClass() {
+    run("explicitInlineValueClass.kt");
+  }
+
+  @Test
+  @TestMetadata("explicitInlineValueClassCommon.kt")
+  public void testExplicitInlineValueClassCommon() {
+    run("explicitInlineValueClassCommon.kt");
+  }
+
+  @Test
   @TestMetadata("fullValueClass.kt")
   public void testFullValueClass() {
     run("fullValueClass.kt");

@@ -54,14 +54,18 @@ internal class GranularAnnotationsBox(
             return annotations.find { it.qualifiedName == qualifiedName }
         }
 
-        specialAnnotationsListWithSafeArgumentsResolve[qualifiedName]?.let { specialAnnotationClassId ->
-            val annotationApplication = annotationsProvider[specialAnnotationClassId].firstOrNull() ?: return null
-            return SymbolLightLazyAnnotation(annotationsProvider, annotationApplication, owner)
+        val specialAnnotationClassId = specialAnnotationsListWithSafeArgumentsResolve[qualifiedName]
+        if (specialAnnotationClassId != null) {
+            annotationsProvider[specialAnnotationClassId].firstOrNull()?.let { annotationApplication ->
+                return SymbolLightLazyAnnotation(annotationsProvider, annotationApplication, owner)
+            }
         }
 
         if (withAdditionalAnnotations && additionalAnnotationsProvider.isSpecialQualifier(qualifiedName)) {
             return additionalAnnotationsProvider.findSpecialAnnotation(this, qualifiedName, owner)
         }
+
+        if (specialAnnotationClassId != null) return null
 
         return getOrComputeCachedAnnotations(owner).find { it.qualifiedName == qualifiedName }
     }
@@ -74,11 +78,15 @@ internal class GranularAnnotationsBox(
         }
 
         val specialAnnotationClassId = specialAnnotationsList[qualifiedName]
-        return if (specialAnnotationClassId != null) {
-            specialAnnotationClassId in annotationsProvider
-        } else {
-            getOrComputeCachedAnnotations(owner).any { it.qualifiedName == qualifiedName }
+        if (specialAnnotationClassId != null && specialAnnotationClassId in annotationsProvider) return true
+
+        if (additionalAnnotationsProvider.isSpecialQualifier(qualifiedName)) {
+            return additionalAnnotationsProvider.findSpecialAnnotation(this, qualifiedName, owner) != null
         }
+
+        if (specialAnnotationClassId != null) return false
+
+        return getOrComputeCachedAnnotations(owner).any { it.qualifiedName == qualifiedName }
     }
 
     companion object {

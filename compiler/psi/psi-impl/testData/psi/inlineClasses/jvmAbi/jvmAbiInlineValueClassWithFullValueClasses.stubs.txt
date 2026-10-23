@@ -1,0 +1,37 @@
+FILE[kind=File[packageFqName=<root>]]
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  CLASS[classId=/Box, fqName=Box, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Box, superNames=[]]
+    MODIFIER_LIST[inline value]
+    TYPE_PARAMETER_LIST
+      TYPE_PARAMETER[fqName=null, name=T]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Box]
+      MODIFIER_LIST[private]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=Box.element, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=element]
+          MODIFIER_LIST[private]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=T]
+    CLASS_BODY
+      OBJECT_DECLARATION[classId=/Box.Companion, fqName=Box.Companion, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+        MODIFIER_LIST[companion]
+        CLASS_BODY
+          FUNCTION[fqName=Box.Companion.makeThreadLocalBox, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=makeThreadLocalBox]
+            TYPE_PARAMETER_LIST
+              TYPE_PARAMETER[fqName=null, name=T]
+            VALUE_PARAMETER_LIST
+              VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=element]
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=ThreadLocal]
+                    TYPE_ARGUMENT_LIST
+                      TYPE_PROJECTION[projectionKind=NONE]
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            REFERENCE_EXPRESSION[referencedName=T]
+            CALL_EXPRESSION
+              REFERENCE_EXPRESSION[referencedName=Box]
+              VALUE_ARGUMENT_LIST
+                VALUE_ARGUMENT[isSpread=false]
+                  REFERENCE_EXPRESSION[referencedName=element]
