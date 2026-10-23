@@ -15,9 +15,8 @@ import org.gradle.api.tasks.testing.source.FileSource
 import org.gradle.api.tasks.testing.source.MethodSource
 import org.gradle.api.tasks.testing.source.NoSource
 import org.gradle.api.tasks.testing.source.TestSource
+import java.io.Closeable
 import java.io.File
-import java.io.FileOutputStream
-import java.io.Writer
 import java.util.IdentityHashMap
 
 /**
@@ -74,31 +73,36 @@ class TestExecutionsListener(
     val executionsFile: Provider<File> =
         buildDir.map { it.resolve("test-inventory").resolve(taskName).resolve("test-executions.jsonl") }
 
+    /**
+     * The test run of the task, from the start of its outermost suite, which Gradle reports before anything else, to
+     * its end. A task execution has a single one: Gradle removes the listeners of the task once its tests have run.
+     */
     @Transient
-    private var recording: Recording? = null
+    private lateinit var recording: Recording
 
+    // Gradle reports the events one at a time for now, but asks listeners not to count on it.
+    @Synchronized
     override fun beforeSuite(suite: TestDescriptor) {
-        record { suiteRecordOf(suite) }
+        if (suite.parent == null) recording = Recording(executionsFile.get(), taskPath)
+        recording.startSuite(suite)
     }
 
+    @Synchronized
     override fun afterSuite(suite: TestDescriptor, result: TestResult) {
-        record { endSuite(suite, result) }
+        recording.endSuite(suite, result)
+        if (suite.parent == null) recording.close()
     }
 
     override fun beforeTest(testDescriptor: TestDescriptor) {}
 
+    @Synchronized
     override fun afterTest(testDescriptor: TestDescriptor, result: TestResult) {
-        record { recordTest(testDescriptor, result) }
-    }
-
-    private fun record(action: Recording.() -> Unit) = synchronized(this) {
-        val recording = recording ?: Recording(executionsFile.get(), taskPath).also { recording = it }
-        recording.action()
+        recording.recordTest(testDescriptor, result)
     }
 
     private class SuiteRecord(val id: Int, val className: String?)
 
-    private class Recording(private val file: File, private val taskPath: String) {
+    private class Recording(file: File, taskPath: String) : Closeable {
         /**
          * The suites that have started and not yet finished. Keyed by identity: Gradle passes the same descriptor to
          * `beforeSuite`, to `afterSuite` and as the `parent` of what runs in the suite, while two runs of one suite can
@@ -106,12 +110,21 @@ class TestExecutionsListener(
          */
         private val running = IdentityHashMap<TestDescriptor, SuiteRecord>()
         private var lastSuiteId = 0
-        private var writer: Writer? = null
-        private var started = false
         private val line = StringBuilder()
 
-        fun suiteRecordOf(suite: TestDescriptor): SuiteRecord = running[suite] ?: run {
-            val parent = suite.parent?.let { suiteRecordOf(it) }
+        // Truncated, so that nothing of an earlier run is left in the file.
+        private val writer = file.run { parentFile.mkdirs(); bufferedWriter(Charsets.UTF_8) }
+
+        init {
+            writeLine {
+                string("type", "header")
+                number("formatVersion", 1)
+                string("taskPath", taskPath)
+            }
+        }
+
+        fun startSuite(suite: TestDescriptor) {
+            val parent = suite.parent?.let { running.getValue(it) }
             val record = SuiteRecord(++lastSuiteId, suite.className)
             running[suite] = record
             writeLine {
@@ -120,23 +133,19 @@ class TestExecutionsListener(
                 if (parent != null) number("parent", parent.id)
                 descriptor(suite, parent?.className)
             }
-            record
         }
 
         fun endSuite(suite: TestDescriptor, result: TestResult) {
-            val record = suiteRecordOf(suite)
-            running.remove(suite)
+            val record = running.remove(suite)!!
             writeLine {
                 string("type", "suiteEnd")
                 number("id", record.id)
                 result(result)
             }
-
-            if (suite.parent == null) close()
         }
 
         fun recordTest(test: TestDescriptor, result: TestResult) {
-            val parent = test.parent?.let { suiteRecordOf(it) }
+            val parent = test.parent?.let { running.getValue(it) }
             writeLine {
                 string("type", "test")
                 if (parent != null) number("parent", parent.id)
@@ -146,34 +155,13 @@ class TestExecutionsListener(
         }
 
         private fun writeLine(members: JsonObjectWriter.() -> Unit) {
-            val writer = writer ?: open()
             line.setLength(0)
             JsonObjectWriter(line).write(members)
             line.append('\n')
             writer.append(line)
         }
 
-        private fun open(): Writer {
-            file.parentFile.mkdirs()
-            // Truncated by the run's first event, so that nothing of an earlier run is left in the file. Should the run
-            // start over after its outermost suite has finished, what follows is appended to it.
-            val writer = FileOutputStream(file, started).bufferedWriter(Charsets.UTF_8)
-            this.writer = writer
-            if (!started) {
-                started = true
-                writeLine {
-                    string("type", "header")
-                    number("formatVersion", 1)
-                    string("taskPath", taskPath)
-                }
-            }
-            return writer
-        }
-
-        private fun close() {
-            writer?.close()
-            writer = null
-        }
+        override fun close() = writer.close()
     }
 }
 

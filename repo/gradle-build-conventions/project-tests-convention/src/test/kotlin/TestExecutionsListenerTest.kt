@@ -173,35 +173,6 @@ class TestExecutionsListenerTest {
     }
 
     @Test
-    fun `a suite never started is recorded before what refers to it`() {
-        val listener = listener()
-        val run = suite("Gradle Test Run $TASK_PATH")
-        val executor = suite("Gradle Test Executor 1", parent = run)
-        val testClass = suite(TEST_CLASS, parent = executor, className = TEST_CLASS)
-
-        listener.beforeSuite(run)
-        listener.passed(descriptor("passes()", TEST_CLASS, parent = testClass))
-        listener.afterSuite(testClass, result(SUCCESS, startTime = 0, endTime = 0))
-        listener.afterSuite(executor, result(SUCCESS, startTime = 0, endTime = 0))
-        listener.afterSuite(run, result(SUCCESS, startTime = 0, endTime = 0))
-
-        assertEquals(
-            listOf(
-                "header" to null,
-                "suite" to run.name,
-                "suite" to executor.name,
-                "suite" to TEST_CLASS,
-                "test" to "passes()",
-                "suiteEnd" to null,
-                "suiteEnd" to null,
-                "suiteEnd" to null,
-            ),
-            recorded().map { it["type"] to it["name"] },
-        )
-        assertEquals(listOf(3, 2, 1), recorded().filter { it["type"] == "suiteEnd" }.map { it["id"] })
-    }
-
-    @Test
     fun `nothing of an earlier run is left in the file`() {
         executionsFile.parentFile.mkdirs()
         executionsFile.writeText("""{"type":"test","name":"fromEarlierRun()"}""" + "\n")
@@ -211,21 +182,6 @@ class TestExecutionsListenerTest {
         listener.run(run) { listener.passed(descriptor("passes()", TEST_CLASS, parent = run)) }
 
         assertEquals(listOf("header", "suite", "test", "suiteEnd"), recorded().map { it["type"] })
-    }
-
-    @Test
-    fun `a run starting over is appended to the file`() {
-        val listener = listener()
-        val firstRun = suite("Gradle Test Run $TASK_PATH")
-        listener.run(firstRun) { listener.passed(descriptor("first()", TEST_CLASS, parent = firstRun)) }
-        val secondRun = suite("Gradle Test Run $TASK_PATH")
-        listener.run(secondRun) { listener.passed(descriptor("second()", TEST_CLASS, parent = secondRun)) }
-
-        assertEquals(
-            listOf("header", "suite", "test", "suiteEnd", "suite", "test", "suiteEnd"),
-            recorded().map { it["type"] },
-        )
-        assertEquals(listOf(1, 2), recorded().filter { it["type"] == "suite" }.map { it["id"] })
     }
 
     @Test
