@@ -199,12 +199,12 @@ internal fun createScriptSourceSession(
     }
 
 internal fun configureLibrarySessionIfNeeded(
-    state: K2ScriptingCompilerEnvironment,
+    state: ScriptCompilerState,
     compilerConfiguration: CompilerConfiguration,
     classpath: List<File>,
 ): FirSession? {
-    (state as? K2ScriptingCompilerEnvironmentInternal)
-        ?: error("Expected the state of type K2ScriptingCompilerEnvironmentInternal, got ${state::class}")
+    (state as? ScriptCompilerStateInternal)
+        ?: error("Expected the state of type ScriptCompilerStateInternal, got ${state::class}")
     // needed for class finders for now anyway
     compilerConfiguration.addJvmClasspathRoots(classpath)
     state.compilerContext.environment.updateClasspath(classpath.map(::JvmClasspathRoot))

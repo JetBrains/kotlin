@@ -99,12 +99,12 @@ fun ScriptCompilationConfiguration.updateWithHostConfiguration(hostConfiguration
     }
 
 class ScriptJvmK2CompilerImpl(
-    state: K2ScriptingCompilerEnvironment,
+    state: ScriptCompilerState,
     private val convertToFir: SourceCode.(FirSession, BaseDiagnosticsCollector) -> FirFile
 ) {
 
-    private val state = (state as? K2ScriptingCompilerEnvironmentInternal)
-        ?: error("Expected the state of type K2ScriptingCompilerEnvironmentInternal, got ${state::class}")
+    private val state = (state as? ScriptCompilerStateInternal)
+        ?: error("Expected the state of type ScriptCompilerStateInternal, got ${state::class}")
 
     fun compile(script: SourceCode) = compile(script, state.baseScriptCompilationConfiguration)
 
@@ -286,7 +286,7 @@ fun SourceCode.convertToFirViaLightTree(session: FirSession, diagnosticsReporter
     }
 }
 
-private fun K2ScriptingCompilerEnvironmentInternal.getOrCreateSessionForAnnotationResolution(
+private fun ScriptCompilerStateInternal.getOrCreateSessionForAnnotationResolution(
     scriptCompilationConfiguration: ScriptCompilationConfiguration
 ): FirSession {
     val dependencies = scriptCompilationConfiguration[ScriptCompilationConfiguration.dependencies].toClassPathOrEmpty()
