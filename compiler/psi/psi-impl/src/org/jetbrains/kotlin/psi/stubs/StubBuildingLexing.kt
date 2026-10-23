@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.psi.stubs
 
+import com.intellij.lang.LighterLazyParseableNode
 import com.intellij.psi.impl.source.tree.LazyParseableElement
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
@@ -46,11 +47,29 @@ internal object StubBuildingLexing {
      * The `class` keyword of class literals (e.g., `Int::class`) doesn't start a declaration, so it is ignored.
      */
     fun mayContainStubbedDeclarations(text: CharSequence): Boolean {
+        val detector = StubbedDeclarationDetector()
         val lexer = KotlinLexer()
         lexer.start(text)
-        var previousTokenType: IElementType? = null
         while (true) {
             val tokenType = lexer.tokenType ?: return false
+            if (detector.startsStubbedDeclaration(tokenType)) return true
+            lexer.advance()
+        }
+    }
+
+    /**
+     * The light tree counterpart of [mayContainStubbedDeclarations] for a collapsed code block, which visits the tokens already lexed by
+     * the builder instead of lexing the text once again.
+     */
+    fun mayContainStubbedDeclarations(chameleon: LighterLazyParseableNode): Boolean {
+        val detector = StubbedDeclarationDetector()
+        return !chameleon.accept { tokenType -> !detector.startsStubbedDeclaration(tokenType) }
+    }
+
+    private class StubbedDeclarationDetector {
+        private var previousTokenType: IElementType? = null
+
+        fun startsStubbedDeclaration(tokenType: IElementType): Boolean {
             if (tokenType in STUBBED_DECLARATION_KEYWORDS) {
                 val isClassLiteral = tokenType == KtTokens.CLASS_KEYWORD && previousTokenType == KtTokens.COLONCOLON
                 if (!isClassLiteral) return true
@@ -60,7 +79,7 @@ internal object StubBuildingLexing {
                 previousTokenType = tokenType
             }
 
-            lexer.advance()
+            return false
         }
     }
 
@@ -78,8 +97,15 @@ internal object StubBuildingLexing {
         val bodyNode = bodyBlock.node
         if (bodyNode !is LazyParseableElement || bodyNode.isParsed) return true
 
+        return mayHaveLegacyContract(bodyNode.chars)
+    }
+
+    /**
+     * Returns `true` if the first statement of the code block [blockText] might be a legacy contract call, see [mayHaveLegacyContract].
+     */
+    fun mayHaveLegacyContract(blockText: CharSequence): Boolean {
         val lexer = KotlinLexer()
-        lexer.start(bodyNode.chars)
+        lexer.start(blockText)
         if (lexer.tokenType != KtTokens.LBRACE) return true
         lexer.advance()
 

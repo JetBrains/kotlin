@@ -5,18 +5,24 @@
 
 package org.jetbrains.kotlin.psi.stubs.factories
 
+import com.intellij.lang.LighterAST
+import com.intellij.lang.LighterASTNode
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
 import com.intellij.psi.tree.IElementType
+import com.intellij.psi.tree.TokenSet
 import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.lang.BinaryOperationPrecedence
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtOperationReferenceExpression
+import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinOperationReferenceExpressionStubImpl
+import org.jetbrains.kotlin.psi.stubs.light.firstChildOfType
+import org.jetbrains.kotlin.psi.stubs.light.nodeText
 
 internal object KtOperationReferenceExpressionStubSerializingElementFactory :
     KtStubSerializingElementFactory<KotlinOperationReferenceExpressionStubImpl, KtOperationReferenceExpression>(
@@ -67,6 +73,34 @@ internal object KtOperationReferenceExpressionStubSerializingElementFactory :
         referencedNameRef = StringRef.fromString(psi.getReferencedName())!!,
         operationToken = psi.getReferencedNameElementType(),
     )
+
+    /**
+     * Mirrors the private `OPERATION_TOKENS` of [KtOperationReferenceExpression], used by its
+     * `getReferencedNameElement`.
+     */
+    private val operationTokens: TokenSet by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        TokenSet.create(*buildList {
+            addAll(KtTokenSets.POSTFIX_OPERATIONS.types)
+            addAll(KtTokenSets.PREFIX_OPERATIONS.types)
+            for (precedence in BinaryOperationPrecedence.entries) {
+                addAll(precedence.tokens)
+            }
+        }.toTypedArray())
+    }
+
+    override fun createStub(
+        tree: LighterAST,
+        node: LighterASTNode,
+        parentStub: StubElement<*>,
+    ): KotlinOperationReferenceExpressionStubImpl {
+        val nameElement = tree.firstChildOfType(node, operationTokens)
+        val referencedName = KtPsiUtil.unquoteIdentifierOrFieldReference(tree.nodeText(nameElement ?: node))
+        return KotlinOperationReferenceExpressionStubImpl(
+            parent = parentStub,
+            referencedNameRef = StringRef.fromString(referencedName)!!,
+            operationToken = nameElement?.tokenType ?: type,
+        )
+    }
 
     override fun serialize(stub: KotlinOperationReferenceExpressionStubImpl, dataStream: StubOutputStream) {
         dataStream.writeName(stub.referencedName)

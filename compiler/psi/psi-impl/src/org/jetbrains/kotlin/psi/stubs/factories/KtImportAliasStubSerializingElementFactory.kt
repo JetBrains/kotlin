@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.psi.stubs.factories
 
+import com.intellij.lang.LighterAST
+import com.intellij.lang.LighterASTNode
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
@@ -12,6 +14,8 @@ import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.psi.KtImportAlias
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinImportAliasStubImpl
+import org.jetbrains.kotlin.psi.stubs.light.nameIdentifier
+import org.jetbrains.kotlin.psi.stubs.light.nodeText
 
 internal object KtImportAliasStubSerializingElementFactory :
     KtStubSerializingElementFactory<KotlinImportAliasStubImpl, KtImportAlias>(
@@ -26,6 +30,16 @@ internal object KtImportAliasStubSerializingElementFactory :
     ): KotlinImportAliasStubImpl = KotlinImportAliasStubImpl(
         parent = parentStub,
         name = StringRef.fromString(psi.name),
+    )
+
+    override fun createStub(
+        tree: LighterAST,
+        node: LighterASTNode,
+        parentStub: StubElement<*>,
+    ): KotlinImportAliasStubImpl = KotlinImportAliasStubImpl(
+        parent = parentStub,
+        // Mirrors `KtImportAlias.getName`, which does not unquote the identifier
+        name = StringRef.fromString(tree.nameIdentifier(node)?.let(tree::nodeText)),
     )
 
     override fun serialize(stub: KotlinImportAliasStubImpl, dataStream: StubOutputStream) {

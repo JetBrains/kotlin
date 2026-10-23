@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.contracts.description.KtContractDescriptionElement
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtClassLikeDeclaration
 import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
@@ -50,32 +51,39 @@ internal object StubUtils {
             return null
         }
 
+        return createClassId(
+            parentStub = parentStub,
+            nameAsSafeName = currentDeclaration.nameAsSafeName,
+            isEnumEntry = currentDeclaration is KtEnumEntry,
+        )
+    }
+
+    /**
+     * The name-based variant of [createClassId] used when the stub is built from a light tree and no PSI is
+     * available. The caller is responsible for returning `null` for object literals.
+     */
+    @JvmStatic
+    internal fun createClassId(parentStub: StubElement<*>, nameAsSafeName: Name, isEnumEntry: Boolean): ClassId? {
         return when (parentStub) {
-            is KotlinFileStub -> parentStub.createTopLevelClassId(currentDeclaration)
-            is KotlinScriptStub -> parentStub.createClassId(currentDeclaration)
+            is KotlinFileStub -> ClassId(parentStub.getPackageFqName(), nameAsSafeName)
+            is KotlinScriptStub -> {
+                val fileStub = parentStub.parentStub as? KotlinFileStub ?: return null
+                ClassId(fileStub.getPackageFqName(), nameAsSafeName)
+            }
             is KotlinPlaceHolderStub<*> if parentStub.elementType == KtNodeTypes.CLASS_BODY -> {
                 when (val containingStub = parentStub.parentStub) {
                     // As in `ClassIdCalculator`, a `companion { }` block doesn't contribute to the class ID of its declarations
                     is KotlinPlaceHolderStub<*> if containingStub.elementType == KtNodeTypes.COMPANION_BLOCK -> {
-                        containingStub.parentStub?.let { createClassId(it, currentDeclaration) }
+                        containingStub.parentStub?.let { createClassId(it, nameAsSafeName, isEnumEntry) }
                     }
-                    is KotlinClassifierStub if currentDeclaration !is KtEnumEntry -> {
-                        containingStub.classId?.createNestedClassId(currentDeclaration.nameAsSafeName)
+                    is KotlinClassifierStub if !isEnumEntry -> {
+                        containingStub.classId?.createNestedClassId(nameAsSafeName)
                     }
                     else -> null
                 }
             }
             else -> null
         }
-    }
-
-    private fun KotlinFileStub.createTopLevelClassId(currentDeclaration: KtClassLikeDeclaration): ClassId {
-        return ClassId(getPackageFqName(), currentDeclaration.nameAsSafeName)
-    }
-
-    private fun KotlinScriptStub.createClassId(currentDeclaration: KtClassLikeDeclaration): ClassId? {
-        val fileStub = parentStub as? KotlinFileStub ?: return null
-        return fileStub.createTopLevelClassId(currentDeclaration)
     }
 
     @JvmStatic
