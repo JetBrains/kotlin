@@ -4387,6 +4387,7 @@ public abstract class org/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTes
 	public final fun getRuntimeClasspath ()Lorg/gradle/api/file/FileCollection;
 	public final fun getTestFramework ()Lorg/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTestFramework;
 	public final fun getTestFrameworkSettings ()Ljava/lang/String;
+	public final fun getToolArgs ()Lorg/gradle/api/provider/ListProperty;
 	public final fun onTestFrameworkSet (Lorg/gradle/api/Action;)V
 	public fun setCompilation (Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrCompilation;)V
 	public final fun setDebug (Z)V
@@ -4404,6 +4405,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/targets/js/testing/K
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTestFramework$Companion;
 	public abstract fun createTestExecuter ()Lorg/gradle/api/internal/tasks/testing/TestExecuter;
 	public abstract fun createTestExecutionSpec (Lorg/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTest;Lorg/jetbrains/kotlin/gradle/utils/processes/ProcessLaunchOptions;Ljava/util/List;Z)Lorg/gradle/api/internal/tasks/testing/TestExecutionSpec;
+	public abstract fun createTestExecutionSpecification (Lorg/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTest;Lorg/jetbrains/kotlin/gradle/utils/processes/ProcessLaunchOptions;Ljava/util/List;Z)Lorg/gradle/api/internal/tasks/testing/TestExecutionSpec;
 	public abstract fun getExecutable ()Lorg/gradle/api/provider/Provider;
 	public abstract fun getFrameworkTaskInputs ()Ljava/lang/Object;
 	public abstract fun getSettingsState ()Ljava/lang/String;
@@ -4415,6 +4417,7 @@ public final class org/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTestFr
 
 public final class org/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTestFramework$DefaultImpls {
 	public static fun createTestExecuter (Lorg/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTestFramework;)Lorg/gradle/api/internal/tasks/testing/TestExecuter;
+	public static fun createTestExecutionSpec (Lorg/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTestFramework;Lorg/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTest;Lorg/jetbrains/kotlin/gradle/utils/processes/ProcessLaunchOptions;Ljava/util/List;Z)Lorg/gradle/api/internal/tasks/testing/TestExecutionSpec;
 	public static fun getFrameworkTaskInputs (Lorg/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTestFramework;)Ljava/lang/Object;
 	public static fun getPath (Lorg/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTestFramework;)Ljava/lang/String;
 }
@@ -4492,8 +4495,9 @@ public final class org/jetbrains/kotlin/gradle/targets/js/testing/karma/KarmaSta
 
 public final class org/jetbrains/kotlin/gradle/targets/js/testing/karma/KotlinKarma : org/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTestFramework {
 	public fun createTestExecuter ()Lorg/gradle/api/internal/tasks/testing/TestExecuter;
-	public synthetic fun createTestExecutionSpec (Lorg/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTest;Lorg/jetbrains/kotlin/gradle/utils/processes/ProcessLaunchOptions;Ljava/util/List;Z)Lorg/gradle/api/internal/tasks/testing/TestExecutionSpec;
-	public fun createTestExecutionSpec (Lorg/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTest;Lorg/jetbrains/kotlin/gradle/utils/processes/ProcessLaunchOptions;Ljava/util/List;Z)Lorg/jetbrains/kotlin/gradle/internal/testing/TCServiceMessagesTestExecutionSpec;
+	public fun createTestExecutionSpec (Lorg/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTest;Lorg/jetbrains/kotlin/gradle/utils/processes/ProcessLaunchOptions;Ljava/util/List;Z)Lorg/gradle/api/internal/tasks/testing/TestExecutionSpec;
+	public synthetic fun createTestExecutionSpecification (Lorg/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTest;Lorg/jetbrains/kotlin/gradle/utils/processes/ProcessLaunchOptions;Ljava/util/List;Z)Lorg/gradle/api/internal/tasks/testing/TestExecutionSpec;
+	public fun createTestExecutionSpecification (Lorg/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTest;Lorg/jetbrains/kotlin/gradle/utils/processes/ProcessLaunchOptions;Ljava/util/List;Z)Lorg/jetbrains/kotlin/gradle/internal/testing/TCServiceMessagesTestExecutionSpec;
 	public fun getCompilation ()Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrCompilation;
 	public final fun getDebugPath ()Lorg/gradle/api/provider/Property;
 	public fun getExecutable ()Lorg/gradle/api/provider/Provider;
@@ -4530,8 +4534,9 @@ public final class org/jetbrains/kotlin/gradle/targets/js/testing/karma/KotlinKa
 public final class org/jetbrains/kotlin/gradle/targets/js/testing/mocha/KotlinMocha : org/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTestFramework {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/js/testing/mocha/KotlinMocha$Companion;
 	public fun createTestExecuter ()Lorg/gradle/api/internal/tasks/testing/TestExecuter;
-	public synthetic fun createTestExecutionSpec (Lorg/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTest;Lorg/jetbrains/kotlin/gradle/utils/processes/ProcessLaunchOptions;Ljava/util/List;Z)Lorg/gradle/api/internal/tasks/testing/TestExecutionSpec;
-	public fun createTestExecutionSpec (Lorg/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTest;Lorg/jetbrains/kotlin/gradle/utils/processes/ProcessLaunchOptions;Ljava/util/List;Z)Lorg/jetbrains/kotlin/gradle/internal/testing/TCServiceMessagesTestExecutionSpec;
+	public fun createTestExecutionSpec (Lorg/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTest;Lorg/jetbrains/kotlin/gradle/utils/processes/ProcessLaunchOptions;Ljava/util/List;Z)Lorg/gradle/api/internal/tasks/testing/TestExecutionSpec;
+	public synthetic fun createTestExecutionSpecification (Lorg/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTest;Lorg/jetbrains/kotlin/gradle/utils/processes/ProcessLaunchOptions;Ljava/util/List;Z)Lorg/gradle/api/internal/tasks/testing/TestExecutionSpec;
+	public fun createTestExecutionSpecification (Lorg/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTest;Lorg/jetbrains/kotlin/gradle/utils/processes/ProcessLaunchOptions;Ljava/util/List;Z)Lorg/jetbrains/kotlin/gradle/internal/testing/TCServiceMessagesTestExecutionSpec;
 	public fun getCompilation ()Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrCompilation;
 	public fun getExecutable ()Lorg/gradle/api/provider/Provider;
 	public fun getFrameworkTaskInputs ()Ljava/lang/Object;

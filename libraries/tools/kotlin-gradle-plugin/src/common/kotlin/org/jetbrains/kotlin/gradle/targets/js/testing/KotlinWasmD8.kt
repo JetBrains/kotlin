@@ -35,10 +35,10 @@ internal class KotlinWasmD8(
 
     override val executable: Provider<String> = d8.executable
 
-    override fun createTestExecutionSpec(
+    override fun createTestExecutionSpecification(
         task: KotlinJsTest,
         launchOpts: ProcessLaunchOptions,
-        nodeJsArgs: MutableList<String>,
+        toolArgs: List<String>,
         debug: Boolean,
     ): TCServiceMessagesTestExecutionSpec {
         val compiledFile = task.inputFileProperty.get().asFile
