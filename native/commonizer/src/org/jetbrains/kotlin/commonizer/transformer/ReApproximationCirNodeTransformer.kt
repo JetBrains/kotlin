@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.commonizer.transformer
 
 import org.jetbrains.kotlin.commonizer.CommonizerSettings
 import org.jetbrains.kotlin.commonizer.cir.CirHasTypeParameters
+import org.jetbrains.kotlin.commonizer.core.SupportExpectClassSupplier
 import org.jetbrains.kotlin.commonizer.mergedtree.*
 import org.jetbrains.kotlin.commonizer.mergedtree.CirNodeRelationship.ParentNode
 import org.jetbrains.kotlin.commonizer.mergedtree.ClassifierSignatureBuildingContext.TypeAliasInvariant
@@ -18,6 +19,7 @@ internal class ReApproximationCirNodeTransformer(
     private val classifiers: CirKnownClassifiers,
     private val settings: CommonizerSettings,
     private val signatureBuildingContextProvider: SignatureBuildingContextProvider,
+    private val supportExpectClassSupplier: SupportExpectClassSupplier,
 ) : CirNodeTransformer {
 
     internal class SignatureBuildingContextProvider(
