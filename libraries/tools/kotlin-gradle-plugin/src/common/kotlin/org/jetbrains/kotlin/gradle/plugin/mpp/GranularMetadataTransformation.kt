@@ -169,9 +169,16 @@ internal class GranularMetadataTransformation(
         val allowMatchingByRequestedCoordinates: Boolean,
 
         @get:Internal
-        val cache: Provider<out KotlinGradleTaskExecutionCache>
+        val cache: Provider<out KotlinGradleTaskExecutionCache>,
+
+        @get:Input
+        val sourceSetsExcludedFromVisibility: Set<String>,
     ) {
-        constructor(project: Project, kotlinSourceSet: KotlinSourceSet, transformProjectDependenciesWithSourceSetMetadataOutputs: Boolean = true) : this(
+        constructor(
+            project: Project,
+            kotlinSourceSet: KotlinSourceSet,
+            transformProjectDependenciesWithSourceSetMetadataOutputs: Boolean = true,
+        ) : this(
             projectId = project.path,
             build = project.currentBuild,
             sourceSetName = kotlinSourceSet.name,
@@ -190,7 +197,198 @@ internal class GranularMetadataTransformation(
             computeTransformedLibraryChecksum = project.kotlinPropertiesProvider.computeTransformedLibraryChecksum,
             kmpResolutionStrategy = project.kotlinPropertiesProvider.kmpResolutionStrategy,
             allowMatchingByRequestedCoordinates = project.kotlinPropertiesProvider.allowMatchingByRequestedCoordinatesInGMDT.get(),
-            cache = project.kotlinGradleTaskExecutionCache
+            cache = project.kotlinGradleTaskExecutionCache,
+            sourceSetsExcludedFromVisibility = if (project.kotlinPropertiesProvider.strictKmpCompilation)
+                defaultTargetHierarchyExcludedSourceSetVisibilityBySourceSet[kotlinSourceSet.name] ?: emptySet() else emptySet()
+        )
+    }
+
+    companion object {
+        val defaultTargetHierarchyExcludedSourceSetVisibilityBySourceSet = mapOf(
+            "appleMain" to setOf(
+                "iosArm64Main",
+                "iosMain",
+                "iosSimulatorArm64Main",
+                "iosX64Main",
+                "macosArm64Main",
+                "macosMain",
+                "tvosArm64Main",
+                "tvosMain",
+                "tvosSimulatorArm64Main",
+                "watchosArm64Main",
+                "watchosDeviceArm64Main",
+                "watchosMain",
+                "watchosSimulatorArm64Main",
+            ),
+            "appleTest" to setOf(
+                "iosArm64Main",
+                "iosMain",
+                "iosSimulatorArm64Main",
+                "iosX64Main",
+                "macosArm64Main",
+                "macosMain",
+                "tvosArm64Main",
+                "tvosMain",
+                "tvosSimulatorArm64Main",
+                "watchosArm64Main",
+                "watchosDeviceArm64Main",
+                "watchosMain",
+                "watchosSimulatorArm64Main",
+            ),
+            "commonMain" to setOf(
+                "androidMain",
+                "appleMain",
+                "iosArm64Main",
+                "iosMain",
+                "iosSimulatorArm64Main",
+                "iosX64Main",
+                "jsMain",
+                "jvmMain",
+                "linuxArm64Main",
+                "linuxMain",
+                "linuxX64Main",
+                "macosArm64Main",
+                "macosMain",
+                "mingwMain",
+                "mingwX64Main",
+                "nativeMain",
+                "tvosArm64Main",
+                "tvosMain",
+                "tvosSimulatorArm64Main",
+                "wasmJsMain",
+                "wasmWasiMain",
+                "watchosArm64Main",
+                "watchosDeviceArm64Main",
+                "watchosMain",
+                "watchosSimulatorArm64Main",
+                "webMain",
+            ),
+            "commonTest" to setOf(
+                "androidMain",
+                "appleMain",
+                "iosArm64Main",
+                "iosMain",
+                "iosSimulatorArm64Main",
+                "iosX64Main",
+                "jsMain",
+                "jvmMain",
+                "linuxArm64Main",
+                "linuxMain",
+                "linuxX64Main",
+                "macosArm64Main",
+                "macosMain",
+                "mingwMain",
+                "mingwX64Main",
+                "nativeMain",
+                "tvosArm64Main",
+                "tvosMain",
+                "tvosSimulatorArm64Main",
+                "wasmJsMain",
+                "wasmWasiMain",
+                "watchosArm64Main",
+                "watchosDeviceArm64Main",
+                "watchosMain",
+                "watchosSimulatorArm64Main",
+                "webMain",
+            ),
+            "iosMain" to setOf(
+                "iosArm64Main",
+                "iosSimulatorArm64Main",
+                "iosX64Main",
+            ),
+            "iosTest" to setOf(
+                "iosArm64Main",
+                "iosSimulatorArm64Main",
+                "iosX64Main",
+            ),
+            "linuxMain" to setOf(
+                "linuxArm64Main",
+                "linuxX64Main",
+            ),
+            "linuxTest" to setOf(
+                "linuxArm64Main",
+                "linuxX64Main",
+            ),
+            "macosMain" to setOf(
+                "macosArm64Main",
+            ),
+            "macosTest" to setOf(
+                "macosArm64Test",
+            ),
+            "mingwMain" to setOf(
+                "mingwX64Main",
+            ),
+            "mingwTest" to setOf(
+                "mingwX64Test",
+            ),
+            "nativeMain" to setOf(
+                "appleMain",
+                "iosArm64Main",
+                "iosMain",
+                "iosSimulatorArm64Main",
+                "iosX64Main",
+                "linuxArm64Main",
+                "linuxMain",
+                "linuxX64Main",
+                "macosArm64Main",
+                "macosMain",
+                "mingwMain",
+                "mingwX64Main",
+                "tvosArm64Main",
+                "tvosMain",
+                "tvosSimulatorArm64Main",
+                "watchosArm64Main",
+                "watchosDeviceArm64Main",
+                "watchosMain",
+                "watchosSimulatorArm64Main",
+            ),
+            "nativeTest" to setOf(
+                "appleMain",
+                "iosArm64Main",
+                "iosMain",
+                "iosSimulatorArm64Main",
+                "iosX64Main",
+                "linuxArm64Main",
+                "linuxMain",
+                "linuxX64Main",
+                "macosArm64Main",
+                "macosMain",
+                "mingwMain",
+                "mingwX64Main",
+                "tvosArm64Main",
+                "tvosMain",
+                "tvosSimulatorArm64Main",
+                "watchosArm64Main",
+                "watchosDeviceArm64Main",
+                "watchosMain",
+                "watchosSimulatorArm64Main",
+            ),
+            "tvosMain" to setOf(
+                "tvosArm64Main",
+                "tvosSimulatorArm64Main",
+            ),
+            "tvosTest" to setOf(
+                "tvosArm64Main",
+                "tvosSimulatorArm64Main",
+            ),
+            "watchosMain" to setOf(
+                "watchosArm64Main",
+                "watchosDeviceArm64Main",
+                "watchosSimulatorArm64Main",
+            ),
+            "watchosTest" to setOf(
+                "watchosArm64Main",
+                "watchosDeviceArm64Main",
+                "watchosSimulatorArm64Main",
+            ),
+            "webMain" to setOf(
+                "jsMain",
+                "wasmJsMain",
+            ),
+            "webTest" to setOf(
+                "jsMain",
+                "wasmJsMain",
+            ),
         )
     }
 
@@ -417,6 +615,7 @@ internal class GranularMetadataTransformation(
             dependingPlatformCompilations = params.dependingPlatformCompilations,
             dependencyProjectStructureMetadata = projectStructureMetadata,
             resolvedToOtherProject = isResolvedToProject,
+            excludedSourceSets = params.sourceSetsExcludedFromVisibility,
         )
 
         val allVisibleSourceSets = sourceSetVisibility.visibleSourceSetNames
@@ -461,7 +660,7 @@ internal class GranularMetadataTransformation(
 
     private fun SourceSetVisibilityResult.getMetadataProviderForVisibleSourceSets(
         dependency: ResolvedDependencyResult,
-        projectStructureMetadata: KotlinProjectStructureMetadata
+        projectStructureMetadata: KotlinProjectStructureMetadata,
     ): MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider? {
         val module = dependency.selected
         val moduleId = module.id
@@ -494,7 +693,8 @@ internal class GranularMetadataTransformation(
             }
 
             logger.debug("Transform composite metadata artifact: '${compositeMetadataArtifact.file}'")
-            val isKotlinArchive = compositeMetadataArtifact.variant.attributes.getAttribute(KarLayout.Attributes.state) == KarLayout.Attributes.State.DECOMPRESSED
+            val isKotlinArchive =
+                compositeMetadataArtifact.variant.attributes.getAttribute(KarLayout.Attributes.state) == KarLayout.Attributes.State.DECOMPRESSED
             ArtifactMetadataProvider(
                 CompositeMetadataArtifactImpl(
                     moduleDependencyIdentifier = dependency.toModuleDependencyIdentifier(),

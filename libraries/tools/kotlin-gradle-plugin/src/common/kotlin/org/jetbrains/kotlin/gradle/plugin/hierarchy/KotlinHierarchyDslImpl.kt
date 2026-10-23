@@ -43,10 +43,11 @@ internal class KotlinHierarchyDslImpl(
         targets.matching { target -> target.platformType != KotlinPlatformType.common }.all { target ->
             target.compilations.all { compilation ->
                 target.project.kotlinPluginLifecycle.launch {
-                    withRestrictedStages(KotlinPluginLifecycle.Stage.upTo(FinaliseRefinesEdges)) {
-                        val hierarchy = template.buildHierarchy(compilation) ?: return@withRestrictedStages
+//                    withRestrictedStages(KotlinPluginLifecycle.Stage.upTo(FinaliseRefinesEdges)) {
+//                        val hierarchy = template.buildHierarchy(compilation) ?: return@withRestrictedStages
+                        val hierarchy = template.buildHierarchy(compilation) ?: return@launch
                         applyKotlinHierarchy(hierarchy, compilation)
-                    }
+//                    }
                 }
             }
         }
