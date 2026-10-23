@@ -125,6 +125,9 @@ fun ProtoBuf.Type.abbreviatedType(typeTable: TypeTable): ProtoBuf.Type? = when {
     else -> null
 }
 
+fun ProtoBuf.Type.richErrors(typeTable: TypeTable): List<ProtoBuf.Type> =
+    richErrorList.takeIf(Collection<*>::isNotEmpty) ?: richErrorIdList.map { typeTable[it] }
+
 fun ProtoBuf.TypeAlias.underlyingType(typeTable: TypeTable): ProtoBuf.Type = when {
     hasUnderlyingType() -> underlyingType
     hasUnderlyingTypeId() -> typeTable[underlyingTypeId]

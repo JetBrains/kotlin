@@ -1095,6 +1095,20 @@ class FirElementSerializer private constructor(
                 }
                 return typeProto(approximatedType)
             }
+            is ConeUnionType -> {
+                return typeProto(type.primaryType).apply {
+                    val useTypeTable = useTypeTable()
+                    type.richErrorTypes.forEach {
+                        val richErrorProto = typeProto(it)
+                        if (useTypeTable) {
+                            addRichErrorId(typeTable[richErrorProto])
+                        } else {
+                            addRichError(richErrorProto)
+                        }
+                    }
+                    type.getAnnotations().serializeAnnotationsToMetadata(extension.annotationSerializer, this::addUnionTypeAnnotation)
+                }
+            }
             is ConeIntegerLiteralType -> {
                 throw IllegalStateException("Integer literal types should not persist up to the serializer: ${type.renderForDebugging()}")
             }
