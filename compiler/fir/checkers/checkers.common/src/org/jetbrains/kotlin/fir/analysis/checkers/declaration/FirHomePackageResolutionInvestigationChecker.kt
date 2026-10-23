@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.fir.resolve.toClassLikeSymbol
 object FirHomePackageResolutionInvestigationChecker : FirFileChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirFile) {
-        if (LanguageFeature.HomePackageResolution.isDisabled()) return
+        // if (LanguageFeature.HomePackageResolution.isDisabled()) return
 
         val hpr = declaration.imports.count { it.redundantHPR() }
         val star = declaration.imports.count { it.isAllUnder }

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.test.backend.ir
 
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.HOME_PACKAGE_RESOLUTION_INVESTIGATION
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.backend.handlers.AbstractIrHandler
@@ -48,7 +49,7 @@ class IrDiagnosticsHandler(
             for (file in currentModule.files) {
                 val diagnostics = file.findByPath(testServices) { file ->
                     diagnosticsByFile.entries.firstOrNull { it.key?.path == file }?.value
-                }
+                }?.filter { it.factory != HOME_PACKAGE_RESOLUTION_INVESTIGATION }
                 if (diagnostics != null && diagnostics.isNotEmpty()) {
                     val diagnosticsMetadataInfos =
                         diagnostics.diagnosticCodeMetaInfos(

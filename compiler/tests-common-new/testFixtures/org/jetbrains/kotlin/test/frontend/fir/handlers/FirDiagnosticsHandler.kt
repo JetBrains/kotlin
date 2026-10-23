@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.diagnostics.rendering.Renderers
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.HOME_PACKAGE_RESOLUTION_INVESTIGATION
 import org.jetbrains.kotlin.fir.builder.FirSyntaxErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
@@ -167,7 +168,9 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
 
             for (file in currentModule.files) {
                 val firFile = info.mainFirFilesByTestFile[file] ?: continue
-                var diagnostics = frontendDiagnosticsPerFile[firFile]
+                var diagnostics = frontendDiagnosticsPerFile[firFile].filter {
+                    it.diagnostic.factory != HOME_PACKAGE_RESOLUTION_INVESTIGATION
+                }
                 if (AdditionalFilesDirectives.CHECK_TYPE in currentModule.directives) {
                     diagnostics = diagnostics.filter { it.diagnostic.factory.name != FirErrors.UNDERSCORE_USAGE_WITHOUT_BACKTICKS.name }
                 }
@@ -688,7 +691,8 @@ open class FirDiagnosticCollectorService(val testServices: TestServices) : TestS
             fun processDiagnosticsFromCliPhase(diagnosticsCollector: BaseDiagnosticsCollector, mode: KmpCompilationMode) {
                 val diagnosticsPerFirFile = buildMap {
                     for ([sourceFile, diagnostics] in diagnosticsCollector.diagnosticsByFile) {
-                        if (sourceFile == null) continue
+                        val diagnostics = diagnostics.filter { it.factory != HOME_PACKAGE_RESOLUTION_INVESTIGATION }
+                        if (sourceFile == null || diagnostics.isEmpty()) continue
                         val firFile = allFiles.first { it.sourceFile == sourceFile }
                         put(firFile, diagnostics)
                     }
