@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.group.isDisabledNative
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.isIgnoredTarget
 import org.jetbrains.kotlin.konan.test.blackbox.support.testKind
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
+import org.jetbrains.kotlin.test.directives.KlibAbiDumpDirectives
 import org.jetbrains.kotlin.test.directives.model.Directive
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
@@ -30,10 +31,12 @@ import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
  * @param customCompilerStage the stage compiled by a custom (previously released) compiler in KLIB compatibility tests, or `null`
  *   otherwise: the tests expecting its failure are isolated (see [CUSTOM_FIRST_STAGE_IGNORE_DIRECTIVES] and
  *   [CUSTOM_SECOND_STAGE_IGNORE_DIRECTIVES]).
+ *   In forward-compatibility tests ([CompilationStage.SECOND]), [KlibAbiDumpDirectives.DUMP_KLIB_ABI] isolates a test too:
+ *   their first stage checks the KLIB ABI dump, which a test renamed for a batch would not match.
  */
 class NativeGroupingTestIsolator(
     testServices: TestServices,
-    customCompilerStage: CompilationStage? = null,
+    private val customCompilerStage: CompilationStage? = null,
 ) : GroupingTestIsolator(testServices, affectsFileGenerators = true) {
     companion object {
         private val assertionTokens = AssertionsMode.entries.associateWith {
@@ -61,14 +64,20 @@ class NativeGroupingTestIsolator(
     }
 
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(CodegenTestDirectives, TestDirectives, CustomKlibCompilerTestDirectives)
+        get() = listOfNotNull(
+            CodegenTestDirectives,
+            TestDirectives,
+            CustomKlibCompilerTestDirectives,
+            KlibAbiDumpDirectives.takeIf { customCompilerStage == CompilationStage.SECOND },
+        )
 
     override fun computeBatchToken(moduleStructure: TestModuleStructure): BatchToken {
-        val isolationDirectives = listOf(
+        val isolationDirectives = listOfNotNull(
             TestDirectives.NATIVE_STANDALONE,
             TestDirectives.FILECHECK_STAGE,
             TestDirectives.EXPECTED_TIMEOUT_FAILURE,
             TestDirectives.MUTED,
+            KlibAbiDumpDirectives.DUMP_KLIB_ABI.takeIf { customCompilerStage == CompilationStage.SECOND },
         ) + customCompilerExpectedFailureDirectives
 
         // KT-84713: Migrate here full grouping logic from TestRunProvider.withTestExecutable(): respect ignores, difference of compiler args, etc.
