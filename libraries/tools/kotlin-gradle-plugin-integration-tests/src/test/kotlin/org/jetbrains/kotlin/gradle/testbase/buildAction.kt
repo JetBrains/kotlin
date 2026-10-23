@@ -14,7 +14,6 @@ object BuildActions {
         build(
             buildArguments = args,
             buildOptions = options,
-            forwardBuildOutput = false,
             assertions = assertions,
         )
     }
@@ -23,7 +22,6 @@ object BuildActions {
         buildAndFail(
             buildArguments = args,
             buildOptions = options,
-            forwardBuildOutput = false,
             assertions = assertions,
         )
     }
