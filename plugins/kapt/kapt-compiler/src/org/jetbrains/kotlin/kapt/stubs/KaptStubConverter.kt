@@ -480,6 +480,8 @@ abstract class ParameterizedKaptStubConverter<
         val components: List<VariableDecl>,
         val componentNames: List<String>,
         val canonicalConstructorDesc: String,
+        // Java requires the canonical constructor parameters to have exactly these types
+        val componentTypes: List<Expression>,
         // `name + desc` of the component accessors
         val accessorSignatures: Set<String>,
         // Arguments of `this(...)` in non-canonical constructors
@@ -504,19 +506,24 @@ abstract class ParameterizedKaptStubConverter<
         val publicAccessors = clazz.methods.filter { isPublic(it.access) && !isStatic(it.access) }.mapTo(hashSetOf()) { it.name + it.desc }
         if (!publicAccessors.containsAll(accessorSignatures)) return null
 
-        val components = recordComponents.mapIndexed { index, component ->
-            val field = clazz.fields.find { it.name == component.name && !isStatic(it.access) } ?: return null
+        val fields = recordComponents.map { component ->
+            clazz.fields.find { it.name == component.name && !isStatic(it.access) } ?: return null
+        }
+
+        val components = recordComponents.zip(fields).mapIndexed { index, [component, field] ->
             val isVararg = index == recordComponents.lastIndex && canonicalConstructor.isVarargs()
             convertField(field, clazz, lineMappings, packageFqName, asRecordComponent = true, isVarargRecordComponent = isVararg)
                 ?: return null
         }
 
-        val delegationArguments = recordComponents.map { component ->
+        val componentTypes = fields.map { convertFieldType(it, clazz) }
+
+        val delegationArguments = recordComponents.mapIndexed { index, component ->
             val type = Type.getType(component.descriptor)
             val defaultValue = convertLiteral(clazz, getDefaultValue(type))
             when (type.sort) {
                 // Cast `null` to avoid ambiguity between constructors
-                Type.OBJECT, Type.ARRAY -> makeCast(parseFieldSignatureOrUseAsmType(component.signature, type), defaultValue)
+                Type.OBJECT, Type.ARRAY -> makeCast(componentTypes[index], defaultValue)
                 // The default is the int `0`, and invocation arguments are not narrowed
                 Type.BYTE, Type.SHORT -> makeCast(makeType(type), defaultValue)
                 else -> defaultValue
@@ -527,6 +534,7 @@ abstract class ParameterizedKaptStubConverter<
             components,
             recordComponents.map { it.name },
             canonicalConstructorDesc,
+            componentTypes,
             accessorSignatures,
             delegationArguments,
         )
@@ -759,11 +767,30 @@ abstract class ParameterizedKaptStubConverter<
         if (!isValidIdentifier(name)) return null
 
         val asmType = Type.getType(field.desc)
-        val irField = declaration as? IrField
 
         if (!checkIfValidTypeName(containingClass, asmType)) {
             return null
         }
+
+        // Enum type must be an identifier (Javac requirement)
+        val convertedType = if (isEnumField) {
+            val name = treeMaker.getQualifiedName(asmType).substringAfterLast('.')
+            makeSimpleName(name)
+        } else {
+            convertFieldType(field, containingClass)
+        }
+
+        lineMappings.registerField(containingClass, field)
+
+        if (asRecordComponent) return makeRecordComponent(field, modifiers, convertedType, isVarargRecordComponent)
+
+        val initializer = explicitInitializer ?: convertPropertyInitializer(containingClass, field)
+
+        return makeField(field, modifiers, initializer, convertedType)
+    }
+
+    private fun convertFieldType(field: FieldNode, containingClass: ClassNode): Expression {
+        val irField = kaptContext.origins[field]?.declaration as? IrField
 
         val fieldTypeReference =
             when (val metadata = kaptContext.origins[field]?.let { kaptContext.firMetadataOf(it.declaration) }) {
@@ -780,30 +807,16 @@ abstract class ParameterizedKaptStubConverter<
             }
         }
 
-        // Enum type must be an identifier (Javac requirement)
-        val convertedType = if (isEnumField) {
-            val name = treeMaker.getQualifiedName(asmType).substringAfterLast('.')
-            makeSimpleName(name)
-        } else {
-            getNonErrorType(
-                irField?.type?.containsErrorTypes() == true,
-                RETURN_TYPE,
-                getFileForClass(containingClass),
-                typeRefProvider = { fieldTypeReference },
-                ifNonError = {
-                    fieldTypeMappingMode?.let { projectLegacyFunctionTypeKindsIfNeeded(fieldTypeReference, it) }
-                        ?: parseFieldSignatureOrUseAsmType(field.signature, asmType)
-                }
-            )
-        }
-
-        lineMappings.registerField(containingClass, field)
-
-        if (asRecordComponent) return makeRecordComponent(field, modifiers, convertedType, isVarargRecordComponent)
-
-        val initializer = explicitInitializer ?: convertPropertyInitializer(containingClass, field)
-
-        return makeField(field, modifiers, initializer, convertedType)
+        return getNonErrorType(
+            irField?.type?.containsErrorTypes() == true,
+            RETURN_TYPE,
+            getFileForClass(containingClass),
+            typeRefProvider = { fieldTypeReference },
+            ifNonError = {
+                fieldTypeMappingMode?.let { projectLegacyFunctionTypeKindsIfNeeded(fieldTypeReference, it) }
+                    ?: parseFieldSignatureOrUseAsmType(field.signature, Type.getType(field.desc))
+            }
+        )
     }
 
     private fun convertPropertyInitializer(containingClass: ClassNode, field: FieldNode): Expression? {
@@ -925,7 +938,7 @@ abstract class ParameterizedKaptStubConverter<
         }
 
         val isConstructor = method.name == "<init>"
-        val canonicalConstructorOfRecord = recordInfo?.takeIf { isConstructor && method.desc == it.canonicalConstructorDesc }
+        val isRecordCanonicalConstructor = recordInfo != null && isConstructor && method.desc == recordInfo.canonicalConstructorDesc
 
         val name = method.name
         if (!isValidIdentifier(name, canBeConstructor = isConstructor)) return null
@@ -952,14 +965,16 @@ abstract class ParameterizedKaptStubConverter<
 
         val parameterTypes = parametersInfo.map { info -> makeType(info.type) }
 
-        // Java forbids `throws` on the canonical constructor and accessors of a record
-        val isRecordCanonicalMember = canonicalConstructorOfRecord != null ||
+        val isRecordCanonicalMember = isRecordCanonicalConstructor ||
                 recordInfo != null && !isStatic(method.access) && method.name + method.desc in recordInfo.accessorSignatures
 
+        // No exceptions are emitted for record's canonical constructor or accessors, Java forbids them.
         // Kotlin @Throws arguments are class literals, so cannot be generic and do not need refinement from the generic signature.
         val exceptionTypes = if (isRecordCanonicalMember) emptyList() else method.exceptions.map { makeQualifiedName(it) }
 
         val genericSignature = extractMethodSignatureTypes(declaration, exceptionTypes, returnType, method, parameterTypes)
+        // Kotlin adds declaration-site variance to parameters (`List<? extends T>`), but not to the components (`List<T>`)
+        val stubParameterTypes = if (isRecordCanonicalConstructor) recordInfo.componentTypes else genericSignature.parameterTypes
 
         val parameterNames = parametersInfo.mapIndexed { index, info ->
             when {
@@ -984,7 +999,7 @@ abstract class ParameterizedKaptStubConverter<
                 emptyList() /* TODO */
             )
 
-            val type = genericSignature.parameterTypes[index]
+            val type = stubParameterTypes[index]
 
             makeParameter(parameterNames[index], type, modifiers, varargs != 0L)
         }
@@ -997,8 +1012,8 @@ abstract class ParameterizedKaptStubConverter<
             null
         } else if (isConstructor && containingClass.isEnum()) {
             makeBlock(emptyList())
-        } else if (canonicalConstructorOfRecord != null) {
-            makeBlock(canonicalConstructorOfRecord.componentNames.zip(parameterNames, ::makeFieldAssignmentStatement))
+        } else if (isRecordCanonicalConstructor) {
+            makeBlock(recordInfo.componentNames.zip(parameterNames, ::makeFieldAssignmentStatement))
         } else if (isConstructor && recordInfo != null) {
             makeBlock(listOf(makeSimpleCallStatement("this", recordInfo.delegationArguments)))
         } else if (isConstructor) {
@@ -1031,7 +1046,7 @@ abstract class ParameterizedKaptStubConverter<
         lineMappings.registerMethod(containingClass, method)
 
         val paramSignatureTypes = List(parametersInfo.size) { index ->
-            genericSignature.parameterTypes[index].toString()
+            stubParameterTypes[index].toString()
         }
         val signature = buildString {
             append(name)

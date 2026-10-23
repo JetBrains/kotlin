@@ -217,12 +217,13 @@ class KaptStubDirectConverter(
     ): String {
         val isEnum = clazz.isEnum()
         val isAnnotation = clazz.isAnnotation()
+        val isRecord = recordComponents != null
 
         val text = buildString {
             appendKDocCommentIfNecessary(clazz)
             append(modifiers)
             val classKindText = when {
-                recordComponents != null -> "record"
+                isRecord -> "record"
                 isEnum -> "enum"
                 isAnnotation -> "@interface"
                 clazz.isInterface() -> "interface"
@@ -233,7 +234,7 @@ class KaptStubDirectConverter(
                 // interface cannot have type parameters or extends clause, but they are allowed (not reported)
                 // during the annotations processing
                 appendTypeArguments(genericType.typeParameters)
-                if (recordComponents != null) {
+                if (isRecord) {
                     appendList(recordComponents, "(", ")")
                     appendListIfNonEmpty(superTypes.interfaces, " implements ", "") { it }
                 } else if (clazz.isInterface()) {

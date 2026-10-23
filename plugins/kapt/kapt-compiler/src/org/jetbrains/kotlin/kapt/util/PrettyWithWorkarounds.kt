@@ -68,7 +68,13 @@ private class PrettyWithWorkarounds(
         pendingRecordComponents.forEachIndexed { index, component ->
             if (index > 0) print(", ")
             printExpr(TreeMaker.instance(context).Modifiers(0, component.mods.annotations))
-            printExpr(component.vartype)
+            val type = component.vartype
+            if ((component.mods.flags and Flags.VARARGS) != 0L && type is JCTree.JCArrayTypeTree) {
+                printExpr(type.elemtype)
+                print("...")
+            } else {
+                printExpr(type)
+            }
             print(" ")
             print(component.name)
         }

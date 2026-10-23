@@ -23,6 +23,10 @@ data class WithCompanion(@field:F val s: String?, val list: List<String>, val ar
     @JvmRecord
     data class Nested(val i: Long)
 
+    inner class Inner {
+        fun s(): String? = s
+    }
+
     companion object {
         const val C = 1
     }
@@ -48,4 +52,23 @@ data class Throwing @Throws(java.io.IOException::class) constructor(@get:Throws(
 @JvmRecord
 data class PrivateComponent(private val x: Int, val y: Int) {
     constructor() : this(0, 0)
+}
+
+class Plain {
+    @JvmRecord
+    data class NestedRecord(val s: String)
+}
+
+@JvmRecord
+data class Varargs(val i: Int, vararg val xs: String)
+
+@JvmRecord
+data class RecordNamed(val record: Int)
+
+@JvmRecord
+data class SpaceNamed(val `with space`: Int)
+
+@JvmRecord
+data class Variance(val numbers: List<Number>, val strings: List<String>) {
+    constructor() : this(emptyList(), emptyList())
 }
