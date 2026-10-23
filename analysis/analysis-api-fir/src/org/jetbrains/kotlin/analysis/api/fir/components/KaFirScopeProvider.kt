@@ -9,9 +9,6 @@ import com.intellij.psi.util.parentOfType
 import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.scopes.*
-import org.jetbrains.kotlin.analysis.api.fir.scopes.KaFirCompositeScope
-import org.jetbrains.kotlin.analysis.api.fir.scopes.KaFirCompositeTypeScope
-import org.jetbrains.kotlin.analysis.api.fir.scopes.KaFirEmptyScope
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirAnonymousObjectSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirFileSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirNamedClassSymbolBase
@@ -24,16 +21,11 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.scopes.KaTypeScope
-import org.jetbrains.kotlin.analysis.api.symbols.KaContextParameterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaFileSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaPackageSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -49,13 +41,11 @@ import org.jetbrains.kotlin.fir.resolve.scopeSessionKey
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseWithCallableMembers
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.isSubtypeOf
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.types.SmartcastStability
@@ -481,30 +471,6 @@ internal class KaFirScopeProvider(
     private fun FirTypeScope.withSyntheticPropertiesScopeOrSelf(coneType: ConeKotlinType): FirTypeScope {
         val syntheticPropertiesScope = getFirSyntheticPropertiesScope(coneType, this) ?: return this
         return FirTypeScopeWithSyntheticProperties(typeScope = this, syntheticPropertiesScope)
-    }
-}
-
-private class FirTypeScopeWithSyntheticProperties(
-    val typeScope: FirTypeScope,
-    val syntheticPropertiesScope: FirSyntheticPropertiesScope,
-) : FirDelegatingTypeScope(typeScope) {
-    override fun getCallableNames(): Set<Name> = typeScope.getCallableNames() + syntheticPropertiesScope.getCallableNames()
-    override fun mayContainName(name: Name): Boolean = typeScope.mayContainName(name) || syntheticPropertiesScope.mayContainName(name)
-
-    override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
-        typeScope.processPropertiesByName(name, processor)
-        syntheticPropertiesScope.processPropertiesByName(name, processor)
-    }
-
-    @DelicateScopeAPI
-    override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): FirTypeScopeWithSyntheticProperties? {
-        val newTypeScope = typeScope.withReplacedSessionOrNull(newSession, newScopeSession)
-        val newSyntheticPropertiesScope = syntheticPropertiesScope.withReplacedSessionOrNull(newSession, newScopeSession)
-        if (newTypeScope == null && newSyntheticPropertiesScope == null) return null
-        return FirTypeScopeWithSyntheticProperties(
-            newTypeScope ?: typeScope,
-            newSyntheticPropertiesScope ?: syntheticPropertiesScope,
-        )
     }
 }
 
