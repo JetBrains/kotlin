@@ -44,8 +44,11 @@ import org.jetbrains.kotlin.wasm.test.blackbox.WasmGroupingTestIsolator
 import org.jetbrains.kotlin.wasm.test.converters.WasmInProcessSecondStageFacade
 import org.jetbrains.kotlin.wasm.test.handlers.WasmCompilationSetsGroupingStageBoxRunner
 import org.jetbrains.kotlin.wasm.test.handlers.WasmJsCoroutinesStackSwitchingBoxRunner
+import org.jetbrains.kotlin.wasm.test.handlers.WasmWasiCoroutinesStackSwitchingBoxRunner
 import org.jetbrains.kotlin.wasm.test.providers.WasmJsLauncherAdditionalSourceProvider
 import org.jetbrains.kotlin.wasm.test.utils.configureIgnoredTestSuppressor
+import org.junit.jupiter.api.Assumptions
+import org.junit.jupiter.api.BeforeEach
 
 abstract class AbstractWasmCodegenBoxTest(
     val backend: TargetBackend,
@@ -171,7 +174,31 @@ abstract class AbstractWasmJsSyntheticAccessorsBoxTest : AbstractWasmJsCodegenBo
 abstract class AbstractWasmJsTranslatorTest : AbstractWasmJsCodegenBoxTest("js/js.translator/testData/box/")
 
 abstract class AbstractWasmJsCodegenCoroutinesStackSwitchingTest : AbstractWasmJsCodegenBoxTest() {
-    override val wasmCompilationSetsBoxRunner: Constructor<GroupingStageHandler<BinaryArtifacts.Wasm>> = ::WasmJsCoroutinesStackSwitchingBoxRunner
+    override val wasmCompilationSetsBoxRunner: Constructor<GroupingStageHandler<BinaryArtifacts.Wasm>> =
+        ::WasmJsCoroutinesStackSwitchingBoxRunner
+
+    override fun configure(builder: TwoStageTestConfigurationBuilder): Unit = with(builder) {
+        super.configure(this)
+        commonConfiguration {
+            defaultDirectives {
+                +WasmEnvironmentConfigurationDirectives.USE_STACK_SWITCHING_PROPOSAL
+            }
+        }
+    }
+}
+
+@WasmFirCompilerExtraTest
+abstract class AbstractWasmWasiCodegenCoroutinesStackSwitchingTest : AbstractWasmWasiCodegenBoxTest() {
+    override val wasmCompilationSetsBoxRunner: Constructor<GroupingStageHandler<BinaryArtifacts.Wasm>> =
+        ::WasmWasiCoroutinesStackSwitchingBoxRunner
+
+    @BeforeEach
+    fun assumeStackSwitchingIsSupported() {
+        // Wasmtime supports the stack switching proposal only on x86_64 Linux
+        val isLinux = System.getProperty("os.name").startsWith("Linux", ignoreCase = true)
+        val isX64 = System.getProperty("os.arch").lowercase() in setOf("amd64", "x86_64")
+        Assumptions.assumeTrue(isLinux && isX64, "Wasmtime supports the stack switching proposal only on x86_64 Linux")
+    }
 
     override fun configure(builder: TwoStageTestConfigurationBuilder): Unit = with(builder) {
         super.configure(this)

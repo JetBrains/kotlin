@@ -122,6 +122,7 @@ internal sealed class WasmVM(
         ) =
             tool.run(
                 *toolArgs.toTypedArray(),
+                *if (useStackSwitching) arrayOf("-W", "stack-switching") else emptyArray(),
                 "--invoke",
                 wasiEntryExport,
                 entryFile,

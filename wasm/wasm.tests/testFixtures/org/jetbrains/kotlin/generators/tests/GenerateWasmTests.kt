@@ -168,6 +168,10 @@ fun main(args: Array<String>) {
                 model("codegen/box/coroutines", pattern = jsTranslatorTestPattern)
             }
 
+            testClass<AbstractWasmWasiCodegenCoroutinesStackSwitchingTest> {
+                model("codegen/box/coroutines", pattern = jsTranslatorTestPattern)
+            }
+
             testClass<AbstractWasmJsCodegenSplittingTest>(annotations = listOf(annotation<WasmJsSplittingTest>())) {
                 model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests)
                 model("codegen/boxInline", pattern = jsTranslatorTestPattern)
