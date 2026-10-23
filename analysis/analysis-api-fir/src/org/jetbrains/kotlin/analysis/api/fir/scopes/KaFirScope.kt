@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.scopes
 
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.symbols.*
@@ -15,8 +14,7 @@ import org.jetbrains.kotlin.name.Name
  * A base class for [KaScope] implementations providing the default behavior of some [KaScope] members. The remaining members
  * ([callables], [classifiers], [constructors], and so on) have to be implemented by the concrete scope.
  */
-@KaImplementationDetail
-abstract class KaFirScope : KaScope {
+internal abstract class KaFirScope : KaScope {
     override val declarations: Sequence<KaDeclarationSymbol>
         get() = withValidityAssertion {
             sequence {

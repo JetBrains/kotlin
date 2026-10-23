@@ -24,8 +24,7 @@ import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 import java.lang.ref.SoftReference
 import kotlin.reflect.KClass
 
-@KaImplementationDetail
-class KaFirPsiSymbolPointer<S : KaSymbol> private constructor(
+internal class KaFirPsiSymbolPointer<S : KaSymbol> private constructor(
     private val psiPointer: SmartPsiElementPointer<out KtElement>,
     private val expectedClass: KClass<S>,
     originalSymbol: S?,
@@ -85,20 +84,6 @@ class KaFirPsiSymbolPointer<S : KaSymbol> private constructor(
         }
 
 
-        fun <S : KaSymbol> createForSymbolFromPsi(
-            ktElement: KtElement,
-            expectedClass: KClass<S>,
-            originalSymbol: S?,
-        ): KaFirPsiSymbolPointer<S>? {
-            ifDisabled { return null }
-
-            return KaFirPsiSymbolPointer(ktElement, expectedClass, originalSymbol)
-        }
-
-        inline fun <reified S : KaSymbol> createForSymbolFromPsi(ktElement: KtElement): KaFirPsiSymbolPointer<S>? {
-            return createForSymbolFromPsi(ktElement, S::class, null)
-        }
-
         @TestOnly
         fun <T> withDisabledPsiBasedPointers(disable: Boolean, action: () -> T): T = try {
             disablePsiPointer = true
@@ -122,11 +107,9 @@ class KaFirPsiSymbolPointer<S : KaSymbol> private constructor(
     }
 }
 
-@KaImplementationDetail
-interface SmartPointerIncompatiblePsiFile
+internal interface SmartPointerIncompatiblePsiFile
 
-@KaImplementationDetail
-fun createCompatibleSmartPointer(element: KtElement): SmartPsiElementPointer<out KtElement> {
+internal fun createCompatibleSmartPointer(element: KtElement): SmartPsiElementPointer<out KtElement> {
     val containingFile = element.containingKtFile
 
     if (containingFile is SmartPointerIncompatiblePsiFile) {

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.annotations
 
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotation
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationValue
 import org.jetbrains.kotlin.analysis.api.base.KaConstantValue
@@ -16,16 +15,14 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtElement
 
-@KaImplementationDetail
-class KaUnsupportedAnnotationValueImpl(
+internal class KaUnsupportedAnnotationValueImpl(
     override val token: KaLifetimeToken
 ) : KaAnnotationValue.UnsupportedValue {
     override val sourcePsi: KtElement?
         get() = withValidityAssertion { null }
 }
 
-@KaImplementationDetail
-class KaArrayAnnotationValueImpl(
+internal class KaArrayAnnotationValueImpl(
     values: Collection<KaAnnotationValue>,
     sourcePsi: KtElement?,
     override val token: KaLifetimeToken,
@@ -40,8 +37,7 @@ class KaArrayAnnotationValueImpl(
         get() = withValidityAssertion { backingSourcePsi }
 }
 
-@KaImplementationDetail
-class KaNestedAnnotationAnnotationValueImpl(
+internal class KaNestedAnnotationAnnotationValueImpl(
     annotation: KaAnnotation,
     override val token: KaLifetimeToken,
 ) : KaAnnotationValue.NestedAnnotationValue {
@@ -54,8 +50,7 @@ class KaNestedAnnotationAnnotationValueImpl(
         get() = withValidityAssertion { backingAnnotation.psi }
 }
 
-@KaImplementationDetail
-class KaClassLiteralAnnotationValueImpl(
+internal class KaClassLiteralAnnotationValueImpl(
     type: KaType,
     classId: ClassId?,
     sourcePsi: KtElement?,
@@ -75,8 +70,7 @@ class KaClassLiteralAnnotationValueImpl(
         get() = withValidityAssertion { backingSourcePsi }
 }
 
-@KaImplementationDetail
-class KaEnumEntryAnnotationValueImpl(
+internal class KaEnumEntryAnnotationValueImpl(
     callableId: CallableId?,
     sourcePsi: KtElement?,
     override val token: KaLifetimeToken,
@@ -91,8 +85,7 @@ class KaEnumEntryAnnotationValueImpl(
         get() = withValidityAssertion { backingSourcePsi }
 }
 
-@KaImplementationDetail
-class KaConstantAnnotationValueImpl(
+internal class KaConstantAnnotationValueImpl(
     value: KaConstantValue,
     override val token: KaLifetimeToken,
 ) : KaAnnotationValue.ConstantValue {

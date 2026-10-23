@@ -5,14 +5,12 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.resolution
 
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.resolution.KaSimpleCallResolutionSuccess
 import org.jetbrains.kotlin.analysis.api.resolution.KaSimpleCall
 
-@KaImplementationDetail
-class KaFirSimpleCallResolutionSuccess(
+internal class KaFirSimpleCallResolutionSuccess(
     private val backingCall: KaSimpleCall<*, *>,
 ) : KaSimpleCallResolutionSuccess {
     override val token: KaLifetimeToken get() = backingCall.token

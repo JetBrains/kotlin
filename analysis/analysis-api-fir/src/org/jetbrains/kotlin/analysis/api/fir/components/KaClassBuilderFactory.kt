@@ -15,8 +15,7 @@ import org.jetbrains.kotlin.ir.PsiIrFileEntry
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.util.fileOrNull
 
-@KaImplementationDetail
-class KaClassBuilderFactory private constructor(
+internal class KaClassBuilderFactory private constructor(
     private val delegateFactory: ClassBuilderFactory,
     private val compiledClassHandler: KaCompiledClassHandler
 ) : DelegatingClassBuilderFactory(delegateFactory) {

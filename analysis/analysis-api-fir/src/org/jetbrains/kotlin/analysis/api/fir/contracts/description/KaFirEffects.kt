@@ -14,8 +14,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import java.util.*
 
-@KaImplementationDetail
-class KaFirContractCallsInPlaceContractEffectDeclaration(
+internal class KaFirContractCallsInPlaceContractEffectDeclaration(
     private val backingValueParameterReference: KaContractParameterValue,
     private val backingOccurrencesRange: EventOccurrencesRange,
 ) : KaContractCallsInPlaceContractEffectDeclaration {
@@ -37,8 +36,7 @@ class KaFirContractCallsInPlaceContractEffectDeclaration(
     }
 }
 
-@KaImplementationDetail
-class KaFirContractConditionalContractEffectDeclaration(
+internal class KaFirContractConditionalContractEffectDeclaration(
     private val backingEffect: KaContractEffectDeclaration,
     private val backingCondition: KaContractBooleanExpression,
 ) : KaContractConditionalContractEffectDeclaration {
@@ -56,8 +54,7 @@ class KaFirContractConditionalContractEffectDeclaration(
     }
 }
 
-@KaImplementationDetail
-object KaFirContractReturnsContractEffectDeclarations {
+internal object KaFirContractReturnsContractEffectDeclarations {
     @KaImplementationDetail
     class KaFirContractReturnsNotNullEffectDeclaration(
         override val token: KaLifetimeToken,
@@ -92,8 +89,7 @@ object KaFirContractReturnsContractEffectDeclarations {
     }
 }
 
-@KaImplementationDetail
-class KaFirContractReturnsResultOfEffectDeclaration(
+internal class KaFirContractReturnsResultOfEffectDeclaration(
     private val backingValueParameterReference: KaContractParameterValue,
 ) : KaContractReturnsResultOfEffectDeclaration {
     override val token: KaLifetimeToken get() = backingValueParameterReference.token
@@ -109,8 +105,7 @@ class KaFirContractReturnsResultOfEffectDeclaration(
     }
 }
 
-@KaImplementationDetail
-class KaFirContractReturnsParameterEffectDeclaration(
+internal class KaFirContractReturnsParameterEffectDeclaration(
     private val backingValueParameterReference: KaContractParameterValue,
 ) : KaContractReturnsParameterEffectDeclaration {
     override val token: KaLifetimeToken get() = backingValueParameterReference.token
@@ -126,8 +121,7 @@ class KaFirContractReturnsParameterEffectDeclaration(
     }
 }
 
-@KaImplementationDetail
-class KaFirContractHoldsInEffectDeclaration(
+internal class KaFirContractHoldsInEffectDeclaration(
     private val backingCondition: KaContractBooleanExpression,
     private val backingValueParameterReference: KaContractParameterValue,
 ) : KaContractHoldsInEffectDeclaration {
@@ -148,8 +142,7 @@ class KaFirContractHoldsInEffectDeclaration(
     override fun hashCode(): Int = Objects.hash(backingCondition, backingValueParameterReference)
 }
 
-@KaImplementationDetail
-fun EventOccurrencesRange.toKaContractInvocationKind(): KaContractInvocationKind = when (this) {
+internal fun EventOccurrencesRange.toKaContractInvocationKind(): KaContractInvocationKind = when (this) {
     EventOccurrencesRange.ZERO -> KaContractInvocationKind.ZERO
     EventOccurrencesRange.AT_MOST_ONCE -> KaContractInvocationKind.AT_MOST_ONCE
     EventOccurrencesRange.EXACTLY_ONCE -> KaContractInvocationKind.EXACTLY_ONCE

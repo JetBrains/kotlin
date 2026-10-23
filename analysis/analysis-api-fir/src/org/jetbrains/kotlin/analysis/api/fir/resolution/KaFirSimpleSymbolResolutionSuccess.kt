@@ -5,14 +5,12 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.resolution
 
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.resolution.KaSimpleSymbolResolutionSuccess
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 
-@KaImplementationDetail
-class KaFirSimpleSymbolResolutionSuccess(
+internal class KaFirSimpleSymbolResolutionSuccess(
     private val backingSymbols: List<KaSymbol>,
 ) : KaSimpleSymbolResolutionSuccess {
     constructor(backingSymbol: KaSymbol) : this(

@@ -5,13 +5,11 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.utils
 
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.components.KaCompiledFile
 import org.jetbrains.kotlin.backend.common.output.OutputFile
 import java.io.File
 
-@KaImplementationDetail
-class KaFirCompiledFileForOutputFile(private val outputFile: OutputFile) : KaCompiledFile {
+internal class KaFirCompiledFileForOutputFile(private val outputFile: OutputFile) : KaCompiledFile {
     override val path: String
         get() = outputFile.relativePath
 

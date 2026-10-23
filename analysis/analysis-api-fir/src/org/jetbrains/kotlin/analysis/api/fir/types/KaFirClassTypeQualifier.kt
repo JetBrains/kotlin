@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.types
 
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassifierSymbol
@@ -15,8 +14,7 @@ import org.jetbrains.kotlin.analysis.api.types.KaTypeProjection
 import org.jetbrains.kotlin.analysis.api.types.KaUnresolvedClassTypeQualifier
 import org.jetbrains.kotlin.name.Name
 
-@KaImplementationDetail
-class KaFirResolvedClassTypeQualifier(
+internal class KaFirResolvedClassTypeQualifier(
     private val backingSymbol: KaClassifierSymbol,
     typeArguments: List<KaTypeProjection>,
 ) : KaResolvedClassTypeQualifier {
@@ -28,8 +26,7 @@ class KaFirResolvedClassTypeQualifier(
     override val typeArguments: List<KaTypeProjection> get() = withValidityAssertion { backingTypeArguments }
 }
 
-@KaImplementationDetail
-class KaFirUnresolvedClassTypeQualifier(
+internal class KaFirUnresolvedClassTypeQualifier(
     name: Name,
     typeArguments: List<KaTypeProjection>,
     override val token: KaLifetimeToken,

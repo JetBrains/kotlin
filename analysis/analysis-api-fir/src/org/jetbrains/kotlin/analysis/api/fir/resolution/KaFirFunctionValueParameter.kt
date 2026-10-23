@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.resolution
 
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.KaFunctionValueParameter
@@ -13,8 +12,7 @@ import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.symbol
 import org.jetbrains.kotlin.name.Name
 
-@KaImplementationDetail
-class KaFirFunctionValueParameter(
+internal class KaFirFunctionValueParameter(
     name: Name?,
     private val backingType: KaType,
 ) : KaFunctionValueParameter() {

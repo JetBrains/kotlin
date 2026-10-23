@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.scopes
 
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.scopes.KaTypeScope
@@ -14,8 +13,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaClassifierSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
 import org.jetbrains.kotlin.name.Name
 
-@KaImplementationDetail
-class KaFirCompositeTypeScope(
+internal class KaFirCompositeTypeScope(
     val subScopes: List<KaTypeScope>,
     override val token: KaLifetimeToken
 ) : KaTypeScope {

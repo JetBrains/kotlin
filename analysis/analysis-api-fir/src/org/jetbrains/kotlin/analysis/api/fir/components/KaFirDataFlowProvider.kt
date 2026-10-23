@@ -11,7 +11,6 @@ import com.intellij.util.SmartList
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtFakeSourceElementKind.DesugaredAugmentedAssign
 import org.jetbrains.kotlin.KtFakeSourceElementKind.DesugaredIncrementOrDecrement
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.dataflow.KaDataFlowExitPointSnapshot
 import org.jetbrains.kotlin.analysis.api.dataflow.KaDataFlowExitPointSnapshot.DefaultExpressionInfo
 import org.jetbrains.kotlin.analysis.api.dataflow.KaDataFlowExitPointSnapshot.VariableReassignment
@@ -648,8 +647,7 @@ private class ControlFlowGraphIndex(graphProvider: () -> ControlFlowGraph) {
     }
 }
 
-@KaImplementationDetail
-class KaFirSmartCastInfo(
+internal class KaFirSmartCastInfo(
     private val backingOriginalType: KaType,
     private val backingSmartCastType: KaType,
     private val backingIsStable: Boolean,
@@ -672,8 +670,7 @@ class KaFirSmartCastInfo(
     override fun hashCode(): Int = Objects.hash(backingSmartCastType, backingIsStable)
 }
 
-@KaImplementationDetail
-class KaFirImplicitReceiverSmartCast(
+internal class KaFirImplicitReceiverSmartCast(
     private val backingType: KaType,
     private val backingKind: KaImplicitReceiverSmartCastKind,
 ) : KaImplicitReceiverSmartCast {

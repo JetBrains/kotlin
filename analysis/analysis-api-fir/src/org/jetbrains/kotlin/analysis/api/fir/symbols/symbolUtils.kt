@@ -23,8 +23,7 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.getPropertyNamesCandidatesByAccessorName
 import org.jetbrains.kotlin.name.Name
 
-@KaImplementationDetail
-fun ClassKind.toKtClassKind(isCompanionObject: Boolean): KaClassKind = when (this) {
+internal fun ClassKind.toKtClassKind(isCompanionObject: Boolean): KaClassKind = when (this) {
     ClassKind.INTERFACE -> KaClassKind.INTERFACE
     ClassKind.ENUM_CLASS -> KaClassKind.ENUM_CLASS
     ClassKind.ANNOTATION_CLASS -> KaClassKind.ANNOTATION_CLASS
@@ -33,13 +32,11 @@ fun ClassKind.toKtClassKind(isCompanionObject: Boolean): KaClassKind = when (thi
     ClassKind.ENUM_ENTRY -> invalidEnumEntryAsClassKind()
 }
 
-@KaImplementationDetail
-fun invalidEnumEntryAsClassKind(): Nothing {
+internal fun invalidEnumEntryAsClassKind(): Nothing {
     error("KtClassKind is not applicable for enum entry, as enum entry is a callable, not a classifier")
 }
 
-@KaImplementationDetail
-val Modality.asKaSymbolModality: KaSymbolModality
+internal val Modality.asKaSymbolModality: KaSymbolModality
     get() = when (this) {
         Modality.FINAL -> KaSymbolModality.FINAL
         Modality.SEALED -> KaSymbolModality.SEALED
@@ -50,8 +47,7 @@ val Modality.asKaSymbolModality: KaSymbolModality
 /**
  * Converts the Kotlin compiler's [Visibility] to the Analysis API's [KaSymbolVisibility].
  */
-@KaImplementationDetail
-val Visibility.asKaSymbolVisibility: KaSymbolVisibility
+internal val Visibility.asKaSymbolVisibility: KaSymbolVisibility
     get() = when (this) {
         Visibilities.Public -> KaSymbolVisibility.PUBLIC
         Visibilities.Protected -> KaSymbolVisibility.PROTECTED

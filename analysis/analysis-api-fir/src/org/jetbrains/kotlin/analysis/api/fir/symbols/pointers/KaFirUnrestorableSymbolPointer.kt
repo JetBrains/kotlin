@@ -5,12 +5,10 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.symbols.pointers
 
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 
-@KaImplementationDetail
-class KaFirUnrestorableSymbolPointer<T : KaSymbol>() : KaSymbolPointer<T>() {
+internal class KaFirUnrestorableSymbolPointer<T : KaSymbol>() : KaSymbolPointer<T>() {
     override fun restoreSymbol(analysisSession: KaSession): T? = null
 }

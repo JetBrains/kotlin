@@ -15,8 +15,7 @@ import org.jetbrains.kotlin.psi.KtClassInitializer
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import java.lang.ref.WeakReference
 
-@KaImplementationDetail
-abstract class KaFirCachedSymbolPointer<out S : KaSymbol>(originalSymbol: S?) : KaSymbolPointer<S>() {
+internal abstract class KaFirCachedSymbolPointer<out S : KaSymbol>(originalSymbol: S?) : KaSymbolPointer<S>() {
     /**
      * This property can have three values:
      *
