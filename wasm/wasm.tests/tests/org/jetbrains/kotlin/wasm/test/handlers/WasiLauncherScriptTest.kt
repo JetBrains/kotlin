@@ -12,22 +12,6 @@ import org.junit.jupiter.api.Test
 
 class WasiLauncherScriptTest {
     @Test
-    fun `given a batch with the generated driver then the launcher calls it`() {
-        val script = startUnitTestsWasiScript(callGroupedTestsDriver = true)
-
-        assertTrue("jsModule.startTest();" in script, script)
-        assertFalse("startUnitTests" in script, script)
-    }
-
-    @Test
-    fun `given a batch without the driver then the launcher calls the unit-test runner`() {
-        val script = startUnitTestsWasiScript(callGroupedTestsDriver = false)
-
-        assertTrue("jsModule.startUnitTests();" in script, script)
-        assertFalse("startTest" in script, script)
-    }
-
-    @Test
     fun `given a driverless unit-test run then the standalone VMs invoke the unit-test runner export`() {
         assertEquals("startUnitTests", wasiStandaloneEntryExport(hasGroupedTestsDriver = false, runUnitTests = true))
     }
@@ -41,13 +25,6 @@ class WasiLauncherScriptTest {
     @Test
     fun `given a driverless box run then the standalone VMs invoke the box helper`() {
         assertEquals("startTest", wasiStandaloneEntryExport(hasGroupedTestsDriver = false, runUnitTests = false))
-    }
-
-    @Test
-    fun `given the Node launcher for a driverless unit-test run then it calls the same export the standalone VMs do`() {
-        val export = wasiStandaloneEntryExport(hasGroupedTestsDriver = false, runUnitTests = true)
-
-        assertTrue("jsModule.$export();" in startUnitTestsWasiScript(callGroupedTestsDriver = false))
     }
 
     @Test

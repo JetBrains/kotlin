@@ -48,9 +48,9 @@ class CustomWasmWasiCompilerFirstStageSanity :
     }
 
     private fun checkIncorrectBoxResult(exception: WasmVMException, testName: String, mode: String) {
-        // WASI runs on a single VM (NodeJs) here, once per compilation mode, so each failure names its execution.
-        assertEquals("NodeJs ($mode)", exception.executionName)
-        assertEquals("WasmVM NodeJs ($mode) failed", exception.message)
+        // WASI runs on a single VM (Wasmtime), one time for each compilation mode, so each failure names its execution.
+        assertEquals("Wasmtime ($mode)", exception.executionName)
+        assertEquals("WasmVM Wasmtime ($mode) failed", exception.message)
         exception.cause!!.message!!.let {
             // WASI helper uses single quotes: Expected 'OK'
             assertContains(it, "Wrong box result 'FAIL'; Expected 'OK'", message = it)

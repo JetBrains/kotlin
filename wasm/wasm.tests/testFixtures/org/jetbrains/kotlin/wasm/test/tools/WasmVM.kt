@@ -12,8 +12,10 @@ import java.lang.Boolean.getBoolean
 
 private val toolLogsEnabled: Boolean = getBoolean("kotlin.js.test.verbose")
 
+/** The export that the WASI VMs call. */
 internal const val WASI_BOX_ENTRY_EXPORT = "startTest"
 
+/** The compiler exports the unit test runner under this name. */
 internal const val WASI_UNIT_TESTS_ENTRY_EXPORT = "startUnitTests"
 
 internal sealed class WasmVM(
