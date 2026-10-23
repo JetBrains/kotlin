@@ -317,7 +317,7 @@ targetList.each { target ->
     tasks.register("${target}CrossDistBitcodeCopy", Sync) {
         def bitcodeFiles = configurations.runtimeBitcode.incoming.artifactView {
             attributes {
-                attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, new TargetWithSanitizer(platformManager.targetByName(target), null))
+                attribute(TargetVariant.TARGET_ATTRIBUTE, new TargetVariant(platformManager.targetByName(target), null))
             }
         }.files
 

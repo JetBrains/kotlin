@@ -91,9 +91,9 @@ private fun Project.moduleCompileBitcodeElements(moduleName: String, sourceSet: 
 
 private fun Project.moduleCompileBitcodeElements(moduleName: String, sourceSet: String) = moduleCompileBitcodeElements(moduleName, sourceSet) {}
 
-private fun Configuration.targetVariant(target: TargetWithSanitizer): ConfigurationVariant = outgoing.variants.getOrCreate("$target") {
+private fun Configuration.targetVariant(target: TargetVariant): ConfigurationVariant = outgoing.variants.getOrCreate("$target") {
     attributes {
-        attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, target)
+        attribute(TargetVariant.TARGET_ATTRIBUTE, target)
     }
 }
 private fun Project.executorsClasspathConfiguration() = configurations.getOrCreate("executorsClasspath") {
@@ -175,7 +175,7 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
             private val owner: CompileToBitcodeExtension,
             private val module: Module,
             private val name: String,
-            private val _target: TargetWithSanitizer,
+            private val _target: TargetVariant,
     ) : Named {
         val target by _target::target
         val sanitizer by _target::sanitizer
@@ -318,7 +318,7 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
     abstract class Module @Inject constructor(
             private val owner: CompileToBitcodeExtension,
             private val name: String,
-            private val _target: TargetWithSanitizer,
+            private val _target: TargetVariant,
     ) : Named {
         /**
          * A container for [SourceSet].
@@ -508,7 +508,7 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
     }
 
     abstract class TestsGroup @Inject constructor(
-            private val _target: TargetWithSanitizer,
+            private val _target: TargetVariant,
     ) {
         val target by _target::target
         val sanitizer by _target::sanitizer
@@ -519,7 +519,7 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
 
     abstract class Target @Inject constructor(
             private val owner: CompileToBitcodeExtension,
-            private val _target: TargetWithSanitizer,
+            private val _target: TargetVariant,
     ) {
         val target by _target::target
         val sanitizer by _target::sanitizer
@@ -627,7 +627,7 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
                 this.compilerOutputFile.set(project.layout.buildDirectory.file("obj/$target/$testName.o"))
                 val mainFileConfiguration = testLauncherConfiguration.incoming.artifactView {
                     attributes {
-                        attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, _target)
+                        attribute(TargetVariant.TARGET_ATTRIBUTE, _target)
                     }
                 }.files
                 // TODO: Check if this is still required.
@@ -635,7 +635,7 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
                 dependsOn(mainFileConfiguration)
                 val inputFilesConfiguration = testsGroupConfiguration.incoming.artifactView {
                     attributes {
-                        attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, _target)
+                        attribute(TargetVariant.TARGET_ATTRIBUTE, _target)
                     }
                 }.files
                 this.inputFiles.from(inputFilesConfiguration)
@@ -698,7 +698,7 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
  * * `{module}CompileBitcode{sourceSet}Elements` - like `compileBitcode{sourceSet}Elements` but for a single `module`.
  *
  * Each of the defined configuration has [Usage attribute][Usage] set to [CppUsage.LLVM_BITCODE].
- * Each `*Elements` configuration has variants with [TargetWithSanitizer.TARGET_ATTRIBUTE] values.
+ * Each `*Elements` configuration has variants with [TargetVariant.TARGET_ATTRIBUTE] values.
  *
  * To depend on a specific module, use [module][org.jetbrains.kotlin.cpp.module] and [moduleTestFixtures][org.jetbrains.kotlin.cpp.moduleTestFixtures].
  *

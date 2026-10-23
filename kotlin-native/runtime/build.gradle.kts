@@ -621,7 +621,7 @@ targetList.forEach { target ->
         group = CompileToBitcodeExtension.BUILD_TASK_GROUP
         val dependencies = runtimeBitcode.incoming.artifactView {
             attributes {
-                attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, target.withSanitizer())
+                attribute(TargetVariant.TARGET_ATTRIBUTE, target.withSanitizer())
             }
         }.files
         dependsOn(dependencies)
