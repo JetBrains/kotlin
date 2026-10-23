@@ -134,7 +134,7 @@ internal class RTTIGenerator(
 
                     associatedObjects,
 
-                    processObjectInMark,
+                    processObjectInMark?.let(llvm::cFunctionPointer),
                     llvm.constInt32(requiredAlignment),
     )
 
@@ -470,7 +470,7 @@ internal class RTTIGenerator(
         val associatedObjectTableRecords = associatedObjects.map { [key, value] ->
             val function = context.getObjectClassInstanceFunction(value)
 
-            Struct(runtime.associatedObjectTableRecordType, key.typeInfoPtr, function.llvmFunction.toConstPointer())
+            Struct(runtime.associatedObjectTableRecordType, key.typeInfoPtr, llvm.cFunctionPointer(function.llvmFunction.toConstPointer()))
         }
 
         return staticData.placeGlobalConstArray(

@@ -570,6 +570,23 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
         override val llvm = kNull
     }
 
+    /**
+     * [pointer] as code that authenticates it with [key] expects it: signed on arm64e, as Clang signs it, and unchanged
+     * elsewhere. A null pointer stays unsigned, as in Clang.
+     */
+    fun signedPointer(pointer: ConstPointer, key: PtrAuthKey): ConstPointer =
+            if (context.config.arm64e && LLVMIsNull(pointer.llvm) == 0) {
+                constPointer(LLVMConstantPtrAuth(pointer.llvm, int32(key.value), int64(0), kNull)!!)
+            } else {
+                pointer
+            }
+
+    /**
+     * [function] as a function pointer that C code calls: on arm64e, Clang authenticates such calls with the IA key
+     * and no discriminator.
+     */
+    fun cFunctionPointer(function: ConstPointer): ConstPointer = signedPointer(function, PtrAuthKey.IA)
+
     val memsetFunction = importMemset()
 
     val llvmTrap = llvmIntrinsic(
@@ -643,6 +660,13 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
     val longTypeWidth: Long by lazy {
         getSizeOfTypeInBits(Kotlin_longTypeProvider.returnType)
     }
+}
+
+/**
+ * Keys of arm64e pointer authentication, numbered as in LLVM.
+ */
+internal enum class PtrAuthKey(val value: Int) {
+    IA(0),
 }
 
 class IrStaticInitializer(val konanLibrary: KotlinLibrary?, val runtimeInitializer: RuntimeInitializer)

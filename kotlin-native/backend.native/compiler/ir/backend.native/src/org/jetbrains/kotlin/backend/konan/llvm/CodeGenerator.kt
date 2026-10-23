@@ -63,8 +63,6 @@ internal class CodeGenerator(override val generationState: NativeGenerationState
 
     fun param(fn: IrSimpleFunction, i: Int) = fn.llvmFunction.param(i)
 
-    fun functionEntryPointAddress(function: IrSimpleFunction) = function.entryPointAddress.llvm
-
     fun typeInfoForAllocation(constructedClass: IrClass): LLVMValueRef {
         require(!constructedClass.isObjCClass()) { "Allocation of Obj-C class ${constructedClass.render()} should have been lowered" }
         require(!constructedClass.isAbstract()) { "Allocation of abstract class ${constructedClass.render()} is not allowed" }
