@@ -112,6 +112,26 @@ public class J2 {
         set(value) {}
 }
 
+public sealed class Sealed <!REDUNDANT_VISIBILITY_MODIFIER!>protected<!> constructor(public val y: Int) {
+    private constructor(): this(42)
+
+    <!NON_PRIVATE_OR_PROTECTED_CONSTRUCTOR_IN_SEALED!>public constructor(byte: Byte) : this(byte.toInt())<!>
+
+    <!REDUNDANT_VISIBILITY_MODIFIER!>protected<!> constructor(x: Double): this(x.toInt())
+    constructor(z: Float): this(z.toInt())
+
+    public object SealedImpl : Sealed()
+}
+
+public enum class E <!REDUNDANT_VISIBILITY_MODIFIER!>private<!> constructor(public val x: Double) {
+    E1(1),
+    E2(2.0),
+    ;
+
+    constructor(y: Int) : this(y.toDouble())
+    <!REDUNDANT_VISIBILITY_MODIFIER!>private<!> constructor(f: Float) : <!CYCLIC_CONSTRUCTOR_DELEGATION_CALL!>this<!>(f.<!REDUNDANT_CALL_OF_CONVERSION_METHOD!>toFloat()<!>)
+}
+
 private class Hidden {
     <!REDUNDANT_VISIBILITY_MODIFIER!>public<!> fun f(): Int = 5
 }
