@@ -27,9 +27,11 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilat
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.BinaryLibraryKind
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeHome
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.configurables
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.ClangDistribution
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.compileWithClang
+import org.jetbrains.kotlin.library.KLIB_PROPERTY_COMPILER_VERSION
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_NATIVE_TARGETS
 import org.jetbrains.kotlin.native.executors.runProcess
 import org.jetbrains.kotlin.test.KtAssert.fail
@@ -194,6 +196,20 @@ class Arm64eTest : AbstractNativeSimpleTest() {
             testSuiteDir.resolve("$testName/$testName.kt"), "LinkBitcodeDependencies",
             givenDependencies = setOf(TestModule.Given(interopLibrary)),
         )
+    }
+
+    @Test
+    fun testPlatformLibraries() {
+        val nativeHome = testRunSettings.get<KotlinNativeHome>()
+        val manifest = nativeHome.librariesDir
+            .resolve("platform/ios_arm64/org.jetbrains.kotlin.native.platform.Foundation/default/manifest")
+            .bufferedReader().use { Properties().apply { load(it) } }
+        // Platform libraries built by the bootstrap compiler have no arm64e bitcode.
+        Assumptions.assumeTrue(manifest.getProperty(KLIB_PROPERTY_COMPILER_VERSION) == nativeHome.properties.getProperty("compilerVersion")) {
+            "The platform libraries were built by another compiler"
+        }
+        assertEquals(KLIB_ARM64E_FOLDER_NAME, manifest.getProperty(KLIB_PROPERTY_NATIVE_BITCODE_VARIANTS))
+        compileFrameworkAndCheckIr(testSuiteDir.resolve("platform_libraries.kt"), "LinkBitcodeDependencies")
     }
 
     /** An Objective-C library without bitcode: with direct C calls, cinterop compiles no stubs. */
