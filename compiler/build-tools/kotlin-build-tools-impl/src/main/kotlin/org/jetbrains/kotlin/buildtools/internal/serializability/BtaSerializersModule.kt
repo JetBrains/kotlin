@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.buildtools.internal.abi.operations.DumpJvmAbiToStrin
 import org.jetbrains.kotlin.buildtools.internal.abi.operations.DumpKlibAbiToStringOperationImpl
 import org.jetbrains.kotlin.buildtools.internal.jps.JvmJpsManagedIncrementalCompilationConfigurationImpl
 import org.jetbrains.kotlin.buildtools.internal.js.JsHistoryBasedIncrementalCompilationConfigurationImpl
+import org.jetbrains.kotlin.buildtools.internal.js.operations.JsDtsGenerationOperationImpl
 import org.jetbrains.kotlin.buildtools.internal.js.operations.JsKlibCompilationOperationImpl
 import org.jetbrains.kotlin.buildtools.internal.js.operations.JsLinkingOperationImpl
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationConfigurationImpl
@@ -43,6 +44,7 @@ internal val btaSerializersModule: SerializersModule = SerializersModule {
         subclass(DumpKlibAbiToStringOperationImpl::class)
         subclass(DumpJvmAbiToStringOperationImpl::class)
         subclass(JvmClasspathSnapshottingOperationImpl::class)
+        subclass(JsDtsGenerationOperationImpl::class)
     }
     polymorphic(JvmIncrementalCompilationConfiguration::class) {
         subclass(
