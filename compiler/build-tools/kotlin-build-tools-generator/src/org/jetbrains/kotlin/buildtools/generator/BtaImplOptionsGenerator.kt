@@ -20,6 +20,7 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 import kotlin.io.path.Path
 import kotlin.reflect.KClass
+import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.full.allSuperclasses
 
 private const val ARGUMENT_PARSE_DIAGNOSTICS_CLASS = "ArgumentParseDiagnostics"
@@ -126,51 +127,35 @@ internal class BtaImplOptionsGenerator(
                 val toCompilerArgumentsAffectingOutcomeFun = toCompilerArgumentsAffectingOutcomeFunBuilder(level, parentClass)
                 val applyCompilerArgumentsFun = applyCompilerArgumentsFunBuilder(level, parentClass)
 
-                val argumentTypeNameString =
-                    generateArgumentType(apiClassName, includeSinceVersion = false, registerAsKnownArgument = true)
-                val argumentImplTypeName = ClassName(targetPackage, implClassName, argumentTypeNameString)
-
+                val argumentTypeNameString = apiClassName.removeSuffix("s")
                 val adapterClassName = ClassName(targetPackage, "${argumentTypeNameString}ValueAdapter")
 
                 generateOptionsMap()
-                generateOwnGetPutFunctions(implClassName, argumentImplTypeName)
 
                 if (syntheticInterfaces.isEmpty()) {
                     val argumentTypeName = ClassName(API_ARGUMENTS_PACKAGE, apiClassName, argumentTypeNameString)
-                    generateGetPutFunctions(implClassName, argumentTypeName, level, adapterClassName)
+                    generateGetPutFunctions(argumentTypeName, level, adapterClassName)
                 } else {
                     syntheticInterfaces.forEach { syntheticInterface ->
                         val argumentTypeName =
                             ClassName(API_ARGUMENTS_PACKAGE, syntheticInterface.name, syntheticInterface.name.removeSuffix("s"))
                         generateGetPutFunctions(
-                            implClassName,
                             argumentTypeName,
                             syntheticLevels.getValue(syntheticInterface.name),
                             adapterClassName
                         )
                     }
                 }
-                val companionSpec = TypeSpec.companionObjectBuilder().apply {
-                    property(
-                        "knownArguments",
-                        ClassName("kotlin.collections", "MutableSet").parameterizedBy(ClassName("kotlin", "String")),
-                        KModifier.PRIVATE
-                    ) {
-                        initializer("%M()", MemberName("kotlin.collections", "mutableSetOf"))
-                    }
-                }
+
                 val mirroredEnums = generateOptions(
-                    companion = companionSpec,
+                    implClassName = implClassName,
                     arguments = level.transformImplArguments(),
-                    argumentTypeName = argumentImplTypeName,
                     applyCompilerArgumentsFun = applyCompilerArgumentsFun,
                     toCompilerConverterFun = toCompilerConverterFun,
                     toCompilerArgumentsAffectingOutcomeFun = toCompilerArgumentsAffectingOutcomeFun,
                     level = level,
                     adapterClassName
                 )
-
-                addType(companionSpec.build())
 
                 outputs += generateValueAdapterFile(
                     adapterClassName,
@@ -340,15 +325,15 @@ internal class BtaImplOptionsGenerator(
     }.build()
 
     private fun TypeSpec.Builder.generateOptions(
-        companion: TypeSpec.Builder,
+        implClassName: String,
         arguments: Collection<BtaCompilerArgument<*>>,
-        argumentTypeName: ClassName,
         applyCompilerArgumentsFun: FunSpec.Builder,
         toCompilerConverterFun: FunSpec.Builder,
         toCompilerArgumentsAffectingOutcomeFun: FunSpec.Builder,
         level: KotlinCompilerArgumentsLevel,
         adapterClassName: ClassName,
     ): Set<KClass<*>> {
+        val propertyAccessMap: CodeBlock.Builder = CodeBlock.builder()
         val enumsToGenerate = mutableMapOf<KClass<*>, TypeSpec.Builder>()
 
         /**
@@ -402,9 +387,6 @@ internal class BtaImplOptionsGenerator(
                 }
             }.copy(nullable = argument.valueType.isNullable)
 
-            companion.property(name, argumentTypeName.parameterizedBy(argumentTypeParameter)) {
-                initializer("%T(%S)", argumentTypeName, name)
-            }
             val argumentName = if (argument is BtaCompilerArgument.SSoTCompilerArgument) {
                 argument.effectiveCompilerName
             } else {
@@ -423,6 +405,8 @@ internal class BtaImplOptionsGenerator(
                     }
                 }
             }
+
+            propertyAccessMap.addStatement("put(%S, %L::%L)", name, implClassName, argumentName)
 
             when (argument) {
                 is BtaCompilerArgument.SSoTCompilerArgument -> {
@@ -452,6 +436,24 @@ internal class BtaImplOptionsGenerator(
 
             addProperty(argumentProperty.build())
         }
+
+        addType(TypeSpec.companionObjectBuilder().apply {
+            property(
+                "propertyAccessMap",
+                ClassName("kotlin.collections", "Map").parameterizedBy(
+                    String::class.asClassName(),
+                    KMutableProperty1::class.asClassName()
+                        .parameterizedBy(STAR, WildcardTypeName.producerOf(Any::class.asClassName().copy(nullable = true)))
+                ),
+                KModifier.PRIVATE
+            ) {
+                initializer(CodeBlock.builder().apply {
+                    beginControlFlow("%M", MemberName("kotlin.collections", "buildMap"))
+                    add(propertyAccessMap.build())
+                    endControlFlow()
+                }.build())
+            }
+        }.build())
 
         enumsToGenerate.forEach { [type, typeSpecBuilder] ->
             outputs += writeEnumFile(typeSpecBuilder.build(), type, targetPackage)
@@ -739,52 +741,15 @@ internal class BtaImplOptionsGenerator(
         initializer("%M()", MemberName("kotlin.collections", "mutableMapOf"))
     }
 
-    fun TypeSpec.Builder.generateOwnGetPutFunctions(
-        implClassName: String,
-        implParameter: ClassName,
-    ) {
-        val setPropertyWithSerialName =
-            MemberName("org.jetbrains.kotlin.buildtools.internal.serializability", "setPropertyWithSerialNameValue", isExtension = true)
-        val getPropertyWithSerialName =
-            MemberName("org.jetbrains.kotlin.buildtools.internal.serializability", "getPropertyWithSerialNameValue", isExtension = true)
-        function("get") {
-            val typeParameter = TypeVariableName("V")
-            annotation<Suppress> {
-                addMember("%S", "UNCHECKED_CAST")
-            }
-            returns(typeParameter)
-            addModifiers(KModifier.OPERATOR)
-            addTypeVariable(typeParameter)
-            addParameter("key", implParameter.parameterizedBy(typeParameter))
-            addStatement("return %L::class.%M(this, key.id)", implClassName, getPropertyWithSerialName)
-        }
-        function("set") {
-            val typeParameter = TypeVariableName("V")
-            addModifiers(KModifier.OPERATOR)
-            addTypeVariable(typeParameter)
-            addParameter("key", implParameter.parameterizedBy(typeParameter))
-            addParameter("value", typeParameter)
-            addStatement("%L::class.%M(this, key.id, value)", implClassName, setPropertyWithSerialName)
-        }
-
-        function("contains") {
-            addModifiers(KModifier.OPERATOR)
-            returns(BOOLEAN)
-            addParameter("key", implParameter.parameterizedBy(STAR))
-            addStatement("return true")
-        }
-    }
-
     fun TypeSpec.Builder.generateGetPutFunctions(
-        implClassName: String,
         parameter: ClassName,
         level: KotlinCompilerArgumentsLevel,
         adapterClassName: ClassName,
     ) {
-        val setPropertyWithSerialName =
-            MemberName("org.jetbrains.kotlin.buildtools.internal.serializability", "setPropertyWithSerialNameValue", isExtension = true)
-        val getPropertyWithSerialName =
-            MemberName("org.jetbrains.kotlin.buildtools.internal.serializability", "getPropertyWithSerialNameValue", isExtension = true)
+        val setPropertyByName =
+            MemberName("org.jetbrains.kotlin.buildtools.internal.serializability", "setPropertyByName", isExtension = true)
+        val getPropertyByName =
+            MemberName("org.jetbrains.kotlin.buildtools.internal.serializability", "getPropertyByName", isExtension = true)
 
         function("get") {
             val typeParameter = TypeVariableName("V")
@@ -799,10 +764,9 @@ internal class BtaImplOptionsGenerator(
             addTypeVariable(typeParameter)
             addParameter("key", parameter.parameterizedBy(typeParameter))
             addStatement(
-                "return try { %T.toApi(%L::class.%M(this, key.id)) } catch (_: IllegalStateException) { optionsMap[key.id] } as %T",
+                "return try { %T.toApi(%M(propertyAccessMap, key.id)) } catch (_: IllegalStateException) { optionsMap[key.id] } as %T",
                 adapterClassName,
-                implClassName,
-                getPropertyWithSerialName,
+                getPropertyByName,
                 typeParameter,
             )
         }
@@ -837,9 +801,8 @@ internal class BtaImplOptionsGenerator(
                     .build()
             )
             addStatement(
-                "try { %L::class.%M(this, key.id, %T.toImpl(value)) } catch (_: IllegalStateException) { optionsMap[key.id] = value }",
-                implClassName,
-                setPropertyWithSerialName,
+                "try { %M(propertyAccessMap, key.id, %T.toImpl(value)) } catch (_: IllegalStateException) { optionsMap[key.id] = value }",
+                setPropertyByName,
                 adapterClassName
             )
         }

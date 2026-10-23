@@ -3,76 +3,60 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:OptIn(ExperimentalCompilerArgument::class)
+@file:UseSerializers(PathAsStringSerializer::class)
 
 package org.jetbrains.kotlin.buildtools.internal.metadata.operations
 
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.UseSerializers
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
-import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
+import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.metadata.KotlinMetadataKlibCompilationOperation
 import org.jetbrains.kotlin.buildtools.internal.*
 import org.jetbrains.kotlin.buildtools.internal.arguments.MetadataArgumentsImpl
 import org.jetbrains.kotlin.buildtools.internal.arguments.absolutePathStringOrThrow
+import org.jetbrains.kotlin.buildtools.internal.serializability.PathAsStringSerializer
+import org.jetbrains.kotlin.buildtools.internal.serializability.getPropertyByName
+import org.jetbrains.kotlin.buildtools.internal.serializability.setPropertyByName
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
+import org.jetbrains.kotlin.cli.common.messages.MessageCollectorWithDiagnosticId
 import org.jetbrains.kotlin.cli.metadata.KotlinMetadataCompiler
 import org.jetbrains.kotlin.daemon.common.CompileService
 import org.jetbrains.kotlin.daemon.common.IncrementalCompilationOptions
 import java.nio.file.Path
 
-internal class KotlinMetadataKlibCompilationOperationImpl private constructor(
-    override val options: Options = Options(KotlinMetadataKlibCompilationOperation::class),
+@Serializable
+internal class KotlinMetadataKlibCompilationOperationImpl(
     override val sources: List<Path>,
     override val destination: Path,
-    compilerArguments: MetadataArgumentsImpl = MetadataArgumentsImpl(),
+    override val compilerArguments: MetadataArgumentsImpl = MetadataArgumentsImpl(),
     private val compilerVersion: String,
-) : BaseCompilationOperationImpl<MetadataArgumentsImpl, K2MetadataCompilerArguments>(compilerArguments),
+) : BaseCompilationOperationImpl<MetadataArgumentsImpl, @Contextual K2MetadataCompilerArguments>(),
     KotlinMetadataKlibCompilationOperation, KotlinMetadataKlibCompilationOperation.Builder,
     DeepCopyable<KotlinMetadataKlibCompilationOperationImpl> {
-    constructor(
-        sources: List<Path>,
-        destination: Path,
-        compilerArguments: MetadataArgumentsImpl = MetadataArgumentsImpl(),
-        compilerVersion: String,
-    ) : this(
-        options = Options(KotlinMetadataKlibCompilationOperation::class),
-        sources = sources,
-        destination = destination,
-        compilerArguments = compilerArguments,
-        compilerVersion = compilerVersion,
-    ) {
-        initializeOptions(this::class, options)
-    }
 
     override fun toBuilder(): KotlinMetadataKlibCompilationOperation.Builder = deepCopy()
 
     override fun deepCopy(): KotlinMetadataKlibCompilationOperationImpl {
         return KotlinMetadataKlibCompilationOperationImpl(
-            options.deepCopy(),
-            sources,
+            sources.toList(),
             destination,
             compilerArguments.deepCopy(),
             compilerVersion
-        )
+        ).also { it.copyFrom(this) }
     }
 
     @UseFromImplModuleRestricted
-    override fun <V> get(key: KotlinMetadataKlibCompilationOperation.Option<V>): V = options[key]
+    override fun <V> get(key: KotlinMetadataKlibCompilationOperation.Option<V>): V = getPropertyByName(emptyMap(), key.id)
 
     @UseFromImplModuleRestricted
     override fun <V> set(key: KotlinMetadataKlibCompilationOperation.Option<V>, value: V) {
-        options[key] = value
+        setPropertyByName(emptyMap(), key.id, value)
     }
 
     override fun build(): KotlinMetadataKlibCompilationOperation = deepCopy()
-
-    private operator fun <V> get(key: Option<V>): V = options[key]
-
-    private operator fun <V> set(key: Option<V>, value: V) {
-        options[key] = value
-    }
-
-    class Option<V>(id: String, default: V) : BaseOptionWithDefault<V>(id, defaultValue = default)
 
     override fun getRootProjectDir(): Path? {
         return null
@@ -109,7 +93,8 @@ internal class KotlinMetadataKlibCompilationOperationImpl private constructor(
 
     override fun compileIncrementallyInProcess(
         arguments: K2MetadataCompilerArguments,
-        loggerAdapter: KotlinLoggerMessageCollectorAdapter,
+        logger: KotlinLogger,
+        messageCollector: MessageCollectorWithDiagnosticId,
         executionContext: ExecutionContext
     ): CompilationResult {
         error("Metadata compiler doesn't support incremental compilation")

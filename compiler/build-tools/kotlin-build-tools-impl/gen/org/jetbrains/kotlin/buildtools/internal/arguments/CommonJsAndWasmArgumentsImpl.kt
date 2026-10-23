@@ -16,15 +16,16 @@ import kotlin.OptIn
 import kotlin.String
 import kotlin.Suppress
 import kotlin.collections.List
+import kotlin.collections.Map
 import kotlin.collections.MutableMap
-import kotlin.collections.MutableSet
 import kotlin.collections.Set
+import kotlin.collections.buildMap
 import kotlin.collections.emptyList
 import kotlin.collections.emptySet
 import kotlin.collections.joinToString
 import kotlin.collections.map
 import kotlin.collections.mutableMapOf
-import kotlin.collections.mutableSetOf
+import kotlin.reflect.KMutableProperty1
 import kotlin.text.split
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -36,8 +37,8 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.JsMainCallMode
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.SourceMapEmbedSources
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.SourceMapNamesPolicy
 import org.jetbrains.kotlin.buildtools.`internal`.serializability.PathAsStringSerializer
-import org.jetbrains.kotlin.buildtools.`internal`.serializability.getPropertyWithSerialNameValue
-import org.jetbrains.kotlin.buildtools.`internal`.serializability.setPropertyWithSerialNameValue
+import org.jetbrains.kotlin.buildtools.`internal`.serializability.getPropertyByName
+import org.jetbrains.kotlin.buildtools.`internal`.serializability.setPropertyByName
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmArguments
@@ -161,48 +162,39 @@ internal abstract class CommonJsAndWasmArgumentsImpl() : CommonKlibBasedArgument
   abstract override fun createDefaultArguments(): CommonJsAndWasmCompilerArguments
 
   @Suppress("UNCHECKED_CAST")
-  public operator fun <V> `get`(key: CommonJsAndWasmArgument<V>): V = CommonJsAndWasmArgumentsImpl::class.getPropertyWithSerialNameValue(this, key.id)
-
-  public operator fun <V> `set`(key: CommonJsAndWasmArgument<V>, `value`: V) {
-    CommonJsAndWasmArgumentsImpl::class.setPropertyWithSerialNameValue(this, key.id, value)
-  }
-
-  public operator fun contains(key: CommonJsAndWasmArgument<*>): Boolean = true
-
-  @Suppress("UNCHECKED_CAST")
   @UseFromImplModuleRestricted
-  override operator fun <V> `get`(key: CommonJsAndWasmArguments.CommonJsAndWasmArgument<V>): V = try { CommonJsAndWasmArgumentValueAdapter.toApi(CommonJsAndWasmArgumentsImpl::class.getPropertyWithSerialNameValue(this, key.id)) } catch (_: IllegalStateException) { optionsMap[key.id] } as V
+  override operator fun <V> `get`(key: CommonJsAndWasmArguments.CommonJsAndWasmArgument<V>): V = try { CommonJsAndWasmArgumentValueAdapter.toApi(getPropertyByName(propertyAccessMap, key.id)) } catch (_: IllegalStateException) { optionsMap[key.id] } as V
 
   @UseFromImplModuleRestricted
   override operator fun <V> `set`(key: CommonJsAndWasmArguments.CommonJsAndWasmArgument<V>, `value`: V) {
     if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 0)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
-    try { CommonJsAndWasmArgumentsImpl::class.setPropertyWithSerialNameValue(this, key.id, CommonJsAndWasmArgumentValueAdapter.toImpl(value)) } catch (_: IllegalStateException) { optionsMap[key.id] = value }
+    try { setPropertyByName(propertyAccessMap, key.id, CommonJsAndWasmArgumentValueAdapter.toImpl(value)) } catch (_: IllegalStateException) { optionsMap[key.id] = value }
   }
 
   @Suppress("UNCHECKED_CAST")
   @UseFromImplModuleRestricted
-  override operator fun <V> `get`(key: CommonJsAndWasmCompilerKlibArguments.CommonJsAndWasmCompilerKlibArgument<V>): V = try { CommonJsAndWasmArgumentValueAdapter.toApi(CommonJsAndWasmArgumentsImpl::class.getPropertyWithSerialNameValue(this, key.id)) } catch (_: IllegalStateException) { optionsMap[key.id] } as V
+  override operator fun <V> `get`(key: CommonJsAndWasmCompilerKlibArguments.CommonJsAndWasmCompilerKlibArgument<V>): V = try { CommonJsAndWasmArgumentValueAdapter.toApi(getPropertyByName(propertyAccessMap, key.id)) } catch (_: IllegalStateException) { optionsMap[key.id] } as V
 
   @UseFromImplModuleRestricted
   override operator fun <V> `set`(key: CommonJsAndWasmCompilerKlibArguments.CommonJsAndWasmCompilerKlibArgument<V>, `value`: V) {
     if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 0)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
-    try { CommonJsAndWasmArgumentsImpl::class.setPropertyWithSerialNameValue(this, key.id, CommonJsAndWasmArgumentValueAdapter.toImpl(value)) } catch (_: IllegalStateException) { optionsMap[key.id] = value }
+    try { setPropertyByName(propertyAccessMap, key.id, CommonJsAndWasmArgumentValueAdapter.toImpl(value)) } catch (_: IllegalStateException) { optionsMap[key.id] = value }
   }
 
   @Suppress("UNCHECKED_CAST")
   @UseFromImplModuleRestricted
-  override operator fun <V> `get`(key: CommonJsAndWasmCompilerLinkingArguments.CommonJsAndWasmCompilerLinkingArgument<V>): V = try { CommonJsAndWasmArgumentValueAdapter.toApi(CommonJsAndWasmArgumentsImpl::class.getPropertyWithSerialNameValue(this, key.id)) } catch (_: IllegalStateException) { optionsMap[key.id] } as V
+  override operator fun <V> `get`(key: CommonJsAndWasmCompilerLinkingArguments.CommonJsAndWasmCompilerLinkingArgument<V>): V = try { CommonJsAndWasmArgumentValueAdapter.toApi(getPropertyByName(propertyAccessMap, key.id)) } catch (_: IllegalStateException) { optionsMap[key.id] } as V
 
   @UseFromImplModuleRestricted
   override operator fun <V> `set`(key: CommonJsAndWasmCompilerLinkingArguments.CommonJsAndWasmCompilerLinkingArgument<V>, `value`: V) {
     if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 0)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
-    try { CommonJsAndWasmArgumentsImpl::class.setPropertyWithSerialNameValue(this, key.id, CommonJsAndWasmArgumentValueAdapter.toImpl(value)) } catch (_: IllegalStateException) { optionsMap[key.id] = value }
+    try { setPropertyByName(propertyAccessMap, key.id, CommonJsAndWasmArgumentValueAdapter.toImpl(value)) } catch (_: IllegalStateException) { optionsMap[key.id] = value }
   }
 
   abstract override fun build(): CommonJsAndWasmArgumentsImpl
@@ -318,87 +310,34 @@ internal abstract class CommonJsAndWasmArgumentsImpl() : CommonKlibBasedArgument
     if (args.irProduceKlibFile != castedDefaults.irProduceKlibFile) _restrictedArgViolations.add(RestrictedArgViolation.Warning("Argument '-Xir-produce-klib-file' is not supported in the Build Tools API. Producing packed/unpacked klib is controlled using the `nopack` argument. This warning will become an error starting from Kotlin 2.6.0."))
   }
 
-  public class CommonJsAndWasmArgument<V>(
-    public val id: String,
-  ) {
-    init {
-      knownArguments.add(id)}
-  }
-
   public companion object {
-    private val knownArguments: MutableSet<String> = mutableSetOf()
-
-    public val X_CACHE_DIRECTORY: CommonJsAndWasmArgument<Path?> =
-        CommonJsAndWasmArgument("X_CACHE_DIRECTORY")
-
-    public val X_ENABLE_ADVANCED_OPTIMIZATIONS: CommonJsAndWasmArgument<Boolean> =
-        CommonJsAndWasmArgument("X_ENABLE_ADVANCED_OPTIMIZATIONS")
-
-    public val X_FRIEND_MODULES: CommonJsAndWasmArgument<List<Path>?> =
-        CommonJsAndWasmArgument("X_FRIEND_MODULES")
-
-    public val X_FRIEND_MODULES_DISABLED: CommonJsAndWasmArgument<Boolean> =
-        CommonJsAndWasmArgument("X_FRIEND_MODULES_DISABLED")
-
-    public val X_GENERATE_DTS: CommonJsAndWasmArgument<Boolean> =
-        CommonJsAndWasmArgument("X_GENERATE_DTS")
-
-    public val X_INCLUDE: CommonJsAndWasmArgument<Path?> = CommonJsAndWasmArgument("X_INCLUDE")
-
-    public val X_IR_DCE: CommonJsAndWasmArgument<Boolean> = CommonJsAndWasmArgument("X_IR_DCE")
-
-    public val X_IR_DCE_PRINT_REACHABILITY_INFO: CommonJsAndWasmArgument<Boolean> =
-        CommonJsAndWasmArgument("X_IR_DCE_PRINT_REACHABILITY_INFO")
-
-    public val X_IR_DCE_RUNTIME_DIAGNOSTIC: CommonJsAndWasmArgument<JsIrDiagnosticMode?> =
-        CommonJsAndWasmArgument("X_IR_DCE_RUNTIME_DIAGNOSTIC")
-
-    public val X_IR_MODULE_NAME: CommonJsAndWasmArgument<String?> =
-        CommonJsAndWasmArgument("X_IR_MODULE_NAME")
-
-    public val X_IR_PER_MODULE_OUTPUT_NAME: CommonJsAndWasmArgument<String?> =
-        CommonJsAndWasmArgument("X_IR_PER_MODULE_OUTPUT_NAME")
-
-    public val X_IR_PRODUCE_JS: CommonJsAndWasmArgument<Boolean> =
-        CommonJsAndWasmArgument("X_IR_PRODUCE_JS")
-
-    public val X_IR_PRODUCE_KLIB_DIR: CommonJsAndWasmArgument<Boolean?> =
-        CommonJsAndWasmArgument("X_IR_PRODUCE_KLIB_DIR")
-
-    public val X_IR_PRODUCE_KLIB_FILE: CommonJsAndWasmArgument<Boolean?> =
-        CommonJsAndWasmArgument("X_IR_PRODUCE_KLIB_FILE")
-
-    public val X_IR_PROPERTY_LAZY_INITIALIZATION: CommonJsAndWasmArgument<Boolean> =
-        CommonJsAndWasmArgument("X_IR_PROPERTY_LAZY_INITIALIZATION")
-
-    public val X_STRICT_IMPLICIT_EXPORT_TYPES: CommonJsAndWasmArgument<Boolean> =
-        CommonJsAndWasmArgument("X_STRICT_IMPLICIT_EXPORT_TYPES")
-
-    public val IR_OUTPUT_DIR: CommonJsAndWasmArgument<Path?> =
-        CommonJsAndWasmArgument("IR_OUTPUT_DIR")
-
-    public val IR_OUTPUT_NAME: CommonJsAndWasmArgument<String?> =
-        CommonJsAndWasmArgument("IR_OUTPUT_NAME")
-
-    public val LIBRARIES: CommonJsAndWasmArgument<List<Path>?> =
-        CommonJsAndWasmArgument("LIBRARIES")
-
-    public val MAIN: CommonJsAndWasmArgument<JsMainCallMode?> = CommonJsAndWasmArgument("MAIN")
-
-    public val NOPACK: CommonJsAndWasmArgument<Boolean> = CommonJsAndWasmArgument("NOPACK")
-
-    public val SOURCE_MAP: CommonJsAndWasmArgument<Boolean> = CommonJsAndWasmArgument("SOURCE_MAP")
-
-    public val SOURCE_MAP_BASE_DIRS: CommonJsAndWasmArgument<List<Path>?> =
-        CommonJsAndWasmArgument("SOURCE_MAP_BASE_DIRS")
-
-    public val SOURCE_MAP_EMBED_SOURCES: CommonJsAndWasmArgument<SourceMapEmbedSources?> =
-        CommonJsAndWasmArgument("SOURCE_MAP_EMBED_SOURCES")
-
-    public val SOURCE_MAP_NAMES_POLICY: CommonJsAndWasmArgument<SourceMapNamesPolicy?> =
-        CommonJsAndWasmArgument("SOURCE_MAP_NAMES_POLICY")
-
-    public val SOURCE_MAP_PREFIX: CommonJsAndWasmArgument<String?> =
-        CommonJsAndWasmArgument("SOURCE_MAP_PREFIX")
+    private val propertyAccessMap: Map<String, KMutableProperty1<*, *>> = buildMap {
+      put("X_CACHE_DIRECTORY", CommonJsAndWasmArgumentsImpl::cacheDirectory)
+      put("X_ENABLE_ADVANCED_OPTIMIZATIONS", CommonJsAndWasmArgumentsImpl::enableAdvancedOptimizations)
+      put("X_FRIEND_MODULES", CommonJsAndWasmArgumentsImpl::friendModules)
+      put("X_FRIEND_MODULES_DISABLED", CommonJsAndWasmArgumentsImpl::friendModulesDisabled)
+      put("X_GENERATE_DTS", CommonJsAndWasmArgumentsImpl::generateDts)
+      put("X_INCLUDE", CommonJsAndWasmArgumentsImpl::includes)
+      put("X_IR_DCE", CommonJsAndWasmArgumentsImpl::irDce)
+      put("X_IR_DCE_PRINT_REACHABILITY_INFO", CommonJsAndWasmArgumentsImpl::irDcePrintReachabilityInfo)
+      put("X_IR_DCE_RUNTIME_DIAGNOSTIC", CommonJsAndWasmArgumentsImpl::irDceRuntimeDiagnostic)
+      put("X_IR_MODULE_NAME", CommonJsAndWasmArgumentsImpl::irModuleName)
+      put("X_IR_PER_MODULE_OUTPUT_NAME", CommonJsAndWasmArgumentsImpl::irPerModuleOutputName)
+      put("X_IR_PRODUCE_JS", CommonJsAndWasmArgumentsImpl::irProduceJs)
+      put("X_IR_PRODUCE_KLIB_DIR", CommonJsAndWasmArgumentsImpl::irProduceKlibDir)
+      put("X_IR_PRODUCE_KLIB_FILE", CommonJsAndWasmArgumentsImpl::irProduceKlibFile)
+      put("X_IR_PROPERTY_LAZY_INITIALIZATION", CommonJsAndWasmArgumentsImpl::irPropertyLazyInitialization)
+      put("X_STRICT_IMPLICIT_EXPORT_TYPES", CommonJsAndWasmArgumentsImpl::strictImplicitExportType)
+      put("IR_OUTPUT_DIR", CommonJsAndWasmArgumentsImpl::outputDir)
+      put("IR_OUTPUT_NAME", CommonJsAndWasmArgumentsImpl::moduleName)
+      put("LIBRARIES", CommonJsAndWasmArgumentsImpl::libraries)
+      put("MAIN", CommonJsAndWasmArgumentsImpl::main)
+      put("NOPACK", CommonJsAndWasmArgumentsImpl::nopack)
+      put("SOURCE_MAP", CommonJsAndWasmArgumentsImpl::sourceMap)
+      put("SOURCE_MAP_BASE_DIRS", CommonJsAndWasmArgumentsImpl::sourceMapBaseDirs)
+      put("SOURCE_MAP_EMBED_SOURCES", CommonJsAndWasmArgumentsImpl::sourceMapEmbedSources)
+      put("SOURCE_MAP_NAMES_POLICY", CommonJsAndWasmArgumentsImpl::sourceMapNamesPolicy)
+      put("SOURCE_MAP_PREFIX", CommonJsAndWasmArgumentsImpl::sourceMapPrefix)
+    }
   }
 }

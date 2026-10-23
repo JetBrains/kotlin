@@ -2,71 +2,59 @@
  * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+@file:UseSerializers(PathAsStringSerializer::class)
 
 package org.jetbrains.kotlin.buildtools.internal.wasm.operations
 
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.UseSerializers
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
+import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.wasm.operations.WasmLinkingOperation
 import org.jetbrains.kotlin.buildtools.internal.*
 import org.jetbrains.kotlin.buildtools.internal.arguments.WasmArgumentsImpl
 import org.jetbrains.kotlin.buildtools.internal.arguments.absolutePathStringOrThrow
+import org.jetbrains.kotlin.buildtools.internal.serializability.PathAsStringSerializer
+import org.jetbrains.kotlin.buildtools.internal.serializability.getPropertyByName
+import org.jetbrains.kotlin.buildtools.internal.serializability.setPropertyByName
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.arguments.KotlinWasmCompilerArguments
+import org.jetbrains.kotlin.cli.common.messages.MessageCollectorWithDiagnosticId
 import org.jetbrains.kotlin.cli.js.KotlinWasmCompiler
 import org.jetbrains.kotlin.daemon.common.CompileService
 import org.jetbrains.kotlin.daemon.common.IncrementalCompilationOptions
 import java.nio.file.Path
 
-internal class WasmLinkingOperationImpl private constructor(
-    override val options: Options = Options(WasmLinkingOperation::class),
+@Serializable
+internal class WasmLinkingOperationImpl(
     override val klib: Path,
     override val destination: Path,
-    compilerArguments: WasmArgumentsImpl = WasmArgumentsImpl(),
-) : BaseCompilationOperationImpl<WasmArgumentsImpl, KotlinWasmCompilerArguments>(compilerArguments),
+    override val compilerArguments: WasmArgumentsImpl = WasmArgumentsImpl(),
+) : BaseCompilationOperationImpl<WasmArgumentsImpl, @Contextual KotlinWasmCompilerArguments>(),
     WasmLinkingOperation, WasmLinkingOperation.Builder,
     DeepCopyable<WasmLinkingOperationImpl> {
-    constructor(
-        klib: Path,
-        destination: Path,
-        compilerArguments: WasmArgumentsImpl = WasmArgumentsImpl(),
-    ) : this(
-        options = Options(WasmLinkingOperation::class),
-        klib = klib,
-        destination = destination,
-        compilerArguments = compilerArguments,
-    ) {
-        initializeOptions(this::class, options)
-    }
 
     override fun toBuilder(): WasmLinkingOperation.Builder = deepCopy()
 
     override fun deepCopy(): WasmLinkingOperationImpl {
         return WasmLinkingOperationImpl(
-            options.deepCopy(),
             klib,
             destination,
             compilerArguments.deepCopy(),
-        )
+        ).also { it.copyFrom(this) }
     }
 
     @UseFromImplModuleRestricted
-    override fun <V> get(key: WasmLinkingOperation.Option<V>): V = options[key]
+    override fun <V> get(key: WasmLinkingOperation.Option<V>): V = getPropertyByName(emptyMap(), key.id)
 
     @UseFromImplModuleRestricted
     override fun <V> set(key: WasmLinkingOperation.Option<V>, value: V) {
         checkOptionIsAvailableForVersion(key)
-        options[key] = value
+        setPropertyByName(emptyMap(), key.id, value)
     }
 
     override fun build(): WasmLinkingOperation = deepCopy()
-
-    private operator fun <V> get(key: Option<V>): V = options[key]
-
-    private operator fun <V> set(key: Option<V>, value: V) {
-        options[key] = value
-    }
-
-    class Option<V>(id: String, default: V) : BaseOptionWithDefault<V>(id, defaultValue = default)
 
     override fun getRootProjectDir(): Path? {
         return null
@@ -102,7 +90,8 @@ internal class WasmLinkingOperationImpl private constructor(
 
     override fun compileIncrementallyInProcess(
         arguments: KotlinWasmCompilerArguments,
-        loggerAdapter: KotlinLoggerMessageCollectorAdapter,
+        logger: KotlinLogger,
+        messageCollector: MessageCollectorWithDiagnosticId,
         executionContext: ExecutionContext
     ): CompilationResult {
         error("Linking doesn't support incremental compilation")

@@ -1,0 +1,97 @@
+/*
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+@file:UseSerializers(PathAsStringSerializer::class)
+
+package org.jetbrains.kotlin.buildtools.internal.serializability
+
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.UseSerializers
+import org.jetbrains.kotlin.buildtools.api.trackers.BuildMetricsCollector
+import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
+import org.jetbrains.kotlin.buildtools.internal.LogLevel
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
+import java.nio.file.Path
+
+@Serializable
+public sealed class Message {
+    @Serializable
+    public data class CollectMetricMessage(
+        public val name: String,
+        public val type: BuildMetricsCollector.ValueType,
+        public val value: Long,
+    ) : Message()
+
+    public object LookupTracker {
+        @Serializable
+        public data class Record(
+            public val filePath: String,
+            public val scopeFqName: String,
+            public val scopeKind: CompilerLookupTracker.ScopeKind,
+            public val name: String,
+        ) : Message()
+
+        @Serializable
+        public object Clear : Message()
+    }
+
+    public object CompilerMessage {
+        @Serializable
+        public data class Report(
+            public val severity: CompilerMessageSeverity,
+            public val message: String,
+            @Serializable(with = CompilerMessageSourceLocationSerializer::class)
+            public val location: CompilerMessageSourceLocation? = null,
+            public val diagnosticId: String?,
+        ) : Message()
+
+        @Serializable
+        public object Clear : Message()
+    }
+
+    public object Logger {
+        @Serializable
+        public data class LogLine(
+            public val level: LogLevel,
+            public val logLine: String,
+            public val throwable: ByteArray? = null,
+        ) : Message()
+    }
+
+    public object FileMappingTracker {
+        @Serializable
+        public data class RecordSourceFilesToOutputFileMapping(val sourceFilePaths: List<Path>, val outputFilePath: Path) : Message()
+
+        @Serializable
+        public data class RecordSourceReferencedByCompilerPlugin(val sourceFilePath: Path) : Message()
+
+        @Serializable
+        public data class RecordOutputFileGeneratedForPlugin(val outputFilePath: Path) : Message()
+
+        @Serializable
+        public data class RecordSourceFileGeneratedForPlugin(val sourceFilePath: Path) : Message()
+    }
+
+    public object EnumWhenTracker {
+        @Serializable
+        public data class Report(val whenExpressionFilePath: Path, val enumClassFqName: String) : Message()
+    }
+
+    public object ImportTracker {
+        @Serializable
+        public data class Report(val filePath: Path, val importedFqName: String) : Message()
+    }
+
+    public object InlineConstTracker {
+        @Serializable
+        public data class Report(val filePath: Path, val owner: String, val name: String, val constType: String) : Message()
+    }
+
+    public object Appendable {
+        @Serializable
+        public data class Append(val string: String) : Message()
+    }
+}

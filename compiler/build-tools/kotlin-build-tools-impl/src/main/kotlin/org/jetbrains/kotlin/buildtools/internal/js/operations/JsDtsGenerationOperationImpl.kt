@@ -3,31 +3,31 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:UseSerializers(PathAsStringSerializer::class)
+@file:Suppress("EnumValuesSoftDeprecate")
+
 package org.jetbrains.kotlin.buildtools.internal.js.operations
 
-import org.jetbrains.kotlin.buildtools.api.CompilationResult
-import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
-import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
-import org.jetbrains.kotlin.buildtools.api.KotlinLogger
-import org.jetbrains.kotlin.buildtools.api.ProjectId
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.UseSerializers
+import org.jetbrains.kotlin.buildtools.api.*
 import org.jetbrains.kotlin.buildtools.api.js.JsDtsCompilationStrategy
 import org.jetbrains.kotlin.buildtools.api.js.JsDtsGranularity
 import org.jetbrains.kotlin.buildtools.api.js.operations.JsDtsGenerationOperation
 import org.jetbrains.kotlin.buildtools.api.js.operations.JsLinkingOperation
-import org.jetbrains.kotlin.buildtools.internal.BaseOptionWithDefault
-import org.jetbrains.kotlin.buildtools.internal.BuildOperationImpl
-import org.jetbrains.kotlin.buildtools.internal.DeepCopyable
-import org.jetbrains.kotlin.buildtools.internal.ExecutionContext
-import org.jetbrains.kotlin.buildtools.internal.Options
-import org.jetbrains.kotlin.buildtools.internal.UseFromImplModuleRestricted
-import org.jetbrains.kotlin.buildtools.internal.arguments.CommonCompilerArgumentsImpl
+import org.jetbrains.kotlin.buildtools.internal.*
 import org.jetbrains.kotlin.buildtools.internal.arguments.JsArgumentValueAdapter
-import org.jetbrains.kotlin.buildtools.internal.arguments.JsArgumentsImpl
 import org.jetbrains.kotlin.buildtools.internal.arguments.enums.JsEcmaVersion
 import org.jetbrains.kotlin.buildtools.internal.arguments.enums.JsModuleKind
-import org.jetbrains.kotlin.buildtools.internal.checkOptionIsAvailableForVersion
-import org.jetbrains.kotlin.buildtools.internal.initializeOptions
+import org.jetbrains.kotlin.buildtools.internal.serializability.CompilationResultSerializer
+import org.jetbrains.kotlin.buildtools.internal.serializability.PathAsStringSerializer
+import org.jetbrains.kotlin.buildtools.internal.serializability.SupportsNewDaemonMode
+import org.jetbrains.kotlin.buildtools.internal.serializability.deserialize
+import org.jetbrains.kotlin.buildtools.internal.serializability.getPropertyByName
+import org.jetbrains.kotlin.buildtools.internal.serializability.setPropertyByName
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.daemon.common.SerializedDataContainer
 import org.jetbrains.kotlin.js.config.JsGenerationGranularity
 import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.js.config.TsCompilationStrategy
@@ -42,26 +42,34 @@ import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import java.nio.file.Path
 
-internal class JsDtsGenerationOperationImpl private constructor(
-    override val options: Options,
+@Serializable
+internal class JsDtsGenerationOperationImpl(
     override val klibs: List<Path>,
     override val outputDirectory: Path,
+    @SerialName("TS_COMPILATION_STRATEGY") internal var tsCompilationStrategy: JsDtsCompilationStrategy = MERGED,
+    @SerialName("GRANULARITY") internal var granularity: JsDtsGranularity = WHOLE_PROGRAM,
+    @SerialName("MODULE_KIND") internal var moduleKind: JsModuleKind = defaultArgsReference.moduleKind
+        ?.let {
+            JsModuleKind.values().firstOrNull { entry ->
+                entry.stringValue.equals(
+                    it,
+                    false
+                )
+            } ?: throw CompilerArgumentsParseException("Unknown -module-kind value: $it")
+        } ?: UMD,
+    @SerialName("COMPILE_LONG_AS_BIG_INT") internal var compileLongAsBigInt: Boolean = defaultArgsReference.compileLongAsBigInt ?: false,
+    @SerialName("IMPLEMENT_INTERFACES") internal var implementInterfaces: Boolean = defaultArgsReference.allowImplementableInterfacesExporting,
+    @SerialName("EXPORT_SUSPEND_LAMBDAS") internal var exportSuspendLambdas: Boolean = defaultArgsReference.allowExportingSuspendLambdas,
+    @SerialName("EXPORT_UNTYPED_AS_UNKNOWN") internal var exportUntypedAsUnknown: Boolean = defaultArgsReference.useUnknownInsteadAny,
+    @SerialName("DATA_CLASS_COPY_RESPECTS_CONSTRUCTOR_VISIBILITY") internal var dataClassCopyRespectsConstructorVisibility: Boolean = defaultArgsReference.consistentDataClassCopyVisibility,
 ) : BuildOperationImpl<CompilationResult>(), JsDtsGenerationOperation, JsDtsGenerationOperation.Builder,
-    DeepCopyable<JsDtsGenerationOperationImpl> {
-
-    constructor(klibs: List<Path>, outputDirectory: Path) : this(
-        options = Options(JsDtsGenerationOperation::class),
-        klibs = klibs,
-        outputDirectory = outputDirectory,
-    ) {
-        initializeOptions(this::class, options)
-    }
+    DeepCopyable<JsDtsGenerationOperationImpl>, SupportsNewDaemonMode<CompilationResult> {
 
     override fun executeImpl(
         projectId: ProjectId,
         executionPolicy: ExecutionPolicy,
         logger: KotlinLogger?,
-        executionContext: ExecutionContext
+        executionContext: ExecutionContext,
     ): CompilationResult {
         val inputModules = transformKlibsIntoKlibInputModule(klibs)
         // The main KLIB is the last one in the list; its manifest drives the merged artifact naming.
@@ -70,20 +78,20 @@ internal class JsDtsGenerationOperationImpl private constructor(
         val typeScriptExportConfig = TypeScriptExportConfig(
             targetPlatform = JsPlatforms.defaultJsPlatform,
             artifactConfiguration = WebArtifactConfiguration(
-                moduleKind = ModuleKind.fromType(this[MODULE_KIND].stringValue),
+                moduleKind = ModuleKind.fromType(moduleKind.stringValue),
                 moduleName = mainModule.name,
                 outputDirectory = outputDirectory.toFile(),
                 outputName = mainModule.config.outputName ?: mainModule.name,
-                granularity = JsGenerationGranularity.valueOf(this[GRANULARITY].name),
-                tsCompilationStrategy = TsCompilationStrategy.valueOf(this[TS_COMPILATION_STRATEGY].name),
+                granularity = JsGenerationGranularity.valueOf(granularity.name),
+                tsCompilationStrategy = TsCompilationStrategy.valueOf(tsCompilationStrategy.name),
                 production = false,
                 minimizedMemberNames = false,
             ),
-            compileLongAsBigInt = this[COMPILE_LONG_AS_BIG_INT],
-            implementableInterfaces = this[IMPLEMENT_INTERFACES],
-            exportableSuspendLambdas = this[EXPORT_SUSPEND_LAMBDAS],
-            dataClassCopyRespectsConstructorVisibility = this[DATA_CLASS_COPY_RESPECTS_CONSTRUCTOR_VISIBILITY],
-            useUnknownInsteadAny = this[USE_UNKNOWN_INSTEAD_ANY],
+            compileLongAsBigInt = compileLongAsBigInt,
+            implementableInterfaces = implementInterfaces,
+            exportableSuspendLambdas = exportSuspendLambdas,
+            dataClassCopyRespectsConstructorVisibility = dataClassCopyRespectsConstructorVisibility,
+            useUnknownInsteadAny = exportUntypedAsUnknown,
         )
         runTypeScriptExport(inputModules, typeScriptExportConfig)
         return CompilationResult.COMPILATION_SUCCESS
@@ -102,26 +110,26 @@ internal class JsDtsGenerationOperationImpl private constructor(
     override fun configureFrom(linkingOperation: JsLinkingOperation) {
         check(linkingOperation is JsLinkingOperationImpl) { "Unexpected linking operation: ${linkingOperation::class}." }
 
-        this[COMPILE_LONG_AS_BIG_INT] = linkingOperation.compilerArguments[JsArgumentsImpl.X_ES_LONG_AS_BIGINT] ?: false
-        this[IMPLEMENT_INTERFACES] = linkingOperation.compilerArguments[JsArgumentsImpl.X_ENABLE_IMPLEMENTING_INTERFACES_FROM_TYPESCRIPT]
-        this[EXPORT_SUSPEND_LAMBDAS] = linkingOperation.compilerArguments[JsArgumentsImpl.X_SUSPEND_LAMBDA_EXPORTING]
-        this[DATA_CLASS_COPY_RESPECTS_CONSTRUCTOR_VISIBILITY] =
-            linkingOperation.compilerArguments[CommonCompilerArgumentsImpl.X_CONSISTENT_DATA_CLASS_COPY_VISIBILITY]
-        this[USE_UNKNOWN_INSTEAD_ANY] =
-            linkingOperation.compilerArguments[JsArgumentsImpl.X_DTS_USE_UNKNOWN_INSTEAD_ANY]
+        compileLongAsBigInt = linkingOperation.compilerArguments.compileLongAsBigInt ?: false
+        implementInterfaces = linkingOperation.compilerArguments.allowImplementableInterfacesExporting
+        exportSuspendLambdas = linkingOperation.compilerArguments.allowExportingSuspendLambdas
+        dataClassCopyRespectsConstructorVisibility =
+            linkingOperation.compilerArguments.consistentDataClassCopyVisibility
+        exportUntypedAsUnknown =
+            linkingOperation.compilerArguments.useUnknownInsteadAny
 
-        this[MODULE_KIND] = linkingOperation.compilerArguments[JsArgumentsImpl.MODULE_KIND]
+        moduleKind = linkingOperation.compilerArguments.moduleKind
             ?: JsModuleKind.ES.takeIf {
-                val target = linkingOperation.compilerArguments[JsArgumentsImpl.TARGET]
+                val target = linkingOperation.compilerArguments.target
                     ?.let { from -> JsEcmaVersion.values().first { it.name == from.name } }
                 target != null && target >= JsEcmaVersion.ES2015
             }
-            ?: JsModuleKind.UMD
+                    ?: JsModuleKind.UMD
 
-        this[GRANULARITY] = when {
-            linkingOperation.compilerArguments[JsArgumentsImpl.X_IR_PER_FILE] -> JsDtsGranularity.PER_FILE
+        granularity = when {
+            linkingOperation.compilerArguments.irPerFile -> JsDtsGranularity.PER_FILE
             // Right now, we don't support per-module d.ts generation for IR. So for the backward compatibility, we use whole-program granularity.
-            linkingOperation.compilerArguments[JsArgumentsImpl.X_IR_PER_MODULE] -> JsDtsGranularity.WHOLE_PROGRAM
+            linkingOperation.compilerArguments.irPerModule -> JsDtsGranularity.WHOLE_PROGRAM
             else -> JsDtsGranularity.WHOLE_PROGRAM
         }
     }
@@ -129,18 +137,13 @@ internal class JsDtsGenerationOperationImpl private constructor(
     @UseFromImplModuleRestricted
     @Suppress("UNCHECKED_CAST")
     override fun <V> get(key: JsDtsGenerationOperation.Option<V>): V =
-        JsArgumentValueAdapter.toApi(options[key]) as V
+        JsArgumentValueAdapter.toApi(getPropertyByName(propertyAccessMap, key.id)) as V
+
 
     @UseFromImplModuleRestricted
     override fun <V> set(key: JsDtsGenerationOperation.Option<V>, value: V) {
         checkOptionIsAvailableForVersion(key)
-        options[key] = JsArgumentValueAdapter.toImpl(value)
-    }
-
-    private operator fun <V> get(key: Option<V>): V = options[key]
-
-    private operator fun <V> set(key: Option<V>, value: V) {
-        options[key] = value
+        setPropertyByName(propertyAccessMap, key.id, JsArgumentValueAdapter.toImpl(value))
     }
 
     override fun toBuilder(): JsDtsGenerationOperation.Builder = deepCopy()
@@ -148,34 +151,40 @@ internal class JsDtsGenerationOperationImpl private constructor(
     override fun build(): JsDtsGenerationOperation = deepCopy()
 
     override fun deepCopy(): JsDtsGenerationOperationImpl =
-        JsDtsGenerationOperationImpl(options.deepCopy(), klibs, outputDirectory)
+        JsDtsGenerationOperationImpl(
+            klibs = klibs,
+            outputDirectory = outputDirectory,
+            tsCompilationStrategy = tsCompilationStrategy,
+            granularity = granularity,
+            moduleKind = moduleKind,
+            compileLongAsBigInt = compileLongAsBigInt,
+            implementInterfaces = implementInterfaces,
+            exportSuspendLambdas = exportSuspendLambdas,
+            exportUntypedAsUnknown = exportUntypedAsUnknown,
+            dataClassCopyRespectsConstructorVisibility = dataClassCopyRespectsConstructorVisibility
+        ).also {
+            it.copyFrom(this)
+        }
 
-    class Option<V>(id: String, default: V) : BaseOptionWithDefault<V>(id, defaultValue = default)
+    override fun deserializeResult(serializedData: SerializedDataContainer): CompilationResult {
+        return KotlinToolchainsImpl.serializer.deserialize(CompilationResultSerializer, serializedData)
+    }
+
+    override fun serializeResult(result: CompilationResult): SerializedDataContainer {
+        return KotlinToolchainsImpl.serializer.serialize(CompilationResultSerializer, result)
+    }
 
     companion object {
         private val defaultArgsReference = K2JSCompilerArguments()
-        val TS_COMPILATION_STRATEGY: Option<JsDtsCompilationStrategy> = Option("TS_COMPILATION_STRATEGY", JsDtsCompilationStrategy.MERGED)
-        val GRANULARITY: Option<JsDtsGranularity> = Option("GRANULARITY", JsDtsGranularity.WHOLE_PROGRAM)
-
-        @Suppress("EnumValuesSoftDeprecate")
-        val MODULE_KIND: Option<JsModuleKind> = Option(
-            "MODULE_KIND",
-            defaultArgsReference.moduleKind
-                ?.let {
-                    JsModuleKind.values().firstOrNull { entry ->
-                        entry.stringValue.equals(
-                            it,
-                            false
-                        )
-                    } ?: throw CompilerArgumentsParseException("Unknown -module-kind value: $it")
-                } ?: JsModuleKind.UMD
+        private val propertyAccessMap = mapOf(
+            "TS_COMPILATION_STRATEGY" to JsDtsGenerationOperationImpl::tsCompilationStrategy,
+            "GRANULARITY" to JsDtsGenerationOperationImpl::granularity,
+            "MODULE_KIND" to JsDtsGenerationOperationImpl::moduleKind,
+            "COMPILE_LONG_AS_BIG_INT" to JsDtsGenerationOperationImpl::compileLongAsBigInt,
+            "IMPLEMENT_INTERFACES" to JsDtsGenerationOperationImpl::implementInterfaces,
+            "EXPORT_SUSPEND_LAMBDAS" to JsDtsGenerationOperationImpl::exportSuspendLambdas,
+            "EXPORT_UNTYPED_AS_UNKNOWN" to JsDtsGenerationOperationImpl::exportUntypedAsUnknown,
+            "DATA_CLASS_COPY_RESPECTS_CONSTRUCTOR_VISIBILITY" to JsDtsGenerationOperationImpl::dataClassCopyRespectsConstructorVisibility
         )
-        val COMPILE_LONG_AS_BIG_INT: Option<Boolean> = Option("COMPILE_LONG_AS_BIG_INT", defaultArgsReference.compileLongAsBigInt ?: false)
-        val IMPLEMENT_INTERFACES: Option<Boolean> =
-            Option("IMPLEMENT_INTERFACES", defaultArgsReference.allowImplementableInterfacesExporting)
-        val EXPORT_SUSPEND_LAMBDAS: Option<Boolean> = Option("EXPORT_SUSPEND_LAMBDAS", defaultArgsReference.allowExportingSuspendLambdas)
-        val USE_UNKNOWN_INSTEAD_ANY: Option<Boolean> = Option("USE_UNKNOWN_INSTEAD_ANY", defaultArgsReference.useUnknownInsteadAny)
-        val DATA_CLASS_COPY_RESPECTS_CONSTRUCTOR_VISIBILITY: Option<Boolean> =
-            Option("DATA_CLASS_COPY_RESPECTS_CONSTRUCTOR_VISIBILITY", defaultArgsReference.consistentDataClassCopyVisibility)
     }
 }

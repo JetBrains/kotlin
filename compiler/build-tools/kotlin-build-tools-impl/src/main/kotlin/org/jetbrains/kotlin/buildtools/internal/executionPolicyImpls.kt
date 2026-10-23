@@ -7,12 +7,15 @@
 package org.jetbrains.kotlin.buildtools.internal
 
 import kotlinx.serialization.*
+import org.jetbrains.kotlin.buildtools.api.DelicateBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
+import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.internal.serializability.PathAsStringSerializer
 import org.jetbrains.kotlin.buildtools.internal.arguments.absolutePathStringOrThrow
-import org.jetbrains.kotlin.buildtools.internal.serializability.getPropertyWithSerialNameValue
-import org.jetbrains.kotlin.buildtools.internal.serializability.setPropertyWithSerialNameValue
+import org.jetbrains.kotlin.buildtools.internal.serializability.getPropertyByName
+import org.jetbrains.kotlin.buildtools.internal.serializability.setPropertyByName
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
+import org.jetbrains.kotlin.cli.common.messages.MessageCollectorWithDiagnosticId
 import org.jetbrains.kotlin.compilerRunner.KotlinCompilerRunnerUtils
 import org.jetbrains.kotlin.daemon.client.CompileServiceSession
 import org.jetbrains.kotlin.daemon.common.*
@@ -42,12 +45,12 @@ internal data class DaemonExecutionPolicyImpl private constructor(
     @Suppress("UNCHECKED_CAST")
     @UseFromImplModuleRestricted
     override fun <V> get(key: ExecutionPolicy.WithDaemon.Option<V>): V =
-        DaemonExecutionPolicyImpl::class.getPropertyWithSerialNameValue(this, key.id)
+        getPropertyByName(propertyAccessMap, key.id)
 
     @UseFromImplModuleRestricted
     override fun <V> set(key: ExecutionPolicy.WithDaemon.Option<V>, value: V) {
         checkOptionIsAvailableForVersion(key)
-        DaemonExecutionPolicyImpl::class.setPropertyWithSerialNameValue(this, key.id, value)
+        setPropertyByName(propertyAccessMap, key.id, value)
     }
 
     override fun build(): ExecutionPolicy.WithDaemon = deepCopy()
@@ -64,13 +67,25 @@ internal data class DaemonExecutionPolicyImpl private constructor(
             logsFileCountLimit
         )
     }
+
+    companion object {
+        private val propertyAccessMap = buildMap {
+            put("JVM_ARGUMENTS", DaemonExecutionPolicyImpl::jvmArguments)
+            put("SHUTDOWN_DELAY_MILLIS", DaemonExecutionPolicyImpl::shutdownDelayMillis)
+            put("DAEMON_RUN_DIR_PATH", DaemonExecutionPolicyImpl::daemonRunDirPath)
+            put("LOGS_PATH", DaemonExecutionPolicyImpl::logsPath)
+            put("LOGS_FILE_SIZE_LIMIT", DaemonExecutionPolicyImpl::logsFileSizeLimit)
+            put("LOGS_FILE_COUNT_LIMIT", DaemonExecutionPolicyImpl::logsFileCountLimit)
+        }
+    }
 }
 
 private fun getCurrentClasspath() =
     (DaemonExecutionPolicyImpl::class.java.classLoader as URLClassLoader).urLs.map { transformUrlToFile(it) }
 
 internal fun DaemonExecutionPolicyImpl.createDaemonConnection(
-    loggerAdapter: KotlinLoggerMessageCollectorAdapter,
+    logger: KotlinLogger,
+    messageCollector: MessageCollectorWithDiagnosticId,
     sessionIsAliveFlagFile: Lazy<File>,
 ): CompileServiceSession? {
     val compilerId = CompilerId.makeCompilerId(getCurrentClasspath())
@@ -108,15 +123,15 @@ internal fun DaemonExecutionPolicyImpl.createDaemonConnection(
         compilerId,
         clientIsAliveFile,
         sessionIsAliveFlagFile.value,
-        loggerAdapter,
-        loggerAdapter.kotlinLogger.isDebugEnabled || System.getProperty("kotlin.daemon.debug.log")?.toBooleanStrictOrNull() ?: true,
+        messageCollector,
+        logger.isDebugEnabled || System.getProperty("kotlin.daemon.debug.log")?.toBooleanStrictOrNull() ?: true,
         daemonJVMOptions = jvmOptions,
         daemonOptions = daemonOptions,
         daemonLogOptions = daemonLogOptions,
     )?.also { compileServiceSession ->
-        if (loggerAdapter.kotlinLogger.isDebugEnabled) {
+        if (logger.isDebugEnabled) {
             compileServiceSession.compileService.getDaemonJVMOptions().takeIf { it.isGood }?.let { jvmOpts ->
-                loggerAdapter.kotlinLogger.debug("Kotlin compile daemon JVM options: ${jvmOpts.get().mappers.flatMap { it.toArgs("-") }}")
+                logger.debug("Kotlin compile daemon JVM options: ${jvmOpts.get().mappers.flatMap { it.toArgs("-") }}")
             }
         }
     }

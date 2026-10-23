@@ -5,30 +5,34 @@
 
 package org.jetbrains.kotlin.buildtools.internal.abi
 
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.buildtools.api.abi.AbiFilters
-import org.jetbrains.kotlin.buildtools.internal.BaseOptionWithDefault
 import org.jetbrains.kotlin.buildtools.internal.DeepCopyable
-import org.jetbrains.kotlin.buildtools.internal.Options
 import org.jetbrains.kotlin.buildtools.internal.UseFromImplModuleRestricted
-import org.jetbrains.kotlin.buildtools.internal.initializeOptions
+import org.jetbrains.kotlin.buildtools.internal.serializability.getPropertyByName
+import org.jetbrains.kotlin.buildtools.internal.serializability.setPropertyByName
 
-internal class AbiFiltersImpl private constructor(val options: Options) : AbiFilters, AbiFilters.Builder, DeepCopyable<AbiFilters> {
-    constructor() : this(Options(AbiFilters::class)) {
-        initializeOptions(this::class, options)
-    }
+@Serializable
+internal class AbiFiltersImpl : AbiFilters, AbiFilters.Builder, DeepCopyable<AbiFilters> {
 
     @UseFromImplModuleRestricted
-    override fun <V> get(key: AbiFilters.Option<V>): V {
-        return options[key]
-    }
+    override fun <V> get(key: AbiFilters.Option<V>): V = getPropertyByName(propertyAccessMap, key.id)
 
     @UseFromImplModuleRestricted
     override fun <V> set(key: AbiFilters.Option<V>, value: V) {
-        options[key] = value
+        setPropertyByName(propertyAccessMap, key.id, value)
     }
 
     override fun deepCopy(): AbiFilters {
-        return AbiFiltersImpl(options.deepCopy())
+        return AbiFiltersImpl().also { it.copyFrom(this) }
+    }
+
+    private fun copyFrom(other: AbiFiltersImpl) {
+        includeNamed = other.includeNamed
+        excludeNamed = other.excludeNamed
+        includeAnnotatedWith = other.includeAnnotatedWith
+        excludeAnnotatedWith = other.excludeAnnotatedWith
     }
 
     override fun build(): AbiFilters {
@@ -36,84 +40,86 @@ internal class AbiFiltersImpl private constructor(val options: Options) : AbiFil
     }
 
     /**
-     * An option for configuring a [AbiFilters].
+     * Include a class, file-level property, or file-level function in a dump by its name.
+     * Declarations that do not match the specified names, that do not have an annotation from [INCLUDE_ANNOTATED_WITH]
+     * and do not have members marked with an annotation from [INCLUDE_ANNOTATED_WITH] are excluded from the dump.
      *
-     * @see get
-     * @see set
-     * @see AbiFilters.Companion
+     * The name filter compares the qualified class name with the value in the filter:
+     *
+     * For Kotlin declarations, fully qualified names are used.
+     * It is important to keep in mind that dots are used everywhere as separators, even in the case of a nested class.
+     * E.g. for qualified name `foo.bar.Container.Value`, here `Value` is a class nested in `Container`.
+     *
+     * For classes from Java sources, canonical names are used.
+     * The main motivation is a similar approach to writing the class name - dots are used everywhere as delimiters.
+     *
+     * Name templates are allowed, with support for wildcards such as `**`, `*`, and `?`:
+     * - `**` - zero or any number of characters
+     * - `*` - zero or any number of characters excluding dot. Using to specify simple class name.
+     * - `?` - any single character.
      */
-    class Option<V>(id: String, default: V) : BaseOptionWithDefault<V>(id, defaultValue = default)
+    @SerialName("INCLUDE_NAMED")
+    var includeNamed: Set<String> = emptySet()
+
+    /**
+     * Excludes a class, file-level property, or file-level function from a dump by its name.
+     *
+     * The name filter compares the qualified class name with the value in the filter:
+     *
+     * For Kotlin declarations, fully qualified names are used.
+     * It is important to keep in mind that dots are used everywhere as separators, even in the case of a nested class.
+     * E.g. for qualified name `foo.bar.Container.Value`, here `Value` is a class nested in `Container`.
+     *
+     * For classes from Java sources, canonical names are used.
+     * The main motivation is a similar approach to writing the class name - dots are used everywhere as delimiters.
+     *
+     * Name templates are allowed, with support for wildcards such as `**`, `*`, and `?`:
+     * - `**` - zero or any number of characters
+     * - `*` - zero or any number of characters excluding dot. Using to specify simple class name.
+     * - `?` - any single character.
+     */
+    @SerialName("EXCLUDE_NAMED")
+    var excludeNamed: Set<String> = emptySet()
+
+    /**
+     * Includes a declaration by annotations placed on it.
+     *
+     * Any declaration that is not marked with one of the these annotations and does not match the [INCLUDE_NAMED] is excluded from the dump.
+     *
+     * The declaration can be a class, a class member (function or property), a top-level function or a top-level property.
+     *
+     * Name templates are allowed, with support for wildcards such as `**`, `*`, and `?`:
+     * - `**` - zero or any number of characters
+     * - `*` - zero or any number of characters excluding dot. Using to specify simple class name.
+     * - `?` - any single character.
+     *
+     * The annotation should not have [Retention] equal to [AnnotationRetention.SOURCE], otherwise, filtering by it will not work.
+     */
+    @SerialName("INCLUDE_ANNOTATED_WITH")
+    var includeAnnotatedWith: Set<String> = emptySet()
+
+    /**
+     * Excludes a declaration by annotations placed on it.
+     *
+     * It means that a class, a class member (function or property), a top-level function, or a top-level property
+     * marked by a specific annotation will be excluded from the dump.
+     *
+     * Name templates are allowed, with support for wildcards such as `**`, `*`, and `?`:
+     * - `**` - zero or any number of characters
+     * - `*` - zero or any number of characters excluding dot. Using to specify simple class name.
+     * - `?` - any single character.
+     *
+     * The annotation should not have [Retention] equal to [AnnotationRetention.SOURCE], otherwise, filtering by it will not work.
+     */
+    @SerialName("EXCLUDE_ANNOTATED_WITH")
+    var excludeAnnotatedWith: Set<String> = emptySet()
 
     companion object {
-        /**
-         * Include a class, file-level property, or file-level function in a dump by its name.
-         * Declarations that do not match the specified names, that do not have an annotation from [INCLUDE_ANNOTATED_WITH]
-         * and do not have members marked with an annotation from [INCLUDE_ANNOTATED_WITH] are excluded from the dump.
-         *
-         * The name filter compares the qualified class name with the value in the filter:
-         *
-         * For Kotlin declarations, fully qualified names are used.
-         * It is important to keep in mind that dots are used everywhere as separators, even in the case of a nested class.
-         * E.g. for qualified name `foo.bar.Container.Value`, here `Value` is a class nested in `Container`.
-         *
-         * For classes from Java sources, canonical names are used.
-         * The main motivation is a similar approach to writing the class name - dots are used everywhere as delimiters.
-         *
-         * Name templates are allowed, with support for wildcards such as `**`, `*`, and `?`:
-         * - `**` - zero or any number of characters
-         * - `*` - zero or any number of characters excluding dot. Using to specify simple class name.
-         * - `?` - any single character.
-         */
-        val INCLUDE_NAMED: Option<Set<String>> = Option("INCLUDE_NAMED", emptySet())
-
-        /**
-         * Excludes a class, file-level property, or file-level function from a dump by its name.
-         *
-         * The name filter compares the qualified class name with the value in the filter:
-         *
-         * For Kotlin declarations, fully qualified names are used.
-         * It is important to keep in mind that dots are used everywhere as separators, even in the case of a nested class.
-         * E.g. for qualified name `foo.bar.Container.Value`, here `Value` is a class nested in `Container`.
-         *
-         * For classes from Java sources, canonical names are used.
-         * The main motivation is a similar approach to writing the class name - dots are used everywhere as delimiters.
-         *
-         * Name templates are allowed, with support for wildcards such as `**`, `*`, and `?`:
-         * - `**` - zero or any number of characters
-         * - `*` - zero or any number of characters excluding dot. Using to specify simple class name.
-         * - `?` - any single character.
-         */
-        val EXCLUDE_NAMED: Option<Set<String>> = Option("EXCLUDE_NAMED", emptySet())
-
-        /**
-         * Includes a declaration by annotations placed on it.
-         *
-         * Any declaration that is not marked with one of the these annotations and does not match the [INCLUDE_NAMED] is excluded from the dump.
-         *
-         * The declaration can be a class, a class member (function or property), a top-level function or a top-level property.
-         *
-         * Name templates are allowed, with support for wildcards such as `**`, `*`, and `?`:
-         * - `**` - zero or any number of characters
-         * - `*` - zero or any number of characters excluding dot. Using to specify simple class name.
-         * - `?` - any single character.
-         *
-         * The annotation should not have [Retention] equal to [AnnotationRetention.SOURCE], otherwise, filtering by it will not work.
-         */
-        val INCLUDE_ANNOTATED_WITH: Option<Set<String>> = Option("INCLUDE_ANNOTATED_WITH", emptySet())
-
-        /**
-         * Excludes a declaration by annotations placed on it.
-         *
-         * It means that a class, a class member (function or property), a top-level function, or a top-level property
-         * marked by a specific annotation will be excluded from the dump.
-         *
-         * Name templates are allowed, with support for wildcards such as `**`, `*`, and `?`:
-         * - `**` - zero or any number of characters
-         * - `*` - zero or any number of characters excluding dot. Using to specify simple class name.
-         * - `?` - any single character.
-         *
-         * The annotation should not have [Retention] equal to [AnnotationRetention.SOURCE], otherwise, filtering by it will not work.
-         */
-        val EXCLUDE_ANNOTATED_WITH: Option<Set<String>> = Option("EXCLUDE_ANNOTATED_WITH", emptySet())
+        private val propertyAccessMap = mapOf(
+            "INCLUDE_NAMED" to AbiFiltersImpl::includeNamed,
+            "EXCLUDE_NAMED" to AbiFiltersImpl::excludeNamed,
+            "INCLUDE_ANNOTATED_WITH" to AbiFiltersImpl::includeAnnotatedWith,
+            "EXCLUDE_ANNOTATED_WITH" to AbiFiltersImpl::excludeAnnotatedWith,
+        )
     }
 }

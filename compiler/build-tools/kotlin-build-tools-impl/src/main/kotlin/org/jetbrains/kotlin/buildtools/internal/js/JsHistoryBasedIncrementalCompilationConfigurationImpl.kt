@@ -4,45 +4,38 @@
  */
 
 @file:Suppress("DEPRECATION")
+@file:UseSerializers(PathAsStringSerializer::class)
 
 package org.jetbrains.kotlin.buildtools.internal.js
 
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.UseSerializers
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.js.IncrementalModule
 import org.jetbrains.kotlin.buildtools.api.js.JsHistoryBasedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.internal.*
+import org.jetbrains.kotlin.buildtools.internal.serializability.JsIncrementalModuleSerializer
+import org.jetbrains.kotlin.buildtools.internal.serializability.PathAsStringSerializer
+import org.jetbrains.kotlin.buildtools.internal.serializability.SourcesChangesSerializer
+import org.jetbrains.kotlin.buildtools.internal.serializability.getPropertyByName
+import org.jetbrains.kotlin.buildtools.internal.serializability.setPropertyByName
 import org.jetbrains.kotlin.incremental.IncrementalCompilerRunner
 import java.nio.file.Path
 
-internal class JsHistoryBasedIncrementalCompilationConfigurationImpl private constructor(
+@Serializable
+internal class JsHistoryBasedIncrementalCompilationConfigurationImpl(
     override val workingDirectory: Path,
+    @Serializable(SourcesChangesSerializer::class)
     override val sourcesChanges: SourcesChanges,
-    override val modulesInformation: List<IncrementalModule>,
-    override val options: Options = Options(
-        JsHistoryBasedIncrementalCompilationConfiguration::class
-    ),
+    override val modulesInformation: List<@Serializable(JsIncrementalModuleSerializer::class) IncrementalModule>,
 ) : BaseIncrementalCompilationConfigurationImpl(), JsHistoryBasedIncrementalCompilationConfiguration,
     JsHistoryBasedIncrementalCompilationConfiguration.Builder,
     DeepCopyable<JsHistoryBasedIncrementalCompilationConfigurationImpl> {
 
-    constructor(
-        rootProjectDir: Path,
-        workingDirectory: Path,
-        sourcesChanges: SourcesChanges,
-        modulesInformation: List<IncrementalModule>,
-    ) : this(
-        workingDirectory,
-        sourcesChanges,
-        modulesInformation,
-        Options(JsHistoryBasedIncrementalCompilationConfiguration::class)
-    ) {
-        initializeOptions(this::class, options)
-        options[ROOT_PROJECT_DIR] = rootProjectDir
-    }
-
     internal val historyFile: Path
         get() {
-            return (this[HISTORY_FILE_DIR] ?: workingDirectory).resolve(
+            return (historyFileDir ?: workingDirectory).resolve(
                 IncrementalCompilerRunner.BUILD_HISTORY_FILE_NAME
             )
         }
@@ -55,34 +48,37 @@ internal class JsHistoryBasedIncrementalCompilationConfigurationImpl private con
         JsHistoryBasedIncrementalCompilationConfigurationImpl(
             workingDirectory,
             sourcesChanges,
-            modulesInformation,
-            options.deepCopy()
-        )
+            modulesInformation
+        ).also { it.copyFrom(this) }
 
+
+    private fun copyFrom(other: JsHistoryBasedIncrementalCompilationConfigurationImpl) {
+        super.copyFrom(other)
+        rootProjectBuildDir = other.rootProjectBuildDir
+        historyFileDir = other.historyFileDir
+    }
 
     @UseFromImplModuleRestricted
-    override fun <V> get(key: JsHistoryBasedIncrementalCompilationConfiguration.Option<V>): V {
-        return options[key]
-    }
+    override fun <V> get(key: JsHistoryBasedIncrementalCompilationConfiguration.Option<V>): V = getPropertyByName(propertyAccessMap, key.id)
 
     @UseFromImplModuleRestricted
     override fun <V> set(key: JsHistoryBasedIncrementalCompilationConfiguration.Option<V>, value: V) {
         checkOptionIsAvailableForVersion(key)
-        options[key] = value
+        setPropertyByName(propertyAccessMap, key.id, value)
     }
 
-    operator fun <V> get(key: Option<V>): V {
-        return options[key]
-    }
+    @SerialName("ROOT_PROJECT_BUILD_DIR")
+    var rootProjectBuildDir: Path? = null
 
-    operator fun <V> set(key: Option<V>, value: V) {
-        options[key] = value
-    }
+    @SerialName("HISTORY_FILE_DIR")
+    var historyFileDir: Path? = null
 
     class Option<V>(id: String, default: V) : BaseOptionWithDefault<V>(id, defaultValue = default)
 
     companion object {
-        val ROOT_PROJECT_BUILD_DIR: Option<Path?> = Option("ROOT_PROJECT_BUILD_DIR", null)
-        val HISTORY_FILE_DIR: Option<Path?> = Option("HISTORY_FILE_DIR", null)
+        private val propertyAccessMap = mapOf(
+            "ROOT_PROJECT_BUILD_DIR" to JsHistoryBasedIncrementalCompilationConfigurationImpl::rootProjectBuildDir,
+            "HISTORY_FILE_DIR" to JsHistoryBasedIncrementalCompilationConfigurationImpl::historyFileDir,
+        )
     }
 }
