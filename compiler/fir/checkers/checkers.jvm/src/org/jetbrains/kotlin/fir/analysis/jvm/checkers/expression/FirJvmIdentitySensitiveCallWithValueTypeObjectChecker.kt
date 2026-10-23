@@ -54,26 +54,33 @@ object FirJvmIdentitySensitiveCallWithValueTypeObjectChecker : FirFunctionCallCh
         CallableId(FqName("java.util"), FqName("WeakHashMap"), Name.identifier("WeakHashMap")),
     )
 
+    private val atomicFqName = FqName("java.util.concurrent.atomic")
+
+    private val compareAndSetNames = listOf("compareAndSet", "weakCompareAndSet")
+
+    private val varHandleCompareAndSetNames = listOf(
+        "compareAndSet", "compareAndExchange", "compareAndExchangeAcquire", "compareAndExchangeRelease",
+        "weakCompareAndSet", "weakCompareAndSetPlain", "weakCompareAndSetAcquire", "weakCompareAndSetRelease",
+    )
+
+    private val stampedAndMarkableReferenceClassNames = listOf("AtomicStampedReference", "AtomicMarkableReference")
+
     // The arguments that field updaters, variable handles and stamped or markable references compare with the current value by
     // identity: the expected and the new value.
     private val comparedArguments: Map<CallableId, (List<FirExpression>) -> List<FirExpression>> = buildMap {
-        val atomic = FqName("java.util.concurrent.atomic")
-        for (name in listOf("compareAndSet", "weakCompareAndSet")) {
-            put(CallableId(atomic, FqName("AtomicReferenceFieldUpdater"), Name.identifier(name))) { it.takeLast(2) }
+        for (name in compareAndSetNames) {
+            this[CallableId(atomicFqName, FqName("AtomicReferenceFieldUpdater"), Name.identifier(name))] = { it.takeLast(2) }
         }
-        for (name in listOf(
-            "compareAndSet", "compareAndExchange", "compareAndExchangeAcquire", "compareAndExchangeRelease",
-            "weakCompareAndSet", "weakCompareAndSetPlain", "weakCompareAndSetAcquire", "weakCompareAndSetRelease",
-        )) {
-            put(CallableId(FqName("java.lang.invoke"), FqName("VarHandle"), Name.identifier(name))) { it.takeLast(2) }
+        for (name in varHandleCompareAndSetNames) {
+            this[CallableId(FqName("java.lang.invoke"), FqName("VarHandle"), Name.identifier(name))] = { it.takeLast(2) }
         }
-        for (className in listOf("AtomicStampedReference", "AtomicMarkableReference")) {
-            for (name in listOf("compareAndSet", "weakCompareAndSet")) {
-                put(CallableId(atomic, FqName(className), Name.identifier(name))) { it.take(2) }
+        for (className in stampedAndMarkableReferenceClassNames) {
+            for (name in compareAndSetNames) {
+                this[CallableId(atomicFqName, FqName(className), Name.identifier(name))] = { it.take(2) }
             }
         }
-        put(CallableId(atomic, FqName("AtomicStampedReference"), Name.identifier("attemptStamp"))) { it.take(1) }
-        put(CallableId(atomic, FqName("AtomicMarkableReference"), Name.identifier("attemptMark"))) { it.take(1) }
+        this[CallableId(atomicFqName, FqName("AtomicStampedReference"), Name.identifier("attemptStamp"))] = { it.take(1) }
+        this[CallableId(atomicFqName, FqName("AtomicMarkableReference"), Name.identifier("attemptMark"))] = { it.take(1) }
     }
 
     override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
@@ -85,6 +92,7 @@ object FirJvmIdentitySensitiveCallWithValueTypeObjectChecker : FirFunctionCallCh
         // 'Reference.refersTo' is inherited by the reference classes, so a function is matched by its original declaration.
         val callableId = function.unwrapFakeOverrides().callableId
         comparedArguments[callableId]?.let { select ->
+            // The arguments are selected by position: these are Java methods, so they have neither named nor optional arguments.
             // The arguments of a 'VarHandle' method are passed as varargs.
             for (argument in select(expression.arguments.flatMap { (it as? FirVarargArgumentsExpression)?.arguments ?: listOf(it) })) {
                 checkComparedValue(argument)
