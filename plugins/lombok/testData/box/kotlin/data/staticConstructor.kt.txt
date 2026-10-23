@@ -24,7 +24,7 @@ class Bounded<T : Comparable<T>> {
 
   }
 
-  override fun equals(other: Any?): Boolean {
+  override operator fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
     }
@@ -76,7 +76,7 @@ class Box<T : Any?> {
 
   }
 
-  override fun equals(other: Any?): Boolean {
+  override operator fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
     }
@@ -131,7 +131,7 @@ data class DataClass {
 
   }
 
-  override fun equals(other: Any?): Boolean {
+  override operator fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
     }
@@ -200,7 +200,7 @@ class Mixed {
 
   }
 
-  override fun equals(other: Any?): Boolean {
+  override operator fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
     }
@@ -259,7 +259,7 @@ class NameTaken {
 
   }
 
-  override fun equals(other: Any?): Boolean {
+  override operator fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
     }
@@ -315,7 +315,7 @@ class Point {
 
   }
 
-  override fun equals(other: Any?): Boolean {
+  override operator fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
     }
@@ -362,7 +362,7 @@ class WithNoArgs {
 
   }
 
-  override fun equals(other: Any?): Boolean {
+  override operator fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
     }
@@ -423,7 +423,7 @@ class WithSecondary {
     this/*WithSecondary*/(x = 0, y = y)
   }
 
-  override fun equals(other: Any?): Boolean {
+  override operator fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
     }
@@ -465,7 +465,7 @@ class WithVararg {
 
   }
 
-  override fun equals(other: Any?): Boolean {
+  override operator fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
     }
@@ -525,7 +525,7 @@ fun box(): String {
 
     }
 
-    override fun equals(other: Any?): Boolean {
+    override operator fun equals(other: Any?): Boolean {
       when {
         EQEQEQ(arg0 = <this>, arg1 = other) -> return true
       }

@@ -1,0 +1,39 @@
+FILE: test.kt
+    @R|lombok/NoArgsConstructor|(staticName = String(of) [evaluated = String(of)]) public final class KotlinClass : R|kotlin/Any| {
+        public constructor(a: R|kotlin/Int|): R|KotlinClass| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final var a: R|kotlin/Int| = R|<local>/a|
+            public get(): R|kotlin/Int|
+            public set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+        private constructor(): R|KotlinClass|
+
+        public final companion object Companion : R|kotlin/Any| {
+            @R|kotlin/jvm/JvmStatic|() public final fun of(): R|KotlinClass|
+
+            private constructor(): R|KotlinClass.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public final fun box(): R|kotlin/String| {
+        when () {
+            Q|java/lang/reflect/Modifier|.R|java/lang/reflect/Modifier.isPrivate*s|(<getClass>(Q|JavaClass|).R|kotlin/jvm/java|<R|JavaClass|>.R|SubstitutionOverride<java/lang/Class.getDeclaredConstructor: R|java/lang/reflect/Constructor<JavaClass!>!|>|().R|java/lang/reflect/Constructor.modifiers|).R|kotlin/Boolean.not|() ->  {
+                ^box String(Fail: Java no-args constructor is not private)
+            }
+        }
+
+        Q|JavaClass|.R|/JavaClass.of*s|()
+        Q|KotlinClass|.R|/KotlinClass.of|()
+        when () {
+            Q|java/lang/reflect/Modifier|.R|java/lang/reflect/Modifier.isPrivate*s|(<getClass>(Q|KotlinClass|).R|kotlin/jvm/java|<R|KotlinClass|>.R|SubstitutionOverride<java/lang/Class.getDeclaredConstructor: R|java/lang/reflect/Constructor<KotlinClass!>!|>|().R|java/lang/reflect/Constructor.modifiers|).R|kotlin/Boolean.not|() ->  {
+                ^box String(Fail: Kotlin no-args constructor is not private)
+            }
+        }
+
+        ^box String(OK)
+    }
