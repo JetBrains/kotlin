@@ -1293,7 +1293,17 @@ class ExpressionCodegen(
 
     private fun visitTryWithInfo(aTry: IrTry, data: BlockInfo, tryInfo: TryInfo): PromisedValue {
         val tryBlockStart = markNewLabel()
+        val tryBlockEnd = Label()
+        val storeFakeTryValue = Label()
         mv.nop()
+
+        val preventEliminationOfFinally = isFinallyMarkerRequired && aTry.finallyExpression != null
+        if (preventEliminationOfFinally) {
+            // KT-40124. Prevent the finally block from being dead-code-eliminated in case try body diverges.
+            mv.invokestatic(INLINE_MARKER_CLASS_NAME, INLINE_MARKER_ALWAYS_TRUE, "()Z", false)
+            mv.ifeq(storeFakeTryValue)
+        }
+
         val tryAsmType = aTry.asmType
         val tryResult = aTry.tryResult.accept(this, data)
         val isExpression = !aTry.type.isUnit()
@@ -1306,7 +1316,16 @@ class ExpressionCodegen(
             tryResult.discard()
         }
 
-        val tryBlockEnd = markNewLabel()
+        if (preventEliminationOfFinally) {
+            mv.goTo(tryBlockEnd)
+            mv.mark(storeFakeTryValue)
+            if (savedValue != null) {
+                pushDefaultValueOnStack(tryAsmType, mv)
+                mv.store(savedValue, tryAsmType)
+            }
+        }
+
+        mv.visitLabel(tryBlockEnd)
         val tryBlockGaps = tryInfo.gaps.toList()
         val tryCatchBlockEnd = Label()
         if (tryInfo is TryWithFinallyInfo) {
