@@ -184,7 +184,7 @@ abstract class KotlinIrLinker(
     protected abstract fun createModuleDeserializer(
         moduleFragment: IrModuleFragment,
         klib: KotlinLibrary?,
-        strategyResolver: (String) -> DeserializationStrategy,
+        strategyResolver: DeserializationStrategyResolver,
     ): IrModuleDeserializer
 
     protected abstract fun isBuiltInModule(module: IrModuleFragment): Boolean
@@ -293,20 +293,10 @@ abstract class KotlinIrLinker(
         }
     }
 
-    fun deserializeIrModuleHeader(
-        moduleDescriptor: ModuleDescriptor,
-        kotlinLibrary: KotlinLibrary,
-        deserializationStrategy: (String) -> DeserializationStrategy = { DeserializationStrategy.ONLY_REFERENCED },
-    ): IrModuleFragment {
-        val deserializer = createAndRegisterModuleDeserializer(moduleDescriptor, kotlinLibrary, deserializationStrategy)
-        // The IrModule and its IrFiles have been created during module initialization.
-        return deserializer.moduleFragment
-    }
-
     fun createAndRegisterModuleDeserializer(
         moduleDescriptor: ModuleDescriptor,
         kotlinLibrary: KotlinLibrary?,
-        deserializationStrategy: (String) -> DeserializationStrategy,
+        strategyResolver: DeserializationStrategyResolver,
     ): IrModuleDeserializer {
         val moduleFragment = IrModuleFragmentImpl(moduleDescriptor)
         moduleFragment.kotlinLibrary = kotlinLibrary
@@ -315,7 +305,7 @@ abstract class KotlinIrLinker(
             createModuleDeserializer(
                 moduleFragment = moduleFragment,
                 klib = kotlinLibrary,
-                strategyResolver = deserializationStrategy
+                strategyResolver = strategyResolver
             )
         )
 
@@ -353,22 +343,6 @@ abstract class KotlinIrLinker(
             )
         } else moduleDeserializer
 
-    fun deserializeFullModule(moduleDescriptor: ModuleDescriptor, kotlinLibrary: KotlinLibrary): IrModuleFragment =
-        deserializeIrModuleHeader(moduleDescriptor, kotlinLibrary, { DeserializationStrategy.ALL })
-
-    fun deserializeOnlyHeaderModule(moduleDescriptor: ModuleDescriptor, kotlinLibrary: KotlinLibrary): IrModuleFragment =
-        deserializeIrModuleHeader(moduleDescriptor, kotlinLibrary, { DeserializationStrategy.ONLY_DECLARATION_HEADERS })
-
-    fun deserializeHeadersWithInlineBodies(moduleDescriptor: ModuleDescriptor, kotlinLibrary: KotlinLibrary): IrModuleFragment =
-        deserializeIrModuleHeader(moduleDescriptor, kotlinLibrary, { DeserializationStrategy.WITH_INLINE_BODIES })
-
-    fun deserializeDirtyFiles(moduleDescriptor: ModuleDescriptor, kotlinLibrary: KotlinLibrary, dirtyFiles: Collection<String>): IrModuleFragment {
-        return deserializeIrModuleHeader(moduleDescriptor, kotlinLibrary, {
-            if (it in dirtyFiles) DeserializationStrategy.ALL
-            else DeserializationStrategy.WITH_INLINE_BODIES
-        })
-    }
-
     fun getAllMatchingSignatures(callableId: CallableId, signatureKind: IrDeserializer.TopLevelSymbolKind): List<IdSignature> {
         return allModuleDeserializers.flatMap { moduleDeserializer ->
             moduleDeserializer.getAllMatchingSignatures(callableId, signatureKind)
@@ -382,13 +356,19 @@ enum class DeserializationStrategy(
     val explicitlyExported: Boolean,
     val theWholeWorld: Boolean,
     val inlineBodies: Boolean
-) {
+) : DeserializationStrategyResolver {
     ON_DEMAND(true, false, false, false, false),
     ONLY_REFERENCED(false, true, false, false, true),
     ALL(false, true, true, true, true),
     EXPLICITLY_EXPORTED(false, true, true, false, true),
     ONLY_DECLARATION_HEADERS(false, false, false, false, false),
-    WITH_INLINE_BODIES(false, false, false, false, true)
+    WITH_INLINE_BODIES(false, false, false, false, true);
+
+    override fun invoke(filePath: String) = this
+}
+
+fun interface DeserializationStrategyResolver {
+    operator fun invoke(filePath: String): DeserializationStrategy
 }
 
 /**

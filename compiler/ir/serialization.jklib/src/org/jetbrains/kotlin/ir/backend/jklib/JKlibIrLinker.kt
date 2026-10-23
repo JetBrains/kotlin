@@ -99,7 +99,7 @@ class JKlibIrLinker(
     override fun createModuleDeserializer(
         moduleFragment: IrModuleFragment,
         klib: KotlinLibrary?,
-        strategyResolver: (String) -> DeserializationStrategy,
+        strategyResolver: DeserializationStrategyResolver,
     ): IrModuleDeserializer {
         if (klib == null) {
             return MetadataJVMModuleDeserializer(moduleFragment)
@@ -175,10 +175,11 @@ class JKlibIrLinker(
             }
         }
     }
+
     private inner class JKlibModuleDeserializer(
         moduleFragment: IrModuleFragment,
         klib: KotlinLibrary,
-        strategyResolver: (String) -> DeserializationStrategy,
+        strategyResolver: DeserializationStrategyResolver,
         libraryAbiVersion: KotlinAbiVersion,
     ) : BasicIrModuleDeserializer(
         this,

@@ -155,7 +155,6 @@ class NativeDeserializerFacade(
             symbolTable = symbolTable,
             friendModules = friendsMap,
             cInteropModuleDeserializerFactory = CInteropModuleDeserializerFactoryMock,
-            exportedDependencies = emptySet(),
             partialLinkageConfig = PartialLinkageConfig(partialLinkageLogLevel),
             irDiagnosticReporter = irDiagnosticReporter,
             librariesBeingCached = emptyMap(),
@@ -193,10 +192,10 @@ class NativeDeserializerFacade(
     ): IrModuleDependencies = IrModuleDependencies(
         libraries.map { klib: KotlinLibrary ->
             val descriptor: ModuleDescriptor = mapping(klib)
-            if (klib != mainModuleLib)
-                irLinker.deserializeIrModuleHeader(descriptor, klib, { DeserializationStrategy.EXPLICITLY_EXPORTED })
-            else
-                irLinker.deserializeIrModuleHeader(descriptor, klib, { DeserializationStrategy.ALL })
+            val deserializationStrategy =
+                if (klib != mainModuleLib) DeserializationStrategy.EXPLICITLY_EXPORTED else DeserializationStrategy.ALL
+
+            irLinker.createAndRegisterModuleDeserializer(descriptor, klib, deserializationStrategy).moduleFragment
         }
     )
 }

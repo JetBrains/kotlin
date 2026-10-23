@@ -120,7 +120,7 @@ abstract class IrModuleDeserializer(
      */
     open fun deserializeReachableDeclarations() { error("Unsupported Operation") }
 
-    open val strategyResolver: (String) -> DeserializationStrategy = { DeserializationStrategy.ONLY_DECLARATION_HEADERS }
+    open val strategyResolver: DeserializationStrategyResolver = DeserializationStrategy.ONLY_DECLARATION_HEADERS
 
     open fun fileDeserializers(): Collection<IrFileDeserializer> = emptyList()
 
@@ -245,8 +245,7 @@ class IrModuleDeserializerWithBuiltIns(
     override val klib: KotlinLibrary
         get() = delegate.klib
 
-    override val strategyResolver: (String) -> DeserializationStrategy
-        get() = delegate.strategyResolver
+    override val strategyResolver get() = delegate.strategyResolver
 
     override fun addModuleReachableTopLevel(topLevelDeclarationSignature: IdSignature) {
         delegate.addModuleReachableTopLevel(topLevelDeclarationSignature)

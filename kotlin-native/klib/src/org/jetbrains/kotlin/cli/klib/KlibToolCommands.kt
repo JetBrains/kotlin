@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.cli.klib
 import org.jetbrains.kotlin.backend.common.DumpIrReferenceRenderingAsSignatureStrategy
 import org.jetbrains.kotlin.backend.common.IdSignaturesExtractorFromKlibWithIndices
 import org.jetbrains.kotlin.backend.common.IdSignaturesExtractorFromRegularKlib
+import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
 import org.jetbrains.kotlin.backend.common.serialization.InternalIrInlineDeserializerAPI
 import org.jetbrains.kotlin.backend.common.serialization.IrInterningService
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializer
@@ -166,7 +167,7 @@ internal class DumpIr(output: KlibToolOutput, args: ParsedArguments) : KlibToolC
         val symbolTable = SymbolTable(KonanIdSignaturer(KonanManglerDesc), IrFactoryImpl)
 
         val linker = KlibToolIrLinker(output, symbolTable)
-        val irFragment = linker.deserializeFullModule(moduleDescriptor, args.library)
+        val irFragment = linker.createAndRegisterModuleDeserializer(moduleDescriptor, args.library, DeserializationStrategy.ALL).moduleFragment
         linker.modulesWithReachableTopLevels.forEach(IrModuleDeserializer::deserializeReachableDeclarations)
 
         val dumpOptions = DumpIrTreeOptions(
