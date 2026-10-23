@@ -140,5 +140,5 @@ internal class SymbolLightRecordComponent private constructor(
     override fun hashCode(): Int = kotlinOrigin?.hashCode() ?: _name.hashCode()
 
     override fun isValid(): Boolean =
-        super.isValid() && kotlinOrigin?.isValid() ?: symbolPointer.isValid(useSiteModule)
+        super.isValid() && kotlinOrigin?.isValid() ?: isSymbolPointerValid(symbolPointer, useSiteModule)
 }

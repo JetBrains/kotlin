@@ -127,5 +127,5 @@ internal abstract class SymbolLightParameterCommon(
     }
 
     override fun hashCode(): Int = kotlinOrigin?.hashCode() ?: _name.hashCode()
-    override fun isValid(): Boolean = super.isValid() && kotlinOrigin?.isValid ?: symbolPointer.isValid(useSiteModule)
+    override fun isValid(): Boolean = super.isValid() && kotlinOrigin?.isValid ?: isSymbolPointerValid(symbolPointer, useSiteModule)
 }

@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightSuspendCo
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightValueParameter
 import org.jetbrains.kotlin.light.classes.symbol.utils.compareSymbolPointers
 import org.jetbrains.kotlin.light.classes.symbol.utils.isOriginEquivalentTo
-import org.jetbrains.kotlin.light.classes.symbol.utils.isValid
+import org.jetbrains.kotlin.light.classes.symbol.utils.isSymbolPointerValid
 import org.jetbrains.kotlin.light.classes.symbol.utils.withSymbol
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -122,7 +122,7 @@ internal abstract class SymbolLightMethod<FType : KaFunctionSymbol> private cons
         }
     }
 
-    override fun isValid(): Boolean = super.isValid() && functionDeclaration?.isValid ?: symbolPointer.isValid(useSiteModule)
+    override fun isValid(): Boolean = super.isValid() && functionDeclaration?.isValid ?: isSymbolPointerValid(symbolPointer, useSiteModule)
 
     override fun isEquivalentTo(another: PsiElement?): Boolean {
         return super.isEquivalentTo(another) || isOriginEquivalentTo(another)

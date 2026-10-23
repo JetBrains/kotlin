@@ -149,7 +149,7 @@ internal abstract class SymbolLightClassForClassLike<SType : KaClassSymbol> prot
     override fun isAnnotationType(): Boolean = classKind() == KaClassKind.ANNOTATION_CLASS
     override fun isEnum(): Boolean = classKind() == KaClassKind.ENUM_CLASS
 
-    override fun isValid(): Boolean = classOrObjectDeclaration?.isValid ?: symbolPointer.isValid(useSiteModule)
+    override fun isValid(): Boolean = classOrObjectDeclaration?.isValid ?: isSymbolPointerValid(symbolPointer, useSiteModule)
 
     override fun getUseScope(): SearchScope = classOrObjectDeclaration?.useScope ?: GlobalSearchScope.projectScope(project)
 

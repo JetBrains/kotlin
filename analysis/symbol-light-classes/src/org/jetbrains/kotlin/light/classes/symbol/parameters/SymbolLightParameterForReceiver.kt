@@ -111,5 +111,5 @@ internal class SymbolLightParameterForReceiver private constructor(
 
     override fun hashCode(): Int = _name.hashCode()
 
-    override fun isValid(): Boolean = super.isValid() && symbolPointer.isValid(useSiteModule)
+    override fun isValid(): Boolean = super.isValid() && isSymbolPointerValid(symbolPointer, useSiteModule)
 }
