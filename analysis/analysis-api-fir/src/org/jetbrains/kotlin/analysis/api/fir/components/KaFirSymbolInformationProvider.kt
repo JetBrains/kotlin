@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationTarget
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.fir.annotations.KaBaseEmptyAnnotationList
+import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirEmptyAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaKlibDecompiledFileAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirNamedClassSymbolBase
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirPackageSymbol
@@ -44,7 +44,7 @@ internal class KaFirSymbolInformationProvider(
     override val analysisSessionProvider: () -> KaFirSession,
 ) : KaFirSessionComponent(), KaInternalsSymbolInformationProvider {
     private companion object {
-        private val OBSOLETE_SYMBOL_DEPRECATION = KaBaseDeprecation(KaDeprecationLevel.HIDDEN, isPropagatedToOverrides = true)
+        private val OBSOLETE_SYMBOL_DEPRECATION = KaFirDeprecation(KaDeprecationLevel.HIDDEN, isPropagatedToOverrides = true)
     }
 
     override fun isDeprecated(symbol: KaSymbol): Boolean = withValidityAssertion { deprecation(symbol) != null }
@@ -130,7 +130,7 @@ internal class KaFirSymbolInformationProvider(
     }
 
     private fun FirDeprecationInfo.toKaDeprecation(): KaDeprecation {
-        return KaBaseDeprecation(deprecationLevel.toKaLevel(), propagatesToOverrides)
+        return KaFirDeprecation(deprecationLevel.toKaLevel(), propagatesToOverrides)
     }
 
     private fun computeAnnotationApplicableTargets(symbol: KaClassSymbol): Set<KotlinTarget>? {
@@ -193,7 +193,7 @@ internal class KaFirSymbolInformationProvider(
 
     override fun containingFileAnnotations(symbol: KaDeclarationSymbol): KaAnnotationList = withValidityAssertion {
         if (!symbol.isTopLevel) {
-            return KaBaseEmptyAnnotationList(analysisSession.firSymbolBuilder.token)
+            return KaFirEmptyAnnotationList(analysisSession.firSymbolBuilder.token)
         }
 
         val containingFile = with(analysisSession) { symbol.containingFile }

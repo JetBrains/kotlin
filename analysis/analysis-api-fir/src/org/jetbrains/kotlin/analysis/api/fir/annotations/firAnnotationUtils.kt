@@ -107,7 +107,7 @@ private fun computeTargetAnnotationArguments(
     if (rawValues.isNotEmpty()) {
         val token = builder.token
 
-        val value = KaBaseNamedAnnotationValue(
+        val value = KaFirNamedAnnotationValue(
             annotationParameterName,
             KaArrayAnnotationValueImpl(
                 values = rawValues.map {

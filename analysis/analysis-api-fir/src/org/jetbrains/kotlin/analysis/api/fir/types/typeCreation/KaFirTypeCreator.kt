@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.analysis.api.fir.types.typeCreation
 
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.fir.types.KaBaseStarTypeProjection
-import org.jetbrains.kotlin.analysis.api.fir.types.KaBaseTypeArgumentWithVariance
+import org.jetbrains.kotlin.analysis.api.fir.types.KaFirStarTypeProjection
+import org.jetbrains.kotlin.analysis.api.fir.types.KaFirTypeArgumentWithVariance
 import org.jetbrains.kotlin.analysis.api.fir.utils.asKaType
 import org.jetbrains.kotlin.analysis.api.fir.utils.coneType
 import org.jetbrains.kotlin.analysis.api.fir.utils.coneTypeProjection
@@ -53,23 +53,23 @@ internal class KaFirTypeCreator(
         variance: Variance,
         type: KaType,
     ): KaTypeArgumentWithVariance = withValidityAssertion {
-        KaBaseTypeArgumentWithVariance(type, variance, token)
+        KaFirTypeArgumentWithVariance(type, variance, token)
     }
 
     override fun typeProjection(
         variance: Variance,
         type: KaTypeCreator.() -> KaType,
     ): KaTypeArgumentWithVariance = withValidityAssertion {
-        KaBaseTypeArgumentWithVariance(type(), variance, token)
+        KaFirTypeArgumentWithVariance(type(), variance, token)
     }
 
     override fun starTypeProjection(): KaStarTypeProjection = withValidityAssertion {
-        KaBaseStarTypeProjection(token)
+        KaFirStarTypeProjection(token)
     }
 
     override fun arrayType(elementType: KaType, init: KaArrayTypeBuilder.() -> Unit): KaType = withValidityAssertion {
         with(analysisSession) {
-            val builder = KaBaseArrayTypeBuilder(this@KaFirTypeCreator).apply(init)
+            val builder = KaFirArrayTypeBuilder(this@KaFirTypeCreator).apply(init)
 
             if (elementType is KaClassType && builder.shouldPreferPrimitiveTypes && !elementType.isMarkedNullable) {
                 val classId = elementType.classId
@@ -99,7 +99,7 @@ internal class KaFirTypeCreator(
     }
 
     override fun classType(classId: ClassId, init: KaClassTypeBuilder.() -> Unit): KaType = withValidityAssertion {
-        val builder = KaBaseClassTypeBuilder(this).apply(init)
+        val builder = KaFirClassTypeBuilder(this).apply(init)
         val classSymbol = rootModuleSession.symbolProvider.getClassLikeSymbolByClassId(classId)
             ?: return ConeErrorType(
                 ConeUnresolvedSymbolError(classId)
@@ -112,10 +112,10 @@ internal class KaFirTypeCreator(
     override fun classType(symbol: KaClassLikeSymbol, init: KaClassTypeBuilder.() -> Unit): KaType = withValidityAssertion {
         val symbol = symbol
         val lookupTag = symbol.classId?.toLookupTag() ?: symbol.firSymbol.toLookupTag()
-        return buildClassType(lookupTag, KaBaseClassTypeBuilder(this).apply(init))
+        return buildClassType(lookupTag, KaFirClassTypeBuilder(this).apply(init))
     }
 
-    private fun buildClassType(lookupTag: ConeClassLikeLookupTag, builder: KaBaseClassTypeBuilder): KaType {
+    private fun buildClassType(lookupTag: ConeClassLikeLookupTag, builder: KaFirClassTypeBuilder): KaType {
         val expectedNumberOfParameters = with(analysisSession.firSession.typeContext) { lookupTag.parametersCount() }
         val builderTypeArguments = builder.typeArguments
         val arguments = List(expectedNumberOfParameters) { index ->
@@ -137,7 +137,7 @@ internal class KaFirTypeCreator(
 
     override fun typeParameterType(symbol: KaTypeParameterSymbol, init: KaTypeParameterTypeBuilder.() -> Unit): KaTypeParameterType =
         withValidityAssertion {
-            val builder = KaBaseTypeParameterTypeBuilder(this).apply(init)
+            val builder = KaFirTypeParameterTypeBuilder(this).apply(init)
             val coneType = symbol.firSymbol.toConeType()
                 .withNullability(nullable = builder.isMarkedNullable, typeContext = analysisSession.firSession.typeContext)
             return coneType.withAnnotationAttributes(builder.annotations).asKaType() as KaTypeParameterType
@@ -148,7 +148,7 @@ internal class KaFirTypeCreator(
         init: KaCapturedTypeBuilder.() -> Unit,
     ): KaCapturedType {
         withValidityAssertion {
-            val builder = KaBaseCapturedTypeBuilder(this).apply(init)
+            val builder = KaFirCapturedTypeBuilder(this).apply(init)
             return type.coneType.withAnnotationAttributes(builder.annotations)
                 .withNullability(builder.isMarkedNullable, typeContext = analysisSession.firSession.typeContext)
                 .asKaType() as KaCapturedType
@@ -168,7 +168,7 @@ internal class KaFirTypeCreator(
                     }
                 }
 
-                val builder = KaBaseCapturedTypeBuilder(this@KaFirTypeCreator).apply(init)
+                val builder = KaFirCapturedTypeBuilder(this@KaFirTypeCreator).apply(init)
                 val capturedType = firSession.typeContext.createCapturedType(
                     projection.coneTypeProjection,
                     projection.type?.directSupertypes?.map { it.coneType }?.toList() ?: emptyList(),
@@ -188,14 +188,14 @@ internal class KaFirTypeCreator(
         type: KaTypeParameterType,
         init: KaDefinitelyNotNullTypeBuilder.() -> Unit,
     ): KaType = withValidityAssertion {
-        buildDefinitelyNotNullType(type, KaBaseDefinitelyNotNullTypeBuilder(this).apply(init))
+        buildDefinitelyNotNullType(type, KaFirDefinitelyNotNullTypeBuilder(this).apply(init))
     }
 
     override fun definitelyNotNullType(
         type: KaCapturedType,
         init: KaDefinitelyNotNullTypeBuilder.() -> Unit,
     ): KaType = withValidityAssertion {
-        buildDefinitelyNotNullType(type, KaBaseDefinitelyNotNullTypeBuilder(this).apply(init))
+        buildDefinitelyNotNullType(type, KaFirDefinitelyNotNullTypeBuilder(this).apply(init))
     }
 
     private fun buildDefinitelyNotNullType(type: KaType, builder: KaDefinitelyNotNullTypeBuilder): KaType {
@@ -211,7 +211,7 @@ internal class KaFirTypeCreator(
         init: KaFlexibleTypeBuilder.() -> Unit,
     ): KaType? {
         withValidityAssertion {
-            val builder = KaBaseFlexibleTypeBuilder(
+            val builder = KaFirFlexibleTypeBuilder(
                 type.lowerBound,
                 type.upperBound,
                 this
@@ -225,7 +225,7 @@ internal class KaFirTypeCreator(
     ): KaType? {
         withValidityAssertion {
             with(analysisSession) {
-                val builder = KaBaseFlexibleTypeBuilder(
+                val builder = KaFirFlexibleTypeBuilder(
                     lowerBound = builtinTypes.nothing,
                     upperBound = builtinTypes.nullableAny,
                     this@KaFirTypeCreator
@@ -240,7 +240,7 @@ internal class KaFirTypeCreator(
         upperBound: KaType,
     ): KaType? {
         withValidityAssertion {
-            val builder = KaBaseFlexibleTypeBuilder(
+            val builder = KaFirFlexibleTypeBuilder(
                 lowerBound,
                 upperBound,
                 this
@@ -274,7 +274,7 @@ internal class KaFirTypeCreator(
     ): KaType {
         withValidityAssertion {
             with(analysisSession) {
-                val builder = KaBaseIntersectionTypeBuilder(this@KaFirTypeCreator).apply(init)
+                val builder = KaFirIntersectionTypeBuilder(this@KaFirTypeCreator).apply(init)
                 val conjuncts = builder.conjuncts
 
                 if (conjuncts.isEmpty()) {
@@ -292,7 +292,7 @@ internal class KaFirTypeCreator(
 
     override fun dynamicType(init: KaDynamicTypeBuilder.() -> Unit): KaDynamicType {
         withValidityAssertion {
-            val builder = KaBaseDynamicTypeBuilder(this).apply(init)
+            val builder = KaFirDynamicTypeBuilder(this).apply(init)
             val attributes = constructAnnotationAttributes(builder.annotations, allowExtensionFunctionType = false)
             val coneType = ConeDynamicType.create(rootModuleSession, attributes = attributes)
             return coneType.asKaType() as KaDynamicType
@@ -302,11 +302,11 @@ internal class KaFirTypeCreator(
     override fun functionType(
         init: KaFunctionTypeBuilder.() -> Unit,
     ): KaFunctionType = withValidityAssertion {
-        return buildFunctionType(KaBaseFunctionTypeBuilder(this, analysisSession).apply(init)) as KaFunctionType
+        return buildFunctionType(KaFirFunctionTypeBuilder(this, analysisSession).apply(init)) as KaFunctionType
     }
 
 
-    private fun buildFunctionType(builder: KaBaseFunctionTypeBuilder): KaType {
+    private fun buildFunctionType(builder: KaFirFunctionTypeBuilder): KaType {
         val isSuspend = builder.isSuspend
         val isReflect = builder.isReflectType
         val numberOfParameters =

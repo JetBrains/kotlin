@@ -60,7 +60,7 @@ internal class KaKlibDecompiledFileAnnotationList private constructor(
     companion object {
         fun create(fileAnnotations: List<FirAnnotation>, builder: KaSymbolByFirBuilder): KaAnnotationList {
             return when {
-                fileAnnotations.isEmpty() -> KaBaseEmptyAnnotationList(builder.token)
+                fileAnnotations.isEmpty() -> KaFirEmptyAnnotationList(builder.token)
                 else -> KaKlibDecompiledFileAnnotationList(fileAnnotations, builder)
             }
         }

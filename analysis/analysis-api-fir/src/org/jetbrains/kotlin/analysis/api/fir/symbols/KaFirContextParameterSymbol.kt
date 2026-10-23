@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.parameterName
-import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaBaseContextParameterSymbolPointer
-import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaBaseUnrestorableSymbolPointer
+import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirContextParameterSymbolPointer
+import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirUnrestorableSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createOwnerPointer
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -57,10 +57,10 @@ internal class KaFirContextParameterSymbol private constructor(
         // context receivers, so they shouldn't be restored in this case by a non-psi pointer
         val index = (ownerSymbol.firSymbol.fir as? FirCallableDeclaration)?.contextParameters?.indexOf(firSymbol.fir)
         if (index == null || index == -1) {
-            return KaBaseUnrestorableSymbolPointer()
+            return KaFirUnrestorableSymbolPointer()
         }
 
-        return KaBaseContextParameterSymbolPointer(
+        return KaFirContextParameterSymbolPointer(
             ownerPointer = createOwnerPointer(),
             name = name,
             index = index,

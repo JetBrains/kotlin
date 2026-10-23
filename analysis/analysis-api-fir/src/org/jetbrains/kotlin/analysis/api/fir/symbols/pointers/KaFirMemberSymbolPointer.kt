@@ -22,7 +22,7 @@ internal abstract class KaFirMemberSymbolPointer<S : KaSymbol>(
     private val ownerPointer: KaSymbolPointer<KaDeclarationContainerSymbol>,
     private val isStatic: Boolean = false,
     originalSymbol: S?,
-) : KaBaseCachedSymbolPointer<S>(originalSymbol) {
+) : KaFirCachedSymbolPointer<S>(originalSymbol) {
     @KaImplementationDetail
     final override fun restoreIfNotCached(analysisSession: KaSession): S? {
         require(analysisSession is KaFirSession)

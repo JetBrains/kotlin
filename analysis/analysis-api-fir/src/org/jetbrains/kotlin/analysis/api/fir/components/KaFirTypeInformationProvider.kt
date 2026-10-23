@@ -29,7 +29,7 @@ internal class KaFirTypeInformationProvider(
     override val analysisSessionProvider: () -> KaFirSession
 ) : KaFirSessionComponent(), KaInternalsTypeInformationProvider {
     override fun functionTypeFamily(type: KaType): KaFunctionTypeFamily? = type.withValidityAssertion {
-        computeFunctionTypeKind(type)?.let(::KaBaseFunctionTypeFamily)
+        computeFunctionTypeKind(type)?.let(::KaFirFunctionTypeFamily)
     }
 
     override fun isFunctionType(type: KaType): Boolean = type.withValidityAssertion {
@@ -82,7 +82,7 @@ internal class KaFirTypeInformationProvider(
         }
     }
 
-    override fun builtinFunctionTypeFamilies(): KaBuiltinFunctionTypeFamilies = KaBaseBuiltinFunctionTypeFamilies
+    override fun builtinFunctionTypeFamilies(): KaBuiltinFunctionTypeFamilies = KaFirBuiltinFunctionTypeFamilies
 
     override fun classId(type: KaType): ClassId? = withValidityAssertion {
         when (type) {
@@ -141,7 +141,7 @@ internal class KaFirTypeInformationProvider(
 }
 
 @KaImplementationDetail
-class KaBaseFunctionTypeFamily(
+class KaFirFunctionTypeFamily(
     @property:KaImplementationDetail
     val typeKind: FunctionTypeKind,
 ) : KaFunctionTypeFamily, org.jetbrains.kotlin.analysis.api.components.KaFunctionTypeFamily {
@@ -173,7 +173,7 @@ class KaBaseFunctionTypeFamily(
         typeKind.numberedClassId(arity)
 
     override fun equals(other: Any?): Boolean =
-        other is KaBaseFunctionTypeFamily && typeKind == other.typeKind
+        other is KaFirFunctionTypeFamily && typeKind == other.typeKind
 
     override fun hashCode(): Int = typeKind.hashCode()
 
@@ -181,17 +181,17 @@ class KaBaseFunctionTypeFamily(
         typeKind.toString()
 }
 
-private object KaBaseBuiltinFunctionTypeFamilies : KaBuiltinFunctionTypeFamilies,
+private object KaFirBuiltinFunctionTypeFamilies : KaBuiltinFunctionTypeFamilies,
     org.jetbrains.kotlin.analysis.api.components.KaBuiltinFunctionTypeFamilies {
     override val function: org.jetbrains.kotlin.analysis.api.components.KaFunctionTypeFamily =
-        KaBaseFunctionTypeFamily(FunctionTypeKind.Function)
+        KaFirFunctionTypeFamily(FunctionTypeKind.Function)
 
     override val suspendFunction: org.jetbrains.kotlin.analysis.api.components.KaFunctionTypeFamily =
-        KaBaseFunctionTypeFamily(FunctionTypeKind.SuspendFunction)
+        KaFirFunctionTypeFamily(FunctionTypeKind.SuspendFunction)
 
     override val kFunction: org.jetbrains.kotlin.analysis.api.components.KaFunctionTypeFamily =
-        KaBaseFunctionTypeFamily(FunctionTypeKind.KFunction)
+        KaFirFunctionTypeFamily(FunctionTypeKind.KFunction)
 
     override val kSuspendFunction: org.jetbrains.kotlin.analysis.api.components.KaFunctionTypeFamily =
-        KaBaseFunctionTypeFamily(FunctionTypeKind.KSuspendFunction)
+        KaFirFunctionTypeFamily(FunctionTypeKind.KSuspendFunction)
 }

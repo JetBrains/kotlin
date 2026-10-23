@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.fir.annotations.KaBaseEmptyAnnotationList
-import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaBaseContextParameterSymbolPointer
+import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirEmptyAnnotationList
+import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirContextParameterSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createOwnerPointer
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -72,7 +72,7 @@ internal class KaFirContextReceiverBasedContextParameterSymbol private construct
         get() = withValidityAssertion { firSymbol.returnType(builder) }
 
     override val annotations: KaAnnotationList
-        get() = withValidityAssertion { KaBaseEmptyAnnotationList(token) }
+        get() = withValidityAssertion { KaFirEmptyAnnotationList(token) }
 
     override fun createPointer(): KaSymbolPointer<KaContextParameterSymbol> = withValidityAssertion {
         psiBasedSymbolPointerOfTypeIfSource<KaContextParameterSymbol>()?.let { return it }
@@ -81,7 +81,7 @@ internal class KaFirContextReceiverBasedContextParameterSymbol private construct
             ?: error("Containing declaration is expected for a context parameter symbol")
 
         val parameters = ownerSymbol.firSymbol.fir.contextParameters
-        return KaBaseContextParameterSymbolPointer(
+        return KaFirContextParameterSymbolPointer(
             ownerPointer = createOwnerPointer(),
             name = name,
             index = parameters.indexOf(firSymbol.fir),

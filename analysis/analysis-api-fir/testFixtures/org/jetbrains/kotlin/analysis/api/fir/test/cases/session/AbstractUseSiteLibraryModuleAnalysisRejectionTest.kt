@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.api.fir.test.cases.session
 
 import com.intellij.mock.MockProject
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analysis.api.fir.sessions.KaBaseUseSiteLibraryModuleAnalysisException
+import org.jetbrains.kotlin.analysis.api.fir.sessions.KaFirUseSiteLibraryModuleAnalysisException
 import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformSettings
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.session.analyze
@@ -52,7 +52,7 @@ abstract class AbstractUseSiteLibraryModuleAnalysisRejectionTest : AbstractAnaly
             analyze(libraryModule) {
                 // Nothing to do here.
             }
-        } catch (_: KaBaseUseSiteLibraryModuleAnalysisException) {
+        } catch (_: KaFirUseSiteLibraryModuleAnalysisException) {
             exceptionOccurred = true
         }
 

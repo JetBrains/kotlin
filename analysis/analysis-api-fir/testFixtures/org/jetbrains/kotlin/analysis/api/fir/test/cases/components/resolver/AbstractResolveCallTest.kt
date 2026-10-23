@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.analysis.api.fir.test.cases.components.resolver
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaResolver
 import org.jetbrains.kotlin.analysis.api.components.resolveToCall
-import org.jetbrains.kotlin.analysis.api.fir.resolution.KaBaseSimpleCallResolutionError
-import org.jetbrains.kotlin.analysis.api.fir.resolution.KaBaseSimpleCallResolutionSuccess
+import org.jetbrains.kotlin.analysis.api.fir.resolution.KaFirSimpleCallResolutionError
+import org.jetbrains.kotlin.analysis.api.fir.resolution.KaFirSimpleCallResolutionSuccess
 import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.assertStableResult
 import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.findSpecializedResolveFunctions
 import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.stringRepresentation
@@ -59,10 +59,10 @@ private fun Any.asCallResolutionAttempt(): KaCallResolutionAttempt = when (this)
     is KaCallResolutionAttempt -> this
     is KaSuccessCallInfo -> {
         val simpleCall = (call as KaSimpleOrMultiCall).calls.first()
-        KaBaseSimpleCallResolutionSuccess(simpleCall)
+        KaFirSimpleCallResolutionSuccess(simpleCall)
     }
 
-    is KaErrorCallInfo -> KaBaseSimpleCallResolutionError(
+    is KaErrorCallInfo -> KaFirSimpleCallResolutionError(
         backedDiagnostic = diagnostic,
         backingCandidateCalls = candidateCalls.flatMap {
             (it as KaSimpleOrMultiCall).calls

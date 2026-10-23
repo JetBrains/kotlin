@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.fir.scopes.KaBaseEmptyScope
-import org.jetbrains.kotlin.analysis.api.fir.scopes.KaBaseScope
+import org.jetbrains.kotlin.analysis.api.fir.scopes.KaFirEmptyScope
+import org.jetbrains.kotlin.analysis.api.fir.scopes.KaFirScope
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsResolveExtensionInfoProvider
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -28,7 +28,7 @@ internal class KaFirResolveExtensionInfoProvider(
 ) : KaFirSessionComponent(), KaInternalsResolveExtensionInfoProvider {
     override fun resolveExtensionScopeWithTopLevelDeclarations(): KaScope = withValidityAssertion {
         val tools = analysisSession.extensionTools
-        if (tools.isEmpty()) return KaBaseEmptyScope(token)
+        if (tools.isEmpty()) return KaFirEmptyScope(token)
         return KaFirResolveExtensionScope(analysisSession, tools)
     }
 
@@ -49,7 +49,7 @@ internal class KaFirResolveExtensionInfoProvider(
 private class KaFirResolveExtensionScope(
     private val analysisSession: KaFirSession,
     private val tools: List<LLFirResolveExtensionTool>,
-) : KaBaseScope() {
+) : KaFirScope() {
     init {
         require(tools.isNotEmpty())
     }

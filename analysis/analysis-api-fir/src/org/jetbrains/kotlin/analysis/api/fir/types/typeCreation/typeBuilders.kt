@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.analysis.api.fir.types.typeCreation
 
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.fir.resolution.KaBaseFunctionValueParameter
-import org.jetbrains.kotlin.analysis.api.fir.types.KaBaseTypeArgumentWithVariance
+import org.jetbrains.kotlin.analysis.api.fir.resolution.KaFirFunctionValueParameter
+import org.jetbrains.kotlin.analysis.api.fir.types.KaFirTypeArgumentWithVariance
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.analysis.api.types.typeCreation.*
@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 
 @KaImplementationDetail
-abstract class KaBaseTypeBuilderWithAnnotations : KaTypeBuilderWithAnnotations {
+abstract class KaFirTypeBuilderWithAnnotations : KaTypeBuilderWithAnnotations {
     val backingAnnotations = mutableListOf<ClassId>()
 
     override val annotations: List<ClassId>
@@ -43,7 +43,7 @@ abstract class KaBaseTypeBuilderWithAnnotations : KaTypeBuilderWithAnnotations {
 }
 
 @KaImplementationDetail
-class KaBaseClassTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaClassTypeBuilder, KaBaseTypeBuilderWithAnnotations(),
+class KaFirClassTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaClassTypeBuilder, KaFirTypeBuilderWithAnnotations(),
     KaTypeCreator by typeCreatorDelegate {
     private val backingTypeArguments = mutableListOf<KaTypeProjection>()
 
@@ -69,7 +69,7 @@ class KaBaseClassTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaClassTypeBu
     override fun typeArgument(variance: Variance, type: () -> KaType) = typeArgument(variance, type())
 
     override fun typeArgument(variance: Variance, type: KaType) = withValidityAssertion {
-        backingTypeArguments += KaBaseTypeArgumentWithVariance(type, variance, type.token)
+        backingTypeArguments += KaFirTypeArgumentWithVariance(type, variance, type.token)
     }
 
     override fun typeArguments(arguments: () -> Iterable<KaTypeProjection>) = withValidityAssertion {
@@ -80,7 +80,7 @@ class KaBaseClassTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaClassTypeBu
 }
 
 @KaImplementationDetail
-class KaBaseTypeParameterTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaTypeParameterTypeBuilder, KaBaseTypeBuilderWithAnnotations(),
+class KaFirTypeParameterTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaTypeParameterTypeBuilder, KaFirTypeBuilderWithAnnotations(),
     KaTypeCreator by typeCreatorDelegate {
     override var isMarkedNullable: Boolean = false
         get() = withValidityAssertion { field }
@@ -92,7 +92,7 @@ class KaBaseTypeParameterTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaTyp
 }
 
 @KaImplementationDetail
-class KaBaseArrayTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaArrayTypeBuilder, KaBaseTypeBuilderWithAnnotations(),
+class KaFirArrayTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaArrayTypeBuilder, KaFirTypeBuilderWithAnnotations(),
     KaTypeCreator by typeCreatorDelegate {
     override var isMarkedNullable: Boolean = false
         get() = withValidityAssertion { field }
@@ -120,7 +120,7 @@ class KaBaseArrayTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaArrayTypeBu
 }
 
 @KaImplementationDetail
-class KaBaseCapturedTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaCapturedTypeBuilder, KaBaseTypeBuilderWithAnnotations(),
+class KaFirCapturedTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaCapturedTypeBuilder, KaFirTypeBuilderWithAnnotations(),
     KaTypeCreator by typeCreatorDelegate {
     override var isMarkedNullable: Boolean = false
         get() = withValidityAssertion { field }
@@ -132,13 +132,13 @@ class KaBaseCapturedTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaCaptured
 }
 
 @KaImplementationDetail
-class KaBaseDefinitelyNotNullTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaDefinitelyNotNullTypeBuilder,
-    KaBaseTypeBuilderWithAnnotations(),
+class KaFirDefinitelyNotNullTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaDefinitelyNotNullTypeBuilder,
+    KaFirTypeBuilderWithAnnotations(),
     KaTypeCreator by typeCreatorDelegate
 
 @KaImplementationDetail
-class KaBaseFlexibleTypeBuilder(lowerBound: KaType, upperBound: KaType, typeCreatorDelegate: KaTypeCreator) : KaFlexibleTypeBuilder,
-    KaBaseTypeBuilderWithAnnotations(), KaTypeCreator by typeCreatorDelegate {
+class KaFirFlexibleTypeBuilder(lowerBound: KaType, upperBound: KaType, typeCreatorDelegate: KaTypeCreator) : KaFlexibleTypeBuilder,
+    KaFirTypeBuilderWithAnnotations(), KaTypeCreator by typeCreatorDelegate {
     override var lowerBound: KaType = lowerBound
         get() = withValidityAssertion { field }
         set(value) {
@@ -153,7 +153,7 @@ class KaBaseFlexibleTypeBuilder(lowerBound: KaType, upperBound: KaType, typeCrea
 }
 
 @KaImplementationDetail
-class KaBaseIntersectionTypeBuilder(
+class KaFirIntersectionTypeBuilder(
     typeCreatorDelegate: KaTypeCreator
 ) : KaIntersectionTypeBuilder, KaTypeCreator by typeCreatorDelegate {
 
@@ -177,12 +177,12 @@ class KaBaseIntersectionTypeBuilder(
 }
 
 @KaImplementationDetail
-class KaBaseDynamicTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaDynamicTypeBuilder,
-    KaBaseTypeBuilderWithAnnotations(), KaTypeCreator by typeCreatorDelegate
+class KaFirDynamicTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaDynamicTypeBuilder,
+    KaFirTypeBuilderWithAnnotations(), KaTypeCreator by typeCreatorDelegate
 
 @KaImplementationDetail
-class KaBaseFunctionTypeBuilder(typeCreatorDelegate: KaTypeCreator, session: KaSession) : KaFunctionTypeBuilder,
-    KaBaseTypeBuilderWithAnnotations(),
+class KaFirFunctionTypeBuilder(typeCreatorDelegate: KaTypeCreator, session: KaSession) : KaFunctionTypeBuilder,
+    KaFirTypeBuilderWithAnnotations(),
     KaTypeCreator by typeCreatorDelegate {
     override var isMarkedNullable: Boolean = false
         get() = withValidityAssertion { field }
@@ -225,7 +225,7 @@ class KaBaseFunctionTypeBuilder(typeCreatorDelegate: KaTypeCreator, session: KaS
         get() = withValidityAssertion { backingValueParameters }
 
     override fun valueParameter(name: Name?, type: KaType) = withValidityAssertion {
-        val valueParameter = KaBaseFunctionValueParameter(name, type)
+        val valueParameter = KaFirFunctionValueParameter(name, type)
         backingValueParameters += valueParameter
     }
 

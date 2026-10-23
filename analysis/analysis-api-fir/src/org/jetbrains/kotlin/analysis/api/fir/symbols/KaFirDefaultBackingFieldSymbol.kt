@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.fir.annotations.KaBaseEmptyAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
-import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaBaseBackingFieldSymbolPointer
+import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirEmptyAnnotationList
+import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirBackingFieldSymbolPointer
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaBackingFieldSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaKotlinPropertySymbol
@@ -56,12 +56,12 @@ internal class KaFirDefaultBackingFieldSymbol(
             if (backingOwningProperty.mayHaveBackingFieldAnnotation()) {
                 KaFirAnnotationListForDeclaration.create(firSymbol, builder)
             } else {
-                KaBaseEmptyAnnotationList(builder.token)
+                KaFirEmptyAnnotationList(builder.token)
             }
         }
 
     override fun createPointer(): KaSymbolPointer<KaBackingFieldSymbol> = withValidityAssertion {
-        KaBaseBackingFieldSymbolPointer(backingOwningProperty.createPointer(), this)
+        KaFirBackingFieldSymbolPointer(backingOwningProperty.createPointer(), this)
     }
 
     override fun equals(other: Any?): Boolean {
