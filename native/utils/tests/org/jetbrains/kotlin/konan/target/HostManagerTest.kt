@@ -33,22 +33,4 @@ class HostManagerTest {
     fun hostIsSupportedOnKnownOs() {
         assertTrue(HostManager.hostIsSupported)
     }
-
-    @Synchronized
-    private fun withModifiedSystemProperties(vararg pairs: Pair<String, String>, block: () -> Unit) {
-        val backupValues = pairs.toMap().mapValues { (key, _) -> System.getProperty(key) }
-
-        try {
-            pairs.forEach { (key, value) -> System.setProperty(key, value) }
-            block()
-        } finally {
-            backupValues.forEach { (key, value) ->
-                if (value == null) {
-                    System.clearProperty(key)
-                } else {
-                    System.setProperty(key, value)
-                }
-            }
-        }
-    }
 }
