@@ -53,7 +53,6 @@ fun Project.customCompilerTest(
     version: CustomCompilerVersion,
     taskName: String,
     tag: String,
-    body: Test.() -> Unit = {},
 ): TaskProvider<out Task> {
     if (HostManager.hostIsMingw) {
         // Klib compatibility tests are intended to run on MacOS(for some developers) and Linux(for some developers and CI),
@@ -94,6 +93,7 @@ fun Project.customCompilerTest(
         taskName,
         allowParallelExecution = true,
         requirePlatformLibs = false,
+        enableGroupingTestEngine = true,
     ) {
         val testTarget = providers.gradleProperty("kotlin.internal.native.test.target")
             .orElse(providers.gradleProperty("kn.target"))
@@ -133,7 +133,8 @@ fun Project.customCompilerTest(
             systemProperties.remove("kotlin.internal.native.test.compat.customCompilerClasspath")
         }
         systemProperty("kotlin.internal.native.test.compat.customCompilerVersion", version.rawVersion)
-        body()
+        // Of batches of 10 to 100 tests, 2 to 16 at a time, these gave the shortest run of the boxInline tests of the custom first stage.
+        groupingEngineSettings(batchSize = 100, simultaneousBatches = 8)
     }
 }
 
