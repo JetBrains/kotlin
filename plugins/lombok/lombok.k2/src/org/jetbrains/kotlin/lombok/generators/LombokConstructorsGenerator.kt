@@ -59,11 +59,13 @@ class LombokConstructorsGenerator(session: FirSession) :
 
     override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): Set<Name> {
         return buildSet {
-            cache.getValue(classSymbol, context)?.forEach {
-                when (it) {
-                    is FirConstructorSymbol -> add(SpecialNames.INIT)
-                    else -> add(it.callableId.callableName)
+            parts.forEach { part ->
+                val constructorInfo = part.extractConstructorInfoAndTargetClassSymbol(classSymbol)?.first ?: return@forEach
+                val staticName = constructorInfo.staticName
+                if (staticName != null) {
+                    add(Name.identifier(staticName))
                 }
+                add(SpecialNames.INIT)
             }
         }
     }

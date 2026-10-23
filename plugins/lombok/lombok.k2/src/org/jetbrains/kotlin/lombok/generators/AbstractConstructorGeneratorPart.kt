@@ -133,19 +133,7 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
 
     @OptIn(SymbolInternals::class)
     fun MutableList<FirFunction>.addIfNonClashing(classSymbol: FirClassSymbol<*>, declaredScope: FirClassDeclaredMemberScope?) {
-        val [constructorInfo: T, targetClassSymbol: FirClassSymbol<*>] = if (classSymbol.isCompanion) {
-            // Create static constructors (when `staticName` is specified) inside companions.
-            val outerClass = classSymbol.classId.outerClassId?.toSymbol(session) as? FirRegularClassSymbol ?: return
-
-            // Only that static factory belongs to a companion object. Without a `staticName` the annotation asks for
-            // a plain constructor, which is the outer class's own. Generating it here as well gave the companion
-            // object a second `()V` constructor next to the one it already has - its own for a generated companion
-            // object, the implicit one for a declared one - which the JVM backend met as
-            // `CONFLICTING_JVM_DECLARATIONS` (KT-89371).
-            (getConstructorInfo(outerClass).takeIf { it?.staticName != null } ?: return) to outerClass
-        } else {
-            (getConstructorInfo(classSymbol) ?: return) to classSymbol
-        }
+        val [constructorInfo: T, targetClassSymbol: FirClassSymbol<*>] = extractConstructorInfoAndTargetClassSymbol(classSymbol) ?: return
         val staticName = constructorInfo.staticName?.let { Name.identifier(it) }
 
         var outerClassSymbolForInnerClass: FirClassSymbol<*>? = null
@@ -403,6 +391,22 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
         add(builder.build().apply {
             containingClassForStaticMemberAttr = targetClassSymbol.toLookupTag()
         })
+    }
+
+    internal fun extractConstructorInfoAndTargetClassSymbol(classSymbol: FirClassSymbol<*>): Pair<T, FirClassSymbol<*>>? {
+        return if (classSymbol.isCompanion) {
+            // Create static constructors (when `staticName` is specified) inside companions.
+            val outerClass = classSymbol.classId.outerClassId?.toSymbol(session) as? FirRegularClassSymbol ?: return null
+
+            // Only that static factory belongs to a companion object. Without a `staticName` the annotation asks for
+            // a plain constructor, which is the outer class's own. Generating it here as well gave the companion
+            // object a second `()V` constructor next to the one it already has - its own for a generated companion
+            // object, the implicit one for a declared one - which the JVM backend met as
+            // `CONFLICTING_JVM_DECLARATIONS` (KT-89371).
+            (getConstructorInfo(outerClass).takeIf { it?.staticName != null } ?: return null) to outerClass
+        } else {
+            (getConstructorInfo(classSymbol) ?: return null) to classSymbol
+        }
     }
 
     @OptIn(SymbolInternals::class)
