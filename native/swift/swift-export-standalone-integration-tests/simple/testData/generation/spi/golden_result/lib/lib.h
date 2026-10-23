@@ -69,7 +69,7 @@ NSString * __root___experimentalProperty_get();
 
 _Bool __root___experimentalProperty_set__TypesOfArguments__Swift_String__(NSString * newValue);
 
-_Bool __root___fooA__TypesOfArgumentsC1__lib_ExperimentalLibClass_anyU20lib_InternalLibInterface__(void * b, void * a);
+_Bool __root___fooA__TypesOfArgumentsC1__anyU20lib_InternalLibInterface_lib_ExperimentalLibClass__(void * a, void * b);
 
 void * __root___fooA_get();
 

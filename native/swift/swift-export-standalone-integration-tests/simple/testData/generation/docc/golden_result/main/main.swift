@@ -173,7 +173,7 @@ public final class Foo: KotlinRuntime.KotlinBase {
         c: Swift.Int32
     ) -> Swift.Void {
         let (a) = context
-        return { Foo_foo__TypesOfArgumentsC1__Swift_Int32_Swift_String__(self.__externalRCRef(), c, a); return () }()
+        return { Foo_foo__TypesOfArgumentsC1__Swift_String_Swift_Int32__(self.__externalRCRef(), a, c); return () }()
     }
     /// A property with a context parameter
     ///
@@ -206,7 +206,7 @@ public final class Foo: KotlinRuntime.KotlinBase {
         `_`: Swift.Int32
     ) -> Swift.Void {
         let (c) = context
-        return { Foo_e_set__TypesOfArgumentsC1__Swift_Int32_anyU20KotlinRuntimeSupport__KotlinBridgeable__(self.__externalRCRef(), `_`, c.__externalRCRef()); return () }()
+        return { Foo_e_set__TypesOfArgumentsC1__anyU20KotlinRuntimeSupport__KotlinBridgeable_Swift_Int32__(self.__externalRCRef(), c.__externalRCRef(), `_`); return () }()
     }
 }
 @_documentation(visibility: internal)

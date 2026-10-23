@@ -193,7 +193,7 @@ public func fooA(
     b: lib.ExperimentalLibClass
 ) -> Swift.Void {
     let (a) = context
-    return { __root___fooA__TypesOfArgumentsC1__lib_ExperimentalLibClass_anyU20lib_InternalLibInterface__(b.__externalRCRef(), a.__externalRCRef()); return () }()
+    return { __root___fooA__TypesOfArgumentsC1__anyU20lib_InternalLibInterface_lib_ExperimentalLibClass__(a.__externalRCRef(), b.__externalRCRef()); return () }()
 }
 @_spi(ExperimentalLibApi) @_spi(InternalLibApi)
 public func fooB(
