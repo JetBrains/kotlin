@@ -650,6 +650,8 @@ include(
     ":prepare:analysis-api:kotlin-analysis-api-intellij-api-surface-components",
     ":prepare:analysis-api:kotlin-analysis-api-intellij-implementation-components",
     ":prepare:analysis-api:kotlin-analysis-api-internal-test-framework",
+    ":prepare:analysis-api:kotlin-analysis-api-smoke-tests",
+    ":prepare:analysis-api:kotlin-analysis-api-syntax-smoke-tests",
 )
 
 include(
