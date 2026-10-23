@@ -22,15 +22,15 @@ import org.jetbrains.kotlin.gradle.abi.utils.AbiValidationTestDumps.SIMPLE_CLASS
 import org.jetbrains.kotlin.gradle.abi.utils.AbiValidationTestDumps.assertDumpsEqual
 import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.jetbrains.kotlin.gradle.util.useCompilerVersion
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInBuildToolsApi
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.DisplayName
 import java.io.File
-import kotlin.test.assertTrue
 
 @MppGradlePluginTests
+@MustRunOnChangesInBuildToolsApi
 class AbiValidationKmpIT : KGPBaseTest() {
 
     private fun TestProject.defaultNativeTargets() {
