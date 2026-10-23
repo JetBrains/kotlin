@@ -20,7 +20,7 @@ class SourceFileIsModifiedIT : KGPBaseTest() {
     @DisplayName("Removed in non-incremental compilation")
     @GradleTest
     fun testClassIsRemovedNonIC(gradleVersion: GradleVersion) {
-        doTestClassIsRemoved(gradleVersion, defaultBuildOptions)
+        doTestClassIsRemoved(gradleVersion, defaultBuildOptions.copy(incremental = false))
     }
 
     private fun doTestClassIsRemoved(
@@ -35,7 +35,7 @@ class SourceFileIsModifiedIT : KGPBaseTest() {
     @DisplayName("Renamed in non-incremental compilation")
     @GradleTest
     fun testClassIsRenamedNonIC(gradleVersion: GradleVersion) {
-        doTestClassIsRenamed(gradleVersion, defaultBuildOptions)
+        doTestClassIsRenamed(gradleVersion, defaultBuildOptions.copy(incremental = false))
     }
 
     private fun doTestClassIsRenamed(
