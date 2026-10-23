@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.konan.serialization
 import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.ir.util.parents
 import org.jetbrains.kotlin.backend.common.serialization.*
-import org.jetbrains.kotlin.backend.common.serialization.encodings.BinaryNameAndType
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature as ProtoIdSignature
 import org.jetbrains.kotlin.backend.konan.*
@@ -34,9 +33,7 @@ import org.jetbrains.kotlin.name.FqName
 import java.io.Reader
 import java.io.Writer
 import java.util.Properties
-import kotlin.collections.set
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration as ProtoDeclaration
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrField as ProtoField
 
 private const val INVALID_INDEX = -1
 
@@ -171,47 +168,10 @@ internal fun buildSerializedClassFields(
 ): SerializedClassFields {
     val signature = irClass.symbol.signature
             ?: error("No signature for ${irClass.render()}")
-    val topLevelSignature = signature.topLevelSignature()
-    val fileDeserializationState = deserializer.getFileDeserializationState(topLevelSignature)
-    val fileDeserializer = with(deserializer) { fileDeserializationState.fileDeserializer }
-    val declarationIndex = fileDeserializer.reversedSignatureIndex[topLevelSignature]
-            ?: error("No declaration for ${topLevelSignature.render()}")
-    val fileReader = fileDeserializationState.fileReader
-    val symbolDeserializer = fileDeserializer.symbolDeserializer
-    val protoDeclaration = fileReader.declaration(declarationIndex)
+    val fileDeserializationState = deserializer.getFileDeserializationState(signature.topLevelSignature())
 
     val outerClasses = irClass.getOuterClasses(takeOnlyInner = false)
     require(outerClasses.first().parent is IrFile) { "Local classes are not supported: ${irClass.render()}" }
-
-    var protoClass = protoDeclaration.irClass
-    val protoClasses = mutableListOf(protoClass)
-    for (classIndex in outerClasses.indices) {
-        if (classIndex < outerClasses.size - 1) {
-            protoClass = protoClass.findClass(outerClasses[classIndex + 1], fileReader, symbolDeserializer)
-            protoClasses += protoClass
-        }
-    }
-
-    val protoFields = mutableListOf<ProtoField>()
-    for (i in 0 until protoClass.declarationCount) {
-        val declaration = protoClass.getDeclaration(i)
-        if (declaration.declaratorCase == ProtoDeclaration.DeclaratorCase.IR_FIELD)
-            protoFields.add(declaration.irField)
-        else if (declaration.declaratorCase == ProtoDeclaration.DeclaratorCase.IR_PROPERTY) {
-            val protoProperty = declaration.irProperty
-            if (protoProperty.hasBackingField())
-                protoFields.add(protoProperty.backingField)
-        }
-    }
-    val protoFieldsMap = mutableMapOf<String, ProtoField>()
-    protoFields.forEach {
-        val nameAndType = BinaryNameAndType.decode(it.nameType)
-        val name = fileReader.string(nameAndType.nameIndex)
-        val prev = protoFieldsMap[name]
-        if (prev != null)
-            error("Class ${irClass.render()} has two fields with same name '$name'")
-        protoFieldsMap[name] = it
-    }
 
     val outerThisIndex = fields.indexOfFirst { it.irField?.origin == IrDeclarationOrigin.FIELD_FOR_OUTER_THIS }
     return SerializedClassFields(
@@ -222,9 +182,6 @@ internal fun buildSerializedClassFields(
                 val field = fields[it]
                 if (it == outerThisIndex) {
                     require(irClass.isInner) { "Expected an inner class: ${irClass.render()}" }
-                    require(protoClasses.size > 1) { "An inner class must have at least one outer class" }
-                    val outerProtoClass = protoClasses[protoClasses.size - 2]
-                    val nameAndType = BinaryNameAndType.decode(outerProtoClass.thisReceiver.nameType)
 
                     SerializedClassFieldInfo(
                             name = "",
