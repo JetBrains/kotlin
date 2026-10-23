@@ -38,10 +38,10 @@ internal data class TestShardingConfiguration(
     }
 }
 
-private const val shardIndexKey = "kotlin.build.test.shard.index"
-private const val shardCountKey = "kotlin.build.test.shard.count"
-private const val shardSeedKey = "kotlin.build.test.shard.seed"
-private const val shardByMethodKey = "tests.shardByMethod"
+internal const val shardIndexKey = "kotlin.build.test.shard.index"
+internal const val shardCountKey = "kotlin.build.test.shard.count"
+internal const val shardSeedKey = "kotlin.build.test.shard.seed"
+internal const val shardByMethodKey = "tests.shardByMethod"
 
 internal val TestShardingConfiguration.isShardingEnabled: Boolean
     get() = shardIndex != -1 && shardCount != -1
@@ -58,12 +58,4 @@ private fun readTestShardingConfiguration(value: (key: String) -> String?): Test
     shardCount = value(shardCountKey)?.toIntOrNull() ?: -1,
     shardSeed = value(shardSeedKey)?.toIntOrNull() ?: 0,
     shardByMethod = value(shardByMethodKey) == "true",
-)
-
-/** All settings as JUnit configuration parameters (e.g., for a `LauncherDiscoveryRequestBuilder`), including the disabled ones. */
-internal fun TestShardingConfiguration.toConfigurationParameters(): Map<String, String> = mapOf(
-    shardIndexKey to shardIndex.toString(),
-    shardCountKey to shardCount.toString(),
-    shardSeedKey to shardSeed.toString(),
-    shardByMethodKey to shardByMethod.toString(),
 )
