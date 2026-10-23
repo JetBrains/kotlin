@@ -107,41 +107,6 @@ import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 import org.jetbrains.kotlin.utils.yieldIfNotNull
 import java.util.*
 
-/**
- * A source file to be compiled as a part of some [ChunkToCompile].
- */
-private class FileToCompile(val ktFile: KtFile, val firFile: FirFile)
-
-/**
- * A set of files to be compiled together.
- *
- * @param kind A chunk kind.
- * @param mainFile The main file if a chunk is the [ChunkKind.MAIN] one, or `null` otherwise.
- * @param hasCodeFragments Whether [files] contain at least one code fragment.
- * @param attachPrecompiledBinaries Whether to attach compiled bytecode of the module instead of compiling the module files.
- * @param files Selected files that are either from the same module or should be compiled as they are from the same module.
- */
-private class ChunkToCompile(
-    val kind: ChunkKind,
-    val mainFile: KtFile?,
-    val hasCodeFragments: Boolean,
-    val attachPrecompiledBinaries: Boolean,
-    val files: List<FileToCompile>
-)
-
-private enum class ChunkKind {
-    /** A chunk with the main file (a file for which compilation is requested). */
-    MAIN,
-
-    /** A chunk with the context of the main file. */
-    CONTEXT,
-
-    /**
-     * A chunk with files required to be compiled prior to the main file compilation.
-     */
-    DEPENDENCY
-}
-
 private val USE_STDLIB_BUILD_OUTPUT: Boolean by lazy(LazyThreadSafetyMode.PUBLICATION) {
     Registry.`is`("kotlin.analysis.compilerFacility.useStdlibBuildOutput", true)
 }
