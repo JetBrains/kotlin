@@ -5,15 +5,13 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.resolution
 
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.resolution.KaImplicitReceiverValue
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 
-@KaImplementationDetail
-class KaFirImplicitReceiverValue(
+internal class KaFirImplicitReceiverValue(
     private val backingSymbol: KaSymbol,
     type: KaType,
 ) : KaImplicitReceiverValue {

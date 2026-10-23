@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.compilerPlugins.KaCompilerPluginGeneratedDeclarations
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
@@ -168,8 +167,7 @@ private class KaFirTopLevelCompilerPluginGeneratedDeclarationsScope(
     }
 }
 
-@KaImplementationDetail
-class KaFirCompilerPluginGeneratedDeclarations(
+internal class KaFirCompilerPluginGeneratedDeclarations(
     private val backingTopLevelDeclarationsScope: KaScope,
 ) : org.jetbrains.kotlin.analysis.api.components.KaCompilerPluginGeneratedDeclarations {
     override val token: KaLifetimeToken = backingTopLevelDeclarationsScope.token

@@ -140,8 +140,7 @@ internal class KaFirTypeInformationProvider(
     }
 }
 
-@KaImplementationDetail
-class KaFirFunctionTypeFamily(
+internal class KaFirFunctionTypeFamily(
     @property:KaImplementationDetail
     val typeKind: FunctionTypeKind,
 ) : KaFunctionTypeFamily, org.jetbrains.kotlin.analysis.api.components.KaFunctionTypeFamily {

@@ -5,15 +5,13 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.symbols.pointers
 
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaBackingFieldSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 
-@KaImplementationDetail
-class KaFirBackingFieldSymbolPointer(
+internal class KaFirBackingFieldSymbolPointer(
     private val propertySymbolPointer: KaSymbolPointer<KaPropertySymbol>,
     originalSymbol: KaBackingFieldSymbol
 ) : KaFirCachedSymbolPointer<KaBackingFieldSymbol>(originalSymbol) {

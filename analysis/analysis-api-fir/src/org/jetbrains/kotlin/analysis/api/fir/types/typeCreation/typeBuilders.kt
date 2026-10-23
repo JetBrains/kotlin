@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.types.typeCreation
 
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.fir.resolution.KaFirFunctionValueParameter
 import org.jetbrains.kotlin.analysis.api.fir.types.KaFirTypeArgumentWithVariance
@@ -16,8 +15,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 
-@KaImplementationDetail
-abstract class KaFirTypeBuilderWithAnnotations : KaTypeBuilderWithAnnotations {
+internal abstract class KaFirTypeBuilderWithAnnotations : KaTypeBuilderWithAnnotations {
     val backingAnnotations = mutableListOf<ClassId>()
 
     override val annotations: List<ClassId>
@@ -42,8 +40,7 @@ abstract class KaFirTypeBuilderWithAnnotations : KaTypeBuilderWithAnnotations {
     }
 }
 
-@KaImplementationDetail
-class KaFirClassTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaClassTypeBuilder, KaFirTypeBuilderWithAnnotations(),
+internal class KaFirClassTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaClassTypeBuilder, KaFirTypeBuilderWithAnnotations(),
     KaTypeCreator by typeCreatorDelegate {
     private val backingTypeArguments = mutableListOf<KaTypeProjection>()
 
@@ -79,8 +76,7 @@ class KaFirClassTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaClassTypeBui
     override fun typeArgument(argument: () -> KaTypeProjection) = typeArgument(argument())
 }
 
-@KaImplementationDetail
-class KaFirTypeParameterTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaTypeParameterTypeBuilder, KaFirTypeBuilderWithAnnotations(),
+internal class KaFirTypeParameterTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaTypeParameterTypeBuilder, KaFirTypeBuilderWithAnnotations(),
     KaTypeCreator by typeCreatorDelegate {
     override var isMarkedNullable: Boolean = false
         get() = withValidityAssertion { field }
@@ -91,8 +87,7 @@ class KaFirTypeParameterTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaType
         }
 }
 
-@KaImplementationDetail
-class KaFirArrayTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaArrayTypeBuilder, KaFirTypeBuilderWithAnnotations(),
+internal class KaFirArrayTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaArrayTypeBuilder, KaFirTypeBuilderWithAnnotations(),
     KaTypeCreator by typeCreatorDelegate {
     override var isMarkedNullable: Boolean = false
         get() = withValidityAssertion { field }
@@ -119,8 +114,7 @@ class KaFirArrayTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaArrayTypeBui
         }
 }
 
-@KaImplementationDetail
-class KaFirCapturedTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaCapturedTypeBuilder, KaFirTypeBuilderWithAnnotations(),
+internal class KaFirCapturedTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaCapturedTypeBuilder, KaFirTypeBuilderWithAnnotations(),
     KaTypeCreator by typeCreatorDelegate {
     override var isMarkedNullable: Boolean = false
         get() = withValidityAssertion { field }
@@ -131,13 +125,11 @@ class KaFirCapturedTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaCapturedT
         }
 }
 
-@KaImplementationDetail
-class KaFirDefinitelyNotNullTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaDefinitelyNotNullTypeBuilder,
+internal class KaFirDefinitelyNotNullTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaDefinitelyNotNullTypeBuilder,
     KaFirTypeBuilderWithAnnotations(),
     KaTypeCreator by typeCreatorDelegate
 
-@KaImplementationDetail
-class KaFirFlexibleTypeBuilder(lowerBound: KaType, upperBound: KaType, typeCreatorDelegate: KaTypeCreator) : KaFlexibleTypeBuilder,
+internal class KaFirFlexibleTypeBuilder(lowerBound: KaType, upperBound: KaType, typeCreatorDelegate: KaTypeCreator) : KaFlexibleTypeBuilder,
     KaFirTypeBuilderWithAnnotations(), KaTypeCreator by typeCreatorDelegate {
     override var lowerBound: KaType = lowerBound
         get() = withValidityAssertion { field }
@@ -152,8 +144,7 @@ class KaFirFlexibleTypeBuilder(lowerBound: KaType, upperBound: KaType, typeCreat
         }
 }
 
-@KaImplementationDetail
-class KaFirIntersectionTypeBuilder(
+internal class KaFirIntersectionTypeBuilder(
     typeCreatorDelegate: KaTypeCreator
 ) : KaIntersectionTypeBuilder, KaTypeCreator by typeCreatorDelegate {
 
@@ -176,12 +167,10 @@ class KaFirIntersectionTypeBuilder(
     }
 }
 
-@KaImplementationDetail
-class KaFirDynamicTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaDynamicTypeBuilder,
+internal class KaFirDynamicTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaDynamicTypeBuilder,
     KaFirTypeBuilderWithAnnotations(), KaTypeCreator by typeCreatorDelegate
 
-@KaImplementationDetail
-class KaFirFunctionTypeBuilder(typeCreatorDelegate: KaTypeCreator, session: KaSession) : KaFunctionTypeBuilder,
+internal class KaFirFunctionTypeBuilder(typeCreatorDelegate: KaTypeCreator, session: KaSession) : KaFunctionTypeBuilder,
     KaFirTypeBuilderWithAnnotations(),
     KaTypeCreator by typeCreatorDelegate {
     override var isMarkedNullable: Boolean = false

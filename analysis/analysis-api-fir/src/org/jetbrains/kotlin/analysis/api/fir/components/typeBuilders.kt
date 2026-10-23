@@ -18,8 +18,7 @@ import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.Variance
 
-@KaImplementationDetail
-sealed class KaFirClassTypeBuilder : KaClassTypeBuilder {
+internal sealed class KaFirClassTypeBuilder : KaClassTypeBuilder {
     private val backingArguments = mutableListOf<KaTypeProjection>()
 
     @Deprecated(
@@ -105,8 +104,7 @@ internal sealed class KaFirArrayTypeBuilder : KaArrayTypeBuilder {
     }
 }
 
-@KaImplementationDetail
-sealed class KaFirTypeParameterTypeBuilder : KaTypeParameterTypeBuilder {
+internal sealed class KaFirTypeParameterTypeBuilder : KaTypeParameterTypeBuilder {
     @Deprecated(
         "Use `isMarkedNullable` instead.",
         replaceWith = ReplaceWith("isMarkedNullable"),

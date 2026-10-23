@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.psi.KtExpression
 // This suppression is required to preserve the semantic compatibility with KaSimpleFunctionCall.
 // It is safe since effectively type parameters are the same
 @Suppress("INCONSISTENT_TYPE_PARAMETER_VALUES")
-class KaFirImplicitInvokeCall(
+internal class KaFirImplicitInvokeCall(
     private val backingPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaNamedFunctionSymbol>,
     private val backingArgumentMapping: Map<KtExpression, KaVariableSignature<KaParameterSymbol>>,
     private val backingTypeArgumentsMapping: Map<KaTypeParameterSymbol, KaType>,

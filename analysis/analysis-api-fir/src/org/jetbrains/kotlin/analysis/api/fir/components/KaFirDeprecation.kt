@@ -6,13 +6,11 @@
 package org.jetbrains.kotlin.analysis.api.fir.components
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeprecation
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeprecationLevel
 
-@KaImplementationDetail
 @KaExperimentalApi
-class KaFirDeprecation(
+internal class KaFirDeprecation(
     override val level: KaDeprecationLevel,
     override val isPropagatedToOverrides: Boolean
 ) : KaDeprecation {

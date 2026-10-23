@@ -12,8 +12,7 @@ import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.name.Name
 
-@KaImplementationDetail
-class KaFirCompositeScope private constructor(
+internal class KaFirCompositeScope private constructor(
     private val subScopes: List<KaScope>,
     override val token: KaLifetimeToken,
 ) : KaFirScope() {

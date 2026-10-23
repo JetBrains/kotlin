@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.resolution
 
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.resolution.KaPartiallyAppliedVariableSymbol
@@ -16,8 +15,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaVariableSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 
-@KaImplementationDetail
-class KaFirSimpleVariableAccessCall(
+internal class KaFirSimpleVariableAccessCall(
     private val backingPartiallyAppliedSymbol: KaPartiallyAppliedVariableSymbol<KaVariableSymbol>,
     private val backingTypeArgumentsMapping: Map<KaTypeParameterSymbol, KaType>,
     private val backingKind: KaVariableAccessCall.Kind,

@@ -5,12 +5,10 @@
 
 package org.jetbrains.kotlin.analysis.api.fir
 
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableImplementationState
 import org.jetbrains.kotlin.analysis.api.components.KaCallableImplementationState as KaLegacyCallableImplementationState
 
-@KaImplementationDetail
-data class KaCallableExplicitImplementationStateImpl(
+internal data class KaCallableExplicitImplementationStateImpl(
     override val isComplete: Boolean,
 ) : KaCallableImplementationState.Explicit, KaLegacyCallableImplementationState.Explicit {
     override fun toString(): String {
@@ -18,8 +16,7 @@ data class KaCallableExplicitImplementationStateImpl(
     }
 }
 
-@KaImplementationDetail
-data class KaCallableInheritedImplementationStateImpl(
+internal data class KaCallableInheritedImplementationStateImpl(
     override val isAmbiguous: Boolean,
     override val isOverridable: Boolean,
 ) : KaCallableImplementationState.Inherited, KaLegacyCallableImplementationState.Inherited {
@@ -28,7 +25,6 @@ data class KaCallableInheritedImplementationStateImpl(
     }
 }
 
-@KaImplementationDetail
-object KaCallableMissingImplementationStateImpl : KaCallableImplementationState.Missing, KaLegacyCallableImplementationState.Missing {
+internal object KaCallableMissingImplementationStateImpl : KaCallableImplementationState.Missing, KaLegacyCallableImplementationState.Missing {
     override fun toString(): String = "Missing"
 }

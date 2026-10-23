@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.fir.utils
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaSeverity
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
@@ -15,8 +14,7 @@ import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.Severity.*
 import kotlin.reflect.KClass
 
-@KaImplementationDetail
-class KaNonBoundToPsiErrorDiagnostic(
+internal class KaNonBoundToPsiErrorDiagnostic(
     override val factoryName: String,
     override val defaultMessage: String,
     override val token: KaLifetimeToken,
@@ -32,8 +30,7 @@ class KaNonBoundToPsiErrorDiagnostic(
         get() = withValidityAssertion { false }
 }
 
-@KaImplementationDetail
-fun Severity.toAnalysisApiSeverity(): KaSeverity {
+internal fun Severity.toAnalysisApiSeverity(): KaSeverity {
     return when (this) {
         ERROR -> KaSeverity.ERROR
         WARNING, FIXED_WARNING, STRONG_WARNING -> KaSeverity.WARNING

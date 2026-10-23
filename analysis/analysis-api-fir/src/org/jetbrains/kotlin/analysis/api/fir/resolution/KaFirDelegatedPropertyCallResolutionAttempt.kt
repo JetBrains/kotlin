@@ -5,14 +5,12 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.resolution
 
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.resolution.*
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 
-@KaImplementationDetail
-class KaFirDelegatedPropertyCallResolutionAttempt(
+internal class KaFirDelegatedPropertyCallResolutionAttempt(
     private val backingValueGetterCallAttempt: KaSimpleCallResolutionAttempt,
     private val backingValueSetterCallAttempt: KaSimpleCallResolutionAttempt?,
     private val backingProvideDelegateCallAttempt: KaSimpleCallResolutionAttempt?,

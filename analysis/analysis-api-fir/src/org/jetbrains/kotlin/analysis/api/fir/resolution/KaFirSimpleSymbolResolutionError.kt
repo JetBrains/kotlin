@@ -5,15 +5,13 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.resolution
 
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.resolution.KaSimpleSymbolResolutionError
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 
-@KaImplementationDetail
-class KaFirSimpleSymbolResolutionError(
+internal class KaFirSimpleSymbolResolutionError(
     private val backingDiagnostic: KaDiagnostic,
     private val backingCandidateSymbols: List<KaSymbol>,
 ) : KaSimpleSymbolResolutionError {

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.fir.components
 
 import com.intellij.psi.util.parentOfType
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.scopes.*
@@ -515,8 +514,7 @@ private val JAVA_ENHANCEMENT_FOR_STATIC_DECLARED_MEMBERS = scopeSessionKey<FirRe
 
 private val JAVA_ENHANCEMENT_FOR_ALL_DECLARED_MEMBERS = scopeSessionKey<FirRegularClassSymbol, FirContainingNamesAwareScope>()
 
-@KaImplementationDetail
-class KaFirScopeContext(
+internal class KaFirScopeContext(
     scopes: List<KaScopeWithKind>,
     implicitValues: List<KaScopeImplicitValue>,
     possibleSmartCasts: List<KaSmartCastPossibility>,
@@ -531,8 +529,7 @@ class KaFirScopeContext(
     override val possibleSmartCasts: List<KaSmartCastPossibility> get() = withValidityAssertion { backingPossibleSmartCasts }
 }
 
-@KaImplementationDetail
-class KaFirSmartCastPossibility(
+internal class KaFirSmartCastPossibility(
     source: KaSmartCastSource,
     smartCastTypes: List<KaType>,
     isStable: Boolean
@@ -548,8 +545,7 @@ class KaFirSmartCastPossibility(
     override val isStable: Boolean get() = withValidityAssertion { backingIsStable }
 }
 
-@KaImplementationDetail
-class KaFirSmartCastSource(
+internal class KaFirSmartCastSource(
     symbol: KaDeclarationSymbol,
     dispatchReceiver: KaSmartCastSource?,
     extensionReceiver: KaSmartCastSource?,
@@ -568,8 +564,7 @@ class KaFirSmartCastSource(
     override val originalType: KaType get() = withValidityAssertion { backingOriginalType }
 }
 
-@KaImplementationDetail
-class KaFirScopeImplicitReceiverValue(
+internal class KaFirScopeImplicitReceiverValue(
     private val backingType: KaType,
     ownerSymbol: KaSymbol,
     scopeIndexInTower: Int,
@@ -586,8 +581,7 @@ class KaFirScopeImplicitReceiverValue(
     override val label: String? get() = withValidityAssertion { backingLabel }
 }
 
-@KaImplementationDetail
-class KaFirScopeImplicitArgumentValue(
+internal class KaFirScopeImplicitArgumentValue(
     private val backingType: KaType,
     symbol: KaContextParameterSymbol,
     scopeIndexInTower: Int,

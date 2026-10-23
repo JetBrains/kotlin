@@ -7,13 +7,11 @@ package org.jetbrains.kotlin.analysis.api.fir.projectStructure
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModuleProvider
 
-@KaImplementationDetail
-class KaFirModuleProvider(private val project: Project) : KaModuleProvider {
+internal class KaFirModuleProvider(private val project: Project) : KaModuleProvider {
     override fun module(element: PsiElement, useSiteModule: KaModule?): KaModule {
         return KotlinProjectStructureProvider.getModule(project, element, useSiteModule)
     }
