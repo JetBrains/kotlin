@@ -588,6 +588,18 @@ public class JsSymbolLightClassesByPsiForSourceTestGenerated extends AbstractJsS
     }
 
     @Test
+    @TestMetadata("genericCollectionSuperclass.kt")
+    public void testGenericCollectionSuperclass() {
+      run("genericCollectionSuperclass.kt");
+    }
+
+    @Test
+    @TestMetadata("genericMapSuperclass.kt")
+    public void testGenericMapSuperclass() {
+      run("genericMapSuperclass.kt");
+    }
+
+    @Test
     @TestMetadata("implementingKotlinAbstractMap.kt")
     public void testImplementingKotlinAbstractMap() {
       run("implementingKotlinAbstractMap.kt");
