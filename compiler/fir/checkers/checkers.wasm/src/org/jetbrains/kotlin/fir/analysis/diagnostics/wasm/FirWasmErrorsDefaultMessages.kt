@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.ASSOCIATED_OBJECT_INVALID_BINDING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.EXPORT_DECLARATION_WITH_CONTEXT_PARAMETERS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.EXTERNAL_DECLARATION_WITH_CONTEXT_PARAMETERS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.INTERNAL_WASM_EXPORT_NAME_AS_JS_EXPORT_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.JSCODE_INVALID_PARAMETER_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.JSCODE_UNSUPPORTED_FUNCTION_KIND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.JSCODE_WRONG_CONTEXT
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.JS_MODUL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.NESTED_WASM_EXPORT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.NESTED_WASM_IMPORT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.NON_EXTERNAL_TYPE_EXTENDS_EXTERNAL_TYPE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.RESERVED_WORD_AS_JS_EXPORT_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.WASI_EXTERNAL_FUNCTION_WITHOUT_IMPORT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.WASI_EXTERNAL_NOT_TOP_LEVEL_FUNCTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.WASM_EXPORT_ON_EXTERNAL_DECLARATION
@@ -93,5 +95,15 @@ object FirWasmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
 
         map.put(EXTERNAL_DECLARATION_WITH_CONTEXT_PARAMETERS, "External declaration cannot have context parameters.")
         map.put(EXPORT_DECLARATION_WITH_CONTEXT_PARAMETERS, "Exported declaration cannot have context parameters.")
+        map.put(
+            RESERVED_WORD_AS_JS_EXPORT_NAME,
+            "Exported name ''{0}'' is a reserved word in JavaScript and cannot be exported from a Kotlin/Wasm module.",
+            TO_STRING,
+        )
+        map.put(
+            INTERNAL_WASM_EXPORT_NAME_AS_JS_EXPORT_NAME,
+            "Exported name ''{0}'' is reserved for internal use by Kotlin/Wasm and cannot be exported.",
+            TO_STRING,
+        )
     }
 }

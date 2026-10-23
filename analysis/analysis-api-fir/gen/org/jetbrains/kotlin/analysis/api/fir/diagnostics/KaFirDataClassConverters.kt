@@ -575,7 +575,7 @@ private fun KaDiagnosticConverterBuilder.addConversions6() {
             token,
         )
     }
-    add(FirJsErrors.WRONG_EXPORTED_DECLARATION) { firDiagnostic ->
+    add(FirWebCommonErrors.WRONG_EXPORTED_DECLARATION) { firDiagnostic ->
         WrongExportedDeclarationImpl(
             firDiagnostic.a,
             firDiagnostic as KtDiagnosticWithSource,
@@ -8531,7 +8531,7 @@ private fun KaDiagnosticConverterBuilder.addConversions183() {
             token,
         )
     }
-    add(FirJsErrors.NOT_EXPORTED_OR_EXTERNAL_ACTUAL_DECLARATION_WHILE_EXPECT_IS_EXPORTED) { firDiagnostic ->
+    add(FirWebCommonErrors.NOT_EXPORTED_OR_EXTERNAL_ACTUAL_DECLARATION_WHILE_EXPECT_IS_EXPORTED) { firDiagnostic ->
         NotExportedOrExternalActualDeclarationWhileExpectIsExportedImpl(
             firDiagnostic as KtDiagnosticWithSource,
             token,

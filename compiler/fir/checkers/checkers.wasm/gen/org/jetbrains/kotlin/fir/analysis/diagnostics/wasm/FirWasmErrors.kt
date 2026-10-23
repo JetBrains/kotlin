@@ -52,6 +52,8 @@ object FirWasmErrors : KtDiagnosticsContainer() {
     val WASM_IMPORT_EXPORT_UNSUPPORTED_RETURN_TYPE: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("WASM_IMPORT_EXPORT_UNSUPPORTED_RETURN_TYPE", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())
     val EXTERNAL_DECLARATION_WITH_CONTEXT_PARAMETERS: KtDiagnosticFactory0 = KtDiagnosticFactory0("EXTERNAL_DECLARATION_WITH_CONTEXT_PARAMETERS", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
     val EXPORT_DECLARATION_WITH_CONTEXT_PARAMETERS: KtDiagnosticFactory0 = KtDiagnosticFactory0("EXPORT_DECLARATION_WITH_CONTEXT_PARAMETERS", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
+    val RESERVED_WORD_AS_JS_EXPORT_NAME: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("RESERVED_WORD_AS_JS_EXPORT_NAME", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
+    val INTERNAL_WASM_EXPORT_NAME_AS_JS_EXPORT_NAME: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("INTERNAL_WASM_EXPORT_NAME_AS_JS_EXPORT_NAME", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
 
     // WASI
     val WASI_EXTERNAL_NOT_TOP_LEVEL_FUNCTION: KtDiagnosticFactory0 = KtDiagnosticFactory0("WASI_EXTERNAL_NOT_TOP_LEVEL_FUNCTION", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
