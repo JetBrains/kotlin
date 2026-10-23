@@ -8,15 +8,12 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.KtPsiSourceFile
-import org.jetbrains.kotlin.KtRealPsiSourceElement
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.analysis.api.compilation.*
 import org.jetbrains.kotlin.analysis.api.compile.KaCodeFragmentCapturedValue
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
-import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticWithPsi
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.compilation.KaFirCompilationOptions
 import org.jetbrains.kotlin.analysis.api.fir.compilation.KaFirCompilationOptionsBuilder
@@ -51,9 +48,9 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirTargetElement
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.analysis.diagnostics.toFirDiagnostics
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
@@ -67,13 +64,14 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.utils.hasBody
-import org.jetbrains.kotlin.fir.diagnostics.ConeSyntaxDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirLoop
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.lazy.AbstractFir2IrLazyDeclaration
 import org.jetbrains.kotlin.fir.pipeline.*
+import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.references.toResolvedSymbol
@@ -1375,22 +1373,4 @@ private fun createPlatformActualizer(customActualizer: KaCompilerFacilityModuleA
     }
 
     return LLKindBasedPlatformActualizer(platformKind)
-}
-
-private class SyntaxErrorReportingVisitor(
-    private val useSiteSession: FirSession,
-    private val diagnosticConverter: (KtDiagnosticWithSource) -> KaDiagnosticWithPsi<*>
-) : KtTreeVisitorVoid() {
-    private val collectedDiagnostics = mutableListOf<KaDiagnostic>()
-
-    val diagnostics: List<KaDiagnostic>
-        get() = Collections.unmodifiableList(collectedDiagnostics)
-
-    override fun visitErrorElement(element: PsiErrorElement) {
-        collectedDiagnostics += ConeSyntaxDiagnostic(element.errorDescription)
-            .toFirDiagnostics(useSiteSession, KtRealPsiSourceElement(element), callOrAssignmentSource = null)
-            .map { diagnosticConverter(it as KtDiagnosticWithSource) }
-
-        super.visitErrorElement(element)
-    }
 }
