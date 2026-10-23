@@ -75,6 +75,24 @@ func boolThroughGenericToString() throws {
 }
 
 @Test
+func arrayThroughGenericToString() throws {
+    let result = genericToString(x: ["a", "b", "c"])
+    try #require(result == "[a, b, c]")
+}
+
+@Test
+func setThroughGenericToString() throws {
+    let result = genericToString(x: Set(["xyz"]))
+    try #require(result == "[xyz]")
+}
+
+@Test
+func dictionaryThroughGenericToString() throws {
+    let result = genericToString(x: ["key": "value"])
+    try #require(result == "{key=value}")
+}
+
+@Test
 func isNullWithString() throws {
     try #require(!isNull(x: "hello"))
 }
@@ -120,4 +138,20 @@ func anyBoolCast() throws {
     try #require(result == true)
 }
 
+@Test
+func anyListCast() throws {
+    let result = anyList() as! [String]
+    try #require(result == ["a", "b", "c"])
+}
 
+@Test
+func anySetCast() throws {
+    let result = anySet() as! Set<String>
+    try #require(result == Set(["xyz"]))
+}
+
+@Test
+func anyMapCast() throws {
+    let result = anyMap() as! [String:String]
+    try #require(result == ["key": "value"])
+}
