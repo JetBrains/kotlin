@@ -9,8 +9,8 @@ import androidx.compose.compiler.plugins.kotlin.services.ComposeExtensionRegistr
 import androidx.compose.compiler.plugins.kotlin.services.ComposeJsClasspathProvider
 import androidx.compose.compiler.plugins.kotlin.services.ComposeJvmClasspathConfigurator
 import androidx.compose.compiler.plugins.kotlin.services.ComposeJvmClasspathProvider
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.compilerFacility.AbstractCompilerFacilityTest
 import org.jetbrains.kotlin.analysis.api.fir.test.configurators.AnalysisApiFirTestConfiguratorFactory
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compilerFacility.AbstractCompilerFacilityTest
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.TestModuleCompiler.Directives.COMPILER_ARGUMENTS
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfiguratorFactoryData
