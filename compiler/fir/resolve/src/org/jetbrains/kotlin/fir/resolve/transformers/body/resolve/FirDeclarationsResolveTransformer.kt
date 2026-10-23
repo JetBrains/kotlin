@@ -553,11 +553,14 @@ open class FirDeclarationsResolveTransformer(
         // If we got successful candidate for provideDelegate, let's select it
         val provideDelegateCandidate = provideDelegateCall.candidate()
         if (provideDelegateCandidate != null && provideDelegateCandidate.isSuccessful) {
-            val additionalBinding = findResultTypeForInnerVariableIfNeeded(provideDelegateCall, provideDelegateCandidate)
+            val inferenceSession = context.inferenceSession as FirDelegatedPropertyInferenceSession
+            val additionalBinding = findResultTypeForInnerVariableIfNeeded(
+                provideDelegateCall, provideDelegateCandidate, inferenceSession
+            )
 
             val substitutor = ChainedSubstitutor(
                 provideDelegateCandidate.substitutor,
-                (context.inferenceSession as FirDelegatedPropertyInferenceSession).currentConstraintStorage.buildCurrentSubstitutor(
+                inferenceSession.currentConstraintStorage.buildCurrentSubstitutor(
                     session.typeContext, additionalBinding?.let(::mapOf) ?: emptyMap()
                 ).asCone()
             )
@@ -613,7 +616,8 @@ open class FirDeclarationsResolveTransformer(
      */
     private fun findResultTypeForInnerVariableIfNeeded(
         provideDelegate: FirFunctionCall,
-        candidate: Candidate
+        candidate: Candidate,
+        inferenceSession: FirDelegatedPropertyInferenceSession,
     ): Pair<TypeConstructorMarker, ConeKotlinType>? {
         // We're only interested in the case when `provideDelegate` candidate returns a type variable
         // because in other cases we could look into the member scope of the type.
@@ -624,10 +628,11 @@ open class FirDeclarationsResolveTransformer(
                 .unwrapTopLevelVariableType() ?: return null
         val typeVariable = returnTypeBasedOnVariable.typeConstructor
 
-        val candidateSystem = candidate.system
-        val candidateStorage = candidateSystem.currentStorage()
+        // We use commonSystem because the CS from the candidate has already been applied into the inference session and it won't happen again.
+        // So any further CS modifications (like synthetic variables for CST) wouldn't be lost.
+        val commonSystem = inferenceSession.currentConstraintSystem
         val variableWithConstraints =
-            candidateSystem.notFixedTypeVariables[typeVariable] ?: error("Not found type variable $typeVariable")
+            commonSystem.notFixedTypeVariables[typeVariable] ?: error("Not found type variable $typeVariable")
 
         var resultType: ConeKotlinType? = null
 
@@ -637,11 +642,11 @@ open class FirDeclarationsResolveTransformer(
         // testData/diagnostics/tests/delegatedProperty/inference/provideDelegateFixationResultContainsOtherInnerVariable.kt
         val typeVariablesCountedAsProperTypes =
             if (session.languageVersionSettings.supportsFeature(LanguageFeature.EliminateSecondKindIncorporation)) {
-                candidateSystem.notFixedTypeVariables.keys
+                commonSystem.notFixedTypeVariables.keys
             } else {
-                candidateSystem.outerTypeVariables.orEmpty()
+                commonSystem.outerTypeVariables.orEmpty()
             }
-        candidateSystem.withTypeVariablesThatAreCountedAsProperTypes(typeVariablesCountedAsProperTypes) {
+        commonSystem.withTypeVariablesThatAreCountedAsProperTypes(typeVariablesCountedAsProperTypes) {
             // TODO: reconsider the approach here (KT-61781 for tracking)
             // Actually, this code might fail with an exception in some rare cases (see KT-61781)
             // The problem is that in the issue example, when fixing T type variable, it has two upper bounds: X and Delegate<Y>
@@ -651,18 +656,16 @@ open class FirDeclarationsResolveTransformer(
             //
             // Just for the inspiration, take a look at ResultTypeResolver.Context.buildNotFixedVariablesToStubTypesSubstitutor usages:
             // it seems like they do something relevant.
-            resultType = with(candidateSystem) {
-                inferenceComponents.resultTypeResolver.findResultTypeOrNull(
-                    variableWithConstraints, TypeVariableDirectionCalculator.ResolveDirection.UNKNOWN
-                )
-            } as? ConeKotlinType ?: return@withTypeVariablesThatAreCountedAsProperTypes
+            resultType = inferenceComponents.resultTypeResolver.findResultTypeOrNull(
+                variableWithConstraints, TypeVariableDirectionCalculator.ResolveDirection.UNKNOWN,
+                c = commonSystem,
+            ) as? ConeKotlinType ?: return@withTypeVariablesThatAreCountedAsProperTypes
 
-
-            check(!candidateStorage.hasContradiction) { "We only should try fixing variables on successful provideDelegate candidate" }
+            check(!commonSystem.hasContradiction) { "We only should try fixing variables on successful provideDelegate candidate" }
             // We don't actually fix it, but add an equality constraint as approximation
-            candidateSystem.addEqualityConstraint(returnTypeBasedOnVariable, resultType, ProvideDelegateFixationPosition)
+            commonSystem.addEqualityConstraint(returnTypeBasedOnVariable, resultType, ProvideDelegateFixationPosition)
 
-            check(!candidateStorage.hasContradiction) {
+            check(!commonSystem.hasContradiction) {
                 "Currently, we see no cases when contradiction might happen after adding equality constraint like that." +
                         "But if you see the message, please report your case to https://youtrack.jetbrains.com/newIssue?project=KT"
             }
