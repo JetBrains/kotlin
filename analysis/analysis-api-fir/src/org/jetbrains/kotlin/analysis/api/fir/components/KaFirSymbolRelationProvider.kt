@@ -12,14 +12,11 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
-import org.jetbrains.kotlin.analysis.api.fir.KaCallableExplicitImplementationStateImpl
-import org.jetbrains.kotlin.analysis.api.fir.KaCallableInheritedImplementationStateImpl
-import org.jetbrains.kotlin.analysis.api.fir.KaCallableMissingImplementationStateImpl
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.buildSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.*
-import org.jetbrains.kotlin.analysis.api.fir.symbols.findSyntheticJavaPropertyAccessor
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.getClassLikeSymbol
+import org.jetbrains.kotlin.analysis.api.fir.toKaImplementationState
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.getContainingKtModule
 import org.jetbrains.kotlin.analysis.api.fir.utils.withSymbolAttachment
@@ -73,7 +70,6 @@ import org.jetbrains.kotlin.psi.psiUtil.isExpectDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualMatcher
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
-import org.jetbrains.kotlin.util.ImplementationStatus
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.analysis.api.fir.components.isDirectSubClassOf as computeIsDirectSubClassOf
 import org.jetbrains.kotlin.analysis.api.fir.components.isSubClassOf as computeIsSubClassOf
@@ -861,13 +857,4 @@ internal class KaFirSymbolRelationProvider(
             )
         }
     }
-}
-
-private fun ImplementationStatus.toKaImplementationState(): KaCallableImplementationState = when (this) {
-    ImplementationStatus.NOT_IMPLEMENTED -> KaCallableMissingImplementationStateImpl
-    ImplementationStatus.VAR_IMPLEMENTED_BY_VAL -> KaCallableExplicitImplementationStateImpl(isComplete = false)
-    ImplementationStatus.AMBIGUOUSLY_INHERITED -> KaCallableInheritedImplementationStateImpl(isAmbiguous = true, isOverridable = true)
-    ImplementationStatus.INHERITED_OR_SYNTHESIZED -> KaCallableInheritedImplementationStateImpl(isAmbiguous = false, isOverridable = true)
-    ImplementationStatus.ALREADY_IMPLEMENTED -> KaCallableExplicitImplementationStateImpl(isComplete = true)
-    ImplementationStatus.CANNOT_BE_IMPLEMENTED -> KaCallableInheritedImplementationStateImpl(isAmbiguous = false, isOverridable = false)
 }

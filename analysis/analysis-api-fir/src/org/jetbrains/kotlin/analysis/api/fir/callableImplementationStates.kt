@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.fir
 
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableImplementationState
+import org.jetbrains.kotlin.util.ImplementationStatus
 import org.jetbrains.kotlin.analysis.api.components.KaCallableImplementationState as KaLegacyCallableImplementationState
 
 internal data class KaCallableExplicitImplementationStateImpl(
@@ -27,4 +28,13 @@ internal data class KaCallableInheritedImplementationStateImpl(
 
 internal object KaCallableMissingImplementationStateImpl : KaCallableImplementationState.Missing, KaLegacyCallableImplementationState.Missing {
     override fun toString(): String = "Missing"
+}
+
+internal fun ImplementationStatus.toKaImplementationState(): KaCallableImplementationState = when (this) {
+    ImplementationStatus.NOT_IMPLEMENTED -> KaCallableMissingImplementationStateImpl
+    ImplementationStatus.VAR_IMPLEMENTED_BY_VAL -> KaCallableExplicitImplementationStateImpl(isComplete = false)
+    ImplementationStatus.AMBIGUOUSLY_INHERITED -> KaCallableInheritedImplementationStateImpl(isAmbiguous = true, isOverridable = true)
+    ImplementationStatus.INHERITED_OR_SYNTHESIZED -> KaCallableInheritedImplementationStateImpl(isAmbiguous = false, isOverridable = true)
+    ImplementationStatus.ALREADY_IMPLEMENTED -> KaCallableExplicitImplementationStateImpl(isComplete = true)
+    ImplementationStatus.CANNOT_BE_IMPLEMENTED -> KaCallableInheritedImplementationStateImpl(isAmbiguous = false, isOverridable = false)
 }
