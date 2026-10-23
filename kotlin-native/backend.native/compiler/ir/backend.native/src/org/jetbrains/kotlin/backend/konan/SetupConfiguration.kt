@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.konan
 
 import com.intellij.openapi.Disposable
+import org.jetbrains.kotlin.backend.common.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.backend.common.linkage.partial.setupPartialLinkageConfig
 import org.jetbrains.kotlin.cli.CliDiagnostics.KONAN_ARGUMENT_ERROR
 import org.jetbrains.kotlin.cli.CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING
@@ -265,7 +266,7 @@ internal fun CompilerConfiguration.setupCommonOptionsForCaches(config: NativeSec
     put(ENABLE_ASSERTIONS, config.assertsEnabled)
     put(BinaryOptions.enableReleaseBinaryCache, config.enableReleaseBinaryCache)
     config.configuration.phaseConfig?.let { phaseConfig = it }
-    setupPartialLinkageConfig(config.partialLinkageConfig)
+    setupPartialLinkageConfig(config.configuration.partialLinkageConfig)
     putIfNotNull(EXTERNAL_DEPENDENCIES, config.externalDependenciesFile?.absolutePathString())
     put(PROPERTY_LAZY_INITIALIZATION, config.propertyLazyInitialization)
     put(BinaryOptions.genericSafeCasts, config.genericSafeCasts)

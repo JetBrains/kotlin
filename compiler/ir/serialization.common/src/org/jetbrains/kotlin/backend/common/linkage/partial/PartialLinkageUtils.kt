@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.common.linkage.partial
 
 import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleConstant.Companion.TYPE_PARAMETER_MARKER_NAME
 import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleConstant.Companion.TYPE_PARAMETER_MARKER_NAME_SETTER
-import org.jetbrains.kotlin.config.PartialLinkageLogLevel
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.IrStatement
@@ -143,7 +142,6 @@ fun interface PartialLinkageIssueSink {
 // A workaround for KT-58837 until KT-58904 is fixed.
 class PartialLinkageLogger(
     val diagnosticReporter: IrDiagnosticReporter,
-    val logLevel: PartialLinkageLogLevel,
     private val issueSink: PartialLinkageIssueSink? = null,
 ) {
     class Location(val moduleName: String, val filePath: String, val lineNumber: Int, val columnNumber: Int) {

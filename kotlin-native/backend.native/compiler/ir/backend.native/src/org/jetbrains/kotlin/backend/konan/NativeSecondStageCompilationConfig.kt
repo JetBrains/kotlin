@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.konan
 
 import com.google.common.base.StandardSystemProperty
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.backend.common.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.backend.konan.ir.BridgesPolicy
 import org.jetbrains.kotlin.backend.konan.library.KlibDAGBuilder
 import org.jetbrains.kotlin.backend.konan.library.KlibDAGBuilder.Parameters
@@ -490,8 +489,6 @@ class NativeSecondStageCompilationConfig(
     internal val testDumpFile: Path? = configuration.testDumpOutputPath?.let(::Path)
 
     internal val useDebugInfoInNativeLibs = configuration.get(BinaryOptions.stripDebugInfoFromNativeLibs) == false
-
-    internal val partialLinkageConfig = configuration.partialLinkageConfig
 
     /**
      * Accumulates the partial linkage issues reported during this compilation. When a cache is built, the issues
