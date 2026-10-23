@@ -708,7 +708,7 @@ private fun ObjCExportBlockCodeGenerator.emitBlockToKotlinFunctionConverters() {
     val converters = (0 until arityLimit).map { arity ->
         functionClassesByArity[arity]?.let {
             val bridge = BlockPointerBridge(numberOfParameters = arity, returnsVoid = false)
-            blockToKotlinFunctionConverter(bridge).toConstPointer()
+            llvm.cFunctionPointer(blockToKotlinFunctionConverter(bridge).toConstPointer())
         } ?: llvm.nullPointer
     }
 
@@ -1955,7 +1955,7 @@ private fun ObjCExportCodeGeneratorBase.bindObjCExportConvertToRetained(
         convertToRetained: ConstPointer,
 ) {
     try {
-        codegen.bindObjCExportConvertToRetained(irClass, convertToRetained)
+        codegen.bindObjCExportConvertToRetained(irClass, llvm.cFunctionPointer(convertToRetained))
     } catch (_: WritableTypeInfoOverrideError) {
         // ObjCExport never tried to catch this error, so ignore.
     }

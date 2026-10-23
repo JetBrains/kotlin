@@ -581,12 +581,12 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
     }
 
     /**
-     * [pointer] as code that authenticates it with [key] expects it: signed on arm64e, as Clang signs it, and unchanged
-     * elsewhere. A null pointer stays unsigned, as in Clang.
+     * [pointer] as code that authenticates it with [key] and [discriminator], blended with [address] if there is one,
+     * expects it: signed on arm64e, as Clang signs it, and unchanged elsewhere. A null pointer stays unsigned, as in Clang.
      */
-    fun signedPointer(pointer: ConstPointer, key: PtrAuthKey): ConstPointer =
+    fun signedPointer(pointer: ConstPointer, key: PtrAuthKey, discriminator: Int = 0, address: ConstPointer? = null): ConstPointer =
             if (context.config.arm64e && LLVMIsNull(pointer.llvm) == 0) {
-                constPointer(LLVMConstantPtrAuth(pointer.llvm, int32(key.value), int64(0), kNull)!!)
+                constPointer(LLVMConstantPtrAuth(pointer.llvm, int32(key.value), int64(discriminator.toLong()), address?.llvm ?: kNull)!!)
             } else {
                 pointer
             }
@@ -684,6 +684,7 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
  */
 internal enum class PtrAuthKey(val value: Int) {
     IA(0),
+    DA(2),
 }
 
 class IrStaticInitializer(val konanLibrary: KotlinLibrary?, val runtimeInitializer: RuntimeInitializer)

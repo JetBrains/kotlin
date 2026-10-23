@@ -26,7 +26,8 @@ internal class ObjCToKotlinMethodAdapter private constructor(type: LLVMTypeRef, 
                 type = llvm.runtime.objCToKotlinMethodAdapter,
                 staticData.cStringLiteral(selector),
                 staticData.cStringLiteral(encoding),
-                imp.toConstPointer(),
+                // The runtime adds this implementation to the class with class_addMethod.
+                llvm.cFunctionPointer(imp.toConstPointer()),
         )
     }
 }
