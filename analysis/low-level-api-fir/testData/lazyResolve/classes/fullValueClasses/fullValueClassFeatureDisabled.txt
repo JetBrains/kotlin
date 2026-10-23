@@ -90,7 +90,7 @@ FILE: [ResolvedTo(IMPORTS)] fullValueClassFeatureDisabled.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] fullValueClassFeatureDisabled.kt
-    public final value [ResolvedTo(STATUS)] class Point : R|kotlin/Any| {
+    public final inline value [ResolvedTo(STATUS)] class Point : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Point.x] x: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Point.y] y: Int): R|pack/Point| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -105,7 +105,7 @@ FILE: [ResolvedTo(IMPORTS)] fullValueClassFeatureDisabled.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] fullValueClassFeatureDisabled.kt
-    public final value [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class Point : R|kotlin/Any| {
+    public final inline value [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class Point : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Point.x] x: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Point.y] y: Int): R|pack/Point| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -120,7 +120,7 @@ FILE: [ResolvedTo(IMPORTS)] fullValueClassFeatureDisabled.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] fullValueClassFeatureDisabled.kt
-    public final value [ResolvedTo(CONTRACTS)] class Point : R|kotlin/Any| {
+    public final inline value [ResolvedTo(CONTRACTS)] class Point : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Point.x] x: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Point.y] y: Int): R|pack/Point| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -135,7 +135,7 @@ FILE: [ResolvedTo(IMPORTS)] fullValueClassFeatureDisabled.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] fullValueClassFeatureDisabled.kt
-    public final value [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class Point : R|kotlin/Any| {
+    public final inline value [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class Point : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Point.x] x: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Point.y] y: Int): R|pack/Point| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -150,7 +150,7 @@ FILE: [ResolvedTo(IMPORTS)] fullValueClassFeatureDisabled.kt
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] fullValueClassFeatureDisabled.kt
-    public final value [ResolvedTo(CONSTANT_EVALUATION)] class Point : R|kotlin/Any| {
+    public final inline value [ResolvedTo(CONSTANT_EVALUATION)] class Point : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Point.x] x: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Point.y] y: Int): R|pack/Point| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -165,7 +165,7 @@ FILE: [ResolvedTo(IMPORTS)] fullValueClassFeatureDisabled.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] fullValueClassFeatureDisabled.kt
-    public final value [ResolvedTo(ANNOTATION_ARGUMENTS)] class Point : R|kotlin/Any| {
+    public final inline value [ResolvedTo(ANNOTATION_ARGUMENTS)] class Point : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Point.x] x: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Point.y] y: Int): R|pack/Point| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -180,7 +180,7 @@ FILE: [ResolvedTo(IMPORTS)] fullValueClassFeatureDisabled.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] fullValueClassFeatureDisabled.kt
-    public final value [ResolvedTo(BODY_RESOLVE)] class Point : R|kotlin/Any| {
+    public final inline value [ResolvedTo(BODY_RESOLVE)] class Point : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Point] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/Point.x] x: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/Point.y] y: R|kotlin/Int|): R|pack/Point| {
             super<R|kotlin/Any|>()
         }
@@ -195,7 +195,7 @@ FILE: [ResolvedTo(IMPORTS)] fullValueClassFeatureDisabled.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] fullValueClassFeatureDisabled.kt
-    public final value [ResolvedTo(BODY_RESOLVE)] class Point : R|kotlin/Any| {
+    public final inline value [ResolvedTo(BODY_RESOLVE)] class Point : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Point] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/Point.x] x: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/Point.y] y: R|kotlin/Int|): R|pack/Point| {
             super<R|kotlin/Any|>()
         }

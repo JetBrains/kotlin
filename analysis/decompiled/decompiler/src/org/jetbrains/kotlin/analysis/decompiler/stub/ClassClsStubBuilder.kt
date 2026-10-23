@@ -125,11 +125,15 @@ private class ClassClsStubBuilder(
             else -> relevantFlags.add(MODALITY)
         }
 
-        val additionalModifiers = when (classKind) {
-            ProtoBuf.Class.Kind.ENUM_CLASS -> listOf(KtTokens.ENUM_KEYWORD)
-            ProtoBuf.Class.Kind.COMPANION_OBJECT -> listOf(KtTokens.COMPANION_KEYWORD)
-            ProtoBuf.Class.Kind.ANNOTATION_CLASS -> listOf(KtTokens.ANNOTATION_KEYWORD)
-            else -> emptyList()
+        val additionalModifiers = buildList {
+            when (classKind) {
+                ProtoBuf.Class.Kind.ENUM_CLASS -> add(KtTokens.ENUM_KEYWORD)
+                ProtoBuf.Class.Kind.COMPANION_OBJECT -> add(KtTokens.COMPANION_KEYWORD)
+                ProtoBuf.Class.Kind.ANNOTATION_CLASS -> add(KtTokens.ANNOTATION_KEYWORD)
+                else -> {}
+            }
+
+            if (classProto.hasInlineClassUnderlyingPropertyName()) add(KtTokens.INLINE_KEYWORD)
         }
 
         return createModifierListStubForDeclaration(
@@ -192,7 +196,7 @@ private class ClassClsStubBuilder(
      * A value object needs no representation of its own: it declares no underlying properties, and the `value` modifier in its modifier
      * list is enough to restore the representation on the fly.
      *
-     * @see org.jetbrains.kotlin.serialization.deserialization.loadValueClassRepresentation
+     * @see org.jetbrains.kotlin.fir.deserialization.loadValueClassRepresentation
      */
     private fun createValueClassRepresentation(): KotlinValueClassRepresentation? = when {
         // An inline class is the only kind of value class which names its underlying property in the class itself

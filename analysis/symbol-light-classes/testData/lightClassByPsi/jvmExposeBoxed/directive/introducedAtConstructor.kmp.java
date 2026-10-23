@@ -32,6 +32,7 @@ public final class IntroducedOnly /* IntroducedOnly*/ {
   private  IntroducedOnly(@kotlin.IntroducedAt(version = "3") @org.jetbrains.annotations.NotNull() int);//  .ctor(@org.jetbrains.annotations.NotNull() int)
 }
 
+@kotlin.jvm.JvmInline()
 public final class JvmMarker /* JvmMarker*/ {
   private final int value;
 

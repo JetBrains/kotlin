@@ -8,6 +8,7 @@ public final class InternalNames /* InternalNames*/ {
   public  InternalNames();//  .ctor()
 }
 
+@kotlin.jvm.JvmInline()
 public final class InternalValue /* InternalValue*/ {
   private final long value;
 
@@ -22,6 +23,7 @@ public final class InternalValue /* InternalValue*/ {
 }
 
 @kotlin.OptIn(markerClass = {kotlin.ExperimentalStdlibApi.class})
+@kotlin.jvm.JvmInline()
 public final class ValueInt /* ValueInt*/ {
   private final int i;
 

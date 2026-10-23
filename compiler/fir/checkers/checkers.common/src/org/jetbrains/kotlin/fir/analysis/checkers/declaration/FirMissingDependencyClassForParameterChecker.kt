@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.InlineStatus
 import org.jetbrains.kotlin.fir.declarations.utils.isData
-import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
+import org.jetbrains.kotlin.fir.declarations.utils.isValue
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneType
@@ -78,6 +78,6 @@ object FirMissingDependencyClassForParameterChecker : FirValueParameterChecker(M
     private fun FirValueParameter.isParameterOfDataOrValueClass(): Boolean {
         if (correspondingProperty == null) return false
         val containingClass = containingDeclarationSymbol.getContainingClassSymbol() ?: return false
-        return containingClass.isData || containingClass.isInlineOrValue
+        return containingClass.isData || containingClass.isValue
     }
 }

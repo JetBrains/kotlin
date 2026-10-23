@@ -1,5 +1,5 @@
 FILE: inlineClassMembers.kt
-    public final value class BackingFields : R|kotlin/Any| {
+    public final inline value class BackingFields : R|kotlin/Any| {
         public constructor(x: R|kotlin/Int|): R|BackingFields| {
             super<R|kotlin/Any|>()
         }
@@ -28,7 +28,7 @@ FILE: inlineClassMembers.kt
         }
 
     }
-    public final inline class DelegatedProp : R|kotlin/Any| {
+    public final inline value class DelegatedProp : R|kotlin/Any| {
         public constructor(x: R|kotlin/Int|): R|DelegatedProp| {
             super<R|kotlin/Any|>()
         }
@@ -42,7 +42,7 @@ FILE: inlineClassMembers.kt
             }
 
     }
-    public final inline class ReservedMembers : R|kotlin/Any| {
+    public final inline value class ReservedMembers : R|kotlin/Any| {
         public constructor(x: R|kotlin/Int|): R|ReservedMembers| {
             super<R|kotlin/Any|>()
         }
@@ -65,7 +65,7 @@ FILE: inlineClassMembers.kt
         }
 
     }
-    public final inline class SecondaryConstructors : R|kotlin/Any| {
+    public final inline value class SecondaryConstructors : R|kotlin/Any| {
         public constructor(x: R|kotlin/Int|): R|SecondaryConstructors| {
             super<R|kotlin/Any|>()
         }
@@ -82,7 +82,7 @@ FILE: inlineClassMembers.kt
         }
 
     }
-    public final value class WithInner : R|kotlin/Any| {
+    public final inline value class WithInner : R|kotlin/Any| {
         public constructor(x: R|kotlin/String|): R|WithInner| {
             super<R|kotlin/Any|>()
         }

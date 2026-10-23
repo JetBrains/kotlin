@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.mpp.RegularClassSymbolMarker
@@ -413,7 +412,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
         symbol: FirBasedSymbol<*>,
         actualContainingClass: FirRegularClassSymbol,
         platformSession: FirSession
-    ): Boolean = (actualContainingClass.isInlineOrValue) &&
+    ): Boolean = (actualContainingClass.isValue) &&
             symbol is FirPropertySymbol &&
             actualContainingClass.primaryConstructorIfAny(platformSession)?.valueParameterSymbols.orEmpty()
                 .contains(symbol.correspondingValueParameterFromPrimaryConstructor)

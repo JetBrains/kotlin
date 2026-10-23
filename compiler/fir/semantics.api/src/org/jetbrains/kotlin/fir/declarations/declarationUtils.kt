@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
 import org.jetbrains.kotlin.fir.SessionHolder
-import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
+import org.jetbrains.kotlin.fir.declarations.utils.isValue
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
@@ -248,7 +248,7 @@ fun FirBasedSymbol<*>.isPrimaryConstructorOfInlineOrValueClass(session: FirSessi
     contract { returns(true) implies (this@isPrimaryConstructorOfInlineOrValueClass is FirConstructorSymbol) }
     if (this !is FirConstructorSymbol) return false
     val constructedClass = getConstructedClass(session) ?: return false
-    return constructedClass.isInlineOrValue && this.isPrimary
+    return constructedClass.isValue && this.isPrimary
 }
 
 fun FirConstructorSymbol.getConstructedClass(session: FirSession): FirRegularClassSymbol? {

@@ -7,6 +7,7 @@ public final class MyClass /* MyClass*/ {
   private  MyClass(@org.jetbrains.annotations.NotNull() int, @org.jetbrains.annotations.NotNull() java.lang.String);//  .ctor(@org.jetbrains.annotations.NotNull() int, @org.jetbrains.annotations.NotNull() java.lang.String)
 }
 
+@kotlin.jvm.JvmInline()
 public final class MyUInt /* MyUInt*/ {
   @org.jetbrains.annotations.NotNull()
   private final @org.jetbrains.annotations.NotNull() int value;

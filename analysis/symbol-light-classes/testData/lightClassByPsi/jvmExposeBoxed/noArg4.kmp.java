@@ -1,4 +1,5 @@
 @kotlin.OptIn(markerClass = {kotlin.ExperimentalStdlibApi.class})
+@kotlin.jvm.JvmInline()
 public final class IntWrapper /* IntWrapper*/ {
   private final int i;
 

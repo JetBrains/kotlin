@@ -10,6 +10,7 @@ public final class ConstructorWithInlineContextParameterAndJvmOverloads /* Const
   public  ConstructorWithInlineContextParameterAndJvmOverloads(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  .ctor(@org.jetbrains.annotations.NotNull() java.lang.String)
 }
 
+@kotlin.jvm.JvmInline()
 public enum Foo /* Foo*/ {
   A,
   B;
@@ -22,6 +23,7 @@ public enum Foo /* Foo*/ {
   public final int getX();//  getX()
 }
 
+@kotlin.jvm.JvmInline()
 public final class InlineInheritance /* InlineInheritance*/ implements I {
   private final int v;
 
@@ -34,6 +36,7 @@ public final class InlineInheritance /* InlineInheritance*/ implements I {
   public final int getV();//  getV()
 }
 
+@kotlin.jvm.JvmInline()
 public final class InlinedDelegate /* InlinedDelegate*/<T>  {
   private T node;
 
@@ -49,6 +52,7 @@ public final class InlinedDelegate /* InlinedDelegate*/<T>  {
   public int hashCode();//  hashCode()
 }
 
+@kotlin.jvm.JvmInline()
 public final class UInt /* UInt*/ {
   private final int value;
 
