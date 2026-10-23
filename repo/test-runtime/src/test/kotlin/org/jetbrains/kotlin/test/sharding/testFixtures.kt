@@ -49,6 +49,14 @@ internal fun executeTests(configuration: TestShardingConfiguration, vararg testC
     return succeeded
 }
 
+/** All settings as JUnit configuration parameters (e.g., for a `LauncherDiscoveryRequestBuilder`), including the disabled ones. */
+internal fun TestShardingConfiguration.toConfigurationParameters(): Map<String, String> = mapOf(
+    shardIndexKey to shardIndex.toString(),
+    shardCountKey to shardCount.toString(),
+    shardSeedKey to shardSeed.toString(),
+    shardByMethodKey to shardByMethod.toString(),
+)
+
 /** The name of the test class containing this test (e.g., also for dynamic tests or invocations of a test template) */
 internal val TestIdentifier.className: String
     get() = uniqueIdObject.segments.firstOrNull { it.type == "class" }?.value ?: error("Missing class of '$uniqueId'")
