@@ -49,13 +49,11 @@ internal fun replayPartialLinkageIssuesFromCaches(
 
     if (issues.isEmpty()) return
 
-    val logLevel = config.partialLinkageConfig.logLevel
     val logger = PartialLinkageLogger(
             KtDiagnosticReporterWithImplicitIrBasedContext(
                     config.configuration.diagnosticsCollector,
                     config.languageVersionSettings,
             ),
-            logLevel,
     )
 
     issues.forEach { logger.log(it.message, it.location, it.significance) }

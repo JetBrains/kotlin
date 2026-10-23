@@ -21,8 +21,6 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.PartialLinkageConfig
-import org.jetbrains.kotlin.config.PartialLinkageLogLevel
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
@@ -53,7 +51,6 @@ import java.io.File
 
 class NativeDeserializerFacade(
     testServices: TestServices,
-    private val partialLinkageLogLevel: PartialLinkageLogLevel = PartialLinkageLogLevel.ERROR, // Use the ERROR log level by default to fail any tests where PL detected any incompatibilities.
 ) : DeserializerFacade<BinaryArtifacts.KLib, IrBackendInput>(testServices, ArtifactKinds.KLib, BackendKinds.IrBackend) {
     override fun transform(
         module: TestModule,
@@ -155,7 +152,6 @@ class NativeDeserializerFacade(
             symbolTable = symbolTable,
             friendModules = friendsMap,
             cInteropModuleDeserializerFactory = CInteropModuleDeserializerFactoryMock,
-            partialLinkageConfig = PartialLinkageConfig(partialLinkageLogLevel),
             irDiagnosticReporter = irDiagnosticReporter,
             librariesBeingCached = emptyMap(),
             externalOverridabilityConditions = listOf(IrObjCOverridabilityCondition),

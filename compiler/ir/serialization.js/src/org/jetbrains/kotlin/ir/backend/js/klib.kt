@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.ir.backend.js
 
 import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.backend.common.*
-import org.jetbrains.kotlin.backend.common.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibSingleFileMetadataSerializer
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
@@ -119,7 +118,6 @@ fun loadIrForSingleModule(
     val irLinker = JsIrLinker(
         configuration = configuration,
         symbolTable = symbolTable,
-        partialLinkageConfig = configuration.partialLinkageConfig,
         irDiagnosticReporter = irDiagnosticReporter,
         friendModules = friendModules
     )
@@ -201,7 +199,6 @@ private fun getIrModuleInfoForKlib(
     val irLinker = JsIrLinker(
         configuration = configuration,
         symbolTable = symbolTable,
-        partialLinkageConfig = configuration.partialLinkageConfig,
         irDiagnosticReporter = irDiagnosticReporter,
         friendModules = friendModules
     )

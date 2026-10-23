@@ -148,7 +148,6 @@ internal class NativeBackendContext(
     override fun dispose() {}
 
     override val partialLinkageSupport = createPartialLinkageSupportForLowerings(
-            config.partialLinkageConfig,
             KtDiagnosticReporterWithImplicitIrBasedContext(
                     configuration.diagnosticsCollector,
                     config.languageVersionSettings,
