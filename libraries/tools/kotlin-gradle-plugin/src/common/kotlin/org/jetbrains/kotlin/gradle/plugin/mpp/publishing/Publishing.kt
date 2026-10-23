@@ -134,29 +134,43 @@ private fun createTargetPublications(project: Project, publishing: PublishingExt
                 is KotlinAndroidTarget -> project.whenEvaluated {
                     kotlinTarget.createTargetSpecificMavenPublications(publishing.publications)
                 }
-                is KotlinTargetWithKotlinArchiveSupport -> project.launchInStage(KotlinPluginLifecycle.Stage.AfterFinaliseDsl) {
-                    if (kotlinTarget is KotlinNativeTarget) {
-                        val crossCompilationSupported = kotlinTarget.crossCompilationOnCurrentHostSupported.await()
-                        if (!crossCompilationSupported) return@launchInStage
+                is KotlinTargetWithKotlinArchiveSupport -> kotlinTarget.createTargetSpecificMavenPublications(
+                    publishing.publications,
+                    enabled = enabled@{
+                        if (kotlinTarget is KotlinNativeTarget) {
+                            val crossCompilationSupported = kotlinTarget.crossCompilationOnCurrentHostSupported.await()
+                            if (!crossCompilationSupported) return@enabled false
+                        }
+                        KotlinPluginLifecycle.Stage.AfterFinaliseDsl.await()
+                        !kotlinTarget.isStoredInKotlinArchive.get()
                     }
-                    if (!kotlinTarget.isStoredInKotlinArchive.get()) {
-                        kotlinTarget.createTargetSpecificMavenPublications(publishing.publications)
-                    }
-                }
+                )
                 else -> kotlinTarget.createTargetSpecificMavenPublications(publishing.publications)
             }
         }
 }
 
-private fun InternalKotlinTarget.createTargetSpecificMavenPublications(publications: PublicationContainer) {
+/**
+ * Publication creation waits for [enabled], so it can occur after the build script runs.
+ * Gradle runs `configureEach` actions when a publication is added, before the action given to `create`.
+ * Thus, if KGP configures the publication in `create`, KGP overrides the values from user `configureEach` actions.
+ *
+ * To keep the old order, KGP registers its `configureEach` action immediately and creates the publication later.
+ * If KGP does not create the publication, the action has no effect.
+ *
+ * A build script that reads the publication list eagerly can still get an incomplete list.
+ * Idiomatic build scripts do not do this.
+ */
+private fun InternalKotlinTarget.createTargetSpecificMavenPublications(
+    publications: PublicationContainer,
+    enabled: suspend () -> Boolean = { true }
+) {
     kotlinComponents
         .filter { kotlinComponent -> kotlinComponent.publishableOnCurrentHost }
         .forEach { kotlinComponent ->
-            val componentPublication = publications.create(kotlinComponent.name, MavenPublication::class.java).apply {
-                val publication = this
-
+            publications.matching { it.name == kotlinComponent.name }.withType().configureEach { publication ->
                 (publication as MavenPublicationInternal).publishWithOriginalFileName()
-                artifactId = kotlinComponent.defaultArtifactId
+                publication.artifactId = kotlinComponent.defaultArtifactId
 
                 // do await for usages since older Gradle versions seem to check the files in the variant eagerly:
                 // We are deferring this to 'AfterFinaliseCompilations' as safety measure for now.
@@ -167,12 +181,17 @@ private fun InternalKotlinTarget.createTargetSpecificMavenPublications(publicati
                 project.rewriteKmpDependenciesInPomForTargetPublication(kotlinComponent, publication)
             }
 
-            (kotlinComponent as? KotlinTargetComponentWithPublication)?.publicationDelegate = componentPublication
-            onPublicationCreated(componentPublication)
+            // Undispatched creates the publication immediately if [enabled] does not suspend, as in old versions
+            project.launch(start = KotlinPluginLifecycle.CoroutineStart.Undispatched) {
+                if (!enabled()) return@launch
+                val componentPublication = publications.create(kotlinComponent.name, MavenPublication::class.java)
+                (kotlinComponent as? KotlinTargetComponentWithPublication)?.publicationDelegate = componentPublication
+                onPublicationCreated(componentPublication)
 
-            // Also skip publishing when a project dependency disables cross-compilation (KT-87394).
-            if (this@createTargetSpecificMavenPublications is KotlinNativeTarget) {
-                skipPublicationTasksWhenCrossCompilationWithDependenciesUnsupported(componentPublication)
+                // Also skip publishing when a project dependency disables cross-compilation (KT-87394).
+                if (this@createTargetSpecificMavenPublications is KotlinNativeTarget) {
+                    skipPublicationTasksWhenCrossCompilationWithDependenciesUnsupported(componentPublication)
+                }
             }
         }
 }
