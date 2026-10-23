@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
-import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBaseCachedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
@@ -30,7 +29,7 @@ internal class KaFirNestedInLocalClassSymbolPointer<T : KaClassLikeSymbol>(
     private val firOrigin: FirDeclarationOrigin,
     private val expectedClass: KClass<T>,
     originalSymbol: T?,
-) : KaBaseCachedSymbolPointer<T>(originalSymbol) {
+) : KaFirCachedSymbolPointer<T>(originalSymbol) {
 
     @KaImplementationDetail
     override fun restoreIfNotCached(analysisSession: KaSession): T? {

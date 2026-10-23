@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.api.fir.scopes
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirFileSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
-import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaBaseScope
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
@@ -29,7 +28,7 @@ import org.jetbrains.kotlin.name.Name
 internal class KaFirFileScope(
     private val owner: KaFirFileSymbol,
     private val builder: KaSymbolByFirBuilder
-) : KaBaseScope() {
+) : KaFirScope() {
     override val token: KaLifetimeToken get() = builder.token
 
     private val allNamesCached by cached {

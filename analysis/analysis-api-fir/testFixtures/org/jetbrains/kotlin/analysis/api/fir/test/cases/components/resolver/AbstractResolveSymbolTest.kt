@@ -1,0 +1,135 @@
+/*
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.analysis.api.fir.test.cases.components.resolver
+
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.components.KaResolver
+import org.jetbrains.kotlin.analysis.api.expressions.contextSensitiveResolutionStatus
+import org.jetbrains.kotlin.analysis.api.expressions.isImplicitReferenceToCompanion
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.assertStableResult
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.findSpecializedResolveFunctions
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.stringRepresentation
+import org.jetbrains.kotlin.analysis.api.resolution.*
+import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
+import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtExperimentalApi
+import org.jetbrains.kotlin.psi.KtSimpleNameExpression
+import org.jetbrains.kotlin.psi.lookupLocally
+import org.jetbrains.kotlin.resolution.KtResolvable
+import org.jetbrains.kotlin.resolution.KtResolvableCall
+import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
+import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.assertions
+import org.jetbrains.kotlin.test.services.moduleStructure
+
+abstract class AbstractResolveSymbolTest : AbstractResolveByElementTest() {
+    override val resolveKinds: List<ResolveKind> get() = listOf(ResolveKind.SYMBOL)
+}
+
+context(_: KaSession)
+internal fun AbstractResolveByElementTest.generateSymbolOutput(mainElement: KtElement, testServices: TestServices): String {
+    val symbolAttempt = tryResolveSymbols(mainElement)
+    val secondSymbolAttempt = tryResolveSymbols(mainElement)
+
+    ignoreStabilityIfNeeded {
+        assertStableResult(testServices, symbolAttempt, secondSymbolAttempt)
+
+        if (mainElement is KtResolvableCall) {
+            val callAttempt = mainElement.tryResolveCall()
+            assertStableResult(mainElement, testServices, symbolAttempt, callAttempt)
+        }
+    }
+
+    // This call mustn't be suppressed as this is the API contracts
+    if (mainElement is KtResolvable) {
+        assertSpecificResolutionApi(testServices, symbolAttempt, mainElement)
+    }
+
+    @OptIn(KtExperimentalApi::class)
+    val localLookup = (mainElement as? KtSimpleNameExpression)?.lookupLocally()
+
+    if (localLookup != null) {
+        val resolved = symbolAttempt?.successfulSymbols?.singleOrNull()?.psi
+        testServices.assertions.assertNotNull(resolved) {
+            "${stringRepresentation(mainElement)} via lookupLocally resolved to ${stringRepresentation(localLookup)} which is not null, " +
+                    "but symbol attempt is ${stringRepresentation(symbolAttempt)}"
+        }
+        ignoreStabilityIfNeeded {
+            testServices.assertions.assertTrue(resolved!!.isEquivalentTo(localLookup)) {
+                "${stringRepresentation(resolved)} != ${stringRepresentation(localLookup)}"
+            }
+        }
+    }
+
+    return prettyPrint {
+        if (mainElement is KtSimpleNameExpression) {
+            appendLine("isImplicitReferenceToCompanion: ${mainElement.isImplicitReferenceToCompanion}")
+            appendLine("contextSensitiveResolutionStatus: ${mainElement.contextSensitiveResolutionStatus}")
+            appendLine("lookupLocally: ${localLookup != null}")
+        }
+
+        val representation = stringRepresentation(symbolAttempt)
+        append(representation)
+
+        if (ResolveSymbolTestDirectives.RENDER_PSI_CLASS_NAME in testServices.moduleStructure.allDirectives) {
+            val symbols = symbolAttempt?.symbols.orEmpty()
+            printCollectionIfNotEmpty(symbols, prefix = "\nPSI class names: ") { symbol ->
+                append(symbol.psi?.let { it::class.simpleName }.toString())
+            }
+        }
+
+        val additionalInfo = symbolAttempt?.let { additionalSymbolInfo(it) }
+        if (additionalInfo != null) {
+            appendLine()
+            append("additional: ")
+            withIndent {
+                append(additionalInfo)
+            }
+        }
+    }
+}
+
+context(session: KaSession)
+private fun tryResolveSymbols(element: KtElement): KaSymbolResolutionAttempt? = if (element is KtResolvable) {
+    element.tryResolveSymbols()
+} else {
+    null
+}
+
+internal object ResolveSymbolTestDirectives : SimpleDirectivesContainer() {
+    val RENDER_PSI_CLASS_NAME by directive(
+        "Render also PSI class name for resolved symbols"
+    )
+}
+
+/**
+ * The function checks that all specific implementations of [KaResolver.resolveSymbol] are consistent.
+ */
+context(session: KaSession)
+internal fun assertSpecificResolutionApi(
+    testServices: TestServices,
+    attempt: KaSymbolResolutionAttempt?,
+    element: KtResolvable,
+) {
+    val elementClass = element::class
+
+    val assertions = testServices.assertions
+    for (kFunction in KaResolver::class.findSpecializedResolveFunctions("resolveSymbol", elementClass)) {
+        val specificCall = kFunction.call(session, element)
+
+        when (attempt) {
+            null, is KaSimpleSymbolResolutionError -> assertions.assertEquals(expected = null, actual = specificCall)
+            is KaSimpleSymbolResolutionSuccess -> {
+                // Only non-compound cases can be checked
+                assertions.assertEquals(expected = attempt.symbols.singleOrNull(), actual = specificCall)
+            }
+            is KaCompoundSymbolResolutionError -> {
+                // Multi-symbol resolution: specialized resolveSymbol returns null for compound cases
+                assertions.assertEquals(expected = null, actual = specificCall)
+            }
+        }
+    }
+}

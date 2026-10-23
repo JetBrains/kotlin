@@ -12,8 +12,6 @@ import org.jetbrains.kotlin.analysis.api.components.KaWhenMissingCase
 import org.jetbrains.kotlin.analysis.api.expressions.expressionType
 import org.jetbrains.kotlin.analysis.api.expressions.returnType
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
-import org.jetbrains.kotlin.analysis.api.impl.base.components.withPsiValidityAssertion
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsExpressionInformationProvider
 import org.jetbrains.kotlin.analysis.api.resolution.KaVariableAccessCall
 import org.jetbrains.kotlin.analysis.api.resolution.resolveSuccessfulCall
@@ -42,7 +40,7 @@ import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 @KaImplementationDetail
 internal class KaFirExpressionInformationProvider(
     override val analysisSessionProvider: () -> KaFirSession,
-) : KaBaseSessionComponent<KaFirSession>(), KaInternalsExpressionInformationProvider, KaFirSessionComponent {
+) : KaFirSessionComponent(), KaInternalsExpressionInformationProvider {
     override fun targetSymbol(returnExpression: KtReturnExpression): KaCallableSymbol? =
         with(analysisSession) { returnExpression.resolveSymbol() }
 

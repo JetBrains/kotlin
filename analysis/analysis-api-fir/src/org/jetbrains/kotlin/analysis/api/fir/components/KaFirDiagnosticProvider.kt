@@ -9,8 +9,6 @@ import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticCheckerKind
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticWithPsi
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostics
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
-import org.jetbrains.kotlin.analysis.api.impl.base.components.withPsiValidityAssertion
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsDiagnosticProvider
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -20,7 +18,7 @@ import org.jetbrains.kotlin.psi.KtElement
 
 internal class KaFirDiagnosticProvider(
     override val analysisSessionProvider: () -> KaFirSession,
-) : KaBaseSessionComponent<KaFirSession>(), KaInternalsDiagnosticProvider, KaFirSessionComponent {
+) : KaFirSessionComponent(), KaInternalsDiagnosticProvider {
     override fun diagnostics(element: KtElement): KaDiagnostics = element.withPsiValidityAssertion {
         KaFirDiagnostics(
             element = element,

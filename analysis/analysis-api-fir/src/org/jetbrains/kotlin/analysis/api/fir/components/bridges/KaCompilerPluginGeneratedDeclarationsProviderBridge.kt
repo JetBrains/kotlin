@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.fir.components.bridges
 import org.jetbrains.kotlin.analysis.api.components.KaCompilerPluginGeneratedDeclarations
 import org.jetbrains.kotlin.analysis.api.components.KaCompilerPluginGeneratedDeclarationsProvider
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
+import org.jetbrains.kotlin.analysis.api.fir.components.KaFirSessionComponent
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.compilerPlugins.compilerPluginGeneratedDeclarations as compilerPluginGeneratedDeclarationsEndpoint
 
@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.analysis.api.compilerPlugins.compilerPluginGenerated
  */
 internal class KaCompilerPluginGeneratedDeclarationsProviderBridge(
     override val analysisSessionProvider: () -> KaFirSession,
-) : KaBaseSessionComponent<KaFirSession>(), KaCompilerPluginGeneratedDeclarationsProvider {
+) : KaFirSessionComponent(), KaCompilerPluginGeneratedDeclarationsProvider {
     override val KaModule.compilerPluginGeneratedDeclarations: KaCompilerPluginGeneratedDeclarations
         get() = context(analysisSession) {
             // The endpoint now returns the new compilation.KaCompilerPluginGeneratedDeclarations. Its only implementation also implements

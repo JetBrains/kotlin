@@ -9,9 +9,9 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
+import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirEmptyAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.hasAnnotation
-import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaBaseEmptyAnnotationList
-import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBaseValueParameterFromDefaultSetterSymbolPointer
+import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirValueParameterFromDefaultSetterSymbolPointer
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
 import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
@@ -69,13 +69,13 @@ internal class KaFirDefaultSetterValueParameter(
     override val annotations: KaAnnotationList
         get() = withValidityAssertion {
             if (owningKaSetter.owningKaProperty.backingPsi?.hasAnnotation(AnnotationUseSiteTarget.SETTER_PARAMETER) == false)
-                KaBaseEmptyAnnotationList(token)
+                KaFirEmptyAnnotationList(token)
             else
                 KaFirAnnotationListForDeclaration.create(firSymbol, builder)
         }
 
     override fun createPointer(): KaSymbolPointer<KaValueParameterSymbol> = withValidityAssertion {
-        KaBaseValueParameterFromDefaultSetterSymbolPointer(owningKaSetter.owningKaProperty.createPointer(), this)
+        KaFirValueParameterFromDefaultSetterSymbolPointer(owningKaSetter.owningKaProperty.createPointer(), this)
     }
 
     override val origin: KaSymbolOrigin

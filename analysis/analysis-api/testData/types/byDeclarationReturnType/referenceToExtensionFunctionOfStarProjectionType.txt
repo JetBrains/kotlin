@@ -24,7 +24,23 @@ KaFunctionType:
       hasFlexibleNullability: false
   ]
   parameters: [
-    KaBaseFunctionValueParameter [name: null, type: kotlin/Nothing]
+    KaFunctionValueParameter:
+      name: null
+      type: KaUsualClassType:
+        abbreviation: null
+        annotations: []
+        classId: kotlin/Nothing
+        qualifiers: [
+          KaResolvedClassTypeQualifier:
+            name: Nothing
+            symbol: KaNamedClassSymbol(kotlin/Nothing)
+            typeArguments: []
+        ]
+        symbol: KaNamedClassSymbol(kotlin/Nothing)
+        typeArguments: []
+        isMarkedNullable: false
+        isNullable: false
+        hasFlexibleNullability: false
   ]
   qualifiers: [
     KaResolvedClassTypeQualifier:

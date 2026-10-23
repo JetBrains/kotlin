@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
-import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBaseCachedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
@@ -23,7 +22,7 @@ internal abstract class KaFirMemberSymbolPointer<S : KaSymbol>(
     private val ownerPointer: KaSymbolPointer<KaDeclarationContainerSymbol>,
     private val isStatic: Boolean = false,
     originalSymbol: S?,
-) : KaBaseCachedSymbolPointer<S>(originalSymbol) {
+) : KaFirCachedSymbolPointer<S>(originalSymbol) {
     @KaImplementationDetail
     final override fun restoreIfNotCached(analysisSession: KaSession): S? {
         require(analysisSession is KaFirSession)

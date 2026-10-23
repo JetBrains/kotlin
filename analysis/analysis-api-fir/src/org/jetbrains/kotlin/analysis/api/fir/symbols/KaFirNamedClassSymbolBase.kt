@@ -6,13 +6,13 @@
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaCannotCreateSymbolPointerForLocalLibraryDeclarationException
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirClassLikeSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirLocalClassFromCompilerPluginSymbolPointer
+import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaUnsupportedSymbolLocation
+import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createCompatibleSmartPointer
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createNestedClassLikeSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.utils.withSymbolAttachment
-import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaCannotCreateSymbolPointerForLocalLibraryDeclarationException
-import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaUnsupportedSymbolLocation
-import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.createCompatibleSmartPointer
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolLocation

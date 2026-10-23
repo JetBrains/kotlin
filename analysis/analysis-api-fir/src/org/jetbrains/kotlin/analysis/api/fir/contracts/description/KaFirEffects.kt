@@ -1,0 +1,152 @@
+/*
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.analysis.api.fir.contracts.description
+
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.contracts.description.*
+import org.jetbrains.kotlin.analysis.api.contracts.description.KaContractReturnsContractEffectDeclaration.*
+import org.jetbrains.kotlin.analysis.api.contracts.description.booleans.KaContractBooleanExpression
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
+import java.util.*
+
+internal class KaFirContractCallsInPlaceContractEffectDeclaration(
+    private val backingValueParameterReference: KaContractParameterValue,
+    private val backingOccurrencesRange: EventOccurrencesRange,
+) : KaContractCallsInPlaceContractEffectDeclaration {
+    private val backingInvocationKind: KaContractInvocationKind = backingOccurrencesRange.toKaContractInvocationKind()
+
+    override val token: KaLifetimeToken get() = backingValueParameterReference.token
+
+    override val valueParameterReference: KaContractParameterValue get() = withValidityAssertion { backingValueParameterReference }
+
+    override val invocationKind: KaContractInvocationKind get() = withValidityAssertion { backingInvocationKind }
+
+    override fun hashCode(): Int = Objects.hash(backingValueParameterReference, backingInvocationKind)
+
+    override fun equals(other: Any?): Boolean {
+        return this === other ||
+                other is KaFirContractCallsInPlaceContractEffectDeclaration &&
+                other.backingValueParameterReference == backingValueParameterReference &&
+                other.backingInvocationKind == backingInvocationKind
+    }
+}
+
+internal class KaFirContractConditionalContractEffectDeclaration(
+    private val backingEffect: KaContractEffectDeclaration,
+    private val backingCondition: KaContractBooleanExpression,
+) : KaContractConditionalContractEffectDeclaration {
+    override val token: KaLifetimeToken get() = backingEffect.token
+
+    override val effect: KaContractEffectDeclaration get() = withValidityAssertion { backingEffect }
+    override val condition: KaContractBooleanExpression get() = withValidityAssertion { backingCondition }
+
+    override fun hashCode(): Int = Objects.hash(backingEffect, backingCondition)
+    override fun equals(other: Any?): Boolean {
+        return this === other ||
+                other is KaFirContractConditionalContractEffectDeclaration &&
+                other.backingEffect == backingEffect &&
+                other.backingCondition == backingCondition
+    }
+}
+
+internal object KaFirContractReturnsContractEffectDeclarations {
+    @KaImplementationDetail
+    class KaFirContractReturnsNotNullEffectDeclaration(
+        override val token: KaLifetimeToken,
+    ) : KaContractReturnsNotNullEffectDeclaration {
+        override fun equals(other: Any?): Boolean = other is KaFirContractReturnsNotNullEffectDeclaration
+        override fun hashCode(): Int = javaClass.hashCode()
+    }
+
+    @KaImplementationDetail
+    class KaFirContractReturnsSpecificValueEffectDeclaration(
+        private val backingValue: KaContractConstantValue,
+    ) : KaContractReturnsSpecificValueEffectDeclaration {
+        override val token: KaLifetimeToken get() = backingValue.token
+
+        override val value: KaContractConstantValue get() = withValidityAssertion { backingValue }
+
+        override fun equals(other: Any?): Boolean {
+            return this === other ||
+                    other is KaFirContractReturnsSpecificValueEffectDeclaration &&
+                    other.backingValue == backingValue
+        }
+
+        override fun hashCode(): Int = backingValue.hashCode()
+    }
+
+    @KaImplementationDetail
+    class KaFirContractReturnsSuccessfullyEffectDeclaration(
+        override val token: KaLifetimeToken,
+    ) : KaContractReturnsSuccessfullyEffectDeclaration {
+        override fun equals(other: Any?): Boolean = other is KaFirContractReturnsSuccessfullyEffectDeclaration
+        override fun hashCode(): Int = javaClass.hashCode()
+    }
+}
+
+internal class KaFirContractReturnsResultOfEffectDeclaration(
+    private val backingValueParameterReference: KaContractParameterValue,
+) : KaContractReturnsResultOfEffectDeclaration {
+    override val token: KaLifetimeToken get() = backingValueParameterReference.token
+
+    override val valueParameterReference: KaContractParameterValue get() = withValidityAssertion { backingValueParameterReference }
+
+    override fun hashCode(): Int = backingValueParameterReference.hashCode()
+
+    override fun equals(other: Any?): Boolean {
+        return this === other ||
+                other is KaFirContractReturnsResultOfEffectDeclaration &&
+                other.backingValueParameterReference == backingValueParameterReference
+    }
+}
+
+internal class KaFirContractReturnsParameterEffectDeclaration(
+    private val backingValueParameterReference: KaContractParameterValue,
+) : KaContractReturnsParameterEffectDeclaration {
+    override val token: KaLifetimeToken get() = backingValueParameterReference.token
+
+    override val valueParameterReference: KaContractParameterValue get() = withValidityAssertion { backingValueParameterReference }
+
+    override fun hashCode(): Int = backingValueParameterReference.hashCode()
+
+    override fun equals(other: Any?): Boolean {
+        return this === other ||
+                other is KaFirContractReturnsParameterEffectDeclaration &&
+                other.backingValueParameterReference == backingValueParameterReference
+    }
+}
+
+internal class KaFirContractHoldsInEffectDeclaration(
+    private val backingCondition: KaContractBooleanExpression,
+    private val backingValueParameterReference: KaContractParameterValue,
+) : KaContractHoldsInEffectDeclaration {
+    override val condition: KaContractBooleanExpression
+        get() = withValidityAssertion { backingCondition }
+
+    override val valueParameterReference: KaContractParameterValue
+        get() = withValidityAssertion { backingValueParameterReference }
+
+    override val token: KaLifetimeToken
+        get() = backingCondition.token
+
+    override fun equals(other: Any?): Boolean = this === other ||
+            other is KaFirContractHoldsInEffectDeclaration &&
+            other.backingCondition == backingCondition &&
+            other.backingValueParameterReference == backingValueParameterReference
+
+    override fun hashCode(): Int = Objects.hash(backingCondition, backingValueParameterReference)
+}
+
+internal fun EventOccurrencesRange.toKaContractInvocationKind(): KaContractInvocationKind = when (this) {
+    EventOccurrencesRange.ZERO -> KaContractInvocationKind.ZERO
+    EventOccurrencesRange.AT_MOST_ONCE -> KaContractInvocationKind.AT_MOST_ONCE
+    EventOccurrencesRange.EXACTLY_ONCE -> KaContractInvocationKind.EXACTLY_ONCE
+    EventOccurrencesRange.AT_LEAST_ONCE -> KaContractInvocationKind.AT_LEAST_ONCE
+    EventOccurrencesRange.MORE_THAN_ONCE -> KaContractInvocationKind.MORE_THAN_ONCE
+    EventOccurrencesRange.UNKNOWN -> KaContractInvocationKind.UNKNOWN
+}

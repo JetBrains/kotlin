@@ -1,0 +1,234 @@
+/*
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.analysis.api.fir.types.typeCreation
+
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.fir.resolution.KaFirFunctionValueParameter
+import org.jetbrains.kotlin.analysis.api.fir.types.KaFirTypeArgumentWithVariance
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.types.*
+import org.jetbrains.kotlin.analysis.api.types.typeCreation.*
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.Variance
+
+internal abstract class KaFirTypeBuilderWithAnnotations : KaTypeBuilderWithAnnotations {
+    val backingAnnotations = mutableListOf<ClassId>()
+
+    override val annotations: List<ClassId>
+        get() = withValidityAssertion {
+            backingAnnotations
+        }
+
+    override fun annotation(annotationClassId: ClassId) = withValidityAssertion {
+        backingAnnotations += annotationClassId
+    }
+
+    override fun annotation(annotationClassId: () -> ClassId) = withValidityAssertion {
+        backingAnnotations += annotationClassId()
+    }
+
+    override fun annotations(annotationClassIds: Iterable<ClassId>) = withValidityAssertion {
+        backingAnnotations += annotationClassIds
+    }
+
+    override fun annotations(annotationClassIds: () -> Iterable<ClassId>) = withValidityAssertion {
+        backingAnnotations += annotationClassIds()
+    }
+}
+
+internal class KaFirClassTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaClassTypeBuilder, KaFirTypeBuilderWithAnnotations(),
+    KaTypeCreator by typeCreatorDelegate {
+    private val backingTypeArguments = mutableListOf<KaTypeProjection>()
+
+    override var isMarkedNullable: Boolean = false
+        get() = withValidityAssertion { field }
+        set(value) {
+            withValidityAssertion {
+                field = value
+            }
+        }
+
+    override val typeArguments: List<KaTypeProjection>
+        get() = withValidityAssertion { backingTypeArguments }
+
+    override fun typeArgument(argument: KaTypeProjection) = withValidityAssertion {
+        backingTypeArguments += argument
+    }
+
+    override fun invariantTypeArgument(type: () -> KaType) = invariantTypeArgument(type())
+
+    override fun invariantTypeArgument(type: KaType) = typeArgument(Variance.INVARIANT, type)
+
+    override fun typeArgument(variance: Variance, type: () -> KaType) = typeArgument(variance, type())
+
+    override fun typeArgument(variance: Variance, type: KaType) = withValidityAssertion {
+        backingTypeArguments += KaFirTypeArgumentWithVariance(type, variance, type.token)
+    }
+
+    override fun typeArguments(arguments: () -> Iterable<KaTypeProjection>) = withValidityAssertion {
+        backingTypeArguments += arguments()
+    }
+
+    override fun typeArgument(argument: () -> KaTypeProjection) = typeArgument(argument())
+}
+
+internal class KaFirTypeParameterTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaTypeParameterTypeBuilder, KaFirTypeBuilderWithAnnotations(),
+    KaTypeCreator by typeCreatorDelegate {
+    override var isMarkedNullable: Boolean = false
+        get() = withValidityAssertion { field }
+        set(value) {
+            withValidityAssertion {
+                field = value
+            }
+        }
+}
+
+internal class KaFirArrayTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaArrayTypeBuilder, KaFirTypeBuilderWithAnnotations(),
+    KaTypeCreator by typeCreatorDelegate {
+    override var isMarkedNullable: Boolean = false
+        get() = withValidityAssertion { field }
+        set(value) {
+            withValidityAssertion {
+                field = value
+            }
+        }
+
+    override var shouldPreferPrimitiveTypes: Boolean = true
+        get() = withValidityAssertion { field }
+        set(value) {
+            withValidityAssertion {
+                field = value
+            }
+        }
+
+    override var variance: Variance = Variance.INVARIANT
+        get() = withValidityAssertion { field }
+        set(value) {
+            withValidityAssertion {
+                field = value
+            }
+        }
+}
+
+internal class KaFirCapturedTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaCapturedTypeBuilder, KaFirTypeBuilderWithAnnotations(),
+    KaTypeCreator by typeCreatorDelegate {
+    override var isMarkedNullable: Boolean = false
+        get() = withValidityAssertion { field }
+        set(value) {
+            withValidityAssertion {
+                field = value
+            }
+        }
+}
+
+internal class KaFirDefinitelyNotNullTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaDefinitelyNotNullTypeBuilder,
+    KaFirTypeBuilderWithAnnotations(),
+    KaTypeCreator by typeCreatorDelegate
+
+internal class KaFirFlexibleTypeBuilder(lowerBound: KaType, upperBound: KaType, typeCreatorDelegate: KaTypeCreator) : KaFlexibleTypeBuilder,
+    KaFirTypeBuilderWithAnnotations(), KaTypeCreator by typeCreatorDelegate {
+    override var lowerBound: KaType = lowerBound
+        get() = withValidityAssertion { field }
+        set(value) {
+            withValidityAssertion { field = value }
+        }
+
+    override var upperBound: KaType = upperBound
+        get() = withValidityAssertion { field }
+        set(value) {
+            withValidityAssertion { field = value }
+        }
+}
+
+internal class KaFirIntersectionTypeBuilder(
+    typeCreatorDelegate: KaTypeCreator
+) : KaIntersectionTypeBuilder, KaTypeCreator by typeCreatorDelegate {
+
+    private val backingConjuncts: MutableSet<KaType> = mutableSetOf()
+
+    private fun KaType.unwrapConjunct(): List<KaType> = (this as? KaIntersectionType)?.conjuncts ?: listOf(this)
+
+    override val conjuncts: Set<KaType> get() = withValidityAssertion { backingConjuncts }
+
+    override fun conjunct(conjunct: KaType): Unit = withValidityAssertion {
+        backingConjuncts += conjunct.unwrapConjunct()
+    }
+
+    override fun conjunct(conjunct: () -> KaType) = conjunct(conjunct())
+
+    override fun conjuncts(conjuncts: () -> Iterable<KaType>) = conjuncts(conjuncts())
+
+    override fun conjuncts(conjuncts: Iterable<KaType>) = withValidityAssertion {
+        backingConjuncts += conjuncts.flatMap { it.unwrapConjunct() }
+    }
+}
+
+internal class KaFirDynamicTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaDynamicTypeBuilder,
+    KaFirTypeBuilderWithAnnotations(), KaTypeCreator by typeCreatorDelegate
+
+internal class KaFirFunctionTypeBuilder(typeCreatorDelegate: KaTypeCreator, session: KaSession) : KaFunctionTypeBuilder,
+    KaFirTypeBuilderWithAnnotations(),
+    KaTypeCreator by typeCreatorDelegate {
+    override var isMarkedNullable: Boolean = false
+        get() = withValidityAssertion { field }
+        set(value) {
+            withValidityAssertion {
+                field = value
+            }
+        }
+
+    override var isSuspend: Boolean = false
+        get() = withValidityAssertion { field }
+        set(value) {
+            withValidityAssertion {
+                field = value
+            }
+        }
+
+    override var isReflectType: Boolean = false
+        get() = withValidityAssertion { field }
+        set(value) {
+            withValidityAssertion {
+                field = value
+            }
+        }
+
+    private val backingContextParameters: MutableList<KaType> = mutableListOf()
+
+    override val contextParameters: List<KaType>
+        get() = withValidityAssertion { backingContextParameters }
+
+    override fun contextParameter(contextParameter: KaType) = withValidityAssertion {
+        backingContextParameters += contextParameter
+    }
+
+    override fun contextParameter(contextParameter: () -> KaType) = contextParameter(contextParameter())
+
+    private val backingValueParameters: MutableList<KaFunctionValueParameter> = mutableListOf()
+
+    override val valueParameters: List<KaFunctionValueParameter>
+        get() = withValidityAssertion { backingValueParameters }
+
+    override fun valueParameter(name: Name?, type: KaType) = withValidityAssertion {
+        val valueParameter = KaFirFunctionValueParameter(name, type)
+        backingValueParameters += valueParameter
+    }
+
+    override fun valueParameter(name: Name?, type: () -> KaType) = valueParameter(name, type())
+
+    override var receiverType: KaType? = null
+        get() = withValidityAssertion { field }
+        set(value) {
+            withValidityAssertion { field = value }
+        }
+
+    override var returnType: KaType = session.builtinTypes.unit
+        get() = withValidityAssertion { field }
+        set(value) {
+            withValidityAssertion { field = value }
+        }
+}

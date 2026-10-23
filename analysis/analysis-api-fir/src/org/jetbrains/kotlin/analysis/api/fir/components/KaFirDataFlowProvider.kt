@@ -19,12 +19,10 @@ import org.jetbrains.kotlin.analysis.api.dataflow.KaImplicitReceiverSmartCastKin
 import org.jetbrains.kotlin.analysis.api.dataflow.KaSmartCastInfo
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.utils.unwrap
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseImplicitReceiverSmartCast
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSmartCastInfo
-import org.jetbrains.kotlin.analysis.api.impl.base.components.withPsiValidityAssertion
 import org.jetbrains.kotlin.analysis.api.impl.base.util.withKaModuleEntry
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsDataFlowProvider
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirOfType
@@ -58,7 +56,7 @@ import kotlin.math.sign
 
 internal class KaFirDataFlowProvider(
     override val analysisSessionProvider: () -> KaFirSession,
-) : KaBaseSessionComponent<KaFirSession>(), KaInternalsDataFlowProvider, KaFirSessionComponent {
+) : KaFirSessionComponent(), KaInternalsDataFlowProvider {
     override fun smartCastInfo(expression: KtExpression): KaSmartCastInfo? =
         expression.withPsiValidityAssertion {
             with(analysisSession) {
@@ -71,7 +69,7 @@ internal class KaFirDataFlowProvider(
                     return null
                 }
 
-                return KaBaseSmartCastInfo(
+                return KaFirSmartCastInfo(
                     backingOriginalType = originalType,
                     backingSmartCastType = smartCastType,
                     backingIsStable = firSmartCastExpression.isStable
@@ -164,7 +162,7 @@ internal class KaFirDataFlowProvider(
         if (!receiver.isStableSmartcast()) return null
 
         val type = receiver.resolvedType.asKaType()
-        return KaBaseImplicitReceiverSmartCast(type, kind)
+        return KaFirImplicitReceiverSmartCast(type, kind)
     }
 
     override fun computeExitPointSnapshot(
@@ -646,5 +644,50 @@ private class ControlFlowGraphIndex(graphProvider: () -> ControlFlowGraph) {
         }
 
         return null
+    }
+}
+
+internal class KaFirSmartCastInfo(
+    private val backingOriginalType: KaType,
+    private val backingSmartCastType: KaType,
+    private val backingIsStable: Boolean,
+) : org.jetbrains.kotlin.analysis.api.components.KaSmartCastInfo {
+    override val token: KaLifetimeToken get() = backingSmartCastType.token
+
+    override val isStable: Boolean get() = withValidityAssertion { backingIsStable }
+
+    override val originalType: KaType get() = withValidityAssertion { backingOriginalType }
+
+    override val smartCastType: KaType get() = withValidityAssertion { backingSmartCastType }
+
+    override fun equals(other: Any?): Boolean {
+        return this === other ||
+                other is KaFirSmartCastInfo &&
+                other.backingSmartCastType == backingSmartCastType &&
+                other.backingIsStable == backingIsStable
+    }
+
+    override fun hashCode(): Int = Objects.hash(backingSmartCastType, backingIsStable)
+}
+
+internal class KaFirImplicitReceiverSmartCast(
+    private val backingType: KaType,
+    private val backingKind: KaImplicitReceiverSmartCastKind,
+) : KaImplicitReceiverSmartCast {
+    override val token: KaLifetimeToken get() = backingType.token
+
+    override val type: KaType get() = withValidityAssertion { backingType }
+
+    override val kind: KaImplicitReceiverSmartCastKind get() = withValidityAssertion { backingKind }
+
+    override fun equals(other: Any?): Boolean {
+        return this === other ||
+                other is KaFirImplicitReceiverSmartCast &&
+                other.backingType == backingType &&
+                other.backingKind == backingKind
+    }
+
+    override fun hashCode(): Int {
+        return Objects.hash(backingType, backingKind)
     }
 }

@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.api.fir.annotations
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotation
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
-import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaBaseEmptyAnnotationList
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.fir.FirSession
@@ -62,7 +61,7 @@ internal class KaFirAnnotationListForDeclaration private constructor(
     companion object {
         fun create(firSymbol: FirBasedSymbol<*>, builder: KaSymbolByFirBuilder): KaAnnotationList = when {
             firSymbol.mightHaveAnnotations -> KaFirAnnotationListForDeclaration(firSymbol, builder)
-            else -> KaBaseEmptyAnnotationList(builder.token)
+            else -> KaFirEmptyAnnotationList(builder.token)
         }
     }
 }

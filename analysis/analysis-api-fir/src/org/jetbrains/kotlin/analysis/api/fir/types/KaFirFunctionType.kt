@@ -10,14 +10,14 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
+import org.jetbrains.kotlin.analysis.api.fir.KaFirContextReceiver
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForType
+import org.jetbrains.kotlin.analysis.api.fir.resolution.KaFirFunctionValueParameter
 import org.jetbrains.kotlin.analysis.api.fir.types.qualifiers.UsualClassTypeQualifierBuilder
 import org.jetbrains.kotlin.analysis.api.fir.utils.buildAbbreviatedType
 import org.jetbrains.kotlin.analysis.api.fir.utils.createPointer
-import org.jetbrains.kotlin.analysis.api.impl.base.KaBaseContextReceiver
-import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseFunctionValueParameter
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
@@ -89,7 +89,7 @@ internal class KaFirFunctionType(
     override val contextReceivers: List<KaContextReceiver>
         get() = withValidityAssertion {
             // Context receivers in function types may not have labels, hence the `null` label.
-            contextParameterTypes.map { KaBaseContextReceiver(it, label = null, token) }
+            contextParameterTypes.map { KaFirContextReceiver(it, label = null, token) }
         }
 
     @Deprecated("Use `hasContextParameters` instead.", ReplaceWith("hasContextParameters"))
@@ -116,7 +116,7 @@ internal class KaFirFunctionType(
                 // as parameter names can be explicitly provided via @ParameterName annotations.
                 parameterConeType.ensureResolvedTypeDeclaration(builder.rootSession, FirResolvePhase.ANNOTATION_ARGUMENTS)
                 val name = parameterConeType?.valueParameterName(builder.rootSession)
-                KaBaseFunctionValueParameter(name, parameterType)
+                KaFirFunctionValueParameter(name, parameterType)
 
             }
         }
