@@ -5,7 +5,11 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components.compilation
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLResolutionFacade
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseRecursively
 import org.jetbrains.kotlin.psi.KtFile
 
 /**
@@ -41,4 +45,10 @@ internal enum class ChunkKind {
      * A chunk with files required to be compiled prior to the main file compilation.
      */
     DEPENDENCY
+}
+
+internal fun getFullyResolvedFirFile(file: KtFile, resolutionFacade: LLResolutionFacade): FirFile {
+    val firFile = file.getOrBuildFirFile(resolutionFacade)
+    firFile.lazyResolveToPhaseRecursively(FirResolvePhase.BODY_RESOLVE)
+    return firFile
 }
