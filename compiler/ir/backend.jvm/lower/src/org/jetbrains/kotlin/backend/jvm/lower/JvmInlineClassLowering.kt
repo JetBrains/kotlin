@@ -946,7 +946,7 @@ internal class JvmInlineClassLowering(private val context: JvmBackendContext) : 
 
         // Don't create a wrapper for functions which are only used in an unboxed context
         if (!(function.shouldBeExposedByAnnotationOrFlag(context) && !function.isFakeOverride) &&
-            (function.overriddenSymbols.isEmpty() || replacement.dispatchReceiverParameter != null)
+            (function.overriddenSymbols.isEmpty() || replacement.dispatchReceiverParameter != null || function.isStatic)
         ) {
             return listOf(replacement)
         } else if (function.shouldBeExposedByAnnotationOrFlag(context) &&

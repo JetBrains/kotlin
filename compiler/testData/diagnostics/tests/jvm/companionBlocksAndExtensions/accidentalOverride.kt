@@ -3,6 +3,8 @@
 
 @file:OptIn(kotlin.ExperimentalVersionOverloading::class)
 
+@JvmInline value class InlineString(val value: String)
+
 open class A {
     val prop: Int = 0
     val prop2: String = ""
@@ -22,6 +24,8 @@ open class A {
         fun compBaz2(x: List<Int>) {}
         fun compBaz3(x: List<Int>) {}
         fun compBaz4(x: List<Int>) {}
+
+        fun compWithInlineClass(s: InlineString) {}
     }
 }
 
@@ -47,6 +51,9 @@ class B : A() {
         <!ACCIDENTAL_OVERRIDE!>fun compBaz2(x: List<String>, y: Int = 0) {}<!>
         <!ACCIDENTAL_OVERRIDE!>fun compBaz3(x: List<Int>, @IntroducedAt("1.1") y: Int = 0) {}<!>
         <!ACCIDENTAL_OVERRIDE!>fun compBaz4(x: List<String>, @IntroducedAt("1.1") y: Int = 0) {}<!>
+
+        // KT-90607
+        fun compWithInlineClass(s: InlineString) {}
     }
 }
 
