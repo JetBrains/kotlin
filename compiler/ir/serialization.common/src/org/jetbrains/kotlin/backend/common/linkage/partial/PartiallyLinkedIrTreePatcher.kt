@@ -62,8 +62,6 @@ internal class PartiallyLinkedIrTreePatcher(
     // Used only to generate IR expressions that throw linkage errors.
     private val supportForLowerings by lazy { PartialLinkageSupportForLoweringsImpl(logger) }
 
-    val linkageIssuesLogged get() = supportForLowerings.linkageIssuesLogged
-
     fun shouldBeSkipped(declaration: IrDeclaration): Boolean = PLModule.determineModuleFor(declaration).shouldBeSkipped
 
     context(irBuiltIns: IrBuiltIns)
