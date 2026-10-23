@@ -103,8 +103,9 @@ class EqualsAndHashCodeGenerator(session: FirSession) : FirDeclarationGeneration
         session.firCachesFactory.createCache(::initializeMembersIfNeeded)
 
     override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): Set<Name> {
-        val members = cache.getValue(classSymbol, context) ?: return emptySet()
-        return if (members.canEqual != null) callableNames + LombokNames.CAN_EQUAL else callableNames
+        // This can be called as early as the SUPERTYPES stage, so only cheap syntactic checks are allowed here:
+        // the names are over-approximated, and `generateFunctions` decides what is actually generated (KT-90086).
+        return if (getApplicableAnnotation(classSymbol) != null) callableNames + LombokNames.CAN_EQUAL else emptySet()
     }
 
     override fun generateFunctions(callableId: CallableId, context: MemberGenerationContext?): List<FirNamedFunctionSymbol> {
@@ -120,16 +121,23 @@ class EqualsAndHashCodeGenerator(session: FirSession) : FirDeclarationGeneration
         )
     }
 
+    /**
+     * The `@EqualsAndHashCode` (or `@Data`) configuration of [classSymbol] if it is a class `equals`/`hashCode` may be
+     * generated for. Only a plain class gets them: an annotation class can hold no member at all, an enum's
+     * `equals`/`hashCode` are final, and an object is compared by identity. Every other kind is already reported as
+     * `ANNOTATION_HAS_NO_EFFECT`.
+     */
+    private fun getApplicableAnnotation(classSymbol: FirClassSymbol<*>): ConeLombokAnnotations.EqualsAndHashCode? {
+        if (classSymbol !is FirRegularClassSymbol || !classSymbol.isPlainClass) return null
+        return session.lombokService.getEqualsAndHashCode(classSymbol)
+    }
+
     private fun initializeMembersIfNeeded(
         classSymbol: FirClassSymbol<*>,
         context: MemberGenerationContext,
     ): EqualsAndHashCodeMembers? {
-        // Only a plain class gets `equals`/`hashCode`: an annotation class can hold no member at all, an enum's
-        // `equals`/`hashCode` are final, and an object is compared by identity. Every other kind is already
-        // reported as `ANNOTATION_HAS_NO_EFFECT`.
-        if (classSymbol !is FirRegularClassSymbol || !classSymbol.isPlainClass) return null
-
-        val annotation = session.lombokService.getEqualsAndHashCode(classSymbol) ?: return null
+        if (classSymbol !is FirRegularClassSymbol) return null
+        val annotation = getApplicableAnnotation(classSymbol) ?: return null
         val declaredScope = context.declaredScope
 
         // Skip-both rule: if the user has explicitly declared either `equals` or `hashCode`, generate neither.
@@ -200,9 +208,9 @@ class EqualsAndHashCodeGenerator(session: FirSession) : FirDeclarationGeneration
     }
 
     /**
-     * Whether [this] is final, without resolving [FirRegularClassSymbol.resolvedStatus]: this can be called from
-     * `getCallableNamesForClass`, itself callable as early as the SUPERTYPES stage, at which point requesting a
-     * lazy resolve to STATUS - even for this class's own declaration - is a phase contract violation.
+     * Whether [this] is final, without resolving [FirRegularClassSymbol.resolvedStatus]: the members can be requested
+     * before the STATUS stage, at which point requesting a lazy resolve to STATUS - even for this class's own
+     * declaration - is a phase contract violation.
      *
      * A `null` raw modality is read as final: a class with no modality modifier is final by default.
      */
