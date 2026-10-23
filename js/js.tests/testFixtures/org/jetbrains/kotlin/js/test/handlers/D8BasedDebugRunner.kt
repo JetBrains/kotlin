@@ -26,6 +26,7 @@ abstract class D8BasedDebugRunner<A : ResultingArtifact.Binary<A>>(
     private val includeColumnInformation: Boolean = false,
     private val preserveSteppingOnTheSamePlace: Boolean = false,
     private val includeLocalVariableInformation: Boolean = false,
+    private val includeTypeInfoForVariables: Boolean = false,
 ) : BinaryArtifactHandler<A>(testServices, artifactKind, failureDisablesNextSteps, doNotRunIfThereWerePreviousFailures) {
     abstract val debugMode: DebugMode
     abstract val jsCodeToGetModuleWithBoxFunction: String
@@ -36,7 +37,17 @@ abstract class D8BasedDebugRunner<A : ResultingArtifact.Binary<A>>(
 
     protected open fun SourceMapSegment.mapOrNull(): SourceMapSegment? = this
 
-    open fun writeToFilesAndRunTest(outputDir: File, sourceMaps: List<SourceMap>, compiledFileName: String) {
+    /**
+     * @param generatedCodeBySourceMap the generated code (split into lines) for each source map from [sourceMaps], if it's textual.
+     *  It is used to resolve the original names of local variables via the `names` section of the source map.
+     *  If there is no generated code for a source map, the local variables are reported with the names visible at runtime.
+     */
+    open fun writeToFilesAndRunTest(
+        outputDir: File,
+        sourceMaps: List<SourceMap>,
+        compiledFileName: String,
+        generatedCodeBySourceMap: Map<SourceMap, List<String>> = emptyMap(),
+    ) {
         val originalFile = testServices.moduleStructure.originalTestDataFiles.first()
 
         val jsCodeAddLocationFunction = if (!includeLocalVariableInformation) {
@@ -54,7 +65,7 @@ abstract class D8BasedDebugRunner<A : ResultingArtifact.Binary<A>>(
             """ // no trim indent, that would break the trimIndent() of `testFileContent`
         } else {
             // language=js
-            """
+            $$"""
             function addLocation(frame) {
                 // get info on locals from runtime
                 let localsInfo = {};
@@ -78,7 +89,7 @@ abstract class D8BasedDebugRunner<A : ResultingArtifact.Binary<A>>(
                                     if(prop.value?.type === "object" && prop.value.objectId != null) {
 
                                         subobj[prop.name] = recurseIntoObjects(prop.value.objectId, maxDepth - 1);
-                                    }else{
+                                    } else {
                                         subobj[prop.name] = prop.value;
                                     }
                                 }
@@ -164,24 +175,49 @@ abstract class D8BasedDebugRunner<A : ResultingArtifact.Binary<A>>(
                                             }
                                         }
                                     }
-                                    return type;
+                                    
+                                    return typeMapper(type, value);
                                 }
-
+                                
+                                function typeMapper(type, value) {
+                                    switch (type) {
+                                      case "undefined": return null;
+                                      case "string": return "kotlin.String";
+                                      // Also, suppose that tests don't have any bigint excepts the ones that produced by the compiler
+                                      case "bigint": return "kotlin.Long";
+                                      // We mimic here for the previous behavior
+                                      case "number": return "number";
+                                      case "object": {
+                                        if (value == null) return "null";
+                                        const constructor = value.constructor;
+                                        const metadata = constructor.$metadata$;
+                                        
+                                        if (metadata == null) return constructor.name;
+                                        // TODO: Here we suppose that all the classes are Kotlin built-ins
+                                        // like we did earlier in this commit 7b7c517dbbba293f83a72198fdedc5ab29487e3f
+                                        // at some point we should revisit this hack since fully qualified names
+                                        // are not yet supported in Kotlin/JS reflection
+                                        return "kotlin." + metadata.simpleName;
+                                      }
+                                      default: return type
+                                    }
+                                }
+                                
                                 // objects don't have a type/value pair, so check or that
                                 if(!("type" in localsEntry) && !("value" in localsEntry)) {
                                     localsInfo[name] = { kind: "LocalReference", type: tryGetTypeOfJsObjectFromConstructor(localsEntry) };
                                 }else if("value" in localsEntry && localsEntry.value === null) {
                                     // null never has a user-defined type, "object" is hardcoded here when no explicit type is supplied
-                                    localsInfo[name] = { kind: "LocalNullValue", type: localsEntry.type || "object" };
+                                    localsInfo[name] = { kind: "LocalNullValue", type: typeMapper(localsEntry.type || "object", null) };
                                 }else if("type" in localsEntry && localsEntry.type === "function") {
                                     // its a class or local fun definition, we don't track those right now
-                                }else {
+                                }else if(localsEntry.value !== undefined) {
                                     let type = localsEntry.type
                                     if(type === undefined) {
                                         type = typeof localsEntry.value;
                                     }
-
-                                    localsInfo[name] = { kind: "LocalPrimitive", type: type, value: localsEntry.value };
+                                    
+                                    localsInfo[name] = { kind: "LocalPrimitive", type: typeMapper(type), value: localsEntry.value };
                                 }
                             }
                         }
@@ -325,7 +361,7 @@ abstract class D8BasedDebugRunner<A : ResultingArtifact.Binary<A>>(
         val exception = try {
             val result = runSavedCode(outputDir)
             val debuggerSteps = FrameParser(result).parse().mapNotNull { frame ->
-                val [pausedLocation, functionLocation] = sourceMaps.firstNotNullOfOrNull { map ->
+                val [sourceMap, pausedLocation, functionLocation] = sourceMaps.firstNotNullOfOrNull { map ->
                     val functionLocation = map.findSegmentForTheGeneratedLocation(
                         frame.currentFunctionStartLocation.line,
                         frame.currentFunctionStartLocation.column
@@ -338,8 +374,14 @@ abstract class D8BasedDebugRunner<A : ResultingArtifact.Binary<A>>(
 
                     if (pausedLocation.isIgnored) return@firstNotNullOfOrNull null
 
-                    pausedLocation to functionLocation
+                    Triple(map, pausedLocation, functionLocation)
                 } ?: return@mapNotNull null
+
+                val locals = generatedCodeBySourceMap[sourceMap]?.let { generatedCode ->
+                    frame.locals?.withOriginalNames(
+                        sourceMap.originalNamesOfLocals(generatedCode, frame.currentFunctionStartLocation, frame.pausedLocation)
+                    )
+                } ?: frame.locals
 
                 ProcessedStep(
                     pausedLocation.sourceFileName ?: compiledFileName,
@@ -348,7 +390,7 @@ abstract class D8BasedDebugRunner<A : ResultingArtifact.Binary<A>>(
                         pausedLocation.sourceLineNumber.takeIf { it >= 0 } ?: frame.pausedLocation.line,
                         pausedLocation.sourceColumnNumber.takeIf { it >= 0 } ?: frame.pausedLocation.column
                     ),
-                    frame.locals
+                    locals
                 )
             }
 
@@ -411,6 +453,55 @@ abstract class D8BasedDebugRunner<A : ResultingArtifact.Binary<A>>(
             ?.mapOrNull()
     }
 
+    /**
+     * Collects the mapping from the generated names of local variables (and parameters) to their original names,
+     * using the named segments of the source map between [functionStart] and [pausedLocation].
+     *
+     * The compiler attaches the original name to the segment pointing to the start of the declared identifier.
+     * The same segment (with the same name) is re-emitted right after nested segments are closed, i.e., usually not at
+     * the start of an identifier, so such segments are skipped, and the first mapping for a generated name wins.
+     */
+    private fun SourceMap.originalNamesOfLocals(
+        generatedCode: List<String>,
+        functionStart: Location,
+        pausedLocation: Location,
+    ): Map<String, String> {
+        val originalNames = mutableMapOf<String, String>()
+
+        for (lineNumber in functionStart.line..pausedLocation.line) {
+            val group = groups.getOrNull(lineNumber) ?: continue
+            val line = generatedCode.getOrNull(lineNumber) ?: continue
+
+            for (segment in group.segments) {
+                val originalName = segment.name ?: continue
+                val column = segment.generatedColumnNumber
+                if (lineNumber == functionStart.line && column < functionStart.column) continue
+                if (lineNumber == pausedLocation.line && column > pausedLocation.column) break
+
+                val generatedName = line.identifierAt(column) ?: continue
+                originalNames.putIfAbsent(generatedName, originalName)
+            }
+        }
+
+        return originalNames
+    }
+
+    private fun String.identifierAt(index: Int): String? {
+        if (index !in indices || !this[index].isJsIdentifierStart()) return null
+        var end = index + 1
+        while (end < length && this[end].isJsIdentifierPart()) end++
+        return substring(index, end)
+    }
+
+    private fun Char.isJsIdentifierStart() = isLetter() || this == '_' || this == '$'
+    private fun Char.isJsIdentifierPart() = isJsIdentifierStart() || isDigit()
+
+    private fun List<LocalVariableRecord>.withOriginalNames(originalNames: Map<String, String>): List<LocalVariableRecord> =
+        map { local ->
+            val originalName = originalNames[local.variable] ?: return@map local
+            LocalVariableRecord(originalName, local.variableType, local.value)
+        }
+
 
     private data class Location(val line: Int, val column: Int)
     private class Frame(
@@ -434,18 +525,15 @@ abstract class D8BasedDebugRunner<A : ResultingArtifact.Binary<A>>(
 
     private inner class FrameParser(private val input: String) {
         fun JsonObject.toLocalsRecord(name: String): LocalVariableRecord {
-            val type = (properties["type"] as JsonString).value
+            val type = (properties["type"] as? JsonString)?.value
             val value: LocalValue = when ((properties["kind"] as JsonString).value) {
                 "LocalNullValue" -> LocalNullValue // properties["type"] is still set for nulls, though it might be "nullref" if its opaque
-                "LocalPrimitive" -> LocalPrimitive(properties["value"].toString(), type)
-                "LocalReference" -> LocalReference(properties["id"].toString(), type)
+                "LocalPrimitive" if type != null -> LocalPrimitive(properties["value"].toString(), type)
+                "LocalReference" if type != null -> LocalReference(properties["id"].toString(), type)
+                else if type == null -> LocalNullValue
                 else -> shouldNotBeCalled("Internal test infrastructure failure: invalid local variable kind: ${properties["kind"]}")
             }
-            return LocalVariableRecord(
-                name,
-                type,
-                value
-            )
+            return LocalVariableRecord(name, type.takeIf { includeTypeInfoForVariables }, value)
         }
 
         fun parse(): List<Frame> =
