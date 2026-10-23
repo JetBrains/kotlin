@@ -26,10 +26,16 @@ import org.jetbrains.kotlin.buildtools.api.jvm.AccessibleClassSnapshot
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshot
 import org.jetbrains.kotlin.buildtools.api.jvm.ClasspathEntrySnapshot
 import org.jetbrains.kotlin.buildtools.api.jvm.InaccessibleClassSnapshot
+import org.jetbrains.kotlin.buildtools.internal.AccessibleClassSnapshotImpl
+import org.jetbrains.kotlin.buildtools.internal.ClasspathEntrySnapshotImpl
+import org.jetbrains.kotlin.buildtools.internal.InaccessibleClassSnapshotImpl
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationConfigurationImpl
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocationWithRange
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
+import org.jetbrains.kotlin.incremental.classpathDiff.JavaClassSnapshot
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.Path
@@ -156,17 +162,112 @@ internal sealed interface CompilerMessageSourceLocationSurrogate {
 
 // *** Jvm IC serialization ***
 
-@Serializer(forClass = AccessibleClassSnapshot::class)
-public object AccessibleClassSnapshotSerializer
+@Serializable
+private sealed interface ClassSnapshotSurrogate {
+    @Serializable
+    @SerialName("Accessible")
+    class Accessible(val classAbiHash: Long) : ClassSnapshotSurrogate
 
-@Serializer(forClass = InaccessibleClassSnapshot::class)
-public object InaccessibleClassSnapshotSerializer
+    @Serializable
+    @SerialName("Inaccessible")
+    object Inaccessible : ClassSnapshotSurrogate
+}
 
-@Serializer(forClass = ClassSnapshot::class)
-public object ClassSnapshotSerializer
+internal object ClassSnapshotSerializer : KSerializer<ClassSnapshot> {
+    override val descriptor: SerialDescriptor = ClassSnapshotSurrogate.serializer().descriptor
 
-@Serializer(forClass = ClasspathEntrySnapshot::class)
-public object ClasspathEntrySnapshotSerializer
+    override fun serialize(encoder: Encoder, value: ClassSnapshot) {
+        val surrogate = when (value) {
+            is AccessibleClassSnapshot -> ClassSnapshotSurrogate.Accessible(value.classAbiHash)
+            is InaccessibleClassSnapshot -> ClassSnapshotSurrogate.Inaccessible
+        }
+        encoder.encodeSerializableValue(ClassSnapshotSurrogate.serializer(), surrogate)
+    }
+
+    override fun deserialize(decoder: Decoder): ClassSnapshot {
+        return when (val surrogate = decoder.decodeSerializableValue(ClassSnapshotSurrogate.serializer())) {
+            is ClassSnapshotSurrogate.Accessible -> AccessibleClassSnapshotImpl(surrogate.classAbiHash)
+            is ClassSnapshotSurrogate.Inaccessible -> InaccessibleClassSnapshotImpl
+        }
+    }
+}
+
+@Serializable
+private class AccessibleClassSnapshotSurrogate(
+    val classAbiHash: Long,
+)
+
+internal object AccessibleClassSnapshotSerializer : KSerializer<AccessibleClassSnapshot> {
+    override val descriptor: SerialDescriptor = AccessibleClassSnapshotSurrogate.serializer().descriptor
+
+    override fun serialize(encoder: Encoder, value: AccessibleClassSnapshot) {
+        val surrogate = AccessibleClassSnapshotSurrogate(value.classAbiHash)
+        encoder.encodeSerializableValue(AccessibleClassSnapshotSurrogate.serializer(), surrogate)
+    }
+
+    override fun deserialize(decoder: Decoder): AccessibleClassSnapshot {
+        val surrogate = decoder.decodeSerializableValue(AccessibleClassSnapshotSurrogate.serializer())
+        return AccessibleClassSnapshotImpl(surrogate.classAbiHash)
+    }
+}
+
+@Serializable
+private object InaccessibleClassSnapshotSurrogate
+
+internal object InaccessibleClassSnapshotSerializer : KSerializer<InaccessibleClassSnapshot> {
+    override val descriptor: SerialDescriptor = InaccessibleClassSnapshotSurrogate.serializer().descriptor
+
+    override fun serialize(encoder: Encoder, value: InaccessibleClassSnapshot) {
+        encoder.encodeSerializableValue(InaccessibleClassSnapshotSurrogate.serializer(), InaccessibleClassSnapshotSurrogate)
+    }
+
+    override fun deserialize(decoder: Decoder): InaccessibleClassSnapshot {
+        decoder.decodeSerializableValue(InaccessibleClassSnapshotSurrogate.serializer())
+        return InaccessibleClassSnapshotImpl
+    }
+}
+
+@Serializable
+private class ClasspathEntrySnapshotSurrogate(
+    val classSnapshots: Map<String, ClassSnapshotSurrogate>,
+)
+
+internal object ClasspathEntrySnapshotSerializer : KSerializer<ClasspathEntrySnapshot> {
+    override val descriptor: SerialDescriptor = ClasspathEntrySnapshotSurrogate.serializer().descriptor
+
+    override fun serialize(encoder: Encoder, value: ClasspathEntrySnapshot) {
+        val surrogate = ClasspathEntrySnapshotSurrogate(
+            value.classSnapshots.mapValues { entry ->
+                when (val snapshot = entry.value) {
+                    is AccessibleClassSnapshot -> ClassSnapshotSurrogate.Accessible(snapshot.classAbiHash)
+                    is InaccessibleClassSnapshot -> ClassSnapshotSurrogate.Inaccessible
+                }
+            }
+        )
+        encoder.encodeSerializableValue(ClasspathEntrySnapshotSurrogate.serializer(), surrogate)
+    }
+
+    override fun deserialize(decoder: Decoder): ClasspathEntrySnapshot {
+        val surrogate = decoder.decodeSerializableValue(ClasspathEntrySnapshotSurrogate.serializer())
+        val originMap = LinkedHashMap<String, org.jetbrains.kotlin.incremental.classpathDiff.ClassSnapshot>(surrogate.classSnapshots.size)
+        for (entry in surrogate.classSnapshots) {
+            val path = entry.key
+            val snapshotSurrogate = entry.value
+            originMap[path] = when (snapshotSurrogate) {
+                is ClassSnapshotSurrogate.Accessible -> {
+                    val classId = ClassId(
+                        FqName(path.substringBeforeLast("/", "").replace("/", ".")),
+                        FqName(path.substringAfterLast("/").removeSuffix(".class")),
+                        false
+                    )
+                    JavaClassSnapshot(classId, snapshotSurrogate.classAbiHash, null, emptyList())
+                }
+                is ClassSnapshotSurrogate.Inaccessible -> org.jetbrains.kotlin.incremental.classpathDiff.InaccessibleClassSnapshot
+            }
+        }
+        return ClasspathEntrySnapshotImpl(org.jetbrains.kotlin.incremental.classpathDiff.ClasspathEntrySnapshot(originMap))
+    }
+}
 
 @Serializable
 private sealed interface SourcesChangesSurrogate {
