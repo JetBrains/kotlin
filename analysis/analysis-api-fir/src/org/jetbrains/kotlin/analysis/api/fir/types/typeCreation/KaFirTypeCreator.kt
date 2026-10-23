@@ -6,11 +6,13 @@
 package org.jetbrains.kotlin.analysis.api.fir.types.typeCreation
 
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.fir.types.typeCreation.*
+import org.jetbrains.kotlin.analysis.api.fir.types.KaBaseStarTypeProjection
+import org.jetbrains.kotlin.analysis.api.fir.types.KaBaseTypeArgumentWithVariance
 import org.jetbrains.kotlin.analysis.api.fir.utils.asKaType
 import org.jetbrains.kotlin.analysis.api.fir.utils.coneType
 import org.jetbrains.kotlin.analysis.api.fir.utils.coneTypeProjection
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
@@ -33,6 +35,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.utils.exceptions.withConeTypeEntry
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.CaptureStatus
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -40,8 +43,60 @@ import org.jetbrains.kotlin.utils.addToStdlib.butIf
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 internal class KaFirTypeCreator(
-    analysisSession: KaFirSession,
-) : KaBaseTypeCreator<KaFirSession>(analysisSession) {
+    val analysisSession: KaFirSession,
+) : KaTypeCreator {
+    override val token: KaLifetimeToken
+        get() = analysisSession.token
+
+    override fun typeProjection(
+        variance: Variance,
+        type: KaType,
+    ): KaTypeArgumentWithVariance = withValidityAssertion {
+        KaBaseTypeArgumentWithVariance(type, variance, token)
+    }
+
+    override fun typeProjection(
+        variance: Variance,
+        type: KaTypeCreator.() -> KaType,
+    ): KaTypeArgumentWithVariance = withValidityAssertion {
+        KaBaseTypeArgumentWithVariance(type(), variance, token)
+    }
+
+    override fun starTypeProjection(): KaStarTypeProjection = withValidityAssertion {
+        KaBaseStarTypeProjection(token)
+    }
+
+    override fun arrayType(elementType: KaType, init: KaArrayTypeBuilder.() -> Unit): KaType = withValidityAssertion {
+        with(analysisSession) {
+            val builder = KaBaseArrayTypeBuilder(this@KaFirTypeCreator).apply(init)
+
+            if (elementType is KaClassType && builder.shouldPreferPrimitiveTypes && !elementType.isMarkedNullable) {
+                val classId = elementType.classId
+                val primitiveArrayId =
+                    StandardClassIds.primitiveArrayTypeByElementType[classId]
+                        ?: StandardClassIds.unsignedArrayTypeByElementType[classId]
+                if (primitiveArrayId != null) {
+                    return classType(primitiveArrayId) {
+                        isMarkedNullable = builder.isMarkedNullable
+                        annotations(builder.annotations)
+                    }
+                }
+            }
+
+            return classType(StandardClassIds.Array) {
+                isMarkedNullable = builder.isMarkedNullable
+                typeArgument(builder.variance, elementType)
+                annotations(builder.annotations)
+            }
+        }
+    }
+
+    override fun varargArrayType(elementType: KaType): KaType = withValidityAssertion {
+        arrayType(elementType) {
+            variance = Variance.OUT_VARIANCE
+        }
+    }
+
     override fun classType(classId: ClassId, init: KaClassTypeBuilder.() -> Unit): KaType = withValidityAssertion {
         val builder = KaBaseClassTypeBuilder(this).apply(init)
         val classSymbol = rootModuleSession.symbolProvider.getClassLikeSymbolByClassId(classId)

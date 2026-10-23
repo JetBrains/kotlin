@@ -9,9 +9,11 @@ import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.types.KaFirType
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.isSubclassOf
+import org.jetbrains.kotlin.analysis.api.internals.KaInternalsTypeRelationChecker
 import org.jetbrains.kotlin.analysis.api.lifetime.assertIsValidAndAccessible
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
+import org.jetbrains.kotlin.analysis.api.types.KaErrorType
 import org.jetbrains.kotlin.analysis.api.types.KaSubtypingErrorTypePolicy
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
@@ -25,7 +27,7 @@ import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 
 internal class KaFirTypeRelationChecker(
     override val analysisSessionProvider: () -> KaFirSession
-) : KaBaseTypeRelationChecker<KaFirSession>(), KaFirSessionComponent {
+) : KaBaseSessionComponent<KaFirSession>(), KaInternalsTypeRelationChecker, KaFirSessionComponent {
     override fun semanticallyEquals(
         type: KaType,
         other: KaType,
@@ -56,14 +58,28 @@ internal class KaFirTypeRelationChecker(
         )
     }
 
-    override fun KaType.isClassSubtypeOf(classId: ClassId, errorTypePolicy: KaSubtypingErrorTypePolicy): Boolean {
+    override fun isSubtypeOf(type: KaType, classId: ClassId, errorTypePolicy: KaSubtypingErrorTypePolicy): Boolean {
+        if (type is KaErrorType) return errorTypePolicy == KaSubtypingErrorTypePolicy.LENIENT
+
+        return type.isClassSubtypeOf(classId, errorTypePolicy)
+    }
+
+    override fun isSubtypeOf(type: KaType, symbol: KaClassLikeSymbol, errorTypePolicy: KaSubtypingErrorTypePolicy): Boolean {
+        symbol.assertIsValidAndAccessible()
+
+        if (type is KaErrorType) return errorTypePolicy == KaSubtypingErrorTypePolicy.LENIENT
+
+        return type.isClassSubtypeOf(symbol, errorTypePolicy)
+    }
+
+    private fun KaType.isClassSubtypeOf(classId: ClassId, errorTypePolicy: KaSubtypingErrorTypePolicy): Boolean {
         val superclassSymbol = analysisSession.firSession.symbolProvider.getClassLikeSymbolByClassId(classId)
             ?: return errorTypePolicy == KaSubtypingErrorTypePolicy.LENIENT
 
         return isClassSubtypeOf(superclassSymbol, errorTypePolicy)
     }
 
-    override fun KaType.isClassSubtypeOf(symbol: KaClassLikeSymbol, errorTypePolicy: KaSubtypingErrorTypePolicy): Boolean =
+    private fun KaType.isClassSubtypeOf(symbol: KaClassLikeSymbol, errorTypePolicy: KaSubtypingErrorTypePolicy): Boolean =
         isClassSubtypeOf(symbol.firSymbol, errorTypePolicy)
 
     private fun KaType.isClassSubtypeOf(
