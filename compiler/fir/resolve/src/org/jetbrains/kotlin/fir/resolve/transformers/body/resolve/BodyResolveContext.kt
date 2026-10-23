@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.name.SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
 import org.jetbrains.kotlin.util.ArrayLiteralResolution
 import org.jetbrains.kotlin.util.OnlyForDefaultLanguageFeatureDisabled
 import org.jetbrains.kotlin.util.PrivateForInline
+import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class BodyResolveContext(
@@ -235,12 +236,20 @@ class BodyResolveContext(
         }
     }
 
+    var inCompanionBlock: Boolean = false
+
     @PrivateForInline
     inline fun <T> withCompanionBlockIf(condition: Boolean, f: () -> T): T {
-        return withTowerDataContexts(
-            newContexts = runIf(condition) { regularTowerDataContexts.forCompanionBlock() },
-            f
-        )
+        val oldValue = inCompanionBlock
+        try {
+            if (condition) inCompanionBlock = true
+            return withTowerDataContexts(
+                newContexts = runIf(condition) { regularTowerDataContexts.forCompanionBlock() },
+                f
+            )
+        } finally {
+            inCompanionBlock = oldValue
+        }
     }
 
     @PrivateForInline
@@ -594,12 +603,21 @@ class BodyResolveContext(
 
         val statics = base.addCompanionAndStaticScopes(towerElementsForClass)
 
-        val staticsAndCompanion = when (val companionReceiver = towerElementsForClass.companionReceiver) {
+        val companionReceiver = towerElementsForClass.companionReceiver
+
+        val staticsAndCompanion = when (companionReceiver) {
             null -> statics
             else -> base
                 .addReceiver(null, companionReceiver)
                 .addCompanionAndStaticScopes(towerElementsForClass)
         }
+
+        @OptIn(PrivateForInline::class)
+        val forCompanionBlock = regularTowerDataContexts.companionBlockContext
+            ?.addNonLocalTowerDataElements(towerElementsForClass.superClassesStaticsAndCompanionReceivers)
+            ?.addReceiverIfNotNull(null, companionReceiver)
+            ?.addCompanionAndStaticScopes(towerElementsForClass)
+            ?: staticsAndCompanion
 
         val typeParameterScope = (owner as? FirRegularClass)?.typeParameterScope()
 
@@ -609,7 +627,7 @@ class BodyResolveContext(
         val withTypeParameters = if (typeParameterScope != null) {
             towerDataContext
                 .addNonLocalTowerDataElements(towerElementsForClass.superClassesStaticsAndCompanionReceivers)
-                .addReceiverIfNotNull(null, towerElementsForClass.companionReceiver)
+                .addReceiverIfNotNull(null, companionReceiver)
                 .addCompanionAndStaticScopes(towerElementsForClass)
                 // Note: scopes here are in reverse order, so type parameter scope is the most prioritized
                 .addNonLocalScope(typeParameterScope)
@@ -673,7 +691,7 @@ class BodyResolveContext(
             towerDataContext
                 .addReceiver(labelName, inaccessibleThisInHeader)
                 .addNonLocalTowerDataElements(towerElementsForClass.superClassesStaticsAndCompanionReceivers)
-                .addReceiverIfNotNull(null, towerElementsForClass.companionReceiver)
+                .addReceiverIfNotNull(null, companionReceiver)
                 .addCompanionAndStaticScopes(towerElementsForClass)
                 .addNonLocalScopeIfNotNull(typeParameterScope)
         } else {
@@ -684,7 +702,7 @@ class BodyResolveContext(
             regular = forMembersResolution,
             forNestedClasses = newTowerDataContextForStaticNestedClasses,
             forCompanionObject = statics,
-            forCompanionBlock = staticsAndCompanion,
+            forCompanionBlock = forCompanionBlock,
             forConstructorHeaders = forConstructorHeader,
             forEnumEntries = scopeForEnumEntries,
             primaryConstructorPureParametersScope = primaryConstructorPureParametersScope,

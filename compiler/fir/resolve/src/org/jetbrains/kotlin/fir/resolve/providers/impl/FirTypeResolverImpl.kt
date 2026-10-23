@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirDefaultStarImportingScope
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.processAllClassifiers
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildUserTypeRef
@@ -39,6 +38,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
+import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
@@ -172,7 +172,6 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         return resolveLocalClassChain(outermostClassLikeSymbol, 0)
     }
 
-    @OptIn(SymbolInternals::class)
     private fun FirQualifierResolver.resolveEnumEntrySymbol(
         classId: ClassId,
         remainingQualifier: List<FirQualifierPart>,
@@ -235,12 +234,11 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
      *
      * Thus, the visibility error should be handled further by just looking into TypeResolutionResult again
      */
-    @OptIn(SymbolInternals::class)
     private fun resolveUserType(
         typeRef: FirUserTypeRef,
         result: TypeResolutionResult,
         areBareTypesAllowed: Boolean,
-        topContainer: FirDeclaration?,
+        configuration: TypeResolutionConfiguration,
         isOperandOfIsOperator: Boolean
     ): ConeKotlinType {
         val [symbol, substitutor] = when (result) {
@@ -257,7 +255,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
 
             if (symbol is FirClassLikeSymbol<*> && !isPossibleBareType) {
                 initExplicitTypeArguments(symbol, qualifier)?.let { return ConeErrorType(it) }
-                addImplicitTypeArguments(symbol, topContainer, substitutor)
+                addImplicitTypeArguments(symbol, configuration, substitutor)
                     ?.let { return ConeErrorType(it) }
             } else {
                 // In this case, type arguments are not allowed, but we would like to store them in the error type
@@ -335,7 +333,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
 
     private fun MutableList<ConeTypeProjection>.addImplicitTypeArguments(
         symbol: FirClassLikeSymbol<*>,
-        topContainer: FirDeclaration?,
+        configuration: TypeResolutionConfiguration,
         substitutor: ConeSubstitutor?,
     ): ConeDiagnostic? {
         // substitutor is used for checking if all implicit type arguments are defined in outer classes. Consider the following example:
@@ -353,7 +351,11 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
 
         fun addImplicitTypeArgument(typeParameter: FirTypeParameterRef) {
             if (typeParameter !is FirOuterClassTypeParameterRef
-                || isValidTypeParameterFromOuterDeclaration(typeParameter.symbol, topContainer, session)
+                || !configuration.inCompanionBlock && isValidTypeParameterFromOuterDeclaration(
+                    typeParameter.symbol,
+                    configuration.topContainer
+                        ?: configuration.containingClassDeclarations.lastOrNull(), session
+                )
             ) {
                 val substituted = substitutor?.substituteOrNull(typeParameter.symbol.defaultType)
                 if (substituted != null) {
@@ -381,10 +383,12 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
 
     private fun createFunctionType(typeRef: FirFunctionTypeRef): FirTypeResolutionResult {
         val parameters =
-            typeRef.contextParameterTypeRefs.map { it.coneType } +
-                    listOfNotNull(typeRef.receiverTypeRef?.coneType) +
-                    typeRef.parameters.map { it.returnTypeRef.coneType.withParameterNameAnnotation(it) } +
-                    listOf(typeRef.returnTypeRef.coneType)
+            buildList {
+                typeRef.contextParameterTypeRefs.mapTo(this) { it.coneType }
+                addIfNotNull(typeRef.receiverTypeRef?.coneType)
+                typeRef.parameters.mapTo(this) { it.returnTypeRef.coneType.withParameterNameAnnotation(it) }
+                add(typeRef.returnTypeRef.coneType)
+            }
         val functionKinds = session.functionTypeService.extractAllSpecialKindsForFunctionTypeRef(typeRef)
         var diagnostic: ConeDiagnostic? = null
         val kind = when (functionKinds.size) {
@@ -527,7 +531,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                 val substitutor = computeSubstitutorForLhs(qualifier, configuration)
                 allTypeArguments.addImplicitTypeArguments(
                     classSymbol,
-                    configuration.topContainer ?: configuration.containingClassDeclarations.lastOrNull(),
+                    configuration,
                     substitutor,
                 )?.let {
                     if (diagnostic == null) diagnostic = it
@@ -600,7 +604,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                     typeRef,
                     result,
                     areBareTypesAllowed,
-                    configuration.topContainer ?: configuration.containingClassDeclarations.lastOrNull(),
+                    configuration,
                     isOperandOfIsOperator,
                 )
                 val potentiallyResolvedCandidate = result.resolvedCandidateOrNull()

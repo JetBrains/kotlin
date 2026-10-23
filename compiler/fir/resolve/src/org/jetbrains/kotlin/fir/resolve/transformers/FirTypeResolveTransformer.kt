@@ -62,13 +62,15 @@ fun <F : FirClassLikeDeclaration> F.runTypeResolvePhaseForLocalClass(
     currentScopeList: List<FirScope>,
     useSiteFile: FirFile,
     containingDeclarations: List<FirDeclaration>,
+    inCompanionBlock: Boolean,
 ): F {
     val transformer = FirTypeResolveTransformer(
         session,
         scopeSession,
         currentScopeList,
         initialCurrentFile = useSiteFile,
-        classDeclarationsStack = containingDeclarations.filterIsInstanceTo(ArrayDeque())
+        classDeclarationsStack = containingDeclarations.filterIsInstanceTo(ArrayDeque()),
+        inCompanionBlock = inCompanionBlock,
     )
 
     return this.transform(transformer, null)
@@ -80,7 +82,8 @@ open class FirTypeResolveTransformer(
     @property:PrivateForInline val scopeSession: ScopeSession,
     initialScopes: List<FirScope> = emptyList(),
     initialCurrentFile: FirFile? = null,
-    @property:PrivateForInline val classDeclarationsStack: ArrayDeque<FirClass> = ArrayDeque()
+    @property:PrivateForInline val classDeclarationsStack: ArrayDeque<FirClass> = ArrayDeque(),
+    private var inCompanionBlock: Boolean = false,
 ) : FirAbstractTreeTransformer<Any?>(FirResolvePhase.TYPES) {
     /**
      * All current scopes sorted from outermost to innermost.
@@ -100,15 +103,13 @@ open class FirTypeResolveTransformer(
     @set:PrivateForInline
     var staticScopesBefore: PersistentList<FirScope>? = null
 
-    private var currentDeclaration: FirDeclaration? = null
-
-    private inline fun <T> withDeclaration(declaration: FirDeclaration, crossinline action: () -> T): T {
-        val oldDeclaration = currentDeclaration
+    private inline fun <T> inCompanionBlockIf(value: Boolean, action: () -> T): T {
+        val oldValue = inCompanionBlock
         return try {
-            currentDeclaration = declaration
+            if (value) inCompanionBlock = true
             action()
         } finally {
-            currentDeclaration = oldDeclaration
+            inCompanionBlock = oldValue
         }
     }
 
@@ -244,7 +245,7 @@ open class FirTypeResolveTransformer(
                 scopes = staticScopes
             }
 
-            withDeclaration(property) {
+            inCompanionBlockIf(property.isCompanionBlockMember) {
                 addTypeParametersScope(property)
                 resolveTypeParameterBounds(property)
                 property
@@ -317,7 +318,7 @@ open class FirTypeResolveTransformer(
                 scopes = staticScopes
             }
 
-            withDeclaration(namedFunction) {
+            inCompanionBlockIf(namedFunction.isCompanionBlockMember) {
                 addTypeParametersScope(namedFunction)
 
                 resolveTypeParameterBounds(namedFunction)
@@ -444,7 +445,7 @@ open class FirTypeResolveTransformer(
     override fun transformTypeRef(typeRef: FirTypeRef, data: Any?): FirResolvedTypeRef {
         return typeRef.transform(
             typeResolverTransformer,
-            TypeResolutionConfiguration(scopes.asReversed(), classDeclarationsStack, currentFile)
+            TypeResolutionConfiguration(scopes.asReversed(), classDeclarationsStack, currentFile, inCompanionBlock = inCompanionBlock)
         )
     }
 
@@ -452,7 +453,8 @@ open class FirTypeResolveTransformer(
         val equalityBoundAnnotation = annotations.getAnnotationByClassId(StandardClassIds.Annotations.EqualityBound, session) ?: return
         val boundArgument = equalityBoundAnnotation.findArgumentByName(StandardClassIds.Annotations.ParameterNames.equalityBound)
         val resolvedType = (boundArgument as? FirGetClassCall)?.argument?.let { getClassLhs ->
-            val configuration = TypeResolutionConfiguration(scopes.asReversed(), classDeclarationsStack, currentFile)
+            val configuration =
+                TypeResolutionConfiguration(scopes.asReversed(), classDeclarationsStack, currentFile, inCompanionBlock = inCompanionBlock)
             session.typeResolver.resolveEqualityBoundTypeOrNull(getClassLhs, configuration)
         }
         equalityBoundType = resolvedType ?: ConeErrorType(ConeCannotResolveEqualityBoundType)
@@ -462,15 +464,13 @@ open class FirTypeResolveTransformer(
         valueParameter: FirValueParameter,
         data: Any?,
     ): FirStatement = whileAnalysing(session, valueParameter) {
-        withDeclaration(valueParameter) {
-            valueParameter.transformReturnTypeRef(this, data)
-            if (LanguageFeature.StrictEquals.isEnabled()) {
-                valueParameter.setEqualityBoundType()
-            }
-            valueParameter.transformAnnotations(this, data)
-            valueParameter.transformVarargTypeToArrayType(session)
-            valueParameter
+        valueParameter.transformReturnTypeRef(this, data)
+        if (LanguageFeature.StrictEquals.isEnabled()) {
+            valueParameter.setEqualityBoundType()
         }
+        valueParameter.transformAnnotations(this, data)
+        valueParameter.transformVarargTypeToArrayType(session)
+        valueParameter
     }
 
     override fun transformBlock(block: FirBlock, data: Any?): FirStatement {
