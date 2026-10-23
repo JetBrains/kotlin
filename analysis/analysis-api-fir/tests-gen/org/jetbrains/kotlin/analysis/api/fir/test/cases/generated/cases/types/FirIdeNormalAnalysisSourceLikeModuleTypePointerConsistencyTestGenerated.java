@@ -68,9 +68,183 @@ public class FirIdeNormalAnalysisSourceLikeModuleTypePointerConsistencyTestGener
   }
 
   @Test
+  @TestMetadata("annotatedAliasedType.kt")
+  public void testAnnotatedAliasedType() {
+    run("annotatedAliasedType.kt");
+  }
+
+  @Test
+  @TestMetadata("annotatedCapturedType.kt")
+  public void testAnnotatedCapturedType() {
+    run("annotatedCapturedType.kt");
+  }
+
+  @Test
+  @TestMetadata("annotatedDefinitelyNotNullType1.kt")
+  public void testAnnotatedDefinitelyNotNullType1() {
+    run("annotatedDefinitelyNotNullType1.kt");
+  }
+
+  @Test
+  @TestMetadata("annotatedDefinitelyNotNullType2.kt")
+  public void testAnnotatedDefinitelyNotNullType2() {
+    run("annotatedDefinitelyNotNullType2.kt");
+  }
+
+  @Test
+  @TestMetadata("annotatedDynamicType.kt")
+  public void testAnnotatedDynamicType() {
+    run("annotatedDynamicType.kt");
+  }
+
+  @Test
+  @TestMetadata("annotatedErrorTypeAsArgument.kt")
+  public void testAnnotatedErrorTypeAsArgument() {
+    run("annotatedErrorTypeAsArgument.kt");
+  }
+
+  @Test
+  @TestMetadata("annotatedFakeOverrideType.kt")
+  public void testAnnotatedFakeOverrideType() {
+    run("annotatedFakeOverrideType.kt");
+  }
+
+  @Test
+  @TestMetadata("annotatedFakeOverrideTypeInImplicitDeclaration.kt")
+  public void testAnnotatedFakeOverrideTypeInImplicitDeclaration() {
+    run("annotatedFakeOverrideTypeInImplicitDeclaration.kt");
+  }
+
+  @Test
+  @TestMetadata("annotatedFunctionType.kt")
+  public void testAnnotatedFunctionType() {
+    run("annotatedFunctionType.kt");
+  }
+
+  @Test
+  @TestMetadata("annotatedFunctionTypeWithContextParameter.kt")
+  public void testAnnotatedFunctionTypeWithContextParameter() {
+    run("annotatedFunctionTypeWithContextParameter.kt");
+  }
+
+  @Test
+  @TestMetadata("annotatedJavaType.kt")
+  public void testAnnotatedJavaType() {
+    run("annotatedJavaType.kt");
+  }
+
+  @Test
+  @TestMetadata("annotatedLibraryType.kt")
+  public void testAnnotatedLibraryType() {
+    run("annotatedLibraryType.kt");
+  }
+
+  @Test
+  @TestMetadata("annotatedLibraryTypeWithComplexArguments.kt")
+  public void testAnnotatedLibraryTypeWithComplexArguments() {
+    run("annotatedLibraryTypeWithComplexArguments.kt");
+  }
+
+  @Test
+  @TestMetadata("annotatedLibraryTypeWithConstantExpressions.kt")
+  public void testAnnotatedLibraryTypeWithConstantExpressions() {
+    run("annotatedLibraryTypeWithConstantExpressions.kt");
+  }
+
+  @Test
+  @TestMetadata("annotatedLocalTypeWithComplexArguments.kt")
+  public void testAnnotatedLocalTypeWithComplexArguments() {
+    run("annotatedLocalTypeWithComplexArguments.kt");
+  }
+
+  @Test
+  @TestMetadata("annotatedNestedTypesWithConstArguments.kt")
+  public void testAnnotatedNestedTypesWithConstArguments() {
+    run("annotatedNestedTypesWithConstArguments.kt");
+  }
+
+  @Test
+  @TestMetadata("annotatedRecursiveType1.kt")
+  public void testAnnotatedRecursiveType1() {
+    run("annotatedRecursiveType1.kt");
+  }
+
+  @Test
+  @TestMetadata("annotatedRecursiveType2.kt")
+  public void testAnnotatedRecursiveType2() {
+    run("annotatedRecursiveType2.kt");
+  }
+
+  @Test
   @TestMetadata("annotatedType.kt")
   public void testAnnotatedType() {
     run("annotatedType.kt");
+  }
+
+  @Test
+  @TestMetadata("annotatedTypeInGetter.kt")
+  public void testAnnotatedTypeInGetter() {
+    run("annotatedTypeInGetter.kt");
+  }
+
+  @Test
+  @TestMetadata("annotatedTypeInGetterFromLibrary.kt")
+  public void testAnnotatedTypeInGetterFromLibrary() {
+    run("annotatedTypeInGetterFromLibrary.kt");
+  }
+
+  @Test
+  @TestMetadata("annotatedTypeInvalidAnnotation.kt")
+  public void testAnnotatedTypeInvalidAnnotation() {
+    run("annotatedTypeInvalidAnnotation.kt");
+  }
+
+  @Test
+  @TestMetadata("annotatedTypeParameter.kt")
+  public void testAnnotatedTypeParameter() {
+    run("annotatedTypeParameter.kt");
+  }
+
+  @Test
+  @TestMetadata("annotatedTypeUnrelatedModule.kt")
+  public void testAnnotatedTypeUnrelatedModule() {
+    run("annotatedTypeUnrelatedModule.kt");
+  }
+
+  @Test
+  @TestMetadata("annotatedTypeWithAliasedAnnotation.kt")
+  public void testAnnotatedTypeWithAliasedAnnotation() {
+    run("annotatedTypeWithAliasedAnnotation.kt");
+  }
+
+  @Test
+  @TestMetadata("annotatedTypeWithComplexArguments.kt")
+  public void testAnnotatedTypeWithComplexArguments() {
+    run("annotatedTypeWithComplexArguments.kt");
+  }
+
+  @Test
+  @TestMetadata("annotatedTypeWithConstantExpressions.kt")
+  public void testAnnotatedTypeWithConstantExpressions() {
+    run("annotatedTypeWithConstantExpressions.kt");
+  }
+
+  @Test
+  @TestMetadata("annotatedTypeWithDifferentConstants.kt")
+  public void testAnnotatedTypeWithDifferentConstants() {
+    run("annotatedTypeWithDifferentConstants.kt");
+  }
+
+  @Test
+  @TestMetadata("annotatedTypeWithInvalidArgumentTypes.kt")
+  public void testAnnotatedTypeWithInvalidArgumentTypes() {
+    run("annotatedTypeWithInvalidArgumentTypes.kt");
+  }
+
+  @Test
+  @TestMetadata("annotatedTypeWithPrivateConstant.kt")
+  public void testAnnotatedTypeWithPrivateConstant() {
+    run("annotatedTypeWithPrivateConstant.kt");
   }
 
   @Test
@@ -131,6 +305,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleTypePointerConsistencyTestGener
   @TestMetadata("definitelyNotNullType.kt")
   public void testDefinitelyNotNullType() {
     run("definitelyNotNullType.kt");
+  }
+
+  @Test
+  @TestMetadata("differentlyAnnotatedEqualNestedTypes.kt")
+  public void testDifferentlyAnnotatedEqualNestedTypes() {
+    run("differentlyAnnotatedEqualNestedTypes.kt");
   }
 
   @Test
@@ -200,6 +380,18 @@ public class FirIdeNormalAnalysisSourceLikeModuleTypePointerConsistencyTestGener
   }
 
   @Test
+  @TestMetadata("functionTypeWithNamedParameters.kt")
+  public void testFunctionTypeWithNamedParameters() {
+    run("functionTypeWithNamedParameters.kt");
+  }
+
+  @Test
+  @TestMetadata("functionTypeWithNamedParametersFromLibrary.kt")
+  public void testFunctionTypeWithNamedParametersFromLibrary() {
+    run("functionTypeWithNamedParametersFromLibrary.kt");
+  }
+
+  @Test
   @TestMetadata("functionTypeWithReceiver.kt")
   public void testFunctionTypeWithReceiver() {
     run("functionTypeWithReceiver.kt");
@@ -233,6 +425,18 @@ public class FirIdeNormalAnalysisSourceLikeModuleTypePointerConsistencyTestGener
   @TestMetadata("nullableType.kt")
   public void testNullableType() {
     run("nullableType.kt");
+  }
+
+  @Test
+  @TestMetadata("propagatedAnnotatedType.kt")
+  public void testPropagatedAnnotatedType() {
+    run("propagatedAnnotatedType.kt");
+  }
+
+  @Test
+  @TestMetadata("propagatedAnnotatedTypeFromLibrary.kt")
+  public void testPropagatedAnnotatedTypeFromLibrary() {
+    run("propagatedAnnotatedTypeFromLibrary.kt");
   }
 
   @Test
