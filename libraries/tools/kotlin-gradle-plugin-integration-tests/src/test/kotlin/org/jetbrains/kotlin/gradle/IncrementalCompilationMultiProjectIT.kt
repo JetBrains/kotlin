@@ -1,6 +1,5 @@
 package org.jetbrains.kotlin.gradle
 
-import org.gradle.api.logging.LogLevel
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
@@ -27,7 +26,7 @@ class IncrementalCompilationJsMultiProjectIT : BaseIncrementalCompilationMultiPr
     override fun defaultProject(
         gradleVersion: GradleVersion,
         buildOptions: BuildOptions,
-        test: TestProject.() -> Unit
+        test: TestProject.() -> Unit,
     ): TestProject = super.defaultProject(gradleVersion, buildOptions) {
         listOf("app", "lib", "another-lib").forEach {
             val subProject = subProject(it)
@@ -71,7 +70,8 @@ class IncrementalCompilationJsMultiProjectIT : BaseIncrementalCompilationMultiPr
 
     @Disabled("compileKotlinJs's modification does not work")
     @GradleTest
-    override fun testFailureHandling_ToolError(gradleVersion: GradleVersion) {}
+    override fun testFailureHandling_ToolError(gradleVersion: GradleVersion) {
+    }
 
     @DisplayName("Add new dependency in lib project causes recompilation in JS")
     @GradleTest
@@ -237,7 +237,7 @@ class IncrementalCompilationJsMultiProjectIT : BaseIncrementalCompilationMultiPr
 }
 
 @JvmGradlePluginTests
-abstract class IncrementalCompilationJvmMultiProjectIT : BaseIncrementalCompilationMultiProjectIT() {
+open class IncrementalCompilationJvmMultiProjectIT : BaseIncrementalCompilationMultiProjectIT() {
     override val additionalExternalLibDependencies: String = """
         dependencies {
             implementation "org.jetbrains.kotlin:kotlin-test:${'$'}kotlin_version"
@@ -303,7 +303,7 @@ abstract class IncrementalCompilationJvmMultiProjectIT : BaseIncrementalCompilat
             subProject("lib")
                 .projectPath
                 .resolve("src/main/kotlin/bar/A.kt").modify {
-                    it.replace("fun a() {}","fun a() {}\nfun c() = ExternalClass()" )
+                    it.replace("fun a() {}", "fun a() {}\nfun c() = ExternalClass()")
                 }
             build("assemble")
             subProject("lib").buildGradle.replaceText(setUpExternalSource, "")
@@ -313,7 +313,7 @@ abstract class IncrementalCompilationJvmMultiProjectIT : BaseIncrementalCompilat
 
     protected fun testCompileLibWithGroovy_doTest(
         gradleVersion: GradleVersion,
-        assertResults: (TestProject, BuildResult) -> Unit
+        assertResults: (TestProject, BuildResult) -> Unit,
     ) {
         defaultProject(gradleVersion) {
             subProject("lib").buildGradle.modify {
@@ -389,10 +389,6 @@ abstract class IncrementalCompilationJvmMultiProjectIT : BaseIncrementalCompilat
             }
         }
     }
-}
-
-open class IncrementalCompilationK2JvmMultiProjectIT : IncrementalCompilationJvmMultiProjectIT() {
-    override val defaultBuildOptions: BuildOptions = super.defaultBuildOptions.copyEnsuringK2()
 
     @DisplayName("Incremental compilation with lenient mode")
     @GradleTest
@@ -400,16 +396,18 @@ open class IncrementalCompilationK2JvmMultiProjectIT : IncrementalCompilationJvm
         project("lenientMode", gradleVersion) {
             build("compileKotlinJvm")
 
-            kotlinSourcesDir("jvmMain").resolve("jvm.kt").writeText("""
+            kotlinSourcesDir("jvmMain").resolve("jvm.kt").writeText(
+                """
                 actual fun foo() {}
-            """.trimIndent())
+                """.trimIndent()
+            )
 
             build("compileKotlinJvm")
         }
     }
 }
 
-class IncrementalCompilationK2JvmMultiProjectFirRunnerIT : IncrementalCompilationK2JvmMultiProjectIT() {
+class IncrementalCompilationJvmMultiProjectFirRunnerIT : IncrementalCompilationJvmMultiProjectIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copy(useFirJvmRunner = true)
 }
 
@@ -437,7 +435,7 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
 
     protected fun TestProject.getExpectedKotlinSourcesForDefaultProject(
         libSources: List<String> = emptyList(),
-        appSources: List<String> = emptyList()
+        appSources: List<String> = emptyList(),
     ): Iterable<Path> {
         val expectedLibSources = if (libSources.isNotEmpty()) {
             sourceFilesRelativeToProject(

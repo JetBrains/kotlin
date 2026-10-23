@@ -25,3 +25,10 @@ private val KotlinVersion.isDeprecated
 
 val KotlinVersion.Companion.firstNonDeprecated: KotlinVersion
     get() = KotlinVersion.entries.first { !it.isDeprecated }
+
+/**
+ * Retrieves the first Kotlin version that is both marked as deprecated and still supported.
+ */
+val KotlinVersion.Companion.firstDeprecatedSupported: KotlinVersion
+    get() = KotlinVersion.entries.firstOrNull { it.isSupported && it.isDeprecated }
+        ?: error("No deprecated-but-supported KotlinVersion exists")

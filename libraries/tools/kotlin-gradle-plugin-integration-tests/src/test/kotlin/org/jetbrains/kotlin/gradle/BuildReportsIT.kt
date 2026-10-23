@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.gradle.testbase.TestVersions.ThirdPartyDependencies.
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.util.BuildOperationRecordImpl
 import org.jetbrains.kotlin.gradle.util.readJsonReport
-import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import java.io.ObjectInputStream
@@ -38,11 +37,7 @@ import java.nio.file.Path
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.io.path.*
 import kotlin.streams.asSequence
-import kotlin.test.assertContains
-import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
-import kotlin.test.assertTrue
-import kotlin.test.fail
+import kotlin.test.*
 
 @DisplayName("Build reports")
 class BuildReportsIT : KGPBaseTest() {
@@ -116,7 +111,6 @@ class BuildReportsIT : KGPBaseTest() {
             "kotlin-js-plugin-project",
             "compileKotlinJs",
             gradleVersion,
-            languageVersion = KotlinVersion.DEFAULT.version,
             // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
             disableIsolatedProjects = true,
         )
@@ -131,7 +125,6 @@ class BuildReportsIT : KGPBaseTest() {
             "kotlin-js-plugin-project",
             "compileKotlinJs",
             gradleVersion,
-            languageVersion = KotlinVersion.DEFAULT.version,
             // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
             disableIsolatedProjects = true,
             freeCompilerArgs = listOf(
@@ -175,7 +168,6 @@ class BuildReportsIT : KGPBaseTest() {
         project: String,
         task: String,
         gradleVersion: GradleVersion,
-        languageVersion: String = KotlinVersion.DEFAULT.version, // FIXME(KT-69597): Previously hardcoded to language version 2.0.
         disableIsolatedProjects: Boolean = false,
         freeCompilerArgs: List<String> = listOf(),
         expectedReportLines: List<String> = listOf(),
@@ -192,7 +184,6 @@ class BuildReportsIT : KGPBaseTest() {
         ) else defaultBuildOptions
 
         project(project, gradleVersion, buildOptions = buildOptions.copy(buildReport = listOf(buildReportOutput))) {
-
             val buildArguments = if (buildReportOutput == BuildReportType.JSON)
                 arrayOf(task, "-Pkotlin.build.report.json.directory=${projectPath.resolve("report").pathString}")
             else arrayOf(task)
@@ -203,22 +194,6 @@ class BuildReportsIT : KGPBaseTest() {
             }
             //Should contain build metrics for all compile kotlin tasks
             reportValidation(KotlinVersion.DEFAULT.version)
-        }
-
-        project(
-            project,
-            gradleVersion,
-            buildOptions = buildOptions.copy(languageVersion = languageVersion, buildReport = listOf(buildReportOutput))
-        ) {
-            val buildArguments = if (buildReportOutput == BuildReportType.JSON)
-                arrayOf(task, "-Pkotlin.build.report.json.directory=${projectPath.resolve("report").pathString}")
-            else arrayOf(task)
-            addCompilerArgs(freeCompilerArgs)
-            build(*buildArguments) {
-                assertBuildReportPathIsPrinted()
-            }
-            //Should contain build metrics for all compile kotlin tasks
-            reportValidation(languageVersion)
         }
     }
 

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.gradle.api.JavaVersion
 import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
@@ -27,11 +26,11 @@ import kotlin.io.path.relativeTo
 @MustRunOnChangesInCompilerPlugins
 @MustRunOnChangesInBuildToolsApi
 @OtherGradlePluginTests
-abstract class ScriptingIT : KGPBaseTest() {
+class ScriptingIT : KGPBaseTest() {
 
     @DisplayName("basic script is working")
     @GradleTest
-    open fun testScripting(gradleVersion: GradleVersion) {
+    fun testScripting(gradleVersion: GradleVersion) {
         project("scripting", gradleVersion) {
             val appSubProject = subProject("app")
             val scriptTemplateSubProject = subProject("script-template")
@@ -60,7 +59,7 @@ abstract class ScriptingIT : KGPBaseTest() {
     @Disabled("Gradle synchronization bug: https://github.com/gradle/gradle/issues/23450")
     @DisplayName("With custom file extension compiled incremental")
     @GradleTest
-    open fun testScriptingCustomExtensionIncremental(gradleVersion: GradleVersion) {
+    fun testScriptingCustomExtensionIncremental(gradleVersion: GradleVersion) {
         testScriptingCustomExtensionImpl(gradleVersion, withIC = true)
     }
 
@@ -129,9 +128,11 @@ abstract class ScriptingIT : KGPBaseTest() {
             gradleVersion = gradleVersion,
         ) {
             val appSubProject = subProject("app")
-            build(":app:test", buildOptions = defaultBuildOptions.copy(
-                logLevel = LogLevel.DEBUG,
-            )) {
+            build(
+                ":app:test", buildOptions = defaultBuildOptions.copy(
+                    logLevel = LogLevel.DEBUG,
+                )
+            ) {
                 assertCompiledKotlinSources(
                     listOf(
                         appSubProject.kotlinSourcesDir("test").resolve("script/ComposeMainKtsTest.kt").relativeTo(projectPath),
@@ -141,9 +142,4 @@ abstract class ScriptingIT : KGPBaseTest() {
             }
         }
     }
-}
-
-@DisplayName("K2 Scripting plugin")
-class ScriptingK2IT : ScriptingIT() {
-    override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
 }

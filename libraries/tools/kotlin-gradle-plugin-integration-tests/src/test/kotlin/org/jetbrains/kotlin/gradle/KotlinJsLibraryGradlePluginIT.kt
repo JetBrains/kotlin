@@ -14,7 +14,8 @@ import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.reader
 import kotlin.test.assertNotNull
 
-abstract class KotlinJsIrLibraryGradlePluginITBase : KGPBaseTest() {
+@JsGradlePluginTests
+class KotlinJsLibraryGradlePluginIT : KGPBaseTest() {
 
     override val defaultBuildOptions = super.defaultBuildOptions.copy(
         jsOptions = BuildOptions.JsOptions(),
@@ -65,10 +66,4 @@ abstract class KotlinJsIrLibraryGradlePluginITBase : KGPBaseTest() {
             }
         }
     }
-}
-
-@DisplayName("Kotlin/JS K2 IR library")
-@JsGradlePluginTests
-class KotlinK2JsIrLibraryGradlePluginIT : KotlinJsIrLibraryGradlePluginITBase() {
-    override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
 }

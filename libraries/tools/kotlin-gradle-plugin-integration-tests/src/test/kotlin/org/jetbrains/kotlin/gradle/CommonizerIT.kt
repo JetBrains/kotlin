@@ -19,7 +19,9 @@ import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.IdeaKotlinDependencyMat
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.assertMatches
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.dependsOnDependency
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.friendSourceDependency
-import org.jetbrains.kotlin.gradle.idea.testFixtures.utils.*
+import org.jetbrains.kotlin.gradle.idea.testFixtures.utils.kotlinNativeDistributionDependencies
+import org.jetbrains.kotlin.gradle.idea.testFixtures.utils.kotlinStdlibDependencies
+import org.jetbrains.kotlin.gradle.idea.testFixtures.utils.nativeStdlibDependency
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
@@ -54,10 +56,11 @@ import kotlin.test.fail
 
 @OsCondition(
     supportedOn = [OS.LINUX, OS.MAC, OS.WINDOWS],
-    enabledOnCI = [OS.LINUX, OS.MAC, OS.WINDOWS])
+    enabledOnCI = [OS.LINUX, OS.MAC, OS.WINDOWS]
+)
 @DisplayName("K/N tests for commonizer")
 @NativeGradlePluginTests
-open class CommonizerIT : KGPBaseTest() {
+class CommonizerIT : KGPBaseTest() {
     companion object {
         private const val commonizerOutput = "Preparing commonized Kotlin/Native libraries"
     }
@@ -562,11 +565,13 @@ open class CommonizerIT : KGPBaseTest() {
             }
             buildScriptInjection {
                 val defFile = project.layout.projectDirectory.file("foo.def").asFile
-                defFile.writeText("""
+                defFile.writeText(
+                    """
                     language = C
                     ---
                     void bar(void);
-                """.trimIndent())
+                """.trimIndent()
+                )
                 project.applyMultiplatform {
                     listOf(
                         linuxX64(),
@@ -840,11 +845,13 @@ open class CommonizerIT : KGPBaseTest() {
             }
             buildScriptInjection {
                 val defFile = project.layout.projectDirectory.file("foo.def").asFile
-                defFile.writeText("""
+                defFile.writeText(
+                    """
                     language = C
                     ---
                     void bar(void);
-                """.trimIndent())
+                """.trimIndent()
+                )
                 project.applyMultiplatform {
                     listOf(
                         linuxArm64(),
