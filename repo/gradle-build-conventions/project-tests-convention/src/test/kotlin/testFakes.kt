@@ -17,7 +17,6 @@ import org.gradle.api.tasks.testing.source.OtherSource
 import org.gradle.api.tasks.testing.source.TestSource
 import java.io.File
 
-/** What Gradle hands a [org.gradle.api.tasks.testing.TestListener], with nothing behind it. */
 internal fun descriptor(
     name: String,
     className: String? = null,
@@ -27,7 +26,6 @@ internal fun descriptor(
     source: TestSource? = null,
 ): TestDescriptor = FakeTestDescriptor(name, className, displayName, parent, composite, source)
 
-/** The outcome Gradle reports with it; only what a listener reads is answered. */
 internal fun result(status: ResultType, startTime: Long, endTime: Long): TestResult =
     FakeTestResult(status, startTime, endTime)
 
@@ -70,8 +68,6 @@ private class FakeTestDescriptor(
     override fun getDisplayName(): String = displayName
     override fun getParent(): TestDescriptor? = parent
     override fun isComposite(): Boolean = composite
-
-    // Gradle's own 'NoSource' unless told otherwise.
     override fun getSource(): TestSource = source ?: super.getSource()
 }
 

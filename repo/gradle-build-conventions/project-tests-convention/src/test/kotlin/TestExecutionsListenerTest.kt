@@ -20,7 +20,6 @@ private const val TEST_CLASS = "com.example.SomeTest"
 private const val NESTED_CLASS = $$"$$TEST_CLASS$Nested"
 private const val OTHER_CLASS = "com.example.OtherTest"
 
-/** What a run leaves in `test-executions.jsonl`, driven through the events Gradle would send. */
 class TestExecutionsListenerTest {
 
     @TempDir
@@ -172,7 +171,6 @@ class TestExecutionsListenerTest {
         val run = suite("Gradle Test Run $TASK_PATH")
 
         listener.inSuite(run) {
-            // The first round runs the whole class, the flaky test failing among the rest of it.
             val firstExecutor = suite("Gradle Test Executor 1", parent = run)
             val firstRound = suite(TEST_CLASS, parent = firstExecutor, className = TEST_CLASS)
             listener.inSuite(firstExecutor) {
@@ -182,7 +180,6 @@ class TestExecutionsListenerTest {
                 }
             }
 
-            // The retry runs the flaky test alone, under an executor of its own.
             val retryExecutor = suite("Gradle Test Executor 2", parent = run)
             val retryRound = suite(TEST_CLASS, parent = retryExecutor, className = TEST_CLASS)
             listener.inSuite(retryExecutor) {
@@ -236,7 +233,6 @@ class TestExecutionsListenerTest {
 
     private val executionsFile: File get() = projectDir.resolve("build/test-inventory/$TASK_NAME/test-executions.jsonl")
 
-    /** The listener under test; it resolves its build directory only when it writes. */
     private fun listener(): TestExecutionsListener {
         val project = ProjectBuilder.builder().withProjectDir(projectDir).build()
         return TestExecutionsListener(TASK_NAME, TASK_PATH, project.provider { projectDir.resolve("build") })
@@ -247,7 +243,6 @@ class TestExecutionsListenerTest {
     private fun recorded(): List<Map<*, *>> = recordedLines().map { JsonSlurper().parseText(it) as Map<*, *> }
 }
 
-/** A suite as Gradle reports one; the suites Gradle inserts itself carry no class. */
 private fun suite(name: String, parent: TestDescriptor? = null, className: String? = null): TestDescriptor =
     descriptor(name, className = className, parent = parent, composite = true)
 
