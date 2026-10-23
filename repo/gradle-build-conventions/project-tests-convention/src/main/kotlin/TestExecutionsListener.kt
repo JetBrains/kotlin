@@ -88,7 +88,10 @@ class TestExecutionsListener(
     // Gradle reports the events one at a time for now, but asks listeners not to count on it.
     @Synchronized
     override fun beforeSuite(suite: TestDescriptor) {
-        if (suite.parent == null) recording = Recording(executionsFile.get(), taskPath)
+        if (suite.parent == null) {
+            recording = Recording(executionsFile.get())
+            recording.writeHeader(taskPath)
+        }
         recording.startSuite(suite)
     }
 
@@ -107,7 +110,7 @@ class TestExecutionsListener(
 
     private class SuiteRecord(val id: Int, val className: String?)
 
-    private class Recording(file: File, taskPath: String) : Closeable {
+    private class Recording(file: File) : Closeable {
         /**
          * The suites that have started and not yet finished. Keyed by identity: Gradle passes the same descriptor to
          * `beforeSuite`, to `afterSuite` and as the `parent` of what runs in the suite, while two runs of one suite can
@@ -116,10 +119,10 @@ class TestExecutionsListener(
         private val running = IdentityHashMap<TestDescriptor, SuiteRecord>()
         private var lastSuiteId = 0
 
-        // Truncated, so that nothing of an earlier run is left in the file.
-        private val writer = file.run { parentFile.mkdirs(); bufferedWriter(Charsets.UTF_8) }
+        // Truncated when opened, so that nothing of an earlier run is left in the file.
+        private val writer by lazy { file.run { parentFile.mkdirs(); bufferedWriter(Charsets.UTF_8) } }
 
-        init {
+        fun writeHeader(taskPath: String) {
             writeLine {
                 put("type", "header")
                 put("formatVersion", 1)
