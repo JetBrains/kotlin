@@ -84,6 +84,8 @@ interface ObjCExportNamer {
     fun getObjectInstanceSelector(descriptor: ClassDescriptor): String
     fun getEnumEntrySelector(descriptor: ClassDescriptor): String
     fun getEnumEntrySwiftName(descriptor: ClassDescriptor): String
+    fun getNSClosedEnumEntryName(nsEnumTypeName: String, descriptor: ClassDescriptor): String
+    fun getNSClosedEnumEntrySwiftName(descriptor: ClassDescriptor): String
     fun getEnumStaticMemberSelector(descriptor: CallableMemberDescriptor): String
     fun getTypeParameterName(typeParameterDescriptor: TypeParameterDescriptor): String
 
@@ -101,7 +103,7 @@ interface ObjCExportNamer {
     // Null means no NSEnum property.
     fun getNSEnumTypeName(descriptor: ClassDescriptor): ObjCExportNSEnumTypeName? =
         descriptor.annotations.findAnnotation(KonanFqNames.objCEnum)?.let {
-            val name = ((it.argumentValue("name")?.value as String?)?.ifEmpty { null })
+            val name = ((it.argumentValue("name")?.value as String?)?.mangleIfStdMacro()?.ifEmpty { null })
                 ?: "${getClassOrProtocolName(descriptor).objCName}NSEnum"
             val swiftName = ((it.argumentValue("swiftName")?.value as String?)?.ifEmpty { null })
                 ?: ((it.argumentValue("name")?.value as String?)?.ifEmpty { null })
@@ -440,6 +442,8 @@ class ObjCExportNamerImpl(
 
     private val enumClassSelectors = EnumNameMapping()
     private val enumClassSwiftNames = EnumNameMapping()
+    private val closedEnumEntryNames = GlobalNameMapping<ClassDescriptor, String>()
+    private val closedEnumSwiftNames = EnumNameMapping()
 
     override fun getFileClassName(file: SourceFile): ObjCExportNamer.ClassOrProtocolName {
         val candidate by lazy {
@@ -688,7 +692,7 @@ class ObjCExportNamerImpl(
         assert(descriptor.kind == ClassKind.ENUM_ENTRY)
 
         return enumClassSelectors.getOrPut(descriptor) {
-            descriptor.getEnumEntryName(false)
+            descriptor.getEnumEntryName(false).map { it.mangleIfStdMacro() }
         }
     }
 
@@ -697,6 +701,36 @@ class ObjCExportNamerImpl(
 
         return enumClassSwiftNames.getOrPut(descriptor) {
             descriptor.getEnumEntryName(true)
+        }
+    }
+
+    override fun getNSClosedEnumEntryName(nsEnumTypeName: String, descriptor: ClassDescriptor): String {
+        assert(descriptor.kind == ClassKind.ENUM_ENTRY)
+
+        return closedEnumEntryNames.getOrPut(descriptor) {
+            val objCEntryName = descriptor.getObjCEnumEntryName().getName(forSwift = false)
+            if (objCEntryName != null) {
+                val name = nsEnumTypeName + objCEntryName.replaceFirstChar(Char::uppercase)
+                StringBuilder(name.mangleIfStdMacro()).mangledBySuffixUnderscores()
+            } else {
+                descriptor.getEnumEntryName(forSwift = false).map {
+                    val name = nsEnumTypeName + it.replaceFirstChar(Char::uppercase)
+                    name.mangleIfStdMacro()
+                }
+            }
+        }
+    }
+
+    override fun getNSClosedEnumEntrySwiftName(descriptor: ClassDescriptor): String {
+        assert(descriptor.kind == ClassKind.ENUM_ENTRY)
+
+        return closedEnumSwiftNames.getOrPut(descriptor) {
+            val swiftEntryName = descriptor.getObjCEnumEntryName().getName(forSwift = true)
+            if (swiftEntryName != null) {
+                StringBuilder(swiftEntryName).mangledBySuffixUnderscores()
+            } else {
+                descriptor.getEnumEntryName(forSwift = true)
+            }
         }
     }
 

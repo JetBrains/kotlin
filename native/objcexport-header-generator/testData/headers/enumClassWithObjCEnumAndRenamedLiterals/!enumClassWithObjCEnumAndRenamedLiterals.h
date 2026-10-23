@@ -6,7 +6,7 @@
 #import <Foundation/NSString.h>
 #import <Foundation/NSValue.h>
 
-@class Foo, KotlinArray<T>, KotlinEnum<E>, KotlinEnumCompanion;
+@class A, B, C, Foo, KotlinArray<T>, KotlinEnum<E>, KotlinEnumCompanion;
 
 @protocol KotlinComparable, KotlinIterator;
 
@@ -38,18 +38,70 @@ NS_ASSUME_NONNULL_BEGIN
 @property (readonly) int32_t ordinal __attribute__((swift_name("ordinal")));
 @end
 
+typedef NS_CLOSED_ENUM(int32_t, NULL_) {
+  NULL_Entry1 __attribute__((swift_name("entry1"))) = 0,
+  NULL_Entry2 __attribute__((swift_name("entry2"))) = 1,
+} __attribute__((swift_name("NULL")));
+
+
+__attribute__((objc_subclassing_restricted))
+@interface A : KotlinEnum<A *>
++ (instancetype)alloc __attribute__((unavailable));
++ (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
+- (instancetype)initWithName:(NSString *)name ordinal:(int32_t)ordinal __attribute__((swift_name("init(name:ordinal:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
+@property (readonly) NULL_ nsEnum;
+@property (class, readonly) A *entry1 __attribute__((swift_name("entry1")));
+@property (class, readonly) A *entry2 __attribute__((swift_name("entry2")));
++ (KotlinArray<A *> *)values __attribute__((swift_name("values()")));
+@property (class, readonly) NSArray<A *> *entries __attribute__((swift_name("entries")));
+@end
+
+typedef NS_CLOSED_ENUM(int32_t, DE) {
+  DEBUG_ __attribute__((swift_name("BUG"))) = 0,
+} __attribute__((swift_name("DE")));
+
+
+__attribute__((objc_subclassing_restricted))
+@interface B : KotlinEnum<B *>
++ (instancetype)alloc __attribute__((unavailable));
++ (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
+- (instancetype)initWithName:(NSString *)name ordinal:(int32_t)ordinal __attribute__((swift_name("init(name:ordinal:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
+@property (readonly) DE nsEnum;
+@property (class, readonly) B *entry3 __attribute__((swift_name("entry3")));
++ (KotlinArray<B *> *)values __attribute__((swift_name("values()")));
+@property (class, readonly) NSArray<B *> *entries __attribute__((swift_name("entries")));
+@end
+
+typedef NS_CLOSED_ENUM(int32_t, N) {
+  NO_ __attribute__((swift_name("O"))) = 0,
+} __attribute__((swift_name("N")));
+
+
+__attribute__((objc_subclassing_restricted))
+@interface C : KotlinEnum<C *>
++ (instancetype)alloc __attribute__((unavailable));
++ (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
+- (instancetype)initWithName:(NSString *)name ordinal:(int32_t)ordinal __attribute__((swift_name("init(name:ordinal:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
+@property (readonly) N nsEnum;
+@property (class, readonly) C *O __attribute__((swift_name("O")));
++ (KotlinArray<C *> *)values __attribute__((swift_name("values()")));
+@property (class, readonly) NSArray<C *> *entries __attribute__((swift_name("entries")));
+@end
+
 typedef NS_CLOSED_ENUM(int32_t, FooNSEnum) {
-  FooNSEnumAlphaBeta NS_SWIFT_NAME(alphaBeta) = 0,
-  FooNSEnumAlpha NS_SWIFT_NAME(alpha) = 1,
-  FooNSEnumTheCopy NS_SWIFT_NAME(theCopy) = 2,
-  FooNSEnumObjCName1Renamed NS_SWIFT_NAME(objCName1Renamed) = 3,
-  FooNSEnumObjcName2Renamed NS_SWIFT_NAME(objcName2Swift) = 4,
-  FooNSEnumEntryName1Renamed NS_SWIFT_NAME(entryName1Renamed) = 5,
-  FooNSEnumEntryName2Renamed NS_SWIFT_NAME(entryName2Swift) = 6,
-  FooNSEnumCombination1Renamed NS_SWIFT_NAME(combination1Renamed) = 7,
-  FooNSEnumCombination2Renamed NS_SWIFT_NAME(combination2Renamed) = 8,
-  FooNSEnumCombination3Renamed NS_SWIFT_NAME(combination3Swift) = 9,
-} NS_SWIFT_NAME(FooNSEnum);
+  FooNSEnumAlphaBeta __attribute__((swift_name("alphaBeta"))) = 0,
+  FooNSEnumAlpha __attribute__((swift_name("alpha"))) = 1,
+  FooNSEnumTheCopy __attribute__((swift_name("theCopy"))) = 2,
+  FooNSEnumObjCName1Renamed __attribute__((swift_name("objCName1Renamed"))) = 3,
+  FooNSEnumObjcName2Renamed __attribute__((swift_name("objcName2Swift"))) = 4,
+  FooNSEnumEntryName1Renamed __attribute__((swift_name("entryName1Renamed"))) = 5,
+  FooNSEnumEntryName2Renamed __attribute__((swift_name("entryName2Swift"))) = 6,
+  FooNSEnumCombination1Renamed __attribute__((swift_name("combination1Renamed"))) = 7,
+  FooNSEnumCombination2Renamed __attribute__((swift_name("combination2Renamed"))) = 8,
+  FooNSEnumCombination3Renamed __attribute__((swift_name("combination3Swift"))) = 9,
+  FooNSEnumNULL __attribute__((swift_name("DEBUG"))) = 10,
+  FooNSEnumYES __attribute__((swift_name("NO"))) = 11,
+} __attribute__((swift_name("FooNSEnum")));
 
 
 __attribute__((objc_subclassing_restricted))
@@ -68,6 +120,8 @@ __attribute__((objc_subclassing_restricted))
 @property (class, readonly) Foo *combination1Bad __attribute__((swift_name("combination1Bad")));
 @property (class, readonly) Foo *combination2BadObjC __attribute__((swift_name("combination2BadSwift")));
 @property (class, readonly) Foo *combination3BadObjC __attribute__((swift_name("combination3BadSwift")));
+@property (class, readonly) Foo *NULL_ __attribute__((swift_name("DEBUG")));
+@property (class, readonly) Foo *entryName3Swift __attribute__((swift_name("entryName3Swift")));
 + (KotlinArray<Foo *> *)values __attribute__((swift_name("values()")));
 @property (class, readonly) NSArray<Foo *> *entries __attribute__((swift_name("entries")));
 @end
