@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
+import org.jetbrains.kotlin.fir.scopes.getDeclaredConstructors
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
@@ -44,6 +45,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrLocalDelegatedPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -94,6 +96,13 @@ class Fir2IrVisitor(
         session.symbolProvider.getTopLevelFunctionSymbols(id.packageName, id.callableName)
             .singleOrNull()
             ?.toIrSymbolForCall(null, null) as? IrSimpleFunctionSymbol
+    }
+
+    private val cceConstructorSymbol: IrConstructorSymbol by lazy {
+        val classSymbol = session.symbolProvider.getClassLikeSymbolByClassId(StandardClassIds.ClassCastException)?.fullyExpandedClass()
+        val firConstructorSymbol = classSymbol?.declaredScope()?.getDeclaredConstructors()?.first { it.valueParameterSymbols.isEmpty() }
+            ?: @OptIn(UnsafeDuringIrConstructionAPI::class) return@lazy IrErrorClassImpl.constructors.first().symbol
+        declarationStorage.getIrConstructorSymbol(firConstructorSymbol)
     }
 
     internal inline fun <T> withAnnotationMode(enableAnnotationMode: Boolean = true, block: () -> T): T {
@@ -1823,18 +1832,75 @@ class Fir2IrVisitor(
             } else {
                 coneType.toIrType()
             }
+            val irArgumentExpression = convertToIrExpression(typeOperatorCall.argument)
+
             val [irType, irTypeOperator] = when (typeOperatorCall.operation) {
                 FirOperation.IS -> builtins.booleanType to if (isNonError) IrTypeOperator.NOT_INSTANCEOF else IrTypeOperator.INSTANCEOF
                 FirOperation.NOT_IS -> builtins.booleanType to if (isNonError) IrTypeOperator.INSTANCEOF else IrTypeOperator.NOT_INSTANCEOF
-                FirOperation.AS -> irTypeOperand to IrTypeOperator.CAST
-                FirOperation.SAFE_AS -> irTypeOperand.makeNullable() to IrTypeOperator.SAFE_CAST
+                FirOperation.AS -> {
+                    if (isNonError)
+                        return generateCastToNonError(startOffset, endOffset, irTypeOperand, irArgumentExpression, isSafeCast = false)
+                    irTypeOperand to IrTypeOperator.CAST
+                }
+                FirOperation.SAFE_AS -> {
+                    if (isNonError)
+                        return generateCastToNonError(startOffset, endOffset, irTypeOperand, irArgumentExpression, isSafeCast = true)
+                    irTypeOperand.makeNullable() to IrTypeOperator.SAFE_CAST
+                }
                 else -> error("Should not be here: ${typeOperatorCall.operation} in type operator call")
             }
 
             IrTypeOperatorCallImpl(
                 startOffset, endOffset, irType, irTypeOperator, irTypeOperand,
-                convertToIrExpression(typeOperatorCall.argument)
+                irArgumentExpression
             )
+        }
+    }
+
+    private fun generateCastToNonError(
+        startOffset: Int,
+        endOffset: Int,
+        irTypeOperand: IrType,
+        irArgumentExpression: IrExpression,
+        isSafeCast: Boolean,
+    ): IrBlockImpl {
+        // irTypeOperand is RichError(?) and its nullability is inverted from the FIR operand NonError(?).
+        val resultType = if (isSafeCast || !irTypeOperand.isMarkedNullable()) builtins.anyNType else builtins.anyType
+
+        return IrBlockImpl(startOffset, endOffset, resultType).apply {
+            val [receiverVariable, variableSymbol] =
+                conversionScope.createTemporaryVariableForSafeCallConstruction(irArgumentExpression)
+
+            statements += receiverVariable
+            statements += IrWhenImpl(startOffset, endOffset, resultType).apply {
+                val condition = IrTypeOperatorCallImpl(
+                    startOffset, endOffset, builtins.booleanType, INSTANCEOF, irTypeOperand,
+                    IrGetValueImpl(startOffset, endOffset, variableSymbol)
+                )
+                val negativeResult = if (isSafeCast) {
+                    IrConstImpl.constNull(startOffset, endOffset, builtins.nothingNType)
+                } else {
+                    IrThrowImpl(
+                        startOffset, endOffset, builtins.nothingType,
+                        IrConstructorCallImpl(
+                            startOffset = UNDEFINED_OFFSET,
+                            endOffset = UNDEFINED_OFFSET,
+                            type = StandardClassIds.ClassCastException.constructClassLikeType().toIrType(),
+                            symbol = cceConstructorSymbol,
+                            typeArgumentsCount = 0,
+                            constructorTypeArgumentsCount = 0,
+                        )
+                    )
+                }
+                branches += IrBranchImpl(condition, negativeResult)
+                branches += IrElseBranchImpl(
+                    IrConstImpl.boolean(startOffset, endOffset, builtins.booleanType, true),
+                    IrTypeOperatorCallImpl(
+                        startOffset, endOffset, resultType, CAST, resultType,
+                        IrGetValueImpl(startOffset, endOffset, variableSymbol)
+                    )
+                )
+            }
         }
     }
 
