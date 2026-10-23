@@ -299,11 +299,10 @@ class ObjCExportTranslatorImpl(
                                 swiftName = nsEnumTypeName.swiftName,
                                 origin = ObjCExportStubOrigin(descriptor),
                                 entries = descriptor.enumEntries.mapIndexed { ordinal, entry ->
-                                    val objcEnumEntryName = entry.getObjCEnumEntryName()
-                                    val objCName = objcEnumEntryName.getName(forSwift = false) ?: namer.getEnumEntrySelector(entry)
-                                    val swiftName = objcEnumEntryName.getName(forSwift = true) ?: namer.getEnumEntrySwiftName(entry)
+                                    val objCName = namer.getNSClosedEnumEntryName(nsEnumTypeName.objCName, entry)
+                                    val swiftName = namer.getNSClosedEnumEntrySwiftName(entry)
                                     ObjCNSClosedEnum.Entry(
-                                        objCName = nsEnumTypeName.objCName + objCName.replaceFirstChar { it.uppercaseChar() },
+                                        objCName = objCName,
                                         swiftName = swiftName,
                                         value = ordinal
                                     )
