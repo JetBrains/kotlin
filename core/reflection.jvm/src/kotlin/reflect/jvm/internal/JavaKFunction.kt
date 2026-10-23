@@ -45,8 +45,12 @@ internal abstract class JavaKFunction(
         val predefinedEnhancementInfo = predefinedEnhancementInfo
         val isKotlinContainer = (container as KClassImpl<*>).kmClass != null
         val overridden = when {
-            // Fake overrides are never enhanced.
-            overriddenStorage.isFakeOverride -> return@lazy null
+            // Fake override is enhanced only in case it's an intersection override in a Java class
+            // (see `FirSignatureEnhancement.isEnhanceableIntersection`).
+            overriddenStorage.isFakeOverride -> {
+                if (isKotlinContainer) return@lazy null
+                overriddenStorage.intersectedFakeOverrides.ifEmpty { return@lazy null }
+            }
             isKotlinContainer -> {
                 // Callables in Kotlin classes are not enhanced from supertypes/nullability annotations.
                 // Only the predefined enhancement of additional built-in members applies to them (see `getAdditionalFunctions`).

@@ -19,6 +19,9 @@ internal data class KCallableOverriddenStorage(
     // empty, and the overridden callables should be found by calling `computeOverriddenFunctions`.
     // For an intersection override, the first element is the most specific overridden callable, whose signature the fake override has.
     val overridden: List<ReflectKCallable<*>>,
+    // For an intersection override, the fake overrides in the same class from which it was created, one for each callable in `overridden`
+    // in the same order.
+    val intersectedFakeOverrides: List<ReflectKCallable<*>>,
 
     val forceIsExternal: Boolean,
     val forceIsOperator: Boolean,
@@ -34,6 +37,7 @@ internal data class KCallableOverriddenStorage(
             originalContainerIfFakeOverride = null,
             originalCallableTypeParameters = emptyList(),
             overridden = emptyList(),
+            intersectedFakeOverrides = emptyList(),
             forceIsExternal = false,
             forceIsOperator = false,
             forceIsInfix = false,
