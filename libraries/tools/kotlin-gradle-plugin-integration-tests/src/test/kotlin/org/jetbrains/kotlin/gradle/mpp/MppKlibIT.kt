@@ -9,11 +9,14 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_SHORT_NAME
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_UNIQUE_NAME
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.inputStream
 import kotlin.test.assertEquals
 
+// TODO KT-90599 Replace MppKlibIT with a KGP functional test on klib module name arguments
 @MppGradlePluginTests
+@MustRunOnChangesInGradle
 class MppKlibIT : KGPBaseTest() {
 
     @GradleTest

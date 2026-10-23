@@ -15,10 +15,14 @@ import org.jetbrains.kotlin.gradle.abi.utils.referenceJvmDumpFile
 import org.jetbrains.kotlin.gradle.dsl.abi.BinariesSource
 import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInBuildToolsApi
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import kotlin.test.assertEquals
 
+@MustRunOnChangesInGradle
 @JvmGradlePluginTests
 class AbiValidationJvmMavenPublicationsIT : KGPBaseTest() {
+
     @GradleTest
     fun testNoPublishPluginInJvm(
         gradleVersion: GradleVersion,
@@ -35,6 +39,7 @@ class AbiValidationJvmMavenPublicationsIT : KGPBaseTest() {
     }
 
     @GradleTest
+    @MustRunOnChangesInBuildToolsApi // Runs ABI tool via BTA
     fun testSame(
         gradleVersion: GradleVersion,
     ) {
@@ -84,6 +89,7 @@ class AbiValidationJvmMavenPublicationsIT : KGPBaseTest() {
     }
 
     @GradleTest
+    @MustRunOnChangesInBuildToolsApi // Runs ABI tool via BTA
     fun testClassifierArtifactsAreIgnored(
         gradleVersion: GradleVersion,
     ) {

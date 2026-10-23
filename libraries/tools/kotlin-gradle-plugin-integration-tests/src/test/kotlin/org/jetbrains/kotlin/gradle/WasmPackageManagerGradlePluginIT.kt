@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.gradle.util.kgpYarnLockFileContent
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.gradle.util.setupCustomKgpNpmToolingDependenciesDir
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import java.nio.file.Path
 import kotlin.io.path.createDirectories
@@ -28,6 +29,7 @@ import kotlin.io.path.readText
 import kotlin.io.path.writeText
 import kotlin.test.assertEquals
 
+@MustRunOnChangesInGradle
 class WasmNpmGradlePluginIT : WasmPackageManagerGradlePluginIT() {
     override val yarn: Boolean = false
 
@@ -37,6 +39,7 @@ class WasmNpmGradlePluginIT : WasmPackageManagerGradlePluginIT() {
         get() = "npm"
 }
 
+@MustRunOnChangesInGradle
 class WasmYarnGradlePluginIT : WasmPackageManagerGradlePluginIT() {
     override val yarn: Boolean = true
 
@@ -185,7 +188,8 @@ class WasmYarnGradlePluginIT : WasmPackageManagerGradlePluginIT() {
     }
 }
 
-@WasmJsGradlePluginTests
+@MustRunOnChangesInGradle
+@WasmJsGradlePluginTests // TODO Should remove `@MustRunOnChangesInWasm`. These tests are unaffected by Wasm compiler.
 abstract class WasmPackageManagerGradlePluginIT : KGPBaseTest() {
 
     abstract val yarn: Boolean

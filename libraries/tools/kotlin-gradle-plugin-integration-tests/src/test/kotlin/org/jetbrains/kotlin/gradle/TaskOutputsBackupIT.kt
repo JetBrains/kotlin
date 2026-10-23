@@ -16,11 +16,14 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import javax.inject.Inject
 import kotlin.io.path.*
 
+@MustRunOnChangesInGradle
 @OtherGradlePluginTests
+// TODO KT-90603 Move TaskOutputsBackupIT to KGP functional tests
 class TaskOutputsBackupIT : KGPBaseTest() {
     override val defaultBuildOptions: BuildOptions
         get() = super.defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
