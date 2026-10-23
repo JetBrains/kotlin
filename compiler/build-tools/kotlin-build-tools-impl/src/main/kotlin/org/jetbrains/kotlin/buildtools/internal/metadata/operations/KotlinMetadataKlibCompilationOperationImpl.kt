@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.buildtools.internal.*
 import org.jetbrains.kotlin.buildtools.internal.arguments.MetadataArgumentsImpl
 import org.jetbrains.kotlin.buildtools.internal.arguments.absolutePathStringOrThrow
 import org.jetbrains.kotlin.buildtools.internal.serializability.PathAsStringSerializer
+import org.jetbrains.kotlin.buildtools.internal.serializability.getPropertyByName
+import org.jetbrains.kotlin.buildtools.internal.serializability.setPropertyByName
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorWithDiagnosticId
@@ -47,11 +49,11 @@ internal class KotlinMetadataKlibCompilationOperationImpl(
     }
 
     @UseFromImplModuleRestricted
-    override fun <V> get(key: KotlinMetadataKlibCompilationOperation.Option<V>): V = options[key]
+    override fun <V> get(key: KotlinMetadataKlibCompilationOperation.Option<V>): V = getPropertyByName(emptyMap(), key.id)
 
     @UseFromImplModuleRestricted
     override fun <V> set(key: KotlinMetadataKlibCompilationOperation.Option<V>, value: V) {
-        options[key] = value
+        setPropertyByName(emptyMap(), key.id, value)
     }
 
     override fun build(): KotlinMetadataKlibCompilationOperation = deepCopy()

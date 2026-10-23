@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.buildtools.internal.*
 import org.jetbrains.kotlin.buildtools.internal.arguments.JsArgumentsImpl
 import org.jetbrains.kotlin.buildtools.internal.arguments.absolutePathStringOrThrow
 import org.jetbrains.kotlin.buildtools.internal.serializability.PathAsStringSerializer
+import org.jetbrains.kotlin.buildtools.internal.serializability.getPropertyByName
+import org.jetbrains.kotlin.buildtools.internal.serializability.setPropertyByName
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorWithDiagnosticId
@@ -44,12 +46,12 @@ internal class JsLinkingOperationImpl(
     }
 
     @UseFromImplModuleRestricted
-    override fun <V> get(key: JsLinkingOperation.Option<V>): V = options[key]
+    override fun <V> get(key: JsLinkingOperation.Option<V>): V = getPropertyByName(emptyMap(), key.id)
 
     @UseFromImplModuleRestricted
     override fun <V> set(key: JsLinkingOperation.Option<V>, value: V) {
         checkOptionIsAvailableForVersion(key)
-        options[key] = value
+        setPropertyByName(emptyMap(), key.id, value)
     }
 
     override fun build(): JsLinkingOperation = deepCopy()

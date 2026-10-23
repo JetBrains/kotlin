@@ -31,8 +31,6 @@ internal abstract class BuildOperationImpl<R> : BuildOperation<R>, BuildOperatio
     @Transient
     protected val compilationId: Int = compilationIdCounter.incrementAndFetch()
 
-    protected open val options: Options get() = Options(this::class) // to be removed when subclasses are also converted to serializable
-
     @SerialName("METRICS_COLLECTOR")
     @Transient
     internal var metricsCollector: BuildMetricsCollector? = null
