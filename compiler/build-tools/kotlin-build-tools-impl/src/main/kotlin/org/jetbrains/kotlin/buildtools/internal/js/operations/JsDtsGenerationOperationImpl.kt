@@ -83,7 +83,7 @@ internal class JsDtsGenerationOperationImpl private constructor(
             implementableInterfaces = this[IMPLEMENT_INTERFACES],
             exportableSuspendLambdas = this[EXPORT_SUSPEND_LAMBDAS],
             dataClassCopyRespectsConstructorVisibility = this[DATA_CLASS_COPY_RESPECTS_CONSTRUCTOR_VISIBILITY],
-            useUnknownInsteadAny = this[USE_UNKNOWN_INSTEAD_ANY],
+            useUnknownInsteadAny = this[EXPORT_UNTYPED_AS_UNKNOWN],
         )
         runTypeScriptExport(inputModules, typeScriptExportConfig)
         return CompilationResult.COMPILATION_SUCCESS
@@ -107,7 +107,7 @@ internal class JsDtsGenerationOperationImpl private constructor(
         this[EXPORT_SUSPEND_LAMBDAS] = linkingOperation.compilerArguments[JsArgumentsImpl.X_SUSPEND_LAMBDA_EXPORTING]
         this[DATA_CLASS_COPY_RESPECTS_CONSTRUCTOR_VISIBILITY] =
             linkingOperation.compilerArguments[CommonCompilerArgumentsImpl.X_CONSISTENT_DATA_CLASS_COPY_VISIBILITY]
-        this[USE_UNKNOWN_INSTEAD_ANY] =
+        this[EXPORT_UNTYPED_AS_UNKNOWN] =
             linkingOperation.compilerArguments[JsArgumentsImpl.X_DTS_USE_UNKNOWN_INSTEAD_ANY]
 
         this[MODULE_KIND] = linkingOperation.compilerArguments[JsArgumentsImpl.MODULE_KIND]
@@ -174,7 +174,7 @@ internal class JsDtsGenerationOperationImpl private constructor(
         val IMPLEMENT_INTERFACES: Option<Boolean> =
             Option("IMPLEMENT_INTERFACES", defaultArgsReference.allowImplementableInterfacesExporting)
         val EXPORT_SUSPEND_LAMBDAS: Option<Boolean> = Option("EXPORT_SUSPEND_LAMBDAS", defaultArgsReference.allowExportingSuspendLambdas)
-        val USE_UNKNOWN_INSTEAD_ANY: Option<Boolean> = Option("USE_UNKNOWN_INSTEAD_ANY", defaultArgsReference.useUnknownInsteadAny)
+        val EXPORT_UNTYPED_AS_UNKNOWN: Option<Boolean> = Option("EXPORT_UNTYPED_AS_UNKNOWN", defaultArgsReference.useUnknownInsteadAny)
         val DATA_CLASS_COPY_RESPECTS_CONSTRUCTOR_VISIBILITY: Option<Boolean> =
             Option("DATA_CLASS_COPY_RESPECTS_CONSTRUCTOR_VISIBILITY", defaultArgsReference.consistentDataClassCopyVisibility)
     }
