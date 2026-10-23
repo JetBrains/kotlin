@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.PARCELAB
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.PARCELABLE_CONSTRUCTOR_PARAMETER_SHOULD_BE_VAL_OR_VAR
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.PARCELABLE_DELEGATE_IS_NOT_ALLOWED
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.PARCELABLE_PRIMARY_CONSTRUCTOR_IS_EMPTY
+import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.PARCELABLE_RECURSIVE_DATA_CLASS_NOT_SUPPORTED
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.PARCELABLE_SHOULD_BE_INSTANTIABLE
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.PARCELABLE_SHOULD_HAVE_PRIMARY_CONSTRUCTOR
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.PARCELABLE_SHOULD_NOT_BE_ENUM_CLASS
@@ -136,6 +137,13 @@ object KtDefaultErrorMessagesParcelize : BaseDiagnosticRendererFactory() {
             PARCELABLE_TYPE_CONTAINS_NOT_SUPPORTED,
             "Type is not directly supported by ''Parcelize'' because it contains an instance of {0}. " +
                     "Add the ''@TypeParceler<{0}, ...>'' annotation to provide the missing serialization logic.",
+            RENDER_TYPE
+        )
+
+        map.put(
+            PARCELABLE_RECURSIVE_DATA_CLASS_NOT_SUPPORTED,
+            "Recursive data class {0} is not supported by ''Parcelize''. " +
+                    "Make the data class ''Parcelable'' or add the ''@TypeParceler<{0}, ...>'' annotation to provide the serialization logic.",
             RENDER_TYPE
         )
 
