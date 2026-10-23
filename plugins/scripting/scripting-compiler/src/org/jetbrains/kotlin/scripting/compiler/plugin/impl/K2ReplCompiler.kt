@@ -59,7 +59,7 @@ import kotlin.script.experimental.util.LinkedSnippetImpl
 import kotlin.script.experimental.util.add
 
 class K2ReplCompiler(
-    private val state: K2ReplCompilationState,
+    private val state: ReplCompilerState,
     private val convertToFir: SourceCode.(FirSession, BaseDiagnosticsCollector) -> FirFile = SourceCode::convertToFirViaLightTree,
 ) : ReplCompiler<CompiledSnippet> {
 
@@ -124,7 +124,7 @@ class K2ReplCompiler(
                         isReplSnippetSource { _, _ -> true }
                     }
                 }
-        ): K2ReplCompilationState {
+        ): ReplCompilerState {
 
             val moduleName = Name.special("<REPL>")
             val compilerContext = createIsolatedCompilationContext(
@@ -199,7 +199,7 @@ class K2ReplCompiler(
                 context = sessionFactoryContext,
             )
 
-            return K2ReplCompilationState(
+            return ReplCompilerState(
                 scriptCompilationConfiguration,
                 hostConfigurationWithProvider,
                 projectEnvironment,
@@ -213,7 +213,7 @@ class K2ReplCompiler(
     }
 }
 
-class K2ReplCompilationState(
+class ReplCompilerState(
     internal val scriptCompilationConfiguration: ScriptCompilationConfiguration,
     internal val hostConfiguration: ScriptingHostConfiguration,
     internal val projectEnvironment: VfsBasedProjectEnvironment,
@@ -317,7 +317,7 @@ class ReplModuleDataProvider(baseLibraryPaths: List<Path>) : ModuleDataProvider(
 
 @OptIn(LegacyK2CliPipeline::class, DirectDeclarationsAccess::class)
 private fun compileImpl(
-    state: K2ReplCompilationState,
+    state: ReplCompilerState,
     snippet: SourceCode,
     scriptCompilationConfiguration: ScriptCompilationConfiguration,
     convertToFir: SourceCode.(FirSession, BaseDiagnosticsCollector) -> FirFile,
@@ -449,7 +449,7 @@ private fun compileImpl(
     }
 }
 
-private fun K2ReplCompilationState.getOrCreateSessionForAnnotationResolution(): FirSession =
+private fun ReplCompilerState.getOrCreateSessionForAnnotationResolution(): FirSession =
     dummySessionForAnnotationResolution ?: run {
         val compilerConfiguration = compilerContext.environment.configuration
         createScriptSourceSession(
