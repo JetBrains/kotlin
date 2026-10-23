@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_KMP_PUBLICATION_STRATEGY
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_KMP_RESOLUTION_STRATEGY
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_KMP_SEPARATE_COMPILATION
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_KMP_STRICT_COMPILATION
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_KMP_STRICT_RESOLVE_IDE_DEPENDENCIES
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_METADATA_RUN_COMPILER_VIA_BUILD_TOOLS_API
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ALLOW_LEGACY_DEPENDENCIES
@@ -143,6 +144,10 @@ internal class PropertiesProvider private constructor(private val project: Proje
                 key = "SeparateKmpCompilation"
             )
         }.orElse(false)
+
+    // FIXME: Wire this with separate compilation
+    val strictKmpCompilation: Boolean
+        get() = booleanProperty(KOTLIN_KMP_STRICT_COMPILATION) ?: false
 
     val incrementalJs: Boolean?
         get() = booleanProperty("kotlin.incremental.js")
@@ -933,6 +938,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_KMP_EAGER_UNRESOLVED_DEPENDENCIES_DIAGNOSTIC = property("kotlin.kmp.eagerUnresolvedDependenciesDiagnostic")
         val KOTLIN_DISPLAY_DIAGNOSTICS_IN_IDE_BUILD_LOG = property("kotlin.displayDiagnosticsInIdeBuildLog")
         val KOTLIN_KMP_SEPARATE_COMPILATION = property("kotlin.kmp.separateCompilation")
+        val KOTLIN_KMP_STRICT_COMPILATION = property("kotlin.kmp.strictCompilation")
         val KOTLIN_SUPPRESS_XCODE_INTEGRATION_CHECK = property("kotlin.suppressSwiftPMXcodeIntegrationCheck")
         val KOTLIN_DISABLE_SWIFTPM_IMPORT = property("kotlin.disableSwiftPMImport")
 
