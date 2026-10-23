@@ -38,11 +38,6 @@ class SourceElementChecker(val context: IrPluginContext) : IrVisitorVoid() {
         if (klass.origin is IrDeclarationOrigin.GeneratedByPlugin) {
             return
         }
-        // kotlinx.serialization generates elements with its own SERIALIZATION_PLUGIN_ORIGIN
-        // which is marked as synthetic, so we ignore synthetic elements here.
-        if (klass.origin.isSynthetic) {
-            return
-        }
         if (klass is Fir2IrLazyClass && klass.fir.origin.isBuiltIns) {
             return
         }
