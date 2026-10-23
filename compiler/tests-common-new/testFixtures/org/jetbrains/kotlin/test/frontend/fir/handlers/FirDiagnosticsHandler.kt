@@ -659,6 +659,11 @@ open class FirDiagnosticCollectorService(val testServices: TestServices) : TestS
         return cache.getOrPut(info) { computeDiagnostics(info) }
     }
 
+    /** Forgets the diagnostics computed so far, together with the frontend artifacts they were computed for. */
+    fun clearCache() {
+        cache.clear()
+    }
+
     val containsErrorDiagnostics: Boolean
         get() = cache.values.any { info ->
             info.values.any { it.diagnostic.severity == Severity.ERROR }
@@ -821,6 +826,7 @@ private fun FirSession.turnOnMetadataCompilationAnalysisFlag(body: () -> Unit) {
 }
 
 val TestServices.firDiagnosticCollectorService: FirDiagnosticCollectorService by TestServices.testServiceAccessor()
+val TestServices.firDiagnosticCollectorServiceIfRegistered: FirDiagnosticCollectorService? by TestServices.nullableTestServiceAccessor()
 
 private object KtDebugInfoDiagnostics : KtDiagnosticsContainer() {
     val DYNAMIC by debugInfo0()

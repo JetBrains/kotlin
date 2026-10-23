@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.test.klib.CustomKlibCompilerTestDirectives
 import org.jetbrains.kotlin.test.model.DependencyRelation
 import org.jetbrains.kotlin.test.model.GroupingTestIsolator
 import org.jetbrains.kotlin.test.model.TestFile
+import org.jetbrains.kotlin.test.services.CompilationStage
 import org.jetbrains.kotlin.test.services.IrCheckersDisabledByTestDirectives
 import org.jetbrains.kotlin.test.services.IrCheckersEnabledByTestDirectives
 import org.jetbrains.kotlin.test.services.TestModuleStructure
@@ -35,8 +36,15 @@ import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
  * that calls every `box()` by its fully qualified name. So a test is isolated whenever it needs a compiler or a runner
  * setup of its own, or declares something that is visible outside its (renamed) package. The rules are deliberately
  * conservative: a wrongly isolated test merely runs the way it always did, while a wrongly grouped one fails and can break its whole batch.
+ *
+ * @param customCompilerStage the stage compiled by a custom (previously released) compiler in this test runner. Only
+ *   the `IGNORE_KLIB_*_WITH_CUSTOM_<STAGE>` directives of that stage expect a failure (see `CustomKlibCompilerFirstStageTestSuppressor`
+ *   and `CustomKlibCompilerSecondStageTestSuppressor`), so only they isolate a test: the directives of the other stage are no-ops here.
  */
-class JsGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolator(testServices, affectsFileGenerators = true) {
+class JsGroupingTestIsolator(
+    testServices: TestServices,
+    private val customCompilerStage: CompilationStage,
+) : GroupingTestIsolator(testServices, affectsFileGenerators = true) {
     override val directiveContainers: List<DirectivesContainer>
         get() = listOf(
             ConfigurationDirectives,
@@ -49,6 +57,11 @@ class JsGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolator(
     override fun computeBatchToken(moduleStructure: TestModuleStructure): BatchToken {
         val allDirectives = moduleStructure.allDirectives
         if (ISOLATION_DIRECTIVES.any { it in allDirectives }) return BatchToken.Isolated
+        val customCompilerIgnoreDirectives = when (customCompilerStage) {
+            CompilationStage.FIRST -> CUSTOM_FIRST_STAGE_IGNORE_DIRECTIVES
+            CompilationStage.SECOND -> CUSTOM_SECOND_STAGE_IGNORE_DIRECTIVES
+        }
+        if (customCompilerIgnoreDirectives.any { it in allDirectives }) return BatchToken.Isolated
         if (IGNORE_BACKEND_DIRECTIVES.any { allDirectives[it].any(::isJsBackend) }) return BatchToken.Isolated
 
         val modules = moduleStructure.modules
@@ -135,18 +148,19 @@ class JsGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolator(
             "Compiler settings: " + joinToString { directive ->
                 when (directive) {
                     is SimpleDirective -> directive.name
-                    is StringDirective -> "${directive.name}=${directives[directive]}"
-                    is ValueDirective<*> -> "${directive.name}=${directives[directive]}"
+                    is StringDirective -> "${directive.name}=${directives[directive].distinct()}"
+                    is ValueDirective<*> -> "${directive.name}=${directives[directive].distinct()}"
                 }
             }
         }
 
     private fun computeLanguageSettings(directives: RegisteredDirectives): String? {
-        val languageFeatures = directives[LanguageSettingsDirectives.LANGUAGE].sorted()
-        val optIns = directives[LanguageSettingsDirectives.OPT_IN].sorted()
-        val apiVersion = directives[LanguageSettingsDirectives.API_VERSION]
-        val languageVersion = directives[LanguageSettingsDirectives.LANGUAGE_VERSION]
-        val returnValueCheckerMode = directives[LanguageSettingsDirectives.RETURN_VALUE_CHECKER_MODE]
+        // `disctinct()` below is used to match directive lists for tests having different amount of modules, like `[+X]` vs `[+X, +X]`
+        val languageFeatures = directives[LanguageSettingsDirectives.LANGUAGE].distinct().sorted()
+        val optIns = directives[LanguageSettingsDirectives.OPT_IN].distinct().sorted()
+        val apiVersion = directives[LanguageSettingsDirectives.API_VERSION].distinct()
+        val languageVersion = directives[LanguageSettingsDirectives.LANGUAGE_VERSION].distinct()
+        val returnValueCheckerMode = directives[LanguageSettingsDirectives.RETURN_VALUE_CHECKER_MODE].distinct()
         val progressiveMode = LanguageSettingsDirectives.PROGRESSIVE_MODE in directives
 
         if (languageFeatures.isEmpty()
@@ -172,8 +186,8 @@ class JsGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolator(
 
     companion object {
         /**
-         * Expect a failure, as the `IGNORE_KLIB_*` directives of [ISOLATION_DIRECTIVES] do, but on JS only if they list
-         * a JS backend or `ANY`: a test ignored on other backends only is grouped.
+         * Expect a failure, as the `IGNORE_KLIB_*` directives do, but on JS only if they list a JS backend or `ANY`:
+         * a test ignored on other backends only is grouped.
          */
         private val IGNORE_BACKEND_DIRECTIVES: List<ValueDirective<TargetBackend>> = listOf(
             CodegenTestDirectives.IGNORE_BACKEND,
@@ -183,13 +197,19 @@ class JsGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolator(
         private fun isJsBackend(backend: TargetBackend): Boolean =
             backend == TargetBackend.ANY || backend.isTransitivelyCompatibleWith(TargetBackend.JS_IR)
 
-        private val ISOLATION_DIRECTIVES: List<Directive> = listOf(
-            // Some test failures can bring down an entire batch, so where a failure is expected, the test runs in isolation.
+        // Some test failures can bring down an entire batch, so where a failure is expected, the test runs in isolation.
+        private val CUSTOM_FIRST_STAGE_IGNORE_DIRECTIVES: List<Directive> = listOf(
             CustomKlibCompilerTestDirectives.IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_STAGE,
             CustomKlibCompilerTestDirectives.IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_FIRST_STAGE,
+        )
+
+        private val CUSTOM_SECOND_STAGE_IGNORE_DIRECTIVES: List<Directive> = listOf(
             CustomKlibCompilerTestDirectives.IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_SECOND_STAGE,
             CustomKlibCompilerTestDirectives.IGNORE_KLIB_FRONTEND_ERRORS_WITH_CUSTOM_SECOND_STAGE,
             CustomKlibCompilerTestDirectives.IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE,
+        )
+
+        private val ISOLATION_DIRECTIVES: List<Directive> = listOf(
             // Which module is the main one, and how it is loaded and called.
             JsEnvironmentConfigurationDirectives.JS_MODULE_KIND,
             JsEnvironmentConfigurationDirectives.NO_JS_MODULE_SYSTEM,

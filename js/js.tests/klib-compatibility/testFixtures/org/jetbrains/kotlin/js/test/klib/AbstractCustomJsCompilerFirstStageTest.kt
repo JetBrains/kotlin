@@ -69,7 +69,7 @@ open class AbstractCustomJsCompilerFirstStageTest(val testDataRoot: String = "co
             )
         }
         nonGroupingStage {
-            useGroupingTestIsolators(::JsGroupingTestIsolator)
+            useGroupingTestIsolators({ JsGroupingTestIsolator(it, customCompilerStage = CompilationStage.FIRST) })
             useAdditionalSourceProviders(
                 ::CoroutineHelpersSourceFilesProvider,
                 ::JsAdditionalSourceProvider,

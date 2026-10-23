@@ -4,7 +4,6 @@ import org.jetbrains.kotlin.test.klib.runSanityTest
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import org.opentest4j.AssertionFailedError
 import org.opentest4j.TestAbortedException
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
@@ -47,10 +46,11 @@ class CustomJsCompilerFirstStageSanity :
 
     @Test
     fun checkNotMutedWithIgnoreRuntimeErrors2ndStage() {
-        val exception = assertThrows<AssertionFailedError> {
+        // The directive is a no-op for this runner, so the test is not isolated, and its `box()` is checked by the grouped pipeline.
+        val exception = assertThrows<AssertionError> {
             runSanityTest(testDataRoot + "mutedWithIgnoreRuntimeErrors2ndStage.kt")
         }
-        assertEquals("expected: <OK> but was: <FAIL>", exception.message)
+        assertContains(exception.message!!, "Test failed with: FAIL. Expected <OK>, actual <FAIL>.")
     }
 
     @Test

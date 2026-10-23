@@ -106,7 +106,9 @@ fun Project.customFirstStageTest(
         taskName = "testCustomFirstStage_$version",
         tag = "custom-first-stage",
         enableGroupingTestEngine = true,
-    )
+    ) {
+        groupingEngineSettings(batchSize = 100, simultaneousBatches = 8)
+    }
 }
 
 fun Project.customSecondStageTest(rawVersion: String): TaskProvider<out Task> {
@@ -116,7 +118,9 @@ fun Project.customSecondStageTest(rawVersion: String): TaskProvider<out Task> {
         taskName = "testCustomSecondStage_$version",
         tag = "custom-second-stage",
         enableGroupingTestEngine = true,
-    )
+    ) {
+        groupingEngineSettings(batchSize = 100, simultaneousBatches = 8)
+    }
 }
 
 fun Project.customStagesAggregateTest(rawVersion: String): TaskProvider<out Task> {
@@ -160,4 +164,3 @@ projectTests {
     withJsRuntime()
     withStdlibCommon()
 }
-
