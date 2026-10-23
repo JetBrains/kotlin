@@ -63,7 +63,7 @@ object FirWillBecomeValueDeclarationChecker : FirClassChecker(MppCheckerKind.Com
  * An actual typealias to a Java class annotated with '@WillBecomeValue' is checked for the identity-based members of that class,
  * which the class checkers never see, as they only run on Kotlin declarations.
  */
-object FirWillBecomeValueActualTypeAliasChecker : FirTypeAliasChecker(MppCheckerKind.Common) {
+object FirWillBecomeValueActualTypeAliasToJavaChecker : FirTypeAliasChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirTypeAlias) {
         if (!declaration.isActual) return

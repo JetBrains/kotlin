@@ -215,7 +215,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
     override val typeAliasCheckers: Set<FirTypeAliasChecker> = setOf(
         FirAnyTypeAliasChecker,
         FirActualTypeAliasChecker,
-        FirWillBecomeValueActualTypeAliasChecker,
+        FirWillBecomeValueActualTypeAliasToJavaChecker,
     )
 
     override val anonymousFunctionCheckers: Set<FirAnonymousFunctionChecker> = setOf(
