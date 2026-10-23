@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.gradle.plugin.usageByName
 import org.jetbrains.kotlin.gradle.targets.js.ir.KLIB_TYPE
 import org.jetbrains.kotlin.gradle.utils.copyZipFilePartially
 import org.jetbrains.kotlin.gradle.utils.copyPartially
+import org.jetbrains.kotlin.gradle.utils.ensurePathComponentSafeString
 import org.jetbrains.kotlin.gradle.utils.ensureValidZipDirectoryPath
 import org.jetbrains.kotlin.gradle.utils.listDescendants
 import java.util.zip.ZipFile
@@ -203,6 +204,7 @@ internal abstract class KarToPlatformArtifactsTransformation : TransformAction<K
                 .map { entry -> entry.name.removePrefix(cinteropsPath).substringBefore('/') }
                 .filter { it.isNotEmpty() }
                 .distinct()
+                .onEach { ensurePathComponentSafeString(it) }
                 .toList()
 
             kar.copyPartially(outputs.klibFile(klibName), platformPath)
