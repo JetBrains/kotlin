@@ -46,7 +46,7 @@ class NativeGroupingTestIsolator(testServices: TestServices) : GroupingTestIsola
         val testRunSettings = testServices.testRunSettings
         val shouldBeIsolated = testRunSettings.testKind(moduleStructure.modules.firstOrNull()?.directives) != TestKind.REGULAR
                 || isolationDirectives.any { it in registeredDirectives }
-                || moduleStructure.sourceContains(packageKotlinInternalRegex)
+                || moduleStructure.testSourceContains(packageKotlinInternalRegex)
                 || moduleStructure.modules.any { module -> module.files.any { it.name.endsWith(".def") } }
                 || testRunSettings.isIgnoredTarget(registeredDirectives) // considers IGNORE_BACKEND* and IGNORE_NATIVE directives
                 || testRunSettings.isDisabledNative(registeredDirectives) // considers DISABLE_NATIVE directive
@@ -79,6 +79,16 @@ class NativeGroupingTestIsolator(testServices: TestServices) : GroupingTestIsola
         registeredDirectives.collectToggledCheckers().let { [additional, disabled] -> additional + disabled }
             .ifNotEmpty { ToggledCheckersToken(this) }
 
+
+    /**
+     * Scans the test files only. Additional files are supplied by the test infrastructure and do not differ between tests in a way
+     * that should isolate one: for example, the `kotlin.internal.ReflectionPackageName` helper of KLIB backward-compatibility tests
+     * is declared in the package `kotlin.internal` for the old stdlibs missing it, while the test itself does not touch that package.
+     * Scanning such a file would also make the answer depend on the moment it's asked: the additional source providers ask while
+     * the helper is not yet added, and `BatchingPackageInserter` asks after that, and the answers must agree.
+     */
+    private fun TestModuleStructure.testSourceContains(regex: Regex): Boolean =
+        modules.any { module -> module.files.any { !it.isAdditional && it.originalContent.contains(regex) } }
 
     private val packageKotlinInternalRegex = Regex("package\\s${StandardNames.KOTLIN_INTERNAL_FQ_NAME}")
 
