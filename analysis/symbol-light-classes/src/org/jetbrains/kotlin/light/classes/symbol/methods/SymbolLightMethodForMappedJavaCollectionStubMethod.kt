@@ -31,6 +31,10 @@ import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightTypeParam
 import org.jetbrains.kotlin.light.classes.symbol.utils.cachedValue
 import javax.swing.Icon
 
+/**
+ * The exact parameter and return types of a [SymbolLightMethodForMappedJavaCollectionStubMethod], used instead of the types computed from
+ * the Java method.
+ */
 internal data class MethodSignature(val parameterTypes: List<PsiType>, val returnType: PsiType)
 
 /**
@@ -108,12 +112,11 @@ internal class SymbolLightMethodForMappedJavaCollectionStubMethod(
      *
      * It is called lazily by [SymbolLightParameterForMappedJavaCollectionStubMethod].
      *
-     * The type is taken from [providedSignature] if it is present. Otherwise, it is the type of [javaParameter] substituted with
+     * The type is taken from [providedSignature] as is if it is present. Otherwise, it is the type of [javaParameter] substituted with
      * [methodSubstitutor], with `Object` replaced by [substituteObjectWith].
      *
      * A boxed primitive type is then unboxed, e.g., `Integer` becomes `int`, if the parameter mirrors a Kotlin parameter of the element,
      * key, or value type:
-     * - the type comes from [providedSignature], like `K` in the Kotlin variant `get(int)` of `get(Object)` in `Map<Int, V>`;
      * - `Object` is replaced by [substituteObjectWith], like in the Kotlin variant `contains(int)` of `contains(Object)` in
      *   `Collection<Int>`;
      * - the Java type is a type parameter of the collection, like `E` in `add(E)`, which becomes `add(int)` in `List<Int>`.
@@ -123,11 +126,11 @@ internal class SymbolLightMethodForMappedJavaCollectionStubMethod(
      * Other types stay as they are, like `Object` in the final bridge `contains(Object)` or `Collection<? extends E>` in `addAll`.
      */
     internal fun computeParameterType(javaParameter: PsiParameter, index: Int): PsiType {
+        providedSignature?.let { return it.parameterTypes[index] }
+
         val typeFromJava = javaParameter.type
-        val providedType = providedSignature?.parameterTypes?.get(index)
-        val candidateType = providedType ?: substituteType(typeFromJava)
-        val shouldTryToUnbox = providedType != null ||
-                (typeFromJava.isJavaLangObject() && substituteObjectWith == candidateType) ||
+        val candidateType = substituteType(typeFromJava)
+        val shouldTryToUnbox = (typeFromJava.isJavaLangObject() && substituteObjectWith == candidateType) ||
                 (typeFromJava.isTypeParameter() && !javaMethod.hasModifierProperty(PsiModifier.DEFAULT))
         return if (shouldTryToUnbox) candidateType.unboxedOrSelf() else candidateType
     }

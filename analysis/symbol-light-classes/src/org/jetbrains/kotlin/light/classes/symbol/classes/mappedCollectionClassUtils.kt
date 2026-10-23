@@ -466,27 +466,28 @@ private fun createJavaUtilMapMethodWithSpecialSignature(
     val k = substitutor.substitute(kOriginal) ?: kOriginal
     val v = substitutor.substitute(vOriginal) ?: vOriginal
 
+    // The Kotlin variant takes the key and the value types unboxed, like `get(int)` in `Map<Int, V>`
     val signature = when (method.name) {
         "get" -> {
             if (k.isTypeParameter()) return null
-            MethodSignature(parameterTypes = listOf(k), returnType = v)
+            MethodSignature(parameterTypes = listOf(k.unboxedOrSelf()), returnType = v)
         }
 
         "containsKey" -> {
             if (k.isTypeParameter()) return null
-            MethodSignature(parameterTypes = listOf(k), returnType = PsiTypes.booleanType())
+            MethodSignature(parameterTypes = listOf(k.unboxedOrSelf()), returnType = PsiTypes.booleanType())
         }
 
         "containsValue" -> {
             if (v.isTypeParameter()) return null
-            MethodSignature(parameterTypes = listOf(v), returnType = PsiTypes.booleanType())
+            MethodSignature(parameterTypes = listOf(v.unboxedOrSelf()), returnType = PsiTypes.booleanType())
         }
 
         "remove" -> {
             // only `remove(Object)` pair (i.e. `remove(K)`) is needed
             if (method.parameterList.parametersCount != 1) return null
             if (k.isTypeParameter()) return null
-            MethodSignature(parameterTypes = listOf(k), returnType = v)
+            MethodSignature(parameterTypes = listOf(k.unboxedOrSelf()), returnType = v)
         }
         else -> null
     } ?: return null
