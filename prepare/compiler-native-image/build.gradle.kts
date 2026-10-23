@@ -197,9 +197,15 @@ val kotlincNativeImageTask = tasks.register<Exec>("kotlincNativeImage") {
         }
     }
 
-    inputs.files(nativeImageClasspath, resources, launcher.map { it.metadata.installationPath.asFile }, preservedPackagesFile, pgoFile)
+    inputs.files(nativeImageClasspath, resources)
         .withNormalizer(ClasspathNormalizer::class)
         .withPropertyName("nativeImageClasspath")
+    inputs.file(launcher.map { it.metadata.installationPath.file("release") })
+        .withNormalizer(ClasspathNormalizer::class)
+        .withPropertyName("graalVmRelease")
+    inputs.files(preservedPackagesFile, pgoFile)
+        .withNormalizer(ClasspathNormalizer::class)
+        .withPropertyName("nativeImageConfiguration")
 
     inputs.property("nativeArgs", nativeArgs)
     inputs.property("os", currentOs.name)
