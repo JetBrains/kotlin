@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.components.KaArrayTypeBuilder
 import org.jetbrains.kotlin.analysis.api.components.KaClassTypeBuilder
 import org.jetbrains.kotlin.analysis.api.components.KaTypeParameterTypeBuilder
-import org.jetbrains.kotlin.analysis.api.fir.types.KaBaseTypeArgumentWithVariance
+import org.jetbrains.kotlin.analysis.api.fir.types.KaFirTypeArgumentWithVariance
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.Variance
 
 @KaImplementationDetail
-sealed class KaBaseClassTypeBuilder : KaClassTypeBuilder {
+sealed class KaFirClassTypeBuilder : KaClassTypeBuilder {
     private val backingArguments = mutableListOf<KaTypeProjection>()
 
     @Deprecated(
@@ -55,25 +55,25 @@ sealed class KaBaseClassTypeBuilder : KaClassTypeBuilder {
     }
 
     override fun argument(type: KaType, variance: Variance): Unit = withValidityAssertion {
-        backingArguments += KaBaseTypeArgumentWithVariance(type, variance, type.token)
+        backingArguments += KaFirTypeArgumentWithVariance(type, variance, type.token)
     }
 
     @KaImplementationDetail
-    class ByClassId(classId: ClassId, override val token: KaLifetimeToken) : KaBaseClassTypeBuilder() {
+    class ByClassId(classId: ClassId, override val token: KaLifetimeToken) : KaFirClassTypeBuilder() {
         private val backingClassId: ClassId = classId
 
         val classId: ClassId get() = withValidityAssertion { backingClassId }
     }
 
     @KaImplementationDetail
-    class BySymbol(symbol: KaClassLikeSymbol, override val token: KaLifetimeToken) : KaBaseClassTypeBuilder() {
+    class BySymbol(symbol: KaClassLikeSymbol, override val token: KaLifetimeToken) : KaFirClassTypeBuilder() {
         private val backingSymbol: KaClassLikeSymbol = symbol
 
         val symbol: KaClassLikeSymbol get() = withValidityAssertion { backingSymbol }
     }
 }
 
-internal sealed class KaBaseArrayTypeBuilder : KaArrayTypeBuilder {
+internal sealed class KaFirArrayTypeBuilder : KaArrayTypeBuilder {
     override var isMarkedNullable: Boolean = false
         get() = withValidityAssertion { field }
         set(value) {
@@ -98,7 +98,7 @@ internal sealed class KaBaseArrayTypeBuilder : KaArrayTypeBuilder {
             }
         }
 
-    class ByElementType(elementType: KaType, override val token: KaLifetimeToken) : KaBaseArrayTypeBuilder() {
+    class ByElementType(elementType: KaType, override val token: KaLifetimeToken) : KaFirArrayTypeBuilder() {
         private val backingElementType: KaType = elementType
 
         val elementType: KaType get() = withValidityAssertion { backingElementType }
@@ -106,7 +106,7 @@ internal sealed class KaBaseArrayTypeBuilder : KaArrayTypeBuilder {
 }
 
 @KaImplementationDetail
-sealed class KaBaseTypeParameterTypeBuilder : KaTypeParameterTypeBuilder {
+sealed class KaFirTypeParameterTypeBuilder : KaTypeParameterTypeBuilder {
     @Deprecated(
         "Use `isMarkedNullable` instead.",
         replaceWith = ReplaceWith("isMarkedNullable"),
@@ -133,7 +133,7 @@ sealed class KaBaseTypeParameterTypeBuilder : KaTypeParameterTypeBuilder {
         }
 
     @KaImplementationDetail
-    class BySymbol(symbol: KaTypeParameterSymbol, override val token: KaLifetimeToken) : KaBaseTypeParameterTypeBuilder() {
+    class BySymbol(symbol: KaTypeParameterSymbol, override val token: KaLifetimeToken) : KaFirTypeParameterTypeBuilder() {
         private val backingSymbol: KaTypeParameterSymbol = symbol
 
         val symbol: KaTypeParameterSymbol get() = withValidityAssertion { backingSymbol }

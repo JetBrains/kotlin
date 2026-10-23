@@ -9,8 +9,8 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiTypeParameter
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.fir.annotations.KaBaseEmptyAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
+import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirEmptyAnnotationList
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolLocation
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
@@ -36,7 +36,7 @@ internal class KaFirPsiJavaTypeParameterSymbol(
     override val annotations: KaAnnotationList
         get() = withValidityAssertion {
             if (backingPsi.annotations.isEmpty())
-                KaBaseEmptyAnnotationList(token)
+                KaFirEmptyAnnotationList(token)
             else
                 KaFirAnnotationListForDeclaration.create(firSymbol, builder)
         }

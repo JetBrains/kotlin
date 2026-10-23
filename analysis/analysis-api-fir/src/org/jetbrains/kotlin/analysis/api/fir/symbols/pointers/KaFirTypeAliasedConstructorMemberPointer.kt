@@ -35,7 +35,7 @@ internal class KaFirTypeAliasedConstructorMemberPointer(
     private val ownerPointer: KaSymbolPointer<KaTypeAliasSymbol>,
     private val signature: FirCallableSignature,
     originalSymbol: KaConstructorSymbol?,
-) : KaBaseCachedSymbolPointer<KaConstructorSymbol>(originalSymbol) {
+) : KaFirCachedSymbolPointer<KaConstructorSymbol>(originalSymbol) {
     override fun restoreIfNotCached(analysisSession: KaSession): KaConstructorSymbol? {
         require(analysisSession is KaFirSession)
         val scope = with(analysisSession) {

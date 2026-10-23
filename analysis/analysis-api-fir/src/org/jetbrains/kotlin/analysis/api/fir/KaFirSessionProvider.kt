@@ -18,10 +18,10 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiUtilCore
 import com.intellij.util.concurrency.AppExecutorUtil
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.fir.lifetime.KaBaseLifetimeTracker
-import org.jetbrains.kotlin.analysis.api.fir.permissions.KaBaseWriteActionStartedChecker
-import org.jetbrains.kotlin.analysis.api.fir.restrictedAnalysis.KaBaseRestrictedAnalysisException
-import org.jetbrains.kotlin.analysis.api.fir.sessions.KaBaseUseSiteLibraryModuleAnalysisException
+import org.jetbrains.kotlin.analysis.api.fir.lifetime.KaFirLifetimeTracker
+import org.jetbrains.kotlin.analysis.api.fir.permissions.KaFirWriteActionStartedChecker
+import org.jetbrains.kotlin.analysis.api.fir.restrictedAnalysis.KaFirRestrictedAnalysisException
+import org.jetbrains.kotlin.analysis.api.fir.sessions.KaFirUseSiteLibraryModuleAnalysisException
 import org.jetbrains.kotlin.analysis.api.fir.utils.KaFirCacheCleaner
 import org.jetbrains.kotlin.analysis.api.impl.base.util.withKaModuleEntry
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
@@ -74,7 +74,7 @@ internal class KaFirSessionProvider(project: Project) : KaSessionProvider(projec
 
     @KaCachedService
     private val lifetimeTracker by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        KaBaseLifetimeTracker.getInstance(project)
+        KaFirLifetimeTracker.getInstance(project)
     }
 
     @KaCachedService
@@ -92,7 +92,7 @@ internal class KaFirSessionProvider(project: Project) : KaSessionProvider(projec
         KotlinPlatformSettings.getInstance(project)
     }
 
-    private val writeActionStartedChecker = KaBaseWriteActionStartedChecker(this)
+    private val writeActionStartedChecker = KaFirWriteActionStartedChecker(this)
 
     /**
      * [KaFirSession]s must be weakly referenced to allow simultaneous garbage collection of an unused [KaFirSession] together with its
@@ -148,7 +148,7 @@ internal class KaFirSessionProvider(project: Project) : KaSessionProvider(projec
 
     private fun checkUseSiteModule(useSiteModule: KaModule) {
         if (useSiteModule is KaLibraryModule && !kotlinPlatformSettings.allowUseSiteLibraryModuleAnalysis) {
-            throw KaBaseUseSiteLibraryModuleAnalysisException(useSiteModule)
+            throw KaFirUseSiteLibraryModuleAnalysisException(useSiteModule)
         }
 
         requireWithAttachment(
@@ -300,7 +300,7 @@ internal class KaFirSessionProvider(project: Project) : KaSessionProvider(projec
         forEachListenerSafe { it.onAnalysisException(useSiteModule, useSiteElement, throwable) }
 
         if (restrictedAnalysisService?.isAnalysisRestricted == true && throwable !is Error) {
-            throw KaBaseRestrictedAnalysisException(cause = throwable)
+            throw KaFirRestrictedAnalysisException(cause = throwable)
         }
 
         throw throwable

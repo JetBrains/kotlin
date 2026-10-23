@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.name.Name
 internal class KaFirDynamicPropertySymbolPointer(
     private val name: Name,
     originalSymbol: KaKotlinPropertySymbol?,
-) : KaBaseCachedSymbolPointer<KaKotlinPropertySymbol>(originalSymbol) {
+) : KaFirCachedSymbolPointer<KaKotlinPropertySymbol>(originalSymbol) {
 
     override fun restoreIfNotCached(analysisSession: KaSession): KaKotlinPropertySymbol {
         require(analysisSession is KaFirSession)

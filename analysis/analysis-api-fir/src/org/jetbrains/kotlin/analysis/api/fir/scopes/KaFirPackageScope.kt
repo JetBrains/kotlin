@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.name.Name
 internal class KaFirPackageScope(
     private val fqName: FqName,
     private val analysisSession: KaFirSession,
-) : KaBaseScope() {
+) : KaFirScope() {
     override val token: KaLifetimeToken get() = analysisSession.token
 
     private val firScope: FirPackageMemberScope by lazy(LazyThreadSafetyMode.PUBLICATION) {

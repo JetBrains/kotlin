@@ -10,14 +10,14 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinGlobalSearchScopeMergeStrategy
 import kotlin.reflect.KClass
 
-internal class KotlinResolveExtensionGeneratedFileScopeMergeStrategy : KotlinGlobalSearchScopeMergeStrategy<KaBaseResolveExtensionGeneratedFilesScope> {
-    override val targetType: KClass<KaBaseResolveExtensionGeneratedFilesScope> = KaBaseResolveExtensionGeneratedFilesScope::class
+internal class KotlinResolveExtensionGeneratedFileScopeMergeStrategy : KotlinGlobalSearchScopeMergeStrategy<KaFirResolveExtensionGeneratedFilesScope> {
+    override val targetType: KClass<KaFirResolveExtensionGeneratedFilesScope> = KaFirResolveExtensionGeneratedFilesScope::class
 
-    override fun uniteScopes(scopes: List<KaBaseResolveExtensionGeneratedFilesScope>, project: Project): List<GlobalSearchScope> {
+    override fun uniteScopes(scopes: List<KaFirResolveExtensionGeneratedFilesScope>, project: Project): List<GlobalSearchScope> {
         val useSiteModules =
             scopes.flatMap { scope ->
                 scope.useSiteModules
             }
-        return listOf(KaBaseResolveExtensionGeneratedFilesScope(useSiteModules))
+        return listOf(KaFirResolveExtensionGeneratedFilesScope(useSiteModules))
     }
 }
