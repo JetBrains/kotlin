@@ -16,14 +16,26 @@ import org.jetbrains.kotlin.buildtools.api.trackers.IcEvent
 import org.jetbrains.kotlin.buildtools.internal.*
 import org.jetbrains.kotlin.buildtools.internal.arguments.*
 import org.jetbrains.kotlin.buildtools.internal.arguments.enums.JsModuleKind
+import org.jetbrains.kotlin.buildtools.api.jvm.AccessibleClassSnapshot
+import org.jetbrains.kotlin.buildtools.api.jvm.ClasspathEntrySnapshot
+import org.jetbrains.kotlin.buildtools.api.jvm.InaccessibleClassSnapshot
+import org.jetbrains.kotlin.buildtools.internal.AccessibleClassSnapshotImpl
+import org.jetbrains.kotlin.buildtools.internal.ClasspathEntrySnapshotImpl
+import org.jetbrains.kotlin.buildtools.internal.DaemonExecutionPolicyImpl
+import org.jetbrains.kotlin.buildtools.internal.InProcessExecutionPolicyImpl
+import org.jetbrains.kotlin.buildtools.internal.arguments.JvmCompilerArgumentsImpl
 import org.jetbrains.kotlin.buildtools.internal.arguments.enums.JvmDefaultMode
 import org.jetbrains.kotlin.buildtools.internal.arguments.enums.WasmTarget
+import org.jetbrains.kotlin.buildtools.internal.daemon.ClasspathEntrySnapshotSerializer
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationConfigurationImpl
 import org.jetbrains.kotlin.buildtools.internal.jvm.operations.JvmCompilationOperationImpl
 import org.jetbrains.kotlin.buildtools.internal.daemon.IcEventSerializer
 import org.jetbrains.kotlin.buildtools.internal.daemon.KlibTargetIdSerializer
 import org.jetbrains.kotlin.daemon.common.serialization.PathAsStringSerializer
 import org.jetbrains.kotlin.buildtools.internal.daemon.btaSerializersModule
+import org.jetbrains.kotlin.incremental.classpathDiff.JavaClassSnapshot
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.junit.jupiter.api.DisplayName
 import java.io.File
 import kotlin.io.path.Path
@@ -334,5 +346,33 @@ class SerializationTest {
         assertEquals(jvmSnapshotIc.useFirRunner, deserializedJvmSnapshotIc.useFirRunner)
         assertEquals(jvmSnapshotIc.rootProjectDir, deserializedJvmSnapshotIc.rootProjectDir)
         assertEquals(jvmSnapshotIc.moduleBuildDir, deserializedJvmSnapshotIc.moduleBuildDir)
+    }
+
+    @Test
+    @DisplayName("ClasspathEntrySnapshot is serialized correctly")
+    fun classpathEntrySnapshot() {
+        val origin = org.jetbrains.kotlin.incremental.classpathDiff.ClasspathEntrySnapshot(
+            linkedMapOf(
+                "com/example/A.class" to JavaClassSnapshot (
+                    ClassId(FqName("com.example"), FqName("A"), false),
+                    42L,
+                    null,
+                    emptyList()
+                ),
+                "com/example/B.class" to org.jetbrains.kotlin.incremental.classpathDiff.InaccessibleClassSnapshot,
+            )
+        )
+        val snapshot: ClasspathEntrySnapshot = ClasspathEntrySnapshotImpl(origin)
+
+        val deserialized = serializer.serializeAndDeserialize(snapshot, ClasspathEntrySnapshotSerializer)
+
+        assertEquals(snapshot, deserialized)
+        val classSnapshots = deserialized.classSnapshots
+        assertEquals(2, classSnapshots.size)
+        val classA = classSnapshots["com/example/A.class"]
+        val classB = classSnapshots["com/example/B.class"]
+        assertEquals(AccessibleClassSnapshotImpl(42L), classA)
+        assertEquals(42L, (classA as AccessibleClassSnapshot).classAbiHash)
+        assertEquals(true, classB is InaccessibleClassSnapshot)
     }
 }

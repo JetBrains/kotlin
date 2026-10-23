@@ -3,8 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:UseSerializers(PathAsStringSerializer::class)
+
 package org.jetbrains.kotlin.buildtools.internal.jvm.operations
 
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.UseSerializers
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.ProjectId
@@ -12,25 +16,31 @@ import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
 import org.jetbrains.kotlin.buildtools.api.jvm.ClasspathEntrySnapshot
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshottingOperation
 import org.jetbrains.kotlin.buildtools.internal.*
+import org.jetbrains.kotlin.buildtools.internal.daemon.ClasspathEntrySnapshotSerializer
+import org.jetbrains.kotlin.buildtools.internal.daemon.cast
+import org.jetbrains.kotlin.buildtools.internal.daemon.throwPropertyNotFound
 import org.jetbrains.kotlin.buildtools.internal.trackers.getMetricsReporter
+import org.jetbrains.kotlin.daemon.common.SerializedDataContainer
+import org.jetbrains.kotlin.daemon.common.serialization.PathAsStringSerializer
+import org.jetbrains.kotlin.daemon.common.serialization.SupportsNewDaemonMode
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathEntrySnapshotter
 import java.nio.file.Path
 
+@Serializable
 internal class JvmClasspathSnapshottingOperationImpl : BuildOperationImpl<ClasspathEntrySnapshot>, JvmClasspathSnapshottingOperation, JvmClasspathSnapshottingOperation.Builder,
-    DeepCopyable<JvmClasspathSnapshottingOperation> {
+    DeepCopyable<JvmClasspathSnapshottingOperation>, SupportsNewDaemonMode<ClasspathEntrySnapshot> {
 
-    override val options: Options
     override val classpathEntry: Path
 
     private constructor(other: JvmClasspathSnapshottingOperationImpl) : super(other) {
-        options = other.options.deepCopy()
         classpathEntry = other.classpathEntry
+        granularity = other.granularity
+        parseInlinedLocalClasses = other.parseInlinedLocalClasses
+        expandTypeAliases = other.expandTypeAliases
     }
 
     constructor(classpathEntry: Path) : super() {
-        this.options = Options(JvmClasspathSnapshottingOperation::class)
         this.classpathEntry = classpathEntry
-        initializeOptions(this::class, options)
     }
 
     override fun toBuilder(): JvmClasspathSnapshottingOperation.Builder = deepCopy()
@@ -39,13 +49,24 @@ internal class JvmClasspathSnapshottingOperationImpl : BuildOperationImpl<Classp
 
     override fun deepCopy(): JvmClasspathSnapshottingOperationImpl = JvmClasspathSnapshottingOperationImpl(this)
 
+    @Suppress("UNCHECKED_CAST")
     @UseFromImplModuleRestricted
-    override fun <V> get(key: JvmClasspathSnapshottingOperation.Option<V>): V = options[key]
+    override fun <V> get(key: JvmClasspathSnapshottingOperation.Option<V>): V = when (key.id) {
+        "GRANULARITY" -> granularity
+        "PARSE_INLINED_LOCAL_CLASSES" -> parseInlinedLocalClasses
+        "EXPAND_TYPE_ALIASES" -> expandTypeAliases
+        else -> throwPropertyNotFound(key.id)
+    } as V
 
     @UseFromImplModuleRestricted
     override fun <V> set(key: JvmClasspathSnapshottingOperation.Option<V>, value: V) {
         checkOptionIsAvailableForVersion(key)
-        options[key] = value
+        when (key.id) {
+            "GRANULARITY" -> granularity = value.cast()
+            "PARSE_INLINED_LOCAL_CLASSES" -> parseInlinedLocalClasses = value.cast()
+            "EXPAND_TYPE_ALIASES" -> expandTypeAliases = value.cast()
+            else -> throwPropertyNotFound(key.id)
+        }
     }
 
     override val usesApplicationEnvironment: Boolean
@@ -57,9 +78,6 @@ internal class JvmClasspathSnapshottingOperationImpl : BuildOperationImpl<Classp
         logger: KotlinLogger?,
         executionContext: ExecutionContext
     ): ClasspathEntrySnapshot {
-        val granularity: ClassSnapshotGranularity = get(GRANULARITY)
-        val parseInlinedLocalClasses: Boolean = get(PARSE_INLINED_LOCAL_CLASSES)
-        val expandTypeAliases: Boolean = get(EXPAND_TYPE_ALIASES)
         val origin = ClasspathEntrySnapshotter.snapshot(
             classpathEntry.toFile(),
             ClasspathEntrySnapshotter.Settings(granularity, parseInlinedLocalClasses, expandTypeAliases),
@@ -68,20 +86,24 @@ internal class JvmClasspathSnapshottingOperationImpl : BuildOperationImpl<Classp
         return ClasspathEntrySnapshotImpl(origin)
     }
 
-    operator fun <V> get(key: Option<V>): V = options[key]
+    var granularity: ClassSnapshotGranularity = CLASS_MEMBER_LEVEL
 
-    @OptIn(UseFromImplModuleRestricted::class)
-    operator fun <V> set(key: Option<V>, value: V) {
-        options[key] = value
+    var parseInlinedLocalClasses: Boolean = true
+
+    var expandTypeAliases: Boolean = false
+    override fun deserializeResult(serializedData: SerializedDataContainer): ClasspathEntrySnapshot {
+        return KotlinToolchainsImpl.serializer.deserialize(ClasspathEntrySnapshotSerializer, serializedData)
     }
 
-    class Option<V>(id: String, default: V) : BaseOptionWithDefault<V>(id, defaultValue = default)
+    override fun serializeResult(result: ClasspathEntrySnapshot): SerializedDataContainer {
+        return KotlinToolchainsImpl.serializer.serialize(ClasspathEntrySnapshotSerializer, result)
+    }
 
     companion object {
-        val GRANULARITY: Option<ClassSnapshotGranularity> = Option("GRANULARITY", ClassSnapshotGranularity.CLASS_MEMBER_LEVEL)
-
-        val PARSE_INLINED_LOCAL_CLASSES: Option<Boolean> = Option("PARSE_INLINED_LOCAL_CLASSES", true)
-
-        val EXPAND_TYPE_ALIASES: Option<Boolean> = Option("EXPAND_TYPE_ALIASES", false)
+        private val propertyMap = mapOf(
+            "GRANULARITY" to JvmClasspathSnapshottingOperationImpl::granularity,
+            "PARSE_INLINED_LOCAL_CLASSES" to JvmClasspathSnapshottingOperationImpl::parseInlinedLocalClasses,
+            "EXPAND_TYPE_ALIASES" to JvmClasspathSnapshottingOperationImpl::expandTypeAliases
+        )
     }
 }
