@@ -29,36 +29,16 @@ class AppleConfigurablesImpl(
     progressCallback: ProgressCallback,
 ) : AppleConfigurables, KonanPropertiesLoader(target, properties, dependenciesDir, progressCallback = progressCallback) {
 
-    private val sdkDependency = this.targetSysRoot!!
-    private val toolchainDependency = this.targetToolchain!!
-    private val xcodeAddonDependency = this.additionalToolsDir!!
-
-    override val absoluteTargetSysRoot: String get() = when (val provider = xcodePartsProvider) {
-        is XcodePartsProvider.Local -> {
+    override val absoluteTargetSysRoot: String
+        get() {
             // In the case of Mac Catalyst, we use sysroot from macOS.
             val platformName = if (targetTriple.isMacabi) "MacOSX" else platformName()
-            provider.xcode.pathToPlatformSdk(platformName)
+            return xcodePartsProvider.xcode.pathToPlatformSdk(platformName)
         }
-        XcodePartsProvider.InternalServer -> absolute(sdkDependency)
-    }
 
-    override val absoluteTargetToolchain: String get() = when (val provider = xcodePartsProvider) {
-        is XcodePartsProvider.Local -> provider.xcode.toolchain
-        XcodePartsProvider.InternalServer -> "${absolute(toolchainDependency)}/usr"
-    }
+    override val absoluteTargetToolchain: String get() = xcodePartsProvider.xcode.toolchain
 
-    override val absoluteAdditionalToolsDir: String get() = when (val provider = xcodePartsProvider) {
-        is XcodePartsProvider.Local -> provider.xcode.additionalTools
-        XcodePartsProvider.InternalServer -> absolute(additionalToolsDir)
-    }
-
-    override val dependencies
-        get() = super.dependencies +
-                if (InternalServer.isAvailable && !useProvisionedXcode) listOf(
-                    sdkDependency,
-                    toolchainDependency,
-                    xcodeAddonDependency
-                ) else emptyList()
+    override val absoluteAdditionalToolsDir: String get() = xcodePartsProvider.xcode.additionalTools
 
     // Opt-in (set at build time via -Xoverride-konan-properties=useProvisionedXcode=true): resolve the Apple
     // toolchain/sysroot from a whole Xcode provisioned under $dependenciesRoot/xcode_<version>_<build>.
@@ -68,7 +48,6 @@ class AppleConfigurablesImpl(
     private val xcodePartsProvider by lazy {
         when {
             useProvisionedXcode -> XcodePartsProvider.Local(provisionedXcode())
-            InternalServer.isAvailable -> XcodePartsProvider.InternalServer
             else -> XcodePartsProvider.Local(currentXcodeCheckingVersion())
         }
     }
@@ -109,7 +88,6 @@ class AppleConfigurablesImpl(
 
     private sealed class XcodePartsProvider {
         class Local(val xcode: Xcode) : XcodePartsProvider()
-        object InternalServer : XcodePartsProvider()
     }
 }
 
