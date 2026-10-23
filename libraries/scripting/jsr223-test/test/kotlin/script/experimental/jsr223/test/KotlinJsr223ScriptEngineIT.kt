@@ -277,6 +277,33 @@ obj
     }
 
     @Test
+    fun testBindingWithInaccessibleRuntimeClass() {
+        val engine = ScriptEngineManager().getEngineByExtension("kts")!!
+        // The runtime class of `listOf(1, 2)` is the private `java.util.Arrays$ArrayList`: exposing the binding with
+        // that type makes the synthetic bindings snippet fail to compile, which breaks snippets that don't touch it (KT-90641).
+        assertEquals(2, engine.eval("1 + 1", SimpleBindings(mutableMapOf<String, Any?>("bound" to listOf(1, 2)))))
+    }
+
+    @Test
+    fun testBindInaccessibleRuntimeClassesAsAccessibleSupertype() {
+        val engine = ScriptEngineManager().getEngineByExtension("kts")!!
+        // Private Java class
+        engine.put("arraysList", listOf(1, 2))
+        // Package-private Java class
+        engine.put("unmodifiableList", java.util.Collections.unmodifiableList(arrayListOf(1, 2, 3)))
+        // Kotlin internal class, public in the bytecode
+        engine.put("emptyBound", emptyList<Int>())
+        // Public class in a package not exported by its module
+        engine.put("path", java.nio.file.Paths.get("a"))
+        // Each binding has to be exposed with its nearest accessible supertype (KT-90641).
+        assertEquals(2, engine.eval("1 + 1"))
+        assertEquals(2, engine.eval("arraysList.size"))
+        assertEquals(3, engine.eval("unmodifiableList[2]"))
+        assertEquals(0, engine.eval("emptyBound.size"))
+        assertEquals("a", engine.eval("path.fileName.toString()"))
+    }
+
+    @Test
     fun testRebindRemoval() {
         val engine = ScriptEngineManager().getEngineByExtension("kts")!!
         engine.put("z", 33)
