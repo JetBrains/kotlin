@@ -398,15 +398,6 @@ internal class KaFirResolver(
         else -> this
     }?.takeIf(::canBeResolvedAsCall)
 
-    private fun KaMultiCallResolutionAttempt.toCallInfo(): KaCallInfo = fold(
-        onSuccess = { KaFirSuccessCallInfo(it.asKaCall()) },
-        onFailure = { errors ->
-            val firstDiagnostic = errors.first().diagnostic
-            val candidateCalls = errors.flatMap { it.candidateCalls.map { call -> call.asKaCall() } }
-            KaFirErrorCallInfo(candidateCalls, firstDiagnostic)
-        },
-    )
-
     private fun KaMultiCallResolutionAttempt.toSymbolResolutionAttempt(): KaSymbolResolutionAttempt =
         mergeSymbolAttempts(simpleAttempts.map { it.toSimpleSymbolResolutionAttempt() })
 
@@ -2906,66 +2897,3 @@ internal class KaFirResolver(
 
 private val FirReference.isContextSensitive: Boolean
     get() = this is FirResolvedNamedReference && resolvedSymbolOrigin == FirResolvedSymbolOrigin.ContextSensitive
-
-internal fun KaCallCandidateInfo.asKaCallCandidate(): KaCallCandidate {
-    val call = candidate as KaSimpleOrMultiCall
-    return when (this) {
-        is KaApplicableCallCandidateInfo -> KaFirApplicableCallCandidate(
-            backingCandidate = call,
-            backingIsInBestCandidates = isInBestCandidates,
-        )
-
-        is KaInapplicableCallCandidateInfo -> KaFirInapplicableCallCandidate(
-            backingCandidate = call,
-            backingIsInBestCandidates = isInBestCandidates,
-            backingDiagnostic = diagnostic,
-        )
-    }
-}
-
-internal fun KaCallCandidate.asKaCallCandidateInfo(): KaCallCandidateInfo {
-    val call = candidate.asKaCall()
-    return when (this) {
-        is KaApplicableCallCandidate -> KaFirApplicableCallCandidateInfo(
-            backingCandidate = call,
-            isInBestCandidates = isInBestCandidates,
-        )
-
-        is KaInapplicableCallCandidate -> KaFirInapplicableCallCandidateInfo(
-            backingCandidate = call,
-            isInBestCandidates = isInBestCandidates,
-            diagnostic = diagnostic,
-        )
-    }
-}
-
-/**
- * Returns the legacy [KaCall] view of [this] [KaSimpleOrMultiCall]. Most resolution result types
- * implement [KaCall] directly. The exception is [KaCallableReferenceCall], which is part of the
- * new resolution API and intentionally does not extend the deprecated [KaCall] hierarchy. For
- * that case we emulate a legacy [KaCall] by re-encoding the reference as the corresponding
- * `KaSimpleFunctionCall` / `KaSimpleVariableAccessCall` view.
- */
-private fun KaSimpleOrMultiCall.asKaCall(): KaCall = when (this) {
-    is KaFirCallableReferenceCall<*, *> -> asLegacyKaCall()
-    else -> this as KaCall
-}
-
-@Suppress("UNCHECKED_CAST")
-private fun KaFirCallableReferenceCall<*, *>.asLegacyKaCall(): KaCall {
-    val partiallyAppliedSymbol = backingPartiallyAppliedSymbol
-    return when (partiallyAppliedSymbol.symbol) {
-        is KaFunctionSymbol -> KaFirSimpleFunctionCall(
-            backingPartiallyAppliedSymbol = partiallyAppliedSymbol as KaPartiallyAppliedFunctionSymbol<KaFunctionSymbol>,
-            backingArgumentMapping = emptyMap(),
-            backingTypeArgumentsMapping = typeArgumentsMapping,
-        )
-
-        is KaVariableSymbol -> KaFirSimpleVariableAccessCall(
-            backingPartiallyAppliedSymbol = partiallyAppliedSymbol as KaPartiallyAppliedVariableSymbol<KaVariableSymbol>,
-            backingTypeArgumentsMapping = typeArgumentsMapping,
-            backingKind = KaFirVariableReadAccess,
-            backingIsContextSensitive = false,
-        )
-    }
-}
