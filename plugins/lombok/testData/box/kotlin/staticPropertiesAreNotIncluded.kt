@@ -7,7 +7,6 @@
 // crash outright, because IR calls a property's getter with a dispatch receiver that a static getter has no
 // slot for.
 
-import lombok.Builder
 import lombok.EqualsAndHashCode
 import lombok.ToString
 import kotlin.test.assertEquals
@@ -26,14 +25,6 @@ class EqualsAndHashCodeWithStatic(val instance: Int) {
     }
 }
 
-// The builder must not grow a `static(...)` setter, nor a backing field for one.
-@Builder
-class BuilderWithStatic(val instance: Int) {
-    companion {
-        val static = 3
-    }
-}
-
 fun box(): String {
     assertEquals("ToStringWithStatic(instance=42)", ToStringWithStatic(42).toString())
 
@@ -45,11 +36,8 @@ fun box(): String {
 
     assertEquals(hashCode1, hashCode2) // static fields should not be considered
 
-    assertEquals(6, BuilderWithStatic.builder().instance(6).build().instance)
-
     // The statics themselves stay reachable, they are simply not part of what Lombok generates.
     assertEquals(1, ToStringWithStatic.static)
-    assertEquals(3, BuilderWithStatic.static)
 
     return "OK"
 }

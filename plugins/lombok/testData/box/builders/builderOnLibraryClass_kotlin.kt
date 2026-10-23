@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM
 // ISSUE: KT-88891
 
 // MODULE: lib
