@@ -31,16 +31,16 @@ CLASS IR_EXTERNAL_DECLARATION_STUB ANNOTATION_CLASS name:Anno modality:OPEN visi
   CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public returnType:<root>.Anno [primary]
     VALUE_PARAMETER kind:Regular name:b index:0 type:kotlin.UByte
       EXPRESSION_BODY
-        CONST Byte type=kotlin.Byte value=-1
+        CONST Byte type=kotlin.UByte value=-1
     VALUE_PARAMETER kind:Regular name:s index:1 type:kotlin.UShort
       EXPRESSION_BODY
-        CONST Short type=kotlin.Short value=-1
+        CONST Short type=kotlin.UShort value=-1
     VALUE_PARAMETER kind:Regular name:i index:2 type:kotlin.UInt
       EXPRESSION_BODY
-        CONST Int type=kotlin.Int value=-1
+        CONST Int type=kotlin.UInt value=-1
     VALUE_PARAMETER kind:Regular name:l index:3 type:kotlin.ULong
       EXPRESSION_BODY
-        CONST Long type=kotlin.Long value=-1
+        CONST Long type=kotlin.ULong value=-1
   FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
     VALUE_PARAMETER FAKE_OVERRIDE kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
     VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
