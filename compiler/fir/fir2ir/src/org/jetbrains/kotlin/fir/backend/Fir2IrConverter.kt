@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.backend.utils.unsubstitutedScope
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.correspondingValueParameterFromPrimaryConstructor
+import org.jetbrains.kotlin.fir.declarations.utils.isRichError
 import org.jetbrains.kotlin.fir.declarations.utils.isSynthetic
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
@@ -235,13 +236,14 @@ class Fir2IrConverter(
         allDeclarations += delegatedMembers(irClass)
         // Add synthetic members *before* fake override generations.
         // Otherwise, redundant members, e.g., synthetic toString _and_ fake override toString, will be added.
-        if (klass is FirRegularClass && irConstructor != null && (irClass.isValue || irClass.isData)) {
+        if (klass is FirRegularClass && irConstructor != null && (irClass.isValue || irClass.isData || klass.isRichError)) {
             declarationStorage.withScope(irConstructor.symbol) {
                 allDeclarations += when (irClass.valueClassRepresentation) {
                     is InlineClassRepresentation -> dataClassMembersGenerator.generateInlineClassMembers(klass, irClass)
                     is FullValueClassRepresentation if irClass.modality != Modality.ABSTRACT && irClass.modality != Modality.SEALED ->
                         dataClassMembersGenerator.generateFullValueClassMembers(klass, irClass)
                     else if irClass.isData -> dataClassMembersGenerator.generateDataClassMembers(klass, irClass)
+                    else if klass.isRichError -> dataClassMembersGenerator.generateRichErrorClassMembers(klass, irClass)
                     else -> emptyList()
                 }
             }

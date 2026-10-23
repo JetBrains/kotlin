@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.backend.utils
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.utils.UseSiteKind.*
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.fir.unwrapUseSiteSubstitutionOverrides
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 enum class ConversionTypeOrigin(val forSetter: Boolean) {
@@ -159,6 +161,12 @@ private fun Fir2IrComponents.toIrSymbol(
             (explicitReceiver as? FirResolvedQualifier)?.toLookupTag(session)
         }
         else -> null
+    }?.let {
+        if (it.classId == StandardClassIds.NonError) {
+            StandardTypes.Any.lookupTag
+        } else {
+            it
+        }
     }
     return when (symbol) {
         is FirSimpleSyntheticPropertySymbol -> {

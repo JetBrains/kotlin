@@ -857,6 +857,12 @@ open class ProtoCompareGenerated(
             if (!checkEquals(oldTypeTable.getType(old.abbreviatedTypeId), newTypeTable.getType(new.abbreviatedTypeId))) return false
         }
 
+        if (!checkEqualsTypeRichError(old, new)) return false
+
+        if (!checkEqualsTypeRichErrorId(old, new)) return false
+
+        if (!checkEqualsTypeUnionTypeAnnotation(old, new)) return false
+
         if (old.hasFlags() != new.hasFlags()) return false
         if (old.hasFlags()) {
             if (old.flags != new.flags) return false
@@ -1770,6 +1776,36 @@ open class ProtoCompareGenerated(
         return true
     }
 
+    open fun checkEqualsTypeRichError(old: ProtoBuf.Type, new: ProtoBuf.Type): Boolean {
+        if (old.richErrorCount != new.richErrorCount) return false
+
+        for(i in 0..old.richErrorCount - 1) {
+            if (!checkEquals(old.getRichError(i), new.getRichError(i))) return false
+        }
+
+        return true
+    }
+
+    open fun checkEqualsTypeRichErrorId(old: ProtoBuf.Type, new: ProtoBuf.Type): Boolean {
+        if (old.richErrorIdCount != new.richErrorIdCount) return false
+
+        for(i in 0..old.richErrorIdCount - 1) {
+            if (!checkEquals(oldTypeTable.getType(old.getRichErrorId(i)), newTypeTable.getType(new.getRichErrorId(i)))) return false
+        }
+
+        return true
+    }
+
+    open fun checkEqualsTypeUnionTypeAnnotation(old: ProtoBuf.Type, new: ProtoBuf.Type): Boolean {
+        if (old.unionTypeAnnotationCount != new.unionTypeAnnotationCount) return false
+
+        for(i in 0..old.unionTypeAnnotationCount - 1) {
+            if (!checkEquals(old.getUnionTypeAnnotation(i), new.getUnionTypeAnnotation(i))) return false
+        }
+
+        return true
+    }
+
     open fun checkEqualsTypeAnnotation(old: ProtoBuf.Type, new: ProtoBuf.Type): Boolean {
         if (old.annotationCount != new.annotationCount) return false
 
@@ -2513,6 +2549,18 @@ fun ProtoBuf.Type.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> 
 
     if (hasAbbreviatedTypeId()) {
         hashCode = 31 * hashCode + typeById(abbreviatedTypeId).hashCode(stringIndexes, fqNameIndexes, typeById)
+    }
+
+    for(i in 0..richErrorCount - 1) {
+        hashCode = 31 * hashCode + getRichError(i).hashCode(stringIndexes, fqNameIndexes, typeById)
+    }
+
+    for(i in 0..richErrorIdCount - 1) {
+        hashCode = 31 * hashCode + typeById(getRichErrorId(i)).hashCode(stringIndexes, fqNameIndexes, typeById)
+    }
+
+    for(i in 0..unionTypeAnnotationCount - 1) {
+        hashCode = 31 * hashCode + getUnionTypeAnnotation(i).hashCode(stringIndexes, fqNameIndexes, typeById)
     }
 
     if (hasFlags()) {
