@@ -13,6 +13,7 @@ plugins {
 dependencies {
     api(project(":compiler:psi:psi-api"))
     api(project(":analysis:analysis-api"))
+    api(project(":core:language.version-settings"))
     testFixturesImplementation(testFixtures(project(":analysis:analysis-api-impl-base")))
     testFixturesApi(testFixtures(project(":analysis:analysis-test-framework")))
     testFixturesApi(testFixtures(project(":analysis:low-level-api-fir")))

@@ -15,6 +15,7 @@ dependencies {
     compileOnly(kotlinStdlib())
 
     implementation(project(":native:native.config"))
+    implementation(project(":compiler:util"))
     implementation(project(":native:swift:sir"))
     implementation(project(":native:swift:sir-providers"))
     implementation(project(":native:swift:sir-light-classes"))

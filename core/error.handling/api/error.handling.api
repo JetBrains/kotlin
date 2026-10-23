@@ -1,0 +1,86 @@
+public class org/jetbrains/kotlin/utils/KotlinExceptionWithAttachments : java/lang/RuntimeException, org/jetbrains/kotlin/utils/exceptions/KotlinExceptionWithAttachments {
+	public fun <init> (Ljava/lang/String;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/Throwable;)V
+	public fun getMutableAttachments ()Ljava/util/List;
+	public fun withAttachment (Ljava/lang/String;Ljava/lang/Object;)Lorg/jetbrains/kotlin/utils/KotlinExceptionWithAttachments;
+	public synthetic fun withAttachment (Ljava/lang/String;Ljava/lang/Object;)Lorg/jetbrains/kotlin/utils/exceptions/KotlinExceptionWithAttachments;
+	public final fun withPsiAttachment (Ljava/lang/String;Lcom/intellij/psi/PsiElement;)Lorg/jetbrains/kotlin/utils/KotlinExceptionWithAttachments;
+}
+
+public final class org/jetbrains/kotlin/utils/KotlinExceptionWithAttachmentsKt {
+	public static final fun checkWithAttachment (ZLkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;)V
+	public static synthetic fun checkWithAttachment$default (ZLkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
+}
+
+public final class org/jetbrains/kotlin/utils/PsiUtilsKt {
+	public static final fun getElementTextWithContext (Lcom/intellij/psi/PsiElement;)Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/utils/exceptions/ExceptionAttachementBuilderUtilsKt {
+	public static final fun withPsiEntry (Lorg/jetbrains/kotlin/utils/exceptions/ExceptionAttachmentBuilder;Ljava/lang/String;Lcom/intellij/psi/PsiElement;)V
+	public static final fun withVirtualFileEntry (Lorg/jetbrains/kotlin/utils/exceptions/ExceptionAttachmentBuilder;Ljava/lang/String;Lcom/intellij/openapi/vfs/VirtualFile;)V
+}
+
+public final class org/jetbrains/kotlin/utils/exceptions/ExceptionAttachmentBuilder {
+	public fun <init> ()V
+	public final fun buildString ()Ljava/lang/String;
+	public final fun withEntry (Ljava/lang/String;Ljava/lang/Object;Lkotlin/jvm/functions/Function1;)V
+	public final fun withEntry (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun withEntry (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)V
+	public final fun withEntryGroup (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)V
+}
+
+public final class org/jetbrains/kotlin/utils/exceptions/ExceptionAttachmentBuilderKt {
+	public static final fun buildAttachment (Lorg/jetbrains/kotlin/utils/exceptions/KotlinExceptionWithAttachments;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/utils/exceptions/KotlinExceptionWithAttachments;
+	public static synthetic fun buildAttachment$default (Lorg/jetbrains/kotlin/utils/exceptions/KotlinExceptionWithAttachments;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/utils/exceptions/KotlinExceptionWithAttachments;
+	public static final fun buildErrorWithAttachment (Ljava/lang/String;Ljava/lang/Throwable;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Ljava/lang/Throwable;
+	public static synthetic fun buildErrorWithAttachment$default (Ljava/lang/String;Ljava/lang/Throwable;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Ljava/lang/Throwable;
+	public static final fun checkWithAttachment (ZLkotlin/jvm/functions/Function0;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)V
+	public static synthetic fun checkWithAttachment$default (ZLkotlin/jvm/functions/Function0;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
+	public static final fun errorWithAttachment (Ljava/lang/String;Ljava/lang/Throwable;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Ljava/lang/Void;
+	public static synthetic fun errorWithAttachment$default (Ljava/lang/String;Ljava/lang/Throwable;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Ljava/lang/Void;
+	public static final fun logErrorWithAttachment (Lcom/intellij/openapi/diagnostic/Logger;Ljava/lang/String;Ljava/lang/Throwable;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)V
+	public static synthetic fun logErrorWithAttachment$default (Lcom/intellij/openapi/diagnostic/Logger;Ljava/lang/String;Ljava/lang/Throwable;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
+	public static final fun requireWithAttachment (ZLkotlin/jvm/functions/Function0;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)V
+	public static synthetic fun requireWithAttachment$default (ZLkotlin/jvm/functions/Function0;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
+	public static final fun rethrowExceptionWithDetails (Ljava/lang/String;Ljava/lang/Throwable;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Ljava/lang/Void;
+	public static synthetic fun rethrowExceptionWithDetails$default (Ljava/lang/String;Ljava/lang/Throwable;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Ljava/lang/Void;
+}
+
+public final class org/jetbrains/kotlin/utils/exceptions/ExceptionUtilKt {
+	public static final fun getExceptionMessage (Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;Ljava/lang/String;)Ljava/lang/String;
+}
+
+public abstract interface class org/jetbrains/kotlin/utils/exceptions/KotlinExceptionWithAttachments : com/intellij/openapi/diagnostic/ExceptionWithAttachments {
+	public static final field Companion Lorg/jetbrains/kotlin/utils/exceptions/KotlinExceptionWithAttachments$Companion;
+	public fun getAttachments ()[Lcom/intellij/openapi/diagnostic/Attachment;
+	public abstract fun getMutableAttachments ()Ljava/util/List;
+	public fun withAttachment (Ljava/lang/String;Ljava/lang/Object;)Lorg/jetbrains/kotlin/utils/exceptions/KotlinExceptionWithAttachments;
+}
+
+public final class org/jetbrains/kotlin/utils/exceptions/KotlinExceptionWithAttachments$Companion {
+}
+
+public class org/jetbrains/kotlin/utils/exceptions/KotlinIllegalArgumentExceptionWithAttachments : java/lang/IllegalArgumentException, org/jetbrains/kotlin/utils/exceptions/KotlinExceptionWithAttachments {
+	public fun <init> (Ljava/lang/String;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/Throwable;)V
+	public final fun getMutableAttachments ()Ljava/util/List;
+}
+
+public class org/jetbrains/kotlin/utils/exceptions/KotlinIllegalStateExceptionWithAttachments : java/lang/IllegalStateException, org/jetbrains/kotlin/utils/exceptions/KotlinExceptionWithAttachments {
+	public fun <init> (Ljava/lang/String;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/Throwable;)V
+	public final fun getMutableAttachments ()Ljava/util/List;
+}
+
+public class org/jetbrains/kotlin/utils/exceptions/KotlinRuntimeExceptionWithAttachments : java/lang/RuntimeException, org/jetbrains/kotlin/utils/exceptions/KotlinExceptionWithAttachments {
+	public fun <init> (Ljava/lang/String;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/Throwable;)V
+	public final fun getMutableAttachments ()Ljava/util/List;
+}
+
+public final class org/jetbrains/kotlin/utils/exceptions/PlatformExceptionUtilsKt {
+	public static final fun rethrowIntellijPlatformExceptionIfNeeded (Ljava/lang/Throwable;)V
+	public static final fun shouldIjPlatformExceptionBeRethrown (Ljava/lang/Throwable;)Z
+}
+

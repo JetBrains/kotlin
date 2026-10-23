@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.PLUS
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.utils.addToStdlib.skipNext
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -157,7 +156,9 @@ fun PsiElement.siblings(forward: Boolean = true, withItself: Boolean = true): Se
             var next: PsiElement? = this@siblings
             return object : Iterator<PsiElement> {
                 init {
-                    if (!withItself) skipNext()
+                    if (!withItself) {
+                        val _ = next()
+                    }
                 }
 
                 override fun hasNext(): Boolean = next != null
