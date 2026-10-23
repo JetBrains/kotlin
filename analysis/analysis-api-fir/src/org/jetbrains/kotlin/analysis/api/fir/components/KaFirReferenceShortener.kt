@@ -14,10 +14,7 @@ import com.intellij.psi.util.parentsOfType
 import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.components.ElementsToShortenCollector.PartialOrderOfScope.Companion.toPartialOrder
-import org.jetbrains.kotlin.analysis.api.fir.components.shortening.areReceiversEquivalent
-import org.jetbrains.kotlin.analysis.api.fir.components.shortening.correspondingTypePsi
-import org.jetbrains.kotlin.analysis.api.fir.components.shortening.enclosingTypeOperatorCall
-import org.jetbrains.kotlin.analysis.api.fir.components.shortening.isResolvableByContextSensitiveResolution
+import org.jetbrains.kotlin.analysis.api.fir.components.shortening.*
 import org.jetbrains.kotlin.analysis.api.fir.getTagIfSubject
 import org.jetbrains.kotlin.analysis.api.fir.isImplicitDispatchReceiver
 import org.jetbrains.kotlin.analysis.api.fir.references.KDocReferenceResolver
@@ -30,10 +27,8 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLResolutionFacade
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolver.AllCandidatesResolver
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
@@ -67,7 +62,10 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElement
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
 import org.jetbrains.kotlin.resolve.ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -174,38 +172,6 @@ internal class KaFirReferenceShortener(
     }
 
     private fun buildSymbol(firSymbol: FirBasedSymbol<*>): KaSymbol = analysisSession.firSymbolBuilder.buildSymbol(firSymbol)
-}
-
-private class FirTowerDataContextProvider private constructor(
-    private val contextProvider: ContextCollector.ContextProvider
-) {
-    companion object {
-        fun create(resolutionFacade: LLResolutionFacade, targetElement: KtElement): FirTowerDataContextProvider {
-            val firFile = targetElement.containingKtFile.getOrBuildFirFile(resolutionFacade)
-
-            val contextProvider = ContextCollector.process(
-                firFile,
-                targetElement,
-                preferBodyContext = false, // we only query SELF context
-                shouldTriggerBodyAnalysis = true,
-                filter = { ContextCollector.FilterResponse.CONTINUE }
-            )
-
-            return FirTowerDataContextProvider(contextProvider)
-        }
-    }
-
-    fun getClosestAvailableParentContext(ktElement: KtElement): FirTowerDataContext? {
-        for (parent in ktElement.parentsWithSelf) {
-            val context = contextProvider[parent, ContextCollector.ContextKind.SELF]
-
-            if (context != null) {
-                return context.towerDataContext
-            }
-        }
-
-        return null
-    }
 }
 
 private fun FqName.dropFakeRootPrefixIfPresent(): FqName =
