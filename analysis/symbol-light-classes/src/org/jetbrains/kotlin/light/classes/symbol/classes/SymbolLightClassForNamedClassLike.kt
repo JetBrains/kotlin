@@ -41,7 +41,7 @@ internal abstract class SymbolLightClassForNamedClassLike : SymbolLightClassForC
         useSiteModule = useSiteModule,
     )
 
-    protected val isLocal: Boolean get() = withClassSymbol { it.isLocal }
+    protected val isLocal: Boolean get() = classOrObjectDeclaration?.isLocal ?: withClassSymbol { it.isLocal }
 
     override fun getParent(): PsiElement? {
         if (isLocal) {

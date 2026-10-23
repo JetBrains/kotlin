@@ -65,6 +65,8 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
      */
     val isInlineClass: Boolean
 
+    private val classKind: KaClassKind
+
     constructor(
         useSiteModule: KaModule,
         classSymbol: KaNamedClassSymbol,
@@ -74,6 +76,7 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
     ) {
         require(classSymbol.classKind != KaClassKind.INTERFACE && classSymbol.classKind != KaClassKind.ANNOTATION_CLASS)
         isInlineClass = classSymbol.isInline
+        classKind = classSymbol.classKind
     }
 
     private constructor(
@@ -81,12 +84,14 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
         classSymbolPointer: KaSymbolPointer<KaNamedClassSymbol>,
         useSiteModule: KaModule,
         isInlineClass: Boolean,
+        classKind: KaClassKind,
     ) : super(
         classOrObjectDeclaration = classOrObjectDeclaration,
         classSymbolPointer = classSymbolPointer,
         useSiteModule = useSiteModule,
     ) {
         this.isInlineClass = isInlineClass
+        this.classKind = classKind
     }
 
     override fun getModifierList(): PsiModifierList = cachedValue {
@@ -345,7 +350,7 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
 
     override fun isInterface(): Boolean = false
     override fun isAnnotationType(): Boolean = false
-    override fun classKind(): KaClassKind = withClassSymbol { it.classKind }
+    override fun classKind(): KaClassKind = classKind
 
     override fun isRecord(): Boolean {
         return modifierList.hasAnnotation(JvmStandardClassIds.Annotations.JvmRecord.asFqNameString())
@@ -374,5 +379,6 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
         classSymbolPointer = symbolPointer,
         useSiteModule = useSiteModule,
         isInlineClass = isInlineClass,
+        classKind = classKind,
     )
 }
