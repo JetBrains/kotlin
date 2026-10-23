@@ -224,6 +224,9 @@ abstract class JvmTestModuleCompiler : CliTestModuleCompiler() {
 
     /**
      * Compiles the sources at [sourcesPath] into a JAR called [jarName] next to them.
+     *
+     * Java sources are compiled by the `javac` of the test JVM. An external `javac` would start a separate JVM for each library, which
+     * would take most of the time of tests whose libraries contain Java sources.
      */
     protected fun compileToJar(sourcesPath: Path, jarName: String, options: List<String>, extraClasspath: List<String>) {
         MockLibraryUtil.compileLibraryToJar(
@@ -231,7 +234,6 @@ abstract class JvmTestModuleCompiler : CliTestModuleCompiler() {
             contentDir = sourcesPath.toFile(),
             jarName = jarName,
             extraOptions = options,
-            useJava11 = true,
             extraClasspath = extraClasspath,
         )
     }
