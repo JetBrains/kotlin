@@ -53,6 +53,7 @@ fun Project.customCompilerTest(
     version: CustomCompilerVersion,
     taskName: String,
     tag: String,
+    enableGroupingTestEngine: Boolean = false,
     body: Test.() -> Unit = {},
 ): TaskProvider<out Task> {
     if (HostManager.hostIsMingw) {
@@ -94,6 +95,7 @@ fun Project.customCompilerTest(
         taskName,
         allowParallelExecution = true,
         requirePlatformLibs = false,
+        enableGroupingTestEngine = enableGroupingTestEngine,
     ) {
         val testTarget = providers.gradleProperty("kotlin.internal.native.test.target")
             .orElse(providers.gradleProperty("kn.target"))
@@ -137,6 +139,19 @@ fun Project.customCompilerTest(
     }
 }
 
+/**
+ * Both custom-first-stage and custom-second-stage tests run on the two-stage grouping test infrastructure
+ * (`AbstractCustomNativeCompilerFirstStageTest`, `AbstractCustomNativeCompilerSecondStageTest`), so the grouping test engine must be
+ * enabled for them. A batch of such tests is linked into a single executable: by the current compiler for the custom first stage,
+ * and by the custom compiler for the custom second stage.
+ * The defaults gave the shortest run of the boxInline tests among batches of 10 to 100 tests, 2 to 16 at a time,
+ * and of all custom-second-stage tests among 20 tests 4 at a time, 50 and 100 tests 8 at a time.
+ */
+fun Test.groupingEngineSettings(batchSize: Int = 100, simultaneousBatches: Int = 8) {
+    systemProperty("kotlin.test.grouping.engine.simultaneous.methods.group.size", batchSize)
+    systemProperty("kotlin.test.grouping.engine.simultaneous.methods.groups", simultaneousBatches)
+}
+
 data class CustomCompilerVersion(val rawVersion: String) {
     val sanitizedVersion = rawVersion.replace('.', '_').replace('-', '_')
     override fun toString() = sanitizedVersion
@@ -147,8 +162,11 @@ fun Project.customFirstStageTest(rawVersion: String): TaskProvider<out Task> {
     return customCompilerTest(
         version = version,
         taskName = "testCustomFirstStage_$version",
-        tag = "custom-first-stage"
-    )
+        tag = "custom-first-stage",
+        enableGroupingTestEngine = true,
+    ) {
+        groupingEngineSettings()
+    }
 }
 
 fun Project.customSecondStageTest(rawVersion: String): TaskProvider<out Task> {
@@ -156,8 +174,11 @@ fun Project.customSecondStageTest(rawVersion: String): TaskProvider<out Task> {
     return customCompilerTest(
         version = version,
         taskName = "testCustomSecondStage_$version",
-        tag = "custom-second-stage"
-    )
+        tag = "custom-second-stage",
+        enableGroupingTestEngine = true,
+    ) {
+        groupingEngineSettings()
+    }
 }
 
 fun Project.customStagesAggregateTest(rawVersion: String, customStage: String): TaskProvider<out Task> {
@@ -165,8 +186,11 @@ fun Project.customStagesAggregateTest(rawVersion: String, customStage: String): 
     return customCompilerTest(
         version = version,
         taskName = "testMinimalInAggregate_${customStage}Stage",
-        tag = "custom-${customStage}-stage"
-    )
+        tag = "aggregate-${customStage}-stage",
+        enableGroupingTestEngine = true,
+    ) {
+        groupingEngineSettings()
+    }
 }
 
 customFirstStageTest("1.9.20")
@@ -194,7 +218,9 @@ customSecondStageTest("2.4.0")
 customStagesAggregateTest("2.4.0", "first")
 customStagesAggregateTest("2.4.0", "second")
 // TODO: Drop the next one after KTI migrates to execution of  `testMinimalInAggregate_firstStage` and `testMinimalInAggregate_secondStage`
-customCompilerTest(CustomCompilerVersion("2.4.0"), "testMinimalInAggregate", "aggregate-first-stage")
+customCompilerTest(CustomCompilerVersion("2.4.0"), "testMinimalInAggregate", "aggregate-first-stage", enableGroupingTestEngine = true) {
+    groupingEngineSettings()
+}
 
 projectTests {
     testGenerator("org.jetbrains.kotlin.generators.tests.GenerateNativeKlibCompatibilityTestsKt", generateTestsInBuildDirectory = true) {

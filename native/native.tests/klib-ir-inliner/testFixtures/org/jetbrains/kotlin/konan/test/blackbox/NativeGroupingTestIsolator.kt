@@ -15,23 +15,61 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.group.isDisabledNative
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.isIgnoredTarget
 import org.jetbrains.kotlin.konan.test.blackbox.support.testKind
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
+import org.jetbrains.kotlin.test.directives.KlibAbiDumpDirectives
+import org.jetbrains.kotlin.test.directives.model.Directive
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
+import org.jetbrains.kotlin.test.klib.CustomKlibCompilerTestDirectives
 import org.jetbrains.kotlin.test.model.GroupingTestIsolator
+import org.jetbrains.kotlin.test.services.CompilationStage
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
-class NativeGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolator(testServices, affectsFileGenerators = true) {
+/**
+ * @param customCompilerStage the stage compiled by a custom (previously released) compiler in KLIB compatibility tests, or `null` otherwise.
+ *   The `IGNORE_KLIB_*_WITH_CUSTOM_<STAGE>` directives of that stage, and only of it, expect a failure (see
+ *   `CustomKlibCompilerFirstStageTestSuppressor` and `CustomKlibCompilerSecondStageTestSuppressor`), so they isolate a test: an expected
+ *   failure must not break a whole batch.
+ *   In forward-compatibility tests ([CompilationStage.SECOND]), [KlibAbiDumpDirectives.DUMP_KLIB_ABI] isolates a test too:
+ *   their first stage checks the KLIB ABI dump, which a test renamed for a batch would not match.
+ */
+class NativeGroupingTestIsolator(
+    testServices: TestServices,
+    private val customCompilerStage: CompilationStage? = null,
+) : GroupingTestIsolator(testServices, affectsFileGenerators = true) {
     companion object {
         private val assertionTokens = AssertionsMode.entries.associateWith {
             BatchToken.Custom("AssertionMode: ${it.name}")
         }
+
+        private val CUSTOM_FIRST_STAGE_ISOLATION_DIRECTIVES: List<Directive> = listOf(
+            CustomKlibCompilerTestDirectives.IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_STAGE,
+            CustomKlibCompilerTestDirectives.IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_FIRST_STAGE,
+        )
+
+        private val CUSTOM_SECOND_STAGE_ISOLATION_DIRECTIVES: List<Directive> = listOf(
+            CustomKlibCompilerTestDirectives.IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_SECOND_STAGE,
+            CustomKlibCompilerTestDirectives.IGNORE_KLIB_FRONTEND_ERRORS_WITH_CUSTOM_SECOND_STAGE,
+            CustomKlibCompilerTestDirectives.IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE,
+            KlibAbiDumpDirectives.DUMP_KLIB_ABI,
+        )
+    }
+
+    private val customCompilerIsolationDirectives: List<Directive> = when (customCompilerStage) {
+        CompilationStage.FIRST -> CUSTOM_FIRST_STAGE_ISOLATION_DIRECTIVES
+        CompilationStage.SECOND -> CUSTOM_SECOND_STAGE_ISOLATION_DIRECTIVES
+        null -> emptyList()
     }
 
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(CodegenTestDirectives, TestDirectives)
+        get() = listOfNotNull(
+            CodegenTestDirectives,
+            TestDirectives,
+            CustomKlibCompilerTestDirectives.takeIf { customCompilerStage != null },
+            KlibAbiDumpDirectives.takeIf { customCompilerStage == CompilationStage.SECOND },
+        )
 
     override fun computeBatchToken(moduleStructure: TestModuleStructure): BatchToken {
         val isolationDirectives = listOf(
@@ -39,14 +77,14 @@ class NativeGroupingTestIsolator(testServices: TestServices) : GroupingTestIsola
             TestDirectives.FILECHECK_STAGE,
             TestDirectives.EXPECTED_TIMEOUT_FAILURE,
             TestDirectives.MUTED,
-        )
+        ) + customCompilerIsolationDirectives
 
         // KT-84713: Migrate here full grouping logic from TestRunProvider.withTestExecutable(): respect ignores, difference of compiler args, etc.
         val registeredDirectives = moduleStructure.allDirectives
         val testRunSettings = testServices.testRunSettings
         val shouldBeIsolated = testRunSettings.testKind(moduleStructure.modules.firstOrNull()?.directives) != TestKind.REGULAR
                 || isolationDirectives.any { it in registeredDirectives }
-                || moduleStructure.sourceContains(packageKotlinInternalRegex)
+                || moduleStructure.testSourceContains(packageKotlinInternalRegex)
                 || moduleStructure.modules.any { module -> module.files.any { it.name.endsWith(".def") } }
                 || testRunSettings.isIgnoredTarget(registeredDirectives) // considers IGNORE_BACKEND* and IGNORE_NATIVE directives
                 || testRunSettings.isDisabledNative(registeredDirectives) // considers DISABLE_NATIVE directive
@@ -81,6 +119,16 @@ class NativeGroupingTestIsolator(testServices: TestServices) : GroupingTestIsola
 
 
     private val packageKotlinInternalRegex = Regex("package\\s${StandardNames.KOTLIN_INTERNAL_FQ_NAME}")
+
+    /**
+     * Additional files are supplied by the test infrastructure and are the same for all tests, so they cannot be a reason to isolate a
+     * test. For example, the `kotlin.internal.ReflectionPackageName` helper of KLIB backward-compatibility tests is declared in the
+     * package `kotlin.internal` for the old stdlibs missing it, while the test itself does not touch that package.
+     * Scanning such a file would also make the answer depend on the moment it's asked: the additional source providers ask while the
+     * helper is not yet added, and `BatchingPackageInserter` asks after that.
+     */
+    private fun TestModuleStructure.testSourceContains(regex: Regex): Boolean =
+        modules.any { module -> module.files.any { !it.isAdditional && it.originalContent.contains(regex) } }
 
     private data class FreeCompilerArgsToken(val freeArgs: Set<String>) : BatchToken()
 }

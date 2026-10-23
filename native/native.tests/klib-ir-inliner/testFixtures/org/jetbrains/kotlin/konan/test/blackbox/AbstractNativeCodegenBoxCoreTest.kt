@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.test.frontend.fir.FirMetaInfoDiffSuppressor
 import org.jetbrains.kotlin.test.frontend.objcinterop.ObjCInteropFacade
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.services.CompilationStage
+import org.jetbrains.kotlin.test.services.ReflectionPackageNameAnnotation
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.NativeFirstStageEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.NativeSecondStageEnvironmentConfigurator
@@ -46,6 +47,7 @@ abstract class AbstractNativeCodegenBoxCoreTest : AbstractTwoStageNativeCoreTest
             commonConfigurationForNativeCodegenTest()
 
             useMetaTestConfigurators(::DisabledNativeTestSkipper, ::CInteropTestSkipper)
+            useAdditionalService { ReflectionPackageNameAnnotation }
             useFailureSuppressors(
                 ::FirMetaInfoDiffSuppressor,
                 ::NativeTestsSuppressor,
@@ -104,7 +106,7 @@ abstract class AbstractNativeCodegenBoxCoreTest : AbstractTwoStageNativeCoreTest
         groupingStage {
             useConfigurators(::NativeSecondStageEnvironmentConfigurator)
 
-            facadeStep(NativeCompilerSecondStageFacade::Grouping.bind(currentCustomNativeCompilerSettings))
+            facadeStep(NativeCompilerSecondStageFacade::Grouping.bind(currentCustomNativeCompilerSettings, /*isCompatibilityTesting*/ false))
             handlersStep(ArtifactKinds.Native, CompilationStage.SECOND) {
                 useHandlers(::NativeBoxRunnerGroupingStage, ::FileCheckHandler)
             }
