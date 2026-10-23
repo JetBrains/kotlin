@@ -1,0 +1,180 @@
+default-scenarios = ${scenario-groups.default}
+
+scenario-groups {
+    default = [
+        "synthetic_small", "synthetic_medium", "synthetic_large",
+        "dagger_small",    "dagger_medium",    "dagger_large",
+        "mapstruct_small", "mapstruct_medium", "mapstruct_large",
+    ]
+
+    # Some scenarios are excluded from all, because running these alongside the
+    # others is misleading rather than merely slow:
+    #   synthetic_incremental — the only non-clean cell; not comparable with clean-build cells and
+    #                           must be reported separately.
+    #   compiler_corpus_*     — an A/B pair only meaningful against each other, and `stripped` is a
+    #                           measurement artefact rather than a workload anyone ships.
+    all = ${scenario-groups.default} [
+        "synthetic_wide", "synthetic_nested", "synthetic_deeppkg", "synthetic_bodies",
+        ]
+}
+
+common {
+    gradle-args = [
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "-Dorg.gradle.parallel=false",
+        "--no-build-cache",
+    ]
+    warm-ups = 2
+    iterations = 20
+}
+
+# compiler-corpus — 114 real Kotlin compiler source files (compiler/ir/backend.common/src),
+# ~19.5k lines, 252 stubs. Unlike the generated samples this is real code with real method bodies,
+# real inference and real call graphs, which is what makes it the cell for frontend questions.
+#
+# The two arms are the same corpus with and without function bodies; the body-stripped tree is
+# produced by profile-async/strip_bodies.py and its stubs are byte-identical to the baseline's.
+# The delta is therefore pure FIR body-resolution cost. See Step 19.
+#
+# Not part of the default suite: the pair is only meaningful compared against each other, and
+# `stripped` is a measurement artefact rather than a workload anyone ships.
+
+compiler_corpus = ${common} {
+    tasks = [":benchmarks:jvm:kapt:samples:compiler-corpus:kaptKotlin"]
+    cleanup-tasks = [":benchmarks:jvm:kapt:samples:compiler-corpus:clean"]
+}
+
+compiler_corpus_baseline = ${compiler_corpus} {
+    title = "compiler-corpus baseline (114 real compiler files, real bodies)"
+    gradle-args = ${compiler_corpus.gradle-args} ["-PbodyMode=baseline"]
+}
+
+compiler_corpus_stripped = ${compiler_corpus} {
+    title = "compiler-corpus body-stripped (same corpus, bodies -> TODO())"
+    gradle-args = ${compiler_corpus.gradle-args} ["-PbodyMode=stripped"]
+}
+
+# dagger-sample benchmark scenarios — 3 sizes.
+
+dagger = ${common} {
+    tasks = [":benchmarks:jvm:kapt:samples:dagger-sample:kaptKotlin"]
+    cleanup-tasks = [":benchmarks:jvm:kapt:samples:dagger-sample:clean"]
+}
+
+dagger_small = ${dagger} {
+    title = "dagger-sample small (100 classes)"
+    gradle-args = ${dagger.gradle-args} ["-PsampleSize=small"]
+}
+
+dagger_medium = ${dagger} {
+    title = "dagger-sample medium (500 classes)"
+    gradle-args = ${dagger.gradle-args} ["-PsampleSize=medium"]
+}
+
+dagger_large = ${dagger} {
+    title = "dagger-sample large (2000 classes)"
+    gradle-args = ${dagger.gradle-args} ["-PsampleSize=large"]
+}
+
+# mapstruct-sample benchmark scenarios — 3 sizes.
+
+mapstruct = ${common} {
+    tasks = [":benchmarks:jvm:kapt:samples:mapstruct-sample:kaptKotlin"]
+    cleanup-tasks = [":benchmarks:jvm:kapt:samples:mapstruct-sample:clean"]
+}
+
+mapstruct_small = ${mapstruct} {
+    title = "mapstruct-sample small (100 classes)"
+    gradle-args = ${mapstruct.gradle-args} ["-PsampleSize=small"]
+}
+
+mapstruct_medium = ${mapstruct} {
+    title = "mapstruct-sample medium (500 classes)"
+    gradle-args = ${mapstruct.gradle-args} ["-PsampleSize=medium"]
+}
+
+mapstruct_large = ${mapstruct} {
+    title = "mapstruct-sample large (2000 classes)"
+    gradle-args = ${mapstruct.gradle-args} ["-PsampleSize=large"]
+}
+
+# synthetic-noop benchmark scenarios — 3 sizes.
+
+synthetic = ${common} {
+    tasks = [":benchmarks:jvm:kapt:samples:synthetic-noop:kaptKotlin"]
+    cleanup-tasks = [":benchmarks:jvm:kapt:samples:synthetic-noop:clean"]
+}
+
+synthetic_small = ${synthetic} {
+    title = "synthetic-noop small (100 classes)"
+    gradle-args = ${synthetic.gradle-args} ["-PsampleSize=small"]
+}
+
+synthetic_medium = ${synthetic} {
+    title = "synthetic-noop medium (500 classes)"
+    gradle-args = ${synthetic.gradle-args} ["-PsampleSize=medium"]
+}
+
+synthetic_large = ${synthetic} {
+    title = "synthetic-noop large (2000 classes)"
+    gradle-args = ${synthetic.gradle-args} ["-PsampleSize=large"]
+}
+
+# Wide-class cell: 100 classes x 100 properties each.
+# Stresses kapt's per-class javac list construction (class members / annotations) at a list
+# length where an O(n^2) accumulator is distinguishable from an O(n) one. Not part of the
+# default 9-cell suite; run explicitly.
+synthetic_wide = ${synthetic} {
+    title = "synthetic-noop wide (100 classes x 100 props)"
+    gradle-args = ${synthetic.gradle-args} ["-PsampleSize=small", "-PclassWidth=100"]
+}
+
+# Nesting-heavy cell: 100 outer classes x 20 nested classes each.
+# Stresses KaptTreeMaker.getQualifiedName, which only takes its expensive path (linear scan over
+# compiledClasses, or a PSI classpath lookup) for `$`-containing internal names. Not part of the
+# default 9-cell suite; run explicitly.
+synthetic_nested = ${synthetic} {
+    title = "synthetic-noop nested (100 classes x 20 nested)"
+    gradle-args = ${synthetic.gradle-args} ["-PsampleSize=small", "-PclassNesting=20"]
+}
+
+# Deep-package cell: 2000 classes in one 13-component package.
+# Stresses the stub-write path: redundant `mkdirs()` calls = (stubs - distinct packages), so the
+# 2000-class size maximizes the count while the package depth maximizes each call's path-resolution
+# cost. Not part of the default 9-cell suite; run explicitly.
+synthetic_deeppkg = ${synthetic} {
+    title = "synthetic-noop deep package (2000 classes, depth 10)"
+    gradle-args = ${synthetic.gradle-args} ["-PsampleSize=large", "-PclassPackageDepth=10"]
+}
+
+# Incremental cell — the benchmark's first. Every other scenario cleans first, so kapt's incremental
+# bookkeeping (ClasspathSnapshot.diff, JavaClassCache.getSourceForType) never runs under them.
+#
+# Requires -PincrementalProcessor=true: without the META-INF/gradle/incremental.annotation.processors
+# marker the synthetic processor is NON_INCREMENTAL and kapt disables the incremental path entirely.
+# -PcommonBase=true makes every generated class reference research.kapt.base.Base, so the ABI change
+# below impacts all 2000 types rather than one.
+synthetic_incremental = ${synthetic} {
+    title = "synthetic-noop incremental (2000 classes, ABI change to shared base)"
+    cleanup-tasks = []
+    apply-abi-change-to = "samples/synthetic-noop/src/main/kotlin/research/kapt/base/Base.kt"
+    gradle-args = ${synthetic.gradle-args} [
+        "-PsampleSize=large",
+        "-PcommonBase=true",
+        "-PincrementalProcessor=true",
+    ]
+}
+
+# Body-heavy cell: 2000 classes x 5 inference-heavy methods each (chained stdlib lambdas, fold,
+# when, smart cast, generic calls). Every other synthetic shape is a signature holder with
+# essentially empty bodies, which is why the default cells measure BODY_RESOLVE at 1.1-2.5% of
+# Java-level work and cannot size it. Not part of the default suite; run explicitly.
+# The real-code equivalent, and the cell Step 19's result rests on, is compiler-corpus.
+#
+# COST: ~80 s per build on a fast workstation (10000 inference-heavy methods), so with the
+# warm-ups and iterations below this single cell is ~30 minutes. Lower `iterations` if you are
+# running it as part of a sweep rather than on its own.
+synthetic_bodies = ${synthetic} {
+    title = "synthetic-noop body-heavy (2000 classes x 5 methods)"
+    gradle-args = ${synthetic.gradle-args} ["-PsampleSize=large", "-PclassBodySize=5"]
+}
