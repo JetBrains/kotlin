@@ -46,7 +46,9 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArguments
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.NO_STDLIB
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.SCRIPT_TEMPLATES
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_ABI_STABILITY
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_ADD_EXPORTS
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_ADD_MODULES
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_ADD_READS
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_ALLOW_NO_SOURCE_FILES
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_ALLOW_UNSTABLE_DEPENDENCIES
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_ANNOTATIONS_IN_METADATA
@@ -93,6 +95,7 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArguments
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_NO_UNIFIED_NULL_CHECKS
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_NULLABILITY_ANNOTATIONS
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_OUTPUT_BUILTINS_METADATA
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_PATCH_MODULE
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_PROFILE
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_SAM_CONVERSIONS
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_SANITIZE_PARENTHESES
@@ -178,7 +181,7 @@ internal class JvmCompilerArgumentsImpl(
 
   @UseFromImplModuleRestricted
   override operator fun <V> `set`(key: JvmCompilerArguments.JvmCompilerArgument<V>, `value`: V) {
-    if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 0)) {
+    if (key.availableSinceVersion > KotlinReleaseVersion(2, 5, 20)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
     this[key.id] = `value`
@@ -203,7 +206,9 @@ internal class JvmCompilerArgumentsImpl(
       throw IllegalStateException("Unknown arguments: ${unknownArgs.joinToString()}")
     }
     if (X_ABI_STABILITY in this) { arguments.abiStability = get(X_ABI_STABILITY)?.stringValue}
+    if (X_ADD_EXPORTS in this) { arguments.additionalJavaModuleExports = get(X_ADD_EXPORTS).toTypedArray()}
     if (X_ADD_MODULES in this) { arguments.additionalJavaModules = get(X_ADD_MODULES).toTypedArray()}
+    if (X_ADD_READS in this) { arguments.additionalJavaModuleReads = get(X_ADD_READS).toTypedArray()}
     if (X_ALLOW_NO_SOURCE_FILES in this) { arguments.allowNoSourceFiles = get(X_ALLOW_NO_SOURCE_FILES)}
     if (X_ALLOW_UNSTABLE_DEPENDENCIES in this) { arguments.allowUnstableDependencies = get(X_ALLOW_UNSTABLE_DEPENDENCIES)}
     if (X_ANNOTATIONS_IN_METADATA in this) { arguments.annotationsInMetadata = get(X_ANNOTATIONS_IN_METADATA)}
@@ -248,6 +253,7 @@ internal class JvmCompilerArgumentsImpl(
     if (X_NO_SOURCE_DEBUG_EXTENSION in this) { arguments.noSourceDebugExtension = get(X_NO_SOURCE_DEBUG_EXTENSION)}
     if (X_NO_UNIFIED_NULL_CHECKS in this) { arguments.noUnifiedNullChecks = get(X_NO_UNIFIED_NULL_CHECKS)}
     if (X_OUTPUT_BUILTINS_METADATA in this) { arguments.outputBuiltinsMetadata = get(X_OUTPUT_BUILTINS_METADATA)}
+    if (X_PATCH_MODULE in this) { arguments.javaModulePatches = get(X_PATCH_MODULE).toTypedArray()}
     if (X_SAM_CONVERSIONS in this) { arguments.samConversions = get(X_SAM_CONVERSIONS)?.stringValue}
     if (X_SANITIZE_PARENTHESES in this) { arguments.sanitizeParentheses = get(X_SANITIZE_PARENTHESES)}
     if (X_SCRIPT_RESOLVER_ENVIRONMENT in this) { arguments.scriptResolverEnvironment = get(X_SCRIPT_RESOLVER_ENVIRONMENT).toTypedArray()}
@@ -294,7 +300,9 @@ internal class JvmCompilerArgumentsImpl(
   protected fun applyCompilerArguments(arguments: K2JVMCompilerArguments) {
     super.applyCompilerArguments(arguments)
     try { this[X_ABI_STABILITY] = arguments.abiStability?.let { AbiStabilityMode.values().firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::abiStability, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xabi-stability value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { this[X_ADD_EXPORTS] = arguments.additionalJavaModuleExports.toListOrEmpty() } catch (_: NoSuchMethodError) {  }
     try { this[X_ADD_MODULES] = arguments.additionalJavaModules.toListOrEmpty() } catch (_: NoSuchMethodError) {  }
+    try { this[X_ADD_READS] = arguments.additionalJavaModuleReads.toListOrEmpty() } catch (_: NoSuchMethodError) {  }
     try { this[X_ALLOW_NO_SOURCE_FILES] = arguments.allowNoSourceFiles } catch (_: NoSuchMethodError) {  }
     try { this[X_ALLOW_UNSTABLE_DEPENDENCIES] = arguments.allowUnstableDependencies } catch (_: NoSuchMethodError) {  }
     try { this[X_ANNOTATIONS_IN_METADATA] = arguments.annotationsInMetadata } catch (_: NoSuchMethodError) {  }
@@ -339,6 +347,7 @@ internal class JvmCompilerArgumentsImpl(
     try { this[X_NO_SOURCE_DEBUG_EXTENSION] = arguments.noSourceDebugExtension } catch (_: NoSuchMethodError) {  }
     try { this[X_NO_UNIFIED_NULL_CHECKS] = arguments.noUnifiedNullChecks } catch (_: NoSuchMethodError) {  }
     try { this[X_OUTPUT_BUILTINS_METADATA] = arguments.outputBuiltinsMetadata } catch (_: NoSuchMethodError) {  }
+    try { this[X_PATCH_MODULE] = arguments.javaModulePatches.toListOrEmpty() } catch (_: NoSuchMethodError) {  }
     try { this[X_SAM_CONVERSIONS] = arguments.samConversions?.let { SamConversionsMode.values().firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::samConversions, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xsam-conversions value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     try { this[X_SANITIZE_PARENTHESES] = arguments.sanitizeParentheses } catch (_: NoSuchMethodError) {  }
     try { this[X_SCRIPT_RESOLVER_ENVIRONMENT] = arguments.scriptResolverEnvironment.toListOrEmpty() } catch (_: NoSuchMethodError) {  }
@@ -383,7 +392,9 @@ internal class JvmCompilerArgumentsImpl(
   public fun toCompilerArgumentsAffectingOutcome(arguments: K2JVMCompilerArguments = K2JVMCompilerArguments()): K2JVMCompilerArguments {
     super.toCompilerArgumentsAffectingOutcome(arguments)
     if (X_ABI_STABILITY in this) { arguments.abiStability = get(X_ABI_STABILITY)?.stringValue}
+    if (X_ADD_EXPORTS in this) { arguments.additionalJavaModuleExports = get(X_ADD_EXPORTS).toTypedArray()}
     if (X_ADD_MODULES in this) { arguments.additionalJavaModules = get(X_ADD_MODULES).toTypedArray()}
+    if (X_ADD_READS in this) { arguments.additionalJavaModuleReads = get(X_ADD_READS).toTypedArray()}
     if (X_ALLOW_NO_SOURCE_FILES in this) { arguments.allowNoSourceFiles = get(X_ALLOW_NO_SOURCE_FILES)}
     if (X_ALLOW_UNSTABLE_DEPENDENCIES in this) { arguments.allowUnstableDependencies = get(X_ALLOW_UNSTABLE_DEPENDENCIES)}
     if (X_ANNOTATIONS_IN_METADATA in this) { arguments.annotationsInMetadata = get(X_ANNOTATIONS_IN_METADATA)}
@@ -427,6 +438,7 @@ internal class JvmCompilerArgumentsImpl(
     if (X_NO_SOURCE_DEBUG_EXTENSION in this) { arguments.noSourceDebugExtension = get(X_NO_SOURCE_DEBUG_EXTENSION)}
     if (X_NO_UNIFIED_NULL_CHECKS in this) { arguments.noUnifiedNullChecks = get(X_NO_UNIFIED_NULL_CHECKS)}
     if (X_OUTPUT_BUILTINS_METADATA in this) { arguments.outputBuiltinsMetadata = get(X_OUTPUT_BUILTINS_METADATA)}
+    if (X_PATCH_MODULE in this) { arguments.javaModulePatches = get(X_PATCH_MODULE).toTypedArray()}
     if (X_SAM_CONVERSIONS in this) { arguments.samConversions = get(X_SAM_CONVERSIONS)?.stringValue}
     if (X_SANITIZE_PARENTHESES in this) { arguments.sanitizeParentheses = get(X_SANITIZE_PARENTHESES)}
     if (X_SCRIPT_RESOLVER_ENVIRONMENT in this) { arguments.scriptResolverEnvironment = get(X_SCRIPT_RESOLVER_ENVIRONMENT).toTypedArray()}
@@ -527,8 +539,13 @@ internal class JvmCompilerArgumentsImpl(
     public val X_ABI_STABILITY: JvmCompilerArgument<AbiStabilityMode?> =
         JvmCompilerArgument("X_ABI_STABILITY")
 
+    public val X_ADD_EXPORTS: JvmCompilerArgument<List<String>> =
+        JvmCompilerArgument("X_ADD_EXPORTS")
+
     public val X_ADD_MODULES: JvmCompilerArgument<List<String>> =
         JvmCompilerArgument("X_ADD_MODULES")
+
+    public val X_ADD_READS: JvmCompilerArgument<List<String>> = JvmCompilerArgument("X_ADD_READS")
 
     public val X_ALLOW_NO_SOURCE_FILES: JvmCompilerArgument<Boolean> =
         JvmCompilerArgument("X_ALLOW_NO_SOURCE_FILES")
@@ -653,6 +670,9 @@ internal class JvmCompilerArgumentsImpl(
 
     public val X_OUTPUT_BUILTINS_METADATA: JvmCompilerArgument<Boolean> =
         JvmCompilerArgument("X_OUTPUT_BUILTINS_METADATA")
+
+    public val X_PATCH_MODULE: JvmCompilerArgument<List<String>> =
+        JvmCompilerArgument("X_PATCH_MODULE")
 
     public val X_SAM_CONVERSIONS: JvmCompilerArgument<SamConversionsMode?> =
         JvmCompilerArgument("X_SAM_CONVERSIONS")
