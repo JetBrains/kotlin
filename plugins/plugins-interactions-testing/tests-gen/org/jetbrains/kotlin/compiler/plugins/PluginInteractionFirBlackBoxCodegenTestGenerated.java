@@ -28,6 +28,12 @@ public class PluginInteractionFirBlackBoxCodegenTestGenerated extends AbstractPl
   }
 
   @Test
+  @TestMetadata("lombokEqualsAndHashCodeAndSerialization.kt")
+  public void testLombokEqualsAndHashCodeAndSerialization() {
+    run("lombokEqualsAndHashCodeAndSerialization.kt");
+  }
+
+  @Test
   @TestMetadata("noArgAndSupertypesGenerator.kt")
   public void testNoArgAndSupertypesGenerator() {
     run("noArgAndSupertypesGenerator.kt");
