@@ -39,8 +39,9 @@ internal object FirNativeIdentityHashCodeCallOnValueTypeObjectChecker : FirFunct
                 val argumentType = expression.extensionReceiver?.resolvedType ?: return
                 if (argumentType.isValueType()) {
                     reporter.reportOn(expression.source, FirNativeErrors.IDENTITY_HASH_CODE_ON_VALUE_TYPE, argumentType)
+                } else {
+                    reportIdentitySensitiveOperationOnWillBecomeValueClass(expression.source, argumentType)
                 }
-                reportIdentitySensitiveOperationOnWillBecomeValueClass(expression.source, argumentType)
             }
             weakReferenceConstructorCallableId -> {
                 val resourceParameter = (symbol as? FirFunctionSymbol<*>)?.valueParameterSymbols?.firstOrNull() ?: return
