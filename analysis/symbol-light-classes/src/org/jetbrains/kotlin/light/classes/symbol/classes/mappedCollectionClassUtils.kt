@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.light.classes.symbol.classes
 
 import com.intellij.psi.*
 import com.intellij.psi.util.ClassUtil
+import com.intellij.psi.util.TypeConversionUtil
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.components.asPsiType
 import org.jetbrains.kotlin.analysis.api.scopes.memberScope
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.*
@@ -24,6 +26,7 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.SpecialGenericSignatures
 import org.jetbrains.kotlin.load.kotlin.SignatureBuildingComponents
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
@@ -226,6 +229,9 @@ internal fun processPossiblyMappedCollectionMethod(
  *
  * Generated stubs are added to the result list only if their signatures don't already exist.
  *
+ * A subclass of such a class only gets special bridges for the members it inherits with substituted types, see
+ * [generateSpecialBridgesForInheritedMethods].
+ *
  * ## Example
  *
  * ```kotlin
@@ -251,15 +257,17 @@ internal fun generateJavaCollectionMethodStubsIfNeeded(
     result: MutableList<PsiMethod>,
 ) {
     val closestMappedSupertype = findClosestMappedCollectionSupertype(allSupertypes) ?: return
-    if (!isFirstNonInterfaceSubtypeOfCollection(classSymbol)) return
-
     val javaClassId = mapKotlinCollectionClassToJava(closestMappedSupertype.classId) ?: return
     val kotlinCollectionSymbol = closestMappedSupertype.symbol as? KaClassSymbol ?: return
     val javaCollectionSymbol = findClass(javaClassId) ?: return
     val javaCollectionPsiClass = javaCollectionSymbol.psi as? PsiClass ?: return
     val substitutor = createPsiSubstitutor(javaCollectionPsiClass, closestMappedSupertype, containingClass)
 
-    generateJavaCollectionMethodStubs(containingClass, javaCollectionPsiClass, javaClassId, kotlinCollectionSymbol, substitutor, result)
+    if (isFirstNonInterfaceSubtypeOfCollection(classSymbol)) {
+        generateJavaCollectionMethodStubs(containingClass, javaCollectionPsiClass, javaClassId, kotlinCollectionSymbol, substitutor, result)
+    } else {
+        generateSpecialBridgesForInheritedMethods(containingClass, classSymbol, javaCollectionPsiClass, substitutor, result)
+    }
 }
 
 /**
@@ -358,6 +366,275 @@ private fun generateJavaCollectionMethodStubs(
 private fun PsiMethod.isMutableOnlyJdkMethod(javaClassId: ClassId): Boolean {
     val jvmDescriptor = name + ClassUtil.getAsmMethodSignature(this)
     return SignatureBuildingComponents.signature(javaClassId, jvmDescriptor) in JvmBuiltInsSignatures.MUTABLE_METHOD_SIGNATURES
+}
+
+/**
+ * Generates special bridges for the collection members that [classSymbol] inherits from its superclass.
+ *
+ * The JVM backend generates special bridges for fake overrides as it does for explicit overrides, see `BridgeLowering`. For example:
+ *
+ * ```kotlin
+ * abstract class StringList : AbstractList<String>()
+ * ```
+ *
+ * `AbstractList<E>` has no special bridge for `contains(element: E)`, as its JVM signature is the Java one, `contains(Object)`.
+ * `StringList` inherits `contains(element: String)`, so it gets an open `contains(String)`, which calls the inherited implementation,
+ * and the final bridge `contains(Object)`. If the inherited member is abstract, its Kotlin variant is abstract too, like
+ * `removeAt(int)` in a subclass of `AbstractMutableList<String>`.
+ *
+ * A member gets no bridges if a Kotlin superclass already has a special bridge with the same JVM signature, even if the backend
+ * didn't generate it there because the member of that superclass comes from an interface. For example, a subclass of
+ * `abstract class StringMap : Map<String, String>` gets no `getOrDefault` bridges, while `StringMap` doesn't have them either.
+ */
+context(session: KaSession)
+private fun generateSpecialBridgesForInheritedMethods(
+    containingClass: SymbolLightClassForClassOrObject,
+    classSymbol: KaNamedClassSymbol,
+    javaCollectionPsiClass: PsiClass,
+    substitutor: PsiSubstitutor,
+    result: MutableList<PsiMethod>,
+) {
+    for (javaMethod in javaCollectionPsiClass.methods) {
+        val kotlinName = javaMethod.kotlinNameIfHasSpecialBridge() ?: continue
+        val function = classSymbol.findCollectionFunction(kotlinName, javaMethod) ?: continue
+
+        val isOwnDeclaration = function.containingSymbol == classSymbol &&
+                function.origin != KaSymbolOrigin.SUBSTITUTION_OVERRIDE &&
+                function.origin != KaSymbolOrigin.INTERSECTION_OVERRIDE
+
+        // Own overrides and delegates get their bridges along with the other declarations, see `processPossiblyMappedCollectionMethod`,
+        // except for the bridge `remove(int)` of `removeAt`, which has a different name
+        if (isOwnDeclaration && kotlinName != "removeAt") continue
+
+        val signatures = computeSpecialBridgeSignatures(function, javaMethod, containingClass)
+        if (signatures.bridge == signatures.member) continue
+        if (signatures.bridge in collectSpecialBridgeSignaturesOfSuperclasses(classSymbol, kotlinName, javaMethod, containingClass)) {
+            continue
+        }
+
+        val bridgeSignature = computeFinalBridgeSignature(function, javaMethod, containingClass)
+        result += javaMethod.wrap(containingClass, substitutor, makeFinal = true, hasImplementation = true, signature = bridgeSignature)
+        if (isOwnDeclaration) continue
+
+        // An open bridge calling the inherited implementation has no generic signature, unlike an abstract stub
+        val hasImplementation = function.modality != KaSymbolModality.ABSTRACT
+        val kotlinSignature = computeKotlinVariantSignature(function, javaMethod, containingClass, erase = hasImplementation)
+        result += javaMethod.wrap(
+            containingClass,
+            substitutor,
+            hasImplementation = hasImplementation,
+            name = kotlinName,
+            signature = kotlinSignature,
+        )
+    }
+}
+
+/**
+ * The name of the Kotlin collection function corresponding to this Java collection method if the JVM backend generates
+ * special bridges for it.
+ *
+ * These are the methods with an erased `Object` parameter, like `contains(Object)` and `getOrDefault(Object, V)`, and `remove(int)`,
+ * which is `removeAt` in Kotlin. Methods with an erased collection parameter, like `containsAll(Collection<?>)`, are not special,
+ * as their Kotlin variants have the same JVM signature.
+ */
+private fun PsiMethod.kotlinNameIfHasSpecialBridge(): String? {
+    val parameterTypes = parameterList.parameters.map { it.type }
+    return when {
+        name == "remove" && parameterTypes.singleOrNull() == PsiTypes.intType() -> "removeAt"
+        name in MEMBERS_WITH_SPECIAL_SIGNATURE && parameterTypes.any { it.isJavaLangObject() } -> name
+        else -> null
+    }
+}
+
+/**
+ * The member function of this class named [kotlinName] that overrides a Kotlin collection function mapped to [javaMethod].
+ */
+context(session: KaSession)
+private fun KaClassSymbol.findCollectionFunction(kotlinName: String, javaMethod: PsiMethod): KaNamedFunctionSymbol? =
+    memberScope.callables(Name.identifier(kotlinName))
+        .filterIsInstance<KaNamedFunctionSymbol>()
+        .firstOrNull { function ->
+            function.valueParameters.size == javaMethod.parameterList.parametersCount &&
+                    (function.isFromKotlinCollectionsPackage() || function.allOverriddenSymbols.any { it.isFromKotlinCollectionsPackage() })
+        }
+
+/**
+ * The erased JVM signatures that the JVM backend compares to decide whether a class needs special bridges for a collection function.
+ *
+ * @property member the signature of the Kotlin function itself, like `contains(String)` for `contains(element: String)`
+ * @property bridge the signature of its special bridge, like `contains(Object)`
+ * @property unsubstitutedBridge the signature of its special bridge with an erased return type, like `get(Object): Object` for
+ * `get(Object): String`, if the return type of the bridge is substituted
+ */
+private class SpecialBridgeSignatures(
+    val member: ErasedSignature,
+    val bridge: ErasedSignature,
+    val unsubstitutedBridge: ErasedSignature?,
+)
+
+private data class ErasedSignature(val name: String, val parameterTypes: List<String>, val returnType: String)
+
+/**
+ * Computes [SpecialBridgeSignatures] of [function], a Kotlin variant of [javaMethod] as seen in some class.
+ *
+ * The types of [function] may refer to the type parameters of a superclass, so they are erased before they are mapped to Java.
+ */
+context(session: KaSession)
+private fun computeSpecialBridgeSignatures(
+    function: KaNamedFunctionSymbol,
+    javaMethod: PsiMethod,
+    useSitePosition: PsiElement,
+): SpecialBridgeSignatures {
+    fun KaType.erasedText(mode: KaTypeMappingMode): String =
+        erasedPsiType(useSitePosition, mode)?.canonicalText ?: CommonClassNames.JAVA_LANG_OBJECT
+
+    val javaParameters = javaMethod.parameterList.parameters
+    val memberParameterTypes = function.valueParameters.map { it.returnType.erasedText(KaTypeMappingMode.VALUE_PARAMETER) }
+    val bridgeParameterTypes = javaParameters.zip(memberParameterTypes) { javaParameter, memberParameterType ->
+        if (javaParameter.type.isJavaLangObject()) CommonClassNames.JAVA_LANG_OBJECT else memberParameterType
+    }
+
+    val javaReturnType = javaMethod.returnType ?: PsiTypes.voidType()
+    val hasSubstitutedReturnType = javaReturnType.isTypeParameter()
+    val memberReturnType: String
+    val bridgeReturnType: String
+    if (hasSubstitutedReturnType) {
+        memberReturnType = function.returnType.erasedText(KaTypeMappingMode.RETURN_TYPE_BOXED)
+        bridgeReturnType = function.returnType.erasedText(javaMethod.bridgeReturnTypeMappingMode)
+    } else {
+        memberReturnType = javaReturnType.canonicalText
+        bridgeReturnType = javaReturnType.canonicalText
+    }
+
+    return SpecialBridgeSignatures(
+        member = ErasedSignature(function.name.asString(), memberParameterTypes, memberReturnType),
+        bridge = ErasedSignature(javaMethod.name, bridgeParameterTypes, bridgeReturnType),
+        unsubstitutedBridge = if (hasSubstitutedReturnType) {
+            val erasedJavaParameterTypes = javaParameters.map { TypeConversionUtil.erasure(it.type).canonicalText }
+            ErasedSignature(javaMethod.name, erasedJavaParameterTypes, CommonClassNames.JAVA_LANG_OBJECT)
+        } else {
+            null
+        },
+    )
+}
+
+/**
+ * The signatures of the special bridges for [javaMethod] that the Kotlin superclasses of [classSymbol] have, or would have if their
+ * members didn't come from an interface.
+ *
+ * Java classes have no special bridges, but a Kotlin class above them in the hierarchy may have.
+ */
+context(session: KaSession)
+private fun collectSpecialBridgeSignaturesOfSuperclasses(
+    classSymbol: KaClassSymbol,
+    kotlinName: String,
+    javaMethod: PsiMethod,
+    useSitePosition: PsiElement,
+): Set<ErasedSignature> = buildSet {
+    for (superclass in generateSequence(classSymbol.superclass) { it.superclass }) {
+        if (superclass.origin == KaSymbolOrigin.JAVA_SOURCE || superclass.origin == KaSymbolOrigin.JAVA_LIBRARY) continue
+        val function = superclass.findCollectionFunction(kotlinName, javaMethod) ?: continue
+        val signatures = computeSpecialBridgeSignatures(function, javaMethod, useSitePosition)
+        if (signatures.bridge != signatures.member) add(signatures.bridge)
+        if (signatures.unsubstitutedBridge != null && signatures.unsubstitutedBridge != signatures.member) {
+            add(signatures.unsubstitutedBridge)
+        }
+    }
+}
+
+context(session: KaSession)
+private val KaClassSymbol.superclass: KaClassSymbol?
+    get() = superTypes.firstNotNullOfOrNull { supertype ->
+        supertype.expandedSymbol?.takeIf { it.classKind != KaClassKind.INTERFACE }
+    }
+
+/**
+ * The signature of the final special bridge for [function], an inherited Kotlin variant of [javaMethod], like
+ * `getOrDefault(Object, String)` for `getOrDefault(key: String, defaultValue: String)`.
+ *
+ * Only the erased `Object` parameters of [javaMethod] stay as they are.
+ */
+context(session: KaSession)
+private fun computeFinalBridgeSignature(
+    function: KaNamedFunctionSymbol,
+    javaMethod: PsiMethod,
+    containingClass: SymbolLightClassForClassOrObject,
+): MethodSignature {
+    val parameterTypes = javaMethod.parameterList.parameters.zip(function.valueParameters) { javaParameter, parameter ->
+        if (javaParameter.type.isJavaLangObject()) {
+            javaParameter.type
+        } else {
+            parameter.returnType.mapToPsiType(containingClass, KaTypeMappingMode.VALUE_PARAMETER) ?: javaParameter.type
+        }
+    }
+
+    val javaReturnType = javaMethod.returnType ?: PsiTypes.voidType()
+    val returnType = if (javaReturnType.isTypeParameter()) {
+        function.returnType.mapToPsiType(containingClass, javaMethod.bridgeReturnTypeMappingMode) ?: javaReturnType
+    } else {
+        javaReturnType
+    }
+
+    return MethodSignature(parameterTypes, returnType)
+}
+
+/**
+ * The signature of the Kotlin variant of [javaMethod] for [function], an inherited Kotlin collection function,
+ * like `getOrDefault(String, String)` for `getOrDefault(key: String, defaultValue: String)`.
+ *
+ * If [erase] is `true`, the type parameters in the signature are replaced with their erasure.
+ */
+context(session: KaSession)
+private fun computeKotlinVariantSignature(
+    function: KaNamedFunctionSymbol,
+    javaMethod: PsiMethod,
+    containingClass: SymbolLightClassForClassOrObject,
+    erase: Boolean,
+): MethodSignature {
+    fun KaType.toPsiType(mode: KaTypeMappingMode): PsiType? =
+        if (erase) erasedPsiType(containingClass, mode) else mapToPsiType(containingClass, mode)
+
+    val parameterTypes = javaMethod.parameterList.parameters.zip(function.valueParameters) { javaParameter, parameter ->
+        parameter.returnType.toPsiType(KaTypeMappingMode.VALUE_PARAMETER) ?: javaParameter.type
+    }
+
+    val javaReturnType = javaMethod.returnType ?: PsiTypes.voidType()
+    val returnType = if (javaReturnType.isTypeParameter()) {
+        function.returnType.toPsiType(KaTypeMappingMode.RETURN_TYPE_BOXED) ?: javaReturnType
+    } else {
+        javaReturnType
+    }
+
+    return MethodSignature(parameterTypes, returnType)
+}
+
+/**
+ * The JVM backend keeps a primitive element type in the return type of the special bridge `remove(int)`, like in `int remove(int)`
+ * for `removeAt(index: Int): Int`, and boxes the substituted return types of the other special bridges.
+ */
+private val PsiMethod.bridgeReturnTypeMappingMode: KaTypeMappingMode
+    get() = if (name == "remove" && parameterList.parameters.singleOrNull()?.type == PsiTypes.intType()) {
+        KaTypeMappingMode.RETURN_TYPE
+    } else {
+        KaTypeMappingMode.RETURN_TYPE_BOXED
+    }
+
+context(session: KaSession)
+private fun KaType.mapToPsiType(useSitePosition: PsiElement, mode: KaTypeMappingMode): PsiType? =
+    asPsiType(useSitePosition, allowErrorTypes = true, mode = mode)
+
+/**
+ * The erasure of this type mapped to Java, like `Object` for an unbounded type parameter and `CharSequence` for `E : CharSequence`.
+ *
+ * A flexible type parameter type, like `K!` in a member inherited from a Java class, is erased like the type parameter itself.
+ */
+context(session: KaSession)
+private fun KaType.erasedPsiType(useSitePosition: PsiElement, mode: KaTypeMappingMode): PsiType? {
+    var type = (this as? KaFlexibleType)?.lowerBound?.takeIf { it is KaTypeParameterType } ?: this
+    while (type is KaTypeParameterType) {
+        type = type.symbol.upperBounds.firstOrNull() ?: builtinTypes.nullableAny
+    }
+    return type.mapToPsiType(useSitePosition, mode)?.let(TypeConversionUtil::erasure)
 }
 
 private fun createWrappersForJavaCollectionMethod(

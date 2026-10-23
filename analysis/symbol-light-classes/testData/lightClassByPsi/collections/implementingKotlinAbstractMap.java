@@ -20,6 +20,9 @@ public abstract class Awd /* test.Awd*/ extends kotlin.collections.AbstractMap<@
   public final @org.jetbrains.annotations.NotNull() java.lang.String get(@org.jetbrains.annotations.NotNull() java.lang.Object);//  get(java.lang.Object)
 
   @java.lang.Override()
+  public @org.jetbrains.annotations.NotNull() java.lang.String getOrDefault(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.String);//  getOrDefault(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
   public boolean containsKey(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  containsKey(@org.jetbrains.annotations.NotNull() java.lang.String)
 
   @java.lang.Override()
@@ -30,6 +33,9 @@ public abstract class Awd /* test.Awd*/ extends kotlin.collections.AbstractMap<@
 
   @java.lang.Override()
   public boolean isEmpty();//  isEmpty()
+
+  @java.lang.Override()
+  public final @org.jetbrains.annotations.NotNull() java.lang.String getOrDefault(java.lang.Object, @org.jetbrains.annotations.NotNull() java.lang.String);//  getOrDefault(java.lang.Object, @org.jetbrains.annotations.NotNull() java.lang.String)
 
   @java.lang.Override()
   public final boolean containsKey(@org.jetbrains.annotations.NotNull() java.lang.Object);//  containsKey(java.lang.Object)

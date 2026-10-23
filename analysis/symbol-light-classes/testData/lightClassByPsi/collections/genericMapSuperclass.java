@@ -3,14 +3,74 @@ public abstract class AbstractGetOrDefaultMap /* test.AbstractGetOrDefaultMap*/<
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.lang.String getOrDefault(java.lang.Object, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  getOrDefault(java.lang.Object, @org.jetbrains.annotations.NotNull() java.lang.String)
 
+  @java.lang.Override()
+  public boolean containsValue(@org.jetbrains.annotations.NotNull() java.lang.String);//  containsValue(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public final boolean containsValue(java.lang.Object);//  containsValue(java.lang.Object)
+
   public  AbstractGetOrDefaultMap();//  .ctor()
 }
 
 public abstract class BelowAbstractGetOrDefaultMap /* test.BelowAbstractGetOrDefaultMap*/ extends test.AbstractGetOrDefaultMap<@org.jetbrains.annotations.NotNull() java.lang.String> {
+  @java.lang.Override()
+  public @org.jetbrains.annotations.Nullable() java.lang.String get(@org.jetbrains.annotations.NotNull() java.lang.String);//  get(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public abstract @org.jetbrains.annotations.NotNull() java.lang.String getOrDefault(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.String);//  getOrDefault(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public boolean containsKey(@org.jetbrains.annotations.NotNull() java.lang.String);//  containsKey(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public final @org.jetbrains.annotations.NotNull() java.lang.String getOrDefault(java.lang.Object, @org.jetbrains.annotations.NotNull() java.lang.String);//  getOrDefault(java.lang.Object, @org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public final @org.jetbrains.annotations.Nullable() java.lang.String get(java.lang.Object);//  get(java.lang.Object)
+
+  @java.lang.Override()
+  public final boolean containsKey(java.lang.Object);//  containsKey(java.lang.Object)
+
   public  BelowAbstractGetOrDefaultMap();//  .ctor()
 }
 
 public abstract class BelowDirectMutableMap /* test.BelowDirectMutableMap*/ extends test.DirectMutableMap<@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.String> {
+  @java.lang.Override()
+  public @org.jetbrains.annotations.NotNull() java.lang.String getOrDefault(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.String);//  getOrDefault(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public abstract @org.jetbrains.annotations.Nullable() java.lang.String get(@org.jetbrains.annotations.NotNull() java.lang.String);//  get(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public abstract @org.jetbrains.annotations.Nullable() java.lang.String remove(@org.jetbrains.annotations.NotNull() java.lang.String);//  remove(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public abstract boolean containsKey(@org.jetbrains.annotations.NotNull() java.lang.String);//  containsKey(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public abstract boolean containsValue(@org.jetbrains.annotations.NotNull() java.lang.String);//  containsValue(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public boolean remove(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.String);//  remove(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public final @org.jetbrains.annotations.NotNull() java.lang.String getOrDefault(java.lang.Object, @org.jetbrains.annotations.NotNull() java.lang.String);//  getOrDefault(java.lang.Object, @org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public final @org.jetbrains.annotations.Nullable() java.lang.String get(java.lang.Object);//  get(java.lang.Object)
+
+  @java.lang.Override()
+  public final @org.jetbrains.annotations.Nullable() java.lang.String remove(java.lang.Object);//  remove(java.lang.Object)
+
+  @java.lang.Override()
+  public final boolean containsKey(java.lang.Object);//  containsKey(java.lang.Object)
+
+  @java.lang.Override()
+  public final boolean containsValue(java.lang.Object);//  containsValue(java.lang.Object)
+
+  @java.lang.Override()
+  public final boolean remove(java.lang.Object, java.lang.Object);//  remove(java.lang.Object, java.lang.Object)
+
   public  BelowDirectMutableMap();//  .ctor()
 }
 
@@ -19,6 +79,24 @@ public abstract class BelowDirectStringMutableMap /* test.BelowDirectStringMutab
 }
 
 public abstract class BelowGenericValueMap /* test.BelowGenericValueMap*/ extends test.GenericValueMap<@org.jetbrains.annotations.NotNull() java.lang.String> {
+  @java.lang.Override()
+  public @org.jetbrains.annotations.NotNull() java.lang.String getOrDefault(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.String);//  getOrDefault(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public @org.jetbrains.annotations.Nullable() java.lang.String get(@org.jetbrains.annotations.NotNull() java.lang.String);//  get(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public boolean containsValue(@org.jetbrains.annotations.NotNull() java.lang.String);//  containsValue(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public final @org.jetbrains.annotations.NotNull() java.lang.String getOrDefault(java.lang.Object, @org.jetbrains.annotations.NotNull() java.lang.String);//  getOrDefault(java.lang.Object, @org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public final @org.jetbrains.annotations.Nullable() java.lang.String get(java.lang.Object);//  get(java.lang.Object)
+
+  @java.lang.Override()
+  public final boolean containsValue(java.lang.Object);//  containsValue(java.lang.Object)
+
   public  BelowGenericValueMap();//  .ctor()
 }
 
@@ -107,6 +185,18 @@ public abstract class DirectStringMutableMap /* test.DirectStringMutableMap*/ im
 }
 
 public abstract class GenericKeyMutableMap /* test.GenericKeyMutableMap*/<K>  extends kotlin.collections.AbstractMutableMap<K, @org.jetbrains.annotations.NotNull() java.lang.String> {
+  @java.lang.Override()
+  public boolean containsValue(@org.jetbrains.annotations.NotNull() java.lang.String);//  containsValue(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public boolean remove(@org.jetbrains.annotations.Nullable() java.lang.Object, java.lang.String);//  remove(@org.jetbrains.annotations.Nullable() java.lang.Object, java.lang.String)
+
+  @java.lang.Override()
+  public final boolean containsValue(java.lang.Object);//  containsValue(java.lang.Object)
+
+  @java.lang.Override()
+  public final boolean remove(java.lang.Object, java.lang.Object);//  remove(java.lang.Object, java.lang.Object)
+
   public  GenericKeyMutableMap();//  .ctor()
 }
 
@@ -115,14 +205,92 @@ public abstract class GenericMap /* test.GenericMap*/<K, V>  extends kotlin.coll
 }
 
 public abstract class GenericValueMap /* test.GenericValueMap*/<V>  extends kotlin.collections.AbstractMap<@org.jetbrains.annotations.NotNull() java.lang.String, V> {
+  @java.lang.Override()
+  public @org.jetbrains.annotations.Nullable() java.lang.Object get(@org.jetbrains.annotations.NotNull() java.lang.String);//  get(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public @org.jetbrains.annotations.Nullable() java.lang.Object getOrDefault(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.Nullable() java.lang.Object);//  getOrDefault(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.Nullable() java.lang.Object)
+
+  @java.lang.Override()
+  public boolean containsKey(@org.jetbrains.annotations.NotNull() java.lang.String);//  containsKey(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public final @org.jetbrains.annotations.Nullable() V get(java.lang.Object);//  get(java.lang.Object)
+
+  @java.lang.Override()
+  public final V getOrDefault(java.lang.Object, V);//  getOrDefault(java.lang.Object, V)
+
+  @java.lang.Override()
+  public final boolean containsKey(java.lang.Object);//  containsKey(java.lang.Object)
+
   public  GenericValueMap();//  .ctor()
 }
 
 public abstract class IntMap /* test.IntMap*/ extends kotlin.collections.AbstractMap<@org.jetbrains.annotations.NotNull() java.lang.Integer, @org.jetbrains.annotations.NotNull() java.lang.Integer> {
+  @java.lang.Override()
+  public @org.jetbrains.annotations.NotNull() java.lang.Integer getOrDefault(int, int);//  getOrDefault(int, int)
+
+  @java.lang.Override()
+  public @org.jetbrains.annotations.Nullable() java.lang.Integer get(int);//  get(int)
+
+  @java.lang.Override()
+  public boolean containsKey(int);//  containsKey(int)
+
+  @java.lang.Override()
+  public boolean containsValue(int);//  containsValue(int)
+
+  @java.lang.Override()
+  public final @org.jetbrains.annotations.NotNull() java.lang.Integer getOrDefault(java.lang.Object, int);//  getOrDefault(java.lang.Object, int)
+
+  @java.lang.Override()
+  public final @org.jetbrains.annotations.Nullable() java.lang.Integer get(java.lang.Object);//  get(java.lang.Object)
+
+  @java.lang.Override()
+  public final boolean containsKey(java.lang.Object);//  containsKey(java.lang.Object)
+
+  @java.lang.Override()
+  public final boolean containsValue(java.lang.Object);//  containsValue(java.lang.Object)
+
   public  IntMap();//  .ctor()
 }
 
 public abstract class IntMutableMap /* test.IntMutableMap*/ extends kotlin.collections.AbstractMutableMap<@org.jetbrains.annotations.NotNull() java.lang.Integer, @org.jetbrains.annotations.NotNull() java.lang.Integer> {
+  @java.lang.Override()
+  public @org.jetbrains.annotations.NotNull() java.lang.Integer getOrDefault(int, int);//  getOrDefault(int, int)
+
+  @java.lang.Override()
+  public @org.jetbrains.annotations.Nullable() java.lang.Integer get(int);//  get(int)
+
+  @java.lang.Override()
+  public @org.jetbrains.annotations.Nullable() java.lang.Integer remove(int);//  remove(int)
+
+  @java.lang.Override()
+  public boolean containsKey(int);//  containsKey(int)
+
+  @java.lang.Override()
+  public boolean containsValue(int);//  containsValue(int)
+
+  @java.lang.Override()
+  public boolean remove(java.lang.Integer, java.lang.Integer);//  remove(java.lang.Integer, java.lang.Integer)
+
+  @java.lang.Override()
+  public final @org.jetbrains.annotations.NotNull() java.lang.Integer getOrDefault(java.lang.Object, int);//  getOrDefault(java.lang.Object, int)
+
+  @java.lang.Override()
+  public final @org.jetbrains.annotations.Nullable() java.lang.Integer get(java.lang.Object);//  get(java.lang.Object)
+
+  @java.lang.Override()
+  public final @org.jetbrains.annotations.Nullable() java.lang.Integer remove(java.lang.Object);//  remove(java.lang.Object)
+
+  @java.lang.Override()
+  public final boolean containsKey(java.lang.Object);//  containsKey(java.lang.Object)
+
+  @java.lang.Override()
+  public final boolean containsValue(java.lang.Object);//  containsValue(java.lang.Object)
+
+  @java.lang.Override()
+  public final boolean remove(java.lang.Object, java.lang.Object);//  remove(java.lang.Object, java.lang.Object)
+
   public  IntMutableMap();//  .ctor()
 }
 
@@ -133,6 +301,30 @@ public final class MapObject /* test.MapObject*/ extends kotlin.collections.Abst
   @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.util.Set<@org.jetbrains.annotations.NotNull() java.util.Map.Entry<@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.String>> getEntries();//  getEntries()
+
+  @java.lang.Override()
+  public @org.jetbrains.annotations.NotNull() java.lang.String getOrDefault(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.String);//  getOrDefault(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public @org.jetbrains.annotations.Nullable() java.lang.String get(@org.jetbrains.annotations.NotNull() java.lang.String);//  get(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public boolean containsKey(@org.jetbrains.annotations.NotNull() java.lang.String);//  containsKey(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public boolean containsValue(@org.jetbrains.annotations.NotNull() java.lang.String);//  containsValue(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public final @org.jetbrains.annotations.NotNull() java.lang.String getOrDefault(java.lang.Object, @org.jetbrains.annotations.NotNull() java.lang.String);//  getOrDefault(java.lang.Object, @org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public final @org.jetbrains.annotations.Nullable() java.lang.String get(java.lang.Object);//  get(java.lang.Object)
+
+  @java.lang.Override()
+  public final boolean containsKey(java.lang.Object);//  containsKey(java.lang.Object)
+
+  @java.lang.Override()
+  public final boolean containsValue(java.lang.Object);//  containsValue(java.lang.Object)
 
   private  MapObject();//  .ctor()
 }
@@ -146,13 +338,91 @@ public abstract class OverridingMap /* test.OverridingMap*/ extends kotlin.colle
   @org.jetbrains.annotations.NotNull()
   public final @org.jetbrains.annotations.NotNull() java.lang.String getOrDefault(@org.jetbrains.annotations.NotNull() java.lang.Object, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  getOrDefault(java.lang.Object, @org.jetbrains.annotations.NotNull() java.lang.String)
 
+  @java.lang.Override()
+  public @org.jetbrains.annotations.Nullable() java.lang.String get(@org.jetbrains.annotations.NotNull() java.lang.String);//  get(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public boolean containsKey(@org.jetbrains.annotations.NotNull() java.lang.String);//  containsKey(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public boolean containsValue(@org.jetbrains.annotations.NotNull() java.lang.String);//  containsValue(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public final @org.jetbrains.annotations.Nullable() java.lang.String get(java.lang.Object);//  get(java.lang.Object)
+
+  @java.lang.Override()
+  public final boolean containsKey(java.lang.Object);//  containsKey(java.lang.Object)
+
+  @java.lang.Override()
+  public final boolean containsValue(java.lang.Object);//  containsValue(java.lang.Object)
+
   public  OverridingMap();//  .ctor()
 }
 
 public abstract class StringMap /* test.StringMap*/ extends kotlin.collections.AbstractMap<@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.String> {
+  @java.lang.Override()
+  public @org.jetbrains.annotations.NotNull() java.lang.String getOrDefault(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.String);//  getOrDefault(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public @org.jetbrains.annotations.Nullable() java.lang.String get(@org.jetbrains.annotations.NotNull() java.lang.String);//  get(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public boolean containsKey(@org.jetbrains.annotations.NotNull() java.lang.String);//  containsKey(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public boolean containsValue(@org.jetbrains.annotations.NotNull() java.lang.String);//  containsValue(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public final @org.jetbrains.annotations.NotNull() java.lang.String getOrDefault(java.lang.Object, @org.jetbrains.annotations.NotNull() java.lang.String);//  getOrDefault(java.lang.Object, @org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public final @org.jetbrains.annotations.Nullable() java.lang.String get(java.lang.Object);//  get(java.lang.Object)
+
+  @java.lang.Override()
+  public final boolean containsKey(java.lang.Object);//  containsKey(java.lang.Object)
+
+  @java.lang.Override()
+  public final boolean containsValue(java.lang.Object);//  containsValue(java.lang.Object)
+
   public  StringMap();//  .ctor()
 }
 
 public abstract class StringMutableMap /* test.StringMutableMap*/ extends kotlin.collections.AbstractMutableMap<@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.String> {
+  @java.lang.Override()
+  public @org.jetbrains.annotations.NotNull() java.lang.String getOrDefault(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.String);//  getOrDefault(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public @org.jetbrains.annotations.Nullable() java.lang.String get(@org.jetbrains.annotations.NotNull() java.lang.String);//  get(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public @org.jetbrains.annotations.Nullable() java.lang.String remove(@org.jetbrains.annotations.NotNull() java.lang.String);//  remove(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public boolean containsKey(@org.jetbrains.annotations.NotNull() java.lang.String);//  containsKey(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public boolean containsValue(@org.jetbrains.annotations.NotNull() java.lang.String);//  containsValue(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public boolean remove(java.lang.String, java.lang.String);//  remove(java.lang.String, java.lang.String)
+
+  @java.lang.Override()
+  public final @org.jetbrains.annotations.NotNull() java.lang.String getOrDefault(java.lang.Object, @org.jetbrains.annotations.NotNull() java.lang.String);//  getOrDefault(java.lang.Object, @org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public final @org.jetbrains.annotations.Nullable() java.lang.String get(java.lang.Object);//  get(java.lang.Object)
+
+  @java.lang.Override()
+  public final @org.jetbrains.annotations.Nullable() java.lang.String remove(java.lang.Object);//  remove(java.lang.Object)
+
+  @java.lang.Override()
+  public final boolean containsKey(java.lang.Object);//  containsKey(java.lang.Object)
+
+  @java.lang.Override()
+  public final boolean containsValue(java.lang.Object);//  containsValue(java.lang.Object)
+
+  @java.lang.Override()
+  public final boolean remove(java.lang.Object, java.lang.Object);//  remove(java.lang.Object, java.lang.Object)
+
   public  StringMutableMap();//  .ctor()
 }

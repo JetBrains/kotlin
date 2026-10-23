@@ -3,14 +3,80 @@ public abstract class BelowBoundedList /* test.BelowBoundedList*/ extends test.B
 }
 
 public abstract class BelowDirectList /* test.BelowDirectList*/ extends test.DirectList<@org.jetbrains.annotations.NotNull() java.lang.String> {
+  @java.lang.Override()
+  public abstract boolean contains(@org.jetbrains.annotations.NotNull() java.lang.String);//  contains(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public abstract int indexOf(@org.jetbrains.annotations.NotNull() java.lang.String);//  indexOf(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public abstract int lastIndexOf(@org.jetbrains.annotations.NotNull() java.lang.String);//  lastIndexOf(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public final boolean contains(java.lang.Object);//  contains(java.lang.Object)
+
+  @java.lang.Override()
+  public final int indexOf(java.lang.Object);//  indexOf(java.lang.Object)
+
+  @java.lang.Override()
+  public final int lastIndexOf(java.lang.Object);//  lastIndexOf(java.lang.Object)
+
   public  BelowDirectList();//  .ctor()
 }
 
 public abstract class BelowDirectMutableList /* test.BelowDirectMutableList*/ extends test.DirectMutableList<@org.jetbrains.annotations.NotNull() java.lang.String> {
+  @java.lang.Override()
+  public abstract @org.jetbrains.annotations.NotNull() java.lang.String removeAt(int);//  removeAt(int)
+
+  @java.lang.Override()
+  public abstract boolean contains(@org.jetbrains.annotations.NotNull() java.lang.String);//  contains(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public abstract boolean remove(@org.jetbrains.annotations.NotNull() java.lang.String);//  remove(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public abstract int indexOf(@org.jetbrains.annotations.NotNull() java.lang.String);//  indexOf(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public abstract int lastIndexOf(@org.jetbrains.annotations.NotNull() java.lang.String);//  lastIndexOf(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public final @org.jetbrains.annotations.NotNull() java.lang.String remove(int);//  remove(int)
+
+  @java.lang.Override()
+  public final boolean contains(java.lang.Object);//  contains(java.lang.Object)
+
+  @java.lang.Override()
+  public final boolean remove(java.lang.Object);//  remove(java.lang.Object)
+
+  @java.lang.Override()
+  public final int indexOf(java.lang.Object);//  indexOf(java.lang.Object)
+
+  @java.lang.Override()
+  public final int lastIndexOf(java.lang.Object);//  lastIndexOf(java.lang.Object)
+
   public  BelowDirectMutableList();//  .ctor()
 }
 
 public abstract class BelowGenericList /* test.BelowGenericList*/ extends test.GenericList<@org.jetbrains.annotations.NotNull() java.lang.String> {
+  @java.lang.Override()
+  public boolean contains(@org.jetbrains.annotations.NotNull() java.lang.String);//  contains(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public final boolean contains(java.lang.Object);//  contains(java.lang.Object)
+
+  @java.lang.Override()
+  public final int indexOf(java.lang.Object);//  indexOf(java.lang.Object)
+
+  @java.lang.Override()
+  public final int lastIndexOf(java.lang.Object);//  lastIndexOf(java.lang.Object)
+
+  @java.lang.Override()
+  public int indexOf(@org.jetbrains.annotations.NotNull() java.lang.String);//  indexOf(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public int lastIndexOf(@org.jetbrains.annotations.NotNull() java.lang.String);//  lastIndexOf(@org.jetbrains.annotations.NotNull() java.lang.String)
+
   public  BelowGenericList();//  .ctor()
 }
 
@@ -27,6 +93,24 @@ public abstract class BelowStringMutableList /* test.BelowStringMutableList*/ ex
 }
 
 public abstract class BoundedList /* test.BoundedList*/<E extends java.lang.CharSequence>  extends kotlin.collections.AbstractList<E> {
+  @java.lang.Override()
+  public boolean contains(@org.jetbrains.annotations.NotNull() java.lang.CharSequence);//  contains(@org.jetbrains.annotations.NotNull() java.lang.CharSequence)
+
+  @java.lang.Override()
+  public final boolean contains(java.lang.Object);//  contains(java.lang.Object)
+
+  @java.lang.Override()
+  public final int indexOf(java.lang.Object);//  indexOf(java.lang.Object)
+
+  @java.lang.Override()
+  public final int lastIndexOf(java.lang.Object);//  lastIndexOf(java.lang.Object)
+
+  @java.lang.Override()
+  public int indexOf(@org.jetbrains.annotations.NotNull() java.lang.CharSequence);//  indexOf(@org.jetbrains.annotations.NotNull() java.lang.CharSequence)
+
+  @java.lang.Override()
+  public int lastIndexOf(@org.jetbrains.annotations.NotNull() java.lang.CharSequence);//  lastIndexOf(@org.jetbrains.annotations.NotNull() java.lang.CharSequence)
+
   public  BoundedList();//  .ctor()
 }
 
@@ -109,6 +193,24 @@ public abstract class GenericList /* test.GenericList*/<E>  extends kotlin.colle
 }
 
 public abstract class IntList /* test.IntList*/ extends kotlin.collections.AbstractList<@org.jetbrains.annotations.NotNull() java.lang.Integer> {
+  @java.lang.Override()
+  public boolean contains(int);//  contains(int)
+
+  @java.lang.Override()
+  public final boolean contains(java.lang.Object);//  contains(java.lang.Object)
+
+  @java.lang.Override()
+  public final int indexOf(java.lang.Object);//  indexOf(java.lang.Object)
+
+  @java.lang.Override()
+  public final int lastIndexOf(java.lang.Object);//  lastIndexOf(java.lang.Object)
+
+  @java.lang.Override()
+  public int indexOf(int);//  indexOf(int)
+
+  @java.lang.Override()
+  public int lastIndexOf(int);//  lastIndexOf(int)
+
   public  IntList();//  .ctor()
 }
 
@@ -121,12 +223,48 @@ public final class ListObject /* test.ListObject*/ extends kotlin.collections.Ab
   public @org.jetbrains.annotations.NotNull() java.lang.String get(int);//  get(int)
 
   @java.lang.Override()
+  public boolean contains(@org.jetbrains.annotations.NotNull() java.lang.String);//  contains(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public final boolean contains(java.lang.Object);//  contains(java.lang.Object)
+
+  @java.lang.Override()
+  public final int indexOf(java.lang.Object);//  indexOf(java.lang.Object)
+
+  @java.lang.Override()
+  public final int lastIndexOf(java.lang.Object);//  lastIndexOf(java.lang.Object)
+
+  @java.lang.Override()
   public int getSize();//  getSize()
+
+  @java.lang.Override()
+  public int indexOf(@org.jetbrains.annotations.NotNull() java.lang.String);//  indexOf(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public int lastIndexOf(@org.jetbrains.annotations.NotNull() java.lang.String);//  lastIndexOf(@org.jetbrains.annotations.NotNull() java.lang.String)
 
   private  ListObject();//  .ctor()
 }
 
 public abstract class NullableIntList /* test.NullableIntList*/ extends kotlin.collections.AbstractList<@org.jetbrains.annotations.Nullable() java.lang.Integer> {
+  @java.lang.Override()
+  public boolean contains(@org.jetbrains.annotations.Nullable() java.lang.Integer);//  contains(@org.jetbrains.annotations.Nullable() java.lang.Integer)
+
+  @java.lang.Override()
+  public final boolean contains(java.lang.Object);//  contains(java.lang.Object)
+
+  @java.lang.Override()
+  public final int indexOf(java.lang.Object);//  indexOf(java.lang.Object)
+
+  @java.lang.Override()
+  public final int lastIndexOf(java.lang.Object);//  lastIndexOf(java.lang.Object)
+
+  @java.lang.Override()
+  public int indexOf(@org.jetbrains.annotations.Nullable() java.lang.Integer);//  indexOf(@org.jetbrains.annotations.Nullable() java.lang.Integer)
+
+  @java.lang.Override()
+  public int lastIndexOf(@org.jetbrains.annotations.Nullable() java.lang.Integer);//  lastIndexOf(@org.jetbrains.annotations.Nullable() java.lang.Integer)
+
   public  NullableIntList();//  .ctor()
 }
 
@@ -135,29 +273,140 @@ public abstract class OverridingMutableList /* test.OverridingMutableList*/ exte
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.lang.String removeAt(int);//  removeAt(int)
 
+  @java.lang.Override()
+  public boolean contains(@org.jetbrains.annotations.NotNull() java.lang.String);//  contains(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public boolean remove(@org.jetbrains.annotations.NotNull() java.lang.String);//  remove(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public final @org.jetbrains.annotations.NotNull() java.lang.String remove(int);//  remove(int)
+
+  @java.lang.Override()
+  public final boolean contains(java.lang.Object);//  contains(java.lang.Object)
+
+  @java.lang.Override()
+  public final boolean remove(java.lang.Object);//  remove(java.lang.Object)
+
+  @java.lang.Override()
+  public final int indexOf(java.lang.Object);//  indexOf(java.lang.Object)
+
+  @java.lang.Override()
+  public final int lastIndexOf(java.lang.Object);//  lastIndexOf(java.lang.Object)
+
+  @java.lang.Override()
+  public int indexOf(@org.jetbrains.annotations.NotNull() java.lang.String);//  indexOf(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public int lastIndexOf(@org.jetbrains.annotations.NotNull() java.lang.String);//  lastIndexOf(@org.jetbrains.annotations.NotNull() java.lang.String)
+
   public  OverridingMutableList();//  .ctor()
 }
 
 public abstract class StringCollection /* test.StringCollection*/ extends kotlin.collections.AbstractCollection<@org.jetbrains.annotations.NotNull() java.lang.String> {
+  @java.lang.Override()
+  public boolean contains(@org.jetbrains.annotations.NotNull() java.lang.String);//  contains(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public final boolean contains(java.lang.Object);//  contains(java.lang.Object)
+
   public  StringCollection();//  .ctor()
 }
 
 public abstract class StringList /* test.StringList*/ extends kotlin.collections.AbstractList<@org.jetbrains.annotations.NotNull() java.lang.String> {
+  @java.lang.Override()
+  public boolean contains(@org.jetbrains.annotations.NotNull() java.lang.String);//  contains(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public final boolean contains(java.lang.Object);//  contains(java.lang.Object)
+
+  @java.lang.Override()
+  public final int indexOf(java.lang.Object);//  indexOf(java.lang.Object)
+
+  @java.lang.Override()
+  public final int lastIndexOf(java.lang.Object);//  lastIndexOf(java.lang.Object)
+
+  @java.lang.Override()
+  public int indexOf(@org.jetbrains.annotations.NotNull() java.lang.String);//  indexOf(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public int lastIndexOf(@org.jetbrains.annotations.NotNull() java.lang.String);//  lastIndexOf(@org.jetbrains.annotations.NotNull() java.lang.String)
+
   public  StringList();//  .ctor()
 }
 
 public abstract class StringMutableCollection /* test.StringMutableCollection*/ extends kotlin.collections.AbstractMutableCollection<@org.jetbrains.annotations.NotNull() java.lang.String> {
+  @java.lang.Override()
+  public boolean contains(@org.jetbrains.annotations.NotNull() java.lang.String);//  contains(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public boolean remove(@org.jetbrains.annotations.NotNull() java.lang.String);//  remove(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public final boolean contains(java.lang.Object);//  contains(java.lang.Object)
+
+  @java.lang.Override()
+  public final boolean remove(java.lang.Object);//  remove(java.lang.Object)
+
   public  StringMutableCollection();//  .ctor()
 }
 
 public abstract class StringMutableList /* test.StringMutableList*/ extends kotlin.collections.AbstractMutableList<@org.jetbrains.annotations.NotNull() java.lang.String> {
+  @java.lang.Override()
+  public abstract @org.jetbrains.annotations.NotNull() java.lang.String removeAt(int);//  removeAt(int)
+
+  @java.lang.Override()
+  public boolean contains(@org.jetbrains.annotations.NotNull() java.lang.String);//  contains(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public boolean remove(@org.jetbrains.annotations.NotNull() java.lang.String);//  remove(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public final @org.jetbrains.annotations.NotNull() java.lang.String remove(int);//  remove(int)
+
+  @java.lang.Override()
+  public final boolean contains(java.lang.Object);//  contains(java.lang.Object)
+
+  @java.lang.Override()
+  public final boolean remove(java.lang.Object);//  remove(java.lang.Object)
+
+  @java.lang.Override()
+  public final int indexOf(java.lang.Object);//  indexOf(java.lang.Object)
+
+  @java.lang.Override()
+  public final int lastIndexOf(java.lang.Object);//  lastIndexOf(java.lang.Object)
+
+  @java.lang.Override()
+  public int indexOf(@org.jetbrains.annotations.NotNull() java.lang.String);//  indexOf(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public int lastIndexOf(@org.jetbrains.annotations.NotNull() java.lang.String);//  lastIndexOf(@org.jetbrains.annotations.NotNull() java.lang.String)
+
   public  StringMutableList();//  .ctor()
 }
 
 public abstract class StringMutableSet /* test.StringMutableSet*/ extends kotlin.collections.AbstractMutableSet<@org.jetbrains.annotations.NotNull() java.lang.String> {
+  @java.lang.Override()
+  public boolean contains(@org.jetbrains.annotations.NotNull() java.lang.String);//  contains(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public boolean remove(@org.jetbrains.annotations.NotNull() java.lang.String);//  remove(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public final boolean contains(java.lang.Object);//  contains(java.lang.Object)
+
+  @java.lang.Override()
+  public final boolean remove(java.lang.Object);//  remove(java.lang.Object)
+
   public  StringMutableSet();//  .ctor()
 }
 
 public abstract class StringSet /* test.StringSet*/ extends kotlin.collections.AbstractSet<@org.jetbrains.annotations.NotNull() java.lang.String> {
+  @java.lang.Override()
+  public boolean contains(@org.jetbrains.annotations.NotNull() java.lang.String);//  contains(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public final boolean contains(java.lang.Object);//  contains(java.lang.Object)
+
   public  StringSet();//  .ctor()
 }
