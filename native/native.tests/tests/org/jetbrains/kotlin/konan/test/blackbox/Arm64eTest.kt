@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.konan.test.blackbox
 
 import com.intellij.testFramework.TestDataPath
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
+import org.jetbrains.kotlin.konan.target.AppleConfigurables
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedProperty
@@ -14,13 +15,19 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCompilerArgs
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestKind
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestModule
+import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.ExistingDependency
+import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.ObjCFrameworkCompilation
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
+import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationDependencyType
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationFactory
+import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.BinaryLibraryKind
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.configurables
+import org.jetbrains.kotlin.konan.test.blackbox.support.util.ClangDistribution
+import org.jetbrains.kotlin.konan.test.blackbox.support.util.compileWithClang
 import org.jetbrains.kotlin.native.executors.runProcess
 import org.jetbrains.kotlin.test.KtAssert.fail
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
@@ -104,6 +111,41 @@ class Arm64eTest : AbstractNativeSimpleTest() {
     fun testObjCMessenger() =
         compileFrameworkAndCheckIr(testSuiteDir.resolve("objc/messenger.kt"), "Codegen", givenDependencies = setOf(objcLibrary()))
 
+    @Test
+    fun testMissingArm64eBitcode() {
+        val result = compileFramework(
+            testSuiteDir.resolve("c_stubs/c_stubs.kt"),
+            listOf("-Xbinary=arm64e=true"),
+            givenDependencies = setOf(TestModule.Given(cinterop("c_stubs").klibFile)),
+        ).result
+        assertTrue(result is TestCompilationResult.CompilationToolFailure && "of library 'c_stubs.def' is compiled for 'arm64-apple-ios" in result.loggedData.toolOutput) {
+            "Expected the arm64e framework to reject arm64 bitcode, got: $result"
+        }
+    }
+
+    @Test
+    fun testNativeLibraryCompiledForArm64e() {
+        val source = testSuiteDir.resolve("native_library/native_library.kt")
+        // Like the library that a one-stage compilation makes, this library has the -native-library bitcode as its ordinary bitcode.
+        val library = compileToLibrary(
+            source, buildDir.resolve("library"),
+            TestCompilerArgs("-native-library", compileNativeLibrary(arm64e = true).absolutePath), emptyList(),
+        )
+        linkFramework(
+            library, listOf("-Xsave-llvm-ir-after=LinkBitcodeDependencies", "-Xsave-llvm-ir-directory=${buildDir.absolutePath}")
+        ).assertSuccess()
+        checkIr(source, "LinkBitcodeDependencies")
+    }
+
+    @Test
+    fun testNativeLibraryCompiledForArm64() {
+        val library = compileToLibrary(testSuiteDir.resolve("native_library/native_library.kt"), buildDir.resolve("library"))
+        val result = linkFramework(library, listOf("-native-library", compileNativeLibrary(arm64e = false).absolutePath))
+        assertTrue(result is TestCompilationResult.CompilationToolFailure && "is compiled for 'arm64-apple-ios" in result.loggedData.toolOutput) {
+            "Expected the arm64e framework to reject arm64 bitcode, got: $result"
+        }
+    }
+
     /** An Objective-C library without bitcode: with direct C calls, cinterop compiles no stubs. */
     private fun objcLibrary() = TestModule.Given(cinterop("objc", listOf("-Xccall-mode", "direct")).klibFile)
 
@@ -130,6 +172,28 @@ class Arm64eTest : AbstractNativeSimpleTest() {
             "Expected arm64e objects with the pointer authentication ABI in ${archive.absolutePath}, got: $headers"
         }
     }
+
+    private fun compileNativeLibrary(arm64e: Boolean): File {
+        val configurables = testRunSettings.configurables as AppleConfigurables
+        return compileWithClang(
+            testRunSettings,
+            clangDistribution = ClangDistribution.Llvm, // To be compatible with the K/N LLVM IR.
+            sourceFiles = listOf(testSuiteDir.resolve("native_library/native_library.c")),
+            outputFile = buildDir.resolve(if (arm64e) "native_library.bc" else "native_library_arm64.bc"),
+            additionalClangFlags = listOf("-emit-llvm", "-c") +
+                    if (arm64e) listOf("-target", "arm64e-apple-ios${configurables.osVersionMin}") else emptyList(),
+            debug = false,
+        ).assertSuccess().resultingArtifact.executableFile
+    }
+
+    /** Links an arm64e framework from [library] alone, as the second stage of a compilation does. */
+    private fun linkFramework(library: TestCompilationArtifact.KLIB, compilerArgs: List<String>) = ObjCFrameworkCompilation(
+        testRunSettings,
+        TestCompilerArgs(listOf("-Xbinary=arm64e=true", "-Xbinary=bundleId=native_library") + compilerArgs),
+        sourceModules = emptySet(),
+        dependencies = listOf(ExistingDependency(library, TestCompilationDependencyType.IncludedLibrary)),
+        expectedArtifact = TestCompilationArtifact.ObjCFramework(buildDir, "native_library"),
+    ).result
 
     private fun llvmTool(name: String) = "${testRunSettings.configurables.absoluteLlvmHome}/bin/$name"
 
