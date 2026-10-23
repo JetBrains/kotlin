@@ -43,11 +43,11 @@ fun <K : Builder<K>> testTypeParam(builder: Builder<K>) {
 }
 
 fun testStarJava(builder: JavaBuilder<*>) {
-    <!DEBUG_INFO_EXPRESSION_TYPE("(ERROR CLASS: Cannot infer argument for type parameter T..ERROR CLASS: Cannot infer argument for type parameter T?)")!>builder.<!CANNOT_INFER_PARAMETER_TYPE!>test<!>()<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("(CapturedType(*)..CapturedType(*)?)")!>builder.test()<!>
 
     builder
-        .<!CANNOT_INFER_PARAMETER_TYPE!>test<!>()
-        .<!UNRESOLVED_REFERENCE!>foo<!>()
+        .test()
+        .foo()
 }
 
 fun <K : JavaBuilder<K>> testTypeParamJava(builder: JavaBuilder<K>) {

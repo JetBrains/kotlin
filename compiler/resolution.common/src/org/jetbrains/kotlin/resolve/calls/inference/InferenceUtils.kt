@@ -53,9 +53,11 @@ fun KotlinTypeMarker.hasRecursiveTypeParametersWithGivenSelfType(): Boolean {
     if (typeConstructor().getParameters().any { it.hasRecursiveBounds(typeConstructor()) }) return true
     if (!c.isK2) return false
 
-    if (this is CapturedTypeMarker || typeConstructor().isIntersection()) {
-        return typeConstructor().supertypes().any { it.hasRecursiveTypeParametersWithGivenSelfType() }
-                || this is CapturedTypeMarker && hasRecursiveBounds()
+    val simpleType = unwrapToSimpleTypeUsingLowerBound()
+
+    if (simpleType is CapturedTypeMarker || simpleType.typeConstructor().isIntersection()) {
+        return simpleType.typeConstructor().supertypes().any { it.hasRecursiveTypeParametersWithGivenSelfType() }
+                || simpleType is CapturedTypeMarker && simpleType.hasRecursiveBounds()
     }
 
     return false

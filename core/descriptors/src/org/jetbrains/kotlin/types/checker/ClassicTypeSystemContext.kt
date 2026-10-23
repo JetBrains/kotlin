@@ -296,7 +296,7 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         require(this is NewCapturedType, this::errorMessage)
 
         fun KotlinType.hasThisAsArgument(): Boolean =
-            arguments.any { it.type.constructor == this@hasRecursiveBounds.constructor }
+            arguments.any { it.type.constructor == this@hasRecursiveBounds.unwrapToSimpleTypeUsingLowerBound().typeConstructor() }
 
         return constructor.supertypes.any { it.hasThisAsArgument() } || lowerType?.hasThisAsArgument() == true
     }

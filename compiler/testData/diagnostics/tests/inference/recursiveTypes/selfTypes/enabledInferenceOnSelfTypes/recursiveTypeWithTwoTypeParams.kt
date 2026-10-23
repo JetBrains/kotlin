@@ -18,8 +18,8 @@ fun test(b: BodySpec<String, *>) {
 }
 
 fun testJava(b: JavaBodySpec<String, *>) {
-    val x = b.<!CANNOT_INFER_PARAMETER_TYPE!>isEqualTo<!>("")
-    <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Cannot infer argument for type parameter T")!>x<!>
+    val x = b.isEqualTo("")
+    <!DEBUG_INFO_EXPRESSION_TYPE("(JavaBodySpec<(kotlin.String..kotlin.String?), *>..JavaBodySpec<(kotlin.String..kotlin.String?), *>?)")!>x<!>
 }
 
 /* GENERATED_FIR_TAGS: capturedType, flexibleType, functionDeclaration, interfaceDeclaration, javaType, localProperty,

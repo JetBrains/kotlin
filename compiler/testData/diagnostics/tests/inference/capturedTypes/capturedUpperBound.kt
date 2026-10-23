@@ -17,10 +17,10 @@ fun test(a: BodySpec<List<*>, *>, k: WithDnn<*>, j: JavaClass<List<*>, *>) {
     a.value()
 
     k.bar<<!UPPER_BOUND_VIOLATED!>WithDnn<*><!>>()
-    k.<!CANNOT_INFER_PARAMETER_TYPE!>bar<!>()
+    k.bar()
 
     j.value<<!UPPER_BOUND_VIOLATED!>JavaClass<*,*><!>>()
-    j.<!CANNOT_INFER_PARAMETER_TYPE!>value<!>()
+    j.value()
 }
 
 interface BodySpec<B, S : BodySpec<B, S>> {

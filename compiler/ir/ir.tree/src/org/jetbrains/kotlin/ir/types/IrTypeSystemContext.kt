@@ -224,8 +224,8 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
     override fun CapturedTypeMarker.hasRecursiveBounds(): Boolean {
         require(this is IrCapturedType)
 
-        fun IrType.hasThisAsArgument(): Boolean =
-            arguments?.any { it.typeOrNull?.typeConstructor() == this@hasRecursiveBounds.constructor } == true
+        fun IrType.hasThisAsArgument(): Boolean = true == arguments
+            ?.any { it.typeOrNull?.typeConstructor() == this@hasRecursiveBounds.unwrapToSimpleTypeUsingLowerBound().typeConstructor() }
 
         return constructor.superTypes.any { it.hasThisAsArgument() } || lowerType?.hasThisAsArgument() == true
     }

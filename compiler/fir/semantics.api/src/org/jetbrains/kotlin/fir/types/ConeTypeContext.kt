@@ -350,7 +350,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         require(this is ConeCapturedType)
 
         fun ConeKotlinType.hasThisAsArgument(): Boolean =
-            typeArguments.any { it.type?.typeConstructor() == this@hasRecursiveBounds.constructor }
+            typeArguments.any { it.type?.typeConstructor() == this@hasRecursiveBounds.unwrapLowerBound().typeConstructor() }
 
         return constructor.supertypes?.any { it.hasThisAsArgument() } == true || constructor.lowerType?.hasThisAsArgument() == true
     }
