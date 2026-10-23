@@ -56,7 +56,7 @@ class ToStringExampleError(val x: Int)
 <!FLAG_USAGE_ERROR!>@EqualsAndHashCode<!>
 class EqualsAndHashCodeExampleError(val x: Int)
 
-<!FLAG_USAGE_ERROR!>@Builder<!>
+<!ANNOTATION_IS_NOT_SUPPORTED, FLAG_USAGE_ERROR!>@Builder<!>
 class BuilderExampleError(val x: Int)
 
 // `@SuperBuilder` isn't supported on Kotlin-origin classes yet (ANNOTATION_IS_NOT_SUPPORTED),

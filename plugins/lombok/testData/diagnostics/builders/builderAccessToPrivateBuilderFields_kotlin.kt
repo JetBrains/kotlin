@@ -1,10 +1,10 @@
 import lombok.Builder
 
-@Builder
+<!ANNOTATION_IS_NOT_SUPPORTED!>@Builder<!>
 class BuilderExample(val str: String, val id: Int)
 
 fun test() {
-    val builder = BuilderExample.builder()
-    builder.<!INVISIBLE_REFERENCE!>str<!> // Access to field despite the fact it's invisible
-    builder.<!INVISIBLE_REFERENCE!>id<!> // Access to field despite the fact it's invisible
+    val builder = BuilderExample.<!UNRESOLVED_REFERENCE!>builder<!>()
+    builder.str // Access to field despite the fact it's invisible
+    builder.id // Access to field despite the fact it's invisible
 }

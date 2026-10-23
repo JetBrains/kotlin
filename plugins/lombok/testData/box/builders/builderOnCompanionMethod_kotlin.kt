@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM
 // ISSUE: KT-87683
 
 import lombok.Builder

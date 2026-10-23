@@ -12,23 +12,6 @@ FILE: builderExplicitBuildersWithIncompatibleTypeParameters_kotlin.kt
                 super<R|kotlin/Any|>()
             }
 
-            public open fun build(): R|ExplicitBuilderWithTypeParametersLessThanRequired<K>|
-
-            public open fun p(p: R|K|): R|ExplicitBuilderWithTypeParametersLessThanRequired.ExplicitBuilderWithTypeParametersLessThanRequiredBuilder|
-
-            private final var p: R|K|
-                private get(): R|K|
-                private set(value: R|K|): R|kotlin/Unit|
-
-        }
-
-        public final companion object Companion : R|kotlin/Any| {
-            @R|kotlin/jvm/JvmStatic|() public final fun <K> builder(): <ERROR TYPE REF: Type mismatch: expected ExplicitBuilderWithTypeParametersLessThanRequired.ExplicitBuilderWithTypeParametersLessThanRequiredBuilder<K>, actual ExplicitBuilderWithTypeParametersLessThanRequired.ExplicitBuilderWithTypeParametersLessThanRequiredBuilder>
-
-            private constructor(): R|ExplicitBuilderWithTypeParametersLessThanRequired.Companion| {
-                super<R|kotlin/Any|>()
-            }
-
         }
 
     }
@@ -45,27 +28,10 @@ FILE: builderExplicitBuildersWithIncompatibleTypeParameters_kotlin.kt
                 super<R|kotlin/Any|>()
             }
 
-            public open fun build(): R|ExplicitBuilderWithTypeParametersMoreThanRequired<T1>|
-
-            public open fun p(p: R|T1|): R|ExplicitBuilderWithTypeParametersMoreThanRequired.ExplicitBuilderWithTypeParametersMoreThanRequiredBuilder<T1, T2>|
-
-            private final var p: R|T1|
-                private get(): R|T1|
-                private set(value: R|T1|): R|kotlin/Unit|
-
-        }
-
-        public final companion object Companion : R|kotlin/Any| {
-            @R|kotlin/jvm/JvmStatic|() public final fun <K> builder(): <ERROR TYPE REF: Type mismatch: expected ExplicitBuilderWithTypeParametersMoreThanRequired.ExplicitBuilderWithTypeParametersMoreThanRequiredBuilder<K>, actual ExplicitBuilderWithTypeParametersMoreThanRequired.ExplicitBuilderWithTypeParametersMoreThanRequiredBuilder<T1, T2>>
-
-            private constructor(): R|ExplicitBuilderWithTypeParametersMoreThanRequired.Companion| {
-                super<R|kotlin/Any|>()
-            }
-
         }
 
     }
     public final fun main(): R|kotlin/Unit| {
-        lval obj: <ERROR TYPE REF: Unresolved name: build> = Q|ExplicitBuilderWithTypeParametersLessThanRequired|.R|/ExplicitBuilderWithTypeParametersLessThanRequired.Companion.builder|<R|kotlin/Int|>().<Unresolved name: build>#()
-        lval obj2: <ERROR TYPE REF: Unresolved name: build> = Q|ExplicitBuilderWithTypeParametersMoreThanRequired|.R|/ExplicitBuilderWithTypeParametersMoreThanRequired.Companion.builder|<R|kotlin/String|>().<Unresolved name: build>#()
+        lval obj: <ERROR TYPE REF: Unresolved name: build> = Q|ExplicitBuilderWithTypeParametersLessThanRequired|.<Unresolved name: builder>#<R|kotlin/Int|>().<Unresolved name: build>#()
+        lval obj2: <ERROR TYPE REF: Unresolved name: build> = Q|ExplicitBuilderWithTypeParametersMoreThanRequired|.<Unresolved name: builder>#<R|kotlin/String|>().<Unresolved name: build>#()
     }

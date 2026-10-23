@@ -50,7 +50,7 @@ class ToStringExampleWarning(val x: Int)
 <!FLAG_USAGE_WARNING!>@EqualsAndHashCode<!>
 class EqualsAndHashCodeExampleWarning(val x: Int)
 
-<!FLAG_USAGE_WARNING!>@Builder<!>
+<!ANNOTATION_IS_NOT_SUPPORTED, FLAG_USAGE_WARNING!>@Builder<!>
 class BuilderExampleWarning(val x: Int)
 
 // `@SuperBuilder` isn't supported on Kotlin-origin classes yet (ANNOTATION_IS_NOT_SUPPORTED),
