@@ -129,6 +129,9 @@ class Arm64eTest : AbstractNativeSimpleTest() {
         compileFrameworkAndCheckIr(testSuiteDir.resolve("objc/subclass.kt"), "Codegen", givenDependencies = setOf(objcLibrary()))
 
     @Test
+    fun testBlocks() = compileFrameworkAndCheckIr(testSuiteDir.resolve("blocks.kt"), "Codegen")
+
+    @Test
     fun testMissingArm64eBitcode() {
         val result = compileFramework(
             testSuiteDir.resolve("c_stubs/c_stubs.kt"),

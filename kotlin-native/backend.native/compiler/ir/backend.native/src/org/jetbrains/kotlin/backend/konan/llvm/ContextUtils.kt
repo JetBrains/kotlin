@@ -620,6 +620,14 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
             ).toTypedArray()
     )
 
+    val llvmPtrAuthBlend by lazy {
+        llvmIntrinsic("llvm.ptrauth.blend", functionType(int64Type, false, int64Type, int64Type), "nounwind")
+    }
+
+    val llvmPtrAuthSign by lazy {
+        llvmIntrinsic("llvm.ptrauth.sign", functionType(int64Type, false, int64Type, int32Type, int64Type), "nounwind")
+    }
+
     var tlsCount = 0
 
     val tlsKey by lazy {
