@@ -139,7 +139,8 @@ internal fun hasCollectionSupertype(allSupertypes: Iterable<KaClassType>): Boole
  *    - The original Kotlin method SHOULD still be generated with its Kotlin signature
  *
  * 3. **Erased signature case** (returns `false`):
- *    - The method has type parameters that get erased (e.g., `contains(Object)` in Java)
+ *    - Each parameter erased to `Object` in Java has a type parameter type, which gets erased as well
+ *      (e.g., `contains(element: E)` for `contains(Object)`, or `getOrDefault(key: K, defaultValue: String)` for `getOrDefault(Object, V)`)
  *    - Generates a single non-final bridge method with the erased Java signature
  *    - The original Kotlin method should NOT be generated separately
  *
@@ -167,7 +168,9 @@ internal fun processPossiblyMappedCollectionMethod(
     val javaCollection = javaMethod.containingClass ?: return true
     val substitutor = createPsiSubstitutor(javaCollection, collectionSupertype, containingClass)
     val isErasedSignature = javaMethod.name in ERASED_COLLECTION_METHOD_NAMES ||
-            ownFunction.valueParameters.any { it.returnType is KaTypeParameterType }
+            javaMethod.parameterList.parameters.zip(ownFunction.valueParameters).all { [javaParameter, parameter] ->
+                !javaParameter.type.isJavaLangObject() || parameter.returnType is KaTypeParameterType
+            }
 
     val lightMemberOrigin = (ownFunction.psi as? KtDeclaration)?.let { originalElement ->
         LightMemberOriginForDeclaration(originalElement, originKind)
