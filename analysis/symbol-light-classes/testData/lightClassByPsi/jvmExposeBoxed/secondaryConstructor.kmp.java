@@ -1,15 +1,13 @@
 public final class MyClass /* MyClass*/ {
-  @org.jetbrains.annotations.NotNull()
-  private final @org.jetbrains.annotations.NotNull() int value;
+  private final int value;
 
-  private  MyClass(@org.jetbrains.annotations.NotNull() int);//  .ctor(@org.jetbrains.annotations.NotNull() int)
+  private  MyClass(int);//  .ctor(int)
 
-  private  MyClass(@org.jetbrains.annotations.NotNull() int, @org.jetbrains.annotations.NotNull() java.lang.String);//  .ctor(@org.jetbrains.annotations.NotNull() int, @org.jetbrains.annotations.NotNull() java.lang.String)
+  private  MyClass(int, @org.jetbrains.annotations.NotNull() java.lang.String);//  .ctor(int, @org.jetbrains.annotations.NotNull() java.lang.String)
 }
 
 public final class MyUInt /* MyUInt*/ {
-  @org.jetbrains.annotations.NotNull()
-  private final @org.jetbrains.annotations.NotNull() int value;
+  private final int value;
 
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.lang.String toString();//  toString()
