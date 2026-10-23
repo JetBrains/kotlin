@@ -27,7 +27,7 @@ internal val CreateLLVMDeclarationsPhase = createSimpleNamedCompilerPhase<Native
         preactions = getDefaultIrActions(),
         postactions = getDefaultIrActions(),
         op = { generationState, module ->
-            generationState.llvmDeclarations = createLlvmDeclarations(generationState, module)
+            createLlvmDeclarations(generationState, module)
         }
 )
 
