@@ -1,3 +1,4 @@
+// CHECK_OPTIMIZED_JS
 // EXPECT_GENERATED_JS: function=test expect=anyChecks.js
 fun <T: Any> test(x: Any?) = x as T
 
