@@ -8,10 +8,12 @@ package org.jetbrains.kotlin.backend.wasm.dce
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.isExported
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.dce.DceDumpNameCache
 import org.jetbrains.kotlin.ir.backend.js.utils.findUnitGetInstanceFunction
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBody
+import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -95,6 +97,12 @@ private fun buildRoots(modules: List<IrModuleFragment>, context: WasmBackendCont
         add(context.wasmSymbols.jsRelatedSymbols.throwValue.owner)
         if (context.wasmUseStackSwitching) {
             add(context.wasmSymbols.jsRelatedSymbols.getJsError.owner)
+
+            // FIXME: We MUST prevent the Boolean's companion object from being DCE'd, otherwise coroutine stack switching stops working.
+            //   Namely, the VM emits the "Unknown heap type" error when compiling the CoroutineImplStackSwitching primary constructor.
+            //   I don't understand why: the code generated for that constructor is identical with and without this line.
+            //   Figure this out and remove the line.
+            add(context.irBuiltIns.booleanClass.owner.file.declarations.single { it.origin == JsLoweredDeclarationOrigin.OBJECT_GET_INSTANCE_FUNCTION })
         }
     }
 
