@@ -83,7 +83,6 @@ internal object TrackedCompilerArguments {
             booleanMetric(BooleanMetrics.CLI_STDLIB_COMPILATION_ENABLED, CommonCompilerArguments::stdlibCompilation)
             booleanMetric(BooleanMetrics.CLI_VERSION_WARNINGS_SUPPRESSED, CommonCompilerArguments::suppressVersionWarnings)
             booleanMetric(BooleanMetrics.CLI_FIR_IC_ENABLED, CommonCompilerArguments::useFirIC)
-            booleanMetric(BooleanMetrics.CLI_FIR_LIGHT_TREE_PARSER_ENABLED, CommonCompilerArguments::useFirLT)
             booleanMetric(BooleanMetrics.CLI_WHEN_GUARDS_ENABLED, CommonCompilerArguments::whenGuards)
             booleanMetric(BooleanMetrics.CLI_SCRIPT_EVALUATION_ENABLED, CommonCompilerArguments::script)
 
