@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.konan.target
 
+import org.jetbrains.kotlin.konan.MissingXcodeException
 import org.jetbrains.kotlin.konan.properties.KonanPropertiesLoader
 import org.jetbrains.kotlin.konan.util.InternalServer
 import org.jetbrains.kotlin.konan.util.ProgressCallback
@@ -46,8 +47,15 @@ class AppleConfigurablesImpl(
         get() = properties.getProperty("useProvisionedXcode") == "true"
 
     val xcode: Xcode by lazy {
-        if (useProvisionedXcode) provisionedXcode()
-        else currentXcodeCheckingVersion()
+        when {
+            !HostManager.hostIsMac -> throw MissingXcodeException(
+                "$target needs Xcode, which a ${HostManager.hostName} host does not have. Such a host can only build caches " +
+                        "for $target, with -Xbinary=useLlvmLibtoolDarwin=true and -Xllvm-variant=dev, " +
+                        "and without -Xbinary=compileCStubsWithTargetSysRoot=true"
+            )
+            useProvisionedXcode -> provisionedXcode()
+            else -> currentXcodeCheckingVersion()
+        }
     }
 
     // The whole Xcode selected by useProvisionedXcode: a [CurrentXcode] rooted at the provisioned Xcode.app under

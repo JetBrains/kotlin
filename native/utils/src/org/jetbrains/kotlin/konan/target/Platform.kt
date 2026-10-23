@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.konan.target
 
+import java.io.File
+
 class Platform(val configurables: Configurables) : Configurables by configurables {
 
     val clang: ClangArgs.Native by lazy {
@@ -53,7 +55,37 @@ class PlatformManager private constructor(private val serialized: Serialized) :
 
     private val distribution by serialized::distribution
 
-    private val loaders = enabled.map {
+    /**
+     * Targets this host can build caches for but not binaries: on a Linux host, the Apple targets whose runtime the
+     * distribution contains. Their caches need LLVM only, not Xcode: the compiler's LLVM generates their code, the C stubs
+     * need no SDK (see [ClangArgs.CStubs]), and llvm-libtool-darwin can write the cache archive.
+     * Only a distribution built on macOS contains the runtime of Apple targets.
+     */
+    val cacheOnlyTargets: List<KonanTarget> = if (!hostIsLinux) emptyList() else appleTargets.filter {
+        File(distribution.defaultNatives(it)).isDirectory
+    }
+
+    /**
+     * Fails with an explanation unless this host can produce [outputKind] for [target]: a library for any target,
+     * a cache for an [enabled] target or one of [cacheOnlyTargets], and anything else for an [enabled] target only.
+     */
+    fun checkCanProduce(outputKind: CompilerOutputKind, target: KonanTarget) {
+        val isStaticCache = outputKind == CompilerOutputKind.STATIC_CACHE || outputKind == CompilerOutputKind.HEADER_CACHE
+        val isAvailable = when {
+            outputKind == CompilerOutputKind.LIBRARY -> true
+            isStaticCache -> isEnabled(target) || target in cacheOnlyTargets
+            else -> isEnabled(target)
+        }
+        check(isAvailable) {
+            val howToCache = if (isStaticCache && hostIsLinux && target in appleTargets) {
+                ". To build caches for it on this host, copy 'konan/targets/${target.visibleName}' into this distribution " +
+                        "from a distribution of the same compiler version built on macOS"
+            } else ""
+            "Target ${target.visibleName} is not available for output kind '$outputKind' on the $hostName host$howToCache"
+        }
+    }
+
+    private val loaders = (enabled + cacheOnlyTargets).map {
         it to loadConfigurables(it, distribution.properties, distribution.dependenciesDir)
     }.toMap()
 
