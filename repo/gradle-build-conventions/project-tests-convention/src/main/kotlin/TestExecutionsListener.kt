@@ -51,15 +51,16 @@ import java.util.IdentityHashMap
  * A descriptor is what Gradle's [TestDescriptor] contains, shortened if nothing is lost:
  * - `name`.
  * - `displayName` - absent when it equals `name`.
- * - `className` - absent when it equals the parent's, or is null on a record without a parent; otherwise present,
- *   null included. An empty string is written as reported, being Gradle's other spelling of "no class".
+ * - `className` - absent when it equals the parent's, taken as null for the outermost suite; otherwise written as
+ *   reported, null and the empty string included, which are Gradle's two spellings of "no class".
  * - `source` - absent for a `NoSource`. Otherwise, its `kind` - `class`, `method`, `file`, `directory`,
  *   `classpathResource` or `other` - and the fields of that kind: `className`, absent when it equals the record's,
  *   `methodName`, `file`, `classpathResourceName`, and the `line` and `column` of a position, each absent if unknown.
  *
  * A result is `resultType`, the name of Gradle's [TestResult.ResultType] (`SUCCESS`, `FAILURE` or `SKIPPED`), and the
  * `startTime` and `endTime` Gradle reports, in epoch milliseconds. A suite's time covers its own setup and teardown,
- * such as a class's `@BeforeAll` and `@AfterAll`, which no test's time includes.
+ * such as a class's `@BeforeAll` and `@AfterAll`, which no test's time includes. Failure details are not recorded: no
+ * messages or stack traces go into a cached artifact.
  *
  * The lines are in the order Gradle reported the events, and every `parent` and `id` refers to a `suite` line above
  * it, so the file can be read in one pass. The events of the suites running in parallel forks interleave. A retried
