@@ -39,16 +39,17 @@ lookups:
   a::Other -> a/src/Base.kt
   a::sameModule -> a/src/SameModule.kt
   a::topLevel -> a/src/Base.kt
-  a::topProp -> a/src/Base.kt, a/src/SameModule.kt, b/src/Untouched.kt
+  a::topProp -> a/src/Base.kt, a/src/SameModule.kt, b/src/Untouched.kt, b/src/Usage.kt
   b::Base -> b/src/Untouched.kt, b/src/Usage.kt
   b::Child -> b/src/Usage.kt
   b::Obj -> b/src/Usage.kt
   b::Untouched -> b/src/Untouched.kt
   b::obj -> b/src/Usage.kt
+  b::readTopProp -> b/src/Usage.kt
   b::untouched -> b/src/Untouched.kt
   b::use -> b/src/Usage.kt
 subtypes:
-  a.Base -> a.Impl, a.Other, b.Untouched
+  a.Base -> a.Impl, a.Other, b.Child, b.Untouched
   a.Impl ->
   a.Obj ->
   a.Other ->

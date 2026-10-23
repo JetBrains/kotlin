@@ -86,10 +86,12 @@ class KotlinCompilerReferenceIndexJpsTest : AbstractKotlinJpsBuildTestCase() {
 
             import a.Base
             import a.Obj
+            import a.topProp
 
-            class Child
+            class Child : Base
             fun use(base: Base) {}
             fun obj() = Obj.prop
+            fun readTopProp() = topProp
         """.trimIndent()
 
         private val PROJECT_PACKAGES = setOf("a", "b")
