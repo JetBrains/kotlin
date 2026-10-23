@@ -526,6 +526,8 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
     fun TypeParameterMarker.getTypeConstructor(): TypeConstructorMarker
     fun TypeParameterMarker.hasRecursiveBounds(selfConstructor: TypeConstructorMarker? = null): Boolean
 
+    fun CapturedTypeMarker.hasRecursiveBounds(): Boolean
+
     fun areEqualTypeConstructors(c1: TypeConstructorMarker, c2: TypeConstructorMarker): Boolean
 
     fun TypeConstructorMarker.isDenotable(): Boolean

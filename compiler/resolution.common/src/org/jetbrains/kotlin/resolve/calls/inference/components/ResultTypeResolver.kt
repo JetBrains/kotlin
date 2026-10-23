@@ -167,7 +167,7 @@ class ResultTypeResolver(
         val preparedSuperType = when {
             approximatedSuperType == null -> null
             shouldBeUsedWithoutApproximation(superType, approximatedSuperType, this) -> superType
-            superType.typeConstructor().hasRecursiveTypeParametersWithGivenSelfType() -> superType
+            superType.hasRecursiveTypeParametersWithGivenSelfType() -> superType
             else -> approximatedSuperType
             // Super type should be the most flexible, sub type should be the least one
         }.makeFlexibleIfNecessary(constraints)
@@ -214,7 +214,7 @@ class ResultTypeResolver(
         val preparedSuperType = when {
             superType == null -> null
             similarCapturedTypesInK2 -> superType
-            c.isK2 && superType.typeConstructor().hasRecursiveTypeParametersWithGivenSelfType() -> superType
+            c.isK2 && superType.hasRecursiveTypeParametersWithGivenSelfType() -> superType
             else -> typeApproximator.approximateToSubType(superType, TypeApproximatorConfiguration.InternalTypesApproximation) ?: superType
             // Super type should be the most flexible, sub type should be the least one
         }.makeFlexibleIfNecessary(constraints)

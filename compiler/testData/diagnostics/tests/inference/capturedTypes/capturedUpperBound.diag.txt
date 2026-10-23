@@ -6,4 +6,8 @@
 
 /test.kt:19:11: error: Type argument is not within its bounds: type parameter 'K (of fun <K : CapturedType(*) & Any> bar)' must be subtype of 'CapturedType(*) & Any', but actual: 'WithDnn<*>'. Consider removing the explicit type arguments.
 
+/test.kt:20:7: error: Cannot infer type for type parameter 'K'. Specify it explicitly.
+
 /test.kt:22:13: error: Type argument is not within its bounds: type parameter 'T (of fun <T : CapturedType(*)!> value)' must be subtype of 'CapturedType(*)!', but actual: 'JavaClass<*, *>!'. Consider removing the explicit type arguments.
+
+/test.kt:23:7: error: Cannot infer type for type parameter 'T'. Specify it explicitly.

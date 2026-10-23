@@ -38,13 +38,13 @@ fun javaInterfaceTest(a: A1<*>, b: B1<*>, c: C1<*>) {
     <!DEBUG_INFO_EXPRESSION_TYPE("A1<*>")!>x<!>
     val y = b.foo()
     <!DEBUG_INFO_EXPRESSION_TYPE("I<*>")!>y<!>
-    val z = c.foo()
-    <!DEBUG_INFO_EXPRESSION_TYPE("(I<*>..I<*>?)")!>z<!>
+    val z = c.<!CANNOT_INFER_PARAMETER_TYPE!>foo<!>()
+    <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Cannot infer argument for type parameter T")!>z<!>
 }
 
 fun javaClassTest(a: A2<*>, b: B2<*>, c: C2<*>, d: D2<*>) {
-    a.foo()
-    b.foo()
+    a.<!CANNOT_INFER_PARAMETER_TYPE!>foo<!>()
+    b.<!CANNOT_INFER_PARAMETER_TYPE!>foo<!>()
     c.foo()
     d.foo()
 }
