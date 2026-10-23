@@ -27,12 +27,15 @@ import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinCompile
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinModuleDependentsProvider
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinModuleOutputProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.*
-import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.*
-import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.*
+import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.CompilationPeerCollector
+import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.CompilationPeerData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.*
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ImplementationPlatformKind
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLKindBasedPlatformActualizer
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLPlatformActualizer
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
@@ -73,12 +76,8 @@ import org.jetbrains.kotlin.fir.lazy.AbstractFir2IrLazyDeclaration
 import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.FirReference
-import org.jetbrains.kotlin.fir.references.FirThisReference
-import org.jetbrains.kotlin.fir.references.toResolvedSymbol
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseRecursively
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
 import org.jetbrains.kotlin.ir.PsiIrFileEntry
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
@@ -91,9 +90,6 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.util.classId
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
@@ -1152,102 +1148,6 @@ internal class KaFirCompilerFacility(
         }
     }
 
-
-    /**
-     * @property capturedValues The list captured values.
-     * Contains additional data required by the debugger in order to evaluate input parameters of evaluator-generated method.
-     *
-     * @property capturedFiles The list of files captured by the given code fragment or lambdas from [inlineLambdaParametersMapping]
-     *
-     * @property injectedValues The list captured values.
-     * Contains all data required by FIR2IR conversion of captured values access.
-     *
-     * @property conversionData The data required for FIR2IR conversion of evaluator-generated class declaration.
-     *
-     * @property reifiedTypeParametersMapping The mapping of captured reified type parameters to theirs arguments.
-     * Extracted from the execution stack via debugger extension point.
-     *
-     * @property inlineLambdaParametersMapping The mapping of inline lambda parameters to theirs arguments.
-     * Extracted from the execution stack via debugger extension point.
-     *
-     * @property selfSymbols The set of symbols which declarations are located inside the given code fragment or inside lambdas presented in
-     * [inlineLambdaParametersMapping]
-     */
-    private class CodeFragmentMappings(
-        val capturedValues: List<KaCodeFragmentCapturedValue>,
-        val capturedFiles: List<KtFile>,
-        val injectedValues: List<InjectedValue>,
-        val conversionData: CodeFragmentConversionData,
-        val reifiedTypeParametersMapping: Map<FirTypeParameterSymbol, ConeKotlinType>,
-        val inlineLambdaParametersMapping: Map<FirValueParameterSymbol, FirExpression>,
-        val selfSymbols: Set<FirBasedSymbol<*>>,
-    )
-
-    @OptIn(LLFirInternals::class)
-    private fun computeCodeFragmentMappings(
-        mainFirFile: FirFile,
-        resolutionFacade: LLResolutionFacade,
-        codeFragmentClassName: String?,
-        codeFragmentMethodName: String?,
-        reifiedTypeParametersMapping: Map<FirTypeParameterSymbol, ConeKotlinType>,
-        inlineLambdaParametersMapping: Map<FirValueParameterSymbol, InlineLambdaArgument>,
-    ): CodeFragmentMappings {
-        val codeFragment = mainFirFile.codeFragment
-
-        val capturedData = CodeFragmentCapturedValueAnalyzer.analyze(resolutionFacade, codeFragment, inlineLambdaParametersMapping)
-
-        val capturedSymbols = capturedData.symbols
-        val capturedValues = capturedSymbols.map { it.value }
-        val injectedValues = capturedSymbols.map { InjectedValue(it.symbol, it.typeRef, it.value.isMutated) }
-
-        val conversionData = CodeFragmentConversionData(
-            classId = ClassId(FqName.ROOT, Name.identifier(codeFragmentClassName ?: "CodeFragment")),
-            methodName = Name.identifier(codeFragmentMethodName ?: "run"),
-            injectedValues
-        )
-
-        return CodeFragmentMappings(
-            capturedValues,
-            capturedData.files,
-            injectedValues,
-            conversionData,
-            reifiedTypeParametersMapping,
-            inlineLambdaParametersMapping.mapValues { it.value.expr },
-            capturedData.selfSymbols
-        )
-    }
-
-    private class InjectedSymbolProvider(
-        codeFragmentMappings: CodeFragmentMappings,
-        private val mainKtFile: KtFile,
-    ) {
-        val conversionData: CodeFragmentConversionData = codeFragmentMappings.conversionData
-
-        private val injectedValueMapping: Map<CodeFragmentCapturedId, InjectedValue> =
-            codeFragmentMappings.injectedValues.associateBy { CodeFragmentCapturedId(it.symbol) }
-
-        fun invoke(calleeReference: FirReference, conversionScope: Fir2IrConversionScope): InjectedValue? {
-            val irFile = conversionScope.containingFileIfAny()
-            val psiFile = (irFile?.fileEntry as? PsiIrFileEntry)?.psiFile
-
-            if (psiFile != mainKtFile) {
-                return null
-            }
-
-            val id = when (calleeReference) {
-                is FirThisReference -> when (val boundSymbol = calleeReference.boundSymbol) {
-                    is FirClassSymbol -> CodeFragmentCapturedId(boundSymbol)
-                    is FirReceiverParameterSymbol -> CodeFragmentCapturedId(boundSymbol)
-                    is FirTypeParameterSymbol, is FirTypeAliasSymbol -> errorWithFirSpecificEntries(
-                        message = "Unexpected FirThisOwnerSymbol ${calleeReference::class.simpleName}", fir = boundSymbol.fir
-                    )
-                    null -> null
-                }
-                else -> calleeReference.toResolvedSymbol<FirBasedSymbol<*>>()?.let { CodeFragmentCapturedId(it) }
-            }
-            return injectedValueMapping[id]
-        }
-    }
 
     private class CompilerFacilityJvmDebuggerExtensions : JvmDebuggerExtensions {
         /**
