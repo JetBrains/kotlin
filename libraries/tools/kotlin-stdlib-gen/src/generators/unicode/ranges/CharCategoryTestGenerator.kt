@@ -119,8 +119,9 @@ class CharCategoryTest {
             fun <T> test(expected: T, actual: T, property: String) {
                 if (expected != actual) {
                     val charCode = "U+" + codePoint.code.toString(radix = 16).padStart(length = 4, padChar = '0')
-                    if (TestPlatform.current == TestPlatform.Jvm) {
-                        // it's expected that on JVM different Unicode version can have some characters unassigned or assigned
+                    if (TestPlatform.current.isJvm() && !TestPlatform.current.isJvm(17)) {
+                        // it's expected that different Unicode versions in other versions of JVM
+                        // can have some characters unassigned or assigned
                         // just report it
                         println("Character $charCode [$codePoint] $property differs: expected $expected, actual $actual")
                     } else {
