@@ -5,11 +5,9 @@
 
 package org.jetbrains.kotlin.backend.konan
 
-import org.jetbrains.kotlin.backend.common.linkage.issues.PartialLinkageErrorsLogged
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageLogger
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedPartialLinkageIssue
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
-import org.jetbrains.kotlin.config.PartialLinkageLogLevel
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.library.KotlinLibrary
 
@@ -61,8 +59,4 @@ internal fun replayPartialLinkageIssuesFromCaches(
     )
 
     issues.forEach { logger.log(it.message, it.location, it.significance) }
-
-    // Make sure that the replayed issues abort the compilation exactly like the freshly detected ones would.
-    if (logLevel == PartialLinkageLogLevel.ERROR)
-        PartialLinkageErrorsLogged.raiseIssue(logger.diagnosticReporter)
 }
