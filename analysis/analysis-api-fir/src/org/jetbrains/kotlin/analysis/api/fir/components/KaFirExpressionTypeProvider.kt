@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirDestructuringDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.fir.unwrapSafeCall
+import org.jetbrains.kotlin.analysis.api.fir.utils.coneType
 import org.jetbrains.kotlin.analysis.api.fir.utils.unwrap
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsExpressionTypeProvider
 import org.jetbrains.kotlin.analysis.api.symbols.*
