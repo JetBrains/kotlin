@@ -58,6 +58,18 @@ public class PluginInteractionFirBlackBoxCodegenTestGenerated extends AbstractPl
   }
 
   @Test
+  @TestMetadata("lombokNoArgsConstructorAndSerialization.kt")
+  public void testLombokNoArgsConstructorAndSerialization() {
+    run("lombokNoArgsConstructorAndSerialization.kt");
+  }
+
+  @Test
+  @TestMetadata("lombokStaticFactoryInDeclaredCompanionAndSerialization.kt")
+  public void testLombokStaticFactoryInDeclaredCompanionAndSerialization() {
+    run("lombokStaticFactoryInDeclaredCompanionAndSerialization.kt");
+  }
+
+  @Test
   @TestMetadata("lombokToStringAndSerialization.kt")
   public void testLombokToStringAndSerialization() {
     run("lombokToStringAndSerialization.kt");
