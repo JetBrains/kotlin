@@ -85,16 +85,23 @@ class ToStringGenerator(session: FirSession) : FirDeclarationGenerationExtension
         session.firCachesFactory.createCache(::initializeToStringIfNeeded)
 
     override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): Set<Name> {
-        return if (cache.getValue(classSymbol, context) != null) {
-            setOf(TO_STRING_NAME)
-        } else {
-            emptySet()
-        }
+        // This can be called as early as the SUPERTYPES stage, so only cheap syntactic checks are allowed here:
+        // the names are over-approximated, and `generateFunctions` decides what is actually generated (KT-90086).
+        return if (getApplicableAnnotation(classSymbol) != null) setOf(TO_STRING_NAME) else emptySet()
     }
 
     override fun generateFunctions(callableId: CallableId, context: MemberGenerationContext?): List<FirNamedFunctionSymbol> {
         val classSymbol = context?.owner ?: return emptyList()
         return listOfNotNull(cache.getValue(classSymbol, context))
+    }
+
+    /**
+     * The `@ToString` (or `@Data`) configuration of [classSymbol] if it is a class `toString` may be
+     * generated for. Only a non-interface & non-annotation class gets them.
+     */
+    private fun getApplicableAnnotation(classSymbol: FirClassSymbol<*>): ConeLombokAnnotations.ToString? {
+        if (classSymbol !is FirRegularClassSymbol || !classSymbol.isSupportedLombokTarget) return null
+        return session.lombokService.getToString(classSymbol)
     }
 
     private fun initializeToStringIfNeeded(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): FirNamedFunctionSymbol? {
