@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ImplementationPlatformKind
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLKindBasedPlatformActualizer
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLPlatformActualizer
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
@@ -59,24 +58,18 @@ import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmVisibilityConverter
 import org.jetbrains.kotlin.fir.backend.jvm.JvmFir2IrExtensions
-import org.jetbrains.kotlin.fir.backend.utils.CodeFragmentConversionData
 import org.jetbrains.kotlin.fir.backend.utils.ConversionTypeOrigin
-import org.jetbrains.kotlin.fir.backend.utils.InjectedValue
-import org.jetbrains.kotlin.fir.declarations.FirCodeFragment
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.utils.hasBody
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
-import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirLoop
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.lazy.AbstractFir2IrLazyDeclaration
 import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.fir.psi
-import org.jetbrains.kotlin.fir.references.FirReference
-import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseRecursively
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
 import org.jetbrains.kotlin.ir.PsiIrFileEntry
@@ -87,7 +80,6 @@ import org.jetbrains.kotlin.ir.descriptors.IrBasedReceiverParameterDescriptor
 import org.jetbrains.kotlin.ir.descriptors.IrBasedValueParameterDescriptor
 import org.jetbrains.kotlin.ir.descriptors.IrBasedVariableDescriptor
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.util.classId
 import org.jetbrains.kotlin.platform.TargetPlatform
@@ -1167,42 +1159,6 @@ internal class KaFirCompilerFacility(
             }
             return false
         }
-    }
-
-    /**
-     * Extensions for the code fragment context transformation.
-     * Collects all local declarations of the context file to feed the code fragment transformer later.
-     */
-    private class CodeFragmentContextFir2IrExtensions(
-        delegate: Fir2IrExtensions,
-        private val contextDeclarationCache: CodeFragmentContextDeclarationCache?,
-    ) : Fir2IrExtensions by delegate {
-        override fun preserveLocalScope(symbol: IrSymbol, cache: Fir2IrScopeCache) {
-            contextDeclarationCache?.registerLocalScope(symbol, cache)
-        }
-    }
-
-    /**
-     * Extensions for code fragment transformation.
-     * This replaces captured value calls with injected parameter calls of the code fragment.
-     */
-    private class CodeFragmentFir2IrExtensions(
-        delegate: Fir2IrExtensions,
-        private val injectedValueProvider: InjectedSymbolProvider?,
-        private val inlineLambdaParametersMapping: Map<FirValueParameterSymbol, FirExpression>,
-    ) : Fir2IrExtensions by delegate {
-        override fun findInjectedValue(calleeReference: FirReference, conversionScope: Fir2IrConversionScope): InjectedValue? {
-            return injectedValueProvider?.invoke(calleeReference, conversionScope)
-        }
-
-        override fun codeFragmentConversionData(fragment: FirCodeFragment): CodeFragmentConversionData {
-            return injectedValueProvider?.conversionData ?: errorWithFirSpecificEntries("Conversion data is not provided", fir = fragment)
-        }
-
-        override fun findInjectedInlineLambdaArgument(parameter: FirValueParameterSymbol): FirExpression? {
-            return inlineLambdaParametersMapping[parameter]
-        }
-
     }
 
     private fun createJvmIrCodegenFactory(configuration: CompilerConfiguration, evaluatorData: JvmEvaluatorData?): JvmIrCodegenFactory {
