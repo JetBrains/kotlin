@@ -15,23 +15,53 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.group.isDisabledNative
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.isIgnoredTarget
 import org.jetbrains.kotlin.konan.test.blackbox.support.testKind
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
+import org.jetbrains.kotlin.test.directives.model.Directive
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
+import org.jetbrains.kotlin.test.klib.CustomKlibCompilerTestDirectives
 import org.jetbrains.kotlin.test.model.GroupingTestIsolator
+import org.jetbrains.kotlin.test.services.CompilationStage
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
-class NativeGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolator(testServices, affectsFileGenerators = true) {
+/**
+ * @param customCompilerStage the stage compiled by a custom (previously released) compiler in KLIB compatibility tests, or `null`
+ *   otherwise: the tests expecting its failure are isolated (see [CUSTOM_FIRST_STAGE_IGNORE_DIRECTIVES] and
+ *   [CUSTOM_SECOND_STAGE_IGNORE_DIRECTIVES]).
+ */
+class NativeGroupingTestIsolator(
+    testServices: TestServices,
+    customCompilerStage: CompilationStage? = null,
+) : GroupingTestIsolator(testServices, affectsFileGenerators = true) {
     companion object {
         private val assertionTokens = AssertionsMode.entries.associateWith {
             BatchToken.Custom("AssertionMode: ${it.name}")
         }
+
+        // Some test failures can bring down an entire batch, so where a failure is expected, the test runs in isolation.
+        // The lists mirror the ones of `JsGroupingTestIsolator`.
+        private val CUSTOM_FIRST_STAGE_IGNORE_DIRECTIVES: List<Directive> = listOf(
+            CustomKlibCompilerTestDirectives.IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_STAGE,
+            CustomKlibCompilerTestDirectives.IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_FIRST_STAGE,
+        )
+
+        private val CUSTOM_SECOND_STAGE_IGNORE_DIRECTIVES: List<Directive> = listOf(
+            CustomKlibCompilerTestDirectives.IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_SECOND_STAGE,
+            CustomKlibCompilerTestDirectives.IGNORE_KLIB_FRONTEND_ERRORS_WITH_CUSTOM_SECOND_STAGE,
+            CustomKlibCompilerTestDirectives.IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE,
+        )
+    }
+
+    private val customCompilerExpectedFailureDirectives: List<Directive> = when (customCompilerStage) {
+        CompilationStage.FIRST -> CUSTOM_FIRST_STAGE_IGNORE_DIRECTIVES
+        CompilationStage.SECOND -> CUSTOM_SECOND_STAGE_IGNORE_DIRECTIVES
+        null -> emptyList()
     }
 
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(CodegenTestDirectives, TestDirectives)
+        get() = listOf(CodegenTestDirectives, TestDirectives, CustomKlibCompilerTestDirectives)
 
     override fun computeBatchToken(moduleStructure: TestModuleStructure): BatchToken {
         val isolationDirectives = listOf(
@@ -39,7 +69,7 @@ class NativeGroupingTestIsolator(testServices: TestServices) : GroupingTestIsola
             TestDirectives.FILECHECK_STAGE,
             TestDirectives.EXPECTED_TIMEOUT_FAILURE,
             TestDirectives.MUTED,
-        )
+        ) + customCompilerExpectedFailureDirectives
 
         // KT-84713: Migrate here full grouping logic from TestRunProvider.withTestExecutable(): respect ignores, difference of compiler args, etc.
         val registeredDirectives = moduleStructure.allDirectives
