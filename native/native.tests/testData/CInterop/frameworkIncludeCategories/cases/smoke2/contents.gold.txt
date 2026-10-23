@@ -1,5 +1,4 @@
 library {
-  // module name: <dependency.def>
 
   library fragment {
     // package name: dependency

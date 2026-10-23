@@ -16,7 +16,9 @@ private typealias MapOfFragmentParts = Map<String, FragmentPartContents>
 class SerializedMetadataLibraryProvider(
     serializedMetadata: SerializedMetadata
 ) : KlibModuleMetadata.MetadataLibraryProvider {
-    override val moduleHeaderData = serializedMetadata.module ?: error("No metadata header data found")
+    override val moduleHeaderData = serializedMetadata.module
+    override val packageNames: Set<String>
+        get() = fragmentMap.keys
     override val metadataVersion: KlibMetadataVersion = KlibMetadataVersion(serializedMetadata.metadataVersion)
 
     private val fragmentMap: Map<String, MapOfFragmentParts>
