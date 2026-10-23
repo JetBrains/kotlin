@@ -112,7 +112,8 @@ open class FirDesignatedStatusResolveTransformer(
             val computationStatus = statusComputationSession.startComputing(firClass)
             statusComputationSession.forceResolveStatusesOfSupertypes(firClass)
             if (computationStatus != StatusComputationSession.StatusComputationStatus.Computed) {
-                firClass.transformStatus(this, statusResolver.resolveStatus(firClass, containingClass, isLocal = false))
+                transformClassStatus(firClass)
+                transformValueClassRepresentation(firClass)
             }
         } else {
             if (firClass.status !is FirResolvedDeclarationStatus) {
