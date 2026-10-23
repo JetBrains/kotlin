@@ -134,6 +134,7 @@ fun Project.customCompilerTest(
         }
         systemProperty("kotlin.internal.native.test.compat.customCompilerVersion", version.rawVersion)
         // Of batches of 10 to 100 tests, 2 to 16 at a time, these gave the shortest run of the boxInline tests of the custom first stage.
+        // On all tests of the custom second stage, these were faster than 20 tests 4 at a time, or 50 tests 8 at a time.
         groupingEngineSettings(batchSize = 100, simultaneousBatches = 8)
     }
 }
@@ -191,7 +192,7 @@ customSecondStageTest("2.4.0")
 // For forward compatibility test -> vice versa
 // Should backward and forward tests be executed together in one Gradle task -> so/dylib versions would be inevitably mixed up
 
-// TODO: Drop these short tasks after KT-84712, when full tasks `testCustomFirstStage_$version` and `testCustomSecondStage_$version` will become very fast
+// TODO: Drop these short tasks when the full tasks `testCustomFirstStage_$version` and `testCustomSecondStage_$version` become fast enough for the release aggregate
 customStagesAggregateTest("2.4.0", "first")
 customStagesAggregateTest("2.4.0", "second")
 // TODO: Drop the next one after KTI migrates to execution of  `testMinimalInAggregate_firstStage` and `testMinimalInAggregate_secondStage`
