@@ -54,7 +54,7 @@ import kotlin.math.sign
 
 internal class KaFirDataFlowProvider(
     override val analysisSessionProvider: () -> KaFirSession,
-) : KaBaseSessionComponent<KaFirSession>(), KaInternalsDataFlowProvider, KaFirSessionComponent {
+) : KaFirSessionComponent(), KaInternalsDataFlowProvider {
     override fun smartCastInfo(expression: KtExpression): KaSmartCastInfo? =
         expression.withPsiValidityAssertion {
             with(analysisSession) {

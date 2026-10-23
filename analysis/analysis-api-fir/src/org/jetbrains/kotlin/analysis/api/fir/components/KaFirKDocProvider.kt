@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 @OptIn(KtNonPublicApi::class, KtImplementationDetail::class)
 internal class KaFirKDocProvider(
     override val analysisSessionProvider: () -> KaFirSession,
-) : KaBaseSessionComponent<KaFirSession>(), KaInternalsKDocProvider {
+) : KaFirSessionComponent(), KaInternalsKDocProvider {
     override fun findKDoc(declaration: KtDeclaration): KDocCommentDescriptor? =
         declaration.lookupOwnedKDoc() ?: declaration.lookupKDocInParent()
 

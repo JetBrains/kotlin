@@ -7,7 +7,8 @@ package org.jetbrains.kotlin.analysis.api.fir.components.bridges
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.fir.components.KaBaseSessionComponent
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.components.KaFirSessionComponent
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -28,8 +29,8 @@ import org.jetbrains.kotlin.analysis.api.symbols.symbol as symbolEndpoint
  * the [KaInternalsSymbolProvider][org.jetbrains.kotlin.analysis.api.internals.KaInternalsSymbolProvider] proxy.
  */
 internal class KaSymbolProviderBridge(
-    override val analysisSessionProvider: () -> KaSession,
-) : KaBaseSessionComponent<KaSession>(), KaSymbolProvider {
+    override val analysisSessionProvider: () -> KaFirSession,
+) : KaFirSessionComponent(), KaSymbolProvider {
     override val KtDeclaration.symbol: KaDeclarationSymbol
         get() = context(analysisSession) { symbolEndpoint }
 

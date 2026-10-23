@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components.bridges
 
-import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaKDocProvider
-import org.jetbrains.kotlin.analysis.api.fir.components.KaBaseSessionComponent
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.components.KaFirSessionComponent
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.kdoc.psi.api.KDocCommentDescriptor
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -16,8 +16,8 @@ import org.jetbrains.kotlin.analysis.api.kdoc.findKDoc as findKDocEndpoint
 
 @OptIn(KtNonPublicApi::class)
 internal class KaKDocProviderBridge(
-    override val analysisSessionProvider: () -> KaSession,
-) : KaBaseSessionComponent<KaSession>(), KaKDocProvider {
+    override val analysisSessionProvider: () -> KaFirSession,
+) : KaFirSessionComponent(), KaKDocProvider {
     override fun KtDeclaration.findKDoc(): KDocCommentDescriptor? =
         context(analysisSession) { findKDocEndpoint() }
 

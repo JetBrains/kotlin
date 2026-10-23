@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.psi.KtElement
 
 internal class KaFirDiagnosticProvider(
     override val analysisSessionProvider: () -> KaFirSession,
-) : KaBaseSessionComponent<KaFirSession>(), KaInternalsDiagnosticProvider, KaFirSessionComponent {
+) : KaFirSessionComponent(), KaInternalsDiagnosticProvider {
     override fun diagnostics(element: KtElement): KaDiagnostics = element.withPsiValidityAssertion {
         KaFirDiagnostics(
             element = element,

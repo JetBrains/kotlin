@@ -7,7 +7,8 @@ package org.jetbrains.kotlin.analysis.api.fir.components.bridges
 
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaSourceProvider
-import org.jetbrains.kotlin.analysis.api.fir.components.KaBaseSessionComponent
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.components.KaFirSessionComponent
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.klibSourceFileName as klibSourceFileNameEndpoint
 
@@ -16,8 +17,8 @@ import org.jetbrains.kotlin.analysis.api.symbols.klibSourceFileName as klibSourc
  * reach the [org.jetbrains.kotlin.analysis.api.internals.KaInternalsSourceProvider] proxy.
  */
 internal class KaSourceProviderBridge(
-    override val analysisSessionProvider: () -> KaSession,
-) : KaBaseSessionComponent<KaSession>(), KaSourceProvider {
+    override val analysisSessionProvider: () -> KaFirSession,
+) : KaFirSessionComponent(), KaSourceProvider {
     override val KaDeclarationSymbol.klibSourceFileName: String?
         get() = context(analysisSession) { klibSourceFileNameEndpoint }
 }

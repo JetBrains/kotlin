@@ -90,7 +90,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.requireIsInstance
 
 internal class KaFirJavaInteroperabilityComponent(
     override val analysisSessionProvider: () -> KaFirSession,
-) : KaBaseSessionComponent<KaFirSession>(), KaInternalsJavaInteroperabilityComponent, KaFirSessionComponent {
+) : KaFirSessionComponent(), KaInternalsJavaInteroperabilityComponent {
     private val jvmTypeMapper: FirJvmTypeMapper by lazy { createFirJvmTypeMapper(analysisSession) }
 
     /**

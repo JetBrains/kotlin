@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components.bridges
 
-import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaSignatureSubstitutor
-import org.jetbrains.kotlin.analysis.api.fir.components.KaBaseSessionComponent
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.components.KaFirSessionComponent
 import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaVariableSignature
@@ -19,8 +19,8 @@ import org.jetbrains.kotlin.analysis.api.signatures.asSignature as asSignatureEn
 import org.jetbrains.kotlin.analysis.api.signatures.substitute as substituteEndpoint
 
 internal class KaSignatureSubstitutorBridge(
-    override val analysisSessionProvider: () -> KaSession,
-) : KaBaseSessionComponent<KaSession>(), KaSignatureSubstitutor {
+    override val analysisSessionProvider: () -> KaFirSession,
+) : KaFirSessionComponent(), KaSignatureSubstitutor {
     override fun <S : KaCallableSymbol> S.substitute(substitutor: KaSubstitutor): KaCallableSignature<S> =
         context(analysisSession) { substituteEndpoint(substitutor) }
 

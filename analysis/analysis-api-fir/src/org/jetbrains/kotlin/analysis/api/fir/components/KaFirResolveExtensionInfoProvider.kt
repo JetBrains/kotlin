@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.psi.KtNamedDeclaration
 
 internal class KaFirResolveExtensionInfoProvider(
     override val analysisSessionProvider: () -> KaFirSession
-) : KaBaseSessionComponent<KaFirSession>(), KaInternalsResolveExtensionInfoProvider, KaFirSessionComponent {
+) : KaFirSessionComponent(), KaInternalsResolveExtensionInfoProvider {
     override fun resolveExtensionScopeWithTopLevelDeclarations(): KaScope = withValidityAssertion {
         val tools = analysisSession.extensionTools
         if (tools.isEmpty()) return KaBaseEmptyScope(token)

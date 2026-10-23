@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.api.fir.components.bridges
 
 import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.fir.components.KaBaseSessionComponent
+import org.jetbrains.kotlin.analysis.api.fir.components.KaFirSessionComponent
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.analysis.api.compilation.KaCodeCompilationException as KaNewCodeCompilationException
 import org.jetbrains.kotlin.analysis.api.compilation.KaCompilationResult as KaNewCompilationResult
@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.analysis.api.compilation.modify as modifyEndpoint
  */
 internal class KaCompilerFacilityBridge(
     override val analysisSessionProvider: () -> KaFirSession,
-) : KaBaseSessionComponent<KaFirSession>(), KaCompilerFacility {
+) : KaFirSessionComponent(), KaCompilerFacility {
     @Throws(KaCodeCompilationException::class)
     override fun compile(file: KtFile, options: KaCompilationOptions): KaCompilationResult =
         context(analysisSession) {
