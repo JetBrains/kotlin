@@ -261,8 +261,8 @@ class JavaFieldOverAst(
         get() {
             if (!hasConstantNotNullInitializer) return null
             val init = initializerNode ?: return null
-            val evaluator = ConstantEvaluator(containingClass) { classQualifier, fieldName ->
-                with(containingClass.resolutionContext) { resolveExternalFieldValue(classQualifier, fieldName) }
+            val evaluator = ConstantEvaluator(containingClass) { classQualifier, qualifierClassId, fieldName ->
+                with(containingClass.resolutionContext) { resolveExternalFieldValue(classQualifier, qualifierClassId, fieldName) }
             }
             return coerceConstantToFieldType(evaluator.evaluate(init))
         }

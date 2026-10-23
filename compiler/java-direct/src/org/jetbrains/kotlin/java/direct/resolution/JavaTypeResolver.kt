@@ -76,8 +76,8 @@ internal fun resolveQualifiedNameToClassIdFromParts(
 ): ClassId? {
     require(parts.size > 1)
 
-    // Leftmost type (JLS 6.5.4): the first segment as a simple type name in scope, else the
-    // shortest package prefix whose next segment names a top-level type.
+    // Leftmost type (JLS 6.5.4.2): the qualifier is classified left to right — the first segment as a simple type name in
+    // scope, else the package prefix grows one segment at a time until the next segment names a top-level type in it.
     var leftmostClassId: ClassId? = resolveSimpleNameToClassIdImpl(parts[0], fullResolution)
     var next = 1
     while (leftmostClassId == null && next < parts.size) {
@@ -236,9 +236,9 @@ private fun resolveFromJavaLang(simpleName: String, fullResolution: Boolean): Cl
 
 /**
  * Step 6: type-import-on-demand (`import a.b.*;`, JLS 7.5.2). The on-demand target is a
- * `PackageOrTypeName`, so on a package-probe miss the entry is retried as a *class* whose member
- * types are imported (`import a.D.*;`). Returns `null` on ambiguity (a JLS 7.5.2 compile-time
- * error), falling through to Step 7.
+ * `PackageOrTypeName`: first resolve it as a type, importing its member types if it is a type;
+ * otherwise treat it as a package and import its top-level types. Returns `null` on ambiguity
+ * (a JLS 7.5.2 compile-time error), falling through to Step 7.
  */
 context(c: JavaResolutionContext)
 private fun resolveFromTypeStarImports(
@@ -247,20 +247,13 @@ private fun resolveFromTypeStarImports(
 ): ClassId? {
     var foundClassId: ClassId? = null
     for (starImport in c.fileContext.imports.typeStarImports) {
-        val candidateClassId = ClassId(starImport, Name.identifier(simpleName))
+        val outerClassId = resolveAsClassId(starImport, fullResolution)
+        val candidateClassId = outerClassId?.createNestedClassId(Name.identifier(simpleName))
+            ?: ClassId(starImport, Name.identifier(simpleName))
+
         if (classExists(candidateClassId, fullResolution)) {
             if (foundClassId != null && foundClassId != candidateClassId) return null // Ambiguous
             foundClassId = candidateClassId
-        } else {
-            // Class-level fallback: `import a.D.*` where `a.D` is a class.
-            val outerClassId = resolveAsClassId(starImport, fullResolution)
-            if (outerClassId != null) {
-                val nestedClassId = outerClassId.createNestedClassId(Name.identifier(simpleName))
-                if (classExists(nestedClassId, fullResolution)) {
-                    if (foundClassId != null && foundClassId != nestedClassId) return null // Ambiguous
-                    foundClassId = nestedClassId
-                }
-            }
         }
     }
     return foundClassId
@@ -390,8 +383,8 @@ internal fun isTypeUseAnnotationClass(classId: ClassId): Boolean =
  * `Foo` is a Kotlin class / facade. Returns `null` when no `const val` is found.
  */
 context(c: JavaResolutionContext)
-internal fun resolveExternalFieldValue(classQualifier: String?, fieldName: String): Any? =
-    c.fileContext.session.resolveExternalFieldValue(classQualifier, fieldName, c.packageFqName)
+internal fun resolveExternalFieldValue(classQualifier: String?, qualifierClassId: ClassId?, fieldName: String): Any? =
+    c.fileContext.session.resolveExternalFieldValue(classQualifier, qualifierClassId, fieldName, c.packageFqName)
 
 /**
  * Const-vs-enum-entry disambiguation for annotation arguments that look syntactically like enum
@@ -602,6 +595,13 @@ internal fun getSimpleImport(simpleName: String): FqName? = c.fileContext.import
 context(c: JavaResolutionContext)
 internal fun getStaticImport(simpleName: String): FqName? = c.fileContext.imports.staticSingleImports[simpleName]
 
+/**
+ * Resolves the class named in an import, e.g. the class part of a single-static import, the same
+ * way as imported types are resolved: classified left to right, see [resolveAsClassId].
+ */
+context(c: JavaResolutionContext)
+internal fun resolveImportedClassName(fqName: FqName): ClassId? = resolveAsClassId(fqName, fullResolution = true)
+
 /** Parsed imports of this context's file, exposed to avoid re-extracting them from the AST. */
 context(c: JavaResolutionContext)
 internal fun getImports(): JavaImports = c.fileContext.imports
@@ -620,28 +620,25 @@ internal fun getFirstStarImportCandidate(simpleName: String): ClassId? {
 }
 
 /**
- * Resolves a FqName to a ClassId by trying all package/class splits from longest package to
- * shortest — "a.x.b.b.b" tries ClassId(a.x.b.b, b), ClassId(a.x.b, b.b), … — unlike
- * ClassId.topLevel, which only splits at the last dot.
+ * Resolves the qualified name of an import to a ClassId, classifying it left to right, according to JLS 6.5.4.2 and JLS 6.5.5.2.
  */
 context(c: JavaResolutionContext)
 private fun resolveAsClassId(fqName: FqName, fullResolution: Boolean): ClassId? {
     if (fqName.isRoot) return null
 
-    // most common case: the longest-package split
-    ClassId.topLevel(fqName).takeIf { classExists(it, fullResolution) }?.let { return it }
-
     val parts = fqName.pathSegments()
-    val stringParts = parts.map { it.asString() }
-    for (classStartIndex in (parts.size - 2) downTo 0) {
-        val pkg = when (classStartIndex) {
-            0 -> FqName.ROOT
-            else -> FqName.fromSegments(stringParts.subList(0, classStartIndex))
-        }
-        val cls = FqName.fromSegments(stringParts.subList(classStartIndex, stringParts.size))
-        val classId = ClassId(pkg, cls, false)
 
-        if (classExists(classId, fullResolution)) return classId
+    // The root-package split is skipped: types of the unnamed package have no canonical name, so they cannot be imported (JLS 7.5).
+    var packageFqName = FqName.ROOT.child(parts[0])
+    for (i in 1 until parts.size) {
+        if (classExists(ClassId(packageFqName, parts[i]), fullResolution)) {
+            return ClassId(
+                packageFqName,
+                FqName.fromSegments(parts.subList(i, parts.size).map { it.asString() }),
+                false
+            ).takeIf { i == parts.lastIndex || classExists(it, fullResolution) }
+        }
+        packageFqName = packageFqName.child(parts[i])
     }
     return null
 }
