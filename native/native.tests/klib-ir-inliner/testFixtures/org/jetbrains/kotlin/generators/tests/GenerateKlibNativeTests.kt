@@ -100,7 +100,7 @@ fun main(args: Array<String>) {
                     provider<UseDummyTestCaseGroupProvider>(),
                 )
             ) {
-                model(pattern = "^([^_](.+)).kt$", recursive = true)
+                model(pattern = "^([^_](.+)).(kt|def)$", recursive = true)
             }
         }
 

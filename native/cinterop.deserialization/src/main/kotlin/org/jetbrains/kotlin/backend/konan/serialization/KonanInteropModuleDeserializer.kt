@@ -10,7 +10,9 @@ import kotlinx.metadata.klib.KlibModuleMetadata
 import kotlinx.metadata.klib.fqName
 import org.jetbrains.kotlin.backend.common.linkage.IrDeserializer.TopLevelSymbolKind
 import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
+import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializer
+import org.jetbrains.kotlin.backend.common.serialization.KotlinIrLinker
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.SourceElement
@@ -53,15 +55,26 @@ import kotlin.metadata.*
  * It returns regular (non-lazy), body-less IR, with a top-level-class grauallity (i.e. even if one class member is referenced, it
  * deserializes the entire top-level class along with its nested classes).
  */
-internal class KonanInteropModuleDeserializer(
-        private val deserializationConfiguration: DeserializationConfiguration,
-        moduleFragment: IrModuleFragment,
-        override val klib: KotlinLibrary,
-        private val isLibraryCached: Boolean,
-        private val linker: KonanIrLinker,
+class KonanInteropModuleDeserializer(
+    private val deserializationConfiguration: DeserializationConfiguration,
+    moduleFragment: IrModuleFragment,
+    override val klib: KotlinLibrary,
+    private val isLibraryCached: Boolean,
+    private val linker: KotlinIrLinker,
+    override val strategyResolver: (String) -> DeserializationStrategy = { DeserializationStrategy.ONLY_REFERENCED },
 ) : IrModuleDeserializer(moduleFragment, klib.versions.abiVersion ?: KotlinAbiVersion.CURRENT), CInteropModuleDeserializer {
+    // Interop Klibs have no real IR files, so the strategy is resolved once for the synthetic file name.
+    private val isFullDeserializationRequested: Boolean =
+        strategyResolver(NativeStandardInteropNames.cTypeDefinitionsFileName).theWholeWorld
+
     init {
         require(klib.isCInteropLibrary())
+
+        if (isFullDeserializationRequested) {
+            // Schedule the full deserialization, but don't run it right away: at this point the current module deserializer
+            // is not yet registered in the linker, so references between declarations of this module would not be resolved.
+            linker.modulesWithReachableTopLevels.add(this)
+        }
     }
 
     // Allow to link against a declaration from another C interop module, even if this module also defines one with the same signature.
@@ -78,11 +91,19 @@ internal class KonanInteropModuleDeserializer(
 
     // Interop Klibs may declare only one package, and its FQ name is declared in the manifest.
     private val definedPackageFqName: FqName = klib.packageFqName?.let(::FqName)
-            ?: error("Interop klib ${klib.path} does not contain an expected manifest property: $KLIB_PROPERTY_PACKAGE")
+        ?: error("Interop klib ${klib.path} does not contain an expected manifest property: $KLIB_PROPERTY_PACKAGE")
 
     override fun getDefinedPackageNames(): Set<FqName> = setOf(definedPackageFqName)
 
-    private var externalIrPackageFragment: IrExternalPackageFragment? = null
+    /**
+     * The package fragment with all deserialized declarations that are not put into a special [IrFile] inside [moduleFragment]
+     * (that file holds C structs and enums, unless the library is cached, see [getOrCreateContainingPackageFragment]).
+     * Unlike that file, this package fragment is not reachable from [moduleFragment].
+     * `null` if no such declaration has been deserialized yet.
+     */
+    var externalIrPackageFragment: IrExternalPackageFragment? = null
+        private set
+
     private var typeDefinitionsIrFile: IrFile? = null
 
     /** The cache of the declarations deserialized by the current deserializer. */
@@ -98,13 +119,13 @@ internal class KonanInteropModuleDeserializer(
     }
 
     private val transformer = CInteropKlibMetadata2IRTransformer(
-            symbolTable,
-            symbols = CInteropKlibMetadata2IRTransformer.ExternalSymbols(symbolTable),
-            declarationTracker = declarationTracker,
-            getNestedKmClass = { classId -> metadataReader.retrieveDeclarationsById(classId.toDeclarationId(), removeMetadataRepresentation = true)?.first() as KmClass? },
-            getOrCreateContainingPackageFragment = ::getOrCreateContainingPackageFragment,
-            getReferencedDeclarationSymbol = { signature, kind -> linker.deserializeOrReturnUnboundIrSymbolIfPartialLinkageEnabled(signature, kind, this) },
-            irProviderForLazyAnnotations = linker,
+        symbolTable,
+        symbols = CInteropKlibMetadata2IRTransformer.ExternalSymbols(symbolTable),
+        declarationTracker = declarationTracker,
+        getNestedKmClass = { classId -> metadataReader.retrieveDeclarationsById(classId.toDeclarationId(), removeMetadataRepresentation = true)?.first() as KmClass? },
+        getOrCreateContainingPackageFragment = ::getOrCreateContainingPackageFragment,
+        getReferencedDeclarationSymbol = { signature, kind -> linker.deserializeOrReturnUnboundIrSymbolIfPartialLinkageEnabled(signature, kind, this) },
+        irProviderForLazyAnnotations = linker,
     )
 
     private fun IdSignature.isInteropSignature() = IdSignature.Flags.IS_NATIVE_INTEROP_LIBRARY.test()
@@ -179,19 +200,7 @@ internal class KonanInteropModuleDeserializer(
                 BinarySymbolData.SymbolKind.ENUM_ENTRY_SYMBOL -> error("This declaration cannot be top-level: $searchForSymbolKind")
                 else -> error("Symbol kind is unsupported by C-interop Klib: $searchForSymbolKind")
             }
-            val id = MetadataDeclarationId(declarationKind, packageFqName, declarationFqName)
-
-            val kmDeclarations = metadataReader.retrieveDeclarationsById(id, removeMetadataRepresentation = true)
-            if (kmDeclarations != null) {
-                for (kmDeclaration in kmDeclarations) {
-                    when (kmDeclaration) {
-                        is KmClass -> transformer.transformTopLevelClass(kmDeclaration)
-                        is KmFunction -> transformer.transformTopLevelFunction(kmDeclaration)
-                        is KmProperty -> transformer.transformTopLevelProperty(kmDeclaration)
-                        else -> error(kmDeclaration.javaClass.name)
-                    }
-                }
-            }
+            deserializeTopLevelDeclarations(MetadataDeclarationId(declarationKind, packageFqName, declarationFqName))
         }
 
         // If the deserialization process above found a declaration with the requested signature, it should store it in this map.
@@ -214,6 +223,34 @@ internal class KonanInteropModuleDeserializer(
 
     override fun deserializedSymbolNotFound(idSig: IdSignature): Nothing = error("No C-Interop symbol found for $idSig")
 
+    override fun deserializeReachableDeclarations() {
+        // Unless full deserialization is requested, declarations are deserialized on demand, in `tryDeserializeIrSymbol()`.
+        if (!isFullDeserializationRequested) return
+
+        // Take a snapshot, as deserialization may reload the metadata of the Klib.
+        for (id in metadataReader.getDeclaredDeclarationIds().toList()) {
+            // Nested classes cannot be loaded here directly, as all class members should be loaded only when deserializing
+            // their parent class.
+            if (id.kind == TopLevelSymbolKind.CLASS_SYMBOL && !id.relativeDeclarationName.isOneSegmentFQN()) continue
+
+            // Declarations that have already been converted to IR (e.g., by `contains()` or when referenced from another declaration)
+            // are not retrieved again, so nothing is deserialized twice, even if this function is called more than once.
+            deserializeTopLevelDeclarations(id)
+        }
+    }
+
+    private fun deserializeTopLevelDeclarations(id: MetadataDeclarationId) {
+        val kmDeclarations = metadataReader.retrieveDeclarationsById(id, removeMetadataRepresentation = true) ?: return
+        for (kmDeclaration in kmDeclarations) {
+            when (kmDeclaration) {
+                is KmClass -> transformer.transformTopLevelClass(kmDeclaration)
+                is KmFunction -> transformer.transformTopLevelFunction(kmDeclaration)
+                is KmProperty -> transformer.transformTopLevelProperty(kmDeclaration)
+                else -> error(kmDeclaration.javaClass.name)
+            }
+        }
+    }
+
     fun deserializeAllCStructsAndEnums() {
         for (id in metadataReader.getDeclaredDeclarationIds()) {
             if (id.kind != TopLevelSymbolKind.CLASS_SYMBOL) continue
@@ -224,12 +261,12 @@ internal class KonanInteropModuleDeserializer(
             if (!id.relativeDeclarationName.isOneSegmentFQN()) continue
 
             val kmClass = metadataReader.retrieveDeclarationsById(id, removeMetadataRepresentation = false)
-                    ?.firstOrNull() as? KmClass ?: continue
+                ?.firstOrNull() as? KmClass ?: continue
             if (kmClass.inheritsFromCStructOrEnum()) {
                 // Ask linker about the class instead of deserializing it directly from metadata.
                 // This ensures that, if two interop Klibs define a class with the same ID, only one of them will be chosen, deterministically.
                 val classSig = ClassId.fromString(kmClass.name).toCInteropSignature(isCInterop = true)
-                val _ = linker.deserializeOrReturnUnboundIrSymbolIfPartialLinkageEnabled(classSig, BinarySymbolData.SymbolKind.CLASS_SYMBOL, this)
+                linker.deserializeOrReturnUnboundIrSymbolIfPartialLinkageEnabled(classSig, BinarySymbolData.SymbolKind.CLASS_SYMBOL, this)
             }
         }
     }
@@ -263,7 +300,7 @@ internal class KonanInteropModuleDeserializer(
     }
 
     private class KlibMetadataReader(
-            private val klib: KotlinLibrary,
+        private val klib: KotlinLibrary,
     ) {
         private var areDeclarationIdsLoaded = false
 
@@ -292,7 +329,7 @@ internal class KonanInteropModuleDeserializer(
             val provider = object : KlibModuleMetadata.MetadataLibraryProvider {
                 override val moduleHeaderData get() = metadataComponent.moduleHeaderData ?: error("No metadata header data found")
                 override val metadataVersion = KlibMetadataVersion((klib.metadataVersion?.toArray()
-                        ?: error("No metadata version specified in ${klib.path}")))
+                    ?: error("No metadata version specified in ${klib.path}")))
 
                 override fun packageMetadata(fqName: String, partName: String) = metadataComponent.getPackageFragment(fqName, partName)
                 override fun packageMetadataParts(fqName: String) = metadataComponent.getPackageFragmentNames(fqName)
@@ -374,16 +411,16 @@ internal class KonanInteropModuleDeserializer(
     }
 
     private data class MetadataDeclarationId(
-            val kind: TopLevelSymbolKind,
-            val packageFqName: FqName,
-            val relativeDeclarationName: FqName,
+        val kind: TopLevelSymbolKind,
+        val packageFqName: FqName,
+        val relativeDeclarationName: FqName,
     )
 
     companion object {
         private fun ClassId.toDeclarationId() = MetadataDeclarationId(
-                kind = TopLevelSymbolKind.CLASS_SYMBOL,
-                packageFqName = packageFqName,
-                relativeDeclarationName = relativeClassName
+            kind = TopLevelSymbolKind.CLASS_SYMBOL,
+            packageFqName = packageFqName,
+            relativeDeclarationName = relativeClassName
         )
     }
 }
@@ -391,9 +428,9 @@ internal class KonanInteropModuleDeserializer(
 private val ClassName.declarationFqName get() = FqName(substringAfterLast('/'))
 
 class DeserializedSecondStageInteropPackageDescriptor(
-        module: ModuleDescriptor,
-        fqName: FqName,
-        private val containerSource: KlibDeserializedContainerSource,
+    module: ModuleDescriptor,
+    fqName: FqName,
+    private val containerSource: KlibDeserializedContainerSource,
 ) : PackageFragmentDescriptorImpl(module, fqName) {
     override fun getMemberScope(): MemberScope = error("K1-specific functionality is not supported.")
     override fun getSource(): SourceElement = containerSource
