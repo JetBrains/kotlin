@@ -172,13 +172,13 @@ internal class PlatformLibrariesGenerator(
                 args.addArg("-cache-arg", it)
             }
         }
-        libraryGenerationRunner.runTool(
+        libraryGenerationRunner.runToolWithWorkers(
             KotlinNativeToolRunner.ToolArguments(
                 shouldRunInProcessMode = false,
                 compilerArgumentsLogLevel = kotlinCompilerArgumentsLogLevel.get(),
                 arguments = args
             )
-        )
+        ).await()
     }
 
     fun generatePlatformLibsIfNeeded() {
