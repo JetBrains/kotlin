@@ -11,20 +11,20 @@ class Ctx(val tag: String)
 // function has no such class, so nothing is generated for one and the annotation is reported the way every
 // other shape the plugin cannot act upon is. Java's closest analogue, a `static` method, always has a class to
 // hold the builder.
-<!ANNOTATION_HAS_NO_EFFECT!>@Builder<!>
+<!ANNOTATION_IS_NOT_SUPPORTED!>@Builder<!>
 fun topLevelFunction(): Int = 42
 
 context(ctx: Ctx)
-<!ANNOTATION_HAS_NO_EFFECT!>@Builder<!>
+<!ANNOTATION_IS_NOT_SUPPORTED!>@Builder<!>
 fun String.bothReceiverAndContext(n: Int): Result = Result("${ctx.tag}/$this/$n")
 
-<!ANNOTATION_HAS_NO_EFFECT!>@Builder<!>
+<!ANNOTATION_IS_NOT_SUPPORTED!>@Builder<!>
 fun topLevelInferred(value: Int) = Result(value.toString())
 
 // A local function is in the same position: the class its builder would be nested in doesn't exist either.
 // This is the counterpart of the local *class* a few cases up in builderChecks_kotlin.kt.
 fun withLocalFunction() {
-    <!ANNOTATION_HAS_NO_EFFECT!>@Builder<!>
+    <!ANNOTATION_IS_NOT_SUPPORTED!>@Builder<!>
     fun local(value: Int): Result = Result(value.toString())
 
     local(1)

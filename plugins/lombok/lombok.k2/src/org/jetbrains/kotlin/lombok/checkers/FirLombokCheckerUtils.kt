@@ -200,25 +200,6 @@ private val implementedAnnotationInfos: Map<ClassId, ImplementedAnnotationsInfo>
             KotlinTarget.MEMBER_PROPERTY,
         )
     )
-    this[LombokNames.BUILDER_ID] = ImplementedAnnotationsInfo(
-        allowedTargetsMap = setOf(
-            KotlinTarget.CLASS_ONLY,
-            KotlinTarget.CONSTRUCTOR,
-            KotlinTarget.MEMBER_FUNCTION,
-            KotlinTarget.COMPANION_MEMBER_FUNCTION,
-        ),
-        // An inner class's constructor takes the outer instance as its dispatch receiver, and the generated
-        // `build()` - a member of the builder class, which holds no such instance - has no way to pass one: the
-        // JVM backend failed outright with "Null argument in ExpressionCodegen for parameter VALUE_PARAMETER
-        // kind:DispatchReceiver" (KT-88852). Lombok refuses the shape as well, with "@Builder is not supported
-        // on non-static nested classes"; a nested class is what works, in Kotlin as in Java.
-        //
-        // An abstract or sealed class cannot be instantiated at all, so the `build()` that calls its constructor
-        // failed with `InstantiationError` at run time (KT-88814). Lombok is an error here too: "BuilderExample
-        // is abstract; cannot be instantiated". `@SuperBuilder` is what builds such a hierarchy, and it is not
-        // supported on a Kotlin class at all - `ANNOTATION_IS_NOT_SUPPORTED` covers that.
-        unsupportedClassModifiers = EnumSet.of(ClassModifier.INNER, ClassModifier.ABSTRACT, ClassModifier.SEALED),
-    )
     this[LombokNames.BUILDER_DEFAULT_ID] = ImplementedAnnotationsInfo(
         allowedTargetsMap = setOf(
             KotlinTarget.MEMBER_PROPERTY,
