@@ -46,8 +46,13 @@ class AppleConfigurablesImpl(
         get() = properties.getProperty("useProvisionedXcode") == "true"
 
     val xcode: Xcode by lazy {
-        if (useProvisionedXcode) provisionedXcode()
-        else currentXcodeCheckingVersion()
+        when {
+            !hasXcode -> error(
+                "$target needs Xcode, which a ${HostManager.hostName} host does not have: it can only build caches for $target"
+            )
+            useProvisionedXcode -> provisionedXcode()
+            else -> currentXcodeCheckingVersion()
+        }
     }
 
     // The whole Xcode selected by useProvisionedXcode: a [CurrentXcode] rooted at the provisioned Xcode.app under
