@@ -87,7 +87,7 @@ class DescriptorSerializer private constructor(
             ProtoEnumFlags.modality(classDescriptor.modality),
             ProtoEnumFlags.classKind(classDescriptor.kind, classDescriptor.isCompanionObject),
             classDescriptor.isInner, classDescriptor.isData, classDescriptor.isExternal, classDescriptor.isExpect,
-            classDescriptor.isValueClass(), classDescriptor.isFun, hasEnumEntries,
+            classDescriptor.isValueClass(), classDescriptor.isFun, hasEnumEntries, /*isRichError = */ false,
         )
         if (flags != builder.flags) {
             builder.flags = flags
