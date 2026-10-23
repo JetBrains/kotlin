@@ -16,8 +16,11 @@ import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.Timeout
+import java.io.IOException
 import java.io.PipedInputStream
 import java.io.PipedOutputStream
+import java.net.InetAddress
+import java.net.ServerSocket
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread
 import kotlin.io.path.createParentDirectories
@@ -26,6 +29,7 @@ import kotlin.io.path.readText
 import kotlin.io.path.writeText
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.TimeSource
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinWasmDevServerTaskImpl.Companion.DEFAULT_PORT
 
 @MustRunOnChangesInGradle
 class WasmJsContinuousBuildIT : AbstractWebContinuousBuildIT() {
@@ -178,5 +182,85 @@ class WasmJsContinuousBuildIT : AbstractWebContinuousBuildIT() {
                 "Hello again!!!"
             )
         }
+    }
+
+    @GradleTest
+    @Timeout(value = 10, unit = TimeUnit.MINUTES)
+    fun testWasmJsWithAlreadyOccupiedDefaultPort(
+        gradleVersion: GradleVersion,
+    ) {
+
+        project("empty", gradleVersion) {
+            settingsBuildScriptInjection {
+                settings.rootProject.name = "wasm-browser-simple-project"
+            }
+
+            plugins {
+                kotlin("multiplatform")
+            }
+
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    @OptIn(ExperimentalWasmDsl::class)
+                    wasmJs {
+                        binaries.executable()
+                        browser(bundler = KotlinBrowserBundler.NONE)
+                    }
+                }
+            }
+
+            projectPath.resolve("src/wasmJsMain/kotlin/A.kt")
+                .also {
+                    it.createParentDirectories()
+                }
+                .writeText(
+                    """
+                    fun main() {
+                        println("Hello, world")
+                    }
+                    """.trimIndent()
+                )
+
+            val daemonRelease = PipedOutputStream()
+            val daemonStdin = PipedInputStream(daemonRelease)
+
+            val closer = thread(name = "testWasmJsWithAlreadyOccupiedDefaultPort closer", isDaemon = true) {
+                daemonRelease.close()
+            }
+
+            val testAction = {
+                build(
+                    "wasmJsBrowserDevelopmentRun",
+                    buildOptions = defaultBuildOptions.copy(
+                        continuousBuild = true,
+                    ),
+                    inputStream = daemonStdin,
+                    forwardBuildOutput = true,
+                ) {
+                    closer.join()
+
+                    assertOutputContains("Development server started at http://localhost:")
+                }
+            }
+
+            try {
+                ServerSocket(
+                    DEFAULT_PORT,
+                    0,
+                    InetAddress.getByName("localhost")
+                ).use {
+                    testAction()
+                }
+            } catch (_: IOException) {
+                // in case of another test already binds default port
+                testAction()
+            }
+        }
+
+        // @GradleTest automatically deletes the project directory.
+        // However, sometimes it does this too quickly.
+        // So, give some time to allow the Gradle daemon to close successfully, avoiding the error:
+        // org.gradle.internal.build.BuildLayoutValidator$BuildLayoutException: Directory '...' does not contain a Gradle build.
+        Thread.sleep(5000)
     }
 }
