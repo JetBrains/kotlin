@@ -75,7 +75,15 @@ abstract class KtModuleByCompilerConfiguration(
                     addAll(configuration.jvmModularRoots.map(File::toPath))
                     addAll(configuration.jvmClasspathRoots.map(File::toPath))
                 }
-                addAll(librariesByRoots(roots))
+
+                // A single library for the whole classpath, like the single library session of the compiler.
+                // A binary library session depends only on the builtins session, so with a library per root, the Java classes of
+                // the JDK root resolved `kotlin.Any`, `kotlin.String`, etc. from the builtins module instead of the stdlib, and each test
+                // bound and deserialized the builtins of both.
+                if (roots.isNotEmpty()) {
+                    add(LibraryByRoots(roots, ktModule, project, testServices))
+                }
+
                 addIfNotNull(createJdkFromConfiguration())
             }
         }
