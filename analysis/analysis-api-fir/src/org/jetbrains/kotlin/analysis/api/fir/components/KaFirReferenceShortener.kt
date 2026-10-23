@@ -169,47 +169,10 @@ internal class KaFirReferenceShortener(
 private fun FqName.dropFakeRootPrefixIfPresent(): FqName =
     tail(FqName(ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE))
 
-private data class AdditionalImports(val simpleImports: Set<FqName>, val starImports: Set<FqName>)
-
 private inline fun <reified T : KtElement> KtFile.findSmallestElementOfTypeContainingSelection(selection: TextRange): T? =
     findElementAt(selection.startOffset)
         ?.parentsOfType<T>(withSelf = true)
         ?.firstOrNull { selection in it.textRange }
-
-private sealed class ElementToShorten {
-    abstract val element: KtElement
-    abstract val nameToImport: FqName?
-    abstract val importAllInParent: Boolean
-}
-
-private class ShortenType(
-    override val element: KtUserType,
-    val shortenedRef: String? = null,
-    override val nameToImport: FqName? = null,
-    override val importAllInParent: Boolean = false,
-) : ElementToShorten()
-
-private class ShortenQualifier(
-    override val element: KtDotQualifiedExpression,
-    val shortenedRef: String? = null,
-    override val nameToImport: FqName? = null,
-    override val importAllInParent: Boolean = false
-) : ElementToShorten()
-
-private class ShortenThisLabel(
-    override val element: KtThisExpression,
-) : ElementToShorten() {
-    override val nameToImport: FqName? = null
-    override val importAllInParent: Boolean = false
-}
-
-/**
- * N.B. Does not subclass [ElementToShorten] because currently
- * there's no reason to do that.
- */
-private class ShortenKDocQualifier(
-    val element: KDocName,
-)
 
 private class CollectingVisitor(private val collector: ElementsToShortenCollector) : FirVisitorVoid() {
     private val visitedProperty = mutableSetOf<FirProperty>()
