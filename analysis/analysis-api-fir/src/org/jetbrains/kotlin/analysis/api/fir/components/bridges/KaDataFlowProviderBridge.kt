@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components.bridges
 
-import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.*
-import org.jetbrains.kotlin.analysis.api.fir.components.KaBaseSessionComponent
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.components.KaFirSessionComponent
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.psi.KtExpression
@@ -19,8 +19,8 @@ import org.jetbrains.kotlin.analysis.api.dataflow.implicitReceiverSmartCasts as 
 import org.jetbrains.kotlin.analysis.api.dataflow.smartCastInfo as smartCastInfoEndpoint
 
 internal class KaDataFlowProviderBridge(
-    override val analysisSessionProvider: () -> KaSession,
-) : KaBaseSessionComponent<KaSession>(), KaDataFlowProvider {
+    override val analysisSessionProvider: () -> KaFirSession,
+) : KaFirSessionComponent(), KaDataFlowProvider {
     override val KtExpression.smartCastInfo: KaSmartCastInfo?
         get() = context(analysisSession) { smartCastInfoEndpoint as KaSmartCastInfo? }
 

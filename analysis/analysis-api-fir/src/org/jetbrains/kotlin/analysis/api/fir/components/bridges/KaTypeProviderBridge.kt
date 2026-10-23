@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.api.fir.components.bridges
 import org.jetbrains.kotlin.analysis.api.components.KaBuiltinTypes
 import org.jetbrains.kotlin.analysis.api.components.KaTypeProvider
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.fir.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.analysis.api.fir.components.KaFirSessionComponent
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.dispatchReceiverType
@@ -48,7 +47,7 @@ import org.jetbrains.kotlin.analysis.api.types.withNullability as withNullabilit
  */
 internal class KaTypeProviderBridge(
     override val analysisSessionProvider: () -> KaFirSession,
-) : KaBaseSessionComponent<KaFirSession>(), KaTypeProvider, KaFirSessionComponent {
+) : KaFirSessionComponent(), KaTypeProvider {
     override val builtinTypes: KaBuiltinTypes
         get() = context(analysisSession) {
             // The endpoint returns the new types.KaBuiltinTypes. Its only implementation also extends the legacy

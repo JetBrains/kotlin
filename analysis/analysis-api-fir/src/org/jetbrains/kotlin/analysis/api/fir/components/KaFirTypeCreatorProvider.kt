@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.analysis.api.types.typeCreation.KaTypeParameterTypeB
 
 internal class KaFirTypeCreatorProvider(
     override val analysisSessionProvider: () -> KaFirSession
-) : KaBaseSessionComponent<KaFirSession>(), KaInternalsTypeCreatorProvider, KaFirSessionComponent {
+) : KaFirSessionComponent(), KaInternalsTypeCreatorProvider {
     val backingTypeCreator by lazy { KaFirTypeCreator(analysisSession) }
 
     override val typeCreator: KaTypeCreator

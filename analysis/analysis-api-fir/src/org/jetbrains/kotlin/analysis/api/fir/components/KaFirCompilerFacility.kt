@@ -152,7 +152,7 @@ private val USE_STDLIB_BUILD_OUTPUT: Boolean by lazy(LazyThreadSafetyMode.PUBLIC
 
 internal class KaFirCompilerFacility(
     override val analysisSessionProvider: () -> KaFirSession
-) : KaBaseSessionComponent<KaFirSession>(), KaInternalsCompilerFacility, KaFirSessionComponent {
+) : KaFirSessionComponent(), KaInternalsCompilerFacility {
     override fun compile(file: KtFile, options: KaCompilationOptions): KaCompilationResult = withPsiValidityAssertion(file) {
         val opts = options as KaBaseCompilationOptions
         return withPsiValidityAssertion(file) {

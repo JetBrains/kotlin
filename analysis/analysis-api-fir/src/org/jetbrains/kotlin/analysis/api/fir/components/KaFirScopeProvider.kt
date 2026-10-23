@@ -63,7 +63,7 @@ import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 internal class KaFirScopeProvider(
     override val analysisSessionProvider: () -> KaFirSession
-) : KaBaseSessionComponent<KaFirSession>(), KaInternalsScopeProvider, KaFirSessionComponent {
+) : KaFirSessionComponent(), KaInternalsScopeProvider {
     private fun getScopeSession(): ScopeSession {
         return analysisSession.getScopeSessionFor(analysisSession.firSession)
     }

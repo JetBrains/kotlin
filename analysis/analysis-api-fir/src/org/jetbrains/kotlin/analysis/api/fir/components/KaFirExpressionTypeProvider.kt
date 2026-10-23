@@ -56,7 +56,7 @@ import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 @KaImplementationDetail
 internal class KaFirExpressionTypeProvider(
     override val analysisSessionProvider: () -> KaFirSession,
-) : KaBaseSessionComponent<KaFirSession>(), KaInternalsExpressionTypeProvider, KaFirSessionComponent {
+) : KaFirSessionComponent(), KaInternalsExpressionTypeProvider {
 
     override fun expressionType(expression: KtExpression): KaType? = expression.withPsiValidityAssertion {
         expression.getExpressionTypeByPsiOrNull(noExpectedType = false)?.let { return it }

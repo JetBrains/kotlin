@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.types.Variance
 
 internal class KaFirTypeCreator(
     override val analysisSessionProvider: () -> KaFirSession,
-) : KaBaseSessionComponent<KaFirSession>(), KaInternalsTypeCreator, KaFirSessionComponent {
+) : KaFirSessionComponent(), KaInternalsTypeCreator {
     override fun buildStarTypeProjection(): KaStarTypeProjection = KaBaseStarTypeProjection(token)
 
     override fun buildArrayType(elementType: KaType, init: KaArrayTypeBuilder.() -> Unit): KaType = withValidityAssertion {

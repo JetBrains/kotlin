@@ -45,7 +45,7 @@ import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 internal class KaFirCompletionCandidateChecker(
     override val analysisSessionProvider: () -> KaFirSession
-) : KaBaseSessionComponent<KaFirSession>(), KaInternalsCompletionCandidateChecker, KaFirSessionComponent {
+) : KaFirSessionComponent(), KaInternalsCompletionCandidateChecker {
     override fun createExtensionCandidateChecker(
         originalFile: KtFile,
         nameExpression: KtSimpleNameExpression,

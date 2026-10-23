@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 internal class KaFirSymbolInformationProvider(
     override val analysisSessionProvider: () -> KaFirSession,
-) : KaBaseSessionComponent<KaFirSession>(), KaInternalsSymbolInformationProvider, KaFirSessionComponent {
+) : KaFirSessionComponent(), KaInternalsSymbolInformationProvider {
     private companion object {
         private val OBSOLETE_SYMBOL_DEPRECATION = KaBaseDeprecation(KaDeprecationLevel.HIDDEN, isPropagatedToOverrides = true)
     }
