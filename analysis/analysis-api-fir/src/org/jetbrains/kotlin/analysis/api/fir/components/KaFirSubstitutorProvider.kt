@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirTypeParameterSymbolBase
 import org.jetbrains.kotlin.analysis.api.fir.types.*
+import org.jetbrains.kotlin.analysis.api.fir.utils.coneType
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsSubstitutorProvider
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion

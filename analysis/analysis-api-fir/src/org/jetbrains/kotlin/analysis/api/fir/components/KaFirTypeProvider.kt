@@ -10,12 +10,8 @@ import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.types.KaFirErrorType
 import org.jetbrains.kotlin.analysis.api.fir.types.KaFirType
 import org.jetbrains.kotlin.analysis.api.fir.types.PublicTypeApproximator
-import org.jetbrains.kotlin.analysis.api.fir.utils.ConeSupertypeCalculationMode
-import org.jetbrains.kotlin.analysis.api.fir.utils.ConeTypeCompatibilityChecker
+import org.jetbrains.kotlin.analysis.api.fir.utils.*
 import org.jetbrains.kotlin.analysis.api.fir.utils.ConeTypeCompatibilityChecker.isCompatible
-import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
-import org.jetbrains.kotlin.analysis.api.fir.utils.getAllStrictSupertypes
-import org.jetbrains.kotlin.analysis.api.fir.utils.getDirectSupertypes
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsTypeProvider
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
@@ -40,7 +36,9 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtDoubleColonExpression
+import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.toKtPsiSourceElement
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
