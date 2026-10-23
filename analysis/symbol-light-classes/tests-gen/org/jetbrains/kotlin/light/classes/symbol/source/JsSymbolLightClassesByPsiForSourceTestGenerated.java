@@ -618,6 +618,12 @@ public class JsSymbolLightClassesByPsiForSourceTestGenerated extends AbstractJsS
     }
 
     @Test
+    @TestMetadata("mapOverridesWithTypeParameters.kt")
+    public void testMapOverridesWithTypeParameters() {
+      run("mapOverridesWithTypeParameters.kt");
+    }
+
+    @Test
     @TestMetadata("multipleCollectionSupertypes.kt")
     public void testMultipleCollectionSupertypes() {
       run("multipleCollectionSupertypes.kt");
@@ -820,6 +826,12 @@ public class JsSymbolLightClassesByPsiForSourceTestGenerated extends AbstractJsS
       @TestMetadata("mutableListOfInt.kt")
       public void testMutableListOfInt() {
         run("mutableListOfInt.kt");
+      }
+
+      @Test
+      @TestMetadata("mutableListOfNullableInt.kt")
+      public void testMutableListOfNullableInt() {
+        run("mutableListOfNullableInt.kt");
       }
 
       @Test
@@ -1083,6 +1095,12 @@ public class JsSymbolLightClassesByPsiForSourceTestGenerated extends AbstractJsS
       }
 
       @Test
+      @TestMetadata("listAbstractClassOfNullableInt.kt")
+      public void testListAbstractClassOfNullableInt() {
+        run("listAbstractClassOfNullableInt.kt");
+      }
+
+      @Test
       @TestMetadata("listAbstractClassOfString.kt")
       public void testListAbstractClassOfString() {
         run("listAbstractClassOfString.kt");
@@ -1218,6 +1236,12 @@ public class JsSymbolLightClassesByPsiForSourceTestGenerated extends AbstractJsS
       @TestMetadata("mapInterfaceOfInt.kt")
       public void testMapInterfaceOfInt() {
         run("mapInterfaceOfInt.kt");
+      }
+
+      @Test
+      @TestMetadata("mapInterfaceOfNullableInt.kt")
+      public void testMapInterfaceOfNullableInt() {
+        run("mapInterfaceOfNullableInt.kt");
       }
 
       @Test

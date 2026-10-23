@@ -9,9 +9,6 @@ public abstract class CList /* test.CList*/ implements test.IList {
   public @org.jetbrains.annotations.NotNull() java.lang.Integer set(int, int);//  set(int, int)
 
   @java.lang.Override()
-  public abstract @org.jetbrains.annotations.NotNull() java.lang.Integer get(int);//  get(int)
-
-  @java.lang.Override()
   public abstract boolean contains(int);//  contains(int)
 
   @java.lang.Override()
@@ -42,9 +39,6 @@ public abstract class CList /* test.CList*/ implements test.IList {
   public boolean retainAll(java.util.Collection<?>);//  retainAll(java.util.Collection<?>)
 
   @java.lang.Override()
-  public final @org.jetbrains.annotations.NotNull() java.lang.Integer get(int);//  get(int)
-
-  @java.lang.Override()
   public final boolean contains(java.lang.Object);//  contains(java.lang.Object)
 
   @java.lang.Override()
@@ -64,6 +58,12 @@ public abstract class CList /* test.CList*/ implements test.IList {
 
   @java.lang.Override()
   public void clear();//  clear()
+
+  @java.lang.Override()
+  public void replaceAll(java.util.function.UnaryOperator<@org.jetbrains.annotations.NotNull() java.lang.Integer>);//  replaceAll(java.util.function.UnaryOperator<@org.jetbrains.annotations.NotNull() java.lang.Integer>)
+
+  @java.lang.Override()
+  public void sort(java.util.Comparator<? super @org.jetbrains.annotations.NotNull() java.lang.Integer>);//  sort(java.util.Comparator<? super @org.jetbrains.annotations.NotNull() java.lang.Integer>)
 
   public  CList();//  .ctor()
 }
@@ -155,6 +155,12 @@ public abstract class CList2 /* test.CList2*/ implements test.IList {
   @java.lang.Override()
   public void clear();//  clear()
 
+  @java.lang.Override()
+  public void replaceAll(java.util.function.UnaryOperator<@org.jetbrains.annotations.NotNull() java.lang.Integer>);//  replaceAll(java.util.function.UnaryOperator<@org.jetbrains.annotations.NotNull() java.lang.Integer>)
+
+  @java.lang.Override()
+  public void sort(java.util.Comparator<? super @org.jetbrains.annotations.NotNull() java.lang.Integer>);//  sort(java.util.Comparator<? super @org.jetbrains.annotations.NotNull() java.lang.Integer>)
+
   public  CList2(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() test.IList);//  .ctor(@org.jetbrains.annotations.NotNull() test.IList)
 }
 
@@ -244,6 +250,12 @@ public class CList3 /* test.CList3*/ implements test.IList {
 
   @java.lang.Override()
   public void clear();//  clear()
+
+  @java.lang.Override()
+  public void replaceAll(java.util.function.UnaryOperator<@org.jetbrains.annotations.NotNull() java.lang.Integer>);//  replaceAll(java.util.function.UnaryOperator<@org.jetbrains.annotations.NotNull() java.lang.Integer>)
+
+  @java.lang.Override()
+  public void sort(java.util.Comparator<? super @org.jetbrains.annotations.NotNull() java.lang.Integer>);//  sort(java.util.Comparator<? super @org.jetbrains.annotations.NotNull() java.lang.Integer>)
 
   public  CList3();//  .ctor()
 }

@@ -1,0 +1,86 @@
+public abstract class CMap /* test.CMap*/ implements test.IMap {
+  public  CMap();//  .ctor()
+}
+
+public abstract class CMap2 /* test.CMap2*/ implements test.IMap {
+  @java.lang.Override()
+  @kotlin.SinceKotlin(version = @kotlin.SinceKotlin(version = "2.0"))
+  @kotlin.js.ExperimentalJsCollectionsApi()
+  @kotlin.js.ExperimentalJsExport()
+  @kotlin.js.JsDontExportDefaultImplementation()
+  @org.jetbrains.annotations.NotNull()
+  public @org.jetbrains.annotations.NotNull() kotlin.js.collections.JsReadonlyMap<@org.jetbrains.annotations.Nullable() java.lang.Integer, @org.jetbrains.annotations.Nullable() java.lang.Integer> asJsReadonlyMapView();//  asJsReadonlyMapView()
+
+  @java.lang.Override()
+  @kotlin.js.JsExport.Ignore()
+  @org.jetbrains.annotations.Nullable()
+  public @org.jetbrains.annotations.Nullable() java.lang.Integer get(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Integer);//  get(@org.jetbrains.annotations.Nullable() java.lang.Integer)
+
+  @java.lang.Override()
+  @kotlin.js.JsExport.Ignore()
+  public boolean containsKey(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Integer);//  containsKey(@org.jetbrains.annotations.Nullable() java.lang.Integer)
+
+  @java.lang.Override()
+  @kotlin.js.JsExport.Ignore()
+  public boolean containsValue(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Integer);//  containsValue(@org.jetbrains.annotations.Nullable() java.lang.Integer)
+
+  @java.lang.Override()
+  @kotlin.js.JsExport.Ignore()
+  public boolean isEmpty();//  isEmpty()
+
+  @java.lang.Override()
+  @org.jetbrains.annotations.NotNull()
+  public @org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.Nullable() java.lang.Integer> getValues();//  getValues()
+
+  @java.lang.Override()
+  @org.jetbrains.annotations.NotNull()
+  public @org.jetbrains.annotations.NotNull() java.util.Set<@org.jetbrains.annotations.NotNull() java.util.Map.Entry<@org.jetbrains.annotations.Nullable() java.lang.Integer, @org.jetbrains.annotations.Nullable() java.lang.Integer>> getEntries();//  getEntries()
+
+  @java.lang.Override()
+  @org.jetbrains.annotations.NotNull()
+  public @org.jetbrains.annotations.NotNull() java.util.Set<@org.jetbrains.annotations.Nullable() java.lang.Integer> getKeys();//  getKeys()
+
+  @java.lang.Override()
+  public int getSize();//  getSize()
+
+  public  CMap2(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() test.IMap);//  .ctor(@org.jetbrains.annotations.NotNull() test.IMap)
+}
+
+public class CMap3 /* test.CMap3*/ implements test.IMap {
+  @java.lang.Override()
+  @org.jetbrains.annotations.NotNull()
+  public @org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.Nullable() java.lang.Integer> getValues();//  getValues()
+
+  @java.lang.Override()
+  @org.jetbrains.annotations.NotNull()
+  public @org.jetbrains.annotations.NotNull() java.util.Set<@org.jetbrains.annotations.NotNull() java.util.Map.Entry<@org.jetbrains.annotations.Nullable() java.lang.Integer, @org.jetbrains.annotations.Nullable() java.lang.Integer>> getEntries();//  getEntries()
+
+  @java.lang.Override()
+  @org.jetbrains.annotations.NotNull()
+  public @org.jetbrains.annotations.NotNull() java.util.Set<@org.jetbrains.annotations.Nullable() java.lang.Integer> getKeys();//  getKeys()
+
+  @java.lang.Override()
+  @org.jetbrains.annotations.Nullable()
+  public @org.jetbrains.annotations.Nullable() java.lang.Integer get(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Integer);//  get(@org.jetbrains.annotations.Nullable() java.lang.Integer)
+
+  @java.lang.Override()
+  @org.jetbrains.annotations.Nullable()
+  public @org.jetbrains.annotations.Nullable() java.lang.Integer getOrDefault(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Integer, @org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Integer);//  getOrDefault(@org.jetbrains.annotations.Nullable() java.lang.Integer, @org.jetbrains.annotations.Nullable() java.lang.Integer)
+
+  @java.lang.Override()
+  public boolean containsKey(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Integer);//  containsKey(@org.jetbrains.annotations.Nullable() java.lang.Integer)
+
+  @java.lang.Override()
+  public boolean containsValue(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Integer);//  containsValue(@org.jetbrains.annotations.Nullable() java.lang.Integer)
+
+  @java.lang.Override()
+  public boolean isEmpty();//  isEmpty()
+
+  @java.lang.Override()
+  public int getSize();//  getSize()
+
+  public  CMap3();//  .ctor()
+}
+
+public abstract interface IMap /* test.IMap*/ extends java.util.Map<@org.jetbrains.annotations.Nullable() java.lang.Integer, @org.jetbrains.annotations.Nullable() java.lang.Integer>, kotlin.jvm.internal.markers.KMappedMarker {
+}

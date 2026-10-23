@@ -1,9 +1,27 @@
 public abstract class MyClass1 /* test.MyClass1*/ implements java.util.List<@org.jetbrains.annotations.NotNull() java.lang.String>, java.util.Map<@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.Integer>, kotlin.jvm.internal.markers.KMappedMarker, kotlin.jvm.internal.markers.KMappedMarker {
   @java.lang.Override()
+  public @org.jetbrains.annotations.NotNull() java.lang.Integer compute(@org.jetbrains.annotations.NotNull() java.lang.String, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() java.lang.String, ? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>);//  compute(@org.jetbrains.annotations.NotNull() java.lang.String, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() java.lang.String, ? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>)
+
+  @java.lang.Override()
+  public @org.jetbrains.annotations.NotNull() java.lang.Integer computeIfAbsent(@org.jetbrains.annotations.NotNull() java.lang.String, java.util.function.Function<? super @org.jetbrains.annotations.NotNull() java.lang.String, ? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>);//  computeIfAbsent(@org.jetbrains.annotations.NotNull() java.lang.String, java.util.function.Function<? super @org.jetbrains.annotations.NotNull() java.lang.String, ? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>)
+
+  @java.lang.Override()
+  public @org.jetbrains.annotations.NotNull() java.lang.Integer computeIfPresent(@org.jetbrains.annotations.NotNull() java.lang.String, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() java.lang.String, ? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>);//  computeIfPresent(@org.jetbrains.annotations.NotNull() java.lang.String, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() java.lang.String, ? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>)
+
+  @java.lang.Override()
+  public @org.jetbrains.annotations.NotNull() java.lang.Integer merge(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.Integer, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>);//  merge(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.Integer, java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>)
+
+  @java.lang.Override()
   public @org.jetbrains.annotations.NotNull() java.lang.Integer put(@org.jetbrains.annotations.NotNull() java.lang.String, int);//  put(@org.jetbrains.annotations.NotNull() java.lang.String, int)
 
   @java.lang.Override()
+  public @org.jetbrains.annotations.NotNull() java.lang.Integer putIfAbsent(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.Integer);//  putIfAbsent(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.Integer)
+
+  @java.lang.Override()
   public @org.jetbrains.annotations.NotNull() java.lang.Integer remove(java.lang.Object);//  remove(java.lang.Object)
+
+  @java.lang.Override()
+  public @org.jetbrains.annotations.NotNull() java.lang.Integer replace(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.Integer);//  replace(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.Integer)
 
   @java.lang.Override()
   public abstract @org.jetbrains.annotations.NotNull() java.lang.Integer get(@org.jetbrains.annotations.NotNull() java.lang.String);//  get(@org.jetbrains.annotations.NotNull() java.lang.String)
@@ -25,6 +43,12 @@ public abstract class MyClass1 /* test.MyClass1*/ implements java.util.List<@org
 
   @java.lang.Override()
   public abstract java.util.Set<java.util.Map.Entry<@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.Integer>> getEntries();//  getEntries()
+
+  @java.lang.Override()
+  public boolean remove(java.lang.Object, java.lang.Object);//  remove(java.lang.Object, java.lang.Object)
+
+  @java.lang.Override()
+  public boolean replace(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.Integer, @org.jetbrains.annotations.NotNull() java.lang.Integer);//  replace(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.Integer, @org.jetbrains.annotations.NotNull() java.lang.Integer)
 
   @java.lang.Override()
   public final @org.jetbrains.annotations.NotNull() java.lang.Integer get(java.lang.Object);//  get(java.lang.Object)
@@ -53,6 +77,9 @@ public abstract class MyClass1 /* test.MyClass1*/ implements java.util.List<@org
   @java.lang.Override()
   public void putAll(java.util.Map<? extends @org.jetbrains.annotations.NotNull() java.lang.String, ? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>);//  putAll(java.util.Map<? extends @org.jetbrains.annotations.NotNull() java.lang.String, ? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>)
 
+  @java.lang.Override()
+  public void replaceAll(java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() java.lang.String, ? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>);//  replaceAll(java.util.function.BiFunction<? super @org.jetbrains.annotations.NotNull() java.lang.String, ? super @org.jetbrains.annotations.NotNull() java.lang.Integer, ? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>)
+
   public  MyClass1();//  .ctor()
 }
 
@@ -65,9 +92,6 @@ public abstract class MyClass2 /* test.MyClass2*/ implements java.util.Collectio
 
   @java.lang.Override()
   public @org.jetbrains.annotations.NotNull() java.lang.String set(int, @org.jetbrains.annotations.NotNull() java.lang.String);//  set(int, @org.jetbrains.annotations.NotNull() java.lang.String)
-
-  @java.lang.Override()
-  public abstract @org.jetbrains.annotations.NotNull() java.lang.String get(int);//  get(int)
 
   @java.lang.Override()
   public abstract boolean contains(@org.jetbrains.annotations.NotNull() java.lang.String);//  contains(@org.jetbrains.annotations.NotNull() java.lang.String)
@@ -100,9 +124,6 @@ public abstract class MyClass2 /* test.MyClass2*/ implements java.util.Collectio
   public boolean retainAll(java.util.Collection<?>);//  retainAll(java.util.Collection<?>)
 
   @java.lang.Override()
-  public final @org.jetbrains.annotations.NotNull() java.lang.String get(int);//  get(int)
-
-  @java.lang.Override()
   public final boolean contains(java.lang.Object);//  contains(java.lang.Object)
 
   @java.lang.Override()
@@ -122,6 +143,12 @@ public abstract class MyClass2 /* test.MyClass2*/ implements java.util.Collectio
 
   @java.lang.Override()
   public void clear();//  clear()
+
+  @java.lang.Override()
+  public void replaceAll(java.util.function.UnaryOperator<@org.jetbrains.annotations.NotNull() java.lang.String>);//  replaceAll(java.util.function.UnaryOperator<@org.jetbrains.annotations.NotNull() java.lang.String>)
+
+  @java.lang.Override()
+  public void sort(java.util.Comparator<? super @org.jetbrains.annotations.NotNull() java.lang.String>);//  sort(java.util.Comparator<? super @org.jetbrains.annotations.NotNull() java.lang.String>)
 
   public  MyClass2();//  .ctor()
 }
