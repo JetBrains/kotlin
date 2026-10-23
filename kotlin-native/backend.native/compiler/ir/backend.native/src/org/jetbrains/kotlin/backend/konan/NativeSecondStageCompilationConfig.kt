@@ -559,6 +559,9 @@ class NativeSecondStageCompilationConfig(
         if (macabi) {
             append("-macabi")
         }
+        if (arm64e) {
+            append("-arm64e")
+        }
         if (cCallMode != defaultCCallMode)
             append("-ccall_mode${cCallMode.name}")
         if (latin1Strings != defaultLatin1Strings)

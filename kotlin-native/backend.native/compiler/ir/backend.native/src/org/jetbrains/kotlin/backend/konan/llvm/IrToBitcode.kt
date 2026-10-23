@@ -371,6 +371,10 @@ internal class CodeGeneratorVisitor(
         }
 
         appendStaticInitializers()
+
+        if (context.config.arm64e) {
+            llvm.addPtrAuthAbiVersion()
+        }
     }
 
     //-------------------------------------------------------------------------//

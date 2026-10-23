@@ -571,6 +571,16 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
     }
 
     /**
+     * Marks the module as code for the arm64e ABI of user space, version 0, as Clang does. Without it, its object file
+     * has no pointer authentication ABI version, and libtool leaves such objects out of static libraries, e.g. caches.
+     */
+    fun addPtrAuthAbiVersion() {
+        val versions = node(llvmContext, node(llvmContext, int32(0), int1(false))!!)!!
+        val flag = node(llvmContext, int32(6 /* Module::AppendUnique */), "ptrauth.abi-version".mdString(llvmContext), versions)
+        LLVMAddNamedMetadataOperand(module, "llvm.module.flags", flag)
+    }
+
+    /**
      * [pointer] as code that authenticates it with [key] expects it: signed on arm64e, as Clang signs it, and unchanged
      * elsewhere. A null pointer stays unsigned, as in Clang.
      */

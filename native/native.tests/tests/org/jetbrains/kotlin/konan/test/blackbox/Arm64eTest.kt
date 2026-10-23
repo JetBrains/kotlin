@@ -19,7 +19,11 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilat
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.BinaryLibraryKind
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.configurables
+import org.jetbrains.kotlin.native.executors.runProcess
 import org.jetbrains.kotlin.test.KtAssert.fail
+import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -45,6 +49,53 @@ class Arm64eTest : AbstractNativeSimpleTest() {
     fun testTarget() = compileFrameworkAndCheckIr(testSuiteDir.resolve("target.kt"), "LinkBitcodeDependencies")
 
     @Test
+    fun testPtrAuthAbiVersion() = compileFrameworkAndCheckIr(testSuiteDir.resolve("ptrauth_abi_version.kt"), "Codegen")
+
+    @Test
+    fun testStaticCaches() {
+        val library = staticCachesLibrary()
+        val cacheRoot = buildDir.resolve("caches")
+        compileFramework(
+            testSuiteDir.resolve("static_caches/static_caches.kt"),
+            listOf("-Xbinary=arm64e=true") + autoCacheArgs(library, cacheRoot),
+            givenDependencies = setOf(TestModule.Given(library.klibFile)),
+        ).result.assertSuccess()
+
+        // arm64e caches have a flavor of their own.
+        val cacheDir = cacheRoot.listFiles().orEmpty().single { it.isDirectory }
+        assertTrue("-arm64e" in cacheDir.name) { "Expected an arm64e cache flavor, got ${cacheDir.name}" }
+        val archives = cacheDir.walkTopDown().filter { it.extension == "a" }.toList()
+        assertTrue(archives.isNotEmpty()) { "No cache in ${cacheDir.absolutePath}" }
+        archives.forEach(::assertArm64eObjects)
+    }
+
+    @Test
+    fun testStaticLibrary() {
+        val library = staticCachesLibrary()
+        val staticLibrary = testCompilationFactory.testCaseToBinaryLibrary(
+            generateObjCFrameworkTestCase(
+                TestKind.STANDALONE_NO_TR,
+                TestCase.NoTestRunnerExtras("There's no entrypoint in a static library"),
+                "static_library",
+                listOf(testSuiteDir.resolve("static_caches/static_caches.kt")),
+                TestCompilerArgs(listOf("-Xbinary=arm64e=true") + autoCacheArgs(library, buildDir.resolve("caches"))),
+                setOf(TestModule.Given(library.klibFile)),
+            ),
+            testRunSettings,
+            BinaryLibraryKind.STATIC,
+        ).result.assertSuccess().resultingArtifact.libraryFile.let {
+            // The compiler adds the prefix of static libraries to the name.
+            it.resolveSibling(targets.testTarget.family.staticPrefix + it.name)
+        }
+
+        // The static library contains the caches, which libtool leaves without objects if they have no pointer authentication
+        // ABI version.
+        assertArm64eObjects(staticLibrary)
+        val symbols = runProcess(llvmTool("llvm-nm"), "--defined-only", "--just-symbol-name", staticLibrary.absolutePath).stdout.lines()
+        assertTrue("_kfun:library#value(library.Base){}kotlin.Int" in symbols) { "No code of the cached library in ${staticLibrary.absolutePath}" }
+    }
+
+    @Test
     fun testCFunctionPointers() = compileFrameworkAndCheckIr(
         testSuiteDir.resolve("c_function_pointers.kt"), "Codegen", listOf("-Xbinary=sourceInfoType=libbacktrace")
     )
@@ -62,6 +113,25 @@ class Arm64eTest : AbstractNativeSimpleTest() {
             outputDir = buildDir,
             freeCompilerArgs = TestCompilerArgs(emptyList(), cinteropArgs = cinteropArgs),
         ).assertSuccess().resultingArtifact
+
+    private fun staticCachesLibrary() = compileToLibrary(testSuiteDir.resolve("static_caches/library"), buildDir.resolve("library"))
+
+    /** Arguments that build static caches of [library] in [cacheRoot]. */
+    private fun autoCacheArgs(library: TestCompilationArtifact.KLIB, cacheRoot: File): List<String> {
+        cacheRoot.mkdirs()
+        return listOf("-Xauto-cache-from=${library.klibFile.parentFile.absolutePath}", "-Xauto-cache-dir=${cacheRoot.absolutePath}")
+    }
+
+    /** Asserts that [archive] contains only arm64e objects with the pointer authentication ABI. */
+    private fun assertArm64eObjects(archive: File) {
+        val headers = runProcess(llvmTool("llvm-objdump"), "--macho", "--private-header", archive.absolutePath)
+            .stdout.lines().filter { it.startsWith("MH_MAGIC") }
+        assertTrue(headers.isNotEmpty() && headers.all { it.matches(Regex("""MH_MAGIC_64\s+ARM64\s+E\s+PAC00\s.*""")) }) {
+            "Expected arm64e objects with the pointer authentication ABI in ${archive.absolutePath}, got: $headers"
+        }
+    }
+
+    private fun llvmTool(name: String) = "${testRunSettings.configurables.absoluteLlvmHome}/bin/$name"
 
     private fun compileFramework(
         source: File,
