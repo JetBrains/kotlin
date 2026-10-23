@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.test.cases.components.resolver
 
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver.AbstractResolveCandidatesByFileTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.LLSourceLikeTestConfigurator
 import org.jetbrains.kotlin.analysis.test.data.manager.TestVariantChain
 import org.jetbrains.kotlin.analysis.test.data.manager.withAdditionalVariant
