@@ -103,6 +103,13 @@ class Arm64eTest : AbstractNativeSimpleTest() {
     }
 
     @Test
+    fun testFunctionAttributes() = compileFrameworkAndCheckIr(testSuiteDir.resolve("function_attributes.kt"), "Codegen")
+
+    @Test
+    fun testFunctionAttributesWithoutArm64e() =
+        compileFrameworkAndCheckIr(testSuiteDir.resolve("function_attributes_without_arm64e.kt"), "Codegen", arm64e = false)
+
+    @Test
     fun testCFunctionPointers() = compileFrameworkAndCheckIr(
         testSuiteDir.resolve("c_function_pointers.kt"), "Codegen", listOf("-Xbinary=sourceInfoType=libbacktrace")
     )
