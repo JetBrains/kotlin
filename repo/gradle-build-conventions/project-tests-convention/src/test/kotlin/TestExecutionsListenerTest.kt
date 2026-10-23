@@ -199,7 +199,7 @@ class TestExecutionsListenerTest {
 
         assertEquals(names, recorded().filter { it["type"] == "test" }.map { it["name"] })
         val text = executionsFile.readText(Charsets.UTF_8)
-        assertEquals(false, '�' in text, "No character was replaced on the way to the file")
+        assertEquals("", text.filterNot { it in ' '..'~' || it == '\n' }, "Everything else is escaped")
         assertEquals(recorded().size, text.lines().count { it.isNotEmpty() }, "Every record is a single line")
     }
 

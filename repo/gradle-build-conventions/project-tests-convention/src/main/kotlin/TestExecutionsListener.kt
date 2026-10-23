@@ -3,6 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+import groovy.json.JsonOutput
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.testing.TestDescriptor
 import org.gradle.api.tasks.testing.TestListener
@@ -64,6 +65,9 @@ import java.util.IdentityHashMap
  * it, so the file can be read in one pass. The events of the suites running in parallel forks interleave. A retried
  * test has a `test` line per attempt, in the order they ran - which is what lets TeamCity tell a flaky test from a
  * failed one. The `suiteEnd` of the outermost suite is the last line.
+ *
+ * Strings have every character outside printable ASCII escaped, so the file is ASCII and keeps any name intact, half a
+ * surrogate pair included.
  */
 class TestExecutionsListener(
     taskName: String,
@@ -110,16 +114,15 @@ class TestExecutionsListener(
          */
         private val running = IdentityHashMap<TestDescriptor, SuiteRecord>()
         private var lastSuiteId = 0
-        private val line = StringBuilder()
 
         // Truncated, so that nothing of an earlier run is left in the file.
         private val writer = file.run { parentFile.mkdirs(); bufferedWriter(Charsets.UTF_8) }
 
         init {
             writeLine {
-                string("type", "header")
-                number("formatVersion", 1)
-                string("taskPath", taskPath)
+                put("type", "header")
+                put("formatVersion", 1)
+                put("taskPath", taskPath)
             }
         }
 
@@ -128,154 +131,95 @@ class TestExecutionsListener(
             val record = SuiteRecord(++lastSuiteId, suite.className)
             running[suite] = record
             writeLine {
-                string("type", "suite")
-                number("id", record.id)
-                if (parent != null) number("parent", parent.id)
-                descriptor(suite, parent?.className)
+                put("type", "suite")
+                put("id", record.id)
+                if (parent != null) put("parent", parent.id)
+                putDescriptor(suite, parent?.className)
             }
         }
 
         fun endSuite(suite: TestDescriptor, result: TestResult) {
             val record = running.remove(suite)!!
             writeLine {
-                string("type", "suiteEnd")
-                number("id", record.id)
-                result(result)
+                put("type", "suiteEnd")
+                put("id", record.id)
+                putResult(result)
             }
         }
 
         fun recordTest(test: TestDescriptor, result: TestResult) {
             val parent = test.parent?.let { running.getValue(it) }
             writeLine {
-                string("type", "test")
-                if (parent != null) number("parent", parent.id)
-                descriptor(test, parent?.className)
-                result(result)
+                put("type", "test")
+                if (parent != null) put("parent", parent.id)
+                putDescriptor(test, parent?.className)
+                putResult(result)
             }
         }
 
-        private fun writeLine(members: JsonObjectWriter.() -> Unit) {
-            line.setLength(0)
-            JsonObjectWriter(line).write(members)
-            line.append('\n')
-            writer.append(line)
+        /** Writes a record of [members], in the order they are put. */
+        private fun writeLine(members: MutableMap<String, Any?>.() -> Unit) {
+            writer.appendLine(JsonOutput.toJson(buildMap(members)))
         }
 
         override fun close() = writer.close()
     }
 }
 
-private fun JsonObjectWriter.descriptor(descriptor: TestDescriptor, parentClassName: String?) {
-    string("name", descriptor.name)
-    if (descriptor.displayName != descriptor.name) string("displayName", descriptor.displayName)
+private fun MutableMap<String, Any?>.putDescriptor(descriptor: TestDescriptor, parentClassName: String?) {
+    put("name", descriptor.name)
+    if (descriptor.displayName != descriptor.name) put("displayName", descriptor.displayName)
     val className = descriptor.className
-    if (className != parentClassName) string("className", className)
-    source(descriptor.source, className)
+    if (className != parentClassName) put("className", className)
+    putSource(descriptor.source, className)
 }
 
-private fun JsonObjectWriter.source(source: TestSource, className: String?) {
+private fun MutableMap<String, Any?>.putSource(source: TestSource, className: String?) {
     if (source is NoSource) return
 
-    fun JsonObjectWriter.sourceClassName(sourceClassName: String) {
-        if (sourceClassName != className) string("className", sourceClassName)
+    fun MutableMap<String, Any>.putClassName(sourceClassName: String) {
+        if (sourceClassName != className) put("className", sourceClassName)
     }
 
-    fun JsonObjectWriter.position(position: FilePosition?) {
+    fun MutableMap<String, Any>.putPosition(position: FilePosition?) {
         if (position == null) return
-        number("line", position.line)
-        position.column?.let { number("column", it) }
+        put("line", position.line)
+        position.column?.let { put("column", it) }
     }
 
-    obj("source") {
+    put("source", buildMap {
         when (source) {
             is ClassSource -> {
-                string("kind", "class")
-                sourceClassName(source.className)
+                put("kind", "class")
+                putClassName(source.className)
             }
             is MethodSource -> {
-                string("kind", "method")
-                sourceClassName(source.className)
-                string("methodName", source.methodName)
+                put("kind", "method")
+                putClassName(source.className)
+                put("methodName", source.methodName)
             }
             is FileSource -> {
-                string("kind", "file")
-                string("file", source.file.path)
-                position(source.position)
+                put("kind", "file")
+                put("file", source.file.path)
+                putPosition(source.position)
             }
             is DirectorySource -> {
-                string("kind", "directory")
-                string("file", source.file.path)
+                put("kind", "directory")
+                put("file", source.file.path)
             }
             is ClasspathResourceSource -> {
-                string("kind", "classpathResource")
-                string("classpathResourceName", source.classpathResourceName)
-                position(source.position)
+                put("kind", "classpathResource")
+                put("classpathResourceName", source.classpathResourceName)
+                putPosition(source.position)
             }
             // 'OtherSource', or a kind Gradle has added since.
-            else -> string("kind", "other")
+            else -> put("kind", "other")
         }
-    }
+    })
 }
 
-private fun JsonObjectWriter.result(result: TestResult) {
-    string("resultType", result.resultType.name)
-    number("startTime", result.startTime)
-    number("endTime", result.endTime)
-}
-
-/** Writes a JSON object into [out], one member at a time. */
-private class JsonObjectWriter(private val out: StringBuilder) {
-    private var empty = true
-
-    fun write(members: JsonObjectWriter.() -> Unit) {
-        out.append('{')
-        members()
-        out.append('}')
-    }
-
-    fun string(key: String, value: String?) {
-        key(key)
-        if (value == null) out.append("null") else out.appendJsonString(value)
-    }
-
-    fun number(key: String, value: Number) {
-        key(key)
-        out.append(value)
-    }
-
-    fun obj(key: String, members: JsonObjectWriter.() -> Unit) {
-        key(key)
-        JsonObjectWriter(out).write(members)
-    }
-
-    private fun key(key: String) {
-        if (!empty) out.append(',')
-        empty = false
-        out.appendJsonString(key).append(':')
-    }
-}
-
-/** Appends [value] as a JSON string literal, so that no test name can break out of it, nor lose a character. */
-private fun StringBuilder.appendJsonString(value: String): StringBuilder {
-    append('"')
-    for ((index, char) in value.withIndex()) {
-        when {
-            char == '"' -> append("\\\"")
-            char == '\\' -> append("\\\\")
-            char == '\n' -> append("\\n")
-            char == '\r' -> append("\\r")
-            char == '\t' -> append("\\t")
-            char < ' ' -> appendUnicodeEscape(char)
-            // Half a surrogate pair has no UTF-8 encoding, so it is escaped rather than replaced when the file is written.
-            char.isHighSurrogate() && value.getOrNull(index + 1)?.isLowSurrogate() != true -> appendUnicodeEscape(char)
-            char.isLowSurrogate() && value.getOrNull(index - 1)?.isHighSurrogate() != true -> appendUnicodeEscape(char)
-            else -> append(char)
-        }
-    }
-    append('"')
-    return this
-}
-
-private fun StringBuilder.appendUnicodeEscape(char: Char) {
-    append("\\u").append(char.code.toString(16).padStart(4, '0'))
+private fun MutableMap<String, Any?>.putResult(result: TestResult) {
+    put("resultType", result.resultType.name)
+    put("startTime", result.startTime)
+    put("endTime", result.endTime)
 }
