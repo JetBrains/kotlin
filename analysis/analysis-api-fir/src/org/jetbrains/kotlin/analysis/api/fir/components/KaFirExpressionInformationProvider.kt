@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.analysis.api.types.classId
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector
-import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
 import org.jetbrains.kotlin.fir.resolve.transformers.FirWhenExhaustivenessComputer
 import org.jetbrains.kotlin.fir.withSession
@@ -506,15 +505,3 @@ private fun doesNamedFunctionUseBody(namedFunction: KtNamedFunction, body: PsiEl
 
 context(session: KaSession)
 private fun returnsUnit(declaration: KtDeclarationWithReturnType): Boolean = declaration.returnType.classId == KaStandardTypeClassIds.UNIT
-
-internal fun WhenMissingCase.toKaWhenMissingCase(): KaWhenMissingCase = when (this) {
-    is WhenMissingCase.Unknown -> KaWhenMissingCase.UnknownCase
-    is WhenMissingCase.ConditionTypeIsExpect.SealedClass -> KaWhenMissingCase.ExpectTypeCase.ExpectSealedClassCase
-    is WhenMissingCase.ConditionTypeIsExpect.SealedInterface -> KaWhenMissingCase.ExpectTypeCase.ExpectSealedInterfaceCase
-    is WhenMissingCase.ConditionTypeIsExpect.Enum -> KaWhenMissingCase.ExpectTypeCase.ExpectEnumCase
-    is WhenMissingCase.NullIsMissing -> KaWhenMissingCase.NullCase
-    is WhenMissingCase.BooleanIsMissing.TrueIsMissing -> KaWhenMissingCase.BooleanCase(true)
-    is WhenMissingCase.BooleanIsMissing.FalseIsMissing -> KaWhenMissingCase.BooleanCase(false)
-    is WhenMissingCase.IsTypeCheckIsMissing -> KaWhenMissingCase.TypeCase(classId, isSingleton, ownTypeParametersCount)
-    is WhenMissingCase.EnumCheckIsMissing -> KaWhenMissingCase.EnumEntryCase(callableId)
-}
