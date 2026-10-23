@@ -60,12 +60,23 @@ abstract class CliTestModuleCompiler : TestModuleCompiler() {
 
         val library = try {
             val outputPath = libraryOutputPath(sourcesTempDirectory, libraryName)
-            doCompile(
-                sourcesTempDirectory,
-                buildCompilerOptions(module, testServices, commonSourcesTempDirectory),
-                outputPath,
-                buildExtraClasspath(module, dependencyBinaryRoots, testServices)
+            val options = buildCompilerOptions(module, testServices, commonSourcesTempDirectory)
+            val extraClasspath = buildExtraClasspath(module, dependencyBinaryRoots, testServices)
+
+            // The key has to be computed before the compilation, which writes the library into the sources directory
+            val cacheKey = CompiledTestLibraryCache.computeKey(
+                compiler = this,
+                sourceDirectories = listOfNotNull(sourcesTempDirectory, commonSourcesTempDirectory),
+                options = options,
+                classpath = extraClasspath + dependencyBinaryRoots.map { it.absolutePathString() },
+                libraryName = libraryName,
             )
+
+            if (!CompiledTestLibraryCache.restore(cacheKey, outputPath)) {
+                doCompile(sourcesTempDirectory, options, outputPath, extraClasspath)
+                CompiledTestLibraryCache.store(cacheKey, outputPath)
+            }
+
             outputPath
         } catch (e: Throwable) {
             if (!compilationErrorExpected) {
