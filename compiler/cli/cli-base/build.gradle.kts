@@ -42,6 +42,9 @@ dependencies {
 
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
+    testCompileOnly(intellijCore())
+    testRuntimeOnly(intellijCore())
+    testRuntimeOnly(libs.intellij.fastutil)
     testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(libs.junit.platform.launcher)
 }
