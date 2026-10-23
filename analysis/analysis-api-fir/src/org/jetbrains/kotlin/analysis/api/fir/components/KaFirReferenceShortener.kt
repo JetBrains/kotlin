@@ -14,6 +14,10 @@ import com.intellij.psi.util.parentsOfType
 import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.components.ElementsToShortenCollector.PartialOrderOfScope.Companion.toPartialOrder
+import org.jetbrains.kotlin.analysis.api.fir.components.shortening.areReceiversEquivalent
+import org.jetbrains.kotlin.analysis.api.fir.components.shortening.correspondingTypePsi
+import org.jetbrains.kotlin.analysis.api.fir.components.shortening.enclosingTypeOperatorCall
+import org.jetbrains.kotlin.analysis.api.fir.components.shortening.isResolvableByContextSensitiveResolution
 import org.jetbrains.kotlin.analysis.api.fir.getTagIfSubject
 import org.jetbrains.kotlin.analysis.api.fir.isImplicitDispatchReceiver
 import org.jetbrains.kotlin.analysis.api.fir.references.KDocReferenceResolver
