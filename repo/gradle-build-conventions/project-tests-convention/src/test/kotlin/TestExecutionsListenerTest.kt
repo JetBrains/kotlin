@@ -17,6 +17,7 @@ import kotlin.test.assertEquals
 private const val TASK_NAME = "test"
 private const val TASK_PATH = ":some:project:test"
 private const val TEST_CLASS = "com.example.SomeTest"
+private const val NESTED_CLASS = $$"$$TEST_CLASS$Nested"
 private const val OTHER_CLASS = "com.example.OtherTest"
 
 /** What a run leaves in `test-executions.jsonl`, driven through the events Gradle would send. */
@@ -72,13 +73,13 @@ class TestExecutionsListenerTest {
         // JUnit 5 reports a parameterized method as a suite of its own, carrying the class of its tests.
         val parameterized = suite("checks(String)", parent = testClass, className = TEST_CLASS)
         val invocation = descriptor("[1] a", TEST_CLASS, parent = parameterized)
-        val nestedClass = suite("$TEST_CLASS\$Nested", parent = testClass, className = "$TEST_CLASS\$Nested")
-        val nestedTest = descriptor("nested()", "$TEST_CLASS\$Nested", parent = nestedClass)
+        val nestedClass = suite(NESTED_CLASS, parent = testClass, className = NESTED_CLASS)
+        val nestedTest = descriptor("nested()", NESTED_CLASS, parent = nestedClass)
         val classless = descriptor("classless", className = null, parent = testClass)
         val emptyClass = descriptor("emptyClass", className = "", parent = run)
         val elsewhere = descriptor("elsewhere()", TEST_CLASS, parent = testClass, source = methodSource(OTHER_CLASS, "elsewhere"))
 
-        listener.run(run) {
+        listener.inSuite(run) {
             listener.inSuite(testClass) {
                 listener.inSuite(parameterized) { listener.passed(invocation) }
                 listener.inSuite(nestedClass) { listener.passed(nestedTest) }
@@ -95,7 +96,7 @@ class TestExecutionsListenerTest {
         assertEquals(TEST_CLASS, record(TEST_CLASS)["className"])
         assertEquals(false, record("checks(String)").containsKey("className"))
         assertEquals(false, record("[1] a").containsKey("className"))
-        assertEquals("$TEST_CLASS\$Nested", record("$TEST_CLASS\$Nested")["className"])
+        assertEquals(NESTED_CLASS, record(NESTED_CLASS)["className"])
         assertEquals(false, record("nested()").containsKey("className"))
         assertEquals(true, record("classless").containsKey("className"), "No class is written out where the parent has one")
         assertEquals(null, record("classless")["className"])
@@ -140,7 +141,7 @@ class TestExecutionsListenerTest {
         val listener = listener()
         val run = suite("Gradle Test Run $TASK_PATH")
 
-        listener.run(run) {
+        listener.inSuite(run) {
             // The first round runs the whole class, the flaky test failing among the rest of it.
             val firstExecutor = suite("Gradle Test Executor 1", parent = run)
             val firstRound = suite(TEST_CLASS, parent = firstExecutor, className = TEST_CLASS)
@@ -179,7 +180,7 @@ class TestExecutionsListenerTest {
 
         val listener = listener()
         val run = suite("Gradle Test Run $TASK_PATH")
-        listener.run(run) { listener.passed(descriptor("passes()", TEST_CLASS, parent = run)) }
+        listener.inSuite(run) { listener.passed(descriptor("passes()", TEST_CLASS, parent = run)) }
 
         assertEquals(listOf("header", "suite", "test", "suiteEnd"), recorded().map { it["type"] })
     }
@@ -195,7 +196,7 @@ class TestExecutionsListenerTest {
 
         val listener = listener()
         val run = suite("Gradle Test Run $TASK_PATH")
-        listener.run(run) { names.forEach { listener.passed(descriptor(it, TEST_CLASS, parent = run)) } }
+        listener.inSuite(run) { names.forEach { listener.passed(descriptor(it, TEST_CLASS, parent = run)) } }
 
         assertEquals(names, recorded().filter { it["type"] == "test" }.map { it["name"] })
         val text = executionsFile.readText(Charsets.UTF_8)
@@ -219,8 +220,6 @@ class TestExecutionsListenerTest {
 /** A suite as Gradle reports one; the suites Gradle inserts itself carry no class. */
 private fun suite(name: String, parent: TestDescriptor? = null, className: String? = null): TestDescriptor =
     descriptor(name, className = className, parent = parent, composite = true)
-
-private fun TestExecutionsListener.run(run: TestDescriptor, events: () -> Unit) = inSuite(run, events)
 
 private fun TestExecutionsListener.inSuite(suite: TestDescriptor, events: () -> Unit) {
     beforeSuite(suite)

@@ -25,9 +25,7 @@ internal fun descriptor(
 internal fun result(status: ResultType, startTime: Long, endTime: Long): TestResult =
     FakeTestResult(status, startTime, endTime)
 
-internal fun classSource(className: String): TestSource = object : ClassSource {
-    override fun getClassName(): String = className
-}
+internal fun classSource(className: String): TestSource = ClassSource { className }
 
 internal fun methodSource(className: String, methodName: String): TestSource = object : MethodSource {
     override fun getClassName(): String = className
@@ -47,12 +45,11 @@ private class FakeTestDescriptor(
     override fun getDisplayName(): String = displayName
     override fun getParent(): TestDescriptor? = parent
     override fun isComposite(): Boolean = composite
+
     // Gradle's own 'NoSource' unless told otherwise.
     override fun getSource(): TestSource = source ?: super.getSource()
 }
 
-// 'TestFailure' is incubating, and an implementation of 'TestResult' still has to answer for it.
-@Suppress("UnstableApiUsage")
 private class FakeTestResult(
     private val status: ResultType,
     private val startTime: Long,
