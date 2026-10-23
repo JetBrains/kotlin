@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.reportIdentitySensitiveOperationOnWillBecomeValueClass
+import org.jetbrains.kotlin.fir.analysis.checkers.reportIdentitySensitiveOperationOnWillBecomeValueClasses
 import org.jetbrains.kotlin.fir.expressions.FirEqualityOperatorCall
 import org.jetbrains.kotlin.fir.expressions.FirOperation
 import org.jetbrains.kotlin.fir.types.isNullableNothing
@@ -24,8 +24,6 @@ object FirIdentityEqualsOnWillBecomeValueClassChecker : FirEqualityOperatorCallC
         val arguments = expression.argumentList.arguments
         // Comparison with 'null' is a nullability check rather than an identity one.
         if (arguments.any { it.resolvedType.isNullableNothing }) return
-        for (argument in arguments) {
-            reportIdentitySensitiveOperationOnWillBecomeValueClass(argument.source, argument.resolvedType)
-        }
+        reportIdentitySensitiveOperationOnWillBecomeValueClasses(expression.source, arguments.map { it.resolvedType })
     }
 }
