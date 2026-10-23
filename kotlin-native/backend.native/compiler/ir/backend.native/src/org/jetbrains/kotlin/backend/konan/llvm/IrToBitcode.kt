@@ -2166,8 +2166,13 @@ internal class CodeGeneratorVisitor(
         intrinsicGenerator.tryEvaluateSpecialCall(value, resultSlot)?.let { return it }
 
         val callSiteFile = (currentCodeContext.functionScope() as FunctionScope).declaration?.fileOrNull
-        if (callSiteFile != null && value.symbol.signature != null && value.symbol.owner.fileOrNull != null) {
-            generationState.context.factsTracker.uses(callSiteFile, Fact.Signature.from(value.symbol.owner))
+        // Fake overrides define no facts (see [FactsCollector]), so the use is recorded against the real declaration.
+        // The functions that constructors are lowered to have no signature, so the use is recorded against the original constructor.
+        val callee: IrFunction = value.symbol.owner.let {
+            it.originalConstructor ?: it.originalInlineClassConstructor ?: it.resolveFakeOverride() ?: it
+        }
+        if (callSiteFile != null && callee.symbol.signature != null && callee.fileOrNull != null) {
+            generationState.context.factsTracker.uses(callSiteFile, Fact.Signature.from(callee))
         }
 
         val args = evaluateExplicitArgs(value)
@@ -2467,8 +2472,25 @@ internal class CodeGeneratorVisitor(
         //context.log{"evaluateSimpleFunctionCall : $tmpVariableName = ${ir2string(value)}"}
         if (superClass == null && function.isOverridable)
             return callVirtual(function, args, resultLifetime, resultSlot)
-        else
+        else {
+            if (function.isFakeOverride) useFakeOverrideTargetFacts(function)
             return callDirect(function, args, resultLifetime, resultSlot)
+        }
+    }
+
+    /**
+     * A direct call to the fake override [function] calls the implementation it resolves to, which a new override in its class,
+     * or in any class between it and the implementation, changes: so the call site uses the [Fact.VtableLayout]
+     * (or [Fact.ItableLayout]) of each of these classes, which records their overrides.
+     */
+    private fun useFakeOverrideTargetFacts(function: IrSimpleFunction) {
+        val callSiteFile = (currentCodeContext.functionScope() as? FunctionScope)?.declaration?.fileOrNull ?: return
+        val owner = function.parent as? IrClass ?: return
+        val targetOwner = function.target.parent as? IrClass ?: return
+        (sequenceOf(owner) + owner.getAllSuperclasses())
+                .filter { it != targetOwner && it.isSubclassOf(targetOwner) }
+                .filter { it.fileOrNull != null && it.symbol.signature != null }
+                .forEach { generationState.context.factsTracker.uses(callSiteFile, Fact.methodTableLayoutOf(it, context.config.bridgesPolicy)) }
     }
 
     //-------------------------------------------------------------------------//

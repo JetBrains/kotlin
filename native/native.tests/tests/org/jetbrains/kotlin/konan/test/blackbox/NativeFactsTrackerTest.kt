@@ -30,7 +30,7 @@ import java.io.File
  * Each test compiles the signature examples of the "signature facts" proposal into a klib, builds a per-file cache for it
  * with `-Xbinary=dumpFactsTo=<file>`, prints everything that was tracked, and checks the provided (`defs`) and used (`uses`) facts.
  *
- * Dump line format: `relation  path  kind  symbolKey  hash  representation` (the representation is for debugging only).
+ * Dump format: CSV with the header `relation,path,kind,symbolKey,hash,representation` (the representation is for debugging only).
  */
 @Tag("caches")
 @EnforcedHostTarget
@@ -200,6 +200,24 @@ class NativeFactsTrackerTest : AbstractNativeSimpleTest() {
         assertFalse(isDirty("C.kt", before, after), "C.kt must not be dirty")
     }
 
+    // The facts computed from the klib alone are the ones the compiler records.
+    @Test
+    fun klibFactsMatchCompiler() {
+        val scenario = "klibFactsMatchCompiler"
+        val compiled = trackFacts(
+            scenario, ORIGINAL + mapOf(
+                "Base.kt" to "open class Base {\n    val x: Int = 1\n    open fun f(): String = \"\"\n}\n",
+                "Derived.kt" to "class Derived : Base() {\n    val y: Long = 2L\n    override fun f(): String = \"d\"\n}\n",
+                "Box.kt" to "class Box<T>(val value: T) {\n    fun get(): List<T?> = listOf(value)\n}\nprivate fun secret(): Box<String> = Box(\"\")\nobject O {\n    var counter: Int = 0\n}\n",
+            )
+        )
+        val fromKlib = klibFacts(buildDir.resolve(scenario))
+
+        assertTrue(compiled.allDefs.isNotEmpty())
+        assertEquals(emptyMap<FactKey, String>(), fromKlib.allUses)
+        assertEquals(compiled.allDefs, fromKlib.allDefs)
+    }
+
     private data class FactKey(val kind: String, val symbolKey: String)
 
     private fun Map<FactKey, String>.layouts(): Map<FactKey, String> = filterKeys { it.kind == "BASE_CLASS_LAYOUT" }
@@ -219,6 +237,7 @@ class NativeFactsTrackerTest : AbstractNativeSimpleTest() {
         fun defs(fileName: String): Map<FactKey, String> = of("defines", fileName)
         fun uses(fileName: String): Map<FactKey, String> = of("uses", fileName)
         val allDefs: Map<FactKey, String> get() = of("defines", null)
+        val allUses: Map<FactKey, String> get() = of("uses", null)
 
         /** The facts [user] used that are provided by [provider]. */
         fun usedFrom(user: String, provider: String): Map<FactKey, String> = uses(user).filterKeys { it in defs(provider) }
@@ -238,7 +257,7 @@ class NativeFactsTrackerTest : AbstractNativeSimpleTest() {
         val workDir = buildDir.resolve(scenario).apply { deleteRecursively(); mkdirs() }
         val cacheDir = workDir.resolve("cache").apply { mkdirs() }
         val klibFile = workDir.resolve("lib.klib")
-        val dumpFile = workDir.resolve("facts.txt")
+        val dumpFile = workDir.resolve("facts.csv")
 
         val sourcePaths = sources.map { entry -> workDir.resolve(entry.key).apply { writeText(entry.value) }.absolutePath }
         callNativeCompiler(*sourcePaths.toTypedArray(), "-p", "library", "-no-default-libs", "-o", klibFile.absolutePath)
@@ -253,15 +272,27 @@ class NativeFactsTrackerTest : AbstractNativeSimpleTest() {
             "-Xbinary=dumpFactsTo=${dumpFile.absolutePath}",
         )
 
-        val lines = if (dumpFile.exists()) dumpFile.readLines().filter { it.isNotBlank() } else emptyList()
+        return parseFacts(scenario, dumpFile)
+    }
+
+    private fun klibFacts(workDir: File): TrackedFacts {
+        val dumpFile = workDir.resolve("klib-facts.csv")
+        Class.forName("org.jetbrains.kotlin.backend.konan.facts.KlibFactsGeneratorKt", true, testRunSettings.get<KotlinNativeClassLoader>().classLoader)
+            .getMethod("dumpKlibFacts", String::class.java, String::class.java)
+            .invoke(null, workDir.resolve("lib.klib").absolutePath, dumpFile.absolutePath)
+        return parseFacts("${workDir.name} (klib)", dumpFile)
+    }
+
+    private fun parseFacts(scenario: String, dumpFile: File): TrackedFacts {
+        val text = if (dumpFile.exists()) dumpFile.readText() else ""
         println(buildString {
             appendLine("=== Facts tracked for '$scenario' (${dumpFile.absolutePath}) ===")
-            lines.sorted().forEach { appendLine(it) }
+            val lines = text.lines().filter { it.isNotBlank() }
+            lines.take(1).forEach { appendLine(it) }
+            lines.drop(1).sorted().forEach { appendLine(it) }
         })
 
-        val result = lines.map { line ->
-            val parts = line.split('\t')
-            assertEquals(6, parts.size) { "Malformed facts dump line: $line" }
+        val result = parseFactsCsv(text).map { parts ->
             TrackedFact(parts[0], File(parts[1]).name, FactKey(parts[2], parts[3]), parts[4], parts[5])
         }
 

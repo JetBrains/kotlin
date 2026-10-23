@@ -629,6 +629,7 @@ private class InlineClassTransformer(private val context: NativeLoweringContext)
 }
 
 private var IrConstructor.loweredInlineClassConstructor: IrSimpleFunction? by irAttribute(copyByDefault = false)
+internal var IrSimpleFunction.originalInlineClassConstructor: IrConstructor? by irAttribute(copyByDefault = false)
 
 private fun NativeLoweringContext.getLoweredInlineClassConstructor(irConstructor: IrConstructor): IrSimpleFunction = irConstructor::loweredInlineClassConstructor.getOrSetIfNull {
     require(irConstructor.constructedClass.isInlined())
@@ -651,6 +652,7 @@ private fun NativeLoweringContext.getLoweredInlineClassConstructor(irConstructor
         this.returnType = returnType
     }.apply {
         parent = irConstructor.parent
+        originalInlineClassConstructor = irConstructor
 
         // Note: technically speaking, this function doesn't have access to class type parameters (since it is "static").
         // But, technically speaking, otherwise we would have to remap types in the entire IR subtree,

@@ -18,6 +18,9 @@ import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.PerformanceManagerContext
 import org.jetbrains.kotlin.backend.konan.driver.utilities.CExportFiles
 import org.jetbrains.kotlin.backend.konan.driver.utilities.createTempFiles
+import org.jetbrains.kotlin.backend.konan.facts.DebugFactsSerializer
+import org.jetbrains.kotlin.backend.konan.facts.FactsCollector
+import org.jetbrains.kotlin.backend.konan.facts.serializeTo
 import org.jetbrains.kotlin.backend.konan.ir.FunctionsWithoutBoundCheckGenerator
 import org.jetbrains.kotlin.backend.konan.lower.*
 import org.jetbrains.kotlin.backend.konan.serialization.CacheDeserializationStrategy
@@ -89,6 +92,11 @@ internal fun <T> PhaseEngine<NativeBackendPhaseContext>.linkKlibs(
 internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendContext: NativeBackendContext, irModules: List<IrModuleFragment>, performanceManager: PerformanceManager?) {
     val config = context.config
     useContext(backendContext) { backendEngine ->
+        // Facts are defined by the IR as deserialized from the klibs, so that they can be computed without compiling (see `KlibFactsGenerator`).
+        irModules.forEach { module ->
+            module.files.forEach { FactsCollector.collectDefs(it, backendContext.factsTracker, config.bridgesPolicy) }
+        }
+
         // This phase adds declarations to the shared built-ins, independently of the input module.
         backendEngine.runModuleWisePhase(createModulePhases(::FunctionsWithoutBoundCheckGenerator).first(), listOf(irModules.first()))
 
@@ -274,6 +282,12 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
                 executor.awaitTermination(1, TimeUnit.DAYS)
                 thrownFromThread.get()?.let { throw it }
             }
+        }
+
+        // Uses are recorded during the codegen of all the fragments (possibly in parallel), so dump the facts only after it.
+        config.dumpFactsTo?.let {
+            val factsTracker = backendContext.factsTracker
+            DebugFactsSerializer.serializeTo(Path(it), factsTracker.definedFacts, factsTracker.usedFacts)
         }
 
         if (performanceManager != null) {

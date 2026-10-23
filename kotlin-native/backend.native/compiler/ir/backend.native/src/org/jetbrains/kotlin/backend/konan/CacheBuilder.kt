@@ -56,6 +56,7 @@ class CacheBuilder(
     private val configuration = config.configuration
     private val autoCacheableFrom = configuration[NativeConfigurationKeys.AUTO_CACHEABLE_FROM]!!.map { Path(Path(it).canonicalPathString()) }
     private val icEnabled = configuration[CommonConfigurationKeys.INCREMENTAL_COMPILATION]!!
+    private val factsCacheEnabled = configuration.factsCacheEnabled
     private val includedLibraries = configuration.konanIncludedLibraries
             .map { Path(it).canonicalPathString() }.toSet()
     private val generateTestRunner = configuration.getNotNull(NativeConfigurationKeys.GENERATE_TEST_RUNNER)
@@ -125,6 +126,10 @@ class CacheBuilder(
     private val KotlinLibrary.isSubjectOfIC: Boolean
         get() = isExplicitlySpecifiedByUserInCLIArgument && !isExternal && !isNativeStdlib
 
+    // With `-Xfacts-cache-enabled`, the caches of these libraries are built by [CacheBuilderFactBased] instead.
+    private val KotlinLibrary.isSubjectOfFactsCache: Boolean
+        get() = factsCacheEnabled && isSubjectOfIC && !isCInteropLibrary()
+
     // Among the IC'ed libraries only the cinterop ones are cached monolithically (see buildLibraryCache).
     private val KotlinLibrary.isCachedPerFile: Boolean
         get() = isSubjectOfIC && !isCInteropLibrary()
@@ -180,6 +185,7 @@ class CacheBuilder(
             if (config.target == KonanTarget.MINGW_X64 && !library.isNativeStdlib) {
                 return@forEach
             }
+            if (library.isSubjectOfFactsCache) return@forEach
             val isSubjectOfIC = library.isSubjectOfIC
             val cache = config.cachedLibraries.getLibraryCache(library, allowIncomplete = isSubjectOfIC)
             cache?.let {
@@ -255,6 +261,12 @@ class CacheBuilder(
                 rebuiltLibraries += library
                 lastRebuiltArchives.addAll(builtCachePaths)
             }
+        }
+
+        // TODO: Temporary. With `-Xfacts-cache-enabled` the per-file caches are only built by [CacheBuilderFactBased].
+        if (factsCacheEnabled) {
+            dumpLastRebuiltArchivesToDisk(lastRebuiltArchives)
+            return
         }
 
         // Every library dependable on one of the changed external libraries needs its cache to be fully rebuilt.

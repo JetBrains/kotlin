@@ -192,12 +192,18 @@ private class DeclarationsGeneratorVisitor(
             val classLlvmDeclarations = createClassDeclarations(declaration)
             declaration.metadata = KonanMetadata.Class(declaration, classLlvmDeclarations, context.getLayoutBuilder(declaration))
 
+            // The facts this class defines are collected before lowering, see [FactsCollector].
+            // The layout of a class depends on the layouts of all its superclasses, not only of the direct one.
             if (declaration.fileOrNull != null && declaration.symbol.signature != null) {
-                context.factsTracker.defines(declaration.file, Fact.BaseClassLayout.from(declaration))
-
-                declaration.getSuperClassNotAny()
-                        ?.takeIf { it.fileOrNull != null && it.fileOrNull != declaration.fileOrNull && it.symbol.signature != null }
-                        ?.let { context.factsTracker.uses(declaration.file, Fact.BaseClassLayout.from(it)) }
+                generateSequence(declaration.getSuperClassNotAny()) { it.getSuperClassNotAny() }
+                        .filter { it.fileOrNull != null && it.fileOrNull != declaration.fileOrNull && it.symbol.signature != null }
+                        .forEach { context.factsTracker.uses(declaration.file, Fact.BaseClassLayout.from(it)) }
+                // The vtable and the itables of this class (in its type info, used by its trampolines) are made of
+                // the slots of all its ancestors, which only define their own contribution.
+                declaration.getAllSuperclasses()
+                        .filter { it.symbol != context.irBuiltIns.anyClass }
+                        .filter { it.fileOrNull != null && it.fileOrNull != declaration.fileOrNull && it.symbol.signature != null }
+                        .forEach { context.factsTracker.uses(declaration.file, Fact.methodTableLayoutOf(it, context.config.bridgesPolicy)) }
             }
         }
         super.visitClass(declaration)
@@ -400,10 +406,6 @@ private class DeclarationsGeneratorVisitor(
     override fun visitField(declaration: IrField) {
         super.visitField(declaration)
 
-        if (declaration.symbol.signature != null) {
-            generationState.context.factsTracker.defines(declaration.file, Fact.Signature.from(declaration))
-        }
-
         val containingClass = declaration.parent as? IrClass
         if (containingClass != null && !declaration.isStatic) {
             if (!containingClass.requiresRtti()) return
@@ -435,9 +437,6 @@ private class DeclarationsGeneratorVisitor(
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction) {
         super.visitSimpleFunction(declaration)
-        if (declaration.symbol.signature != null) {
-            generationState.context.factsTracker.defines(declaration.file, Fact.Signature.from(declaration))
-        }
 
         if (!declaration.isReal) return
 

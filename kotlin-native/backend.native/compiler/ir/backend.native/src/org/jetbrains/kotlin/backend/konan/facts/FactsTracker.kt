@@ -26,25 +26,34 @@ interface FactsTracker {
     fun uses(user: IrFile, existingFact: Fact)
 }
 
-class FactsTrackerImpl : FactsTracker {
+class FactsTrackerImpl(
+        initialDefinedFacts: DefsAssociation = emptyMap(),
+        initialUsedFacts: UsesAssociation = emptyMap(),
+) : FactsTracker {
 
     override val definedFacts: DefsAssociation
-            field: ConcurrentHashMap<String, ConcurrentHashMap<FactKey, FactHash>> = ConcurrentHashMap()
+            field: ConcurrentHashMap<FileName, ConcurrentHashMap<FactKey, FactHash>> = initialDefinedFacts.toConcurrentCopy()
     override val usedFacts: UsesAssociation
-            field: ConcurrentHashMap<String, ConcurrentHashMap<FactKey, FactHash>> = ConcurrentHashMap()
+            field: ConcurrentHashMap<FileName, ConcurrentHashMap<FactKey, FactHash>> = initialUsedFacts.toConcurrentCopy()
 
     override fun defines(definee: IrFile, newFact: Fact) {
         val factKey = requireNotNull(newFact.factKey) {
             "Well, this should not happen for defines :)"
         }
-        definedFacts.getOrPut(definee.path) { ConcurrentHashMap() }[factKey] = newFact.contentHash()
+        definedFacts.computeIfAbsent(definee.path) { ConcurrentHashMap() }[factKey] = newFact.contentHash()
     }
 
     override fun uses(user: IrFile, existingFact: Fact) {
         val factKey = requireNotNull(existingFact.factKey) {
             "Well, this should not happen for uses :)"
         }
-        usedFacts.getOrPut(user.path) { ConcurrentHashMap() }[factKey] = existingFact.contentHash()
+        // Uses are recorded on lowered IR, so prefer the hash computed by [FactsCollector] before lowering.
+        // Facts of other modules are not collected and their IR is not lowered, so they are hashed directly.
+        val hash = definedFacts[existingFact.irFilePathString]?.get(factKey) ?: existingFact.contentHash()
+        usedFacts.computeIfAbsent(user.path) { ConcurrentHashMap() }[factKey] = hash
     }
 }
+
+private fun Map<FileName, Map<FactKey, FactHash>>.toConcurrentCopy(): ConcurrentHashMap<FileName, ConcurrentHashMap<FactKey, FactHash>> =
+        entries.associateTo(ConcurrentHashMap()) { [file, facts] -> file to ConcurrentHashMap(facts) }
 
