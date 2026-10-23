@@ -15,8 +15,7 @@ import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.HeaderMode
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.phaser.CompilerPhase
-import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.pipeline.AllModulesFrontendOutput
+import org.jetbrains.kotlin.fir.pipeline.requireIrForHeaderCompilationMode
 import org.jetbrains.kotlin.util.PerformanceManager
 
 class JKlibCliPipeline(
@@ -43,33 +42,12 @@ class JKlibCliPipeline(
     /**
      * Skips IR generation when running header mode with -Xheader-mode and
      * -Xheader-mode-type=compilation, unless the module contains declarations that require IR
-     * (inline functions, inline property accessors, or value classes).
+     * (inline functions, inline property accessors, value classes, or expect declarations).
      */
     private fun skipIrGeneration(artifact: JKlibFrontendPipelineArtifact): Boolean {
         val configuration = artifact.configuration
         return configuration.languageVersionSettings.getFlag(AnalysisFlags.headerMode) &&
                 configuration.languageVersionSettings.getFlag(AnalysisFlags.headerModeType) == HeaderMode.COMPILATION &&
                 !requireIrForHeaderCompilationMode(artifact.frontendOutput)
-    }
-
-    @OptIn(DirectDeclarationsAccess::class)
-    private fun requireIrForHeaderCompilationMode(frontendOutput: AllModulesFrontendOutput): Boolean {
-        return frontendOutput.outputs.any { output ->
-            output.fir.any { file ->
-                requireIrForHeaderCompilationMode(file.declarations)
-            }
-        }
-    }
-
-    @OptIn(DirectDeclarationsAccess::class)
-    private fun requireIrForHeaderCompilationMode(declarations: List<FirDeclaration>): Boolean {
-        return declarations.any { declaration ->
-            when (declaration) {
-                is FirFunction -> declaration.status.isInline
-                is FirProperty -> declaration.getter?.status?.isInline == true || declaration.setter?.status?.isInline == true
-                is FirClass -> declaration.status.isValue || requireIrForHeaderCompilationMode(declaration.declarations)
-                else -> false
-            }
-        }
     }
 }

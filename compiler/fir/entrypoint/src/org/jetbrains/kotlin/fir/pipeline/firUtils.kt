@@ -13,7 +13,8 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.builder.MultiplatformParsing2Fir
 import org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder
-import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
@@ -96,4 +97,29 @@ fun buildResolveAndCheckFirViaLightTree(
 ): SingleModuleFrontendOutput {
     val firFiles = session.buildFirViaLightTree(ktFiles, diagnosticsReporter, useMultiplatformParsing = false, countFilesAndLines)
     return resolveAndCheckFir(session, firFiles, diagnosticsReporter)
+}
+
+@OptIn(DirectDeclarationsAccess::class)
+fun requireIrForHeaderCompilationMode(frontendOutput: AllModulesFrontendOutput): Boolean {
+    return frontendOutput.outputs.any { output ->
+        output.fir.any { file ->
+            requireIrForHeaderCompilationMode(file.declarations)
+        }
+    }
+}
+
+@OptIn(DirectDeclarationsAccess::class)
+fun requireIrForHeaderCompilationMode(declarations: List<FirDeclaration>): Boolean {
+    return declarations.any(::requireIrForHeaderCompilationMode)
+}
+
+@OptIn(DirectDeclarationsAccess::class)
+fun requireIrForHeaderCompilationMode(declaration: FirDeclaration): Boolean {
+    return when (declaration) {
+        is FirMemberDeclaration if declaration.isExpect -> true
+        is FirFunction -> declaration.status.isInline
+        is FirProperty -> declaration.getter?.status?.isInline == true || declaration.setter?.status?.isInline == true
+        is FirClass -> declaration.status.isValue || requireIrForHeaderCompilationMode(declaration.declarations)
+        else -> false
+    }
 }
