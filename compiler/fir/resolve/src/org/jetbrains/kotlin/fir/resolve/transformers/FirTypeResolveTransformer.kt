@@ -62,13 +62,15 @@ fun <F : FirClassLikeDeclaration> F.runTypeResolvePhaseForLocalClass(
     currentScopeList: List<FirScope>,
     useSiteFile: FirFile,
     containingDeclarations: List<FirDeclaration>,
+    inCompanionBlock: Boolean,
 ): F {
     val transformer = FirTypeResolveTransformer(
         session,
         scopeSession,
         currentScopeList,
         initialCurrentFile = useSiteFile,
-        classDeclarationsStack = containingDeclarations.filterIsInstanceTo(ArrayDeque())
+        classDeclarationsStack = containingDeclarations.filterIsInstanceTo(ArrayDeque()),
+        inCompanionBlock = inCompanionBlock,
     )
 
     return this.transform(transformer, null)
@@ -80,7 +82,8 @@ open class FirTypeResolveTransformer(
     @property:PrivateForInline val scopeSession: ScopeSession,
     initialScopes: List<FirScope> = emptyList(),
     initialCurrentFile: FirFile? = null,
-    @property:PrivateForInline val classDeclarationsStack: ArrayDeque<FirClass> = ArrayDeque()
+    @property:PrivateForInline val classDeclarationsStack: ArrayDeque<FirClass> = ArrayDeque(),
+    private var inCompanionBlock: Boolean = false,
 ) : FirAbstractTreeTransformer<Any?>(FirResolvePhase.TYPES) {
     /**
      * All current scopes sorted from outermost to innermost.
@@ -99,6 +102,16 @@ open class FirTypeResolveTransformer(
 
     @set:PrivateForInline
     var staticScopesBefore: PersistentList<FirScope>? = null
+
+    private inline fun <T> inCompanionBlockIf(value: Boolean, action: () -> T): T {
+        val oldValue = inCompanionBlock
+        return try {
+            if (value) inCompanionBlock = true
+            action()
+        } finally {
+            inCompanionBlock = oldValue
+        }
+    }
 
     private val typeResolverTransformer: FirSpecificTypeResolverTransformer = FirSpecificTypeResolverTransformer(session, expandTypeAliases = true)
 
@@ -232,48 +245,50 @@ open class FirTypeResolveTransformer(
                 scopes = staticScopes
             }
 
-            addTypeParametersScope(property)
-            resolveTypeParameterBounds(property)
-            property
-                .transformReturnTypeRef(this, data)
-                .transformReceiverParameter(this, data)
-                .transformContextParameters(this, data)
-                .transformGetter(this, data)
-                .transformSetter(this, data)
-                .transformBackingField(this, data)
-                .transformAnnotations(this, data)
+            inCompanionBlockIf(property.isCompanionBlockMember) {
+                addTypeParametersScope(property)
+                resolveTypeParameterBounds(property)
+                property
+                    .transformReturnTypeRef(this, data)
+                    .transformReceiverParameter(this, data)
+                    .transformContextParameters(this, data)
+                    .transformGetter(this, data)
+                    .transformSetter(this, data)
+                    .transformBackingField(this, data)
+                    .transformAnnotations(this, data)
 
-            if (property.isFromVararg == true) {
-                property.transformTypeToArrayType(session)
-                property.backingField?.transformTypeToArrayType(session)
-                setAccessorTypesByPropertyType(property)
-            }
-
-            when {
-                property.returnTypeRef is FirResolvedTypeRef && property.delegate != null -> {
+                if (property.isFromVararg == true) {
+                    property.transformTypeToArrayType(session)
+                    property.backingField?.transformTypeToArrayType(session)
                     setAccessorTypesByPropertyType(property)
                 }
-                property.returnTypeRef !is FirResolvedTypeRef && property.initializer == null &&
-                        property.getter?.returnTypeRef is FirResolvedTypeRef -> {
-                    val returnTypeRef = property.getter!!.returnTypeRef
 
-                    property.replaceReturnTypeRef(returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.PropertyTypeFromGetterReturnType))
-                    property.backingField?.replaceReturnTypeRef(
-                        returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.PropertyTypeFromGetterReturnType)
-                    )
+                when {
+                    property.returnTypeRef is FirResolvedTypeRef && property.delegate != null -> {
+                        setAccessorTypesByPropertyType(property)
+                    }
+                    property.returnTypeRef !is FirResolvedTypeRef && property.initializer == null &&
+                            property.getter?.returnTypeRef is FirResolvedTypeRef -> {
+                        val returnTypeRef = property.getter!!.returnTypeRef
 
-                    property.setter?.valueParameters?.forEach {
-                        it.replaceReturnTypeRef(
+                        property.replaceReturnTypeRef(returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.PropertyTypeFromGetterReturnType))
+                        property.backingField?.replaceReturnTypeRef(
                             returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.PropertyTypeFromGetterReturnType)
                         )
+
+                        property.setter?.valueParameters?.forEach {
+                            it.replaceReturnTypeRef(
+                                returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.PropertyTypeFromGetterReturnType)
+                            )
+                        }
                     }
                 }
+
+                unboundCyclesInTypeParametersSupertypes(property)
+
+                property.moveOrDeleteIrrelevantAnnotations()
+                property
             }
-
-            unboundCyclesInTypeParametersSupertypes(property)
-
-            property.moveOrDeleteIrrelevantAnnotations()
-            property
         }
     }
 
@@ -303,30 +318,32 @@ open class FirTypeResolveTransformer(
                 scopes = staticScopes
             }
 
-            addTypeParametersScope(namedFunction)
+            inCompanionBlockIf(namedFunction.isCompanionBlockMember) {
+                addTypeParametersScope(namedFunction)
 
-            resolveTypeParameterBounds(namedFunction)
+                resolveTypeParameterBounds(namedFunction)
 
-            namedFunction
-                .transformReturnTypeRef(this, data)
-                .transformReceiverParameter(this, data)
-                .transformContextParameters(this, data)
-                .transformValueParameters(this, data)
-                .transformBody(this, data)
-                .transformAnnotations(this, data)
-                .also {
-                    unboundCyclesInTypeParametersSupertypes(it as FirTypeParametersOwner)
+                namedFunction
+                    .transformReturnTypeRef(this, data)
+                    .transformReceiverParameter(this, data)
+                    .transformContextParameters(this, data)
+                    .transformValueParameters(this, data)
+                    .transformBody(this, data)
+                    .transformAnnotations(this, data)
+                    .also {
+                        unboundCyclesInTypeParametersSupertypes(it as FirTypeParametersOwner)
+                    }
+
+                if (namedFunction.source?.kind == KtFakeSourceElementKind.DataClassGeneratedMembers.CopyFunction &&
+                    namedFunction.name == StandardNames.DATA_CLASS_COPY
+                ) {
+                    for (valueParameter in namedFunction.valueParameters) {
+                        valueParameter.moveOrDeleteIrrelevantAnnotations()
+                    }
                 }
 
-            if (namedFunction.source?.kind == KtFakeSourceElementKind.DataClassGeneratedMembers.CopyFunction &&
-                namedFunction.name == StandardNames.DATA_CLASS_COPY
-            ) {
-                for (valueParameter in namedFunction.valueParameters) {
-                    valueParameter.moveOrDeleteIrrelevantAnnotations()
-                }
+                namedFunction
             }
-
-            namedFunction
         }
     }
 
@@ -428,7 +445,7 @@ open class FirTypeResolveTransformer(
     override fun transformTypeRef(typeRef: FirTypeRef, data: Any?): FirResolvedTypeRef {
         return typeRef.transform(
             typeResolverTransformer,
-            TypeResolutionConfiguration(scopes.asReversed(), classDeclarationsStack, currentFile)
+            TypeResolutionConfiguration(scopes.asReversed(), classDeclarationsStack, currentFile, inCompanionBlock = inCompanionBlock)
         )
     }
 
@@ -436,7 +453,8 @@ open class FirTypeResolveTransformer(
         val equalityBoundAnnotation = annotations.getAnnotationByClassId(StandardClassIds.Annotations.EqualityBound, session) ?: return
         val boundArgument = equalityBoundAnnotation.findArgumentByName(StandardClassIds.Annotations.ParameterNames.equalityBound)
         val resolvedType = (boundArgument as? FirGetClassCall)?.argument?.let { getClassLhs ->
-            val configuration = TypeResolutionConfiguration(scopes.asReversed(), classDeclarationsStack, currentFile)
+            val configuration =
+                TypeResolutionConfiguration(scopes.asReversed(), classDeclarationsStack, currentFile, inCompanionBlock = inCompanionBlock)
             session.typeResolver.resolveEqualityBoundTypeOrNull(getClassLhs, configuration)
         }
         equalityBoundType = resolvedType ?: ConeErrorType(ConeCannotResolveEqualityBoundType)

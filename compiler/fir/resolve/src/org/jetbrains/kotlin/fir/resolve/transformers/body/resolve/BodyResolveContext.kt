@@ -236,12 +236,20 @@ class BodyResolveContext(
         }
     }
 
+    var inCompanionBlock: Boolean = false
+
     @PrivateForInline
     inline fun <T> withCompanionBlockIf(condition: Boolean, f: () -> T): T {
-        return withTowerDataContexts(
-            newContexts = runIf(condition) { regularTowerDataContexts.forCompanionBlock() },
-            f
-        )
+        val oldValue = inCompanionBlock
+        try {
+            if (condition) inCompanionBlock = true
+            return withTowerDataContexts(
+                newContexts = runIf(condition) { regularTowerDataContexts.forCompanionBlock() },
+                f
+            )
+        } finally {
+            inCompanionBlock = oldValue
+        }
     }
 
     @PrivateForInline
