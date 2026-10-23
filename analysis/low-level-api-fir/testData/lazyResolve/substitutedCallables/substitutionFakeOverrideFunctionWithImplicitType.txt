@@ -36,7 +36,7 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideFunctionWithImplicitType.kt
 
         public final [ResolvedTo(STATUS)] fun explicitType(): R|T?| { LAZY_BLOCK }
 
-        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun [ResolvedTo(EXPECT_ACTUAL_MATCHING)] R|T|.resolveMe(): <implicit> { LAZY_BLOCK }
+        public final [ResolvedTo(STATUS)] fun [ResolvedTo(STATUS)] R|T|.resolveMe(): <implicit> { LAZY_BLOCK }
 
     }
 
@@ -57,7 +57,7 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideFunctionWithImplicitType.kt
 
         public final [ResolvedTo(STATUS)] fun explicitType(): R|T?| { LAZY_BLOCK }
 
-        public final [ResolvedTo(CONTRACTS)] fun [ResolvedTo(CONTRACTS)] R|T|.resolveMe(): <implicit> { LAZY_BLOCK }
+        public final [ResolvedTo(STATUS)] fun [ResolvedTo(STATUS)] R|T|.resolveMe(): <implicit> { LAZY_BLOCK }
 
     }
 
@@ -101,7 +101,7 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideFunctionWithImplicitType.kt
 
         public final [ResolvedTo(STATUS)] fun explicitType(): R|T?| { LAZY_BLOCK }
 
-        public final [ResolvedTo(CONSTANT_EVALUATION)] fun [ResolvedTo(CONSTANT_EVALUATION)] R|T|.resolveMe(): R|T?| {
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] R|T|.resolveMe(): R|T?| {
             ^resolveMe this@R|second/AbstractClass|.R|second/AbstractClass.explicitType|()
         }
 
@@ -124,7 +124,7 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideFunctionWithImplicitType.kt
 
         public final [ResolvedTo(STATUS)] fun explicitType(): R|T?| { LAZY_BLOCK }
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun [ResolvedTo(ANNOTATION_ARGUMENTS)] R|T|.resolveMe(): R|T?| {
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] R|T|.resolveMe(): R|T?| {
             ^resolveMe this@R|second/AbstractClass|.R|second/AbstractClass.explicitType|()
         }
 
@@ -147,7 +147,7 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideFunctionWithImplicitType.kt
 
         public final [ResolvedTo(STATUS)] fun explicitType(): R|T?| { LAZY_BLOCK }
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun [ResolvedTo(ANNOTATION_ARGUMENTS)] R|T|.resolveMe(): R|T?| {
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] R|T|.resolveMe(): R|T?| {
             ^resolveMe this@R|second/AbstractClass|.R|second/AbstractClass.explicitType|()
         }
 

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.calls.overloads
 
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirContractDescriptionOwner
+import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.ConeLambdaWithTypeVariableAsExpectedTypeAtom
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.ConeResolvedLambdaAtom
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.substitution.asCone
+import org.jetbrains.kotlin.fir.scopes.impl.contractOwner
 import org.jetbrains.kotlin.fir.types.isSomeFunctionType
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
@@ -200,4 +202,5 @@ private fun Collection<Candidate>.lambdaAtomGroups(): Collection<Collection<Lamb
     return lambdaAtomsGroupedByAnonymousFunction.values
 }
 
-private fun Candidate.hasNonTrivialContracts(): Boolean = (symbol.fir as? FirContractDescriptionOwner)?.contractDescription != null
+private fun Candidate.hasNonTrivialContracts(): Boolean =
+    ((symbol.fir as? FirFunction)?.contractOwner() as? FirContractDescriptionOwner)?.contractDescription != null

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildConstructedClassTypePa
 import org.jetbrains.kotlin.fir.declarations.builder.buildConstructor
 import org.jetbrains.kotlin.fir.declarations.builder.buildReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameterCopy
+import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.defaultType
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 
 private object TypeAliasConstructorInfoKey : FirDeclarationDataKey()
 
@@ -36,12 +38,30 @@ data class TypeAliasConstructorInfo<T : FirFunction>(
     val originalConstructor: T,
     val typeAliasSymbol: FirTypeAliasSymbol,
     val substitutor: ConeSubstitutor?,
-)
+) {
+    override fun toString(): String {
+        return "TypeAliasConstructorInfo(originalConstructor=${originalConstructor.symbol}, typeAliasSymbol=$typeAliasSymbol, substitutor=$substitutor)"
+    }
+}
 
 var <T : FirFunction> T.typeAliasConstructorInfo: TypeAliasConstructorInfo<T>? by FirDeclarationDataRegistry.data(TypeAliasConstructorInfoKey)
 
 val FirConstructorSymbol.typeAliasConstructorInfo: TypeAliasConstructorInfo<*>?
     get() = fir.typeAliasConstructorInfo
+
+/**
+ * The function whose contract applies to calls of this function.
+ *
+ * Neither typealiased constructors nor substitution and intersection fake overrides copy the contract of their original,
+ * so it should be taken from the original. The original of a typealiased constructor may be a substitution override,
+ * but never vice versa, so the typealiased constructor is unwrapped first.
+ */
+fun FirFunction.contractOwner(): FirFunction = (typeAliasConstructorInfo?.originalConstructor ?: this).unwrapFakeOverrides()
+
+/**
+ * @see contractOwner
+ */
+fun FirFunctionSymbol<*>.contractOwner(): FirFunctionSymbol<*> = fir.contractOwner().symbol
 
 class FirTypealiasConstructorStorage(val session: FirSession) : FirSessionComponent {
     private val cachesFactory = session.firCachesFactory
@@ -129,12 +149,17 @@ class TypeAliasConstructorsSubstitutingScope private constructor(
                 }
             }
 
-            originalConstructor.valueParameters.mapTo(valueParameters) {
-                buildValueParameterCopy(it) {
+            originalConstructor.valueParameters.mapTo(valueParameters) { originalParameter ->
+                buildValueParameterCopy(originalParameter) {
                     symbol = FirValueParameterSymbol()
                     moduleData = typeAliasSymbol.moduleData
                     origin = FirDeclarationOrigin.Synthetic.TypeAliasConstructor
                     containingDeclarationSymbol = newConstructorSymbol
+                    // As in fake overrides, only the presence of a default value matters,
+                    // so we shouldn't share the original expression which can be replaced during resolution
+                    defaultValue = originalParameter.defaultValue?.let {
+                        buildExpressionStub { coneTypeOrNull = originalParameter.returnTypeRef.coneTypeOrNull }
+                    }
                 }
             }
 
@@ -146,10 +171,7 @@ class TypeAliasConstructorsSubstitutingScope private constructor(
                 }
             }
 
-            contractDescription = originalConstructor.contractDescription
             annotations.addAll(originalConstructor.annotations)
-            delegatedConstructor = originalConstructor.delegatedConstructor
-            body = originalConstructor.body
 
             val outerType = (typeAliasSymbol.resolvedExpandedTypeRef.coneType as? ConeClassLikeType)?.let { expandedType ->
                 outerType(expandedType, session) { session.firProvider.getContainingClass(it) }

@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.resolve.isFunctionOrSuspendFunctionInvoke
+import org.jetbrains.kotlin.fir.scopes.impl.contractOwner
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
@@ -167,7 +168,8 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) {
 
     private fun FirFunctionCall.forEachArgument(session: FirSession, block: (FirExpression, EventOccurrencesRange?) -> Unit) {
         val functionSymbol = toResolvedCallableSymbol() as? FirFunctionSymbol<*>
-        val effects = functionSymbol?.resolvedContractDescription?.effects?.mapNotNull { it.effect as? ConeCallsEffectDeclaration }
+        val effects = functionSymbol?.contractOwner()?.resolvedContractDescription?.effects
+            ?.mapNotNull { it.effect as? ConeCallsEffectDeclaration }
         val isInline = functionSymbol?.isInline == true || functionSymbol?.isArrayLambdaConstructor() == true
         explicitReceiver?.let { arg ->
             // Special hardcoded contract for `Function<N>.invoke`:
