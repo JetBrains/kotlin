@@ -10,10 +10,7 @@ import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationTarget
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirEmptyAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaKlibDecompiledFileAnnotationList
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirNamedClassSymbolBase
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirPackageSymbol
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirPsiJavaClassSymbol
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
+import org.jetbrains.kotlin.analysis.api.fir.symbols.*
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.withSymbolAttachment
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsSymbolInformationProvider
