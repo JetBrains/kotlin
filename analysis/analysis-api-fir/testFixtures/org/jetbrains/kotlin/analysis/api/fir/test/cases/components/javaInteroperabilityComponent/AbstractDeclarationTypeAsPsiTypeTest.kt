@@ -12,14 +12,14 @@ import org.jetbrains.kotlin.analysis.api.compilation.compile
 import org.jetbrains.kotlin.analysis.api.compilation.createCompilationOptions
 import org.jetbrains.kotlin.analysis.api.components.asPsiType
 import org.jetbrains.kotlin.analysis.api.expressions.returnType
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.compilerFacility.TestAllowedErrorFilter
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.compilerFacility.dumpClassFiles
 import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.javaInteroperabilityComponent.AbstractDeclarationTypeAsPsiTypeTest.Directives.RENDER_CLASS_DUMP
 import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.javaInteroperabilityComponent.AbstractDeclarationTypeAsPsiTypeTest.Directives.TYPE_MAPPING_MODE
 import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.javaInteroperabilityComponent.JavaInteroperabilityComponentTestUtils.findLightDeclarationContext
 import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.javaInteroperabilityComponent.JavaInteroperabilityComponentTestUtils.getContainingKtLightClass
 import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.javaInteroperabilityComponent.JavaInteroperabilityComponentTestUtils.render
 import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.stringRepresentation
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compilerFacility.TestAllowedErrorFilter
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compilerFacility.dumpClassFiles
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
