@@ -171,6 +171,16 @@ public interface JsCompilerLinkingArguments : JsCompilerArguments,
         JsCompilerLinkingArgument("X_IR_MINIMIZED_MEMBER_NAMES", KotlinReleaseVersion(1, 7, 0))
 
     /**
+     * Generate one .js file per class and per top-level declaration set.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_IR_PER_CLASS: JsCompilerLinkingArgument<Boolean> =
+        JsCompilerLinkingArgument("X_IR_PER_CLASS", KotlinReleaseVersion(2, 5, 0))
+
+    /**
      * Generate one .js file per source file.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.

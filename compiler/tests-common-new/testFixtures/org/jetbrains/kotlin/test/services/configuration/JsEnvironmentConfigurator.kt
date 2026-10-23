@@ -141,6 +141,9 @@ abstract class JsEnvironmentConfigurator(testServices: TestServices) : Environme
             // If perModuleOnly then skip whole program
             // (it.dce => runIrDce) && (perModuleOnly => it.perModule)
             return TranslationMode.entries
+                // TODO: Remove before merging
+                .asSequence()
+                .filterNot { it.granularity == JsGenerationGranularity.PER_CLASS }
                 .filter {
                     (it.production || !onlyIrDce) &&
                             (!it.production || runIrDce) &&

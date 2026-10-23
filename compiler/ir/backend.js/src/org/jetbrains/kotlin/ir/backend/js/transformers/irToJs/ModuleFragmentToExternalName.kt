@@ -18,6 +18,9 @@ class ModuleFragmentToExternalName(private val jsOutputNamesMapping: Map<IrModul
         return getExternalNameFor(file.outputName, file.packageFqName.asString(), file.module.getJsOutputName())
     }
 
+    fun getExternalNameFor(file: IrFile, postfix: String): String =
+        "${getExternalNameFor(file)}$postfix"
+
     fun getExternalNameFor(fileName: String, packageFqn: String, moduleName: String): String {
         return "$moduleName/${getFileStableName(fileName, packageFqn)}"
     }
@@ -35,7 +38,11 @@ class ModuleFragmentToExternalName(private val jsOutputNamesMapping: Map<IrModul
     }
 
     fun getSafeNameExporterFor(file: IrFile): String {
-        return "${getSafeNameFor(file)}$EXPORTER_FILE_POSTFIX"
+        return getSafeNameFor(file, EXPORTER_FILE_POSTFIX)
+    }
+
+    fun getSafeNameFor(file: IrFile, postfix: String): String {
+        return "${getSafeNameFor(file)}$postfix"
     }
 
     fun getExternalNameFor(module: IrModuleFragment): String {

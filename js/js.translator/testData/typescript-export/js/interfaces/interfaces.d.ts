@@ -21,8 +21,6 @@ declare namespace JS_TESTS {
         }
         interface ExternalInterfaceWithIgnoredNonStaticCompanion {
         }
-    }
-    namespace foo {
         interface TestInterface {
             readonly value: string;
             getOwnerName(): string;
