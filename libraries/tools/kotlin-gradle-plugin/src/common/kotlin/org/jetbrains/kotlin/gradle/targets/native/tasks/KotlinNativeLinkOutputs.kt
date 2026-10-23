@@ -18,30 +18,13 @@ import java.io.File
  */
 internal class KotlinNativeLinkOutputs(
     destinationDirectory: File,
-    outputKind: CompilerOutputKind,
+    private val outputKind: CompilerOutputKind,
     private val target: KonanTarget,
     baseName: String,
-    debuggable: Boolean,
-    isStaticFramework: Boolean,
-    freeCompilerArgs: List<String>,
 ) {
     private val isFramework = outputKind == CompilerOutputKind.FRAMEWORK
 
     private val isLibrary = outputKind == CompilerOutputKind.STATIC || outputKind == CompilerOutputKind.DYNAMIC
-
-    // Static archives go through libtool, which produces no dSYM
-    private val isStaticArchive = outputKind == CompilerOutputKind.STATIC || isStaticFramework
-
-    // Light debug info is on by default for Apple targets, so release binaries get a dSYM too
-    private val lightDebug = "-Xadd-light-debug=disable" !in freeCompilerArgs
-
-    // Headers only, the compiler never links
-    private val omitFrameworkBinary = isFramework && "-Xomit-framework-binary" in freeCompilerArgs
-
-    private val producesDsym = target.family.isAppleFamily &&
-            !isStaticArchive &&
-            !omitFrameworkBinary &&
-            (debuggable || lightDebug)
 
     /** Main output path without the suffix, e.g. `.../libfoo` for `.../libfoo.so`. */
     private val outputName: File = destinationDirectory.resolve(
@@ -60,8 +43,27 @@ internal class KotlinNativeLinkOutputs(
         File("${outputName.path}.def").takeIf { isLibrary && target.family == Family.MINGW },
     )
 
-    val directories: List<File> = listOfNotNull(
-        mainOutput.takeIf { isFramework },
-        File("${mainOutput.path}.dSYM").takeIf { producesDsym },
-    )
+    fun directories(debuggable: Boolean, isStaticFramework: Boolean, freeCompilerArgs: List<String>): List<File> {
+        // Static archives go through libtool, which produces no dSYM
+        val isStaticArchive = outputKind == CompilerOutputKind.STATIC || isStaticFramework
+
+        // Headers only, the compiler never links
+        val omitFrameworkBinary = isFramework && "-Xomit-framework-binary" in freeCompilerArgs
+
+        // -g may also arrive as a free arg. Light debug info is on by default for Apple targets,
+        // so release binaries get a dSYM too; the last -Xadd-light-debug flag wins.
+        val debug = debuggable || "-g" in freeCompilerArgs
+        val lightDebug = freeCompilerArgs.lastOrNull { it.startsWith(LIGHT_DEBUG_FLAG) }?.removePrefix(LIGHT_DEBUG_FLAG) != "disable"
+
+        val producesDsym = target.family.isAppleFamily && !isStaticArchive && !omitFrameworkBinary && (debug || lightDebug)
+
+        return listOfNotNull(
+            mainOutput.takeIf { isFramework },
+            File("${mainOutput.path}.dSYM").takeIf { producesDsym },
+        )
+    }
+
+    private companion object {
+        const val LIGHT_DEBUG_FLAG = "-Xadd-light-debug="
+    }
 }

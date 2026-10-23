@@ -420,12 +420,9 @@ constructor(
     @get:NormalizeLineEndings
     protected val friendModule: FileCollection = objectFactory.fileCollection().from({ compilation.friendPaths })
 
-    private val linkOutputs: Provider<KotlinNativeLinkOutputs> =
-        destinationDirectory.zip(toolOptions.freeCompilerArgs) { directory, freeCompilerArgs ->
-            KotlinNativeLinkOutputs(
-                directory.asFile, outputKind, konanTarget, baseName, debuggable, isStaticFramework, freeCompilerArgs
-            )
-        }
+    private val linkOutputs: Provider<KotlinNativeLinkOutputs> = destinationDirectory.map {
+        KotlinNativeLinkOutputs(it.asFile, outputKind, konanTarget, baseName)
+    }
 
     @get:Internal
     open val outputFile: Provider<File>
@@ -435,7 +432,10 @@ constructor(
     internal val outputFiles: Provider<List<File>> = linkOutputs.map { it.files }
 
     @get:OutputDirectories
-    internal val outputDirectories: Provider<List<File>> = linkOutputs.map { it.directories }
+    internal val outputDirectories: Provider<List<File>> =
+        linkOutputs.zip(toolOptions.freeCompilerArgs) { outputs, freeCompilerArgs ->
+            outputs.directories(debuggable, isStaticFramework, freeCompilerArgs)
+        }
 
     @Internal
     val compilerPluginOptions = CompilerPluginOptions()

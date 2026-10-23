@@ -15,14 +15,14 @@ class KotlinNativeLinkOutputsTest {
 
     private val dir = File("/build/bin")
 
-    private fun outputs(
-        kind: CompilerOutputKind,
-        target: KonanTarget,
-        baseName: String = "foo",
+    private fun outputs(kind: CompilerOutputKind, target: KonanTarget, baseName: String = "foo") =
+        KotlinNativeLinkOutputs(dir, kind, target, baseName)
+
+    private fun KotlinNativeLinkOutputs.directories(
         debuggable: Boolean = true,
         isStaticFramework: Boolean = false,
         freeCompilerArgs: List<String> = emptyList(),
-    ) = KotlinNativeLinkOutputs(dir, kind, target, baseName, debuggable, isStaticFramework, freeCompilerArgs)
+    ) = directories(debuggable, isStaticFramework, freeCompilerArgs)
 
     private fun name(file: File) = file.relativeTo(dir).path
 
@@ -58,18 +58,18 @@ class KotlinNativeLinkOutputsTest {
     fun `executable outputs`() {
         val linux = outputs(CompilerOutputKind.PROGRAM, KonanTarget.LINUX_X64)
         assertEquals(listOf("foo.kexe"), names(linux.files))
-        assertEquals(emptyList(), names(linux.directories))
+        assertEquals(emptyList(), names(linux.directories()))
 
         val apple = outputs(CompilerOutputKind.PROGRAM, KonanTarget.IOS_SIMULATOR_ARM64)
         assertEquals(listOf("foo.kexe"), names(apple.files))
-        assertEquals(listOf("foo.kexe.dSYM"), names(apple.directories))
+        assertEquals(listOf("foo.kexe.dSYM"), names(apple.directories()))
     }
 
     @Test
     fun `library outputs`() {
         val shared = outputs(CompilerOutputKind.DYNAMIC, KonanTarget.LINUX_X64)
         assertEquals(listOf("libfoo.so", "libfoo_api.h"), names(shared.files))
-        assertEquals(emptyList(), names(shared.directories))
+        assertEquals(emptyList(), names(shared.directories()))
 
         val static = outputs(CompilerOutputKind.STATIC, KonanTarget.LINUX_X64)
         assertEquals(listOf("libfoo.a", "libfoo_api.h"), names(static.files))
@@ -78,41 +78,45 @@ class KotlinNativeLinkOutputsTest {
         assertEquals(listOf("foo.dll", "foo_api.h", "foo.def"), names(mingw.files))
 
         val appleShared = outputs(CompilerOutputKind.DYNAMIC, KonanTarget.MACOS_ARM64)
-        assertEquals(listOf("libfoo.dylib.dSYM"), names(appleShared.directories))
+        assertEquals(listOf("libfoo.dylib.dSYM"), names(appleShared.directories()))
 
         val appleStatic = outputs(CompilerOutputKind.STATIC, KonanTarget.MACOS_ARM64)
-        assertEquals(emptyList(), names(appleStatic.directories))
+        assertEquals(emptyList(), names(appleStatic.directories()))
     }
 
     @Test
     fun `framework outputs`() {
-        val dynamic = outputs(CompilerOutputKind.FRAMEWORK, KonanTarget.IOS_ARM64)
-        assertEquals(emptyList(), names(dynamic.files))
-        assertEquals(listOf("foo.framework", "foo.framework.dSYM"), names(dynamic.directories))
-
-        val static = outputs(CompilerOutputKind.FRAMEWORK, KonanTarget.IOS_ARM64, isStaticFramework = true)
-        assertEquals(listOf("foo.framework"), names(static.directories))
-
-        val headersOnly =
-            outputs(CompilerOutputKind.FRAMEWORK, KonanTarget.IOS_ARM64, freeCompilerArgs = listOf("-Xomit-framework-binary"))
-        assertEquals(listOf("foo.framework"), names(headersOnly.directories))
+        val framework = outputs(CompilerOutputKind.FRAMEWORK, KonanTarget.IOS_ARM64)
+        assertEquals(emptyList(), names(framework.files))
+        assertEquals(listOf("foo.framework", "foo.framework.dSYM"), names(framework.directories()))
+        assertEquals(listOf("foo.framework"), names(framework.directories(isStaticFramework = true)))
+        assertEquals(listOf("foo.framework"), names(framework.directories(freeCompilerArgs = listOf("-Xomit-framework-binary"))))
     }
 
     @Test
     fun `release apple binaries get a dSYM unless light debug is disabled`() {
-        val release = outputs(CompilerOutputKind.PROGRAM, KonanTarget.IOS_ARM64, debuggable = false)
-        assertEquals(listOf("foo.kexe.dSYM"), names(release.directories))
+        val executable = outputs(CompilerOutputKind.PROGRAM, KonanTarget.IOS_ARM64)
+        val dsym = listOf("foo.kexe.dSYM")
 
-        val noLightDebug = listOf("-Xadd-light-debug=disable")
-        val releaseNoLightDebug =
-            outputs(CompilerOutputKind.PROGRAM, KonanTarget.IOS_ARM64, debuggable = false, freeCompilerArgs = noLightDebug)
-        assertEquals(emptyList(), names(releaseNoLightDebug.directories))
+        assertEquals(dsym, names(executable.directories(debuggable = false)))
+        assertEquals(emptyList(), names(executable.directories(debuggable = false, freeCompilerArgs = listOf("-Xadd-light-debug=disable"))))
+        assertEquals(dsym, names(executable.directories(debuggable = true, freeCompilerArgs = listOf("-Xadd-light-debug=disable"))))
 
-        val debugNoLightDebug =
-            outputs(CompilerOutputKind.PROGRAM, KonanTarget.IOS_ARM64, debuggable = true, freeCompilerArgs = noLightDebug)
-        assertEquals(listOf("foo.kexe.dSYM"), names(debugNoLightDebug.directories))
+        val framework = outputs(CompilerOutputKind.FRAMEWORK, KonanTarget.IOS_ARM64)
+        assertEquals(listOf("foo.framework", "foo.framework.dSYM"), names(framework.directories(debuggable = false)))
+    }
 
-        val releaseFramework = outputs(CompilerOutputKind.FRAMEWORK, KonanTarget.IOS_ARM64, debuggable = false)
-        assertEquals(listOf("foo.framework", "foo.framework.dSYM"), names(releaseFramework.directories))
+    @Test
+    fun `debug flags in free compiler args are honoured like the compiler does`() {
+        val executable = outputs(CompilerOutputKind.PROGRAM, KonanTarget.IOS_ARM64)
+        val dsym = listOf("foo.kexe.dSYM")
+
+        // -g turns a release link into a debug one
+        assertEquals(dsym, names(executable.directories(debuggable = false, freeCompilerArgs = listOf("-Xadd-light-debug=disable", "-g"))))
+        // the last light debug flag wins
+        val disableThenEnable = listOf("-Xadd-light-debug=disable", "-Xadd-light-debug=enable")
+        assertEquals(dsym, names(executable.directories(debuggable = false, freeCompilerArgs = disableThenEnable)))
+        val enableThenDisable = listOf("-Xadd-light-debug=enable", "-Xadd-light-debug=disable")
+        assertEquals(emptyList(), names(executable.directories(debuggable = false, freeCompilerArgs = enableThenDisable)))
     }
 }
