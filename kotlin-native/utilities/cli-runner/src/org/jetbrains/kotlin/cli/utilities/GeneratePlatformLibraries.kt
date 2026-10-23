@@ -348,7 +348,8 @@ private fun buildStdlibCache(
         target: KonanTarget,
         stdlib: Path,
         cacheInfo: CacheInfo,
-        logger: Logger
+        logger: Logger,
+        konanDataDir: String?,
 ): Unit = with(cacheInfo) {
     val stdlibCacheFile = getLibraryCacheDir("stdlib", target, cacheDirectory, cacheKind)
     if (stdlibCacheFile.exists()) {
@@ -357,15 +358,15 @@ private fun buildStdlibCache(
     }
 
     logger.log("Precompiling standard library...")
-    val compilerArgs = arrayOf(
+    val compilerArgs = listOfNotNull(
             "-p", cacheKind,
             "-target", target.visibleName,
             "-Xadd-cache=${stdlib.absolutePathString()}",
             "-Xcache-directory=${cacheDirectory.absolutePathString()}",
-            *cacheArgs.toTypedArray()
-    )
+            konanDataDir?.let { "-Xkonan-data-dir=${it}" },
+    ) + cacheArgs
     logger.verbose("Run compiler with args: ${compilerArgs.joinToString(separator = " ")}")
-    K2Native.mainNoExit(compilerArgs)
+    K2Native.mainNoExit(compilerArgs.toTypedArray())
 }
 
 @OptIn(ExperimentalPathApi::class)
@@ -380,7 +381,7 @@ private fun generatePlatformLibraries(
         konanDataDir: String?,
 ) = with(directories) {
     if (cacheInfo != null) {
-        buildStdlibCache(target, stdlib, cacheInfo, logger)
+        buildStdlibCache(target, stdlib, cacheInfo, logger, konanDataDir)
     }
 
     logger.verbose("Generating platform libraries from $inputDirectory to $outputDirectory for ${target.visibleName}")
