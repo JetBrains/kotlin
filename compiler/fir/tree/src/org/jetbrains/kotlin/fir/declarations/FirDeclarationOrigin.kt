@@ -43,6 +43,7 @@ sealed class FirDeclarationOrigin(
         object DataClassMember : Synthetic(generatedAnyMethod = true)
         object InlineClassMember : Synthetic(generatedAnyMethod = true)
         object FullValueClassMember : Synthetic(generatedAnyMethod = true)
+        object RichErrorClassMember : Synthetic(generatedAnyMethod = true)
         object JavaProperty : Synthetic()
         object DelegateField : Synthetic()
         object PluginFile : Synthetic()

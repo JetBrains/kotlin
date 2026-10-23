@@ -13,7 +13,10 @@ import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
+import org.jetbrains.kotlin.fir.declarations.isFullValueClass
 import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.declarations.utils.isAbstract
+import org.jetbrains.kotlin.fir.declarations.utils.isSealed
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.resolve.*
@@ -81,15 +84,27 @@ class FirKotlinScopeProvider(
                 else
                     FirDelegatedMemberScope(useSiteSession, scopeSession, klass, it, delegateFields)
             }
+
+            val originForSyntheticFunctionsFromAny = when {
+                klass !is FirRegularClass || klass.isExpect || klass.origin == FirDeclarationOrigin.Library -> null
+                klass.isData -> FirDeclarationOrigin.Synthetic.DataClassMember
+                klass.isFullValueClass -> FirDeclarationOrigin.Synthetic.FullValueClassMember.takeUnless { klass.isAbstract || klass.isSealed }
+                klass.isInlineOrValue -> FirDeclarationOrigin.Synthetic.InlineClassMember
+                klass.isRichError -> FirDeclarationOrigin.Synthetic.RichErrorClassMember
+                else -> null
+            }
+
             val declaredMemberScopeWithPossiblySynthesizedMembers =
                 // Related: https://youtrack.jetbrains.com/issue/KT-20427#focus=Comments-27-8652759.0-0
-                if (
-                    klass is FirRegularClass && !klass.isExpect &&
-                    (klass.isData || klass.isInlineClass || klass.isFullValueClass && !klass.isAbstract && !klass.isSealed) &&
-                    klass.origin != FirDeclarationOrigin.Library
-                ) {
+                if (originForSyntheticFunctionsFromAny != null) {
                     // See also KT-58926 (we apply delegation first, and data/value classes after it)
-                    FirClassAnySynthesizedMemberScope(useSiteSession, possiblyDelegatedDeclaredMemberScope, klass, scopeSession)
+                    FirClassAnySynthesizedMemberScope(
+                        useSiteSession,
+                        possiblyDelegatedDeclaredMemberScope,
+                        klass as FirRegularClass,
+                        originForSyntheticFunctionsFromAny,
+                        scopeSession
+                    )
                 } else {
                     possiblyDelegatedDeclaredMemberScope
                 }
