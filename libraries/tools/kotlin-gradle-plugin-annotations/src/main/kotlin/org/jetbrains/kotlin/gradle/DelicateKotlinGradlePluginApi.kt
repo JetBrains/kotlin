@@ -35,4 +35,10 @@ object DelicateKotlinGradlePluginApiKind {
      * User of the API should read related documentation.
      */
     const val REQUIRES_KNOWLEDGE = "DELICATE_KOTLIN_GRADLE_PLUGIN_API_REQUIRES_KNOWLEDGE"
+
+    /**
+     * API allows to configure ABI dumps for ABI validation bypassing DSL in KGP.
+     * Can It can be mixed with automatic settings. Leading to incorrect ABI dumping and checks.
+     */
+    const val ABI_VALIDATION = "DELICATE_KOTLIN_GRADLE_PLUGIN_API_ABI_VALIDATION"
 }

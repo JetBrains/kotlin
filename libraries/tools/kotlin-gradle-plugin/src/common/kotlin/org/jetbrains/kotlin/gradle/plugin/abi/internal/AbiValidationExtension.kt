@@ -9,18 +9,22 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.artifacts.ConfigurationContainer
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.FileCollection
 import org.gradle.api.file.ProjectLayout
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.TaskProvider
+import org.jetbrains.kotlin.buildtools.api.abi.KlibTargetId
 import org.jetbrains.kotlin.compilerRunner.btapi.BuildSessionService
 import org.jetbrains.kotlin.gradle.dsl.abi.AbiFiltersSpec
 import org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationExtension
 import org.jetbrains.kotlin.gradle.dsl.abi.BinariesSource
 import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
 import org.jetbrains.kotlin.gradle.tasks.abi.KotlinAbiCheckTaskImpl
+import org.jetbrains.kotlin.gradle.tasks.abi.KotlinAbiDumpTaskImpl
 import org.jetbrains.kotlin.gradle.tasks.abi.KotlinAbiUpdateTask
 import org.jetbrains.kotlin.gradle.utils.property
 import org.jetbrains.kotlin.gradle.utils.propertyWithConvention
@@ -34,7 +38,7 @@ internal abstract class AbiValidationExtensionImpl @Inject constructor(
     private val layout: ProjectLayout,
     private val buildSessionService: Provider<BuildSessionService>,
     private val configurations: ConfigurationContainer
-) : AbiValidationExtension {
+) : AbiValidationExtension, AbiValidationConfiguration {
     private var activated = false
 
     internal fun activate(compilerVersion: Provider<String>) {
@@ -56,6 +60,32 @@ internal abstract class AbiValidationExtensionImpl @Inject constructor(
     override val referenceDumpDir: DirectoryProperty = objects.directoryProperty()
 
     override val keepLocallyUnsupportedTargets: Property<Boolean> = objects.property<Boolean>()
+
+    override val unsupportedTargets: SetProperty<KlibTargetId> = objects.setProperty(KlibTargetId::class.java)
+
+    override val useAutoconfigure: Property<Boolean> = objects.property<Boolean>().convention(true)
+
+    internal val jvmTargets = objects.listProperty(KotlinAbiDumpTaskImpl.JvmTargetInfo::class.java)
+
+    internal val klibTargets = objects.listProperty(KotlinAbiDumpTaskImpl.KlibTargetInfo::class.java)
+
+    override fun addJvmDump(output: FileCollection) {
+        jvmTargets.add(KotlinAbiDumpTaskImpl.JvmTargetInfo("", output))
+    }
+
+    override fun addJvmDump(name: String, output: FileCollection) {
+        jvmTargets.add(KotlinAbiDumpTaskImpl.JvmTargetInfo(name, output))
+    }
+
+    override fun addKlibTarget(target: KlibTargetId, output: FileCollection) {
+        klibTargets.add(
+            KotlinAbiDumpTaskImpl.KlibTargetInfo(
+                target.customizedName,
+                target.targetType.canonicalName,
+                output
+            )
+        )
+    }
 
     override val binariesSource: Property<BinariesSource> = objects.propertyWithConvention<BinariesSource>(BinariesSource.MAIN_COMPILATION)
 
