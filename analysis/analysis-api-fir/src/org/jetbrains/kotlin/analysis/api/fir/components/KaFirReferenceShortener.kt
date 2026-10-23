@@ -19,14 +19,9 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirFunctionTypeParameter
-import org.jetbrains.kotlin.fir.correspondingProperty
-import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.references.FirThisReference
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -140,76 +135,6 @@ private inline fun <reified T : KtElement> KtFile.findSmallestElementOfTypeConta
     findElementAt(selection.startOffset)
         ?.parentsOfType<T>(withSelf = true)
         ?.firstOrNull { selection in it.textRange }
-
-private class CollectingVisitor(private val collector: ElementsToShortenCollector) : FirVisitorVoid() {
-    private val visitedProperty = mutableSetOf<FirProperty>()
-
-    override fun visitValueParameter(valueParameter: FirValueParameter) {
-        super.visitValueParameter(valueParameter)
-        valueParameter.correspondingProperty?.let { visitProperty(it) }
-    }
-
-    override fun visitProperty(property: FirProperty) {
-        if (visitedProperty.add(property)) {
-            super.visitProperty(property)
-        }
-    }
-
-    override fun visitScript(script: FirScript) {
-        @OptIn(DirectDeclarationsAccess::class)
-        script.declarations.forEach {
-            it.accept(this)
-        }
-    }
-
-    override fun visitElement(element: FirElement) {
-        element.acceptChildren(this)
-    }
-
-    override fun visitErrorTypeRef(errorTypeRef: FirErrorTypeRef) {
-        visitResolvedTypeRef(errorTypeRef)
-
-        errorTypeRef.partiallyResolvedTypeRef?.accept(this)
-    }
-
-    override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef) {
-        collector.processTypeRef(resolvedTypeRef)
-
-        resolvedTypeRef.acceptChildren(this)
-        resolvedTypeRef.delegatedTypeRef?.accept(this)
-    }
-
-    override fun visitResolvedQualifier(resolvedQualifier: FirResolvedQualifier) {
-        super.visitResolvedQualifier(resolvedQualifier)
-
-        collector.processTypeQualifier(resolvedQualifier)
-    }
-
-    override fun visitErrorResolvedQualifier(errorResolvedQualifier: FirErrorResolvedQualifier) {
-        super.visitErrorResolvedQualifier(errorResolvedQualifier)
-
-        collector.processTypeQualifier(errorResolvedQualifier)
-    }
-
-    override fun visitFunctionCall(functionCall: FirFunctionCall) {
-        super.visitFunctionCall(functionCall)
-
-        collector.processFunctionCall(functionCall)
-    }
-
-    override fun visitPropertyAccessExpression(propertyAccessExpression: FirPropertyAccessExpression) {
-        super.visitPropertyAccessExpression(propertyAccessExpression)
-
-        collector.processPropertyAccess(propertyAccessExpression)
-    }
-
-    override fun visitThisReference(thisReference: FirThisReference) {
-        super.visitThisReference(thisReference)
-
-        collector.processThisReference(thisReference)
-    }
-}
-
 
 private class ShortenCommandImpl(
     override val targetFile: SmartPsiElementPointer<KtFile>,
