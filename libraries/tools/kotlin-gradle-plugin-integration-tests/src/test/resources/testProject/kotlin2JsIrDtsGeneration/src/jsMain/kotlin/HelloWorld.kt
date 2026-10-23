@@ -10,3 +10,6 @@ package foo
 fun bar(): BarResult = "OK"
 
 typealias BarResult = String
+
+@JsExport
+fun identity(value: Any): Any = value
