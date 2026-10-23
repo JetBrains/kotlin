@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.analysis.api.compile.KaCodeFragmentCapturedValue
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticWithPsi
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.compilation.KaFirCompilationOptions
+import org.jetbrains.kotlin.analysis.api.fir.compilation.KaFirCompilationOptionsBuilder
 import org.jetbrains.kotlin.analysis.api.fir.components.compilation.*
 import org.jetbrains.kotlin.analysis.api.fir.utils.KaFirCompiledFileForOutputFile
 import org.jetbrains.kotlin.analysis.api.fir.utils.KaNonBoundToPsiErrorDiagnostic
