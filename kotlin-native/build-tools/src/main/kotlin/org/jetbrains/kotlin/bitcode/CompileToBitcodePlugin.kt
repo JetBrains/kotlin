@@ -274,8 +274,9 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
                         from(this@SourceSet.headersDirs)
                     }
                     arguments.addAll(ClangFrontend.defaultCompilerFlags(headers, reproducibilityRootsMap))
-                    arguments.addAll(allCompilerArgs)
+                    // In the order of the compile task.
                     arguments.addAll(platformManager.clangArgs(target, module.compiler.get()))
+                    arguments.addAll(allCompilerArgs)
                     output.set(this@SourceSet.outputDirectory.map { it.asFile.absolutePath })
                 }
                 task.configure {
