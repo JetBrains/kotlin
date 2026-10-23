@@ -80,6 +80,10 @@ tasks.withType<Test>().configureEach {
             environment(TEST_FEDERATION_AUTO_SMOKE_TEST_PERCENTAGE_ENV_KEY, percentage)
         }
 
+        for (domain in domains.get()) {
+            println("##teamcity[addBuildTag 'Domain: $domain']")
+        }
+
         for (testSubset in subsets.get()) {
             println("##teamcity[addBuildTag '$testSubset']")
         }
