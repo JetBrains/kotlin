@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.cli.common.arguments
 
+import org.jetbrains.kotlin.cli.CliDiagnostics
 import org.jetbrains.kotlin.load.java.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.isSubpackageOf
@@ -147,7 +148,8 @@ class JavaTypeEnhancementStateParser(
                     }
                 }
                 item == "enable" -> {
-                    reporter.reportWarning(
+                    reporter.report(
+                        CliDiagnostics.COMPILER_ARGUMENTS_WARNING,
                         "Option 'enable' for -Xjsr305 flag is deprecated. Please use 'strict' instead"
                     )
                     if (global != null) return@forEach

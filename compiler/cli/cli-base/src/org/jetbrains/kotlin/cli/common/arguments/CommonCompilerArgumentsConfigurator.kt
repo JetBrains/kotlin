@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.diagnostics.KtSourcelessDiagnosticFactory
 
 open class CommonCompilerArgumentsConfigurator {
     interface Reporter {
-        fun reportWarning(message: String)
         fun reportError(message: String)
 
         fun report(factory: KtSourcelessDiagnosticFactory, message: String)
@@ -21,7 +20,6 @@ open class CommonCompilerArgumentsConfigurator {
         fun withLanguageVersionSettings(languageVersionSettings: LanguageVersionSettings): Reporter
 
         object DoNothing : Reporter {
-            override fun reportWarning(message: String) {}
             override fun reportError(message: String) {}
             override fun report(factory: KtSourcelessDiagnosticFactory, message: String) {}
             override fun info(message: String) {}
@@ -198,7 +196,8 @@ open class CommonCompilerArgumentsConfigurator {
         }
 
         if (featuresThatForcePreReleaseBinaries.isNotEmpty()) {
-            reporter.reportWarning(
+            reporter.report(
+                CliDiagnostics.PRE_RELEASE_LANGUAGE_FEATURES_ENABLED,
                 "Following manually enabled features will force generation of pre-release binaries: ${featuresThatForcePreReleaseBinaries.joinToString()}"
             )
         }
@@ -218,13 +217,17 @@ open class CommonCompilerArgumentsConfigurator {
             when (entry.firstOrNull()) {
                 '+', '-' -> {
                     if (entry.length == 1) {
-                        reporter.reportWarning("Empty callable name in -Xescaping-functions entry '$entry'.")
+                        reporter.report(
+                            CliDiagnostics.COMPILER_ARGUMENTS_WARNING,
+                            "Empty callable name in -Xescaping-functions entry '$entry'."
+                        )
                         return@filter false
                     }
                     true
                 }
                 else -> {
-                    reporter.reportWarning(
+                    reporter.report(
+                        CliDiagnostics.COMPILER_ARGUMENTS_WARNING,
                         "Incorrect -Xescaping-functions entry '$entry', each entry must start with '+' (to add) or '-' (to remove)."
                     )
                     false
@@ -373,7 +376,8 @@ private fun CommonCompilerArguments.checkProgressiveMode(
     reporter: CommonCompilerArgumentsConfigurator.Reporter,
 ) {
     if (progressiveMode && languageVersion < LanguageVersion.LATEST_STABLE && !suppressVersionWarnings) {
-        reporter.reportWarning(
+        reporter.report(
+            CliDiagnostics.PROGRESSIVE_MODE_WITH_OLD_LANGUAGE_VERSION,
             "'-progressive' is meaningful only for the latest language version (${LanguageVersion.LATEST_STABLE}), " +
                     "while this build uses $languageVersion\n" +
                     "Compiler behavior in such mode is undefined; consider moving to the latest stable version " +
