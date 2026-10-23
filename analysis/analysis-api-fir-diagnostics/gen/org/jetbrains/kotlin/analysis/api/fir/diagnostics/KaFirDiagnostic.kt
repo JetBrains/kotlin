@@ -8493,7 +8493,7 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass: KClass<IllegalCompanionBlock>
             get() = IllegalCompanionBlock::class
 
-        public val parent: KaSymbol
+        public val kind: String
     }
 
     @KaUnstableDiagnosticApi
