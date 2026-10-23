@@ -22,7 +22,7 @@ import kotlin.test.assertTrue
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-private class ExampleCancellableOperation(override val options: Options = Options(ExampleCancellableOperation::class)) :
+private class ExampleCancellableOperation() :
     CancellableBuildOperationImpl<Unit>() {
     override fun executeCancellableImpl(
         projectId: ProjectId,
