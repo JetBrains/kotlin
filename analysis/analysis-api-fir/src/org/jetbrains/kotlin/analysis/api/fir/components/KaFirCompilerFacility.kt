@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.util.registry.Registry
-import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.findFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.util.PsiTreeUtil
@@ -1377,24 +1375,6 @@ private fun createPlatformActualizer(customActualizer: KaCompilerFacilityModuleA
     }
 
     return LLKindBasedPlatformActualizer(platformKind)
-}
-
-private class KaFirDependencyCompiledCodeProvider(val cache: Map<String, ByteArray>) : CompiledCodeProvider {
-    override fun getClassBytes(className: String): ByteArray? {
-        return cache[className]
-    }
-}
-
-private class KaFirDelegatingCompiledCodeProvider(private val delegates: List<CompiledCodeProvider>) : CompiledCodeProvider {
-    override fun getClassBytes(className: String): ByteArray? {
-        return delegates.firstNotNullOfOrNull { it.getClassBytes(className) }
-    }
-}
-
-private class KaFirDirectoryBasedCompiledCodeProvider(private val outputDirectory: VirtualFile) : CompiledCodeProvider {
-    override fun getClassBytes(className: String): ByteArray? {
-        return outputDirectory.findFile("$className.class")?.contentsToByteArray(false)
-    }
 }
 
 private class SyntaxErrorReportingVisitor(
