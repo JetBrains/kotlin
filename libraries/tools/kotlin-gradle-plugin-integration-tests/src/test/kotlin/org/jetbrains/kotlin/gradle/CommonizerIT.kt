@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.konan.library.KONAN_DISTRIBUTION_COMMONIZED_LIBS_DIR
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
@@ -57,6 +58,7 @@ import kotlin.test.fail
     enabledOnCI = [OS.LINUX, OS.MAC, OS.WINDOWS])
 @DisplayName("K/N tests for commonizer")
 @NativeGradlePluginTests
+@MustRunOnChangesInGradle
 open class CommonizerIT : KGPBaseTest() {
     companion object {
         private const val commonizerOutput = "Preparing commonized Kotlin/Native libraries"

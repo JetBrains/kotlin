@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.assertAll
 import org.junit.jupiter.api.condition.OS
@@ -25,6 +26,7 @@ import kotlin.test.assertNotEquals
 import kotlin.test.assertNotNull
 
 @DisplayName("Configuration cache")
+@MustRunOnChangesInGradle
 class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     @DisplayName("works in simple Kotlin project")
     @GradleTest
