@@ -60,7 +60,7 @@ internal class CompilerMetricsJson(
         )
 
     companion object {
-        /** The dumper writes `parentPhaseType` as a bare word, which Gson's lenient reader accepted. */
+        /** Lenient, because the dumper writes `parentPhaseType` as a bare word. */
         private val json = Json(KgpJson.default) { isLenient = true }
 
         fun parse(text: String): CompilerMetricsJson = json.decodeFromString(serializer(), text)
