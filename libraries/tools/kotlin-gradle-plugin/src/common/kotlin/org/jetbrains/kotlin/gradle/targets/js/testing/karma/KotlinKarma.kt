@@ -733,4 +733,4 @@ private val PROXY_FALSE_WARN = "\"/\" is proxied, you should probably change url
 private val WEBPACK_OUTPUT_WARN = "All files matched by \".+\" were excluded or matched by prior matchers\\.".toRegex()
 
 internal fun karmaConfigToJson(config: KarmaConfig): String =
-    KgpJson.prettyPrintedTwoSpaceIndent.encodeToString(KarmaConfig.serializer(), config)
+    KgpJson.prettyPrinted.encodeToString(KarmaConfig.serializer(), config)

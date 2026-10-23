@@ -497,7 +497,7 @@ data class KotlinWebpackConfig(
     }
 
     private fun <T> json(serializer: KSerializer<T>, value: T): String =
-        KgpJson.prettyPrintedTwoSpaceIndent.encodeToString(serializer, value)
+        KgpJson.prettyPrinted.encodeToString(serializer, value)
 }
 
 /** [KotlinWebpackConfig.DevServer] as written, with the deprecated `static` list merged into `statics`. */

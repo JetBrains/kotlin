@@ -51,25 +51,11 @@ internal object KgpJson {
     }
 
     /**
-     * As [default], but also accepts unquoted keys and strings, and comments. For files this plugin did not write;
-     * Gson read them in its lenient mode, which took the same.
-     */
-    val lenient: Json = Json(default) {
-        isLenient = true
-        allowComments = true
-    }
-
-    /**
      * Pretty-printed instance for human-readable output (config files, diagnostics, etc.).
      * Inherits all leniency settings from [default].
      */
     val prettyPrinted: Json = Json(default) {
         prettyPrint = true
-    }
-
-    /** Two-space indent, as Gson wrote, so generated files don't change. */
-    val prettyPrintedTwoSpaceIndent: Json = Json(prettyPrinted) {
-        prettyPrintIndent = "  "
     }
 }
 
@@ -79,9 +65,9 @@ internal fun String.removeBom(): String = removePrefix("\uFEFF")
 /**
  * Converts the values build authors pass to the JS DSLs as `Any`.
  *
- * Map entries with a null value are left out unless [serializeNulls] is set, as Gson did by default; webpack's schema
- * rejects an explicit null for many options. A `@Serializable` class is written by its serializer. Anything else fails:
- * Gson wrote such objects field by field, which hid typos and private state in the generated files.
+ * Map entries with a null value are left out unless [serializeNulls] is set, since webpack's schema rejects an explicit
+ * null for many options. A `@Serializable` class is written by its serializer. Anything else fails, so a typo or private
+ * state never ends up in a generated file.
  */
 internal fun anyToJsonElement(value: Any?, serializeNulls: Boolean = false): JsonElement = when (value) {
     null -> JsonNull

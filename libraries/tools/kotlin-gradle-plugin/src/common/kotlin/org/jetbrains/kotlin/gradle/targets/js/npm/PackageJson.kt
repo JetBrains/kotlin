@@ -101,7 +101,7 @@ class PackageJson(
         }
 
         if (jsonTree != previous) {
-            packageJsonFile.writeText(KgpJson.prettyPrintedTwoSpaceIndent.encodeToString(JsonObject.serializer(), jsonTree))
+            packageJsonFile.writeText(KgpJson.prettyPrinted.encodeToString(JsonObject.serializer(), jsonTree))
         }
     }
 
@@ -146,7 +146,7 @@ private val logger = Logging.getLogger(PackageJson::class.java)
 private fun File.readJsonText(): String = readText().removeBom()
 
 internal fun parsePackageJsonObject(file: File): JsonObject =
-    KgpJson.lenient.parseToJsonElement(file.readJsonText()).jsonObject
+    KgpJson.default.parseToJsonElement(file.readJsonText()).jsonObject
 
 /** The entries of the object under [key] with a primitive value; empty when there is no such object. */
 internal fun JsonObject.stringMap(key: String): Map<String, String> = buildMap {
@@ -158,7 +158,7 @@ internal fun JsonObject.stringMap(key: String): Map<String, String> = buildMap {
  * A missing "version" falls back to [defaultVersion]. Callers decide what is worth reporting.
  */
 internal fun parsePackageJson(file: File, defaultName: String? = null, defaultVersion: String = ""): PackageJson? {
-    val json = KgpJson.lenient.decodeFromString(PackageJsonFile.serializer(), file.readJsonText())
+    val json = KgpJson.default.decodeFromString(PackageJsonFile.serializer(), file.readJsonText())
     val name = json.name ?: defaultName ?: return null
     return PackageJson(name, json.version ?: defaultVersion).also { pkg ->
         pkg.private = json.private

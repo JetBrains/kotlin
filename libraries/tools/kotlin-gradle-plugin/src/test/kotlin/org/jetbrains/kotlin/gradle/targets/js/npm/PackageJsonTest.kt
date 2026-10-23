@@ -84,22 +84,6 @@ class PackageJsonTest {
     }
 
     @Test
-    fun `a package json with comments is read, as Gson did`(@TempDir tempDir: File) {
-        val target = tempDir.resolve("package.json")
-        target.writeText(
-            """
-            {
-              // the main entry
-              "name": "commented", /* no version */
-              "main": "index.js"
-            }
-            """.trimIndent()
-        )
-
-        assertEquals("commented", fromSrcPackageJson(target)?.name)
-    }
-
-    @Test
     fun `moduleName falls back to the directory name`(@TempDir tempDir: File) {
         val directory = tempDir.resolve("some-module").also { it.mkdirs() }
         // a private package may legitimately have no "name"
@@ -111,7 +95,7 @@ class PackageJsonTest {
     private data class Author(val name: String, val email: String?)
 
     @Test
-    fun `customField keeps nulls, as the Gson writer for package json did`(@TempDir tempDir: File) {
+    fun `customField keeps a null the build author sets`(@TempDir tempDir: File) {
         val target = tempDir.resolve("package.json")
         PackageJson(name = "foo", version = "1.0.0")
             .apply { customField("author", mapOf("name" to "Jane", "email" to null)) }
@@ -144,7 +128,7 @@ class PackageJsonTest {
     @OptIn(ExperimentalSerializationApi::class)
     @Test
     fun `PackageJsonFile declares every PackageJson property`() {
-        // Gson picked up a new PackageJson property by reflection; the DTO has to be told about it
+        // the DTO lists the properties by hand, so a new PackageJson property has to be added there too
         val properties = PackageJson::class.java.declaredFields
             .filterNot { Modifier.isStatic(it.modifiers) }
             .map { it.name }

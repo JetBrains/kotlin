@@ -106,7 +106,7 @@ internal fun <T> KotlinJsIrTarget.webTargetVariant(
 
 /** Converts arbitrary Map/List/primitive trees to pretty-printed JSON. */
 internal fun json(obj: Any): String =
-    KgpJson.prettyPrintedTwoSpaceIndent.encodeToString(JsonElement.serializer(), anyToJsonElement(obj))
+    KgpJson.prettyPrinted.encodeToString(JsonElement.serializer(), anyToJsonElement(obj))
 
 /**
  * A converter from a string `target` option to an [EcmaVersion]
