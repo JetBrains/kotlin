@@ -79,7 +79,7 @@ class KotlinMetadataLibrariesIndexFileTest {
     }
 
     @Test
-    fun `test - the file keeps the layout Gson wrote`() {
+    fun `test - written file layout`() {
         val index = KotlinMetadataLibrariesIndexFile(temporaryFolder.resolve("index"))
         val record = TransformedMetadataLibraryRecord(
             moduleId = KmpModuleIdentifier(
@@ -92,21 +92,21 @@ class KotlinMetadataLibrariesIndexFileTest {
         //language=JSON
         val written = """
             [
-              {
-                "moduleId": {
-                  "groupAndName": {
-                    "group": "group",
-                    "name": "name"
-                  },
-                  "componentId": {
-                    "type": "project",
-                    "projectPath": ":lib",
-                    "buildPath": ":"
-                  }
-                },
-                "file": "lib.klib",
-                "sourceSetName": null
-              }
+                {
+                    "moduleId": {
+                        "groupAndName": {
+                            "group": "group",
+                            "name": "name"
+                        },
+                        "componentId": {
+                            "type": "project",
+                            "projectPath": ":lib",
+                            "buildPath": ":"
+                        }
+                    },
+                    "file": "lib.klib",
+                    "sourceSetName": null
+                }
             ]
         """.trimIndent()
 

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
@@ -34,10 +33,8 @@ internal class KotlinMetadataLibrariesIndexFile(private val file: File) {
     private companion object {
         val serializer = ListSerializer(TransformedMetadataLibraryRecord.serializer())
 
-        /** The layout Gson wrote: two-space indent, nulls written, the component id kind under "type". */
-        @OptIn(ExperimentalSerializationApi::class)
+        /** Nulls are written, so every record shows the same keys, and the component id kind goes under "type". */
         val json = Json(KgpJson.prettyPrinted) {
-            prettyPrintIndent = "  "
             explicitNulls = true
             classDiscriminator = "type"
         }
