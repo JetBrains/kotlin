@@ -36,6 +36,7 @@ interface IrStatementOrigin {
 
     companion object {
         val SAFE_CALL by IrStatementOriginImpl
+        val ERROR_SAFE_CALL by IrStatementOriginImpl
 
         val UMINUS by IrStatementOriginImpl
         val UPLUS by IrStatementOriginImpl
