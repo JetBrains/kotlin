@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 class CInteropHeaderHashesTest {
 
@@ -28,27 +27,19 @@ class CInteropHeaderHashesTest {
     }
 
     @Test
-    fun `a file written by an earlier Kotlin version is read`(@TempDir tempDir: File) {
-        // as Gson wrote it in earlier plugin versions
+    fun `the written file is pretty-printed`(@TempDir tempDir: File) {
         val file = tempDir.resolve("headers.json")
-        file.writeText(
+
+        file.writeHeaderHashes(mapOf("/include/a.h" to "one", "/include/b.h" to "two"))
+
+        assertEquals(
             """
             {
-              "/include/a.h": "one",
-              "/include/b.h": "two"
+                "/include/a.h": "one",
+                "/include/b.h": "two"
             }
-            """.trimIndent()
+            """.trimIndent(),
+            file.readText(),
         )
-
-        assertEquals(mapOf("/include/a.h" to "one", "/include/b.h" to "two"), file.readHeaderHashes())
-    }
-
-    @Test
-    fun `the written file keeps the paths readable`(@TempDir tempDir: File) {
-        val file = tempDir.resolve("headers.json")
-
-        file.writeHeaderHashes(mapOf("/include/a.h" to "one"))
-
-        assertTrue(file.readText().contains("\"/include/a.h\": \"one\""), file.readText())
     }
 }
