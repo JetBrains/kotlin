@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.scripting.test.host
 
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.cli.common.ExitCode
@@ -14,17 +15,26 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.MessageCollectorAccess
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.config.useFir
 import org.jetbrains.kotlin.script.loadScriptingPlugin
+import org.jetbrains.kotlin.scripting.test.CapturedHostProperties
 import org.jetbrains.kotlin.scripting.test.TestDisposable
+import org.jetbrains.kotlin.scripting.test.TestTemplateHostConfiguration
+import org.jetbrains.kotlin.scripting.test.captureHostConfigurationOnRefinement
+import org.jetbrains.kotlin.scripting.test.overriddenHostProperty
 import org.jetbrains.kotlin.scripting.test.updateWithBaseCompilerArguments
 import org.jetbrains.kotlin.scripting.compiler.test.TestScriptWithRequire
 import org.jetbrains.kotlin.scripting.test.captureOut
 import org.jetbrains.kotlin.scripting.test.compileAndExecuteScript
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmK2CompilerFromEnvironment
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmK2CompilerIsolated
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptDiagnosticsMessageCollector
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.createIsolatedCompilerState
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
@@ -34,6 +44,8 @@ import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.nio.file.Files
 import kotlin.reflect.KClass
+import kotlin.script.experimental.annotations.KotlinScript
+import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.host.configurationDependencies
 import kotlin.script.experimental.host.toScriptSource
@@ -91,8 +103,77 @@ class ScriptHostCompilationTest {
         assertEquals("Hello from required!", out)
     }
 
+    @Test
+    fun testHostDefinitionIsRegisteredOnceInIsolatedState() {
+        val disposable = Disposer.newDisposable("host definition registration test")
+        try {
+            lateinit var compilerConfiguration: CompilerConfiguration
+            val state = createIsolatedCompilerState(
+                ScriptDiagnosticsMessageCollector(null), disposable, ScriptCompilationConfiguration {}, defaultJvmScriptingHostConfiguration
+            ) { compilerConfiguration = this }
+
+            assertEquals(
+                1,
+                compilerConfiguration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS)
+                    .count { it.compilationConfiguration == state.baseScriptCompilationConfiguration },
+            )
+        } finally {
+            ApplicationManager.getApplication().runWriteAction { Disposer.dispose(disposable) }
+        }
+    }
+
+    @Test
+    fun testExplicitHostConfigurationWinsInK2Proxies() {
+        val explicitHostConfiguration = ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration) {
+            overriddenHostProperty("explicit")
+        }
+
+        val isolatedCaptured = CapturedHostProperties()
+        ScriptJvmK2CompilerIsolated(explicitHostConfiguration).compile(
+            hostConfigurationTestScript,
+            hostConfigurationTestCompilationConfiguration(thisClasspath, isolatedCaptured)
+        ).valueOrThrow()
+        assertEquals("explicit", isolatedCaptured.overriddenHostProperty)
+        assertEquals("template-only", isolatedCaptured.templateOnlyHostProperty)
+
+        val fromEnvironmentCaptured = CapturedHostProperties()
+        val compiler = ScriptJvmK2CompilerFromEnvironment(createEnvironment(), explicitHostConfiguration)
+        compiler.compile(
+            hostConfigurationTestScript,
+            hostConfigurationTestCompilationConfiguration(thisClasspath, fromEnvironmentCaptured)
+        ).valueOrThrow()
+        assertEquals("explicit", fromEnvironmentCaptured.overriddenHostProperty)
+        assertEquals("template-only", fromEnvironmentCaptured.templateOnlyHostProperty)
+    }
+
+    @Test
+    fun testScriptDefinitionHostConfigurationOverridesBaseForTemplate() {
+        val baseHostConfiguration = ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration) {
+            overriddenHostProperty("base")
+        }
+        val definition = ScriptDefinition.FromTemplate(
+            baseHostConfiguration,
+            HostConfigurationTestScript::class,
+            ScriptDefinition::class,
+        )
+
+        assertEquals("template", definition.hostConfiguration.get(ScriptingHostConfiguration.overriddenHostProperty))
+    }
 
     private val thisClasspath = listOf(PathUtil.getResourcePathForClass(ScriptHostCompilationTest::class.java))
+
+    private fun createEnvironment(): KotlinCoreEnvironment {
+        val collector = MessageCollectorImpl()
+        val configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.NO_KOTLIN_REFLECT, TestJdkKind.FULL_JDK).apply {
+            useFir = true
+            updateWithBaseCompilerArguments()
+            @OptIn(MessageCollectorAccess::class) // write access
+            this.messageCollector = collector
+            loadScriptingPlugin(this, testRootDisposable)
+        }
+        @OptIn(CoreEnvironmentDeprecation::class)
+        return KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+    }
 
     private fun runCompiler(
         script: File,
@@ -152,3 +233,26 @@ class ScriptHostCompilationTest {
             assertFalse(res.second.hasErrors(), resMessage.value)
         }
 }
+
+private fun hostConfigurationTestCompilationConfiguration(
+    classpath: List<File>,
+    captured: CapturedHostProperties,
+): ScriptCompilationConfiguration {
+    val templateConfiguration = ScriptDefinition.FromTemplate(
+        defaultJvmScriptingHostConfiguration,
+        HostConfigurationTestScript::class,
+        ScriptDefinition::class,
+    ).compilationConfiguration
+    return templateConfiguration.with {
+        dependencies(JvmDependency(classpath))
+        captureHostConfigurationOnRefinement(captured)
+    }
+}
+
+private val hostConfigurationTestScript = "42".toScriptSource()
+
+@KotlinScript(
+    fileExtension = "hostconfiguration.kts",
+    hostConfiguration = TestTemplateHostConfiguration::class,
+)
+abstract class HostConfigurationTestScript

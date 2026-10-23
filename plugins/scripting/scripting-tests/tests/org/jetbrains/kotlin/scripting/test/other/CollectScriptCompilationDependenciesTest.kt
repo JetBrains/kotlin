@@ -31,7 +31,10 @@ import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.testFramework.RunAll
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
+import kotlin.script.experimental.api.ScriptCompilationConfiguration
+import kotlin.script.experimental.api.dependencies
 import kotlin.script.experimental.host.ScriptingHostConfiguration
+import kotlin.script.experimental.jvm.JvmDependencyFromClassLoader
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.test.AfterTest
 import kotlin.test.Test
@@ -54,6 +57,11 @@ class CollectScriptCompilationDependenciesTest {
     @Test
     fun testCascadeImport() {
         runTest("imp_imp_leaf.req1.kts", listOf("imp_leaf.req1.kts", "leaf.req1.kts"))
+    }
+
+    @Test
+    fun testCascadeImportWithClassLoaderDependency() {
+        runTest("imp_imp_leaf.req1.kts", listOf("imp_leaf.req1.kts", "leaf.req1.kts"), useClassLoaderDependency = true)
     }
 
     @Test
@@ -85,16 +93,17 @@ class CollectScriptCompilationDependenciesTest {
         )
     }
 
-    private fun runTest(scriptFile: String, expectedDependencies: List<String>, classPath: List<File> = emptyList()) {
+    private fun runTest(
+        scriptFile: String,
+        expectedDependencies: List<String>,
+        classPath: List<File> = emptyList(),
+        useClassLoaderDependency: Boolean = false,
+    ) {
         val configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.NO_KOTLIN_REFLECT, TestJdkKind.MOCK_JDK).apply {
             updateWithBaseCompilerArguments()
             add(
                 ScriptingConfigurationKeys.SCRIPT_DEFINITIONS,
-                ScriptDefinition.FromTemplate(
-                    ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration),
-                    TestScriptWithRequire::class,
-                    ScriptDefinition::class
-                )
+                createScriptDefinition(useClassLoaderDependency)
             )
 
             addJvmClasspathRoots(listOf(PathUtil.getResourcePathForClass(TestScriptWithRequire::class.java)))
@@ -134,5 +143,24 @@ class CollectScriptCompilationDependenciesTest {
         if (classPath.isNotEmpty()) {
             assertTrue(updatedClasspath.containsAll(classPath), "expect that $updatedClasspath contains $classPath")
         }
+    }
+
+    private fun createScriptDefinition(useClassLoaderDependency: Boolean): ScriptDefinition {
+        val baseDefinition = ScriptDefinition.FromTemplate(
+            ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration),
+            TestScriptWithRequire::class,
+            ScriptDefinition::class
+        )
+        if (!useClassLoaderDependency) return baseDefinition
+
+        val compilationConfiguration = ScriptCompilationConfiguration(baseDefinition.compilationConfiguration) {
+            this[ScriptCompilationConfiguration.dependencies] =
+                listOf(JvmDependencyFromClassLoader { TestScriptWithRequire::class.java.classLoader })
+        }
+        return ScriptDefinition.FromConfigurations(
+            baseDefinition.hostConfiguration,
+            compilationConfiguration,
+            baseDefinition.evaluationConfiguration,
+        )
     }
 }
