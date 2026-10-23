@@ -55,10 +55,10 @@ fun Project.customCompilerTest(
     tag: String,
     body: Test.() -> Unit = {},
 ): TaskProvider<out Task> {
-    if (HostManager.hostIsMingw) {
+    if (HostManager.hostIsMingw || HostManager.hostOrNull == KonanTarget.LINUX_ARM64) {
         // Klib compatibility tests are intended to run on MacOS(for some developers) and Linux(for some developers and CI),
-        // Windows-specific artifacts have `@zip` extensions instead of `@tar.gz`, and contain zip files instead of tar.
-        // So the whole task is simply skipped for the simplicity.
+        // Windows archives have a different format, and older compilers have no Linux/AArch64 archive.
+        // Register the task without a compiler dependency until a matching archive is available.
         return tasks.register(taskName) {
             enabled = false
         }
