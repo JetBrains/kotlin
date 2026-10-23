@@ -46,56 +46,56 @@ class KarmaConfigSerializationTest {
         assertEquals(
             """
             {
-              "singleRun": true,
-              "autoWatch": false,
-              "basePath": "/tmp/project",
-              "files": [
-                "kotlin-test-karma-runner.js",
-                {
-                  "pattern": "*.wasm",
-                  "included": false,
-                  "watched": true
-                }
-              ],
-              "frameworks": [
-                "mocha"
-              ],
-              "client": {
-                "args": [
-                  "--include",
-                  "MyTest"
+                "singleRun": true,
+                "autoWatch": false,
+                "basePath": "/tmp/project",
+                "files": [
+                    "kotlin-test-karma-runner.js",
+                    {
+                        "pattern": "*.wasm",
+                        "included": false,
+                        "watched": true
+                    }
+                ],
+                "frameworks": [
+                    "mocha"
+                ],
+                "client": {
+                    "args": [
+                        "--include",
+                        "MyTest"
+                    ]
+                },
+                "browsers": [
+                    "ChromeHeadless"
+                ],
+                "customLaunchers": {
+                    "ChromeHeadlessNoSandbox": {
+                        "base": "ChromeHeadless",
+                        "flags": [
+                            "--no-sandbox"
+                        ],
+                        "debug": true
+                    }
+                },
+                "customContextFile": "context.html",
+                "failOnFailingTestSuite": false,
+                "failOnEmptyTestSuite": false,
+                "reporters": [
+                    "mocha"
+                ],
+                "preprocessors": {
+                    "main.js": [
+                        "sourcemap"
+                    ]
+                },
+                "proxies": {
+                    "/x": "/y"
+                },
+                "port": 9876,
+                "webpackCopy": [
+                    "main.wasm.map"
                 ]
-              },
-              "browsers": [
-                "ChromeHeadless"
-              ],
-              "customLaunchers": {
-                "ChromeHeadlessNoSandbox": {
-                  "base": "ChromeHeadless",
-                  "flags": [
-                    "--no-sandbox"
-                  ],
-                  "debug": true
-                }
-              },
-              "customContextFile": "context.html",
-              "failOnFailingTestSuite": false,
-              "failOnEmptyTestSuite": false,
-              "reporters": [
-                "mocha"
-              ],
-              "preprocessors": {
-                "main.js": [
-                  "sourcemap"
-                ]
-              },
-              "proxies": {
-                "/x": "/y"
-              },
-              "port": 9876,
-              "webpackCopy": [
-                "main.wasm.map"
-              ]
             }
             """.trimIndent(),
             karmaConfigToJson(config)
@@ -107,21 +107,21 @@ class KarmaConfigSerializationTest {
         assertEquals(
             """
             {
-              "singleRun": true,
-              "autoWatch": false,
-              "files": [],
-              "frameworks": [],
-              "client": {
-                "args": []
-              },
-              "browsers": [],
-              "customLaunchers": {},
-              "failOnFailingTestSuite": false,
-              "failOnEmptyTestSuite": false,
-              "reporters": [],
-              "preprocessors": {},
-              "proxies": {},
-              "webpackCopy": []
+                "singleRun": true,
+                "autoWatch": false,
+                "files": [],
+                "frameworks": [],
+                "client": {
+                    "args": []
+                },
+                "browsers": [],
+                "customLaunchers": {},
+                "failOnFailingTestSuite": false,
+                "failOnEmptyTestSuite": false,
+                "reporters": [],
+                "preprocessors": {},
+                "proxies": {},
+                "webpackCopy": []
             }
             """.trimIndent(),
             karmaConfigToJson(KarmaConfig())
