@@ -45,7 +45,7 @@ import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.host.with
 import kotlin.script.experimental.jvm.JvmDependency
 
-interface K2ScriptingCompilerEnvironment {
+interface ScriptCompilerState {
     val baseScriptCompilationConfiguration: ScriptCompilationConfiguration
     val hostConfiguration: ScriptingHostConfiguration
     val projectEnvironment: VfsBasedProjectEnvironment
@@ -56,7 +56,7 @@ interface K2ScriptingCompilerEnvironment {
     val dummySessionForAnnotationResolution: FirSession?
 }
 
-internal interface K2ScriptingCompilerEnvironmentInternal : K2ScriptingCompilerEnvironment {
+internal interface ScriptCompilerStateInternal : ScriptCompilerState {
     override var dummySessionForAnnotationResolution: FirSession?
     val predefinedJavaComponents: FirSharableJavaComponents
     val compilerContext: SharedScriptCompilationContext
@@ -65,7 +65,7 @@ internal interface K2ScriptingCompilerEnvironmentInternal : K2ScriptingCompilerE
     fun updateContext(configuration: CompilerConfiguration)
 }
 
-internal open class K2ScriptingCompilerEnvironmentImpl(
+internal open class ScriptCompilerStateImpl(
     override val baseScriptCompilationConfiguration: ScriptCompilationConfiguration,
     override val hostConfiguration: ScriptingHostConfiguration,
     override val predefinedJavaComponents: FirSharableJavaComponents,
@@ -78,7 +78,7 @@ internal open class K2ScriptingCompilerEnvironmentImpl(
     override val sharedLibrarySession: FirSession,
     override var dummySessionForAnnotationResolution: FirSession?,
     override var sessionFactoryContext: FirJvmSessionFactory.Context
-) : K2ScriptingCompilerEnvironmentInternal {
+) : ScriptCompilerStateInternal {
 
     override fun updateContext(configuration: CompilerConfiguration) {
         val previous = sessionFactoryContext
@@ -149,7 +149,7 @@ fun createIsolatedCompilerState(
     baseScriptCompilationConfiguration: ScriptCompilationConfiguration,
     hostConfiguration: ScriptingHostConfiguration,
     configureCompiler: CompilerConfiguration.() -> Unit = {},
-): K2ScriptingCompilerEnvironment {
+): ScriptCompilerState {
     val compilerContext = createIsolatedCompilationContext(
         baseScriptCompilationConfiguration,
         hostConfiguration,
@@ -165,7 +165,7 @@ fun createCompilerStateFromEnvironment(
     messageCollector: ScriptDiagnosticsMessageCollector,
     baseScriptCompilationConfiguration: ScriptCompilationConfiguration,
     hostConfiguration: ScriptingHostConfiguration,
-): K2ScriptingCompilerEnvironment {
+): ScriptCompilerState {
     val compilerContext = createCompilationContextFromEnvironment(baseScriptCompilationConfiguration, environment, messageCollector)
     return createCompilerState(compilerContext, messageCollector, hostConfiguration)
 }
@@ -174,7 +174,7 @@ fun createCompilerState(
     compilerContext: SharedScriptCompilationContext,
     messageCollector: ScriptDiagnosticsMessageCollector,
     hostConfiguration: ScriptingHostConfiguration,
-): K2ScriptingCompilerEnvironment {
+): ScriptCompilerState {
     val project = compilerContext.environment.project
     val compilerConfiguration = compilerContext.environment.configuration
     val languageVersionSettings = compilerConfiguration.languageVersionSettings
@@ -243,7 +243,7 @@ fun createCompilerState(
         context = sessionFactoryContext,
     )
 
-    return K2ScriptingCompilerEnvironmentImpl(
+    return ScriptCompilerStateImpl(
         scriptCompilationConfiguration,
         hostConfigurationWithProvider,
         predefinedJavaComponents,
