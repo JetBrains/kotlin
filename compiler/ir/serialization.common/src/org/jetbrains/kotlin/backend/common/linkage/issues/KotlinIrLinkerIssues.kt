@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.backend.common.linkage.issues
 
 import org.jetbrains.kotlin.analyzer.CompilationErrorException
-import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageDiagnostics
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializer
-import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.render
@@ -18,15 +16,6 @@ abstract class KotlinIrLinkerIssue {
 
     fun raiseIssue(consumer: (String) -> Unit): Nothing {
         consumer(errorMessage)
-        throw CompilationErrorException(errorMessage)
-    }
-}
-
-object PartialLinkageErrorsLogged : KotlinIrLinkerIssue() {
-    override val errorMessage = "There are linkage errors reported by the partial linkage engine"
-
-    fun raiseIssue(diagnosticReporter: IrDiagnosticReporter): Nothing {
-        diagnosticReporter.report(PartialLinkageDiagnostics.MAJOR_PARTIAL_LINKAGE_ISSUE, errorMessage)
         throw CompilationErrorException(errorMessage)
     }
 }
