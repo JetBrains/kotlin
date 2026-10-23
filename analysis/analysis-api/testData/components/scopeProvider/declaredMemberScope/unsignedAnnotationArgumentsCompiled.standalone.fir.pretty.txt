@@ -1,0 +1,11 @@
+fun function(argument: @test.TypeAnno(b = -1, s = -1, i = -1, l = -1) kotlin.Int): @test.TypeAnno(b = 1, s = 2, i = 3, l = 4) kotlin.Int
+
+fun constants(): @test.TypeAnno(b = -1, s = 0, i = -1, l = -1) kotlin.Int
+
+fun nested(): @test.NestedAnno(single = test/TypeAnno(b = 1, , s = 2, , i = 3, , l = 4, ), array = [test/TypeAnno(b = -1, , s = -1, , i = -1, , l = -1, )]) kotlin.Int
+
+fun typeArgument(): kotlin.collections.List<@test.TypeAnno(b = -1, s = -1, i = -1, l = -1) kotlin.String>
+
+val property: @test.TypeAnno(b = 1, s = 2, i = 3, l = 4) kotlin.String
+
+val propertyWithDefaults: @test.AnnoWithDefaults kotlin.Int
