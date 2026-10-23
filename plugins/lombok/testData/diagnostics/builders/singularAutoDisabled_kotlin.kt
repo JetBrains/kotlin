@@ -5,13 +5,13 @@
 import lombok.Builder
 import lombok.Singular
 
-@Builder
+<!ANNOTATION_IS_NOT_SUPPORTED!>@Builder<!>
 class Basket(
-    <!SINGULAR_REQUIRES_EXPLICIT_NAME!>@Singular<!>
+    @Singular
     val items: List<String>,
 )
 
-@Builder
+<!ANNOTATION_IS_NOT_SUPPORTED!>@Builder<!>
 class BasketWithExplicitName(
     @Singular("fruit")
     val fruits: List<String>,

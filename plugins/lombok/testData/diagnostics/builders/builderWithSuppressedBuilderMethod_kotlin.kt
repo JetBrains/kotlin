@@ -3,10 +3,10 @@
 
 import lombok.Builder
 
-@Builder(toBuilder = true, builderMethodName = "")
+<!ANNOTATION_IS_NOT_SUPPORTED!>@Builder(toBuilder = true, builderMethodName = "")<!>
 class Suppressed(val x: Int)
 
-@Builder(builderMethodName = "createBuilder")
+<!ANNOTATION_IS_NOT_SUPPORTED!>@Builder(builderMethodName = "createBuilder")<!>
 class Renamed(val x: Int)
 
 fun testSuppressed(instance: Suppressed) {
@@ -16,11 +16,11 @@ fun testSuppressed(instance: Suppressed) {
     Suppressed.<!UNRESOLVED_REFERENCE!>Companion<!>
 
     // Everything else the annotation generates is untouched.
-    val builder: Suppressed.SuppressedBuilder = instance.toBuilder()
-    builder.x(1).build()
+    val builder: Suppressed.<!UNRESOLVED_REFERENCE!>SuppressedBuilder<!> = instance.<!UNRESOLVED_REFERENCE!>toBuilder<!>()
+    builder.<!UNRESOLVED_REFERENCE!>x<!>(1).build()
 }
 
 fun testRenamed() {
-    val builder: Renamed.RenamedBuilder = Renamed.createBuilder()
-    builder.x(1).build()
+    val builder: Renamed.<!UNRESOLVED_REFERENCE!>RenamedBuilder<!> = Renamed.<!UNRESOLVED_REFERENCE!>createBuilder<!>()
+    builder.<!UNRESOLVED_REFERENCE!>x<!>(1).build()
 }
