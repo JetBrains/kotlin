@@ -347,6 +347,15 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         }
     }
 
+    override fun CapturedTypeMarker.hasRecursiveBounds(): Boolean {
+        require(this is ConeCapturedType)
+
+        fun ConeKotlinType.hasThisAsArgument(): Boolean =
+            typeArguments.any { it.type?.typeConstructor() == this@hasRecursiveBounds.unwrapLowerBound().typeConstructor() }
+
+        return constructor.supertypes?.any { it.hasThisAsArgument() } == true || constructor.lowerType?.hasThisAsArgument() == true
+    }
+
     override fun areEqualTypeConstructors(c1: TypeConstructorMarker, c2: TypeConstructorMarker): Boolean {
         return c1 == c2
     }

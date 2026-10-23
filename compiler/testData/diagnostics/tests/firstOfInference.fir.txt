@@ -3,6 +3,6 @@ FILE: firstOfInference.kt
         ^firstOf (R|<local>/list|.R|SubstitutionOverride<kotlin/collections/List.get: R|kotlin/Any?|>|(Int(0)) as R|T|)
     }
     public final fun main(): R|kotlin/Unit| {
-        lval x: R|kotlin/Any| = R|/firstOf|<R|kotlin/Nothing|>(R|kotlin/collections/listOf|<R|kotlin/Int|>(vararg(Int(1), Int(2))))
+        lval x: R|kotlin/Any| = R|/firstOf|<R|it(kotlin/Any & CapturedType(*))|>(R|kotlin/collections/listOf|<R|kotlin/Int|>(vararg(Int(1), Int(2))))
         R|kotlin/io/println|(String(reached: ).R|kotlin/String.plus|(R|<local>/x|))
     }

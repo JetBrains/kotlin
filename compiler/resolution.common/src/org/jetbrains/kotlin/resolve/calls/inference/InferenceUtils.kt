@@ -49,14 +49,16 @@ fun ConstraintStorage.buildNotFixedVariablesToNonSubtypableTypesSubstitutor(
 }
 
 context(c: TypeSystemInferenceExtensionContext)
-fun TypeConstructorMarker.hasRecursiveTypeParametersWithGivenSelfType(): Boolean {
-    if (getParameters().any { it.hasRecursiveBounds(this) }) return true
+fun KotlinTypeMarker.hasRecursiveTypeParametersWithGivenSelfType(languageVersionSettings: LanguageVersionSettings): Boolean {
+    if (typeConstructor().getParameters().any { it.hasRecursiveBounds(typeConstructor()) }) return true
     if (!c.isK2) return false
 
-    if (this is CapturedTypeConstructorMarker || this.isIntersection()) {
-        return supertypes().any {
-            it.typeConstructor().hasRecursiveTypeParametersWithGivenSelfType()
-        }
+    val considerUseSiteRecursion = languageVersionSettings.supportsFeature(LanguageFeature.ConsiderUseSiteRecursiveBoundsOnCapturedTypes)
+    val simpleType = if (considerUseSiteRecursion) unwrapToSimpleTypeUsingLowerBound() else this
+
+    if (simpleType is CapturedTypeMarker || simpleType.typeConstructor().isIntersection()) {
+        return simpleType.typeConstructor().supertypes().any { it.hasRecursiveTypeParametersWithGivenSelfType(languageVersionSettings) }
+                || considerUseSiteRecursion && simpleType is CapturedTypeMarker && simpleType.hasRecursiveBounds()
     }
 
     return false

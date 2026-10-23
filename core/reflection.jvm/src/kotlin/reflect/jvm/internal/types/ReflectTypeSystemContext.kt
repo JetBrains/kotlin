@@ -269,6 +269,10 @@ object ReflectTypeSystemContext : TypeSystemContext {
         shouldNotBeCalled()
     }
 
+    override fun CapturedTypeMarker.hasRecursiveBounds(): Boolean {
+        shouldNotBeCalled()
+    }
+
     override fun areEqualTypeConstructors(c1: TypeConstructorMarker, c2: TypeConstructorMarker): Boolean {
         return c1 == c2
     }
