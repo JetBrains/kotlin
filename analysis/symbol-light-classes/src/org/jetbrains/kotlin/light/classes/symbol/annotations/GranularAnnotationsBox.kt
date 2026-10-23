@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.light.classes.symbol.annotations
 
 import com.intellij.psi.PsiAnnotation
 import com.intellij.psi.PsiElement
+import kotlinx.collections.immutable.PersistentMap
+import kotlinx.collections.immutable.persistentHashMapOf
 import org.jetbrains.kotlin.light.classes.symbol.utils.toArrayIfNotEmptyOrDefault
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.JvmStandardClassIds
@@ -21,6 +23,21 @@ internal class GranularAnnotationsBox(
 ) : AnnotationsBox {
     @Volatile
     private var cachedAnnotations: Collection<PsiAnnotation>? = null
+
+    /**
+     * The special annotations found by [findAnnotation] before all the annotations are computed, or [NoAnnotation] for an absent one.
+     * Each lookup restores the annotated symbol, so the results are kept for the lifetime of the box, as [cachedAnnotations] are.
+     */
+    @Volatile
+    private var specialAnnotations: PersistentMap<ClassId, Any> = persistentHashMapOf()
+
+    /**
+     * The results of [hasAnnotation] for the special annotations before all the annotations are computed.
+     *
+     * @see specialAnnotations
+     */
+    @Volatile
+    private var specialAnnotationPresence: PersistentMap<ClassId, Boolean> = persistentHashMapOf()
 
     private fun getOrComputeCachedAnnotations(owner: PsiElement): Collection<PsiAnnotation> {
         cachedAnnotations?.let { return it }
@@ -56,9 +73,7 @@ internal class GranularAnnotationsBox(
 
         val specialAnnotationClassId = specialAnnotationsListWithSafeArgumentsResolve[qualifiedName]
         if (specialAnnotationClassId != null) {
-            annotationsProvider[specialAnnotationClassId].firstOrNull()?.let { annotationApplication ->
-                return SymbolLightLazyAnnotation(annotationsProvider, annotationApplication, owner)
-            }
+            findSpecialAnnotation(specialAnnotationClassId, owner)?.let { return it }
         }
 
         if (withAdditionalAnnotations && additionalAnnotationsProvider.isSpecialQualifier(qualifiedName)) {
@@ -78,7 +93,7 @@ internal class GranularAnnotationsBox(
         }
 
         val specialAnnotationClassId = specialAnnotationsList[qualifiedName]
-        if (specialAnnotationClassId != null && specialAnnotationClassId in annotationsProvider) return true
+        if (specialAnnotationClassId != null && hasSpecialAnnotation(specialAnnotationClassId)) return true
 
         if (additionalAnnotationsProvider.isSpecialQualifier(qualifiedName)) {
             return additionalAnnotationsProvider.findSpecialAnnotation(this, qualifiedName, owner) != null
@@ -89,11 +104,52 @@ internal class GranularAnnotationsBox(
         return getOrComputeCachedAnnotations(owner).any { it.qualifiedName == qualifiedName }
     }
 
+    private fun findSpecialAnnotation(classId: ClassId, owner: PsiElement): PsiAnnotation? {
+        specialAnnotations[classId]?.let { return it as? PsiAnnotation }
+
+        val annotation = annotationsProvider[classId].firstOrNull()?.let { SymbolLightLazyAnnotation(annotationsProvider, it, owner) }
+        while (true) {
+            val current = specialAnnotations
+            // Another thread might have stored its annotation, which is returned to keep the result stable
+            current[classId]?.let { return it as? PsiAnnotation }
+            if (specialAnnotationsUpdater.compareAndSet(this, current, current.putting(classId, annotation ?: NoAnnotation))) {
+                return annotation
+            }
+        }
+    }
+
+    private fun hasSpecialAnnotation(classId: ClassId): Boolean {
+        specialAnnotationPresence[classId]?.let { return it }
+
+        val isPresent = classId in annotationsProvider
+        while (true) {
+            val current = specialAnnotationPresence
+            if (current.containsKey(classId)) return current.getValue(classId)
+            if (specialAnnotationPresenceUpdater.compareAndSet(this, current, current.putting(classId, isPresent))) {
+                return isPresent
+            }
+        }
+    }
+
+    private object NoAnnotation
+
     companion object {
         private val fieldUpdater = AtomicReferenceFieldUpdater.newUpdater(
             /* tclass = */ GranularAnnotationsBox::class.java,
             /* vclass = */ Collection::class.java,
             /* fieldName = */ GranularAnnotationsBox::cachedAnnotations.name,
+        )
+
+        private val specialAnnotationsUpdater = AtomicReferenceFieldUpdater.newUpdater(
+            /* tclass = */ GranularAnnotationsBox::class.java,
+            /* vclass = */ PersistentMap::class.java,
+            /* fieldName = */ GranularAnnotationsBox::specialAnnotations.name,
+        )
+
+        private val specialAnnotationPresenceUpdater = AtomicReferenceFieldUpdater.newUpdater(
+            /* tclass = */ GranularAnnotationsBox::class.java,
+            /* vclass = */ PersistentMap::class.java,
+            /* fieldName = */ GranularAnnotationsBox::specialAnnotationPresence.name,
         )
 
         /**
