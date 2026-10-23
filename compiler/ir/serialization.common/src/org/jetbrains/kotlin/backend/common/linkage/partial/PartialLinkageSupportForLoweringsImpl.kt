@@ -35,13 +35,6 @@ internal class PartialLinkageSupportForLoweringsImpl(
     var linkageIssuesRendered = 0
         private set
 
-    /**
-     * To track the amount of generated `throw` expressions.
-     * Note that the following condition is always true: [throwExpressionsGenerated] <= [linkageIssuesRendered].
-     */
-    var throwExpressionsGenerated = 0
-        private set
-
     context(irBuiltIns: IrBuiltIns)
     override fun throwLinkageError(
         partialLinkageCase: PartialLinkageCase,
@@ -50,8 +43,6 @@ internal class PartialLinkageSupportForLoweringsImpl(
         significance: PartialLinkageIssueSignificance,
     ): IrCall {
         val errorMessage = renderAndLogLinkageError(partialLinkageCase, element, file, significance)
-
-        throwExpressionsGenerated++ // Track each generated `throw` expression.
 
         return IrCallImpl(
             startOffset = element.startOffset,
