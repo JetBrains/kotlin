@@ -443,7 +443,7 @@ tasks.named("validatePlugins") {
 }
 
 projectTests {
-    testTask(javaLauncher = JdkMajorVersion.JDK_17_0) {
+    testTask() {
         workingDir = rootDir
     }
 }
