@@ -51,6 +51,21 @@ abstract class KtModuleByCompilerConfiguration(
     val name: String
         get() = testModule.name
 
+    /**
+     * The JVM classpath of the module, or `null` if its libraries are JS, Wasm or Native dependencies instead.
+     */
+    private val jvmLibraryRoots: List<Path>? by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        val targetPlatform = testModule.targetPlatform(testServices)
+        if (targetPlatform.isNative() || targetPlatform.isWasm() || targetPlatform.isJs()) {
+            null
+        } else {
+            buildList {
+                addAll(configuration.jvmModularRoots.map(File::toPath))
+                addAll(configuration.jvmClasspathRoots.map(File::toPath))
+            }
+        }
+    }
+
     override val directRegularDependencies: List<KaModule> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         buildList {
             testModule.allDependencies.mapTo(this) { testServices.ktTestModuleStructure.getKtTestModule(it.dependencyModule.name).ktModule }
@@ -71,15 +86,36 @@ abstract class KtModuleByCompilerConfiguration(
                 librariesByRoots(getAllJsDependenciesPaths(testModule, testServices).map { Paths.get(it) })
             }
             else -> buildList {
-                val roots = buildList {
-                    addAll(configuration.jvmModularRoots.map(File::toPath))
-                    addAll(configuration.jvmClasspathRoots.map(File::toPath))
+                val roots = jvmLibraryRoots.orEmpty()
+                if (roots.isNotEmpty()) {
+                    if (canUseSingleLibrary(roots)) {
+                        // A single library for the whole classpath, like the single library session of the compiler.
+                        // A binary library session depends only on the builtins session, so with a library per root, the Java classes
+                        // of the JDK root resolved `kotlin.Any`, `kotlin.String`, etc. from the builtins module instead of the stdlib,
+                        // and each test bound and deserialized the builtins of both.
+                        add(LibraryByRoots(roots, ktModule, project, testServices))
+                    } else {
+                        addAll(librariesByRoots(roots))
+                    }
                 }
-                addAll(librariesByRoots(roots))
+
                 addIfNotNull(createJdkFromConfiguration())
             }
         }
     }
+
+    /**
+     * Whether the JVM classpath [roots] can be a single library: every other module of the test has the same classpath or shares no root
+     * with it.
+     *
+     * Otherwise, two different libraries would contain the same root. The test project structure provider maps a file to the first library
+     * containing it, so the combined symbol providers of the other module would skip the classes of a shared root, e.g., of the JDK.
+     */
+    private fun canUseSingleLibrary(roots: List<Path>): Boolean =
+        testServices.ktTestModuleStructure.mainModules.all { mainModule ->
+            val otherRoots = (mainModule.ktModule as? KtModuleByCompilerConfiguration)?.jvmLibraryRoots ?: return@all true
+            otherRoots == roots || otherRoots.none { it in roots }
+        }
 
     private fun createJdkFromConfiguration(): KaLibraryModule? = configuration.get(JVMConfigurationKeys.JDK_HOME)?.let { jdkHome ->
         val jdkHomePaths = StandaloneProjectFactory.getDefaultJdkModulePaths(project, jdkHome.toPath())
