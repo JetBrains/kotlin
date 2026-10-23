@@ -28,7 +28,7 @@ KaNamedFunctionSymbol:
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: [
-      test/TypeAnno(b = 1, i = 3, l = 4, s = 2)
+      test/TypeAnno(b = 1u, i = 3u, l = 4uL, s = 2u)
         psi: null
     ]
     typeArguments: []
@@ -64,7 +64,7 @@ KaNamedFunctionSymbol:
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: [
-          test/TypeAnno(b = -1, i = -1, l = -1, s = -1)
+          test/TypeAnno(b = 255u, i = 4294967295u, l = 18446744073709551615uL, s = 65535u)
             psi: null
         ]
         typeArguments: []
@@ -121,7 +121,7 @@ KaNamedFunctionSymbol:
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: [
-      test/TypeAnno(b = -1, i = -1, l = -1, s = 0)
+      test/TypeAnno(b = 255u, i = 4294967295u, l = 18446744073709551615uL, s = 0u)
         psi: null
     ]
     typeArguments: []
@@ -172,7 +172,7 @@ KaNamedFunctionSymbol:
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: [
-      test/NestedAnno(array = [test/TypeAnno(b = -1, , s = -1, , i = -1, , l = -1, )], single = test/TypeAnno(b = 1, , s = 2, , i = 3, , l = 4, ))
+      test/NestedAnno(array = [test/TypeAnno(b = 255u, , s = 65535u, , i = 4294967295u, , l = 18446744073709551615uL, )], single = test/TypeAnno(b = 1u, , s = 2u, , i = 3u, , l = 4uL, ))
         psi: null
     ]
     typeArguments: []
@@ -226,7 +226,7 @@ KaNamedFunctionSymbol:
     typeArguments: [
       KaUsualClassType:
         annotations: [
-          test/TypeAnno(b = -1, i = -1, l = -1, s = -1)
+          test/TypeAnno(b = 255u, i = 4294967295u, l = 18446744073709551615uL, s = 65535u)
             psi: null
         ]
         typeArguments: []
@@ -276,7 +276,7 @@ KaKotlinPropertySymbol:
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: [
-        test/TypeAnno(b = 1, i = 3, l = 4, s = 2)
+        test/TypeAnno(b = 1u, i = 3u, l = 4uL, s = 2u)
           psi: null
       ]
       typeArguments: []
@@ -318,7 +318,7 @@ KaKotlinPropertySymbol:
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: [
-        test/TypeAnno(b = 1, i = 3, l = 4, s = 2)
+        test/TypeAnno(b = 1u, i = 3u, l = 4uL, s = 2u)
           psi: null
       ]
       typeArguments: []
@@ -361,7 +361,7 @@ KaKotlinPropertySymbol:
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: [
-      test/TypeAnno(b = 1, i = 3, l = 4, s = 2)
+      test/TypeAnno(b = 1u, i = 3u, l = 4uL, s = 2u)
         psi: null
     ]
     typeArguments: []
