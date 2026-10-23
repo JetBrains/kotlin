@@ -305,7 +305,7 @@ internal class SymbolLightAccessorMethod private constructor(
     override fun isValid(): Boolean =
         super.isValid() && propertyAccessorDeclaration?.isValid
                 ?: containingPropertyDeclaration?.isValid
-                ?: symbolPointer.isValid(useSiteModule)
+                ?: isSymbolPointerValid(symbolPointer, useSiteModule)
 
     private val _isOverride: Boolean by lazyPub {
         if (isTopLevel) {

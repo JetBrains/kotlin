@@ -296,5 +296,5 @@ internal class SymbolLightFieldForProperty private constructor(
 
     override fun hashCode(): Int = kotlinOrigin?.hashCode() ?: fieldName.hashCode()
 
-    override fun isValid(): Boolean = super.isValid() && kotlinOrigin?.isValid ?: propertySymbolPointer.isValid(useSiteModule)
+    override fun isValid(): Boolean = super.isValid() && kotlinOrigin?.isValid ?: isSymbolPointerValid(propertySymbolPointer, useSiteModule)
 }

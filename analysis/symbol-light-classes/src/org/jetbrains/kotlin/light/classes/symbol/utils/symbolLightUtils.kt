@@ -359,6 +359,16 @@ internal fun KaSymbolPointer<*>.isValid(useSiteModule: KaModule): Boolean =
         restoreSymbol() != null
     }
 
+/**
+ * Whether [pointer] still restores a symbol, cached until the next modification.
+ *
+ * Light elements without source PSI, such as generated members, can check their validity only this way. A restoration is costly: for
+ * example, a member symbol is searched for in the member scope of its class. The Java resolver checks the validity of every candidate
+ * member on every lookup.
+ */
+internal fun PsiElement.isSymbolPointerValid(pointer: KaSymbolPointer<*>, useSiteModule: KaModule): Boolean =
+    cachedValue { pointer.isValid(useSiteModule) }
+
 @Suppress("NOTHING_TO_INLINE")
 internal inline fun <T : KaSymbol> compareSymbolPointers(
     left: KaSymbolPointer<T>,

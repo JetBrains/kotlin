@@ -129,5 +129,5 @@ internal class SymbolLightTypeParameter private constructor(
     override fun getTextOffset(): Int = kotlinOrigin?.startOffset ?: -1
     override fun getStartOffsetInParent(): Int = kotlinOrigin?.startOffsetInParent ?: -1
 
-    override fun isValid(): Boolean = super.isValid() && kotlinOrigin?.isValid ?: symbolPointer.isValid(useSiteModule)
+    override fun isValid(): Boolean = super.isValid() && kotlinOrigin?.isValid ?: isSymbolPointerValid(symbolPointer, useSiteModule)
 }

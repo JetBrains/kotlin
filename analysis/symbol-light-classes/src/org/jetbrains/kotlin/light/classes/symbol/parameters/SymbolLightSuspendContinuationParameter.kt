@@ -78,5 +78,5 @@ internal class SymbolLightSuspendContinuationParameter(
 
     override fun hashCode(): Int = name.hashCode() * 31 + containingMethod.hashCode()
 
-    override fun isValid(): Boolean = super.isValid() && symbolPointer.isValid(useSiteModule)
+    override fun isValid(): Boolean = super.isValid() && isSymbolPointerValid(symbolPointer, useSiteModule)
 }
