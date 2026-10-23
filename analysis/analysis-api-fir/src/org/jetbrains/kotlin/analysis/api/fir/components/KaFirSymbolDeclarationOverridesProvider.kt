@@ -221,7 +221,7 @@ private fun isSubClassOf(subClass: KaClassSymbol, superClass: KaClassSymbol, all
     return isSubclassOf(
         subclass = subClass.firSymbol.fir as FirClass,
         superclass = superClass.firSymbol.fir as FirClass,
-        relationProvider.rootModuleSession,
+        rootModuleSession,
         allowIndirectSubtyping,
     )
 }
