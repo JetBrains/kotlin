@@ -1,5 +1,7 @@
 // TARGET_BACKEND: JS_IR
 // ISSUE: KT-90470
+// IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_FIRST_STAGE: JS:2.0,2.1,2.2,2.3,2.4
+// KT-90470: Fixed in 2.5.20
 
 fun <T> assertEquals(a: T, b: T) {
     require(a == b) { "Assertion failed: $a != $b" }
