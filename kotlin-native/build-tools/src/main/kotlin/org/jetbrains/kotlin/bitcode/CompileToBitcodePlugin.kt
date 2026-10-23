@@ -225,13 +225,25 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
         private val reproducibilityRootsMap: Map<File, String>
             get() = reproducibilityRootsMap(project, nativeDependencies)
 
+        // These follow the platform arguments, so this `-target` replaces the target's triple.
+        private val arm64eCompilerArgs: List<String> = if (_target.arm64e) {
+            val configurables = platformManager.platform(target).configurables as AppleConfigurables
+            val triple = configurables.arm64eTargetTriple ?: error("$target has no arm64e variant")
+            listOf("-target", triple.withOSVersion(configurables.osVersionMin).toString())
+        } else {
+            emptyList()
+        }
+
         private val allCompilerArgs = module.compilerArgs.map {
             it + when (sanitizer) {
                 null -> emptyList()
                 SanitizerKind.ADDRESS -> listOf("-fsanitize=address")
                 SanitizerKind.THREAD -> listOf("-fsanitize=thread")
-            }
+            } + arm64eCompilerArgs
         }
+
+        // The arm64e variant uses the dependencies of its target.
+        private val dependenciesTarget = target.withSanitizer(sanitizer)
 
         /**
          * Compiles source files into bitcode files.
@@ -249,7 +261,7 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
             this.workingDirectory.set(module.compilerWorkingDirectory)
             this.reproducibilityRootsMap.set(this@SourceSet.reproducibilityRootsMap)
             dependsOn(nativeDependencies.llvmDependency)
-            dependsOn(nativeDependencies.targetDependency(_target))
+            dependsOn(nativeDependencies.targetDependency(dependenciesTarget))
             this@SourceSet.dependencies.apply {
                 finalizeValue()
                 dependsOn(*get().toTypedArray())
@@ -284,7 +296,7 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
                     // compdb task should also have these dependencies. This way the generated database will point to the
                     // code that actually exists.
                     dependsOn(nativeDependencies.llvmDependency)
-                    dependsOn(nativeDependencies.targetDependency(_target))
+                    dependsOn(nativeDependencies.targetDependency(dependenciesTarget))
                     this@SourceSet.dependencies.apply {
                         finalizeValue()
                         dependsOn(*get().toTypedArray())
@@ -573,6 +585,8 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
                 testTaskName: String,
                 action: Action<in TestsGroup>,
         ) {
+            // The arm64e variant only provides runtime bitcode for the distribution.
+            if (_target.arm64e) return
             val testsGroup = project.objects.newInstance(TestsGroup::class.java, _target).apply {
                 testSupportModules.set(listOf("googletest", "googlemock"))
                 testLauncherModule.convention("test_support")

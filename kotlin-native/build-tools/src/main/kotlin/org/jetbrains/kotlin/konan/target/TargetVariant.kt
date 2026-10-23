@@ -14,14 +14,16 @@ import java.io.Serializable
 
 /**
  * [Target][KonanTarget] with optional [sanitizer][SanitizerKind].
+ * With [arm64e], the arm64e variant of the target, which `-Xbinary=arm64e=true` selects, see [arm64eTargetTriple].
  *
  * Can be used as a gradle attribute: `attribute(TargetVariant.TARGET_ATTRIBUTE, target.withSanitizer())`
  */
-class TargetVariant(
+class TargetVariant @JvmOverloads constructor(
         val target: KonanTarget,
         val sanitizer: SanitizerKind?,
+        val arm64e: Boolean = false,
 ) : Named, Serializable {
-    override fun getName(): String = "$target${sanitizer.targetSuffix}"
+    override fun getName(): String = "$target${sanitizer.targetSuffix}${if (arm64e) "_arm64e" else ""}"
 
     override fun toString(): String = name
 
@@ -47,6 +49,11 @@ class TargetVariant(
  * Construct [TargetVariant] from [target][KonanTarget] and optional [sanitizer][SanitizerKind].
  */
 fun KonanTarget.withSanitizer(sanitizer: SanitizerKind? = null) = TargetVariant(this, sanitizer)
+
+/**
+ * Construct the arm64e variant of [target][KonanTarget], see [TargetVariant].
+ */
+fun KonanTarget.arm64eVariant() = TargetVariant(this, sanitizer = null, arm64e = true)
 
 /**
  * All known targets with their sanitizers.
