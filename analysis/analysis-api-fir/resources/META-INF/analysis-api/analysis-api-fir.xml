@@ -54,27 +54,27 @@
 
     <projectService
         serviceInterface="org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade"
-        serviceImplementation="org.jetbrains.kotlin.analysis.api.impl.base.java.KaBaseKotlinJavaPsiFacade"
+        serviceImplementation="org.jetbrains.kotlin.analysis.api.fir.java.KaBaseKotlinJavaPsiFacade"
     />
 
     <projectService
         serviceInterface="org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver"
-        serviceImplementation="org.jetbrains.kotlin.analysis.api.impl.base.java.KaBaseJavaModuleResolver"
+        serviceImplementation="org.jetbrains.kotlin.analysis.api.fir.java.KaBaseJavaModuleResolver"
     />
 
     <projectService
         serviceInterface="org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementSourceFactory"
-        serviceImplementation="org.jetbrains.kotlin.analysis.api.impl.base.java.source.JavaElementSourceWithSmartPointerFactory"
+        serviceImplementation="org.jetbrains.kotlin.analysis.api.fir.java.source.JavaElementSourceWithSmartPointerFactory"
     />
 
     <projectService
         serviceInterface="org.jetbrains.kotlin.psi.KotlinReferenceProvidersService"
-        serviceImplementation="org.jetbrains.kotlin.analysis.api.impl.base.references.KotlinReferenceProvidersServiceImpl"
+        serviceImplementation="org.jetbrains.kotlin.analysis.api.fir.references.KotlinReferenceProvidersServiceImpl"
     />
 
     <projectService
         serviceInterface="org.jetbrains.kotlin.analysis.api.projectStructure.KaModuleProvider"
-        serviceImplementation="org.jetbrains.kotlin.analysis.api.impl.base.projectStructure.KaBaseModuleProvider"
+        serviceImplementation="org.jetbrains.kotlin.analysis.api.fir.projectStructure.KaBaseModuleProvider"
     />
 
     <projectService
@@ -84,32 +84,32 @@
 
     <applicationService
         serviceInterface="org.jetbrains.kotlin.analysis.api.permissions.KaAnalysisPermissionRegistry"
-        serviceImplementation="org.jetbrains.kotlin.analysis.api.impl.base.permissions.KaBaseAnalysisPermissionRegistry"
+        serviceImplementation="org.jetbrains.kotlin.analysis.api.fir.permissions.KaBaseAnalysisPermissionRegistry"
     />
 
     <projectService
         serviceInterface="org.jetbrains.kotlin.analysis.api.platform.permissions.KaAnalysisPermissionChecker"
-        serviceImplementation="org.jetbrains.kotlin.analysis.api.impl.base.permissions.KaBaseAnalysisPermissionChecker"
+        serviceImplementation="org.jetbrains.kotlin.analysis.api.fir.permissions.KaBaseAnalysisPermissionChecker"
     />
 
     <projectService
         serviceInterface="org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaResolutionScopeProvider"
-        serviceImplementation="org.jetbrains.kotlin.analysis.api.impl.base.projectStructure.KaBaseResolutionScopeProvider"
+        serviceImplementation="org.jetbrains.kotlin.analysis.api.fir.projectStructure.KaBaseResolutionScopeProvider"
     />
 
     <projectService
         serviceInterface="org.jetbrains.kotlin.analysis.api.platform.lifetime.KaLifetimeTracker"
-        serviceImplementation="org.jetbrains.kotlin.analysis.api.impl.base.lifetime.KaBaseLifetimeTracker"
+        serviceImplementation="org.jetbrains.kotlin.analysis.api.fir.lifetime.KaBaseLifetimeTracker"
     />
 
     <projectService
         serviceInterface="org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaContentScopeProvider"
-        serviceImplementation="org.jetbrains.kotlin.analysis.api.impl.base.projectStructure.KaBaseContentScopeProvider"
+        serviceImplementation="org.jetbrains.kotlin.analysis.api.fir.projectStructure.KaBaseContentScopeProvider"
     />
 
     <projectService
         serviceInterface="org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaGlobalSearchScopeMerger"
-        serviceImplementation="org.jetbrains.kotlin.analysis.api.impl.base.projectStructure.KotlinOptimizingGlobalSearchScopeMerger"
+        serviceImplementation="org.jetbrains.kotlin.analysis.api.fir.projectStructure.KotlinOptimizingGlobalSearchScopeMerger"
     />
 
     <applicationService serviceImplementation="org.jetbrains.kotlin.analysis.decompiled.light.classes.origin.KotlinDeclarationInCompiledFileSearcher" />
@@ -196,17 +196,17 @@
   </extensions>
 
   <extensions defaultExtensionNs="org.jetbrains.kotlin">
-    <kotlinContentScopeRefiner implementation="org.jetbrains.kotlin.analysis.api.impl.base.projectStructure.KaResolveExtensionToContentScopeRefinerBridge"/>
+    <kotlinContentScopeRefiner implementation="org.jetbrains.kotlin.analysis.api.fir.projectStructure.KaResolveExtensionToContentScopeRefinerBridge"/>
     <kotlinGlobalSearchScopeMergeStrategy
-        implementation="org.jetbrains.kotlin.analysis.api.impl.base.projectStructure.KotlinUnionScopeMergeStrategy"
+        implementation="org.jetbrains.kotlin.analysis.api.fir.projectStructure.KotlinUnionScopeMergeStrategy"
         order="first"/>
 
     <!-- We merge intersection scopes right after flattening union scopes. This allows the merger to profit from nested union scopes being
          flattened (which may contain intersection scopes), while also cutting down on the number of scopes passed to later mergers. -->
     <kotlinGlobalSearchScopeMergeStrategy
-        implementation="org.jetbrains.kotlin.analysis.api.impl.base.projectStructure.KotlinIntersectionScopeMergeStrategy"
+        implementation="org.jetbrains.kotlin.analysis.api.fir.projectStructure.KotlinIntersectionScopeMergeStrategy"
         order="first"/>
-    <kotlinGlobalSearchScopeMergeStrategy implementation="org.jetbrains.kotlin.analysis.api.impl.base.projectStructure.KotlinResolveExtensionGeneratedFileScopeMergeStrategy"/>
+    <kotlinGlobalSearchScopeMergeStrategy implementation="org.jetbrains.kotlin.analysis.api.fir.projectStructure.KotlinResolveExtensionGeneratedFileScopeMergeStrategy"/>
 
     <kotlinContentScopeRefiner implementation="org.jetbrains.kotlin.analysis.api.fir.projectStructure.KaFirLibraryTargetPlatformContentScopeRefiner"/>
 

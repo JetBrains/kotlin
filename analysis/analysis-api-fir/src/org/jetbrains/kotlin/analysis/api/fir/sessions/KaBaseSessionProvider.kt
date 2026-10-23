@@ -1,0 +1,164 @@
+/*
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.analysis.api.fir.sessions
+
+import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiElement
+import com.intellij.psi.util.PsiUtilCore
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.fir.lifetime.KaBaseLifetimeTracker
+import org.jetbrains.kotlin.analysis.api.fir.permissions.KaBaseWriteActionStartedChecker
+import org.jetbrains.kotlin.analysis.api.fir.restrictedAnalysis.KaBaseRestrictedAnalysisException
+import org.jetbrains.kotlin.analysis.api.impl.base.util.withKaModuleEntry
+import org.jetbrains.kotlin.analysis.api.platform.KaCachedService
+import org.jetbrains.kotlin.analysis.api.platform.KaSessionListener
+import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformSettings
+import org.jetbrains.kotlin.analysis.api.platform.lifetime.KotlinLifetimeTokenFactory
+import org.jetbrains.kotlin.analysis.api.platform.permissions.KaAnalysisPermissionChecker
+import org.jetbrains.kotlin.analysis.api.platform.restrictedAnalysis.KotlinRestrictedAnalysisService
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.isResolvable
+import org.jetbrains.kotlin.analysis.api.session.KaSessionProvider
+import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfNeeded
+
+@KaImplementationDetail
+abstract class KaBaseSessionProvider(project: Project) : KaSessionProvider(project) {
+    // We cache several services to avoid repeated `getService` calls in `analyze`.
+    @KaCachedService
+    private val permissionChecker by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        KaAnalysisPermissionChecker.getInstance(project)
+    }
+
+    @KaCachedService
+    private val lifetimeTracker by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        KaBaseLifetimeTracker.getInstance(project)
+    }
+
+    @KaCachedService
+    private val restrictedAnalysisService by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        KotlinRestrictedAnalysisService.getInstance(project)
+    }
+
+    @KaCachedService
+    protected val tokenFactory by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        KotlinLifetimeTokenFactory.getInstance(project)
+    }
+
+    @KaCachedService
+    private val kotlinPlatformSettings by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        KotlinPlatformSettings.getInstance(project)
+    }
+
+    private val writeActionStartedChecker = KaBaseWriteActionStartedChecker(this)
+
+    /**
+     * Checks that the [useSiteElement] is valid. Should be called before the use-site module is computed from the element, so that issues
+     * with analysis on invalid PSI are caught as early as possible.
+     */
+    protected fun checkUseSiteElement(useSiteElement: PsiElement) {
+        PsiUtilCore.ensureValid(useSiteElement)
+    }
+
+    protected fun checkUseSiteModule(useSiteModule: KaModule) {
+        if (useSiteModule is KaLibraryModule && !kotlinPlatformSettings.allowUseSiteLibraryModuleAnalysis) {
+            throw KaBaseUseSiteLibraryModuleAnalysisException(useSiteModule)
+        }
+
+        requireWithAttachment(
+            useSiteModule.isResolvable,
+            { "`${useSiteModule::class.simpleName}` is not resolvable and thus cannot be a use-site module." },
+        ) {
+            withKaModuleEntry("useSiteModule", useSiteModule)
+        }
+    }
+
+    /**
+     * Checks whether analysis may be performed at all in the current context. Should be called before a session is acquired, so that we
+     * don't create and cache a session for an analysis that is going to be rejected anyway.
+     */
+    protected fun checkAnalysisAllowed() {
+        if (!permissionChecker.isAnalysisAllowed()) {
+            throw ProhibitedAnalysisException("Analysis is not allowed: ${permissionChecker.getRejectionReason()}")
+        }
+
+        ProgressManager.checkCanceled()
+
+        restrictedAnalysisService?.run {
+            if (isAnalysisRestricted && !isRestrictedAnalysisAllowed) {
+                rejectRestrictedAnalysis()
+            }
+        }
+    }
+
+    override fun beforeEnteringAnalysis(session: KaSession, useSiteElement: PsiElement) {
+        beforeEnteringAnalysisInternal(session, session.useSiteModule, useSiteElement)
+    }
+
+    override fun beforeEnteringAnalysis(session: KaSession, useSiteModule: KaModule) {
+        beforeEnteringAnalysisInternal(session, useSiteModule, null)
+    }
+
+    protected fun forEachListenerSafe(action: (KaSessionListener) -> Unit) = KaSessionListener.EP_NAME.forEachExtensionSafe(action)
+
+    private fun beforeEnteringAnalysisInternal(session: KaSession, useSiteModule: KaModule, useSiteElement: PsiElement?) {
+        // Session acquisition might take a while (e.g. when the session has to be created), so we check for cancellation again before
+        // entering analysis.
+        ProgressManager.checkCanceled()
+
+        lifetimeTracker.beforeEnteringAnalysis(session)
+        writeActionStartedChecker.beforeEnteringAnalysis()
+
+        forEachListenerSafe { it.beforeEnteringAnalysis(useSiteModule, useSiteElement) }
+    }
+
+    override fun handleAnalysisException(throwable: Throwable, session: KaSession, useSiteElement: PsiElement): Nothing {
+        handleAnalysisExceptionInternal(throwable, session.useSiteModule, useSiteElement)
+    }
+
+    override fun handleAnalysisException(throwable: Throwable, session: KaSession, useSiteModule: KaModule): Nothing {
+        handleAnalysisExceptionInternal(throwable, useSiteModule, null)
+    }
+
+    private fun handleAnalysisExceptionInternal(
+        throwable: Throwable,
+        useSiteModule: KaModule,
+        useSiteElement: PsiElement?,
+    ): Nothing {
+        rethrowIntellijPlatformExceptionIfNeeded(throwable)
+        forEachListenerSafe { it.onAnalysisException(useSiteModule, useSiteElement, throwable) }
+
+        if (restrictedAnalysisService?.isAnalysisRestricted == true && throwable !is Error) {
+            throw KaBaseRestrictedAnalysisException(cause = throwable)
+        }
+
+        throw throwable
+    }
+
+    override fun afterLeavingAnalysis(session: KaSession, useSiteElement: PsiElement) {
+        afterLeavingAnalysisInternal(session, session.useSiteModule, useSiteElement)
+    }
+
+    override fun afterLeavingAnalysis(session: KaSession, useSiteModule: KaModule) {
+        afterLeavingAnalysisInternal(session, useSiteModule, null)
+    }
+
+    private fun afterLeavingAnalysisInternal(session: KaSession, useSiteModule: KaModule, useSiteElement: PsiElement?) {
+        forEachListenerSafe { it.afterLeavingAnalysis(useSiteModule, useSiteElement) }
+
+        try {
+            // `writeActionStartedChecker` might throw an "illegal write action" exception.
+            writeActionStartedChecker.afterLeavingAnalysis()
+        } finally {
+            lifetimeTracker.afterLeavingAnalysis(session)
+        }
+    }
+}
+
+private class ProhibitedAnalysisException(override val message: String) : IllegalStateException()
