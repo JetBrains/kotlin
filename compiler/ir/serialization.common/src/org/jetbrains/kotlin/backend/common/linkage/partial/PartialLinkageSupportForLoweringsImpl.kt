@@ -36,13 +36,6 @@ internal class PartialLinkageSupportForLoweringsImpl(
         private set
 
     /**
-     * To track the amount of logged linkage issues.
-     * Note that the following condition is always true: [linkageIssuesLogged] <= [linkageIssuesRendered].
-     */
-    var linkageIssuesLogged = 0
-        private set
-
-    /**
      * To track the amount of generated `throw` expressions.
      * Note that the following condition is always true: [throwExpressionsGenerated] <= [linkageIssuesRendered].
      */
@@ -81,7 +74,6 @@ internal class PartialLinkageSupportForLoweringsImpl(
         val errorMessage = renderLinkageError(partialLinkageCase)
         val locationInSourceCode = file.computeLocationForOffset(element.startOffsetOfFirstDenotableIrElement())
 
-        linkageIssuesLogged++ // Track each logged linkage issue.
         logger.log(errorMessage, locationInSourceCode, significance)
 
         return errorMessage
