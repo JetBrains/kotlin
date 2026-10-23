@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNodeWithSubgraphs
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.FunctionCallExitNode
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.QualifiedAccessNode
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ResolvedQualifierNode
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.resolvedControlFlowGraphReference
@@ -55,6 +56,8 @@ object FirEnumCompanionInEnumConstructorCallChecker : FirClassChecker(MppChecker
         companionSymbol: FirRegularClassSymbol,
         enumClass: FirRegularClassSymbol,
     ) {
+        val reportedAccess = mutableSetOf<FirExpression>()
+
         for (node in graph.nodes) {
             if (node is CFGNodeWithSubgraphs) {
                 for (subGraph in node.subGraphs) {
@@ -72,16 +75,17 @@ object FirEnumCompanionInEnumConstructorCallChecker : FirClassChecker(MppChecker
                     }
                 }
             }
-            val qualifiedAccess = when (node) {
-                is QualifiedAccessNode -> node.fir
-                is FunctionCallExitNode -> node.firAsFunctionCallOrNull ?: continue
-                else -> continue
+
+            val access = when (node) {
+                is QualifiedAccessNode -> node.fir.findCompanionAccess(companionSymbol)
+                is FunctionCallExitNode -> node.firAsFunctionCallOrNull?.findCompanionAccess(companionSymbol)
+                is ResolvedQualifierNode -> node.fir.takeIf { it.accessedObjectSymbol == companionSymbol }
+                else -> null
             }
-            val matchingReceiver = qualifiedAccess.allReceiverExpressions
-                .firstOrNull { it.unwrapSmartcastExpression().getClassSymbol(qualifiedAccess) == companionSymbol }
-            if (matchingReceiver != null) {
+
+            if (access != null && reportedAccess.add(access)) {
                 reporter.reportOn(
-                    matchingReceiver.source ?: qualifiedAccess.source,
+                    access.source ?: node.fir.source,
                     FirErrors.UNINITIALIZED_ENUM_COMPANION,
                     enumClass
                 )
@@ -90,11 +94,18 @@ object FirEnumCompanionInEnumConstructorCallChecker : FirClassChecker(MppChecker
     }
 
     context(context: CheckerContext)
+    private fun FirQualifiedAccessExpression.findCompanionAccess(companionSymbol: FirRegularClassSymbol): FirExpression? =
+        allReceiverExpressions.firstOrNull {
+            it.unwrapSmartcastExpression().getClassSymbol(this) == companionSymbol
+        }
+
+
+    context(context: CheckerContext)
     private fun FirExpression.getClassSymbol(qualifiedAccess: FirQualifiedAccessExpression): FirRegularClassSymbol? {
         return when (this) {
             is FirResolvedQualifier ->
                 if (LanguageFeature.FixedUninitializedEnumCompanionCheck.isEnabled()) {
-                    this.resolvedSymbolOrCompanionSymbol()
+                    this.resolvedSymbolOrCompanionSymbol()?.fullyExpandedClass()
                 } else {
                     // Before companion blocks (KT-84484), unqualified accesses to static members didn't have a dispatch receiver.
                     // The only static members in Kotlin classes were enum entries, `values()`, `valueOf()` and `entries`.
