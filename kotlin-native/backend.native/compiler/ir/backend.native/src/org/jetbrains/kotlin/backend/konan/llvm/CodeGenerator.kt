@@ -296,7 +296,8 @@ internal object VirtualTablesLookup {
             }
         }
 
-        return LlvmFunctionPointer(llvmMethod, llvmFunctionSignature)
+        // Vtable and itable entries are signed as C function pointers, see [RTTIGenerator.vtable].
+        return LlvmFunctionPointer(llvmMethod, llvmFunctionSignature, llvm.cFunctionPointerAuth)
     }
 }
 

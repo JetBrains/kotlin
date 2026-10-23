@@ -597,6 +597,13 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
      */
     fun cFunctionPointer(function: ConstPointer): ConstPointer = signedPointer(function, PtrAuthKey.IA)
 
+    /**
+     * How calls authenticate function pointers signed by [cFunctionPointer], if they are signed.
+     */
+    val cFunctionPointerAuth: PtrAuthBundle? by lazy {
+        if (context.config.arm64e) PtrAuthBundle(int32(PtrAuthKey.IA.value), int64(0)) else null
+    }
+
     val memsetFunction = importMemset()
 
     val llvmTrap = llvmIntrinsic(
