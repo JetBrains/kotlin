@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.*
 import org.jetbrains.kotlin.analysis.api.fir.types.*
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.toVariance
-import org.jetbrains.kotlin.analysis.api.impl.base.types.KaBaseStarTypeProjection
-import org.jetbrains.kotlin.analysis.api.impl.base.types.KaBaseTypeArgumentWithVariance
+import org.jetbrains.kotlin.analysis.api.fir.types.KaBaseStarTypeProjection
+import org.jetbrains.kotlin.analysis.api.fir.types.KaBaseTypeArgumentWithVariance
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageProvider
 import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature

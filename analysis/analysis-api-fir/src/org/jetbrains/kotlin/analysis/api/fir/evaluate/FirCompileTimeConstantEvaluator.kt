@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.fir.evaluate
 
 import org.jetbrains.kotlin.analysis.api.base.KaConstantValue
-import org.jetbrains.kotlin.analysis.api.impl.base.*
+import org.jetbrains.kotlin.analysis.api.fir.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession

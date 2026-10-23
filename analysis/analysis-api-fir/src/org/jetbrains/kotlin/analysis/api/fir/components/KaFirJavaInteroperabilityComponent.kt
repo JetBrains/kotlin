@@ -23,12 +23,10 @@ import org.jetbrains.kotlin.analysis.api.fir.getJvmNameFromAnnotation
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirPsiJavaClassSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSyntheticJavaPropertySymbol
+import org.jetbrains.kotlin.analysis.api.fir.symbols.findSyntheticJavaPropertyAccessor
 import org.jetbrains.kotlin.analysis.api.fir.types.KaFirType
 import org.jetbrains.kotlin.analysis.api.fir.types.PublicTypeApproximator
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
-import org.jetbrains.kotlin.analysis.api.impl.base.components.withPsiValidityAssertion
-import org.jetbrains.kotlin.analysis.api.impl.base.symbols.findSyntheticJavaPropertyAccessor
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsJavaInteroperabilityComponent
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope

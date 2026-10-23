@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.analysis.api.fir.types.typeCreation
 
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.types.typeCreation.*
 import org.jetbrains.kotlin.analysis.api.fir.utils.asKaType
 import org.jetbrains.kotlin.analysis.api.fir.utils.coneType
 import org.jetbrains.kotlin.analysis.api.fir.utils.coneTypeProjection
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
-import org.jetbrains.kotlin.analysis.api.impl.base.types.typeCreation.*
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol

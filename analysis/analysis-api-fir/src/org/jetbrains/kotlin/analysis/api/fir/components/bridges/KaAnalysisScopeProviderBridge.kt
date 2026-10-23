@@ -10,7 +10,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaAnalysisScopeProvider
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
+import org.jetbrains.kotlin.analysis.api.fir.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.analysis.api.session.analysisScope as analysisScopeEndpoint
 import org.jetbrains.kotlin.analysis.api.session.canBeAnalysed as canBeAnalysedEndpoint
 

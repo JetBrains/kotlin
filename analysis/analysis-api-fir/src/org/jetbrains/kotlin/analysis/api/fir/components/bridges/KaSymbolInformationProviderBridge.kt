@@ -12,8 +12,8 @@ import org.jetbrains.kotlin.analysis.api.components.KaDeprecationLevel
 import org.jetbrains.kotlin.analysis.api.components.KaReturnValueStatus
 import org.jetbrains.kotlin.analysis.api.components.KaSymbolInformationProvider
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.analysis.api.fir.components.KaFirSessionComponent
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeprecation as KaEndpointDeprecation

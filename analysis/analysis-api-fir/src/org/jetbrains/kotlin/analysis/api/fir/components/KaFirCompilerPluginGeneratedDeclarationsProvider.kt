@@ -8,10 +8,8 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 import org.jetbrains.kotlin.analysis.api.compilerPlugins.KaCompilerPluginGeneratedDeclarations
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseCompilerPluginGeneratedDeclarations
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
-import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaBaseEmptyScope
-import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaBaseScope
+import org.jetbrains.kotlin.analysis.api.fir.scopes.KaBaseEmptyScope
+import org.jetbrains.kotlin.analysis.api.fir.scopes.KaBaseScope
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsCompilerPluginGeneratedDeclarationsProvider
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion

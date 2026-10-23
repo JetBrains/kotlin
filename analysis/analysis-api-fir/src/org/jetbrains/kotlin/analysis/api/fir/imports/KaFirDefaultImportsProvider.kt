@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.imports
 
-import org.jetbrains.kotlin.analysis.api.impl.base.imports.KaBaseDefaultImportsProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.imports.defaultImportsProvider
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.resolve.DefaultImportsProvider

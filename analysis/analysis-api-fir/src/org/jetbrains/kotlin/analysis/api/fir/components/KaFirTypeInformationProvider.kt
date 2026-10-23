@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.types.KaFirType
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseTypeInformationProvider
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
