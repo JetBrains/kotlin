@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.contracts.description.KaContractEffectD
 import org.jetbrains.kotlin.analysis.api.fir.*
 import org.jetbrains.kotlin.analysis.api.fir.contracts.coneEffectDeclarationToAnalysisApi
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.*
+import org.jetbrains.kotlin.analysis.api.fir.utils.inferReturnTypeByPsi
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.KaSyntheticJavaPropertyAccessorKind
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.asKaSymbolVisibility
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaCannotCreateSymbolPointerForLocalLibraryDeclarationException
@@ -85,7 +86,7 @@ internal class KaFirNamedFunctionSymbol private constructor(
         }
 
     override val returnType: KaType
-        get() = withValidityAssertion { createReturnType() }
+        get() = withValidityAssertion { backingPsi?.inferReturnTypeByPsi(analysisSession) ?: createReturnType() }
 
     override val receiverParameter: KaReceiverParameterSymbol?
         get() = withValidityAssertion {

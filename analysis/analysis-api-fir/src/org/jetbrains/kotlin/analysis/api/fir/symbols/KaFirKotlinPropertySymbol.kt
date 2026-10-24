@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.fir.*
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.*
+import org.jetbrains.kotlin.analysis.api.fir.utils.inferReturnTypeByPsi
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.asKaSymbolVisibility
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaUnsupportedSymbolLocation
 import org.jetbrains.kotlin.analysis.api.impl.base.util.callableId
@@ -55,7 +56,14 @@ internal sealed class KaFirKotlinPropertySymbol<P : KtCallableDeclaration>(
         get() = withValidityAssertion { backingPsi?.nameAsSafeName ?: firSymbol.name }
 
     override val returnType: KaType
-        get() = withValidityAssertion { firSymbol.returnType(builder) }
+        get() = withValidityAssertion { returnTypeByPsi ?: firSymbol.returnType(builder) }
+
+    /**
+     * The type of the property inferred from its PSI without resolution, if possible.
+     * The accessors reuse it, as the getter and the setter parameter have the type of the property.
+     */
+    val returnTypeByPsi: KaType?
+        get() = withValidityAssertion { (backingPsi as? KtProperty)?.inferReturnTypeByPsi(analysisSession) }
 
     override val contextReceivers: List<KaContextReceiver>
         get() = withValidityAssertion { createContextReceivers() }

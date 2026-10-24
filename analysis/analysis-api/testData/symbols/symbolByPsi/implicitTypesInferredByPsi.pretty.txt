@@ -1,0 +1,12 @@
+fun function(): kotlin.UInt
+
+var variable: kotlin.Long
+
+val getter: kotlin.String
+  get()
+
+var initializerAndAccessors: kotlin.Char
+  get()
+  set(value: kotlin.Char)
+
+fun container()
