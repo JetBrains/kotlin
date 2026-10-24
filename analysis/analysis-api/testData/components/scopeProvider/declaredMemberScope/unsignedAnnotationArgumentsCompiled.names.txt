@@ -1,0 +1,9 @@
+Classifier names:
+
+Callable names:
+  constants
+  function
+  nested
+  property
+  propertyWithDefaults
+  typeArgument
