@@ -14,10 +14,12 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinApiPlugin
 import org.jetbrains.kotlin.gradle.plugin.KotlinJvmFactory
 import org.jetbrains.kotlin.gradle.tasks.Kapt
 import org.jetbrains.kotlin.gradle.util.buildProject
+import org.jetbrains.kotlin.gradle.util.propertiesExtension
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.io.TempDir
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 import java.io.File
 
 class KaptApiTest {
@@ -189,6 +191,28 @@ class KaptApiTest {
         )
     }
 
+    @Test
+    fun testGenerateStubsHeaderModeIsOffByDefault() {
+        assertNull(generateStubsKaptOption("headerMode"))
+    }
+
+    @Test
+    fun testGenerateStubsHeaderMode() {
+        project.propertiesExtension.set("kapt.header.mode", "true")
+        assertEquals("true", generateStubsKaptOption("headerMode"))
+    }
+
+    private fun generateStubsKaptOption(key: String): String? {
+        val task = plugin.registerKaptGenerateStubsTask(
+            GENERATE_STUBS,
+            plugin.registerKotlinJvmCompileTask("customCompileKotlin", plugin.createCompilerJvmOptions()),
+            plugin.kaptExtension,
+        ).get()
+        return task.pluginOptions.get()
+            .flatMap { it.allOptions()[Kapt3GradleSubplugin.KAPT_SUBPLUGIN_ID].orEmpty() }
+            .singleOrNull { it.key == key }
+            ?.value
+    }
 
     @Test
     fun testGenerateStubsTaskHasCompilerOptionsFromCompileTask() {

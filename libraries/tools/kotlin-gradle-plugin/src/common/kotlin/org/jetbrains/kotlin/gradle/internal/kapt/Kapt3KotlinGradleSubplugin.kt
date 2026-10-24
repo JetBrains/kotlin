@@ -469,6 +469,10 @@ internal fun buildKaptSubpluginOptions(
         pluginOptions += SubpluginOption("isolateProcessorsFromBuildClasspath", "true")
     }
 
+    if (KaptProperties.isHeaderMode(project).get()) {
+        pluginOptions += SubpluginOption("headerMode", "true")
+    }
+
     return pluginOptions
 }
 
