@@ -56,17 +56,23 @@ abstract class DebugRunner(testServices: TestServices) : JvmBoxRunner(testServic
 
         val process = ProcessBuilder(command).start()
 
-        // Extract the chosen port from the output of the newly started java process.
-        // The java process prints a line with the format:
-        //
-        //      Listening for transport dt_socket at address: <port number>
-        val port = process.inputStream.bufferedReader().readLine().split("address:").last().trim().toInt()
+        try {
+            // Extract the chosen port from the output of the newly started java process.
+            // The java process prints a line with the format:
+            //
+            //      Listening for transport dt_socket at address: <port number>
+            val port = process.inputStream.bufferedReader().readLine().split("address:").last().trim().toInt()
 
-        // Attach debugger to the separate java process, setup initial event requests,
-        // and run the debugger loop to step through the program.
-        val virtualMachine = attachDebugger(port)
-        setupMethodEntryAndExitRequests(virtualMachine)
-        runDebugEventLoop(virtualMachine)
+            // Attach debugger to the separate java process, setup initial event requests,
+            // and run the debugger loop to step through the program.
+            val virtualMachine = attachDebugger(port)
+            setupMethodEntryAndExitRequests(virtualMachine)
+            runDebugEventLoop(virtualMachine)
+        } catch (e: Throwable) {
+            // The java process stays suspended without a debugger that resumes it, until the test JVM exits.
+            process.destroyForcibly()
+            throw e
+        }
 
         return process
     }
