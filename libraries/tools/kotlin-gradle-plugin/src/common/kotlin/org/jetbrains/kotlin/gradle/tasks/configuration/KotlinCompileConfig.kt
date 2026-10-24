@@ -12,6 +12,7 @@ import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.api.artifacts.transform.TransformSpec
 import org.gradle.api.artifacts.type.ArtifactTypeDefinition
 import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.SourceSet
 import org.jetbrains.kotlin.compilerRunner.btapi.BuildSessionService
 import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
 import org.jetbrains.kotlin.gradle.dsl.ReturnValueCheckerMode
@@ -27,8 +28,10 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaCompilation
 import org.jetbrains.kotlin.gradle.tasks.DefaultKotlinJavaToolchain
+import org.jetbrains.kotlin.gradle.tasks.JavaModuleSource
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.utils.detachedResolvable
+import org.jetbrains.kotlin.gradle.utils.lenient
 import org.jetbrains.kotlin.gradle.utils.registerTransformForArtifactType
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import java.io.File
@@ -97,12 +100,23 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
             is KotlinWithJavaCompilation<*, *> -> compilation.compileJavaTaskProvider
             else -> null
         }
+        val javaModuleInfoFiles = when (val compilation = compilationInfo.tcs.compilation) {
+            is KotlinJvmCompilation -> project.provider { compilation.javaSourceSet.lenient.getOrNull()?.moduleInfoFiles().orEmpty() }
+            is KotlinWithJavaCompilation<*, *> -> project.provider { compilation.javaSourceSet.moduleInfoFiles() }
+            else -> null
+        }
 
         configureTaskProvider { taskProvider ->
             taskProvider.configure { task ->
                 javaTaskProvider?.let { javaTask ->
                     task.associatedJavaCompileTaskTargetCompatibility.value(javaTask.map { it.targetCompatibility })
                     task.associatedJavaCompileTaskName.value(javaTask.map { it.name })
+                    task.inferModulePath.value(javaTask.flatMap { it.modularity.inferModulePath }.orElse(false))
+                }
+                javaModuleInfoFiles?.let { files ->
+                    task.hasJavaModuleSource.value(
+                        project.providers.of(JavaModuleSource::class.java) { it.parameters.moduleInfoFiles.from(files) }
+                    )
                 }
             }
         }
@@ -118,6 +132,8 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
         explicitApiMode,
         returnValueCheckerMode,
     )
+
+    private fun SourceSet.moduleInfoFiles(): List<File> = java.srcDirs.map { File(it, "module-info.java") }
 
     companion object {
         private const val TRANSFORMS_REGISTERED = "_kgp_internal_kotlin_compile_transforms_registered"

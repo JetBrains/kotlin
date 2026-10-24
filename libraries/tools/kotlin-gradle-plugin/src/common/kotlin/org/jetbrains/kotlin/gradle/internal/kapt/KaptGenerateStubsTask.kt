@@ -139,6 +139,7 @@ abstract class KaptGenerateStubsTask @Inject constructor(
 
         dependencyClasspath { args ->
             args.classpathAsList = runSafe { libraries.toList().filter { it.exists() } }.orEmpty()
+            args.javaModulePath = inferredJavaModulePath(args.classpathAsList, args.freeArgs)
             args.friendPaths = friendPaths.toPathsArray()
         }
 
