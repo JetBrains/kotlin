@@ -117,7 +117,7 @@ internal fun KtExpression.getExpressionTypeByPsiOrNull(analysisSession: KaFirSes
  *
  * See [org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilder.generateConstantExpressionByLiteral].
  */
-private fun KtConstantExpression.isMalformedLiteral(): Boolean {
+internal fun KtConstantExpression.isMalformedLiteral(): Boolean {
     val text = text
     return when (iElementType) {
         KtNodeTypes.INTEGER_CONSTANT -> {
