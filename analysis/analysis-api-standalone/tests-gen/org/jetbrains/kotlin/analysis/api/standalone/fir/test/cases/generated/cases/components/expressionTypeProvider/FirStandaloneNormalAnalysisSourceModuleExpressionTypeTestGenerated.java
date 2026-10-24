@@ -225,6 +225,18 @@ public class FirStandaloneNormalAnalysisSourceModuleExpressionTypeTestGenerated 
   }
 
   @Test
+  @TestMetadata("expectedUByteUnsignedLiteral.kt")
+  public void testExpectedUByteUnsignedLiteral() {
+    run("expectedUByteUnsignedLiteral.kt");
+  }
+
+  @Test
+  @TestMetadata("expectedULongUnsignedLiteral.kt")
+  public void testExpectedULongUnsignedLiteral() {
+    run("expectedULongUnsignedLiteral.kt");
+  }
+
+  @Test
   @TestMetadata("float.kt")
   public void testFloat() {
     run("float.kt");
@@ -414,6 +426,30 @@ public class FirStandaloneNormalAnalysisSourceModuleExpressionTypeTestGenerated 
   @TestMetadata("loopExpression.kt")
   public void testLoopExpression() {
     run("loopExpression.kt");
+  }
+
+  @Test
+  @TestMetadata("malformedCharacterLiteral.kt")
+  public void testMalformedCharacterLiteral() {
+    run("malformedCharacterLiteral.kt");
+  }
+
+  @Test
+  @TestMetadata("malformedDoubleLiteral.kt")
+  public void testMalformedDoubleLiteral() {
+    run("malformedDoubleLiteral.kt");
+  }
+
+  @Test
+  @TestMetadata("malformedLongLiteral.kt")
+  public void testMalformedLongLiteral() {
+    run("malformedLongLiteral.kt");
+  }
+
+  @Test
+  @TestMetadata("malformedLongLiteralWithLeadingZeros.kt")
+  public void testMalformedLongLiteralWithLeadingZeros() {
+    run("malformedLongLiteralWithLeadingZeros.kt");
   }
 
   @Test
