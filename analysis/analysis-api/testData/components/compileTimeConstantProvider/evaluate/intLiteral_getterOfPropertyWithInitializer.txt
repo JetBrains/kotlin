@@ -1,0 +1,5 @@
+expression: 1
+constant: 1
+constantValueKind: LongValue
+constantValueSource: INTEGER_CONSTANT
+constantValueSourceText: 1
