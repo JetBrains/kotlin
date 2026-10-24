@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.psi.stubs.impl
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.ObjectStubBase
+import com.intellij.psi.stubs.StubBase
 import com.intellij.psi.stubs.StubElement
 import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.psi.KtImplementationDetail
@@ -49,9 +50,27 @@ private fun <T : PsiElement> copyStubRecursively(
         { "${originalStub::class.simpleName} is expected, but ${stubCopy::class.simpleName} is found" },
     )
 
-    for (originalChild in originalStub.childrenStubs) {
+    val originalChildren = originalStub.childrenStubs
+    (stubCopy as? StubBase<*>)?.prepareForChildren(originalChildren.size)
+
+    for (originalChild in originalChildren) {
         copyStubRecursively(originalStub = originalChild, newParentStub = stubCopy)
     }
 
     return stubCopy
+}
+
+/**
+ * Reserves space for [childrenCount] children of this stub in its stub list, as the stub deserializer does.
+ *
+ * Otherwise, the children of a stub whose earlier children have their own children can end up in a temporary map,
+ * and [com.intellij.psi.stubs.StubTree] rebuilds the whole stub list of the file to restore the optimal layout.
+ */
+@Suppress("UnstableApiUsage")
+private fun StubBase<*>.prepareForChildren(childrenCount: Int) {
+    val stubList = stubList
+    // The reservation is only valid right after the stub is added to the list
+    if (stubId == stubList.size - 1) {
+        stubList.prepareForChildren(stubId, childrenCount)
+    }
 }

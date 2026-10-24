@@ -6,6 +6,7 @@
 
 package org.jetbrains.kotlin.analysis.stubs
 
+import com.intellij.psi.stubs.StubElement
 import org.jetbrains.kotlin.analysis.internal.utils.IndentedTextBuilder
 import org.jetbrains.kotlin.analysis.internal.utils.buildIndentedText
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
@@ -57,12 +58,31 @@ abstract class AbstractStubsTest : AbstractAnalysisApiBasedTest() {
         }
     }
 
+    @Suppress("UnstableApiUsage")
     private fun assertEquality(fileStub: KotlinFileStubImpl) {
         val deepCopy = fileStub.deepCopy()
         fileStub.stubList.zip(deepCopy.stubList).forEach { [stub1, stub2] ->
             stub1 as KotlinStubElement<*>
             stub2 as KotlinStubElement<*>
             assert(stub1.isEquivalentTo(stub2)) { "Stub is not equal to it's copy: $stub1" }
+        }
+
+        assertSameStructure(fileStub, deepCopy)
+
+        // Otherwise, `StubTree` rebuilds the whole stub list of the copy
+        assert(deepCopy.stubList.isChildrenLayoutOptimal) { "The copy of the stub tree has a non-optimal children layout" }
+    }
+
+    private fun assertSameStructure(original: StubElement<*>, copy: StubElement<*>) {
+        val originalChildren = original.childrenStubs
+        val copyChildren = copy.childrenStubs
+        assert(originalChildren.size == copyChildren.size) {
+            "The copy of $original has ${copyChildren.size} children instead of ${originalChildren.size}"
+        }
+
+        for ([originalChild, copyChild] in originalChildren.zip(copyChildren)) {
+            assert(copyChild.parentStub === copy) { "The copy of $originalChild has a wrong parent" }
+            assertSameStructure(originalChild, copyChild)
         }
     }
 
