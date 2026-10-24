@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSignatures
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.runtime.structure.classId
-import org.jetbrains.kotlin.descriptors.runtime.structure.wrapperByPrimitive
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.getPropertyNamesCandidatesByAccessorName
@@ -308,8 +307,6 @@ internal fun KClassImpl<*>.getAdditionalFunctions(): List<ReflectKFunction> {
     if (!isMappedBuiltin || this == Any::class) return emptyList()
     val kmClass = kmClass ?: return emptyList()
 
-    val javaAnalogue = jClass.wrapperByPrimitive ?: jClass
-
     // Property accessors must not be loaded as functions; the compiler filters them out because they override the corresponding
     // property accessors declared in this class. Unlike functions (handled below), reflection keeps properties and functions separate,
     // so they are not deduplicated against each other automatically.
@@ -327,7 +324,7 @@ internal fun KClassImpl<*>.getAdditionalFunctions(): List<ReflectKFunction> {
         it.mapSignature(kmClass).toString()
     }
 
-    return javaAnalogue.declaredMethods.mapNotNull { method ->
+    return methodOwner.declaredMethods.mapNotNull { method ->
         if (Modifier.isStatic(method.modifiers) || method.isSynthetic) return@mapNotNull null
         if (!Modifier.isPublic(method.modifiers) && !Modifier.isProtected(method.modifiers)) return@mapNotNull null
         if (method.isAnnotationPresent(JavaLangDeprecated::class.java)) return@mapNotNull null
@@ -342,7 +339,7 @@ internal fun KClassImpl<*>.getAdditionalFunctions(): List<ReflectKFunction> {
         // Kotlin one. This mirrors the `kotlinVersions` check in `JvmBuiltInsCustomizer.getAdditionalFunctions`.
         if (method.jvmSignature in declaredJvmSignatures) return@mapNotNull null
 
-        when (method.getJdkMethodStatus(javaAnalogue)) {
+        when (method.getJdkMethodStatus(methodOwner)) {
             JdkMemberStatus.DROP -> return@mapNotNull null
             // Hidden-for-resolution members are still listed by reflection, except in final classes where the compiler drops them.
             JdkMemberStatus.HIDDEN -> if (isFinal) return@mapNotNull null

@@ -100,6 +100,7 @@ private fun ReflectKCallable<*>.createFakeOverride(subclass: KClassImpl<*>, subs
             originalContainerIfFakeOverride = originalContainer,
             originalCallableTypeParameters = typeParameters,
             overridden = listOf(this),
+            intersectedFakeOverrides = emptyList(),
         ),
     )
 
@@ -112,6 +113,9 @@ private fun createIntersectionOverride(a: ReflectKCallable<*>, b: ReflectKCallab
         result.overriddenStorage.copy(
             modality = computeIntersectionOverrideModality(a, b),
             overridden = result.overriddenStorage.overridden + other.overriddenStorage.overridden,
+            intersectedFakeOverrides =
+                result.overriddenStorage.intersectedFakeOverrides.ifEmpty { listOf(result) } +
+                        other.overriddenStorage.intersectedFakeOverrides.ifEmpty { listOf(other) },
             forceIsExternal = a.isExternal || b.isExternal,
             forceIsOperator = a.isOperator || b.isOperator,
             forceIsInfix = a.isInfix || b.isInfix,
