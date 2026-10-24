@@ -47,6 +47,8 @@ xerces = "2.12.2"
 caffeine = "2.9.3" # We cannot use the latest version of Caffeine (`3.x`) because it doesn't support Java 8.
 compose-stable = "1.7.0-alpha08" # Used for Compose compiler plugin tests
 androidx-collections = "1.5.0" # Used for Compose compiler plugin tests
+# Used for Compose compiler plugin Kotlin/Native tests. Older versions are compiled against an outdated stdlib ABI.
+kotlinx-coroutines-compose-native-tests = "1.11.0"
 ant = "1.10.14"
 # It is recommended to skip at least one major release, e.g., use 2.0.21 when the default bootstrap version is 2.2.
 # This ensures additional verification that Gradle-related code does not get dependencies of higher LV
@@ -206,6 +208,7 @@ javaDiffUtils = { module = "io.github.java-diff-utils:java-diff-utils", version.
 kotlinx-bcv = { module = "org.jetbrains.kotlinx:binary-compatibility-validator", version.ref = "kotlinx-bcv" }
 
 androidx-collections = { module = "androidx.collection:collection", version.ref = "androidx-collections" }
+kotlinx-coroutines-core-compose-native-tests = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines-compose-native-tests" }
 oshi-core = { module = "com.github.oshi:oshi-core", version.ref = "oshi" }
 
 org-jetbrains-syntax-api = { module = "org.jetbrains:syntax-api", version.ref = "org-jetbrains-syntax-api" }
