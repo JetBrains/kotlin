@@ -5609,6 +5609,13 @@ private fun KaDiagnosticConverterBuilder.addConversions118() {
             token,
         )
     }
+    add(FirJvmErrors.IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_OBJECT) { firDiagnostic ->
+        IdentitySensitiveOperationsWithValueObjectImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirJsErrors.JS_NO_RUNTIME_FORBIDDEN_CLASS_REFERENCE) { firDiagnostic ->
         JsNoRuntimeForbiddenClassReferenceImpl(
             firDiagnostic as KtDiagnosticWithSource,
@@ -7189,6 +7196,12 @@ private fun KaDiagnosticConverterBuilder.addConversions151() {
             firDiagnostic.a.map { firTypeParameterSymbol ->
                 firSymbolBuilder.classifierBuilder.buildTypeParameterSymbol(firTypeParameterSymbol)
             },
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
+    add(FirJvmErrors.SERIALIZABLE_VALUE_CLASS_WITHOUT_WRITE_REPLACE) { firDiagnostic ->
+        SerializableValueClassWithoutWriteReplaceImpl(
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
