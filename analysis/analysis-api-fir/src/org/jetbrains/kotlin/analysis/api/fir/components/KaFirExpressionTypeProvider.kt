@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirDestructuringDeclarationSymbol
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirOfType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.builder.parseCharacter
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirNamedReference
@@ -48,6 +50,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getAssignmentByLHS
 import org.jetbrains.kotlin.psi.psiUtil.getOutermostParenthesizerOrThis
 import org.jetbrains.kotlin.psi.psiUtil.inferClassIdByPsi
 import org.jetbrains.kotlin.psi.psiUtil.unwrapParenthesesLabelsAndAnnotations
+import org.jetbrains.kotlin.psi.utils.parseNumericLiteral
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -325,12 +328,21 @@ internal class KaFirExpressionTypeProvider(
         if (hasDeclaredReturnType()) return null
 
         if (isEmptyFunction()) return analysisSession.builtinTypes.unit
+
+        // An anonymous function takes its return type from the expected type, like a lambda
+        if (this is KtNamedFunction && isAnonymous) return null
+
         val singleExpression = when (this) {
             is KtNamedFunction -> bodyExpression
             is KtProperty -> initializer ?: getter?.bodyExpression
-            is KtPropertyAccessor -> bodyExpression
+            // A getter has the type of its property, which FIR infers from the initializer first
+            is KtPropertyAccessor -> property.initializer ?: bodyExpression
             else -> null
         }
+
+        // A loop is not an expression, so FIR infers an error type for a declaration with such a body
+        if (singleExpression?.unwrapParenthesesLabelsAndAnnotations() is KtLoopExpression) return null
+
         return singleExpression?.getExpressionTypeByPsiOrNull(noExpectedType = true)
     }
 
@@ -355,22 +367,26 @@ internal class KaFirExpressionTypeProvider(
                 is KtContinueExpression, is KtBreakExpression, is KtThrowExpression, is KtReturnExpression, is KtLabelReferenceExpression,
                     -> nothing
                 is KtConstantExpression -> {
+                    if (unwrappedExpression.isMalformedLiteral()) return null
+
                     val classId = unwrappedExpression.inferClassIdByPsi()
                     /**
-                     * Type of [int] literals is defined by their expected types:
+                     * Type of [int] and `UInt` literals is defined by their expected types:
                      * ```kotlin
                      * fun main() {
                      *     val number: Byte = 1 // Byte, not Int
                      *     val number2: Long = 1 // Long, not Int
+                     *     val number3: ULong = 1u // ULong, not UInt
                      * }
                      * ```
                      *
                      * Calculating the expected type might require building FIR.
                      * If so, this PSI optimization doesn't make sense.
                      * But if there is no any expected type ([noExpectedType] == `true`), then
-                     * it's safe to return just [int]
+                     * it's safe to return just [int] or `UInt`
                      */
-                    primitiveTypesMap[classId]?.value?.takeIf { noExpectedType || it != int }
+                    if (!noExpectedType && (classId == StandardClassIds.Int || classId == StandardClassIds.UInt)) return null
+                    primitiveTypesMap[classId]?.value
                 }
                 else -> null
             }
@@ -387,6 +403,24 @@ internal class KaFirExpressionTypeProvider(
         StandardClassIds.UInt to lazy { analysisSession.buildClassType(StandardClassIds.UInt) },
         StandardClassIds.ULong to lazy { analysisSession.buildClassType(StandardClassIds.ULong) },
     )
+
+    /**
+     * Whether the raw FIR builder converts this literal into an error expression, while [inferClassIdByPsi] still infers some type for it.
+     *
+     * See [org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilder.generateConstantExpressionByLiteral].
+     */
+    private fun KtConstantExpression.isMalformedLiteral(): Boolean {
+        val text = text
+        return when (iElementType) {
+            KtNodeTypes.INTEGER_CONSTANT -> {
+                val hasLeadingZeros = text.length > 1 && text[0] == '0' && (text[1].isDigit() || text[1] == '_')
+                hasLeadingZeros || text.endsWith('l')
+            }
+            KtNodeTypes.FLOAT_CONSTANT -> parseNumericLiteral(text, isFloatingPointLiteral = true) == null
+            KtNodeTypes.CHARACTER_CONSTANT -> text.parseCharacter().value == null
+            else -> false
+        }
+    }
 
     override fun functionType(function: KtFunction): KaType = function.withPsiValidityAssertion {
         val firFunction = function.resolveToFirSymbol(resolutionFacade, FirResolvePhase.TYPES).fir as FirFunction
