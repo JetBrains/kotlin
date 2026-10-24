@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.code
 import kotlinx.coroutines.*
 import org.jetbrains.kotlin.code.DomainsDumpTest.Companion.sanitize
 import org.jetbrains.kotlin.repoTestFixtures.isGitIgnored
+import org.jetbrains.kotlin.repoTestFixtures.isTestFederationIgnored
+import org.jetbrains.kotlin.repoTestFixtures.toRepositoryPath
 import org.jetbrains.kotlin.test.isTeamCityBuild
 import org.jetbrains.kotlin.testFederation.Domain
 import org.jetbrains.kotlin.testFederation.RepositoryPath
@@ -152,7 +154,7 @@ internal fun assertIgnoredPathsDumpContains(expectedText: String, actualText: St
     val missingPaths = actualPaths - expectedPaths
 
     val noLongerIgnoredPaths = (expectedPaths - actualPaths)
-        .filterNot { path -> Path(path).toRepositoryPath().isTestFederationIgnored }
+        .filterNot { path -> Path(path).isTestFederationIgnored() }
 
     if (missingPaths.isNotEmpty() || noLongerIgnoredPaths.isNotEmpty()) {
         throw AssertionFailedError(
