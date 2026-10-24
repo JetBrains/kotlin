@@ -11,8 +11,8 @@ import org.jetbrains.kotlin.lombok.LombokEnvironmentConfigurator
 import org.jetbrains.kotlin.lombok.LombokRuntimeClassPathProvider
 import org.jetbrains.kotlin.noarg.NoArgEnvironmentConfigurator
 import org.jetbrains.kotlin.parcelize.test.services.ParcelizeEnvironmentConfigurator
-import org.jetbrains.kotlin.parcelize.test.services.ParcelizeMainClassProvider
 import org.jetbrains.kotlin.parcelize.test.services.ParcelizeRuntimeClasspathProvider
+import org.jetbrains.kotlin.parcelize.test.services.ParcelizeSeparateProcessBoxRunner
 import org.jetbrains.kotlin.parcelize.test.services.ParcelizeUtilSourcesProvider
 import org.jetbrains.kotlin.plugin.sandbox.ExtensionRegistrarConfigurator
 import org.jetbrains.kotlin.plugin.sandbox.PluginAnnotationsProvider
@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.powerassert.PowerAssertEnvironmentConfigurator
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.runners.codegen.AbstractFirLightTreeBlackBoxCodegenTest
-import org.jetbrains.kotlin.test.services.jvm.JvmBoxMainClassProvider
+import org.jetbrains.kotlin.test.services.jvm.JvmSeparateProcessBoxRunner
 import org.jetbrains.kotlin.test.services.service
 import org.jetbrains.kotlin.utils.bind
 import org.jetbrains.kotlinx.serialization.SerializationEnvironmentConfigurator
@@ -74,5 +74,5 @@ fun TestConfigurationBuilder.enablePlugins() {
         ::ParcelizeUtilSourcesProvider,
     )
 
-    useAdditionalServices(service<JvmBoxMainClassProvider>(::ParcelizeMainClassProvider))
+    useAdditionalServices(service<JvmSeparateProcessBoxRunner>(::ParcelizeSeparateProcessBoxRunner))
 }

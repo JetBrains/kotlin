@@ -80,9 +80,15 @@ dependencies {
     testRuntimeOnly("com.jetbrains.intellij.platform:util-xml-dom:$intellijVersion") { isTransitive = false }
     testRuntimeOnly(toolsJar())
     testImplementation(project(":compiler:cli-base"))
-    testFixturesImplementation(libs.junit4) // needed for runtime of box tests, see `ParcelizeMainClassProvider`
+    testFixturesImplementation(libs.junit4) // needed for runtime of box tests, see `RobolectricBoxWorker`
+    // Robolectric is only on the class path of the box test workers, see `RobolectricBoxWorker`. Not transitive, so that the compile
+    // class path doesn't resolve other versions of Robolectric's dependencies than `robolectricClasspath`.
+    val robolectricVersion = commonDependencyVersion("org.robolectric", "robolectric")
+    for (robolectricArtifact in listOf("robolectric", "junit", "sandbox", "annotations")) {
+        testFixturesCompileOnly("org.robolectric:$robolectricArtifact:$robolectricVersion") { isTransitive = false }
+    }
 
-    // Must be kept in sync with ANDROID_API_VERSION in ParcelizeRuntimeClasspathProvider.
+    // Must be kept in sync with ANDROID_API_VERSION in RobolectricBoxWorker.kt.
     // The dependency version defined here determines the Android API version.
     robolectricDependency("org.robolectric:android-all-instrumented:16-robolectric-13921718-i7")
 

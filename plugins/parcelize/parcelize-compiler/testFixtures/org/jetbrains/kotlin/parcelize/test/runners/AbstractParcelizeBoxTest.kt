@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.parcelize.test.runners
 
 import org.jetbrains.kotlin.parcelize.test.services.ParcelizeDirectives.ENABLE_PARCELIZE
 import org.jetbrains.kotlin.parcelize.test.services.ParcelizeEnvironmentConfigurator
-import org.jetbrains.kotlin.parcelize.test.services.ParcelizeMainClassProvider
 import org.jetbrains.kotlin.parcelize.test.services.ParcelizeRuntimeClasspathProvider
+import org.jetbrains.kotlin.parcelize.test.services.ParcelizeSeparateProcessBoxRunner
 import org.jetbrains.kotlin.parcelize.test.services.ParcelizeUtilSourcesProvider
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TestJdkKind
@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirective
 import org.jetbrains.kotlin.test.frontend.fir.FirMetaInfoDiffSuppressor
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerJvmTest
-import org.jetbrains.kotlin.test.services.jvm.JvmBoxMainClassProvider
+import org.jetbrains.kotlin.test.services.jvm.JvmSeparateProcessBoxRunner
 import org.jetbrains.kotlin.test.services.service
 import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBoxTestsSourceProvider
 
@@ -58,7 +58,7 @@ abstract class AbstractParcelizeBoxTest : AbstractKotlinCompilerJvmTest() {
         useCustomRuntimeClasspathProviders(::ParcelizeRuntimeClasspathProvider)
         useConfigurators(::ParcelizeEnvironmentConfigurator)
         useAdditionalSourceProviders(::ParcelizeUtilSourcesProvider, ::MainFunctionForBlackBoxTestsSourceProvider)
-        useAdditionalServices(service<JvmBoxMainClassProvider>(::ParcelizeMainClassProvider))
+        useAdditionalServices(service<JvmSeparateProcessBoxRunner>(::ParcelizeSeparateProcessBoxRunner))
         useFailureSuppressors(::BlackBoxCodegenSuppressor, ::FirMetaInfoDiffSuppressor)
         enableMetaInfoHandler()
     }
