@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.expressionTypeProvider
 
 import org.jetbrains.kotlin.analysis.api.expressions.returnType
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.dropBackingPsi
 import org.jetbrains.kotlin.analysis.api.renderer.render
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.symbol
@@ -42,6 +43,15 @@ abstract class AbstractDeclarationReturnTypeTest : AbstractAnalysisApiBasedTest(
                             if (symbolReturnType != null && symbolReturnType != returnType) {
                                 append(" (symbol: ")
                                 append(symbolReturnType)
+                                append(")")
+                            }
+
+                            // The symbol may infer its return type from PSI, so check that it is consistent with the FIR-based one
+                            val nonPsiSymbol = symbol?.let { declaration.symbol.apply { dropBackingPsi() } }
+                            val nonPsiReturnType = (nonPsiSymbol as? KaCallableSymbol)?.returnType?.render(position = Variance.INVARIANT)
+                            if (nonPsiReturnType != null && nonPsiReturnType != symbolReturnType) {
+                                append(" (non-PSI symbol: ")
+                                append(nonPsiReturnType)
                                 append(")")
                             }
 

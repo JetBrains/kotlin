@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols
 
 import com.intellij.psi.PsiClass
-import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMember
 import com.intellij.psi.PsiPackage
 import org.jetbrains.kotlin.analysis.api.KaSession
@@ -52,8 +51,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.utils.exceptions.KotlinIllegalArgumentExceptionWithAttachments
 import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 import java.util.concurrent.ExecutionException
-import kotlin.reflect.full.*
-import kotlin.reflect.jvm.javaField
 import kotlin.test.assertEquals
 import kotlin.test.fail
 
@@ -644,58 +641,6 @@ private fun <S : KaSymbol> restoreSymbol(pointer: KaSymbolPointer<S>, disablePsi
 private fun SymbolsData.dropBackingPsi() {
     symbols.forEach(KaSymbol::dropBackingPsi)
     symbolsForPrettyRendering.forEach(KaSymbol::dropBackingPsi)
-}
-
-/**
- * Some K2 implementations of [KaSymbol] is backed by some [PsiElement],
- * so they may implement some API on top of PSI, FirSymbols or both of them.
- *
- * FirSymbol-based implementation is the source of truth, so the PSI-based implementation
- * exists to cover simple cases.
- *
- * As most of the symbols have the underlying PSI element, it is crucial to
- * have consistent implementation for PSI-based and FirSymbol-based symbols.
- */
-private fun KaSymbol.dropBackingPsi() {
-    val interfaceInstance = Class.forName("org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirPsiSymbol")
-    val symbolType = KaSymbol::class.createType()
-
-    val thisClass = this::class
-    for (property in thisClass.declaredMemberProperties) {
-        // Some symbols may have owning symbols, so they should be invalidated as well
-        if (!property.name.startsWith("owning") || !property.returnType.isSubtypeOf(symbolType)) continue
-
-        val symbol = property.getter.call(this) as KaSymbol
-        symbol.dropBackingPsi()
-    }
-
-    if (!interfaceInstance.isInstance(this)) return
-
-    when (thisClass.simpleName) {
-        // Those classes are PSI-based only, so they have FirSymbol only for the compatibility with other classes
-        "KaFirPsiJavaClassSymbol",
-        "KaFirPsiJavaTypeParameterSymbol",
-            -> return
-
-        // There classes depend on the property PSI. The owning property is already invalidated above
-        "KaFirDefaultPropertyGetterSymbol",
-        "KaFirDefaultPropertySetterSymbol",
-        "KaFirPropertyGetterSymbol",
-        "KaFirPropertySetterSymbol",
-            -> return
-    }
-
-    val property = thisClass.memberProperties.single { it.name == "backingPsi" }
-    val returnType = property.returnType
-    if (!returnType.isSubtypeOf(PsiElement::class.createType().withNullability(true))) {
-        error("Unexpected return type '$returnType' for '${this::class.simpleName}' class")
-    }
-
-    val field = property.javaField ?: error("Backing field is not found")
-    field.isAccessible = true
-
-    // Drop backing PSI to trigger non-psi implementation
-    field.set(this, null)
 }
 
 private val Throwable.isIllegalPsiException: Boolean
