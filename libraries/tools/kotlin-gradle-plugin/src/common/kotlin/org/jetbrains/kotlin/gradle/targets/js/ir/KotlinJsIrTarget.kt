@@ -357,15 +357,13 @@ internal constructor(
         val configurations = project.configurations
 
         return project.locateOrRegisterTask<KotlinJsDtsGenerationTask>(binary.dtsGenerationTaskName) { task ->
-            KotlinJsCompilerOptionsHelper.syncOptionsAsConvention(
-                linkTask.get().compilerOptions,
-                task.linkCompilerOptions,
-            )
-            task.klibs.from(linkTask.map { it.libraries })
+            task.dependsOn(binary.compilation.compileTaskProvider)
+            task.linkCompilerOptions.moduleKind.convention(linkTask.flatMap { it.compilerOptions.moduleKind })
+            task.linkCompilerOptions.freeCompilerArgs.convention(linkTask.flatMap { it.compilerOptions.freeCompilerArgs })
+            task.klibs.from(linkTask.flatMap { it.libraries.elements })
             task.entryModule.set(linkTask.flatMap { it.entryModule })
-            task.granularity.set(linkTask.map { it.outputGranularity })
+            task.granularity.set(propertiesProvider.jsIrOutputGranularity)
             task.kotlinBuildToolsApiClasspath.from(configurations.named(BUILD_TOOLS_API_CLASSPATH_CONFIGURATION_NAME))
-
             task.outputDirectory.set(binary.outputDirBase.map { it.dir(KotlinJsDtsGenerationTask.OUTPUT_DIRECTORY_NAME) })
         }
     }
