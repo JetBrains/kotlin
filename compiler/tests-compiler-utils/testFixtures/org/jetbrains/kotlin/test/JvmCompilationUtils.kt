@@ -7,6 +7,8 @@
 
 package org.jetbrains.kotlin.test
 
+import com.intellij.util.currentJavaVersion
+import com.intellij.util.lang.JavaVersion
 import java.io.*
 import java.nio.charset.Charset
 import java.util.*
@@ -49,10 +51,21 @@ sealed class JavaCompilationResult {
 class JavaCompilationError(errors: String) :
     AssertionError("Java files are not compiled successfully\n$errors")
 
+/**
+ * Compiles [files] like the `javac` of the JDK at [jdkHome] would, or like the `javac` of the test JVM if [jdkHome] is `null`.
+ *
+ * The `javac` of the test JVM compiles in-process whenever it can stand in for the requested one: with the given [options] for a JDK
+ * of the same feature version, and with `--release` added for an older one. Otherwise, the `javac` of [jdkHome] runs in a separate
+ * process, which takes a JVM start per call, usually longer than the compilation of a test's few sources.
+ */
 @JvmOverloads
 fun compileJavaFiles(files: Collection<File>, options: List<String?>, jdkHome: File? = null): JavaCompilationResult {
-    if (jdkHome != null) {
-        return compileJavaFilesExternally(files, options, jdkHome)
+    val patchModuleOptions = extractPatchModuleOptions(files)
+    val releaseOptions = if (jdkHome != null) {
+        releaseOptionsToCompileInProcess(jdkHome, options + patchModuleOptions)
+            ?: return compileJavaFilesExternally(files, options, jdkHome)
+    } else {
+        emptyList()
     }
 
     val javaCompiler = ToolProvider.getSystemJavaCompiler()
@@ -65,7 +78,7 @@ fun compileJavaFiles(files: Collection<File>, options: List<String?>, jdkHome: F
                 compilerOutputWriter,
                 fileManager,
                 diagnosticCollector,
-                options + listOf("-Djava.ext.dirs=") + extractPatchModuleOptions(files),
+                options + releaseOptions + listOf("-Djava.ext.dirs=") + patchModuleOptions,
                 null,
                 javaFileObjectsFromFiles
             )
@@ -93,6 +106,42 @@ private fun extractPatchModuleOptions(files: Collection<File>): List<String> =
     }.flatMap {
         listOf("--patch-module", "java.base=$it")
     }
+
+/**
+ * Returns the options with which the `javac` of the test JVM compiles like the `javac` of the JDK at [jdkHome]: none for the same
+ * feature version, and `--release` for an older JDK. Returns `null` if it can't: the JDK is newer, or [options] contain an option
+ * that `javac` doesn't allow together with `--release`.
+ */
+private fun releaseOptionsToCompileInProcess(jdkHome: File, options: List<String?>): List<String>? {
+    val jdkVersion = readJdkFeatureVersion(jdkHome) ?: return null
+    val currentVersion = currentJavaVersion().feature
+    return when {
+        jdkVersion == currentVersion -> emptyList()
+        jdkVersion > currentVersion -> null
+        options.any { it != null && it.conflictsWithRelease() } -> null
+        ToolProvider.getSystemJavaCompiler().sourceVersions.none { it.name == "RELEASE_$jdkVersion" } -> null
+        else -> listOf("--release", jdkVersion.toString())
+    }
+}
+
+private val OPTIONS_CONFLICTING_WITH_RELEASE = setOf(
+    "-source", "--source", "-target", "--target", "--release", "-bootclasspath", "--boot-class-path", "-extdirs",
+    "--extension-directories", "-endorseddirs", "--endorsed-directories", "--system", "--upgrade-module-path", "--patch-module",
+    "--add-exports", "--add-reads", "--limit-modules",
+)
+
+private fun String.conflictsWithRelease(): Boolean =
+    substringBefore('=') in OPTIONS_CONFLICTING_WITH_RELEASE || startsWith("-Xbootclasspath")
+
+/**
+ * Returns the feature version of the JDK at [jdkHome] (e.g., 17), as recorded in its `release` file, or `null` if it can't be read.
+ */
+fun readJdkFeatureVersion(jdkHome: File): Int? {
+    val releaseFile = File(jdkHome, "release").takeIf { it.isFile } ?: return null
+    val version = releaseFile.readLines().firstNotNullOfOrNull { it.substringAfter("JAVA_VERSION=", "").ifEmpty { null } }
+        ?: return null
+    return JavaVersion.tryParse(version.trim('"'))?.feature
+}
 
 private fun compileJavaFilesExternally(files: Collection<File>, options: List<String?>, jdkHome: File): JavaCompilationResult {
     val command: MutableList<String?> = ArrayList()
