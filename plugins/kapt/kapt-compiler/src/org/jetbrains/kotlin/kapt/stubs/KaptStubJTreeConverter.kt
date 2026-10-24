@@ -195,6 +195,7 @@ class KaptStubJTreeConverter(
         sortedConvertedFields: List<JCVariableDecl>,
         sortedConvertedMethods: List<JCMethodDecl>,
         nestedClasses: List<JCClassDecl>,
+        recordComponents: List<JCVariableDecl>?,
     ): JCClassDecl {
         return treeMaker.ClassDef(
             modifiers,
