@@ -200,17 +200,7 @@ open class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(t
         classLoader: URLClassLoader,
         classFileFactory: ClassFileFactory
     ): String {
-        val jdkHome = when (jdkKind) {
-            TestJdkKind.FULL_JDK -> KtTestUtil.getJdk8Home()
-            TestJdkKind.FULL_JDK_11 -> KtTestUtil.getJdk11Home()
-            TestJdkKind.FULL_JDK_17 -> KtTestUtil.getJdk17Home()
-            TestJdkKind.FULL_JDK_21 -> KtTestUtil.getJdk21Home()
-            TestJdkKind.FULL_JDK_25 -> KtTestUtil.getJdk25Home()
-            TestJdkKind.FULL_JDK_VALHALLA -> KtTestUtil.getJdkValhallaHome()
-            // Test-infrastructure invariant violation (not a failure of the code under test): throw a
-            // TestInfrastructureException so it is never masked by failure suppressors (e.g. an IGNORE_BACKEND directive).
-            else -> testInfraError("Unsupported JDK kind: $jdkKind")
-        }
+        val jdkHome = getJdkHome(jdkKind)
 
         val javaExe = File(jdkHome, "bin/java.exe").takeIf(File::exists)
             ?: File(jdkHome, "bin/java").takeIf(File::exists)
@@ -257,6 +247,18 @@ open class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(t
         } finally {
             process.outputStream.flush()
         }
+    }
+
+    private fun getJdkHome(jdkKind: TestJdkKind): File = when (jdkKind) {
+        TestJdkKind.FULL_JDK -> KtTestUtil.getJdk8Home()
+        TestJdkKind.FULL_JDK_11 -> KtTestUtil.getJdk11Home()
+        TestJdkKind.FULL_JDK_17 -> KtTestUtil.getJdk17Home()
+        TestJdkKind.FULL_JDK_21 -> KtTestUtil.getJdk21Home()
+        TestJdkKind.FULL_JDK_25 -> KtTestUtil.getJdk25Home()
+        TestJdkKind.FULL_JDK_VALHALLA -> KtTestUtil.getJdkValhallaHome()
+        // Test-infrastructure invariant violation (not a failure of the code under test): throw a
+        // TestInfrastructureException so it is never masked by failure suppressors (e.g. an IGNORE_BACKEND directive).
+        else -> testInfraError("Unsupported JDK kind: $jdkKind")
     }
 
     protected open fun launchSeparateJvmProcess(
