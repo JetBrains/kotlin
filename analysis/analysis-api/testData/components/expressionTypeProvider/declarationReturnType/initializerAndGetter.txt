@@ -6,7 +6,7 @@ mismatchedInitializerAndGetter@(8,1) : kotlin.String
   KtPropertyAccessor@(9,5) : kotlin.String
 initializerAndAccessors@(11,1) : kotlin.Int
   KtPropertyAccessor@(12,5) : kotlin.Int
-  KtPropertyAccessor@(13,5) : kotlin.Unit
+  KtPropertyAccessor@(13,5) : kotlin.Unit (by PSI)
     value@(13,9) : kotlin.Int
 getterWithBlockBody@(15,1) : kotlin.Int
   KtPropertyAccessor@(16,5) : kotlin.Int

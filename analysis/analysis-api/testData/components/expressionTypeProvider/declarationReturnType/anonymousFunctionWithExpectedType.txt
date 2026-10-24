@@ -1,8 +1,8 @@
-takeLong@(1,1) : kotlin.Unit
+takeLong@(1,1) : kotlin.Unit (by PSI)
   f@(2,14) : () -> kotlin.Long
-takeAny@(3,1) : kotlin.Unit
+takeAny@(3,1) : kotlin.Unit (by PSI)
   f@(3,13) : kotlin.Any
-container@(5,1) : kotlin.Unit
+container@(5,1) : kotlin.Unit (by PSI)
   long@(6,5) : () -> kotlin.Long
     KtNamedFunction@(6,28) : kotlin.Long
   byte@(7,5) : () -> kotlin.Byte
@@ -16,8 +16,8 @@ container@(5,1) : kotlin.Unit
   unit@(11,5) : () -> kotlin.Unit
     KtNamedFunction@(11,28) : kotlin.Unit
   blockBody@(12,5) : () -> kotlin.Int
-    KtNamedFunction@(12,32) : kotlin.Unit
+    KtNamedFunction@(12,32) : kotlin.Unit (by PSI)
   blockBodyWithReturn@(13,5) : () -> kotlin.Int
-    KtNamedFunction@(13,42) : kotlin.Unit
+    KtNamedFunction@(13,42) : kotlin.Unit (by PSI)
   KtNamedFunction@(15,14) : kotlin.Long
   KtNamedFunction@(16,13) : kotlin.Int

@@ -40,7 +40,7 @@ continuing@(25,1) : kotlin.Nothing
 comparisonProperty@(27,1) : kotlin.Boolean
 throwingGetter@(28,1) : kotlin.Nothing
   KtPropertyAccessor@(28,20) : kotlin.Nothing
-container@(30,1) : kotlin.Unit
+container@(30,1) : kotlin.Unit (by PSI)
   equalityLocal@(31,5) : kotlin.Boolean
   stringTemplateLocal@(32,5) : kotlin.String
   throwingLocal@(33,5) : kotlin.Nothing
