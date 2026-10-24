@@ -1,0 +1,14 @@
+fir-lazy-resolve	LLFirModuleLazyDeclarationResolver\.lazyResolve|lazyResolveToPhase
+psi-factory-parse	PsiElementFactoryImpl\.create|createExpressionFromText|createTypeFromText|JavaParserUtil|PsiJavaParserFacadeImpl|createAnnotationFromText|createReferenceFromText
+type-mapping-signature	FirJvmTypeMapper|AbstractTypeMapper|BothSignatureWriter|JvmSignatureWriter|mapType|SignatureParsing|ClsTypeElementImpl|TypeInfo
+type-simplify-approx	simplifyType|PublicTypeApproximator|AbstractTypeApproximator|AnonymousTypesSubstitutor|fullyExpandedType|visibilityForApproximation
+type-annotate	annotateByKtType|annotateByTypeAnnotationProvider|TypeAnnotationProvider
+asPsiType-other	asPsiType
+symbol-restore	restoreSymbol|KaFirPsiBasedSymbolPointer|KaBasePsiSymbolPointer|KaFir.*SymbolPointer|KaPsiBased|restoreSymbolOrThrowIfDisposed
+pointer-create	createPointer
+session-entry	KaFirSessionProvider|KaBaseSessionProvider|analyzeForLightClasses|KaAnalysisPermission|allowAnalysis|KaBaseLifetimeTracker|LifetimeToken
+annotation-symbols	KaFirAnnotationList|KaAnnotationList|annotations\b|FirAnnotation|KaFirAnnotation|AnnotationsKt
+scopes	MemberScope|Scope\.|KaFirScope|declaredMemberScope|combinedDeclaredMemberScope|FirScope|KaBaseScope
+symbol-build	KaSymbolByFirBuilder|KaFir[A-Za-z]*Symbol\.<init>|buildSymbol|buildClassLikeSymbol|buildCallableSymbol
+cached-values	CachedValuesManager|CachedValueBase|PsiCachedValue|UserDataHolder
+psi-tree	com\.intellij\.psi\.impl\.source|com\.intellij\.psi\.stubs|KtStubBasedElement|org\.jetbrains\.kotlin\.psi\.
