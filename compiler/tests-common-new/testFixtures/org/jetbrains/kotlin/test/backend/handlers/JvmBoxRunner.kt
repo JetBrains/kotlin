@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.test.backend.handlers
 
+import com.intellij.util.currentJavaVersion
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.codegen.ClassFileFactory
 import org.jetbrains.kotlin.codegen.CodegenTestUtil
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.model.nameWithoutExtension
+import org.jetbrains.kotlin.test.readJdkFeatureVersion
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator.Companion.TEST_CONFIGURATION_KIND_KEY
 import org.jetbrains.kotlin.test.services.jvm.compiledClassesManager
@@ -148,7 +150,9 @@ open class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(t
             )
         } else {
             val jdkKind = module.directives.singleOrZeroValue(JDK_KIND)
-            if (jdkKind?.requiresSeparateProcess == true || REQUIRES_SEPARATE_PROCESS in module.directives) {
+            val needsSeparateJvm = REQUIRES_SEPARATE_PROCESS in module.directives ||
+                    jdkKind?.requiresSeparateProcess == true && !canRunInCurrentJvm(jdkKind, module)
+            if (needsSeparateJvm) {
                 runSeparateJvmInstance(module, jdkKind ?: TestJdkKind.FULL_JDK, classLoader, classFileFactory)
             } else {
                 runBoxInCurrentProcess(
@@ -187,6 +191,14 @@ open class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(t
             }
         }
     }
+
+    /**
+     * Whether `box` of a test that requests [jdkKind] can run in the test JVM: it has the same feature version as that JDK, and the test
+     * doesn't need JVM options. Another JVM of the same version would only add the cost of its start to the test.
+     */
+    private fun canRunInCurrentJvm(jdkKind: TestJdkKind, module: TestModule): Boolean =
+        jdkKind != TestJdkKind.FULL_JDK_VALHALLA && ENABLE_JVM_PREVIEW !in module.directives && ATTACH_DEBUGGER !in module.directives &&
+                readJdkFeatureVersion(getJdkHome(jdkKind)) == currentJavaVersion().feature
 
     /*
      * TODO:
