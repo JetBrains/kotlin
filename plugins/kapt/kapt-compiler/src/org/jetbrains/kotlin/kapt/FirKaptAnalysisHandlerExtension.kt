@@ -23,15 +23,14 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.fir.builder.FirSyntaxErrors
 import org.jetbrains.kotlin.fir.extensions.FirAnalysisHandlerExtension
 import org.jetbrains.kotlin.kapt.base.*
-import org.jetbrains.kotlin.kapt.base.util.ClassTrackingURLClassLoader
 import org.jetbrains.kotlin.kapt.base.util.KaptBaseError
 import org.jetbrains.kotlin.kapt.base.util.KaptLogger
 import org.jetbrains.kotlin.kapt.base.util.info
+import org.jetbrains.kotlin.kapt.base.util.runMemoryLeakDetection
 import org.jetbrains.kotlin.kapt.stubs.KaptStubConverter
 import org.jetbrains.kotlin.kapt.stubs.KaptStubConverter.KaptStub
 import org.jetbrains.kotlin.kapt.util.CompilerConfigurationBackedKaptLogger
 import org.jetbrains.kotlin.kapt3.diagnostic.KaptError
-import org.jetbrains.kotlin.utils.kapt.MemoryLeakDetector
 import java.io.File
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.Executors
@@ -148,21 +147,7 @@ open class FirKaptAnalysisHandlerExtension(
 
         logger.info { "Annotation processing took $annotationProcessingTime ms" }
 
-        if (options.detectMemoryLeaks != DetectMemoryLeaksMode.NONE) {
-            MemoryLeakDetector.add(processors.classLoader) { (it as? ClassTrackingURLClassLoader)?.definedClasses }
-
-            val isParanoid = options.detectMemoryLeaks == DetectMemoryLeaksMode.PARANOID
-            val [leakDetectionTime, leaks] = measureTimeMillis { MemoryLeakDetector.process(isParanoid) }
-            logger.info { "Leak detection took $leakDetectionTime ms" }
-
-            for (leak in leaks) {
-                logger.warn(buildString {
-                    appendLine("Memory leak detected!")
-                    appendLine("Location: '${leak.className}', static field '${leak.fieldName}'")
-                    append(leak.description)
-                })
-            }
-        }
+        runMemoryLeakDetection(options, processors, logger)
     }
 
     private fun contextForStubGeneration(disposable: Disposable, configuration: CompilerConfiguration): KaptContextForStubGeneration? {

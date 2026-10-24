@@ -53,6 +53,9 @@ abstract class KaptWithoutKotlincTask @Inject constructor(
     @get:Input
     var disableClassloaderCacheForProcessors: Set<String> = emptySet()
 
+    @get:Internal
+    var detectMemoryLeaks: String = "standard"
+
     @get:Input
     var mapDiagnosticLocations: Boolean = false
 
@@ -162,6 +165,7 @@ abstract class KaptWithoutKotlincTask @Inject constructor(
 
             kaptFlagsForWorker,
             stubGenerationScheme.get().optionValue,
+            detectMemoryLeaks,
 
             disableClassloaderCacheForProcessors
         )
@@ -301,6 +305,15 @@ abstract class KaptWithoutKotlincTask @Inject constructor(
                         + "\nIf you disable discovery, declare every annotation processor in a 'kapt' configuration."
             )
         }
+        // The 'paranoid' mode inspects every classloader right after annotation processing anyway, whatever its lifetime.
+        if (classLoadersCacheSize > 0 && (detectMemoryLeaks == "standard" || detectMemoryLeaks == "default")) {
+            logger.warn(
+                "Kapt memory leak detection may report false positives while the annotation processor classloaders cache is enabled:"
+                        + " cached classloaders are kept alive between builds on purpose, so the 'standard' mode cannot tell them"
+                        + " from leaked ones and reports suspicious static fields of cached processors as the 'paranoid' mode does."
+                        + "\nSet 'kapt.classloaders.cache.size=0' or 'kapt.detectMemoryLeaks = \"none\"' to avoid this."
+            )
+        }
     }
 }
 
@@ -399,8 +412,9 @@ private class KaptExecution @Inject constructor(
         val mode = classLoader.kaptClass("AptMode")
             .enumConstants.single { (it as Enum<*>).name == "APT_ONLY" }
 
+        val detectMemoryLeaksModeName = if (detectMemoryLeaks == "default") "STANDARD" else detectMemoryLeaks.uppercase()
         val detectMemoryLeaksMode = classLoader.kaptClass("DetectMemoryLeaksMode")
-            .enumConstants.single { (it as Enum<*>).name == "NONE" }
+            .enumConstants.single { (it as Enum<*>).name == detectMemoryLeaksModeName }
 
         val stubGenerationSchemeEnum = classLoader.kaptClass("StubGenerationScheme")
             .enumConstants.single { (it as Enum<*>).name == stubGenerationScheme.uppercase() }
@@ -489,6 +503,7 @@ internal data class KaptOptionsForWorker(
 
     val flags: Set<String>,
     val stubGenerationScheme: String,
+    val detectMemoryLeaks: String,
 
     val disableClassloaderCacheForProcessors: Set<String>
 ) : Serializable
