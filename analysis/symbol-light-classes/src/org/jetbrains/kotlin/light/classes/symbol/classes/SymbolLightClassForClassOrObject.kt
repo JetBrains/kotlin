@@ -60,10 +60,14 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
      * and a value object are compiled as regular classes, so they are not inline value classes even though they have the
      * `value` modifier. The distinction cannot be made from PSI alone, as it depends on the `@JvmInline` annotation, the
      * target platform, and the `FullValueClasses` language feature, so the flag is computed from the class symbol.
+     * For a class with the `value` modifier, the computation requires FIR, while a light class is often created only to
+     * be listed or referenced, e.g., for an on-demand import in Java, so the flag is computed on the first access.
      *
      * @see KaNamedClassSymbol.isInline
      */
-    val isInlineClass: Boolean
+    val isInlineClass: Boolean by lazyPub {
+        withClassSymbol { it.isInline }
+    }
 
     private val classKind: KaClassKind
 
@@ -75,7 +79,6 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
         classSymbol = classSymbol,
     ) {
         require(classSymbol.classKind != KaClassKind.INTERFACE && classSymbol.classKind != KaClassKind.ANNOTATION_CLASS)
-        isInlineClass = classSymbol.isInline
         classKind = classSymbol.classKind
     }
 
@@ -83,14 +86,12 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
         classOrObjectDeclaration: KtClassOrObject?,
         classSymbolPointer: KaSymbolPointer<KaNamedClassSymbol>,
         useSiteModule: KaModule,
-        isInlineClass: Boolean,
         classKind: KaClassKind,
     ) : super(
         classOrObjectDeclaration = classOrObjectDeclaration,
         classSymbolPointer = classSymbolPointer,
         useSiteModule = useSiteModule,
     ) {
-        this.isInlineClass = isInlineClass
         this.classKind = classKind
     }
 
@@ -378,7 +379,6 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
         classOrObjectDeclaration = classOrObjectDeclaration,
         classSymbolPointer = symbolPointer,
         useSiteModule = useSiteModule,
-        isInlineClass = isInlineClass,
         classKind = classKind,
     )
 }

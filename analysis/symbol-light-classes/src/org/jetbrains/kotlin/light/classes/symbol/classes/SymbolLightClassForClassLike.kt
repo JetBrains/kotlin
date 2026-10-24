@@ -182,6 +182,9 @@ internal abstract class SymbolLightClassForClassLike<SType : KaClassSymbol> prot
     override fun getSuperTypes(): Array<PsiClassType> = PsiClassImplUtil.getSuperTypes(this)
 
     private val _containingClass: PsiClass? by lazyPub {
+        // A top-level declaration has no containing class, and the check doesn't require FIR, unlike the containing symbol
+        if (classOrObjectDeclaration?.isTopLevel() == true) return@lazyPub null
+
         withClassSymbol { classSymbol ->
             when (val containingSymbol = classSymbol.containingSymbol) {
                 is KaClassSymbol -> containingSymbol.asPsiClass()
