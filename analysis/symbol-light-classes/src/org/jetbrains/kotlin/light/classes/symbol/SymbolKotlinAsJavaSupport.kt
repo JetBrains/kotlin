@@ -28,10 +28,10 @@ import org.jetbrains.kotlin.analysis.api.platform.modification.*
 import org.jetbrains.kotlin.analysis.api.platform.packages.createPackageProvider
 import org.jetbrains.kotlin.analysis.api.platform.permissions.KaAnalysisPermissionChecker
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaModuleConverter
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaResolutionScope
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinModuleDependentsProvider
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.*
-import org.jetbrains.kotlin.analysis.api.session.analysisScope
 import org.jetbrains.kotlin.analysis.api.session.canBeAnalysed
 import org.jetbrains.kotlin.analysis.api.session.useSiteModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
@@ -597,18 +597,15 @@ internal class SymbolKotlinAsJavaSupport(private val project: Project) : KotlinA
      * Then, the declaration-site module is used as a context, so [getResolutionScope] returns the scope of that (possibly non-JVM) module.
      */
     override fun getResolutionScope(file: FakeFileForLightClass): GlobalSearchScope {
-        val analysisScopesForContextModules = file.classes.mapNotNullTo(mutableSetOf()) { lightClass ->
+        val contextModules = file.classes.mapNotNullTo(mutableSetOf()) { lightClass ->
             (lightClass as? KaSymbolJavaView<*>)?.useSiteModule
-        }.map { module ->
-            analyzeForLightClasses(module) {
-                analysisScope
-            }
         }
 
-        return when {
-            analysisScopesForContextModules.isEmpty() -> ResolveScopeManager.getInstance(project).getDefaultResolveScope(file.virtualFile)
-            analysisScopesForContextModules.size == 1 -> analysisScopesForContextModules.single()
-            else -> GlobalSearchScope.union(analysisScopesForContextModules)
+        // The analysis scope of a session is the resolution scope of its use-site module, which is available without a session
+        return when (contextModules.size) {
+            0 -> ResolveScopeManager.getInstance(project).getDefaultResolveScope(file.virtualFile)
+            1 -> KaResolutionScope.forModule(contextModules.single())
+            else -> GlobalSearchScope.union(contextModules.map(KaResolutionScope::forModule))
         }
     }
 
