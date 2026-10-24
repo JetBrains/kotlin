@@ -1,0 +1,3 @@
+expression: 'ab'
+expression PSI: KtConstantExpression
+type: kotlin.Char

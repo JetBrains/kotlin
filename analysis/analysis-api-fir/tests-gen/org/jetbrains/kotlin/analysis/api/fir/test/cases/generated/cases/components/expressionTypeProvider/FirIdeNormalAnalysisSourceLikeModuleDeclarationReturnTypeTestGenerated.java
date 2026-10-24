@@ -50,6 +50,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleDeclarationReturnTypeTestGenera
   }
 
   @Test
+  @TestMetadata("anonymousFunctionWithExpectedType.kt")
+  public void testAnonymousFunctionWithExpectedType() {
+    run("anonymousFunctionWithExpectedType.kt");
+  }
+
+  @Test
   @TestMetadata("constantsAnonymousFunction.kt")
   public void testConstantsAnonymousFunction() {
     run("constantsAnonymousFunction.kt");
@@ -140,6 +146,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleDeclarationReturnTypeTestGenera
   }
 
   @Test
+  @TestMetadata("illegalInitializersAndBodies.kt")
+  public void testIllegalInitializersAndBodies() {
+    run("illegalInitializersAndBodies.kt");
+  }
+
+  @Test
   @TestMetadata("implicitTypeErrors.kt")
   public void testImplicitTypeErrors() {
     run("implicitTypeErrors.kt");
@@ -149,6 +161,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleDeclarationReturnTypeTestGenera
   @TestMetadata("implicitTypeFromTypealiasedConstructorCallWithImplicitTypeArguments.kt")
   public void testImplicitTypeFromTypealiasedConstructorCallWithImplicitTypeArguments() {
     run("implicitTypeFromTypealiasedConstructorCallWithImplicitTypeArguments.kt");
+  }
+
+  @Test
+  @TestMetadata("initializerAndGetter.kt")
+  public void testInitializerAndGetter() {
+    run("initializerAndGetter.kt");
   }
 
   @Test
@@ -170,9 +188,21 @@ public class FirIdeNormalAnalysisSourceLikeModuleDeclarationReturnTypeTestGenera
   }
 
   @Test
+  @TestMetadata("malformedConstants.kt")
+  public void testMalformedConstants() {
+    run("malformedConstants.kt");
+  }
+
+  @Test
   @TestMetadata("overriddenMember.kt")
   public void testOverriddenMember() {
     run("overriddenMember.kt");
+  }
+
+  @Test
+  @TestMetadata("overrideWithConstantInitializer.kt")
+  public void testOverrideWithConstantInitializer() {
+    run("overrideWithConstantInitializer.kt");
   }
 
   @Test
@@ -191,6 +221,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleDeclarationReturnTypeTestGenera
   @TestMetadata("simpleDeclaration.kt")
   public void testSimpleDeclaration() {
     run("simpleDeclaration.kt");
+  }
+
+  @Test
+  @TestMetadata("simpleExpressionBodies.kt")
+  public void testSimpleExpressionBodies() {
+    run("simpleExpressionBodies.kt");
   }
 
   @Test

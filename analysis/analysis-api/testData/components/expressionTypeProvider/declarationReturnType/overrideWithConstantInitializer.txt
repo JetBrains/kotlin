@@ -1,0 +1,13 @@
+Base@(1,1)
+  long@(3,5) : kotlin.Long
+  any@(4,5) : kotlin.Any
+  getter@(5,5) : kotlin.Long
+  longFunction@(6,5) : kotlin.Long
+  anyFunction@(7,5) : kotlin.Any
+Derived@(10,1)
+  long@(11,5) : kotlin.Int
+  any@(12,5) : kotlin.Int
+  getter@(13,5) : kotlin.Int
+    KtPropertyAccessor@(13,25) : kotlin.Int
+  longFunction@(14,5) : kotlin.Int
+  anyFunction@(15,5) : kotlin.Int
