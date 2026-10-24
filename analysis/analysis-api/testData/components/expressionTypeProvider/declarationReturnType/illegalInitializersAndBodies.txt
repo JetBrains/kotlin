@@ -1,0 +1,11 @@
+expectPropertyWithInitializer@(1,1) : kotlin.Int
+expectPropertyWithGetter@(4,1) : kotlin.Int
+  KtPropertyAccessor@(4,37) : kotlin.Int
+expectFunctionWithBody@(5,1) : kotlin.Int
+AbstractClass@(7,1)
+  abstractPropertyWithInitializer@(8,5) : kotlin.Int
+  abstractFunctionWithBody@(9,5) : kotlin.Int
+Interface@(12,1)
+  interfacePropertyWithInitializer@(13,5) : kotlin.Int
+externalFunctionWithBody@(16,1) : kotlin.Int
+lateinitPropertyWithInitializer@(18,1) : kotlin.String
