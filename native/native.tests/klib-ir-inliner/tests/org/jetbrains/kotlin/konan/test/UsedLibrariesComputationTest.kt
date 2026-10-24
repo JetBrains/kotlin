@@ -17,12 +17,14 @@ import org.jetbrains.kotlin.library.components.KlibMetadataComponent
 import org.jetbrains.kotlin.library.components.metadata
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.testFederation.HostDependent
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.Properties
 
+@HostDependent
 class UsedLibrariesComputationTest : AbstractNativeSimpleTest() {
     @Test
     fun `Used libraries are computed correctly (CLI)`() {

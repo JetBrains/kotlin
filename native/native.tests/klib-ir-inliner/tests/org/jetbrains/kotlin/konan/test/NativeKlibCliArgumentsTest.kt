@@ -29,11 +29,13 @@ import org.jetbrains.kotlin.serialization.deserialization.getName
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
+import org.jetbrains.kotlin.testFederation.HostDependent
 import org.jetbrains.kotlin.util.toMetadataVersion
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import java.io.File
 
+@HostDependent
 class NativeKlibCliArgumentsTest : AbstractNativeSimpleTest() {
     @Test
     @DisplayName("Test custom -Xabi-version CLI argument (KT-74467)")

@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.konan.test.syntheticAccessors.AbstractNativeKlibSynt
 import org.jetbrains.kotlin.konan.test.dump.AbstractNativeLoadCompiledKotlinTest
 import org.jetbrains.kotlin.konan.test.headerMode.AbstractNativeCodegenBoxCoreHeaderModeTest
 import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
+import org.jetbrains.kotlin.testFederation.HostDependent
 import org.junit.jupiter.api.Tag
 
 fun main(args: Array<String>) {
@@ -161,6 +162,7 @@ fun main(args: Array<String>) {
                 suiteTestClassName = "NativeSpecificCodegenBoxTestGenerated",
                 annotations = listOf(
                     provider<UseDummyTestCaseGroupProvider>(),
+                    hostDependent(),
                 )
             ) {
                 model()
@@ -192,7 +194,7 @@ fun main(args: Array<String>) {
 
         // KLIB cross-compilation tests.
         testGroup(testsRoot, "native/native.tests/testData/klib/cross-compilation/identity") {
-            testClass<AbstractKlibCrossCompilationIdentityTest> {
+            testClass<AbstractKlibCrossCompilationIdentityTest>(annotations = listOf(hostDependent())) {
                 model()
             }
         }
@@ -213,6 +215,8 @@ fun main(args: Array<String>) {
 }
 
 private fun klib() = annotation(Tag::class.java, "klib")
+
+private fun hostDependent() = annotation(HostDependent::class.java)
 
 fun klibSyntheticAccessors() = arrayOf(
     annotation(

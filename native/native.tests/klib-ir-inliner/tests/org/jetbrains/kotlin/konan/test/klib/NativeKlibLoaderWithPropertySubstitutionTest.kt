@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.library.KlibMockDSL.Companion.mockKlib
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
+import org.jetbrains.kotlin.testFederation.HostDependent
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -22,6 +23,7 @@ import java.nio.file.Path
 import java.util.*
 import kotlin.io.path.pathString
 
+@HostDependent
 class NativeKlibLoaderWithPropertySubstitutionTest {
     @TempDir
     lateinit var tmpDir: Path
