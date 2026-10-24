@@ -58,7 +58,7 @@ internal class KaFirDefaultSetterValueParameter(
         get() = withValidityAssertion { false }
 
     override val returnType: KaType
-        get() = withValidityAssertion { firSymbol.returnType(builder) }
+        get() = withValidityAssertion { owningKaSetter.owningKaProperty.returnTypeByPsi ?: firSymbol.returnType(builder) }
 
     override val psi: PsiElement?
         get() = withValidityAssertion { null }

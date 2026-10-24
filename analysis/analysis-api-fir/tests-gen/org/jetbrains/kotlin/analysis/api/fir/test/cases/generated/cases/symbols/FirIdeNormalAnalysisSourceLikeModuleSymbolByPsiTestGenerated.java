@@ -399,6 +399,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleSymbolByPsiTestGenerated extend
   }
 
   @Test
+  @TestMetadata("implicitTypesInferredByPsi.kt")
+  public void testImplicitTypesInferredByPsi() {
+    run("implicitTypesInferredByPsi.kt");
+  }
+
+  @Test
   @TestMetadata("independentModulesWithGloballyDuplicateJavaLibrary1.kt")
   public void testIndependentModulesWithGloballyDuplicateJavaLibrary1() {
     run("independentModulesWithGloballyDuplicateJavaLibrary1.kt");
