@@ -1,0 +1,5 @@
+expression: 1.5
+constant: 1.5
+constantValueKind: DoubleValue
+constantValueSource: FLOAT_CONSTANT
+constantValueSourceText: 1.5

@@ -1,0 +1,5 @@
+expression: 1u
+constant: 1u
+constantValueKind: UIntValue
+constantValueSource: INTEGER_CONSTANT
+constantValueSourceText: 1u

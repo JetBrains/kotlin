@@ -1,0 +1,5 @@
+expression: '\u0041'
+constant: `A`
+constantValueKind: CharValue
+constantValueSource: CHARACTER_CONSTANT
+constantValueSourceText: '\u0041'

@@ -1,0 +1,5 @@
+expression: 'a'
+constant: `a`
+constantValueKind: CharValue
+constantValueSource: CHARACTER_CONSTANT
+constantValueSourceText: 'a'

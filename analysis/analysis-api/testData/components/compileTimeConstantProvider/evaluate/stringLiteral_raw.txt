@@ -1,0 +1,5 @@
+expression: """a\tb$"""
+constant: "a\tb$"
+constantValueKind: StringValue
+constantValueSource: STRING_TEMPLATE
+constantValueSourceText: """a\tb$"""
