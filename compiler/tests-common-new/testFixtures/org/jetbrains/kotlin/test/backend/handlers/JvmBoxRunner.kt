@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator.Companion.TEST_CONFIGURATION_KIND_KEY
 import org.jetbrains.kotlin.test.services.jvm.compiledClassesManager
 import org.jetbrains.kotlin.test.services.jvm.jvmBoxMainClassProvider
+import org.jetbrains.kotlin.test.services.jvm.jvmSeparateProcessBoxRunner
 import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBoxTestsSourceProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBoxTestsSourceProvider.Companion.fileContainsBoxMethod
 import org.jetbrains.kotlin.test.testInfraError
@@ -221,6 +222,8 @@ open class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(t
             ?: testInfraError("Can't find 'java' executable in $jdkHome")
 
         val classPath = extractClassPath(module, classLoader, classFileFactory)
+
+        testServices.jvmSeparateProcessBoxRunner?.runBox(module, javaExe, classPath)?.let { return it }
 
         val mainClassAndArguments = testServices.jvmBoxMainClassProvider?.getMainClassNameAndAdditionalArguments(module) ?: run {
             val mainFile = module.files.firstOrNull {
