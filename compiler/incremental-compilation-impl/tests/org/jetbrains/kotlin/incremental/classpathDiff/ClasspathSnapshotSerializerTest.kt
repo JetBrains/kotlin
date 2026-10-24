@@ -56,3 +56,14 @@ internal class JavaClassesClasspathSnapshotSerializerTest : ClasspathSnapshotSer
         )
     }
 }
+
+internal class PackageInfoClasspathSnapshotSerializerTest : ClasspathSnapshotSerializerTest() {
+
+    override val sourceFile by lazy {
+        TestSourceFile(
+            JavaSourceFile(
+                baseDir = File(testDataDir, "java/testPackageInfo/src"), relativePath = "com/example/package-info.java",
+            ), tmpDir
+        )
+    }
+}

@@ -26,7 +26,15 @@ class ClasspathEntrySnapshot(
      * Maps (Unix-style) relative paths of classes to their snapshots. The paths are relative to the containing classpath entry (directory
      * or jar).
      */
-    val classSnapshots: LinkedHashMap<String, ClassSnapshot>
+    val classSnapshots: LinkedHashMap<String, ClassSnapshot>,
+
+    /**
+     * The `module-info.class` is intentionally excluded from [classSnapshots] (it is not a regular class and carries no ABI members), so a
+     * change to a dependency's module descriptor — e.g. a dropped `requires`/`exports` — would otherwise be invisible to incremental
+     * compilation. We only need to detect *whether* it changed, so a content hash is enough; a differing hash forces a non-incremental
+     * rebuild of a consuming module (see the diffing logic).
+     */
+    val moduleInfoHash: Long? = null,
 )
 
 /**
@@ -112,6 +120,16 @@ class JavaClassSnapshot(
     /** Snapshot of this class when [ClassSnapshotGranularity] == [CLASS_MEMBER_LEVEL], null otherwise. */
     val classMemberLevelSnapshot: JavaClassMemberLevelSnapshot?,
     val supertypes: List<JvmClassName>
+) : AccessibleClassSnapshot()
+
+/**
+ * [ClassSnapshot] of a `package-info.class`.
+ *
+ * @see PackageInfoImpact
+ */
+class PackageInfoClassSnapshot(
+    override val classId: ClassId,
+    override val classAbiHash: Long,
 ) : AccessibleClassSnapshot()
 
 /** Snapshot of a Java class when [ClassSnapshotGranularity] == [CLASS_MEMBER_LEVEL]. */

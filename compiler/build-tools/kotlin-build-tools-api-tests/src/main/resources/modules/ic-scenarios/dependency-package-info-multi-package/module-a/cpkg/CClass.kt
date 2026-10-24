@@ -1,0 +1,3 @@
+package cpkg
+
+class CClass

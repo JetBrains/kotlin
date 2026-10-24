@@ -28,10 +28,11 @@ internal class JvmSourcesToCompileCalculator(
     private val dirtyFilesProvider: DirtyFilesProvider,
     private val reporter: BuildReporter<BuildTimeMetric, BuildPerformanceMetric>,
 ) {
-
     private fun calculateSourcesToCompileImpl(
         impactedFilesDeterminer: ImpactedFilesDeterminer,
     ): CompilationMode {
+        changedFiles.findRebuildReasonByFileName()?.let { return CompilationMode.Rebuild(it) }
+
         val changedAndImpactedSymbols = impactedFilesDeterminer.determineChangedAndImpactedSymbols()
 
         return when (changedAndImpactedSymbols) {
@@ -47,6 +48,9 @@ internal class JvmSourcesToCompileCalculator(
             }
         }
     }
+
+    private fun DeterminableFiles.Known.findRebuildReasonByFileName(): BuildAttribute? =
+        (modified + removed).firstNotNullOfOrNull { rebuildReasonsByFileName[it.name] }
 
     private fun calculateSourcesToCompileWithKnownChanges(
         changedFiles: DeterminableFiles.Known,
@@ -90,6 +94,13 @@ internal class JvmSourcesToCompileCalculator(
         )
         return calculateSourcesToCompileImpl(
             impactedFilesDeterminer,
+        )
+    }
+
+    companion object {
+        private val rebuildReasonsByFileName: Map<String, BuildAttribute> = mapOf(
+            "module-info.java" to BuildAttribute.MODULE_INFO_CHANGED,
+            "package-info.java" to BuildAttribute.PACKAGE_INFO_CHANGED,
         )
     }
 }

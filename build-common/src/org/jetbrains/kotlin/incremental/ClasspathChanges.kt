@@ -44,6 +44,8 @@ class ClasspathSnapshotFiles(
 
     val shrunkPreviousClasspathSnapshotFile: File = File(classpathSnapshotDir, "shrunk-classpath-snapshot.bin")
 
+    val previousModuleInfoHashesFile: File = File(classpathSnapshotDir, "module-info-hashes.bin")
+
     companion object {
         private const val serialVersionUID = 0L
     }

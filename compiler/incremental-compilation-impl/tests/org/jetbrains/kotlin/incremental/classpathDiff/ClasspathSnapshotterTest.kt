@@ -214,6 +214,21 @@ class JavaOnlyClasspathSnapshotterTest : ClasspathSnapshotTestCommon() {
         // Check that the snapshot does not contain class member details
         actualSnapshot.assertDoesNotContain("publicField", "privateField", "publicMethod", "privateMethod")
     }
+
+    @Test
+    fun testPackageInfo() {
+        val classFile = getSourceFile("testPackageInfo", "com/example/package-info.java").compileSingle()
+        val classLevelSnapshot = classFile.snapshot(ClassSnapshotGranularity.CLASS_LEVEL)
+        val memberLevelSnapshot = classFile.snapshot(ClassSnapshotGranularity.CLASS_MEMBER_LEVEL)
+
+        // `package-info.class` is synthetic, but it must not be treated as inaccessible: its annotations are part of the package's ABI
+        assertInstanceOf(PackageInfoClassSnapshot::class.java, classLevelSnapshot)
+        assertEquals(ClassId(FqName("com.example"), FqName("package-info"), false), (classLevelSnapshot as PackageInfoClassSnapshot).classId)
+
+        // Granularity is forced to CLASS_LEVEL
+        assertInstanceOf(PackageInfoClassSnapshot::class.java, memberLevelSnapshot)
+        assertEquals(classLevelSnapshot.classAbiHash, (memberLevelSnapshot as PackageInfoClassSnapshot).classAbiHash)
+    }
 }
 
 private fun TestSourceFile.getExpectedSnapshotText(granularity: ClassSnapshotGranularity? = null): String {
