@@ -62,6 +62,14 @@ flags, tests, trade-offs, connections to other subsystems, and the implied contr
 | [platform-libraries.md](platform-libraries.md) | How platform libraries are built, shipped, discovered, cached and commonized, and what depends on their shape |
 | [compatibility-and-migration.md](compatibility-and-migration.md) | Every compatibility surface (klib ABI, stdlib/platform libs, caches, options, targets, toolchains, exported API, CLI/KGP), what enforces it, how defaults are migrated |
 | [tooling-integration.md](tooling-integration.md) | What KGP, the IDE / Analysis API, the commonizer and the CLI tools pass to and expect from the compiler |
+| [coroutines.md](coroutines.md) | Suspend functions: tail-call classification, the generated state-machine class, late variable spilling, `indirectbr` codegen, what the GC and escape analysis see, the stdlib contract |
+| [exceptions.md](exceptions.md) | Throw, C++ unwinding and the shadow stack, landing pads, interop filtering, ObjC/Swift `NSError` bridging, unhandled exceptions and termination, stack-trace symbolication |
+| [debug-info.md](debug-info.md) | DWARF emission (scopes, `inlinedAt`, variables, types), `ExtendedTypeInfo` and the runtime debug helpers, `konan_lldb.py`, symbolication, dSYM and linking |
+| [intrinsics.md](intrinsics.md) | The `kotlin.native.internal` intrinsics and compiler-facing annotations as a set: who reads each, how a call is resolved, the two call directions between Kotlin and the runtime, how to add one |
+| [llvm-passes.md](llvm-passes.md) | The LLVM pass pipeline per optimization mode, the custom `kotlin-*` passes, runtime inlining, function attributes codegen emits, debugging with `opt` |
+| [targets-and-toolchains.md](targets-and-toolchains.md) | `KonanTarget` and host support, `konan.properties`, the dependency downloader, Clang/linker drivers, Xcode coupling, the distribution layout, adding or removing a target |
+| [commonizer.md](commonizer.md) | The klib commonizer: CIR, the merged node tree, per-declaration commonizers, type-alias substitution, optimistic numbers, hierarchical runs, KGP tasks and caching |
+| [test-infrastructure.md](test-infrastructure.md) | How `native/native.tests` works inside: `-Pkn.*` → settings → flags, the life of one blackbox test, grouping, the test runner protocol, directives, FileCheck, cache modes, test generation |
 
 ## Navigation
 
@@ -88,6 +96,16 @@ for the agent-oriented summary.
 - Statements verified against code or tests are written plainly. Anything not verified is marked **Hypothesis** or **Unverified**.
   Each page ends with an "Open questions" list; if you resolve one, update the page and remove it.
 - Each concept has one canonical page; other pages link to it rather than restating it. The user-visible model is canonical in
-  compilation-model.md, the module map in architecture.md, the runtime module list in the runtime README, and test mechanics in
-  HACKING.md. Overview pages (optimizations.md, runtime.md, caches.md) summarize and link to the deep dives.
-- Lines wrap at about 130 characters; tables are used for maps and mermaid for flows only where a picture clarifies.
+  compilation-model.md, the module map in architecture.md, the runtime module list in the runtime README, how to *run* tests in
+  HACKING.md and how the test infrastructure *works* in test-infrastructure.md. Overview pages (optimizations.md, runtime.md,
+  caches.md) summarize and link to the deep dives.
+- Lines wrap at about 130 characters; tables are used for maps.
+- Pictures are used wherever a flow, state machine, layout or decision tree is clearer drawn than written, but the prose stays
+  complete without them. Three forms are used: Mermaid code blocks (`flowchart`, `stateDiagram-v2`, `sequenceDiagram`,
+  `classDiagram`) for flows and graphs; hand-written SVG files in [imgs/](imgs/) named `<page>-<topic>.svg` for layouts where
+  placement carries meaning (object headers, pages, tables, timelines); ASCII blocks for bit fields and small layouts. Every
+  diagram is introduced by a sentence naming the source it was derived from, and is a claim like any other: check it against the
+  code and fix it when the code changes. Mermaid conventions that keep GitHub and IntelliJ rendering: quote labels that contain
+  punctuation, use `<br/>` for line breaks, write angle brackets as `#lt;`/`#gt;`, no `;` inside sequence or state diagram text,
+  no node named `end`. The headless parse check used while writing is `mermaid.parse` from the real library, not a renderer; a
+  diagram that parses can still look wrong, so view it once.

@@ -24,7 +24,7 @@ whose header comment is the primary source.
 | Intestines | Pseudo-field `inte$tines` standing for "the elements of" an array (or the saved state of a coroutine). `intestinesField` |
 | Function summary | `FunctionEscapeAnalysisResult`: compressed PTG over `P0..Pn`, `RET` and numbered drains `D0..Dk` as `v.f0…fk → w.g0…gl` edges, plus the set of escaping nodes. Embedded at each call site in callers |
 | `Lifetime` | Codegen-facing verdict per allocation: `STACK`, `STACK_ARRAY(len)`, otherwise `GLOBAL`. [ContextUtils.kt](../../kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/llvm/ContextUtils.kt) |
-| Exiled object | An object EA found non-escaping but that cannot go on the stack (too large array, finalizer); "local" in the header comment's terminology |
+| Exiled object | Any `Alloc` whose computed lifetime is not `STACK` (i.e. `ARGUMENT`, `RETURN_VALUE`, `INDIRECT_RETURN_VALUE` or `LOCAL`; "local" in the header comment's terminology), plus stack candidates that are too large arrays or have a finalizer. `computeLifetimes` folds all of these to `GLOBAL` and, with `escapeAnalysisPropagateExiledToHeapObjects=true` (default), turns the node into an escape origin ("Forcing node … to escape") so that everything it points to escapes too |
 | `@Escapes` / `@PointsTo` | Hand-written summaries on stdlib `external fun`s. [Annotations.kt](../../kotlin-native/runtime/src/main/kotlin/kotlin/native/internal/escapeAnalysis/Annotations.kt) |
 
 ## How it works
@@ -77,7 +77,7 @@ only for `IrLoop`s, [DFGBuilder.kt](../../kotlin-native/backend.native/compiler/
 | `FieldWrite(recv, f, v)` | `recv.f → v`; a null receiver is a static field, so `v` becomes an escape origin |
 | `FieldRead(recv, f)` | `result → recv.f`; null receiver: `result` is an escape origin (it may be anything) |
 | `ArrayWrite(arr, v)` / `ArrayRead(arr)` | same with the `intestines` pseudo-field |
-| `SaveCoroutineState(liveVars)` | `this.intestines → each live variable` (spilled locals live in the coroutine object) |
+| `SaveCoroutineState(liveVars)` | `this.intestines → each live variable` (spilled locals live in the coroutine object; this single edge is what keeps stack objects from dangling across a suspension, see [coroutines.md](coroutines.md#what-the-gc-sees-during-a-suspension)) |
 | `Variable(values)` | `var → each value` |
 | `Singleton` (object access) | escape origin, unless its type is `Nothing` |
 | `body.throws` | each thrown value is an escape origin (exceptions always heap-allocate) |
@@ -149,6 +149,62 @@ The resulting lifetime is recorded in the output map **only for `Alloc` nodes** 
 codegen defaults them to `GLOBAL`. Static-field initializers, enum/object constructors and `Throwable` subclasses are excluded from
 the *statistics* only (`isFilteredOut`), not from the verdict.
 
+The whole verdict path for one allocation, from `lifetimeOf` and `computeLifetimes` in `EscapeAnalysis.kt` down to
+`allocInstance`/`allocArray` in `CodeGenerator.kt`. Note the fold step: *any* computed lifetime other than `STACK` and `GLOBAL`
+differs from the folded `GLOBAL`, so with the default option an allocation that merely flows into a parameter field or the
+return value is exiled, i.e. becomes an escape origin in its own function:
+
+```mermaid
+flowchart TD
+  A["Alloc node in the closed PTG"] --> ESC{"escapes(node)?<br/>reachable from, or alias of, an escape origin"}
+  ESC -->|yes| G1["GLOBAL"]
+  ESC -->|no| K{"kind, from the depth"}
+  K -->|"unchanged"| ST["STACK"]
+  K -->|"changed to an outer scope"| LOC["LOCAL"]
+  K -->|"PARAMETER (-2)"| ARG["ARGUMENT"]
+  K -->|"RETURN_VALUE (-1)"| RV["RETURN_VALUE or<br/>INDIRECT_RETURN_VALUE"]
+  K -->|"GLOBAL (-3)"| G2["GLOBAL"]
+  LOC --> FOLD["folded to GLOBAL; it differs from the computed lifetime,<br/>so the Alloc is exiled: escapeOrigins += node<br/>(propagateExiledToHeapObjects, default true)"]
+  ARG --> FOLD
+  RV --> FOLD
+  ST --> ARR{"AllocArray?"}
+  ARR -->|"yes: constant length, fits the 65536 budget"| SA["STACK_ARRAY(length)"]
+  ARR -->|"yes: unknown length, or too large"| FOLD
+  ARR -->|no| FIN{"class has @HasFinalizer?"}
+  FIN -->|yes| FOLD
+  FIN -->|no| ST2["STACK → StackLocalsManager.alloc"]
+  SA --> SA2["→ StackLocalsManager.allocArray"]
+  FOLD --> HEAP["→ runtime AllocInstance / AllocArrayInstance"]
+  G1 --> HEAP
+  G2 --> HEAP
+```
+
+**A worked example.** Three allocations with three different fates: one stays in the frame, one is stored into a parameter's
+field and returned, one is stored into a global:
+
+```kotlin
+class Node { var next: Node? = null }
+var global: Node? = null
+
+fun build(p: Node): Node {
+    val a = Node()
+    val b = Node()
+    val c = Node()
+    p.next = b
+    a.next = b
+    global = c
+    return b
+}
+```
+
+The points-to graph of `build` after `buildDrains` and `computeLifetimes`, drawn from the `After closure building` digraph that
+`-Xverbose-phases=EscapeAnalysis` prints for this program (node numbers are the DFG node ids from that dump). `global = c` is a
+call to the top-level setter `<set-global>`, whose own summary is `Escapes: P0`, so `c` becomes an escape origin through
+`processCall` rather than through a static `FieldWrite`; the `Node.<init>` summaries are empty because the constructor writes
+`null`:
+
+![Points-to graph of build(p): component A with the stack-allocated a, component B where p.next, a.next and the return value all drain into Alloc b at depth -2, and component C where c escapes through the setter summary](imgs/escape-analysis-ptg.svg)
+
 ### Step 5: the summary (`paintInterestingNodes`) and the interprocedural driver
 
 The summary must stay small because it is re-embedded at every call site up the call graph. `findInterestingDrains` keeps the drains
@@ -163,6 +219,19 @@ nodes by field path (`P0.f.g`), allocating `D<k>` ids for drains that are not re
 comments show the expected summaries for an aggressive and a passive variant). The result is a sorted, deduplicated edge array so
 summaries compare by value.
 
+For the `build` example of Step 4 the summary that callers embed is small: `b`'s drain was exiled (an escape origin that is
+not reachable from a parameter by a painted path), so `handleNotTakenEscapeOrigins` adds one synthetic escaping drain `D0`
+that both `p.next` and the return value point to, and nothing about `a` or `c` survives. This is the `Escape analysis was
+refined:` block of the verbose log (compare the "Passive" variant in `test10.kt`):
+
+```
+FunctionEscapeAnalysisResult of build(p)       numberOfDrains = 1
+PointsTo:
+    P0.next   -> D0        // p.next may reference D0 after the call …
+    RET.v@lue -> D0        // … and so may the result: the caller learns that p.next and the result may alias
+Escapes: D0                // D0 escapes, so whatever the caller stores into p.next or gets back is heap-bound
+```
+
 `InterproceduralAnalysis.analyze()`:
 1. Build the condensation of the call graph (`DirectedGraphCondensationBuilder`) and initialise every function with
    `optimistic()` (nothing escapes, no relations).
@@ -174,6 +243,30 @@ summaries compare by value.
 3. Fallback `analyzeComponentPessimistically`: a DFS over the SCC that analyses each function exactly once, breaking cycles by
    assuming `pessimistic` for the pending callee; a function that still overflows gets `pessimistic` and all its nodes set to
    `Depths.GLOBAL`. The strategy dates from commit `e057e5ffac75` (2021).
+
+The same driver as a flow, from `InterproceduralAnalysis.analyze()`, `analyze(callGraph, multiNode)` and
+`analyzeComponentPessimistically`:
+
+```mermaid
+flowchart TD
+  CG["CallGraph from CallGraphBuilder<br/>(5 / 5 for a program, 5 / -1 for a library)"] --> COND["DirectedGraphCondensationBuilder:<br/>SCCs in topological order"]
+  COND --> INIT["every function: result = optimistic()"]
+  INIT --> LOOP["for each SCC in reverse topological order"]
+  LOOP --> WL["worklist = members of the SCC"]
+  WL -->|"take one"| AN["analyze(function): fresh PointsToGraph,<br/>processCall per call site, buildClosure"]
+  AN --> SIZE{"PTG size > 100 + 25 × DFG nodes?"}
+  SIZE -->|yes| DIV["failedToConverge"]
+  SIZE -->|no| CH{"summary changed?"}
+  CH -->|no| WL
+  CH -->|yes| RUNS{"runs of this function > MaxAttempts (3)?"}
+  RUNS -->|yes| DIV
+  RUNS -->|no| REQ["re-queue its callers inside the SCC"]
+  REQ --> WL
+  DIV --> PESS["analyzeComponentPessimistically: DFS over the SCC,<br/>pessimistic() for pending callees; a function that still<br/>overflows gets pessimistic() and all depths GLOBAL"]
+  PESS --> REC["lifetimes[alloc.irCallSite] = lifetimeOf(alloc)<br/>for every Alloc of every PTG of the SCC"]
+  WL -->|"empty"| REC
+  REC --> LOOP
+```
 
 Any exception escaping `analyze()` is converted by `computeLifetimes` into a compilation error whose text tells the user to add
 `-Xdisable-phases=EscapeAnalysis` (with the Gradle snippet) and file an issue.
@@ -211,12 +304,36 @@ Examples from [Array.kt](../../kotlin-native/runtime/src/main/kotlin/kotlin/Arra
 (`k` odd), so `intestines` is the only field path annotations can express. The runtime sources carry about 160 `@Escapes.Nothing`,
 30 `@Escapes(mask)` and 8 `@PointsTo` today.
 
+The bit and nibble layout, using the `@Escapes` example from the KDoc in `Annotations.kt` and the two `@PointsTo` annotations
+from `Array.kt`; element indices follow the signature order (dispatch receiver, extension receiver, parameters, return value)
+and `Escapes.escapesAt(i)` / `PointsTo.kind(i, j)` in `Escapes.kt` / `PointsTo.kt` read them:
+
+```
+@Escapes(who): bit i of who is set  <=>  signature element i escapes
+
+  class C { @Escapes(0b10101) external fun Array<Any>.f(p0: Any, p1: Any): Any }
+  signature element:   4=ret   3=p1   2=p0   1=this@Array   0=this@C
+  0b1 0 1 0 1          1       0      1      0              1        -> this@C, p0 and the return value escape
+
+@PointsTo(onWhom): onWhom[i] holds one nibble per element j; (onWhom[i] shr 4*j) and 15 = kind of "i points to j"
+  kinds: 1 i -> j (return value only)   2 i -> j.intestines   3 i.intestines -> j   4 i.intestines -> j.intestines
+
+  Array<T>.set(index: Int, value: T): Unit      @PointsTo(0x0300, 0x0000, 0x0000, 0x0000)
+  element i = 0 (this), onWhom[0] = 0x0300:    nibble j:   3=ret  2=value  1=index  0=this
+                                                            0      3        0        0      -> this.intestines -> value
+
+  Array<T>.get(index: Int): T                   @PointsTo(0x000, 0x000, 0x002)
+  element i = 2 (ret), onWhom[2] = 0x002:      nibble j:   2=ret  1=index  0=this
+                                                            0      0        2               -> ret -> this.intestines
+```
+
 **The checker.** [EscapeAnalysisChecker.kt](../../compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/checkers/EscapeAnalysisChecker.kt)
 runs in the first stage for every klib via `SpecialBackendChecksTraversal`
 ([SpecialBackendChecksTraversal.kt](../../compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/lower/SpecialBackendChecksTraversal.kt),
 invoked from [NativeFir2IrPipelinePhase.kt](../../compiler/cli/cli-native-klib/src/main/kotlin/org/jetbrains/kotlin/native/pipeline/NativeFir2IrPipelinePhase.kt)).
 It mirrors the `kfun:kotlin.` rule as a package test (`isSupportedPackageByEA`): outside `kotlin.*` (or inside the `concurrent`
-packages), on non-external functions, on intrinsics lowered by the compiler, or when no signature element can escape, any
+packages), on non-external functions, on intrinsics lowered by the compiler (the checker's `mustBeLowered` list, which has drifted
+from `IntrinsicGenerator`; see [intrinsics.md](intrinsics.md#escape-analysis-summaries)), or when no signature element can escape, any
 annotation only yields an "Unused …" strong warning. Inside, an external with a reference in its signature and no annotation is a
 backend error (added by `fdc1f79bcc38`, KT-66316), as are: a `@HasFinalizer`-typed element not marked escaping, a primitive/`Unit`/
 `Nothing` element marked escaping or pointing anywhere, kind `1` on a non-return element, invalid masks. The comment "only makes

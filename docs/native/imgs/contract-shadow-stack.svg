@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 446" width="1000" height="446" font-family="Helvetica, Arial, sans-serif" font-size="13">
+  <rect x="0" y="0" width="1000" height="446" fill="#ffffff"/>
+  <text x="12" y="22" font-size="15" font-weight="bold" fill="#111">The shadow stack: how codegen frames, ObjHolder and the GC iterator see the same memory</text>
+
+  <!-- ThreadData -->
+  <g font-size="11" fill="#111">
+    <rect x="12" y="50" width="150" height="40" fill="#f0f0f0" stroke="#444"/>
+    <text x="87" y="66" text-anchor="middle">mm::ThreadData</text>
+    <text x="87" y="82" text-anchor="middle">shadowStack().currentFrame_</text>
+  </g>
+
+  <!-- Frame of the current Kotlin function: alloca'd slots -->
+  <text x="200" y="46" font-size="11.5" font-weight="bold" fill="#111">Current Kotlin frame: alloca ptr[slotCount], memset 0, EnterFrame(slots, skipSlots, slotCount)</text>
+  <g font-size="10.5" fill="#111" text-anchor="middle">
+    <rect x="200" y="54" width="110" height="36" fill="#fdf1dc" stroke="#444"/>
+    <text x="255" y="69">slots[0]</text><text x="255" y="83">overlay.previous</text>
+    <rect x="310" y="54" width="110" height="36" fill="#fdf1dc" stroke="#444"/>
+    <text x="365" y="69">slots[1]</text><text x="365" y="83">parameters, count</text>
+    <rect x="420" y="54" width="90" height="36" fill="#f0f0f0" stroke="#444"/>
+    <text x="465" y="69">slots[2]</text><text x="465" y="83">param copy</text>
+    <rect x="510" y="54" width="90" height="36" fill="#f0f0f0" stroke="#444"/>
+    <text x="555" y="69">slots[3]</text><text x="555" y="83">param copy</text>
+    <rect x="600" y="54" width="90" height="36" fill="#eaf5e6" stroke="#444"/>
+    <text x="645" y="69">slots[4]</text><text x="645" y="83">local ref</text>
+    <rect x="690" y="54" width="90" height="36" fill="#eaf5e6" stroke="#444"/>
+    <text x="735" y="69">slots[5]</text><text x="735" y="83">temp / return slot</text>
+    <rect x="780" y="54" width="90" height="36" fill="#eaf5e6" stroke="#444"/>
+    <text x="825" y="69">slots[6]</text><text x="825" y="83">local ref</text>
+    <rect x="870" y="54" width="60" height="36" fill="#eaf5e6" stroke="#444"/>
+    <text x="900" y="69">…</text><text x="900" y="83">count-1</text>
+  </g>
+  <path d="M 162 70 L 200 70" stroke="#444" fill="none" marker-end="url(#arrow)"/>
+  <!-- braces / annotations -->
+  <g font-size="10.5" fill="#111">
+    <path d="M 200 96 L 200 104 L 420 104 L 420 96" stroke="#444" fill="none"/>
+    <text x="310" y="118" text-anchor="middle">2 overlay words (kFrameOverlaySlots)</text>
+    <path d="M 420 96 L 420 104 L 600 104 L 600 96" stroke="#444" fill="none"/>
+    <text x="510" y="118" text-anchor="middle">parameters = skipSlots, skipped</text>
+    <path d="M 600 96 L 600 104 L 930 104 L 930 96" stroke="#444" fill="none"/>
+    <text x="608" y="118">scanned: [frame+1+parameters, begin+count-2-parameters)</text>
+    <text x="200" y="140">count = slotCount includes the two overlay words (CodeGenerator: slotCount starts at frameOverlaySlotCount; ObjHolder passes sizeof(*this)/sizeof(void*) = 3).</text>
+    <text x="200" y="154">Every reference-typed local gets a slot (VariableManager); SSA values between stores are not roots. UpdateStackRef / UpdateReturnRef write slots without a barrier.</text>
+  </g>
+
+  <!-- previous frame (caller) -->
+  <text x="200" y="192" font-size="11.5" font-weight="bold" fill="#111">Caller's frame (reached through previous)</text>
+  <g font-size="10.5" fill="#111" text-anchor="middle">
+    <rect x="200" y="200" width="110" height="36" fill="#fdf1dc" stroke="#444"/>
+    <text x="255" y="215">previous</text><text x="255" y="229">→ older frame</text>
+    <rect x="310" y="200" width="110" height="36" fill="#fdf1dc" stroke="#444"/>
+    <text x="365" y="215">parameters = 0</text><text x="365" y="229">count = 5</text>
+    <rect x="420" y="200" width="90" height="36" fill="#eaf5e6" stroke="#444"/>
+    <text x="465" y="221">slot</text>
+    <rect x="510" y="200" width="90" height="36" fill="#eaf5e6" stroke="#444"/>
+    <text x="555" y="221">slot</text>
+    <rect x="600" y="200" width="90" height="36" fill="#eaf5e6" stroke="#444"/>
+    <text x="645" y="221">slot</text>
+  </g>
+  <path d="M 206 90 C 206 150, 180 150, 180 218 L 200 218" stroke="#444" fill="none" marker-end="url(#arrow)"/>
+
+  <!-- ObjHolder frame -->
+  <text x="200" y="274" font-size="11.5" font-weight="bold" fill="#111">A C++ ObjHolder is a one-slot frame (24 bytes) pushed by its constructor and popped by its destructor</text>
+  <g font-size="10.5" fill="#111" text-anchor="middle">
+    <rect x="200" y="282" width="110" height="36" fill="#fdf1dc" stroke="#444"/>
+    <text x="255" y="297">frame_.previous</text>
+    <rect x="310" y="282" width="110" height="36" fill="#fdf1dc" stroke="#444"/>
+    <text x="365" y="297">parameters = 0</text><text x="365" y="311">count = 3</text>
+    <rect x="420" y="282" width="90" height="36" fill="#eaf5e6" stroke="#444"/>
+    <text x="465" y="297">obj_</text><text x="465" y="311">(slot())</text>
+  </g>
+  <text x="200" y="334" font-size="10.5" fill="#111">EnterFrame(frame(), 0, 3) in the ctor, LeaveFrame in the dtor; used by runtime C++ that must keep an object alive (OBJ_GETTER results, launcher args).</text>
+
+  <!-- rules -->
+  <g font-size="10.5" fill="#111">
+    <text x="12" y="356" font-weight="bold">Linking rules (ShadowStack.cpp)</text>
+    <text x="12" y="370">EnterFrame: frame->previous = currentFrame_; currentFrame_ = frame; store parameters, count.   LeaveFrame: asserts currentFrame_ == frame, pops to previous.</text>
+    <text x="12" y="384">SetCurrentFrame(slots) in landing pads drops the frames skipped by unwinding. The GC walks the chain with no lock, so the owner must be stopped or in kNative.</text>
+    <text x="12" y="398">Stack-allocated objects (OBJECT_TAG_STACK) live in their own alloca; the slot holds a pointer to them like any other root.</text>
+  </g>
+
+  <g font-size="11" fill="#111">
+    <rect x="12" y="408" width="14" height="12" fill="#fdf1dc" stroke="#444"/><text x="30" y="418">FrameOverlay words</text>
+    <rect x="160" y="408" width="14" height="12" fill="#f0f0f0" stroke="#444"/><text x="178" y="418">skipped parameter slots</text>
+    <rect x="330" y="408" width="14" height="12" fill="#eaf5e6" stroke="#444"/><text x="348" y="418">scanned object slots</text>
+    <text x="12" y="438">Sources: Memory.h (FrameOverlay, ObjHolder), mm/ShadowStack.{hpp,cpp}, CodeGenerator.kt (epilogue, frameOverlaySlotCount), VariableManager.kt</text>
+  </g>
+
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 z" fill="#444"/>
+    </marker>
+  </defs>
+</svg>

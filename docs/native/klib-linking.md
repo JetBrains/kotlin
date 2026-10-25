@@ -79,6 +79,31 @@ IR serialization) → NativeKlibWritingPipelinePhase`. IR generation is skipped 
   klib, then re-runs with `contentRoots = []`, `useFir = false`, and the temporary klib added to both `-library` and
   `-Xinclude`. So "one stage" is literally two stages; nothing is shared except the configuration.
 
+What `KlibWriter` produces (an unpacked `-nopack` directory; a `.klib` is the same tree zipped), with the names from
+`KlibConstants`, `KlibIrConstants`, `KlibMetadataConstants` in `compiler/util-klib` and `KlibBitcodeConstants`,
+`KlibNativeIncludedBinariesConstants` in `native/utils` (`components/`):
+
+```
+<name>.klib  (zip)   or   <name>/  (-nopack)
+└── default/                                  KLIB_DEFAULT_COMPONENT_NAME
+    ├── manifest                              unique_name, abi_version, native_targets, depends, interop, ir_provider, ...
+    ├── linkdata/                             metadata component: always present; K1 descriptors and the IDE read only this
+    │   ├── module                            module header
+    │   ├── root_package/<part>.knm
+    │   └── package_<fq.name>/<part>.knm      one directory per package
+    ├── ir/                                   main IR component: absent for metadata klibs and cinterop klibs
+    │   ├── irDeclarations.knd                declarations without bodies
+    │   ├── bodies.knb                        function bodies and local declarations, read on demand
+    │   ├── types.knt  signatures.knt  strings.knt
+    │   ├── files.knf  fileEntries.knf        per-file tables (the parts SerializedIrFileFingerprint hashes, see IC)
+    │   └── debugInfo.knd                     supplementary information about signatures
+    ├── ir_inlinable_functions/               optional second IR component, same file set (cross-module inlining)
+    ├── targets/<target>/                     Native-specific, one directory per target
+    │   ├── native/*.bc                       bitcode (cinterop bridges), linked when the klib is used
+    │   └── included/*                        static libraries bundled by cinterop (staticLibraries), passed to the linker
+    └── resources/
+```
+
 ### Second stage, step 1: library resolution (`loadNativeKlibs`)
 
 [`loadNativeKlibs`](../../compiler/ir/serialization.native/src/org/jetbrains/kotlin/backend/konan/serialization/loadNativeKlibs.kt)
@@ -92,7 +117,8 @@ is called once from `NativeSecondStageCompilationConfig.loadedKlibs`. It configu
    `isImplicitlyLoadedFromKotlinNativeDistribution` ([`NativeKlibAttributes.kt`](../../native/utils/src/org/jetbrains/kotlin/konan/library/NativeKlibAttributes.kt)).
 2. explicit `-library`/`-l` paths (`konanLibraries`); `-Xinclude`, `-friend-modules`, `-Xexport-library` are *selections*
    from the loaded set, not extra loads;
-3. a platform check (`KlibPlatformChecker.Native(target)` or `NativeMetadata` for metadata compilations), the ABI window
+3. a platform check (`KlibPlatformChecker.Native(target)` or `NativeMetadata` for metadata compilations; commonized klibs
+   are metadata-only and carry `commonizer_native_targets`, see [commonizer.md](commonizer.md#step-7--serialization-and-the-manifest)), the ABI window
    `[FIRST_SUPPORTED, CURRENT]`, and [`KlibNativeManifestTransformer`](../../native/utils/src/org/jetbrains/kotlin/konan/library/KlibNativeManifestTransformer.kt),
    which substitutes `<prop>.<target>` manifest properties for the current target (`linkerOpts`, `includedHeaders`, …,
    [`KonanLibrary.kt`](../../native/utils/src/org/jetbrains/kotlin/konan/library/KonanLibrary.kt)).
@@ -109,6 +135,23 @@ There is no `KonanLibraryResolver`/`TopologicalLibraryOrder` any more; the two `
 (`partiallyLowerModuleWithDependencies`) are stale. Order is now: `LoadedNativeKlibs.all` is CLI order with stdlib first;
 the `KlibDAG` (built once per compilation in `NativeSecondStageCompilationConfig`, passed serialized to spawned cache builds
 via `serializedKlibDag`) provides `librariesReverseTopoSorted` with `all`-order as the tie-breaker.
+
+The second-stage front from library paths to linked IR (steps 1–3 of this section), as sequenced in `loadNativeKlibs.kt`,
+`NativeSecondStageCompilationConfig` (`loadedKlibs`, `klibDag`), `K1Frontend.kt` and `linkKlibs.kt`:
+
+```mermaid
+flowchart TD
+    P["library paths: -library / -l<br/>+ KlibNativeDistributionLibraryProvider:<br/>klib/common/stdlib, klib/platform/TARGET/org.jetbrains.kotlin.native.platform.*"] --> L["KlibLoader.load(): per path parse the manifest (KlibNativeManifestTransformer),<br/>KlibPlatformChecker.Native, ABI window FIRST_SUPPORTED..CURRENT,<br/>dedupe by canonical path, stdlib moved first"]
+    L --> IRP["checkForUnknownIrProviders<br/>only none or kotlin.native.cinterop"]
+    IRP --> DUP["reportLoadingProblemsIfAny<br/>eliminateLibrariesWithDuplicatedUniqueNames"]
+    DUP --> SPC["KonanLibrarySpecialCompatibilityChecker<br/>stdlib version vs konan.properties compilerVersion"]
+    SPC --> SEL["LoadedNativeKlibs: all, friends, exported, included<br/>(distribution and cinterop klibs dropped from exported/included)"]
+    SEL --> DAG["KlibDAGBuilder: dependency DAG from signature indices<br/>librariesReverseTopoSorted (Kahn, load order as tie-breaker)"]
+    DAG --> K1["K1FrontendPhase: one ModuleDescriptor per klib from metadata only<br/>+ forward-declarations module"]
+    K1 --> LINK["LinkKlibsPhase: KonanIrLinker over the shared SymbolTable<br/>module deserializer per klib (partial / interop / forward declarations)<br/>ExternalDependenciesGenerator drives lazy deserialization<br/>postProcess: fake overrides, partial-linkage stubs"]
+    LINK --> FILT["filterOutUnusedPlatformLibraryModules<br/>C struct/enum bodies for the remaining cinterop modules<br/>checkNoUnboundSymbols, sort modules by KlibDAG"]
+    FILT --> OUT["LinkKlibsOutput: irModules (reverse topological order),<br/>irModulesToCompile, irBuiltIns, symbols,<br/>irLinker kept alive for lazy deserialization in lowerings"]
+```
 
 ### Second stage, step 2: the K1 "frontend" (`runK1Frontend`)
 
@@ -204,6 +247,30 @@ through `NativeBackendContext`. At runtime the stub ends in `kotlin.internal.thr
 ([`IrLinkageError.kt`](../../libraries/stdlib/common-non-jvm/src/kotlin/internal/IrLinkageError.kt)); `KFunctionImpl`/`KPropertyImpl`
 in `kotlin-native/runtime` do the same for broken reflection targets.
 
+The two passes of the engine inside `KotlinIrLinker.postProcess`, as implemented in `PartialLinkageSupportForLinkerImpl`,
+`ClassifierExplorer`, `MissingDeclarationStubGenerator` and `PartiallyLinkedIrTreePatcher` (the case names are the
+`PartialLinkageCase` subclasses):
+
+```mermaid
+flowchart TD
+    UB["unbound symbol after deserialization<br/>(signature found in no module)"] --> STUB["MissingDeclarationStubGenerator.getDeclaration<br/>stub with origin MISSING_DECLARATION"]
+    CL["every deserialized classifier<br/>(fake-override candidates, inline lazy IR)"] --> EXP["ClassifierExplorer.exploreSymbol: supertypes, type parameters,<br/>outer class, annotation constructors, type arguments"]
+    EXP -->|"everything reachable is bound and valid"| USABLE["Usable"]
+    EXP -->|"classifier missing"| UN1["Unusable: MissingClassifier"]
+    EXP -->|"illegal supertypes (final, several classes, wrong kind)"| UN2["Unusable: InvalidInheritance"]
+    EXP -->|"depends on an unusable classifier"| UN3["Unusable: DueToOtherClassifier (root cause kept)"]
+    STUB --> PATCH
+    UN1 --> PATCH
+    UN2 --> PATCH
+    UN3 --> PATCH["PartiallyLinkedIrTreePatcher.patchDeclarations<br/>over every enqueued file and declaration"]
+    PATCH -->|"DeclarationWithUnusableClassifier, MissingDeclaration,<br/>UnimplementedAbstractCallable, ..."| BODY["body replaced: throwLinkageError(...) inserted as the first statement,<br/>unusable annotations removed"]
+    PATCH -->|"ExpressionWithMissingDeclaration, ExpressionWithUnusableClassifier,<br/>argument mismatches, invalid SAM conversion, ..."| EXPR["expression replaced by a call that throws"]
+    PATCH --> LOG["one logged issue per case<br/>-Xpartial-linkage-loglevel"]
+    LOG -->|"level = error and at least one issue"| ABORT["PartialLinkageErrorsLogged: compilation aborted"]
+    BODY --> RT["at run time: kotlin.internal.throwIrLinkageError"]
+    EXPR --> RT
+```
+
 Native specifics:
 
 - `KonanIrLinker` allows intersection overrides of ObjC class members without a PL error
@@ -218,7 +285,9 @@ Native specifics:
   (called from `KonanDriver.run` after `CacheBuilder`) re-reports them, skipping caches rebuilt in this run, and aborts when the
   level is `ERROR` (KT-78253).
 - Flags: `-Xpartial-linkage-loglevel={silent|info|warning|error}`; the default is `SILENT`
-  ([`PartialLinkageSettings.kt`](../../compiler/util/src/org/jetbrains/kotlin/config/PartialLinkageSettings.kt)).
+  ([`PartialLinkageSettings.kt`](../../compiler/util/src/org/jetbrains/kotlin/config/PartialLinkageSettings.kt)). The test
+  infrastructure passes `error` unless a class is annotated `@UsePartialLinkage` (`computeUsedPartialLinkageConfig`), so a test
+  run is stricter than a user build; see [test-infrastructure.md](test-infrastructure.md).
   `-Xpartial-linkage={enable|disable}` is parsed in `CommonKlibBasedCompilerArguments` but no non-generated code reads it in
   this tree, so PL cannot be switched off from the CLI. Unverified: whether that is intentional.
 

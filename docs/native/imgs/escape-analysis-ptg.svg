@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 600" width="1000" height="600" font-family="Helvetica, Arial, sans-serif" font-size="13">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#444"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1000" height="600" fill="#ffffff"/>
+  <text x="20" y="24" font-size="15" font-weight="bold" fill="#111">Points-to graph of build(p) after buildDrains and computeLifetimes (node ids as in the -Xverbose-phases=EscapeAnalysis dump)</text>
+
+  <!-- component A -->
+  <rect x="30" y="40" width="250" height="200" rx="8" fill="none" stroke="#444" stroke-dasharray="5 4"/>
+  <text x="40" y="58" font-size="11" fill="#111">component A — drain: Alloc a (n7)</text>
+  <rect x="50" y="72" width="210" height="40" rx="6" fill="#e8eef7" stroke="#444"/>
+  <text x="155" y="97" text-anchor="middle" fill="#111">a  (Variable n1)  depth 0</text>
+  <rect x="50" y="160" width="210" height="60" rx="6" fill="#eaf5e6" stroke="#444" stroke-width="2.5"/>
+  <text x="155" y="180" text-anchor="middle" fill="#111">Alloc Node — a  (n7, drain)</text>
+  <text x="155" y="197" text-anchor="middle" font-size="11" fill="#111">depth 0 = start depth → kind STACK</text>
+  <text x="155" y="212" text-anchor="middle" font-size="11" fill="#111">Lifetime.STACK</text>
+
+  <!-- parameter -->
+  <rect x="40" y="300" width="200" height="44" rx="6" fill="#e8eef7" stroke="#444"/>
+  <text x="140" y="318" text-anchor="middle" fill="#111">P0 = p  (n16)</text>
+  <text x="140" y="335" text-anchor="middle" font-size="11" fill="#111">depth −2 (PARAMETER), own drain</text>
+  <rect x="60" y="410" width="140" height="36" rx="6" fill="#e8eef7" stroke="#444"/>
+  <text x="130" y="433" text-anchor="middle" fill="#111">p.next  (t1)  −2</text>
+
+  <!-- component B -->
+  <rect x="320" y="160" width="370" height="340" rx="8" fill="none" stroke="#444" stroke-dasharray="5 4"/>
+  <text x="330" y="178" font-size="11" fill="#111">component B — drain: Alloc b (n9)</text>
+  <rect x="340" y="190" width="140" height="36" rx="6" fill="#e8eef7" stroke="#444"/>
+  <text x="410" y="213" text-anchor="middle" fill="#111">a.next  (t2)  0</text>
+  <rect x="530" y="190" width="150" height="36" rx="6" fill="#e8eef7" stroke="#444"/>
+  <text x="605" y="213" text-anchor="middle" fill="#111">RET.v@lue  (t3)  −1</text>
+  <rect x="360" y="280" width="220" height="44" rx="6" fill="#e8eef7" stroke="#444"/>
+  <text x="470" y="298" text-anchor="middle" fill="#111">b  (Variable n3)</text>
+  <text x="470" y="315" text-anchor="middle" font-size="11" fill="#111">start −1 (returned) → −2 (via p.next)</text>
+  <rect x="340" y="400" width="330" height="76" rx="6" fill="#f7e6e6" stroke="#444" stroke-width="2.5"/>
+  <text x="505" y="420" text-anchor="middle" fill="#111">Alloc Node — b  (n9, drain)</text>
+  <text x="505" y="437" text-anchor="middle" font-size="11" fill="#111">depth −2 → kind PARAMETER → Lifetime.ARGUMENT</text>
+  <text x="505" y="452" text-anchor="middle" font-size="11" fill="#111">folded to GLOBAL ≠ computed → "Forcing node 9 to escape"</text>
+  <text x="505" y="467" text-anchor="middle" font-size="11" fill="#111">(escape origin because propagateExiledToHeapObjects)</text>
+
+  <!-- return node -->
+  <rect x="740" y="60" width="230" height="44" rx="6" fill="#e8eef7" stroke="#444"/>
+  <text x="855" y="78" text-anchor="middle" fill="#111">RET  (returnsNode t0)</text>
+  <text x="855" y="95" text-anchor="middle" font-size="11" fill="#111">depth −1 (RETURN_VALUE), own drain</text>
+
+  <!-- component C -->
+  <rect x="720" y="200" width="260" height="300" rx="8" fill="none" stroke="#444" stroke-dasharray="5 4"/>
+  <text x="730" y="218" font-size="11" fill="#111">component C — drain: Alloc c (n11)</text>
+  <rect x="740" y="240" width="220" height="60" rx="6" fill="#f7e6e6" stroke="#444"/>
+  <text x="850" y="260" text-anchor="middle" fill="#111">c  (Variable n5)  escape origin</text>
+  <text x="850" y="277" text-anchor="middle" font-size="11" fill="#111">from the callee summary of &lt;set-global&gt;:</text>
+  <text x="850" y="292" text-anchor="middle" font-size="11" fill="#111">"Escapes: P0"</text>
+  <rect x="740" y="400" width="220" height="60" rx="6" fill="#f7e6e6" stroke="#444" stroke-width="2.5"/>
+  <text x="850" y="420" text-anchor="middle" fill="#111">Alloc Node — c  (n11, drain)</text>
+  <text x="850" y="437" text-anchor="middle" font-size="11" fill="#111">reachable from an escape origin</text>
+  <text x="850" y="452" text-anchor="middle" font-size="11" fill="#111">Lifetime.GLOBAL</text>
+
+  <!-- assignment edges (holder -> value) -->
+  <g stroke="#444" stroke-width="1.4" fill="none" marker-end="url(#arr)">
+    <line x1="155" y1="112" x2="155" y2="158"/>
+    <line x1="200" y1="428" x2="358" y2="312"/>
+    <line x1="410" y1="226" x2="440" y2="278"/>
+    <line x1="605" y1="226" x2="530" y2="278"/>
+    <line x1="470" y1="324" x2="470" y2="398"/>
+    <line x1="850" y1="300" x2="850" y2="398"/>
+  </g>
+  <!-- field edges -->
+  <g stroke="#444" stroke-width="1.4" fill="none" marker-end="url(#arr)">
+    <line x1="260" y1="190" x2="338" y2="208"/>
+    <line x1="140" y1="344" x2="132" y2="408"/>
+    <line x1="800" y1="104" x2="610" y2="188"/>
+  </g>
+  <g font-size="11" fill="#111">
+    <text x="292" y="190">next</text>
+    <text x="146" y="380">next</text>
+    <text x="700" y="174">v@lue</text>
+  </g>
+  <!-- node -> drain edges (dotted) -->
+  <g stroke="#444" stroke-width="1.2" fill="none" stroke-dasharray="2 4" marker-end="url(#arr)">
+    <line x1="350" y1="226" x2="350" y2="398"/>
+    <line x1="660" y1="226" x2="660" y2="398"/>
+    <line x1="200" y1="440" x2="338" y2="440"/>
+  </g>
+
+  <!-- legend -->
+  <text x="20" y="530" font-size="12" fill="#111">solid arrow: assignment edge (holder → value, "a = b" is a → b); labelled arrow: field edge; dotted: node → drain (added by buildDrains).</text>
+  <text x="20" y="548" font-size="12" fill="#111">Depth flows from holder to value along every edge (propagateLifetimes): p (−2) → p.next → b → Alloc b. Green = STACK, red = GLOBAL.</text>
+  <text x="20" y="566" font-size="12" fill="#111">Omitted: the inst temporaries of the lowered constructor calls (one per allocation, inside its component), the returns Temporary (n17 → b),</text>
+  <text x="20" y="584" font-size="12" fill="#111">the call and FieldWrite nodes (they have no edges) and the throws variable. Node.&lt;init&gt; summaries are empty: the field is written with null.</text>
+</svg>

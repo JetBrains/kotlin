@@ -68,6 +68,29 @@ A library is skipped ("SKIPPING ... as some of the dependencies aren't cached") 
 the reverse topological order matters. External caches are built under an OS file lock (`buildUnderFileLock`) because several
 Gradle workers may race to build the same stdlib cache; IC caches live in a per-project directory and are not locked.
 
+How `KonanDriver.run` and `CacheBuilder.build` decide which sub-compilations to spawn, and in which order (the IC branch
+is expanded in [incremental-compilation.md](incremental-compilation.md)):
+
+```mermaid
+flowchart TD
+    RUN["KonanDriver.run"] --> NEED{"needToBuild(): no ignoreCacheReason,<br/>final binary or full cache,<br/>-Xauto-cache-from roots or IC on?"}
+    NEED -->|"no"| MAIN
+    NEED -->|"yes"| WALK["for each klib in klibDag.librariesReverseTopoSorted<br/>(MinGW: stdlib only)"]
+    WALK --> CLS{"classify"}
+    CLS -->|"path under an -Xauto-cache-from root"| EXT{"cache found in<br/>system or auto dir?"}
+    CLS -->|"explicit on CLI, not external, not stdlib"| IC["icedLibraries"]
+    CLS -->|"otherwise"| NONE["never cached<br/>(compiled into the main module)"]
+    EXT -->|"yes"| HAVE["caches[lib] = existing cache"]
+    EXT -->|"no"| EXTB["externalLibrariesToCache"]
+    EXTB --> SPAWN1["buildLibraryCache per library, dependencies first:<br/>CompilationSpawner.spawn = fresh K2Native run in the same JVM<br/>-p static_cache -Xadd-cache -Xcached-library -Xcache-directory<br/>monolithic; stdlib per-file when perFileCacheForStdlib and not -opt;<br/>system or fingerprinted auto dir, under #lt;dir#gt;.lock"]
+    HAVE --> ICQ
+    SPAWN1 --> ICQ{"-Xenable-incremental-compilation?"}
+    IC --> ICQ
+    ICQ -->|"no"| MAIN
+    ICQ -->|"yes"| ICFLOW["IC branch: staleCacheReason, cinterop monolithic caches,<br/>dirty-file analysis, batched and per-file builds"]
+    ICFLOW --> MAIN["reloadCacheSupport(), checkConsistency(),<br/>replayPartialLinkageIssuesFromCaches,<br/>NativeCompilerDriver.run"]
+```
+
 The IC branch (`icEnabled`) adds:
 1. staleness check of existing IC caches (`staleCacheReason`): `metadata.properties` compiler fingerprint, dependencies
    fingerprint, companion-initialization mode, and for monolithic cinterop caches the klib hash; a stale per-file cache is
@@ -96,6 +119,34 @@ library currently being (re)built. An empty cache directory counts as "no cache"
 
 Outputs of a cache build are placed by `CacheSupport.tryGetImplicitOutput` into the *first* implicit cache root; in a
 per-file build each fragment gets `<root>/<name>-per-file-cache/<fileId>`.
+
+The three implicit roots and what a monolithic and a per-file cache look like on disk, with names from the
+`CachedLibraries` companion constants, `computeLibraryCacheDirectory`, `OutputFiles` and `CacheBuilder.buildLibraryCache`
+(flavor strings are examples for a debug macOS build):
+
+```
+<dist>/klib/cache/                                        systemCacheRootDirectory (DistributionUtils.kt)
+├── macos_arm64-gSTATIC-system/                           systemCacheFlavorString; -optSTATIC-system for -opt
+│   ├── stdlib-per-file-cache/                            debug stdlib: per-file (perFileCacheForStdlib)
+│   │   └── <package>.<hash36(path)>/                     cacheFileId
+│   │       ├── metadata.properties
+│   │       ├── bin/  lib<fileId>.a  bitcode_deps
+│   │       └── ir/   inline_bodies  class_fields  eager_init  trivial_getters  objc_adapters  [pl_issues]
+│   └── org.jetbrains.kotlin.native.platform.posix-cache/ monolithic (getCachedLibraryName)
+│       ├── metadata.properties                           CacheMetadata (CacheStorage.generateCacheMetadata)
+│       ├── bin/  liborg.jetbrains.kotlin.native.platform.posix-cache.a   bitcode_deps
+│       └── ir/   same side files
+└── macos_arm64-gSTATIC-user-pl/                          userCacheFlavorString: default -Xauto-cache-dir is this root
+    └── <uniqueName>/<fingerprint(lib + all deps)>/       computeLibraryCacheDirectory (auto cache)
+        ├── <uniqueName>-cache/  { metadata.properties, bin/, ir/ }
+        └── <uniqueName>-cache.lock                       buildUnderFileLock, external caches only
+<-Xic-cache-dir>/macos_arm64-gSTATIC-user-pl/             IC root, see incremental-compilation.md
+├── <uniqueName>-per-file-cache/<fileId>/ ...
+└── <cinterop uniqueName>-cache/ ...
+```
+
+`trySelectCacheFor` classifies a directory by `bin/`: `lib<name>-cache.a` → STATIC, `.dylib`/`.so` → DYNAMIC, `.header` →
+HEADER, none of these → per-file (one subdirectory per `cacheFileId`).
 
 ### 3. A cache-building compilation
 
@@ -157,6 +208,33 @@ with these cache-specific points:
 
 ### 4. Consuming caches
 
+Which consumer reads each file of a cache directory, as wired in `CachedLibraries.Cache`, `CacheSerializationSupport.kt`,
+`DependenciesTracker.kt`, `CacheBuilder.staleCacheReason` and `PartialLinkageIssuesReplay.kt`:
+
+```mermaid
+flowchart LR
+    subgraph cachedir ["#lt;name#gt;-cache/ or #lt;name#gt;-per-file-cache/#lt;fileId#gt;/"]
+        MD["metadata.properties"]
+        BIN["bin/lib#lt;name#gt;.a"]
+        BD["bin/bitcode_deps"]
+        CF["ir/class_fields"]
+        IB["ir/inline_bodies"]
+        EI["ir/eager_init"]
+        TG["ir/trivial_getters"]
+        OA["ir/objc_adapters"]
+        PL["ir/pl_issues"]
+    end
+    MD --> SCR["CacheBuilder.staleCacheReason<br/>(IC only)"]
+    BIN --> RCB["resolveCacheBinaries → Linker<br/>staticLibraries / dynamicLibraries"]
+    BD --> CBD["CachedBitcodeDependenciesComputer<br/>transitive closure of binaries to link;<br/>CacheBuilder dirty-file graph (IC)"]
+    CF --> CLB["ClassLayoutBuilder.getDeclaredFields<br/>object layout without the class body"]
+    IB --> IFD["InlineFunctionDeserializer via<br/>NativeInlineFunctionResolver: body read<br/>lazily from the klib protobuf"]
+    EI --> CEF["CachedEagerInitializedFiles →<br/>DependenciesTracker (always linked)"]
+    TG --> TGD["TrivialGettersDeserializer →<br/>NativeBackendContext.isTrivialGetter"]
+    OA --> BC["BindClassToObjCNameCodeGenerator"]
+    PL --> RPL["replayPartialLinkageIssuesFromCaches"]
+```
+
 - **Side info instead of IR.** `ModuleDeserializerProvider.getDeserializerOrNull`
   ([ModuleDeserializerProvider.kt](../../kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/serialization/ModuleDeserializerProvider.kt))
   returns a deserializer exactly for declarations from cached klibs that are not being compiled now. `ClassLayoutBuilder.getDeclaredFields`
@@ -186,6 +264,26 @@ with these cache-specific points:
   ([PartialLinkageIssuesReplay.kt](../../kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/PartialLinkageIssuesReplay.kt)),
   skipping caches built in this very run.
 
+The link step of a final binary with caches, as sequenced in `compileAndLink` (`TopLevelPhases.kt`),
+`CacheBinariesResolver.kt` and `Linker.linkCommands`:
+
+```mermaid
+flowchart LR
+    BC["main LLVM module<br/>(code of non-cached libraries only)"] --> OBJ["ObjectFilesPhase<br/>main .o"]
+    DT["DependenciesTrackingResult<br/>allCachedBitcodeDependencies"] --> RES["resolveCacheBinaries<br/>per-file cache: only the referenced files' .a<br/>monolithic: the library's .a or .dylib<br/>header cache: error"]
+    OBJ --> PRE{"shouldPerformPreLink?<br/>static-library output, final binary,<br/>-Xpre-link-caches=enable, static caches present"}
+    RES -->|"static"| PRE
+    PRE -->|"yes (Apple ld -r only)"| LDR["PreLinkCachesPhase<br/>main .o + static caches → withStaticCaches.o"]
+    PRE -->|"no"| LINK
+    LDR --> LINK["LinkerPhase<br/>objectFiles + staticLibraries + dynamicLibraries<br/>+ linkerOpts of allNativeDependencies"]
+    RES -->|"dynamic"| LINK
+    INC["included binaries (targets/#lt;target#gt;/included)<br/>of non-cached native dependencies"] --> LINK
+    LINK --> OUT["binary"]
+```
+
+For a `-p static_cache` build the same function passes an empty `ResolvedCacheBinaries`: the archive contains only this
+fragment's code and `FinalizeCachePhase` renames the temporary directory over the cache directory.
+
 ### Consequences for optimizations
 
 `runCodegen` sets `runGlobalOptimizations = optimize && !cachedLibraries.hasStaticCaches` and disables `GHAPhase` for any
@@ -196,7 +294,9 @@ class hierarchy are invisible, so "no other implementation exists" conclusions w
 bakes them into type infos (`RTTIGenerator`, `CodeGenerator`); a cache built with its own numbering could not interoperate
 with a consumer's numbering, hence it is off for caches and, transitively, for binaries using them. This is the reason
 caches are a debug-build feature (`ignoreCacheReason`); `enableReleaseBinaryCache` is an opt-in used by the test
-infrastructure and exposed by KGP as the internal property `kotlin.internal.native.enableReleaseBinaryCache`.
+infrastructure and exposed by KGP as the internal property `kotlin.internal.native.enableReleaseBinaryCache`. The same boundary
+exists at the LLVM level: a cache is a separate object file, so LLVM never inlines across it, and the `kotlin-hide-symbols` pass
+hides everything a cache does not export ([llvm-passes.md](llvm-passes.md#the-custom-passes)).
 
 ### Versioning and invalidation
 
@@ -205,11 +305,28 @@ the library and all its dependencies (`computeLibraryCacheDirectory`), so a depe
 System caches live inside the distribution, so a new compiler brings new caches. IC caches are keyed by name only, hence
 `metadata.properties` (`CacheMetadata`: klib hash, host, target, `compiler.fingerprint` from `<dist>/konan/`, runtime
 fingerprint for stdlib, dependencies fingerprint, companion-initialization mode) and the `staleCacheReason` check. Nothing
-purges old auto-cache directories. Distribution caches are produced by `KonanCacheTask`
+purges old auto-cache directories.
+
+How the two flavor strings are derived from the compilation options and which directory each one keys, following
+`appendCommonCacheFlavor`, `systemCacheFlavorString` and `userCacheFlavorString` in `NativeSecondStageCompilationConfig.kt`
+(every part after `STATIC` is appended only when the option differs from its default):
+
+```mermaid
+flowchart TD
+    OPT["second-stage options<br/>(CLI flags and -Xbinary=name=value)"] --> COMMON["appendCommonCacheFlavor<br/>#lt;target#gt; -g | -opt STATIC<br/>+ stdlib_cache, lazy_init, sanitizer, check_state_at_external_calls,<br/>stack_protector, generic_safe_casts, macabi, ccall_mode,<br/>latin1_strings, asserts"]
+    COMMON --> SYS["systemCacheFlavorString<br/>+ -system<br/>+ runtime_debug, allocator, gc, gc_scheduler, runtime_asserts,<br/>disable_mmap, gc_mark_single_threaded, fixed_block_page_size,<br/>paged_allocator, concurrent_weak_sweep, with_crash_dumps,<br/>runtime_logs_enabled"]
+    COMMON --> USR["userCacheFlavorString<br/>+ -user-pl<br/>+ -swift_export when enabled"]
+    SYS --> SYSDIR["#lt;dist#gt;/klib/cache/#lt;system flavor#gt;/<br/>stdlib and platform-library caches"]
+    USR --> AUTODIR["#lt;-Xauto-cache-dir or dist klib/cache#gt;/#lt;user flavor#gt;/<br/>#lt;uniqueName#gt;/#lt;fingerprint of lib + deps#gt;/"]
+    USR --> ICDIR["#lt;-Xic-cache-dir#gt;/#lt;user flavor#gt;/<br/>IC per-file and cinterop caches"]
+    COMMON -. "every entry must also be forwarded by" .-> FWD["setupCommonOptionsForCaches<br/>into the spawned cache build"]
+``` Distribution caches are produced by `KonanCacheTask`
 ([KonanCacheTask.kt](../../kotlin-native/build-tools/src/main/kotlin/org/jetbrains/kotlin/gradle/plugin/konan/tasks/KonanCacheTask.kt))
 from [runtime/build.gradle.kts](../../kotlin-native/runtime/build.gradle.kts) (`<target>StdlibCache`, per-file for debug) and
 [platformLibs/build.gradle.kts](../../kotlin-native/platformLibs/build.gradle.kts); `cacheableTargets.<host>` in
-[konan.properties](../../kotlin-native/konan/konan.properties) lists which targets get them.
+[konan.properties](../../kotlin-native/konan/konan.properties) lists which targets get them (the property schema and lookup rules
+are in [targets-and-toolchains.md](targets-and-toolchains.md#konanproperties-the-schema)). The debug stdlib cache is per-file and
+carries a `runtime_debug` flavor component; what the debugger needs from it is in [debug-info.md](debug-info.md#linking-dsym-and-runtime-debug-info).
 
 ### KGP side
 
@@ -305,7 +422,9 @@ under `optimizationMode=OPT` the default is `NO`, and on MinGW only `NO`/`STATIC
 linking, and passes `-Xauto-cache-from=<dist>/klib -Xbinary=enableReleaseBinaryCache=true` for distribution caches
 ([TestCompilation.kt](../../native/native.tests/testFixtures/org/jetbrains/kotlin/konan/test/blackbox/support/compilation/TestCompilation.kt)).
 In shared `compiler/testData`, expected failures are marked `// IGNORE_NATIVE: cacheMode=STATIC_EVERYWHERE` (see
-[HACKING.md](../../kotlin-native/HACKING.md#testing)). IC scenarios are directories under
+[HACKING.md](../../kotlin-native/HACKING.md#testing)). Note the real default: `STATIC_ONLY_DIST` only when the test target is in
+`cacheableTargets.<host>` (plus MinGW), `NO` otherwise; the per-mode compilation steps are in
+[test-infrastructure.md](test-infrastructure.md#cache-modes). IC scenarios are directories under
 [native/native.tests/testData/caches/ic](../../native/native.tests/testData/caches/ic) with `project.info`/`module.info` step
 scripts and expectations like `added cache`, `unchanged cache`, `removed cache`
 ([AbstractNativeIncrementalCompilationTest.kt](../../native/native.tests/testFixtures/org/jetbrains/kotlin/konan/test/blackbox/AbstractNativeIncrementalCompilationTest.kt));

@@ -62,6 +62,24 @@ BuildDFG → [inliner] → DevirtualizationAnalysis → Devirtualization → [in
    true and `NativePointed` members are treated like any other. Classes, fields and constructors are never deleted —
    constructors are already lowered to functions by `ConstructorsLowering` and are deleted as such.
 
+From roots to deletions, as implemented in `computeRootSet` (`DevirtualizationAnalysis.kt`), `CallGraphBuilder.handleFunction`
+and `dce()`:
+
+```mermaid
+flowchart TD
+  R1["program: the entry point only"] --> RS["computeRootSet"]
+  R2["library: every Public, every exported External,<br/>every vtable / itable member with a body"] --> RS
+  R3["always: static field and eager initializers, EXPLICITLY_EXPORTED,<br/>associated-object getters, IrRawFunctionReference targets"] --> RS
+  RS --> CGB["CallGraphBuilder(-1, -1)"]
+  CGB --> DIRECT["direct calls, lowered constructor calls, Singleton constructors,<br/>array intrinsics, static-initializer calls → edges, callees pushed"]
+  CGB --> VIRT["every virtual site stays isVirtual: all candidates<br/>(devirtualized set, else all inheritors' slots) → handleRoot"]
+  DIRECT --> REF["referencedFunctions = graph nodes (minus field initializers)<br/>+ non-virtual callees + rootExternalFunctions<br/>+ bridgeTarget of each + invoke of kotlin.FunctionN"]
+  VIRT --> REF
+  REF --> DEL["remove unreferenced IrSimpleFunctions from files and<br/>unreferenced real ones from classes; null property accessors"]
+  REF --> RTTI["RTTIPhase: nullPointer in vtable / itable slots<br/>whose implementation is not in the set"]
+  DEL --> CGN["CreateLLVMDeclarations and Codegen never see them"]
+```
+
 The returned set is what `RTTIPhase` consumes; the IR mutation is what makes `CreateLLVMDeclarations` and `Codegen` skip dead
 functions — there is no "is this function dead" check in `IrToBitcode.kt`; the function simply is no longer in the module.
 
@@ -83,7 +101,8 @@ is shared by DCE, devirtualization, EA and the inliner:
 
 `EXPLICITLY_EXPORTED` is set in `SymbolTable.mapFunction`
 ([DataFlowIR.kt](../../kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/optimizations/DataFlowIR.kt))
-for `@ExportForCppRuntime`, `@ExportedBridge` (Swift export), `@BindReverseBridgeToMethod`, external ObjC methods
+for `@ExportForCppRuntime`, `@ExportedBridge` (Swift export), `@BindReverseBridgeToMethod` (all described in
+[intrinsics.md](intrinsics.md#making-a-kotlin-declaration-reachable-from-outside)), external ObjC methods
 (`getExternalObjCMethodInfo() != null`, marked `TODO-DCE-OBJC-INIT` since the original DCE commit `63d763338dcf`) and
 `@ObjCMethodImp`. Consequence for libraries: because **every vtable/itable member is a root**, DCE in a framework never nulls a
 vtable slot; it only removes non-overridable functions that are not public ABI (private/internal top-level or final members)
@@ -114,6 +133,23 @@ after lowering and are kept by ordinary reachability. `KClass.isInstance` goes t
   from a vtable/itable constant — which is exactly what IR-level DCE nulls out. That is the binary-size cost of static caches
   and of `-g`: all overrides of all classes survive. KT-74377's discussion states the trade-off explicitly: DCE removing
   overrides "contributes to DCE quality" and "code size is a concern for KMP on iOS".
+
+How the set reaches the emitted tables, from `RTTIPhase`/`RTTIInput` in `BitcodeGeneration.kt` and `vtable()` /
+`interfaceTableRecords()` in `RTTIGenerator.kt`:
+
+```mermaid
+flowchart LR
+  DCE["DCEPhase"] -->|"Set of IrSimpleFunction, or null"| IN["RTTIInput.referencedFunctions"]
+  IN --> RG["RTTIGenerator(generationState, referencedFunctions)"]
+  RG --> VT["vtable(irClass): one entry per vtableEntries"]
+  RG --> ITR["interfaceTableRecords(irClass): one vtable per interface"]
+  VT --> Q{"impl == null, external ObjC method,<br/>or set != null and impl not in it?"}
+  ITR --> Q
+  Q -->|yes| NULLP["llvm.nullPointer in the slot<br/>(slot layout unchanged)"]
+  Q -->|no| ADDR["impl.entryPointAddress"]
+  OBJC["ObjCExportCodeGenerator:<br/>RTTIGenerator(referencedFunctions = null)"] --> ALL["every slot filled<br/>(safe: library-mode roots)"]
+  NULLP --> SEG["a call through a nulled slot<br/>jumps to address 0: segfault"]
+```
 
 ### Ordering constraints
 
@@ -148,6 +184,12 @@ blocks": `generateSyntheticInterfaceImpl` (used by
 for ObjC blocks wrapped as Kotlin function objects) hard-codes `ClassGlobalHierarchyInfo(-1, -1, 0)`, so such objects pass
 `is Any` (`-1 >= -1`) and fail every other class check (all real classes have `lo >= 1`).
 
+The numbering on a four-class hierarchy, traced through `dfs` in `GlobalHierarchyAnalysis.run` and checked with
+`IsSubclassFast` from `Types.cpp` (the times assume these are the only classes; in a real module `Any`'s subtree also holds
+every stdlib class, so the numbers are larger but the containment relations are the same):
+
+![Class intervals: Any (-1, 5), A (2, 4), B (3, 3), C (4, 4), D (5, 5) drawn as a tree and as nested bars on a time axis, with the lo <= classId <= hi checks](imgs/dce-and-gha-class-intervals.svg)
+
 **Interfaces: coloring.** `InterfacesForbiddennessGraph.build` registers every interface as a vertex and, for every class,
 adds an edge between each pair of its `implementedInterfaces` (the transitive closure of super-interfaces,
 [IrUtils.kt](../../kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/ir/IrUtils.kt)).
@@ -166,6 +208,12 @@ empty slots have `id = 0`. Not found → records sorted by id, `interfaceTableSi
 interfaces share an id. Note the search starts at 1, so a class implementing one interface gets a 1-entry table whatever the
 colors, and the optimal size may be smaller than `2^bitsPerColor`. Interfaces, abstract classes and ObjC classes get no
 itable (`needInterfaceTable`).
+
+Coloring, id assignment and table construction on four interfaces and four classes, traced through
+`InterfacesForbiddennessGraph.build`, `computeColoringGreedy`, the id loop in `GlobalHierarchyAnalysis.run` and
+`RTTIGenerator.interfaceTableSkeleton` (ids assume these are the only interfaces in the module):
+
+![Interface coloring: the forbiddenness graph I-J, J-K, I-K with colors 0, 1, 2 and L alone with color 0; ids 4, 5, 6, 8 with the color in the low two bits; itables of size 2 for A and B, size 4 for C, size 1 for D; two membership checks](imgs/dce-and-gha-interface-coloring.svg)
 
 ### Consumers
 
@@ -193,6 +241,29 @@ applied to Kotlin classes; that is why Kotlin ObjC classes can safely carry `cla
   search above, and "never returns nullptr" — for an `is` check the caller compares the returned record's `id`; for a call
   the compiler relies on the interface actually being implemented. Without GHA the RTTI side still builds perfect-hash tables
   when the hashed ids happen not to collide, so the fast branch is usually taken even in debug builds.
+
+Both decisions side by side: the per-class table shape chosen at compile time in `RTTIGenerator.interfaceTableSkeleton`, and
+the lookup code chosen per site in `VirtualTablesLookup.getInterfaceTableRecord` (`CodeGenerator.kt`), with the runtime
+fallback from `TypeInfo.cpp`:
+
+```mermaid
+flowchart TD
+  subgraph compile ["interfaceTableSkeleton, per class"]
+    S1["size = 1"] --> COL{"id and (size - 1) collides<br/>for two of the class's interfaces?"}
+    COL -->|yes| S2{"size < 32?"}
+    S2 -->|yes| DBL["size = size * 2"]
+    DBL --> COL
+    S2 -->|no| SORTED["records sorted by id,<br/>interfaceTableSize_ = -count"]
+    COL -->|no| FAST["hashed slots, empty ones with id 0,<br/>interfaceTableSize_ = size - 1"]
+  end
+  subgraph codegen ["getInterfaceTableRecord, per call or check site"]
+    Q{"ghaEnabled and bitsPerColor <= 5<br/>and produce != FRAMEWORK?"}
+    Q -->|yes| UNCOND["gep(itable, size_ and id), no branch"]
+    Q -->|no| BR{"size_ >= 0 at run time?"}
+    BR -->|yes| HASHED["gep(itable, size_ and id)"]
+    BR -->|no| SLOW["LookupInterfaceTableRecord(itable, -size_, id):<br/>linear scan up to 8 records, else binary search"]
+  end
+```
 
 Runtime side: `IsSubclassFast` and `IsSubtype` in [Types.cpp](../../kotlin-native/runtime/src/main/cpp/Types.cpp);
 `LookupInterfaceTableRecord` in [TypeInfo.cpp](../../kotlin-native/runtime/src/main/cpp/TypeInfo.cpp); the fields

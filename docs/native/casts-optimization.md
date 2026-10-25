@@ -85,6 +85,37 @@ Interplay with `-opt`: `DevirtualizationAnalysis.devirtualize` normally calls th
 box/unbox coercions, but with `genericSafeCasts` it calls the bridge ("Can't easily inline bridges with casts",
 [DevirtualizationAnalysis.kt](../../kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/optimizations/DevirtualizationAnalysis.kt)).
 
+The difference for the `unchecked_cast8.kt` case (`Derived<T : I1, I2>.foo(x: T)` overriding `Base<T : I1>.foo(x: T)`, called as
+`(Derived<D>() as Base<C>).foo(C())`), derived from the `Cast` builder in `IrUtils.kt`, `BridgesBuilding.buildBridge` and
+`Autoboxing.adaptIfNecessary`:
+
+```
+genericSafeCasts = false (BOX_UNBOX_ONLY)           genericSafeCasts = true (BOX_UNBOX_CASTS)
+
+Base.foo slot in Derived's vtable                   Base.foo slot in Derived's vtable
+  └─► Derived.foo(x: <erasure of T>)                  └─► <bridge-...>foo(x: I1)        parameter typed as in Base
+        println(x.z)   // reads I2.z from a C              ├─ checkedCast(x, <erasure of T>) inserted by Autoboxing
+        garbage value or memory fault                      │     fails for C: ThrowClassCastException
+                                                           └─► Derived.foo(x)             reached only on success
+```
+
+How the policy decides whether such a bridge exists at all, from `bridgeDirectionToAt` and the direction table in `IrUtils.kt`:
+
+```mermaid
+flowchart TD
+    GSC["-Xbinary=genericSafeCasts"] -->|"true: default without -opt"| P1["BridgesPolicy.BOX_UNBOX_CASTS"]
+    GSC -->|"false: default with -opt"| P0["BridgesPolicy.BOX_UNBOX_ONLY"]
+    P1 --> DIR["bridgeDirectionToAt(override, overridden, parameter index):<br/>table lookup on the kinds of both erased types (ABSENT, VOID, VAL, REF, generic)"]
+    P0 --> DIR
+    DIR -->|"VAL vs REF or generic"| BU["BOX or UNBOX bridge"]
+    DIR -->|"VOID vs a value"| DROP["DROP bridge"]
+    DIR -->|"REF or generic vs REF or generic,<br/>overridden erased type is a subtype"| NONE1["NONE: no bridge"]
+    DIR -->|"REF or generic vs REF or generic,<br/>not a subtype"| CASTQ{"policy == BOX_UNBOX_CASTS?"}
+    CASTQ -->|"yes"| CASTB["CAST bridge: parameter typed with the overridden erased type,<br/>Autoboxing inserts checkedCast before the target call"]
+    CASTQ -->|"no"| NONE2["NONE: the override sits in the vtable slot unchecked"]
+    CASTB --> CONS["same policy read by ClassLayoutBuilder (vtable),<br/>ObjC export findImplementation, DevirtualizationAnalysis"]
+```
+
 History: option added 2024-01 (`6b1becbea312`, KT-68165) with default `false` "due to performance penalty"; `CastsOptimization`
 landed 2024-10 (`122343cfceb0`, KT-77653: "without it turning on the casts … would lead to a big performance hit");
 `ComputeTypesPass` 2025-12 (`6e2ddeeae081`, KT-83036); default flipped to `!optimizationsEnabled` in 2025-08 (`21b204a9b2de`,
@@ -119,7 +150,7 @@ authoritative description; in short:
 
 Why twice: the first run (right after inlining-related lowerings and `NativeFinallyBlocksLowering`) undoes the inliner's erasure;
 it also replaced the fragile "return wrapped in `IMPLICIT_CAST` is a tail call" heuristic of the suspend lowering
-(`2435a7609fc2`, KT-72999). The second run sits immediately before `CastsOptimization`, after suspend/enum/string/initializer
+(`2435a7609fc2`, KT-72999; the tail-suspend-call classification is in [coroutines.md](coroutines.md#step-1--classifying-suspend-calls)). The second run sits immediately before `CastsOptimization`, after suspend/enum/string/initializer
 lowerings have created new variables and casts. **Unverified:** which lowerings produce the "inaccuracies in IR types" the comment
 refers to.
 
@@ -186,6 +217,27 @@ is a `BodyLoweringPass`: per function body, `TypeCheckResolver` computes a `Type
     succeeds → a direct call to `throwClassCastException(argument, typeInfo)`. The argument is kept for its side effects unless
     `isPure` (`keepingSideEffectsOf`, KT-86947).
 
+The verdict and rewrite for one type operator, from `TypeCheckResolver.visitTypeOperator` / `tryOptimizeTypeCheck` and
+`CastsOptimization.lower` in `CastsOptimization.kt`:
+
+```mermaid
+flowchart TD
+    OP["type operator on argument e under full predicate P<br/>(CAST, IMPLICIT_CAST, SAFE_CAST, INSTANCEOF, NOT_INSTANCEOF)"] --> V{"e resolves to a variable alias v?"}
+    V -->|"no: call result, field read, …"| U["UNKNOWN: operator kept"]
+    V -->|"yes"| F["castIsFailed = P and (v !is T)<br/>castIsSuccessful = P and (v is T)"]
+    F -->|"castIsFailed simplifies to False"| A["ALWAYS_SUCCEEDS"]
+    F -->|"castIsSuccessful simplifies to False"| N["NEVER_SUCCEEDS"]
+    F -->|"neither"| U
+    A --> SAME{"same verdict on every visit<br/>of this node (loop iterations)?"}
+    N --> SAME
+    SAME -->|"no"| U
+    SAME -->|"always"| RA["is: true, !is: false<br/>casts: NO_CAST_NEEDED block around an IMPLICIT_CAST"]
+    SAME -->|"never"| RN["is: false, !is: true, as?: null<br/>as and implicit cast: throwClassCastException(e, typeInfo)"]
+    RA --> SE["argument kept for side effects unless isPure"]
+    RN --> SE
+    DIV["DivergingAnalysisError: MaxSize reached,<br/>loop depth over MAX_LOOPS_DEPTH, no convergence"] -.->|"whole body left untouched"| U
+```
+
 ### Bail-outs and complexity
 
 `Predicates.or` is the distributive product of two CNFs; when the running size reaches `MaxSize = 10_000` leaf occurrences, or a
@@ -223,7 +275,7 @@ With `-opt`, `CastsLowering` is skipped and `IrToBitcode.evaluateTypeOperator` s
   is why the tests pair `CHECK-DEBUG: … @IsSubtype` with `CHECK-OPT: … @IsSubclassFast`.
 - The stdlib intrinsic `isSubtype<T>(typeInfo)` (`IntrinsicType.IS_SUBTYPE`, `emitIsSubtype` in
   [IntrinsicGenerator.kt](../../kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/llvm/IntrinsicGenerator.kt))
-  reuses `checkIsSubtype`; devirtualization's type switches are built on it.
+  reuses `checkIsSubtype`; devirtualization's type switches are built on it. The intrinsic catalogue is in [intrinsics.md](intrinsics.md).
 
 Without `-opt`, `CastsLowering` rewrites each remaining `CAST` (except to ObjC classes) into `checkNotNull(x)` (super-class cast
 to non-null), nothing (super-class cast to nullable) or `downcast(x, typeInfo, nullable)`
@@ -237,6 +289,33 @@ interface targets (`TF_INTERFACE`) and walks `superType_` otherwise; `IsSubclass
 ([RuntimeUtils.kt](../../kotlin-native/runtime/src/main/kotlin/kotlin/native/internal/RuntimeUtils.kt)):
 `ThrowClassCastException` builds `"<obj class> cannot be cast to <KClass>"`, `ThrowTypeCastException` (ObjC)
 `"<obj class> cannot be cast to class <name>"`. Both `CastsLowering`'s helpers are `@TransparentForDebugger`.
+
+The path of one surviving check from IR to the runtime, from `CastsLowering.kt`, `evaluateCast` / `genInstanceOf` /
+`genInstanceOfImpl` in `IrToBitcode.kt`, `VirtualTablesLookup.checkIsSubtype` in `CodeGenerator.kt` and `Types.cpp` (the GHA ids
+come from [dce-and-gha.md](dce-and-gha.md)):
+
+```mermaid
+flowchart TD
+    C["CAST or INSTANCEOF left after CastsOptimization and Autoboxing"] --> KIND{"operator"}
+    KIND -->|"CAST, without -opt (CastsLowering)"| CL{"isSuperClassCastTo?"}
+    CL -->|"yes, nullable target"| NOP["argument unchanged"]
+    CL -->|"yes, non-null target"| CNN["checkNotNull(x): NullPointerException on null"]
+    CL -->|"no"| DC["downcast(x, typeInfo, nullable): Kotlin_TypeInfo_isInstance,<br/>IsInstanceInternal, IsSubtype; CCE or NPE"]
+    KIND -->|"CAST with -opt; INSTANCEOF in both modes"| EV["IrToBitcode genInstanceOf"]
+    EV --> NULLCHK{"x == null?"}
+    NULLCHK -->|"yes"| NULLR["CAST: null for a nullable target, else ThrowNullPointerException;<br/>INSTANCEOF: true iff the target type is nullable"]
+    NULLCHK -->|"no"| SC{"isSuperClassCastTo?"}
+    SC -->|"yes"| TRUE["no runtime check"]
+    SC -->|"no"| IMPL["genInstanceOfImpl"]
+    IMPL -->|"ObjC class or protocol"| OBJC["genInstanceOfObjC"]
+    IMPL -->|"Kotlin class, GHA off"| IS["IsSubtype(objTypeInfo, dstTypeInfo):<br/>scan implementedInterfaces_ or walk superType_"]
+    IMPL -->|"Kotlin class, GHA on"| FAST["IsSubclassFast(objTypeInfo, lo, hi):<br/>classId_ within the interval"]
+    IMPL -->|"Kotlin interface, GHA on"| ITB["itable record id == interfaceId"]
+    IS --> RES["false: CAST throws ThrowClassCastException (ThrowTypeCastException for ObjC);<br/>INSTANCEOF yields i1"]
+    FAST --> RES
+    ITB --> RES
+    OBJC --> RES
+```
 
 ## Flags and options
 

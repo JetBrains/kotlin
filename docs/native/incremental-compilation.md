@@ -26,16 +26,25 @@ which change on every build. The core idea, all implemented in `CacheBuilder`
 There is no separate IC state besides the cache directory: the previous build *is* the state. KGP does not know which
 files changed; it only hands the compiler a directory and a flag.
 
+The whole path from an edited source file to the relinked binary, as wired in `KotlinNativeLink.compile()`,
+`KonanDriver.run` and `CacheBuilder.build` (sections 1–6 below follow the same order):
+
 ```mermaid
-flowchart LR
-    A[edit .kt] --> B[Gradle: compileKotlin<Target><br/>klib rebuilt]
-    B --> C[KotlinNativeLink.compile<br/>-Xenable-incremental-compilation<br/>-Xic-cache-dir=build/kotlin-native-ic-cache/<binary>]
-    C --> D[KonanDriver.run → CacheBuilder.build]
-    D --> E[stale-cache check<br/>metadata.properties]
-    E --> F[dirty-file analysis<br/>IR fingerprints + bitcode_deps]
-    F --> G[spawned cache builds<br/>batch / -Xfile-to-cache]
-    G --> H[reloadCacheSupport<br/>main compilation: headers only]
-    H --> I[link: old + new per-file .a]
+flowchart TD
+    subgraph gradle ["Gradle (KGP)"]
+        A["edit .kt"] --> B["compileKotlin#lt;Target#gt;<br/>klib rebuilt (-nopack)"]
+        B --> C["KotlinNativeLink.compile()<br/>-Xauto-cache-from=#lt;Gradle user home#gt;<br/>-Xenable-incremental-compilation<br/>-Xic-cache-dir=build/kotlin-native-ic-cache/#lt;binary#gt;"]
+    end
+    subgraph compiler ["Compiler: KonanDriver.run"]
+        C --> D["CacheBuilder.build()<br/>classify klibs: external / IC'ed"]
+        D --> E["build missing auto caches<br/>(external klibs, monolithic)"]
+        E --> F["staleCacheReason per IC'ed library<br/>metadata.properties"]
+        F --> G["dirty-file analysis<br/>SerializedIrFileFingerprint vs hash<br/>reversed bitcode_deps closure"]
+        G --> H["spawned cache builds<br/>batch (CACHE_BATCH) or<br/>-Xfile-to-cache per dirty file"]
+        H --> I["reloadCacheSupport()<br/>checkConsistency()<br/>replay pl_issues"]
+        I --> J["main compilation<br/>cached klibs: ONLY_DECLARATION_HEADERS<br/>LLVM module = uncached code only"]
+        J --> K["link: main .o + surviving old per-file .a<br/>+ rebuilt per-file .a + auto/system caches"]
+    end
 ```
 
 ## Terminology
@@ -85,8 +94,34 @@ invocation, which is where IC starts.
 
 `-Xic-cache-dir` (`incrementalCacheDir`) must be an existing directory; `NativeSecondStageCompilationConfig`
 ([NativeSecondStageCompilationConfig.kt](../../kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/NativeSecondStageCompilationConfig.kt))
-resolves `incrementalCacheDirectory = <dir>/<user cache flavor>`, e.g. `.../debugExecutable/macos_arm64-gSTATIC-user`, so
-a change of any flavor-relevant option (`appendCommonCacheFlavor`) starts a fresh, empty IC state next to the old one.
+resolves `incrementalCacheDirectory = <dir>/<user cache flavor>`, e.g. `.../debugExecutable/macos_arm64-gSTATIC-user-pl`
+(`userCacheFlavorString` = `appendCommonCacheFlavor()` + `-user` + `-pl` [+ `-swift_export`]), so a change of any
+flavor-relevant option (`appendCommonCacheFlavor`) starts a fresh, empty IC state next to the old one.
+
+What the IC directory contains after a build, with the names taken from `CachedLibraries` (companion constants),
+`CacheSupport.cacheFileId`, `OutputFiles` and `CacheStorage.saveAdditionalCacheInfo`:
+
+```
+build/kotlin-native-ic-cache/debugExecutable/      -Xic-cache-dir: created by KGP, one per binary name
+└── macos_arm64-gSTATIC-user-pl/                    userCacheFlavorString, added by the compiler
+    ├── <uniqueName>-per-file-cache/                one per IC'ed Kotlin klib (getPerFileCachedLibraryName)
+    │   ├── <package>.<hash36(absolute path)>/      cacheFileId: one directory per klib file; ROOT.<hash> for the root package
+    │   │   ├── metadata.properties                 CacheMetadata: file fingerprint, compiler/dependencies fingerprint, ...
+    │   │   ├── bin/
+    │   │   │   ├── lib<fileId>.a                   this file's machine code (STATIC_CACHE prefix/suffix)
+    │   │   │   └── bitcode_deps                    immediateBitcodeDependencies: strong and weak edges to other files
+    │   │   └── ir/
+    │   │       ├── inline_bodies  class_fields  eager_init  trivial_getters  objc_adapters
+    │   │       └── pl_issues                       present only when partial-linkage issues were recorded
+    │   └── ...                                     one such directory per file; a missing one = incomplete cache
+    └── <cinteropName>-cache/                       IC'ed cinterop klib: monolithic (getCachedLibraryName)
+        ├── metadata.properties                     hash = SerializedKlibFingerprint of the whole klib
+        ├── bin/  lib<cinteropName>-cache.a  bitcode_deps
+        └── ir/   same side files
+```
+
+A spawned build writes each cache into `<output><random>` (`OutputFiles.tempCacheDirectory`) and `FinalizeCachePhase`
+renames it over the final directory, so a half-written cache never has the final name.
 `-Xenable-incremental-compilation` is the common `CommonConfigurationKeys.INCREMENTAL_COMPILATION` flag; `CacheBuilder.icEnabled`
 reads it. `needToBuild()` requires `ignoreCacheReason == null`, so under `-opt` without `enableReleaseBinaryCache` the flags are
 silently inert (release builds are never incremental; see "Consequences for optimizations" in [caches.md](caches.md)).
@@ -109,6 +144,29 @@ the library):
 | `dependenciesFingerprint` ≠ fingerprint of monolithically cached non-distribution dependencies (auto-cached klibs, IC'ed cinterop klibs) | a dependency rolled back to a version whose auto cache still exists; dependents' IR did not change | KT-87194 |
 | `newCompanionInitialization` ≠ klib manifest | `-Xcompanion-blocks` is recorded only in the manifest yet changes code of every file | KT-89390 |
 | monolithic (cinterop) cache: `hash` ≠ `SerializedKlibFingerprint` | cinterop caches are looked up by name, not by content | KT-87273 |
+
+The order of these checks and what each outcome leads to, as written in `staleCacheReason` and the beginning of
+`CacheBuilder.build` (the first matching condition wins; the log line is "Incremental cache for … <reason>; rebuilding it"):
+
+```mermaid
+flowchart TD
+    S["IC'ed library with an existing cache<br/>(getLibraryCache, allowIncomplete = true)"] --> M{"metadata.properties<br/>readable?"}
+    M -->|"no (pre-2.2.20 cache)"| STALE["stale"]
+    M -->|"yes"| CF{"compilerFingerprint ==<br/>konan/compiler.fingerprint?"}
+    CF -->|"no"| STALE
+    CF -->|"yes"| DF{"dependenciesFingerprint ==<br/>computeDependenciesFingerprint?"}
+    DF -->|"no"| STALE
+    DF -->|"yes"| CI{"newCompanionInitialization ==<br/>klib manifest?"}
+    CI -->|"no"| STALE
+    CI -->|"yes"| MONO{"monolithic<br/>(cinterop) cache?"}
+    MONO -->|"yes"| KH{"hash == SerializedKlibFingerprint?"}
+    KH -->|"no"| STALE
+    KH -->|"yes"| OK["up to date: keep"]
+    MONO -->|"no"| OK2["per-file cache: go to<br/>dirty-file analysis"]
+    STALE --> KIND{"cache kind"}
+    KIND -->|"per-file"| FULL["needFullRebuild:<br/>rebuilt in place, file by file"]
+    KIND -->|"monolithic"| DEL["directory deleted,<br/>rebuilt from scratch before the per-file builds"]
+```
 
 A stale per-file cache goes into `needFullRebuild` (rebuilt in place); a stale monolithic cache is deleted first. Per-file
 cached dependencies are deliberately excluded from `dependenciesFingerprint` (`computeDependenciesFingerprint`): their changes
@@ -142,6 +200,12 @@ still names the vanished file, so they must be rebuilt to drop it; KT-89876, com
 without propagation. Removed files are then taken out of the set and their cache directories deleted. The result is logged
 under "IC analysis results" (`CACHED`, `CLEAN BUILD`, `FULL REBUILD`, `ADDED/REMOVED/CHANGED FILES`, `DIRTY FILES`).
 
+A worked example of that closure over one library's `bitcode_deps` graph, following the `dfs` in `CacheBuilder.build`
+(arrows point from a dependent file to the file it references, i.e. the direction recorded in `bitcode_deps`; the
+analysis walks them backwards):
+
+![Dirty-file analysis example: six cached files, one changed, one removed, one added; strong edges propagate from the changed and the removed file, the weak edge propagates only from the removed file](imgs/incremental-compilation-dirty-files.svg)
+
 Three properties make this sound-by-construction rather than heuristic:
 
 - **Identity by path, content by IR.** File ids hash the absolute source path recorded in the klib, so renaming a file or
@@ -163,7 +227,28 @@ rebuild rather than a file-level one (`dependencies/changedCInteropDependency`: 
 ### 5. What is rebuilt, and how
 
 Rebuild order follows the reverse topological order of `icedLibraries`, dependencies first, since a cache build needs every
-dependency's cache (`-Xcached-library=<lib>,<dir>`; a missing one logs `SKIPPING`). Per library:
+dependency's cache (`-Xcached-library=<lib>,<dir>`; a missing one logs `SKIPPING`). How the second half of
+`CacheBuilder.build` decides what to spawn for each IC'ed library (`tryBuildCacheBatch`, then the per-library loop):
+
+```mermaid
+flowchart TD
+    START["dirtyFiles grouped by library"] --> BATCH{"batchedCacheBuild and<br/>at least 2 per-file libraries with<br/>no cache or in needFullRebuild?"}
+    BATCH -->|"yes"| DEPS{"every dependency is a batch member,<br/>already rebuilt, or an up-to-date cache?"}
+    DEPS -->|"no"| EXCL["EXCLUDED FROM BATCH:<br/>left to the per-library loop"]
+    DEPS -->|"yes"| SPLIT["splitIntoNonConflictingGroups<br/>by top-level non-private signatures"]
+    SPLIT --> GRP["one spawned compilation per group<br/>CACHE_BATCH, -Xmake-per-file-cache<br/>old directories deleted first"]
+    BATCH -->|"no"| LOOP
+    EXCL --> LOOP
+    GRP --> LOOP["per-library loop, reverse topo order<br/>skip libraries already rebuilt"]
+    LOOP --> FR{"in needFullRebuild?"}
+    FR -->|"yes"| WHOLE["buildLibraryCache(whole library)<br/>-Xadd-cache, -Xmake-per-file-cache"]
+    FR -->|"no"| FIRST{"no cache yet, or<br/>dirty files in this library?"}
+    FIRST -->|"no cache"| WHOLE
+    FIRST -->|"dirty files"| PART["buildLibraryCache(dirty files)<br/>-Xfile-to-cache=#lt;path#gt; per file"]
+    FIRST -->|"neither"| KEEP["nothing spawned"]
+```
+
+Per library:
 
 | Situation | Build | Deserialization strategy in the spawned compilation |
 |-----------|-------|------------------------------------------------------|
@@ -183,7 +268,8 @@ Each spawned build stamps every produced file with `CacheMetadata` (`generateCac
 [CacheStorage.kt](../../kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/CacheStorage.kt)):
 the file fingerprint as `hash` (`CacheInfoBuilder` sets `klibHash` per file in per-file builds), compiler fingerprint,
 dependencies fingerprint (from `CACHE_BATCH` or `cachedLibraryDependenciesFingerprint`), companion-initialization mode.
-`DEBUG_PREFIX_MAP` is forwarded to IC builds but is not part of the flavor, so changing it needs a clean build (KT-89892).
+`DEBUG_PREFIX_MAP` is forwarded to IC builds but is not part of the flavor, so changing it needs a clean build (KT-89892); what
+the mapping does to DWARF paths is in [debug-info.md](debug-info.md).
 
 ### 6. Main compilation and link
 

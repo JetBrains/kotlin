@@ -68,18 +68,18 @@ expected to be no-ops on already-lowered IR (not verified).
 
 ```mermaid
 flowchart TD
-    A[FunctionsWithoutBoundCheckGenerator<br/>module-wise, first module only] --> B[per fragment: EntryPointPhase / BuildAdditionalCacheInfoPhase]
-    B --> C[IrValidationBeforeLoweringsKlibSecondStagePhase]
-    C --> D[InlineCallCycleCheckerLowering]
+    A["FunctionsWithoutBoundCheckGenerator<br/>module-wise, first module only"] --> B["per fragment: EntryPointPhase / BuildAdditionalCacheInfoPhase"]
+    B --> C["IrValidationBeforeLoweringsKlibSecondStagePhase"]
+    C --> D["InlineCallCycleCheckerLowering"]
     D --> E["List 1: getLoweringsUpToAndIncludingSyntheticAccessors()<br/>per file"]
     E --> F[IrValidationAfterInliningPrivateFunctionsKlibPhase]
     F --> G["NativeAllFunctionInlining<br/>per file, but mutates other files"]
     G --> H[SpecialObjCValidationLowering, RedundantCastsRemoverLowering]
     H --> I[IrValidationAfterInliningAllFunctionsKlibSecondStagePhase]
-    I --> J["List 2: getLoweringsAfterInlining(...)<br/>per file, ~85 lowerings"]
+    I --> J["List 2: getLoweringsAfterInlining(...)<br/>per file, up to 70 lowerings (5 gated by flags)"]
     J --> K[IrValidationAfterLoweringsSecondStagePhase]
     K --> L["finalizeLowerings: mergeDependencies<br/>(dependency files prepended to the fragment module)"]
-    L --> M[runCodegen: 5 more lowerings interleaved with DFG/devirtualization/DCE]
+    L --> M["runCodegen: 5 more lowerings interleaved with DFG/devirtualization/DCE"]
 ```
 
 Each box is applied to **every fragment** before the next box starts (`fragmentWithState.runSpecifiedLowerings(...)`), which is what
@@ -115,6 +115,12 @@ declarations to the shared built-ins, independently of the input module"
 ([FunctionsWithoutBoundCheckGenerator.kt](../../kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/ir/FunctionsWithoutBoundCheckGenerator.kt));
 `NativeForLoopsLowering` and `VarargInjectionLowering` carry `// TODO: depends on FunctionsWithoutBoundCheckGenerator`.
 
+The same pipeline drawn with files as lanes, as sequenced by `runAllLowerings` (`TopLevelPhases.kt`) and `runLowerings`
+(`NativeLoweringPhases.kt`): inside a column every file of every fragment is lowered in turn, so each column boundary is a
+synchronization point; only the inliner column reaches across lanes, and the last column folds dependency files into the fragment:
+
+![Lowering steps as columns, files of two fragments and a dependency klib as lanes, with synchronization points between columns](imgs/lowerings-sync-points.svg)
+
 ### Inlining
 
 `NativePrivateFunctionInlining` (in list 1) and `NativeAllFunctionInlining` (between the lists) are both the shared
@@ -129,6 +135,30 @@ the two accessor lowerings via `lowerWithoutAddingAccessorsToParents`). This is 
 kept in sync by hand (a `// TODO … KT-72441` sits on the `wasLowered` check). After inlining, `PostInlineLowering` folds expanded
 `typeOf`, `immutableBlobOf` and `::class` ([PostInlineLowering.kt](../../kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/lower/PostInlineLowering.kt)).
 Cross-module inlining in general is described in [klib-inining.md](../inlining/klib-inining.md).
+
+What happens when the inliner, while lowering file F, meets a call to an inline function `g` from another file or klib
+(`NativeInlineFunctionResolver.getFunctionDeclaration` and `lower` in `NativeInlineFunctionResolver.kt`):
+
+```mermaid
+sequenceDiagram
+    participant I as NativeAllFunctionInlining (file F)
+    participant R as NativeInlineFunctionResolver
+    participant D as InlineFunctionDeserializer
+    participant G as callee g (other file or klib)
+    I->>R: getFunctionDeclaration(g)
+    alt g is external and has no body
+        R-->>I: null, call stays as it is
+    else g has a body but wasLowered != true
+        R->>G: lower(g): copy of list 1 on this one function
+        R->>G: wasLowered = true
+    else g has no body yet (lives in a klib)
+        R->>D: deserializeInlineFunction(g)
+        D-->>G: body attached to g
+        R->>G: lower(g), wasLowered = true
+    end
+    R-->>I: g, lowered to the list-1 boundary
+    I->>I: copy g's body into F (irAttributes copied when copyByDefault)
+```
 
 ### Gated lowerings
 
@@ -194,7 +224,8 @@ restore live locals around suspension points. These see the merged module, so th
   Examples: `Autoboxing` after `BridgesBuilding`, `NativeSuspendFunctionsLowering`, `GenericCallsReturnTypeEraser`;
   `ReturnsInsertionLowering` after `Autoboxing`; `StaticInitializersLowering` after `ExpressionBodyTransformer`;
   `NativeLocalDeclarationsLowering` after `InteropBridgesNameInventor`.
-- **Ordering that is only in comments.** `ComputeTypesPass` runs twice: after `NativeFinallyBlocksLowering` because "Inliner erases
+- **Ordering that is only in comments.** `ComputeTypesPass` runs twice: after `NativeFinallyBlocksLowering` (which removes
+  `finally` so codegen never sees it, see [exceptions.md](exceptions.md)) because "Inliner erases
   generics", and again before `CastsOptimization` because it "corrects some lowerings' inaccuracies in IR types".
   `GenericCallsReturnTypeEraser` states the end-of-pipeline contract: "by the end of the pipeline all the types are considered erased
   and a function call is just a pure and simple function call with no conversions/coercions"
@@ -212,9 +243,10 @@ restore live locals around suspension points. These see the merged module, so th
 `llvmModuleSpecification`), insert its constructor reference in the right list in `NativeLoweringPhases.kt`, and add
 `@PhasePrerequisites`. Placement rules: before the inliner only if it must see pre-inlining IR *and* can obey "modify only this
 file" (and then mirror it in `NativeInlineFunctionResolver.lower`); otherwise in list 2. Then run
-`NativeLoweringPrerequisitesTest`. Runtime symbols come from `BackendNativeSymbols` (`BACKEND/ir/`); a new intrinsic usually needs a
-stdlib declaration in `kotlin-native/runtime/src/main/kotlin` and, if codegen must recognise it, an entry on the LLVM side
-([compiler-runtime-contract.md](compiler-runtime-contract.md)).
+`NativeLoweringPrerequisitesTest`. Runtime symbols come from `BackendNativeSymbols` (`BACKEND/ir/`); a new intrinsic needs more
+than a stdlib declaration in `kotlin-native/runtime/src/main/kotlin`: an `IntrinsicType` entry (two files), an
+`IntrinsicGenerator` or lowering case, DFG/EA handling and the first-stage checker all have to agree. Follow the checklist in
+[intrinsics.md](intrinsics.md#extension-points); the runtime ABI side is in [compiler-runtime-contract.md](compiler-runtime-contract.md).
 
 **Changing what the lowered IR looks like** (new declaration origin, new synthetic field, different call shape) is a contract change
 with [llvm-codegen.md](llvm-codegen.md) (`IrToBitcode.kt` pattern-matches on origins such as `DECLARATION_ORIGIN_BRIDGE_METHOD`,
@@ -237,8 +269,30 @@ enum entries, `@EagerInitialization`/`@ThreadLocal`) in [static-initializers.md]
 policy) in [casts-optimization.md](casts-optimization.md).
 
 Descriptions below come from each class's KDoc or body. Shared lowerings (`LateinitLowering`, `SharedVariablesLowering`,
-`InnerClassLowering`-style helpers, `EnumWhenLowering`, `DefaultArgumentStubGenerator`, …) come from `compiler/ir/backend.common`;
-a `Native*` subclass exists only where the Native runtime needs different symbols or policy.
+`EnumWhenLowering`, `DefaultArgumentStubGenerator`, …) come from `compiler/ir/backend.common`; a `Native*` subclass exists only
+where the Native runtime needs different symbols or policy. Note that some lowerings with generic-sounding names are Native-only
+classes defined in `BACKEND/lower/`: `InnerClassLowering`, `PropertyReferenceLowering`, `DataClassOperatorsLowering` and
+`ContractsDslRemover` are Native implementations, not the `backend.common` ones.
+
+Where the classes referenced by the two lists in `NativeLoweringPhases.kt` are defined (counted from the lists and the class
+declarations in this session; the 70 of list 2 include the 5 flag-gated entries and `ComputeTypesPass` twice):
+
+```mermaid
+flowchart LR
+    subgraph common ["compiler/ir/backend.common and compiler/ir/ir.inline: shared backend code"]
+        C1["list 1: 7 of 10<br/>UpgradeCallableReferences, LateinitLowering, SharedVariablesLowering,<br/>LocalClassesInInlineLambdasLowering, ArrayConstructorLowering,<br/>OuterThisInInlineFunctionsSpecialAccessorLowering, SyntheticAccessorLowering"]
+        C2["list 2: 15 of 70<br/>ConstEvaluationLowering, InitializersLowering, StringConcatenationLowering,<br/>LocalDeclarationPopupLowering, AddContinuationToNonLocalSuspendFunctionsLowering, …"]
+        C3["between lists: InlineCallCycleCheckerLowering, RedundantCastsRemoverLowering;<br/>in runCodegen: PropertyAccessorInlineLowering"]
+    end
+    subgraph llvmfree ["compiler/ir/backend.native: LLVM-free, also used by the first stage"]
+        N1["list 1: 2 of 10<br/>TestProcessor, NativeAssertionWrapperLowering"]
+    end
+    subgraph backend ["kotlin-native/backend.native: second stage only"]
+        K1["list 1: NativePrivateFunctionInlining"]
+        K2["list 2: 55 of 70<br/>InteropLowering, Autoboxing, BridgesBuilding, NativeSuspendFunctionsLowering,<br/>EnumClassLowering, ObjectClassLowering, StaticInitializersLowering, CastsOptimization, …"]
+        K3["between lists: NativeAllFunctionInlining, SpecialObjCValidationLowering;<br/>in runCodegen: InlineClassPropertyAccessorsLowering, RedundantCoercionsCleaner,<br/>UnboxInlineLowering, CoroutinesVarSpillingLowering"]
+    end
+```
 
 | Topic | Lowering (file in `BACKEND/lower/`) | What it does / why Native-specific |
 |-------|-------------------------------------|------------------------------------|
@@ -250,14 +304,14 @@ a `Native*` subclass exists only where the Native runtime needs different symbol
 | Boxing / value classes | `GenericCallsReturnTypeEraser`, `RedundantCoercionsCleaner`, `UnboxInlineLowering`, `InlineClassPropertyAccessorsLowering` | Erase generic return types, then remove box/unbox pairs and inline trivial `<T-unbox>` and accessor bodies left after devirtualization. |
 | Boxing / value classes | `NativeSharedVariablesPrimitiveBoxSpecializationLowering` | Shared-variable boxes specialised per primitive, using `context.symbols`. |
 | Coroutines | `NativeSuspendFunctionsLowering` ([NativeSuspendFunctionLowering.kt](../../kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/lower/NativeSuspendFunctionLowering.kt)) | Builds the `invokeSuspend` state-machine class only when a function has non-tail suspend calls; tail suspend calls are simplified into returns. Uses `saveCoroutineState`/`restoreCoroutineState` runtime symbols. |
-| Coroutines | `NativeAddContinuationToFunctionCallsLowering`, `CoroutinesLivenessAnalysis(+Fallback)`, `CoroutinesVarSpillingLowering` | Pass the continuation (the state-machine object itself overrides `invokeSuspend`); compute live or visible variables at suspension points; spill them to fields (in `runCodegen`). |
+| Coroutines | `NativeAddContinuationToFunctionCallsLowering`, `CoroutinesLivenessAnalysis(+Fallback)`, `CoroutinesVarSpillingLowering` | Pass the continuation (the state-machine object itself overrides `invokeSuspend`); compute live or visible variables at suspension points; spill them to fields (in `runCodegen`). The whole coroutine story, from classification to codegen and the GC view, is in [coroutines.md](coroutines.md). |
 | Enums, objects, initializers | `EnumConstructorsLowering`, `EnumClassLowering`, `EnumUsageLowering`, `NativeEnumWhenLowering` | Enum entries become `VALUES`/`ENTRIES` static fields plus a `getEnumAt` getter; `IrGetEnumValue` and `values/valueOf/entries` intrinsics become loads; `when` over enums records a strong per-file dependency for caches. |
 | Enums, objects, initializers | `ObjectClassLowering` ([ObjectClassLowering.kt](../../kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/lower/ObjectClassLowering.kt)) | Replaces `IrGetObjectValue` by a call to a synthesized `instance`/`companion` getter; companion placement follows `newCompanionInitializationEnabled` of the klib (initialization order is a klib-level property). ObjC companions use `interopInterpretObjCPointer`. |
 | Enums, objects, initializers | `InitializersLowering`, `StaticInitializersLowering` ([StaticInitializersLowering.kt](../../kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/lower/StaticInitializersLowering.kt)), `VolatileFieldsLowering` | Instance initializers into an `<init>` method; global/thread-local/eager static initializers per file and class with a `$clinit_trigger` function, lazy per file unless `-Xir-property-lazy-initialization=disable` or `@EagerInitialization`; `@Volatile` fields get atomic intrinsic functions (`Boolean` stored as `Byte`). |
-| Bridges | `BridgesBuilding`, `WorkersBridgesBuilding` ([BridgesBuilding.kt](../../kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/lower/BridgesBuilding.kt)) | Box/unbox (and, with `genericSafeCasts`, cast) bridges for overrides whose erased signatures differ, following `config.bridgesPolicy`; also bridges needed for cache entry points. Bridges are `@TransparentForDebugger`. |
+| Bridges | `BridgesBuilding`, `WorkersBridgesBuilding` ([BridgesBuilding.kt](../../kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/lower/BridgesBuilding.kt)) | Box/unbox (and, with `genericSafeCasts`, cast) bridges for overrides whose erased signatures differ, following `config.bridgesPolicy`; also bridges needed for cache entry points. Bridges are `@TransparentForDebugger` (stepped over by the debugger, see [debug-info.md](debug-info.md)). |
 | Casts / type operators | `TypeOperatorLowering`, `CastsLowering` ([CastsLowering.kt](../../kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/lower/CastsLowering.kt)), `RemoveCastsFromNothingLowering`, `BuiltinOperatorLowering` | Erase type parameters in checks (ObjC forward declarations check against `Any`); turn `CAST` into `checkNotNull`/`downcast` runtime calls (not with `-opt`, where `CastsOptimization` handles them); lower `IrBuiltinOperator` calls. |
 | Strings | `StringConcatenationTypeNarrowing` | With `-opt`, call `toString()` explicitly so `append`/`plus` take `String`, which "can be later devirtualized, improving escape analysis". |
-| Test runner | `TestProcessor` (stage 1 and 2), `TestsInitializer`, `TestsDumper` | Suite classes for `kotlin.test` annotations; `@TestInitializer` functions become eager thread-local fields; dump of test names for the test infrastructure. |
+| Test runner | `TestProcessor` (stage 1 and 2), `TestsInitializer`, `TestsDumper` | Suite classes for `kotlin.test` annotations; `@TestInitializer` functions become eager thread-local fields; dump of test names for the test infrastructure (how the dump and the generated runner are consumed is in [test-infrastructure.md](test-infrastructure.md#step-4--what-the-compiler-contributes-the-test-runner-and-the-dump)). |
 | Reflection / `typeOf` | `TypeOfProcessingLowering`, `ReifiedFunctionLowering`, `PostInlineLowering`, `NativeFunctionReferenceLowering`, `StaticCallableReferenceOptimization` | `typeOf<T>()` becomes constant `KType` IR after inlining; bodies of reified inline functions that survive inlining are replaced by a throw; function references become `KFunctionImpl` subclasses (with linkage-error variants) and are constant-folded when they capture nothing. |
 | Default arguments | `NativeDefaultArgumentStubGenerator`, `NativeDefaultParameterCleaner`, `NativeDefaultParameterInjector` | Shared scheme with `skipInlineMethods = false`; `nullConst` produces a typed zero per `PrimitiveBinaryType` wrapped in `reinterpret`, including `getNativeNullPtr` for pointers. |
 | Local declarations | `NativeLocalDeclarationsLowering`, `NativeInventNamesForLocalClasses`, `NativeKlibInventNamesForLocalFunctions`, `LocalDeclarationPopupLowering` | Shared lowerings with Native naming (`$`-joined, anonymous objects named after the package part and flagged `hasSyntheticNameToBeHiddenInReflection`). |

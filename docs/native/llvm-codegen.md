@@ -20,7 +20,7 @@ Unless noted, paths are relative to `kotlin-native/backend.native/compiler/ir/ba
 | Virtual trampoline | A function under a method's public symbol that does the vtable/itable lookup; the body is at `<name>-impl` | `CodeGenerator.kt` `getVirtualFunctionTrampoline` |
 | Thread state | `Runnable` (may touch Kotlin heap) vs `Native` (may block); switched around interop calls and in bridges | `CodeGenerator.kt` `ThreadState` |
 | Runtime modules | Per-feature `.bc` files from `dist/konan/targets/<target>/native/` linked into the program module | [RuntimeModule.kt](../../kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/llvm/runtime/RuntimeModule.kt) |
-| Mandatory / Module / LTO pipelines | The three LLVM pass pipelines run on the final module (plus sanitizer, SSP, safepoint passes) | [OptimizationPipeline.kt](../../kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/OptimizationPipeline.kt) |
+| Mandatory / Module / LTO pipelines | The three LLVM pass pipelines run on the final module (plus sanitizer, SSP, safepoint passes); pass-by-pass in [llvm-passes.md](llvm-passes.md) | [OptimizationPipeline.kt](../../kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/OptimizationPipeline.kt) |
 | `libllvmext` | C++ extension of the LLVM C API, plus custom passes (`kotlin-*`) | [kotlin-native/libllvmext](../../kotlin-native/libllvmext/README.md) |
 | `DependenciesTracker` | Records which libraries/files the generated code references; drives what bitcode and native libraries get linked | `DependenciesTracker.kt` |
 
@@ -50,6 +50,29 @@ objects live in [BitcodeGeneration.kt](../../kotlin-native/backend.native/compil
 `-Xcompile-from-bitcode=<file>` enters the same tail at `runBitcodeBackend` (post-processing onwards) from
 `NativeCompilerDriver.produceBinaryFromBitcode`.
 
+The same tail seen as data flow: what goes into one fragment's LLVM module and what comes out, from `runBackendCodegen` /
+`compileModule` / `compileAndLink` in `TopLevelPhases.kt` and `collectLlvmModules` in `CompilerOutput.kt` (the driver-level view of
+the phases is in [second-stage-pipeline.md](second-stage-pipeline.md)):
+
+```mermaid
+flowchart TD
+    IR["lowered IR fragment + lifetimes"] --> CG["CodegenPhase: IrToBitcode fills LLVM module out"]
+    CG --> CS["CStubsPhase: C stubs from interop lowerings, compiled by clang, linked in"]
+    CEX["C export adapter api.cpp compiled to api.bc<br/>(STATIC / DYNAMIC only)"] --> LD
+    CS --> LD["LinkBitcodeDependenciesPhase"]
+    RT["runtime modules from konan/targets/T/native:<br/>runtime.bc, debug.bc (-g), one GC, one scheduler, one allocator,<br/>crash handler, external-calls checker, source info, stdlib bitcode"] --> RTL["linkRuntimeModules<br/>(+ generated constants module; Optimize strategy runs O3 on the runtime alone)"]
+    RTL -->|"only if this module defines the stdlib runtime part"| LD
+    ADD["additional modules: -native-library files, launcher.bc (program),<br/>xctest_launcher.bc (test bundle), exceptionsSupport.bc (dynamic cache),<br/>cinterop klib bitcode (unless cCallMode=Direct), patched objc.bc"] --> LD
+    LD --> PP["runBitcodePostProcessing: mandatory, module, LTO pipelines, safepoint removal"]
+    PP --> ALIAS["InsertEntryPointAliasPhase: main = Konan_main (program)"] --> WB["WriteBitcodeFilePhase: out.bc"]
+    WB --> OBJ["ObjectFilesPhase: clang -cc1, out.o"]
+    OBJ --> PRE{"shouldPerformPreLink?"}
+    PRE -->|"yes"| PL["PreLinkCachesPhase: ld -r out.o + static caches"] --> LINK
+    PRE -->|"no"| LINK["LinkerPhase (inputs drawn below)"]
+    CACHE["cache binaries resolved from allCachedBitcodeDependencies"] --> LINK
+    LINK --> OUT["binary; FinalizeCachePhase for caches"]
+```
+
 ### Declarations and symbol names (`CreateLLVMDeclarationsPhase`)
 
 [LlvmDeclarations.kt](../../kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/llvm/LlvmDeclarations.kt)
@@ -69,6 +92,12 @@ declarations (`declaration.metadata`). Codegen later reads them through `LlvmDec
 - **Linkage**: `ContextUtils.linkageOf` gives external linkage to exported or external functions, internal otherwise, with a
   per-file-cache exception for functions called from exported inline functions (KT-69666).
 - Overridable methods get their body under `<name>-impl` (`computeSymbolName(forImplementation = true)`); see trampolines below.
+
+The resulting shape of one fragment's module, collected from the naming in `BinaryInterface.kt`, the globals created in
+`LlvmDeclarations.kt`, `RTTIGenerator.kt`, `KotlinStaticData.kt` and `IrToBitcode.kt`, and the modules linked in by
+`CompilerOutput.kt`:
+
+![Layout of a generated LLVM module: globals on the left, functions on the right, modules linked in afterwards below](imgs/llvm-codegen-module-layout.svg)
 
 ### RTTI (`RTTIPhase`)
 
@@ -120,10 +149,26 @@ epilogue [→ cleanup_landingpad]`. `epilogue()` is where the frame is finalized
   keeps immutable non-object `val`s as SSA values and gives every `var`, every object reference and (with `-g`) every variable a slot,
   because the debugger needs an address.
 
+The block skeleton that `FunctionGenerationContext` (`prologue()`, `epilogue()` in `CodeGenerator.kt`) gives every generated function;
+bracketed items are emitted only under the stated condition:
+
+```
+prologue:           slots = alloca [slotCount x ptr]; memset(slots, 0)      (only if slots are needed)
+                    llvm.dbg.declare for every slot-backed variable (-g)
+locals_init:        slotsPhi = phi(slots)
+stack_locals_init:  [Kotlin_initRuntimeIfNeeded]  [switchThreadState(Runnable)]   (C-to-Kotlin bridges, @ExportedBridge)
+                    EnterFrame(slots, skipSlots, slotCount)                        (if slots or cleanup landingpad)
+                    Kotlin_mm_safePointFunctionPrologue                             (needSafePoint; not for trampolines)
+entry:              ... function body; returns branch to epilogue ...
+epilogue:           LeaveFrame (releaseVars)  [switchThreadState(Native)]  ret
+cleanup_landingpad: landingpad cleanup; LeaveFrame; resume          (exported / bridge functions only, deleted if unused)
+```
+
 **Calls.** `evaluateCall` first offers the call to
 [IntrinsicGenerator.kt](../../kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/llvm/IntrinsicGenerator.kt)
 (`@TypedIntrinsic`, kinds in [IntrinsicType.kt](../../native/base/src/main/kotlin/org/jetbrains/kotlin/backend/konan/IntrinsicType.kt):
-arithmetic, atomics, interop pointer ops, `ObjC` helpers, `IDENTITY`, `GET_OBJC_CLASS`, …). Otherwise
+arithmetic, atomics, interop pointer ops, `ObjC` helpers, `IDENTITY`, `GET_OBJC_CLASS`, …; the full catalogue and which kinds
+must already have been lowered away is in [intrinsics.md](intrinsics.md)). Otherwise
 `evaluateSimpleFunctionCall` goes to `callVirtual` when the callee `isOverridable` and no super-qualifier is given, else `callDirect`
 on `function.target`. The private `call(function, llvmCallable, ...)` wrapper decides two things per call site:
 
@@ -145,6 +190,30 @@ or the itable record (`itablePlace`), and tail-calls the implementation. The com
 stack traces do not show trampoline frames, and a method becoming final needs no alias. `Any` methods invoked on an interface
 receiver dispatch through `Any`'s vtable (`findOverriddenMethodOfAny`). Final fake overrides still get a trampoline in cache builds so
 that old cached callers link (KT-87777, `needsCacheEntryPointForFinalFakeOverride`).
+
+How one `IrCall` is dispatched, from `evaluateCall` / `evaluateSimpleFunctionCall` / `callDirect` / `callVirtual` in `IrToBitcode.kt`
+and `getVirtualFunctionTrampoline` / `getVirtualImpl` in `CodeGenerator.kt`:
+
+```mermaid
+flowchart TD
+    CALL["IrCall to f with receiver r"] --> INTR{"f is a @TypedIntrinsic?"}
+    INTR -->|"yes"| IG["IntrinsicGenerator emits the operation inline"]
+    INTR -->|"no"| OV{"f.isOverridable and<br/>no super qualifier?"}
+    OV -->|"no"| DIRECT["callDirect: call the LLVM function of f.target<br/>(kfun: symbol, or fq#internal)"]
+    OV -->|"yes"| TR["callVirtual: call the trampoline that owns f's public symbol"]
+    TR --> ANY{"f overrides a method of Any<br/>and r is an interface?"}
+    ANY -->|"yes"| TRA["trampoline of the Any method (vtable)"]
+    ANY -->|"no"| LOAD["trampoline body: typeInfo = r.typeInfo<br/>(getObjCKotlinTypeInfo for ObjC methods)"]
+    TRA --> LOAD
+    LOAD --> KIND{"owner class is an interface?"}
+    KIND -->|"no"| VT["vtable: load (typeInfo + 1)[vtableIndex(f)]"]
+    KIND -->|"yes"| IT["itable: record = getInterfaceTableRecord(typeInfo, interfaceId)<br/>GHA: itable[interfaceId and size mask], LookupInterfaceTableRecord otherwise<br/>load record.vtable[methodIndex]"]
+    VT --> IMPL["call the loaded pointer: f-impl of r's class, or a bridge"]
+    IT --> IMPL
+```
+
+The call site itself therefore always contains a plain `call`; the indices from `ClassLayoutBuilder` live only inside the trampoline,
+which is what keeps cached callers valid when a vtable changes.
 
 **Allocation and lifetimes.** `allocInstance(irClass, lifetime, resultSlot)` calls the runtime `AllocInstance(typeInfo, slot)` unless
 the escape analysis gave `Lifetime.STACK`, in which case `StackLocalsManagerImpl.alloc` emits an `alloca` of the class body in
@@ -168,12 +237,15 @@ the box/unbox functions themselves are IR created earlier.
 **Control flow.** `when` becomes a chain of conditional branches with a phi (`WhenEmittingContext`); loops get `loop_check` /
 `loop_exit` blocks; `IrReturnableBlock` and `IrInlinedFunctionBlock` (inlined bodies) get their own scopes so `return` jumps to a
 continuation. Coroutines are already state machines: `IrSuspendableExpression` dispatches with `indirectbr` on a block address stored
-in the continuation, `IrSuspensionPoint` registers a resume block (`evaluateSuspendableExpression`).
+in the continuation, `IrSuspensionPoint` registers a resume block (`evaluateSuspendableExpression`); the state-machine construction
+and the `scope()` mapping of `invokeSuspend` are in [coroutines.md](coroutines.md#step-6--codegen).
 
 **try/catch.** `evaluateTry` assumes `finally` is lowered away. A `CatchScope` lazily creates one `landingpad` block that catches
 the C++ `ExceptionObjHolder` (`_ZTI18ExceptionObjHolder`), extracts the Kotlin object (`catchKotlinException`) and jumps to the handler,
 which runs `instanceof` checks per `catch` clause and rethrows via the outer handler. Throws inside a `try` body are a local branch,
 not a C++ throw (`ExceptionHandler.Local.genThrow`). The personality is the C++ one, so exceptions interoperate with ObjC/C++ frames.
+The landing-pad shapes (`callRaw` vs `call` with an `ExceptionHandler`, cleanup vs filtering pads) and the unwinding contract with
+the shadow stack are in [exceptions.md](exceptions.md).
 
 **Static initializers and program start.** Per file, the lowered static initializer functions are registered (`handleStaticInitializer`)
 and, after the module is visited, merged into `InitNode` records appended to the runtime list (`AppendToInitializersTail`) by a
@@ -206,10 +278,13 @@ line table. Inlined code is handled by `InlinedBlockScope`, which switches the f
 `LocationInfo.inlinedAt`, which `CodeGenerator.generateLocationInfo` turns into a `DILocation` with an `inlinedAt` chain. Variables get
 `DIInsertDeclaration` with a `DW_OP_plus_uconst` expression pointing into the slots array (`epilogue`). The prologue deliberately has
 no location so breakpoints never stop on an inconsistent frame (comment in `epilogue`). `-Xdebug-info-version` selects DWARF
-version/language constants (`DWARF.dwarfVersion`); `-Xdebug-prefix-map` remaps paths; `-Xg-generate-debug-trampoline` inserts
-trampoline calls so that breakpoints on `when` branches and inlined code resolve. Runtime bitcode debug info is stripped unless
-`-Xbinary=stripDebugInfoFromNativeLibs=false` (`LLVMStripModuleDebugInfo` in `CompilerOutput.kt`). The LLDB side (pretty printers,
-`konan_lldb.py`) is in `kotlin-native/llvmDebugInfoC`; see [debugging.md](debugging.md).
+version/language constants (`DWARF.dwarfVersion`); `-Xdebug-prefix-map` remaps paths; `-Xg-generate-debug-trampoline=enable`
+(off by default, ignored without `-g`: `generateDebugTrampoline = debug && …` in `NativeSecondStageCompilationConfig.kt`) inserts
+an extra basic block with its own location in front of `when` branches and inlined blocks (`generateDebugTrambolineIf`), not a
+call, so that a breakpoint on that line has an address. Runtime bitcode debug info is stripped unless
+`-Xbinary=stripDebugInfoFromNativeLibs=false` (`LLVMStripModuleDebugInfo` in `CompilerOutput.kt`). The LLDB side (`konan_lldb.py`,
+`libLLVMDebugInfoC`) is in `kotlin-native/llvmDebugInfoC`; the runtime side (`Konan_Debug*`, `ExtendedTypeInfo`) is
+`kotlin-native/runtime/src/debug/cpp/KDebug.cpp`. All of it is described in [debug-info.md](debug-info.md).
 
 ### Linking in the runtime (`LinkBitcodeDependenciesPhase`)
 
@@ -243,7 +318,8 @@ suppresses the harmless "SDK Version" module-flag conflict (KT-35001). Static fr
 
 Order, in `Bitcode.kt`: optional `CallsChecker` instrumentation (must run before the call graph is disturbed) → stack protector →
 `MandatoryBitcodeLLVMPostprocessingPhase` → `ModuleBitcodeOptimization` → `LTOBitcodeOptimization` → optional `ThreadSanitizerPhase` →
-`RemoveRedundantSafepoints` → optional `ModuleCallsChecker` (after DCE so the known-function list is final). The config comes from
+`RemoveRedundantSafepoints` → optional `ModuleCallsChecker` (after DCE so the known-function list is final). The pass strings, the
+custom `kotlin-*` passes and the `-g`/`-opt`/small-binary differences are in [llvm-passes.md](llvm-passes.md); the config comes from
 `createLTOFinalPipelineConfig` in `OptimizationPipeline.kt`:
 
 | Input | Effect |
@@ -274,7 +350,8 @@ LLVM state when dumping IR, which is why `-Xsave-llvm-ir-after=<Phase>:<pass>` i
 [BitcodeCompiler.kt](../../kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/BitcodeCompiler.kt)
 runs the bundled `clang++` from the LLVM distribution (`-Xllvm-variant`; or Xcode's with `-Xbinary=compileBitcodeWithXcodeLlvm`) in
 `-cc1` mode on the written `.bc`: flags are `clangFlags.<target>` + `-triple` + one of `clangOptFlags` / `clangDebugFlags` /
-`clangNooptFlags` + relocation model, all from [konan.properties](../../kotlin-native/konan/konan.properties) through
+`clangNooptFlags` + relocation model, all from [konan.properties](../../kotlin-native/konan/konan.properties) (per-target
+toolchain and linker resolution: [targets-and-toolchains.md](targets-and-toolchains.md#toolchains)) through
 `Configurables` ([Configurables.kt](../../native/utils/src/org/jetbrains/kotlin/konan/target/Configurables.kt)); `-Xoverride-clang-options`
 replaces the whole list. Because `clangFlags` contain `-disable-llvm-passes`/`-disable-llvm-optzns`, clang only does instruction
 selection; all middle-end optimization happened in the previous step.
@@ -296,6 +373,25 @@ by `ld -r` (`PreLinkCachesPhase`) so the final link sees one object. `determineL
 executable / static / dynamic; `OutputFiles` ([OutputFiles.kt](../../kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/OutputFiles.kt))
 computes the prefixed/suffixed main file, the `.dSYM` path, and the temporary cache directory layout. Linker failures are reported with
 hints to disable caches and with `userSetupHint` from cinterop klibs (`runLinkerCommands`).
+
+What reaches the linker and in which role, from `Linker.linkCommands` / `runLinker` (BACKEND `Linker.kt`), `compileAndLink`
+(`TopLevelPhases.kt`) and `resolveCacheBinaries` (`CacheBinariesResolver.kt`):
+
+```mermaid
+flowchart LR
+    OBJ["out.o, or withStaticCaches.o after PreLinkCachesPhase"] --> LA
+    INC["nativeIncludedBinaries (-include-binary) of native-dependency klibs<br/>that are not cached; when building a cache: of the cached klib only"] -->|"staticLibraries"| LA
+    SC["static cache binaries (.a)"] -->|"staticLibraries (empty after pre-link)"| LA
+    DC["dynamic cache binaries"] -->|"dynamicLibraries"| LA
+    F1["-linker-option / -linker-options (LINKER_ARGS)"] --> ARGS["linkerArgs, in this order"]
+    F2["linkerOpts of every native-dependency klib manifest"] --> ARGS
+    F3["output-kind flags: -dead_strip, -bundle, -install_name"] --> ARGS
+    F4["extraLinkerFlags"] --> ARGS
+    ARGS --> LA["LinkerArguments<br/>kind = determineLinkerOutput(produce), optimize, debug, sanitizer, dSYM path"]
+    LA --> LF["target LinkerFlags subclass (native/utils Linker.kt)<br/>adds linkerKonanFlags, linkerOptimizationFlags, linkerNoDebugFlags,<br/>linkerDynamicFlags from konan.properties"]
+    LF --> CMD["finalLinkCommands, run by runLinkerCommands"]
+    CMD --> OUT["executable, .so / .dylib / .dll, .a, framework binary, bundle; dsymutil on Apple"]
+```
 
 ## Invariants and ordering constraints
 
@@ -341,7 +437,7 @@ hints to disable caches and with `userSetupHint` from cinterop klibs (`runLinker
 
 | Flag | What it does |
 |------|--------------|
-| `-Xsave-llvm-ir-after=<Phase>[,...]` + `-Xsave-llvm-ir-directory=<dir>` | Dumps `out.<Phase>.ll` after any LLVM-holding phase (`Codegen`, `LinkBitcodeDependencies`, `MandatoryBitcodeLLVMPostprocessingPhase`, `ModuleBitcodeOptimization`, `LTOBitcodeOptimization`, `WriteBitcodeFile`, …); `<Phase>:<llvm-pass>` dumps inside a pipeline (CLI only) |
+| `-Xsave-llvm-ir-after=<Phase>[,...]` + `-Xsave-llvm-ir-directory=<dir>` | Dumps `out.<Phase>.ll` after any LLVM-holding phase (`Codegen`, `LinkBitcodeDependencies`, `MandatoryBitcodeLLVMPostprocessingPhase`, `ModuleBitcodeOptimization`, `LTOBitcodeOptimization`, `WriteBitcodeFile`, …); `<Phase>:<llvm-pass>` dumps inside a pipeline (CLI only; see [llvm-passes.md](llvm-passes.md#flags-and-options)) |
 | `-Xprint-bitcode` | Dumps the module to stderr right after codegen (`PrintBitcodePhase`) |
 | `-Xverify-bitcode` | Runs the LLVM verifier after every generated function and after every LLVM phase; `-Xverify-compiler` verifies once after codegen |
 | `-Xdisable-phases=LTOBitcodeOptimization,...`, `-Xprofile-phases` | Skip or time phases by name ([HACKING.md](../../kotlin-native/HACKING.md#playing-with-compilation-pipeline)) |
@@ -361,7 +457,7 @@ hints to disable caches and with `userSetupHint` from cinterop klibs (`runLinker
 | "No exception handler specified when calling function X without nounwind attr" | the runtime function is not `RUNTIME_NOTHROW`, or codegen passed `ExceptionHandler.None` for a may-throw callee |
 | Linker "undefined symbol kfun:..." / "kclass:..." | `DependenciesTracker` did not record the library (missing `dependenciesTracker.add`), DCE removed a vtable target, a stale cache (`-Xbinary=...`, disable caches to confirm), or name mismatch between `computeSymbolName(forImplementation=…)` and the caller |
 | Undefined C symbol from a cinterop klib | `linkerOpts` in the klib manifest and `userSetupHint`; `-Xbinary=stripDebugInfoFromNativeLibs`; check `nativeDependenciesToLink` filtering in `DependenciesTracker` |
-| Crash only with `-opt` | Dump after `Codegen` vs after `LTOBitcodeOptimization`; bisect with `-Xdisable-phases` and `-Xllvm-*-passes`; check lifetimes (`escapeAnalysis` test data) and missing slots; also devirtualization/DCE ([optimizations.md](optimizations.md)) |
+| Crash only with `-opt` | Dump after `Codegen` vs after `LTOBitcodeOptimization`; bisect with `-Xdisable-phases` and `-Xllvm-*-passes`; check lifetimes (`escapeAnalysis` test data) and missing slots; also devirtualization/DCE ([optimizations.md](optimizations.md)); if the IR after `Codegen` is right, follow [llvm-passes.md](llvm-passes.md#typical-bugs-and-how-to-investigate) |
 | Crash only in debug / with GC stress | missing slot or `storeHeapRef`; `-Xbinary=gcSchedulerType=aggressive`, `-Xcheck-state-at-external-calls` for thread-state mistakes |
 | Wrong line numbers / stepping in the debugger | `updateBuilderDebugLocation`, `InlinedBlockScope` `inlinedAt`, `-Xg-generate-debug-trampoline`; compare `.ll` `!dbg` metadata; `testData/lldb` |
 | "linking module flags ... conflicting values" or "Failed to link <module>" | `llvmLinkModules2`; usually a runtime `.bc` built against a different LLVM/target than the compiler expects, or a mismatched `-Xruntime` |
@@ -391,8 +487,10 @@ codegen change costs a dist rebuild.
   HACKING.md says the list changes, this page lists only those seen in `Bitcode.kt` and `BitcodeGeneration.kt`.
 - Unverified: how `cCallMode = Direct` changes the calls emitted for cinterop functions (it only shows up here as the filter that
   skips cinterop bitcode); belongs to [cinterop.md](cinterop.md).
-- Hypothesis: `runLLVMPassesInCompiler` will be removed once the C++ passes are proven; both code paths currently exist and must stay
-  equivalent (`visibility.kt` vs `kotlin-hide-symbols`, `RemoveRedundantSafepointsPass` vs `kotlin-remove-sp`).
+- (Resolved: the `BinaryOptions.kt` KDoc says `runLLVMPassesInCompiler` "exists as a workaround, if new passes introduce
+  regressions", i.e. the Kotlin-side code paths (`visibility.kt`, `RemoveRedundantSafepointsPass`) are the fallback for the C++
+  passes `kotlin-hide-symbols` / `kotlin-remove-sp` and must stay equivalent until the option is removed; see
+  [llvm-passes.md](llvm-passes.md#the-custom-passes).)
 - Unverified: exact per-target behaviour of `linkerNoDebugFlags` (`-S` on macOS strips debug symbols) when `-g` is combined with
   `-opt`; `Linker` treats `debug = config.debug || config.lightDebug` while `BitcodeCompiler` uses `optimize` first.
 - Not covered: the ObjC/Swift export codegen in `llvm/objcexport` and `objcexport/`, C export adapter generation (`cexport/`), and

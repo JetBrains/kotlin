@@ -44,6 +44,30 @@ Initialization is per thread and lazy. `Kotlin_initRuntimeIfNeeded` in
    a thread that waits for another thread's initializer waits in `kNative` to avoid deadlocking the GC.
 4. `konan::onThreadExit(Kotlin_deinitRuntimeCallback)` is registered. The thread is left in `kNative`.
 
+Who calls `Kotlin_initRuntimeIfNeeded`, what `initRuntime` does and the two ways a runtime ends, from
+[Runtime.cpp](../../kotlin-native/runtime/src/main/cpp/Runtime.cpp), [launcher.cpp](../../kotlin-native/runtime/src/launcher/cpp/launcher.cpp),
+[Worker.cpp](../../kotlin-native/runtime/src/main/cpp/Worker.cpp) `workerRoutine` and
+[FinalizerProcessor.hpp](../../kotlin-native/runtime/src/main/cpp/alloc/FinalizerProcessor.hpp):
+
+```mermaid
+flowchart TD
+    L["executable: Konan_main calls Init_and_run_start(argc, argv, memoryDeInit = 1)"] --> I
+    W["Worker thread: workerRoutine"] --> I
+    N["foreign thread entering a bridge: CalledFromNativeGuard"] --> I
+    F["GC finalizer processor thread"] --> I
+    I{"Kotlin_initRuntimeIfNeeded:<br/>thread-local runtimeState already set?"} -->|"yes"| RUN
+    I -->|"no"| G{"initRuntime: initializeGlobalRuntimeIfNeeded,<br/>CAS globalRuntimeStatus Uninitialized to Running"}
+    G -->|"this thread won"| GI["console, logging, crash handler,<br/>GlobalData::init, ObjC export init"]
+    G -->|"another thread won"| GW["waitGlobalDataInitialized"]
+    GI --> IM
+    GW --> IM
+    IM["InitMemory: RegisterCurrentThread in kNative,<br/>gc().onThreadRegistration()"] --> TS["ThreadStateGuard kRunnable: WorkerInit,<br/>ALLOC_THREAD_LOCAL_GLOBALS, CommitTLSStorage,<br/>INIT_GLOBALS (first runtime only), INIT_THREAD_LOCAL_GLOBALS"]
+    TS --> OX["onThreadExit(Kotlin_deinitRuntimeCallback); back to kNative"]
+    OX --> RUN["run Kotlin code in kRunnable<br/>(launcher: switchThreadStateRunnable, Konan_run_start, Konan_start(args))"]
+    RUN --> SD["main returned and memoryDeInit: Kotlin_shutdownRuntime<br/>CAS status to Shutdown, main thread to kNative, nothing freed"]
+    RUN --> DI["thread exits: Kotlin_deinitRuntimeCallback, deinitRuntime<br/>ClearTLS, kNative, WorkerDeinit, DeinitMemory, Unregister"]
+```
+
 Entry points that create runtimes: the executable launcher `Init_and_run_start`
 ([launcher.cpp](../../kotlin-native/runtime/src/launcher/cpp/launcher.cpp)), `workerRoutine` in
 [Worker.cpp](../../kotlin-native/runtime/src/main/cpp/Worker.cpp), and `CalledFromNativeGuard`
@@ -70,12 +94,56 @@ The state lives in `ThreadSuspensionData::state_`
 returning from native code blocks there if a suspension is pending. This is why native-state threads never need to be signalled:
 the GC treats them as already stopped, and they cannot re-enter the heap until the world resumes.
 
+The state machine of one mutator, from `ThreadSuspensionData::setState`/`suspendIfRequested`
+([ThreadSuspension.cpp](../../kotlin-native/runtime/src/main/cpp/mm/ThreadSuspension.cpp)), `SwitchThreadState`
+([ThreadState.hpp](../../kotlin-native/runtime/src/main/cpp/mm/ThreadState.hpp)) and `MutatorAssists::ThreadData::safePoint`
+([MutatorAssists.cpp](../../kotlin-native/runtime/src/main/cpp/gcScheduler/MutatorAssists.cpp)); the two parked states store
+`kNative` in `state_`, they are distinguished here only by what wakes the thread:
+
+```mermaid
+stateDiagram-v2
+    [*] --> kNative: RegisterCurrentThread
+    kNative --> kRunnable: switchThreadStateRunnable, ThreadStateGuard, CalledFromNativeGuard
+    kRunnable --> kNative: switchThreadStateNative, ThreadStateGuard, blocking in a ThreadStateAware mutex
+    kRunnable --> SuspendedAtSafepoint: safePoint slow path, suspendIfRequested, pauseMutationInScope
+    SuspendedAtSafepoint --> kRunnable: ResumeThreads, notify_all, state restored under gSuspensionRequestMutex
+    kRunnable --> AssistingGC: safePoint slow path while completedEpoch below the requested assists epoch
+    AssistingGC --> kRunnable: MutatorAssists completeEpoch wakes the condvar
+    kNative --> [*]: deinitRuntime, DeinitMemory, Unregister
+    note right of kNative
+        The GC may read this thread's ThreadData, shadow stack and TLS now.
+        The kNative to kRunnable switch itself calls safePoint with seq_cst,
+        so a pending suspension blocks the return into Kotlin.
+    end note
+    note right of SuspendedAtSafepoint
+        state_ reads kNative while parked: the GC counts the thread as stopped.
+    end note
+```
+
 `mm::safePoint()` ([SafePoint.cpp](../../kotlin-native/runtime/src/main/cpp/mm/SafePoint.cpp)) loads `safePointAction`; it is
 non-null only while at least one `SafePointActivator` exists. The slow path `safePointActionImpl` runs, in order:
 `gcScheduler().safePoint()` (aggressive scheduler), `gc().safePoint()` (CMS: flush the thread's mark queue if asked), and
 `suspensionData().suspendIfRequested()`. `ExtraSafePointActionActivator` lets a subsystem hook a one-off action into this path
 (CMS's `FlushActionActivator` is the example). Codegen emits `Kotlin_mm_safePointFunctionPrologue` / `..WhileLoopBody`
 calls, which are just `mm::safePoint()`.
+
+The fast path and the ordered slow path of a safepoint, from `mm::safePoint`, `safePointActionImpl` and
+`incrementActiveCount` in `SafePoint.cpp`, with every place that installs a `SafePointActivator`:
+
+```mermaid
+flowchart TD
+    P["Kotlin_mm_safePointFunctionPrologue / WhileLoopBody,<br/>the kNative to kRunnable switch, weakReadProtector spinning"] --> F{"safePointAction != nullptr?<br/>(one load; non-null while any SafePointActivator exists)"}
+    F -->|"no"| C["continue"]
+    F -->|"yes"| S["safePointActionImpl (asserts no recursion;<br/>optional os_signpost interval)"]
+    S --> A["gcScheduler().safePoint(): adaptive waits in MutatorAssists,<br/>aggressive hashes the stack and schedules"]
+    A --> G["gc().safePoint(): CMS runs the FlushActionActivator action, forceFlush of the mark queue"]
+    G --> U["suspensionData().suspendIfRequested(): if gSuspensionRequestReason is set,<br/>park in kNative on gSuspensionCondVar until ResumeThreads"]
+    U --> C
+    T1["TryRequestThreadsSuspension (every STW)"] -.-> F
+    T2["MutatorAssists::requestAssists"] -.-> F
+    T3["aggressive scheduler, for the whole process"] -.-> F
+    T4["ExtraSafePointActionActivator, e.g. CMS FlushActionActivator"] -.-> F
+```
 
 Mutexes that can be contended from `kRunnable` should be `ThreadStateAware<T>`
 ([concurrent/Mutex.hpp](../../kotlin-native/runtime/src/main/cpp/concurrent/Mutex.hpp)): `try_lock` first, then a full switch to
@@ -95,7 +163,7 @@ sequenceDiagram
     M->>M: next safePoint(): slow path -> suspendIfRequested()
     M->>M: state = kNative (pauseMutationInScope), gc().OnSuspendForGC(), wait on condvar
     GC->>GC: WaitForThreadsSuspension: lock ThreadRegistry, spin until every thread is kNative
-    Note over N: never notified; blocks on its next kNative -> kRunnable switch
+    Note over N: never notified, blocks on its next kNative -> kRunnable switch
     GC->>GC: ... STW work ...
     GC->>GC: ResumeThreads: drop activator, reason = nullptr under mutex, notify_all
     M->>M: state = kRunnable under the mutex, continue
@@ -248,7 +316,44 @@ main run loop is being processed. `GC.collect()` waits for the finalized epoch (
 
 - Build: every module in [runtime/build.gradle.kts](../../kotlin-native/runtime/build.gradle.kts) is one `module("…")` block
   compiled by the `compile-to-bitcode` plugin from [kotlin-native/build-tools](../../kotlin-native/build-tools) into
-  `dist/konan/targets/<target>/native/*.bc`. `testsGroup` blocks pair a tested module with the support modules it needs.
+  `dist/konan/targets/<target>/native/*.bc` (per-target flags and sysroots: [targets-and-toolchains.md](targets-and-toolchains.md#runtime-build-per-target)).
+  `testsGroup` blocks pair a tested module with the support modules it needs. `PERFORMANCE_INLINE` (the `performance_inline`
+  annotation) is turned into `alwaysinline` by the compiler's LLVM pipeline only when `inlineForPerformance` holds; `ALWAYS_INLINE` /
+  `NO_INLINE` are plain clang attributes. See [llvm-passes.md](llvm-passes.md#what-codegen-emits-to-steer-llvm).
+
+  Which `.bc` files end up in one binary and what selects them, from `collectLlvmModules` in
+  [CompilerOutput.kt](../../kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/CompilerOutput.kt),
+  [linkObjC.kt](../../kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/llvm/objc/linkObjC.kt)
+  and the `headersDirs` of each module in `build.gradle.kts` (every pluggable module compiles against `src/main/cpp`, so all
+  arrows point at `runtime.bc`):
+
+  ```mermaid
+  flowchart LR
+      RT["runtime.bc (src/main): mm, gc framework, alloc API, scheduler API, ObjC export"]
+      subgraph one ["exactly one of each, chosen in CompilerOutput.kt"]
+          AL["custom_alloc.bc | legacy_alloc.bc (-Xallocator)"]
+          GC["noop_gc | same_thread_ms_gc | pmcs_gc | concurrent_ms_gc (-Xbinary=gc)"]
+          SC["manual | adaptive | aggressive _gcScheduler.bc (gcSchedulerType)"]
+          CC["impl | noop _externalCallsChecker.bc (checkStateAtExternalCalls)"]
+          CH["impl_crashHandler.bc + breakpad.bc | noop_crashHandler.bc (OSX and minidumpLocation)"]
+      end
+      subgraph opt ["by target or output kind"]
+          SI["source_info_core_symbolication.bc (Apple) and/or source_info_libbacktrace.bc + libbacktrace.bc"]
+          LA["launcher.bc (PROGRAM) | xctest_launcher.bc (TEST_BUNDLE) | exceptionsSupport.bc (DYNAMIC_CACHE)"]
+          DB["debug.bc (containsDebuggingRuntime)"]
+          OB["objc.bc (final binaries on Apple targets, patched by linkObjC.kt)"]
+      end
+      AL --> RT
+      GC --> RT
+      SC --> RT
+      CC --> RT
+      CH --> RT
+      SI --> RT
+      LA --> RT
+      DB --> RT
+      OB --> RT
+      CI["compiler_interface.bc: parsed by the compiler for struct layouts, never linked"] -.-> RT
+  ```
 - Compile-time constants: the compiler emits globals such as `Kotlin_runtimeAssertsMode`, `Kotlin_gcMarkSingleThreaded`,
   `Kotlin_runtimeLogsEnabled` that [CompilerConstants.hpp](../../kotlin-native/runtime/src/main/cpp/CompilerConstants.hpp) wraps.
   The only runtime environment variable found is `KOTLIN_NATIVE_AVAILABLE_PROCESSORS` (`Runtime.cpp`).
@@ -266,7 +371,10 @@ main run loop is being processed. `GC.collect()` waits for the finalized epoch (
   out in `kRunnable` wraps the call in `CallsCheckerIgnoreGuard` or marks the function `NO_EXTERNAL_CALLS_CHECK`.
 - Stack traces and symbolication: [StackTrace.hpp](../../kotlin-native/runtime/src/main/cpp/StackTrace.hpp) captures frames;
   `compiler::getSourceInfo` is provided by `source_info_core_symbolication` (Apple) or `source_info_libbacktrace`
-  (`-Xbinary=sourceInfoType=`). Crash handler: Breakpad minidumps, macOS only, when `minidumpLocation` is set
+  (`-Xbinary=sourceInfoType=`). Capture, symbolication and the printed format are in
+  [exceptions.md](exceptions.md#step-7--stack-traces-capture-symbolication-format); the `debug` module (`debug.bc`,
+  `Konan_Debug*` entry points for the LLDB plugin) in [debug-info.md](debug-info.md#step-7--what-the-runtime-contributes-extendedtypeinfo-and-debugbc).
+  Crash handler: Breakpad minidumps, macOS only, when `minidumpLocation` is set
   ([CrashHandler.hpp](../../kotlin-native/runtime/src/main/cpp/CrashHandler.hpp)). `MemoryUsageInfo.hpp` gives peak RSS.
 - Memory dump: `kotlin.native.runtime.Debugging.dumpMemory(fd)` → `Kotlin_native_runtime_Debugging_dumpMemoryWithOptions`
   (`Memory.cpp`): takes `gcLock`, suspends all other threads from a mutator, publishes every thread, writes roots and walks
@@ -381,4 +489,5 @@ Style and conventions: [codestyle/cpp/README.md](../../kotlin-native/runtime/cod
   waits are empty; `AppStateTracking` has no consumer other than the adaptive scheduler's timer.)
 - How `Konan_create_testSuite` (XCTest) initializes the runtime on the XCTest thread was not traced (presumably via
   `CalledFromNativeGuard` in generated code).
-- The `debug` runtime module (`src/debug`, linked for `-g` builds) was not examined; it serves the LLDB plugin, not asserts.
+- (Resolved in [debug-info.md](debug-info.md): the `debug` runtime module (`src/debug`, linked for `-g` builds) serves the LLDB
+  plugin through `Konan_Debug*` entry points reading `ExtendedTypeInfo`; it is not an assertion facility.)

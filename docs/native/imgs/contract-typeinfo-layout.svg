@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 600" width="1000" height="600" font-family="Helvetica, Arial, sans-serif" font-size="13">
+  <rect x="0" y="0" width="1000" height="600" fill="#ffffff"/>
+  <text x="12" y="22" font-size="15" font-weight="bold" fill="#111">struct TypeInfo as the runtime reads it and as RTTIGenerator.TypeInfo emits it (64-bit, KONAN_TYPE_INFO_HAS_WRITABLE_PART = 1)</text>
+
+  <!-- column headers -->
+  <g font-size="11" font-weight="bold" fill="#111">
+    <text x="14" y="50">offset</text>
+    <text x="64" y="50">size</text>
+    <text x="118" y="50">TypeInfo.h field</text>
+    <text x="300" y="50">#</text>
+    <text x="322" y="50">RTTIGenerator.TypeInfo element</text>
+    <text x="600" y="50">main runtime reader</text>
+  </g>
+  <line x1="12" y1="56" x2="988" y2="56" stroke="#444"/>
+
+  <!-- rows: y step 22, start 60 -->
+  <g font-size="11" fill="#111">
+    <rect x="12" y="60" width="976" height="22" fill="#e8eef7" stroke="#444"/>
+    <text x="14" y="75">0</text><text x="64" y="75">8</text><text x="118" y="75">typeInfo_</text><text x="300" y="75">0</text><text x="322" y="75">selfPtr</text><text x="600" y="75">ObjHeader::type_info, AsMetaObject (self-pointer test)</text>
+
+    <rect x="12" y="82" width="976" height="22" fill="#f0f0f0" stroke="#444"/>
+    <text x="14" y="97">8</text><text x="64" y="97">8</text><text x="118" y="97">extendedInfo_</text><text x="300" y="97">1</text><text x="322" y="97">extendedInfo (non-opt builds only)</text><text x="600" y="97">debug.bc, IsLayoutCompatible TODO</text>
+
+    <rect x="12" y="104" width="976" height="22" fill="#f0f0f0" stroke="#444"/>
+    <text x="14" y="119">16</text><text x="64" y="119">4</text><text x="118" y="119">unused_</text><text x="300" y="119">2</text><text x="322" y="119">constInt32(0) (former ABI version)</text><text x="600" y="119">—</text>
+
+    <rect x="12" y="126" width="976" height="22" fill="#eaf5e6" stroke="#444"/>
+    <text x="14" y="141">20</text><text x="64" y="141">4</text><text x="118" y="141">instanceSize_</text><text x="300" y="141">3</text><text x="322" y="141">size (negative = -elementSize for arrays)</text><text x="600" y="141">allocator (KObject.hpp descriptors), IsArray()</text>
+
+    <rect x="12" y="148" width="976" height="22" fill="#e8eef7" stroke="#444"/>
+    <text x="14" y="163">24</text><text x="64" y="163">8</text><text x="118" y="163">superType_</text><text x="300" y="163">4</text><text x="322" y="163">superType</text><text x="600" y="163">IsSubtype (Types.cpp)</text>
+
+    <rect x="12" y="170" width="976" height="22" fill="#eaf5e6" stroke="#444"/>
+    <text x="14" y="185">32</text><text x="64" y="185">8</text><text x="118" y="185">objOffsets_</text><text x="300" y="185">5</text><text x="322" y="185">objOffsets (int32 array of ref field offsets)</text><text x="600" y="185">Kotlin_processObjectInMark, IsLayoutCompatible</text>
+
+    <rect x="12" y="192" width="976" height="22" fill="#eaf5e6" stroke="#444"/>
+    <text x="14" y="207">40</text><text x="64" y="207">4, pad 4</text><text x="118" y="207">objOffsetsCount_</text><text x="300" y="207">6</text><text x="322" y="207">objOffsetsCount (1 for kotlin.Array)</text><text x="600" y="207">mark</text>
+
+    <rect x="12" y="214" width="976" height="22" fill="#e8eef7" stroke="#444"/>
+    <text x="14" y="229">48</text><text x="64" y="229">8</text><text x="118" y="229">implementedInterfaces_</text><text x="300" y="229">7</text><text x="322" y="229">interfaces</text><text x="600" y="229">IsSubtype for interfaces (linear scan)</text>
+
+    <rect x="12" y="236" width="976" height="22" fill="#e8eef7" stroke="#444"/>
+    <text x="14" y="251">56</text><text x="64" y="251">4</text><text x="118" y="251">implementedInterfacesCount_</text><text x="300" y="251">8</text><text x="322" y="251">interfacesCount</text><text x="600" y="251">IsSubtype</text>
+
+    <rect x="12" y="258" width="976" height="22" fill="#fdf1dc" stroke="#444"/>
+    <text x="14" y="273">60</text><text x="64" y="273">4</text><text x="118" y="273">interfaceTableSize_</text><text x="300" y="273">9</text><text x="322" y="273">interfaceTableSize (size-1, or -count for sorted)</text><text x="600" y="273">LookupInterfaceTableRecord; structGep(…, 9) in codegen</text>
+
+    <rect x="12" y="280" width="976" height="22" fill="#fdf1dc" stroke="#444"/>
+    <text x="14" y="295">64</text><text x="64" y="295">8</text><text x="118" y="295">interfaceTable_</text><text x="300" y="295">10</text><text x="322" y="295">interfaceTable (InterfaceTableRecord[])</text><text x="600" y="295">LookupInterfaceTableRecord; structGep(…, 10)</text>
+
+    <rect x="12" y="302" width="976" height="22" fill="#f0f0f0" stroke="#444"/>
+    <text x="14" y="317">72</text><text x="64" y="317">8</text><text x="118" y="317">packageName_</text><text x="300" y="317">11</text><text x="322" y="317">kotlinStringLiteral(packageName) (permanent String)</text><text x="600" y="317">Kotlin_TypeInfo_getPackageName, fqName()</text>
+
+    <rect x="12" y="324" width="976" height="22" fill="#f0f0f0" stroke="#444"/>
+    <text x="14" y="339">80</text><text x="64" y="339">8</text><text x="118" y="339">relativeName_</text><text x="300" y="339">12</text><text x="322" y="339">kotlinStringLiteral(relativeName)</text><text x="600" y="339">Kotlin_TypeInfo_getRelativeName, fqName()</text>
+
+    <rect x="12" y="346" width="976" height="22" fill="#eaf5e6" stroke="#444"/>
+    <text x="14" y="361">88</text><text x="64" y="361">4</text><text x="118" y="361">flags_</text><text x="300" y="361">13</text><text x="322" y="361">flags (TF_* bits, see bit field)</text><text x="600" y="361">HasFinalizers, ObjC export, reflection</text>
+
+    <rect x="12" y="368" width="976" height="22" fill="#fdf1dc" stroke="#444"/>
+    <text x="14" y="383">92</text><text x="64" y="383">4</text><text x="118" y="383">classId_ (ClassId = int32_t)</text><text x="300" y="383">14</text><text x="322" y="383">classId (DFS interval start / coloured interface id)</text><text x="600" y="383">IsSubclassFast(lo, hi), itable lookup</text>
+
+    <rect x="12" y="390" width="976" height="22" fill="#f0f0f0" stroke="#444" stroke-dasharray="4,2"/>
+    <text x="14" y="405">96</text><text x="64" y="405">8</text><text x="118" y="405">writableInfo_ (#if WRITABLE_PART)</text><text x="300" y="405">15</text><text x="322" y="405">writableTypeInfo (omitted when the macro is 0)</text><text x="600" y="405">WritableTypeInfo.hpp, ObjC export class cache</text>
+
+    <rect x="12" y="412" width="976" height="22" fill="#f0f0f0" stroke="#444"/>
+    <text x="14" y="427">104</text><text x="64" y="427">8</text><text x="118" y="427">associatedObjects</text><text x="300" y="427">16</text><text x="322" y="427">associatedObjects (null-terminated records)</text><text x="600" y="427">Kotlin_TypeInfo_findAssociatedObject</text>
+
+    <rect x="12" y="434" width="976" height="22" fill="#eaf5e6" stroke="#444"/>
+    <text x="14" y="449">112</text><text x="64" y="449">8</text><text x="118" y="449">processObjectInMark</text><text x="300" y="449">17</text><text x="322" y="449">one of Kotlin_process{Object,EmptyObject,Array}InMark</text><text x="600" y="449">MarkTraits::processInMark (every tracing GC)</text>
+
+    <rect x="12" y="456" width="976" height="22" fill="#eaf5e6" stroke="#444"/>
+    <text x="14" y="471">120</text><text x="64" y="471">4, pad 4</text><text x="118" y="471">instanceAlignment_</text><text x="300" y="471">18</text><text x="322" y="471">requiredAlignment</text><text x="600" y="471">declared only; allocators use kObjectAlignment = 8</text>
+
+    <rect x="12" y="478" width="976" height="22" fill="#e8eef7" stroke="#444"/>
+    <text x="14" y="493">128</text><text x="64" y="493">8 x n</text><text x="118" y="493">vtable() = this + 1</text><text x="300" y="493">—</text><text x="322" y="493">ConstArray appended after the struct</text><text x="600" y="493">virtual calls: vtable[index], index from ClassLayoutBuilder.vtableEntries</text>
+  </g>
+
+  <!-- InterfaceTableRecord -->
+  <text x="12" y="526" font-weight="bold" fill="#111">InterfaceTableRecord (16 bytes, interfaceTable_ points to an array of these)</text>
+  <g font-size="11" fill="#111" text-anchor="middle">
+    <rect x="12" y="534" width="130" height="26" fill="#fdf1dc" stroke="#444"/><text x="77" y="551">0: id (ClassId)</text>
+    <rect x="142" y="534" width="130" height="26" fill="#f0f0f0" stroke="#444"/><text x="207" y="551">4: vtableSize</text>
+    <rect x="272" y="534" width="180" height="26" fill="#e8eef7" stroke="#444"/><text x="362" y="551">8: vtable (VTableElement const*)</text>
+  </g>
+  <text x="470" y="551" font-size="11" fill="#111">fast path: itable[id &amp; interfaceTableSize_].id == id; slow path: binary search over -interfaceTableSize_ records</text>
+
+  <text x="12" y="580" font-size="11" fill="#111">Offsets measured with offsetof on an LP64 target. Legend: blue = identity/hierarchy, green = layout/GC, orange = dispatch, grey = reflection/misc.</text>
+  <text x="12" y="594" font-size="11" fill="#111">Sources: TypeInfo.h, RTTIGenerator.kt (class TypeInfo), CodeGenerator.kt (VirtualTablesLookup), ExtraObjectData.hpp.</text>
+</svg>

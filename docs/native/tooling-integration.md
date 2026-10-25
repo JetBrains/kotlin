@@ -38,19 +38,22 @@ Each binary gets one `KotlinNativeLink` task
 ([KotlinNativeConfigureBinariesSideEffect.kt](../../libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/targets/native/KotlinNativeConfigureBinariesSideEffect.kt)
 `registerLinkTask`), whose only source is the compilation's klib (`task.source(compilation.compileTaskProvider.flatMap { it.outputFile })`).
 
+The task graph KGP creates for one binary-producing target, as registered in `KotlinNativeConfigureBinariesSideEffect.kt`
+(`registerLinkTask`), `KotlinNativeTasks.kt` and the commonizer/download task files linked below:
+
 ```mermaid
 flowchart LR
-    subgraph "target iosArm64, compilation main"
-        cinterop[cinteropFooIosArm64\nCInteropProcess] --> compile[compileKotlinIosArm64\nKotlinNativeCompile]
-        compile -->|klib via -Xinclude| linkDebug[linkDebugFrameworkIosArm64\nKotlinNativeLink]
-        compile --> linkRelease[linkReleaseFrameworkIosArm64]
-        compile --> linkTest[linkDebugTestIosArm64]
-        linkTest --> test[iosSimulatorArm64Test\nKotlinNativeSimulatorTest]
-        linkDebug --> embed[embedAndSign...\nEmbedAndSignTask]
+    subgraph target ["target iosArm64, compilation main"]
+        cinterop["cinteropFooIosArm64<br/>CInteropProcess"] --> compile["compileKotlinIosArm64<br/>KotlinNativeCompile"]
+        compile -->|"klib via -Xinclude"| linkDebug["linkDebugFrameworkIosArm64<br/>KotlinNativeLink"]
+        compile --> linkRelease["linkReleaseFrameworkIosArm64"]
+        compile --> linkTest["linkDebugTestIosArm64"]
+        linkTest --> test["iosSimulatorArm64Test<br/>KotlinNativeSimulatorTest"]
+        linkDebug --> embed["embedAndSign...<br/>EmbedAndSignTask"]
     end
-    download[downloadKotlinNativeDistribution\nKotlinNativeDownloadTask] -.-> cinterop
+    download["downloadKotlinNativeDistribution<br/>KotlinNativeDownloadTask"] -.-> cinterop
     download -.-> compile
-    commonize[commonizeNativeDistribution /\ncommonizeCInterop] -.->|shared source sets| compile
+    commonize["commonizeNativeDistribution /<br/>commonizeCInterop"] -.->|"shared source sets"| compile
 ```
 
 ### What each task asks the compiler to do
@@ -99,6 +102,24 @@ Notes on the link task:
   dependency supports it (`KotlinNativeCompilation.crossCompilationOnCurrentHostSupported`); link tasks only when
   `konanTarget.enabledOnCurrentHostForBinariesCompilation`, otherwise `libraries` is empty and the task is effectively disabled.
 
+How a binary option travels from a Gradle build into `CompilerConfiguration`, following `PropertiesProvider.nativeBinaryOptions`,
+`KotlinNativeLink.binaryOptions`, `K2NativeCompilerArguments.binaryOptions` and `parseBinaryOptions`
+(`SetupConfiguration.kt`, `native/binary-options` `parsing.kt`):
+
+```mermaid
+flowchart LR
+    P["gradle.properties<br/>kotlin.native.binary.NAME=VALUE"] --> MERGE["KotlinNativeLink.binaryOptions =<br/>PropertiesProvider.nativeBinaryOptions + binary.binaryOptions<br/>(the DSL wins on the same name)"]
+    DSL["binaries DSL<br/>binaryOption(name, value)"] --> MERGE
+    MERGE --> ARG["K2NativeCompilerArguments.binaryOptions<br/>array of NAME=VALUE"]
+    ARG --> CLI["convertArgumentsToStringList<br/>one -Xbinary=NAME=VALUE per entry"]
+    FREE["freeCompilerArgs<br/>-Xbinary=NAME=VALUE"] --> CLI
+    CLI --> PARSE["parseBinaryOptions<br/>BinaryOptions registry, lookup by property name"]
+    PARSE -->|"known name and value"| CFG["CompilerConfiguration put(BinaryOptions.NAME)<br/>read as NativeSecondStageCompilationConfig.x ?: defaultX"]
+    PARSE -->|"unknown name or value"| WARN["warning, option dropped, build continues"]
+    PARSE -->|"not of the form key=value"| ERR["error: incorrect property format"]
+    CFG --> FLAV["cache flavor string when the value<br/>differs from the default (caches.md)"]
+```
+
 ### How the compiler process is started
 
 All K/N tools go through `KotlinNativeToolRunner`
@@ -117,6 +138,36 @@ configured by a `ToolSpec` per tool ([nativeCompilerRunner.kt](../../libraries/t
 | Environment | `<dist>/tools/env_blacklist` ([env_blacklist](../../kotlin-native/utilities/env_blacklist), mostly Xcode build-setting variables) is removed from the forked process; `KonanPropertiesBuildService.environmentBlacklist` |
 | Message format | system property / env `org.jetbrains.kotlin.cliMessageRenderer` (`MessageRenderer.PROPERTY_KEY`) set to `GradleStyle` or `XcodeStyle`; `CLICompiler.defaultMessageRenderer` ([CLICompiler.kt](../../compiler/cli/src/org/jetbrains/kotlin/cli/common/CLICompiler.kt)) honours it. In-process the renderer is chosen by entry point instead (`mainNoExitWithGradleRenderer` / `...XcodeRenderer` in [K2Native.kt](../../native/cli-native/src/org/jetbrains/kotlin/cli/bc/K2Native.kt)). Xcode style is on with `kotlin.native.useXcodeMessageStyle` or automatically when an `embedAndSign*`-type task is requested ([XcodeMessageReporting.kt](../../libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/plugin/mpp/apple/XcodeMessageReporting.kt)) |
 | Metrics | for K/N ≥ `2.2.0-dev-13610` KGP appends `-Xdump-perf=<tmp>.json` and parses it as `UnitStats` (`compiler/util`) into Gradle build-report/FUS metrics (`parseCompilerMetricsFromFile`) |
+
+One `KotlinNativeLink` invocation from the task action to the compiler's driver, as sequenced in `KotlinNativeLink.compile()`,
+`KotlinNativeToolRunner.runTool`, `cli-runner/main.kt` (`daemonMain`, `mainImpl`) and `K2Native.kt`:
+
+```mermaid
+sequenceDiagram
+    participant T as KotlinNativeLink.compile()
+    participant R as KotlinNativeToolRunner
+    participant CL as ClassLoadersCachingBuildService
+    participant M as MainKt (embeddable jar)
+    participant K as K2Native
+    participant D as KonanDriver
+    T->>T: createCompilerArguments() + cache and IC literals
+    T->>R: runTool(ToolArguments(inProcess = not disableCompilerDaemon, arguments))
+    alt in-process (default for konanc)
+        R->>CL: getClassLoader(classpath, parent = JDK classes only)
+        CL-->>R: cached URLClassLoader
+        R->>M: daemonMain or daemonMainWithXcodeRenderer(konanc, args..., -Xdump-perf=tmp.json)
+        M->>M: usingNativeMemoryAllocator, LIBCLANG_DISABLE_CRASH_RECOVERY=1
+        M->>K: mainNoExitWithRenderer(args, GRADLE_STYLE or XCODE_STYLE)
+    else forked (kotlin.native.disableCompilerDaemon=true, always for cinterop and generatePlatformLibraries)
+        R->>M: javaexec MainKt @argfile, jvmArgs, filtered system properties
+        M->>K: main(args), renderer from org.jetbrains.kotlin.cliMessageRenderer
+    end
+    K->>D: KonanDriver.run (CacheBuilder, then NativeCompilerDriver)
+    D->>K: CompilationSpawner.spawn per cache build (nested K2Native run, same JVM)
+    D-->>K: done, or KonanCompilationException
+    K-->>R: in-process: exception through InvocationTargetException. forked: non-zero exit code
+    R->>R: parseCompilerMetricsFromFile(tmp.json) into the build report
+```
 
 Because `konanc` runs in-process by default, the compiler must be re-entrant inside one JVM across many compilations and across
 different projects in the same Gradle daemon; the classloader is shared by all tasks with the same distribution path.
@@ -146,9 +197,13 @@ inside a real distribution directory.
 | `kotlin.native.ignoreIncorrectDependencies` | skip dependency-shape checks for Native source sets ([PropertiesProvider.kt](../../libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/plugin/PropertiesProvider.kt)) |
 | `kotlin.native.useEmbeddableCompilerJar` | deprecated, no effect (`GradleDeprecatedPropertyChecker`); the embeddable jar is the only option |
 
-Toolchain downloads (LLVM, sysroots) are done by KGP itself, not by the compiler: `downloadNativeDependencies` calls
+Toolchain downloads (LLVM, sysroots) are done by KGP ahead of the compiler: `downloadNativeDependencies` calls
 `loadConfigurables(target, distribution.properties, ...).downloadDependencies(...)` from `native/utils`, i.e. the same
-`konan.properties` dependency lists the compiler uses. `KotlinNativeDownloadTask` (`downloadKotlinNativeDistribution`,
+`konan.properties` dependency lists the compiler uses. The compiler itself also downloads whatever is missing when
+`checkDependencies` is set (any compilation with sources, `-Xinclude`, exported libraries, a program with libraries, or a cache
+build; [NativeConfigurationPhase.kt](../../compiler/cli/cli-native-klib/src/main/kotlin/org/jetbrains/kotlin/native/pipeline/NativeConfigurationPhase.kt),
+`platform` in `NativeSecondStageCompilationConfig.kt`), so KGP's step only moves the download to a dedicated task; the
+mechanics are in [targets-and-toolchains.md](targets-and-toolchains.md#dependencies-naming-resolution-download). `KotlinNativeDownloadTask` (`downloadKotlinNativeDistribution`,
 [KotlinNativeDownloadTask.kt](../../libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/targets/native/internal/KotlinNativeDownloadTask.kt))
 forces provisioning and writes the resolved home path to a file that other tasks read instead of depending on the directory.
 
@@ -174,7 +229,9 @@ forces provisioning and writes the resolved home path to a file that other tasks
   ([KotlinNativeTest.kt](../../libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/targets/native/tasks/KotlinNativeTest.kt))
   run the `TestExecutable` with `--ktest_logger=TEAMCITY`, `--ktest_no_exit_code`, `--ktest_gradle_filter=` and
   `--ktest_negative_gradle_filter=`, and parse TeamCity service messages; K/N stack traces are converted to JVM-like frames by
-  [KotlinNativeStackTraceParser.kt](../../libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/targets/native/internal/KotlinNativeStackTraceParser.kt).
+  [KotlinNativeStackTraceParser.kt](../../libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/targets/native/internal/KotlinNativeStackTraceParser.kt);
+  this makes the runtime's printed stack-trace format a contract even though its KDoc calls it unstable
+  ([exceptions.md](exceptions.md#step-7--stack-traces-capture-symbolication-format)).
   Simulator tests run `/usr/bin/xcrun simctl spawn [--standalone] <device> <binary>`. The test-runner CLI (`--ktest_*`) is
   therefore a KGP contract on the generated test runner ([runtime.md](runtime.md)).
 - `embedAndSign*` ([AppleXcodeTasks.kt](../../libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/plugin/mpp/apple/AppleXcodeTasks.kt),
@@ -228,15 +285,39 @@ everything else from klibs:
 4. **`native/utils` is on everybody's classpath**: `KonanTarget`, `HostManager`, `Distribution`, `DefFile`, `CompilerOutputKind`
    are used by KGP, the commonizer and the IDE import. Changing `KonanTarget` names or `Distribution` paths is a tooling change.
 
+What the IDE's model of a Native source set is built from, following the KGP IDE resolvers
+(`IdeNativeStdlibDependencyResolver`, `IdeNativePlatformDependencyResolver`, `IdeCommonizedNativePlatformDependencyResolver`,
+`KlibExtra` in `factories.kt`) and `LLNativeSessionComponentRegistration`:
+
+```mermaid
+flowchart LR
+    subgraph kgp ["Gradle side: KGP IDE import"]
+        SS["source set + commonizerTarget"] --> LEAF{"leaf target?"}
+        LEAF -->|"yes"| PLAT["IdeNativePlatformDependencyResolver<br/>IdeKonanDistributionLibsService: files of DIST/klib/platform/TARGET"]
+        LEAF -->|"shared"| COMM["IdeCommonizedNativePlatformDependencyResolver<br/>DIST/klib/commonized/VERSION/... (isCommonized)"]
+        SS --> STD["IdeNativeStdlibDependencyResolver<br/>DIST/klib/common/stdlib, sources from DIST/sources"]
+        SS --> OTH["other resolvers: project klibs, cinterop klibs,<br/>commonized cinterops (copyCommonizeCInteropForIde)"]
+        PLAT --> EX["KlibExtra read with KlibLoader: builtins_platform, unique_name,<br/>short_name, package, native_targets, commonizer_*, interop"]
+        COMM --> EX
+        STD --> EX
+    end
+    EX --> IDE["IdeaKotlinResolvedBinaryDependency<br/>(klib paths + manifest facts)"]
+    OTH --> IDE
+    IDE --> SESS["LLNativeSessionComponentRegistration<br/>FirNativeSessionFactory components (ForMetadata for metadata sessions),<br/>NativeDefaultImportsProvider"]
+    SESS --> META["klib symbol providers over linkdata/ only<br/>LLNativeForwardDeclarationsSymbolProvider from includedForwardDeclarations"]
+    META --> NOIR["never read: ir/, bitcode, caches, the backend"]
+```
+
 **Unverified:** how the IDE learns the distribution root itself; the resolvers only hand over absolute klib paths, so the IDE
 may not need it.
 
 ## Commonizer
 
-What it does is explained in [native/commonizer/README.md](../../native/commonizer/README.md): for a source set shared between
-several native targets it produces one "common" klib with `expect` declarations plus per-target klibs with `actual`s, for the
-platform libraries and (optionally) for cinterop klibs. It works on klib **metadata** only and writes ordinary klibs whose
-manifests carry `commonizer_target` and `commonizer_native_targets`.
+The algorithm, the CLI tasks and the cache layout are in [commonizer.md](commonizer.md) (the README in
+[native/commonizer](../../native/commonizer/README.md) is partly stale). For a source set shared between several native targets it
+produces one "common" klib with `expect` declarations for the platform libraries and (optionally) for cinterop klibs; only that
+common slot is serialized, the leaves stay the original per-target klibs. It works on klib **metadata** only and writes ordinary
+klibs whose manifests carry `commonizer_target` and `commonizer_native_targets`.
 
 KGP side ([CommonizerTasks.kt](../../libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/targets/native/internal/CommonizerTasks.kt),
 [NativeDistributionCommonizerTask.kt](../../libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/targets/native/internal/NativeDistributionCommonizerTask.kt),
@@ -307,6 +388,9 @@ Things tooling relies on that no compiler test enforces directly:
 | `.def` file grammar (`headers`, `compilerOpts`, `staticLibraries`, `libraryPaths`) parsed by KGP via `DefFile` from `native/utils` | cinterop up-to-date checks, CocoaPods | stale cinterop outputs |
 
 ## Tests
+
+The compiler-side test infrastructure (`native/native.tests`, the `-Pkn.*` properties, how tests invoke the compiler from a
+distribution) is described in [test-infrastructure.md](test-infrastructure.md); this section is about the tooling side.
 
 - **KGP integration tests** (`libraries/tools/kotlin-gradle-plugin-integration-tests`, [AGENTS.md](../../libraries/tools/kotlin-gradle-plugin-integration-tests/AGENTS.md)):
   `./gradlew :kotlin-gradle-plugin-integration-tests:kgpNativeTests [--tests "org.jetbrains.kotlin.gradle.native.KotlinNativeLinkIT"]`.

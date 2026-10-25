@@ -1,0 +1,120 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 620" width="1000" height="620" font-family="Helvetica, Arial, sans-serif" font-size="13">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#444"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1000" height="620" fill="#ffffff"/>
+  <text x="500" y="24" text-anchor="middle" font-size="15" font-weight="bold" fill="#111">Objective-C objects seen from Kotlin: the two run-time shapes (ObjCInterop.mm, ObjCExport.mm, ExtraObjectData.cpp)</text>
+
+  <!-- ===================== Panel A ===================== -->
+  <rect x="12" y="40" width="470" height="562" fill="none" stroke="#444" stroke-dasharray="4 3"/>
+  <text x="247" y="60" text-anchor="middle" font-size="14" font-weight="bold" fill="#111">A. Foreign Objective-C object wrapped by Kotlin</text>
+
+  <!-- ObjC object -->
+  <rect x="30" y="80" width="190" height="110" fill="#fdf1dc" stroke="#444"/>
+  <text x="125" y="100" text-anchor="middle" font-weight="bold" fill="#111">Objective-C object</text>
+  <text x="125" y="118" text-anchor="middle" fill="#111">(instance of a library class,</text>
+  <text x="125" y="134" text-anchor="middle" fill="#111">e.g. NSString, UIView)</text>
+  <text x="125" y="158" text-anchor="middle" fill="#111">NSObject refcount:</text>
+  <text x="125" y="174" text-anchor="middle" fill="#111">+1 held by the Kotlin wrapper</text>
+
+  <!-- Kotlin wrapper -->
+  <rect x="270" y="80" width="200" height="160" fill="#e8eef7" stroke="#444"/>
+  <text x="370" y="100" text-anchor="middle" font-weight="bold" fill="#111">Kotlin wrapper object</text>
+  <text x="370" y="118" text-anchor="middle" fill="#111">ObjHeader</text>
+  <text x="370" y="134" text-anchor="middle" font-size="12" fill="#111">typeInfo: Kotlin class of the ObjC</text>
+  <text x="370" y="150" text-anchor="middle" font-size="12" fill="#111">class (getOrCreateTypeInfo)</text>
+  <rect x="282" y="166" width="176" height="60" fill="#f0f0f0" stroke="#444"/>
+  <text x="370" y="184" text-anchor="middle" font-weight="bold" fill="#111">ExtraObjectData</text>
+  <text x="370" y="200" text-anchor="middle" font-size="12" fill="#111">associatedObject_ =</text>
+  <text x="370" y="216" text-anchor="middle" font-size="12" fill="#111">retained id of the ObjC object</text>
+
+  <!-- arrow wrapper -> objc -->
+  <line x1="282" y1="196" x2="222" y2="140" stroke="#444" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- flows -->
+  <rect x="30" y="258" width="440" height="330" fill="#f0f0f0" stroke="#444"/>
+  <g font-size="12">
+  <text x="40" y="278" font-weight="bold" fill="#111">ObjC to Kotlin (argument or result of a bridge)</text>
+  <text x="40" y="296" fill="#111">interpretObjCPointerOrNull(ptr)  =  Kotlin_Interop_refFromObjC</text>
+  <text x="40" y="312" fill="#111">   -&gt; objc_msgSend(ptr, toKotlin:)</text>
+  <text x="40" y="328" fill="#111">        (NSObject category NSObjectToKotlin, ObjCExportClasses.mm)</text>
+  <text x="40" y="344" fill="#111">   -&gt; Kotlin_ObjCExport_convertUnmappedObjCObject</text>
+  <text x="40" y="360" fill="#111">   -&gt; AllocInstanceWithAssociatedObject(typeInfo, objc_retain(ptr))</text>
+
+  <text x="40" y="388" font-weight="bold" fill="#111">Kotlin to ObjC (argument of a bridge)</text>
+  <text x="40" y="406" fill="#111">obj.objcPtr()  =  Kotlin_Interop_refToObjC</text>
+  <text x="40" y="422" fill="#111">   -&gt; GetAssociatedObject(obj), unretained</text>
+  <text x="40" y="438" fill="#111">CBridgeGen ObjCReferenceValuePassing adds objc_retain only</text>
+  <text x="40" y="454" fill="#111">   for consumed parameters (isObjCConsumed)</text>
+
+  <text x="40" y="482" font-weight="bold" fill="#111">Wrapper is swept by the GC</text>
+  <text x="40" y="500" fill="#111">ExtraObjectData::Uninstall  -&gt;  ReleaseAssociatedObject</text>
+  <text x="40" y="516" fill="#111">   -&gt; Kotlin_ObjCExport_releaseAssociatedObject (Native state)</text>
+  <text x="40" y="532" fill="#111">   -&gt; objc_msgSend(id, releaseAsAssociatedObject)  =  objc_release</text>
+
+  <text x="40" y="560" fill="#111">Every conversion allocates a new wrapper: a foreign object has</text>
+  <text x="40" y="576" fill="#111">no back pointer to a Kotlin wrapper.</text>
+  </g>
+
+  <!-- ===================== Panel B ===================== -->
+  <rect x="500" y="40" width="488" height="562" fill="none" stroke="#444" stroke-dasharray="4 3"/>
+  <text x="744" y="60" text-anchor="middle" font-size="14" font-weight="bold" fill="#111">B. Kotlin subclass of an Objective-C class (class MyView : UIView())</text>
+
+  <!-- ObjC instance -->
+  <rect x="516" y="80" width="210" height="160" fill="#fdf1dc" stroke="#444"/>
+  <text x="621" y="100" text-anchor="middle" font-weight="bold" fill="#111">Objective-C instance</text>
+  <text x="621" y="118" text-anchor="middle" font-size="12" fill="#111">isa: class registered at run time</text>
+  <text x="621" y="134" text-anchor="middle" font-size="12" fill="#111">by CreateKotlinObjCClass from</text>
+  <text x="621" y="150" text-anchor="middle" font-size="12" fill="#111">the KotlinObjCClassInfo record</text>
+  <text x="621" y="166" text-anchor="middle" font-size="12" fill="#111">(superclass ivars ...)</text>
+  <rect x="528" y="178" width="186" height="50" fill="#f0f0f0" stroke="#444"/>
+  <text x="621" y="196" text-anchor="middle" font-weight="bold" fill="#111">ivar kotlinBody</text>
+  <text x="621" y="212" text-anchor="middle" font-size="12" fill="#111">ObjCBackRef (at bodyOffset)</text>
+
+  <!-- ExternalRCRefImpl -->
+  <rect x="516" y="272" width="210" height="76" fill="#f0f0f0" stroke="#444"/>
+  <text x="621" y="292" text-anchor="middle" font-weight="bold" fill="#111">ExternalRCRefImpl</text>
+  <text x="621" y="310" text-anchor="middle" font-size="12" fill="#111">obj_: the Kotlin object</text>
+  <text x="621" y="326" text-anchor="middle" font-size="12" fill="#111">rc_: ObjC-side references</text>
+  <text x="621" y="342" text-anchor="middle" font-size="12" fill="#111">rc_ &gt; 0  =&gt;  obj_ is a GC root</text>
+
+  <!-- Kotlin object -->
+  <rect x="770" y="80" width="204" height="160" fill="#e8eef7" stroke="#444"/>
+  <text x="872" y="100" text-anchor="middle" font-weight="bold" fill="#111">Kotlin object</text>
+  <text x="872" y="118" text-anchor="middle" font-size="12" fill="#111">ObjHeader + Kotlin fields</text>
+  <text x="872" y="134" text-anchor="middle" font-size="12" fill="#111">typeInfo: copy with the ObjC class</text>
+  <text x="872" y="150" text-anchor="middle" font-size="11" fill="#111">(createTypeInfoWithKotlinFieldsFrom)</text>
+  <rect x="782" y="166" width="180" height="60" fill="#f0f0f0" stroke="#444"/>
+  <text x="872" y="184" text-anchor="middle" font-weight="bold" fill="#111">ExtraObjectData</text>
+  <text x="872" y="200" text-anchor="middle" font-size="12" fill="#111">associatedObject_ =</text>
+  <text x="872" y="216" text-anchor="middle" font-size="12" fill="#111">the ObjC instance (alloc's +1)</text>
+
+  <!-- arrows -->
+  <line x1="621" y1="228" x2="621" y2="270" stroke="#444" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="628" y="254" font-size="11" fill="#111">raw_</text>
+  <line x1="726" y1="310" x2="872" y2="242" stroke="#444" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="810" y="285" font-size="11" fill="#111">obj_</text>
+  <line x1="782" y1="196" x2="728" y2="196" stroke="#444" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="755" y="188" text-anchor="middle" font-size="11" fill="#111">id</text>
+
+  <!-- flows -->
+  <rect x="516" y="364" width="458" height="232" fill="#f0f0f0" stroke="#444"/>
+  <g font-size="12">
+  <text x="526" y="384" font-weight="bold" fill="#111">NSObject overrides installed by CreateKotlinObjCClass</text>
+  <text x="526" y="402" fill="#111">+allocWithZone:  [super allocWithZone:], then</text>
+  <text x="526" y="418" fill="#111">     AllocInstanceWithAssociatedObject(typeInfo, obj) and</text>
+  <text x="526" y="434" fill="#111">     ObjCBackRef(kotlinObj) placed in kotlinBody (rc_ = 1)</text>
+  <text x="526" y="450" fill="#111">retain / release / _tryRetain:  ObjCBackRef.retain() /</text>
+  <text x="526" y="466" fill="#111">     release() / tryRetain()  (rc_, not the NSObject refcount)</text>
+  <text x="526" y="482" fill="#111">toKotlin:  ObjCBackRef.ref()  (Kotlin_Interop_refFromObjC)</text>
+  <text x="526" y="498" fill="#111">releaseAsAssociatedObject:  [super release]</text>
+  <text x="526" y="514" fill="#111">     (sent when the GC sweeps the Kotlin object)</text>
+  <text x="526" y="530" fill="#111">dealloc:  ObjCBackRef destroyed, then [super dealloc]</text>
+
+  <text x="526" y="556" fill="#111">Kotlin methods: @ObjCAction / @ObjCOutlet IMPs and @ObjCOverrideInit</text>
+  <text x="526" y="572" fill="#111">(InteropLowering), listed in KotlinObjCClassInfo.instanceMethods /</text>
+  <text x="526" y="586" fill="#111">classMethods (KotlinObjCClassInfoGenerator.kt).</text>
+  </g>
+</svg>

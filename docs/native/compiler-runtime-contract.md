@@ -59,6 +59,25 @@ self-pointer) and an `ExtraObjectData`, whose first field is a `const TypeInfo*`
 The meta-object is installed lazily (`ObjHeader::createMetaObject`, [mm/Memory.cpp]) for weak references, ObjC associated
 objects and flags; the read is deliberately relaxed, see the long comment on `type_info()`.
 
+The byte layout of a heap object and a heap array, including the allocator's `GC::ObjectData` word in front of the header,
+and the two structures the header word can point to, with offsets measured by `offsetof` on an LP64 build of [Memory.h],
+[KObject.hpp], [HeapObject.hpp] and [ExtraObjectData.hpp] (this is the canonical drawing; [allocator.md](allocator.md) and
+[gc.md](gc.md) link here):
+
+![Heap object and array blocks, the tagged header word and its two pointees](imgs/contract-object-layout.svg)
+
+The header word bit by bit (`ObjectTag` in [Memory.h]; `permanentTag`/`immTypeInfoMask` on the compiler side):
+
+```
+ObjHeader::typeInfoOrMeta_                                    bit 1 0
++--------------------------------------------------------------+-+-+
+| TypeInfo* or ExtraObjectData*, 8-byte aligned so bits 1..0   |t|t|
+| are free                                                     | | |
++--------------------------------------------------------------+-+-+
+tag 00 OBJECT_TAG_HEAP   01 OBJECT_TAG_PERMANENT   11 OBJECT_TAG_STACK
+    (10 is unused)        OBJECT_TAG_MASK = 3; heap()/permanent()/stack() compare the two bits
+```
+
 Compiler side:
 - The tag constants are duplicated: `permanentTag` in [KotlinStaticData.kt] (constant objects), `immTypeInfoMask` and
   `setTypeInfoForStackObject` (`| 3`) in [CodeGenerator.kt]. Generated code reads the `TypeInfo` of an object only through
@@ -89,7 +108,7 @@ runtime gtests) and `createTypeInfo` in [ObjCExport.mm], which builds `TypeInfo`
 | Field                                    | Written by the compiler                                                   | Read by the runtime                          |
 |------------------------------------------|---------------------------------------------------------------------------|----------------------------------------------|
 | `typeInfo_`                              | self pointer                                                              | `ObjHeader::type_info`, `AsMetaObject`       |
-| `extendedInfo_`                          | field names/offsets/types, only in non-optimized builds (`makeExtendedInfo`) | debugger (`debug.bc`), `IsLayoutCompatible` |
+| `extendedInfo_`                          | field names/offsets/types, only in non-optimized builds (`makeExtendedInfo`) | debugger (`debug.bc`, [debug-info.md](debug-info.md)), `IsLayoutCompatible` |
 | `instanceSize_`, `instanceAlignment_`    | see above                                                                 | allocator ([KObject.hpp], [CustomAllocator.cpp]) |
 | `superType_`                             | `Any` for arrays and Kotlin ObjC classes; null for `Any`                  | `IsSubtype` walks the chain ([Types.cpp])    |
 | `objOffsets_`, `objOffsetsCount_`        | reference field offsets                                                   | marking, `IsLayoutCompatible`                |
@@ -102,10 +121,32 @@ runtime gtests) and `createTypeInfo` in [ObjCExport.mm], which builds `TypeInfo`
 | `processObjectInMark`                    | one of three runtime functions                                            | GC mark                                      |
 | vtable                                   | `ConstArray` appended right after the struct (`llvm.struct(typeInfo, vtable)`) | `TypeInfo::vtable()` = `this + 1`       |
 
+The same struct with byte offsets, the positional index each field has in `RTTIGenerator.TypeInfo` (which is what the
+`structGep` literals in [CodeGenerator.kt] index) and the `InterfaceTableRecord` it points to, measured with `offsetof` on an
+LP64 build of [TypeInfo.h] with `KONAN_TYPE_INFO_HAS_WRITABLE_PART = 1` (the only configuration: `Common.h` defines it
+unconditionally):
+
+![TypeInfo field offsets, RTTIGenerator indices, runtime readers and InterfaceTableRecord](imgs/contract-typeinfo-layout.svg)
+
 Flags: `Konan_TypeFlags` in `TypeInfo.h` vs the `TF_*` constants at the bottom of `RTTIGenerator.kt`. They have drifted:
 the compiler defines `TF_LEAK_DETECTOR_CANDIDATE = 16` and `TF_HAS_FREEZE_HOOK = 128`, both unused, while the runtime uses
 bit 16 for `TF_KOTLIN_OBJC_CLASS` (set only by `createTypeInfo` in `ObjCExport.mm`). `Konan_RuntimeType` (`RT_*`) is
-mirrored by `primitiveRuntimeTypeMap`.
+mirrored by `primitiveRuntimeTypeMap`. Bit by bit (`Konan_TypeFlags` in [TypeInfo.h], `private const val TF_*` in
+[RTTIGenerator.kt]):
+
+```
+TypeInfo::flags_ (int32)   runtime (TypeInfo.h)            compiler (RTTIGenerator.kt)
+bit 0   1 << 0             TF_IMMUTABLE                    TF_IMMUTABLE = 1
+bit 1   1 << 1             TF_ACYCLIC                      TF_ACYCLIC = 2
+bit 2   1 << 2             TF_INTERFACE                    TF_INTERFACE = 4
+bit 3   1 << 3             TF_OBJC_DYNAMIC                 TF_OBJC_DYNAMIC = 8
+bit 4   1 << 4             TF_KOTLIN_OBJC_CLASS (runtime)  TF_LEAK_DETECTOR_CANDIDATE = 16 (unused)   <- same bit
+bit 5   1 << 5             TF_SUSPEND_FUNCTION             TF_SUSPEND_FUNCTION = 32
+bit 6   1 << 6             TF_HAS_FINALIZER                TF_HAS_FINALIZER = 64
+bit 7   1 << 7             -                               TF_HAS_FREEZE_HOOK = 128 (unused)
+bit 8   1 << 8             TF_REFLECTION_SHOW_PKG_NAME     TF_REFLECTION_SHOW_PKG_NAME = 256
+bit 9   1 << 9             TF_REFLECTION_SHOW_REL_NAME     TF_REFLECTION_SHOW_REL_NAME = 512
+```
 
 Virtual dispatch (`VirtualTablesLookup.getVirtualImpl`, [CodeGenerator.kt]): class methods load `vtable[index]` with the
 index from `ClassLayoutBuilder.vtableEntries` (inherited slots first, new slots sorted by mangled name). Interface methods
@@ -144,12 +185,14 @@ Direction runtime → Kotlin: `Exceptions.h` declares `ThrowNullPointerException
 | `@GCUnsafeCall(callee)`                | Same resolution as `@SymbolName` (runtime-implemented intrinsic); the callee is responsible for GC safety     |
 | `@ForceNativeThreadState`, `-Xbinary=forceNativeThreadStateForFunctions` | Switch to Native around the direct call and force a filtering exception handler ([IrToBitcode.kt] `call`), for blocking `@SymbolName` functions |
 | `@FilterExceptions(mode)`              | Install `filteringExceptionHandler`: foreign C++/ObjC exceptions terminate (default) or are wrapped (`objc_wrap`) |
-| `@TypedIntrinsic(kind)`                | [IntrinsicGenerator.kt] emits LLVM instead of a call; kinds in [Intrinsics.kt]                               |
-| `@ExportForCompiler`                   | Marks declarations the compiler looks up by name (e.g. `KClassImpl`, `createCleaner`); no backend consumer of the annotation itself was found, see Open questions |
+| `@TypedIntrinsic(kind)`                | [IntrinsicGenerator.kt] emits LLVM instead of a call (or a lowering consumes it first); kinds in the `IntrinsicType` enum, [IntrinsicType.kt] (`native/base`), matched by name against the stdlib's copy. Full catalogue: [intrinsics.md](intrinsics.md) |
+| `@ExportForCompiler`                   | Marks declarations the compiler looks up by name (e.g. `KClassImpl`, `createCleaner`). Consumers: `ANNOTATIONS_TO_TREAT_AS_EXPORTED` in [KonanMangler.kt] makes `KonanBinaryInterface.isExported` true (public symbol; `FunctionSymbol.Public`/exported `External` root for DCE and devirtualization, [DataFlowIR.kt]), and `hasExportForCompilerAnnotation.kt` in the Analysis-API ObjC export (`translateToObjCConstructor.kt`) keeps such constructors out of headers |
 | `@Escapes(mask)`, `@Escapes.Nothing`, `@PointsTo(...)` | Escape analysis summaries for `external fun` with object parameters ([EscapeAnalysis.kt] `fromAnnotations`); the first stage checks every stdlib `external fun` has one ([EscapeAnalysisChecker.kt]) |
 | `@HasFinalizer`                        | `TF_HAS_FINALIZER` ([IrUtils.kt] `hasFinalizer`); runtime queues such objects for finalization ([FinalizerHooks.cpp]) |
 | `@NoReorderFields`                     | Keep declaration order of fields (used for classes the runtime reads field-by-field)                        |
 | `@ExportedBridge`, `@ImportedBridge`   | Swift export bridges: C→Kotlin bridges get runtime init + `Runnable` switch; Kotlin→C bridges switch to Native |
+
+Every annotation above, plus the ones only the lowerings read, is described with its consumer in [intrinsics.md](intrinsics.md).
 
 ## Thread states and safepoints
 
@@ -175,14 +218,33 @@ stubs), `@ImportedBridge` and `@ForceNativeThreadState` get `switchThreadState(N
 exception landing pad for such a call also switches back (`gxxLandingpad(switchThreadState = true)`), which is why a
 state switch without a filtering handler is rejected with a `check`. In non-optimized builds the `_debug` no-inline
 variants are used (KT-67567, [ContextUtils.kt]). Functions generated with `generateFunctionNoRuntime` (global ctors) may
-not touch the runtime at all (`forbidRuntime`). The `RemoveRedundantSafepoints` LLVM pass ([RemoveRedundantSafepoints.cpp])
-later drops prologue safepoints made redundant by inlining. `-Xbinary=checkStateAtExternalCalls=true` links
+not touch the runtime at all (`forbidRuntime`). The `RemoveRedundantSafepoints` LLVM pass ([RemoveRedundantSafepoints.cpp],
+`kotlin-remove-sp`) later drops prologue safepoints made redundant by inlining; it matches `Kotlin_mm_safePointFunctionPrologue`
+by name, and `PERFORMANCE_INLINE` runtime functions become `alwaysinline` only when `inlineForPerformance` holds — both in
+[llvm-passes.md](llvm-passes.md#the-custom-passes). `-Xbinary=checkStateAtExternalCalls=true` links
 `impl_externalCallsChecker.bc` ([CompilerOutput.kt]) and the `CallsChecker` pass in libllvmext instruments every call to a
 function not defined in the module; see the README for the algorithm and the `GoodFunctionNames` allowlist.
 
 Rules: a runtime function called from generated code runs in Runnable and must switch itself (`ThreadStateGuard`,
 `CallWithThreadState`) before blocking; a `@SymbolName` callee is in Runnable too; C++ code called from arbitrary threads
 uses `CalledFromNativeGuard` to attach and become Runnable before touching objects ([Memory.h]).
+
+What a generated function emits around the three kinds of call, from `FunctionGenerationContext.epilogue()` and
+`switchThreadState` in [CodeGenerator.kt] and `call(function, llvmCallable, …)` in [IrToBitcode.kt] (the runtime side of each
+switch is `Kotlin_mm_switchThreadState*` in [mm/Memory.cpp]):
+
+```mermaid
+flowchart TD
+    P["prologue (kRunnable): [initRuntimeIfNeeded, switchThreadStateRunnable if a C-to-Kotlin bridge]<br/>EnterFrame(slots, skipSlots, slotCount); Kotlin_mm_safePointFunctionPrologue()"] --> K{"callee kind"}
+    K -->|"Kotlin function, runtime entry point,<br/>@SymbolName or @GCUnsafeCall external"| R["plain call, thread stays kRunnable;<br/>a blocking callee must switch itself (ThreadStateGuard)"]
+    K -->|"KOTLIN_TO_C_BRIDGE, @ImportedBridge,<br/>@ForceNativeThreadState or forceNativeThreadStateForFunctions"| N1["Kotlin_mm_switchThreadStateNative()<br/>(requires a filteringExceptionHandler, checked)"]
+    N1 --> X["external call in kNative: the GC runs freely, the callee must not touch Kotlin objects"]
+    X -->|"normal return"| N2["Kotlin_mm_switchThreadStateRunnable()<br/>(this switch is itself a safepoint)"]
+    X -->|"foreign exception"| LP["gxxLandingpad(switchThreadState = true): back to kRunnable,<br/>then terminate or wrap as ForeignException (OBJC_WRAP)"]
+    R --> E["epilogue: UpdateReturnRef(returnSlot); LeaveFrame<br/>[switchThreadStateNative if a C-to-Kotlin bridge]"]
+    N2 --> E
+    LP --> E
+```
 
 ## GC roots from generated code
 
@@ -206,6 +268,14 @@ uses `CalledFromNativeGuard` to attach and become Runnable before touching objec
   objects never reference stack objects ([MarkAndSweepUtils.hpp]) and that no `ExternalRCRef` points to one
   ([ExternalRCRef.cpp]); `ShadowStack.hpp` still carries a TODO about stack objects.
 - **Exceptions in flight** are roots through `ExceptionObjHolderImpl`'s `OwningExternalRCRef` ([ExceptionObjHolder.cpp]).
+- **Suspended coroutines** are not roots: their live locals are spilled into the heap-allocated coroutine object before the
+  frame is left ([coroutines.md](coroutines.md#what-the-gc-sees-during-a-suspension)).
+
+How a codegen frame, a C++ `ObjHolder` and the GC's `ShadowStack::Iterator` share one layout, from `FrameOverlay`/`ObjHolder`
+in [Memory.h], `EnterFrame`/`LeaveFrame`/`Iterator::begin()`/`end()` in [ShadowStack.hpp] and `frameOverlaySlotCount`/`slotCount`
+in [CodeGenerator.kt] (`count` always includes the two overlay words; `parameters` slots are skipped by the iterator):
+
+![Shadow stack frames: overlay words, skipped and scanned slots, the previous chain, ObjHolder](imgs/contract-shadow-stack.svg)
 
 ## Allocation, initialization, exceptions, lifecycle
 
@@ -226,7 +296,8 @@ uses `CalledFromNativeGuard` to attach and become Runnable before touching objec
   checks on the extracted object ([IrToBitcode.kt] `CatchingScope`). Foreign exceptions reaching a
   `filteringExceptionHandler` either terminate or, on Apple targets with `OBJC_WRAP`, become a Kotlin
   `ForeignException` via `createForeignException`. Unhandled Kotlin exceptions reach the runtime terminate handler
-  installed by `SetKonanTerminateHandler`, which calls the Kotlin hook (`Kotlin_runUnhandledExceptionHook`).
+  installed by `SetKonanTerminateHandler`, which calls the Kotlin hook (`Kotlin_runUnhandledExceptionHook`). The whole path,
+  including `SetCurrentFrame` in landing pads and the stack-trace format, is in [exceptions.md](exceptions.md).
 - **Finalizers / Cleaner:** `TF_HAS_FINALIZER` from `@HasFinalizer` tells the allocator to queue the object
   ([FinalizerHooks.cpp], [CustomAllocator.cpp]); `createCleaner` in [Cleaner.kt] is `@ExportForCompiler`. Details in
   [runtime.md](runtime.md).
@@ -249,7 +320,9 @@ Examples of the first kind: `Kotlin_runtimeAssertsMode` (`-Xbinary=runtimeAssert
 comments: `RuntimeAssertsMode`, `AppStateTracking`, and `LoggingLevel`/`LoggingTag` in [RuntimeLogging.kt] vs
 [Logging.hpp]. The runtime gtests define their own values in [CompilerGenerated.cpp] (asserts = panic), so a new constant
 must be added there too. The only environment override found in the runtime is `KOTLIN_NATIVE_AVAILABLE_PROCESSORS`
-([Runtime.cpp]); runtime options are otherwise compile-time.
+([Runtime.cpp]); runtime options are otherwise compile-time. The `constants` module is linked only into the LLVM module that
+defines the stdlib's `Runtime.kt`, and it is at `LinkBitcodeDependencies` that the runtime's `if (kotlin::compiler::…())` checks
+become foldable ([llvm-passes.md](llvm-passes.md#lto-linking-and-what-the-pipeline-can-and-cannot-see)).
 
 ## Changes come in pairs
 
@@ -312,14 +385,12 @@ leak-checker binary option exists; `GC.detectCycles` is a stub returning `null` 
 
 ## Open questions
 
-- Who consumes `@ExportForCompiler`? No backend code reads `RuntimeNames`/`KonanFqNames` for it; it may only document
-  "looked up by name" declarations. Unverified.
 - `TF_LEAK_DETECTOR_CANDIDATE` and `TF_HAS_FREEZE_HOOK` in `RTTIGenerator.kt` have no runtime counterpart; are they
   dead, and is reusing bit 16 for `TF_KOTLIN_OBJC_CLASS` intentional?
 - The `ShadowStack.hpp` TODO says stack-allocated objects are "currently incompatible"; the codegen stores them into
   root slots, so the GC sees them as ordinary roots. Hypothesis: the TODO is stale; not verified against each GC.
 - `ExtendedTypeInfo` is emitted only when not optimizing (`makeExtendedInfo` has a "shall we actually do that?" TODO);
-  the exact consumers besides `debug.bc` were not traced.
+  its consumers (`Konan_Debug*` in `debug.bc`, read by `konan_lldb.py`) are traced in [debug-info.md](debug-info.md#step-7--what-the-runtime-contributes-extendedtypeinfo-and-debugbc).
 - `Kotlin_ObjCExport_*` and the ObjC part of the interface ([CompilerObjCInterface.mm]) are not covered here; see
   [export.md](export.md).
 - Whether `SlotType.ARENA`/`PARAM_IF_ARENA` lifetimes still produce distinct code (comments mention a removed arena) was
@@ -331,6 +402,7 @@ leak-checker binary option exists; `GC.detectCycles` is a stub returning `null` 
 [Alignment.hpp]: ../../kotlin-native/runtime/src/main/cpp/Alignment.hpp
 [KString.h]: ../../kotlin-native/runtime/src/main/cpp/KString.h
 [ExtraObjectData.hpp]: ../../kotlin-native/runtime/src/main/cpp/mm/ExtraObjectData.hpp
+[HeapObject.hpp]: ../../kotlin-native/runtime/src/main/cpp/alloc/HeapObject.hpp
 [mm/Memory.cpp]: ../../kotlin-native/runtime/src/main/cpp/mm/Memory.cpp
 [ThreadState.hpp]: ../../kotlin-native/runtime/src/main/cpp/mm/ThreadState.hpp
 [ThreadSuspension.hpp]: ../../kotlin-native/runtime/src/main/cpp/mm/ThreadSuspension.hpp
@@ -393,7 +465,8 @@ leak-checker binary option exists; `GC.detectCycles` is a stub returning `null` 
 [DataFlowIR.kt]: ../../kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/optimizations/DataFlowIR.kt
 [EscapeAnalysis.kt]: ../../kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/optimizations/EscapeAnalysis.kt
 [BoxCache.kt]: ../../compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/BoxCache.kt
-[Intrinsics.kt]: ../../compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/ir/Intrinsics.kt
+[IntrinsicType.kt]: ../../native/base/src/main/kotlin/org/jetbrains/kotlin/backend/konan/IntrinsicType.kt
+[KonanMangler.kt]: ../../compiler/ir/serialization.native/src/org/jetbrains/kotlin/backend/konan/serialization/KonanMangler.kt
 [EscapeAnalysisChecker.kt]: ../../compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/checkers/EscapeAnalysisChecker.kt
 [RuntimeAssertsMode.kt]: ../../native/binary-options/src/main/kotlin/org/jetbrains/kotlin/config/nativeBinaryOptions/RuntimeAssertsMode.kt
 [K2NativeCompilerArguments.kt]: ../../compiler/cli/cli-base/gen/org/jetbrains/kotlin/cli/common/arguments/K2NativeCompilerArguments.kt

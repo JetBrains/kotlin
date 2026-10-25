@@ -9,7 +9,7 @@ LLVM bridges are kept consistent, how the runtime turns Kotlin objects into ObjC
 
 ## Role and fit
 
-Export is a second-stage concern: it runs inside `NativeCompilerDriver` ([architecture.md](architecture.md#second-stage)) between
+Export is a second-stage concern: it runs inside `NativeCompilerDriver` ([second-stage-pipeline.md](second-stage-pipeline.md)) between
 the K1 "frontend" (descriptors for all klibs) and IR linking, and again at codegen time. It has three layers that must agree:
 
 1. **Interface**: which declarations are visible and under which names (ObjC header; C header with a symbols struct).
@@ -31,7 +31,7 @@ that emits Kotlin bridge code, which the compiler then compiles with a few dedic
 | Type adapter | `ObjCTypeAdapter` constant: per exported class/protocol, the ObjC name, Kotlin `TypeInfo`, vtable/itable copies, and lists of method adapters ([ObjCTypeAdapter.kt][typeadapter], runtime [TypeInfoObjCExportAddition.hpp][tiaddition]). |
 | Direct / virtual / class / reverse adapter | ObjC→Kotlin IMPs for a final or statically resolved method, for a virtual call by selector, for class (static) methods; and Kotlin→ObjC bridges (`kotlin2objc_*`) used when an ObjC/Swift subclass overrides a Kotlin method. |
 | `WritableTypeInfo` | Mutable companion of a class's `TypeInfo` holding `convertToRetained`, the ObjC `Class` and the type adapter ([WritableTypeInfo.kt][wti]). |
-| Associated object | Pointer slot in `ObjHeader` linking a Kotlin object to its ObjC counterpart (wrapper or wrapped ObjC object) ([ObjCExport.h][objcexport-h]). |
+| Associated object | Pointer slot linking a Kotlin object to its ObjC counterpart (wrapper or wrapped ObjC object); accessed through `ObjHeader::GetAssociatedObject` ([ObjCExport.h][objcexport-h]), stored in the object's `ExtraObjectData` (`associatedObject_` in [ExtraObjectData.hpp][extraobjectdata]). |
 | `ExternalRCRef` | Runtime handle with its own refcount; `rc > 0` keeps the Kotlin object in GC roots ([ExternalRCRef.hpp][rcref]). Backs `KotlinBase` wrappers and Swift export. |
 | Symbols struct | C export API: one `<prefix>_ExportedSymbols` struct of function pointers, returned by `<prefix>_symbols()` ([CAdapterApiExporter.kt][capi]). |
 | `kref` / `pinned` | C export's opaque handle: a struct with one `pinned` field holding a stable pointer to a Kotlin object. |
@@ -44,8 +44,8 @@ that emits Kotlin bridge code, which the compiler then compiles with a few dedic
 flowchart LR
     fe[runK1Frontend<br/>descriptors] --> iface[ProduceObjCExportInterfacePhase<br/>header lines + namer + mapper]
     iface --> fw[CreateObjCFrameworkPhase<br/>Headers/, Modules/, Info.plist]
-    iface --> spec[CreateObjCExportCodeSpecPhase<br/>descriptors → IR symbols]
-    link[linkKlibs] --> spec
+    iface --> spec["CreateObjCExportCodeSpecPhase<br/>descriptors → IR symbols"]
+    lk[linkKlibs] --> spec
     spec --> cg[ObjCExportCodeGenerator<br/>adapters, bridges, converters]
     cg --> rt[runtime ObjCExport.mm<br/>patch classes at +initialize]
 ```
@@ -61,6 +61,24 @@ Driver: `produceObjCFramework` in [NativeCompilerDriver.kt][driver]. Steps and t
    (`framework module`, umbrella header, `use Foundation`; [ModuleMapBuilder.kt][modulemap]) and `Info.plist`
    ([InfoPListBuilder.kt][plist]); on macOS it builds the `Versions/A` layout with symlinks. With `-Xomit-framework-binary`
    the driver returns here, so a header-only framework never links IR.
+
+   The resulting bundle, from `FrameworkBuilder.build` and the binary path chosen in `Linker.kt` (`resolveExecutableTarget`):
+
+   ```text
+   iOS / tvOS / watchOS                 macOS
+   Foo.framework/                       Foo.framework/
+   ├── Foo                 (binary)     ├── Versions/
+   ├── Headers/Foo.h                    │   ├── A/
+   ├── Modules/module.modulemap         │   │   ├── Foo             (binary)
+   └── Info.plist                       │   │   ├── Headers/Foo.h
+                                        │   │   ├── Modules/module.modulemap
+                                        │   │   └── Resources/Info.plist
+                                        │   └── Current -> A
+                                        ├── Foo       -> Versions/Current/Foo
+                                        ├── Headers   -> Versions/Current/Headers
+                                        ├── Modules   -> Versions/Current/Modules
+                                        └── Resources -> Versions/Current/Resources
+   ```
 3. **Code spec** ([ObjCExportCodeSpec.kt `createCodeSpec`][codespec]): runs inside `linkKlibs`, because it needs the real
    `SymbolTable`. It walks the *same* `generatedClasses` / `topLevel` / `categoryMembers` and resolves each descriptor to an
    `IrClassSymbol`/`IrFunctionSymbol`, pairing it with the `MethodBridge` and selector from the namer. The result is lists of
@@ -90,8 +108,44 @@ Driver: `produceObjCFramework` in [NativeCompilerDriver.kt][driver]. Steps and t
    `Kotlin_ObjCExport_RethrowExceptionAsNSError` with the array of declared exception `TypeInfo`s (`effectiveThrowsClasses`);
    `suspend` functions get a completion-block parameter turned into a `Continuation` by
    `Kotlin_ObjCExport_createContinuationArgument`, and a non-suspending return resumes it immediately; anything else traps in
-   `Kotlin_ObjCExport_trapOnUndeclaredException`. Blocks ↔ Kotlin functions are handled by [BlockPointerSupport.kt][blocks]
+   `Kotlin_ObjCExport_trapOnUndeclaredException`. The exception side (`ExceptionObjHolder`, `NSError` conversion, undeclared
+   exceptions) is in [exceptions.md](exceptions.md#step-5--the-objcswift-export-bridge); the continuation side in
+   [coroutines.md](coroutines.md#interop-and-export). Blocks ↔ Kotlin functions are handled by [BlockPointerSupport.kt][blocks]
    (`Kotlin_ObjCExport_blockToFunctionConverters`; the block pointer is stored as the Kotlin function's associated object).
+
+   One call from Objective-C or Swift into an exported Kotlin method, as generated by `generateObjCImp` (`objc2kotlin_*`
+   functions, whose prologue switches to Runnable) and served by the runtime in `ObjCExport.mm`:
+
+   ```mermaid
+   sequenceDiagram
+       participant C as ObjC / Swift caller
+       participant R as ObjC runtime
+       participant I as objc2kotlin_* IMP
+       participant RT as Kotlin runtime (ObjCExport.mm)
+       participant K as Kotlin function
+       C->>R: objc_msgSend(obj, selector, args)
+       Note over R: first use of the class: +initialize, Kotlin_ObjCExport_initializeClass adds the IMPs
+       R->>I: IMP(self, _cmd, args)
+       Note over I: static method: initRuntimeIfNeeded. Switch to Runnable
+       I->>RT: Kotlin_ObjCExport_refFromObjC(arg) for each reference argument
+       RT-->>I: [arg toKotlin:] gives the wrapped object or a new wrapper (convertUnmappedObjCObject)
+       I->>K: direct call, virtual trampoline, or constructor on the allocated instance
+       alt returns normally
+           K-->>I: Kotlin result
+           I->>RT: Kotlin_ObjCExport_refToRetainedObjC(result)
+           RT-->>I: associated object, convertToRetained, or a new KotlinBase wrapper
+           I-->>C: switch to Native, autoreleaseAndRet (objc_autoreleaseReturnValue)
+       else throws, method has an NSError** parameter (@Throws)
+           K-->>I: Kotlin exception
+           I->>RT: Kotlin_ObjCExport_RethrowExceptionAsNSError(exception, error, declared TypeInfos)
+           I-->>C: NO or zero (ZeroForError), *error set
+       else throws, suspend method
+           I->>RT: objCExportResumeContinuationWithException
+           I-->>C: void, the completion block receives the error
+       else throws, undeclared
+           I->>RT: Kotlin_ObjCExport_trapOnUndeclaredException, terminate
+       end
+   ```
 
 5. **Runtime** (`kotlin-native/runtime/src/main/cpp/ObjCExport*.mm`, `src/objc/cpp/ObjCExport*.mm`, linked as the `objc.bc`
    module). The ObjC side of every exported Kotlin class is a subclass of `KotlinBase` ([KotlinBase.h][kotlinbase-h],
@@ -116,6 +170,13 @@ sends `releaseAsAssociatedObject` (`Kotlin_ObjCExport_releaseAssociatedObject`).
 (`autoreleaseAndRet`) and release retained arguments after the call. Thread-state rules (bridges switch to Runnable, ObjC runtime
 work happens in Native) are part of the [compiler-runtime contract](compiler-runtime-contract.md); GC roots are in
 [runtime.md](runtime.md).
+
+The structures behind this model and the reference-count lifecycle of a wrapper, from `KotlinBase` in
+[ObjCExportClasses.mm][objcexportclasses], the conversions in [ObjCExport.mm][objcexport-mm],
+[ObjCBackRef.hpp][objcbackref] / [ExternalRCRef.hpp][rcref] and `ExtraObjectData::ReleaseAssociatedObject` in
+[ExtraObjectData.cpp][extraobjectdata-cpp]:
+
+![KotlinBase wrapper, ExternalRCRef and Kotlin object with the associated-object slot, and the rc lifecycle from creation to dealloc](imgs/export-objc-lifetime.svg)
 
 ### What is exported, and names
 
@@ -152,6 +213,30 @@ Driver: `produceCLibrary` in [NativeCompilerDriver.kt][driver]. `cInterfaceGener
 ([NativeSecondStageCompilationConfig.kt][config], `-Xbinary=cInterfaceMode=V1|NONE`) defaults to `V1` for these output kinds;
 `NONE` builds a plain library without a C API.
 
+The C-library path, from `produceCLibrary` in [NativeCompilerDriver.kt][driver], the phases in
+[driver/phases/CExport.kt][cexport-phases], [CAdapterApiExporter.kt][capi], [CAdapterCompile.kt][ccompile] and
+[CAdapterCodegen.kt][ccodegen]:
+
+```mermaid
+flowchart TD
+    fe["runK1Frontend: descriptors for all klibs"] --> mode{"cInterfaceMode"}
+    mode -->|"NONE"| plain["plain static or dynamic library, no C API"]
+    mode -->|"V1 (default)"| disc{"cExportUseIrDiscovery"}
+    disc -->|"false (default)"| k1["BuildCExports, inside linkKlibs:<br/>CAdapterGenerator over descriptors"]
+    disc -->|"true"| ir["BuildCExportsFromIr, after linkKlibs:<br/>CAdapterIrGenerator over the exported IR modules"]
+    k1 --> model["CAdapterExportedElements<br/>(CExportModel: scopes and elements)"]
+    ir --> model
+    model --> api["CExportGenerateApiPhase:<br/>CAdapterApiExporter.makeGlobalStruct"]
+    api --> hdr["name_api.h: typedefs, kref structs,<br/>name_ExportedSymbols struct, name_symbols()"]
+    api --> cpp["C++ adapter file: static wrappers that enter<br/>the runtime and call _konan_function_N<br/>(plus a .def file on MinGW)"]
+    cpp --> clangp["CExportCompileAdapterPhase:<br/>clang++ -std=c++17 -emit-llvm"]
+    clangp --> bc["adapter bitcode in generatedBitcodeFiles"]
+    model --> cg["CAdapterCodegen in visitModuleFragment:<br/>_konan_function_N, _type and _instance definitions"]
+    bc --> lnk["linkBitcodeDependencies, LLVM module,<br/>object file, platform linker"]
+    cg --> lnk
+    lnk --> out["libname.so / .dylib / .dll or libname.a,<br/>shipped with name_api.h"]
+```
+
 1. **Model.** Either [BuildCExports][cexport-phases] (default; K1 descriptors, inside `linkKlibs`,
    [CAdapterGenerator.kt][cgen]) or, with `-Xbinary=cExportUseIrDiscovery=true`, `BuildCExportsFromIr` (after linking, over the
    exported modules in reverse-topological order, [CAdapterIrGenerator.kt][cirgen]). Both produce the same
@@ -185,7 +270,9 @@ cannot subclass Kotlin) and no ObjC-style identity: each returned handle is a ne
 
 Swift export lives in `native/swift` and generates Swift sources plus Kotlin bridge functions annotated
 `@ExportedBridge(bridgeName, nonVirtualTargetMethod)` ([Annotations.kt][internal-annotations]); see
-[compiler-bridges.md](../swift-export/compiler-bridges.md). The compiler's support consists of:
+[compiler-bridges.md](../swift-export/compiler-bridges.md) and, for how `@ExportedBridge`, `@ImportedBridge` and
+`@ExportForCompiler` fit among the other backend annotations, [intrinsics.md](intrinsics.md#interop-and-export-annotations-listed-only).
+The compiler's support consists of:
 - `@ExportedBridge` functions get the given C symbol name ([BinaryInterface.kt `funSymbolNameImpl`][binaryinterface]), are
   `EXPLICITLY_EXPORTED` roots for DCE/devirtualization ([DataFlowIR.kt][dfg]), are kept via `llvm.used`
   ([RetainAnnotation.kt][retain]) and are generated as C→Kotlin bridges that switch to the Runnable state
@@ -258,7 +345,8 @@ Cross-subsystem impact: adapter and bridge code is emitted per *binary*, not per
 | `unrecognized selector` / crash when calling an exported method | Header and spec disagree (see invariants); `Kotlin_ObjCExport_initializeClass` not run (`+initialize` order, KT-50982); with caches, `Kotlin_ObjCExport_initTypeAdapters` path. Dump LLVM IR after `CStubs`/`Codegen` and grep `objc2kotlin_`/`kotlin2objc_`. |
 | Override in Swift subclass not called from Kotlin | Reverse adapters: `createReverseAdapters` (selector ambiguity marks `-2`, non-overridable `-1`), runtime `createTypeInfo`/`throwIfCantBeOverridden`. |
 | Leak or over-release across the boundary | `Kotlin_ObjCExport_refToObjCImpl<retain>`, `autoreleaseAndRet`, `objCReferenceArgsToRelease` in `generateKotlinToObjCBridge`; `KotlinBase retain/release/releaseAsAssociatedObject`; `ExternalRCRef` refcount; `-Xbinary=objcDisposeWithRunLoop`. |
-| Exception not turned into `NSError` | Method needs `@Throws` (or is `suspend`); `effectiveThrowsClasses`; `Kotlin_ObjCExport_RethrowExceptionAsNSError`/`ExceptionAsNSError` in `ObjCExportErrors.mm` (undeclared types trap). |
+| Exception not turned into `NSError` | Method needs `@Throws` (or is `suspend`); `effectiveThrowsClasses`; `Kotlin_ObjCExport_RethrowExceptionAsNSError`/`ExceptionAsNSError` in `ObjCExportErrors.mm` (undeclared types trap). Full flow in [exceptions.md](exceptions.md#step-5--the-objcswift-export-bridge). |
+| Stepping from Swift into Kotlin stops in `objc2kotlin_*` / no Kotlin frames in the dSYM | Bridges are `<compiler-generated>` and skipped by the LLDB stop hook; see [debug-info.md](debug-info.md). |
 | `suspend` completion never called / called twice | `MethodBridge.ReturnValue.Suspend` handling in `generateObjCImp`, `ObjCExportCoroutines.kt/.mm`, `objcExportSuspendFunctionLaunchThreadRestriction`. |
 | C export symbol missing or renamed | `isExportedFunction/Class` in `CAdapterGenerator`/`CAdapterIrGenerator`, `scopeUniqueName` mangling, `@CName`; compare `-Xbinary=cExportUseIrDiscovery=true`; check `<name>_api.h` and the generated `.cpp` adapter. |
 | Duplicate symbols linking two static frameworks | KT-42254 hint symbol (`emitKt42254Hint`); caches + static framework. |
@@ -343,6 +431,9 @@ Test generators: `GenerateNativeTests.kt` (`testGroup` for `ObjCExport` and `CEx
 [objcexport-h]: ../../kotlin-native/runtime/src/main/cpp/ObjCExport.h
 [tiaddition]: ../../kotlin-native/runtime/src/main/cpp/TypeInfoObjCExportAddition.hpp
 [rcref]: ../../kotlin-native/runtime/src/main/cpp/ExternalRCRef.hpp
+[objcbackref]: ../../kotlin-native/runtime/src/main/cpp/ObjCBackRef.hpp
+[extraobjectdata]: ../../kotlin-native/runtime/src/main/cpp/mm/ExtraObjectData.hpp
+[extraobjectdata-cpp]: ../../kotlin-native/runtime/src/main/cpp/mm/ExtraObjectData.cpp
 [kotlinbase-h]: ../../kotlin-native/runtime/src/objcExport/cpp/KotlinBase.h
 [objcexportclasses]: ../../kotlin-native/runtime/src/objc/cpp/ObjCExportClasses.mm
 [internal-annotations]: ../../kotlin-native/runtime/src/main/kotlin/kotlin/native/internal/Annotations.kt

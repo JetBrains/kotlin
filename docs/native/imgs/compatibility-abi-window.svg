@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 400" width="960" height="400" font-family="Helvetica, Arial, sans-serif" font-size="13">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#444"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="960" height="400" fill="#ffffff"/>
+  <text x="20" y="26" font-size="15" font-weight="bold" fill="#111">KotlinAbiVersion bumps (KotlinAbiVersionBumpHistory.md) and the window a 2.5 compiler accepts (KlibLoader)</text>
+  <text x="20" y="44" fill="#111" font-size="11">Ticks are evenly spaced, not to scale in time. Dates are the bump commit dates.</text>
+
+  <!-- Regions behind the axis -->
+  <rect x="40" y="70" width="188" height="70" fill="#f7e6e6" stroke="none"/>
+  <rect x="228" y="70" width="588" height="70" fill="#eaf5e6" stroke="none"/>
+  <rect x="816" y="70" width="104" height="70" fill="#f7e6e6" stroke="none"/>
+  <text x="134" y="86" text-anchor="middle" fill="#111" font-size="11">rejected: older than</text>
+  <text x="134" y="99" text-anchor="middle" fill="#111" font-size="11">FIRST_SUPPORTED</text>
+  <text x="522" y="86" text-anchor="middle" fill="#111" font-size="12" font-weight="bold">accepted: FIRST_SUPPORTED 1.6.0 &lt;= abi_version &lt;= CURRENT 2.5.0</text>
+  <text x="522" y="101" text-anchor="middle" fill="#111" font-size="11">minPermittedAbiVersion / maxPermittedAbiVersion in loadNativeKlibs; checked only when the klib hasAbi</text>
+  <text x="868" y="86" text-anchor="middle" fill="#111" font-size="11">rejected: newer</text>
+  <text x="868" y="99" text-anchor="middle" fill="#111" font-size="11">than CURRENT</text>
+
+  <!-- Axis -->
+  <line x1="40" y1="120" x2="930" y2="120" stroke="#444" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Ticks: x = 60 + i*84 -->
+  <g stroke="#444" stroke-width="2">
+    <line x1="60" y1="113" x2="60" y2="127"/>
+    <line x1="144" y1="113" x2="144" y2="127"/>
+    <line x1="228" y1="110" x2="228" y2="130" stroke-width="3"/>
+    <line x1="312" y1="113" x2="312" y2="127"/>
+    <line x1="396" y1="113" x2="396" y2="127"/>
+    <line x1="480" y1="113" x2="480" y2="127"/>
+    <line x1="564" y1="113" x2="564" y2="127"/>
+    <line x1="648" y1="113" x2="648" y2="127"/>
+    <line x1="732" y1="113" x2="732" y2="127"/>
+    <line x1="816" y1="110" x2="816" y2="130" stroke-width="3"/>
+  </g>
+  <g fill="#111" text-anchor="middle" font-size="12" font-weight="bold">
+    <text x="60" y="146">1.4.0</text>
+    <text x="144" y="146">1.5.0</text>
+    <text x="228" y="146">1.6.0</text>
+    <text x="312" y="146">1.7.0</text>
+    <text x="396" y="146">1.8.0</text>
+    <text x="480" y="146">1.201.0</text>
+    <text x="564" y="146">2.2.0</text>
+    <text x="648" y="146">2.3.0</text>
+    <text x="732" y="146">2.4.0</text>
+    <text x="816" y="146">2.5.0</text>
+    <text x="890" y="146">next</text>
+  </g>
+  <g fill="#111" text-anchor="middle" font-size="10">
+    <text x="60" y="160">2020-03</text>
+    <text x="144" y="160">2021-04</text>
+    <text x="228" y="160">2021-05</text>
+    <text x="312" y="160">2022-05</text>
+    <text x="396" y="160">Enum.Entries</text>
+    <text x="480" y="160">2024-07 LLVM</text>
+    <text x="564" y="160">2025-01 new IR</text>
+    <text x="648" y="160">2025-06</text>
+    <text x="732" y="160">2026-01</text>
+    <text x="816" y="160">2026-05</text>
+    <text x="890" y="160">with LV bump</text>
+  </g>
+  <text x="228" y="174" text-anchor="middle" fill="#111" font-size="10">FIRST_SUPPORTED_COMPILER_VERSION = 1.6.0</text>
+  <text x="705" y="174" text-anchor="middle" fill="#111" font-size="10">since 2.2.0: aligned with the Kotlin version, bumped with LATEST_STABLE</text>
+
+  <!-- Lane 2: what this compiler writes -->
+  <text x="20" y="208" font-size="13" font-weight="bold" fill="#111">What this compiler writes into a klib manifest (klibAbiVersionForManifest, KlibAbiCompatibilityLevel)</text>
+  <rect x="748" y="216" width="200" height="54" rx="6" fill="#e8eef7" stroke="#444"/>
+  <text x="848" y="234" text-anchor="middle" fill="#111" font-size="11">default: LATEST_STABLE</text>
+  <text x="848" y="249" text-anchor="middle" fill="#111" font-size="11">= ABI_LEVEL_2_5</text>
+  <text x="848" y="264" text-anchor="middle" fill="#111" font-size="11">abi_version = 2.5.0</text>
+  <line x1="816" y1="216" x2="816" y2="132" stroke="#444" stroke-width="1.5" stroke-dasharray="4 3"/>
+  <rect x="470" y="216" width="230" height="54" rx="6" fill="#fdf1dc" stroke="#444"/>
+  <text x="585" y="234" text-anchor="middle" fill="#111" font-size="11">-language-version 2.4 +</text>
+  <text x="585" y="249" text-anchor="middle" fill="#111" font-size="11">ExportKlibToOlderAbiVersion</text>
+  <text x="585" y="264" text-anchor="middle" fill="#111" font-size="11">= ABI_LEVEL_2_4, abi_version = 2.4.0</text>
+  <line x1="700" y1="243" x2="732" y2="243" stroke="#444" stroke-width="1.5"/>
+  <line x1="732" y1="243" x2="732" y2="132" stroke="#444" stroke-width="1.5" stroke-dasharray="4 3"/>
+
+  <!-- Lane 3: tests -->
+  <text x="20" y="290" font-size="13" font-weight="bold" fill="#111">klib-compatibility tests (native/native.tests/klib-compatibility/build.gradle.kts); versions are compiler releases</text>
+  <rect x="40" y="300" width="560" height="44" rx="6" fill="#f0f0f0" stroke="#444"/>
+  <text x="320" y="318" text-anchor="middle" fill="#111" font-size="11">testCustomFirstStage_{1.9.20, 2.0.0, 2.1.0, 2.2.0, 2.3.0, 2.4.0}: old compiler produces the klib,</text>
+  <text x="320" y="334" text-anchor="middle" fill="#111" font-size="11">this compiler links it (backward compatibility); expected breakages muted per version</text>
+  <line x1="600" y1="322" x2="690" y2="322" stroke="#444" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <rect x="692" y="300" width="248" height="44" rx="6" fill="#f0f0f0" stroke="#444"/>
+  <text x="816" y="318" text-anchor="middle" fill="#111" font-size="11">testCustomSecondStage_2.4.0: this compiler</text>
+  <text x="816" y="334" text-anchor="middle" fill="#111" font-size="11">with +ExportKlibToOlderAbiVersion, 2.4.0 links</text>
+  <text x="20" y="368" fill="#111" font-size="11">Forward export is limited to one language version back (setupCustomLVForKlibForwardCompatibilityTest aborts otherwise).</text>
+  <text x="20" y="384" fill="#111" font-size="11">Inside the window, declaration-level drift is handled by partial linkage, not by the version check.</text>
+</svg>

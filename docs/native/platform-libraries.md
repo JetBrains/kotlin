@@ -139,7 +139,8 @@ other K/N build tasks). What each flag means:
 the snapshot compiler. `kotlin.native.platformLibs.parallel` / `.parallelCaches` serialize the tasks through a shared build service.
 
 **Sysroot and SDK.** The tool and the cache compiler take the target's clang flags, sysroot and SDK version from `konan.properties`
-([konan.properties](../../kotlin-native/konan/konan.properties)): `targetSysRoot.<target>` names a downloadable dependency
+([konan.properties](../../kotlin-native/konan/konan.properties); schema and lookup rules in
+[targets-and-toolchains.md](targets-and-toolchains.md#konanproperties-the-schema)): `targetSysRoot.<target>` names a downloadable dependency
 (`target-sysroot-xcode_<ver>_<build>-<platform>` for Apple, `$gccToolchain…/sysroot` for Linux), `targetToolchain.<host>-<target>`
 the toolchain, `dependencies.*` the extra downloads, all fetched into `~/.konan/dependencies` by `DependencyProcessor`.
 `sdkVersion.<family>`/`minVersion.<family>` are what `-platform_version` gets at link time
@@ -169,6 +170,30 @@ Darwin-built dist's `klib/platform/<apple targets>` into the host dist (`setupMe
 [nativeFullCrossDist.kt](../../kotlin-native/build-tools/src/main/kotlin/org/jetbrains/kotlin/nativeFullCrossDist.kt)); the comment
 notes it is "expected (but not checked in the code)" that both come from the same source revision.
 
+Where all of this lands inside a distribution, with the paths from `NativeLibraryConstants.kt`,
+`KlibNativeDistributionLibraryProvider`, `Distribution.platformDefs`, `systemCacheRootDirectory`/`compilerFingerprint`
+(`DistributionUtils.kt`) and the `cacheFlavor` used by `KonanCacheTask`:
+
+```
+<dist>/
+├── konan/
+│   ├── konan.properties                            cacheableTargets.<host>, sdkVersion.*, targetSysRoot.*, compilerVersion
+│   ├── compiler.fingerprint                        checked by IC cache metadata (caches.md)
+│   └── platformDef/<target>/<name>.def             distDef: the .def sources, used by light distributions
+└── klib/
+    ├── common/stdlib/                              KONAN_DISTRIBUTION_COMMON_LIBS_DIR
+    ├── platform/<target>/                          KONAN_DISTRIBUTION_PLATFORM_LIBS_DIR, scanned by the provider
+    │   ├── org.jetbrains.kotlin.native.platform.posix/        unpacked klib: default/{manifest, linkdata/, targets/<target>/native/*.bc}
+    │   ├── org.jetbrains.kotlin.native.platform.Foundation/
+    │   └── ...                                     only directories starting with KONAN_PLATFORM_LIBS_NAME_PREFIX are loaded
+    └── cache/
+        ├── <target>-gSTATIC-system/                prebuilt debug caches, cacheable targets only
+        │   ├── stdlib-per-file-cache/
+        │   └── org.jetbrains.kotlin.native.platform.posix-cache/{metadata.properties, bin/, ir/}
+        ├── <target>-optSTATIC-system/              prebuilt release caches
+        └── <target>-gSTATIC/                       written by KGP for light distributions (no -system suffix, see open questions)
+```
+
 ## How they are consumed
 
 **Compiler.** `loadNativeKlibs` ([loadNativeKlibs.kt](../../compiler/ir/serialization.native/src/org/jetbrains/kotlin/backend/konan/serialization/loadNativeKlibs.kt))
@@ -186,6 +211,24 @@ with `withPlatformLibs(target)` unless `konanNoDefaultLibs` (`-no-default-libs`,
   ([caches.md](caches.md)).
 - `selectLibrariesEligibleToBeIncludedOrExported` refuses any `isFromKotlinNativeDistribution` library (and any cinterop library) in
   `-Xinclude`/`-Xexport-library`: platform libs can be depended on, never included or exported as a whole.
+
+Discovery and pruning of platform libraries in one second-stage compilation, as implemented in `loadNativeKlibs`,
+`KlibNativeDistributionLibraryProvider`, `filterOutUnusedPlatformLibraryModules` (`linkKlibs.kt`), `CacheBuilder` and
+`DependenciesTracker`:
+
+```mermaid
+flowchart TD
+    HOME["konanHome (or the compiler's own distribution)"] --> PROV["KlibNativeDistributionLibraryProvider.getLibraryPaths<br/>klib/platform/TARGET/org.jetbrains.kotlin.native.platform.* directories, sorted by name<br/>skipped entirely with -no-default-libs"]
+    PROV --> LOAD["KlibLoader: manifest, platform check, ABI window<br/>isFromKotlinNativeDistribution = path under konanHome<br/>isImplicitlyLoadedFromKotlinNativeDistribution = suggested by this provider"]
+    LOAD --> K1["K1 descriptor module per platform klib<br/>(metadata read only)"]
+    K1 --> IRL["IR linkage: KonanInteropModuleDeserializer<br/>builds IR on demand per referenced signature"]
+    IRL --> USED{"any declaration linked<br/>from this module?"}
+    USED -->|"no, and implicitly loaded"| DROP["filterOutUnusedPlatformLibraryModules<br/>module dropped: no bitcode, no linkerOpts"]
+    USED -->|"yes, or passed explicitly with -library"| KEEP["kept in irModules"]
+    KEEP --> CACHE["CacheBuilder: cache expected in<br/>DIST/klib/cache/SYSTEM_FLAVOR/NAME-cache<br/>never auto- or IC-cached"]
+    KEEP --> LINKOPTS["allNativeDependencies: linkerOpts (-framework X, -lz)<br/>and targets/TARGET/native bitcode reach the link"]
+    DROP -. "still resolvable by name via loadedKlibs.all" .-> CBD["CachedBitcodeDependenciesComputer:<br/>a cache's bitcode_deps may still name the dropped library"]
+```
 
 Passing a platform klib explicitly with `-library` is allowed (the `KlibLoader` deduplicates by path) and makes it
 `isExplicitlySpecifiedByUserInCLIArgument`, which forces its bitcode and `linkerOpts` into the link even if unused.
@@ -223,6 +266,27 @@ under an inter-process directory lock. That tool orders `.def`s by `depends`, ru
 `-cache-kind`/`-cache-arg`. **It does not pass `-Xccall-mode indirect`**, so light-distribution platform libs are built in the tool's
 default `both` mode and differ from the shipped ones (verified against the argument list; consequences are an open question below).
 
+The two ways a KGP build ends up with platform klibs and their caches, following `NativeCompilerDownloader` /
+`KotlinNativeBundleBuildService`, `PlatformLibrariesGenerator.generatePlatformLibsIfNeeded` and the
+`generatePlatformLibraries` tool (`GeneratePlatformLibraries.kt`):
+
+```mermaid
+flowchart TD
+    T{"kotlin.native.distribution.type"} -->|"prebuilt (default)"| PRE["kotlin-native-prebuilt-HOST-VERSION downloaded<br/>klib/platform/* and klib/cache/*-system already inside"]
+    T -->|"light"| LIGHT["kotlin-native-HOST-VERSION downloaded<br/>only konan/platformDef/TARGET/*.def shipped"]
+    LIGHT --> GEN["PlatformLibrariesGenerator.generatePlatformLibsIfNeeded<br/>per target, once per Gradle invocation"]
+    GEN --> CHK{"every platformDef/TARGET/*.def has its klib under klib/platform/TARGET?<br/>and, if cacheWorksFor(target) and kind != NONE,<br/>a non-empty klib/cache/TARGET-gKIND/NAME-cache?"}
+    CHK -->|"yes"| READY["nothing to do"]
+    CHK -->|"no"| TOOL["forked JVM: MainKt generatePlatformLibraries -target TARGET<br/>-cache-kind KIND -cache-directory klib/cache/TARGET-gKIND<br/>-cache-arg -g -cache-arg additionalCacheFlags.TARGET<br/>under KotlinInterprocessDirectoryLock(klib/platform/TARGET)"]
+    TOOL --> STD["buildStdlibCache first"]
+    STD --> TOPO["parse the depends = lines, topoSort, thread pool"]
+    TOPO --> CI["per .def: cinterop -no-default-libs -nopack -Xdisable-experimental-annotation<br/>-Xshort-module-name NAME -l DEP... (no -Xccall-mode: tool default both)"]
+    CI --> CC["per .def: konanc -p KIND -Xadd-cache=klib -Xcache-directory=... cache-args"]
+    CC --> DONE["klib/platform/TARGET/org...platform.NAME<br/>klib/cache/TARGET-gKIND/NAME-cache"]
+    PRE --> USE["compiler loads klib/platform/TARGET implicitly<br/>caches looked up under systemCacheFlavorString"]
+    DONE --> USE
+```
+
 **How KGP passes them to the compiler.** `SetupKotlinNativePlatformDependenciesAndStdlib`
 ([SetupKotlinNativePlatformDependenciesAndStdlib.kt](../../libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/targets/native/internal/SetupKotlinNativePlatformDependenciesAndStdlib.kt))
 adds the stdlib and, per compilation, the target's `klib/platform/<target>/*` (leaf targets) or the commonized klibs (shared targets)
@@ -242,6 +306,8 @@ commonizes the platform libs of every `SharedCommonizerTarget` in the project in
 and requires a `metadataVersion` in every manifest. Note that this is unconditional for platform libs; the
 `kotlin.mpp.enableCInteropCommonization` property gates only *user* cinterop commonization (`CInteropCommonizerTask`). Targets whose
 `klib/platform/<target>` is missing on the host are skipped with a warning ([commonizer README](../../native/commonizer/README.md)).
+The algorithm, the cache layout and the "commonized output changes whenever a platform library changes" contract are in
+[commonizer.md](commonizer.md).
 
 **IDE.** The IDE does not scan the distribution; KGP's IDE import resolvers hand it the files:
 [IdeNativePlatformDependencyResolver.kt](../../libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/plugin/ide/dependencyResolvers/IdeNativePlatformDependencyResolver.kt)
@@ -255,7 +321,8 @@ distribution provider (grep: only `native/utils`, the commonizer, the cinterop t
 - `// WITH_PLATFORM_LIBS` ([TestDirectives.kt](../../native/native.tests/testFixtures/org/jetbrains/kotlin/konan/test/blackbox/support/TestDirectives.kt))
   — the test infrastructure otherwise passes `-no-default-libs` to every compilation (`ExtTestCaseGroupProvider`, `TestCompilation`
   `noDefaultLibs = true`); the `PlatformLibs` setting (`-Pkn.…`, [TestProcessSettings.kt](../../native/native.tests/testFixtures/org/jetbrains/kotlin/konan/test/blackbox/support/settings/TestProcessSettings.kt))
-  and the XCTest runner force them on globally (`Settings.withPlatformLibs` in [SettingsContainers.kt](../../native/native.tests/testFixtures/org/jetbrains/kotlin/konan/test/blackbox/support/settings/SettingsContainers.kt)).
+  and the XCTest runner force them on globally (`Settings.withPlatformLibs` in [SettingsContainers.kt](../../native/native.tests/testFixtures/org/jetbrains/kotlin/konan/test/blackbox/support/settings/SettingsContainers.kt));
+  how directives and settings become compiler flags is in [test-infrastructure.md](test-infrastructure.md#directives).
   The shared compiler test infrastructure has its own directive with the same name
   ([NativeEnvironmentConfigurator.kt](../../compiler/tests-common-new/testFixtures/org/jetbrains/kotlin/test/services/configuration/NativeEnvironmentConfigurator.kt)).
   About 50 test data files use it, e.g. [platform_zlib.kt](../../native/native.tests/testData/codegen/interop/platform_zlib.kt).

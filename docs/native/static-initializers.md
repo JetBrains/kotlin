@@ -41,7 +41,9 @@ Paths are relative to `kotlin-native/backend.native/compiler/ir/backend.native/s
   off top-level or on a property without an initializer ([FirNativeEagerInitializationChecker.kt]).
 - **Thread-locals** (`@ThreadLocal` on a top-level property or an object, [concurrent/Annotations.kt]) are initialized once per
   thread, after the container's shared globals; a thread-local may read a global, a global must not read a thread-local
-  (comment in `addInitializersCall`). `@SharedImmutable` is a no-op since 1.7.20 and an error since 2.1.
+  (comment in `addInitializersCall`). `@SharedImmutable` is a no-op since 1.7.20 and an error since 2.1. `@EagerInitialization`,
+  `@ThreadLocal` and `@CanBePrecreated` are catalogued with the other backend annotations in
+  [intrinsics.md](intrinsics.md#initialization-threads-debugger).
 - **Failure is sticky.** If an initializer throws, the state becomes `FILE_FAILED_TO_INITIALIZE` and this and every later access
   throws via `StaticInitializationFailure(reason, typeInfo)` → the Kotlin `staticInitializationFailure` with the class name when
   the container is a class ([RuntimeUtils.kt], `staticInitializerTypeInfo` in [IrToBitcode.kt]).
@@ -65,6 +67,26 @@ class in it. For each static `IrField` (or property backing field):
 | Otherwise | Routed to one of four lists by `storageKind` (thread-local iff `@ThreadLocal` on the property or field) × `shouldBeInitializedEagerly` (file-level field with lazy init disabled, or `@EagerInitialization`). The initializer is removed from the field and becomes `IrSetField(origin = INITIALIZE_GLOBAL_FIELD / INITIALIZE_THREAD_LOCAL_FIELD)`. |
 
 Fields without initializers but with reference type are still listed (`field to null`) so they are registered with the GC.
+
+The same decision as a flowchart, following the `for (declaration in container.declarations)` loop of `processDeclarationContainter`
+and `shouldBeInitializedEagerly` in [StaticInitializersLowering.kt]:
+
+```mermaid
+flowchart TD
+    F["static IrField, or the backing field of a static IrProperty"] --> C1{"initializer isConst()<br/>and storage is not THREAD_LOCAL?"}
+    C1 -->|"yes"| C2{"primitive (non-reference) type<br/>or final field?"}
+    C2 -->|"yes"| KEEP["initializer stays on the field:<br/>LLVM global initializer, nothing to register"]
+    C2 -->|"no: non-final reference"| TL
+    C1 -->|"no"| C3{"no initializer and<br/>primitive type?"}
+    C3 -->|"yes"| SKIP["skipped: LLVM zero-initializes the global"]
+    C3 -->|"no"| TL{"storageKind == THREAD_LOCAL?"}
+    TL -->|"no"| E1{"shouldBeInitializedEagerly: top-level with<br/>lazy init disabled, or @EagerInitialization?"}
+    TL -->|"yes"| E2{"shouldBeInitializedEagerly?"}
+    E1 -->|"no"| G["globalInitializers: IrSetField(INITIALIZE_GLOBAL_FIELD)<br/>in $init_global"]
+    E1 -->|"yes"| GE["eagerGlobalInitializers<br/>in $init_global_eager"]
+    E2 -->|"no"| T["threadLocalInitializers: IrSetField(INITIALIZE_THREAD_LOCAL_FIELD)<br/>in $init_thread_local"]
+    E2 -->|"yes"| TE["eagerThreadLocalInitializers<br/>in $init_thread_local_eager"]
+```
 
 When the container is a non-interface class from a klib with `newCompanionInitializationEnabled`, the lists are prefixed with
 calls to `$clinit_trigger` of the superclass (unless it is an external ObjC class, KT-90352/KT-90390) and of every superinterface
@@ -95,6 +117,26 @@ Eager initializers get **no** trigger calls inserted anywhere: the runtime calls
 
 These two leading statements are a contract: `StaticInitializersOptimization` finds them with `take(2)`, and the DFG builder and
 codegen recognise them by origin.
+
+What one file turns into, from the lowering (`buildInitFunction`, `addInitializersCall`, `getClinitTriggerFunction` in
+[StaticInitializersLowering.kt]) to the lazy-path code that codegen emits for it (`evaluateFileGlobalInitializerCall`,
+`evaluateFileThreadLocalInitializerCall`, `getGlobalInitStateFor` in [IrToBitcode.kt]):
+
+```mermaid
+flowchart TD
+    SRC["file F.kt: val a = compute(); @ThreadLocal val t = mk();<br/>fun f(); class K { companion object C { … } }"] --> LOW["StaticInitializersLowering, per container"]
+    LOW --> IGF["$init_global$F(): a = compute()<br/>initializedGlobals = [a]"]
+    LOW --> ITF["$init_thread_local(): t = mk()"]
+    LOW --> IGK["K.$init_global(): [superclass $clinit_trigger calls,]<br/>companion field = createUninitializedInstance, initInstance(C())"]
+    LOW --> CT["K.$clinit_trigger(): empty body, public"]
+    IGF --> TRIG["prepended to f() and every other static function of F:<br/>$init_global$F(); $init_thread_local()"]
+    ITF --> TRIG
+    IGK --> TRIGK["prepended to K's constructors, static functions and $clinit_trigger:<br/>K.$init_global()"]
+    TRIG --> CG["codegen per call: acquire-load state_global$F;<br/>if not FILE_INITIALIZED: CallInitGlobalPossiblyLock(statePtr, $init_global$F, typeInfo)"]
+    TRIG --> CGT["codegen: if state_global$F is INITIALIZED and the TLS word is not:<br/>CallInitThreadLocal(globalStatePtr, localStatePtr, $init_thread_local, typeInfo)"]
+    TRIGK --> CGK["codegen: same pattern on state_global$K; a subclass initializer<br/>reaches it through K.$clinit_trigger()"]
+    IGF -.->|"RegisterGlobal(a) emitted at the start of the body"| CG
+```
 
 ### 4. Objects, companions, enums, instance initializers
 
@@ -145,6 +187,23 @@ codegen recognise them by origin.
   `fileCtorName`). For final binaries `_Konan_constructors` calls all ctors and is the single `llvm.global_ctors` entry
   (priority 65535 on MinGW, KT-39548).
 
+The eager path end to end, from `appendStaticInitializers` / `createInitBody` in [IrToBitcode.kt] to `initRuntime` in [Runtime.cpp]:
+
+```mermaid
+flowchart TD
+    GC["llvm.global_ctors (final binary)"] --> KC["_Konan_constructors"]
+    KC --> L1["_Konan_init_lib1: if lib1_guard == 0 then set it and call the merged initializer ctor"]
+    KC --> L2["_Konan_init_lib2 … one per library, allBitcodeDependencies order<br/>(cached library: external symbol resolved from the cache binary)"]
+    L1 --> APP["AppendToInitializersTail(init_node)"]
+    L2 --> APP
+    APP --> LIST["runtime InitNode list"]
+    IR["initRuntime(): launcher main, or Kotlin_initRuntimeIfNeeded from a bridge"] --> P0["phase ALLOC_THREAD_LOCAL_GLOBALS:<br/>AddTLSRecord(memory, __KonanTlsKey, tlsCount)"]
+    P0 --> COMMIT["CommitTLSStorage"]
+    COMMIT --> P1["phase INIT_GLOBALS, first runtime in the process only:<br/>$init_global_eager per scope"]
+    P1 --> P2["phase INIT_THREAD_LOCAL_GLOBALS, every thread:<br/>$init_thread_local_eager per scope"]
+    LIST -.->|"walked by every phase, in list order"| P0
+```
+
 ### 6. Runtime: the state machine
 
 ```mermaid
@@ -165,6 +224,30 @@ in [ThreadSuspensionTest.cpp]); otherwise CAS `0 → 1 | threadId<<2` and run `i
 mutex: the word is the lock, and the low two bits carry the state while the rest carries the owner. Two threads initializing
 containers that depend on each other in opposite order therefore **deadlock** (each spins waiting for the other) — the same
 hazard as JVM class-init deadlocks, with no detection.
+
+Two threads touching the same container for the first time, as sequenced by `CallInitGlobalPossiblyLock` and
+`CallInitGlobalAwaitInitialized` in [Runtime.cpp]:
+
+```mermaid
+sequenceDiagram
+    participant T1 as Thread 1 (Runnable)
+    participant S as state_global$F
+    participant T2 as Thread 2
+    T1->>S: acquire load: 0 (NOT_INITIALIZED)
+    T1->>S: CAS 0 to BEING_INITIALIZED with tid1 in the upper bits succeeds
+    T2->>S: acquire load: BEING_INITIALIZED, owner bits are not tid2
+    T2->>T2: CallInitGlobalAwaitInitialized: switch to Native state, spin on acquire loads
+    T1->>T1: init() under CurrentFrameGuard, a re-entrant call from T1 sees its own tid and returns at once
+    alt init() returns
+        T1->>S: release store 2 (INITIALIZED)
+        T2->>S: load: 2, back to Runnable, return
+    else init() throws
+        T1->>S: release store 3 (FAILED_TO_INITIALIZE)
+        T1->>T1: StaticInitializationFailure(exception, typeInfo)
+        T2->>S: load: 3
+        T2->>T2: StaticInitializationFailure(null, typeInfo)
+    end
+```
 
 `CallInitThreadLocal` is single-threaded by construction: it sets `localState = INITIALIZED` *before* running `init()` (so
 re-entrant access on this thread sees "done"), and flips to `FAILED` on exception; it also throws if the global word is `FAILED`.
@@ -397,7 +480,8 @@ practice such reads already sit behind a getter that triggers the initializer; n
 - `Worker.execute` is the only cross-thread construct the optimizer models (`processExecuteImpl`); other ways to start threads
   (ObjC dispatch, `pthread` via cinterop) are covered only because their callbacks are roots. Not traced further.
 - Eager initializer exceptions leave `initRuntime` as C++ exceptions with no `FAILED` state; the observable behaviour (terminate?
-  partially initialized later files?) was not traced through the launcher.
+  partially initialized later files?) was not traced through the launcher. The unhandled-exception path they would reach is in
+  [exceptions.md](exceptions.md#step-6--unhandled-exceptions-and-termination).
 - `IrStatementOriginFieldPreInit` ("hack to avoid early freezing, should be removed when freezing is removed") is still set by
   `ObjectClassLowering` and `EnumClassLowering` but no consumer reads it; it looks dead since the legacy MM removal
   (`a464c8e9a311`). KT-72336 (phase placement vs the inliner) is tracked in [optimizations.md](optimizations.md).

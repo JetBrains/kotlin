@@ -40,6 +40,21 @@ flowchart LR
 `RemoveRedundantCallsToStaticInitializersPhase` to read the verdicts between them and lets `-Xdisable-phases=Devirtualization` keep
 the analysis results for the other consumers while leaving the IR virtual.
 
+Inside the two phases, the steps described below and the data each passes on, as sequenced in
+`DevirtualizationAnalysisImpl.analyze()` and `DevirtualizationAnalysis.devirtualize()`:
+
+```mermaid
+flowchart TD
+  RS["Step 1: computeRootSet"] -->|"roots"| CGB["Step 2: ConstraintGraphBuilder.build<br/>RTA seeding, one constraint node per DFG node,<br/>dispatch hubs, bagOfEdges"]
+  CGB -->|"instantiatingClasses, CSR directEdges / reversedEdges"| COND["Step 3: CondensationBuilder.build<br/>topological sort, SCCs, mergeEdges,<br/>squashEquivalentNodes, mergeEdges"]
+  COND -->|"topologicalOrder of root nodes"| PREP["Step 4: propagateVirtualType,<br/>collectUsefulNodes, priorities, badEdges"]
+  PREP --> GREEDY["Step 5a: greedy sweeps (at most 2)<br/>types |= predecessors, cast-filtered"]
+  GREEDY --> BFS["Step 5b: BFS from the targets of bad edges<br/>until no set changes"]
+  BFS -->|"types per root node"| RES["Step 6: per VirtualCall, receiver root types<br/>∩ inheritorsOf(receiverType), calleeAt(slot)"]
+  RES -->|"IrCall.devirtualizedCallSite"| DEV["Step 7 (Devirtualization phase): devirtualize<br/>0 / 1 / up to 3 / more callees"]
+  DEV -->|"changedDeclarations"| RB["FunctionDFGBuilder.build per changed declaration<br/>→ moduleDFG.functions"]
+```
+
 ## Step 1 — the root set
 
 `DevirtualizationAnalysis.computeRootSet(context, irModule, moduleDFG)` is shared by every DFG client via `CallGraphBuilder`.
@@ -81,7 +96,7 @@ gives each root `Param#i` nodes fed from `concreteClass(type)` if the parameter 
 | `FieldRead/FieldWrite(field)`             | one global node per `Field` ("Do not distinguish receivers"); in a library the node is also fed by `concreteClass(fieldType)` (final) or `virtualNode` ("Some user of our library might place some value into the field"), and final field types are instantiated |
 | `ArrayRead/ArrayWrite`                    | the same, with a single synthetic `Array$Item` field for *all* arrays                                                                                                        |
 | `FunctionReference(type)`                 | `concreteClass(type)` — the function class is a source, no instantiation call                                                                                                |
-| `SaveCoroutineState`                      | `voidNode`                                                                                                                                                                   |
+| `SaveCoroutineState`                      | `voidNode` (spilled locals carry no type information for devirtualization; see [coroutines.md](coroutines.md#devirtualization-and-dce))                                       |
 | `VirtualCall`                             | see below                                                                                                                                                                    |
 
 **Virtual calls.** A site with a `Type.Virtual` receiver gets `virtualNode → receiver` and no callees. Otherwise it is attached to the
@@ -105,6 +120,28 @@ arrays `directEdges`/`reversedEdges` (`edges[edges[v] until edges[v+1]]`) in two
 at once (comment above `buildConstraintGraph`). Cast edges stay as small per-node lists. Finally every cached `suitableTypes` bitset
 is intersected with `instantiatingClasses` and gets `Virtual` set, so casts never let a non-instantiated class through but always let
 "unknown" through.
+
+**A worked example.** One virtual call site with two instantiated receiver classes:
+
+```kotlin
+abstract class Shape { abstract fun area(): Int }
+class Square : Shape() { override fun area() = 4 }
+class Circle : Shape() { override fun area() = 3 }
+
+fun describe(s: Shape) = s.area()
+
+fun main() {
+    describe(Square())
+    describe(Circle())
+}
+```
+
+The constraint graph that `ConstraintGraphBuilder` builds for it, following the node mapping table above (sources for the two
+allocations and the `Int` literals, `Variable$main` nodes for the lowered constructor temporaries, `Param#0$describe` as the
+receiver, the dispatch hub for the `area` slot fanning out to both implementations, and the cast edge to `Throws`); node
+identities and the final verdict were checked against the `-Xverbose-phases=DevirtualizationAnalysis` dump of this program:
+
+![Constraint graph of describe(s) = s.area(): sources flow through main's temporaries into Param#0$describe, which feeds the dispatch hub for the area slot; the hub fans out to Square.area and Circle.area whose returns flow back to describe](imgs/devirtualization-constraint-graph.svg)
 
 ## Step 3 — condensation
 
@@ -131,6 +168,14 @@ to "60ms and a few MB". KT-80167 (commit `b6d4b37645d5`) is the original node/ed
 
 Important: SCCs are computed over *regular* edges only. Cast edges may therefore point against the topological order; they are
 collected as `badEdges` and handled specially in the propagation.
+
+On the example above, the condensation has no non-trivial SCC (the graph is acyclic), so all the shrinking comes from
+`squashEquivalentNodes`: every parameter node downstream of `Param#0$describe` has it as its only non-`Source` parent and
+joins it, and `Param#0$Shape.<init>` (reached from the constructor bodies through `Param#0$Square.<init>` and
+`Param#0$Circle.<init>`, which were themselves joined into `inst1` and `inst2`) has the same parent set `{inst1, inst2}` and is
+merged by signature. The result, as printed under `CONDENSATION` and `Types of multi-node` by `-Xverbose-phases=DevirtualizationAnalysis`:
+
+![Condensed graph: inst1 and inst2 feed one multi-node holding the receiver and all parameter nodes downstream of it, typed {Square, Circle}; the return chains stay separate and are not useful](imgs/devirtualization-condensation.svg)
 
 ## Step 4 — preparation
 
@@ -190,6 +235,42 @@ is a subclass of an earlier one and minimizes a lexicographic weight (`0` = sing
 `isSubtype`; `2` = interface `isSubtype`, "the slowest"), excluding the last branch since it becomes `else`. The number of targets
 is ≤ 3, so brute force is fine (comment in code).
 
+The decisions `devirtualize` makes per annotated call site, in the order of the `when` in its `visitCall`:
+
+```mermaid
+flowchart TD
+  C["IrCall with devirtualizedCallSite"] --> G["group possibleCallees by callee;<br/>keep the receiver types per callee"]
+  G --> N{"groups > maxUnfoldFactor (3)?"}
+  N -->|yes| LEAVE["leave the call virtual<br/>(too complicated)"]
+  N -->|no| Z{"0 groups?"}
+  Z -->|yes| THROW["irThrowInvalidReceiverTypeException<br/>plus a coercion to the expected type"]
+  Z -->|no| ONE{"1 group and optimize?"}
+  ONE -->|yes| DIRECT["irDevirtualizedCall: a direct IrCall with<br/>superQualifier = the callee's class"]
+  ONE -->|no| ORDER["backTrack: order targets derived-before-base,<br/>weights 0 (one receiver) < 1 (class) < 2 (interface)"]
+  ORDER --> WHEN["when over getObjectTypeInfo(receiver):<br/>pointer compare or isSubtype per branch;<br/>last branch: true (optimize) or a throwing else"]
+  WHEN --> BR{"callee is a bridge and<br/>genericSafeCasts is off?"}
+  DIRECT --> BR
+  BR -->|yes| TGT["call bridgeTarget; re-create box / unbox<br/>coercions from the DFG FunctionParameters"]
+  BR -->|no| CALL["call the callee itself"]
+```
+
+The shape of the rewritten IR for the two-callee example above, taken from `-Xphases-to-dump-after=Devirtualization` (the
+`Square` branch has a single receiver type, so it gets the pointer compare; the last target becomes the unconditional branch):
+
+```
+// describe(s) after Devirtualization
+BLOCK type=Int
+  VAR arg0 = s                                   // irSplitCoercion: one temporary per argument
+  VAR tmp0 = arg0                                // the receiver
+  VAR tmp1 = getObjectTypeInfo(tmp0)             // created lazily, only if some branch tests it
+  WHEN
+    areEqualByValue(tmp1, CLASS_REFERENCE Square)   // weight 0: exactly one receiver type → pointer compare
+      -> CALL Square.area(arg0) superQualifier=Square
+    true                                            // optimize: the last target is not checked
+      -> CALL Circle.area(arg0) superQualifier=Circle
+  // only without optimize: an extra branch  true -> ThrowInvalidReceiverTypeException(KClassImpl(tmp1))
+```
+
 **Bridges and coercions.** If the chosen callee is a bridge (`bridgeTarget != null`) and `genericSafeCasts` is off, the call goes
 straight to the bridge target and the box/unbox coercions the bridge would have performed are re-created from the DFG
 `FunctionParameter`s (`getTypeConversion`): this is what makes a devirtualized `ref(it)` on a `(Int) -> Int` reference run without
@@ -205,16 +286,34 @@ got a verdict / overridable call sites) and `Actually devirtualized: Y%` (sites 
 There is no devirtualization-specific code in `llvm/`: `IrToBitcode.evaluateSimpleFunctionCall`
 ([IrToBitcode.kt](../../kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/llvm/IrToBitcode.kt))
 calls `callVirtual` (through the virtual trampoline, [llvm-codegen.md](llvm-codegen.md)) only when `superClass == null &&
-function.isOverridable`; a rewritten site calls a concrete implementation, usually a final or `-impl` body, so it is `callDirect`.
-The type switch compiles to: `IrClassReference` → `codegen.typeInfoValue(class)` (`evaluateClassReference`), pointer equality →
+function.isOverridable`; `irDevirtualizedCall` creates every rewritten call with `superQualifierSymbol` set to the callee's
+class (visible as `superQualifier='CLASS Square'` in the IR dump above), so even a call to an `open` override takes the
+`callDirect` path. The type switch compiles to: `IrClassReference` → `codegen.typeInfoValue(class)` (`evaluateClassReference`), pointer equality →
 `ARE_EQUAL_BY_VALUE`, and `isSubtype<T>` → `IS_SUBTYPE` in
-[IntrinsicGenerator.kt](../../kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/llvm/IntrinsicGenerator.kt),
+[IntrinsicGenerator.kt](../../kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/llvm/IntrinsicGenerator.kt)
+(both are `@TypedIntrinsic` kinds, see [intrinsics.md](intrinsics.md#part-2--typedintrinsic-kinds-by-family)),
 which is `CodeGenerator.checkIsSubtype`
 ([CodeGenerator.kt](../../kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/llvm/CodeGenerator.kt)):
 with GHA enabled an `IsSubclassFast(typeInfo, lo, hi)` interval check for classes or an itable-id compare for interfaces, otherwise
 the runtime `IsSubtype`. So devirtualization does **not** consume GHA ids itself (GHA runs after it and after DCE; the DFG's
 `interfaceId`s are name hashes, see [dataflow-ir.md](dataflow-ir.md#the-symboltable)); only the emitted type checks benefit from GHA
 ([dce-and-gha.md](dce-and-gha.md)).
+
+How the two halves of a rewritten site reach machine code, from `evaluateSimpleFunctionCall` in `IrToBitcode.kt`,
+`IntrinsicGenerator.kt` and `VirtualTablesLookup.checkIsSubtype` in `CodeGenerator.kt`:
+
+```mermaid
+flowchart TD
+  CALL["IrCall in evaluateSimpleFunctionCall"] --> Q{"superQualifier == null<br/>and callee.isOverridable?"}
+  Q -->|yes| VIRT["callVirtual: getVirtualImpl loads the slot<br/>from the vtable or an itable record"]
+  Q -->|no| DIR["callDirect: a devirtualized call always lands here<br/>(superQualifier = callee class)"]
+  TS["branch condition of the type switch"] --> EQ["areEqualByValue(typeInfo, CLASS_REFERENCE)<br/>→ ARE_EQUAL_BY_VALUE: pointer compare"]
+  TS --> IS["isSubtype of T (typeInfo)<br/>→ IS_SUBTYPE → checkIsSubtype"]
+  IS --> GHA{"ghaEnabled()?"}
+  GHA -->|no| RT["runtime IsSubtype(typeInfo, dstTypeInfo)"]
+  GHA -->|"yes, class"| FAST["IsSubclassFast(typeInfo, classIdLo, classIdHi)"]
+  GHA -->|"yes, interface"| IT["getInterfaceTableRecord(typeInfo, id).id == id"]
+```
 
 ## Downstream consumers
 

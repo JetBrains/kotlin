@@ -34,6 +34,24 @@ All code paths are relative to `kotlin-native/backend.native/compiler/ir/backend
 | `TypeHierarchy`           | Lazily built from the sealed table: `allTypes` by index, `inheritorsOf(type)` as a cached `CustomBitSet` (reflexive).                                                                         |
 | `CallGraph`               | `directEdges: Map<Declared, CallGraphNode>` (each with `callSites`), `reversedEdges`, `rootSet`, `rootExternalFunctions`. Built per client by `CallGraphBuilder` with two unfold factors. |
 
+How these pieces nest, from the class declarations in `DataFlowIR.kt` and `ModuleDFG` in `DFGBuilder.kt`:
+
+```mermaid
+flowchart TD
+  M["ModuleDFG"] --> F["functions: Map from FunctionSymbol to Function<br/>(externals have no entry)"]
+  M --> ST["SymbolTable (sealed after populateWith)"]
+  ST --> CM["classMap: IrClass to Type"]
+  ST --> FM["functionMap: IrDeclaration to FunctionSymbol"]
+  ST --> FLD["fieldMap: IrField to Field"]
+  ST --> TH["typeHierarchy (lazy, requires sealed):<br/>allTypes, inheritorsOf"]
+  CM --> T["Type: Virtual (index 0) | Public (identity = name hash) | Private (identity = index)<br/>superTypes, vtable, itable per interface"]
+  FM --> FS["FunctionSymbol: External (no body, escapes/pointsTo)<br/>| Declared: Public / Private (symbolTableIndex, bridgeTarget)<br/>parameters, returnParameter with box/unbox functions"]
+  F --> FN["Function = symbol + FunctionBody"]
+  FN --> B["FunctionBody: rootScope, allScopes, returns, throws"]
+  B --> N["Node: Parameter, Const / SimpleConst, Null, StaticCall,<br/>VtableCall / ItableCall, Singleton, AllocInstance / AllocArray,<br/>FunctionReference, FieldRead / FieldWrite, ArrayRead / ArrayWrite,<br/>SaveCoroutineState, Variable, Scope"]
+  N --> E["Edge(node, castToType): one use of a node"]
+```
+
 ## Where it is built and who rebuilds it
 
 `BuildDFGPhase` ([LTO.kt](../../kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/driver/phases/LTO.kt))
@@ -166,6 +184,44 @@ argument when it is a class that is a subclass of the callee's owner, otherwise 
 inline-class receiver is mapped to its boxed class ("Box if inline class"). Return types are mapped with `mapWrappedType` so that a
 call returning an inline class through a generic signature is typed as the boxed class.
 
+### A worked example
+
+The following function exercises an allocation, a static call, a field write, a constant, an unused parameter and a return:
+
+```kotlin
+class Box(var value: Any)
+
+fun wrap(a: Any, loud: Boolean): Any {
+    val b = Box(a)
+    if (loud) b.value = "!"
+    return b
+}
+```
+
+The picture shows the lowered IR the builder sees (`ConstructorsLowering` has split `Box(a)` into `createUninitializedInstance`
+plus a call to the lowered constructor, `PropertyAccessorInlineLowering` has turned the setter call into an `IrSetField`) and the
+`FunctionBody` that `FunctionDFGBuilder.build` produces for it; node kinds and edges were checked against the
+`-Xverbose-phases=BuildDFG` dump of this exact function compiled with `-opt`:
+
+![DFG of wrap(): one root scope with parameters, the allocation, the constructor call, the constant, the field write, two variables and the returns/throws temporaries](imgs/dataflow-ir-example.svg)
+
+The dump itself (`Function.debugString()`, abbreviated) is what the picture was drawn from. Note that `b` keeps both the
+intermediate variable and the closed-over allocation as values, because `computeClosure` adds to the variable's values
+rather than replacing them, and that the parameter `loud` is a node even though no node refers to it:
+
+```
+NODE #1  Ordinary            VAL #2  VAL #3          // b
+NODE #2  Ordinary            VAL #3                  // inst
+NODE #3  ALLOC INSTANCE Box
+NODE #4  STATIC CALL kfun:Box.<init>(kotlin.Any){}   ARG #2  ARG #7
+NODE #5  CONST kotlin.String
+NODE #6  FIELD WRITE Field(name=value)               RECEIVER #1  VALUE #5
+NODE #7  PARAM 0
+NODE #8  PARAM 1
+NODE #9  Temporary            VAL #1                 // returns
+NODE #10 Temporary                                   // throws
+```
+
 ## What is deliberately dropped
 
 - **Control flow and order.** There are no basic blocks, no successor edges, no statement order. `if`/`when`/`try` collapse into
@@ -187,7 +243,8 @@ call returning an inline class through a generic signature is typed as the boxed
 **Coroutines.** By the time the DFG is built, `NativeSuspendFunctionsLowering` has turned suspend functions into state machines with
 `IrSuspendableExpression`/`IrSuspensionPoint`, and `CoroutinesLivenessAnalysis` has annotated every suspension point with its live
 variables ([NativeLoweringPhases.kt](../../kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/driver/phases/NativeLoweringPhases.kt)).
-`SaveCoroutineState(liveVariables)` tells the analyses which locals are spilled into the coroutine object at that point; EA makes them
+`SaveCoroutineState(liveVariables)` (how the lowering produces it: [coroutines.md](coroutines.md#step-5--liveness-and-spilling))
+tells the analyses which locals are spilled into the coroutine object at that point; EA makes them
 flow into the coroutine's "intestines" (its `this`), i.e. they escape to the heap exactly as `CoroutinesVarSpillingLowering` will
 later spill them. The actual spilling lowering runs *after* DCE (see `runCodegen`), so the DFG models an effect that does not yet
 exist in IR. This is why the pre-codegen inliner must re-run `LivenessAnalysis` before rebuilding the DFG of a function it inlined into
@@ -204,7 +261,9 @@ object allocated in a loop and stored into a variable outside the loop cannot be
 
 ## External functions, cinterop and platform libraries
 
-Anything without a body is `FunctionSymbol.External`: Kotlin `external fun`s (stdlib intrinsics and runtime entry points), builtin
+Anything without a body is `FunctionSymbol.External`: Kotlin `external fun`s (stdlib intrinsics and runtime entry points; which ones
+the builder special-cases — `IDENTITY`, the atomics, `arrayGet`/`arraySet`, `createUninitializedInstance` — is cross-referenced in
+[intrinsics.md](intrinsics.md#part-2--typedintrinsic-kinds-by-family)), builtin
 operators, and all cinterop stubs (`@CCall` functions, ObjC method stubs; the C bridges themselves are compiled by clang, see
 [cinterop.md](cinterop.md)). Externals have no `Function` in `moduleDFG.functions`, so:
 
@@ -248,6 +307,24 @@ Algorithm (`build`, `FunctionStack`, `handleFunction`):
      `vtable`/`itable`; `≤ nonDevirtualizedCallSitesUnfoldFactor` → direct call sites;
    - otherwise one `CallSite(isVirtual = true)` and *every* candidate becomes a root (`handleRoot`), so it is still reachable;
    - `Type.Virtual` receivers are skipped entirely ("can only be for invocations of Any's methods on instances of ObjC classes").
+
+The per-call-site decision of step 4, as implemented in `CallGraphBuilder.handleFunction`:
+
+```mermaid
+flowchart TD
+  CS["call site from forEachCallSite<br/>(Call, Singleton constructor, ArrayRead / ArrayWrite)"] --> V{"VirtualCall?"}
+  V -->|no| SC["CallSite(isVirtual = false, callee);<br/>push the callee if it has a DFG body"]
+  V -->|yes| DVS{"irCallSite.devirtualizedCallSite set?"}
+  DVS -->|yes| N1{"possibleCallees.size <= devirtualizedCallSitesUnfoldFactor?"}
+  N1 -->|yes| UNF1["one direct CallSite per callee"]
+  N1 -->|no| VIRT1["CallSite(isVirtual = true);<br/>every callee becomes a root (handleRoot)"]
+  DVS -->|no| RV{"receiverType == Type.Virtual?"}
+  RV -->|yes| SKIP["skip the site<br/>(Any methods on ObjC instances)"]
+  RV -->|no| INH["candidates = slot implementation in every<br/>non-abstract inheritorsOf(receiverType)"]
+  INH --> N2{"candidates.size <= nonDevirtualizedCallSitesUnfoldFactor?"}
+  N2 -->|yes| UNF2["one direct CallSite per candidate"]
+  N2 -->|no| VIRT2["CallSite(isVirtual = true);<br/>every candidate becomes a root"]
+```
 
 The result implements `DirectedGraph`, so `DirectedGraphCondensationBuilder`
 ([GraphAlgorithms.kt](../../kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/GraphAlgorithms.kt))

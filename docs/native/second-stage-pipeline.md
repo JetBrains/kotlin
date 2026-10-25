@@ -96,6 +96,29 @@ cinterop-generated JVM bindings) and starts the top-level phase `"Compiler"` (`P
 
 The common skeleton is `runK1Frontend` → `linkKlibs` → `createBackendContext` → `runBackend`.
 
+How the five `produce*` functions of `NativeCompilerDriver.kt` share that skeleton and where each output kind branches off:
+
+```mermaid
+flowchart TD
+    RUN["NativeCompilerDriver.run<br/>PhaseEngine.startTopLevel(Compiler)"] -->|"-Xcompile-from-bitcode"| BC["produceBinaryFromBitcode<br/>parse .bc, read -Xread-dependencies-from"]
+    RUN -->|"PROGRAM, STATIC_CACHE, DYNAMIC_CACHE, HEADER_CACHE"| PB["produceBinary"]
+    RUN -->|"STATIC, DYNAMIC"| PC["produceCLibrary"]
+    RUN -->|"FRAMEWORK"| PF["produceObjCFramework"]
+    RUN -->|"TEST_BUNDLE"| PT["produceBundle (Apple only)"]
+    RUN -->|"LIBRARY, BITCODE"| ERR["error(...)"]
+    PB --> K1["runK1Frontend: ModuleDescriptors for all klibs"]
+    PC --> K1
+    PF --> OBJC["ProduceObjCExportInterfacePhase<br/>CreateObjCFrameworkPhase (header, Info.plist)"]
+    OBJC -->|"-Xomit-framework-binary"| STOP["return"]
+    OBJC --> K1
+    PT --> TB["CreateTestBundlePhase"] --> K1
+    K1 --> LK["linkKlibs: LinkKlibsPhase + SpecialBackendChecks"]
+    PC -.->|"inside linkKlibs: BuildCExports (K1)<br/>or after it: BuildCExportsFromIr"| LK
+    PF -.->|"inside linkKlibs: CreateObjCExportCodeSpecPhase"| LK
+    LK --> CTX["createBackendContext (NativeBackendContext)"] --> RB["runBackend"]
+    BC --> RBB["runBitcodeBackend: post-processing, WriteBitcodeFile, compileAndLink"]
+```
+
 **`runK1Frontend`** ([TopLevelPhases.kt](../../kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/driver/phases/TopLevelPhases.kt),
 `K1FrontendPhase` in [K1Frontend.kt](../../kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/driver/phases/K1Frontend.kt))
 builds `ModuleDescriptor`s for every klib. It throws `"Attempt to run K1 from unsupported LV"` if there are source roots and the
@@ -140,6 +163,26 @@ All in `TopLevelPhases.kt`.
    - `collectAndMaybeSerializeDependencies` (`-Xwrite-dependencies-to`);
    - `compileAndLink`.
 
+The fragment model of `runBackend` (`splitIntoFragments`, `runAllLowerings`, `runAfterLowerings` in `TopLevelPhases.kt`): one sequential
+lowering pass over every fragment, then one independent codegen-and-link job per fragment:
+
+```mermaid
+flowchart TD
+    IN["irModulesToCompile"] --> SPLIT["splitIntoFragments"]
+    SPLIT -->|"default"| F1["1 fragment: the whole module<br/>DefaultLlvmModuleSpecification, or CacheLlvmModuleSpecification for a cache"]
+    SPLIT -->|"-Xmake-per-file-cache"| FN["N fragments: one per file (function-interface files join the KFunctionImpl fragment)<br/>each with its own CacheLlvmModuleSpecification, DependenciesTracker, PerformanceManager"]
+    F1 --> GS["createGenerationState per fragment: OutputFiles, NativeGenerationState,<br/>BuildAdditionalCacheInfoPhase (caches), EntryPointPhase (program)"]
+    FN --> GS
+    GS --> LOW["runAllLowerings: each lowering list on every fragment in turn,<br/>plus the dependency modules compiled into the same LLVM module; one thread"]
+    LOW --> FIN["finalizeLowerings: mergeDependencies (dependency files prepended)"]
+    FIN --> PAR{"threadsCount == 1<br/>or a single fragment?"}
+    PAR -->|"yes"| SEQ["runAfterLowerings for each fragment in turn"]
+    PAR -->|"no"| POOL["Executors.newFixedThreadPool(-Xbackend-threads)<br/>one runAfterLowerings task per fragment"]
+    SEQ --> AL["runAfterLowerings = compileModule, collectAndMaybeSerializeDependencies, compileAndLink"]
+    POOL --> AL
+    AL -->|"header cache"| HC["SaveAdditionalCacheInfoPhase, empty binary file, FinalizeCachePhase"]
+```
+
 **`runBackendCodegen`** = `runCodegen` (below), then for C libraries `CExportGenerateApiPhase` + `CExportCompileAdapterPhase`,
 then `CStubsPhase` (C stubs produced by interop lowerings, compiled by clang; see [cinterop.md](cinterop.md)),
 `VerifyBitcodePhase` (`-Xverify-bitcode` or `-Xverify-compiler`), `PrintBitcodePhase` (`-Xprint-bitcode`), and
@@ -180,10 +223,78 @@ The pipeline switches context as it goes; a phase's context type tells you which
 | Context | Lifetime | Holds |
 |---------|----------|-------|
 | `BasicNativeBackendPhaseContext` ([Machinery.kt](../../kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/driver/Machinery.kt)) | whole compilation | `config`, diagnostics reporter, logging. Used by the frontend, export-interface and bitcode-only phases. |
-| `LinkKlibsContextImpl` ([LinkKlibs.kt](../../kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/driver/phases/LinkKlibs.kt)) | IR linking | `SymbolTable`, `KonanBuiltIns` from the module descriptor. |
+| `LinkKlibsContext` (interface, [linkKlibs.kt](../../kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/linkKlibs.kt)) / `LinkKlibsContextImpl` ([LinkKlibs.kt](../../kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/driver/phases/LinkKlibs.kt)) | IR linking | `SymbolTable`, `KonanBuiltIns` from the module descriptor. The root of the hierarchy, `NativePhaseContext`, is in the LLVM-free `compiler/ir/backend.native` ([NativePhaseContext.kt](../../compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/driver/NativePhaseContext.kt)). |
 | `NativeBackendContext` ([NativeBackendContext.kt](../../kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/NativeBackendContext.kt)) | from `runBackend` to the end; shared by all fragments | `irModules`, `irLinker`, `symbols`, `irBuiltIns`; lowering "supports" (bridges, enums, caches ABI, inner classes); `moduleDeserializerProvider` and the lazy inline-function / trivial-getter deserializers that pull bodies from klibs on demand; `globalHierarchyAnalysisResult`; export models (`objCExportedInterface`, `objCExportCodeSpec`, `cAdapterExportedElements`); partial linkage support. |
 | `NativeGenerationState` ([NativeGenerationState.kt](../../kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/NativeGenerationState.kt)) | one per fragment | `cacheInfo`, `dependenciesTracker`, `llvmModuleSpecification`, `outputFiles`; the LLVM context and module (created lazily, always named `"out"`); `runtime` (declarations parsed from the runtime's `compiler_interface` bitcode); `debugInfo`; `cStubsManager`; `llvmDeclarations`; `fileLowerState` (per-file counters used to name synthetic function references, coroutines and C stubs); the lists serialized into caches (`inlineFunctionBodies`, `classFields`, `eagerInitializedFiles`, `trivialGetters`, `objCAdapters`). |
 | `BitcodePostProcessingContext` | post-codegen and `-Xcompile-from-bitcode` | the LLVM module only. |
+
+How these types relate, from the declarations in `Machinery.kt`, `NativeLoweringContext.kt`, `NativeBackendContext.kt`,
+`NativeGenerationState.kt`, `driver/phases/LinkKlibs.kt` and `linkKlibs.kt` (`NativePhaseContext` itself lives in the LLVM-free
+`compiler/ir/backend.native`):
+
+```mermaid
+classDiagram
+    class NativePhaseContext {
+        <<interface>>
+        LoggingContext
+        ErrorReportingContext
+        PerformanceManagerContext
+    }
+    class NativeBackendPhaseContext {
+        <<interface>>
+        config NativeSecondStageCompilationConfig
+        ConfigChecks
+    }
+    class BasicNativeBackendPhaseContext {
+        diagnosticReporter
+        log()
+    }
+    class LinkKlibsContext {
+        <<interface>>
+        symbolTable
+        builtIns KonanBuiltIns
+    }
+    class NativeLoweringContext {
+        <<interface>>
+        CommonBackendContext
+        symbols BackendNativeSymbols
+        bridgesSupport enumsSupport cachesAbiSupport
+    }
+    class BitcodePostProcessingContext {
+        <<interface>>
+        llvm BasicLlvmHelpers
+        llvmContext llvmModule
+    }
+    class LinkKlibsContextImpl {
+        SymbolTable with KonanIdSignaturer
+    }
+    class NativeBackendContext {
+        irModules irLinker irBuiltIns
+        shared by all fragments
+    }
+    class NativeGenerationState {
+        one per fragment
+        cacheInfo dependenciesTracker llvmModuleSpecification outputFiles
+    }
+    class BitcodePostProcessingContextImpl {
+        Xcompile-from-bitcode only
+    }
+    NativePhaseContext <|-- NativeBackendPhaseContext
+    NativeBackendPhaseContext <|.. BasicNativeBackendPhaseContext
+    NativeBackendPhaseContext <|-- LinkKlibsContext
+    NativeBackendPhaseContext <|-- NativeLoweringContext
+    NativeBackendPhaseContext <|-- BitcodePostProcessingContext
+    BasicNativeBackendPhaseContext <|-- LinkKlibsContextImpl
+    LinkKlibsContext <|.. LinkKlibsContextImpl
+    BasicNativeBackendPhaseContext <|-- NativeBackendContext
+    NativeLoweringContext <|.. NativeBackendContext
+    BasicNativeBackendPhaseContext <|-- NativeGenerationState
+    NativeLoweringContext <|.. NativeGenerationState
+    BitcodePostProcessingContext <|.. NativeGenerationState
+    BasicNativeBackendPhaseContext <|-- BitcodePostProcessingContextImpl
+    BitcodePostProcessingContext <|.. BitcodePostProcessingContextImpl
+    NativeGenerationState --> NativeBackendContext : context, NativeLoweringContext delegated to it
+```
 
 Phase definitions live next to the step they belong to: `driver/phases/K1Frontend.kt`, `LinkKlibs.kt`, `BackendPhases.kt`,
 `NativeLoweringPhases.kt`, `BitcodeGeneration.kt`, `Bitcode.kt`, `LTO.kt`, `ObjectFiles.kt`, `Linker.kt`, `CacheBuilding.kt`,
@@ -232,12 +343,39 @@ Then:
 | Skip a phase to bisect | `-Xdisable-phases=X` (safe for optimizations, DCE, GHA, escape analysis; not for most lowerings) |
 | Keep intermediate `.bc`/`.o` files | `-Xtemporary-files-dir=<dir>` |
 | See LLVM IR | `-Xprint-bitcode`, `-Xsave-llvm-ir-after=<phase>` with `-Xsave-llvm-ir-directory` (see [llvm-codegen.md](llvm-codegen.md)) |
+| See LLVM IR after one LLVM pass | `-Xsave-llvm-ir-after=<Phase>:<pass>` (e.g. `ModuleBitcodeOptimization:inline`) writes `<dir>/<Phase>/` dumps after that pass inside the phase's pipeline (`LlvmPipelineConfig.copyConfiguringSaveIr`); see [llvm-passes.md](llvm-passes.md#flags-and-options) |
 | Time per phase | `-Xprofile-phases`, `-Xreport-perf`, `-Xdump-perf` |
 | Rule out threading | `-Xbackend-threads=1` |
 
 These flags are defined in `compiler/cli/cli-base/gen/.../CommonCompilerArguments.kt` (phase machinery) and
 `K2NativeCompilerArguments.kt` (Native-specific); the generated classes come from
 [NativeCompilerArguments.kt](../../compiler/arguments/src/org/jetbrains/kotlin/arguments/description/NativeCompilerArguments.kt).
+
+Where these flags take effect in the run of a single phase, as implemented by `PhaseEngine.runPhase`
+([PhaseEngine.kt](../../compiler/ir/backend.common/src/org/jetbrains/kotlin/backend/common/phaser/PhaseEngine.kt)),
+`NamedCompilerPhase.invoke` ([CompilerPhase.kt](../../compiler/config/src/org/jetbrains/kotlin/config/phaser/CompilerPhase.kt)), the IR
+actions in [DumperVerifier.kt](../../compiler/ir/backend.common/src/org/jetbrains/kotlin/backend/common/phaser/DumperVerifier.kt) and the LLVM
+actions in `driver/utilities/LlvmPassesUtilities.kt`:
+
+```mermaid
+sequenceDiagram
+    participant E as PhaseEngine.runPhase
+    participant P as NamedCompilerPhase.invoke
+    participant C as PhaseConfig
+    participant A as pre- and post-actions
+    E->>P: invoke(phaseConfig, phaserState, context, input)
+    P->>C: isEnabled(phase)?
+    C-->>P: false: outputIfNotEnabled (-Xdisable-phases, LinkKlibs errors instead)
+    P->>C: isVerbose(phase) sets context.inVerbosePhase (-Xverbose-phases)
+    P->>A: runBefore: IR dumper (-Xphases-to-dump-before), IR validator (-Xphases-to-validate-before)
+    P->>P: phaseBody, timed when needProfiling (-Xprofile-phases)
+    P->>A: runAfter: IR dumper (-Xphases-to-dump-after), IR validator (-Xphases-to-validate-after)
+    P->>A: runAfter, LLVM phases only: dump out.Phase.ll (-Xsave-llvm-ir-after), verifyModule (-Xverify-bitcode)
+    P->>P: phaserState.alreadyDone += phase, phaseCount++ (the NN_ prefix of dump file names)
+```
+
+Only phases created with `getDefaultIrActions()` / `getDefaultLlvmModuleActions()` carry the actions; `-Xverify-ir` is different: it
+configures the four named `IrValidation*Phase`s described in [lowerings.md](lowerings.md#validation-phases).
 
 **Behaviour differs between a program and a cached build, or between `-opt` and debug.** Compare the `runCodegen` gating above;
 the first suspects are the optimizations ([optimizations.md](optimizations.md)) and the cache ABI ([caches.md](caches.md)).

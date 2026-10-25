@@ -25,12 +25,19 @@ page per subsystem, a [glossary](../docs/native/glossary.md) and a symptom → s
 | IR → LLVM IR, runtime bitcode, LLVM passes, linker              | [docs/native/llvm-codegen.md](../docs/native/llvm-codegen.md)                                                                |
 | Anything touching both `llvm/` and `runtime/`                   | [docs/native/compiler-runtime-contract.md](../docs/native/compiler-runtime-contract.md)                                      |
 | Runtime C++ (GC, allocator, thread states)                      | [docs/native/runtime.md](../docs/native/runtime.md), [runtime/README.md](runtime/README.md), [runtime/codestyle/cpp/README.md](runtime/codestyle/cpp/README.md) |
+| Suspend functions, coroutine state machines, spilling           | [docs/native/coroutines.md](../docs/native/coroutines.md)                                                                    |
+| Exceptions, unwinding, stack traces, `@Throws`/`NSError`        | [docs/native/exceptions.md](../docs/native/exceptions.md)                                                                    |
+| Debug info, LLDB, `konan_lldb.py`, symbolication                | [docs/native/debug-info.md](../docs/native/debug-info.md)                                                                    |
+| `kotlin.native.internal` intrinsics and annotations             | [docs/native/intrinsics.md](../docs/native/intrinsics.md)                                                                    |
+| LLVM passes, `-opt` vs `-g` pipelines, `kotlin-*` passes        | [docs/native/llvm-passes.md](../docs/native/llvm-passes.md)                                                                  |
+| The klib commonizer                                             | [docs/native/commonizer.md](../docs/native/commonizer.md)                                                                    |
+| How the test infrastructure works inside                        | [docs/native/test-infrastructure.md](../docs/native/test-infrastructure.md)                                                  |
 | Cross-module inlining in klibs                                  | [docs/inlining/klib-inining.md](../docs/inlining/klib-inining.md)                                                            |
-| LLVM IR dumps, the LLVM pipeline, a debugger on the compiler    | [HACKING.md](HACKING.md) (LLVM and Debugging sections)                                                                       |
+| LLVM IR dumps, a debugger on the compiler                       | [HACKING.md](HACKING.md) (LLVM and Debugging sections)                                                                       |
 | Swift export                                                    | [docs/swift-export/README.md](../docs/swift-export/README.md)                                                                |
 | ObjC header generation                                          | [native/objcexport-header-generator/ReadMe.md](../native/objcexport-header-generator/ReadMe.md)                              |
 | Binary options (`-Xbinary=`)                                    | `native/binary-options/src/main/kotlin/org/jetbrains/kotlin/config/nativeBinaryOptions/BinaryOptions.kt`                                  |
-| Targets and toolchain configuration                             | `native/utils/src/org/jetbrains/kotlin/konan/target/KonanTarget.kt`, [konan/konan.properties](konan/konan.properties)        |
+| Targets, toolchains, `konan.properties`, the distribution       | [docs/native/targets-and-toolchains.md](../docs/native/targets-and-toolchains.md)                                            |
 
 ## Build and test commands
 

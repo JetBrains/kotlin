@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 610" width="1000" height="610" font-family="Helvetica, Arial, sans-serif" font-size="13">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#444"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1000" height="610" fill="#ffffff"/>
+  <text x="500" y="24" text-anchor="middle" font-size="16" font-weight="bold" fill="#111">ObjC export: one Kotlin object, one KotlinBase instance, one ExternalRCRef</text>
+
+  <!-- ===================== structures ===================== -->
+  <!-- KotlinBase instance -->
+  <rect x="20" y="50" width="280" height="200" fill="#fdf1dc" stroke="#444"/>
+  <text x="160" y="70" text-anchor="middle" font-weight="bold" fill="#111">KotlinBase instance (ObjC / Swift side)</text>
+  <g font-size="12">
+  <text x="160" y="90" text-anchor="middle" fill="#111">wrapper made by createRetainedWrapper:,</text>
+  <text x="160" y="106" text-anchor="middle" fill="#111">or an ObjC/Swift subclass instance</text>
+  <text x="160" y="122" text-anchor="middle" fill="#111">made by allocWithZone:</text>
+  <text x="160" y="144" text-anchor="middle" fill="#111">isa: PrefixFoo, methods added at +initialize</text>
+  <text x="160" y="160" text-anchor="middle" fill="#111">by Kotlin_ObjCExport_initializeClass</text>
+  <text x="160" y="182" text-anchor="middle" fill="#111">NSObject refcount: 1 from alloc, never</text>
+  <text x="160" y="198" text-anchor="middle" fill="#111">changed by retain/release (overridden)</text>
+  </g>
+  <rect x="32" y="206" width="256" height="38" fill="#f0f0f0" stroke="#444"/>
+  <text x="160" y="222" text-anchor="middle" font-size="12" font-weight="bold" fill="#111">refHolder: RegularRef | PermanentRef</text>
+  <text x="160" y="237" text-anchor="middle" font-size="11" fill="#111">ObjCBackRef | KRef (permanent objects)</text>
+
+  <!-- ExternalRCRefImpl -->
+  <rect x="365" y="90" width="260" height="110" fill="#f0f0f0" stroke="#444"/>
+  <text x="495" y="110" text-anchor="middle" font-weight="bold" fill="#111">ExternalRCRefImpl</text>
+  <g font-size="12">
+  <text x="495" y="130" text-anchor="middle" fill="#111">obj_: the Kotlin object (nulled by the GC)</text>
+  <text x="495" y="148" text-anchor="middle" fill="#111">rc_: ObjC-side reference count</text>
+  <text x="495" y="166" text-anchor="middle" fill="#111">rc_ &gt; 0  =&gt;  obj_ is in the global roots</text>
+  <text x="495" y="184" text-anchor="middle" fill="#111">nextRoot_: ExternalRCRefRegistry root list</text>
+  </g>
+
+  <!-- Kotlin object -->
+  <rect x="690" y="50" width="290" height="200" fill="#e8eef7" stroke="#444"/>
+  <text x="835" y="70" text-anchor="middle" font-weight="bold" fill="#111">Kotlin object (ObjHeader)</text>
+  <g font-size="12">
+  <text x="835" y="92" text-anchor="middle" fill="#111">typeInfo -&gt; WritableTypeInfo of its class:</text>
+  <text x="835" y="108" text-anchor="middle" fill="#111">objCClass, convertToRetained, typeAdapter</text>
+  <text x="835" y="124" text-anchor="middle" fill="#111">(TypeInfoObjCExportAddition.hpp)</text>
+  <text x="835" y="148" text-anchor="middle" fill="#111">permanent (static) objects: PermanentRef,</text>
+  <text x="835" y="164" text-anchor="middle" fill="#111">no ExternalRCRef, [super retain/release]</text>
+  </g>
+  <rect x="702" y="180" width="266" height="60" fill="#f0f0f0" stroke="#444"/>
+  <text x="835" y="198" text-anchor="middle" font-size="12" font-weight="bold" fill="#111">ExtraObjectData.associatedObject_</text>
+  <text x="835" y="214" text-anchor="middle" font-size="12" fill="#111">= the KotlinBase instance, set once by CAS</text>
+  <text x="835" y="230" text-anchor="middle" font-size="11" fill="#111">(AtomicCompareAndSwapAssociatedObject)</text>
+
+  <!-- arrows -->
+  <line x1="288" y1="222" x2="363" y2="160" stroke="#444" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="305" y="180" font-size="11" fill="#111">raw_</text>
+  <line x1="625" y1="145" x2="688" y2="145" stroke="#444" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="656" y="138" text-anchor="middle" font-size="11" fill="#111">obj_</text>
+  <polyline points="702,210 660,210 660,268 160,268 160,252" fill="none" stroke="#444" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="410" y="263" text-anchor="middle" font-size="11" fill="#111">associated object (unretained id: the alloc +1 belongs to the Kotlin object)</text>
+
+  <!-- ===================== lifecycle ===================== -->
+  <text x="20" y="300" font-size="14" font-weight="bold" fill="#111">Reference-count lifecycle (RegularRef)</text>
+
+  <rect x="20" y="313" width="180" height="78" fill="#e8eef7" stroke="#444"/>
+  <text x="110" y="333" text-anchor="middle" font-weight="bold" fill="#111">1. no wrapper</text>
+  <text x="110" y="351" text-anchor="middle" font-size="12" fill="#111">plain Kotlin object,</text>
+  <text x="110" y="367" text-anchor="middle" font-size="12" fill="#111">associatedObject_ == null</text>
+
+  <rect x="280" y="313" width="200" height="78" fill="#fdf1dc" stroke="#444"/>
+  <text x="380" y="333" text-anchor="middle" font-weight="bold" fill="#111">2. wrapper, rc_ = 1</text>
+  <text x="380" y="351" text-anchor="middle" font-size="12" fill="#111">retained result handed to ObjC</text>
+  <text x="380" y="367" text-anchor="middle" font-size="12" fill="#111">via autoreleaseAndRet;</text>
+  <text x="380" y="383" text-anchor="middle" font-size="12" fill="#111">Kotlin object is a GC root</text>
+
+  <rect x="560" y="313" width="200" height="78" fill="#fdf1dc" stroke="#444"/>
+  <text x="660" y="333" text-anchor="middle" font-weight="bold" fill="#111">3. rc_ = n</text>
+  <text x="660" y="351" text-anchor="middle" font-size="12" fill="#111">retain / _tryRetain / release</text>
+  <text x="660" y="367" text-anchor="middle" font-size="12" fill="#111">from ObjC or Swift (ARC)</text>
+  <text x="660" y="383" text-anchor="middle" font-size="12" fill="#111">act on rc_ only</text>
+
+  <rect x="800" y="313" width="180" height="78" fill="#eaf5e6" stroke="#444"/>
+  <text x="890" y="333" text-anchor="middle" font-weight="bold" fill="#111">4. rc_ = 0</text>
+  <text x="890" y="351" text-anchor="middle" font-size="12" fill="#111">object leaves the roots;</text>
+  <text x="890" y="367" text-anchor="middle" font-size="12" fill="#111">wrapper still allocated,</text>
+  <text x="890" y="383" text-anchor="middle" font-size="11" fill="#111">found via associatedObject_</text>
+
+  <line x1="200" y1="352" x2="278" y2="352" stroke="#444" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="480" y1="352" x2="558" y2="352" stroke="#444" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="760" y1="352" x2="798" y2="352" stroke="#444" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <text x="240" y="408" text-anchor="middle" font-size="11" fill="#111">Kotlin_ObjCExport_refToRetainedObjC:</text>
+  <text x="240" y="421" text-anchor="middle" font-size="11" fill="#111">convertToRetained or createRetainedWrapper</text>
+  <text x="519" y="408" text-anchor="middle" font-size="11" fill="#111">[obj retain]</text>
+  <text x="779" y="408" text-anchor="middle" font-size="11" fill="#111">last [obj release]</text>
+
+  <!-- back edge 4 -> 2 -->
+  <polyline points="890,391 890,438 380,438 380,393" fill="none" stroke="#444" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#arrow)"/>
+  <text x="635" y="453" text-anchor="middle" font-size="11" fill="#111">Kotlin hands the object to ObjC again: refToRetainedObjC finds associatedObject_ and calls objc_retain -&gt; [retain] -&gt; rc_ = 1</text>
+
+  <!-- end state -->
+  <rect x="20" y="472" width="960" height="124" fill="#f7e6e6" stroke="#444"/>
+  <text x="30" y="492" font-weight="bold" fill="#111">5. Kotlin object unreachable with rc_ = 0: the GC sweeps it</text>
+  <g font-size="12">
+  <text x="30" y="512" fill="#111">ExtraObjectData::Uninstall  -&gt;  ReleaseAssociatedObject  -&gt;  Kotlin_ObjCExport_releaseAssociatedObject (Native state)</text>
+  <text x="30" y="530" fill="#111">   -&gt;  [wrapper releaseAsAssociatedObject]  =  [super release]   (the only path that drops the NSObject refcount)</text>
+  <text x="30" y="548" fill="#111">   -&gt;  dealloc destroys refHolder: ~ObjCBackRef disposes the ExternalRCRefImpl (waits for concurrent _tryRetain)</text>
+  <text x="30" y="574" fill="#111">ObjC to Kotlin at any time: Kotlin_ObjCExport_refFromObjC  -&gt;  [obj toKotlin:]  -&gt;  *RegularRef</text>
+  <text x="30" y="590" fill="#111">(valid while rc_ &gt; 0 or while the object is rooted some other way, e.g. on a stack).</text>
+  </g>
+</svg>

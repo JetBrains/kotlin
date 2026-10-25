@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 470" width="960" height="470" font-family="Helvetica, Arial, sans-serif" font-size="13">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#444"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="960" height="470" fill="#ffffff"/>
+  <text x="20" y="28" font-size="15" font-weight="bold" fill="#111">One library's per-file caches before the build (edges as recorded in each file's bin/bitcode_deps)</text>
+
+  <!-- Row 1 -->
+  <!-- A: changed -->
+  <rect x="60" y="70" width="170" height="64" rx="8" fill="#fdf1dc" stroke="#444" stroke-width="2"/>
+  <text x="145" y="94" text-anchor="middle" font-weight="bold" fill="#111">A.kt</text>
+  <text x="145" y="112" text-anchor="middle" fill="#111">fingerprint differs</text>
+  <text x="145" y="126" text-anchor="middle" fill="#111" font-size="11">CHANGED</text>
+
+  <!-- B -->
+  <rect x="340" y="70" width="170" height="64" rx="8" fill="#f0f0f0" stroke="#444" stroke-width="2"/>
+  <text x="425" y="94" text-anchor="middle" font-weight="bold" fill="#111">B.kt</text>
+  <text x="425" y="112" text-anchor="middle" fill="#111">unchanged IR</text>
+  <text x="425" y="126" text-anchor="middle" fill="#111" font-size="11">calls A.foo()</text>
+
+  <!-- C -->
+  <rect x="620" y="70" width="170" height="64" rx="8" fill="#f0f0f0" stroke="#444" stroke-width="2"/>
+  <text x="705" y="94" text-anchor="middle" font-weight="bold" fill="#111">C.kt</text>
+  <text x="705" y="112" text-anchor="middle" fill="#111">unchanged IR</text>
+  <text x="705" y="126" text-anchor="middle" fill="#111" font-size="11">inlines B.bar()</text>
+
+  <!-- Row 2 -->
+  <!-- D -->
+  <rect x="60" y="210" width="170" height="64" rx="8" fill="#f0f0f0" stroke="#444" stroke-width="2"/>
+  <text x="145" y="234" text-anchor="middle" font-weight="bold" fill="#111">D.kt</text>
+  <text x="145" y="252" text-anchor="middle" fill="#111">unchanged IR</text>
+  <text x="145" y="266" text-anchor="middle" fill="#111" font-size="11">virtual call into A</text>
+
+  <!-- R: removed -->
+  <rect x="340" y="210" width="170" height="64" rx="8" fill="#f7e6e6" stroke="#444" stroke-width="2" stroke-dasharray="6 3"/>
+  <text x="425" y="234" text-anchor="middle" font-weight="bold" fill="#111">R.kt</text>
+  <text x="425" y="252" text-anchor="middle" fill="#111">cache dir without a klib file</text>
+  <text x="425" y="266" text-anchor="middle" fill="#111" font-size="11">REMOVED</text>
+
+  <!-- E -->
+  <rect x="620" y="210" width="170" height="64" rx="8" fill="#f0f0f0" stroke="#444" stroke-width="2"/>
+  <text x="705" y="234" text-anchor="middle" font-weight="bold" fill="#111">E.kt</text>
+  <text x="705" y="252" text-anchor="middle" fill="#111">unchanged IR</text>
+  <text x="705" y="266" text-anchor="middle" fill="#111" font-size="11">virtual call into R</text>
+
+  <!-- F: added -->
+  <rect x="820" y="140" width="120" height="64" rx="8" fill="#eaf5e6" stroke="#444" stroke-width="2"/>
+  <text x="880" y="164" text-anchor="middle" font-weight="bold" fill="#111">F.kt</text>
+  <text x="880" y="182" text-anchor="middle" fill="#111">klib file, no cache</text>
+  <text x="880" y="196" text-anchor="middle" fill="#111" font-size="11">ADDED</text>
+
+  <!-- Edges: dependent -> dependency -->
+  <!-- B -> A strong -->
+  <line x1="340" y1="102" x2="232" y2="102" stroke="#444" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="286" y="94" text-anchor="middle" fill="#111" font-size="11">strong</text>
+  <!-- C -> B strong -->
+  <line x1="620" y1="102" x2="512" y2="102" stroke="#444" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="566" y="94" text-anchor="middle" fill="#111" font-size="11">strong</text>
+  <!-- D -> A weak -->
+  <line x1="145" y1="210" x2="145" y2="136" stroke="#444" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#arrow)"/>
+  <text x="178" y="178" text-anchor="middle" fill="#111" font-size="11">weak</text>
+  <!-- E -> R weak -->
+  <line x1="620" y1="242" x2="512" y2="242" stroke="#444" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#arrow)"/>
+  <text x="566" y="234" text-anchor="middle" fill="#111" font-size="11">weak</text>
+
+  <!-- Result table -->
+  <text x="20" y="320" font-size="15" font-weight="bold" fill="#111">Result of the closure (dfs over reversed strong edges; weak edges only from removed files)</text>
+  <rect x="20" y="332" width="920" height="118" fill="#e8eef7" stroke="#444" stroke-width="1"/>
+  <text x="34" y="352" fill="#111"><tspan font-weight="bold">A</tspan> changed, root of the walk</text>
+  <text x="34" y="370" fill="#111"><tspan font-weight="bold">B</tspan> dirty: strong edge B → A</text>
+  <text x="34" y="388" fill="#111"><tspan font-weight="bold">C</tspan> dirty: strong edge C → B (transitive)</text>
+  <text x="34" y="406" fill="#111"><tspan font-weight="bold">D</tspan> NOT dirty: weak edge to a changed file is link-time only</text>
+  <text x="470" y="352" fill="#111"><tspan font-weight="bold">R</tspan> removed: root of the walk, then dropped from the set; directory deleted</text>
+  <text x="470" y="370" fill="#111"><tspan font-weight="bold">E</tspan> dirty: weak dependent of a REMOVED file (its bitcode_deps names R)</text>
+  <text x="470" y="388" fill="#111"><tspan font-weight="bold">F</tspan> dirty: added files are dirty without propagation</text>
+  <text x="470" y="406" fill="#111">DIRTY FILES = A, B, C, E, F → -Xfile-to-cache for each; D's .a is reused</text>
+
+  <!-- Legend -->
+  <rect x="34" y="424" width="14" height="14" fill="#fdf1dc" stroke="#444"/><text x="54" y="436" fill="#111" font-size="11">changed</text>
+  <rect x="124" y="424" width="14" height="14" fill="#f7e6e6" stroke="#444" stroke-dasharray="3 2"/><text x="144" y="436" fill="#111" font-size="11">removed</text>
+  <rect x="214" y="424" width="14" height="14" fill="#eaf5e6" stroke="#444"/><text x="234" y="436" fill="#111" font-size="11">added</text>
+  <rect x="294" y="424" width="14" height="14" fill="#f0f0f0" stroke="#444"/><text x="314" y="436" fill="#111" font-size="11">cached, IR unchanged</text>
+  <line x1="460" y1="431" x2="500" y2="431" stroke="#444" stroke-width="2"/><text x="506" y="436" fill="#111" font-size="11">strong edge (propagates dirtiness)</text>
+  <line x1="700" y1="431" x2="740" y2="431" stroke="#444" stroke-width="2" stroke-dasharray="6 4"/><text x="746" y="436" fill="#111" font-size="11">weak edge (link-time only)</text>
+</svg>

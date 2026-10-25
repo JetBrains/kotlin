@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 600" width="980" height="600" font-family="Helvetica, Arial, sans-serif" font-size="13">
+  <!-- Title -->
+  <text x="20" y="26" font-size="15" font-weight="bold" fill="#111">CirClassNode for platform/Foundation/NSString with three input targets</text>
+
+  <!-- Class node box -->
+  <rect x="20" y="44" width="940" height="252" rx="6" fill="#e8eef7" stroke="#444"/>
+  <text x="32" y="66" font-weight="bold" fill="#111">CirClassNode (id = CirEntityId "platform/Foundation/NSString"; keyed by CirName in CirPackageNode.classes)</text>
+
+  <!-- targetDeclarations row -->
+  <text x="32" y="92" fill="#111">targetDeclarations: CommonizedGroup&lt;CirClass&gt;, size = number of input targets (3); a slot is set at most once</text>
+  <rect x="32" y="102" width="200" height="56" fill="#eaf5e6" stroke="#444"/>
+  <text x="42" y="121" fill="#111">[0] ios_arm64</text>
+  <text x="42" y="140" fill="#111" font-size="12">CirClass NSString : NSObject</text>
+  <rect x="244" y="102" width="200" height="56" fill="#eaf5e6" stroke="#444"/>
+  <text x="254" y="121" fill="#111">[1] ios_x64</text>
+  <text x="254" y="140" fill="#111" font-size="12">CirClass NSString : NSObject</text>
+  <rect x="456" y="102" width="220" height="56" fill="#eaf5e6" stroke="#444"/>
+  <text x="466" y="121" fill="#111">[2] (macos_arm64, macos_x64)</text>
+  <text x="466" y="140" fill="#111" font-size="12">CirClass from the previous run</text>
+
+  <!-- commonDeclaration -->
+  <rect x="700" y="102" width="248" height="56" fill="#fdf1dc" stroke="#444"/>
+  <text x="710" y="121" fill="#111">commonDeclaration (lazy, index 3)</text>
+  <text x="710" y="140" fill="#111" font-size="12">ClassCommonizer(slots 0..2) -&gt; CirClass?</text>
+  <text x="32" y="180" fill="#111" font-size="12">indexOfCommon = targetDeclarations.size = 3, dimension = 4.</text>
+  <text x="32" y="196" fill="#111" font-size="12">CirTreeSerializer.serializeSingleTarget(node, indexOfCommon) writes only the common slot; leaf slots are never written back.</text>
+
+  <!-- member maps -->
+  <text x="32" y="222" fill="#111">member maps (CirNodeWithMembers), keys built in tree/mergeCirTree.kt:</text>
+  <rect x="32" y="230" width="215" height="54" fill="#f0f0f0" stroke="#444"/>
+  <text x="40" y="248" fill="#111" font-size="12">constructors</text>
+  <text x="40" y="264" fill="#111" font-size="10">Map&lt;ConstructorApproximationKey, Node&gt;</text>
+  <rect x="259" y="230" width="215" height="54" fill="#f0f0f0" stroke="#444"/>
+  <text x="267" y="248" fill="#111" font-size="12">functions</text>
+  <text x="267" y="264" fill="#111" font-size="10">Map&lt;FunctionApproximationKey, Node&gt;</text>
+  <rect x="486" y="230" width="215" height="54" fill="#f0f0f0" stroke="#444"/>
+  <text x="494" y="248" fill="#111" font-size="12">properties</text>
+  <text x="494" y="264" fill="#111" font-size="10">Map&lt;PropertyApproximationKey, Node&gt;</text>
+  <rect x="713" y="230" width="235" height="54" fill="#f0f0f0" stroke="#444"/>
+  <text x="721" y="248" fill="#111" font-size="11">classes (nested, companion, enum entries)</text>
+  <text x="721" y="264" fill="#111" font-size="11">Map&lt;CirName, CirClassNode&gt;</text>
+
+  <!-- arrow to child -->
+  <line x1="366" y1="284" x2="366" y2="326" stroke="#444" stroke-width="1.5"/>
+  <polygon points="361,320 371,320 366,328" fill="#444"/>
+  <text x="378" y="312" fill="#111" font-size="12">key = name + parameter type signatures + receiver signature + ObjC parameter-name hash</text>
+
+  <!-- Child function node: commonized -->
+  <rect x="20" y="330" width="460" height="118" rx="6" fill="#e8eef7" stroke="#444"/>
+  <text x="32" y="350" font-weight="bold" fill="#111">CirFunctionNode, key length()</text>
+  <rect x="32" y="360" width="135" height="40" fill="#eaf5e6" stroke="#444"/>
+  <text x="40" y="384" fill="#111" font-size="12">[0] length(): ULong</text>
+  <rect x="175" y="360" width="135" height="40" fill="#eaf5e6" stroke="#444"/>
+  <text x="183" y="384" fill="#111" font-size="12">[1] length(): ULong</text>
+  <rect x="318" y="360" width="150" height="40" fill="#eaf5e6" stroke="#444"/>
+  <text x="326" y="384" fill="#111" font-size="12">[2] length(): ULong</text>
+  <text x="32" y="420" fill="#111" font-size="12">common = FunctionCommonizer -&gt; expect fun length(): ULong</text>
+  <text x="32" y="436" fill="#111" font-size="12">(ParentNode relationship: computed only if the class node commonized)</text>
+
+  <!-- Child function node: dropped -->
+  <rect x="500" y="330" width="460" height="118" rx="6" fill="#f7e6e6" stroke="#444"/>
+  <text x="512" y="350" font-weight="bold" fill="#111">CirFunctionNode, key macOnly(arg0: Int)</text>
+  <rect x="512" y="360" width="135" height="40" fill="#f0f0f0" stroke="#444" stroke-dasharray="4 3"/>
+  <text x="520" y="384" fill="#111" font-size="12">[0] null</text>
+  <rect x="655" y="360" width="135" height="40" fill="#f0f0f0" stroke="#444" stroke-dasharray="4 3"/>
+  <text x="663" y="384" fill="#111" font-size="12">[1] null</text>
+  <rect x="798" y="360" width="150" height="40" fill="#eaf5e6" stroke="#444"/>
+  <text x="806" y="384" fill="#111" font-size="12">[2] macOnly(arg0: Int)</text>
+  <text x="512" y="420" fill="#111" font-size="12">common = null: a null slot means "not in every target",</text>
+  <text x="512" y="436" fill="#111" font-size="12">so the member is dropped from the shared output.</text>
+
+  <!-- Legend -->
+  <rect x="20" y="466" width="940" height="118" rx="6" fill="#ffffff" stroke="#444"/>
+  <text x="32" y="486" font-weight="bold" fill="#111">Legend</text>
+  <rect x="32" y="496" width="18" height="14" fill="#eaf5e6" stroke="#444"/>
+  <text x="56" y="508" fill="#111" font-size="12">target declaration: one per input target; an input may be a leaf klib or a previously commonized shared target</text>
+  <rect x="32" y="518" width="18" height="14" fill="#fdf1dc" stroke="#444"/>
+  <text x="56" y="530" fill="#111" font-size="12">common declaration: NullableLazyValue computed by the node's Commonizer; null = dropped (recursion-tolerant for classifiers)</text>
+  <rect x="32" y="540" width="18" height="14" fill="#f0f0f0" stroke="#444" stroke-dasharray="4 3"/>
+  <text x="56" y="552" fill="#111" font-size="12">empty slot</text>
+  <text x="32" y="574" fill="#111" font-size="11">Sources: mergedtree/CirNode.kt, CirClassNode.kt, nodeBuilders.kt (commonize: any null slot -&gt; null), approximationKeys.kt, tree/mergeCirTree.kt</text>
+</svg>

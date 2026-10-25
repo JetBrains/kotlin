@@ -34,6 +34,14 @@ also remove the question from the page's "Open questions").
 | [platform-libraries.md](platform-libraries.md) | `.def` sources and conventions, `depends`, build tasks and cinterop args, SDK/Xcode, consumption, KGP/IDE/commonizer, contracts | `platformLibs/*`, `build-tools`, `konan.properties`, `loadNativeKlibs.kt`, KGP sources |
 | [compatibility-and-migration.md](compatibility-and-migration.md) | every compatibility surface, its enforcement, migration examples, checklist | `KotlinAbiVersion.kt`, `klibArguments.kt`, checkers, `BinaryOptions.kt`, `KonanTarget.kt`, `compiler/arguments` |
 | [tooling-integration.md](tooling-integration.md) | KGP target model, tasks and invocations, execution and provisioning, IDE, commonizer, CLI tools, contracts | KGP sources, `cli-runner/main.kt`, `fir-native`, commonizer |
+| [coroutines.md](coroutines.md) | tail-call classification, generated coroutine class, `IrSuspendableExpression`/`IrSuspensionPoint`, liveness and late spilling, `indirectbr` codegen, stdlib side, GC/EA view, exceptions, ObjC export bridges | `NativeSuspendFunctionLowering.kt`, `AbstractSuspendFunctionsLowering.kt`, `CoroutinesLivenessAnalysis.kt`, `CoroutinesVarSpillingLowering.kt`, `IrToBitcode.kt`, `IntrinsicsNative.kt`, FileCheck tests |
+| [exceptions.md](exceptions.md) | throw → unwinding → landing pads, `ExceptionObjHolder`, interop filtering, ObjC/Swift `NSError`, unhandled exceptions and termination, stack traces and symbolication | `CodeGenerator.kt`, `IrToBitcode.kt`, `Exceptions.cpp`, `ObjCExceptions.cpp`, `StackTrace.cpp`, `SourceInfo.cpp`, `ObjCExportCodeGenerator.kt`, standalone tests |
+| [debug-info.md](debug-info.md) | DWARF emission, scopes and `inlinedAt`, variables and types, `ExtendedTypeInfo`, `Konan_Debug*`, `konan_lldb.py`, symbolication, dSYM and linking | `DebugUtils.kt`, `IrToBitcode.kt`, `llvmDebugInfoC`, `KDebug.cpp`, `konan_lldb.py`, `SourceInfo.cpp`, lldb tests |
+| [intrinsics.md](intrinsics.md) | annotations catalogue, all `IntrinsicType` kinds by family and handler, symbol-recognized stdlib functions, `@GCUnsafeCall`/`@ExportForCppRuntime` call directions, extension checklist | `Annotations.kt`, `IntrinsicType.kt` (both copies), `IntrinsicGenerator.kt`, `Ir.kt`, `IrUtils.kt`, `EscapeAnalysisChecker.kt`, `KonanMangler.kt` |
+| [llvm-passes.md](llvm-passes.md) | per-mode pipelines and `-passes` strings, bitcode post-processing phases, `LLVMKotlinRunPasses`, custom `kotlin-*` passes, runtime inlining, attributes, debugging with `opt` | `OptimizationPipeline.kt`, `BitcodePhases.kt`, `libllvmext/src/main/cpp/*`, `RuntimeLinkage.kt`, `PerformanceInline.kt`, FileCheck tests |
+| [targets-and-toolchains.md](targets-and-toolchains.md) | `KonanTarget`/`HostManager`, `konan.properties` lookup rules, dependency downloader, Clang and linker drivers, Xcode coupling, distribution layout, runtime build per target, add/remove a target | `KonanTarget.kt`, `HostManager.kt`, `KonanProperties.kt`, `Configurables.kt`, `DependencyProcessor.kt`, `ClangArgs.kt`, `Linker.kt`, `Xcode.kt`, `NativeDistribution.kt`, git history of target additions |
+| [commonizer.md](commonizer.md) | CIR, deserialization, merged node tree, transformers, per-declaration commonizers, type-alias substitution, optimistic/platform numbers, serialization, hierarchical runs and dependencies, KGP tasks and cache | `native/commonizer/src/**`, `commonizer-api`, KGP `*Commoniz*` tasks, commonizer tests |
+| [test-infrastructure.md](test-infrastructure.md) | test families, `-Pkn.*` → settings → flags, life of a blackbox test, grouping and compilation caches, test runner protocol, directives, FileCheck, cache modes, test generation, CI aggregates | `native/native.tests/testFixtures/**`, `nativeTest.kt`, `TestProcessor.kt`, `TestsDumper.kt`, `build.gradle.kts` files |
 | [debugging.md](debugging.md) | symptom → subsystem → flags → tests | the pages above, `LoggedData.kt`, `BinaryOptions.kt` |
 | [glossary.md](glossary.md) | terms with pointers to the canonical page | the pages above |
 
@@ -46,7 +54,10 @@ also remove the question from the page's "Open questions").
 - Crash in a user program: [debugging.md](debugging.md) → [runtime.md](runtime.md) → [gc.md](gc.md) / [allocator.md](allocator.md).
 - "Works without caches" or "stale after an incremental build": [caches.md](caches.md), [incremental-compilation.md](incremental-compilation.md).
 - Is this change safe to ship: [compatibility-and-migration.md](compatibility-and-migration.md), [platform-libraries.md](platform-libraries.md),
-  [tooling-integration.md](tooling-integration.md).
+  [tooling-integration.md](tooling-integration.md), [targets-and-toolchains.md](targets-and-toolchains.md).
+- Debugger or stack-trace complaints: [debug-info.md](debug-info.md), [exceptions.md](exceptions.md).
+- A test behaves differently from the command line: [test-infrastructure.md](test-infrastructure.md).
+- Adding a runtime-called function or an intrinsic: [intrinsics.md](intrinsics.md).
 
 ## Cross-subsystem contracts
 
@@ -100,8 +111,38 @@ Facts that span pages and are the usual cause of "I changed X and Y broke". Each
   devirtualized or inlined, no static initializers) and carry metadata only; `.def` `linkerOpts` reach the link only for klibs
   that contributed code. [cinterop.md](cinterop.md), [platform-libraries.md](platform-libraries.md)
 - **KGP hard-codes compiler contracts**: flag spellings, output naming, `konan/lib/kotlin-native-compiler-embeddable.jar`,
-  `daemonMain`, `-Xdump-perf` JSON, message renderers, manifest keys, `ktest_*` flags, `konan.properties` keys.
-  [tooling-integration.md](tooling-integration.md)
+  `daemonMain` (looked up by name with `singleOrNull`, so an overload breaks every K/N task), `-Xdump-perf` JSON, message
+  renderers, manifest keys, `ktest_*` flags, `konan.properties` keys, the printed stack-trace format
+  (`KotlinNativeStackTraceParser`). [tooling-integration.md](tooling-integration.md), [exceptions.md](exceptions.md)
+- **Coroutine liveness is computed early and consumed late.** `CoroutinesLivenessAnalysis` records live variables on each
+  `IrSuspensionPoint`; devirtualization, `UnboxInlineLowering`, the inliner and DCE run in between and must neither remove a
+  listed variable nor introduce one live across a suspension; only the pre-codegen inliner recomputes. The attributes are not
+  copied by default, so a pass that copies a suspension point drops them. [coroutines.md](coroutines.md), [dataflow-ir.md](dataflow-ir.md)
+- **Only one EA edge keeps stack objects alive across suspension** (`SaveCoroutineState → this.intestines` over the live
+  variable list); it relies on `ExpressionSlicer` hoisting every impure argument into a temporary. [coroutines.md](coroutines.md),
+  [escape-analysis.md](escape-analysis.md)
+- **Kotlin frames have no landing pads; the shadow stack is reset by `SetCurrentFrame` at the catching frame.** Every function
+  callable from foreign code needs a cleanup landing pad, every call into foreign code a filtering handler; a C++ exception that
+  reaches a Kotlin `catch` is reinterpreted as a Kotlin one because catch clauses never check `typeid`. [exceptions.md](exceptions.md),
+  [compiler-runtime-contract.md](compiler-runtime-contract.md), [cinterop.md](cinterop.md)
+- **The stdlib and the compiler are coupled by name**: `IntrinsicType` strings (two copies matched by `Enum.valueOf`),
+  `BackendNativeSymbols` lookups, `@GCUnsafeCall` callee names (prototype derived from the Kotlin signature, never checked
+  against C++), `@ExportForCppRuntime` names the runtime calls. [intrinsics.md](intrinsics.md), [compatibility-and-migration.md](compatibility-and-migration.md)
+- **LLVM-level passes trust codegen attributes**: `nounwind` on `RUNTIME_NOTHROW` runtime functions, the literal callee name
+  `Kotlin_mm_safePointFunctionPrologue` and its `NO_INLINE` for `kotlin-remove-sp`, `performance_inline` annotations, and
+  `targetCpu`/`targetCpuFeatures` matching how the runtime bitcode was compiled. [llvm-passes.md](llvm-passes.md),
+  [targets-and-toolchains.md](targets-and-toolchains.md)
+- **Debug info is read by three consumers with different assumptions**: LLDB via `konan_lldb.py` (needs `ExtendedTypeInfo`,
+  which `-opt` omits, and the `kclass:kotlin.String` symbol in the selected frame's module), the runtime symbolicator
+  (`sourceInfoType`, `noop` for every `-opt` and non-Apple build), and dsymutil/strip. [debug-info.md](debug-info.md),
+  [exceptions.md](exceptions.md)
+- **Target names, `konan.properties` keys and the distribution layout are consumed by KGP, the commonizer, the IDE and
+  tests** (`presetName`, `commonizer_target` strings, `klib/platform/<target>`, `klib/cache/<flavor>`, `cacheableTargets.<host>`,
+  `llvmVersion.<host>` equal to the LLVM archive's `lib/clang/<ver>`). [targets-and-toolchains.md](targets-and-toolchains.md),
+  [commonizer.md](commonizer.md), [test-infrastructure.md](test-infrastructure.md)
+- **Commonized klibs are metadata only and carry only the common slot**: no `actual` klibs are produced, leaves stay the original
+  platform/cinterop klibs, and the frontend must accept the commonized `expect` next to the platform declaration.
+  [commonizer.md](commonizer.md), [klib-linking.md](klib-linking.md)
 
 ## Implied contracts not enforced by any check or test
 
@@ -135,8 +176,36 @@ because something would fail if it stopped holding.
 | `objcDisposeOnMain` stays true and the main run loop spins | UIKit code relies on main-thread `dealloc` of associated objects | [gc.md](gc.md) |
 | `GC.collect()` is a finalize barrier under tracing GCs and a no-op under `noop` | tests must `IGNORE_NATIVE: gcType=NOOP` | [gc.md](gc.md) |
 | OOM aborts rather than throwing `OutOfMemoryError`; only 8-byte alignment is guaranteed | both allocators | [allocator.md](allocator.md) |
-| `compiler_version` and `depends` manifest properties are informational | no compiler reader found | [compatibility-and-migration.md](compatibility-and-migration.md) |
+| `compiler_version` and `depends` manifest properties are informational | no compiler reader found; `-Xmetadata-klib` outputs have no `depends` at all | [compatibility-and-migration.md](compatibility-and-migration.md), [commonizer.md](commonizer.md) |
 | Cross bundles combine Darwin and host distributions from one revision | unchecked | [platform-libraries.md](platform-libraries.md) |
+| Nothing between `CoroutinesLivenessAnalysis` and `CoroutinesVarSpillingLowering` changes the set of live variables at a suspension point | passes in between do not touch them today; a stale list is a silently wrong resume | [coroutines.md](coroutines.md) |
+| Stdlib coroutine classes (`BaseContinuationImpl`, `ContinuationImpl`, `SafeContinuation`, `COROUTINE_SUSPENDED` identity, the `Function{N+1}` supertype trick) keep the shape the lowering emits against | same build; `kotlinx.coroutines` tested outside this repository | [coroutines.md](coroutines.md) |
+| `$<fn>COROUTINE$<n>` class names are not keyed on by IC, caches or symbolication | per-file counters; classes are private | [coroutines.md](coroutines.md), [incremental-compilation.md](incremental-compilation.md) |
+| `@GCUnsafeCall` callees have the C++ signature the Kotlin declaration implies, and do not block or allocate in Runnable state | prototype derived from Kotlin; no check against the runtime; a drift is UB | [intrinsics.md](intrinsics.md) |
+| Every `@ExportForCppRuntime` function is called in Runnable state | verified for the launcher path and by the `EnterFrame` assertion only | [intrinsics.md](intrinsics.md) |
+| `IntrinsicType` strings in the stdlib and the compiler agree; `BackendNativeSymbols` resolve | same build; surfaces lazily in the first compilation that needs a kind | [intrinsics.md](intrinsics.md) |
+| `@NoReorderFields` is only used on final classes without inherited fields | comment in `LlvmDeclarations.packFields`; unchecked | [intrinsics.md](intrinsics.md) |
+| Runtime functions marked `RUNTIME_NOTHROW` really never throw | codegen emits `nounwind`; LLVM may delete landing pads | [llvm-passes.md](llvm-passes.md) |
+| `kotlin-remove-sp` finds the prologue safepoint by literal name in the entry block | `NO_INLINE` in `mm/Memory.cpp` and codegen placement | [llvm-passes.md](llvm-passes.md) |
+| `targetCpu`/`targetCpuFeatures` are compatible with how runtime bitcode was compiled | `runtime_attributes_compatible.kt` is disabled on Android arm64/x86 and Linux arm64 | [llvm-passes.md](llvm-passes.md), [targets-and-toolchains.md](targets-and-toolchains.md) |
+| `-Xsave-llvm-ir-after=<Phase>:<pass>` is used single-threaded | `LLVMKotlinRunPasses` writes global `cl::opt`s | [llvm-passes.md](llvm-passes.md) |
+| The `dev` and `user` LLVM distributions are the same LLVM version; `llvmVersion.<host>` equals the archive's `lib/clang/<ver>` | by construction of the distribution; libclang `-isystem` path breaks otherwise | [targets-and-toolchains.md](targets-and-toolchains.md), [llvm-passes.md](llvm-passes.md) |
+| `cacheableTargets.<host>` matches the caches actually shipped in `klib/cache` | both from one build | [targets-and-toolchains.md](targets-and-toolchains.md), [test-infrastructure.md](test-infrastructure.md) |
+| The first stage never touches `PlatformManager`, so klibs can be cross-compiled on any host | KGP defaults `enableKlibsCrossCompilation=true`; no test on a host without the target's toolchain | [targets-and-toolchains.md](targets-and-toolchains.md) |
+| Extracted dependencies under `~/.konan/dependencies` are intact | `.extracted` markers are never re-validated | [targets-and-toolchains.md](targets-and-toolchains.md) |
+| `osVersionMin` of a target is what the shipped platform libraries were built against | `watchos_device_arm64` hard-codes 9.0 while `minVersion.watchos` is 8.0 | [targets-and-toolchains.md](targets-and-toolchains.md), [compatibility-and-migration.md](compatibility-and-migration.md) |
+| The ObjC wrapper of a Kotlin object keeps an NSObject refcount of exactly one until `releaseAsAssociatedObject` | nothing stops ObjC code from `[super retain]` or `objc_setAssociatedObject` with a wrapper as value | [export.md](export.md), [cinterop.md](cinterop.md) |
+| Catch clauses in Kotlin only ever see `ExceptionObjHolder` | landing pads use a `null` catch-all without `typeid`; runtime discipline and filtering handlers at interop boundaries | [exceptions.md](exceptions.md) |
+| `Kotlin_getCurrentStackTrace`'s skip count matches the `Throwable` constructor structure | one test (`kt49240_stack_trace_completeness.kt`) | [exceptions.md](exceptions.md) |
+| Runtime global names agree between `NativeRuntimeOverridableConstants.kt` and `CompilerConstants.cpp` | hand-maintained | [exceptions.md](exceptions.md), [compiler-runtime-contract.md](compiler-runtime-contract.md) |
+| `Konan_DebugOperation` numbering is append-only and `ExtendedTypeInfo` keeps its position in `TypeInfo` | `konan_lldb.py` of one version drives binaries of another | [debug-info.md](debug-info.md) |
+| `konan_lldb.py` finds `kclass:kotlin.String` in the selected frame's module | single-image programs | [debug-info.md](debug-info.md) |
+| Function and bridge naming (`objc2kotlin_*`, `<compiler-generated>`, `<NODEBUG>`) is stable for the debugger scripts | hard-coded in `konan_lldb.py` and libbacktrace patch | [debug-info.md](debug-info.md), [export.md](export.md) |
+| Every commonized `expect` has an implementation in each leaf | only the common slot is serialized; leaves are the original klibs; the frontend's handling is partly unverified | [commonizer.md](commonizer.md) |
+| `klib/platform` content is what the distribution commonizer cache was built from | cache keyed by KGP version and `konanHome` path only | [commonizer.md](commonizer.md), [platform-libraries.md](platform-libraries.md) |
+| `PlatformWidthIndex` lists every target | hand-maintained table; new targets silently excluded from platform-integer commonization | [commonizer.md](commonizer.md), [targets-and-toolchains.md](targets-and-toolchains.md) |
+| Test modes passed through `-Pkn.*` produce the compiler flags the test author expects | `IGNORE_NATIVE: target=` values unvalidated; `gcScheduler=` never fires by default; forbidden-args check skipped for ext test data | [test-infrastructure.md](test-infrastructure.md) |
+| `IGNORE_NATIVE` tests fail | enforced ("Test did not fail as expected"); `MUTED` tests are skipped instead | [test-infrastructure.md](test-infrastructure.md) |
 
 ## Findings worth an owner's attention
 
@@ -155,18 +224,108 @@ Recorded as open questions on the pages, listed here because they look like late
   `-system` suffix the compiler uses ([platform-libraries.md](platform-libraries.md), [tooling-integration.md](tooling-integration.md)).
 - `reversedWholeLibraryDependencies` is built but never traversed by the IC dirty-file analysis ([incremental-compilation.md](incremental-compilation.md)).
 - The two `TopologicalLibraryOrder` TODOs in `TopLevelPhases.kt` refer to a class that no longer exists ([klib-linking.md](klib-linking.md)).
+- `userCacheFlavorString` appends `-pl` unconditionally although partial linkage cannot be switched off; KGP integration-test
+  helpers hard-code the suffix ([caches.md](caches.md), [incremental-compilation.md](incremental-compilation.md)).
+
+Coroutines ([coroutines.md](coroutines.md)):
+- Suspend lambdas are never their own state machines on Native (`buildCoroutine(…, isSuspendLambdaInvokeMethod = false)`
+  always), so every created coroutine goes through the `createCoroutineFromSuspendFunction` wrapper and
+  `BaseContinuationImpl.create` is dead; the shared `CoroutineBuilder` supports the cheaper mode that JS uses.
+- Late variable spilling (`ade70d52e6f4`, empty commit body) relies on an unenforced invariant (see cross-subsystem contracts).
+- `DebugProbes` are empty but `probeCoroutineResumed` is called on every `resumeWith`; `ExpressionSlicer` is quadratic
+  (TODO); spilled fields are never shared between variables with disjoint live ranges.
+- `objcExportSuspendFunctionLaunchThreadRestriction` is read as `!= MAIN`, so an unset option means "any thread".
+
+Exceptions ([exceptions.md](exceptions.md)):
+- `KONAN_REPORT_BACKTRACE_TO_IOS_CRASH_LOG` is referenced but defined nowhere (definitions removed in `de1dd47ab10a`,
+  `2a395ad9c5fe`); `ReportBacktraceToIosCrashLog` and the `Kotlin_Throwable_getStackTrace` export are dead, as is
+  `kotlin::DisallowSourceInfo()`.
+- `SetKonanTerminateHandler()` pushes a handler on every `initRuntime()` (per attached thread) and every
+  `setUnhandledExceptionHook`, so the terminate-handler stack grows.
+- `ReportUnhandledException` prints the `Uncaught Kotlin exception:` prefix to stdout and the trace to stderr.
+- `HandleCurrentExceptionWhenLeavingKotlinCode` is `RUNTIME_NORETURN` but returns normally for non-Kotlin exceptions.
+- `Worker.execute` only prints exceptions (TODO), unlike `executeAfter`.
+
+Debug info ([debug-info.md](debug-info.md)):
+- `sourceInfoType` defaults to `noop` for every `-opt` build and every non-Apple `-g` build, so `Throwable` traces have no
+  `file:line` there even when a line table exists; `<NODEBUG>` frame hiding only works under libbacktrace, not the Apple default.
+- `needDebugInfo` gives `var` locals but not `val`s a `DILocalVariable` under light debug; looks accidental.
+- Dead code: `ClassScope.members`/`debugFieldDeclaration` (also wrong offset arithmetic), `DebugInfo.module`,
+  `Konan_DebugGetOperation` (declared, never defined), `konan_globals_command` (never registered).
+- `konan_lldb.py`: `_TYPES` has 10 entries but `_TYPE_CONVERSION` 11 (a `VECTOR128` field raises `IndexError`);
+  `Konan_DebugGetTypeNameImpl` leaks a C string per call; `DICreateBasicType` ignores `alignment`; `Boolean` DWARF size is
+  `int8` for an `i1`; `SetupConfiguration.kt` misspells `-Xg-generate-debug-tramboline`; `dwarf_util.kt.pp` and the generated
+  `Dwarf.kt` disagree on `DW_LANG_Kotlin` (0x0001 vs 0x0026). No FileCheck test covers debug metadata.
+
+Intrinsics ([intrinsics.md](intrinsics.md)):
+- `EscapeAnalysisChecker.mustBeLowered` and `IntrinsicGenerator` disagree on which kinds are lowered
+  (`CREATE_UNINITIALIZED_INSTANCE`/`_ARRAY`, `CREATE_EMPTY_STRING`, `IDENTITY` listed as lowered but generated;
+  `BLOCK_PTR_TO_FUNCTION_OBJECT` missing), so some EA annotations are reported unused instead of validated.
+- `OBJC_INIT_BY` sits in the "special intrinsic" error branch although `InteropLowering.lowerObjCInitBy` lowers it.
+- Dead annotations: `@kotlin.native.internal.Intrinsic`, `@LeakDetectorCandidate` (the compiler side of the
+  `TF_LEAK_DETECTOR_CANDIDATE` collision above); `@Retain`/`@RetainForTarget` and `@Independent` have readers but no stdlib
+  users.
+- An unannotated `external fun` in user code is not a frontend diagnostic on Native; it dies in the second stage with an
+  internal `Error` from `externalSymbolOrThrow`.
+
+LLVM passes and toolchains ([llvm-passes.md](llvm-passes.md), [targets-and-toolchains.md](targets-and-toolchains.md)):
+- `-Xllvm-variant=dev-with-asserts` maps to a `konan.properties` key that `LLVMDistributionSource` never writes, and the
+  `gradle.properties` URLs for it point at the plain `dev` archives; probably unresolvable.
+- `HideSymbolsPass` does not preserve `__stack_chk_*` (TODO); `-Xbinary=stackProtector` with `-produce static_cache` is untested.
+- `libllvmext/CMakeLists.txt` lists the deleted `CoverageMappingC.cpp`; `RemoveRedundantSafepointsPass.kt` kdoc describes a gate
+  that no longer exists; `GCSchedulerConfig.hpp` still says pages are 256 KiB.
+- `DependencyProcessor.kt` reads `downloadingAttemptPauseMs` while `konan.properties` sets `downloadingAttemptIntervalMs`.
+- Dead `konan.properties` keys and readers: `osVersionMinFlagLd.*` (14 entries, no reader), `reducedLlvmAppendix`,
+  `lld`/`LldFlags` (reader, no entries), `runtimeDefinitions`, `Distribution.additionalPropertyFiles`;
+  `defaultArchiveTypeByHost` still lists `MACOS_X64` after `HostManager` dropped it (`5292dc16be63`); a stale
+  `WATCHOS_DEVICE_ARM64` TODO in `KonanTargetExtenstions.kt`; `Distribution.getBundleVersion` guesses the version from a `-1`
+  substring of the path.
+
+Optimizations ([escape-analysis.md](escape-analysis.md), [devirtualization.md](devirtualization.md)):
+- With `escapeAnalysisPropagateExiledToHeapObjects=true` (default for all GCs since `f7d3b8074e7c`), an allocation that only
+  flows into a parameter field or the return value becomes an escape origin in its own function (`Escapes: D0`), so callers
+  cannot stack-allocate anything stored into such objects; the KDoc example in `escapeAnalysis/Annotations.kt` no longer holds for
+  Kotlin-bodied callees. The commit targeted large local arrays; this looks like an unintended widening worth measuring.
+- `squashEquivalentNodes` skips nodes whose only parent is a `Source`, so sibling return chains fed by the same constant are
+  never merged; parentless `Ordinary` nodes all get signature 0.
+- `processCall` logs `WARNING: There is no node N` for every `null` argument and leaves dangling field nodes that force a
+  synthetic drain.
+- CMS: `marked()` cannot tell grey from black, so the deletion barrier cannot skip black destinations (TODO in
+  `cms/Barriers.cpp`) ([gc.md](gc.md)).
+
+Interop and export ([cinterop.md](cinterop.md), [export.md](export.md)):
+- `releaseAsAssociatedObjectImp`/`deallocImp` in `ObjCInterop.mm` dispatch to `super` with `// FIXME is this correct?`.
+- `collectLlvmModules` drops cinterop klib bitcode only when `cCallMode` is exactly `Direct`; `DirectOrIndirect` links it even
+  when every call resolved directly.
+- `_Konan_init_<lib>` constructors: an exception from a merged runtime initializer escapes a `generateFunctionNoRuntime`
+  function (TODO "shall we put that into the try block?") ([static-initializers.md](static-initializers.md)).
+
+Commonizer ([commonizer.md](commonizer.md)):
+- `native-dist-commonize` declares `-targets`, `-copy-stdlib`, `-copy-endorsed-libs` and never reads them; the Xcode 14
+  CoreGraphics `allowedDuplicates` hack (`289f540530dc`) is still present; `@kotlin.commonizer.ObjCCallable` is emitted into
+  every commonized ObjC callable but declared nowhere in the repository; `CallableValueParametersCommonizer.patchCallables`
+  mutates its input declarations; top-level `@Deprecated` functions are dropped at deserialization with no recorded reason;
+  `native/commonizer/README.md` is stale (claims no user-cinterop support and shows `actual` klibs that are not produced).
+
+Test infrastructure ([test-infrastructure.md](test-infrastructure.md)):
+- `IGNORE_NATIVE: target=` values are not validated (a typo never matches); `TestCompilerArgs.findForbiddenArgs` is applied only
+  to predefined test cases; `computeKlibIrInlinerMode` ignores its argument (KT-81022) yet injects two `-XXLanguage:` flags into
+  every test; `IGNORE_NATIVE: gcScheduler=` can never fire by default; `NativeCodegenSourceTransformers` and `fromGTestPattern`
+  are duplicated without a sync test; `invokeCInterop` cannot capture cinterop output; `-Pkn.compilerOutputInterceptor` is not
+  forwarded; `kn.ignoreFailures` does not exist; `MUTED` tests never report an unexpected pass. `TestListing.kt` KDoc and the
+  `TestRun.kt` sync comment are stale. HACKING.md's property table was corrected in this round where the code disagreed.
 
 ## Known gaps
 
 Not covered, or only by a pointer:
-- Swift export internals (skipped on purpose; [docs/swift-export](../swift-export/README.md) exists), the klib commonizer's
-  algorithm, and the Analysis-API-based ObjC header generator.
-- Test infrastructure internals beyond [HACKING.md](../../kotlin-native/HACKING.md#test-infrastructure-overview).
-- Benchmarks (`kotlin-native/performance`), the XCTest launcher, the LLDB plugin (`llvmDebugInfoC`, `runtime/src/debug`),
-  the Breakpad crash handler.
+- Swift export internals (skipped on purpose; [docs/swift-export](../swift-export/README.md) exists) and the Analysis-API-based
+  ObjC header generator.
+- Benchmarks (`kotlin-native/performance`), the XCTest launcher, the Breakpad crash handler.
 - Dynamic caches (not built automatically, no test mode) and `-Xcompile-from-bitcode` beyond their entry points.
-- The `kotlin.native.internal` intrinsics as a set; they are mentioned where a subsystem uses them.
-- The LLVM pass pipeline is described in [llvm-codegen.md](llvm-codegen.md) but not at the level of individual passes.
+- `kotlinx.coroutines` internals (outside this repository); only what the compiler and stdlib guarantee is documented.
+- Sanitizer builds (`-Xbinary=sanitizer`): how the instrumented runtime reaches the link is unverified.
+- `-Xllvm-variant` default: `konan.properties` points `llvmHome.<host>` at the `dev` slot while HACKING.md says `user`; which
+  one a shipped distribution resolves to was not settled.
 
 ## Open questions
 
@@ -220,8 +379,43 @@ Collected from the pages; each is also listed at the end of its page.
 - Interaction of `-g` with `-opt` across `Linker` and `BitcodeCompiler`.
 
 ### compiler-runtime-contract.md
-- Who consumes `@ExportForCompiler`; the `TF_*` flag collision above; the `ShadowStack.hpp` "incompatible" TODO;
-  consumers of `ExtendedTypeInfo` beyond `debug.bc`.
+- The `TF_*` flag collision above; the `ShadowStack.hpp` "incompatible" TODO. (`@ExportForCompiler`'s consumer is the mangler's
+  `ANNOTATIONS_TO_TREAT_AS_EXPORTED`; `ExtendedTypeInfo` is consumed by `debug.bc` only — both resolved in
+  [intrinsics.md](intrinsics.md) and [debug-info.md](debug-info.md).)
+
+### coroutines.md
+- Does `-opt` fold the `COROUTINE_SUSPENDED` getter into a load; does `-Xphases-to-dump-after=CoroutinesVarSpillingLowering`
+  work for a lowering inside `runCodegen`; could EA stack-allocate a coroutine object whose `this` never escapes.
+- Why suspend lambdas do not use the lambda-as-state-machine mode; the IC test `suspendFunChange` is disabled on MinGW with no
+  recorded reason.
+
+### exceptions.md
+- Which component reports a Kotlin exception escaping a Swift-export bridge without `@Throws`; rationale for having no landing
+  pads in Kotlin frames and for the `typeid`-less catch-all.
+
+### debug-info.md
+- How Fleet/AppCode/Xcode locate `konan_lldb.py`; what lldb shows for a suspended coroutine; why `-Xdebug-info-version=1`
+  (DWARF 2, `DW_LANG_C89`) is still the default and the trampoline is off by default.
+
+### intrinsics.md
+- Whether every C++ call site of an `@ExportForCppRuntime` function runs Runnable; why `@CanBePrecreated` has `SOURCE`
+  retention; whether `@Independent` is still produced for shipped klibs; whether `@ExportForCppRuntime` on a constructor works.
+
+### llvm-passes.md
+- Contents of LLVM's `lto<O0>` pipeline; whether any TBAA/`invariant.load`/`dereferenceable` metadata is emitted (grep found
+  none); the `dev` vs `user` default (see Known gaps).
+
+### targets-and-toolchains.md
+- How `-Xbinary=sanitizer=thread` obtains an instrumented runtime; whether `tools/scripts/update_xcode.sh` is the canonical way to
+  build Apple sysroot archives; target tiers are external to the code.
+
+### commonizer.md
+- Separate KMP compilation (`-Xfragment-dependencies`): can a platform fragment see both the commonized `expect` and the platform
+  class, and which wins; where the `kotlin.PlatformInt` support library lives; who consumes `@kotlin.commonizer.ObjCCallable`.
+
+### test-infrastructure.md
+- Whether the thread-state checker works with `STATIC_ONLY_DIST` (HACKING says `cacheMode=NO` is required; code only asserts
+  `DEBUG`); whether KGP's `KotlinNativeTest` uses the same `--ktest_*` protocol; the `LLDB_TRACE` directive does not exist.
 
 ### runtime.md, gc.md, allocator.md
 - Any remaining runtime teardown path (`memoryDeInit=0`); `Platform.isMemoryLeakCheckerActive` without a leak checker.

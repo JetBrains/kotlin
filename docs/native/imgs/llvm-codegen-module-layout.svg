@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 700" width="1000" height="700" font-family="Helvetica, Arial, sans-serif" font-size="13">
+  <rect x="0" y="0" width="1000" height="700" fill="#ffffff"/>
+  <text x="12" y="22" font-size="15" font-weight="bold" fill="#111">One fragment's LLVM module ("out") after CodegenPhase, before LinkBitcodeDependenciesPhase</text>
+  <text x="12" y="40" fill="#111" font-size="12">Target triple, data layout and the struct types TypeInfo, ObjHeader, InitNode, InterfaceTableRecord come from compiler_interface.bc.</text>
+
+  <!-- left: globals -->
+  <rect x="12" y="56" width="480" height="500" fill="#e8eef7" stroke="#444"/>
+  <text x="24" y="76" font-weight="bold" fill="#111">Globals (data)</text>
+
+  <text x="24" y="98" fill="#111" font-size="12" font-weight="bold">per class C with requiresRtti() - LlvmDeclarations.kt, RTTIGenerator.kt</text>
+  <rect x="30" y="106" width="454" height="22" fill="#ffffff" stroke="#444"/>
+  <text x="36" y="121" fill="#111" font-size="11">kclass:C = { TypeInfo, [N x ptr] }  vtable attached if non-abstract</text>
+  <rect x="30" y="132" width="454" height="22" fill="#ffffff" stroke="#444"/>
+  <text x="36" y="147" fill="#111" font-size="11">kintf:C  krefs:C  kifacetable:C   constant arrays the TypeInfo points to</text>
+  <rect x="30" y="158" width="454" height="22" fill="#ffffff" stroke="#444"/>
+  <text x="36" y="173" fill="#111" font-size="11">ktypew:C writable TypeInfo (exported);  type kclassbody:C#internal</text>
+
+  <text x="24" y="200" fill="#111" font-size="12" font-weight="bold">static state</text>
+  <rect x="30" y="208" width="454" height="22" fill="#ffffff" stroke="#444"/>
+  <text x="36" y="223" fill="#111" font-size="11">kvar:pkg.name  static field (global)</text>
+  <rect x="30" y="234" width="454" height="22" fill="#ffffff" stroke="#444"/>
+  <text x="36" y="249" fill="#111" font-size="11">@ThreadLocal field: TLS slot, read via LookupTLS(__KonanTlsKey, index)</text>
+  <rect x="30" y="260" width="454" height="22" fill="#ffffff" stroke="#444"/>
+  <text x="36" y="275" fill="#111" font-size="11">kobjref:Fq / kobjget:Fq  exported singleton storage;  theUnitInstance</text>
+  <rect x="30" y="286" width="454" height="22" fill="#ffffff" stroke="#444"/>
+  <text x="36" y="301" fill="#111" font-size="11">state_global$container (intptr, internal);  state_thread_local$container</text>
+
+  <text x="24" y="328" fill="#111" font-size="12" font-weight="bold">permanent constants - KotlinStaticData.kt, Boxing.kt</text>
+  <rect x="30" y="336" width="454" height="22" fill="#ffffff" stroke="#444"/>
+  <text x="36" y="351" fill="#111" font-size="11">unnamed private globals: string literals, IrConstantValue objects, boxes</text>
+  <rect x="30" y="362" width="454" height="22" fill="#ffffff" stroke="#444"/>
+  <text x="36" y="377" fill="#111" font-size="11">OBJECT_TAG_PERMANENT set in the ObjHeader: never scanned or freed</text>
+
+  <text x="24" y="404" fill="#111" font-size="12" font-weight="bold">start-up records - IrToBitcode.kt appendStaticInitializers</text>
+  <rect x="30" y="412" width="454" height="22" fill="#ffffff" stroke="#444"/>
+  <text x="36" y="427" fill="#111" font-size="11">init_node { initializer, next }  one per library compiled into this module</text>
+  <rect x="30" y="438" width="454" height="22" fill="#ffffff" stroke="#444"/>
+  <text x="36" y="453" fill="#111" font-size="11">_Konan_init_lib_guard (i32);  llvm.global_ctors = [ _Konan_constructors ]</text>
+  <rect x="30" y="464" width="454" height="22" fill="#ffffff" stroke="#444"/>
+  <text x="36" y="479" fill="#111" font-size="11">llvm.used (retainAnnotation);  KotlinObjCClassInfo records;  ObjC adapters</text>
+  <text x="24" y="510" fill="#111" font-size="11">prefix:name symbols are the ABI (KonanBinaryInterface);</text>
+  <text x="24" y="526" fill="#111" font-size="11">#internal names stay private to the module; global_ctors only in final binaries.</text>
+
+  <!-- right: functions -->
+  <rect x="508" y="56" width="480" height="500" fill="#eaf5e6" stroke="#444"/>
+  <text x="520" y="76" font-weight="bold" fill="#111">Functions (code)</text>
+
+  <text x="520" y="98" fill="#111" font-size="12" font-weight="bold">Kotlin functions - BinaryInterface.kt, ContextUtils.linkageOf</text>
+  <rect x="526" y="106" width="454" height="22" fill="#ffffff" stroke="#444"/>
+  <text x="532" y="121" fill="#111" font-size="11">kfun:mangled  exported, external linkage</text>
+  <rect x="526" y="132" width="454" height="22" fill="#ffffff" stroke="#444"/>
+  <text x="532" y="147" fill="#111" font-size="11">fq#internal  not exported, internal linkage (file-qualified in per-file caches)</text>
+  <rect x="526" y="158" width="454" height="22" fill="#ffffff" stroke="#444"/>
+  <text x="532" y="173" fill="#111" font-size="11">overridable method: trampoline under the public name, body at name-impl</text>
+  <rect x="526" y="184" width="454" height="22" fill="#ffffff" stroke="#444"/>
+  <text x="532" y="199" fill="#111" font-size="11">&lt;bridge-DIRS&gt;name  bridges, reached only through vtable/itable slots</text>
+
+  <text x="520" y="226" fill="#111" font-size="12" font-weight="bold">initialization - static-initializers.md</text>
+  <rect x="526" y="234" width="454" height="22" fill="#ffffff" stroke="#444"/>
+  <text x="532" y="249" fill="#111" font-size="11">$init_global$file, $init_thread_local, eager variants, $clinit_trigger</text>
+  <rect x="526" y="260" width="454" height="22" fill="#ffffff" stroke="#444"/>
+  <text x="532" y="275" fill="#111" font-size="11">_Konan_init_lib  one ctor per library (declared only, if the library is cached)</text>
+  <rect x="526" y="286" width="454" height="22" fill="#ffffff" stroke="#444"/>
+  <text x="532" y="301" fill="#111" font-size="11">_Konan_constructors  calls every ctor (final binaries)</text>
+
+  <text x="520" y="328" fill="#111" font-size="12" font-weight="bold">entry point and foreign-facing symbols</text>
+  <rect x="526" y="336" width="454" height="22" fill="#ffffff" stroke="#444"/>
+  <text x="532" y="351" fill="#111" font-size="11">Konan_start  (programs, @ExportForCppRuntime, EntryPoint.kt) calls main</text>
+  <rect x="526" y="362" width="454" height="22" fill="#ffffff" stroke="#444"/>
+  <text x="532" y="377" fill="#111" font-size="11">literal C names from @ExportForCppRuntime / @ExportedBridge</text>
+  <rect x="526" y="388" width="454" height="22" fill="#ffffff" stroke="#444"/>
+  <text x="532" y="403" fill="#111" font-size="11">C export adapters;  Kotlin_ObjCExport_* adapters (export.md)</text>
+  <rect x="526" y="414" width="454" height="22" fill="#ffffff" stroke="#444"/>
+  <text x="532" y="429" fill="#111" font-size="11">declared runtime entry points (importRtFunction): AllocInstance, EnterFrame, ...</text>
+
+  <text x="520" y="456" fill="#111" font-size="12" font-weight="bold">metadata - DebugUtils.kt, linkModules.kt</text>
+  <rect x="526" y="464" width="454" height="22" fill="#ffffff" stroke="#444"/>
+  <text x="532" y="479" fill="#111" font-size="11">DICompileUnit per module, DIFile per IrFileEntry, DISubprogram per function</text>
+  <rect x="526" y="490" width="454" height="22" fill="#ffffff" stroke="#444"/>
+  <text x="532" y="505" fill="#111" font-size="11">module flags (SDK version);  embedded -l / -framework for static frameworks</text>
+  <text x="520" y="532" fill="#111" font-size="11">Each function with a frame has the blocks prologue, locals_init,</text>
+  <text x="520" y="548" fill="#111" font-size="11">stack_locals_init, entry ..., epilogue and optionally cleanup_landingpad.</text>
+
+  <!-- bottom: linked in later -->
+  <rect x="12" y="572" width="976" height="116" fill="#fdf1dc" stroke="#444"/>
+  <text x="24" y="592" font-weight="bold" fill="#111">Added into the same module afterwards</text>
+  <text x="24" y="612" fill="#111" font-size="12">CStubsPhase: C stubs produced by interop lowerings and compiled by clang.</text>
+  <text x="24" y="630" fill="#111" font-size="12">LinkBitcodeDependenciesPhase (CompilerOutput.kt): C export adapter api.bc; runtime modules (runtime.bc, chosen GC, scheduler, allocator, ...,</text>
+  <text x="24" y="648" fill="#111" font-size="12">plus the generated constants module) only when this module defines the stdlib runtime part; launcher.bc for programs (defines Konan_main),</text>
+  <text x="24" y="666" fill="#111" font-size="12">xctest_launcher.bc, exceptionsSupport.bc (dynamic caches), cinterop klib bitcode, -native-library files, patched objc.bc.</text>
+  <text x="24" y="682" fill="#111" font-size="12">After the LLVM pipelines, InsertEntryPointAliasPhase adds the alias main = Konan_main (programs without -nomain).</text>
+</svg>

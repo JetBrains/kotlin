@@ -46,6 +46,24 @@ runGlobalOptimizations  = optimize && !cachedLibraries.hasStaticCaches
 enablePreCodegenInliner = preCodegenInlineThreshold != 0 && runGlobalOptimizations   // -Xbinary=preCodegenInlineThreshold=N
 ```
 
+The same conditions as a decision tree, in the order `runCodegen` (`TopLevelPhases.kt`) evaluates them, plus the two extra gates
+on `GHAPhase` and on any individual phase:
+
+```mermaid
+flowchart TD
+  OPT{"-opt?"} -->|no| DBG["optimize = false:<br/>no accessor inlining, no DFG, no analyses"]
+  OPT -->|yes| CACHES{"cachedLibraries.hasStaticCaches?<br/>(only with enableReleaseBinaryCache,<br/>otherwise -opt ignores caches)"}
+  CACHES -->|yes| NOGLOB["runGlobalOptimizations = false:<br/>empty ModuleDFG, null DCE set,<br/>empty lifetimes, GHA off"]
+  CACHES -->|no| GLOB["runGlobalOptimizations = true"]
+  GLOB --> THR{"preCodegenInlineThreshold != 0?"}
+  THR -->|yes| INL["enablePreCodegenInliner: inliner runs twice,<br/>static-initializer removal before run 1"]
+  THR -->|no| NOINL["static-initializer removal after<br/>DevirtualizationAnalysis"]
+  GLOB --> ISC{"produce.isCache?"}
+  ISC -->|yes| NOGHA["GHAPhase disabled:<br/>classId 0, hashed interface ids"]
+  ISC -->|no| GHAON["GHAPhase runs"]
+  GLOB --> DIS["-Xdisable-phases=Name drops any single<br/>phase: it returns outputIfNotEnabled"]
+```
+
 | # | Phase (name for `-Xdisable-phases`)              | Runs when                                   | Input → output                                                                   |
 |---|--------------------------------------------------|---------------------------------------------|----------------------------------------------------------------------------------|
 | 1 | `PropertyAccessorInlineLowering`, `InlineClassPropertyAccessorsLowering` | `optimize`                | IR → IR (trivial accessors inlined; comment: not in debug because of separate compilation and debug info) |
@@ -64,6 +82,50 @@ enablePreCodegenInliner = preCodegenInlineThreshold != 0 && runGlobalOptimizatio
 | 14 | `RTTI`                                          | always                                      | consumes the DCE set: vtable/itable slots of dead functions become null pointers |
 | 15 | `EscapeAnalysis`                                | `runGlobalOptimizations`                    | DFG + call graph → `Map<IrElement, Lifetime>` (empty map when disabled)          |
 | 16 | `Codegen`                                       | always                                      | consumes lifetimes                                                               |
+
+The same sequence as a flow, with each phase's gate in parentheses, as called in `runCodegen` (`TopLevelPhases.kt`); phases
+with no gate always run:
+
+```mermaid
+flowchart TD
+  L1["PropertyAccessorInlineLowering,<br/>InlineClassPropertyAccessorsLowering (optimize)"] --> DFG["BuildDFG (runGlobalOptimizations)<br/>→ ModuleDFG"]
+  DFG --> SI1["RemoveRedundantCallsToStaticInitializers<br/>(enablePreCodegenInliner)"]
+  SI1 --> IN1["PreCodegenInliner, run 1<br/>(enablePreCodegenInliner)"]
+  IN1 --> DA["DevirtualizationAnalysis<br/>(runGlobalOptimizations)"]
+  DA --> SI2["RemoveRedundantCallsToStaticInitializers<br/>(runGlobalOptimizations and not enablePreCodegenInliner)"]
+  SI2 --> DV["Devirtualization<br/>(runGlobalOptimizations)"]
+  DV --> L2["RedundantCoercionsCleaner,<br/>UnboxInlineLowering (optimize)"]
+  L2 --> IN2["PreCodegenInliner, run 2<br/>(enablePreCodegenInliner)"]
+  IN2 --> DCE["DCEPhase (runGlobalOptimizations)<br/>→ set of live IrSimpleFunctions, or null"]
+  DCE --> L3["CoroutinesVarSpillingLowering,<br/>CreateLLVMDeclarations"]
+  L3 --> GHA["GHAPhase<br/>(runGlobalOptimizations and not produce.isCache)"]
+  GHA --> RTTI["RTTIPhase<br/>reads the DCE set"]
+  RTTI --> EA["EscapeAnalysis (runGlobalOptimizations)<br/>→ Map IrElement to Lifetime, or empty"]
+  EA --> CG["CodegenPhase<br/>reads the lifetimes"]
+```
+
+What each analysis hands to the next, as read from the phase inputs in `LTO.kt` and `BitcodeGeneration.kt`: the DFG is shared
+by reference and patched in place, the devirtualization verdicts travel as an IR attribute, and every other result is a plain
+value passed to exactly one consumer. Each client builds its own call graph with its own unfold factors (devirtualized /
+non-devirtualized):
+
+```mermaid
+flowchart LR
+  IR["lowered IR"] --> DFGB["BuildDFG"]
+  DFGB -->|"ModuleDFG: functions + SymbolTable"| DA["DevirtualizationAnalysis"]
+  DA -->|"IrCall.devirtualizedCallSite"| DV["Devirtualization"]
+  DA -->|"IrCall.devirtualizedCallSite"| CGB["CallGraphBuilder<br/>(one per client)"]
+  DV -->|"direct calls, type switches;<br/>FunctionDFGBuilder rebuilds"| DFGB
+  CGB -->|"CallGraph (5 / 5)"| SI["RemoveRedundantCalls<br/>ToStaticInitializers"]
+  CGB -->|"CallGraph (-1 / -1)"| INL["PreCodegenInliner"]
+  CGB -->|"CallGraph (-1 / -1)"| DCE["DCEPhase"]
+  CGB -->|"CallGraph (5 / 5 program, 5 / -1 library)"| EA["EscapeAnalysis"]
+  DCE -->|"referencedFunctions"| RTTI["RTTIPhase"]
+  DCE -->|"dead functions removed from IR"| CG["CodegenPhase"]
+  GHA["GHAPhase"] -->|"hierarchyInfo per class, bitsPerColor"| RTTI
+  GHA -->|"checkIsSubtype, itable lookup shape"| CG
+  EA -->|"lifetimes"| CG
+```
 
 Phases are disabled in two ways that look identical from outside: the driver passes `disable = true` (the table above), or the user
 lists the phase name in `-Xdisable-phases`. Both return `outputIfNotEnabled`
@@ -207,8 +269,9 @@ is a bottom-up (tricolor DFS over the call graph) inliner that uses DFG node cou
 not recursive, has `≤ preCodegenInlineThreshold` DFG nodes, is not `main`, not box/unbox, not a static initializer, not from a
 cinterop klib, not `@NoInline`, not `invokeSuspend`, not an inline-class property getter, not a String/array/Throwable constructor.
 Callers that are bridges, cinterop functions or the special `KFunctionImpl` constructors are never modified (comment: pattern
-recognition in `IrToBitcode.kt`). After inlining it re-runs coroutine liveness analysis and rebuilds the function's DFG. It is off by
-default (`preCodegenInlineThreshold` defaults to `0`); tests enable it with `-Xbinary=preCodegenInlineThreshold=40`.
+recognition in `IrToBitcode.kt`). After inlining it re-runs coroutine liveness analysis and rebuilds the function's DFG (why
+`invokeSuspend` is excluded and what the liveness re-run protects is in [coroutines.md](coroutines.md#step-5--liveness-and-spilling)).
+It is off by default (`preCodegenInlineThreshold` defaults to `0`); tests enable it with `-Xbinary=preCodegenInlineThreshold=40`.
 
 ### Static initializer call removal
 
@@ -232,7 +295,7 @@ devirtualization can manifest as "my top-level `val` is not initialized".
 - `handlePerformanceInlineAnnotation` marks runtime functions annotated `performance_inline` as `alwaysinline` when
   `inlineForPerformance` (`!debug && !smallBinary`); `RemoveRedundantSafepointsPass` is a thin wrapper over the `libllvmext` pass
   run from `runBitcodePostProcessing` in [Bitcode.kt](../../kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/driver/phases/Bitcode.kt).
-  Both are LLVM-level; see [llvm-codegen.md](llvm-codegen.md).
+  Both are LLVM-level; the pass pipelines that run after everything on this page are in [llvm-passes.md](llvm-passes.md).
 
 ## Invariants and ordering constraints
 
@@ -287,6 +350,7 @@ on library-mode roots; cinterop ([cinterop.md](cinterop.md)) is opaque to EA and
 | `-Xbinary=escapeAnalysisPropagateExiledToHeapObjects=` | see EA above                                                                                                    |
 | `-Xbinary=enableReleaseBinaryCache=true`               | use caches in `-opt` (turns global optimizations off)                                                           |
 | `-Xsave-llvm-ir-after=<phase> -Xsave-llvm-ir-directory=`, `-Xprint-bitcode` | see the LLVM IR, e.g. check for `alloca %"kclassbody:..."` vs `call @AllocInstance` |
+| `-Xdisable-phases=LTOBitcodeOptimization,ModuleBitcodeOptimization`, `-Xllvm-module-passes=` | rule the LLVM pipeline in or out when an `-opt`-only bug survives disabling every phase above ([llvm-passes.md](llvm-passes.md#typical-bugs-and-how-to-investigate)) |
 
 There is no dedicated "disable devirtualization" or "disable EA" flag; `-Xdisable-phases` is the mechanism (all flags live in
 [K2NativeCompilerArguments.kt](../../compiler/cli/cli-base/gen/org/jetbrains/kotlin/cli/common/arguments/K2NativeCompilerArguments.kt)
@@ -296,7 +360,7 @@ and [CommonCompilerArguments.kt](../../compiler/cli/cli-base/gen/org/jetbrains/k
 
 | Symptom                                                              | First suspects                                                                                                                                                 |
 |----------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Works with `-g`, wrong/crashes with `-opt`; works with `-opt` + caches | Something in this page. Bisect: `-Xdisable-phases=EscapeAnalysis` first, then `Devirtualization`, `DCEPhase`, `RemoveRedundantCallsToStaticInitializersPhase`. |
+| Works with `-g`, wrong/crashes with `-opt`; works with `-opt` + caches | Something in this page. Bisect: `-Xdisable-phases=EscapeAnalysis` first, then `Devirtualization`, `DCEPhase`, `RemoveRedundantCallsToStaticInitializersPhase`. If all of them are off and the bug stays, it is in the LLVM pipeline: [llvm-passes.md](llvm-passes.md#typical-bugs-and-how-to-investigate). |
 | Memory corruption, GC crash, use-after-return, object "changes" later | EA: a `STACK` object escaped. Check `-Xsave-llvm-ir-after=Codegen` for `alloca` of the class; look for missing/incorrect `@Escapes`/`@PointsTo` on a stdlib external the code calls, or an IR rewrite that did not rebuild the DFG. |
 | `InvalidReceiverTypeException` / wrong override called                | Devirtualization: type set too small. Candidates: a class instantiated outside the root set (reflection, `@ExportForCppRuntime`, raw function reference), a cast not modelled (`Edge.castToType`). Compare with `-Xdisable-phases=Devirtualization`. |
 | Null function pointer call / "unresolved" vtable slot at runtime       | DCE removed a function the runtime or export calls. Check `computeRootSet` and `EXPLICITLY_EXPORTED` attributes.                                               |

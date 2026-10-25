@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 560" width="980" height="560" font-family="Helvetica, Arial, sans-serif" font-size="13">
+  <!-- Lanes -->
+  <rect x="10" y="10" width="250" height="540" fill="#f0f0f0" stroke="#444"/>
+  <text x="135" y="32" text-anchor="middle" font-weight="bold" fill="#111">Thread stack (shadow stack)</text>
+  <text x="135" y="48" text-anchor="middle" fill="#111" font-size="11">FrameOverlay slots = GC roots</text>
+
+  <rect x="280" y="10" width="690" height="540" fill="#ffffff" stroke="#444"/>
+  <text x="625" y="32" text-anchor="middle" font-weight="bold" fill="#111">Heap (reached only by tracing from roots)</text>
+
+  <!-- Stack frames: only the holder of the innermost continuation remains -->
+  <rect x="30" y="70" width="210" height="60" fill="#e8eef7" stroke="#444"/>
+  <text x="135" y="90" text-anchor="middle" fill="#111">main / dispatcher loop</text>
+  <text x="135" y="106" text-anchor="middle" fill="#111" font-size="11">frame slot: ref to task queue</text>
+  <text x="135" y="121" text-anchor="middle" fill="#111" font-size="11">(no invokeSuspend frame exists)</text>
+
+  <rect x="30" y="160" width="210" height="110" fill="#fdf1dc" stroke="#444" stroke-dasharray="5,4"/>
+  <text x="135" y="180" text-anchor="middle" fill="#111">returned frames (gone)</text>
+  <text x="135" y="198" text-anchor="middle" fill="#111" font-size="11">outerCOROUTINE$0.invokeSuspend</text>
+  <text x="135" y="214" text-anchor="middle" fill="#111" font-size="11">innerCOROUTINE$1.invokeSuspend</text>
+  <text x="135" y="230" text-anchor="middle" fill="#111" font-size="11">their locals and any STACK-lifetime</text>
+  <text x="135" y="246" text-anchor="middle" fill="#111" font-size="11">objects died with the frame;</text>
+  <text x="135" y="262" text-anchor="middle" fill="#111" font-size="11">live values were spilled before the call</text>
+
+  <!-- Globals root -->
+  <rect x="30" y="300" width="210" height="50" fill="#e8eef7" stroke="#444"/>
+  <text x="135" y="320" text-anchor="middle" fill="#111">globals (RegisterGlobal)</text>
+  <text x="135" y="337" text-anchor="middle" fill="#111" font-size="11">e.g. CoroutineSingletons entries</text>
+
+  <!-- Heap: holder -->
+  <rect x="300" y="70" width="170" height="60" fill="#eaf5e6" stroke="#444"/>
+  <text x="385" y="92" text-anchor="middle" fill="#111">holder of the</text>
+  <text x="385" y="108" text-anchor="middle" fill="#111">innermost continuation</text>
+  <text x="385" y="123" text-anchor="middle" fill="#111" font-size="11">(queue, timer, channel...)</text>
+
+  <!-- Heap: SafeContinuation / intercepted -->
+  <rect x="300" y="170" width="170" height="70" fill="#eaf5e6" stroke="#444"/>
+  <text x="385" y="190" text-anchor="middle" fill="#111">SafeContinuation or</text>
+  <text x="385" y="206" text-anchor="middle" fill="#111">intercepted wrapper</text>
+  <text x="385" y="224" text-anchor="middle" fill="#111" font-size="11">delegate / continuation field</text>
+
+  <!-- Heap: inner coroutine object -->
+  <rect x="520" y="150" width="200" height="130" fill="#e8eef7" stroke="#444"/>
+  <text x="620" y="170" text-anchor="middle" font-weight="bold" fill="#111">$innerCOROUTINE$1</text>
+  <text x="530" y="190" fill="#111" font-size="12">completion (to outer)</text>
+  <text x="530" y="208" fill="#111" font-size="12">_context, intercepted</text>
+  <text x="530" y="226" fill="#111" font-size="12">label : NativePtr (blockaddress)</text>
+  <text x="530" y="244" fill="#111" font-size="12">param fields (ctor args)</text>
+  <text x="530" y="262" fill="#111" font-size="12">spilled locals (VAR_SPILLING)</text>
+
+  <!-- Heap: outer coroutine object -->
+  <rect x="760" y="150" width="200" height="130" fill="#e8eef7" stroke="#444"/>
+  <text x="860" y="170" text-anchor="middle" font-weight="bold" fill="#111">$outerCOROUTINE$0</text>
+  <text x="770" y="190" fill="#111" font-size="12">completion  ──▶ caller's</text>
+  <text x="770" y="206" fill="#111" font-size="12">   Continuation (builder)</text>
+  <text x="770" y="226" fill="#111" font-size="12">label : NativePtr (blockaddress)</text>
+  <text x="770" y="244" fill="#111" font-size="12">param fields (ctor args)</text>
+  <text x="770" y="262" fill="#111" font-size="12">spilled locals (VAR_SPILLING)</text>
+
+  <!-- Heap: spilled objects -->
+  <rect x="520" y="330" width="200" height="60" fill="#fdf1dc" stroke="#444"/>
+  <text x="620" y="352" text-anchor="middle" fill="#111">objects referenced by</text>
+  <text x="620" y="370" text-anchor="middle" fill="#111">inner's live variables</text>
+
+  <rect x="760" y="330" width="200" height="60" fill="#fdf1dc" stroke="#444"/>
+  <text x="860" y="352" text-anchor="middle" fill="#111">objects referenced by</text>
+  <text x="860" y="370" text-anchor="middle" fill="#111">outer's live variables</text>
+
+  <!-- Heap: completion of the whole coroutine -->
+  <rect x="760" y="60" width="200" height="60" fill="#eaf5e6" stroke="#444"/>
+  <text x="860" y="82" text-anchor="middle" fill="#111">builder completion</text>
+  <text x="860" y="100" text-anchor="middle" fill="#111" font-size="11">(user Continuation / EmptyContinuation)</text>
+
+  <!-- Arrows -->
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#444"/>
+    </marker>
+  </defs>
+  <!-- stack frame -> holder -->
+  <line x1="240" y1="100" x2="298" y2="100" stroke="#444" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <!-- holder -> wrapper -->
+  <line x1="385" y1="130" x2="385" y2="168" stroke="#444" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <!-- wrapper -> inner -->
+  <line x1="470" y1="205" x2="518" y2="205" stroke="#444" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <!-- inner.completion -> outer -->
+  <line x1="720" y1="186" x2="758" y2="186" stroke="#444" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <!-- outer.completion -> builder completion -->
+  <line x1="860" y1="150" x2="860" y2="122" stroke="#444" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <!-- spilled -> objects -->
+  <line x1="620" y1="280" x2="620" y2="328" stroke="#444" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="860" y1="280" x2="860" y2="328" stroke="#444" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Legend -->
+  <rect x="300" y="412" width="660" height="133" fill="#ffffff" stroke="#444"/>
+  <text x="310" y="430" font-weight="bold" fill="#111">Legend</text>
+  <rect x="310" y="442" width="16" height="12" fill="#e8eef7" stroke="#444"/>
+  <text x="332" y="452" fill="#111" font-size="12">root (stack slot / global) or compiler-generated coroutine class instance</text>
+  <rect x="310" y="462" width="16" height="12" fill="#eaf5e6" stroke="#444"/>
+  <text x="332" y="472" fill="#111" font-size="12">stdlib / user continuation objects (ordinary heap objects, no runtime support)</text>
+  <rect x="310" y="482" width="16" height="12" fill="#fdf1dc" stroke="#444"/>
+  <text x="332" y="492" fill="#111" font-size="12">dead frames (dashed) and the objects kept alive only through spilled fields</text>
+  <text x="310" y="516" fill="#111" font-size="12">The GC marks from the stack slot through holder, wrapper, inner, outer and the spilled objects. `label` is a</text>
+  <text x="310" y="532" fill="#111" font-size="12">NativePtr field: not scanned. Nothing in the runtime knows these objects are continuations.</text>
+</svg>

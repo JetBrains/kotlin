@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 540" width="1000" height="540" font-family="Helvetica, Arial, sans-serif" font-size="13">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#444"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1000" height="540" fill="#ffffff"/>
+  <text x="20" y="28" font-size="15" font-weight="bold" fill="#111">From lowered IR to the DataFlowIR of wrap()</text>
+
+  <!-- Left panel: lowered IR and pass 1 -->
+  <text x="20" y="58" font-weight="bold" fill="#111">Lowered IR (sketch)</text>
+  <g font-family="Menlo, Courier, monospace" font-size="12" fill="#111" xml:space="preserve">
+    <text x="20" y="80">fun wrap(a: Any, loud: Boolean): Any {</text>
+    <text x="20" y="98">&#160;&#160;val b = {                 // Box(a)</text>
+    <text x="20" y="116">&#160;&#160;&#160;&#160;val inst =</text>
+    <text x="20" y="134">&#160;&#160;&#160;&#160;&#160;&#160;createUninitializedInstance&lt;Box&gt;()</text>
+    <text x="20" y="152">&#160;&#160;&#160;&#160;inst.Box.&lt;init&gt;(a)      // StaticCall</text>
+    <text x="20" y="170">&#160;&#160;&#160;&#160;inst</text>
+    <text x="20" y="188">&#160;&#160;}</text>
+    <text x="20" y="206">&#160;&#160;if (loud) b.value = "!"   // IrSetField</text>
+    <text x="20" y="224">&#160;&#160;return b</text>
+    <text x="20" y="242">}</text>
+  </g>
+  <text x="20" y="280" font-weight="bold" fill="#111">Pass 1 (ElementFinderVisitor)</text>
+  <g font-size="12" fill="#111">
+    <text x="20" y="300">interesting expressions: the two calls,</text>
+    <text x="20" y="316">the IrConst "!" and the IrSetField</text>
+    <text x="20" y="338">variable values after closure:</text>
+    <text x="20" y="354">  inst → { alloc }</text>
+    <text x="20" y="370">  b    → { inst, alloc }</text>
+    <text x="20" y="392">returns: [ b ]     throws: [ ]</text>
+    <text x="20" y="414">no loops → a single Scope (depth 0)</text>
+  </g>
+
+  <!-- Right panel: the function body -->
+  <rect x="360" y="50" width="630" height="400" rx="8" fill="#f0f0f0" stroke="#444"/>
+  <text x="372" y="70" font-weight="bold" fill="#111">FunctionBody — SCOPE depth 0 (rootScope)</text>
+
+  <!-- row 1 -->
+  <rect x="380" y="86" width="150" height="40" rx="6" fill="#e8eef7" stroke="#444"/>
+  <text x="455" y="111" text-anchor="middle" fill="#111">PARAM 0 (a)</text>
+  <rect x="550" y="86" width="150" height="40" rx="6" fill="#e8eef7" stroke="#444"/>
+  <text x="625" y="111" text-anchor="middle" fill="#111">PARAM 1 (loud)</text>
+  <rect x="730" y="82" width="240" height="48" rx="6" fill="#fdf1dc" stroke="#444"/>
+  <text x="850" y="101" text-anchor="middle" fill="#111">ALLOC INSTANCE Box</text>
+  <text x="850" y="118" text-anchor="middle" font-size="11" fill="#111">irCallSite = createUninitializedInstance</text>
+
+  <!-- row 2 -->
+  <rect x="380" y="182" width="230" height="48" rx="6" fill="#e8eef7" stroke="#444"/>
+  <text x="495" y="201" text-anchor="middle" fill="#111">STATIC CALL Box.&lt;init&gt;</text>
+  <text x="495" y="218" text-anchor="middle" font-size="11" fill="#111">return type = Unit</text>
+  <rect x="730" y="182" width="240" height="48" rx="6" fill="#eaf5e6" stroke="#444"/>
+  <text x="850" y="201" text-anchor="middle" fill="#111">VARIABLE inst (Ordinary)</text>
+  <text x="850" y="218" text-anchor="middle" font-size="11" fill="#111">values: [ alloc ]</text>
+
+  <!-- row 3 -->
+  <rect x="380" y="282" width="230" height="48" rx="6" fill="#fdf1dc" stroke="#444"/>
+  <text x="495" y="301" text-anchor="middle" fill="#111">SIMPLE CONST kotlin.String</text>
+  <text x="495" y="318" text-anchor="middle" font-size="11" fill="#111">value = "!"</text>
+  <rect x="730" y="282" width="240" height="48" rx="6" fill="#eaf5e6" stroke="#444"/>
+  <text x="850" y="301" text-anchor="middle" fill="#111">VARIABLE b (Ordinary)</text>
+  <text x="850" y="318" text-anchor="middle" font-size="11" fill="#111">values: [ inst, alloc ]</text>
+
+  <!-- row 4 -->
+  <rect x="380" y="382" width="230" height="48" rx="6" fill="#e8eef7" stroke="#444"/>
+  <text x="495" y="401" text-anchor="middle" fill="#111">FIELD WRITE Box.value</text>
+  <text x="495" y="418" text-anchor="middle" font-size="11" fill="#111">receiver, value</text>
+  <rect x="650" y="382" width="150" height="48" rx="6" fill="#eaf5e6" stroke="#444"/>
+  <text x="725" y="401" text-anchor="middle" fill="#111">RETURNS (Temporary)</text>
+  <text x="725" y="418" text-anchor="middle" font-size="11" fill="#111">values: [ b ]</text>
+  <rect x="820" y="382" width="150" height="48" rx="6" fill="#eaf5e6" stroke="#444"/>
+  <text x="895" y="401" text-anchor="middle" fill="#111">THROWS (Temporary)</text>
+  <text x="895" y="418" text-anchor="middle" font-size="11" fill="#111">values: [ ]</text>
+
+  <!-- edges: from the using node to the used node -->
+  <g stroke="#444" stroke-width="1.4" fill="none" marker-end="url(#arr)">
+    <line x1="455" y1="182" x2="455" y2="128"/>
+    <line x1="610" y1="206" x2="728" y2="206"/>
+    <line x1="850" y1="182" x2="850" y2="132"/>
+    <line x1="850" y1="282" x2="850" y2="232"/>
+    <path d="M 970 300 C 988 300 988 112 972 112"/>
+    <line x1="455" y1="382" x2="455" y2="332"/>
+    <line x1="610" y1="400" x2="728" y2="322"/>
+    <line x1="725" y1="382" x2="800" y2="332"/>
+  </g>
+  <g font-size="11" fill="#111">
+    <text x="461" y="158">arg #1</text>
+    <text x="640" y="200">arg #0</text>
+    <text x="856" y="160">val</text>
+    <text x="856" y="260">val</text>
+    <text x="992" y="210" text-anchor="end">val</text>
+    <text x="461" y="360">value</text>
+    <text x="640" y="356">receiver</text>
+    <text x="752" y="352">val</text>
+  </g>
+
+  <text x="20" y="470" font-size="12" fill="#111">Arrows are DFG Edges: from the node that uses a value to the node that produces it; the label is the role.</text>
+  <text x="20" y="488" font-size="12" fill="#111">The if has no node (control flow is dropped); PARAM 1 exists although nothing reads it as a value.</text>
+  <text x="20" y="506" font-size="12" fill="#111">Fills: yellow = produces a class instance (Alloc, Const), green = Variable, blue = other.</text>
+</svg>

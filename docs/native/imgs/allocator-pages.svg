@@ -1,0 +1,127 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 560" width="1000" height="560" font-family="Helvetica, Arial, sans-serif" font-size="13">
+  <rect x="0" y="0" width="1000" height="560" fill="#ffffff"/>
+  <text x="12" y="22" font-size="15" font-weight="bold" fill="#111">The three page kinds of the custom allocator (one cell = 8 bytes)</text>
+
+  <!-- ===== FixedBlockPage ===== -->
+  <text x="12" y="52" font-weight="bold" fill="#111">FixedBlockPage</text>
+  <text x="130" y="52" font-size="12" fill="#111">fixedBlockPageSize KiB (default 128); blockSize_ cells per block (1..128); here blockSize_ = 2</text>
+  <!-- header -->
+  <g font-size="10.5" fill="#111" text-anchor="middle">
+    <rect x="12" y="62" width="60" height="40" fill="#f0f0f0" stroke="#444"/><text x="42" y="79">next_</text><text x="42" y="93">(AnyPage)</text>
+    <rect x="72" y="62" width="76" height="40" fill="#f0f0f0" stroke="#444"/><text x="110" y="79">allocatedSize</text><text x="110" y="93">Tracker_</text>
+    <rect x="148" y="62" width="92" height="40" fill="#fdf1dc" stroke="#444"/><text x="194" y="79">nextFree_</text><text x="194" y="93">{first=4, last=6}</text>
+    <rect x="240" y="62" width="60" height="40" fill="#f0f0f0" stroke="#444"/><text x="270" y="79">blockSize_</text><text x="270" y="93">end_</text>
+  </g>
+  <text x="310" y="87" font-size="10.5" fill="#111">header = 32 bytes, then cells_[] (cellCount = (SIZE - 32) / 8)</text>
+  <!-- cells row: 16 cells of 36px, starting x=12 y=112 -->
+  <g font-size="10" fill="#111" text-anchor="middle">
+    <!-- block 0 (cells 0,1) occupied -->
+    <rect x="12" y="112" width="72" height="34" fill="#e8eef7" stroke="#444"/><text x="48" y="126">ObjectData</text><text x="48" y="139">ObjHeader…</text>
+    <!-- block 1 (cells 2,3) occupied -->
+    <rect x="84" y="112" width="72" height="34" fill="#e8eef7" stroke="#444"/><text x="120" y="126">ObjectData</text><text x="120" y="139">ObjHeader…</text>
+    <!-- block 2 (cells 4,5) free -->
+    <rect x="156" y="112" width="72" height="34" fill="#eaf5e6" stroke="#444"/><text x="192" y="131">free (zeroed)</text>
+    <!-- block 3 (cells 6,7) free + link -->
+    <rect x="228" y="112" width="72" height="34" fill="#fdf1dc" stroke="#444"/><text x="264" y="126">free; next</text><text x="264" y="139">run {12,16}</text>
+    <!-- block 4 (8,9) occupied -->
+    <rect x="300" y="112" width="72" height="34" fill="#e8eef7" stroke="#444"/><text x="336" y="126">ObjectData</text><text x="336" y="139">ObjHeader…</text>
+    <!-- block 5 (10,11) occupied -->
+    <rect x="372" y="112" width="72" height="34" fill="#e8eef7" stroke="#444"/><text x="408" y="126">ObjectData</text><text x="408" y="139">ObjHeader…</text>
+    <!-- block 6 (12,13) free -->
+    <rect x="444" y="112" width="72" height="34" fill="#eaf5e6" stroke="#444"/><text x="480" y="131">free (zeroed)</text>
+    <!-- block 7 (14,15) free, last run to end_ -->
+    <rect x="516" y="112" width="72" height="34" fill="#eaf5e6" stroke="#444"/><text x="552" y="131">free (zeroed)</text>
+    <rect x="588" y="112" width="30" height="34" fill="#ffffff" stroke="#444" stroke-dasharray="3,2"/><text x="603" y="131">end_</text>
+  </g>
+  <!-- cell indices -->
+  <g font-size="9" fill="#444" text-anchor="middle">
+    <text x="30" y="158">0</text><text x="66" y="158">1</text><text x="102" y="158">2</text><text x="138" y="158">3</text>
+    <text x="174" y="158">4</text><text x="210" y="158">5</text><text x="246" y="158">6</text><text x="282" y="158">7</text>
+    <text x="318" y="158">8</text><text x="354" y="158">9</text><text x="390" y="158">10</text><text x="426" y="158">11</text>
+    <text x="462" y="158">12</text><text x="498" y="158">13</text><text x="534" y="158">14</text><text x="570" y="158">15</text><text x="603" y="158">16</text>
+  </g>
+  <!-- free-list arrows -->
+  <path d="M 194 102 L 194 112" stroke="#444" fill="none" marker-end="url(#arrow)"/>
+  <path d="M 264 146 C 264 175, 480 175, 480 148" stroke="#444" fill="none" marker-end="url(#arrow)"/>
+  <g font-size="10.5" fill="#111">
+    <text x="630" y="124">Free list: nextFree_ names the first free run [first, last]; the cell at</text>
+    <text x="630" y="138">index last (here cells_[6]) stores the next run; the final run ends at end_.</text>
+    <text x="630" y="152">TryAllocate: pop cells_[first], first += blockSize_; when first == last,</text>
+    <text x="630" y="166">load cells_[last].nextFree and hand out that cell too; first >= end_ = full</text>
+    <text x="630" y="180">(onPageOverflow reports the page to the scheduler).</text>
+    <text x="630" y="194">Sweep rebuilds the runs in one pass, memset-ing dead blocks in batches.</text>
+  </g>
+
+  <!-- ===== NextFitPage ===== -->
+  <text x="12" y="232" font-weight="bold" fill="#111">NextFitPage</text>
+  <text x="110" y="232" font-size="12" fill="#111">256 KiB; blocks of 129 … cellCount()-2 cells; each block = 1 header cell {isAllocated_, size_} + payload</text>
+  <g font-size="10.5" fill="#111" text-anchor="middle">
+    <rect x="12" y="242" width="60" height="40" fill="#f0f0f0" stroke="#444"/><text x="42" y="259">next_</text><text x="42" y="273">(AnyPage)</text>
+    <rect x="72" y="242" width="76" height="40" fill="#f0f0f0" stroke="#444"/><text x="110" y="259">allocatedSize</text><text x="110" y="273">Tracker_</text>
+    <rect x="148" y="242" width="70" height="40" fill="#fdf1dc" stroke="#444"/><text x="183" y="259">curBlock_</text><text x="183" y="273">(Cell*)</text>
+  </g>
+  <!-- cells -->
+  <g font-size="10" fill="#111" text-anchor="middle">
+    <rect x="12" y="292" width="40" height="34" fill="#f0f0f0" stroke="#444"/><text x="32" y="306">cells_[0]</text><text x="32" y="319">size 0</text>
+    <!-- allocated block A -->
+    <rect x="52" y="292" width="40" height="34" fill="#fdf1dc" stroke="#444"/><text x="72" y="306">alloc=1</text><text x="72" y="319">size=5</text>
+    <rect x="92" y="292" width="160" height="34" fill="#e8eef7" stroke="#444"/><text x="172" y="306">ObjectData | ObjHeader | fields…</text><text x="172" y="319">(4 payload cells)</text>
+    <!-- free block B -->
+    <rect x="252" y="292" width="40" height="34" fill="#fdf1dc" stroke="#444"/><text x="272" y="306">alloc=0</text><text x="272" y="319">size=7</text>
+    <rect x="292" y="292" width="240" height="34" fill="#eaf5e6" stroke="#444"/><text x="412" y="306">free (6 cells, zeroed)</text><text x="412" y="319">allocation carves from the END of this block</text>
+    <!-- allocated block C -->
+    <rect x="532" y="292" width="40" height="34" fill="#fdf1dc" stroke="#444"/><text x="552" y="306">alloc=1</text><text x="552" y="319">size=3</text>
+    <rect x="572" y="292" width="80" height="34" fill="#e8eef7" stroke="#444"/><text x="612" y="306">ObjectData |</text><text x="612" y="319">ObjHeader…</text>
+    <rect x="652" y="292" width="30" height="34" fill="#ffffff" stroke="#444" stroke-dasharray="3,2"/><text x="667" y="312">…</text>
+  </g>
+  <path d="M 183 282 C 183 300, 240 340, 272 328" stroke="#444" fill="none" marker-end="url(#arrow)"/>
+  <g font-size="10.5" fill="#111">
+    <text x="700" y="256">Blocks are contiguous: Next() = this + size_.</text>
+    <text x="700" y="270">Cell::TryAllocate splits the free block at its end,</text>
+    <text x="700" y="284">the new block gets its own header cell.</text>
+    <text x="700" y="298">UpdateCurBlock scans forward from curBlock_,</text>
+    <text x="700" y="312">wraps once, stops at the first block that fits;</text>
+    <text x="700" y="326">if none fits curBlock_ = largest free block and</text>
+    <text x="700" y="340">the thread abandons the page (onPageOverflow).</text>
+    <text x="700" y="354">Sweep deallocates, coalesces neighbours,</text>
+    <text x="700" y="368">then points curBlock_ at the largest free block.</text>
+  </g>
+  <text x="12" y="348" font-size="10.5" fill="#111">cells_[1] is created as one free block of cellCount()-1 cells; a request of N cells needs N+1 (header).</text>
+
+  <!-- ===== SingleObjectPage ===== -->
+  <text x="12" y="396" font-weight="bold" fill="#111">SingleObjectPage</text>
+  <text x="140" y="396" font-size="12" fill="#111">objects above NextFitPage::maxBlockSize(), and every object when pagedAllocator=false</text>
+  <g font-size="10.5" fill="#111" text-anchor="middle">
+    <rect x="12" y="406" width="60" height="34" fill="#f0f0f0" stroke="#444"/><text x="42" y="427">next_</text>
+    <rect x="72" y="406" width="420" height="34" fill="#e8eef7" stroke="#444"/><text x="282" y="427">data_: ObjectData | ObjHeader | fields or array elements … (exactly one block)</text>
+  </g>
+  <g font-size="10.5" fill="#111">
+    <text x="510" y="420">page size = object cells + 8-byte header; SafeAlloc per object;</text>
+    <text x="510" y="434">SweepAndDestroy frees the page as soon as the object is dead;</text>
+    <text x="510" y="448">bytes reported to the scheduler on creation and destruction.</text>
+  </g>
+
+  <!-- ===== Extra-object pages ===== -->
+  <text x="12" y="480" font-weight="bold" fill="#111">Extra-object pages</text>
+  <text x="150" y="480" font-size="12" fill="#111">FixedBlockPage with blockSize_ = ExtraObjectCell::size() (or SingleObjectPage when pagedAllocator=false)</text>
+  <g font-size="10.5" fill="#111" text-anchor="middle">
+    <rect x="12" y="490" width="70" height="34" fill="#fdf1dc" stroke="#444"/><text x="47" y="511">next_ (queue)</text>
+    <rect x="82" y="490" width="260" height="34" fill="#e8eef7" stroke="#444"/><text x="212" y="506">ExtraObjectData: typeInfo_, flags_,</text><text x="212" y="520">associatedObject_, weakReferenceOrBaseObject_</text>
+  </g>
+  <text x="356" y="511" font-size="10.5" fill="#111">one ExtraObjectCell; next_ links cells into the finalizer queue, so finalization needs no allocation</text>
+
+  <!-- legend -->
+  <g font-size="11" fill="#111">
+    <rect x="12" y="532" width="14" height="12" fill="#e8eef7" stroke="#444"/><text x="30" y="542">live block</text>
+    <rect x="110" y="532" width="14" height="12" fill="#eaf5e6" stroke="#444"/><text x="128" y="542">free, zeroed</text>
+    <rect x="220" y="532" width="14" height="12" fill="#fdf1dc" stroke="#444"/><text x="238" y="542">allocator metadata</text>
+    <rect x="370" y="532" width="14" height="12" fill="#f0f0f0" stroke="#444"/><text x="388" y="542">page header</text>
+    <text x="12" y="556">Sources: FixedBlockPage.{hpp,cpp}, NextFitPage.{hpp,cpp}, Cell.cpp, SingleObjectPage.{hpp,cpp}, ExtraObjectCell.hpp, Heap.hpp</text>
+  </g>
+
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 z" fill="#444"/>
+    </marker>
+  </defs>
+</svg>

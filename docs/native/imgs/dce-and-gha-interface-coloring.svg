@@ -1,0 +1,106 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 540" width="1000" height="540" font-family="Helvetica, Arial, sans-serif" font-size="13">
+  <rect x="0" y="0" width="1000" height="540" fill="#ffffff"/>
+  <text x="20" y="24" font-size="15" font-weight="bold" fill="#111">GHA interface coloring and the per-class itable (InterfacesForbiddennessGraph, computeColoringGreedy, interfaceTableSkeleton)</text>
+  <text x="20" y="44" font-size="12" fill="#111">interface I, J, K, L (declared in this order); class A : I, J;  class B : J, K;  class C : I, K;  class D : L.  Ids as if these were the only interfaces.</text>
+
+  <!-- Panel 1: forbiddenness graph -->
+  <text x="20" y="80" font-weight="bold" fill="#111">1. Forbiddenness graph</text>
+  <text x="20" y="98" font-size="11" fill="#111">edge = some class implements both</text>
+  <g stroke="#444" stroke-width="1.6">
+    <line x1="110" y1="150" x2="250" y2="150"/>
+    <line x1="110" y1="150" x2="180" y2="260"/>
+    <line x1="250" y1="150" x2="180" y2="260"/>
+  </g>
+  <circle cx="110" cy="150" r="28" fill="#eaf5e6" stroke="#444"/>
+  <text x="110" y="146" text-anchor="middle" fill="#111">I</text>
+  <text x="110" y="161" text-anchor="middle" font-size="10" fill="#111">color 0</text>
+  <circle cx="250" cy="150" r="28" fill="#e8eef7" stroke="#444"/>
+  <text x="250" y="146" text-anchor="middle" fill="#111">J</text>
+  <text x="250" y="161" text-anchor="middle" font-size="10" fill="#111">color 1</text>
+  <circle cx="180" cy="260" r="28" fill="#fdf1dc" stroke="#444"/>
+  <text x="180" y="256" text-anchor="middle" fill="#111">K</text>
+  <text x="180" y="271" text-anchor="middle" font-size="10" fill="#111">color 2</text>
+  <circle cx="110" cy="360" r="28" fill="#eaf5e6" stroke="#444"/>
+  <text x="110" y="356" text-anchor="middle" fill="#111">L</text>
+  <text x="110" y="371" text-anchor="middle" font-size="10" fill="#111">color 0</text>
+  <g font-size="11" fill="#111">
+    <text x="160" y="124">A: I–J</text>
+    <text x="90" y="215">C: I–K</text>
+    <text x="225" y="215">B: J–K</text>
+    <text x="150" y="364">no edges (D only)</text>
+  </g>
+  <text x="20" y="420" font-size="12" fill="#111">Greedy, in IR order: I → 0; J (I taken) → 1;</text>
+  <text x="20" y="437" font-size="12" fill="#111">K (I, J taken) → 2; L (nothing taken) → 0.</text>
+  <text x="20" y="454" font-size="12" fill="#111">maxColor = 2 → bitsPerColor = 2</text>
+
+  <!-- Panel 2: ids -->
+  <text x="350" y="80" font-weight="bold" fill="#111">2. interfaceId = color | (ordinal shl bitsPerColor)</text>
+  <text x="350" y="98" font-size="11" fill="#111">ordinal = index within its color, from 1 (0 is kInvalidInterfaceId)</text>
+  <g font-size="12" fill="#111">
+    <rect x="350" y="110" width="300" height="24" fill="#f0f0f0" stroke="#444"/>
+    <text x="360" y="127">iface</text>
+    <text x="410" y="127">color</text>
+    <text x="465" y="127">ordinal</text>
+    <text x="530" y="127">id</text>
+    <text x="580" y="127">bits</text>
+    <rect x="350" y="134" width="300" height="24" fill="#ffffff" stroke="#444"/>
+    <text x="360" y="151">I</text><text x="410" y="151">0</text><text x="465" y="151">1</text><text x="530" y="151">4</text><text x="580" y="151" font-family="Menlo, Courier, monospace">0b 01 00</text>
+    <rect x="350" y="158" width="300" height="24" fill="#ffffff" stroke="#444"/>
+    <text x="360" y="175">J</text><text x="410" y="175">1</text><text x="465" y="175">1</text><text x="530" y="175">5</text><text x="580" y="175" font-family="Menlo, Courier, monospace">0b 01 01</text>
+    <rect x="350" y="182" width="300" height="24" fill="#ffffff" stroke="#444"/>
+    <text x="360" y="199">K</text><text x="410" y="199">2</text><text x="465" y="199">1</text><text x="530" y="199">6</text><text x="580" y="199" font-family="Menlo, Courier, monospace">0b 01 10</text>
+    <rect x="350" y="206" width="300" height="24" fill="#ffffff" stroke="#444"/>
+    <text x="360" y="223">L</text><text x="410" y="223">0</text><text x="465" y="223">2</text><text x="530" y="223">8</text><text x="580" y="223" font-family="Menlo, Courier, monospace">0b 10 00</text>
+  </g>
+  <!-- bit layout -->
+  <text x="350" y="262" font-size="12" fill="#111">Bit layout of an id (bitsPerColor = 2):</text>
+  <rect x="350" y="272" width="200" height="30" fill="#e8eef7" stroke="#444"/>
+  <rect x="550" y="272" width="100" height="30" fill="#fdf1dc" stroke="#444"/>
+  <text x="450" y="291" text-anchor="middle" font-size="12" fill="#111">ordinal within color</text>
+  <text x="600" y="291" text-anchor="middle" font-size="12" fill="#111">color</text>
+  <text x="350" y="318" font-size="11" fill="#111">bit 31 … 2</text>
+  <text x="560" y="318" font-size="11" fill="#111">bit 1 … 0</text>
+  <text x="350" y="350" font-size="12" fill="#111">Two interfaces of one class never share the low bits,</text>
+  <text x="350" y="367" font-size="12" fill="#111">so id and (size − 1) is collision-free once size ≥ 2^bitsPerColor.</text>
+  <text x="350" y="384" font-size="12" fill="#111">A smaller table is tried first (sizes 1, 2, 4, … ≤ 32).</text>
+
+  <!-- Panel 3: itables -->
+  <text x="690" y="80" font-weight="bold" fill="#111">3. itables (interfaceTableSize_ = size − 1)</text>
+  <g font-size="12" fill="#111">
+    <text x="690" y="104">class A {4, 5}: size 1 collides, size 2 fits → mask 1</text>
+    <rect x="690" y="112" width="70" height="28" fill="#eaf5e6" stroke="#444"/>
+    <text x="725" y="131" text-anchor="middle">[0] I=4</text>
+    <rect x="760" y="112" width="70" height="28" fill="#e8eef7" stroke="#444"/>
+    <text x="795" y="131" text-anchor="middle">[1] J=5</text>
+
+    <text x="690" y="170">class B {5, 6}: size 2 fits → mask 1</text>
+    <rect x="690" y="178" width="70" height="28" fill="#fdf1dc" stroke="#444"/>
+    <text x="725" y="197" text-anchor="middle">[0] K=6</text>
+    <rect x="760" y="178" width="70" height="28" fill="#e8eef7" stroke="#444"/>
+    <text x="795" y="197" text-anchor="middle">[1] J=5</text>
+
+    <text x="690" y="236">class C {4, 6}: 4 and 1 = 6 and 1 = 0 → size 4, mask 3</text>
+    <rect x="690" y="244" width="70" height="28" fill="#eaf5e6" stroke="#444"/>
+    <text x="725" y="263" text-anchor="middle">[0] I=4</text>
+    <rect x="760" y="244" width="70" height="28" fill="#ffffff" stroke="#444"/>
+    <text x="795" y="263" text-anchor="middle">[1] id 0</text>
+    <rect x="830" y="244" width="70" height="28" fill="#fdf1dc" stroke="#444"/>
+    <text x="865" y="263" text-anchor="middle">[2] K=6</text>
+    <rect x="900" y="244" width="70" height="28" fill="#ffffff" stroke="#444"/>
+    <text x="935" y="263" text-anchor="middle">[3] id 0</text>
+
+    <text x="690" y="302">class D {8}: size 1 fits → mask 0</text>
+    <rect x="690" y="310" width="70" height="28" fill="#eaf5e6" stroke="#444"/>
+    <text x="725" y="329" text-anchor="middle">[0] L=8</text>
+  </g>
+  <rect x="690" y="360" width="290" height="110" rx="6" fill="#f0f0f0" stroke="#444"/>
+  <text x="700" y="380" font-weight="bold" fill="#111">Checks: itable[id and mask].id == id</text>
+  <g font-size="12" fill="#111">
+    <text x="700" y="402">c is K :  C.itable[6 and 3 = 2].id = 6  → true</text>
+    <text x="700" y="422">a is K :  A.itable[6 and 1 = 0].id = 4  → false</text>
+    <text x="700" y="442">b is I :  B.itable[4 and 1 = 0].id = 6  → false</text>
+    <text x="700" y="462">interface call: record.vtable[methodIndex]</text>
+  </g>
+  <text x="20" y="500" font-size="12" fill="#111">If no size ≤ 32 is collision-free the records are stored sorted by id with interfaceTableSize_ = −count and looked up by LookupInterfaceTableRecord.</text>
+  <text x="20" y="518" font-size="12" fill="#111">Only the low bitsPerColor bits are guaranteed distinct per class; whether a 1- or 2-entry table works depends on the ordinals, which is why sizes are tried from 1.</text>
+</svg>

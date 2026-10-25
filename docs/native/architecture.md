@@ -17,6 +17,25 @@ K/N compiles in two stages:
 The runtime (C++) is compiled to LLVM bitcode at build time and shipped in the distribution. The second stage selects runtime modules
 (GC, allocator, etc.) based on the compilation options and links them into the program's LLVM module.
 
+Inputs and outputs of the two stages, from the stage selection in `K2Native.doExecute` (`native/cli-native`), the library and cache
+handling in `KonanDriver.kt` / `NativeSecondStageCompilationConfig.kt`, the bitcode selection in `CompilerOutput.kt` and the linker
+inputs in `Linker.kt` (the project-level view with Gradle tasks is in [compilation-model.md](compilation-model.md)):
+
+```mermaid
+flowchart LR
+    SRC[".kt sources"] --> S1["first stage: NativeKlibCliPipeline<br/>(-produce library, or one-stage mode)"]
+    DEPK["dependency klibs: -library, stdlib (klib/common/stdlib),<br/>platform libraries (klib/platform/T), cinterop klibs"] --> S1
+    S1 --> KLIB["klib: metadata + IR<br/>(cinterop klibs: metadata + bitcode, no IR)"]
+    KLIB -->|"-library, -Xinclude, -Xexport-library"| S2["second stage: KonanDriver, NativeCompilerDriver"]
+    DEPK --> S2
+    CACHE["compiler caches: klib/cache, -Xauto-cache-from, -Xcached-library<br/>(built by CacheBuilder when missing)"] --> S2
+    RTB["runtime bitcode: konan/targets/T/native/*.bc"] --> S2
+    NAT["native inputs: -native-library .bc, -include-binary,<br/>klib linkerOpts, -linker-option"] --> S2
+    TC["toolchain: bundled LLVM clang, sysroot, platform linker<br/>(konan.properties, downloaded into ~/.konan)"] --> S2
+    S2 --> OUT["program, static or dynamic library, framework,<br/>test bundle, static / dynamic / header cache"]
+    S2 -.->|"-Xwrite-dependencies-to"| DEPS["dependencies list for -Xcompile-from-bitcode"]
+```
+
 ## Where the code lives
 
 The code is spread across the repository. The **Gradle path** column is the name to use in `./gradlew <path>:<task>`. It does not
@@ -34,23 +53,23 @@ always match the directory.
 | `kotlin-native/Interop`                                 | `:kotlin-native:Interop:*`                           | cinterop tool (`Indexer`, `StubGenerator`) and the `kotlinx.cinterop` runtime (`Runtime`)               |
 | `kotlin-native/llvmInterop`, `libclangInterop`          | `:kotlin-native:llvmInterop`, `:...:libclangInterop` | JVM bindings to the LLVM and libclang C APIs (generated with cinterop's JVM mode)                      |
 | `kotlin-native/libllvmext`, `libclangext`               | same                                                 | C++ extensions to the LLVM/libclang C APIs, and custom LLVM passes                                     |
-| `kotlin-native/llvmDebugInfoC`                          | same                                                 | DWARF helpers; the `konan_lldb.py` LLDB plugin                                                         |
+| `kotlin-native/llvmDebugInfoC`                          | same                                                 | DWARF helpers; the `konan_lldb.py` LLDB plugin; see [debug-info.md](debug-info.md)                     |
 | `kotlin-native/platformLibs`                            | `:kotlin-native:platformLibs`                        | `.def` files and the build of platform libraries (POSIX, Apple frameworks, …)                          |
 | `kotlin-native/build-tools`                             | included build `native-build-tools`                  | Gradle plugins used to build K/N: bitcode compilation, distribution layout, platform libs, Xcode       |
 | `kotlin-native/konan/konan.properties`                  | —                                                    | Per-target toolchains, sysroots, clang/linker flags, Xcode versions                                    |
 | `kotlin-native/cmd`                                     | —                                                    | Launcher scripts (`konanc`, `kotlinc-native`, `cinterop`, `klib`, `run_konan`)                         |
 | `kotlin-native/prepare`                                 | `:kotlin-native:prepare:*`                           | Packaging of `kotlin-native-compiler-embeddable.jar`                                                   |
 | `kotlin-native/performance`                             | separate Gradle build                                | Benchmarks; see its README                                                                             |
-| `native/utils`                                          | `:native:kotlin-native-utils`                        | `KonanTarget`, `HostManager`, `konan.properties` access, `.def` file parsing, dependency downloader    |
+| `native/utils`                                          | `:native:kotlin-native-utils`                        | `KonanTarget`, `HostManager`, `konan.properties` access, `.def` file parsing, dependency downloader; see [targets-and-toolchains.md](targets-and-toolchains.md) |
 | `native/base`, `native/native.config`                   | `:native:base`, `:native:native.config`              | Small shared types (`KonanFqNames`, …) and `NativeConfigurationKeys`                                   |
 | `native/binary-options`                                 | `:native:binary-options`                             | `-Xbinary=` options (`BinaryOptions.kt`)                                                               |
 | `native/frontend`                                       | `:native:frontend.native`                            | K1 descriptors for Native (`KonanBuiltIns`, platform resolution), still used by the second stage        |
 | `native/cinterop.deserialization`                       | `:native:cinterop.deserialization`                   | Builds IR for cinterop klibs, which carry metadata only, at link time                                  |
 | `native/objcexport-header-generator`                    | `:native:objcexport-header-generator*`               | ObjC header generation: the `k1` implementation (used by the compiler) and the `analysis-api` one (IDE) |
 | `native/swift`                                          | `:native:swift:*`                                    | Swift export, a standalone tool built on the Analysis API; see [swift-export](../swift-export/README.md) |
-| `native/commonizer*`                                    | `:native:kotlin-klib-commonizer*`                    | klib commonizer for shared native source sets; see its README                                          |
+| `native/commonizer*`                                    | `:native:kotlin-klib-commonizer*`                    | klib commonizer for shared native source sets; see [commonizer.md](commonizer.md)                      |
 | `native/executors`                                      | `:native:executors`                                  | Run binaries on host, simulators, emulators, devices (used by tests)                                   |
-| `native/native.tests`                                   | `:native:native.tests*`                              | Compiler integration tests; see [Testing](../../kotlin-native/HACKING.md#testing)                      |
+| `native/native.tests`                                   | `:native:native.tests*`                              | Compiler integration tests; usage in [Testing](../../kotlin-native/HACKING.md#testing), internals in [test-infrastructure.md](test-infrastructure.md) |
 | `libraries/stdlib/native-wasm`                          | —                                                    | stdlib sources shared by Native and Wasm                                                               |
 | `libraries/tools/kotlin-gradle-plugin/.../targets/native` | —                                                  | The Kotlin Gradle plugin side of Native (tasks, cinterop, caches, CocoaPods)                           |
 
@@ -59,21 +78,33 @@ The K/N-specific projects (`:kotlin-native:*`, `:native:cli-native`, …) are in
 
 ### Module dependencies
 
+Dependencies as declared in the modules' `build.gradle.kts` files (`native/cli-native`, `compiler/cli/cli-native-klib`,
+`compiler/ir/backend.native`, `kotlin-native/backend.native/compiler/ir/backend.native`); only the Native-specific projects are shown,
+the shared compiler projects (`ir.tree`, `fir:*`, `core:*`) are omitted:
+
 ```mermaid
-graph TD
+flowchart TD
     cli["native/cli-native (K2Native)"] --> klibcli["compiler/cli/cli-native-klib<br/>(1st stage)"]
-    cli --> backend["kotlin-native/backend.native<br/>(2nd stage)"]
-    klibcli --> irnative["compiler/ir/backend.native"]
+    cli --> backend["kotlin-native/backend.native<br/>(2nd stage, LLVM)"]
+    cli --> irnative
+    cli --> fe
+    klibcli --> irnative["compiler/ir/backend.native<br/>(LLVM-free, both stages)"]
     klibcli --> firnative["compiler/fir/fir-native"]
+    klibcli --> sernative
+    klibcli --> inline["compiler/ir/ir.inline"]
     backend --> irnative
     backend --> klibcli
     backend --> sernative["compiler/ir/serialization.native"]
+    backend --> inline
     backend --> llvm["kotlin-native/llvmInterop"]
     backend --> fe["native/frontend (K1 descriptors)"]
     backend --> objc["native/objcexport-header-generator(-k1)"]
     backend --> cid["native/cinterop.deserialization"]
+    backend --> binopts["native/binary-options"]
     irnative --> common["compiler/ir/backend.common"]
     irnative --> sernative
+    irnative --> base["native/base, native/native.config"]
+    irnative --> utils["native/utils (KonanTarget, Distribution)"]
     llvm --> ext["libllvmext (C++)"]
 ```
 
@@ -101,6 +132,20 @@ The pipeline runs these phases in order:
    - otherwise: `NativeFir2IrPipelinePhase` → `NativePreSerializationPipelinePhase` (lowerings from `compiler/ir/backend.native/.../lower`)
      → `NativeIrSerializationPipelinePhase`
 4. `NativeKlibWritingPipelinePhase`
+
+The branch, as composed with `then` / `thenIf` in `NativeKlibCliPipeline.createCompoundPhase` and decided by `skipIrGeneration`:
+
+```mermaid
+flowchart TD
+    A["NativeConfigurationPhase"] --> B["NativeFrontendPipelinePhase (FIR)"]
+    B --> Q{"skipIrGeneration: -Xmetadata-klib, or header mode of type<br/>compilation with no inline functions, inline accessors or value classes?"}
+    Q -->|"yes"| M["NativeMetadataSerializationPipelinePhase"]
+    Q -->|"no"| F["NativeFir2IrPipelinePhase"]
+    F --> P["NativePreSerializationPipelinePhase<br/>(first-stage lowerings, lowerings.md)"]
+    P --> S["NativeIrSerializationPipelinePhase"]
+    M --> W["NativeKlibWritingPipelinePhase: .klib"]
+    S --> W
+```
 
 ### Second stage (`kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/`)
 
@@ -191,7 +236,12 @@ can use:
 | `klib/platform/<target>/`          | platform libraries (`distPlatformLibs`)                        |
 | `klib/cache/`                      | prebuilt caches                                                |
 
-Toolchains (LLVM, sysroots) are downloaded on demand into `~/.konan` (override it with `KONAN_DATA_DIR`).
+The table is abridged: a shipped distribution also has `konan/nativelib`, `konan/platformDef`, `konan/swift_export`,
+`konan/compiler.fingerprint`, `tools/` and `sources/`; the full tree, how it is discovered and how `konan.properties` is read are in
+[targets-and-toolchains.md](targets-and-toolchains.md#the-distribution-layout-and-discovery).
+
+Toolchains (LLVM, sysroots) are downloaded on demand into `~/.konan/dependencies` (archives are kept in
+`~/.konan/dependencies/cache`; override the root with `KONAN_DATA_DIR`).
 
 **Integration tests load the compiler from the distribution, not from the IDE classpath.** After a compiler change, the test task
 rebuilds `:kotlin-native:dist`, unless you pass `-Pkn.nativeHome`.
@@ -203,7 +253,10 @@ This page is the map; the subsystem pages of the [knowledge base](README.md) go 
 [llvm-codegen.md](llvm-codegen.md), [compiler-runtime-contract.md](compiler-runtime-contract.md), [runtime.md](runtime.md),
 [caches.md](caches.md), [klib-linking.md](klib-linking.md), [cinterop.md](cinterop.md), [export.md](export.md), and for bug
 hunting [debugging.md](debugging.md) and the [glossary](glossary.md). Algorithm-level deep dives and integration pages are
-listed in the [README](README.md#deep-dives).
+listed in the [README](README.md#deep-dives); among them [targets-and-toolchains.md](targets-and-toolchains.md) (targets,
+`konan.properties`, the distribution), [intrinsics.md](intrinsics.md), [coroutines.md](coroutines.md),
+[exceptions.md](exceptions.md), [debug-info.md](debug-info.md), [llvm-passes.md](llvm-passes.md),
+[commonizer.md](commonizer.md) and [test-infrastructure.md](test-infrastructure.md).
 
 - [compilation-model.md](compilation-model.md): user-visible compilation model, caches, interop and export.
 - [kotlin-native/HACKING.md](../../kotlin-native/HACKING.md): building, testing, debugging, LLVM tricks.

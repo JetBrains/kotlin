@@ -25,6 +25,23 @@ Paths are relative to this file. `BACKEND` means
 | Exported API | ObjC/C headers and Swift USRs generated for the same Kotlin code | golden header tests; name-collision options; no cross-version test | assumed |
 | CLI and KGP | argument names, KGP ↔ compiler version | `compiler/arguments` lifecycle metadata and stable-release tests; KGP downloads its own version | metadata + convention |
 
+The same surfaces as a producer → consumer graph; each edge carries the check that guards it (sources and details in
+the numbered sections below, which this picture only indexes):
+
+```mermaid
+flowchart LR
+    CA["compiler A: first stage<br/>(any 1.6+ release)"] -->|"klib: abi_version in FIRST_SUPPORTED..CURRENT,<br/>native_targets; partial linkage for the rest"| CB["compiler B: second stage<br/>(this release)"]
+    DIST["distribution build<br/>(same Gradle build as compiler B)"] -->|"stdlib: KonanLibrarySpecialCompatibilityChecker"| CB
+    DIST -->|"platform libs: ABI window only,<br/>same-build assumption"| CB
+    DIST -->|"system caches: flavor directory name"| CB
+    PREV["previous build of the same project"] -->|"IC caches: compiler.fingerprint,<br/>dependencies fingerprint, klib hash"| CB
+    RT["runtime bitcode"] -->|"mirrored constants, runtime module selection<br/>(compiler-runtime-contract.md)"| CB
+    USER["user build: CLI flags, KGP DSL,<br/>kotlin.native.binary.*"] -->|"K2NativeCompilerArguments + lifecycle metadata;<br/>-Xbinary names: registry, unknown = warning"| CB
+    KGP["KGP"] -->|"same version by default<br/>(kotlin.native.version)"| CB
+    TC["konan.properties: LLVM, sysroot, Xcode"] -->|"KonanTarget lists, minimalXcodeVersion,<br/>LLVM bump = ABI bump precedent"| CB
+    CB -->|"ObjC/C headers, Swift USRs:<br/>golden tests for fixed inputs only"| XC["Xcode / Swift consumers"]
+```
+
 ## 1. Klib ABI
 
 ### Versions carried by a klib manifest
@@ -40,6 +57,7 @@ and are written/read by `writeKonanLibraryVersioning`/`readKonanLibraryVersionin
 | `metadata_version` | `languageVersion.toMetadataVersion()` ([`serializeModuleIntoKlib.kt`](../../compiler/ir/serialization.common/src/org/jetbrains/kotlin/backend/common/serialization/serializeModuleIntoKlib.kt)) | `getIncompatibility(configuration.metadataVersion)` attached to every package fragment in [`K1KlibMetadataModuleDescriptorFactoryImpl.kt`](../../kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/K1KlibMetadataModuleDescriptorFactoryImpl.kt). Unverified: how the incompatibility surfaces to the user in the second stage. |
 | `ir_signature_versions` | `KotlinIrSignatureVersion.CURRENTLY_SUPPORTED_VERSIONS` = `{1, 2}` ([`KotlinIrSignatureVersion.kt`](../../compiler/util-klib/src/org/jetbrains/kotlin/library/KotlinIrSignatureVersion.kt)); absent → `V1` | `AllKnownIrSignatureVersionsAreSupported` in `compiler/util-klib-abi`. V2 adds a human-readable description; linkage uses only the numeric id, so V2 is compatible with V1 |
 | `native_targets` | the `-target` of the producer | [`KlibPlatformChecker.Native`](../../compiler/util-klib/src/org/jetbrains/kotlin/library/loader/KlibPlatformChecker.kt): `builtins_platform` must be NATIVE; `commonizer_native_targets` or `native_targets` must contain the target; an empty list passes (metadata klibs) |
+| `commonizer_target`, `commonizer_native_targets` | the commonizer ([commonizer.md](commonizer.md#step-7--serialization-and-the-manifest)) | `KlibPlatformChecker.Native` (above); KGP and the IDE use them to match commonized klibs to source sets. A new target must also be added to the commonizer's `PlatformWidthIndex`, or it is silently excluded from platform-integer commonization |
 | `depends` | used-library computation in the first stage ([klib-linking.md](klib-linking.md)) | no reader found in the compiler (`KlibDAG` uses signature indices); only [`NativeKlibWriterUtils.kt`](../../native/utils/src/org/jetbrains/kotlin/konan/library/writer/NativeKlibWriterUtils.kt) merges it. Hypothesis: consumed by KGP/commonizer only |
 | `interop`, `ir_provider`, `package` | cinterop tool | `checkForUnknownIrProviders` in `loadNativeKlibs` accepts only none or `kotlin.native.cinterop`; `KonanInteropModuleDeserializer` |
 | `header` | `-Xheader-klib-path` | deserialization strategy `WITH_INLINE_BODIES` ([klib-linking.md](klib-linking.md)) |
@@ -63,6 +81,12 @@ backward-only by default. Forward export exists as an opt-in: `LanguageFeature.E
 [`KlibAbiCompatibilityLevel`](../../compiler/config/src/org/jetbrains/kotlin/config/KlibAbiCompatibilityLevel.kt)
 (`2.4 → ABI_LEVEL_2_4`, `2.5 → ABI_LEVEL_2_5`; `check(size == entries.size)` forces the map to be updated on every new level).
 Without the feature the level is always `LATEST_STABLE`.
+
+The window seen from this compiler, with the bump points from `KotlinAbiVersionBumpHistory.md`, the constants from
+`KotlinAbiVersion.kt`, the levels from `KlibAbiCompatibilityLevel.kt` and the test matrix from the klib-compatibility
+`build.gradle.kts`:
+
+![ABI version window: a timeline of KotlinAbiVersion bumps from 1.4.0 to 2.5.0; versions 1.6.0..2.5.0 are accepted by the current compiler, older ones and newer ones are rejected; the compiler emits 2.5.0 by default and 2.4.0 with ExportKlibToOlderAbiVersion; klib-compatibility tests cover first-stage compilers 1.9.20..2.4.0 and a second-stage compiler 2.4.0](imgs/compatibility-abi-window.svg)
 
 Accepted does not mean linkable: inside the window the compiler relies on the IR reader tolerating older protos and on
 partial linkage for everything declaration-level (missing symbols, changed classifiers), see
@@ -155,6 +179,11 @@ name, so a change in `StubIrBuilder` output needs a matching change there ([cint
 `-Xbinary=cCallMode=Direct` fails on them, and `cCallMode` is part of the cache flavor. Prebuilt platform-library caches ship
 inside the distribution (`cacheableTargets.<host>` in `konan.properties`), so they are replaced together with the compiler.
 
+The stdlib is coupled to the compiler by more than the version check: `@TypedIntrinsic` kinds are matched by *string* against
+the compiler's `IntrinsicType` enum (an unknown kind is a second-stage error, "No enum constant"), `@GCUnsafeCall` callees are
+matched by symbol name against the runtime, and `@ExportForCppRuntime` functions must exist for the runtime's declarations.
+Which of these are checked, and by what, is in [intrinsics.md](intrinsics.md#how-tightly-the-compiler-is-coupled-to-the-stdlib-klib).
+
 ## 3. Compiler caches
 
 A cache is machine code plus side info that stands in for IR ([caches.md](caches.md)). Its compatibility key is the flavor
@@ -198,7 +227,9 @@ fails a build. Binary options are not part of `compiler/arguments` and have no l
 
 Defaults follow one pattern in `NativeSecondStageCompilationConfig`: `private val defaultX get() = …` and
 `val x get() = configuration.get(BinaryOptions.x) ?: defaultX`; the flavor appends `x` when it differs from the default,
-so changing a default silently re-keys every system cache directory. Deprecations are expressed in three ways:
+so changing a default silently re-keys every system cache directory. The debugger contract has its own append-only surfaces
+(the `Konan_DebugOperation` numbering and the position of `ExtendedTypeInfo` in `TypeInfo`, consumed by `konan_lldb.py` and
+`debug.bc`); see [debug-info.md](debug-info.md#implied-contracts). Deprecations are expressed in three ways:
 
 | Option | Mechanism | Evidence |
 |--------|-----------|----------|
@@ -252,7 +283,10 @@ overridden per invocation with `-Xoverride-konan-properties=k=v;…`. Dependenci
 **Minimum OS versions** are the four `minVersion.*` values (ios 15.0, macos 12.0, tvos 15.0, watchos 8.0) consumed by
 `ClangArgs` (the triple), `Linker` (`-*_version_min`), `BitcodeCompiler` and `InfoPListBuilder` (`MinimumOSVersion`). Raising
 one changes every produced binary and framework plist; history: `9daa40d2ed21` moved to `platform_version`, and
-`c8a07ae1565a` deliberately kept `osVersionMinFlagLd` "for compatibility purposes".
+`c8a07ae1565a` deliberately kept `osVersionMinFlagLd` "for compatibility purposes". One target does not follow the
+`$minVersion.<family>` pattern: `osVersionMin.watchos_device_arm64 = 9.0` is hard-coded in `konan.properties` while
+`minVersion.watchos` is 8.0, so raising the family value does not move that target. The target model, hosts, toolchain
+resolution and the download mechanism are in [targets-and-toolchains.md](targets-and-toolchains.md).
 
 **Xcode**: at compile time `Apple.kt` (`currentXcodeCheckingVersion`) fails below `minimalXcodeVersion=15.4` unless
 `ignoreXcodeVersionCheck=true` ([`Apple.kt`](../../native/utils/src/org/jetbrains/kotlin/konan/target/Apple.kt)). At build
@@ -296,6 +330,28 @@ view; the option names inside it have no lifecycle and no stability test (sectio
 binary option, not a flag". Native-specific plumbing lives in
 [`K2NativeCompilerArgumentsConfigurator`](../../compiler/cli/cli-base/src/org/jetbrains/kotlin/cli/common/arguments/K2NativeCompilerArgumentsConfigurator.kt)
 (analysis flags, `configureNativeLanguageFeatures`, `isSecondStage`).
+
+The lifecycle of a compiler argument as modelled by `KotlinReleaseVersionLifecycle` (four optional release versions)
+and the rule in `code-rules.md`; the examples are `-trw` in `NativeCompilerArguments.kt` and `-Xg0` in
+`removedNativeCompilerArguments.kt`:
+
+```mermaid
+stateDiagram-v2
+    [*] --> Introduced : lifecycle(introducedVersion)
+    Introduced --> Stabilized : stabilizedVersion
+    Introduced --> Deprecated : deprecatedVersion
+    Stabilized --> Deprecated : deprecatedVersion + deprecatedMessage
+    Deprecated --> Removed : removedVersion, definition moved to removed/
+    Removed --> [*] : never deleted from the description
+    note right of Deprecated
+        -trw: introduced 1.5.20, stabilized 1.5.20, deprecated 2.5.0
+        still accepted, deprecatedMessage "Use '-generate-test-runner'"
+    end note
+    note right of Removed
+        -Xg0: introduced 1.5.20, deprecated 1.5.20, removed 2.4.20
+        kept in removed/ so the stable-release tests still see it
+    end note
+```
 
 KGP and the compiler are coupled by version: `NativeCompilerDownloader`
 ([`NativeCompilerDownloader.kt`](../../libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/targets/native/NativeCompilerDownloader.kt))

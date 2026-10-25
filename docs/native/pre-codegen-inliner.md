@@ -79,6 +79,16 @@ sites with `!isVirtual && directEdges.containsKey(actualCallee)` — direct call
 Bottom-up order means that when `f` is inlined into `g`, `f` has already absorbed its own small callees, so the depth is
 unbounded but the size check applies to the already-flattened `f`.
 
+The node life cycle of that traversal, from the `when (color)` in `PreCodegenInliner.run`:
+
+```mermaid
+stateDiagram-v2
+  [*] --> WHITE: root, or discovered as a direct callee
+  WHITE --> GRAY: on top of the stack for the first time, push its WHITE direct callees
+  GRAY --> BLACK: on top again with all callees finished, pop and process as a caller
+  BLACK --> [*]: on top later (reached twice), pop and skip
+```
+
 **Caller filter** (functions never modified): bridges (`bridgeTarget != null`), functions from a cinterop klib
 (`moduleFragment.kotlinLibrary?.isCInteropLibrary()`), and the lowered parameterless constructors of `KFunctionImpl` /
 `KSuspendFunctionImpl` subclasses ("To support IR pattern recognition in IrToBitcode.kt on IrConstantObject generation":
@@ -105,6 +115,27 @@ Externals have no DFG body and are not in `directEdges`, so they are never candi
 levels (`isVirtual` in the graph, `expression.isVirtualCall` in IR). Nothing looks at `@InlineOnly`, visibility or module
 boundaries: a stdlib function is inlined into user code exactly like a local one.
 
+Caller filter, callee filter and `shouldInline` as one decision path, in the order the `GRAY` branch of
+`PreCodegenInliner.run` evaluates them:
+
+```mermaid
+flowchart TD
+  CS["call site of the caller being processed (GRAY → BLACK)"] --> V{"isVirtual, or callee has no DFG body?"}
+  V -->|yes| NO["not a candidate"]
+  V -->|no| CF{"caller is a bridge, from a cinterop klib, or a parameterless<br/>constructor of a KFunctionImpl / KSuspendFunctionImpl subclass?"}
+  CF -->|yes| SKIPC["caller left untouched"]
+  CF -->|no| CB{"callee BLACK?<br/>(GRAY means on the DFS path: a cycle)"}
+  CB -->|no| NO
+  CB -->|yes| LOOP{"callee's DFG calls the callee itself (isALoop)?"}
+  LOOP -->|yes| NO
+  LOOP -->|no| SIZE{"DFG nodes of the callee <= preCodegenInlineThreshold?"}
+  SIZE -->|no| NO
+  SIZE -->|yes| SPECIAL{"entry point, box / unbox, static initializer, cinterop klib,<br/>@NoInline (function or property), invokeSuspend override,<br/>inline-class accessor with backing field, String / array / Throwable constructor?"}
+  SPECIAL -->|yes| NO
+  SPECIAL -->|no| YES["functionsToInline += callee"]
+  YES --> RW["PreCodegenFunctionInlining.run(caller), then<br/>LivenessAnalysis and FunctionDFGBuilder for the caller"]
+```
+
 **Rewrite.** For each caller with a non-empty candidate set, `PreCodegenFunctionInlining(context, functionsToInline).run(caller)`
 ([NativeIrInliner.kt](../../kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/lower/NativeIrInliner.kt))
 walks the body and replaces every non-virtual `IrCall` whose callee is in the set by an `irBlock` that binds each argument to
@@ -113,6 +144,22 @@ a temporary (or reuses an `IrGetValue`) and appends `callee.inline(caller, argum
 copy of the body wrapped in an `IrReturnableBlock`, with the callee's `return`s retargeted to the block. This replaced the
 general `FunctionInlining` machinery in `48a39a3e9bc2` ("use simpler inlining mechanism instead of general IR inliner").
 The copy carries IR attributes, so `devirtualizedCallSite` marks inside a body inlined by run 2 survive.
+
+The shape of one rewritten call site, from `PreCodegenFunctionInlining.visitCall` (`NativeIrInliner.kt`) and
+`IrFunction.inline` (`IrInlineUtils.kt`):
+
+```
+before                        after
+  foo(x, bar())                 BLOCK {                                   // irBlock at the call site
+                                  // x is an IrGetValue: its declaration is reused as is
+                                  VAR p1 = bar()                          // irTemporary per other argument, named after the parameter
+                                  RETURNABLE_BLOCK type = foo's return type {
+                                    <deep copy of foo's body>             // moveBody = false: foo itself stays until DCE
+                                    ... RETURN@RETURNABLE_BLOCK v         // foo's returns retargeted to the block
+                                  }
+                                }
+                                // a block with a single statement is unwrapped to that statement
+```
 
 **Repair.** After rewriting a caller: `LivenessAnalysis.run(irBody) { it is IrSuspensionPoint }` recomputes
 `liveVariablesAtSuspensionPoint` (comment "KT-72336: This is not entirely correct since coroutinesLivenessAnalysisPhase could
@@ -132,8 +179,8 @@ the graph built before any inlining, which is fine because inlining only removes
 The runtime-side `performance_inline` attribute (`handlePerformanceInlineAnnotation`, marks runtime functions `alwaysinline`
 when `inlineForPerformance`) and `-Xllvm-*` pass flags belong to the LLVM level; see [llvm-codegen.md](llvm-codegen.md).
 
-**Debug info.** `IrToBitcode` builds `inlinedAt` locations only for `IrInlinedFunctionBlock` (`InlinedBlockScope`); an
-`IrReturnableBlock` is a plain scope. *Unverified:* the inlined statements keep the callee's offsets, which the caller's
+**Debug info.** `IrToBitcode` builds `inlinedAt` locations only for `IrInlinedFunctionBlock` (`InlinedBlockScope`, see
+[debug-info.md](debug-info.md#step-5--inline-functions-and-lambdas-the-inlinedat-model)); an `IrReturnableBlock` is a plain scope. *Unverified:* the inlined statements keep the callee's offsets, which the caller's
 `FileScope` would then resolve against the caller's file entry; whether this yields wrong line tables for cross-file
 inlining in `-opt -g` builds was not tested. The option is documented as experimental (KT-67480 comment), which is consistent
 with this not having been addressed.
@@ -181,9 +228,11 @@ Trade-offs recorded in the tree and the tracker:
   time"); 40 is "a good compromise from our experiments" (KT-67480 comment), but no size budget or per-site heuristic exists
   — the threshold is the whole policy.
 - Default off because of "rough edges" (KT-72336, open): the static-initializer ordering above, the liveness-analysis
-  dependency, and FileCheck fragility. Nothing in the code caps total growth, so a hot helper of size 39 called from 10,000
+  dependency (`invokeSuspend` overrides are never inlined and coroutine liveness is re-run after inlining, see
+  [coroutines.md](coroutines.md#step-5--liveness-and-spilling)), and FileCheck fragility. Nothing in the code caps total growth, so a hot helper of size 39 called from 10,000
   sites is copied 10,000 times.
-- Symptoms when enabled: functions missing from stack traces and LLVM IR; a top-level `val` observed uninitialized in
+- Symptoms when enabled: functions missing from stack traces (inlined bodies have no frame of their own, see
+  [exceptions.md](exceptions.md#step-7--stack-traces-capture-symbolication-format)) and from LLVM IR; a top-level `val` observed uninitialized in
   release (static-initializer interplay, compare with `-Xdisable-phases=PreCodegenInliner`); any analysis bug amplified by
   larger bodies (EA/devirtualization) — bisect with the phase name first since it is the least mature pass.
 

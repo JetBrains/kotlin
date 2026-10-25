@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 640" width="1000" height="640" font-family="Helvetica, Arial, sans-serif" font-size="13">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#444"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1000" height="640" fill="#ffffff"/>
+  <text x="20" y="24" font-size="15" font-weight="bold" fill="#111">Constraint graph for describe(s: Shape) = s.area(), called from main with Square() and Circle()</text>
+
+  <!-- column headers -->
+  <g font-weight="bold" fill="#111">
+    <text x="120" y="50" text-anchor="middle">main()</text>
+    <text x="375" y="50" text-anchor="middle">describe(s)</text>
+    <text x="625" y="50" text-anchor="middle">dispatch hub (Shape, slot of area)</text>
+    <text x="875" y="50" text-anchor="middle">callees</text>
+  </g>
+
+  <!-- main column -->
+  <rect x="20" y="60" width="200" height="48" rx="6" fill="#fdf1dc" stroke="#444" stroke-width="2.5"/>
+  <text x="120" y="79" text-anchor="middle" fill="#111">Source Class$Square</text>
+  <text x="120" y="97" text-anchor="middle" font-size="11" fill="#111">types = {Square}</text>
+  <rect x="20" y="160" width="200" height="38" rx="6" fill="#e8eef7" stroke="#444" stroke-width="2.5"/>
+  <text x="120" y="184" text-anchor="middle" fill="#111">Variable$main (inst1)</text>
+  <rect x="20" y="260" width="200" height="48" rx="6" fill="#fdf1dc" stroke="#444" stroke-width="2.5"/>
+  <text x="120" y="279" text-anchor="middle" fill="#111">Source Class$Circle</text>
+  <text x="120" y="297" text-anchor="middle" font-size="11" fill="#111">types = {Circle}</text>
+  <rect x="20" y="360" width="200" height="38" rx="6" fill="#e8eef7" stroke="#444" stroke-width="2.5"/>
+  <text x="120" y="384" text-anchor="middle" fill="#111">Variable$main (inst2)</text>
+
+  <!-- describe column -->
+  <rect x="270" y="60" width="210" height="38" rx="6" fill="#e8eef7" stroke="#444"/>
+  <text x="375" y="84" text-anchor="middle" fill="#111">Throws$describe</text>
+  <rect x="270" y="240" width="210" height="48" rx="6" fill="#e8eef7" stroke="#444" stroke-width="2.5"/>
+  <text x="375" y="259" text-anchor="middle" fill="#111">Param#0$describe</text>
+  <text x="375" y="277" text-anchor="middle" font-size="11" fill="#111">receiver of s.area()</text>
+  <rect x="270" y="400" width="210" height="38" rx="6" fill="#e8eef7" stroke="#444"/>
+  <text x="375" y="424" text-anchor="middle" fill="#111">VirtualCallReturns$describe</text>
+  <rect x="270" y="480" width="210" height="38" rx="6" fill="#e8eef7" stroke="#444"/>
+  <text x="375" y="504" text-anchor="middle" fill="#111">Returns$describe</text>
+
+  <!-- hub column -->
+  <rect x="520" y="60" width="210" height="38" rx="6" fill="#e8eef7" stroke="#444"/>
+  <text x="625" y="84" text-anchor="middle" fill="#111">VirtualSlotThrows$area</text>
+  <rect x="520" y="240" width="210" height="38" rx="6" fill="#e8eef7" stroke="#444"/>
+  <text x="625" y="264" text-anchor="middle" fill="#111">VirtualSlotParam#0$area</text>
+  <rect x="520" y="400" width="210" height="38" rx="6" fill="#e8eef7" stroke="#444"/>
+  <text x="625" y="424" text-anchor="middle" fill="#111">VirtualSlotReturns$area</text>
+
+  <!-- callees column -->
+  <rect x="770" y="180" width="210" height="38" rx="6" fill="#e8eef7" stroke="#444"/>
+  <text x="875" y="204" text-anchor="middle" fill="#111">Param#0$Square.area</text>
+  <rect x="770" y="300" width="210" height="38" rx="6" fill="#e8eef7" stroke="#444"/>
+  <text x="875" y="324" text-anchor="middle" fill="#111">Param#0$Circle.area</text>
+  <rect x="770" y="400" width="210" height="38" rx="6" fill="#e8eef7" stroke="#444"/>
+  <text x="875" y="424" text-anchor="middle" fill="#111">Returns$Square.area</text>
+  <rect x="770" y="480" width="210" height="38" rx="6" fill="#e8eef7" stroke="#444"/>
+  <text x="875" y="504" text-anchor="middle" fill="#111">Returns$Circle.area</text>
+  <rect x="770" y="560" width="210" height="48" rx="6" fill="#fdf1dc" stroke="#444"/>
+  <text x="875" y="579" text-anchor="middle" fill="#111">Source Const$Int</text>
+  <text x="875" y="597" text-anchor="middle" font-size="11" fill="#111">types = {Int} (the literals 4 and 3)</text>
+
+  <!-- regular edges: types flow along the arrow -->
+  <g stroke="#444" stroke-width="1.4" fill="none" marker-end="url(#arr)">
+    <line x1="120" y1="108" x2="120" y2="158"/>
+    <line x1="120" y1="308" x2="120" y2="358"/>
+    <line x1="220" y1="179" x2="268" y2="252"/>
+    <line x1="220" y1="379" x2="268" y2="276"/>
+    <line x1="480" y1="262" x2="518" y2="260"/>
+    <line x1="520" y1="79" x2="482" y2="79"/>
+    <line x1="730" y1="254" x2="768" y2="202"/>
+    <line x1="730" y1="266" x2="768" y2="318"/>
+    <line x1="770" y1="419" x2="732" y2="419"/>
+    <line x1="770" y1="494" x2="732" y2="428"/>
+    <line x1="520" y1="419" x2="482" y2="419"/>
+    <line x1="375" y1="438" x2="375" y2="478"/>
+    <line x1="875" y1="560" x2="875" y2="520"/>
+    <path d="M 980 570 C 996 570 996 420 982 420"/>
+  </g>
+  <!-- cast edge -->
+  <g stroke="#444" stroke-width="1.4" fill="none" stroke-dasharray="6 4" marker-end="url(#arr)">
+    <line x1="375" y1="240" x2="375" y2="100"/>
+  </g>
+  <text x="381" y="172" font-size="11" fill="#111">cast edge {Virtual}</text>
+  <text x="381" y="186" font-size="11" fill="#111">"an external function can throw anything"</text>
+  <text x="500" y="236" font-size="11" fill="#111" text-anchor="middle">arg → hub</text>
+  <text x="690" y="362" font-size="11" fill="#111">fan-out: inheritorsOf(Shape) ∩ instantiated classes</text>
+  <text x="520" y="455" font-size="11" fill="#111">hub.returns → site returns</text>
+
+  <!-- legend and result -->
+  <rect x="20" y="430" width="230" height="86" rx="6" fill="#ffffff" stroke="#444"/>
+  <text x="30" y="448" font-size="11" fill="#111" font-weight="bold">Legend</text>
+  <text x="30" y="464" font-size="11" fill="#111">yellow: Source node (holds one class)</text>
+  <text x="30" y="479" font-size="11" fill="#111">blue: Ordinary node (starts empty)</text>
+  <text x="30" y="494" font-size="11" fill="#111">thick border: useful node (receiver reachable)</text>
+  <text x="30" y="509" font-size="11" fill="#111">dashed: cast edge, filtered by suitableTypes</text>
+
+  <rect x="20" y="530" width="700" height="90" rx="6" fill="#eaf5e6" stroke="#444"/>
+  <text x="30" y="550" font-weight="bold" fill="#111">After propagation</text>
+  <text x="30" y="570" font-size="12" fill="#111">Param#0$describe.types = {Square, Circle}; Virtual is not set, so the site is devirtualized:</text>
+  <text x="30" y="588" font-size="12" fill="#111">DevirtualizedCallSite(callee = Shape.area, possibleCallees = [Square → Square.area, Circle → Circle.area])</text>
+  <text x="30" y="608" font-size="11" fill="#111">Omitted: constructor bodies, main's Returns/Throws, the TempVar nodes for return values, callee Throws → hub Throws.</text>
+</svg>

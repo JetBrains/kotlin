@@ -43,10 +43,10 @@ flowchart LR
     sir -->|METADATA| md[klib metadata +<br/>manifest]
     sir -->|C stubs file| clang1[clang -emit-llvm] --> bc[cstubs.bc]
     md & bc --> klib[(cinterop klib)]
-    klib -->|stage 1: FIR deps| fe[FIR session]
+    klib -->|"stage 1: FIR deps"| fe[FIR session]
     klib -->|stage 2| des[KonanInteropModuleDeserializer<br/>metadata to IR]
     des --> low[InteropLowering +<br/>CBridgeGen] --> inv[InteropBridgesNameInventor<br/>CStubsManager.addStub]
-    inv --> cstubs[CStubs phase: clang] --> link[LLVM link + platform linker<br/>klib bitcode, included .a, linkerOpts]
+    inv --> cstubs["CStubs phase: clang"] --> lnk["LLVM link + platform linker<br/>klib bitcode, included .a, linkerOpts"]
 ```
 
 ### The cinterop tool
@@ -63,7 +63,8 @@ tests call `Interop.interopViaReflection`, and KGP runs the tool through
    the platform libs for the target with `KlibLoader`; `parseImports` maps every `includedHeaders` entry of those klibs to their
    package. This is how a klib depending on another cinterop klib reuses its declarations instead of redeclaring them.
 2. **Native library description.** `buildNativeLibrary` combines `headers`, `compilerOpts` (+ `-compiler-option`), the target's
-   default clang flags from `ToolConfig`, the `---` preamble, and the header filter: `headerFilter`/`excludeFilter` globs become
+   default clang flags from `ToolConfig` (sysroot, triple and `clangFlags.<target>` resolved from `konan.properties`, see
+   [targets-and-toolchains.md](targets-and-toolchains.md#toolchains)), the `---` preamble, and the header filter: `headerFilter`/`excludeFilter` globs become
    `HeaderInclusionPolicyImpl`, imported headers become `HeaderExclusionPolicyImpl` ([`STUBGEN/Imports.kt`](../../kotlin-native/Interop/StubGenerator/src/org/jetbrains/kotlin/native/interop/gen/Imports.kt)).
    With `modules=` (Objective-C only, no `headers`, no `headerFilter`) the filter is `Predefined` from
    [`INDEXER/ModuleSupport.kt`](../../kotlin-native/Interop/Indexer/src/main/kotlin/org/jetbrains/kotlin/native/interop/indexer/ModuleSupport.kt).
@@ -185,6 +186,29 @@ annotation (callbacks use `@CToKotlinBridge`). Direct calls declare `<signature>
 later makes them unique per file and scope (the `interopCallMarker` intrinsic delimits a scope; this two-phase scheme exists because
 bridges generated inside inline lambdas get copied by inlining) and calls `CStubsManager.addStub`.
 
+How one call to a C function is compiled, in both call modes, as implemented by `generateCFunctionCallOrGlobalAccess` in
+`InteropLowering.kt`, `generateCCall` in `CBridgeGen.kt`, and the bridge call in `IrToBitcode.kt` `call()` with
+`CodeGenerator.filteringExceptionHandler`:
+
+```mermaid
+flowchart TD
+    ircall["IrCall to external fun foo()<br/>annotated @CCall(id) and/or @CCall.Direct(name)"] --> sel{"config.cCallMode.select<br/>(default IndirectOrDirect)"}
+    sel -->|"indirect: callee has @CCall"| ind["C: extern const fnptr target __asm(id);<br/>the pointer is defined in the klib's bridge bitcode"]
+    sel -->|"direct: callee has @CCall.Direct"| dir["C: ret target(params) __asm(name);<br/>the symbol is resolved by the platform linker"]
+    sel -->|"neither available"| err["compiler error:<br/>the call is incompatible with cCallMode"]
+    ind --> bridge
+    dir --> bridge
+    bridge["C bridge knbridgeN(...) calling target(...)<br/>+ Kotlin external fun knbridgeN<br/>@KotlinToCBridge(language, impl, library)"]
+    bridge --> marker["interopCallMarker block: local bridge declaration,<br/>argument conversions (ValuePassing), call"]
+    marker --> inv["InteropBridgesNameInventor: unique names,<br/>CStubsManager.addStub"]
+    inv --> cstubs["CStubs phase: clang -O2 -fexceptions -emit-llvm,<br/>bitcode linked into the LLVM module"]
+    marker --> cg["Codegen of the bridge call (IrToBitcode call):<br/>switchThreadState(Native), invoke, switchThreadState(Runnable)"]
+    cg --> lp{"landingpad<br/>filteringExceptionHandler"}
+    lp -->|"Kotlin exception"| rethrow["switch back to Runnable,<br/>rethrow to the enclosing handler"]
+    lp -->|"NSException, foreignExceptionMode=objc-wrap, Apple target"| wrap["CreateForeignException,<br/>throw it as a Kotlin exception"]
+    lp -->|"any other foreign exception"| term["terminateWithCurrentException"]
+```
+
 ### Second stage: codegen and link
 
 - **C stubs.** The `CStubs` phase ([`driver/phases/Bitcode.kt`](../../kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/driver/phases/Bitcode.kt),
@@ -195,7 +219,9 @@ bridges generated inside inline lambdas get copied by inlining) and calls `CStub
 - **Intrinsics.** `IntrinsicType` ([`native/base`](../../native/base/src/main/kotlin/org/jetbrains/kotlin/backend/konan/IntrinsicType.kt))
   `INTEROP_READ/WRITE_PRIMITIVE`, `INTEROP_READ/WRITE_BITS`, `INTEROP_NATIVE_PTR_*`, `OBJC_GET_SELECTOR`, `OBJC_GET_MESSENGER`,
   `OBJC_GET_OBJC_CLASS`, `OBJC_CREATE_SUPER_STRUCT` are emitted by [`llvm/IntrinsicGenerator.kt`](../../kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/llvm/IntrinsicGenerator.kt);
-  the ones listed in the lowering above must not survive to codegen.
+  the ones listed in the lowering above must not survive to codegen (`OBJC_GET_SELECTOR` is a *special* intrinsic: its argument
+  must be a constant, evaluated by `tryEvaluateSpecialCall`). The lowered/generated/special classification and the full
+  catalogue are in [intrinsics.md](intrinsics.md#part-2--typedintrinsic-kinds-by-family).
 - **ObjC data.** [`llvm/objc/ObjCDataGenerator.kt`](../../kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/llvm/objc/ObjCDataGenerator.kt)
   emits selector refs, class refs and (for `@ExportObjCClass`) class structures modeled on clang's `CGObjCMac.cpp`;
   `ObjCCodeGenerator.kt` declares `objc_msgSend`, `objc_alloc` and the ARC intrinsics. Kotlin subclasses of ObjC classes are not
@@ -209,7 +235,8 @@ bridges generated inside inline lambdas get copied by inlining) and calls `CStub
   (`IrToBitcode.kt` `call()`, `CodeGenerator.filteringExceptionHandler`) that terminates on any non-Kotlin exception, or, when the
   callee's klib manifest says `foreignExceptionMode=objc-wrap` (read in `InteropLowering` and passed to `CBridgeGen`), catches
   `NSException` and calls `CreateForeignException` ([`ForeignException.kt`](../../kotlin-native/Interop/Runtime/src/native/kotlin/kotlinx/cinterop/ForeignException.kt)).
-  `objc-wrap` has an effect only on Apple targets (`wrapExceptionMode` check).
+  `objc-wrap` has an effect only on Apple targets (`wrapExceptionMode` check); the landing-pad shapes and what happens to a foreign
+  exception on the way out are in [exceptions.md](exceptions.md#step-4--the-interop-boundary-filtering-landing-pads-and-foreign-exceptions).
 - **Link.** `DependenciesTracker` ([`BACKEND/DependenciesTracker.kt`](../../kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/DependenciesTracker.kt))
   records which klibs contributed code. `collectLlvmModules` in `CompilerOutput.kt` links each used klib's `bitcode(target)` files
   (skipping cinterop bitcode when `cCallMode == Direct`); `Linker.kt` adds `nativeIncludedBinaries` (the `staticLibraries`) of
@@ -230,6 +257,76 @@ Most Native-only operations are `@TypedIntrinsic` (pointer arithmetic, primitive
 vector ops) and some are `@GCUnsafeCall` runtime calls (`Kotlin_objc_*`, pinning, `Kotlin_Interop_*` in `Interop.cpp`);
 `memScoped`, `Arena`, `CValues` and `StableRef` are plain Kotlin on top of them. `interpretPointed`/`CPointer` creation is not
 magic: `InteropLowering` only replaces `NativePointed.rawPtr` and `CPointer.rawValue` getters with intrinsics.
+
+The pointer and value types of `kotlinx.cinterop`, as declared in
+[`Interop/Runtime/src/main/kotlin/kotlinx/cinterop/Types.kt`](../../kotlin-native/Interop/Runtime/src/main/kotlin/kotlinx/cinterop/Types.kt)
+(`ObjCObjectVar` is in `ObjectiveCImpl.kt`; the `*VarOf` classes are one per primitive type, aliased as `IntVar`, `LongVar`, …):
+
+```mermaid
+classDiagram
+    NativePointed <|-- CPointed
+    CPointed <|-- CVariable
+    CPointed <|-- COpaque
+    CPointed <|-- CFunction
+    CVariable <|-- CStructVar
+    CVariable <|-- CPrimitiveVar
+    CVariable <|-- CPointerVarOf
+    CVariable <|-- ObjCObjectVar
+    CPrimitiveVar <|-- CEnumVar
+    CPrimitiveVar <|-- IntVarOf
+    CValuesRef <|-- CValues
+    CValuesRef <|-- CPointer
+    CValues <|-- CValue
+    class NativePointed {
+        rawPtr: NativePtr
+    }
+    class CPointed {
+        a typed location in native memory
+    }
+    class CVariable {
+        companion Type(size, align)
+    }
+    class CStructVar {
+        generated subclasses per C struct
+    }
+    class CEnumVar {
+        value accessor rewritten by InteropCallConvertors
+    }
+    class CValuesRef~T~ {
+        getPointer(scope) CPointer~T~
+    }
+    class CValues~T~ {
+        place(placement) CPointer~T~
+    }
+    class CPointer~T~ {
+        value: NonNullNativePtr
+        pointed: T
+    }
+    class CFunction~T~ {
+        invoked via INTEROP_FUNPTR_INVOKE
+    }
+```
+
+**Objective-C object identity.** Two shapes exist at run time, both built on the associated-object slot of a Kotlin object
+(`ExtraObjectData.associatedObject_`, reached through `ObjHeader::GetAssociatedObject`, released by
+`ExtraObjectData::ReleaseAssociatedObject` when the object is swept, see
+[`mm/ExtraObjectData.cpp`](../../kotlin-native/runtime/src/main/cpp/mm/ExtraObjectData.cpp)). A *foreign* ObjC object reaching
+Kotlin (`interpretObjCPointerOrNull` = `Kotlin_Interop_refFromObjC`, which sends `toKotlin:`) is wrapped in a fresh Kotlin object
+whose associated object is the retained ObjC pointer (`Kotlin_ObjCExport_convertUnmappedObjCObject` and the `NSObject` category
+`NSObjectToKotlin` in [`ObjCExport.mm`](../../kotlin-native/runtime/src/main/cpp/ObjCExport.mm) /
+[`ObjCExportClasses.mm`](../../kotlin-native/runtime/src/objc/cpp/ObjCExportClasses.mm)); `objcPtr()` (`Kotlin_Interop_refToObjC`)
+returns that pointer unretained, and `ObjCReferenceValuePassing` in `CBridgeGen.kt` retains only for consumed parameters. A
+Kotlin *subclass* of an ObjC class is an instance of the class that `CreateKotlinObjCClass` registers at run time: the ObjC
+instance carries an ivar `kotlinBody` holding an `ObjCBackRef`, an `ExternalRCRefImpl` whose `rc_ > 0` keeps the Kotlin object in
+the GC roots; its `retain`/`release`/`_tryRetain` overrides act on that count instead of the NSObject refcount, `allocWithZone:`
+allocates both objects together (`AllocInstanceWithAssociatedObject`), `toKotlin:` returns the back reference and `dealloc`
+destroys it ([`ObjCInterop.mm`](../../kotlin-native/runtime/src/main/cpp/ObjCInterop.mm),
+[`ObjCBackRef.hpp`](../../kotlin-native/runtime/src/main/cpp/ObjCBackRef.hpp)). The ObjC-export counterpart, `KotlinBase`
+wrappers of Kotlin objects, is in [export.md](export.md#objective-c-framework).
+
+The two shapes, as laid out in `ObjCInterop.mm`, `ObjCExport.mm`, `ObjCExportClasses.mm` and `ExtraObjectData.cpp`:
+
+![Foreign ObjC object wrapped by a Kotlin object, and Kotlin subclass of an ObjC class with its ObjCBackRef](imgs/cinterop-objc-objects.svg)
 
 ### Platform libraries
 
@@ -289,7 +386,8 @@ pruning above. The cinterop tool loads them the same way, which is how a user `.
 Cross-subsystem impact: caches (a cached cinterop klib ships compiled struct/enum code; see [caches.md](caches.md)), klib linking
 and partial linkage (interop signatures are flagged, deserialization order matters; see [klib-linking.md](klib-linking.md)),
 ObjC/Swift export (shares `ObjCDataGenerator`, `linkObjC.kt`, reverse bridges; see [export.md](export.md)), the commonizer
-(consumes cinterop klib metadata and manifests).
+(consumes cinterop klib metadata and manifests, and depends on the stub naming of parameters such as `arg0…`/`variadicArguments`
+and on forward declarations; see [commonizer.md](commonizer.md)).
 
 ## Investigating bugs
 
@@ -318,7 +416,8 @@ kotlin-native/dist/bin/kotlinc-native main.kt -l foo.klib -o main
 ```
 
 Tests (`cinterop` JUnit tag, `./gradlew :native:native.tests:cinteropTest`; see
-[HACKING.md#testing](../../kotlin-native/HACKING.md#testing)):
+[HACKING.md#testing](../../kotlin-native/HACKING.md#testing) for usage and [test-infrastructure.md](test-infrastructure.md) for how
+golden files and `// MODULE: cinterop` modules are compiled):
 - Golden metadata tests: `native/native.tests/testData/CInterop/{simple,framework,framework.macros,builtins,cCallMode,swiftName*}`,
   driven by `AbstractNativeCInteropTest` (`contents.gold.txt` = `klib dump-metadata` output; variants with/without `-fmodules`,
   header mode, macro collection modes). Add a `.def` directory and a golden file.

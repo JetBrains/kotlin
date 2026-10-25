@@ -69,16 +69,15 @@ GlobalData.allocator()                          per mm::ThreadData
 │ concurrentSweepersCount_ (atomic)           │   PageStore<T>: empty_  ready_  used_  unswept_
 │ allocatedSizeTracker_ (atomic bytes)        │                 (four lock-free AtomicStack<T>)
 └─────────────────────────────────────────────┘
-
-FixedBlockPage (fixedBlockPageSize KiB, default 128)        NextFitPage (256 KiB)
-[next_|tracker|nextFree_{first,last}|blockSize_|end_]       [next_|tracker|curBlock_]
-[cell 0][cell 1] ... blocks of blockSize_ cells ...         [Cell 0: sentinel size 0][Cell 1: {isAllocated_,size_} data...]
-  free ranges form a forward-linked list stored in            blocks are contiguous; Next() = this + size_;
-  the *last* cell of each free range                          allocation carves from the END of the current free block
-
-SingleObjectPage: [next_][ObjectData|ObjHeader ... ] exactly one block, page size = object size + header
-every object block = [GC::ObjectData (8 bytes: mark bit / mark-queue link)][ObjHeader ...], 8-byte aligned
 ```
+
+Every object block is `[GC::ObjectData (8 bytes: mark bit / mark-queue link)][ObjHeader …]`, 8-byte aligned; the byte-level
+layout of the block, the array header and the meta-object is drawn once in
+[compiler-runtime-contract.md](compiler-runtime-contract.md#object-layout). The three page kinds and how blocks, free runs and
+block headers are laid out inside them, from [FixedBlockPage.hpp]/[FixedBlockPage.cpp], [NextFitPage.hpp]/[NextFitPage.cpp],
+[Cell.hpp], [SingleObjectPage.cpp] and [ExtraObjectCell.hpp]:
+
+![The three page kinds and the extra-object page, with cells, free runs and block headers](imgs/allocator-pages.svg)
 
 ### Routing an allocation (`CustomAllocator::Allocate`)
 
@@ -116,6 +115,31 @@ Slow path: `heap_.GetFixedBlockPage / GetNextFitPage(cells, finalizerQueue_)` �
 3. Otherwise `empty_.Pop()` (a page with no live objects, kept since the last sweep) → `used_`.
 4. Otherwise `NewPage`: `T::Create` → `SafeAlloc(size)` → `used_`.
 
+Routing, fast path and slow path together, as coded in `CustomAllocator::Allocate`/`AllocateIn*Page` ([CustomAllocator.cpp])
+and `PageStore::GetPage` ([PageStore.hpp]):
+
+```mermaid
+flowchart TD
+    A["CustomAllocator::Allocate(size in cells)"] --> P{"pagedAllocator?"}
+    P -->|"false"| S["Heap::GetSingleObjectPage: NewPage, pushed to newlyAllocated_"]
+    P -->|"true"| C{"cells <= 128?"}
+    C -->|"yes"| F["fixedBlockPages_[cells]->TryAllocate()"]
+    C -->|"no"| N{"cells <= NextFitPage::maxBlockSize()?"}
+    N -->|"no"| S
+    N -->|"yes"| X["nextFitPage_->TryAllocate(cells)"]
+    F -->|"null: page full, onPageOverflow"| G["Heap::GetFixedBlockPage / GetNextFitPage: PageStore::GetPage"]
+    X -->|"null: no block fits, onPageOverflow"| G
+    G --> G1{"ready_.Pop()?"}
+    G1 -->|"page"| U["used_.Push; becomes this thread's current page"]
+    G1 -->|"none"| G2{"unswept_.Pop()?"}
+    G2 -->|"page"| SW["++concurrentSweepersCount_; SweepSingle on this thread:<br/>alive page to used_, dead page to empty_ and try the next unswept"]
+    G2 -->|"none"| G3{"empty_.Pop()?"}
+    G3 -->|"page"| U
+    G3 -->|"none"| NP["NewPage: SafeAlloc (mmap or calloc); abort on failure"]
+    SW --> U
+    NP --> U
+```
+
 `SingleObjectPage`s skip all of this: `Heap::GetSingleObjectPage` always calls `NewPage`, which pushes to a separate
 `newlyAllocated_` stack so that the GC's non-atomic sweep of `unswept_`/`used_` never races with mutators
 ([PageStore.hpp] specialization; commit `71b353136505`). `AllocateInFixedBlockPage` loops until a page yields a block; the
@@ -150,6 +174,25 @@ Per-block decision, `ObjectSweepTraits::trySweepElement` in [GCApi.cpp]:
 | unmarked, extra object not yet `IN_FINALIZER_QUEUE` | set the flag, `ClearRegularWeakReferenceImpl`, push the cell to `regular` or (`objcDisposeOnMain` && `RELEASE_ON_MAIN_QUEUE`) `mainThread`; if `TF_HAS_FINALIZER` keep the object, else `UnlinkFromBaseObject` and reclaim the object now | marked + kept / swept |
 | in queue, not yet `FINALIZED` | keep (finalizer thread has not run yet) | marked + kept |
 | `FINALIZED` | `UnlinkFromBaseObject`, flag the extra object `SWEEPABLE`, reclaim | swept |
+
+The same decision as a tree (`ObjectSweepTraits::trySweepElement` in [GCApi.cpp]; `HasFinalizersDataInObject` is
+`TF_HAS_FINALIZER`, [FinalizerHooks.cpp]):
+
+```mermaid
+flowchart TD
+    S["trySweepElement(block)"] --> M{"gc::tryResetMark succeeds?"}
+    M -->|"yes: was marked"| K["keep; mark cleared; counted kept"]
+    M -->|"no: unmarked"| E{"ExtraObjectData attached?"}
+    E -->|"no"| F["reclaim the block (swept)"]
+    E -->|"yes"| Q{"FLAGS_IN_FINALIZER_QUEUE already set?"}
+    Q -->|"no"| P["set IN_FINALIZER_QUEUE; ClearRegularWeakReferenceImpl;<br/>push the cell to regular, or mainThread when<br/>objcDisposeOnMain and RELEASE_ON_MAIN_QUEUE"]
+    P --> H{"TF_HAS_FINALIZER: finalizer data inside the object?"}
+    H -->|"yes"| K2["keep one more cycle (counted marked + kept)"]
+    H -->|"no"| U["UnlinkFromBaseObject; reclaim the block now"]
+    Q -->|"yes"| D{"FLAGS_FINALIZED?"}
+    D -->|"no"| K3["keep: the finalizer thread has not run yet"]
+    D -->|"yes"| X["UnlinkFromBaseObject; flag the cell SWEEPABLE; reclaim the block"]
+```
 
 `ExtraDataSweepTraits::trySweepElement` reclaims a cell iff `FLAGS_SWEEPABLE`. Net effect: a Cleaner's object dies two cycles
 after becoming unreachable (cycle N queues and keeps it, the finalizer thread flags `FINALIZED`, cycle N+1 frees object and
@@ -203,6 +246,25 @@ ObjC-interop targets the thread runs a `CFRunLoop` instead of a condition-variab
 main-thread variant is throttled by `RunLoopFinalizerProcessorConfig` (300 ms per task, 1 ms between tasks,
 [RunLoopFinalizerProcessor.hpp]), configured from the stdlib `GC` object through `configureMainThreadFinalizerProcessor`
 ([mm/Memory.cpp]).
+
+The path of one `ExtraObjectCell` from the sweep to the finalizer, from [GCApi.cpp] (`trySweepElement`), [Heap.cpp]
+(`Sweep`, `AddToFinalizerQueue`), [AllocatorImpl.cpp] (`sweep`, `scheduleFinalization`), [SegregatedFinalizerProcessor.hpp]
+and [FinalizerProcessor.hpp]:
+
+```mermaid
+flowchart LR
+    T["trySweepElement pushes the ExtraObjectCell<br/>(GC thread, or a mutator sweeping a page in GetPage)"] --> R["queue.regular"]
+    T --> MT["queue.mainThread<br/>(objcDisposeOnMain and RELEASE_ON_MAIN_QUEUE)"]
+    R --> TQ["mutator: its finalizerQueue_<br/>GC thread: Heap::Sweep result<br/>exited thread: Heap::pendingFinalizerQueue_"]
+    MT --> TQ
+    TQ -->|"Allocator::sweep: ExtractFinalizerQueue from every thread and from Heap"| PF["Impl::pendingFinalizers_"]
+    PF -->|"Allocator::scheduleFinalization, last step of the epoch"| SP["SegregatedFinalizerProcessor::schedule"]
+    SP -->|"regular, plus mainThread when no run loop processor is available"| FP["FinalizerProcessor::ScheduleTasks<br/>GC finalizer processor thread, kRunnable, autoreleasepool"]
+    SP -->|"mainThread"| MP["MainThreadFinalizerProcessor<br/>main run loop, 100 cells per batch, 300 ms per task"]
+    FP --> RF["processSingle: RunFinalizers(baseObject),<br/>or destroyExtraObjectData for a cell without a base object"]
+    MP --> RF
+    FP -->|"batch done"| OE["gc().onEpochFinalized(epoch) = GCStateHolder::finalized"]
+```
 
 ### `pagedAllocator=false`
 
@@ -317,7 +379,8 @@ Tests:
   (`ObjectFactory*Test`). Every GC's `*_gc_custom_test` group links `custom_alloc`, `*_gc_test` links `legacy_alloc`.
   Run: `./gradlew :kotlin-native:runtime:hostRuntimeTests -Pgtest_filter='CustomAlloc*:FinalizerProcessor*'`.
 - Integration: any `native.tests` task with `-Pkn.alloc=STD|CUSTOM` or `-Pkn.pagedAllocator=true|false` (mutually exclusive,
-  `computeAllocator` in [NativeTestSupport.kt]; flags in [TestProcessSettings.kt]), `-Pkn.sanitizer=THREAD`;
+  `computeAllocator` in [NativeTestSupport.kt]; flags in [TestProcessSettings.kt]; how properties become flags is in
+  [test-infrastructure.md](test-infrastructure.md#from-gradle-property-to-compiler-flag)), `-Pkn.sanitizer=THREAD`;
   `:native:native.tests:gcTest` ([testData/gc]); stress tests [native.tests/stress] (`stress_gc_allocations.kt`,
   `array_out_of_memory.kt`, `kt63423_dispose_on_main_stress.kt`); GC fuzzing ([gc-fuzzing-tests/README.md]).
 

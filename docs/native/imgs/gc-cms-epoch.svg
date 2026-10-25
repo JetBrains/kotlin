@@ -1,0 +1,179 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 470" width="1000" height="470" font-family="Helvetica, Arial, sans-serif" font-size="13">
+  <!-- One CMS epoch: MainGCThread::PerformFullGC + ConcurrentMark::markInSTW + Barriers.cpp phases -->
+  <rect x="0" y="0" width="1000" height="470" fill="#ffffff"/>
+  <text x="12" y="22" font-size="15" font-weight="bold" fill="#111">One CMS epoch (time runs left to right; not to scale)</text>
+
+  <!-- column headers -->
+  <g font-size="11" fill="#111" text-anchor="middle">
+    <text x="160" y="46">before STW</text>
+    <text x="255" y="46" font-weight="bold">STW #1 "mark"</text>
+    <text x="420" y="46">concurrent mark closure</text>
+    <text x="587" y="46">weak processing</text>
+    <text x="690" y="38" font-weight="bold">STW #2</text>
+    <text x="690" y="50" font-weight="bold">"prepare to sweep"</text>
+    <text x="820" y="46">concurrent sweep</text>
+    <text x="950" y="46">finalization</text>
+  </g>
+  <!-- STW shading across all lanes -->
+  <rect x="205" y="52" width="100" height="356" fill="#f7e6e6" stroke="none"/>
+  <rect x="640" y="52" width="100" height="356" fill="#f7e6e6" stroke="none"/>
+  <!-- column separators -->
+  <g stroke="#bbb" stroke-dasharray="3,3">
+    <line x1="205" y1="52" x2="205" y2="408"/>
+    <line x1="305" y1="52" x2="305" y2="408"/>
+    <line x1="535" y1="52" x2="535" y2="408"/>
+    <line x1="640" y1="52" x2="640" y2="408"/>
+    <line x1="740" y1="52" x2="740" y2="408"/>
+    <line x1="900" y1="52" x2="900" y2="408"/>
+  </g>
+
+  <!-- lane labels -->
+  <g font-size="12" font-weight="bold" fill="#111">
+    <text x="10" y="92">GC thread</text>
+    <text x="10" y="200">Mutator</text>
+    <text x="10" y="214">threads</text>
+    <text x="10" y="300">Barrier phase</text>
+    <text x="10" y="345">Registry lock</text>
+    <text x="10" y="390">Finalizer</text>
+    <text x="10" y="404">thread</text>
+  </g>
+
+  <!-- GC thread lane boxes -->
+  <g font-size="10.5" fill="#111">
+    <rect x="118" y="60" width="84" height="88" fill="#e8eef7" stroke="#444"/>
+    <text x="122" y="74">setupBeforeSTW:</text>
+    <text x="122" y="88">lock registry</text>
+    <text x="122" y="102">(LockForIter),</text>
+    <text x="122" y="116">construct</text>
+    <text x="122" y="130">ParallelProcessor</text>
+
+    <rect x="208" y="60" width="94" height="88" fill="#e8eef7" stroke="#444"/>
+    <text x="212" y="74">onGCStart, start(e)</text>
+    <text x="212" y="88">build mutator</text>
+    <text x="212" y="102">mark queues</text>
+    <text x="212" y="116">scan stacks + TLS</text>
+    <text x="212" y="130">enableBarriers(e)</text>
+    <text x="212" y="144">resumeTheWorld</text>
+
+    <rect x="308" y="60" width="224" height="88" fill="#e8eef7" stroke="#444"/>
+    <text x="312" y="74">collectRootSetGlobals (globals, ExternalRCRef)</text>
+    <text x="312" y="88">loop up to concurrentMarkMaxIterations (100):</text>
+    <text x="322" y="102">Mark(mainWorker)</text>
+    <text x="322" y="116">tryTerminateMark: lock markTermination,</text>
+    <text x="322" y="130">flush queues, compare batchesEverShared</text>
+    <text x="312" y="144">fallback: extra STW + Mark if never stable</text>
+
+    <rect x="538" y="60" width="99" height="88" fill="#e8eef7" stroke="#444"/>
+    <text x="542" y="74">processWeaks:</text>
+    <text x="542" y="88">null every</text>
+    <text x="542" y="102">ExternalRCRef</text>
+    <text x="542" y="116">whose obj_ is</text>
+    <text x="542" y="130">unmarked and</text>
+    <text x="542" y="144">not permanent</text>
+
+    <rect x="643" y="60" width="94" height="88" fill="#e8eef7" stroke="#444"/>
+    <text x="647" y="74">disableBarriers</text>
+    <text x="647" y="88">destroy mutator</text>
+    <text x="647" y="102">queues; unlock</text>
+    <text x="647" y="116">registry; every</text>
+    <text x="647" y="130">prepareForGC()</text>
+    <text x="647" y="144">resumeTheWorld</text>
+
+    <rect x="743" y="60" width="154" height="88" fill="#e8eef7" stroke="#444"/>
+    <text x="747" y="74">allocator_.sweep(gcHandle)</text>
+    <text x="747" y="88">onGCFinish(e, keptBytes):</text>
+    <text x="747" y="102">retarget heap, wait for</text>
+    <text x="747" y="116">assisting mutators</text>
+    <text x="747" y="130">finish(e); lastGCInfo</text>
+    <text x="747" y="144">scheduleFinalization</text>
+
+    <rect x="903" y="60" width="92" height="44" fill="#f0f0f0" stroke="#444" stroke-dasharray="4,2"/>
+    <text x="907" y="74">idle until the</text>
+    <text x="907" y="88">next scheduled</text>
+    <text x="907" y="102">epoch</text>
+  </g>
+
+  <!-- Mutator lane -->
+  <g font-size="10.5" fill="#111">
+    <rect x="118" y="166" width="84" height="74" fill="#eaf5e6" stroke="#444"/>
+    <text x="122" y="180">run normally</text>
+    <text x="122" y="194">(safepoints</text>
+    <text x="122" y="208">already slow:</text>
+    <text x="122" y="222">activator set)</text>
+
+    <rect x="208" y="166" width="94" height="74" fill="#fdf1dc" stroke="#444"/>
+    <text x="212" y="180">parked at a</text>
+    <text x="212" y="194">safepoint in</text>
+    <text x="212" y="208">kNative, or in</text>
+    <text x="212" y="222">native code</text>
+
+    <rect x="308" y="166" width="224" height="74" fill="#eaf5e6" stroke="#444"/>
+    <text x="312" y="180">run with barriers: deletion barrier enqueues</text>
+    <text x="312" y="194">the overwritten heap ref; allocate black;</text>
+    <text x="312" y="208">weak read enqueues the referee; forceFlush</text>
+    <text x="312" y="222">of the local queue at a safepoint on request;</text>
+    <text x="312" y="236">no thread may register or unregister</text>
+
+    <rect x="538" y="166" width="99" height="74" fill="#eaf5e6" stroke="#444"/>
+    <text x="542" y="180">run; weak read</text>
+    <text x="542" y="194">of an unmarked</text>
+    <text x="542" y="208">referee returns</text>
+    <text x="542" y="222">null; allocations</text>
+    <text x="542" y="236">still marked</text>
+
+    <rect x="643" y="166" width="94" height="74" fill="#fdf1dc" stroke="#444"/>
+    <text x="647" y="180">parked</text>
+    <text x="647" y="194">(cached pages</text>
+    <text x="647" y="208">dropped by</text>
+    <text x="647" y="222">prepareForGC)</text>
+
+    <rect x="743" y="166" width="154" height="74" fill="#eaf5e6" stroke="#444"/>
+    <text x="747" y="180">run; GetPage may pop an</text>
+    <text x="747" y="194">unswept page and sweep it;</text>
+    <text x="747" y="208">new objects unmarked;</text>
+    <text x="747" y="222">assisting threads resume</text>
+    <text x="747" y="236">after onGCFinish</text>
+
+    <rect x="903" y="166" width="92" height="74" fill="#eaf5e6" stroke="#444"/>
+    <text x="907" y="180">run; GC.collect()</text>
+    <text x="907" y="194">callers wait in</text>
+    <text x="907" y="208">kNative for</text>
+    <text x="907" y="222">finalized(e)</text>
+  </g>
+
+  <!-- Barrier phase lane -->
+  <g font-size="11" fill="#111" text-anchor="middle">
+    <rect x="118" y="282" width="140" height="26" fill="#f0f0f0" stroke="#444"/>
+    <text x="188" y="299">kDisabled</text>
+    <rect x="258" y="282" width="320" height="26" fill="#fdf1dc" stroke="#444"/>
+    <text x="418" y="299">kMarkClosure (deletion + allocation + weak-read barriers)</text>
+    <rect x="578" y="282" width="112" height="26" fill="#e8eef7" stroke="#444"/>
+    <text x="634" y="299">kWeakProcessing</text>
+    <rect x="690" y="282" width="305" height="26" fill="#f0f0f0" stroke="#444"/>
+    <text x="842" y="299">kDisabled</text>
+  </g>
+
+  <!-- Registry lock lane -->
+  <g font-size="11" fill="#111" text-anchor="middle">
+    <rect x="118" y="328" width="572" height="26" fill="#fdf1dc" stroke="#444"/>
+    <text x="404" y="345">held by the GC thread: RegisterCurrentThread / Unregister block</text>
+    <rect x="690" y="328" width="305" height="26" fill="#f0f0f0" stroke="#444"/>
+    <text x="842" y="345">free (sweep takes it briefly to collect finalizer queues)</text>
+  </g>
+
+  <!-- Finalizer lane -->
+  <g font-size="10.5" fill="#111">
+    <rect x="903" y="372" width="92" height="36" fill="#e8eef7" stroke="#444"/>
+    <text x="907" y="386">RunFinalizers;</text>
+    <text x="907" y="400">onEpochFinalized</text>
+    <line x1="897" y1="148" x2="903" y2="372" stroke="#444" stroke-dasharray="3,2"/>
+  </g>
+
+  <!-- legend -->
+  <g font-size="11" fill="#111">
+    <rect x="12" y="428" width="14" height="12" fill="#f7e6e6" stroke="#444"/><text x="30" y="438">stop-the-world (mutators parked)</text>
+    <rect x="230" y="428" width="14" height="12" fill="#eaf5e6" stroke="#444"/><text x="248" y="438">mutators running</text>
+    <rect x="370" y="428" width="14" height="12" fill="#e8eef7" stroke="#444"/><text x="388" y="438">GC-side work</text>
+    <text x="12" y="458">e = epoch number from GCStateHolder. Sources: MainGCThread.hpp, cms/ConcurrentMark.cpp, cms/Barriers.cpp, GCState.hpp.</text>
+  </g>
+</svg>

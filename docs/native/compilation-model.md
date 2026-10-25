@@ -15,7 +15,7 @@ By "Gradle" this document mostly means
 When compiling projects with multiple K/N targets, the build has to handle
 common parts between these targets, which is not trivial.
 This is out of scope for this document, and additionally involves things like
-[commonizer](../../native/commonizer) and common metadata compilation.
+[commonizer](../../native/commonizer) (see [commonizer.md](commonizer.md)) and common metadata compilation.
 
 So, this document focuses on the single target case. Below is the chart:
 
@@ -24,20 +24,20 @@ So, this document focuses on the single target case. Below is the chart:
 title: Compilation of a binary in project :B, which depends on project :A
 ---
 flowchart LR
-    subgraph Inputs
-        Asource[project :A source code]
-        Adeps[project :A klib dependencies]
-        Bsource[project :B source code]
-        Bdeps[project :B klib dependencies]
+    subgraph Inputs ["Inputs"]
+        Asource["project :A source code"]
+        Adeps["project :A klib dependencies"]
+        Bsource["project :B source code"]
+        Bdeps["project :B klib dependencies"]
     end
 
-    Acompile{{:A:compileKotlin$Target}}
-    Bcompile{{:B:compileKotlin$Target}}
+    Acompile{{":A:compileKotlin$Target"}}
+    Bcompile{{":B:compileKotlin$Target"}}
 
-    Aklib[project :A klib]
-    Bklib[project :B klib]
+    Aklib["project :A klib"]
+    Bklib["project :B klib"]
 
-    link{{:B:linkDebug...}}
+    linkTask{{":B:linkDebug...$Target"}}
 
     Asource -->|translated| Acompile
     Adeps -.->|used| Acompile
@@ -50,12 +50,12 @@ flowchart LR
 
     Bcompile --> Bklib
     
-    Aklib --> link
-    Adeps --> link
-    Bklib --> link
-    Bdeps --> link
+    Aklib --> linkTask
+    Adeps --> linkTask
+    Bklib --> linkTask
+    Bdeps --> linkTask
     
-    link --> binary
+    linkTask --> binary
 ```
 
 Any Kotlin sources are first compiled to a klib.
@@ -110,6 +110,30 @@ The relevant compilation flags specifying what the compiler produces are:
 `-produce`, `-generate-test-runner`, `-Xstatic-framework`.
 The corresponding Gradle documentation is
 [here](https://kotlinlang.org/docs/multiplatform-dsl-reference.html#binaries).
+
+How each `-produce` value
+([`CompilerOutputKind`](../../native/utils/src/org/jetbrains/kotlin/konan/target/CompilerOutputKind.kt)) is dispatched by
+`NativeCompilerDriver.run`
+([NativeCompilerDriver.kt](../../kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/driver/NativeCompilerDriver.kt)),
+with the linker output kind chosen in `Linker.kt` (`determineLinkerOutput`):
+
+```mermaid
+flowchart LR
+    produce["-produce ..."] --> lib["library (LIBRARY): first stage only,<br/>NativeKlibCliPipeline writes a .klib"]
+    produce --> prog["program (PROGRAM)"]
+    produce --> dyn["dynamic / static<br/>(DYNAMIC, STATIC)"]
+    produce --> fw["framework (FRAMEWORK)"]
+    produce --> tb["test_bundle (TEST_BUNDLE, Apple only)"]
+    produce --> cache["dynamic_cache / static_cache / header_cache<br/>(compiler caches, see below)"]
+    prog --> pb["produceBinary"]
+    cache --> pb
+    tb --> bundle["produceBundle: Info.plist + binary"]
+    dyn --> cl["produceCLibrary: C header and adapters<br/>(export.md)"]
+    fw --> of["produceObjCFramework: header, module map,<br/>Info.plist, then the binary (export.md)"]
+    pb --> exe["executable; with -generate-test-runner the entry point is<br/>kotlin.native.internal.test.main (Ir.kt) over suites built by TestProcessor"]
+    cl --> nl["libname.so / .dylib / .dll or libname.a<br/>plus name_api.h"]
+    of --> fwout["Name.framework: dynamic library,<br/>or static library with -Xstatic-framework"]
+```
 
 # Closed-world compilation model
 
@@ -287,7 +311,7 @@ illustrates the entire compilation flow:
 
 ```mermaid
 flowchart LR
-    subgraph nativelib['foo' native library]
+    subgraph nativelib ["foo native library"]
         dylib[libfoo.dylib]
         header[foo.h]
     end
@@ -297,8 +321,9 @@ flowchart LR
     cinteropKlib[cinterop klib]
 
     compiler1{{compiler}}
-    subgraph compiler2[compiler encapsulates that]
+    subgraph compiler2 ["compiler encapsulates that"]
         codegen{{code generator}}
+        cstubs{{"clang: generated C bridges"}}
         machineCode[.o]
         linker{{native linker}}
     end
@@ -308,18 +333,20 @@ flowchart LR
     header -->|cinterop| cinteropKlib
     sources -.->|imports| cinteropKlib
     cinteropKlib -.-> compiler1
-    cinteropKlib --> codegen
+    cinteropKlib -->|"metadata, bridge bitcode"| codegen
 
     compiler1 --> klib
     klib --> codegen
 
+    codegen -->|"C bridges per call site"| cstubs
+    cstubs --> machineCode
     codegen --> machineCode
     machineCode --> linker
 
+    cinteropKlib -.->|"linkerOpts, staticLibraries"| linker
     dylib -.-> linker
 
     linker --> binary
-    
 ```
 
 ## Consuming Swift or C++ libraries in Kotlin
@@ -356,35 +383,25 @@ dependencies. When working with multiple such frameworks, this might be
 surprising. Consider the following case.
 ```mermaid
 flowchart RL
-    core["// project :core
-    class Data"]
-    feature1["// project :feature1
-    fun produceData(): Data"]
-    feature2["// project :feature2
-    fun consume(data: Data)"]
+    core["// project :core<br/>class Data"]
+    feature1["// project :feature1<br/>fun produceData(): Data"]
+    feature2["// project :feature2<br/>fun consume(data: Data)"]
 
     feature1 -.->|depends| core
     feature2 -.->|depends| core
 
-    framework1["// framework Feature1
-    @interface Feature1Data
-    + (Feature1Data*)produceData;"]
-    framework2["// framework Feature2
-    @interface Feature2Data
-    + (void)consumeData:(Feature2Data*);"]
+    framework1["// framework Feature1<br/>@interface Feature1Data<br/>+ (Feature1Data*)produceData;"]
+    framework2["// framework Feature2<br/>@interface Feature2Data<br/>+ (void)consumeData:(Feature2Data*);"]
 
-    framework1 -->|includes|feature1
-    framework1 -->|includes|core
-    framework2 -->|includes|core
-    framework2 -->|includes|feature2
+    framework1 -->|includes| feature1
+    framework1 -->|includes| core
+    framework2 -->|includes| core
+    framework2 -->|includes| feature2
 
-    swift["// Swift code
-    consume(data: produceData())
-    // ^ doesn't work, different types"]
+    swift["// Swift code<br/>consume(data: produceData())<br/>// ^ doesn't work, different types"]
 
     swift -.->|depends| framework1
     swift -.->|depends| framework2
-    
 ```
 In other words, both frameworks (`Feature1` and `Feature2`) contain project
 `:core`, and its class `Data`. So Swift code ends up with two different
@@ -397,11 +414,11 @@ That's why the recommended approach is to use the "umbrella framework"
 technique:
 ```mermaid
 flowchart RL
-    core[:core]
-    feature1[:feature1]
-    feature2[:feature2]
+    core[":core"]
+    feature1[":feature1"]
+    feature2[":feature2"]
 
-    framework[Framework]
+    framework["Framework (umbrella)"]
 
     feature1 -.->|depends| core
     framework -->|includes| feature1
@@ -422,7 +439,7 @@ See also
 ## Consuming Kotlin libraries in C/C++
 
 Basically everything from the section 
-[above](#Consuming-Kotlin-libraries-in-Objective-C-or-Swift) applies to
+[above](#consuming-kotlin-libraries-in-objective-c-or-swift) applies to
 [consuming Kotlin in C/C++](https://kotlinlang.org/docs/native-dynamic-libraries.html).
 
 The implementation can be found

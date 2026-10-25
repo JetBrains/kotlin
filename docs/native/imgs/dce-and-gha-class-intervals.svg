@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 440" width="900" height="440" font-family="Helvetica, Arial, sans-serif" font-size="13">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#444"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="900" height="440" fill="#ffffff"/>
+  <text x="20" y="24" font-size="15" font-weight="bold" fill="#111">GHA class intervals: DFS from Any over immediateInheritors, (enterTime, exitTime) per class</text>
+  <text x="20" y="44" font-size="12" fill="#111">Hierarchy: class A, class B : A, class C : A, class D (declared in this order; times as if these were the only classes).</text>
+
+  <!-- tree -->
+  <g stroke="#444" stroke-width="1.4">
+    <line x1="300" y1="100" x2="190" y2="170"/>
+    <line x1="300" y1="100" x2="410" y2="170"/>
+    <line x1="190" y1="210" x2="120" y2="280"/>
+    <line x1="190" y1="210" x2="260" y2="280"/>
+  </g>
+  <rect x="230" y="60" width="140" height="40" rx="6" fill="#e8eef7" stroke="#444"/>
+  <text x="300" y="78" text-anchor="middle" fill="#111">Any</text>
+  <text x="300" y="94" text-anchor="middle" font-size="11" fill="#111">time 1 → enter −1, exit 5</text>
+  <rect x="120" y="170" width="140" height="40" rx="6" fill="#eaf5e6" stroke="#444"/>
+  <text x="190" y="188" text-anchor="middle" fill="#111">A</text>
+  <text x="190" y="204" text-anchor="middle" font-size="11" fill="#111">enter 2, exit 4</text>
+  <rect x="340" y="170" width="140" height="40" rx="6" fill="#fdf1dc" stroke="#444"/>
+  <text x="410" y="188" text-anchor="middle" fill="#111">D</text>
+  <text x="410" y="204" text-anchor="middle" font-size="11" fill="#111">enter 5, exit 5</text>
+  <rect x="50" y="280" width="140" height="40" rx="6" fill="#eaf5e6" stroke="#444"/>
+  <text x="120" y="298" text-anchor="middle" fill="#111">B</text>
+  <text x="120" y="314" text-anchor="middle" font-size="11" fill="#111">enter 3, exit 3</text>
+  <rect x="190" y="280" width="140" height="40" rx="6" fill="#eaf5e6" stroke="#444"/>
+  <text x="260" y="298" text-anchor="middle" fill="#111">C</text>
+  <text x="260" y="314" text-anchor="middle" font-size="11" fill="#111">enter 4, exit 4</text>
+  <text x="20" y="350" font-size="12" fill="#111">DFS order: Any(1) A(2) B(3) C(4) D(5). ++time happens on entry only; exitTime is the</text>
+  <text x="20" y="367" font-size="12" fill="#111">counter after the subtree. Any's enter is forced to −1 so that ObjC block classes</text>
+  <text x="20" y="384" font-size="12" fill="#111">(ClassGlobalHierarchyInfo(−1, −1, 0)) pass "is Any" and fail every other check.</text>
+  <text x="20" y="408" font-size="12" fill="#111">TypeInfo stores only classId_ = enterTime; the (lo, hi) pair of the target class is a</text>
+  <text x="20" y="425" font-size="12" fill="#111">compile-time constant at the check site.</text>
+
+  <!-- number line -->
+  <text x="530" y="70" font-weight="bold" fill="#111">Intervals on the time axis</text>
+  <line x1="540" y1="100" x2="880" y2="100" stroke="#444" stroke-width="1.4"/>
+  <g font-size="11" fill="#111" text-anchor="middle">
+    <text x="560" y="90">−1</text>
+    <text x="610" y="90">0</text>
+    <text x="660" y="90">1</text>
+    <text x="710" y="90">2</text>
+    <text x="760" y="90">3</text>
+    <text x="810" y="90">4</text>
+    <text x="860" y="90">5</text>
+  </g>
+  <g stroke="#444">
+    <line x1="560" y1="95" x2="560" y2="105"/>
+    <line x1="610" y1="95" x2="610" y2="105"/>
+    <line x1="660" y1="95" x2="660" y2="105"/>
+    <line x1="710" y1="95" x2="710" y2="105"/>
+    <line x1="760" y1="95" x2="760" y2="105"/>
+    <line x1="810" y1="95" x2="810" y2="105"/>
+    <line x1="860" y1="95" x2="860" y2="105"/>
+  </g>
+  <!-- bars -->
+  <rect x="554" y="120" width="312" height="18" rx="4" fill="#e8eef7" stroke="#444"/>
+  <text x="710" y="133" text-anchor="middle" font-size="11" fill="#111">Any [−1, 5]</text>
+  <rect x="704" y="150" width="112" height="18" rx="4" fill="#eaf5e6" stroke="#444"/>
+  <text x="760" y="163" text-anchor="middle" font-size="11" fill="#111">A [2, 4]</text>
+  <rect x="854" y="150" width="12" height="18" rx="3" fill="#fdf1dc" stroke="#444"/>
+  <text x="860" y="186" text-anchor="middle" font-size="11" fill="#111">D [5, 5]</text>
+  <rect x="754" y="180" width="12" height="18" rx="3" fill="#eaf5e6" stroke="#444"/>
+  <text x="760" y="216" text-anchor="middle" font-size="11" fill="#111">B [3, 3]</text>
+  <rect x="804" y="180" width="12" height="18" rx="3" fill="#eaf5e6" stroke="#444"/>
+  <text x="810" y="216" text-anchor="middle" font-size="11" fill="#111">C [4, 4]</text>
+
+  <!-- checks -->
+  <rect x="530" y="240" width="350" height="150" rx="6" fill="#f0f0f0" stroke="#444"/>
+  <text x="542" y="260" font-weight="bold" fill="#111">IsSubclassFast(typeInfo, lo, hi): lo ≤ classId_ ≤ hi</text>
+  <g font-size="12" fill="#111">
+    <text x="542" y="284">b is A :  2 ≤ 3 ≤ 4   → true</text>
+    <text x="542" y="304">d is A :  2 ≤ 5 ≤ 4   → false</text>
+    <text x="542" y="324">c is B :  3 ≤ 4 ≤ 3   → false (siblings are disjoint)</text>
+    <text x="542" y="344">block is Any :  −1 ≤ −1 ≤ 5  → true</text>
+    <text x="542" y="364">block is A :  2 ≤ −1 ≤ 4  → false</text>
+    <text x="542" y="382">intervals are nested or disjoint, never overlapping</text>
+  </g>
+</svg>

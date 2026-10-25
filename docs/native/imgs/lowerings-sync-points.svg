@@ -1,0 +1,123 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 480" width="1000" height="480" font-family="Helvetica, Arial, sans-serif" font-size="13">
+  <rect x="0" y="0" width="1000" height="480" fill="#ffffff"/>
+  <text x="12" y="22" font-size="15" font-weight="bold" fill="#111">runAllLowerings: files as lanes, one column per step, every column boundary is a synchronization point</text>
+  <text x="12" y="40" fill="#111" font-size="12">Time flows left to right. Inside a column, files are lowered one after another (runLowerings): fragment module, dependency modules, next fragment.</text>
+
+  <!-- lane labels -->
+  <text x="12" y="92" fill="#111" font-size="12">Fragment 1, file a.kt</text>
+  <text x="12" y="142" fill="#111" font-size="12">Fragment 1, file b.kt</text>
+  <text x="12" y="186" fill="#111" font-size="12">dependency klib file d.kt</text>
+  <text x="12" y="200" fill="#111" font-size="11">(not cached: same LLVM module)</text>
+  <text x="12" y="242" fill="#111" font-size="12">Fragment 2, file c.kt</text>
+  <text x="12" y="256" fill="#111" font-size="11">(per-file caches only)</text>
+
+  <!-- lane separators -->
+  <line x1="170" y1="70" x2="990" y2="70" stroke="#bbb" stroke-width="1"/>
+  <line x1="170" y1="120" x2="990" y2="120" stroke="#bbb" stroke-width="1"/>
+  <line x1="170" y1="170" x2="990" y2="170" stroke="#bbb" stroke-width="1"/>
+  <line x1="170" y1="220" x2="990" y2="220" stroke="#bbb" stroke-width="1"/>
+  <line x1="170" y1="270" x2="990" y2="270" stroke="#bbb" stroke-width="1"/>
+
+  <!-- column boundaries = sync points -->
+  <g stroke="#444" stroke-width="1" stroke-dasharray="4 3">
+    <line x1="252" y1="62" x2="252" y2="278"/>
+    <line x1="334" y1="62" x2="334" y2="278"/>
+    <line x1="416" y1="62" x2="416" y2="278"/>
+    <line x1="580" y1="62" x2="580" y2="278"/>
+    <line x1="662" y1="62" x2="662" y2="278"/>
+    <line x1="744" y1="62" x2="744" y2="278"/>
+    <line x1="826" y1="62" x2="826" y2="278"/>
+    <line x1="908" y1="62" x2="908" y2="278"/>
+  </g>
+  <!-- the sync point before the inliner -->
+  <line x1="498" y1="56" x2="498" y2="284" stroke="#444" stroke-width="3"/>
+  <text x="498" y="296" text-anchor="middle" fill="#111" font-size="11">sync point before InlineAllFunctions (thick); dashed lines are the other sync points</text>
+
+  <!-- column headers -->
+  <g fill="#111" font-size="11" text-anchor="middle">
+    <text x="211" y="66">1 validate</text>
+    <text x="293" y="66">2 cycle check</text>
+    <text x="375" y="66">3 list 1</text>
+    <text x="457" y="66">4 validate</text>
+    <text x="539" y="66">5 inline all</text>
+    <text x="621" y="66">6 ObjC, casts</text>
+    <text x="703" y="66">7 validate</text>
+    <text x="785" y="66">8 list 2</text>
+    <text x="867" y="66">9 validate</text>
+    <text x="949" y="66">10 merge</text>
+  </g>
+
+  <!-- column 1: module-wise validation (fragment 1 module + deps, then fragment 2) -->
+  <rect x="178" y="76" width="66" height="138" fill="#eaf5e6" stroke="#444"/>
+  <rect x="178" y="226" width="66" height="38" fill="#eaf5e6" stroke="#444"/>
+  <!-- column 2: module-wise InlineCallCycleChecker -->
+  <rect x="260" y="76" width="66" height="138" fill="#fdf1dc" stroke="#444"/>
+  <rect x="260" y="226" width="66" height="38" fill="#fdf1dc" stroke="#444"/>
+  <!-- column 3: list 1 per file, staggered -->
+  <rect x="340" y="78" width="46" height="34" fill="#e8eef7" stroke="#444"/>
+  <rect x="348" y="128" width="46" height="34" fill="#e8eef7" stroke="#444"/>
+  <rect x="356" y="178" width="46" height="34" fill="#e8eef7" stroke="#444"/>
+  <rect x="364" y="228" width="46" height="34" fill="#e8eef7" stroke="#444"/>
+  <!-- column 4: validation -->
+  <rect x="424" y="76" width="66" height="138" fill="#eaf5e6" stroke="#444"/>
+  <rect x="424" y="226" width="66" height="38" fill="#eaf5e6" stroke="#444"/>
+  <!-- column 5: NativeAllFunctionInlining per file; mutates other files -->
+  <rect x="504" y="78" width="46" height="34" fill="#f7e6e6" stroke="#444"/>
+  <rect x="512" y="128" width="46" height="34" fill="#f7e6e6" stroke="#444"/>
+  <rect x="520" y="178" width="46" height="34" fill="#f7e6e6" stroke="#444"/>
+  <rect x="528" y="228" width="46" height="34" fill="#f7e6e6" stroke="#444"/>
+  <g stroke="#444" stroke-width="1.2" fill="none">
+    <path d="M 527 112 C 540 118, 540 124, 535 128"/>
+    <path d="M 527 112 C 560 130, 560 165, 543 178"/>
+  </g>
+  <g fill="#444">
+    <polygon points="535,128 531,122 538,123"/>
+    <polygon points="543,178 540,171 547,173"/>
+  </g>
+  <!-- column 6: SpecialObjCValidation + RedundantCastsRemover per file -->
+  <rect x="586" y="78" width="46" height="34" fill="#e8eef7" stroke="#444"/>
+  <rect x="594" y="128" width="46" height="34" fill="#e8eef7" stroke="#444"/>
+  <rect x="602" y="178" width="46" height="34" fill="#e8eef7" stroke="#444"/>
+  <rect x="610" y="228" width="46" height="34" fill="#e8eef7" stroke="#444"/>
+  <!-- column 7: validation -->
+  <rect x="670" y="76" width="66" height="138" fill="#eaf5e6" stroke="#444"/>
+  <rect x="670" y="226" width="66" height="38" fill="#eaf5e6" stroke="#444"/>
+  <!-- column 8: list 2 per file -->
+  <rect x="750" y="78" width="46" height="34" fill="#e8eef7" stroke="#444"/>
+  <rect x="758" y="128" width="46" height="34" fill="#e8eef7" stroke="#444"/>
+  <rect x="766" y="178" width="46" height="34" fill="#e8eef7" stroke="#444"/>
+  <rect x="774" y="228" width="46" height="34" fill="#e8eef7" stroke="#444"/>
+  <!-- column 9: validation -->
+  <rect x="834" y="76" width="66" height="138" fill="#eaf5e6" stroke="#444"/>
+  <rect x="834" y="226" width="66" height="38" fill="#eaf5e6" stroke="#444"/>
+  <!-- column 10: finalizeLowerings / mergeDependencies: d.kt moves into fragment 1 -->
+  <rect x="916" y="76" width="66" height="88" fill="#f0f0f0" stroke="#444"/>
+  <text x="949" y="112" text-anchor="middle" fill="#111" font-size="10">a.kt, b.kt</text>
+  <text x="949" y="126" text-anchor="middle" fill="#111" font-size="10">+ d.kt first</text>
+  <rect x="916" y="226" width="66" height="38" fill="#f0f0f0" stroke="#444"/>
+  <text x="949" y="249" text-anchor="middle" fill="#111" font-size="10">c.kt</text>
+  <path d="M 949 212 L 949 170" stroke="#444" stroke-width="1.2" fill="none"/>
+  <polygon points="949,166 945,174 953,174" fill="#444"/>
+  <text x="949" y="203" text-anchor="middle" fill="#111" font-size="10">prepended</text>
+
+  <!-- after lowerings -->
+  <text x="178" y="326" fill="#111" font-size="12" font-weight="bold">after column 10: runAfterLowerings per fragment, in parallel when -Xbackend-threads &gt; 1</text>
+  <rect x="178" y="336" width="380" height="26" fill="#f0f0f0" stroke="#444"/>
+  <text x="368" y="353" text-anchor="middle" fill="#111" font-size="11">fragment 1: runCodegen, bitcode post-processing, .o, link</text>
+  <rect x="590" y="336" width="380" height="26" fill="#f0f0f0" stroke="#444"/>
+  <text x="780" y="353" text-anchor="middle" fill="#111" font-size="11">fragment 2: runCodegen, bitcode post-processing, .o, link</text>
+
+  <!-- legend -->
+  <g font-size="11" fill="#111">
+    <rect x="178" y="382" width="14" height="12" fill="#eaf5e6" stroke="#444"/>
+    <text x="198" y="392">module-wise IrValidation phases, no-op unless -Xverify-ir: 1 BeforeLoweringsKlibSecondStage, 4 AfterInliningPrivateFunctionsKlib,</text>
+    <text x="198" y="406">7 AfterInliningAllFunctionsKlibSecondStage, 9 AfterLoweringsSecondStage</text>
+    <rect x="178" y="414" width="14" height="12" fill="#fdf1dc" stroke="#444"/>
+    <text x="198" y="424">2 InlineCallCycleCheckerLowering, module-wise</text>
+    <rect x="178" y="430" width="14" height="12" fill="#e8eef7" stroke="#444"/>
+    <text x="198" y="440">per-file lowerings that modify only the lowered file: 3 getLoweringsUpToAndIncludingSyntheticAccessors (10 entries),</text>
+    <text x="198" y="454">6 SpecialObjCValidationLowering + RedundantCastsRemoverLowering, 8 getLoweringsAfterInlining (up to 70 entries)</text>
+    <rect x="178" y="462" width="14" height="12" fill="#f7e6e6" stroke="#444"/>
+    <text x="198" y="472">5 NativeAllFunctionInlining, per file but mutates other files (arrows).   10 finalizeLowerings: mergeDependencies (grey)</text>
+  </g>
+</svg>

@@ -38,8 +38,26 @@ Each GC defines `GC::ObjectData` ([stms](../../kotlin-native/runtime/src/gc/stms
 `next_` to a non-null value and removal never nulls it, so **"was ever enqueued" ⇔ "marked"**, and `try_push_front` fails on an
 already-marked object. `stms` uses non-atomic accesses; `pmcs`/`cms` use relaxed atomics with a `compare_exchange_strong` for
 `trySetNext`. The allocator places this header before every heap object (`alloc::objectDataForObject`,
-[AllocatorImpl.cpp](../../kotlin-native/runtime/src/alloc/custom/cpp/AllocatorImpl.cpp)); `noop` makes it zero-sized. `GC.hpp`
+[AllocatorImpl.cpp](../../kotlin-native/runtime/src/alloc/custom/cpp/AllocatorImpl.cpp); the byte layout is drawn in
+[compiler-runtime-contract.md](compiler-runtime-contract.md#object-layout)); `noop` makes it zero-sized. `GC.hpp`
 requires it to be trivially destructible because it is never deinitialized.
+
+The values `next_` can take over one epoch, as implemented in `cms/ObjectData.hpp` (`stms` is the same without atomics) and
+`IntrusiveList.hpp` (`try_push_front` is `trySetNext` from `nullptr`; `pop_front` never writes the popped node):
+
+```mermaid
+stateDiagram-v2
+    [*] --> White: allocation, next_ is nullptr
+    White --> Grey: tryEnqueue, CAS nullptr to the list link
+    White --> BlackNoQueue: tryMark or markUncontended, next_ becomes 1, kNoQueueMark
+    Grey --> BlackDequeued: tryDequeue, the stale link stays non-null
+    BlackDequeued --> White: sweep, tryResetMark succeeds, object kept
+    BlackNoQueue --> White: sweep, tryResetMark succeeds, object kept
+    White --> [*]: sweep, tryResetMark fails, object freed
+```
+
+"Grey" and both "Black" states are indistinguishable to `marked()`; only the queue knows whether an object still has to be
+traversed, which is why there is no cheap way to skip the deletion barrier for already-black objects (TODO in `cms/Barriers.cpp`).
 
 ### Mark traits and the mark loop
 
@@ -93,7 +111,8 @@ so a dump and a collection never overlap.
 `collectRootSet<Traits>` ([MarkAndSweepUtils.hpp](../../kotlin-native/runtime/src/main/cpp/gc/MarkAndSweepUtils.hpp)) iterates the
 locked thread registry, calls `thread.Publish()` (moves the thread's globals queue and `ExternalRCRef` queue into the global
 lists, [ThreadData.hpp](../../kotlin-native/runtime/src/main/cpp/mm/ThreadData.hpp)) and walks `ThreadRootSet` (shadow stack, then
-TLS), then `GlobalRootSet` (globals, then `ExternalRCRefRegistry::roots()`)
+TLS), then `GlobalRootSet` (globals, then `ExternalRCRefRegistry::roots()`). A suspended coroutine is not a root of its own: its
+locals survive only because they were spilled into the heap-allocated coroutine object ([coroutines.md](coroutines.md#what-the-gc-sees-during-a-suspension))
 ([RootSet.hpp](../../kotlin-native/runtime/src/main/cpp/mm/RootSet.hpp)). Who walks a thread's stack: always a GC worker, never the owner, in `stms`/`cms`; in `pmcs` a cooperating mutator may walk its
 own or another stopped mutator's stack. In every case the owner is in `kNative` (suspended at a safepoint, or genuinely in
 native code), which is what makes the lock-free walk of `FrameOverlay` frames safe; a thread in `kNative` cannot push or pop
@@ -116,6 +135,27 @@ users of `rc == 0` refs: `kotlin.native.ref.WeakReference` (whose `RegularWeakRe
 Reads of a weak target go through `ExternalRCRefImpl::tryRef` → `gc::weakRefReadBarrier`
 ([ExternalRCRef.cpp](../../kotlin-native/runtime/src/main/cpp/mm/ExternalRCRef.cpp)), which is where `pmcs` and `cms` hook
 their read barriers. `concurrentWeakSweep` (default `true`) only matters for `pmcs`.
+
+What a weak read does under each collector, from `ExternalRCRefImpl::tryRef` and the three `weakRefReadBarrier`
+implementations (`stms/GCImpl.cpp`, `pmcs/Barriers.cpp` `WeakRefRead`, `cms/Barriers.cpp`):
+
+```mermaid
+flowchart TD
+    R["WeakReference.get, ObjC _tryRetain, ExternalRCRef.tryRef"] --> T["ExternalRCRefImpl::tryRef (asserts kRunnable)"]
+    T --> B["gc::weakRefReadBarrier(obj_)"]
+    B -->|"stwms"| L["relaxed load of obj_"]
+    B -->|"pmcs"| P{"weakRefBarrier function pointer set?"}
+    P -->|"no"| L
+    P -->|"yes: weak processing in progress"| PM["re-read the pointer seq_cst, re-read obj_;<br/>unmarked referee becomes null"]
+    B -->|"cms"| C{"BarriersPhase (acquire load)"}
+    C -->|"kDisabled"| L
+    C -->|"kMarkClosure"| CM["weakReadProtector: shared markTerminationMutex_, spin with safePoint;<br/>tryEnqueue(referee) into this thread's mark queue; return referee"]
+    C -->|"kWeakProcessing"| CW["weakReadProtector; return referee only if isMarked(referee)"]
+    L --> O["result: the object or null"]
+    PM --> O
+    CM --> O
+    CW --> O
+```
 
 ### Statistics and signposts
 
@@ -157,6 +197,33 @@ mutex/condvar:
 4. `endMarkingEpoch`: spin until `activeWorkersCount_ == 0`, `kIdle`, destroy the processor, clear per-thread flags, unlock the
    registry. Termination of the closure itself is the `ParallelProcessor`'s last-sleeper rule.
 
+The same sequence from the point of view of the three kinds of participant, as written in `ParallelMark.cpp`
+(`setupBeforeSTW`, `markInSTW`, `markOnMutator`, `runAuxiliary`, `completeRootSetAndMark`) and `ThreadSuspension.cpp`:
+
+```mermaid
+sequenceDiagram
+    participant G as Main GC thread
+    participant A as Auxiliary GC thread
+    participant M as Mutator (gcMutatorsCooperate)
+    G->>G: setupBeforeSTW: lock registry, activeWorkersCount_ = 1, pacer beginEpoch -> kReady
+    G->>G: stopTheWorld
+    A->>A: runAuxiliary: waitNewEpochReadyOrShutdown, createWorker()
+    M->>M: safepoint -> suspendIfRequested -> kNative -> OnSuspendForGC -> markOnMutator
+    M->>M: createWorker(), tryCollectRootSet(own stack)
+    G->>G: pacer kRootSet, completeMutatorsRootSet (CAS per thread)
+    A->>A: wait kRootSet, compete for the remaining stacks
+    M->>M: wait kRootSet, compete for the remaining stacks
+    G->>G: spin until every mutator is published_, collectRootSetGlobals, pacer kParallelMark
+    par all workers
+        G->>G: Mark (shared ParallelProcessor, last-sleeper termination)
+        A->>A: Mark, then activeWorkersCount_ -= 1
+        M->>M: Mark, then activeWorkersCount_ -= 1, back to waiting for resume
+    end
+    G->>G: endMarkingEpoch: spin until activeWorkersCount_ == 0, pacer kIdle, unlock registry
+    G->>G: concurrentWeakSweep: EnableWeakRefBarriers, resumeTheWorld, processWeaks
+    G->>G: STW "prepare heap for sweep", DisableWeakRefBarriers
+```
+
 `gcMarkSingleThreaded` bypasses all of this: `markInSTW` degenerates to `collectRootSet` + `Mark` on one worker whose
 `tryEnqueue`/`tryDequeue` use the local list only, the pacer is never started and helpers return immediately.
 
@@ -184,6 +251,12 @@ stateDiagram-v2
     kMarkClosure --> kWeakProcessing: tryTerminateMark() succeeded (or STW fallback)
     kWeakProcessing --> kDisabled: disableBarriers() in STW #2 ("prepare to sweep")
 ```
+
+The whole epoch on a time axis — what the GC thread does, what mutators may do meanwhile, which barrier phase is active and
+how long the registry lock is held — as sequenced in `MainGCThread::PerformFullGC`, `ConcurrentMark::markInSTW` and
+`cms/Barriers.cpp` (the numbered steps below are the same events in prose):
+
+![One CMS epoch: GC thread, mutators, barrier phase, registry lock and finalizer thread lanes](imgs/gc-cms-epoch.svg)
 
 1. **STW #1.** `setupBeforeSTW` locks the thread registry (held until the end of marking) and constructs the processor.
    `markInSTW` takes `markMutex_` exclusively, builds a mutator mark queue (`ParallelProcessor::WorkSource`) for every registered
@@ -216,6 +289,23 @@ stateDiagram-v2
    complete; the phase switches to `kWeakProcessing` under the same lock. Otherwise `resetForNewWork` and loop. If the loop
    never stabilizes, a fallback STW flushes and finishes the mark with a `GCLogWarning`. The default 100 came in with
    KT-58865 (`git log -S"concurrentMarkMaxIterations = 100"`); no further rationale was found.
+
+   The termination loop as a decision tree, from `ConcurrentMark::markInSTW`, `tryTerminateMark` and `flushMutatorQueues`:
+
+   ```mermaid
+   flowchart TD
+       S["after STW #1: everShared = batchesEverShared()"] --> M["Mark(mainWorker): drain the shared pool"]
+       M --> L["take markTerminationMutex_ exclusively<br/>(weak reads now spin at safepoints)"]
+       L --> F["flushMutatorQueues: FlushActionActivator;<br/>each mutator runs forceFlush at its next safepoint,<br/>the GC thread flushes threads that are suspendedOrNative"]
+       F --> C{"batchesEverShared() == everShared?"}
+       C -->|"no: new batches were published"| R["everShared = now; resetForNewWork; iter += 1"]
+       R --> I{"iter < concurrentMarkMaxIterations (100)?"}
+       I -->|"yes"| M
+       I -->|"no"| W["GCLogWarning; stopTheWorld;<br/>flushMutatorQueues; Mark; switchToWeakProcessingBarriers"]
+       C -->|"yes: closure complete"| D["switchToWeakProcessingBarriers under the lock<br/>(kMarkClosure to kWeakProcessing)"]
+       D --> P["processWeaks concurrently, then STW #2"]
+       W --> P2["processWeaks inside the fallback STW"]
+   ```
 4. **Weak processing** runs concurrently (phase `kWeakProcessing`), then **STW #2** ("prepare to sweep"): `disableBarriers`,
    destroy the mutator queues (only now, because a thread may still enqueue before it observes the phase change), unlock the
    registry, `prepareForGC` in `MainGCThread`, resume, concurrent sweep.
@@ -271,6 +361,28 @@ constants from [GCSchedulerConfig.hpp](../../kotlin-native/runtime/src/main/cpp/
 | allocation | `allocated >= target` and `mutatorAssists()` | schedule if not in progress, log a warning, `MutatorAssists::requestAssists(epoch)` |
 | timer ("GC Timer thread", `RepeatedTimer`) | `now >= lastGC + regularGcInterval` (10 s), app not in background | schedule if not in progress |
 | `onGCFinish(alive)` | `autoTune` (default on) | `target = clamp(alive / 0.5, [5 MiB, maxHeapBytes])`, `trigger = 0.9 * target`; then wait for assisting mutators |
+
+How the three inputs reach `GCStateHolder::schedule` and how an epoch's end feeds back into the thresholds, from
+`adaptive/GCSchedulerImpl.hpp` (`setAllocatedBytes`, the timer lambda, `onGCFinish`), `HeapGrowthController.hpp` and
+`EpochScheduler.cpp`:
+
+```mermaid
+flowchart TD
+    A["allocator: OnMemoryAllocation(total)<br/>on page overflow"] --> B["HeapGrowthController::boundaryForHeapSize(total)"]
+    B -->|"total < trigger"| N["kNone: nothing"]
+    B -->|"trigger <= total < target"| T["kTrigger: scheduleNextEpochIfNotInProgress"]
+    B -->|"total >= target, assists off"| T
+    B -->|"total >= target and mutatorAssists()"| G["kTarget: schedule if not in progress, log a warning,<br/>MutatorAssists::requestAssists(epoch)"]
+    TM["GC Timer thread, every regularGcInterval"] -->|"app not kBackground and<br/>RegularIntervalPacer::NeedsGC"| T
+    K["Kotlin GC.schedule() / GC.collect()"] --> M["scheduleNextEpoch (also while an epoch runs)"]
+    T --> E["EpochScheduler: at most one scheduledEpoch_"]
+    G --> E
+    M --> E
+    E --> S["GCStateHolder::schedule(): scheduled = started + 1<br/>Main GC thread wakes"]
+    S --> F["onGCFinish(epoch, aliveBytes) from the GC thread"]
+    F --> U["autoTune: target = clamp(alive / targetHeapUtilization, minHeapBytes, maxHeapBytes)<br/>trigger = heapTriggerCoefficient * target"]
+    F --> W["MutatorAssists::completeEpoch: wake parked mutators,<br/>block until every thread has left the wait"]
+```
 
 Initial `targetHeapBytes` is 10 MiB; the comment on `minHeapBytes = 5 MiB` explains it as "20 pages" of the custom allocator.
 `maxHeapBytes` defaults to `INT64_MAX`. With `autoTune=false` the target is whatever `GC.targetHeapBytes` was set to. The
@@ -388,7 +500,9 @@ are what gtests see).
   weak references, cleaners, workers, escape analysis, memory dump, `gcStats`). Any native test task takes
   `-Pkn.gcType=CMS|PMCS|STWMS|NOOP` and `-Pkn.gcScheduler=ADAPTIVE|AGGRESSIVE|MANUAL`
   ([NativeTestSupport.kt](../../native/native.tests/testFixtures/org/jetbrains/kotlin/konan/test/blackbox/support/NativeTestSupport.kt)
-  `computeGCType`; table in [HACKING.md](../../kotlin-native/HACKING.md#testing)), plus `-Pkn.binaryOptions=concurrentWeakSweep=false,…`
+  `computeGCType`; table in [HACKING.md](../../kotlin-native/HACKING.md#testing); note the default is `CMS`, and the infrastructure always
+  passes an explicit `-Xbinary=gc=`, see [test-infrastructure.md](test-infrastructure.md#from-gradle-property-to-compiler-flag)),
+  plus `-Pkn.binaryOptions=concurrentWeakSweep=false,…`
   for the rest. To run one test under all GCs, loop over `-Pkn.gcType`; tests opt out per GC with `// IGNORE_NATIVE: gcType=NOOP`
   ([IgnoreDisableHelper.kt](../../native/native.tests/testFixtures/org/jetbrains/kotlin/konan/test/blackbox/support/group/IgnoreDisableHelper.kt)).
 - **Stress and fuzzing**: [native.tests/stress/testData](../../native/native.tests/stress/testData) (`stress_gc_allocations.kt`,
