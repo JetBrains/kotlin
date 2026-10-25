@@ -1,62 +1,36 @@
+For an overview of the code base, see [docs/native/architecture.md](../docs/native/architecture.md).
+
 ## Profiling the compiler
 
-### Profiling with Async profiler
+When building the repository, the Kotlin/Native compiler that builds the stdlib, platform libraries and caches runs inside the
+Gradle daemon, in an isolated classloader. To profile those compilations, profile the Gradle daemon. For example, add the agent to
+`org.gradle.jvmargs`, or attach to the daemon process.
 
- IDEA Ultimate contains an Async sampling profiler.
- As of IDEA 2018.3 Async sampling profiler is still an experimental feature, so use Ctrl-Alt-Shift-/ on Linux,
-Cmd-Alt-Shift-/ on macOS to activate it. Then start compilation in CLI with `--no-daemon` and
-`-Porg.gradle.workers.max=1` flags (running Gradle task with the profiler doesn't seem to work properly) and attach
-to the running process using "Run/Attach Profiler to Local Process" menu item.
+To profile a standalone compilation, pass JVM options to the command-line compiler through `JAVA_OPTS`:
 
- Select "K2NativeKt" or "org.jetbrains.kotlin.cli.utilities.MainKt" process.
-On completion profiler will produce flame diagram which could be navigated with the mouse
-(click-drag moves, wheel scales). More RAM in IDE (>4G) could be helpful when analyzing longer runs.
-As Async is a sampling profiler, to get sensible coverage longer runs are important.
+        JAVA_OPTS="-agentpath:<path to profiler agent>" ./kotlin-native/dist/bin/kotlinc-native file.kt
 
-### Profiling with YourKit
+Any JVM profiler works:
+* IntelliJ IDEA Ultimate's built-in profiler: attach to the `K2NativeKt` or `org.jetbrains.kotlin.cli.utilities.MainKt` process,
+  or to the Gradle daemon.
+* async-profiler.
+* YourKit.
 
-Unlike Async profiler in IDEA, YourKit can work as an exact profiler and provide complete coverage
-of all methods along with exact invocation counters.
+As with any sampling profiler, longer runs give better coverage.
 
-Install the YourKit profiler for your platform from https://www.yourkit.com/java/profiler.
-Set AGENT variable to the JVMTI agent provided by YourKit, like
-
-        export AGENT=/Applications/YourKit-Java-Profiler-2018.04.app/Contents/Resources/bin/mac/libyjpagent.jnilib
-
-To profile standard library compilation:
-
-        ./gradlew -PstdLibJvmArgs="-agentpath:$AGENT=probe_disable=*,listen=all,tracing"  :kotlin-native:dist
-
-To profile platform libraries start build of proper target like this:
-
-        ./gradlew -PplatformLibsJvmArgs="-agentpath:$AGENT=probe_disable=*,listen=all,tracing"  :kotlin-native:ios_arm64PlatformLibs
-
-To profile standalone code compilation use:
-
-        JAVA_OPTS="-agentpath:$AGENT=probe_disable=*,listen=all,tracing" ./kotlin-native/dist/bin/konanc file.kt
-
-Then attach to the desired application in YourKit GUI and use CPU tab to inspect CPU consuming methods.
-Saving the trace may be needed for more analysis. Adjusting `-Xmx` in `$HOME/.yjp/ui.ini` could help
-with the big traces.
-
-To perform memory profiling follow the steps above, and after attachment to the running process
-use "Start Object Allocation Recording" button. See https://www.yourkit.com/docs/java/help/allocations.jsp for more details.
+The compiler can also report the time spent in each phase with `-Xprofile-phases`, or a summary with `-Xreport-perf`.
 
 ## Compiler Gradle options
 
-There are several gradle flags one can use for Konan build.
+Useful Gradle properties for building Kotlin/Native from this repository:
 
-* **-Pbuild_flags** passes flags to the compiler used to build stdlib
+* `kotlin.native.enabled=true` (in `local.properties`) is required to build Kotlin/Native.
+* `kotlin.native.llvm=<path>` builds against a local LLVM distribution, see [BUILDING_LLVM.md](BUILDING_LLVM.md).
+* `kotlin.native.isNativeRuntimeDebugInfoEnabled=true` builds the runtime with debug info, see
+  [Kotlin/Native runtime specifics](#kotlinnative-runtime-specifics).
+* `-PcheckXcodeVersion=true` checks that the local Xcode major version matches `xcodeMajorVersion` from [gradle.properties](../gradle.properties).
 
-        ./gradlew -Pbuild_flags="--disable lower_inline --print_ir" :kotlin-native:stdlib
-
-* **-Pshims** compiles LLVM interface with tracing "shims". Allowing one 
-    to trace the LLVM calls from the compiler.
-    Make sure to rebuild the project.
-
-        ./gradlew -Pshims=true :kotlin-native:dist
-
- ## Compiler environment variables
+## Compiler environment variables
 
 * **KONAN_DATA_DIR** changes `.konan` local data directory location (`$HOME/.konan` by default). Works both with cli compiler and gradle plugin
 
@@ -107,33 +81,39 @@ See the table of property names and values below.
 | `xctest`                | Compile and run tests with XCTest: `false` (default), `true`.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | `jdkVersion`            | The JDK major version used to run the compiler and tests (e.g., `11`, `17`, `21`). Falls back to JDK 11 when unset.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 
- #### Passing arbitrary binary options
+#### Passing arbitrary binary options
 
 It is possible to pass binary options to all tests by using `-Pkn.binaryOptions=<key=value>,<key=value>,<key=value>`.
-A list of available binary options is available in [BinaryOptions.kt](../native/binary-options/src/main/kotlin/org/jetbrains/kotlin/backend/konan/BinaryOptions.kt).
+A list of available binary options is available in [BinaryOptions.kt](../native/binary-options/src/main/kotlin/org/jetbrains/kotlin/config/nativeBinaryOptions/BinaryOptions.kt).
 
- #### Generating JUnit test classes
+#### Generating JUnit test classes
 
 Most compiler integration tests are defined by test data files,
 while the actual JUnit test classes to run them are auto-generated based on those files.
-When adding a new test data file, re-generate the test classes by running
+Kotlin/Native test classes are generated into `<project>/build/tests-gen/` and are not checked in.
+The test task regenerates them automatically, so after adding a test data file you can just run the tests.
+To refresh the generated classes for the IDE, run the `generateTests` task of the corresponding project, e.g.
 
-    ./gradlew generateTests
+    ./gradlew :native:native.tests:generateTests :native:native.tests:codegen-box:generateTests
 
-or `Generate Tests` run configuration in IDEA.
-This generates all the tests in the repository, not only the ones for Kotlin/Native.
+Note that the repository-wide `./gradlew generateTests` does not generate the Kotlin/Native test classes.
 
- #### Filtering compiler integration tests with tags
+#### Filtering compiler integration tests with tags
 
-Most integration tests are marked with JUnit tags.
-For example, tests using K1 (the old compiler frontend) are marked with the `frontend-classic` tag.
+Most integration tests are marked with JUnit tags
+(e.g. `codegen`, `codegen-box`, `standalone`, `gc`, `cinterop`, `objcexport`, `cexport`, `klib`, `caches`, `partial-linkage`,
+`debugger`, `stdlib`).
 The `-Pkotlin.native.tests.tags` Gradle project property can be used to filter tests by their tags.
 The value of the property is a [JUnit tag expression](https://junit.org/junit5/docs/current/user-guide/#running-tests-tag-expressions).
-For example, the following command will run all tests except those using K1:
+For example, the following command will run all tests except the debugger ones:
 
-    ./gradlew :nativeCompilerTest --continue -Pkotlin.native.tests.tags='!frontend-classic'
+    ./gradlew :nativeCompilerTest --continue -Pkotlin.native.tests.tags='!debugger'
 
- #### Compiler integration tests in a specific Gradle project
+`:native:native.tests` also has a task per tag, e.g. `stdlibTest`, `cinteropTest`, `gcTest`, `standaloneTest`, `klibTest`,
+`cachesTest`, `partialLinkageTest`, `debuggerTest`, `infrastructureTest`
+(see [its build script](../native/native.tests/build.gradle.kts)).
+
+#### Compiler integration tests in a specific Gradle project
 
 As mentioned above, the `:nativeCompilerTest` task runs tests from many Gradle projects.
 Each project is supposed to mean a specific group of compiler integration tests.
@@ -146,7 +126,7 @@ the test cases to run can be selected with the `--tests` flag:
 
     ./gradlew :native:native.tests:codegen-box:test --tests "org.jetbrains.kotlin.konan.test.blackbox.FirNativeCodegenBoxTestGenerated\$Box\$*"
 
- #### Compiler blackbox tests
+#### Compiler blackbox tests
 
 The `:native:native.tests:codegen-box:test` task above runs the blackbox tests:
 they check the correctness of Kotlin language features support in the Kotlin/Native compiler.
@@ -155,7 +135,9 @@ and they generally do not depend on a particular Kotlin/Native target.
 
 A test can be ignored for certain property values with the help of test directives within
 [test data files](../compiler/testData/codegen):
-- `// IGNORE_NATIVE: <name>=<value>` to ignore test
+- `// IGNORE_NATIVE: <name>=<value>` marks the test as expected to fail; it still runs, and fails if it unexpectedly passes
+- `// DISABLE_NATIVE: <name>=<value>` doesn't compile or run the test at all
+- `// IGNORE_BACKEND: NATIVE` (from the common test infrastructure) ignores the test unconditionally
 
 Good examples are:
 - `// IGNORE_NATIVE: cacheMode=STATIC_EVERYWHERE`
@@ -163,9 +145,27 @@ Good examples are:
 - `// IGNORE_NATIVE: optimizationMode=OPT`
 - `// IGNORE_NATIVE: cacheMode=STATIC_EVERYWHERE && target=linux_x64`
 
-Test will be ignored in case value of any `// IGNORE_NATIVE*` directive would match to an actual test run setting.
+A test is treated as expected to fail if any of its `// IGNORE_NATIVE` directives matches the actual test run settings.
 
- ### Compiler unit tests
+All Native test directives are defined in
+[TestDirectives.kt](../native/native.tests/testFixtures/org/jetbrains/kotlin/konan/test/blackbox/support/TestDirectives.kt).
+
+#### Test infrastructure overview
+
+The infrastructure lives in
+[native/native.tests/testFixtures](../native/native.tests/testFixtures/org/jetbrains/kotlin/konan/test/blackbox):
+* `Abstract*Test.kt` are the base classes of the generated tests: `AbstractNativeBlackBoxTest` for test data–driven tests,
+  `AbstractNativeSimpleTest` for hand-written ones, and specializations for cinterop, ObjC/C export, partial linkage, etc.
+* `support/ConfigurationProperties.kt` maps the `kotlin.internal.native.test.*` properties above to settings.
+  `support/settings/` holds those settings.
+* `support/group/` turns test data into test cases (`ExtTestCaseGroupProvider` for the shared `compiler/testData`).
+  It groups compatible tests into one executable, and evaluates `IGNORE_NATIVE`/`DISABLE_NATIVE`.
+* `support/compilation/` invokes the compiler (`K2Native`) and cinterop in-process, loaded from the distribution under test.
+  This is why the test tasks depend on `:kotlin-native:dist`.
+* `support/runner/` runs the produced binaries through [executors](../native/executors) (host, simulator, emulator)
+  and checks the output.
+
+### Compiler unit tests
 
 There are also a handful of the Kotlin/Native compiler unit tests. To run them, use the following Gradle task:
 
@@ -174,7 +174,7 @@ There are also a handful of the Kotlin/Native compiler unit tests. To run them, 
 The tests are scattered across multiple projects.
 See the list in the `nativeCompilerUnitTest` task definition in [the root build script](../build.gradle.kts).
 
- ### Runtime unit tests
+### Runtime unit tests
 
 To run all runtime unit tests on the host machine:
 
@@ -274,8 +274,7 @@ compiling an application with `-Xbinary=stripDebugInfoFromNativeLibs=false` comp
 the corresponding setting in the Gradle build script. After doing this, Kotlin/Native runtime in application
 is debuggable in CLion, with Attach to process tool.
 
-
- ## Performance measurement
+## Performance measurement
 
 See [the performance project](performance/README.md) for details on the micro-benchmarking setup.
 
@@ -359,13 +358,7 @@ To utilize this machinery, use `$dist/bin/run_konan clang $tool $target $argumen
 ```
 $dist/bin/run_konan clang clang ios_arm64 1.c
 ```
-will print and run the following command:
-```
-~/.konan/dependencies/clang-llvm-apple-8.0.0-darwin-macos/bin/clang \
-    -B/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin \
-    -fno-stack-protector -stdlib=libc++ -arch arm64 \
-    -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS13.5.sdk \
-    -miphoneos-version-min=9.0 1.c
-```
+will print the full command line (bundled Clang from `~/.konan/dependencies/llvm-*`, the target sysroot, and the target flags
+from [konan.properties](konan/konan.properties)) and run it.
 
 The similar helper is available for LLVM tools, `$dist/bin/run_konan llvm $tool $arguments`.

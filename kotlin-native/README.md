@@ -27,7 +27,7 @@ More information can be found in the overviews of
 [Kotlin/Native](https://kotlinlang.org/docs/native-overview.html)
 and [Kotlin Multiplatform](https://kotlinlang.org/docs/multiplatform.html).
 
-On macOS Kotlin/Native requires Xcode 15.4 or newer.
+On macOS, using Kotlin/Native requires Xcode 15.4 or newer.
 
 ## Contributing
 
@@ -42,16 +42,11 @@ Prerequisites:
 *   configure Kotlin build as [specified in main readme](../ReadMe.md#build-environment-requirements)
 *   at the root directory of the repository,
     create `local.properties` file with `kotlin.native.enabled=true` line
-*   macOS: Xcode 27.0 or newer
-    * if you're seeing a build error like this
-      
-            > Failed to apply plugin class 'org.jetbrains.kotlin.xcode.XcodeOverridePlugin'.
-               > org.jetbrains.kotlin.konan.MissingXcodeException: An error occurred during an xcrun execution. Make sure that Xcode and its command line tools are properly installed.
-                 Failed command: /usr/bin/xcrun -f bitcode-build-tool
-                 Try running this command in Terminal and fix the errors by making Xcode (and its command line tools) configuration correct.
-            
-      * try running `sudo xcode-select -s /Applications/Xcode.app/Contents/Developer`
-      * check if it helped via `xcrun --find bitcode-build-tool` which should print the correct path
+*   macOS: Xcode 27.0 or newer (building from source needs the latest Xcode, see `xcodeVersion` in
+    [konan.properties](konan/konan.properties))
+    * if you're seeing a `MissingXcodeException` like "An error occurred during an xcrun execution",
+      make sure that Xcode and its command line tools are selected:
+      `sudo xcode-select -s /Applications/Xcode.app/Contents/Developer`, then check with `xcrun --show-sdk-path`
 
     * on `macOS aarch64`, CInterop functionality is available only using aarch64 JDK builds, e.g.
 [Eclipse Temurin 17.0.5](https://github.com/adoptium/temurin17-binaries/releases) or
@@ -121,4 +116,5 @@ For more details see [Testing](HACKING.md#Testing).
 More tips and tricks that might be useful when developing or debugging Kotlin/Native
 can be found in [HACKING.md](HACKING.md).
 
-Some Kotlin/Native compiler internals are described in the [corresponding docs directory](../docs/native)  
+For an overview of the code base and compiler internals, see [architecture.md](../docs/native/architecture.md)
+and the rest of the [docs/native](../docs/native) directory.

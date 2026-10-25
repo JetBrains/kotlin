@@ -26,11 +26,8 @@ Use `-Pgtest_filter=` to filter which tests to run (uses Google Test filter synt
 Use `-Pgtest_timeout=` to limit how much time each test executable can take (accepts values like `30s`, `1h15m20s`, and so on).
 
 To help with code formatting, [.clang-format](.clang-format) file is placed in this folder.
-`:kotlin-native:libllvmext:clangFormat` task can be used to run
-`git-clang-format -f $(git merge-base origin/master HEAD) -- kotlin-native/libllvmext/`, which will
-format only the changed files. The task accepts optional `--parent=<branch>` (to specify a branch
-other than `origin/master`) and `--interactive` (which adds `-p` flag to `git-clang-format` to
-interactively accept or reject formatting patches).
+There is no Gradle task for the runtime (unlike `:kotlin-native:libllvmext:clangFormat`), so run `git-clang-format` directly
+to format only the changed lines, e.g. `git-clang-format $(git merge-base origin/master HEAD) -- kotlin-native/runtime/`.
 
 ### Project structure
 
