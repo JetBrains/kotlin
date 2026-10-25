@@ -157,8 +157,8 @@ object IeChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
 
         val setterN = setterOverloads.size
         val getterN = getterOverloads.size
-        val setterShape = setterOverloads.map { it.fir.valueParameters.size }.distinct().sorted().joinToString("; ")
-        val getterShape = getterOverloads.map { it.fir.valueParameters.size }.distinct().sorted().joinToString("; ")
+        val setterShape = setterOverloads.map { it.fir.valueParameters.size }.distinct().sorted().joinToString(", ")
+        val getterShape = getterOverloads.map { it.fir.valueParameters.size }.distinct().sorted().joinToString(", ")
 
         val mainGetter = getterOverloads.singleOrNull { it.fir.valueParameters.isEmpty() }
         val mainGetterVisibility = mainGetter?.fir?.visibility?.toEffectiveVisibilityOrNull(null)
