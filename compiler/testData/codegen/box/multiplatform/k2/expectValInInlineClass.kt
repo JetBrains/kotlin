@@ -1,7 +1,6 @@
 // LANGUAGE: +MultiPlatformProjects
 // IGNORE_BACKEND: JVM
 // IGNORE_HMPP: JVM
-// IGNORE_LIGHT_TREE
 
 // MODULE: common
 // FILE: common.kt
