@@ -224,6 +224,10 @@ Native specifics:
 
 ## Invariants and ordering constraints
 
+The compatibility surfaces touched here (ABI window, manifest properties, special compatibility checker, LanguageFeature
+gates, klib-compatibility tests) are collected with their enforcement status in
+[compatibility-and-migration.md](compatibility-and-migration.md).
+
 - **The first stage is LLVM-free.** `cli-native-klib`, `compiler/ir/backend.native`, `compiler/ir/serialization.native` and
   `native/cinterop.deserialization` must not depend on `:kotlin-native:backend.native` (see [architecture.md](architecture.md)).
 - **Pre-serialization lowerings are ABI.** A klib contains IR *after* `nativeLoweringsOfTheFirstPhase`. Changing those

@@ -213,9 +213,11 @@ bridges generated inside inline lambdas get copied by inlining) and calls `CStub
 - **Link.** `DependenciesTracker` ([`BACKEND/DependenciesTracker.kt`](../../kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/DependenciesTracker.kt))
   records which klibs contributed code. `collectLlvmModules` in `CompilerOutput.kt` links each used klib's `bitcode(target)` files
   (skipping cinterop bitcode when `cCallMode == Direct`); `Linker.kt` adds `nativeIncludedBinaries` (the `staticLibraries`) of
-  used, non-cached klibs and `linkerOpts` of all native dependencies. A cinterop klib whose declarations are never referenced
-  contributes neither bitcode nor linker flags, unless it was passed explicitly on the command line
-  (`isExplicitlySpecifiedByUserInCLIArgument`).
+  used, non-cached klibs and `linkerOpts` of `allNativeDependencies`, i.e. the used libraries plus the libraries referenced by
+  the used caches' `bitcode_deps`. A cinterop klib whose declarations are never referenced contributes neither bitcode nor
+  linker flags, unless it was passed explicitly on the command line (`isExplicitlySpecifiedByUserInCLIArgument`); KGP never
+  passes platform libraries explicitly, so an unused platform library adds no `-framework`/`-l` flags
+  ([platform-libraries.md](platform-libraries.md)).
 
 ### The `kotlinx.cinterop` runtime library
 
@@ -230,6 +232,9 @@ vector ops) and some are `@GCUnsafeCall` runtime calls (`Kotlin_objc_*`, pinning
 magic: `InteropLowering` only replaces `NativePointed.rawPtr` and `CPointer.rawValue` getters with intrinsics.
 
 ### Platform libraries
+
+Summary only; how they are built, shipped, cached, commonized and what silently depends on them is in
+[platform-libraries.md](platform-libraries.md).
 
 `kotlin-native/platformLibs/src/platform/<family>/*.def` (hundreds for Apple families; `posix`, `linux`, `android`, `mingw`
 otherwise). [`platformLibs/build.gradle.kts`](../../kotlin-native/platformLibs/build.gradle.kts) registers one `KonanInteropTask`

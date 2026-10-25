@@ -202,7 +202,8 @@ This page is the map; the subsystem pages of the [knowledge base](README.md) go 
 [second-stage-pipeline.md](second-stage-pipeline.md), [lowerings.md](lowerings.md), [optimizations.md](optimizations.md),
 [llvm-codegen.md](llvm-codegen.md), [compiler-runtime-contract.md](compiler-runtime-contract.md), [runtime.md](runtime.md),
 [caches.md](caches.md), [klib-linking.md](klib-linking.md), [cinterop.md](cinterop.md), [export.md](export.md), and for bug
-hunting [debugging.md](debugging.md) and the [glossary](glossary.md).
+hunting [debugging.md](debugging.md) and the [glossary](glossary.md). Algorithm-level deep dives and integration pages are
+listed in the [README](README.md#deep-dives).
 
 - [compilation-model.md](compilation-model.md): user-visible compilation model, caches, interop and export.
 - [kotlin-native/HACKING.md](../../kotlin-native/HACKING.md): building, testing, debugging, LLVM tricks.

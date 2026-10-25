@@ -132,3 +132,82 @@ area; within a group they are in the order you are likely to meet them.
 | **Header mode** (`-Xheader-mode`) | cinterop output with metadata only, no bridge validation or bitcode (`header=true`); C errors surface at compile time instead. | [cinterop.md](cinterop.md) |
 | **Foreign exception mode** | Per-klib `foreignExceptionMode` (`terminate` or `objc-wrap`) controlling the filtering landing pad around bridge calls. | [cinterop.md](cinterop.md), [compiler-runtime-contract.md](compiler-runtime-contract.md) |
 | **`KotlinObjCClassInfo`** | Compiler-emitted descriptor from which the runtime lazily creates the ObjC class for a Kotlin subclass of an ObjC class (`CreateKotlinObjCClass`). | [cinterop.md](cinterop.md) |
+
+## Whole-program analyses: algorithm vocabulary
+
+| Term | Meaning | See |
+|------|---------|-----|
+| **DFG symbol table** | `DataFlowIR.SymbolTable`, sealed after `populateWith`; maps classes, functions and fields to DFG symbols. Lowerings that create declarations must run before it is built. | [dataflow-ir.md](dataflow-ir.md) |
+| **`FunctionSymbol.External`** | DFG symbol of a bodiless function (external, builtin operator, cinterop stub); opaque to every analysis, carries `@Escapes`/`@PointsTo` when present. | [dataflow-ir.md](dataflow-ir.md) |
+| **`symbolTableIndex`** | ≥ 0 iff a function can be reached through a vtable/itable slot; −1 otherwise. | [dataflow-ir.md](dataflow-ir.md) |
+| **Scope (DFG)**, **`SaveCoroutineState`** | Loop-nesting node group with a depth (the DFG's only notion of structure); node listing the live variables spilled at a suspension point. | [dataflow-ir.md](dataflow-ir.md) |
+| **VTA / RTA** | Variable Type Analysis (set constraints assigning each value node a set of possible classes, the devirtualization algorithm) bounded by Rapid Type Analysis (`instantiatingClasses`, the classes whose allocation is reachable). | [devirtualization.md](devirtualization.md) |
+| **Constraint graph**, **cast edge**, **bad edge** | Devirtualization's graph of Source/Ordinary nodes; a `CastEdge` filters the flowing types by a bitset; a bad edge is a cast edge against the topological order, handled by the greedy/BFS fixpoint. | [devirtualization.md](devirtualization.md) |
+| **Virtual dispatch hub** | Shared fan-out node group per (receiver type, interface id, slot) that replaced per-site callee unfolding. | [devirtualization.md](devirtualization.md) |
+| **Useful node** | Constraint node from which a devirtualizable receiver is reachable; only those are propagated. | [devirtualization.md](devirtualization.md) |
+| **Points-to graph (PTG)**, **escape origin**, **drain** | Escape analysis' per-function graph; a node whose contents leave the function (return, global, thrown, external call); the sink node escaping references drain into. | [escape-analysis.md](escape-analysis.md) |
+| **Intestines**, **EA depth**, **exiled object** | The pseudo-field for array/object contents (`inte$tines`); the scope depth used to decide stack eligibility; a local object demoted to the heap that is then treated as an escape origin (`escapeAnalysisPropagateExiledToHeapObjects`). | [escape-analysis.md](escape-analysis.md) |
+| **Function summary** (`CompressedPointsToGraph`) | Compressed PTG of a callee (`P<i>`, `RET`, `D<k>`) embedded at call sites. | [escape-analysis.md](escape-analysis.md) |
+| **`kAllowHeapToStackRefs`** | GC mark trait: whether dead heap objects may still reference stack objects (true for STMS/PMCS, false for CMS). | [escape-analysis.md](escape-analysis.md), [gc.md](gc.md) |
+| **Class interval**, **interface color** | GHA's DFS enter/exit ids (`TypeInfo.classId_` = enter time; subclass test is an interval check) and the greedy coloring of interfaces (`MAX_BITS_PER_COLOR = 5`) that makes itables perfectly hashable. | [dce-and-gha.md](dce-and-gha.md) |
+| **Fast vs sorted itable** | `interfaceTableSize_ >= 0`: mask `size-1`, ≤ 32 entries; `< 0`: `-count` entries sorted by id, binary search (`LookupInterfaceTableRecord`). | [dce-and-gha.md](dce-and-gha.md) |
+| **`referencedFunctions`**, **bridgeTarget rule** | The DCE result handed to `RTTIPhase`; DCE keeps bridge targets because class layouts are computed from them (KT-74377). | [dce-and-gha.md](dce-and-gha.md) |
+| **Pre-codegen inliner** | IR-level optimization inliner (`preCodegenInlineThreshold`, default 0 = off), distinct from the language-level `inline` function inliner and from LLVM inlining; opt-out `@kotlin.native.NoInline`. | [pre-codegen-inliner.md](pre-codegen-inliner.md) |
+| **`NO_CAST_NEEDED`** | Proof-token block around an `IMPLICIT_CAST` that tells `Autoboxing` no checked cast is needed. | [casts-optimization.md](casts-optimization.md) |
+| **Cast bridge**, **`BridgesPolicy`** | With `genericSafeCasts`, overrides with narrower erased parameters get bridges (`BOX_UNBOX_CASTS`) whose casts `Autoboxing` materializes. | [casts-optimization.md](casts-optimization.md) |
+| **Predicate / leaf term / phantom variable** | `CastsOptimization` vocabulary: CNF predicates over bitset terms (`v is C`, `v == null`) tracked along SSA-like phantom aliases. | [casts-optimization.md](casts-optimization.md) |
+
+## Initialization
+
+| Term | Meaning | See |
+|------|---------|-----|
+| **Container** | The unit of static initialization: an `IrFile` or an `IrClass`, each with its own state word and initializer functions. | [static-initializers.md](static-initializers.md) |
+| **Static initializer**, **`$clinit_trigger`** | `$init_global`, `$init_thread_local` and their `_eager` variants (recognised by origin, not name); the trigger function whose call is prepended to functions and constructors of the container. | [static-initializers.md](static-initializers.md) |
+| **State word** | `state_global$`/`state_thread_local$`: `FILE_*` values 0 / 1 (initializing, with thread id) / 2 (initialized) / 3 (failed, sticky). | [static-initializers.md](static-initializers.md) |
+| **`InitNode`**, **init phases 0/1/2** | Runtime list of eager initializers (`_Konan_init_<lib>` → `_Konan_constructors`); phases allocate TLS, run globals (first runtime only), run thread-local globals. | [static-initializers.md](static-initializers.md), [compiler-runtime-contract.md](compiler-runtime-contract.md) |
+| **`@EagerInitialization`**, **`@ThreadLocal`** | Opt-out of lazy initialization for a top-level property (experimental, deprecated); per-thread global. | [static-initializers.md](static-initializers.md) |
+| **`new_companion_initialization`** | Per-klib manifest flag (set by `LanguageFeature.CompanionBlocks`) selecting the class-initialization order (`$clinit_trigger` chain through supertypes). | [static-initializers.md](static-initializers.md) |
+
+## GC and allocator internals
+
+| Term | Meaning | See |
+|------|---------|-----|
+| **SATB**, **deletion barrier**, **allocate-black** | CMS marking discipline: snapshot-at-the-beginning; `beforeHeapRefUpdate` remembers the overwritten reference; new objects are marked on allocation while barriers are on. | [gc.md](gc.md) |
+| **Weak-read barrier**, **barriers phase** | Barrier on weak reads during `kWeakProcessing`; CMS phases `kDisabled` / `kMarkClosure` / `kWeakProcessing`. | [gc.md](gc.md) |
+| **MarkPacer**, **auxiliary GC thread**, **cooperative mutator** | PMCS's phase controller (`kReady` / `kRootSet` / `kParallelMark`), its extra marking threads (`auxGCThreads`), and mutators that mark while suspended (`gcMutatorsCooperate`). | [gc.md](gc.md) |
+| **ParallelProcessor / batch** | Work *sharing* (not stealing) between marking workers in batches; termination via `batchesEverShared`. | [gc.md](gc.md) |
+| **`GC::ObjectData`** | Per-object GC header 8 bytes before `ObjHeader`; its mark bit doubles as the mark-queue link. | [gc.md](gc.md), [allocator.md](allocator.md) |
+| **`GCHandle` / `GCInfo`**, **`HeapGrowthController`** | Per-epoch statistics (`GC.lastGCInfo`); the adaptive scheduler's target computation. | [gc.md](gc.md) |
+| **Cell**, **page kinds**, **size class** | 8-byte allocation unit; `FixedBlockPage` (≤ 128 cells), `NextFitPage` (≤ ~256 KiB), `SingleObjectPage`; fixed-block cell counts 1..128. | [allocator.md](allocator.md) |
+| **`PageStore`**, **`Heap`**, **`CustomAllocator`** | Per-size-class page stacks (`empty_`/`ready_`/`used_`/`unswept_`); the global heap; the per-thread allocator state (fast path without atomics). | [allocator.md](allocator.md) |
+| **`ExtraObjectCell`**, **finalizer queue** | Storage for meta-objects; per-thread queues handed to the "GC finalizer processor" thread or the main-thread processor (`objcDisposeOnMain`). | [allocator.md](allocator.md) |
+| **`AllocatedSizeTracker`**, **`pagedAllocator`**, **`mmapTag`** | Accounting fed to the scheduler on page overflow; per-object mode used with sanitizers; Apple VM tag (246) for `vmmap`. | [allocator.md](allocator.md) |
+
+## Incremental compilation
+
+| Term | Meaning | See |
+|------|---------|-----|
+| **IC'ed library** | A klib passed explicitly on the CLI, not external and not stdlib, cached per file under `-Xic-cache-dir/<flavor>` (`isSubjectOfIC`). | [incremental-compilation.md](incremental-compilation.md) |
+| **File id**, **file fingerprint** | `cacheFileId` = package + hash of the absolute source path (moving the checkout invalidates all IC state); `SerializedIrFileFingerprint` over all serialized parts of a klib file. | [incremental-compilation.md](incremental-compilation.md) |
+| **Changed / dirty / removed file**, **strong vs weak dependency** | Dirty-file analysis vocabulary: changed files plus strong-dependency closure (reverse `bitcode_deps`); weak edges (virtual trampolines) propagate only from removed files. | [incremental-compilation.md](incremental-compilation.md) |
+| **Stale cache**, **full rebuild**, **cache batch** | `staleCacheReason` (metadata, compiler fingerprint, dependencies fingerprint, companion-init mode, klib hash); `needFullRebuild`; several libraries built in one spawned compilation (`batchedCacheBuild`). | [incremental-compilation.md](incremental-compilation.md) |
+| **Compiler fingerprint** | `<dist>/konan/compiler.fingerprint`, the only compiler-version key of IC and auto caches. | [incremental-compilation.md](incremental-compilation.md), [compatibility-and-migration.md](compatibility-and-migration.md) |
+
+## Platform libraries, compatibility, tooling
+
+| Term | Meaning | See |
+|------|---------|-----|
+| **Platform `.def`**, **`.def.disabled`**, **`depends =`** | Sources of platform libraries under `kotlin-native/platformLibs/src/platform/<family>/`; disabled libraries; the auto-generated dependency line (Apple families). | [platform-libraries.md](platform-libraries.md) |
+| **Prebuilt vs light distribution** | `kotlin.native.distribution.type`: platform libs shipped, or generated on the user's machine by KGP via `generatePlatformLibraries`. | [platform-libraries.md](platform-libraries.md), [tooling-integration.md](tooling-integration.md) |
+| **Cacheable target**, **cross bundle** | `cacheableTargets.<host>` in `konan.properties`; a Linux/Windows distribution with Darwin platform klibs merged in. | [platform-libraries.md](platform-libraries.md) |
+| **Commonized distribution klibs** | Output of `commonizeNativeDistribution` under `<dist>/klib/commonized/<KGP version>`, used by shared source sets and the IDE. | [platform-libraries.md](platform-libraries.md), [tooling-integration.md](tooling-integration.md) |
+| **ABI window** | `KotlinAbiVersion.FIRST_SUPPORTED .. CURRENT` (1.6.0 .. 2.5.0), applied by `KlibLoader` to klibs that have IR. | [compatibility-and-migration.md](compatibility-and-migration.md) |
+| **`ExportKlibToOlderAbiVersion`** / **`KlibAbiCompatibilityLevel`** | Opt-in forward export of a klib to the previous ABI level. | [compatibility-and-migration.md](compatibility-and-migration.md) |
+| **Special compatibility checker** | `KonanLibrarySpecialCompatibilityChecker`: verifies the stdlib's version against `konan.properties` `compilerVersion`; platform and user libs are not checked (KT-68322). | [compatibility-and-migration.md](compatibility-and-migration.md) |
+| **Soft-deprecated target** | `softDeprecatedTargets` in `KonanDriver.kt` (compiler strong warning), maintained separately from KGP's `KonanTarget.deprecatedTargets`. | [compatibility-and-migration.md](compatibility-and-migration.md) |
+| **Argument lifecycle** | `introduced` / `stabilized` / `deprecated` / `removedVersion` metadata in `compiler/arguments`; `-Xbinary` option names have none. | [compatibility-and-migration.md](compatibility-and-migration.md) |
+| **Embeddable compiler jar**, **`daemonMain`** | `konan/lib/kotlin-native-compiler-embeddable.jar` loaded by KGP in a cached classloader and entered through `MainKt.daemonMain` (in-process mode) or forked with `kotlin.native.disableCompilerDaemon=true`. | [tooling-integration.md](tooling-integration.md) |
+| **`KotlinNativeToolRunner`**, **toolchain provisioning** | KGP's runner for compiler/cinterop/commonizer; download and unpacking of the distribution (`kotlin.native.home`, `kotlin.native.version`, `provisioned.ok`). | [tooling-integration.md](tooling-integration.md) |
+| **`UnitStats`** | JSON produced by `-Xdump-perf`, parsed by KGP for build reports. | [tooling-integration.md](tooling-integration.md) |
+| **Commonizer target** | `CommonizerTarget` (leaf or shared) and the `commonizer_target` manifest key marking commonized klibs. | [tooling-integration.md](tooling-integration.md) |
+| **`ktest_*` flags** | The generated test runner's CLI (`--ktest_logger=TEAMCITY`, filters), a KGP contract. | [tooling-integration.md](tooling-integration.md) |

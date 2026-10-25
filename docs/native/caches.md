@@ -16,7 +16,8 @@ finds the cache directory. The driver ([KonanDriver.kt](../../kotlin-native/back
 `KonanDriver.run`) builds missing caches before the main compilation by spawning sub-compilations
 ([CacheBuilder.kt](../../kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/CacheBuilder.kt)).
 Incremental compilation (IC) is per-file caches of the project's own klibs plus a dirty-file analysis, implemented in the
-same class. Everything else in the backend sees caches through two queries: "is this library cached?"
+same class; it has its own page, [incremental-compilation.md](incremental-compilation.md). Everything else in the backend
+sees caches through two queries: "is this library cached?"
 (`CachedLibraries`) and "does my LLVM module contain this declaration?" (`LlvmModuleSpecification`).
 
 ## Terminology
@@ -220,8 +221,11 @@ The kind comes from `KonanPropertiesBuildService.defaultCacheKindForTarget`
 ([KonanPropertiesBuildService.kt](../../libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/targets/native/KonanPropertiesBuildService.kt)),
 i.e. `cacheableTargets` minus `optInCacheableTargets` from `konan.properties`; `NativeCacheKind`
 ([KotlinProjectExtension.kt](../../libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/dsl/KotlinProjectExtension.kt))
-maps to `-produce` values. KGP never computes cache paths or flavors; only the compiler does. Because the Gradle user home is
-the auto-cache root, only klibs resolved from repositories are "external"; project klibs are never auto-cached.
+maps to `-produce` values. For prebuilt distributions KGP never computes cache paths or flavors; only the compiler does. The
+exception is the `light` distribution type, where KGP's `PlatformLibrariesGenerator` builds `<dist>/klib/cache/<target>-g<KIND>`
+itself and passes `-cache-directory` to `generatePlatformLibraries` (see [platform-libraries.md](platform-libraries.md) and
+[tooling-integration.md](tooling-integration.md)). Because the Gradle user home is the auto-cache root, only klibs resolved
+from repositories are "external"; project klibs are never auto-cached.
 
 ## Invariants and ordering constraints
 

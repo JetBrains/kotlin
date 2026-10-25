@@ -139,6 +139,8 @@ stays locked for the whole STW, so no thread can register or unregister during i
 
 ### Allocation and accounting
 
+Summary only; the allocator's data structures, sweep protocol and finalizer queues are in [allocator.md](allocator.md).
+
 `AllocInstance`/`AllocArrayInstance` → `mm::AllocateObject`
 ([ObjectOps.cpp](../../kotlin-native/runtime/src/main/cpp/mm/ObjectOps.cpp)): assert `kRunnable`, `allocator().allocateObject`, `gc().onAllocation(object)` (CMS/PMCS allocate black while marking), then a
 release fence so another thread that later reads the reference sees an initialized header (KT-58995). Reference stores from
@@ -154,6 +156,8 @@ types, per-thread pages, sweep-on-demand). GC accounting is coarse: `AllocatedSi
 when a sanitizer is on, `NativeSecondStageCompilationConfig.defaultPagedAllocator`).
 
 ### A GC cycle
+
+Summary only; the per-collector algorithms, barriers, termination and the scheduler heuristics are in [gc.md](gc.md).
 
 Every tracing GC is a `GC::Impl` holding a `GCStateHolder` and a `MainGCThread<Traits>`
 ([MainGCThread.hpp](../../kotlin-native/runtime/src/main/cpp/gc/MainGCThread.hpp)), a `UtilityThread` named "Main GC thread"
@@ -373,10 +377,8 @@ Style and conventions: [codestyle/cpp/README.md](../../kotlin-native/runtime/cod
   Whether leak reporting at exit still exists for the current memory manager is unverified.
 - Lock ordering is inferred from call paths, not documented. Whether `ExternalRCRefRegistry::mutex_` may be taken while
   holding `GlobalsRegistry`'s lock in places other than `GlobalRootSet` was not checked exhaustively.
-- `GCScheduler::schedule()` in the manual scheduler and `GC::Schedule()` for `noop` were not traced to confirm what
-  `GC.collect()` does with `gc=noop`.
-- `AppStateTracking` beyond the adaptive timer: no other consumer was found; whether backgrounding affects allocation-triggered
-  GCs is unverified.
+- (Resolved in [gc.md](gc.md): under `gc=noop`, `GC.collect()` returns immediately — `Schedule()` returns epoch 0 and the
+  waits are empty; `AppStateTracking` has no consumer other than the adaptive scheduler's timer.)
 - How `Konan_create_testSuite` (XCTest) initializes the runtime on the XCTest thread was not traced (presumably via
   `CalledFromNativeGuard` in generated code).
 - The `debug` runtime module (`src/debug`, linked for `-g` builds) was not examined; it serves the LLDB plugin, not asserts.

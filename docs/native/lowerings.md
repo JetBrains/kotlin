@@ -231,6 +231,11 @@ anything visible across a cache boundary, with [caches.md](caches.md) (`CachesAb
 
 ## Native-specific lowerings worth knowing
 
+Two groups have their own pages: initialization (`InitializersLowering`, `StaticInitializersLowering`, `ObjectClassLowering`,
+enum entries, `@EagerInitialization`/`@ThreadLocal`) in [static-initializers.md](static-initializers.md), and casts
+(`ComputeTypesPass`, `CastsOptimization`, `TypeOperatorLowering`, `CastsLowering`, `Autoboxing`'s checked casts, the bridges
+policy) in [casts-optimization.md](casts-optimization.md).
+
 Descriptions below come from each class's KDoc or body. Shared lowerings (`LateinitLowering`, `SharedVariablesLowering`,
 `InnerClassLowering`-style helpers, `EnumWhenLowering`, `DefaultArgumentStubGenerator`, …) come from `compiler/ir/backend.common`;
 a `Native*` subclass exists only where the Native runtime needs different symbols or policy.

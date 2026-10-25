@@ -11,6 +11,12 @@ all of this in [lowerings.md](lowerings.md).
 All code paths below are relative to `kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/`
 ("BACKEND") unless stated otherwise.
 
+This page is the overview. Each analysis has an algorithm-level page: [dataflow-ir.md](dataflow-ir.md) (the shared model),
+[devirtualization.md](devirtualization.md), [escape-analysis.md](escape-analysis.md), [dce-and-gha.md](dce-and-gha.md),
+[pre-codegen-inliner.md](pre-codegen-inliner.md), [static-initializers.md](static-initializers.md) (the whole
+initialization story, including the redundant-call removal) and [casts-optimization.md](casts-optimization.md)
+(`ComputeTypesPass`, `CastsOptimization`, generic safe casts).
+
 ## Key concepts
 
 | Term                       | Meaning                                                                                                                                                                                                                                                                  |
@@ -183,9 +189,11 @@ Callee summaries come from three places (`callSiteEAResult` region around line 7
 `computeLifetimes()` turns points-to depth into `Lifetime`: only `STACK` survives, everything else becomes `GLOBAL` (comment: other
 lifetimes need arenas). Extra rules: arrays become `STACK_ARRAY(len)` only with a constant non-negative length and a per-function
 budget of 65536 bytes (`allowedToAlloc`, smallest first); allocations of classes with a finalizer (`hasFinalizer`, ObjC-backed) are
-forced to escape; when `escapeAnalysisPropagateExiledToHeapObjects` (binary option, default `true`, required for CMS) is set,
-an object demoted from stack to heap is also treated as an escape origin so that objects it references are not stack-allocated either
-(KT-69731). The result map is keyed by the IR allocation/call element.
+forced to escape; when `escapeAnalysisPropagateExiledToHeapObjects` (binary option, default `true` for every GC since commit
+f7d3b8074e7c; CMS and the memory dumper cannot tolerate heap→stack references, KT-75317, KT-85811) is set, an object demoted
+from stack to heap is also treated as an escape origin so that objects it references are not stack-allocated either (KT-69731).
+The result map is keyed by the IR allocation element; call results are not recorded and default to `GLOBAL` in codegen. The
+full algorithm is in [escape-analysis.md](escape-analysis.md).
 
 Consumption: `CodeGenerator.allocInstance`/`allocArray` call `stackLocalsManager.alloc`/`allocArray` for `STACK`/`STACK_ARRAY`
 and the runtime `AllocInstance`/`AllocArray` otherwise. `IrToBitcode.resultLifetime` defaults to `GLOBAL` for elements absent from
