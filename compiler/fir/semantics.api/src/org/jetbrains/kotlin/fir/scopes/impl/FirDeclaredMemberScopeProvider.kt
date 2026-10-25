@@ -42,12 +42,12 @@ import kotlin.time.Duration.Companion.seconds
  */
 @ThreadSafeMutableState
 class FirDeclaredMemberScopeProvider(val useSiteSession: FirSession) : FirSessionComponent {
-    private val declaredMemberCache: FirCache<FirClass, FirContainingNamesAwareScope, DeclaredMemberScopeContext> =
+    private val declaredMemberCache: FirCache<FirClass, FirContainingNamesAwareScope, List<Name>?> =
         useSiteSession.firCachesFactory.createCacheWithSuggestedLimits(
             expirationAfterAccess = 5.seconds,
             valueStrength = FirCachesFactory.ValueReferenceStrength.SOFT,
         ) { klass, context ->
-            createDeclaredMemberScope(klass = klass, existingNamesForLazyNestedClassifierScope = context.existingNames)
+            createDeclaredMemberScope(klass = klass, existingNamesForLazyNestedClassifierScope = context)
         }
 
     private val nestedClassifierCache: FirCache<FirClass, FirNestedClassifierScope?, Nothing?> =
@@ -60,7 +60,6 @@ class FirDeclaredMemberScopeProvider(val useSiteSession: FirSession) : FirSessio
 
     fun declaredMemberScope(
         klass: FirClass,
-        useLazyNestedClassifierScope: Boolean,
         existingNames: List<Name>?,
         memberRequiredPhase: FirResolvePhase?,
     ): FirContainingNamesAwareScope {
@@ -70,17 +69,9 @@ class FirDeclaredMemberScopeProvider(val useSiteSession: FirSession) : FirSessio
 
         return declaredMemberCache.getValue(
             klass,
-            DeclaredMemberScopeContext(
-                useLazyNestedClassifierScope,
-                existingNames,
-            )
+            existingNames,
         )
     }
-
-    private data class DeclaredMemberScopeContext(
-        val useLazyNestedClassifierScope: Boolean,
-        val existingNames: List<Name>?,
-    )
 
     private fun createDeclaredMemberScope(
         klass: FirClass,
@@ -148,7 +139,6 @@ class FirDeclaredMemberScopeProvider(val useSiteSession: FirSession) : FirSessio
 fun FirSession.declaredMemberScope(klass: FirClass, memberRequiredPhase: FirResolvePhase?): FirContainingNamesAwareScope {
     return declaredMemberScopeProvider.declaredMemberScope(
         klass = klass,
-        useLazyNestedClassifierScope = false,
         existingNames = null,
         memberRequiredPhase = memberRequiredPhase,
     )
@@ -167,7 +157,6 @@ fun FirSession.declaredMemberScopeWithLazyNestedScope(
     existingNames: List<Name>,
 ): FirContainingNamesAwareScope = declaredMemberScopeProvider.declaredMemberScope(
     klass = klass,
-    useLazyNestedClassifierScope = true,
     existingNames = existingNames,
     memberRequiredPhase = null,
 )
