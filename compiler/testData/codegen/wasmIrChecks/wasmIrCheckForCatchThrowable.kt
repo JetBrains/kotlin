@@ -1,7 +1,7 @@
 // TARGET_BACKEND: WASM
 
-// A single `catch (e: Throwable)` should be kept as is by CatchMerger, but it gets a merged catch parameter
-// WASM_CHECK_LOCAL_IN_FUNCTION: name=merged_catch_param inFunction=catchThrowable
+// A single `catch (e: Throwable)` is kept as is by CatchMerger, so no merged catch parameter is introduced
+// WASM_CHECK_LOCAL_NOT_IN_FUNCTION: name=merged_catch_param inFunction=catchThrowable
 // WASM_CHECK_LOCAL_IN_FUNCTION: name=e inFunction=catchThrowable
 
 // Several catches are merged into one catching Throwable
