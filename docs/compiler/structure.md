@@ -75,7 +75,7 @@ flowchart TD
         WASM_JS@{ shape: lin-cyl, label: "WASM_JS"}
         WASM_WASI@{ shape: lin-cyl, label: "WASM_WASI"}
 
-        click Native_Backend "https://github.com/JetBrains/kotlin/blob/master/docs/native/compilation-model.md" "Click to see Native compilation model"
+        click Native_Backend "https://github.com/JetBrains/kotlin/blob/master/docs/native/architecture.md" "Click to see Native backend architecture"
         style Native_Backend fill:#e1f5fe,stroke:#01579b
         Native_Backend --> CPU
         Native_Backend --> STATIC

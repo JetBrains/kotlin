@@ -39,7 +39,7 @@ follow the [Diagnostic Message Style Guide](../docs/diagnostic_message_style_gui
 | Analysis API             | `Ka*`, `KaFir*`, `LL*` | analysis/                                                 | [AGENTS.md](../analysis/AGENTS.md)                                               |
 | Backend: JVM             |                        | compiler/ir/backend.jvm/                                  | [AGENTS.md](../compiler/AGENTS.md)                                               |
 | Backend: JS              |                        | compiler/ir/backend.js/                                   | [AGENTS.md](../compiler/AGENTS.md)                                               |
-| Backend: Native          |                        | kotlin-native/, native/                                   | [AGENTS.md](../compiler/AGENTS.md)                                               |
+| Backend: Native          |                        | kotlin-native/, native/                                   | [AGENTS.md](../kotlin-native/AGENTS.md)                                          |
 | Backend: WASM            |                        | compiler/ir/backend.wasm/                                 | [AGENTS.md](../compiler/AGENTS.md)                                               |
 | Build Tools API          |                        | compiler/build-tools/                                     | [AGENTS.md](../compiler/build-tools/AGENTS.md)                                   |
 | Compiler plugins         |                        | plugins/                                                  | —                                                                                |
