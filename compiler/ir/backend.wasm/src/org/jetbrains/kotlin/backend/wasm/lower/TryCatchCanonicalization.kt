@@ -120,7 +120,7 @@ internal class CatchMerger(private val ctx: WasmBackendContext) : IrElementTrans
 
         activeCatches.singleOrNull()?.let { irCatch ->
             // Nothing to do
-            if (irCatch == ctx.irBuiltIns.throwableType) {
+            if (irCatch.catchParameter.type == ctx.irBuiltIns.throwableType) {
                 irCatch.toCatchThrowableOrJsException = true
                 return super.visitTry(aTry)
             }
