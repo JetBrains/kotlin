@@ -1814,13 +1814,22 @@ class Fir2IrVisitor(
 
     override fun visitTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall, data: Any?): IrElement {
         return typeOperatorCall.convertWithOffsets { startOffset, endOffset ->
-            val irTypeOperand = typeOperatorCall.conversionTypeRef.toIrType()
+            // is NonError and !is NonError is translated to !is RichError and is RichError
+            val coneType = typeOperatorCall.conversionTypeRef.coneType
+            val isNonError = coneType.classId == StandardClassIds.NonError
+            val irTypeOperand = if (isNonError) {
+                // We need to invert nullability because `is NonError` <=> `!is RichError?`
+                StandardClassIds.RichError.constructClassLikeType(isMarkedNullable = !coneType.isMarkedNullable)
+                    .toIrType()
+            } else {
+                coneType.toIrType()
+            }
             val [irType, irTypeOperator] = when (typeOperatorCall.operation) {
-                FirOperation.IS -> builtins.booleanType to IrTypeOperator.INSTANCEOF
-                FirOperation.NOT_IS -> builtins.booleanType to IrTypeOperator.NOT_INSTANCEOF
+                FirOperation.IS -> builtins.booleanType to if (isNonError) IrTypeOperator.NOT_INSTANCEOF else IrTypeOperator.INSTANCEOF
+                FirOperation.NOT_IS -> builtins.booleanType to if (isNonError) IrTypeOperator.INSTANCEOF else IrTypeOperator.NOT_INSTANCEOF
                 FirOperation.AS -> irTypeOperand to IrTypeOperator.CAST
                 FirOperation.SAFE_AS -> irTypeOperand.makeNullable() to IrTypeOperator.SAFE_CAST
-                else -> TODO("Should not be here: ${typeOperatorCall.operation} in type operator call")
+                else -> error("Should not be here: ${typeOperatorCall.operation} in type operator call")
             }
 
             IrTypeOperatorCallImpl(
