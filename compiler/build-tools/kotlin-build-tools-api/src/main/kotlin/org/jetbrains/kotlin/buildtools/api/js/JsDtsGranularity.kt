@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 /**
  * The granularity of TypeScript declaration (`.d.ts`) generation.
  *
- * Must be kept consistent with the JS linking granularity (the `-Xir-per-module` / `-Xir-per-file`
+ * Must be kept consistent with the JS linking granularity (the `-Xir-per-module` / `-Xir-per-file` / `-Xir-per-class`
  * compiler flags)
  *
  * @since 2.5.0
@@ -26,6 +26,11 @@ public enum class JsDtsGranularity {
      * One set of declarations per module.
      */
     PER_MODULE,
+
+    /**
+     * One set of declarations per class.
+     */
+    PER_CLASS,
 
     /**
      * One set of declarations per source file.
