@@ -38,7 +38,7 @@ internal class FirAnonymousObjectImpl(
     override var deprecationsProvider: DeprecationsProvider,
     override val scopeProvider: FirScopeProvider,
     override val classKind: ClassKind,
-    override val superTypeRefs: MutableList<FirTypeRef>,
+    override var superTypeRefs: MutableOrEmptyList<FirTypeRef>,
     @property:DirectDeclarationsAccess
     override val declarations: MutableList<FirDeclaration>,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
@@ -115,9 +115,7 @@ internal class FirAnonymousObjectImpl(
     }
 
     override fun replaceSuperTypeRefs(newSuperTypeRefs: List<FirTypeRef>) {
-        if (superTypeRefs === newSuperTypeRefs) return
-        superTypeRefs.clear()
-        superTypeRefs.addAll(newSuperTypeRefs)
+        superTypeRefs = newSuperTypeRefs.toMutableOrEmpty()
     }
 
     override fun replaceDeclarations(newDeclarations: List<FirDeclaration>) {

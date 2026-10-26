@@ -110,11 +110,7 @@ private class LLFirSuperTypeTargetResolver(
         when (target) {
             is FirRegularClass -> performResolve(
                 declaration = target,
-                superTypeRefsForTransformation = {
-                    // We should create a copy of the original collection
-                    // to avoid [ConcurrentModificationException] during another thread publication
-                    ArrayList(target.superTypeRefs)
-                },
+                superTypeRefsForTransformation = { target.superTypeRefs },
                 resolver = {
                     supertypeResolver.withClass(target) {
                         supertypeResolver.resolveSpecificClassLikeSupertypes(target, it, resolveRecursively = false)
