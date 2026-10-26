@@ -152,9 +152,9 @@ class PackageInfoChangesTest : BaseCompilationTest() {
     }
 
     @DefaultStrategyAgnosticCompilationTest
-    @DisplayName("Adding an annotation to a dependency's package-info.java recompiles only the affected consumer source (externally tracked)")
+    @DisplayName("Adding an annotation to a dependency's package-info.java recompiles only the affected consumer source")
     @TestMetadata("ic-scenarios/dependency-package-info-modification")
-    fun testDependencyPackageInfoChangeCausesConsumerRecompilationExternallyTracked(strategyConfig: CompilerExecutionStrategyConfiguration) {
+    fun testDependencyPackageInfoChangeCausesConsumerRecompilation(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmScenario(strategyConfig) {
             val dependency = module(
                 moduleName = "ic-scenarios/dependency-package-info-modification/module-a",
@@ -164,39 +164,18 @@ class PackageInfoChangesTest : BaseCompilationTest() {
                 moduleName = "ic-scenarios/dependency-package-info-modification/module-b",
                 dependencies = listOf(dependency),
             )
-            dependency.addAnnotationAndAssertConsumerRecompiles(consumer)
+            dependency.replaceFileWithVersion("package-info.java", "add-annotation")
+            dependency.compile()
+            consumer.compile {
+                assertCompiledSources("bpkg/UseA.kt")
+            }
         }
     }
 
     @DefaultStrategyAgnosticCompilationTest
-    @DisplayName("Adding an annotation to a dependency's package-info.java recompiles only the affected consumer source (internally tracked)")
-    @TestMetadata("ic-scenarios/dependency-package-info-modification")
-    fun testDependencyPackageInfoChangeCausesConsumerRecompilationInternallyTracked(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
-            val dependency = module(
-                moduleName = "ic-scenarios/dependency-package-info-modification/module-a",
-                compileJavaSources = true,
-            )
-            val consumer = trackedModule(
-                moduleName = "ic-scenarios/dependency-package-info-modification/module-b",
-                dependencies = listOf(dependency),
-            )
-            dependency.addAnnotationAndAssertConsumerRecompiles(consumer)
-        }
-    }
-
-    private fun ScenarioModule.addAnnotationAndAssertConsumerRecompiles(consumer: ScenarioModule) {
-        replaceFileWithVersion("package-info.java", "add-annotation")
-        compile()
-        consumer.compile {
-            assertCompiledSources("bpkg/UseA.kt")
-        }
-    }
-
-    @DefaultStrategyAgnosticCompilationTest
-    @DisplayName("Changing one dependency package-info recompiles only consumers of that package (externally tracked)")
+    @DisplayName("Changing one dependency package-info recompiles only consumers of that package")
     @TestMetadata("ic-scenarios/dependency-package-info-multi-package")
-    fun testDependencyPackageInfoChangeIsIsolatedToAffectedPackageExternallyTracked(
+    fun testDependencyPackageInfoChangeIsIsolatedToAffectedPackage(
         strategyConfig: CompilerExecutionStrategyConfiguration,
     ) {
         jvmScenario(strategyConfig) {
@@ -208,41 +187,18 @@ class PackageInfoChangesTest : BaseCompilationTest() {
                 moduleName = "ic-scenarios/dependency-package-info-multi-package/module-b",
                 dependencies = listOf(dependency),
             )
-            dependency.changeOnePackageInfoAndAssertOnlyAffectedConsumerRecompiles(consumer)
+            dependency.replaceFileWithVersion("apkg/package-info.java", "add-annotation")
+            dependency.compile()
+            consumer.compile {
+                assertCompiledSources("bpkg/UseA.kt")
+            }
         }
     }
 
     @DefaultStrategyAgnosticCompilationTest
-    @DisplayName("Changing one dependency package-info recompiles only consumers of that package (internally tracked)")
-    @TestMetadata("ic-scenarios/dependency-package-info-multi-package")
-    fun testDependencyPackageInfoChangeIsIsolatedToAffectedPackageInternallyTracked(
-        strategyConfig: CompilerExecutionStrategyConfiguration,
-    ) {
-        jvmScenario(strategyConfig) {
-            val dependency = module(
-                moduleName = "ic-scenarios/dependency-package-info-multi-package/module-a",
-                compileJavaSources = true,
-            )
-            val consumer = trackedModule(
-                moduleName = "ic-scenarios/dependency-package-info-multi-package/module-b",
-                dependencies = listOf(dependency),
-            )
-            dependency.changeOnePackageInfoAndAssertOnlyAffectedConsumerRecompiles(consumer)
-        }
-    }
-
-    private fun ScenarioModule.changeOnePackageInfoAndAssertOnlyAffectedConsumerRecompiles(consumer: ScenarioModule) {
-        replaceFileWithVersion("apkg/package-info.java", "add-annotation")
-        compile()
-        consumer.compile {
-            assertCompiledSources("bpkg/UseA.kt")
-        }
-    }
-
-    @DefaultStrategyAgnosticCompilationTest
-    @DisplayName("Changing dependency package-info nullability recompiles the consumer and reports an error (externally tracked)")
+    @DisplayName("Changing dependency package-info nullability recompiles the consumer and reports an error")
     @TestMetadata("ic-scenarios/dependency-package-info-nullability")
-    fun testDependencyPackageInfoNullabilityChangeRecompilesConsumerExternallyTracked(
+    fun testDependencyPackageInfoNullabilityChangeRecompilesConsumer(
         strategyConfig: CompilerExecutionStrategyConfiguration,
     ) {
         jvmScenario(strategyConfig) {
@@ -255,43 +211,19 @@ class PackageInfoChangesTest : BaseCompilationTest() {
                 dependencies = listOf(dependency),
                 compilationConfigAction = jsr305StrictConfigAction,
             )
-            dependency.addNonNullApiAndAssertConsumerFails(consumer)
+            dependency.replaceFileWithVersion("package-info.java", "add-nonnull-api")
+            dependency.compile()
+            consumer.compile {
+                expectFailWithError(".*UseA\\.kt:\\d+:\\d+ Null cannot be a value of a non-null type 'String'.*".toRegex())
+                assertCompiledSources("bpkg/UseA.kt")
+            }
         }
     }
 
     @DefaultStrategyAgnosticCompilationTest
-    @DisplayName("Changing dependency package-info nullability recompiles the consumer and reports an error (internally tracked)")
+    @DisplayName("Changing dependency package-info nullability recompiles a consumer using fully qualified names")
     @TestMetadata("ic-scenarios/dependency-package-info-nullability")
-    fun testDependencyPackageInfoNullabilityChangeRecompilesConsumerInternallyTracked(
-        strategyConfig: CompilerExecutionStrategyConfiguration,
-    ) {
-        jvmScenario(strategyConfig) {
-            val dependency = module(
-                moduleName = "ic-scenarios/dependency-package-info-nullability/dependency",
-                compileJavaSources = true,
-            )
-            val consumer = trackedModule(
-                moduleName = "ic-scenarios/dependency-package-info-nullability/consumer-direct-call",
-                dependencies = listOf(dependency),
-                compilationConfigAction = jsr305StrictConfigAction,
-            )
-            dependency.addNonNullApiAndAssertConsumerFails(consumer)
-        }
-    }
-
-    private fun ScenarioModule.addNonNullApiAndAssertConsumerFails(consumer: ScenarioModule) {
-        replaceFileWithVersion("package-info.java", "add-nonnull-api")
-        compile()
-        consumer.compile {
-            expectFailWithError(".*UseA\\.kt:\\d+:\\d+ Null cannot be a value of a non-null type 'String'.*".toRegex())
-            assertCompiledSources("bpkg/UseA.kt")
-        }
-    }
-
-    @DefaultStrategyAgnosticCompilationTest
-    @DisplayName("Changing dependency package-info nullability recompiles a consumer using fully qualified names (externally tracked)")
-    @TestMetadata("ic-scenarios/dependency-package-info-nullability")
-    fun testDependencyPackageInfoNullabilityChangeRecompilesFullyQualifiedConsumerExternallyTracked(
+    fun testDependencyPackageInfoNullabilityChangeRecompilesFullyQualifiedConsumer(
         strategyConfig: CompilerExecutionStrategyConfiguration,
     ) {
         jvmScenario(strategyConfig) {
@@ -304,43 +236,19 @@ class PackageInfoChangesTest : BaseCompilationTest() {
                 dependencies = listOf(dependency),
                 compilationConfigAction = jsr305StrictConfigAction,
             )
-            dependency.addNonNullApiAndAssertFullyQualifiedConsumerFails(consumer)
+            dependency.replaceFileWithVersion("package-info.java", "add-nonnull-api")
+            dependency.compile()
+            consumer.compile {
+                expectFailWithError(".*UseAFullyQualified\\.kt:\\d+:\\d+ Null cannot be a value of a non-null type 'String'.*".toRegex())
+                assertCompiledSources("bpkg/UseAFullyQualified.kt")
+            }
         }
     }
 
     @DefaultStrategyAgnosticCompilationTest
-    @DisplayName("Changing dependency package-info nullability recompiles a consumer using fully qualified names (internally tracked)")
+    @DisplayName("Changing dependency package-info nullability recompiles a consumer that reaches the annotated type through its own factory")
     @TestMetadata("ic-scenarios/dependency-package-info-nullability")
-    fun testDependencyPackageInfoNullabilityChangeRecompilesFullyQualifiedConsumerInternallyTracked(
-        strategyConfig: CompilerExecutionStrategyConfiguration,
-    ) {
-        jvmScenario(strategyConfig) {
-            val dependency = module(
-                moduleName = "ic-scenarios/dependency-package-info-nullability/dependency",
-                compileJavaSources = true,
-            )
-            val consumer = trackedModule(
-                moduleName = "ic-scenarios/dependency-package-info-nullability/consumer-fully-qualified",
-                dependencies = listOf(dependency),
-                compilationConfigAction = jsr305StrictConfigAction,
-            )
-            dependency.addNonNullApiAndAssertFullyQualifiedConsumerFails(consumer)
-        }
-    }
-
-    private fun ScenarioModule.addNonNullApiAndAssertFullyQualifiedConsumerFails(consumer: ScenarioModule) {
-        replaceFileWithVersion("package-info.java", "add-nonnull-api")
-        compile()
-        consumer.compile {
-            expectFailWithError(".*UseAFullyQualified\\.kt:\\d+:\\d+ Null cannot be a value of a non-null type 'String'.*".toRegex())
-            assertCompiledSources("bpkg/UseAFullyQualified.kt")
-        }
-    }
-
-    @DefaultStrategyAgnosticCompilationTest
-    @DisplayName("Changing dependency package-info nullability recompiles a consumer that reaches the annotated type through its own factory (externally tracked)")
-    @TestMetadata("ic-scenarios/dependency-package-info-nullability")
-    fun testDependencyPackageInfoNullabilityChangeRecompilesLocalFactoryConsumerExternallyTracked(
+    fun testDependencyPackageInfoNullabilityChangeRecompilesLocalFactoryConsumer(
         strategyConfig: CompilerExecutionStrategyConfiguration,
     ) {
         jvmScenario(strategyConfig) {
@@ -353,44 +261,20 @@ class PackageInfoChangesTest : BaseCompilationTest() {
                 dependencies = listOf(dependency),
                 compilationConfigAction = jsr305StrictConfigAction,
             )
-            dependency.addNonNullApiAndAssertLocalFactoryConsumerFails(consumer)
+            dependency.replaceFileWithVersion("package-info.java", "add-nonnull-api")
+            dependency.compile()
+            consumer.compile {
+                expectFailWithError(".*UseKotlinFactory\\.kt:\\d+:\\d+ Null cannot be a value of a non-null type 'String'.*".toRegex())
+                // `bpkg/Other.kt` must stay untouched: the assertion has to distinguish a precise dirty set from a full module rebuild.
+                assertCompiledSources("bpkg/KotlinFactory.kt", "bpkg/UseKotlinFactory.kt")
+            }
         }
     }
 
     @DefaultStrategyAgnosticCompilationTest
-    @DisplayName("Changing dependency package-info nullability recompiles a consumer that reaches the annotated type through its own factory (internally tracked)")
-    @TestMetadata("ic-scenarios/dependency-package-info-nullability")
-    fun testDependencyPackageInfoNullabilityChangeRecompilesLocalFactoryConsumerInternallyTracked(
-        strategyConfig: CompilerExecutionStrategyConfiguration,
-    ) {
-        jvmScenario(strategyConfig) {
-            val dependency = module(
-                moduleName = "ic-scenarios/dependency-package-info-nullability/dependency",
-                compileJavaSources = true,
-            )
-            val consumer = trackedModule(
-                moduleName = "ic-scenarios/dependency-package-info-nullability/consumer-local-factory",
-                dependencies = listOf(dependency),
-                compilationConfigAction = jsr305StrictConfigAction,
-            )
-            dependency.addNonNullApiAndAssertLocalFactoryConsumerFails(consumer)
-        }
-    }
-
-    private fun ScenarioModule.addNonNullApiAndAssertLocalFactoryConsumerFails(consumer: ScenarioModule) {
-        replaceFileWithVersion("package-info.java", "add-nonnull-api")
-        compile()
-        consumer.compile {
-            expectFailWithError(".*UseKotlinFactory\\.kt:\\d+:\\d+ Null cannot be a value of a non-null type 'String'.*".toRegex())
-            // `bpkg/Other.kt` must stay untouched: the assertion has to distinguish a precise dirty set from a full module rebuild.
-            assertCompiledSources("bpkg/KotlinFactory.kt", "bpkg/UseKotlinFactory.kt")
-        }
-    }
-
-    @DefaultStrategyAgnosticCompilationTest
-    @DisplayName("Only the package-info of the first classpath entry declaring the package is tracked (externally tracked)")
+    @DisplayName("Only the package-info of the first classpath entry declaring the package is tracked")
     @TestMetadata("ic-scenarios/dependency-package-info-first-wins")
-    fun testOnlyFirstDependencyPackageInfoIsTrackedExternallyTracked(
+    fun testOnlyFirstDependencyPackageInfoIsTracked(
         strategyConfig: CompilerExecutionStrategyConfiguration,
     ) {
         jvmScenario(strategyConfig) {
@@ -406,43 +290,16 @@ class PackageInfoChangesTest : BaseCompilationTest() {
                 moduleName = "ic-scenarios/dependency-package-info-first-wins/module-consumer",
                 dependencies = listOf(first, second),
             )
-            assertOnlyFirstPackageInfoIsTracked(first, second, consumer)
-        }
-    }
-
-    @DefaultStrategyAgnosticCompilationTest
-    @DisplayName("Only the package-info of the first classpath entry declaring the package is tracked (internally tracked)")
-    @TestMetadata("ic-scenarios/dependency-package-info-first-wins")
-    fun testOnlyFirstDependencyPackageInfoIsTrackedInternallyTracked(
-        strategyConfig: CompilerExecutionStrategyConfiguration,
-    ) {
-        jvmScenario(strategyConfig) {
-            val first = module(
-                moduleName = "ic-scenarios/dependency-package-info-first-wins/module-first",
-                compileJavaSources = true,
-            )
-            val second = module(
-                moduleName = "ic-scenarios/dependency-package-info-first-wins/module-second",
-                compileJavaSources = true,
-            )
-            val consumer = trackedModule(
-                moduleName = "ic-scenarios/dependency-package-info-first-wins/module-consumer",
-                dependencies = listOf(first, second),
-            )
-            assertOnlyFirstPackageInfoIsTracked(first, second, consumer)
-        }
-    }
-
-    private fun assertOnlyFirstPackageInfoIsTracked(first: ScenarioModule, second: ScenarioModule, consumer: ScenarioModule) {
-        second.replaceFileWithVersion("apkg/package-info.java", "change-annotation")
-        second.compile()
-        consumer.compile {
-            assertNoCompiledSources()
-        }
-        first.replaceFileWithVersion("apkg/package-info.java", "change-annotation")
-        first.compile()
-        consumer.compile {
-            assertCompiledSources("bpkg/UseA.kt")
+            second.replaceFileWithVersion("apkg/package-info.java", "change-annotation")
+            second.compile()
+            consumer.compile {
+                assertNoCompiledSources()
+            }
+            first.replaceFileWithVersion("apkg/package-info.java", "change-annotation")
+            first.compile()
+            consumer.compile {
+                assertCompiledSources("bpkg/UseA.kt")
+            }
         }
     }
 
