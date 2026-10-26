@@ -435,6 +435,52 @@ class SwiftPackageExportIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("A consumer of the Release package links in an optimised build")
+    @GradleTest
+    fun testReleasePackageLinksInOptimisedConsumer(
+        gradleVersion: GradleVersion,
+    ) {
+        project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            settingsBuildScriptInjection {
+                settings.rootProject.name = "shared"
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    iosArm64()
+                    iosSimulatorArm64()
+                    sourceSets.commonMain.get().compileSource("fun sharedApi(): Int = 1")
+                }
+                export.swift {
+                    moduleName.set("Shared")
+                    swiftPackageIntegration {
+                        outputDirectory.set(project.layout.projectDirectory.dir("package"))
+                    }
+                }
+            }
+
+            build(":exportReleaseSwiftPackage") {
+                assertTasksExecuted(":exportReleaseSwiftPackage")
+            }
+
+            val consumer = consumerOf(
+                projectPath.resolve("package/Release"),
+                """
+                import Shared
+
+                print(sharedApi())
+                """,
+            )
+            // KT-90738: an optimised build of KotlinRuntimeSupport lost the link anchor the Kotlin binary references.
+            listOf(SwiftDestination.IOS, SwiftDestination.IOS_SIMULATOR).forEach { destination ->
+                val build = consumer.swiftBuild(destination, extraArguments = listOf("-c", "release"))
+                assertTrue(build.isSuccessful, "The Release consumer failed to build for $destination:\n$build\n${build.output}")
+            }
+        }
+    }
+
     /** A destination a Swift package is built for: the target triple and the SDK of `swift build`. */
     private enum class SwiftDestination(val triple: String, val sdk: String) {
         MACOS("arm64-apple-macosx15.0", "macosx"),
@@ -474,12 +520,16 @@ class SwiftPackageExportIT : KGPBaseTest() {
     }
 
     /** Builds the Swift package at this path for [destination], in a scratch directory of its own. */
-    private fun Path.swiftBuild(destination: SwiftDestination): ProcessRunResult {
+    private fun Path.swiftBuild(
+        destination: SwiftDestination,
+        extraArguments: List<String> = emptyList(),
+    ): ProcessRunResult {
         val sdk = runProcess(listOf("xcrun", "--sdk", destination.sdk, "--show-sdk-path"), toFile())
             .also { it.assertProcessRunResult { assertTrue(isSuccessful, "No SDK path for ${destination.sdk}") } }
             .output.trim()
         return runProcess(
-            listOf("swift", "build", "--triple", destination.triple, "--sdk", sdk, "--scratch-path", ".build-${destination.sdk}"),
+            listOf("swift", "build", "--triple", destination.triple, "--sdk", sdk, "--scratch-path", ".build-${destination.sdk}") +
+                extraArguments,
             toFile(),
         )
     }
