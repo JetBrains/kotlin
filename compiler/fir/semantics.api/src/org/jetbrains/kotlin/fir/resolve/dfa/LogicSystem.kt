@@ -324,7 +324,11 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
             val operation = next.operation
             val variable = next.variable
 
-            val impliedType = if (operation == Operation.EqNull) StandardTypes.NullableNothing else StandardTypes.Any
+            val impliedType = when (operation) {
+                EqNull -> StandardTypes.NullableNothing
+                IsNullableNonError -> StandardTypes.NullableNonError
+                else -> StandardTypes.Any
+            }
             val resultStatement = result.getOrPut(variable) { MutableTypeStatement(variable) }
             resultStatement.upperTypes.add(impliedType)
             // We could additionally imply the opposite lower type, but it won't bring us anything new

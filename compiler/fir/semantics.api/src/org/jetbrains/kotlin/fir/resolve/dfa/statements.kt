@@ -59,12 +59,14 @@ class Implication(
 }
 
 enum class Operation {
-    EqTrue, EqFalse, EqNull, NotEqNull;
+    EqTrue, EqFalse, EqNull, NotEqNull, IsNullableNonError;
 
     fun valueIfKnown(given: Operation): Boolean? = when (this) {
-        EqTrue, EqFalse -> if (given == NotEqNull) null else given == this
-        EqNull -> given == EqNull
-        NotEqNull -> given != EqNull
+        EqTrue, EqFalse -> if (given == NotEqNull || given == IsNullableNonError) null else given == this
+        EqNull -> if (given == IsNullableNonError) null else given == EqNull
+        NotEqNull -> if (given == IsNullableNonError) null else given != EqNull
+        // `null`, `true` and `false` are all non-errors; knowing only `!= null` says nothing about being an error.
+        IsNullableNonError -> if (given == NotEqNull) null else true
     }
 
     override fun toString(): String = when (this) {
@@ -72,5 +74,6 @@ enum class Operation {
         EqFalse -> "== False"
         EqNull -> "== Null"
         NotEqNull -> "!= Null"
+        IsNullableNonError -> "is NonError?"
     }
 }
