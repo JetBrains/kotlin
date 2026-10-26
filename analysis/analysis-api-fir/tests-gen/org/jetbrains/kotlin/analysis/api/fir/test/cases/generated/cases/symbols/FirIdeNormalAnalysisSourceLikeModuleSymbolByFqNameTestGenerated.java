@@ -99,6 +99,24 @@ public class FirIdeNormalAnalysisSourceLikeModuleSymbolByFqNameTestGenerated ext
   }
 
   @Test
+  @TestMetadata("explicitInlineValueClassFromBinary.kt")
+  public void testExplicitInlineValueClassFromBinary() {
+    run("explicitInlineValueClassFromBinary.kt");
+  }
+
+  @Test
+  @TestMetadata("explicitInlineValueClassFromCommonBinary.kt")
+  public void testExplicitInlineValueClassFromCommonBinary() {
+    run("explicitInlineValueClassFromCommonBinary.kt");
+  }
+
+  @Test
+  @TestMetadata("explicitInlineValueClassWithJvmInlineFromBinary.kt")
+  public void testExplicitInlineValueClassWithJvmInlineFromBinary() {
+    run("explicitInlineValueClassWithJvmInlineFromBinary.kt");
+  }
+
+  @Test
   @TestMetadata("fileWalkDirectionEnum.kt")
   public void testFileWalkDirectionEnum() {
     run("fileWalkDirectionEnum.kt");
