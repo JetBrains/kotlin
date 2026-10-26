@@ -414,6 +414,16 @@ class RemoveRedundantSafepointsPipeline(config: LlvmPipelineConfig, performanceM
     }
 }
 
+/**
+ * Replaces the calls of the functions with the kotlin-native GC strategy by statepoints (delta-main scheme).
+ * It has to be the last pipeline: the passes before it, notably kotlin-remove-sp, work with plain calls.
+ */
+class RewriteStatepointsForGCPipeline(config: LlvmPipelineConfig, performanceManager: PerformanceManager?, logger: LoggingContext? = null) :
+        LlvmOptimizationPipeline(config, performanceManager, logger) {
+    override val pipelineName = "llvm-rs4gc"
+    override val passes = listOf("rewrite-statepoints-for-gc")
+}
+
 class ModuleCallsCheckerPipeline(config: LlvmPipelineConfig, performanceManager: PerformanceManager?, logger: LoggingContext? = null) :
         LlvmOptimizationPipeline(config, performanceManager, logger) {
     override val pipelineName = "llvm-calls-checker-module"

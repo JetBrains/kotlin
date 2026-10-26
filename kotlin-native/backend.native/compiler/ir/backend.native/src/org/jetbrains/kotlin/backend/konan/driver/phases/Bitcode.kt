@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.backend.konan.llvm.getFunctions
 import org.jetbrains.kotlin.backend.konan.llvm.valueName
 import org.jetbrains.kotlin.backend.konan.llvm.verifyModule
 import org.jetbrains.kotlin.backend.konan.optimizations.RemoveRedundantSafepointsPass
+import org.jetbrains.kotlin.config.nativeBinaryOptions.GCStackMapScheme
 import org.jetbrains.kotlin.config.nativeBinaryOptions.SanitizerKind
 import org.jetbrains.kotlin.util.PerformanceManager
 import java.io.File
@@ -145,6 +146,11 @@ internal val RemoveRedundantSafepointsPhaseInLLVM = optimizationPipelinePass(
         pipeline = ::RemoveRedundantSafepointsPipeline
 )
 
+internal val RewriteStatepointsForGCPhase = optimizationPipelinePass(
+        name = "RewriteStatepointsForGC",
+        pipeline = ::RewriteStatepointsForGCPipeline
+)
+
 internal val CStubsPhase = createSimpleNamedCompilerPhase<NativeGenerationState, Unit>(
         name = "CStubs",
         postactions = getDefaultLlvmModuleActions(),
@@ -203,5 +209,10 @@ internal fun <T : BitcodePostProcessingContext> PhaseEngine<T>.runBitcodePostPro
     }
     if (context.config.runLLVMPassesInCompiler) {
         runAndMeasurePhase(RemoveRedundantSafepointsPhaseInCompiler)
+    }
+    if (context.config.gcStackMapScheme == GCStackMapScheme.DELTA_MAIN) {
+        useContext(OptimizationState(context.config, optimizationConfig, context.performanceManager)) {
+            it.runAndMeasurePhase(RewriteStatepointsForGCPhase, this@runBitcodePostProcessing.context.llvmModule)
+        }
     }
 }
