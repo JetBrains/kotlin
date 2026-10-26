@@ -533,6 +533,9 @@ class SerializedEagerInitializedFile(val file: SerializedFileReference)
 class SerializedObjCReverseBridge(
         val selector: String,
         val impl: String,
+        /** Empty when the method is not dispatched through an interface. */
+        val interfaceName: String,
+        /** The id [interfaceName] had in the compilation that wrote this; meaningless where the final link numbers the interfaces. */
         val interfaceId: Int,
         val itableSize: Int,
         val itableIndex: Int,
@@ -557,7 +560,7 @@ internal object ObjCAdapterSerializer {
     private const val FLAG_IS_INTERFACE = 1
 
     private val SerializedObjCAdapter.payloadSize: Int
-        get() = Int.SIZE_BYTES * (8 + 6 * reverseBridges.size)
+        get() = Int.SIZE_BYTES * (8 + 7 * reverseBridges.size)
 
     fun serialize(adapters: List<SerializedObjCAdapter>): ByteArray {
         val stringTable = buildStringTable {
@@ -569,6 +572,7 @@ internal object ObjCAdapterSerializer {
                 it.reverseBridges.forEach { bridge ->
                     +bridge.selector
                     +bridge.impl
+                    +bridge.interfaceName
                 }
             }
         }
@@ -587,6 +591,7 @@ internal object ObjCAdapterSerializer {
                 adapter.reverseBridges.forEach { bridge ->
                     writeInt(stringTable.indices[bridge.selector]!!)
                     writeInt(stringTable.indices[bridge.impl]!!)
+                    writeInt(stringTable.indices[bridge.interfaceName]!!)
                     writeInt(bridge.interfaceId)
                     writeInt(bridge.itableSize)
                     writeInt(bridge.itableIndex)
@@ -613,6 +618,7 @@ internal object ObjCAdapterSerializer {
                             SerializedObjCReverseBridge(
                                     selector = stringTable[readInt()],
                                     impl = stringTable[readInt()],
+                                    interfaceName = stringTable[readInt()],
                                     interfaceId = readInt(),
                                     itableSize = readInt(),
                                     itableIndex = readInt(),
@@ -725,3 +731,61 @@ object CacheMetadataSerializer {
         }
     }
 }
+
+/** A single class or interface of the hierarchy piece a compilation contributes to its cache. */
+data class SerializedClassHierarchy(
+        val className: String,
+        val isInterface: Boolean,
+        /** `null` for interfaces and for the direct children of `Any`: `Any` is never recorded as a superclass. */
+        val superClassName: String?,
+        val interfaceNames: List<String>,
+        /** The number of methods in the vtable of this interface; zero for a class. */
+        val interfaceVTableSize: Int,
+        val hasInterfaceLookupTable: Boolean,
+)
+
+internal object ClassHierarchySerializer {
+    fun serialize(records: List<SerializedClassHierarchy>): ByteArray {
+        val stringTable = buildStringTable {
+            records.forEach { record ->
+                +record.className
+                record.superClassName?.let { +it }
+                record.interfaceNames.forEach { +it }
+            }
+        }
+        val size = stringTable.sizeBytes + records.sumOf { Int.SIZE_BYTES * (6 + it.interfaceNames.size) }
+        val stream = ByteArrayStream(ByteArray(size))
+        stringTable.serialize(stream)
+        records.forEach { record ->
+            stream.writeInt(stringTable.indices[record.className]!!)
+            stream.writeInt(if (record.isInterface) 1 else 0)
+            stream.writeInt(record.superClassName?.let { stringTable.indices[it]!! } ?: INVALID_INDEX)
+            stream.writeIntArray(record.interfaceNames.map { stringTable.indices[it]!! }.toIntArray())
+            stream.writeInt(record.interfaceVTableSize)
+            stream.writeInt(if (record.hasInterfaceLookupTable) 1 else 0)
+        }
+        return stream.buf
+    }
+
+    fun deserializeTo(data: ByteArray, result: MutableList<SerializedClassHierarchy>) {
+        val stream = ByteArrayStream(data)
+        val stringTable = StringTable.deserialize(stream)
+        while (stream.hasData()) {
+            val className = stringTable[stream.readInt()]
+            val isInterface = stream.readInt() != 0
+            val superClassIndex = stream.readInt()
+            val interfaceNames = stream.readIntArray().map { stringTable[it] }
+            val interfaceVTableSize = stream.readInt()
+            val hasInterfaceLookupTable = stream.readInt() != 0
+            result.add(SerializedClassHierarchy(
+                    className = className,
+                    isInterface = isInterface,
+                    superClassName = if (superClassIndex == INVALID_INDEX) null else stringTable[superClassIndex],
+                    interfaceNames = interfaceNames,
+                    interfaceVTableSize = interfaceVTableSize,
+                    hasInterfaceLookupTable = hasInterfaceLookupTable,
+            ))
+        }
+    }
+}
+

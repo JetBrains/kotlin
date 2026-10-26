@@ -395,6 +395,10 @@ class NativeSecondStageCompilationConfig(
     internal val klibDag = configuration.serializedKlibDag?.deserialize(loadedKlibs.all)
             ?: KlibDAGBuilder(Parameters(loadedKlibs.all) { it.isExplicitlySpecifiedByUserInCLIArgument }).build()
 
+    /** The caches this compilation links against. */
+    val linkedCaches: List<CachedLibraries.Cache>
+        get() = loadedKlibs.all.mapNotNull { cachedLibraries.getLibraryCache(it) }
+
     internal val externalDependenciesFile = configuration.externalDependencies?.let(::Path)
 
     val fullExportedNamePrefix: String

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.konan.serialization.CacheDeserializationStra
 import org.jetbrains.kotlin.backend.konan.serialization.CacheMetadata
 import org.jetbrains.kotlin.backend.konan.serialization.CacheMetadataSerializer
 import org.jetbrains.kotlin.backend.konan.serialization.ClassFieldsSerializer
+import org.jetbrains.kotlin.backend.konan.serialization.ClassHierarchySerializer
 import org.jetbrains.kotlin.backend.konan.serialization.EagerInitializedPropertySerializer
 import org.jetbrains.kotlin.backend.konan.serialization.InlineFunctionBodyReferenceSerializer
 import org.jetbrains.kotlin.backend.konan.serialization.ObjCAdapterSerializer
@@ -91,6 +92,7 @@ internal class CacheStorage(private val generationState: NativeGenerationState) 
         saveTrivialGetters()
         saveObjCAdapters()
         savePartialLinkageIssues()
+        saveClassHierarchy()
     }
 
     private fun saveMetadata() {
@@ -180,5 +182,10 @@ internal class CacheStorage(private val generationState: NativeGenerationState) 
         if (issues.isEmpty()) return
 
         outputFiles.partialLinkageIssuesFile!!.writeBytes(PartialLinkageIssuesSerializer.serialize(issues))
+    }
+
+    private fun saveClassHierarchy() {
+        outputFiles.classHierarchyFile!!.writeBytes(
+                ClassHierarchySerializer.serialize(generationState.classHierarchy))
     }
 }

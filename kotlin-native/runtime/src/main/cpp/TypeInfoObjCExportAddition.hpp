@@ -19,7 +19,8 @@ struct ObjCToKotlinMethodAdapter {
 
 struct KotlinToObjCMethodAdapter {
   const char* selector;
-  ClassId interfaceId;
+  // The id of the interface this method is dispatched through, null when it is not dispatched through one.
+  const ClassHierarchyIds* interfaceId;
   int itableSize;
   int itableIndex;
   int vtableIndex;

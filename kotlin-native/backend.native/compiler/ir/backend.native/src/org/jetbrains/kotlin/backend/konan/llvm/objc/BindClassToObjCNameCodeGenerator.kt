@@ -5,29 +5,17 @@
 
 package org.jetbrains.kotlin.backend.konan.llvm.objc
 
-import llvm.LLVMAddGlobal
 import llvm.LLVMGetNamedFunction
-import llvm.LLVMGetNamedGlobal
 import llvm.LLVMLinkage
-import llvm.LLVMTypeRef
 import org.jetbrains.kotlin.backend.common.getCompilerMessageLocation
 import org.jetbrains.kotlin.backend.common.serialization.kotlinLibrary
 import org.jetbrains.kotlin.backend.konan.NativeBackendDiagnostics
-import org.jetbrains.kotlin.backend.konan.isCache
-import org.jetbrains.kotlin.backend.konan.isFinalBinary
 import org.jetbrains.kotlin.backend.konan.ir.ClassLayoutBuilder
 import org.jetbrains.kotlin.backend.konan.ir.annotations.BindClassToObjCName
 import org.jetbrains.kotlin.backend.konan.ir.annotations.allBindClassToObjCName
-import org.jetbrains.kotlin.backend.konan.llvm.CodeGenerator
-import org.jetbrains.kotlin.backend.konan.llvm.ConstPointer
-import org.jetbrains.kotlin.backend.konan.llvm.KonanBinaryInterface
-import org.jetbrains.kotlin.backend.konan.llvm.LlvmFunctionSignature
-import org.jetbrains.kotlin.backend.konan.llvm.LlvmRetType
-import org.jetbrains.kotlin.backend.konan.llvm.computePrivateTypeInfoSymbolName
-import org.jetbrains.kotlin.backend.konan.llvm.computeTypeInfoSymbolName
-import org.jetbrains.kotlin.backend.konan.llvm.constPointer
-import org.jetbrains.kotlin.backend.konan.llvm.importGlobal
-import org.jetbrains.kotlin.backend.konan.llvm.toProto
+import org.jetbrains.kotlin.backend.konan.isCache
+import org.jetbrains.kotlin.backend.konan.isFinalBinary
+import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.KotlinToObjCMethodAdapter.Companion.KotlinToObjCMethodAdapter
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.ObjCTypeAdapter.Companion.ObjCTypeAdapterForBindClassToObjCName
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.WritableTypeInfoOverrideError
@@ -111,6 +99,7 @@ private fun buildSerializedObjCAdapter(
                         selector = bridge.selector,
                         impl = bridge.kotlinImpl.name
                                 ?: error("No symbol name for the bridge of `${bridge.selector}` of ${binding.objCName}"),
+                        interfaceName = bridge.itablePlace.irInterface?.crossModuleName() ?: "",
                         interfaceId = bridge.itablePlace.interfaceId,
                         itableSize = bridge.itablePlace.itableSize,
                         itableIndex = bridge.itablePlace.methodIndex,
@@ -163,9 +152,15 @@ private fun CodeGenerator.emitObjCAdapterFromCache(
             reverseAdapters = serialized.reverseBridges.map {
                 KotlinToObjCMethodAdapter(
                         selector = it.selector,
-                        itablePlace = ClassLayoutBuilder.InterfaceTablePlace(it.interfaceId, it.itableSize, it.itableIndex),
+                        itablePlace = ClassLayoutBuilder.InterfaceTablePlace(
+                                irInterface = null,
+                                interfaceId = it.interfaceId,
+                                itableSize = it.itableSize,
+                                methodIndex = it.itableIndex,
+                        ),
                         vtableIndex = it.vtableIndex,
                         kotlinImpl = importCachedFunctionAddress(it.impl),
+                        interfaceName = it.interfaceName.takeIf { name -> name.isNotEmpty() },
                 )
             },
             typeInfo = constPointer(importGlobal(serialized.typeInfoSymbolName, llvm.runtime.typeInfoType))
