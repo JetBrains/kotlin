@@ -303,55 +303,12 @@ internal class RTTIGenerator(
         return Pair(interfaceTableEntries, interfaceTableSize)
     }
 
-    private fun interfaceTableSkeleton(interfaces: List<IrClass>): Pair<Array<out ClassLayoutBuilder?>, Int> {
-        val interfaceLayouts = interfaces.map { context.getLayoutBuilder(it) }
-        val interfaceIds = interfaceLayouts.map { it.classId }
-
-        // Find the optimal size. It must be a power of 2.
-        var size = 1
-        val maxSize = 1 shl ClassGlobalHierarchyInfo.MAX_BITS_PER_COLOR
-        val used = BooleanArray(maxSize)
-        while (size <= maxSize) {
-            for (i in 0 until size)
-                used[i] = false
-            // Check for collisions.
-            var ok = true
-            for (id in interfaceIds) {
-                val index = id and (size - 1) // This is not an optimization but rather for not to bother with negative numbers.
-                if (used[index]) {
-                    ok = false
-                    break
-                }
-                used[index] = true
-            }
-            if (ok) break
-            size *= 2
-        }
-        val useFastITable = size <= maxSize
-
-        val interfaceTableSkeleton = if (useFastITable) {
-            arrayOfNulls<ClassLayoutBuilder?>(size).also {
-                for (interfaceLayout in interfaceLayouts)
-                    it[interfaceLayout.classId and (size - 1)] = interfaceLayout
-            }
-        } else {
-            size = interfaceLayouts.size
-            val sortedInterfaceLayouts = interfaceLayouts.sortedBy { it.classId }.toTypedArray()
-            for (i in 1 until sortedInterfaceLayouts.size)
-                require(sortedInterfaceLayouts[i - 1].classId != sortedInterfaceLayouts[i].classId) {
-                    "Different interfaces ${sortedInterfaceLayouts[i - 1].irClass.render()} and ${sortedInterfaceLayouts[i].irClass.render()}" +
-                            " have same class id: ${sortedInterfaceLayouts[i].classId}"
-                }
-            sortedInterfaceLayouts
-        }
-
-        val interfaceTableSize = if (useFastITable) (size - 1) else -size
-        return Pair(interfaceTableSkeleton, interfaceTableSize)
-    }
+    private fun interfaceTableSkeleton(interfaces: List<IrClass>): Pair<List<ClassLayoutBuilder?>, Int> =
+            layOutInterfaceLookupTable(interfaces.map { context.getLayoutBuilder(it) }) { it.classId }
 
     private fun interfaceTableRecords(
             irClass: IrClass,
-            interfaceTableSkeleton: Array<out ClassLayoutBuilder?>
+            interfaceTableSkeleton: List<ClassLayoutBuilder?>
     ): List<InterfaceTableRecord> {
         val layoutBuilder = context.getLayoutBuilder(irClass)
         val className = irClass.fqNameForIrSerialization
@@ -618,6 +575,49 @@ internal class RTTIGenerator(
     fun dispose() {
         debugRuntimeOrNull?.let { LLVMDisposeModule(it) }
     }
+}
+
+/**
+ * Places [entries] into the slots of an interface lookup table: a perfect hash table keyed by the lower bits of
+ * the interface ids when they fit into one, and a table sorted by the interface id otherwise.
+ * Returns the slots along with the size to record in the table: the mask for the former shape, the negated count
+ * for the latter.
+ */
+internal fun <T> layOutInterfaceLookupTable(entries: List<T>, interfaceId: (T) -> Int): Pair<List<T?>, Int> {
+    // Find the optimal size. It must be a power of 2.
+    var size = 1
+    val maxSize = 1 shl ClassGlobalHierarchyInfo.MAX_BITS_PER_COLOR
+    val used = BooleanArray(maxSize)
+    while (size <= maxSize) {
+        for (i in 0 until size)
+            used[i] = false
+        // Check for collisions.
+        var ok = true
+        for (entry in entries) {
+            val index = interfaceId(entry) and (size - 1) // This is not an optimization but rather for not to bother with negative numbers.
+            if (used[index]) {
+                ok = false
+                break
+            }
+            used[index] = true
+        }
+        if (ok) break
+        size *= 2
+    }
+
+    if (size <= maxSize) {
+        val slots = MutableList<T?>(size) { null }
+        for (entry in entries)
+            slots[interfaceId(entry) and (size - 1)] = entry
+        return Pair(slots, size - 1)
+    }
+
+    val sorted = entries.sortedBy(interfaceId)
+    for (i in 1 until sorted.size)
+        require(interfaceId(sorted[i - 1]) != interfaceId(sorted[i])) {
+            "Different interfaces have same interface id: ${interfaceId(sorted[i])}"
+        }
+    return Pair(sorted, -sorted.size)
 }
 
 // Keep in sync with Konan_TypeFlags in TypeInfo.h.
