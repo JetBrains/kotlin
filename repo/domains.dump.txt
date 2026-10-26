@@ -46,6 +46,7 @@ CompilerInfrastructure:
  - core/deserialization
  - core/deserialization.common
  - core/deserialization.common.jvm
+ - core/error.handling
  - core/language.model
  - core/language.targets
  - core/language.targets.jvm
