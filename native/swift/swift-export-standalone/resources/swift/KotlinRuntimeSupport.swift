@@ -269,6 +269,9 @@ extension NSObject {
 
 // MARK: - Link anchor
 
-/// Anchor that keeps this compilation unit in the linked image. Without it this module gets stripped
+/// Anchor that keeps this compilation unit in the linked image. Without it this module gets stripped.
+/// Declared `package` so the symbol stays external: an internal one is hidden in a Release build
+/// (Debug gets `-enable-testing`), and SwiftPM's `ld -r` merge then makes it local, so the Kotlin
+/// binary's reference to it does not link (KT-90738).
 @_cdecl("KotlinRuntimeSupport_linkAnchor")
-func _kotlinRuntimeSupportLinkAnchor() {}
+package func _kotlinRuntimeSupportLinkAnchor() {}
