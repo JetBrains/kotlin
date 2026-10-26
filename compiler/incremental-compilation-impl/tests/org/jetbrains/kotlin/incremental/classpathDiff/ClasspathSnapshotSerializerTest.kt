@@ -22,11 +22,10 @@ internal abstract class ClasspathSnapshotSerializerTest : ClasspathSnapshotTestC
             ForTestCompileRuntime.transformTestDataPath("compiler/incremental-compilation-impl/testData/org/jetbrains/kotlin/incremental/classpathDiff/ClasspathSnapshotterTest")
     }
 
-    protected abstract val sourceFile: TestSourceFile
+    protected abstract val originalSnapshot: ClassSnapshot
 
     @Test
     open fun `test ClassSnapshotExternalizer`() {
-        val originalSnapshot = sourceFile.compileAndSnapshot()
         val serializedSnapshot = ClassSnapshotExternalizer.toByteArray(originalSnapshot)
         val deserializedSnapshot = ClassSnapshotExternalizer.fromByteArray(serializedSnapshot)
 
@@ -36,34 +35,42 @@ internal abstract class ClasspathSnapshotSerializerTest : ClasspathSnapshotTestC
 
 internal class KotlinClassesClasspathSnapshotSerializerTest : ClasspathSnapshotSerializerTest() {
 
-    override val sourceFile by lazy {
+    override val originalSnapshot by lazy {
         TestSourceFile(
             KotlinSourceFile(
                 baseDir = File(testDataDir, "kotlin/testSimpleClass/src"), relativePath = "com/example/SimpleClass.kt",
                 preCompiledClassFile = ClassFile(File(testDataDir, "kotlin/testSimpleClass/classes"), "com/example/SimpleClass.class")
             ), tmpDir
-        )
+        ).compileAndSnapshot()
     }
 }
 
 internal class JavaClassesClasspathSnapshotSerializerTest : ClasspathSnapshotSerializerTest() {
 
-    override val sourceFile by lazy {
+    override val originalSnapshot by lazy {
         TestSourceFile(
             JavaSourceFile(
                 baseDir = File(testDataDir, "java/testSimpleClass/src"), relativePath = "com/example/SimpleClass.java",
             ), tmpDir
-        )
+        ).compileAndSnapshot()
     }
 }
 
 internal class PackageInfoClasspathSnapshotSerializerTest : ClasspathSnapshotSerializerTest() {
 
-    override val sourceFile by lazy {
+    override val originalSnapshot by lazy {
         TestSourceFile(
             JavaSourceFile(
                 baseDir = File(testDataDir, "java/testPackageInfo/src"), relativePath = "com/example/package-info.java",
             ), tmpDir
-        )
+        ).compileAndSnapshot()
+    }
+}
+
+internal class ModuleInfoClasspathSnapshotSerializerTest : ClasspathSnapshotSerializerTest() {
+
+    override val originalSnapshot by lazy {
+        snapshotClasspath(File(testDataDir, "java/testModuleInfo/src"), tmpDir)
+            .classpathEntrySnapshots.single().classSnapshots.getValue("module-info.class")
     }
 }

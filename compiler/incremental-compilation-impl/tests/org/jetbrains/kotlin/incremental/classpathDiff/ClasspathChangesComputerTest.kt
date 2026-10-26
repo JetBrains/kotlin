@@ -689,6 +689,27 @@ class KotlinAndJavaClasspathChangesComputerTest : ClasspathSnapshotTestCommon() 
             )
         ).assertEquals(changes)
     }
+
+    @Test
+    fun testModuleInfoChange() {
+        val changes = computeClasspathChanges(File(testDataDir, "JavaOnly/testModuleInfoChange/src"), tmpDir)
+        Changes(
+            lookupSymbols = setOf(
+                // Changed
+                LookupSymbol(name = "module-info", scope = "mid"),
+                // Impacted
+                LookupSymbol(name = "M", scope = "mpkg"),
+                LookupSymbol(name = "module-info", scope = "base"),
+                LookupSymbol(name = "A", scope = "apkg"),
+            ),
+            fqNames = setOf(
+                "mid.module-info",
+                "mpkg.M",
+                "base.module-info",
+                "apkg.A",
+            )
+        ).assertEquals(changes)
+    }
 }
 
 private fun testMixedClassSnapshotGranularities_snapshotClasspath(

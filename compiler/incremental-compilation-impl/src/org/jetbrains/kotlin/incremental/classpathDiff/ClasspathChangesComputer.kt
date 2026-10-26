@@ -130,8 +130,10 @@ internal object ClasspathChangesComputer {
         previousClassSnapshots: List<AccessibleClassSnapshot>,
         metrics: BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>,
     ): ProgramSymbolSet {
-        val [currentPackageInfoSnapshots, currentRegularClassSnapshots] = currentClassSnapshots.partition { it is PackageInfoClassSnapshot }
-        val [previousPackageInfoSnapshots, previousRegularClassSnapshots] = previousClassSnapshots.partition { it is PackageInfoClassSnapshot }
+        // `package-info` and `module-info` snapshots have no members: a change is a change of the whole (synthetic) class, and the
+        // impacted classes are computed by `PackageInfoImpact` / `ModuleInfoImpact`.
+        val [currentInfoSnapshots, currentRegularClassSnapshots] = currentClassSnapshots.partition { it.isInfoClassSnapshot() }
+        val [previousInfoSnapshots, previousRegularClassSnapshots] = previousClassSnapshots.partition { it.isInfoClassSnapshot() }
         val [currentKotlinClassSnapshots, currentJavaClassSnapshots] = currentRegularClassSnapshots.partition { it is KotlinClassSnapshot }
         val [previousKotlinClassSnapshots, previousJavaClassSnapshots] = previousRegularClassSnapshots.partition { it is KotlinClassSnapshot }
 
@@ -151,13 +153,15 @@ internal object ClasspathChangesComputer {
             )
         }
 
-        val packageInfoChanges = ProgramSymbolSet.Collector().run {
-            addClasses((currentPackageInfoSnapshots + previousPackageInfoSnapshots).map { it.classId })
+        val infoClassChanges = ProgramSymbolSet.Collector().run {
+            addClasses((currentInfoSnapshots + previousInfoSnapshots).map { it.classId })
             getResult()
         }
 
-        return kotlinClassChanges + javaClassChanges + packageInfoChanges
+        return kotlinClassChanges + javaClassChanges + infoClassChanges
     }
+
+    private fun AccessibleClassSnapshot.isInfoClassSnapshot() = this is PackageInfoClassSnapshot || this is ModuleInfoClassSnapshot
 
     private fun computeKotlinClassChanges(
         currentClassSnapshots: List<KotlinClassSnapshot>,

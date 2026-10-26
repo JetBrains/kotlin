@@ -1,0 +1,1 @@
+module other { exports opkg; }

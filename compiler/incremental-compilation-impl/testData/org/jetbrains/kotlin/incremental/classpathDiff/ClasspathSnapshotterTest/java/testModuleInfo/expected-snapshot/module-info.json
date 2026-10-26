@@ -1,0 +1,26 @@
+{
+  "classId": {
+    "packageFqName": {
+      "fqName": {
+        "fqName": "some.mod"
+      }
+    },
+    "relativeClassName": {
+      "fqName": {
+        "fqName": "module-info"
+      }
+    },
+    "isLocal": false
+  },
+  "classAbiHash": 8267346778422797461,
+  "packages": [
+    {
+      "fqName": {
+        "fqName": "apkg"
+      }
+    }
+  ],
+  "transitiveRequires": [
+    "java.sql"
+  ]
+}
