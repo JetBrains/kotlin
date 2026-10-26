@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: CODEGEN
 error class Foo
 
 fun test(x: String | Foo, y: String | RichError) {
