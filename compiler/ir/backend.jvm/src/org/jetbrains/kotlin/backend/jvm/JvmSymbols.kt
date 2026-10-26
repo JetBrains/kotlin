@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.ir.BackendSymbols
 import org.jetbrains.kotlin.backend.common.ir.createExtensionReceiver
+import org.jetbrains.kotlin.backend.jvm.ir.getInlineClassUnderlyingType
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.coroutines.INVOKE_SUSPEND_METHOD_NAME
 import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_CALL_RESULT_NAME
@@ -60,6 +61,7 @@ class JvmSymbols(
     private val kotlinJvmInternalPackage: IrPackageFragment = createPackage(FqName("kotlin.jvm.internal"))
     private val kotlinJvmFunctionsPackage: IrPackageFragment = createPackage(FqName("kotlin.jvm.functions"))
     private val kotlinEnumsPackage: IrPackageFragment = createPackage(FqName("kotlin.enums"))
+    private val kotlinCollectionsUnsignedPackage: IrPackageFragment = createPackage(FqName("kotlin.collections.unsigned"))
     private val kotlinReflectPackage: IrPackageFragment = createPackage(FqName("kotlin.reflect"))
     private val javaLangPackage: IrPackageFragment = createPackage(FqName("java.lang"))
     private val javaLangInvokePackage: IrPackageFragment = createPackage(FqName("java.lang.invoke"))
@@ -104,6 +106,7 @@ class JvmSymbols(
                 "kotlin.coroutines" -> kotlinCoroutinesPackage
                 "kotlin.coroutines.jvm.internal" -> kotlinCoroutinesJvmInternalPackage
                 "kotlin.enums" -> kotlinEnumsPackage
+                "kotlin.collections.unsigned" -> kotlinCollectionsUnsignedPackage
                 "kotlin.jvm.internal" -> kotlinJvmInternalPackage
                 "kotlin.jvm.functions" -> kotlinJvmFunctionsPackage
                 "kotlin.jvm" -> kotlinJvmPackage
@@ -250,6 +253,20 @@ class JvmSymbols(
     }
 
     val createEnumEntries: IrSimpleFunctionSymbol = enumEntriesKt.functions.single { it.owner.name.asString() == "enumEntries" }
+
+    private val uArraysKt: IrClassSymbol by lazy {
+        createClass(FqName("kotlin.collections.unsigned.UArraysKt")) { klass ->
+            for ([unsignedArray, elementType] in irBuiltIns.unsignedArraysElementTypes) {
+                val storageType = getInlineClassUnderlyingType(unsignedArray.owner)
+                klass.addFunction("to${unsignedArray.owner.name}", storageType, isStatic = true).apply {
+                    addValueParameter("array", irBuiltIns.arrayClass.typeWith(elementType!!))
+                }
+            }
+        }
+    }
+
+    fun unsignedArrayFromBoxedArray(unsignedArray: IrClassSymbol): IrSimpleFunctionSymbol =
+        uArraysKt.functions.single { it.owner.name.asString() == "to${unsignedArray.owner.name}" }
 
     override val defaultConstructorMarker: IrClassSymbol =
         createClass(FqName("kotlin.jvm.internal.DefaultConstructorMarker"))
