@@ -58,8 +58,9 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
      *
      * A [full value class](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0454-better-immutability-value-classes-MFVC.md)
      * and a value object are compiled as regular classes, so they are not inline value classes even though they have the
-     * `value` modifier. The distinction cannot be made from PSI alone, as it depends on the `@JvmInline` annotation, the
-     * target platform, and the `FullValueClasses` language feature, so the flag is computed from the class symbol.
+     * `value` modifier. The distinction cannot be made from PSI alone: unless the class has the `inline` modifier, it depends on
+     * the `@JvmInline` annotation, the target platform, and the `FullValueClasses` language feature, so the flag is computed
+     * from the class symbol.
      *
      * @see KaNamedClassSymbol.isInline
      */
