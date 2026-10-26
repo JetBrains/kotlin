@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components.resolver
 
-import org.jetbrains.kotlin.analysis.api.fir.components.*
+import org.jetbrains.kotlin.analysis.api.fir.components.KaFirResolver
+import org.jetbrains.kotlin.analysis.api.fir.components.analysisSession
+import org.jetbrains.kotlin.analysis.api.fir.components.asKaDiagnostic
+import org.jetbrains.kotlin.analysis.api.fir.components.resolutionFacade
 import org.jetbrains.kotlin.analysis.api.fir.resolution.KaFirApplicableCallCandidate
 import org.jetbrains.kotlin.analysis.api.fir.resolution.KaFirInapplicableCallCandidate
 import org.jetbrains.kotlin.analysis.api.fir.utils.KaNonBoundToPsiErrorDiagnostic
@@ -69,7 +72,7 @@ internal fun FirElement.collectCallCandidates(
     }
 }
 
-context(component: KaFirSessionComponent)
+context(resolver: KaFirResolver)
 private fun FirResolvedQualifier.toKaCallCandidates(): List<KaCallCandidate> {
     return toKaCalls(findQualifierConstructors()).map {
         KaFirInapplicableCallCandidate(
@@ -80,7 +83,7 @@ private fun FirResolvedQualifier.toKaCallCandidates(): List<KaCallCandidate> {
     }
 }
 
-context(component: KaFirSessionComponent)
+context(resolver: KaFirResolver)
 private fun FirQualifiedAccessExpression.collectCallCandidates(
     psi: KtElement,
     resolveFragmentOfCall: Boolean,
@@ -147,7 +150,7 @@ private fun FirQualifiedAccessExpression.collectCallCandidates(
     }
 }
 
-context(component: KaFirSessionComponent)
+context(resolver: KaFirResolver)
 private fun FirDelegatedConstructorCall.collectCallCandidatesForDelegatedConstructorCall(
     psi: KtElement,
     resolveFragmentOfCall: Boolean,
@@ -201,7 +204,7 @@ private fun KaCallResolutionAttempt?.toKaCallCandidates(): List<KaCallCandidate>
     null -> emptyList()
 }
 
-context(component: KaFirSessionComponent)
+context(resolver: KaFirResolver)
 private fun convertToKaCallCandidate(
     resolvable: FirResolvable,
     element: KtElement,
@@ -226,7 +229,7 @@ private fun convertToKaCallCandidate(
     val diagnostic = createConeDiagnosticForCandidateWithError(candidate.lowestApplicability, candidate)
     if (diagnostic is ConeHiddenCandidateError) return null
     val kaDiagnostic = resolvable.source?.let { diagnostic.asKaDiagnostic(it) }
-        ?: KaNonBoundToPsiErrorDiagnostic(factoryName = FirErrors.OTHER_ERROR.name, diagnostic.reason, component.token)
+        ?: KaNonBoundToPsiErrorDiagnostic(factoryName = FirErrors.OTHER_ERROR.name, diagnostic.reason, resolver.token)
 
     return KaFirInapplicableCallCandidate(
         backingCandidate = call,

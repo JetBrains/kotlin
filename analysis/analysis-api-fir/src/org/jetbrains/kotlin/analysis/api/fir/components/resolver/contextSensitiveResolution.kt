@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components.resolver
 
-import org.jetbrains.kotlin.analysis.api.fir.components.KaFirSessionComponent
+import org.jetbrains.kotlin.analysis.api.fir.components.KaFirResolver
 import org.jetbrains.kotlin.analysis.api.fir.components.analysisSession
 import org.jetbrains.kotlin.analysis.api.fir.resolution.KaContextSensitiveResolutionImportCanBeRemovedImpl
 import org.jetbrains.kotlin.analysis.api.fir.resolution.KaContextSensitiveResolutionNotAvailableImpl
@@ -54,7 +54,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
  * are different, we can certainly say that the [KtSimpleNameExpression] does not
  * point to the companion object.
  */
-context(component: KaFirSessionComponent)
+context(resolver: KaFirResolver)
 internal fun isImplicitReferenceToCompanionImpl(simpleNameExpression: KtSimpleNameExpression): Boolean {
     val implicitInvokeCall = run {
         val parentCallExpression = simpleNameExpression.parent as? KtCallExpression
@@ -67,7 +67,7 @@ internal fun isImplicitReferenceToCompanionImpl(simpleNameExpression: KtSimpleNa
     return wholeQualifier is FirResolvedQualifier && wholeQualifier.resolvedToCompanionObject
 }
 
-context(component: KaFirSessionComponent)
+context(resolver: KaFirResolver)
 internal fun contextSensitiveResolutionStatusImpl(simpleNameExpression: KtSimpleNameExpression): KaContextSensitiveResolutionStatus {
     val fir = simpleNameExpression.getOrBuildFir(analysisSession.resolutionFacade)
         ?: return KaContextSensitiveResolutionNotAvailableImpl
@@ -99,7 +99,7 @@ internal fun contextSensitiveResolutionStatusImpl(simpleNameExpression: KtSimple
     }
 }
 
-context(component: KaFirSessionComponent)
+context(resolver: KaFirResolver)
 private fun FirElement.isResolvedThroughContextSensitiveResolution(): Boolean = when (this) {
     is FirResolvedTypeRef -> resolvedSymbolOrigin == FirResolvedSymbolOrigin.ContextSensitive
     is FirResolvedQualifier -> resolvedSymbolOrigin == FirResolvedSymbolOrigin.ContextSensitive
@@ -120,7 +120,7 @@ private fun FirElement.isResolvedThroughContextSensitiveResolution(): Boolean = 
  * Returns `null` for anything that is not such a selector (e.g. the `Foo` receiver), so that the caller
  * falls back to the simple name's own FIR.
  */
-context(component: KaFirSessionComponent)
+context(resolver: KaFirResolver)
 private fun KtSimpleNameExpression.qualifiedExpressionFir(): FirElement? {
     return getQualifiedExpressionForSelector()?.getOrBuildFir(analysisSession.resolutionFacade)
 }
@@ -143,7 +143,7 @@ private fun KtSimpleNameExpression.qualifiedExpressionFir(): FirElement? {
  * argument sits under a `KtTypeReference` whose parent is a projection rather than the operator — both
  * therefore yield `null`.
  */
-context(component: KaFirSessionComponent)
+context(resolver: KaFirResolver)
 private fun KtSimpleNameExpression.enclosingTypeOperatorCall(): FirTypeOperatorCall? {
     val userType = parent as? KtUserType ?: return null
     if (userType.referenceExpression != this) return null

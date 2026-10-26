@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components.resolver
 
-import org.jetbrains.kotlin.analysis.api.fir.components.KaFirSessionComponent
+import org.jetbrains.kotlin.analysis.api.fir.components.KaFirResolver
 import org.jetbrains.kotlin.analysis.api.fir.components.analysisSession
 import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaVariableSignature
@@ -51,7 +51,7 @@ internal fun Collection<MutableMap.MutableEntry<FirExpression, FirValueParameter
     return argumentMapping
 }
 
-context(component: KaFirSessionComponent)
+context(resolver: KaFirResolver)
 internal fun FirCollectionLiteral.createArgumentMapping(
     arrayOfSymbol: KaNamedFunctionSymbol,
     substitutor: KaSubstitutor,
