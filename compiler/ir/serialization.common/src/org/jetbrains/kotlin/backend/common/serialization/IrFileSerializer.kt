@@ -129,7 +129,7 @@ open class IrFileSerializer(
      * and therefore serializes them as two distinct types.
      */
     protected class ProtoTypeArray {
-        private class UniqueType(val protoType: ProtoType) {
+        private class UniqueType(protoType: ProtoType) {
             val byteArray: ByteArray = protoType.toByteArray()
 
             private val memoizedHashCode = byteArray.contentHashCode()
@@ -142,7 +142,6 @@ open class IrFileSerializer(
         // Use `LinkedHashMap` to keep only unique types but preserve the insertion order.
         private val uniqueTypes: MutableMap<UniqueType, /* ordered index */ Int> = linkedMapOf()
 
-        val protoTypes: List<ProtoType> get() = uniqueTypes.keys.map { it.protoType }
         val byteArrays: List<ByteArray> get() = uniqueTypes.keys.map { it.byteArray }
 
         fun addAndGetIndex(protoType: ProtoType) = uniqueTypes.getOrPut(UniqueType(protoType)) { uniqueTypes.size }
