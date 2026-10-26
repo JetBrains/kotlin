@@ -202,6 +202,7 @@ object CompilerModules {
         ":core:language.targets",
         ":core:language.targets.jvm",
         ":core:language.version-settings",
+        ":compiler:compiler.version",
     )
 
     val analysisApiSyntaxSurfaceModules = arrayOf(
