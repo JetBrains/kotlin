@@ -36,6 +36,9 @@ import org.jetbrains.kotlin.wasm.WasmSpecialExportNames
  * Kotlin/Wasm also adds restrictions on extension functions (except companion extensions) and functions with vararg parameters.
  */
 object FirWasmJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind.Platform) {
+    override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
+        get() = true
+
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirDeclaration) {
         if (declaration !is FirNamedFunction || !context.isTopLevel || !isJsExportedDeclaration(declaration, context.session)) {
