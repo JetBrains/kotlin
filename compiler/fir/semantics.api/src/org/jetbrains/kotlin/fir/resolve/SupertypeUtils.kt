@@ -154,14 +154,14 @@ fun FirClass.isThereLoopInSupertypes(session: FirSession): Boolean {
             return
         }
 
-        when (val fir = current.fir) {
-            is FirClass -> {
-                fir.superConeTypes.forEach {
-                    it.lookupTag.toSymbol(session)?.let(::dfs)
+        when (current) {
+            is FirClassSymbol<*> -> {
+                current.resolvedSuperTypes.forEach {
+                    it.classLikeLookupTagIfAny?.toSymbol(session)?.let(::dfs)
                 }
             }
-            is FirTypeAlias -> {
-                fir.expandedConeType?.lookupTag?.toSymbol(session)?.let(::dfs)
+            is FirTypeAliasSymbol -> {
+                current.resolvedExpandedTypeRef.coneType.classLikeLookupTagIfAny?.toSymbol(session)?.let(::dfs)
             }
             else -> {}
         }
