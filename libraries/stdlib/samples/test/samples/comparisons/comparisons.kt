@@ -85,6 +85,18 @@ class Comparisons {
     }
 
     @Sample
+    fun compareByDescendingWithSelectors() {
+        val list = listOf("aa", "b", "bb", "a")
+
+        val sorted = list.sortedWith(compareByDescending(
+            { it.length },
+            { it }
+        ))
+
+        assertPrints(sorted, "[bb, aa, b, a]")
+    }
+
+    @Sample
     fun compareByWithComparator() {
         val list = listOf('B', 'a', 'A', 'b')
 
