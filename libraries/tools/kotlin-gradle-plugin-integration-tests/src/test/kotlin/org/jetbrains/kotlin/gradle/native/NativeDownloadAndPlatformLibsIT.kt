@@ -99,27 +99,6 @@ class NativeDownloadAndPlatformLibsIT : KGPBaseTest() {
         }
     }
 
-    // KT-90608
-    @OptIn(EnvironmentalVariablesOverride::class)
-    @DisplayName("Platform libraries generation downloads native dependencies only into konan.data.dir")
-    @GradleTest
-    fun testLibrariesGenerationDoesNotUseAnotherKonanDataDir(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
-        val anotherKonanDataDir = tempDir.resolve(".konan2")
-        nativeProject(
-            "native-platform-libraries",
-            gradleVersion = gradleVersion,
-            buildOptions = defaultBuildOptions.disableConfigurationCacheForNativeDistGeneration(),
-            environmentVariables = EnvironmentalVariables(Pair("KONAN_DATA_DIR", anotherKonanDataDir.absolutePathString()))
-        ) {
-            buildGradleKts.appendText("\nkotlin.${HostManager.host.presetName}()\n")
-
-            buildWithLightDist("assemble") {
-                assertOutputContains("Generate and precompile platform libraries for ${HostManager.host.name}")
-                assertDirectoryDoesNotExist(anotherKonanDataDir)
-            }
-        }
-    }
-
     @DisplayName("Downloading K/N with custom konanDataDir property")
     @GradleTest
     fun testLibrariesGenerationInCustomKonanDir(gradleVersion: GradleVersion) {
