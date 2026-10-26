@@ -54,7 +54,7 @@ class JavaAnnotationOverAst(
     private fun computeClassId(): ClassId? {
         val reference = annotationName ?: return null
 
-        with(resolutionContext) { resolve(reference) }?.let { return it }
+        resolve(reference, c = resolutionContext)?.let { return it }
 
         // No-symbol-provider fallback (parsing-level unit fixtures): `resolve` returned null
         // because `tryResolve` is always `false` without a provider. The `ClassId.topLevel`
@@ -65,7 +65,7 @@ class JavaAnnotationOverAst(
             return ClassId.topLevel(FqName(reference))
         }
 
-        val imported = with(resolutionContext) { getSimpleImport(reference) }
+        val imported = getSimpleImport(reference, c = resolutionContext)
         if (imported != null) {
             return ClassId.topLevel(imported)
         }
