@@ -62,6 +62,11 @@ class BodyGenerator(
      * [calleeReturnType] defaults to the callee's declared return type. Indirect (callRef)
      * dispatch passes the concrete result type the wasm function type is built from,
      * because the callRef intrinsic itself declares the erased type parameter `T`.
+     *
+     * Calls to imported functions are never emitted as tail calls: they cannot form unbounded
+     * recursion within the module, and V8 before 15.1 skips its well-known-import fast path
+     * (e.g. `wasm:js-string` builtins) for `return_call`, making such calls ~13x slower
+     * (https://crbug.com/527088951).
      */
     private fun isEligibleForTailCall(
         call: IrFunctionAccessExpression,
@@ -69,11 +74,16 @@ class BodyGenerator(
         calleeReturnType: IrType = callee.returnType,
     ): Boolean {
         if (call.origin !== WASM_TAIL_CALL) return false
+        if (callee.isImportedIntoWasm()) return false
         val caller = functionContext.irFunction ?: return false
         val callerResultType = wasmModuleTypeTransformer.transformResultType(caller.returnType)
         val calleeResultType = wasmModuleTypeTransformer.transformResultType(calleeReturnType)
         return callerResultType == calleeResultType
     }
+
+    // Mirrors the import detection in DeclarationGenerator.generateFunction.
+    private fun IrFunction.isImportedIntoWasm(): Boolean =
+        getWasmImportDescriptor() != null || getJsBuiltinDescriptor() != null || getJsFunAnnotation() != null
 
     fun WasmExpressionBuilder.buildGetUnit() {
         buildInstr(
