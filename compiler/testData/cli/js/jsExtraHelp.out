@@ -20,6 +20,7 @@ where advanced options include:
                              Lambda expressions that capture values are translated into in-line anonymous JavaScript functions.
   -Xir-keep                  Comma-separated list of fully qualified names not to be eliminated by DCE (if it can be reached), and for which to keep non-minified names.
   -Xir-minimized-member-names Minimize the names of members.
+  -Xir-per-class             Generate one .js file per class and per top-level declaration set.
   -Xir-per-file              Generate one .js file per source file.
   -Xir-per-module            Generate one .js file per module.
   -Xir-safe-external-boolean Wrap access to external 'Boolean' properties with an explicit conversion to 'Boolean'.
