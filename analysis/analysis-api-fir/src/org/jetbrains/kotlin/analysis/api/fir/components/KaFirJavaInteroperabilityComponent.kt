@@ -109,7 +109,7 @@ internal class KaFirJavaInteroperabilityComponent(
         }
 
         val mappingMode = mode.toTypeMappingMode(type, isAnnotationMethod, suppressWildcards)
-        val typeElement = coneType.simplifyType(rootModuleSession, useSitePosition).asPsiTypeElement(
+        val typeElement = coneType.simplifyForPsiType(rootModuleSession, useSitePosition).asPsiTypeElement(
             mode = mappingMode,
             useSitePosition = useSitePosition,
             allowErrorTypes = allowErrorTypes,

@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.psiUtil.parents
 
-internal fun ConeKotlinType.simplifyType(
+internal fun ConeKotlinType.simplifyForPsiType(
     session: FirSession,
     useSitePosition: PsiElement,
     visited: MutableSet<ConeKotlinType> = mutableSetOf(),
@@ -66,7 +66,7 @@ internal fun ConeKotlinType.simplifyType(
     if (typeArguments.isNotEmpty()) {
         currentType = currentType.withArguments { typeProjection ->
             typeProjection.replaceType(
-                typeProjection.type?.simplifyType(session, useSitePosition, visited)
+                typeProjection.type?.simplifyForPsiType(session, useSitePosition, visited)
             )
         }
     }
