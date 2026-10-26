@@ -231,9 +231,9 @@ class ModuleInfoChangesTest : BaseCompilationTest() {
     }
 
     @DefaultStrategyAgnosticCompilationTest
-    @DisplayName("Removing an 'exports' from a dependency's module-info.java recompiles and fails the consumer's user of the package (externally tracked)")
+    @DisplayName("Removing an 'exports' from a dependency's module-info.java recompiles and fails the consumer's user of the package")
     @TestMetadata("ic-scenarios/dependency-module-info-modification")
-    fun testDependencyModuleInfoExportsRemovalFailsConsumerExternallyTracked(strategyConfig: CompilerExecutionStrategyConfiguration) {
+    fun testDependencyModuleInfoExportsRemovalFailsConsumer(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmScenario(strategyConfig) {
             val dependency = module(
                 moduleName = "ic-scenarios/dependency-module-info-modification/module-a",
@@ -244,44 +244,20 @@ class ModuleInfoChangesTest : BaseCompilationTest() {
                 dependencies = listOf(dependency),
                 compilationConfigAction = jpmsSupportConfigAction,
             )
-            dependency.removeExportsAndAssertConsumerFails(consumer)
+            dependency.replaceFileWithVersion("module-info.java", "remove-exports")
+            dependency.compile()
+            consumer.compile {
+                expectFail()
+                assertLogContainsPatterns(LogLevel.ERROR, ".*/UseA\\.kt:\\d+:\\d+ .*does not export.*".toRegex())
+                assertCompiledSources("bpkg/UseA.kt")
+            }
         }
     }
 
     @DefaultStrategyAgnosticCompilationTest
-    @DisplayName("Removing an 'exports' from a dependency's module-info.java recompiles and fails the consumer's user of the package (internally tracked)")
-    @TestMetadata("ic-scenarios/dependency-module-info-modification")
-    fun testDependencyModuleInfoExportsRemovalFailsConsumerInternallyTracked(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
-            val dependency = module(
-                moduleName = "ic-scenarios/dependency-module-info-modification/module-a",
-                compilationConfigAction = jpmsSupportConfigAction,
-            )
-            val consumer = trackedModule(
-                moduleName = "ic-scenarios/dependency-module-info-modification/module-b",
-                dependencies = listOf(dependency),
-                compilationConfigAction = jpmsSupportConfigAction,
-            )
-            dependency.removeExportsAndAssertConsumerFails(consumer)
-        }
-    }
-
-    private fun ScenarioModule.removeExportsAndAssertConsumerFails(consumer: ScenarioModule) {
-        replaceFileWithVersion("module-info.java", "remove-exports")
-        compile()
-        consumer.compile {
-            expectFail()
-            assertLogContainsPatterns(LogLevel.ERROR, ".*/UseA\\.kt:\\d+:\\d+ .*does not export.*".toRegex())
-            assertCompiledSources("bpkg/UseA.kt")
-        }
-    }
-
-    @DefaultStrategyAgnosticCompilationTest
-    @DisplayName("A dependency's module-info.java change recompiles only the consumer's users of the dependency (externally tracked)")
+    @DisplayName("A dependency's module-info.java change recompiles only the consumer's users of the dependency")
     @TestMetadata("ic-scenarios/dependency-module-info-unrelated-change")
-    fun testDependencyModuleInfoChangeRecompilesOnlyUsersInNonModularConsumerExternallyTracked(
-        strategyConfig: CompilerExecutionStrategyConfiguration,
-    ) {
+    fun testDependencyModuleInfoChangeRecompilesOnlyUsersInNonModularConsumer(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmScenario(strategyConfig) {
             val dependency = module(
                 moduleName = "ic-scenarios/dependency-module-info-unrelated-change/module-a",
@@ -292,42 +268,18 @@ class ModuleInfoChangesTest : BaseCompilationTest() {
                 dependencies = listOf(dependency),
                 compilationConfigAction = jpmsSupportConfigAction,
             )
-            dependency.addRequiresAndAssertOnlyUsersAreRecompiled(consumer)
+            dependency.replaceFileWithVersion("module-info.java", "add-requires")
+            dependency.compile()
+            consumer.compile {
+                assertCompiledSources("bpkg/UseA.kt")
+            }
         }
     }
 
     @DefaultStrategyAgnosticCompilationTest
-    @DisplayName("A dependency's module-info.java change recompiles only the consumer's users of the dependency (internally tracked)")
-    @TestMetadata("ic-scenarios/dependency-module-info-unrelated-change")
-    fun testDependencyModuleInfoChangeRecompilesOnlyUsersInNonModularConsumerInternallyTracked(
-        strategyConfig: CompilerExecutionStrategyConfiguration,
-    ) {
-        jvmScenario(strategyConfig) {
-            val dependency = module(
-                moduleName = "ic-scenarios/dependency-module-info-unrelated-change/module-a",
-                compilationConfigAction = jpmsSupportConfigAction,
-            )
-            val consumer = trackedModule(
-                moduleName = "ic-scenarios/dependency-module-info-unrelated-change/module-b",
-                dependencies = listOf(dependency),
-                compilationConfigAction = jpmsSupportConfigAction,
-            )
-            dependency.addRequiresAndAssertOnlyUsersAreRecompiled(consumer)
-        }
-    }
-
-    private fun ScenarioModule.addRequiresAndAssertOnlyUsersAreRecompiled(consumer: ScenarioModule) {
-        replaceFileWithVersion("module-info.java", "add-requires")
-        compile()
-        consumer.compile {
-            assertCompiledSources("bpkg/UseA.kt")
-        }
-    }
-
-    @DefaultStrategyAgnosticCompilationTest
-    @DisplayName("A dependency becoming a JPMS module recompiles only the consumer's users of the dependency (externally tracked)")
+    @DisplayName("A dependency becoming a JPMS module recompiles only the consumer's users of the dependency")
     @TestMetadata("ic-scenarios/dependency-module-info-addition")
-    fun testDependencyModuleInfoAdditionRecompilesOnlyUsersExternallyTracked(strategyConfig: CompilerExecutionStrategyConfiguration) {
+    fun testDependencyModuleInfoAdditionRecompilesOnlyUsers(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmScenario(strategyConfig) {
             val dependency = module(
                 moduleName = "ic-scenarios/dependency-module-info-addition/module-a",
@@ -338,40 +290,18 @@ class ModuleInfoChangesTest : BaseCompilationTest() {
                 dependencies = listOf(dependency),
                 compilationConfigAction = jpmsSupportConfigAction,
             )
-            dependency.addModuleInfoAndAssertOnlyUsersAreRecompiled(consumer)
+            dependency.createPredefinedFile("module-info.java", "add-module-info")
+            dependency.compile()
+            consumer.compile {
+                assertCompiledSources("bpkg/UseA.kt")
+            }
         }
     }
 
     @DefaultStrategyAgnosticCompilationTest
-    @DisplayName("A dependency becoming a JPMS module recompiles only the consumer's users of the dependency (internally tracked)")
-    @TestMetadata("ic-scenarios/dependency-module-info-addition")
-    fun testDependencyModuleInfoAdditionRecompilesOnlyUsersInternallyTracked(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
-            val dependency = module(
-                moduleName = "ic-scenarios/dependency-module-info-addition/module-a",
-                compilationConfigAction = jpmsSupportConfigAction,
-            )
-            val consumer = trackedModule(
-                moduleName = "ic-scenarios/dependency-module-info-addition/module-b",
-                dependencies = listOf(dependency),
-                compilationConfigAction = jpmsSupportConfigAction,
-            )
-            dependency.addModuleInfoAndAssertOnlyUsersAreRecompiled(consumer)
-        }
-    }
-
-    private fun ScenarioModule.addModuleInfoAndAssertOnlyUsersAreRecompiled(consumer: ScenarioModule) {
-        createPredefinedFile("module-info.java", "add-module-info")
-        compile()
-        consumer.compile {
-            assertCompiledSources("bpkg/UseA.kt")
-        }
-    }
-
-    @DefaultStrategyAgnosticCompilationTest
-    @DisplayName("Dropping 'transitive' from a 'requires' in an intermediate module recompiles the consumer's users of both modules (externally tracked)")
+    @DisplayName("Dropping 'transitive' from a 'requires' in an intermediate module recompiles the consumer's users of both modules")
     @TestMetadata("ic-scenarios/dependency-module-info-requires-transitive")
-    fun testDependencyRequiresTransitiveRemovalRecompilesUsersExternallyTracked(strategyConfig: CompilerExecutionStrategyConfiguration) {
+    fun testDependencyRequiresTransitiveRemovalRecompilesUsers(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmScenario(strategyConfig) {
             val base = module(
                 moduleName = "ic-scenarios/dependency-module-info-requires-transitive/module-base",
@@ -387,38 +317,11 @@ class ModuleInfoChangesTest : BaseCompilationTest() {
                 dependencies = listOf(base, intermediate),
                 compilationConfigAction = jpmsSupportConfigAction,
             )
-            intermediate.dropTransitiveAndAssertUsersAreRecompiled(consumer)
-        }
-    }
-
-    @DefaultStrategyAgnosticCompilationTest
-    @DisplayName("Dropping 'transitive' from a 'requires' in an intermediate module recompiles the consumer's users of both modules (internally tracked)")
-    @TestMetadata("ic-scenarios/dependency-module-info-requires-transitive")
-    fun testDependencyRequiresTransitiveRemovalRecompilesUsersInternallyTracked(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmScenario(strategyConfig) {
-            val base = module(
-                moduleName = "ic-scenarios/dependency-module-info-requires-transitive/module-base",
-                compilationConfigAction = jpmsSupportConfigAction,
-            )
-            val intermediate = module(
-                moduleName = "ic-scenarios/dependency-module-info-requires-transitive/module-intermediate",
-                dependencies = listOf(base),
-                compilationConfigAction = jpmsSupportConfigAction,
-            )
-            val consumer = trackedModule(
-                moduleName = "ic-scenarios/dependency-module-info-requires-transitive/module-consumer",
-                dependencies = listOf(base, intermediate),
-                compilationConfigAction = jpmsSupportConfigAction,
-            )
-            intermediate.dropTransitiveAndAssertUsersAreRecompiled(consumer)
-        }
-    }
-
-    private fun ScenarioModule.dropTransitiveAndAssertUsersAreRecompiled(consumer: ScenarioModule) {
-        replaceFileWithVersion("module-info.java", "drop-transitive")
-        compile()
-        consumer.compile {
-            assertCompiledSources("cpkg/UseBase.kt", "cpkg/UseIntermediate.kt")
+            intermediate.replaceFileWithVersion("module-info.java", "drop-transitive")
+            intermediate.compile()
+            consumer.compile {
+                assertCompiledSources("cpkg/UseBase.kt", "cpkg/UseIntermediate.kt")
+            }
         }
     }
 
