@@ -5,20 +5,16 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.types.KaFirBuiltinFunctionTypeFamilies
+import org.jetbrains.kotlin.analysis.api.fir.types.KaFirFunctionTypeFamily
 import org.jetbrains.kotlin.analysis.api.fir.types.KaFirType
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsTypeInformationProvider
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeAliasSymbol
-import org.jetbrains.kotlin.analysis.api.types.KaBuiltinFunctionTypeFamilies
-import org.jetbrains.kotlin.analysis.api.types.KaClassType
-import org.jetbrains.kotlin.analysis.api.types.KaFunctionTypeFamily
-import org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds
-import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
-import org.jetbrains.kotlin.builtins.functions.isSuspendOrKSuspendFunction
 import org.jetbrains.kotlin.fir.resolve.FirSamResolver
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.*
@@ -138,59 +134,4 @@ internal class KaFirTypeInformationProvider(
     override fun fullyExpandedType(type: KaType): KaType = type.withValidityAssertion {
         (type as KaFirType).coneType.fullyExpandedType(analysisSession.firSession).asKaType()
     }
-}
-
-internal class KaFirFunctionTypeFamily(
-    @property:KaImplementationDetail
-    val typeKind: FunctionTypeKind,
-) : KaFunctionTypeFamily, org.jetbrains.kotlin.analysis.api.components.KaFunctionTypeFamily {
-    override val isReflect: Boolean
-        get() = typeKind.isReflectType
-
-    override val isSuspend: Boolean
-        get() = typeKind.isSuspendOrKSuspendFunction
-
-    override val isInlinable: Boolean
-        get() = typeKind.isInlineable
-
-    override val maxArity: Int
-        get() = typeKind.maxArity
-
-    override val supportsConversionFromSimpleFunctionType: Boolean
-        get() = typeKind.supportsConversionFromSimpleFunctionType
-
-    override val nameBase: String
-        get() = typeKind.classNamePrefix
-
-    override val typeRenderingPrefix: String?
-        get() = typeKind.prefixForTypeRender
-
-    override val markerAnnotationClassId: ClassId?
-        get() = typeKind.annotationOnInvokeClassId
-
-    override fun classId(arity: Int): ClassId =
-        typeKind.numberedClassId(arity)
-
-    override fun equals(other: Any?): Boolean =
-        other is KaFirFunctionTypeFamily && typeKind == other.typeKind
-
-    override fun hashCode(): Int = typeKind.hashCode()
-
-    override fun toString(): String =
-        typeKind.toString()
-}
-
-private object KaFirBuiltinFunctionTypeFamilies : KaBuiltinFunctionTypeFamilies,
-    org.jetbrains.kotlin.analysis.api.components.KaBuiltinFunctionTypeFamilies {
-    override val function: org.jetbrains.kotlin.analysis.api.components.KaFunctionTypeFamily =
-        KaFirFunctionTypeFamily(FunctionTypeKind.Function)
-
-    override val suspendFunction: org.jetbrains.kotlin.analysis.api.components.KaFunctionTypeFamily =
-        KaFirFunctionTypeFamily(FunctionTypeKind.SuspendFunction)
-
-    override val kFunction: org.jetbrains.kotlin.analysis.api.components.KaFunctionTypeFamily =
-        KaFirFunctionTypeFamily(FunctionTypeKind.KFunction)
-
-    override val kSuspendFunction: org.jetbrains.kotlin.analysis.api.components.KaFunctionTypeFamily =
-        KaFirFunctionTypeFamily(FunctionTypeKind.KSuspendFunction)
 }
