@@ -13,28 +13,28 @@ import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseRecursively
 import org.jetbrains.kotlin.psi.KtFile
 
 /**
- * A source file to be compiled as a part of some [ChunkToCompile].
+ * A source file to be compiled as a part of some [CompilationChunk].
  */
-internal class FileToCompile(val ktFile: KtFile, val firFile: FirFile)
+internal class CompilationChunkFile(val ktFile: KtFile, val firFile: FirFile)
 
 /**
  * A set of files to be compiled together.
  *
  * @param kind A chunk kind.
- * @param mainFile The main file if a chunk is the [ChunkKind.MAIN] one, or `null` otherwise.
+ * @param mainFile The main file if a chunk is the [CompilationChunkKind.MAIN] one, or `null` otherwise.
  * @param hasCodeFragments Whether [files] contain at least one code fragment.
  * @param attachPrecompiledBinaries Whether to attach compiled bytecode of the module instead of compiling the module files.
  * @param files Selected files that are either from the same module or should be compiled as they are from the same module.
  */
-internal class ChunkToCompile(
-    val kind: ChunkKind,
+internal class CompilationChunk(
+    val kind: CompilationChunkKind,
     val mainFile: KtFile?,
     val hasCodeFragments: Boolean,
     val attachPrecompiledBinaries: Boolean,
-    val files: List<FileToCompile>
+    val files: List<CompilationChunkFile>
 )
 
-internal enum class ChunkKind {
+internal enum class CompilationChunkKind {
     /** A chunk with the main file (a file for which compilation is requested). */
     MAIN,
 

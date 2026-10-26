@@ -228,7 +228,7 @@ internal class KaFirCompilerFacility(
 
             when (result) {
                 is KaCompilationResult.Failure -> return result
-                is KaCompilationResult.Success if chunk.kind == ChunkKind.MAIN -> return result
+                is KaCompilationResult.Success if chunk.kind == CompilationChunkKind.MAIN -> return result
                 is KaCompilationResult.Success -> {
                     val classMap = buildMap {
                         for (compiledFile in result.output) {
@@ -306,7 +306,7 @@ internal class KaFirCompilerFacility(
         chunkRegistrar: CompilationChunkRegistrar,
         compilationPeerData: CompilationPeerData,
         codeFragmentMappings: CodeFragmentMappings?
-    ): Map<KaModule, ChunkToCompile> {
+    ): Map<KaModule, CompilationChunk> {
         for ([module, files] in compilationPeerData.peers) {
             for (file in files) {
                 chunkRegistrar.submit(file, module)
@@ -325,7 +325,7 @@ internal class KaFirCompilerFacility(
 
     private fun compileChunk(
         module: KaModule,
-        chunk: ChunkToCompile,
+        chunk: CompilationChunk,
         options: KaFirCompilationOptions,
         codeFragmentMappings: CodeFragmentMappings?,
         compiledCodeProvider: CompiledCodeProvider,
@@ -349,7 +349,7 @@ internal class KaFirCompilerFacility(
                     codeFragmentMappings.inlineLambdaParametersMapping
                 )
             }
-            chunk.kind == ChunkKind.CONTEXT -> {
+            chunk.kind == CompilationChunkKind.CONTEXT -> {
                 CodeFragmentContextFir2IrExtensions(baseFir2IrExtensions, contextDeclarationCache)
             }
             else -> baseFir2IrExtensions
@@ -384,7 +384,7 @@ internal class KaFirCompilerFacility(
         }
 
         val evaluatorData = when (chunk.kind) {
-            ChunkKind.MAIN if codeFragmentMappings != null -> {
+            CompilationChunkKind.MAIN if codeFragmentMappings != null -> {
                 val irFile = fir2IrResult.irModuleFragment.files.single { (it.fileEntry as? PsiIrFileEntry)?.psiFile is KtCodeFragment }
                 val irClass = irFile.declarations.single { it is IrClass && it.metadata is FirMetadataSource.CodeFragment } as IrClass
                 val irFunction = irClass.declarations.single { it is IrFunction && it !is IrConstructor } as IrFunction
@@ -398,7 +398,7 @@ internal class KaFirCompilerFacility(
                     capturedTypeParametersMapping = convertedMapping
                 )
             }
-            ChunkKind.CONTEXT -> {
+            CompilationChunkKind.CONTEXT -> {
                 JvmEvaluatorData(
                     localDeclarationsData = JvmBackendContext.SharedLocalDeclarationsData(),
                     evaluatorGeneratedFunction = null,
@@ -428,7 +428,7 @@ internal class KaFirCompilerFacility(
             }
         }
 
-        if (chunk.kind == ChunkKind.CONTEXT) {
+        if (chunk.kind == CompilationChunkKind.CONTEXT) {
             contextDeclarationCache?.initialize(commonMemberStorage, evaluatorData)
         }
 
