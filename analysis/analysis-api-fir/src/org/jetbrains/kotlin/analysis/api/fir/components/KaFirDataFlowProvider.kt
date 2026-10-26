@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.parentsOfType
-import com.intellij.util.SmartList
-import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtFakeSourceElementKind.DesugaredAugmentedAssign
 import org.jetbrains.kotlin.KtFakeSourceElementKind.DesugaredIncrementOrDecrement
 import org.jetbrains.kotlin.analysis.api.dataflow.KaDataFlowExitPointSnapshot
@@ -35,8 +33,8 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
 import org.jetbrains.kotlin.fir.psi
-import org.jetbrains.kotlin.fir.references.FirReference
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNodeWithSubgraphs
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
@@ -50,8 +48,6 @@ import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
-import java.util.*
-import kotlin.jvm.optionals.getOrNull
 import kotlin.math.sign
 
 internal class KaFirDataFlowProvider(
@@ -389,130 +385,6 @@ internal class KaFirDataFlowProvider(
         return null
     }
 
-    private fun ControlFlowGraphIndex.hasMultipleExitPoints(firTargets: Set<FirElement>): Boolean {
-        if (firTargets.size < 2) {
-            return false
-        }
-
-        val exitPoints = firTargets
-            .mapNotNull { findLast(it) }
-            .flatMap { node ->
-                node.followingNodes
-                    .filter { it !is StubNode }
-                    .map { it.unwrap() }
-                    .distinct()
-                    .sortedBy { it.id }
-            }.distinct()
-
-        return exitPoints.size > 1
-    }
-
-    private fun CFGNode<*>.unwrap(): CFGNode<*> {
-        var current = this
-
-        while (current.isExitNode()) {
-            val following = current.followingNodes
-            if (following.size == 1) {
-                current = following.first()
-            } else {
-                break
-            }
-        }
-
-        return current
-    }
-
-    private fun CFGNode<*>.isExitNode(): Boolean {
-        return when (this) {
-            is ExitNodeMarker, is ExitValueParameterNode, is WhenSubjectExpressionExitNode, is AnonymousObjectExpressionExitNode,
-            is SmartCastExpressionExitNode, is PostponedLambdaExitNode, is DelegateExpressionExitNode, is WhenBranchResultExitNode,
-            is ElvisExitNode, is ExitSafeCallNode, is LocalClassExitNode, is ElvisLhsExitNode,
-                -> {
-                true
-            }
-            else -> {
-                false
-            }
-        }
-    }
-
-    /**
-     * Returns `true` if the control graph contains at least one of the [firCandidates].
-     */
-    private fun ControlFlowGraph.contains(firCandidates: Set<FirElement>): Boolean {
-        for (node in nodes) {
-            if (node.fir in firCandidates) {
-                return true
-            }
-            if (node is CFGNodeWithSubgraphs<*> && node.subGraphs.any { it.contains(firCandidates) }) {
-                return true
-            }
-        }
-
-        return false
-    }
-
-    private class FirElementPathSearcher(statements: Collection<FirElement>) : FirDefaultVisitorVoid() {
-        private companion object {
-            val FORBIDDEN_FAKE_SOURCE_KINDS: Set<KtFakeSourceElementKind> = setOf(
-                KtFakeSourceElementKind.WhenCondition,
-                KtFakeSourceElementKind.SingleExpressionBlock
-            )
-        }
-
-        private val statements = statements.toHashSet()
-
-        private val mapping = HashMap<FirElement, Optional<FirElement>>()
-        private var unmappedCount = statements.size
-
-        private val stack = ArrayDeque<FirElement>()
-
-        operator fun get(fir: FirElement): FirElement? {
-            return mapping[fir]?.getOrNull()
-        }
-
-        override fun visitElement(element: FirElement) {
-            withElement(element) {
-                if (element in statements) {
-                    // The leaf is in mapping, but its value is still 'null'
-                    mapping.computeIfAbsent(element) { _ ->
-                        unmappedCount -= 1
-                        // Here we intentionally use the 'Optional' wrapper to make 'computeIfAbsent' work smoothly
-                        Optional.ofNullable(computeTarget(element))
-                    }
-                }
-
-                if (unmappedCount > 0) {
-                    element.acceptChildren(this)
-                }
-            }
-        }
-
-        private fun computeTarget(element: FirElement): FirElement? {
-            val psi = element.psi
-            return stack.firstOrNull { it.psi == psi && isAppropriateTarget(it) }
-        }
-
-        private fun isAppropriateTarget(element: FirElement): Boolean {
-            if (element !is FirStatement && element !is FirReference) {
-                return false
-            }
-
-            val source = element.source
-            val isImplicitWhenSubjectVariable = element is FirProperty && element.isImplicitWhenSubjectVariable
-            return source?.kind !in FORBIDDEN_FAKE_SOURCE_KINDS && !isImplicitWhenSubjectVariable
-        }
-
-        private inline fun withElement(element: FirElement, block: () -> Unit) {
-            stack.addLast(element)
-            try {
-                block()
-            } finally {
-                stack.removeLast()
-            }
-        }
-    }
-
     private inner class FirElementCollector : FirDefaultVisitorVoid() {
         val hasJumps: Boolean
             get() = firReturnTargets.isNotEmpty() || firLoopJumpTargets.isNotEmpty()
@@ -609,40 +481,18 @@ internal class KaFirDataFlowProvider(
     }
 }
 
-private class ControlFlowGraphIndex(graphProvider: () -> ControlFlowGraph) {
-    private val mapping: Map<FirElement, List<CFGNode<*>>> by lazy {
-        val result = HashMap<FirElement, MutableList<CFGNode<*>>>()
-
-        fun addGraph(graph: ControlFlowGraph) {
-            for (node in graph.nodes) {
-                result.getOrPut(node.fir) { SmartList() }.add(node)
-
-                if (node is CFGNodeWithSubgraphs<*>) {
-                    node.subGraphs.forEach(::addGraph)
-                }
-            }
+/**
+ * Returns `true` if the control graph contains at least one of the [firCandidates].
+ */
+private fun ControlFlowGraph.contains(firCandidates: Set<FirElement>): Boolean {
+    for (node in nodes) {
+        if (node.fir in firCandidates) {
+            return true
         }
-
-        addGraph(graphProvider())
-
-        return@lazy result
+        if (node is CFGNodeWithSubgraphs<*> && node.subGraphs.any { it.contains(firCandidates) }) {
+            return true
+        }
     }
 
-    /**
-     * Find the last node in a graph (or its subgraphs) that point to the given [fir] element.
-     */
-    fun findLast(fir: FirElement): CFGNode<*>? {
-        val directNodes = mapping[fir]
-        if (directNodes != null) {
-            return directNodes.last()
-        }
-
-        if (fir is FirBlock) {
-            return fir.statements
-                .asReversed()
-                .firstNotNullOfOrNull(::findLast)
-        }
-
-        return null
-    }
+    return false
 }
