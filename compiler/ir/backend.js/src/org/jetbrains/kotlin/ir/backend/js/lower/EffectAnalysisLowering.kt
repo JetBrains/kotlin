@@ -48,7 +48,8 @@ class EffectAnalysisLowering(val context: JsCommonBackendContext) : BodyLowering
                 dependOn(it)
             }
 
-        fun maybeVisit(owner: IrFunction): Effects {
+        fun maybeVisit(ownerOrFakeOverride: IrFunction): Effects {
+            val owner = ownerOrFakeOverride.resolveFakeOverrideOrSelf()
             owner.effects?.let { return it }
             val effectsAnnotation = owner.getAnnotation(EffectAnalysisClassIds.annotation.asSingleFqName())
             if (effectsAnnotation != null) {
@@ -196,11 +197,10 @@ class EffectAnalysisLowering(val context: JsCommonBackendContext) : BodyLowering
             get() {
                 if (this.isStatic) return true
                 if (this !is IrSimpleFunction) return true
-                if (this.modality == Modality.FINAL) return true
-                (this.parent as? IrClass)?.let {
-                    return it.modality == Modality.FINAL
+                this.parentClassOrNull?.let {
+                    if (it.modality == Modality.FINAL) return true
                 }
-                return true
+                return this.modality == Modality.FINAL
             }
     }
 }
