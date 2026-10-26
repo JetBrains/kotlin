@@ -202,7 +202,7 @@ private sealed class ProcessingStatus {
 
 private data class DirectoriesInfo(val inputDirectory: Path, val outputDirectory: Path, val stdlib: Path)
 
-private data class CacheInfo(val cacheDirectory: Path, val cacheKind: String, val cacheArgs: List<String>)
+internal data class CacheInfo(val cacheDirectory: Path, val cacheKind: String, val cacheArgs: List<String>)
 
 private class DefFile(val name: String, val depends: MutableList<DefFile>) {
     override fun toString(): String = "$name: [${depends.joinToString(separator = ", ") { it.name }}]"
@@ -312,6 +312,21 @@ private fun getLibraryCacheDir(
     return OutputFiles(cacheDirectory.resolve(cacheBaseName).absolutePathString(), target, cacheOutputKind).mainFile
 }
 
+internal fun cacheCompilerArgs(
+        target: KonanTarget,
+        library: Path,
+        cacheInfo: CacheInfo,
+        konanDataDir: String?,
+): List<String> = with(cacheInfo) {
+    listOfNotNull(
+            "-p", cacheKind,
+            "-target", target.visibleName,
+            "-Xadd-cache=${library.absolutePathString()}",
+            "-Xcache-directory=${cacheDirectory.absolutePathString()}",
+            konanDataDir?.let { "-Xkonan-data-dir=${it}" },
+    ) + cacheArgs
+}
+
 @OptIn(ExperimentalPathApi::class)
 private fun buildCache(
         target: KonanTarget,
@@ -332,13 +347,7 @@ private fun buildCache(
         libraryCacheDir.deleteRecursively()
     }
 
-    val compilerArgs = listOfNotNull(
-            "-p", cacheKind,
-            "-target", target.visibleName,
-            "-Xadd-cache=${outputDirectory.absolutePathString()}/${def.libraryName}",
-            "-Xcache-directory=${cacheDirectory.absolutePathString()}",
-            konanDataDir?.let { "-Xkonan-data-dir=${it}" },
-    ) + cacheArgs
+    val compilerArgs = cacheCompilerArgs(target, outputDirectory.resolve(def.libraryName), cacheInfo, konanDataDir)
 
     logger.verbose("Run compiler with args: ${compilerArgs.joinToString(separator = " ")}")
     K2Native.mainNoExit(compilerArgs.toTypedArray())
@@ -358,13 +367,7 @@ private fun buildStdlibCache(
     }
 
     logger.log("Precompiling standard library...")
-    val compilerArgs = listOfNotNull(
-            "-p", cacheKind,
-            "-target", target.visibleName,
-            "-Xadd-cache=${stdlib.absolutePathString()}",
-            "-Xcache-directory=${cacheDirectory.absolutePathString()}",
-            konanDataDir?.let { "-Xkonan-data-dir=${it}" },
-    ) + cacheArgs
+    val compilerArgs = cacheCompilerArgs(target, stdlib, cacheInfo, konanDataDir)
     logger.verbose("Run compiler with args: ${compilerArgs.joinToString(separator = " ")}")
     K2Native.mainNoExit(compilerArgs.toTypedArray())
 }
