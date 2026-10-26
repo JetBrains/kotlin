@@ -58,7 +58,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 
 context(component: KaFirSessionComponent)
 internal fun runJvmIrCodeGen(
-    chunk: ChunkToCompile,
+    chunk: CompilationChunk,
     fir2IrResult: Fir2IrActualizedResult,
     configuration: CompilerConfiguration,
     options: KaFirCompilationOptions,
