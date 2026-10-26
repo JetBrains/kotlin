@@ -1,3 +1,5 @@
+// IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE: JS,Wasm-JS:2.4
+// KT-89489, KT-89487: Fixed in 2.5.20-Beta1
 // FILE: another.kt
 
 private val prop = run {
