@@ -1840,6 +1840,48 @@ public class FirStandaloneNormalAnalysisSourceModuleWasmSingleSymbolByPsiTestGen
     }
 
     @Test
+    @TestMetadata("explicitInlineValueClass.kt")
+    public void testExplicitInlineValueClass() {
+      run("explicitInlineValueClass.kt");
+    }
+
+    @Test
+    @TestMetadata("explicitInlineValueClassFeatureEnabled.kt")
+    public void testExplicitInlineValueClassFeatureEnabled() {
+      run("explicitInlineValueClassFeatureEnabled.kt");
+    }
+
+    @Test
+    @TestMetadata("explicitInlineValueClassFeatureEnabledCommon.kt")
+    public void testExplicitInlineValueClassFeatureEnabledCommon() {
+      run("explicitInlineValueClassFeatureEnabledCommon.kt");
+    }
+
+    @Test
+    @TestMetadata("explicitInlineValueClassFeatureEnabledJs.kt")
+    public void testExplicitInlineValueClassFeatureEnabledJs() {
+      run("explicitInlineValueClassFeatureEnabledJs.kt");
+    }
+
+    @Test
+    @TestMetadata("explicitInlineValueClassMultipleFields.kt")
+    public void testExplicitInlineValueClassMultipleFields() {
+      run("explicitInlineValueClassMultipleFields.kt");
+    }
+
+    @Test
+    @TestMetadata("explicitInlineValueClassWithJvmInline.kt")
+    public void testExplicitInlineValueClassWithJvmInline() {
+      run("explicitInlineValueClassWithJvmInline.kt");
+    }
+
+    @Test
+    @TestMetadata("explicitInlineValueClassWithJvmInlineCommon.kt")
+    public void testExplicitInlineValueClassWithJvmInlineCommon() {
+      run("explicitInlineValueClassWithJvmInlineCommon.kt");
+    }
+
+    @Test
     @TestMetadata("fullValueClassAbstract.kt")
     public void testFullValueClassAbstract() {
       run("fullValueClassAbstract.kt");

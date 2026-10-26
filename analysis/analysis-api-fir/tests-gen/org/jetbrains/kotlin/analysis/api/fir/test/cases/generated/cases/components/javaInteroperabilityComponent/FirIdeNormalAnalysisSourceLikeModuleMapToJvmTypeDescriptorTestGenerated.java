@@ -50,6 +50,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleMapToJvmTypeDescriptorTestGener
   }
 
   @Test
+  @TestMetadata("explicitInlineValueClass.kt")
+  public void testExplicitInlineValueClass() {
+    run("explicitInlineValueClass.kt");
+  }
+
+  @Test
   @TestMetadata("flexibleType.kt")
   public void testFlexibleType() {
     run("flexibleType.kt");

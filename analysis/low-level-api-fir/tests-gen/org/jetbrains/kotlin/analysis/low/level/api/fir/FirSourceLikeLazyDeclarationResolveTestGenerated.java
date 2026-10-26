@@ -2189,6 +2189,24 @@ public class FirSourceLikeLazyDeclarationResolveTestGenerated extends AbstractFi
       }
 
       @Test
+      @TestMetadata("explicitInlineValueClassWithFullValueClassesEnabled.kt")
+      public void testExplicitInlineValueClassWithFullValueClassesEnabled() {
+        run("explicitInlineValueClassWithFullValueClassesEnabled.kt");
+      }
+
+      @Test
+      @TestMetadata("explicitInlineValueClassWithJvmInline.kt")
+      public void testExplicitInlineValueClassWithJvmInline() {
+        run("explicitInlineValueClassWithJvmInline.kt");
+      }
+
+      @Test
+      @TestMetadata("explicitInlineValueClassWithMultipleFields.kt")
+      public void testExplicitInlineValueClassWithMultipleFields() {
+        run("explicitInlineValueClassWithMultipleFields.kt");
+      }
+
+      @Test
       @TestMetadata("fullValueClass.kt")
       public void testFullValueClass() {
         run("fullValueClass.kt");

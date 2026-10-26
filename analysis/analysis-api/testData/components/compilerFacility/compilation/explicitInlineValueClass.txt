@@ -1,0 +1,33 @@
+public final class ExplicitInlineValueClass {
+    // source: 'explicitInlineValueClass.kt'
+    private final field value: int
+    private synthetic method <init>(p0: int): void
+    public synthetic final static method box-impl(p0: int): ExplicitInlineValueClass
+    public static method constructor-impl(p0: int): int
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: int, p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: int, p1: int): boolean
+    public final method getValue(): int
+    public method hashCode(): int
+    public static method hashCode-impl(p0: int): int
+    public final static method plus-nBG2T-o(p0: int, p1: int): int
+    public method toString(): java.lang.String
+    public static method toString-impl(p0: int): java.lang.String
+    public synthetic final method unbox-impl(): int
+}
+
+public final class ExplicitInlineValueClassKt {
+    // source: 'explicitInlineValueClass.kt'
+    public final static method convert-Rcw7k8A(p0: int): FullValueClass
+    public final static method create(p0: int): int
+}
+
+public final class FullValueClass {
+    // source: 'explicitInlineValueClass.kt'
+    private final field value: int
+    public method <init>(p0: int): void
+    public method equals(p0: java.lang.Object): boolean
+    public final method getValue(): int
+    public method hashCode(): int
+    public method toString(): java.lang.String
+}
