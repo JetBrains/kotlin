@@ -63,10 +63,10 @@ abstract class ObjectTransformer<out T : TransformationInfo>(@JvmField val trans
 }
 
 class WhenMappingTransformer(
+    state: GenerationState,
     whenObjectRegenerationInfo: WhenMappingTransformationInfo,
     private val inliningContext: InliningContext
-) : ObjectTransformer<WhenMappingTransformationInfo>(whenObjectRegenerationInfo, inliningContext.state) {
-
+) : ObjectTransformer<WhenMappingTransformationInfo>(whenObjectRegenerationInfo, state) {
     override fun doTransform(parentRemapper: FieldRemapper): InlineResult {
         val classReader = createClassReader()
         //TODO add additional check that class is when mapping
