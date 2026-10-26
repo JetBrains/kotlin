@@ -92,14 +92,15 @@ data class IeData(
 object IeChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
     context(context: CheckerContext)
     private fun isInterestingSetter(funcName: String, expression: FirFunctionCall): Boolean {
-        if (funcName.length < 4 || !(funcName.startsWith("set") || !funcName[3].isUpperCase())) return false
+        if (funcName.length < 4) return false
         if (funcName == "setOf") return false
+        if (funcName.startsWith("set") && funcName[3].isUpperCase()) return true
 //        if (funcName.startsWith("set") && expression.arguments.size != 1) return
 //        val symbol = expression.calleeReference.symbol as? FirNamedFunctionSymbol ?: return
 //        val isSetter = funcName.startsWith("set")
 //        if (symbol.valueParameterSymbols.size != if (isSetter) 1 else 0) return
 //        if (symbol.valueParameterSymbols.any { it.isVararg || it.hasDefaultValue }) return
-        return true
+        return false
     }
 
     private fun String.setterNameToGetter(): String {
