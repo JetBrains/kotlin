@@ -87,11 +87,6 @@ class IrSymbolDeserializer(
         return postProcessedSymbol
     }
 
-    /** Notify [IrSymbolDeserializer] about a known symbol that belongs to the current file, [libraryFile]. */
-    fun referenceLocalIrSymbol(symbol: IrSymbol, signature: IdSignature) {
-        deserializedSymbolsWithOwnersInCurrentFile.put(signature, symbol)
-    }
-
     fun referenceSimpleFunctionByLocalSignature(signature: IdSignature): IrSimpleFunctionSymbol =
         deserializeSymbolWithOwnerMaybeInOtherFile(signature, BinarySymbolData.SymbolKind.FUNCTION_SYMBOL) as IrSimpleFunctionSymbol
 
