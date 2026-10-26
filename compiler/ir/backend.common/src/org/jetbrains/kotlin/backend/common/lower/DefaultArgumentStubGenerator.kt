@@ -260,7 +260,6 @@ open class DefaultParameterInjector<TContext : CommonBackendContext>(
         val stubFunction = symbol.owner
         stubFunction.typeParameters.forEach { log { "$stubFunction[${it.index}] : $it" } }
 
-        val declaration = expression.symbol.owner
         val currentDeclaration = declarationStack.last()
         return context.createIrBuilder(
             currentDeclaration.symbol, startOffset = expression.startOffset, endOffset = expression.endOffset
@@ -426,8 +425,6 @@ open class DefaultParameterInjector<TContext : CommonBackendContext>(
         function.visibility // Just use whatever visibility the original declaration has
 
     protected open fun useConstructorMarker(function: IrFunction) = function is IrConstructor
-
-    protected open fun isStatic(function: IrFunction): Boolean = false
 
     private fun log(msg: () -> String) = context.log { "DEFAULT-INJECTOR: ${msg()}" }
 
