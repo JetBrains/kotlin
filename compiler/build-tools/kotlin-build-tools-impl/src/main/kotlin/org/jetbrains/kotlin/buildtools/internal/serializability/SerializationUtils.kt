@@ -35,7 +35,7 @@ internal fun <T, K : Any> K.setPropertyByName(
 internal object PathAsStringSerializer : KSerializer<Path> {
     override val descriptor = PrimitiveSerialDescriptor("Path", PrimitiveKind.STRING)
 
-    override fun serialize(encoder: Encoder, value: Path) = encoder.encodeString(value.pathString)
+    override fun serialize(encoder: Encoder, value: Path) = encoder.encodeString(value.toFile().path)
 
     override fun deserialize(decoder: Decoder): Path = Path(decoder.decodeString())
 }
