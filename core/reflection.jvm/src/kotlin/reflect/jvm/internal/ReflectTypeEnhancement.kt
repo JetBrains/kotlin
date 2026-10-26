@@ -180,8 +180,9 @@ private fun AbstractKType.enhanceInflexible(
     if (enhancedClassifier == null && enhancedNullability == null && enhancedArguments.all { it == null })
         return EnhancementResult(null, subtreeSize)
 
+    val mutableCollectionClass = typeConstructor as? MutableCollectionKClass<*>
     val enhancedType = SimpleKType(
-        typeConstructor,
+        mutableCollectionClass?.readonlyClass ?: typeConstructor,
         enhancedArguments.zip(arguments) { enhanced, original -> enhanced ?: original },
         enhancedNullability ?: isMarkedNullable,
         lazyAnnotations, // In contrast to the compiler, we're not adding synthetic EnhancedNullability/EnhancedMutability annotations.
@@ -189,7 +190,7 @@ private fun AbstractKType.enhanceInflexible(
         isDefinitelyNotNullType || (effectiveQualifiers.definitelyNotNull && !effectiveQualifiers.isNullabilityQualifierForWarning),
         isNothingType,
         isSuspendFunctionType,
-        enhancedClassifier as? MutableCollectionKClass<*>,
+        mutableCollectionClass,
     )
 
     return EnhancementResult(enhancedType, subtreeSize)
