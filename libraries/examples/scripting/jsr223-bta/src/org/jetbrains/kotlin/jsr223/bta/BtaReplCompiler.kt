@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgumen
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jvm
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.NameUtils
+import org.jetbrains.kotlin.name.ScriptNames
 import org.jetbrains.kotlin.scripting.compiler.plugin.KOTLIN_SCRIPTING_PLUGIN_ID
 import org.jetbrains.kotlin.scripting.compiler.plugin.ReplSnippetConfigurationCodec
 import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptTemplateWithClasspath
@@ -269,7 +269,7 @@ class BtaReplCompiler(
     }
 
     private fun snippetClassId(scriptFile: Path): ClassId =
-        ClassId(ROOT, NameUtils.getSnippetTargetClassName(scriptFile.name))
+        ClassId(ROOT, ScriptNames.getSnippetTargetClassName(scriptFile.name))
 }
 
 // defensive deleting for OSes like Windows
