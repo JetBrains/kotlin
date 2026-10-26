@@ -1,0 +1,34 @@
+// IntelliJ API Decompiler stub source generated from a class file
+// Implementation of methods is not available
+
+public final enum class E1 private constructor() : kotlin.Enum<E1> {
+    error,
+
+    value,
+
+    inline;
+}
+
+public final enum class E2 private constructor(x: kotlin.String) : kotlin.Enum<E2> {
+    error,
+
+    value,
+
+    inline;
+}
+
+public final enum class E3 private constructor() : kotlin.Enum<E3> {
+    error,
+
+    value,
+
+    inline;
+}
+
+public final enum class E4 private constructor(x: kotlin.String) : kotlin.Enum<E4> {
+    error,
+
+    value,
+
+    inline;
+}
