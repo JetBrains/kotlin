@@ -163,6 +163,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         FirNestedClassChecker,
         FirValueClassDeclarationChecker.Regular,
         FirValueClassDeclarationChecker.ForExpectClass,
+        FirWillBecomeValueIdentityBasedMembersChecker,
         FirOuterClassArgumentsRequiredChecker,
         FirFiniteBoundRestrictionChecker,
         FirNonExpansiveInheritanceRestrictionChecker,
