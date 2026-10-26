@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib.Companion.UMANIFEST_F
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib.Companion.UMANIFEST_VERSION
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.UklibFragment
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.UklibModule
+import org.jetbrains.kotlin.gradle.utils.ensurePathComponentSafeString
+import org.jetbrains.kotlin.gradle.utils.resolveInside
 import java.io.File
 
 internal data class IncompatibleUklibVersion(
@@ -37,13 +39,13 @@ internal fun deserializeUklibFromDirectory(
         assertCanReadUManifest(manifestVersion, directory)
 
         val fragments = (json.property<List<Map<String, Any>>>(FRAGMENTS)).map { fragment ->
-            val fragmentIdentifier = fragment.property<String>(FRAGMENT_IDENTIFIER)
+            val fragmentIdentifier = ensurePathComponentSafeString(fragment.property<String>(FRAGMENT_IDENTIFIER))
             UklibFragment(
                 identifier = fragmentIdentifier,
                 attributes = fragment.property<List<String>>(ATTRIBUTES).toSet(),
                 files = if (fragment.keys.contains(FRAGMENT_FILES))
                     fragment.property<List<String>>(FRAGMENT_FILES).map(::File)
-                else listOf(directory.resolve(fragmentIdentifier))
+                else listOf(directory.resolveInside(fragmentIdentifier))
             )
         }.toSet()
 

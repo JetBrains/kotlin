@@ -79,7 +79,7 @@ internal fun File.isParentOf(childCandidate: File, strict: Boolean = false): Boo
     val childCandidatePath = Paths.get(childCandidate.absolutePath).normalize()
 
     return if (strict) {
-        childCandidatePath.startsWith(parentPath) && parentPath != childCandidate
+        childCandidatePath.startsWith(parentPath) && parentPath != childCandidatePath
     } else {
         childCandidatePath.startsWith(parentPath)
     }
@@ -252,4 +252,42 @@ internal fun Path.setExecutable() {
     setPosixFilePermissions(
         getPosixFilePermissions() + PosixFilePermission.OWNER_EXECUTE
     )
+}
+
+/**
+ * Single path component: Latin letters, digits, '-', '_' and '.', but not starting with '.'.
+ * This rules out separators, `.`, `..` and hidden files.
+ */
+private val pathSafeStringRegex = Regex("[A-Za-z0-9_-][A-Za-z0-9._-]*")
+
+internal val String.isPathComponentSafe: Boolean get() = pathSafeStringRegex.matches(this)
+
+internal fun ensurePathComponentSafeString(pathComponent: String): String {
+    require(pathComponent.isPathComponentSafe) {
+        "String '$pathComponent' is not safe for path component. " +
+                "Only Latin characters, numbers, '-', '_' and '.' (not as the first character) are allowed. Check origin of this string."
+    }
+    return pathComponent
+}
+
+/**
+ * Resolves [relative] against [this] directory and ensures that the result stays strictly inside of it.
+ * This is important for security reasons to prevent malicious writes outside expected directory.
+ *
+ * Permitted resolves:
+ *    * a.txt
+ *    * b/c/d/
+ *
+ * Forbidden resolves:
+ *    * /absolute
+ *    * ../relative/
+ */
+internal fun File.resolveInside(relative: String): File = resolveInside(File(relative))
+
+internal fun File.resolveInside(relative: File): File {
+    val resolved = resolve(relative)
+    require(!relative.isAbsolute && isParentOf(resolved, strict = true)) {
+        "Path '$relative' points outside of '$this'. Check origin of this path."
+    }
+    return resolved
 }

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.UklibFragment
+import org.jetbrains.kotlin.gradle.utils.ensurePathComponentSafeString
 import org.jetbrains.kotlin.utils.keysToMap
 import java.io.File
 import java.security.MessageDigest
@@ -97,7 +98,7 @@ private class UklibCompositeMetadataBinary(
     override val archiveExtension: String
         get() = ""
     override val relativeFile: File
-        get() = File("uklib-${moduleId.group}-${moduleId.name}-${moduleId.version}-${fragment.identifier}-${checksum}")
+        get() = File(ensurePathComponentSafeString("uklib-${moduleId.group}-${moduleId.name}-${moduleId.version}-${fragment.identifier}-${checksum}"))
 
     // Rely on unique transform path
     override val checksum: String
