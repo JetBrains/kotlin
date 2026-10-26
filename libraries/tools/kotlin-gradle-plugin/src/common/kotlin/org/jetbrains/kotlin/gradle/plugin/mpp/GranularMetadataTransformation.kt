@@ -175,6 +175,9 @@ internal class GranularMetadataTransformation(
         val cache: Provider<out KotlinGradleTaskExecutionCache>,
 
         @get:Input
+        val strictKmpCompilation: Boolean,
+
+        @get:Input
         val sourceSetsExcludedFromVisibility: Set<String>,
     ) {
         constructor(
@@ -202,6 +205,7 @@ internal class GranularMetadataTransformation(
             kmpResolutionStrategy = project.kotlinPropertiesProvider.kmpResolutionStrategy,
             allowMatchingByRequestedCoordinates = project.kotlinPropertiesProvider.allowMatchingByRequestedCoordinatesInGMDT.get(),
             cache = project.kotlinGradleTaskExecutionCache,
+            strictKmpCompilation = project.kotlinPropertiesProvider.strictKmpCompilation,
             // FIXME: Disable strict compilation from custom source sets that refine a non default hierarchy source set?
             sourceSetsExcludedFromVisibility = if (project.kotlinPropertiesProvider.strictKmpCompilation)
                 defaultTargetHierarchyExcludedSourceSetVisibilityBySourceSet[kotlinSourceSet.name] ?: emptySet() else emptySet()
