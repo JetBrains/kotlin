@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.backend.konan.llvm
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 
+private val dataLayoutMismatch = Regex("""^linking two modules of different data layouts: .* is '([^']*)' whereas .* is '([^']*)'""", RegexOption.IGNORE_CASE)
+
 internal fun llvmLinkModules2(generationState: NativeGenerationState, dest: LLVMModuleRef, src: LLVMModuleRef): LLVMBool {
     val diagnosticHandler = DefaultLlvmDiagnosticHandler(generationState, generationState.diagnosticReporter, object : DefaultLlvmDiagnosticHandler.Policy {
         override fun suppressWarning(diagnostic: LlvmDiagnostic): Boolean {
@@ -20,7 +22,8 @@ internal fun llvmLinkModules2(generationState: NativeGenerationState, dest: LLVM
             // Just ignore such warnings for now:
             if (diagnostic.message.startsWith("linking module flags 'SDK Version': IDs have conflicting values")) return true
 
-            return false
+            val [sourceLayout, destinationLayout] = dataLayoutMismatch.find(diagnostic.message)?.destructured ?: return false
+            return sourceLayout.removeSuffix("-ni:1") == destinationLayout.removeSuffix("-ni:1")
         }
     })
 
