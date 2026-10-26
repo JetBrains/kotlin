@@ -537,7 +537,8 @@ constructor(
                     shouldRunInProcessMode = !forceDisableRunningInProcess.get(),
                     compilerArgumentsLogLevel = kotlinCompilerArgumentsLogLevel.get(),
                     arguments = buildArguments
-                )
+                ),
+                taskPath = path,
             )
         }
     }

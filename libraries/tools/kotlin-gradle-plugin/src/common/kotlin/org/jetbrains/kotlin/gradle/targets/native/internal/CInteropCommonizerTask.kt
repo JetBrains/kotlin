@@ -248,7 +248,8 @@ internal abstract class CInteropCommonizerTask
                     shouldRunInProcessMode = false,
                     compilerArgumentsLogLevel = compilerArgumentsLogLevel,
                     arguments = arguments,
-                )
+                ),
+                taskPath = path,
             )
         }.commonizeLibraries(
             konanHome = konanHome.get(),

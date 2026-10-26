@@ -30,10 +30,13 @@ import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.internal.ParentClassLoaderProvider
 import org.jetbrains.kotlin.gradle.logging.GradleErrorMessageCollector
 import org.jetbrains.kotlin.gradle.logging.gradleLogLevel
+import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
 import org.jetbrains.kotlin.gradle.plugin.statistics.BuildFusService
+import org.jetbrains.kotlin.gradle.report.TaskExecutionResult
 import org.jetbrains.kotlin.gradle.utils.escapeStringCharacters
 import org.jetbrains.kotlin.gradle.utils.listProperty
 import org.jetbrains.kotlin.gradle.utils.newInstance
+import org.jetbrains.kotlin.gradle.utils.property
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.statistics.FusMetricRetrievalException
 import java.io.File
@@ -83,17 +86,23 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
      * so this runner (and the build services it wraps) can't be passed directly - instead, only plain,
      * serializable values and build-service references are captured here, and a fresh [KotlinNativeToolRunner]
      * is rebuilt from them inside [KotlinNativeToolWorkAction.execute]. See [KotlinNativeToolWorkAction] for details.
+     *
+     * [taskPath], when provided, lets [KotlinNativeToolWorkAction] hand the metrics it collects back to the
+     * submitting task via [org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults] - this is
+     * needed because [metricsReporterProvider] itself is isolated (deep-copied) by Gradle along with the rest of
+     * [KotlinNativeToolWorkParameters], so mutating it inside the worker never reaches the original, live reporter.
+     * Pass `null` when there is no actual task to report back to.
      */
-    fun runToolWithWorkers(args: ToolArguments): WorkQueue =
+    fun runToolWithWorkers(args: ToolArguments, taskPath: String? = null): WorkQueue =
         workerExecutor.noIsolation().apply {
-            submit(KotlinNativeToolWorkAction::class.java) { it.from(this@KotlinNativeToolRunner, args) }
+            submit(KotlinNativeToolWorkAction::class.java) { it.from(this@KotlinNativeToolRunner, args, taskPath) }
         }
 
     private fun KotlinNativeToolWorkParameters.from(
         runner: KotlinNativeToolRunner,
         args: ToolArguments,
+        taskPath: String?,
     ) {
-        metricsReporter.set(runner.metricsReporterProvider)
         classLoadersCachingService.set(runner.classLoadersCachingBuildServiceProvider)
         fusService.set(runner.fusMetricsConsumer)
 
@@ -113,6 +122,8 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
         shouldRunInProcessMode.set(args.shouldRunInProcessMode)
         compilerArgumentsLogLevel.set(args.compilerArgumentsLogLevel)
         arguments.set(args.arguments)
+
+        this.taskPath.set(taskPath)
     }
 
     private fun runViaExec(args: ToolArguments) {
@@ -341,7 +352,11 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
      */
     internal interface KotlinNativeToolWorkParameters : WorkParameters {
         // Runner configuration
-        val metricsReporter: Property<BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>>
+        //
+        // Note: there's no `metricsReporter` property here - unlike the other build-service references below,
+        // a plain, Serializable BuildMetricsReporter would survive isolation silently as a disconnected copy
+        // instead of failing loudly, so mutating it inside the worker would never reach the task's live reporter.
+        // KotlinNativeToolWorkAction builds its own fresh reporter instead and reports back via [taskPath].
         val classLoadersCachingService: Property<ClassLoadersCachingBuildService>
         val fusService: Property<BuildFusService<out BuildFusService.Parameters>?>
 
@@ -362,6 +377,9 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
         val shouldRunInProcessMode: Property<Boolean>
         val compilerArgumentsLogLevel: Property<KotlinCompilerArgumentsLogLevel>
         val arguments: ListProperty<String>
+
+        // Task path to report collected metrics back to via TaskExecutionResults, if any - see runToolWithWorkers.
+        val taskPath: Property<String>
     }
 
     /**
@@ -372,13 +390,20 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
         private val objectFactory: ObjectFactory,
     ) : WorkAction<KotlinNativeToolWorkParameters> {
         override fun execute() {
+            val metricsReporter = BuildMetricsReporterImpl<BuildTimeMetric, BuildPerformanceMetric>()
             val runner = objectFactory.newInstance<KotlinNativeToolRunner>(
-                parameters.metricsReporter,
+                objectFactory.property<BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>>(metricsReporter),
                 parameters.classLoadersCachingService,
                 parameters.toToolSpec(objectFactory),
                 parameters.fusService,
             )
-            runner.runTool(parameters.toToolArguments())
+            try {
+                runner.runTool(parameters.toToolArguments())
+            } finally {
+                parameters.taskPath.orNull?.let { taskPath ->
+                    TaskExecutionResults[taskPath] = TaskExecutionResult(buildMetrics = metricsReporter.getMetrics())
+                }
+            }
         }
     }
 
