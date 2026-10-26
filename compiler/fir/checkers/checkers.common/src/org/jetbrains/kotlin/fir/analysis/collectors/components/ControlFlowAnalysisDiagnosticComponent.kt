@@ -141,7 +141,9 @@ class ControlFlowAnalysisDiagnosticComponent(
                     // Recusing to a CFG-independent element is a navigation violation in the Analysis API.
                     if (element.isUsedInControlFlowGraph(container = data)) {
                         val container = element.controlFlowGraphReference?.controlFlowGraph ?: data
-                        element.acceptChildren(this, container)
+                        if (container === data || container in data.subGraphs) {
+                            element.acceptChildren(this, container)
+                        }
                     }
                 }
 
