@@ -5,10 +5,11 @@ fun testSimple(x: String | Foo) {
     if (x is String) x.length
     if (x is NonError) x.length
     if (x is NonError?) x.length
-    if (x !is RichError) x<!UNSAFE_CALL!>.<!>length
-    if (x !is RichError?) x<!UNSAFE_CALL!>.<!>length
+    if (x !is RichError) x.length
+    if (x !is RichError?) x.length
     if (x !is Foo) x<!UNSAFE_CALL!>.<!>length
-    if (x !is NonError?) { val y: RichError = <!INITIALIZER_TYPE_MISMATCH!>x<!> }
+    if (x !is NonError?) { val y: RichError = x }
+    if (x !is NonError?) { val y: Foo = <!INITIALIZER_TYPE_MISMATCH!>x<!> }
 }
 
 fun testSimpleAs1(x: String | Foo) {
@@ -31,19 +32,19 @@ fun testNullable(x: String? | Foo) {
     if (x is NonError) x.length
     if (x is NonError?) x<!UNSAFE_CALL!>.<!>length
     if (x !is RichError) x<!UNSAFE_CALL!>.<!>length
-    if (x !is RichError?) x<!UNSAFE_CALL!>.<!>length
+    if (x !is RichError?) x.length
     if (x !is Foo) x<!UNSAFE_CALL!>.<!>length
-    if (x !is NonError?) { val y: RichError = <!INITIALIZER_TYPE_MISMATCH!>x<!> }
+    if (x !is NonError?) { val y: RichError = x }
 }
 
 fun <T : CharSequence | Foo> testTypeParameter(x: T) {
     if (x is String) x.length
     if (x is NonError) x.length
     if (x is NonError?) x.length
-    if (x !is RichError) x<!UNSAFE_CALL!>.<!>length
-    if (x !is RichError?) x<!UNSAFE_CALL!>.<!>length
+    if (x !is RichError) x.length
+    if (x !is RichError?) x.length
     if (x !is Foo) x<!UNSAFE_CALL!>.<!>length
-    if (x !is NonError?) { val y: RichError = <!INITIALIZER_TYPE_MISMATCH!>x<!> }
+    if (x !is NonError?) { val y: RichError = x }
 }
 
 fun <T : CharSequence | Foo> testTypeParameterAs1(x: T) {
@@ -66,9 +67,9 @@ fun <T : CharSequence? | Foo> testTypeParameterNullable(x: T) {
     if (x is NonError) x.length
     if (x is NonError?) x<!UNSAFE_CALL!>.<!>length
     if (x !is RichError) x<!UNSAFE_CALL!>.<!>length
-    if (x !is RichError?) x<!UNSAFE_CALL!>.<!>length
+    if (x !is RichError?) x.length
     if (x !is Foo) x<!UNSAFE_CALL!>.<!>length
-    if (x !is NonError?) { val y: RichError = <!INITIALIZER_TYPE_MISMATCH!>x<!> }
+    if (x !is NonError?) { val y: RichError = x }
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, ifExpression, isExpression, smartcast */

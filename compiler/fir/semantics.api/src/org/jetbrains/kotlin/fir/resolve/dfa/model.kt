@@ -37,6 +37,9 @@ typealias TypeStatements = Map<DataFlowVariable, TypeStatement>
 infix fun DataFlowVariable.eq(constant: Boolean): OperationStatement =
     OperationStatement(this, if (constant) Operation.EqTrue else Operation.EqFalse)
 
+fun DataFlowVariable.isNullableNonError(): OperationStatement =
+    OperationStatement(this, IsNullableNonError)
+
 @Suppress("UNUSED_PARAMETER")
 infix fun DataFlowVariable.eq(constant: Nothing?): OperationStatement =
     OperationStatement(this, Operation.EqNull)
