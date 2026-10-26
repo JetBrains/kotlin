@@ -37,22 +37,22 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtPsiUtil.deparenthesize
 import org.jetbrains.kotlin.resolve.ArrayFqNames
 
-context(component: KaFirSessionComponent)
+context(resolver: KaFirResolver)
 private fun FirCollectionLiteral.toTypeArgumentsMapping(symbol: KaDeclarationSymbol): Map<KaTypeParameterSymbol, KaType> {
     val elementType = resolvedType.arrayElementType()?.asKaType() ?: return emptyMap()
     val typeParameter = symbol.typeParameters.singleOrNull() ?: return emptyMap()
     return mapOf(typeParameter to elementType)
 }
 
-context(component: KaFirSessionComponent)
+context(resolver: KaFirResolver)
 private val unresolvedArrayOfDiagnostic: KaDiagnostic
     get() = KaNonBoundToPsiErrorDiagnostic(
         factoryName = FirErrors.OTHER_ERROR.name,
         defaultMessage = "type of arrayOf call is not resolved",
-        token = component.token
+        token = resolver.token
     )
 
-context(component: KaFirSessionComponent)
+context(resolver: KaFirResolver)
 internal fun FirCollectionLiteral.toKaResolutionAttempt(): KaCallResolutionAttempt? {
     val arrayOfSymbol = with(analysisSession) {
         val type = resolvedType as? ConeClassLikeType ?: return run {
@@ -103,13 +103,13 @@ internal fun FirCollectionLiteral.toKaResolutionAttempt(): KaCallResolutionAttem
     )
 }
 
-context(component: KaFirSessionComponent)
+context(resolver: KaFirResolver)
 private fun FirCollectionLiteral.createSubstitutorFromTypeArguments(arrayOfSymbol: KaNamedFunctionSymbol): KaSubstitutor {
     val firSymbol = arrayOfSymbol.firSymbol
     // No type parameter means this is an arrayOf call of primitives, in which case there is no type arguments
-    val typeParameter = firSymbol.fir.typeParameters.singleOrNull() ?: return KaFirEmptySubstitutor(component.token)
+    val typeParameter = firSymbol.fir.typeParameters.singleOrNull() ?: return KaFirEmptySubstitutor(resolver.token)
 
-    val elementType = resolvedType.arrayElementType() ?: return KaFirEmptySubstitutor(component.token)
+    val elementType = resolvedType.arrayElementType() ?: return KaFirEmptySubstitutor(resolver.token)
     val coneSubstitutor = substitutorByMap(mapOf(typeParameter.symbol to elementType), rootModuleSession)
     return firSymbolBuilder.typeBuilder.buildSubstitutor(coneSubstitutor)
 }

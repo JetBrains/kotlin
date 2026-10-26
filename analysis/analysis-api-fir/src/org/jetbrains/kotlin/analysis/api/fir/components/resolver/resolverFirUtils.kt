@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components.resolver
 
-import org.jetbrains.kotlin.analysis.api.fir.components.KaFirSessionComponent
+import org.jetbrains.kotlin.analysis.api.fir.components.KaFirResolver
 import org.jetbrains.kotlin.analysis.api.fir.components.resolutionFacade
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.fir.FirElement
@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.psi.KtSafeQualifiedExpression
  * - For [KtPropertyDelegate], [getOrBuildFir] should be called on the property to handle the type specially.
  *   The actual resolution target is in [FirProperty.delegate] (e.g., [FirFunctionCall]), which conflicts with the regular logic.
  */
-context(component: KaFirSessionComponent)
+context(resolver: KaFirResolver)
 internal fun KtElement.getOrBuildFirWithAdjustments(): FirElement? = when (this) {
     is KtPropertyDelegate -> (parent as? KtElement)?.getOrBuildFir(resolutionFacade)
     else -> when (val fir = getOrBuildFir(resolutionFacade)) {
