@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.cinteropToLibrary
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCompilerArgs
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult
 import org.jetbrains.kotlin.library.loader.KlibLoader
+import org.jetbrains.kotlin.testFederation.HostDependent
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -21,6 +22,7 @@ import org.junit.jupiter.api.Test
 import java.io.File
 
 @Tag("klib")
+@HostDependent
 @Suppress("TestFunctionName")
 class CInteropGenerateKlibInOlderAbiVersionTest : AbstractNativeSimpleTest() {
     private lateinit var outputDir: File
