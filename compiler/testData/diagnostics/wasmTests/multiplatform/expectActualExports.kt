@@ -20,12 +20,12 @@ expect fun notExported(): Int
 
 package sample
 
-<!NOT_EXPORTED_OR_EXTERNAL_ACTUAL_DECLARATION_WHILE_EXPECT_IS_EXPORTED!>actual fun foo()<!> = 42
+<!NOT_EXPORTED_OR_EXTERNAL_ACTUAL_DECLARATION_WHILE_EXPECT_IS_EXPORTED("mark the actual declaration with '@JsExport' as well")!>actual fun foo()<!> = 42
 
 @JsExport actual fun bar() = 42
 
-<!NOT_EXPORTED_OR_EXTERNAL_ACTUAL_DECLARATION_WHILE_EXPECT_IS_EXPORTED!>actual external fun baz(): Int<!>
+<!NOT_EXPORTED_OR_EXTERNAL_ACTUAL_DECLARATION_WHILE_EXPECT_IS_EXPORTED("mark the actual declaration with '@JsExport' as well")!>actual external fun baz(): Int<!>
 
-<!NOT_EXPORTED_OR_EXTERNAL_ACTUAL_DECLARATION_WHILE_EXPECT_IS_EXPORTED!>@JsExport.Ignore actual fun ignored()<!> = 42
+<!NOT_EXPORTED_OR_EXTERNAL_ACTUAL_DECLARATION_WHILE_EXPECT_IS_EXPORTED("remove the '@JsExport.Ignore' annotation")!>@JsExport.Ignore actual fun ignored()<!> = 42
 
 actual fun notExported() = 42

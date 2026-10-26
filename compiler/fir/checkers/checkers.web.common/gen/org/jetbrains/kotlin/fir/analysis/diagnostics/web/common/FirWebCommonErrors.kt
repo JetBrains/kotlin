@@ -64,7 +64,7 @@ object FirWebCommonErrors : KtDiagnosticsContainer() {
     val MULTIPLE_JS_EXPORT_DEFAULT_IN_ONE_FILE: KtDiagnosticFactory0 = KtDiagnosticFactory0("MULTIPLE_JS_EXPORT_DEFAULT_IN_ONE_FILE", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
     val WRONG_JS_EXPORT_TARGET_VISIBILITY: KtDiagnosticFactory0 = KtDiagnosticFactory0("WRONG_JS_EXPORT_TARGET_VISIBILITY", WARNING, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
     val WRONG_EXPORTED_DECLARATION: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("WRONG_EXPORTED_DECLARATION", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())
-    val NOT_EXPORTED_OR_EXTERNAL_ACTUAL_DECLARATION_WHILE_EXPECT_IS_EXPORTED: KtDiagnosticFactory0 = KtDiagnosticFactory0("NOT_EXPORTED_OR_EXTERNAL_ACTUAL_DECLARATION_WHILE_EXPECT_IS_EXPORTED", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())
+    val NOT_EXPORTED_OR_EXTERNAL_ACTUAL_DECLARATION_WHILE_EXPECT_IS_EXPORTED: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("NOT_EXPORTED_OR_EXTERNAL_ACTUAL_DECLARATION_WHILE_EXPECT_IS_EXPORTED", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())
 
     // JsCode
     val JSCODE_ARGUMENT_NON_CONST_EXPRESSION: KtDiagnosticFactory0 = KtDiagnosticFactory0("JSCODE_ARGUMENT_NON_CONST_EXPRESSION", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())

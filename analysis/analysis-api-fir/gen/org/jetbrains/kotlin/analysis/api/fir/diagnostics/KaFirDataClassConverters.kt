@@ -8486,8 +8486,9 @@ private fun KaDiagnosticConverterBuilder.addConversions183() {
             token,
         )
     }
-    add(FirJsErrors.NOT_EXPORTED_OR_EXTERNAL_ACTUAL_DECLARATION_WHILE_EXPECT_IS_EXPORTED) { firDiagnostic ->
+    add(FirWebCommonErrors.NOT_EXPORTED_OR_EXTERNAL_ACTUAL_DECLARATION_WHILE_EXPECT_IS_EXPORTED) { firDiagnostic ->
         NotExportedOrExternalActualDeclarationWhileExpectIsExportedImpl(
+            firDiagnostic.a,
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )

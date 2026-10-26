@@ -9789,6 +9789,8 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
     public interface NotExportedOrExternalActualDeclarationWhileExpectIsExported : KaFirDiagnostic<KtElement> {
         override val diagnosticClass: KClass<NotExportedOrExternalActualDeclarationWhileExpectIsExported>
             get() = NotExportedOrExternalActualDeclarationWhileExpectIsExported::class
+
+        public val fixSuggestion: String
     }
 
     @KaUnstableDiagnosticApi

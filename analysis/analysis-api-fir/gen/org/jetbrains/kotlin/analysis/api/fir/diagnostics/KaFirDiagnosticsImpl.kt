@@ -6909,6 +6909,7 @@ internal class WrongExportedDeclarationImpl(
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.WrongExportedDeclaration
 
 internal class NotExportedOrExternalActualDeclarationWhileExpectIsExportedImpl(
+    override val fixSuggestion: String,
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.NotExportedOrExternalActualDeclarationWhileExpectIsExported
