@@ -125,6 +125,14 @@ abstract class AbstractTypeModificationDslTest : AbstractTypeModificationDslTest
         }
     }
 
+    @Test
+    @TestMetadata("classType/innerClassWithOuterTypeArguments.kt")
+    fun `classType innerClassWithOuterTypeArguments +markNullable`() = test<KaUsualClassType> { type ->
+        type.copy {
+            isMarkedNullable = true
+        }
+    }
+
     // endregion
 
     // region KaFunctionType modifications

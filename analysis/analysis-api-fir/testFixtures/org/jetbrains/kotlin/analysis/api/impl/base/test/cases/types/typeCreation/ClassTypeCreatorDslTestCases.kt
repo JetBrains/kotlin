@@ -151,6 +151,18 @@ class ClassTypeCreatorDslTestCases(session: KaSession, caretToType: Map<String, 
         }
     }
 
+    fun testInnerClassWithOuterTypeArguments(): KaType {
+        val innerTypeSymbol = getClassLikeSymbolByCaret("type")
+
+        // Type arguments are ordered from the innermost class outwards
+        return session.typeCreator.classType(innerTypeSymbol) {
+            invariantTypeArgument(getTypeByCaret("long"))
+            invariantTypeArgument(getTypeByCaret("double"))
+            invariantTypeArgument(getTypeByCaret("boolean"))
+            invariantTypeArgument(getTypeByCaret("char"))
+        }
+    }
+
     fun testMissingDependencyCandidateSymbol(): KaType {
         val errorType = getTypeByCaret("type") as KaClassErrorType
         val symbol = errorType.candidateSymbols.single()
