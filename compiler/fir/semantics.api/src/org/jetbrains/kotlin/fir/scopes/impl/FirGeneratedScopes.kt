@@ -27,12 +27,15 @@ import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.resolve.isClassBasedType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.DelicateScopeAPI
 import org.jetbrains.kotlin.fir.scopes.getDeclaredConstructors
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -279,10 +282,33 @@ class FirGeneratedMemberDeclarationsStorage(private val session: FirSession) : F
             return extensionsByCallableName[SpecialNames.INIT].orEmpty()
                 .flatMap { it.generateConstructors(generationContext) }
                 .onEach { it.fir.validate() }
-                .ifEmpty { if (isSharedGeneratedCompanion) listOf(generateCompanionObjectConstructorForPlugins(classSymbol).symbol) else emptyList() }
+                .ifEmpty {
+                    if (isSharedGeneratedCompanion) listOfNotNull(generateCompanionObjectConstructorForPlugins(classSymbol)?.symbol)
+                    else emptyList()
+                }
         }
 
-        private fun generateCompanionObjectConstructorForPlugins(owner: FirClassSymbol<*>): FirConstructor = buildPrimaryConstructor {
+        /**
+         * Returns `null` if the superclass of [owner] has no constructor that can be called without arguments.
+         * In this case, a plugin can generate the constructor in IR.
+         */
+        private fun generateCompanionObjectConstructorForPlugins(owner: FirClassSymbol<*>): FirConstructor? {
+            val superTypeRef = owner.resolvedSuperTypeRefs.firstOrNull {
+                (it.coneType as? ConeClassLikeType).isClassBasedType(session)
+            } ?: session.builtinTypes.anyType
+            val superConstructorSymbol = superTypeRef.coneType.toRegularClassSymbol(session)
+                ?.declaredMemberScope(session, memberRequiredPhase = null)
+                ?.getDeclaredConstructors()
+                ?.firstOrNull { constructor -> constructor.valueParameterSymbols.all { it.hasDefaultValue } }
+                ?: return null
+            return buildCompanionObjectConstructorForPlugins(owner, superTypeRef, superConstructorSymbol)
+        }
+
+        private fun buildCompanionObjectConstructorForPlugins(
+            owner: FirClassSymbol<*>,
+            superTypeRef: FirResolvedTypeRef,
+            superConstructorSymbol: FirConstructorSymbol,
+        ): FirConstructor = buildPrimaryConstructor {
             symbol = FirConstructorSymbol(owner.classId)
             source = owner.source?.fakeElement(KtFakeSourceElementKind.PluginGenerated.Default)
 
@@ -301,11 +327,7 @@ class FirGeneratedMemberDeclarationsStorage(private val session: FirSession) : F
             }
             isLocal = owner.isLocal
             delegatedConstructor = buildDelegatedConstructorCall {
-                constructedTypeRef = session.builtinTypes.anyType
-                val superConstructorSymbol = session.builtinTypes.anyType.coneType.toRegularClassSymbol(session)
-                    ?.declaredMemberScope(session, memberRequiredPhase = null)
-                    ?.getDeclaredConstructors()
-                    ?.firstOrNull { it.valueParameterSymbols.isEmpty() } ?: return@buildPrimaryConstructor
+                constructedTypeRef = superTypeRef
                 calleeReference = buildResolvedNamedReference {
                     name = superConstructorSymbol.name
                     resolvedSymbol = superConstructorSymbol
