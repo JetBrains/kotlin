@@ -1,10 +1,13 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// OPT_IN: kotlin.js.ExperimentalJsExport
+// OPT_IN: kotlin.js.ExperimentalJsExport, kotlin.js.ExperimentalWasmJsInterop
 // LANGUAGE: +ContextParameters
 
 @JsExport
 fun foo1() {
 }
+
+@JsExport
+fun fooJsCode(): Int = js("42")
 
 class C {
     <!NESTED_JS_EXPORT!>@JsExport<!>
