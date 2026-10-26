@@ -65,6 +65,10 @@ internal sealed class MetadataDependencyResolution(
         dependency: ResolvedComponentResult,
     ) : MetadataDependencyResolution(dependency) {
 
+        class Requested(
+            dependency: ResolvedComponentResult,
+        ) : Exclude(dependency)
+
         class Unrequested(
             dependency: ResolvedComponentResult,
         ) : Exclude(dependency)
@@ -171,8 +175,8 @@ internal class GranularMetadataTransformation(
         @get:Internal
         val cache: Provider<out KotlinGradleTaskExecutionCache>,
 
-        @get:Input
-        val strictKmpCompilation: Boolean,
+        @get:Internal
+        val onNonKmpDependency: (dependency: ResolvedComponentResult) -> MetadataDependencyResolution,
 
         @get:Input
         val sourceSetsExcludedFromVisibility: Set<String>,
@@ -201,7 +205,12 @@ internal class GranularMetadataTransformation(
             kmpResolutionStrategy = project.kotlinPropertiesProvider.kmpResolutionStrategy,
             allowMatchingByRequestedCoordinates = project.kotlinPropertiesProvider.allowMatchingByRequestedCoordinatesInGMDT.get(),
             cache = project.kotlinGradleTaskExecutionCache,
-            strictKmpCompilation = project.kotlinPropertiesProvider.strictKmpCompilation,
+            onNonKmpDependency = if (project.kotlinPropertiesProvider.strictKmpCompilation
+                && kotlinSourceSet.name in (defaultTargetHierarchyExcludedSourceSetVisibilityBySourceSet.keys + "androidMain")) {
+                { MetadataDependencyResolution.Exclude.Requested(it) }
+            } else {
+                { MetadataDependencyResolution.KeepOriginalDependency(it) }
+            },
             // FIXME: Disable strict compilation from custom source sets that refine a non default hierarchy source set?
             sourceSetsExcludedFromVisibility = if (project.kotlinPropertiesProvider.strictKmpCompilation)
                 defaultTargetHierarchyExcludedSourceSetVisibilityBySourceSet[kotlinSourceSet.name] ?: emptySet() else emptySet()
@@ -456,6 +465,7 @@ internal class GranularMetadataTransformation(
             result.add(dependencyResult)
 
             val transitiveDependenciesToVisit = when (dependencyResult) {
+                is MetadataDependencyResolution.Exclude.Requested,
                 is MetadataDependencyResolution.KeepOriginalDependency ->
                     selectedComponent.dependencies.filterIsInstance<ResolvedDependencyResult>()
 
@@ -510,7 +520,7 @@ internal class GranularMetadataTransformation(
         val artifact = params
             .resolvedMetadataConfiguration
             .getArtifacts(dependency)
-            .singleOrNull() ?: return MetadataDependencyResolution.KeepOriginalDependency(module)
+            .singleOrNull() ?: return params.onNonKmpDependency(module)
         // expected only Composite Metadata Klib, but if dependency got resolved into platform variant
         // when a source set is a leaf, then we might get multiple artifacts in such a case we must return KeepOriginal
 
@@ -531,7 +541,7 @@ internal class GranularMetadataTransformation(
                 params.uklibFragmentAttributes,
             )
         } else {
-            return MetadataDependencyResolution.KeepOriginalDependency(module)
+            return params.onNonKmpDependency(module)
         }
     }
 
@@ -607,11 +617,11 @@ internal class GranularMetadataTransformation(
         /** Due to [KotlinUsages.KotlinMetadataCompatibility], non kotlin-metadata resolutions can happen */
         if (!dependency.resolvedVariant.attributes.containsCompositeMetadataJarAttributes) {
             logger.debug("Dependency $moduleId is not a Kotlin HMPP library")
-            return MetadataDependencyResolution.KeepOriginalDependency(module)
+            return params.onNonKmpDependency(module)
         }
 
         val projectStructureMetadata = extractProjectStructureMetadata(dependency)
-            ?: return MetadataDependencyResolution.KeepOriginalDependency(module)
+            ?: return params.onNonKmpDependency(module)
 
         val isResolvedToProject = moduleId in params.build
 
@@ -651,7 +661,7 @@ internal class GranularMetadataTransformation(
         val visibleSourceSetsExcludingDependsOn = allVisibleSourceSets.filterTo(mutableSetOf()) { it !in sourceSetsVisibleInParents }
 
         val metadataProvider = sourceSetVisibility.getMetadataProviderForVisibleSourceSets(dependency, projectStructureMetadata)
-            ?: return MetadataDependencyResolution.KeepOriginalDependency(module)
+            ?: return params.onNonKmpDependency(module)
 
         return MetadataDependencyResolution.ChooseVisibleSourceSets(
             dependency = module,
