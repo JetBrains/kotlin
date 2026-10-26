@@ -448,7 +448,7 @@ class NativeSecondStageCompilationConfig(
     // KT-69731 Kotlin/Native: handle heap-allocated non-escaping objects with CMS
     val escapeAnalysisPropagateExiledToHeapObjects by lazy {
         configuration.get(BinaryOptions.escapeAnalysisPropagateExiledToHeapObjects)?.also {
-            if (it && gc == GC.CONCURRENT_MARK_AND_SWEEP) {
+            if (!it && gc == GC.CONCURRENT_MARK_AND_SWEEP) {
                 configuration.report(CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING, "CMS GC requires escapeAnalysisPropagateExiledToHeapObjects=true")
             }
         } ?: true

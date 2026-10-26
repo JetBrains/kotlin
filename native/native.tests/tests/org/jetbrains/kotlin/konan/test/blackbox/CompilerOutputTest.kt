@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.forcesPreReleaseBinariesIfEnabled
+import org.jetbrains.kotlin.config.nativeBinaryOptions.GC
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.presetName
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
@@ -20,6 +21,8 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.ObjCFramewor
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.CacheMode
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.GCType
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.OptimizationMode
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
 import org.jetbrains.kotlin.konan.test.klib.KlibCrossCompilationOutputTest.Companion.DEPRECATED_K1_LANGUAGE_VERSIONS_DIAGNOSTIC_REGEX
 import org.jetbrains.kotlin.test.TestDataAssertions
@@ -31,6 +34,44 @@ import kotlin.test.assertContains
 import kotlin.test.assertIs
 
 abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
+    // KT-90711
+    @Test
+    fun testEscapeAnalysisPropagateExiledToHeapObjectsTrueWithCms() =
+        doTestEscapeAnalysisPropagateExiledToHeapObjectsWithCms(value = true, goldenFileName = "empty.txt")
+
+    // KT-90711
+    @Test
+    fun testEscapeAnalysisPropagateExiledToHeapObjectsFalseWithCms() =
+        doTestEscapeAnalysisPropagateExiledToHeapObjectsWithCms(value = false, goldenFileName = "cms_requires_propagation.txt")
+
+    private fun doTestEscapeAnalysisPropagateExiledToHeapObjectsWithCms(value: Boolean, goldenFileName: String) {
+        // Escape analysis reads this option only in optimized compilations.
+        Assumptions.assumeTrue(testRunSettings.get<OptimizationMode>() == OptimizationMode.OPT)
+        Assumptions.assumeTrue(testRunSettings.get<GCType>().gc == GC.CONCURRENT_MARK_AND_SWEEP)
+        val rootDir = ForTestCompileRuntime.transformTestDataPath(
+            "native/native.tests/testData/compilerOutput/escapeAnalysisPropagateExiledToHeapObjects"
+        )
+        val testCase = generateTestCaseWithSingleFile(
+            rootDir.resolve("main.kt"),
+            freeCompilerArgs = TestCompilerArgs("-Xbinary=escapeAnalysisPropagateExiledToHeapObjects=$value"),
+            extras = TestCase.NoTestRunnerExtras("main"),
+            testKind = TestKind.STANDALONE_NO_TR,
+        )
+        val compilation = ExecutableCompilation(
+            testRunSettings,
+            freeCompilerArgs = testCase.freeCompilerArgs,
+            sourceModules = testCase.modules,
+            extras = testCase.extras,
+            dependencies = emptyList(),
+            expectedArtifact = TestCompilationArtifact.Executable(buildDir.resolve("escape_analysis_propagate_$value")),
+        )
+        val compilationResult = compilation.result
+        compilationResult.assertSuccess()
+        TestDataAssertions.assertEqualsToFile(
+            rootDir.resolve(goldenFileName), compilationResult.toOutput().sanitizeCompilationOutput()
+        )
+    }
+
     @Test
     fun testReleaseCompilerAgainstPreReleaseLibrary() {
         val rootDir = ForTestCompileRuntime.transformTestDataPath("native/native.tests/testData/compilerOutput/releaseCompilerAgainstPreReleaseLibrary")
