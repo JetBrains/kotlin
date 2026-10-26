@@ -51,7 +51,6 @@ import org.jetbrains.kotlin.types.AbstractNullabilityChecker
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.model.TypeVariableTypeConstructorMarker
-import org.jetbrains.kotlin.types.model.anySuperTypeConstructor
 import org.jetbrains.kotlin.types.model.typeConstructor
 import org.jetbrains.kotlin.util.OnlyForDefaultLanguageFeatureDisabled
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -210,7 +209,7 @@ object CheckDispatchReceiver : ResolutionStage() {
 
         if (smartcastedReceiver != null &&
             !smartcastedReceiver.isStable &&
-            (isCandidateFromUnstableSmartcast || (isReceiverUnsafe && !smartcastedReceiver.smartcastType.coneType.canBeNull()))
+            (isCandidateFromUnstableSmartcast || (isReceiverUnsafe && !smartcastedReceiver.smartcastType.coneType.isUnsafeAsDispatchReceiver()))
         ) {
             val dispatchReceiverType = (candidate.symbol as? FirCallableSymbol<*>)?.dispatchReceiverType?.let {
                 context.session.typeApproximator.approximateToSuperType(
@@ -241,17 +240,6 @@ object CheckDispatchReceiver : ResolutionStage() {
         } else if (isCandidateFromUnstableSmartcast) {
             sink.yieldDiagnostic(InapplicableWrongReceiver(actualType = dispatchReceiverValueType))
         }
-    }
-
-    /**
-     * A receiver is unsafe if it's a union type, or it has a union type as supertype while not being a subtype of `NonError?`.
-     *
-     * A notable counterexample is `T & NonError` where `T : X | MyError` which is the type of the safe receiver in `t|.someCall()`.
-     */
-    context(context: ResolutionContext)
-    private fun ConeKotlinType.isUnsafeUnion(): Boolean {
-        return unionSuperTypeOrNull(context.session) != null &&
-                !isSubtypeOf(StandardTypes.NullableNonError, context.session)
     }
 }
 

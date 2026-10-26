@@ -2,9 +2,9 @@
 error class Foo
 
 fun testSimple(x: String | Foo) {
-    if (x is String) x<!UNSAFE_CALL!>.<!>length
-    if (x is NonError) x<!UNSAFE_CALL!>.<!>length
-    if (x is NonError?) x<!UNSAFE_CALL!>.<!>length
+    if (x is String) x.length
+    if (x is NonError) x.length
+    if (x is NonError?) x.length
     if (x !is RichError) x<!UNSAFE_CALL!>.<!>length
     if (x !is RichError?) x<!UNSAFE_CALL!>.<!>length
     if (x !is Foo) x<!UNSAFE_CALL!>.<!>length
@@ -13,17 +13,17 @@ fun testSimple(x: String | Foo) {
 
 fun testSimpleAs1(x: String | Foo) {
     x as String
-    x<!UNSAFE_CALL!>.<!>length
+    x.length
 }
 
 fun testSimpleAs2(x: String | Foo) {
     x as NonError?
-    x<!UNSAFE_CALL!>.<!>length
+    x.length
 }
 
 fun testSimpleAs3(x: String | Foo) {
-    x as NonError?
-    x<!UNSAFE_CALL!>.<!>length
+    x as NonError
+    x.length
 }
 
 fun testNullable(x: String? | Foo) {
@@ -38,8 +38,8 @@ fun testNullable(x: String? | Foo) {
 
 fun <T : CharSequence | Foo> testTypeParameter(x: T) {
     if (x is String) x.length
-    if (x is NonError) x<!UNSAFE_CALL!>.<!>length
-    if (x is NonError?) x<!UNSAFE_CALL!>.<!>length
+    if (x is NonError) x.length
+    if (x is NonError?) x.length
     if (x !is RichError) x<!UNSAFE_CALL!>.<!>length
     if (x !is RichError?) x<!UNSAFE_CALL!>.<!>length
     if (x !is Foo) x<!UNSAFE_CALL!>.<!>length
@@ -53,12 +53,12 @@ fun <T : CharSequence | Foo> testTypeParameterAs1(x: T) {
 
 fun <T : CharSequence | Foo> testTypeParameterAs2(x: T) {
     x as NonError?
-    x<!UNSAFE_CALL!>.<!>length
+    x.length
 }
 
 fun <T : CharSequence | Foo> testTypeParameterAs3(x: T) {
-    x as NonError?
-    x<!UNSAFE_CALL!>.<!>length
+    x as NonError
+    x.length
 }
 
 fun <T : CharSequence? | Foo> testTypeParameterNullable(x: T) {
