@@ -46,7 +46,6 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
-import org.jetbrains.kotlin.fir.types.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.name.ClassId
@@ -962,4 +961,23 @@ fun FirScope.toResolvedSymbolOrigin(): FirResolvedSymbolOrigin? = when (this) {
     is FirPackageMemberScope -> FirResolvedSymbolOrigin.Package
     is FirAbstractSimpleImportingScope -> FirResolvedSymbolOrigin.ExplicitImport
     else -> null
+}
+
+/**
+ * A receiver is unsafe if it's a union type, or it has a union type as supertype while not being a subtype of `NonError?`.
+ *
+ * A notable counterexample is `T & NonError` where `T : X | MyError` which is the type of the safe receiver in `t|.someCall()`.
+ */
+context(holder: SessionHolder)
+fun ConeKotlinType.isUnsafeUnion(): Boolean {
+    return unionSuperTypeOrNull(holder.session) != null &&
+            !isSubtypeOf(StandardTypes.NullableNonError, holder.session)
+}
+
+/**
+ * True when [canBeNull] or [isUnsafeUnion].
+ */
+context(_: SessionHolder)
+fun ConeKotlinType.isUnsafeAsDispatchReceiver(): Boolean {
+    return canBeNull() || isUnsafeUnion()
 }
