@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.analysis.api.KaSpi
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotated
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotation
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsObsoleteRendererImplementationProvider
-import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.name.FqName
 
 @KaSpi
 @KaExperimentalApi
@@ -50,8 +50,10 @@ public interface KaRendererAnnotationsFilter {
 
     @KaExperimentalApi
     public object NO_PARAMETER_NAME : KaRendererAnnotationsFilter {
+        private val parameterNameFqName = FqName(ParameterName::class.java.name)
+
         override fun filter(analysisSession: KaSession, annotation: KaAnnotation, owner: KaAnnotated): Boolean {
-            return annotation.classId?.asSingleFqName() != StandardNames.FqNames.parameterName
+            return annotation.classId?.asSingleFqName() != parameterNameFqName
         }
     }
 

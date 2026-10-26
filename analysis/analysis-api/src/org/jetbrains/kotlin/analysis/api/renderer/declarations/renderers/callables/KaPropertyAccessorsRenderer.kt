@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaPropertyGetterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySetterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 @KaSpi
 @KaExperimentalApi
@@ -39,11 +38,11 @@ public interface KaPropertyAccessorsRenderer {
                 withIndent {
                     "\n".separated(
                         {
-                            toRender.firstIsInstanceOrNull<KaPropertyGetterSymbol>()
+                            toRender.filterIsInstance<KaPropertyGetterSymbol>().firstOrNull()
                                 ?.let { declarationRenderer.getterRenderer.renderSymbol(analysisSession, it, declarationRenderer, printer) }
                         },
                         {
-                            toRender.firstIsInstanceOrNull<KaPropertySetterSymbol>()
+                            toRender.filterIsInstance<KaPropertySetterSymbol>().firstOrNull()
                                 ?.let { declarationRenderer.setterRenderer.renderSymbol(analysisSession, it, declarationRenderer, printer) }
                         },
                     )
@@ -67,11 +66,11 @@ public interface KaPropertyAccessorsRenderer {
             withIndent {
                 "\n".separated(
                     {
-                        toRender.firstIsInstanceOrNull<KaPropertyGetterSymbol>()
+                        toRender.filterIsInstance<KaPropertyGetterSymbol>().firstOrNull()
                             ?.let { declarationRenderer.getterRenderer.renderSymbol(analysisSession, it, declarationRenderer, printer) }
                     },
                     {
-                        toRender.firstIsInstanceOrNull<KaPropertySetterSymbol>()
+                        toRender.filterIsInstance<KaPropertySetterSymbol>().firstOrNull()
                             ?.let { declarationRenderer.setterRenderer.renderSymbol(analysisSession, it, declarationRenderer, printer) }
                     },
                 )
