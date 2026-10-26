@@ -1,3 +1,4 @@
+@kotlin.jvm.JvmInline()
 public final class IC /* IC*/ {
   private final int x;
 

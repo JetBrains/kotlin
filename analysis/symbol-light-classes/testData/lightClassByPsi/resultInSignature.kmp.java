@@ -55,6 +55,7 @@ public final class ResultInSignatureKt /* ResultInSignatureKt*/ {
   public static final void topLevelResultInParameter(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.Object);//  topLevelResultInParameter(@org.jetbrains.annotations.NotNull() java.lang.Object)
 }
 
+@kotlin.jvm.JvmInline()
 public final class Some /* Some*/ {
   @org.jetbrains.annotations.NotNull()
   private final @org.jetbrains.annotations.NotNull() java.lang.String value;
@@ -70,6 +71,7 @@ public final class Some /* Some*/ {
   public int hashCode();//  hashCode()
 }
 
+@kotlin.jvm.JvmInline()
 public final class ValueClassWithResult /* ValueClassWithResult*/ {
   @org.jetbrains.annotations.NotNull()
   private final @org.jetbrains.annotations.NotNull() java.lang.Object r;
