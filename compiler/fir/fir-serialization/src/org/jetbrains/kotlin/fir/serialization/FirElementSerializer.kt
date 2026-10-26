@@ -1028,13 +1028,12 @@ class FirElementSerializer private constructor(
         isAbbreviation: Boolean = false,
         abbreviationOnly: Boolean = false,
     ): ProtoBuf.Type.Builder {
-        val builder = ProtoBuf.Type.newBuilder()
-        val typeAnnotations = mutableListOf<FirAnnotation>()
-        when (type) {
+        val builder = when (type) {
             is ConeDefinitelyNotNullType -> return typeProto(type.original, toSuper, correspondingTypeRef, isDefinitelyNotNullType = true)
             is ConeErrorType -> {
-                extension.serializeErrorType(type, builder)
-                return builder
+                return ProtoBuf.Type.newBuilder().also {
+                    extension.serializeErrorType(type, it)
+                }
             }
             is ConeFlexibleType -> {
                 val lowerBound = typeProto(type.lowerBound)
@@ -1064,18 +1063,22 @@ class FirElementSerializer private constructor(
                         return typeProto(type.customFunctionTypeToSimpleFunctionType(session))
                     }
                 }
-                fillFromPossiblyInnerType(builder, type, abbreviationOnly)
+                ProtoBuf.Type.newBuilder().also {
+                    fillFromPossiblyInnerType(it, type, abbreviationOnly)
+                }
             }
             is ConeTypeParameterType -> {
-                val typeParameter = type.lookupTag.typeParameterSymbol.fir
-                if (typeParameter in ((currentDeclaration as? FirMemberDeclaration)?.typeParameters ?: emptyList())) {
-                    builder.typeParameterName = getSimpleNameIndex(typeParameter.name)
-                } else {
-                    builder.typeParameter = getTypeParameterId(typeParameter)
-                }
+                ProtoBuf.Type.newBuilder().also { builder ->
+                    val typeParameter = type.lookupTag.typeParameterSymbol.fir
+                    if (typeParameter in ((currentDeclaration as? FirMemberDeclaration)?.typeParameters ?: emptyList())) {
+                        builder.typeParameterName = getSimpleNameIndex(typeParameter.name)
+                    } else {
+                        builder.typeParameter = getTypeParameterId(typeParameter)
+                    }
 
-                if (isDefinitelyNotNullType) {
-                    builder.flags = Flags.getTypeFlags(/* isSuspend = */ false, /* isDefinitelyNotNull = */ true)
+                    if (isDefinitelyNotNullType) {
+                        builder.flags = Flags.getTypeFlags(/* isSuspend = */ false, /* isDefinitelyNotNull = */ true)
+                    }
                 }
             }
             is ConeIntersectionType -> {
@@ -1107,6 +1110,12 @@ class FirElementSerializer private constructor(
             builder.nullable = type.isMarkedNullable
         }
 
+        extension.serializeTypeAnnotations(type.getAnnotations(), builder)
+        return builder
+    }
+
+    private fun ConeKotlinType.getAnnotations(): List<FirAnnotation> {
+        val typeAnnotations = mutableListOf<FirAnnotation>()
         val extensionAttributes = mutableListOf<ConeAttribute<*>>()
         // KT-67474: In K1, iteration order of `type.attributes` is the following: 1) custom attrs, then 2) builtin attrs;
         //   see it in `Annotations.withExtensionFunctionAnnotation` in functionTypes.kt
@@ -1114,7 +1123,7 @@ class FirElementSerializer private constructor(
         // - `ConeAttributes.WithExtensionFunctionType` in ConeAttributes.kt and
         // - `ConeAttributes.custom` in CustomAnnotationTypeAttribute.kt
         // To put custom attrs before builtin ones, as K1 does, the following partial sorting is used.
-        val sortedAttributes = type.attributes.sortedBy { it !is CustomAnnotationTypeAttribute }
+        val sortedAttributes = attributes.sortedBy { it !is CustomAnnotationTypeAttribute }
         for (attribute in sortedAttributes) {
             when {
                 attribute is CustomAnnotationTypeAttribute -> typeAnnotations.addAll(attribute.annotations.nonSourceAnnotations(session))
@@ -1130,9 +1139,7 @@ class FirElementSerializer private constructor(
                 typeAnnotations.addIfNotNull(attributeExtension.convertAttributeToAnnotation(attribute))
             }
         }
-
-        extension.serializeTypeAnnotations(typeAnnotations, builder)
-        return builder
+        return typeAnnotations
     }
 
     private fun createAnnotationForCompilerDefinedTypeAttribute(attribute: ConeAttribute<*>): FirAnnotation? {
