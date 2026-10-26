@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.wasm.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
+import org.jetbrains.kotlin.ir.backend.js.utils.isExplicitlyExported
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -67,9 +68,10 @@ class JsCodeCallsLowering(val context: WasmBackendContext) : FileLoweringPass {
             append(jsCode)
             if (!isSingleExpressionJsCode) append(" }")
         }
-        if (function.parameters.any { it.defaultValue != null }) {
-            // Create a separate external function without default arguments
-            // and delegate calls to it.
+        if (function.parameters.any { it.defaultValue != null } || function.isExplicitlyExported()) {
+            // Delegate calls from the original function to an external one.
+            // Values for default parameters are passed to the external function explicitly.
+            // Original function stays non-external and can be exported.
             val externalFun = context.irFactory.stageController.restrictTo(function) {
                 createExternalJsFunction(
                     context,
