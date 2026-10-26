@@ -1416,7 +1416,7 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
         buildEvalBody: (build: () -> FirBlock) -> FirBlock = { it() },
     ): FirReplSnippet {
         val snippetName = firSnippetName(fileName)
-        val snippetClassName = NameUtils.getSnippetTargetClassName(snippetName)
+        val snippetClassName = ScriptNames.getSnippetTargetClassName(snippetName)
         val classSymbol = FirRegularClassSymbol(ClassId(context.packageFqName, snippetClassName))
 
         val snippetSymbol = FirReplSnippetSymbol(classSymbol)

@@ -38,22 +38,25 @@ object NameUtils {
 
     // "pkg/someScript.kts" -> "SomeScript"
     @JvmStatic
+    @Deprecated(
+        "Use 'getScriptNameForFile' from 'ScriptNames' instead",
+        ReplaceWith(
+            "ScriptNames.getScriptNameForFile(filePath)",
+            imports = ["org.jetbrains.kotlin.name.ScriptNames"]
+        )
+    )
     fun getScriptNameForFile(filePath: String): Name =
-        Name.identifier(NameUtils.getPackagePartClassNamePrefix(filePath.substringAfterLast('/').substringBeforeLast('.')))
+        ScriptNames.getScriptNameForFile(filePath)
 
     @JvmStatic
-    fun getScriptTargetClassName(originalName: Name): Name = getSnippetOrScriptTargetClassName(originalName, "script-")
-
-    @JvmStatic
-    fun getSnippetTargetClassName(originalName: Name): Name = getSnippetOrScriptTargetClassName(originalName, "snippet-")
-
-    @JvmStatic
-    fun getSnippetTargetClassName(fileName: String): Name = getSnippetTargetClassName(Name.special("<$fileName>"))
-
-    private fun getSnippetOrScriptTargetClassName(originalName: Name, prefix: String): Name =
-        if (originalName.isSpecial) {
-            getScriptNameForFile(originalName.asStringStripSpecialMarkers().removePrefix(prefix))
-        } else originalName
+    @Deprecated(
+        "Use 'getSnippetTargetClassName' from 'ScriptNames' instead",
+        ReplaceWith(
+            "ScriptNames.getSnippetTargetClassName(fileName)",
+            imports = ["org.jetbrains.kotlin.name.ScriptNames"]
+        )
+    )
+    fun getSnippetTargetClassName(fileName: String): Name = ScriptNames.getSnippetTargetClassName(fileName)
 
     @JvmStatic
     fun hasName(name: Name) = name != SpecialNames.NO_NAME_PROVIDED && name != SpecialNames.ANONYMOUS
