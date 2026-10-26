@@ -163,6 +163,41 @@ class ObjCExportTranslatorImpl(
         return ObjCInterfaceImpl(name, categoryName = "Extensions", members = members)
     }
 
+    internal class PlainMemberEntry(
+        val sortKey: ObjCExportMemberSortKey,
+        val exportThrown: () -> Unit,
+        val translate: () -> List<ObjCExportStub>,
+    )
+
+    internal fun translateExtendedClassName(classDescriptor: ClassDescriptor): String = referenceClass(classDescriptor).objCName
+
+    internal fun translatePlainMemberEntries(members: List<CallableMemberDescriptor>): List<PlainMemberEntry> {
+        val methods = mutableListOf<FunctionDescriptor>()
+        val properties = mutableListOf<PropertyDescriptor>()
+
+        members.toObjCMembers(methods, properties)
+
+        return methods.map { method ->
+            PlainMemberEntry(
+                ObjCExportMemberSortKey(
+                    isProperty = false, method.name.asString(), method.valueParameters.size,
+                    KonanManglerDesc.run { method.signatureString(false) },
+                ),
+                exportThrown = { exportThrown(method) },
+                translate = { buildMembers { add { buildMethod(method, method, ObjCRootExportScope) } } },
+            )
+        } + properties.map { property ->
+            PlainMemberEntry(
+                ObjCExportMemberSortKey(isProperty = true, property.name.asString(), parameterCount = 0, signature = ""),
+                exportThrown = {},
+                translate = { buildMembers { translateProperty(property, property, ObjCRootExportScope) } },
+            )
+        }
+    }
+
+    internal fun buildExtensionsCategory(className: String, members: List<ObjCExportStub>): ObjCInterface =
+        ObjCInterfaceImpl(className, categoryName = "Extensions", members = members)
+
     override fun translateFile(file: SourceFile, declarations: List<CallableMemberDescriptor>): ObjCInterface {
         val name = namer.getFileClassName(file)
 

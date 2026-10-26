@@ -23,14 +23,17 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.klibModuleOriginOrNull
 import org.jetbrains.kotlin.library.uniqueName
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.source.getPsi
 import java.nio.file.Path
+import java.util.zip.GZIPOutputStream
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.bufferedWriter
 import kotlin.io.path.createDirectories
 import kotlin.io.path.createTempFile
 import kotlin.io.path.name
+import kotlin.io.path.outputStream
 import kotlin.io.path.writeLines
 
 private val ModuleDescriptor.library: KotlinLibrary?
@@ -103,12 +106,37 @@ internal fun produceObjCExportInterface(
             explicitMethodFamily = explicitMethodFamily,
     )
     val headerModuleDescriptors = libraryToCacheModule?.let { listOf(it) } ?: moduleDescriptors
+
+    val objCCaches = config.objCCaches
+    val cachedModules = headerModuleDescriptors.mapNotNull { module ->
+        module.library?.let { objCCaches[it] }?.let { module to it }
+    }.toMap()
+
     val shouldExportKDoc = context.shouldExportKDoc()
     val additionalImports = context.config.configuration.getNotNull(NativeConfigurationKeys.FRAMEWORK_IMPORT_HEADERS)
     val headerGenerator = ObjCExportHeaderGenerator.createInstance(
-            headerModuleDescriptors, mapper, namer, problemCollector, objcGenerics, objcExportBlockExplicitParameterNames, shouldExportKDoc = shouldExportKDoc,
-            additionalImports = additionalImports, restrictToLocalModules = config.produce.isObjCCache)
-    headerGenerator.translateModule()
+            headerModuleDescriptors.filter { it !in cachedModules }, mapper, namer, problemCollector, objcGenerics, objcExportBlockExplicitParameterNames, shouldExportKDoc = shouldExportKDoc,
+            additionalImports = additionalImports,
+            restrictToLocalModules = config.produce.isObjCCache, cachedModules = cachedModules.keys)
+
+    headerGenerator.translateBaseDeclarations()
+    when {
+        config.produce.isObjCCache -> {
+            val units = headerGenerator.translateUnits().single()
+            headerGenerator.assembleHeader(listOf(ObjCExportModuleUnits(0, units)))
+            return headerGenerator.buildInterface(objCCacheUnits = units)
+        }
+        cachedModules.isNotEmpty() -> {
+            val moduleIndices = moduleDescriptors.withIndex().associate { [index, module] -> module to index }
+            val localModules = headerGenerator.moduleDescriptors.associateWith { moduleIndices.getValue(it) }
+            val cachedUnits = cachedModules.map { [module, cache] -> ObjCExportModuleUnits(moduleIndices.getValue(module), cache.units) }
+            headerGenerator.assembleHeader(cachedUnits, localModules) { classId ->
+                runCatching { ClassId.fromString(classId) }.getOrNull()?.let { moduleDescriptor.findClassAcrossModuleDependencies(it) }
+            }
+        }
+        else -> headerGenerator.translateModuleDeclarations()
+    }
+
     return headerGenerator.buildInterface()
 }
 
@@ -223,7 +251,7 @@ internal class ObjCExport(
         objCCodeGenerator.generate(codeSpec)
         objCCodeGenerator.dispose()
 
-        if (config.produce.isObjCCache) {
+        if (config.produce.isObjCCache && exportedInterface != null) {
             val library = requireNotNull(config.librariesToCache.keys.singleOrNull())
             val metadata = ObjCCacheMetadata(
                     classAdapters = objCCodeGenerator.objCCacheClassAdapters,
@@ -234,6 +262,12 @@ internal class ObjCExport(
             generationState.outputFiles.objcCacheMetadataFile?.let { file ->
                 file.parent.createDirectories()
                 file.bufferedWriter().use { metadata.serialize(it) }
+            }
+            val units = exportedInterface.objCCacheUnits
+            val unitsFile = generationState.outputFiles.objcCacheUnitsFile
+            if (units != null && unitsFile != null) {
+                unitsFile.parent.createDirectories()
+                GZIPOutputStream(unitsFile.outputStream()).bufferedWriter().use { units.write(it, generationState.shouldExportKDoc()) }
             }
         }
     }

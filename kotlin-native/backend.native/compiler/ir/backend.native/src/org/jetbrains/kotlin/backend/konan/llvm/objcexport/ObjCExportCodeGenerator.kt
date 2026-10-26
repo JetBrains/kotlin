@@ -1713,8 +1713,11 @@ private fun ObjCExportCodeGenerator.createReverseAdapters(
 private fun ObjCExportCodeGenerator.hasAdaptersElsewhere(irClass: IrClass): Boolean {
     val library = irClass.moduleFragment.kotlinLibrary ?: return false
     val config = generationState.config
-    return config.produce.isObjCCache && library != config.librariesToCache.keys.singleOrNull() &&
-            library in config.exportedLibrariesForObjCCache
+    return if (config.produce.isObjCCache) {
+        library != config.librariesToCache.keys.singleOrNull() && library in config.exportedLibrariesForObjCCache
+    } else {
+        library in config.objCCaches
+    }
 }
 
 private class ReverseAdapters(

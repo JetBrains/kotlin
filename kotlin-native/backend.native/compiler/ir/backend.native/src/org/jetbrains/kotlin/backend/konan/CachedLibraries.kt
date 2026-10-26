@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.konan
 import org.jetbrains.kotlin.backend.common.serialization.FingerprintHash
 import org.jetbrains.kotlin.backend.konan.CacheSupport.Companion.cacheFileId
 import org.jetbrains.kotlin.backend.konan.library.KlibDAG
+import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportUnits
 import org.jetbrains.kotlin.backend.common.lazyEvaluatedFingerprintHash
 import org.jetbrains.kotlin.backend.common.serialization.Hash128Bits
 import org.jetbrains.kotlin.backend.konan.serialization.*
@@ -24,11 +25,13 @@ import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.library.uniqueName
 import java.nio.file.Path
 import java.util.Properties
+import java.util.zip.GZIPInputStream
 import kotlin.io.path.Path
 import kotlin.io.path.absolute
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.bufferedReader
 import kotlin.io.path.exists
+import kotlin.io.path.inputStream
 import kotlin.io.path.name
 import kotlin.io.path.readBytes
 import kotlin.io.path.readLines
@@ -261,7 +264,7 @@ class CachedLibraries(
             implicitCacheDirectories.flatMap { dir -> dir.listDirectoryEntriesIfDirectoryExists().map { it.name to it } }
                     .toMap()
 
-    class ObjCCache(val binaryPath: String, val metadata: ObjCCacheMetadata)
+    class ObjCCache(val binaryPath: String, val metadata: ObjCCacheMetadata, val units: ObjCExportUnits)
 
     fun exportedDependencies(library: KotlinLibrary, exportedLibraries: Set<KotlinLibrary>): List<String> =
             klibDag.getAllDependencies(library)
@@ -289,7 +292,8 @@ class CachedLibraries(
                                 "but this compilation exports [${expected.joinToString()}]",
                 )
             }
-            library to ObjCCache(archive.absolutePathString(), metadata)
+            val units = loadObjCExportUnits(archive) ?: return@mapNotNull null
+            library to ObjCCache(archive.absolutePathString(), metadata, units)
         }.toMap()
     }
 
@@ -312,6 +316,10 @@ class CachedLibraries(
             ObjCCacheMetadata.deserialize(properties, library)
         }.getOrElse { ignoreObjCCache(directory, "is incomplete or unreadable (${it.message})") }
     }
+
+    private fun loadObjCExportUnits(archive: Path): ObjCExportUnits? = runCatching {
+        GZIPInputStream(archive.resolveSibling(OBJC_CACHE_UNITS_FILE_NAME).inputStream()).bufferedReader().use { ObjCExportUnits.read(it) }
+    }.getOrElse { ignoreObjCCache(archive.parent.parent, "is incomplete or unreadable (${it.message})") }
 
     private fun findObjCCache(library: KotlinLibrary, moduleName: String, directoriesByName: Map<String, List<Path>>): Path? {
         val candidateName = getObjCCachedLibraryName(library, moduleName)
@@ -416,6 +424,7 @@ class CachedLibraries(
 
         const val METADATA_FILE_NAME = "metadata.properties"
         const val OBJC_CACHE_METADATA_FILE_NAME = "objc_cache_metadata.properties"
+        const val OBJC_CACHE_UNITS_FILE_NAME = "objc_cache_units.txt.gz"
         const val BITCODE_DEPENDENCIES_FILE_NAME = "bitcode_deps"
         const val INLINE_FUNCTION_BODIES_FILE_NAME = "inline_bodies"
         const val CLASS_FIELDS_FILE_NAME = "class_fields"
@@ -453,7 +462,7 @@ class ObjCCacheMetadata(
     }
 
     companion object {
-        const val FORMAT_VERSION = 1
+        const val FORMAT_VERSION = ObjCExportUnits.FORMAT_VERSION
 
         private fun List<ObjCCacheAdapterEntry>.serializeEntries() = map { it.objcName }.sorted().joinToString(";")
 
