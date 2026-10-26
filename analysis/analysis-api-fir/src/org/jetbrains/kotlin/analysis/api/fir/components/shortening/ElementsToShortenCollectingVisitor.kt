@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 
-internal class CollectingVisitor(private val collector: ElementsToShortenCollector) : FirVisitorVoid() {
+internal class ElementsToShortenCollectingVisitor(private val collector: ElementsToShortenCollector) : FirVisitorVoid() {
     private val visitedProperty = mutableSetOf<FirProperty>()
 
     override fun visitValueParameter(valueParameter: FirValueParameter) {

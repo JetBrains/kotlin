@@ -70,7 +70,7 @@ internal class KaFirReferenceShortener(
             kDocQualifiersToShorten = emptyList(),
         )
 
-        val towerContext = FirTowerDataContextProvider.create(resolutionFacade, declarationToVisit)
+        val towerContext = ShorteningTowerDataContextProvider.create(resolutionFacade, declarationToVisit)
 
         //TODO: collect all usages of available symbols in the file and prevent importing symbols that could introduce name clashes, which
         // may alter the meaning of existing code.
@@ -84,9 +84,9 @@ internal class KaFirReferenceShortener(
             callableShortenStrategy = { callableShortenStrategy(buildSymbol(it) as KaCallableSymbol) },
             resolutionFacade,
         )
-        firDeclaration.accept(CollectingVisitor(collector))
+        firDeclaration.accept(ElementsToShortenCollectingVisitor(collector))
 
-        val additionalImports = AdditionalImports(
+        val additionalImports = ShorteningAdditionalImports(
             collector.getNamesToImport(starImport = false).toSet(),
             collector.getNamesToImport(starImport = true).toSet(),
         )

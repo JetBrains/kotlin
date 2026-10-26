@@ -54,7 +54,7 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 internal class ElementsToShortenCollector(
     private val shortenOptions: ShortenOptions,
     private val shorteningContext: FirShorteningContext,
-    private val towerContextProvider: FirTowerDataContextProvider,
+    private val towerContextProvider: ShorteningTowerDataContextProvider,
     private val containingFile: KtFile,
     private val selection: TextRange,
     private val classShortenStrategy: (FirClassLikeSymbol<*>) -> ShortenStrategy,
@@ -394,7 +394,7 @@ internal class ElementsToShortenCollector(
             availableClassifier.symbol.classIdIfExists == qualifierClassId -> {
                 // Respect caller's request to use star import, if it's not already star-imported.
                 return when {
-                    availableClassifier.importKind == ImportKind.EXPLICIT && importAllInParent -> {
+                    availableClassifier.importKind == ShorteningImportKind.EXPLICIT && importAllInParent -> {
                         createElementToShorten(qualifierElement, qualifierClassId.asSingleFqName(), importAllInParent)
                     }
                     // Otherwise, just shorten it and don't alter import statements
@@ -507,10 +507,10 @@ internal class ElementsToShortenCollector(
     }
 
     private fun importedClassifierOverwritesAvailableClassifier(
-        availableClassifier: AvailableSymbol<FirClassifierSymbol<*>>,
+        availableClassifier: ShorteningAvailableSymbol<FirClassifierSymbol<*>>,
         importAllInParent: Boolean
     ): Boolean {
-        val importKindFromOption = if (importAllInParent) ImportKind.STAR else ImportKind.EXPLICIT
+        val importKindFromOption = if (importAllInParent) ShorteningImportKind.STAR else ShorteningImportKind.EXPLICIT
         return importKindFromOption.hasHigherPriorityThan(availableClassifier.importKind)
     }
 
@@ -533,7 +533,7 @@ internal class ElementsToShortenCollector(
                 val shortClassName = classToImport.shortClassName
                 if (expression.getReferencedNameAsName() != shortClassName) return
 
-                val contextProvider = FirTowerDataContextProvider.create(resolutionFacade, expression)
+                val contextProvider = ShorteningTowerDataContextProvider.create(resolutionFacade, expression)
                 val positionScopes = shorteningContext.findScopesAtPosition(expression, getNamesToImport(), contextProvider) ?: return
                 val availableClassifier = shorteningContext.findFirstClassifierInScopesByName(positionScopes, shortClassName) ?: return
                 when {
@@ -800,7 +800,7 @@ internal class ElementsToShortenCollector(
         calledSymbol: FirCallableSymbol<*>,
         option: ShortenStrategy,
         qualifiedCallExpression: KtDotQualifiedExpression,
-        availableCallables: List<AvailableSymbol<FirCallableSymbol<*>>>,
+        availableCallables: List<ShorteningAvailableSymbol<FirCallableSymbol<*>>>,
     ): ElementToShorten? {
         if (option == ShortenStrategy.DO_NOT_SHORTEN) return null
         if (!canBePossibleToImportReceiver(qualifiedAccess)) return null
@@ -809,7 +809,7 @@ internal class ElementsToShortenCollector(
 
         val [matchedCallables, otherCallables] = availableCallables.partition { it.symbol.callableId == calledSymbol.callableId }
 
-        val importKindFromOption = ImportKind.fromShortenOption(option)
+        val importKindFromOption = ShorteningImportKind.fromShortenOption(option)
         val importKind = matchedCallables.minOfOrNull { it.importKind } ?: importKindFromOption ?: return null
 
         val callToShorten = when {
@@ -829,7 +829,7 @@ internal class ElementsToShortenCollector(
                     }
 
                     // Respect caller's request to star import this symbol.
-                    matchedCallables.any { it.importKind == ImportKind.EXPLICIT } && option == ShortenStrategy.SHORTEN_AND_STAR_IMPORT ->
+                    matchedCallables.any { it.importKind == ShorteningImportKind.EXPLICIT } && option == ShortenStrategy.SHORTEN_AND_STAR_IMPORT ->
                         createElementToShorten(qualifiedCallExpression, nameToImport, importAllInParent = true)
 
                     else -> createElementToShorten(qualifiedCallExpression)

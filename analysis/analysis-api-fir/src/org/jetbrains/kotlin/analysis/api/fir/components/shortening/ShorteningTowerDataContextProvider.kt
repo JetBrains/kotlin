@@ -12,11 +12,11 @@ import org.jetbrains.kotlin.fir.declarations.FirTowerDataContext
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 
-internal class FirTowerDataContextProvider private constructor(
+internal class ShorteningTowerDataContextProvider private constructor(
     private val contextProvider: ContextCollector.ContextProvider
 ) {
     companion object {
-        fun create(resolutionFacade: LLResolutionFacade, targetElement: KtElement): FirTowerDataContextProvider {
+        fun create(resolutionFacade: LLResolutionFacade, targetElement: KtElement): ShorteningTowerDataContextProvider {
             val firFile = targetElement.containingKtFile.getOrBuildFirFile(resolutionFacade)
 
             val contextProvider = ContextCollector.process(
@@ -27,7 +27,7 @@ internal class FirTowerDataContextProvider private constructor(
                 filter = { ContextCollector.FilterResponse.CONTINUE }
             )
 
-            return FirTowerDataContextProvider(contextProvider)
+            return ShorteningTowerDataContextProvider(contextProvider)
         }
     }
 

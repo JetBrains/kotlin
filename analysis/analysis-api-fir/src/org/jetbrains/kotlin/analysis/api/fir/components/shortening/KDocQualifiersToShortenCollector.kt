@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.resolve.ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE
 internal class KDocQualifiersToShortenCollector(
     private val analysisSession: KaFirSession,
     private val selection: TextRange,
-    private val additionalImports: AdditionalImports,
+    private val additionalImports: ShorteningAdditionalImports,
     private val classShortenStrategy: (FirClassLikeSymbol<*>) -> ShortenStrategy,
     private val callableShortenStrategy: (FirCallableSymbol<*>) -> ShortenStrategy,
 ) : KtVisitorVoid() {
@@ -59,7 +59,7 @@ internal class KDocQualifiersToShortenCollector(
 
     private fun shouldShortenKDocQualifier(
         kDocName: KDocName,
-        additionalImports: AdditionalImports,
+        additionalImports: ShorteningAdditionalImports,
         classShortenStrategy: (FirClassLikeSymbol<*>) -> ShortenStrategy,
         callableShortenStrategy: (FirCallableSymbol<*>) -> ShortenStrategy,
     ): Boolean {
@@ -112,7 +112,7 @@ internal class KDocQualifiersToShortenCollector(
         }
     }
 
-    private fun FqName.isInNewImports(additionalImports: AdditionalImports): Boolean =
+    private fun FqName.isInNewImports(additionalImports: ShorteningAdditionalImports): Boolean =
         this in additionalImports.simpleImports || this.parent() in additionalImports.starImports
 
     private fun addKDocQualifierToShorten(kDocName: KDocName) {

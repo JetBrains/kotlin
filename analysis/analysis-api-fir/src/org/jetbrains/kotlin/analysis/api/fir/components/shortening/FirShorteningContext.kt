@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
  * How a symbol is imported. The order of the enum entry represents the priority of imports. If a symbol is available from multiple kinds of
  * imports, the symbol from "smaller" kind is used. For example, an explicitly imported symbol can overwrite a star-imported symbol.
  */
-internal enum class ImportKind {
+internal enum class ShorteningImportKind {
     /** The symbol is available from the local scope and hence cannot be imported or overwritten. */
     LOCAL,
 
@@ -56,10 +56,10 @@ internal enum class ImportKind {
     /** Star imported (star import) by Kotlin default. */
     DEFAULT_STAR;
 
-    fun hasHigherPriorityThan(that: ImportKind): Boolean = this < that
+    fun hasHigherPriorityThan(that: ShorteningImportKind): Boolean = this < that
 
     companion object {
-        fun fromScope(scope: FirScope): ImportKind {
+        fun fromScope(scope: FirScope): ShorteningImportKind {
             return when (scope) {
                 is FirDefaultStarImportingScope -> DEFAULT_STAR
                 is FirAbstractStarImportingScope -> STAR
@@ -70,7 +70,7 @@ internal enum class ImportKind {
             }
         }
 
-        fun fromShortenOption(option: ShortenStrategy): ImportKind? = when (option) {
+        fun fromShortenOption(option: ShortenStrategy): ShorteningImportKind? = when (option) {
             ShortenStrategy.SHORTEN_AND_IMPORT -> EXPLICIT
             ShortenStrategy.SHORTEN_AND_STAR_IMPORT -> STAR
             else -> null
@@ -78,9 +78,9 @@ internal enum class ImportKind {
     }
 }
 
-internal data class AvailableSymbol<out T>(
+internal data class ShorteningAvailableSymbol<out T>(
     val symbol: T,
-    val importKind: ImportKind,
+    val importKind: ShorteningImportKind,
 )
 
 internal class FirShorteningContext(val analysisSession: KaFirSession) {
@@ -89,9 +89,9 @@ internal class FirShorteningContext(val analysisSession: KaFirSession) {
     private val firSession: FirSession
         get() = resolutionFacade.useSiteFirSession
 
-    class ClassifierCandidate(val scope: FirScope, val availableSymbol: AvailableSymbol<FirClassifierSymbol<*>>)
+    class ClassifierCandidate(val scope: FirScope, val availableSymbol: ShorteningAvailableSymbol<FirClassifierSymbol<*>>)
 
-    fun findFirstClassifierInScopesByName(positionScopes: List<FirScope>, targetClassName: Name): AvailableSymbol<FirClassifierSymbol<*>>? =
+    fun findFirstClassifierInScopesByName(positionScopes: List<FirScope>, targetClassName: Name): ShorteningAvailableSymbol<FirClassifierSymbol<*>>? =
         positionScopes.firstNotNullOfOrNull { scope -> findFirstClassifierSymbolByName(scope, targetClassName) }
 
     fun findClassifiersInScopesByName(scopes: List<FirScope>, targetClassName: Name): List<ClassifierCandidate> =
@@ -101,10 +101,10 @@ internal class FirShorteningContext(val analysisSession: KaFirSession) {
             ClassifierCandidate(scope, classifierSymbol)
         }
 
-    private fun findFirstClassifierSymbolByName(scope: FirScope, targetClassName: Name): AvailableSymbol<FirClassifierSymbol<*>>? {
+    private fun findFirstClassifierSymbolByName(scope: FirScope, targetClassName: Name): ShorteningAvailableSymbol<FirClassifierSymbol<*>>? {
         val classifierSymbol = scope.findFirstClassifierByName(targetClassName) ?: return null
 
-        return AvailableSymbol(classifierSymbol, ImportKind.fromScope(scope))
+        return ShorteningAvailableSymbol(classifierSymbol, ShorteningImportKind.fromScope(scope))
     }
 
     private fun FirClassLikeSymbol<*>.getSamConstructor(): FirNamedFunctionSymbol? {
@@ -132,24 +132,24 @@ internal class FirShorteningContext(val analysisSession: KaFirSession) {
         return constructors + listOfNotNull(samConstructor)
     }
 
-    fun findFunctionsInScopes(scopes: List<FirScope>, name: Name): List<AvailableSymbol<FirFunctionSymbol<*>>> {
+    fun findFunctionsInScopes(scopes: List<FirScope>, name: Name): List<ShorteningAvailableSymbol<FirFunctionSymbol<*>>> {
         return scopes.flatMap { scope ->
-            val importKind = ImportKind.fromScope(scope)
+            val importKind = ShorteningImportKind.fromScope(scope)
             buildList {
                 // Collect constructors
-                findAvailableConstructors(scope, name).mapTo(this) { AvailableSymbol(it, importKind) }
+                findAvailableConstructors(scope, name).mapTo(this) { ShorteningAvailableSymbol(it, importKind) }
 
                 // Collect functions
-                scope.getFunctions(name).mapTo(this) { AvailableSymbol(it, importKind) }
+                scope.getFunctions(name).mapTo(this) { ShorteningAvailableSymbol(it, importKind) }
             }
         }
     }
 
-    fun findPropertiesInScopes(scopes: List<FirScope>, name: Name): List<AvailableSymbol<FirVariableSymbol<*>>> {
+    fun findPropertiesInScopes(scopes: List<FirScope>, name: Name): List<ShorteningAvailableSymbol<FirVariableSymbol<*>>> {
         return scopes.flatMap { scope ->
-            val importKind = ImportKind.fromScope(scope)
+            val importKind = ShorteningImportKind.fromScope(scope)
             scope.getProperties(name).map {
-                AvailableSymbol(it, importKind)
+                ShorteningAvailableSymbol(it, importKind)
             }
         }
     }
@@ -169,7 +169,7 @@ internal class FirShorteningContext(val analysisSession: KaFirSession) {
     fun findScopesAtPosition(
         position: KtElement,
         newImports: Sequence<FqName>,
-        towerContextProvider: FirTowerDataContextProvider,
+        towerContextProvider: ShorteningTowerDataContextProvider,
         withImplicitReceivers: Boolean = true,
     ): List<FirScope>? {
         val towerDataContext = towerContextProvider.getClosestAvailableParentContext(position) ?: return null
