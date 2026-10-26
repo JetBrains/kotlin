@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.fir.components.resolver
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.analysis.api.fir.components.KaFirSessionComponent
+import org.jetbrains.kotlin.analysis.api.fir.components.KaFirResolver
 import org.jetbrains.kotlin.analysis.api.fir.components.analysisSession
 import org.jetbrains.kotlin.analysis.api.fir.components.toKaSubstitutor
 import org.jetbrains.kotlin.analysis.api.fir.resolution.*
@@ -30,7 +30,7 @@ private fun FirExpression.asFunctionOperatorCall(
     it.origin == FirFunctionCallOrigin.Operator && it.source?.kind == expectedSourceKind
 }
 
-context(component: KaFirSessionComponent)
+context(resolver: KaFirResolver)
 internal fun resolveForLoopCall(firLoop: FirWhileLoop, psi: KtForExpression): KaCallResolutionAttempt? {
     val firHasNextCall = firLoop.condition.asFunctionOperatorCall(KtFakeSourceElementKind.DesugaredForLoop) ?: return null
 
@@ -59,7 +59,7 @@ internal fun resolveForLoopCall(firLoop: FirWhileLoop, psi: KtForExpression): Ka
     )
 }
 
-context(component: KaFirSessionComponent)
+context(resolver: KaFirResolver)
 internal fun resolveDelegatedPropertyCall(firProperty: FirProperty, psi: KtPropertyDelegate): KaCallResolutionAttempt? {
     if (firProperty.delegate == null) return null
 
@@ -92,7 +92,7 @@ internal fun resolveDelegatedPropertyCall(firProperty: FirProperty, psi: KtPrope
  * Resolves a [FirFunctionCall] into a [KaSimpleCallResolutionAttempt].
  * If the call has an error, returns [KaSimpleCallResolutionError]; otherwise builds a [KaSimpleCallResolutionSuccess].
  */
-context(component: KaFirSessionComponent)
+context(resolver: KaFirResolver)
 private fun resolveSingleSubCall(call: FirFunctionCall, psi: KtElement): KaSimpleCallResolutionAttempt {
     findErrorCall(call, psi)?.let { return it }
 
@@ -101,7 +101,7 @@ private fun resolveSingleSubCall(call: FirFunctionCall, psi: KtElement): KaSimpl
             backedDiagnostic = KaNonBoundToPsiErrorDiagnostic(
                 factoryName = FirErrors.OTHER_ERROR.name,
                 defaultMessage = "Failed to build call",
-                token = component.token,
+                token = resolver.token,
             ),
             backingCandidateCalls = emptyList(),
         )
@@ -110,7 +110,7 @@ private fun resolveSingleSubCall(call: FirFunctionCall, psi: KtElement): KaSimpl
     }
 }
 
-context(component: KaFirSessionComponent)
+context(resolver: KaFirResolver)
 private fun buildNamedFunctionCall(firFunctionCall: FirFunctionCall): KaFunctionCall<KaNamedFunctionSymbol>? {
     val functionSymbol = (firFunctionCall.calleeReference as? FirResolvedNamedReference)
         ?.resolvedSymbol as? FirNamedFunctionSymbol ?: return null

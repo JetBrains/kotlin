@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components.resolver
 
-import org.jetbrains.kotlin.analysis.api.fir.components.KaFirSessionComponent
+import org.jetbrains.kotlin.analysis.api.fir.components.KaFirResolver
 import org.jetbrains.kotlin.analysis.api.fir.components.resolutionFacade
 import org.jetbrains.kotlin.analysis.api.fir.resolution.*
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
@@ -40,7 +40,7 @@ private fun createKaCallForArrayAccessConvention(
 /**
  * Handle compound assignment with variable
  */
-context(component: KaFirSessionComponent)
+context(resolver: KaFirResolver)
 private fun createKaCallForVariableAccessConvention(
     psi: KtElement,
     fir: FirElement,
@@ -88,7 +88,7 @@ private fun createKaCallForVariableAccessConvention(
     )
 }
 
-context(component: KaFirSessionComponent)
+context(resolver: KaFirResolver)
 private fun createKaCallForCompoundAccessConvention(
     psi: KtElement,
     fir: FirElement,
@@ -113,7 +113,7 @@ private fun createKaCallForCompoundAccessConvention(
     compoundOperationProvider = compoundOperationProvider,
 )
 
-context(component: KaFirSessionComponent)
+context(resolver: KaFirResolver)
 internal fun handleCompoundAccessCall(
     psi: KtElement,
     fir: FirElement,
@@ -180,7 +180,7 @@ internal fun handleCompoundAccessCall(
     }
 }
 
-context(component: KaFirSessionComponent)
+context(resolver: KaFirResolver)
 private fun createCompoundArrayAccessCall(
     psi: KtElement,
     firCall: FirFunctionCall,
@@ -284,7 +284,7 @@ private fun createCompoundArrayAccessCall(
     )
 }
 
-context(component: KaFirSessionComponent)
+context(resolver: KaFirResolver)
 private fun getInitializerOfReferencedLocalVariable(variableReference: FirExpression): FirFunctionCall? {
     return variableReference.toReference(resolutionFacade.useSiteFirSession)
         ?.toResolvedVariableSymbol()
@@ -292,7 +292,7 @@ private fun getInitializerOfReferencedLocalVariable(variableReference: FirExpres
         ?.initializer as? FirFunctionCall
 }
 
-context(component: KaFirSessionComponent)
+context(resolver: KaFirResolver)
 private fun buildOperationCallForCompoundVariableAccess(
     firOperationCall: FirFunctionCall,
     leftOperandPsi: KtExpression,

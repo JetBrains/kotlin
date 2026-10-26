@@ -219,7 +219,7 @@ internal fun FirElement.toKaResolutionAttempt(
  *     - `MyJavaClass<Int>.staticMethod()`
  *     - It could be dropped after the 2.5 version
  */
-context(component: KaFirSessionComponent)
+context(resolver: KaFirResolver)
 private fun handleMissedConstructorCall(fir: FirElement, psi: KtElement): KaSimpleCallResolutionError? {
     if (fir !is FirResolvedQualifier) {
         return null
@@ -251,12 +251,12 @@ private fun handleMissedConstructorCall(fir: FirElement, psi: KtElement): KaSimp
     )
 }
 
-context(component: KaFirSessionComponent)
+context(resolver: KaFirResolver)
 internal fun inapplicableCandidateDiagnostic(): KaDiagnostic {
-    return KaNonBoundToPsiErrorDiagnostic(factoryName = FirErrors.OTHER_ERROR.name, "Inapplicable candidate", component.token)
+    return KaNonBoundToPsiErrorDiagnostic(factoryName = FirErrors.OTHER_ERROR.name, "Inapplicable candidate", resolver.token)
 }
 
-context(component: KaFirSessionComponent)
+context(resolver: KaFirResolver)
 internal fun createKaCall(
     psi: KtElement,
     fir: FirResolvable,
@@ -302,7 +302,7 @@ private class TypeArgumentsMappingResult(
     val typeArgumentsMapping: Map<KaTypeParameterSymbol, KaType>,
 )
 
-context(component: KaFirSessionComponent)
+context(resolver: KaFirResolver)
 private fun computeTypeArgumentsMapping(
     fir: FirElement,
     calleeReference: FirReference?,
@@ -327,7 +327,7 @@ private fun computeTypeArgumentsMapping(
     return TypeArgumentsMappingResult(targetSymbol, firTypeArgumentsMapping, typeArgumentsMapping)
 }
 
-context(component: KaFirSessionComponent)
+context(resolver: KaFirResolver)
 private fun createKaCallResolutionAttempt(
     psi: KtElement,
     fir: FirElement,
@@ -365,7 +365,7 @@ private fun createKaCallResolutionAttempt(
 /**
  * Core call construction logic. Assumes the caller has already handled compound access.
  */
-context(component: KaFirSessionComponent)
+context(resolver: KaFirResolver)
 private fun buildKaCall(
     psi: KtElement,
     fir: FirElement,
@@ -670,7 +670,7 @@ private fun buildKaCall(
     }
 }
 
-context(component: KaFirSessionComponent)
+context(resolver: KaFirResolver)
 internal fun transformErrorReference(
     psi: KtElement,
     call: FirElement,
@@ -722,7 +722,7 @@ internal fun transformErrorReference(
     )
 }
 
-context(component: KaFirSessionComponent)
+context(resolver: KaFirResolver)
 internal fun findErrorCall(
     call: FirFunctionCall,
     psi: KtElement,
@@ -738,7 +738,7 @@ internal fun findErrorCall(
     else -> null
 }
 
-context(component: KaFirSessionComponent)
+context(resolver: KaFirResolver)
 internal fun FirResolvedQualifier.findQualifierConstructors(): List<FirConstructorSymbol> {
     val classSymbol = this.qualifierSymbol?.fullyExpandedClass(analysisSession.firSession) ?: return emptyList()
     return classSymbol.unsubstitutedScope(
@@ -749,7 +749,7 @@ internal fun FirResolvedQualifier.findQualifierConstructors(): List<FirConstruct
     ).getDeclaredConstructors()
 }
 
-context(component: KaFirSessionComponent)
+context(resolver: KaFirResolver)
 internal fun FirResolvedQualifier.toKaCalls(constructors: List<FirConstructorSymbol>): List<KaFunctionCall<*>> =
     constructors.map { constructor ->
         val signature = constructor.toKaSignature()

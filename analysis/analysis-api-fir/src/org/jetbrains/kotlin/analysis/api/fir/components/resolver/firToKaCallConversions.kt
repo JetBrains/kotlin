@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.logErrorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
-context(component: KaFirSessionComponent)
+context(resolver: KaFirResolver)
 internal fun FirVariableAssignment.toPartiallyAppliedSymbol(): KaPartiallyAppliedVariableSymbol<KaVariableSymbol>? {
     val variableRef = calleeReference as? FirResolvedNamedReference ?: return null
     val variableSymbol = variableRef.resolvedSymbol as? FirVariableSymbol<*> ?: return null
@@ -53,7 +53,7 @@ internal fun FirVariableAssignment.toPartiallyAppliedSymbol(): KaPartiallyApplie
     )
 }
 
-context(component: KaFirSessionComponent)
+context(resolver: KaFirResolver)
 internal fun FirFunctionCall.toPartiallyAppliedSymbol(
     explicitReceiverPsiSupplement: KtExpression? = null,
 ): KaPartiallyAppliedFunctionSymbol<KaNamedFunctionSymbol>? {
@@ -96,7 +96,7 @@ internal fun FirFunctionCall.toPartiallyAppliedSymbol(
     )
 }
 
-context(component: KaFirSessionComponent)
+context(resolver: KaFirResolver)
 internal fun List<FirExpression>.toKaContextParameterValues(): List<KaReceiverValue> = mapNotNull { expression ->
     val receiverValue = expression.toKaReceiverValue()
     if (receiverValue == null && expression !is FirErrorExpression) {
@@ -108,7 +108,7 @@ internal fun List<FirExpression>.toKaContextParameterValues(): List<KaReceiverVa
     receiverValue
 }
 
-context(component: KaFirSessionComponent)
+context(resolver: KaFirResolver)
 internal fun FirExpression.toKaReceiverValue(): KaReceiverValue? {
     return when (this) {
         is FirSmartCastExpression -> {
@@ -159,18 +159,18 @@ internal fun FirExpression.toKaReceiverValue(): KaReceiverValue? {
     }
 }
 
-context(component: KaFirSessionComponent)
+context(resolver: KaFirResolver)
 internal fun FirCallableSymbol<*>.toKaSignature(): KaCallableSignature<KaCallableSymbol> =
     firSymbolBuilder.callableBuilder.buildCallableSignature(this)
 
-context(component: KaFirSessionComponent)
+context(resolver: KaFirResolver)
 private fun FirClassLikeSymbol<*>.toKaSymbol(): KaClassLikeSymbol = firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(this)
 
-context(component: KaFirSessionComponent)
+context(resolver: KaFirResolver)
 internal fun FirNamedFunctionSymbol.toKaSignature(): KaFunctionSignature<KaNamedFunctionSymbol> =
     firSymbolBuilder.functionBuilder.buildNamedFunctionSignature(this)
 
-context(component: KaFirSessionComponent)
+context(resolver: KaFirResolver)
 internal fun FirVariableSymbol<*>.toKaSignature(): KaVariableSignature<KaVariableSymbol> =
     firSymbolBuilder.variableBuilder.buildVariableLikeSignature(this)
 
@@ -225,17 +225,17 @@ private fun toFirTypeArgumentsMapping(
     return result
 }
 
-context(component: KaFirSessionComponent)
+context(resolver: KaFirResolver)
 internal fun Map<FirTypeParameterSymbol, ConeKotlinType>.asKaTypeParametersMapping(): Map<KaTypeParameterSymbol, KaType> {
     return map { [key, value] ->
         firSymbolBuilder.classifierBuilder.buildTypeParameterSymbol(key) to value.asKaType()
     }.toMap()
 }
 
-context(component: KaFirSessionComponent)
+context(resolver: KaFirResolver)
 internal fun FirDiagnosticHolder.createKaDiagnostic(): KaDiagnostic {
     return source?.let { diagnostic.asKaDiagnostic(it) }
-        ?: KaNonBoundToPsiErrorDiagnostic(factoryName = FirErrors.OTHER_ERROR.name, diagnostic.reason, component.token)
+        ?: KaNonBoundToPsiErrorDiagnostic(factoryName = FirErrors.OTHER_ERROR.name, diagnostic.reason, resolver.token)
 }
 
 private fun KtExpression.toExplicitReceiverValue(type: KaType): KaExplicitReceiverValue =

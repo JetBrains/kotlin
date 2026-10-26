@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.api.fir.components.resolver
 
 import com.intellij.psi.util.parentOfType
 import org.jetbrains.kotlin.analysis.api.fir.buildSymbol
-import org.jetbrains.kotlin.analysis.api.fir.components.KaFirSessionComponent
+import org.jetbrains.kotlin.analysis.api.fir.components.KaFirResolver
 import org.jetbrains.kotlin.analysis.api.fir.components.analysisSession
 import org.jetbrains.kotlin.analysis.api.fir.components.firSymbolBuilder
 import org.jetbrains.kotlin.analysis.api.fir.components.resolutionFacade
@@ -57,14 +57,14 @@ import org.jetbrains.kotlin.psi.KtPsiUtil.deparenthesize
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
-context(component: KaFirSessionComponent)
+context(resolver: KaFirResolver)
 internal fun resolveSymbol(psi: KtElement): KaSymbolResolutionAttempt? = when (psi) {
     is KDocName -> resolveKDocName(psi)
     is KtNameReferenceExpression if psi.parent is KtValueArgumentName -> resolveValueArgumentName(psi)
     else -> psi.getOrBuildFirWithAdjustments()?.toKaSymbolResolutionAttempt(psi)
 }
 
-context(component: KaFirSessionComponent)
+context(resolver: KaFirResolver)
 private fun resolveValueArgumentName(psi: KtNameReferenceExpression): KaSymbolResolutionAttempt? {
     val valueArgument = psi.parent.parent as? KtValueArgument ?: return null
     val call = getCallByValueArgument(valueArgument) ?: return null
@@ -87,7 +87,7 @@ private fun resolveValueArgumentName(psi: KtNameReferenceExpression): KaSymbolRe
 /**
  * Returns the call that receives [argument], e.g., `foo(x = 1)` for `x = 1`.
  */
-context(component: KaFirSessionComponent)
+context(resolver: KaFirResolver)
 private fun getCallByValueArgument(argument: KtValueArgument): FirCall? {
     val ktValueArgumentList = argument.parent as? KtValueArgumentList ?: return null
     val ktCallExpression = ktValueArgumentList.parent as? KtCallElement ?: return null
@@ -127,7 +127,7 @@ private fun Candidate.findParameterMappedTo(argument: KtValueArgument): FirValue
     return argumentMapping.entries.firstOrNull { it.key.expression.realPsi == argument }?.value
 }
 
-context(component: KaFirSessionComponent)
+context(resolver: KaFirResolver)
 private fun resolveKDocName(psi: KDocName): KaSymbolResolutionAttempt? {
     val fullFqName = generateSequence(psi) { it.parent as? KDocName }.last().getQualifiedNameAsFqName()
     val selectedFqName = psi.getQualifiedNameAsFqName()
@@ -145,7 +145,7 @@ private fun resolveKDocName(psi: KDocName): KaSymbolResolutionAttempt? {
     return KaFirSimpleSymbolResolutionSuccess(backingSymbols = symbols.toList())
 }
 
-context(component: KaFirSessionComponent)
+context(resolver: KaFirResolver)
 private fun FirElement.toKaSymbolResolutionAttempt(psi: KtElement): KaSymbolResolutionAttempt? = when (this) {
     is FirResolvedTypeRef if psi is KtSimpleNameExpression -> toKaSymbolResolutionAttempt(psi)
     is FirReference -> toKaSymbolResolutionAttempt(psi)
@@ -166,7 +166,7 @@ private fun FirElement.toKaSymbolResolutionAttempt(psi: KtElement): KaSymbolReso
     else -> null
 }
 
-context(component: KaFirSessionComponent)
+context(resolver: KaFirResolver)
 private fun FirResolvable.toKaSymbolResolutionAttempt(psi: KtElement): KaSymbolResolutionAttempt? {
     val calleeReference = when {
         /**
@@ -192,7 +192,7 @@ private fun FirResolvable.toKaSymbolResolutionAttempt(psi: KtElement): KaSymbolR
     return calleeReference?.toKaSymbolResolutionAttempt(psi)
 }
 
-context(component: KaFirSessionComponent)
+context(resolver: KaFirResolver)
 private fun FirReference.toKaSymbolResolutionAttempt(psi: KtElement): KaSymbolResolutionAttempt? {
     val firSymbolToBuild = when (this) {
         is FirSuperReference -> {
@@ -244,7 +244,7 @@ private fun FirReference.toKaSymbolResolutionAttempt(psi: KtElement): KaSymbolRe
  *
  * @see getContainingCallExpressionForCalleeExpression
  */
-context(component: KaFirSessionComponent)
+context(resolver: KaFirResolver)
 private fun invokeFunctionReceiver(psi: KtNameReferenceExpression): KaSymbolResolutionAttempt? {
     val callExpression = psi.getContainingCallExpressionForCalleeExpression() ?: return null
     val implicitInvokeCall = callExpression.getOrBuildFir(analysisSession.resolutionFacade)
@@ -253,7 +253,7 @@ private fun invokeFunctionReceiver(psi: KtNameReferenceExpression): KaSymbolReso
     return implicitInvokeCall?.explicitReceiver?.toKaSymbolResolutionAttempt(psi)
 }
 
-context(component: KaFirSessionComponent)
+context(resolver: KaFirResolver)
 private fun FirResolvedQualifier.toKaSymbolResolutionAttempt(psi: KtSimpleNameExpression): KaSymbolResolutionAttempt? {
     return getSymbolsForResolvedQualifier(
         fir = this,
@@ -263,23 +263,23 @@ private fun FirResolvedQualifier.toKaSymbolResolutionAttempt(psi: KtSimpleNameEx
     ).ifNotEmpty(::KaFirSimpleSymbolResolutionSuccess)
 }
 
-context(component: KaFirSessionComponent)
+context(resolver: KaFirResolver)
 private fun FirPackageDirective.toKaSymbolResolutionAttempt(psi: KtSimpleNameExpression): KaSymbolResolutionAttempt? {
     val packageFqName = getQualifierSelected(psi, forQualifiedType = false)
     return firSymbolBuilder.createPackageSymbolIfOneExists(packageFqName)?.let(::KaFirSimpleSymbolResolutionSuccess)
 }
 
-context(component: KaFirSessionComponent)
+context(resolver: KaFirResolver)
 private fun FirTypeParameter.toKaSymbolResolutionAttempt(): KaSymbolResolutionAttempt {
     return KaFirSimpleSymbolResolutionSuccess(firSymbolBuilder.buildSymbol(symbol))
 }
 
-context(component: KaFirSessionComponent)
+context(resolver: KaFirResolver)
 private fun FirResolvedReifiedParameterReference.toKaSymbolResolutionAttempt(): KaSymbolResolutionAttempt {
     return KaFirSimpleSymbolResolutionSuccess(firSymbolBuilder.buildSymbol(symbol))
 }
 
-context(component: KaFirSessionComponent)
+context(resolver: KaFirResolver)
 private fun FirResolvedImport.toKaSymbolResolutionAttempt(psi: KtSimpleNameExpression): KaSymbolResolutionAttempt? {
     return getSymbolsByResolvedImport(
         expression = psi,
@@ -289,13 +289,13 @@ private fun FirResolvedImport.toKaSymbolResolutionAttempt(psi: KtSimpleNameExpre
     ).ifNotEmpty(::KaFirSimpleSymbolResolutionSuccess)
 }
 
-context(component: KaFirSessionComponent)
+context(resolver: KaFirResolver)
 private fun FirResolvedTypeRef.toKaSymbolResolutionAttemptForFunctionType(): KaSymbolResolutionAttempt? {
     val symbol = toTargetSymbol(analysisSession.firSession, firSymbolBuilder) ?: return null
     return KaFirSimpleSymbolResolutionSuccess(backingSymbol = symbol)
 }
 
-context(component: KaFirSessionComponent)
+context(resolver: KaFirResolver)
 private fun FirResolvedTypeRef.toKaSymbolResolutionAttempt(psi: KtSimpleNameExpression): KaSymbolResolutionAttempt? {
     val resolvedTypeSymbols = getSymbolsForResolvedTypeRef(
         expression = psi,
@@ -328,7 +328,7 @@ private fun FirResolvedTypeRef.toKaSymbolResolutionAttempt(psi: KtSimpleNameExpr
     return resolvedTypeSymbols.ifNotEmpty(::KaFirSimpleSymbolResolutionSuccess) ?: resolutionError
 }
 
-context(component: KaFirSessionComponent)
+context(resolver: KaFirResolver)
 private fun FirDiagnosticHolder.toKaSymbolResolutionError(): KaSimpleSymbolResolutionError {
     val candidates = if (this is FirNamedReference) {
         getCandidateSymbols()
@@ -342,7 +342,7 @@ private fun FirDiagnosticHolder.toKaSymbolResolutionError(): KaSimpleSymbolResol
     )
 }
 
-context(component: KaFirSessionComponent)
+context(resolver: KaFirResolver)
 private fun FirReturnExpression.toKaSymbolResolutionAttempt(): KaSymbolResolutionAttempt {
     return when (val firFunctionSymbol = target.labeledElement.symbol) {
         is FirErrorFunctionSymbol -> {
