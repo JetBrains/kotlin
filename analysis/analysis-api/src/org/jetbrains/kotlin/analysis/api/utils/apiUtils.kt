@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.api.utils
 
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import kotlin.reflect.KClass
-import kotlin.reflect.full.allSuperclasses
 
 private val implementationPackageNames = listOf(
     "org.jetbrains.kotlin.analysis.api.fir",
@@ -22,13 +21,13 @@ public fun getApiKClassOf(value: Any): KClass<*> {
     }
 
     val valueClass = value::class
-    val allClasses = listOf(valueClass) + valueClass.allSuperclasses
+    val allClasses = listOf(valueClass) + valueClass.allSuperclassesNoReflect
 
     val matchingClasses = allClasses.filter { it.isImplementationIndependent() }
     val matchingClassSet = matchingClasses.toSet()
 
     val matchingClassesRanking = matchingClasses
-        .associateWith { matchingClassSet.intersect(it.allSuperclasses).size }
+        .associateWith { matchingClassSet.intersect(it.allSuperclassesNoReflect).size }
 
     // Find supertypes with the highest number of frontend-independent supertypes
     // It means more specific classes will be selected (such as KaClassSymbol instead of KaSymbol)
@@ -41,3 +40,16 @@ public fun getApiKClassOf(value: Any): KClass<*> {
         .sortedBy { it.simpleName }
         .first()
 }
+
+private val KClass<*>.allSuperclassesNoReflect: Set<KClass<*>>
+    get() = buildSet {
+        fun collect(javaClass: Class<*>) {
+            for (supertype in listOfNotNull(javaClass.superclass) + javaClass.interfaces) {
+                if (add(supertype.kotlin)) {
+                    collect(supertype)
+                }
+            }
+        }
+
+        collect(java)
+    }
