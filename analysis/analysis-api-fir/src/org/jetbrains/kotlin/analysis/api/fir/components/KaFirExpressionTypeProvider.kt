@@ -265,20 +265,6 @@ internal class KaFirExpressionTypeProvider(
         return firCall.argumentsToSubstitutedValueParameters()?.values?.lastOrNull()?.substitutedType?.asKaType()
     }
 
-    private data class SubstitutedValueParameter(val parameter: FirValueParameter, val substitutedType: ConeKotlinType)
-
-    private fun FirCall.argumentsToSubstitutedValueParameters(
-        substituteWithErrorTypes: Boolean = true,
-    ): LinkedHashMap<FirExpression, SubstitutedValueParameter>? {
-        val substitutor = (this as? FirQualifiedAccessExpression)
-            ?.createConeSubstitutorFromTypeArguments(rootModuleSession, discardErrorTypes = !substituteWithErrorTypes)
-            ?: ConeSubstitutor.Empty
-
-        return resolvedArgumentMapping?.mapValuesTo(LinkedHashMap()) { [_, parameter] ->
-            SubstitutedValueParameter(parameter, substitutor.substituteOrSelf(parameter.returnTypeRef.coneType))
-        }
-    }
-
     override fun returnType(declaration: KtDeclarationWithReturnType): KaType = declaration.withPsiValidityAssertion {
         declaration.inferReturnTypeByPsi()?.let { return it }
 
@@ -764,6 +750,21 @@ internal class KaFirExpressionTypeProvider(
         }
 
         return DefiniteNullability.UNKNOWN
+    }
+}
+
+internal data class SubstitutedValueParameter(val parameter: FirValueParameter, val substitutedType: ConeKotlinType)
+
+context(expressionTypeProvider: KaFirExpressionTypeProvider)
+internal fun FirCall.argumentsToSubstitutedValueParameters(
+    substituteWithErrorTypes: Boolean = true,
+): LinkedHashMap<FirExpression, SubstitutedValueParameter>? {
+    val substitutor = (this as? FirQualifiedAccessExpression)
+        ?.createConeSubstitutorFromTypeArguments(rootModuleSession, discardErrorTypes = !substituteWithErrorTypes)
+        ?: ConeSubstitutor.Empty
+
+    return resolvedArgumentMapping?.mapValuesTo(LinkedHashMap()) { [_, parameter] ->
+        SubstitutedValueParameter(parameter, substitutor.substituteOrSelf(parameter.returnTypeRef.coneType))
     }
 }
 
