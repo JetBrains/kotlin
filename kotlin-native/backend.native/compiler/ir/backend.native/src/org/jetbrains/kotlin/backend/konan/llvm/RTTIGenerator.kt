@@ -88,7 +88,6 @@ internal class RTTIGenerator(
             objOffsetsCount: Int,
             interfaces: ConstValue,
             interfacesCount: Int,
-            interfaceTableSize: Int,
             interfaceTable: ConstValue,
             packageName: String?,
             relativeName: String?,
@@ -120,7 +119,6 @@ internal class RTTIGenerator(
                     interfaces,
                     llvm.constInt32(interfacesCount),
 
-                    llvm.constInt32(interfaceTableSize),
                     interfaceTable,
 
                     kotlinStringLiteral(packageName),
@@ -236,8 +234,11 @@ internal class RTTIGenerator(
         } else {
             Pair(emptyList(), -1)
         }
-        val interfaceTablePtr = staticData.placeGlobalConstArray("kifacetable:$className",
+        val interfaceTableRecordsPtr = staticData.placeGlobalConstArray("kifacerecords:$className",
                 runtime.interfaceTableRecordType, interfaceTable)
+        val interfaceTablePtr = staticData.placeGlobal("kifacetable:$className",
+                Struct(runtime.interfaceTableType, llvm.constInt32(interfaceTableSize), interfaceTableRecordsPtr))
+                .also { it.setConstant(true) }.pointer
 
         val reflectionInfo = getReflectionInfo(irClass)
         val typeInfoGlobal = llvmDeclarations.typeInfoGlobal
@@ -248,7 +249,7 @@ internal class RTTIGenerator(
                 superType,
                 objOffsetsPtr, objOffsetsCount,
                 interfacesPtr, interfaces.size,
-                interfaceTableSize, interfaceTablePtr,
+                interfaceTablePtr,
                 reflectionInfo.packageName,
                 reflectionInfo.relativeName,
                 flagsFromClass(irClass) or reflectionInfo.reflectionFlags,
@@ -545,7 +546,10 @@ internal class RTTIGenerator(
                 )
             }
         }
-        val interfaceTablePtr = staticData.placeGlobalConstArray("", runtime.interfaceTableRecordType, interfaceTable)
+        val interfaceTableRecordsPtr = staticData.placeGlobalConstArray("", runtime.interfaceTableRecordType, interfaceTable)
+        val interfaceTablePtr = staticData.placeGlobal("",
+                Struct(runtime.interfaceTableType, llvm.constInt32(interfaceTableSize), interfaceTableRecordsPtr))
+                .also { it.setConstant(true) }.pointer
 
         val typeInfoWithVtable = llvm.struct(TypeInfo(
                 selfPtr = result,
@@ -554,7 +558,7 @@ internal class RTTIGenerator(
                 superType = superClass.typeInfoPtr,
                 objOffsets = objOffsetsPtr, objOffsetsCount = objOffsetsCount,
                 interfaces = interfacesPtr, interfacesCount = interfaces.size,
-                interfaceTableSize = interfaceTableSize, interfaceTable = interfaceTablePtr,
+                interfaceTable = interfaceTablePtr,
                 packageName = ReflectionInfo.EMPTY.packageName,
                 relativeName = ReflectionInfo.EMPTY.relativeName,
                 flags = flagsFromClass(irClass) or (if (immutable) TF_IMMUTABLE else 0),
