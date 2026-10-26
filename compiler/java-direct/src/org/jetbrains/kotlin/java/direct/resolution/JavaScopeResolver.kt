@@ -90,9 +90,7 @@ internal fun findInnerClassInSameFileSupertypes(
 ): JavaClass? {
     if (!visited.add(cls.fqName.asString())) return null
     for (supertypeRef in cls.directSupertypeRefNames) {
-        val supertypeClass = with(cls.resolutionContext) {
-            resolveSameFileSupertypeRefToClass(supertypeRef)
-        } ?: continue
+        val supertypeClass = resolveSameFileSupertypeRefToClass(supertypeRef, c = cls.resolutionContext) ?: continue
         // Declared-only probe; supertype inheritance is handled by the recursive call below.
         supertypeClass.findInnerClass(name)?.let { return it }
         findInnerClassInSameFileSupertypes(supertypeClass, name, visited)?.let { return it }

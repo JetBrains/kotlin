@@ -50,9 +50,7 @@ class JavaParsingClassFinderTest : JavaParsingTestBase() {
         val containingClass = finder.findClass(JavaClassFinder.Request(containingClassId))
         assertTrue(containingClass is JavaClassOverAst, "Expected to find source class $containingClassId")
         containingClass as JavaClassOverAst
-        return with(containingClass.resolutionContext) {
-            resolveInheritedInnerClassToClassId(simpleName, containingClass)
-        }
+        return resolveInheritedInnerClassToClassId(simpleName, containingClass, c = containingClass.resolutionContext)
     }
 
     @Test
@@ -563,7 +561,7 @@ class JavaParsingClassFinderTest : JavaParsingTestBase() {
 
         val tree = parseJavaToLightTree("package pkg;\nclass Dummy {}", 0)
         val context = JavaResolutionContext.create(tree, createDummyFirSessionForTests(), classFinder = finder)
-        val viaAdapter = with(context) { classifierAdapterFor(targetId) }
+        val viaAdapter = classifierAdapterFor(targetId, c = context)
 
         assertSame(
             direct,
