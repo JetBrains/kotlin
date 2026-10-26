@@ -6,14 +6,20 @@
 package org.jetbrains.kotlin.scripting.test.host
 
 import kotlinx.coroutines.runBlocking
+import org.jetbrains.kotlin.fir.java.FirJavaFacade
+import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
+import org.jetbrains.kotlin.fir.java.javaSymbolProvider
 import org.jetbrains.kotlin.scripting.test.getBaseCompilerArgumentsFromProperty
+import org.jetbrains.kotlin.scripting.compiler.plugin.configureFirSession
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmK2CompilerIsolated
 import org.jetbrains.kotlin.testFederation.MustRunAlways
+import java.lang.reflect.Field
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 import kotlin.reflect.full.declaredMembers
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.toScriptSource
+import kotlin.script.experimental.host.with
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.test.*
 
@@ -159,6 +165,46 @@ class ScriptCompilerTest {
         val nestedClasses = kClass.nestedClasses
         assertEquals(1, nestedClasses.size)
     }
+
+    @Test
+    fun testJavaDirectOptionFromRefinementIsApplied() {
+        assertEquals("JavaClassFinderOverAstImpl", javaClassFinderNameOfSourceSession())
+        val expected = javaClassFinderNameOfSourceSession(baseOptions = listOf("-Xjava-direct=false"))
+        assertEquals("JavaClassFinderImpl", expected)
+        val refined = javaClassFinderNameOfSourceSession(refinedOptions = listOf("-Xjava-direct=false"))
+        assertEquals(expected, refined, "-Xjava-direct=false from the refinement is not applied to the session")
+    }
+
+    private fun javaClassFinderNameOfSourceSession(
+        baseOptions: List<String> = emptyList(),
+        refinedOptions: List<String> = emptyList(),
+    ): String? {
+        var finderName: String? = null
+        val hostConfiguration = defaultJvmScriptingHostConfiguration.with {
+            configureFirSession {
+                val javaFacade = javaSymbolProvider?.let { JavaSymbolProvider::class.java.getDeclaredField("javaFacade").getFrom(it) }
+                val classFinder = javaFacade?.let { FirJavaFacade::class.java.getDeclaredField("classFinder").getFrom(it) }
+                finderName = classFinder?.javaClass?.simpleName
+            }
+        }
+        val compilationConfiguration = ScriptCompilationConfiguration {
+            compilerOptions(baseOptions)
+            getBaseCompilerArgumentsFromProperty()?.let {
+                compilerOptions.append(it)
+            }
+            if (refinedOptions.isNotEmpty()) {
+                refineConfiguration {
+                    beforeCompiling {
+                        it.compilationConfiguration.with { compilerOptions.append(refinedOptions) }.asSuccess()
+                    }
+                }
+            }
+        }
+        ScriptJvmK2CompilerIsolated(hostConfiguration).compile("val x = 1".toScriptSource(), compilationConfiguration).valueOrThrow()
+        return finderName
+    }
+
+    private fun Field.getFrom(obj: Any): Any? = also { it.isAccessible = true }.get(obj)
 
     fun compile(
         script: SourceCode,
