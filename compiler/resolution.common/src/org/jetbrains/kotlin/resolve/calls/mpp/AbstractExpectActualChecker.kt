@@ -148,7 +148,7 @@ object AbstractExpectActualChecker {
             }
         }
 
-        if (!equalBy(expectClassSymbol, actualClass) { listOf(it.isCompanion, it.isInner, it.isValue) }) {
+        if (!equalBy(expectClassSymbol, actualClass) { listOf(it.isCompanion, it.isInner, it.isValue, it.isInline) }) {
             add(ExpectActualIncompatibility.ClassModifiers)
         }
 

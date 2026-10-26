@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: CODEGEN
 // IGNORE_FIR_DIAGNOSTICS
-// LANGUAGE: +ContextParameters
+// LANGUAGE: -FullValueClasses
 // LANGUAGE: -StrictEquals
 //  ^^^ KT-88389
 // WITH_STDLIB

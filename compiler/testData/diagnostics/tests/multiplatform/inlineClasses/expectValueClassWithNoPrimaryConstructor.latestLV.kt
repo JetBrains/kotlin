@@ -7,8 +7,8 @@
 // LATEST_LV_DIFFERENCE
 // MODULE: common
 
-expect value class CommonSomething {
-    <!EXPECT_VALUE_CLASS_WITH_NO_PRIMARY_CONSTRUCTOR_HAS_SECONDARY("final value")!>constructor(value: Int)<!>
+expect inline value class CommonSomething {
+    <!EXPECT_VALUE_CLASS_WITH_NO_PRIMARY_CONSTRUCTOR_HAS_SECONDARY("inline value")!>constructor(value: Int)<!>
 }
 
 // MODULE: platform()()(common)
