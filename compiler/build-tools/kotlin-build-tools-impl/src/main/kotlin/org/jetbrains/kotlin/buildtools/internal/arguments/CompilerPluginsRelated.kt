@@ -70,13 +70,13 @@ internal fun applyCompilerPlugins(
 }
 
 @Serializable
-public class CompilerPluginOptionImpl(public val key: String, public val value: String) {
+internal class CompilerPluginOptionImpl(val key: String, val value: String) {
     internal fun toApi(): CompilerPluginOption = CompilerPluginOption(key, value)
 }
 
 internal fun CompilerPluginOption.toImpl(): CompilerPluginOptionImpl = CompilerPluginOptionImpl(key, value)
 
-public enum class CompilerPluginPartialOrderRelationImpl {
+internal enum class CompilerPluginPartialOrderRelationImpl {
     BEFORE,
     AFTER,
     ;
@@ -88,9 +88,9 @@ internal fun CompilerPluginPartialOrderRelation.toImpl(): CompilerPluginPartialO
     CompilerPluginPartialOrderRelationImpl.valueOf(name)
 
 @Serializable
-public class CompilerPluginPartialOrderImpl(
-    public val relation: CompilerPluginPartialOrderRelationImpl,
-    public val otherPluginId: String,
+internal class CompilerPluginPartialOrderImpl(
+    val relation: CompilerPluginPartialOrderRelationImpl,
+    val otherPluginId: String,
 ) {
     internal fun toApi(): CompilerPluginPartialOrder = CompilerPluginPartialOrder(relation.toApi(), otherPluginId)
 }
@@ -98,13 +98,12 @@ public class CompilerPluginPartialOrderImpl(
 internal fun CompilerPluginPartialOrder.toImpl(): CompilerPluginPartialOrderImpl =
     CompilerPluginPartialOrderImpl(relation.toImpl(), otherPluginId)
 
-
 @Serializable
-public class CompilerPluginImpl(
-    public val pluginId: String,
-    public val classpath: List<Path>,
-    public val rawArguments: List<CompilerPluginOptionImpl>,
-    public val orderingRequirements: Set<CompilerPluginPartialOrderImpl>,
+internal class CompilerPluginImpl(
+    val pluginId: String,
+    val classpath: List<Path>,
+    val rawArguments: List<CompilerPluginOptionImpl>,
+    val orderingRequirements: Set<CompilerPluginPartialOrderImpl>,
 ) {
     internal fun toApi(): CompilerPlugin = CompilerPlugin(
         pluginId,

@@ -21,7 +21,7 @@ internal fun K2JVMCompilerArguments.applyProfileCompilerCommand(profileCompilerC
 }
 
 internal fun applyProfileCompilerCommand(
-    currentValue: ProfileCompilerCommandImpl?,
+    @Suppress("unused") currentValue: ProfileCompilerCommandImpl?,
     compilerArgs: K2JVMCompilerArguments,
 ): ProfileCompilerCommandImpl? {
     val stringValue = compilerArgs.profileCompilerCommand ?: return null
@@ -34,10 +34,10 @@ internal fun applyProfileCompilerCommand(
 }
 
 @Serializable
-public class ProfileCompilerCommandImpl(
-    public val profilerPath: Path,
-    public val command: String,
-    public val outputDir: Path,
+internal class ProfileCompilerCommandImpl(
+    val profilerPath: Path,
+    val command: String,
+    val outputDir: Path,
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

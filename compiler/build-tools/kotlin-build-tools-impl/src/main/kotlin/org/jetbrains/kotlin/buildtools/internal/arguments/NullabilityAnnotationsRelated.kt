@@ -32,12 +32,12 @@ internal fun applyNullabilityAnnotations(
     }
 
 @Serializable
-public class NullabilityAnnotationImpl(
-    public val fqName: String,
-    public val mode: Mode,
+internal class NullabilityAnnotationImpl(
+    val fqName: String,
+    val mode: Mode,
 ) {
 
-    public val annotationFqName: String = "@$fqName"
+    val annotationFqName: String = "@$fqName"
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -54,8 +54,8 @@ public class NullabilityAnnotationImpl(
 
     override fun toString(): String = "NullabilityAnnotation(fqName=$fqName, mode=$mode)"
 
-    public enum class Mode(
-        public val stringValue: String,
+    enum class Mode(
+        val stringValue: String,
     ) {
         IGNORE(stringValue = "ignore"),
         STRICT(stringValue = "strict"),

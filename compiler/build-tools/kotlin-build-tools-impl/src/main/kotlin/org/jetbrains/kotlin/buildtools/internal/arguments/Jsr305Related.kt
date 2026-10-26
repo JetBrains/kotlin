@@ -21,7 +21,7 @@ internal fun K2JVMCompilerArguments.applyJsr305(settings: List<Jsr305Impl>) {
 }
 
 internal fun applyJsr305(
-    currentValue: List<Jsr305Impl>,
+    @Suppress("unused") currentValue: List<Jsr305Impl>,
     compilerArgs: K2JVMCompilerArguments,
 ): List<Jsr305Impl> =
     compilerArgs.jsr305.mapOrEmpty { fullEntry ->
@@ -44,11 +44,11 @@ private fun jsr305mode(mode: String, fullEntry: String) = Jsr305Impl.Mode.values
     ?: throw CompilerArgumentsParseException("Unknown -Xjsr305 mode: $fullEntry")
 
 @Serializable
-public sealed class Jsr305Impl {
-    public abstract val mode: Mode
+internal sealed class Jsr305Impl {
+    abstract val mode: Mode
 
     @Serializable
-    public class Global(override val mode: Mode) : Jsr305Impl() {
+    class Global(override val mode: Mode) : Jsr305Impl() {
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
             if (other !is Global) return false
@@ -61,7 +61,7 @@ public sealed class Jsr305Impl {
     }
 
     @Serializable
-    public class UnderMigration(override val mode: Mode) : Jsr305Impl() {
+    class UnderMigration(override val mode: Mode) : Jsr305Impl() {
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
             if (other !is UnderMigration) return false
@@ -74,8 +74,8 @@ public sealed class Jsr305Impl {
     }
 
     @Serializable
-    public class SpecificAnnotation(public val fqName: String, override val mode: Mode) : Jsr305Impl() {
-        public val annotationFqName: String = "@$fqName"
+    class SpecificAnnotation(val fqName: String, override val mode: Mode) : Jsr305Impl() {
+        val annotationFqName: String = "@$fqName"
 
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
@@ -94,8 +94,8 @@ public sealed class Jsr305Impl {
     }
 
     @Serializable
-    public enum class Mode(
-        public val stringValue: String,
+    enum class Mode(
+        val stringValue: String,
     ) {
         IGNORE(stringValue = "ignore"),
         STRICT(stringValue = "strict"),
