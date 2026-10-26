@@ -3,11 +3,11 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 @file:UseSerializers(PathAsStringSerializer::class)
+@file:OptIn(ExperimentalSerializationApi::class)
 
 package org.jetbrains.kotlin.buildtools.internal
 
 import kotlinx.serialization.*
-import org.jetbrains.kotlin.buildtools.api.DelicateBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.internal.serializability.PathAsStringSerializer
 import org.jetbrains.kotlin.buildtools.internal.arguments.absolutePathStringOrThrow
@@ -30,11 +30,20 @@ internal object InProcessExecutionPolicyImpl : ExecutionPolicy.InProcess
 @ConsistentCopyVisibility
 internal data class DaemonExecutionPolicyImpl private constructor(
     @SerialName("JVM_ARGUMENTS") var jvmArguments: List<String>? = null,
-    @SerialName("SHUTDOWN_DELAY_MILLIS") var shutdownDelayMillis: Long? = null,
-    @SerialName("DAEMON_RUN_DIR_PATH") var daemonRunDirPath: Path = Path(DaemonOptions().runFilesPath),
+    @SerialName("SHUTDOWN_DELAY_MILLIS")
+    var shutdownDelayMillis: Long? = null,
+
+    @EncodeDefault
+    @SerialName("DAEMON_RUN_DIR_PATH")
+    var daemonRunDirPath: Path = Path(DaemonOptions().runFilesPath),
+
+    @EncodeDefault
     @SerialName("LOGS_PATH") var logsPath: Path = Path(DEFAULT_LOG_FILE_DIRECTORY),
-    @SerialName("LOGS_FILE_SIZE_LIMIT") var logsFileSizeLimit: Long? = DEFAULT_LOG_FILE_SIZE_LIMIT,
-    @SerialName("LOGS_FILE_COUNT_LIMIT") var logsFileCountLimit: Int? = DEFAULT_LOG_FILE_COUNT_LIMIT,
+    @SerialName("LOGS_FILE_SIZE_LIMIT")
+    var logsFileSizeLimit: Long? = DEFAULT_LOG_FILE_SIZE_LIMIT,
+
+    @SerialName("LOGS_FILE_COUNT_LIMIT")
+    var logsFileCountLimit: Int? = DEFAULT_LOG_FILE_COUNT_LIMIT,
 ) : ExecutionPolicy.WithDaemon, ExecutionPolicy.WithDaemon.Builder,
     DeepCopyable<DaemonExecutionPolicyImpl> {
 
