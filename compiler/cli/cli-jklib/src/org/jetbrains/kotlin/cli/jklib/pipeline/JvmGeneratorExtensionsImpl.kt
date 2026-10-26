@@ -10,43 +10,25 @@ import org.jetbrains.kotlin.backend.jvm.JvmIrSpecialAnnotationSymbolProvider
 import org.jetbrains.kotlin.backend.jvm.classNameOverride
 import org.jetbrains.kotlin.backend.jvm.createJvmFileFacadeClass
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.config.JvmClosureGenerationScheme
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.FilteredAnnotations
-import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.expressions.IrAnnotation
-import org.jetbrains.kotlin.ir.expressions.IrDelegatingConstructorCall
-import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.IrErrorModuleFragment
+import org.jetbrains.kotlin.ir.util.StubGeneratorExtensions
 import org.jetbrains.kotlin.ir.util.createThisReceiverParameter
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
-import org.jetbrains.kotlin.load.java.descriptors.getParentJavaStaticClassScope
-import org.jetbrains.kotlin.load.java.sam.JavaSingleAbstractMethodUtils
 import org.jetbrains.kotlin.load.java.typeEnhancement.hasEnhancedNullability
 import org.jetbrains.kotlin.load.kotlin.FacadeClassSource
-import org.jetbrains.kotlin.psi.KtPureClassOrObject
-import org.jetbrains.kotlin.psi.psiUtil.pureEndOffset
-import org.jetbrains.kotlin.psi.psiUtil.pureStartOffset
-import org.jetbrains.kotlin.psi2ir.descriptors.fromSymbolDescriptor
-import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
-import org.jetbrains.kotlin.psi2ir.generators.GeneratorExtensions
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
-import org.jetbrains.kotlin.resolve.jvm.JAVA_LANG_RECORD_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmFieldAnnotation
-import org.jetbrains.kotlin.resolve.jvm.annotations.isJvmRecord
-import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
-import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
 
@@ -54,26 +36,10 @@ import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
 open class JvmGeneratorExtensionsImpl(
     private val configuration: CompilerConfiguration,
     private val generateFacades: Boolean = true,
-) : GeneratorExtensions() {
-    override val samConversion: SamConversion = JvmSamConversion()
-
-    inner class JvmSamConversion : SamConversion() {
-        override fun isPlatformSamType(type: KotlinType): Boolean =
-            JavaSingleAbstractMethodUtils.isSamType(type)
-
-        override fun isCarefulApproximationOfContravariantProjection(): Boolean =
-            configuration.get(JVMConfigurationKeys.SAM_CONVERSIONS) != JvmClosureGenerationScheme.CLASS
-    }
-
+) : StubGeneratorExtensions() {
     override fun getContainerSource(descriptor: DeclarationDescriptor): DeserializedContainerSource? {
         return (descriptor as? DescriptorWithContainerSource)?.containerSource
     }
-
-    override fun computeFieldVisibility(descriptor: PropertyDescriptor): DescriptorVisibility? =
-        if (descriptor.hasJvmFieldAnnotation() || descriptor is JavaCallableMemberDescriptor)
-            descriptor.visibility
-        else
-            null
 
     override fun computeExternalDeclarationOrigin(descriptor: DeclarationDescriptor): IrDeclarationOrigin? =
         if (descriptor is JavaCallableMemberDescriptor || descriptor is JavaClassDescriptor)
@@ -121,33 +87,6 @@ open class JvmGeneratorExtensionsImpl(
         companion object Instance : JvmEnhancedNullability()
     }
 
-    override fun getParentClassStaticScope(descriptor: ClassDescriptor): MemberScope? =
-        descriptor.getParentJavaStaticClassScope()
-
-    override fun createCustomSuperConstructorCall(
-        ktPureClassOrObject: KtPureClassOrObject,
-        descriptor: ClassDescriptor,
-        context: GeneratorContext
-    ): IrDelegatingConstructorCall? {
-        if (!descriptor.isJvmRecord()) return null
-
-        val recordClass =
-            // We assume j.l.Record is in the classpath because otherwise it should be a compile time error
-            descriptor.module.resolveTopLevelClass(JAVA_LANG_RECORD_FQ_NAME, NoLookupLocation.FROM_BACKEND)
-                ?: error("Class not found: $JAVA_LANG_RECORD_FQ_NAME")
-
-        val recordConstructor = recordClass.constructors.single()
-        // OptIn is needed for the same as for Any constructor at BodyGenerator::generateAnySuperConstructorCall
-        @OptIn(ObsoleteDescriptorBasedAPI::class)
-        return IrDelegatingConstructorCallImpl.fromSymbolDescriptor(
-            ktPureClassOrObject.pureStartOffset, ktPureClassOrObject.pureEndOffset,
-            context.irBuiltIns.unitType,
-            context.symbolTable.descriptorExtension.referenceConstructor(recordConstructor)
-        )
-    }
-
-    override val shouldPreventDeprecatedIntegerValueTypeLiteralConversion: Boolean
-        get() = true
 
     // This is deprecated code, so for the sake of simplicity, just ErrorModuleDescriptor is passed here instead of looking for a real module.
     private val specialAnnotations: JvmIrSpecialAnnotationSymbolProvider =
@@ -164,17 +103,4 @@ open class JvmGeneratorExtensionsImpl(
 
     override fun generateRawTypeAnnotation(): IrAnnotation =
         specialAnnotations.generateRawTypeAnnotation()
-
-    override fun unwrapSyntheticJavaProperty(descriptor: PropertyDescriptor): Pair<FunctionDescriptor, FunctionDescriptor?>? {
-        if (descriptor is SyntheticJavaPropertyDescriptor) {
-            return descriptor.getMethod to descriptor.setMethod
-        }
-        return null
-    }
-
-    override val parametersAreAssignable: Boolean
-        get() = true
-
-    override val debugInfoOnlyOnVariablesInDestructuringDeclarations: Boolean
-        get() = true
 }

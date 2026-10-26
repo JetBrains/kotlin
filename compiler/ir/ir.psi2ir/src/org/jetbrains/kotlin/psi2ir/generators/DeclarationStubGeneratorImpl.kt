@@ -8,8 +8,6 @@ package org.jetbrains.kotlin.psi2ir.generators
 import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.IrProvider
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
@@ -416,20 +414,5 @@ class DeclarationStubGeneratorImpl(
         }
 
         return this
-    }
-}
-
-@OptIn(ObsoleteDescriptorBasedAPI::class)
-@K1Deprecation
-class DeclarationStubGeneratorForNotFoundClasses(
-    private val stubGenerator: DeclarationStubGeneratorImpl,
-) : IrProvider {
-
-    override fun getDeclaration(symbol: IrSymbol): IrDeclaration? {
-        if (symbol.isBound) return null
-
-        val classDescriptor = symbol.descriptor as? NotFoundClasses.MockClassDescriptor
-            ?: return null
-        return stubGenerator.generateClassStub(classDescriptor)
     }
 }

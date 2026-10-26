@@ -36,7 +36,7 @@ abstract class TypeTranslator(
     private val enterTableScope: Boolean = false,
     protected val extensions: StubGeneratorExtensions = StubGeneratorExtensions.EMPTY
 ) {
-    abstract val constantValueGenerator: ConstantValueGenerator
+    internal abstract val constantValueGenerator: ConstantValueGenerator
 
     protected abstract fun approximateType(type: KotlinType): KotlinType
 

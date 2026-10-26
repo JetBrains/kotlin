@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.utils.memoryOptimizedMapNotNull
 
-abstract class ConstantValueGenerator(
+internal abstract class ConstantValueGenerator(
     private val moduleDescriptor: ModuleDescriptor,
     private val symbolTable: ReferenceSymbolTable,
     private val allowErrorTypeInAnnotations: Boolean,
