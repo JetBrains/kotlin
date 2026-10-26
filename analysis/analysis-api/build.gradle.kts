@@ -25,7 +25,6 @@ dependencies {
     implementation(kotlinxCollectionsImmutable())
 
     api(intellijCore())
-    implementation(libs.intellij.asm)
 
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
