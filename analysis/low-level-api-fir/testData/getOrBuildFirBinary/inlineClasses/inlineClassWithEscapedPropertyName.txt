@@ -1,7 +1,7 @@
 KT element: KtClass
 KT element text:
 @kotlin.jvm.JvmInline
-public final value class ValueClass public constructor(`underlying property`: kotlin.String) {
+public final inline value class ValueClass public constructor(`underlying property`: kotlin.String) {
     private final val `underlying property`: kotlin.String /* compiled code */
 
     public open operator fun equals(other: kotlin.Any?): kotlin.Boolean { /* compiled code */ }
