@@ -1,5 +1,4 @@
 // LANGUAGE: +RichErrors
-// TARGET_BACKEND: JVM
 package test
 
 error class Foo
