@@ -238,6 +238,7 @@ public final class org/jetbrains/kotlin/name/StandardClassIds {
 	public final fun getCharIterator ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getCharRange ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getCharSequence ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getClassCastException ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getCloneable ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getCollection ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getComparable ()Lorg/jetbrains/kotlin/name/ClassId;
