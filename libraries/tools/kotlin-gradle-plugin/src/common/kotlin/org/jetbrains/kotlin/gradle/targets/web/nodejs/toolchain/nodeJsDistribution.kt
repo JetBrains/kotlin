@@ -39,7 +39,7 @@ internal val BuildPlatform.isWindows: Boolean get() = os == WINDOWS_OS_NAME
 
 /**
  * The name of the Node.js distribution, as used both by the official distribution archives
- * and by the layout of the local installation directory, for example `node-v24.16.0-linux-x64`.
+ * and by the layout of the local installation directory, for example `node-v24.22.1-linux-x64`.
  */
 internal fun nodeJsDistributionName(versionValue: String, osName: String, architecture: String): String =
     "node-v$versionValue-$osName-$architecture"
