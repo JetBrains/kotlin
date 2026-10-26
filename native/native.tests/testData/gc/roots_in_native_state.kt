@@ -14,6 +14,8 @@ import kotlin.native.concurrent.Worker
 import kotlin.native.ref.WeakReference
 import kotlin.native.runtime.GC
 import kotlin.test.*
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.TimeSource
 
 class Node(val data: IntArray) {
     fun sum() = data.sum()
@@ -22,15 +24,13 @@ class Node(val data: IntArray) {
 @NoInline
 private fun newNode(): Node = Node(IntArray(16) { it })
 
-private fun startCollector(stop: AtomicInt): Pair<Worker, kotlin.native.concurrent.Future<Int>> {
+private fun startCollector(stop: AtomicInt, rounds: AtomicInt): Pair<Worker, kotlin.native.concurrent.Future<Unit>> {
     val worker = Worker.start()
-    val future = worker.execute(TransferMode.SAFE, { stop }) { flag ->
-        var rounds = 0
+    val future = worker.execute(TransferMode.SAFE, { stop to rounds }) { (flag, finishedRounds) ->
         while (flag.value == 0) {
             GC.collect()
-            rounds++
+            finishedRounds.incrementAndGet()
         }
-        rounds
     }
     return worker to future
 }
@@ -38,19 +38,28 @@ private fun startCollector(stop: AtomicInt): Pair<Worker, kotlin.native.concurre
 @Test
 fun rootSurvivesConsoleWrites() {
     val stop = AtomicInt(0)
-    val (worker, future) = startCollector(stop)
+    val rounds = AtomicInt(0)
+    val (worker, future) = startCollector(stop, rounds)
     val node = newNode()
     val weak = WeakReference(node)
 
-    repeat(500) {
+    // The collections must overlap with the writes, so the loop goes on until the collector has finished
+    // a few rounds after the loop started. How soon the collector thread starts depends on the machine load,
+    // which is why the number of writes is not fixed. The deadline keeps the test finite if the collector is stuck.
+    val roundsBefore = rounds.value
+    val deadline = TimeSource.Monotonic.markNow() + 60.seconds
+    var writes = 0
+    while (writes < 500 || (rounds.value < roundsBefore + 3 && deadline.hasNotPassedNow())) {
         // The runtime switches this thread to the Native state around the write.
-        print(it % 10)
+        print(writes % 10)
         assertNotNull(weak.value)
+        writes++
     }
     println()
 
     stop.value = 1
-    assertTrue(future.result > 0)
+    future.result
+    assertTrue(rounds.value >= roundsBefore + 3, "the collector finished only ${rounds.value - roundsBefore} rounds during $writes writes")
     worker.requestTermination().result
     assertEquals(120, node.sum())
 }

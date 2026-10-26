@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.konan.test.blackbox.support.group
 
+import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
 import org.jetbrains.kotlin.config.nativeBinaryOptions.GC
 import org.jetbrains.kotlin.config.nativeBinaryOptions.GCSchedulerType
+import org.jetbrains.kotlin.config.nativeBinaryOptions.GCStackMapScheme
 import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.supportsCoreSymbolication
@@ -24,11 +26,13 @@ private val TARGET_FAMILY = "targetFamily"
 private val TARGET_ARCHITECTURE = "targetArchitecture"
 private val IS_APPLE_TARGET = "isAppleTarget"
 private val SUPPORTS_CORE_SYMBOLICATION = "targetSupportsCoreSymbolication"
+private val GC_STACK_MAP_SCHEME = "gcStackMapScheme"
 private val CACHE_MODE_NAMES = CacheMode.Alias.entries.map { it.name }
 private val TEST_MODE_NAMES = TestMode.entries.map { it.name }
 private val OPTIMIZATION_MODE_NAMES = OptimizationMode.entries.map { it.name }
 private val GC_TYPE_NAMES = GC.entries.map { it.shortcut.uppercase() }
 private val GC_SCHEDULER_NAMES = GCSchedulerType.entries.map { it.name }
+private val GC_STACK_MAP_SCHEME_NAMES = GCStackMapScheme.entries.map { it.name }
 private val ALLOCATOR_NAMES = Allocator.entries.map { it.name }
 private val THREAD_STATE_CHECKER_NAMES = ThreadStateChecker.entries.map { it.name }
 private val FAMILY_NAMES = Family.entries.map { it.name }
@@ -80,6 +84,8 @@ internal fun Settings.evaluate(registeredDirectives: RegisteredDirectives, direc
                 ClassLevelProperty.GC_SCHEDULER.shortName -> get<GCScheduler>().scheduler?.let { it.name to GC_SCHEDULER_NAMES }
                 ClassLevelProperty.ALLOCATOR.shortName -> get<Allocator>().name to ALLOCATOR_NAMES
                 ClassLevelProperty.USE_THREAD_STATE_CHECKER.shortName -> get<ThreadStateChecker>().name to THREAD_STATE_CHECKER_NAMES
+                GC_STACK_MAP_SCHEME -> get<ExplicitBinaryOptions>().getOrNull<GCStackMapScheme>(BinaryOptions.gcStackMapScheme)
+                    ?.let { it.name to GC_STACK_MAP_SCHEME_NAMES }
                 TARGET_FAMILY -> get<KotlinNativeTargets>().testTarget.family.name to FAMILY_NAMES
                 TARGET_ARCHITECTURE -> get<KotlinNativeTargets>().testTarget.architecture.name to ARCHITECTURE_NAMES
                 IS_APPLE_TARGET -> get<KotlinNativeTargets>().testTarget.family.isAppleFamily.toString() to BOOLEAN_NAMES

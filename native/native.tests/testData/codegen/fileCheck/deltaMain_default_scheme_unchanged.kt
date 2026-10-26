@@ -1,4 +1,5 @@
 // TARGET_BACKEND: NATIVE
+// DISABLE_NATIVE: gcStackMapScheme=DELTA_MAIN
 // FILECHECK_STAGE: CStubs
 // FREE_COMPILER_ARGS: -opt-in=kotlin.experimental.ExperimentalNativeApi
 

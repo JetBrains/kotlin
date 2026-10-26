@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.konan.test.blackbox.support.runner
 
 import com.intellij.openapi.util.SystemInfo
 import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
+import org.jetbrains.kotlin.config.nativeBinaryOptions.GCStackMapScheme
 import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.needSmallBinary
@@ -232,6 +233,7 @@ sealed interface TestRunCheck {
                     add("CHECK")
                     add("CHECK-${testTarget.abiInfoString}")
                     add("CHECK-${testTarget.name.toUpperCaseAsciiOnly()}")
+                    add("CHECK-${(settings.get<ExplicitBinaryOptions>().getOrNull<GCStackMapScheme>(BinaryOptions.gcStackMapScheme) ?: GCStackMapScheme.SHADOW_STACK).name}")
                     if (testTarget.family.isAppleFamily) {
                         add("CHECK-APPLE")
                     }
