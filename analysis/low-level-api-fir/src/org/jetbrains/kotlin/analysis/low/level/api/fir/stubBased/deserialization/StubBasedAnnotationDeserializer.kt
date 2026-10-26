@@ -202,20 +202,20 @@ internal class StubBasedAnnotationDeserializer(private val session: FirSession) 
                     value.value.argumentsMapping
                 )
             }
-            is BooleanValue -> const(ConstantValueKind.Boolean, value.value, session.builtinTypes.booleanType, sourceElement)
-            is ByteValue -> const(ConstantValueKind.Byte, value.value, session.builtinTypes.byteType, sourceElement)
-            is CharValue -> const(ConstantValueKind.Char, value.value, session.builtinTypes.charType, sourceElement)
-            is ShortValue -> const(ConstantValueKind.Short, value.value, session.builtinTypes.shortType, sourceElement)
-            is LongValue -> const(ConstantValueKind.Long, value.value, session.builtinTypes.longType, sourceElement)
-            is FloatValue -> const(ConstantValueKind.Float, value.value, session.builtinTypes.floatType, sourceElement)
-            is DoubleValue -> const(ConstantValueKind.Double, value.value, session.builtinTypes.doubleType, sourceElement)
-            is UByteValue -> const(ConstantValueKind.UnsignedByte, value.value, session.builtinTypes.uByteType, sourceElement)
-            is UShortValue -> const(ConstantValueKind.UnsignedShort, value.value, session.builtinTypes.uShortType, sourceElement)
-            is UIntValue -> const(ConstantValueKind.UnsignedInt, value.value, session.builtinTypes.uIntType, sourceElement)
-            is ULongValue -> const(ConstantValueKind.UnsignedLong, value.value, session.builtinTypes.uLongType, sourceElement)
-            is IntValue -> const(ConstantValueKind.Int, value.value, session.builtinTypes.intType, sourceElement)
-            NullValue -> const(ConstantValueKind.Null, null, session.builtinTypes.nullableAnyType, sourceElement)
-            is StringValue -> const(ConstantValueKind.String, value.value, session.builtinTypes.stringType, sourceElement)
+            is BooleanValue -> const(ConstantValueKind.Boolean, value.value, sourceElement)
+            is ByteValue -> const(ConstantValueKind.Byte, value.value, sourceElement)
+            is CharValue -> const(ConstantValueKind.Char, value.value, sourceElement)
+            is ShortValue -> const(ConstantValueKind.Short, value.value, sourceElement)
+            is LongValue -> const(ConstantValueKind.Long, value.value, sourceElement)
+            is FloatValue -> const(ConstantValueKind.Float, value.value, sourceElement)
+            is DoubleValue -> const(ConstantValueKind.Double, value.value, sourceElement)
+            is UByteValue -> const(ConstantValueKind.UnsignedByte, value.value, sourceElement)
+            is UShortValue -> const(ConstantValueKind.UnsignedShort, value.value, sourceElement)
+            is UIntValue -> const(ConstantValueKind.UnsignedInt, value.value, sourceElement)
+            is ULongValue -> const(ConstantValueKind.UnsignedLong, value.value, sourceElement)
+            is IntValue -> const(ConstantValueKind.Int, value.value, sourceElement)
+            NullValue -> const(ConstantValueKind.Null, null, sourceElement)
+            is StringValue -> const(ConstantValueKind.String, value.value, sourceElement)
             else -> errorWithAttachment("Unexpected value ${value::class}") {
                 withEntry("value", value.toString())
             }
@@ -260,19 +260,8 @@ internal class StubBasedAnnotationDeserializer(private val session: FirSession) 
         return null
     }
 
-    private fun const(
-        kind: ConstantValueKind,
-        value: Any?,
-        typeRef: FirResolvedTypeRef,
-        sourceElement: PsiElement
-    ): FirLiteralExpression {
-        return buildLiteralExpression(
-            KtRealPsiSourceElement(sourceElement),
-            kind,
-            value,
-            setType = true
-        ).apply { this.replaceConeTypeOrNull(typeRef.coneType) }
-    }
+    private fun const(kind: ConstantValueKind, value: Any?, sourceElement: PsiElement): FirLiteralExpression =
+        buildLiteralExpression(KtRealPsiSourceElement(sourceElement), kind, value, setType = true)
 
     private fun PsiElement.toEnumEntryReferenceExpression(classId: ClassId, entryName: Name): FirExpression =
         buildEnumEntryDeserializedAccessExpression {
