@@ -12,30 +12,20 @@ import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.ExperimentalNodeJsToolchainDsl
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.NodeJsToolchainService
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsExec
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.WebpackBundleKotlinJsTests
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.KotlinPlaywrightJsTestFramework
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
-import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.DefaultNodeJsToolchainServiceImpl
-import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.DisabledNodeJsToolchainServiceImpl
-import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.legacyNodeJsExecutable
-import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.nodeJsServiceName
-import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.registerNodeJsToolchainServiceIfAbsent
-import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.requestDefaultNodeJs
-import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.resolveNodeJsExecutable
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.*
 import org.jetbrains.kotlin.gradle.tasks.nodejs.UsesNodeJsToolchainService
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.propertiesExtension
-import org.jetbrains.kotlin.gradle.utils.property
+import org.jetbrains.kotlin.internal.KgpBuildConstants
 import org.junit.jupiter.api.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertIs
-import kotlin.test.assertNotNull
-import kotlin.test.assertNull
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 class NodeJsToolchainTaskWiringTest {
 
@@ -61,7 +51,7 @@ class NodeJsToolchainTaskWiringTest {
     fun `default node js request uses the default version and the build platform`() {
         val request = buildProject().requestDefaultNodeJs().get()
 
-        assertEquals("24.16.0", request.version.get().version)
+        assertEquals(KgpBuildConstants.DEFAULT_NODE_JS_VERSION, request.version.get().version)
         assertTrue(request.platform.isPresent, "Expected the platform to default to the build platform")
     }
 
@@ -74,7 +64,7 @@ class NodeJsToolchainTaskWiringTest {
         webpackTasks.forEach { task ->
             assertIs<UsesNodeJsToolchainService>(task)
             assertTrue(task.nodeJsToolchainService.isPresent, "Expected ${task.name} to have the toolchain service")
-            assertEquals("24.16.0", task.nodeJsRequest.get().version.get().version)
+            assertEquals(KgpBuildConstants.DEFAULT_NODE_JS_VERSION, task.nodeJsRequest.get().version.get().version)
         }
     }
 
@@ -120,7 +110,7 @@ class NodeJsToolchainTaskWiringTest {
             assertIs<UsesNodeJsToolchainService>(task)
             assertNull(task.executable, "Expected ${task.name} to resolve Node.js only at execution time")
             assertTrue(!task.nodeExecutable.isPresent, "Expected no legacy executable when the toolchain is enabled")
-            assertEquals("24.16.0", task.nodeJsRequest.get().version.get().version)
+            assertEquals(KgpBuildConstants.DEFAULT_NODE_JS_VERSION, task.nodeJsRequest.get().version.get().version)
         }
     }
 

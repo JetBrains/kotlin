@@ -461,7 +461,7 @@ private const val PROVISION_TASK_NAME = "provisionNodeJs"
  */
 private fun provisionTaskName(requestIndex: Int, version: String): String = "$PROVISION_TASK_NAME-$requestIndex-$version"
 
-private const val NODE_JS_VERSION = "24.16.0"
+private const val NODE_JS_VERSION = "24.22.1"
 
 
 /** A version older than the minimal one the Kotlin Gradle Plugin supports. */
@@ -491,7 +491,7 @@ private val hostPlatform: BuildPlatform = BuildPlatform(
 
 /**
  * The naming of the official distributions, spelled out independently of the production code,
- * for example `node-v24.16.0-linux-x64`.
+ * for example `node-v24.22.1-linux-x64`.
  */
 private fun BuildPlatform.distributionName(version: String): String = "node-v$version-$os-$arch"
 

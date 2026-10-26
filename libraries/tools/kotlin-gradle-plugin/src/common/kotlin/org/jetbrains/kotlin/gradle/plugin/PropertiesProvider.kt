@@ -12,7 +12,9 @@ import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Provider
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.compilerRunner.KotlinCompilerArgumentsLogLevel
+import org.jetbrains.kotlin.gradle.ExperimentalNodeJsToolchainDsl
 import org.jetbrains.kotlin.gradle.dsl.jvm.JvmTargetValidationMode
+import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.NodeJsVersion
 import org.jetbrains.kotlin.gradle.fus.internal.isCiBuild
 import org.jetbrains.kotlin.gradle.internal.properties.PropertiesBuildService
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessageOutputStreamHandler.Companion.IGNORE_TCSM_OVERFLOW
@@ -69,6 +71,7 @@ import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
 import org.jetbrains.kotlin.gradle.utils.localProperties
+import org.jetbrains.kotlin.internal.KgpBuildConstants
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
 import org.jetbrains.kotlin.util.prefixIfNot
@@ -763,6 +766,18 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val playwrightBrowsersPath: Provider<String>
         get() = property(PropertyNames.KOTLIN_PLAYWRIGHT_BROWSERS_PATH)
 
+    /**
+     * The Node.js version used by default for JS and WasmJS,
+     * and both by the Node.js toolchain and the (to-be-deprecated) [org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsEnvSpec].
+     *
+     * This property is temporary and will be replaced with a settings plugin DSL in KT-90504.
+     */
+    @OptIn(ExperimentalNodeJsToolchainDsl::class)
+    val nodejsDefaultVersion: Provider<NodeJsVersion>
+        get() = property(PropertyNames.KOTLIN_NODEJS_DEFAULT_VERSION)
+            .orElse(KgpBuildConstants.DEFAULT_NODE_JS_VERSION)
+            .map(::NodeJsVersion)
+
     val nodeJsToolchainMode: NodeJsToolchainMode
         get() = property(PropertyNames.KOTLIN_JS_NODEJS_TOOLCHAIN_MODE).orNull
             ?.let { NodeJsToolchainMode.valueOf(it.toUpperCaseAsciiOnly()) }
@@ -818,7 +833,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
     private fun booleanProvider(propName: String): Provider<Boolean> =
         getProvider(propName).map { it.toBoolean() }
 
-    private inline fun <reified T: Enum<T>> String.toEnumValue(): T =
+    private inline fun <reified T : Enum<T>> String.toEnumValue(): T =
         enumValueOf<T>(this.toUpperCaseAsciiOnly())
 
     private inline fun <reified T : Enum<T>> enumProperty(
@@ -879,6 +894,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_JS_KARMA_BROWSERS = property("kotlin.js.browser.karma.browsers")
         val KOTLIN_JS_GENERATE_RICH_TYPESCRIPT_DECLARATIONS = property("kotlin.js.generateRichTypeScriptDeclarations")
         val KOTLIN_PLAYWRIGHT_BROWSERS_PATH = property("kotlin.gradle.playwright.browsers.path")
+        val KOTLIN_NODEJS_DEFAULT_VERSION = property("kotlin.defaultNodeJsVersion")
         val KOTLIN_JS_NODEJS_TOOLCHAIN_MODE = property("kotlin.js.nodeJsToolchainMode")
         val KOTLIN_JS_NODEJS_TOOLCHAIN_INSTALLATION_DIR = property("kotlin.js.nodeJsToolchainInstallationDir")
         val KOTLIN_JS_NODEJS_TOOLCHAIN_DOWNLOAD_URL = property("kotlin.js.nodeJsToolchainDownloadUrl")
