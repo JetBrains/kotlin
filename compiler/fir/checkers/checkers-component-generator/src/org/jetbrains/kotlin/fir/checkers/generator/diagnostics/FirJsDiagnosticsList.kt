@@ -105,9 +105,6 @@ object JS_DIAGNOSTICS_LIST : DiagnosticList("FirJsErrors") {
     }
 
     val EXPORT by object : DiagnosticGroup("Export") {
-        val WRONG_EXPORTED_DECLARATION by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
-            parameter<String>("kind")
-        }
         val NON_EXPORTABLE_TYPE by warning<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
             parameter<String>("kind")
             parameter<ConeKotlinType>("type")

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.EXPOSED_NOT_EXPORTED_SUPER_INTERFACE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors
 import org.jetbrains.kotlin.fir.analysis.js.checkers.sanitizeName
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
@@ -87,7 +88,7 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind
         val hasJsName = declaration.hasAnnotation(JsStandardClassIds.Annotations.JsName, context.session)
 
         fun reportWrongExportedDeclaration(kind: String) {
-            reporter.reportOn(declaration.source, FirJsErrors.WRONG_EXPORTED_DECLARATION, kind)
+            reporter.reportOn(declaration.source, FirWebCommonErrors.WRONG_EXPORTED_DECLARATION, kind)
         }
 
         if (LanguageFeature.AllowExpectDeclarationsInJsExport.isDisabled() && declaration.isExpect) {
