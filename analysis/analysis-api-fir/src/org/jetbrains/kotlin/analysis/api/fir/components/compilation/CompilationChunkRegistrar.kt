@@ -49,7 +49,7 @@ private val USE_STDLIB_BUILD_OUTPUT: Boolean by lazy(LazyThreadSafetyMode.PUBLIC
 private data class ChunkSpec(
     val originalModule: KaModule,
     val effectiveModule: KaModule,
-    val kind: ChunkKind,
+    val kind: CompilationChunkKind,
     val isDanglingChild: Boolean,
     val attachPrecompiledBinaries: Boolean,
 )
@@ -83,9 +83,9 @@ internal class CompilationChunkRegistrar(
      */
     fun submit(file: KtFile, module: KaModule) {
         val chunkKind = when (module) {
-            originalMainModule -> ChunkKind.MAIN
-            originalMainContextModule -> ChunkKind.CONTEXT
-            else -> ChunkKind.DEPENDENCY
+            originalMainModule -> CompilationChunkKind.MAIN
+            originalMainContextModule -> CompilationChunkKind.CONTEXT
+            else -> CompilationChunkKind.DEPENDENCY
         }
 
         val attachPrecompiledBinaries = shouldAttachPrecompiledBinaries(file)
@@ -123,7 +123,7 @@ internal class CompilationChunkRegistrar(
                 }
             }
 
-            module.isSupported && chunkKind != ChunkKind.MAIN -> {
+            module.isSupported && chunkKind != CompilationChunkKind.MAIN -> {
                 val spec = ChunkSpec(
                     originalModule = module,
                     effectiveModule = module,
@@ -193,9 +193,9 @@ internal class CompilationChunkRegistrar(
      * The main chunk is guaranteed to be the last one in the returned [Map].
      * Other chunks generally follow the order of file submission.
      */
-    fun computeChunks(): Map<KaModule, ChunkToCompile> {
-        val [mainChunks, otherChunks] = submittedChunks.entries.partition { it.key.kind == ChunkKind.MAIN }
-        val result = LinkedHashMap<KaModule, ChunkToCompile>()
+    fun computeChunks(): Map<KaModule, CompilationChunk> {
+        val [mainChunks, otherChunks] = submittedChunks.entries.partition { it.key.kind == CompilationChunkKind.MAIN }
+        val result = LinkedHashMap<KaModule, CompilationChunk>()
 
         // Contains mappings from original modules to the modules that should be used instead.
         // The mappings are used for substituting context modules of the dependent dangling file chunks.
@@ -226,7 +226,7 @@ internal class CompilationChunkRegistrar(
                 }
             }
 
-            val mainFile = if (spec.kind == ChunkKind.MAIN) {
+            val mainFile = if (spec.kind == CompilationChunkKind.MAIN) {
                 val mainFileIndex = files.indexOf(originalMainFile)
                 check(mainFileIndex >= 0) { "Main file is not submitted" }
                 newFiles[mainFileIndex]
@@ -240,7 +240,7 @@ internal class CompilationChunkRegistrar(
 
             moduleSubstitutions[spec.originalModule] = newModule
 
-            result[newModule] = ChunkToCompile(
+            result[newModule] = CompilationChunk(
                 spec.kind,
                 mainFile = mainFile,
                 hasCodeFragments = newFiles.any { it is KtCodeFragment },
@@ -257,7 +257,7 @@ internal class CompilationChunkRegistrar(
                 } else {
                     val hasCodeFragments = files.any { it is KtCodeFragment }
 
-                    val mainFile = if (spec.kind == ChunkKind.MAIN) {
+                    val mainFile = if (spec.kind == CompilationChunkKind.MAIN) {
                         check(originalMainFile in files) { "Main file is not submitted" }
                         originalMainFile
                     } else {
@@ -266,7 +266,7 @@ internal class CompilationChunkRegistrar(
 
                     moduleSubstitutions[spec.originalModule] = spec.effectiveModule
 
-                    result[spec.effectiveModule] = ChunkToCompile(
+                    result[spec.effectiveModule] = CompilationChunk(
                         kind = spec.kind,
                         mainFile = mainFile,
                         hasCodeFragments = hasCodeFragments,
@@ -443,11 +443,11 @@ internal class CompilationChunkRegistrar(
         }
     }
 
-    private fun createFilesToCompile(files: Collection<KtFile>): List<FileToCompile> {
+    private fun createFilesToCompile(files: Collection<KtFile>): List<CompilationChunkFile> {
         return buildList {
             for (file in files) {
                 val firFile = if (file == originalMainFile) originalMainFirFile else getFullyResolvedFirFile(file, resolutionFacade)
-                add(FileToCompile(file, firFile))
+                add(CompilationChunkFile(file, firFile))
             }
 
             // Code fragments must go after all context files so the backend works correctly
