@@ -54,7 +54,7 @@ class SharedScriptCompilationContext(
  * Creates the compiler configuration and the project environment of an isolated K2 compilation and passes them to [createState]
  * together with the initial script compilation configuration.
  */
-internal fun <S> createIsolatedScriptingState(
+internal fun <S : AbstractScriptingCompilerState<*>> createIsolatedScriptingState(
     baseScriptCompilationConfiguration: ScriptCompilationConfiguration,
     hostConfiguration: ScriptingHostConfiguration,
     messageCollector: ScriptDiagnosticsMessageCollector,
