@@ -6,64 +6,64 @@
 package codegen.stringConcatenationTypeNarrowing.kt53119_plus_extension
 import kotlin.test.*
 
-// CHECK-LABEL: define ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_extension#manualPlusExtensionAny
+// CHECK-LABEL: define ptr{{( addrspace\(1\))?}} @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_extension#manualPlusExtensionAny
 // CHECK-OPT-NOT: kfun:kotlin.String#plus(kotlin.Any?)
 
-// CHECK-OPT: call ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_extension.Foo#toString(){}kotlin.String"
+// CHECK-OPT: call ptr{{( addrspace\(1\))?}} @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_extension.Foo#toString(){}kotlin.String"
 // CHECK-OPT-NOT: Foo#toString(){}kotlin.String"
 
-// CHECK-OPT: call ptr @Kotlin_String_plusImpl
-// CHECK-OPT-NOT: call ptr @Kotlin_String_plusImpl
+// CHECK-OPT: call ptr{{( addrspace\(1\))?}} @Kotlin_String_plusImpl
+// CHECK-OPT-NOT: call ptr{{( addrspace\(1\))?}} @Kotlin_String_plusImpl
 // CHECK-OPT-NOT: kfun:kotlin.String#plus(kotlin.Any?)
-// CHECK-OPT-NOT: call ptr @"kfun:kotlin.String#toString(){}kotlin.String"
+// CHECK-OPT-NOT: call ptr{{( addrspace\(1\))?}} @"kfun:kotlin.String#toString(){}kotlin.String"
 // CHECK-OPT-NOT: Foo#toString(){}kotlin.String"
-// CHECK-OPT-NOT: call ptr @Kotlin_String_plusImpl
+// CHECK-OPT-NOT: call ptr{{( addrspace\(1\))?}} @Kotlin_String_plusImpl
 
-// CHECK: ret ptr
+// CHECK: ret ptr{{( addrspace\(1\))?}}
 
 fun manualPlusExtensionAny(maybeStr: String?, maybeAny: kotlin.Any?): kotlin.String =
         maybeStr + maybeAny
 
-// CHECK-LABEL: define ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_extension#manualPlusExtensionString
+// CHECK-LABEL: define ptr{{( addrspace\(1\))?}} @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_extension#manualPlusExtensionString
 // CHECK-OPT-NOT: kfun:kotlin.String#plus(kotlin.Any?)
 
-// CHECK-OPT: call ptr @Kotlin_String_plusImpl
-// CHECK-OPT-NOT: call ptr @Kotlin_String_plusImpl
+// CHECK-OPT: call ptr{{( addrspace\(1\))?}} @Kotlin_String_plusImpl
+// CHECK-OPT-NOT: call ptr{{( addrspace\(1\))?}} @Kotlin_String_plusImpl
 
-// CHECK-OPT-NOT: call ptr @"kfun:kotlin.String#toString(){}kotlin.String"
+// CHECK-OPT-NOT: call ptr{{( addrspace\(1\))?}} @"kfun:kotlin.String#toString(){}kotlin.String"
 // CHECK-OPT-NOT: kfun:kotlin.String#plus(kotlin.Any?)
 
-// CHECK: ret ptr
+// CHECK: ret ptr{{( addrspace\(1\))?}}
 
 fun manualPlusExtensionString(maybeStr: String?, str: String): kotlin.String =
         maybeStr + str
 
-// CHECK-LABEL: define ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_extension#generatedPlusExtensionAny
+// CHECK-LABEL: define ptr{{( addrspace\(1\))?}} @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_extension#generatedPlusExtensionAny
 // CHECK-OPT-NOT: kfun:kotlin#plus__at__kotlin.String?(kotlin.Any?)
 
-// CHECK-OPT: call ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_extension.Foo#toString(){}kotlin.String"
+// CHECK-OPT: call ptr{{( addrspace\(1\))?}} @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_extension.Foo#toString(){}kotlin.String"
 // CHECK-OPT-NOT: Foo#toString(){}kotlin.String"
-// CHECK-OPT: call ptr @Kotlin_String_plusImpl
-// CHECK-OPT-NOT: call ptr @Kotlin_String_plusImpl
+// CHECK-OPT: call ptr{{( addrspace\(1\))?}} @Kotlin_String_plusImpl
+// CHECK-OPT-NOT: call ptr{{( addrspace\(1\))?}} @Kotlin_String_plusImpl
 // CHECK-OPT-NOT: kfun:kotlin#plus__at__kotlin.String?(kotlin.Any?)
-// CHECK-OPT-NOT: call ptr @"kfun:kotlin.String#toString(){}kotlin.String"
+// CHECK-OPT-NOT: call ptr{{( addrspace\(1\))?}} @"kfun:kotlin.String#toString(){}kotlin.String"
 
-// CHECK: ret ptr
+// CHECK: ret ptr{{( addrspace\(1\))?}}
 
 fun generatedPlusExtensionAny(maybeStr: String?, maybeAny: Any?): String {
     return "$maybeStr$maybeAny"
 }
 
-// CHECK-LABEL: define ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_extension#generatedPlusExtensionString
+// CHECK-LABEL: define ptr{{( addrspace\(1\))?}} @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_extension#generatedPlusExtensionString
 // CHECK-OPT-NOT: kfun:kotlin.String#plus(kotlin.Any?)
 
-// CHECK-OPT: call ptr @Kotlin_String_plusImpl
-// CHECK-OPT-NOT: call ptr @Kotlin_String_plusImpl
+// CHECK-OPT: call ptr{{( addrspace\(1\))?}} @Kotlin_String_plusImpl
+// CHECK-OPT-NOT: call ptr{{( addrspace\(1\))?}} @Kotlin_String_plusImpl
 
-// CHECK-OPT-NOT: call ptr @"kfun:kotlin.String#toString(){}kotlin.String"
+// CHECK-OPT-NOT: call ptr{{( addrspace\(1\))?}} @"kfun:kotlin.String#toString(){}kotlin.String"
 // CHECK-OPT-NOT: kfun:kotlin.String#plus(kotlin.Any?)
 
-// CHECK: ret ptr
+// CHECK: ret ptr{{( addrspace\(1\))?}}
 
 fun generatedPlusExtensionString(maybeStr: String?, str: String): String {
     return "$maybeStr$str"
@@ -71,36 +71,36 @@ fun generatedPlusExtensionString(maybeStr: String?, str: String): String {
 
 data class Foo(val bar: Int)
 
-// CHECK-LABEL: define ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_extension#generatedPlusExtensionFoo
+// CHECK-LABEL: define ptr{{( addrspace\(1\))?}} @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_extension#generatedPlusExtensionFoo
 // CHECK-OPT-NOT: kfun:kotlin.String#plus(kotlin.Any?)
 
-// CHECK-OPT: call ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_extension.Foo#toString(){}kotlin.String"
+// CHECK-OPT: call ptr{{( addrspace\(1\))?}} @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_extension.Foo#toString(){}kotlin.String"
 // CHECK-OPT-NOT: Foo#toString(){}kotlin.String
 
-// CHECK-OPT: call ptr @Kotlin_String_plusImpl
-// CHECK-OPT-NOT: call ptr @Kotlin_String_plusImpl
+// CHECK-OPT: call ptr{{( addrspace\(1\))?}} @Kotlin_String_plusImpl
+// CHECK-OPT-NOT: call ptr{{( addrspace\(1\))?}} @Kotlin_String_plusImpl
 
-// CHECK-OPT-NOT: call ptr @"kfun:kotlin.String#toString(){}kotlin.String"
+// CHECK-OPT-NOT: call ptr{{( addrspace\(1\))?}} @"kfun:kotlin.String#toString(){}kotlin.String"
 // CHECK-OPT-NOT: kfun:kotlin.String#plus(kotlin.Any?)
 
-// CHECK: ret ptr
+// CHECK: ret ptr{{( addrspace\(1\))?}}
 
 fun generatedPlusExtensionFoo(maybeStr: String?, foo: Foo): String {
     return "$maybeStr$foo"
 }
 
-// CHECK-LABEL: define ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_extension#generatedPlusExtensionMaybeFoo
+// CHECK-LABEL: define ptr{{( addrspace\(1\))?}} @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_extension#generatedPlusExtensionMaybeFoo
 // CHECK-OPT-NOT: kfun:kotlin.String#plus(kotlin.Any?)
 
-// CHECK-OPT: call ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_extension.Foo#toString(){}kotlin.String"
+// CHECK-OPT: call ptr{{( addrspace\(1\))?}} @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_extension.Foo#toString(){}kotlin.String"
 // CHECK-OPT-NOT: Foo#toString(){}kotlin.String
-// CHECK-OPT: call ptr @Kotlin_String_plusImpl
-// CHECK-OPT-NOT: call ptr @Kotlin_String_plusImpl
-// CHECK-OPT-NOT: call ptr @"kfun:kotlin.String#toString(){}kotlin.String"
+// CHECK-OPT: call ptr{{( addrspace\(1\))?}} @Kotlin_String_plusImpl
+// CHECK-OPT-NOT: call ptr{{( addrspace\(1\))?}} @Kotlin_String_plusImpl
+// CHECK-OPT-NOT: call ptr{{( addrspace\(1\))?}} @"kfun:kotlin.String#toString(){}kotlin.String"
 
 // CHECK-OPT-NOT: kfun:kotlin.String#plus(kotlin.Any?)
 
-// CHECK: ret ptr
+// CHECK: ret ptr{{( addrspace\(1\))?}}
 
 fun generatedPlusExtensionMaybeFoo(maybeStr: String?, foo: Foo?): String {
     return "$maybeStr$foo"

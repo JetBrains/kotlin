@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.konan.test.blackbox
 
+import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
+import org.jetbrains.kotlin.config.nativeBinaryOptions.GCStackMapScheme
 import org.jetbrains.kotlin.incremental.createDirectory
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
@@ -14,12 +16,14 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilat
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestExecutable
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.ExplicitBinaryOptions
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.LLDB
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.ClangDistribution
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.ReplLLDBSessionSpec
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.compileWithClang
 import org.junit.jupiter.api.Assumptions
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.io.File
 
@@ -28,6 +32,13 @@ import java.io.File
 // FIXME: With -opt these tests can't set a breakpoint in inlined "fun bar()"
 @EnforcedProperty(ClassLevelProperty.OPTIMIZATION_MODE, propertyValue = "DEBUG")
 class ObjCToKotlinSteppingInLLDBTest : AbstractNativeSimpleTest() {
+
+    @BeforeEach
+    fun skipForDeltaMain() {
+        // The delta-main scheme does not compile without -opt, and these tests need the debug mode.
+        val scheme = testRunSettings.get<ExplicitBinaryOptions>().getOrNull<GCStackMapScheme>(BinaryOptions.gcStackMapScheme)
+        Assumptions.assumeTrue(scheme != GCStackMapScheme.DELTA_MAIN, "delta-main stack maps require optimizations")
+    }
 
     @Test
     fun stepInFromObjCToKotlin___WithoutTransparentStepping___StopsAtABridgingRoutine() {

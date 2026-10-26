@@ -73,7 +73,7 @@ fun testc(): Int {
 // CHECK-LABEL: epilogue:
 }
 
-// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
+// CHECK-LABEL: define ptr{{( addrspace\(1\))?}} @"kfun:#box(){}kotlin.String"
 fun box(): String {
     if (testa()) return "FAIL KT-86948 (general position): type check wrongly optimized"
     if (testb()) return "FAIL KT-86948 (boolean var): type check wrongly optimized"

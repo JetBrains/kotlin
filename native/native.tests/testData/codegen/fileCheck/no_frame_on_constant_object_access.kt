@@ -21,15 +21,17 @@ fun f() = A.x + B.y
 // CHECK: {{^}}epilogue:
 
 // test that assumption on how EnterFrame looks like is not broken
+// EnterFrame is created by the shadow stack scheme only, there is no frame in the delta-main scheme.
 // CHECK-LABEL: define void @"kfun:#g(){}"()
-// CHECK: EnterFrame
+// CHECK-SHADOW_STACK: EnterFrame
+// CHECK-DELTA_MAIN-NOT: EnterFrame
 fun g() {
     val x = C.x
 }
 // CHECK: {{^}}epilogue:
 
 
-// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
+// CHECK-LABEL: define ptr{{( addrspace\(1\))?}} @"kfun:#box(){}kotlin.String"
 fun box(): String {
     val f = f()
     if (f != 12)

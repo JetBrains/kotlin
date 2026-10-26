@@ -8,10 +8,10 @@ inline fun foo(x: () -> Unit): String {
 
 fun String.id(s: String = this, vararg xs: Int): String = s
 
-// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
+// CHECK-LABEL: define ptr{{( addrspace\(1\))?}} @"kfun:#box(){}kotlin.String"
 fun box(): String {
     // CHECK-LABEL: entry
-    // CHECK-NOT: call ptr @AllocInstance
+    // CHECK-NOT: call ptr{{( addrspace\(1\))?}} @AllocInstance
     // CHECK-NOT: alloca
     return foo("Fail"::id)
     // CHECK-LABEL: epilogue:

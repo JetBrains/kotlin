@@ -152,8 +152,11 @@ inline fun weakResurrectTest(create: () -> Ref, doRetainRelease: Boolean) {
                 val result = dereferenceExternalRCRefOrNull(ref.second)
                 if (result != null) {
                     if (doRetainRelease) retainExternalRCRef(ref.second)
-                    assertEquals(ref.first, result.identityHashCode())
+                    // `result` is used after the second dereference, so it keeps the object alive. Without the retain nothing
+                    // else does, and when a local is a root only while it is used (delta-main), the GC may clear the weak
+                    // reference between the two reads.
                     assertEquals(ref.first, dereferenceExternalRCRef(ref.second).identityHashCode())
+                    assertEquals(ref.first, result.identityHashCode())
                     if (doRetainRelease) releaseExternalRCRef(ref.second)
                 }
             }

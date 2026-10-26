@@ -29,7 +29,7 @@ import lib.*
 
 // CHECK: knifunptr
 // CHECK-NOT: call i32 @{{foo|"\\01_foo"}}
-// CHECK-NOT: load i32, ptr @{{bar|"\\01_bar"}}
+// CHECK-NOT: load i32, ptr{{( addrspace\(1\))?}} @{{bar|"\\01_bar"}}
 fun box(): String {
     val result = foo(4)
     if (result != 5) return "FAIL 1: $result"

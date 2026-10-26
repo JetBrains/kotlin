@@ -24,5 +24,9 @@ fun box(): String {
         kotlin.native.runtime.GC.collect()
     }
 
-    return weakNode3.value?.value ?: "FAIL"
+    val result = weakNode3.value?.value ?: "FAIL"
+    // node1 keeps node3 reachable. Without this use node1 is dead after the loops, and a precise GC
+    // (the delta-main scheme) may collect node3, while the shadow stack keeps node1 in its frame.
+    if (node1.next == null) return "FAIL"
+    return result
 }

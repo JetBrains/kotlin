@@ -49,6 +49,6 @@ class KotlinSubclass : ObjCBase {
 // CHECK-DAG: [[ENCODING:@[0-9]+]] = internal constant [11 x i8] c"@20@0:8i16\00"
 // CHECK-DAG: [[INIT_WITH_OTHER_VALUE:@[0-9]+]] = internal constant [20 x i8] c"initWithOtherValue:\00"
 // CHECK-DAG: = internal constant [2 x %struct.ObjCMethodDescription] [
-// CHECK-DAG: %struct.ObjCMethodDescription { ptr @MissingInitImp, ptr [[INIT_WITH_OTHER_VALUE]], ptr [[ENCODING]] }
-// CHECK-DAG: @"kobjcclassinfo:KotlinSubclass" = constant %struct.KotlinObjCClassInfo { ptr {{.*}}, i32 0, ptr {{.*}}, ptr {{.*}}, ptr {{.*}}, i32 2,
+// CHECK-DAG: %struct.ObjCMethodDescription { ptr{{( addrspace\(1\))?}} @MissingInitImp, ptr{{( addrspace\(1\))?}} [[INIT_WITH_OTHER_VALUE]], ptr{{( addrspace\(1\))?}} [[ENCODING]] }
+// CHECK-DAG: @"kobjcclassinfo:KotlinSubclass" = constant %struct.KotlinObjCClassInfo { ptr{{( addrspace\(1\))?}} {{.*}}, i32 0, ptr{{( addrspace\(1\))?}} {{.*}}, ptr{{( addrspace\(1\))?}} {{.*}}, ptr{{( addrspace\(1\))?}} {{.*}}, i32 2,
 fun box(): String = "OK"

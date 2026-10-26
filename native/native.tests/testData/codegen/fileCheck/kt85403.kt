@@ -41,7 +41,7 @@ fun bar(x: B): Int {
     }
 }
 
-// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
+// CHECK-LABEL: define ptr{{( addrspace\(1\))?}} @"kfun:#box(){}kotlin.String"
 fun box(): String {
     if (foo(A1()) != 1) return "fail 1"
     if (foo(A()) != 0) return "fail 2"

@@ -1,3 +1,5 @@
+// Escape analysis is turned off for the delta-main scheme, nothing is allocated on the stack.
+// DISABLE_NATIVE: gcStackMapScheme=DELTA_MAIN
 // DISABLE_NATIVE: optimizationMode=DEBUG
 // DISABLE_NATIVE: optimizationMode=NO
 // DISABLE_NATIVE: cacheMode=STATIC_ONLY_DIST
