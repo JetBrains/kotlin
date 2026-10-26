@@ -18,8 +18,8 @@ import org.jetbrains.kotlin.fir.analysis.wasm.checkers.isJsExportedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.declarations.utils.isEffectivelyExternal
-import org.jetbrains.kotlin.fir.declarations.utils.isExtension
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
+import org.jetbrains.kotlin.fir.declarations.utils.isInstanceExtension
 import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
 import org.jetbrains.kotlin.fir.declarations.utils.nameOrSpecialName
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.name.WebCommonStandardClassIds
  * Kotlin/Wasm exports only top-level functions, so this is the subset of `FirJsExportDeclarationChecker`
  * applicable to functions; the types of exported functions are checked by [FirWasmJsInteropTypesChecker].
  *
- * Kotlin/Wasm also adds restrictions on extension functions and functions with vararg parameters.
+ * Kotlin/Wasm also adds restrictions on extension functions (except companion extensions) and functions with vararg parameters.
  */
 object FirWasmJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind.Platform) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -50,7 +50,7 @@ object FirWasmJsExportDeclarationChecker : FirBasicDeclarationChecker(MppChecker
             declaration.isInline && declaration.typeParameters.any { it.symbol.isReified } ->
                 reportWrongExportedDeclaration("inline function with reified type parameters")
             declaration.isSuspend -> reportWrongExportedDeclaration("suspend function")
-            declaration.isExtension -> reportWrongExportedDeclaration("extension function")
+            declaration.isInstanceExtension -> reportWrongExportedDeclaration("extension function")
             declaration.valueParameters.any { it.isVararg } -> reportWrongExportedDeclaration("function with vararg parameter")
         }
 
