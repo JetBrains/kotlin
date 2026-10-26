@@ -139,10 +139,6 @@ fun CompilerConfiguration.setupMetadataVersion(
 
 fun CommonCompilerArgumentsConfigurator.Reporter.Companion.fromConfiguration(configuration: CompilerConfiguration): CommonCompilerArgumentsConfigurator.Reporter {
     return object : CommonCompilerArgumentsConfigurator.Reporter {
-        override fun reportWarning(message: String) {
-            configuration.report(COMPILER_ARGUMENTS_WARNING, message)
-        }
-
         override fun reportError(message: String) {
             configuration.report(COMPILER_ARGUMENTS_ERROR, message)
         }
