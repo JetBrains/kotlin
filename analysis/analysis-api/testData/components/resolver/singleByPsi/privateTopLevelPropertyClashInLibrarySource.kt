@@ -1,6 +1,5 @@
 // MODULE: lib
 // MODULE_KIND: LibrarySource
-// IGNORE_STABILITY: candidates
 // FILE: a.kt
 package test
 
