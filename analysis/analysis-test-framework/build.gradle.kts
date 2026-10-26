@@ -20,6 +20,7 @@ dependencies {
     testFixturesApi(testFixtures(project(":compiler:tests-common")))
     testFixturesImplementation(project(":analysis:analysis-api-platform-interface"))
     testFixturesImplementation(project(":analysis:analysis-api"))
+    testFixturesImplementation(project(":analysis:analysis-internal-utils"))
     testFixturesApi(project(":analysis:analysis-api-standalone:analysis-api-standalone-fir"))
     testFixturesImplementation(project(":analysis:decompiled:decompiler"))
     testFixturesImplementation(project(":wasm:wasm.frontend"))

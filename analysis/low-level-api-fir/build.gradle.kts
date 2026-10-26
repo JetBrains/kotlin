@@ -40,6 +40,7 @@ dependencies {
     implementation(project(":native:native.config"))
     implementation(project(":wasm:wasm.config"))
     testFixturesApi(project(":analysis:analysis-api-fir"))
+    testFixturesImplementation(project(":analysis:analysis-internal-utils"))
     testFixturesImplementation(project(":native:native.config"))
 
     implementation(project(":compiler:frontend.common"))
