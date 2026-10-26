@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.codegen.inline
 
+import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode
 
 interface TransformationInfo {
@@ -30,7 +31,9 @@ interface TransformationInfo {
 
     fun canRemoveAfterTransformation(): Boolean
 
-    fun createTransformer(inliningContext: InliningContext, sameModule: Boolean, continuationClassName: String?): ObjectTransformer<*>
+    fun createTransformer(
+        state: GenerationState, inliningContext: InliningContext, sameModule: Boolean, continuationClassName: String?,
+    ): ObjectTransformer<*>
 }
 
 class WhenMappingTransformationInfo(
@@ -49,11 +52,12 @@ class WhenMappingTransformationInfo(
     override fun canRemoveAfterTransformation(): Boolean = true
 
     override fun createTransformer(
+        state: GenerationState,
         inliningContext: InliningContext,
         sameModule: Boolean,
-        continuationClassName: String?
+        continuationClassName: String?,
     ): ObjectTransformer<*> =
-        WhenMappingTransformer(this, inliningContext)
+        WhenMappingTransformer(state, this, inliningContext)
 
     companion object {
         const val TRANSFORMED_WHEN_MAPPING_MARKER = "\$wm$"
@@ -106,9 +110,10 @@ class AnonymousObjectTransformationInfo internal constructor(
     }
 
     override fun createTransformer(
+        state: GenerationState,
         inliningContext: InliningContext,
         sameModule: Boolean,
-        continuationClassName: String?
+        continuationClassName: String?,
     ): ObjectTransformer<*> =
-        AnonymousObjectTransformer(this, inliningContext, sameModule, continuationClassName)
+        AnonymousObjectTransformer(state, this, inliningContext, sameModule, continuationClassName)
 }

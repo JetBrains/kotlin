@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.codegen.inline
 
+import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
@@ -48,13 +49,14 @@ class SamWrapperTransformationInfo(
 
     override fun canRemoveAfterTransformation() = false
 
-    override fun createTransformer(inliningContext: InliningContext, sameModule: Boolean, continuationClassName: String?) =
-        SamWrapperTransformer(this, inliningContext)
+    override fun createTransformer(
+        state: GenerationState, inliningContext: InliningContext, sameModule: Boolean, continuationClassName: String?,
+    ): ObjectTransformer<*> = SamWrapperTransformer(state, this, inliningContext)
 }
 
-class SamWrapperTransformer(transformationInfo: SamWrapperTransformationInfo, private val inliningContext: InliningContext) :
-    ObjectTransformer<SamWrapperTransformationInfo>(transformationInfo, inliningContext.state) {
-
+class SamWrapperTransformer(
+    state: GenerationState, transformationInfo: SamWrapperTransformationInfo, private val inliningContext: InliningContext,
+) : ObjectTransformer<SamWrapperTransformationInfo>(transformationInfo, state) {
     override fun doTransform(parentRemapper: FieldRemapper): InlineResult {
         val classReader = createClassReader()
         val classBuilder = createRemappingClassBuilderViaFactory(inliningContext)
@@ -67,7 +69,7 @@ class SamWrapperTransformer(transformationInfo: SamWrapperTransformationInfo, pr
             }
 
         }, LOADABLE_DESCRIPTORS_ATTRIBUTE_PROTOTYPES, ClassReader.SKIP_FRAMES)
-        classBuilder.done(inliningContext.state.config.generateSmapCopyToAnnotation)
+        classBuilder.done(inliningContext.config.generateSmapCopyToAnnotation)
 
         return transformationResult
     }

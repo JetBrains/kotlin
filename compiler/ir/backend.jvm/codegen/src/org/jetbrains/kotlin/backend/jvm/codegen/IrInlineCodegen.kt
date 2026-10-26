@@ -329,7 +329,7 @@ class IrInlineCodegen(
         val parameters = invocationParamBuilder.buildParameters()
 
         val info = RootInliningContext(
-            state, codegen.inlineNameGenerator.subGenerator(jvmSignature.asmMethod.name),
+            state.config, codegen.inlineNameGenerator.subGenerator(jvmSignature.asmMethod.name),
             sourceCompiler, sourceCompiler.inlineCallSiteInfo, reifiedTypeInliner, typeParameterMappings,
             codegen.inlineScopesGenerator, codegen.typeMapper,
         )
@@ -340,6 +340,7 @@ class IrInlineCodegen(
         val callSite = SourcePosition(lastLineNumber, sourceInfo.sourceFileName!!, sourceInfo.pathOrCleanFQN)
         info.inlineScopesGenerator?.apply { currentCallSiteLineNumber = lastLineNumber }
         val inliner = MethodInliner(
+            state,
             node,
             parameters,
             info,
