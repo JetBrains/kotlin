@@ -189,6 +189,8 @@ object StandardClassIds {
         Long to AtomicLongArray,
     )
 
+    val ClassCastException = "ClassCastException".baseId()
+
     object Annotations {
         val Suppress = "Suppress".baseId()
         val PublishedApi = "PublishedApi".baseId()
