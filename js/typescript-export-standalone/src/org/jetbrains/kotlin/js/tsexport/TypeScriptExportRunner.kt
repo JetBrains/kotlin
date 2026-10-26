@@ -86,7 +86,7 @@ public fun runTypeScriptExport(
                     val jsFileName = config.artifactConfiguration.outputJsFile().name
                     writeMergedTsFile(artifacts, config.artifactConfiguration, jsFileName)
                 }
-                JsGenerationGranularity.PER_FILE, JsGenerationGranularity.PER_MODULE -> artifacts.map { artifact ->
+                JsGenerationGranularity.PER_FILE, JsGenerationGranularity.PER_MODULE, JsGenerationGranularity.PER_CLASS -> artifacts.map { artifact ->
                     val jsFileName = config.artifactConfiguration.outputJsFile(artifact.externalModuleName).name
                     val dtsFile = config.artifactConfiguration.outputDtsFile(artifact.externalModuleName).normalizedAbsoluteFile
                     dtsFile.parentFile?.mkdirs()

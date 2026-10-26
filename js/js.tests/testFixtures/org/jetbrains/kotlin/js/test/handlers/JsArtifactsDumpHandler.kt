@@ -32,6 +32,8 @@ object JsArtifactsDumpHandler {
         TranslationMode.PER_MODULE_PROD_MINIMIZED_NAMES,
         TranslationMode.PER_FILE_DEV,
         TranslationMode.PER_FILE_PROD_MINIMIZED_NAMES,
+        TranslationMode.PER_CLASS_DEV,
+        TranslationMode.PER_CLASS_PROD_MINIMIZED_NAMES,
     )
 
     class Suppressor(testServices: TestServices) : TestFailureSuppressor(testServices) {
@@ -76,6 +78,9 @@ object JsArtifactsDumpHandler {
             TranslationMode.PER_FILE_DEV -> "out-per-file"
             TranslationMode.PER_FILE_PROD -> unreachableBranch(translationMode)
             TranslationMode.PER_FILE_PROD_MINIMIZED_NAMES -> "out-per-file-min"
+            TranslationMode.PER_CLASS_DEV -> "out-per-class"
+            TranslationMode.PER_CLASS_PROD -> unreachableBranch(translationMode)
+            TranslationMode.PER_CLASS_PROD_MINIMIZED_NAMES -> "out-per-class-min"
         }
         return testServices.compiledTestOutputDirectory(
             prefix,
