@@ -574,7 +574,7 @@ private fun KaDiagnosticConverterBuilder.addConversions6() {
             token,
         )
     }
-    add(FirJsErrors.WRONG_EXPORTED_DECLARATION) { firDiagnostic ->
+    add(FirWebCommonErrors.WRONG_EXPORTED_DECLARATION) { firDiagnostic ->
         WrongExportedDeclarationImpl(
             firDiagnostic.a,
             firDiagnostic as KtDiagnosticWithSource,

@@ -64,6 +64,10 @@ object WEB_COMMON_DIAGNOSTICS_LIST : DiagnosticList("FirWebCommonErrors") {
         val NESTED_JS_EXPORT by error<KtElement>()
         val MULTIPLE_JS_EXPORT_DEFAULT_IN_ONE_FILE by error<KtElement>()
         val WRONG_JS_EXPORT_TARGET_VISIBILITY by warning<KtElement>()
+        val WRONG_EXPORTED_DECLARATION by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
+            parameter<String>("kind")
+        }
+        val NOT_EXPORTED_OR_EXTERNAL_ACTUAL_DECLARATION_WHILE_EXPECT_IS_EXPORTED by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
     }
 
     val JSCODE by object : DiagnosticGroup("JsCode") {

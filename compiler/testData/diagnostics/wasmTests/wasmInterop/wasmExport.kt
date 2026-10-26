@@ -75,3 +75,73 @@ fun fooUnsigned2(): UByte = 42u
 @WasmExport()
 fun fooWithContext() {
 }<!>
+
+interface UserDefinedInterface
+external interface ExternalInterface : JsAny
+enum class UserDefinedEnum { A }
+value class IntValueClass(val x: Int)
+typealias AliasedChar = Char
+typealias AliasedNullableInt = Int?
+
+@WasmExport("a")
+fun unsupportedParameterTypes(
+<!WASM_IMPORT_EXPORT_UNSUPPORTED_PARAMETER_TYPE!>p0: Nothing<!>,
+<!WASM_IMPORT_EXPORT_UNSUPPORTED_PARAMETER_TYPE!>p1: Char<!>,
+<!WASM_IMPORT_EXPORT_UNSUPPORTED_PARAMETER_TYPE!>p2: IntArray<!>,
+<!WASM_IMPORT_EXPORT_UNSUPPORTED_PARAMETER_TYPE!>p3: List<Int><!>,
+<!WASM_IMPORT_EXPORT_UNSUPPORTED_PARAMETER_TYPE!>p4: UserDefinedInterface<!>,
+<!WASM_IMPORT_EXPORT_UNSUPPORTED_PARAMETER_TYPE!>p5: JsAny<!>,
+<!WASM_IMPORT_EXPORT_UNSUPPORTED_PARAMETER_TYPE!>p6: ExternalInterface<!>,
+<!WASM_IMPORT_EXPORT_UNSUPPORTED_PARAMETER_TYPE!>p7: (Int) -> Int<!>,
+<!WASM_IMPORT_EXPORT_UNSUPPORTED_PARAMETER_TYPE!>p8: UInt?<!>,
+<!WASM_IMPORT_EXPORT_UNSUPPORTED_PARAMETER_TYPE!>p9: AliasedChar<!>,
+<!WASM_IMPORT_EXPORT_UNSUPPORTED_PARAMETER_TYPE!>p10: AliasedNullableInt<!>,
+<!WASM_IMPORT_EXPORT_UNSUPPORTED_PARAMETER_TYPE!>p11: UserDefinedEnum<!>,
+<!WASM_IMPORT_EXPORT_UNSUPPORTED_PARAMETER_TYPE!>p12: IntValueClass<!>,
+): Unit {}
+
+<!WASM_IMPORT_EXPORT_UNSUPPORTED_RETURN_TYPE!>@WasmExport("a")
+fun returnNothing(): Nothing<!> = TODO()
+
+<!WASM_IMPORT_EXPORT_UNSUPPORTED_RETURN_TYPE!>@WasmExport("a")
+fun returnChar(): Char<!> = 'a'
+
+<!WASM_IMPORT_EXPORT_UNSUPPORTED_RETURN_TYPE!>@WasmExport("a")
+fun returnString(): String<!> = ""
+
+<!WASM_IMPORT_EXPORT_UNSUPPORTED_RETURN_TYPE!>@WasmExport("a")
+fun returnUserDefinedInterface(): UserDefinedInterface<!> = TODO()
+
+<!WASM_IMPORT_EXPORT_UNSUPPORTED_RETURN_TYPE!>@WasmExport("a")
+fun returnJsAny(): JsAny<!> = TODO()
+
+<!WASM_IMPORT_EXPORT_UNSUPPORTED_RETURN_TYPE!>@WasmExport("a")
+fun returnFunctionType(): (Int) -> Int<!> = TODO()
+
+<!WASM_IMPORT_EXPORT_UNSUPPORTED_RETURN_TYPE!>@WasmExport("a")
+fun returnUserDefinedEnum(): UserDefinedEnum<!> = UserDefinedEnum.A
+
+<!WASM_IMPORT_EXPORT_UNSUPPORTED_RETURN_TYPE!>@WasmExport("a")
+fun returnIntValueClass(): IntValueClass<!> = IntValueClass(42)
+
+<!WASM_IMPORT_EXPORT_UNSUPPORTED_RETURN_TYPE!>@WasmExport("a")
+fun returnAliasedNullableInt(): AliasedNullableInt<!> = null
+
+@WasmExport("a")
+fun supportedParameterTypes(
+    p0: Byte,
+    p1: Short,
+    p2: Int,
+    p3: Long,
+    p4: Float,
+    p5: Double,
+    p6: Boolean,
+    p7: UByte,
+    p8: UShort,
+    p9: UInt,
+    p10: ULong,
+): Unit {}
+
+// receivers are not checked
+@WasmExport("a")
+fun String.stringReceiver() {}
