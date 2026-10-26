@@ -175,7 +175,7 @@ internal class KaFirDataFlowProvider(
         val firDefaultStatement = firStatements.last()
         val defaultExpressionInfo = computeDefaultExpression(defaultStatement, firDefaultStatement, firValuedReturnExpressions)
 
-        val graphIndex = ControlFlowGraphIndex {
+        val graphIndex = ExitPointSnapshotGraphIndex {
             getControlFlowGraph(anchor = statements.first(), firStatements = firStatements)
         }
 
@@ -206,7 +206,7 @@ internal class KaFirDataFlowProvider(
         val firParent = computeCommonParent(statements)
 
         val firStatements = statements.map { it.unwrap().getOrBuildFirOfType<FirElement>(resolutionFacade) }
-        val pathSearcher = FirElementPathSearcher(firStatements)
+        val pathSearcher = ExitPointSnapshotPathSearcher(firStatements)
         firParent.accept(pathSearcher)
 
         return firStatements.map { unwrapLeaf(pathSearcher[it] ?: it) }
@@ -326,7 +326,7 @@ internal class KaFirDataFlowProvider(
         return analysisSession.firSession.typeContext.commonSuperTypeOrNull(coneTypes)?.toKtType()
     }
 
-    private fun ControlFlowGraphIndex.computeHasEscapingJumps(firDefaultStatement: FirElement, collector: FirElementCollector): Boolean {
+    private fun ExitPointSnapshotGraphIndex.computeHasEscapingJumps(firDefaultStatement: FirElement, collector: FirElementCollector): Boolean {
         val firTargets = buildSet {
             add(firDefaultStatement)
             addAll(collector.firReturnExpressions)
@@ -337,7 +337,7 @@ internal class KaFirDataFlowProvider(
         return hasMultipleExitPoints(firTargets)
     }
 
-    private fun ControlFlowGraphIndex.computeHasMultipleJumpTargets(collector: FirElementCollector): Boolean {
+    private fun ExitPointSnapshotGraphIndex.computeHasMultipleJumpTargets(collector: FirElementCollector): Boolean {
         val firTargets = buildSet<FirElement> {
             addAll(collector.firReturnExpressions)
             addAll(collector.firBreakExpressions)
