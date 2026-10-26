@@ -824,6 +824,7 @@ kotlin {
 
 val generateKgpBuildConstants = registerGenerateKgpBuildConstantsTask {
     defaultYarnVersion = libs.versions.yarn
+    defaultNodeJsVersion = nodejsLtsVersion
 }
 
 kotlin.sourceSets.common {

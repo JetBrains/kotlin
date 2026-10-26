@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs
 
-import org.gradle.api.Task
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
@@ -81,7 +80,7 @@ abstract class NodeJsRequest @Inject internal constructor() {
     abstract val platform: Property<BuildPlatform>
 
     /**
-     * Sets [version] from a raw Node.js version string, for example `24.16.0`.
+     * Sets [version] from a raw Node.js version string, for example `24.22.1`.
      */
     fun version(version: String) {
         this.version.set(NodeJsVersion(version))
@@ -120,7 +119,7 @@ abstract class NodeJsExecutable @Inject internal constructor() {
 }
 
 /**
- * A Node.js version, for example `24.16.0`.
+ * A Node.js version, for example `24.22.1`.
  *
  * @param version the version string. Must not be blank.
  */
