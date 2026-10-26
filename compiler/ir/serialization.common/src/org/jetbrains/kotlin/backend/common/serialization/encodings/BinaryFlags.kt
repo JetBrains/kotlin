@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.descriptors.toDescriptorVisibility
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
 import org.jetbrains.kotlin.metadata.ProtoBuf
@@ -48,7 +47,18 @@ value class ClassFlags(val flags: Long) {
                 val hasEnumEntries = kind == ProtoBuf.Class.Kind.ENUM_CLASS &&
                         languageVersionSettings.supportsFeature(LanguageFeature.EnumEntries)
                 val flags = IrFlags.getClassFlags(
-                    hasAnnotation, visibility, modality, kind, isInner, isData, isExternal, isExpect, isValue, isFun, hasEnumEntries
+                    hasAnnotation,
+                    visibility,
+                    modality,
+                    kind,
+                    isInner,
+                    isData,
+                    isExternal,
+                    isExpect,
+                    isValue,
+                    isFun,
+                    hasEnumEntries,
+                    /*isRichError =*/ false,
                 )
 
                 flags.toLong()

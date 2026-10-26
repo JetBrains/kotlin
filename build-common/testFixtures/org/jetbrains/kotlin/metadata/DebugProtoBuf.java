@@ -11854,6 +11854,7 @@ public final class DebugProtoBuf {
      *isInline
      *isFun
      *hasEnumEntries
+     *isRichError
      * </pre>
      */
     boolean hasFlags();
@@ -11872,6 +11873,7 @@ public final class DebugProtoBuf {
      *isInline
      *isFun
      *hasEnumEntries
+     *isRichError
      * </pre>
      */
     int getFlags();
@@ -12807,6 +12809,7 @@ public final class DebugProtoBuf {
      *isInline
      *isFun
      *hasEnumEntries
+     *isRichError
      * </pre>
      */
     public boolean hasFlags() {
@@ -12827,6 +12830,7 @@ public final class DebugProtoBuf {
      *isInline
      *isFun
      *hasEnumEntries
+     *isRichError
      * </pre>
      */
     public int getFlags() {
@@ -14676,6 +14680,7 @@ public final class DebugProtoBuf {
        *isInline
        *isFun
        *hasEnumEntries
+       *isRichError
        * </pre>
        */
       public boolean hasFlags() {
@@ -14696,6 +14701,7 @@ public final class DebugProtoBuf {
        *isInline
        *isFun
        *hasEnumEntries
+       *isRichError
        * </pre>
        */
       public int getFlags() {
@@ -14716,6 +14722,7 @@ public final class DebugProtoBuf {
        *isInline
        *isFun
        *hasEnumEntries
+       *isRichError
        * </pre>
        */
       public Builder setFlags(int value) {
@@ -14739,6 +14746,7 @@ public final class DebugProtoBuf {
        *isInline
        *isFun
        *hasEnumEntries
+       *isRichError
        * </pre>
        */
       public Builder clearFlags() {
