@@ -629,6 +629,30 @@ class ObjCCacheTest : ObjCCacheTestBase() {
         }
         try assertTrue(exceptionThrown)
         """
+
+    @Test
+    fun testStaticFrameworkRequiredClassExtendsCachedClass() {
+        val libraries = compileLibraries(
+            Library("libA", "package liba\nopen class Alpha(val name: String)"),
+            Library(
+                "libN", "package libn\nimport liba.Alpha\nclass Hidden(name: String) : Alpha(name)", listOf("libA"), isExported = false,
+            ),
+            Library(
+                "libB",
+                """
+                package libb
+                import libn.Hidden
+                class Beta {
+                    fun hidden(): Hidden = Hidden("fromBeta")
+                }
+                """,
+                listOf("libA", "libN"),
+            ),
+        )
+        val framework = linkFramework(libraries)
+        framework.assertObjCCachesLinked("libA", "libB")
+        framework.runSwift("let alpha: Alpha = Beta().hidden()\ntry assertEquals(actual: alpha.name, expected: \"fromBeta\")")
+    }
 }
 
 @Tag("caches")
@@ -653,6 +677,13 @@ class ObjCCacheWarningsTest : ObjCCacheTestBase() {
         val libraries = alphaAndBeta()
         libraries.cacheDir.resolve("libB-cache").deleteRecursively()
         assertLibBCacheIgnored(libraries, "libB-Kt.objc_cache requires a static cache of libB, which this compilation does not use")
+    }
+
+    @Test
+    fun testIgnoredWhenIncomplete() {
+        val libraries = alphaAndBeta()
+        objCCacheBinDir(libraries.cacheDir, "libB").resolve("objc_cache_units.txt.gz").delete()
+        assertLibBCacheIgnored(libraries, "libB-Kt.objc_cache is incomplete or unreadable")
     }
 
     private fun assertLibBCacheIgnored(libraries: Libraries, warning: String) {

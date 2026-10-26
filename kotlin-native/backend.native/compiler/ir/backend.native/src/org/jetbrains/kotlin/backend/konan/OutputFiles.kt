@@ -71,6 +71,8 @@ class OutputFiles(val outputName: String, target: KonanTarget, val produce: Comp
 
     val objcCacheMetadataFile = tempCacheDirectory?.cacheBinaryPart()?.resolve(CachedLibraries.OBJC_CACHE_METADATA_FILE_NAME)
 
+    val objcCacheUnitsFile = tempCacheDirectory?.cacheBinaryPart()?.resolve(CachedLibraries.OBJC_CACHE_UNITS_FILE_NAME)
+
     val bitcodeDependenciesFile = tempCacheDirectory?.cacheBinaryPart()?.resolve(CachedLibraries.BITCODE_DEPENDENCIES_FILE_NAME)
 
     val inlineFunctionBodiesFile = tempCacheDirectory?.cacheIrPart()?.resolve(CachedLibraries.INLINE_FUNCTION_BODIES_FILE_NAME)

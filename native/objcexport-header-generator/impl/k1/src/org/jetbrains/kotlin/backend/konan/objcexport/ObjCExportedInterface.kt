@@ -18,4 +18,5 @@ class ObjCExportedInterface internal constructor(
     val headerLines: List<String>,
     val namer: ObjCExportNamer,
     val mapper: ObjCExportMapper,
+    val objCCacheUnits: ObjCExportUnits? = null,
 )

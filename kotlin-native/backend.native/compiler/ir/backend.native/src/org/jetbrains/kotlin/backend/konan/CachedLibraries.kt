@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.konan
 import org.jetbrains.kotlin.backend.common.serialization.FingerprintHash
 import org.jetbrains.kotlin.backend.konan.CacheSupport.Companion.cacheFileId
 import org.jetbrains.kotlin.backend.konan.library.KlibDAG
+import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportUnits
 import org.jetbrains.kotlin.backend.common.lazyEvaluatedFingerprintHash
 import org.jetbrains.kotlin.backend.common.serialization.Hash128Bits
 import org.jetbrains.kotlin.backend.konan.serialization.*
@@ -23,11 +24,13 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.library.uniqueName
 import java.nio.file.Path
+import java.util.zip.GZIPInputStream
 import kotlin.io.path.Path
 import kotlin.io.path.absolute
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.bufferedReader
 import kotlin.io.path.exists
+import kotlin.io.path.inputStream
 import kotlin.io.path.name
 import kotlin.io.path.readBytes
 import kotlin.io.path.readLines
@@ -260,7 +263,7 @@ class CachedLibraries(
             implicitCacheDirectories.flatMap { dir -> dir.listDirectoryEntriesIfDirectoryExists().map { it.name to it } }
                     .toMap()
 
-    class ObjCCache(val binaryPath: String, val metadata: ObjCCacheMetadata)
+    class ObjCCache(val binaryPath: String, val metadata: ObjCCacheMetadata, val units: ObjCExportUnits)
 
     fun exportedDependencies(library: KotlinLibrary, exportedLibraries: Set<KotlinLibrary>): List<String> =
             klibDag.getAllDependencies(library)
@@ -300,6 +303,7 @@ class CachedLibraries(
             ObjCCache(
                     archive.absolutePathString(),
                     directory.resolve(OBJC_CACHE_METADATA_FILE_NAME).bufferedReader().use { ObjCCacheMetadata.deserialize(it) },
+                    GZIPInputStream(directory.resolve(OBJC_CACHE_UNITS_FILE_NAME).inputStream()).bufferedReader().use { ObjCExportUnits.read(it) },
             )
         }.getOrElse {
             configuration.report(
@@ -419,6 +423,7 @@ class CachedLibraries(
 
         const val METADATA_FILE_NAME = "metadata.properties"
         const val OBJC_CACHE_METADATA_FILE_NAME = "objc_cache_metadata.properties"
+        const val OBJC_CACHE_UNITS_FILE_NAME = "objc_cache_units.txt.gz"
         const val BITCODE_DEPENDENCIES_FILE_NAME = "bitcode_deps"
         const val INLINE_FUNCTION_BODIES_FILE_NAME = "inline_bodies"
         const val CLASS_FIELDS_FILE_NAME = "class_fields"
