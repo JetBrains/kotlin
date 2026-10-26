@@ -1,0 +1,267 @@
+bundle.fragments[0].elements[KdElementId(value=example/Types///PointingToDeclaration/)].typeParameters[0].upperBounds[0]:
+KdClassLikeType {
+  annotations = []
+  classLikeId = "kotlin/CharSequence///PointingToDeclaration/"
+  isEnhancedNullability = false
+  isMarkedNullable = false
+  qualifiers = [
+    KdClassTypeQualifier {
+      name = "CharSequence"
+      typeArguments = []
+    }
+  ]
+}
+bundle.fragments[0].elements[KdElementId(value=example/Types/Types/#TypeParam(bounds=[kotlin.CharSequence])/PointingToDeclaration/)].typeParameters[0].upperBounds[0]:
+KdClassLikeType {
+  annotations = []
+  classLikeId = "kotlin/CharSequence///PointingToDeclaration/"
+  isEnhancedNullability = false
+  isMarkedNullable = false
+  qualifiers = [
+    KdClassTypeQualifier {
+      name = "CharSequence"
+      typeArguments = []
+    }
+  ]
+}
+bundle.fragments[0].elements[KdElementId(value=example/Types/Types/#TypeParam(bounds=[kotlin.CharSequence])/PointingToDeclaration/)].valueParameters[0].type:
+KdTypeParameterType {
+  annotations = []
+  containerElementId = "example/Types///PointingToDeclaration/"
+  isMarkedNullable = false
+  name = "T"
+}
+bundle.fragments[0].elements[KdElementId(value=example/Types/convert/#TypeParam(bounds=[kotlin.Any])?#kotlin.Function1[TypeParam(bounds=[kotlin.CharSequence]),TypeParam(bounds=[kotlin.Any])]/PointingToDeclaration/)].returnType:
+KdTypeParameterType {
+  annotations = []
+  containerElementId = "example/Types/convert/#TypeParam(bounds=[kotlin.Any])?#kotlin.Function1[TypeParam(bounds=[kotlin.CharSequence]),TypeParam(bounds=[kotlin.Any])]/PointingToDeclaration/"
+  isMarkedNullable = false
+  name = "R"
+}
+bundle.fragments[0].elements[KdElementId(value=example/Types/convert/#TypeParam(bounds=[kotlin.Any])?#kotlin.Function1[TypeParam(bounds=[kotlin.CharSequence]),TypeParam(bounds=[kotlin.Any])]/PointingToDeclaration/)].typeParameters[0].upperBounds[0]:
+KdClassLikeType {
+  annotations = []
+  classLikeId = "kotlin/Any///PointingToDeclaration/"
+  isEnhancedNullability = false
+  isMarkedNullable = false
+  qualifiers = [
+    KdClassTypeQualifier {
+      name = "Any"
+      typeArguments = []
+    }
+  ]
+}
+bundle.fragments[0].elements[KdElementId(value=example/Types/convert/#TypeParam(bounds=[kotlin.Any])?#kotlin.Function1[TypeParam(bounds=[kotlin.CharSequence]),TypeParam(bounds=[kotlin.Any])]/PointingToDeclaration/)].valueParameters[0].type:
+KdTypeParameterType {
+  annotations = []
+  containerElementId = "example/Types/convert/#TypeParam(bounds=[kotlin.Any])?#kotlin.Function1[TypeParam(bounds=[kotlin.CharSequence]),TypeParam(bounds=[kotlin.Any])]/PointingToDeclaration/"
+  isMarkedNullable = true
+  name = "R"
+}
+bundle.fragments[0].elements[KdElementId(value=example/Types/convert/#TypeParam(bounds=[kotlin.Any])?#kotlin.Function1[TypeParam(bounds=[kotlin.CharSequence]),TypeParam(bounds=[kotlin.Any])]/PointingToDeclaration/)].valueParameters[1].type:
+KdFunctionalType {
+  annotations = []
+  contextParameterTypes = []
+  isMarkedNullable = false
+  isSuspend = false
+  receiverType = null
+  returnType = Invariant {
+    type = KdTypeParameterType {
+      annotations = []
+      containerElementId = "example/Types/convert/#TypeParam(bounds=[kotlin.Any])?#kotlin.Function1[TypeParam(bounds=[kotlin.CharSequence]),TypeParam(bounds=[kotlin.Any])]/PointingToDeclaration/"
+      isMarkedNullable = false
+      name = "R"
+    }
+  }
+  valueParameterTypes = [
+    Invariant {
+      type = KdTypeParameterType {
+        annotations = []
+        containerElementId = "example/Types///PointingToDeclaration/"
+        isMarkedNullable = false
+        name = "T"
+      }
+    }
+  ]
+}
+bundle.fragments[0].elements[KdElementId(value=example/Types/extension/kotlin.String#TypeParam(bounds=[kotlin.CharSequence])/PointingToDeclaration/)].extensionReceiverParameter.type:
+KdClassLikeType {
+  annotations = []
+  classLikeId = "kotlin/String///PointingToDeclaration/"
+  isEnhancedNullability = false
+  isMarkedNullable = false
+  qualifiers = [
+    KdClassTypeQualifier {
+      name = "String"
+      typeArguments = []
+    }
+  ]
+}
+bundle.fragments[0].elements[KdElementId(value=example/Types/extension/kotlin.String#TypeParam(bounds=[kotlin.CharSequence])/PointingToDeclaration/)].returnType:
+KdClassLikeType {
+  annotations = []
+  classLikeId = "kotlin/String///PointingToDeclaration/"
+  isEnhancedNullability = false
+  isMarkedNullable = false
+  qualifiers = [
+    KdClassTypeQualifier {
+      name = "String"
+      typeArguments = []
+    }
+  ]
+}
+bundle.fragments[0].elements[KdElementId(value=example/Types/extension/kotlin.String#TypeParam(bounds=[kotlin.CharSequence])/PointingToDeclaration/)].valueParameters[0].type:
+KdTypeParameterType {
+  annotations = []
+  containerElementId = "example/Types///PointingToDeclaration/"
+  isMarkedNullable = false
+  name = "T"
+}
+bundle.fragments[0].elements[KdElementId(value=example/Types/extensionFunction/#/PointingToDeclaration/)].type:
+KdFunctionalType {
+  annotations = []
+  contextParameterTypes = []
+  isMarkedNullable = false
+  isSuspend = false
+  receiverType = Invariant {
+    type = KdClassLikeType {
+      annotations = []
+      classLikeId = "kotlin/String///PointingToDeclaration/"
+      isEnhancedNullability = false
+      isMarkedNullable = false
+      qualifiers = [
+        KdClassTypeQualifier {
+          name = "String"
+          typeArguments = []
+        }
+      ]
+    }
+  }
+  returnType = Invariant {
+    type = KdClassLikeType {
+      annotations = []
+      classLikeId = "kotlin/Int///PointingToDeclaration/"
+      isEnhancedNullability = false
+      isMarkedNullable = false
+      qualifiers = [
+        KdClassTypeQualifier {
+          name = "Int"
+          typeArguments = []
+        }
+      ]
+    }
+  }
+  valueParameterTypes = [
+    Invariant {
+      type = KdTypeParameterType {
+        annotations = []
+        containerElementId = "example/Types///PointingToDeclaration/"
+        isMarkedNullable = false
+        name = "T"
+      }
+    }
+  ]
+}
+bundle.fragments[0].elements[KdElementId(value=example/Types/function/#/PointingToDeclaration/)].type:
+KdFunctionalType {
+  annotations = []
+  contextParameterTypes = []
+  isMarkedNullable = false
+  isSuspend = false
+  receiverType = null
+  returnType = Invariant {
+    type = KdClassLikeType {
+      annotations = []
+      classLikeId = "kotlin/String///PointingToDeclaration/"
+      isEnhancedNullability = false
+      isMarkedNullable = false
+      qualifiers = [
+        KdClassTypeQualifier {
+          name = "String"
+          typeArguments = []
+        }
+      ]
+    }
+  }
+  valueParameterTypes = [
+    Invariant {
+      type = KdTypeParameterType {
+        annotations = []
+        containerElementId = "example/Types///PointingToDeclaration/"
+        isMarkedNullable = false
+        name = "T"
+      }
+    }
+  ]
+}
+bundle.fragments[0].elements[KdElementId(value=example/Types/nullableFunction/#/PointingToDeclaration/)].type:
+KdFunctionalType {
+  annotations = []
+  contextParameterTypes = []
+  isMarkedNullable = true
+  isSuspend = false
+  receiverType = null
+  returnType = Invariant {
+    type = KdClassLikeType {
+      annotations = []
+      classLikeId = "kotlin/String///PointingToDeclaration/"
+      isEnhancedNullability = false
+      isMarkedNullable = false
+      qualifiers = [
+        KdClassTypeQualifier {
+          name = "String"
+          typeArguments = []
+        }
+      ]
+    }
+  }
+  valueParameterTypes = [
+    Invariant {
+      type = KdTypeParameterType {
+        annotations = []
+        containerElementId = "example/Types///PointingToDeclaration/"
+        isMarkedNullable = false
+        name = "T"
+      }
+    }
+  ]
+}
+bundle.fragments[0].elements[KdElementId(value=example/Types/suspendFunction/#/PointingToDeclaration/)].type:
+KdFunctionalType {
+  annotations = []
+  contextParameterTypes = []
+  isMarkedNullable = false
+  isSuspend = true
+  receiverType = null
+  returnType = Invariant {
+    type = KdClassLikeType {
+      annotations = []
+      classLikeId = "kotlin/Unit///PointingToDeclaration/"
+      isEnhancedNullability = false
+      isMarkedNullable = false
+      qualifiers = [
+        KdClassTypeQualifier {
+          name = "Unit"
+          typeArguments = []
+        }
+      ]
+    }
+  }
+  valueParameterTypes = [
+    Invariant {
+      type = KdTypeParameterType {
+        annotations = []
+        containerElementId = "example/Types///PointingToDeclaration/"
+        isMarkedNullable = false
+        name = "T"
+      }
+    }
+  ]
+}
+bundle.fragments[0].elements[KdElementId(value=example/Types/value/#/PointingToDeclaration/)].type:
+KdTypeParameterType {
+  annotations = []
+  containerElementId = "example/Types///PointingToDeclaration/"
+  isMarkedNullable = false
+  name = "T"
+}

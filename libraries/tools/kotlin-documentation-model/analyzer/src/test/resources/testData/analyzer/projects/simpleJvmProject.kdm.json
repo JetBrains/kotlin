@@ -1,0 +1,159 @@
+{
+    "schemaVersion": "2.5.255",
+    "fragments": [
+        {
+            "name": "main",
+            "elements": {
+                "////PointingToDeclaration/": {
+                    "kind": "module",
+                    "name": "simpleJvmProject",
+                    "packages": [
+                        "pkg////PointingToDeclaration/"
+                    ],
+                    "annotations": []
+                },
+                "pkg////PointingToDeclaration/": {
+                    "kind": "package",
+                    "name": "pkg",
+                    "declarations": [
+                        "pkg/Greeter///PointingToDeclaration/"
+                    ],
+                    "annotations": []
+                },
+                "pkg/Greeter///PointingToDeclaration/": {
+                    "kind": "class",
+                    "name": "Greeter",
+                    "classKind": "CLASS",
+                    "isCompanion": false,
+                    "isData": false,
+                    "isValue": false,
+                    "isFun": false,
+                    "isInner": false,
+                    "isExternal": false,
+                    "isError": false,
+                    "mappedTo": null,
+                    "typeParameters": [],
+                    "superTypes": [],
+                    "declarations": [
+                        "pkg/Greeter/Greeter/#kotlin.String/PointingToDeclaration/",
+                        "pkg/Greeter/greet/#/PointingToDeclaration/",
+                        "pkg/Greeter/name/#/PointingToDeclaration/"
+                    ],
+                    "visibility": "PUBLIC",
+                    "modality": "FINAL",
+                    "since": null,
+                    "deprecated": null,
+                    "annotations": []
+                },
+                "pkg/Greeter/Greeter/#kotlin.String/PointingToDeclaration/": {
+                    "kind": "constructor",
+                    "isPrimary": true,
+                    "isExternal": false,
+                    "mappedTo": null,
+                    "typeParameters": [],
+                    "valueParameters": [
+                        {
+                            "name": "name",
+                            "type": {
+                                "kind": "classLike",
+                                "qualifiers": [
+                                    {
+                                        "name": "String",
+                                        "typeArguments": []
+                                    }
+                                ],
+                                "classLikeId": "kotlin/String///PointingToDeclaration/",
+                                "isMarkedNullable": false,
+                                "annotations": []
+                            },
+                            "isNoinline": false,
+                            "isCrossinline": false,
+                            "isVararg": false,
+                            "defaultValueExpression": null,
+                            "annotations": []
+                        }
+                    ],
+                    "visibility": "PUBLIC",
+                    "since": null,
+                    "deprecated": null,
+                    "throws": [],
+                    "annotations": []
+                },
+                "pkg/Greeter/greet/#/PointingToDeclaration/": {
+                    "kind": "function",
+                    "name": "greet",
+                    "isCompanion": false,
+                    "isExternal": false,
+                    "isSuspend": false,
+                    "isOperator": false,
+                    "isInfix": false,
+                    "isInline": false,
+                    "isTailRec": false,
+                    "mappedTo": null,
+                    "returnType": {
+                        "kind": "classLike",
+                        "qualifiers": [
+                            {
+                                "name": "String",
+                                "typeArguments": []
+                            }
+                        ],
+                        "classLikeId": "kotlin/String///PointingToDeclaration/",
+                        "isMarkedNullable": false,
+                        "annotations": []
+                    },
+                    "typeParameters": [],
+                    "valueParameters": [],
+                    "extensionReceiverParameter": null,
+                    "contextParameters": [],
+                    "overridens": [],
+                    "visibility": "PUBLIC",
+                    "modality": "FINAL",
+                    "since": null,
+                    "deprecated": null,
+                    "throws": [],
+                    "annotations": []
+                },
+                "pkg/Greeter/name/#/PointingToDeclaration/": {
+                    "kind": "property",
+                    "name": "name",
+                    "isLateinit": false,
+                    "isInline": false,
+                    "isCompanion": false,
+                    "isExternal": false,
+                    "isSuspend": false,
+                    "isMutable": false,
+                    "isFromPrimaryConstructor": true,
+                    "constExpression": null,
+                    "getter": null,
+                    "setter": null,
+                    "mappedTo": null,
+                    "type": {
+                        "kind": "classLike",
+                        "qualifiers": [
+                            {
+                                "name": "String",
+                                "typeArguments": []
+                            }
+                        ],
+                        "classLikeId": "kotlin/String///PointingToDeclaration/",
+                        "isMarkedNullable": false,
+                        "annotations": []
+                    },
+                    "typeParameters": [],
+                    "extensionReceiverParameter": null,
+                    "contextParameters": [],
+                    "overridens": [],
+                    "visibility": "PUBLIC",
+                    "modality": "FINAL",
+                    "since": null,
+                    "deprecated": null,
+                    "throws": [],
+                    "annotations": []
+                }
+            },
+            "embeddedElements": {}
+        }
+    ],
+    "expectActualMappings": []
+}

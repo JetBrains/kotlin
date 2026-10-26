@@ -1,0 +1,39 @@
+fragment main
+var text: String [sample/Base/text/#/PointingToDeclaration/].overridens:
+[
+    "sample/First/text/#/PointingToDeclaration/",
+    "sample/Second/text/#/PointingToDeclaration/"
+]
+fun toString(): String [sample/Base/toString/#/PointingToDeclaration/].overridens:
+[
+    "kotlin/Any/toString/#/PointingToDeclaration/"
+]
+fun transform(value: String): String [sample/Base/transform/#kotlin.String/PointingToDeclaration/].overridens:
+[
+    "sample/First/transform/#TypeParam(bounds=[kotlin.Any?])/PointingToDeclaration/",
+    "sample/Second/transform/#kotlin.String/PointingToDeclaration/"
+]
+var text: String [sample/Child/text/#/PointingToDeclaration/].overridens:
+[
+    "sample/Base/text/#/PointingToDeclaration/"
+]
+fun transform(value: String): String [sample/Child/transform/#kotlin.String/PointingToDeclaration/].overridens:
+[
+    "sample/Base/transform/#kotlin.String/PointingToDeclaration/"
+]
+fun transform(value: String): String [sample/JavaChild/transform/#java.lang.String/PointingToDeclaration/].overridens:
+[
+    "sample/JavaBase/transform/#T/PointingToDeclaration/"
+]
+fun transform(value: String): String [sample/JavaGrandChild/transform/#java.lang.String/PointingToDeclaration/].overridens:
+[
+    "sample/JavaChild/transform/#java.lang.String/PointingToDeclaration/"
+]
+fun transform(value: String): String [sample/KotlinChild/transform/#kotlin.String/PointingToDeclaration/].overridens:
+[
+    "sample/JavaBase/transform/#T/PointingToDeclaration/"
+]
+val length: Int [sample/Text/length/#/PointingToDeclaration/].overridens:
+[
+    "kotlin/CharSequence/length/#/PointingToDeclaration/"
+]
