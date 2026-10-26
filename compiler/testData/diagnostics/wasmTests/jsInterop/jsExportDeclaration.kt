@@ -43,6 +43,34 @@ fun thisFun(): Int = 1
 @JsExport
 fun `with space`(): Int = 1
 
+// names used by Kotlin/Wasm for its own exports
+
+<!INTERNAL_WASM_EXPORT_NAME_AS_JS_EXPORT_NAME("memory")!>@JsExport
+fun memory(): Int = 1<!>
+
+<!INTERNAL_WASM_EXPORT_NAME_AS_JS_EXPORT_NAME("__callFunction_foo")!>@JsExport
+fun __callFunction_foo(): Int = 1<!>
+
+@JsExport
+@JsName(<!INTERNAL_WASM_EXPORT_NAME_AS_JS_EXPORT_NAME("__vt$foo")!>"__vt\$foo"<!>)
+fun vtFoo(): Int = 1
+
+@JsExport
+@JsName(<!INTERNAL_WASM_EXPORT_NAME_AS_JS_EXPORT_NAME("__it$foo")!>"__it\$foo"<!>)
+fun itFoo(): Int = 1
+
+@JsExport
+@JsName(<!INTERNAL_WASM_EXPORT_NAME_AS_JS_EXPORT_NAME("__rt$foo")!>"__rt\$foo"<!>)
+fun rtFoo(): Int = 1
+
+@JsExport
+@JsName(<!INTERNAL_WASM_EXPORT_NAME_AS_JS_EXPORT_NAME("__fn$foo")!>"__fn\$foo"<!>)
+fun fnFoo(): Int = 1
+
+@JsExport
+@JsName(<!INTERNAL_WASM_EXPORT_NAME_AS_JS_EXPORT_NAME("memory")!>"memory"<!>)
+fun memoryWithJsName(): Int = 1
+
 <!WRONG_EXPORTED_DECLARATION("extension function")!>@JsExport
 fun Int.extensionFun(): Int<!> = this
 
