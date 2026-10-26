@@ -18,6 +18,8 @@ Note: The IntelliJ Kotlin plugin is in a separate repository (JetBrains/intellij
 
 ```bash
 # Generate test sources (run after adding new test data files)
+# Mostly required for Analysis API, CLI and some other test runners.
+# Most other tests (like diagnostic, box, etc) generate runners on demand.
 ./gradlew generateTests
 ```
  

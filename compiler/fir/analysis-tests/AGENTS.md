@@ -70,7 +70,7 @@ Run with `-Pkotlin.test.update.test.data=true` to auto-generate/update `.latestL
 ## Creating a New Test
 
 1. **Create the `.kt` test file** with appropriate directives and test code.
-2. **Regenerate test runners**: `./gradlew generateTests` — updates `*Generated.java` files to include the new test method.
+2. **Regenerating diagnostic test runners is not required**: They are regenerated on demand when running tests.
 3. **Run the test once** (it will fail):
    ```bash
    ./gradlew :compiler:fir:analysis-tests:test --tests "org.jetbrains.kotlin.test.runners.PhasedJvmDiagnosticLightTreeTestGenerated\$Resolve\$Problems.testMyTest"
