@@ -25,6 +25,8 @@ declare namespace JS_TESTS {
         function getHolderOfParentSuspendFun1(): foo.HolderOfParentSuspendFun1<string>;
         function acceptExportedChild(child: foo.ExportedChild): Promise<void>;
         function acceptHolderOfParentSuspendFun1(holder: foo.HolderOfParentSuspendFun1<string>): Promise<void>;
+        function acceptAbstractWithSuspend(x: foo.AbstractWithSuspend): Promise<string>;
+        function acceptAbstractWithSuspendAndDefaultArgument(x: foo.AbstractWithSuspendAndDefaultArgument, suffix: Nullable<string>): Promise<string>;
         class WithSuspendExtensionFunAndContext {
             constructor();
             suspendFun(ctx: number, _this_: number): Promise<number>;
@@ -125,6 +127,46 @@ declare namespace JS_TESTS {
             /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
             namespace $metadata$ {
                 const constructor: abstract new () => ExportedChild;
+            }
+        }
+        abstract class AbstractWithSuspend {
+            constructor();
+            abstract value(): Promise<string>;
+        }
+        namespace AbstractWithSuspend {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => AbstractWithSuspend;
+            }
+        }
+        class KotlinImplWithSuspend extends foo.AbstractWithSuspend.$metadata$.constructor {
+            constructor();
+            value(): Promise<string>;
+        }
+        namespace KotlinImplWithSuspend {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => KotlinImplWithSuspend;
+            }
+        }
+        abstract class AbstractWithSuspendAndDefaultArgument {
+            constructor();
+            abstract value(suffix?: string): Promise<string>;
+        }
+        namespace AbstractWithSuspendAndDefaultArgument {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => AbstractWithSuspendAndDefaultArgument;
+            }
+        }
+        class KotlinImplWithSuspendAndDefaultArg extends foo.AbstractWithSuspendAndDefaultArgument.$metadata$.constructor {
+            constructor();
+            value(suffix?: string): Promise<string>;
+        }
+        namespace KotlinImplWithSuspendAndDefaultArg {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => KotlinImplWithSuspendAndDefaultArg;
             }
         }
     }
