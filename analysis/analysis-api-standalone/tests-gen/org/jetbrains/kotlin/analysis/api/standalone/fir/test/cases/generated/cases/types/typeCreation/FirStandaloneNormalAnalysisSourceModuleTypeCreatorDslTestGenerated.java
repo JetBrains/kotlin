@@ -248,6 +248,12 @@ public class FirStandaloneNormalAnalysisSourceModuleTypeCreatorDslTestGenerated 
     }
 
     @Test
+    @TestMetadata("innerClassWithOuterTypeArguments.kt")
+    public void testInnerClassWithOuterTypeArguments() {
+      run("innerClassWithOuterTypeArguments.kt");
+    }
+
+    @Test
     @TestMetadata("intTypeMarkNullable.kt")
     public void testIntTypeMarkNullable() {
       run("intTypeMarkNullable.kt");
