@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.cli.common.arguments
 
+import org.jetbrains.kotlin.cli.CliDiagnostics
 import org.jetbrains.kotlin.config.AnalysisFlag
 import org.jetbrains.kotlin.config.AnalysisFlags.allowFullyQualifiedNameInKClass
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -17,6 +18,19 @@ class K2JSCompilerArgumentsConfigurator : CommonKlibBasedCompilerArgumentsConfig
         languageVersion: LanguageVersion,
     ): MutableMap<AnalysisFlag<*>, Any> = with(arguments) {
         require(this is K2JSCompilerArguments)
+        val enabledGranularityFlags = listOfNotNull(
+            "irPerFile".takeIf { irPerFile },
+            "irPerClass".takeIf { irPerClass },
+            "irPerModule".takeIf { irPerModule },
+        )
+        if (enabledGranularityFlags.size > 1) {
+            reporter.report(
+                CliDiagnostics.WEB_ARGUMENT_WARNING,
+                "Multiple JS output granularity flags are enabled (${enabledGranularityFlags.joinToString(", ")}); " +
+                        "only the first one in the order irPerFile, irPerClass, irPerModule takes effect"
+            )
+        }
+
         super.configureAnalysisFlags(arguments, reporter, languageVersion).apply {
             @Suppress("DEPRECATION")
             putAnalysisFlag(allowFullyQualifiedNameInKClass, wasm && wasmKClassFqn) //Only enabled WASM BE supports this flag

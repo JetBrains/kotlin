@@ -103,11 +103,20 @@ internal val CompilerConfiguration.platformChecker: KlibPlatformChecker
 
 internal fun initializeFinalArtifactConfiguration(configuration: CompilerConfiguration, arguments: CommonJsAndWasmCompilerArguments) {
     val isPerFile = arguments is K2JSCompilerArguments && arguments.irPerFile
+    val isPerClass = arguments is K2JSCompilerArguments && arguments.irPerClass
 
     if (isPerFile && configuration.moduleKind != ModuleKind.ES) {
         configuration.report(
             WEB_ARGUMENT_ERROR,
-            "Per-file compilation can't be used with any `moduleKind` except `es` (ECMAScript Modules)"
+            "Per-file compilation can only be used with `-module-kind es` (ECMAScript Modules)."
+        )
+        return
+    }
+
+    if (isPerClass && configuration.moduleKind != ModuleKind.ES) {
+        configuration.report(
+            WEB_ARGUMENT_ERROR,
+            "Per-class compilation can only be used with `-module-kind es` (ECMAScript Modules)."
         )
         return
     }
@@ -115,6 +124,7 @@ internal fun initializeFinalArtifactConfiguration(configuration: CompilerConfigu
     val artifactConfiguration = WebArtifactConfiguration.fromFlags(
         configuration,
         isPerFile = isPerFile,
+        isPerClass = isPerClass,
         isPerModule = arguments is K2JSCompilerArguments && arguments.irPerModule,
         generateDts = arguments.generateDts,
     ) ?: return

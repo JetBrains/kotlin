@@ -1,0 +1,2 @@
+error: per-class compilation can only be used with `-module-kind es` (ECMAScript Modules).
+COMPILATION_ERROR
