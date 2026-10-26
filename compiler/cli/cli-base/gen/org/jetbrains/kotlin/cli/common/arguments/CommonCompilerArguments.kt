@@ -651,7 +651,7 @@ with bodies.""",
 
     @Argument(
         value = "-Xheader-mode-type",
-        valueDescription = "{any|compilation}",
+        valueDescription = "{any|compilation|header_caches}",
         description = """Generates output based on what it is used for:
 -Xheader-mode-type=compilation: Skips the IR generation for modules that don't have inline functions.
 -Xheader-mode-type=any: Can be used for any downstream dependency which doesn't require linking.""",

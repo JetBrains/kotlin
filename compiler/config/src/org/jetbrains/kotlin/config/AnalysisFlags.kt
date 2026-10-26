@@ -106,3 +106,6 @@ object AnalysisFlags {
 
 val LanguageVersionSettings.hmppProvidersEnabled: Boolean
     get() = getFlag(AnalysisFlags.hierarchicalMultiplatformCompilation) || getFlag(AnalysisFlags.kmpJvmIncrementalCompilationEnabled)
+
+val LanguageVersionSettings.isHeaderCacheFromAugmented: Boolean
+    get() = getFlag(AnalysisFlags.headerMode) && getFlag(AnalysisFlags.headerModeType) == HeaderMode.HEADER_CACHES

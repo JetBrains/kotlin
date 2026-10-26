@@ -39,6 +39,7 @@ data class IrSerializationSettings(
     val shouldCheckSignaturesOnUniqueness: Boolean,
     val collectDataForSignatureIndex: Boolean,
     val abiCompatibilityLevel: KlibAbiCompatibilityLevel,
+    val augmentHeaderKlib: Boolean = false,
 ) {
     constructor(
         configuration: CompilerConfiguration,
@@ -49,6 +50,7 @@ data class IrSerializationSettings(
         shouldCheckSignaturesOnUniqueness: Boolean = configuration.get(KlibConfigurationKeys.PRODUCE_KLIB_SIGNATURES_CLASH_CHECKS, true),
         collectDataForSignatureIndex: Boolean = configuration.targetPlatform?.let { it.isJs() || it.isWasm() || it.isNative() } == true,
         abiCompatibilityLevel: KlibAbiCompatibilityLevel = configuration.klibAbiCompatibilityLevel,
+        augmentHeaderKlib: Boolean = false,
     ) : this(
         languageVersionSettings = languageVersionSettings,
         publicAbiOnly = publicAbiOnly,
@@ -57,6 +59,7 @@ data class IrSerializationSettings(
         shouldCheckSignaturesOnUniqueness = shouldCheckSignaturesOnUniqueness,
         abiCompatibilityLevel = abiCompatibilityLevel,
         collectDataForSignatureIndex = collectDataForSignatureIndex,
+        augmentHeaderKlib = augmentHeaderKlib,
     )
 }
 

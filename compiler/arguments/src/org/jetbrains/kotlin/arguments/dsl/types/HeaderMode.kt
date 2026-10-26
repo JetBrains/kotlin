@@ -25,6 +25,11 @@ enum class HeaderMode(
             introducedVersion = KotlinReleaseVersion.v2_3_20
         )
     ),
+    header_caches(modeName = "header_caches",
+        releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_5_0
+        )
+    )
     ;
 
     override val stringRepresentation: String

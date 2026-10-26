@@ -7,7 +7,8 @@ package org.jetbrains.kotlin.config
 
 enum class HeaderMode(val state: String) {
     ANY(state = "any"),
-    COMPILATION(state = "compilation");
+    COMPILATION(state = "compilation"),
+    HEADER_CACHES(state = "header_caches");
 
     companion object {
         fun fromString(string: String): HeaderMode? = entries.find { it.state == string }

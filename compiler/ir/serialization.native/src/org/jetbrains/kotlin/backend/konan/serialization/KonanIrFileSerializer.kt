@@ -10,13 +10,19 @@ import org.jetbrains.kotlin.backend.common.serialization.IrSerializationSettings
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.name.NativeRuntimeNames
 
 open class KonanIrFileSerializer(
     settings: IrSerializationSettings,
     declarationTable: KonanDeclarationTable,
+    private val anyNType: IrType? = null
 ) : IrFileSerializer(settings, declarationTable) {
+
+    override val anyNTypeForHeaderKlib: IrType?
+        get() = anyNType
+
     override fun backendSpecificExplicitRoot(node: IrAnnotationContainer): Boolean {
         val classId = when (node) {
             is IrFunction -> NativeRuntimeNames.Annotations.exportForCppRuntimeClassId

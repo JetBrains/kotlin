@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
 import org.jetbrains.kotlin.cli.pipeline.PerformanceNotifications
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.isHeaderCacheFromAugmented
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.io.canonicalPathString
 import org.jetbrains.kotlin.konan.config.konanGeneratedHeaderKlibPath
 import org.jetbrains.kotlin.native.FirSerializerInput
@@ -49,7 +51,7 @@ object NativeIrSerializationPipelinePhase : PipelinePhase<NativeFir2IrArtifact, 
         }
         val serializerOutput = phaseContext.fir2IrSerializer(
             configuration,
-            FirSerializerInput(fir2IrOutput, produceHeaderKlib = false)
+            FirSerializerInput(fir2IrOutput, produceHeaderKlib = configuration.languageVersionSettings.isHeaderCacheFromAugmented)
         )
         return NativeSerializationArtifact(
             serializerOutput = serializerOutput,
@@ -77,7 +79,7 @@ object NativeKlibWritingPipelinePhase : PipelinePhase<NativeSerializationArtifac
         val (serializerOutput, configuration, phaseContext) = input
         val outputKlibPath = phaseContext.config.outputPath
         phaseContext.writeKlib(
-            KlibWriterInput(serializerOutput, outputKlibPath, produceHeaderKlib = false)
+            KlibWriterInput(serializerOutput, outputKlibPath, produceHeaderKlib = configuration.languageVersionSettings.isHeaderCacheFromAugmented),
         )
         return NativeKlibSerializedArtifact(
             outputKlibPath = outputKlibPath,

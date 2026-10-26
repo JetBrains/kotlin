@@ -4699,7 +4699,7 @@
                             }
                         },
                         "valueDescription": {
-                            "current": "{any|compilation}",
+                            "current": "{any|compilation|header_caches}",
                             "valueInVersions": []
                         },
                         "releaseVersionsMetadata": {

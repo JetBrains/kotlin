@@ -15,5 +15,6 @@ public enum class HeaderMode(
 ) {
   ANY("any"),
   COMPILATION("compilation"),
+  HEADER_CACHES("header_caches"),
   ;
 }

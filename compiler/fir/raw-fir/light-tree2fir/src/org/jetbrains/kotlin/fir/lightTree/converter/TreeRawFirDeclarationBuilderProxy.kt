@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.KtSourceFileLinesMapping
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.config.isHeaderCacheFromAugmented
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -1627,7 +1628,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
                     KtNodeTypes.BACKING_FIELD_ID -> fieldDeclaration = it
                     else -> if (it.isExpression()) {
                         context.calleeNamesForLambda += null
-                        val keepBodyInHeaderMode = !isReturnType || modifiers?.isConst() == true
+                        val keepBodyInHeaderMode = !isReturnType || modifiers?.isConst() == true || (isHeaderCacheFromAugmented && context.inLocalContext)
                         propertyInitializer = runIf(isLocal || !headerMode || keepBodyInHeaderMode) {
                             context.withForcedLocalContext(keepBodyInHeaderMode) {
                                 expressionConverter.getAsFirExpression(it, "Should have initializer")
@@ -2010,6 +2011,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
             val allowLegacyContractDescription = outerContractDescription == null
             val bodyWithContractDescription = context.withForcedLocalContext(
                 forceKeepingTheBodyInHeaderMode = propertyTypeRef is FirImplicitTypeRef || status.isInline
+                        || (isHeaderCacheFromAugmented && (block ?: expression)?.refsField() == true)
             ) {
                 convertFunctionBody(block, expression, allowLegacyContractDescription)
             }
@@ -2025,6 +2027,11 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
             it.initContainingClassAttr()
         }
     }
+
+    private val isHeaderCacheFromAugmented: Boolean = headerMode && baseSession.languageVersionSettings.isHeaderCacheFromAugmented
+
+    private fun Node.refsField(): Boolean =
+        (toTokenId() == KtNodeTypes.REFERENCE_EXPRESSION_ID && getAsStringWithoutBacktick() == "field") || getChildren().any { it.refsField() }
 
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parsePropertyComponent

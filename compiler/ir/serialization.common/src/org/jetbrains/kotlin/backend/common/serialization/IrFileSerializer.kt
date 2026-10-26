@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.DeprecatedCompilerApi
 import org.jetbrains.kotlin.backend.common.serialization.encodings.*
+import org.jetbrains.kotlin.backend.common.serialization.mangle.ir.isAnonymous
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeNullability
 import org.jetbrains.kotlin.config.KlibAbiCompatibilityLevel
 import org.jetbrains.kotlin.descriptors.*
@@ -17,6 +18,8 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
+import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.IdSignature.CommonSignature
 import org.jetbrains.kotlin.ir.util.IdSignature.CompositeSignature
@@ -28,6 +31,7 @@ import org.jetbrains.kotlin.library.SerializedDeclaration
 import org.jetbrains.kotlin.library.SerializedIrFile
 import org.jetbrains.kotlin.library.impl.IrArrayWriter
 import org.jetbrains.kotlin.library.impl.IrDeclarationWriter
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
@@ -117,6 +121,121 @@ open class IrFileSerializer(
     private var currentLoopIndex = 0
     private var fileBeingSerialized: IrFile? = null
     private var isSerializingIrType = false
+
+    // TODO: Import, don't hardcode.
+    private val eagerInitAnnotation = FqName("kotlin.native.EagerInitialization")
+
+    protected open val anyNTypeForHeaderKlib: IrType? get() = null
+
+    /**
+     * Like [skipIfPrivate], but keeps declarations that are needed to produce a header cache from this augmented header klib.
+     */
+    private fun canSkip(declaration: IrDeclaration): Boolean =
+        skipIfPrivate(declaration) && !(settings.augmentHeaderKlib && declaration.isNeededForAugmentedKlib())
+
+    private fun IrDeclaration.isNeededForAugmentedKlib(): Boolean = when (this) {
+        // Every non-local class should be retained.
+        is IrClass -> isNonLocal()
+        is IrConstructor -> isPrimary && constructedClass.isObject && constructedClass.isNonLocal()
+        // `class_fields`: a private property is kept to aid in calculating the layout later.
+        // `trivial_getters`: purely optimisation purposes.
+        is IrProperty -> backingField?.isFieldForAugmentedKlib() == true
+                || hasTrivialGetterForAugmentedKlib()
+                || isMarkedForEagerInit()
+
+        // `class_fields`: backing fields and standalone fields (e.g. `$$delegate_N`).
+        // `trivial_getters`: the backing field read by a trivial getter.
+        is IrField -> correspondingPropertySymbol?.owner?.hasTrivialGetterForAugmentedKlib() == true || isFieldForAugmentedKlib()
+        // `trivial_getters`: the trivial getter itself.
+        is IrSimpleFunction -> isTrivialGetterForAugmentedKlib()
+        else -> false
+    }
+
+    private fun IrProperty.isMarkedForEagerInit(): Boolean = parent is IrFile && hasAnnotation(eagerInitAnnotation)
+
+    /**
+     * Mirrors the non-compatible mode of [org.jetbrains.kotlin.backend.common.serialization.mangle.ir.IrExportCheckerVisitor]
+     * (which `CacheInfoBuilder.isExported` relies on): a declaration is exported iff neither it nor any of its containers
+     * is local or anonymous.
+     */
+    private fun IrDeclaration.isNonLocal(): Boolean {
+        var current: IrDeclaration = this
+        while (true) {
+            if (((current as? IrDeclarationWithVisibility)?.visibility == DescriptorVisibilities.LOCAL)
+                || (current is IrClass && current.name.isAnonymous)
+                || (current is IrAnonymousInitializer)
+            ) {
+                return false
+            }
+
+            current = when (val parent = current.parent) {
+                is IrPackageFragment -> {
+                    return true
+                }
+
+                // Declared inside a body.
+                is IrFunction -> {
+                    return false
+                }
+
+                is IrDeclaration -> parent
+                else -> {
+                    return false
+                }
+            }
+        }
+    }
+
+    /**
+     * Mirrors `ClassLayoutBuilder.getDeclaredFields` as consumed by `CacheInfoBuilder`:
+     * real, non-static fields (standalone or backing) of non-local, non-interface classes.
+     */
+    private fun IrField.isFieldForAugmentedKlib(): Boolean {
+        val irClass = parent as? IrClass ?: return false // Top-level fields are not class fields.
+        if (isStatic) return false
+        if (correspondingPropertySymbol?.owner?.isReal == false) return false
+        return !irClass.isInterface && irClass.isNonLocal()
+    }
+
+    private fun IrProperty.hasTrivialGetterForAugmentedKlib(): Boolean {
+        val getter = getter ?: return false
+        // Same as in `CacheInfoBuilder.build()`.
+        return !isVar && isReal && getter.isReal && getter.isTrivialGetter && getter.isNonLocal()
+                // TODO: if trivial getters that mention local types need to be kept, this needs to be replaced with approximation.
+                && !getter.returnType.refsLocalType()
+    }
+
+    private fun IrSimpleFunction.isTrivialGetterForAugmentedKlib(): Boolean {
+        val property = correspondingPropertySymbol?.owner ?: return false
+        return property.getter == this && property.hasTrivialGetterForAugmentedKlib()
+    }
+
+    /**
+     * Fields of private properties may mention types that are local, i.e. via their initialisers (anonymous objects, for e.g.).
+     * In such cases, we need to map them to `Any?`, since we do not retain these initialisers. This should be fine since the
+     * downstream cache consumer only needs to know if the type is a primitive or a reference. That way, we avoid references
+     * to unserialised classes.
+     */
+    private fun IrType.getFieldType(): IrType {
+        if (this !is IrSimpleType || !refsLocalType()) return this
+        // Is local. This type cannot be reported as-is. Map to `Any?`.
+        if ((classifier.owner as? IrClass)?.isNonLocal() == false) {
+            return anyNTypeForHeaderKlib ?: error("Augmented header klibs require kotlin.Any? to approximate ${render()}")
+        }
+
+        val newArguments = arguments.map {
+            // Replace a local type with a *.
+            if (it is IrTypeProjection && it.type.refsLocalType()) IrStarProjectionImpl else it
+        }
+
+        return IrSimpleTypeImpl(classifier, nullability, newArguments, annotations)
+    }
+
+    private fun IrType.refsLocalType(): Boolean {
+        if (this !is IrSimpleType) return false
+        if ((classifier.owner as? IrClass)?.isNonLocal() == false) return true
+        return arguments.any { it is IrTypeProjection && it.type.refsLocalType() }
+    }
 
     /**
      * The abstraction that represents all [ProtoType]s to be serialized in the current [IrFile].
@@ -1204,7 +1323,9 @@ open class IrFileSerializer(
             }
         }
 
-        if (!settings.bodiesOnlyForInlines || function.isInline || (settings.publicAbiOnly && isInsideInline)) {
+        if (!settings.bodiesOnlyForInlines || function.isInline || (settings.publicAbiOnly && isInsideInline)
+            || (settings.augmentHeaderKlib && function is IrSimpleFunction && function.isTrivialGetterForAugmentedKlib())
+        ) {
             function.body?.let { proto.body = serializeIrStatementBody(it, function) }
         }
         isInsideInline = isInsideInlineBefore
@@ -1268,17 +1389,18 @@ open class IrFileSerializer(
             .setBase(serializeIrDeclarationBase(property, parent, PropertyFlags.encode(property)))
             .setName(stringSerializer.serializeName(property.name))
 
-        property.backingField?.takeUnless { skipIfPrivate(it) }?.let { proto.backingField = serializeIrField(it, property) }
-        property.getter?.takeUnless { skipIfPrivate(it) }?.let { proto.getter = serializeIrFunction(it, property) }
-        property.setter?.takeUnless { skipIfPrivate(it) }?.let { proto.setter = serializeIrFunction(it, property) }
+        property.backingField?.takeUnless { canSkip(it) }?.let { proto.backingField = serializeIrField(it, property) }
+        property.getter?.takeUnless { canSkip(it) }?.let { proto.getter = serializeIrFunction(it, property) }
+        property.setter?.takeUnless { canSkip(it) }?.let { proto.setter = serializeIrFunction(it, property) }
 
         return proto.build()
     }
 
     private fun serializeIrField(field: IrField, parent: IrElement?): ProtoField {
+        val fieldType = if (settings.augmentHeaderKlib && !isInsideInline) field.type.getFieldType() else field.type
         val proto = ProtoField.newBuilder()
             .setBase(serializeIrDeclarationBase(field, parent, FieldFlags.encode(field)))
-            .setNameType(serializeNameAndType(field.name, field.type))
+            .setNameType(serializeNameAndType(field.name, fieldType))
         if (!(settings.bodiesOnlyForInlines &&
                     (field.parent as? IrDeclarationWithVisibility)?.visibility != DescriptorVisibilities.LOCAL &&
                     (field.initializer?.expression !is IrConst))
@@ -1471,7 +1593,7 @@ open class IrFileSerializer(
         if (backendSpecificSerializeAllMembers(parent)) return true
         if (settings.bodiesOnlyForInlines && member is IrAnonymousInitializer && parent.visibility != DescriptorVisibilities.LOCAL)
             return false
-        if (skipIfPrivate(member)) {
+        if (canSkip(member)) {
             return false
         }
 
@@ -1540,7 +1662,7 @@ open class IrFileSerializer(
                 // KT-86632: Type aliases are not serialized into klibs.
                 return@forEach
             }
-            if (skipIfPrivate(it)) {
+            if (canSkip(it)) {
                 // Skip the declaration if producing header klib and the declaration is not public.
                 return@forEach
             }

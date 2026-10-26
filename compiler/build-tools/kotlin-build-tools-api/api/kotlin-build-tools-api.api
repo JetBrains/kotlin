@@ -1224,6 +1224,7 @@ public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/ExplicitA
 public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/HeaderMode : java/lang/Enum {
 	public static final field ANY Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/HeaderMode;
 	public static final field COMPILATION Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/HeaderMode;
+	public static final field HEADER_CACHES Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/HeaderMode;
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public final fun getStringValue ()Ljava/lang/String;
 	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/HeaderMode;

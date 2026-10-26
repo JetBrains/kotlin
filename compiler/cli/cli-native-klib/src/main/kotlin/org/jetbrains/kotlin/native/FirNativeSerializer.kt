@@ -10,7 +10,9 @@ import org.jetbrains.kotlin.backend.common.serialization.SerializerOutput
 import org.jetbrains.kotlin.backend.common.serialization.serializeModuleIntoKlib
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIrModuleSerializer
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.HeaderMode
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.pipeline.AllModulesFrontendOutput
@@ -63,6 +65,9 @@ internal fun NativeFirstStagePhaseContext.firSerializerBase(
                     settings = IrSerializationSettings(
                         configuration = configuration,
                         publicAbiOnly = produceHeaderKlib,
+                        augmentHeaderKlib = produceHeaderKlib
+                                && configuration.languageVersionSettings.getFlag(AnalysisFlags.headerMode)
+                                && configuration.languageVersionSettings.getFlag(AnalysisFlags.headerModeType) == HeaderMode.HEADER_CACHES,
                     ),
                     diagnosticReporter = irDiagnosticReporter,
                     irBuiltIns = fir2IrOutput?.fir2irActualizedResult?.irBuiltIns!!,

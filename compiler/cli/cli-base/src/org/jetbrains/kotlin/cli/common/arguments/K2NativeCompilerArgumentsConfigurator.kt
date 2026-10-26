@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.cli.common.arguments
 
 import org.jetbrains.kotlin.config.AnalysisFlag
 import org.jetbrains.kotlin.config.AnalysisFlags
+import org.jetbrains.kotlin.config.HeaderMode
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
 
@@ -24,6 +25,9 @@ class K2NativeCompilerArgumentsConfigurator : CommonKlibBasedCompilerArgumentsCo
                 phasesToDumpAfter = arrayOf("ALL")
             if (metadataKlib) {
                 putAnalysisFlag(AnalysisFlags.metadataCompilation, true)
+            }
+            if (headerMode && HeaderMode.fromString(headerModeType) == HeaderMode.HEADER_CACHES) {
+                putAnalysisFlag(AnalysisFlags.firAggressivePruning, false)
             }
         }
     }

@@ -239,7 +239,13 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
 
         val fragmentsList = irModules.flatMap { backendEngine.splitIntoFragments(it, performanceManager).toList() }
         val generationStates = performanceManager.tryMeasurePhaseTime(PhaseType.IrLowering) {
-            fragmentsList.runAllLowerings()
+            if (context.config.produce.isHeaderCache) {
+                // Header caches only need the cache info built before lowerings (`BuildAdditionalCacheInfoPhase`).
+                // Lowerings would also require function bodies, which header klibs don't have.
+                fragmentsList.map { fragment -> createGenerationState(fragment) }
+            } else {
+                fragmentsList.runAllLowerings()
+            }
         }
 
         val threadsCount = context.config.threadsCount
