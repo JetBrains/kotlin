@@ -86,7 +86,6 @@ class IrDeclarationDeserializer(
         libraryFile = libraryFile,
         declarationDeserializer = this,
         settings = settings,
-        irInterner = irInterner,
         fileEntryDeserializer = fileEntryDeserializer,
     )
 
