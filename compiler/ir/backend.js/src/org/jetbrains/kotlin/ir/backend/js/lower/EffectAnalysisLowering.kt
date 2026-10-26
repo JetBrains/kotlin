@@ -172,6 +172,26 @@ class EffectAnalysisLowering(val context: JsCommonBackendContext) : BodyLowering
             }
         }
 
+        override fun visitDynamicOperatorExpression(
+            expression: IrDynamicOperatorExpression,
+            data: Effects.Lazy,
+        ) {
+            if (
+                expression.operator.isAssignmentOperator
+                || expression.operator == IrDynamicOperator.INVOKE
+                || expression.operator == IrDynamicOperator.ARRAY_ACCESS
+            ) {
+                data.dependOnNew(expression) {
+                    if (expression.operator == IrDynamicOperator.ARRAY_ACCESS && expression.arguments.size == 1) {
+                        it.setAtLeast(EffectsKind.READ)
+                    } else {
+                        it.setAtLeast(EffectsKind.WRITE)
+                    }
+                }
+            }
+            super.visitDynamicOperatorExpression(expression, data)
+        }
+
         val IrFunction.isFinal: Boolean
             get() {
                 if (this.isStatic) return true
