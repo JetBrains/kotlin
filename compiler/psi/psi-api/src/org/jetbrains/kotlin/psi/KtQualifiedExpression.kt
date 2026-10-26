@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.resolution.KtResolvableCall
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
@@ -87,6 +86,6 @@ interface KtQualifiedExpression : KtExpression, KtResolvableCall {
         get() = operationTokenNode.elementType as KtSingleValueToken
 
     private fun getExpression(afterOperation: Boolean): KtExpression? {
-        return operationTokenNodeOrNull?.psi?.siblings(afterOperation, false)?.firstIsInstanceOrNull<KtExpression>()
+        return operationTokenNodeOrNull?.psi?.siblings(afterOperation, false)?.firstNotNullOfOrNull { it as? KtExpression }
     }
 }

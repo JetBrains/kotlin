@@ -10,7 +10,7 @@ import com.intellij.lang.ASTNode
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.NameUtils
+import org.jetbrains.kotlin.name.ScriptNames
 import org.jetbrains.kotlin.psi.stubs.KotlinScriptStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets
 
@@ -42,7 +42,7 @@ open class KtScript : KtNamedDeclarationStub<KotlinScriptStub>, KtDeclarationCon
         }
 
         val containingKtFile = containingKtFile
-        val fileBasedName = NameUtils.getScriptNameForFile(containingKtFile.name)
+        val fileBasedName = ScriptNames.getScriptNameForFile(containingKtFile.name)
         return containingKtFile.packageFqName.child(fileBasedName)
     }
 
