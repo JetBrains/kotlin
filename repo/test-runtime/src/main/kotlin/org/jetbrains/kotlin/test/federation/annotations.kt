@@ -31,5 +31,14 @@ annotation class MustRunAlways
 @Tag("nightly")
 annotation class NightlyTest
 
+/**
+ * Marks tests whose behavior depends on the host they run on (e.g. file system, CLI or native tooling specifics).
+ * It is useful for pre-merge checks, e.g., the Windows pre-merge task `commonBackendTestOnWindows`.
+ *
+ * Nightly failures of tests not marked with this annotation on such hosts indicate that the annotation is missing.
+ */
+@Tag("host-dependent")
+annotation class HostDependent
+
 @RequiresOptIn(level = RequiresOptIn.Level.ERROR)
 annotation class InternalTestFederationApi

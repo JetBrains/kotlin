@@ -60,8 +60,9 @@ projectTests {
 
     withStdlibCommon()
 
-    nativeTestTask(
-        "test",
+    fun commonBackendTestTask(taskName: String, tag: String? = null) = nativeTestTask(
+        taskName,
+        tag = tag,
         allowParallelExecution = true,
         requirePlatformLibs = true,
         enableGroupingTestEngine = true,
@@ -87,6 +88,11 @@ projectTests {
 
         systemProperty("user.dir", layout.buildDirectory.asFile.get().absolutePath)
     }
+
+    commonBackendTestTask("test")
+    // Windows-specific subset of `test` for pre-merge checks: only explicitly host-dependent tests.
+    // All tests, including the rest of `test`, are run on Windows nightly, which reveals tests that should be tagged `host-dependent`.
+    commonBackendTestTask("commonBackendTestOnWindows", tag = "host-dependent")
 
     testGenerator("org.jetbrains.kotlin.generators.tests.GenerateKlibNativeTestsKt", generateTestsInBuildDirectory = true) {
         javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
