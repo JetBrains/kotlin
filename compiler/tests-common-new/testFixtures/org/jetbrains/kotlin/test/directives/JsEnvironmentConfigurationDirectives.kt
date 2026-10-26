@@ -71,6 +71,11 @@ object JsEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         applicability = DirectiveApplicability.Global
     )
 
+    val SPLIT_PER_CLASS by directive(
+        description = "",
+        applicability = DirectiveApplicability.Global
+    )
+
     val JS_DROP_REGION_COMMENTS by directive(
         description = "",
         applicability = DirectiveApplicability.Global

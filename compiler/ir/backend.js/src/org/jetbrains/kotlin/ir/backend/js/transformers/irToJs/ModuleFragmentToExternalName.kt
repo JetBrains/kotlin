@@ -11,31 +11,38 @@ import org.jetbrains.kotlin.js.common.makeValidES5Identifier
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 
-private const val EXPORTER_FILE_POSTFIX = ".export"
+internal const val EXPORTER_FILE_POSTFIX = ".export"
 
 class ModuleFragmentToExternalName(private val jsOutputNamesMapping: Map<IrModuleFragment, String>) {
     fun getExternalNameFor(file: IrFile): String {
         return getExternalNameFor(file.outputName, file.packageFqName.asString(), file.module.getJsOutputName())
     }
 
+    fun getExternalNameFor(file: IrFile, postfix: String): String =
+        "${getExternalNameFor(file)}$postfix"
+
     fun getExternalNameFor(fileName: String, packageFqn: String, moduleName: String): String {
         return "$moduleName/${getFileStableName(fileName, packageFqn)}"
     }
 
-    fun getExternalNameForExporterFile(file: IrFile): String {
-        return getExternalNameForExporterFile(file.outputName, file.packageFqName.asString(), file.module.getJsOutputName())
+    fun getExternalNameForExporterFile(file: IrFile, postfix: String = ""): String {
+        return getExternalNameForExporterFile(file.outputName, file.packageFqName.asString(), file.module.getJsOutputName(), postfix)
     }
 
-    fun getExternalNameForExporterFile(fileName: String, packageFqn: String, moduleName: String): String {
-        return "${getExternalNameFor(fileName, packageFqn, moduleName)}$EXPORTER_FILE_POSTFIX"
+    fun getExternalNameForExporterFile(fileName: String, packageFqn: String, moduleName: String, postfix: String = ""): String {
+        return "${getExternalNameFor(fileName, packageFqn, moduleName)}$postfix$EXPORTER_FILE_POSTFIX"
     }
 
     fun getSafeNameFor(file: IrFile): String {
         return "${file.module.safeName}/${file.stableFileName}"
     }
 
-    fun getSafeNameExporterFor(file: IrFile): String {
-        return "${getSafeNameFor(file)}$EXPORTER_FILE_POSTFIX"
+    fun getSafeNameExporterFor(file: IrFile, postfix: String = ""): String {
+        return getSafeNameFor(file, "$postfix$EXPORTER_FILE_POSTFIX")
+    }
+
+    fun getSafeNameFor(file: IrFile, postfix: String): String {
+        return "${getSafeNameFor(file)}$postfix"
     }
 
     fun getExternalNameFor(module: IrModuleFragment): String {
