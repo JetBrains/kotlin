@@ -20,7 +20,6 @@ dependencies {
     compileOnly(project(":core:language.targets"))
     compileOnly(project(":core:language.version-settings"))
     compileOnly(project(":compiler:psi:psi-api"))
-    compileOnly(project(":core:compiler.common"))
 
     api(intellijCore())
 

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.utils.printer
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
-import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
@@ -199,7 +198,9 @@ public class PrettyPrinter(public val indentSize: Int = 2) : Appendable {
     }
 
     public fun withSuffix(suffix: String, p1: () -> Unit) {
-        checkIfPrinted { p1() }.ifTrue { append(suffix) }
+        if (checkIfPrinted { p1() }) {
+            append(suffix)
+        }
     }
 }
 
