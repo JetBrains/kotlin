@@ -34,13 +34,13 @@ import android.os.Parcelable
 class C(
     val disabled: <!PARCELABLE_TYPE_NOT_SUPPORTED!>Accepted<!>,
     val a: @DataClass Accepted,
-    val b: @DataClass PrivateField,
+    val b: <!PARCELABLE_TYPE_NOT_SUPPORTED!>@DataClass PrivateField<!>,
     val c: <!PARCELABLE_TYPE_NOT_SUPPORTED!>@DataClass PrivateConstructor<!>,
-    val d: @DataClass UnsupportedField,
+    val d: <!PARCELABLE_TYPE_CONTAINS_NOT_SUPPORTED!>@DataClass UnsupportedField<!>,
     val e: @DataClass Generic<String>,
     val f: @DataClass GenericOut<String>,
-    val g: @DataClass Generic<Any>,
+    val g: <!PARCELABLE_TYPE_CONTAINS_NOT_SUPPORTED!>@DataClass Generic<Any><!>,
     val h: @DataClass GenericBounded<*>,
-    val i: @DataClass BadButSerializable,
-    val j: @DataClass Nested,
+    val i: <!PARCELABLE_TYPE_CONTAINS_NOT_SUPPORTED!>@DataClass BadButSerializable<!>,
+    val j: <!PARCELABLE_TYPE_CONTAINS_NOT_SUPPORTED!>@DataClass Nested<!>,
 ) : Parcelable
