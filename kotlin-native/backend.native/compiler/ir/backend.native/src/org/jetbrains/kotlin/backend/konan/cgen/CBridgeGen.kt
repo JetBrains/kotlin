@@ -456,7 +456,11 @@ private fun <R> KotlinToCCallBuilder.handleArgumentForVarargParameter(
 private fun KotlinToCCallBuilder.emitCBridge() {
     val cLines = mutableListOf<String>()
 
-    val noinlineAttribute = if (stubs.gcStackMapScheme == GCStackMapScheme.DELTA_MAIN && cFunctionBuilder.variadic) "__attribute__((noinline)) " else ""
+    // Variadic: a statepoint around a variadic call is wrong.
+    // Objective-C: the stub is compiled with ARC, and its call carries the "clang.arc.attachedcall"
+    // bundle RewriteStatepointsForGC would drop the bundle if the stub were inlined into a GC function.
+    val noinlineAttribute = if (stubs.gcStackMapScheme == GCStackMapScheme.DELTA_MAIN &&
+            (cFunctionBuilder.variadic || stubs.language == "Objective-C")) "__attribute__((noinline)) " else ""
     cLines += "$noinlineAttribute${bridgeBuilder.buildCSignature(cBridgeName)} {"
     cLines += cBridgeBodyLines
     cLines += "}"
