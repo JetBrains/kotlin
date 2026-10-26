@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirClassDeclaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirNestedClassifierScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -75,7 +75,7 @@ abstract class FirDeclarationGenerationExtension(session: FirSession) : FirExten
      * @property superTypes extra supertypes to add to the `companion object`
      * @property annotations extra annotations to add to the `companion object`
      */
-    class CompanionObjectInfo(val superTypes: List<ConeKotlinType> = emptyList(), val annotations: List<FirAnnotation> = emptyList())
+    class CompanionObjectInfo(val superTypes: List<ConeClassLikeType> = emptyList(), val annotations: List<FirAnnotation> = emptyList())
 
     /** Can be called on [FirResolvePhase.STATUS] stage */
     open fun generateFunctions(callableId: CallableId, context: MemberGenerationContext?): List<FirNamedFunctionSymbol> = emptyList()
