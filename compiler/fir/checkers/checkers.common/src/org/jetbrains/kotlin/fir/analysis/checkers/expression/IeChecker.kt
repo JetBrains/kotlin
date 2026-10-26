@@ -126,6 +126,7 @@ object IeChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
         if (symbol.isStatic) return
 
 //        val origin = symbol.unwrapFakeOverrides().origin
+
 //        val isJava = origin is FirDeclarationOrigin.Enhancement || origin is FirDeclarationOrigin.Java
 
         val receiverType = expression.dispatchReceiver?.resolvedType ?: return
