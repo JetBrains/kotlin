@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
 import java.util.*
 import kotlin.jvm.optionals.getOrNull
 
-internal class FirElementPathSearcher(statements: Collection<FirElement>) : FirDefaultVisitorVoid() {
+internal class ExitPointSnapshotPathSearcher(statements: Collection<FirElement>) : FirDefaultVisitorVoid() {
     private companion object {
         val FORBIDDEN_FAKE_SOURCE_KINDS: Set<KtFakeSourceElementKind> = setOf(
             KtFakeSourceElementKind.WhenCondition,
@@ -80,7 +80,7 @@ internal class FirElementPathSearcher(statements: Collection<FirElement>) : FirD
     }
 }
 
-internal class ControlFlowGraphIndex(graphProvider: () -> ControlFlowGraph) {
+internal class ExitPointSnapshotGraphIndex(graphProvider: () -> ControlFlowGraph) {
     private val mapping: Map<FirElement, List<CFGNode<*>>> by lazy {
         val result = HashMap<FirElement, MutableList<CFGNode<*>>>()
 
@@ -118,7 +118,7 @@ internal class ControlFlowGraphIndex(graphProvider: () -> ControlFlowGraph) {
     }
 }
 
-internal fun ControlFlowGraphIndex.hasMultipleExitPoints(firTargets: Set<FirElement>): Boolean {
+internal fun ExitPointSnapshotGraphIndex.hasMultipleExitPoints(firTargets: Set<FirElement>): Boolean {
     if (firTargets.size < 2) {
         return false
     }
