@@ -1195,3 +1195,17 @@ internal fun <A, B, C, D> KtDiagnosticFactory4<A, B, C, D>.createOn(
 ): KtDiagnostic? {
     return onOrFallback(element, a, b, c, d, positioningStrategy, session.toDiagnosticContext())
 }
+
+@OptIn(InternalDiagnosticFactoryMethod::class)
+internal fun <A, B, C, D, E> KtDiagnosticFactory5<A, B, C, D, E>.createOn(
+    element: KtSourceElement?,
+    a: A,
+    b: B,
+    c: C,
+    d: D,
+    e: E,
+    session: FirSession,
+    positioningStrategy: AbstractSourceElementPositioningStrategy? = null,
+): KtDiagnostic? {
+    return onOrFallback(element, a, b, c, d, e, positioningStrategy, session.toDiagnosticContext())
+}

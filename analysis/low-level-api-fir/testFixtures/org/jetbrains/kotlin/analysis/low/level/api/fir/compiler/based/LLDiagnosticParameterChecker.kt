@@ -55,6 +55,7 @@ internal class LLDiagnosticParameterChecker(testServices: TestServices) : FirAna
         is KtDiagnosticWithParameters2<*, *> -> listOf(a, b)
         is KtDiagnosticWithParameters3<*, *, *> -> listOf(a, b, c)
         is KtDiagnosticWithParameters4<*, *, *, *> -> listOf(a, b, c, d)
+        is KtDiagnosticWithParameters5<*, *, *, *, *> -> listOf(a, b, c, d, e)
         is KtSimpleDiagnostic -> emptyList()
     }
 

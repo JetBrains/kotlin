@@ -66,6 +66,18 @@ class KtDiagnosticFactoryToRendererMap internal constructor(val name: String) {
         put(factory, KtDiagnosticWithParameters4Renderer(message, rendererA, rendererB, rendererC, rendererD))
     }
 
+    fun <A, B, C, D, E> put(
+        factory: KtDiagnosticFactory5<A, B, C, D, E>,
+        message: String,
+        rendererA: DiagnosticParameterRenderer<A>?,
+        rendererB: DiagnosticParameterRenderer<B>?,
+        rendererC: DiagnosticParameterRenderer<C>?,
+        rendererD: DiagnosticParameterRenderer<D>?,
+        rendererE: DiagnosticParameterRenderer<E>?
+    ) {
+        put(factory, KtDiagnosticWithParameters5Renderer(message, rendererA, rendererB, rendererC, rendererD, rendererE))
+    }
+
     fun put(factory: KtDiagnosticFactoryForDeprecation0, message: String) {
         put(factory.errorFactory, SimpleKtDiagnosticRenderer(message))
         put(factory.warningFactory, SimpleKtDiagnosticRenderer(factory.warningMessage(message)))
@@ -111,6 +123,19 @@ class KtDiagnosticFactoryToRendererMap internal constructor(val name: String) {
     ) {
         put(factory.errorFactory, KtDiagnosticWithParameters4Renderer(message, rendererA, rendererB, rendererC, rendererD))
         put(factory.warningFactory, KtDiagnosticWithParameters4Renderer(factory.warningMessage(message), rendererA, rendererB, rendererC, rendererD))
+    }
+
+    fun <A, B, C, D, E> put(
+        factory: KtDiagnosticFactoryForDeprecation5<A, B, C, D, E>,
+        message: String,
+        rendererA: DiagnosticParameterRenderer<A>?,
+        rendererB: DiagnosticParameterRenderer<B>?,
+        rendererC: DiagnosticParameterRenderer<C>?,
+        rendererD: DiagnosticParameterRenderer<D>?,
+        rendererE: DiagnosticParameterRenderer<E>?
+    ) {
+        put(factory.errorFactory, KtDiagnosticWithParameters5Renderer(message, rendererA, rendererB, rendererC, rendererD, rendererE))
+        put(factory.warningFactory, KtDiagnosticWithParameters5Renderer(factory.warningMessage(message), rendererA, rendererB, rendererC, rendererD, rendererE))
     }
 
     private fun put(factory: AbstractKtDiagnosticFactory, renderer: KtDiagnosticRenderer) {

@@ -58,6 +58,19 @@ public interface KaCompilerPluginDiagnostic4 : KaFirDiagnostic<PsiElement> {
         get() = KaCompilerPluginDiagnostic4::class
 }
 
+@KaUnstableDiagnosticApi
+@SubclassOptInRequired(KaImplementationDetail::class)
+public interface KaCompilerPluginDiagnostic5 : KaFirDiagnostic<PsiElement> {
+    public val parameter1: Any?
+    public val parameter2: Any?
+    public val parameter3: Any?
+    public val parameter4: Any?
+    public val parameter5: Any?
+
+    override val diagnosticClass: KClass<KaCompilerPluginDiagnostic5>
+        get() = KaCompilerPluginDiagnostic5::class
+}
+
 
 @Deprecated(
     message = "Use KaCompilerPluginDiagnostic0 instead",
