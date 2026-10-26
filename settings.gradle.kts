@@ -253,6 +253,7 @@ include(
     ":native:external-projects-test-utils:testExtensionsLibrary",
     ":native:external-projects-test-utils:testKDocLibrary",
     ":native:cinterop.deserialization",
+    ":core:error.handling",
     ":core:names",
     ":core:language.model",
     ":core:language.targets",
