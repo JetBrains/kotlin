@@ -1,0 +1,245 @@
+KtFile: enumEntryNamedLikeModifier.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  CLASS
+    PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')
+    PsiWhiteSpace('\n')
+    PsiComment(EOL_COMMENT)('// ISSUE: KT-90707')
+    PsiWhiteSpace('\n')
+    MODIFIER_LIST
+      PsiElement(enum)('enum')
+    PsiWhiteSpace(' ')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('E1')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      ENUM_ENTRY
+        PsiElement(IDENTIFIER)('error')
+        PsiElement(COMMA)(',')
+      PsiWhiteSpace('\n    ')
+      ENUM_ENTRY
+        PsiElement(IDENTIFIER)('value')
+        PsiElement(COMMA)(',')
+      PsiWhiteSpace('\n    ')
+      ENUM_ENTRY
+        PsiElement(IDENTIFIER)('inline')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n    ')
+        PsiElement(SEMICOLON)(';')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    MODIFIER_LIST
+      PsiElement(enum)('enum')
+    PsiWhiteSpace(' ')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('E2')
+    PRIMARY_CONSTRUCTOR
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        VALUE_PARAMETER
+          PsiElement(IDENTIFIER)('x')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('String')
+        PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiErrorElement:Expecting ';' after the last enum entry or '}' to close enum class body
+        <empty list>
+      PsiWhiteSpace('\n    ')
+      MODIFIER_LIST
+        PsiElement(error)('error')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(LPAR)('(')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(OPEN_QUOTE)('"')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(CLOSING_QUOTE)('"')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(RPAR)(')')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(COMMA)(',')
+      PsiWhiteSpace('\n    ')
+      MODIFIER_LIST
+        PsiElement(value)('value')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(LPAR)('(')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(OPEN_QUOTE)('"')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(CLOSING_QUOTE)('"')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(RPAR)(')')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(COMMA)(',')
+      PsiWhiteSpace('\n    ')
+      MODIFIER_LIST
+        PsiElement(inline)('inline')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(LPAR)('(')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(OPEN_QUOTE)('"')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(CLOSING_QUOTE)('"')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(RPAR)(')')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(COMMA)(',')
+      PsiWhiteSpace('\n    ')
+      PsiElement(SEMICOLON)(';')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    MODIFIER_LIST
+      PsiElement(enum)('enum')
+    PsiWhiteSpace(' ')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('E3')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiErrorElement:Expecting ';' after the last enum entry or '}' to close enum class body
+        <empty list>
+      PsiWhiteSpace('\n    ')
+      FUNCTION
+        MODIFIER_LIST
+          PsiElement(error)('error')
+        PsiErrorElement:Expecting member declaration
+          <empty list>
+        PsiWhiteSpace(' ')
+        BLOCK
+          PsiElement(LBRACE)('{')
+          PsiElement(RBRACE)('}')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(COMMA)(',')
+      PsiWhiteSpace('\n    ')
+      FUNCTION
+        MODIFIER_LIST
+          PsiElement(value)('value')
+        PsiErrorElement:Expecting member declaration
+          <empty list>
+        PsiWhiteSpace(' ')
+        BLOCK
+          PsiElement(LBRACE)('{')
+          PsiElement(RBRACE)('}')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(COMMA)(',')
+      PsiWhiteSpace('\n    ')
+      FUNCTION
+        MODIFIER_LIST
+          PsiElement(inline)('inline')
+        PsiErrorElement:Expecting member declaration
+          <empty list>
+        PsiWhiteSpace(' ')
+        BLOCK
+          PsiElement(LBRACE)('{')
+          PsiElement(RBRACE)('}')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(COMMA)(',')
+      PsiWhiteSpace('\n    ')
+      PsiElement(SEMICOLON)(';')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    MODIFIER_LIST
+      PsiElement(enum)('enum')
+    PsiWhiteSpace(' ')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('E4')
+    PRIMARY_CONSTRUCTOR
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        VALUE_PARAMETER
+          PsiElement(IDENTIFIER)('x')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('String')
+        PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiErrorElement:Expecting ';' after the last enum entry or '}' to close enum class body
+        <empty list>
+      PsiWhiteSpace('\n    ')
+      MODIFIER_LIST
+        PsiElement(error)('error')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(LPAR)('(')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(OPEN_QUOTE)('"')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(CLOSING_QUOTE)('"')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      FUNCTION
+        PsiErrorElement:Expecting member declaration
+          <empty list>
+        BLOCK
+          PsiElement(LBRACE)('{')
+          PsiElement(RBRACE)('}')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(COMMA)(',')
+      PsiWhiteSpace('\n    ')
+      MODIFIER_LIST
+        PsiElement(value)('value')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(LPAR)('(')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(OPEN_QUOTE)('"')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(CLOSING_QUOTE)('"')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      FUNCTION
+        PsiErrorElement:Expecting member declaration
+          <empty list>
+        BLOCK
+          PsiElement(LBRACE)('{')
+          PsiElement(RBRACE)('}')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(COMMA)(',')
+      PsiWhiteSpace('\n    ')
+      MODIFIER_LIST
+        PsiElement(inline)('inline')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(LPAR)('(')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(OPEN_QUOTE)('"')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(CLOSING_QUOTE)('"')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      FUNCTION
+        PsiErrorElement:Expecting member declaration
+          <empty list>
+        BLOCK
+          PsiElement(LBRACE)('{')
+          PsiElement(RBRACE)('}')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(COMMA)(',')
+      PsiWhiteSpace('\n    ')
+      PsiElement(SEMICOLON)(';')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
