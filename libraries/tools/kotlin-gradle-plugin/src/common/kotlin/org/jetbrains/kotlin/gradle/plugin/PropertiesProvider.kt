@@ -143,10 +143,10 @@ internal class PropertiesProvider private constructor(private val project: Proje
                 ),
                 key = "SeparateKmpCompilation"
             )
-        }.orElse(false)
+        }.orElse(true)
 
     val strictKmpCompilation: Boolean
-        get() = booleanProperty(KOTLIN_KMP_STRICT_COMPILATION) ?: false
+        get() = booleanProperty(KOTLIN_KMP_STRICT_COMPILATION) ?: true
 
     val incrementalJs: Boolean?
         get() = booleanProperty("kotlin.incremental.js")
