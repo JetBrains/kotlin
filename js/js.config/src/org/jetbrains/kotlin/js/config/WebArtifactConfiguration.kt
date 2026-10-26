@@ -55,6 +55,7 @@ data class WebArtifactConfiguration(
         fun fromFlags(
             configuration: CompilerConfiguration,
             isPerFile: Boolean,
+            isPerClass: Boolean,
             isPerModule: Boolean,
             generateDts: Boolean,
         ): WebArtifactConfiguration? {
@@ -65,12 +66,13 @@ data class WebArtifactConfiguration(
                 outputName = configuration.outputName ?: return null,
                 granularity = when {
                     isPerFile -> JsGenerationGranularity.PER_FILE
+                    isPerClass -> JsGenerationGranularity.PER_CLASS
                     isPerModule -> JsGenerationGranularity.PER_MODULE
                     else -> JsGenerationGranularity.WHOLE_PROGRAM
                 },
                 tsCompilationStrategy = when {
                     !generateDts -> TsCompilationStrategy.NONE
-                    isPerFile -> TsCompilationStrategy.EACH_FILE
+                    isPerFile, isPerClass -> TsCompilationStrategy.EACH_FILE
                     else -> TsCompilationStrategy.MERGED
                 },
                 production = configuration.dce,

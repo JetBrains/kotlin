@@ -104,6 +104,7 @@ internal fun initializeFinalArtifactConfiguration(configuration: CompilerConfigu
     val artifactConfiguration = WebArtifactConfiguration.fromFlags(
         configuration,
         isPerFile = arguments is K2JSCompilerArguments && arguments.irPerFile,
+        isPerClass = arguments is K2JSCompilerArguments && arguments.irPerClass,
         isPerModule = arguments is K2JSCompilerArguments && arguments.irPerModule,
         generateDts = arguments.generateDts,
     ) ?: return

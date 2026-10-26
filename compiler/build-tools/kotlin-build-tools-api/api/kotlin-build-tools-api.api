@@ -843,6 +843,7 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/Js
 	public static final field X_IR_GENERATE_INLINE_ANONYMOUS_FUNCTIONS Lorg/jetbrains/kotlin/buildtools/api/arguments/JsCompilerLinkingArguments$JsCompilerLinkingArgument;
 	public static final field X_IR_KEEP Lorg/jetbrains/kotlin/buildtools/api/arguments/JsCompilerLinkingArguments$JsCompilerLinkingArgument;
 	public static final field X_IR_MINIMIZED_MEMBER_NAMES Lorg/jetbrains/kotlin/buildtools/api/arguments/JsCompilerLinkingArguments$JsCompilerLinkingArgument;
+	public static final field X_IR_PER_CLASS Lorg/jetbrains/kotlin/buildtools/api/arguments/JsCompilerLinkingArguments$JsCompilerLinkingArgument;
 	public static final field X_IR_PER_FILE Lorg/jetbrains/kotlin/buildtools/api/arguments/JsCompilerLinkingArguments$JsCompilerLinkingArgument;
 	public static final field X_IR_PER_MODULE Lorg/jetbrains/kotlin/buildtools/api/arguments/JsCompilerLinkingArguments$JsCompilerLinkingArgument;
 	public static final field X_IR_SAFE_EXTERNAL_BOOLEAN Lorg/jetbrains/kotlin/buildtools/api/arguments/JsCompilerLinkingArguments$JsCompilerLinkingArgument;

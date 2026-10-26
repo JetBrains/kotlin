@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Comp
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_IR_GENERATE_INLINE_ANONYMOUS_FUNCTIONS
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_IR_KEEP
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_IR_MINIMIZED_MEMBER_NAMES
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_IR_PER_CLASS
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_IR_PER_FILE
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_IR_PER_MODULE
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_IR_SAFE_EXTERNAL_BOOLEAN
@@ -169,6 +170,7 @@ internal class JsArgumentsImpl(
     if (X_IR_GENERATE_INLINE_ANONYMOUS_FUNCTIONS in this) { arguments.irGenerateInlineAnonymousFunctions = get(X_IR_GENERATE_INLINE_ANONYMOUS_FUNCTIONS)}
     if (X_IR_KEEP in this) { arguments.irKeep = get(X_IR_KEEP)}
     if (X_IR_MINIMIZED_MEMBER_NAMES in this) { arguments.irMinimizedMemberNames = get(X_IR_MINIMIZED_MEMBER_NAMES)}
+    if (X_IR_PER_CLASS in this) { arguments.irPerClass = get(X_IR_PER_CLASS)}
     if (X_IR_PER_FILE in this) { arguments.irPerFile = get(X_IR_PER_FILE)}
     if (X_IR_PER_MODULE in this) { arguments.irPerModule = get(X_IR_PER_MODULE)}
     if (X_IR_SAFE_EXTERNAL_BOOLEAN in this) { arguments.irSafeExternalBoolean = get(X_IR_SAFE_EXTERNAL_BOOLEAN)}
@@ -202,6 +204,7 @@ internal class JsArgumentsImpl(
     try { this[X_IR_GENERATE_INLINE_ANONYMOUS_FUNCTIONS] = arguments.irGenerateInlineAnonymousFunctions } catch (_: NoSuchMethodError) {  }
     try { this[X_IR_KEEP] = arguments.irKeep } catch (_: NoSuchMethodError) {  }
     try { this[X_IR_MINIMIZED_MEMBER_NAMES] = arguments.irMinimizedMemberNames } catch (_: NoSuchMethodError) {  }
+    try { this[X_IR_PER_CLASS] = arguments.irPerClass } catch (_: NoSuchMethodError) {  }
     try { this[X_IR_PER_FILE] = arguments.irPerFile } catch (_: NoSuchMethodError) {  }
     try { this[X_IR_PER_MODULE] = arguments.irPerModule } catch (_: NoSuchMethodError) {  }
     try { this[X_IR_SAFE_EXTERNAL_BOOLEAN] = arguments.irSafeExternalBoolean } catch (_: NoSuchMethodError) {  }
@@ -233,6 +236,7 @@ internal class JsArgumentsImpl(
     if (X_IR_GENERATE_INLINE_ANONYMOUS_FUNCTIONS in this) { arguments.irGenerateInlineAnonymousFunctions = get(X_IR_GENERATE_INLINE_ANONYMOUS_FUNCTIONS)}
     if (X_IR_KEEP in this) { arguments.irKeep = get(X_IR_KEEP)}
     if (X_IR_MINIMIZED_MEMBER_NAMES in this) { arguments.irMinimizedMemberNames = get(X_IR_MINIMIZED_MEMBER_NAMES)}
+    if (X_IR_PER_CLASS in this) { arguments.irPerClass = get(X_IR_PER_CLASS)}
     if (X_IR_PER_FILE in this) { arguments.irPerFile = get(X_IR_PER_FILE)}
     if (X_IR_PER_MODULE in this) { arguments.irPerModule = get(X_IR_PER_MODULE)}
     if (X_IR_SAFE_EXTERNAL_BOOLEAN in this) { arguments.irSafeExternalBoolean = get(X_IR_SAFE_EXTERNAL_BOOLEAN)}
@@ -329,6 +333,8 @@ internal class JsArgumentsImpl(
 
     public val X_IR_MINIMIZED_MEMBER_NAMES: JsArgument<Boolean> =
         JsArgument("X_IR_MINIMIZED_MEMBER_NAMES")
+
+    public val X_IR_PER_CLASS: JsArgument<Boolean> = JsArgument("X_IR_PER_CLASS")
 
     public val X_IR_PER_FILE: JsArgument<Boolean> = JsArgument("X_IR_PER_FILE")
 
