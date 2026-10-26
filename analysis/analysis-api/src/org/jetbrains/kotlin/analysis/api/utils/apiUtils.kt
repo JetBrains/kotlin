@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.api.utils
 
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import kotlin.reflect.KClass
-import kotlin.reflect.full.allSuperclasses
 
 private val implementationPackageNames = listOf(
     "org.jetbrains.kotlin.analysis.api.impl.base",
@@ -42,3 +41,16 @@ public fun getApiKClassOf(value: Any): KClass<*> {
         .sortedBy { it.simpleName }
         .first()
 }
+
+private val KClass<*>.allSuperclasses: Set<KClass<*>>
+    get() = buildSet {
+        fun collect(javaClass: Class<*>) {
+            for (supertype in listOfNotNull(javaClass.superclass) + javaClass.interfaces) {
+                if (add(supertype.kotlin)) {
+                    collect(supertype)
+                }
+            }
+        }
+
+        collect(java)
+    }
