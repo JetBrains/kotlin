@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.cli.common.config.ContentRoot
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.MessageUtil
 import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
+import org.jetbrains.kotlin.cli.jvm.modules.ModuleInfoClassSelection
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRootBase
 import org.jetbrains.kotlin.cli.jvm.config.JvmContentRootBase
 import org.jetbrains.kotlin.cli.jvm.config.JvmModulePathRoot
@@ -171,9 +172,12 @@ class ClasspathRootsResolver(
         val isJar = root.fileSystem.protocol == StandardFileSystems.JAR_PROTOCOL
         val manifest = lazy(NONE) { readManifestAttributes(root) }
 
-        val moduleInfoFile =
-            root.findChild(PsiJavaModule.MODULE_INFO_CLS_FILE)
-                ?: if (isJar) tryLoadVersionSpecificModuleInfo(root, manifest) else null
+        val moduleInfoFile = ModuleInfoClassSelection.select(
+            rootModuleInfo = root.findChild(PsiJavaModule.MODULE_INFO_CLS_FILE),
+            isJar = isJar,
+            isMultiRelease = { ModuleInfoClassSelection.isMultiReleaseJar(manifest.value) },
+            versionedModuleInfos = { findVersionSpecificModuleInfos(root) },
+        )
 
         if (moduleInfoFile != null) {
             val moduleInfo = JavaModuleInfo.read(moduleInfoFile) {
@@ -203,21 +207,12 @@ class ClasspathRootsResolver(
         return null
     }
 
-    private fun tryLoadVersionSpecificModuleInfo(root: VirtualFile, manifest: Lazy<Attributes?>): VirtualFile? {
-        val versionsDir = root.findChild("META-INF")?.findChild("versions") ?: return null
-
-        val isMultiReleaseJar = manifest.value?.getValue(IS_MULTI_RELEASE)?.equals("true", ignoreCase = true)
-        if (isMultiReleaseJar != true) return null
-
-        val versions = versionsDir.children.filter {
-            val version = it.name.toIntOrNull()
-            version != null && version >= 9
-        }.sortedBy { it.name.toInt() }
-        for (version in versions) {
-            val file = version.findChild(PsiJavaModule.MODULE_INFO_CLS_FILE)
-            if (file != null) return file
-        }
-        return null
+    /** The `module-info.class` files under `META-INF/versions/<n>/`, keyed by `<n>` (see [ModuleInfoClassSelection.select]). */
+    private fun findVersionSpecificModuleInfos(root: VirtualFile): Map<String, VirtualFile> {
+        val versionsDir = root.findChild("META-INF")?.findChild("versions") ?: return emptyMap()
+        return versionsDir.children.mapNotNull { versionDir ->
+            versionDir.findChild(PsiJavaModule.MODULE_INFO_CLS_FILE)?.let { versionDir.name to it }
+        }.toMap()
     }
 
     private fun readManifestAttributes(jarRoot: VirtualFile): Attributes? {
@@ -332,6 +327,5 @@ class ClasspathRootsResolver(
 
     private companion object {
         const val AUTOMATIC_MODULE_NAME = "Automatic-Module-Name"
-        const val IS_MULTI_RELEASE = "Multi-Release"
     }
 }
