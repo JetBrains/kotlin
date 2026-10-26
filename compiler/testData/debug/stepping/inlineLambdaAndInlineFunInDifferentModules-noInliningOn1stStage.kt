@@ -22,9 +22,9 @@ fun box(): String {
 // EXPECTATIONS NATIVE
 // test.kt:16 box
 // wrapped.kt:8 box
-// test.kt:19 box
+// wrapped.kt:9 box
 // test.kt:17 box
-// test.kt:19 box
+// wrapped.kt:9 box
 // wrapped.kt:10 box
 // test.kt:18 box
 // test.kt:19 box
