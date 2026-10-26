@@ -31,9 +31,6 @@ internal class BtaImplOptionsGenerator(
     private val skipXX: Boolean,
     /**
      * The Kotlin version that is used for generating arguments from SSoT.
-     *
-     * It's usually the Kotlin version of the currently running build,
-     * but it will be set to an older version when generating the compat layer.
      */
     private val kotlinVersion: KotlinReleaseVersion,
 ) : BtaOptionsGenerator {
