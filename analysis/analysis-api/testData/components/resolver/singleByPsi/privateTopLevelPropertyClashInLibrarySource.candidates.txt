@@ -1,4 +1,21 @@
-KtNameReferenceExpression(75,77): 'pv'
+KtNameReferenceExpression(74,76): 'pv'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = pv
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = val pv: kotlin.Int
+        contextParameters = []
+        callableId = test/pv
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
   KaInapplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
