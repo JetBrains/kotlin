@@ -251,7 +251,7 @@ public class KaDebugRenderer(
     }
 
     private fun renderAnnotationValue(value: KaAnnotationValue, printer: PrettyPrinter) {
-        printer.append(KaAnnotationValueRenderer.render(value))
+        printer.append(value.renderAsSourceCode())
     }
 
     private fun KaSession.renderNamedConstantValue(
