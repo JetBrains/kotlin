@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.js.sourceMap.SourceMapBuilderConsumer
 import org.jetbrains.kotlin.js.util.NameTable
 import org.jetbrains.kotlin.js.util.TextOutputImpl
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
+import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 import java.io.File
@@ -251,7 +252,7 @@ class IrModuleToJsTransformer(
 
         doStaticMembersLowering(allModules)
 
-        return exportData.map { { generateProgramFragment(it, mode) } }
+        return exportData.map { { it.generateProgramFragment(it.file.declarations, isPrimary = true,  mode) } }
     }
 
     private fun <E> generateExportWithExternals(rootFile: IrFile, generate: (IrPackageFragment) -> Map<IrDeclaration, List<E>>): Map<IrDeclaration, List<E>> {
@@ -326,7 +327,7 @@ class IrModuleToJsTransformer(
                 moduleName = module.fragment.safeName,
                 externalModuleName = moduleFragmentToNameMapper.getExternalNameFor(module.fragment),
                 fragments = module.files.flatMap {
-                    val fragments = generateProgramFragment(it, mode)
+                    val fragments = it.generateProgramFragment(it.file.declarations, isPrimary = true, mode)
                     listOfNotNull(fragments.mainFragment, fragments.exportFragment)
                 },
                 reexportedInModuleWithName = runIf(couldBeReexportedInMain) { mainModuleSafeName },
@@ -379,30 +380,35 @@ class IrModuleToJsTransformer(
                 )
             )
 
-            override fun IrFileExports.generateArtifact(module: IrAndExportedDeclarations) = takeIf { !file.couldBeSkipped() }
-                ?.let { generateProgramFragment(it, mode) }
-                ?.let {
-                    JsIrModules(
-                        toJsIrModule(module, it.mainFragment),
-                        it.exportFragment?.run { toJsIrModuleForExport(module, this) }
-                    )
-                }
+            override fun IrFileExports.generateArtifacts(module: IrAndExportedDeclarations): List<JsIrModules> {
+                if (file.couldBeSkipped()) return []
+
+                return generatePerFileArtifacts(module)
+            }
+
+            private fun IrFileExports.generatePerFileArtifacts(module: IrAndExportedDeclarations): List<JsIrModules> {
+                val fragments = generateProgramFragment(file.declarations, isPrimary = true, mode)
+                return [JsIrModules(
+                    file.toJsIrModule(module, fragments.mainFragment),
+                    fragments.exportFragment?.run { file.toJsIrModuleForExport(module, this) }
+                )]
+            }
         }
     }
 
-    private fun IrFileExports.toJsIrModule(module: IrAndExportedDeclarations, programFragment: JsIrProgramFragment): JsIrModule {
+    private fun IrFile.toJsIrModule(module: IrAndExportedDeclarations, programFragment: JsIrProgramFragment): JsIrModule {
         return JsIrModule(
-            moduleFragmentToNameMapper.getSafeNameFor(file),
-            moduleFragmentToNameMapper.getExternalNameFor(file),
+            moduleFragmentToNameMapper.getSafeNameFor(this),
+            moduleFragmentToNameMapper.getExternalNameFor(this),
             listOf(programFragment),
             importedWithEffectInModuleWithName = runIf(programFragment.hasEffect) { module.fragment.safeName }
         )
     }
 
-    private fun IrFileExports.toJsIrModuleForExport(module: IrAndExportedDeclarations, programFragment: JsIrProgramFragment): JsIrModule {
+    private fun IrFile.toJsIrModuleForExport(module: IrAndExportedDeclarations, programFragment: JsIrProgramFragment): JsIrModule {
         return JsIrModule(
-            moduleFragmentToNameMapper.getSafeNameExporterFor(file),
-            moduleFragmentToNameMapper.getExternalNameForExporterFile(file),
+            moduleFragmentToNameMapper.getSafeNameExporterFor(this),
+            moduleFragmentToNameMapper.getExternalNameForExporterFile(this),
             listOf(programFragment),
             module.fragment.safeName
         )
@@ -430,23 +436,35 @@ class IrModuleToJsTransformer(
             }
     }
 
-    private fun generateProgramFragment(fileExports: IrFileExports, mode: TranslationMode): JsIrProgramFragments {
+    /**
+     * Builds a JS program fragment from [declarations] of this file.
+     *
+     * [isPrimary] tells whether the fragment is the file's primary artifact or an artifact
+     * holding only a part of the file. Polyfills and the export fragment are only generated
+     * for the primary artifact, so parts of the file don't duplicate them.
+     */
+    private fun IrFileExports.generateProgramFragment(
+        declarations: List<IrDeclaration>,
+        isPrimary: Boolean,
+        mode: TranslationMode
+    ): JsIrProgramFragments {
         val globalNameScope = NameTable<IrDeclaration>()
         val nameGenerator = JsNameLinkingNamer(backendContext, mode.minimizedMemberNames, isEsModules)
         val staticContext = JsStaticContext(backendContext, nameGenerator, globalNameScope, mode)
 
         val result = JsIrProgramFragment(
-            fileExports.file.getJsFileName() ?: fileExports.file.nameWithoutExtension,
-            fileExports.file.packageFqName.asString()
+            file.getJsFileName() ?: file.nameWithoutExtension,
+            file.packageFqName.asString()
         ).apply {
-            if (shouldGeneratePolyfills) {
-                polyfills.statements += backendContext.polyfills.getAllPolyfillsFor(fileExports.file)
+            if (shouldGeneratePolyfills && isPrimary) {
+                polyfills.statements += backendContext.polyfills.getAllPolyfillsFor(file)
             }
         }
 
         val statements = result.declarations.statements
-        val fileStatements = fileExports.file.accept(IrFileToJsTransformer(useBareParameterNames = true), staticContext).statements
-        val exportFragment = fileExports.generateProgramFragmentForExport(mode, globalNameScope)
+        val ctx = JsGenerationContext(file.fileEntry, null, null, staticContext, useBareParameterNames = true)
+        val fileStatements = declarations.map { it.accept(IrDeclarationToJsTransformer(), ctx) }
+        val exportFragment = isPrimary.ifTrue { generateProgramFragmentForExport(mode, globalNameScope) }
 
         if (fileStatements.isNotEmpty()) {
             var startComment = ""
@@ -456,7 +474,7 @@ class IrModuleToJsTransformer(
             }
 
             if (generateRegionComments) {
-                val originalPath = fileExports.file.path
+                val originalPath = file.path
                 val path = pathPrefixMap.entries
                     .find { [k, _] -> originalPath.startsWith(k) }
                     ?.let { [k, v] -> v + originalPath.substring(k.length) }
@@ -487,15 +505,15 @@ class IrModuleToJsTransformer(
         result.eagerInitializers.statements += staticContext.eagerInitializerBlock.statements
         result.importedModules += nameGenerator.importedModules
 
-        val definitionSet = fileExports.file.declarations.toSet()
+        val definitionSet = declarations.toSet()
 
         if (backendContext.callMain) {
-            JsMainFunctionDetector(backendContext).getMainFunctionOrNull(fileExports.file)
+            JsMainFunctionDetector(backendContext).getMainFunctionOrNull(file)
                 ?.mainFunctionWrapper
                 ?.let { result.mainFunctionTag = definitionSet.computeTag(it) }
         }
 
-        backendContext.testFunsPerFile[fileExports.file]
+        backendContext.testFunsPerFile[file]
             ?.let { definitionSet.computeTag(it) }
             ?.let {
                 val suiteFun = backendContext.symbols.suiteFun!!
@@ -508,7 +526,7 @@ class IrModuleToJsTransformer(
 
         result.computeAndSaveNameBindings(definitionSet, nameGenerator)
         result.computeAndSaveImports(definitionSet, nameGenerator)
-        result.computeAndSaveDefinitions(definitionSet, fileExports)
+        result.computeAndSaveDefinitions(definitionSet)
 
         if (optimizeGeneratedJs) {
             optimizeFragmentByJsAst(result, staticContext)
@@ -566,9 +584,8 @@ class IrModuleToJsTransformer(
 
     private fun JsIrProgramFragment.computeAndSaveDefinitions(
         definitions: Set<IrDeclaration>,
-        fileExports: IrFileExports,
     ) {
-        fileExports.file.declarations.forEach {
+        definitions.forEach {
             definitions.computeTag(it)?.let { tag ->
                 this.definitions += tag
             }

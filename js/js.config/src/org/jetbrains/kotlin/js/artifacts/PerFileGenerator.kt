@@ -57,7 +57,7 @@ interface PerFileGenerator<Module, File, Artifact, TestEnvironment> {
     val TestEnvironment.suiteFunctionTag: String
 
     fun List<Artifact>.merge(): Artifact
-    fun File.generateArtifact(module: Module): Artifact?
+    fun File.generateArtifacts(module: Module): List<Artifact>
 
     /**
      * Generates a special _proxy_ artifact for this module, which re-exports the declarations from all the artifacts generated from
@@ -85,9 +85,9 @@ interface PerFileGenerator<Module, File, Artifact, TestEnvironment> {
                 var suiteFunctionTag: String? = null
                 val testFunctions = mutableMapOf<String, MutableList<String>>()
 
-                val artifacts = module.fileList.mapNotNull {
-                    val generatedArtifact = it.generateArtifact(module) ?: return@mapNotNull null
+                val artifacts = module.fileList.flatMap { it.generateArtifacts(module) }
 
+                for (generatedArtifact in artifacts) {
                     if (generatedArtifact.hasExport) {
                         hasFileWithExportedDeclaration = true
                     }
@@ -102,8 +102,6 @@ interface PerFileGenerator<Module, File, Artifact, TestEnvironment> {
                     }
 
                     putToMultiMap(generatedArtifact.artifactName, generatedArtifact)
-
-                    generatedArtifact
                 }
 
                 if (hasModuleLevelEffect) {
