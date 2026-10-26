@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.wasm.WasmSpecialExportNames.CALL_FUNCTION_PREFIX
 
 val JS_EXPORT_ADAPTER by IrDeclarationOriginImpl.Regular
 val KOTLIN_TO_JS_CLOSURE_ORIGIN by IrDeclarationOriginImpl.Regular
@@ -529,7 +530,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
 
     private fun createKotlinClosureCaller(info: FunctionTypeInfo): IrSimpleFunction {
         val result = context.irFactory.buildFun {
-            name = Name.identifier("$CALL_FUNCTION${info.signatureString}")
+            name = Name.identifier("$CALL_FUNCTION_PREFIX${info.signatureString}")
             returnType = info.adaptedResultType
             origin = KOTLIN_TO_JS_CLOSURE_ORIGIN
         }
@@ -1022,7 +1023,6 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
     }
 
     companion object {
-        const val CALL_FUNCTION = "__callFunction_"
         val JS_CALL_INTEROP_FUNCTION by IrDeclarationOriginImpl.Synthetic
     }
 }

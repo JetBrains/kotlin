@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.nameOrSpecialName
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.js.common.RESERVED_KEYWORDS
 import org.jetbrains.kotlin.name.WebCommonStandardClassIds
+import org.jetbrains.kotlin.wasm.WasmSpecialExportNames
 
 /**
  * Reports functions that are marked with `@JsExport` but cannot be exported from a Kotlin/Wasm module.
@@ -74,13 +75,8 @@ object FirWasmJsExportDeclarationChecker : FirBasicDeclarationChecker(MppChecker
         val source = jsNameArgument?.source ?: declaration.source
         when {
             name in RESERVED_KEYWORDS -> reporter.reportOn(source, FirWasmErrors.RESERVED_WORD_AS_JS_EXPORT_NAME, name)
-            isInternalWasmExportName(name) -> reporter.reportOn(source, FirWasmErrors.INTERNAL_WASM_EXPORT_NAME_AS_JS_EXPORT_NAME, name)
+            WasmSpecialExportNames.isInternal(name) ->
+                reporter.reportOn(source, FirWasmErrors.INTERNAL_WASM_EXPORT_NAME_AS_JS_EXPORT_NAME, name)
         }
     }
-
-    // Must be kept in sync with `isWasmInternalUsageExport` in the Kotlin/Wasm backend.
-    private val internalWasmExportNamePrefixes = listOf("__callFunction_", "__vt$", "__it$", "__rt$", "__fn$")
-
-    private fun isInternalWasmExportName(name: String): Boolean =
-        name == "memory" || internalWasmExportNamePrefixes.any { name.startsWith(it) }
 }
