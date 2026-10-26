@@ -530,7 +530,7 @@ object FirTree : AbstractFirTreeBuilder() {
 
         +declaredSymbol(classSymbolType.withArgs(klass))
         +field(classKindType)
-        +listField("superTypeRefs", typeRef, withReplace = true, withTransform = true)
+        +listField("superTypeRefs", typeRef, withReplace = true, useMutableOrEmpty = true, withTransform = true)
         +declarations {
             withTransform = true
             withReplace = true
@@ -563,7 +563,7 @@ object FirTree : AbstractFirTreeBuilder() {
         +declaredSymbol(regularClassSymbolType)
         +field("hasLazyNestedClassifiers", boolean)
         +referencedSymbol("companionObjectSymbol", regularClassSymbolType, nullable = true, withReplace = true)
-        +listField("superTypeRefs", typeRef, withReplace = true)
+        +listField("superTypeRefs", typeRef, withReplace = true, useMutableOrEmpty = true)
         +listField(name = "contextParameters", valueParameter, useMutableOrEmpty = true, withTransform = true)
     }
 
