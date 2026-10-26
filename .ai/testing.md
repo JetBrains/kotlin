@@ -16,8 +16,11 @@ Tests use `.kt` files in `testData/` directories with special directive comments
 ```
 
 ## Test Generation
+Tests are generated from abstract test runners on demand for most runners like diagnostics, box, etc.
 
-Tests are generated from abstract test runners. After adding test data:
+For Analysis API, CLI tests and some others:
+
+After adding test data:
 1. Add test data file to appropriate `testData/` directory
 2. Run `./gradlew generateTests`
 3. New test methods appear in `*Generated.java` files in `tests-gen/`
