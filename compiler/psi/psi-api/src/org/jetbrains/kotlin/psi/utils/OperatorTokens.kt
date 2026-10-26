@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.psi.utils
 
-import com.google.common.collect.ImmutableBiMap
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -18,49 +17,49 @@ import java.util.*
  * groups the operator tokens by category (unary, binary, assignment, comparison, and so on).
  */
 object OperatorTokens {
-    // If you add new unary, binary or assignment operators, add it to OperatorConventionNames as well
-    private val UNARY_OPERATIONS = ImmutableBiMap.builder<KtSingleValueToken, Name>()
-        .put(KtTokens.PLUSPLUS, OperatorNameConventions.INC)
-        .put(KtTokens.MINUSMINUS, OperatorNameConventions.DEC)
-        .put(KtTokens.PLUS, OperatorNameConventions.UNARY_PLUS)
-        .put(KtTokens.MINUS, OperatorNameConventions.UNARY_MINUS)
-        .put(KtTokens.EXCL, OperatorNameConventions.NOT)
-        .build()
-
     /**
      * Maps each unary operator token (such as `++` or `-`) to its operator-convention function name (such as `inc` or `unaryMinus`).
      */
     @JvmField
-    val UNARY_OPERATION_NAMES: Map<KtSingleValueToken, Name> = UNARY_OPERATIONS
+    // If you add new unary, binary or assignment operators, add it to OperatorConventionNames as well
+    val UNARY_OPERATION_NAMES: Map<KtSingleValueToken, Name> = Collections.unmodifiableMap(
+        linkedMapOf(
+            KtTokens.PLUSPLUS to OperatorNameConventions.INC,
+            KtTokens.MINUSMINUS to OperatorNameConventions.DEC,
+            KtTokens.PLUS to OperatorNameConventions.UNARY_PLUS,
+            KtTokens.MINUS to OperatorNameConventions.UNARY_MINUS,
+            KtTokens.EXCL to OperatorNameConventions.NOT,
+        )
+    )
 
     /**
      * The inverse of [UNARY_OPERATION_NAMES]: maps each unary operator function name to its token.
      */
     @JvmField
-    val UNARY_OPERATION_TOKENS: Map<Name, KtSingleValueToken> = UNARY_OPERATIONS.inverse()
-
-    private val BINARY_OPERATIONS = ImmutableBiMap.builder<KtSingleValueToken, Name>()
-        .put(KtTokens.MUL, OperatorNameConventions.TIMES)
-        .put(KtTokens.PLUS, OperatorNameConventions.PLUS)
-        .put(KtTokens.MINUS, OperatorNameConventions.MINUS)
-        .put(KtTokens.DIV, OperatorNameConventions.DIV)
-        .put(KtTokens.PERC, OperatorNameConventions.REM)
-        .put(KtTokens.RANGE, OperatorNameConventions.RANGE_TO)
-        .put(KtTokens.RANGE_UNTIL, OperatorNameConventions.RANGE_UNTIL)
-        .build()
+    val UNARY_OPERATION_TOKENS: Map<Name, KtSingleValueToken> = UNARY_OPERATION_NAMES.inverted()
 
     /**
      * Maps each binary operator token (such as `*`, `+`, or `..`) to its operator-convention function name (such as `times`, `plus`,
      * or `rangeTo`).
      */
     @JvmField
-    val BINARY_OPERATION_NAMES: Map<KtSingleValueToken, Name> = BINARY_OPERATIONS
+    val BINARY_OPERATION_NAMES: Map<KtSingleValueToken, Name> = Collections.unmodifiableMap(
+        linkedMapOf(
+            KtTokens.MUL to OperatorNameConventions.TIMES,
+            KtTokens.PLUS to OperatorNameConventions.PLUS,
+            KtTokens.MINUS to OperatorNameConventions.MINUS,
+            KtTokens.DIV to OperatorNameConventions.DIV,
+            KtTokens.PERC to OperatorNameConventions.REM,
+            KtTokens.RANGE to OperatorNameConventions.RANGE_TO,
+            KtTokens.RANGE_UNTIL to OperatorNameConventions.RANGE_UNTIL,
+        )
+    )
 
     /**
      * The inverse of [BINARY_OPERATION_NAMES]: maps each binary operator function name to its token.
      */
     @JvmField
-    val BINARY_OPERATION_TOKENS: Map<Name, KtSingleValueToken> = BINARY_OPERATIONS.inverse()
+    val BINARY_OPERATION_TOKENS: Map<Name, KtSingleValueToken> = BINARY_OPERATION_NAMES.inverted()
 
     /**
      * The increment and decrement operator tokens (`++` and `--`).
@@ -119,47 +118,47 @@ object OperatorTokens {
         )
     )
 
-    private val ASSIGNMENT_OPERATIONS = ImmutableBiMap.builder<KtSingleValueToken, Name>()
-        .put(KtTokens.MULTEQ, OperatorNameConventions.TIMES_ASSIGN)
-        .put(KtTokens.DIVEQ, OperatorNameConventions.DIV_ASSIGN)
-        .put(KtTokens.PERCEQ, OperatorNameConventions.REM_ASSIGN)
-        .put(KtTokens.PLUSEQ, OperatorNameConventions.PLUS_ASSIGN)
-        .put(KtTokens.MINUSEQ, OperatorNameConventions.MINUS_ASSIGN)
-        .build()
-
     /**
      * Maps each augmented assignment operator token (such as `+=` or `*=`) to its operator-convention function name (such as `plusAssign`
      * or `timesAssign`).
      */
     @JvmField
-    val ASSIGNMENT_OPERATION_NAMES: Map<KtSingleValueToken, Name> = ASSIGNMENT_OPERATIONS
+    val ASSIGNMENT_OPERATION_NAMES: Map<KtSingleValueToken, Name> = Collections.unmodifiableMap(
+        linkedMapOf(
+            KtTokens.MULTEQ to OperatorNameConventions.TIMES_ASSIGN,
+            KtTokens.DIVEQ to OperatorNameConventions.DIV_ASSIGN,
+            KtTokens.PERCEQ to OperatorNameConventions.REM_ASSIGN,
+            KtTokens.PLUSEQ to OperatorNameConventions.PLUS_ASSIGN,
+            KtTokens.MINUSEQ to OperatorNameConventions.MINUS_ASSIGN,
+        )
+    )
 
     /**
      * The inverse of [ASSIGNMENT_OPERATION_NAMES]: maps each augmented assignment function name to its token.
      */
     @JvmField
-    val ASSIGNMENT_OPERATION_TOKENS: Map<Name, KtSingleValueToken> = ASSIGNMENT_OPERATIONS.inverse()
-
-    private val ASSIGNMENT_OPERATION_COUNTERPARTS = ImmutableBiMap.builder<KtSingleValueToken, KtSingleValueToken>()
-        .put(KtTokens.MULTEQ, KtTokens.MUL)
-        .put(KtTokens.DIVEQ, KtTokens.DIV)
-        .put(KtTokens.PERCEQ, KtTokens.PERC)
-        .put(KtTokens.PLUSEQ, KtTokens.PLUS)
-        .put(KtTokens.MINUSEQ, KtTokens.MINUS)
-        .build()
+    val ASSIGNMENT_OPERATION_TOKENS: Map<Name, KtSingleValueToken> = ASSIGNMENT_OPERATION_NAMES.inverted()
 
     /**
      * Maps each augmented assignment token (such as `+=`) to the corresponding binary operator token (such as `+`).
      */
     @JvmField
-    val OPERATIONS_FOR_ASSIGNMENTS: Map<KtSingleValueToken, KtSingleValueToken> = ASSIGNMENT_OPERATION_COUNTERPARTS
+    val OPERATIONS_FOR_ASSIGNMENTS: Map<KtSingleValueToken, KtSingleValueToken> = Collections.unmodifiableMap(
+        linkedMapOf(
+            KtTokens.MULTEQ to KtTokens.MUL,
+            KtTokens.DIVEQ to KtTokens.DIV,
+            KtTokens.PERCEQ to KtTokens.PERC,
+            KtTokens.PLUSEQ to KtTokens.PLUS,
+            KtTokens.MINUSEQ to KtTokens.MINUS,
+        )
+    )
 
     /**
      * The inverse of [OPERATIONS_FOR_ASSIGNMENTS]: maps each binary operator token (such as `+`) to the corresponding augmented assignment
      * token (such as `+=`).
      */
     @JvmField
-    val ASSIGNMENTS_FOR_OPERATIONS: Map<KtSingleValueToken, KtSingleValueToken> = ASSIGNMENT_OPERATION_COUNTERPARTS.inverse()
+    val ASSIGNMENTS_FOR_OPERATIONS: Map<KtSingleValueToken, KtSingleValueToken> = OPERATIONS_FOR_ASSIGNMENTS.inverted()
 
     /**
      * The set of fixed function names that carry a special operator meaning in Kotlin. This includes names such as `get`, `set`,
@@ -217,7 +216,7 @@ object OperatorTokens {
             UNARY_OPERATION_NAMES[token]?.let { return it }
         }
 
-        ASSIGNMENT_OPERATIONS[token]?.let { return it }
+        ASSIGNMENT_OPERATION_NAMES[token]?.let { return it }
 
         if (COMPARISON_OPERATIONS.contains(token)) {
             return OperatorNameConventions.COMPARE_TO
@@ -244,9 +243,9 @@ object OperatorTokens {
             return null
         }
 
-        return BINARY_OPERATIONS.inverse()[name]
-            ?: UNARY_OPERATIONS.inverse()[name]
-            ?: ASSIGNMENT_OPERATIONS.inverse()[name]
+        return BINARY_OPERATION_TOKENS[name]
+            ?: UNARY_OPERATION_TOKENS[name]
+            ?: ASSIGNMENT_OPERATION_TOKENS[name]
     }
 
     /**
@@ -257,5 +256,15 @@ object OperatorTokens {
     fun isConventionName(name: Name): Boolean {
         return CONVENTION_NAMES.contains(name)
                 || OperatorNameConventions.COMPONENT_REGEX.matches(name.asString())
+    }
+
+    /** Builds the inverse of this map, requiring the values to be unique the way a bidirectional map does. */
+    private fun <K : Any, V : Any> Map<K, V>.inverted(): Map<V, K> {
+        val result = LinkedHashMap<V, K>(size)
+        for ((key, value) in this) {
+            val previous = result.put(value, key)
+            check(previous == null) { "Duplicate value: $value" }
+        }
+        return Collections.unmodifiableMap(result)
     }
 }
