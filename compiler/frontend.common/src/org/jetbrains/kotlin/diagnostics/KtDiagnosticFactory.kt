@@ -331,6 +331,76 @@ class KtDiagnosticFactory4<A, B, C, D>(
     }
 }
 
+class KtDiagnosticFactory5<A, B, C, D, E>(
+    name: String,
+    severity: Severity,
+    defaultPositioningStrategy: AbstractSourceElementPositioningStrategy,
+    rendererFactory: BaseDiagnosticRendererFactory,
+) : KtDiagnosticFactoryN(name, severity, defaultPositioningStrategy, rendererFactory) {
+    @InternalDiagnosticFactoryMethod
+    fun on(
+        element: AbstractKtSourceElement,
+        a: A,
+        b: B,
+        c: C,
+        d: D,
+        e: E,
+        positioningStrategy: AbstractSourceElementPositioningStrategy?,
+        context: DiagnosticBaseContext,
+    ): KtDiagnosticWithParameters5<A, B, C, D, E>? {
+        val effectiveSeverity = getEffectiveSeverity(context.languageVersionSettings) ?: return null
+        return KtDiagnosticWithParameters5(
+            element,
+            a,
+            b,
+            c,
+            d,
+            e,
+            effectiveSeverity,
+            this,
+            positioningStrategy ?: defaultPositioningStrategy,
+            context,
+        )
+    }
+
+
+    @InternalDiagnosticFactoryMethod
+    fun onOrFallback(
+        element: AbstractKtSourceElement?,
+        a: A,
+        b: B,
+        c: C,
+        d: D,
+        e: E,
+        positioningStrategy: AbstractSourceElementPositioningStrategy?,
+        context: DiagnosticBaseContext,
+    ): KtDiagnostic? {
+        return on(
+            element ?: return createFallbackDiagnostic(
+                KtDiagnosticWithParameters5(
+                    KtMissingSourceElement,
+                    a,
+                    b,
+                    c,
+                    d,
+                    e,
+                    severity,
+                    this,
+                    defaultPositioningStrategy,
+                    context
+                )
+            ),
+            a,
+            b,
+            c,
+            d,
+            e,
+            positioningStrategy,
+            context,
+        )
+    }
+}
+
 // ------------------------------ factories for deprecation ------------------------------
 
 sealed class KtDiagnosticFactoryForDeprecation<F : KtDiagnosticFactoryN>(
@@ -401,4 +471,16 @@ class KtDiagnosticFactoryForDeprecation4<A, B, C, D>(
     featureForError,
     KtDiagnosticFactory4("$name$WARNING", Severity.WARNING, defaultPositioningStrategy,rendererFactory),
     KtDiagnosticFactory4("$name$ERROR", Severity.ERROR, defaultPositioningStrategy,rendererFactory)
+)
+
+class KtDiagnosticFactoryForDeprecation5<A, B, C, D, E>(
+    name: String,
+    featureForError: LanguageFeature,
+    defaultPositioningStrategy: AbstractSourceElementPositioningStrategy,
+    rendererFactory: BaseDiagnosticRendererFactory,
+) : KtDiagnosticFactoryForDeprecation<KtDiagnosticFactory5<A, B, C, D, E>>(
+    name,
+    featureForError,
+    KtDiagnosticFactory5("$name$WARNING", Severity.WARNING, defaultPositioningStrategy,rendererFactory),
+    KtDiagnosticFactory5("$name$ERROR", Severity.ERROR, defaultPositioningStrategy,rendererFactory)
 )
