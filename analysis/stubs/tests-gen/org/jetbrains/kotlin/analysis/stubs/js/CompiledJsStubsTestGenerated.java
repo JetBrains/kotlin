@@ -521,6 +521,12 @@ public class CompiledJsStubsTestGenerated extends AbstractCompiledJsStubsTest {
   }
 
   @Test
+  @TestMetadata("enumEntryNamedLikeModifier.kt")
+  public void testEnumEntryNamedLikeModifier() {
+    run("enumEntryNamedLikeModifier.kt");
+  }
+
+  @Test
   @TestMetadata("EnumEntrySemicolonInlineMember.kt")
   public void testEnumEntrySemicolonInlineMember() {
     run("EnumEntrySemicolonInlineMember.kt");
