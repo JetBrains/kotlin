@@ -22,8 +22,12 @@ import kotlinx.serialization.Serializable
 data class KdProperty(
     val name: String,
 
+    val isLateinit: Boolean,
     val isInline: Boolean,
     val isCompanion: Boolean,
+    /**
+     * Whether this property is declared as `external` in Kotlin or `native` in Java.
+     */
     val isExternal: Boolean,
     val isSuspend: Boolean,
 
@@ -43,13 +47,16 @@ data class KdProperty(
     val extensionReceiverParameter: KdExtensionReceiverParameter?,
     val contextParameters: List<KdContextParameter>,
 
+    /** Directly overridden declarations. */
     val overridens: List<KdElementId>,
 
     /** The visibility of the `getter`, if this property has a non-default getter/setter. */
     val visibility: KdVisibility,
     val modality: KdModality,
 
+    val since: String?,
+    val deprecated: KdDeprecated?,
     val throws: List<KdThrows>,
     val annotations: List<KdAnnotation>,
-    val documentation: KdDocumentation = KdDocumentation.EMPTY,
+    val documentation: KdDocumentation = KdDocumentation.EMPTY
 ) : KdElement()
