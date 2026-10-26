@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotShrinker.
 import org.jetbrains.kotlin.incremental.snapshots.LazyClasspathSnapshot
 import org.jetbrains.kotlin.incremental.snapshots.LazySnapshotLoadingMetrics
 import org.jetbrains.kotlin.incremental.storage.ListExternalizer
-import org.jetbrains.kotlin.incremental.storage.LongExternalizer
 import org.jetbrains.kotlin.incremental.storage.LookupSymbolKey
 import org.jetbrains.kotlin.incremental.storage.saveToFile
 import org.jetbrains.kotlin.name.ClassId
@@ -92,6 +91,11 @@ internal object ClasspathSnapshotShrinker {
                     // Additionally, PackageInfoImpact retains it transitively whenever a class of the package is retained.
                     lookupSymbols.getLookupNamesInScope(clazz.classId.packageFqName).isNotEmpty()
                 }
+                is ModuleInfoClassSnapshot -> {
+                    // Anything looked up in a package of the module may be affected by its descriptor (e.g., a dropped `exports`).
+                    // Additionally, ModuleInfoImpact retains it transitively whenever a class of the module is retained.
+                    clazz.packages.any { lookupSymbols.getLookupNamesInScope(it).isNotEmpty() }
+                }
             }
         }
         return referencedClasses
@@ -160,12 +164,17 @@ internal fun ClasspathSnapshot.removeDuplicateAndInaccessibleClasses(): List<Acc
  * Returns all [ClassSnapshot]s in this [ClasspathSnapshot].
  *
  * If there are duplicate classes on the classpath, retain only the first one to match the compiler's behavior.
+ *
+ * Module descriptors are an exception: every modular entry stores its [ModuleInfoClassSnapshot] under the same `module-info.class` path,
+ * but the descriptors of different modules are not duplicates of each other, so they are keyed by the module name instead (two entries
+ * declaring the same module are still deduplicated, the first one wins).
  */
 private fun ClasspathSnapshot.getNonDuplicateClassSnapshots(): List<ClassSnapshot> {
     val classSnapshots = LinkedHashMap<String, ClassSnapshot>(classpathEntrySnapshots.sumOf { it.classSnapshots.size })
     for (classpathEntrySnapshot in classpathEntrySnapshots) {
         for ([unixStyleRelativePath, classSnapshot] in classpathEntrySnapshot.classSnapshots) {
-            classSnapshots.putIfAbsent(unixStyleRelativePath, classSnapshot)
+            val key = if (classSnapshot is ModuleInfoClassSnapshot) "${classSnapshot.classId}" else unixStyleRelativePath
+            classSnapshots.putIfAbsent(key, classSnapshot)
         }
     }
     return classSnapshots.values.toList()
@@ -301,12 +310,6 @@ internal fun shrinkAndSaveClasspathSnapshot(
             ListExternalizer(AccessibleClassSnapshotExternalizer).saveToFile(
                 classpathChanges.classpathSnapshotFiles.shrunkPreviousClasspathSnapshotFile,
                 shrunkCurrentClasspath!!
-            )
-        }
-        reporter.measure(SAVE_CURRENT_MODULE_INFO_HASHES) {
-            ListExternalizer(LongExternalizer).saveToFile(
-                classpathChanges.classpathSnapshotFiles.previousModuleInfoHashesFile,
-                lazyClasspathSnapshot.getCurrentModuleInfoHashes(LazySnapshotLoadingMetrics.AssertThatDataIsAlreadyComputed).toList()
             )
         }
     }

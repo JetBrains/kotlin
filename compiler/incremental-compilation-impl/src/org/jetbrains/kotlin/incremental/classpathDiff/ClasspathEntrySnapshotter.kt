@@ -8,12 +8,14 @@ package org.jetbrains.kotlin.incremental.classpathDiff
 import com.google.common.io.ByteStreams
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
+import org.jetbrains.kotlin.cli.jvm.modules.ModuleInfoClassSelection
+import org.jetbrains.kotlin.cli.jvm.modules.ModuleInfoClassSelection.MODULE_INFO_CLASS
 import org.jetbrains.kotlin.incremental.classpathDiff.impl.*
-import org.jetbrains.kotlin.incremental.impl.hashToLong
-import java.io.ByteArrayOutputStream
+import org.jetbrains.kotlin.incremental.classpathDiff.impl.SingleClassSnapshotter.snapshotModuleInfoClass
+import org.jetbrains.kotlin.name.FqName
 import java.io.Closeable
-import java.io.DataOutputStream
 import java.io.File
+import java.util.jar.Manifest
 import java.util.zip.ZipFile
 
 
@@ -60,49 +62,53 @@ object ClasspathEntrySnapshotter {
                 }
                 classListSnapshotter.snapshot()
             }
-            val moduleInfoHash = combinedContentHash(
-                directoryOrJarReader,
-                directoryOrJarReader.getUnixStyleRelativePaths { path, isDirectory -> !isDirectory && isModuleInfoClassPath(path) }
-            )
-            return ClasspathEntrySnapshot(
-                classSnapshots = classes.map { it.classFile.unixStyleRelativePath }.zip(snapshots).toMap(LinkedHashMap()),
-                moduleInfoHash = moduleInfoHash,
-            )
-        }
-    }
+            val classSnapshots = classes.map { it.classFile.unixStyleRelativePath }.zip(snapshots).toMap(LinkedHashMap())
 
-    private fun isModuleInfoClassPath(unixStyleRelativePath: String): Boolean {
-        if (unixStyleRelativePath.equals(MODULE_INFO_CLASS, ignoreCase = true)) return true
-        val prefix = "meta-inf/versions/"
-        val suffix = "/$MODULE_INFO_CLASS"
-        if (unixStyleRelativePath.length < prefix.length + suffix.length
-            || !unixStyleRelativePath.startsWith(prefix, ignoreCase = true)
-            || !unixStyleRelativePath.endsWith(suffix, ignoreCase = true)
-        ) return false
-        val version = unixStyleRelativePath.substring(prefix.length, unixStyleRelativePath.length - suffix.length)
-        return version.toIntOrNull() != null
+            selectModuleInfoPath(directoryOrJarReader)?.let { moduleInfoPath ->
+                val packages: Set<FqName> = snapshots.mapNotNullTo(mutableSetOf()) { (it as? AccessibleClassSnapshot)?.classId?.packageFqName }
+                snapshotModuleInfoClass(directoryOrJarReader.readBytes(moduleInfoPath), packages)?.let { moduleInfoSnapshot ->
+                    classSnapshots[moduleInfoPath] = moduleInfoSnapshot
+                }
+            }
+            return ClasspathEntrySnapshot(classSnapshots)
+        }
     }
 
     /**
-     * Paths must already be sorted (as [DirectoryOrJarReader.getUnixStyleRelativePaths] returns them) so the result is stable;
-     * each path is folded in alongside its bytes, so relocating a file (e.g. between multi-release version dirs) also counts as a change.
+     * Selects the `module-info.class` the compiler reads for this classpath entry, see [ModuleInfoClassSelection].
      */
-    private fun combinedContentHash(reader: DirectoryOrJarReader, paths: List<String>): Long? =
-        paths.takeIf { it.isNotEmpty() }?.let {
-            val buffer = ByteArrayOutputStream()
-            DataOutputStream(buffer).use { out ->
-                for (path in paths) {
-                    out.writeUTF(path)
-                    out.write(reader.readBytes(path))
-                }
-            }
-            buffer.toByteArray().hashToLong()
+    private fun selectModuleInfoPath(reader: DirectoryOrJarReader): String? {
+        val candidates = reader.getUnixStyleRelativePaths { path, isDirectory ->
+            !isDirectory && (path == MODULE_INFO_CLASS || path == MANIFEST_PATH || versionDirectoryName(path) != null)
         }
+        return ModuleInfoClassSelection.select(
+            rootModuleInfo = MODULE_INFO_CLASS.takeIf { it in candidates },
+            isJar = reader.isJar,
+            isMultiRelease = {
+                MANIFEST_PATH in candidates && ModuleInfoClassSelection.isMultiReleaseJar(
+                    reader.readBytes(MANIFEST_PATH).inputStream().use { Manifest(it) }.mainAttributes
+                )
+            },
+            versionedModuleInfos = {
+                candidates.mapNotNull { path -> versionDirectoryName(path)?.let { it to path } }.toMap()
+            },
+        )
+    }
 
-    private const val MODULE_INFO_CLASS = "module-info.class"
+    /** Returns `<n>` for a `META-INF/versions/<n>/module-info.class` path, or `null` for any other path. */
+    private fun versionDirectoryName(unixStyleRelativePath: String): String? {
+        if (!unixStyleRelativePath.startsWith(VERSIONS_PREFIX) || !unixStyleRelativePath.endsWith("/$MODULE_INFO_CLASS")) return null
+        return unixStyleRelativePath.substring(VERSIONS_PREFIX.length, unixStyleRelativePath.length - MODULE_INFO_CLASS.length - 1)
+            .takeIf { '/' !in it }
+    }
+
+    private const val MANIFEST_PATH = "META-INF/MANIFEST.MF"
+    private const val VERSIONS_PREFIX = "META-INF/versions/"
 }
 
 private sealed interface DirectoryOrJarReader : Closeable {
+
+    val isJar: Boolean
 
     /**
      * Returns the Unix-style relative paths of all entries under the containing directory or jar which satisfy the given [filter].
@@ -131,6 +137,8 @@ private sealed interface DirectoryOrJarReader : Closeable {
 
 private class DirectoryReader(private val directory: File) : DirectoryOrJarReader {
 
+    override val isJar: Boolean get() = false
+
     override fun getUnixStyleRelativePaths(filter: (unixStyleRelativePath: String, isDirectory: Boolean) -> Boolean): List<String> {
         return directory.walk()
             .filter { filter.invoke(it.relativeTo(directory).invariantSeparatorsPath, it.isDirectory) }
@@ -149,6 +157,8 @@ private class DirectoryReader(private val directory: File) : DirectoryOrJarReade
 }
 
 private class JarReader(jar: File) : DirectoryOrJarReader {
+
+    override val isJar: Boolean get() = true
 
     // Use `java.util.zip.ZipFile` API to read jars (it matches what the compiler is using).
     // Note: Using `java.util.zip.ZipInputStream` API is slightly faster, but (1) it may fail on certain jars (e.g., KT-57767), and (2) it
