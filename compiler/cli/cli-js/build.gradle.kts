@@ -18,6 +18,7 @@ dependencies {
     api(project(":compiler:backend.wasm"))
     implementation(project(":kotlin-util-klib-metadata"))
     implementation(project(":wasm:wasm.frontend"))
+    implementation(project(":core:compiler.common.wasm"))
     api(project(":wasm:wasm.config"))
 
     wasmCustomFormatters(project(":wasm:wasm.debug.browsers"))
