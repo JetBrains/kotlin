@@ -33,7 +33,6 @@
 object BuildHealthBaselines {
     // Modules with duplicate-classes warnings at the baseline date — warning-only, do not grow the list
     val duplicateClassesBaselineProjects: Set<String> = setOf(
-        ":analysis:analysis-api",
         ":analysis:analysis-api-fir",
         ":analysis:analysis-api-standalone",
         ":analysis:analysis-api-standalone:analysis-api-standalone-fir",

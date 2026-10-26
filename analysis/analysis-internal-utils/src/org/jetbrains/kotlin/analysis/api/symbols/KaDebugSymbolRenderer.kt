@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.api.symbols
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiPackage
-import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analysis.api.*
 import org.jetbrains.kotlin.analysis.api.annotations.*
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
@@ -62,7 +61,6 @@ public class KaDebugRenderer(
         renderType(type, this, linkedSetOf())
     }
 
-    @TestOnly
     context(session: KaSession)
     public fun renderForSubstitutionOverrideUnwrappingTest(symbol: KaSymbol): String = prettyPrint {
         renderForSubstitutionOverrideUnwrappingTest(symbol, this, linkedSetOf())
@@ -265,7 +263,7 @@ public class KaDebugRenderer(
     }
 
     private fun renderAnnotationValue(value: KaAnnotationValue, printer: PrettyPrinter) {
-        printer.append(KaAnnotationValueRenderer.render(value))
+        printer.append(value.renderAsSourceCode())
     }
 
     context(session: KaSession)
