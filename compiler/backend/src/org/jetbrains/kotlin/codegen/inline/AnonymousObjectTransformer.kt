@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.codegen.coroutines.DEBUG_METADATA_ANNOTATION_ASM_TYP
 import org.jetbrains.kotlin.codegen.coroutines.isCoroutineSuperClass
 import org.jetbrains.kotlin.codegen.inline.coroutines.CoroutineTransformer
 import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
+import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.kotlin.FileBasedKotlinClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
@@ -27,11 +28,12 @@ import org.jetbrains.org.objectweb.asm.tree.*
 import java.util.*
 
 class AnonymousObjectTransformer(
+    state: GenerationState,
     transformationInfo: AnonymousObjectTransformationInfo,
     private val inliningContext: InliningContext,
     private val isSameModule: Boolean,
     private val continuationClassName: String?
-) : ObjectTransformer<AnonymousObjectTransformationInfo>(transformationInfo, inliningContext.state) {
+) : ObjectTransformer<AnonymousObjectTransformationInfo>(transformationInfo, state) {
 
     private val oldObjectType = Type.getObjectType(transformationInfo.oldClassName)
 
@@ -129,7 +131,7 @@ class AnonymousObjectTransformer(
 
             override fun visitEnd() {}
         }, LOADABLE_DESCRIPTORS_ATTRIBUTE_PROTOTYPES, ClassReader.SKIP_FRAMES)
-        val header = metadataReader.createHeader(inliningContext.state.config.languageVersionSettings.languageVersion.toMetadataVersion())
+        val header = metadataReader.createHeader(inliningContext.config.languageVersionSettings.languageVersion.toMetadataVersion())
         assert(isSameModule || (header != null && isPublicAbi(header)) || inliningContext.callSiteInfo.suppressNonPublicApiObjectInliningError) {
             "Trying to inline an anonymous object which is not part of the public ABI: ${oldObjectType.className}"
         }
@@ -373,6 +375,7 @@ class AnonymousObjectTransformer(
                 null
             }
         val result = MethodInliner(
+            state,
             sourceNode,
             parameters,
             inliningContext.subInline(
