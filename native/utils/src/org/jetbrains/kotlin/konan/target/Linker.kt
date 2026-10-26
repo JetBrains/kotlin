@@ -316,7 +316,12 @@ class MacOSBasedLinker(targetProperties: AppleConfigurables)
             require(sanitizer == null) {
                 "Sanitizers are unsupported"
             }
-            return listOf(Command(libtool).apply {
+            return listOf(object : Command(libtool) {
+                override fun execute() {
+                    super.execute()
+                    zeroArchiveSymbolTablePadding(Path(executable))
+                }
+            }.apply {
                 +"-D"
                 +"-static"
                 +listOf("-o", executable)
