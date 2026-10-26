@@ -50,7 +50,9 @@ abstract class JsEnvironmentConfigurator(testServices: TestServices) : Environme
             TranslationMode.PER_MODULE_DEV to "outPm",
             TranslationMode.PER_MODULE_PROD_MINIMIZED_NAMES to "outPmMin",
             TranslationMode.PER_FILE_DEV to "outPf",
-            TranslationMode.PER_FILE_PROD_MINIMIZED_NAMES to "outPfMin"
+            TranslationMode.PER_FILE_PROD_MINIMIZED_NAMES to "outPfMin",
+            TranslationMode.PER_CLASS_DEV to "outPc",
+            TranslationMode.PER_CLASS_PROD_MINIMIZED_NAMES to "outPcMin"
         )
 
         fun getJsModuleArtifactPath(
@@ -136,6 +138,7 @@ abstract class JsEnvironmentConfigurator(testServices: TestServices) : Environme
             val onlyIrDce = JsEnvironmentConfigurationDirectives.ONLY_IR_DCE in module.directives
             val perModuleOnly = JsEnvironmentConfigurationDirectives.SPLIT_PER_MODULE in module.directives
             val perFileOnly = JsEnvironmentConfigurationDirectives.SPLIT_PER_FILE in module.directives
+            val perClassOnly = JsEnvironmentConfigurationDirectives.SPLIT_PER_CLASS in module.directives
             val isEsModules = getModuleKind(testServices, module) == ModuleKind.ES
             // If runIrDce then include DCE results
             // If perModuleOnly then skip whole program
@@ -145,10 +148,11 @@ abstract class JsEnvironmentConfigurator(testServices: TestServices) : Environme
                     (it.production || !onlyIrDce) &&
                             (!it.production || runIrDce) &&
                             (!perModuleOnly || it.granularity == JsGenerationGranularity.PER_MODULE) &&
-                            (!perFileOnly || it.granularity == JsGenerationGranularity.PER_FILE)
+                            (!perFileOnly || it.granularity == JsGenerationGranularity.PER_FILE) &&
+                            (!perClassOnly || it.granularity == JsGenerationGranularity.PER_CLASS)
                 }
                 .filter { it.production == it.minimizedMemberNames }
-                .filter { isEsModules || it.granularity != JsGenerationGranularity.PER_FILE }
+                .filter { isEsModules || (it.granularity != JsGenerationGranularity.PER_FILE && it.granularity != JsGenerationGranularity.PER_CLASS) }
                 .toSet()
         }
 

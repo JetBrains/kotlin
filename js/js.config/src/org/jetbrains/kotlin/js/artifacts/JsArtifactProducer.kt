@@ -45,7 +45,7 @@ interface JsArtifactProducer<Module, File, Artifact, TestEnvironment> {
                 singleModuleToArtifact(it, mainModule)
             }
         }
-        JsGenerationGranularity.PER_FILE -> {
+        JsGenerationGranularity.PER_FILE, JsGenerationGranularity.PER_CLASS -> {
             val perFileGenerator = makePerFileGenerator(mainModule = modules.last())
             buildList {
                 for ((mainModule, exportModule) in perFileGenerator.generatePerFileArtifacts(modules)) {

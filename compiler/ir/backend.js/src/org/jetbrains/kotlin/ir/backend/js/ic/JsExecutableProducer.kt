@@ -39,6 +39,7 @@ class JsExecutableProducer(
             JsPerModuleCache(artifactConfiguration, caches)
         )
         JsGenerationGranularity.PER_FILE -> buildMultiArtifactExecutable(outJsProgram, JsPerFileCache(artifactConfiguration, caches))
+        JsGenerationGranularity.PER_CLASS -> TODO()
     }
 
     private fun buildSingleModuleExecutable(outJsProgram: Boolean): BuildResult {

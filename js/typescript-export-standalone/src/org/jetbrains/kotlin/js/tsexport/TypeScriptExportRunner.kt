@@ -95,6 +95,7 @@ public fun runTypeScriptExport(
                     dtsFile.writeText(tsDefinitions)
                     dtsFile
                 }
+                JsGenerationGranularity.PER_CLASS -> TODO()
             }
         }
     }

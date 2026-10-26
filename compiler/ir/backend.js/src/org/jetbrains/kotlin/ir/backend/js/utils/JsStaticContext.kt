@@ -27,5 +27,7 @@ class JsStaticContext(
     val initializerBlock = JsCompositeBlock()
     val eagerInitializerBlock = JsCompositeBlock()
 
-    val isPerFile: Boolean get() = mode.granularity === JsGenerationGranularity.PER_FILE
+    val isPerFile: Boolean
+        get() = mode.granularity === JsGenerationGranularity.PER_FILE ||
+                mode.granularity === JsGenerationGranularity.PER_CLASS
 }
