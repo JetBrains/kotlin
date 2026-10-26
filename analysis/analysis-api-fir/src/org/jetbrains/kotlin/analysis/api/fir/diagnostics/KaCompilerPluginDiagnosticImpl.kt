@@ -45,3 +45,13 @@ internal class KaCompilerPluginDiagnostic4Impl(
     override val parameter3: Any?,
     override val parameter4: Any?
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaCompilerPluginDiagnostic4
+
+internal class KaCompilerPluginDiagnostic5Impl(
+    firDiagnostic: KtDiagnosticWithParameters5<*, *, *, *, *>,
+    token: KaLifetimeToken,
+    override val parameter1: Any?,
+    override val parameter2: Any?,
+    override val parameter3: Any?,
+    override val parameter4: Any?,
+    override val parameter5: Any?
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaCompilerPluginDiagnostic5
