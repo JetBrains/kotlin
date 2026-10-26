@@ -324,7 +324,9 @@ class CompilerTestGroupingTestEngine : TestEngine {
         for (test in failedTests) {
             try {
                 val testInfo = runNonGroupingStage(test.method, test.context, isRetry = true) ?: continue
-                if (!testInfo.failed && !testInfo.hadIgnoredFailuresOnNonGroupingStage) runGroupingStageOnSingleSizedBatch(testInfo)
+                if (!testInfo.failed && !testInfo.hadIgnoredFailuresOnNonGroupingStage) {
+                    runGroupingStageOnSingleSizedBatch(testInfo, reportFailure = true)
+                }
             } catch (e: Throwable) {
                 // Must not fail the tests still waiting for their retry.
                 test.context.failIfUnfinished(test.method, e)
@@ -472,7 +474,7 @@ class CompilerTestGroupingTestEngine : TestEngine {
      * @param reportFailure whether a failed test is reported, or only disposed, to be retried in isolation.
      * @return `false` if the test failed and is not reported.
      */
-    private fun runGroupingStageOnSingleSizedBatch(testInfo: TestMethodInfo, reportFailure: Boolean = true): Boolean {
+    private fun runGroupingStageOnSingleSizedBatch(testInfo: TestMethodInfo, reportFailure: Boolean): Boolean {
         val throwableCollector = testInfo.nonGroupingStageThrowableCollector
         val testInstance = testInfo.testInstance
         throwableCollector.executeCatchingAll {
