@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.KtStubBasedElementTypes.INTEGER_CONSTANT
 import org.jetbrains.kotlin.KtStubBasedElementTypes.NULL
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.ConstantValueKind
-import org.jetbrains.kotlin.utils.extractRadix
 
 /**
  * Checks whether the [text] representation of a number literal has a long number suffix.
@@ -168,4 +167,13 @@ fun ConstantValueKind.toConstantExpressionElementType(): KtNodeType {
         ConstantValueKind.CHARACTER_CONSTANT -> CHARACTER_CONSTANT
         ConstantValueKind.INTEGER_CONSTANT -> INTEGER_CONSTANT
     }
+}
+
+// Copied from org.jetbrains.kotlin.utils.numbers to avoid a dependency on core/util.runtime.
+private data class NumberWithRadix(val number: String, val radix: Int)
+
+private fun extractRadix(value: String): NumberWithRadix = when {
+    value.startsWith("0x") || value.startsWith("0X") -> NumberWithRadix(value.substring(2), 16)
+    value.startsWith("0b") || value.startsWith("0B") -> NumberWithRadix(value.substring(2), 2)
+    else -> NumberWithRadix(value, 10)
 }
