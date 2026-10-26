@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtThisExpression
 import org.jetbrains.kotlin.psi.KtUserType
 
-internal data class AdditionalImports(val simpleImports: Set<FqName>, val starImports: Set<FqName>)
+internal data class ShorteningAdditionalImports(val simpleImports: Set<FqName>, val starImports: Set<FqName>)
 
 internal sealed class ElementToShorten {
     abstract val element: KtElement
