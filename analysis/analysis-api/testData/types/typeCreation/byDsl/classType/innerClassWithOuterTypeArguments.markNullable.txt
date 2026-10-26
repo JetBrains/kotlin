@@ -12,8 +12,36 @@ KaUsualClassType:
       name: Middle
       symbol: KaNamedClassSymbol(Outer.Middle)
       typeArguments: [
-        *
-        *
+        KaUsualClassType:
+          abbreviation: null
+          annotations: []
+          classId: kotlin/Boolean
+          qualifiers: [
+            KaResolvedClassTypeQualifier:
+              name: Boolean
+              symbol: KaNamedClassSymbol(kotlin/Boolean)
+              typeArguments: []
+          ]
+          symbol: KaNamedClassSymbol(kotlin/Boolean)
+          typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
+        KaUsualClassType:
+          abbreviation: null
+          annotations: []
+          classId: kotlin/Char
+          qualifiers: [
+            KaResolvedClassTypeQualifier:
+              name: Char
+              symbol: KaNamedClassSymbol(kotlin/Char)
+              typeArguments: []
+          ]
+          symbol: KaNamedClassSymbol(kotlin/Char)
+          typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
       ]
     KaResolvedClassTypeQualifier:
       name: Inner
@@ -89,4 +117,4 @@ KaUsualClassType:
   hasFlexibleNullability: false
 
 Rendered type:
-Outer.Middle<*, *>.Inner<kotlin.Long, kotlin.Double>?
+Outer.Middle<kotlin.Boolean, kotlin.Char>.Inner<kotlin.Long, kotlin.Double>?

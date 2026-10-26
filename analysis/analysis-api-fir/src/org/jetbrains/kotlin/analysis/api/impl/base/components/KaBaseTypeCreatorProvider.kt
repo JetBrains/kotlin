@@ -26,7 +26,10 @@ abstract class KaBaseTypeCreatorProvider<T : KaSession> : KaBaseSessionComponent
             val sourceSymbol = type.symbol
             val sourceIsMarkedNullable = type.isMarkedNullable
             val sourceAnnotationClassIds = type.annotations.classIds.toList()
-            val sourceTypeArguments = type.typeArguments
+
+            // `typeArguments` only contains the arguments of the last qualifier, while the builder expects the arguments of all
+            // qualifiers, ordered from the innermost class outwards
+            val sourceTypeArguments = type.qualifiers.asReversed().flatMap { it.typeArguments }
 
             typeCreator.classType(sourceSymbol) {
                 isMarkedNullable = sourceIsMarkedNullable
