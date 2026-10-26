@@ -1107,6 +1107,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleResolveSingleByPsiTestGenerated
   }
 
   @Test
+  @TestMetadata("privateTopLevelPropertyClashInLibrarySource.kt")
+  public void testPrivateTopLevelPropertyClashInLibrarySource() {
+    run("privateTopLevelPropertyClashInLibrarySource.kt");
+  }
+
+  @Test
   @TestMetadata("qualifiedCallSelector.kt")
   public void testQualifiedCallSelector() {
     run("qualifiedCallSelector.kt");
