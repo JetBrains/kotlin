@@ -1,7 +1,7 @@
 KT element: KtClass
 KT element text:
 @kotlin.jvm.JvmInline
-public final value class ValueClass public constructor(value: kotlin.String) {
+public final inline value class ValueClass public constructor(value: kotlin.String) {
     public final val value: kotlin.String /* compiled code */
 
     public final val kotlin.Int.value: kotlin.Int /* compiled code */

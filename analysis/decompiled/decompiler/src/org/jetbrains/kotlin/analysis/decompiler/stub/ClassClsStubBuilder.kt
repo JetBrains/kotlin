@@ -129,11 +129,15 @@ private class ClassClsStubBuilder(
             else -> relevantFlags.add(MODALITY)
         }
 
-        val additionalModifiers = when (classKind) {
-            ProtoBuf.Class.Kind.ENUM_CLASS -> listOf(KtTokens.ENUM_KEYWORD)
-            ProtoBuf.Class.Kind.COMPANION_OBJECT -> listOf(KtTokens.COMPANION_KEYWORD)
-            ProtoBuf.Class.Kind.ANNOTATION_CLASS -> listOf(KtTokens.ANNOTATION_KEYWORD)
-            else -> emptyList()
+        val additionalModifiers = buildList {
+            when (classKind) {
+                ProtoBuf.Class.Kind.ENUM_CLASS -> add(KtTokens.ENUM_KEYWORD)
+                ProtoBuf.Class.Kind.COMPANION_OBJECT -> add(KtTokens.COMPANION_KEYWORD)
+                ProtoBuf.Class.Kind.ANNOTATION_CLASS -> add(KtTokens.ANNOTATION_KEYWORD)
+                else -> {}
+            }
+
+            if (classProto.hasInlineClassUnderlyingPropertyName()) add(KtTokens.INLINE_KEYWORD)
         }
 
         return createModifierListStubForDeclaration(
