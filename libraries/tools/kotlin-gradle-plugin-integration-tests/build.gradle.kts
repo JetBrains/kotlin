@@ -297,9 +297,11 @@ enum class JunitTag(
      * - They are run with specialised TC config (e.g. Swift tags).
      */
     val includeInBatchedGradleVersionTests: Boolean = parent == null,
+
+    val maxParallelForks: Int = 0,
 ) {
     JvmKGP,
-    DaemonsKGP,
+    DaemonsKGP(maxParallelForks = 1),
     JsKGP,
     JsBrowserKGP,
     WasmKGP,
@@ -393,7 +395,7 @@ if (project.kotlinBuildProperties.isTeamcityBuild.get()) {
             tasks.register<Test>("${taskPrefix}TestsForGradle_${gradleVersion.replace(".", "_")}") {
                 group = gradleVersionTaskGroup
                 description = "Runs all tests for Kotlin Gradle plugins against Gradle $gradleVersion"
-                maxParallelForks = maxParallelTestForks
+                maxParallelForks = if (junitTag.maxParallelForks > 0) junitTag.maxParallelForks else maxParallelTestForks
 
                 classpath = sourceSets["test"].runtimeClasspath
                 testClassesDirs = sourceSets["test"].output.classesDirs
