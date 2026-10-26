@@ -18,7 +18,7 @@ class B : A() {
 fun box(): String {
     assertEquals("A0", A.foo())
     assertEquals("A42", A.foo(42))
-    assertEquals("A0", B.foo()) // Wrong
+    assertEquals("B1", B.foo())
     assertEquals("B42", B.foo(42))
     return "OK"
 }
