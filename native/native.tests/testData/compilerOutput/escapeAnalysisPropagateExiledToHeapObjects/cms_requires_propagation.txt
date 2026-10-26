@@ -1,0 +1,2 @@
+warning: CMS GC requires escapeAnalysisPropagateExiledToHeapObjects=true
+OK
