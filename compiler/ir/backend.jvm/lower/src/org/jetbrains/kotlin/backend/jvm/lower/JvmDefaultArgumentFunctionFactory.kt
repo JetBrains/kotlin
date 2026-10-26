@@ -8,9 +8,12 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.jvm.InlineClassAbi
+import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.withoutJvmExposeBoxedAnnotation
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.isStatic
 
 internal class JvmDefaultArgumentFunctionFactory(context: CommonBackendContext) : MaskedDefaultArgumentFunctionFactory(context) {
     override fun IrType.hasNullAsUndefinedValue() =
@@ -26,4 +29,7 @@ internal class JvmDefaultArgumentFunctionFactory(context: CommonBackendContext) 
     // See KT-88324.
     override fun filterCopiedAnnotations(annotations: List<IrAnnotation>): List<IrAnnotation> =
         annotations.withoutJvmExposeBoxedAnnotation()
+
+    override val IrFunction.doNotFindBaseFunctionWithDefaultArguments: Boolean
+        get() = isStatic && origin != JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_REPLACEMENT
 }
