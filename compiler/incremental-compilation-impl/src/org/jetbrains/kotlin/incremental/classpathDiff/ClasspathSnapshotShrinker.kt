@@ -86,6 +86,16 @@ internal object ClasspathSnapshotShrinker {
                     }
                     packageMemberNames.any { it in lookupNamesInScope }
                 }
+                is PackageInfoClassSnapshot -> {
+                    // Anything looked up in the package may be affected by its package-level annotations.
+                    // Additionally, PackageInfoImpact retains it transitively whenever a class of the package is retained.
+                    lookupSymbols.getLookupNamesInScope(clazz.classId.packageFqName).isNotEmpty()
+                }
+                is ModuleInfoClassSnapshot -> {
+                    // Anything looked up in a package of the module may be affected by its descriptor (e.g., a dropped `exports`).
+                    // Additionally, ModuleInfoImpact retains it transitively whenever a class of the module is retained.
+                    clazz.packages.any { lookupSymbols.getLookupNamesInScope(it).isNotEmpty() }
+                }
             }
         }
         return referencedClasses
@@ -154,12 +164,17 @@ internal fun ClasspathSnapshot.removeDuplicateAndInaccessibleClasses(): List<Acc
  * Returns all [ClassSnapshot]s in this [ClasspathSnapshot].
  *
  * If there are duplicate classes on the classpath, retain only the first one to match the compiler's behavior.
+ *
+ * Module descriptors are an exception: every modular entry stores its [ModuleInfoClassSnapshot] under the same `module-info.class` path,
+ * but the descriptors of different modules are not duplicates of each other, so they are keyed by the module name instead (two entries
+ * declaring the same module are still deduplicated, the first one wins).
  */
 private fun ClasspathSnapshot.getNonDuplicateClassSnapshots(): List<ClassSnapshot> {
     val classSnapshots = LinkedHashMap<String, ClassSnapshot>(classpathEntrySnapshots.sumOf { it.classSnapshots.size })
     for (classpathEntrySnapshot in classpathEntrySnapshots) {
         for ([unixStyleRelativePath, classSnapshot] in classpathEntrySnapshot.classSnapshots) {
-            classSnapshots.putIfAbsent(unixStyleRelativePath, classSnapshot)
+            val key = if (classSnapshot is ModuleInfoClassSnapshot) "${classSnapshot.classId}" else unixStyleRelativePath
+            classSnapshots.putIfAbsent(key, classSnapshot)
         }
     }
     return classSnapshots.values.toList()

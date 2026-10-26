@@ -8,9 +8,11 @@ package org.jetbrains.kotlin.incremental.classpathDiff
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.ClassFileUtil.snapshot
+import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.CompileUtil.compileAll
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.SourceFile.JavaSourceFile
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.SourceFile.KotlinSourceFile
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.TestSourceFile
+import org.jetbrains.kotlin.incremental.classpathDiff.ModuleInfoClassSnapshot.Companion.moduleInfoClassId
 import org.jetbrains.kotlin.incremental.classpathDiff.impl.ClassFile
 import org.jetbrains.kotlin.incremental.storage.fromByteArray
 import org.jetbrains.kotlin.incremental.storage.toByteArray
@@ -19,6 +21,10 @@ import org.jetbrains.kotlin.name.FqName
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import java.io.File
+import java.util.jar.Attributes
+import java.util.jar.JarEntry
+import java.util.jar.JarOutputStream
+import java.util.jar.Manifest
 
 private val testDataDir =
     ForTestCompileRuntime.transformTestDataPath("compiler/incremental-compilation-impl/testData/org/jetbrains/kotlin/incremental/classpathDiff/ClasspathSnapshotterTest")
@@ -213,6 +219,151 @@ class JavaOnlyClasspathSnapshotterTest : ClasspathSnapshotTestCommon() {
 
         // Check that the snapshot does not contain class member details
         actualSnapshot.assertDoesNotContain("publicField", "privateField", "publicMethod", "privateMethod")
+    }
+
+    @Test
+    fun testPackageInfo() {
+        val classFile = getSourceFile("testPackageInfo", "com/example/package-info.java").compileSingle()
+        val classLevelSnapshot = classFile.snapshot(ClassSnapshotGranularity.CLASS_LEVEL)
+        val memberLevelSnapshot = classFile.snapshot(ClassSnapshotGranularity.CLASS_MEMBER_LEVEL)
+
+        // `package-info.class` is synthetic, but it must not be treated as inaccessible: its annotations are part of the package's ABI
+        assertInstanceOf(PackageInfoClassSnapshot::class.java, classLevelSnapshot)
+        assertEquals(ClassId(FqName("com.example"), FqName("package-info"), false), (classLevelSnapshot as PackageInfoClassSnapshot).classId)
+
+        // Granularity is forced to CLASS_LEVEL
+        assertInstanceOf(PackageInfoClassSnapshot::class.java, memberLevelSnapshot)
+        assertEquals(classLevelSnapshot.classAbiHash, (memberLevelSnapshot as PackageInfoClassSnapshot).classAbiHash)
+    }
+}
+
+/** Tests snapshotting of `module-info.class` (see [ModuleInfoClassSnapshot]) and the selection of the descriptor within a classpath entry. */
+class ModuleInfoClasspathSnapshotterTest : ClasspathSnapshotTestCommon() {
+
+    private val settings = ClasspathEntrySnapshotter.Settings(
+        granularity = ClassSnapshotGranularity.CLASS_LEVEL,
+        parseInlinedLocalClasses = false,
+        expandTypeAliases = false,
+    )
+
+    /** Compiles the module in `java/<testName>/src/<moduleDir>` on its own and returns its classes directory. */
+    private fun compileModule(testName: String, moduleDir: String, vararg javacOptions: String): File =
+        compileAll(File("$testDataDir/java/$testName/src/$moduleDir"), tmpDir, javacOptions = javacOptions.toList()).first().classRoot
+
+    private fun File.moduleInfoSnapshot(): ModuleInfoClassSnapshot? =
+        ClasspathEntrySnapshotter.snapshot(this, settings).classSnapshots.values.filterIsInstance<ModuleInfoClassSnapshot>().singleOrNull()
+
+    @Test
+    fun testModuleInfo() {
+        val classpathSnapshot = snapshotClasspath(File("$testDataDir/java/testModuleInfo/src"), tmpDir)
+        val classSnapshots = classpathSnapshot.classpathEntrySnapshots.single().classSnapshots
+        val actualSnapshot = classSnapshots["module-info.class"] as ModuleInfoClassSnapshot
+        val expectedSnapshot = File("$testDataDir/java/testModuleInfo/expected-snapshot/module-info.json").readText().trimEnd()
+
+        assertEquals(expectedSnapshot, actualSnapshot.toGson())
+        assertEquals(moduleInfoClassId("some.mod"), actualSnapshot.classId)
+        assertEquals("some.mod", actualSnapshot.moduleName)
+        assertEquals(setOf(FqName("apkg")), actualSnapshot.packages)
+        assertEquals(listOf("java.sql"), actualSnapshot.transitiveRequires)
+
+        // The same descriptor must be produced when the classpath entry is snapshotted as a whole
+        assertEquals(expectedSnapshot, compileModule("testModuleInfo", "some.mod").moduleInfoSnapshot()!!.toGson())
+    }
+
+    @Test
+    fun testModuleVersionsDoNotAffectSnapshot() {
+        val v1 = compileModule("testModuleInfo", "some.mod", "--module-version", "1.0").moduleInfoSnapshot()!!
+        val v2 = compileModule("testModuleInfo", "some.mod", "--module-version", "2.0").moduleInfoSnapshot()!!
+
+        assertEquals(v1.classAbiHash, v2.classAbiHash)
+    }
+
+    @Test
+    fun testDirectiveOrderDoesNotAffectSnapshot() {
+        val base = compileModule("testModuleInfoDescriptorVariants", "base").moduleInfoSnapshot()!!
+        val reordered = compileModule("testModuleInfoDescriptorVariants", "reorderedDirectives").moduleInfoSnapshot()!!
+
+        assertEquals(base.classAbiHash, reordered.classAbiHash)
+    }
+
+    @Test
+    fun testDescriptorChangesAffectSnapshot() {
+        val variants = listOf("base", "removedExports", "addedRequires", "transitiveRequires", "qualifiedExports", "annotated", "open")
+        val hashes = variants.map { compileModule("testModuleInfoDescriptorVariants", it).moduleInfoSnapshot()!!.classAbiHash }
+
+        assertEquals(hashes.size, hashes.toSet().size, "All descriptors must have distinct hashes: ${variants.zip(hashes)}")
+    }
+
+    @Test
+    fun testVersionedModuleInfoIsIgnoredInDirectory() {
+        val classesDir = compileModule("testModuleInfoSelection", "root")
+        val versionedDir = classesDir.resolve("META-INF/versions/9").apply { mkdirs() }
+        assertTrue(classesDir.resolve("module-info.class").renameTo(versionedDir.resolve("module-info.class")))
+
+        assertNull(classesDir.moduleInfoSnapshot())
+    }
+
+    /** Builds a jar at [jarName] with the given manifest attributes and entries (jar path to source file). */
+    private fun buildJar(jarName: String, multiRelease: Boolean?, entries: Map<String, File>): File {
+        val jar = tmpDir.resolve(jarName)
+        val manifest = Manifest().apply {
+            mainAttributes[Attributes.Name.MANIFEST_VERSION] = "1.0"
+            multiRelease?.let { mainAttributes.putValue("Multi-Release", it.toString()) }
+        }
+        JarOutputStream(jar.outputStream(), manifest).use { out ->
+            entries.forEach { [path, file] ->
+                out.putNextEntry(JarEntry(path))
+                out.write(file.readBytes())
+                out.closeEntry()
+            }
+        }
+        return jar
+    }
+
+    @Test
+    fun testRootModuleInfoWinsOverVersionedOnesInJar() {
+        val root = compileModule("testModuleInfoSelection", "root")
+        val versioned = compileModule("testModuleInfoSelection", "v9")
+        val jar = buildJar(
+            "root.jar", multiRelease = true, entries = mapOf(
+                "module-info.class" to root.resolve("module-info.class"),
+                "META-INF/versions/9/module-info.class" to versioned.resolve("module-info.class"),
+                "apkg/A.class" to root.resolve("apkg/A.class"),
+            )
+        )
+
+        assertEquals("root.mod", jar.moduleInfoSnapshot()!!.moduleName)
+    }
+
+    @Test
+    fun testLowestVersionedModuleInfoIsSelectedInMultiReleaseJar() {
+        val v8 = compileModule("testModuleInfoSelection", "v8")
+        val v9 = compileModule("testModuleInfoSelection", "v9")
+        val v11 = compileModule("testModuleInfoSelection", "v11")
+        val entries = mapOf(
+            "META-INF/versions/11/module-info.class" to v11.resolve("module-info.class"),
+            "META-INF/versions/9/module-info.class" to v9.resolve("module-info.class"),
+            "META-INF/versions/8/module-info.class" to v8.resolve("module-info.class"),
+            "apkg/A.class" to v9.resolve("apkg/A.class"),
+        )
+
+        assertEquals("v9.mod", buildJar("multi-release.jar", multiRelease = true, entries).moduleInfoSnapshot()!!.moduleName)
+        // Versioned descriptors are only considered for multi-release jars
+        assertNull(buildJar("not-multi-release.jar", multiRelease = false, entries).moduleInfoSnapshot())
+        assertNull(buildJar("no-attribute.jar", multiRelease = null, entries).moduleInfoSnapshot())
+    }
+
+    @Test
+    fun testVersionedModuleInfoBelowJava9IsIgnored() {
+        val v8 = compileModule("testModuleInfoSelection", "v8")
+        val jar = buildJar(
+            "v8.jar", multiRelease = true, entries = mapOf(
+                "META-INF/versions/8/module-info.class" to v8.resolve("module-info.class"),
+                "apkg/A.class" to v8.resolve("apkg/A.class"),
+            )
+        )
+
+        assertNull(jar.moduleInfoSnapshot())
     }
 }
 

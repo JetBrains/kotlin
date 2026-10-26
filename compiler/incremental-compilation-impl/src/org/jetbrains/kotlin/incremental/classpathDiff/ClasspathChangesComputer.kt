@@ -130,8 +130,12 @@ internal object ClasspathChangesComputer {
         previousClassSnapshots: List<AccessibleClassSnapshot>,
         metrics: BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>,
     ): ProgramSymbolSet {
-        val [currentKotlinClassSnapshots, currentJavaClassSnapshots] = currentClassSnapshots.partition { it is KotlinClassSnapshot }
-        val [previousKotlinClassSnapshots, previousJavaClassSnapshots] = previousClassSnapshots.partition { it is KotlinClassSnapshot }
+        // `package-info` and `module-info` snapshots have no members: a change is a change of the whole (synthetic) class, and the
+        // impacted classes are computed by `PackageInfoImpact` / `ModuleInfoImpact`.
+        val [currentInfoSnapshots, currentRegularClassSnapshots] = currentClassSnapshots.partition { it.isInfoClassSnapshot() }
+        val [previousInfoSnapshots, previousRegularClassSnapshots] = previousClassSnapshots.partition { it.isInfoClassSnapshot() }
+        val [currentKotlinClassSnapshots, currentJavaClassSnapshots] = currentRegularClassSnapshots.partition { it is KotlinClassSnapshot }
+        val [previousKotlinClassSnapshots, previousJavaClassSnapshots] = previousRegularClassSnapshots.partition { it is KotlinClassSnapshot }
 
         @Suppress("UNCHECKED_CAST")
         val kotlinClassChanges = metrics.measure(COMPUTE_KOTLIN_CLASS_CHANGES) {
@@ -149,8 +153,15 @@ internal object ClasspathChangesComputer {
             )
         }
 
-        return kotlinClassChanges + javaClassChanges
+        val infoClassChanges = ProgramSymbolSet.Collector().run {
+            addClasses((currentInfoSnapshots + previousInfoSnapshots).map { it.classId })
+            getResult()
+        }
+
+        return kotlinClassChanges + javaClassChanges + infoClassChanges
     }
+
+    private fun AccessibleClassSnapshot.isInfoClassSnapshot() = this is PackageInfoClassSnapshot || this is ModuleInfoClassSnapshot
 
     private fun computeKotlinClassChanges(
         currentClassSnapshots: List<KotlinClassSnapshot>,

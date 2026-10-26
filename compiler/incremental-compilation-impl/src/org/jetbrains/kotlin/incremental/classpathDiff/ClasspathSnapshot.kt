@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity.CLASS_ME
 import org.jetbrains.kotlin.incremental.KotlinClassInfo
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader.Kind.*
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 
 /** Snapshot of a classpath. It consists of a list of [ClasspathEntrySnapshot]s. */
@@ -26,7 +28,7 @@ class ClasspathEntrySnapshot(
      * Maps (Unix-style) relative paths of classes to their snapshots. The paths are relative to the containing classpath entry (directory
      * or jar).
      */
-    val classSnapshots: LinkedHashMap<String, ClassSnapshot>
+    val classSnapshots: LinkedHashMap<String, ClassSnapshot>,
 )
 
 /**
@@ -113,6 +115,42 @@ class JavaClassSnapshot(
     val classMemberLevelSnapshot: JavaClassMemberLevelSnapshot?,
     val supertypes: List<JvmClassName>
 ) : AccessibleClassSnapshot()
+
+/**
+ * [ClassSnapshot] of a `package-info.class`.
+ *
+ * @see PackageInfoImpact
+ */
+class PackageInfoClassSnapshot(
+    override val classId: ClassId,
+    override val classAbiHash: Long,
+) : AccessibleClassSnapshot()
+
+/**
+ * [ClassSnapshot] of a `module-info.class`
+ *
+ * @see ModuleInfoImpact
+ */
+class ModuleInfoClassSnapshot(
+    /** Synthetic id `<module.name>.module-info` (see [moduleInfoClassId]); `module-info` is not a legal identifier, so it can't clash. */
+    override val classId: ClassId,
+
+    override val classAbiHash: Long,
+
+    /** Packages of the (accessible) classes in the same classpath entry */
+    val packages: Set<FqName>,
+
+    /** Names of the modules this module `requires transitive`. */
+    val transitiveRequires: List<String>,
+) : AccessibleClassSnapshot() {
+    val moduleName: String get() = classId.packageFqName.asString()
+
+    companion object {
+        private val MODULE_INFO_CLASS_NAME = Name.identifier("module-info")
+
+        fun moduleInfoClassId(moduleName: String): ClassId = ClassId(FqName(moduleName), MODULE_INFO_CLASS_NAME)
+    }
+}
 
 /** Snapshot of a Java class when [ClassSnapshotGranularity] == [CLASS_MEMBER_LEVEL]. */
 class JavaClassMemberLevelSnapshot(

@@ -1,0 +1,3 @@
+module standard.layout.test {
+    requires kotlin.stdlib;
+}

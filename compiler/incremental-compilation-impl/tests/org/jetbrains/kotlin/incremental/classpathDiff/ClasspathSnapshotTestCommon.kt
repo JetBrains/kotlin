@@ -9,6 +9,7 @@ import com.google.gson.GsonBuilder
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
 import org.jetbrains.kotlin.cli.common.isWindows
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
+import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.ClassFileUtil.readBytes
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.ClassFileUtil.snapshot
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.CompileUtil.compile
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.CompileUtil.compileAll
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommo
 import org.jetbrains.kotlin.incremental.classpathDiff.impl.ClassFile
 import org.jetbrains.kotlin.incremental.classpathDiff.impl.ClassFileWithContentsProvider
 import org.jetbrains.kotlin.incremental.classpathDiff.impl.PlainClassListSnapshotter
+import org.jetbrains.kotlin.incremental.classpathDiff.impl.SingleClassSnapshotter.snapshotModuleInfoClass
 import org.jetbrains.kotlin.incremental.storage.fromByteArray
 import org.jetbrains.kotlin.incremental.storage.toByteArray
 import org.jetbrains.kotlin.test.compileJavaFiles
@@ -85,15 +87,27 @@ abstract class ClasspathSnapshotTestCommon {
             }
         }
 
-        /** Compiles the source files in the given directory and returns all generated .class files. */
-        fun compileAll(srcDir: File, tmpDir: File, classpath: List<File> = emptyList()): List<ClassFile> {
+        /**
+         * Compiles the source files in the given directory and returns all generated .class files.
+         *
+         * If the directory contains a `module-info.java`, the Java sources are compiled as a named module with [classpath] on the module
+         * path (so that the module can `requires` the modules compiled before it).
+         */
+        fun compileAll(
+            srcDir: File,
+            tmpDir: File,
+            classpath: List<File> = emptyList(),
+            javacOptions: List<String> = emptyList(),
+        ): List<ClassFile> {
             val classesDir = srcDir.path.let {
                 File(it.substringBeforeLast("src") + "classes" + it.substringAfterLast("src"))
             }
             val kotlinClasses = compileKotlin(srcDir, classesDir, classpath)
 
             val javaClasspath = classpath + listOfNotNull(kotlinClasses.firstOrNull()?.classRoot)
-            val javaClasses = compileJava(srcDir, classesDir = Files.createTempDirectory(tmpDir.toPath(), null).toFile(), javaClasspath)
+            val javaClasses = compileJava(
+                srcDir, classesDir = Files.createTempDirectory(tmpDir.toPath(), null).toFile(), javaClasspath, javacOptions
+            )
 
             return kotlinClasses + javaClasses
         }
@@ -148,12 +162,12 @@ abstract class ClasspathSnapshotTestCommon {
             classesDir.resolve("META-INF").deleteRecursively()
         }
 
-        private fun compileJava(srcDir: File, classesDir: File, classpath: List<File>): List<ClassFile> {
-            doCompileJava(srcDir, classesDir, classpath)
+        private fun compileJava(srcDir: File, classesDir: File, classpath: List<File>, javacOptions: List<String>): List<ClassFile> {
+            doCompileJava(srcDir, classesDir, classpath, javacOptions)
             return getClassFilesInDir(classesDir)
         }
 
-        private fun doCompileJava(srcDir: File, classesDir: File, classpath: List<File>) {
+        private fun doCompileJava(srcDir: File, classesDir: File, classpath: List<File>, javacOptions: List<String>) {
             classesDir.deleteRecursively()
             classesDir.mkdirs()
             val javaFiles = srcDir.walk().toList().filter { it.path.endsWith(".java") }
@@ -161,10 +175,16 @@ abstract class ClasspathSnapshotTestCommon {
                 return
             }
 
-            val classpathOption =
-                if (classpath.isNotEmpty()) listOf("-classpath", classpath.joinToString(File.pathSeparator)) else emptyList()
-            compileJavaFiles(javaFiles, listOf("-d", classesDir.path) + classpathOption).assertSuccessful()
+            val isModule = javaFiles.any { it.name == MODULE_INFO_JAVA }
+            val classpathOption = when {
+                classpath.isEmpty() -> emptyList()
+                isModule -> listOf("--module-path", classpath.joinToString(File.pathSeparator))
+                else -> listOf("-classpath", classpath.joinToString(File.pathSeparator))
+            }
+            compileJavaFiles(javaFiles, listOf("-d", classesDir.path) + classpathOption + javacOptions).assertSuccessful()
         }
+
+        private const val MODULE_INFO_JAVA = "module-info.java"
 
         private fun getClassFilesInDir(classesDir: File): List<ClassFile> {
             return classesDir.walk().toList()
@@ -218,14 +238,32 @@ internal fun snapshotClasspath(
         val classFiles = compileAll(classpathEntrySourceDir, tmpDir, classpath)
         classpath.addAll(listOfNotNull(classFiles.firstOrNull()?.classRoot))
 
-        val relativePaths = classFiles.map { it.unixStyleRelativePath }
-        val classSnapshots = classFiles.snapshot(granularity, expandTypeAliases)
-        ClasspathEntrySnapshot(
-            classSnapshots = relativePaths.zip(classSnapshots).toMap(LinkedHashMap())
-        )
+        classFiles.snapshotClasspathEntry(granularity, expandTypeAliases)
     }
     return ClasspathSnapshot(classpathEntrySnapshots)
 }
+
+/**
+ * Snapshots the given classes of a single classpath entry. Like [ClasspathEntrySnapshotter], a `module-info.class` at the root of the
+ * entry is snapshotted as a [ModuleInfoClassSnapshot] (versioned ones under `META-INF/versions` are not considered for directories).
+ */
+internal fun List<ClassFile>.snapshotClasspathEntry(
+    granularity: ClassSnapshotGranularity? = null,
+    expandTypeAliases: Boolean = false,
+): ClasspathEntrySnapshot {
+    val [moduleInfoClassFiles, regularClassFiles] = partition { it.unixStyleRelativePath == MODULE_INFO_CLASS }
+    val relativePaths = regularClassFiles.map { it.unixStyleRelativePath }
+    val classSnapshots = regularClassFiles.snapshot(granularity, expandTypeAliases)
+    val classSnapshotsByPath = relativePaths.zip(classSnapshots).toMap(LinkedHashMap())
+
+    moduleInfoClassFiles.singleOrNull()?.let { moduleInfoClassFile ->
+        val packages = classSnapshots.mapNotNullTo(mutableSetOf()) { (it as? AccessibleClassSnapshot)?.classId?.packageFqName }
+        snapshotModuleInfoClass(moduleInfoClassFile.readBytes(), packages)?.let { classSnapshotsByPath[MODULE_INFO_CLASS] = it }
+    }
+    return ClasspathEntrySnapshot(classSnapshotsByPath)
+}
+
+private const val MODULE_INFO_CLASS = "module-info.class"
 
 private fun runCommandInNewProcess(commandAndArgs: List<String>) {
     val processBuilder = ProcessBuilder(commandAndArgs)

@@ -670,6 +670,46 @@ class KotlinAndJavaClasspathChangesComputerTest : ClasspathSnapshotTestCommon() 
             )
         ).assertEquals(changes)
     }
+
+    @Test
+    fun testPackageInfoChange() {
+        val changes = computeClasspathChanges(File(testDataDir, "JavaOnly/testPackageInfoChange/src"), tmpDir)
+        Changes(
+            lookupSymbols = setOf(
+                // Changed
+                LookupSymbol(name = "package-info", scope = "com.example"),
+                // Impacted: every class in the package, and (transitively) their subclasses in other packages
+                LookupSymbol(name = "ClassInPackage", scope = "com.example"),
+                LookupSymbol(name = "SubClassOfClassInPackage", scope = "com.other"),
+            ),
+            fqNames = setOf(
+                "com.example.package-info",
+                "com.example.ClassInPackage",
+                "com.other.SubClassOfClassInPackage",
+            )
+        ).assertEquals(changes)
+    }
+
+    @Test
+    fun testModuleInfoChange() {
+        val changes = computeClasspathChanges(File(testDataDir, "JavaOnly/testModuleInfoChange/src"), tmpDir)
+        Changes(
+            lookupSymbols = setOf(
+                // Changed
+                LookupSymbol(name = "module-info", scope = "mid"),
+                // Impacted
+                LookupSymbol(name = "M", scope = "mpkg"),
+                LookupSymbol(name = "module-info", scope = "base"),
+                LookupSymbol(name = "A", scope = "apkg"),
+            ),
+            fqNames = setOf(
+                "mid.module-info",
+                "mpkg.M",
+                "base.module-info",
+                "apkg.A",
+            )
+        ).assertEquals(changes)
+    }
 }
 
 private fun testMixedClassSnapshotGranularities_snapshotClasspath(
