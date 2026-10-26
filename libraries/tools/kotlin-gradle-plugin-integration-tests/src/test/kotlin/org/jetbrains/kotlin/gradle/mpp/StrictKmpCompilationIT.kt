@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.mpp
 
 import org.gradle.api.Project
+import org.gradle.internal.impldep.com.google.api.client.util.Data.mapOf
 import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.kotlin.dsl.listProperty
@@ -17,26 +18,25 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.uklibs.computeTransformedLibraryChecksum
+import org.jetbrains.kotlin.gradle.uklibs.enableSeparateKmpCompilation
 import org.jetbrains.kotlin.gradle.uklibs.enableStrictKmpCompilation
 import java.io.File
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
+@GradleTestVersions(
+    // Something explodes in old Gradle version with provider return
+    minVersion = TestVersions.Gradle.MAX_SUPPORTED
+)
 @MppGradlePluginTests
 class StrictKmpCompilationIT : KGPBaseTest() {
 
-    @GradleTestVersions(
-        // Something explodes in old Gradle version with provider return
-        minVersion = TestVersions.Gradle.MAX_SUPPORTED
-    )
     @GradleTest
     fun `strict kmp compilation - coroutines and platform native libraries transform - in a project with 2 native targets`(version: GradleVersion) {
-        val transformMap = projectWith2NativeTargets(version) {
-            buildScriptInjection {
-                project.computeTransformedLibraryChecksum(false)
-                project.enableStrictKmpCompilation()
-            }
-        }.dumpSeparateCompilationXfragmentTransformBySourceSet {
+        val transformMap = projectWith2NativeTargets(
+            version,
+            enableStrictKmpCompilation = true,
+        ).dumpSeparateCompilationXfragmentTransformBySourceSet {
             (project.extensions.getByName("kotlin") as KotlinMultiplatformExtension).iosArm64().compilations
                 .get("main")
                 .compileTaskProvider.get()
@@ -80,17 +80,13 @@ class StrictKmpCompilationIT : KGPBaseTest() {
         // FIXME: Check that transform matches the -Xfragment output
     }
 
-    @GradleTestVersions(
-        minVersion = TestVersions.Gradle.MAX_SUPPORTED
-    )
     @GradleTest
     fun `before strict kmp compilation - coroutines and platform native libraries transform - in a project with 2 native targets`(version: GradleVersion) {
-        val project = projectWith2NativeTargets(version) {
-            buildScriptInjection {
-                project.computeTransformedLibraryChecksum(false)
-                project.enableStrictKmpCompilation(false)
-            }
-        }
+        // FIXME: Rewrite this with just separate compilation?
+        val project = projectWith2NativeTargets(
+            version,
+            enableStrictKmpCompilation = false,
+        )
 
         val commonMainClasspath = project.dumpMetadataCompilationClasspath {
             (extensions.getByName("kotlin") as KotlinMultiplatformExtension).metadata().compilations.getByName("commonMain")
@@ -114,6 +110,61 @@ class StrictKmpCompilationIT : KGPBaseTest() {
         assertEquals(
             coroutinesNativeMainVisibility,
             commonMainClasspath.map { it.name }.intersect(coroutinesNativeMainVisibility),
+        )
+    }
+
+    @GradleTest
+    fun `strict kmp compilation - coroutines and guava - in a project with single jvm`(version: GradleVersion) {
+        val strictCompilationTransformMap = projectWithSingleJvmTarget(
+            version,
+            enableStrictKmpCompilation = true,
+        ).dumpSeparateCompilationXfragmentTransformBySourceSet {
+            (project.extensions.getByName("kotlin") as KotlinMultiplatformExtension).jvm().compilations
+                .get("main")
+                .compileTaskProvider.get() as K2MultiplatformCompilationTask
+        }
+
+        val beforeStrictCompilationTransformMap = projectWithSingleJvmTarget(
+            version,
+            enableStrictKmpCompilation = false
+        ).dumpSeparateCompilationXfragmentTransformBySourceSet {
+            (project.extensions.getByName("kotlin") as KotlinMultiplatformExtension).jvm().compilations
+                .get("main")
+                .compileTaskProvider.get() as K2MultiplatformCompilationTask
+        }
+
+        assertEquals(
+            mapOf(
+                "commonMain" to listOf(
+                    "guava-33.7.2-jre.jar",
+                    "annotations-23.0.0.jar",
+                    "failureaccess-1.0.3.jar",
+                    "listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar",
+                    "jspecify-1.0.1.jar",
+                    "error_prone_annotations-2.50.0.jar",
+                    "j2objc-annotations-3.1.jar",
+                    "org.jetbrains.kotlin-kotlin-stdlib-2.5.255-SNAPSHOT-commonMain-.klib",
+                    "org.jetbrains.kotlinx-kotlinx-coroutines-core-1.11.0-concurrentMain-.klib",
+                    "org.jetbrains.kotlinx-kotlinx-coroutines-core-1.11.0-commonMain-.klib",
+                    "kotlinx-coroutines-core-jvm-1.11.0.jar",
+                ),
+                "jvmMain" to listOf(
+                ),
+            ).prettyPrinted,
+            beforeStrictCompilationTransformMap.mapValues { it.value.map { it.name } }.prettyPrinted,
+        )
+
+        assertEquals(
+            mapOf(
+                "commonMain" to listOf(
+                    "org.jetbrains.kotlin-kotlin-stdlib-2.5.255-SNAPSHOT-commonMain-.klib",
+                    "org.jetbrains.kotlinx-kotlinx-coroutines-core-1.11.0-concurrentMain-.klib",
+                    "org.jetbrains.kotlinx-kotlinx-coroutines-core-1.11.0-commonMain-.klib",
+                ),
+                "jvmMain" to listOf(
+                ),
+            ).prettyPrinted,
+            strictCompilationTransformMap.mapValues { it.value.map { it.name } }.prettyPrinted,
         )
     }
 
@@ -153,14 +204,16 @@ class StrictKmpCompilationIT : KGPBaseTest() {
 
     private fun projectWith2NativeTargets(
         version: GradleVersion,
-        setup: TestProject.() -> Unit = {
-            buildScriptInjection {
-                project.computeTransformedLibraryChecksum(false)
-                project.enableStrictKmpCompilation()
-            }
-        },
+        enableStrictKmpCompilation: Boolean,
     ) = project("empty", version) {
-        setup()
+        buildScriptInjection {
+            project.computeTransformedLibraryChecksum(false)
+            if (enableStrictKmpCompilation) {
+                project.enableStrictKmpCompilation(true)
+            } else {
+                project.enableStrictKmpCompilation(false)
+            }
+        }
         plugins {
             kotlin("multiplatform")
         }
@@ -171,6 +224,34 @@ class StrictKmpCompilationIT : KGPBaseTest() {
 
                 sourceSets.commonMain.dependencies {
                     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.11.0")
+                }
+            }
+        }
+    }
+
+    private fun projectWithSingleJvmTarget(
+        version: GradleVersion,
+        enableStrictKmpCompilation: Boolean = true,
+    ) = project("empty", version) {
+        buildScriptInjection {
+            project.computeTransformedLibraryChecksum(false)
+            if (enableStrictKmpCompilation) {
+                project.enableStrictKmpCompilation()
+            } else {
+                project.enableSeparateKmpCompilation()
+            }
+        }
+        plugins {
+            kotlin("multiplatform")
+        }
+        buildScriptInjection {
+            project.applyMultiplatform {
+                jvm()
+
+                sourceSets.commonMain.dependencies {
+                    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.11.0")
+                    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.11.0")
+                    implementation("com.google.guava:guava:33.7.2-jre")
                 }
             }
         }

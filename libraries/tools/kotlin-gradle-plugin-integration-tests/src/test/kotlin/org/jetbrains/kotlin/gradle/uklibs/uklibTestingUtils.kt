@@ -336,12 +336,18 @@ internal fun Project.setUklibResolutionStrategy(strategy: KmpResolutionStrategy 
     )
 }
 
-internal fun Project.enableStrictKmpCompilation(enable: Boolean = true) {
-    // Separate compilation is a prerequisite for strict compilation because we will enforce it primarily through -Xfragment-dependency in platform compilations
+internal fun Project.enableSeparateKmpCompilation(enable: Boolean = true) {
     propertiesExtension.set(
         PropertiesProvider.PropertyNames.KOTLIN_KMP_SEPARATE_COMPILATION,
         enable,
     )
+}
+
+internal fun Project.enableStrictKmpCompilation(enable: Boolean = true) {
+    if (enable) {
+        // Separate compilation is a prerequisite for strict compilation because we will enforce it primarily through -Xfragment-dependency in platform compilations
+        enableSeparateKmpCompilation()
+    }
     propertiesExtension.set(
         PropertiesProvider.PropertyNames.KOTLIN_KMP_STRICT_COMPILATION,
         enable,

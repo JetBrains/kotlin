@@ -235,7 +235,16 @@ internal suspend fun KotlinSourceSet.retrieveExternalDependencies(transitive: Bo
     val dependencies = project.files()
     // Requested dependencies that are not Multiplatform Libraries. for example stdlib-common
     val artifacts = internal.resolvableMetadataConfiguration.incoming.artifacts.resolvedArtifacts
-    dependencies.from(project.files(artifacts.map { artifactsSet -> artifactsSet.filterNot { it.isMpp }.map { it.file } }))
+    dependencies.from(project.files(artifacts.map { artifactsSet ->
+        if (project.kotlinPropertiesProvider.strictKmpCompilation) {
+            /**
+             * FIXME: Both the KeepOriginal and this seems to be needed. Why does this branch exist at all if we have KeepOriginal?
+             */
+            emptyList()
+        } else {
+            artifactsSet.filterNot { it.isMpp }.map { it.file }
+        }
+    }))
 
     // Transformed Multiplatform Libraries based on source set visibility
     dependencies.from(

@@ -113,19 +113,33 @@ abstract class MetadataDependencyTransformationTask
         flatMap { resolution ->
             when (resolution) {
                 is MetadataDependencyResolution.ChooseVisibleSourceSets -> resolution.toTransformedLibrariesRecords()
-                is MetadataDependencyResolution.KeepOriginalDependency -> when (transformationParameters.kmpResolutionStrategy) {
-                    /**
-                     * We probably actually want:
-                     * is MetadataDependencyResolution.KeepOriginalDependency -> emptyList()
-                     *
-                     * in both cases
-                     *
-                     * This used to resolve pre-HMPP metadata jar, but now it just leaks files to metadata compilation classpath
-                     *
-                     * This is especially problematic for lenient resolution
-                     */
-                    KmpResolutionStrategy.InterlibraryUklibAndPSMResolution_PreferUklibs -> emptyList()
-                    KmpResolutionStrategy.StandardKMPResolution -> resolution.toTransformedLibrariesRecords()
+                is MetadataDependencyResolution.KeepOriginalDependency -> {
+                    if (transformationParameters.strictKmpCompilation) {
+                        /**
+                         * Don't send random files to transformation outputs. Most problematic (and likely) here are the JVM jar
+                         * dependencies that break the strict compilation semantics in strict compilation mode.
+                         *
+                         * FIXME: Just move all of this to Exclude instead?
+                         *
+                         * FIXME: Maybe apply this only in default target hierarchy source sets, so that jvmAndAndroidMain continues to work?
+                         */
+                        emptyList()
+                    } else {
+                        when (transformationParameters.kmpResolutionStrategy) {
+                            /**
+                             * We probably actually want:
+                             * is MetadataDependencyResolution.KeepOriginalDependency -> emptyList()
+                             *
+                             * in both cases
+                             *
+                             * This used to resolve pre-HMPP metadata jar, but now it just leaks files to metadata compilation classpath
+                             *
+                             * This is especially problematic for lenient resolution
+                             */
+                            KmpResolutionStrategy.InterlibraryUklibAndPSMResolution_PreferUklibs -> emptyList()
+                            KmpResolutionStrategy.StandardKMPResolution -> resolution.toTransformedLibrariesRecords()
+                        }
+                    }
                 }
                 is MetadataDependencyResolution.Exclude -> emptyList()
             }
