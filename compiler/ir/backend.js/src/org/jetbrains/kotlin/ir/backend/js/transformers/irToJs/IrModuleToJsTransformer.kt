@@ -172,8 +172,13 @@ class IrModuleToJsTransformer(
 
     private val moduleFragmentToNameMapper = ModuleFragmentToExternalName(moduleToName)
 
+    private val jsExportModelGenerator by lazy {
+        JsExportModelGenerator(backendContext, generateNamespacesForPackages = !isEsModules)
+    }
+
     private class IrFileExports(
         val file: IrFile,
+        val declarationExports: Map<IrDeclaration, List<ExportedDeclaration>>,
         val exports: List<ExportedDeclaration>,
         val tsDeclarations: TypeScriptFragment?,
     )
@@ -251,28 +256,27 @@ class IrModuleToJsTransformer(
         return exportData.map { { generateProgramFragment(it, mode) } }
     }
 
-    private fun <E> generateExportWithExternals(rootFile: IrFile, generate: (IrPackageFragment) -> List<E>): List<E> {
+    private fun <E> generateExportWithExternals(rootFile: IrFile, generate: (IrPackageFragment) -> Map<IrDeclaration, List<E>>): Map<IrDeclaration, List<E>> {
         val exports = generate(rootFile)
-        val additionalExports = backendContext.externalPackageFragment[rootFile.symbol]?.let(generate) ?: emptyList()
+        val additionalExports = backendContext.externalPackageFragment[rootFile.symbol]?.let(generate) ?: emptyMap()
         return additionalExports + exports
     }
+
 
     private fun generateExportWithExternals(
         irFiles: Collection<IrFile>,
         tsExportModelGenerator: TsExportModelGenerator?,
     ): List<IrFileExports> {
-        val jsExportModelGenerator = JsExportModelGenerator(backendContext, generateNamespacesForPackages = !isEsModules)
         return irFiles.map { irFile ->
-            val allExports = generateExportWithExternals(irFile, jsExportModelGenerator::generateExport)
-            val tsDeclarations = if (tsExportModelGenerator != null) {
-                generateExportWithExternals(
-                    irFile,
-                    tsExportModelGenerator::generateExport
-                ).ifNotEmpty { toTypeScriptFragment(moduleKind) }
-            } else {
-                null
+            val declarationExports = generateExportWithExternals(irFile, jsExportModelGenerator::generateExports)
+            val exports = jsExportModelGenerator.wrapInNamespaces(irFile.packageFqName, declarationExports.values.flatten())
+
+            val tsDeclarations = tsExportModelGenerator?.let { ts ->
+                val tsExports = generateExportWithExternals(irFile, ts::generateExports)
+                ts.wrapInNamespaces(irFile.packageFqName, tsExports.values.flatten())
+                    .ifNotEmpty { toTypeScriptFragment(moduleKind) }
             }
-            IrFileExports(irFile, allExports, tsDeclarations)
+            IrFileExports(irFile, declarationExports, exports, tsDeclarations)
         }
     }
 

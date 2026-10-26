@@ -4,8 +4,6 @@ declare namespace JS_TESTS {
     namespace foo {
         interface SomeExternalInterface {
         }
-    }
-    namespace foo {
         class Test {
             constructor();
             sum(x: number, y: number): number;
