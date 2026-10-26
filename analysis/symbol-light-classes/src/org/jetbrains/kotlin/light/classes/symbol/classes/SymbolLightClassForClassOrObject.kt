@@ -52,7 +52,9 @@ import org.jetbrains.kotlin.util.OperatorNameConventions.TO_STRING
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 
 internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassLike {
-    val isKotlinValueClass: Boolean
+    val isKotlinValueClass: Boolean by lazyPub {
+        withClassSymbol { it.isInline }
+    }
 
     constructor(
         useSiteModule: KaModule,
@@ -62,21 +64,17 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
         classSymbol = classSymbol,
     ) {
         require(classSymbol.classKind != KaClassKind.INTERFACE && classSymbol.classKind != KaClassKind.ANNOTATION_CLASS)
-        isKotlinValueClass = classSymbol.isInline
     }
 
     private constructor(
         classOrObjectDeclaration: KtClassOrObject?,
         classSymbolPointer: KaSymbolPointer<KaNamedClassSymbol>,
         useSiteModule: KaModule,
-        isKotlinValueClass: Boolean,
     ) : super(
         classOrObjectDeclaration = classOrObjectDeclaration,
         classSymbolPointer = classSymbolPointer,
         useSiteModule = useSiteModule,
-    ) {
-        this.isKotlinValueClass = isKotlinValueClass
-    }
+    )
 
     override fun getModifierList(): PsiModifierList = cachedValue {
         SymbolLightClassModifierList(
@@ -362,6 +360,5 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
         classOrObjectDeclaration = classOrObjectDeclaration,
         classSymbolPointer = symbolPointer,
         useSiteModule = useSiteModule,
-        isKotlinValueClass = isKotlinValueClass,
     )
 }
