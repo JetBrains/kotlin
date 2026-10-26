@@ -396,7 +396,7 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
         val context = parsed.context
 
         // Check that star import is extracted
-        val starCandidate = with(context) { getFirstStarImportCandidate("NotNull") }
+        val starCandidate = getFirstStarImportCandidate("NotNull", c = context)
         assertNotNull(starCandidate) { "Expected star import candidate for NotNull" }
         assertEquals("org.jetbrains.annotations", starCandidate.packageFqName.asString())
 
@@ -441,7 +441,7 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
         val context = parsed.context
 
         // Verify star imports are extracted
-        val starCandidate1 = with(context) { getFirstStarImportCandidate("Iterator") }
+        val starCandidate1 = getFirstStarImportCandidate("Iterator", c = context)
         assertEquals("java.util", starCandidate1?.packageFqName?.asString())
 
         // Find the class and method
