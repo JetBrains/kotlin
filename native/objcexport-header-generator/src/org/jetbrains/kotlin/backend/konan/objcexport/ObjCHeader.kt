@@ -35,7 +35,9 @@ data class ObjCHeader(
         }
     }
 
-    fun render(exportKDoc: Boolean = true): List<String> {
+    fun render(exportKDoc: Boolean = true): List<String> = render(exportKDoc, emptyList())
+
+    fun render(exportKDoc: Boolean, insertions: List<Pair<Int, List<String>>>): List<String> {
         return buildList {
             addImports(foundationImports)
             addImports(additionalImports)
@@ -68,14 +70,24 @@ data class ObjCHeader(
             add("#endif")
             add("")
 
-            stubs.forEach {
-                addAll(StubRenderer.render(it, exportKDoc))
-                add("")
+            var start = 0
+            insertions.sortedBy { it.first }.forEach { [index, lines] ->
+                addAll(renderStubs(start until index, exportKDoc))
+                addAll(lines)
+                start = index
             }
+            addAll(renderStubs(start until stubs.size, exportKDoc))
 
             add("#pragma pop_macro(\"$objcNullableResultAttribute\")")
             add("#pragma clang diagnostic pop")
             add("NS_ASSUME_NONNULL_END")
+        }
+    }
+
+    private fun renderStubs(range: IntRange, exportKDoc: Boolean): List<String> = buildList {
+        range.forEach { index ->
+            addAll(StubRenderer.render(stubs[index], exportKDoc))
+            add("")
         }
     }
 

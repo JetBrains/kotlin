@@ -24,6 +24,7 @@ import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import java.io.File
 import java.util.Properties
+import java.util.zip.GZIPInputStream
 
 abstract class ObjCCacheTestBase : AbstractNativeSimpleTest() {
     protected val frameworkTestDataDir = ForTestCompileRuntime.transformTestDataPath("native/native.tests/testData/framework")
@@ -277,6 +278,8 @@ class ObjCCacheTest : ObjCCacheTestBase() {
         )
         val binDir = objCCacheBinDir(libraries.cacheDir, "layoutLib")
         assertTrue(binDir.isDirectory) { "Expected the cache in $binDir" }
+        val units = GZIPInputStream(binDir.resolve("objc_cache_units.txt.gz").inputStream()).bufferedReader().use { it.readText() }
+        assertTrue("LayoutWorker" in units) { "Expected the header units to declare LayoutWorker" }
         val metadata = objCCacheMetadata(libraries.cacheDir, "layoutLib")
         assertEquals(
             setOf(
@@ -729,6 +732,31 @@ class ObjCCacheTest : ObjCCacheTestBase() {
     }
 
     @Test
+    fun testHeaderKeepsControlCharactersOfCachedLibraries() {
+        val libraries = compileLibraries(
+            Library(
+                "libA",
+                """
+                package liba
+                @MustBeDocumented
+                annotation class Doc(val text: String)
+                class Documented {
+                    @Doc("cr\rcrlf\r\ntab\tbackslash\\n")
+                    fun annotated(): Int = 1
+                }
+                """,
+                objCCacheArgs = listOf("-Xexport-kdoc"),
+            ),
+        )
+        val kdocArgs = listOf("-Xexport-kdoc")
+        val cached = linkFramework(libraries, extraArgs = kdocArgs, dir = buildDir.resolve("cached"))
+        val uncached = linkFramework(libraries, withCaches = false, extraArgs = kdocArgs, dir = buildDir.resolve("uncached"))
+        cached.assertObjCCachesLinked("libA")
+        assertTrue("cr\rcrlf\r\ntab\tbackslash\\n" in uncached.header) { uncached.header }
+        assertEquals(uncached.header, cached.header) { "Expected the header with caches to match the header without caches" }
+    }
+
+    @Test
     fun testNotUsedWithoutCollisionErrors() {
         val framework = linkFramework(compileLibraries(testLibrary()), binaryOptions = emptyList())
         framework.assertObjCCachesLinked("library", linked = false)
@@ -781,6 +809,13 @@ class ObjCCacheWarningsTest : ObjCCacheTestBase() {
         val metadata = objCCacheBinDir(libraries.cacheDir, "libB").resolve("objc_cache_metadata.properties")
         metadata.writeText(metadata.readText().replace("format=1", "format=0"))
         assertLibBCacheIgnored(libraries, "libB-Kt.objc_cache was built in format 0, but this compiler reads format 1")
+    }
+
+    @Test
+    fun testIgnoredWhenIncomplete() {
+        val libraries = alphaAndBeta()
+        objCCacheBinDir(libraries.cacheDir, "libB").resolve("objc_cache_units.txt.gz").delete()
+        assertLibBCacheIgnored(libraries, "libB-Kt.objc_cache is incomplete or unreadable")
     }
 
     @Test
