@@ -97,7 +97,8 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
         private val COMMA_COLON_GT_SET = syntaxElementTypeSetOf(KtTokens.COMMA, KtTokens.COLON, KtTokens.GT)
         private val IDENTIFIER_RBRACKET_LBRACKET_SET = syntaxElementTypeSetOf(KtTokens.IDENTIFIER, KtTokens.RBRACKET, KtTokens.LBRACKET)
         private val LBRACE_RBRACE_SET = syntaxElementTypeSetOf(KtTokens.LBRACE, KtTokens.RBRACE)
-        private val COMMA_SEMICOLON_RBRACE_SET = syntaxElementTypeSetOf(KtTokens.COMMA, KtTokens.SEMICOLON, KtTokens.RBRACE)
+        private val NO_MODIFIERS_BEFORE_FOR_ENUM_ENTRY =
+            syntaxElementTypeSetOf(KtTokens.COMMA, KtTokens.SEMICOLON, KtTokens.RBRACE, KtTokens.LPAR, KtTokens.LBRACE)
         private val VALUE_ARGS_RECOVERY_SET =
             syntaxElementTypeSetOf(KtTokens.LBRACE, KtTokens.SEMICOLON, KtTokens.RPAR, KtTokens.EOL_OR_SEMICOLON, KtTokens.RBRACE)
         private val PROPERTY_NAME_FOLLOW_SET = syntaxElementTypeSetOf(
@@ -1348,7 +1349,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
     private fun parseEnumEntry(): ParseEnumEntryResult {
         val entry = mark()
 
-        parseModifierList(COMMA_SEMICOLON_RBRACE_SET)
+        parseModifierList(NO_MODIFIERS_BEFORE_FOR_ENUM_ENTRY)
 
         if (!atSetWithRemap(SOFT_KEYWORDS_AT_MEMBER_START) && atWithRemap(KtTokens.IDENTIFIER)) {
             advance() // IDENTIFIER

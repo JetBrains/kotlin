@@ -1,4 +1,3 @@
-// COMPILATION_ERRORS
 // ISSUE: KT-90707
 enum class E1 {
     error,

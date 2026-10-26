@@ -527,6 +527,12 @@ public class CompiledCommonStubsTestGenerated extends AbstractCompiledCommonStub
   }
 
   @Test
+  @TestMetadata("enumEntryNamedLikeModifierWithModifiers.kt")
+  public void testEnumEntryNamedLikeModifierWithModifiers() {
+    run("enumEntryNamedLikeModifierWithModifiers.kt");
+  }
+
+  @Test
   @TestMetadata("EnumEntrySemicolonInlineMember.kt")
   public void testEnumEntrySemicolonInlineMember() {
     run("EnumEntrySemicolonInlineMember.kt");
