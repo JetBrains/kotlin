@@ -46,16 +46,16 @@ class StrictKmpCompilationIT : KGPBaseTest() {
         val nativeMainTransform = assertNotNull(transformMap["nativeMain"])
         val appleMainTransform = assertNotNull(transformMap["appleMain"])
         assertEquals(
-            listOf(
+            setOf(
                 "stdlib",
                 "org.jetbrains.kotlinx-kotlinx-coroutines-core-1.11.0-concurrentMain-.klib",
                 "org.jetbrains.kotlinx-kotlinx-coroutines-core-1.11.0-commonMain-.klib",
                 "org.jetbrains.kotlinx-atomicfu-0.23.1-commonMain-.klib",
             ).prettyPrinted,
-            commonMainTransform.map { it.name }.prettyPrinted
+            commonMainTransform.map { it.name }.toSet().prettyPrinted
         )
         assertEquals(
-            listOf(
+            setOf(
                 "org.jetbrains.kotlin.native.platform.iconv",
                 "org.jetbrains.kotlin.native.platform.posix",
                 "org.jetbrains.kotlin.native.platform.zlib",
@@ -66,7 +66,7 @@ class StrictKmpCompilationIT : KGPBaseTest() {
                 // FIXME: Take 2 components
                 "org.jetbrains.kotlinx_atomicfu-cinterop-interop-.klib",
             ).prettyPrinted,
-            nativeMainTransform.map { it.name }.prettyPrinted
+            nativeMainTransform.map { it.name }.toSet().prettyPrinted
         )
 
         val coreFoundationCommonization = assertNotNull(appleMainTransform.filter { it.name == "org.jetbrains.kotlin.native.platform.CoreFoundation" }.singleOrNull())
@@ -135,7 +135,7 @@ class StrictKmpCompilationIT : KGPBaseTest() {
 
         assertEquals(
             mapOf(
-                "commonMain" to listOf(
+                "commonMain" to setOf(
                     "guava-33.7.2-jre.jar",
                     "annotations-23.0.0.jar",
                     "failureaccess-1.0.3.jar",
@@ -148,23 +148,43 @@ class StrictKmpCompilationIT : KGPBaseTest() {
                     "org.jetbrains.kotlinx-kotlinx-coroutines-core-1.11.0-commonMain-.klib",
                     "kotlinx-coroutines-core-jvm-1.11.0.jar",
                 ),
-                "jvmMain" to listOf(
+                "intermediateMain" to setOf(
+                    "guava-33.7.2-jre.jar",
+                    "annotations-23.0.0.jar",
+                    "failureaccess-1.0.3.jar",
+                    "listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar",
+                    "jspecify-1.0.1.jar",
+                    "error_prone_annotations-2.50.0.jar",
+                    "j2objc-annotations-3.1.jar",
+                    "kotlinx-coroutines-core-jvm-1.11.0.jar",
+                ),
+                "jvmMain" to setOf(
                 ),
             ).prettyPrinted,
-            beforeStrictCompilationTransformMap.mapValues { it.value.map { it.name } }.prettyPrinted,
+            beforeStrictCompilationTransformMap.mapValues { it.value.map { it.name }.toSet() }.prettyPrinted,
         )
 
         assertEquals(
             mapOf(
-                "commonMain" to listOf(
+                "commonMain" to setOf(
                     "org.jetbrains.kotlin-kotlin-stdlib-2.5.255-SNAPSHOT-commonMain-.klib",
                     "org.jetbrains.kotlinx-kotlinx-coroutines-core-1.11.0-concurrentMain-.klib",
                     "org.jetbrains.kotlinx-kotlinx-coroutines-core-1.11.0-commonMain-.klib",
                 ),
-                "jvmMain" to listOf(
+                "intermediateMain" to setOf(
+                    "guava-33.7.2-jre.jar",
+                    "annotations-23.0.0.jar",
+                    "failureaccess-1.0.3.jar",
+                    "listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar",
+                    "jspecify-1.0.1.jar",
+                    "error_prone_annotations-2.50.0.jar",
+                    "j2objc-annotations-3.1.jar",
+                    "kotlinx-coroutines-core-jvm-1.11.0.jar",
+                ),
+                "jvmMain" to setOf(
                 ),
             ).prettyPrinted,
-            strictCompilationTransformMap.mapValues { it.value.map { it.name } }.prettyPrinted,
+            strictCompilationTransformMap.mapValues { it.value.map { it.name }.toSet() }.prettyPrinted,
         )
     }
 
@@ -253,6 +273,12 @@ class StrictKmpCompilationIT : KGPBaseTest() {
                     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.11.0")
                     implementation("com.google.guava:guava:33.7.2-jre")
                 }
+
+                val intermediateMain = sourceSets.create("intermediateMain") {
+                    it.dependsOn(sourceSets.commonMain.get())
+                }
+
+                sourceSets.jvmMain.get().dependsOn(intermediateMain)
             }
         }
     }
