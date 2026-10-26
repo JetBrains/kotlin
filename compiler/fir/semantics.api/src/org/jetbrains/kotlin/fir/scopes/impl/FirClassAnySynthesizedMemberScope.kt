@@ -22,10 +22,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildNamedFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.equalityBoundType
-import org.jetbrains.kotlin.fir.declarations.utils.isData
-import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
 import org.jetbrains.kotlin.fir.languageVersionSettings
-import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
@@ -54,14 +51,9 @@ class FirClassAnySynthesizedMemberScope(
     private val session: FirSession,
     private val declaredMemberScope: FirContainingNamesAwareScope,
     private val klass: FirRegularClass,
+    private val originForFunctions: FirDeclarationOrigin.Synthetic,
     scopeSession: ScopeSession,
 ) : FirContainingNamesAwareScope() {
-    private val originForFunctions = when {
-        klass.isData -> FirDeclarationOrigin.Synthetic.DataClassMember
-        klass.isFullValueClass -> FirDeclarationOrigin.Synthetic.FullValueClassMember
-        klass.isInlineOrValue -> FirDeclarationOrigin.Synthetic.InlineClassMember
-        else -> error("This scope should not be created for non-data and non-value class. ${klass.render()}")
-    }
     private val lookupTag = klass.symbol.toLookupTag()
 
     private val baseModuleData = klass.moduleData
@@ -217,6 +209,7 @@ class FirClassAnySynthesizedMemberScope(
             newSession,
             declaredMemberScope.withReplacedSessionOrNull(newSession, newScopeSession) ?: declaredMemberScope,
             klass,
+            originForFunctions,
             newScopeSession
         )
     }

@@ -75,6 +75,10 @@ class Fir2IrDataClassMembersGenerator(
         return MyDataClassMethodsGenerator(irClass, klass, GENERATED_DATA_CLASS_MEMBER).generateHeaders()
     }
 
+    fun generateRichErrorClassMembers(klass: FirRegularClass, irClass: IrClass): List<FirDeclaration> {
+        return MyDataClassMethodsGenerator(irClass, klass, DEFINED).generateHeaders()
+    }
+
     fun registerCopyOrComponentFunction(irFunction: IrSimpleFunction) {
         generatedDataValueClassSyntheticFunctionsStorage.getValue(irFunction.parentAsClass).generatedFunctions += irFunction
     }
