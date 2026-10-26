@@ -63,7 +63,9 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
      *
      * @see KaNamedClassSymbol.isInline
      */
-    val isInlineClass: Boolean
+    val isInlineClass: Boolean by lazyPub {
+        withClassSymbol { it.isInline }
+    }
 
     constructor(
         useSiteModule: KaModule,
@@ -73,21 +75,17 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
         classSymbol = classSymbol,
     ) {
         require(classSymbol.classKind != KaClassKind.INTERFACE && classSymbol.classKind != KaClassKind.ANNOTATION_CLASS)
-        isInlineClass = classSymbol.isInline
     }
 
     private constructor(
         classOrObjectDeclaration: KtClassOrObject?,
         classSymbolPointer: KaSymbolPointer<KaNamedClassSymbol>,
         useSiteModule: KaModule,
-        isInlineClass: Boolean,
     ) : super(
         classOrObjectDeclaration = classOrObjectDeclaration,
         classSymbolPointer = classSymbolPointer,
         useSiteModule = useSiteModule,
-    ) {
-        this.isInlineClass = isInlineClass
-    }
+    )
 
     override fun getModifierList(): PsiModifierList = cachedValue {
         SymbolLightClassModifierList(
@@ -373,6 +371,5 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
         classOrObjectDeclaration = classOrObjectDeclaration,
         classSymbolPointer = symbolPointer,
         useSiteModule = useSiteModule,
-        isInlineClass = isInlineClass,
     )
 }
