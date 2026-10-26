@@ -8,7 +8,7 @@
 expect sealed class OverridingBase()
 
 @WillBecomeValue
-<!IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS, IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS, IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS!>class OfOverridingBase<!>(val x: Int) : OverridingBase()
+class OfOverridingBase(val x: Int) : OverridingBase()
 
 @WillBecomeValue
 expect sealed class NotOverridingBase()

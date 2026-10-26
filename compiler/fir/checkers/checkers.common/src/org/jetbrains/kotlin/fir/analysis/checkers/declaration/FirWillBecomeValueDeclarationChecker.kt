@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isActual
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
+import org.jetbrains.kotlin.fir.resolve.getSuperClassSymbolOrAny
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.unwrapFakeOverrides
@@ -34,8 +36,8 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 /**
- * Checks that '@WillBecomeValue' is applied to a class which can actually become a value class, and that such a class
- * does not rely on the identity-based 'equals'/'hashCode'/'toString' inherited from 'Any'.
+ * Checks that '@WillBecomeValue' is applied to a class which can actually become a value class. That such a class does not rely on
+ * the identity-based 'equals'/'hashCode'/'toString' inherited from 'Any' is checked by [FirWillBecomeValueIdentityBasedMembersChecker].
  *
  * The remaining value class declaration checks are shared with real value classes and are performed by
  * [FirValueClassDeclarationChecker].
@@ -51,11 +53,32 @@ object FirWillBecomeValueDeclarationChecker : FirClassChecker(MppCheckerKind.Com
         }
         if (inapplicableTarget != null) {
             reporter.reportOn(annotation.source, FirErrors.WILL_BECOME_VALUE_NOT_APPLICABLE, inapplicableTarget)
-            return
         }
+    }
+}
 
+/**
+ * Checks the identity-based members of a '@WillBecomeValue' class with the session of the platform module, where its expect
+ * superclasses are actualized and have the members of their actual classes.
+ */
+object FirWillBecomeValueIdentityBasedMembersChecker : FirRegularClassChecker(MppCheckerKind.Platform) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirRegularClass) {
         // The members of an expect class come from its actual class, which is checked instead.
-        if (declaration is FirRegularClass && !declaration.isExpect) checkIdentityBasedMembers(declaration.symbol, declaration.source)
+        if (declaration.isExpect || !declaration.symbol.willBecomeKotlinValueClass(context.session)) return
+        // Without the platform module, as in the metadata compilation, an expect superclass doesn't have the members of its actual class.
+        if (declaration.symbol.hasExpectSuperclass(context.session)) return
+        checkIdentityBasedMembers(declaration.symbol, declaration.source)
+    }
+
+    private fun FirRegularClassSymbol.hasExpectSuperclass(session: FirSession): Boolean {
+        val visited = mutableSetOf<FirRegularClassSymbol>()
+        var superclass = getSuperClassSymbolOrAny(session)
+        while (superclass != null && superclass.classId != StandardClassIds.Any && visited.add(superclass)) {
+            if (superclass.isExpect) return true
+            superclass = superclass.getSuperClassSymbolOrAny(session)
+        }
+        return false
     }
 }
 
