@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.backend.js.jsexport.ExportedDeclaration
 import org.jetbrains.kotlin.ir.backend.js.jsexport.ExportedModule
 import org.jetbrains.kotlin.ir.backend.js.lower.JsCodeOutliningLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.StaticMembersLowering
+import org.jetbrains.kotlin.ir.backend.js.lower.extractedFromContainer
 import org.jetbrains.kotlin.ir.backend.js.lower.isBuiltInClass
 import org.jetbrains.kotlin.ir.backend.js.tsexport.TypeScriptFragment
 import org.jetbrains.kotlin.ir.backend.js.tsexport.joinTypeScriptFragments
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.ir.backend.js.tsexport.toTypeScriptFragment
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.IdSignatureRenderer
+import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.irError
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.render
@@ -127,7 +129,13 @@ enum class TranslationMode(
     PER_MODULE_PROD_MINIMIZED_NAMES(production = true, granularity = JsGenerationGranularity.PER_MODULE, minimizedMemberNames = true),
     PER_FILE_DEV(production = false, granularity = JsGenerationGranularity.PER_FILE, minimizedMemberNames = false),
     PER_FILE_PROD(production = true, granularity = JsGenerationGranularity.PER_FILE, minimizedMemberNames = false),
-    PER_FILE_PROD_MINIMIZED_NAMES(production = true, granularity = JsGenerationGranularity.PER_FILE, minimizedMemberNames = true);
+    PER_FILE_PROD_MINIMIZED_NAMES(production = true, granularity = JsGenerationGranularity.PER_FILE, minimizedMemberNames = true),
+
+    PER_CLASS_DEV(production = false, granularity = JsGenerationGranularity.PER_CLASS, minimizedMemberNames = false),
+
+    PER_CLASS_PROD(production = true, granularity = JsGenerationGranularity.PER_CLASS, minimizedMemberNames = false),
+
+    PER_CLASS_PROD_MINIMIZED_NAMES(production = true, granularity = JsGenerationGranularity.PER_CLASS, minimizedMemberNames = true);
 
     companion object {
         fun fromFlags(
@@ -147,6 +155,12 @@ enum class TranslationMode(
                         if (minimizedMemberNames) PER_FILE_PROD_MINIMIZED_NAMES
                         else PER_FILE_PROD
                     } else PER_FILE_DEV
+
+                JsGenerationGranularity.PER_CLASS ->
+                    if (production) {
+                        if (minimizedMemberNames) PER_CLASS_PROD_MINIMIZED_NAMES
+                        else PER_CLASS_PROD
+                    } else PER_CLASS_DEV
 
                 JsGenerationGranularity.WHOLE_PROGRAM ->
                     if (production) {
@@ -305,6 +319,7 @@ class IrModuleToJsTransformer(
                 outJsProgram = outJsProgram,
             )
             JsGenerationGranularity.PER_FILE,
+            JsGenerationGranularity.PER_CLASS,
             JsGenerationGranularity.PER_MODULE,
                 -> generateMultiWrappedModuleBody(
                 artifactConfiguration,
@@ -383,7 +398,73 @@ class IrModuleToJsTransformer(
             override fun IrFileExports.generateArtifacts(module: IrAndExportedDeclarations): List<JsIrModules> {
                 if (file.couldBeSkipped()) return []
 
-                return generatePerFileArtifacts(module)
+                return when (mode.granularity) {
+                    PER_CLASS -> generatePerClassArtifacts(module)
+                    PER_FILE -> generatePerFileArtifacts(module)
+                    else -> error("Unexpected granularity to generate artifacts for: ${mode.granularity}")
+                }
+            }
+
+            private fun IrFileExports.generatePerClassArtifacts(module: IrAndExportedDeclarations): List<JsIrModules> {
+                // Declarations of each class fragment: the class itself plus static members extracted from it by StaticMembersLowering
+                val classFragments = mutableMapOf<IrClass, MutableList<IrDeclaration>>()
+                val eagerProperties = mutableListOf<IrProperty>()
+                val restDeclarations = mutableListOf<IrDeclaration>()
+                for (declaration in file.declarations) {
+                    when (declaration) {
+                        is IrClass -> classFragments.getOrPut(declaration) { mutableListOf() } += declaration
+                        is IrProperty if declaration.hasAnnotation(backendContext.propertyLazyInitialization.eagerInitialization) ->
+                            eagerProperties += declaration
+                        else -> {
+                            val ownerClass = declaration.extractedFromContainer as? IrClass
+                            if (ownerClass != null && ownerClass.parent == file) {
+                                classFragments.getOrPut(ownerClass) { mutableListOf() } += declaration
+                            } else {
+                                restDeclarations += declaration
+                            }
+                        }
+                    }
+                }
+
+                if (eagerProperties.isEmpty() && classFragments.isEmpty())
+                    return generatePerFileArtifacts(module)
+
+                return buildList {
+                    for ([klass, classDeclarations] in classFragments) {
+                        val fragments = generateProgramFragment(classDeclarations, isPrimary = false, mode)
+                        add(JsIrModules(
+                            file.toJsIrModuleForPerClassFile(
+                                module,
+                                fragments.mainFragment,
+                                ".${klass.name.asStringStripSpecialMarkers()}"
+                            ),
+                            fragments.exportFragment?.run { file.toJsIrModuleForExport(module, this) }
+                        ))
+                    }
+
+                    if (eagerProperties.isNotEmpty()) {
+                        val eagerFragments = generateProgramFragment(eagerProperties, isPrimary = false, mode)
+                        add(JsIrModules(
+                            file.toJsIrModuleForPerClassFile(
+                                module,
+                                eagerFragments.mainFragment,
+                                ".eager"
+                            ),
+                            eagerFragments.exportFragment?.run { file.toJsIrModuleForExport(module, this) }
+                        ))
+                    }
+
+                    if (restDeclarations.isNotEmpty()) {
+                        val restFragments = generateProgramFragment(restDeclarations, isPrimary = true, mode)
+                        add(JsIrModules(
+                            file.toJsIrModule(
+                                module,
+                                restFragments.mainFragment,
+                            ),
+                            restFragments.exportFragment?.run { file.toJsIrModuleForExport(module, this) }
+                        ))
+                    }
+                }
             }
 
             private fun IrFileExports.generatePerFileArtifacts(module: IrAndExportedDeclarations): List<JsIrModules> {
@@ -411,6 +492,19 @@ class IrModuleToJsTransformer(
             moduleFragmentToNameMapper.getExternalNameForExporterFile(this),
             listOf(programFragment),
             module.fragment.safeName
+        )
+    }
+
+    private fun IrFile.toJsIrModuleForPerClassFile(
+        module: IrAndExportedDeclarations,
+        programFragment: JsIrProgramFragment,
+        postfix: String
+    ): JsIrModule {
+        return JsIrModule(
+            moduleFragmentToNameMapper.getSafeNameFor(this, postfix),
+            moduleFragmentToNameMapper.getExternalNameFor(this, postfix),
+            listOf(programFragment),
+            importedWithEffectInModuleWithName = runIf(programFragment.hasEffect) { module.fragment.safeName }
         )
     }
 

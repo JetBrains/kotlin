@@ -203,6 +203,7 @@ class JsGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolator(
             // The translation modes and the tools the executable of the test is produced with.
             JsEnvironmentConfigurationDirectives.SPLIT_PER_MODULE,
             JsEnvironmentConfigurationDirectives.SPLIT_PER_FILE,
+            JsEnvironmentConfigurationDirectives.SPLIT_PER_CLASS,
             JsEnvironmentConfigurationDirectives.DELEGATE_JS_TRANSPILATION,
             // The declarations it names are in the packages the batch would rename.
             JsEnvironmentConfigurationDirectives.KEEP,
