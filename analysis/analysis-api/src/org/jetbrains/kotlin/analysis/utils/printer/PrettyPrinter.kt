@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.utils.printer
 
-import kotlinx.collections.immutable.PersistentList
-import kotlinx.collections.immutable.persistentListOf
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import kotlin.contracts.ExperimentalContracts
@@ -17,7 +15,7 @@ import kotlin.contracts.contract
 @OptIn(ExperimentalContracts::class)
 public class PrettyPrinter(public val indentSize: Int = 2) : Appendable {
     private val result: StringBuilder = StringBuilder()
-    private var prefixes: PersistentList<String> = persistentListOf()
+    private val prefixes: MutableList<String> = mutableListOf()
     private var indentationLevel: Int = 0
 
     override fun append(nullableSeq: CharSequence?): Appendable = apply {
@@ -53,7 +51,7 @@ public class PrettyPrinter(public val indentSize: Int = 2) : Appendable {
         if (prefixes.isNotEmpty()) {
             appendIndentIfNeeded()
             prefixes.forEach { result.append(it) }
-            prefixes = persistentListOf()
+            prefixes.clear()
         }
     }
 
@@ -189,13 +187,13 @@ public class PrettyPrinter(public val indentSize: Int = 2) : Appendable {
         contract {
             callsInPlace(print, InvocationKind.EXACTLY_ONCE)
         }
-        val currentPrefixes = prefixes
-        prefixes = prefixes.adding(prefix)
+        val prefixCountBefore = prefixes.size
+        prefixes.add(prefix)
         try {
             print()
         } finally {
             if (prefixes.isNotEmpty()) {
-                prefixes = currentPrefixes
+                prefixes.subList(prefixCountBefore, prefixes.size).clear()
             }
         }
     }
