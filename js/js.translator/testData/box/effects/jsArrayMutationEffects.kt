@@ -1,4 +1,3 @@
-// TARGET_BACKEND: JS_IR
 // ONLY_IR_DCE
 // CHECK_OPTIMIZED_JS
 // ENABLE_UNUSED_PROPERTY_DCE
@@ -10,6 +9,15 @@
 
 external val sharedArray: IntArray
 
+// FUNCTION_HAS_EFFECTS: function=mutateLocal WRITE
+@JsExport
+fun mutateLocal(): IntArray {
+    var local = intArrayOf(1)
+    local[0] = 7
+    return local
+}
+
+// FUNCTION_HAS_EFFECTS: function=mutate WRITE
 fun mutate(array: IntArray): Int {
     array[0] = 7
     return 0

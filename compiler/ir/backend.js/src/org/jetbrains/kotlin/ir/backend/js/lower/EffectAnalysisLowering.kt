@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.ir.expressions.IrThrow
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.constructedClass
 import org.jetbrains.kotlin.ir.util.getAnnotation
+import org.jetbrains.kotlin.ir.util.isOverridable
 import org.jetbrains.kotlin.ir.util.isStatic
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 
@@ -209,10 +210,7 @@ class EffectAnalysisLowering(val context: JsCommonBackendContext) : BodyLowering
             get() {
                 if (this.isStatic) return true
                 if (this !is IrSimpleFunction) return true
-                if (this.modality == Modality.FINAL) return true
-                (this.parent as? IrClass)?.let {
-                    return it.modality == Modality.FINAL
-                }
+                if (this.modality == Modality.OPEN) return false
                 return true
             }
     }

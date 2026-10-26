@@ -97,8 +97,8 @@ class SetFieldRemover(val context: JsCommonBackendContext, val usefulDeclaration
         if (expression.symbol.owner !in usefulDeclarations) {
             val receiverEffects = expression.receiver?.computeEffectsKind(context) == EffectsKind.WRITE
             val valueEffects = expression.value.computeEffectsKind(context) == EffectsKind.WRITE
-            return when (receiverEffects to valueEffects) {
-                true to true -> {
+            return when {
+                receiverEffects && valueEffects -> {
                     buildComposite(
                         expression.type,
                         listOf(
@@ -107,8 +107,8 @@ class SetFieldRemover(val context: JsCommonBackendContext, val usefulDeclaration
                         )
                     )
                 }
-                true to false -> expression.receiver!!.transform(this, null)
-                false to true -> expression.value.transform(this, null)
+                receiverEffects && !valueEffects -> expression.receiver!!.transform(this, null)
+                !receiverEffects && valueEffects -> expression.value.transform(this, null)
                 else /* false to false */ -> buildComposite(expression.type)
             }
         }

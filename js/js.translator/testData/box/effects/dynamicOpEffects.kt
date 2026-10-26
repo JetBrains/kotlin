@@ -8,6 +8,7 @@
 // MODULE: probe_dynamic_write
 // FILE: lib.kt
 
+// FUNCTION_HAS_EFFECTS: function=operate WRITE
 fun operate(value: dynamic): Int {
     value.field = 7
     return 0
