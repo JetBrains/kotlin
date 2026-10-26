@@ -21,18 +21,20 @@ import org.jetbrains.kotlin.analysis.api.types.typeCreation.KaTypeParameterTypeB
 @KaImplementationDetail
 abstract class KaBaseTypeCreatorProvider<T : KaSession> : KaBaseSessionComponent<T>(), KaInternalsTypeCreatorProvider {
     @KaExperimentalApi
-    override fun <T : KaClassType> copy(type: T, init: KaClassTypeBuilder.() -> Unit): KaClassType = with(analysisSession) {
-        val sourceSymbol = type.symbol
-        val sourceIsMarkedNullable = type.isMarkedNullable
-        val sourceAnnotationClassIds = type.annotations.classIds.toList()
-        val sourceTypeArguments = type.typeArguments
+    override fun <T : KaClassType> copy(type: T, init: KaClassTypeBuilder.() -> Unit): KaClassType = withValidityAssertion {
+        with(analysisSession) {
+            val sourceSymbol = type.symbol
+            val sourceIsMarkedNullable = type.isMarkedNullable
+            val sourceAnnotationClassIds = type.annotations.classIds.toList()
+            val sourceTypeArguments = type.typeArguments
 
-        typeCreator.classType(sourceSymbol) {
-            isMarkedNullable = sourceIsMarkedNullable
-            typeArguments { sourceTypeArguments }
-            annotations(sourceAnnotationClassIds)
-            init()
-        } as KaClassType
+            typeCreator.classType(sourceSymbol) {
+                isMarkedNullable = sourceIsMarkedNullable
+                typeArguments { sourceTypeArguments }
+                annotations(sourceAnnotationClassIds)
+                init()
+            } as KaClassType
+        }
     }
 
     @KaExperimentalApi
