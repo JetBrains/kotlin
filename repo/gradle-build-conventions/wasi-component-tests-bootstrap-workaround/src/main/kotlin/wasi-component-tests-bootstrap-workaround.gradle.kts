@@ -1,8 +1,8 @@
 /*
- * TODO(remove after bootstrap): The stdlib imports `wasi:*` 0.2 interfaces, and a host gives these only to components.
- *  The bootstrap compiler doesn't export the unit test runner of WASI test binaries under a WIT label. The bootstrap KGP
- *  doesn't componentize test binaries. Until the bootstrap does both, `wasmWasiWasmtimeTest` runs a component that
- *  [org.jetbrains.kotlin.build.wasi.ComponentizeWasiTestBinary] builds, not the core module.
+ * TODO(KT-XXXXX): Remove this plugin when the bootstrap KGP componentizes WASI test binaries.
+ *  The stdlib imports `wasi:*` 0.2 interfaces, and a host gives these only to components. So this plugin makes
+ *  `wasmWasiWasmtimeTest` run a component that [org.jetbrains.kotlin.build.wasi.ComponentizeWasiTestBinary] builds,
+ *  not the core module.
  */
 
 import org.jetbrains.kotlin.build.wasi.ComponentizeWasiTestBinary

@@ -22,8 +22,8 @@ import java.io.ByteArrayOutputStream
 import javax.inject.Inject
 
 /**
- * TODO(remove after bootstrap): The export name of the unit test runner in WASI test binaries of the bootstrap compiler.
- *  The current compiler uses [WASI_UNIT_TESTS_EXPORT_NAME].
+ * The export name of the unit test runner in WASI test binaries of the bootstrap compiler. The current compiler uses
+ * [WASI_UNIT_TESTS_EXPORT_NAME]. `KotlinWasmtime` of KGP passes the same name to `wasmtime --invoke`.
  */
 internal const val BOOTSTRAP_UNIT_TESTS_EXPORT_NAME = "startUnitTests"
 
@@ -31,11 +31,12 @@ internal const val BOOTSTRAP_UNIT_TESTS_EXPORT_NAME = "startUnitTests"
 internal const val WASI_UNIT_TESTS_EXPORT_NAME = "startunittests"
 
 /**
- * TODO(remove after bootstrap): Turns a WASI test binary of the bootstrap compiler into a WASI 0.2 component, with the
- *  same steps as `WasiComponentizer` in `wasm/wasm.tests`.
+ * Turns a WASI test binary into a WASI 0.2 component, with the same steps as `WasiComponentizer` in `wasm/wasm.tests`.
  *
- *  [BOOTSTRAP_UNIT_TESTS_EXPORT_NAME] isn't a WIT label, so the task first adds the alias [WASI_UNIT_TESTS_EXPORT_NAME],
- *  if the binary doesn't export it yet.
+ * If the binary doesn't export [WASI_UNIT_TESTS_EXPORT_NAME], the task first adds it as an alias of
+ * [BOOTSTRAP_UNIT_TESTS_EXPORT_NAME], because that name isn't a WIT label.
+ *
+ * TODO(KT-XXXXX): Remove when the bootstrap KGP componentizes WASI test binaries.
  */
 @DisableCachingByDefault(because = "Not worth caching")
 abstract class ComponentizeWasiTestBinary : DefaultTask() {
@@ -118,6 +119,8 @@ private const val FUNCTION_EXPORT_KIND = 0
  *
  * No part of a module refers to an export by its position, so only the export section changes. The offsets of the later
  * sections change too. Only source maps use these offsets, and the WASI test binaries have no source maps.
+ *
+ * TODO(remove after bootstrap): Remove when the bootstrap compiler exports [WASI_UNIT_TESTS_EXPORT_NAME].
  */
 internal fun addFunctionExportAliasIfNecessary(module: ByteArray, name: String, alias: String): ByteArray {
     val result = ByteArrayOutputStream()

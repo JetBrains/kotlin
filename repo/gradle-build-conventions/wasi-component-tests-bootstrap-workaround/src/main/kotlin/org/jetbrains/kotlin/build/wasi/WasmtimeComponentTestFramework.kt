@@ -13,10 +13,12 @@ import org.jetbrains.kotlin.gradle.utils.processes.ProcessLaunchOptions
 import java.io.File
 
 /**
- * TODO(remove after bootstrap): Runs the tests of [delegate], the `KotlinWasmtime` of the bootstrap KGP, on [component],
- *  not on the core module. `--invoke startUnitTests <core module>` becomes `--invoke startunittests() <component>`,
- *  because `--invoke` takes a call expression for a component. [delegate] does all other work, for example the parsing
- *  of the TeamCity service messages.
+ * Runs the tests of [delegate], the `KotlinWasmtime` of the bootstrap KGP, on [component], not on the core module.
+ * `--invoke startUnitTests <core module>` becomes `--invoke startunittests() <component>`, because `--invoke` takes a
+ * call expression for a component. [delegate] does all other work, for example the parsing of the TeamCity service
+ * messages.
+ *
+ * TODO(KT-XXXXX): Remove when the bootstrap KGP componentizes WASI test binaries.
  */
 internal class WasmtimeComponentTestFramework(
     private val delegate: KotlinJsTestFramework,
