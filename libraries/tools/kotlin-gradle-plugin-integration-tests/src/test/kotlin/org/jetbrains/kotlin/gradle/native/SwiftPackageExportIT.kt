@@ -451,6 +451,52 @@ class SwiftPackageExportIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("A consumer of the Release package links in an optimised build")
+    @GradleTest
+    fun testReleasePackageLinksInOptimisedConsumer(
+        gradleVersion: GradleVersion,
+    ) {
+        project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            settingsBuildScriptInjection {
+                settings.rootProject.name = "shared"
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    iosArm64()
+                    iosSimulatorArm64()
+                    sourceSets.commonMain.get().compileSource("fun sharedApi(): Int = 1")
+                }
+                export.swift {
+                    moduleName.set("Shared")
+                    swiftPackageIntegration {
+                        outputDirectory.set(project.layout.projectDirectory.dir("package"))
+                    }
+                }
+            }
+
+            build(":exportReleaseSwiftPackage") {
+                assertTasksExecuted(":exportReleaseSwiftPackage")
+            }
+
+            val consumer = consumerOf(
+                projectPath.resolve("package/Release"),
+                """
+                import Shared
+
+                print(sharedApi())
+                """,
+            )
+            // KT-90738: an optimised build of KotlinRuntimeSupport lost the link anchor the Kotlin binary references.
+            listOf(SwiftDestination.IOS, SwiftDestination.IOS_SIMULATOR).forEach { destination ->
+                val build = consumer.swiftBuild(destination, extraArguments = listOf("-c", "release"))
+                assertTrue(build.isSuccessful, "The Release consumer failed to build for $destination:\n$build\n${build.output}")
+            }
+        }
+    }
+
     @DisplayName("The packages of the SwiftPM import are dependencies of the exported package")
     @GradleTest
     @OptIn(ExperimentalKotlinGradlePluginApi::class)
