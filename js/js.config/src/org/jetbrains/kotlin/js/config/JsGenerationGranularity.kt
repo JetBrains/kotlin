@@ -8,5 +8,6 @@ package org.jetbrains.kotlin.js.config
 enum class JsGenerationGranularity {
     WHOLE_PROGRAM,
     PER_MODULE,
+    PER_CLASS,
     PER_FILE
 }
