@@ -428,8 +428,10 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
     val setCurrentFrameFunction = importRtFunction("SetCurrentFrame", false)
     val checkCurrentFrameFunction = importRtFunction("CheckCurrentFrame", false)
     val lookupInterfaceTableRecord = importRtFunction("LookupInterfaceTableRecord", false)
+    val layOutInterfaceTable = importRtFunction("Kotlin_layOutInterfaceTable", false)
     val isSubtypeFunction = importRtFunction("IsSubtype", false)
     val isSubclassFastFunction = importRtFunction("IsSubclassFast", false)
+    val isSubclassFastIndirectFunction = importRtFunction("IsSubclassFastIndirect", false)
     val getTypeInfo = importRtFunction("Kotlin_Any_getTypeInfo", false)
     val throwExceptionFunction = importRtFunction("ThrowException", false)
     val appendToInitalizersTail = importRtFunction("AppendToInitializersTail", false)
@@ -645,6 +647,12 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
     }
 }
 
+/**
+ * A startup initializer of the Kotlin code of [konanLibrary], to be called from the constructor of that library.
+ * [konanLibrary] is null for the module this compilation produces, which is no library of its own: the bitcode
+ * synthesized for it as a whole, and, when it is compiled from sources rather than being a cache of a library,
+ * the code of its own files - such a module fragment carries no `kotlinLibrary`.
+ */
 class IrStaticInitializer(val konanLibrary: KotlinLibrary?, val runtimeInitializer: RuntimeInitializer)
 
 /**

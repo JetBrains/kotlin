@@ -559,7 +559,7 @@ internal object DataFlowIR {
                 }
                 val interfaces = irClass.implementedInterfaces.map { context.getLayoutBuilder(it) }
                 for (iface in interfaces) {
-                    type.itable[iface.classId] = iface.interfaceVTableEntries.map {
+                    type.itable[iface.localInterfaceId] = iface.interfaceVTableEntries.map {
                         val implementation = layoutBuilder.overridingOf(it)
                                 ?: error(
                                         irClass.fileOrNull,

@@ -46,6 +46,48 @@ NO_INLINE InterfaceTableRecord const* LookupInterfaceTableRecord(
     return interfaceTable + l;
 }
 
+void Kotlin_layOutInterfaceTable(InterfaceTable* table, InterfaceTableRecord* slots,
+                                 InterfaceTableRecord const* records, TypeInfo const* const* interfaces,
+                                 int32_t count) {
+    // Mirrors layOutInterfaceLookupTable of the compiler: the smallest perfect hash table keyed by the interface
+    // ids, and a table sorted by the id when none of the sizes avoids a collision.
+    int32_t size = 1;
+    for (; size <= kMaxInterfaceTableSize; size <<= 1) {
+        uint32_t used = 0;
+        bool collides = false;
+        for (int32_t i = 0; i < count; ++i) {
+            uint32_t slot = interfaces[i]->interfaceId() & (size - 1);
+            if (used & (1u << slot)) {
+                collides = true;
+                break;
+            }
+            used |= 1u << slot;
+        }
+        if (!collides) break;
+    }
+
+    if (size <= kMaxInterfaceTableSize) {
+        for (int32_t i = 0; i < size; ++i)
+            slots[i] = {kInvalidInterfaceId, 0, nullptr};
+        for (int32_t i = 0; i < count; ++i) {
+            auto id = interfaces[i]->interfaceId();
+            slots[id & (size - 1)] = {id, records[i].vtableSize, records[i].vtable};
+        }
+        table->size_ = size - 1;
+    } else {
+        // Insertion sort: a table holds an interface and the interfaces it inherits, a handful of records at most.
+        for (int32_t i = 0; i < count; ++i) {
+            InterfaceTableRecord record = {interfaces[i]->interfaceId(), records[i].vtableSize, records[i].vtable};
+            int32_t j = i;
+            for (; j > 0 && slots[j - 1].id > record.id; --j)
+                slots[j] = slots[j - 1];
+            slots[j] = record;
+        }
+        table->size_ = -count;
+    }
+    table->records_ = slots;
+}
+
 RUNTIME_NOTHROW int Kotlin_internal_reflect_getObjectReferenceFieldsCount(ObjHeader* object) {
     auto* info = object->type_info();
     if (info->IsArray()) return 0;

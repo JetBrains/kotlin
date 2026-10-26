@@ -77,18 +77,31 @@ typedef int32_t ClassId;
 
 const ClassId kInvalidInterfaceId = 0;
 
+// The number of slots an interface lookup table may have while still being a perfect hash table.
+// Keep in sync with MAX_BITS_PER_COLOR of the hierarchy analysis: 1 << MAX_BITS_PER_COLOR.
+const int32_t kMaxInterfaceTableSize = 32;
+
 struct InterfaceTableRecord {
     ClassId id;
     uint32_t vtableSize;
     VTableElement const* vtable;
 };
 
-// The interface lookup table of a class.
+// The interface lookup table of a class. Its layout is decided by the compilation that produces the final binary.
 struct InterfaceTable {
     // The number of records minus one (mask: `records_[interfaceId & size_]`) if they form a perfect hash table keyed by the interface id,
     // or the negated number of records if they are sorted by the interface id instead.
     int32_t size_;
     InterfaceTableRecord const* records_;
+};
+
+struct ClassHierarchyIds {
+    int32_t low_;
+    int32_t high_;
+
+#ifdef __cplusplus
+    ClassId interfaceId() const noexcept { return low_; }
+#endif
 };
 
 // This struct represents runtime type information and by itself is the compile time
@@ -128,8 +141,11 @@ struct TypeInfo {
     // Various flags.
     int32_t flags_;
 
-    // Class id built with the whole class hierarchy taken into account. The details are in ClassLayoutBuilder.
+    // The interval of this class in the class hierarchy, or the id of this interface.
+    // Set only when the whole program was compiled at once; otherwise the numbering lives in classHierarchyIds_
+    // instead, which the final link points at the structure it laid out.
     ClassId classId_;
+    ClassHierarchyIds* classHierarchyIds_;
 
 #if KONAN_TYPE_INFO_HAS_WRITABLE_PART
     WritableTypeInfo* writableInfo_;
@@ -167,6 +183,13 @@ struct TypeInfo {
         return true;
     }
 
+    // The id of this interface in the numbering of the whole program.
+    // The compilation that emitted this type info may not have known it: the interfaces are numbered by the one
+    // that produces the final binary, which leaves every other compilation nothing but a pointer to what it laid out.
+    ClassId interfaceId() const noexcept {
+        return classHierarchyIds_ != nullptr ? classHierarchyIds_->interfaceId() : classId_;
+    }
+
     std::string fqName() const;
 #endif
 };
@@ -176,6 +199,14 @@ extern "C" {
 #endif
 InterfaceTableRecord const* LookupInterfaceTableRecord(InterfaceTableRecord const* interfaceTable,
                                                        int interfaceTableSize, ClassId interfaceId) RUNTIME_CONST;
+
+// Lays out an interface table that could not be laid out when it was emitted, because the ids of its interfaces
+// were not known to that compilation: see ClassHierarchyIds. [records] carries the vtables of [interfaces], in the
+// same order and without the ids; the table is laid out into [slots], which holds kMaxInterfaceTableSize records,
+// or [count] of them when that is more. Called from a module constructor, before any Kotlin code runs.
+void Kotlin_layOutInterfaceTable(InterfaceTable* table, InterfaceTableRecord* slots,
+                                 InterfaceTableRecord const* records, TypeInfo const* const* interfaces,
+                                 int32_t count);
 
 #ifdef __cplusplus
 } // extern "C"
