@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 import org.jetbrains.kotlin.utils.putToMultiMap
 
 abstract class KotlinIrLinker(
@@ -241,15 +242,15 @@ abstract class KotlinIrLinker(
         return symbol.owner as IrDeclaration
     }
 
-    override fun tryReferencingSimpleFunctionByLocalSignature(file: IrFile?, idSignature: IdSignature): IrSimpleFunctionSymbol? {
-        if (idSignature.isPubliclyVisible || file == null) return null
-        return resolveModuleDeserializer(file)?.referenceSimpleFunctionByLocalSignature(file, idSignature)
-    }
+    override fun tryReferencingSimpleFunctionByLocalSignature(file: IrFile, idSignature: IdSignature): IrSimpleFunctionSymbol? =
+        runUnless(idSignature.isPubliclyVisible) {
+            resolveModuleDeserializer(file)?.referenceSimpleFunctionByLocalSignature(file, idSignature)
+        }
 
-    override fun tryReferencingPropertyByLocalSignature(file: IrFile?, idSignature: IdSignature): IrPropertySymbol? {
-        if (idSignature.isPubliclyVisible || file == null) return null
-        return resolveModuleDeserializer(file)?.referencePropertyByLocalSignature(file, idSignature)
-    }
+    override fun tryReferencingPropertyByLocalSignature(file: IrFile, idSignature: IdSignature): IrPropertySymbol? =
+        runUnless(idSignature.isPubliclyVisible) {
+            resolveModuleDeserializer(file)?.referencePropertyByLocalSignature(file, idSignature)
+        }
 
     override fun getSymbolAndPutIntoQueue(signature: IdSignature, kind: IrDeserializer.TopLevelSymbolKind): IrSymbol? {
         val moduleDeserializer = resolveModuleDeserializer(signature) ?: return null
