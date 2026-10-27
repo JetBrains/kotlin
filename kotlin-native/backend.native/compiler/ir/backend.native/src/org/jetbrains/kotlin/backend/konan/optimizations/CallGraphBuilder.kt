@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.optimizations
 
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.konan.DirectedGraph
@@ -129,8 +130,12 @@ private class CallGraphHierarchyDispatchCache(
 ) {
     private data class Key(val receiverTypeIndex: Int, val interfaceId: Int, val slot: Int)
 
-    // A null list marks an opaque call whose roots have already been registered.
-    private val resolutions = HashMap<Key, List<DataFlowIR.FunctionSymbol>?>()
+    private companion object {
+        // Share one opaque marker, distinct from empty target lists.
+        private val OPAQUE: List<DataFlowIR.FunctionSymbol> = ArrayList(0)
+    }
+
+    private val resolutions = HashMap<Key, List<DataFlowIR.FunctionSymbol>>()
 
     fun resolve(call: DataFlowIR.Node.VirtualCall) = resolutions.getOrPut(
             key = when (call) {
@@ -152,8 +157,18 @@ private class CallGraphHierarchyDispatchCache(
             }
             collector.add(actualCallee, handleRoot)
         }
-        collector.callees.takeUnless { collector.isOpaque }
-    }
+        if (collector.isOpaque) OPAQUE else collector.callees
+    }.takeUnless { it === OPAQUE }
+}
+
+@TestOnly
+internal fun createDispatchResolverForTests(
+        typeHierarchy: DataFlowIR.TypeHierarchy,
+        unfoldFactor: Int,
+        handleRoot: (DataFlowIR.FunctionSymbol) -> Unit,
+): (DataFlowIR.Node.VirtualCall) -> List<DataFlowIR.FunctionSymbol>? {
+    val cache = CallGraphHierarchyDispatchCache(typeHierarchy, unfoldFactor, handleRoot)
+    return cache::resolve
 }
 
 internal class CallGraphBuilder(
