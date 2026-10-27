@@ -2,7 +2,7 @@ function invokeOnly$ref() {
   return (p0) => invokeOnly(p0);
 }
 function Bound$boundInvoke$ref(p0) {
-  return (p0_0) => p0.d(p0_0);
+  return (p0_0) => p0.p(p0_0);
 }
 function dynamicInvoke$ref() {
   return (p0) => dynamicInvoke(p0);
@@ -42,4 +42,34 @@ function nestedCapturedInvoke$ref() {
 }
 function capturedAssignmentInvoke$ref() {
   return (p0) => capturedAssignmentInvoke(p0);
+}
+function varargInvoke$ref() {
+  return (p0) => varargInvoke(p0);
+}
+function varargIndexed$ref() {
+  return (p0) => varargIndexed(p0);
+}
+function arrayOfInvoke$ref() {
+  return (p0) => arrayOfInvoke(p0);
+}
+function spreadInvoke$ref() {
+  return (p0) => spreadInvoke(p0);
+}
+function mixedSpreadInvoke$ref() {
+  return (p0) => mixedSpreadInvoke(p0);
+}
+function forwardedVararg$ref() {
+  return (p0) => forwardedVararg(p0);
+}
+function returnedArray$ref() {
+  return (p0) => returnedArray(p0);
+}
+function objectField$ref() {
+  return (p0) => objectField(p0);
+}
+function companionField$ref() {
+  return (p0) => companionField(p0);
+}
+function objectVar$ref() {
+  return (p0) => objectVar(p0);
 }

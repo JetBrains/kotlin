@@ -29,8 +29,14 @@ private fun IrTypeOperator.isCast() =
  * [ElementFinderVisitor] records the non-structural results of returnable blocks and suspendable
  * expressions before graph construction. This extractor then recursively removes those
  * containers, transparent casts, and statement-only expressions from value flow.
+ *
+ * It also looks through the array intrinsics that
+ * [org.jetbrains.kotlin.ir.backend.js.lower.VarargLowering] wraps around a vararg: an
+ * `arrayLiteral` yields its vararg, and a spread copy yields the array it copies, or every
+ * concatenated segment. A copy is thereby merged with its sources. That over-approximates the
+ * values that reach it, but the graph only describes what may flow.
  */
-private class ExpressionValuesExtractor(context: JsIrBackendContext) {
+private class ExpressionValuesExtractor(private val context: JsIrBackendContext) {
     val returnableBlockValues = mutableMapOf<IrReturnableBlock, MutableList<IrExpression>>()
     val suspendableExpressionValues = mutableMapOf<IrSuspendableExpression, MutableList<IrSuspensionPoint>>()
 
@@ -40,6 +46,9 @@ private class ExpressionValuesExtractor(context: JsIrBackendContext) {
         type = context.irBuiltIns.unitType,
         symbol = context.irBuiltIns.unitClass,
     )
+
+    /** Intrinsics whose result holds exactly the values of their single argument array. */
+    private val arrayPassThroughs = with(context.symbols) { setOf(arrayLiteral, jsArraySlice, taggedArrayCopy) }
 
     fun forEachValue(expression: IrExpression, block: (IrExpression) -> Unit) {
         when (expression) {
@@ -76,10 +85,19 @@ private class ExpressionValuesExtractor(context: JsIrBackendContext) {
                 expression.catches.forEach { forEachValue(it.result, block) }
             }
 
+            is IrCall if expression.symbol in arrayPassThroughs ->
+                forEachValue(checkNotNull(expression.arguments[0]), block)
+
+            is IrCall if expression.isConcatenationOfLiteral() -> {
+                // The literal of segments still gets an array node of its own, which nothing reads.
+                val segments = checkNotNull(expression.arguments[0]) as IrCall
+                (segments.arguments[0] as IrVararg).elements.forEach { forEachValue(it as IrExpression, block) }
+            }
+
             is IrVararg,
             is IrClassReference,
             is IrMemberAccessExpression<*>, is IrGetValue, is IrGetObjectValue,
-            is IrGetField, is IrSetField, is IrConst, is IrConstantValue, is IrRawFunctionReference,
+            is IrGetField, is IrSetField, is IrConst, is IrRawFunctionReference,
             is IrDynamicMemberExpression, is IrDynamicOperatorExpression, is IrFunctionExpression,
                 -> block(expression)
 
@@ -92,6 +110,14 @@ private class ExpressionValuesExtractor(context: JsIrBackendContext) {
                 block(expression)
             }
         }
+    }
+
+    private fun IrCall.isConcatenationOfLiteral(): Boolean {
+        if (symbol != context.symbols.arrayConcat && symbol != context.symbols.primitiveArrayConcat) return false
+        val segments = arguments[0] as? IrCall ?: return false
+        if (segments.symbol != context.symbols.arrayLiteral) return false
+        val vararg = segments.arguments[0] as? IrVararg ?: return false
+        return vararg.elements.all { it is IrExpression }
     }
 }
 
@@ -339,6 +365,8 @@ internal class JsBodyDFGBuilder(
     }
 
     private fun toCallNode(call: IrCall): JsDataFlowIR.Node {
+        toArrayOperationNode(call)?.let { return it }
+
         val callee = call.symbol.owner.let { it.findOverriddenMethodOfAny() ?: it }
         val arguments = call.alignedArgumentValues()
 
@@ -361,21 +389,56 @@ internal class JsBodyDFGBuilder(
         )
     }
 
+    /**
+     * Maps the JS array element accesses produced by array intrinsification to array nodes, or
+     * returns null for any other call.
+     */
+    private fun toArrayOperationNode(call: IrCall): JsDataFlowIR.Node? {
+        val symbols = context.symbols
+        val arguments = call.arguments
+        return when (call.symbol) {
+            symbols.jsArrayGet -> JsDataFlowIR.Node.ArrayRead(
+                array = checkNotNull(arguments[0]).toValueNode(),
+                index = checkNotNull(arguments[1]).toValueNode(),
+                type = symbolTable.mapType(call.type),
+            )
+
+            symbols.jsArraySet -> JsDataFlowIR.Node.ArrayWrite(
+                array = checkNotNull(arguments[0]).toValueNode(),
+                index = checkNotNull(arguments[1]).toValueNode(),
+                value = checkNotNull(arguments[2]).toValueNode(),
+            )
+
+            symbols.jsArrayLength -> JsDataFlowIR.Node.FieldRead(
+                receiver = checkNotNull(arguments[0]).toValueNode(),
+                field = symbolTable.lengthField,
+                type = symbolTable.mapType(call.type),
+            )
+
+            else -> null
+        }
+    }
+
     private fun toNode(expression: IrExpression): JsDataFlowIR.Node = when (expression) {
         is IrGetValue -> getNode(expression).value
 
         is IrClassReference -> JsDataFlowIR.Node.Const(symbolTable.mapType(expression.type))
 
-        is IrVararg -> JsDataFlowIR.Node.OpaqueValue(
-            expression.elements.map { element ->
-                val value = when (element) {
+        is IrVararg -> {
+            val elements = expression.elements.map { element ->
+                when (element) {
                     is IrSpreadElement -> element.expression
                     is IrExpression -> element
                     else -> error("Unexpected vararg element: ${element.render()}")
-                }
-                value.toValueNode()
+                }.toValueNode()
             }
-        )
+            if (expression.elements.all { it is IrExpression }) {
+                JsDataFlowIR.Node.AllocArray(type = symbolTable.mapType(expression.type), elements = elements)
+            } else {
+                // Vararg lowering removes spreads; escape the elements of any that remain.
+                JsDataFlowIR.Node.OpaqueValue(elements)
+            }
+        }
 
         is IrRawFunctionReference -> JsDataFlowIR.Node.FunctionReference(
             symbol = symbolTable.mapFunction(expression.symbol.owner),
@@ -385,10 +448,6 @@ internal class JsBodyDFGBuilder(
         is IrConst ->
             if (expression.value == null) JsDataFlowIR.Node.Null
             else JsDataFlowIR.Node.Const(symbolTable.mapType(expression.type))
-
-        is IrConstantPrimitive ->
-            if (expression.value.value == null) JsDataFlowIR.Node.Null
-            else JsDataFlowIR.Node.Const(mapReturnType(actualType = expression.value.type, returnType = expression.type))
 
         is IrGetObjectValue -> JsDataFlowIR.Node.Singleton(type = symbolTable.mapType(expression.type))
 
@@ -447,12 +506,6 @@ internal class JsBodyDFGBuilder(
         is IrFunctionExpression ->
             // Its body is a separate execution unit whose captured reads reuse their owners' nodes.
             JsDataFlowIR.Node.Const(symbolTable.mapType(expression.type))
-
-        is IrConstantArray ->
-            JsDataFlowIR.Node.OpaqueValue(expression.elements.map { it.toValueNode() })
-
-        is IrConstantObject ->
-            JsDataFlowIR.Node.OpaqueValue(expression.valueArguments.map { it.toValueNode() })
 
         else -> {
             // Preserve soundness for unrecognized IR by escaping every expression operand.
@@ -563,7 +616,6 @@ private class ElementFinderVisitor(
             is IrVararg,
             is IrConst,
             is IrTypeOperatorCall,
-            is IrConstantPrimitive,
             is IrClassReference,
             is IrGetClass,
             is IrDynamicMemberExpression,
@@ -630,15 +682,5 @@ private class ElementFinderVisitor(
         variableValues.addEmpty(declaration, currentLoop)
         super.visitVariable(declaration)
         declaration.initializer?.let { assignValue(declaration, it) }
-    }
-
-    override fun visitConstantArray(expression: IrConstantArray) {
-        super.visitConstantArray(expression)
-        expressions += expression to currentLoop
-    }
-
-    override fun visitConstantObject(expression: IrConstantObject) {
-        super.visitConstantObject(expression)
-        expressions += expression to currentLoop
     }
 }
