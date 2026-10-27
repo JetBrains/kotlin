@@ -1,0 +1,5 @@
+/propertyAccessorTypeMismatch.kt:4:14: error: Initializer is prohibited here because this property has no backing field.
+
+/propertyAccessorTypeMismatch.kt:5:20: error: Return type mismatch in the getter of property 'x': expected 'Int', actual 'String'.
+
+/propertyAccessorTypeMismatch.kt:6:25: error: Return type mismatch in the setter of property 'x': expected 'Unit', actual 'Int'.
