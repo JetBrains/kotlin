@@ -66,9 +66,7 @@ abstract class KotlinIrLinker(
         }
 
         private fun findModuleDeserializer(irFile: IrFile): IrModuleDeserializer {
-            val candidateModules = getModulesDefiningPackage(irFile.packageFqName)
-
-            return candidateModules.firstOrNull { moduleDeserializer ->
+            return firstModuleDeserializerOrNull(irFile.packageFqName) { moduleDeserializer ->
                 moduleDeserializer.fileDeserializers().any { it.file == irFile }
             } ?: error("No module deserializer found for file: $irFile")
         }
@@ -156,8 +154,9 @@ abstract class KotlinIrLinker(
             currentModuleIfSearched = moduleDeserializer
         }
         if (actualModuleDeserializer == null) {
-            val candidateModules = getModulesDefiningPackage(topLevelSignature.packageFqName())
-            actualModuleDeserializer = candidateModules.firstOrNull { it != currentModuleIfSearched && topLevelSignature in it }
+            actualModuleDeserializer = firstModuleDeserializerOrNull(topLevelSignature.packageFqName()) {
+                it != currentModuleIfSearched && topLevelSignature in it
+            }
         }
 
         // Note: It might happen that the top-level symbol still exists in KLIB, but nested symbol has been removed.
@@ -181,16 +180,44 @@ abstract class KotlinIrLinker(
             ).raiseIssue(errorCallback)
     }
 
-    private fun resolveModuleDeserializer(idSignature: IdSignature): IrModuleDeserializer? {
-        val candidateModules = getModulesDefiningPackage(idSignature.packageFqName())
-        return candidateModules.firstOrNull { idSignature in it }
-    }
+    private fun resolveModuleDeserializer(idSignature: IdSignature): IrModuleDeserializer? =
+        firstModuleDeserializerOrNull(idSignature.packageFqName()) { idSignature in it }
 
-    private fun getModulesDefiningPackage(packageFqName: FqName): List<IrModuleDeserializer> {
-        val indexedModules = moduleDeserializersByPackageName[packageFqName].orEmpty()
-        return if (moduleDeserializersWithUnknownPackageNames.isEmpty()) indexedModules
-        else indexedModules + moduleDeserializersWithUnknownPackageNames
-    }
+    /**
+     * Returns the first module deserializer that may define declarations in the package [packageFqName]
+     * and matches the given [filter], or `null` if no such module deserializer is found.
+     *
+     * Similar to [firstOrNull] from stdlib, but only checks module deserializers that are relevant for [packageFqName],
+     * in the following order:
+     * 1. Module deserializers whose list of defined package names includes [packageFqName].
+     * 2. Module deserializers that cannot tell which packages they define
+     *    ([IrModuleDeserializer.getDefinedPackageNames] returns `null`). These are checked for every package.
+     *
+     * Inside each group, module deserializers are checked in the order they were registered with [createAndRegisterModuleDeserializer].
+     */
+    private inline fun firstModuleDeserializerOrNull(
+        packageFqName: FqName,
+        filter: (IrModuleDeserializer) -> Boolean,
+    ): IrModuleDeserializer? = moduleDeserializersByPackageName[packageFqName]?.firstOrNull(filter)
+        ?: moduleDeserializersWithUnknownPackageNames.firstOrNull(filter)
+
+    /**
+     * Applies the given [transformer] to module deserializers that may define declarations in the package [packageFqName]
+     * and returns the first non-null result, or `null` if [transformer] returns `null` for all of them.
+     *
+     * Similar to [firstNotNullOfOrNull] from stdlib, but only checks module deserializers that are relevant for [packageFqName],
+     * in the following order:
+     * 1. Module deserializers whose list of defined package names includes [packageFqName].
+     * 2. Module deserializers that cannot tell which packages they define
+     *    ([IrModuleDeserializer.getDefinedPackageNames] returns `null`). These are checked for every package.
+     *
+     * Inside each group, module deserializers are checked in the order they were registered with [createAndRegisterModuleDeserializer].
+     */
+    private inline fun <T : Any> firstNotNullOfModuleDeserializersOrNull(
+        packageFqName: FqName,
+        transformer: (IrModuleDeserializer) -> T?,
+    ): T? = moduleDeserializersByPackageName[packageFqName]?.firstNotNullOfOrNull(transformer)
+        ?: moduleDeserializersWithUnknownPackageNames.firstNotNullOfOrNull(transformer)
 
     protected abstract fun createModuleDeserializer(
         moduleFragment: IrModuleFragment,
