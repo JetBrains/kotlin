@@ -24,7 +24,7 @@ Starting with the release built from Kotlin 2.5.20, `kotlinx-metadata-klib` is p
 
 - `KlibModuleMetadata.MetadataLibraryProvider.moduleHeaderData` is now `ByteArray?`. An implementation returns `null`
   when the KLIB has no header file.
-- `KlibModuleMetadata.MetadataLibraryProvider` has a new abstract member `packageNames: Set<String>`, the fully-qualified
+- `KlibModuleMetadata.MetadataLibraryProvider` has a new abstract member `packageFqNames: Set<String>`, the fully-qualified
   names of the packages whose fragments the KLIB contains, with `""` standing for the root package. It replaces the
   package list that used to be read from the header.
 - `KlibModuleMetadata.readStrict()` and `KlibModuleMetadata.readLenient()` no longer fail when the header is absent.
@@ -40,7 +40,7 @@ or reads `KlibModuleMetadata.name` as a non-null `String`.
 
 #### Implementations of `MetadataLibraryProvider`
 
-Implement `packageNames` by listing `default/linkdata/`: `root_package` is the root package (`""`), `package_<fqName>`
+Implement `packageFqNames` by listing `default/linkdata/`: `root_package` is the root package (`""`), `package_<fqName>`
 is the package `<fqName>`. Return `null` from `moduleHeaderData` when `default/linkdata/module` is absent.
 
 #### Readers of `KlibModuleMetadata.name`
